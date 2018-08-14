@@ -1,3 +1,9 @@
+2018-08-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed gardening. Update several test expectations after r234839.
+
+        * TestExpectations.json:
+
 2018-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update W3C WebDriver imported tests.

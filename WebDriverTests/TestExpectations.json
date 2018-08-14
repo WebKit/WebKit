@@ -478,10 +478,20 @@
             }
         }
     },
+    "imported/w3c/webdriver/tests/back/back.py": {
+        "subtests": {
+            "test_dismissed_beforeunload": {
+                "expected": {"all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/188546"}}
+            }
+        }
+    },
     "imported/w3c/webdriver/tests/close_window/close.py": {
         "subtests": {
             "test_close_last_browsing_context": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/188118"}}
+            },
+            "test_close_browsing_context_with_dismissed_beforeunload_prompt": {
+                "expected": {"all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/188546"}}
             }
         }
     },
@@ -509,6 +519,21 @@
         "subtests": {
             "test_spin_event_loop": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180400"}}
+            }
+        }
+    },
+    "imported/w3c/webdriver/tests/element_click/file_upload.py": {
+        "subtests": {
+            "test_file_upload_state": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188513"}}
+            }
+        }
+    },
+    "imported/w3c/webdriver/tests/element_click/interactability.py": {
+        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188545"}},
+        "subtests": {
+            "test_element_intercepted": {
+                "expected": {"all": {"status": ["PASS"]}}
             }
         }
     },
@@ -582,8 +607,59 @@
             }
         }
     },
+    "imported/w3c/webdriver/tests/forward/forward.py": {
+        "subtests": {
+            "test_dismissed_beforeunload": {
+                "expected": {"all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/188546"}}
+            }
+        }
+    },
+    "imported/w3c/webdriver/tests/element_send_keys/events.py": {
+        "subtests": {
+            "test_file_upload": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188514"}}
+            }
+        }
+    },
+    "imported/w3c/webdriver/tests/element_send_keys/file_upload.py": {
+        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188514"}},
+        "subtests": {
+            "test_empty_text": {
+                "expected": {"all": {"status": ["PASS"]}}
+            }
+        }
+    },
     "imported/w3c/webdriver/tests/element_send_keys/form_controls.py": {
         "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182331"}}
+    },
+    "imported/w3c/webdriver/tests/element_send_keys/interactability.py": {
+        "subtests": {
+            "test_document_element_is_interactable": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188545"}}
+            },
+            "test_not_a_focusable_element": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188545"}}
+            },
+            "test_not_displayed_element": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188545"}}
+            },
+            "test_hidden_element": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188545"}}
+            },
+            "test_disabled_element": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188545"}}
+            }
+        }
+    },
+    "imported/w3c/webdriver/tests/element_send_keys/scroll_into_view.py": {
+        "subtests": {
+            "test_option_select_container_outside_of_scrollable_viewport": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188545"}}
+            },
+            "test_option_stays_outside_of_scrollable_viewport": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188545"}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/execute_script/collections.py": {
         "subtests": {
@@ -800,112 +876,112 @@
     },
     "imported/w3c/webdriver/tests/new_session/invalid_capabilities.py": {
         "subtests": {
-            "test_invalid_values[proxy-1-body0]": {
+            "test_invalid_values[proxy-1-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-1-body1]": {
+            "test_invalid_values[proxy-1-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value28-body0]": {
+            "test_invalid_values[proxy-value28-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value28-body1]": {
+            "test_invalid_values[proxy-value28-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-{}-body0]": {
+            "test_invalid_values[proxy-{}-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-{}-body1]": {
+            "test_invalid_values[proxy-{}-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value30-body0]": {
+            "test_invalid_values[proxy-value30-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value30-body1]": {
+            "test_invalid_values[proxy-value30-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value31-body0]": {
+            "test_invalid_values[proxy-value31-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value31-body1]": {
+            "test_invalid_values[proxy-value31-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value32-body0]": {
+            "test_invalid_values[proxy-value32-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value32-body1]": {
+            "test_invalid_values[proxy-value32-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value33-body0]": {
+            "test_invalid_values[proxy-value33-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value33-body1]": {
+            "test_invalid_values[proxy-value33-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value34-body0]": {
+            "test_invalid_values[proxy-value34-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value34-body1]": {
+            "test_invalid_values[proxy-value34-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value35-body0]": {
+            "test_invalid_values[proxy-value35-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value35-body1]": {
+            "test_invalid_values[proxy-value35-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value36-body0]": {
+            "test_invalid_values[proxy-value36-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value36-body1]": {
+            "test_invalid_values[proxy-value36-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value37-body0]": {
+            "test_invalid_values[proxy-value37-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value37-body1]": {
+            "test_invalid_values[proxy-value37-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value38-body0]": {
+            "test_invalid_values[proxy-value38-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value38-body1]": {
+            "test_invalid_values[proxy-value38-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value39-body0]": {
+            "test_invalid_values[proxy-value39-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value39-body1]": {
+            "test_invalid_values[proxy-value39-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value40-body0]": {
+            "test_invalid_values[proxy-value40-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value40-body1]": {
+            "test_invalid_values[proxy-value40-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value41-body0]": {
+            "test_invalid_values[proxy-value41-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value41-body1]": {
+            "test_invalid_values[proxy-value41-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value42-body0]": {
+            "test_invalid_values[proxy-value42-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value42-body1]": {
+            "test_invalid_values[proxy-value42-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value43-body0]": {
+            "test_invalid_values[proxy-value43-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value43-body1]": {
+            "test_invalid_values[proxy-value43-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value44-body0]": {
+            "test_invalid_values[proxy-value44-<lambda>0]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
-            "test_invalid_values[proxy-value44-body1]": {
+            "test_invalid_values[proxy-value44-<lambda>1]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             }
         }
