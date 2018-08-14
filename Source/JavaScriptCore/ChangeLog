@@ -1,3 +1,12 @@
+2018-08-14  Keith Miller  <keith_miller@apple.com>
+
+        Add missing availability macro.
+        https://bugs.webkit.org/show_bug.cgi?id=188563
+
+        Reviewed by Mark Lam.
+
+        * API/JSValueRef.h:
+
 2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] GetByIdStatus::m_wasSeenInJIT is touched in GetByIdStatus::slowVersion

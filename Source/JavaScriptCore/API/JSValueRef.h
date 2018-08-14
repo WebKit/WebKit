@@ -276,7 +276,7 @@ JS_EXPORT JSValueRef JSValueMakeNumber(JSContextRef ctx, double number);
 @param description   A description of the newly created symbol value.
 @result              A unique JSValue of the symbol type, whose description matches the one provided.
 */
-JS_EXPORT JSValueRef JSValueMakeSymbol(JSContextRef ctx, JSStringRef description);
+JS_EXPORT JSValueRef JSValueMakeSymbol(JSContextRef ctx, JSStringRef description) JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 /*!
 @function
