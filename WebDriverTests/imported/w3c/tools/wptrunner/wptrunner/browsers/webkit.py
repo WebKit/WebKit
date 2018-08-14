@@ -1,8 +1,8 @@
 from .base import Browser, ExecutorBrowser, require_arg
 from ..executors import executor_kwargs as base_executor_kwargs
-from ..executors.executorselenium import (SeleniumTestharnessExecutor,
-                                          SeleniumRefTestExecutor)
-from ..executors.executorwebkit import WebKitDriverWdspecExecutor
+from ..executors.executorselenium import (SeleniumTestharnessExecutor,  # noqa: F401
+                                          SeleniumRefTestExecutor)  # noqa: F401
+from ..executors.executorwebkit import WebKitDriverWdspecExecutor  # noqa: F401
 from ..webdriver_server import WebKitDriverServer
 
 
@@ -24,20 +24,24 @@ def check_args(**kwargs):
     require_arg(kwargs, "webkit_port")
 
 
-def browser_kwargs(test_type, run_info_data, **kwargs):
+def browser_kwargs(test_type, run_info_data, config, **kwargs):
     return {"binary": kwargs["binary"],
             "webdriver_binary": kwargs["webdriver_binary"],
             "webdriver_args": kwargs.get("webdriver_args")}
 
 
-def capabilities_for_port(webkit_port, binary, binary_args):
+def capabilities_for_port(server_config, **kwargs):
     from selenium.webdriver import DesiredCapabilities
 
-    if webkit_port == "gtk":
+    if kwargs["webkit_port"] == "gtk":
         capabilities = dict(DesiredCapabilities.WEBKITGTK.copy())
         capabilities["webkitgtk:browserOptions"] = {
-            "binary": binary,
-            "args": binary_args
+            "binary": kwargs["binary"],
+            "args": kwargs.get("binary_args", []),
+            "certificates": [
+                {"host": server_config["browser_host"],
+                 "certificateFile": kwargs["host_cert_path"]}
+            ]
         }
         return capabilities
 
@@ -47,12 +51,10 @@ def capabilities_for_port(webkit_port, binary, binary_args):
 def executor_kwargs(test_type, server_config, cache_manager, run_info_data,
                     **kwargs):
     executor_kwargs = base_executor_kwargs(test_type, server_config,
-                                           cache_manager, **kwargs)
+                                           cache_manager, run_info_data, **kwargs)
     executor_kwargs["close_after_done"] = True
-    capabilities = capabilities_for_port(kwargs["webkit_port"],
-                                         kwargs["binary"],
-                                         kwargs.get("binary_args", []))
-    executor_kwargs["capabilities"] = capabilities
+    executor_kwargs["capabilities"] = capabilities_for_port(server_config,
+                                                            **kwargs)
     return executor_kwargs
 
 

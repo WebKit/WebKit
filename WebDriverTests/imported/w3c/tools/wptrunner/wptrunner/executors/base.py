@@ -17,7 +17,8 @@ here = os.path.split(__file__)[0]
 extra_timeout = 5  # seconds
 
 
-def executor_kwargs(test_type, server_config, cache_manager, **kwargs):
+def executor_kwargs(test_type, server_config, cache_manager, run_info_data,
+                    **kwargs):
     timeout_multiplier = kwargs["timeout_multiplier"]
     if timeout_multiplier is None:
         timeout_multiplier = 1
@@ -61,12 +62,12 @@ class TestharnessResultConverter(object):
                   2: "TIMEOUT",
                   3: "NOTRUN"}
 
-    def __call__(self, test, result):
+    def __call__(self, test, result, extra=None):
         """Convert a JSON result into a (TestResult, [SubtestResult]) tuple"""
         result_url, status, message, stack, subtest_results = result
         assert result_url == test.url, ("Got results from %s, expected %s" %
-                                      (result_url, test.url))
-        harness_result = test.result_cls(self.harness_codes[status], message)
+                                        (result_url, test.url))
+        harness_result = test.result_cls(self.harness_codes[status], message, extra=extra, stack=stack)
         return (harness_result,
                 [test.subtest_result_cls(st_name, self.test_codes[st_status], st_message, st_stack)
                  for st_name, st_status, st_message, st_stack in subtest_results])
@@ -76,8 +77,11 @@ testharness_result_converter = TestharnessResultConverter()
 
 
 def reftest_result_converter(self, test, result):
-    return (test.result_cls(result["status"], result["message"],
-                            extra=result.get("extra")), [])
+    return (test.result_cls(
+        result["status"],
+        result["message"],
+        extra=result.get("extra", {}),
+        stack=result.get("stack")), [])
 
 
 def pytest_result_converter(self, test, data):
@@ -243,7 +247,6 @@ class RefTestImplementation(object):
         return self.executor.logger
 
     def get_hash(self, test, viewport_size, dpi):
-        timeout = test.timeout * self.timeout_multiplier
         key = (test.url, viewport_size, dpi)
 
         if key not in self.screenshot_cache:
@@ -391,7 +394,7 @@ class WdspecRun(object):
         executor = threading.Thread(target=self._run)
         executor.start()
 
-        flag = self.result_flag.wait(self.timeout)
+        self.result_flag.wait(self.timeout)
         if self.result[1] is None:
             self.result = False, ("EXTERNAL-TIMEOUT", None)
 
@@ -533,7 +536,7 @@ class CallbackHandler(object):
                 raise ValueError("Unknown action %s" % action)
             try:
                 action_handler(payload)
-            except Exception as e:
+            except Exception:
                 self.logger.warning("Action %s failed" % action)
                 self.logger.warning(traceback.format_exc())
                 self._send_message("complete", "failure")

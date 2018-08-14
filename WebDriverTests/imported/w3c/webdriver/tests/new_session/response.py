@@ -1,54 +1,43 @@
-# META: timeout=long
-
 import uuid
 
-def test_resp_sessionid(new_session, add_browser_capabilites):
-    resp, _ = new_session({"capabilities": {"alwaysMatch": add_browser_capabilites({})}})
-    assert isinstance(resp["sessionId"], unicode)
-    uuid.UUID(hex=resp["sessionId"])
+import pytest
+
+from tests.support.asserts import assert_success
 
 
-def test_resp_capabilites(new_session, add_browser_capabilites):
-    resp, _ = new_session({"capabilities": {"alwaysMatch": add_browser_capabilites({})}})
-    assert isinstance(resp["sessionId"], unicode)
-    assert isinstance(resp["capabilities"], dict)
-    assert {"browserName",
-            "browserVersion",
-            "platformName",
-            "acceptInsecureCerts",
-            "setWindowRect",
-            "timeouts",
-            "proxy",
-            "pageLoadStrategy"}.issubset(
-                set(resp["capabilities"].keys()))
+def test_sessionid(new_session, add_browser_capabilities):
+    response, _ = new_session({"capabilities": {"alwaysMatch": add_browser_capabilities({})}})
+    value = assert_success(response)
+    assert isinstance(value["sessionId"], basestring)
+    uuid.UUID(hex=value["sessionId"])
 
 
-def test_resp_data(new_session, add_browser_capabilites, platform_name):
-    resp, _ = new_session({"capabilities": {"alwaysMatch": add_browser_capabilites({})}})
+@pytest.mark.parametrize("capability, type", [
+    ("browserName", basestring),
+    ("browserVersion", basestring),
+    ("platformName", basestring),
+    ("acceptInsecureCerts", bool),
+    ("pageLoadStrategy", basestring),
+    ("proxy", dict),
+    ("setWindowRect", bool),
+    ("timeouts", dict),
+    ("unhandledPromptBehavior", basestring),
+])
+def test_capability_type(session, capability, type):
+    assert isinstance(session.capabilities, dict)
+    assert capability in session.capabilities
+    assert isinstance(session.capabilities[capability], type)
 
-    assert isinstance(resp["capabilities"]["browserName"], unicode)
-    assert isinstance(resp["capabilities"]["browserVersion"], unicode)
-    if platform_name:
-        assert resp["capabilities"]["platformName"] == platform_name
-    else:
-        assert "platformName" in resp["capabilities"]
-    assert resp["capabilities"]["acceptInsecureCerts"] is False
-    assert isinstance(resp["capabilities"]["setWindowRect"], bool)
-    assert resp["capabilities"]["timeouts"]["implicit"] == 0
-    assert resp["capabilities"]["timeouts"]["pageLoad"] == 300000
-    assert resp["capabilities"]["timeouts"]["script"] == 30000
-    assert resp["capabilities"]["proxy"] == {}
-    assert resp["capabilities"]["pageLoadStrategy"] == "normal"
 
-
-def test_timeouts(new_session, add_browser_capabilites, platform_name):
-    resp, _ = new_session({"capabilities": {"alwaysMatch": add_browser_capabilites({"timeouts": {"implicit": 1000}})}})
-    assert resp["capabilities"]["timeouts"] == {
-        "implicit": 1000,
-        "pageLoad": 300000,
-        "script": 30000
-    }
-
-def test_pageLoadStrategy(new_session, add_browser_capabilites, platform_name):
-    resp, _ = new_session({"capabilities": {"alwaysMatch": add_browser_capabilites({"pageLoadStrategy": "eager"})}})
-    assert resp["capabilities"]["pageLoadStrategy"] == "eager"
+@pytest.mark.parametrize("capability, default_value", [
+    ("acceptInsecureCerts", False),
+    ("pageLoadStrategy", "normal"),
+    ("proxy", {}),
+    ("setWindowRect", True),
+    ("timeouts", {"implicit": 0, "pageLoad": 300000, "script": 30000}),
+    ("unhandledPromptBehavior", "dismiss and notify"),
+])
+def test_capability_default_value(session, capability, default_value):
+    assert isinstance(session.capabilities, dict)
+    assert capability in session.capabilities
+    assert session.capabilities[capability] == default_value

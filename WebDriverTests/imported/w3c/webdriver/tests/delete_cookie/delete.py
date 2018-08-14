@@ -8,10 +8,13 @@ def delete_cookie(session, name):
             name=name))
 
 
-def test_no_browsing_context(session, create_window):
-    session.window_handle = create_window()
-    session.close()
+def test_null_response_value(session, url):
+    response = delete_cookie(session, "foo")
+    value = assert_success(response)
+    assert value is None
 
+
+def test_no_browsing_context(session, closed_window):
     response = delete_cookie(session, "foo")
     assert_error(response, "no such window")
 

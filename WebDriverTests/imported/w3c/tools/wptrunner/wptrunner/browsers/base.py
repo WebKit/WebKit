@@ -3,7 +3,7 @@ import platform
 import socket
 from abc import ABCMeta, abstractmethod
 
-from ..wptcommandline import require_arg
+from ..wptcommandline import require_arg  # noqa: F401
 
 here = os.path.split(__file__)[0]
 
@@ -87,7 +87,7 @@ class Browser(object):
         return {}
 
     @abstractmethod
-    def start(self, **kwargs):
+    def start(self, group_metadata, **kwargs):
         """Launch the browser object and get it into a state where is is ready to run tests"""
         pass
 

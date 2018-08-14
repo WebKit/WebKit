@@ -33,6 +33,14 @@ def bool_prop(name, node):
         return None
 
 
+def int_prop(name, node):
+    """Boolean property"""
+    try:
+        return int(node.get(name))
+    except KeyError:
+        return None
+
+
 def tags(node):
     """Set of tags that have been applied to the test"""
     try:
@@ -54,10 +62,23 @@ def prefs(node):
     try:
         node_prefs = node.get("prefs")
         if type(node_prefs) in (str, unicode):
-            prefs = {value(node_prefs)}
-        rv = dict(value(item) for item in node_prefs)
+            rv = dict(value(node_prefs))
+        else:
+            rv = dict(value(item) for item in node_prefs)
     except KeyError:
         rv = {}
+    return rv
+
+
+def lsan_allowed(node):
+    try:
+        node_items = node.get("lsan-allowed")
+        if isinstance(node_items, (str, unicode)):
+            rv = {node_items}
+        else:
+            rv = set(node_items)
+    except KeyError:
+        rv = set()
     return rv
 
 
@@ -116,12 +137,24 @@ class ExpectedManifest(ManifestItem):
         return bool_prop("leaks", self)
 
     @property
+    def min_assertion_count(self):
+        return int_prop("min-asserts", self)
+
+    @property
+    def max_assertion_count(self):
+        return int_prop("max-asserts", self)
+
+    @property
     def tags(self):
         return tags(self)
 
     @property
     def prefs(self):
         return prefs(self)
+
+    @property
+    def lsan_allowed(self):
+        return lsan_allowed(self)
 
 
 class DirectoryManifest(ManifestItem):
@@ -138,12 +171,24 @@ class DirectoryManifest(ManifestItem):
         return bool_prop("leaks", self)
 
     @property
+    def min_assertion_count(self):
+        return int_prop("min-asserts", self)
+
+    @property
+    def max_assertion_count(self):
+        return int_prop("max-asserts", self)
+
+    @property
     def tags(self):
         return tags(self)
 
     @property
     def prefs(self):
         return prefs(self)
+
+    @property
+    def lsan_allowed(self):
+        return lsan_allowed(self)
 
 
 class TestNode(ManifestItem):
@@ -187,12 +232,24 @@ class TestNode(ManifestItem):
         return bool_prop("leaks", self)
 
     @property
+    def min_assertion_count(self):
+        return int_prop("min-asserts", self)
+
+    @property
+    def max_assertion_count(self):
+        return int_prop("max-asserts", self)
+
+    @property
     def tags(self):
         return tags(self)
 
     @property
     def prefs(self):
         return prefs(self)
+
+    @property
+    def lsan_allowed(self):
+        return lsan_allowed(self)
 
     def append(self, node):
         """Add a subtest to the current test
@@ -244,6 +301,7 @@ def get_manifest(metadata_root, test_path, url_base, run_info):
                                   url_base=url_base)
     except IOError:
         return None
+
 
 def get_dir_manifest(path, run_info):
     """Get the ExpectedManifest for a particular test path, or None if there is no

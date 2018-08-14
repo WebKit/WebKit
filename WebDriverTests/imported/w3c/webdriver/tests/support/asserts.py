@@ -1,4 +1,4 @@
-from webdriver import Element, WebDriverException
+from webdriver import Element, NoSuchAlertException, WebDriverException
 
 
 # WebDriver specification ID: dfn-error-response-data
@@ -34,27 +34,6 @@ errors = {
 }
 
 
-# WebDriver specification ID: dfn-send-an-error
-#
-# > When required to send an error, with error code, a remote end must run the
-# > following steps:
-# >
-# > 1. Let http status and name be the error response data for error code.
-# > 2. Let message be an implementation-defined string containing a
-# >    human-readable description of the reason for the error.
-# > 3. Let stacktrace be an implementation-defined string containing a stack
-# >    trace report of the active stack frames at the time when the error
-# >    occurred.
-# > 4. Let data be a new JSON Object initialised with the following properties:
-# >
-# >     error
-# >         name
-# >     message
-# >         message
-# >     stacktrace
-# >         stacktrace
-# >
-# > 5. Send a response with status and data as arguments.
 def assert_error(response, error_code):
     """
     Verify that the provided webdriver.Response instance described
@@ -87,20 +66,53 @@ def assert_success(response, value=None):
     return response.body.get("value")
 
 
-def assert_dialog_handled(session, expected_text):
-    result = session.transport.send("GET",
-                                    "session/%s/alert/text" % session.session_id)
-
+def assert_dialog_handled(session, expected_text, expected_retval):
     # If there were any existing dialogs prior to the creation of this
     # fixture's dialog, then the "Get Alert Text" command will return
     # successfully. In that case, the text must be different than that
     # of this fixture's dialog.
     try:
-        assert_error(result, "no such alert")
-    except:
-        assert (result.status == 200 and
-                result.body["value"] != expected_text), (
-            "Dialog with text '%s' was not handled." % expected_text)
+        assert session.alert.text != expected_text, (
+            "User prompt with text '{}' was not handled.".format(expected_text))
+
+    except NoSuchAlertException:
+        # If dialog has been closed and no other one is open, check its return value
+        prompt_retval = session.execute_script(" return window.dialog_return_value;")
+        assert prompt_retval == expected_retval
+
+
+def assert_files_uploaded(session, element, files):
+
+    def get_file_contents(file_index):
+        return session.execute_async_script("""
+            let files = arguments[0].files;
+            let index = arguments[1];
+            let resolve = arguments[2];
+
+            var reader = new FileReader();
+            reader.onload = function(event) {
+              resolve(reader.result);
+            };
+            reader.readAsText(files[index]);
+        """, (element, file_index))
+
+    def get_uploaded_file_names():
+        return session.execute_script("""
+            let fileList = arguments[0].files;
+            let files = [];
+
+            for (var i = 0; i < fileList.length; i++) {
+              files.push(fileList[i].name);
+            }
+
+            return files;
+        """, args=(element,))
+
+    expected_file_names = [str(f.basename) for f in files]
+    assert get_uploaded_file_names() == expected_file_names
+
+    for index, f in enumerate(files):
+        assert get_file_contents(index) == f.read()
 
 
 def assert_same_element(session, a, b):
@@ -137,6 +149,17 @@ def assert_same_element(session, a, b):
         pass
 
     raise AssertionError(message)
+
+
+def assert_in_events(session, expected_events):
+    actual_events = session.execute_script("return window.events")
+    for expected_event in expected_events:
+        assert expected_event in actual_events
+
+
+def assert_events_equal(session, expected_events):
+    actual_events = session.execute_script("return window.events")
+    assert actual_events == expected_events
 
 
 def assert_element_has_focus(target_element):
