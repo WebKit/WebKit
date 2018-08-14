@@ -1,5 +1,15 @@
 2018-08-13  Jon Lee  <jonlee@apple.com>
 
+        Update MotionMark version number
+        https://bugs.webkit.org/show_bug.cgi?id=188535
+        <rdar://problem/43254078>
+
+        Reviewed by Said Abou-Hallawa.
+
+        * MotionMark/resources/strings.js: To 1.1.
+
+2018-08-13  Jon Lee  <jonlee@apple.com>
+
         [MotionMark] Update Multiply test
         https://bugs.webkit.org/show_bug.cgi?id=188532
         <rdar://problem/43252151>
