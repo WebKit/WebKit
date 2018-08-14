@@ -1,5 +1,16 @@
 2018-08-14  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
+        [Curl] Test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=188587
+
+        Unreviewed test gardening.
+
+        Added platform dependent expected result.
+
+        * platform/wincairo/http/tests/xmlhttprequest/methods-expected.txt: Added.
+
+2018-08-14  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
         [Curl] Implement platform default timeout interval.
         https://bugs.webkit.org/show_bug.cgi?id=188565
 
