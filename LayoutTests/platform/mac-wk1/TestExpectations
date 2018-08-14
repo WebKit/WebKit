@@ -606,3 +606,6 @@ webkit.org/b/187711 [ Debug ] svg/custom/linking-uri-01-b.svg [ Pass Failure ]
 webkit.org/b/188357 legacy-animation-engine/compositing/backing/transform-transition-from-outside-view.html [ Pass Failure ]
 webkit.org/b/188357 legacy-animation-engine/compositing/geometry/limit-layer-bounds-opacity-transition.html [ Pass Failure ]
 webkit.org/b/188357 legacy-animation-engine/compositing/layer-creation/animation-overlap-with-children.html [ Pass Failure ]
+
+# <rdar://problem/42904780>
+[ Mojave+ Release ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker.html [ Failure ]
