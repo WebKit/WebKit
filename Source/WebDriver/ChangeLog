@@ -1,5 +1,17 @@
 2018-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: include all capabilities in the new session response
+        https://bugs.webkit.org/show_bug.cgi?id=188511
+
+        Reviewed by Brian Burg.
+
+        As expected by the tests, using the default values when the capability is not provided by the user.
+
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::createSession):
+
+2018-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: several element_send_keys tests are failing since added
         https://bugs.webkit.org/show_bug.cgi?id=181644
 
