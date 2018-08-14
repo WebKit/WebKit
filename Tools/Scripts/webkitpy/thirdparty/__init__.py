@@ -146,6 +146,10 @@ class AutoinstallImportHook(object):
                               "py-1.5.2/py")
         self._install("https://pypi.python.org/packages/11/bf/cbeb8cdfaffa9f2ea154a30ae31a9d04a1209312e2919138b4171a1f8199/pluggy-0.6.0.tar.gz",
                               "pluggy-0.6.0/pluggy")
+        self._install("https://pypi.python.org/packages/c0/2f/6773347277d76c5ade4414a6c3f785ef27e7f5c4b0870ec7e888e66a8d83/more-itertools-4.2.0.tar.gz",
+                              "more-itertools-4.2.0/more_itertools")
+        self._install("https://pypi.python.org/packages/16/d8/bc6316cf98419719bd59c91742194c111b6f2e85abac88e496adefaf7afe/six-1.11.0.tar.gz",
+                              "six-1.11.0/six.py")
         self._install("https://pypi.python.org/packages/a1/e1/2d9bc76838e6e6667fde5814aa25d7feb93d6fa471bf6816daac2596e8b2/atomicwrites-1.1.5.tar.gz",
                               "atomicwrites-1.1.5/atomicwrites")
         self._install("https://pypi.python.org/packages/94/4a/db842e7a0545de1cdb0439bb80e6e42dfe82aaeaadd4072f2263a4fbed23/funcsigs-1.0.2.tar.gz",
