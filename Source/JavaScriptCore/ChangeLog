@@ -1,5 +1,19 @@
 2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
+        [JSC] GetByIdStatus::m_wasSeenInJIT is touched in GetByIdStatus::slowVersion
+        https://bugs.webkit.org/show_bug.cgi?id=188560
+
+        Reviewed by Keith Miller.
+
+        While GetByIdStatus() / GetByIdStatus(status) constructors do not set m_wasSeenInJIT,
+        it is loaded unconditionally in GetByIdStatus::slowVersion. This access to the
+        uninitialized member field is caught in UBSan. This patch fixes it by adding an initializer
+        `m_wasSeenInJIT { false }`.
+
+        * bytecode/GetByIdStatus.h:
+
+2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
         [DFG] DFGPredictionPropagation should set PrimaryPass when processing invariants
         https://bugs.webkit.org/show_bug.cgi?id=188557
 

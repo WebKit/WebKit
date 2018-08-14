@@ -158,7 +158,7 @@ private:
     
     State m_state;
     Vector<GetByIdVariant, 1> m_variants;
-    bool m_wasSeenInJIT;
+    bool m_wasSeenInJIT { false };
     JSModuleNamespaceObject* m_moduleNamespaceObject { nullptr };
     JSModuleEnvironment* m_moduleEnvironment { nullptr };
     ScopeOffset m_scopeOffset { };
