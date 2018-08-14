@@ -1,3 +1,16 @@
+2018-08-13  James Savage  <james.savage@apple.com>
+
+        [iOS] Crash at -[UIViewController _presentViewController:withAnimationController:completion:]
+        https://bugs.webkit.org/show_bug.cgi?id=188537
+        <rdar://problem/41400259>
+
+        Reviewed by Tim Horton.
+
+        * platform/ios/ValidationBubbleIOS.mm:
+        (WebCore::ValidationBubble::show): Avoid hitting a UIKit exception for
+        presenting an already presented view controller by turning the scenario
+        into an early return.
+
 2018-08-13  Alex Christensen  <achristensen@webkit.org>
 
         Make CSSSelectorList a little more sane

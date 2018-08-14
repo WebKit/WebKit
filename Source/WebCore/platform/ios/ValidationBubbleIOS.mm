@@ -135,6 +135,9 @@ ValidationBubble::~ValidationBubble()
 
 void ValidationBubble::show()
 {
+    if ([m_popoverController parentViewController] || [m_popoverController presentingViewController])
+        return;
+
     // Protect the validation bubble so it stays alive until it is effectively presented. UIKit does not deal nicely with
     // dismissing a popover that is being presented.
     RefPtr<ValidationBubble> protectedThis(this);
