@@ -1,0 +1,12 @@
+[Worker] Test rejected promises are returned from bindings and trigger unhandledrejection.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Starting worker: ../resources/unhandled-promise-rejection-bindings-type-error-in-workers.js
+PASS [Worker] error.promise is promise
+PASS [Worker] error.reason instanceof TypeError is true
+Got error from worker: Unhandled Promise Rejection: TypeError: The PromiseRejectionEvent.promise getter can only be used on instances of PromiseRejectionEvent
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

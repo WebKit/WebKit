@@ -16,7 +16,7 @@ PASS checkForNodeLeaks(createMessageEventDataCycle) is "did not leak"
 PASS checkForNodeLeaks(createPopStateEventStateCycle) is "did not leak"
 FAIL checkForNodeLeaks(createPromiseRejectionEventPromiseCycle) should be did not leak. Was leaked.
 PASS checkForNodeLeaks(createPromiseRejectionEventPromiseFunctionCycle) is "did not leak"
-FAIL checkForNodeLeaks(createPromiseRejectionEventReasonCycle) should be did not leak. Was leaked.
+PASS checkForNodeLeaks(createPromiseRejectionEventReasonCycle) is "did not leak"
 PASS successfullyParsed is true
 Some tests failed.
 

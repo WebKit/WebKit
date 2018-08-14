@@ -26,7 +26,7 @@
 #pragma once
 
 #include "Event.h"
-#include <JavaScriptCore/Strong.h>
+#include "JSValueInWrappedObject.h"
 
 namespace WebCore {
 
@@ -39,25 +39,23 @@ public:
         JSC::JSValue reason;
     };
 
-    static Ref<PromiseRejectionEvent> create(JSC::ExecState& state, const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<PromiseRejectionEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new PromiseRejectionEvent(state, type, initializer, isTrusted));
+        return adoptRef(*new PromiseRejectionEvent(type, initializer, isTrusted));
     }
 
     virtual ~PromiseRejectionEvent();
 
     DOMPromise& promise() const { return m_promise.get(); }
-    JSC::JSValue reason() const { return m_reason.get(); }
+    const JSValueInWrappedObject& reason() const { return m_reason; }
 
     EventInterface eventInterface() const override { return PromiseRejectionEventInterfaceType; }
 
 private:
-    PromiseRejectionEvent(JSC::ExecState&, const AtomicString&, const Init&, IsTrusted);
+    PromiseRejectionEvent(const AtomicString&, const Init&, IsTrusted);
 
     Ref<DOMPromise> m_promise;
-    // FIXME: The following use of JSC::Strong is incorrect and can lead to storage leaks
-    // due to reference cycles; we should use JSValueInWrappedObject instead.
-    JSC::Strong<JSC::Unknown> m_reason;
+    JSValueInWrappedObject m_reason;
 };
 
 } // namespace WebCore

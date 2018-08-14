@@ -1,3 +1,17 @@
+2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Worker should support unhandled promise rejections
+        https://bugs.webkit.org/show_bug.cgi?id=188265
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.worker-expected.txt:
+        * web-platform-tests/streams/readable-streams/tee.dedicatedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/tee.serviceworker.https-expected.txt:
+        * web-platform-tests/workers/interfaces.worker-expected.txt:
+        * web-platform-tests/workers/semantics/interface-objects/001.worker-expected.txt:
+
 2018-08-14  Rob Buis  <rbuis@igalia.com>
 
         Fetch: content-length header is being added to the safe-list

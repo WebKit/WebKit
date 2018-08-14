@@ -47,6 +47,18 @@ MicrotaskQueue& MicrotaskQueue::mainThreadQueue()
     return queue;
 }
 
+MicrotaskQueue& MicrotaskQueue::contextQueue(ScriptExecutionContext& context)
+{
+    // While main thread has many ScriptExecutionContexts, WorkerGlobalScope and worker thread have
+    // one on one correspondence. The lifetime of MicrotaskQueue is aligned to this semantics.
+    // While main thread MicrotaskQueue is persistently held, worker's MicrotaskQueue is held by
+    // WorkerGlobalScope.
+    if (isMainThread())
+        return mainThreadQueue();
+    ASSERT(context.isWorkerGlobalScope());
+    return downcast<WorkerGlobalScope>(context).microtaskQueue();
+}
+
 void MicrotaskQueue::append(std::unique_ptr<Microtask>&& task)
 {
     m_microtaskQueue.append(WTFMove(task));

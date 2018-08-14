@@ -102,8 +102,6 @@ private:
     static void instantiateStreaming(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromiseDeferred*, JSC::JSValue, JSC::JSObject*);
 #endif
 
-    static void promiseRejectionTracker(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromise*, JSC::JSPromiseRejectionOperation);
-
     RefPtr<DOMWindow> m_wrapped;
     JSWindowProxy* m_proxy;
 };

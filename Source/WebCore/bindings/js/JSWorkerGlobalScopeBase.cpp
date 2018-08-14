@@ -62,7 +62,7 @@ const GlobalObjectMethodTable JSWorkerGlobalScopeBase::s_globalObjectMethodTable
     nullptr, // moduleLoaderFetch
     nullptr, // moduleLoaderCreateImportMetaProperties
     nullptr, // moduleLoaderEvaluate
-    nullptr, // promiseRejectionTracker
+    &promiseRejectionTracker,
     &defaultLanguage,
     nullptr, // compileStreaming
     nullptr, // instantiateStreaming

@@ -1,3 +1,70 @@
+2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Worker should support unhandled promise rejections
+        https://bugs.webkit.org/show_bug.cgi?id=188265
+
+        Reviewed by Darin Adler.
+
+        This patch adds PromiseRejectionEvent support in workers.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::promiseRejectionTracker):
+        Move promiseRejectionTracker handler from JSDOMWindowBase to JSDOMGlobalObject
+        to share it with WorkerGlobalScope.
+
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::promiseRejectionTracker): Deleted.
+        Moved to JSDOMGlobalObject.
+
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSExecState.cpp:
+        (WebCore::JSExecState::didLeaveScriptContext):
+        PromiseRejectionTracker is driven in workers too.
+
+        * bindings/js/JSPromiseRejectionEventCustom.cpp: Added.
+        (WebCore::JSPromiseRejectionEvent::visitAdditionalChildren):
+        Marking PromiseRejectionEvent::m_reason.
+
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        Configure promiseRejectionTracker.
+
+        * dom/Microtasks.cpp:
+        (WebCore::MicrotaskQueue::contextQueue):
+        * dom/Microtasks.h:
+        * dom/PromiseRejectionEvent.cpp:
+        (WebCore::PromiseRejectionEvent::PromiseRejectionEvent):
+        * dom/PromiseRejectionEvent.h:
+        * dom/PromiseRejectionEvent.idl:
+        Expose it to worker scope. The custom mark function is required since we start
+        using JSValueInWrappedObject. And the constructor no longer requires ExecState.
+
+        * dom/RejectedPromiseTracker.cpp:
+        (WebCore::RejectedPromiseTracker::reportUnhandledRejections):
+        (WebCore::RejectedPromiseTracker::reportRejectionHandled):
+        Remove state argument for PromiseRejectionEvent::create.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::removeRejectedPromiseTracker):
+        * dom/ScriptExecutionContext.h:
+        In worker thread, we should delete PromiseRejectionTracker before destroying VM
+        because PromiseRejectionTracker's destruction requires VM. If we destroy VM first,
+        PromiseRejectionTracker's destruction causes crashing. In main thread, we do not
+        need to handle this case since we never destroy VM.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::prepareForTermination):
+        (WebCore::WorkerGlobalScope::removeMicrotaskQueue): Deleted.
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerGlobalScope.idl:
+        Add onunhandledrejection and onrejectionhandled event handler attributes.
+
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::stop):
+        We call WorkerGlobalScope::prepareForTermination, which cleans up Worker's objects touching VM.
+
 2018-08-14  Rob Buis  <rbuis@igalia.com>
 
         Fetch: content-length header is being added to the safe-list

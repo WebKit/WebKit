@@ -9256,6 +9256,7 @@
 		71EFCEDA202B388F00D7C411 /* AnimationEffectReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationEffectReadOnly.cpp; sourceTree = "<group>"; };
 		71EFCEDB202B389000D7C411 /* KeyframeEffectReadOnly.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = KeyframeEffectReadOnly.idl; sourceTree = "<group>"; };
 		71EFCEDE202B39C700D7C411 /* JSAnimationEffectReadOnlyCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimationEffectReadOnlyCustom.cpp; sourceTree = "<group>"; };
+		A4A69B8BB91B49D0A804C31D /* JSPromiseRejectionEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPromiseRejectionEventCustom.cpp; sourceTree = "<group>"; };
 		71EFCEDF202B3AA100D7C411 /* JSKeyframeEffectReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSKeyframeEffectReadOnly.h; sourceTree = "<group>"; };
 		71EFCEE0202B3AA300D7C411 /* JSKeyframeEffectReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSKeyframeEffectReadOnly.cpp; sourceTree = "<group>"; };
 		71F936F71DD4F99B00922CC7 /* tracks-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "tracks-support.js"; sourceTree = "<group>"; };
@@ -19920,6 +19921,7 @@
 				3140C52B1FE06B4900D2A873 /* JSOffscreenCanvasRenderingContext2DCustom.cpp */,
 				CB38FD551CD21D5B00592A3F /* JSPerformanceEntryCustom.cpp */,
 				833CF70F20DB3F5F00141BCC /* JSPerformanceObserverCustom.cpp */,
+				A4A69B8BB91B49D0A804C31D /* JSPromiseRejectionEventCustom.cpp */,
 				83F572941FA1066F003837BE /* JSServiceWorkerClientCustom.cpp */,
 				460D19441FCE21DD00C3DB85 /* JSServiceWorkerGlobalScopeCustom.cpp */,
 				BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */,

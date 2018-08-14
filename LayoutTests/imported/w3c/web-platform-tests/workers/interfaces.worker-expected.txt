@@ -34,9 +34,9 @@ PASS WorkerGlobalScope interface: attribute onoffline
 PASS Unscopable handled correctly for onoffline property on WorkerGlobalScope 
 PASS WorkerGlobalScope interface: attribute ononline 
 PASS Unscopable handled correctly for ononline property on WorkerGlobalScope 
-FAIL WorkerGlobalScope interface: attribute onrejectionhandled assert_true: The prototype object must have a property "onrejectionhandled" expected true got false
+PASS WorkerGlobalScope interface: attribute onrejectionhandled 
 PASS Unscopable handled correctly for onrejectionhandled property on WorkerGlobalScope 
-FAIL WorkerGlobalScope interface: attribute onunhandledrejection assert_true: The prototype object must have a property "onunhandledrejection" expected true got false
+PASS WorkerGlobalScope interface: attribute onunhandledrejection 
 PASS Unscopable handled correctly for onunhandledrejection property on WorkerGlobalScope 
 PASS WorkerGlobalScope interface: attribute origin 
 PASS Unscopable handled correctly for origin property on WorkerGlobalScope 
@@ -101,8 +101,8 @@ PASS WorkerGlobalScope interface: self must inherit property "onerror" with the 
 FAIL WorkerGlobalScope interface: self must inherit property "onlanguagechange" with the proper type assert_inherits: property "onlanguagechange" not found in prototype chain
 PASS WorkerGlobalScope interface: self must inherit property "onoffline" with the proper type 
 PASS WorkerGlobalScope interface: self must inherit property "ononline" with the proper type 
-FAIL WorkerGlobalScope interface: self must inherit property "onrejectionhandled" with the proper type assert_inherits: property "onrejectionhandled" not found in prototype chain
-FAIL WorkerGlobalScope interface: self must inherit property "onunhandledrejection" with the proper type assert_inherits: property "onunhandledrejection" not found in prototype chain
+PASS WorkerGlobalScope interface: self must inherit property "onrejectionhandled" with the proper type 
+PASS WorkerGlobalScope interface: self must inherit property "onunhandledrejection" with the proper type 
 PASS WorkerGlobalScope interface: self must inherit property "origin" with the proper type 
 PASS WorkerGlobalScope interface: self must inherit property "btoa(DOMString)" with the proper type 
 PASS WorkerGlobalScope interface: calling btoa(DOMString) on self with too few arguments must throw TypeError 

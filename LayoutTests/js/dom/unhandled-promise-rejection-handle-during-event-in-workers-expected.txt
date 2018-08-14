@@ -1,0 +1,18 @@
+[Worker] Test unhandled promise rejection event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Starting worker: ../resources/unhandled-promise-rejection-handle-during-event-in-workers.js
+[Worker] global.promise[0] = Promise.reject(0);
+[Worker] global.promise[1] = Promise.reject(1);
+[Worker] global.promise[2] = Promise.reject(2);
+PASS [Worker] error.type is "unhandledrejection"
+PASS [Worker] error.cancelable is true
+PASS [Worker] error.promise is promise[0]
+PASS [Worker] error.reason is 0
+[Worker] global.promise[1].catch(function () { });
+[Worker] global.promise[2].catch(function () { });
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

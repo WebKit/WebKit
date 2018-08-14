@@ -69,7 +69,6 @@ public:
 
 #if ENABLE(INDEXED_DATABASE)
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
-    void stopIndexedDatabase();
 #endif
 
     WorkerCacheStorageConnection& cacheStorageConnection();
@@ -117,9 +116,9 @@ public:
     Crypto& crypto();
     Performance& performance() const;
 
-    void removeAllEventListeners() final;
+    void prepareForTermination();
 
-    void removeMicrotaskQueue();
+    void removeAllEventListeners() final;
 
     void createImageBitmap(ImageBitmap::Source&&, ImageBitmapOptions&&, ImageBitmap::Promise&&);
     void createImageBitmap(ImageBitmap::Source&&, int sx, int sy, int sw, int sh, ImageBitmapOptions&&, ImageBitmap::Promise&&);
@@ -172,6 +171,10 @@ private:
     // workerThreads and the mainThread.
     bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) final;
     bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) final;
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+    void stopIndexedDatabase();
 #endif
 
     URL m_url;

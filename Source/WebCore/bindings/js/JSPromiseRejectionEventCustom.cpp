@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2018 Yusuke Suzuki <yusukesuzuki@slowstart.org>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,31 +24,17 @@
  */
 
 #include "config.h"
-#include "JSExecState.h"
+#include "JSPromiseRejectionEvent.h"
 
-#include "Microtasks.h"
-#include "RejectedPromiseTracker.h"
-#include "ScriptExecutionContext.h"
-#include "ScriptState.h"
-#include "WorkerGlobalScope.h"
+#include "PromiseRejectionEvent.h"
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
 
 namespace WebCore {
 
-void JSExecState::didLeaveScriptContext(JSC::ExecState* exec)
+void JSPromiseRejectionEvent::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
-    ScriptExecutionContext* context = scriptExecutionContextFromExecState(exec);
-    MicrotaskQueue::contextQueue(*context).performMicrotaskCheckpoint();
-    context->ensureRejectedPromiseTracker().processQueueSoon();
-}
-
-JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
-{
-    return JSExecState::call(exec, functionObject, callType, callData, thisValue, args, returnedException);
-}
-
-JSC::JSValue evaluateHandlerFromAnyThread(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
-{
-    return JSExecState::evaluate(exec, source, thisValue, returnedException);
+    wrapped().reason().visit(visitor);
 }
 
 } // namespace WebCore

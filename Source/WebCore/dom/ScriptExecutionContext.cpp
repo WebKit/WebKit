@@ -497,6 +497,11 @@ RejectedPromiseTracker& ScriptExecutionContext::ensureRejectedPromiseTrackerSlow
     return *m_rejectedPromiseTracker.get();
 }
 
+void ScriptExecutionContext::removeRejectedPromiseTracker()
+{
+    m_rejectedPromiseTracker = nullptr;
+}
+
 void ScriptExecutionContext::setDatabaseContext(DatabaseContext* databaseContext)
 {
     m_databaseContext = databaseContext;

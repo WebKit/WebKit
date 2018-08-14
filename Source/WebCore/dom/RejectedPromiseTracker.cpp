@@ -166,7 +166,7 @@ void RejectedPromiseTracker::reportUnhandledRejections(Vector<UnhandledPromise>&
         initializer.promise = &domPromise;
         initializer.reason = promise.result(vm);
 
-        auto event = PromiseRejectionEvent::create(state, eventNames().unhandledrejectionEvent, initializer);
+        auto event = PromiseRejectionEvent::create(eventNames().unhandledrejectionEvent, initializer);
         auto target = m_context.errorEventTarget();
         target->dispatchEvent(event);
 
@@ -188,14 +188,13 @@ void RejectedPromiseTracker::reportRejectionHandled(Ref<DOMPromise>&& rejectedPr
     if (rejectedPromise->isSuspended())
         return;
 
-    auto& state = *rejectedPromise->globalObject()->globalExec();
     auto& promise = *rejectedPromise->promise();
 
     PromiseRejectionEvent::Init initializer;
     initializer.promise = rejectedPromise.ptr();
     initializer.reason = promise.result(vm);
 
-    auto event = PromiseRejectionEvent::create(state, eventNames().rejectionhandledEvent, initializer);
+    auto event = PromiseRejectionEvent::create(eventNames().rejectionhandledEvent, initializer);
     auto target = m_context.errorEventTarget();
     target->dispatchEvent(event);
 }

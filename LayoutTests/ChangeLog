@@ -1,3 +1,46 @@
+2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Worker should support unhandled promise rejections
+        https://bugs.webkit.org/show_bug.cgi?id=188265
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/reference-cycle-leaks-expected.txt:
+        * http/wpt/workers/promise-unhandled-rejection.any-expected.txt: Added.
+        * http/wpt/workers/promise-unhandled-rejection.any.html: Added.
+        * http/wpt/workers/promise-unhandled-rejection.any.js: Added.
+        (promise_test):
+        * http/wpt/workers/promise-unhandled-rejection.any.worker-expected.txt: Added.
+        * http/wpt/workers/promise-unhandled-rejection.any.worker.html: Added.
+        * js/dom/unhandled-promise-rejection-basic-in-workers-expected.txt: Added.
+        * js/dom/unhandled-promise-rejection-basic-in-workers.html: Added.
+        * js/dom/unhandled-promise-rejection-bindings-type-error-in-workers-expected.txt: Added.
+        * js/dom/unhandled-promise-rejection-bindings-type-error-in-workers.html: Added.
+        * js/dom/unhandled-promise-rejection-handle-during-event-in-workers-expected.txt: Added.
+        * js/dom/unhandled-promise-rejection-handle-during-event-in-workers.html: Added.
+        * js/dom/unhandled-promise-rejection-handle-in-handler-in-workers-expected.txt: Added.
+        * js/dom/unhandled-promise-rejection-handle-in-handler-in-workers.html: Added.
+        * js/dom/unhandled-promise-rejection-handle-in-workers-expected.txt: Added.
+        * js/dom/unhandled-promise-rejection-handle-in-workers.html: Added.
+        * js/dom/unhandled-promise-rejection-order-in-workers-expected.txt: Added.
+        * js/dom/unhandled-promise-rejection-order-in-workers.html: Added.
+        * js/resources/unhandled-promise-rejection-basic-in-workers.js: Added.
+        (global.onunhandledrejection):
+        * js/resources/unhandled-promise-rejection-bindings-type-error-in-workers.js: Added.
+        (global.onunhandledrejection):
+        (catch):
+        (setTimeout):
+        * js/resources/unhandled-promise-rejection-handle-during-event-in-workers.js: Added.
+        (global.onunhandledrejection):
+        * js/resources/unhandled-promise-rejection-handle-in-handler-in-workers.js: Added.
+        (global.onunhandledrejection):
+        (global.onrejectionhandled):
+        * js/resources/unhandled-promise-rejection-handle-in-workers.js: Added.
+        (global.onunhandledrejection):
+        (global.onrejectionhandled):
+        * js/resources/unhandled-promise-rejection-order-in-workers.js: Added.
+        (global.onunhandledrejection):
+
 2018-08-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         [macOS debug] LayoutTest inspector/worker/resources-in-worker.html is a flaky timeout

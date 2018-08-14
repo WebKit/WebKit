@@ -39,6 +39,8 @@
     attribute EventHandler onerror;
     attribute EventHandler onoffline;
     attribute EventHandler ononline;
+    attribute EventHandler onrejectionhandled;
+    attribute EventHandler onunhandledrejection;
 
     // WorkerUtils
 

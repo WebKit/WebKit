@@ -25,8 +25,8 @@
 
 [
     Constructor(DOMString type, PromiseRejectionEventInit eventInitDict),
-    ConstructorCallWith=ScriptState,
-    Exposed=(Window),
+    Exposed=(Window,Worker),
+    JSCustomMarkFunction,
 ] interface PromiseRejectionEvent : Event {
     readonly attribute Promise<any> promise;
     readonly attribute any reason;

@@ -1,0 +1,14 @@
+[Worker] Test rejection handled event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Starting worker: ../resources/unhandled-promise-rejection-handle-in-handler-in-workers.js
+PASS [Worker] error.type is "unhandledrejection"
+PASS [Worker] error.cancelable is true
+PASS [Worker] error.promise is promise
+PASS [Worker] error.reason is "ERROR"
+PASS [Worker] reason is "ERROR"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class MicrotaskQueue;
+class ScriptExecutionContext;
 
 class Microtask {
 public:
@@ -69,6 +70,7 @@ class MicrotaskQueue {
     friend class Microtask;
 public:
     WEBCORE_EXPORT static MicrotaskQueue& mainThreadQueue();
+    WEBCORE_EXPORT static MicrotaskQueue& contextQueue(ScriptExecutionContext&);
 
     WEBCORE_EXPORT MicrotaskQueue();
     WEBCORE_EXPORT ~MicrotaskQueue();

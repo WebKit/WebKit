@@ -105,16 +105,30 @@ String WorkerGlobalScope::origin() const
     return securityOrigin ? securityOrigin->toString() : emptyString();
 }
 
+void WorkerGlobalScope::prepareForTermination()
+{
+#if ENABLE(INDEXED_DATABASE)
+    stopIndexedDatabase();
+#endif
+
+    stopActiveDOMObjects();
+
+    m_inspectorController->workerTerminating();
+
+    // Event listeners would keep DOMWrapperWorld objects alive for too long. Also, they have references to JS objects,
+    // which become dangling once Heap is destroyed.
+    removeAllEventListeners();
+
+    // MicrotaskQueue and RejectedPromiseTracker reference Heap.
+    m_microtaskQueue = nullptr;
+    removeRejectedPromiseTracker();
+}
+
 void WorkerGlobalScope::removeAllEventListeners()
 {
     EventTarget::removeAllEventListeners();
     m_performance->removeAllEventListeners();
     m_performance->removeAllObservers();
-}
-
-void WorkerGlobalScope::removeMicrotaskQueue()
-{
-    m_microtaskQueue = nullptr;
 }
 
 bool WorkerGlobalScope::isSecureContext() const

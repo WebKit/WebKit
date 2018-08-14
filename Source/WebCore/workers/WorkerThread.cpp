@@ -287,20 +287,7 @@ void WorkerThread::stop(WTF::Function<void()>&& stoppedCallback)
         m_runLoop.postTaskAndTerminate({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context ) {
             WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
 
-#if ENABLE(INDEXED_DATABASE)
-            workerGlobalScope.stopIndexedDatabase();
-#endif
-
-            workerGlobalScope.stopActiveDOMObjects();
-
-            workerGlobalScope.inspectorController().workerTerminating();
-
-            // Event listeners would keep DOMWrapperWorld objects alive for too long. Also, they have references to JS objects,
-            // which become dangling once Heap is destroyed.
-            workerGlobalScope.removeAllEventListeners();
-
-            // MicrotaskQueue references Heap.
-            workerGlobalScope.removeMicrotaskQueue();
+            workerGlobalScope.prepareForTermination();
 
             // Stick a shutdown command at the end of the queue, so that we deal
             // with all the cleanup tasks the databases post first.
