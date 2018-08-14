@@ -1,3 +1,16 @@
+2018-08-13  Don Olmstead  <don.olmstead@sony.com>
+
+        Meaning of OptionSet::contains is unclear when used with OptionSet argument
+        https://bugs.webkit.org/show_bug.cgi?id=188501
+        <rdar://problem/43246242>
+
+        Reviewed by Simon Fraser.
+
+        MSVC is unable to compile contains using an initializer_list within a lambda.
+
+        * wtf/OptionSet.h:
+        (WTF::OptionSet::contains const):
+
 2018-08-13  Antti Koivisto  <antti@apple.com>
 
         Meaning of OptionSet::contains is unclear when used with OptionSet argument

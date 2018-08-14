@@ -98,7 +98,7 @@ public:
 
     constexpr bool contains(T option) const
     {
-        return containsAny({ option });
+        return containsAny(option);
     }
 
     constexpr bool containsAny(OptionSet optionSet) const
