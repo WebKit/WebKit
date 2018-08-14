@@ -1,3 +1,17 @@
+2018-08-14  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Minibrowser: Add labels for buttons
+        https://bugs.webkit.org/show_bug.cgi?id=188549
+
+        Reviewed by Carlos Garcia Campos.
+
+        So they are accessible easier (i.e. while testing WebKitGTK+ through Minibrowser in Dogtail).
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewIsLoadingChanged):
+        (browserWindowSetupEditorToolbar):
+        (browser_window_init):
+
 2018-08-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WebDriver tests after r234839.

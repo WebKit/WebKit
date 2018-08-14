@@ -491,6 +491,7 @@ static void faviconChanged(WebKitWebView *webView, GParamSpec *paramSpec, Browse
 static void webViewIsLoadingChanged(WebKitWebView *webView, GParamSpec *paramSpec, BrowserWindow *window)
 {
     gboolean isLoading = webkit_web_view_is_loading(webView);
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(window->reloadOrStopButton), isLoading ? "Stop" : "Reload");
     gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(window->reloadOrStopButton), isLoading ? GTK_STOCK_STOP : GTK_STOCK_REFRESH);
 }
 
@@ -710,6 +711,7 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
     GtkToolItem *item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_BOLD);
     window->boldItem = GTK_WIDGET(item);
     gtk_widget_set_name(GTK_WIDGET(item), "Bold");
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Bold");
     g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
@@ -717,6 +719,7 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
     item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_ITALIC);
     window->italicItem = GTK_WIDGET(item);
     gtk_widget_set_name(GTK_WIDGET(item), "Italic");
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Italic");
     g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
@@ -724,12 +727,14 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
     item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_UNDERLINE);
     window->underlineItem = GTK_WIDGET(item);
     gtk_widget_set_name(GTK_WIDGET(item), "Underline");
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Underline");
     g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_STRIKETHROUGH);
     gtk_widget_set_name(GTK_WIDGET(item), "Strikethrough");
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Strikethrough");
     window->strikethroughItem = GTK_WIDGET(item);
     g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
@@ -741,18 +746,21 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
 
     item = gtk_tool_button_new_from_stock(GTK_STOCK_CUT);
     gtk_widget_set_name(GTK_WIDGET(item), WEBKIT_EDITING_COMMAND_CUT);
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), WEBKIT_EDITING_COMMAND_CUT);
     g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_tool_button_new_from_stock(GTK_STOCK_COPY);
     gtk_widget_set_name(GTK_WIDGET(item), WEBKIT_EDITING_COMMAND_COPY);
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), WEBKIT_EDITING_COMMAND_COPY);
     g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_tool_button_new_from_stock(GTK_STOCK_PASTE);
     gtk_widget_set_name(GTK_WIDGET(item), WEBKIT_EDITING_COMMAND_PASTE);
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), WEBKIT_EDITING_COMMAND_PASTE);
     g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
@@ -763,12 +771,14 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
 
     item = gtk_tool_button_new_from_stock(GTK_STOCK_UNDO);
     gtk_widget_set_name(GTK_WIDGET(item), WEBKIT_EDITING_COMMAND_UNDO);
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), WEBKIT_EDITING_COMMAND_UNDO);
     g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_tool_button_new_from_stock(GTK_STOCK_REDO);
     gtk_widget_set_name(GTK_WIDGET(item), WEBKIT_EDITING_COMMAND_REDO);
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), WEBKIT_EDITING_COMMAND_REDO);
     g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
@@ -780,6 +790,7 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
     item = gtk_radio_tool_button_new_from_stock(NULL, GTK_STOCK_JUSTIFY_LEFT);
     GSList *justifyRadioGroup = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(item));
     gtk_widget_set_name(GTK_WIDGET(item), "JustifyLeft");
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Justify Left");
     g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
@@ -787,12 +798,14 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
     item = gtk_radio_tool_button_new_from_stock(justifyRadioGroup, GTK_STOCK_JUSTIFY_CENTER);
     justifyRadioGroup = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(item));
     gtk_widget_set_name(GTK_WIDGET(item), "JustifyCenter");
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Justify Center");
     g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_radio_tool_button_new_from_stock(justifyRadioGroup, GTK_STOCK_JUSTIFY_RIGHT);
     gtk_widget_set_name(GTK_WIDGET(item), "JustifyRight");
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Justify Right");
     g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
@@ -803,12 +816,14 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
 
     item = gtk_tool_button_new_from_stock(GTK_STOCK_INDENT);
     gtk_widget_set_name(GTK_WIDGET(item), "Indent");
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Indent");
     g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_tool_button_new_from_stock(GTK_STOCK_UNINDENT);
     gtk_widget_set_name(GTK_WIDGET(item), "Outdent");
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Outdent");
     g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
@@ -819,12 +834,14 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
 
     item = gtk_tool_button_new(NULL, NULL);
     gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(item), "insert-image");
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Insert Image");
     g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(insertImageCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_tool_button_new(NULL, NULL);
     gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(item), "insert-link");
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Insert Link");
     g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(insertLinkCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
@@ -976,6 +993,7 @@ static void browser_window_init(BrowserWindow *window)
     window->backItem = GTK_WIDGET(item);
     gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(item), 0);
     g_signal_connect_swapped(item, "clicked", G_CALLBACK(goBackCallback), (gpointer)window);
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Back");
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
@@ -983,40 +1001,47 @@ static void browser_window_init(BrowserWindow *window)
     window->forwardItem = GTK_WIDGET(item);
     gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(item), 0);
     g_signal_connect_swapped(G_OBJECT(item), "clicked", G_CALLBACK(goForwardCallback), (gpointer)window);
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Forward");
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_tool_button_new_from_stock(GTK_STOCK_PREFERENCES);
     g_signal_connect_swapped(G_OBJECT(item), "clicked", G_CALLBACK(settingsCallback), window);
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Preferences");
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_tool_button_new_from_stock(GTK_STOCK_ZOOM_OUT);
     window->zoomOutItem = GTK_WIDGET(item);
     g_signal_connect_swapped(item, "clicked", G_CALLBACK(zoomOutCallback), window);
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Zoom Out");
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_tool_button_new_from_stock(GTK_STOCK_ZOOM_IN);
     window->zoomInItem = GTK_WIDGET(item);
     g_signal_connect_swapped(item, "clicked", G_CALLBACK(zoomInCallback), window);
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Zoom In");
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_tool_button_new_from_stock(GTK_STOCK_FIND);
     g_signal_connect_swapped(item, "clicked", G_CALLBACK(searchCallback), window);
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Find");
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_add_accelerator(GTK_WIDGET(item), "clicked", window->accelGroup, GDK_KEY_F, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_tool_button_new_from_stock(GTK_STOCK_HOME);
     g_signal_connect_swapped(item, "clicked", G_CALLBACK(loadHomePage), window);
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Home");
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_add_accelerator(GTK_WIDGET(item), "clicked", window->accelGroup, GDK_KEY_Home, GDK_MOD1_MASK, GTK_ACCEL_VISIBLE);
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_tool_button_new(gtk_image_new_from_icon_name("tab-new", GTK_ICON_SIZE_SMALL_TOOLBAR), NULL);
     g_signal_connect_swapped(item, "clicked", G_CALLBACK(newTabCallback), window);
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "New Tab");
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_add_accelerator(GTK_WIDGET(item), "clicked", window->accelGroup, GDK_KEY_T, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_widget_show_all(GTK_WIDGET(item));
@@ -1031,6 +1056,7 @@ static void browser_window_init(BrowserWindow *window)
     item = gtk_tool_button_new_from_stock(GTK_STOCK_REFRESH);
     window->reloadOrStopButton = GTK_WIDGET(item);
     g_signal_connect_swapped(item, "clicked", G_CALLBACK(reloadOrStopCallback), window);
+    gtk_tool_button_set_label(GTK_TOOL_BUTTON(item), "Reload");
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_add_accelerator(window->reloadOrStopButton, "clicked", window->accelGroup, GDK_KEY_F5, 0, GTK_ACCEL_VISIBLE);
     gtk_widget_show(window->reloadOrStopButton);
