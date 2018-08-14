@@ -121,7 +121,7 @@ String IntersectionObserver::rootMargin() const
         if (length.type() == Percent)
             stringBuilder.append('%');
         else
-            stringBuilder.append("px", 2);
+            stringBuilder.appendLiteral("px");
         if (side != PhysicalBoxSide::Left)
             stringBuilder.append(' ');
     }

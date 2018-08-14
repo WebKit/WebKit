@@ -1,3 +1,14 @@
+2018-08-14  Ali Juma  <ajuma@chromium.org>
+
+        Follow-up: [IntersectionObserver] Implement rootMargin parsing
+        https://bugs.webkit.org/show_bug.cgi?id=188469
+
+        Address review feedback from Darin Adler.
+
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::rootMargin const):
+        Use StringBuilder::appendLiteral instead of ::append to append a literal.
+
 2018-08-14  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Crash under AnimationTimeline::cancelOrRemoveDeclarativeAnimation()
