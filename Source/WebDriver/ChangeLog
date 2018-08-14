@@ -1,5 +1,17 @@
 2018-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: do not try to set the caret when focusing non text element in send keys command
+        https://bugs.webkit.org/show_bug.cgi?id=188515
+
+        Reviewed by Brian Burg.
+
+        It causes a type error exception.
+
+        * Session.cpp:
+        (WebDriver::Session::elementSendKeys):
+
+2018-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: include all capabilities in the new session response
         https://bugs.webkit.org/show_bug.cgi?id=188511
 

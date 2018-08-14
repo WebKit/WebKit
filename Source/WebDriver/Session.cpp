@@ -1732,12 +1732,14 @@ void Session::elementSendKeys(const String& elementID, const String& text, Funct
         // FIXME: move this to an atom.
         static const char focusScript[] =
             "function focus(element) {"
-            "    var doc = element.ownerDocument || element;"
-            "    var prevActiveElement = doc.activeElement;"
+            "    let doc = element.ownerDocument || element;"
+            "    let prevActiveElement = doc.activeElement;"
             "    if (element != prevActiveElement && prevActiveElement)"
             "        prevActiveElement.blur();"
             "    element.focus();"
-            "    if (element != prevActiveElement && element.value && element.value.length && element.setSelectionRange)"
+            "    let tagName = element.tagName.toUpperCase();"
+            "    let isTextElement = tagName === 'TEXTAREA' || (tagName === 'INPUT' && element.type === 'text');"
+            "    if (isTextElement && element.selectionEnd == 0)"
             "        element.setSelectionRange(element.value.length, element.value.length);"
             "    if (element != doc.activeElement)"
             "        throw new Error('cannot focus element');"
