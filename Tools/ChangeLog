@@ -1,3 +1,13 @@
+2018-08-14  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add support for max_builds parameter for workers
+        https://bugs.webkit.org/show_bug.cgi?id=188531
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+        (loadBuilderConfig): Added support for max_builds.
+
 2018-08-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Adjust vertical position with non-collapsing previous sibling margin.

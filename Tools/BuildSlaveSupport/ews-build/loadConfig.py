@@ -43,7 +43,7 @@ def loadBuilderConfig(c, use_localhost_worker=False, master_prefix_path='./'):
     checkWorkersAndBuildersForConsistency(config, config['workers'], config['builders'])
     checkValidSchedulers(config, config['schedulers'])
 
-    c['workers'] = [Worker(worker['name'], passwords.get(worker['name'], 'password')) for worker in config['workers']]
+    c['workers'] = [Worker(worker['name'], passwords.get(worker['name'], 'password'), max_builds=worker.get('max_builds', 1)) for worker in config['workers']]
     if use_localhost_worker:
         c['workers'].append(Worker('local-worker', 'password', max_builds=2))
 
