@@ -75,9 +75,7 @@ auto RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& d
 }
 
 RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
-    : changedProperties(NoChange)
-    , everChangedProperties(NoChange)
-    , anchorPoint(0.5, 0.5, 0)
+    : anchorPoint(0.5, 0.5, 0)
     , contentsRect(FloatPoint(), FloatSize(1, 1))
     , maskLayerID(0)
     , clonedLayerID(0)
@@ -108,7 +106,6 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
 
 RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperties& other)
     : changedProperties(other.changedProperties)
-    , everChangedProperties(other.everChangedProperties)
     , name(other.name)
     , children(other.children)
     , addedAnimations(other.addedAnimations)
@@ -158,7 +155,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
 
 void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) const
 {
-    encoder.encodeEnum(changedProperties);
+    encoder.encode(changedProperties);
 
     if (changedProperties & NameChanged)
         encoder << name;
@@ -280,7 +277,7 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) 
 
 bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, LayerProperties& result)
 {
-    if (!decoder.decodeEnum(result.changedProperties))
+    if (!decoder.decode(result.changedProperties))
         return false;
 
     if (result.changedProperties & NameChanged) {

@@ -54,8 +54,7 @@ class PlatformCALayerRemote;
 
 class RemoteLayerTreeTransaction {
 public:
-    enum LayerChanges {
-        NoChange                        = 0,
+    enum LayerChange {
         NameChanged                     = 1LLU << 1,
         ChildrenChanged                 = 1LLU << 2,
         PositionChanged                 = 1LLU << 3,
@@ -94,7 +93,6 @@ public:
         CustomAppearanceChanged         = 1LLU << 36,
         UserInteractionEnabledChanged   = 1LLU << 37,
     };
-    typedef uint64_t LayerChange;
 
     struct LayerCreationProperties {
         LayerCreationProperties();
@@ -116,19 +114,17 @@ public:
         void encode(IPC::Encoder&) const;
         static bool decode(IPC::Decoder&, LayerProperties&);
 
-        void notePropertiesChanged(LayerChange changeFlags)
+        void notePropertiesChanged(OptionSet<LayerChange> changeFlags)
         {
             changedProperties |= changeFlags;
-            everChangedProperties |= changeFlags;
         }
 
         void resetChangedProperties()
         {
-            changedProperties = RemoteLayerTreeTransaction::NoChange;
+            changedProperties = { };
         }
 
-        LayerChange changedProperties;
-        LayerChange everChangedProperties;
+        OptionSet<LayerChange> changedProperties;
 
         String name;
         std::unique_ptr<WebCore::TransformationMatrix> transform;

@@ -332,7 +332,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, RemoteLayerTr
         }
     }
 
-    if (properties.changedProperties & (RemoteLayerTreeTransaction::ContentsHiddenChanged | RemoteLayerTreeTransaction::UserInteractionEnabledChanged))
+    if (properties.changedProperties.containsAny({ RemoteLayerTreeTransaction::ContentsHiddenChanged, RemoteLayerTreeTransaction::UserInteractionEnabledChanged }))
         view.userInteractionEnabled = !properties.contentsHidden && properties.userInteractionEnabled;
 
     END_BLOCK_OBJC_EXCEPTIONS;

@@ -397,7 +397,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     bool hadAnyChangedBackingStore = false;
     Vector<RetainPtr<CGContextRef>> contextsToFlush;
     for (auto& layer : layerTransaction.changedLayers()) {
-        if (layer->properties().changedProperties & RemoteLayerTreeTransaction::LayerChanges::BackingStoreChanged) {
+        if (layer->properties().changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged) {
             hadAnyChangedBackingStore = true;
             if (layer->properties().backingStore) {
                 if (auto contextPendingFlush = layer->properties().backingStore->takeFrontContextPendingFlush())
