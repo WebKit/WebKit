@@ -77,6 +77,7 @@ public:
     bool isCompleted() const { return !m_curlHandle; }
     bool isCancelled() const { return m_cancelled; }
     bool isCompletedOrCancelled() const { return isCompleted() || isCancelled(); }
+    Seconds timeoutInterval() const;
 
     const String& user() const { return m_user; }
     const String& password() const { return m_password; }

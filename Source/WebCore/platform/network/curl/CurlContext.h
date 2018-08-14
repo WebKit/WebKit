@@ -118,6 +118,7 @@ public:
     // Timeout
     Seconds dnsCacheTimeout() const { return m_dnsCacheTimeout; }
     Seconds connectTimeout() const { return m_connectTimeout; }
+    Seconds defaultTimeoutInterval() const { return m_defaultTimeoutInterval; }
 
 #ifndef NDEBUG
     FILE* getLogFile() const { return m_logFile; }
@@ -135,6 +136,7 @@ private:
 
     Seconds m_dnsCacheTimeout { Seconds::fromMinutes(5) };
     Seconds m_connectTimeout { 30.0 };
+    Seconds m_defaultTimeoutInterval { 60.0 };
 
 #ifndef NDEBUG
     FILE* m_logFile { nullptr };

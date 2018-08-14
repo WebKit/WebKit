@@ -604,7 +604,14 @@ void CurlHandle::setConnectTimeout(Seconds timeout)
 
 void CurlHandle::setTimeout(Seconds timeout)
 {
-    curl_easy_setopt(m_handle, CURLOPT_TIMEOUT_MS, safeTimeValue(timeout.milliseconds()));
+    // Originally CURLOPT_TIMEOUT_MS was used here, but that is not the
+    // idle timeout, but entire duration time limit. It's not safe to specify
+    // such a time limit for communications, such as downloading.
+    // CURLOPT_LOW_SPEED_LIMIT is used instead. It enables the speed watcher
+    // and if the speed is below specified limit and last for specified duration,
+    // it invokes timeout error.
+    curl_easy_setopt(m_handle, CURLOPT_LOW_SPEED_LIMIT, 1L);
+    curl_easy_setopt(m_handle, CURLOPT_LOW_SPEED_TIME, safeTimeValue(timeout.seconds()));
 }
 
 void CurlHandle::setHeaderCallbackFunction(curl_write_callback callbackFunc, void* userData)

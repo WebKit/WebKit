@@ -1,3 +1,13 @@
+2018-08-14  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Implement platform default timeout interval.
+        https://bugs.webkit.org/show_bug.cgi?id=188565
+
+        Reviewed by Alex Christensen.
+
+        * platform/wincairo/TestExpectations:
+          - xmlhttprequest/on-network-timeout-error-during-preflight.html
+
 2018-08-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html as flaky.
