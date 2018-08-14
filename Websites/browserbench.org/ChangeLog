@@ -1,3 +1,13 @@
+2018-08-14  Jon Lee  <jonlee@apple.com>
+
+        Add MotionMark 1.1 to browserbench
+        https://bugs.webkit.org/show_bug.cgi?id=188585
+        <rdar://problem/43308076>
+
+        Rubber-stamped by Ryosuke Niwa.
+
+        * MotionMark1.1/: Added.
+
 2018-01-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         ΩUpdate the default hyperlink for Speedometer to Speedometer 2.0.
