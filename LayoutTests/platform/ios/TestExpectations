@@ -3205,3 +3205,5 @@ webkit.org/b/187982 webgl/2.0.0/conformance2/glsl3 [ Skip ]
 
 # Audio session does not have a "none" category on iOS [ Skip ]
 webkit.org/b/188285 platform/mac/media/audio-session-category-video-paused.html [ Skip ]
+
+webkit.org/b/188578 svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html [ Pass Failure ]
