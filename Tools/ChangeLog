@@ -1,3 +1,13 @@
+2018-08-14  Patrick Griffis  <pgriffis@igalia.com>
+
+        [Flatpak] Fix --cmakeargs
+        https://bugs.webkit.org/show_bug.cgi?id=188567
+
+        Reviewed by Michael Catanzaro.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.setup_dev_env):
+
 2018-08-14  Darshan Kadu  <dkadu@igalia.com>
 
         Enhancement request: Make export-w3c-test-changes add the PR to "See Also" links

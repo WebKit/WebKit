@@ -787,7 +787,7 @@ class WebkitFlatpak:
             if self.makeargs:
                 builder.append("--makeargs=%s" % self.makeargs)
             if self.cmakeargs:
-                builder.append("--makeargs=%s" % self.cmakeargs)
+                builder.append("--cmakeargs=%s" % self.cmakeargs)
             Console.message("Building webkit")
             res = self.run_in_sandbox(*builder)
 
