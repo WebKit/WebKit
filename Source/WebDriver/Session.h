@@ -106,7 +106,7 @@ public:
     void isElementDisplayed(const String& elementID, Function<void (CommandResult&&)>&&);
     void elementClick(const String& elementID, Function<void (CommandResult&&)>&&);
     void elementClear(const String& elementID, Function<void (CommandResult&&)>&&);
-    void elementSendKeys(const String& elementID, Vector<String>&& keys, Function<void (CommandResult&&)>&&);
+    void elementSendKeys(const String& elementID, const String& text, Function<void (CommandResult&&)>&&);
     void executeScript(const String& script, RefPtr<JSON::Array>&& arguments, ExecuteScriptMode, Function<void (CommandResult&&)>&&);
     void getAllCookies(Function<void (CommandResult&&)>&&);
     void getNamedCookie(const String& name, Function<void (CommandResult&&)>&&);
@@ -184,7 +184,7 @@ private:
         Alternate = 1 << 2,
         Meta = 1 << 3,
     };
-    String virtualKeyForKeySequence(const String& keySequence, KeyModifier&);
+    String virtualKeyForKey(UChar, KeyModifier&);
     void performKeyboardInteractions(Vector<KeyboardInteraction>&&, Function<void (CommandResult&&)>&&);
 
     struct InputSourceState {

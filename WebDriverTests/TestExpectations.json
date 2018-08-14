@@ -585,12 +585,6 @@
     "imported/w3c/webdriver/tests/element_send_keys/form_controls.py": {
         "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182331"}}
     },
-    "imported/w3c/webdriver/tests/element_send_keys/interactability.py": {
-        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181644"}}
-    },
-    "imported/w3c/webdriver/tests/element_send_keys/scroll_into_view.py": {
-        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181644"}}
-    },
     "imported/w3c/webdriver/tests/execute_script/collections.py": {
         "subtests": {
             "test_arguments": {

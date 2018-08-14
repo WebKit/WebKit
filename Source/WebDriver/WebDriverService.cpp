@@ -1393,32 +1393,13 @@ void WebDriverService::elementSendKeys(RefPtr<JSON::Object>&& parameters, Functi
     if (!elementID)
         return;
 
-    RefPtr<JSON::Array> valueArray;
-    if (!parameters->getArray("value"_s, valueArray)) {
+    String text;
+    if (!parameters->getString("text"_s, text) || text.isEmpty()) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;
     }
 
-    unsigned valueArrayLength = valueArray->length();
-    if (!valueArrayLength) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
-        return;
-    }
-    Vector<String> value;
-    value.reserveInitialCapacity(valueArrayLength);
-    for (unsigned i = 0; i < valueArrayLength; ++i) {
-        if (auto keyValue = valueArray->get(i)) {
-            String key;
-            if (keyValue->asString(key))
-                value.uncheckedAppend(WTFMove(key));
-        }
-    }
-    if (!value.size()) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
-        return;
-    }
-
-    m_session->elementSendKeys(elementID.value(), WTFMove(value), WTFMove(completionHandler));
+    m_session->elementSendKeys(elementID.value(), text, WTFMove(completionHandler));
 }
 
 static bool findScriptAndArgumentsOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler, String& script, RefPtr<JSON::Array>& arguments)

@@ -1,3 +1,24 @@
+2018-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: several element_send_keys tests are failing since added
+        https://bugs.webkit.org/show_bug.cgi?id=181644
+
+        Reviewed by Michael Catanzaro.
+
+        This is because we are implementing an old version of the spec that received a "value" parameter to send keys
+        command, instead of the "text" one.
+
+        14.3 Element Send Keys
+        https://w3c.github.io/webdriver/#element-send-keys
+
+        * Session.cpp:
+        (WebDriver::Session::virtualKeyForKey): Receive a single character instead of a sequence.
+        (WebDriver::Session::elementSendKeys): It now receives a String and passes every character to virtualKeyForKey.
+        (WebDriver::Session::performActions): Pass first character of sequence to virtualKeyForKey.
+        * Session.h:
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::elementSendKeys): Get text as a String, instead of value as an array.
+
 2018-08-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: do not handle prompts that appear while running scripts
