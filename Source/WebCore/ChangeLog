@@ -1,3 +1,29 @@
+2018-08-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] Adjust vertical position with non-collapsed previous sibling margin.
+        https://bugs.webkit.org/show_bug.cgi?id=188543
+
+        Reviewed by Antti Koivisto.
+
+        This patch ensures that the inital vertical position for a float is adjusted with the non-collapsed sibling margin.
+
+        <div id=A style="margin-bottom: 20px;"></div>
+        <div id=B style='float: left'></div>
+        <div id=C style="margin-top: 10px;"></div>
+
+        While computing the static position for element "B", we simply call marginBottom() on A.
+        In the case above, A's margin bottom is collapsed with C's margin top and the value is 0 (C.marginTop() is 20px).
+        However CSS spec says that in block formatting context, the non-collapsed margin should be used instead to offset the float box.
+        (The reason why this should not be part of the BlockMarginCollapse::marginBottom() logic is because it can not differentiate the context of
+        sibling float/sibling inflow. When we margin collapse, we always do it in the context of inflow boxes.)
+
+        Test: fast/block/block-only/float-and-siblings-with-margins.html
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutFormattingContextRoot const):
+        (WebCore::Layout::BlockFormattingContext::computeFloatingPosition const):
+        * layout/blockformatting/BlockFormattingContext.h:
+
 2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Worker should support unhandled promise rejections

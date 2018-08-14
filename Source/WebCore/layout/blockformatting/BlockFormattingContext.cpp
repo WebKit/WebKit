@@ -146,7 +146,7 @@ void BlockFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutCo
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Height][Margin] -> for layoutBox(" << &layoutBox << ")");
     computeHeightAndMargin(layoutContext, layoutBox, displayBox);
     if (layoutBox.isFloatingPositioned())
-        computeFloatingPosition(floatingContext, layoutBox, displayBox);
+        computeFloatingPosition(layoutContext, floatingContext, layoutBox, displayBox);
     // Now that we computed the root's height, we can go back and layout the out-of-flow descedants (if any).
     formattingContext->layoutOutOfFlowDescendants(layoutContext, layoutBox);
 }
@@ -156,9 +156,16 @@ void BlockFormattingContext::computeStaticPosition(LayoutContext& layoutContext,
     displayBox.setTopLeft(Geometry::staticPosition(layoutContext, layoutBox));
 }
 
-void BlockFormattingContext::computeFloatingPosition(FloatingContext& floatingContext, const Box& layoutBox, Display::Box& displayBox) const
+void BlockFormattingContext::computeFloatingPosition(LayoutContext& layoutContext, FloatingContext& floatingContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     ASSERT(layoutBox.isFloatingPositioned());
+    // 8.3.1 Collapsing margins
+    // In block formatting context margins between a floated box and any other box do not collapse.
+    // Adjust the static position by using the previous inflow box's non-collapsed margin.
+    if (auto* previousInFlowBox = layoutBox.previousInFlowSibling()) {
+        auto& previousDisplayBox = *layoutContext.displayBoxForLayoutBox(*previousInFlowBox);
+        displayBox.moveVertically(previousDisplayBox.nonCollapsedMarginBottom() - previousDisplayBox.marginBottom());
+    }
     displayBox.setTopLeft(floatingContext.positionForFloat(layoutBox));
     floatingContext.floatingState().append(layoutBox);
 }

@@ -1,3 +1,13 @@
+2018-08-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] Adjust vertical position with non-collapsing previous sibling margin.
+        https://bugs.webkit.org/show_bug.cgi?id=188543
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/block-only/float-and-siblings-with-margins-expected.txt: Added.
+        * fast/block/block-only/float-and-siblings-with-margins.html: Added.
+
 2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Worker should support unhandled promise rejections
