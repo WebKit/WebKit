@@ -1,3 +1,12 @@
+2018-08-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark legacy-animation-engine/animations/combo-transform-translate+scale.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=185308
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2018-08-14  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Test gardening

@@ -2220,3 +2220,5 @@ webkit.org/b/187762 http/tests/websocket/tests/hybi/websocket-allowed-setting-co
 webkit.org/b/187762 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Failure ]
 
 webkit.org/b/187269 [ Debug ] imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_abort.html [ Skip ]
+
+webkit.org/b/185308 legacy-animation-engine/animations/combo-transform-translate+scale.html [ Pass Failure ]
