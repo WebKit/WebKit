@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableWebAnimationsCSSIntegration=true ] -->
+<body>
+<style>
+
+@keyframes anim {
+    from { margin-left: 0 }
+    to   { margin-left: 100px }
+}
+
+</style>
+<script>
+
+const target = document.body.appendChild(document.createElement("div"));
+target.style.animation = "anim 1s";
+const animation = target.getAnimations()[0];
+
+animation.effect = new KeyframeEffect(animation.effect);
+animation.effect.target = document.createElement("div");
+
+target.style.animation = "none";
+target.getAnimations();
+
+target.remove();
+
+</script>
+</body>

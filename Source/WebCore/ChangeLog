@@ -1,3 +1,23 @@
+2018-08-14  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Crash under AnimationTimeline::cancelOrRemoveDeclarativeAnimation()
+        https://bugs.webkit.org/show_bug.cgi?id=188519
+        <rdar://problem/43237889>
+
+        Reviewed by Eric Carlson.
+
+        Test: webanimations/css-animation-effect-target-change-and-animation-removal-crash.html
+
+        We would crash because we blindly assumed an animation that was found in the previous style must be in the list of running animations
+        but in fact it could have been removed already due to the element being removed from the DOM or its effect target changing, etc. So when
+        we iterate over names of animations that were found in the previous style but not in the new style, we must make a null check to ensure
+        that there is an animation to remove. Adding an ASSERT() in AnimationTimeline::cancelOrRemoveDeclarativeAnimation() will also clarify the
+        expectation here.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::updateCSSAnimationsForElement):
+        (WebCore::AnimationTimeline::cancelOrRemoveDeclarativeAnimation):
+
 2018-08-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Adjust vertical position with non-collapsed previous sibling margin.

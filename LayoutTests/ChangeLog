@@ -1,3 +1,20 @@
+2018-08-14  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Crash under AnimationTimeline::cancelOrRemoveDeclarativeAnimation()
+        https://bugs.webkit.org/show_bug.cgi?id=188519
+        <rdar://problem/43237889>
+
+        Reviewed by Eric Carlson.
+
+        Add a test where we clone the effect to be mutable and set a new target. At this stage the animation is no longer listed in the
+        m_elementToCSSAnimationByName map on AnimationTimeline. Then we remove the animation and force a style recalc for this element,
+        "anim" will be in the old style but not in the new style and we used to attempt to get an animation matching that name from
+        m_elementToCSSAnimationByName but it would be null, which would lead to a crash. Now we check that we indeed have such an animation
+        before proceeding.
+
+        * webanimations/css-animation-effect-target-change-and-animation-removal-crash-expected.html: Added.
+        * webanimations/css-animation-effect-target-change-and-animation-removal-crash.html: Added.
+
 2018-08-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Adjust vertical position with non-collapsing previous sibling margin.
