@@ -1,3 +1,17 @@
+2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Unreviewed, follow-up patch for comments
+        https://bugs.webkit.org/show_bug.cgi?id=188265
+
+        * bindings/js/JSExecState.cpp:
+        (WebCore::JSExecState::didLeaveScriptContext):
+        Do nothing if `context` is nullptr. It is OK since we do not need to drain microtasks / rejected
+        promise events after ScriptExecutionContext is gone.
+
+        * dom/Microtasks.cpp:
+        (WebCore::MicrotaskQueue::contextQueue):
+        Drop unnecessary assertion since it is subsumed by downcast<>.
+
 2018-08-14  Ali Juma  <ajuma@chromium.org>
 
         Follow-up: [IntersectionObserver] Implement rootMargin parsing

@@ -55,7 +55,6 @@ MicrotaskQueue& MicrotaskQueue::contextQueue(ScriptExecutionContext& context)
     // WorkerGlobalScope.
     if (isMainThread())
         return mainThreadQueue();
-    ASSERT(context.isWorkerGlobalScope());
     return downcast<WorkerGlobalScope>(context).microtaskQueue();
 }
 

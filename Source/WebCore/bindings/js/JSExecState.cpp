@@ -37,6 +37,8 @@ namespace WebCore {
 void JSExecState::didLeaveScriptContext(JSC::ExecState* exec)
 {
     ScriptExecutionContext* context = scriptExecutionContextFromExecState(exec);
+    if (!context)
+        return;
     MicrotaskQueue::contextQueue(*context).performMicrotaskCheckpoint();
     context->ensureRejectedPromiseTracker().processQueueSoon();
 }
