@@ -836,6 +836,7 @@ bool isCrossOriginSafeHeader(HTTPHeaderName name, const HTTPHeaderSet& accessCon
     switch (name) {
     case HTTPHeaderName::CacheControl:
     case HTTPHeaderName::ContentLanguage:
+    case HTTPHeaderName::ContentLength:
     case HTTPHeaderName::ContentType:
     case HTTPHeaderName::Expires:
     case HTTPHeaderName::LastModified:

@@ -1,3 +1,19 @@
+2018-08-14  Rob Buis  <rbuis@igalia.com>
+
+        Fetch: content-length header is being added to the safe-list
+        https://bugs.webkit.org/show_bug.cgi?id=185473
+
+        Reviewed by Youenn Fablet.
+
+        Content-Length is a CORS-safelisted reponse header:
+        https://fetch.spec.whatwg.org/#cors-safelisted-response-header-name
+
+        Tests: web-platform-tests/fetch/api/cors/cors-filtering.html
+               web-platform-tests/fetch/api/cors/cors-filtering-worker.html
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::isCrossOriginSafeHeader):
+
 2018-08-13  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Do not confuse clear with clearance.

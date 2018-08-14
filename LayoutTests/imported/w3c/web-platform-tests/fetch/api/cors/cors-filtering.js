@@ -52,18 +52,17 @@ corsFilter(url, "Content-Type", "text/html", false);
 corsFilter(url, "Expires","04 May 1988 22:22:22 GMT" , false);
 corsFilter(url, "Last-Modified", "04 May 1988 22:22:22 GMT", false);
 corsFilter(url, "Pragma", "no-cache", false);
+corsFilter(url, "Content-Length", "3" , false); // top.txt contains "top"
 
 corsFilter(url, "Age", "27", true);
 corsFilter(url, "Server", "wptServe" , true);
 corsFilter(url, "Warning", "Mind the gap" , true);
-corsFilter(url, "Content-Length", "3" , true); // top.txt contains "top"
 corsFilter(url, "Set-Cookie", "name=value" , true);
 corsFilter(url, "Set-Cookie2", "name=value" , true);
 
 corsExposeFilter(url, "Age", "27", false);
 corsExposeFilter(url, "Server", "wptServe" , false);
 corsExposeFilter(url, "Warning", "Mind the gap" , false);
-corsExposeFilter(url, "Content-Length", "3" , false);
 
 corsExposeFilter(url, "Set-Cookie", "name=value" , true);
 corsExposeFilter(url, "Set-Cookie2", "name=value" , true);

@@ -1,3 +1,17 @@
+2018-08-14  Rob Buis  <rbuis@igalia.com>
+
+        Fetch: content-length header is being added to the safe-list
+        https://bugs.webkit.org/show_bug.cgi?id=185473
+
+        Reviewed by Youenn Fablet.
+
+        Sync with wpt change:
+        https://github.com/web-platform-tests/wpt/commit/407ecdff87af8aeceaa07cbc71aac9ec355d4334
+
+        * web-platform-tests/fetch/api/cors/cors-filtering-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-filtering-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-filtering.js:
+
 2018-08-13  Youenn Fablet  <youenn@apple.com>
 
         [WPT] Ensure templated tests do set a Content-Type: text/html HTTP header
