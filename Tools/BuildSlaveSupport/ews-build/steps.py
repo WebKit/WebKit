@@ -423,6 +423,13 @@ class RunWebKitTests(shell.Test):
         return shell.Test.start(self)
 
 
+class RunWebKit1Tests(RunWebKitTests):
+    def start(self):
+        self.setCommand(self.command + ['--dump-render-tree'])
+
+        return RunWebKitTests.start(self)
+
+
 class ArchiveBuiltProduct(shell.ShellCommand):
     command = ['python', 'Tools/BuildSlaveSupport/built-product-archive',
                WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s'), 'archive']

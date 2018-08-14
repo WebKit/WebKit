@@ -1,3 +1,14 @@
+2018-08-14  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add build step to run WK1 layout-test
+        https://bugs.webkit.org/show_bug.cgi?id=188498
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKit1Tests): Class to run WebKit1Tests.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+
 2018-08-14  Patrick Griffis  <pgriffis@igalia.com>
 
         [Flatpak] Fix --cmakeargs
