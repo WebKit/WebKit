@@ -1,5 +1,19 @@
 2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
+        Unhandled Promise Rejection logging in workers should not emit ErrorEvent to host Worker object
+        https://bugs.webkit.org/show_bug.cgi?id=188551
+
+        Reviewed by Youenn Fablet.
+
+        Previously we dispatched ErrorEvent on the Worker object of the host side when the unhandled promise
+        rejection happens in the worker. But that was wrong. We should not dispatch such an event and we
+        should just log the error message.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::reportUnhandledPromiseRejection):
+
+2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
         Unreviewed, follow-up patch for comments
         https://bugs.webkit.org/show_bug.cgi?id=188265
 

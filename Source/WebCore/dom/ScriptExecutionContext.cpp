@@ -393,22 +393,15 @@ void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::ExecState& sta
     JSC::VM& vm = state.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    int lineNumber = 0;
-    int columnNumber = 0;
-    String sourceURL;
-
     JSC::JSValue result = promise.result(vm);
     String resultMessage = retrieveErrorMessage(state, vm, result, scope);
     String errorMessage = makeString("Unhandled Promise Rejection: ", resultMessage);
-    if (callStack) {
-        if (const ScriptCallFrame* callFrame = callStack->firstNonNativeCallFrame()) {
-            lineNumber = callFrame->lineNumber();
-            columnNumber = callFrame->columnNumber();
-            sourceURL = callFrame->sourceURL();
-        }
-    }
-
-    logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, WTFMove(callStack));
+    std::unique_ptr<Inspector::ConsoleMessage> message;
+    if (callStack)
+        message = std::make_unique<Inspector::ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage, callStack.releaseNonNull());
+    else
+        message = std::make_unique<Inspector::ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage);
+    addConsoleMessage(WTFMove(message));
 }
 
 void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)

@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: line 1774: TypeError: null is not an object (evaluating 'this.message_target.removeEventListener')
-CONSOLE MESSAGE: line 198: Unhandled Promise Rejection: DataError: Data provided to an operation does not meet requirements
 
 FAIL Untitled Data provided to an operation does not meet requirements
 

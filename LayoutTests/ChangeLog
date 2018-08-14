@@ -1,3 +1,13 @@
+2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Unhandled Promise Rejection logging in workers should not emit ErrorEvent to host Worker object
+        https://bugs.webkit.org/show_bug.cgi?id=188551
+
+        Reviewed by Youenn Fablet.
+
+        * http/wpt/workers/promise-unhandled-rejection.any.worker-expected.txt:
+        * js/dom/unhandled-promise-rejection-bindings-type-error-in-workers-expected.txt:
+
 2018-08-14  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Crash under AnimationTimeline::cancelOrRemoveDeclarativeAnimation()

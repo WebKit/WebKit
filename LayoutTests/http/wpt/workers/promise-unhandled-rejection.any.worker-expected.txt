@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: line 1774: TypeError: null is not an object (evaluating 'this.message_target.removeEventListener')
-CONSOLE MESSAGE: Unhandled Promise Rejection: Reject
 
 Harness Error (FAIL), message = undefined
 

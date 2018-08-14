@@ -1,5 +1,16 @@
 2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
+        Unhandled Promise Rejection logging in workers should not emit ErrorEvent to host Worker object
+        https://bugs.webkit.org/show_bug.cgi?id=188551
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.worker-expected.txt:
+        * web-platform-tests/streams/readable-streams/tee.dedicatedworker-expected.txt:
+
+2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
         Worker should support unhandled promise rejections
         https://bugs.webkit.org/show_bug.cgi?id=188265
 
