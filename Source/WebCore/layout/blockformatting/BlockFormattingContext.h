@@ -57,7 +57,7 @@ private:
 
     void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const override;
     void computeFloatingPosition(FloatingContext&, const Box&, Display::Box&) const;
-    void computeVerticalPositionWithClearance(const FloatingContext&, const Box&, Display::Box&) const;
+    void computeVerticalPositionForFloatClear(const FloatingContext&, const Box&, Display::Box&) const;
     void computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const override;
     void computeInFlowWidthAndMargin(LayoutContext&, const Box&, Display::Box&) const;
     void computeInFlowHeightAndMargin(LayoutContext&, const Box&, Display::Box&) const;

@@ -133,7 +133,7 @@ Position FloatingContext::positionForFloat(const Box& layoutBox) const
 
 std::optional<LayoutUnit> FloatingContext::verticalPositionWithClearance(const Box& layoutBox) const
 {
-    ASSERT(layoutBox.hasClearance());
+    ASSERT(layoutBox.hasFloatClear());
     ASSERT(layoutBox.isBlockLevelBox());
 
     if (m_floatingState.isEmpty())

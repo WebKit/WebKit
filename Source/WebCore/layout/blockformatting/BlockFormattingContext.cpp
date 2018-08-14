@@ -112,8 +112,8 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             ASSERT(!layoutBox.establishesFormattingContext());
             computeHeightAndMargin(layoutContext, layoutBox, displayBox);
             // Finalize position with clearance.
-            if (layoutBox.hasClearance())
-                computeVerticalPositionWithClearance(floatingContext, layoutBox, displayBox);
+            if (layoutBox.hasFloatClear())
+                computeVerticalPositionForFloatClear(floatingContext, layoutBox, displayBox);
             if (!is<Container>(layoutBox))
                 continue;
             auto& container = downcast<Container>(layoutBox);
@@ -163,9 +163,9 @@ void BlockFormattingContext::computeFloatingPosition(FloatingContext& floatingCo
     floatingContext.floatingState().append(layoutBox);
 }
 
-void BlockFormattingContext::computeVerticalPositionWithClearance(const FloatingContext& floatingContext, const Box& layoutBox, Display::Box& displayBox) const
+void BlockFormattingContext::computeVerticalPositionForFloatClear(const FloatingContext& floatingContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    ASSERT(layoutBox.hasClearance());
+    ASSERT(layoutBox.hasFloatClear());
     if (auto verticalPositionWithClearance = floatingContext.verticalPositionWithClearance(layoutBox))
         displayBox.setTop(*verticalPositionWithClearance);
 }

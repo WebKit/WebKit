@@ -114,7 +114,7 @@ bool Box::isRightFloatingPositioned() const
     return m_style.floating() == Float::Right;
 }
 
-bool Box::hasClearance() const
+bool Box::hasFloatClear() const
 {
     return m_style.clear() != Clear::None;
 }
