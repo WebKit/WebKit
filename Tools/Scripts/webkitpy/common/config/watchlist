@@ -418,7 +418,7 @@
         "WebIDL": [ "esprehn+autocc@chromium.org", "cdumez@apple.com", "kondapallykalyan@gmail.com" ],
         "WebInspectorBackend": [ "joepeck@webkit.org" ],
         "WebInspectorGenerator": [ "bburg@apple.com", "joepeck@webkit.org" ],
-        "WebInspectorRecording": [ "webkit@devinrousso.com" ],
+        "WebInspectorRecording": [ "drousso@apple.com" ],
         "JSBuiltins": [ "joepeck@webkit.org" ],
         "JSBuiltinsGenerator": [ "bburg@apple.com" ],
         "WPEDependencies": [ "aperez@igalia.com", "clopez@igalia.com" ],

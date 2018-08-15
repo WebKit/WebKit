@@ -1658,10 +1658,13 @@
    },
    "Devin Rousso" : {
       "emails" : [
+         "drousso@apple.com",
+         "dcrousso@apple.com",
          "webkit@devinrousso.com"
       ],
       "expertise" : "Web Inspector",
       "nicks" : [
+         "drousso",
          "dcrousso"
       ],
       "status" : "reviewer"
