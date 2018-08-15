@@ -38,7 +38,7 @@ namespace JSC {
 
     namespace ARMRegisters {
 
-        typedef enum {
+        typedef enum : int8_t {
             r0,
             r1,
             r2,
@@ -62,15 +62,16 @@ namespace JSC {
             r12 = ip, S1 = ip,
             r13 = sp,
             r14 = lr,
-            r15 = pc
+            r15 = pc,
+            InvalidGPRReg = -1,
         } RegisterID;
 
-        typedef enum {
+        typedef enum : int8_t {
             apsr,
             fpscr
         } SPRegisterID;
 
-        typedef enum {
+        typedef enum : int8_t {
             d0,
             d1,
             d2,
@@ -105,6 +106,7 @@ namespace JSC {
             d30,
             d31,
 #endif // CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
+            InvalidFPRReg = -1,
         } FPRegisterID;
 
     } // namespace ARMRegisters

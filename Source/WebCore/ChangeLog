@@ -1,3 +1,17 @@
+2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Add GPRReg::InvalidGPRReg and FPRReg::InvalidFPRReg
+        https://bugs.webkit.org/show_bug.cgi?id=188589
+
+        Reviewed by Mark Lam.
+
+        No behavior change.
+
+        * cssjit/FunctionCall.h:
+        (WebCore::FunctionCall::FunctionCall):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::modulo):
+
 2018-08-14  Alex Christensen  <achristensen@webkit.org>
 
         isValidCSSSelector is unsafe to be called from a non-main thread
