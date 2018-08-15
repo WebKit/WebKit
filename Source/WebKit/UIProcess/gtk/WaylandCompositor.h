@@ -76,7 +76,7 @@ public:
         uint32_t m_busyCount { 0 };
     };
 
-    class Surface {
+    class Surface : public CanMakeWeakPtr<Surface> {
         WTF_MAKE_NONCOPYABLE(Surface); WTF_MAKE_FAST_ALLOCATED;
     public:
         Surface();
@@ -111,7 +111,6 @@ public:
     void bindSurfaceToWebPage(Surface*, uint64_t pageID);
     void registerWebPage(WebPageProxy&);
     void unregisterWebPage(WebPageProxy&);
-    void willDestroySurface(Surface*);
 
     bool getTexture(WebPageProxy&, unsigned&, WebCore::IntSize&);
 
@@ -131,7 +130,7 @@ private:
     WebCore::WlUniquePtr<struct wl_global> m_webkitgtkGlobal;
     GRefPtr<GSource> m_eventSource;
     std::unique_ptr<WebCore::GLContext> m_eglContext;
-    HashMap<WebPageProxy*, Surface*> m_pageMap;
+    HashMap<WebPageProxy*, WeakPtr<Surface>> m_pageMap;
 };
 
 } // namespace WebKit

@@ -1,3 +1,14 @@
+2018-08-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] WaylandCompositor fails to properly remove surface from its page map
+        https://bugs.webkit.org/show_bug.cgi?id=188520
+
+        Reviewed by Alex Christensen.
+
+        Add a comment pointing to CanMakeWeakPtr, since it's useful and I very nearly missed it.
+
+        * wtf/WeakPtr.h:
+
 2018-08-14  Saam barati  <sbarati@apple.com>
 
         HashMap<Ref<P>, V> asserts when V is not zero for its empty value
