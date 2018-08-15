@@ -1,3 +1,13 @@
+2018-08-14  Saam barati  <sbarati@apple.com>
+
+        HashMap<Ref<P>, V> asserts when V is not zero for its empty value
+        https://bugs.webkit.org/show_bug.cgi?id=188582
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-08-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Add support for negative clearance.

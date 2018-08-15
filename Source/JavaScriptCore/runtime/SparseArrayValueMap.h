@@ -37,6 +37,7 @@ namespace JSC {
 class SparseArrayValueMap;
 
 class SparseArrayEntry : private WriteBarrier<Unknown> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     using Base = WriteBarrier<Unknown>;
 

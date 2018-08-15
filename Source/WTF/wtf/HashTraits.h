@@ -70,6 +70,12 @@ template<typename T> struct GenericHashTraits : GenericHashTraitsBase<std::is_in
         emptyValue = std::forward<V>(value);
     }
 
+    template <typename Traits>
+    static void constructEmptyValue(T& slot)
+    {
+        new (NotNull, std::addressof(slot)) T(Traits::emptyValue());
+    }
+
     // Type for return value of functions that do not transfer ownership, such as get.
     typedef T PeekType;
     template<typename U> static U&& peek(U&& value) { return std::forward<U>(value); }
@@ -191,6 +197,12 @@ template<typename P> struct HashTraits<Ref<P>> : SimpleClassHashTraits<Ref<P>> {
     static const bool emptyValueIsZero = true;
     static Ref<P> emptyValue() { return HashTableEmptyValue; }
 
+    template <typename>
+    static void constructEmptyValue(Ref<P>& slot)
+    {
+        new (NotNull, std::addressof(slot)) Ref<P>(HashTableEmptyValue);
+    }
+
     static const bool hasIsEmptyValueFunction = true;
     static bool isEmptyValue(const Ref<P>& value) { return value.isHashTableEmptyValue(); }
 
@@ -301,6 +313,13 @@ struct KeyValuePairHashTraits : GenericHashTraits<KeyValuePair<typename KeyTrait
 
     static const bool emptyValueIsZero = KeyTraits::emptyValueIsZero && ValueTraits::emptyValueIsZero;
     static EmptyValueType emptyValue() { return KeyValuePair<typename KeyTraits::EmptyValueType, typename ValueTraits::EmptyValueType>(KeyTraits::emptyValue(), ValueTraits::emptyValue()); }
+
+    template <typename>
+    static void constructEmptyValue(TraitType& slot)
+    {
+        KeyTraits::template constructEmptyValue<KeyTraits>(slot.key);
+        ValueTraits::template constructEmptyValue<ValueTraits>(slot.value);
+    }
 
     static const unsigned minimumTableSize = KeyTraits::minimumTableSize;
 

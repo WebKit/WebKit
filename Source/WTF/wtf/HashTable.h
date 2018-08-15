@@ -837,7 +837,7 @@ namespace WTF {
     template<> struct HashTableBucketInitializer<false> {
         template<typename Traits, typename Value> static void initialize(Value& bucket)
         {
-            new (NotNull, std::addressof(bucket)) Value(Traits::emptyValue());
+            Traits::template constructEmptyValue<Traits>(bucket);
         }
     };
 

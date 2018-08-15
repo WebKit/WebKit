@@ -945,4 +945,47 @@ TEST(WTF_HashMap, DeletedAddressOfOperator)
         (void)value;
 }
 
+TEST(WTF_HashMap, RefMappedToNonZeroEmptyValue)
+{
+    class Value {
+    public:
+        Value() = default;
+        Value(Value&&) = default;
+        Value(const Value&) = default;
+        Value& operator=(Value&&) = default;
+
+        Value(int32_t f)
+            : m_field(f)
+        { }
+
+        int32_t field() { return m_field; }
+
+    private:
+        int32_t m_field { 0xbadbeef };
+    };
+
+    class Key : public RefCounted<Key> {
+        Key() = default;
+    public:
+        static Ref<Key> create() { return adoptRef(*new Key); }
+    };
+
+    static_assert(!WTF::HashTraits<Value>::emptyValueIsZero, "");
+
+    HashMap<Ref<Key>, Value> map;
+    Vector<std::pair<Ref<Key>, int32_t>> vectorMap;
+
+    for (int32_t i = 0; i < 160; ++i) {
+        Ref<Key> key = Key::create();
+        map.add(Ref<Key>(key.get()), Value { i });
+        vectorMap.append({ WTFMove(key), i });
+    }
+
+    for (auto& pair : vectorMap)
+        ASSERT_EQ(pair.second, map.get(pair.first).field());
+
+    for (auto& pair : vectorMap)
+        ASSERT_TRUE(map.remove(pair.first));
+}
+
 } // namespace TestWebKitAPI
