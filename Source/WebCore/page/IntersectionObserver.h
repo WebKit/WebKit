@@ -38,17 +38,28 @@ namespace WebCore {
 
 class Element;
 
+struct IntersectionObserverData {
+    // IntersectionObservers for which the element that owns this IntersectionObserverData is the root.
+    // The IntersectionObservers are owned by JavaScript wrappers and by IntersectionObserverRegistrations
+    // for each target currently being observed.
+    Vector<IntersectionObserver*> observers;
+
+    // FIXME: Create and track IntersectionObserverRegistrations.
+};
+
 class IntersectionObserver : public RefCounted<IntersectionObserver> {
 public:
     struct Init {
-        RefPtr<Element> root;
+        Element* root { nullptr };
         String rootMargin;
         Variant<double, Vector<double>> threshold;
     };
 
     static ExceptionOr<Ref<IntersectionObserver>> create(Ref<IntersectionObserverCallback>&&, Init&&);
-    
-    Element* root() const { return m_root.get(); }
+
+    ~IntersectionObserver();
+
+    Element* root() const { return m_root; }
     String rootMargin() const;
     const Vector<double>& thresholds() const { return m_thresholds; }
 
@@ -58,10 +69,12 @@ public:
 
     Vector<RefPtr<IntersectionObserverEntry>> takeRecords();
 
+    void rootDestroyed();
+
 private:
-    IntersectionObserver(Ref<IntersectionObserverCallback>&&, RefPtr<Element>&& root, LengthBox&& parsedRootMargin, Vector<double>&& thresholds);
+    IntersectionObserver(Ref<IntersectionObserverCallback>&&, Element* root, LengthBox&& parsedRootMargin, Vector<double>&& thresholds);
     
-    RefPtr<Element> m_root;
+    Element* m_root;
     LengthBox m_rootMargin;
     Vector<double> m_thresholds;
     Ref<IntersectionObserverCallback> m_callback;

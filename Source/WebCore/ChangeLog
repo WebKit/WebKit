@@ -1,3 +1,34 @@
+2018-08-15  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Do not hold a strong reference to the root element
+        https://bugs.webkit.org/show_bug.cgi?id=188575
+
+        Reviewed by Simon Fraser.
+
+        Make IntersectionObserver have only a raw pointer to its root element rather than
+        a reference, so that an otherwise-unreachable root isn't kept alive. Add logic to
+        to clear this pointer when the root element gets deleted.
+
+        Test: intersection-observer/root-element-deleted.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        (WebCore::Element::disconnectFromIntersectionObservers):
+        (WebCore::Element::ensureIntersectionObserverData):
+        (WebCore::Element::intersectionObserverData):
+        * dom/Element.h:
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::intersectionObserverData):
+        (WebCore::ElementRareData::setIntersectionObserverData):
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::create):
+        (WebCore::IntersectionObserver::IntersectionObserver):
+        (WebCore::IntersectionObserver::~IntersectionObserver):
+        (WebCore::IntersectionObserver::rootDestroyed):
+        * page/IntersectionObserver.h:
+        (WebCore::IntersectionObserver::root const):
+
 2018-08-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Add Nicosia::BackingStoreTextureMapperImpl

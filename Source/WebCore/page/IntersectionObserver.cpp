@@ -100,15 +100,25 @@ ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Ref<Intersec
             return Exception { RangeError, "Failed to construct 'IntersectionObserver': all thresholds must lie in the range [0.0, 1.0]." };
     }
 
-    return adoptRef(*new IntersectionObserver(WTFMove(callback), WTFMove(init.root), rootMarginOrException.releaseReturnValue(), WTFMove(thresholds)));
+    return adoptRef(*new IntersectionObserver(WTFMove(callback), init.root, rootMarginOrException.releaseReturnValue(), WTFMove(thresholds)));
 }
 
-IntersectionObserver::IntersectionObserver(Ref<IntersectionObserverCallback>&& callback, RefPtr<Element>&& root, LengthBox&& parsedRootMargin, Vector<double>&& thresholds)
-    : m_root(WTFMove(root))
+IntersectionObserver::IntersectionObserver(Ref<IntersectionObserverCallback>&& callback, Element* root, LengthBox&& parsedRootMargin, Vector<double>&& thresholds)
+    : m_root(root)
     , m_rootMargin(WTFMove(parsedRootMargin))
     , m_thresholds(WTFMove(thresholds))
     , m_callback(WTFMove(callback))
 {
+    if (m_root) {
+        auto& observerData = m_root->ensureIntersectionObserverData();
+        observerData.observers.append(this);
+    }
+}
+
+IntersectionObserver::~IntersectionObserver()
+{
+    if (m_root)
+        m_root->intersectionObserverData()->observers.removeFirst(this);
 }
 
 String IntersectionObserver::rootMargin() const
@@ -145,6 +155,12 @@ Vector<RefPtr<IntersectionObserverEntry>> IntersectionObserver::takeRecords()
     return { };
 }
 
+void IntersectionObserver::rootDestroyed()
+{
+    ASSERT(m_root);
+    disconnect();
+    m_root = nullptr;
+}
 
 } // namespace WebCore
 

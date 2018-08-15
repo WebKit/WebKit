@@ -187,6 +187,10 @@ Element::~Element()
     ASSERT(!beforePseudoElement());
     ASSERT(!afterPseudoElement());
 
+#if ENABLE(INTERSECTION_OBSERVER)
+    disconnectFromIntersectionObservers();
+#endif
+
     removeShadowRoot();
 
     if (hasSyntheticAttrChildNodes())
@@ -3230,6 +3234,32 @@ void Element::requestPointerLock()
 {
     if (document().page())
         document().page()->pointerLockController().requestPointerLock(this);
+}
+#endif
+
+#if ENABLE(INTERSECTION_OBSERVER)
+void Element::disconnectFromIntersectionObservers()
+{
+    auto* observerData = intersectionObserverData();
+    if (!observerData)
+        return;
+
+    for (auto* observer : observerData->observers)
+        observer->rootDestroyed();
+    observerData->observers.clear();
+}
+
+IntersectionObserverData& Element::ensureIntersectionObserverData()
+{
+    auto& rareData = ensureElementRareData();
+    if (!rareData.intersectionObserverData())
+        rareData.setIntersectionObserverData(std::make_unique<IntersectionObserverData>());
+    return *rareData.intersectionObserverData();
+}
+
+IntersectionObserverData* Element::intersectionObserverData()
+{
+    return hasRareData() ? elementRareData()->intersectionObserverData() : nullptr;
 }
 #endif
 

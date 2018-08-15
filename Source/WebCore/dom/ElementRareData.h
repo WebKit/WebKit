@@ -24,6 +24,7 @@
 #include "CustomElementReactionQueue.h"
 #include "DOMTokenList.h"
 #include "DatasetDOMStringMap.h"
+#include "IntersectionObserver.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
 #include "PseudoElement.h"
@@ -116,6 +117,11 @@ public:
     bool hasCSSAnimation() const { return m_hasCSSAnimation; }
     void setHasCSSAnimation(bool value) { m_hasCSSAnimation = value; }
 
+#if ENABLE(INTERSECTION_OBSERVER)
+    IntersectionObserverData* intersectionObserverData() { return m_intersectionObserverData.get(); }
+    void setIntersectionObserverData(std::unique_ptr<IntersectionObserverData>&& data) { m_intersectionObserverData = WTFMove(data); }
+#endif
+
 private:
     int m_tabIndex;
     unsigned short m_childIndex;
@@ -149,6 +155,9 @@ private:
     RefPtr<ShadowRoot> m_shadowRoot;
     std::unique_ptr<CustomElementReactionQueue> m_customElementReactionQueue;
     std::unique_ptr<NamedNodeMap> m_attributeMap;
+#if ENABLE(INTERSECTION_OBSERVER)
+    std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;
+#endif
 
     RefPtr<PseudoElement> m_beforePseudoElement;
     RefPtr<PseudoElement> m_afterPseudoElement;
