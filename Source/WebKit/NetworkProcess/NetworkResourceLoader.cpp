@@ -938,13 +938,10 @@ void NetworkResourceLoader::invalidateSandboxExtensions()
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync(const ProtectionSpace& protectionSpace)
 {
-    NetworkProcess::singleton().canAuthenticateAgainstProtectionSpace(*this, protectionSpace);
-}
-
-void NetworkResourceLoader::continueCanAuthenticateAgainstProtectionSpace(bool result)
-{
-    if (m_networkLoad)
-        m_networkLoad->continueCanAuthenticateAgainstProtectionSpace(result);
+    NetworkProcess::singleton().canAuthenticateAgainstProtectionSpace(protectionSpace, pageID(), frameID(), [this, protectedThis = makeRef(*this)] (bool result) {
+        if (m_networkLoad)
+            m_networkLoad->continueCanAuthenticateAgainstProtectionSpace(result);
+    });
 }
 #endif
 

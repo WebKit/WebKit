@@ -45,8 +45,6 @@ public:
     uint64_t frameID() const;
     uint64_t pageID() const;
 
-    void continueCanAuthenticateAgainstProtectionSpace(bool);
-
 private:
     // NetworkLoadClient.
     bool isSynchronous() const final { return false; }

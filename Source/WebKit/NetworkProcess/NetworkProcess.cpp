@@ -669,40 +669,21 @@ void NetworkProcess::cancelDownload(DownloadID downloadID)
 }
     
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-static uint64_t generateCanAuthenticateIdentifier()
+void NetworkProcess::canAuthenticateAgainstProtectionSpace(const WebCore::ProtectionSpace& protectionSpace, uint64_t pageID, uint64_t frameID, CompletionHandler<void(bool)>&& completionHandler)
 {
-    static uint64_t lastLoaderID = 0;
-    return ++lastLoaderID;
+    static uint64_t lastCompletionHandlerID = 0;
+    uint64_t completionHandlerID = ++lastCompletionHandlerID;
+    m_canAuthenticateAgainstProtectionSpaceCompletionHandlers.add(completionHandlerID, WTFMove(completionHandler));
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::CanAuthenticateAgainstProtectionSpace(completionHandlerID, pageID, frameID, protectionSpace), 0);
 }
 
-void NetworkProcess::canAuthenticateAgainstProtectionSpace(NetworkResourceLoader& loader, const WebCore::ProtectionSpace& protectionSpace)
+void NetworkProcess::continueCanAuthenticateAgainstProtectionSpace(uint64_t completionHandlerID, bool canAuthenticate)
 {
-    uint64_t loaderID = generateCanAuthenticateIdentifier();
-    m_waitingNetworkResourceLoaders.set(loaderID, loader);
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::CanAuthenticateAgainstProtectionSpace(loaderID, loader.pageID(), loader.frameID(), protectionSpace), 0);
-}
-
-#if ENABLE(SERVER_PRECONNECT)
-void NetworkProcess::canAuthenticateAgainstProtectionSpace(PreconnectTask& preconnectTask, const WebCore::ProtectionSpace& protectionSpace)
-{
-    uint64_t loaderID = generateCanAuthenticateIdentifier();
-    m_waitingPreconnectTasks.set(loaderID, makeWeakPtr(preconnectTask));
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::CanAuthenticateAgainstProtectionSpace(loaderID, preconnectTask.pageID(), preconnectTask.frameID(), protectionSpace), 0);
-}
-#endif
-
-void NetworkProcess::continueCanAuthenticateAgainstProtectionSpace(uint64_t loaderID, bool canAuthenticate)
-{
-    if (auto resourceLoader = m_waitingNetworkResourceLoaders.take(loaderID)) {
-        resourceLoader.value()->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
+    if (auto completionHandler = m_canAuthenticateAgainstProtectionSpaceCompletionHandlers.take(completionHandlerID)) {
+        completionHandler(canAuthenticate);
         return;
     }
-#if ENABLE(SERVER_PRECONNECT)
-    if (auto preconnectTask = m_waitingPreconnectTasks.take(loaderID)) {
-        preconnectTask->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
-        return;
-    }
-#endif
+    ASSERT_NOT_REACHED();
 }
 
 #endif

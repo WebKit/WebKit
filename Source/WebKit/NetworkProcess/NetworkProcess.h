@@ -123,10 +123,7 @@ public:
     void findPendingDownloadLocation(NetworkDataTask&, ResponseCompletionHandler&&, const WebCore::ResourceResponse&);
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    void canAuthenticateAgainstProtectionSpace(NetworkResourceLoader&, const WebCore::ProtectionSpace&);
-#if ENABLE(SERVER_PRECONNECT)
-    void canAuthenticateAgainstProtectionSpace(PreconnectTask&, const WebCore::ProtectionSpace&);
-#endif
+    void canAuthenticateAgainstProtectionSpace(const WebCore::ProtectionSpace&, uint64_t pageID, uint64_t frameID, CompletionHandler<void(bool)>&&);
 #endif
 
     void prefetchDNS(const String&);
@@ -225,7 +222,7 @@ private:
     void resumeDownload(PAL::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&&);
     void cancelDownload(DownloadID);
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    void continueCanAuthenticateAgainstProtectionSpace(uint64_t resourceLoadIdentifier, bool canAuthenticate);
+    void continueCanAuthenticateAgainstProtectionSpace(uint64_t completionHandlerID, bool canAuthenticate);
 #endif
     void continueWillSendRequest(DownloadID, WebCore::ResourceRequest&&);
     void continueDecidePendingDownloadDestination(DownloadID, String destination, SandboxExtension::Handle&&, bool allowOverwrite);
@@ -284,10 +281,9 @@ private:
     typedef HashMap<const char*, std::unique_ptr<NetworkProcessSupplement>, PtrHash<const char*>> NetworkProcessSupplementMap;
     NetworkProcessSupplementMap m_supplements;
 
-    HashMap<uint64_t, Function<void ()>> m_sandboxExtensionForBlobsCompletionHandlers;
-    HashMap<uint64_t, Ref<NetworkResourceLoader>> m_waitingNetworkResourceLoaders;
-#if ENABLE(SERVER_PRECONNECT)
-    HashMap<uint64_t, WeakPtr<PreconnectTask>> m_waitingPreconnectTasks;
+    HashMap<uint64_t, Function<void()>> m_sandboxExtensionForBlobsCompletionHandlers;
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    HashMap<uint64_t, CompletionHandler<void(bool)>> m_canAuthenticateAgainstProtectionSpaceCompletionHandlers;
 #endif
     HashSet<PAL::SessionID> m_sessionsControlledByAutomation;
 
