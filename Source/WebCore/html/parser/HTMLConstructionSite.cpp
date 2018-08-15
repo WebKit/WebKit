@@ -514,6 +514,7 @@ void HTMLConstructionSite::insertCustomElement(Ref<Element>&& element, const Ato
     setAttributes(element, attributes, m_parserContentPolicy);
     attachLater(currentNode(), element.copyRef());
     m_openElements.push(HTMLStackItem::create(WTFMove(element), localName, WTFMove(attributes)));
+    executeQueuedTasks();
 }
 
 void HTMLConstructionSite::insertSelfClosingHTMLElement(AtomicHTMLToken&& token)

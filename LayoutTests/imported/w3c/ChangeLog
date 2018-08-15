@@ -1,3 +1,15 @@
+2018-08-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        connectedCallback is invoked by the HTML parser after child nodes had been inserted
+        https://bugs.webkit.org/show_bug.cgi?id=183931
+        <rdar://problem/38843548>
+
+        Reviewed by Alex Christensen.
+
+        Rebaselined the test now that all test cases pass.
+
+        * web-platform-tests/custom-elements/parser/parser-sets-attributes-and-children-expected.txt:
+
 2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Unhandled Promise Rejection logging in workers should not emit ErrorEvent to host Worker object
