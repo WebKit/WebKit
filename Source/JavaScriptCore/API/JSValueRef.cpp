@@ -54,17 +54,6 @@
 
 using namespace JSC;
 
-#if PLATFORM(MAC)
-static bool evernoteHackNeeded()
-{
-    static const int32_t webkitLastVersionWithEvernoteHack = 35133959;
-    static bool hackNeeded = CFEqual(CFBundleGetIdentifier(CFBundleGetMainBundle()), CFSTR("com.evernote.Evernote"))
-        && NSVersionOfLinkTimeLibrary("JavaScriptCore") <= webkitLastVersionWithEvernoteHack;
-
-    return hackNeeded;
-}
-#endif
-
 ::JSType JSValueGetType(JSContextRef ctx, JSValueRef value)
 {
     if (!ctx) {
@@ -485,11 +474,6 @@ void JSValueProtect(JSContextRef ctx, JSValueRef value)
 
 void JSValueUnprotect(JSContextRef ctx, JSValueRef value)
 {
-#if PLATFORM(MAC)
-    if ((!value || !ctx) && evernoteHackNeeded())
-        return;
-#endif
-
     ExecState* exec = toJS(ctx);
     JSLockHolder locker(exec);
 

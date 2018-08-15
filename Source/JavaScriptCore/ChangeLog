@@ -1,3 +1,17 @@
+2018-08-15  Keith Miller  <keith_miller@apple.com>
+
+        Remove evernote hacks
+        https://bugs.webkit.org/show_bug.cgi?id=188591
+
+        Reviewed by Joseph Pecoraro.
+
+        The hack was added in 2012 and the evernote app seems to work now.
+        It's probably not needed anymore.
+
+        * API/JSValueRef.cpp:
+        (JSValueUnprotect):
+        (evernoteHackNeeded): Deleted.
+
 2018-08-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed, rolling out r234874 and r234876.
