@@ -1,3 +1,16 @@
+2018-08-14  Ansh Shukla  <ansh_shukla@apple.com>
+
+        NSURLAuthenticationMethodOAuth challenges are surfaced to clients in -didReceiveAuthenticationChallenge as NSURLAuthenticationMethodDefault
+        https://bugs.webkit.org/show_bug.cgi?id=186870
+
+        Reviewed by Alex Christensen.
+
+        Ensure the exposed authentication type to clients is OAuth.
+
+        * http/tests/loading/oauth-expected.txt: Added.
+        * http/tests/loading/oauth.html: Added.
+        * http/tests/loading/resources/oauth-subresource.php: Added.
+
 2018-08-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening for mac-wk1.

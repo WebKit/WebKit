@@ -1,3 +1,14 @@
+2018-08-14  Ansh Shukla  <ansh_shukla@apple.com>
+
+        NSURLAuthenticationMethodOAuth challenges are surfaced to clients in -didReceiveAuthenticationChallenge as NSURLAuthenticationMethodDefault
+        https://bugs.webkit.org/show_bug.cgi?id=186870
+        <rdar://problem/41314410>
+
+        Reviewed by Alex Christensen.
+
+        * pal/spi/cf/CFNetworkSPI.h: Declare OAuth string when not building against the
+        internal SDK.
+
 2018-08-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, suppress warnings to fix the build.

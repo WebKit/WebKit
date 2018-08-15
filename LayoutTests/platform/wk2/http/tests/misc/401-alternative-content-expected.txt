@@ -1,2 +1,2 @@
-127.0.0.1:8000 - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet
+127.0.0.1:8000 - didReceiveAuthenticationChallenge - ProtectionSpaceAuthenticationSchemeHTTPBasic - Simulating cancelled authentication sheet
 PASS

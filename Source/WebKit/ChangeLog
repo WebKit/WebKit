@@ -1,3 +1,17 @@
+2018-08-14  Ansh Shukla  <ansh_shukla@apple.com>
+
+        NSURLAuthenticationMethodOAuth challenges are surfaced to clients in -didReceiveAuthenticationChallenge as NSURLAuthenticationMethodDefault
+        https://bugs.webkit.org/show_bug.cgi?id=186870
+        <rdar://problem/41314410>
+
+        Reviewed by Alex Christensen.
+
+        Correctly expose the OAuth protection space type in API.
+
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toAPI):
+        * UIProcess/API/C/WKProtectionSpaceTypes.h:
+
 2018-08-14  Ben Richards  <benton_richards@apple.com>
 
         Remove api misuse check so that custom webcontent service identifier can be set at runtime
