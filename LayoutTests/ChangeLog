@@ -1,3 +1,12 @@
+2018-08-15  Per Arne Vollan  <pvollan@apple.com>
+
+        Layout Test editing/input/press-tab-during-ime-composition.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=188600
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-08-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment SPI] Remove attachment display mode options

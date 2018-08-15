@@ -4161,3 +4161,5 @@ webkit.org/b/188168 fast/text/complex-first-glyph-with-initial-advance.html [ Im
 webkit.org/b/188168 fast/text/initial-advance-in-intermediate-run-complex.html [ ImageOnlyFailure ]
 
 webkit.org/b/188169 http/tests/security/canvas-remote-read-remote-video-hls.html [ Failure ]
+
+webkit.org/b/188600 editing/input/press-tab-during-ime-composition.html [ Failure ]
