@@ -1,3 +1,18 @@
+2018-08-15  Alex Christensen  <achristensen@webkit.org>
+
+        Remove WKNavigationDelegatePrivate's canAuthenticateAgainstProtectionSpace
+        https://bugs.webkit.org/show_bug.cgi?id=188622
+
+        Reviewed by Timothy Hatcher.
+
+        It's been deprecated for a release now, nobody uses it, and it's a concept from NSURLConnection, which we don't use any more in WebKit2.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::NavigationClient::canAuthenticateAgainstProtectionSpace):
+
 2018-08-15  Tim Horton  <timothy_horton@apple.com>
 
         Crashes in Quip under _dictionaryPopupInfoForRange, in setObject:forKey:
