@@ -1,3 +1,34 @@
+2018-08-14  Alex Christensen  <achristensen@webkit.org>
+
+        isValidCSSSelector is unsafe to be called from a non-main thread
+        https://bugs.webkit.org/show_bug.cgi?id=188581
+        <rdar://problem/40517358>
+
+        Reviewed by Sam Weinig.
+
+        Parsing and determining whether the css selectors are valid is fast enough to do before
+        hopping to the background thread for the slow NFA/DFA operations and writing to disk.
+        Doing it on the main thread avoids the thread safety issues in the CSSParser's use of strings.
+
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        * contentextensions/ContentExtensionCompiler.h:
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::isValidCSSSelector):
+        (WebCore::ContentExtensions::loadEncodedRules):
+        (WebCore::ContentExtensions::parseRuleList):
+        * contentextensions/ContentExtensionParser.h:
+        * contentextensions/ContentExtensionRule.cpp:
+        (WebCore::ContentExtensions::Trigger::isolatedCopy const):
+        (WebCore::ContentExtensions::Action::isolatedCopy const):
+        * contentextensions/ContentExtensionRule.h:
+        (WebCore::ContentExtensions::Trigger::isEmpty const):
+        (WebCore::ContentExtensions::Trigger::operator== const):
+        (WebCore::ContentExtensions::Action::Action):
+        (WebCore::ContentExtensions::ContentExtensionRule::isolatedCopy const):
+        (WebCore::ContentExtensions::ContentExtensionRule::operator== const):
+        (WebCore::ContentExtensions::vectorIsolatedCopy):
+
 2018-08-14  Ansh Shukla  <ansh_shukla@apple.com>
 
         NSURLAuthenticationMethodOAuth challenges are surfaced to clients in -didReceiveAuthenticationChallenge as NSURLAuthenticationMethodDefault

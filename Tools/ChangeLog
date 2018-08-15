@@ -1,3 +1,15 @@
+2018-08-14  Alex Christensen  <achristensen@webkit.org>
+
+        isValidCSSSelector is unsafe to be called from a non-main thread
+        https://bugs.webkit.org/show_bug.cgi?id=188581
+        <rdar://problem/40517358>
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::InMemoryCompiledContentExtension::create):
+        (TestWebKitAPI::checkCompilerError):
+
 2018-08-14  Ansh Shukla  <ansh_shukla@apple.com>
 
         NSURLAuthenticationMethodOAuth challenges are surfaced to clients in -didReceiveAuthenticationChallenge as NSURLAuthenticationMethodDefault

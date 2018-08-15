@@ -230,6 +230,7 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
 
 bool isValidCSSSelector(const String& selector)
 {
+    ASSERT(isMainThread());
     AtomicString::init();
     QualifiedName::init();
     CSSParserContext context(HTMLQuirksMode);
@@ -299,7 +300,7 @@ static Expected<std::optional<ContentExtensionRule>, std::error_code> loadRule(E
     return { std::nullopt };
 }
 
-static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(ExecState& exec, String&& ruleJSON)
+static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(ExecState& exec, const String& ruleJSON)
 {
     VM& vm = exec.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -347,7 +348,7 @@ static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(
     return WTFMove(ruleList);
 }
 
-Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(String&& ruleJSON)
+Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const String& ruleJSON)
 {
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime loadExtensionStartTime = MonotonicTime::now();
@@ -358,7 +359,7 @@ Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(String&& r
     JSGlobalObject* globalObject = JSGlobalObject::create(*vm, JSGlobalObject::createStructure(*vm, jsNull()));
 
     ExecState* exec = globalObject->globalExec();
-    auto ruleList = loadEncodedRules(*exec, WTFMove(ruleJSON));
+    auto ruleList = loadEncodedRules(*exec, ruleJSON);
 
     vm = nullptr;
 
