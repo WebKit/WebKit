@@ -1,3 +1,46 @@
+2018-08-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Add Nicosia::BackingStoreTextureMapperImpl
+        https://bugs.webkit.org/show_bug.cgi?id=188548
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add the Nicosia::BackingStoreTextureMapperImpl class, the
+        TextureMapper-specific implementation that will extend the BackingStore
+        class.
+
+        Purpose of this class is to manage content of painted layers. In the
+        LayerState object that will be exposed to the CoordinatedGraphicsLayer
+        owner we keep the current and previous TiledBackingStore objects that
+        will be used for painting. A TileUpdate object is used to store all tile
+        creation, removal and update changes that happen during the painting
+        that's performed during the CoordinatedGraphicsLayer flush.
+
+        At the point of synchronization under the Nicosia::Scene object, these
+        updates will be moved over to the pending TileUpdate object that will
+        then be accessed during the composition step. For that purpose we keep
+        in the CompositionState member object a reference to the
+        CoordinatedBackingStore object that will get updated with the tile
+        creation, removal and update changes (if there are any). The composition
+        step will use the takeUpdate() method to retrieve all these changes and
+        apply them outside of the point of synchronization (avoiding this sync
+        step to take too long).
+
+        This will be integrated into the CoordinatedGraphicsLayer class at a
+        later point, when the switch to the new infrastructure can be made in
+        one go.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/nicosia/texmap/NicosiaBackingStoreTextureMapperImpl.cpp: Added.
+        (Nicosia::BackingStoreTextureMapperImpl::createFactory):
+        (Nicosia::BackingStoreTextureMapperImpl::tiledBackingStoreHasPendingTileCreation):
+        (Nicosia::BackingStoreTextureMapperImpl::createTile):
+        (Nicosia::BackingStoreTextureMapperImpl::updateTile):
+        (Nicosia::BackingStoreTextureMapperImpl::removeTile):
+        (Nicosia::BackingStoreTextureMapperImpl::flushUpdate):
+        (Nicosia::BackingStoreTextureMapperImpl::takeUpdate):
+        * platform/graphics/nicosia/texmap/NicosiaBackingStoreTextureMapperImpl.h: Added.
+
 2018-08-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed, rolling out r234874 and r234876.

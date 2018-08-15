@@ -58,6 +58,7 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp
         platform/graphics/nicosia/cairo/NicosiaPaintingContextCairo.cpp
 
+        platform/graphics/nicosia/texmap/NicosiaBackingStoreTextureMapperImpl.cpp
         platform/graphics/nicosia/texmap/NicosiaCompositionLayerTextureMapperImpl.cpp
         platform/graphics/nicosia/texmap/NicosiaContentLayerTextureMapperImpl.cpp
         platform/graphics/nicosia/texmap/NicosiaGC3DLayer.cpp
