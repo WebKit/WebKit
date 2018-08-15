@@ -59,9 +59,7 @@ public:
     void setNth(int a, int b) { m_selector->setNth(a, b); }
     void setMatch(CSSSelector::Match value) { m_selector->setMatch(value); }
     void setRelation(CSSSelector::RelationType value) { m_selector->setRelation(value); }
-#if !ASSERT_DISABLED
     void setForPage() { m_selector->setForPage(); }
-#endif
 
     CSSSelector::Match match() const { return m_selector->match(); }
     CSSSelector::PseudoElementType pseudoElementType() const { return m_selector->pseudoElementType(); }

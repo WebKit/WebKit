@@ -23,378 +23,379 @@
 
 #include "QualifiedName.h"
 #include "RenderStyleConstants.h"
-#include <wtf/Variant.h>
 
 namespace WebCore {
+    class CSSSelectorList;
 
-class CSSSelectorList;
-
-enum class SelectorSpecificityIncrement {
-    ClassA = 0x10000,
-    ClassB = 0x100,
-    ClassC = 1
-};
-
-#pragma pack(push, 1)
-// this class represents a selector for a StyleRule
-class CSSSelector {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    CSSSelector();
-    CSSSelector(const CSSSelector&);
-    explicit CSSSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
-
-    ~CSSSelector();
-
-    /**
-     * Re-create selector text from selector's data
-     */
-    String selectorText(const String& = emptyString()) const;
-
-    // checks if the 2 selectors (including sub selectors) agree.
-    bool operator==(const CSSSelector&) const;
-
-    static const unsigned maxValueMask = 0xffffff;
-    static const unsigned idMask = 0xff0000;
-    static const unsigned classMask = 0xff00;
-    static const unsigned elementMask = 0xff;
-
-    unsigned staticSpecificity(bool& ok) const;
-    unsigned specificityForPage() const;
-    unsigned simpleSelectorSpecificity() const;
-    static unsigned addSpecificities(unsigned, unsigned);
-
-    /* how the attribute value has to match.... Default is Exact */
-    enum Match {
-        Unknown = 0,
-        Tag,
-        Id,
-        Class,
-        Exact,
-        Set,
-        List,
-        Hyphen,
-        PseudoClass,
-        PseudoElement,
-        Contain, // css3: E[foo*="bar"]
-        Begin, // css3: E[foo^="bar"]
-        End, // css3: E[foo$="bar"]
-        PagePseudoClass
+    enum class SelectorSpecificityIncrement {
+        ClassA = 0x10000,
+        ClassB = 0x100,
+        ClassC = 1
     };
 
-    enum RelationType {
-        Subselector,
-        DescendantSpace,
-        Child,
-        DirectAdjacent,
-        IndirectAdjacent,
-        ShadowDescendant
-    };
+    // this class represents a selector for a StyleRule
+    class CSSSelector {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        CSSSelector();
+        CSSSelector(const CSSSelector&);
+        explicit CSSSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
 
-    enum PseudoClassType {
-        PseudoClassUnknown = 0,
-        PseudoClassEmpty,
-        PseudoClassFirstChild,
-        PseudoClassFirstOfType,
-        PseudoClassLastChild,
-        PseudoClassLastOfType,
-        PseudoClassOnlyChild,
-        PseudoClassOnlyOfType,
-        PseudoClassNthChild,
-        PseudoClassNthOfType,
-        PseudoClassNthLastChild,
-        PseudoClassNthLastOfType,
-        PseudoClassLink,
-        PseudoClassVisited,
-        PseudoClassAny,
-        PseudoClassAnyLink,
-        PseudoClassAnyLinkDeprecated,
-        PseudoClassAutofill,
-        PseudoClassAutofillStrongPassword,
-        PseudoClassHover,
-        PseudoClassDrag,
-        PseudoClassFocus,
-        PseudoClassFocusWithin,
-        PseudoClassActive,
-        PseudoClassChecked,
-        PseudoClassEnabled,
-        PseudoClassFullPageMedia,
-        PseudoClassDefault,
-        PseudoClassDisabled,
-        PseudoClassMatches,
-        PseudoClassOptional,
-        PseudoClassPlaceholderShown,
-        PseudoClassRequired,
-        PseudoClassReadOnly,
-        PseudoClassReadWrite,
-        PseudoClassValid,
-        PseudoClassInvalid,
-        PseudoClassIndeterminate,
-        PseudoClassTarget,
-        PseudoClassLang,
-        PseudoClassNot,
-        PseudoClassRoot,
-        PseudoClassScope,
-        PseudoClassWindowInactive,
-        PseudoClassCornerPresent,
-        PseudoClassDecrement,
-        PseudoClassIncrement,
-        PseudoClassHorizontal,
-        PseudoClassVertical,
-        PseudoClassStart,
-        PseudoClassEnd,
-        PseudoClassDoubleButton,
-        PseudoClassSingleButton,
-        PseudoClassNoButton,
+        ~CSSSelector();
+
+        /**
+         * Re-create selector text from selector's data
+         */
+        String selectorText(const String& = emptyString()) const;
+
+        // checks if the 2 selectors (including sub selectors) agree.
+        bool operator==(const CSSSelector&) const;
+
+        static const unsigned maxValueMask = 0xffffff;
+        static const unsigned idMask = 0xff0000;
+        static const unsigned classMask = 0xff00;
+        static const unsigned elementMask = 0xff;
+
+        unsigned staticSpecificity(bool& ok) const;
+        unsigned specificityForPage() const;
+        unsigned simpleSelectorSpecificity() const;
+        static unsigned addSpecificities(unsigned, unsigned);
+
+        /* how the attribute value has to match.... Default is Exact */
+        enum Match {
+            Unknown = 0,
+            Tag,
+            Id,
+            Class,
+            Exact,
+            Set,
+            List,
+            Hyphen,
+            PseudoClass,
+            PseudoElement,
+            Contain, // css3: E[foo*="bar"]
+            Begin, // css3: E[foo^="bar"]
+            End, // css3: E[foo$="bar"]
+            PagePseudoClass
+        };
+
+        enum RelationType {
+            Subselector,
+            DescendantSpace,
+            Child,
+            DirectAdjacent,
+            IndirectAdjacent,
+            ShadowDescendant
+        };
+
+        enum PseudoClassType {
+            PseudoClassUnknown = 0,
+            PseudoClassEmpty,
+            PseudoClassFirstChild,
+            PseudoClassFirstOfType,
+            PseudoClassLastChild,
+            PseudoClassLastOfType,
+            PseudoClassOnlyChild,
+            PseudoClassOnlyOfType,
+            PseudoClassNthChild,
+            PseudoClassNthOfType,
+            PseudoClassNthLastChild,
+            PseudoClassNthLastOfType,
+            PseudoClassLink,
+            PseudoClassVisited,
+            PseudoClassAny,
+            PseudoClassAnyLink,
+            PseudoClassAnyLinkDeprecated,
+            PseudoClassAutofill,
+            PseudoClassAutofillStrongPassword,
+            PseudoClassHover,
+            PseudoClassDrag,
+            PseudoClassFocus,
+            PseudoClassFocusWithin,
+            PseudoClassActive,
+            PseudoClassChecked,
+            PseudoClassEnabled,
+            PseudoClassFullPageMedia,
+            PseudoClassDefault,
+            PseudoClassDisabled,
+            PseudoClassMatches,
+            PseudoClassOptional,
+            PseudoClassPlaceholderShown,
+            PseudoClassRequired,
+            PseudoClassReadOnly,
+            PseudoClassReadWrite,
+            PseudoClassValid,
+            PseudoClassInvalid,
+            PseudoClassIndeterminate,
+            PseudoClassTarget,
+            PseudoClassLang,
+            PseudoClassNot,
+            PseudoClassRoot,
+            PseudoClassScope,
+            PseudoClassWindowInactive,
+            PseudoClassCornerPresent,
+            PseudoClassDecrement,
+            PseudoClassIncrement,
+            PseudoClassHorizontal,
+            PseudoClassVertical,
+            PseudoClassStart,
+            PseudoClassEnd,
+            PseudoClassDoubleButton,
+            PseudoClassSingleButton,
+            PseudoClassNoButton,
 #if ENABLE(FULLSCREEN_API)
-        PseudoClassFullScreen,
-        PseudoClassFullScreenDocument,
-        PseudoClassFullScreenAncestor,
-        PseudoClassAnimatingFullScreenTransition,
-        PseudoClassFullScreenControlsHidden,
+            PseudoClassFullScreen,
+            PseudoClassFullScreenDocument,
+            PseudoClassFullScreenAncestor,
+            PseudoClassAnimatingFullScreenTransition,
+            PseudoClassFullScreenControlsHidden,
 #endif
-        PseudoClassInRange,
-        PseudoClassOutOfRange,
+            PseudoClassInRange,
+            PseudoClassOutOfRange,
 #if ENABLE(VIDEO_TRACK)
-        PseudoClassFuture,
-        PseudoClassPast,
+            PseudoClassFuture,
+            PseudoClassPast,
 #endif
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-        PseudoClassDir,
-        PseudoClassRole,
+            PseudoClassDir,
+            PseudoClassRole,
 #endif
-        PseudoClassHost,
-        PseudoClassDefined,
-    };
+            PseudoClassHost,
+            PseudoClassDefined,
+        };
 
-    enum PseudoElementType {
-        PseudoElementUnknown = 0,
-        PseudoElementAfter,
-        PseudoElementBefore,
+        enum PseudoElementType {
+            PseudoElementUnknown = 0,
+            PseudoElementAfter,
+            PseudoElementBefore,
 #if ENABLE(VIDEO_TRACK)
-        PseudoElementCue,
+            PseudoElementCue,
 #endif
-        PseudoElementFirstLetter,
-        PseudoElementFirstLine,
-        PseudoElementMarker,
-        PseudoElementResizer,
-        PseudoElementScrollbar,
-        PseudoElementScrollbarButton,
-        PseudoElementScrollbarCorner,
-        PseudoElementScrollbarThumb,
-        PseudoElementScrollbarTrack,
-        PseudoElementScrollbarTrackPiece,
-        PseudoElementSelection,
-        PseudoElementSlotted,
-        PseudoElementUserAgentCustom,
-        PseudoElementWebKitCustom,
+            PseudoElementFirstLetter,
+            PseudoElementFirstLine,
+            PseudoElementMarker,
+            PseudoElementResizer,
+            PseudoElementScrollbar,
+            PseudoElementScrollbarButton,
+            PseudoElementScrollbarCorner,
+            PseudoElementScrollbarThumb,
+            PseudoElementScrollbarTrack,
+            PseudoElementScrollbarTrackPiece,
+            PseudoElementSelection,
+            PseudoElementSlotted,
+            PseudoElementUserAgentCustom,
+            PseudoElementWebKitCustom,
 
-        // WebKitCustom that appeared in an old prefixed form
-        // and need special handling.
-        PseudoElementWebKitCustomLegacyPrefixed,
-    };
+            // WebKitCustom that appeared in an old prefixed form
+            // and need special handling.
+            PseudoElementWebKitCustomLegacyPrefixed,
+        };
 
-    enum PagePseudoClassType {
-        PagePseudoClassFirst = 1,
-        PagePseudoClassLeft,
-        PagePseudoClassRight,
-    };
+        enum PagePseudoClassType {
+            PagePseudoClassFirst = 1,
+            PagePseudoClassLeft,
+            PagePseudoClassRight,
+        };
 
-    enum MarginBoxType {
-        TopLeftCornerMarginBox,
-        TopLeftMarginBox,
-        TopCenterMarginBox,
-        TopRightMarginBox,
-        TopRightCornerMarginBox,
-        BottomLeftCornerMarginBox,
-        BottomLeftMarginBox,
-        BottomCenterMarginBox,
-        BottomRightMarginBox,
-        BottomRightCornerMarginBox,
-        LeftTopMarginBox,
-        LeftMiddleMarginBox,
-        LeftBottomMarginBox,
-        RightTopMarginBox,
-        RightMiddleMarginBox,
-        RightBottomMarginBox,
-    };
+        enum MarginBoxType {
+            TopLeftCornerMarginBox,
+            TopLeftMarginBox,
+            TopCenterMarginBox,
+            TopRightMarginBox,
+            TopRightCornerMarginBox,
+            BottomLeftCornerMarginBox,
+            BottomLeftMarginBox,
+            BottomCenterMarginBox,
+            BottomRightMarginBox,
+            BottomRightCornerMarginBox,
+            LeftTopMarginBox,
+            LeftMiddleMarginBox,
+            LeftBottomMarginBox,
+            RightTopMarginBox,
+            RightMiddleMarginBox,
+            RightBottomMarginBox,
+        };
 
-    enum AttributeMatchType {
-        CaseSensitive,
-        CaseInsensitive,
-    };
+        enum AttributeMatchType {
+            CaseSensitive,
+            CaseInsensitive,
+        };
 
-    static PseudoElementType parsePseudoElementType(const String&);
-    static PseudoId pseudoId(PseudoElementType);
+        static PseudoElementType parsePseudoElementType(const String&);
+        static PseudoId pseudoId(PseudoElementType);
 
-    // Selectors are kept in an array by CSSSelectorList. The next component of the selector is
-    // the next item in the array.
-    const CSSSelector* tagHistory() const { return m_isLastInTagHistory ? 0 : const_cast<CSSSelector*>(this + 1); }
+        // Selectors are kept in an array by CSSSelectorList. The next component of the selector is
+        // the next item in the array.
+        const CSSSelector* tagHistory() const { return m_isLastInTagHistory ? 0 : const_cast<CSSSelector*>(this + 1); }
 
-    const QualifiedName& tagQName() const;
-    const AtomicString& tagLowercaseLocalName() const;
+        const QualifiedName& tagQName() const;
+        const AtomicString& tagLowercaseLocalName() const;
 
-    const AtomicString& value() const;
-    const AtomicString& serializingValue() const;
-    const QualifiedName& attribute() const;
-    const AtomicString& attributeCanonicalLocalName() const;
-    const AtomicString& argument() const { return WTF::holds_alternative<RefPtr<RareData>>(m_data) ? WTF::get<RefPtr<RareData>>(m_data)->m_argument : nullAtom(); }
-    bool attributeValueMatchingIsCaseInsensitive() const;
-    const Vector<AtomicString>* langArgumentList() const { return WTF::holds_alternative<RefPtr<RareData>>(m_data) ? WTF::get<RefPtr<RareData>>(m_data)->m_langArgumentList.get() : nullptr; }
-    const CSSSelectorList* selectorList() const { return WTF::holds_alternative<RefPtr<RareData>>(m_data) ? WTF::get<RefPtr<RareData>>(m_data)->m_selectorList.get() : nullptr; }
+        const AtomicString& value() const;
+        const AtomicString& serializingValue() const;
+        const QualifiedName& attribute() const;
+        const AtomicString& attributeCanonicalLocalName() const;
+        const AtomicString& argument() const { return m_hasRareData ? m_data.m_rareData->m_argument : nullAtom(); }
+        bool attributeValueMatchingIsCaseInsensitive() const;
+        const Vector<AtomicString>* langArgumentList() const { return m_hasRareData ? m_data.m_rareData->m_langArgumentList.get() : nullptr; }
+        const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.m_rareData->m_selectorList.get() : nullptr; }
 
-    void setValue(const AtomicString&, bool matchLowerCase = false);
-    
-    void setAttribute(const QualifiedName&, bool convertToLowercase, AttributeMatchType);
-    void setNth(int a, int b);
-    void setArgument(const AtomicString&);
-    void setLangArgumentList(std::unique_ptr<Vector<AtomicString>>);
-    void setSelectorList(std::unique_ptr<CSSSelectorList>);
-
-    bool matchNth(int count) const;
-    int nthA() const;
-    int nthB() const;
-
-    bool hasDescendantRelation() const { return relation() == DescendantSpace; }
-
-    bool hasDescendantOrChildRelation() const { return relation() == Child || hasDescendantRelation(); }
-
-    PseudoClassType pseudoClassType() const
-    {
-        ASSERT(match() == PseudoClass);
-        return static_cast<PseudoClassType>(m_pseudoType);
-    }
-    void setPseudoClassType(PseudoClassType pseudoType)
-    {
-        m_pseudoType = pseudoType;
-        ASSERT(m_pseudoType == pseudoType);
-    }
-
-    PseudoElementType pseudoElementType() const
-    {
-        ASSERT(match() == PseudoElement);
-        return static_cast<PseudoElementType>(m_pseudoType);
-    }
-    void setPseudoElementType(PseudoElementType pseudoElementType)
-    {
-        m_pseudoType = pseudoElementType;
-        ASSERT(m_pseudoType == pseudoElementType);
-    }
-
-    PagePseudoClassType pagePseudoClassType() const
-    {
-        ASSERT(match() == PagePseudoClass);
-        return static_cast<PagePseudoClassType>(m_pseudoType);
-    }
-    void setPagePseudoType(PagePseudoClassType pagePseudoType)
-    {
-        m_pseudoType = pagePseudoType;
-        ASSERT(m_pseudoType == pagePseudoType);
-    }
-
-    bool matchesPseudoElement() const;
-    bool isUnknownPseudoElement() const;
-    bool isCustomPseudoElement() const;
-    bool isWebKitCustomPseudoElement() const;
-    bool isSiblingSelector() const;
-    bool isAttributeSelector() const;
-
-    RelationType relation() const { return static_cast<RelationType>(m_relation); }
-    void setRelation(RelationType relation)
-    {
-        m_relation = relation;
-        ASSERT(m_relation == relation);
-    }
-
-    Match match() const { return static_cast<Match>(m_match); }
-    void setMatch(Match match)
-    {
-        m_match = match;
-        ASSERT(m_match == match);
-    }
-
-    bool isLastInSelectorList() const { return m_isLastInSelectorList; }
-    void setLastInSelectorList() { m_isLastInSelectorList = true; }
-    bool isLastInTagHistory() const { return m_isLastInTagHistory; }
-    void setNotLastInTagHistory() { m_isLastInTagHistory = false; }
-
-#if !ASSERT_DISABLED
-    bool isForPage() const { return m_isForPage; }
-    void setForPage() { m_isForPage = true; }
-#endif
-
-private:
-    struct RareData;
-    struct NameWithCase;
-    Variant<AtomicString, QualifiedName, RefPtr<RareData>, RefPtr<NameWithCase>> m_data;
-
-    unsigned m_relation               : 3; // enum RelationType.
-    mutable unsigned m_match          : 4; // enum Match.
-    mutable unsigned m_pseudoType     : 7; // enum PseudoClassType.
-    unsigned m_isLastInSelectorList   : 1;
-    unsigned m_isLastInTagHistory     : 1;
-    unsigned m_tagIsForNamespaceRule  : 1;
-#if !ASSERT_DISABLED
-    unsigned m_isForPage              : 1;
-#endif
-#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-    unsigned m_destructorHasBeenCalled : 1;
-#endif
-
-    unsigned simpleSelectorSpecificityForPage() const;
-
-    // Hide.
-    CSSSelector& operator=(const CSSSelector&);
-
-    struct RareData : public RefCounted<RareData> {
-        RareData(AtomicString&& value);
-        ~RareData();
-
-        bool matchNth(int count);
-
-        // For quirks mode, class and id are case-insensitive. In the case where uppercase
-        // letters are used in quirks mode, |m_matchingValue| holds the lowercase class/id
-        // and |m_serializingValue| holds the original string.
-        AtomicString m_matchingValue;
-        AtomicString m_serializingValue;
+        void setValue(const AtomicString&, bool matchLowerCase = false);
         
-        int m_a { 0 }; // Used for :nth-*
-        int m_b { 0 }; // Used for :nth-*
-        QualifiedName m_attribute { anyQName() }; // used for attribute selector
-        AtomicString m_attributeCanonicalLocalName;
-        AtomicString m_argument { nullAtom() }; // Used for :contains and :nth-*
-        std::unique_ptr<Vector<AtomicString>> m_langArgumentList; // Used for :lang arguments.
-        std::unique_ptr<CSSSelectorList> m_selectorList; // Used for :matches() and :not().
-        bool m_caseInsensitiveAttributeValueMatching { false };
-    };
-    void createRareData();
+        void setAttribute(const QualifiedName&, bool convertToLowercase, AttributeMatchType);
+        void setNth(int a, int b);
+        void setArgument(const AtomicString&);
+        void setLangArgumentList(std::unique_ptr<Vector<AtomicString>>);
+        void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
-    struct NameWithCase : public RefCounted<NameWithCase> {
-        NameWithCase(const QualifiedName& originalName, const AtomicString& lowercaseName)
-            : m_originalName(originalName)
-            , m_lowercaseLocalName(lowercaseName)
+        bool matchNth(int count) const;
+        int nthA() const;
+        int nthB() const;
+
+        bool hasDescendantRelation() const { return relation() == DescendantSpace; }
+
+        bool hasDescendantOrChildRelation() const { return relation() == Child || hasDescendantRelation(); }
+
+        PseudoClassType pseudoClassType() const
         {
-            ASSERT(originalName.localName() != lowercaseName);
+            ASSERT(match() == PseudoClass);
+            return static_cast<PseudoClassType>(m_pseudoType);
+        }
+        void setPseudoClassType(PseudoClassType pseudoType)
+        {
+            m_pseudoType = pseudoType;
+            ASSERT(m_pseudoType == pseudoType);
         }
 
-        const QualifiedName m_originalName;
-        const AtomicString m_lowercaseLocalName;
+        PseudoElementType pseudoElementType() const
+        {
+            ASSERT(match() == PseudoElement);
+            return static_cast<PseudoElementType>(m_pseudoType);
+        }
+        void setPseudoElementType(PseudoElementType pseudoElementType)
+        {
+            m_pseudoType = pseudoElementType;
+            ASSERT(m_pseudoType == pseudoElementType);
+        }
+
+        PagePseudoClassType pagePseudoClassType() const
+        {
+            ASSERT(match() == PagePseudoClass);
+            return static_cast<PagePseudoClassType>(m_pseudoType);
+        }
+        void setPagePseudoType(PagePseudoClassType pagePseudoType)
+        {
+            m_pseudoType = pagePseudoType;
+            ASSERT(m_pseudoType == pagePseudoType);
+        }
+
+        bool matchesPseudoElement() const;
+        bool isUnknownPseudoElement() const;
+        bool isCustomPseudoElement() const;
+        bool isWebKitCustomPseudoElement() const;
+        bool isSiblingSelector() const;
+        bool isAttributeSelector() const;
+
+        RelationType relation() const { return static_cast<RelationType>(m_relation); }
+        void setRelation(RelationType relation)
+        {
+            m_relation = relation;
+            ASSERT(m_relation == relation);
+        }
+
+        Match match() const { return static_cast<Match>(m_match); }
+        void setMatch(Match match)
+        {
+            m_match = match;
+            ASSERT(m_match == match);
+        }
+
+        bool isLastInSelectorList() const { return m_isLastInSelectorList; }
+        void setLastInSelectorList() { m_isLastInSelectorList = true; }
+        bool isLastInTagHistory() const { return m_isLastInTagHistory; }
+        void setNotLastInTagHistory() { m_isLastInTagHistory = false; }
+
+        bool isForPage() const { return m_isForPage; }
+        void setForPage() { m_isForPage = true; }
+
+    private:
+        unsigned m_relation              : 4; // enum RelationType.
+        mutable unsigned m_match         : 4; // enum Match.
+        mutable unsigned m_pseudoType    : 8; // PseudoType.
+        unsigned m_isLastInSelectorList  : 1;
+        unsigned m_isLastInTagHistory    : 1;
+        unsigned m_hasRareData           : 1;
+        unsigned m_hasNameWithCase       : 1;
+        unsigned m_isForPage             : 1;
+        unsigned m_tagIsForNamespaceRule : 1;
+        unsigned m_caseInsensitiveAttributeValueMatching : 1;
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+        unsigned m_destructorHasBeenCalled : 1;
+#endif
+
+        unsigned simpleSelectorSpecificityForPage() const;
+
+        // Hide.
+        CSSSelector& operator=(const CSSSelector&);
+
+        struct RareData : public RefCounted<RareData> {
+            static Ref<RareData> create(AtomicString&& value) { return adoptRef(*new RareData(WTFMove(value))); }
+            ~RareData();
+
+            bool matchNth(int count);
+
+            // For quirks mode, class and id are case-insensitive. In the case where uppercase
+            // letters are used in quirks mode, |m_matchingValue| holds the lowercase class/id
+            // and |m_serializingValue| holds the original string.
+            AtomicString m_matchingValue;
+            AtomicString m_serializingValue;
+            
+            int m_a; // Used for :nth-*
+            int m_b; // Used for :nth-*
+            QualifiedName m_attribute; // used for attribute selector
+            AtomicString m_attributeCanonicalLocalName;
+            AtomicString m_argument; // Used for :contains and :nth-*
+            std::unique_ptr<Vector<AtomicString>> m_langArgumentList; // Used for :lang arguments.
+            std::unique_ptr<CSSSelectorList> m_selectorList; // Used for :matches() and :not().
+        
+        private:
+            RareData(AtomicString&& value);
+        };
+        void createRareData();
+
+        struct NameWithCase : public RefCounted<NameWithCase> {
+            NameWithCase(const QualifiedName& originalName, const AtomicString& lowercaseName)
+                : m_originalName(originalName)
+                , m_lowercaseLocalName(lowercaseName)
+            {
+                ASSERT(originalName.localName() != lowercaseName);
+            }
+
+            const QualifiedName m_originalName;
+            const AtomicString m_lowercaseLocalName;
+        };
+
+        union DataUnion {
+            DataUnion() : m_value(0) { }
+            AtomicStringImpl* m_value;
+            QualifiedName::QualifiedNameImpl* m_tagQName;
+            RareData* m_rareData;
+            NameWithCase* m_nameWithCase;
+        } m_data;
     };
-};
-#pragma pack(pop)
 
 inline const QualifiedName& CSSSelector::attribute() const
 {
     ASSERT(isAttributeSelector());
-    ASSERT(WTF::holds_alternative<RefPtr<RareData>>(m_data));
-    return WTF::get<RefPtr<RareData>>(m_data)->m_attribute;
+    ASSERT(m_hasRareData);
+    return m_data.m_rareData->m_attribute;
 }
 
 inline const AtomicString& CSSSelector::attributeCanonicalLocalName() const
 {
     ASSERT(isAttributeSelector());
-    ASSERT(WTF::holds_alternative<RefPtr<RareData>>(m_data));
-    return WTF::get<RefPtr<RareData>>(m_data)->m_attributeCanonicalLocalName;
+    ASSERT(m_hasRareData);
+    return m_data.m_rareData->m_attributeCanonicalLocalName;
 }
 
 inline bool CSSSelector::matchesPseudoElement() const
@@ -457,16 +458,20 @@ inline void CSSSelector::setValue(const AtomicString& value, bool matchLowerCase
 {
     ASSERT(match() != Tag);
     AtomicString matchingValue = matchLowerCase ? value.convertToASCIILowercase() : value;
-    if (!WTF::holds_alternative<RefPtr<RareData>>(m_data) && matchingValue != value)
+    if (!m_hasRareData && matchingValue != value)
         createRareData();
     
-    if (!WTF::holds_alternative<RefPtr<RareData>>(m_data)) {
-        m_data = value;
+    // Need to do ref counting manually for the union.
+    if (!m_hasRareData) {
+        if (m_data.m_value)
+            m_data.m_value->deref();
+        m_data.m_value = value.impl();
+        m_data.m_value->ref();
         return;
     }
 
-    WTF::get<RefPtr<RareData>>(m_data)->m_matchingValue = WTFMove(matchingValue);
-    WTF::get<RefPtr<RareData>>(m_data)->m_serializingValue = value;
+    m_data.m_rareData->m_matchingValue = WTFMove(matchingValue);
+    m_data.m_rareData->m_serializingValue = value;
 }
 
 inline CSSSelector::CSSSelector()
@@ -475,10 +480,11 @@ inline CSSSelector::CSSSelector()
     , m_pseudoType(0)
     , m_isLastInSelectorList(false)
     , m_isLastInTagHistory(true)
-    , m_tagIsForNamespaceRule(false)
-#if !ASSERT_DISABLED
+    , m_hasRareData(false)
+    , m_hasNameWithCase(false)
     , m_isForPage(false)
-#endif
+    , m_tagIsForNamespaceRule(false)
+    , m_caseInsensitiveAttributeValueMatching(false)
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     , m_destructorHasBeenCalled(false)
 #endif
@@ -486,20 +492,33 @@ inline CSSSelector::CSSSelector()
 }
 
 inline CSSSelector::CSSSelector(const CSSSelector& o)
-    : m_data(o.m_data)
-    , m_relation(o.m_relation)
+    : m_relation(o.m_relation)
     , m_match(o.m_match)
     , m_pseudoType(o.m_pseudoType)
     , m_isLastInSelectorList(o.m_isLastInSelectorList)
     , m_isLastInTagHistory(o.m_isLastInTagHistory)
-    , m_tagIsForNamespaceRule(o.m_tagIsForNamespaceRule)
-#if !ASSERT_DISABLED
+    , m_hasRareData(o.m_hasRareData)
+    , m_hasNameWithCase(o.m_hasNameWithCase)
     , m_isForPage(o.m_isForPage)
-#endif
+    , m_tagIsForNamespaceRule(o.m_tagIsForNamespaceRule)
+    , m_caseInsensitiveAttributeValueMatching(o.m_caseInsensitiveAttributeValueMatching)
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     , m_destructorHasBeenCalled(false)
 #endif
 {
+    if (o.m_hasRareData) {
+        m_data.m_rareData = o.m_data.m_rareData;
+        m_data.m_rareData->ref();
+    } else if (o.m_hasNameWithCase) {
+        m_data.m_nameWithCase = o.m_data.m_nameWithCase;
+        m_data.m_nameWithCase->ref();
+    } if (o.match() == Tag) {
+        m_data.m_tagQName = o.m_data.m_tagQName;
+        m_data.m_tagQName->ref();
+    } else if (o.m_data.m_value) {
+        m_data.m_value = o.m_data.m_value;
+        m_data.m_value->ref();
+    }
 }
 
 inline CSSSelector::~CSSSelector()
@@ -508,44 +527,62 @@ inline CSSSelector::~CSSSelector()
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     m_destructorHasBeenCalled = true;
 #endif
+    if (m_hasRareData) {
+        m_data.m_rareData->deref();
+        m_data.m_rareData = nullptr;
+        m_hasRareData = false;
+    } else if (m_hasNameWithCase) {
+        m_data.m_nameWithCase->deref();
+        m_data.m_nameWithCase = nullptr;
+        m_hasNameWithCase = false;
+    } else if (match() == Tag) {
+        m_data.m_tagQName->deref();
+        m_data.m_tagQName = nullptr;
+        m_match = Unknown;
+    } else if (m_data.m_value) {
+        m_data.m_value->deref();
+        m_data.m_value = nullptr;
+    }
 }
 
 inline const QualifiedName& CSSSelector::tagQName() const
 {
     ASSERT(match() == Tag);
-    if (WTF::holds_alternative<RefPtr<NameWithCase>>(m_data))
-        return WTF::get<RefPtr<NameWithCase>>(m_data)->m_originalName;
-    return WTF::get<QualifiedName>(m_data);
+    if (m_hasNameWithCase)
+        return m_data.m_nameWithCase->m_originalName;
+    return *reinterpret_cast<const QualifiedName*>(&m_data.m_tagQName);
 }
 
 inline const AtomicString& CSSSelector::tagLowercaseLocalName() const
 {
-    if (WTF::holds_alternative<RefPtr<NameWithCase>>(m_data))
-        return WTF::get<RefPtr<NameWithCase>>(m_data)->m_lowercaseLocalName;
-    return WTF::get<QualifiedName>(m_data).localName();
+    if (m_hasNameWithCase)
+        return m_data.m_nameWithCase->m_lowercaseLocalName;
+    return m_data.m_tagQName->m_localName;
 }
 
 inline const AtomicString& CSSSelector::value() const
 {
     ASSERT(match() != Tag);
-    if (WTF::holds_alternative<RefPtr<RareData>>(m_data))
-        return WTF::get<RefPtr<RareData>>(m_data)->m_matchingValue;
+    if (m_hasRareData)
+        return m_data.m_rareData->m_matchingValue;
 
-    return WTF::get<AtomicString>(m_data);
+    // AtomicString is really just an AtomicStringImpl* so the cast below is safe.
+    return *reinterpret_cast<const AtomicString*>(&m_data.m_value);
 }
 
 inline const AtomicString& CSSSelector::serializingValue() const
 {
     ASSERT(match() != Tag);
-    if (WTF::holds_alternative<RefPtr<RareData>>(m_data))
-        return WTF::get<RefPtr<RareData>>(m_data)->m_serializingValue;
+    if (m_hasRareData)
+        return m_data.m_rareData->m_serializingValue;
     
-    return WTF::get<AtomicString>(m_data);
+    // AtomicString is really just an AtomicStringImpl* so the cast below is safe.
+    return *reinterpret_cast<const AtomicString*>(&m_data.m_value);
 }
     
 inline bool CSSSelector::attributeValueMatchingIsCaseInsensitive() const
 {
-    return WTF::holds_alternative<RefPtr<RareData>>(m_data) && WTF::get<RefPtr<RareData>>(m_data)->m_caseInsensitiveAttributeValueMatching;
+    return m_caseInsensitiveAttributeValueMatching;
 }
 
 } // namespace WebCore

@@ -1435,7 +1435,6 @@ struct __noexcept_variant_swap:
 __noexcept_variant_swap_impl<__all_swappable<_Types...>::value,_Types...>
 {};
 
-#pragma pack(push, 1)
 template<typename ... _Types>
 class Variant:
         private __variant_base<
@@ -1722,7 +1721,6 @@ public:
         }
     }
 };
-#pragma pack(pop)
 
 template<>
 class Variant<>{
