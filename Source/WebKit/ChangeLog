@@ -1,3 +1,27 @@
+2018-08-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Can't share an app on AppStore to WeChat due to a release assert
+        https://bugs.webkit.org/show_bug.cgi?id=188621
+        <rdar://problem/43343976>
+
+        Reviewed by Geoffrey Garen.
+
+        Disable the thread safety check when the app is not linked on or after iOS 12 since this release assert
+        is getting hit by third party applications on iOS in UI process.
+
+        * UIProcess/Cocoa/VersionChecks.h:
+        (WebKit::SDKVersion::FirstWithMainThreadReleaseAssertionInWebPageProxy): Added. It's iOS 12 or macOS 10.14 Mojave.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::isMainThreadOrCheckDisabled): Added. Returns true whether when we're in the main thread or if the app
+        is not linked on or after iOS 12 or macOS 10.14 Mojave.
+        (WebKit::globalPageMap):
+        (WebKit::m_isInPrewarmedPool):
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        (WebKit::WebProcessProxy::shutDown):
+        (WebKit::WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores):
+        (WebKit::WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+
 2018-08-15  Alex Christensen  <achristensen@webkit.org>
 
         Remove WKNavigationDelegatePrivate's canAuthenticateAgainstProtectionSpace
