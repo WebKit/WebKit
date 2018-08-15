@@ -122,6 +122,9 @@ webkit.org/b/74716 legacy-animation-engine/css3/filters/backdrop [ Skip ]
 # color-filters are off by default
 webkit.org/b/185076 css3/color-filters [ Skip ]
 
+# IntersectionObserver is off by default
+webkit.org/b/188613 intersection-observer [ Skip ]
+
 # TODO Should be moved to platform/mac <rdar://5621425>
 http/tests/misc/willCacheResponse-delegate-callback.html [ Skip ]
 
@@ -3344,8 +3347,6 @@ http/tests/xmlhttprequest/if-modified-since-0.html [ Failure ]
 http/tests/xmlhttprequest/redirections-and-user-headers.html [ Failure ]
 imported/blink/storage/indexeddb/blob-basics-metadata.html [ Failure ]
 imported/blink/storage/indexeddb/empty-blob-file.html [ Failure ]
-intersection-observer/intersection-observer-entry-interface.html [ Failure ]
-intersection-observer/intersection-observer-interface.html [ Failure ]
 js/dom/constructor-length.html [ Failure ]
 js/dom/deep-recursion-test.html [ Failure ]
 js/dom/regress-157246.html [ Failure ]
