@@ -1,3 +1,14 @@
+2018-08-14 Sihui Liu <sihui_liu@apple.com>
+
+        Crash in WebKit::filterPreloadHSTSEntry via NetworkProcess::getHostNamesWithHSTSCache
+        https://bugs.webkit.org/show_bug.cgi?id=188576
+        <rdar://problem/43148977>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::fetchWebsiteData):
+
 2018-08-14  Alex Christensen  <achristensen@webkit.org>
 
         isValidCSSSelector is unsafe to be called from a non-main thread
