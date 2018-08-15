@@ -39,32 +39,9 @@ using namespace WebKit;
 
 @implementation _WKAttachmentDisplayOptions : NSObject
 
-- (instancetype)init
-{
-    if (self = [super init])
-        _mode = _WKAttachmentDisplayModeAuto;
-
-    return self;
-}
-
 - (WebCore::AttachmentDisplayOptions)coreDisplayOptions
 {
-    WebCore::AttachmentDisplayMode mode;
-    switch (self.mode) {
-    case _WKAttachmentDisplayModeAuto:
-        mode = WebCore::AttachmentDisplayMode::Auto;
-        break;
-    case _WKAttachmentDisplayModeAsIcon:
-        mode = WebCore::AttachmentDisplayMode::AsIcon;
-        break;
-    case _WKAttachmentDisplayModeInPlace:
-        mode = WebCore::AttachmentDisplayMode::InPlace;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        mode = WebCore::AttachmentDisplayMode::Auto;
-    }
-    return { mode };
+    return { };
 }
 
 @end

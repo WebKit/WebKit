@@ -3385,8 +3385,6 @@ webkit.org/b/177632 fast/text/flag-codepoint.html [ ImageOnlyFailure ]
 
 webkit.org/b/179052 compositing/contents-format/subpixel-antialiased-nested-layer.html [ Failure ]
 
-webkit.org/b/180371 fast/attachment/attachment-without-appearance.html [ ImageOnlyFailure ]
-
 webkit.org/b/180749 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ ImageOnlyFailure ]
 
 webkit.org/b/180802 imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html [ Failure ]

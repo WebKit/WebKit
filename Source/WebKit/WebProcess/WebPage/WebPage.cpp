@@ -6105,12 +6105,8 @@ void WebPage::requestAttachmentInfo(const String& identifier, CallbackID callbac
     });
 }
 
-void WebPage::setAttachmentDisplayOptions(const String& identifier, const AttachmentDisplayOptions& options, CallbackID callbackID)
+void WebPage::setAttachmentDisplayOptions(const String&, const AttachmentDisplayOptions&, CallbackID callbackID)
 {
-    if (auto attachment = attachmentElementWithIdentifier(identifier)) {
-        attachment->document().updateLayout();
-        attachment->updateDisplayMode(options.mode);
-    }
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 

@@ -53,7 +53,6 @@ public:
     String uniqueIdentifier() const { return m_uniqueIdentifier; }
     void setUniqueIdentifier(const String& uniqueIdentifier) { m_uniqueIdentifier = uniqueIdentifier; }
 
-    WEBCORE_EXPORT void updateDisplayMode(AttachmentDisplayMode);
     WEBCORE_EXPORT void updateFileWithData(Ref<SharedBuffer>&& data, std::optional<String>&& newContentType = std::nullopt, std::optional<String>&& newFilename = std::nullopt);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
@@ -63,7 +62,7 @@ public:
     String attachmentType() const;
     String attachmentPath() const;
 
-    RenderAttachment* attachmentRenderer() const;
+    RenderAttachment* renderer() const;
 
     WEBCORE_EXPORT void requestInfo(Function<void(const AttachmentInfo&)>&& callback);
     void destroyReader(AttachmentDataReader&);
@@ -73,22 +72,6 @@ private:
     virtual ~HTMLAttachmentElement();
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
-    Ref<HTMLImageElement> ensureInnerImage();
-    Ref<HTMLVideoElement> ensureInnerVideo();
-    RefPtr<HTMLImageElement> innerImage() const;
-    RefPtr<HTMLVideoElement> innerVideo() const;
-
-    void populateShadowRootIfNecessary();
-    void invalidateShadowRootChildrenIfNecessary();
-
-    AttachmentDisplayMode defaultDisplayMode() const
-    {
-        // FIXME: For now, all attachment elements automatically display using a file icon.
-        // In a followup patch, we'll change the default behavior to use in-place presentation
-        // for certain image MIME types.
-        return AttachmentDisplayMode::AsIcon;
-    }
-
     bool shouldSelectOnMouseDown() final {
 #if PLATFORM(IOS)
         return false;

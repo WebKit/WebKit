@@ -3873,7 +3873,7 @@ void Editor::insertAttachment(const String& identifier, const AttachmentDisplayO
     insertAttachmentFromFile(identifier, options, filename, *contentType, File::create(Blob::create(WTFMove(data), *contentType), filename));
 }
 
-void Editor::insertAttachmentFromFile(const String& identifier, const AttachmentDisplayOptions& options, const String& filename, const String& contentType, Ref<File>&& file)
+void Editor::insertAttachmentFromFile(const String& identifier, const AttachmentDisplayOptions&, const String& filename, const String& contentType, Ref<File>&& file)
 {
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document());
     attachment->setAttribute(HTMLNames::titleAttr, filename);
@@ -3881,7 +3881,6 @@ void Editor::insertAttachmentFromFile(const String& identifier, const Attachment
     attachment->setAttribute(HTMLNames::typeAttr, contentType);
     attachment->setUniqueIdentifier(identifier);
     attachment->setFile(WTFMove(file));
-    attachment->updateDisplayMode(options.mode);
 
     auto fragmentToInsert = document().createDocumentFragment();
     fragmentToInsert->appendChild(attachment.get());

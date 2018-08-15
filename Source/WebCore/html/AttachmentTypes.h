@@ -34,31 +34,20 @@ namespace WebCore {
 
 class SharedBuffer;
 
-enum class AttachmentDisplayMode {
-    Auto,
-    InPlace,
-    AsIcon
-};
-
 struct AttachmentDisplayOptions {
-    AttachmentDisplayMode mode { AttachmentDisplayMode::Auto };
-
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<AttachmentDisplayOptions> decode(Decoder&);
 };
 
 template<class Encoder> inline void AttachmentDisplayOptions::encode(Encoder& encoder) const
 {
-    encoder.encodeEnum(mode);
+    UNUSED_PARAM(encoder);
 }
 
 template<class Decoder> inline std::optional<AttachmentDisplayOptions> AttachmentDisplayOptions::decode(Decoder& decoder)
 {
-    AttachmentDisplayMode mode;
-    if (!decoder.decodeEnum(mode))
-        return std::nullopt;
-
-    return {{ mode }};
+    UNUSED_PARAM(decoder);
+    return AttachmentDisplayOptions();
 }
 
 struct AttachmentInfo {

@@ -209,7 +209,6 @@ static Ref<DocumentFragment> createFragmentForImageAttachment(Document& document
 #if ENABLE(ATTACHMENT_ELEMENT)
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
     attachment->setFile(File::create(blob, AtomicString("image")), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
-    attachment->updateDisplayMode(AttachmentDisplayMode::InPlace);
 
     auto fragment = document.createDocumentFragment();
     fragment->appendChild(attachment);
@@ -225,7 +224,6 @@ static void replaceRichContentWithAttachments(DocumentFragment& fragment, const 
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
     struct AttachmentReplacementInfo {
-        AttachmentDisplayMode displayMode;
         Ref<File> file;
         Ref<Element> elementToReplace;
     };
@@ -257,7 +255,7 @@ static void replaceRichContentWithAttachments(DocumentFragment& fragment, const 
         if (title.isEmpty())
             title = AtomicString("media");
 
-        attachmentReplacementInfo.append({ AttachmentDisplayMode::InPlace, File::create(*blob, title), image });
+        attachmentReplacementInfo.append({ File::create(*blob, title), image });
     }
 
     for (auto& object : descendantsOfType<HTMLObjectElement>(fragment)) {
@@ -277,7 +275,7 @@ static void replaceRichContentWithAttachments(DocumentFragment& fragment, const 
         if (title.isEmpty())
             title = AtomicString("file");
 
-        attachmentReplacementInfo.append({ AttachmentDisplayMode::AsIcon, File::create(*blob, title), object });
+        attachmentReplacementInfo.append({ File::create(*blob, title), object });
     }
 
     for (auto& info : attachmentReplacementInfo) {
@@ -289,7 +287,6 @@ static void replaceRichContentWithAttachments(DocumentFragment& fragment, const 
 
         auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, fragment.document());
         attachment->setFile(WTFMove(file), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
-        attachment->updateDisplayMode(info.displayMode);
         parent->replaceChild(attachment, elementToReplace);
     }
 

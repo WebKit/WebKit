@@ -1,3 +1,19 @@
+2018-08-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment SPI] Remove attachment display mode options
+        https://bugs.webkit.org/show_bug.cgi?id=188596
+
+        Reviewed by Dan Bernstein.
+
+        Remove API tests and API test helpers for verifying the behavior of in-place media attachment elements.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (-[TestWKWebView synchronouslyInsertAttachmentWithFilename:contentType:data:]):
+        (TestWebKitAPI::TEST):
+        (testVideoData): Deleted.
+        (displayOptionsWithMode): Deleted.
+        (-[TestWKWebView synchronouslyInsertAttachmentWithFilename:contentType:data:options:]): Deleted.
+
 2018-08-14  Devin Rousso  <drousso@apple.com>
 
         Unreviewed, change my emails.
