@@ -855,7 +855,16 @@ http/tests/cache-storage [ Skip ]
 http/tests/canvas [ Skip ]
 http/tests/contentdispositionattachmentsandbox [ Skip ]
 http/tests/contentfiltering [ Skip ]
-http/tests/cookies [ Skip ]
+
+http/tests/cookies/same-site [ Skip ]
+
+http/tests/cookies/double-quoted-value-with-semi-colon.html [ Failure ]
+http/tests/cookies/http-get-cookie-set-in-js.html [ Failure ]
+http/tests/cookies/multiple-cookies.html [ Failure ]
+http/tests/cookies/private-cookie-storage.html [ Crash ]
+http/tests/cookies/simple-cookies-expired.html [ Failure ]
+http/tests/cookies/simple-cookies-max-age.html [ Failure ]
+http/tests/cookies/third-party-cookie-relaxing.html [ Failure ]
 
 http/tests/css/cross-fade-reload.html [ Timeout Pass ]
 
