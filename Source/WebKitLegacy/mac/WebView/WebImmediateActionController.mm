@@ -528,10 +528,10 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
         RetainPtr<NSMutableDictionary> scaledAttributes = adoptNS([attributes mutableCopy]);
 
         NSFont *font = [scaledAttributes objectForKey:NSFontAttributeName];
-        if (font) {
-            font = [fontManager convertFont:font toSize:[font pointSize] * frame->page()->pageScaleFactor()];
+        if (font)
+            font = [fontManager convertFont:font toSize:font.pointSize * frame->page()->pageScaleFactor()];
+        if (font)
             [scaledAttributes setObject:font forKey:NSFontAttributeName];
-        }
 
         [scaledNSAttributedString addAttributes:scaledAttributes.get() range:attributeRange];
     }];

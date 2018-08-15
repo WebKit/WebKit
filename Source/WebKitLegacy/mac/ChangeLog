@@ -1,3 +1,16 @@
+2018-08-15  Tim Horton  <timothy_horton@apple.com>
+
+        Crashes in Quip under _dictionaryPopupInfoForRange, in setObject:forKey:
+        https://bugs.webkit.org/show_bug.cgi?id=188569
+        <rdar://problem/34201095>
+
+        Reviewed by Megan Gardner.
+
+        * WebView/WebImmediateActionController.mm:
+        (+[WebImmediateActionController _dictionaryPopupInfoForRange:inFrame:withLookupOptions:indicatorOptions:transition:]):
+        Speculative fix; the crashes indicate font is null, but we just checked it,
+        so it must be getting made null by convertFont:toSize:. Check again!
+
 2018-08-13  Alex Christensen  <achristensen@webkit.org>
 
         Use a 1-byte enum class for TextDirection
