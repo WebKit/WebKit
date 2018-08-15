@@ -626,7 +626,7 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
     "katakana", "katakana-iroha", "keep-all", "khmer",
     "korean-hangul-formal", "korean-hanja-formal", "korean-hanja-informal",
     "landscape", "lao", "large", "larger", "left", "level", "lighter", "lighten",
-    "line-through", "linear", "linear-gradient", "lines", "list-item", "listbox", "listitem",
+    "line-through", "linear", "linear-gradient", "lines", "list-item", "listbox", "list-button", "listitem",
     "local", "logical", "loud", "lower", "lower-alpha", "lower-armenian",
     "lower-greek", "lower-hexadecimal", "lower-latin", "lower-norwegian",
     "lower-roman", "lowercase", "ltr", "luminosity", "malayalam", "match", "matrix", "matrix3d",

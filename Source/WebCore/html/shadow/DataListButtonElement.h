@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <AppKit/NSColor.h>
+#pragma once
 
-#if PLATFORM(MAC) && USE(APPLE_INTERNAL_SDK)
+#if ENABLE(DATALIST_ELEMENT)
 
-#import <AppKit/NSColor_Private.h>
+#include "HTMLDivElement.h"
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-#import <AppKit/NSColor_UserAccent.h>
-#endif
+namespace WebCore {
 
-#else
+class TextFieldInputType;
 
-@interface NSColor ()
-+ (NSColor *)systemRedColor;
-+ (NSColor *)systemGreenColor;
-+ (NSColor *)systemBlueColor;
-+ (NSColor *)systemOrangeColor;
-+ (NSColor *)systemYellowColor;
-+ (NSColor *)systemBrownColor;
-+ (NSColor *)systemPinkColor;
-+ (NSColor *)systemPurpleColor;
-+ (NSColor *)systemGrayColor;
-+ (NSColor *)linkColor;
-+ (NSColor *)findHighlightColor;
-+ (NSColor *)placeholderTextColor;
-@end
+class DataListButtonElement final : public HTMLDivElement {
+    WTF_MAKE_ISO_ALLOCATED(DataListButtonElement);
+public:
+    class DataListButtonOwner {
+    public:
+        virtual ~DataListButtonOwner() = default;
+        virtual void dataListButtonElementWasClicked() = 0;
+    };
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-typedef NS_ENUM(NSInteger, NSUserAccentColor) {
-    NSUserAccentColorRed = 0,
-    NSUserAccentColorOrange,
-    NSUserAccentColorYellow,
-    NSUserAccentColorGreen,
-    NSUserAccentColorBlue,
-    NSUserAccentColorPurple,
-    NSUserAccentColorPink,
+    ~DataListButtonElement();
 
-    NSUserAccentColorNoColor = -1,
+    static Ref<DataListButtonElement> create(Document&, DataListButtonOwner&);
+
+private:
+    explicit DataListButtonElement(Document&, DataListButtonOwner&);
+
+    void defaultEventHandler(Event&) override;
+
+    DataListButtonOwner& m_owner;
 };
 
-extern "C" NSUserAccentColor NSColorGetUserAccentColor(void);
-#endif
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(DATALIST_ELEMENT)

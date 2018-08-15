@@ -241,6 +241,13 @@ HTMLElement* HTMLInputElement::placeholderElement() const
     return m_inputType->placeholderElement();
 }
 
+#if ENABLE(DATALIST_ELEMENT)
+HTMLElement* HTMLInputElement::dataListButtonElement() const
+{
+    return m_inputType->dataListButtonElement();
+}
+#endif
+
 bool HTMLInputElement::shouldAutocomplete() const
 {
     if (m_autocomplete != Uninitialized)

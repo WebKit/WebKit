@@ -1,3 +1,66 @@
+2018-08-15  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Datalist] Add button to TextFieldInputs with a datalist
+        https://bugs.webkit.org/show_bug.cgi?id=187741
+
+        Reviewed by Tim Horton.
+
+        TextFieldInputs that have an associated datalist element should be drawn as
+        combo boxes. However, we cannot use NSComboBox for this control, as NSComboBox
+        is not height-resizable. Furthermore, the input should also be able to contain
+        additional elements, such as the stepper for type=number and the cancel button
+        for type=search. For these reasons, we draw a button at the end of the input,
+        mimicking appearance of a combo box.
+
+        The list-button -webkit-appearance value was added to display the new button.
+
+        Tests: fast/forms/datalist/datalist-searchinput-appearance.html
+               fast/forms/datalist/datalist-textinput-appearance.html
+
+        * Resources/ListButtonArrow.png: Added.
+        * Resources/ListButtonArrow@2x.png: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/html.css:
+        (input::-webkit-list-button):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::dataListButtonElement const):
+        * html/HTMLInputElement.h:
+        * html/InputType.h:
+        (WebCore::InputType::dataListButtonElement const):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::needsContainer const):
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        (WebCore::TextFieldInputType::destroyShadowSubtree):
+        (WebCore::TextFieldInputType::listAttributeTargetChanged):
+        (WebCore::TextFieldInputType::dataListButtonElement const):
+        (WebCore::TextFieldInputType::dataListButtonElementWasClicked):
+        (WebCore::TextFieldInputType::didCloseSuggestions):
+        * html/TextFieldInputType.h:
+        * html/shadow/DataListButtonElement.cpp: Added.
+        (WebCore::DataListButtonElement::create):
+        (WebCore::DataListButtonElement::DataListButtonElement):
+        (WebCore::DataListButtonElement::~DataListButtonElement):
+        (WebCore::DataListButtonElement::defaultEventHandler):
+        * html/shadow/DataListButtonElement.h: Added.
+        * platform/ThemeTypes.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::adjustListButtonStyle const):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (-[WebListButtonCell drawWithFrame:inView:]):
+        (WebCore::RenderThemeMac::paintListButtonForInput):
+        (WebCore::RenderThemeMac::adjustListButtonStyle const):
+        (WebCore::RenderThemeMac::paintTextField):
+        (WebCore::RenderThemeMac::paintSearchField):
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::listButton const):
+
 2018-08-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r234870.

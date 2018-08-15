@@ -155,6 +155,11 @@ private:
     void adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle&, const Element*) const final;
     bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const IntRect&) final;
 
+#if ENABLE(DATALIST_ELEMENT)
+    void paintListButtonForInput(const RenderObject&, GraphicsContext&, const FloatRect&);
+    void adjustListButtonStyle(StyleResolver&, RenderStyle&, const Element*) const;
+#endif
+
 #if ENABLE(VIDEO)
     bool supportsClosedCaptioning() const final { return true; }
 #endif
@@ -219,6 +224,9 @@ private:
     NSSliderCell *sliderThumbHorizontal() const;
     NSSliderCell *sliderThumbVertical() const;
     NSTextFieldCell *textField() const;
+#if ENABLE(DATALIST_ELEMENT)
+    NSCell *listButton() const;
+#endif
 
 #if ENABLE(METER_ELEMENT)
     NSLevelIndicatorStyle levelIndicatorStyleFor(ControlPart) const;
@@ -246,6 +254,9 @@ private:
     mutable RetainPtr<NSTextFieldCell> m_textField;
 #if ENABLE(SERVICE_CONTROLS)
     mutable RetainPtr<NSServicesRolloverButtonCell> m_servicesRolloverButton;
+#endif
+#if ENABLE(DATALIST_ELEMENT)
+    mutable RetainPtr<NSCell> m_listButton;
 #endif
 
     bool m_isSliderThumbHorizontalPressed { false };

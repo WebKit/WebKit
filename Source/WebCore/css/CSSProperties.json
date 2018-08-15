@@ -4218,6 +4218,7 @@
                 "attachment",
                 "caps-lock-indicator",
                 "color-well",
+                "list-button",
                 "none"
             ],
             "status": {

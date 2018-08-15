@@ -839,6 +839,9 @@ image-controls-button
 #if defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
 color-well
 #endif
+#if defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT
+list-button
+#endif
 textarea
 #if defined(ENABLE_ATTACHMENT_ELEMENT) && ENABLE_ATTACHMENT_ELEMENT
 attachment

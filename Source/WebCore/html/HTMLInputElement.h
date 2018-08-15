@@ -150,6 +150,9 @@ public:
     HTMLElement* sliderTrackElement() const;
     HTMLElement* placeholderElement() const final;
     WEBCORE_EXPORT HTMLElement* autoFillButtonElement() const;
+#if ENABLE(DATALIST_ELEMENT)
+    HTMLElement* dataListButtonElement() const;
+#endif
 
     bool checked() const { return m_isChecked; }
     WEBCORE_EXPORT void setChecked(bool, TextFieldEventBehavior = DispatchNoEvent);
