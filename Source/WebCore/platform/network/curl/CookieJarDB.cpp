@@ -393,7 +393,7 @@ int CookieJarDB::setCookie(const String& url, const String& cookie, bool fromJav
         cookieObj.domain = String(host);
 
     if (cookieObj.path.isEmpty())
-        cookieObj.path = String(path);
+        cookieObj.path = CookieUtil::defaultPathForURL(urlObj);
 
     // FIXME: Need to check that a domain doesn't a set cookie for a tld when wincairo supports PSL
 

@@ -177,6 +177,21 @@ bool parseCookieHeader(const String& cookieLine, const String& domain, Cookie& r
     return true;
 }
 
+String defaultPathForURL(const URL& url)
+{
+    // Algorithm to generate the default path is outlined in https://tools.ietf.org/html/rfc6265#section-5.1.4
+
+    String path = url.path();
+    if (path.isEmpty() || !path.startsWith('/'))
+        return "/";
+
+    auto lastSlashPosition = path.reverseFind('/');
+    if (!lastSlashPosition)
+        return "/";
+
+    return path.substring(0, lastSlashPosition);
+}
+
 } // namespace CookieUtil
 
 } // namespace WebCore

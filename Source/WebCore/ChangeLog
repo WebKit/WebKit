@@ -1,3 +1,21 @@
+2018-08-15  Christopher Reid  <chris.reid@sony.com>
+
+        [Curl] Implement default cookie path handling correctly as outlined in RFC6265.
+        https://bugs.webkit.org/show_bug.cgi?id=188609
+
+        Reviewed by Alex Christensen.
+
+        Curl implementation of default cookie path was wrong so that some cookies cannot be accessible.
+        It should be generated as outlined in: https://tools.ietf.org/html/rfc6265#section-5.1.4
+
+        Tests: http/tests/cookies/http-get-cookie-set-in-js.html
+
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::setCookie):
+        * platform/network/curl/CookieUtil.cpp:
+        (WebCore::CookieUtil::defaultPathForURL):
+        * platform/network/curl/CookieUtil.h:
+
 2018-08-15  Aditya Keerthi  <akeerthi@apple.com>
 
         [Datalist] Add button to TextFieldInputs with a datalist
