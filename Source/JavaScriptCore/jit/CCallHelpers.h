@@ -314,7 +314,7 @@ private:
         std::array<RegType, TargetSize> result { };
 
         for (unsigned i = 0; i < TargetSize; i++) {
-            ASSERT(sourceArray[i] != static_cast<int32_t>(InfoTypeForReg<RegType>::InvalidIndex));
+            ASSERT(sourceArray[i] != InfoTypeForReg<RegType>::InvalidIndex);
             result[i] = sourceArray[i];
         }
 

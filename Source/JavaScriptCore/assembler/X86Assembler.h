@@ -41,7 +41,7 @@ inline bool CAN_SIGN_EXTEND_8_32(int32_t value) { return value == (int32_t)(sign
 
 namespace X86Registers {
 
-typedef enum : int8_t {
+typedef enum {
     eax,
     ecx,
     edx,
@@ -58,17 +58,16 @@ typedef enum : int8_t {
     r12,
     r13,
     r14,
-    r15,
+    r15
 #endif
-    InvalidGPRReg = -1,
 } RegisterID;
 
-typedef enum : int8_t {
+typedef enum {
     eip,
     eflags
 } SPRegisterID;
 
-typedef enum : int8_t {
+typedef enum {
     xmm0,
     xmm1,
     xmm2,
@@ -85,9 +84,8 @@ typedef enum : int8_t {
     xmm12,
     xmm13,
     xmm14,
-    xmm15,
+    xmm15
 #endif
-    InvalidFPRReg = -1,
 } XMMRegisterID;
 
 } // namespace X86Register
