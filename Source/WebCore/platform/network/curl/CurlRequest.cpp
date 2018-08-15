@@ -463,6 +463,10 @@ void CurlRequest::setupPOST(ResourceRequest& request)
     m_curlHandle->enableHttpPostRequest();
 
     auto elementSize = m_formDataStream.elementSize();
+
+    if (!m_request.hasHTTPHeader(HTTPHeaderName::ContentType) && !elementSize)
+        m_curlHandle->removeRequestHeader("Content-Type"_s);
+
     if (!elementSize)
         return;
 

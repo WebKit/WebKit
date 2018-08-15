@@ -1,3 +1,12 @@
+2018-08-15  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Don't send Content-Type header for POST request when body is null.
+        https://bugs.webkit.org/show_bug.cgi?id=188588
+
+        Reviewed by Youenn Fablet.
+
+        * platform/wincairo/TestExpectations:
+
 2018-08-15  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test editing/input/press-tab-during-ime-composition.html is failing
