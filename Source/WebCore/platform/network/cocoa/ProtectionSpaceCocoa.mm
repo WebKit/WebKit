@@ -26,8 +26,6 @@
 #import "config.h"
 #import "ProtectionSpaceCocoa.h"
 
-#import <pal/spi/cf/CFNetworkSPI.h>
-
 namespace WebCore {
 
 static ProtectionSpaceServerType type(NSURLProtectionSpace *space)
@@ -82,8 +80,6 @@ static ProtectionSpaceAuthenticationScheme scheme(NSURLProtectionSpace *space)
     if ([method isEqualToString:NSURLAuthenticationMethodServerTrust])
         return ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
 #endif
-    if ([method isEqualToString:NSURLAuthenticationMethodOAuth])
-        return ProtectionSpaceAuthenticationSchemeOAuth;
 
     ASSERT_NOT_REACHED();
     return ProtectionSpaceAuthenticationSchemeUnknown;
@@ -159,9 +155,6 @@ NSURLProtectionSpace *ProtectionSpace::nsSpace() const
         method = NSURLAuthenticationMethodClientCertificate;
         break;
 #endif
-    case ProtectionSpaceAuthenticationSchemeOAuth:
-        method = NSURLAuthenticationMethodOAuth;
-        break;
     default:
         ASSERT_NOT_REACHED();
     }

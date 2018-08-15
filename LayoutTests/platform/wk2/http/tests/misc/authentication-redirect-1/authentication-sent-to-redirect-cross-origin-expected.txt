@@ -1,4 +1,4 @@
-localhost:8000 - didReceiveAuthenticationChallenge - ProtectionSpaceAuthenticationSchemeHTTPBasic - Responding with testUser:testPassword
+localhost:8000 - didReceiveAuthenticationChallenge - Responding with testUser:testPassword
 https://bugs.webkit.org/show_bug.cgi?id=40138
 You should load this page at 127.0.0.1:8000 so localhost:8000 is considered a different security origin.
 This test loads a php script which demands http authentication, then uses it to redirect to another script in a different origin that shows what authentication headers were sent with the final request.

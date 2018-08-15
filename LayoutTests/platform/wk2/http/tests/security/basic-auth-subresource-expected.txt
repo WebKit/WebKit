@@ -1,8 +1,8 @@
-127.0.0.1:8000 - didReceiveAuthenticationChallenge - ProtectionSpaceAuthenticationSchemeHTTPBasic - Responding with testUser:testPassword
+127.0.0.1:8000 - didReceiveAuthenticationChallenge - Responding with testUser:testPassword
 CONSOLE MESSAGE: Blocked http://localhost:8000/security/resources/subresource1/protected-image.php from asking for credentials because it is a cross-origin request.
 CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/subresource1/protected-image.php from asking for credentials because it is a cross-origin request.
 CONSOLE MESSAGE: Blocked http://localhost:8000/security/resources/subresource2/protected-image.php from asking for credentials because it is a cross-origin request.
-127.0.0.1:8000 - didReceiveAuthenticationChallenge - ProtectionSpaceAuthenticationSchemeHTTPBasic - Responding with testUser:testPassword
+127.0.0.1:8000 - didReceiveAuthenticationChallenge - Responding with testUser:testPassword
 CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/security/resources/subresource2/protected-image.php from asking for credentials because it is a cross-origin request.
 CONSOLE MESSAGE: Blocked https://localhost:8443/security/resources/subresource2/protected-image.php from asking for credentials because it is a cross-origin request.
 CONSOLE MESSAGE: Blocked https://127.0.0.1:8443/security/resources/subresource2/protected-image.php from asking for credentials because it is a cross-origin request.

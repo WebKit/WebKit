@@ -1,5 +1,5 @@
-127.0.0.1:8000 - didReceiveAuthenticationChallenge - ProtectionSpaceAuthenticationSchemeHTTPBasic - Responding with testUsername:testPassword
-127.0.0.1:8000 - didReceiveAuthenticationChallenge - ProtectionSpaceAuthenticationSchemeHTTPBasic - Simulating cancelled authentication sheet
+127.0.0.1:8000 - didReceiveAuthenticationChallenge - Responding with testUsername:testPassword
+127.0.0.1:8000 - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet
 Tests speculative revalidation of authenticated resources.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

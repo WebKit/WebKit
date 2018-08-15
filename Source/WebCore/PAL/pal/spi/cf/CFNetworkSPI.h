@@ -178,8 +178,6 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 #endif
 @end
 
-extern NSString * const NSURLAuthenticationMethodOAuth;
-
 #endif // defined(__OBJC__)
 
 #endif // !PLATFORM(WIN) && !USE(APPLE_INTERNAL_SDK)

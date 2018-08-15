@@ -53,7 +53,6 @@ enum  {
     kWKProtectionSpaceAuthenticationSchemeNegotiate,
     kWKProtectionSpaceAuthenticationSchemeClientCertificateRequested,
     kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested,
-    kWKProtectionSpaceAuthenticationSchemeOAuth,
     kWKProtectionSpaceAuthenticationSchemeUnknown = 100,
 };
 typedef uint32_t WKProtectionSpaceAuthenticationScheme;
