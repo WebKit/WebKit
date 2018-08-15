@@ -142,7 +142,7 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext,
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow descendants -> context: " << &layoutContext << " root: " << &root());
 }
 
-Display::Box FormattingContext::mapToAncestor(const LayoutContext& layoutContext, const Box& layoutBox, const Container& ancestor)
+Display::Box FormattingContext::mapBoxToAncestor(const LayoutContext& layoutContext, const Box& layoutBox, const Container& ancestor)
 {
     ASSERT(layoutBox.isDescendantOf(ancestor));
 
@@ -162,6 +162,27 @@ Display::Box FormattingContext::mapToAncestor(const LayoutContext& layoutContext
     auto mappedDisplayBox = Display::Box(*displayBox);
     mappedDisplayBox.setTopLeft(topLeft);
     return mappedDisplayBox;
+}
+
+Position FormattingContext::mapTopLeftToAncestor(const LayoutContext& layoutContext, const Box& layoutBox, const Container& ancestor)
+{
+    ASSERT(layoutBox.isDescendantOf(ancestor));
+    return mapCoordinateToAncestor(layoutContext, layoutContext.displayBoxForLayoutBox(layoutBox)->topLeft(), *layoutBox.containingBlock(), ancestor);
+}
+
+Position FormattingContext::mapCoordinateToAncestor(const LayoutContext& layoutContext, Position position, const Container& containingBlock, const Container& ancestor)
+{
+    auto mappedPosition = position;
+    auto* container = &containingBlock;
+    for (; container && container != &ancestor; container = container->containingBlock())
+        mappedPosition.moveBy(layoutContext.displayBoxForLayoutBox(*container)->topLeft());
+
+    if (!container) {
+        ASSERT_NOT_REACHED();
+        return position;
+    }
+
+    return mappedPosition;
 }
 
 #ifndef NDEBUG

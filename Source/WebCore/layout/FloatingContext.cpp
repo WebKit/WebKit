@@ -150,13 +150,40 @@ std::optional<LayoutUnit> FloatingContext::verticalPositionWithClearance(const B
         // 1. The amount necessary to place the border edge of the block even with the bottom outer edge of the lowest float that is to be cleared.
         // 2. The amount necessary to place the top border edge of the block at its hypothetical position.
 
-        auto absoluteDisplayBox = FormattingContext::mapToAncestor(layoutContext(), layoutBox, downcast<Container>(m_floatingState.root()));
-        if (floatBottom <= absoluteDisplayBox.rectWithMargin().top())
+        auto& layoutContext = this->layoutContext();
+        auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
+        auto rootRelativeTop = FormattingContext::mapTopLeftToAncestor(layoutContext, layoutBox, downcast<Container>(m_floatingState.root())).y;
+        auto clearance = *floatBottom - rootRelativeTop;
+        if (clearance <= 0)
             return { };
 
+        // Clearance inhibits margin collapsing. Let's reset the relevant adjoining margins.
+        if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
+            auto& previousInFlowDisplayBox = *layoutContext.displayBoxForLayoutBox(*previousInFlowSibling);
+
+            // Since the previous inflow sibling has already been laid out, its margin is collapsed by now.
+            ASSERT(!previousInFlowDisplayBox.marginBottom());
+            auto collapsedMargin = displayBox.marginTop();
+
+            // Reset previous bottom and current top margins to non-collapsing.
+            previousInFlowDisplayBox.setVerticalMargin({ previousInFlowDisplayBox.marginTop(), previousInFlowDisplayBox.nonCollapsedMarginBottom() });
+            displayBox.setVerticalMargin({ displayBox.nonCollapsedMarginTop(), displayBox.marginBottom() });
+
+            auto nonCollapsedMargin = previousInFlowDisplayBox.marginBottom() + displayBox.marginTop();
+            auto marginOffset = nonCollapsedMargin - collapsedMargin;
+            // Move the box to the position where it would be with non-collapsed margins.
+            rootRelativeTop += marginOffset;
+
+            // Having negative clearance is also normal. It just means that the box with the non-collapsed margins is now lower than it needs to be.
+            clearance -= marginOffset;
+        }
+        // Now adjust the box's position with the clearance.
+        rootRelativeTop += clearance;
+        ASSERT(*floatBottom == rootRelativeTop);
+
         // The return vertical position is in the containing block's coordinate system.
-        auto* containingBlockDisplayBox = layoutContext().displayBoxForLayoutBox(*layoutBox.containingBlock());
-        return *floatBottom - containingBlockDisplayBox->top();
+        auto containingBlockRootRelativeTop = FormattingContext::mapTopLeftToAncestor(layoutContext, *layoutBox.containingBlock(), downcast<Container>(m_floatingState.root())).y;
+        return rootRelativeTop - containingBlockRootRelativeTop;
     };
 
     auto clear = layoutBox.style().clear();

@@ -1,3 +1,32 @@
+2018-08-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] Add support for negative clearance.
+        https://bugs.webkit.org/show_bug.cgi?id=188555
+
+        Reviewed by Simon Fraser.
+
+        1. Compute clearance to avoid float(s) (border box needs to avoid floats)
+        2. Reset vertical margins to non-collapsed values.
+        4. Adjust clearance with the new margins.
+        5. Take the adjusted clearance and move the box vertically if needed.
+
+        Test: fast/block/block-only/margin-collapse-with-clearance.html
+
+        * layout/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::verticalPositionWithClearance const):
+        * layout/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::FloatItem::FloatItem):
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::mapBoxToAncestor):
+        (WebCore::Layout::FormattingContext::mapTopLeftToAncestor):
+        (WebCore::Layout::FormattingContext::mapCoordinateToAncestor):
+        (WebCore::Layout::FormattingContext::mapToAncestor): Deleted.
+        * layout/FormattingContext.h:
+        * layout/LayoutUnits.h:
+        (WebCore::Layout::Position::Position):
+        (WebCore::Layout::Position::moveBy):
+        * layout/displaytree/DisplayBox.h:
+
 2018-08-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed, rolling out r234859.

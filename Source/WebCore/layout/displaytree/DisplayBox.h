@@ -38,6 +38,7 @@ class RenderStyle;
 namespace Layout {
 class BlockFormattingContext;
 class FormattingContext;
+class FloatingContext;
 class LayoutContext;
 }
 
@@ -48,6 +49,7 @@ class Box {
 public:
     friend class Layout::BlockFormattingContext;
     friend class Layout::FormattingContext;
+    friend class Layout::FloatingContext;
     friend class Layout::LayoutContext;
 
     Box(const Box&);

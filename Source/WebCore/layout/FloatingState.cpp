@@ -41,8 +41,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingState);
 FloatingState::FloatItem::FloatItem(const Box& layoutBox, const FloatingState& floatingState)
     : m_layoutBox(makeWeakPtr(const_cast<Box&>(layoutBox)))
     , m_containingBlock(makeWeakPtr(const_cast<Container&>(*layoutBox.containingBlock())))
-    , m_absoluteDisplayBox(FormattingContext::mapToAncestor(floatingState.layoutContext(), layoutBox, downcast<Container>(floatingState.root())))
-    , m_containingBlockAbsoluteDisplayBox(FormattingContext::mapToAncestor(floatingState.layoutContext(), *m_containingBlock, downcast<Container>(floatingState.root())))
+    , m_absoluteDisplayBox(FormattingContext::mapBoxToAncestor(floatingState.layoutContext(), layoutBox, downcast<Container>(floatingState.root())))
+    , m_containingBlockAbsoluteDisplayBox(FormattingContext::mapBoxToAncestor(floatingState.layoutContext(), *m_containingBlock, downcast<Container>(floatingState.root())))
 {
 }
 

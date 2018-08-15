@@ -38,8 +38,31 @@ struct Position {
     // FIXME: Use LayoutUnit<Horizontal> to avoid top/left vs. x/y confusion.
     LayoutUnit x; // left
     LayoutUnit y; // top
+
+    Position() = default;
+    Position(LayoutUnit, LayoutUnit);
+    Position(LayoutPoint);
+    void moveBy(LayoutPoint);
     operator LayoutPoint() const { return { x, y }; }
 };
+
+inline Position::Position(LayoutPoint point)
+    : x(point.x())
+    , y(point.y())
+{
+}
+
+inline Position::Position(LayoutUnit x, LayoutUnit y)
+    : x(x)
+    , y(y)
+{
+}
+
+inline void Position::moveBy(LayoutPoint offset)
+{
+    x += offset.x();
+    y += offset.y();
+}
 
 // Margin, border, padding
 struct HorizontalEdges {
