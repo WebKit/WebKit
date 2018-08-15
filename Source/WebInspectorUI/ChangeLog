@@ -1,3 +1,14 @@
+2018-08-14  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Table should not center rows when scrolling them into view
+        https://bugs.webkit.org/show_bug.cgi?id=188593
+        <rdar://problem/43311660>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype._handleKeyDown):
+
 2018-08-13  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Table should handle row selection instead of the table delegate

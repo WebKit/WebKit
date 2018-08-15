@@ -1173,7 +1173,7 @@ WI.Table = class Table extends WI.View
 
             let row = this._cachedRows.get(this._selectedRowIndex);
             console.assert(row, "Moving up or down by one should always find a cached row since it is within the overflow bounds.");
-            row.scrollIntoViewIfNeeded();
+            row.scrollIntoViewIfNeeded(false);
 
             // Force our own scroll update because we may have scrolled.
             this._cachedScrollTop = NaN;
