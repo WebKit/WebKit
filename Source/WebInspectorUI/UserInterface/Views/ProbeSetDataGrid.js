@@ -33,7 +33,7 @@ WI.ProbeSetDataGrid = class ProbeSetDataGrid extends WI.DataGrid
         var columns = {};
         for (var probe of probeSet.probes) {
             var title = probe.expression || WI.UIString("(uninitialized)");
-            columns[probe.id] = {title};
+            columns[WI.ProbeSetDataGrid.columnIdentifierForProbe(probe)] = {title};
         }
 
         super(columns);
@@ -56,6 +56,13 @@ WI.ProbeSetDataGrid = class ProbeSetDataGrid extends WI.DataGrid
         this._setupData();
     }
 
+    // Static
+
+    static columnIdentifierForProbe(probe)
+    {
+        return "probe" + probe.id;
+    }
+
     // Public
 
     closed()
@@ -71,7 +78,7 @@ WI.ProbeSetDataGrid = class ProbeSetDataGrid extends WI.DataGrid
     _setupProbe(event)
     {
         var probe = event.data;
-        this.insertColumn(probe.id, {title: probe.expression});
+        this.insertColumn(WI.ProbeSetDataGrid.columnIdentifierForProbe(probe), {title: probe.expression});
 
         for (var frame of this._data.frames)
             this._updateNodeForFrame(frame);
@@ -80,7 +87,7 @@ WI.ProbeSetDataGrid = class ProbeSetDataGrid extends WI.DataGrid
     _teardownProbe(event)
     {
         var probe = event.data;
-        this.removeColumn(probe.id);
+        this.removeColumn(WI.ProbeSetDataGrid.columnIdentifierForProbe(probe));
 
         for (var frame of this._data.frames)
             this._updateNodeForFrame(frame);
@@ -176,14 +183,15 @@ WI.ProbeSetDataGrid = class ProbeSetDataGrid extends WI.DataGrid
         if (probe.breakpoint !== this.probeSet.breakpoint)
             return;
 
-        if (!this.columns.has(probe.id))
+        let columnIdentifier = WI.ProbeSetDataGrid.columnIdentifierForProbe(probe);
+        if (!this.columns.has(columnIdentifier))
             return;
 
-        var oldColumn = this.columns.get(probe.id);
-        this.removeColumn(probe.id);
+        var oldColumn = this.columns.get(columnIdentifier);
+        this.removeColumn(columnIdentifier);
         var ordinal = oldColumn["ordinal"];
         var newColumn = {title: event.data.newValue};
-        this.insertColumn(probe.id, newColumn, ordinal);
+        this.insertColumn(columnIdentifier, newColumn, ordinal);
 
         for (var frame of this._data.frames)
             this._updateNodeForFrame(frame);

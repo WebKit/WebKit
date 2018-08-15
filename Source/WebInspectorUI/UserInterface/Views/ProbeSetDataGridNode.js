@@ -56,13 +56,15 @@ WI.ProbeSetDataGridNode = class ProbeSetDataGridNode extends WI.DataGridNode
         console.assert(value instanceof WI.ProbeSetDataFrame, "Invalid ProbeSetDataFrame argument: ", value);
         this._frame = value;
 
+
         var data = {};
         for (var probe of this.dataGrid.probeSet.probes) {
+            let columnIdentifier = WI.ProbeSetDataGrid.columnIdentifierForProbe(probe);
             var sample = this.frame[probe.id];
             if (!sample || !sample.object)
-                data[probe.id] = WI.ProbeSetDataFrame.MissingValue;
+                data[columnIdentifier] = WI.ProbeSetDataFrame.MissingValue;
             else
-                data[probe.id] = sample.object;
+                data[columnIdentifier] = sample.object;
         }
         this._data = data;
     }

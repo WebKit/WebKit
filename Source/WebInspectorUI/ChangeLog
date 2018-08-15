@@ -1,3 +1,29 @@
+2018-08-15  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r?): the probe sidebar doesn't show up when adding probes
+        https://bugs.webkit.org/show_bug.cgi?id=188594
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/ProbeDetailsSidebarPanel.js:
+        (WI.ProbeDetailsSidebarPanel.prototype.set inspectedProbeSets):
+        (WI.ProbeDetailsSidebarPanel.prototype.initialLayout):
+        Add checks to ensure that DOM elements for each probe section exist before trying to
+        add/remove them from the sidebar. This can happen if probes are inspected before the sidebar
+        is shown for the first time.
+
+        * UserInterface/Views/ProbeSetDataGrid.js:
+        (WI.ProbeSetDataGrid):
+        (WI.ProbeSetDataGrid.columnIdentifierForProbe): Added.
+        (WI.ProbeSetDataGrid.prototype._setupProbe):
+        (WI.ProbeSetDataGrid.prototype._teardownProbe):
+        (WI.ProbeSetDataGrid.prototype._probeExpressionChanged):
+        * UserInterface/Views/ProbeSetDataGridNode.js:
+        (WI.ProbeSetDataGridNode.prototype.set frame):
+        Provide better column identifiers for each probe's `WI.DataGrid`. It's possible for the
+        numeric probe ID value to be stringified when passing it into the constructor of
+        `WI.DataGrid`, which will not match the original numeric value on later retrieval.
+
 2018-08-14  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Table should not center rows when scrolling them into view
