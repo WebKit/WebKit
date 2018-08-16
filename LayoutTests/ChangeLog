@@ -1,3 +1,15 @@
+2018-08-16  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=188668
+
+        Unreviewed test gardening.
+
+        After r234863 landed, the information in the `LayoutTests/tests-options.json` is effective on WinCairo tests.
+        Remove [ Slow ] keywords. Also maintain xmlhttprequest results.
+
+        * platform/wincairo/TestExpectations:
+
 2018-08-16  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] The layout test editing/pasteboard/drag-and-drop-color-input-events.html is timing out.
