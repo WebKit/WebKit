@@ -1,4 +1,4 @@
-Tests for bug 3812 - GET and POST should not be the only HTTP methods implemented in XMLHttpRequest.
+GET and POST should not be the only HTTP methods implemented in XMLHttpRequest for Workers.
 
 GET(""): GET(null bytes), Content-Type: null
 GET(null): GET(null bytes), Content-Type: null
@@ -21,3 +21,4 @@ WKFOOBAR("123"): WKFOOBAR(3 bytes), Content-Type: text/plain;charset=UTF-8
 SEARCH(""): SEARCH(0 bytes), Content-Type: text/plain;charset=UTF-8
 SEARCH(null): SEARCH(0 bytes), Content-Type: null
 SEARCH("123"): SEARCH(3 bytes), Content-Type: text/plain;charset=UTF-8
+DONE
