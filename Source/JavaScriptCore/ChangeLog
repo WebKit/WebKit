@@ -1,3 +1,28 @@
+2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [YARR] Align allocation size in BumpPointerAllocator with sizeof(void*)
+        https://bugs.webkit.org/show_bug.cgi?id=188571
+
+        Reviewed by Saam Barati.
+
+        UBSan finds YarrInterpreter performs misaligned accesses. This is because YarrInterpreter
+        allocates DisjunctionContext and ParenthesesDisjunctionContext from BumpPointerAllocator
+        without considering alignment of them. This patch adds DisjunctionContext::allocationSize
+        and ParenthesesDisjunctionContext::allocationSize to calculate allocation sizes for them.
+        The size is always rounded to `sizeof(void*)` so that these classes are always allocated
+        with `sizeof(void*)` alignment. We also ensure the alignments of both classes are less
+        than or equal to `sizeof(void*)` by `static_assert`.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::DisjunctionContext::allocationSize):
+        (JSC::Yarr::Interpreter::allocDisjunctionContext):
+        (JSC::Yarr::Interpreter::ParenthesesDisjunctionContext::ParenthesesDisjunctionContext):
+        (JSC::Yarr::Interpreter::ParenthesesDisjunctionContext::getDisjunctionContext):
+        (JSC::Yarr::Interpreter::ParenthesesDisjunctionContext::allocationSize):
+        (JSC::Yarr::Interpreter::allocParenthesesDisjunctionContext):
+        (JSC::Yarr::Interpreter::Interpreter):
+        (JSC::Yarr::Interpreter::DisjunctionContext::DisjunctionContext): Deleted.
+
 2018-08-15  Keith Miller  <keith_miller@apple.com>
 
         Remove evernote hacks
