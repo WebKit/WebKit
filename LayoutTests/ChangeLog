@@ -1,3 +1,22 @@
+2018-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perform a microtask checkpoint before creating a custom element
+        https://bugs.webkit.org/show_bug.cgi?id=188189
+        <rdar://problem/42843022>
+
+        Reviewed by Geoffrey Garen.
+
+        Added a W3C style testharness.js test for perfoming microtask checkpoint before constructing
+        a custom element synchronously.
+
+        * fast/custom-elements/perform-microtask-checkpoint-before-construction-expected.txt: Added.
+        * fast/custom-elements/perform-microtask-checkpoint-before-construction.html: Added.
+        * fast/dom/MutationObserver/parser-mutations.html: Fixed the test per new behavior in Document::finishParsing.
+        Because iframe loads synchronously and fires DOMContentLoaded, mutation records are now delivered twice after
+        iframe element is encountered in this test and before script element executes. Concatenate the mutation records
+        arrays to account for this behavioral change. New WebKit behavior matches that of Chrome; namely this test
+        fails both on Chrome Canary 70 and trunk WebKit with this patch without this fix.
+
 2018-08-15  Jer Noble  <jer.noble@apple.com>
 
         Add Experimental Feature support for SourceBuffer.changeType()

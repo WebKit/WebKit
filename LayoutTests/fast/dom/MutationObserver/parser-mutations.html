@@ -7,8 +7,9 @@
     if (window.testRunner)
         testRunner.dumpAsText();
 
+    var mutations = [];
     var observer = new MutationObserver(function(mutations, observer) {
-        window.mutations = mutations;
+        window.mutations = window.mutations.concat(mutations);
     });
     observer.observe(document.body, {childList: true, subtree:true});
 </script>

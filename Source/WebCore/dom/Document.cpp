@@ -5427,6 +5427,9 @@ void Document::finishedParsing()
     if (!m_documentTiming.domContentLoadedEventStart)
         m_documentTiming.domContentLoadedEventStart = MonotonicTime::now();
 
+    // FIXME: Schdule a task to fire DOMContentLoaded event instead. See webkit.org/b/82931
+    MicrotaskQueue::mainThreadQueue().performMicrotaskCheckpoint();
+
     dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, true, false));
 
     if (!m_documentTiming.domContentLoadedEventEnd)
