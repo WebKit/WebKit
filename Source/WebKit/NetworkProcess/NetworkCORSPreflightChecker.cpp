@@ -89,7 +89,7 @@ void NetworkCORSPreflightChecker::willPerformHTTPRedirection(WebCore::ResourceRe
     m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), "Preflight response is not successful"_s, ResourceError::Type::AccessControl });
 }
 
-void NetworkCORSPreflightChecker::didReceiveChallenge(const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler&& completionHandler)
+void NetworkCORSPreflightChecker::didReceiveChallenge(WebCore::AuthenticationChallenge&& challenge, ChallengeCompletionHandler&& completionHandler)
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveChallenge, authentication scheme: %u", challenge.protectionSpace().authenticationScheme());
 
@@ -102,7 +102,15 @@ void NetworkCORSPreflightChecker::didReceiveChallenge(const WebCore::Authenticat
         return;
     }
 
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    NetworkProcess::singleton().canAuthenticateAgainstProtectionSpace(challenge.protectionSpace(), m_parameters.pageID, m_parameters.frameID, [this, weakThis = makeWeakPtr(this), completionHandler = WTFMove(completionHandler), challenge = WTFMove(challenge)] (bool canAuthenticate) mutable {
+        if (!canAuthenticate)
+            return completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, { });
+        NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.pageID, m_parameters.frameID, challenge, WTFMove(completionHandler));
+    });
+#else
     NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.pageID, m_parameters.frameID, challenge, WTFMove(completionHandler));
+#endif
 }
 
 void NetworkCORSPreflightChecker::didReceiveResponseNetworkSession(WebCore::ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)

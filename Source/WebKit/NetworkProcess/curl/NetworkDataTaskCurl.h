@@ -72,7 +72,7 @@ private:
     bool shouldRedirectAsGET(const WebCore::ResourceRequest&, bool crossOrigin);
     void willPerformHTTPRedirection();
 
-    void tryHttpAuthentication(const WebCore::AuthenticationChallenge&);
+    void tryHttpAuthentication(WebCore::AuthenticationChallenge&&);
     void restartWithCredential(const WebCore::Credential&);
 
     void appendCookieHeader(WebCore::ResourceRequest&);

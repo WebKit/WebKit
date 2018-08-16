@@ -306,7 +306,7 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
     });
 }
 
-void NetworkDataTaskCurl::tryHttpAuthentication(const AuthenticationChallenge& challenge)
+void NetworkDataTaskCurl::tryHttpAuthentication(AuthenticationChallenge&& challenge)
 {
     if (!m_user.isNull() && !m_password.isNull()) {
         auto persistence = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use ? WebCore::CredentialPersistenceForSession : WebCore::CredentialPersistenceNone;
@@ -338,7 +338,7 @@ void NetworkDataTaskCurl::tryHttpAuthentication(const AuthenticationChallenge& c
         }
     }
 
-    m_client->didReceiveChallenge(challenge, [this, protectedThis = makeRef(*this), challenge](AuthenticationChallengeDisposition disposition, const Credential& credential) {
+    m_client->didReceiveChallenge(AuthenticationChallenge(challenge), [this, protectedThis = makeRef(*this), ](AuthenticationChallengeDisposition disposition, const Credential& credential) {
         if (m_state == State::Canceling || m_state == State::Completed)
             return;
 
