@@ -1,3 +1,12 @@
+2018-08-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WebDriver tests after r234839.
+
+        New pytest requires to autoinstall attrs too.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook._install_pytest):
+
 2018-08-15  Ansh Shukla  <ansh_shukla@apple.com>
 
         NSURLAuthenticationMethodOAuth challenges are surfaced to clients in -didReceiveAuthenticationChallenge as NSURLAuthenticationMethodDefault

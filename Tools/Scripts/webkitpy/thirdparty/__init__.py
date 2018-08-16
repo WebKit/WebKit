@@ -154,6 +154,8 @@ class AutoinstallImportHook(object):
                               "atomicwrites-1.1.5/atomicwrites")
         self._install("https://pypi.python.org/packages/94/4a/db842e7a0545de1cdb0439bb80e6e42dfe82aaeaadd4072f2263a4fbed23/funcsigs-1.0.2.tar.gz",
                               "funcsigs-1.0.2/funcsigs")
+        self._install("https://pypi.python.org/packages/e4/ac/a04671e118b57bee87dabca1e0f2d3bda816b7a551036012d0ca24190e71/attrs-18.1.0.tar.gz",
+                              "attrs-18.1.0/src/attr")
         self._install("https://pypi.python.org/packages/a2/ec/415d0cccc1ed41cd7fdf69ad989da16a8d13057996371004cab4bafc48f3/pytest-3.6.2.tar.gz",
                               "pytest-3.6.2/src/_pytest")
         self._install("https://pypi.python.org/packages/a2/ec/415d0cccc1ed41cd7fdf69ad989da16a8d13057996371004cab4bafc48f3/pytest-3.6.2.tar.gz",
