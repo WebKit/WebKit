@@ -340,6 +340,19 @@ fast/dom/Window/watchos [ Skip ]
 
 fast/dom/Window/Plug-ins.html [ Failure ]
 
+webkit.org/b/99036 pointer-lock/ [ Skip ]
+webkit.org/b/99036 fast/shadow-dom/pointerlockelement-in-shadow-tree.html [ Skip ]
+webkit.org/b/99036 fast/shadow-dom/pointerlockelement-in-slot.html [ Skip ]
+
+webkit.org/b/153833 fast/shadow-dom/touch-event-ios.html [ Skip ]
+
+Bug(WPE) fast/replaced/invalid-object-with-fallback.html [ Skip ]
+Bug(WPE) fast/replaced/object-with-embed-url-param.html [ Skip ]
+Bug(WPE) fast/replaced/no-focus-ring-embed.html [ Skip ]
+Bug(WPE) fast/replaced/no-focus-ring-object.html [ Skip ]
+Bug(WPE) fast/replaced/pdf-as-image.html [ Skip ]
+Bug(WPE) fast/replaced/pdf-as-object-and-embed.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -354,7 +367,6 @@ Bug(WPE) mathml/ [ Skip ]
 Bug(WPE) media/ [ Skip ]
 Bug(WPE) pageoverlay/ [ Skip ]
 Bug(WPE) plugins/ [ Skip ]
-Bug(WPE) pointer-lock/ [ Skip ]
 Bug(WPE) printing/ [ Skip ]
 Bug(WPE) scrollingcoordinator/ [ Skip ]
 Bug(WPE) webarchive/ [ Skip ]
@@ -366,46 +378,27 @@ Bug(WPE) fast/backgrounds [ Skip ]
 Bug(WPE) fast/block [ Skip ]
 Bug(WPE) fast/body-propagation [ Skip ]
 Bug(WPE) fast/borders [ Skip ]
-Bug(WPE) fast/box-decoration-break [ Skip ]
-Bug(WPE) fast/box-shadow [ Skip ]
-Bug(WPE) fast/box-sizing [ Skip ]
-Bug(WPE) fast/clip [ Skip ]
-Bug(WPE) fast/compact [ Skip ]
 Bug(WPE) fast/css [ Skip ]
 Bug(WPE) fast/css3-text [ Skip ]
-Bug(WPE) fast/css-generated-content [ Skip ]
-Bug(WPE) fast/doctypes [ Skip ]
 Bug(WPE) fast/fast-mobile-scrolling [ Skip ]
 Bug(WPE) fast/files [ Skip ]
 Bug(WPE) fast/filter-image [ Skip ]
 Bug(WPE) fast/fixed-layout [ Skip ]
-Bug(WPE) fast/flexbox [ Skip ]
 Bug(WPE) fast/forms [ Skip ]
 Bug(WPE) fast/frames [ Skip ]
 Bug(WPE) fast/hidpi [ Skip ]
 Bug(WPE) fast/history [ Skip ]
 Bug(WPE) fast/html [ Skip ]
 Bug(WPE) fast/images [ Skip ]
-Bug(WPE) fast/inline [ Skip ]
-Bug(WPE) fast/inline-block [ Skip ]
-Bug(WPE) fast/invalid [ Skip ]
 Bug(WPE) fast/layers [ Skip ]
-Bug(WPE) fast/line-grid [ Skip ]
-Bug(WPE) fast/lists [ Skip ]
-Bug(WPE) fast/loader [ Skip ]
-Bug(WPE) fast/masking [ Skip ]
 Bug(WPE) fast/media [ Skip ]
 Bug(WPE) fast/multicol [ Skip ]
 Bug(WPE) fast/overflow [ Skip ]
 Bug(WPE) fast/picture [ Skip ]
-Bug(WPE) fast/preloader [ Skip ]
 Bug(WPE) fast/reflections [ Skip ]
 Bug(WPE) fast/repaint [ Skip ]
-Bug(WPE) fast/replaced [ Skip ]
-Bug(WPE) fast/ruby [ Skip ]
 Bug(WPE) fast/scrolling [ Skip ]
 Bug(WPE) fast/selectors [ Skip ]
-Bug(WPE) fast/shadow-dom [ Skip ]
 Bug(WPE) fast/shrink-wrap [ Skip ]
 Bug(WPE) fast/spatial-navigation [ Skip ]
 Bug(WPE) fast/speechsynthesis [ Skip ]
@@ -416,9 +409,6 @@ Bug(WPE) fast/text/woff2-totalsfntsize.html [ Pass ]
 Bug(WPE) fast/text/woff2.html [ Pass ]
 Bug(WPE) fast/text-autosizing [ Skip ]
 Bug(WPE) fast/visual-viewport [ Skip ]
-Bug(WPE) fast/writing-mode [ Skip ]
-Bug(WPE) fast/xmlhttprequest [ Skip ]
-Bug(WPE) fast/xpath [ Skip ]
 Bug(WPE) fast/zooming [ Skip ]
 
 Bug(WPE) css3/blending [ Skip ]
@@ -676,6 +666,9 @@ webkit.org/b/179611 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-b
 webkit.org/b/179607 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-async.htm [ Pass Failure ]
 webkit.org/b/179607 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-async-same-origin.htm [ Pass Failure ]
 webkit.org/b/159724 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Pass Failure ]
+
+Bug(WPE) fast/doctypes/xhtml-with-xhtmlmp-doctype.xhtml [ Pass Failure ]
+Bug(WPE) fast/doctypes/xhtml-with-xhtmlmp12-doctype.xhtml [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 7. SLOW TESTS
@@ -1321,6 +1314,46 @@ webkit.org/b/188509 fast/dom/Window/window-resize-and-move-arguments.html [ Fail
 webkit.org/b/188509 fast/dom/Window/window-resize-contents.html [ Timeout ]
 webkit.org/b/188509 fast/dom/Window/window-resize-nan.html [ Failure ]
 webkit.org/b/188509 fast/dom/Window/window-resize-update-scrollbars.html [ Timeout ]
+
+webkit.org/b/188657 fast/shadow-dom/range-input-element-shadow-manipulation.html [ Failure ]
+
+webkit.org/b/188658 fast/shadow-dom/trusted-event-scoped-flags.html [ Failure ]
+
+webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
+webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
+webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
+webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-5.html [ ImageOnlyFailure ]
+webkit.org/b/153700 fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
+
+webkit.org/b/176648 fast/ruby/ruby-justification.html [ ImageOnlyFailure ]
+
+webkit.org/b/188659 fast/masking/clip-path-selection.html [ Failure ]
+
+webkit.org/b/188660 fast/loader/local-CSS-from-local.html [ Failure ]
+webkit.org/b/188660 fast/loader/local-JavaScript-from-local.html [ Failure ]
+webkit.org/b/188660 fast/loader/local-image-from-local.html [ Failure ]
+
+webkit.org/b/163335 fast/loader/file-URL-with-port-number.html [ Timeout ]
+
+webkit.org/b/169909 fast/css-generated-content/initial-letter-pagination-sunken-rl.html [ ImageOnlyFailure ]
+webkit.org/b/169909 fast/css-generated-content/initial-letter-pagination-sunken.html [ ImageOnlyFailure ]
+
+webkit.org/b/117582 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
+
+webkit.org/b/131347 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
+
+webkit.org/b/131347 fast/inline/hidpi-inline-selection-leaves-gap.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/inline/hidpi-inline-text-decoration-with-subpixel-value.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/inline/hidpi-outline-auto-negative-offset-with-border-radius.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/inline/hidpi-outline-auto-with-border-radius-horizontal-ltr.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/inline/hidpi-outline-auto-with-border-radius-horizontal-rtl.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/inline/hidpi-outline-auto-with-border-radius-vertical-ltr.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/inline/hidpi-outline-auto-with-border-radius-vertical-rtl.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/inline/hidpi-outline-auto-with-fractional-radius.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlines.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/inline/hidpi-select-inline-on-subpixel-position.html [ ImageOnlyFailure ]
+webkit.org/b/168430 fast/inline/outline-corners-with-offset.html [ ImageOnlyFailure ]
+webkit.org/b/179113 fast/inline/padding-ellipsis-right.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<
