@@ -69,7 +69,9 @@ IsoTLS* IsoTLS::ensureEntries(unsigned offset)
 #if HAVE_PTHREAD_MACHDEP_H
             pthread_key_init_np(tlsKey, destructor);
 #else
-            pthread_key_create(&s_tlsKey, destructor);
+            int error = pthread_key_create(&s_tlsKey, destructor);
+            if (error)
+                BCRASH();
             s_didInitialize = true;
 #endif
         });

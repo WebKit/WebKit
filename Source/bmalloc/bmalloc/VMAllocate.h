@@ -56,8 +56,12 @@ namespace bmalloc {
 inline size_t vmPageSize()
 {
     static size_t cached;
-    if (!cached)
-        cached = sysconf(_SC_PAGESIZE);
+    if (!cached) {
+        long pageSize = sysconf(_SC_PAGESIZE);
+        if (pageSize < 0)
+            BCRASH();
+        cached = pageSize;
+    }
     return cached;
 }
 

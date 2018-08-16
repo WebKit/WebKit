@@ -53,7 +53,7 @@ private:
 #endif
     
     // This is the debug heap. We can use whatever data structures we like. It doesn't matter.
-    size_t m_pageSize;
+    size_t m_pageSize { 0 };
     std::mutex m_lock;
     std::unordered_map<void*, size_t> m_sizeMap;
 };

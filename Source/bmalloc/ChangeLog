@@ -1,3 +1,17 @@
+2018-08-16  Tomas Popela  <tpopela@redhat.com>
+
+        bmalloc: Coverity scan issues
+        https://bugs.webkit.org/show_bug.cgi?id=186763
+
+        Reviewed by Saam Barati.
+
+        * bmalloc/DebugHeap.h: Initialize the m_pageSize variable.
+        * bmalloc/IsoTLS.cpp:
+        (bmalloc::IsoTLS::ensureEntries): Check the return value of
+        pthread_key_create return().
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmPageSize): Correctly check the return value of sysconf().
+
 2018-07-27  Mark Lam  <mark.lam@apple.com>
 
         Initialize bmalloc::DebugHeap::m_pageSize for non-Darwin builds.
