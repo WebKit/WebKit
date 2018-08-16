@@ -39,6 +39,7 @@
 #import "WKWebViewContentProviderRegistry.h"
 #import "WebKit2Initialize.h"
 #import "WebURLSchemeHandlerCocoa.h"
+#import "_WKApplicationManifestInternal.h"
 #import "_WKVisitedLinkStore.h"
 #import "_WKWebsiteDataStoreInternal.h"
 #import <WebCore/RuntimeApplicationChecks.h>
@@ -141,15 +142,10 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 
 #if PLATFORM(MAC)
     WKRetainPtr<WKPageGroupRef> _pageGroup;
-    double _cpuLimit;
     BOOL _showsURLsInToolTips;
     BOOL _serviceControlsEnabled;
     BOOL _imageControlsEnabled;
     BOOL _requiresUserActionForEditingControlsManager;
-#endif
-
-#if ENABLE(APPLICATION_MANIFEST)
-    RetainPtr<_WKApplicationManifest> _applicationManifest;
 #endif
 
 #if ENABLE(APPLE_PAY)
@@ -206,7 +202,6 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 #endif
 
 #if PLATFORM(MAC)
-    _cpuLimit = 0;
     _printsBackgrounds = NO;
     _respectsImageOrientation = NO;
     _showsURLsInToolTips = NO;
@@ -373,7 +368,6 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_systemPreviewEnabled = self->_systemPreviewEnabled;
 #endif
 #if PLATFORM(MAC)
-    configuration->_cpuLimit = self->_cpuLimit;
     configuration->_userInterfaceDirectionPolicy = self->_userInterfaceDirectionPolicy;
     configuration->_showsURLsInToolTips = self->_showsURLsInToolTips;
     configuration->_serviceControlsEnabled = self->_serviceControlsEnabled;
@@ -389,9 +383,6 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 #endif
 #if ENABLE(APPLE_PAY)
     configuration->_applePayEnabled = self->_applePayEnabled;
-#endif
-#if ENABLE(APPLICATION_MANIFEST)
-    configuration->_applicationManifest = self->_applicationManifest;
 #endif
     configuration->_needsStorageAccessFromFileURLsQuirk = self->_needsStorageAccessFromFileURLsQuirk;
 
@@ -858,18 +849,14 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (_WKApplicationManifest *)_applicationManifest
 {
-#if ENABLE(APPLICATION_MANIFEST)
-    return _applicationManifest.get();
-#else
+    if (auto* manifest = _pageConfiguration->applicationManifest())
+        return wrapper(*manifest);
     return nil;
-#endif
 }
 
 - (void)_setApplicationManifest:(_WKApplicationManifest *)applicationManifest
 {
-#if ENABLE(APPLICATION_MANIFEST)
-    _applicationManifest = applicationManifest;
-#endif
+    _pageConfiguration->setApplicationManifest(applicationManifest ? applicationManifest->_applicationManifest.get() : nullptr);
 }
 
 #if PLATFORM(MAC)
@@ -925,12 +912,12 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (void)_setCPULimit:(double)cpuLimit
 {
-    _cpuLimit = cpuLimit;
+    _pageConfiguration->setCPULimit(cpuLimit);
 }
 
 - (double)_cpuLimit
 {
-    return _cpuLimit;
+    return _pageConfiguration->cpuLimit().value_or(0);
 }
 
 #endif // PLATFORM(MAC)

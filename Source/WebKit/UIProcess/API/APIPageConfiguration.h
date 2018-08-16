@@ -111,7 +111,7 @@ public:
     void setOverrideContentSecurityPolicy(const WTF::String& overrideContentSecurityPolicy) { m_overrideContentSecurityPolicy = overrideContentSecurityPolicy; }
 
 #if ENABLE(APPLICATION_MANIFEST)
-    const ApplicationManifest* applicationManifest() const;
+    ApplicationManifest* applicationManifest() const;
     void setApplicationManifest(ApplicationManifest*);
 #endif
 

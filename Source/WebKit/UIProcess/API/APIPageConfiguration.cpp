@@ -188,7 +188,7 @@ void PageConfiguration::setURLSchemeHandlerForURLScheme(Ref<WebKit::WebURLScheme
 }
 
 #if ENABLE(APPLICATION_MANIFEST)
-const ApplicationManifest* PageConfiguration::applicationManifest() const
+ApplicationManifest* PageConfiguration::applicationManifest() const
 {
     return m_applicationManifest.get();
 }
