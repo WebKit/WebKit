@@ -498,8 +498,8 @@ public:
     void addPluginView(PluginView*);
     void removePluginView(PluginView*);
 
-    bool isVisible() const { return m_activityState & WebCore::ActivityState::IsVisible; }
-    bool isVisibleOrOccluded() const { return m_activityState & WebCore::ActivityState::IsVisibleOrOccluded; }
+    bool isVisible() const { return m_activityState.contains(WebCore::ActivityState::IsVisible); }
+    bool isVisibleOrOccluded() const { return m_activityState.contains(WebCore::ActivityState::IsVisibleOrOccluded); }
 
     LayerHostingMode layerHostingMode() const { return m_layerHostingMode; }
     void setLayerHostingMode(LayerHostingMode);
@@ -1171,7 +1171,7 @@ private:
     void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&, CallbackID);
     void updateIsInWindow(bool isInitialState = false);
     void visibilityDidChange();
-    void setActivityState(WebCore::ActivityState::Flags, ActivityStateChangeID, const Vector<CallbackID>& callbackIDs);
+    void setActivityState(OptionSet<WebCore::ActivityState::Flag>, ActivityStateChangeID, const Vector<CallbackID>& callbackIDs);
     void validateCommand(const String&, CallbackID);
     void executeEditCommand(const String&, const String&);
     void setEditable(bool);
@@ -1689,7 +1689,7 @@ private:
 
     bool m_useAsyncScrolling { false };
 
-    WebCore::ActivityState::Flags m_activityState;
+    OptionSet<WebCore::ActivityState::Flag> m_activityState;
 
     bool m_processSuppressionEnabled;
     UserActivity m_userActivity;

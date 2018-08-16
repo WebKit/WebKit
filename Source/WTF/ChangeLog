@@ -1,3 +1,15 @@
+2018-08-16  Antti Koivisto  <antti@apple.com>
+
+        Use OptionSet for ActivityState::Flags
+        https://bugs.webkit.org/show_bug.cgi?id=188554
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/OptionSet.h:
+        (WTF::OptionSet::operator^):
+
+        Add xor operator, useful for finding changes between sets.
+
 2018-08-15  Ben Richards  <benton_richards@apple.com>
 
         We should cache the compiled sandbox profile in a data vault

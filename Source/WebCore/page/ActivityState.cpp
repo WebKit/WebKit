@@ -26,65 +26,34 @@
 #include "config.h"
 #include "ActivityState.h"
 
-#include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-String activityStateFlagsToString(ActivityState::Flags flags)
+TextStream& operator<<(TextStream& ts, OptionSet<ActivityState::Flag> flags)
 {
-    StringBuilder builder;
-    
-    auto appendCommaIfNecessary = [&]() {
-        if (!builder.isEmpty())
-            builder.append(", ");
+    bool didAppend = false;
+
+    auto appendIf = [&](auto flag, auto message) {
+        if (!flags.contains(flag))
+            return;
+        if (didAppend)
+            ts << ", ";
+        ts << message;
+        didAppend = true;
     };
     
-    if (flags & WebCore::ActivityState::WindowIsActive) {
-        appendCommaIfNecessary();
-        builder.append("active window");
-    }
+    appendIf(ActivityState::WindowIsActive, "active window");
+    appendIf(ActivityState::IsFocused, "focused");
+    appendIf(ActivityState::IsVisible, "visible");
+    appendIf(ActivityState::IsVisibleOrOccluded, "visible or occluded");
+    appendIf(ActivityState::IsInWindow, "in-window");
+    appendIf(ActivityState::IsVisuallyIdle, "visually idle");
+    appendIf(ActivityState::IsAudible, "audible");
+    appendIf(ActivityState::IsLoading, "loading");
+    appendIf(ActivityState::IsCapturingMedia, "capturing media");
 
-    if (flags & WebCore::ActivityState::IsFocused) {
-        appendCommaIfNecessary();
-        builder.append("focused");
-    }
-
-    if (flags & WebCore::ActivityState::IsVisible) {
-        appendCommaIfNecessary();
-        builder.append("visible");
-    }
-
-    if (flags & WebCore::ActivityState::IsVisibleOrOccluded) {
-        appendCommaIfNecessary();
-        builder.append("visible or occluded");
-    }
-
-    if (flags & WebCore::ActivityState::IsInWindow) {
-        appendCommaIfNecessary();
-        builder.append("in-window");
-    }
-
-    if (flags & WebCore::ActivityState::IsVisuallyIdle) {
-        appendCommaIfNecessary();
-        builder.append("visually idle");
-    }
-
-    if (flags & WebCore::ActivityState::IsAudible) {
-        appendCommaIfNecessary();
-        builder.append("audible");
-    }
-
-    if (flags & WebCore::ActivityState::IsLoading) {
-        appendCommaIfNecessary();
-        builder.append("loading");
-    }
-
-    if (flags & WebCore::ActivityState::IsCapturingMedia) {
-        appendCommaIfNecessary();
-        builder.append("capturing media");
-    }
-    
-    return builder.toString();
+    return ts;
 }
 
 } // namespace WebCore

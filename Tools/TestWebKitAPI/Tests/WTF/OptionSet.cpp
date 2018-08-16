@@ -379,6 +379,31 @@ TEST(WTF_OptionSet, OperatorAnd)
     }
 }
 
+TEST(WTF_OptionSet, OperatorXor)
+{
+    OptionSet<ExampleFlags> a { ExampleFlags::A };
+    OptionSet<ExampleFlags> ac { ExampleFlags::A, ExampleFlags::C };
+    OptionSet<ExampleFlags> bc { ExampleFlags::B, ExampleFlags::C };
+    {
+        auto set = a ^ ac;
+        EXPECT_FALSE(set.contains(ExampleFlags::A));
+        EXPECT_FALSE(set.contains(ExampleFlags::B));
+        EXPECT_TRUE(set.contains(ExampleFlags::C));
+    }
+    {
+        auto set = a ^ bc;
+        EXPECT_TRUE(set.contains(ExampleFlags::A));
+        EXPECT_TRUE(set.contains(ExampleFlags::B));
+        EXPECT_TRUE(set.contains(ExampleFlags::C));
+    }
+    {
+        auto set = ac ^ bc;
+        EXPECT_TRUE(set.contains(ExampleFlags::A));
+        EXPECT_TRUE(set.contains(ExampleFlags::B));
+        EXPECT_FALSE(set.contains(ExampleFlags::C));
+    }
+}
+
 TEST(WTF_OptionSet, ContainsAny)
 {
     OptionSet<ExampleFlags> set { ExampleFlags::A, ExampleFlags::B };

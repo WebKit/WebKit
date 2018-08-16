@@ -67,8 +67,8 @@ public:
 
     const WebCore::IntSize& size() const { return m_size; }
 
-    WebCore::ActivityState::Flags viewState() const { return m_viewStateFlags; }
-    void setViewState(WebCore::ActivityState::Flags);
+    OptionSet<WebCore::ActivityState::Flag> viewState() const { return m_viewStateFlags; }
+    void setViewState(OptionSet<WebCore::ActivityState::Flag>);
 
     void close();
 
@@ -87,7 +87,7 @@ private:
     std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
     RefPtr<WebKit::WebPageProxy> m_pageProxy;
     WebCore::IntSize m_size;
-    WebCore::ActivityState::Flags m_viewStateFlags;
+    OptionSet<WebCore::ActivityState::Flag> m_viewStateFlags;
 
     WebKit::CompositingManagerProxy m_compositingManagerProxy;
     struct wpe_view_backend* m_backend;

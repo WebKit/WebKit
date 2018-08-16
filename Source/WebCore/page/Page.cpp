@@ -192,7 +192,10 @@ static void networkStateChanged(bool isOnLine)
     }
 }
 
-static const ActivityState::Flags PageInitialActivityState = ActivityState::IsVisible | ActivityState::IsInWindow;
+static constexpr OptionSet<ActivityState::Flag> pageInitialActivityState()
+{
+    return { ActivityState::IsVisible, ActivityState::IsInWindow };
+}
 
 Page::Page(PageConfiguration&& pageConfiguration)
     : m_chrome(std::make_unique<Chrome>(*this, *pageConfiguration.chromeClient))
@@ -200,7 +203,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #if ENABLE(DRAG_SUPPORT)
     , m_dragController(std::make_unique<DragController>(*this, *pageConfiguration.dragClient))
 #endif
-    , m_focusController(std::make_unique<FocusController>(*this, PageInitialActivityState))
+    , m_focusController(std::make_unique<FocusController>(*this, pageInitialActivityState()))
 #if ENABLE(CONTEXT_MENUS)
     , m_contextMenuController(std::make_unique<ContextMenuController>(*this, *pageConfiguration.contextMenuClient))
 #endif
@@ -224,7 +227,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_horizontalScrollElasticity(ScrollElasticityAllowed)
     , m_domTimerAlignmentInterval(DOMTimer::defaultAlignmentInterval())
     , m_domTimerAlignmentIntervalIncreaseTimer(*this, &Page::domTimerAlignmentIntervalIncreaseTimerFired)
-    , m_activityState(PageInitialActivityState)
+    , m_activityState(pageInitialActivityState())
     , m_alternativeTextClient(pageConfiguration.alternativeTextClient)
     , m_consoleClient(std::make_unique<PageConsoleClient>(*this))
 #if ENABLE(REMOTE_INSPECTOR)
@@ -1089,7 +1092,7 @@ unsigned Page::pageCount() const
 
 void Page::setIsInWindow(bool isInWindow)
 {
-    setActivityState(isInWindow ? m_activityState | ActivityState::IsInWindow : m_activityState & ~ActivityState::IsInWindow);
+    setActivityState(isInWindow ? m_activityState | ActivityState::IsInWindow : m_activityState - ActivityState::IsInWindow);
 }
 
 void Page::setIsInWindowInternal(bool isInWindow)
@@ -1356,7 +1359,7 @@ void Page::updateTimerThrottlingState()
     // If the page is visible (but idle), there is any activity (loading, media playing, etc), or per setting,
     // we allow timer throttling, but not increasing timer throttling.
     if (!m_settings->hiddenPageDOMTimerThrottlingAutoIncreases()
-        || m_activityState & (ActivityState::IsVisible | ActivityState::IsAudible | ActivityState::IsLoading | ActivityState::IsCapturingMedia)) {
+        || m_activityState.containsAny({ActivityState::IsVisible, ActivityState::IsAudible, ActivityState::IsLoading, ActivityState::IsCapturingMedia })) {
         setTimerThrottlingState(TimerThrottlingState::Enabled);
         return;
     }
@@ -1590,13 +1593,13 @@ void Page::resumeAnimatingImages()
         view->resumeVisibleImageAnimationsIncludingSubframes();
 }
 
-void Page::setActivityState(ActivityState::Flags activityState)
+void Page::setActivityState(OptionSet<ActivityState::Flag> activityState)
 {
-    ActivityState::Flags changed = m_activityState ^ activityState;
+    auto changed = m_activityState ^ activityState;
     if (!changed)
         return;
 
-    ActivityState::Flags oldActivityState = m_activityState;
+    auto oldActivityState = m_activityState;
 
     bool wasVisibleAndActive = isVisibleAndActive();
     m_activityState = activityState;
@@ -1604,17 +1607,17 @@ void Page::setActivityState(ActivityState::Flags activityState)
     m_focusController->setActivityState(activityState);
 
     if (changed & ActivityState::IsVisible)
-        setIsVisibleInternal(activityState & ActivityState::IsVisible);
+        setIsVisibleInternal(activityState.contains(ActivityState::IsVisible));
     if (changed & ActivityState::IsInWindow)
-        setIsInWindowInternal(activityState & ActivityState::IsInWindow);
+        setIsInWindowInternal(activityState.contains(ActivityState::IsInWindow));
     if (changed & ActivityState::IsVisuallyIdle)
-        setIsVisuallyIdleInternal(activityState & ActivityState::IsVisuallyIdle);
+        setIsVisuallyIdleInternal(activityState.contains(ActivityState::IsVisuallyIdle));
     if (changed & ActivityState::WindowIsActive) {
         if (auto* view = m_mainFrame->view())
             view->updateTiledBackingAdaptiveSizing();
     }
 
-    if (changed & (ActivityState::IsVisible | ActivityState::IsVisuallyIdle | ActivityState::IsAudible | ActivityState::IsLoading | ActivityState::IsCapturingMedia))
+    if (changed.containsAny({ActivityState::IsVisible, ActivityState::IsVisuallyIdle, ActivityState::IsAudible, ActivityState::IsLoading, ActivityState::IsCapturingMedia }))
         updateTimerThrottlingState();
 
     for (auto* observer : m_activityStateChangeObservers)
@@ -1629,20 +1632,26 @@ void Page::setActivityState(ActivityState::Flags activityState)
 
 bool Page::isVisibleAndActive() const
 {
-    return (m_activityState & ActivityState::IsVisible) && (m_activityState & ActivityState::WindowIsActive);
+    return m_activityState.contains(ActivityState::IsVisible) && m_activityState.contains(ActivityState::WindowIsActive);
 }
 
 bool Page::isWindowActive() const
 {
-    return m_activityState & ActivityState::WindowIsActive;
+    return m_activityState.contains(ActivityState::WindowIsActive);
 }
 
 void Page::setIsVisible(bool isVisible)
 {
-    if (isVisible)
-        setActivityState((m_activityState & ~ActivityState::IsVisuallyIdle) | ActivityState::IsVisible | ActivityState::IsVisibleOrOccluded);
-    else
-        setActivityState((m_activityState & ~(ActivityState::IsVisible | ActivityState::IsVisibleOrOccluded)) | ActivityState::IsVisuallyIdle);
+    auto state = m_activityState;
+
+    if (isVisible) {
+        state -= ActivityState::IsVisuallyIdle;
+        state |= { ActivityState::IsVisible, ActivityState::IsVisibleOrOccluded };
+    } else {
+        state |= ActivityState::IsVisuallyIdle;
+        state -= { ActivityState::IsVisible, ActivityState::IsVisibleOrOccluded };
+    }
+    setActivityState(state);
 }
 
 enum class SVGAnimationsState { Paused, Resumed };

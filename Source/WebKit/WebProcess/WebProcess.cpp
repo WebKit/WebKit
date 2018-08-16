@@ -1373,7 +1373,7 @@ void WebProcess::updateCPUMonitorState(CPUMonitorUpdateReason)
 
 #endif
 
-void WebProcess::pageActivityStateDidChange(uint64_t, WebCore::ActivityState::Flags changed)
+void WebProcess::pageActivityStateDidChange(uint64_t, OptionSet<WebCore::ActivityState::Flag> changed)
 {
     if (changed & WebCore::ActivityState::IsVisible)
         updateCPUMonitorState(CPUMonitorUpdateReason::VisibilityHasChanged);

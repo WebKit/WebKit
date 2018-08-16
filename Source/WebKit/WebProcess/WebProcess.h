@@ -195,7 +195,7 @@ public:
 #endif
 
     void updateActivePages();
-    void pageActivityStateDidChange(uint64_t pageID, WebCore::ActivityState::Flags changed);
+    void pageActivityStateDidChange(uint64_t pageID, OptionSet<WebCore::ActivityState::Flag> changed);
 
     void setHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds);
 

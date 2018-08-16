@@ -1,3 +1,50 @@
+2018-08-16  Antti Koivisto  <antti@apple.com>
+
+        Use OptionSet for ActivityState::Flags
+        https://bugs.webkit.org/show_bug.cgi?id=188554
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::windowDidOrderOffScreen):
+        (WebKit::WebViewImpl::windowDidOrderOnScreen):
+        (WebKit::WebViewImpl::viewDidMoveToWindow):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateActivityState):
+        (WebKit::WebPageProxy::activityStateDidChange):
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        (WebKit::WebPageProxy::setMuted):
+        (WebKit::WebPageProxy::isPlayingMediaDidChange):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isInWindow const):
+        (WebKit::WebPageProxy::isViewVisible const):
+        (WebKit::WebPageProxy::isViewFocused const):
+        (WebKit::WebPageProxy::isViewWindowActive const):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::activityStateDidChange):
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::activityStateDidChange):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::activityStateDidChange):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateThrottleState):
+        (WebKit::WebPage::updateIsInWindow):
+        (WebKit::WebPage::visibilityDidChange):
+        (WebKit::WebPage::setActivityState):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::isVisible const):
+        (WebKit::WebPage::isVisibleOrOccluded const):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::activityStateDidChange):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::pageActivityStateDidChange):
+        * WebProcess/WebProcess.h:
+
 2018-08-15  Ansh Shukla  <ansh_shukla@apple.com>
 
         NSURLAuthenticationMethodOAuth challenges are surfaced to clients in -didReceiveAuthenticationChallenge as NSURLAuthenticationMethodDefault

@@ -455,7 +455,7 @@ void AcceleratedDrawingArea::deviceOrPageScaleFactorChanged()
 }
 #endif
 
-void AcceleratedDrawingArea::activityStateDidChange(ActivityState::Flags changed, ActivityStateChangeID, const Vector<CallbackID>&)
+void AcceleratedDrawingArea::activityStateDidChange(OptionSet<ActivityState::Flag> changed, ActivityStateChangeID, const Vector<CallbackID>&)
 {
     if (changed & ActivityState::IsVisible) {
         if (m_webPage.isVisible())

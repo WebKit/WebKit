@@ -148,6 +148,11 @@ public:
         return fromRaw(lhs.m_storage & ~rhs.m_storage);
     }
 
+    constexpr friend OptionSet operator^(OptionSet lhs, OptionSet rhs)
+    {
+        return fromRaw(lhs.m_storage ^ rhs.m_storage);
+    }
+
 private:
     enum InitializationTag { FromRawValue };
     constexpr OptionSet(T t, InitializationTag)

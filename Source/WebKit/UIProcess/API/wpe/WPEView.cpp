@@ -172,11 +172,11 @@ void View::setSize(const WebCore::IntSize& size)
         m_pageProxy->drawingArea()->setSize(size);
 }
 
-void View::setViewState(WebCore::ActivityState::Flags flags)
+void View::setViewState(OptionSet<WebCore::ActivityState::Flag> flags)
 {
-    static const WebCore::ActivityState::Flags defaultFlags = WebCore::ActivityState::WindowIsActive | WebCore::ActivityState::IsFocused;
+    static const OptionSet<WebCore::ActivityState::Flag> defaultFlags { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused };
 
-    WebCore::ActivityState::Flags changedFlags = m_viewStateFlags ^ (defaultFlags | flags);
+    auto = m_viewStateFlags ^ (defaultFlags | flags);
     m_viewStateFlags = defaultFlags | flags;
 
     if (changedFlags)

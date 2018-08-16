@@ -1,3 +1,52 @@
+2018-08-16  Antti Koivisto  <antti@apple.com>
+
+        Use OptionSet for ActivityState::Flags
+        https://bugs.webkit.org/show_bug.cgi?id=188554
+
+        Reviewed by Brent Fulgham.
+
+        More typesafe flags.
+
+        * Modules/geolocation/GeolocationController.cpp:
+        (WebCore::GeolocationController::activityStateDidChange):
+        * Modules/geolocation/GeolocationController.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::activityStateDidChange):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * page/ActivityState.cpp:
+        (WebCore::operator<<):
+        (WebCore::activityStateFlagsToString): Deleted.
+        * page/ActivityState.h:
+        (WebCore::ActivityState::allFlags):
+        * page/ActivityStateChangeObserver.h:
+        * page/FocusController.cpp:
+        (WebCore::FocusController::FocusController):
+        (WebCore::FocusController::setFocused):
+        (WebCore::FocusController::setActivityState):
+        (WebCore::FocusController::setActive):
+        * page/FocusController.h:
+        (WebCore::FocusController::isActive const):
+        (WebCore::FocusController::isFocused const):
+        (WebCore::FocusController::contentIsVisible const):
+        * page/Page.cpp:
+        (WebCore::pageInitialActivityState):
+        (WebCore::Page::Page):
+        (WebCore::Page::setIsInWindow):
+        (WebCore::Page::updateTimerThrottlingState):
+        (WebCore::Page::setActivityState):
+        (WebCore::Page::isVisibleAndActive const):
+        (WebCore::Page::isWindowActive const):
+        (WebCore::Page::setIsVisible):
+        * page/Page.h:
+        (WebCore::Page::activityState const):
+        (WebCore::Page::isVisible const):
+        (WebCore::Page::isInWindow const):
+        * page/PerformanceMonitor.cpp:
+        (WebCore::activityStateForCPUSampling):
+        (WebCore::PerformanceMonitor::activityStateChanged):
+        * page/PerformanceMonitor.h:
+        * platform/text/cocoa: Added.
+
 2018-08-15  Ansh Shukla  <ansh_shukla@apple.com>
 
         NSURLAuthenticationMethodOAuth challenges are surfaced to clients in -didReceiveAuthenticationChallenge as NSURLAuthenticationMethodDefault

@@ -67,7 +67,7 @@ private:
     Page& m_page;
     GeolocationClient& m_client;
 
-    void activityStateDidChange(ActivityState::Flags oldActivityState, ActivityState::Flags newActivityState) override;
+    void activityStateDidChange(OptionSet<ActivityState::Flag> oldActivityState, OptionSet<ActivityState::Flag> newActivityState) override;
 
     std::optional<GeolocationPosition> m_lastPosition;
 

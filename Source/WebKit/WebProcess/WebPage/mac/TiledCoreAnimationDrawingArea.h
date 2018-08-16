@@ -81,7 +81,7 @@ private:
 
     bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) override;
 
-    void activityStateDidChange(WebCore::ActivityState::Flags changed, ActivityStateChangeID, const Vector<CallbackID>&) override;
+    void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> changed, ActivityStateChangeID, const Vector<CallbackID>&) override;
     void didUpdateActivityStateTimerFired();
 
     void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;

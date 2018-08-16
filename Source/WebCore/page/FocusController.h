@@ -51,7 +51,7 @@ struct FocusCandidate;
 class FocusController {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit FocusController(Page&, ActivityState::Flags);
+    explicit FocusController(Page&, OptionSet<ActivityState::Flag>);
 
     WEBCORE_EXPORT void setFocusedFrame(Frame*);
     Frame* focusedFrame() const { return m_focusedFrame.get(); }
@@ -62,15 +62,15 @@ public:
 
     WEBCORE_EXPORT bool setFocusedElement(Element*, Frame&, FocusDirection = FocusDirectionNone);
 
-    void setActivityState(ActivityState::Flags);
+    void setActivityState(OptionSet<ActivityState::Flag>);
 
     WEBCORE_EXPORT void setActive(bool);
-    bool isActive() const { return m_activityState & ActivityState::WindowIsActive; }
+    bool isActive() const { return m_activityState.contains(ActivityState::WindowIsActive); }
 
     WEBCORE_EXPORT void setFocused(bool);
-    bool isFocused() const { return m_activityState & ActivityState::IsFocused; }
+    bool isFocused() const { return m_activityState.contains(ActivityState::IsFocused); }
 
-    bool contentIsVisible() const { return m_activityState & ActivityState::IsVisible; }
+    bool contentIsVisible() const { return m_activityState.contains(ActivityState::IsVisible); }
 
     // These methods are used in WebCore/bindings/objc/DOM.mm.
     WEBCORE_EXPORT Element* nextFocusableElement(Node&);
@@ -119,7 +119,7 @@ private:
     Page& m_page;
     RefPtr<Frame> m_focusedFrame;
     bool m_isChangingFocusedFrame;
-    ActivityState::Flags m_activityState;
+    OptionSet<ActivityState::Flag> m_activityState;
 
     Timer m_focusRepaintTimer;
     MonotonicTime m_focusSetTime;

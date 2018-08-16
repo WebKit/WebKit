@@ -55,7 +55,7 @@ static const double postPageLoadCPUUsageDomainReportingThreshold { 20.0 }; // Re
 static const uint64_t postPageLoadMemoryUsageDomainReportingThreshold { 2048 * MB };
 #endif
 
-static inline ActivityStateForCPUSampling activityStateForCPUSampling(ActivityState::Flags state)
+static inline ActivityStateForCPUSampling activityStateForCPUSampling(OptionSet<ActivityState::Flag> state)
 {
     if (!(state & ActivityState::IsVisible))
         return ActivityStateForCPUSampling::NonVisible;
@@ -101,10 +101,10 @@ void PerformanceMonitor::didFinishLoad()
         m_postPageLoadMemoryUsageTimer.startOneShot(memoryUsageMeasurementDelay);
 }
 
-void PerformanceMonitor::activityStateChanged(ActivityState::Flags oldState, ActivityState::Flags newState)
+void PerformanceMonitor::activityStateChanged(OptionSet<ActivityState::Flag> oldState, OptionSet<ActivityState::Flag> newState)
 {
-    ActivityState::Flags changed = oldState ^ newState;
-    bool visibilityChanged = changed & ActivityState::IsVisible;
+    auto changed = oldState ^ newState;
+    bool visibilityChanged = changed.contains(ActivityState::IsVisible);
 
     // Measure CPU usage of pages when they are no longer visible.
     if (DeprecatedGlobalSettings::isPostBackgroundingCPUUsageMeasurementEnabled() && visibilityChanged) {

@@ -515,7 +515,7 @@ void PluginView::webPageDestroyed()
     m_webPage = 0;
 }
 
-void PluginView::activityStateDidChange(ActivityState::Flags changed)
+void PluginView::activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> changed)
 {
     if (!m_plugin || !m_isInitialized)
         return;

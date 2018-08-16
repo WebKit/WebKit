@@ -6371,14 +6371,14 @@ bool WebGLRenderingContextBase::enableSupportedExtension(ASCIILiteral extensionN
     return true;
 }
 
-void WebGLRenderingContextBase::activityStateDidChange(ActivityState::Flags oldActivityState, ActivityState::Flags newActivityState)
+void WebGLRenderingContextBase::activityStateDidChange(OptionSet<ActivityState::Flag> oldActivityState, OptionSet<ActivityState::Flag> newActivityState)
 {
     if (!m_context)
         return;
 
-    ActivityState::Flags changed = oldActivityState ^ newActivityState;
+    auto changed = oldActivityState ^ newActivityState;
     if (changed & ActivityState::IsVisible)
-        m_context->setContextVisibility(newActivityState & ActivityState::IsVisible);
+        m_context->setContextVisibility(newActivityState.contains(ActivityState::IsVisible));
 }
 
 void WebGLRenderingContextBase::setFailNextGPUStatusCheck()

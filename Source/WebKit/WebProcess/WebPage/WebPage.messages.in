@@ -22,7 +22,7 @@
 
 messages -> WebPage LegacyReceiver {
     SetInitialFocus(bool forward, bool isKeyboardEventValid, WebKit::WebKeyboardEvent event, WebKit::CallbackID callbackID)
-    SetActivityState(unsigned activityState, WebKit::ActivityStateChangeID activityStateChangeID, Vector<WebKit::CallbackID> callbackIDs)
+    SetActivityState(OptionSet<WebCore::ActivityState::Flag> activityState, WebKit::ActivityStateChangeID activityStateChangeID, Vector<WebKit::CallbackID> callbackIDs)
     SetLayerHostingMode(enum WebKit::LayerHostingMode layerHostingMode)
 
     SetDrawsBackground(bool drawsBackground)

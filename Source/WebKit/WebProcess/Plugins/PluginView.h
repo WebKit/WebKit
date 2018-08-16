@@ -79,7 +79,7 @@ public:
     void manualLoadDidFinishLoading();
     void manualLoadDidFail(const WebCore::ResourceError&);
 
-    void activityStateDidChange(WebCore::ActivityState::Flags changed);
+    void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> changed);
     void setLayerHostingMode(LayerHostingMode);
 
 #if PLATFORM(COCOA)

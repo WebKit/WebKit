@@ -1492,9 +1492,9 @@ void WebPageProxy::setSuppressVisibilityUpdates(bool flag)
     }
 }
 
-void WebPageProxy::updateActivityState(ActivityState::Flags flagsToUpdate)
+void WebPageProxy::updateActivityState(OptionSet<ActivityState::Flag> flagsToUpdate)
 {
-    m_activityState &= ~flagsToUpdate;
+    m_activityState = m_activityState - flagsToUpdate;
     if (flagsToUpdate & ActivityState::IsFocused && m_pageClient.isViewFocused())
         m_activityState |= ActivityState::IsFocused;
     if (flagsToUpdate & ActivityState::WindowIsActive && m_pageClient.isViewWindowActive())
@@ -1515,9 +1515,9 @@ void WebPageProxy::updateActivityState(ActivityState::Flags flagsToUpdate)
         m_activityState |= ActivityState::IsCapturingMedia;
 }
 
-void WebPageProxy::activityStateDidChange(ActivityState::Flags mayHaveChanged, bool wantsSynchronousReply, ActivityStateChangeDispatchMode dispatchMode)
+void WebPageProxy::activityStateDidChange(OptionSet<ActivityState::Flag> mayHaveChanged, bool wantsSynchronousReply, ActivityStateChangeDispatchMode dispatchMode)
 {
-    LOG_WITH_STREAM(ActivityState, stream << "WebPageProxy " << pageID() << " activityStateDidChange - mayHaveChanged " <<  activityStateFlagsToString(mayHaveChanged));
+    LOG_WITH_STREAM(ActivityState, stream << "WebPageProxy " << pageID() << " activityStateDidChange - mayHaveChanged " << mayHaveChanged);
 
     m_potentiallyChangedActivityStateFlags |= mayHaveChanged;
     m_activityStateChangeWantsSynchronousReply = m_activityStateChangeWantsSynchronousReply || wantsSynchronousReply;
@@ -1566,20 +1566,20 @@ void WebPageProxy::dispatchActivityStateChange()
     if (!isValid())
         return;
 
-    LOG_WITH_STREAM(ActivityState, stream << "WebPageProxy " << pageID() << " dispatchActivityStateChange - potentiallyChangedActivityStateFlags " << activityStateFlagsToString(m_potentiallyChangedActivityStateFlags));
+    LOG_WITH_STREAM(ActivityState, stream << "WebPageProxy " << pageID() << " dispatchActivityStateChange - potentiallyChangedActivityStateFlags " << m_potentiallyChangedActivityStateFlags);
 
     // If the visibility state may have changed, then so may the visually idle & occluded agnostic state.
     if (m_potentiallyChangedActivityStateFlags & ActivityState::IsVisible)
-        m_potentiallyChangedActivityStateFlags |= ActivityState::IsVisibleOrOccluded | ActivityState::IsVisuallyIdle;
+        m_potentiallyChangedActivityStateFlags |= { ActivityState::IsVisibleOrOccluded, ActivityState::IsVisuallyIdle };
 
     // Record the prior view state, update the flags that may have changed,
     // and check which flags have actually changed.
-    ActivityState::Flags previousActivityState = m_activityState;
+    auto previousActivityState = m_activityState;
     updateActivityState(m_potentiallyChangedActivityStateFlags);
-    ActivityState::Flags changed = m_activityState ^ previousActivityState;
+    auto changed = m_activityState ^ previousActivityState;
 
     if (changed)
-        LOG_WITH_STREAM(ActivityState, stream << "WebPageProxy " << pageID() << " dispatchActivityStateChange: state changed from " << activityStateFlagsToString(previousActivityState) << " to " << activityStateFlagsToString(m_activityState));
+        LOG_WITH_STREAM(ActivityState, stream << "WebPageProxy " << pageID() << " dispatchActivityStateChange: state changed from " << previousActivityState << " to " << m_activityState);
 
     if ((m_potentiallyChangedActivityStateFlags & ActivityState::IsVisible) && isViewVisible())
         viewIsBecomingVisible();
@@ -1637,7 +1637,7 @@ void WebPageProxy::dispatchActivityStateChange()
     if (activityStateChangeID != ActivityStateChangeAsynchronous)
         waitForDidUpdateActivityState(activityStateChangeID);
 
-    m_potentiallyChangedActivityStateFlags = ActivityState::NoFlags;
+    m_potentiallyChangedActivityStateFlags = { };
     m_activityStateChangeWantsSynchronousReply = false;
     m_viewWasEverInWindow |= isNowInWindow;
 }
@@ -1663,8 +1663,8 @@ void WebPageProxy::updateThrottleState()
         m_pageIsUserObservableCount = m_process->processPool().userObservablePageCount();
 
 #if PLATFORM(IOS)
-    bool isCapturingMedia = m_activityState & ActivityState::IsCapturingMedia;
-    bool isAudible = m_activityState & ActivityState::IsAudible;
+    bool isCapturingMedia = m_activityState.contains(ActivityState::IsCapturingMedia);
+    bool isAudible = m_activityState.contains(ActivityState::IsAudible);
     if (!isViewVisible() && !m_alwaysRunsAtForegroundPriority && !isCapturingMedia && !isAudible) {
         if (m_activityToken) {
             RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "%p - UIProcess is releasing a foreground assertion because the view is no longer visible", this);
@@ -4712,7 +4712,7 @@ void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state)
 #endif
 
     m_process->send(Messages::WebPage::SetMuted(state), m_pageID);
-    activityStateDidChange(ActivityState::IsAudible | ActivityState::IsCapturingMedia);
+    activityStateDidChange({ ActivityState::IsAudible, ActivityState::IsCapturingMedia });
 }
 
 void WebPageProxy::setMediaCaptureEnabled(bool enabled)
@@ -7269,7 +7269,7 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags newSta
     }
 #endif
 
-    activityStateDidChange(ActivityState::IsAudible | ActivityState::IsCapturingMedia);
+    activityStateDidChange({ ActivityState::IsAudible, ActivityState::IsCapturingMedia });
 
     playingMediaMask |= WebCore::MediaProducer::MediaCaptureMask;
     if ((oldState & playingMediaMask) != (m_mediaState & playingMediaMask))
