@@ -1,3 +1,22 @@
+2018-08-16  Alex Christensen  <achristensen@webkit.org>
+
+        Transition more WKWebViewConfiguration ivars to API::PageConfiguration values
+        https://bugs.webkit.org/show_bug.cgi?id=188661
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _alwaysRunsAtForegroundPriority]):
+        (-[WKWebViewConfiguration _setAlwaysRunsAtForegroundPriority:]):
+        (-[WKWebViewConfiguration _initialCapitalizationEnabled]):
+        (-[WKWebViewConfiguration _setInitialCapitalizationEnabled:]):
+        (-[WKWebViewConfiguration _overrideContentSecurityPolicy]):
+        (-[WKWebViewConfiguration _setOverrideContentSecurityPolicy:]):
+
 2018-08-16  Aditya Keerthi  <akeerthi@apple.com>
 
         Support drag-and-drop for input[type=color]

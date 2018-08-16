@@ -125,7 +125,6 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 
 #if PLATFORM(IOS)
     LazyInitialized<RetainPtr<WKWebViewContentProviderRegistry>> _contentProviderRegistry;
-    BOOL _alwaysRunsAtForegroundPriority;
     BOOL _allowsInlineMediaPlayback;
     BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute;
     BOOL _allowsInlineMediaPlaybackAfterFullscreen;
@@ -148,7 +147,6 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     BOOL _imageControlsEnabled;
     BOOL _requiresUserActionForEditingControlsManager;
 #endif
-    BOOL _initialCapitalizationEnabled;
     BOOL _waitsForPaintAfterViewDidMoveToWindow;
     BOOL _controlledByAutomation;
 
@@ -167,7 +165,6 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     BOOL _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad;
     BOOL _drawsBackground;
 
-    RetainPtr<NSString> _overrideContentSecurityPolicy;
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
 }
 
@@ -220,7 +217,6 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     _imageControlsEnabled = NO;
     _requiresUserActionForEditingControlsManager = NO;
 #endif
-    _initialCapitalizationEnabled = YES;
     _waitsForPaintAfterViewDidMoveToWindow = YES;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -368,7 +364,6 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_attachmentElementEnabled = self->_attachmentElementEnabled;
     configuration->_mediaTypesRequiringUserActionForPlayback = self->_mediaTypesRequiringUserActionForPlayback;
     configuration->_mainContentUserGestureOverrideEnabled = self->_mainContentUserGestureOverrideEnabled;
-    configuration->_initialCapitalizationEnabled = self->_initialCapitalizationEnabled;
     configuration->_waitsForPaintAfterViewDidMoveToWindow = self->_waitsForPaintAfterViewDidMoveToWindow;
     configuration->_controlledByAutomation = self->_controlledByAutomation;
 
@@ -377,7 +372,6 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_allowsInlineMediaPlaybackAfterFullscreen = self->_allowsInlineMediaPlaybackAfterFullscreen;
     configuration->_inlineMediaPlaybackRequiresPlaysInlineAttribute = self->_inlineMediaPlaybackRequiresPlaysInlineAttribute;
     configuration->_allowsPictureInPictureMediaPlayback = self->_allowsPictureInPictureMediaPlayback;
-    configuration->_alwaysRunsAtForegroundPriority = _alwaysRunsAtForegroundPriority;
     configuration->_selectionGranularity = self->_selectionGranularity;
     configuration->_ignoresViewportScaleLimits = self->_ignoresViewportScaleLimits;
     configuration->_dragLiftDelay = self->_dragLiftDelay;
@@ -407,7 +401,6 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_applicationManifest = self->_applicationManifest;
 #endif
     configuration->_needsStorageAccessFromFileURLsQuirk = self->_needsStorageAccessFromFileURLsQuirk;
-    configuration->_overrideContentSecurityPolicy = adoptNS([self->_overrideContentSecurityPolicy copyWithZone:zone]);
 
     configuration->_mediaContentTypesRequiringHardwareSupport = adoptNS([self._mediaContentTypesRequiringHardwareSupport copyWithZone:zone]);
     configuration->_legacyEncryptedMediaAPIEnabled = self->_legacyEncryptedMediaAPIEnabled;
@@ -665,12 +658,12 @@ static NSString *defaultApplicationNameForUserAgent()
 #if PLATFORM(IOS)
 - (BOOL)_alwaysRunsAtForegroundPriority
 {
-    return _alwaysRunsAtForegroundPriority;
+    return _pageConfiguration->alwaysRunsAtForegroundPriority();
 }
 
 - (void)_setAlwaysRunsAtForegroundPriority:(BOOL)alwaysRunsAtForegroundPriority
 {
-    _alwaysRunsAtForegroundPriority = alwaysRunsAtForegroundPriority;
+    _pageConfiguration->setAlwaysRunsAtForegroundPriority(alwaysRunsAtForegroundPriority);
 }
 
 - (BOOL)_inlineMediaPlaybackRequiresPlaysInlineAttribute
@@ -843,12 +836,12 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (BOOL)_initialCapitalizationEnabled
 {
-    return _initialCapitalizationEnabled;
+    return _pageConfiguration->initialCapitalizationEnabled();
 }
 
 - (void)_setInitialCapitalizationEnabled:(BOOL)initialCapitalizationEnabled
 {
-    _initialCapitalizationEnabled = initialCapitalizationEnabled;
+    _pageConfiguration->setInitialCapitalizationEnabled(initialCapitalizationEnabled);
 }
 
 - (BOOL)_waitsForPaintAfterViewDidMoveToWindow
@@ -978,12 +971,12 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (NSString *)_overrideContentSecurityPolicy
 {
-    return _overrideContentSecurityPolicy.get();
+    return _pageConfiguration->overrideContentSecurityPolicy();
 }
 
 - (void)_setOverrideContentSecurityPolicy:(NSString *)overrideContentSecurityPolicy
 {
-    _overrideContentSecurityPolicy = adoptNS([overrideContentSecurityPolicy copy]);
+    _pageConfiguration->setOverrideContentSecurityPolicy(overrideContentSecurityPolicy);
 }
 
 - (NSString *)_mediaContentTypesRequiringHardwareSupport
