@@ -55,7 +55,8 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
     ASSERT(context->isDocument());
 
     JSValue newTargetValue = exec.thisValue();
-    auto* globalObject = jsConstructor->globalObject();
+    auto* newTarget = newTargetValue.getObject();
+    auto* globalObject = jsCast<JSDOMGlobalObject*>(newTarget->globalObject(vm));
     JSValue htmlElementConstructorValue = JSHTMLElement::getConstructor(vm, globalObject);
     if (newTargetValue == htmlElementConstructorValue)
         return throwVMTypeError(&exec, scope, "new.target is not a valid custom element constructor"_s);
@@ -70,7 +71,6 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
     if (!registry)
         return throwVMTypeError(&exec, scope, "new.target is not a valid custom element constructor"_s);
 
-    JSObject* newTarget = newTargetValue.getObject();
     auto* elementInterface = registry->findInterface(newTarget);
     if (!elementInterface)
         return throwVMTypeError(&exec, scope, "new.target does not define a custom element"_s);
