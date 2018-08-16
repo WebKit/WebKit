@@ -170,6 +170,12 @@ static bool verifyAndOutputSubtree(TextStream& stream, const LayoutContext& cont
             continue;
         }
 
+        if (!childBox) {
+            stream  << "Trees are out of sync!";
+            stream.nextLine();
+            return true;
+        }
+
         if (is<RenderBlockFlow>(*childRenderer) && childBox->establishesInlineFormattingContext()) {
             ASSERT(childRenderer->childrenInline());
             auto& blockFlow = downcast<RenderBlockFlow>(*childRenderer);
@@ -183,6 +189,7 @@ static bool verifyAndOutputSubtree(TextStream& stream, const LayoutContext& cont
         childBox = childBox->nextSibling();
         childRenderer = childRenderer->nextSibling();
     }
+
     return mismtachingGeometry;
 }
 
