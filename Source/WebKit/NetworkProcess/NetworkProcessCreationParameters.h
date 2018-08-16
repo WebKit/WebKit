@@ -80,7 +80,6 @@ struct NetworkProcessCreationParameters {
     ProcessID presentingApplicationPID { 0 };
 
 #if PLATFORM(COCOA)
-    String parentProcessName;
     String uiProcessBundleIdentifier;
     uint32_t uiProcessSDKVersion { 0 };
     String sourceApplicationBundleIdentifier;
