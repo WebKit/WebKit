@@ -1,5 +1,17 @@
 2018-08-16  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Tree builder should construct block and inline containers based on the display type.
+        https://bugs.webkit.org/show_bug.cgi?id=188632
+
+        Reviewed by Antti Koivisto.
+
+        Inline elements can also construct RenderBlock renderers (inline-bloc etc), so use the display type instead when deciding what type of container to construct.   
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createSubTree):
+
+2018-08-16  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Bail out of subtree verification when trees are out of sync.
         https://bugs.webkit.org/show_bug.cgi?id=188633
 

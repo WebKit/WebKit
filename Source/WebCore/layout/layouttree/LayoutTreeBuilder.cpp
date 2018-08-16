@@ -86,15 +86,23 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
 
         if (is<RenderElement>(child)) {
             auto& renderer = downcast<RenderElement>(child);
-            if (is<RenderBlock>(renderer))
+            auto display = renderer.style().display();
+            if (display == DisplayType::Block)
                 box = new BlockContainer(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
-            else if (is<RenderInline>(renderer))
+            else if (display == DisplayType::Inline)
                 box = new InlineContainer(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+            else {
+                ASSERT_NOT_IMPLEMENTED_YET();
+                continue;
+            }
+
         } else if (is<RenderText>(child)) {
             box = new InlineBox( { }, RenderStyle::createAnonymousStyleWithDisplay(rootRenderer.style(), DisplayType::Inline));
             downcast<InlineBox>(*box).setTextContent(downcast<RenderText>(child).originalText());
-        } else
+        } else {
             ASSERT_NOT_IMPLEMENTED_YET();
+            continue;
+        }
 
         if (!rootContainer.hasChild()) {
             rootContainer.setFirstChild(*box);
@@ -105,6 +113,7 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
             lastChild->setNextSibling(*box);
             rootContainer.setLastChild(*box);
         }
+
         box->setParent(rootContainer);
 
         if (box->isOutOfFlowPositioned()) {
