@@ -49,6 +49,7 @@ class PluginProcess : public ChildProcess
 
 public:
     static PluginProcess& singleton();
+    static constexpr ProcessType processType = ProcessType::Plugin;
 
     void removeWebProcessConnection(WebProcessConnection*);
 

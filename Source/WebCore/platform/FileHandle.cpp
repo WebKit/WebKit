@@ -32,15 +32,23 @@
 namespace WebCore {
 
 FileHandle::FileHandle(const String& path, FileSystem::FileOpenMode mode)
-    : m_path(path)
-    , m_mode(mode)
+    : m_path { path }
+    , m_mode { mode }
 {
 }
 
 FileHandle::FileHandle(FileHandle&& other)
-    : m_path(WTFMove(other.m_path))
-    , m_mode(WTFMove(other.m_mode))
-    , m_fileHandle(std::exchange(other.m_fileHandle, FileSystem::invalidPlatformFileHandle))
+    : m_path { WTFMove(other.m_path) }
+    , m_mode { WTFMove(other.m_mode) }
+    , m_fileHandle { std::exchange(other.m_fileHandle, FileSystem::invalidPlatformFileHandle) }
+{
+}
+
+FileHandle::FileHandle(const String& path, FileSystem::FileOpenMode mode, OptionSet<FileSystem::FileLockMode> lockMode)
+    : m_path { path }
+    , m_mode { mode }
+    , m_lockMode { lockMode }
+    , m_shouldLock { true }
 {
 }
 
@@ -77,7 +85,7 @@ bool FileHandle::open(const String& path, FileSystem::FileOpenMode mode)
 bool FileHandle::open()
 {
     if (!*this)
-        m_fileHandle = FileSystem::openFile(m_path, m_mode);
+        m_fileHandle = m_shouldLock ? FileSystem::openAndLockFile(m_path, m_mode, m_lockMode) :  FileSystem::openFile(m_path, m_mode);
     return static_cast<bool>(*this);
 }
 
@@ -115,7 +123,11 @@ bool FileHandle::printf(const char* format, ...)
 
 void FileHandle::close()
 {
-    FileSystem::closeFile(m_fileHandle);
+    if (m_shouldLock && *this) {
+        // FileSystem::unlockAndCloseFile requires the file handle to be valid while closeFile does not
+        FileSystem::unlockAndCloseFile(m_fileHandle);
+    } else
+        FileSystem::closeFile(m_fileHandle);
 }
 
 } // namespace WebCore

@@ -1,3 +1,15 @@
+2018-08-15  Ben Richards  <benton_richards@apple.com>
+
+        We should cache the compiled sandbox profile in a data vault
+        https://bugs.webkit.org/show_bug.cgi?id=184991
+
+        Reviewed by Ryosuke Niwa.
+
+        Added trace points for sandbox initialization and exposed functions needed for sandbox caching
+
+        * wtf/SystemTracing.h:
+        * wtf/spi/darwin/SandboxSPI.h:
+
 2018-08-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] WaylandCompositor fails to properly remove surface from its page map

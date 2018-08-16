@@ -184,6 +184,7 @@ String roamingUserSpecificStorageDirectory();
 
 #if PLATFORM(COCOA)
 WEBCORE_EXPORT NSString *createTemporaryDirectory(NSString *directoryPrefix);
+WEBCORE_EXPORT bool deleteNonEmptyDirectory(const String&);
 #endif
 
 WEBCORE_EXPORT String realPath(const String&);
