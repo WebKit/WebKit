@@ -3174,7 +3174,6 @@ http/tests/security/isolatedWorld/number-prototype.html [ Failure Pass ]
 http/tests/security/local-video-src-from-remote.html [ Failure Pass ]
 http/tests/security/video-cross-origin-caching.html [ Crash Failure Timeout Pass ]
 http/tests/security/video-poster-cross-origin-crash2.html [ Failure Pass ]
-http/tests/websocket/tests/hybi/simple-wss.html [ Crash Timeout ]
 security/contentSecurityPolicy/worker-inherits-blocks-eval.html [ Failure Pass ]
 sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A4_T2.html [ Failure Pass ]
 storage/indexeddb/database-close-private.html [ Failure Pass ]
@@ -3709,7 +3708,6 @@ http/tests/preload/single_download_preload_headers_charset.php [ Crash Failure P
 http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html [ Crash Timeout Pass ]
 http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Timeout Failure Crash ]
 http/tests/security/contentSecurityPolicy/block-favicon.html [ Failure Pass ]
-http/tests/websocket/tests/hybi/workers/close-code-and-reason.html [ Crash Pass ]
 svg/animations/animations-paused-in-background-page.html [ Timeout Pass ]
 
 # FIXME: create bugs to track the following failures:
@@ -3856,8 +3854,6 @@ webkit.org/b/176423 editing/pasteboard/entries-api/datatransfer-items-drop-getPa
 
 webkit.org/b/176598 http/tests/security/contentSecurityPolicy/audio-redirect-allowed2.html [ Pass Crash ]
 webkit.org/b/176606 http/tests/preload/single_download_preload_headers.php [ Pass Crash ]
-webkit.org/b/176609 http/tests/websocket/tests/hybi/close-code-and-reason.html [ Pass Crash ]
-webkit.org/b/176632 http/tests/websocket/tests/hybi/websocket-pending-activity.html [ Pass Crash ]
 
 # Web platform tests are very slow on Windows.
 webkit.org/b/176657 imported/w3c/web-platform-tests/ [ Skip ]
@@ -3873,8 +3869,6 @@ webkit.org/b/176998 pageoverlay/overlay-small-frame-paints.html [ Failure ]
 webkit.org/b/176998 storage/indexeddb/modern/idbcursor-continue-primary-key-1.html [ Timeout ]
 
 webkit.org/b/177071 fast/events/beforeunload-dom-manipulation-crash.html [ Crash ]
-
-webkit.org/b/177072 http/tests/websocket/tests/hybi/secure-cookie-secure-connection.pl [ Failure ]
 
 webkit.org/b/177109 fast/css/display-contents-style-update.html [ ImageOnlyFailure ]
 
@@ -4055,8 +4049,6 @@ webkit.org/b/183955 accessibility/row-with-aria-role-in-native-table.html [ Fail
 webkit.org/b/184133 transitions/opacity-transition-zindex.html [ Skip ]
 webkit.org/b/184133 legacy-animation-engine/transitions/opacity-transition-zindex.html [ Skip ]
 
-webkit.org/b/184134 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Failure ]
-
 webkit.org/b/184482 legacy-animation-engine/compositing/animation/animation-backing.html [ Failure ]
 webkit.org/b/184482 legacy-animation-engine/compositing/animation/animation-compositing.html [ Failure ]
 webkit.org/b/184482 legacy-animation-engine/compositing/backing/backface-visibility-flip.html [ Failure ]
@@ -4164,3 +4156,8 @@ webkit.org/b/188168 fast/text/initial-advance-in-intermediate-run-complex.html [
 webkit.org/b/188169 http/tests/security/canvas-remote-read-remote-video-hls.html [ Failure ]
 
 webkit.org/b/188600 editing/input/press-tab-during-ime-composition.html [ Failure ]
+
+http/tests/websocket [ Skip ]
+http/tests/security/mixedContent/websocket [ Skip ]
+imported/blink/http/tests/websocket [ Skip ]
+imported/blink/http/tests/security/mixedContent/websocket [ Skip ]

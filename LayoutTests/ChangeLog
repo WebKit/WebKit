@@ -1,3 +1,17 @@
+2018-08-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [win-ews] No such file or directory: u'/cygdrive/C/cygwin/home/buildbot/WebKit/WebKitBuild/Release/bin32/layout-test-results/pywebsocket.ws.log-out.txt'
+        https://bugs.webkit.org/show_bug.cgi?id=188640
+
+        Unreviewed test gardening.
+
+        For now, skip websocket tests on Windows. Currently, run-webkit-tests is failing to start the websocket server because
+        port 8880 is already in use. Port 8880 is being used because the python websocket server process from the previous run
+        did not shutdown properly. We still need to understand why this is happening, but disable websocket tests now in order
+        for tests to run again.
+
+        * platform/win/TestExpectations:
+
 2018-08-16  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Enable a few subdirectories under fast/ and
