@@ -107,11 +107,13 @@ bool CookieJarDB::openDatabase()
                 executeSimpleSql(DELETE_ALL_SESSION_COOKIE_SQL);
             else {
                 // delete database and try to re-create again
+                LOG_ERROR("Cookie database validity check failed, attempting to recreate the database");
                 m_database.close();
                 deleteAllDatabaseFiles();
                 existsDatabaseFile = false;
             }
         } else {
+            LOG_ERROR("Failed to open cookie database: %s, attempting to recreate the database", m_databasePath.utf8().data());
             deleteAllDatabaseFiles();
             existsDatabaseFile = false;
         }
@@ -137,9 +139,7 @@ bool CookieJarDB::openDatabase()
     if (!m_database.isOpen())
         return false;
 
-    executeSimpleSql("PRAGMA temp_store = MEMORY;");
-    executeSimpleSql("PRAGMA synchronous = NORMAL;");
-    executeSimpleSql("PRAGMA journal_mode = WAL;");
+    m_database.setSynchronous(SQLiteDatabase::SyncNormal);
 
     // create prepared statements
     createPrepareStatement(SET_COOKIE_SQL);
@@ -180,6 +180,7 @@ void CookieJarDB::flagDatabaseCorruption()
 bool CookieJarDB::checkDatabaseCorruptionAndRemoveIfNeeded()
 {
     if (!isOnMemory() && FileSystem::fileExists(getCorruptionMarkerPath())) {
+        LOG_ERROR("Detected cookie database corruption, attempting to recreate the database");
         deleteAllDatabaseFiles();
         return true;
     }
@@ -187,7 +188,7 @@ bool CookieJarDB::checkDatabaseCorruptionAndRemoveIfNeeded()
     return false;
 }
 
-bool CookieJarDB::checkSQLiteReturnCode(int actual, int expected)
+void CookieJarDB::checkSQLiteReturnCode(int actual)
 {
     if (!m_detectedDatabaseCorruption) {
         switch (actual) {
@@ -199,15 +200,41 @@ bool CookieJarDB::checkSQLiteReturnCode(int actual, int expected)
             m_detectedDatabaseCorruption = true;
         }
     }
-
-    return (actual == expected);
 }
 
 bool CookieJarDB::checkDatabaseValidity()
 {
     ASSERT(m_database.isOpen());
 
-    return m_database.tableExists("Cookie");
+    if (!m_database.tableExists("Cookie"))
+        return false;
+
+    SQLiteStatement integrity(m_database, "PRAGMA quick_check;");
+    if (integrity.prepare() != SQLITE_OK) {
+        LOG_ERROR("Failed to execute database integrity check");
+        return false;
+    }
+
+    int resultCode = integrity.step();
+    if (resultCode != SQLITE_ROW) {
+        LOG_ERROR("Integrity quick_check step returned %d", resultCode);
+        return false;
+    }
+
+    int columns = integrity.columnCount();
+    if (columns != 1) {
+        LOG_ERROR("Received %i columns performing integrity check, should be 1", columns);
+        return false;
+    }
+
+    String resultText = integrity.getColumnText(0);
+
+    if (resultText != "ok") {
+        LOG_ERROR("Cookie database integrity check failed - %s", resultText.ascii().data());
+        return false;
+    }
+
+    return true;
 }
 
 void CookieJarDB::deleteAllDatabaseFiles()
@@ -216,19 +243,10 @@ void CookieJarDB::deleteAllDatabaseFiles()
     if (isOnMemory())
         return;
 
-    int ret = 0;
-    String removePath;
-
-    // remove marker file (cookie.jar.db-corrupted)
-    ret = remove(removePath.utf8().data());
-
-    // remove shm file (cookie.jar.db-shm)
-    removePath = String(m_databasePath + "-shm");
-    ret = remove(removePath.utf8().data());
-
-    // remove wal file (cookie.jar.db-wal)
-    removePath = String(m_databasePath + "-wal");
-    ret = remove(removePath.utf8().data());
+    FileSystem::deleteFile(m_databasePath);
+    FileSystem::deleteFile(getCorruptionMarkerPath());
+    FileSystem::deleteFile(m_databasePath + "-shm");
+    FileSystem::deleteFile(m_databasePath + "-wal");
 }
 
 bool CookieJarDB::isEnabled()
@@ -368,7 +386,8 @@ int CookieJarDB::setCookie(const Cookie& cookie)
 
         ret = statement->step();
     }
-    ASSERT(checkSQLiteReturnCode(ret, SQLITE_DONE));
+    checkSQLiteReturnCode(ret);
+    ASSERT(ret == SQLITE_DONE);
 
     return ret;
 }
@@ -420,7 +439,8 @@ int CookieJarDB::deleteCookie(const String& url, const String& name)
         String hostStr(urlObj.host().toString());
         String pathStr(urlObj.path());
         int ret = deleteCookieInternal(name, hostStr, pathStr);
-        ASSERT(checkSQLiteReturnCode(ret, SQLITE_DONE));
+        checkSQLiteReturnCode(ret);
+        ASSERT(ret == SQLITE_DONE);
 
         return ret;
     }
@@ -484,10 +504,10 @@ int CookieJarDB::executeSimpleSql(const char* sql, bool ignoreError)
     int ret = statement.prepareAndStep();
     statement.finalize();
 
-    ASSERT(checkSQLiteReturnCode(ret, SQLITE_OK)
-        || checkSQLiteReturnCode(ret, SQLITE_DONE)
-        || checkSQLiteReturnCode(ret, SQLITE_ROW)
-        || ignoreError);
+    checkSQLiteReturnCode(ret);
+    if (ret != SQLITE_OK && ret != SQLITE_DONE && ret != SQLITE_ROW && !ignoreError)
+        LOG_ERROR("Failed to execute %s error: %s", sql, m_database.lastErrorMsg());
+
     return ret;
 }
 

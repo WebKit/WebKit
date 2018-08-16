@@ -67,7 +67,7 @@ private:
     bool openDatabase();
     void closeDatabase();
 
-    bool checkSQLiteReturnCode(int actual, int expected);
+    void checkSQLiteReturnCode(int actual);
     void flagDatabaseCorruption();
     bool checkDatabaseCorruptionAndRemoveIfNeeded();
     String getCorruptionMarkerPath() const;

@@ -1,3 +1,18 @@
+2018-08-16  Christopher Reid  <chris.reid@sony.com>
+
+        [Curl] Not all Cookie database files are deleted on corruption
+        https://bugs.webkit.org/show_bug.cgi?id=185873
+
+        Reviewed by Fujii Hironori.
+
+        No new tests.
+
+        Delete the cookie database file and the corruption flag file when corruption is detected.
+        Adding a quick integrity check in case it can catch anything when opening the database.
+        Removing PRAGMA temp_store = MEMORY and PRAGMA journal_mode = WAL as they are set in SQLiteDatabase::open.
+
+        * platform/network/curl/CookieJarDB.cpp:
+
 2018-08-16  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Add Nicosia::ImageBackingTextureMapperImpl
