@@ -1,3 +1,133 @@
+2018-08-16  Andy Estes  <aestes@apple.com>
+
+        [watchOS] Upstream Proximity Networking (nee Wi-Fi Assertions)
+        https://bugs.webkit.org/show_bug.cgi?id=188664
+
+        Reviewed by Tim Horton.
+
+        Proximity Networking provides two features for speeding up page loads on watchOS:
+
+        1. Binding requests to the Apple Watch's Wi-Fi interface even when the iPhone is in proximity.
+        2. When Wi-Fi isn't available, preemptively upgrading the Bluetooth link to its fastest data
+        rate prior to starting page loads.
+
+        * Configurations/WebKit.xcconfig:
+
+        Added LDFLAGS for Proximity Networking.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::proximityManager):
+        * NetworkProcess/NetworkProcess.h:
+
+        Added NetworkProximityManager as a supplement.
+
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+
+        Renamed ENABLE(WIFI_ASSERTIONS) to ENABLE(PROXIMITY_NETWORKING).
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+
+        Renamed m_wiFiAssertionHolder to m_proximityAssertionToken and changed its type from an
+        optional WiFiAssertionHolder to an optional NetworkProximityAssertion::Token.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        (WebKit::NetworkProcess::platformPrepareToSuspend):
+        (WebKit::NetworkProcess::platformProcessDidResume):
+        (WebKit::NetworkProcess::platformProcessDidTransitionToBackground):
+        (WebKit::NetworkProcess::platformProcessDidTransitionToForeground):
+
+        Changed to use NetworkProximityManager.
+
+        * NetworkProcess/cocoa/WiFiAssertionHolder.h: Removed.
+        * NetworkProcess/cocoa/WiFiAssertionHolder.mm: Removed.
+        * NetworkProcess/watchos/NetworkProximityAssertion.h: Added.
+        (WebKit::NetworkProximityAssertion::Token::Token):
+        (WebKit::NetworkProximityAssertion::Token::~Token):
+
+        Added. NetworkDataTasks hold these tokens to keep Bluetooth or Wi-Fi assertions active
+        during loading. When the last token is destroyed, its associated assertion will be
+        deactivated.
+
+        * NetworkProcess/watchos/NetworkProximityAssertion.mm: Added.
+        (WebKit::NetworkProximityAssertion::NetworkProximityAssertion):
+        (WebKit::NetworkProximityAssertion::hold):
+        (WebKit::NetworkProximityAssertion::release):
+        (WebKit::NetworkProximityAssertion::resume):
+        (WebKit::NetworkProximityAssertion::suspend):
+        (WebKit::NetworkProximityAssertion::suspendNow):
+        (WebKit::NetworkProximityAssertion::releaseTimerFired):
+        (WebKit::NetworkProximityAssertion::suspendAfterBackgroundingTimerFired):
+
+        Added. NetworkProximityAssertion is the base class for Bluetooth and Wi-Fi assertions. It
+        manages the logic for holding and releasing assertions as well as responding to network
+        process backgrounding and suspension.
+
+        (WebKit::BluetoothProximityAssertion::BluetoothProximityAssertion):
+        (WebKit::BluetoothProximityAssertion::suspend):
+        (WebKit::BluetoothProximityAssertion::holdNow):
+        (WebKit::BluetoothProximityAssertion::releaseNow):
+
+        Added. Holds a Bluetooth assertion by calling -[IDSService setLinkPreferences:].
+
+        (WebKit::WiFiProximityAssertion::WiFiProximityAssertion):
+        (WebKit::WiFiProximityAssertion::holdNow):
+        (WebKit::WiFiProximityAssertion::releaseNow):
+
+        Added. Holds a Wi-Fi assertion by using WiFiManagerClient.
+
+        * NetworkProcess/watchos/NetworkProximityManager.h: Added.
+        * NetworkProcess/watchos/NetworkProximityManager.mm: Added.
+        (-[WKProximityServiceDelegate setClient:]):
+        (-[WKProximityServiceDelegate service:devicesChanged:]):
+        (-[WKProximityServiceDelegate service:nearbyDevicesChanged:]):
+        (WebKit::NetworkProximityManager::NetworkProximityManager):
+        (WebKit::NetworkProximityManager::~NetworkProximityManager):
+        (WebKit::NetworkProximityManager::supplementName):
+        (WebKit::bindRequestToWiFi):
+        (WebKit::NetworkProximityManager::applyProperties):
+        (WebKit::NetworkProximityManager::resume):
+        (WebKit::NetworkProximityManager::suspend):
+        (WebKit::NetworkProximityManager::recommendation const):
+        (WebKit::NetworkProximityManager::processRecommendations):
+        (WebKit::toProcessID):
+        (WebKit::NetworkProximityManager::resumeRecommendations):
+        (WebKit::NetworkProximityManager::suspendRecommendations):
+        (WebKit::NetworkProximityManager::updateCompanionProximity):
+        (WebKit::NetworkProximityManager::updateRecommendation):
+        (WebKit::NetworkProximityManager::initialize):
+        (WebKit::NetworkProximityManager::devicesChanged):
+
+        Added. NetworkProximityManager is a network process supplement that can bind
+        NetworkDataTasks to Wi-Fi, associate assertions with NetworkDataTasks, check for companion
+        proximity, ask for proximity network recommendations, and respond to network process
+        backgrounding and suspending.
+
+        * Platform/Logging.h:
+
+        Renamed the WiFiAssertions log channel to ProximityNetworking.
+
+        * Platform/spi/ios/MobileWiFiSPI.h:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
+        Renamed ENABLE(WIFI_ASSERTIONS) to ENABLE(PROXIMITY_NETWORKING).
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * config.h:
+
+        Removed unused definition of HAVE_MOBILE_WIFI.
+
 2018-08-16  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused and deprecated _WKProcessPoolConfiguration.allowsCellularAccess

@@ -333,7 +333,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
         parameters.recordReplayCacheLocation = parameters.diskCacheDirectory;
 #endif
 
-#if ENABLE(WIFI_ASSERTIONS)
+#if ENABLE(PROXIMITY_NETWORKING)
     parameters.wirelessContextIdentifier = m_configuration->wirelessContextIdentifier();
 #endif
 }

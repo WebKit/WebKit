@@ -1593,6 +1593,10 @@
 		A102A7081EC0EEE900D81D82 /* com.macromedia.Flash Player ESR.plugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7A5E39491D5BD8A700B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb */; };
 		A1046EA12079263100F0C5D8 /* WKPDFView.h in Headers */ = {isa = PBXBuildFile; fileRef = A1046E9F2079263100F0C5D8 /* WKPDFView.h */; };
 		A1046EA22079263100F0C5D8 /* WKPDFView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1046EA02079263100F0C5D8 /* WKPDFView.mm */; };
+		A11455AC211FCFCA00CA935B /* NetworkProximityAssertion.h in Headers */ = {isa = PBXBuildFile; fileRef = A11455AA211FCFCA00CA935B /* NetworkProximityAssertion.h */; };
+		A11455AD211FCFCA00CA935B /* NetworkProximityAssertion.mm in Sources */ = {isa = PBXBuildFile; fileRef = A11455AB211FCFCA00CA935B /* NetworkProximityAssertion.mm */; };
+		A11455B0211FD25200CA935B /* NetworkProximityManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A11455AE211FD25200CA935B /* NetworkProximityManager.h */; };
+		A11455B1211FD25200CA935B /* NetworkProximityManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = A11455AF211FD25200CA935B /* NetworkProximityManager.mm */; };
 		A115DC71191D82D700DA8072 /* _WKWebViewPrintFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = A115DC6D191D82AB00DA8072 /* _WKWebViewPrintFormatter.mm */; };
 		A115DC72191D82DA00DA8072 /* _WKWebViewPrintFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = A115DC6E191D82AB00DA8072 /* _WKWebViewPrintFormatter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A118A9EE1907AD6F00F7C92B /* QuickLookDocumentData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A118A9EC1907AD6F00F7C92B /* QuickLookDocumentData.cpp */; };
@@ -1614,8 +1618,6 @@
 		A1C512C8190656E500448914 /* WebPreviewLoaderClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1C512C6190656E500448914 /* WebPreviewLoaderClient.cpp */; };
 		A1C512C9190656E500448914 /* WebPreviewLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1C512C7190656E500448914 /* WebPreviewLoaderClient.h */; };
 		A1D420471DB5578500BB6B0D /* WKContextMenuListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1EA02351DABFF7E0096021F /* WKContextMenuListener.cpp */; };
-		A1DAFDDF207E9B16005E8A52 /* WiFiAssertionHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DAFDDD207E9B16005E8A52 /* WiFiAssertionHolder.h */; };
-		A1DAFDE0207E9B16005E8A52 /* WiFiAssertionHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1DAFDDE207E9B16005E8A52 /* WiFiAssertionHolder.mm */; };
 		A1DF631218E0B7C8003A3E2A /* DownloadClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1DF631018E0B7C8003A3E2A /* DownloadClient.mm */; };
 		A1DF631318E0B7C8003A3E2A /* DownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF631118E0B7C8003A3E2A /* DownloadClient.h */; };
 		A1E688701F6E2BAB007006A6 /* QuarantineSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1E6886F1F6E2BAB007006A6 /* QuarantineSPI.h */; };
@@ -4198,6 +4200,10 @@
 		9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContextPrivateMac.h; path = mac/WKContextPrivateMac.h; sourceTree = "<group>"; };
 		A1046E9F2079263100F0C5D8 /* WKPDFView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKPDFView.h; path = ios/WKPDFView.h; sourceTree = "<group>"; };
 		A1046EA02079263100F0C5D8 /* WKPDFView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKPDFView.mm; path = ios/WKPDFView.mm; sourceTree = "<group>"; };
+		A11455AA211FCFCA00CA935B /* NetworkProximityAssertion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkProximityAssertion.h; sourceTree = "<group>"; };
+		A11455AB211FCFCA00CA935B /* NetworkProximityAssertion.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkProximityAssertion.mm; sourceTree = "<group>"; };
+		A11455AE211FD25200CA935B /* NetworkProximityManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkProximityManager.h; sourceTree = "<group>"; };
+		A11455AF211FD25200CA935B /* NetworkProximityManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkProximityManager.mm; sourceTree = "<group>"; };
 		A115DC6D191D82AB00DA8072 /* _WKWebViewPrintFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebViewPrintFormatter.mm; sourceTree = "<group>"; };
 		A115DC6E191D82AB00DA8072 /* _WKWebViewPrintFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebViewPrintFormatter.h; sourceTree = "<group>"; };
 		A118A9EC1907AD6F00F7C92B /* QuickLookDocumentData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = QuickLookDocumentData.cpp; path = ios/QuickLookDocumentData.cpp; sourceTree = "<group>"; };
@@ -4218,8 +4224,6 @@
 		A1A4FE6018DD54A400B5EA8A /* _WKDownloadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDownloadDelegate.h; sourceTree = "<group>"; };
 		A1C512C6190656E500448914 /* WebPreviewLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPreviewLoaderClient.cpp; path = ios/WebPreviewLoaderClient.cpp; sourceTree = "<group>"; };
 		A1C512C7190656E500448914 /* WebPreviewLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPreviewLoaderClient.h; path = ios/WebPreviewLoaderClient.h; sourceTree = "<group>"; };
-		A1DAFDDD207E9B16005E8A52 /* WiFiAssertionHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WiFiAssertionHolder.h; path = NetworkProcess/cocoa/WiFiAssertionHolder.h; sourceTree = "<group>"; };
-		A1DAFDDE207E9B16005E8A52 /* WiFiAssertionHolder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WiFiAssertionHolder.mm; path = NetworkProcess/cocoa/WiFiAssertionHolder.mm; sourceTree = "<group>"; };
 		A1DF631018E0B7C8003A3E2A /* DownloadClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DownloadClient.mm; sourceTree = "<group>"; };
 		A1DF631118E0B7C8003A3E2A /* DownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadClient.h; sourceTree = "<group>"; };
 		A1E6886F1F6E2BAB007006A6 /* QuarantineSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuarantineSPI.h; sourceTree = "<group>"; };
@@ -6554,6 +6558,7 @@
 				E1798C7616E6815500240139 /* FileAPI */,
 				2DA944BB188511DD00ED86DB /* ios */,
 				510CC7DC16138E2900D03ED3 /* mac */,
+				A11455A1211FCE7F00CA935B /* watchos */,
 				413075971DE84ED70039EC69 /* webrtc */,
 				53F3CAA5206C443E0086490E /* NetworkActivityTracker.cpp */,
 				535BCB902069C49C00CCCE02 /* NetworkActivityTracker.h */,
@@ -7118,8 +7123,6 @@
 				7EC4F0F918E4A945008056AF /* NetworkProcessCocoa.mm */,
 				532159501DBAE6D70054AA3C /* NetworkSessionCocoa.h */,
 				5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */,
-				A1DAFDDD207E9B16005E8A52 /* WiFiAssertionHolder.h */,
-				A1DAFDDE207E9B16005E8A52 /* WiFiAssertionHolder.mm */,
 			);
 			name = cocoa;
 			sourceTree = "<group>";
@@ -7188,6 +7191,18 @@
 				99C3AE261DAD948500AF5C16 /* WebAutomationSessionCocoa.mm */,
 			);
 			path = cocoa;
+			sourceTree = "<group>";
+		};
+		A11455A1211FCE7F00CA935B /* watchos */ = {
+			isa = PBXGroup;
+			children = (
+				A11455AA211FCFCA00CA935B /* NetworkProximityAssertion.h */,
+				A11455AB211FCFCA00CA935B /* NetworkProximityAssertion.mm */,
+				A11455AE211FD25200CA935B /* NetworkProximityManager.h */,
+				A11455AF211FD25200CA935B /* NetworkProximityManager.mm */,
+			);
+			name = watchos;
+			path = NetworkProcess/watchos;
 			sourceTree = "<group>";
 		};
 		A182D5B11BE6BCF40087A7CC /* ios */ = {
@@ -9258,6 +9273,8 @@
 				5179556E162877B300FA43B6 /* NetworkProcessProxy.h in Headers */,
 				513A163D163088F6005D7D22 /* NetworkProcessProxyMessages.h in Headers */,
 				5C1426EE1C23F80900D41183 /* NetworkProcessSupplement.h in Headers */,
+				A11455AC211FCFCA00CA935B /* NetworkProximityAssertion.h in Headers */,
+				A11455B0211FD25200CA935B /* NetworkProximityManager.h in Headers */,
 				51FD18B61651FBAD00DBE1CE /* NetworkResourceLoader.h in Headers */,
 				E152551B17011819003D7ADB /* NetworkResourceLoaderMessages.h in Headers */,
 				5C1426F01C23F80900D41183 /* NetworkResourceLoadParameters.h in Headers */,
@@ -9646,7 +9663,6 @@
 				15739BBD1B42042D00D258C1 /* WebUserMediaClient.h in Headers */,
 				83EE575C1DB7D61100C74C50 /* WebValidationMessageClient.h in Headers */,
 				2DFC7DBB1BCCC19500C1548C /* WebViewImpl.h in Headers */,
-				A1DAFDDF207E9B16005E8A52 /* WiFiAssertionHolder.h in Headers */,
 				29CD55AA128E294F00133C85 /* WKAccessibilityWebPageObjectBase.h in Headers */,
 				29232DF418B29D6800D0596F /* WKAccessibilityWebPageObjectMac.h in Headers */,
 				934B724419F5B9BE00AE96D6 /* WKActionMenuItemTypes.h in Headers */,
@@ -11124,6 +11140,8 @@
 				E14A954916E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp in Sources */,
 				5179556D162877B100FA43B6 /* NetworkProcessProxy.cpp in Sources */,
 				513A163C163088F6005D7D22 /* NetworkProcessProxyMessageReceiver.cpp in Sources */,
+				A11455AD211FCFCA00CA935B /* NetworkProximityAssertion.mm in Sources */,
+				A11455B1211FD25200CA935B /* NetworkProximityManager.mm in Sources */,
 				51FD18B51651FBAD00DBE1CE /* NetworkResourceLoader.cpp in Sources */,
 				E152551A17011819003D7ADB /* NetworkResourceLoaderMessageReceiver.cpp in Sources */,
 				5C1426EF1C23F80900D41183 /* NetworkResourceLoadParameters.cpp in Sources */,
@@ -11612,7 +11630,6 @@
 				83EE575B1DB7D61100C74C50 /* WebValidationMessageClient.cpp in Sources */,
 				2DFC7DBC1BCCC19500C1548C /* WebViewImpl.mm in Sources */,
 				C0337DD1127A2980008FF4F4 /* WebWheelEvent.cpp in Sources */,
-				A1DAFDE0207E9B16005E8A52 /* WiFiAssertionHolder.mm in Sources */,
 				868160D0187645570021E79D /* WindowServerConnection.mm in Sources */,
 				29CD55AB128E294F00133C85 /* WKAccessibilityWebPageObjectBase.mm in Sources */,
 				29232DF818B2A9AE00D0596F /* WKAccessibilityWebPageObjectIOS.mm in Sources */,

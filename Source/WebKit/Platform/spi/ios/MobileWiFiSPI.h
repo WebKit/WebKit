@@ -27,7 +27,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#include <MobileWiFi/WiFiManagerClient.h>
+#include <MobileWiFi/MobileWiFi.h>
 
 #else
 

@@ -153,7 +153,7 @@ public:
     const WTF::String& customWebContentServiceBundleIdentifier() const { return m_customWebContentServiceBundleIdentifier; }
     void setCustomWebContentServiceBundleIdentifier(const WTF::String& customWebContentServiceBundleIdentifier) { m_customWebContentServiceBundleIdentifier = customWebContentServiceBundleIdentifier; }
 
-#if ENABLE(WIFI_ASSERTIONS)
+#if ENABLE(PROXIMITY_NETWORKING)
     unsigned wirelessContextIdentifier() const { return m_wirelessContextIdentifier; }
     void setWirelessContextIdentifier(unsigned wirelessContextIdentifier) { m_wirelessContextIdentifier = wirelessContextIdentifier; }
 #endif
@@ -205,7 +205,7 @@ private:
     WTF::String m_ctDataConnectionServiceType;
 #endif
 
-#if ENABLE(WIFI_ASSERTIONS)
+#if ENABLE(PROXIMITY_NETWORKING)
     unsigned m_wirelessContextIdentifier { 0 };
 #endif
 

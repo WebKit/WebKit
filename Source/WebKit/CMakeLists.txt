@@ -11,6 +11,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/NetworkProcess/FileAPI"
     "${WEBKIT_DIR}/NetworkProcess/cache"
     "${WEBKIT_DIR}/NetworkProcess/capture"
+    "${WEBKIT_DIR}/NetworkProcess/watchos"
     "${WEBKIT_DIR}/NetworkProcess/webrtc"
     "${WEBKIT_DIR}/Platform"
     "${WEBKIT_DIR}/Platform/IPC"

@@ -30,6 +30,7 @@
 #import "Logging.h"
 #import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"
+#import "NetworkProximityManager.h"
 #import "NetworkResourceLoader.h"
 #import "NetworkSessionCocoa.h"
 #import "SandboxExtension.h"
@@ -44,10 +45,6 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/ProcessPrivilege.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/NetworkProcessCocoaAdditions.mm>
-#endif
 
 namespace WebKit {
 
@@ -109,10 +106,6 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     // One non-obvious constraint is that we need to use -setSharedURLCache: even in testing mode, to prevent creating a default one on disk later, when some other code touches the cache.
 
     ASSERT(!m_diskCacheIsDisabledForTesting);
-
-#if ENABLE(WIFI_ASSERTIONS)
-    initializeWiFiAssertions(parameters);
-#endif
 
     if (m_diskCacheDirectory.isNull())
         return;
@@ -245,8 +238,8 @@ void NetworkProcess::platformSyncAllCookies(CompletionHandler<void()>&& completi
 
 void NetworkProcess::platformPrepareToSuspend(CompletionHandler<void()>&& completionHandler)
 {
-#if ENABLE(WIFI_ASSERTIONS)
-    suspendWiFiAssertions(SuspensionReason::ProcessSuspending, WTFMove(completionHandler));
+#if ENABLE(PROXIMITY_NETWORKING)
+    proximityManager().suspend(SuspensionReason::ProcessSuspending, WTFMove(completionHandler));
 #else
     completionHandler();
 #endif
@@ -254,23 +247,23 @@ void NetworkProcess::platformPrepareToSuspend(CompletionHandler<void()>&& comple
 
 void NetworkProcess::platformProcessDidResume()
 {
-#if ENABLE(WIFI_ASSERTIONS)
-    resumeWiFiAssertions(ResumptionReason::ProcessResuming);
+#if ENABLE(PROXIMITY_NETWORKING)
+    proximityManager().resume(ResumptionReason::ProcessResuming);
 #endif
 }
 
 void NetworkProcess::platformProcessDidTransitionToBackground()
 {
-#if ENABLE(WIFI_ASSERTIONS)
-    suspendWiFiAssertions(SuspensionReason::ProcessBackgrounding, [] { });
+#if ENABLE(PROXIMITY_NETWORKING)
+    proximityManager().suspend(SuspensionReason::ProcessBackgrounding, [] { });
 #endif
 }
 
 void NetworkProcess::platformProcessDidTransitionToForeground()
 {
-#if ENABLE(WIFI_ASSERTIONS)
-    resumeWiFiAssertions(ResumptionReason::ProcessForegrounding);
+#if ENABLE(PROXIMITY_NETWORKING)
+    proximityManager().resume(ResumptionReason::ProcessForegrounding);
 #endif
 }
 
-}
+} // namespace WebKit

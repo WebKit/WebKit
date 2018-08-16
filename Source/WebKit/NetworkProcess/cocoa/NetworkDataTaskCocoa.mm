@@ -31,6 +31,7 @@
 #import "DownloadProxyMessages.h"
 #import "Logging.h"
 #import "NetworkProcess.h"
+#import "NetworkProximityManager.h"
 #import "NetworkSessionCocoa.h"
 #import "SessionTracker.h"
 #import "WebCoreArgumentCoders.h"
@@ -43,10 +44,6 @@
 #import <wtf/MainThread.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/text/Base64.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/NetworkDataTaskCocoaAdditions.mm>
-#endif
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
 @interface NSURLSessionTask (Staging)
@@ -213,8 +210,8 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     NSURLRequest *nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
     applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, shouldContentSniff == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), shouldContentEncodingSniff == WebCore::ContentEncodingSniffingPolicy::Sniff);
-#if ENABLE(WIFI_ASSERTIONS)
-    applyAdditionalProperties(request, *this, nsRequest);
+#if ENABLE(PROXIMITY_NETWORKING)
+    NetworkProcess::singleton().proximityManager().applyProperties(request, *this, nsRequest);
 #endif
 
     auto& cocoaSession = static_cast<NetworkSessionCocoa&>(m_session.get());

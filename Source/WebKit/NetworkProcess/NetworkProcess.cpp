@@ -43,6 +43,7 @@
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessPlatformStrategies.h"
 #include "NetworkProcessProxyMessages.h"
+#include "NetworkProximityManager.h"
 #include "NetworkResourceLoader.h"
 #include "NetworkSession.h"
 #include "PreconnectTask.h"
@@ -121,6 +122,9 @@ NetworkProcess::NetworkProcess()
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     addSupplement<LegacyCustomProtocolManager>();
 #endif
+#if ENABLE(PROXIMITY_NETWORKING)
+    addSupplement<NetworkProximityManager>();
+#endif
 
     NetworkStateNotifier::singleton().addListener([this](bool isOnLine) {
         auto webProcessConnections = m_webProcessConnections;
@@ -147,6 +151,13 @@ DownloadManager& NetworkProcess::downloadManager()
     static NeverDestroyed<DownloadManager> downloadManager(*this);
     return downloadManager;
 }
+
+#if ENABLE(PROXIMITY_NETWORKING)
+NetworkProximityManager& NetworkProcess::proximityManager()
+{
+    return *supplement<NetworkProximityManager>();
+}
+#endif
 
 void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess* connection)
 {

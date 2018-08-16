@@ -180,6 +180,17 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 
 #endif /* PLATFORM(IOS) */
 
+/* --------- Apple WATCHOS port --------- */
+#if PLATFORM(WATCHOS)
+
+#if !defined(ENABLE_PROXIMITY_NETWORKING)
+#if !TARGET_OS_SIMULATOR
+#define ENABLE_PROXIMITY_NETWORKING 1
+#endif
+#endif
+
+#endif /* PLATFORM(WATCHOS) */
+
 /* --------- Apple MAC port (not IOS) --------- */
 #if PLATFORM(MAC)
 

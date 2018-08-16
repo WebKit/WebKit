@@ -1,3 +1,12 @@
+2018-08-16  Andy Estes  <aestes@apple.com>
+
+        [watchOS] Upstream Proximity Networking (nee Wi-Fi Assertions)
+        https://bugs.webkit.org/show_bug.cgi?id=188664
+
+        Reviewed by Tim Horton.
+
+        * wtf/FeatureDefines.h: Defined ENABLE_PROXIMITY_NETWORKING to 1 on watchOS.
+
 2018-08-16  Alex Christensen  <achristensen@webkit.org>
 
         Re-introduce assertion removed in r234890

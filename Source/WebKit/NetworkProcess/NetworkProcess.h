@@ -46,25 +46,25 @@ class SessionID;
 }
 
 namespace WebCore {
-class DownloadID;
 class CertificateInfo;
+class DownloadID;
 class NetworkStorageSession;
 class ProtectionSpace;
 class SecurityOrigin;
+class URL;
+enum class StoredCredentialsPolicy;
 struct SecurityOriginData;
 struct SoupNetworkProxySettings;
-enum class StoredCredentialsPolicy;
-class URL;
 }
 
 namespace WebKit {
+
 class AuthenticationManager;
-#if ENABLE(SERVER_PRECONNECT)
-class PreconnectTask;
-#endif
 class NetworkConnectionToWebProcess;
 class NetworkProcessSupplement;
+class NetworkProximityManager;
 class NetworkResourceLoader;
+class PreconnectTask;
 enum class WebsiteDataFetchOption;
 enum class WebsiteDataType;
 struct NetworkProcessCreationParameters;
@@ -98,6 +98,9 @@ public:
 
     AuthenticationManager& authenticationManager();
     DownloadManager& downloadManager();
+#if ENABLE(PROXIMITY_NETWORKING)
+    NetworkProximityManager& proximityManager();
+#endif
 
     NetworkCache::Cache* cache() { return m_cache.get(); }
 

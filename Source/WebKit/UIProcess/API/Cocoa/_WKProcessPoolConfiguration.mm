@@ -139,7 +139,7 @@
     _processPoolConfiguration->setAdditionalReadAccessAllowedPaths(WTFMove(paths));
 }
 
-#if ENABLE(WIFI_ASSERTIONS)
+#if ENABLE(PROXIMITY_NETWORKING)
 - (NSUInteger)wirelessContextIdentifier
 {
     return _processPoolConfiguration->wirelessContextIdentifier();
