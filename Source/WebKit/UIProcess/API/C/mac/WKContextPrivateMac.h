@@ -74,6 +74,8 @@ WK_EXPORT WKStringRef WKPlugInInfoIsSandboxedKey();
 WK_EXPORT bool WKContextShouldBlockWebGL();
 WK_EXPORT bool WKContextShouldSuggestBlockWebGL();
 
+WK_EXPORT bool WKContextHandlesSafeBrowsing();
+
 #ifdef __cplusplus
 }
 #endif

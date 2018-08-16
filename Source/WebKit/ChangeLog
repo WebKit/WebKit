@@ -1,3 +1,19 @@
+2018-08-16  Alex Christensen  <achristensen@webkit.org>
+
+        Add temporary SPI WKContextHandlesSafeBrowsing
+        https://bugs.webkit.org/show_bug.cgi?id=188676
+
+        Reviewed by Joseph Pecoraro.
+
+        WebKit showing the safe browsing warning doesn't play well with Safari showing the safe browsing warning.
+        I plan to adopt this SPI in Safari to disable Safari's safe browsing check if it's true.
+        Then when I implement safe browsing in WebKit, I can switch this value to true in the same change and
+        not have a broken Safari.
+
+        * UIProcess/API/C/mac/WKContextPrivateMac.h:
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextHandlesSafeBrowsing):
+
 2018-08-16  Ben Richards  <benton_richards@apple.com>
 
         Add script to generate WebContent service resource files

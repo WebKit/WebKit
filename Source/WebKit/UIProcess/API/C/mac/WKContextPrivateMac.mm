@@ -172,3 +172,8 @@ bool WKContextShouldSuggestBlockWebGL()
     return false;
 #endif
 }
+
+bool WKContextHandlesSafeBrowsing()
+{
+    return false;
+}
