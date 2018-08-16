@@ -1,3 +1,10 @@
+2018-08-16  Aditya Keerthi  <akeerthi@apple.com>
+
+        Unreviewed, fix the watchOS build after r188464.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::setColor):
+
 2018-08-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Custom element doesn't invalidate its style when :defined rule starts to apply

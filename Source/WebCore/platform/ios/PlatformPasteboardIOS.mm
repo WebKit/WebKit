@@ -569,6 +569,11 @@ long PlatformPasteboard::write(const PasteboardCustomData& data)
 
 #else
 
+long PlatformPasteboard::setColor(const Color&)
+{
+    return 0;
+}
+
 bool PlatformPasteboard::allowReadingURLAtIndex(const URL&, int) const
 {
     return false;
