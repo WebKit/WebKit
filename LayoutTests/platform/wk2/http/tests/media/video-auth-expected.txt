@@ -1,4 +1,4 @@
-127.0.0.1:8000 - didReceiveAuthenticationChallenge - Responding with username:password
+127.0.0.1:8000 - didReceiveAuthenticationChallenge - ProtectionSpaceAuthenticationSchemeHTTPBasic - Responding with username:password
  
 Tests that the media player sends authorization credentials when requesting a media file.
 Testing same domain (127.0.0.1)

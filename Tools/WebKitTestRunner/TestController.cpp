@@ -1809,6 +1809,32 @@ void TestController::didReceiveServerRedirectForProvisionalNavigation(WKPageRef 
     return;
 }
 
+static const char* toString(WKProtectionSpaceAuthenticationScheme scheme)
+{
+    switch (scheme) {
+    case kWKProtectionSpaceAuthenticationSchemeDefault:
+        return "ProtectionSpaceAuthenticationSchemeDefault";
+    case kWKProtectionSpaceAuthenticationSchemeHTTPBasic:
+        return "ProtectionSpaceAuthenticationSchemeHTTPBasic";
+    case kWKProtectionSpaceAuthenticationSchemeHTMLForm:
+        return "ProtectionSpaceAuthenticationSchemeHTMLForm";
+    case kWKProtectionSpaceAuthenticationSchemeNTLM:
+        return "ProtectionSpaceAuthenticationSchemeNTLM";
+    case kWKProtectionSpaceAuthenticationSchemeNegotiate:
+        return "ProtectionSpaceAuthenticationSchemeNegotiate";
+    case kWKProtectionSpaceAuthenticationSchemeClientCertificateRequested:
+        return "ProtectionSpaceAuthenticationSchemeClientCertificateRequested";
+    case kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
+        return "ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested";
+    case kWKProtectionSpaceAuthenticationSchemeOAuth:
+        return "ProtectionSpaceAuthenticationSchemeOAuth";
+    case kWKProtectionSpaceAuthenticationSchemeUnknown:
+        return "ProtectionSpaceAuthenticationSchemeUnknown";
+    }
+    ASSERT_NOT_REACHED();
+    return "ProtectionSpaceAuthenticationSchemeUnknown";
+}
+
 bool TestController::canAuthenticateAgainstProtectionSpace(WKPageRef page, WKProtectionSpaceRef protectionSpace)
 {
     if (m_shouldLogCanAuthenticateAgainstProtectionSpace)
@@ -1820,7 +1846,7 @@ bool TestController::canAuthenticateAgainstProtectionSpace(WKPageRef page, WKPro
         return host == "localhost" || host == "127.0.0.1" || (m_allowAnyHTTPSCertificateForAllowedHosts && m_allowedHosts.find(host) != m_allowedHosts.end());
     }
     
-    return authenticationScheme <= kWKProtectionSpaceAuthenticationSchemeHTTPDigest;
+    return authenticationScheme <= kWKProtectionSpaceAuthenticationSchemeHTTPDigest || authenticationScheme == kWKProtectionSpaceAuthenticationSchemeOAuth;
 }
 
 void TestController::didFinishNavigation(WKPageRef page, WKNavigationRef navigation)
@@ -1840,8 +1866,9 @@ void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthent
 {
     WKProtectionSpaceRef protectionSpace = WKAuthenticationChallengeGetProtectionSpace(authenticationChallenge);
     WKAuthenticationDecisionListenerRef decisionListener = WKAuthenticationChallengeGetDecisionListener(authenticationChallenge);
+    WKProtectionSpaceAuthenticationScheme authenticationScheme = WKProtectionSpaceGetAuthenticationScheme(protectionSpace);
 
-    if (WKProtectionSpaceGetAuthenticationScheme(protectionSpace) == kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
+    if (authenticationScheme == kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
         // Any non-empty credential signals to accept the server trust. Since the cross-platform API
         // doesn't expose a way to create a credential from server trust, we use a password credential.
 
@@ -1858,7 +1885,7 @@ void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthent
 
     std::string host = toSTD(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)).get());
     int port = WKProtectionSpaceGetPort(protectionSpace);
-    String message = String::format("%s:%d - didReceiveAuthenticationChallenge - ", host.c_str(), port);
+    String message = String::format("%s:%d - didReceiveAuthenticationChallenge - %s - ", host.c_str(), port, toString(authenticationScheme));
     if (!m_handlesAuthenticationChallenges)
         message.append("Simulating cancelled authentication sheet\n");
     else

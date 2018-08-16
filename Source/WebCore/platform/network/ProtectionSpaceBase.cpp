@@ -108,6 +108,7 @@ bool ProtectionSpaceBase::isPasswordBased() const
     case ProtectionSpaceAuthenticationSchemeHTMLForm:
     case ProtectionSpaceAuthenticationSchemeNTLM:
     case ProtectionSpaceAuthenticationSchemeNegotiate:
+    case ProtectionSpaceAuthenticationSchemeOAuth:
         return true;
     case ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
     case ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:

@@ -1,3 +1,21 @@
+2018-08-15  Ansh Shukla  <ansh_shukla@apple.com>
+
+        NSURLAuthenticationMethodOAuth challenges are surfaced to clients in -didReceiveAuthenticationChallenge as NSURLAuthenticationMethodDefault
+        https://bugs.webkit.org/show_bug.cgi?id=186870
+        <rdar://problem/41314410>
+
+        Reviewed by Alex Christensen.
+
+        Add the ProtectionSpaceAuthenticationSchemeOAuth type.
+
+        * platform/network/ProtectionSpaceBase.cpp:
+        (WebCore::ProtectionSpaceBase::isPasswordBased const): Return yes because the oauth challenge
+        expects a token in return.
+        * platform/network/ProtectionSpaceBase.h:
+        * platform/network/cocoa/ProtectionSpaceCocoa.mm:
+        (WebCore::scheme):
+        (WebCore::ProtectionSpace::nsSpace const):
+
 2018-08-15  Ben Richards  <benton_richards@apple.com>
 
         We should cache the compiled sandbox profile in a data vault

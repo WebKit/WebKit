@@ -364,6 +364,8 @@ inline WKProtectionSpaceAuthenticationScheme toAPI(WebCore::ProtectionSpaceAuthe
         return kWKProtectionSpaceAuthenticationSchemeClientCertificateRequested;
     case WebCore::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
         return kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
+    case WebCore::ProtectionSpaceAuthenticationSchemeOAuth:
+        return kWKProtectionSpaceAuthenticationSchemeOAuth;
     default:
         return kWKProtectionSpaceAuthenticationSchemeUnknown;
     }
