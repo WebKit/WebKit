@@ -254,6 +254,7 @@
     "web-platform-tests/magnetometer": "skip", 
     "web-platform-tests/mathml": "import", 
     "web-platform-tests/media-capabilities": "skip", 
+    "web-platform-tests/media-source": "import", 
     "web-platform-tests/mediacapture-image": "skip", 
     "web-platform-tests/mediacapture-record": "skip", 
     "web-platform-tests/mediacapture-streams": "import", 

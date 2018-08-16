@@ -1,3 +1,49 @@
+2018-08-15  Jer Noble  <jer.noble@apple.com>
+
+        Add Experimental Feature support for SourceBuffer.changeType()
+        https://bugs.webkit.org/show_bug.cgi?id=188626
+
+        Reviewed by Eric Carlson.
+
+        Tests: imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html
+               imported/w3c/web-platform-tests/media-source/mediasource-changetype.html
+
+        The WICG is incubating a new proposal to allow clients to switch between streams
+        with different codecs within the same SourceBuffer. The proposal is being tracked
+        by <https://github.com/w3c/media-source/issues/155> and the proposed spec change
+        is available at <https://rawgit.com/wicg/media-source/codec-switching/index.html>.
+
+        Drive-by fix: One of the wpt tests uses a .mp3 file to test SourceBuffer switching.
+        The AVStreamDataParser does not necessarily emit every frame appended, and after a
+        new init segment is appended, it's possible that frames from the previous media
+        segment will be emitted. This causes an error condition to occur, due to an added
+        check in the spec for a new flag. When the SourceBuffer asks its private implementation
+        to reset the parser state, since there's no API on AVStreamDataParser to actually
+        reset the parser state, just set a flag to drop all emitted buffers until the next
+        initialization segment is parsed.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::contentTypeShouldGenerateTimestamps):
+        (WebCore::MediaSource::setDurationInternal):
+        (WebCore::MediaSource::addSourceBuffer):
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::changeType):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment):
+        (WebCore::SourceBuffer::validateInitializationSegment):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/SourceBuffer.idl:
+        * page/Settings.yaml:
+        * platform/graphics/SourceBufferPrivate.h:
+        (WebCore::SourceBufferPrivate::canSwitchToType):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset):
+        (WebCore::SourceBufferPrivateAVFObjC::processCodedFrame):
+        (WebCore::SourceBufferPrivateAVFObjC::resetParserState):
+        (WebCore::SourceBufferPrivateAVFObjC::canSwitchToType):
+
 2018-08-16  Christopher Reid  <chris.reid@sony.com>
 
         [Curl] Not all Cookie database files are deleted on corruption

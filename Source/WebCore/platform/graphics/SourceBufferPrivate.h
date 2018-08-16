@@ -63,6 +63,8 @@ public:
     virtual void notifyClientWhenReadyForMoreSamples(const AtomicString&) { }
 
     virtual Vector<String> enqueuedSamplesForTrackID(const AtomicString&) { return { }; }
+
+    virtual bool canSwitchToType(const ContentType&) { return false; }
 };
 
 }

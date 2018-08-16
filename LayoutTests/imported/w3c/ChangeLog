@@ -1,3 +1,28 @@
+2018-08-15  Jer Noble  <jer.noble@apple.com>
+
+        Add Experimental Feature support for SourceBuffer.changeType()
+        https://bugs.webkit.org/show_bug.cgi?id=188626
+
+        Reviewed by Eric Carlson.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/media-source/mediasource-changetype-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-changetype-play-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-changetype-play.html: Added.
+        * web-platform-tests/media-source/mediasource-changetype-util.js: Added.
+        (findSupportedChangeTypeTestTypes):
+        (appendBuffer):
+        (trimBuffered):
+        (trimDuration):
+        (runChangeTypeTest):
+        (mediaSourceChangeTypeTest):
+        * web-platform-tests/media-source/mediasource-changetype.html: Added.
+        * web-platform-tests/media-source/mp3/sound_5.mp3: Added.
+        * web-platform-tests/media-source/mp3/w3c-import.log: Added.
+        * web-platform-tests/media-source/w3c-import.log:
+        * web-platform-tests/media-source/webm/test-vp9.webm: Added.
+        * web-platform-tests/media-source/webm/w3c-import.log:
+
 2018-08-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         connectedCallback is invoked by the HTML parser after child nodes had been inserted

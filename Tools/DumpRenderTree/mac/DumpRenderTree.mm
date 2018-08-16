@@ -868,6 +868,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setCrossOriginWindowPolicySupportEnabled:YES];
     [preferences setServerTimingEnabled:YES];
     [preferences setIntersectionObserverEnabled:YES];
+    preferences.sourceBufferChangeTypeEnabled = YES;
 }
 
 // Called before each test.
@@ -960,6 +961,7 @@ static void resetWebPreferencesToConsistentValues()
 
     [preferences setWebAudioEnabled:YES];
     [preferences setMediaSourceEnabled:YES];
+    [preferences setSourceBufferChangeTypeEnabled:YES];
 
     [preferences setShadowDOMEnabled:YES];
     [preferences setCustomElementsEnabled:YES];

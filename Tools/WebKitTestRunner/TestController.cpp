@@ -740,8 +740,9 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetSansSerifFontFamily(preferences, sansSerifFontFamily);
     WKPreferencesSetSerifFontFamily(preferences, serifFontFamily);
     WKPreferencesSetAsynchronousSpellCheckingEnabled(preferences, false);
-#if ENABLE(WEB_AUDIO)
+#if ENABLE(MEDIA_SOURCE)
     WKPreferencesSetMediaSourceEnabled(preferences, true);
+    WKPreferencesSetSourceBufferChangeTypeEnabled(preferences, true);
 #endif
 
     WKPreferencesSetHiddenPageDOMTimerThrottlingEnabled(preferences, false);

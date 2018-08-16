@@ -3021,6 +3021,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
 #if ENABLE(MEDIA_SOURCE)
     settings.setMediaSourceEnabled([preferences mediaSourceEnabled]);
+    settings.setSourceBufferChangeTypeEnabled([preferences sourceBufferChangeTypeEnabled]);
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)

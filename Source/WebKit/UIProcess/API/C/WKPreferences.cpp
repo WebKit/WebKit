@@ -1468,6 +1468,16 @@ bool WKPreferencesGetMediaSourceEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->mediaSourceEnabled();
 }
 
+void WKPreferencesSetSourceBufferChangeTypeEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setSourceBufferChangeTypeEnabled(enabled);
+}
+
+bool WKPreferencesGetSourceBufferChangeTypeEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->sourceBufferChangeTypeEnabled();
+}
+
 void WKPreferencesSetViewGestureDebuggingEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setViewGestureDebuggingEnabled(enabled);

@@ -1,3 +1,12 @@
+2018-08-15  Jer Noble  <jer.noble@apple.com>
+
+        Add Experimental Feature support for SourceBuffer.changeType()
+        https://bugs.webkit.org/show_bug.cgi?id=188626
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-expected.txt: Added.
+
 2018-08-16  Per Arne Vollan  <pvollan@apple.com>
 
         [win-ews] No such file or directory: u'/cygdrive/C/cygwin/home/buildbot/WebKit/WebKitBuild/Release/bin32/layout-test-results/pywebsocket.ws.log-out.txt'

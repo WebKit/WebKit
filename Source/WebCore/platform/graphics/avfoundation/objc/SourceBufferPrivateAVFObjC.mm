@@ -538,6 +538,8 @@ void SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
     m_videoTracks.clear();
     m_audioTracks.clear();
 
+    m_discardSamplesUntilNextInitializationSegment = false;
+
     SourceBufferPrivateClient::InitializationSegment segment;
 
     if ([m_asset respondsToSelector:@selector(overallDurationHint)])
@@ -606,6 +608,9 @@ bool SourceBufferPrivateAVFObjC::processCodedFrame(int trackID, CMSampleBufferRe
         // will just confuse its state. Drop this sample until we can handle text tracks properly.
         return false;
     }
+
+    if (m_discardSamplesUntilNextInitializationSegment)
+        return false;
 
     if (m_client) {
         Ref<MediaSample> mediaSample = MediaSampleAVFObjC::create(sampleBuffer, trackID);
@@ -746,6 +751,7 @@ void SourceBufferPrivateAVFObjC::abort()
 void SourceBufferPrivateAVFObjC::resetParserState()
 {
     m_parserStateWasReset = true;
+    m_discardSamplesUntilNextInitializationSegment = true;
 }
 
 void SourceBufferPrivateAVFObjC::destroyParser()
@@ -1195,6 +1201,14 @@ void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(const Atomi
                 weakThis->didBecomeReadyForMoreSamples(trackID);
         }];
     }
+}
+
+bool SourceBufferPrivateAVFObjC::canSwitchToType(const ContentType& contentType)
+{
+    MediaEngineSupportParameters parameters;
+    parameters.isMediaSource = true;
+    parameters.type = contentType;
+    return MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters) != MediaPlayer::IsNotSupported;
 }
 
 void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer)

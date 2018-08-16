@@ -144,6 +144,7 @@ private:
     bool isReadyForMoreSamples(const AtomicString& trackID) final;
     void setActive(bool) final;
     void notifyClientWhenReadyForMoreSamples(const AtomicString& trackID) final;
+    bool canSwitchToType(const ContentType&) final;
 
     void didBecomeReadyForMoreSamples(int trackID);
     void appendCompleted();
@@ -194,6 +195,7 @@ private:
     FloatSize m_currentSize;
     bool m_parsingSucceeded { true };
     bool m_parserStateWasReset { false };
+    bool m_discardSamplesUntilNextInitializationSegment { false };
     int m_enabledVideoTrackID { -1 };
     int m_protectedTrackID { -1 };
 };

@@ -1,3 +1,17 @@
+2018-08-16  Jer Noble  <jer.noble@apple.com>
+
+        Add Experimental Feature support for SourceBuffer.changeType()
+        https://bugs.webkit.org/show_bug.cgi?id=188626
+        <rdar://problem/43356021>
+
+        Reviewed by Eric Carlson.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        (resetWebPreferencesToConsistentValues):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2018-08-16  Aditya Keerthi  <akeerthi@apple.com>
 
         Support drag-and-drop for input[type=color]

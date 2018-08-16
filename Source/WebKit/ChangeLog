@@ -1,3 +1,16 @@
+2018-08-15  Jer Noble  <jer.noble@apple.com>
+
+        Add Experimental Feature support for SourceBuffer.changeType()
+        https://bugs.webkit.org/show_bug.cgi?id=188626
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetSourceBufferChangeTypeEnabled):
+        (WKPreferencesGetSourceBufferChangeTypeEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
 2018-08-16  Alex Christensen  <achristensen@webkit.org>
 
         Transition more WKWebViewConfiguration ivars to API::PageConfiguration values

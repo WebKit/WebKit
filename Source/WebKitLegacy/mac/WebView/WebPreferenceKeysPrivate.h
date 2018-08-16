@@ -163,6 +163,7 @@
 #define WebKitLowPowerVideoAudioBufferSizeEnabledPreferenceKey @"WebKitLowPowerVideoAudioBufferSizeEnabled"
 #define WebKitUseLegacyTextAlignPositionedElementBehaviorPreferenceKey @"WebKitUseLegacyTextAlignPositionedElementBehavior"
 #define WebKitMediaSourceEnabledPreferenceKey @"WebKitMediaSourceEnabled"
+#define WebKitSourceBufferChangeTypeEnabledPreferenceKey @"WebKitSourceBufferChangeTypeEnabled"
 #define WebKitShouldConvertPositionStyleOnCopyPreferenceKey @"WebKitShouldConvertPositionStyleOnCopy"
 #define WebKitImageControlsEnabledPreferenceKey @"WebKitImageControlsEnabled"
 #define WebKitGamepadsEnabledPreferenceKey @"WebKitGamepadsEnabled"

@@ -103,6 +103,7 @@ public:
     bool hasPendingActivity() const final;
 
     static const MediaTime& currentTimeFudgeFactor();
+    static bool contentTypeShouldGenerateTimestamps(const ContentType&);
 
 private:
     explicit MediaSource(ScriptExecutionContext&);

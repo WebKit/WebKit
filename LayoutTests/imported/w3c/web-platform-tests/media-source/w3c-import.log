@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -34,6 +34,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-attach-stops-delaying-load-event.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-buffered.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-changetype-util.js
+/LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-changetype.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-closed.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-a-bitrate.html
 /LayoutTests/imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-audio-bitrate.html

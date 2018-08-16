@@ -344,6 +344,11 @@ const MediaTime& MediaSource::currentTimeFudgeFactor()
     return fudgeFactor;
 }
 
+bool MediaSource::contentTypeShouldGenerateTimestamps(const ContentType& contentType)
+{
+    return contentType.containerType() == "audio/aac" || contentType.containerType() == "audio/mpeg";
+}
+
 bool MediaSource::hasBufferedTime(const MediaTime& time)
 {
     if (time > duration())
@@ -524,7 +529,7 @@ ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& duration)
     m_duration = newDuration;
 
     // 6. Update the media duration to new duration and run the HTMLMediaElement duration change algorithm.
-    LOG(MediaSource, "MediaSource::setDurationInternal(%p) - duration(%g)", this, duration.toDouble());
+    LOG(MediaSource, "MediaSource::setDurationInternal(%p) - duration(%s)", this, duration.toString().utf8().data());
     m_private->durationChanged();
 
     return { };
@@ -662,7 +667,7 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
     // column of the byte stream format registry [MSE-REGISTRY] entry that is associated with type.
     // NOTE: In the current byte stream format registry <http://www.w3.org/2013/12/byte-stream-format-registry/>
     // only the "MPEG Audio Byte Stream Format" has the "Generate Timestamps Flag" value set.
-    bool shouldGenerateTimestamps = contentType.containerType() == "audio/aac" || contentType.containerType() == "audio/mpeg";
+    bool shouldGenerateTimestamps = contentTypeShouldGenerateTimestamps(contentType);
     buffer->setShouldGenerateTimestamps(shouldGenerateTimestamps);
 
     // 7. If the generate timestamps flag equals true:

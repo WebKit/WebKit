@@ -79,6 +79,7 @@ public:
     ExceptionOr<void> abort();
     ExceptionOr<void> remove(double start, double end);
     ExceptionOr<void> remove(const MediaTime&, const MediaTime&);
+    ExceptionOr<void> changeType(const String&);
 
     const TimeRanges& bufferedInternal() const { ASSERT(m_buffered); return *m_buffered; }
 
@@ -235,6 +236,7 @@ private:
     bool m_active { false };
     bool m_bufferFull { false };
     bool m_shouldGenerateTimestamps { false };
+    bool m_pendingInitializationSegmentForChangeType { false };
 };
 
 } // namespace WebCore

@@ -605,6 +605,7 @@ public:
         [NSNumber numberWithBool:NO], WebKitUseLegacyTextAlignPositionedElementBehaviorPreferenceKey,
 #if ENABLE(MEDIA_SOURCE)
         [NSNumber numberWithBool:YES], WebKitMediaSourceEnabledPreferenceKey,
+        @NO, WebKitSourceBufferChangeTypeEnabledPreferenceKey,
 #endif
 #if ENABLE(SERVICE_CONTROLS)
         [NSNumber numberWithBool:NO], WebKitImageControlsEnabledPreferenceKey,
@@ -2740,6 +2741,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setMediaSourceEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitMediaSourceEnabledPreferenceKey];
+}
+
+- (BOOL)sourceBufferChangeTypeEnabled
+{
+    return [self _boolValueForKey:WebKitSourceBufferChangeTypeEnabledPreferenceKey];
+}
+
+- (void)setSourceBufferChangeTypeEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitSourceBufferChangeTypeEnabledPreferenceKey];
 }
 
 - (BOOL)imageControlsEnabled

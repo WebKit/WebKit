@@ -68,4 +68,6 @@
     attribute EventHandler onupdateend;
     attribute EventHandler onerror;
     attribute EventHandler onabort;
+
+    [EnabledBySetting=SourceBufferChangeType, MayThrowException] void changeType(DOMString type);
 };

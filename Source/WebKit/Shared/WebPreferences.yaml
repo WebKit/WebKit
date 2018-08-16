@@ -1309,3 +1309,10 @@ ProcessSwapOnNavigationEnabled:
   category: experimental
   webcoreBinding: none
 
+SourceBufferChangeTypeEnabled:
+  type: bool
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  humanReadableName: "Media Source Codec Switching Support"
+  humanReadableDescription: "Enable Media Source Codec Switching through changeType()"
+  category: experimental
+  condition: ENABLE(MEDIA_SOURCE)
