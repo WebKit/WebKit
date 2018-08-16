@@ -1,3 +1,15 @@
+2018-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Custom element doesn't invalidate its style when :defined rule starts to apply
+        https://bugs.webkit.org/show_bug.cgi?id=188637
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test.
+
+        * fast/custom-elements/defined-update-style-expected.html: Added.
+        * fast/custom-elements/defined-update-style.html: Added.
+
 2018-08-16  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Test gardening

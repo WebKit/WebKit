@@ -1978,6 +1978,7 @@ void Element::setIsDefinedCustomElement(JSCustomElementInterface& elementInterfa
     auto& data = ensureElementRareData();
     if (!data.customElementReactionQueue())
         data.setCustomElementReactionQueue(std::make_unique<CustomElementReactionQueue>(elementInterface));
+    invalidateStyleForSubtree();
     InspectorInstrumentation::didChangeCustomElementState(*this);
 }
 

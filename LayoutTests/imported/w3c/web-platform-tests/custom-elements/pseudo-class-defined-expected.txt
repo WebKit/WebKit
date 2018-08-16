@@ -11,8 +11,8 @@ PASS <a-a> should not be :defined
 PASS createElement("a-a") should not be :defined 
 PASS createElementNS("http://www.w3.org/1999/xhtml", "a-a") should not be :defined 
 PASS createElementNS("http://www.w3.org/2000/svg", "a-a") should be :defined 
-FAIL Upgraded createElement("a-a") should be :defined assert_equals: getComputedStyle expected "rgb(255, 165, 0)" but got "rgb(0, 0, 255)"
-FAIL Upgraded createElementNS("http://www.w3.org/1999/xhtml", "a-a") should be :defined assert_equals: getComputedStyle expected "rgb(255, 165, 0)" but got "rgb(0, 0, 255)"
+PASS Upgraded createElement("a-a") should be :defined 
+PASS Upgraded createElementNS("http://www.w3.org/1999/xhtml", "a-a") should be :defined 
 PASS Without browsing context: createElement("a-a") should not be :defined 
 PASS Without browsing context: createElementNS("http://www.w3.org/1999/xhtml", "a-a") should not be :defined 
 PASS Without browsing context: createElementNS("http://www.w3.org/2000/svg", "a-a") should be :defined 
