@@ -120,6 +120,9 @@ def parse_args(args):
         # FIXME: Default should be false, API tests should not be forced to run singly
         optparse.make_option('--run-singly', action='store_true', default=True,
                              help='Run a separate process for each test'),
+
+        optparse.make_option('--force', action='store_true', default=False,
+                             help='Run all tests, even DISABLED tests'),
     ]))
 
     option_parser = optparse.OptionParser(usage='%prog [options] [<path>...]')

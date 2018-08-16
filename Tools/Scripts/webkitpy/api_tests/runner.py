@@ -66,6 +66,8 @@ class Runner(object):
     # FIXME API tests should run as an app, we won't need this function <https://bugs.webkit.org/show_bug.cgi?id=175204>
     @staticmethod
     def command_for_port(port, args):
+        if (port.get_option('force')):
+            args.append('--gtest_also_run_disabled_tests=1')
         if 'simulator' in port.port_name:
             assert SimulatedDeviceManager.INITIALIZED_DEVICES
             return ['/usr/bin/xcrun', 'simctl', 'spawn', SimulatedDeviceManager.INITIALIZED_DEVICES[0].udid] + args
@@ -159,7 +161,7 @@ class _Worker(object):
             env=self._port.environment_for_api_tests())
 
         status = Runner.STATUS_RUNNING
-        if test.split('.')[1].startswith('DISABLED_'):
+        if test.split('.')[1].startswith('DISABLED_') and not self._port.get_option('force'):
             status = Runner.STATUS_DISABLED
 
         try:
