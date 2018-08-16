@@ -56,9 +56,6 @@ WI.Target = class Target extends WI.Object
     get name() { return this._name; }
     set name(name) { this._name = name; }
 
-    get mainResource() { return this._mainResource; }
-    set mainResource(resource) { this._mainResource = resource; }
-
     get type() { return this._type; }
     get connection() { return this._connection; }
     get executionContext() { return this._executionContext; }
@@ -67,6 +64,20 @@ WI.Target = class Target extends WI.Object
     get extraScriptCollection() { return this._extraScriptCollection; }
 
     get displayName() { return this._name; }
+
+    get mainResource()
+    {
+        return this._mainResource;
+    }
+
+    set mainResource(resource)
+    {
+        console.assert(!this._mainResource);
+
+        this._mainResource = resource;
+
+        this.dispatchEventToListeners(WI.Target.Event.MainResourceAdded, {resource});
+    }
 
     addResource(resource)
     {
@@ -98,6 +109,7 @@ WI.Target.Type = {
 };
 
 WI.Target.Event = {
+    MainResourceAdded: "target-main-resource-added",
     ResourceAdded: "target-resource-added",
     ScriptAdded: "target-script-added",
 };

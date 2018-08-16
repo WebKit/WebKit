@@ -3,6 +3,7 @@
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script src="../debugger/resources/log-pause-location.js"></script>
+<script src="resources/worker-utilities.js"></script>
 <script>
 TestPage.allowUncaughtExceptions = true;
 TestPage.needToSanitizeUncaughtExceptionURLs = true;
@@ -111,8 +112,7 @@ function test()
         }
     });
 
-    // Turn once to ensure workerTarget.mainResource is loaded.
-    Promise.resolve().then(() => {
+    awaitTargetMainResource(workerTarget).then(() => {
         window.loadLinesFromSourceCode(workerTarget.mainResource).then(() => {
             suite.runTestCasesAndFinish();
         });
