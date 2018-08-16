@@ -888,4 +888,11 @@ TEST(WTF_Vector, CopyToVectorSizeRangeIterator)
     EXPECT_FLOAT_EQ(9, valuesVector[2]);
 }
 
+TEST(WTF_Vector, StringComparison)
+{
+    Vector<String> a = {{ "a" }};
+    Vector<String> b = {{ "a" }};
+    EXPECT_TRUE(a == b);
+}
+    
 } // namespace TestWebKitAPI

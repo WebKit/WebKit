@@ -1,3 +1,13 @@
+2018-08-16  Alex Christensen  <achristensen@webkit.org>
+
+        Re-introduce assertion removed in r234890
+        https://bugs.webkit.org/show_bug.cgi?id=188611
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-08-16  Jer Noble  <jer.noble@apple.com>
 
         Add Experimental Feature support for SourceBuffer.changeType()

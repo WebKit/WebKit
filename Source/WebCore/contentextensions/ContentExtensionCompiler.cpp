@@ -285,6 +285,12 @@ static void compileToBytecode(CombinedURLFilters&& filters, UniversalActionSet&&
 
 std::error_code compileRuleList(ContentExtensionCompilationClient& client, String&& ruleJSON, Vector<ContentExtensionRule>&& parsedRuleList)
 {
+#if !ASSERT_DISABLED
+    callOnMainThread([ruleJSON = ruleJSON.isolatedCopy(), parsedRuleList = parsedRuleList.isolatedCopy()] {
+        ASSERT(parseRuleList(ruleJSON) == parsedRuleList);
+    });
+#endif
+
     bool domainConditionSeen = false;
     bool topURLConditionSeen = false;
     for (const auto& rule : parsedRuleList) {

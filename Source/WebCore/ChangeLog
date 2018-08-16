@@ -1,3 +1,17 @@
+2018-08-16  Alex Christensen  <achristensen@webkit.org>
+
+        Re-introduce assertion removed in r234890
+        https://bugs.webkit.org/show_bug.cgi?id=188611
+
+        Reviewed by Geoffrey Garen.
+
+        The assertion was failing because Vector<String>::operator== was using memcmp,
+        which failed to consider different instances of equal Strings equal.  Added an
+        API test and this assertion, which now succeeds.
+
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+
 2018-08-15  Jer Noble  <jer.noble@apple.com>
 
         Add Experimental Feature support for SourceBuffer.changeType()
