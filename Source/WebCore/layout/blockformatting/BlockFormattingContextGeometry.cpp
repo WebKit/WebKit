@@ -104,7 +104,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
         VerticalEdges nonCollapsedMargin = { FormattingContext::Geometry::computedValueIfNotAuto(style.marginTop(), containingBlockWidth).value_or(0),
             FormattingContext::Geometry::computedValueIfNotAuto(style.marginBottom(), containingBlockWidth).value_or(0) }; 
         VerticalEdges collapsedMargin = { MarginCollapse::marginTop(layoutContext, layoutBox), MarginCollapse::marginBottom(layoutContext, layoutBox) };
-        auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop();
+        auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop().value_or(0);
         
         auto height = style.logicalHeight();
         if (!height.isAuto()) {
@@ -191,8 +191,8 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
         auto marginRight = FormattingContext::Geometry::computedValueIfNotAuto(style.marginRight(), containingBlockWidth);
         auto borderLeft = displayBox.borderLeft();
         auto borderRight = displayBox.borderRight();
-        auto paddingLeft = displayBox.paddingLeft();
-        auto paddingRight = displayBox.paddingRight();
+        auto paddingLeft = displayBox.paddingLeft().value_or(0);
+        auto paddingRight = displayBox.paddingRight().value_or(0);
 
         // #1
         if (width) {
