@@ -76,22 +76,22 @@ WebCore::IntSize PageClientImpl::viewSize()
 
 bool PageClientImpl::isViewWindowActive()
 {
-    return m_view.viewState() & WebCore::ActivityState::WindowIsActive;
+    return m_view.viewState().contains(WebCore::ActivityState::WindowIsActive);
 }
 
 bool PageClientImpl::isViewFocused()
 {
-    return m_view.viewState() & WebCore::ActivityState::IsFocused;
+    return m_view.viewState().contains(WebCore::ActivityState::IsFocused);
 }
 
 bool PageClientImpl::isViewVisible()
 {
-    return m_view.viewState() & WebCore::ActivityState::IsVisible;
+    return m_view.viewState().contains(WebCore::ActivityState::IsVisible);
 }
 
 bool PageClientImpl::isViewInWindow()
 {
-    return m_view.viewState() & WebCore::ActivityState::IsInWindow;
+    return m_view.viewState().contains(WebCore::ActivityState::IsInWindow);
 }
 
 void PageClientImpl::processDidExit()

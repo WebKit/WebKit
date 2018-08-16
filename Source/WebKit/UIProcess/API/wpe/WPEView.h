@@ -31,6 +31,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/ActivityState.h>
 #include <memory>
+#include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
 
 typedef struct OpaqueJSContext* JSGlobalContextRef;
