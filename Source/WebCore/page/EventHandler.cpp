@@ -3695,16 +3695,8 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     ASSERT(dragState().source);
 
     if (!ExactlyOneBitSet(dragState().type)) {
-        ASSERT((dragState().type & DragSourceActionSelection));
-        ASSERT((dragState().type & ~DragSourceActionSelection) == DragSourceActionDHTML
-            || (dragState().type & ~DragSourceActionSelection) == DragSourceActionImage
-#if ENABLE(ATTACHMENT_ELEMENT)
-            || (dragState().type & ~DragSourceActionSelection) == DragSourceActionAttachment
-#endif
-#if ENABLE(INPUT_TYPE_COLOR)
-            || (dragState().type & ~DragSourceActionSelection) == DragSourceActionColor
-#endif
-            || (dragState().type & ~DragSourceActionSelection) == DragSourceActionLink);
+        ASSERT(dragState().type & DragSourceActionSelection);
+        ASSERT(ExactlyOneBitSet(static_cast<DragSourceAction>(dragState().type & ~DragSourceActionSelection)));
 
         dragState().type = DragSourceActionSelection;
     }
