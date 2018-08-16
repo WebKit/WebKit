@@ -1,5 +1,19 @@
 2018-08-16  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Add build steps ArchiveTestResults, UploadTestResults and ExtractTestResults
+        https://bugs.webkit.org/show_bug.cgi?id=188666
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ArchiveTestResults): Build step to Archive the test results.
+        (UploadTestResults): Build step to upload the archive.
+        (ExtractTestResults): Build step to unzip the archive on server and generate a link.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+        (ExpectMasterShellCommand): Copied from other similar internal code.
+
+2018-08-16  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Separate queues for Builders and Testers - macOS Sierra
         https://bugs.webkit.org/show_bug.cgi?id=188516
 

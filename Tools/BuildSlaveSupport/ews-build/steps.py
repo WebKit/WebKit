@@ -22,7 +22,7 @@
 
 from buildbot.process import buildstep, logobserver, properties
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
-from buildbot.steps import shell, transfer
+from buildbot.steps import master, shell, transfer
 from buildbot.steps.source import svn
 from twisted.internet import defer
 
@@ -30,6 +30,7 @@ import re
 
 EWS_URL = 'http://ews-build.webkit-uat.org/'
 WithProperties = properties.WithProperties
+Interpolate = properties.Interpolate
 
 
 class ConfigureBuild(buildstep.BuildStep):
@@ -492,3 +493,49 @@ class RunAPITests(TestWithFailureCount):
         if not match:
             return 0
         return int(match.group('ran')) - int(match.group('passed'))
+
+
+class ArchiveTestResults(shell.ShellCommand):
+    command = ['python', 'Tools/BuildSlaveSupport/test-result-archive',
+               Interpolate('--platform=%(prop:platform)s'), Interpolate('--%(prop:configuration)s'), 'archive']
+    name = 'archive-test-results'
+    description = ['archiving test results']
+    descriptionDone = ['archived test results']
+    haltOnFailure = True
+
+
+class UploadTestResults(transfer.FileUpload):
+    name = 'upload-test-results'
+    workersrc = 'layout-test-results.zip'
+    masterdest = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:ewspatchid)s-%(prop:buildnumber)s.zip')
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        kwargs['workersrc'] = self.workersrc
+        kwargs['masterdest'] = self.masterdest
+        kwargs['mode'] = 0644
+        kwargs['blocksize'] = 1024 * 256
+        transfer.FileUpload.__init__(self, **kwargs)
+
+
+class ExtractTestResults(master.MasterShellCommand):
+    name = 'extract-test-results'
+    zipFile = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:ewspatchid)s-%(prop:buildnumber)s.zip')
+    resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:ewspatchid)s-%(prop:buildnumber)s')
+
+    descriptionDone = ['uploaded results']
+    command = ['unzip', zipFile, '-d', resultDirectory]
+    renderables = ['resultDirectory']
+
+    def __init__(self):
+        super(ExtractTestResults, self).__init__(self.command)
+
+    def resultDirectoryURL(self):
+        return self.resultDirectory.replace('public_html/', '/') + '/'
+
+    def addCustomURLs(self):
+        self.addURL('view layout test results', self.resultDirectoryURL() + 'results.html')
+
+    def finished(self, result):
+        self.addCustomURLs()
+        return master.MasterShellCommand.finished(self, result)

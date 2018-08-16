@@ -29,11 +29,42 @@ from buildbot.process import remotetransfer
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.test.fake.remotecommand import Expect, ExpectRemoteRef, ExpectShell
 from buildbot.test.util.steps import BuildStepMixin
+from mock import call
 from twisted.internet import error, reactor
 from twisted.python import failure, log
 from twisted.trial import unittest
 
 from steps import *
+
+
+class ExpectMasterShellCommand(object):
+    def __init__(self, command, workdir=None, env=None, usePTY=0):
+        self.args = command
+        self.usePTY = usePTY
+        self.rc = None
+        self.path = None
+        self.logs = []
+
+        if env is not None:
+            self.env = env
+        else:
+            self.env = os.environ
+        if workdir:
+            self.path = os.path.join(os.getcwd(), workdir)
+
+    @classmethod
+    def log(self, name, value):
+        return ('log', name, value)
+
+    def __add__(self, other):
+        if isinstance(other, int):
+            self.rc = other
+        elif isinstance(other, tuple) and other[0] == 'log':
+            self.logs.append((other[1], other[2]))
+        return self
+
+    def __repr__(self):
+        return 'ExpectMasterShellCommand({0})'.format(repr(self.args))
 
 
 class BuildStepMixinAdditions(BuildStepMixin):
@@ -1089,6 +1120,120 @@ All tests successfully passed!
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='run-api-tests')
+        return self.runStep()
+
+
+class TestArchiveTestResults(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(ArchiveTestResults())
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('platform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python', 'Tools/BuildSlaveSupport/test-result-archive', '--platform=ios-simulator',  '--release', 'archive'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='archived test results')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(ArchiveTestResults())
+        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'debug')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python', 'Tools/BuildSlaveSupport/test-result-archive', '--platform=mac',  '--debug', 'archive'],
+                        )
+            + ExpectShell.log('stdio', stdout='Unexpected failure.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='archived test results (failure)')
+        return self.runStep()
+
+
+class TestUploadTestResults(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(UploadTestResults())
+        self.setProperty('configuration', 'release')
+        self.setProperty('architecture', 'x86_64')
+        self.setProperty('ewspatchid', '1234')
+        self.setProperty('buildername', 'macOS-Sierra-Release-WK2-Tests-EWS')
+        self.setProperty('buildnumber', '12')
+        self.expectHidden(False)
+        self.expectRemoteCommands(
+            Expect('uploadFile', dict(
+                                        workersrc='layout-test-results.zip', workdir='wkdir',
+                                        blocksize=1024 * 256, maxsize=None, keepstamp=False,
+                                        writer=ExpectRemoteRef(remotetransfer.FileWriter),
+                                     ))
+            + Expect.behavior(uploadFileWithContentsOfString('Dummy zip file content.'))
+            + 0,
+        )
+        self.expectUploadedFile('public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12.zip')
+
+        self.expectOutcome(result=SUCCESS, state_string='uploading layout-test-results.zip')
+        return self.runStep()
+
+
+class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(ExtractTestResults())
+        self.setProperty('configuration', 'release')
+        self.setProperty('ewspatchid', '1234')
+        self.setProperty('buildername', 'macOS-Sierra-Release-WK2-Tests-EWS')
+        self.setProperty('buildnumber', '12')
+        self.expectLocalCommands(
+            ExpectMasterShellCommand(command=['unzip',
+                                              'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12.zip',
+                                              '-d',
+                                              'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12',
+                                             ])
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='uploaded results')
+        self.expectAddedURLs([call('view layout test results', '/results/test/r2468_ab1a28b4feee0d42973c7c05335b35bca927e974 (1)/results.html')])
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(ExtractTestResults())
+        self.setProperty('configuration', 'debug')
+        self.setProperty('ewspatchid', '1234')
+        self.setProperty('buildername', 'macOS-Sierra-Release-WK2-Tests-EWS')
+        self.setProperty('buildnumber', '12')
+        self.expectLocalCommands(
+            ExpectMasterShellCommand(command=['unzip',
+                                              'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12.zip',
+                                              '-d',
+                                              'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12',
+                                             ])
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='failed (2) (failure)')
+        self.expectAddedURLs([call('view layout test results', '/results/test/r2468_ab1a28b4feee0d42973c7c05335b35bca927e974 (1)/results.html')])
         return self.runStep()
 
 
