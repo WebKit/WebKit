@@ -1,3 +1,16 @@
+2018-08-16  Ben Richards  <benton_richards@apple.com>
+
+        Add script to generate WebContent service resource files
+        https://bugs.webkit.org/show_bug.cgi?id=188601
+
+        Reviewed by Dan Bernstein.
+
+        Added new build phase to WebContent service to copy resource files to WebKit.framework/PrivateHeaders/CustomWebContentResource.
+        These resources are intended to be used by a client to create a custom WebContent service.
+
+        * Scripts/copy-webcontent-resources-to-private-headers.sh: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-08-16  Alex Christensen  <achristensen@webkit.org>
 
         Consolidate data/string API loading paths
