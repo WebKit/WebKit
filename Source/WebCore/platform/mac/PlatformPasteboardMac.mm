@@ -274,6 +274,13 @@ long PlatformPasteboard::setURL(const PasteboardURL& pasteboardURL)
     return changeCount();
 }
 
+long PlatformPasteboard::setColor(const Color& color)
+{
+    NSColor *pasteboardColor = nsColor(color);
+    [pasteboardColor writeToPasteboard:m_pasteboard.get()];
+    return changeCount();
+}
+
 long PlatformPasteboard::setStringForType(const String& string, const String& pasteboardType)
 {
     BOOL didWriteData;

@@ -138,6 +138,11 @@ void WebPasteboardProxy::setPasteboardURL(IPC::Connection& connection, const Pas
     newChangeCount = 0;
 }
 
+void WebPasteboardProxy::setPasteboardColor(const String& pasteboardName, const WebCore::Color& color, uint64_t& newChangeCount)
+{
+    newChangeCount = PlatformPasteboard(pasteboardName).setColor(color);
+}
+
 void WebPasteboardProxy::setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String& string, uint64_t& newChangeCount)
 {
     newChangeCount = PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);

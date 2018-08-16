@@ -1,3 +1,14 @@
+2018-08-16  Aditya Keerthi  <akeerthi@apple.com>
+
+        Support drag-and-drop for input[type=color]
+        https://bugs.webkit.org/show_bug.cgi?id=188464
+
+        Reviewed by Wenson Hsieh.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::setColor):
+
 2018-08-15  Tim Horton  <timothy_horton@apple.com>
 
         Crashes in Quip under _dictionaryPopupInfoForRange, in setObject:forKey:

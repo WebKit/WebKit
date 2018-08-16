@@ -1,3 +1,22 @@
+2018-08-16  Aditya Keerthi  <akeerthi@apple.com>
+
+        Support drag-and-drop for input[type=color]
+        https://bugs.webkit.org/show_bug.cgi?id=188464
+
+        Reviewed by Wenson Hsieh.
+
+        Added tests to verify that dragging from one color input to another behaves as
+        expected in WK1. The tests consider disabled and read-only inputs in addition to
+        default color inputs. The WK2 implementation is tested through API tests.
+
+        * editing/pasteboard/drag-and-drop-color-input-events-expected.txt: Added.
+        * editing/pasteboard/drag-and-drop-color-input-events.html: Added.
+        * editing/pasteboard/drag-and-drop-color-input-expected.txt: Added.
+        * editing/pasteboard/drag-and-drop-color-input.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2018-08-16  Simon Fraser  <simon.fraser@apple.com>
 
         Add fake layout test results JSON to exercise the functionality in results.html

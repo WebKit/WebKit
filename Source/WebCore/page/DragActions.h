@@ -48,6 +48,9 @@ namespace WebCore {
 #if ENABLE(ATTACHMENT_ELEMENT)
         DragSourceActionAttachment   = 16,
 #endif
+#if ENABLE(INPUT_TYPE_COLOR)
+        DragSourceActionColor        = 32,
+#endif
         DragSourceActionAny          = UINT_MAX
     } DragSourceAction;
     

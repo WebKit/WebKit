@@ -20,6 +20,7 @@
 #include "config.h"
 #include "Pasteboard.h"
 
+#include "Color.h"
 #include "DragData.h"
 #include "Image.h"
 #include "NotImplemented.h"
@@ -329,6 +330,10 @@ void Pasteboard::writeMarkup(const String&)
 }
 
 void Pasteboard::writeCustomData(const PasteboardCustomData&)
+{
+}
+
+void Pasteboard::write(const Color&)
 {
 }
 

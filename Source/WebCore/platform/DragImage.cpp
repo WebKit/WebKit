@@ -38,6 +38,12 @@
 
 namespace WebCore {
 
+#if PLATFORM(COCOA)
+const float ColorSwatchCornerRadius = 4;
+const float ColorSwatchStrokeSize = 4;
+const float ColorSwatchWidth = 24;
+#endif
+
 DragImageRef fitDragImageToMaxSize(DragImageRef image, const IntSize& layoutSize, const IntSize& maxSize)
 {
     float heightResizeRatio = 0.0f;
@@ -259,6 +265,7 @@ DragImage::DragImage(DragImage&& other)
     : m_dragImageRef { std::exchange(other.m_dragImageRef, nullptr) }
 {
     m_indicatorData = other.m_indicatorData;
+    m_visiblePath = other.m_visiblePath;
 }
 
 DragImage& DragImage::operator=(DragImage&& other)
@@ -268,6 +275,7 @@ DragImage& DragImage::operator=(DragImage&& other)
 
     m_dragImageRef = std::exchange(other.m_dragImageRef, nullptr);
     m_indicatorData = other.m_indicatorData;
+    m_visiblePath = other.m_visiblePath;
 
     return *this;
 }

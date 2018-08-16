@@ -30,6 +30,7 @@
 #import "UIKitSPI.h"
 #import <WebCore/DragActions.h>
 #import <WebCore/DragData.h>
+#import <WebCore/Path.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/URL.h>
 #import <WebCore/WebItemProviderPasteboard.h>
@@ -49,6 +50,7 @@ struct DragSourceState {
     CGRect dragPreviewFrameInRootViewCoordinates { CGRectZero };
     RetainPtr<UIImage> image;
     std::optional<WebCore::TextIndicatorData> indicatorData;
+    std::optional<WebCore::Path> visiblePath;
     String linkTitle;
     WebCore::URL linkURL;
     bool possiblyNeedsDragPreviewUpdate { true };

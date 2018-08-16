@@ -1,3 +1,75 @@
+2018-08-16  Aditya Keerthi  <akeerthi@apple.com>
+
+        Support drag-and-drop for input[type=color]
+        https://bugs.webkit.org/show_bug.cgi?id=188464
+
+        Reviewed by Wenson Hsieh.
+
+        input[type=color] should support native drag and drop on both macOS and iOS.
+
+        Added methods to Pasteboard and PlatformPasteboard to enable colors to be read
+        from and written to the pasteboard. On macOS, colors are managed through the
+        NSColorPboardType, whereas on iOS, colors are managed through the
+        'com.apple.uikit.color' identifier.
+
+        DragSourceActionColor was added to the list of DragSourceActions to identify
+        when a color input is being dragged.
+
+        Tests: editing/pasteboard/drag-and-drop-color-input-events.html
+               editing/pasteboard/drag-and-drop-color-input.html
+
+        * page/DragActions.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::dragEnteredOrUpdated):
+        (WebCore::isEnabledColorInput):
+        (WebCore::DragController::concludeEditDrag):
+        (WebCore::DragController::canProcessDrag):
+        (WebCore::DragController::draggableElement const):
+        (WebCore::DragController::startDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dragHysteresisExceeded const):
+        (WebCore::EventHandler::handleDrag):
+        * page/EventHandler.h:
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::updateSupportedTypeIdentifiersForDragHandlingMethod const):
+        * platform/DragData.h:
+        * platform/DragImage.cpp:
+        (WebCore::DragImage::operator=):
+        * platform/DragImage.h: Added the visiblePath property to DragImage, in order for
+        us to be able to clip images in the UITargetedDragPreview on iOS.
+        * platform/DragItem.h:
+        (WebCore::DragItem::encode const):
+        (WebCore::DragItem::decode):
+        * platform/Pasteboard.h:
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+        * platform/gtk/DragImageGtk.cpp:
+        (WebCore::createDragImageForColor):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::write):
+        * platform/ios/DragImageIOS.mm:
+        (WebCore::createDragImageForColor):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::write):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::color):
+        (WebCore::PlatformPasteboard::setColor):
+        * platform/mac/DragDataMac.mm:
+        (WebCore::colorPasteboardType):
+        (WebCore::DragData::containsCompatibleContent const):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageForColor): Draw a rounded rectangle with a fill color
+        matching the value of the dragged color input. The rendered image is designed to
+        mimic the preview shown when dragging an NSColorWell.
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::write):
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::setColor):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::write):
+        * platform/wpe/PasteboardWPE.cpp:
+        (WebCore::Pasteboard::write):
+
 2018-08-16  Zalan Bujtas  <zalan@apple.com>
 
         [lFC][Floating] Add estimated margin top computation.

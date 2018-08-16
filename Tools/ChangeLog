@@ -1,3 +1,25 @@
+2018-08-16  Aditya Keerthi  <akeerthi@apple.com>
+
+        Support drag-and-drop for input[type=color]
+        https://bugs.webkit.org/show_bug.cgi?id=188464
+
+        Reviewed by Wenson Hsieh.
+
+        Added five cross-platform API tests, to verify that dragging and dropping with
+        color inputs changes the value of the drop target if and only if both inputs are
+        enabled. Also tests that the change and input events are fired when changing the
+        value of a color input through drag and drop. 
+
+        Additionally, added a macOS-specific test to verify that dropping an item with
+        NSColorPboardType changes the value of the color input.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/color-drop.html: Added.
+        * TestWebKitAPI/Tests/mac/DragAndDropTestsMac.mm:
+        (TestWebKitAPI::TEST):
+
 2018-08-16  Antti Koivisto  <antti@apple.com>
 
         Use OptionSet for ActivityState::Flags

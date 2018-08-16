@@ -144,6 +144,9 @@ void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHan
                 supportedTypes.append(type);
         }
         break;
+    case DragHandlingMethod::SetColor:
+        supportedTypes.append(UIColorPboardType);
+        break;
     default:
         for (NSString *type in Pasteboard::supportedFileUploadPasteboardTypes())
             supportedTypes.append(type);

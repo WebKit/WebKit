@@ -251,6 +251,23 @@ DragImageRef createDragImageForRange(Frame& frame, Range& range, bool forceBlack
     return finalImage.CGImage;
 }
 
+DragImageRef createDragImageForColor(const Color& color, const FloatRect& elementRect, float pageScaleFactor, Path& visiblePath)
+{
+    FloatRect imageRect { 0, 0, elementRect.width() * pageScaleFactor, elementRect.height() * pageScaleFactor };
+    FloatRoundedRect swatch { imageRect, FloatRoundedRect::Radii(ColorSwatchCornerRadius * pageScaleFactor) };
+
+    auto render = adoptNS([allocUIGraphicsImageRendererInstance() initWithSize:imageRect.size()]);
+    UIImage *image = [render imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
+        GraphicsContext context { rendererContext.CGContext };
+        context.translate(0, CGRectGetHeight(imageRect));
+        context.scale({ 1, -1 });
+        context.fillRoundedRect(swatch, color);
+    }];
+
+    visiblePath.addRoundedRect(swatch);
+    return image.CGImage;
+}
+
 #else
 
 void deleteDragImage(RetainPtr<CGImageRef>)

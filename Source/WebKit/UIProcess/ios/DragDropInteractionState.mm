@@ -46,7 +46,7 @@ static UIDragItem *dragItemMatchingIdentifier(id <UIDragSession> session, NSInte
     return nil;
 }
 
-static UITargetedDragPreview *createTargetedDragPreview(UIImage *image, UIView *rootView, UIView *previewContainer, const FloatRect& frameInRootViewCoordinates, const Vector<FloatRect>& clippingRectsInFrameCoordinates, UIColor *backgroundColor)
+static UITargetedDragPreview *createTargetedDragPreview(UIImage *image, UIView *rootView, UIView *previewContainer, const FloatRect& frameInRootViewCoordinates, const Vector<FloatRect>& clippingRectsInFrameCoordinates, UIColor *backgroundColor, UIBezierPath *visiblePath)
 {
     if (frameInRootViewCoordinates.isEmpty() || !image)
         return nullptr;
@@ -75,6 +75,9 @@ static UITargetedDragPreview *createTargetedDragPreview(UIImage *image, UIView *
     if (backgroundColor)
         [parameters setBackgroundColor:backgroundColor];
 
+    if (visiblePath)
+        [parameters setVisiblePath:visiblePath];
+
     CGPoint centerInContainerCoordinates = { CGRectGetMidX(frameInContainerCoordinates), CGRectGetMidY(frameInContainerCoordinates) };
     auto target = adoptNS([[UIDragPreviewTarget alloc] initWithContainer:previewContainer center:centerInContainerCoordinates]);
     auto dragPreview = adoptNS([[UITargetedDragPreview alloc] initWithView:imageView.get() parameters:parameters.get() target:target.get()]);
@@ -98,7 +101,25 @@ static bool shouldUseDragImageToCreatePreviewForDragSource(const DragSourceState
     if (!source.image)
         return false;
 
+#if ENABLE(INPUT_TYPE_COLOR)
+    if (source.action & DragSourceActionColor)
+        return true;
+#endif
+
     return source.action & (DragSourceActionDHTML | DragSourceActionImage);
+}
+
+static bool shouldUseVisiblePathToCreatePreviewForDragSource(const DragSourceState& source)
+{
+    if (!source.visiblePath)
+        return false;
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    if (source.action & DragSourceActionColor)
+        return true;
+#endif
+
+    return false;
 }
 
 static bool shouldUseTextIndicatorToCreatePreviewForDragSource(const DragSourceState& source)
@@ -113,6 +134,22 @@ static bool shouldUseTextIndicatorToCreatePreviewForDragSource(const DragSourceS
     if (source.action & DragSourceActionAttachment)
         return true;
 #endif
+
+    return false;
+}
+
+static bool canUpdatePreviewForActiveDragSource(const DragSourceState& source)
+{
+    if (!source.possiblyNeedsDragPreviewUpdate)
+        return false;
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    if (source.action & DragSourceActionColor)
+        return true;
+#endif
+
+    if (source.action & DragSourceActionLink && !(source.action & DragSourceActionImage))
+        return true;
 
     return false;
 }
@@ -158,13 +195,19 @@ UITargetedDragPreview *DragDropInteractionState::previewForDragItem(UIDragItem *
         return nil;
 
     auto& source = foundSource.value();
-    if (shouldUseDragImageToCreatePreviewForDragSource(source))
-        return createTargetedDragPreview(source.image.get(), contentView, previewContainer, source.dragPreviewFrameInRootViewCoordinates, { }, nil);
+    if (shouldUseDragImageToCreatePreviewForDragSource(source)) {
+        if (shouldUseVisiblePathToCreatePreviewForDragSource(source)) {
+            auto path = source.visiblePath.value();
+            UIBezierPath *visiblePath = [UIBezierPath bezierPathWithCGPath:path.ensurePlatformPath()];
+            return createTargetedDragPreview(source.image.get(), contentView, previewContainer, source.dragPreviewFrameInRootViewCoordinates, { }, nil, visiblePath);
+        }
+        return createTargetedDragPreview(source.image.get(), contentView, previewContainer, source.dragPreviewFrameInRootViewCoordinates, { }, nil, nil);
+    }
 
     if (shouldUseTextIndicatorToCreatePreviewForDragSource(source)) {
         auto indicator = source.indicatorData.value();
         auto textIndicatorImage = uiImageForImage(indicator.contentImage.get());
-        return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, [UIColor colorWithCGColor:cachedCGColor(indicator.estimatedBackgroundColor)]);
+        return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, [UIColor colorWithCGColor:cachedCGColor(indicator.estimatedBackgroundColor)], nil);
     }
 
     return nil;
@@ -203,6 +246,7 @@ void DragDropInteractionState::stageDragItem(const DragItem& item, UIImage *drag
         item.dragPreviewFrameInRootViewCoordinates,
         dragImage,
         item.image.indicatorData(),
+        item.image.visiblePath(),
         item.title.isEmpty() ? nil : (NSString *)item.title,
         item.url.isEmpty() ? nil : (NSURL *)item.url,
         true, // We assume here that drag previews need to be updated until proven otherwise in updatePreviewsForActiveDragSources().
@@ -239,29 +283,30 @@ void DragDropInteractionState::dragAndDropSessionsDidEnd()
 void DragDropInteractionState::updatePreviewsForActiveDragSources()
 {
     for (auto& source : m_activeDragSources) {
-        if (!source.possiblyNeedsDragPreviewUpdate)
+        if (!canUpdatePreviewForActiveDragSource(source))
             continue;
-
-        if (source.action & DragSourceActionImage || !(source.action & DragSourceActionLink)) {
-            // Currently, non-image links are the only type of source for which we need to update
-            // drag preview providers after the initial lift. All other dragged content should maintain
-            // the same targeted drag preview used during the lift animation.
-            continue;
-        }
 
         UIDragItem *dragItem = dragItemMatchingIdentifier(m_dragSession.get(), source.itemIdentifier);
         if (!dragItem)
             continue;
 
-        auto linkDraggingCenter = source.adjustedOrigin;
-        RetainPtr<NSString> title = (NSString *)source.linkTitle;
-        RetainPtr<NSURL> url = (NSURL *)source.linkURL;
-        dragItem.previewProvider = [title, url, linkDraggingCenter] () -> UIDragPreview * {
-            UIURLDragPreviewView *previewView = [UIURLDragPreviewView viewWithTitle:title.get() URL:url.get()];
-            previewView.center = linkDraggingCenter;
-            UIDragPreviewParameters *parameters = [[[UIDragPreviewParameters alloc] initWithTextLineRects:@[ [NSValue valueWithCGRect:previewView.bounds] ]] autorelease];
-            return [[[UIDragPreview alloc] initWithView:previewView parameters:parameters] autorelease];
-        };
+        if (source.action & DragSourceActionLink) {
+            dragItem.previewProvider = [title = retainPtr((NSString *)source.linkTitle), url = retainPtr((NSURL *)source.linkURL), center = source.adjustedOrigin] () -> UIDragPreview * {
+                UIURLDragPreviewView *previewView = [UIURLDragPreviewView viewWithTitle:title.get() URL:url.get()];
+                previewView.center = center;
+                UIDragPreviewParameters *parameters = [[[UIDragPreviewParameters alloc] initWithTextLineRects:@[ [NSValue valueWithCGRect:previewView.bounds] ]] autorelease];
+                return [[[UIDragPreview alloc] initWithView:previewView parameters:parameters] autorelease];
+            };
+        }
+#if ENABLE(INPUT_TYPE_COLOR)
+        else if (source.action & DragSourceActionColor) {
+            dragItem.previewProvider = [image = source.image] () -> UIDragPreview * {
+                UIImageView *imageView = [[[UIImageView alloc] initWithImage:image.get()] autorelease];
+                UIDragPreviewParameters *parameters = [[[UIDragPreviewParameters alloc] initWithTextLineRects:@[ [NSValue valueWithCGRect:[imageView bounds]] ]] autorelease];
+                return [[[UIDragPreview alloc] initWithView:imageView parameters:parameters] autorelease];
+            };
+        }
+#endif
 
         source.possiblyNeedsDragPreviewUpdate = false;
     }

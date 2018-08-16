@@ -213,6 +213,7 @@ public:
     virtual WEBCORE_EXPORT void read(PasteboardWebContentReader&, WebContentReadingPolicy = WebContentReadingPolicy::AnyType);
     virtual WEBCORE_EXPORT void read(PasteboardFileReader&);
 
+    virtual WEBCORE_EXPORT void write(const Color&);
     virtual WEBCORE_EXPORT void write(const PasteboardURL&);
     virtual WEBCORE_EXPORT void writeTrustworthyWebURLsPboardType(const PasteboardURL&);
     virtual WEBCORE_EXPORT void write(const PasteboardImage&);
@@ -331,6 +332,7 @@ private:
 
 #if PLATFORM(IOS)
 extern NSString *WebArchivePboardType;
+extern NSString *UIColorPboardType;
 #endif
 
 #if PLATFORM(MAC)

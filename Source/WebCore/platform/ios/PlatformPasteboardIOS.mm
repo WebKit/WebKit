@@ -37,6 +37,7 @@
 #import "WebCoreNSURLExtras.h"
 #import "WebItemProviderPasteboard.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
 #import <UIKit/UIPasteboard.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
@@ -49,6 +50,7 @@
 #define NSURL_SUPPORTS_TITLE (!PLATFORM(IOSMAC))
 
 SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CLASS(UIKit, UIColor)
 SOFT_LINK_CLASS(UIKit, UIImage)
 SOFT_LINK_CLASS(UIKit, UIPasteboard)
 
@@ -221,7 +223,9 @@ String PlatformPasteboard::stringForType(const String& type) const
 
 Color PlatformPasteboard::color()
 {
-    return Color();
+    NSData *data = [m_pasteboard dataForPasteboardType:UIColorPboardType];
+    UIColor *uiColor = [NSKeyedUnarchiver unarchivedObjectOfClass:getUIColorClass() fromData:data error:nil];
+    return Color(uiColor.CGColor);
 }
 
 URL PlatformPasteboard::url()
@@ -306,6 +310,15 @@ static void registerItemToPasteboard(WebItemProviderRegistrationInfoList *repres
         [pasteboard stageRegistrationList:representationsToRegister];
 #endif
     
+}
+
+long PlatformPasteboard::setColor(const Color& color)
+{
+    auto representationsToRegister = adoptNS([[WebItemProviderRegistrationInfoList alloc] init]);
+    UIColor *uiColor = [getUIColorClass() colorWithCGColor:cachedCGColor(color)];
+    [representationsToRegister addData:[NSKeyedArchiver archivedDataWithRootObject:uiColor requiringSecureCoding:NO error:nil] forType:UIColorPboardType];
+    registerItemToPasteboard(representationsToRegister.get(), m_pasteboard.get());
+    return 0;
 }
 
 static void addRepresentationsForPlainText(WebItemProviderRegistrationInfoList *itemsToRegister, const String& plainText)

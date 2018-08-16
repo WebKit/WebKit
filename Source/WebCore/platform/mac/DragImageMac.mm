@@ -336,6 +336,26 @@ DragImageRef createDragImageForLink(Element& element, URL& url, const String& ti
 
     return dragImage;
 }
+
+DragImageRef createDragImageForColor(const Color& color, const FloatRect&, float, Path&)
+{
+    auto dragImage = adoptNS([[NSImage alloc] initWithSize:NSMakeSize(ColorSwatchWidth, ColorSwatchWidth)]);
+
+    [dragImage lockFocus];
+
+    NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:NSMakeRect(0, 0, ColorSwatchWidth, ColorSwatchWidth) xRadius:ColorSwatchCornerRadius yRadius:ColorSwatchCornerRadius];
+    [path setLineWidth:ColorSwatchStrokeSize];
+
+    [nsColor(color) setFill];
+    [path fill];
+
+    [[NSColor quaternaryLabelColor] setStroke];
+    [path stroke];
+
+    [dragImage unlockFocus];
+
+    return dragImage;
+}
    
 } // namespace WebCore
 

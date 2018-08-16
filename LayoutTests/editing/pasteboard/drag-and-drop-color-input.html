@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+</head>
+<body onload="runTest()">
+    <p id="description"></p>
+    <p>Drag and drop should work between two color inputs.</p>
+    <div>
+        <input type=color id="src" value="#ff0000">
+        <input type=color id="dest" value="#000000">
+    </div>
+    <p>Disabled color inputs should not be draggable.</p>
+    <div>
+        <input type=color id="disabled-src" value="#9A9A9A" disabled>
+        <input type=color id="dest-disabled-src" value="#ff0000">
+    </div>
+    <p>Disabled color inputs should not change color when a color is dropped.</p>
+    <div>
+        <input type=color id="src-disabled-dest" value="#ff0000">
+        <input type=color id="disabled-dest" value="#9A9A9A" disabled>
+    </div>
+    <p>Read-only color inputs should behave like default color inputs.</p>
+    <div>
+        <input type=color id="readonly-src" value="#ff0000" readonly>
+        <input type=color id="readonly-dest" value="#000000" readonly>
+    </div>
+    <div id="console"></div>
+</body>
+<script>
+description('This test verifies that dragging a color from one input to another changes the color of the second input. To test manually, drag from inputs on the left and drop into inputs on the right.');
+
+function element(id) {
+    return document.getElementById(id);
+}
+
+function performDrag(src, dest) {
+    eventSender.mouseMoveTo(src.offsetLeft + src.offsetWidth / 2, src.offsetTop + src.offsetHeight / 2);
+    eventSender.mouseDown();
+    eventSender.leapForward(200);
+    eventSender.mouseMoveTo(dest.offsetLeft + dest.offsetWidth / 2, dest.offsetTop + dest.offsetHeight / 2);
+    eventSender.mouseUp();
+    eventSender.leapForward(200);
+}
+
+function runTest() {
+    if (!window.testRunner)
+        return;
+
+    performDrag(element("src"), element("dest"));
+    shouldBeEqualToString("element('src').value", "#ff0000");
+    shouldBeEqualToString("element('dest').value", "#ff0000");
+
+    performDrag(element("disabled-src"), element("dest-disabled-src"));
+    shouldBeEqualToString("element('disabled-src').value", "#9a9a9a");
+    shouldBeEqualToString("element('dest-disabled-src').value", "#ff0000");
+
+    performDrag(element("src-disabled-dest"), element("disabled-dest"));
+    shouldBeEqualToString("element('src-disabled-dest').value", "#ff0000");
+    shouldBeEqualToString("element('disabled-dest').value", "#9a9a9a");
+
+    performDrag(element("readonly-src"), element("readonly-dest"));
+    shouldBeEqualToString("element('readonly-src').value", "#ff0000");
+    shouldBeEqualToString("element('readonly-dest').value", "#ff0000");
+}
+</script>
+</html>

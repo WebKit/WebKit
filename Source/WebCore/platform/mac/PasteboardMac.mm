@@ -223,6 +223,13 @@ void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL& pasteboa
     m_changeCount = platformStrategies()->pasteboardStrategy()->setURL(url, m_pasteboardName);
 }
 
+void Pasteboard::write(const Color& color)
+{
+    Vector<String> types = { legacyColorPasteboardType() };
+    platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName);
+    m_changeCount = platformStrategies()->pasteboardStrategy()->setColor(color, m_pasteboardName);
+}
+
 static NSFileWrapper* fileWrapper(const PasteboardImage& pasteboardImage)
 {
     NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:pasteboardImage.resourceData->createNSData().get()] autorelease];

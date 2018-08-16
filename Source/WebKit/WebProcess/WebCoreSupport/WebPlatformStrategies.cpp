@@ -274,6 +274,13 @@ long WebPlatformStrategies::setURL(const PasteboardURL& pasteboardURL, const Str
     return newChangeCount;
 }
 
+long WebPlatformStrategies::setColor(const Color& color, const String& pasteboardName)
+{
+    uint64_t newChangeCount { 0 };
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardColor(pasteboardName, color), Messages::WebPasteboardProxy::SetPasteboardColor::Reply(newChangeCount), 0);
+    return newChangeCount;
+}
+
 long WebPlatformStrategies::setStringForType(const String& string, const String& pasteboardType, const String& pasteboardName)
 {
     uint64_t newChangeCount { 0 };

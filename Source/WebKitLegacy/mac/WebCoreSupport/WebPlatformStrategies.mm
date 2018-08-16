@@ -168,6 +168,11 @@ long WebPlatformStrategies::setURL(const PasteboardURL& pasteboardURL, const Str
     return PlatformPasteboard(pasteboardName).setURL(pasteboardURL);
 }
 
+long WebPlatformStrategies::setColor(const Color& color, const String& pasteboardName)
+{
+    return PlatformPasteboard(pasteboardName).setColor(color);
+}
+
 long WebPlatformStrategies::setStringForType(const String& string, const String& pasteboardType, const String& pasteboardName)
 {
     return PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);

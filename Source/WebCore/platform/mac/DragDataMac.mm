@@ -91,7 +91,7 @@ static inline String htmlPasteboardType()
 static inline String colorPasteboardType()
 {
 #if PLATFORM(IOS)
-    return "com.apple.uikit.color";
+    return String { UIColorPboardType };
 #else
     return String(legacyColorPasteboardType());
 #endif
@@ -225,6 +225,9 @@ bool DragData::containsCompatibleContent(DraggingPurpose purpose) const
 {
     if (purpose == DraggingPurpose::ForFileUpload)
         return containsFiles();
+
+    if (purpose == DraggingPurpose::ForColorControl)
+        return containsColor();
 
     if (purpose == DraggingPurpose::ForEditing && RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() && containsFiles())
         return true;

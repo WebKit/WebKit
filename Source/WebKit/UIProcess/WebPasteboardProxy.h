@@ -96,6 +96,7 @@ private:
     void addPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, uint64_t& newChangeCount);
     void setPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, uint64_t& newChangeCount);
     void setPasteboardURL(IPC::Connection&, const WebCore::PasteboardURL&, const String& pasteboardName, uint64_t& newChangeCount);
+    void setPasteboardColor(const String&, const WebCore::Color&, uint64_t&);
     void setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String&, uint64_t& newChangeCount);
     void setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle&, uint64_t size, uint64_t& newChangeCount);
 #endif

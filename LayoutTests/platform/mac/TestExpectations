@@ -1727,6 +1727,8 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word
 # Color Well is turned off
 accessibility/color-well.html [ Skip ]
 fast/forms/color [ Skip ]
+editing/pasteboard/drag-and-drop-color-input.html [ Skip ]
+editing/pasteboard/drag-and-drop-color-input-events.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color.html [ Skip ]
 fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
 fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]

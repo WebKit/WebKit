@@ -321,7 +321,8 @@ DragOperation DragController::dragEnteredOrUpdated(const DragData& dragData)
         dragOperation = operationForLoad(dragData);
         if (dragOperation != DragOperationNone)
             m_dragHandlingMethod = DragHandlingMethod::PageLoad;
-    }
+    } else if (m_dragHandlingMethod == DragHandlingMethod::SetColor)
+        dragOperation = DragOperationCopy;
 
     updateSupportedTypeIdentifiersForDragHandlingMethod(m_dragHandlingMethod, dragData);
     return dragOperation;
@@ -342,6 +343,20 @@ static HTMLInputElement* asFileInput(Node& node)
 
     return inputElement && inputElement->isFileUpload() ? inputElement : nullptr;
 }
+
+#if ENABLE(INPUT_TYPE_COLOR)
+static bool isEnabledColorInput(Node& node, bool setToShadowAncestor)
+{
+    Node* candidate = setToShadowAncestor ? node.deprecatedShadowAncestorNode() : &node;
+    if (is<HTMLInputElement>(*candidate)) {
+        auto& input = downcast<HTMLInputElement>(*candidate);
+        if (input.isColorControl() && !input.isDisabledFormControl())
+            return true;
+    }
+
+    return false;
+}
+#endif
 
 // This can return null if an empty document is loaded.
 static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& p)
@@ -539,6 +554,13 @@ bool DragController::concludeEditDrag(const DragData& dragData)
         Color color = dragData.asColor();
         if (!color.isValid())
             return false;
+#if ENABLE(INPUT_TYPE_COLOR)
+        if (isEnabledColorInput(*element, false)) {
+            auto& input = downcast<HTMLInputElement>(*element);
+            input.setValue(color.serialized(), DispatchInputAndChangeEvent);
+            return true;
+        }
+#endif
         auto innerRange = innerFrame->selection().toNormalizedRange();
         if (!innerRange)
             return false;
@@ -643,12 +665,21 @@ bool DragController::canProcessDrag(const DragData& dragData)
     DragData::DraggingPurpose dragPurpose = DragData::DraggingPurpose::ForEditing;
     if (asFileInput(*result.innerNonSharedNode()))
         dragPurpose = DragData::DraggingPurpose::ForFileUpload;
+#if ENABLE(INPUT_TYPE_COLOR)
+    else if (isEnabledColorInput(*result.innerNonSharedNode(), true))
+        dragPurpose = DragData::DraggingPurpose::ForColorControl;
+#endif
 
     if (!dragData.containsCompatibleContent(dragPurpose))
         return false;
 
     if (dragPurpose == DragData::DraggingPurpose::ForFileUpload)
         return true;
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    if (dragPurpose == DragData::DraggingPurpose::ForColorControl)
+        return true;
+#endif
 
     if (is<HTMLPlugInElement>(*result.innerNonSharedNode())) {
         if (!downcast<HTMLPlugInElement>(result.innerNonSharedNode())->canProcessDrag() && !result.innerNonSharedNode()->hasEditableStyle())
@@ -785,6 +816,13 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
                 return element;
             }
 #endif
+#if ENABLE(INPUT_TYPE_COLOR)
+            if ((m_dragSourceAction & DragSourceActionColor)
+                && isEnabledColorInput(*element, false)) {
+                state.type = static_cast<DragSourceAction>(state.type | DragSourceActionColor);
+                return element;
+            }
+#endif
         }
     }
 
@@ -874,6 +912,10 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
     includeShadowDOM = includeShadowDOM || is<HTMLAttachmentElement>(state.source.get());
+#endif
+#if ENABLE(INPUT_TYPE_COLOR)
+    bool isColorControl = is<HTMLInputElement>(state.source) && downcast<HTMLInputElement>(*state.source).isColorControl();
+    includeShadowDOM = includeShadowDOM || isColorControl;
 #endif
     bool sourceContainsHitNode;
     if (!includeShadowDOM)
@@ -1126,6 +1168,24 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         if (!element.isContentRichlyEditable())
             src.selection().setSelection(previousSelection);
         src.editor().setIgnoreSelectionChanges(false);
+        return true;
+    }
+#endif
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    if (isColorControl && m_dragSourceAction & DragSourceActionColor) {
+        auto& input = downcast<HTMLInputElement>(*state.source);
+        auto color = input.valueAsColor();
+
+        Path visiblePath;
+        dragImage = DragImage { createDragImageForColor(color, input.boundsInRootViewSpace(), input.document().page()->pageScaleFactor(), visiblePath) };
+        dragImage.setVisiblePath(visiblePath);
+        dataTransfer.pasteboard().write(color);
+        dragImageOffset = IntPoint { dragImageSize(dragImage.get()) };
+        dragLoc = dragLocForDHTMLDrag(mouseDraggedPoint, dragOrigin, dragImageOffset, false);
+
+        m_client.willPerformDragSourceAction(DragSourceActionColor, dragOrigin, dataTransfer);
+        doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state, { });
         return true;
     }
 #endif

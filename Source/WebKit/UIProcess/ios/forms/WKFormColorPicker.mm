@@ -180,7 +180,7 @@ using namespace WebKit;
         colorPickerSize = CGSizeMake(keyboardSize.width, keyboardSize.height + additionalKeyboardAffordance);
     }
 
-    _colorPicker = adoptNS([[UIView alloc] initWithSize:colorPickerSize]);
+    _colorPicker = adoptNS([[UIView alloc] initWithFrame:CGRectMake(0, 0, colorPickerSize.width, colorPickerSize.height)]);
 
     CGFloat totalRows = [[getPKColorMatrixViewClass() defaultColorMatrix] count] + 1;
     CGFloat swatchHeight = (colorPickerSize.height - topColorMatrixPadding) / totalRows;

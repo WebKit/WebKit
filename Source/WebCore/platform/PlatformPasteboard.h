@@ -85,6 +85,7 @@ public:
     WEBCORE_EXPORT long copy(const String& fromPasteboard);
     WEBCORE_EXPORT long setBufferForType(SharedBuffer*, const String& pasteboardType);
     WEBCORE_EXPORT long setURL(const PasteboardURL&);
+    WEBCORE_EXPORT long setColor(const Color&);
     WEBCORE_EXPORT long setStringForType(const String&, const String& pasteboardType);
     WEBCORE_EXPORT void write(const PasteboardWebContent&);
     WEBCORE_EXPORT void write(const PasteboardImage&);

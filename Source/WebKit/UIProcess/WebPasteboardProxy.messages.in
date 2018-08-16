@@ -54,6 +54,7 @@ messages -> WebPasteboardProxy {
     AddPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes) -> (uint64_t changeCount)
     SetPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes) -> (uint64_t changeCount)
     SetPasteboardURL(struct WebCore::PasteboardURL pasteboardURL, String pasteboardName) -> (uint64_t changeCount) WantsConnection
+    SetPasteboardColor(String pasteboardName, WebCore::Color color) -> (uint64_t changeCount)
     SetPasteboardStringForType(String pasteboardName, String pasteboardType, String string) -> (uint64_t changeCount)
     SetPasteboardBufferForType(String pasteboardName, String pasteboardType, WebKit::SharedMemory::Handle handle, uint64_t size) -> (uint64_t changeCount)
 #endif

@@ -38,6 +38,7 @@
 #import "WebColorPicker.h"
 #import <WebCore/IntRect.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 class Color;

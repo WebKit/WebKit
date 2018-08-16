@@ -28,6 +28,7 @@
 #include "FloatSize.h"
 #include "ImageOrientation.h"
 #include "IntSize.h"
+#include "Path.h"
 #include "TextFlags.h"
 #include "TextIndicator.h"
 #include <wtf/Forward.h>
@@ -69,7 +70,9 @@ typedef RefPtr<cairo_surface_t> DragImageRef;
 #endif
 
 #if PLATFORM(COCOA)
-static const float SelectionDragImagePadding = 15;
+extern const float ColorSwatchCornerRadius;
+extern const float ColorSwatchStrokeSize;
+extern const float ColorSwatchWidth;
 #endif
 
 IntSize dragImageSize(DragImageRef);
@@ -88,6 +91,7 @@ DragImageRef createDragImageIconForCachedImageFilename(const String&);
 WEBCORE_EXPORT DragImageRef createDragImageForNode(Frame&, Node&);
 WEBCORE_EXPORT DragImageRef createDragImageForSelection(Frame&, TextIndicatorData&, bool forceBlackText = false);
 WEBCORE_EXPORT DragImageRef createDragImageForRange(Frame&, Range&, bool forceBlackText = false);
+DragImageRef createDragImageForColor(const Color&, const FloatRect&, float, Path&);
 DragImageRef createDragImageForImage(Frame&, Node&, IntRect& imageRect, IntRect& elementRect);
 DragImageRef createDragImageForLink(Element&, URL&, const String& label, TextIndicatorData&, FontRenderingMode, float deviceScaleFactor);
 void deleteDragImage(DragImageRef);
@@ -108,12 +112,17 @@ public:
     bool hasIndicatorData() const { return !!m_indicatorData; }
     std::optional<TextIndicatorData> indicatorData() const { return m_indicatorData; }
 
+    void setVisiblePath(const Path& path) { m_visiblePath = path; }
+    bool hasVisiblePath() const { return !!m_visiblePath; }
+    std::optional<Path> visiblePath() const { return m_visiblePath; }
+
     explicit operator bool() const { return !!m_dragImageRef; }
     DragImageRef get() const { return m_dragImageRef; }
 
 private:
     DragImageRef m_dragImageRef;
     std::optional<TextIndicatorData> m_indicatorData;
+    std::optional<Path> m_visiblePath;
 };
 
 }

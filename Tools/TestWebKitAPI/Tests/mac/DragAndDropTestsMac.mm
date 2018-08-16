@@ -58,4 +58,21 @@ TEST(DragAndDropTests, NumberOfValidItemsForDrop)
     EXPECT_EQ(1U, numberOfValidItemsForDrop);
 }
 
+#if ENABLE(INPUT_TYPE_COLOR)
+TEST(DragAndDropTests, DropColor)
+{
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
+    [pasteboard declareTypes:@[NSColorPboardType] owner:nil];
+    [[NSColor redColor] writeToPasteboard:pasteboard];
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    TestWKWebView *webView = [simulator webView];
+    [simulator setExternalDragPasteboard:pasteboard];
+
+    [webView synchronouslyLoadTestPageNamed:@"color-drop"];
+    [simulator runFrom:NSMakePoint(0, 0) to:NSMakePoint(50, 50)];
+    EXPECT_WK_STREQ(@"#ff0000", [webView stringByEvaluatingJavaScript:@"document.querySelector(\"input\").value"]);
+}
+#endif // ENABLE(INPUT_TYPE_COLOR)
+
 #endif // WK_API_ENABLED && ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)

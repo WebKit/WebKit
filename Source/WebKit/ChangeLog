@@ -1,3 +1,44 @@
+2018-08-16  Aditya Keerthi  <akeerthi@apple.com>
+
+        Support drag-and-drop for input[type=color]
+        https://bugs.webkit.org/show_bug.cgi?id=188464
+
+        Reviewed by Wenson Hsieh.
+
+        On iOS, the drag preview for the color input is a rounded rectangle. In order to
+        ensure that the corners appear transparent, the visiblePath property of the
+        UIDragPreviewParameters was set to match the preview's shape. This also required
+        the creation of an additional ArgumentCoder for Path.
+
+        When beginning the drag session, the preview should appear centered about the
+        color input. This is managed in createTargetedDragPreview. However, once the
+        preview is dragged, the preview should be at the center of the touch location.
+        Consequently, DragSourceActionColor was added to the list of sources that could
+        update the drag preview after lifting.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Path>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::setPasteboardColor):
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * UIProcess/ios/DragDropInteractionState.h:
+        * UIProcess/ios/DragDropInteractionState.mm:
+        (WebKit::createTargetedDragPreview):
+        (WebKit::shouldUseDragImageToCreatePreviewForDragSource):
+        (WebKit::shouldUseVisiblePathToCreatePreviewForDragSource):
+        (WebKit::canUpdatePreviewForActiveDragSource):
+        (WebKit::DragDropInteractionState::previewForDragItem const):
+        (WebKit::DragDropInteractionState::stageDragItem):
+        (WebKit::DragDropInteractionState::updatePreviewsForActiveDragSources):
+        * UIProcess/ios/forms/WKFormColorPicker.mm:
+        (-[WKColorPicker initWithView:]):
+        * UIProcess/mac/WebColorPickerMac.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::setColor):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2018-08-16  Per Arne Vollan  <pvollan@apple.com>
 
         Assert that calling CGSSetDenyWindowServerConnections(true) succeeds

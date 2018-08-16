@@ -134,6 +134,7 @@ using namespace HTMLNames;
 const int LinkDragHysteresis = 40;
 const int ImageDragHysteresis = 5;
 const int TextDragHysteresis = 3;
+const int ColorDragHystersis = 3;
 const int GeneralDragHysteresis = 3;
 #if PLATFORM(COCOA)
 const Seconds EventHandler::TextDragDelay { 150_ms };
@@ -3510,6 +3511,11 @@ bool EventHandler::dragHysteresisExceeded(const FloatPoint& dragViewportLocation
     case DragSourceActionLink:
         threshold = LinkDragHysteresis;
         break;
+#if ENABLE(INPUT_TYPE_COLOR)
+    case DragSourceActionColor:
+        threshold = ColorDragHystersis;
+        break;
+#endif
     case DragSourceActionDHTML:
         break;
     case DragSourceActionNone:
@@ -3690,16 +3696,16 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
 
     if (!ExactlyOneBitSet(dragState().type)) {
         ASSERT((dragState().type & DragSourceActionSelection));
-#if ENABLE(ATTACHMENT_ELEMENT)
-        ASSERT((dragState().type & ~DragSourceActionSelection) == DragSourceActionDHTML
-               || (dragState().type & ~DragSourceActionSelection) == DragSourceActionImage
-               || (dragState().type & ~DragSourceActionSelection) == DragSourceActionAttachment
-               || (dragState().type & ~DragSourceActionSelection) == DragSourceActionLink);
-#else
         ASSERT((dragState().type & ~DragSourceActionSelection) == DragSourceActionDHTML
             || (dragState().type & ~DragSourceActionSelection) == DragSourceActionImage
-            || (dragState().type & ~DragSourceActionSelection) == DragSourceActionLink);
+#if ENABLE(ATTACHMENT_ELEMENT)
+            || (dragState().type & ~DragSourceActionSelection) == DragSourceActionAttachment
 #endif
+#if ENABLE(INPUT_TYPE_COLOR)
+            || (dragState().type & ~DragSourceActionSelection) == DragSourceActionColor
+#endif
+            || (dragState().type & ~DragSourceActionSelection) == DragSourceActionLink);
+
         dragState().type = DragSourceActionSelection;
     }
 

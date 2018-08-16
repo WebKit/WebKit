@@ -852,6 +852,15 @@ bool ArgumentCoder<Path>::decode(Decoder& decoder, Path& path)
     return true;
 }
 
+std::optional<Path> ArgumentCoder<Path>::decode(Decoder& decoder)
+{
+    Path path;
+    if (!decode(decoder, path))
+        return std::nullopt;
+
+    return path;
+}
+
 void ArgumentCoder<RecentSearch>::encode(Encoder& encoder, const RecentSearch& recentSearch)
 {
     encoder << recentSearch.string << recentSearch.time;

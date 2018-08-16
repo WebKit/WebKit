@@ -570,6 +570,8 @@ platform/mac/fast/events/objc-event-api.html
 # https://bugs.webkit.org/show_bug.cgi?id=64285
 editing/pasteboard/datatransfer-items-drop-plaintext-file.html
 editing/pasteboard/datatransfer-types-dropping-text-file.html
+editing/pasteboard/drag-and-drop-color-input.html
+editing/pasteboard/drag-and-drop-color-input-events.html
 editing/pasteboard/drag-and-drop-image-contenteditable.html
 editing/pasteboard/drag-and-drop-inputimage-contenteditable.html
 editing/pasteboard/drag-and-drop-objectimage-contenteditable.html

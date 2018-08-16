@@ -149,4 +149,8 @@ void Pasteboard::writeCustomData(const PasteboardCustomData&)
 {
 }
 
+void Pasteboard::write(const Color&)
+{
+}
+
 } // namespace WebCore

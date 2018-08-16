@@ -85,6 +85,7 @@ private:
     long setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) override;
     long setBufferForType(WebCore::SharedBuffer*, const String& pasteboardType, const String& pasteboardName) override;
     long setURL(const WebCore::PasteboardURL&, const String& pasteboardName) override;
+    long setColor(const WebCore::Color&, const String& pasteboardName) override;
     long setStringForType(const String&, const String& pasteboardType, const String& pasteboardName) override;
 #endif
 #if PLATFORM(GTK)

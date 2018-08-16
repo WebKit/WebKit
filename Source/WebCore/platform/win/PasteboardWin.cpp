@@ -30,6 +30,7 @@
 #include "BitmapInfo.h"
 #include "CachedImage.h"
 #include "ClipboardUtilitiesWin.h"
+#include "Color.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Editor.h"
@@ -1082,6 +1083,10 @@ void Pasteboard::write(const PasteboardImage&)
 }
 
 void Pasteboard::writeCustomData(const PasteboardCustomData&)
+{
+}
+
+void Pasteboard::write(const Color&)
 {
 }
 

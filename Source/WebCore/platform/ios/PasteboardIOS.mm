@@ -83,6 +83,7 @@ static long changeCountForPasteboard(const String& pasteboardName = { })
 
 // FIXME: Does this need to be declared in the header file?
 WEBCORE_EXPORT NSString *WebArchivePboardType = @"Apple Web Archive pasteboard type";
+NSString *UIColorPboardType = @"com.apple.uikit.color";
 
 Pasteboard::Pasteboard()
     : m_changeCount(0)
@@ -137,6 +138,11 @@ void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL&)
     // should not use the same pasteboard type as this function for
     // URLs.
     ASSERT_NOT_REACHED();
+}
+
+void Pasteboard::write(const Color& color)
+{
+    platformStrategies()->pasteboardStrategy()->setColor(color, m_pasteboardName);
 }
 
 bool Pasteboard::canSmartReplace()
