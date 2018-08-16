@@ -131,12 +131,16 @@ class iOSTestsFactory(TestFactory):
     LayoutTestClass = RunWebKitTests
 
 
-class MacWK1Factory(BuildFactory):
+class macOSBuildFactory(BuildFactory):
     pass
 
 
-class MacWK2Factory(BuildFactory):
-    pass
+class macOSWK1Factory(TestFactory):
+    LayoutTestClass = RunWebKit1Tests
+
+
+class macOSWK2Factory(TestFactory):
+    LayoutTestClass = RunWebKitTests
 
 
 class WindowsFactory(Factory):
