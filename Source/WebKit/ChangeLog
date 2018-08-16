@@ -1,3 +1,16 @@
+2018-08-16  Per Arne Vollan  <pvollan@apple.com>
+
+        Assert that calling CGSSetDenyWindowServerConnections(true) succeeds
+        https://bugs.webkit.org/show_bug.cgi?id=188615
+
+        Reviewed by Brent Fulgham.
+
+        If the call to CGSSetDenyWindowServerConnections(true) fails, it means there are open WindowServer connections
+        at this point, and future WindowServer connections will not be denied. We should assert that this call succeeds.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2018-08-16  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, WPE build fix after r234920.
