@@ -1,5 +1,19 @@
 2018-08-16  Alex Christensen  <achristensen@webkit.org>
 
+        Deprecate SPI that is or ought to be unused
+        https://bugs.webkit.org/show_bug.cgi?id=188616
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::ContextMenuClient::menuFromProposedMenu):
+
+2018-08-16  Alex Christensen  <achristensen@webkit.org>
+
         Add temporary SPI WKContextHandlesSafeBrowsing
         https://bugs.webkit.org/show_bug.cgi?id=188676
 
