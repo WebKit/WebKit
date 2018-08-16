@@ -1,3 +1,14 @@
+2018-08-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] MiniBrowser: web view doesn't get the focus when new window is created
+        https://bugs.webkit.org/show_bug.cgi?id=188546
+
+        Reviewed by Michael Catanzaro.
+
+        Remove expectations of the tests that pass now.
+
+        * TestExpectations.json:
+
 2018-08-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed gardening. Update several test expectations after r234839.

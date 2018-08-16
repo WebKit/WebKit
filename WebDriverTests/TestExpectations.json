@@ -478,20 +478,10 @@
             }
         }
     },
-    "imported/w3c/webdriver/tests/back/back.py": {
-        "subtests": {
-            "test_dismissed_beforeunload": {
-                "expected": {"all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/188546"}}
-            }
-        }
-    },
     "imported/w3c/webdriver/tests/close_window/close.py": {
         "subtests": {
             "test_close_last_browsing_context": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/188118"}}
-            },
-            "test_close_browsing_context_with_dismissed_beforeunload_prompt": {
-                "expected": {"all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/188546"}}
             }
         }
     },
@@ -604,13 +594,6 @@
             },
             "test_parent_of_document_node_errors": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184964"}}
-            }
-        }
-    },
-    "imported/w3c/webdriver/tests/forward/forward.py": {
-        "subtests": {
-            "test_dismissed_beforeunload": {
-                "expected": {"all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/188546"}}
             }
         }
     },

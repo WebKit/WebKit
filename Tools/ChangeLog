@@ -1,5 +1,24 @@
 2018-08-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] MiniBrowser: web view doesn't get the focus when new window is created
+        https://bugs.webkit.org/show_bug.cgi?id=188546
+
+        Reviewed by Michael Catanzaro.
+
+        When a new window is created, the first widget of the windo is getting the focus, the toolbar in this case. We
+        always want the WebView to grab the focus. In case of new empty tab, we want to the URL bar to be focused
+        instead. This was causing failures in WebDriver tests that create a popup window with an input element that is
+        filled with send keys command. The input element is marked as focused in the DOM, but the actual focused widget
+        is the toolbar, so key events are sent to the toolbar instead of the web view.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewCreate):
+        (newTabCallback):
+        (openPrivateWindow):
+        (browser_window_get_or_create_web_view_for_automation):
+
+2018-08-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix WebDriver tests after r234839.
 
         New pytest requires to autoinstall attrs too.

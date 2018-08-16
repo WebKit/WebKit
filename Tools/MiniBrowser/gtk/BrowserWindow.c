@@ -338,6 +338,7 @@ static GtkWidget *webViewCreate(WebKitWebView *webView, WebKitNavigationAction *
 
     GtkWidget *newWindow = browser_window_new(GTK_WINDOW(window), window->webContext);
     browser_window_append_view(BROWSER_WINDOW(newWindow), newWebView);
+    gtk_widget_grab_focus(GTK_WIDGET(newWebView));
     g_signal_connect(newWebView, "ready-to-show", G_CALLBACK(webViewReadyToShow), newWindow);
     g_signal_connect(newWebView, "run-as-modal", G_CALLBACK(webViewRunAsModal), newWindow);
     g_signal_connect(newWebView, "close", G_CALLBACK(webViewClose), newWindow);
@@ -528,6 +529,7 @@ static void newTabCallback(BrowserWindow *window)
         "user-content-manager", webkit_web_view_get_user_content_manager(webView),
         "is-controlled-by-automation", webkit_web_view_is_controlled_by_automation(webView),
         NULL)));
+    gtk_widget_grab_focus(window->uriEntry);
     gtk_notebook_set_current_page(GTK_NOTEBOOK(window->notebook), -1);
 }
 
@@ -548,6 +550,7 @@ static void openPrivateWindow(BrowserWindow *window)
         NULL));
     GtkWidget *newWindow = browser_window_new(GTK_WINDOW(window), window->webContext);
     browser_window_append_view(BROWSER_WINDOW(newWindow), newWebView);
+    gtk_widget_grab_focus(GTK_WIDGET(newWebView));
     gtk_widget_show(GTK_WIDGET(newWindow));
 }
 
@@ -1233,5 +1236,6 @@ WebKitWebView *browser_window_get_or_create_web_view_for_automation(void)
         "is-controlled-by-automation", TRUE,
         NULL));
     browser_window_append_view(window, newWebView);
+    gtk_widget_grab_focus(GTK_WIDGET(newWebView));
     return newWebView;
 }
