@@ -1,4 +1,15 @@
-=================
+==================
+WebKitGTK+ 2.21.91
+==================
+
+What's new in WebKitGTK+ 2.21.91?
+
+  - Add enable-media-capabilities setting.
+  - Stop pushing buffers when seeking status changes in media player.
+  - Fix rendering of theme styled buttons.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Brazilian Portuguese.
+
 WebKitGTK+ 2.21.5
 =================
 
