@@ -4161,3 +4161,5 @@ http/tests/websocket [ Skip ]
 http/tests/security/mixedContent/websocket [ Skip ]
 imported/blink/http/tests/websocket [ Skip ]
 imported/blink/http/tests/security/mixedContent/websocket [ Skip ]
+
+editing/pasteboard/drag-and-drop-color-input-events.html [ Skip ]

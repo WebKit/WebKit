@@ -1,3 +1,12 @@
+2018-08-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] The layout test editing/pasteboard/drag-and-drop-color-input-events.html is timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=188667
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-08-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         LayoutTest inspector/worker/debugger-pause.html sometimes times out
