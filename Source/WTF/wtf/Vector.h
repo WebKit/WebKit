@@ -766,6 +766,8 @@ public:
 
     void clear() { shrinkCapacity(0); }
 
+    template<typename U = T> Vector<U> isolatedCopy() const;
+
     ALWAYS_INLINE void append(ValueType&& value) { append<ValueType>(std::forward<ValueType>(value)); }
     template<typename U> void append(U&&);
     template<typename... Args> void constructAndAppend(Args&&...);
@@ -1604,6 +1606,17 @@ template<typename T> struct ValueCheck<Vector<T>> {
 };
 #endif
 
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+template<typename U>
+inline Vector<U> Vector<T, inlineCapacity, OverflowHandler, minCapacity>::isolatedCopy() const
+{
+    Vector<U> copy;
+    copy.reserveInitialCapacity(size());
+    for (const auto& element : *this)
+        copy.uncheckedAppend(element.isolatedCopy());
+    return copy;
+}
+    
 template<typename VectorType, typename Func>
 size_t removeRepeatedElements(VectorType& vector, const Func& func)
 {
