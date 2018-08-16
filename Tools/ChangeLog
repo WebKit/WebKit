@@ -1,3 +1,17 @@
+2018-08-16  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Win][DumpRenderTree] Remove error message for duplicated tests.
+        https://bugs.webkit.org/show_bug.cgi?id=188662
+
+        Reviewed by Per Arne Vollan.
+
+        This was added to track down an issue where the same tests appeared
+        to be run multiple times. This turned out to not be the case.
+        See https://bugs.webkit.org/show_bug.cgi?id=166760 .
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+
 2018-08-16  Alex Christensen  <achristensen@webkit.org>
 
         Re-introduce assertion removed in r234890

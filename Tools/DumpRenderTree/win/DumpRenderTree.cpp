@@ -1155,12 +1155,6 @@ static void runTest(const string& inputLine)
     _bstr_t urlBStr(reinterpret_cast<wchar_t*>(buffer.data()));
     ASSERT(urlBStr.length() == length);
 
-    // Check that test has not already run
-    static HashSet<String> testUrls;
-    if (testUrls.contains(String(inputLine.c_str())))
-        fprintf(stderr, "Test has already run \"%s\"\n", inputLine.c_str());
-    testUrls.add(String(inputLine.c_str()));
-
     CFIndex maximumURLLengthAsUTF8 = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
     Vector<char> testURL(maximumURLLengthAsUTF8 + 1, 0);
     CFStringGetCString(str, testURL.data(), maximumURLLengthAsUTF8, kCFStringEncodingUTF8);
