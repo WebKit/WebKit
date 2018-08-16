@@ -1,5 +1,14 @@
 2018-08-16  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Separate queues for Builders and Testers - macOS High Sierra
+        https://bugs.webkit.org/show_bug.cgi?id=188540
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/config.json: Splitted few macOS queues into builders and testers. 
+
+2018-08-16  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Add build steps ArchiveTestResults, UploadTestResults and ExtractTestResults
         https://bugs.webkit.org/show_bug.cgi?id=188666
 
