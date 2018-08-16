@@ -399,30 +399,6 @@ void NetworkProcessProxy::logDiagnosticMessageWithValue(uint64_t pageID, const S
     page->logDiagnosticMessageWithValue(message, description, value, significantFigures, shouldSample);
 }
 
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-void NetworkProcessProxy::canAuthenticateAgainstProtectionSpace(uint64_t loaderID, uint64_t pageID, uint64_t frameID, const WebCore::ProtectionSpace& protectionSpace)
-{
-    // NetworkProcess state cannot asynchronously be kept in sync with these objects
-    // like we expect WebProcess <-> UIProcess state to be kept in sync.
-    // So there's no guarantee the messaged WebPageProxy or WebFrameProxy exist here in the UIProcess.
-    // We need to validate both the page and the frame up front.
-    if (auto* page = WebProcessProxy::webPage(pageID)) {
-        if (page->process().webFrame(frameID)) {
-            page->canAuthenticateAgainstProtectionSpace(loaderID, frameID, protectionSpace);
-            return;
-        }
-#if ENABLE(SERVICE_WORKER)
-    } else if (m_processPool.serviceWorkerProcessProxyFromPageID(pageID)) {
-        send(Messages::NetworkProcess::ContinueCanAuthenticateAgainstProtectionSpace(loaderID, true), 0);
-        return;
-#endif
-    }
-    // In the case where we will not be able to reply to this message with a client reply,
-    // we should message back a default to the Networking process.
-    send(Messages::NetworkProcess::ContinueCanAuthenticateAgainstProtectionSpace(loaderID, false), 0);
-}
-#endif
-
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
 void NetworkProcessProxy::updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, const Vector<String>& domainsToBlock, ShouldClearFirst shouldClearFirst, CompletionHandler<void()>&& completionHandler)
 {

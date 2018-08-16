@@ -102,15 +102,7 @@ void NetworkCORSPreflightChecker::didReceiveChallenge(WebCore::AuthenticationCha
         return;
     }
 
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    NetworkProcess::singleton().canAuthenticateAgainstProtectionSpace(challenge.protectionSpace(), m_parameters.pageID, m_parameters.frameID, [this, weakThis = makeWeakPtr(this), completionHandler = WTFMove(completionHandler), challenge = WTFMove(challenge)] (bool canAuthenticate) mutable {
-        if (!canAuthenticate)
-            return completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, { });
-        NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.pageID, m_parameters.frameID, challenge, WTFMove(completionHandler));
-    });
-#else
     NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.pageID, m_parameters.frameID, challenge, WTFMove(completionHandler));
-#endif
 }
 
 void NetworkCORSPreflightChecker::didReceiveResponseNetworkSession(WebCore::ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)

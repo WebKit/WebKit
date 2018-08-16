@@ -667,26 +667,6 @@ void NetworkProcess::cancelDownload(DownloadID downloadID)
 {
     downloadManager().cancelDownload(downloadID);
 }
-    
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-void NetworkProcess::canAuthenticateAgainstProtectionSpace(const WebCore::ProtectionSpace& protectionSpace, uint64_t pageID, uint64_t frameID, CompletionHandler<void(bool)>&& completionHandler)
-{
-    static uint64_t lastCompletionHandlerID = 0;
-    uint64_t completionHandlerID = ++lastCompletionHandlerID;
-    m_canAuthenticateAgainstProtectionSpaceCompletionHandlers.add(completionHandlerID, WTFMove(completionHandler));
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::CanAuthenticateAgainstProtectionSpace(completionHandlerID, pageID, frameID, protectionSpace), 0);
-}
-
-void NetworkProcess::continueCanAuthenticateAgainstProtectionSpace(uint64_t completionHandlerID, bool canAuthenticate)
-{
-    if (auto completionHandler = m_canAuthenticateAgainstProtectionSpaceCompletionHandlers.take(completionHandlerID)) {
-        completionHandler(canAuthenticate);
-        return;
-    }
-    ASSERT_NOT_REACHED();
-}
-
-#endif
 
 void NetworkProcess::continueWillSendRequest(DownloadID downloadID, WebCore::ResourceRequest&& request)
 {

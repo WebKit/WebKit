@@ -37,7 +37,7 @@ namespace WebKit {
 class NetworkLoad;
 class NetworkLoadParameters;
 
-class PreconnectTask final : public NetworkLoadClient, public CanMakeWeakPtr<PreconnectTask> {
+class PreconnectTask final : public NetworkLoadClient {
 public:
     explicit PreconnectTask(NetworkLoadParameters&&, WTF::CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler = { });
     ~PreconnectTask();
@@ -50,7 +50,6 @@ private:
     bool isSynchronous() const final { return false; }
     bool isAllowedToAskUserForCredentials() const final { return false; }
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) final;
-    void canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&) final;
     void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse) final;
     ShouldContinueDidReceiveResponse didReceiveResponse(WebCore::ResourceResponse&&) final;
     void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) final;

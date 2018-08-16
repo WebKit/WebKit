@@ -96,19 +96,6 @@ void PreconnectTask::didSendData(unsigned long long bytesSent, unsigned long lon
     ASSERT_NOT_REACHED();
 }
 
-void PreconnectTask::canAuthenticateAgainstProtectionSpaceAsync(const ProtectionSpace& protectionSpace)
-{
-    if (!pageID()) {
-        // The preconnect was started by the UIProcess.
-        m_networkLoad->continueCanAuthenticateAgainstProtectionSpace(false);
-        return;
-    }
-    NetworkProcess::singleton().canAuthenticateAgainstProtectionSpace(protectionSpace, pageID(), frameID(), [weakThis = makeWeakPtr(this)] (bool result) {
-        if (weakThis)
-            weakThis->m_networkLoad->continueCanAuthenticateAgainstProtectionSpace(result);
-    });
-}
-
 void PreconnectTask::didFinish(const ResourceError& error)
 {
     if (m_completionHandler)

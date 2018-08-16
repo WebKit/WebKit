@@ -39,7 +39,7 @@ class SecurityOrigin;
 
 namespace WebKit {
 
-class NetworkCORSPreflightChecker final : private NetworkDataTaskClient, public CanMakeWeakPtr<NetworkCORSPreflightChecker> {
+class NetworkCORSPreflightChecker final : private NetworkDataTaskClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     struct Parameters {

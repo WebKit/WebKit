@@ -75,8 +75,6 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 
 - (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents;
 
-- (void)_webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge WK_API_DEPRECATED_WITH_REPLACEMENT("webView:didReceiveAuthenticationChallenge:completionHandler:", macosx(10.10, 10.13.4), ios(8.0, 11.3));
-
 - (void)_webViewWebProcessDidCrash:(WKWebView *)webView;
 - (void)_webViewWebProcessDidBecomeResponsive:(WKWebView *)webView;
 - (void)_webViewWebProcessDidBecomeUnresponsive:(WKWebView *)webView;

@@ -76,13 +76,6 @@ void PendingDownload::cancel()
     send(Messages::DownloadProxy::DidCancel({ }));
 }
 
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-void PendingDownload::canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace& protectionSpace)
-{
-    m_networkLoad->continueCanAuthenticateAgainstProtectionSpace(true);
-}
-#endif
-
 void PendingDownload::didFailLoading(const WebCore::ResourceError& error)
 {
     send(Messages::DownloadProxy::DidFail(error, { }));

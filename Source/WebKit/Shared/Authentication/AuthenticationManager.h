@@ -68,9 +68,6 @@ public:
 
     void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
     void didReceiveAuthenticationChallenge(IPC::MessageSender& download, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    void continueCanAuthenticateAgainstProtectionSpace(DownloadID, bool canAuthenticate);
-#endif
 
     void useCredentialForChallenge(uint64_t challengeID, const WebCore::Credential&);
     void continueWithoutCredentialForChallenge(uint64_t challengeID);
