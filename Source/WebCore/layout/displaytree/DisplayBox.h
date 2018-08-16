@@ -117,12 +117,12 @@ public:
 
     ~Box();
 
-    LayoutUnit top() const { return m_topLeft.y(); }
-    LayoutUnit left() const { return m_topLeft.x(); }
+    LayoutUnit top() const;
+    LayoutUnit left() const;
     LayoutUnit bottom() const { return top() + height(); }
     LayoutUnit right() const { return left() + width(); }
 
-    LayoutPoint topLeft() const { return m_topLeft; }
+    LayoutPoint topLeft() const;
     LayoutPoint bottomRight() const { return { right(), bottom() }; }
 
     LayoutSize size() const { return { width(), height() }; }
@@ -138,6 +138,7 @@ public:
 
     LayoutUnit nonCollapsedMarginTop() const;
     LayoutUnit nonCollapsedMarginBottom() const;
+    std::optional<LayoutUnit> estimatedMarginTop() const { return m_estimatedMarginTop; }
 
     LayoutUnit borderTop() const;
     LayoutUnit borderLeft() const;
@@ -172,9 +173,9 @@ private:
         BoxSizing boxSizing { BoxSizing::ContentBox };
     };
 
-    void setTopLeft(const LayoutPoint& topLeft) { m_topLeft = topLeft; }
-    void setTop(LayoutUnit top) { m_topLeft.setY(top); }
-    void setLeft(LayoutUnit left) { m_topLeft.setX(left); }
+    void setTopLeft(const LayoutPoint&);
+    void setTop(LayoutUnit);
+    void setLeft(LayoutUnit);
     void moveHorizontally(LayoutUnit offset) { m_topLeft.move(offset, { }); }
     void moveVertically(LayoutUnit offset) { m_topLeft.move({ }, offset); }
 
@@ -184,6 +185,7 @@ private:
     void setHorizontalMargin(Layout::HorizontalEdges);
     void setVerticalMargin(Layout::VerticalEdges);
     void setVerticalNonCollapsedMargin(Layout::VerticalEdges);
+    void setEstimatedMarginTop(LayoutUnit marginTop) { m_estimatedMarginTop = marginTop; }
 
     void setBorder(Layout::Edges);
     void setPadding(std::optional<Layout::Edges>);
@@ -193,6 +195,8 @@ private:
     void invalidateBorder() { m_hasValidBorder = false; }
     void invalidatePadding() { m_hasValidPadding = false; }
 
+    void setHasValidTop() { m_hasValidTop = true; }
+    void setHasValidLeft() { m_hasValidLeft = true; }
     void setHasValidVerticalMargin() { m_hasValidVerticalMargin = true; }
     void setHasValidVerticalNonCollapsedMargin() { m_hasValidVerticalNonCollapsedMargin = true; }
     void setHasValidHorizontalMargin() { m_hasValidHorizontalMargin = true; }
@@ -212,11 +216,14 @@ private:
 
     Layout::Edges m_margin;
     Layout::VerticalEdges m_verticalNonCollapsedMargin;
+    std::optional<LayoutUnit> m_estimatedMarginTop;
 
     Layout::Edges m_border;
     std::optional<Layout::Edges> m_padding;
 
 #if !ASSERT_DISABLED
+    bool m_hasValidTop { false };
+    bool m_hasValidLeft { false };
     bool m_hasValidHorizontalMargin { false };
     bool m_hasValidVerticalMargin { false };
     bool m_hasValidVerticalNonCollapsedMargin { false };
@@ -416,6 +423,50 @@ inline Box::Rect::operator LayoutRect() const
     return m_rect;
 }
 
+inline LayoutUnit Box::top() const
+{
+    ASSERT(m_hasValidTop && (m_estimatedMarginTop || m_hasValidVerticalMargin));
+    return m_topLeft.y();
+}
+
+inline LayoutUnit Box::left() const
+{
+    ASSERT(m_hasValidLeft && m_hasValidHorizontalMargin);
+    return m_topLeft.x();
+}
+
+inline LayoutPoint Box::topLeft() const
+{
+    ASSERT(m_hasValidTop && (m_estimatedMarginTop || m_hasValidVerticalMargin));
+    ASSERT(m_hasValidLeft && m_hasValidHorizontalMargin);
+    return m_topLeft;
+}
+
+inline void Box::setTopLeft(const LayoutPoint& topLeft)
+{
+#if !ASSERT_DISABLED
+    setHasValidTop();
+    setHasValidLeft();
+#endif
+    m_topLeft = topLeft;
+}
+
+inline void Box::setTop(LayoutUnit top)
+{
+#if !ASSERT_DISABLED
+    setHasValidTop();
+#endif
+    m_topLeft.setY(top);
+}
+
+inline void Box::setLeft(LayoutUnit left)
+{
+#if !ASSERT_DISABLED
+    setHasValidLeft();
+#endif
+    m_topLeft.setX(left);
+}
+
 inline void Box::setContentBoxHeight(LayoutUnit height)
 { 
 #if !ASSERT_DISABLED
@@ -457,6 +508,7 @@ inline void Box::setVerticalMargin(Layout::VerticalEdges margin)
 #if !ASSERT_DISABLED
     setHasValidVerticalMargin();
 #endif
+    ASSERT(!m_estimatedMarginTop || *m_estimatedMarginTop == margin.top);
     m_margin.vertical = margin;
 }
 

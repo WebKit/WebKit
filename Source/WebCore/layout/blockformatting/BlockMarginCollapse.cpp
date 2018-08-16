@@ -332,6 +332,18 @@ LayoutUnit BlockFormattingContext::MarginCollapse::nonCollapsedMarginBottom(cons
     return marginValue(computedNonCollapsedMarginBottom(layoutContext, layoutBox), collapsedMarginBottomFromLastChild(layoutContext, layoutBox));
 }
 
+LayoutUnit BlockFormattingContext::MarginCollapse::estimatedMarginTop(const LayoutContext& layoutContext, const Box& layoutBox)
+{
+    ASSERT(layoutBox.isBlockLevelBox());
+    // Can't estimate vertical margins for out of flow boxes (and we shouldn't need to do it for float boxes).
+    ASSERT(layoutBox.isInFlow());
+    // Can't cross block formatting context boundary.
+    ASSERT(!layoutBox.establishesBlockFormattingContext());
+
+    // Let's just use the normal path for now.
+    return marginTop(layoutContext, layoutBox);
+}
+
 }
 }
 #endif
