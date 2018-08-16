@@ -246,8 +246,10 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<IntConstraint> 
         }
 
         distance = std::min(distance, constraintDistance);
-        auto range = capabilities.width();
-        width = widthConstraint->valueForCapabilityRange(size().width(), range.rangeMin().asInt, range.rangeMax().asInt);
+        if (widthConstraint->isMandatory()) {
+            auto range = capabilities.width();
+            width = widthConstraint->valueForCapabilityRange(size().width(), range.rangeMin().asInt, range.rangeMax().asInt);
+        }
     }
 
     std::optional<int> height;
@@ -259,8 +261,10 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<IntConstraint> 
         }
 
         distance = std::min(distance, constraintDistance);
-        auto range = capabilities.height();
-        height = heightConstraint->valueForCapabilityRange(size().height(), range.rangeMin().asInt, range.rangeMax().asInt);
+        if (heightConstraint->isMandatory()) {
+            auto range = capabilities.height();
+            height = heightConstraint->valueForCapabilityRange(size().height(), range.rangeMin().asInt, range.rangeMax().asInt);
+        }
     }
 
     std::optional<double> frameRate;
@@ -272,8 +276,10 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<IntConstraint> 
         }
 
         distance = std::min(distance, constraintDistance);
-        auto range = capabilities.frameRate();
-        frameRate = frameRateConstraint->valueForCapabilityRange(this->frameRate(), range.rangeMin().asDouble, range.rangeMax().asDouble);
+        if (frameRateConstraint->isMandatory()) {
+            auto range = capabilities.frameRate();
+            frameRate = frameRateConstraint->valueForCapabilityRange(this->frameRate(), range.rangeMin().asDouble, range.rangeMax().asDouble);
+        }
     }
 
     // Each of the non-null values is supported individually, see if they all can be applied at the same time.
@@ -286,7 +292,7 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<IntConstraint> 
             badConstraint = frameRateConstraint->name();
         return false;
     }
-    
+
     return true;
 }
 
@@ -754,7 +760,7 @@ bool RealtimeMediaSource::supportsConstraint(const MediaConstraint& constraint) 
         // Unknown (or unsupported) constraints should be ignored.
         break;
     }
-    
+
     return false;
 }
 
@@ -765,7 +771,7 @@ bool RealtimeMediaSource::supportsConstraints(const MediaConstraints& constraint
     FlattenedConstraint candidates;
     if (!selectSettings(constraints, candidates, invalidConstraint, SelectType::ForSupportsConstraints))
         return false;
-    
+
     return true;
 }
 

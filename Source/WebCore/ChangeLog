@@ -1,3 +1,27 @@
+2018-08-16  Youenn Fablet  <youenn@apple.com>
+
+        Change the input camera in the sources & outputs example on Safari (11) with M.Way camera
+        https://bugs.webkit.org/show_bug.cgi?id=187756
+        <rdar://problem/42332178>
+
+        Reviewed by Eric Carlson.
+
+        Covered by manual testing.
+
+        640x480x30fps is added as ideal constraints to getUserMedia if none other is added to provide consistent behavior.
+        Some cameras do not support 30fps as they have discrete frame rate ranges.
+        Before the patch, we were rejecting getUserMedia promise if the 'ideal' frameRate was not supported.
+        After the patch, we do not check whether frame rate is supported if it is not mandatory.
+        At capture time, we will still try to apply frame rate change and if not supported, the frame rate will not be set to 30 fps.
+
+        While we could surface discrete width/height/frame rate ranges, it seems best to fix the issue this way.
+        In the future, we might implement video interpolation for width/height/framerate at WebCore level.
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::supportsSizeAndFrameRate):
+        (WebCore::RealtimeMediaSource::supportsConstraint const):
+        (WebCore::RealtimeMediaSource::supportsConstraints):
+
 2018-08-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perform a microtask checkpoint before creating a custom element
