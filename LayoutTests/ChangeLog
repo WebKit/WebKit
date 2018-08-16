@@ -1,3 +1,18 @@
+2018-08-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Add fake layout test results JSON to exercise the functionality in results.html
+        https://bugs.webkit.org/show_bug.cgi?id=188636
+
+        Reviewed by Alexey Proskuryakov.
+        
+        The results for results.html are mostly blank because the page runs without any JSON
+        data, so there's no testing of the functionality of the page. Add some fake JSON
+        data which supplies most of the different types of test result, so we're testing
+        at least some of the results.html script.
+
+        * fast/harness/full_results.json: Added.
+        * fast/harness/results-expected.txt:
+
 2018-08-15  Ansh Shukla  <ansh_shukla@apple.com>
 
         NSURLAuthenticationMethodOAuth challenges are surfaced to clients in -didReceiveAuthenticationChallenge as NSURLAuthenticationMethodDefault

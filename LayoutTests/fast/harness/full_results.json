@@ -1,0 +1,127 @@
+ADD_RESULTS({
+    "tests": {
+        "http": {
+            "wpt": {
+                "cache-storage": {
+                    "cache-put-stream.https.any.html": {
+                        "expected": "PASS FAIL",
+                        "actual": "PASS"
+                    },
+                    "cache-put-keys.https.any.worker.html": {
+                        "report": "REGRESSION",
+                        "expected": "PASS",
+                        "actual": "TEXT"
+                    }
+                }
+            },
+            "tests": {
+                "contentextensions": {
+                    "async-xhr-onerror.html": {
+                        "expected": "PASS TIMEOUT",
+                        "actual": "PASS"
+                    },
+                    "top-url.html": {
+                        "report": "REGRESSION",
+                        "expected": "PASS",
+                        "actual": "CRASH",
+                        "has_stderr": true
+                    }
+                },
+                "storageAccess": {
+                    "request-storage-access-top-frame.html": {
+                        "report": "REGRESSION",
+                        "expected": "PASS TIMEOUT",
+                        "actual": "TEXT"
+                    }
+                }
+            }
+        },
+        "media": {
+            "video-loop.html": {
+                "report": "FLAKY",
+                "expected": "PASS TIMEOUT",
+                "actual": "TEXT PASS TIMEOUT"
+            },
+        },
+        "canvas": {
+            "philip": {
+                "tests": {
+                    "2d.gradient.interpolate.solid.html": {
+                        "expected": "FAIL",
+                        "actual": "PASS"
+                    }
+                }
+            }
+        },
+        "editing": {
+            "spelling": {
+                "spelling-marker-includes-hyphen.html": {
+                    "expected": "IMAGE",
+                    "actual": "PASS",
+                    "reftest_type": ["=="]
+                },
+                "spelling-markers-in-overlapping-lines.html": {
+                    "expected": "IMAGE",
+                    "actual": "PASS",
+                    "reftest_type": ["!="]
+                }
+            }
+        },
+        "webarchive": {
+            "test-css-url-resources-in-stylesheets.html": {
+                "expected": "FAIL",
+                "actual": "TEXT"
+            },
+            "loading": {
+                "object.html": {
+                    "expected": "PASS CRASH",
+                    "actual": "PASS"
+                },
+                "test-loading-archive-subresource-null-mimetype.html": {
+                    "expected": "CRASH",
+                    "actual": "PASS"
+                }
+            }
+        },
+        "svg": {
+            "batik": {
+                "smallFonts.svg": {
+                    "report": "MISSING",
+                    "expected": "PASS",
+                    "actual": "MISSING"
+                }
+            }
+        },
+        "platform": {
+            "mac": {
+                "media": {
+                    "audio-session-category-video-paused.html": {
+                        "report": "REGRESSION",
+                        "expected": "PASS",
+                        "actual": "TIMEOUT",
+                        "has_stderr": true
+                    }
+                }
+            }
+        }
+    },
+    "skipped": 5367,
+    "num_regressions": 2,
+    "other_crashes": {
+        "DumpRenderTree-54888": {},
+        "DumpRenderTree-56804": {},
+    },
+    "interrupted": false,
+    "num_missing": 0,
+    "layout_tests_dir": "/Volumes/Data/slave/highsierra-release-tests-wk2/build/LayoutTests",
+    "version": 4,
+    "num_passes": 49387,
+    "pixel_tests_enabled": false,
+    "date": "05:38PM on August 15, 2018",
+    "has_pretty_patch": true,
+    "fixable": 6360,
+    "num_flaky": 0,
+    "uses_expectations_file": true,
+    "revision": "234905"
+});
+
