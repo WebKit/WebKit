@@ -1,5 +1,23 @@
 2018-08-16  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r234908. rdar://problem/43385542
+
+    [WinCairo] Unreviewed build fix after r234896.
+    
+    * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+    (WebKit::NetworkDataTaskCurl::tryHttpAuthentication):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234908 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-15  Ross Kirsling  <ross.kirsling@sony.com>
+
+            [WinCairo] Unreviewed build fix after r234896.
+
+            * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+            (WebKit::NetworkDataTaskCurl::tryHttpAuthentication):
+
+2018-08-16  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r234896. rdar://problem/43385542
 
     NetworkCORSPreflightChecker should proceed in case of ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested even though the WebKit app is not implementing the didReceiveAuthenticationChallenge/didReceiveAuthenticationChallengeInFrame callback
