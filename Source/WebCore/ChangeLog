@@ -1,3 +1,18 @@
+2018-08-16  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Implement deleteAllCookies()
+        https://bugs.webkit.org/show_bug.cgi?id=188612
+
+        Reviewed by Alex Christensen.
+
+        deleteAllCookies() was not implemented. Connect the interface to the implementation.
+
+        Tests: http/tests/cookies/simple-cookies-expired.html
+               http/tests/cookies/simple-cookies-max-age.html
+
+        * platform/network/curl/CookieJarCurlDatabase.cpp:
+        (WebCore::CookieJarCurlDatabase::deleteAllCookies const):
+
 2018-08-16  Ross Kirsling  <ross.kirsling@sony.com>
 
         REGRESSION(r234930): Don't embed a #if in an ASSERT

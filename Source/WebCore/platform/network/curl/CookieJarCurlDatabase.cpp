@@ -128,9 +128,10 @@ void CookieJarCurlDatabase::deleteCookiesForHostnames(const NetworkStorageSessio
     // FIXME: Not yet implemented
 }
 
-void CookieJarCurlDatabase::deleteAllCookies(const NetworkStorageSession&) const
+void CookieJarCurlDatabase::deleteAllCookies(const NetworkStorageSession& session) const
 {
-    // FIXME: Not yet implemented
+    CookieJarDB& cookieJarDB = session.cookieDatabase();
+    cookieJarDB.deleteAllCookies();
 }
 
 void CookieJarCurlDatabase::deleteAllCookiesModifiedSince(const NetworkStorageSession&, WallTime) const
