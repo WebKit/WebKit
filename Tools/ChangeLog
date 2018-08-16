@@ -1,3 +1,14 @@
+2018-08-16  Alex Christensen  <achristensen@webkit.org>
+
+        Add entitlement to MiniBrowser to allow it to communicate with com.apple.Safari.SafeBrowsing.Service
+        https://bugs.webkit.org/show_bug.cgi?id=188677
+
+        Reviewed by Tim Horton.
+
+        * MiniBrowser/MiniBrowser.entitlements:
+        SSBLookupContext lookUpURL:completionHandler: fails to communicate with its service without this entitlement
+        on released operating systems.  See <rdar://problem/42749777>
+
 2018-08-16  Jer Noble  <jer.noble@apple.com>
 
         Add option to run-api-tests to force running of DISABLED tests.
