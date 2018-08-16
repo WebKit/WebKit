@@ -201,7 +201,7 @@ void LayoutContext::verifyAndOutputMismatchingLayoutTree(const RenderView& rende
         return;
 #if ENABLE(TREE_DEBUGGING)
     showRenderTree(&renderView);
-    TreeBuilder::showLayoutTree(*this, *m_root.get());
+    showLayoutTree(*m_root.get(), this);
 #endif
     WTFLogAlways("%s", stream.release().utf8().data());
 }

@@ -34,19 +34,21 @@ class RenderView;
 
 namespace Layout {
 
+class Box;
 class Container;
 class LayoutContext;
 
 class TreeBuilder {
 public:
     static std::unique_ptr<Container> createLayoutTree(const RenderView&);
-    static void showLayoutTree(const LayoutContext&, const Container&);
 
 private:
     static void createSubTree(const RenderElement& rootRenderer, Container& rootContainer);
 };
 
 #if ENABLE(TREE_DEBUGGING)
+void showLayoutTree(const Box&, const LayoutContext*);
+void showLayoutTree(const Box&);
 void printLayoutTreeForLiveDocuments();
 #endif
 

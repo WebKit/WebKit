@@ -162,7 +162,19 @@ const Container& Box::formattingContextRoot() const
     // Initial containing block always establishes a formatting context.
     if (isInitialContainingBlock())
         return downcast<Container>(*this);
+
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+const Container& Box::initialContainingBlock() const
+{
+    if (isInitialContainingBlock())
+        return downcast<Container>(*this);
+
+    auto* parent = this->parent();
+    for (; parent->parent(); parent = parent->parent()) { }
+
+    return *parent;
 }
 
 bool Box::isDescendantOf(const Container& container) const

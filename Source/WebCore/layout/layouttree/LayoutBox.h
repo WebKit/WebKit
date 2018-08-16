@@ -68,6 +68,8 @@ public:
 
     const Container* containingBlock() const;
     const Container& formattingContextRoot() const;
+    const Container& initialContainingBlock() const;
+
     bool isDescendantOf(const Container&) const;
 
     bool isAnonymous() const { return !m_elementAttributes; }
