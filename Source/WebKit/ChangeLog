@@ -1,3 +1,10 @@
+2018-08-15  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo] Unreviewed build fix after r234896.
+
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::tryHttpAuthentication):
+
 2018-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Can't share an app on AppStore to WeChat due to a release assert
