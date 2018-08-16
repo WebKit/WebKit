@@ -220,15 +220,6 @@
     _processPoolConfiguration->setSourceApplicationSecondaryIdentifier(sourceApplicationSecondaryIdentifier);
 }
 
-- (BOOL)allowsCellularAccess
-{
-    return YES;
-}
-
-- (void)setAllowsCellularAccess:(BOOL)allowsCellularAccess
-{
-}
-
 - (BOOL)shouldCaptureAudioInUIProcess
 {
     return _processPoolConfiguration->shouldCaptureAudioInUIProcess();
