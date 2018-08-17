@@ -20,6 +20,12 @@ p {
     margin-bottom: 0.3em;
 }
 
+a.clickable {
+    color: blue;
+    cursor: pointer;
+    margin-left: 0.2em;
+}
+
 tr:not(.results-row) td {
     white-space: nowrap;
 }
@@ -32,7 +38,7 @@ td:not(:first-of-type) {
     text-transform: lowercase;
 }
 
-td {
+th, td {
     padding: 1px 4px;
 }
 
@@ -75,7 +81,7 @@ th {
 }
 
 .floating-panel {
-    padding: 4px;
+    padding: 6px;
     background-color: rgba(255, 255, 255, 0.9);
     border: 1px solid silver;
     border-radius: 4px;
@@ -137,11 +143,12 @@ tbody.flagged .flag {
 }
 
 #options-menu {
-    border: 1px solid;
+    border: 1px solid gray;
+    border-radius: 4px;
     margin-top: 1px;
     padding: 2px 4px;
-    box-shadow: 2px 2px 2px #888;
-    -webkit-transition: opacity .2s;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+    transition: opacity .2s;
     text-align: left;
     position: absolute;
     right: 4px;
@@ -229,1301 +236,1674 @@ tbody.flagged .flag {
 if (window.testRunner)
     testRunner.dumpAsText();
 
-var g_state;
-function globalState()
+class Utils
 {
-    if (!g_state) {
-        g_state = {
-            crashTests: [],
-            crashOther: [],
-            flakyPassTests: [],
-            hasHttpTests: false,
-            hasImageFailures: false,
-            hasTextFailures: false,
-            missingResults: [],
-            results: {},
-            shouldToggleImages: true,
-            failingTests: [],
-            testsWithStderr: [],
-            timeoutTests: [],
-            unexpectedPassTests: []
+    static matchesSelector(node, selector)
+    {
+        if (node.matches)
+            return node.matches(selector);
+
+        if (node.webkitMatchesSelector)
+            return node.webkitMatchesSelector(selector);
+
+        if (node.mozMatchesSelector)
+            return node.mozMatchesSelector(selector);
+    }
+
+    static parentOfType(node, selector)
+    {
+        while (node = node.parentNode) {
+            if (Utils.matchesSelector(node, selector))
+                return node;
+        }
+        return null;
+    }
+
+    static stripExtension(testName)
+    {
+        // Temporary fix, also in Tools/Scripts/webkitpy/layout_tests/constrollers/test_result_writer.py, line 95.
+        // FIXME: Refactor to avoid confusing reference to both test and process names.
+        if (Utils.splitExtension(testName)[1].length > 5)
+            return testName;
+        return Utils.splitExtension(testName)[0];
+    }
+
+    static splitExtension(testName)
+    {
+        let index = testName.lastIndexOf('.');
+        if (index == -1) {
+            return [testName, ''];
+        }
+        return [testName.substring(0, index), testName.substring(index + 1)];
+    }
+
+    static forEach(nodeList, handler)
+    {
+        Array.prototype.forEach.call(nodeList, handler);
+    }
+
+    static toArray(nodeList)
+    {
+        return Array.prototype.slice.call(nodeList);
+    }
+
+    static trim(string)
+    {
+        return string.replace(/^[\s\xa0]+|[\s\xa0]+$/g, '');
+    }
+
+    static async(func, args)
+    {
+        setTimeout(() => { func.apply(null, args); }, 50);
+    }
+
+    static appendHTML(node, html)
+    {
+        if (node.insertAdjacentHTML)
+            node.insertAdjacentHTML('beforeEnd', html);
+        else
+            node.innerHTML += html;
+    }};
+
+class TestResult
+{
+    constructor(info, name)
+    {
+        this.name = name;
+        this.info = info; // FIXME: make this private.
+    }
+
+    isFailureExpected()
+    {
+        let actual = this.info.actual;    
+        let expected = this.info.expected || 'PASS';
+
+        if (actual != 'SKIP') {
+            let expectedArray = expected.split(' ');
+            let actualArray = actual.split(' ');
+            for (let actualValue of actualArray) {
+                if (expectedArray.indexOf(actualValue) == -1 && (expectedArray.indexOf('FAIL') == -1 || (actualValue != 'TEXT' && actualValue != 'IMAGE+TEXT' && actualValue != 'AUDIO')))
+                    return false;
+            }
+        }
+        return true;
+    }
+    
+    isMissing()
+    {
+        return this.info.actual.indexOf('MISSING') != -1;
+    }
+    
+    isFlakey(pixelTestsEnabled)
+    {
+        let actualTokens = this.info.actual.split(' ');
+        let passedWithImageOnlyFailureInRetry = actualTokens[0] == 'TEXT' && actualTokens[1] == 'IMAGE';
+        if (actualTokens[1] && this.info.actual.indexOf('PASS') != -1 || (!pixelTestsEnabled && passedWithImageOnlyFailureInRetry))
+            return true;
+        
+        return false;
+    }
+    
+    isPass()
+    {
+        return this.info.actual == 'PASS';
+    }
+
+    isTextFailure()
+    {
+        return this.info.actual.indexOf('TEXT') != -1;
+    }
+
+    isImageFailure()
+    {
+        return this.info.actual.indexOf('IMAGE') != -1;
+    }
+
+    isAudioFailure()
+    {
+        return this.info.actual.indexOf('AUDIO') != -1;
+    }
+
+    isCrash()
+    {
+        return this.info.actual == 'CRASH';
+    }
+    
+    isTimeout()
+    {
+        return this.info.actual == 'TIMEOUT';
+    }
+    
+    isUnexpectedPass(pixelTestsEnabled)
+    {
+        if (this.info.actual == 'PASS' && this.info.expected != 'PASS') {
+            if (this.info.expected != 'IMAGE' || (pixelTestsEnabled || this.isRefTest()))
+                return true;
+        }
+        
+        return false;
+    }
+    
+    isRefTest()
+    {
+        return !!this.info.reftest_type;
+    }
+
+    isMismatchRefTest()
+    {
+        return this.isRefTest() && this.info.reftest_type.indexOf('!=') != -1;
+    }
+
+    isMatchRefTest()
+    {
+        return this.isRefTest() && this.info.reftest_type.indexOf('==') != -1;
+    }
+    
+    isMissingImage()
+    {
+        return this.info.is_missing_image;
+    }
+    
+    hasStdErr()
+    {
+        return this.info.has_stderr;
+    }
+};
+
+class TestResults
+{
+    constructor(results)
+    {
+        this._results = results;
+
+        this.crashTests = [];
+        this.crashOther = [];
+        this.missingResults = [];
+        this.failingTests = [];
+        this.testsWithStderr = [];
+        this.timeoutTests = [];
+        this.unexpectedPassTests = [];
+        this.flakyPassTests = [];
+
+        this.hasHttpTests = false;
+        this.hasImageFailures = false;
+        this.hasTextFailures = false;
+
+        this._forEachTest(this._results.tests, '');
+        this._forOtherCrashes(this._results.other_crashes);
+    }
+    
+    date()
+    {
+        return this._results.date;
+    }
+
+    layoutTestsDir()
+    {
+        return this._results.layout_tests_dir;
+    }
+    
+    usesExpectationsFile()
+    {
+        return this._results.uses_expectations_file;
+    }
+    
+    resultForTest(testName)
+    {
+        return this._resultsByTest[testName];
+    }
+    
+    wasInterrupted()
+    {
+        return this._results.interrupted;
+    }
+
+    hasPrettyPatch()
+    {
+        return this._results.has_pretty_patch;
+    }
+    
+    hasWDiff()
+    {
+        return this._results.has_wdiff;
+    }
+
+    _processResultForTest(testResult)
+    {
+        let test = testResult.name;
+        if (testResult.hasStdErr())
+            this.testsWithStderr.push(testResult);
+
+        this.hasHttpTests |= test.indexOf('http/') == 0;
+
+        if (this.usesExpectationsFile())
+            testResult.isExpected = testResult.isFailureExpected();
+        
+        if (testResult.isTextFailure())
+            this.hasTextFailures = true;
+
+        if (testResult.isImageFailure())
+            this.hasImageFailures = true;
+
+        if (testResult.isMissing()) {
+            // FIXME: make sure that new-run-webkit-tests spits out an -actual.txt file for tests with MISSING results.
+            this.missingResults.push(testResult);
+            return;
+        }
+
+        if (testResult.isFlakey(this._results.pixel_tests_enabled)) {
+            this.flakyPassTests.push(testResult);
+            return;
+        }
+
+        if (testResult.isPass()) {
+            if (testResult.isUnexpectedPass(this._results.pixel_tests_enabled))
+                this.unexpectedPassTests.push(testResult);
+            return;
+        }
+
+        if (testResult.isCrash()) {
+            this.crashTests.push(testResult);
+            return;
+        }
+
+        if (testResult.isTimeout()) {
+            this.timeoutTests.push(testResult);
+            return;
+        }
+    
+        this.failingTests.push(testResult);
+    }
+    
+    _forEachTest(tree, prefix)
+    {
+        for (let key in tree) {
+            let newPrefix = prefix ? (prefix + '/' + key) : key;
+            if ('actual' in tree[key]) {
+                let testObject = new TestResult(tree[key], newPrefix);
+                this._processResultForTest(testObject);
+            } else
+                this._forEachTest(tree[key], newPrefix);
         }
     }
-    return g_state;
-}
 
+    _forOtherCrashes(tree)
+    {
+        for (let key in tree) {
+            let testObject = new TestResult(tree[key], key);
+            this.crashOther.push(testObject);
+        }
+    }
+    
+    static sortByName(tests)
+    {
+        tests.sort(function (a, b) { return a.name.localeCompare(b.name) });
+    }
+
+    static hasUnexpectedResult(tests)
+    {
+        return tests.some(function (test) { return !test.isExpected; });
+    }
+};
+
+class TestResultsController
+{        
+    constructor(containerElement, testResults)
+    {
+        this.containerElement = containerElement;
+        this.testResults = testResults;
+
+        this.shouldToggleImages = true;
+        this._togglingImageInterval = null;
+        
+        this._updatePageTitle();
+
+        this.buildResultsTables();
+        this.hideNonApplicableUI();
+        this.setupSorting();
+        this.setupOptions();
+    }
+    
+    buildResultsTables()
+    {
+        if (this.testResults.wasInterrupted()) {
+            let interruptionMessage = document.createElement('p');
+            interruptionMessage.textContent = 'Testing exited early';
+            interruptionMessage.classList.add('stopped-running-early-message');
+            this.containerElement.appendChild(interruptionMessage);
+        }
+
+        if (this.testResults.crashTests.length)
+            this.containerElement.appendChild(this.buildOneSection(this.testResults.crashTests, CrashingTestsSectionBuilder));
+
+        if (this.testResults.crashOther.length)
+            this.containerElement.appendChild(this.buildOneSection(this.testResults.crashOther, OtherCrashesSectionBuilder));
+
+        if (this.testResults.failingTests.length)
+            this.containerElement.appendChild(this.buildOneSection(this.testResults.failingTests, FailingTestsSectionBuilder));
+
+        if (this.testResults.missingResults.length)
+            this.containerElement.appendChild(this.buildOneSection(this.testResults.missingResults, TestsWithMissingResultsSectionBuilder));
+
+        if (this.testResults.timeoutTests.length)
+            this.containerElement.appendChild(this.buildOneSection(this.testResults.timeoutTests, TimedOutTestsSectionBuilder));
+
+        if (this.testResults.testsWithStderr.length)
+            this.containerElement.appendChild(this.buildOneSection(this.testResults.testsWithStderr, TestsWithStdErrSectionBuilder));
+
+        if (this.testResults.flakyPassTests.length)
+            this.containerElement.appendChild(this.buildOneSection(this.testResults.flakyPassTests, FlakyPassTestsSectionBuilder));
+
+        if (this.testResults.usesExpectationsFile() && this.testResults.unexpectedPassTests.length)
+            this.containerElement.appendChild(this.buildOneSection(this.testResults.unexpectedPassTests, UnexpectedPassTestsSectionBuilder));
+
+        if (this.testResults.hasHttpTests) {
+            let httpdAccessLogLink = document.createElement('p');
+            httpdAccessLogLink.innerHTML = 'httpd access log: <a href="access_log.txt">access_log.txt</a>';
+
+            let httpdErrorLogLink = document.createElement('p');
+            httpdErrorLogLink.innerHTML = 'httpd error log: <a href="error_log.txt">error_log.txt</a>';
+            
+            this.containerElement.appendChild(httpdAccessLogLink);
+            this.containerElement.appendChild(httpdErrorLogLink);
+        }
+        
+        this.updateTestlistCounts();
+    }
+    
+    setupSorting()
+    {
+        let resultsTable = document.getElementById('results-table');
+        if (!resultsTable)
+            return;
+        
+        // FIXME: Make all the tables sortable. Maybe SectionBuilder should put a TableSorter on each table.
+        resultsTable.addEventListener('click', TableSorter.handleClick, false);
+        TableSorter.sortColumn(0);
+    }
+    
+    hideNonApplicableUI()
+    {
+        // FIXME: do this all through body classnames.
+        if (!this.testResults.hasTextFailures) {
+            let textResultsHeader = document.getElementById('text-results-header');
+            if (textResultsHeader)
+                textResultsHeader.textContent = '';
+        }
+
+        if (!this.testResults.hasImageFailures) {
+            let imageResultsHeader = document.getElementById('image-results-header');
+            if (imageResultsHeader)
+                imageResultsHeader.textContent = '';
+
+            Utils.parentOfType(document.getElementById('toggle-images'), 'label').style.display = 'none';
+        }
+    }
+    
+    setupOptions()
+    {
+        // FIXME: do this all through body classnames.
+        if (!this.testResults.usesExpectationsFile())
+            Utils.parentOfType(document.getElementById('unexpected-results'), 'label').style.display = 'none';
+    }
+
+    buildOneSection(tests, sectionBuilderClass)
+    {
+        TestResults.sortByName(tests);
+        
+        let sectionBuilder = new sectionBuilderClass(tests, this);
+        return sectionBuilder.build();
+    }
+
+    updateTestlistCounts()
+    {
+        // FIXME: do this through the data model, not through the DOM.
+        let onlyShowUnexpectedFailures = this.onlyShowUnexpectedFailures();
+        Utils.forEach(document.querySelectorAll('.test-list-count'), count => {
+            let container = Utils.parentOfType(count, 'section');
+            let testContainers;
+            if (onlyShowUnexpectedFailures)
+                testContainers = container.querySelectorAll('tbody:not(.expected)');
+            else
+                testContainers = container.querySelectorAll('tbody');
+
+            count.textContent = testContainers.length;
+        })
+    }
+    
+    flagAll(headerLink)
+    {
+        let tests = this.visibleTests(Utils.parentOfType(headerLink, 'section'));
+        Utils.forEach(tests, tests => {
+            let shouldFlag = true;
+            testNavigator.flagTest(tests, shouldFlag);
+        })
+    }
+
+    unflag(flag)
+    {
+        const shouldFlag = false;
+        testNavigator.flagTest(Utils.parentOfType(flag, 'tbody'), shouldFlag);
+    }
+
+    visibleTests(opt_container)
+    {
+        let container = opt_container || document;
+        if (this.onlyShowUnexpectedFailures())
+            return container.querySelectorAll('tbody:not(.expected)');
+        else
+            return container.querySelectorAll('tbody');
+    }
+
+    // FIXME: this is confusing. Flip the sense around.
+    onlyShowUnexpectedFailures()
+    {
+        return document.getElementById('unexpected-results').checked;
+    }
+
+    static _testListHeader(title)
+    {
+        let header = document.createElement('h1');
+        header.innerHTML = title + ' (<span class=test-list-count></span>): <a href="#" class=flag-all onclick="controller.flagAll(this)">flag all</a>';
+        return header;
+    }
+
+    testToURL(testResult, layoutTestsPath)
+    {
+        const mappings = {
+            "http/tests/ssl/": "https://127.0.0.1:8443/ssl/",
+            "http/tests/": "http://127.0.0.1:8000/",
+            "http/wpt/": "http://localhost:8800/WebKit/",
+            "imported/w3c/web-platform-tests/": "http://localhost:8800/"
+        };
+
+        for (let key in mappings) {
+            if (testResult.name.startsWith(key))
+                return mappings[key] + testResult.name.substring(key.length);
+
+        }
+        return "file://" + layoutTestsPath + "/" + testResult.name;
+    }
+
+    layoutTestURL(testResult)
+    {
+        if (this.shouldUseTracLinks())
+            return this.layoutTestsBasePath() + testResult.name;
+
+        return this.testToURL(testResult, this.layoutTestsBasePath());
+    }
+
+    layoutTestsBasePath()
+    {
+        let basePath;
+        if (this.shouldUseTracLinks()) {
+            let revision = this.testResults.revision;
+            basePath = 'http://trac.webkit.org';
+            basePath += revision ? ('/export/' + revision) : '/browser';
+            basePath += '/trunk/LayoutTests/';
+        } else
+            basePath = this.testResults.layoutTestsDir() + '/';
+
+        return basePath;
+    }
+
+    shouldUseTracLinks()
+    {
+        return !this.testResults.layoutTestsDir() || !location.toString().indexOf('file://') == 0;
+    }
+
+    checkServerIsRunning(event)
+    {
+        if (this.shouldUseTracLinks())
+            return;
+
+        let url = event.target.href;
+        if (url.startsWith("file://"))
+            return;
+
+        event.preventDefault();
+        fetch(url, { mode: "no-cors" }).then(() => {
+            window.location = url;
+        }, () => {
+            alert("HTTP server does not seem to be running, please use the run-webkit-httpd script");
+        });
+    }
+
+    testLink(testResult)
+    {
+        return '<a class=test-link onclick="controller.checkServerIsRunning(event)" href="' + this.layoutTestURL(testResult) + '">' + testResult.name + '</a><span class=flag onclick="controller.unflag(this)"> \u2691</span>';
+    }
+    
+    static resultLink(testPrefix, suffix, contents)
+    {
+        return '<a class=result-link href="' + testPrefix + suffix + '" data-prefix="' + testPrefix + '">' + contents + '</a> ';
+    }
+
+    textResultLinks(prefix)
+    {
+        let html = TestResultsController.resultLink(prefix, '-expected.txt', 'expected') +
+            TestResultsController.resultLink(prefix, '-actual.txt', 'actual') +
+            TestResultsController.resultLink(prefix, '-diff.txt', 'diff');
+
+        if (this.testResults.hasPrettyPatch())
+            html += TestResultsController.resultLink(prefix, '-pretty-diff.html', 'pretty diff');
+
+        if (this.testResults.hasWDiff())
+            html += TestResultsController.resultLink(prefix, '-wdiff.html', 'wdiff');
+
+        return html;
+    }
+
+    flakinessDashboardURLForTests(testObjects)
+    {
+        // FIXME: just map and join here.
+        let testList = '';
+        for (let i = 0; i < testObjects.length; ++i) {
+            testList += testObjects[i].name;
+
+            if (i != testObjects.length - 1)
+                testList += ',';
+        }
+
+        return 'http://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=' + encodeURIComponent(testList);
+    }
+
+    _updatePageTitle()
+    {
+        let dateString = this.testResults.date();
+        let title = document.createElement('title');
+        title.textContent = 'Layout Test Results from ' + dateString;
+        document.head.appendChild(title);
+    }
+    
+    // Options handling. FIXME: move to a separate class?
+    updateAllOptions()
+    {
+        Utils.forEach(document.querySelectorAll('#options-menu input'), input => { input.onchange() });
+    }
+
+    toggleOptionsMenu()
+    {
+        let menu = document.getElementById('options-menu');
+        menu.className = (menu.className == 'hidden-menu') ? '' : 'hidden-menu';
+    }
+
+    handleToggleUseNewlines()
+    {
+        OptionWriter.save();
+        testNavigator.updateFlaggedTests();
+    }
+
+    handleUnexpectedResultsChange()
+    {
+        OptionWriter.save();
+        this._updateExpectedFailures();
+    }
+
+    expandAllExpectations()
+    {
+        let expandLinks = this._visibleExpandLinks();
+        for (let link of expandLinks)
+            Utils.async(link => { controller.expandExpectations(link) }, [ link ]);
+    }
+
+    collapseAllExpectations()
+    {
+        let expandLinks = this._visibleExpandLinks();
+        for (let link of expandLinks)
+            Utils.async(link => { controller.collapseExpectations(link) }, [ link ]);
+    }
+
+    expandExpectations(expandLink)
+    {
+        let row = Utils.parentOfType(expandLink, 'tr');
+        let parentTbody = row.parentNode;
+        let existingResultsRow = parentTbody.querySelector('.results-row');
+    
+        const enDash = '\u2013';
+        expandLink.textContent = enDash;
+        if (existingResultsRow) {
+            this._updateExpandedState(existingResultsRow, true);
+            return;
+        }
+    
+        let newRow = document.createElement('tr');
+        newRow.className = 'results-row';
+        let newCell = document.createElement('td');
+        newCell.colSpan = row.querySelectorAll('td').length;
+
+        let resultLinks = row.querySelectorAll('.result-link');
+        let hasTogglingImages = false;
+        for (let link of resultLinks) {
+            let result;
+            if (link.textContent == 'images') {
+                hasTogglingImages = true;
+                result = TestResultsController._togglingImage(link.getAttribute('data-prefix'));
+            } else
+                result = TestResultsController._resultIframe(link.href);
+
+            Utils.appendHTML(newCell, result);    
+        }
+
+        newRow.appendChild(newCell);
+        parentTbody.appendChild(newRow);
+
+        this._updateExpandedState(newRow, true);
+
+        this._updateImageTogglingTimer();
+    }
+
+    collapseExpectations(expandLink)
+    {
+        expandLink.textContent = '+';
+        let existingResultsRow = Utils.parentOfType(expandLink, 'tbody').querySelector('.results-row');
+        if (existingResultsRow)
+            this._updateExpandedState(existingResultsRow, false);
+    }
+
+    toggleExpectations(element)
+    {
+        let expandLink = element;
+        if (expandLink.className != 'expand-button-text')
+            expandLink = expandLink.querySelector('.expand-button-text');
+
+        if (expandLink.textContent == '+')
+            this.expandExpectations(expandLink);
+        else
+            this.collapseExpectations(expandLink);
+    }
+
+    _updateExpandedState(row, isExpanded)
+    {
+        row.setAttribute('data-expanded', isExpanded);
+        this._updateImageTogglingTimer();
+    }
+
+    handleToggleImagesChange()
+    {
+        OptionWriter.save();
+        this._updateTogglingImages();
+    }
+
+    _visibleExpandLinks()
+    {
+        if (this.onlyShowUnexpectedFailures())
+            return document.querySelectorAll('tbody:not(.expected) .expand-button-text');
+        else
+            return document.querySelectorAll('.expand-button-text');
+    }
+
+    static _togglingImage(prefix)
+    {
+        return '<div class=result-container><div class="label imageText"></div><img class=animatedImage data-prefix="' + prefix + '"></img></div>';
+    }
+
+    _updateTogglingImages()
+    {
+        this.shouldToggleImages = document.getElementById('toggle-images').checked;
+
+        // FIXME: this is all pretty confusing. Simplify.
+        if (this.shouldToggleImages) {
+            Utils.forEach(document.querySelectorAll('table:not(#missing-table) tbody:not([mismatchreftest]) a[href$=".png"]'), TestResultsController._convertToTogglingHandler(function(prefix) {
+                return TestResultsController.resultLink(prefix, '-diffs.html', 'images');
+            }));
+            Utils.forEach(document.querySelectorAll('table:not(#missing-table) tbody:not([mismatchreftest]) img[src$=".png"]'), TestResultsController._convertToTogglingHandler(TestResultsController._togglingImage));
+        } else {
+            Utils.forEach(document.querySelectorAll('a[href$="-diffs.html"]'), element => {
+                TestResultsController._convertToNonTogglingHandler(element);
+            });
+            Utils.forEach(document.querySelectorAll('.animatedImage'), TestResultsController._convertToNonTogglingHandler(function (absolutePrefix, suffix) {
+                return TestResultsController._resultIframe(absolutePrefix + suffix);
+            }));
+        }
+
+        this._updateImageTogglingTimer();
+    }
+
+    _updateExpectedFailures()
+    {
+        // Gross to do this by setting stylesheet text. Use a body class!
+        document.getElementById('unexpected-style').textContent = this.onlyShowUnexpectedFailures() ? '.expected { display: none; }' : '';
+
+        this.updateTestlistCounts();
+        testNavigator.onlyShowUnexpectedFailuresChanged();
+    }
+
+    static _resultIframe(src)
+    {
+        // FIXME: use audio tags for AUDIO tests?
+        let layoutTestsIndex = src.indexOf('LayoutTests');
+        let name;
+        if (layoutTestsIndex != -1) {
+            let hasTrac = src.indexOf('trac.webkit.org') != -1;
+            let prefix = hasTrac ? 'trac.webkit.org/.../' : '';
+            name = prefix + src.substring(layoutTestsIndex + 'LayoutTests/'.length);
+        } else {
+            let lastDashIndex = src.lastIndexOf('-pretty');
+            if (lastDashIndex == -1)
+                lastDashIndex = src.lastIndexOf('-');
+            name = src.substring(lastDashIndex + 1);
+        }
+
+        let tagName = (src.lastIndexOf('.png') == -1) ? 'iframe' : 'img';
+
+        if (tagName != 'img')
+            src += '?format=txt';
+        return '<div class=result-container><div class=label>' + name + '</div><' + tagName + ' src="' + src + '"></' + tagName + '></div>';
+    }
+
+
+    static _toggleImages()
+    {
+        let images = document.querySelectorAll('.animatedImage');
+        let imageTexts = document.querySelectorAll('.imageText');
+        for (let i = 0, len = images.length; i < len; i++) {
+            let image = images[i];
+            let text = imageTexts[i];
+            if (text.textContent == 'Expected Image') {
+                text.textContent = 'Actual Image';
+                image.src = image.getAttribute('data-prefix') + '-actual.png';
+            } else {
+                text.textContent = 'Expected Image';
+                image.src = image.getAttribute('data-prefix') + '-expected.png';
+            }
+        }
+    }
+
+    _updateImageTogglingTimer()
+    {
+        let hasVisibleAnimatedImage = document.querySelector('.results-row[data-expanded="true"] .animatedImage');
+        if (!hasVisibleAnimatedImage) {
+            clearInterval(this._togglingImageInterval);
+            this._togglingImageInterval = null;
+            return;
+        }
+
+        if (!this._togglingImageInterval) {
+            TestResultsController._toggleImages();
+            this._togglingImageInterval = setInterval(TestResultsController._toggleImages, 2000);
+        }
+    }
+    
+    static _getResultContainer(node)
+    {
+        return (node.tagName == 'IMG') ? Utils.parentOfType(node, '.result-container') : node;
+    }
+
+    static _convertToTogglingHandler(togglingImageFunction)
+    {
+        return function(node) {
+            let url = (node.tagName == 'IMG') ? node.src : node.href;
+            if (url.match('-expected.png$'))
+                TestResultsController._getResultContainer(node).remove();
+            else if (url.match('-actual.png$')) {
+                let name = Utils.parentOfType(node, 'tbody').querySelector('.test-link').textContent;
+                TestResultsController._getResultContainer(node).outerHTML = togglingImageFunction(Utils.stripExtension(name));
+            }
+        }
+    }
+    
+    static _convertToNonTogglingHandler(resultFunction)
+    {
+        return function(node) {
+            let prefix = node.getAttribute('data-prefix');
+            TestResultsController._getResultContainer(node).outerHTML = resultFunction(prefix, '-expected.png', 'expected') + resultFunction(prefix, '-actual.png', 'actual');
+        }
+    }
+};
+
+class SectionBuilder {
+    
+    constructor(tests, resultsController)
+    {
+        this._tests = tests;
+        this._table = null;
+        this._resultsController = resultsController;
+    }
+
+    build()
+    {
+        TestResults.sortByName(this._tests);
+        
+        let section = document.createElement('section');
+        section.appendChild(TestResultsController._testListHeader(this.sectionTitle()));
+        if (this.hideWhenShowingUnexpectedResultsOnly())
+            section.classList.add('expected');
+
+        this._table = document.createElement('table');
+        this._table.id = this.tableID();
+        this.addTableHeader();
+
+        let visibleResultsCount = 0;
+        for (let testResult of this._tests) {
+            let tbody = this.createTableRow(testResult);
+            this._table.appendChild(tbody);
+            
+            if (!this._resultsController.onlyShowUnexpectedFailures() || testResult.isExpected)
+                ++visibleResultsCount;
+        }
+        
+        section.querySelector('.test-list-count').textContent = visibleResultsCount;
+        section.appendChild(this._table);
+        return section;
+    }
+
+    createTableRow(testResult)
+    {
+        let tbody = document.createElement('tbody');
+        if (testResult.isExpected)
+            tbody.classList.add('expected');
+        
+        let row = document.createElement('tr');
+        tbody.appendChild(row);
+        
+        let testNameCell = document.createElement('td');
+        this.fillTestCell(testResult, testNameCell);
+        row.appendChild(testNameCell);
+
+        let resultCell = document.createElement('td');
+        this.fillTestResultCell(testResult, resultCell);
+        row.appendChild(resultCell);
+
+        let historyCell = this.createHistoryCell(testResult);
+        if (historyCell)
+            row.appendChild(historyCell);
+
+        return tbody;
+    }
+    
+    hideWhenShowingUnexpectedResultsOnly()
+    {
+        return !TestResults.hasUnexpectedResult(this._tests);
+    }
+    
+    addTableHeader()
+    {
+    }
+    
+    fillTestCell(testResult, cell)
+    {
+        cell.innerHTML = '<span class=expand-button onclick="controller.toggleExpectations(this)"><span class=expand-button-text>+</span></span>' + this._resultsController.testLink(testResult);
+    }
+
+    fillTestResultCell(testResult, cell)
+    {
+    }
+    
+    createHistoryCell(testResult)
+    {
+        let historyCell = document.createElement('td');
+        historyCell.innerHTML = '<a href="' + this._resultsController.flakinessDashboardURLForTests([testResult]) + '">history</a>'
+        return historyCell;
+    }
+    
+    tableID() { return ''; }
+    sectionTitle() { return ''; }
+};
+
+class FailuresSectionBuilder extends SectionBuilder {
+    
+    addTableHeader()
+    {
+        let header = document.createElement('thead');
+        let html = '<th>test</th><th id="text-results-header">results</th><th id="image-results-header">image results</th>';
+
+        if (this._resultsController.testResults.usesExpectationsFile())
+            html += '<th>actual failure</th><th>expected failure</th>';
+
+        html += '<th><a href="' + this._resultsController.flakinessDashboardURLForTests(this._tests) + '">history</a></th>';
+
+        if (this.tableID() == 'flaky-tests-table') // FIXME: use the classes, Luke!
+            html += '<th>failures</th>';
+
+        header.innerHTML = html;
+        this._table.appendChild(header);
+    }
+    
+    createTableRow(testResult)
+    {
+        let tbody = document.createElement('tbody');
+        if (testResult.isExpected)
+            tbody.classList.add('expected');
+        
+        if (testResult.isMismatchRefTest())
+            tbody.setAttribute('mismatchreftest', 'true');
+
+        let row = document.createElement('tr');
+        tbody.appendChild(row);
+        
+        let testNameCell = document.createElement('td');
+        this.fillTestCell(testResult, testNameCell);
+        row.appendChild(testNameCell);
+
+        let resultCell = document.createElement('td');
+        this.fillTestResultCell(testResult, resultCell);
+        row.appendChild(resultCell);
+
+        if (testResult.isTextFailure())
+            this.appendTextFailureLinks(testResult, resultCell);
+
+        if (testResult.isAudioFailure())
+            this.appendAudioFailureLinks(testResult, resultCell);
+            
+        if (testResult.isMissing())
+            this.appendActualOnlyLinks(testResult, resultCell);
+
+        let actualTokens = testResult.info.actual.split(/\s+/);
+
+        let testPrefix = Utils.stripExtension(testResult.name);
+        let imageResults = this.imageResultLinks(testResult, testPrefix, actualTokens[0]);
+        if (!imageResults && actualTokens.length > 1)
+            imageResults = this.imageResultLinks(testResult, 'retries/' + testPrefix, actualTokens[1]);
+
+        let imageResultsCell = document.createElement('td');
+        imageResultsCell.innerHTML = imageResults;
+        row.appendChild(imageResultsCell);
+
+        if (this._resultsController.testResults.usesExpectationsFile() || actualTokens.length) {
+            let actualCell = document.createElement('td');
+            actualCell.textContent = testResult.info.actual;
+            row.appendChild(actualCell);
+        }
+
+        if (this._resultsController.testResults.usesExpectationsFile()) {
+            let expectedCell = document.createElement('td');
+            expectedCell.textContent = testResult.isMissing() ? '' : testResult.info.expected;
+            row.appendChild(expectedCell);
+        }
+
+        let historyCell = this.createHistoryCell(testResult);
+        if (historyCell)
+            row.appendChild(historyCell);
+
+        return tbody;
+    }
+
+    appendTextFailureLinks(testResult, cell)
+    {
+        cell.innerHTML += this._resultsController.textResultLinks(Utils.stripExtension(testResult.name));
+    }
+    
+    appendAudioFailureLinks(testResult, cell)
+    {
+        let prefix = Utils.stripExtension(testResult.name);
+        cell.innerHTML += TestResultsController.resultLink(prefix, '-expected.wav', 'expected audio')
+            + TestResultsController.resultLink(prefix, '-actual.wav', 'actual audio')
+            + TestResultsController.resultLink(prefix, '-diff.txt', 'textual diff');
+    }
+    
+    appendActualOnlyLinks(testResult, cell)
+    {
+        if (testResult.info.is_missing_audio)
+            cell.innerHTML += TestResultsController.resultLink(prefix, '-actual.wav', 'audio result');
+
+        if (testResult.info.is_missing_text)
+            cell.innerHTML += TestResultsController.resultLink(prefix, '-actual.txt', 'result');
+    }
+
+    imageResultLinks(testResult, testPrefix, resultToken)
+    {
+        let result = '';
+        if (resultToken.indexOf('IMAGE') != -1) {
+            let testExtension = Utils.splitExtension(testResult.name)[1];
+
+            if (testResult.isMismatchRefTest()) {
+                result += TestResultsController.resultLink(this._resultsController.layoutTestsBasePath() + testPrefix, '-expected-mismatch.' + testExtension, 'ref mismatch');
+                result += TestResultsController.resultLink(testPrefix, '-actual.png', 'actual');
+            } else {
+                if (testResult.isMatchRefTest())
+                    result += TestResultsController.resultLink(this._resultsController.layoutTestsBasePath() + testPrefix, '-expected.' + testExtension, 'reference');
+
+                if (this._resultsController.shouldToggleImages)
+                    result += TestResultsController.resultLink(testPrefix, '-diffs.html', 'images');
+                else {
+                    result += TestResultsController.resultLink(testPrefix, '-expected.png', 'expected');
+                    result += TestResultsController.resultLink(testPrefix, '-actual.png', 'actual');
+                }
+
+                let diff = testResult.info.image_diff_percent;
+                result += TestResultsController.resultLink(testPrefix, '-diff.png', 'diff (' + diff + '%)');
+            }
+        }
+        
+        if (testResult.isMissing() && testResult.isMissingImage())
+            result += TestResultsController.resultLink(testPrefix, '-actual.png', 'png result');
+        
+        return result;
+    }
+};
+
+class FailingTestsSectionBuilder extends FailuresSectionBuilder {
+    tableID() { return 'results-table'; }
+    sectionTitle() { return 'Tests that failed text/pixel/audio diff'; }
+};
+
+class TestsWithMissingResultsSectionBuilder extends FailuresSectionBuilder {
+    tableID() { return 'missing-table'; }
+    sectionTitle() { return 'Tests that had no expected results (probably new)'; }
+};
+
+class FlakyPassTestsSectionBuilder extends FailuresSectionBuilder {
+    tableID() { return 'flaky-tests-table'; }
+    sectionTitle() { return 'Flaky tests (failed the first run and passed on retry)'; }
+};
+
+class UnexpectedPassTestsSectionBuilder extends SectionBuilder {
+    tableID() { return 'passes-table'; }
+    sectionTitle() { return 'Tests expected to fail but passed'; }
+
+    addTableHeader()
+    {
+        let header = document.createElement('thead');
+        header.innerHTML = '<th>test</th><th>expected failure</th><th>history</th>';
+        this._table.appendChild(header);
+    }
+    
+    fillTestCell(testResult, cell)
+    {
+        cell.innerHTML = '<a class=test-link onclick="controller.checkServerIsRunning(event)" href="' + this._resultsController.layoutTestURL(testResult) + '">' + testResult.name + '</a><span class=flag onclick="controller.unflag(this)"> \u2691</span>';
+    }
+
+    fillTestResultCell(testResult, cell)
+    {
+        cell.innerHTML = testResult.info.expected;
+    }
+};
+
+
+class TestsWithStdErrSectionBuilder extends SectionBuilder {
+    tableID() { return 'stderr-table'; }
+    sectionTitle() { return 'Tests that had stderr output'; }
+    hideWhenShowingUnexpectedResultsOnly() { return false; }
+
+    fillTestResultCell(testResult, cell)
+    {
+        cell.innerHTML = TestResultsController.resultLink(Utils.stripExtension(testResult.name), '-stderr.txt', 'stderr');
+    }
+};
+
+class TimedOutTestsSectionBuilder extends SectionBuilder {
+    tableID() { return 'timeout-tests-table'; }
+    sectionTitle() { return 'Tests that timed out'; }
+
+    fillTestResultCell(testResult, cell)
+    {
+        // FIXME: only include timeout actual/diff results here if we actually spit out results for timeout tests.
+        cell.innerHTML = this._resultsController.textResultLinks(Utils.stripExtension(testResult.name));
+    }
+};
+
+class CrashingTestsSectionBuilder extends SectionBuilder {
+    tableID() { return 'crash-tests-table'; }
+    sectionTitle() { return 'Tests that crashed'; }
+
+    fillTestResultCell(testResult, cell)
+    {
+        cell.innerHTML = TestResultsController.resultLink(Utils.stripExtension(testResult.name), '-crash-log.txt', 'crash log')
+                       + TestResultsController.resultLink(Utils.stripExtension(testResult.name), '-sample.txt', 'sample');
+    }
+};
+
+class OtherCrashesSectionBuilder extends SectionBuilder {
+    tableID() { return 'other-crash-tests-table'; }
+    sectionTitle() { return 'Other crashes'; }
+    fillTestCell(testResult, cell)
+    {
+        cell.innerHTML = '<span class=expand-button onclick="controller.toggleExpectations(this)"><span class=expand-button-text>+</span></span>' + testResult.name;
+    }
+
+    fillTestResultCell(testResult, cell)
+    {
+        cell.innerHTML = TestResultsController.resultLink(Utils.stripExtension(testResult.name), '-crash-log.txt', 'crash log');
+    }
+
+    createHistoryCell(testResult)
+    {
+        return null;
+    }
+};
+
+class PixelZoomer {
+    constructor()
+    {
+        this.showOnDelay = true;
+        this._zoomFactor = 6;
+
+        this._resultWidth = 800;
+        this._resultHeight = 600;
+        
+        this._percentX = 0;
+        this._percentY = 0;
+
+        document.addEventListener('mousemove', this, false);
+        document.addEventListener('mouseout', this, false);
+    }
+
+    _zoomedResultWidth()
+    {
+        return this._resultWidth * this._zoomFactor;
+    }
+    
+    _zoomedResultHeight()
+    {
+        return this._resultHeight * this._zoomFactor;
+    }
+    
+    _zoomImageContainer(url)
+    {
+        let container = document.createElement('div');
+        container.className = 'zoom-image-container';
+
+        let title = url.match(/\-([^\-]*)\.png/)[1];
+    
+        let label = document.createElement('div');
+        label.className = 'label';
+        label.appendChild(document.createTextNode(title));
+        container.appendChild(label);
+    
+        let imageContainer = document.createElement('div');
+        imageContainer.className = 'scaled-image-container';
+    
+        let image = new Image();
+        image.src = url;
+        image.style.width = this._zoomedResultWidth() + 'px';
+        image.style.height = this._zoomedResultHeight() + 'px';
+        image.style.border = '1px solid black';
+        imageContainer.appendChild(image);
+        container.appendChild(imageContainer);
+    
+        return container;
+    }
+
+    _createContainer(e)
+    {
+        let tbody = Utils.parentOfType(e.target, 'tbody');
+        let row = tbody.querySelector('tr');
+        let imageDiffLinks = row.querySelectorAll('a[href$=".png"]');
+    
+        let container = document.createElement('div');
+        container.className = 'pixel-zoom-container';
+    
+        let html = '';
+    
+        let togglingImageLink = row.querySelector('a[href$="-diffs.html"]');
+        if (togglingImageLink) {
+            let prefix = togglingImageLink.getAttribute('data-prefix');
+            container.appendChild(this._zoomImageContainer(prefix + '-expected.png'));
+            container.appendChild(this._zoomImageContainer(prefix + '-actual.png'));
+        }
+    
+        for (let link of imageDiffLinks)
+            container.appendChild(this._zoomImageContainer(link.href));
+
+        document.body.appendChild(container);
+        this._drawAll();
+    }
+
+    _draw(imageContainer)
+    {
+        let image = imageContainer.querySelector('img');
+        let containerBounds = imageContainer.getBoundingClientRect();
+        image.style.left = (containerBounds.width / 2 - this._percentX * this._zoomedResultWidth()) + 'px';
+        image.style.top = (containerBounds.height / 2 - this._percentY * this._zoomedResultHeight()) + 'px';
+    }
+
+    _drawAll()
+    {
+        Utils.forEach(document.querySelectorAll('.pixel-zoom-container .scaled-image-container'), element => { this._draw(element) });
+    }
+    
+    handleEvent(event)
+    {
+        if (event.type == 'mousemove') {
+            this._handleMouseMove(event);
+            return;
+        }
+
+        if (event.type == 'mouseout') {
+            this._handleMouseOut(event);
+            return;
+        }
+    }
+
+    _handleMouseOut(event)
+    {
+        if (event.relatedTarget && event.relatedTarget.tagName != 'IFRAME')
+            return;
+
+        // If e.relatedTarget is null, we've moused out of the document.
+        let container = document.querySelector('.pixel-zoom-container');
+        if (container)
+            container.remove();
+    }
+
+    _handleMouseMove(event)
+    {
+        if (this._mouseMoveTimeout) {
+            clearTimeout(this._mouseMoveTimeout);
+            this._mouseMoveTimeout = 0;
+        }
+
+        if (Utils.parentOfType(event.target, '.pixel-zoom-container'))
+            return;
+
+        let container = document.querySelector('.pixel-zoom-container');
+    
+        let resultContainer = (event.target.className == 'result-container') ? event.target : Utils.parentOfType(event.target, '.result-container');
+        if (!resultContainer || !resultContainer.querySelector('img')) {
+            if (container)
+                container.remove();
+            return;
+        }
+
+        let targetLocation = event.target.getBoundingClientRect();
+        this._percentX = (event.clientX - targetLocation.left) / targetLocation.width;
+        this._percentY = (event.clientY - targetLocation.top) / targetLocation.height;
+
+        if (!container) {
+            if (this.showOnDelay) {
+                this._mouseMoveTimeout = setTimeout(() => {
+                    this._createContainer(event);
+                }, 400);
+                return;
+            }
+
+            this._createContainer(event);
+            return;
+        }
+    
+        this._drawAll();
+    }
+};
+
+class TableSorter
+{
+    static _forwardArrow()
+    {
+        return '<svg style="width:10px;height:10px"><polygon points="0,0 10,0 5,10" style="fill:#ccc"></svg>';
+    }
+
+    static _backwardArrow()
+    {
+        return '<svg style="width:10px;height:10px"><polygon points="0,10 10,10 5,0" style="fill:#ccc"></svg>';
+    }
+
+    static _sortedContents(header, arrow)
+    {
+        return arrow + ' ' + Utils.trim(header.textContent) + ' ' + arrow;
+    }
+
+    static _updateHeaderClassNames(newHeader)
+    {
+        let sortHeader = document.querySelector('.sortHeader');
+        if (sortHeader) {
+            if (sortHeader == newHeader) {
+                let isAlreadyReversed = sortHeader.classList.contains('reversed');
+                if (isAlreadyReversed)
+                    sortHeader.classList.remove('reversed');
+                else
+                    sortHeader.classList.add('reversed');
+            } else {
+                sortHeader.textContent = sortHeader.textContent;
+                sortHeader.classList.remove('sortHeader');
+                sortHeader.classList.remove('reversed');
+            }
+        }
+
+        newHeader.classList.add('sortHeader');
+    }
+
+    static _textContent(tbodyRow, column)
+    {
+        return tbodyRow.querySelectorAll('td')[column].textContent;
+    }
+
+    static _sortRows(newHeader, reversed)
+    {
+        let testsTable = document.getElementById('results-table');
+        let headers = Utils.toArray(testsTable.querySelectorAll('th'));
+        let sortColumn = headers.indexOf(newHeader);
+
+        let rows = Utils.toArray(testsTable.querySelectorAll('tbody'));
+
+        rows.sort(function(a, b) {
+            // Only need to support lexicographic sort for now.
+            let aText = TableSorter._textContent(a, sortColumn);
+            let bText = TableSorter._textContent(b, sortColumn);
+        
+            // Forward sort equal values by test name.
+            if (sortColumn && aText == bText) {
+                let aTestName = TableSorter._textContent(a, 0);
+                let bTestName = TableSorter._textContent(b, 0);
+                if (aTestName == bTestName)
+                    return 0;
+                return aTestName < bTestName ? -1 : 1;
+            }
+
+            if (reversed)
+                return aText < bText ? 1 : -1;
+            else
+                return aText < bText ? -1 : 1;
+        });
+
+        for (let row of rows)
+            testsTable.appendChild(row);
+    }
+
+    static sortColumn(columnNumber)
+    {
+        let newHeader = document.getElementById('results-table').querySelectorAll('th')[columnNumber];
+        TableSorter._sort(newHeader);
+    }
+
+    static handleClick(e)
+    {
+        let newHeader = e.target;
+        if (newHeader.localName != 'th')
+            return;
+        TableSorter._sort(newHeader);
+    }
+
+    static _sort(newHeader)
+    {
+        TableSorter._updateHeaderClassNames(newHeader);
+    
+        let reversed = newHeader.classList.contains('reversed');
+        let sortArrow = reversed ? TableSorter._backwardArrow() : TableSorter._forwardArrow();
+        newHeader.innerHTML = TableSorter._sortedContents(newHeader, sortArrow);
+    
+        TableSorter._sortRows(newHeader, reversed);
+    }    
+};
+
+class OptionWriter {
+    static save()
+    {
+        let options = document.querySelectorAll('label input');
+        let data = {};
+        for (let option of options)
+            data[option.id] = option.checked;
+
+        try {
+            localStorage.setItem(OptionWriter._key, JSON.stringify(data));
+        } catch (err) {
+            if (err.name != "SecurityError")
+                throw err;
+        }
+    }
+
+    static apply()
+    {
+        let json;
+        try {
+            json = localStorage.getItem(OptionWriter._key);
+        } catch (err) {
+           if (err.name != "SecurityError")
+              throw err;
+        }
+
+        if (!json) {
+            controller.updateAllOptions();
+            return;
+        }
+
+        let data = JSON.parse(json);
+        for (let id in data) {
+            let input = document.getElementById(id);
+            if (input)
+                input.checked = data[id];
+        }
+        controller.updateAllOptions();
+    }
+
+    static get _key()
+    {
+        return 'run-webkit-tests-options';
+    }
+};
+
+let testResults;
 function ADD_RESULTS(input)
 {
-    globalState().results = input;
+    testResults = new TestResults(input);
 }
 </script>
 
 <script src="full_results.json"></script>
 
 <script>
-function splitExtension(test)
+
+class TestNavigator
 {
-    var index = test.lastIndexOf('.');
-    if (index == -1) {
-        return [test, ""];
-    }
-    return [test.substring(0, index), test.substring(index + 1)];
-}
-
-function stripExtension(test)
-{
-    // Temporary fix, also in Tools/Scripts/webkitpy/layout_tests/constrollers/test_result_writer.py, line 95.
-    // FIXME: Refactor to avoid confusing reference to both test and process names.
-    if (splitExtension(test)[1].length > 5)
-        return test;
-    return splitExtension(test)[0];
-}
-
-function matchesSelector(node, selector)
-{
-    if (node.matches)
-        return node.matches(selector);
-
-    if (node.webkitMatchesSelector)
-        return node.webkitMatchesSelector(selector);
-
-    if (node.mozMatchesSelector)
-        return node.mozMatchesSelector(selector);
-}
-
-function parentOfType(node, selector)
-{
-    while (node = node.parentNode) {
-        if (matchesSelector(node, selector))
-            return node;
-    }
-    return null;
-}
-
-function remove(node)
-{
-    node.parentNode.removeChild(node);
-}
-
-function forEach(nodeList, handler)
-{
-    Array.prototype.forEach.call(nodeList, handler);
-}
-
-function resultIframe(src)
-{
-    // FIXME: use audio tags for AUDIO tests?
-    var layoutTestsIndex = src.indexOf('LayoutTests');
-    var name;
-    if (layoutTestsIndex != -1) {
-        var hasTrac = src.indexOf('trac.webkit.org') != -1;
-        var prefix = hasTrac ? 'trac.webkit.org/.../' : '';
-        name = prefix + src.substring(layoutTestsIndex + 'LayoutTests/'.length);
-    } else {
-        var lastDashIndex = src.lastIndexOf('-pretty');
-        if (lastDashIndex == -1)
-            lastDashIndex = src.lastIndexOf('-');
-        name = src.substring(lastDashIndex + 1);
-    }
-
-    var tagName = (src.lastIndexOf('.png') == -1) ? 'iframe' : 'img';
-
-    if (tagName != 'img')
-        src += '?format=txt';
-    return '<div class=result-container><div class=label>' + name + '</div><' + tagName + ' src="' + src + '"></' + tagName + '></div>';
-}
-
-function togglingImage(prefix)
-{
-    return '<div class=result-container><div class="label imageText"></div><img class=animatedImage data-prefix="' +
-        prefix + '"></img></div>';
-}
-
-function toggleExpectations(element)
-{
-    var expandLink = element;
-    if (expandLink.className != 'expand-button-text')
-        expandLink = expandLink.querySelector('.expand-button-text');
-
-    if (expandLink.textContent == '+')
-        expandExpectations(expandLink);
-    else
-        collapseExpectations(expandLink);
-}
-
-function collapseExpectations(expandLink)
-{
-    expandLink.textContent = '+';
-    var existingResultsRow = parentOfType(expandLink, 'tbody').querySelector('.results-row');
-    if (existingResultsRow)
-        updateExpandedState(existingResultsRow, false);
-}
-
-function updateExpandedState(row, isExpanded)
-{
-    row.setAttribute('data-expanded', isExpanded);
-    updateImageTogglingTimer();
-}
-
-function appendHTML(node, html)
-{
-    if (node.insertAdjacentHTML)
-        node.insertAdjacentHTML('beforeEnd', html);
-    else
-        node.innerHTML += html;
-}
-
-function expandExpectations(expandLink)
-{
-    var row = parentOfType(expandLink, 'tr');
-    var parentTbody = row.parentNode;
-    var existingResultsRow = parentTbody.querySelector('.results-row');
-    
-    var enDash = '\u2013';
-    expandLink.textContent = enDash;
-    if (existingResultsRow) {
-        updateExpandedState(existingResultsRow, true);
-        return;
+    constructor() {
+        this.currentTestIndex = -1;
+        this.flaggedTests = {};
+        document.addEventListener('keypress', this, false);
     }
     
-    var newRow = document.createElement('tr');
-    newRow.className = 'results-row';
-    var newCell = document.createElement('td');
-    newCell.colSpan = row.querySelectorAll('td').length;
-
-    var resultLinks = row.querySelectorAll('.result-link');
-    var hasTogglingImages = false;
-    for (var i = 0; i < resultLinks.length; i++) {
-        var link = resultLinks[i];
-        var result;
-        if (link.textContent == 'images') {
-            hasTogglingImages = true;
-            result = togglingImage(link.getAttribute('data-prefix'));
-        } else
-            result = resultIframe(link.href);
-
-        appendHTML(newCell, result);    
-    }
-
-    newRow.appendChild(newCell);
-    parentTbody.appendChild(newRow);
-
-    updateExpandedState(newRow, true);
-
-    updateImageTogglingTimer();
-}
-
-function updateImageTogglingTimer()
-{
-    var hasVisibleAnimatedImage = document.querySelector('.results-row[data-expanded="true"] .animatedImage');
-    if (!hasVisibleAnimatedImage) {
-        clearInterval(globalState().togglingImageInterval);
-        globalState().togglingImageInterval = null;
-        return;
-    }
-
-    if (!globalState().togglingImageInterval) {
-        toggleImages();
-        globalState().togglingImageInterval = setInterval(toggleImages, 2000);
-    }
-}
-
-function async(func, args)
-{
-    setTimeout(function() { func.apply(null, args); }, 100);
-}
-
-function visibleTests(opt_container)
-{
-    var container = opt_container || document;
-    if (onlyShowUnexpectedFailures())
-        return container.querySelectorAll('tbody:not(.expected)');
-    else
-        return container.querySelectorAll('tbody');
-}
-
-function visibleExpandLinks()
-{
-    if (onlyShowUnexpectedFailures())
-        return document.querySelectorAll('tbody:not(.expected) .expand-button-text');
-    else
-        return document.querySelectorAll('.expand-button-text');
-}
-
-function expandAllExpectations()
-{
-    var expandLinks = visibleExpandLinks();
-    for (var i = 0, len = expandLinks.length; i < len; i++)
-        async(expandExpectations, [expandLinks[i]]);
-}
-
-function collapseAllExpectations()
-{
-    var expandLinks = visibleExpandLinks();
-    for (var i = 0, len = expandLinks.length; i < len; i++)
-        async(collapseExpectations, [expandLinks[i]]);
-}
-
-function shouldUseTracLinks()
-{
-    return !globalState().results.layout_tests_dir || !location.toString().indexOf('file://') == 0;
-}
-
-function layoutTestsBasePath()
-{
-    var basePath;
-    if (shouldUseTracLinks()) {
-        var revision = globalState().results.revision;
-        basePath = 'http://trac.webkit.org';
-        basePath += revision ? ('/export/' + revision) : '/browser';
-        basePath += '/trunk/LayoutTests/';
-    } else
-        basePath = globalState().results.layout_tests_dir + '/';
-    return basePath;
-}
-
-var mappings = {
-    "http/tests/ssl/": "https://127.0.0.1:8443/ssl/",
-    "http/tests/": "http://127.0.0.1:8000/",
-    "http/wpt/": "http://localhost:8800/WebKit/",
-    "imported/w3c/web-platform-tests/": "http://localhost:8800/"
-}
-
-function testToURL(test, layoutTestsPath)
-{
-    for (let key in mappings) {
-        if (test.startsWith(key))
-            return mappings[key] + test.substring(key.length);
-
-    }
-    return "file://" + layoutTestsPath + "/" + test
-}
-
-function layoutTestURL(test)
-{
-    if (shouldUseTracLinks())
-        return layoutTestsBasePath() + test;
-    return testToURL(test, layoutTestsBasePath());
-}
-
-function checkServerIsRunning(event)
-{
-    if (shouldUseTracLinks())
-        return;
-
-    var url = event.target.href;
-    if (url.startsWith("file://"))
-        return;
-
-    event.preventDefault();
-    fetch(url, {mode: "no-cors"}).then(() => {
-        window.location = url;
-    }, () => {
-        alert("HTTP server does not seem to be running, please use the run-webkit-httpd script");
-    });
-}
-
-function testLink(test)
-{
-    return '<a class=test-link onclick="checkServerIsRunning(event)" href="' + layoutTestURL(test) + '">' + test + '</a><span class=flag onclick="unflag(this)"> \u2691</span>';
-}
-
-function unflag(flag)
-{
-    var shouldFlag = false;
-    TestNavigator.flagTest(parentOfType(flag, 'tbody'), shouldFlag);
-}
-
-function testLinkWithExpandButton(test)
-{
-    return '<span class=expand-button onclick="toggleExpectations(this)"><span class=expand-button-text>+</span></span>' + testLink(test);
-}
-
-function testWithExpandButton(test)
-{
-    return '<span class=expand-button onclick="toggleExpectations(this)"><span class=expand-button-text>+</span></span>' + test;
-}
-
-function resultLink(testPrefix, suffix, contents)
-{
-    return '<a class=result-link href="' + testPrefix + suffix + '" data-prefix="' + testPrefix + '">' + contents + '</a> ';
-}
-
-function isFailureExpected(expected, actual)
-{
-    var isExpected = true;
-    if (actual != 'SKIP') {
-        var expectedArray = expected.split(' ');
-        var actualArray = actual.split(' ');
-        for (var i = 0; i < actualArray.length; i++) {
-            var actualValue = actualArray[i];
-            if (expectedArray.indexOf(actualValue) == -1 &&
-                (expectedArray.indexOf('FAIL') == -1 ||
-                 (actualValue != 'TEXT' && actualValue != 'IMAGE+TEXT' && actualValue != 'AUDIO')))
-                isExpected = false;
-        }
-    }
-    return isExpected;
-}
-
-function processGlobalStateFor(testObject)
-{
-    var test = testObject.name;
-    if (testObject.has_stderr)
-        globalState().testsWithStderr.push(testObject);
-
-    globalState().hasHttpTests = globalState().hasHttpTests || test.indexOf('http/') == 0;
-
-    var actual = testObject.actual;    
-    var expected = testObject.expected || 'PASS';
-    if (globalState().results.uses_expectations_file)
-        testObject.isExpected = isFailureExpected(expected, actual);
-
-    if (actual == 'MISSING') {
-        // FIXME: make sure that new-run-webkit-tests spits out an -actual.txt file for
-        // tests with MISSING results.
-        globalState().missingResults.push(testObject);
-        return;
-    }
-
-    var actualTokens = actual.split(' ');
-    var passedWithImageOnlyFailureInRetry = actualTokens[0] == 'TEXT' && actualTokens[1] == 'IMAGE';
-    if (actualTokens[1] && actual.indexOf('PASS') != -1 || (!globalState().results.pixel_tests_enabled && passedWithImageOnlyFailureInRetry)) {
-        globalState().flakyPassTests.push(testObject);
-        return;
-    }
-
-    if (actual == 'PASS' && expected != 'PASS') {
-        if (expected != 'IMAGE' || (globalState().results.pixel_tests_enabled || testObject.reftest_type)) {
-            globalState().unexpectedPassTests.push(testObject);
-        }
-        return;
-    }
-
-    if (actual == 'CRASH') {
-        globalState().crashTests.push(testObject);
-        return;
-    }
-
-    if (actual == 'TIMEOUT') {
-        globalState().timeoutTests.push(testObject);
-        return;
-    }
-    
-    globalState().failingTests.push(testObject);
-}
-
-function toggleImages()
-{
-    var images = document.querySelectorAll('.animatedImage');
-    var imageTexts = document.querySelectorAll('.imageText');
-    for (var i = 0, len = images.length; i < len; i++) {
-        var image = images[i];
-        var text = imageTexts[i];
-        if (text.textContent == 'Expected Image') {
-            text.textContent = 'Actual Image';
-            image.src = image.getAttribute('data-prefix') + '-actual.png';
-        } else {
-            text.textContent = 'Expected Image';
-            image.src = image.getAttribute('data-prefix') + '-expected.png';
-        }
-    }
-}
-
-function textResultLinks(prefix)
-{
-    var html = resultLink(prefix, '-expected.txt', 'expected') +
-        resultLink(prefix, '-actual.txt', 'actual') +
-        resultLink(prefix, '-diff.txt', 'diff');
-
-    if (globalState().results.has_pretty_patch)
-        html += resultLink(prefix, '-pretty-diff.html', 'pretty diff');
-
-    if (globalState().results.has_wdiff)
-        html += resultLink(prefix, '-wdiff.html', 'wdiff');
-
-    return html;
-}
-
-function imageResultsCell(testObject, testPrefix, actual) {
-    var row = '';
-
-    if (actual.indexOf('IMAGE') != -1) {
-        var testExtension = splitExtension(testObject.name)[1];
-        globalState().hasImageFailures = true;
-
-        if (testObject.reftest_type && testObject.reftest_type.indexOf('!=') != -1) {
-            row += resultLink(layoutTestsBasePath() + testPrefix, '-expected-mismatch.' + testExtension, 'ref mismatch');
-            row += resultLink(testPrefix, '-actual.png', 'actual');
-        } else {
-            if (testObject.reftest_type && testObject.reftest_type.indexOf('==') != -1) {
-                row += resultLink(layoutTestsBasePath() + testPrefix, '-expected.' + testExtension, 'reference');
-            }
-            if (globalState().shouldToggleImages) {
-                row += resultLink(testPrefix, '-diffs.html', 'images');
-            } else {
-                row += resultLink(testPrefix, '-expected.png', 'expected');
-                row += resultLink(testPrefix, '-actual.png', 'actual');
-            }
-
-            var diff = testObject.image_diff_percent;
-            row += resultLink(testPrefix, '-diff.png', 'diff (' + diff + '%)');
-        }
-    }
-
-    if (actual.indexOf('MISSING') != -1 && testObject.is_missing_image)
-        row += resultLink(testPrefix, '-actual.png', 'png result');
-
-    return row;
-}
-
-function flakinessDashboardURLForTests(testObjects)
-{
-    var testList = "";
-    for (var i = 0; i < testObjects.length; ++i) {
-        testList += testObjects[i].name;
-
-        if (i != testObjects.length - 1)
-            testList += ",";
-    }
-
-    return 'http://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=' + encodeURIComponent(testList);
-}
-
-function tableRow(testObject)
-{    
-    var row = '<tbody'
-    if (globalState().results.uses_expectations_file)
-        row += ' class="' + (testObject.isExpected ? 'expected' : '') + '"';
-    if (testObject.reftest_type && testObject.reftest_type.indexOf('!=') != -1)
-        row += ' mismatchreftest=true';
-    row += '><tr>';
-
-    row += '<td>' + testLinkWithExpandButton(testObject.name) + '</td>';
-
-    var testPrefix = stripExtension(testObject.name);
-    row += '<td>';
-    
-    var actual = testObject.actual;
-    if (actual.indexOf('TEXT') != -1) {
-        globalState().hasTextFailures = true;
-        row += textResultLinks(testPrefix);
-    }
-    
-    if (actual.indexOf('AUDIO') != -1) {
-        row += resultLink(testPrefix, '-expected.wav', 'expected audio');
-        row += resultLink(testPrefix, '-actual.wav', 'actual audio');
-        row += resultLink(testPrefix, '-diff.txt', 'textual diff');
-    }
-
-    if (actual.indexOf('MISSING') != -1) {
-        if (testObject.is_missing_audio)
-            row += resultLink(testPrefix, '-actual.wav', 'audio result');
-        if (testObject.is_missing_text)
-            row += resultLink(testPrefix, '-actual.txt', 'result');
-    }
-
-    var actualTokens = actual.split(/\s+/);
-    var cell = imageResultsCell(testObject, testPrefix, actualTokens[0]);
-    if (!cell && actualTokens.length > 1)
-        cell = imageResultsCell(testObject, 'retries/' + testPrefix, actualTokens[1]);
-
-    row += '</td><td>' + cell + '</td>';
-
-    if (globalState().results.uses_expectations_file || actual.indexOf(' ') != -1)
-        row += '<td>' + actual + '</td>';
-
-    if (globalState().results.uses_expectations_file)
-        row += '<td>' + (actual.indexOf('MISSING') == -1 ? testObject.expected : '') + '</td>';
-
-    row += '<td><a href="' + flakinessDashboardURLForTests([testObject]) + '">history</a></td>';
-
-    row += '</tr></tbody>';
-    return row;
-}
-
-function forEachTest(handler, opt_tree, opt_prefix)
-{
-    var tree = opt_tree || globalState().results.tests;
-    var prefix = opt_prefix || '';
-
-    for (var key in tree) {
-        var newPrefix = prefix ? (prefix + '/' + key) : key;
-        if ('actual' in tree[key]) {
-            var testObject = tree[key];
-            testObject.name = newPrefix;
-            handler(testObject);
-        } else
-            forEachTest(handler, tree[key], newPrefix);
-    }
-}
-
-function forOtherCrashes()
-{
-    var tree = globalState().results.other_crashes;
-    for (var key in tree) {
-            var testObject = tree[key];
-            testObject.name = key;
-            globalState().crashOther.push(testObject);
-    }
-}
-
-function hasUnexpected(tests)
-{
-    return tests.some(function (test) { return !test.isExpected; });
-}
-
-function updateTestlistCounts()
-{
-    forEach(document.querySelectorAll('.test-list-count'), function(count) {
-        var container = parentOfType(count, 'div');
-        var testContainers;
-        if (onlyShowUnexpectedFailures())
-            testContainers = container.querySelectorAll('tbody:not(.expected)');
-        else
-            testContainers = container.querySelectorAll('tbody');
-
-        count.textContent = testContainers.length;
-    })
-}
-
-function flagAll(headerLink)
-{
-    var tests = visibleTests(parentOfType(headerLink, 'div'));
-    forEach(tests, function(tests) {
-        var shouldFlag = true;
-        TestNavigator.flagTest(tests, shouldFlag);
-    })
-}
-
-function testListHeaderHtml(header)
-{
-    return '<h1>' + header + ' (<span class=test-list-count></span>): <a href="#" class=flag-all onclick="flagAll(this)">flag all</a></h1>';
-}
-
-function testList(tests, header, tableId)
-{
-    tests.sort(function (a, b) { return a.name.localeCompare(b.name) });
-
-    var html = '<div' + ((!hasUnexpected(tests) && tableId != 'stderr-table') ? ' class=expected' : '') + ' id=' + tableId + '>' +
-        testListHeaderHtml(header) + '<table>';
-
-    // FIXME: add the expected failure column for all the test lists if globalState().results.uses_expectations_file
-    if (tableId == 'passes-table')
-        html += '<thead><th>test</th><th>expected failure</th></thead>';
-
-    for (var i = 0; i < tests.length; i++) {
-        var testObject = tests[i];
-        var test = testObject.name;
-        html += '<tbody';
-        if (globalState().results.uses_expectations_file)
-            html += ' class="' + ((testObject.isExpected && tableId != 'stderr-table') ? 'expected' : '') + '"';
-        html += '><tr><td>';
-        if (tableId == 'passes-table')
-            html += testLink(test);
-        else if (tableId == 'other-crash-tests-table')
-            html += testWithExpandButton(test);
-        else
-            html += testLinkWithExpandButton(test);
-
-        html += '</td><td>';
-
-        if (tableId == 'stderr-table')
-            html += resultLink(stripExtension(test), '-stderr.txt', 'stderr');
-        else if (tableId == 'passes-table')
-            html += testObject.expected;
-        else if (tableId == 'other-crash-tests-table') 
-            html += resultLink(stripExtension(test), '-crash-log.txt', 'crash log');
-        else if (tableId == 'crash-tests-table') {
-            html += resultLink(stripExtension(test), '-crash-log.txt', 'crash log');
-            html += resultLink(stripExtension(test), '-sample.txt', 'sample');
-        } else if (tableId == 'timeout-tests-table') {
-            // FIXME: only include timeout actual/diff results here if we actually spit out results for timeout tests.
-            html += textResultLinks(stripExtension(test));
-        }
-
-        if (tableId != 'other-crash-tests-table')
-            html += '</td><td><a href="' + flakinessDashboardURLForTests([testObject]) + '">history</a></td>';
-
-        html += '</tr></tbody>';
-    }
-    html += '</table></div>';
-    return html;
-}
-
-function toArray(nodeList)
-{
-    return Array.prototype.slice.call(nodeList);
-}
-
-function trim(string)
-{
-    return string.replace(/^[\s\xa0]+|[\s\xa0]+$/g, '');
-}
-
-// Just a namespace for code management.
-var TableSorter = {};
-
-TableSorter._forwardArrow = '<svg style="width:10px;height:10px"><polygon points="0,0 10,0 5,10" style="fill:#ccc"></svg>';
-
-TableSorter._backwardArrow = '<svg style="width:10px;height:10px"><polygon points="0,10 10,10 5,0" style="fill:#ccc"></svg>';
-
-TableSorter._sortedContents = function(header, arrow)
-{
-    return arrow + ' ' + trim(header.textContent) + ' ' + arrow;
-}
-
-TableSorter._updateHeaderClassNames = function(newHeader)
-{
-    var sortHeader = document.querySelector('.sortHeader');
-    if (sortHeader) {
-        if (sortHeader == newHeader) {
-            var isAlreadyReversed = sortHeader.classList.contains('reversed');
-            if (isAlreadyReversed)
-                sortHeader.classList.remove('reversed');
-            else
-                sortHeader.classList.add('reversed');
-        } else {
-            sortHeader.textContent = sortHeader.textContent;
-            sortHeader.classList.remove('sortHeader');
-            sortHeader.classList.remove('reversed');
-        }
-    }
-
-    newHeader.classList.add('sortHeader');
-}
-
-TableSorter._textContent = function(tbodyRow, column)
-{
-    return tbodyRow.querySelectorAll('td')[column].textContent;
-}
-
-TableSorter._sortRows = function(newHeader, reversed)
-{
-    var testsTable = document.getElementById('results-table');
-    var headers = toArray(testsTable.querySelectorAll('th'));
-    var sortColumn = headers.indexOf(newHeader);
-
-    var rows = toArray(testsTable.querySelectorAll('tbody'));
-
-    rows.sort(function(a, b) {
-        // Only need to support lexicographic sort for now.
-        var aText = TableSorter._textContent(a, sortColumn);
-        var bText = TableSorter._textContent(b, sortColumn);
-        
-        // Forward sort equal values by test name.
-        if (sortColumn && aText == bText) {
-            var aTestName = TableSorter._textContent(a, 0);
-            var bTestName = TableSorter._textContent(b, 0);
-            if (aTestName == bTestName)
-                return 0;
-            return aTestName < bTestName ? -1 : 1;
-        }
-
-        if (reversed)
-            return aText < bText ? 1 : -1;
-        else
-            return aText < bText ? -1 : 1;
-    });
-
-    for (var i = 0; i < rows.length; i++)
-        testsTable.appendChild(rows[i]);
-}
-
-TableSorter.sortColumn = function(columnNumber)
-{
-    var newHeader = document.getElementById('results-table').querySelectorAll('th')[columnNumber];
-    TableSorter._sort(newHeader);
-}
-
-TableSorter.handleClick = function(e)
-{
-    var newHeader = e.target;
-    if (newHeader.localName != 'th')
-        return;
-    TableSorter._sort(newHeader);
-}
-
-TableSorter._sort = function(newHeader)
-{
-    TableSorter._updateHeaderClassNames(newHeader);
-    
-    var reversed = newHeader.classList.contains('reversed');
-    var sortArrow = reversed ? TableSorter._backwardArrow : TableSorter._forwardArrow;
-    newHeader.innerHTML = TableSorter._sortedContents(newHeader, sortArrow);
-    
-    TableSorter._sortRows(newHeader, reversed);
-}
-
-var PixelZoomer = {};
-
-PixelZoomer.showOnDelay = true;
-PixelZoomer._zoomFactor = 6;
-
-var kResultWidth = 800;
-var kResultHeight = 600;
-
-var kZoomedResultWidth = kResultWidth * PixelZoomer._zoomFactor;
-var kZoomedResultHeight = kResultHeight * PixelZoomer._zoomFactor;
-
-PixelZoomer._zoomImageContainer = function(url)
-{
-    var container = document.createElement('div');
-    container.className = 'zoom-image-container';
-
-    var title = url.match(/\-([^\-]*)\.png/)[1];
-    
-    var label = document.createElement('div');
-    label.className = 'label';
-    label.appendChild(document.createTextNode(title));
-    container.appendChild(label);
-    
-    var imageContainer = document.createElement('div');
-    imageContainer.className = 'scaled-image-container';
-    
-    var image = new Image();
-    image.src = url;
-    image.style.width = kZoomedResultWidth + 'px';
-    image.style.height = kZoomedResultHeight + 'px';
-    image.style.border = '1px solid black';
-    imageContainer.appendChild(image);
-    container.appendChild(imageContainer);
-    
-    return container;
-}
-
-PixelZoomer._createContainer = function(e)
-{
-    var tbody = parentOfType(e.target, 'tbody');
-    var row = tbody.querySelector('tr');
-    var imageDiffLinks = row.querySelectorAll('a[href$=".png"]');
-    
-    var container = document.createElement('div');
-    container.className = 'pixel-zoom-container';
-    
-    var html = '';
-    
-    var togglingImageLink = row.querySelector('a[href$="-diffs.html"]');
-    if (togglingImageLink) {
-        var prefix = togglingImageLink.getAttribute('data-prefix');
-        container.appendChild(PixelZoomer._zoomImageContainer(prefix + '-expected.png'));
-        container.appendChild(PixelZoomer._zoomImageContainer(prefix + '-actual.png'));
-    }
-    
-    for (var i = 0; i < imageDiffLinks.length; i++)
-        container.appendChild(PixelZoomer._zoomImageContainer(imageDiffLinks[i].href));
-
-    document.body.appendChild(container);
-    PixelZoomer._drawAll();
-}
-
-PixelZoomer._draw = function(imageContainer)
-{
-    var image = imageContainer.querySelector('img');
-    var containerBounds = imageContainer.getBoundingClientRect();
-    image.style.left = (containerBounds.width / 2 - PixelZoomer._percentX * kZoomedResultWidth) + 'px';
-    image.style.top = (containerBounds.height / 2 - PixelZoomer._percentY * kZoomedResultHeight) + 'px';
-}
-
-PixelZoomer._drawAll = function()
-{
-    forEach(document.querySelectorAll('.pixel-zoom-container .scaled-image-container'), PixelZoomer._draw);
-}
-
-PixelZoomer.handleMouseOut = function(e)
-{
-    if (e.relatedTarget && e.relatedTarget.tagName != 'IFRAME')
-        return;
-
-    // If e.relatedTarget is null, we've moused out of the document.
-    var container = document.querySelector('.pixel-zoom-container');
-    if (container)
-        remove(container);
-}
-
-PixelZoomer.handleMouseMove = function(e) {
-    if (PixelZoomer._mouseMoveTimeout)
-        clearTimeout(PixelZoomer._mouseMoveTimeout);
-
-    if (parentOfType(e.target, '.pixel-zoom-container'))
-        return;
-
-    var container = document.querySelector('.pixel-zoom-container');
-    
-    var resultContainer = (e.target.className == 'result-container') ?
-        e.target : parentOfType(e.target, '.result-container');
-    if (!resultContainer || !resultContainer.querySelector('img')) {
-        if (container)
-            remove(container);
-        return;
-    }
-
-    var targetLocation = e.target.getBoundingClientRect();
-    PixelZoomer._percentX = (e.clientX - targetLocation.left) / targetLocation.width;
-    PixelZoomer._percentY = (e.clientY - targetLocation.top) / targetLocation.height;
-
-    if (!container) {
-        if (PixelZoomer.showOnDelay) {
-            PixelZoomer._mouseMoveTimeout = setTimeout(function() {
-                PixelZoomer._createContainer(e);
-            }, 400);
+    handleEvent(event)
+    {
+        if (event.type == 'keypress') {
+            this.handleKeyEvent(event);
             return;
         }
-
-        PixelZoomer._createContainer(e);
-        return;
-    }
-    
-    PixelZoomer._drawAll();
-}
-
-document.addEventListener('mousemove', PixelZoomer.handleMouseMove, false);
-document.addEventListener('mouseout', PixelZoomer.handleMouseOut, false);
-
-var TestNavigator = {};
-
-TestNavigator.reset = function() {
-    TestNavigator.currentTestIndex = -1;
-    TestNavigator.flaggedTests = {};
-}
-
-TestNavigator.handleKeyEvent = function(event)
-{
-    if (event.metaKey || event.shiftKey || event.ctrlKey)
-        return;
-
-    switch (String.fromCharCode(event.charCode)) {
-        case 'i':
-            TestNavigator._scrollToFirstTest();
-            break;
-        case 'j':
-            TestNavigator._scrollToNextTest();
-            break;
-        case 'k':
-            TestNavigator._scrollToPreviousTest();
-            break;
-        case 'l':
-            TestNavigator._scrollToLastTest();
-            break;
-        case 'e':
-            TestNavigator._expandCurrentTest();
-            break;
-        case 'c':
-            TestNavigator._collapseCurrentTest();
-            break;
-        case 't':
-            TestNavigator._toggleCurrentTest();
-            break;
-        case 'f':
-            TestNavigator._toggleCurrentTestFlagged();
-            break;
-    }
-}
-
-TestNavigator._scrollToFirstTest = function()
-{
-    if (TestNavigator._setCurrentTest(0))
-        TestNavigator._scrollToCurrentTest();
-}
-
-TestNavigator._scrollToLastTest = function()
-{
-    var links = visibleTests();
-    if (TestNavigator._setCurrentTest(links.length - 1))
-        TestNavigator._scrollToCurrentTest();
-}
-
-TestNavigator._scrollToNextTest = function()
-{
-    if (TestNavigator.currentTestIndex == -1)
-        TestNavigator._scrollToFirstTest();
-    else if (TestNavigator._setCurrentTest(TestNavigator.currentTestIndex + 1))
-        TestNavigator._scrollToCurrentTest();
-}
-
-TestNavigator._scrollToPreviousTest = function()
-{
-    if (TestNavigator.currentTestIndex == -1)
-        TestNavigator._scrollToLastTest();
-    else if (TestNavigator._setCurrentTest(TestNavigator.currentTestIndex - 1))
-        TestNavigator._scrollToCurrentTest();
-}
-
-TestNavigator._currentTestLink = function()
-{
-    var links = visibleTests();
-    return links[TestNavigator.currentTestIndex];
-}
-
-TestNavigator._currentTestExpandLink = function()
-{
-    return TestNavigator._currentTestLink().querySelector('.expand-button-text');
-}
-
-TestNavigator._expandCurrentTest = function()
-{
-    expandExpectations(TestNavigator._currentTestExpandLink());
-}
-
-TestNavigator._collapseCurrentTest = function()
-{
-    collapseExpectations(TestNavigator._currentTestExpandLink());
-}
-
-TestNavigator._toggleCurrentTest = function()
-{
-    toggleExpectations(TestNavigator._currentTestExpandLink());
-}
-
-TestNavigator._toggleCurrentTestFlagged = function()
-{
-    var testLink = TestNavigator._currentTestLink();
-    TestNavigator.flagTest(testLink, !testLink.classList.contains('flagged'));
-}
-
-// FIXME: Test navigator shouldn't know anything about flagging. It should probably call out to TestFlagger or something.
-TestNavigator.flagTest = function(testTbody, shouldFlag)
-{
-    var testName = testTbody.querySelector('.test-link').innerText;
-    
-    if (shouldFlag) {
-        testTbody.classList.add('flagged');
-        TestNavigator.flaggedTests[testName] = 1;
-    } else {
-        testTbody.classList.remove('flagged');
-        delete TestNavigator.flaggedTests[testName];
     }
 
-    TestNavigator.updateFlaggedTests();
-}
+    handleKeyEvent(event)
+    {
+        if (event.metaKey || event.shiftKey || event.ctrlKey)
+            return;
 
-TestNavigator.updateFlaggedTests = function()
-{
-    var flaggedTestTextbox = document.getElementById('flagged-tests');
-    if (!flaggedTestTextbox) {
-        var flaggedTestContainer = document.createElement('div');
-        flaggedTestContainer.id = 'flagged-test-container';
-        flaggedTestContainer.className = 'floating-panel';
-        flaggedTestContainer.innerHTML = '<h2>Flagged Tests</h2><pre id="flagged-tests" contentEditable></pre>';
-        document.body.appendChild(flaggedTestContainer);
-
-        flaggedTestTextbox = document.getElementById('flagged-tests');
-    }
-
-    var flaggedTests = Object.keys(this.flaggedTests);
-    flaggedTests.sort();
-    var separator = document.getElementById('use-newlines').checked ? '\n' : ' ';
-    flaggedTestTextbox.innerHTML = flaggedTests.join(separator);
-    document.getElementById('flagged-test-container').style.display = flaggedTests.length ? '' : 'none';
-}
-
-TestNavigator._setCurrentTest = function(testIndex)
-{
-    var links = visibleTests();
-    if (testIndex < 0 || testIndex >= links.length)
-        return false;
-
-    var currentTest = links[TestNavigator.currentTestIndex];
-    if (currentTest)
-        currentTest.classList.remove('current');
-
-    TestNavigator.currentTestIndex = testIndex;
-
-    currentTest = links[TestNavigator.currentTestIndex];
-    currentTest.classList.add('current');
-
-    return true;
-}
-
-TestNavigator._scrollToCurrentTest = function()
-{
-    var targetLink = TestNavigator._currentTestLink();
-    if (!targetLink)
-        return;
-
-    var rowRect = targetLink.getBoundingClientRect();
-    // rowRect is in client coords (i.e. relative to viewport), so we just want to add its top to the current scroll position.
-    document.body.scrollTop += rowRect.top;
-}
-
-TestNavigator.onlyShowUnexpectedFailuresChanged = function()
-{
-    var currentTest = document.querySelector('.current');
-    if (!currentTest)
-        return;
-
-    // If our currentTest became hidden, reset the currentTestIndex.
-    if (onlyShowUnexpectedFailures() && currentTest.classList.contains('expected'))
-        TestNavigator._scrollToFirstTest();
-    else {
-        // Recompute TestNavigator.currentTestIndex
-        var links = visibleTests();
-        TestNavigator.currentTestIndex = links.indexOf(currentTest);
-    }
-}
-
-document.addEventListener('keypress', TestNavigator.handleKeyEvent, false);
-
-
-function onlyShowUnexpectedFailures()
-{
-    return document.getElementById('unexpected-results').checked;
-}
-
-function handleUnexpectedResultsChange()
-{
-    OptionWriter.save();
-    updateExpectedFailures();
-}
-
-function updateExpectedFailures()
-{
-    document.getElementById('unexpected-style').textContent = onlyShowUnexpectedFailures() ?
-        '.expected { display: none; }' : '';
-
-    updateTestlistCounts();
-    TestNavigator.onlyShowUnexpectedFailuresChanged();
-}
-
-var OptionWriter = {};
-
-OptionWriter._key = 'run-webkit-tests-options';
-
-OptionWriter.save = function()
-{
-    var options = document.querySelectorAll('label input');
-    var data = {};
-    for (var i = 0, len = options.length; i < len; i++) {
-        var option = options[i];
-        data[option.id] = option.checked;
-    }
-    try {
-        localStorage.setItem(OptionWriter._key, JSON.stringify(data));
-    } catch (err) {
-        if (err.name != "SecurityError")
-            throw err;
-    }
-}
-
-OptionWriter.apply = function()
-{
-    var json;
-    try {
-        json = localStorage.getItem(OptionWriter._key);
-    } catch (err) {
-       if (err.name != "SecurityError")
-          throw err;
-    }
-
-    if (!json) {
-        updateAllOptions();
-        return;
-    }
-
-    var data = JSON.parse(json);
-    for (var id in data) {
-        var input = document.getElementById(id);
-        if (input)
-            input.checked = data[id];
-    }
-    updateAllOptions();
-}
-
-function updateAllOptions()
-{
-    forEach(document.querySelectorAll('#options-menu input'), function(input) { input.onchange(); });
-}
-
-function handleToggleUseNewlines()
-{
-    OptionWriter.save();
-    TestNavigator.updateFlaggedTests();
-}
-
-function handleToggleImagesChange()
-{
-    OptionWriter.save();
-    updateTogglingImages();
-}
-
-function updateTogglingImages()
-{
-    var shouldToggle = document.getElementById('toggle-images').checked;
-    globalState().shouldToggleImages = shouldToggle;
-    
-    if (shouldToggle) {
-        forEach(document.querySelectorAll('table:not(#missing-table) tbody:not([mismatchreftest]) a[href$=".png"]'), convertToTogglingHandler(function(prefix) {
-            return resultLink(prefix, '-diffs.html', 'images');
-        }));
-        forEach(document.querySelectorAll('table:not(#missing-table) tbody:not([mismatchreftest]) img[src$=".png"]'), convertToTogglingHandler(togglingImage));
-    } else {
-        forEach(document.querySelectorAll('a[href$="-diffs.html"]'), convertToNonTogglingHandler(resultLink));
-        forEach(document.querySelectorAll('.animatedImage'), convertToNonTogglingHandler(function (absolutePrefix, suffix) {
-            return resultIframe(absolutePrefix + suffix);
-        }));
-    }
-
-    updateImageTogglingTimer();
-}
-
-function getResultContainer(node)
-{
-    return (node.tagName == 'IMG') ? parentOfType(node, '.result-container') : node;
-}
-
-function convertToTogglingHandler(togglingImageFunction)
-{
-    return function(node) {
-        var url = (node.tagName == 'IMG') ? node.src : node.href;
-        if (url.match('-expected.png$'))
-            remove(getResultContainer(node));
-        else if (url.match('-actual.png$')) {
-            var name = parentOfType(node, 'tbody').querySelector('.test-link').textContent;
-            getResultContainer(node).outerHTML = togglingImageFunction(stripExtension(name));
+        switch (String.fromCharCode(event.charCode)) {
+            case 'i':
+                this._scrollToFirstTest();
+                break;
+            case 'j':
+                this._scrollToNextTest();
+                break;
+            case 'k':
+                this._scrollToPreviousTest();
+                break;
+            case 'l':
+                this._scrollToLastTest();
+                break;
+            case 'e':
+                this._expandCurrentTest();
+                break;
+            case 'c':
+                this._collapseCurrentTest();
+                break;
+            case 't':
+                this._toggleCurrentTest();
+                break;
+            case 'f':
+                this._toggleCurrentTestFlagged();
+                break;
         }
     }
-}
 
-function convertToNonTogglingHandler(resultFunction)
-{
-    return function(node) {
-        var prefix = node.getAttribute('data-prefix');
-        getResultContainer(node).outerHTML = resultFunction(prefix, '-expected.png', 'expected') + resultFunction(prefix, '-actual.png', 'actual');
+    _scrollToFirstTest()
+    {
+        if (this._setCurrentTest(0))
+            this._scrollToCurrentTest();
     }
-}
 
-function toggleOptionsMenu()
-{
-    var menu = document.getElementById('options-menu');
-    menu.className = (menu.className == 'hidden-menu') ? '' : 'hidden-menu';
-}
+    _scrollToLastTest()
+    {
+        let links = controller.visibleTests();
+        if (this._setCurrentTest(links.length - 1))
+            this._scrollToCurrentTest();
+    }
+
+    _scrollToNextTest()
+    {
+        if (this.currentTestIndex == -1)
+            this._scrollToFirstTest();
+        else if (this._setCurrentTest(this.currentTestIndex + 1))
+            this._scrollToCurrentTest();
+    }
+
+    _scrollToPreviousTest()
+    {
+        if (this.currentTestIndex == -1)
+            this._scrollToLastTest();
+        else if (this._setCurrentTest(this.currentTestIndex - 1))
+            this._scrollToCurrentTest();
+    }
+
+    _currentTestLink()
+    {
+        let links = controller.visibleTests();
+        return links[this.currentTestIndex];
+    }
+
+    _currentTestExpandLink()
+    {
+        return this._currentTestLink().querySelector('.expand-button-text');
+    }
+
+    _expandCurrentTest()
+    {
+        controller.expandExpectations(this._currentTestExpandLink());
+    }
+
+    _collapseCurrentTest()
+    {
+        controller.collapseExpectations(this._currentTestExpandLink());
+    }
+
+    _toggleCurrentTest()
+    {
+        controller.toggleExpectations(this._currentTestExpandLink());
+    }
+
+    _toggleCurrentTestFlagged()
+    {
+        let testLink = this._currentTestLink();
+        this.flagTest(testLink, !testLink.classList.contains('flagged'));
+    }
+
+    // FIXME: Test navigator shouldn't know anything about flagging. It should probably call out to TestFlagger or something.
+    // FIXME: Batch flagging (avoid updateFlaggedTests on each test).
+    flagTest(testTbody, shouldFlag)
+    {
+        let testName = testTbody.querySelector('.test-link').innerText;
+    
+        if (shouldFlag) {
+            testTbody.classList.add('flagged');
+            this.flaggedTests[testName] = 1;
+        } else {
+            testTbody.classList.remove('flagged');
+            delete this.flaggedTests[testName];
+        }
+
+        this.updateFlaggedTests();
+    }
+
+    updateFlaggedTests()
+    {
+        let flaggedTestTextbox = document.getElementById('flagged-tests');
+        if (!flaggedTestTextbox) {
+            let flaggedTestContainer = document.createElement('div');
+            flaggedTestContainer.id = 'flagged-test-container';
+            flaggedTestContainer.className = 'floating-panel';
+            flaggedTestContainer.innerHTML = '<h2>Flagged Tests</h2><pre id="flagged-tests" contentEditable></pre>';
+            document.body.appendChild(flaggedTestContainer);
+
+            flaggedTestTextbox = document.getElementById('flagged-tests');
+        }
+
+        let flaggedTests = Object.keys(this.flaggedTests);
+        flaggedTests.sort();
+        let separator = document.getElementById('use-newlines').checked ? '\n' : ' ';
+        flaggedTestTextbox.innerHTML = flaggedTests.join(separator);
+        document.getElementById('flagged-test-container').style.display = flaggedTests.length ? '' : 'none';
+    }
+
+    _setCurrentTest(testIndex)
+    {
+        let links = controller.visibleTests();
+        if (testIndex < 0 || testIndex >= links.length)
+            return false;
+
+        let currentTest = links[this.currentTestIndex];
+        if (currentTest)
+            currentTest.classList.remove('current');
+
+        this.currentTestIndex = testIndex;
+
+        currentTest = links[this.currentTestIndex];
+        currentTest.classList.add('current');
+
+        return true;
+    }
+
+    _scrollToCurrentTest()
+    {
+        let targetLink = this._currentTestLink();
+        if (!targetLink)
+            return;
+
+        let rowRect = targetLink.getBoundingClientRect();
+        // rowRect is in client coords (i.e. relative to viewport), so we just want to add its top to the current scroll position.
+        document.body.scrollTop += rowRect.top;
+    }
+
+    onlyShowUnexpectedFailuresChanged()
+    {
+        let currentTest = document.querySelector('.current');
+        if (!currentTest)
+            return;
+
+        // If our currentTest became hidden, reset the currentTestIndex.
+        if (controller.onlyShowUnexpectedFailures() && currentTest.classList.contains('expected'))
+            this._scrollToFirstTest();
+        else {
+            // Recompute this.currentTestIndex
+            let links = controller.visibleTests();
+            this.currentTestIndex = links.indexOf(currentTest);
+        }
+    }
+};
 
 function handleMouseDown(e)
 {
-    if (!parentOfType(e.target, '#options-menu') && e.target.id != 'options-link')
+    if (!Utils.parentOfType(e.target, '#options-menu') && e.target.id != 'options-link')
         document.getElementById('options-menu').className = 'hidden-menu';
 }
 
 document.addEventListener('mousedown', handleMouseDown, false);
 
-function failingTestsTable(tests, title, id)
-{
-    if (!tests.length)
-        return '';
-
-    var numberofUnexpectedFailures = 0;
-    var tableRowHtml = '';
-    for (var i = 0; i < tests.length; i++){
-        tableRowHtml += tableRow(tests[i]);
-        if (!tests[i].isExpected)
-            numberofUnexpectedFailures++;
-    }
-
-    var header = '<div';
-    if (!hasUnexpected(tests))
-        header += ' class=expected';
-
-    header += '>' + testListHeaderHtml(title) +
-        '<table id="' + id + '"><thead><tr>' +
-        '<th>test</th>' +
-        '<th id="text-results-header">results</th>' +
-        '<th id="image-results-header">image results</th>';
-
-    if (globalState().results.uses_expectations_file)
-        header += '<th>actual failure</th><th>expected failure</th>';
-
-    header += '<th><a href="' + flakinessDashboardURLForTests(tests) + '">history</a></th>';
-
-    if (id == 'flaky-tests-table')
-        header += '<th>failures</th>';
-
-    header += '</tr></thead>';
-
-    return header + tableRowHtml + '</table></div>';
-}
-
-function updateTitle()
-{
-    var dateString = globalState().results.date;
-    
-    var title = document.createElement('title');
-    title.textContent = 'Layout Test Results from ' + dateString;
-    document.head.appendChild(title);
-}
+let controller;
+let pixelZoomer;
+let testNavigator;
 
 function generatePage()
 {
-    updateTitle();
-    forEachTest(processGlobalStateFor);
-    forOtherCrashes();
+    let container = document.getElementById('main-content');
 
-    var html = "";
+    controller = new TestResultsController(container, testResults);
+    pixelZoomer = new PixelZoomer();
+    testNavigator = new TestNavigator();
 
-    if (globalState().results.interrupted)
-        html += "<p class='stopped-running-early-message'>Testing exited early.</p>"
-
-    if (globalState().crashTests.length)
-        html += testList(globalState().crashTests, 'Tests that crashed', 'crash-tests-table');
-
-    if (globalState().crashOther.length)
-        html += testList(globalState().crashOther, 'Other Crashes', 'other-crash-tests-table');
-
-    html += failingTestsTable(globalState().failingTests,
-        'Tests that failed text/pixel/audio diff', 'results-table');
-
-    html += failingTestsTable(globalState().missingResults,
-        'Tests that had no expected results (probably new)', 'missing-table');
-
-    if (globalState().timeoutTests.length)
-        html += testList(globalState().timeoutTests, 'Tests that timed out', 'timeout-tests-table');
-
-    if (globalState().testsWithStderr.length)
-        html += testList(globalState().testsWithStderr, 'Tests that had stderr output', 'stderr-table');
-
-    html += failingTestsTable(globalState().flakyPassTests,
-        'Flaky tests (failed the first run and passed on retry)', 'flaky-tests-table');
-
-    if (globalState().results.uses_expectations_file && globalState().unexpectedPassTests.length)
-        html += testList(globalState().unexpectedPassTests, 'Tests expected to fail but passed', 'passes-table');
-
-    if (globalState().hasHttpTests) {
-        html += '<p>httpd access log: <a href="access_log.txt">access_log.txt</a></p>' +
-            '<p>httpd error log: <a href="error_log.txt">error_log.txt</a></p>';
-    }
-
-    document.getElementById('main-content').innerHTML = html + '</div>';
-
-    if (document.getElementById('results-table')) {
-        document.getElementById('results-table').addEventListener('click', TableSorter.handleClick, false);
-        TableSorter.sortColumn(0);
-        if (!globalState().results.uses_expectations_file)
-            parentOfType(document.getElementById('unexpected-results'), 'label').style.display = 'none';
-        if (!globalState().hasTextFailures)
-            document.getElementById('text-results-header').textContent = '';
-        if (!globalState().hasImageFailures) {
-            document.getElementById('image-results-header').textContent = '';
-            parentOfType(document.getElementById('toggle-images'), 'label').style.display = 'none';
-        }
-    }
-
-    updateTestlistCounts();
-
-    TestNavigator.reset();
     OptionWriter.apply();
 }
+
+window.addEventListener('load', generatePage, false);
+
 </script>
-<body onload="generatePage()">
+<body>
     
     <div class="content-container">
         <div id="toolbar" class="floating-panel">
         <div class="note">Use the i, j, k and l keys to navigate, e, c to expand and collapse, and f to flag</div>
-        <a href="javascript:void()" onclick="expandAllExpectations()">expand all</a>
-        <a href="javascript:void()" onclick="collapseAllExpectations()">collapse all</a>
-        <a href="javascript:void()" id=options-link onclick="toggleOptionsMenu()">options</a>
+        <a class="clickable" onclick="controller.expandAllExpectations()">expand all</a>
+        <a class="clickable" onclick="controller.collapseAllExpectations()">collapse all</a>
+        <a class="clickable" id=options-link onclick="controller.toggleOptionsMenu()">options</a>
         <div id="options-menu" class="hidden-menu">
-            <label><input id="unexpected-results" type="checkbox" checked onchange="handleUnexpectedResultsChange()">Only unexpected results</label>
-            <label><input id="toggle-images" type="checkbox" checked onchange="handleToggleImagesChange()">Toggle images</label>
-            <label title="Use newlines instead of spaces to separate flagged tests"><input id="use-newlines" type="checkbox" checked onchange="handleToggleUseNewlines()">Use newlines in flagged list</input>
+            <label><input id="unexpected-results" type="checkbox" checked onchange="controller.handleUnexpectedResultsChange()">Only unexpected results</label>
+            <label><input id="toggle-images" type="checkbox" checked onchange="controller.handleToggleImagesChange()">Toggle images</label>
+            <label title="Use newlines instead of spaces to separate flagged tests"><input id="use-newlines" type="checkbox" checked onchange="controller.handleToggleUseNewlines()">Use newlines in flagged list</label>
         </div>
     </div>
 

@@ -1,3 +1,21 @@
+2018-08-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Modernize results.html
+        https://bugs.webkit.org/show_bug.cgi?id=188690
+
+        Reviewed by Alexey Proskuryakov.
+        
+        results.html, which is used to show layout test results, had some very old-school
+        HTML string building to create the tables of test results, making it hard to hack on.
+        
+        Modernize it, using ES6 classes for the major actors, and using DOM API to build most
+        of the content.
+        
+        The page is functionally the same (other than the addition of a missing 'History" column header).
+
+        * fast/harness/results-expected.txt:
+        * fast/harness/results.html:
+
 2018-08-16  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: support breakpoints for arbitrary event names

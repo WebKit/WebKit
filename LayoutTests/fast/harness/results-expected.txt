@@ -5,7 +5,7 @@ Use newlines in flagged list
 Tests that crashed (1): flag all
 
 +http/tests/contentextensions/top-url.html	crash log sample	history
-Other Crashes (2): flag all
+Other crashes (2): flag all
 
 +DumpRenderTree-54888	crash log
 +DumpRenderTree-56804	crash log
@@ -31,7 +31,7 @@ test	results	image results	actual failure	expected failure	history	failures
 +media/video-loop.html	expected actual diff pretty diff		text pass timeout	pass timeout	history
 Tests expected to fail but passed (4): flag all
 
-test	expected failure
+test	expected failure	history
 canvas/philip/tests/2d.gradient.interpolate.solid.html	fail	history
 editing/spelling/spelling-marker-includes-hyphen.html	image	history
 editing/spelling/spelling-markers-in-overlapping-lines.html	image	history
