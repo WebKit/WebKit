@@ -281,6 +281,8 @@ inspector/heap/getRemoteObject.html [ Skip ]
 inspector/unit-tests/heap-snapshot.html [ Skip ]
 inspector/unit-tests/heap-snapshot-collection-event.html [ Skip ]
 
+webkit.org/b/188708 inspector/dom-debugger/event-breakpoint-with-navigation.html [ Pass Timeout ]
+
 # These tests check ScrollAnimator events for main frame scrollbars that use native widgets in WK1.
 fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html [ Skip ]
 fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html [ Skip ]
