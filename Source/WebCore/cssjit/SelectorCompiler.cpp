@@ -2378,7 +2378,7 @@ Assembler::Jump SelectorCodeGenerator::modulo(Assembler::ResultCondition conditi
     Assembler::RegisterID dividend = JSC::X86Registers::eax;
     RegisterAllocationType dividendAllocation = RegisterAllocationType::External;
     StackAllocator::StackReference temporaryDividendStackReference;
-    Assembler::RegisterID temporaryDividendCopy = InvalidGPRReg;
+    Assembler::RegisterID temporaryDividendCopy = JSC::InvalidGPRReg;
     if (inputDividend != dividend) {
         bool registerIsInUse = m_registerAllocator.allocatedRegisters().contains(dividend);
         if (registerIsInUse) {
@@ -2400,7 +2400,7 @@ Assembler::Jump SelectorCodeGenerator::modulo(Assembler::ResultCondition conditi
     Assembler::RegisterID remainder = JSC::X86Registers::edx;
     RegisterAllocationType remainderAllocation = RegisterAllocationType::External;
     StackAllocator::StackReference temporaryRemainderStackReference;
-    Assembler::RegisterID temporaryRemainderCopy = InvalidGPRReg;
+    Assembler::RegisterID temporaryRemainderCopy = JSC::InvalidGPRReg;
     if (inputDividend != remainder) {
         bool registerIsInUse = m_registerAllocator.allocatedRegisters().contains(remainder);
         if (registerIsInUse) {

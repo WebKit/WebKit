@@ -31,7 +31,7 @@
 namespace JSC {
 
 typedef MacroAssembler::FPRegisterID FPRReg;
-#define InvalidFPRReg ((::JSC::FPRReg)-1)
+static constexpr FPRReg InvalidFPRReg { FPRReg::InvalidFPRReg };
 
 #if ENABLE(JIT)
 

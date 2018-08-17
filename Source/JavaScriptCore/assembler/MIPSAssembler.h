@@ -41,7 +41,7 @@ namespace JSC {
 typedef uint32_t MIPSWord;
 
 namespace MIPSRegisters {
-typedef enum {
+typedef enum : int8_t {
     r0 = 0,
     r1,
     r2,
@@ -105,10 +105,11 @@ typedef enum {
     gp = r28,
     sp = r29,
     fp = r30,
-    ra = r31
+    ra = r31,
+    InvalidGPRReg = -1,
 } RegisterID;
 
-typedef enum {
+typedef enum : int8_t {
     fir = 0,
     fccr = 25,
     fexr = 26,
@@ -117,7 +118,7 @@ typedef enum {
     pc
 } SPRegisterID;
 
-typedef enum {
+typedef enum : int8_t {
     f0,
     f1,
     f2,
@@ -149,7 +150,8 @@ typedef enum {
     f28,
     f29,
     f30,
-    f31
+    f31,
+    InvalidFPRReg = -1,
 } FPRegisterID;
 
 } // namespace MIPSRegisters
