@@ -1,3 +1,31 @@
+2018-08-17  Alex Christensen  <achristensen@webkit.org>
+
+        Replace WebPageProxy::loadAlternateHTMLString with loadAlternateHTML
+        https://bugs.webkit.org/show_bug.cgi?id=188679
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/LoadParameters.cpp:
+        (WebKit::LoadParameters::encode const):
+        (WebKit::LoadParameters::decode):
+        * Shared/LoadParameters.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (encodingOf):
+        (dataFrom):
+        (loadString):
+        (WKPageLoadAlternateHTMLString):
+        (WKPageLoadAlternateHTMLStringWithUserData):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadAlternateHTMLString:baseURL:forUnreachableURL:]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _loadAlternateHTMLString:baseURL:forUnreachableURL:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadAlternateHTML):
+        (WebKit::WebPageProxy::loadAlternateHTMLString): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadAlternateHTMLString):
+
 2018-08-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r234259.

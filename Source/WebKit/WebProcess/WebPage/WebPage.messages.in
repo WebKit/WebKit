@@ -146,7 +146,7 @@ messages -> WebPage LegacyReceiver {
     LoadURLInFrame(WebCore::URL url, uint64_t frameID)
     LoadRequest(struct WebKit::LoadParameters loadParameters)
     LoadData(struct WebKit::LoadParameters loadParameters)
-    LoadAlternateHTMLString(struct WebKit::LoadParameters loadParameters)
+    LoadAlternateHTML(struct WebKit::LoadParameters loadParameters)
 
     NavigateToPDFLinkWithSimulatedClick(String url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint)
 
