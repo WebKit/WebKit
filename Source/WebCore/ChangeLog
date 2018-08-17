@@ -1,5 +1,20 @@
 2018-08-16  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
+        [Curl] Bug fix on deleting cookies when Max-Age is set to zero.
+        https://bugs.webkit.org/show_bug.cgi?id=188617
+
+        Reviewed by Alex Christensen.
+
+        Delete cookie if Max-Age is set to zero in Set-Cookie. Original implementation was
+        compared using "less than", but it must be "less than or equal" to zero.
+
+        Tests: http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html
+
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::setCookie):
+
+2018-08-16  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
         [Curl] Implement deleteAllCookies()
         https://bugs.webkit.org/show_bug.cgi?id=188612
 

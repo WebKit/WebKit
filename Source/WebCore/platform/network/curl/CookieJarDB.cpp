@@ -31,6 +31,8 @@
 #include "SQLiteFileSystem.h"
 #include "URL.h"
 
+#include <wtf/MonotonicTime.h>
+
 namespace WebCore {
 
 #define CORRUPT_MARKER_SUFFIX "-corrupted"
@@ -366,7 +368,7 @@ bool CookieJarDB::hasHttpOnlyCookie(const String& name, const String& domain, co
 int CookieJarDB::setCookie(const Cookie& cookie)
 {
     int ret = 0;
-    if (!cookie.session && (cookie.expires < ::time(0)))
+    if (!cookie.session && MonotonicTime::fromRawSeconds(cookie.expires) <= MonotonicTime::now())
         ret = deleteCookieInternal(cookie.name, cookie.domain, cookie.path);
     else {
         SQLiteStatement* statement = getPrepareStatement(SET_COOKIE_SQL);
@@ -378,7 +380,7 @@ int CookieJarDB::setCookie(const Cookie& cookie)
         statement->bindText(2, cookie.value);
         statement->bindText(3, cookie.domain);
         statement->bindText(4, cookie.path);
-        statement->bindInt64(5, cookie.session ? 0 : (int64_t)cookie.expires);
+        statement->bindInt64(5, cookie.session ? 0 : static_cast<int64_t>(cookie.expires));
         statement->bindInt(6, cookie.value.length());
         statement->bindInt(7, cookie.session ? 1 : 0);
         statement->bindInt(8, cookie.httpOnly ? 1 : 0);
