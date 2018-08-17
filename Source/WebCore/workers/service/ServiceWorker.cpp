@@ -86,7 +86,7 @@ void ServiceWorker::scheduleTaskToUpdateState(State state)
         m_data.state = state;
         if (state != State::Installing && !m_isStopped) {
             ASSERT(m_pendingActivityForEventDispatch);
-            dispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
+            dispatchEvent(Event::create(eventNames().statechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
         }
 
         updatePendingActivityForEventDispatch();

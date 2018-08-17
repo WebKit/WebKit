@@ -307,7 +307,7 @@ void DOMWindow::dispatchAllPendingUnloadEvents()
             continue;
 
         window->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, false), window->document());
-        window->dispatchEvent(Event::create(eventNames().unloadEvent, false, false), window->document());
+        window->dispatchEvent(Event::create(eventNames().unloadEvent, Event::CanBubble::No, Event::IsCancelable::No), window->document());
 
         window->enableSuddenTermination();
     }
@@ -1989,7 +1989,7 @@ bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
 void DOMWindow::languagesChanged()
 {
     if (auto* document = this->document())
-        document->enqueueWindowEvent(Event::create(eventNames().languagechangeEvent, false, false));
+        document->enqueueWindowEvent(Event::create(eventNames().languagechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void DOMWindow::dispatchLoadEvent()
@@ -2003,7 +2003,7 @@ void DOMWindow::dispatchLoadEvent()
     if (shouldMarkLoadEventTimes)
         protectedLoader->timing().markLoadEventStart();
 
-    dispatchEvent(Event::create(eventNames().loadEvent, false, false), document());
+    dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No), document());
 
     if (shouldMarkLoadEventTimes)
         protectedLoader->timing().markLoadEventEnd();
@@ -2011,7 +2011,7 @@ void DOMWindow::dispatchLoadEvent()
     // Send a separate load event to the element that owns this frame.
     if (frame()) {
         if (auto* owner = frame()->ownerElement())
-            owner->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
+            owner->dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
     }
 
     InspectorInstrumentation::loadEventFired(frame());

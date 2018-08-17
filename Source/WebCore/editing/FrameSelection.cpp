@@ -353,7 +353,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
     m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation();
     selectFrameElementInParentIfFullySelected();
     m_frame->editor().respondToChangedSelection(oldSelection, options);
-    m_frame->document()->enqueueDocumentEvent(Event::create(eventNames().selectionchangeEvent, false, false));
+    m_frame->document()->enqueueDocumentEvent(Event::create(eventNames().selectionchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
     return true;
 }
@@ -1965,7 +1965,7 @@ void FrameSelection::selectAll()
         return;
 
     if (selectStartTarget) {
-        auto event = Event::create(eventNames().selectstartEvent, true, true);
+        auto event = Event::create(eventNames().selectstartEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes);
         selectStartTarget->dispatchEvent(event);
         if (event->defaultPrevented())
             return;
@@ -2425,7 +2425,7 @@ bool FrameSelection::dispatchSelectStart()
     if (!selectStartTarget)
         return true;
 
-    auto event = Event::create(eventNames().selectstartEvent, true, true);
+    auto event = Event::create(eventNames().selectstartEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes);
     selectStartTarget->dispatchEvent(event);
     return !event->defaultPrevented();
 }

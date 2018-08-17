@@ -49,7 +49,7 @@ inline MessageEvent::MessageEvent(const AtomicString& type, Init&& initializer, 
 }
 
 inline MessageEvent::MessageEvent(DataType&& data, const String& origin, const String& lastEventId, std::optional<MessageEventSource>&& source, Vector<RefPtr<MessagePort>>&& ports)
-    : Event(eventNames().messageEvent, false, false)
+    : Event(eventNames().messageEvent, CanBubble::No, IsCancelable::No)
     , m_data(WTFMove(data))
     , m_origin(origin)
     , m_lastEventId(lastEventId)
@@ -59,7 +59,7 @@ inline MessageEvent::MessageEvent(DataType&& data, const String& origin, const S
 }
 
 inline MessageEvent::MessageEvent(const AtomicString& type, Ref<SerializedScriptValue>&& data, const String& origin, const String& lastEventId)
-    : Event(type, false, false)
+    : Event(type, CanBubble::No, IsCancelable::No)
     , m_data(WTFMove(data))
     , m_origin(origin)
     , m_lastEventId(lastEventId)

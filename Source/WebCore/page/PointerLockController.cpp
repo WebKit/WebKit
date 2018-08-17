@@ -207,7 +207,7 @@ void PointerLockController::enqueueEvent(const AtomicString& type, Element* elem
 void PointerLockController::enqueueEvent(const AtomicString& type, Document* document)
 {
     if (document)
-        document->enqueueDocumentEvent(Event::create(type, true, false));
+        document->enqueueDocumentEvent(Event::create(type, Event::CanBubble::Yes, Event::IsCancelable::No));
 }
 
 } // namespace WebCore

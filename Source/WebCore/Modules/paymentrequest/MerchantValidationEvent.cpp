@@ -38,7 +38,7 @@ Ref<MerchantValidationEvent> MerchantValidationEvent::create(const AtomicString&
 }
 
 MerchantValidationEvent::MerchantValidationEvent(const AtomicString& type, const URL& validationURL, PaymentRequest& paymentRequest)
-    : Event { type, false, false }
+    : Event { type, Event::CanBubble::No, Event::IsCancelable::No }
     , m_validationURL { validationURL }
     , m_paymentRequest { paymentRequest }
 {

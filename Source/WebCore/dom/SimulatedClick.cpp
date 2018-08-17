@@ -44,7 +44,7 @@ public:
 
 private:
     SimulatedMouseEvent(const AtomicString& eventType, RefPtr<WindowProxy>&& view, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
-        : MouseEvent(eventType, true, true, underlyingEvent ? underlyingEvent->timeStamp() : MonotonicTime::now(), WTFMove(view), 0, { }, { },
+        : MouseEvent(eventType, CanBubble::Yes, IsCancelable::Yes, underlyingEvent ? underlyingEvent->timeStamp() : MonotonicTime::now(), WTFMove(view), 0, { }, { },
 #if ENABLE(POINTER_LOCK)
             { },
 #endif

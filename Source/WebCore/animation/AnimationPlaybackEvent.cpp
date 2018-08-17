@@ -45,7 +45,7 @@ AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomicString& type, const A
 }
 
 AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomicString& type, std::optional<Seconds> currentTime, std::optional<Seconds> timelineTime)
-    : Event(type, true, false)
+    : Event(type, CanBubble::Yes, IsCancelable::No)
     , m_currentTime(currentTime)
     , m_timelineTime(timelineTime)
 {

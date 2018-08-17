@@ -58,7 +58,7 @@ void AbortSignal::abort()
     // FIXME: Add support for 'abort algorithms' - https://dom.spec.whatwg.org/#abortsignal-abort-algorithms
 
     // 5. Fire an event named abort at signal.
-    dispatchEvent(Event::create(eventNames().abortEvent, false, false));
+    dispatchEvent(Event::create(eventNames().abortEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 }

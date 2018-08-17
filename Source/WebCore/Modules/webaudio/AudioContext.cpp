@@ -288,7 +288,7 @@ void AudioContext::setState(State state)
         return;
 
     m_state = state;
-    m_eventQueue->enqueueEvent(Event::create(eventNames().statechangeEvent, true, false));
+    m_eventQueue->enqueueEvent(Event::create(eventNames().statechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 
     size_t stateIndex = static_cast<size_t>(state);
     if (stateIndex >= m_stateReactions.size())

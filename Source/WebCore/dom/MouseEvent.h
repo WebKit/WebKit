@@ -34,15 +34,19 @@ class PlatformMouseEvent;
 
 class MouseEvent : public MouseRelatedEvent {
 public:
-    WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& type, bool canBubble, bool cancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail, int screenX, int screenY, int pageX, int pageY,
+    WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& type, CanBubble, IsCancelable, MonotonicTime timestamp,
+        RefPtr<WindowProxy>&&, int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
         int movementX, int movementY,
 #endif
-        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short buttons, EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* = nullptr, bool isSimulated = false);
+        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short buttons,
+        EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* = nullptr, bool isSimulated = false);
 
     WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& eventType, RefPtr<WindowProxy>&&, const PlatformMouseEvent&, int detail, Node* relatedTarget);
 
-    static Ref<MouseEvent> create(const AtomicString& eventType, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short buttons, unsigned short syntheticClickType, EventTarget* relatedTarget);
+    static Ref<MouseEvent> create(const AtomicString& eventType, CanBubble, IsCancelable, RefPtr<WindowProxy>&&,
+        int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
+        unsigned short button, unsigned short buttons, unsigned short syntheticClickType, EventTarget* relatedTarget);
 
     static Ref<MouseEvent> createForBindings() { return adoptRef(*new MouseEvent); }
 
@@ -50,8 +54,13 @@ public:
 
     virtual ~MouseEvent();
 
-    WEBCORE_EXPORT void initMouseEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, EventTarget* relatedTarget);
-    void initMouseEventQuirk(JSC::ExecState&, ScriptExecutionContext&, const AtomicString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, JSC::JSValue relatedTarget);
+    WEBCORE_EXPORT void initMouseEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&,
+        int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
+        unsigned short button, EventTarget* relatedTarget);
+
+    void initMouseEventQuirk(JSC::ExecState&, ScriptExecutionContext&, const AtomicString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&,
+        int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
+        unsigned short button, JSC::JSValue relatedTarget);
 
     unsigned short button() const { return m_button; }
     unsigned short buttons() const { return m_buttons; }
@@ -71,7 +80,7 @@ public:
     int which() const final;
 
 protected:
-    MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&&,
+    MouseEvent(const AtomicString& type, CanBubble, IsCancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&&,
         int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
 #if ENABLE(POINTER_LOCK)
         const IntPoint& movementDelta,
@@ -79,7 +88,7 @@ protected:
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short buttons,
         EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer*, bool isSimulated);
 
-    MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&,
+    MouseEvent(const AtomicString& type, CanBubble, IsCancelable, RefPtr<WindowProxy>&&,
         int detail, const IntPoint& screenLocation, const IntPoint& clientLocation,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
         unsigned short button, unsigned short buttons, unsigned short syntheticClickType, EventTarget* relatedTarget);

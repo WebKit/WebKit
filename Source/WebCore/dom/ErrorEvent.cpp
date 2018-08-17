@@ -51,7 +51,7 @@ ErrorEvent::ErrorEvent(const AtomicString& type, const Init& initializer, IsTrus
 }
 
 ErrorEvent::ErrorEvent(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error)
-    : Event(eventNames().errorEvent, false, true)
+    : Event(eventNames().errorEvent, CanBubble::No, IsCancelable::Yes)
     , m_message(message)
     , m_fileName(fileName)
     , m_lineNumber(lineNumber)

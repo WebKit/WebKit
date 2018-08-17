@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-Ref<InputEvent> InputEvent::create(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
+Ref<InputEvent> InputEvent::create(const AtomicString& eventType, const String& inputType, CanBubble canBubble, IsCancelable cancelable, RefPtr<WindowProxy>&& view, const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
 {
     return adoptRef(*new InputEvent(eventType, inputType, canBubble, cancelable, WTFMove(view), data, WTFMove(dataTransfer), targetRanges, detail));
 }
 
-InputEvent::InputEvent(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
+InputEvent::InputEvent(const AtomicString& eventType, const String& inputType, CanBubble canBubble, IsCancelable cancelable, RefPtr<WindowProxy>&& view, const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
     : UIEvent(eventType, canBubble, cancelable, WTFMove(view), detail)
     , m_inputType(inputType)
     , m_data(data)

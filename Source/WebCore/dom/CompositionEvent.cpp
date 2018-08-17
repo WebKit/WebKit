@@ -32,7 +32,7 @@ namespace WebCore {
 CompositionEvent::CompositionEvent() = default;
 
 CompositionEvent::CompositionEvent(const AtomicString& type, RefPtr<WindowProxy>&& view, const String& data)
-    : UIEvent(type, true, true, WTFMove(view), 0)
+    : UIEvent(type, CanBubble::Yes, IsCancelable::Yes, WTFMove(view), 0)
     , m_data(data)
 {
 }

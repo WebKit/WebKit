@@ -634,7 +634,8 @@ void LibWebRTCMediaEndpoint::addRemoteStream(webrtc::MediaStreamInterface& rtcSt
         return;
 
     auto& mediaStream = mediaStreamFromRTCStream(rtcStream);
-    m_peerConnectionBackend.connection().fireEvent(MediaStreamEvent::create(eventNames().addstreamEvent, false, false, &mediaStream));
+    m_peerConnectionBackend.connection().fireEvent(MediaStreamEvent::create(eventNames().addstreamEvent,
+        Event::CanBubble::No, Event::IsCancelable::No, &mediaStream));
 }
 
 class RTCRtpReceiverBackend final : public RTCRtpReceiver::Backend {
@@ -687,7 +688,8 @@ void LibWebRTCMediaEndpoint::addRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiv
         streams.append(&mediaStream);
         mediaStream.addTrackFromPlatform(*track);
     }
-    m_peerConnectionBackend.connection().fireEvent(RTCTrackEvent::create(eventNames().trackEvent, false, false, WTFMove(receiver), track, WTFMove(streams), nullptr));
+    m_peerConnectionBackend.connection().fireEvent(RTCTrackEvent::create(eventNames().trackEvent,
+        Event::CanBubble::No, Event::IsCancelable::No, WTFMove(receiver), track, WTFMove(streams), nullptr));
 }
 
 void LibWebRTCMediaEndpoint::removeRemoteStream(webrtc::MediaStreamInterface& rtcStream)
@@ -777,7 +779,8 @@ void LibWebRTCMediaEndpoint::addDataChannel(rtc::scoped_refptr<webrtc::DataChann
         });
     }
 
-    m_peerConnectionBackend.connection().fireEvent(RTCDataChannelEvent::create(eventNames().datachannelEvent, false, false, WTFMove(channel)));
+    m_peerConnectionBackend.connection().fireEvent(RTCDataChannelEvent::create(eventNames().datachannelEvent,
+        Event::CanBubble::No, Event::IsCancelable::No, WTFMove(channel)));
 }
 
 void LibWebRTCMediaEndpoint::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> dataChannel)

@@ -53,7 +53,7 @@ public:
 
 protected:
     WEBCORE_EXPORT ExtendableEvent(const AtomicString&, const ExtendableEventInit&, IsTrusted);
-    ExtendableEvent(const AtomicString&, bool bubbles, bool cancelable);
+    ExtendableEvent(const AtomicString&, CanBubble, IsCancelable);
 
     void addExtendLifetimePromise(Ref<DOMPromise>&&);
 

@@ -171,10 +171,10 @@ void RTCDataChannel::didChangeReadyState(RTCDataChannelState newState)
 
     switch (m_readyState) {
     case RTCDataChannelState::Open:
-        scheduleDispatchEvent(Event::create(eventNames().openEvent, false, false));
+        scheduleDispatchEvent(Event::create(eventNames().openEvent, Event::CanBubble::No, Event::IsCancelable::No));
         break;
     case RTCDataChannelState::Closed:
-        scheduleDispatchEvent(Event::create(eventNames().closeEvent, false, false));
+        scheduleDispatchEvent(Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
         break;
     default:
         break;
@@ -211,7 +211,7 @@ void RTCDataChannel::didDetectError()
     if (m_stopped)
         return;
 
-    scheduleDispatchEvent(Event::create(eventNames().errorEvent, false, false));
+    scheduleDispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void RTCDataChannel::bufferedAmountIsDecreasing(size_t amount)
@@ -220,7 +220,7 @@ void RTCDataChannel::bufferedAmountIsDecreasing(size_t amount)
         return;
 
     if (amount <= m_bufferedAmountLowThreshold)
-        scheduleDispatchEvent(Event::create(eventNames().bufferedamountlowEvent, false, false));
+        scheduleDispatchEvent(Event::create(eventNames().bufferedamountlowEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void RTCDataChannel::stop()

@@ -283,7 +283,7 @@ void HTMLFormElement::prepareForSubmission(Event& event)
 
     auto protectedThis = makeRef(*this);
 
-    auto submitEvent = Event::create(eventNames().submitEvent, true, true);
+    auto submitEvent = Event::create(eventNames().submitEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes);
     dispatchEvent(submitEvent);
 
     // Event handling could have resulted in m_shouldSubmit becoming true as a side effect, too.
@@ -380,7 +380,7 @@ void HTMLFormElement::reset()
 
     SetForScope<bool> isInResetFunctionRestorer(m_isInResetFunction, true);
 
-    auto event = Event::create(eventNames().resetEvent, true, true);
+    auto event = Event::create(eventNames().resetEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes);
     dispatchEvent(event);
     if (!event->defaultPrevented())
         resetAssociatedFormControlElements();

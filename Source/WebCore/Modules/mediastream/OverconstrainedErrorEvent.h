@@ -40,7 +40,7 @@ class OverconstrainedErrorEvent : public Event {
 public:
     virtual ~OverconstrainedErrorEvent() = default;
 
-    static Ref<OverconstrainedErrorEvent> create(const AtomicString& type, bool canBubble, bool cancelable, OverconstrainedError* error)
+    static Ref<OverconstrainedErrorEvent> create(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, OverconstrainedError* error)
     {
         return adoptRef(*new OverconstrainedErrorEvent(type, canBubble, cancelable, error));
     }
@@ -58,7 +58,7 @@ public:
     EventInterface eventInterface() const override { return OverconstrainedErrorEventInterfaceType; }
 
 private:
-    explicit OverconstrainedErrorEvent(const AtomicString& type, bool canBubble, bool cancelable, OverconstrainedError* error)
+    explicit OverconstrainedErrorEvent(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, OverconstrainedError* error)
         : Event(type, canBubble, cancelable)
         , m_error(error)
     {

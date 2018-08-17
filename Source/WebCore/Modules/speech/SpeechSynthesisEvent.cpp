@@ -36,7 +36,7 @@ Ref<SpeechSynthesisEvent> SpeechSynthesisEvent::create(const AtomicString& type,
 }
 
 SpeechSynthesisEvent::SpeechSynthesisEvent(const AtomicString& type, unsigned charIndex, float elapsedTime, const String& name)
-    : Event(type, false, false)
+    : Event(type, CanBubble::No, IsCancelable::No)
     , m_charIndex(charIndex)
     , m_elapsedTime(elapsedTime)
     , m_name(name)

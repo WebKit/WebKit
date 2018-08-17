@@ -473,7 +473,7 @@ static inline bool dispatchSelectStart(Node* node)
     if (!node || !node->renderer())
         return true;
 
-    auto event = Event::create(eventNames().selectstartEvent, true, true);
+    auto event = Event::create(eventNames().selectstartEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes);
     node->dispatchEvent(event);
     return !event->defaultPrevented();
 }
@@ -2214,7 +2214,7 @@ bool EventHandler::dispatchDragEvent(const AtomicString& eventType, Element& dra
 
     view->disableLayerFlushThrottlingTemporarilyForInteraction();
     Ref<MouseEvent> me = MouseEvent::create(eventType,
-        true, true, event.timestamp().approximateMonotonicTime(), &m_frame.windowProxy(),
+        Event::CanBubble::Yes, Event::IsCancelable::Yes, event.timestamp().approximateMonotonicTime(), &m_frame.windowProxy(),
         0, event.globalPosition().x(), event.globalPosition().y(), event.position().x(), event.position().y(),
 #if ENABLE(POINTER_LOCK)
         event.movementDelta().x(), event.movementDelta().y(),

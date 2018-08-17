@@ -840,7 +840,7 @@ void ApplePaySession::didCancelPaymentSession()
 
     m_state = State::Canceled;
 
-    auto event = Event::create(eventNames().cancelEvent, false, false);
+    auto event = Event::create(eventNames().cancelEvent, Event::CanBubble::No, Event::IsCancelable::No);
     dispatchEvent(event.get());
 
     didReachFinalState();

@@ -215,7 +215,7 @@ void ServiceWorkerRegistration::scheduleTaskToFireUpdateFoundEvent()
         REGISTRATION_RELEASE_LOG_IF_ALLOWED("scheduleTaskToFireUpdateFoundEvent: Firing updatefound event for registration %llu", identifier().toUInt64());
 
         ASSERT(m_pendingActivityForEventDispatch);
-        dispatchEvent(Event::create(eventNames().updatefoundEvent, false, false));
+        dispatchEvent(Event::create(eventNames().updatefoundEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });
 }
 

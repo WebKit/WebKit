@@ -1,3 +1,374 @@
+2018-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Replace canBubble and cancelable booleans in Event by enum classes
+        https://bugs.webkit.org/show_bug.cgi?id=188692
+
+        Reviewed by Alex Christensen.
+
+        Replaced booleans indicating whether an event can bubble and an event is cancelable
+        by two enum classes: CanBubble and IsCancelable.
+
+        No new tests since there should be no behavioral changes.
+
+        * Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp:
+        (WebCore::WebKitPlaybackTargetAvailabilityEvent::WebKitPlaybackTargetAvailabilityEvent):
+        * Modules/applepay/ApplePayPaymentAuthorizedEvent.cpp:
+        (WebCore::ApplePayPaymentAuthorizedEvent::ApplePayPaymentAuthorizedEvent):
+        * Modules/applepay/ApplePayPaymentMethodSelectedEvent.cpp:
+        (WebCore::ApplePayPaymentMethodSelectedEvent::ApplePayPaymentMethodSelectedEvent):
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::ApplePaySession::didCancelPaymentSession):
+        * Modules/applepay/ApplePayShippingContactSelectedEvent.cpp:
+        (WebCore::ApplePayShippingContactSelectedEvent::ApplePayShippingContactSelectedEvent):
+        * Modules/applepay/ApplePayShippingMethodSelectedEvent.cpp:
+        (WebCore::ApplePayShippingMethodSelectedEvent::ApplePayShippingMethodSelectedEvent):
+        * Modules/applepay/ApplePayValidateMerchantEvent.cpp:
+        (WebCore::ApplePayValidateMerchantEvent::ApplePayValidateMerchantEvent):
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::updateKeyStatuses):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyMessageEvent.cpp:
+        (WebCore::WebKitMediaKeyMessageEvent::WebKitMediaKeyMessageEvent):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyNeededEvent.cpp:
+        (WebCore::WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        (WebCore::WebKitMediaKeySession::addKeyTimerFired):
+        (WebCore::WebKitMediaKeySession::sendError):
+        * Modules/gamepad/GamepadEvent.cpp:
+        (WebCore::GamepadEvent::GamepadEvent):
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::connectionToServerLost):
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::onError):
+        (WebCore::IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit):
+        (WebCore::IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion):
+        (WebCore::IDBOpenDBRequest::onSuccess):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::onError):
+        (WebCore::IDBRequest::onSuccess):
+        * Modules/indexeddb/IDBRequestCompletionEvent.cpp:
+        (WebCore::IDBRequestCompletionEvent::IDBRequestCompletionEvent):
+        * Modules/indexeddb/IDBRequestCompletionEvent.h:
+        (WebCore::IDBRequestCompletionEvent::create):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::fireOnComplete):
+        (WebCore::IDBTransaction::fireOnAbort):
+        * Modules/indexeddb/IDBVersionChangeEvent.cpp:
+        (WebCore::IDBVersionChangeEvent::IDBVersionChangeEvent):
+        * Modules/mediasession/MediaSession.cpp:
+        (WebCore::MediaSession::skipToNextTrack):
+        (WebCore::MediaSession::skipToPreviousTrack):
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::scheduleEvent):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::scheduleEvent):
+        * Modules/mediasource/SourceBufferList.cpp:
+        (WebCore::SourceBufferList::scheduleEvent):
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::scheduledEventTimerFired):
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::internalAddTrack):
+        (WebCore::MediaStream::internalRemoveTrack):
+        * Modules/mediastream/MediaStreamEvent.cpp:
+        (WebCore::MediaStreamEvent::create):
+        (WebCore::MediaStreamEvent::MediaStreamEvent):
+        * Modules/mediastream/MediaStreamEvent.h:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::trackEnded):
+        (WebCore::MediaStreamTrack::trackMutedChanged):
+        * Modules/mediastream/MediaStreamTrackEvent.cpp:
+        (WebCore::MediaStreamTrackEvent::create):
+        (WebCore::MediaStreamTrackEvent::MediaStreamTrackEvent):
+        * Modules/mediastream/MediaStreamTrackEvent.h:
+        * Modules/mediastream/OverconstrainedErrorEvent.h:
+        (WebCore::OverconstrainedErrorEvent::create):
+        (WebCore::OverconstrainedErrorEvent::OverconstrainedErrorEvent):
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::fireICECandidateEvent):
+        (WebCore::PeerConnectionBackend::doneGatheringCandidates):
+        (WebCore::PeerConnectionBackend::updateSignalingState):
+        * Modules/mediastream/RTCDTMFToneChangeEvent.cpp:
+        (WebCore::RTCDTMFToneChangeEvent::RTCDTMFToneChangeEvent):
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::didChangeReadyState):
+        (WebCore::RTCDataChannel::didDetectError):
+        (WebCore::RTCDataChannel::bufferedAmountIsDecreasing):
+        * Modules/mediastream/RTCDataChannelEvent.cpp:
+        (WebCore::RTCDataChannelEvent::create):
+        (WebCore::RTCDataChannelEvent::RTCDataChannelEvent):
+        * Modules/mediastream/RTCDataChannelEvent.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::updateIceGatheringState):
+        (WebCore::RTCPeerConnection::updateIceConnectionState):
+        (WebCore::RTCPeerConnection::updateConnectionState):
+        (WebCore::RTCPeerConnection::scheduleNegotiationNeededEvent):
+        * Modules/mediastream/RTCPeerConnectionIceEvent.cpp:
+        (WebCore::RTCPeerConnectionIceEvent::create):
+        (WebCore::RTCPeerConnectionIceEvent::RTCPeerConnectionIceEvent):
+        * Modules/mediastream/RTCPeerConnectionIceEvent.h:
+        * Modules/mediastream/RTCTrackEvent.cpp:
+        (WebCore::RTCTrackEvent::create):
+        (WebCore::RTCTrackEvent::RTCTrackEvent):
+        * Modules/mediastream/RTCTrackEvent.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::addRemoteStream):
+        (WebCore::LibWebRTCMediaEndpoint::addRemoteTrack):
+        (WebCore::LibWebRTCMediaEndpoint::addDataChannel):
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::dispatchShowEvent):
+        (WebCore::Notification::dispatchClickEvent):
+        (WebCore::Notification::dispatchCloseEvent):
+        (WebCore::Notification::dispatchErrorEvent):
+        * Modules/paymentrequest/MerchantValidationEvent.cpp:
+        (WebCore::MerchantValidationEvent::MerchantValidationEvent):
+        * Modules/paymentrequest/PaymentRequestUpdateEvent.cpp:
+        (WebCore::PaymentRequestUpdateEvent::PaymentRequestUpdateEvent):
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::postEvent):
+        * Modules/speech/SpeechSynthesisEvent.cpp:
+        (WebCore::SpeechSynthesisEvent::SpeechSynthesisEvent):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::setState):
+        * Modules/webaudio/AudioProcessingEvent.cpp:
+        (WebCore::AudioProcessingEvent::AudioProcessingEvent):
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::finish):
+        * Modules/webaudio/OfflineAudioCompletionEvent.cpp:
+        (WebCore::OfflineAudioCompletionEvent::OfflineAudioCompletionEvent):
+        * Modules/websockets/CloseEvent.h:
+        (WebCore::CloseEvent::CloseEvent):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didConnect):
+        (WebCore::WebSocket::dispatchOrQueueErrorEvent):
+        * Modules/webvr/VRDisplayEvent.cpp:
+        (WebCore::VRDisplayEvent::VRDisplayEvent):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::dispatchAccessibilityEventWithType const):
+        * accessibility/AccessibleSetValueEvent.cpp:
+        (WebCore::AccessibleSetValueEvent::AccessibleSetValueEvent):
+        * animation/AnimationPlaybackEvent.cpp:
+        (WebCore::AnimationPlaybackEvent::AnimationPlaybackEvent):
+        * dom/AbortSignal.cpp:
+        (WebCore::AbortSignal::abort):
+        * dom/AnimationEvent.cpp:
+        (WebCore::AnimationEvent::AnimationEvent):
+        * dom/BeforeLoadEvent.h:
+        * dom/BeforeTextInsertedEvent.cpp:
+        (WebCore::BeforeTextInsertedEvent::BeforeTextInsertedEvent):
+        * dom/BeforeUnloadEvent.cpp:
+        (WebCore::BeforeUnloadEvent::BeforeUnloadEvent):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::dispatchModifiedEvent):
+        * dom/CompositionEvent.cpp:
+        (WebCore::CompositionEvent::CompositionEvent):
+        * dom/ContainerNode.cpp:
+        (WebCore::dispatchChildInsertionEvents):
+        (WebCore::dispatchChildRemovalEvents):
+        * dom/DeviceMotionEvent.cpp:
+        (WebCore::DeviceMotionEvent::DeviceMotionEvent):
+        * dom/DeviceOrientationEvent.cpp:
+        (WebCore::DeviceOrientationEvent::DeviceOrientationEvent):
+        * dom/Document.cpp:
+        (WebCore::Document::setReadyState):
+        (WebCore::Document::visibilityStateChanged):
+        (WebCore::Document::finishedParsing):
+        (WebCore::Document::dispatchFullScreenChangeOrErrorEvent):
+        (WebCore::Document::orientationChanged):
+        * dom/DocumentEventQueue.cpp:
+        (WebCore::DocumentEventQueue::enqueueOrDispatchScrollEvent):
+        (WebCore::DocumentEventQueue::enqueueScrollEvent):
+        (WebCore::DocumentEventQueue::enqueueResizeEvent):
+        * dom/DocumentEventQueue.h:
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchMouseEvent):
+        (WebCore::Element::dispatchFocusInEvent):
+        (WebCore::Element::dispatchFocusOutEvent):
+        (WebCore::Element::dispatchFocusEvent):
+        (WebCore::Element::dispatchBlurEvent):
+        (WebCore::Element::dispatchWebKitImageReadyEventForTesting):
+        * dom/ErrorEvent.cpp:
+        (WebCore::ErrorEvent::ErrorEvent):
+        * dom/Event.cpp:
+        (WebCore::Event::Event):
+        (WebCore::Event::create):
+        * dom/Event.h:
+        * dom/FocusEvent.cpp:
+        (WebCore::FocusEvent::FocusEvent):
+        * dom/FocusEvent.h:
+        * dom/HashChangeEvent.h:
+        * dom/InputEvent.cpp:
+        (WebCore::InputEvent::create):
+        (WebCore::InputEvent::InputEvent):
+        * dom/InputEvent.h:
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create):
+        (WebCore::MouseEvent::MouseEvent):
+        * dom/MouseEvent.h:
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        * dom/MouseRelatedEvent.h:
+        * dom/MutationEvent.cpp:
+        (WebCore::MutationEvent::MutationEvent):
+        * dom/MutationEvent.h:
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchSubtreeModifiedEvent):
+        (WebCore::Node::dispatchDOMActivateEvent):
+        (WebCore::Node::dispatchInputEvent):
+        * dom/OverflowEvent.cpp:
+        (WebCore::OverflowEvent::OverflowEvent):
+        * dom/PageTransitionEvent.cpp:
+        (WebCore::PageTransitionEvent::PageTransitionEvent):
+        * dom/PopStateEvent.cpp:
+        (WebCore::PopStateEvent::PopStateEvent):
+        * dom/ProgressEvent.cpp:
+        (WebCore::ProgressEvent::ProgressEvent):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::dispatchErrorEvent):
+        * dom/SecurityPolicyViolationEvent.h:
+        * dom/SimulatedClick.cpp:
+        * dom/TextEvent.cpp:
+        (WebCore::TextEvent::TextEvent):
+        * dom/TransitionEvent.cpp:
+        (WebCore::TransitionEvent::TransitionEvent):
+        * dom/UIEvent.cpp:
+        (WebCore::UIEvent::UIEvent):
+        * dom/UIEvent.h:
+        (WebCore::UIEvent::create):
+        * dom/UIEventWithKeyState.h:
+        (WebCore::UIEventWithKeyState::UIEventWithKeyState):
+        * dom/WebKitAnimationEvent.cpp:
+        (WebCore::WebKitAnimationEvent::WebKitAnimationEvent):
+        * dom/WebKitTransitionEvent.cpp:
+        (WebCore::WebKitTransitionEvent::WebKitTransitionEvent):
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+        * editing/Editor.cpp:
+        (WebCore::dispatchBeforeInputEvent):
+        (WebCore::dispatchBeforeInputEvents):
+        (WebCore::Editor::willApplyEditing const):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance):
+        (WebCore::FrameSelection::selectAll):
+        (WebCore::FrameSelection::dispatchSelectStart):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::dispatchPendingEvent):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::dispatchChangeEvent):
+        (WebCore::HTMLFormControlElement::checkValidity):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::prepareForSubmission):
+        (WebCore::HTMLFormElement::reset):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::dispatchLoadEvent):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::onSearch):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::dispatchPendingEvent):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::scheduleEvent):
+        (WebCore::HTMLMediaElement::notifyAboutPlaying):
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues):
+        (WebCore::HTMLMediaElement::layoutSizeChanged):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::checkSnapshotStatus):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::dispatchLoadEvent):
+        * html/HTMLSlotElement.cpp:
+        (WebCore::HTMLSlotElement::dispatchSlotChangeEvent):
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::errorEventTimerFired):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::dispatchPendingEvent):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::selectionChanged):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::didCompleteLoad):
+        * html/MediaController.cpp:
+        (WebCore::MediaController::scheduleEvent):
+        * html/canvas/WebGLContextEvent.cpp:
+        (WebCore::WebGLContextEvent::WebGLContextEvent):
+        * html/canvas/WebGLContextEvent.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+        (WebCore::WebGLRenderingContextBase::dispatchContextLostEvent):
+        (WebCore::WebGLRenderingContextBase::maybeRestoreContext):
+        (WebCore::WebGLRenderingContextBase::dispatchContextChangedEvent):
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::createScriptLoadEvent):
+        * html/track/TrackEvent.cpp:
+        (WebCore::TrackEvent::TrackEvent):
+        * html/track/TrackEvent.h:
+        * html/track/TrackListBase.cpp:
+        (WebCore::TrackListBase::scheduleTrackEvent):
+        (WebCore::TrackListBase::scheduleChangeEvent):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::dispatchUnloadEvents):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::dispatchPendingErrorEvent):
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::createApplicationCacheEvent):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchAllPendingUnloadEvents):
+        (WebCore::DOMWindow::languagesChanged):
+        (WebCore::DOMWindow::dispatchLoadEvent):
+        * page/EventHandler.cpp:
+        (WebCore::dispatchSelectStart):
+        (WebCore::EventHandler::dispatchDragEvent):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::scheduleReconnect):
+        (WebCore::EventSource::didReceiveResponse):
+        (WebCore::EventSource::abortConnectionAttempt):
+        * page/FocusController.cpp:
+        (WebCore::dispatchEventsOnWindowAndFocusedElement):
+        (WebCore::FocusController::setFocusedFrame):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::sendResizeEventIfNeeded):
+        * page/Page.cpp:
+        (WebCore::networkStateChanged):
+        * page/Performance.cpp:
+        (WebCore::Performance::resourceTimingBufferFullTimerFired):
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::enqueueEvent):
+        * page/VisualViewport.cpp:
+        (WebCore::VisualViewport::enqueueResizeEvent):
+        (WebCore::VisualViewport::enqueueScrollEvent):
+        * storage/StorageEvent.cpp:
+        (WebCore::StorageEvent::StorageEvent):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::sendSVGLoadEventIfPossible):
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::dispatchLoadEvent):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::notifyFinished):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::dispatchPendingEvent):
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::notifyNetworkStateChange):
+        * workers/service/ExtendableEvent.cpp:
+        (WebCore::ExtendableEvent::ExtendableEvent):
+        * workers/service/ExtendableEvent.h:
+        * workers/service/ExtendableMessageEvent.cpp:
+        (WebCore::ExtendableMessageEvent::ExtendableMessageEvent):
+        * workers/service/ServiceWorker.cpp:
+        (WebCore::ServiceWorker::scheduleTaskToUpdateState):
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::scheduleTaskToFireControllerChangeEvent):
+        * workers/service/ServiceWorkerRegistration.cpp:
+        (WebCore::ServiceWorkerRegistration::scheduleTaskToFireUpdateFoundEvent):
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::notifyNetworkStateChange):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener):
+
 2018-08-17  Yusuke Suzuki  <yusukesuzuki@slowstart.org> and Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [JSC] Add GPRReg::InvalidGPRReg and FPRReg::InvalidFPRReg

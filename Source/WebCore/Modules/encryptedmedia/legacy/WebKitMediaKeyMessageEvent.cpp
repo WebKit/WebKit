@@ -33,7 +33,7 @@
 namespace WebCore {
 
 WebKitMediaKeyMessageEvent::WebKitMediaKeyMessageEvent(const AtomicString& type, Uint8Array* message, const String& destinationURL)
-    : Event(type, false, false)
+    : Event(type, CanBubble::No, IsCancelable::No)
     , m_message(message)
     , m_destinationURL(destinationURL)
 {

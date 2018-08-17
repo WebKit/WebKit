@@ -41,7 +41,7 @@ static const AtomicString& stringForPlaybackTargetAvailability(bool available)
 }
 
 WebKitPlaybackTargetAvailabilityEvent::WebKitPlaybackTargetAvailabilityEvent(const AtomicString& eventType, bool available)
-    : Event(eventType, false, false)
+    : Event(eventType, CanBubble::No, IsCancelable::No)
     , m_availability(stringForPlaybackTargetAvailability(available))
 {
 }

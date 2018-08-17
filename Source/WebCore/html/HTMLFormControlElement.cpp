@@ -317,7 +317,7 @@ void HTMLFormControlElement::setChangedSinceLastFormControlChangeEvent(bool chan
 
 void HTMLFormControlElement::dispatchChangeEvent()
 {
-    dispatchScopedEvent(Event::create(eventNames().changeEvent, true, false));
+    dispatchScopedEvent(Event::create(eventNames().changeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 }
 
 void HTMLFormControlElement::dispatchFormControlChangeEvent()
@@ -474,7 +474,7 @@ bool HTMLFormControlElement::checkValidity(Vector<RefPtr<HTMLFormControlElement>
     // An event handler can deref this object.
     Ref<HTMLFormControlElement> protectedThis(*this);
     Ref<Document> originalDocument(document());
-    auto event = Event::create(eventNames().invalidEvent, false, true);
+    auto event = Event::create(eventNames().invalidEvent, Event::CanBubble::No, Event::IsCancelable::Yes);
     dispatchEvent(event);
     if (!event->defaultPrevented() && unhandledInvalidControls && isConnected() && originalDocument.ptr() == &document())
         unhandledInvalidControls->append(this);

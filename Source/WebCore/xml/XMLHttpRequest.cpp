@@ -302,8 +302,10 @@ void XMLHttpRequest::callReadyStateChangeListener()
     // Check whether sending load and loadend events before sending readystatechange event, as it may change m_error/m_state values.
     bool shouldSendLoadEvent = (m_state == DONE && !m_error);
 
-    if (m_async || (m_state <= OPENED || m_state == DONE))
-        m_progressEventThrottle.dispatchReadyStateChangeEvent(Event::create(eventNames().readystatechangeEvent, false, false), m_state == DONE ? FlushProgressEvent : DoNotFlushProgressEvent);
+    if (m_async || (m_state <= OPENED || m_state == DONE)) {
+        m_progressEventThrottle.dispatchReadyStateChangeEvent(Event::create(eventNames().readystatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No),
+            m_state == DONE ? FlushProgressEvent : DoNotFlushProgressEvent);
+    }
 
     if (shouldSendLoadEvent) {
         m_progressEventThrottle.dispatchProgressEvent(eventNames().loadEvent);

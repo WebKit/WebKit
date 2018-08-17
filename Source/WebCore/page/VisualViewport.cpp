@@ -180,9 +180,7 @@ void VisualViewport::enqueueResizeEvent()
     if (!m_frame)
         return;
 
-    bool bubbles = false;
-    bool cancelable = false;
-    m_frame->document()->eventQueue().enqueueResizeEvent(*this, bubbles, cancelable);
+    m_frame->document()->eventQueue().enqueueResizeEvent(*this, Event::CanBubble::No, Event::IsCancelable::No);
 }
 
 void VisualViewport::enqueueScrollEvent()
@@ -190,9 +188,7 @@ void VisualViewport::enqueueScrollEvent()
     if (!m_frame)
         return;
 
-    bool bubbles = false;
-    bool cancelable = false;
-    m_frame->document()->eventQueue().enqueueScrollEvent(*this, bubbles, cancelable);
+    m_frame->document()->eventQueue().enqueueScrollEvent(*this, Event::CanBubble::No, Event::IsCancelable::No);
 }
 
 } // namespace WebCore

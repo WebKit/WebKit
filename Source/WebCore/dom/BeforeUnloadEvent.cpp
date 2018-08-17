@@ -28,7 +28,7 @@
 namespace WebCore {
 
 BeforeUnloadEvent::BeforeUnloadEvent()
-    : Event(eventNames().beforeunloadEvent, false, true)
+    : Event(eventNames().beforeunloadEvent, CanBubble::No, IsCancelable::Yes)
 {
 }
 

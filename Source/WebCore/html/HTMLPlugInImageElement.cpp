@@ -612,7 +612,7 @@ void HTMLPlugInImageElement::checkSnapshotStatus()
     }
     
     // Notify the shadow root that the size changed so that we may update the overlay layout.
-    ensureUserAgentShadowRoot().dispatchEvent(Event::create(eventNames().resizeEvent, true, false));
+    ensureUserAgentShadowRoot().dispatchEvent(Event::create(eventNames().resizeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 }
     
 void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const URL& url)

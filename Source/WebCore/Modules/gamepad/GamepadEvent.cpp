@@ -30,7 +30,7 @@
 namespace WebCore {
 
 GamepadEvent::GamepadEvent(const AtomicString& eventType, Gamepad& gamepad)
-    : Event(eventType, false, false)
+    : Event(eventType, CanBubble::No, IsCancelable::No)
     , m_gamepad(&gamepad)
 {
 }

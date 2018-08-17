@@ -38,7 +38,7 @@ OverflowEvent::OverflowEvent()
 }
 
 OverflowEvent::OverflowEvent(bool horizontalOverflowChanged, bool horizontalOverflow, bool verticalOverflowChanged, bool verticalOverflow)
-    : Event(eventNames().overflowchangedEvent, false, false)
+    : Event(eventNames().overflowchangedEvent, CanBubble::No, IsCancelable::No)
     , m_horizontalOverflow(horizontalOverflow)
     , m_verticalOverflow(verticalOverflow)
 {

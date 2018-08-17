@@ -611,7 +611,7 @@ void ServiceWorkerContainer::scheduleTaskToFireControllerChangeEvent()
         if (m_isStopped)
             return;
 
-        dispatchEvent(Event::create(eventNames().controllerchangeEvent, false, false));
+        dispatchEvent(Event::create(eventNames().controllerchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });
 }
 

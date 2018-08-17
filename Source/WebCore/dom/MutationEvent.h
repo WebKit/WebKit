@@ -36,9 +36,9 @@ public:
         REMOVAL = 3
     };
 
-    static Ref<MutationEvent> create(const AtomicString& type, bool canBubble, Node* relatedNode = nullptr, const String& prevValue = String(), const String& newValue = String())
+    static Ref<MutationEvent> create(const AtomicString& type, CanBubble canBubble, Node* relatedNode = nullptr, const String& prevValue = String(), const String& newValue = String())
     {
-        return adoptRef(*new MutationEvent(type, canBubble, false, relatedNode, prevValue, newValue));
+        return adoptRef(*new MutationEvent(type, canBubble, IsCancelable::No, relatedNode, prevValue, newValue));
     }
 
     static Ref<MutationEvent> createForBindings()
@@ -56,7 +56,7 @@ public:
 
 private:
     MutationEvent() = default;
-    MutationEvent(const AtomicString& type, bool canBubble, bool cancelable, Node* relatedNode, const String& prevValue, const String& newValue);
+    MutationEvent(const AtomicString& type, CanBubble, IsCancelable, Node* relatedNode, const String& prevValue, const String& newValue);
 
     EventInterface eventInterface() const final;
 

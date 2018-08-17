@@ -142,7 +142,7 @@ bool HTMLDetailsElement::isActiveSummary(const HTMLSummaryElement& summary) cons
 void HTMLDetailsElement::dispatchPendingEvent(DetailEventSender* eventSender)
 {
     ASSERT_UNUSED(eventSender, eventSender == &detailToggleEventSender());
-    dispatchEvent(Event::create(eventNames().toggleEvent, false, false));
+    dispatchEvent(Event::create(eventNames().toggleEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void HTMLDetailsElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

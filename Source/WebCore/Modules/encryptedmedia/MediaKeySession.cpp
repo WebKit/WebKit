@@ -641,7 +641,7 @@ void MediaKeySession::updateKeyStatuses(CDMInstanceClient::KeyStatusVector&& inp
         m_statuses.uncheckedAppend({ WTFMove(status.first), toMediaKeyStatus(status.second) });
 
     // 5. Queue a task to fire a simple event named keystatuseschange at the session.
-    m_eventQueue.enqueueEvent(Event::create(eventNames().keystatuseschangeEvent, false, false));
+    m_eventQueue.enqueueEvent(Event::create(eventNames().keystatuseschangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
     // 6. Queue a task to run the Attempt to Resume Playback If Necessary algorithm on each of the media element(s) whose mediaKeys attribute is the MediaKeys object that created the session.
     m_taskQueue.enqueueTask(

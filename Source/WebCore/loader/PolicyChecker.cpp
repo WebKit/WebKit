@@ -132,7 +132,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
         if (m_frame.ownerElement()) {
             // Fire a load event (even though we were blocked by CSP) as timing attacks would otherwise
             // reveal that the frame was blocked. This way, it looks like any other cross-origin page load.
-            m_frame.ownerElement()->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
+            m_frame.ownerElement()->dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
         }
         function(WTFMove(request), { }, ShouldContinue::No);
         return;

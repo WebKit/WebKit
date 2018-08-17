@@ -40,21 +40,21 @@ Event::Event(IsTrusted isTrusted)
 {
 }
 
-Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg)
+Event::Event(const AtomicString& eventType, CanBubble canBubble, IsCancelable isCancelable)
     : m_type(eventType)
     , m_isInitialized(true)
-    , m_canBubble(canBubbleArg)
-    , m_cancelable(cancelableArg)
+    , m_canBubble(canBubble == CanBubble::Yes)
+    , m_cancelable(isCancelable == IsCancelable::Yes)
     , m_isTrusted(true)
     , m_createTime(MonotonicTime::now())
 {
 }
 
-Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg, MonotonicTime timestamp)
+Event::Event(const AtomicString& eventType, CanBubble canBubble, IsCancelable isCancelable, MonotonicTime timestamp)
     : m_type(eventType)
     , m_isInitialized(true)
-    , m_canBubble(canBubbleArg)
-    , m_cancelable(cancelableArg)
+    , m_canBubble(canBubble == CanBubble::Yes)
+    , m_cancelable(isCancelable == IsCancelable::Yes)
     , m_isTrusted(true)
     , m_createTime(timestamp)
 {
@@ -73,9 +73,9 @@ Event::Event(const AtomicString& eventType, const EventInit& initializer, IsTrus
 
 Event::~Event() = default;
 
-Ref<Event> Event::create(const AtomicString& type, bool canBubble, bool cancelable)
+Ref<Event> Event::create(const AtomicString& type, CanBubble canBubble, IsCancelable isCancelable)
 {
-    return adoptRef(*new Event(type, canBubble, cancelable));
+    return adoptRef(*new Event(type, canBubble, isCancelable));
 }
 
 Ref<Event> Event::createForBindings()

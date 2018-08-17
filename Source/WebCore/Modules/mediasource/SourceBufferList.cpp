@@ -92,7 +92,7 @@ void SourceBufferList::swap(Vector<RefPtr<SourceBuffer>>& other)
 
 void SourceBufferList::scheduleEvent(const AtomicString& eventName)
 {
-    auto event = Event::create(eventName, false, false);
+    auto event = Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::No);
     event->setTarget(this);
 
     m_asyncEventQueue.enqueueEvent(WTFMove(event));

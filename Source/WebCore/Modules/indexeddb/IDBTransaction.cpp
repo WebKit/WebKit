@@ -591,14 +591,14 @@ void IDBTransaction::fireOnComplete()
 {
     LOG(IndexedDB, "IDBTransaction::fireOnComplete");
     ASSERT(&m_database->originThread() == &Thread::current());
-    enqueueEvent(Event::create(eventNames().completeEvent, false, false));
+    enqueueEvent(Event::create(eventNames().completeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void IDBTransaction::fireOnAbort()
 {
     LOG(IndexedDB, "IDBTransaction::fireOnAbort");
     ASSERT(&m_database->originThread() == &Thread::current());
-    enqueueEvent(Event::create(eventNames().abortEvent, true, false));
+    enqueueEvent(Event::create(eventNames().abortEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 }
 
 void IDBTransaction::enqueueEvent(Ref<Event>&& event)

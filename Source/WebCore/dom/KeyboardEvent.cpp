@@ -94,7 +94,9 @@ static inline KeyboardEvent::KeyLocationCode keyLocationCode(const PlatformKeybo
 inline KeyboardEvent::KeyboardEvent() = default;
 
 inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<WindowProxy>&& view)
-    : UIEventWithKeyState(eventTypeForKeyboardEventType(key.type()), true, true, key.timestamp().approximateMonotonicTime(), view.copyRef(), 0, key.ctrlKey(), key.altKey(), key.shiftKey(), key.metaKey(), false, key.modifiers().contains(PlatformEvent::Modifier::CapsLockKey))
+    : UIEventWithKeyState(eventTypeForKeyboardEventType(key.type()), CanBubble::Yes, IsCancelable::Yes,
+        key.timestamp().approximateMonotonicTime(), view.copyRef(), 0, key.ctrlKey(), key.altKey(), key.shiftKey(), key.metaKey(),
+        false, key.modifiers().contains(PlatformEvent::Modifier::CapsLockKey))
     , m_underlyingPlatformEvent(std::make_unique<PlatformKeyboardEvent>(key))
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     , m_key(key.key())

@@ -528,15 +528,14 @@ void IDBRequest::onError()
     ASSERT(!m_idbError.isNull());
 
     m_domError = m_idbError.toDOMException();
-    enqueueEvent(Event::create(eventNames().errorEvent, true, true));
+    enqueueEvent(Event::create(eventNames().errorEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes));
 }
 
 void IDBRequest::onSuccess()
 {
     LOG(IndexedDB, "IDBRequest::onSuccess");
     ASSERT(&originThread() == &Thread::current());
-
-    enqueueEvent(Event::create(eventNames().successEvent, false, false));
+    enqueueEvent(Event::create(eventNames().successEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void IDBRequest::setResult(Ref<IDBDatabase>&& database)

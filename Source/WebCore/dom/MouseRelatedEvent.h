@@ -74,7 +74,7 @@ public:
 
 protected:
     MouseRelatedEvent() = default;
-    MouseRelatedEvent(const AtomicString& type, bool canBubble, bool cancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&&,
+    MouseRelatedEvent(const AtomicString& type, CanBubble, IsCancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&&,
         int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
 #if ENABLE(POINTER_LOCK)
         const IntPoint& movementDelta,

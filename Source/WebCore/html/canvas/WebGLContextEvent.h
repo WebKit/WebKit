@@ -31,7 +31,7 @@ namespace WebCore {
 
 class WebGLContextEvent final : public Event {
 public:
-    static Ref<WebGLContextEvent> create(const AtomicString& type, bool canBubble, bool cancelable, const String& statusMessage)
+    static Ref<WebGLContextEvent> create(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, const String& statusMessage)
     {
         return adoptRef(*new WebGLContextEvent(type, canBubble, cancelable, statusMessage));
     }
@@ -51,7 +51,7 @@ public:
     EventInterface eventInterface() const override;
 
 private:
-    WebGLContextEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& statusMessage);
+    WebGLContextEvent(const AtomicString& type, CanBubble, IsCancelable, const String& statusMessage);
     WebGLContextEvent(const AtomicString&, const Init&, IsTrusted);
 
     String m_statusMessage;

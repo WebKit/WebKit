@@ -125,7 +125,7 @@ static bool isLegacySupportedJavaScriptLanguage(const String& language)
 
 void ScriptElement::dispatchErrorEvent()
 {
-    m_element.dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+    m_element.dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 std::optional<ScriptElement::ScriptType> ScriptElement::determineScriptType(LegacyTypeSupport supportLegacyTypes) const

@@ -86,12 +86,10 @@ void DocumentEventQueue::enqueueOrDispatchScrollEvent(Node& target)
     ASSERT(&target.document() == &m_document);
 
     // Per the W3C CSSOM View Module, scroll events fired at the document should bubble, others should not.
-    bool bubbles = target.isDocumentNode();
-    bool cancelable = false;
-    enqueueScrollEvent(target, bubbles, cancelable);
+    enqueueScrollEvent(target, target.isDocumentNode() ? Event::CanBubble::Yes : Event::CanBubble::No, Event::IsCancelable::No);
 }
 
-void DocumentEventQueue::enqueueScrollEvent(EventTarget& target, bool bubbles, bool cancelable)
+void DocumentEventQueue::enqueueScrollEvent(EventTarget& target, Event::CanBubble canBubble, Event::IsCancelable cancelable)
 {
     if (m_isClosed)
         return;
@@ -102,12 +100,12 @@ void DocumentEventQueue::enqueueScrollEvent(EventTarget& target, bool bubbles, b
     if (!m_targetsWithQueuedScrollEvents.add(&target).isNewEntry)
         return;
 
-    Ref<Event> scrollEvent = Event::create(eventNames().scrollEvent, bubbles, cancelable);
+    Ref<Event> scrollEvent = Event::create(eventNames().scrollEvent, canBubble, cancelable);
     scrollEvent->setTarget(&target);
     enqueueEvent(WTFMove(scrollEvent));
 }
 
-void DocumentEventQueue::enqueueResizeEvent(EventTarget& target, bool bubbles, bool cancelable)
+void DocumentEventQueue::enqueueResizeEvent(EventTarget& target, Event::CanBubble canBubble, Event::IsCancelable cancelable)
 {
     if (m_isClosed)
         return;
@@ -118,7 +116,7 @@ void DocumentEventQueue::enqueueResizeEvent(EventTarget& target, bool bubbles, b
     if (!m_targetsWithQueuedResizeEvents.add(&target).isNewEntry)
         return;
 
-    Ref<Event> resizeEvent = Event::create(eventNames().resizeEvent, bubbles, cancelable);
+    Ref<Event> resizeEvent = Event::create(eventNames().resizeEvent, canBubble, cancelable);
     resizeEvent->setTarget(&target);
     enqueueEvent(WTFMove(resizeEvent));
 }

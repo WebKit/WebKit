@@ -34,7 +34,7 @@ typedef WindowProxy AbstractView;
 
 class UIEvent : public Event {
 public:
-    static Ref<UIEvent> create(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, int detail)
+    static Ref<UIEvent> create(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<WindowProxy>&& view, int detail)
     {
         return adoptRef(*new UIEvent(type, canBubble, cancelable, WTFMove(view), detail));
     }
@@ -65,8 +65,8 @@ public:
 
 protected:
     UIEvent();
-    UIEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&, int detail);
-    UIEvent(const AtomicString& type, bool canBubble, bool cancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail);
+    UIEvent(const AtomicString& type, CanBubble, IsCancelable, RefPtr<WindowProxy>&&, int detail);
+    UIEvent(const AtomicString& type, CanBubble, IsCancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail);
     UIEvent(const AtomicString&, const UIEventInit&, IsTrusted);
 
 private:

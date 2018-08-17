@@ -253,13 +253,13 @@ void MediaSession::safelyIterateActiveMediaElements(const WTF::Function<void(HTM
 void MediaSession::skipToNextTrack()
 {
     if (m_controls && m_controls->nextTrackEnabled())
-        m_controls->dispatchEvent(Event::create(eventNames().nexttrackEvent, false, false));
+        m_controls->dispatchEvent(Event::create(eventNames().nexttrackEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void MediaSession::skipToPreviousTrack()
 {
     if (m_controls && m_controls->previousTrackEnabled())
-        m_controls->dispatchEvent(Event::create(eventNames().previoustrackEvent, false, false));
+        m_controls->dispatchEvent(Event::create(eventNames().previoustrackEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void MediaSession::controlIsEnabledDidChange()
