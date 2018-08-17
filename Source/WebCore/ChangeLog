@@ -1,3 +1,17 @@
+2018-08-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] Handle OAuth authentication after r234912
+        https://bugs.webkit.org/show_bug.cgi?id=188651
+
+        Reviewed by Carlos Garcia Campos.
+
+        Update this switch to consider the new OAuth enum value added in r234912. I suppose OAuth is
+        used for HTTP Auth now. It will be a one-time compatibility break as passwords previously
+        stored with type "Unknown" will no longer be accessible.
+
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::authTypeFromProtectionSpaceAuthenticationScheme):
+
 2018-08-17  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Never return an uninitialized ImageGStreamer object.

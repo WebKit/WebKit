@@ -177,6 +177,8 @@ static const char* authTypeFromProtectionSpaceAuthenticationScheme(ProtectionSpa
     case ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
         ASSERT_NOT_REACHED();
         break;
+    case ProtectionSpaceAuthenticationSchemeOAuth:
+        return "OAuth";
     case ProtectionSpaceAuthenticationSchemeUnknown:
         return "unknown";
     }
