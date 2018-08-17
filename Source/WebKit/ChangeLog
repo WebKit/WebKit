@@ -1,3 +1,12 @@
+2018-08-17  Andy Estes  <aestes@apple.com>
+
+        [Xcode] Fix up file reference paths in Source/WebKit/NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=188700
+
+        Rubber-stamped by Dan Bernstein.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-08-17  Alex Christensen  <achristensen@webkit.org>
 
         Pass webPageID and webFrameID to NetworkLoad for speculative loads
