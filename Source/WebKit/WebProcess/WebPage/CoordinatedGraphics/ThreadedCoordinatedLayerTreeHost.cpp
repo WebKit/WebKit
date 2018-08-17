@@ -77,10 +77,10 @@ ThreadedCoordinatedLayerTreeHost::ThreadedCoordinatedLayerTreeHost(WebPage& webP
         if (m_surface->shouldPaintMirrored())
             paintFlags |= TextureMapper::PaintingMirrored;
 
-        m_compositor = ThreadedCompositor::create(m_compositorClient, m_compositorClient, compositingDisplayID, scaledSize, scaleFactor, ThreadedCompositor::ShouldDoFrameSync::Yes, paintFlags);
+        m_compositor = ThreadedCompositor::create(m_compositorClient, compositingDisplayID, scaledSize, scaleFactor, ThreadedCompositor::ShouldDoFrameSync::Yes, paintFlags);
         m_layerTreeContext.contextID = m_surface->surfaceID();
     } else
-        m_compositor = ThreadedCompositor::create(m_compositorClient, m_compositorClient, compositingDisplayID, scaledSize, scaleFactor);
+        m_compositor = ThreadedCompositor::create(m_compositorClient, compositingDisplayID, scaledSize, scaleFactor);
 
     m_webPage.windowScreenDidChange(compositingDisplayID);
 
@@ -103,22 +103,6 @@ void ThreadedCoordinatedLayerTreeHost::forceRepaint()
 void ThreadedCoordinatedLayerTreeHost::frameComplete()
 {
     m_compositor->frameComplete();
-}
-
-void ThreadedCoordinatedLayerTreeHost::requestDisplayRefreshMonitorUpdate()
-{
-    // Flush layers to cause a repaint. If m_isWaitingForRenderer was true at this point, the layer
-    // flush won't do anything, but that means there's a painting ongoing that will send the
-    // display refresh notification when it's done.
-    flushLayersAndForceRepaint();
-}
-
-void ThreadedCoordinatedLayerTreeHost::handleDisplayRefreshMonitorUpdate(bool hasBeenRescheduled)
-{
-    // Call renderNextFrame. If hasBeenRescheduled is true, the layer flush will force a repaint
-    // that will cause the display refresh notification to come.
-    renderNextFrame(hasBeenRescheduled);
-    m_compositor->handleDisplayRefreshMonitorUpdate();
 }
 
 uint64_t ThreadedCoordinatedLayerTreeHost::nativeSurfaceHandleForCompositing()

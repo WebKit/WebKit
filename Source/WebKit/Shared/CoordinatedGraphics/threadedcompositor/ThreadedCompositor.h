@@ -39,13 +39,14 @@
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-#include "ThreadedDisplayRefreshMonitor.h"
+#include <WebCore/DisplayRefreshMonitor.h>
 #endif
 
 namespace WebKit {
 
 class CoordinatedGraphicsScene;
 class CoordinatedGraphicsSceneClient;
+class ThreadedDisplayRefreshMonitor;
 
 class ThreadedCompositor : public CoordinatedGraphicsSceneClient, public ThreadSafeRefCounted<ThreadedCompositor> {
     WTF_MAKE_NONCOPYABLE(ThreadedCompositor);
@@ -53,6 +54,8 @@ class ThreadedCompositor : public CoordinatedGraphicsSceneClient, public ThreadS
 public:
     class Client {
     public:
+        virtual void renderNextFrame() = 0;
+
         virtual uint64_t nativeSurfaceHandleForCompositing() = 0;
         virtual void didDestroyGLContext() = 0;
 
@@ -62,7 +65,7 @@ public:
 
     enum class ShouldDoFrameSync { No, Yes };
 
-    static Ref<ThreadedCompositor> create(Client&, ThreadedDisplayRefreshMonitor::Client&, WebCore::PlatformDisplayID, const WebCore::IntSize&, float scaleFactor, ShouldDoFrameSync = ShouldDoFrameSync::Yes, WebCore::TextureMapper::PaintFlags = 0);
+    static Ref<ThreadedCompositor> create(Client&, WebCore::PlatformDisplayID, const WebCore::IntSize&, float scaleFactor, ShouldDoFrameSync = ShouldDoFrameSync::Yes, WebCore::TextureMapper::PaintFlags = 0);
     virtual ~ThreadedCompositor();
 
     void setNativeSurfaceHandleForCompositing(uint64_t);
@@ -79,13 +82,14 @@ public:
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     RefPtr<WebCore::DisplayRefreshMonitor> displayRefreshMonitor(WebCore::PlatformDisplayID);
-    void handleDisplayRefreshMonitorUpdate();
+    void requestDisplayRefreshMonitorUpdate();
+    void handleDisplayRefreshMonitorUpdate(bool hasBeenRescheduled);
 #endif
 
     void frameComplete();
 
 private:
-    ThreadedCompositor(Client&, ThreadedDisplayRefreshMonitor::Client&, WebCore::PlatformDisplayID, const WebCore::IntSize&, float scaleFactor, ShouldDoFrameSync, WebCore::TextureMapper::PaintFlags);
+    ThreadedCompositor(Client&, WebCore::PlatformDisplayID, const WebCore::IntSize&, float scaleFactor, ShouldDoFrameSync, WebCore::TextureMapper::PaintFlags);
 
     // CoordinatedGraphicsSceneClient
     void updateViewport() override;

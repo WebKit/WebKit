@@ -37,10 +37,10 @@
 
 namespace WebKit {
 
-ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID displayID, Client& client)
+ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID displayID, ThreadedCompositor& compositor)
     : WebCore::DisplayRefreshMonitor(displayID)
     , m_displayRefreshTimer(RunLoop::main(), this, &ThreadedDisplayRefreshMonitor::displayRefreshCallback)
-    , m_client(&client)
+    , m_compositor(&compositor)
 {
 #if USE(GLIB_EVENT_LOOP)
     m_displayRefreshTimer.setPriority(RunLoopSourcePriority::DisplayRefreshMonitorTimer);
@@ -50,7 +50,7 @@ ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor(WebCore::PlatformDi
 
 bool ThreadedDisplayRefreshMonitor::requestRefreshCallback()
 {
-    if (!m_client)
+    if (!m_compositor)
         return false;
 
     bool previousFrameDone { false };
@@ -64,7 +64,7 @@ bool ThreadedDisplayRefreshMonitor::requestRefreshCallback()
     // refresh notifications under ThreadedDisplayRefreshMonitor::displayRefreshCallback().
     // Any such schedule request is handled in that method after the notifications.
     if (previousFrameDone)
-        m_client->requestDisplayRefreshMonitorUpdate();
+        m_compositor->requestDisplayRefreshMonitorUpdate();
 
     return true;
 }
@@ -77,7 +77,7 @@ bool ThreadedDisplayRefreshMonitor::requiresDisplayRefreshCallback()
 
 void ThreadedDisplayRefreshMonitor::dispatchDisplayRefreshCallback()
 {
-    if (!m_client)
+    if (!m_compositor)
         return;
     m_displayRefreshTimer.startOneShot(0_s);
 }
@@ -85,7 +85,7 @@ void ThreadedDisplayRefreshMonitor::dispatchDisplayRefreshCallback()
 void ThreadedDisplayRefreshMonitor::invalidate()
 {
     m_displayRefreshTimer.stop();
-    m_client = nullptr;
+    m_compositor = nullptr;
 }
 
 void ThreadedDisplayRefreshMonitor::displayRefreshCallback()
@@ -111,8 +111,8 @@ void ThreadedDisplayRefreshMonitor::displayRefreshCallback()
     // Notify the compositor about the completed DisplayRefreshMonitor update, passing
     // along information about any schedule request that might have occurred during
     // the notification handling.
-    if (m_client)
-        m_client->handleDisplayRefreshMonitorUpdate(hasBeenRescheduled);
+    if (m_compositor)
+        m_compositor->handleDisplayRefreshMonitorUpdate(hasBeenRescheduled);
 }
 
 } // namespace WebKit

@@ -1,3 +1,16 @@
+2018-08-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, rolling out r234259.
+
+        Caused excessive CPU usage
+
+        Reverted changeset:
+
+        "[GTK][WPE] Improve the way request displayRefresh
+        notifications"
+        https://bugs.webkit.org/show_bug.cgi?id=188005
+        https://trac.webkit.org/changeset/234259
+
 2018-08-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r234958.

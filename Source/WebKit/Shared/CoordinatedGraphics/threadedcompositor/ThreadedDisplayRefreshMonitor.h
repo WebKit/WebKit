@@ -36,15 +36,9 @@ class ThreadedCompositor;
 
 class ThreadedDisplayRefreshMonitor : public WebCore::DisplayRefreshMonitor {
 public:
-    class Client {
-    public:
-        virtual void requestDisplayRefreshMonitorUpdate() = 0;
-        virtual void handleDisplayRefreshMonitorUpdate(bool) = 0;
-    };
-
-    static Ref<ThreadedDisplayRefreshMonitor> create(WebCore::PlatformDisplayID displayID, Client& client)
+    static Ref<ThreadedDisplayRefreshMonitor> create(WebCore::PlatformDisplayID displayID, ThreadedCompositor& compositor)
     {
-        return adoptRef(*new ThreadedDisplayRefreshMonitor(displayID, client));
+        return adoptRef(*new ThreadedDisplayRefreshMonitor(displayID, compositor));
     }
     virtual ~ThreadedDisplayRefreshMonitor() = default;
 
@@ -55,11 +49,11 @@ public:
     void invalidate();
 
 private:
-    ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID, Client&);
+    ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID, ThreadedCompositor&);
 
     void displayRefreshCallback();
     RunLoop::Timer<ThreadedDisplayRefreshMonitor> m_displayRefreshTimer;
-    Client* m_client;
+    ThreadedCompositor* m_compositor;
 };
 
 } // namespace WebKit

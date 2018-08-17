@@ -45,18 +45,18 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, ShouldDoFrameSync doFrameSync, TextureMapper::PaintFlags paintFlags)
+Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, ShouldDoFrameSync doFrameSync, TextureMapper::PaintFlags paintFlags)
 {
-    return adoptRef(*new ThreadedCompositor(client, displayRefreshMonitorClient, displayID, viewportSize, scaleFactor, doFrameSync, paintFlags));
+    return adoptRef(*new ThreadedCompositor(client, displayID, viewportSize, scaleFactor, doFrameSync, paintFlags));
 }
 
-ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, ShouldDoFrameSync doFrameSync, TextureMapper::PaintFlags paintFlags)
+ThreadedCompositor::ThreadedCompositor(Client& client, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, ShouldDoFrameSync doFrameSync, TextureMapper::PaintFlags paintFlags)
     : m_client(client)
     , m_doFrameSync(doFrameSync)
     , m_paintFlags(paintFlags)
     , m_compositingRunLoop(std::make_unique<CompositingRunLoop>([this] { renderLayerTree(); }))
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    , m_displayRefreshMonitor(ThreadedDisplayRefreshMonitor::create(displayID, displayRefreshMonitorClient))
+    , m_displayRefreshMonitor(ThreadedDisplayRefreshMonitor::create(displayID, *this))
 #endif
 {
     {
@@ -304,7 +304,22 @@ RefPtr<WebCore::DisplayRefreshMonitor> ThreadedCompositor::displayRefreshMonitor
     return m_displayRefreshMonitor.copyRef();
 }
 
-void ThreadedCompositor::handleDisplayRefreshMonitorUpdate()
+void ThreadedCompositor::requestDisplayRefreshMonitorUpdate()
+{
+    // This is invoked by ThreadedDisplayRefreshMonitor when a fresh update is required.
+
+    LockHolder stateLocker(m_compositingRunLoop->stateLock());
+    {
+        // coordinateUpdateCompletionWithClient is set to true in order to delay the scene update
+        // completion until the DisplayRefreshMonitor is fired on the main thread after the composition
+        // is completed.
+        LockHolder locker(m_attributes.lock);
+        m_attributes.coordinateUpdateCompletionWithClient = true;
+    }
+    m_compositingRunLoop->scheduleUpdate(stateLocker);
+}
+
+void ThreadedCompositor::handleDisplayRefreshMonitorUpdate(bool hasBeenRescheduled)
 {
     // Retrieve coordinateUpdateCompletionWithClient.
     bool coordinateUpdateCompletionWithClient { false };
@@ -313,6 +328,12 @@ void ThreadedCompositor::handleDisplayRefreshMonitorUpdate()
         coordinateUpdateCompletionWithClient = std::exchange(m_attributes.coordinateUpdateCompletionWithClient, false);
     }
 
+    // The client is finally notified about the scene update nearing completion. The client will use this
+    // opportunity to clean up resources as appropriate. It can also perform any layer flush that was
+    // requested during the composition, or by any DisplayRefreshMonitor notifications that have been
+    // handled at this point.
+    m_client.renderNextFrame();
+
     LockHolder stateLocker(m_compositingRunLoop->stateLock());
 
     // If required, mark the current scene update as completed. CompositingRunLoop will take care of
@@ -320,6 +341,16 @@ void ThreadedCompositor::handleDisplayRefreshMonitorUpdate()
     // or DisplayRefreshMonitor notifications.
     if (coordinateUpdateCompletionWithClient)
         m_compositingRunLoop->updateCompleted(stateLocker);
+
+    // If the DisplayRefreshMonitor was scheduled again, we immediately demand the update completion
+    // coordination (like we do in requestDisplayRefreshMonitorUpdate()) and request an update.
+    if (hasBeenRescheduled) {
+        {
+            LockHolder locker(m_attributes.lock);
+            m_attributes.coordinateUpdateCompletionWithClient = true;
+        }
+        m_compositingRunLoop->scheduleUpdate(stateLocker);
+    }
 }
 #endif
 
