@@ -1,5 +1,16 @@
 2018-08-17  Alex Christensen  <achristensen@webkit.org>
 
+        Fix API tests after r234985
+        https://bugs.webkit.org/show_bug.cgi?id=188679
+
+        * UIProcess/API/C/WKPage.cpp:
+        (encodingOf):
+        (dataFrom):
+        The encoding of null strings had changed, which is no big deal because there's no data in that encoding,
+        but switching it back fixes the tests.
+
+2018-08-17  Alex Christensen  <achristensen@webkit.org>
+
         Replace WebPageProxy::loadAlternateHTMLString with loadAlternateHTML
         https://bugs.webkit.org/show_bug.cgi?id=188679
 
