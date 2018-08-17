@@ -240,15 +240,19 @@ class Port(object):
                 return False
         return True
 
-    def check_api_test_build(self):
-        if not self._root_was_set and self.get_option('build') and not self._build_api_tests():
+    def check_api_test_build(self, canonicalized_binaries=None):
+        if not canonicalized_binaries:
+            canonicalized_binaries = self.path_to_api_test_binaries().keys()
+        if not self._root_was_set and self.get_option('build') and not self._build_api_tests(wtf_only=(canonicalized_binaries == ['TestWTF'])):
             return False
         if self.get_option('install') and not self._check_port_build():
             return False
 
-        for binary in self.path_to_api_test_binaries():
-            if not self._filesystem.exists(binary):
-                _log.error('{} was not found at {}'.format(os.path.basename(binary), binary))
+        for binary, path in self.path_to_api_test_binaries().iteritems():
+            if binary not in canonicalized_binaries:
+                continue
+            if not self._filesystem.exists(path):
+                _log.error('{} was not found at {}'.format(os.path.basename(path), path))
                 return False
         return True
 
@@ -1370,15 +1374,7 @@ class Port(object):
         return self._build_path('ImageDiff')
 
     def path_to_api_test_binaries(self):
-        binary_names = ['TestWTF']
-        if self.host.platform.is_win():
-            binary_names += ['TestWebCore', 'TestWebKitLegacy']
-        else:
-            binary_names += ['TestWebKitAPI']
-        binary_paths = [self._build_path(binary_name) for binary_name in binary_names]
-        if self.host.platform.is_win():
-            binary_paths = [os.path.splitext(binary_path)[0] + '.exe' for binary_path in binary_paths]
-        return binary_paths
+        return {binary: self._build_path(binary) for binary in ['TestWTF', 'TestWebKitAPI']}
 
     def _path_to_lighttpd(self):
         """Returns the path to the LigHTTPd binary.
@@ -1505,10 +1501,10 @@ class Port(object):
             return False
         return True
 
-    def _build_api_tests(self):
+    def _build_api_tests(self, wtf_only=False):
         environment = self.host.copy_current_environment().to_dictionary()
         try:
-            self._run_script('build-api-tests', args=self._build_driver_flags(), env=environment)
+            self._run_script('build-api-tests', args=(['--wtf-only'] if wtf_only else []) + self._build_driver_flags(), env=environment)
         except ScriptError as e:
             _log.error(e.message_with_output(output_limit=None))
             return False

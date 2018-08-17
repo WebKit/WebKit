@@ -1,3 +1,31 @@
+2018-08-17  Jonathan Bedard  <jbedard@apple.com>
+
+        Add back --wtf-only to run-api-tests
+        https://bugs.webkit.org/show_bug.cgi?id=187893
+        <rdar://problem/42483983>
+
+        Reviewed by Aakash Jain.
+
+        When doing WTF development, it is not necessary to build or run all of the API
+        tests. Generally, if a user has specified a specific binary (or binaries) that
+        they are interested in testing, it is not necessary to check all API test binaries.
+
+        * Scripts/webkitpy/api_tests/manager.py:
+        (Manager._collect_tests): Only use the binaries matching the program arguments
+        when collecting tests.
+        (Manager._binaries_for_arguments): Generate a list of binaries which match the
+        program arguments.
+        (Manager.run): Pass a list binaries to check.
+        * Scripts/webkitpy/api_tests/run_api_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/port/base.py:
+        (Port.check_api_test_build): If the caller specifies which API test binaries it
+        requires, only check the ones specified.
+        (Port.path_to_api_test_binaries): Allow the caller to only build the WTF API tests.
+        (Port._build_api_tests): Allow the caller to only build the WTF API tests.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.path_to_api_test_binaries):
+
 2018-08-17  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (234743) Timeouts in TestWebKitAPI.PreferredAudioBufferSize.AudioWithWebAudio and TestWebKitAPI.PreferredAudioBufferSize.WebAudio
