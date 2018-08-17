@@ -1,5 +1,22 @@
 2018-08-17  Alex Christensen  <achristensen@webkit.org>
 
+        Simplify server trust authentication flow
+        https://bugs.webkit.org/show_bug.cgi?id=188684
+
+        Reviewed by Youenn Fablet.
+
+        We unnecessarily had the allowsSpecificHTTPSCertificateForHost check at two different abstraction levels.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::allowsSpecificHTTPSCertificateForHost): Deleted.
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+
+2018-08-17  Alex Christensen  <achristensen@webkit.org>
+
         Fix API tests after r234985
         https://bugs.webkit.org/show_bug.cgi?id=188679
 
