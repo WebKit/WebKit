@@ -62,6 +62,7 @@ struct LoadParameters {
     uint64_t shouldOpenExternalURLsPolicy;
     bool shouldTreatAsContinuingLoad { false };
     UserData userData;
+    bool forSafeBrowsing { false };
 
 #if PLATFORM(COCOA)
     RetainPtr<NSDictionary> dataDetectionContext;

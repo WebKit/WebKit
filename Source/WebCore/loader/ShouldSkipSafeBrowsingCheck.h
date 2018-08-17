@@ -23,23 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "SafeBrowsingResult.h"
+#pragma once
 
-#import "SafeBrowsingSPI.h"
+#include <wtf/EnumTraits.h>
 
-namespace WebKit {
+namespace WebCore {
 
-#if HAVE(SAFE_BROWSING)
-SafeBrowsingResult::SafeBrowsingResult(WebCore::URL&& url, SSBServiceLookupResult *result)
-    : m_url(WTFMove(url))
-    , m_provider([result provider])
-    , m_isPhishing([result isPhishing])
-    , m_isMalware([result isMalware])
-    , m_isUnwantedSoftware([result isUnwantedSoftware])
-    , m_isKnownToBeUnsafe([result isKnownToBeUnsafe])
-{
+enum class ShouldSkipSafeBrowsingCheck { No, Yes };
+
 }
-#endif
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ShouldSkipSafeBrowsingCheck> {
+    using values = EnumValues<
+        WebCore::ShouldSkipSafeBrowsingCheck,
+        WebCore::ShouldSkipSafeBrowsingCheck::No,
+        WebCore::ShouldSkipSafeBrowsingCheck::Yes
+    >;
+};
 
 }

@@ -49,6 +49,7 @@ void LoadParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldOpenExternalURLsPolicy;
     encoder << shouldTreatAsContinuingLoad;
     encoder << userData;
+    encoder << forSafeBrowsing;
 
     platformEncode(encoder);
 }
@@ -105,6 +106,9 @@ bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
     if (!decoder.decode(data.userData))
         return false;
 
+    if (!decoder.decode(data.forSafeBrowsing))
+        return false;
+    
     if (!platformDecode(decoder, data))
         return false;
 

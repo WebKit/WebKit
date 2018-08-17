@@ -77,8 +77,8 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, WebFramePolicyListener
     SSBLookupContext *context = [SSBLookupContext sharedLookupContext];
     if (!context)
         return listener.didReceiveSafeBrowsingResults({ });
-    [context lookUpURL:url completionHandler:BlockPtr<void(SSBLookupResult *, NSError *)>::fromCallable([listener = makeRef(listener)] (SSBLookupResult *result, NSError *error) mutable {
-        RunLoop::main().dispatch([listener = WTFMove(listener), result = retainPtr(result), error = retainPtr(error)] {
+    [context lookUpURL:url completionHandler:BlockPtr<void(SSBLookupResult *, NSError *)>::fromCallable([listener = makeRef(listener), url = url] (SSBLookupResult *result, NSError *error) mutable {
+        RunLoop::main().dispatch([listener = WTFMove(listener), result = retainPtr(result), error = retainPtr(error), url = WTFMove(url)] {
             if (error) {
                 listener->didReceiveSafeBrowsingResults({ });
                 return;
@@ -88,7 +88,7 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, WebFramePolicyListener
             Vector<SafeBrowsingResult> resultsVector;
             resultsVector.reserveInitialCapacity([results count]);
             for (SSBServiceLookupResult *result in results)
-                resultsVector.uncheckedAppend({ result });
+                resultsVector.uncheckedAppend({ URL(url), result });
             listener->didReceiveSafeBrowsingResults(WTFMove(resultsVector));
         });
     }).get()];

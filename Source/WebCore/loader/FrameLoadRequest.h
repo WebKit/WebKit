@@ -27,6 +27,7 @@
 
 #include "FrameLoaderTypes.h"
 #include "ResourceRequest.h"
+#include "ShouldSkipSafeBrowsingCheck.h"
 #include "SubstituteData.h"
 #include <wtf/Forward.h>
 
@@ -63,6 +64,9 @@ public:
     void setShouldTreatAsContinuingLoad(bool value) { m_shouldTreatAsContinuingLoad = value; }
     bool shouldTreatAsContinuingLoad() const { return m_shouldTreatAsContinuingLoad; }
 
+    void setShouldSkipSafeBrowsingCheck(ShouldSkipSafeBrowsingCheck skip) { m_shouldSkipSafeBrowsingCheck = skip; }
+    ShouldSkipSafeBrowsingCheck shouldSkipSafeBrowsingCheck() { return m_shouldSkipSafeBrowsingCheck; }
+    
     const SubstituteData& substituteData() const { return m_substituteData; }
     void setSubstituteData(const SubstituteData& data) { m_substituteData = data; }
     bool hasSubstituteData() { return m_substituteData.isValid(); }
@@ -110,6 +114,7 @@ private:
     InitiatedByMainFrame m_initiatedByMainFrame { InitiatedByMainFrame::Unknown };
     bool m_isCrossOriginWindowOpenNavigation { false };
     SystemPreviewInfo m_systemPreviewInfo;
+    ShouldSkipSafeBrowsingCheck m_shouldSkipSafeBrowsingCheck { ShouldSkipSafeBrowsingCheck::No };
 };
 
 } // namespace WebCore

@@ -1,3 +1,41 @@
+2018-08-17  Alex Christensen  <achristensen@webkit.org>
+
+        Add some plumbing for safe browsing
+        https://bugs.webkit.org/show_bug.cgi?id=188709
+
+        Reviewed by Tim Horton.
+
+        No change in behavior.  Just passing around unused booleans.
+        We will need this for a way to load a page even though safe browsing says it's unsafe.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::setShouldSkipSafeBrowsingCheck):
+        (WebCore::FrameLoadRequest::shouldSkipSafeBrowsingCheck):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadArchive):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithNavigationAction):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::shouldReloadToHandleUnreachableURL):
+        (WebCore::FrameLoader::reloadWithOverrideEncoding):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::loadWithNavigationAction):
+        * loader/FrameLoaderClient.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        * loader/PolicyChecker.h:
+        * loader/ShouldSkipSafeBrowsingCheck.h: Added.
+
 2018-08-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace canBubble and cancelable booleans in Event by enum classes

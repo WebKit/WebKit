@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/URL.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS SSBServiceLookupResult;
@@ -34,10 +35,11 @@ namespace WebKit {
 class SafeBrowsingResult {
 public:
 #if HAVE(SAFE_BROWSING)
-    SafeBrowsingResult(SSBServiceLookupResult *);
+    SafeBrowsingResult(WebCore::URL&&, SSBServiceLookupResult *);
 #endif
     SafeBrowsingResult() = default;
 
+    const WebCore::URL& url() const { return m_url; }
     const String& provider() const { return m_provider; }
     bool isPhishing() const { return m_isPhishing; }
     bool isMalware() const { return m_isMalware; }
@@ -45,6 +47,7 @@ public:
     bool isKnownToBeUnsafe() const { return m_isKnownToBeUnsafe; }
 
 private:
+    WebCore::URL m_url;
     String m_provider;
     bool m_isPhishing { false };
     bool m_isMalware { false };

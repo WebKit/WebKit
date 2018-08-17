@@ -1,3 +1,35 @@
+2018-08-17  Alex Christensen  <achristensen@webkit.org>
+
+        Add some plumbing for safe browsing
+        https://bugs.webkit.org/show_bug.cgi?id=188709
+
+        Reviewed by Tim Horton.
+
+        Also adding a URL to SafeBrowsingResult because we'll need it.
+        Also adding a bool to LoadParameters because we will need to do special things
+        when loading the safe browsing warning, like adding a way to skip the safe browsing check.
+
+        * Shared/LoadParameters.cpp:
+        (WebKit::LoadParameters::encode const):
+        (WebKit::LoadParameters::decode):
+        * Shared/LoadParameters.h:
+        * UIProcess/Cocoa/SafeBrowsingResultCocoa.mm:
+        (WebKit::SafeBrowsingResult::SafeBrowsingResult):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::beginSafeBrowsingCheck):
+        * UIProcess/SafeBrowsingResult.h:
+        (WebKit::SafeBrowsingResult::url const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadAlternateHTML):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsync):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSync):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2018-08-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace canBubble and cancelable booleans in Event by enum classes
