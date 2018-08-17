@@ -1,3 +1,15 @@
+2018-08-16  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] alignas for RegisterState should respect alignof(RegisterState) too
+        https://bugs.webkit.org/show_bug.cgi?id=188686
+
+        Reviewed by Saam Barati.
+
+        RegisterState would have larger alignment than `alignof(void*)`. We use the larger alignment value
+        for `alignof` for RegisterState.
+
+        * heap/RegisterState.h:
+
 2018-08-14  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [YARR] Align allocation size in BumpPointerAllocator with sizeof(void*)

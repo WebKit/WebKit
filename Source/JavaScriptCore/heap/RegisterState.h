@@ -164,14 +164,13 @@ using RegisterState = jmp_buf;
 #if COMPILER(MSVC)
 #pragma warning(push)
 #pragma warning(disable: 4611)
+#endif
 #define ALLOCATE_AND_GET_REGISTER_STATE(registers) \
-    alignas(void*) RegisterState registers; \
+    alignas(std::max(alignof(void*), alignof(RegisterState))) RegisterState registers; \
     setjmp(registers)
+
+#if COMPILER(MSVC)
 #pragma warning(pop)
-#else
-#define ALLOCATE_AND_GET_REGISTER_STATE(registers) \
-    alignas(void*) RegisterState registers; \
-    setjmp(registers)
 #endif
 #endif // ALLOCATE_AND_GET_REGISTER_STATE
 
