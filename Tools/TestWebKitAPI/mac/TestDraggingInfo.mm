@@ -28,18 +28,40 @@
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC) && WK_API_ENABLED
 
+#import "DragAndDropSimulator.h"
+#import "TestFilePromiseReceiver.h"
 #import <wtf/WeakObjCPtr.h>
+
+@interface NSDraggingItem ()
+@property (nonatomic, strong) id item;
+@end
 
 @implementation TestDraggingInfo {
     WeakObjCPtr<id> _source;
+    WeakObjCPtr<DragAndDropSimulator> _dragAndDropSimulator;
     RetainPtr<NSPasteboard> _pasteboard;
     RetainPtr<NSImage> _draggedImage;
+    RetainPtr<NSMutableArray<NSFilePromiseReceiver *>> _filePromiseReceivers;
+}
+
+- (instancetype)initWithDragAndDropSimulator:(DragAndDropSimulator *)simulator
+{
+    if (self = [super init]) {
+        _filePromiseReceivers = adoptNS([NSMutableArray new]);
+        _dragAndDropSimulator = simulator;
+    }
+    return self;
 }
 
 @synthesize draggingSourceOperationMask=_draggingSourceOperationMask;
 @synthesize draggingLocation=_draggingLocation;
 @synthesize draggingFormation=_draggingFormation;
 @synthesize numberOfValidItemsForDrop=_numberOfValidItemsForDrop;
+
+- (NSArray<NSFilePromiseReceiver *> *)filePromiseReceivers
+{
+    return _filePromiseReceivers.get();
+}
 
 - (NSPasteboard *)draggingPasteboard
 {
@@ -61,9 +83,45 @@
     _source = draggingSource;
 }
 
-- (void)enumerateDraggingItemsWithOptions:(NSDraggingItemEnumerationOptions)enumOpts forView:(NSView *)view classes:(NSArray<Class> *)classArray searchOptions:(NSDictionary<NSString *, id> *)searchOptions usingBlock:(void (^)(NSDraggingItem *, NSInteger, BOOL *))block
+- (void)enumerateDraggingItemsWithOptions:(NSDraggingItemEnumerationOptions)enumerationOptions forView:(NSView *)view classes:(NSArray<Class> *)classes searchOptions:(NSDictionary<NSString *, id> *)searchOptions usingBlock:(void (^)(NSDraggingItem *, NSInteger, BOOL *))block
 {
-    // FIXME: Implement this to test file promise drop handling.
+    // FIXME: Much of this can be shared with existing drag and drop testing code in DumpRenderTree.
+
+    if (enumerationOptions) {
+        [NSException raise:@"DragAndDropSimulator" format:@"Dragging item enumeration options are currently unsupported. (got: %tu)", enumerationOptions];
+        return;
+    }
+
+    if (searchOptions.count) {
+        [NSException raise:@"DragAndDropSimulator" format:@"Search options are currently unsupported. (got: %@)", searchOptions];
+        return;
+    }
+
+    BOOL stop = NO;
+    for (Class classObject in classes) {
+        if (classObject != NSFilePromiseReceiver.class)
+            continue;
+
+        id promisedTypeIdentifiers = [_pasteboard propertyListForType:NSFilesPromisePboardType];
+        if (![promisedTypeIdentifiers isKindOfClass:NSArray.class])
+            break;
+
+        for (id object in promisedTypeIdentifiers) {
+            if (![object isKindOfClass:NSString.class])
+                break;
+        }
+
+        auto receiver = adoptNS([[TestFilePromiseReceiver alloc] initWithPromisedTypeIdentifiers:promisedTypeIdentifiers dragAndDropSimulator:_dragAndDropSimulator.getAutoreleased()]);
+        [receiver setDraggingSource:_source.get().get()];
+        [_filePromiseReceivers addObject:receiver.get()];
+
+        auto item = adoptNS([NSDraggingItem new]);
+        [item setItem:receiver.get()];
+
+        block(item.get(), 0, &stop);
+        if (stop)
+            break;
+    }
 }
 
 // The following methods are not currently used by WebKit.

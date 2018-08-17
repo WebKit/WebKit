@@ -25,26 +25,19 @@
 
 #pragma once
 
-#if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC) && WK_API_ENABLED
 
-#import <AppKit/NSDragging.h>
+#import <AppKit/NSFilePromiseReceiver.h>
 
 @class DragAndDropSimulator;
 
-@interface TestDraggingInfo : NSObject <NSDraggingInfo>
+@interface TestFilePromiseReceiver : NSFilePromiseReceiver
 
-- (instancetype)initWithDragAndDropSimulator:(DragAndDropSimulator *)simulator NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithPromisedTypeIdentifiers:(NSArray<NSString *> *)promisedTypeIdentifiers dragAndDropSimulator:(DragAndDropSimulator *)simulator NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
-@property (nonatomic) NSPoint draggingLocation;
-@property (nonatomic) NSPoint draggedImageLocation;
-@property (nonatomic) NSInteger draggingSequenceNumber;
-@property (nonatomic) NSDragOperation draggingSourceOperationMask;
-@property (nonatomic, strong) NSPasteboard *draggingPasteboard;
-@property (nonatomic, strong) NSImage *draggedImage;
 @property (nonatomic, weak) id draggingSource;
-@property (nonatomic, readonly) NSArray<NSFilePromiseReceiver *> *filePromiseReceivers;
 
 @end
 
-#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC) && WK_API_ENABLED
+#endif

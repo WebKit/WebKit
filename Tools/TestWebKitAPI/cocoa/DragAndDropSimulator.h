@@ -116,7 +116,11 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 @property (nonatomic, readonly) NSDragOperation currentDragOperation;
 @property (nonatomic, strong) NSPasteboard *externalDragPasteboard;
 @property (nonatomic, strong) NSImage *externalDragImage;
+@property (nonatomic, readonly) NSArray<NSURL *> *externalPromisedFiles;
 @property (nonatomic, copy) dispatch_block_t willEndDraggingHandler;
+
+- (void)writePromisedFiles:(NSArray<NSURL *> *)fileURLs;
+- (void)writeFiles:(NSArray<NSURL *> *)fileURLs;
 
 #endif // PLATFORM(MAC)
 

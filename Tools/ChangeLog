@@ -1,3 +1,84 @@
+2018-08-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] [WK2] Add infrastructure to test receiving file promises on drop
+        https://bugs.webkit.org/show_bug.cgi?id=188583
+
+        Reviewed by Andy Estes.
+
+        Enable testing file promise drop handling on the WebKit2 port of macOS by introducing a subclass of
+        NSFilePromiseReceiver and implementing `-enumerateDraggingItemsWithOptions:forView:…` on TestDraggingInfo (the
+        concrete NSDraggingInfo implementation used by DragAndDropSimulator) using the mock file receiver. Also
+        introduces 3 new macOS tests. See below for more details.
+
+        A large portion of this logic is ported over from DumpRenderTree testing infrastructure added in r229297. In a
+        future patch, we should introduce a way to write code common to both API tests, WebKitTestRunner and
+        DumpRenderTree, and make this code shared among all three testing harnesses.
+
+        Tests:  DragAndDropTests.DragImageElementIntoFileUpload
+                DragAndDropTests.DragPromisedImageFileIntoFileUpload
+                DragAndDropTests.DragImageFileIntoFileUpload
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+        (TEST):
+
+        Drive-by fix: Replace NSMakePoint with CGPointMake.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/image-and-file-upload.html:
+
+        Add a new test page consisting of an image and a "file upload" area that updates exercises DataTransfer API to
+        load the dropped image.
+
+        * TestWebKitAPI/Tests/mac/DragAndDropTestsMac.mm:
+        (waitForConditionWithLogging):
+
+        Add a helper function to wait for a condition to evaluate to true. To make failures more informative,
+        additionally add a mechanism to log a warning message after a given timeout, if the condition has yet to be met.
+
+        (TEST):
+
+        Add new tests to exercise a few cases of file upload in WebKit, including: (1) dragging from an image element,
+        (2) dragging files written to the pasteboard as promises, and (3) files written to the pasteboard as file URLs.
+
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+
+        Surface the new functionality provided by the file promise receiver mock via two new methods on
+        DragAndDropSimulator to (1) write files as file promises to the pasteboard, and (2) write files as file paths
+        directly to the pasteboard.
+
+        * TestWebKitAPI/mac/DragAndDropSimulatorMac.mm:
+        (-[DragAndDropSimulator performDragInWebView:atLocation:withImage:pasteboard:source:]):
+        (-[DragAndDropSimulator externalPromisedFiles]):
+        (getFilePathsAndTypeIdentifiers):
+        (-[DragAndDropSimulator writePromisedFiles:]):
+        (-[DragAndDropSimulator writeFiles:]):
+        * TestWebKitAPI/mac/TestDraggingInfo.h:
+        * TestWebKitAPI/mac/TestDraggingInfo.mm:
+        (-[TestDraggingInfo initWithDragAndDropSimulator:]):
+        (-[TestDraggingInfo filePromiseReceivers]):
+        (-[TestDraggingInfo enumerateDraggingItemsWithOptions:forView:classes:searchOptions:usingBlock:]):
+
+        Implement this by invoking the given block with a TestFilePromiseReceiver. While all other classes are
+        unhandled by this testing code, WebKit only calls into this with [NSFilePromiseReceiver class], this is
+        currently sufficient for testing purposes.
+
+        * TestWebKitAPI/mac/TestFilePromiseReceiver.h: Copied from Tools/TestWebKitAPI/mac/TestDraggingInfo.h.
+        * TestWebKitAPI/mac/TestFilePromiseReceiver.mm: Added.
+        (-[TestFilePromiseReceiver initWithPromisedTypeIdentifiers:dragAndDropSimulator:]):
+        (-[TestFilePromiseReceiver fileTypes]):
+        (-[TestFilePromiseReceiver fileNames]):
+        (-[TestFilePromiseReceiver dealloc]):
+        (-[TestFilePromiseReceiver draggingSource]):
+        (-[TestFilePromiseReceiver setDraggingSource:]):
+        (fileNameWithNumericSuffix):
+        (copyFile):
+
+        Add a helper to copy a file into a destination directory. Used to implement the main functionality of our
+        NSFilePromiseReceiver subclass, which copies the files specified by test code into the directory determined by
+        WebKit.
+
+        (-[TestFilePromiseReceiver receivePromisedFilesAtDestination:options:operationQueue:reader:]):
+
 2018-08-16  Alex Christensen  <achristensen@webkit.org>
 
         Add entitlement to MiniBrowser to allow it to communicate with com.apple.Safari.SafeBrowsing.Service

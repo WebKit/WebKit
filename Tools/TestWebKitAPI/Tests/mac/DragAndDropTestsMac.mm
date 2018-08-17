@@ -30,6 +30,25 @@
 
 #if WK_API_ENABLED && ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
+static void waitForConditionWithLogging(BOOL(^condition)(), NSTimeInterval loggingTimeout, NSString *message, ...)
+{
+    NSDate *startTime = [NSDate date];
+    BOOL exceededLoggingTimeout = NO;
+    while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
+        if (condition())
+            break;
+
+        if (exceededLoggingTimeout || [[NSDate date] timeIntervalSinceDate:startTime] < loggingTimeout)
+            continue;
+
+        va_list args;
+        va_start(args, message);
+        NSLogv(message, args);
+        va_end(args);
+        exceededLoggingTimeout = YES;
+    }
+}
+
 TEST(DragAndDropTests, NumberOfValidItemsForDrop)
 {
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
@@ -39,10 +58,6 @@ TEST(DragAndDropTests, NumberOfValidItemsForDrop)
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
     TestWKWebView *webView = [simulator webView];
     [simulator setExternalDragPasteboard:pasteboard];
-
-    auto hostWindow = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 400, 400) styleMask:0 backing:NSBackingStoreBuffered defer:NO]);
-    [hostWindow setFrameOrigin:NSMakePoint(0, 0)];
-    [[hostWindow contentView] addSubview:webView];
     [webView synchronouslyLoadTestPageNamed:@"full-page-dropzone"];
 
     NSInteger numberOfValidItemsForDrop = 0;
@@ -74,5 +89,50 @@ TEST(DragAndDropTests, DropColor)
     EXPECT_WK_STREQ(@"#ff0000", [webView stringByEvaluatingJavaScript:@"document.querySelector(\"input\").value"]);
 }
 #endif // ENABLE(INPUT_TYPE_COLOR)
+
+TEST(DragAndDropTests, DragImageElementIntoFileUpload)
+{
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    TestWKWebView *webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"image-and-file-upload"];
+    [simulator runFrom:NSMakePoint(100, 100) to:NSMakePoint(100, 300)];
+
+    waitForConditionWithLogging([&] () -> BOOL {
+        return [webView stringByEvaluatingJavaScript:@"imageload.textContent"].boolValue;
+    }, 2, @"Expected image to finish loading.");
+    EXPECT_EQ(1, [webView stringByEvaluatingJavaScript:@"filecount.textContent"].integerValue);
+}
+
+TEST(DragAndDropTests, DragPromisedImageFileIntoFileUpload)
+{
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    TestWKWebView *webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"image-and-file-upload"];
+
+    NSURL *imageURL = [NSBundle.mainBundle URLForResource:@"apple" withExtension:@"gif" subdirectory:@"TestWebKitAPI.resources"];
+    [simulator writePromisedFiles:@[ imageURL ]];
+    [simulator runFrom:NSMakePoint(100, 100) to:NSMakePoint(100, 300)];
+
+    waitForConditionWithLogging([&] () -> BOOL {
+        return [webView stringByEvaluatingJavaScript:@"imageload.textContent"].boolValue;
+    }, 2, @"Expected image to finish loading.");
+    EXPECT_EQ(1, [webView stringByEvaluatingJavaScript:@"filecount.textContent"].integerValue);
+}
+
+TEST(DragAndDropTests, DragImageFileIntoFileUpload)
+{
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    TestWKWebView *webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"image-and-file-upload"];
+
+    NSURL *imageURL = [NSBundle.mainBundle URLForResource:@"apple" withExtension:@"gif" subdirectory:@"TestWebKitAPI.resources"];
+    [simulator writeFiles:@[ imageURL ]];
+    [simulator runFrom:NSMakePoint(100, 100) to:NSMakePoint(100, 300)];
+
+    waitForConditionWithLogging([&] () -> BOOL {
+        return [webView stringByEvaluatingJavaScript:@"imageload.textContent"].boolValue;
+    }, 2, @"Expected image to finish loading.");
+    EXPECT_EQ(1, [webView stringByEvaluatingJavaScript:@"filecount.textContent"].integerValue);
+}
 
 #endif // WK_API_ENABLED && ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)

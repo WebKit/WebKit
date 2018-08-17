@@ -34,7 +34,7 @@ TEST(DragAndDropTests, DragImageLocationForLinkInSubframe)
 {
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:CGRectMake(0, 0, 400, 400)]);
     [[simulator webView] synchronouslyLoadTestPageNamed:@"link-in-iframe-and-input"];
-    [simulator runFrom:NSMakePoint(200, 375) to:NSMakePoint(200, 125)];
+    [simulator runFrom:CGPointMake(200, 375) to:CGPointMake(200, 125)];
 
     EXPECT_WK_STREQ("https://www.apple.com/", [[simulator webView] stringByEvaluatingJavaScript:@"document.querySelector('input').value"]);
 

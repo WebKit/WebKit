@@ -84,6 +84,7 @@ static NSImage *defaultExternalDragImage()
     RetainPtr<TestDraggingInfo> _draggingInfo;
     RetainPtr<NSPasteboard> _externalDragPasteboard;
     RetainPtr<NSImage> _externalDragImage;
+    RetainPtr<NSArray<NSURL *>> _externalPromisedFiles;
     BlockPtr<void()> _willEndDraggingHandler;
     NSPoint _startLocationInWindow;
     NSPoint _endLocationInWindow;
@@ -160,7 +161,7 @@ static NSImage *defaultExternalDragImage()
 - (void)performDragInWebView:(DragAndDropTestWKWebView *)webView atLocation:(NSPoint)viewLocation withImage:(NSImage *)image pasteboard:(NSPasteboard *)pasteboard source:(id)source
 {
     _initialDragImageLocationInView = viewLocation;
-    _draggingInfo = adoptNS([[TestDraggingInfo alloc] init]);
+    _draggingInfo = adoptNS([[TestDraggingInfo alloc] initWithDragAndDropSimulator:self]);
     [_draggingInfo setDraggedImage:image];
     [_draggingInfo setDraggingPasteboard:pasteboard];
     [_draggingInfo setDraggingSource:source];
@@ -243,6 +244,68 @@ static NSImage *defaultExternalDragImage()
 - (void)setWillEndDraggingHandler:(dispatch_block_t)willEndDraggingHandler
 {
     _willEndDraggingHandler = makeBlockPtr(willEndDraggingHandler);
+}
+
+- (NSArray<NSURL *> *)externalPromisedFiles
+{
+    return _externalPromisedFiles.get();
+}
+
+static BOOL getFilePathsAndTypeIdentifiers(NSArray<NSURL *> *fileURLs, NSArray<NSString *> **outFilePaths, NSArray<NSString *> **outTypeIdentifiers)
+{
+    NSMutableArray *filePaths = [NSMutableArray arrayWithCapacity:fileURLs.count];
+    NSMutableArray *typeIdentifiers = [NSMutableArray arrayWithCapacity:fileURLs.count];
+    for (NSURL *url in fileURLs) {
+        NSString *typeIdentifier = nil;
+        NSError *error = nil;
+        BOOL foundUTI = [url getResourceValue:&typeIdentifier forKey:NSURLTypeIdentifierKey error:&error];
+        if (!foundUTI || error) {
+            [NSException raise:@"DragAndDropSimulator" format:@"Failed to get UTI for promised file: %@ with error: %@", url, error];
+            continue;
+        }
+        [typeIdentifiers addObject:typeIdentifier];
+        [filePaths addObject:url.path];
+    }
+
+    if (fileURLs.count != filePaths.count)
+        return NO;
+
+    if (outTypeIdentifiers)
+        *outTypeIdentifiers = typeIdentifiers;
+
+    if (outFilePaths)
+        *outFilePaths = filePaths;
+
+    return YES;
+}
+
+- (void)writePromisedFiles:(NSArray<NSURL *> *)fileURLs
+{
+    NSArray *paths = nil;
+    NSArray *types = nil;
+    if (!getFilePathsAndTypeIdentifiers(fileURLs, &paths, &types))
+        return;
+
+    NSMutableArray *names = [NSMutableArray arrayWithCapacity:paths.count];
+    for (NSString *path in paths)
+        [names addObject:path.lastPathComponent];
+
+    _externalPromisedFiles = fileURLs;
+    _externalDragPasteboard = [NSPasteboard pasteboardWithUniqueName];
+    [_externalDragPasteboard declareTypes:@[NSFilesPromisePboardType, NSFilenamesPboardType] owner:nil];
+    [_externalDragPasteboard setPropertyList:types forType:NSFilesPromisePboardType];
+    [_externalDragPasteboard setPropertyList:names forType:NSFilenamesPboardType];
+}
+
+- (void)writeFiles:(NSArray<NSURL *> *)fileURLs
+{
+    NSArray *paths = nil;
+    if (!getFilePathsAndTypeIdentifiers(fileURLs, &paths, nil))
+        return;
+
+    _externalDragPasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+    [_externalDragPasteboard declareTypes:@[NSFilenamesPboardType] owner:nil];
+    [_externalDragPasteboard setPropertyList:paths forType:NSFilenamesPboardType];
 }
 
 @end

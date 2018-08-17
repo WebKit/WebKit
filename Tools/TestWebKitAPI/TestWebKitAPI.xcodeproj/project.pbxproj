@@ -842,9 +842,11 @@
 		F4D5E4E81F0C5D38008C1A49 /* dragstart-clear-selection.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D5E4E71F0C5D27008C1A49 /* dragstart-clear-selection.html */; };
 		F4D65DA81F5E4704009D8C27 /* selected-text-image-link-and-editable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D65DA71F5E46C0009D8C27 /* selected-text-image-link-and-editable.html */; };
 		F4DEF6ED1E9B4DB60048EF61 /* image-in-link-and-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4DEF6EC1E9B4D950048EF61 /* image-in-link-and-input.html */; };
-		F4E0A296211FC5FB00AF7C7F /* selected-text-and-textarea.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4E0A295211FC5A300AF7C7F /* selected-text-and-textarea.html */; };
 		F4E0A28B211E4A2B00AF7C7F /* full-page-dropzone.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F46128D8211E496300D9FADB /* full-page-dropzone.html */; };
 		F4E0A28F211E5D5B00AF7C7F /* DragAndDropTestsMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4E0A28E211E5D5B00AF7C7F /* DragAndDropTestsMac.mm */; };
+		F4E0A296211FC5FB00AF7C7F /* selected-text-and-textarea.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4E0A295211FC5A300AF7C7F /* selected-text-and-textarea.html */; };
+		F4E0A2B42122402B00AF7C7F /* image-and-file-upload.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4E0A2B321223F2D00AF7C7F /* image-and-file-upload.html */; };
+		F4E0A2B82122847400AF7C7F /* TestFilePromiseReceiver.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4E0A2B72122847400AF7C7F /* TestFilePromiseReceiver.mm */; };
 		F4E3D80820F70BB9007B58C5 /* significant-text-milestone-article.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4E3D80720F708E4007B58C5 /* significant-text-milestone-article.html */; };
 		F4F137921D9B683E002BEC57 /* large-video-test-now-playing.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F137911D9B6832002BEC57 /* large-video-test-now-playing.html */; };
 		F4F405BC1D4C0D1C007A9707 /* full-size-autoplaying-video-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F405BA1D4C0CF8007A9707 /* full-size-autoplaying-video-with-audio.html */; };
@@ -1042,6 +1044,7 @@
 				510477741D298DDD009747EB /* IDBDeleteRecovery.sqlite3-wal in Copy Resources */,
 				5110FCF11E01CD64006F8D0B /* IDBIndexUpgradeToV2.html in Copy Resources */,
 				F41AB9A41EF4696B0083FA08 /* image-and-contenteditable.html in Copy Resources */,
+				F4E0A2B42122402B00AF7C7F /* image-and-file-upload.html in Copy Resources */,
 				F41AB9A51EF4696B0083FA08 /* image-and-textarea.html in Copy Resources */,
 				F4DEF6ED1E9B4DB60048EF61 /* image-in-link-and-input.html in Copy Resources */,
 				F45B63FB1F197F4A009D38B9 /* image-map.html in Copy Resources */,
@@ -2088,8 +2091,11 @@
 		F4D5E4E71F0C5D27008C1A49 /* dragstart-clear-selection.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "dragstart-clear-selection.html"; sourceTree = "<group>"; };
 		F4D65DA71F5E46C0009D8C27 /* selected-text-image-link-and-editable.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "selected-text-image-link-and-editable.html"; sourceTree = "<group>"; };
 		F4DEF6EC1E9B4D950048EF61 /* image-in-link-and-input.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "image-in-link-and-input.html"; sourceTree = "<group>"; };
-		F4E0A295211FC5A300AF7C7F /* selected-text-and-textarea.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "selected-text-and-textarea.html"; sourceTree = "<group>"; };
 		F4E0A28E211E5D5B00AF7C7F /* DragAndDropTestsMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropTestsMac.mm; sourceTree = "<group>"; };
+		F4E0A295211FC5A300AF7C7F /* selected-text-and-textarea.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "selected-text-and-textarea.html"; sourceTree = "<group>"; };
+		F4E0A2B321223F2D00AF7C7F /* image-and-file-upload.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "image-and-file-upload.html"; sourceTree = "<group>"; };
+		F4E0A2B62122847400AF7C7F /* TestFilePromiseReceiver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestFilePromiseReceiver.h; sourceTree = "<group>"; };
+		F4E0A2B72122847400AF7C7F /* TestFilePromiseReceiver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestFilePromiseReceiver.mm; sourceTree = "<group>"; };
 		F4E3D80720F708E4007B58C5 /* significant-text-milestone-article.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "significant-text-milestone-article.html"; sourceTree = "<group>"; };
 		F4F137911D9B6832002BEC57 /* large-video-test-now-playing.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-test-now-playing.html"; sourceTree = "<group>"; };
 		F4F405BA1D4C0CF8007A9707 /* full-size-autoplaying-video-with-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "full-size-autoplaying-video-with-audio.html"; sourceTree = "<group>"; };
@@ -2662,6 +2668,7 @@
 				510477711D298D85009747EB /* IDBDeleteRecovery.sqlite3-wal */,
 				5110FCF01E01CD53006F8D0B /* IDBIndexUpgradeToV2.html */,
 				F41AB9991EF4692C0083FA08 /* image-and-contenteditable.html */,
+				F4E0A2B321223F2D00AF7C7F /* image-and-file-upload.html */,
 				F41AB9931EF4692C0083FA08 /* image-and-textarea.html */,
 				F4DEF6EC1E9B4D950048EF61 /* image-in-link-and-input.html */,
 				F45B63FA1F197F33009D38B9 /* image-map.html */,
@@ -3147,6 +3154,8 @@
 				29AB8AA2164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm */,
 				F46128C9211D475100D9FADB /* TestDraggingInfo.h */,
 				F46128CA211D475100D9FADB /* TestDraggingInfo.mm */,
+				F4E0A2B62122847400AF7C7F /* TestFilePromiseReceiver.h */,
+				F4E0A2B72122847400AF7C7F /* TestFilePromiseReceiver.mm */,
 				C08587BE13FE956C001EF4E5 /* WebKitAgnosticTest.h */,
 				C08587BD13FE956C001EF4E5 /* WebKitAgnosticTest.mm */,
 			);
@@ -3962,6 +3971,7 @@
 				7CCE7F161A411AE600447C4C /* TerminateTwice.cpp in Sources */,
 				7CCE7EA91A411A1D00447C4C /* TestBrowsingContextLoadDelegate.mm in Sources */,
 				F46128CB211D475100D9FADB /* TestDraggingInfo.mm in Sources */,
+				F4E0A2B82122847400AF7C7F /* TestFilePromiseReceiver.mm in Sources */,
 				F45E15762112CE6200307E82 /* TestInputDelegate.mm in Sources */,
 				2D1C04A71D76298B000A6816 /* TestNavigationDelegate.mm in Sources */,
 				A14FC5901B8AE36F00D107EB /* TestProtocol.mm in Sources */,
