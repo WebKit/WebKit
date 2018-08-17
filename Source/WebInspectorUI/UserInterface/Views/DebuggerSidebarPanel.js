@@ -176,22 +176,44 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             this._domBreakpointsSection = new WI.DetailsSection("dom-breakpoints", WI.UIString("DOM Breakpoints"), [domBreakpointsGroup], null, defaultCollapsed);
             this.contentView.element.appendChild(this._domBreakpointsSection.element);
 
+            this._eventBreakpointsContentTreeOutline = this.createContentTreeOutline(true);
+            this._eventBreakpointsContentTreeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, this._eventBreakpointAddedOrRemoved, this);
+            this._eventBreakpointsContentTreeOutline.addEventListener(WI.TreeOutline.Event.ElementRemoved, this._eventBreakpointAddedOrRemoved, this);
+
+            this._eventBreakpointsRow = new WI.DetailsSectionRow(WI.UIString("No Breakpoints"));
+            this._eventBreakpointsRow.element.appendChild(this._eventBreakpointsContentTreeOutline.element);
+            this._eventBreakpointsRow.showEmptyMessage();
+
+            let eventBreakpointNavigationBar = new WI.NavigationBar;
+            let eventBreakpointNavigationBarWrapper = document.createElement("div");
+            eventBreakpointNavigationBarWrapper.appendChild(eventBreakpointNavigationBar.element);
+
+            let addEventBreakpointButton = new WI.ButtonNavigationItem("add-event-breakpoint", WI.UIString("Add Event Breakpoint"), "Images/Plus13.svg", 13, 13);
+            addEventBreakpointButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._addEventBreakpointButtonClicked, this);
+            eventBreakpointNavigationBar.addNavigationItem(addEventBreakpointButton);
+
+            let eventBreakpointsGroup = new WI.DetailsSectionGroup([this._eventBreakpointsRow]);
+            this._eventBreakpointsSection = new WI.DetailsSection("event-breakpoints", WI.UIString("Event Breakpoints"), [eventBreakpointsGroup], eventBreakpointNavigationBarWrapper, defaultCollapsed);
+            this.contentView.element.appendChild(this._eventBreakpointsSection.element);
+
+            this._eventBreakpointTreeController = new WI.EventBreakpointTreeController(this._eventBreakpointsContentTreeOutline);
+
             this._xhrBreakpointsContentTreeOutline = this.createContentTreeOutline(true);
             this._xhrBreakpointTreeController = new WI.XHRBreakpointTreeController(this._xhrBreakpointsContentTreeOutline);
 
             this._xhrBreakpointsRow = new WI.DetailsSectionRow;
             this._xhrBreakpointsRow.element.appendChild(this._xhrBreakpointsContentTreeOutline.element);
 
-            let navigationBar = new WI.NavigationBar;
-            let navigationBarWrapper = document.createElement("div");
-            navigationBarWrapper.appendChild(navigationBar.element);
+            let xhrBreakpointNavigationBar = new WI.NavigationBar;
+            let xhrBreakpointNavigationBarWrapper = document.createElement("div");
+            xhrBreakpointNavigationBarWrapper.appendChild(xhrBreakpointNavigationBar.element);
 
             let addXHRBreakpointButton = new WI.ButtonNavigationItem("add-xhr-breakpoint", WI.UIString("Add XHR Breakpoint"), "Images/Plus13.svg", 13, 13);
             addXHRBreakpointButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._addXHRBreakpointButtonClicked, this);
-            navigationBar.addNavigationItem(addXHRBreakpointButton);
+            xhrBreakpointNavigationBar.addNavigationItem(addXHRBreakpointButton);
 
             let xhrBreakpointsGroup = new WI.DetailsSectionGroup([this._xhrBreakpointsRow]);
-            let xhrBreakpointsSection = new WI.DetailsSection("xhr-breakpoints", WI.UIString("XHR Breakpoints"), [xhrBreakpointsGroup], navigationBarWrapper, defaultCollapsed);
+            let xhrBreakpointsSection = new WI.DetailsSection("xhr-breakpoints", WI.UIString("XHR Breakpoints"), [xhrBreakpointsGroup], xhrBreakpointNavigationBarWrapper, defaultCollapsed);
             this.contentView.element.appendChild(xhrBreakpointsSection.element);
         }
 
@@ -1032,6 +1054,24 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             }
             break;
 
+        case WI.DebuggerManager.PauseReason.EventListener:
+            console.assert(pauseData, "Expected data with an event listener, but found none.");
+            if (pauseData) {
+                let eventBreakpoint = WI.domDebuggerManager.eventBreakpointForEventName(pauseData.eventName);
+                console.assert(eventBreakpoint, "Expected Event Listener breakpoint for event name.", pauseData.eventName);
+
+                this._pauseReasonTreeOutline = this.createContentTreeOutline(true);
+
+                let eventBreakpointTreeElement = new WI.EventBreakpointTreeElement(eventBreakpoint, WI.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName, WI.UIString("“%s“ Event Fired").format(pauseData.eventName));
+                this._pauseReasonTreeOutline.appendChild(eventBreakpointTreeElement);
+
+                let eventBreakpointRow = new WI.DetailsSectionRow;
+                eventBreakpointRow.element.appendChild(this._pauseReasonTreeOutline.element);
+
+                this._pauseReasonGroup.rows = [eventBreakpointRow];
+            }
+            return true;
+
         case WI.DebuggerManager.PauseReason.Exception:
             console.assert(pauseData, "Expected data with an exception, but found none.");
             if (pauseData) {
@@ -1175,6 +1215,28 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         this._domBreakpointsSection.collapsed = false;
     }
 
+    _eventBreakpointAddedOrRemoved(event)
+    {
+        if (!this._eventBreakpointsContentTreeOutline.children.length) {
+            this._eventBreakpointsRow.showEmptyMessage();
+            return;
+        }
+
+        if (this._eventBreakpointsContentTreeOutline.element.parent)
+            return;
+
+        this._eventBreakpointsRow.hideEmptyMessage();
+        this._eventBreakpointsRow.element.append(this._eventBreakpointsContentTreeOutline.element);
+
+        this._eventBreakpointsSection.collapsed = false;
+    }
+
+    _addEventBreakpointButtonClicked(event)
+    {
+        let popover = new WI.EventBreakpointPopover(this);
+        popover.show(event.target.element, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
+    }
+
     _addXHRBreakpointButtonClicked(event)
     {
         let popover = new WI.XHRBreakpointPopover(this);
@@ -1188,11 +1250,19 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         if (popover.result !== WI.InputPopover.Result.Committed)
             return;
 
-        let url = popover.value;
-        if (!url)
+        if (popover instanceof WI.EventBreakpointPopover) {
+            let eventName = popover.value;
+            if (eventName)
+                WI.domDebuggerManager.addEventBreakpoint(new WI.EventBreakpoint(eventName));
             return;
+        }
 
-        WI.domDebuggerManager.addXHRBreakpoint(new WI.XHRBreakpoint(popover.type, url));
+        if (popover instanceof WI.XHRBreakpointPopover) {
+            let url = popover.value;
+            if (url)
+                WI.domDebuggerManager.addXHRBreakpoint(new WI.XHRBreakpoint(popover.type, url));
+            return;
+        }
     }
 };
 

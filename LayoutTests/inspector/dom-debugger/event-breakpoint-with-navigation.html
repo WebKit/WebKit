@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function handleLoad(event) {
+    TestPage.dispatchEventToFrontend("TestPageLoad");
+
+    runTest();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("DOMDebugger.EventWithNavigation");
+
+    suite.addTestCase({
+        name: `DOMDebugger.EventWithNavigation.AddBreakpoint`,
+        description: "Check that a breakpoint is preserved over navigation.",
+        test(resolve, reject) {
+            let paused = false;
+
+            let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                paused = true;
+
+                let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
+                InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.EventListener, "Pause reason should be EventListener.");
+                InspectorTest.expectEqual(targetData.pauseData.eventName, "load", "Pause data eventName should be \"load\".");
+
+                WI.debuggerManager.resume()
+                .catch((reason) => {
+                    InspectorTest.fail(reason);
+                    resolve();
+                });
+            });
+
+            InspectorTest.singleFireEventListener("TestPageLoad", (event) => {
+                if (!paused) {
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+
+                    InspectorTest.fail("Should pause before \"load\" event handler is run");
+                }
+
+                resolve();
+            });
+
+            InspectorTest.log("Adding \"load\" Event Breakpoint...");
+
+            let breakpoint = new WI.EventBreakpoint("load");
+
+            WI.domDebuggerManager.awaitEvent(WI.DOMDebuggerManager.Event.EventBreakpointAdded)
+            .then((event) => {
+                InspectorTest.assert(event.data.breakpoint.eventName, "load", "Breakpoint should be for expected event name.");
+
+                InspectorTest.log("Reloading WebInspector...");
+                return InspectorTest.reloadPage();
+            })
+            .catch(reject);
+
+            WI.domDebuggerManager.addEventBreakpoint(breakpoint);
+        },
+        teardown(resolve, reject) {
+            let breakpoints = WI.domDebuggerManager.eventBreakpoints;
+            for (let breakpoint of breakpoints)
+                WI.domDebuggerManager.removeEventBreakpoint(breakpoint);
+
+            resolve();
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body>
+    <p>Tests for Event Listener breakpoints.</p>
+    <div id="x"></div>
+    <script>
+        window.addEventListener("load", handleLoad);
+    </script>
+</body>
+</html>

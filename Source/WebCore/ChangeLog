@@ -1,3 +1,16 @@
+2018-08-16  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: support breakpoints for arbitrary event names
+        https://bugs.webkit.org/show_bug.cgi?id=183118
+
+        Reviewed by Joseph Pecoraro.
+
+        Tests: inspector/dom-debugger/event-breakpoints.html
+               inspector/dom-debugger/event-breakpoints-with-navigation.html
+
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded):
+
 2018-08-16  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Bug fix on deleting cookies when Max-Age is set to zero.

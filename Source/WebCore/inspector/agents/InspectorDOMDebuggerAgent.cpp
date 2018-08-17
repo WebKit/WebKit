@@ -371,7 +371,7 @@ void InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded(bool isDOMEvent, cons
         return;
 
     Ref<JSON::Object> eventData = JSON::Object::create();
-    eventData->setString("eventName"_s, fullEventName);
+    eventData->setString("eventName"_s, eventName);
 
     if (synchronous)
         m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::EventListener, WTFMove(eventData));

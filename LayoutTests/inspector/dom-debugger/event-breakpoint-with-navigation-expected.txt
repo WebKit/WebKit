@@ -1,0 +1,11 @@
+Tests for Event Listener breakpoints.
+
+
+== Running test suite: DOMDebugger.EventWithNavigation
+-- Running test case: DOMDebugger.EventWithNavigation.AddBreakpoint
+Adding "load" Event Breakpoint...
+Reloading WebInspector...
+PASS: Pause reason should be EventListener.
+PASS: Pause data eventName should be "load".
+-- Running test teardown.
+

@@ -828,6 +828,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return WI.DebuggerManager.PauseReason.DOM;
         case DebuggerAgent.PausedReason.DebuggerStatement:
             return WI.DebuggerManager.PauseReason.DebuggerStatement;
+        case DebuggerAgent.PausedReason.EventListener:
+            return WI.DebuggerManager.PauseReason.EventListener;
         case DebuggerAgent.PausedReason.Exception:
             return WI.DebuggerManager.PauseReason.Exception;
         case DebuggerAgent.PausedReason.PauseOnNextStatement:
@@ -1236,6 +1238,7 @@ WI.DebuggerManager.PauseReason = {
     CSPViolation: "CSP-violation",
     DebuggerStatement: "debugger-statement",
     DOM: "DOM",
+    EventListener: "event-listener",
     Exception: "exception",
     PauseOnNextStatement: "pause-on-next-statement",
     XHR: "xhr",
