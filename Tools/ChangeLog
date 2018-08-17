@@ -1,3 +1,19 @@
+2018-08-17  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (234743) Timeouts in TestWebKitAPI.PreferredAudioBufferSize.AudioWithWebAudio and TestWebKitAPI.PreferredAudioBufferSize.WebAudio
+        https://bugs.webkit.org/show_bug.cgi?id=188470
+        <rdar://problem/43144969>
+
+        Reviewed by Alex Christensen.
+
+        On a loaded server, the WebContent process may send the "playing" message before the
+        UIProcess has a chance to register a listener for that message. Restructure the tests
+        so that the listener is registered before the page is loaded.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PreferredAudioBufferSize.mm:
+        (PreferredAudioBufferSize::runPlayingTestWithPageNamed):
+        (TEST_F):
+
 2018-08-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] [WK2] Add infrastructure to test receiving file promises on drop

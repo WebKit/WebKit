@@ -57,8 +57,19 @@ public:
         return [webView stringByEvaluatingJavaScript:@"window.internals.preferredAudioBufferSize()"].doubleValue;
     }
 
+    void runPlayingTestWithPageNamed(NSString* name, double expectedAudioBufferSize)
+    {
+        createView();
+        __block bool isPlaying = false;
+        [webView performAfterReceivingMessage:@"playing" action:^() { isPlaying = true; }];
+        [webView synchronouslyLoadTestPageNamed:name];
+        TestWebKitAPI::Util::run(&isPlaying);
+        EXPECT_EQ(expectedAudioBufferSize, preferredAudioBufferSize());
+    }
+
     RetainPtr<WKWebViewConfiguration> configuration;
     RetainPtr<TestWKWebView> webView;
+    bool isPlaying { false };
 };
 
 TEST_F(PreferredAudioBufferSize, Empty)
@@ -70,50 +81,32 @@ TEST_F(PreferredAudioBufferSize, Empty)
 
 TEST_F(PreferredAudioBufferSize, AudioElement)
 {
-    createView();
-    [webView synchronouslyLoadTestPageNamed:@"audio-only"];
-    [webView waitForMessage:@"playing"];
-    EXPECT_EQ(4096, preferredAudioBufferSize());
+    runPlayingTestWithPageNamed(@"audio-only", 4096);
 }
 
-TEST_F(PreferredAudioBufferSize, DISABLED_WebAudio)
+TEST_F(PreferredAudioBufferSize, WebAudio)
 {
-    createView();
-    [webView synchronouslyLoadTestPageNamed:@"web-audio-only"];
-    [webView waitForMessage:@"playing"];
-    EXPECT_EQ(128, preferredAudioBufferSize());
+    runPlayingTestWithPageNamed(@"web-audio-only", 128);
 }
 
 TEST_F(PreferredAudioBufferSize, VideoOnly)
 {
-    createView();
-    [webView synchronouslyLoadTestPageNamed:@"video-without-audio"];
-    [webView waitForMessage:@"playing"];
-    EXPECT_EQ(512, preferredAudioBufferSize());
+    runPlayingTestWithPageNamed(@"video-without-audio", 512);
 }
 
 TEST_F(PreferredAudioBufferSize, VideoWithAudio)
 {
-    createView();
-    [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
-    [webView waitForMessage:@"playing"];
-    EXPECT_EQ(4096, preferredAudioBufferSize());
+    runPlayingTestWithPageNamed(@"video-with-audio", 4096);
 }
 
-TEST_F(PreferredAudioBufferSize, DISABLED_AudioWithWebAudio)
+TEST_F(PreferredAudioBufferSize, AudioWithWebAudio)
 {
-    createView();
-    [webView synchronouslyLoadTestPageNamed:@"audio-with-web-audio"];
-    [webView waitForMessage:@"playing"];
-    EXPECT_EQ(128, preferredAudioBufferSize());
+    runPlayingTestWithPageNamed(@"audio-with-web-audio", 128);
 }
 
 TEST_F(PreferredAudioBufferSize, VideoWithAudioAndWebAudio)
 {
-    createView();
-    [webView synchronouslyLoadTestPageNamed:@"video-with-audio-and-web-audio"];
-    [webView waitForMessage:@"playing"];
-    EXPECT_EQ(128, preferredAudioBufferSize());
+    runPlayingTestWithPageNamed(@"video-with-audio-and-web-audio", 128);
 }
 
 #endif // WK_HAVE_C_SPI && WK_API_ENABLED
