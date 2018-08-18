@@ -104,15 +104,6 @@ bool ResourceLoadObserver::shouldLog(Page* page) const
     return DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() && !page->usesEphemeralSession() && m_notificationCallback;
 }
 
-// FIXME: This quirk was added to address <rdar://problem/33325881> and should be removed once content is fixed.
-static bool resourceNeedsSSOQuirk(Page* page, const URL& url)
-{
-    if (!shouldEnableSiteSpecificQuirks(page))
-        return false;
-
-    return equalIgnoringASCIICase(url.host(), "sp.auth.adobe.com");
-}
-
 void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
     ASSERT(frame->page());
@@ -137,9 +128,6 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     auto sourcePrimaryDomain = primaryDomain(sourceURL);
     
     if (areDomainsAssociated(page, targetPrimaryDomain, mainFramePrimaryDomain) || (isRedirect && areDomainsAssociated(page, targetPrimaryDomain, sourcePrimaryDomain)))
-        return;
-
-    if (resourceNeedsSSOQuirk(page, targetURL))
         return;
 
     bool shouldCallNotificationCallback = false;
