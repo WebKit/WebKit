@@ -1,3 +1,31 @@
+2018-08-17  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Datalist][iOS] Display suggestions for input[type=color]
+        https://bugs.webkit.org/show_bug.cgi?id=188669
+
+        Reviewed by Tim Horton.
+
+        An input[type=color] element that has an associated datalist element should
+        display the color values provided on iOS. Similar to macOS, we now support 1-12
+        suggested colors, that will be displayed at the top of the color picker.
+
+        Also ensured that we get rounded corners on both sides of a color swatch if it is
+        the only one in its row.
+
+        * Shared/AssistedNodeInformation.cpp: Added suggestedColors field.
+        (WebKit::AssistedNodeInformation::encode const):
+        (WebKit::AssistedNodeInformation::decode):
+        * Shared/AssistedNodeInformation.h:
+        * UIProcess/ios/forms/WKFormColorPicker.mm:
+        (+[WKColorPicker defaultTopColorMatrix]):
+        (-[WKColorPicker initWithView:]): Use the list of suggestedColors if it exists.
+        (-[WKColorPicker drawSelectionIndicatorForColorButton:]):
+        * WebProcess/WebCoreSupport/WebColorChooser.cpp:
+        (WebKit::WebColorChooser::WebColorChooser):
+        (WebKit::WebColorChooser::reattachColorChooser):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getAssistedNodeInformation):
+
 2018-08-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r234991.

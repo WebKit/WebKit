@@ -28,6 +28,7 @@
 #include "ArgumentCoders.h"
 #include <WebCore/AutocapitalizeTypes.h>
 #include <WebCore/Autofill.h>
+#include <WebCore/Color.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/URL.h>
 #include <wtf/text/WTFString.h>
@@ -122,6 +123,9 @@ struct AssistedNodeInformation {
     String placeholder;
     String label;
     String ariaLabel;
+#if ENABLE(INPUT_TYPE_COLOR) && ENABLE(DATALIST_ELEMENT)
+    Vector<WebCore::Color> suggestedColors;
+#endif
 
     uint64_t assistedNodeIdentifier { 0 };
 

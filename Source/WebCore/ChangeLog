@@ -1,3 +1,24 @@
+2018-08-17  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Datalist][iOS] Display suggestions for input[type=color]
+        https://bugs.webkit.org/show_bug.cgi?id=188669
+
+        Reviewed by Tim Horton.
+
+        Expose suggestedColors() in HTMLInputElement in order to allow the UIProcess to
+        access the list of suggested colors from a <datalist> element.
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::suggestedColors const):
+        * html/ColorInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::suggestedColors const):
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::suggestedColors const):
+        * html/InputType.h:
+        * platform/ColorChooserClient.h:
+
 2018-08-17  Alex Christensen  <achristensen@webkit.org>
 
         Clean up CSSSelectorList after r234825

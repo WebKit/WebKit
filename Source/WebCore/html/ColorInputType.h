@@ -50,7 +50,7 @@ private:
     IntRect elementRectRelativeToRootView() const final;
     Color currentColor() final;
     bool shouldShowSuggestions() const final;
-    Vector<Color> suggestions() const final;
+    Vector<Color> suggestedColors() const final;
     bool isMouseFocusable() const final;
     bool isKeyboardFocusable(KeyboardEvent*) const final;
     bool isColorControl() const final;

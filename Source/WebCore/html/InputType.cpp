@@ -1131,6 +1131,11 @@ void InputType::selectColor(StringView)
 {
 }
 
+Vector<Color> InputType::suggestedColors() const
+{
+    return { };
+}
+
 RefPtr<TextControlInnerTextElement> InputType::innerTextElement() const
 {
     return nullptr;

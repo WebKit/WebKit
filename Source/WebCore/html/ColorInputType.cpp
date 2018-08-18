@@ -281,7 +281,7 @@ bool ColorInputType::shouldShowSuggestions() const
 #endif
 }
 
-Vector<Color> ColorInputType::suggestions() const
+Vector<Color> ColorInputType::suggestedColors() const
 {
     Vector<Color> suggestions;
 #if ENABLE(DATALIST_ELEMENT)

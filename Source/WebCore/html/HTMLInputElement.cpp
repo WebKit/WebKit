@@ -1601,6 +1601,11 @@ void HTMLInputElement::selectColor(StringView color)
     m_inputType->selectColor(color);
 }
 
+Vector<Color> HTMLInputElement::suggestedColors() const
+{
+    return m_inputType->suggestedColors();
+}
+
 #if ENABLE(DATALIST_ELEMENT)
 
 RefPtr<HTMLElement> HTMLInputElement::list() const

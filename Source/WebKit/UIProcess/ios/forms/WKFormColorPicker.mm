@@ -45,6 +45,9 @@ static const CGFloat colorSelectionIndicatorBorderWidth = 4;
 static const CGFloat colorSelectionIndicatorCornerRadius = 9;
 static const CGFloat pickerWidthForPopover = 280;
 static const CGFloat topColorMatrixPadding = 5;
+#if ENABLE(DATALIST_ELEMENT)
+static const size_t maxColorSuggestions = 12;
+#endif
 
 using namespace WebKit;
 
@@ -162,7 +165,7 @@ using namespace WebKit;
 
 + (NSArray<NSArray<UIColor *> *> *)defaultTopColorMatrix
 {
-    return @[@[[UIColor redColor], [UIColor orangeColor], [UIColor yellowColor], [UIColor greenColor], [UIColor cyanColor], [UIColor blueColor], [UIColor magentaColor], [UIColor purpleColor], [UIColor brownColor], [UIColor whiteColor], [UIColor grayColor], [UIColor blackColor]]];
+    return @[ @[ UIColor.redColor, UIColor.orangeColor, UIColor.yellowColor, UIColor.greenColor, UIColor.cyanColor, UIColor.blueColor, UIColor.magentaColor, UIColor.purpleColor, UIColor.brownColor, UIColor.whiteColor, UIColor.grayColor, UIColor.blackColor ] ];
 }
 
 - (instancetype)initWithView:(WKContentView *)view
@@ -190,7 +193,21 @@ using namespace WebKit;
     [_mainColorMatrix setDelegate:self];
     [_colorPicker addSubview:_mainColorMatrix.get()];
 
-    _topColorMatrix = adoptNS([[WKColorMatrixView alloc] initWithFrame:CGRectMake(0, 0, colorPickerSize.width, swatchHeight) colorMatrix:[[self class] defaultTopColorMatrix]]);
+    NSArray<NSArray<UIColor *> *> *topColorMatrix = [[self class] defaultTopColorMatrix];
+
+#if ENABLE(DATALIST_ELEMENT)
+    size_t numColorSuggestions = view.assistedNodeInformation.suggestedColors.size();
+    if (numColorSuggestions) {
+        NSMutableArray<UIColor *> *colors = [NSMutableArray array];
+        for (size_t i = 0; i < std::min(numColorSuggestions, maxColorSuggestions); i++) {
+            WebCore::Color color = view.assistedNodeInformation.suggestedColors[i];
+            [colors addObject:[UIColor colorWithCGColor:cachedCGColor(color)]];
+        }
+        topColorMatrix = @[ colors ];
+    }
+#endif
+
+    _topColorMatrix = adoptNS([[WKColorMatrixView alloc] initWithFrame:CGRectMake(0, 0, colorPickerSize.width, swatchHeight) colorMatrix:topColorMatrix]);
     [_topColorMatrix setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
     [_topColorMatrix setDelegate:self];
     [_colorPicker addSubview:_topColorMatrix.get()];
@@ -227,15 +244,15 @@ using namespace WebKit;
         bool maxXEqual = std::abs(CGRectGetMaxX(frame) - CGRectGetMaxX(colorPickerBounds)) < FLT_EPSILON;
         bool maxYEqual = std::abs(CGRectGetMaxY(frame) - CGRectGetMaxY(colorPickerBounds)) < FLT_EPSILON;
 
-        // On iPad, round one corner of the indicator if it's at the corner of the picker, to match the popover.
+        // On iPad, round the corners of the indicator that border the corners of the picker, to match the popover.
         if (minXEqual && minYEqual)
-            roundCorner = UIRectCornerTopLeft;
-        else if (maxXEqual && minYEqual)
-            roundCorner = UIRectCornerTopRight;
-        else if (minXEqual && maxYEqual)
-            roundCorner = UIRectCornerBottomLeft;
-        else if (maxXEqual && maxYEqual)
-            roundCorner = UIRectCornerBottomRight;
+            roundCorner |= UIRectCornerTopLeft;
+        if (maxXEqual && minYEqual)
+            roundCorner |= UIRectCornerTopRight;
+        if (minXEqual && maxYEqual)
+            roundCorner |= UIRectCornerBottomLeft;
+        if (maxXEqual && maxYEqual)
+            roundCorner |= UIRectCornerBottomRight;
     }
 
     UIBezierPath *cornerMaskPath = [UIBezierPath bezierPathWithRoundedRect:colorButton.bounds byRoundingCorners:roundCorner cornerRadii:CGSizeMake(colorSelectionIndicatorCornerRadius, colorSelectionIndicatorCornerRadius)];

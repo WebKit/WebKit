@@ -48,7 +48,7 @@ public:
     virtual IntRect elementRectRelativeToRootView() const = 0;
     virtual Color currentColor() = 0;
     virtual bool shouldShowSuggestions() const = 0;
-    virtual Vector<Color> suggestions() const = 0;
+    virtual Vector<Color> suggestedColors() const = 0;
 };
 
 } // namespace WebCore
