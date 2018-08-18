@@ -1,3 +1,51 @@
+2018-08-18  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Fire an initial dummy notification
+        https://bugs.webkit.org/show_bug.cgi?id=188670
+
+        Reviewed by Simon Fraser.
+
+        Add logic to track ongoing intersection observations. Create an IntersectionObserverRegistration
+        and fire a single dummy notification for each one.
+
+        Test: intersection-observer/root-element-moved.html
+        Also tested by existing tests in imported/w3c/web-platform-tests/intersection-observer.
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::addIntersectionObserver):
+        (WebCore::Document::removeIntersectionObserver):
+        (WebCore::Document::updateIntersectionObservations):
+        (WebCore::Document::notifyIntersectionObserversTimerFired):
+        * dom/Document.h:
+        (WebCore::Document::numberOfIntersectionObservers const):
+        * dom/Element.cpp:
+        (WebCore::Element::didMoveToNewDocument):
+        (WebCore::Element::disconnectFromIntersectionObservers):
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::create):
+        (WebCore::IntersectionObserver::IntersectionObserver):
+        (WebCore::IntersectionObserver::~IntersectionObserver):
+        (WebCore::IntersectionObserver::observe):
+        (WebCore::IntersectionObserver::unobserve):
+        (WebCore::IntersectionObserver::disconnect):
+        (WebCore::IntersectionObserver::takeRecords):
+        (WebCore::IntersectionObserver::targetDestroyed):
+        (WebCore::IntersectionObserver::removeTargetRegistration):
+        (WebCore::IntersectionObserver::removeAllTargets):
+        (WebCore::IntersectionObserver::rootDestroyed):
+        (WebCore::IntersectionObserver::appendQueuedEntry):
+        (WebCore::IntersectionObserver::notify):
+        * page/IntersectionObserver.h:
+        (WebCore::IntersectionObserver::trackingDocument):
+        (WebCore::IntersectionObserver:: const):
+        (WebCore::IntersectionObserver::hasObservationTargets const):
+        * page/IntersectionObserver.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::numberOfIntersectionObservers const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-08-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Paste is missing from callout bar when pasteboard only contains custom data

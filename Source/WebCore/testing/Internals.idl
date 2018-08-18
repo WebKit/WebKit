@@ -359,6 +359,7 @@ enum CompositingPolicy {
     unsigned long numberOfLiveNodes();
     unsigned long numberOfLiveDocuments();
     unsigned long referencingNodeCount(Document document);
+    [Conditional=INTERSECTION_OBSERVER] unsigned long numberOfIntersectionObservers(Document document);
     WindowProxy? openDummyInspectorFrontend(DOMString url);
     void closeDummyInspectorFrontend();
     [MayThrowException] void setInspectorIsUnderTest(boolean isUnderTest);

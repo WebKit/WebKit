@@ -1,3 +1,14 @@
+2018-08-18  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Fire an initial dummy notification
+        https://bugs.webkit.org/show_bug.cgi?id=188670
+
+        Reviewed by Simon Fraser.
+
+        * intersection-observer/root-element-deleted.html: Add additional assertions.
+        * intersection-observer/root-element-moved-expected.txt: Added.
+        * intersection-observer/root-element-moved.html: Added.
+
 2018-08-17  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Add layout test for web workers importing cross-site scripts

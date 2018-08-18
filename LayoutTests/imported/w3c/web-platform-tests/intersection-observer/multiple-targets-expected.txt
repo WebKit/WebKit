@@ -1,7 +1,7 @@
 
 PASS One observer with multiple targets. 
-FAIL First rAF. assert_equals: Three initial notifications. expected 3 but got 0
-FAIL document.scrollingElement.scrollTop = 150 assert_equals: Four notifications. expected 4 but got 0
-FAIL document.scrollingElement.scrollTop = 10000 assert_equals: Six notifications. expected 6 but got 0
-FAIL document.scrollingElement.scrollTop = 0 assert_equals: Nine notifications. expected 9 but got 0
+PASS First rAF. 
+FAIL document.scrollingElement.scrollTop = 150 assert_equals: Four notifications. expected 4 but got 3
+FAIL document.scrollingElement.scrollTop = 10000 assert_equals: Six notifications. expected 6 but got 3
+FAIL document.scrollingElement.scrollTop = 0 assert_equals: Nine notifications. expected 9 but got 3
 

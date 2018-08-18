@@ -1,4 +1,4 @@
 
 PASS isIntersecting changes should trigger notifications. 
-FAIL Rects in initial notifications should report initial positions. assert_equals: Has 3 initial notifications. expected 3 but got 0
+FAIL Rects in initial notifications should report initial positions. assert_equals: Check 1st entry rect.right expected 100 but got 0
 
