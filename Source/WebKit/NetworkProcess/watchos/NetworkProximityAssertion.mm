@@ -57,19 +57,26 @@ void NetworkProximityAssertion::hold()
     }
 
     if (m_releaseTimer.isActive()) {
+        ASSERT(m_isHoldingAssertion);
         m_releaseTimer.stop();
         return;
     }
 
-    if (m_assertionCount == 1)
+    if (m_assertionCount == 1) {
+        ASSERT(!m_isHoldingAssertion);
         holdNow();
+    }
+
+    ASSERT(m_isHoldingAssertion);
 }
 
 void NetworkProximityAssertion::release()
 {
     ASSERT(m_assertionCount);
-    if (!m_assertionCount || --m_assertionCount)
+    if (!m_assertionCount)
         return;
+
+    --m_assertionCount;
 
     if (m_state == State::Suspended) {
         ASSERT(!m_isHoldingAssertion);
@@ -78,7 +85,10 @@ void NetworkProximityAssertion::release()
         return;
     }
 
-    m_releaseTimer.restart();
+    ASSERT(m_isHoldingAssertion);
+    ASSERT(!m_releaseTimer.isActive());
+    if (!m_assertionCount)
+        m_releaseTimer.restart();
 }
 
 void NetworkProximityAssertion::resume(ResumptionReason)
@@ -135,9 +145,10 @@ void NetworkProximityAssertion::suspendNow()
 
 void NetworkProximityAssertion::releaseTimerFired()
 {
-    ASSERT(!m_releaseTimer.isActive());
-    ASSERT(!m_assertionCount);
+    ASSERT(m_isHoldingAssertion);
     ASSERT(m_state != State::Suspended);
+    ASSERT(!m_assertionCount);
+    ASSERT(!m_releaseTimer.isActive());
     releaseNow();
 }
 
