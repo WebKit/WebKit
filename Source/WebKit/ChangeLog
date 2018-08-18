@@ -1,5 +1,14 @@
 2018-08-18  Andy Estes  <aestes@apple.com>
 
+        [watchOS] NetworkProximityManager should use WTF_MAKE_FAST_ALLOCATED
+        https://bugs.webkit.org/show_bug.cgi?id=188723
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/watchos/NetworkProximityManager.h:
+
+2018-08-18  Andy Estes  <aestes@apple.com>
+
         [watchOS] Add more assertions to NetworkProximityAssertion
         https://bugs.webkit.org/show_bug.cgi?id=188721
 

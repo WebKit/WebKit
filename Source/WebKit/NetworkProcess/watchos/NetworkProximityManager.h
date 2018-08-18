@@ -67,6 +67,7 @@ public:
 };
 
 class NetworkProximityManager final : public NetworkProcessSupplement, private NetworkProximityServiceClient {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(NetworkProximityManager);
 public:
     explicit NetworkProximityManager(ChildProcess&);
