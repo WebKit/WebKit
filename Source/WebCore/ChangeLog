@@ -1,3 +1,18 @@
+2018-08-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Pack booleans in Event into a bitfield
+        https://bugs.webkit.org/show_bug.cgi?id=188713
+
+        Reviewed by Daniel Bates.
+
+        Use bitfields for booleans in Event class.
+
+        * dom/Event.cpp:
+        (WebCore::Event::Event):
+        * dom/Event.h:
+        (WebCore::Event::IsComposed): Added.
+        (WebCore::Event): Packed booleans into a bitfield.
+
 2018-08-17  Aditya Keerthi  <akeerthi@apple.com>
 
         [Datalist][iOS] Display suggestions for input[type=color]

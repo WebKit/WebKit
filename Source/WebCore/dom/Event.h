@@ -43,8 +43,9 @@ public:
     enum class IsTrusted : uint8_t { No, Yes };
     enum class CanBubble : uint8_t { No, Yes };
     enum class IsCancelable : uint8_t { No, Yes };
+    enum class IsComposed : uint8_t { No, Yes };
 
-    enum PhaseType { 
+    enum PhaseType {
         NONE = 0,
         CAPTURING_PHASE = 1,
         AT_TARGET = 2,
@@ -148,24 +149,27 @@ protected:
     virtual void receivedTarget() { }
 
 private:
-    AtomicString m_type;
+    explicit Event(MonotonicTime createTime, const AtomicString& type, IsTrusted, CanBubble, IsCancelable, IsComposed);
 
     void setCanceledFlagIfPossible();
 
-    bool m_isInitialized { false };
-    bool m_canBubble { false };
-    bool m_cancelable { false };
-    bool m_composed { false };
+    AtomicString m_type;
 
-    bool m_propagationStopped { false };
-    bool m_immediatePropagationStopped { false };
-    bool m_wasCanceled { false };
-    bool m_defaultHandled { false };
-    bool m_isDefaultEventHandlerIgnored { false };
-    bool m_isTrusted { false };
-    bool m_isExecutingPassiveEventListener { false };
+    unsigned m_isInitialized : 1;
+    unsigned m_canBubble : 1;
+    unsigned m_cancelable : 1;
+    unsigned m_composed : 1;
 
-    PhaseType m_eventPhase { NONE };
+    unsigned m_propagationStopped : 1;
+    unsigned m_immediatePropagationStopped : 1;
+    unsigned m_wasCanceled : 1;
+    unsigned m_defaultHandled : 1;
+    unsigned m_isDefaultEventHandlerIgnored : 1;
+    unsigned m_isTrusted : 1;
+    unsigned m_isExecutingPassiveEventListener : 1;
+
+    unsigned m_eventPhase : 2;
+
     RefPtr<EventTarget> m_currentTarget;
     const EventPath* m_eventPath { nullptr };
     RefPtr<EventTarget> m_target;
