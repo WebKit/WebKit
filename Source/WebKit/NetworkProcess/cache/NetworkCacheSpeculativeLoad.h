@@ -64,7 +64,7 @@ private:
     void didComplete();
 
     Ref<Cache> m_cache;
-    GlobalFrameID m_globalFrameID;
+    GlobalFrameID m_frameID;
     RevalidationCompletionHandler m_completionHandler;
     WebCore::ResourceRequest m_originalRequest;
 
