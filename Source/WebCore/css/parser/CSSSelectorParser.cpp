@@ -70,7 +70,7 @@ CSSSelectorList CSSSelectorParser::consumeComplexSelectorList(CSSParserTokenRang
 
     if (m_failedParsing)
         return { };
-    return { WTFMove(selectorList) };
+    return CSSSelectorList { WTFMove(selectorList) };
 }
 
 CSSSelectorList CSSSelectorParser::consumeCompoundSelectorList(CSSParserTokenRange& range)
@@ -92,7 +92,7 @@ CSSSelectorList CSSSelectorParser::consumeCompoundSelectorList(CSSParserTokenRan
 
     if (m_failedParsing)
         return { };
-    return { WTFMove(selectorList) };
+    return CSSSelectorList { WTFMove(selectorList) };
 }
 
 static bool consumeLangArgumentList(std::unique_ptr<Vector<AtomicString>>& argumentList, CSSParserTokenRange& range)

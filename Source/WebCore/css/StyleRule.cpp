@@ -218,7 +218,7 @@ Ref<StyleRule> StyleRule::createForSplitting(const Vector<const CSSSelector*>& s
     for (unsigned i = 0; i < selectors.size(); ++i)
         new (NotNull, &selectorListArray[i]) CSSSelector(*selectors.at(i));
     selectorListArray[selectors.size() - 1].setLastInSelectorList();
-    return StyleRule::create(WTFMove(properties), hasDocumentSecurityOrigin, WTFMove(selectorListArray));
+    return StyleRule::create(WTFMove(properties), hasDocumentSecurityOrigin, CSSSelectorList(WTFMove(selectorListArray)));
 }
 
 Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorComponentCount(unsigned maxCount) const
