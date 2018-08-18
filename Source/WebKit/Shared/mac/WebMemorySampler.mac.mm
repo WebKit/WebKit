@@ -39,10 +39,6 @@
 #import <notify.h>
 #import <wtf/WallTime.h>
 
-using namespace WebCore;
-using namespace JSC;
-using namespace WTF;
-
 namespace WebKit {
     
 struct SystemMallocStats {
@@ -111,19 +107,19 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     
     WebMemoryStatistics webKitMemoryStats;
     
-    FastMallocStatistics fastMallocStatistics = WTF::fastMallocStatistics();
+    auto fastMallocStatistics = WTF::fastMallocStatistics();
     size_t fastMallocBytesInUse = fastMallocStatistics.committedVMBytes - fastMallocStatistics.freeListBytes;
     size_t fastMallocBytesCommitted = fastMallocStatistics.committedVMBytes;
     totalBytesInUse += fastMallocBytesInUse;
     totalBytesCommitted += fastMallocBytesCommitted;
     
-    JSLockHolder lock(commonVM());
-    size_t jscHeapBytesInUse = commonVM().heap.size();
-    size_t jscHeapBytesCommitted = commonVM().heap.capacity();
+    JSC::JSLockHolder lock(WebCore::commonVM());
+    size_t jscHeapBytesInUse = WebCore::commonVM().heap.size();
+    size_t jscHeapBytesCommitted = WebCore::commonVM().heap.capacity();
     totalBytesInUse += jscHeapBytesInUse;
     totalBytesCommitted += jscHeapBytesCommitted;
     
-    GlobalMemoryStatistics globalMemoryStats = globalMemoryStatistics();
+    JSC::GlobalMemoryStatistics globalMemoryStats = JSC::globalMemoryStatistics();
     totalBytesInUse += globalMemoryStats.stackBytes + globalMemoryStats.JITBytes;
     totalBytesCommitted += globalMemoryStats.stackBytes + globalMemoryStats.JITBytes;
     

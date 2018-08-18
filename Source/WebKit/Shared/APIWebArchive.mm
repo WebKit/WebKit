@@ -133,7 +133,7 @@ API::Array* WebArchive::subframeArchives()
     return m_cachedSubframeArchives.get();
 }
 
-static void releaseCFData(unsigned char*, const void* data)
+static void releaseWebArchiveData(unsigned char*, const void* data)
 {
     // Balanced by CFRetain in WebArchive::data().
     CFRelease(data);
@@ -143,10 +143,10 @@ Ref<API::Data> WebArchive::data()
 {
     RetainPtr<CFDataRef> rawDataRepresentation = m_legacyWebArchive->rawDataRepresentation();
 
-    // Balanced by CFRelease in releaseCFData.
+    // Balanced by CFRelease in releaseWebArchiveData.
     CFRetain(rawDataRepresentation.get());
 
-    return API::Data::createWithoutCopying(CFDataGetBytePtr(rawDataRepresentation.get()), CFDataGetLength(rawDataRepresentation.get()), releaseCFData, rawDataRepresentation.get());
+    return API::Data::createWithoutCopying(CFDataGetBytePtr(rawDataRepresentation.get()), CFDataGetLength(rawDataRepresentation.get()), releaseWebArchiveData, rawDataRepresentation.get());
 }
 
 LegacyWebArchive* WebArchive::coreLegacyWebArchive()

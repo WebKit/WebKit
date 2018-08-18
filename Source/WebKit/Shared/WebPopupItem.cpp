@@ -29,13 +29,11 @@
 
 #include "ArgumentCoders.h"
 
-using namespace WebCore;
-
 namespace WebKit {
 
 WebPopupItem::WebPopupItem()
     : m_type(Item)
-    , m_textDirection(TextDirection::LTR)
+    , m_textDirection(WebCore::TextDirection::LTR)
     , m_hasTextDirectionOverride(false)
     , m_isEnabled(true)
     , m_isSelected(false)
@@ -44,7 +42,7 @@ WebPopupItem::WebPopupItem()
 
 WebPopupItem::WebPopupItem(Type type)
     : m_type(type)
-    , m_textDirection(TextDirection::LTR)
+    , m_textDirection(WebCore::TextDirection::LTR)
     , m_hasTextDirectionOverride(false)
     , m_isEnabled(true)
     , m_isLabel(false)
@@ -52,7 +50,7 @@ WebPopupItem::WebPopupItem(Type type)
 {
 }
 
-WebPopupItem::WebPopupItem(Type type, const String& text, TextDirection textDirection, bool hasTextDirectionOverride, const String& toolTip, const String& accessibilityText, bool isEnabled, bool isLabel, bool isSelected)
+WebPopupItem::WebPopupItem(Type type, const String& text, WebCore::TextDirection textDirection, bool hasTextDirectionOverride, const String& toolTip, const String& accessibilityText, bool isEnabled, bool isLabel, bool isSelected)
     : m_type(type)
     , m_text(text)
     , m_textDirection(textDirection)
@@ -88,7 +86,7 @@ std::optional<WebPopupItem> WebPopupItem::decode(IPC::Decoder& decoder)
     if (!decoder.decode(text))
         return std::nullopt;
     
-    TextDirection textDirection;
+    WebCore::TextDirection textDirection;
     if (!decoder.decodeEnum(textDirection))
         return std::nullopt;
 

@@ -31,8 +31,6 @@
 #include "Encoder.h"
 #include "WebCoreArgumentCoders.h"
 
-using namespace WebCore;
-
 namespace WebKit {
 
 void NavigationActionData::encode(IPC::Encoder& encoder) const
@@ -120,7 +118,7 @@ std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& d
     if (!opener)
         return std::nullopt;
 
-    std::optional<std::optional<BackForwardItemIdentifier>> targetBackForwardItemIdentifier;
+    std::optional<std::optional<WebCore::BackForwardItemIdentifier>> targetBackForwardItemIdentifier;
     decoder >> targetBackForwardItemIdentifier;
     if (!targetBackForwardItemIdentifier)
         return std::nullopt;

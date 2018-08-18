@@ -38,24 +38,22 @@
 #include <WebCore/RenderWidget.h>
 #include <WebCore/StyledElement.h>
 
-using namespace WebCore;
-
 namespace WebKit {
 
 RefPtr<WebRenderLayer> WebRenderLayer::create(WebPage* page)
 {
-    Frame* mainFrame = page->mainFrame();
+    WebCore::Frame* mainFrame = page->mainFrame();
     if (!mainFrame)
         return nullptr;
 
     if (!mainFrame->loader().client().hasHTMLView())
         return nullptr;
 
-    RenderView* contentRenderer = mainFrame->contentRenderer();
+    WebCore::RenderView* contentRenderer = mainFrame->contentRenderer();
     if (!contentRenderer)
         return nullptr;
 
-    RenderLayer* rootLayer = contentRenderer->layer();
+    WebCore::RenderLayer* rootLayer = contentRenderer->layer();
     if (!rootLayer)
         return nullptr;
 
@@ -67,7 +65,7 @@ Ref<WebRenderLayer> WebRenderLayer::create(RefPtr<WebRenderObject>&& renderer, b
     return adoptRef(*new WebRenderLayer(WTFMove(renderer), isReflection, isClipping, isClipped, type, absoluteBoundingBox, backingStoreMemoryEstimate, WTFMove(negativeZOrderList), WTFMove(normalFlowList), WTFMove(positiveZOrderList), WTFMove(frameContentsLayer)));
 }
 
-RefPtr<API::Array> WebRenderLayer::createArrayFromLayerList(Vector<RenderLayer*>* list)
+RefPtr<API::Array> WebRenderLayer::createArrayFromLayerList(Vector<WebCore::RenderLayer*>* list)
 {
     if (!list || !list->size())
         return nullptr;
@@ -81,26 +79,26 @@ RefPtr<API::Array> WebRenderLayer::createArrayFromLayerList(Vector<RenderLayer*>
     return API::Array::create(WTFMove(layers));
 }
 
-WebRenderLayer::WebRenderLayer(RenderLayer* layer)
+WebRenderLayer::WebRenderLayer(WebCore::RenderLayer* layer)
 {
     m_renderer = WebRenderObject::create(&layer->renderer());
     m_isReflection = layer->isReflection();
 
     if (layer->isComposited()) {
-        RenderLayerBacking* backing = layer->backing();
+        WebCore::RenderLayerBacking* backing = layer->backing();
         m_isClipping = backing->hasClippingLayer();
         m_isClipped = backing->hasAncestorClippingLayer();
         switch (backing->compositingLayerType()) {
-        case NormalCompositingLayer:
+        case WebCore::NormalCompositingLayer:
             m_compositingLayerType = Normal;
             break;
-        case TiledCompositingLayer:
+        case WebCore::TiledCompositingLayer:
             m_compositingLayerType = Tiled;
             break;
-        case MediaCompositingLayer:
+        case WebCore::MediaCompositingLayer:
             m_compositingLayerType = Media;
             break;
-        case ContainerCompositingLayer:
+        case WebCore::ContainerCompositingLayer:
             m_compositingLayerType = Container;
             break;
         }
@@ -119,9 +117,9 @@ WebRenderLayer::WebRenderLayer(RenderLayer* layer)
     m_normalFlowList = createArrayFromLayerList(layer->normalFlowList());
     m_positiveZOrderList = createArrayFromLayerList(layer->posZOrderList());
 
-    if (is<RenderWidget>(layer->renderer())) {
-        if (Document* contentDocument = downcast<RenderWidget>(layer->renderer()).frameOwnerElement().contentDocument()) {
-            if (RenderView* view = contentDocument->renderView())
+    if (is<WebCore::RenderWidget>(layer->renderer())) {
+        if (WebCore::Document* contentDocument = downcast<WebCore::RenderWidget>(layer->renderer()).frameOwnerElement().contentDocument()) {
+            if (WebCore::RenderView* view = contentDocument->renderView())
                 m_frameContentsLayer = adoptRef(new WebRenderLayer(view->layer()));
         }
     }

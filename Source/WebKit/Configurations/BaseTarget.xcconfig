@@ -38,7 +38,7 @@ GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(FEATURE_DEFINES) $(WK_MANUAL_S
 WEBKITADDITIONS_HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions $(SDKROOT)/usr/local/include/WebKitAdditions;
 LIBWEBRTC_HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc $(SDKROOT)/usr/local/include/webrtc;
 
-HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include "$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders" $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2 $(WEBKITADDITIONS_HEADER_SEARCH_PATHS) $(LIBWEBRTC_HEADER_SEARCH_PATHS) $(HEADER_SEARCH_PATHS);
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include "$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders" $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2 $(WEBKITADDITIONS_HEADER_SEARCH_PATHS) $(LIBWEBRTC_HEADER_SEARCH_PATHS) $(SRCROOT) $(HEADER_SEARCH_PATHS);
 
 OTHER_CFLAGS = $(inherited) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;

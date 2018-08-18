@@ -44,8 +44,6 @@
 #import <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
 
 void ChildProcess::setApplicationIsDaemon()

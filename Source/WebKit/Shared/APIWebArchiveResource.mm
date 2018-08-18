@@ -61,7 +61,7 @@ WebArchiveResource::~WebArchiveResource()
 {
 }
 
-static void releaseCFData(unsigned char*, const void* data)
+static void releaseWebArchiveResourceData(unsigned char*, const void* data)
 {
     // Balanced by CFRetain in WebArchiveResource::data().
     CFRelease(data);
@@ -71,10 +71,10 @@ Ref<API::Data> WebArchiveResource::data()
 {
     RetainPtr<CFDataRef> cfData = m_archiveResource->data().createCFData();
 
-    // Balanced by CFRelease in releaseCFData.
+    // Balanced by CFRelease in releaseWebArchiveResourceData.
     CFRetain(cfData.get());
 
-    return API::Data::createWithoutCopying(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()), releaseCFData, cfData.get());
+    return API::Data::createWithoutCopying(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()), releaseWebArchiveResourceData, cfData.get());
 }
 
 String WebArchiveResource::URL()

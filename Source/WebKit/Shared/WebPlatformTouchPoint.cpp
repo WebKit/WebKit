@@ -31,11 +31,9 @@
 
 #include "WebCoreArgumentCoders.h"
 
-using namespace WebCore;
-
 namespace WebKit {
 
-WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, TouchPointState state, const IntPoint& screenPosition, const IntPoint& position)
+WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, TouchPointState state, const WebCore::IntPoint& screenPosition, const WebCore::IntPoint& position)
     : m_id(id)
     , m_state(state)
     , m_screenPosition(screenPosition)
@@ -45,7 +43,7 @@ WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, TouchPointState state,
 {
 }
 
-WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, TouchPointState state, const IntPoint& screenPosition, const IntPoint& position, const WebCore::IntSize& radius, float rotationAngle, float force)
+WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, TouchPointState state, const WebCore::IntPoint& screenPosition, const WebCore::IntPoint& position, const WebCore::IntSize& radius, float rotationAngle, float force)
     : m_id(id)
     , m_state(state)
     , m_screenPosition(screenPosition)
