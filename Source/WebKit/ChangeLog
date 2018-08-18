@@ -1,3 +1,42 @@
+2018-08-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Paste is missing from callout bar when pasteboard only contains custom data
+        https://bugs.webkit.org/show_bug.cgi?id=184271
+        <rdar://problem/39256708>
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently, the "paste:" selector action cannot be performed during editing if the pasteboard only contains
+        custom pasteboard data. This is because logic in -[WKContentView canPerformActionForWebView:withSender:] only
+        checks against a list of pasteboard types which does not include the type identifier for custom pasteboard data.
+        To fix this, we allow pasting only in the case where none of the other type identifiers exist in the pasteboard,
+        as long as the custom pasteboard data type identifier is present, and the custom pasteboard data's origin
+        matches the origin of the focused frame's document.
+
+        Test: PasteMixedContent.CopyAndPasteWithCustomPasteboardDataOnly
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode const):
+        (WebKit::EditorState::decode):
+        * Shared/EditorState.h:
+
+        Add a originIdentifierForPasteboard field, and add support for encoding it when propagating EditorState via IPC.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+
+        If none of the conventional pasteboard type identifiers for rich or plain text editing are present, check to see
+        if we have custom pasteboard data; if so, only allow pasting if the custom pasteboard data's origin matches that
+        of the focused frame's document origin.
+
+        Additionally refactor a bit of logic by pulling out `_page->editorState()` into a separate local variable, used
+        throughout the rest of the method.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState const):
+
+        Send the focused frame's document origin to the UI process via EditorState.
+
 2018-08-17  Tim Horton  <timothy_horton@apple.com>
 
         Start bringing up Unified Sources in WebKit2

@@ -170,7 +170,7 @@ struct PasteboardCustomData {
     WEBCORE_EXPORT static PasteboardCustomData fromSharedBuffer(const SharedBuffer&);
 
 #if PLATFORM(COCOA)
-    static const char* cocoaType();
+    WEBCORE_EXPORT static const char* cocoaType();
 #endif
 };
 

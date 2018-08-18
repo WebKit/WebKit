@@ -53,6 +53,8 @@ void EditorState::encode(IPC::Encoder& encoder) const
     encoder << lastMarkedRect;
     encoder << markedText;
 #endif
+
+    encoder << originIdentifierForPasteboard;
 }
 
 bool EditorState::decode(IPC::Decoder& decoder, EditorState& result)
@@ -97,6 +99,9 @@ bool EditorState::decode(IPC::Decoder& decoder, EditorState& result)
     if (!decoder.decode(result.markedText))
         return false;
 #endif
+
+    if (!decoder.decode(result.originIdentifierForPasteboard))
+        return false;
 
     return true;
 }

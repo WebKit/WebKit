@@ -80,6 +80,8 @@ struct EditorState {
     String markedText;
 #endif
 
+    String originIdentifierForPasteboard;
+
     struct PostLayoutData {
         uint32_t typingAttributes { AttributeNone };
 #if PLATFORM(IOS) || PLATFORM(GTK)

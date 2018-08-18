@@ -921,6 +921,9 @@ EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayo
     result.hasComposition = editor.hasComposition();
     result.shouldIgnoreSelectionChanges = editor.ignoreSelectionChanges();
 
+    if (auto* document = frame.document())
+        result.originIdentifierForPasteboard = document->originIdentifierForPasteboard();
+
     bool canIncludePostLayoutData = frame.view() && !frame.view()->needsLayout();
     if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::Yes && canIncludePostLayoutData) {
         auto& postLayoutData = result.postLayoutData();

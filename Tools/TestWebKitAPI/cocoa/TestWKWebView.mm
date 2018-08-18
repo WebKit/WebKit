@@ -246,11 +246,15 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     [self loadRequest:request];
 }
 
+- (void)synchronouslyLoadHTMLString:(NSString *)html baseURL:(NSURL *)url
+{
+    [self loadHTMLString:html baseURL:url];
+    [self _test_waitForDidFinishNavigation];
+}
+
 - (void)synchronouslyLoadHTMLString:(NSString *)html
 {
-    NSURL *testResourceURL = [[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"TestWebKitAPI.resources"];
-    [self loadHTMLString:html baseURL:testResourceURL];
-    [self _test_waitForDidFinishNavigation];
+    [self synchronouslyLoadHTMLString:html baseURL:[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"TestWebKitAPI.resources"]];
 }
 
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName

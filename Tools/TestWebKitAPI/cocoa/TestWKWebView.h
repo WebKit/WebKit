@@ -51,6 +51,7 @@
 - (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action;
 - (void)loadTestPageNamed:(NSString *)pageName;
 - (void)synchronouslyLoadHTMLString:(NSString *)html;
+- (void)synchronouslyLoadHTMLString:(NSString *)html baseURL:(NSURL *)url;
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName;
 - (id)objectByEvaluatingJavaScript:(NSString *)script;
 - (NSString *)stringByEvaluatingJavaScript:(NSString *)script;

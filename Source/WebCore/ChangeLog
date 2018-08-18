@@ -1,3 +1,16 @@
+2018-08-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Paste is missing from callout bar when pasteboard only contains custom data
+        https://bugs.webkit.org/show_bug.cgi?id=184271
+        <rdar://problem/39256708>
+
+        Reviewed by Ryosuke Niwa.
+
+        Export a couple of WebCore functions for use in WebKit.
+
+        * dom/Document.h:
+        * platform/Pasteboard.h:
+
 2018-08-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Pack booleans in Event into a bitfield

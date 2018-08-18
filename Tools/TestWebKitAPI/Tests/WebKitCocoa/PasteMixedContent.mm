@@ -25,14 +25,20 @@
 
 #include "config.h"
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if WK_API_ENABLED
 
 #import "PlatformUtilities.h"
+#import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesRef.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
+
+namespace TestWebKitAPI {
+
+#if PLATFORM(MAC)
 
 static NSString *imagePath()
 {
@@ -95,8 +101,6 @@ static NSString *markupString()
     // sanitization while pasting.
     return @"<script>foo()</script><strong onmouseover='javascript:void(0)'>HELLO WORLD</strong>";
 }
-
-namespace TestWebKitAPI {
 
 TEST(PasteMixedContent, ImageFileAndPlainText)
 {
@@ -251,6 +255,39 @@ TEST(PasteMixedContent, PasteURLWrittenToPasteboardUsingWriteObjects)
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('a').textContent"], urlToCopy);
 }
 
+#endif // PLATFORM(MAC)
+
+TEST(PasteMixedContent, CopyAndPasteWithCustomPasteboardDataOnly)
+{
+    NSString *markupForSource = @"<body oncopy=\"event.preventDefault(); event.clipboardData.setData('foo', 'bar')\">hello</body>";
+    NSString *markupForDestination = @"<input autofocus onpaste=\"event.preventDefault(); this.value = event.clipboardData.getData('foo')\">";
+
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"same"];
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"different"];
+
+    auto source = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    [source synchronouslyLoadHTMLString:markupForSource baseURL:[NSURL URLWithString:@"same://"]];
+    [source selectAll:nil];
+    [source _executeEditCommand:@"copy" argument:nil completion:nil];
+
+    auto destination = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    [destination synchronouslyLoadHTMLString:markupForDestination baseURL:[NSURL URLWithString:@"same://"]];
+    [destination paste:nil];
+    EXPECT_WK_STREQ("bar", [destination stringByEvaluatingJavaScript:@"document.querySelector('input').value"]);
+#if PLATFORM(IOS)
+    EXPECT_TRUE([destination canPerformAction:@selector(paste:) withSender:nil]);
+#endif
+
+    [destination synchronouslyLoadHTMLString:markupForDestination baseURL:[NSURL URLWithString:@"different://"]];
+    [destination paste:nil];
+    EXPECT_WK_STREQ("", [destination stringByEvaluatingJavaScript:@"document.querySelector('input').value"]);
+#if PLATFORM(IOS)
+    EXPECT_FALSE([destination canPerformAction:@selector(paste:) withSender:nil]);
+#endif
+}
+
 } // namespace TestWebKitAPI
 
-#endif // PLATFORM(MAC) && WK_API_ENABLED
+#endif // WK_API_ENABLED

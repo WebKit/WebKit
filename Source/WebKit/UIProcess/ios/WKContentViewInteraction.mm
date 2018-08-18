@@ -2276,35 +2276,49 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     if (action == @selector(_arrowKey:))
         return [self isFirstResponder];
         
+    auto editorState = _page->editorState();
     if (action == @selector(_showTextStyleOptions:))
-        return _page->editorState().isContentRichlyEditable && _page->editorState().selectionIsRange && !_showingTextStyleOptions;
+        return editorState.isContentRichlyEditable && editorState.selectionIsRange && !_showingTextStyleOptions;
     if (_showingTextStyleOptions)
         return (action == @selector(toggleBoldface:) || action == @selector(toggleItalics:) || action == @selector(toggleUnderline:));
     if (action == @selector(toggleBoldface:) || action == @selector(toggleItalics:) || action == @selector(toggleUnderline:))
-        return _page->editorState().isContentRichlyEditable;
+        return editorState.isContentRichlyEditable;
     if (action == @selector(cut:))
-        return !_page->editorState().isInPasswordField && _page->editorState().isContentEditable && _page->editorState().selectionIsRange;
+        return !editorState.isInPasswordField && editorState.isContentEditable && editorState.selectionIsRange;
     
     if (action == @selector(paste:)) {
-        if (_page->editorState().selectionIsNone || !_page->editorState().isContentEditable)
+        if (editorState.selectionIsNone || !editorState.isContentEditable)
             return NO;
         UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
         NSArray *types = [self supportedPasteboardTypesForCurrentSelection];
         NSIndexSet *indices = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [pasteboard numberOfItems])];
-        return [pasteboard containsPasteboardTypes:types inItemSet:indices];
+        if ([pasteboard containsPasteboardTypes:types inItemSet:indices])
+            return YES;
+
+        auto focusedDocumentOrigin = editorState.originIdentifierForPasteboard;
+        if (focusedDocumentOrigin.isEmpty())
+            return NO;
+
+        NSArray *allCustomPasteboardData = [pasteboard dataForPasteboardType:@(PasteboardCustomData::cocoaType()) inItemSet:indices];
+        for (NSData *data in allCustomPasteboardData) {
+            auto buffer = SharedBuffer::create(data);
+            if (PasteboardCustomData::fromSharedBuffer(buffer.get()).origin == focusedDocumentOrigin)
+                return YES;
+        }
+        return NO;
     }
 
     if (action == @selector(copy:)) {
-        if (_page->editorState().isInPasswordField)
+        if (editorState.isInPasswordField)
             return NO;
-        return _page->editorState().selectionIsRange;
+        return editorState.selectionIsRange;
     }
 
     if (action == @selector(_define:)) {
-        if (_page->editorState().isInPasswordField || !_page->editorState().selectionIsRange)
+        if (editorState.isInPasswordField || !editorState.selectionIsRange)
             return NO;
 
-        NSUInteger textLength = _page->editorState().postLayoutData().selectedTextLength;
+        NSUInteger textLength = editorState.postLayoutData().selectedTextLength;
         // FIXME: We should be calling UIReferenceLibraryViewController to check if the length is
         // acceptable, but the interface takes a string.
         // <rdar://problem/15254406>
@@ -2320,7 +2334,7 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     }
 
     if (action == @selector(_lookup:)) {
-        if (_page->editorState().isInPasswordField)
+        if (editorState.isInPasswordField)
             return NO;
 
 #if !PLATFORM(IOSMAC)
@@ -2328,18 +2342,18 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
             return NO;
 #endif
 
-        return _page->editorState().selectionIsRange;
+        return editorState.selectionIsRange;
     }
 
     if (action == @selector(_share:)) {
-        if (_page->editorState().isInPasswordField || !_page->editorState().selectionIsRange)
+        if (editorState.isInPasswordField || !editorState.selectionIsRange)
             return NO;
 
-        return _page->editorState().postLayoutData().selectedTextLength > 0;
+        return editorState.postLayoutData().selectedTextLength > 0;
     }
 
     if (action == @selector(_addShortcut:)) {
-        if (_page->editorState().isInPasswordField || !_page->editorState().selectionIsRange)
+        if (editorState.isInPasswordField || !editorState.selectionIsRange)
             return NO;
 
         NSString *selectedText = [self selectedText];
@@ -2354,7 +2368,7 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     }
 
     if (action == @selector(_promptForReplace:)) {
-        if (!_page->editorState().selectionIsRange || !_page->editorState().postLayoutData().isReplaceAllowed || ![[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled])
+        if (!editorState.selectionIsRange || !editorState.postLayoutData().isReplaceAllowed || ![[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled])
             return NO;
         if ([[self selectedText] _containsCJScriptsOnly])
             return NO;
@@ -2362,24 +2376,24 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     }
 
     if (action == @selector(_transliterateChinese:)) {
-        if (!_page->editorState().selectionIsRange || !_page->editorState().postLayoutData().isReplaceAllowed || ![[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled])
+        if (!editorState.selectionIsRange || !editorState.postLayoutData().isReplaceAllowed || ![[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled])
             return NO;
         return UIKeyboardEnabledInputModesAllowChineseTransliterationForText([self selectedText]);
     }
 
     if (action == @selector(select:)) {
         // Disable select in password fields so that you can't see word boundaries.
-        return !_page->editorState().isInPasswordField && [self hasContent] && !_page->editorState().selectionIsNone && !_page->editorState().selectionIsRange;
+        return !editorState.isInPasswordField && [self hasContent] && !editorState.selectionIsNone && !editorState.selectionIsRange;
     }
 
     if (action == @selector(selectAll:)) {
-        if (!_page->editorState().selectionIsNone && !_page->editorState().selectionIsRange)
+        if (!editorState.selectionIsNone && !editorState.selectionIsRange)
             return YES;
         return NO;
     }
 
     if (action == @selector(replace:))
-        return _page->editorState().isContentEditable && !_page->editorState().isInPasswordField;
+        return editorState.isContentEditable && !editorState.isInPasswordField;
 
     return [super canPerformAction:action withSender:sender];
 }

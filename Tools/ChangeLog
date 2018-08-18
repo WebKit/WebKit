@@ -1,3 +1,31 @@
+2018-08-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Paste is missing from callout bar when pasteboard only contains custom data
+        https://bugs.webkit.org/show_bug.cgi?id=184271
+        <rdar://problem/39256708>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a new API test to verify that on both iOS and macOS, copied custom pasteboard data can only be pasted in a
+        matching origin. Additionally verify that on iOS, the web view is capable of performing the "paste:" selector.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteMixedContent.mm:
+        (TestWebKitAPI::TEST):
+        (imagePath): Deleted.
+        (writeTypesAndDataToPasteboard): Deleted.
+        (setUpWebView): Deleted.
+        (markupString): Deleted.
+
+        Make this test file no longer exclusive to macOS.
+
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView synchronouslyLoadHTMLString:baseURL:]):
+
+        Tweak this helper to also take in a `baseURL`. Defaults to using the TestWebKitAPI bundle resource URL.
+
+        (-[TestWKWebView synchronouslyLoadHTMLString:]):
+
 2018-08-17  Jonathan Bedard  <jbedard@apple.com>
 
         Add back --wtf-only to run-api-tests
