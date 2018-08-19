@@ -30,6 +30,7 @@
 #include <unicode/uchar.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/NotFound.h>
+#include <wtf/UnalignedAccess.h>
 
 namespace WTF {
 
@@ -48,19 +49,6 @@ template<typename StringClass, unsigned length> bool equalLettersIgnoringASCIICa
 bool equalIgnoringASCIICase(const char*, const char*);
 template<unsigned lowercaseLettersLength> bool equalLettersIgnoringASCIICase(const char*, const char (&lowercaseLetters)[lowercaseLettersLength]);
 
-template<typename T>
-inline T loadUnaligned(const char* s)
-{
-#if COMPILER(CLANG)
-    T tmp;
-    memcpy(&tmp, s, sizeof(T));
-    return tmp;
-#else
-    // This may result in undefined behavior due to unaligned access.
-    return *reinterpret_cast<const T*>(s);
-#endif
-}
-
 // Do comparisons 8 or 4 bytes-at-a-time on architectures where it's safe.
 #if (CPU(X86_64) || CPU(ARM64)) && !ASAN_ENABLED
 ALWAYS_INLINE bool equal(const LChar* aLChar, const LChar* bLChar, unsigned length)
@@ -72,7 +60,7 @@ ALWAYS_INLINE bool equal(const LChar* aLChar, const LChar* bLChar, unsigned leng
 
     if (dwordLength) {
         for (unsigned i = 0; i != dwordLength; ++i) {
-            if (loadUnaligned<uint64_t>(a) != loadUnaligned<uint64_t>(b))
+            if (unalignedLoad<uint64_t>(a) != unalignedLoad<uint64_t>(b))
                 return false;
 
             a += sizeof(uint64_t);
@@ -81,7 +69,7 @@ ALWAYS_INLINE bool equal(const LChar* aLChar, const LChar* bLChar, unsigned leng
     }
 
     if (length & 4) {
-        if (loadUnaligned<uint32_t>(a) != loadUnaligned<uint32_t>(b))
+        if (unalignedLoad<uint32_t>(a) != unalignedLoad<uint32_t>(b))
             return false;
 
         a += sizeof(uint32_t);
@@ -89,7 +77,7 @@ ALWAYS_INLINE bool equal(const LChar* aLChar, const LChar* bLChar, unsigned leng
     }
 
     if (length & 2) {
-        if (loadUnaligned<uint16_t>(a) != loadUnaligned<uint16_t>(b))
+        if (unalignedLoad<uint16_t>(a) != unalignedLoad<uint16_t>(b))
             return false;
 
         a += sizeof(uint16_t);
@@ -111,7 +99,7 @@ ALWAYS_INLINE bool equal(const UChar* aUChar, const UChar* bUChar, unsigned leng
 
     if (dwordLength) {
         for (unsigned i = 0; i != dwordLength; ++i) {
-            if (loadUnaligned<uint64_t>(a) != loadUnaligned<uint64_t>(b))
+            if (unalignedLoad<uint64_t>(a) != unalignedLoad<uint64_t>(b))
                 return false;
 
             a += sizeof(uint64_t);
@@ -120,7 +108,7 @@ ALWAYS_INLINE bool equal(const UChar* aUChar, const UChar* bUChar, unsigned leng
     }
 
     if (length & 2) {
-        if (loadUnaligned<uint32_t>(a) != loadUnaligned<uint32_t>(b))
+        if (unalignedLoad<uint32_t>(a) != unalignedLoad<uint32_t>(b))
             return false;
 
         a += sizeof(uint32_t);
@@ -140,7 +128,7 @@ ALWAYS_INLINE bool equal(const LChar* aLChar, const LChar* bLChar, unsigned leng
 
     unsigned wordLength = length >> 2;
     for (unsigned i = 0; i != wordLength; ++i) {
-        if (loadUnaligned<uint32_t>(a) != loadUnaligned<uint32_t>(b))
+        if (unalignedLoad<uint32_t>(a) != unalignedLoad<uint32_t>(b))
             return false;
         a += sizeof(uint32_t);
         b += sizeof(uint32_t);
@@ -168,7 +156,7 @@ ALWAYS_INLINE bool equal(const UChar* aUChar, const UChar* bUChar, unsigned leng
 
     unsigned wordLength = length >> 1;
     for (unsigned i = 0; i != wordLength; ++i) {
-        if (loadUnaligned<uint32_t>(a) != loadUnaligned<uint32_t>(b))
+        if (unalignedLoad<uint32_t>(a) != unalignedLoad<uint32_t>(b))
             return false;
         a += sizeof(uint32_t);
         b += sizeof(uint32_t);

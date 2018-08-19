@@ -1,3 +1,31 @@
+2018-08-19  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [WTF] Add WTF::unalignedLoad and WTF::unalignedStore
+        https://bugs.webkit.org/show_bug.cgi?id=188716
+
+        Reviewed by Darin Adler.
+
+        Use WTF::unalignedLoad and WTF::unalignedStore to avoid undefined behavior.
+        The compiler can emit appropriate mov operations in x86 even if we use these
+        helper functions.
+
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::LocalWriter::putIntegralUnchecked):
+        (JSC::AssemblerBuffer::putIntegral):
+        (JSC::AssemblerBuffer::putIntegralUnchecked):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::readCallTarget):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::linkJump):
+        (JSC::X86Assembler::readPointer):
+        (JSC::X86Assembler::replaceWithHlt):
+        (JSC::X86Assembler::replaceWithJump):
+        (JSC::X86Assembler::setPointer):
+        (JSC::X86Assembler::setInt32):
+        (JSC::X86Assembler::setInt8):
+        * interpreter/InterpreterInlines.h:
+        (JSC::Interpreter::getOpcodeID): Embedded opcode may be misaligned. Actually UBSan detects misaligned accesses here.
+
 2018-08-17  Saam barati  <sbarati@apple.com>
 
         intersectionOfPastValuesAtHead must filter values after they've observed an invalidation point

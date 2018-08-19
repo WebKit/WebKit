@@ -302,7 +302,7 @@ public:
     template<PtrTag resultTag, PtrTag locationTag>
     static FunctionPtr<resultTag> readCallTarget(CodeLocationCall<locationTag> call)
     {
-        intptr_t offset = reinterpret_cast<int32_t*>(call.dataLocation())[-1];
+        intptr_t offset = WTF::unalignedLoad<int32_t>(bitwise_cast<int32_t*>(call.dataLocation()) - 1);
         return FunctionPtr<resultTag>(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(call.dataLocation()) + offset));
     }
 

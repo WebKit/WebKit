@@ -3680,7 +3680,7 @@ public:
         ASSERT(to.isSet());
 
         char* code = reinterpret_cast<char*>(m_formatter.data());
-        ASSERT(!reinterpret_cast<int32_t*>(code + from.m_offset)[-1]);
+        ASSERT(!WTF::unalignedLoad<int32_t>(bitwise_cast<int32_t*>(code + from.m_offset) - 1));
         setRel32(code + from.m_offset, code + to.m_offset);
     }
     
@@ -3739,22 +3739,21 @@ public:
     
     static void* readPointer(void* where)
     {
-        return reinterpret_cast<void**>(where)[-1];
+        return WTF::unalignedLoad<void*>(bitwise_cast<void**>(where) - 1);
     }
 
     static void replaceWithHlt(void* instructionStart)
     {
-        uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
-        ptr[0] = static_cast<uint8_t>(OP_HLT);
+        WTF::unalignedStore<uint8_t>(instructionStart, static_cast<uint8_t>(OP_HLT));
     }
 
     static void replaceWithJump(void* instructionStart, void* to)
     {
-        uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
-        uint8_t* dstPtr = reinterpret_cast<uint8_t*>(to);
+        uint8_t* ptr = bitwise_cast<uint8_t*>(instructionStart);
+        uint8_t* dstPtr = bitwise_cast<uint8_t*>(to);
         intptr_t distance = (intptr_t)(dstPtr - (ptr + 5));
-        ptr[0] = static_cast<uint8_t>(OP_JMP_rel32);
-        *reinterpret_cast<int32_t*>(ptr + 1) = static_cast<int32_t>(distance);
+        WTF::unalignedStore<uint8_t>(ptr, static_cast<uint8_t>(OP_JMP_rel32));
+        WTF::unalignedStore<int32_t>(ptr + 1, static_cast<int32_t>(distance));
     }
     
     static ptrdiff_t maxJumpReplacementSize()
@@ -3956,17 +3955,17 @@ private:
 
     static void setPointer(void* where, void* value)
     {
-        reinterpret_cast<void**>(where)[-1] = value;
+        WTF::unalignedStore<void*>(bitwise_cast<void**>(where) - 1, value);
     }
 
     static void setInt32(void* where, int32_t value)
     {
-        reinterpret_cast<int32_t*>(where)[-1] = value;
+        WTF::unalignedStore<int32_t>(bitwise_cast<int32_t*>(where) - 1, value);
     }
     
     static void setInt8(void* where, int8_t value)
     {
-        reinterpret_cast<int8_t*>(where)[-1] = value;
+        WTF::unalignedStore<int8_t>(bitwise_cast<int8_t*>(where) - 1, value);
     }
 
     static void setRel32(void* from, void* to)

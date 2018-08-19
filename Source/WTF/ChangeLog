@@ -1,3 +1,29 @@
+2018-08-19  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [WTF] Add WTF::unalignedLoad and WTF::unalignedStore
+        https://bugs.webkit.org/show_bug.cgi?id=188716
+
+        Reviewed by Darin Adler.
+
+        While some CPUs allow unaligned accesses to memory, doing it in C++ with `reinterpret_cast<>` is
+        undefined behavior. This patch adds WTF::{unalignedLoad,unalignedStore} helper functions, which
+        can load from and store to the pointer in an unaligned manner.
+        Actual implementation uses `memcpy`. This can be optimized to direct unaligned access operations
+        in supported CPUs like x86. Even though a CPU does not support unaligned accesses, memcpy is still
+        safe and the compiler emits appropriate code.
+
+        We name these functions `unalignedLoad` and `unalignedStore` instead of `loadUnaligned` and `storeUnaligned`
+        in order to align them to `atomicLoad` and `atomicStore`.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/UnalignedAccess.h: Added.
+        (WTF::unalignedLoad):
+        (WTF::unalignedStore):
+        * wtf/text/StringCommon.h:
+        (WTF::equal):
+        (WTF::loadUnaligned): Deleted.
+
 2018-08-17  David Kilzer  <ddkilzer@apple.com>
 
         WTF's internal std::optional implementation should release assert on all bad accesses

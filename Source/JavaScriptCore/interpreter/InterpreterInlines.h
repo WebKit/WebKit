@@ -33,6 +33,7 @@
 #include "JSCPtrTag.h"
 #include "LLIntData.h"
 #include "UnlinkedCodeBlock.h"
+#include <wtf/UnalignedAccess.h>
 
 namespace JSC {
 
@@ -51,7 +52,7 @@ inline OpcodeID Interpreter::getOpcodeID(Opcode opcode)
     // in LowLevelInterpreter.cpp).
     auto codePtr = MacroAssemblerCodePtr<BytecodePtrTag>::createFromExecutableAddress(opcode);
     int32_t* opcodeIDAddress = codePtr.dataLocation<int32_t*>() - 1;
-    OpcodeID opcodeID = static_cast<OpcodeID>(*opcodeIDAddress);
+    OpcodeID opcodeID = static_cast<OpcodeID>(WTF::unalignedLoad<int32_t>(opcodeIDAddress));
     ASSERT(opcodeID < NUMBER_OF_BYTECODE_IDS);
     return opcodeID;
 #else

@@ -34,6 +34,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/UnalignedAccess.h>
 
 namespace JSC {
 
@@ -239,7 +240,7 @@ namespace JSC {
             void putIntegralUnchecked(IntegralType value)
             {
                 ASSERT(m_index + sizeof(IntegralType) <= m_buffer.m_storage.capacity());
-                *reinterpret_cast_ptr<IntegralType*>(m_storageBuffer + m_index) = value;
+                WTF::unalignedStore<IntegralType>(m_storageBuffer + m_index, value);
                 m_index += sizeof(IntegralType);
             }
             AssemblerBuffer& m_buffer;
@@ -258,16 +259,14 @@ namespace JSC {
             unsigned nextIndex = m_index + sizeof(IntegralType);
             if (UNLIKELY(nextIndex > m_storage.capacity()))
                 outOfLineGrow();
-            ASSERT(isAvailable(sizeof(IntegralType)));
-            *reinterpret_cast_ptr<IntegralType*>(m_storage.buffer() + m_index) = value;
-            m_index = nextIndex;
+            putIntegralUnchecked<IntegralType>(value);
         }
 
         template<typename IntegralType>
         void putIntegralUnchecked(IntegralType value)
         {
             ASSERT(isAvailable(sizeof(IntegralType)));
-            *reinterpret_cast_ptr<IntegralType*>(m_storage.buffer() + m_index) = value;
+            WTF::unalignedStore<IntegralType>(m_storage.buffer() + m_index, value);
             m_index += sizeof(IntegralType);
         }
 
