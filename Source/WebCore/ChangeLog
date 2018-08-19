@@ -1,3 +1,14 @@
+2018-08-18  David Kilzer  <ddkilzer@apple.com>
+
+        Let Xcode have its way with the WebCore project
+
+        * WebCore.xcodeproj/project.pbxproj:
+        - Let Xcode sort recently added resources by unique ID.
+        - Manually change the `mainGroup` name from "WebKit" to
+          "WebCore".  There's no need to do this other than to make the
+          inside of the proverbial cabinet match the outside.  It's been
+          this way since the project file was committed in r9857.
+
 2018-08-18  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Fire an initial dummy notification
