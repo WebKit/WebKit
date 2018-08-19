@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,11 +32,9 @@
 
 namespace WebKit {
 
-inline WKWebProcessPlugInRangeHandle *wrapper(InjectedBundleRangeHandle& rangeHandle)
-{
-    ASSERT([rangeHandle.wrapper() isKindOfClass:[WKWebProcessPlugInRangeHandle class]]);
-    return (WKWebProcessPlugInRangeHandle *)rangeHandle.wrapper();
-}
+template<> struct WrapperTraits<InjectedBundleRangeHandle> {
+    using WrapperClass = WKWebProcessPlugInRangeHandle;
+};
 
 }
 

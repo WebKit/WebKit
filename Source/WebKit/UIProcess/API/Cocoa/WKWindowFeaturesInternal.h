@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,14 +32,12 @@
 
 namespace WebKit {
 
-inline WKWindowFeatures *wrapper(API::WindowFeatures& windowFeatures)
-{
-    ASSERT([windowFeatures.wrapper() isKindOfClass:[WKWindowFeatures class]]);
-
-    return (WKWindowFeatures *)windowFeatures.wrapper();
-}
+template<> struct WrapperTraits<API::WindowFeatures> {
+    using WrapperClass = WKWindowFeatures;
+};
 
 }
+
 @interface WKWindowFeatures () <WKObject> {
 @package
     API::ObjectStorage<API::WindowFeatures> _windowFeatures;

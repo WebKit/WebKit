@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,11 @@
 #import "WKObject.h"
 
 namespace WebKit {
-inline NSDictionary *wrapper(API::Dictionary& dictionary) { ASSERT([dictionary.wrapper() isKindOfClass:[NSDictionary class]]); return (NSDictionary *)dictionary.wrapper(); }
+
+template<> struct WrapperTraits<API::Dictionary> {
+    using WrapperClass = NSDictionary;
+};
+
 }
 
 @interface WKNSDictionary : NSDictionary <WKObject>

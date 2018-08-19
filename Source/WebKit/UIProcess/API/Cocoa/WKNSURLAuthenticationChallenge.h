@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,11 +32,9 @@
 
 namespace WebKit {
 
-inline NSURLAuthenticationChallenge *wrapper(AuthenticationChallengeProxy& challenge)
-{
-    ASSERT([challenge.wrapper() isKindOfClass:[NSURLAuthenticationChallenge self]]);
-    return (NSURLAuthenticationChallenge *)challenge.wrapper();
-}
+template<> struct WrapperTraits<AuthenticationChallengeProxy> {
+    using WrapperClass = NSURLAuthenticationChallenge;
+};
 
 }
 

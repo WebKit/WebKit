@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,12 @@
 #import "APIArray.h"
 #import "WKObject.h"
 
-inline NSArray *wrapper(API::Array& array)
-{
-    ASSERT([array.wrapper() isKindOfClass:[NSArray class]]);
+namespace WebKit {
 
-    return (NSArray *)array.wrapper();
+template<> struct WrapperTraits<API::Array> {
+    using WrapperClass = NSArray;
+};
+
 }
 
 @interface WKNSArray : NSArray <WKObject>

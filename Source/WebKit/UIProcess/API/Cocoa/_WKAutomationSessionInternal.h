@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,10 +30,12 @@
 #import "WKObject.h"
 #import "WebAutomationSession.h"
 
-inline _WKAutomationSession *wrapper(WebKit::WebAutomationSession& session)
-{
-    ASSERT([session.wrapper() isKindOfClass:[_WKAutomationSession class]]);
-    return (_WKAutomationSession *)session.wrapper();
+namespace WebKit {
+
+template<> struct WrapperTraits<WebAutomationSession> {
+    using WrapperClass = _WKAutomationSession;
+};
+
 }
 
 @interface _WKAutomationSession () <WKObject> {

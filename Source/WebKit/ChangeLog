@@ -1,3 +1,82 @@
+2018-08-19  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Consolidate inline "wrapper" functions in WebKit API into function templates and WrapperTraits
+        https://bugs.webkit.org/show_bug.cgi?id=188733
+
+        Reviewed by Sam Weinig.
+
+        Replaced all the different functions named "wrapper" that were all boilerplate doing Objective-C
+        casts with WrapperTraits specializations. The only thing about this that was at all tricky was
+        the loose mixing of the WebKit namespace, the API namespace, and the global namespace. My choice
+        for this first step was to put WrapperTraits into the WebKit namespace and to put the wrapper
+        function into both the WebKit and API namespaces with "using". This turned out pretty clean: did
+        not have to touch any of the code calling wrapper just to make things work, although we can now
+        clean up by changing call sites to get rid of unnecessary explicit use of leakRef and autorelease.
+        Doing this will make ARC conversion practical and easy, which is the motivation behind pursuing
+        this set of changes.
+
+        * Shared/Cocoa/WKObject.h: Tweaked style of the ObjectStorage structure template,
+        using a class name instead of "T". Added WrapperTraits structure template, checkedObjCCast
+        function template, and multiple wrapper functions templates that take a variety of pointer,
+        reference, smart pointer, and smart reference types, and return the wrapper for each one,
+        handling object lifetime appropriately.
+
+        * Shared/API/Cocoa/_WKFrameHandleInternal.h:
+        * Shared/API/Cocoa/_WKHitTestResultInternal.h:
+        * Shared/Cocoa/WKNSArray.h:
+        * Shared/Cocoa/WKNSData.h:
+        * Shared/Cocoa/WKNSDictionary.h:
+        * Shared/Cocoa/WKNSError.h:
+        * Shared/Cocoa/WKNSNumber.h:
+        * Shared/Cocoa/WKNSString.h:
+        * Shared/Cocoa/WKNSURL.h:
+        * Shared/Cocoa/WKNSURLRequest.h:
+        * UIProcess/API/Cocoa/WKBackForwardListInternal.h:
+        * UIProcess/API/Cocoa/WKBackForwardListItemInternal.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextGroupInternal.h:
+        * UIProcess/API/Cocoa/WKConnectionInternal.h:
+        * UIProcess/API/Cocoa/WKContentRuleListInternal.h:
+        * UIProcess/API/Cocoa/WKContentRuleListStoreInternal.h:
+        * UIProcess/API/Cocoa/WKFrameInfoInternal.h:
+        * UIProcess/API/Cocoa/WKHTTPCookieStoreInternal.h:
+        * UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.h:
+        * UIProcess/API/Cocoa/WKNavigationActionInternal.h:
+        * UIProcess/API/Cocoa/WKNavigationDataInternal.h:
+        * UIProcess/API/Cocoa/WKNavigationInternal.h:
+        * UIProcess/API/Cocoa/WKNavigationResponseInternal.h:
+        * UIProcess/API/Cocoa/WKOpenPanelParametersInternal.h:
+        * UIProcess/API/Cocoa/WKPreferencesInternal.h:
+        * UIProcess/API/Cocoa/WKProcessPoolInternal.h:
+        * UIProcess/API/Cocoa/WKSecurityOriginInternal.h:
+        * UIProcess/API/Cocoa/WKUserContentControllerInternal.h:
+        * UIProcess/API/Cocoa/WKUserScriptInternal.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordInternal.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStoreInternal.h:
+        * UIProcess/API/Cocoa/WKWindowFeaturesInternal.h:
+        * UIProcess/API/Cocoa/_WKApplicationManifestInternal.h:
+        * UIProcess/API/Cocoa/_WKAttachmentInternal.h:
+        * UIProcess/API/Cocoa/_WKAutomationSessionInternal.h:
+        * UIProcess/API/Cocoa/_WKExperimentalFeatureInternal.h:
+        * UIProcess/API/Cocoa/_WKGeolocationPositionInternal.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfigurationInternal.h:
+        * UIProcess/API/Cocoa/_WKUserContentWorldInternal.h:
+        * UIProcess/API/Cocoa/_WKUserInitiatedActionInternal.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheetInternal.h:
+        * UIProcess/API/Cocoa/_WKVisitedLinkStoreInternal.h:
+        * UIProcess/API/Cocoa/_WKWebsitePoliciesInternal.h:
+        * UIProcess/Cocoa/DownloadClient.mm:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrameInternal.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResultInternal.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandleInternal.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroupInternal.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandleInternal.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorldInternal.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerInternal.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInInternal.h:
+        Replaced inline wrapper functions with WrapperTraits structure template
+        specializations. This is always in the WebKit namespace, unlike the functions,
+        which were in a mix of namespaces. Also deleted some unneeded "#pragma once".
+
 2018-08-19  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r234396): Leak of CFURLRef in WebKit::NetworkProcess::deleteHSTSCacheForHostNames()

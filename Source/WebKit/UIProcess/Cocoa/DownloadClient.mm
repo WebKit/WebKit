@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,11 +48,9 @@
 
 namespace WebKit {
 
-static inline _WKDownload *wrapper(DownloadProxy& download)
-{
-    ASSERT([download.wrapper() isKindOfClass:[_WKDownload class]]);
-    return (_WKDownload *)download.wrapper();
-}
+template<> struct WrapperTraits<DownloadProxy> {
+    using WrapperClass = _WKDownload;
+};
 
 DownloadClient::DownloadClient(id <_WKDownloadDelegate> delegate)
     : m_delegate(delegate)

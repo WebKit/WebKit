@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +31,11 @@
 #import "WKObject.h"
 
 namespace WebKit {
-template<typename NumberType, API::Object::Type APIObjectType>
-inline NSNumber *wrapper(API::Number<NumberType, APIObjectType>& number) { ASSERT([number.wrapper() isKindOfClass:[NSNumber class]]); return (NSNumber *)number.wrapper(); }
+
+template<typename NumberType, API::Object::Type APIObjectType> struct WrapperTraits<API::Number<NumberType, APIObjectType>> {
+    using WrapperClass = NSNumber;
+};
+
 }
 
 @interface WKNSNumber : NSNumber <WKObject> {

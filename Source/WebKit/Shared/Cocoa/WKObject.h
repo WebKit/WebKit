@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,21 +28,70 @@
 #if WK_API_ENABLED
 
 #import <type_traits>
+#import <wtf/RefPtr.h>
 
 namespace API {
+
 class Object;
 
-template<typename T>
-struct ObjectStorage {
-    T* get() { return reinterpret_cast<T*>(&data); }
-    T& operator*() { return *reinterpret_cast<T*>(&data); }
-    T* operator->() { return reinterpret_cast<T*>(&data); }
+template<typename ObjectClass> struct ObjectStorage {
+    ObjectClass* get() { return reinterpret_cast<ObjectClass*>(&data); }
+    ObjectClass& operator*() { return *get(); }
+    ObjectClass* operator->() { return get(); }
 
-    typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type data;
+    typename std::aligned_storage<sizeof(ObjectClass), std::alignment_of<ObjectClass>::value>::type data;
 };
 
 API::Object* unwrap(void*);
 void* wrap(API::Object*);
+
+}
+
+namespace WebKit {
+
+template<typename WrappedObjectClass> struct WrapperTraits;
+
+template<typename DestinationClass, typename SourceClass> inline DestinationClass *checkedObjCCast(SourceClass *source)
+{
+    ASSERT([source isKindOfClass:[DestinationClass class]]);
+    return (DestinationClass *)source;
+}
+
+template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *wrapper(ObjectClass& object)
+{
+    return checkedObjCCast<typename WrapperTraits<ObjectClass>::WrapperClass>(object.wrapper());
+}
+
+template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *wrapper(ObjectClass* object)
+{
+    return object ? wrapper(*object) : nil;
+}
+
+template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *wrapper(const Ref<ObjectClass>& object)
+{
+    return wrapper(object.get());
+}
+
+template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *wrapper(const RefPtr<ObjectClass>& object)
+{
+    return wrapper(object.get());
+}
+
+template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *wrapper(Ref<ObjectClass>&& object)
+{
+    return [wrapper(object.leakRef()) autorelease];
+}
+
+template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *wrapper(RefPtr<ObjectClass>&& object)
+{
+    return object ? wrapper(object.releaseNonNull()) : nil;
+}
+
+}
+
+namespace API {
+
+using WebKit::wrapper;
 
 }
 

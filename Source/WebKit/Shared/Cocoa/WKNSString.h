@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,11 @@
 #import "WKObject.h"
 
 namespace WebKit {
-inline NSString *wrapper(API::String& string) { ASSERT([string.wrapper() isKindOfClass:[NSString class]]); return (NSString *)string.wrapper(); }
+
+template<> struct WrapperTraits<API::String> {
+    using WrapperClass = NSString;
+};
+
 }
 
 @interface WKNSString : WKObject <NSCopying>

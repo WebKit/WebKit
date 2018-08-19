@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,11 +32,9 @@
 
 namespace WebKit {
 
-inline WKWebsiteDataStore *wrapper(API::WebsiteDataStore& websiteDataStore)
-{
-    ASSERT([websiteDataStore.wrapper() isKindOfClass:[WKWebsiteDataStore class]]);
-    return (WKWebsiteDataStore *)websiteDataStore.wrapper();
-}
+template<> struct WrapperTraits<API::WebsiteDataStore> {
+    using WrapperClass = WKWebsiteDataStore;
+};
 
 }
 

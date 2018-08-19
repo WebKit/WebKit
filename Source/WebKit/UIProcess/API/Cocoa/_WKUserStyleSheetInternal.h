@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +29,11 @@
 
 #import "APIUserStyleSheet.h"
 
-namespace API {
+namespace WebKit {
 
-inline _WKUserStyleSheet *wrapper(UserStyleSheet& userStyleSheet)
-{
-    ASSERT([userStyleSheet.wrapper() isKindOfClass:[_WKUserStyleSheet class]]);
-    return (_WKUserStyleSheet *)userStyleSheet.wrapper();
-}
+template<> struct WrapperTraits<API::UserStyleSheet> {
+    using WrapperClass = _WKUserStyleSheet;
+};
 
 }
 

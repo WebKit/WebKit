@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
 #import "APIApplicationManifest.h"
 #import "_WKApplicationManifest.h"
-#import <WebCore/ApplicationManifest.h>
 
 #if ENABLE(APPLICATION_MANIFEST)
-namespace API {
 
-inline _WKApplicationManifest *wrapper(API::ApplicationManifest& applicationManifest)
-{
-    ASSERT([applicationManifest.wrapper() isKindOfClass:[_WKApplicationManifest class]]);
-    return (_WKApplicationManifest *)applicationManifest.wrapper();
-}
+namespace WebKit {
+
+template<> struct WrapperTraits<API::ApplicationManifest> {
+    using WrapperClass = _WKApplicationManifest;
+};
 
 }
 

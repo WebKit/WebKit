@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,14 +30,11 @@
 #import "APIFrameInfo.h"
 #import "WKObject.h"
 
-namespace API {
+namespace WebKit {
 
-inline WKFrameInfo *wrapper(API::FrameInfo& frameInfo)
-{
-    ASSERT([frameInfo.wrapper() isKindOfClass:[WKFrameInfo class]]);
-
-    return (WKFrameInfo *)frameInfo.wrapper();
-}
+template<> struct WrapperTraits<API::FrameInfo> {
+    using WrapperClass = WKFrameInfo;
+};
 
 }
 

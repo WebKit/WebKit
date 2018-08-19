@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +30,11 @@
 #import "APIProcessPoolConfiguration.h"
 #import "WKObject.h"
 
-namespace API {
+namespace WebKit {
 
-inline _WKProcessPoolConfiguration *wrapper(API::ProcessPoolConfiguration& processPoolConfiguration)
-{
-    ASSERT([processPoolConfiguration.wrapper() isKindOfClass:[_WKProcessPoolConfiguration class]]);
-    return (_WKProcessPoolConfiguration *)processPoolConfiguration.wrapper();
-}
+template<> struct WrapperTraits<API::ProcessPoolConfiguration> {
+    using WrapperClass = _WKProcessPoolConfiguration;
+};
 
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,12 +32,10 @@
 
 namespace WebKit {
 
-inline WKWebProcessPlugInPageGroup *wrapper(WebPageGroupProxy& pageGroup)
-{
-    ASSERT([pageGroup.wrapper() isKindOfClass:[WKWebProcessPlugInPageGroup class]]);
-    return (WKWebProcessPlugInPageGroup *)pageGroup.wrapper();
-}
-    
+template<> struct WrapperTraits<WebPageGroupProxy> {
+    using WrapperClass = WKWebProcessPlugInPageGroup;
+};
+
 }
 
 @interface WKWebProcessPlugInPageGroup () <WKObject>

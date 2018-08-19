@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,11 +32,9 @@
 
 namespace WebKit {
 
-inline WKWebProcessPlugInScriptWorld *wrapper(InjectedBundleScriptWorld& world)
-{
-    ASSERT([world.wrapper() isKindOfClass:[WKWebProcessPlugInScriptWorld class]]);
-    return (WKWebProcessPlugInScriptWorld *)world.wrapper();
-}
+template<> struct WrapperTraits<InjectedBundleScriptWorld> {
+    using WrapperClass = WKWebProcessPlugInScriptWorld;
+};
 
 }
 

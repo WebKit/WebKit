@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,14 +30,11 @@
 #import "APINavigationResponse.h"
 #import "WKObject.h"
 
-namespace API {
+namespace WebKit {
 
-inline WKNavigationResponse *wrapper(API::NavigationResponse& navigationResponse)
-{
-    ASSERT([navigationResponse.wrapper() isKindOfClass:[WKNavigationResponse class]]);
-
-    return (WKNavigationResponse *)navigationResponse.wrapper();
-}
+template<> struct WrapperTraits<API::NavigationResponse> {
+    using WrapperClass = WKNavigationResponse;
+};
 
 }
 

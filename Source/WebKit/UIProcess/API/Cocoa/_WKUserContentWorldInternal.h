@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,13 +32,15 @@
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
-namespace API {
+namespace WebKit {
 
-inline _WKUserContentWorld *wrapper(UserContentWorld& userContentWorld)
-{
-    ASSERT([userContentWorld.wrapper() isKindOfClass:[_WKUserContentWorld class]]);
-    return (_WKUserContentWorld *)userContentWorld.wrapper();
+template<> struct WrapperTraits<API::UserContentWorld> {
+    using WrapperClass = _WKUserContentWorld;
+};
+
 }
+
+namespace API {
 
 inline Vector<WTF::String> toStringVector(NSArray *input)
 {

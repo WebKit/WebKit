@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,10 +33,10 @@
 
 namespace WebKit {
 
-inline WKWebProcessPlugInFrame *wrapper(WebFrame& frame)
-{
-    ASSERT([frame.wrapper() isKindOfClass:[WKWebProcessPlugInFrame class]]);
-    return (WKWebProcessPlugInFrame *)frame.wrapper(); }
+template<> struct WrapperTraits<WebFrame> {
+    using WrapperClass = WKWebProcessPlugInFrame;
+};
+
 }
 
 @interface WKWebProcessPlugInFrame () <WKObject>

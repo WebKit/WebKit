@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #import "APIAttachment.h"
 #import "_WKAttachment.h"
 
-namespace API {
+namespace WebKit {
 
-inline _WKAttachment *wrapper(API::Attachment& attachment)
-{
-    ASSERT([attachment.wrapper() isKindOfClass:[_WKAttachment class]]);
-    return (_WKAttachment *)attachment.wrapper();
-}
+template<> struct WrapperTraits<API::Attachment> {
+    using WrapperClass = _WKAttachment;
+};
 
 }
 

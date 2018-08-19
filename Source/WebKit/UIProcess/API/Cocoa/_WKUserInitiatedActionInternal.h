@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,15 +29,12 @@
 
 #import "APIUserInitiatedAction.h"
 #import "WKObject.h"
-#import <wtf/text/WTFString.h>
 
-namespace API {
+namespace WebKit {
 
-inline _WKUserInitiatedAction *wrapper(UserInitiatedAction& userInitiatedAction)
-{
-    ASSERT([userInitiatedAction.wrapper() isKindOfClass:[_WKUserInitiatedAction class]]);
-    return (_WKUserInitiatedAction *)userInitiatedAction.wrapper();
-}
+template<> struct WrapperTraits<API::UserInitiatedAction> {
+    using WrapperClass = _WKUserInitiatedAction;
+};
 
 }
 
