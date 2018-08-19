@@ -45,7 +45,7 @@ public:
     enum class IsCancelable : uint8_t { No, Yes };
     enum class IsComposed : uint8_t { No, Yes };
 
-    enum PhaseType {
+    enum PhaseType : uint8_t {
         NONE = 0,
         CAPTURING_PHASE = 1,
         AT_TARGET = 2,
@@ -153,8 +153,6 @@ private:
 
     void setCanceledFlagIfPossible();
 
-    AtomicString m_type;
-
     unsigned m_isInitialized : 1;
     unsigned m_canBubble : 1;
     unsigned m_cancelable : 1;
@@ -169,6 +167,8 @@ private:
     unsigned m_isExecutingPassiveEventListener : 1;
 
     unsigned m_eventPhase : 2;
+
+    AtomicString m_type;
 
     RefPtr<EventTarget> m_currentTarget;
     const EventPath* m_eventPath { nullptr };

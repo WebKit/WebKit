@@ -1,3 +1,21 @@
+2018-08-19  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Shrink size of WebCore::Event further by reordering members
+        https://bugs.webkit.org/show_bug.cgi?id=188734
+
+        Reviewed by Daniel Bates.
+
+        Since WebCore::Event is ref-counted class, it has 4bytes m_refCount at the head of the class.
+        So placing 4bytes just after that before placing 8bytes aligned member (like pointers in 64bit
+        platforms) can save the size of WebCore::Event further.
+        This patch reorders members of WebCore::Event to shrink the size from 80bytes to 72bytes.
+
+        No behavior change.
+
+        * dom/Event.cpp:
+        (WebCore::Event::Event):
+        * dom/Event.h:
+
 2018-08-18  David Kilzer  <ddkilzer@apple.com>
 
         Let Xcode have its way with the WebCore project

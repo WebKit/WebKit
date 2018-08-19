@@ -35,8 +35,7 @@
 namespace WebCore {
 
 ALWAYS_INLINE Event::Event(MonotonicTime createTime, const AtomicString& type, IsTrusted isTrusted, CanBubble canBubble, IsCancelable cancelable, IsComposed composed)
-    : m_type { type }
-    , m_isInitialized { !type.isNull() }
+    : m_isInitialized { !type.isNull() }
     , m_canBubble { canBubble == CanBubble::Yes }
     , m_cancelable { cancelable == IsCancelable::Yes }
     , m_composed { composed == IsComposed::Yes }
@@ -48,6 +47,7 @@ ALWAYS_INLINE Event::Event(MonotonicTime createTime, const AtomicString& type, I
     , m_isTrusted { isTrusted == IsTrusted::Yes }
     , m_isExecutingPassiveEventListener { false }
     , m_eventPhase { NONE }
+    , m_type { type }
     , m_createTime { createTime }
 {
 }
