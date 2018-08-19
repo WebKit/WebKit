@@ -45,6 +45,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/ProcessPrivilege.h>
+#import <wtf/RetainPtr.h>
 
 namespace WebKit {
 
@@ -159,8 +160,10 @@ void NetworkProcess::getHostNamesWithHSTSCache(WebCore::NetworkStorageSession& s
 
 void NetworkProcess::deleteHSTSCacheForHostNames(WebCore::NetworkStorageSession& session, const Vector<String>& hostNames)
 {
-    for (auto& hostName : hostNames)
-        _CFNetworkResetHSTS(CFURLCreateWithString(kCFAllocatorDefault, hostName.createCFString().get(), NULL), session.platformSession());
+    for (auto& hostName : hostNames) {
+        auto url = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, hostName.createCFString().get(), NULL));
+        _CFNetworkResetHSTS(url.get(), session.platformSession());
+    }
 }
 
 void NetworkProcess::clearHSTSCache(WebCore::NetworkStorageSession& session, WallTime modifiedSince)

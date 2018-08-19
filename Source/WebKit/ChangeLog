@@ -1,3 +1,14 @@
+2018-08-19  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r234396): Leak of CFURLRef in WebKit::NetworkProcess::deleteHSTSCacheForHostNames()
+        <https://webkit.org/b/188725>
+
+        Reviewed by Dan Bernstein.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::deleteHSTSCacheForHostNames): Use
+        adoptCF() to prevent a leak.
+
 2018-08-18  Andy Estes  <aestes@apple.com>
 
         [watchOS] NetworkProximityManager should use WTF_MAKE_FAST_ALLOCATED
