@@ -1,3 +1,16 @@
+2018-08-20  Jonathan Bedard  <jbedard@apple.com>
+
+        WebKitTestRunner: Add watchOS entitlements
+        https://bugs.webkit.org/show_bug.cgi?id=188758
+
+        Reviewed by Tim Horton.
+
+        watchOS needs an additional entitlement to open up a socket for on-device testing.
+
+        * WebKitTestRunner/Configurations/WebKitTestRunnerApp-watchOS.entitlements: Added.
+        * WebKitTestRunner/Configurations/WebKitTestRunnerApp.xcconfig:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2018-08-20  Thomas Denney  <tdenney@apple.com>
 
         [WHLSL] Remove generics from the interpreter
