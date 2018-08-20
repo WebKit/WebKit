@@ -188,7 +188,7 @@ static void networkStateChanged(bool isOnLine)
     for (auto& frame : frames) {
         if (!frame->document())
             continue;
-        frame->document()->dispatchWindowEvent(Event::create(eventName, false, false));
+        frame->document()->dispatchWindowEvent(Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::No));
     }
 }
 

@@ -176,7 +176,7 @@ void HTMLScriptElement::dispatchLoadEvent()
     ASSERT(!haveFiredLoadEvent());
     setHaveFiredLoadEvent(true);
 
-    dispatchEvent(Event::create(eventNames().loadEvent, false, false));
+    dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 Ref<Element> HTMLScriptElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)

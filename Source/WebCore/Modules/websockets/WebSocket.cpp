@@ -563,7 +563,7 @@ void WebSocket::didConnect()
     m_state = OPEN;
     m_subprotocol = m_channel->subprotocol();
     m_extensions = m_channel->extensions();
-    dispatchEvent(Event::create(eventNames().openEvent, false, false));
+    dispatchEvent(Event::create(eventNames().openEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void WebSocket::didReceiveMessage(const String& msg)
@@ -657,7 +657,7 @@ void WebSocket::dispatchOrQueueErrorEvent()
         return;
 
     m_dispatchedErrorEvent = true;
-    dispatchOrQueueEvent(Event::create(eventNames().errorEvent, false, false));
+    dispatchOrQueueEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void WebSocket::dispatchOrQueueEvent(Ref<Event>&& event)

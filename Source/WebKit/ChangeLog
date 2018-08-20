@@ -1,3 +1,13 @@
+2018-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Replace canBubble and cancelable booleans in Event by enum classes
+        https://bugs.webkit.org/show_bug.cgi?id=188692
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::navigateToPDFLinkWithSimulatedClick):
+
 2018-08-17  Alex Christensen  <achristensen@webkit.org>
 
         Simplify server trust authentication flow

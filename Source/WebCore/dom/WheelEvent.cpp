@@ -48,7 +48,7 @@ inline WheelEvent::WheelEvent(const AtomicString& type, const Init& initializer,
 }
 
 inline WheelEvent::WheelEvent(const PlatformWheelEvent& event, RefPtr<WindowProxy>&& view)
-    : MouseEvent(eventNames().wheelEvent, true, true, event.timestamp().approximateMonotonicTime(), WTFMove(view), 0, event.globalPosition(), event.position()
+    : MouseEvent(eventNames().wheelEvent, CanBubble::Yes, IsCancelable::Yes, event.timestamp().approximateMonotonicTime(), WTFMove(view), 0, event.globalPosition(), event.position()
 #if ENABLE(POINTER_LOCK)
         , { }
 #endif

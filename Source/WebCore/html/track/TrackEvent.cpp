@@ -48,7 +48,7 @@ static inline std::optional<TrackEvent::TrackEventTrack> convertToTrackEventTrac
     return std::nullopt;
 }
 
-TrackEvent::TrackEvent(const AtomicString& type, bool canBubble, bool cancelable, Ref<TrackBase>&& track)
+TrackEvent::TrackEvent(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, Ref<TrackBase>&& track)
     : Event(type, canBubble, cancelable)
     , m_track(convertToTrackEventTrack(WTFMove(track)))
 {

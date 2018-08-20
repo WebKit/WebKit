@@ -2144,7 +2144,7 @@ static NSMutableSet *knownPluginMIMETypes()
         if (coreMainFrame) {
             Document *document = coreMainFrame->document();
             if (document)
-                document->dispatchWindowEvent(Event::create(eventNames().unloadEvent, false, false));
+                document->dispatchWindowEvent(Event::create(eventNames().unloadEvent, Event::CanBubble::No, Event::IsCancelable::No));
         }
     });
 }

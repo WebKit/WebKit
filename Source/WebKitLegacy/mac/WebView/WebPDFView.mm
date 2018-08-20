@@ -1030,7 +1030,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
         break;
     }
     if (button != noButton) {
-        event = MouseEvent::create(eventNames().clickEvent, true, true, MonotonicTime::now(), 0, [nsEvent clickCount], 0, 0, 0, 0,
+        event = MouseEvent::create(eventNames().clickEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, MonotonicTime::now(), 0, [nsEvent clickCount], 0, 0, 0, 0,
 #if ENABLE(POINTER_LOCK)
             0, 0,
 #endif

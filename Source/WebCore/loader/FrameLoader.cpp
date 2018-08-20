@@ -3155,7 +3155,7 @@ void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
             // https://bugs.webkit.org/show_bug.cgi?id=116770
 
             if (m_frame.document()->pageCacheState() == Document::NotInPageCache) {
-                Ref<Event> unloadEvent(Event::create(eventNames().unloadEvent, false, false));
+                Ref<Event> unloadEvent(Event::create(eventNames().unloadEvent, Event::CanBubble::No, Event::IsCancelable::No));
                 // The DocumentLoader (and thus its LoadTiming) might get destroyed
                 // while dispatching the event, so protect it to prevent writing the end
                 // time into freed memory.

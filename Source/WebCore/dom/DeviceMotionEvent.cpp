@@ -38,7 +38,7 @@ DeviceMotionEvent::DeviceMotionEvent()
 }
 
 DeviceMotionEvent::DeviceMotionEvent(const AtomicString& eventType, DeviceMotionData* deviceMotionData)
-    : Event(eventType, false, false) // Can't bubble, not cancelable
+    : Event(eventType, CanBubble::No, IsCancelable::No)
     , m_deviceMotionData(deviceMotionData)
 {
 }

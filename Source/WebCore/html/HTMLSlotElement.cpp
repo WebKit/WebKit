@@ -142,9 +142,7 @@ void HTMLSlotElement::dispatchSlotChangeEvent()
 {
     m_inSignalSlotList = false;
 
-    bool bubbles = true;
-    bool cancelable = false;
-    Ref<Event> event = Event::create(eventNames().slotchangeEvent, bubbles, cancelable);
+    Ref<Event> event = Event::create(eventNames().slotchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No);
     event->setTarget(this);
     dispatchEvent(event);
 }

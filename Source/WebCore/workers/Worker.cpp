@@ -181,7 +181,7 @@ void Worker::notifyFinished()
     PAL::SessionID sessionID = context ? context->sessionID() : PAL::SessionID();
 
     if (m_scriptLoader->failed() || !sessionID.isValid())
-        dispatchEvent(Event::create(eventNames().errorEvent, false, true));
+        dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::Yes));
     else {
         bool isOnline = platformStrategies()->loaderStrategy()->isOnLine();
         const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders = m_contentSecurityPolicyResponseHeaders ? m_contentSecurityPolicyResponseHeaders.value() : scriptExecutionContext()->contentSecurityPolicy()->responseHeaders();

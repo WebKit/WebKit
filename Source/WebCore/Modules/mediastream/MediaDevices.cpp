@@ -163,7 +163,7 @@ MediaTrackSupportedConstraints MediaDevices::getSupportedConstraints()
 void MediaDevices::scheduledEventTimerFired()
 {
     if (scriptExecutionContext())
-        dispatchEvent(Event::create(eventNames().devicechangeEvent, false, false));
+        dispatchEvent(Event::create(eventNames().devicechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 bool MediaDevices::hasPendingActivity() const

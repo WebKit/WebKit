@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include "Event.h"
 #include "EventQueue.h"
 #include <memory>
 #include <wtf/HashSet.h>
@@ -35,7 +36,6 @@
 namespace WebCore {
 
 class Document;
-class Event;
 class Node;
 
 class DocumentEventQueue final : public EventQueue {
@@ -48,8 +48,8 @@ public:
     void close() override;
 
     void enqueueOrDispatchScrollEvent(Node&);
-    void enqueueScrollEvent(EventTarget&, bool bubbles, bool cancelable);
-    void enqueueResizeEvent(EventTarget&, bool bubbles, bool cancelable);
+    void enqueueScrollEvent(EventTarget&, Event::CanBubble, Event::IsCancelable);
+    void enqueueResizeEvent(EventTarget&, Event::CanBubble, Event::IsCancelable);
 
 private:
     void pendingEventTimerFired();

@@ -356,7 +356,7 @@ void PeerConnectionBackend::fireICECandidateEvent(RefPtr<RTCIceCandidate>&& cand
 {
     ASSERT(isMainThread());
 
-    m_peerConnection.fireEvent(RTCPeerConnectionIceEvent::create(false, false, WTFMove(candidate), WTFMove(serverURL)));
+    m_peerConnection.fireEvent(RTCPeerConnectionIceEvent::create(Event::CanBubble::No, Event::IsCancelable::No, WTFMove(candidate), WTFMove(serverURL)));
 }
 
 void PeerConnectionBackend::enableICECandidateFiltering()
@@ -456,7 +456,7 @@ void PeerConnectionBackend::doneGatheringCandidates()
     if (m_waitingForMDNSRegistration)
         return;
 
-    m_peerConnection.fireEvent(RTCPeerConnectionIceEvent::create(false, false, nullptr, { }));
+    m_peerConnection.fireEvent(RTCPeerConnectionIceEvent::create(Event::CanBubble::No, Event::IsCancelable::No, nullptr, { }));
     m_peerConnection.updateIceGatheringState(RTCIceGatheringState::Complete);
     m_pendingICECandidates.clear();
 }
@@ -505,7 +505,7 @@ void PeerConnectionBackend::updateSignalingState(RTCSignalingState newSignalingS
 
     if (newSignalingState != m_peerConnection.signalingState()) {
         m_peerConnection.setSignalingState(newSignalingState);
-        m_peerConnection.fireEvent(Event::create(eventNames().signalingstatechangeEvent, false, false));
+        m_peerConnection.fireEvent(Event::create(eventNames().signalingstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
     }
 }
 

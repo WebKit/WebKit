@@ -48,7 +48,7 @@ ExtendableMessageEvent::ExtendableMessageEvent(JSC::ExecState& state, const Atom
 }
 
 ExtendableMessageEvent::ExtendableMessageEvent(RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&& source, Vector<RefPtr<MessagePort>>&& ports)
-    : ExtendableEvent(eventNames().messageEvent, false, false)
+    : ExtendableEvent(eventNames().messageEvent, CanBubble::No, IsCancelable::No)
     , m_data(WTFMove(data))
     , m_origin(origin)
     , m_lastEventId(lastEventId)

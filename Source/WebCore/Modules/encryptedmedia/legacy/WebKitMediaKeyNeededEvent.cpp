@@ -33,7 +33,7 @@
 namespace WebCore {
 
 WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomicString& type, Uint8Array* initData)
-    : Event(type, false, false)
+    : Event(type, CanBubble::No, IsCancelable::No)
     , m_initData(initData)
 {
 }

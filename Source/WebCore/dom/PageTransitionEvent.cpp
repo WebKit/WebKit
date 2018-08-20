@@ -29,7 +29,7 @@
 namespace WebCore {
 
 PageTransitionEvent::PageTransitionEvent(const AtomicString& type, bool persisted)
-    : Event(type, true, true)
+    : Event(type, CanBubble::Yes, IsCancelable::Yes)
     , m_persisted(persisted)
 {
 }

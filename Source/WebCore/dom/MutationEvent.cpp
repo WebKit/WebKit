@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-MutationEvent::MutationEvent(const AtomicString& type, bool canBubble, bool cancelable, Node* relatedNode, const String& prevValue, const String& newValue)
+MutationEvent::MutationEvent(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, Node* relatedNode, const String& prevValue, const String& newValue)
     : Event(type, canBubble, cancelable)
     , m_relatedNode(relatedNode)
     , m_prevValue(prevValue)

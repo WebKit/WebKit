@@ -29,7 +29,7 @@
 namespace WebCore {
 
 AccessibleSetValueEvent::AccessibleSetValueEvent(const AtomicString& type, const AtomicString& value)
-    : Event(type, true, true)
+    : Event(type, CanBubble::Yes, IsCancelable::Yes)
     , m_value(value)
 {
 }

@@ -31,7 +31,7 @@
 namespace WebCore {
 
 BeforeTextInsertedEvent::BeforeTextInsertedEvent(const String& text)
-    : Event(eventNames().webkitBeforeTextInsertedEvent, false, true), m_text(text)
+    : Event(eventNames().webkitBeforeTextInsertedEvent, CanBubble::No, IsCancelable::Yes), m_text(text)
 {
 }
 

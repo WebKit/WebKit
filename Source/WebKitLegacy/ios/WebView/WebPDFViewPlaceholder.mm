@@ -479,7 +479,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
         return;
 
     // Construct an event to simulate a click.
-    RefPtr<Event> event = MouseEvent::create(eventNames().clickEvent, true, true, MonotonicTime::now(), 0, 1, 0, 0, 0, 0,
+    RefPtr<Event> event = MouseEvent::create(eventNames().clickEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, MonotonicTime::now(), 0, 1, 0, 0, 0, 0,
 #if ENABLE(POINTER_LOCK)
         0, 0,
 #endif

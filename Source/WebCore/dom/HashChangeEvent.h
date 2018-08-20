@@ -69,7 +69,7 @@ private:
     }
 
     HashChangeEvent(const String& oldURL, const String& newURL)
-        : Event(eventNames().hashchangeEvent, false, false)
+        : Event(eventNames().hashchangeEvent, CanBubble::No, IsCancelable::No)
         , m_oldURL(oldURL)
         , m_newURL(newURL)
     {

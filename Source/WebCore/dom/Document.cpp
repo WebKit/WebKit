@@ -1216,7 +1216,7 @@ void Document::setReadyState(ReadyState readyState)
     }
 
     m_readyState = readyState;
-    dispatchEvent(Event::create(eventNames().readystatechangeEvent, false, false));
+    dispatchEvent(Event::create(eventNames().readystatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
     if (settings().suppressesIncrementalRendering())
         setVisualUpdatesAllowed(readyState);
@@ -1630,7 +1630,7 @@ void Document::unregisterForVisibilityStateChangedCallbacks(VisibilityChangeClie
 
 void Document::visibilityStateChanged()
 {
-    enqueueDocumentEvent(Event::create(eventNames().visibilitychangeEvent, false, false));
+    enqueueDocumentEvent(Event::create(eventNames().visibilitychangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
     for (auto* client : m_visibilityStateCallbackClients)
         client->visibilityStateChanged();
 
@@ -5430,7 +5430,7 @@ void Document::finishedParsing()
     // FIXME: Schdule a task to fire DOMContentLoaded event instead. See webkit.org/b/82931
     MicrotaskQueue::mainThreadQueue().performMicrotaskCheckpoint();
 
-    dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, true, false));
+    dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 
     if (!m_documentTiming.domContentLoadedEventEnd)
         m_documentTiming.domContentLoadedEventEnd = MonotonicTime::now();
@@ -6404,7 +6404,7 @@ void Document::dispatchFullScreenChangeOrErrorEvent(Deque<RefPtr<Node>>& queue, 
         if (shouldNotifyMediaElement && is<HTMLMediaElement>(*node))
             downcast<HTMLMediaElement>(*node).enteredOrExitedFullscreen();
 #endif
-        node->dispatchEvent(Event::create(eventName, true, false));
+        node->dispatchEvent(Event::create(eventName, Event::CanBubble::Yes, Event::IsCancelable::No));
     }
 }
 
@@ -7452,7 +7452,7 @@ void Document::didRemoveInDocumentShadowRoot(ShadowRoot& shadowRoot)
 void Document::orientationChanged(int orientation)
 {
     LOG(Events, "Document %p orientationChanged - orientation %d", this, orientation);
-    dispatchWindowEvent(Event::create(eventNames().orientationchangeEvent, false, false));
+    dispatchWindowEvent(Event::create(eventNames().orientationchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
     m_orientationNotifier.orientationChanged(orientation);
 }
 

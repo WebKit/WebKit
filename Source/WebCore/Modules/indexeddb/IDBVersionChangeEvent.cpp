@@ -31,7 +31,7 @@
 namespace WebCore {
 
 IDBVersionChangeEvent::IDBVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomicString& name)
-    : Event(name, false /*canBubble*/, false /*cancelable*/)
+    : Event(name, CanBubble::No, IsCancelable::No)
     , m_requestIdentifier(requestIdentifier)
     , m_oldVersion(oldVersion)
 {

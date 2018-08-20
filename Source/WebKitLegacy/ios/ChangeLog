@@ -1,3 +1,13 @@
+2018-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Replace canBubble and cancelable booleans in Event by enum classes
+        https://bugs.webkit.org/show_bug.cgi?id=188692
+
+        Reviewed by Alex Christensen.
+
+        * WebView/WebPDFViewPlaceholder.mm:
+        (-[WebPDFViewPlaceholder simulateClickOnLinkToURL:]):
+
 2018-08-13  Alex Christensen  <achristensen@webkit.org>
 
         Use a 1-byte enum class for TextDirection

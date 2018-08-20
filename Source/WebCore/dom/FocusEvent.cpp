@@ -40,7 +40,7 @@ bool FocusEvent::isFocusEvent() const
     return true;
 }
 
-FocusEvent::FocusEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, int detail, RefPtr<EventTarget>&& relatedTarget)
+FocusEvent::FocusEvent(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<WindowProxy>&& view, int detail, RefPtr<EventTarget>&& relatedTarget)
     : UIEvent(type, canBubble, cancelable, WTFMove(view), detail)
     , m_relatedTarget(WTFMove(relatedTarget))
 {

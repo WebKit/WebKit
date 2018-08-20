@@ -1484,7 +1484,7 @@ void HTMLInputElement::onSearch()
 
     if (m_inputType)
         downcast<SearchInputType>(*m_inputType.get()).stopSearchEventTimer();
-    dispatchEvent(Event::create(eventNames().searchEvent, true, false));
+    dispatchEvent(Event::create(eventNames().searchEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 }
 
 void HTMLInputElement::resumeFromDocumentSuspension()

@@ -365,7 +365,7 @@ void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
 
     // 3. Notify track's source that track is ended so that the source may be stopped, unless other MediaStreamTrack objects depend on it.
     // 4. Fire a simple event named ended at the object.
-    dispatchEvent(Event::create(eventNames().endedEvent, false, false));
+    dispatchEvent(Event::create(eventNames().endedEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
     for (auto& observer : m_observers)
         observer->trackDidEnd();
@@ -379,7 +379,7 @@ void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
         return;
 
     AtomicString eventType = muted() ? eventNames().muteEvent : eventNames().unmuteEvent;
-    dispatchEvent(Event::create(eventType, false, false));
+    dispatchEvent(Event::create(eventType, Event::CanBubble::No, Event::IsCancelable::No));
 
     configureTrackRendering();
 }

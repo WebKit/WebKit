@@ -40,7 +40,7 @@ public:
 protected:
     UIEventWithKeyState() = default;
 
-    UIEventWithKeyState(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, int detail, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
+    UIEventWithKeyState(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<WindowProxy>&& view, int detail, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
         : UIEvent(type, canBubble, cancelable, WTFMove(view), detail)
         , m_ctrlKey(ctrlKey)
         , m_altKey(altKey)
@@ -49,7 +49,7 @@ protected:
     {
     }
 
-    UIEventWithKeyState(const AtomicString& type, bool canBubble, bool cancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view,
+    UIEventWithKeyState(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view,
         int detail, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey, bool capsLockKey)
             : UIEvent(type, canBubble, cancelable, timestamp, WTFMove(view), detail)
             , m_ctrlKey(ctrlKey)

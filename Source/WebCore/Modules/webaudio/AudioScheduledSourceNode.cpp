@@ -179,7 +179,7 @@ void AudioScheduledSourceNode::finish()
         if (!this->scriptExecutionContext())
             return;
 
-        this->dispatchEvent(Event::create(eventNames().endedEvent, false, false));
+        this->dispatchEvent(Event::create(eventNames().endedEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });
 }
 

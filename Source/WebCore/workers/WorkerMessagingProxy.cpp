@@ -227,7 +227,7 @@ void WorkerMessagingProxy::notifyNetworkStateChange(bool isOnline)
     m_workerThread->runLoop().postTask([isOnline] (ScriptExecutionContext& context) {
         auto& globalScope = downcast<WorkerGlobalScope>(context);
         globalScope.setIsOnline(isOnline);
-        globalScope.dispatchEvent(Event::create(isOnline ? eventNames().onlineEvent : eventNames().offlineEvent, false, false));
+        globalScope.dispatchEvent(Event::create(isOnline ? eventNames().onlineEvent : eventNames().offlineEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });
 }
 

@@ -559,7 +559,7 @@ void SVGUseElement::notifyFinished(CachedResource& resource)
     ASSERT(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     invalidateShadowTree();
     if (resource.errorOccurred())
-        dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+        dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
     else if (!resource.wasCanceled())
         SVGExternalResourcesRequired::dispatchLoadEvent();
 }

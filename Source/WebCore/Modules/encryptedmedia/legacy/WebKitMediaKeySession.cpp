@@ -179,7 +179,7 @@ void WebKitMediaKeySession::addKeyTimerFired()
 
         // 2.7. If did store key is true, queue a task to fire a simple event named keyadded at the MediaKeySession object.
         if (didStoreKey) {
-            auto keyaddedEvent = Event::create(eventNames().webkitkeyaddedEvent, false, false);
+            auto keyaddedEvent = Event::create(eventNames().webkitkeyaddedEvent, Event::CanBubble::No, Event::IsCancelable::No);
             keyaddedEvent->setTarget(this);
             m_asyncEventQueue.enqueueEvent(WTFMove(keyaddedEvent));
 
@@ -212,7 +212,7 @@ void WebKitMediaKeySession::sendError(MediaKeyErrorCode errorCode, uint32_t syst
 {
     m_error = WebKitMediaKeyError::create(errorCode, systemCode);
 
-    auto keyerrorEvent = Event::create(eventNames().webkitkeyerrorEvent, false, false);
+    auto keyerrorEvent = Event::create(eventNames().webkitkeyerrorEvent, Event::CanBubble::No, Event::IsCancelable::No);
     keyerrorEvent->setTarget(this);
     m_asyncEventQueue.enqueueEvent(WTFMove(keyerrorEvent));
 }

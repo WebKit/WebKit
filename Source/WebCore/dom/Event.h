@@ -41,6 +41,8 @@ class ScriptExecutionContext;
 class Event : public ScriptWrappable, public RefCounted<Event> {
 public:
     enum class IsTrusted { No, Yes };
+    enum class CanBubble { No, Yes };
+    enum class IsCancelable { No, Yes };
 
     enum PhaseType { 
         NONE = 0,
@@ -49,7 +51,7 @@ public:
         BUBBLING_PHASE = 3
     };
 
-    WEBCORE_EXPORT static Ref<Event> create(const AtomicString& type, bool canBubble, bool cancelable);
+    WEBCORE_EXPORT static Ref<Event> create(const AtomicString& type, CanBubble, IsCancelable);
     static Ref<Event> createForBindings();
     static Ref<Event> create(const AtomicString& type, const EventInit&, IsTrusted = IsTrusted::No);
 
@@ -139,8 +141,8 @@ public:
 
 protected:
     explicit Event(IsTrusted = IsTrusted::No);
-    Event(const AtomicString& type, bool canBubble, bool cancelable);
-    Event(const AtomicString& type, bool canBubble, bool cancelable, MonotonicTime timestamp);
+    Event(const AtomicString& type, CanBubble, IsCancelable);
+    Event(const AtomicString& type, CanBubble, IsCancelable, MonotonicTime timestamp);
     Event(const AtomicString& type, const EventInit&, IsTrusted);
 
     virtual void receivedTarget() { }

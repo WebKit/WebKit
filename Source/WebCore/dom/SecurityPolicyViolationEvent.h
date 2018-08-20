@@ -31,7 +31,7 @@ namespace WebCore {
 
 class SecurityPolicyViolationEvent final : public Event {
 public:
-    static Ref<SecurityPolicyViolationEvent> create(const AtomicString& type, bool canBubble, bool cancelable, const String& documentURI, const String& referrer, const String& blockedURI, const String& violatedDirective, const String& effectiveDirective, const String& originalPolicy, const String& sourceFile, unsigned short statusCode, int lineNumber, int columnNumber)
+    static Ref<SecurityPolicyViolationEvent> create(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, const String& documentURI, const String& referrer, const String& blockedURI, const String& violatedDirective, const String& effectiveDirective, const String& originalPolicy, const String& sourceFile, unsigned short statusCode, int lineNumber, int columnNumber)
     {
         return adoptRef(*new SecurityPolicyViolationEvent(type, canBubble, cancelable, documentURI, referrer, blockedURI, violatedDirective, effectiveDirective, originalPolicy, sourceFile, statusCode, lineNumber, columnNumber));
     }
@@ -80,7 +80,7 @@ private:
     {
     }
 
-    SecurityPolicyViolationEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& documentURI, const String& referrer, const String& blockedURI, const String& violatedDirective, const String& effectiveDirective, const String& originalPolicy, const String& sourceFile, unsigned short statusCode, int lineNumber, int columnNumber)
+    SecurityPolicyViolationEvent(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, const String& documentURI, const String& referrer, const String& blockedURI, const String& violatedDirective, const String& effectiveDirective, const String& originalPolicy, const String& sourceFile, unsigned short statusCode, int lineNumber, int columnNumber)
         : Event(type, canBubble, cancelable)
         , m_documentURI(documentURI)
         , m_referrer(referrer)

@@ -42,7 +42,7 @@ public:
     };
 
     static Ref<RTCPeerConnectionIceEvent> create(const AtomicString& type, Init&&);
-    static Ref<RTCPeerConnectionIceEvent> create(bool canBubble, bool cancelable, RefPtr<RTCIceCandidate>&&, String&& serverURL);
+    static Ref<RTCPeerConnectionIceEvent> create(CanBubble, IsCancelable, RefPtr<RTCIceCandidate>&&, String&& serverURL);
 
     RTCIceCandidate* candidate() const;
     const String& url() const { return m_url; }
@@ -50,7 +50,7 @@ public:
     virtual EventInterface eventInterface() const;
 
 private:
-    RTCPeerConnectionIceEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<RTCIceCandidate>&&, String&& serverURL);
+    RTCPeerConnectionIceEvent(const AtomicString& type, CanBubble, IsCancelable, RefPtr<RTCIceCandidate>&&, String&& serverURL);
 
     RefPtr<RTCIceCandidate> m_candidate;
     String m_url;

@@ -50,7 +50,7 @@ Ref<StorageEvent> StorageEvent::create(const AtomicString& type, const Init& ini
 }
 
 StorageEvent::StorageEvent(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea)
-    : Event(type, false, false)
+    : Event(type, CanBubble::No, IsCancelable::No)
     , m_key(key)
     , m_oldValue(oldValue)
     , m_newValue(newValue)

@@ -36,16 +36,14 @@ namespace WebCore {
 
 TouchEvent::TouchEvent() = default;
 
-TouchEvent::TouchEvent(TouchList* touches, TouchList* targetTouches,
-        TouchList* changedTouches, const AtomicString& type, 
-        RefPtr<WindowProxy>&& view, int screenX, int screenY, int pageX, int pageY,
-        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
-    : MouseRelatedEvent(type, true, true, MonotonicTime::now(), WTFMove(view), 0, IntPoint(screenX, screenY),
-                        IntPoint(pageX, pageY),
+TouchEvent::TouchEvent(TouchList* touches, TouchList* targetTouches, TouchList* changedTouches, const AtomicString& type,
+    RefPtr<WindowProxy>&& view, int screenX, int screenY, int pageX, int pageY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
+    : MouseRelatedEvent(type, CanBubble::Yes, IsCancelable::Yes, MonotonicTime::now(), WTFMove(view), 0, IntPoint(screenX, screenY),
+        IntPoint(pageX, pageY),
 #if ENABLE(POINTER_LOCK)
-                        IntPoint(0, 0),
+        IntPoint(0, 0),
 #endif
-                        ctrlKey, altKey, shiftKey, metaKey)
+        ctrlKey, altKey, shiftKey, metaKey)
     , m_touches(touches)
     , m_targetTouches(targetTouches)
     , m_changedTouches(changedTouches)

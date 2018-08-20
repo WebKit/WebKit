@@ -32,15 +32,15 @@ UIEvent::UIEvent()
 {
 }
 
-UIEvent::UIEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg, RefPtr<WindowProxy>&& viewArg, int detailArg)
-    : Event(eventType, canBubbleArg, cancelableArg)
+UIEvent::UIEvent(const AtomicString& eventType, CanBubble canBubble, IsCancelable cancelable, RefPtr<WindowProxy>&& viewArg, int detailArg)
+    : Event(eventType, canBubble, cancelable)
     , m_view(WTFMove(viewArg))
     , m_detail(detailArg)
 {
 }
 
-UIEvent::UIEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg, MonotonicTime timestamp, RefPtr<WindowProxy>&& viewArg, int detailArg)
-    : Event(eventType, canBubbleArg, cancelableArg, timestamp)
+UIEvent::UIEvent(const AtomicString& eventType, CanBubble canBubble, IsCancelable cancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& viewArg, int detailArg)
+    : Event(eventType, canBubble, cancelable, timestamp)
     , m_view(WTFMove(viewArg))
     , m_detail(detailArg)
 {

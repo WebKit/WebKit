@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-Ref<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<MediaStreamTrack>&& track)
+Ref<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<MediaStreamTrack>&& track)
 {
     return adoptRef(*new MediaStreamTrackEvent(type, canBubble, cancelable, WTFMove(track)));
 }
@@ -41,7 +41,7 @@ Ref<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomicString& typ
     return adoptRef(*new MediaStreamTrackEvent(type, initializer, isTrusted));
 }
 
-MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<MediaStreamTrack>&& track)
+MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<MediaStreamTrack>&& track)
     : Event(type, canBubble, cancelable)
     , m_track(WTFMove(track))
 {

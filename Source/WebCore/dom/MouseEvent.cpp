@@ -47,8 +47,8 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& type, const MouseEventIni
 Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, RefPtr<WindowProxy>&& view, const PlatformMouseEvent& event, int detail, Node* relatedTarget)
 {
     bool isMouseEnterOrLeave = eventType == eventNames().mouseenterEvent || eventType == eventNames().mouseleaveEvent;
-    bool isCancelable = eventType != eventNames().mousemoveEvent && !isMouseEnterOrLeave;
-    bool canBubble = !isMouseEnterOrLeave;
+    auto isCancelable = eventType != eventNames().mousemoveEvent && !isMouseEnterOrLeave ? IsCancelable::Yes : IsCancelable::No;
+    auto canBubble = !isMouseEnterOrLeave ? CanBubble::Yes : CanBubble::No;
 
     return MouseEvent::create(eventType, canBubble, isCancelable, event.timestamp().approximateMonotonicTime(), WTFMove(view),
         detail, event.globalPosition().x(), event.globalPosition().y(), event.position().x(), event.position().y(),
@@ -59,7 +59,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, RefPtr<WindowP
         relatedTarget, event.force(), event.syntheticClickType());
 }
 
-Ref<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, bool cancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail, int screenX, int screenY, int pageX, int pageY,
+Ref<MouseEvent> MouseEvent::create(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
     int movementX, int movementY,
 #endif
@@ -73,14 +73,14 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, boo
         ctrlKey, altKey, shiftKey, metaKey, button, buttons, relatedTarget, force, syntheticClickType, dataTransfer, isSimulated));
 }
 
-Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short buttons, unsigned short syntheticClickType, EventTarget* relatedTarget)
+Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, CanBubble canBubble, IsCancelable cancelable, RefPtr<WindowProxy>&& view, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short buttons, unsigned short syntheticClickType, EventTarget* relatedTarget)
 {
     return adoptRef(*new MouseEvent(eventType, canBubble, cancelable, WTFMove(view), detail, { screenX, screenY }, { clientX, clientY }, ctrlKey, altKey, shiftKey, metaKey, button, buttons, syntheticClickType, relatedTarget));
 }
 
 MouseEvent::MouseEvent() = default;
 
-MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
+MouseEvent::MouseEvent(const AtomicString& eventType, CanBubble canBubble, IsCancelable cancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
 #if ENABLE(POINTER_LOCK)
         const IntPoint& movementDelta,
 #endif
@@ -100,7 +100,7 @@ MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cance
 {
 }
 
-MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, int detail, const IntPoint& screenLocation, const IntPoint& clientLocation, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short buttons, unsigned short syntheticClickType, EventTarget* relatedTarget)
+MouseEvent::MouseEvent(const AtomicString& eventType, CanBubble canBubble, IsCancelable cancelable, RefPtr<WindowProxy>&& view, int detail, const IntPoint& screenLocation, const IntPoint& clientLocation, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short buttons, unsigned short syntheticClickType, EventTarget* relatedTarget)
     : MouseRelatedEvent(eventType, canBubble, cancelable, MonotonicTime::now(), WTFMove(view), detail, screenLocation, { },
 #if ENABLE(POINTER_LOCK)
         { },

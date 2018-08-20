@@ -37,7 +37,7 @@ VRDisplayEvent::VRDisplayEvent(const AtomicString& type, const Init& initializer
 }
 
 VRDisplayEvent::VRDisplayEvent(const AtomicString& name, const RefPtr<VRDisplay>& display, std::optional<VRDisplayEventReason>&& reason)
-    : Event(name, false /*canBubble*/, false /*cancelable*/)
+    : Event(name, CanBubble::No, IsCancelable::No)
     , m_display(display)
     , m_reason(WTFMove(reason))
 {

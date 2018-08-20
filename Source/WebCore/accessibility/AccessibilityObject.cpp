@@ -2216,7 +2216,7 @@ bool AccessibilityObject::dispatchAccessibilityEventWithType(AccessibilityEventT
         return false;
     }
     
-    auto event = Event::create(eventName, true, true);
+    auto event = Event::create(eventName, Event::CanBubble::Yes, Event::IsCancelable::Yes);
     return dispatchAccessibilityEvent(event);
 }
 

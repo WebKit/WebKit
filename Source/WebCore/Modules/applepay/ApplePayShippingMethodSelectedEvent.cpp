@@ -44,7 +44,7 @@ static inline ApplePayShippingMethod convert(const ApplePaySessionPaymentRequest
 }
 
 ApplePayShippingMethodSelectedEvent::ApplePayShippingMethodSelectedEvent(const AtomicString& type, const ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
-    : Event(type, false, false)
+    : Event(type, CanBubble::No, IsCancelable::No)
     , m_shippingMethod(convert(shippingMethod))
 {
 }

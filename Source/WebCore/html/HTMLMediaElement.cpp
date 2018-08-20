@@ -1091,7 +1091,7 @@ void HTMLMediaElement::mediaPlayerActiveSourceBuffersChanged(const MediaPlayer*)
 
 void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
 {
-    RefPtr<Event> event = Event::create(eventName, false, true);
+    RefPtr<Event> event = Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::Yes);
 
     // Don't set the event target, the event queue will set it in GenericEventQueue::timerFired and setting it here
     // will trigger an ASSERT if this element has been marked for deletion.
@@ -1137,7 +1137,7 @@ void HTMLMediaElement::notifyAboutPlaying(PlayPromiseVector&& pendingPlayPromise
     Ref<HTMLMediaElement> protectedThis(*this); // The 'playing' event can make arbitrary DOM mutations.
     m_playbackStartedTime = currentMediaTime().toDouble();
     m_hasEverNotifiedAboutPlaying = true;
-    dispatchEvent(Event::create(eventNames().playingEvent, false, true));
+    dispatchEvent(Event::create(eventNames().playingEvent, Event::CanBubble::No, Event::IsCancelable::Yes));
     resolvePendingPlayPromises(WTFMove(pendingPlayPromises));
 
     schedulePlaybackControlsManagerUpdate();
@@ -1897,19 +1897,19 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
         // correctly identifies the type of the event, if the startTime is
         // less than the endTime in the cue.
         if (eventTask.second->startTime() >= eventTask.second->endTime()) {
-            auto enterEvent = Event::create(eventNames().enterEvent, false, false);
+            auto enterEvent = Event::create(eventNames().enterEvent, Event::CanBubble::No, Event::IsCancelable::No);
             enterEvent->setTarget(eventTask.second);
             m_asyncEventQueue.enqueueEvent(WTFMove(enterEvent));
 
-            auto exitEvent = Event::create(eventNames().exitEvent, false, false);
+            auto exitEvent = Event::create(eventNames().exitEvent, Event::CanBubble::No, Event::IsCancelable::No);
             exitEvent->setTarget(eventTask.second);
             m_asyncEventQueue.enqueueEvent(WTFMove(exitEvent));
         } else {
             RefPtr<Event> event;
             if (eventTask.first == eventTask.second->startMediaTime())
-                event = Event::create(eventNames().enterEvent, false, false);
+                event = Event::create(eventNames().enterEvent, Event::CanBubble::No, Event::IsCancelable::No);
             else
-                event = Event::create(eventNames().exitEvent, false, false);
+                event = Event::create(eventNames().exitEvent, Event::CanBubble::No, Event::IsCancelable::No);
             event->setTarget(eventTask.second);
             m_asyncEventQueue.enqueueEvent(WTFMove(event));
         }
@@ -1922,14 +1922,14 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     // 15 - For each text track in affected tracks, in the list order, queue a
     // task to fire a simple event named cuechange at the TextTrack object, and, ...
     for (auto& affectedTrack : affectedTracks) {
-        auto event = Event::create(eventNames().cuechangeEvent, false, false);
+        auto event = Event::create(eventNames().cuechangeEvent, Event::CanBubble::No, Event::IsCancelable::No);
         event->setTarget(affectedTrack);
         m_asyncEventQueue.enqueueEvent(WTFMove(event));
 
         // ... if the text track has a corresponding track element, to then fire a
         // simple event named cuechange at the track element as well.
         if (is<LoadableTextTrack>(*affectedTrack)) {
-            auto event = Event::create(eventNames().cuechangeEvent, false, false);
+            auto event = Event::create(eventNames().cuechangeEvent, Event::CanBubble::No, Event::IsCancelable::No);
             auto trackElement = makeRefPtr(downcast<LoadableTextTrack>(*affectedTrack).trackElement());
             ASSERT(trackElement);
             event->setTarget(trackElement);
@@ -4395,7 +4395,7 @@ void HTMLMediaElement::layoutSizeChanged()
     if (auto frameView = makeRefPtr(document().view())) {
         auto task = [this, protectedThis = makeRef(*this)] {
             if (auto root = userAgentShadowRoot())
-                root->dispatchEvent(Event::create("resize", false, false));
+                root->dispatchEvent(Event::create("resize", Event::CanBubble::No, Event::IsCancelable::No));
         };
         frameView->queuePostLayoutCallback(WTFMove(task));
     }
