@@ -1,3 +1,12 @@
+2018-08-20  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r235015): Xcode changes `mainGroup` name when updating WebCore project file
+
+        * WebCore.xcodeproj/project.pbxproj:
+        - Change `name` to "WebCore" within the group used by
+          `mainGroup` so Xcode won't keep changing its value back to
+          "WebKit".
+
 2018-08-20  Jeremy Jones  <jeremyj@apple.com>
 
         UIWebView crashes while attempting to play youtube video on phone
