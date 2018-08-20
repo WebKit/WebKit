@@ -1,3 +1,13 @@
+2018-08-20  Rob Buis  <rbuis@igalia.com>
+
+        Throw an exception if window.open() gets passed a URL that cannot be parsed
+        https://bugs.webkit.org/show_bug.cgi?id=171656
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Window/open-invalid-url-expected.txt:
+        * fast/dom/Window/open-invalid-url.html:
+
 2018-08-20  Ms2ger  <Ms2ger@igalia.com>
 
         [SOUP] Check length before calling soup_message_body_append_buffer.
