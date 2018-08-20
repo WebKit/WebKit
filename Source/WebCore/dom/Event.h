@@ -40,9 +40,9 @@ class ScriptExecutionContext;
 
 class Event : public ScriptWrappable, public RefCounted<Event> {
 public:
-    enum class IsTrusted { No, Yes };
-    enum class CanBubble { No, Yes };
-    enum class IsCancelable { No, Yes };
+    enum class IsTrusted : uint8_t { No, Yes };
+    enum class CanBubble : uint8_t { No, Yes };
+    enum class IsCancelable : uint8_t { No, Yes };
 
     enum PhaseType { 
         NONE = 0,
