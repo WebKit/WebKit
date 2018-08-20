@@ -192,8 +192,6 @@ enforceCSSMIMETypeInNoQuirksMode:
   initial: true
 usesEncodingDetector:
   initial: false
-allowScriptsToCloseWindows:
-  initial: false
 canvasUsesAcceleratedDrawing:
   initial: false
 acceleratedDrawingEnabled:
