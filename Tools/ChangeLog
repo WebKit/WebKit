@@ -1,3 +1,17 @@
+2018-08-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Complete the JSCException API
+        https://bugs.webkit.org/show_bug.cgi?id=188695
+
+        Reviewed by Michael Catanzaro.
+
+        Add cases to test the new API.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (testJSCCheckSyntax):
+        (createCustomError):
+        (testJSCExceptions):
+
 2018-08-16  Alex Christensen  <achristensen@webkit.org>
 
         Re-introduce assertion removed in r234890

@@ -98,6 +98,11 @@ jsc_context_throw                    (JSCContext         *context,
                                       const char         *error_message);
 
 JSC_API void
+jsc_context_throw_with_name          (JSCContext         *context,
+                                      const char         *error_name,
+                                      const char         *error_message);
+
+JSC_API void
 jsc_context_throw_exception          (JSCContext         *context,
                                       JSCException       *exception);
 

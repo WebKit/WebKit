@@ -644,6 +644,23 @@ void jsc_context_throw(JSCContext* context, const char* errorMessage)
 }
 
 /**
+ * jsc_context_throw_with_name:
+ * @context: a #JSCContext
+ * @error_name: the error name
+ * @error_message: an error message
+ *
+ * Throw an exception to @context using the given error name and message. The created #JSCException
+ * can be retrieved with jsc_context_get_exception().
+ */
+void jsc_context_throw_with_name(JSCContext* context, const char* errorName, const char* errorMessage)
+{
+    g_return_if_fail(JSC_IS_CONTEXT(context));
+    g_return_if_fail(errorName);
+
+    context->priv->exception = adoptGRef(jsc_exception_new_with_name(context, errorName, errorMessage));
+}
+
+/**
  * jsc_context_throw_exception:
  * @context: a #JSCContext
  * @exception: a #JSCException
