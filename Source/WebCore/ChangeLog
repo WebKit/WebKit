@@ -1,3 +1,20 @@
+2018-08-17  Philippe Normand  <philn@igalia.com>
+
+        [GStreamer] reduce position queries frequency
+        https://bugs.webkit.org/show_bug.cgi?id=188645
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        There is no need to perform dozens of position queries per second.
+        One every 300ms is enough.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition const):
+        (WebCore::MediaPlayerPrivateGStreamer::asyncStateChangeDone):
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2018-08-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Handle OAuth authentication after r234912
