@@ -1,3 +1,17 @@
+2018-08-17  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove Adobe SSO exception now that StorageAccess API is available
+        https://bugs.webkit.org/show_bug.cgi?id=188710
+        <rdar://problem/35056707>
+
+        Reviewed by Alex Christensen.
+
+        Remove custom quirk now that proper API exists to allow the same functions.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::logSubresourceLoading): Remove unneeded quirk.
+        (WebCore::resourceNeedsSSOQuirk): Deleted.
+
 2018-08-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace canBubble and cancelable booleans in Event by enum classes
