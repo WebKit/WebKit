@@ -427,7 +427,10 @@ WTF_EXPORT_PRIVATE const String& emptyString();
 
 template<typename> struct DefaultHash;
 template<> struct DefaultHash<String> { using Hash = StringHash; };
-template<> struct VectorTraits<String> : SimpleClassVectorTraits { };
+template<> struct VectorTraits<String> : VectorTraitsBase<false, void> {
+    static const bool canInitializeWithMemset = true;
+    static const bool canMoveWithMemcpy = true;
+};
 
 template<> struct IntegerToStringConversionTrait<String> {
     using ReturnType = String;
