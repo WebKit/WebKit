@@ -4331,7 +4331,7 @@ void Internals::setPageVisibility(bool isVisible)
     auto state = page.activityState();
 
     if (!isVisible)
-        state &= ~ActivityState::IsVisible;
+        state -= ActivityState::IsVisible;
     else
         state |= ActivityState::IsVisible;
 

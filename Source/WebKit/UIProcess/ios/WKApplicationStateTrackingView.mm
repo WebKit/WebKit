@@ -73,7 +73,7 @@
         return;
 
     page->applicationDidEnterBackground();
-    page->activityStateDidChange(WebCore::ActivityState::AllFlags & ~WebCore::ActivityState::IsInWindow);
+    page->activityStateDidChange(WebCore::ActivityState::allFlags() - WebCore::ActivityState::IsInWindow);
 }
 
 - (void)_applicationDidFinishSnapshottingAfterEnteringBackground
@@ -89,7 +89,7 @@
         return;
 
     page->applicationWillEnterForeground();
-    page->activityStateDidChange(WebCore::ActivityState::AllFlags & ~WebCore::ActivityState::IsInWindow, true, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
+    page->activityStateDidChange(WebCore::ActivityState::allFlags() - WebCore::ActivityState::IsInWindow, true, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
 }
 
 - (BOOL)isBackground

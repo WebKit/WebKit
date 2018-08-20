@@ -663,13 +663,9 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 
 void WebPage::updateThrottleState()
 {
-    // We should suppress if the page is not active, is visually idle, and supression is enabled.
-    bool isLoading = m_activityState & ActivityState::IsLoading;
-    bool isPlayingAudio = m_activityState & ActivityState::IsAudible;
-    bool isCapturingMedia = m_activityState & ActivityState::IsCapturingMedia;
-    bool isVisuallyIdle = m_activityState & ActivityState::IsVisuallyIdle;
-    bool windowIsActive = m_activityState & ActivityState::WindowIsActive;
-    bool pageSuppressed = !windowIsActive && !isLoading && !isPlayingAudio && !isCapturingMedia && m_processSuppressionEnabled && isVisuallyIdle;
+    bool isActive = m_activityState.containsAny({ ActivityState::IsLoading, ActivityState::IsAudible, ActivityState::IsCapturingMedia, ActivityState::WindowIsActive });
+    bool isVisuallyIdle = m_activityState.contains(ActivityState::IsVisuallyIdle);
+    bool pageSuppressed = m_processSuppressionEnabled && !isActive && isVisuallyIdle;
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     if (!pageSuppressed) {
@@ -2760,7 +2756,7 @@ void WebPage::setCanStartMediaTimerFired()
 
 void WebPage::updateIsInWindow(bool isInitialState)
 {
-    bool isInWindow = m_activityState & WebCore::ActivityState::IsInWindow;
+    bool isInWindow = m_activityState.contains(WebCore::ActivityState::IsInWindow);
 
     if (!isInWindow) {
         m_setCanStartMediaTimer.stop();
@@ -2785,7 +2781,7 @@ void WebPage::updateIsInWindow(bool isInitialState)
 
 void WebPage::visibilityDidChange()
 {
-    bool isVisible = m_activityState & ActivityState::IsVisible;
+    bool isVisible = m_activityState.contains(ActivityState::IsVisible);
     if (!isVisible) {
         // We save the document / scroll state when backgrounding a tab so that we are able to restore it
         // if it gets terminated while in the background.
@@ -2794,11 +2790,11 @@ void WebPage::visibilityDidChange()
     }
 }
 
-void WebPage::setActivityState(ActivityState::Flags activityState, ActivityStateChangeID activityStateChangeID, const Vector<CallbackID>& callbackIDs)
+void WebPage::setActivityState(OptionSet<ActivityState::Flag> activityState, ActivityStateChangeID activityStateChangeID, const Vector<CallbackID>& callbackIDs)
 {
-    LOG_WITH_STREAM(ActivityState, stream << "WebPage " << pageID() << " setActivityState to " << activityStateFlagsToString(activityState));
+    LOG_WITH_STREAM(ActivityState, stream << "WebPage " << pageID() << " setActivityState to " << activityState);
 
-    ActivityState::Flags changed = m_activityState ^ activityState;
+    auto changed = m_activityState ^ activityState;
     m_activityState = activityState;
 
     if (changed)

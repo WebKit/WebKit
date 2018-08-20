@@ -1892,13 +1892,13 @@ float WebViewImpl::intrinsicDeviceScaleFactor() const
 void WebViewImpl::windowDidOrderOffScreen()
 {
     LOG(ActivityState, "WebViewImpl %p (page %llu) windowDidOrderOffScreen", this, m_page->pageID());
-    m_page->activityStateDidChange(WebCore::ActivityState::IsVisible | WebCore::ActivityState::WindowIsActive);
+    m_page->activityStateDidChange({ WebCore::ActivityState::IsVisible, WebCore::ActivityState::WindowIsActive });
 }
 
 void WebViewImpl::windowDidOrderOnScreen()
 {
     LOG(ActivityState, "WebViewImpl %p (page %llu) windowDidOrderOnScreen", this, m_page->pageID());
-    m_page->activityStateDidChange(WebCore::ActivityState::IsVisible | WebCore::ActivityState::WindowIsActive);
+    m_page->activityStateDidChange({ WebCore::ActivityState::IsVisible, WebCore::ActivityState::WindowIsActive });
 }
 
 void WebViewImpl::windowDidBecomeKey(NSWindow *keyWindow)
@@ -2064,7 +2064,7 @@ void WebViewImpl::viewDidMoveToWindow()
     if (window) {
         windowDidChangeScreen();
 
-        WebCore::ActivityState::Flags activityStateChanges = WebCore::ActivityState::WindowIsActive | WebCore::ActivityState::IsVisible;
+        OptionSet<WebCore::ActivityState::Flag> activityStateChanges { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsVisible };
         if (m_shouldDeferViewInWindowChanges)
             m_viewInWindowChangeWasDeferred = true;
         else
@@ -2090,7 +2090,7 @@ void WebViewImpl::viewDidMoveToWindow()
         if (m_immediateActionGestureRecognizer && ![[m_view gestureRecognizers] containsObject:m_immediateActionGestureRecognizer.get()] && !m_ignoresNonWheelEvents && m_allowsLinkPreview)
             [m_view addGestureRecognizer:m_immediateActionGestureRecognizer.get()];
     } else {
-        WebCore::ActivityState::Flags activityStateChanges = WebCore::ActivityState::WindowIsActive | WebCore::ActivityState::IsVisible;
+        OptionSet<WebCore::ActivityState::Flag> activityStateChanges { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsVisible };
         if (m_shouldDeferViewInWindowChanges)
             m_viewInWindowChangeWasDeferred = true;
         else
