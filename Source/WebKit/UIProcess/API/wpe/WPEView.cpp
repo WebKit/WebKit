@@ -45,7 +45,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
     : m_client(std::make_unique<API::ViewClient>())
     , m_pageClient(std::make_unique<PageClientImpl>(*this))
     , m_size { 800, 600 }
-    , m_viewStateFlags(WebCore::ActivityState::WindowIsActive | WebCore::ActivityState::IsFocused | WebCore::ActivityState::IsVisible | WebCore::ActivityState::IsInWindow)
+    , m_viewStateFlags { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsVisible, WebCore::ActivityState::IsInWindow }
     , m_compositingManagerProxy(*this)
     , m_backend(backend)
 {
@@ -176,7 +176,7 @@ void View::setViewState(OptionSet<WebCore::ActivityState::Flag> flags)
 {
     static const OptionSet<WebCore::ActivityState::Flag> defaultFlags { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused };
 
-    auto = m_viewStateFlags ^ (defaultFlags | flags);
+    auto changedFlags = m_viewStateFlags ^ (defaultFlags | flags);
     m_viewStateFlags = defaultFlags | flags;
 
     if (changedFlags)

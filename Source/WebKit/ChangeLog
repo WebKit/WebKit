@@ -1,3 +1,16 @@
+2018-08-16  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, WPE build fix after r234920.
+
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::isViewWindowActive):
+        (WebKit::PageClientImpl::isViewFocused):
+        (WebKit::PageClientImpl::isViewVisible):
+        (WebKit::PageClientImpl::isViewInWindow):
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::View::setViewState):
+        * UIProcess/API/wpe/WPEView.h:
+
 2018-08-16  Antti Koivisto  <antti@apple.com>
 
         Use OptionSet for ActivityState::Flags
