@@ -1,5 +1,37 @@
 2018-08-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Show Initiator information in Network Table
+        https://bugs.webkit.org/show_bug.cgi?id=188590
+        <rdar://problem/43305488>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/NetworkResourceDetailView.js:
+        (WI.NetworkResourceDetailView):
+        (WI.NetworkResourceDetailView.prototype.shown):
+        (WI.NetworkResourceDetailView.prototype.willShowWithCookie):
+        (WI.NetworkResourceDetailView.prototype._showContentViewForNavigationItem):
+        When a ResourceDetailView gets shown, it may also want to show its initial content view
+        with a cookie as the cookie may contain position highlight information.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype._showResourceDetailView):
+        (WI.NetworkTableContentView.prototype.showRepresentedObject):
+        When showing a represented object, pass the cookie information on to the detail
+        view's so that it may include the cookie when showing the final content view.
+
+        (WI.NetworkTableContentView.prototype.tablePopulateCell):
+        (WI.NetworkTableContentView.prototype._populateInitiatorCell):
+        (WI.NetworkTableContentView.prototype.initialLayout):
+        New initiator column contains a source code link to the call site.
+
+        (WI.NetworkTableContentView.prototype._generateSortComparator):
+        (WI.NetworkTableContentView.prototype._entryForResource):
+        Entry data for the initiator is a display string that can be sorted easily.
+
+2018-08-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         LayoutTest inspector/worker/debugger-pause.html sometimes times out
         https://bugs.webkit.org/show_bug.cgi?id=188580
 

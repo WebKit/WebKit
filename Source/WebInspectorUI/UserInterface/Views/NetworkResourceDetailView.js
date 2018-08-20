@@ -42,6 +42,8 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
         this._cookiesContentView = null;
         this._sizesContentView = null;
         this._timingContentView = null;
+
+        this._contentViewCookie = null;
     }
 
     // Public
@@ -54,6 +56,12 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
             return;
 
         this._showPreferredContentView();
+
+        if (this._contentViewCookie) {
+            this._contentBrowser.showContentView(this._contentBrowser.currentContentView, this._contentViewCookie);
+            this._contentViewCookie = null;
+        }
+
         this._contentBrowser.shown();
     }
 
@@ -67,6 +75,11 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
         this._delegate = null;
 
         this._contentBrowser.contentViewContainer.closeAllContentViews();
+    }
+
+    willShowWithCookie(cookie)
+    {
+        this._contentViewCookie = cookie;
     }
 
     // ResourceHeadersContentView delegate
@@ -174,27 +187,27 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
         case "preview":
             if (!this._resourceContentView)
                 this._resourceContentView = this._contentBrowser.showContentViewForRepresentedObject(this._resource);
-            this._contentBrowser.showContentView(this._resourceContentView);
+            this._contentBrowser.showContentView(this._resourceContentView, this._contentViewCookie);
             break;
         case "headers":
             if (!this._headersContentView)
                 this._headersContentView = new WI.ResourceHeadersContentView(this._resource, this);
-            this._contentBrowser.showContentView(this._headersContentView);
+            this._contentBrowser.showContentView(this._headersContentView, this._contentViewCookie);
             break;
         case "cookies":
             if (!this._cookiesContentView)
                 this._cookiesContentView = new WI.ResourceCookiesContentView(this._resource);
-            this._contentBrowser.showContentView(this._cookiesContentView);
+            this._contentBrowser.showContentView(this._cookiesContentView, this._contentViewCookie);
             break;
         case "sizes":
             if (!this._sizesContentView)
                 this._sizesContentView = new WI.ResourceSizesContentView(this._resource, this);
-            this._contentBrowser.showContentView(this._sizesContentView);
+            this._contentBrowser.showContentView(this._sizesContentView, this._contentViewCookie);
             break;
         case "timing":
             if (!this._timingContentView)
                 this._timingContentView = new WI.ResourceTimingContentView(this._resource);
-            this._contentBrowser.showContentView(this._timingContentView);
+            this._contentBrowser.showContentView(this._timingContentView, this._contentViewCookie);
             break;
         }
     }
