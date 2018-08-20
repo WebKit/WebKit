@@ -970,13 +970,9 @@ http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Skip 
 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Skip ]
 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html [ Skip ]
 http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown.html [ Skip ]
-media/audio-dealloc-crash.html [ Skip ]
 media/audio-playback-volume-changes-with-restrictions-and-user-gestures.html [ Skip ]
 media/audio-playback-volume-changes-with-restrictions.html [ Skip ]
 media/picture-in-picture-interruption.html [ Skip ]
-media/restricted-audio-playback-with-document-gesture.html [ Skip ]
-media/restricted-audio-playback-with-multiple-settimeouts.html [ Skip ]
-media/video-fullscreen-reload-crash.html [ Skip ]
 scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html [ Skip ]
 scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html [ Skip ]
 scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html [ Skip ]
@@ -2568,8 +2564,6 @@ media/accessibility-closed-captions-has-aria-owns.html
 media/airplay-autoplay.html
 media/airplay-target-availability.html
 media/audio-delete-while-slider-thumb-clicked.html
-media/audio-playback-restriction-play.html
-media/audio-playback-restriction-removed-track-enabled.html
 
 # needs enhanced eventSender.contextMenu() return value
 webkit.org/b/116651 media/context-menu-actions.html
@@ -2588,16 +2582,13 @@ media/document-level-media-user-gesture-quirk.html
 media/media-controls-accessibility.html [ Timeout ]
 media/media-fullscreen-return-to-inline.html
 media/no-autoplay-with-user-gesture-requirement.html
-media/video-add-autoplay-user-gesture.html
 media/video-controls-drag.html
 media/video-controls-fullscreen-volume.html
 media/video-controls-no-display-with-text-track.html
 media/video-controls-show-on-kb-or-ax-event.html
-media/video-create-with-user-gesture.html
 media/video-fullscreen-restriction-removed.html
 media/video-playsinline.html
 media/video-remote-control-playpause.html
-media/video-user-gesture-tracking.html
 media/video-volume-slider-drag.html
 media/video-webkit-playsinline.html
 media/volume-bar-empty-when-muted.html
@@ -2629,7 +2620,6 @@ media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html [ Failure ]
 media/audio-as-video-fullscreen.html [ Failure ]
 media/audio-delete-while-step-button-clicked.html [ Failure ]
 media/audio-mpeg-supported.html [ Failure ]
-media/audio-playback-restriction-removed-muted.html [ Failure ]
 media/click-volume-bar-not-pausing.html [ Failure ]
 media/controls-drag-timebar.html [ Failure ]
 media/event-attributes.html [ Failure ]
