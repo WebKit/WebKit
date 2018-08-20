@@ -623,6 +623,8 @@
 		E311FB161F0A568B003C08DE /* ThreadGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadGroup.h; sourceTree = "<group>"; };
 		E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformRegisters.h; sourceTree = "<group>"; };
 		E33D5F871FBED66700BF625E /* RecursableLambda.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecursableLambda.h; sourceTree = "<group>"; };
+		E360C7642127B85B00C90F0E /* UnalignedAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnalignedAccess.h; sourceTree = "<group>"; };
+		E360C7652127B85C00C90F0E /* Unexpected.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Unexpected.h; sourceTree = "<group>"; };
 		E388886D20C9095100E632BC /* WorkerPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerPool.cpp; sourceTree = "<group>"; };
 		E388886E20C9095100E632BC /* WorkerPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerPool.h; sourceTree = "<group>"; };
 		E38C41241EB4E04C0042957D /* CPUTimeCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CPUTimeCocoa.cpp; sourceTree = "<group>"; };
@@ -1117,6 +1119,8 @@
 				0FED67B51B22D4D80066CE15 /* TinyPtrSet.h */,
 				149EF16216BBFE0D000A4331 /* TriState.h */,
 				83FBA93119DF459700F30ADB /* TypeCasts.h */,
+				E360C7642127B85B00C90F0E /* UnalignedAccess.h */,
+				E360C7652127B85C00C90F0E /* Unexpected.h */,
 				A8A4735C151A825B004123FF /* UnionFind.h */,
 				E300E521203D645F00DA79BE /* UniqueArray.h */,
 				5C7C88D31D0A3A0A009D2F6D /* UniqueRef.h */,

@@ -240,6 +240,7 @@ set(WTF_PUBLIC_HEADERS
     TriState.h
     TypeCasts.h
     UUID.h
+    UnalignedAccess.h
     Unexpected.h
     UniStdExtras.h
     UnionFind.h
