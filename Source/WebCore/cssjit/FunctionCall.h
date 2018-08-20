@@ -43,8 +43,8 @@ public:
         , m_stackAllocator(stackAllocator)
         , m_callRegistry(callRegistry)
         , m_argumentCount(0)
-        , m_firstArgument(InvalidGPRReg)
-        , m_secondArgument(InvalidGPRReg)
+        , m_firstArgument(JSC::InvalidGPRReg)
+        , m_secondArgument(JSC::InvalidGPRReg)
     {
     }
 

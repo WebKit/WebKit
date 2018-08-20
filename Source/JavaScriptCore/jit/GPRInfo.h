@@ -39,7 +39,7 @@ enum NoResultTag { NoResult };
 // top of the LowLevelInterpreter.asm file.
 
 typedef MacroAssembler::RegisterID GPRReg;
-#define InvalidGPRReg ((::JSC::GPRReg)-1)
+static constexpr GPRReg InvalidGPRReg { GPRReg::InvalidGPRReg };
 
 #if ENABLE(JIT)
 
@@ -161,8 +161,8 @@ private:
 class JSValueRegs {
 public:
     JSValueRegs()
-        : m_tagGPR(static_cast<int8_t>(InvalidGPRReg))
-        , m_payloadGPR(static_cast<int8_t>(InvalidGPRReg))
+        : m_tagGPR(InvalidGPRReg)
+        , m_payloadGPR(InvalidGPRReg)
     {
     }
     
@@ -196,8 +196,8 @@ public:
     }
     bool operator!=(JSValueRegs other) const { return !(*this == other); }
     
-    GPRReg tagGPR() const { return static_cast<GPRReg>(m_tagGPR); }
-    GPRReg payloadGPR() const { return static_cast<GPRReg>(m_payloadGPR); }
+    GPRReg tagGPR() const { return m_tagGPR; }
+    GPRReg payloadGPR() const { return m_payloadGPR; }
     GPRReg gpr(WhichValueWord which) const
     {
         switch (which) {
@@ -215,16 +215,16 @@ public:
     void dump(PrintStream&) const;
     
 private:
-    int8_t m_tagGPR;
-    int8_t m_payloadGPR;
+    GPRReg m_tagGPR;
+    GPRReg m_payloadGPR;
 };
 
 class JSValueSource {
 public:
     JSValueSource()
         : m_offset(notAddress())
-        , m_baseOrTag(static_cast<int8_t>(InvalidGPRReg))
-        , m_payload(static_cast<int8_t>(InvalidGPRReg))
+        , m_baseOrTag(InvalidGPRReg)
+        , m_payload(InvalidGPRReg)
         , m_tagType(0)
     {
     }
@@ -239,28 +239,28 @@ public:
     
     JSValueSource(GPRReg tagGPR, GPRReg payloadGPR)
         : m_offset(notAddress())
-        , m_baseOrTag(static_cast<int8_t>(tagGPR))
-        , m_payload(static_cast<int8_t>(payloadGPR))
+        , m_baseOrTag(tagGPR)
+        , m_payload(payloadGPR)
         , m_tagType(0)
     {
     }
     
     JSValueSource(MacroAssembler::Address address)
         : m_offset(address.offset)
-        , m_baseOrTag(static_cast<int8_t>(address.base))
-        , m_payload(static_cast<int8_t>(InvalidGPRReg))
+        , m_baseOrTag(address.base)
+        , m_payload(InvalidGPRReg)
         , m_tagType(0)
     {
         ASSERT(m_offset != notAddress());
-        ASSERT(static_cast<GPRReg>(m_baseOrTag) != InvalidGPRReg);
+        ASSERT(m_baseOrTag != InvalidGPRReg);
     }
     
     static JSValueSource unboxedCell(GPRReg payloadGPR)
     {
         JSValueSource result;
         result.m_offset = notAddress();
-        result.m_baseOrTag = static_cast<int8_t>(InvalidGPRReg);
-        result.m_payload = static_cast<int8_t>(payloadGPR);
+        result.m_baseOrTag = InvalidGPRReg;
+        result.m_payload = payloadGPR;
         result.m_tagType = static_cast<int8_t>(JSValue::CellTag);
         return result;
     }
@@ -268,8 +268,7 @@ public:
     bool operator!() const { return !static_cast<bool>(*this); }
     explicit operator bool() const
     {
-        return static_cast<GPRReg>(m_baseOrTag) != InvalidGPRReg
-            || static_cast<GPRReg>(m_payload) != InvalidGPRReg;
+        return m_baseOrTag != InvalidGPRReg || m_payload != InvalidGPRReg;
     }
     
     bool isAddress() const
@@ -287,26 +286,26 @@ public:
     GPRReg base() const
     {
         ASSERT(isAddress());
-        return static_cast<GPRReg>(m_baseOrTag);
+        return m_baseOrTag;
     }
     
     GPRReg tagGPR() const
     {
-        ASSERT(!isAddress() && static_cast<GPRReg>(m_baseOrTag) != InvalidGPRReg);
-        return static_cast<GPRReg>(m_baseOrTag);
+        ASSERT(!isAddress() && m_baseOrTag != InvalidGPRReg);
+        return m_baseOrTag;
     }
     
     GPRReg payloadGPR() const
     {
         ASSERT(!isAddress());
-        return static_cast<GPRReg>(m_payload);
+        return m_payload;
     }
     
     bool hasKnownTag() const
     {
         ASSERT(!!*this);
         ASSERT(!isAddress());
-        return static_cast<GPRReg>(m_baseOrTag) == InvalidGPRReg;
+        return m_baseOrTag == InvalidGPRReg;
     }
     
     uint32_t tag() const
@@ -325,8 +324,8 @@ private:
     static inline int32_t notAddress() { return 0x80000000; }     
           
     int32_t m_offset;
-    int8_t m_baseOrTag;
-    int8_t m_payload; 
+    GPRReg m_baseOrTag;
+    GPRReg m_payload;
     int8_t m_tagType; // Contains the low bits of the tag.
 };
 #endif // USE(JSVALUE32_64)
