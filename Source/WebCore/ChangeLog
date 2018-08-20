@@ -1,3 +1,18 @@
+2018-08-20  Jeremy Jones  <jeremyj@apple.com>
+
+        UIWebView crashes while attempting to play youtube video on phone
+        https://bugs.webkit.org/show_bug.cgi?id=188351
+        rdar://problem/42489664
+
+        Reviewed by David Kilzer.
+
+        Test will be incorporated with fix for 188749, which will test both fixes.
+
+        VideoFullscreenControllerContext must remove unretained reference to it from m_playbackModel during cleanup.
+
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::didCleanupFullscreen):
+
 2018-08-20  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Move capture device monitoring to WebKit

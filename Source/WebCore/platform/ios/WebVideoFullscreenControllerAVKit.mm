@@ -328,6 +328,7 @@ void VideoFullscreenControllerContext::didCleanupFullscreen()
         m_fullscreenModel->setVideoFullscreenLayer(nil);
         m_fullscreenModel->setVideoElement(nullptr);
         m_playbackModel->setMediaElement(nullptr);
+        m_playbackModel->removeClient(*this);
         m_fullscreenModel->removeClient(*this);
         m_fullscreenModel = nullptr;
         m_videoElement = nullptr;
