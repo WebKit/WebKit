@@ -1,5 +1,6 @@
 "use strict";
 (function() {
+  var numSuccesses = 0;
   var numFailures = 0;
 
   if (window.testRunner && !window.layoutTestController) {
@@ -32,7 +33,10 @@
 
   window.webglTestHarness = {
     reportResults: function(url, success, msg) {
-      if (!success) {
+      if (success) {
+        ++numSuccesses;
+      } else {
+        log(msg, "red");
         ++numFailures;
       }
     },
@@ -40,6 +44,10 @@
     notifyFinished: function(url) {
       var iframe = document.getElementById("iframe");
       if (numFailures > 0) {
+        if (numSuccesses > 0) {
+          log(numFailures + " failures reported", "red");
+          log(numSuccesses + " passes reported", "green");
+        }
         log("FAIL", "red");
       } else {
         log("PASS", "green");

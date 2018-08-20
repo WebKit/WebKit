@@ -1,3 +1,28 @@
+2018-08-20  Justin Fan  <justin_fan@apple.com>
+
+        Update webkit-webgl-test-harness.js to provide more info on failing and partially passing tests
+        https://bugs.webkit.org/show_bug.cgi?id=188628
+
+        Reviewed by Alexey Proskuryakov.
+
+        Slightly augment the test-harness for the WebGL 2 conformance suite; failing test results now report
+        failure messagees and the number of individual reported failures and passes from the wrapped Khronos test. 
+        Allow us to track when incremental conformance improvements or regressions occur within the breadth of a 
+        single conformance test. 
+
+        * webgl/2.0.0/conformance2/glsl3/attrib-location-length-limits-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/shader-linking-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/shader-with-1024-character-define-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/shader-with-1024-character-identifier.frag-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/shader-with-invalid-characters-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/shader-with-mis-matching-uniform-block-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/unary-minus-operator-in-dynamic-loop-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/uniform-location-length-limits-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/valid-invariant-expected.txt:
+        * webgl/2.0.0/resources/webkit-webgl-test-harness.js:
+        (window.webglTestHarness.reportResults):
+        (window.webglTestHarness.notifyFinished):
+
 2018-08-20  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Move capture device monitoring to WebKit
