@@ -330,13 +330,13 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
         return;
     }
 
-    // Handle server trust evaluation at platform-level if requested, for performance reasons.
-    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust] && !NetworkProcess::singleton().canHandleHTTPSServerTrustEvaluation()) {
+    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
         if (NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(challenge))
-            completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
-        else
-            completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
-        return;
+            return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+
+        // Handle server trust evaluation at platform-level if requested, for performance reasons and to use ATS defaults.
+        if (!NetworkProcess::singleton().canHandleHTTPSServerTrustEvaluation())
+            return completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
     }
 
     if (auto* networkDataTask = [self existingTask:task]) {

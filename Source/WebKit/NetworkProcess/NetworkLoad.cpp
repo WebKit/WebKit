@@ -261,12 +261,6 @@ void NetworkLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Chall
         completionHandler(AuthenticationChallengeDisposition::UseCredential, { });
         return;
     }
-
-#if PLATFORM(COCOA)
-    if (scheme == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested
-        && NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(challenge))
-        return completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(challenge));
-#endif
     
     if (auto* pendingDownload = m_task->pendingDownload())
         NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(*pendingDownload, challenge, WTFMove(completionHandler));
