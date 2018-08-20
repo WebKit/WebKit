@@ -1,3 +1,13 @@
+2018-08-20  Bernhard M. Wiedemann  <bwiedemann@suse.de>
+
+        [GTK] Sort inspector GResource manifest to ensure reproducible builds
+        https://bugs.webkit.org/show_bug.cgi?id=188738
+
+        Reviewed by Michael Catanzaro.
+
+        * glib/generate-inspector-gresource-manifest.py:
+        (get_filenames): sort list of input files
+
 2018-08-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Paste is missing from callout bar when pasteboard only contains custom data
