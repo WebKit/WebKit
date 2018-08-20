@@ -1,3 +1,50 @@
+2018-08-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Nicosia] Add Nicosia::ImageBackingTextureMapperImpl
+        https://bugs.webkit.org/show_bug.cgi?id=188550
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add the Nicosia::ImageBackingTextureMapperImpl class, the
+        TextureMapper-specific implementation that will extend the ImageBacking
+        class.
+
+        This class will be used to contain and manage updates for layers that
+        are backed by image objects. The CoordinatedGraphicsLayer instance will
+        use the LayerState object to track the currently-presented image objects
+        and to store the latest update of these objects. The Update struct
+        contains information about the current visibility of the image in the
+        layer tree as well as the Nicosia::Buffer object containing the painted
+        image data that's to be presented on the screen.
+
+        During the layer flush the flushUpdate() method will move the current
+        update data into the pending position, from which this data will be
+        gathered by the composition component through the takeUpdate() method
+        and used to update the CoordinatedBackingStore object that's kept in
+        the CompositionState object on this impl class.
+
+        This will be deployed for use in the CoordinatedGraphicsLayer at a later
+        stage as it requires a larger rework in both CoordinatedGraphicsLayer as
+        well as the CoordinatedGraphicsScene classes.
+
+        The implementation itself differs from the current image backing support
+        in CoordinatedGraphicsLayer and CompositingCoordinator by abandoning the
+        idea of sharing single image backings between layers that might be
+        backed by identical Image objects. We thus end up trading any memory
+        consumption benefit in these scenarios for a much simplified
+        implementation. Overall this area needs more research both in figuring
+        out whether there's worthy improvements in grouping image backings, as
+        well as investigating whether it's possible to avoid additional image
+        rasterization by just leveraging direct pixel data via the
+        NativeImagePtr object.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/nicosia/texmap/NicosiaImageBackingTextureMapperImpl.cpp: Added.
+        (Nicosia::ImageBackingTextureMapperImpl::createFactory):
+        (Nicosia::ImageBackingTextureMapperImpl::flushUpdate):
+        (Nicosia::ImageBackingTextureMapperImpl::takeUpdate):
+        * platform/graphics/nicosia/texmap/NicosiaImageBackingTextureMapperImpl.h: Added.
+
 2018-08-16  Zalan Bujtas  <zalan@apple.com>
 
         [lFC][Floating] Add estimated margin top computation.
