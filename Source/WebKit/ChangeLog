@@ -1,5 +1,45 @@
 2018-08-16  Alex Christensen  <achristensen@webkit.org>
 
+        Consolidate data/string API loading paths
+        https://bugs.webkit.org/show_bug.cgi?id=188417
+
+        Reviewed by Michael Catanzaro.
+
+        loadHTMLString and loadData are basically duplicate code.
+        loadPlainTextString was also basically the same except it didn't set up a navigation, which
+        was almost certainly a bug, but nobody uses it in all of Apple and Debian.  We should probably deprecate
+        and remove it, but for now I make it use the same data loading path.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadData):
+        (WKPageLoadDataWithUserData):
+        (loadString):
+        (WKPageLoadHTMLString):
+        (WKPageLoadHTMLStringWithUserData):
+        (WKPageLoadPlainTextString):
+        (WKPageLoadPlainTextStringWithUserData):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadHTMLString:baseURL:userData:]):
+        (-[WKBrowsingContextController loadData:MIMEType:textEncodingName:baseURL:userData:]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadData:MIMEType:characterEncodingName:baseURL:]):
+        (-[WKWebView _loadData:MIMEType:characterEncodingName:baseURL:userData:]):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_load_html):
+        (webkit_web_view_load_plain_text):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::loadHTMLString): Deleted.
+        (WebKit::WebPageProxy::loadPlainTextString): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadData):
+        (WebKit::WebPage::loadString): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2018-08-16  Alex Christensen  <achristensen@webkit.org>
+
         Stop using canAuthenticateAgainstProtectionSpace in modern WebKit
         https://bugs.webkit.org/show_bug.cgi?id=188639
 
