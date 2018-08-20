@@ -1,3 +1,45 @@
+2018-08-20  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas tab: create icons for recordings/shaders in the preview tile
+        https://bugs.webkit.org/show_bug.cgi?id=183650
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView):
+        (WI.CanvasContentView.prototype.initialLayout):
+        (WI.CanvasContentView.prototype.attached):
+        (WI.CanvasContentView.prototype._recordingStopped):
+        (WI.CanvasContentView.prototype._shaderProgramAdded):
+        (WI.CanvasContentView.prototype._shaderProgramRemoved):
+        (WI.CanvasContentView.prototype._updateViewRelatedItems):
+        (WI.CanvasContentView.prototype._handleViewShaderButtonClicked):
+        (WI.CanvasContentView.prototype._handleViewRecordingButtonClicked):
+        (WI.CanvasContentView.prototype._addRecording): Deleted.
+        (WI.CanvasContentView.prototype._handleRecordingSelectElementChange): Deleted.
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.content-view.canvas-overview .content-view.canvas > footer > .view-related-items):
+        (.content-view.canvas-overview .content-view.canvas > footer > .view-related-items > :matches(.view-shader, .view-recording)):
+        (.content-view.canvas-overview .content-view.canvas > footer > .view-related-items > img + img):
+        (.content-view.canvas-overview .content-view.canvas > footer > .view-related-items > .view-shader):
+        (.content-view.canvas-overview .content-view.canvas > footer > .view-related-items > .view-recording):
+        (.content-view.canvas-overview .content-view.canvas > footer > .recordings): Deleted.
+        (.content-view.canvas-overview .content-view.canvas > footer > .recordings::before): Deleted.
+        (.content-view.canvas-overview .content-view.canvas > footer > .recordings > select): Deleted.
+        (.content-view.canvas-overview .content-view.canvas > footer .recordings > select:focus): Deleted.
+        Create two image buttons in the bottom left corner of each canvas tile that appear when the
+        canvas has associated shaders and/or recordings. Clicking each image button will function
+        similar to path components, in that if there is only one shader/recording, it is immediately
+        selected, whereas if there are multiple a dropdown is shown.
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype._currentRepresentedObjectsDidChange):
+        (WI.CanvasSidebarPanel.prototype._recordingChanged):
+        Drive-by: ensure that the selected recording action is properly updated when first loading a
+        recording and when scrubbing through one.
+
 2018-08-16  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: support breakpoints for arbitrary event names

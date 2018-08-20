@@ -143,35 +143,26 @@
     border-top: none;
 }
 
-.content-view.canvas-overview .content-view.canvas > footer > .recordings {
-    position: absolute;
+.content-view.canvas-overview .content-view.canvas > footer > .view-related-items {
     display: flex;
     align-items: center;
 }
 
-.content-view.canvas-overview .content-view.canvas > footer > .recordings::before {
-    display: inline-block;
+.content-view.canvas-overview .content-view.canvas > footer > .view-related-items > :matches(.view-shader, .view-recording) {
     width: 16px;
-    margin-top: 3px;
-    -webkit-padding-end: 4px;
+    height: 16px;
+}
+
+.content-view.canvas-overview .content-view.canvas > footer > .view-related-items > img + img {
+    -webkit-margin-start: 4px;
+}
+
+.content-view.canvas-overview .content-view.canvas > footer > .view-related-items > .view-shader {
+    content: image-set(url(../Images/DocumentGL.png) 1x, url(../Images/DocumentGL@2x.png) 2x);
+}
+
+.content-view.canvas-overview .content-view.canvas > footer > .view-related-items > .view-recording {
     content: url(../Images/Recording.svg);
-}
-
-.content-view.canvas-overview .content-view.canvas > footer > .recordings > select {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    margin: 0;
-    padding: 0;
-    border: none;
-    opacity: 0;
-    -webkit-appearance: none;
-}
-
-.content-view.canvas-overview .content-view.canvas > footer .recordings > select:focus {
-    -webkit-margin-start: 11px;
 }
 
 .content-view.canvas-overview .content-view.canvas > footer > .flexible-space {

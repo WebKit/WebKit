@@ -260,7 +260,10 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
         let recording = objects.find((object) => object instanceof WI.Recording);
         if (recording) {
-            recording[WI.CanvasSidebarPanel.SelectedActionSymbol] = objects.find((object) => object instanceof WI.RecordingAction);
+            let recordingAction = objects.find((object) => object instanceof WI.RecordingAction);
+            if (recordingAction !== recording[WI.CanvasSidebarPanel.SelectedActionSymbol])
+                this.action = recordingAction;
+
             this.recording = recording;
             return;
         }
@@ -342,6 +345,8 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
             if (recording !== this._recording || promise !== this._recordingProcessPromise)
                 return;
 
+            this._recordingProcessPromise = null;
+
             if (this._recordingProcessSpinner) {
                 this._recordingProcessSpinner.element.remove();
                 this._recordingProcessSpinner = null;
@@ -381,8 +386,6 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
             }
 
             this.action = this._recording[WI.CanvasSidebarPanel.SelectedActionSymbol] || this._recording.actions[0];
-
-            this._recordingProcessPromise = null;
         });
 
         this._recordingProcessPromise = promise;
