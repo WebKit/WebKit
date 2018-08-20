@@ -1,3 +1,12 @@
+2018-08-20  Rob Buis  <rbuis@igalia.com>
+
+        Relax Request constructor around referrers
+        https://bugs.webkit.org/show_bug.cgi?id=168649
+
+        Reviewed by Darin Adler.
+
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/request/request-init-001.sub-expected.txt:
+
 2018-08-18  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Fire an initial dummy notification
