@@ -1,5 +1,36 @@
 2018-08-16  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC] Display::Box interface should reflect that padding is optional.
+        https://bugs.webkit.org/show_bug.cgi?id=188630
+
+        Reviewed by Antti Koivisto.
+
+        Certain type of boxes can't have paddings (see Layout::Box::isPaddingApplicable).
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeBorderAndPadding const):
+        (WebCore::Layout::FormattingContext::validateGeometryConstraintsAfterLayout const):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::width const):
+        (WebCore::Display::Box::height const):
+        (WebCore::Display::Box::contentBoxTop const):
+        (WebCore::Display::Box::contentBoxLeft const):
+        (WebCore::Display::Box::setPadding):
+        (WebCore::Display::Box::paddingTop const):
+        (WebCore::Display::Box::paddingLeft const):
+        (WebCore::Display::Box::paddingBottom const):
+        (WebCore::Display::Box::paddingRight const):
+
+2018-08-16  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Add showLayoutTree() that does not require LayoutContext.
         https://bugs.webkit.org/show_bug.cgi?id=188631
 

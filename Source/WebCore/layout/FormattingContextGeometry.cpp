@@ -196,8 +196,8 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
     auto height = computedValueIfNotAuto(style.logicalHeight(), containingBlockHeight);
     auto marginTop = computedValueIfNotAuto(style.marginTop(), containingBlockWidth);
     auto marginBottom = computedValueIfNotAuto(style.marginBottom(), containingBlockWidth);
-    auto paddingTop = displayBox.paddingTop();
-    auto paddingBottom = displayBox.paddingBottom();
+    auto paddingTop = displayBox.paddingTop().value_or(0);
+    auto paddingBottom = displayBox.paddingBottom().value_or(0);
     auto borderTop = displayBox.borderTop();
     auto borderBottom = displayBox.borderBottom();
 
@@ -314,8 +314,8 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
     auto width = computedValueIfNotAuto(style.logicalWidth(), containingBlockWidth);
     auto marginLeft = computedValueIfNotAuto(style.marginLeft(), containingBlockWidth);
     auto marginRight = computedValueIfNotAuto(style.marginRight(), containingBlockWidth);
-    auto paddingLeft = displayBox.paddingLeft();
-    auto paddingRight = displayBox.paddingRight();
+    auto paddingLeft = displayBox.paddingLeft().value_or(0);
+    auto paddingRight = displayBox.paddingRight().value_or(0);
     auto borderLeft = displayBox.borderLeft();
     auto borderRight = displayBox.borderRight();
 
@@ -442,8 +442,8 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
     auto height = inlineReplacedHeightAndMargin(layoutContext, layoutBox).height;
     auto marginTop = computedValueIfNotAuto(style.marginTop(), containingBlockWidth);
     auto marginBottom = computedValueIfNotAuto(style.marginBottom(), containingBlockWidth);
-    auto paddingTop = displayBox.paddingTop();
-    auto paddingBottom = displayBox.paddingBottom();
+    auto paddingTop = displayBox.paddingTop().value_or(0);
+    auto paddingBottom = displayBox.paddingBottom().value_or(0);
     auto borderTop = displayBox.borderTop();
     auto borderBottom = displayBox.borderBottom();
 
@@ -515,8 +515,8 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
     auto marginLeft = computedValueIfNotAuto(style.marginLeft(), containingBlockWidth);
     auto marginRight = computedValueIfNotAuto(style.marginRight(), containingBlockWidth);
     auto width = inlineReplacedWidthAndMargin(layoutContext, layoutBox).width;
-    auto paddingLeft = displayBox.paddingLeft();
-    auto paddingRight = displayBox.paddingRight();
+    auto paddingLeft = displayBox.paddingLeft().value_or(0);
+    auto paddingRight = displayBox.paddingRight().value_or(0);
     auto borderLeft = displayBox.borderLeft();
     auto borderRight = displayBox.borderRight();
 

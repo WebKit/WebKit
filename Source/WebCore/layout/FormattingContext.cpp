@@ -90,8 +90,7 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(LayoutContext& layoutCo
 void FormattingContext::computeBorderAndPadding(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     displayBox.setBorder(Geometry::computedBorder(layoutContext, layoutBox));
-    if (auto padding = Geometry::computedPadding(layoutContext, layoutBox))
-        displayBox.setPadding(*padding);
+    displayBox.setPadding(Geometry::computedPadding(layoutContext, layoutBox));
 }
 
 void FormattingContext::placeInFlowPositionedChildren(LayoutContext& layoutContext, const Container& container) const
@@ -204,16 +203,16 @@ void FormattingContext::validateGeometryConstraintsAfterLayout(const LayoutConte
         if ((layoutBox.isBlockLevelBox() || layoutBox.isOutOfFlowPositioned()) && !layoutBox.replaced()) {
             // margin-left + border-left-width + padding-left + width + padding-right + border-right-width + margin-right = width of containing block
             auto containingBlockWidth = containingBlockDisplayBox.contentBoxWidth();
-            ASSERT(displayBox->marginLeft() + displayBox->borderLeft() + displayBox->paddingLeft() + displayBox->contentBoxWidth()
-                + displayBox->paddingRight() + displayBox->borderRight() + displayBox->marginRight() == containingBlockWidth);
+            ASSERT(displayBox->marginLeft() + displayBox->borderLeft() + displayBox->paddingLeft().value_or(0) + displayBox->contentBoxWidth()
+                + displayBox->paddingRight().value_or(0) + displayBox->borderRight() + displayBox->marginRight() == containingBlockWidth);
         }
 
         // 10.6.4 Absolutely positioned, non-replaced elements
         if (layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced()) {
             // top + margin-top + border-top-width + padding-top + height + padding-bottom + border-bottom-width + margin-bottom + bottom = height of containing block
             auto containingBlockHeight = containingBlockDisplayBox.contentBoxHeight();
-            ASSERT(displayBox->top() + displayBox->marginTop() + displayBox->borderTop() + displayBox->paddingTop() + displayBox->contentBoxHeight()
-                + displayBox->paddingBottom() + displayBox->borderBottom() + displayBox->marginBottom() == containingBlockHeight);
+            ASSERT(displayBox->top() + displayBox->marginTop() + displayBox->borderTop() + displayBox->paddingTop().value_or(0) + displayBox->contentBoxHeight()
+                + displayBox->paddingBottom().value_or(0) + displayBox->borderBottom() + displayBox->marginBottom() == containingBlockHeight);
         }
     }
 }
