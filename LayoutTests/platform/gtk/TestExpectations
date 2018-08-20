@@ -1269,8 +1269,6 @@ webkit.org/b/172955 media/video-preload.html [ Crash Pass ]
 
 webkit.org/b/175575 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Crash Pass ]
 
-webkit.org/b/176803 http/tests/local/blob/send-hybrid-blob-using-open-panel.html [ Crash ]
-
 # See also webkit.org/b/141699
 webkit.org/b/177534 fast/attachment/attachment-respects-css-size.html [ Crash ImageOnlyFailure ]
 # See also webkit.org/b/163528 Threaded compositor failures caused by one of r203496, r203497, or r203498
