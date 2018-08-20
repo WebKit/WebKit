@@ -1,3 +1,28 @@
+2018-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perform a microtask checkpoint before creating a custom element
+        https://bugs.webkit.org/show_bug.cgi?id=188189
+        <rdar://problem/42843022>
+
+        Reviewed by Geoffrey Garen.
+
+        Fixed the bug that the HTML parser was not performing a microtask checkpoint prior to synchronously constructing
+        a custom element in the concept to create an element for a token:
+        https://html.spec.whatwg.org/multipage/parsing.html#creating-and-inserting-nodes:perform-a-microtask-checkpoint
+
+        Also added a microtask checkpoint before dispatching DOMContentLoaded to work around webkit.org/b/82931 since
+        scheduling a task to fire a DOMContentLoaded event in Document::finishedParsing as the HTML5 spec mandates
+        is a long standing bug with a lot of implications, which is completely outside the scope of this bug fix:
+        https://html.spec.whatwg.org/multipage/parsing.html#stop-parsing
+
+        Test: fast/custom-elements/perform-microtask-checkpoint-before-construction.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::finishedParsing): Perform a microtask checkpoint before dispatching DOMContentLoaded here as
+        a workaround for webkit.org/b/82931.
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::runScriptsForPausedTreeBuilder): Perform a microtask checkpoint here to fix the bug.
+
 2018-08-16  Alex Christensen  <achristensen@webkit.org>
 
         Re-introduce assertion removed in r234890
