@@ -1,3 +1,17 @@
+2018-08-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Complete the JSCException API
+        https://bugs.webkit.org/show_bug.cgi?id=188695
+
+        Reviewed by Michael Catanzaro.
+
+        Add cases to test the new API.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (testJSCCheckSyntax):
+        (createCustomError):
+        (testJSCExceptions):
+
 2018-08-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Paste is missing from callout bar when pasteboard only contains custom data

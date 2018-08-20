@@ -777,9 +777,11 @@ static void testJSCCheckSyntax()
     g_assert_cmpuint(jsc_context_check_syntax(context.get(), "f = 42; b =", -1, JSC_CHECK_SYNTAX_MODE_SCRIPT, nullptr, 0, &exception.outPtr()), ==, JSC_CHECK_SYNTAX_RESULT_RECOVERABLE_ERROR);
     checker.watch(exception.get());
     g_assert_true(JSC_IS_EXCEPTION(exception.get()));
+    g_assert_cmpstr(jsc_exception_get_name(exception.get()), ==, "SyntaxError");
     g_assert_cmpstr(jsc_exception_get_message(exception.get()), ==, "Unexpected end of script");
     g_assert_cmpuint(jsc_exception_get_line_number(exception.get()), ==, 1);
-    g_assert_false(jsc_exception_get_source_uri(exception.get()));
+    g_assert_null(jsc_exception_get_source_uri(exception.get()));
+    g_assert_null(jsc_exception_get_backtrace_string(exception.get()));
     GRefPtr<JSCValue> globalObject = adoptGRef(jsc_context_get_global_object(context.get()));
     checker.watch(globalObject.get());
     g_assert_false(jsc_value_object_has_property(globalObject.get(), "f"));
@@ -798,8 +800,8 @@ static void testJSCCheckSyntax()
     g_assert_cmpuint(jsc_context_check_syntax(context.get(), "f ==== 42", -1, JSC_CHECK_SYNTAX_MODE_SCRIPT, "file:///foo/script.js", 2, &exception.outPtr()), ==, JSC_CHECK_SYNTAX_RESULT_IRRECOVERABLE_ERROR);
     checker.watch(exception.get());
     g_assert_true(JSC_IS_EXCEPTION(exception.get()));
+    g_assert_cmpstr(jsc_exception_get_name(exception.get()), ==, "SyntaxError");
     g_assert_cmpstr(jsc_exception_get_message(exception.get()), ==, "Unexpected token '='");
-    g_assert_cmpuint(jsc_exception_get_line_number(exception.get()), ==, 2);
     g_assert_cmpstr(jsc_exception_get_source_uri(exception.get()), ==, "file:///foo/script.js");
 
     g_assert_cmpuint(jsc_context_check_syntax(context.get(), "f := 42", -1, JSC_CHECK_SYNTAX_MODE_SCRIPT, nullptr, 0, nullptr), ==, JSC_CHECK_SYNTAX_RESULT_IRRECOVERABLE_ERROR);
@@ -2488,6 +2490,11 @@ static void createError()
     jsc_context_throw(jsc_context_get_current(), "API exception");
 }
 
+static void createCustomError()
+{
+    jsc_context_throw_with_name(jsc_context_get_current(), "CustomAPIError", "API custom exception");
+}
+
 static void testJSCExceptions()
 {
     {
@@ -2503,9 +2510,16 @@ static void testJSCExceptions()
         auto* exception = jsc_context_get_exception(context.get());
         g_assert_true(JSC_IS_EXCEPTION(exception));
         checker.watch(exception);
+        g_assert_cmpstr(jsc_exception_get_name(exception), ==, "ReferenceError");
         g_assert_cmpstr(jsc_exception_get_message(exception), ==, "Can't find variable: foo");
         g_assert_cmpuint(jsc_exception_get_line_number(exception), ==, 1);
-        g_assert_false(jsc_exception_get_source_uri(exception));
+        g_assert_cmpuint(jsc_exception_get_column_number(exception), ==, 4);
+        g_assert_null(jsc_exception_get_source_uri(exception));
+        g_assert_cmpstr(jsc_exception_get_backtrace_string(exception), ==, "global code");
+        GUniquePtr<char> errorString(jsc_exception_to_string(exception));
+        g_assert_cmpstr(errorString.get(), ==, "ReferenceError: Can't find variable: foo");
+        GUniquePtr<char> reportString(jsc_exception_report(exception));
+        g_assert_cmpstr(reportString.get(), ==, ":1:4 ReferenceError: Can't find variable: foo\n  global code\n");
 
         jsc_context_clear_exception(context.get());
         g_assert_null(jsc_context_get_exception(context.get()));
@@ -2525,6 +2539,7 @@ static void testJSCExceptions()
         g_assert_true(JSC_IS_EXCEPTION(exception));
         checker.watch(exception);
         g_assert_cmpuint(jsc_exception_get_line_number(exception), ==, 2);
+        g_assert_cmpuint(jsc_exception_get_column_number(exception), ==, 4);
 
         jsc_context_clear_exception(context.get());
         g_assert_null(jsc_context_get_exception(context.get()));
@@ -2536,15 +2551,34 @@ static void testJSCExceptions()
         checker.watch(context.get());
         g_assert_false(jsc_context_get_exception(context.get()));
 
-        GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate_with_source_uri(context.get(), "foo", -1, "file:///foo/script.js", 3));
+        GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate_with_source_uri(context.get(),
+            "let a = 25;\n"
+            "function foo() {\n"
+            "    let b = baz();\n"
+            "    return b;\n"
+            "}\n"
+            "function bar() {\n"
+            "    let c = 75;\n"
+            "    return foo();\n"
+            "}\n"
+            "let d = bar();\n",
+            -1, "file:///foo/script.js", 1));
         checker.watch(result.get());
 
         g_assert_true(jsc_value_is_undefined(result.get()));
         auto* exception = jsc_context_get_exception(context.get());
         g_assert_true(JSC_IS_EXCEPTION(exception));
         checker.watch(exception);
+        g_assert_cmpstr(jsc_exception_get_name(exception), ==, "ReferenceError");
+        g_assert_cmpstr(jsc_exception_get_message(exception), ==, "Can't find variable: baz");
         g_assert_cmpstr(jsc_exception_get_source_uri(exception), ==, "file:///foo/script.js");
         g_assert_cmpuint(jsc_exception_get_line_number(exception), ==, 3);
+        g_assert_cmpuint(jsc_exception_get_column_number(exception), ==, 16);
+        g_assert_cmpstr(jsc_exception_get_backtrace_string(exception), ==, "foo@file:///foo/script.js:3:16\nbar@file:///foo/script.js:8:15\nglobal code@file:///foo/script.js:10:12");
+        GUniquePtr<char> errorString(jsc_exception_to_string(exception));
+        g_assert_cmpstr(errorString.get(), ==, "ReferenceError: Can't find variable: baz");
+        GUniquePtr<char> reportString(jsc_exception_report(exception));
+        g_assert_cmpstr(reportString.get(), ==, "file:///foo/script.js:3:16 ReferenceError: Can't find variable: baz\n  foo@file:///foo/script.js:3:16\n  bar@file:///foo/script.js:8:15\n  global code@file:///foo/script.js:10:12\n");
 
         jsc_context_clear_exception(context.get());
         g_assert_null(jsc_context_get_exception(context.get()));
@@ -2573,9 +2607,71 @@ static void testJSCExceptions()
         auto* exception = jsc_context_get_exception(context.get());
         g_assert_true(JSC_IS_EXCEPTION(exception));
         checker.watch(exception);
+        g_assert_cmpstr(jsc_exception_get_name(exception), ==, "Error");
         g_assert_cmpstr(jsc_exception_get_message(exception), ==, "API exception");
         g_assert_cmpuint(jsc_exception_get_line_number(exception), ==, 1);
-        g_assert_false(jsc_exception_get_source_uri(exception));
+        g_assert_cmpuint(jsc_exception_get_column_number(exception), ==, 24);
+        g_assert_null(jsc_exception_get_source_uri(exception));
+        g_assert_cmpstr(jsc_exception_get_backtrace_string(exception), ==, "createError@[native code]\nglobal code");
+        GUniquePtr<char> errorString(jsc_exception_to_string(exception));
+        g_assert_cmpstr(errorString.get(), ==, "Error: API exception");
+        GUniquePtr<char> reportString(jsc_exception_report(exception));
+        g_assert_cmpstr(reportString.get(), ==, ":1:24 Error: API exception\n  createError@[native code]\n  global code\n");
+
+        jsc_context_clear_exception(context.get());
+        g_assert_null(jsc_context_get_exception(context.get()));
+    }
+
+    {
+        LeakChecker checker;
+        GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        g_assert_false(jsc_context_get_exception(context.get()));
+
+        GRefPtr<JSCValue> function = adoptGRef(jsc_value_new_function(context.get(), "createCustomError", G_CALLBACK(createCustomError), nullptr, nullptr, G_TYPE_NONE, 0, G_TYPE_NONE));
+        checker.watch(function.get());
+        jsc_context_set_value(context.get(), "createCustomError", function.get());
+
+        GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate(context.get(), "var result; createCustomError(); result = 'No exception';", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_undefined(result.get()));
+        auto* exception = jsc_context_get_exception(context.get());
+        g_assert_true(JSC_IS_EXCEPTION(exception));
+        checker.watch(exception);
+        g_assert_cmpstr(jsc_exception_get_name(exception), ==, "CustomAPIError");
+        g_assert_cmpstr(jsc_exception_get_message(exception), ==, "API custom exception");
+        g_assert_cmpuint(jsc_exception_get_line_number(exception), ==, 1);
+        g_assert_cmpuint(jsc_exception_get_column_number(exception), ==, 30);
+        g_assert_null(jsc_exception_get_source_uri(exception));
+        g_assert_cmpstr(jsc_exception_get_backtrace_string(exception), ==, "createCustomError@[native code]\nglobal code");
+        GUniquePtr<char> errorString(jsc_exception_to_string(exception));
+        g_assert_cmpstr(errorString.get(), ==, "CustomAPIError: API custom exception");
+        GUniquePtr<char> reportString(jsc_exception_report(exception));
+        g_assert_cmpstr(reportString.get(), ==, ":1:30 CustomAPIError: API custom exception\n  createCustomError@[native code]\n  global code\n");
+
+        jsc_context_clear_exception(context.get());
+        g_assert_null(jsc_context_get_exception(context.get()));
+    }
+
+    {
+        LeakChecker checker;
+        GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        g_assert_false(jsc_context_get_exception(context.get()));
+
+        GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate_with_source_uri(context.get(), "foo", -1, "file:///foo/script.js", 3));
+        checker.watch(result.get());
+
+        g_assert_true(jsc_value_is_undefined(result.get()));
+        auto* exception = jsc_context_get_exception(context.get());
+        g_assert_true(JSC_IS_EXCEPTION(exception));
+        checker.watch(exception);
+        g_assert_cmpstr(jsc_exception_get_source_uri(exception), ==, "file:///foo/script.js");
+        g_assert_cmpuint(jsc_exception_get_line_number(exception), ==, 3);
+        g_assert_cmpuint(jsc_exception_get_column_number(exception), ==, 4);
+        g_assert_cmpstr(jsc_exception_get_backtrace_string(exception), ==, "global code@file:///foo/script.js:3:4");
+        GUniquePtr<char> reportString(jsc_exception_report(exception));
+        g_assert_cmpstr(reportString.get(), ==, "file:///foo/script.js:3:4 ReferenceError: Can't find variable: foo\n  global code@file:///foo/script.js:3:4\n");
 
         jsc_context_clear_exception(context.get());
         g_assert_null(jsc_context_get_exception(context.get()));
@@ -2610,9 +2706,13 @@ static void testJSCExceptions()
         g_assert_false(jsc_context_get_exception(context.get()));
         g_assert_true(JSC_IS_EXCEPTION(test.exception.get()));
         checker.watch(test.exception.get());
+        g_assert_cmpstr(jsc_exception_get_name(test.exception.get()), ==, "ReferenceError");
         g_assert_cmpstr(jsc_exception_get_message(test.exception.get()), ==, "Can't find variable: foo");
         g_assert_cmpuint(jsc_exception_get_line_number(test.exception.get()), ==, 1);
+        g_assert_cmpuint(jsc_exception_get_column_number(test.exception.get()), ==, 4);
         g_assert_false(jsc_exception_get_source_uri(test.exception.get()));
+        GUniquePtr<char> errorString(jsc_exception_to_string(test.exception.get()));
+        g_assert_cmpstr(errorString.get(), ==, "ReferenceError: Can't find variable: foo");
 
         g_assert_false(test.wasDeleted);
         jsc_context_pop_exception_handler(context.get());

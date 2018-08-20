@@ -33,6 +33,7 @@ jsc_context_new_with_virtual_machine
 jsc_context_get_virtual_machine
 jsc_context_get_exception
 jsc_context_throw
+jsc_context_throw_with_name
 jsc_context_throw_exception
 jsc_context_clear_exception
 jsc_context_push_exception_handler
@@ -151,9 +152,15 @@ jsc_weak_value_get_type
 <TITLE>JSCException</TITLE>
 JSCException
 jsc_exception_new
+jsc_exception_new_with_name
+jsc_exception_get_name
 jsc_exception_get_message
 jsc_exception_get_line_number
+jsc_exception_get_column_number
 jsc_exception_get_source_uri
+jsc_exception_get_backtrace_string
+jsc_exception_to_string
+jsc_exception_report
 
 <SUBSECTION Standard>
 JSCExceptionClass
