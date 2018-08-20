@@ -6,16 +6,25 @@
     <script src="../../resources/testharness.js"></script>
     <script src="../../resources/testharnessreport.js"></script>
     <script>
-    let deviceIds = [];
-    promise_test(async (test) => {
+    let stream = null;
+    
+    let setup = async (test) => {
         if (!window.testRunner)
             return Promise.reject("test requires internal API");
 
         test.add_cleanup(() => { testRunner.resetMockMediaDevices(); });
 
         testRunner.setUserMediaPermission(true);
+        
+        stream = null;
+    }
 
-        await navigator.mediaDevices.getUserMedia({ audio:true, video:true });
+    promise_test(async (test) => {
+    
+        await setup(test);
+
+        await navigator.mediaDevices.getUserMedia({ audio:true, video:true })
+            .then(s => stream = s)
 
         let devices = await navigator.mediaDevices.enumerateDevices();
 
@@ -29,7 +38,7 @@
         await new Promise((resolve, reject) => {
             navigator.mediaDevices.ondevicechange = resolve;
             setTimeout(() => {
-                console.log("event 1 taking a long time");
+                console.log("event 1 took too long");
                 resolve();
             }, 5000);
             testRunner.addMockCameraDevice("id1", "my camera");
@@ -41,7 +50,7 @@
         await new Promise((resolve, reject) => {
             navigator.mediaDevices.ondevicechange = resolve;
             setTimeout(() => {
-                console.log("event 2 taking a long time");
+                console.log("event 2 took too long");
                 resolve();
             }, 5000);
             testRunner.addMockMicrophoneDevice("id2", "my mic");
@@ -51,6 +60,102 @@
         assert_equals(devices[0].label, "my mic");
 
     }, "'devicechange' event fired when device list changes");
+
+    promise_test(async (test) => {
+
+        await setup(test);
+
+        let eventCount = 0;
+        await new Promise((resolve, reject) => {
+            navigator.mediaDevices.ondevicechange = (evt) => {
+                ++eventCount;
+                setTimeout(() => {
+                    resolve();
+                }, 500);
+            }
+
+            setTimeout(() => {
+                console.log("navigator.mediaDevices.ondevicechange took too long");
+                resolve();
+            }, 4000);
+
+            testRunner.addMockMicrophoneDevice("id4", "microphone 3");
+            testRunner.addMockMicrophoneDevice("id5", "microphone 4");
+        });
+        assert_equals(eventCount, 1, "one event fired");
+
+    }, "'devicechange' events fired quickly are coalesced");
+
+
+    promise_test(async (test) => {
+
+        await setup(test);
+
+        await new Promise((resolve, reject) => {
+            let timeout = setTimeout(() => {
+                console.log("window.onblur took too long");
+                resolve();
+            }, 5000);
+
+            window.onblur = () => {
+                clearTimeout(timeout);
+                resolve();
+            }
+        
+            internals.setPageIsFocusedAndActive(false);
+        });
+
+        await new Promise((resolve, reject) => {
+            assert_false(document.hasFocus(), "document.hasFocus()");
+
+            navigator.mediaDevices.ondevicechange = () => {
+                assert_true(document.hasFocus(), "devicechange should only fire when the document is focused and active");
+                resolve();
+            };
+
+            setTimeout(() => {
+                internals.setPageIsFocusedAndActive(true);
+            }, 200);
+
+            testRunner.addMockMicrophoneDevice("id3", "microphone 2");
+        });
+
+    }, "'devicechange' event is not fired when the document doesn't has focus or permission to capture");
+
+    promise_test(async (test) => {
+
+        await setup(test);
+
+        await navigator.mediaDevices.getUserMedia({ audio:true, video:true })
+            .then(s => stream = s);
+
+        await new Promise((resolve, reject) => {
+            let timeout = setTimeout(() => {
+                console.log("window.onblur took too long");
+                resolve();
+            }, 5000);
+
+            window.onblur = () => {
+                clearTimeout(timeout);
+                resolve();
+            }
+        
+            internals.setPageIsFocusedAndActive(false);
+        });
+
+        await new Promise((resolve, reject) => {
+            assert_false(document.hasFocus(), "document.hasFocus()");
+
+            navigator.mediaDevices.ondevicechange = () => {
+                assert_false(document.hasFocus(), "devicechange should fire when the document is not focused but can capture");
+                resolve();
+            };
+
+            testRunner.addMockMicrophoneDevice("id3", "microphone 2");
+        });
+
+    }, "'devicechange' event is fired when the document doesn't has focus but has permission to capture");
+
     </script>
 </head>
 <body>

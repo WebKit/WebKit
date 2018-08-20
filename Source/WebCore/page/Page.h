@@ -434,8 +434,8 @@ public:
     void setIsRestoringCachedPage(bool value) { m_isRestoringCachedPage = value; }
     bool isRestoringCachedPage() const { return m_isRestoringCachedPage; }
 
-    void addActivityStateChangeObserver(ActivityStateChangeObserver&);
-    void removeActivityStateChangeObserver(ActivityStateChangeObserver&);
+    WEBCORE_EXPORT void addActivityStateChangeObserver(ActivityStateChangeObserver&);
+    WEBCORE_EXPORT void removeActivityStateChangeObserver(ActivityStateChangeObserver&);
 
     WEBCORE_EXPORT void suspendScriptedAnimations();
     WEBCORE_EXPORT void resumeScriptedAnimations();

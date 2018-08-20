@@ -228,6 +228,7 @@ class WebTouchEvent;
 class WebCredentialsMessenger;
 class RemoteLayerTreeTransaction;
 
+enum class DeviceAccessState;
 enum FindOptions : uint16_t;
 enum class DragControllerAction;
 
@@ -565,6 +566,7 @@ public:
 #if ENABLE(MEDIA_STREAM)
     UserMediaPermissionRequestManager& userMediaPermissionRequestManager() { return *m_userMediaPermissionRequestManager; }
     void prepareToSendUserMediaPermissionRequest();
+    void captureDevicesChanged(DeviceAccessState);
 #endif
 
     void elementDidFocus(WebCore::Node*);

@@ -1,3 +1,67 @@
+2018-08-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Move capture device monitoring to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=188521
+        <rdar://problem/43251787>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, updated fast/mediastream/device-change-event-2.html for the changes.
+
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::MediaDevices): Device change listener is added in addEventListener.
+        (WebCore::MediaDevices::stop): Device change listener is on the user media controller.
+        (WebCore::MediaDevices::addEventListener): Add the device change listener only once the first
+        event handler is added.
+        * Modules/mediastream/MediaDevices.h:
+
+        * Modules/mediastream/UserMediaClient.h:
+        * Modules/mediastream/UserMediaController.h:
+        (WebCore::UserMediaController::addDeviceChangeObserver): Pass through to the client.
+        (WebCore::UserMediaController::removeDeviceChangeObserver): Ditto.
+
+        * platform/mediastream/CaptureDeviceManager.cpp:
+        (CaptureDeviceManager::deviceChanged): Notify RealtimeMediaSourceCenter.
+        (nextObserverToken): Deleted.
+        (CaptureDeviceManager::addCaptureDeviceChangedObserver): Deleted.
+        (CaptureDeviceManager::removeCaptureDeviceChangedObserver): Deleted.
+        * platform/mediastream/CaptureDeviceManager.h:
+
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::setDevicesChangedObserver):
+        (WebCore::RealtimeMediaSourceCenter::captureDevicesChanged):
+        (WebCore::observerMap): Deleted.
+        (WebCore::RealtimeMediaSourceCenter::addDevicesChangedObserver): Deleted.
+        (WebCore::RealtimeMediaSourceCenter::removeDevicesChangedObserver): Deleted.
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm:
+        (WebCore::AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices): Call base class.
+
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        (WebCore::AVCaptureDeviceManager::deviceConnected): Ditto.
+        (WebCore::AVCaptureDeviceManager::deviceDisconnected): Ditto.
+
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp:
+        (WebCore::deviceHasInputStreams): Drive-by fix, check the number of buffers to see if the
+        device has input streams.
+        (WebCore::CoreAudioCaptureDeviceManager::coreAudioCaptureDevices): Use new bool parameter
+        added to refreshAudioCaptureDevices so we won't trigger a device change event on the first scan.
+        (WebCore::CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices): Add param.
+        (WebCore::CoreAudioCaptureDeviceManager::devicesChanged): Use new param.
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.h:
+
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeMediaSourceCenter::setDevices): Don't need to call captureDevicesChanged,
+        it is done in the UI process.
+        (WebCore::MockRealtimeMediaSourceCenter::addDevice): Ditto.
+        (WebCore::MockRealtimeMediaSourceCenter::removeDevice): Ditto.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setPageIsFocusedAndActive): New, used by updated test.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-08-20  Rob Buis  <rbuis@igalia.com>
 
         Throw an exception if window.open() gets passed a URL that cannot be parsed

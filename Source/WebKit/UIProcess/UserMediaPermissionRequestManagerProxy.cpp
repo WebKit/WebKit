@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L.
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@
 
 #include "APISecurityOrigin.h"
 #include "APIUIClient.h"
+#include "UserMediaPermissionRequestManager.h"
 #include "UserMediaProcessManager.h"
 #include "WebAutomationSession.h"
 #include "WebPageMessages.h"
@@ -75,6 +76,15 @@ void UserMediaPermissionRequestManagerProxy::stopCapture()
 {
     invalidatePendingRequests();
     m_page.stopMediaCapture();
+}
+
+void UserMediaPermissionRequestManagerProxy::captureDevicesChanged()
+{
+#if ENABLE(MEDIA_STREAM)
+    // FIXME: a page with persistent access should always get device change notifications.
+    auto accessState = m_grantedRequests.isEmpty() ? DeviceAccessState::NoAccess : DeviceAccessState::SessionAccess;
+    m_page.process().send(Messages::WebPage::CaptureDevicesChanged(accessState), m_page.pageID());
+#endif
 }
 
 void UserMediaPermissionRequestManagerProxy::clearCachedState()
@@ -434,7 +444,7 @@ void UserMediaPermissionRequestManagerProxy::captureStateChanged(MediaProducer::
 #endif
 }
 
-void UserMediaPermissionRequestManagerProxy::processPregrantedRequests()
+void UserMediaPermissionRequestManagerProxy::viewIsBecomingVisible()
 {
     for (auto& request : m_pregrantedRequests)
         request->allow();

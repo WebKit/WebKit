@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,9 @@ private:
 
     void enumerateMediaDevices(WebCore::MediaDevicesEnumerationRequest&) final;
     void cancelMediaDevicesEnumerationRequest(WebCore::MediaDevicesEnumerationRequest&) final;
+
+    DeviceChangeObserverToken addDeviceChangeObserver(WTF::Function<void()>&&) final;
+    void removeDeviceChangeObserver(DeviceChangeObserverToken) final;
 
     void initializeFactories();
 

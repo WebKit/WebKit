@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc.  All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,19 +55,16 @@ void MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(bool
 void MockRealtimeMediaSourceCenter::setDevices(Vector<MockMediaDevice>&& newMockDevices)
 {
     MockRealtimeMediaSource::setDevices(WTFMove(newMockDevices));
-    singleton().captureDevicesChanged();
 }
 
 void MockRealtimeMediaSourceCenter::addDevice(const MockMediaDevice& device)
 {
     MockRealtimeMediaSource::addDevice(device);
-    singleton().captureDevicesChanged();
 }
 
 void MockRealtimeMediaSourceCenter::removeDevice(const String& persistentId)
 {
     MockRealtimeMediaSource::removeDevice(persistentId);
-    singleton().captureDevicesChanged();
 }
 
 } // namespace WebCore

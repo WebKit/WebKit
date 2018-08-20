@@ -246,10 +246,8 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<IntConstraint> 
         }
 
         distance = std::min(distance, constraintDistance);
-        if (widthConstraint->isMandatory()) {
-            auto range = capabilities.width();
-            width = widthConstraint->valueForCapabilityRange(size().width(), range.rangeMin().asInt, range.rangeMax().asInt);
-        }
+        auto range = capabilities.width();
+        width = widthConstraint->valueForCapabilityRange(size().width(), range.rangeMin().asInt, range.rangeMax().asInt);
     }
 
     std::optional<int> height;
@@ -261,10 +259,8 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<IntConstraint> 
         }
 
         distance = std::min(distance, constraintDistance);
-        if (heightConstraint->isMandatory()) {
-            auto range = capabilities.height();
-            height = heightConstraint->valueForCapabilityRange(size().height(), range.rangeMin().asInt, range.rangeMax().asInt);
-        }
+        auto range = capabilities.height();
+        height = heightConstraint->valueForCapabilityRange(size().height(), range.rangeMin().asInt, range.rangeMax().asInt);
     }
 
     std::optional<double> frameRate;
@@ -276,10 +272,8 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<IntConstraint> 
         }
 
         distance = std::min(distance, constraintDistance);
-        if (frameRateConstraint->isMandatory()) {
-            auto range = capabilities.frameRate();
-            frameRate = frameRateConstraint->valueForCapabilityRange(this->frameRate(), range.rangeMin().asDouble, range.rangeMax().asDouble);
-        }
+        auto range = capabilities.frameRate();
+        frameRate = frameRateConstraint->valueForCapabilityRange(this->frameRate(), range.rangeMin().asDouble, range.rangeMax().asDouble);
     }
 
     // Each of the non-null values is supported individually, see if they all can be applied at the same time.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "CoreAudioCaptureDevice.h"
 #include "Logging.h"
+#include "RealtimeMediaSourceCenter.h"
 #include <AudioUnit/AudioUnit.h>
 #include <CoreMedia/CMSync.h>
 #include <wtf/Assertions.h>
@@ -64,10 +65,17 @@ std::optional<CaptureDevice> CoreAudioCaptureDeviceManager::captureDeviceWithPer
 static bool deviceHasInputStreams(AudioObjectID deviceID)
 {
     UInt32 dataSize = 0;
-    AudioObjectPropertyAddress address = { kAudioDevicePropertyStreams, kAudioDevicePropertyScopeInput, kAudioObjectPropertyElementMaster };
+    AudioObjectPropertyAddress address = { kAudioDevicePropertyStreamConfiguration, kAudioDevicePropertyScopeInput, kAudioObjectPropertyElementMaster };
     auto err = AudioObjectGetPropertyDataSize(deviceID, &address, 0, nullptr, &dataSize);
 
-    return !err && dataSize;
+    if (err || !dataSize)
+        return false;
+
+    auto bufferList = std::unique_ptr<AudioBufferList>((AudioBufferList*) ::operator new (dataSize));
+    memset(bufferList.get(), 0, dataSize);
+    err = AudioObjectGetPropertyData(deviceID, &address, 0, nullptr, &dataSize, bufferList.get());
+
+    return !err && bufferList->mNumberBuffers;
 }
 
 static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device)
@@ -81,7 +89,7 @@ Vector<CoreAudioCaptureDevice>& CoreAudioCaptureDeviceManager::coreAudioCaptureD
     static bool initialized;
     if (!initialized) {
         initialized = true;
-        refreshAudioCaptureDevices();
+        refreshAudioCaptureDevices(DoNotNotify);
 
         AudioObjectPropertyAddress address = { kAudioHardwarePropertyDevices, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
         auto err = AudioObjectAddPropertyListener(kAudioObjectSystemObject, &address, devicesChanged, this);
@@ -102,7 +110,7 @@ std::optional<CoreAudioCaptureDevice> CoreAudioCaptureDeviceManager::coreAudioDe
 }
 
 
-void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices()
+void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices(NotifyIfDevicesHaveChanged notify)
 {
     AudioObjectPropertyAddress address = { kAudioHardwarePropertyDevices, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
     UInt32 dataSize = 0;
@@ -156,13 +164,13 @@ void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices()
         m_devices.append(captureDevice);
     }
 
-    for (auto& observer : m_observers.values())
-        observer();
+    if (notify == Notify)
+        deviceChanged();
 }
 
 OSStatus CoreAudioCaptureDeviceManager::devicesChanged(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void* userData)
 {
-    static_cast<CoreAudioCaptureDeviceManager*>(userData)->refreshAudioCaptureDevices();
+    static_cast<CoreAudioCaptureDeviceManager*>(userData)->refreshAudioCaptureDevices(Notify);
     return 0;
 }
 

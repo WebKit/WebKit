@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@
 
 #include "MediaDeviceSandboxExtensions.h"
 #include "SandboxExtension.h"
+#include <WebCore/ActivityStateChangeObserver.h>
 #include <WebCore/MediaCanStartListener.h>
 #include <WebCore/MediaConstraints.h>
 #include <WebCore/MediaDevicesEnumerationRequest.h>
@@ -37,8 +38,9 @@ namespace WebKit {
 
 class WebPage;
 
-class UserMediaPermissionRequestManager
-    : private WebCore::MediaCanStartListener {
+enum class DeviceAccessState { NoAccess, SessionAccess, PersistentAccess };
+
+class UserMediaPermissionRequestManager : public CanMakeWeakPtr<UserMediaPermissionRequestManager>, private WebCore::MediaCanStartListener, private WebCore::ActivityStateChangeObserver {
 public:
     explicit UserMediaPermissionRequestManager(WebPage&);
     ~UserMediaPermissionRequestManager();
@@ -55,11 +57,19 @@ public:
     void grantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions&&);
     void revokeUserMediaDeviceSandboxExtensions(const Vector<String>&);
 
+    WebCore::UserMediaClient::DeviceChangeObserverToken addDeviceChangeObserver(WTF::Function<void()>&&);
+    void removeDeviceChangeObserver(WebCore::UserMediaClient::DeviceChangeObserverToken);
+
+    void captureDevicesChanged(DeviceAccessState);
+
 private:
     void sendUserMediaRequest(WebCore::UserMediaRequest&);
 
     // WebCore::MediaCanStartListener
-    void mediaCanStart(WebCore::Document&) override;
+    void mediaCanStart(WebCore::Document&) final;
+
+    // WebCore::ActivityStateChangeObserver
+    void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> oldActivityState, OptionSet<WebCore::ActivityState::Flag> newActivityState) final;
 
     void removeMediaRequestFromMaps(WebCore::UserMediaRequest&);
 
@@ -73,9 +83,28 @@ private:
     HashMap<RefPtr<WebCore::MediaDevicesEnumerationRequest>, uint64_t> m_mediaDevicesEnumerationRequestToIDMap;
 
     HashMap<String, RefPtr<SandboxExtension>> m_userMediaDeviceSandboxExtensions;
+
+    HashMap<WebCore::UserMediaClient::DeviceChangeObserverToken, WTF::Function<void()>> m_deviceChangeObserverMap;
+    DeviceAccessState m_accessStateWhenDevicesChanged { DeviceAccessState::NoAccess };
+    bool m_monitoringDeviceChange { false };
+    bool m_pendingDeviceChangeEvent { false };
+    bool m_monitoringActivityStateChange { false };
 };
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::DeviceAccessState> {
+    using values = EnumValues<
+        WebKit::DeviceAccessState,
+        WebKit::DeviceAccessState::NoAccess,
+        WebKit::DeviceAccessState::SessionAccess,
+        WebKit::DeviceAccessState::PersistentAccess
+    >;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(MEDIA_STREAM)
 

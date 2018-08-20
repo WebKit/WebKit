@@ -85,6 +85,7 @@
 		074E75FE1DF2211900D318EC /* UserMediaProcessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 074E75FB1DF1FD1300D318EC /* UserMediaProcessManager.h */; };
 		074E76021DF707BE00D318EC /* MediaDeviceSandboxExtensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 074E76001DF7075D00D318EC /* MediaDeviceSandboxExtensions.cpp */; };
 		076E884E1A13CADF005E90FC /* APIContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 076E884D1A13CADF005E90FC /* APIContextMenuClient.h */; };
+		0772811D21234FF600C8EF2E /* UserMediaPermissionRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F4319AF7B27002EBAB5 /* UserMediaPermissionRequestManager.h */; };
 		07A5EBBB1C7BA43E00B9CA69 /* WKFrameHandleRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07A5EBB91C7BA43E00B9CA69 /* WKFrameHandleRef.cpp */; };
 		07A5EBBC1C7BA43E00B9CA69 /* WKFrameHandleRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 07A5EBBA1C7BA43E00B9CA69 /* WKFrameHandleRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0E97D74D200E900400BF6643 /* SafeBrowsingSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */; };
@@ -9716,6 +9717,7 @@
 				CD491B131E73482100009066 /* UserMediaCaptureManagerProxy.h in Headers */,
 				CD491B181E73525500009066 /* UserMediaCaptureManagerProxyMessages.h in Headers */,
 				07297F9F1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h in Headers */,
+				0772811D21234FF600C8EF2E /* UserMediaPermissionRequestManager.h in Headers */,
 				4A3CC18B19B0640F00D14AEF /* UserMediaPermissionRequestManagerProxy.h in Headers */,
 				4A3CC18D19B0641900D14AEF /* UserMediaPermissionRequestProxy.h in Headers */,
 				074E75FE1DF2211900D318EC /* UserMediaProcessManager.h in Headers */,

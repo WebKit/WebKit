@@ -645,6 +645,8 @@ public:
 #endif
 
     void setPageVisibility(bool isVisible);
+    void setPageIsFocusedAndActive(bool);
+
 
 #if ENABLE(WEB_RTC)
     void setH264HardwareEncoderAllowed(bool allowed);

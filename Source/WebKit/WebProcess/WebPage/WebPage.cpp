@@ -3739,6 +3739,12 @@ void WebPage::didCompleteMediaDeviceEnumeration(uint64_t userMediaID, const Vect
 {
     m_userMediaPermissionRequestManager->didCompleteMediaDeviceEnumeration(userMediaID, devices, WTFMove(deviceIdentifierHashSalt), originHasPersistentAccess);
 }
+
+void WebPage::captureDevicesChanged(DeviceAccessState accessState)
+{
+    m_userMediaPermissionRequestManager->captureDevicesChanged(accessState);
+}
+
 #if ENABLE(SANDBOX_EXTENSIONS)
 void WebPage::grantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions&& extensions)
 {

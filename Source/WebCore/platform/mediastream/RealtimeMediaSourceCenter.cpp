@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,12 +51,6 @@ static RealtimeMediaSourceCenter*& mediaStreamCenterOverride()
 {
     static RealtimeMediaSourceCenter* override;
     return override;
-}
-
-static HashMap<unsigned, std::function<void()>>& observerMap()
-{
-    static NeverDestroyed<HashMap<unsigned, std::function<void()>>> map;
-    return map;
 }
 
 RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::singleton()
@@ -199,25 +193,18 @@ ExceptionOr<void> RealtimeMediaSourceCenter::setDeviceEnabled(const String& id, 
     return Exception { NotFoundError };
 }
 
-RealtimeMediaSourceCenter::DevicesChangedObserverToken RealtimeMediaSourceCenter::addDevicesChangedObserver(std::function<void()>&& observer)
+void RealtimeMediaSourceCenter::setDevicesChangedObserver(std::function<void()>&& observer)
 {
-    static DevicesChangedObserverToken nextToken = 0;
-    observerMap().set(++nextToken, WTFMove(observer));
-    return nextToken;
-}
-
-void RealtimeMediaSourceCenter::removeDevicesChangedObserver(DevicesChangedObserverToken token)
-{
-    bool wasRemoved = observerMap().remove(token);
-    ASSERT_UNUSED(wasRemoved, wasRemoved);
+    ASSERT(isMainThread());
+    ASSERT(!m_deviceChangedObserver);
+    m_deviceChangedObserver = WTFMove(observer);
 }
 
 void RealtimeMediaSourceCenter::captureDevicesChanged()
 {
-    // Copy the hash map because the observer callback may call back in and modify the map.
-    auto callbacks = observerMap();
-    for (auto& it : callbacks)
-        it.value();
+    ASSERT(isMainThread());
+    if (m_deviceChangedObserver)
+        m_deviceChangedObserver();
 }
 
 void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandler&& validHandler, InvalidConstraintsHandler&& invalidHandler, const MediaStreamRequest& request, String&& deviceIdentifierHashSalt)

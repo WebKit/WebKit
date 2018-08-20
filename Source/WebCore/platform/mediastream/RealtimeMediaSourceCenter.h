@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,22 +85,22 @@ public:
     WEBCORE_EXPORT CaptureDevice captureDeviceWithUniqueID(const String& id, const String& hashSalt);
     WEBCORE_EXPORT ExceptionOr<void> setDeviceEnabled(const String&, bool);
 
-    using DevicesChangedObserverToken = unsigned;
-    DevicesChangedObserverToken addDevicesChangedObserver(std::function<void()>&&);
-    void removeDevicesChangedObserver(DevicesChangedObserverToken);
+    WEBCORE_EXPORT void setDevicesChangedObserver(std::function<void()>&&);
 
     void setVideoCapturePageState(bool, bool);
 
+    void captureDevicesChanged();
+
 protected:
     RealtimeMediaSourceCenter();
-
-    void captureDevicesChanged();
 
     static RealtimeMediaSourceCenter& platformCenter();
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 
     CaptureDeviceManager* m_audioCaptureDeviceManager { nullptr };
     CaptureDeviceManager* m_videoCaptureDeviceManager { nullptr };
+
+    WTF::Function<void()> m_deviceChangedObserver;
 };
 
 } // namespace WebCore

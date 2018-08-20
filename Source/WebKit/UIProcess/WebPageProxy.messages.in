@@ -287,6 +287,7 @@ messages -> WebPageProxy {
     # MediaSteam messages
     RequestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, struct WebCore::MediaStreamRequest request)
     EnumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier)
+    BeginMonitoringCaptureDevices()
 #endif
 
     # Notification messages

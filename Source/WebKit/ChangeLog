@@ -1,3 +1,57 @@
+2018-08-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Move capture device monitoring to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=188521
+        <rdar://problem/43251787>
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::captureDevicesChanged): Notify as appropriate.
+        (WebKit::UserMediaPermissionRequestManagerProxy::viewIsBecomingVisible): Change name from
+        viewIsBecomingVisible. Call captureDevicesChanged if a change happened when not visible.
+        (WebKit::UserMediaPermissionRequestManagerProxy::watchdogTimerFired): Clear m_pendingDeviceChangeEvent.
+        (WebKit::UserMediaPermissionRequestManagerProxy::processPregrantedRequests): Deleted.
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::UserMediaProcessManager): Initialize timer.
+        (WebKit::UserMediaProcessManager::captureDevicesChanged): New, notify each manager.
+        (WebKit::UserMediaProcessManager::beginMonitoringCaptureDevices): Cache the device list and 
+        register device change listener the first time it is called.
+        * UIProcess/UserMediaProcessManager.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewIsBecomingVisible):
+        (WebKit::WebPageProxy::beginMonitoringCaptureDevices):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::addDeviceChangeObserver): Add listener, tell page
+        to start monitoring device changes.
+        (WebKit::UserMediaPermissionRequestManager::removeDeviceChangeObserver): Remove listener.
+        (WebKit::UserMediaPermissionRequestManager::captureDevicesChanged): Call listeners.
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+
+        * WebProcess/WebCoreSupport/WebUserMediaClient.cpp:
+        (WebKit::WebUserMediaClient::addDeviceChangeObserver):
+        (WebKit::WebUserMediaClient::removeDeviceChangeObserver):
+        * WebProcess/WebCoreSupport/WebUserMediaClient.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::captureDevicesChanged):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::addMockMediaDevice):
+        (WebKit::WebProcess::clearMockMediaDevices):
+        (WebKit::WebProcess::removeMockMediaDevice):
+        (WebKit::WebProcess::resetMockMediaDevices):
+        (WebKit::WebProcess::captureDevicesChanged):
+        * WebProcess/WebProcess.h:
+
 2018-08-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK/WPE cookie API tests after r234396.

@@ -29,6 +29,7 @@
 
 #include "AXObjectCache.h"
 #include "ActiveDOMCallbackMicrotask.h"
+#include "ActivityState.h"
 #include "AnimationTimeline.h"
 #include "ApplicationCacheStorage.h"
 #include "AudioSession.h"
@@ -4341,6 +4342,22 @@ void Internals::setPageVisibility(bool isVisible)
         state -= ActivityState::IsVisible;
     else
         state |= ActivityState::IsVisible;
+
+    page.setActivityState(state);
+}
+
+void Internals::setPageIsFocusedAndActive(bool isFocusedAndActive)
+{
+    auto* document = contextDocument();
+    if (!document || !document->page())
+        return;
+    auto& page = *document->page();
+    auto state = page.activityState();
+
+    if (!isFocusedAndActive)
+        state -= { ActivityState::IsFocused, ActivityState::WindowIsActive };
+    else
+        state |= { ActivityState::IsFocused, ActivityState::WindowIsActive };
 
     page.setActivityState(state);
 }

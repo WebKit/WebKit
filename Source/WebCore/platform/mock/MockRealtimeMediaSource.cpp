@@ -97,6 +97,7 @@ void MockRealtimeMediaSource::createCaptureDevice(const MockMediaDevice& device)
 void MockRealtimeMediaSource::resetDevices()
 {
     setDevices(defaultDevices());
+    RealtimeMediaSourceCenter::singleton().captureDevicesChanged();
 }
 
 void MockRealtimeMediaSource::setDevices(Vector<MockMediaDevice>&& newMockDevices)
@@ -115,6 +116,7 @@ void MockRealtimeMediaSource::setDevices(Vector<MockMediaDevice>&& newMockDevice
         map.add(device.persistentId, device);
         createCaptureDevice(device);
     }
+    RealtimeMediaSourceCenter::singleton().captureDevicesChanged();
 }
 
 void MockRealtimeMediaSource::addDevice(const MockMediaDevice& device)
@@ -122,6 +124,7 @@ void MockRealtimeMediaSource::addDevice(const MockMediaDevice& device)
     devices().append(device);
     deviceMap().set(device.persistentId, device);
     createCaptureDevice(device);
+    RealtimeMediaSourceCenter::singleton().captureDevicesChanged();
 }
 
 void MockRealtimeMediaSource::removeDevice(const String& persistentId)
@@ -140,6 +143,7 @@ void MockRealtimeMediaSource::removeDevice(const String& persistentId)
     });
 
     map.remove(iterator);
+    RealtimeMediaSourceCenter::singleton().captureDevicesChanged();
 }
 
 std::optional<CaptureDevice> MockRealtimeMediaSource::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id)

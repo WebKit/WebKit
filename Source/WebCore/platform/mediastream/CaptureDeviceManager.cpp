@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,24 +50,14 @@ CaptureDevice CaptureDeviceManager::captureDeviceFromPersistentID(const String& 
     return { };
 }
 
-static CaptureDeviceManager::ObserverToken nextObserverToken()
+void CaptureDeviceManager::deviceChanged()
 {
-    static CaptureDeviceManager::ObserverToken nextToken = 0;
-    return ++nextToken;
-}
+    callOnMainThread([weakThis = makeWeakPtr(*this)] {
+        if (!weakThis)
+            return;
 
-CaptureDeviceManager::ObserverToken CaptureDeviceManager::addCaptureDeviceChangedObserver(CaptureDeviceChangedCallback&& observer)
-{
-    auto token = nextObserverToken();
-    m_observers.set(token, WTFMove(observer));
-    return token;
+        RealtimeMediaSourceCenter::singleton().captureDevicesChanged();
+    });
 }
-
-void CaptureDeviceManager::removeCaptureDeviceChangedObserver(ObserverToken token)
-{
-    ASSERT(m_observers.contains(token));
-    m_observers.remove(token);
-}
-
 
 #endif // ENABLE(MEDIA_STREAM)

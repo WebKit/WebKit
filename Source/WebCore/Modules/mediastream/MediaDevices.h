@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,11 +41,11 @@
 #include "MediaTrackConstraints.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "Timer.h"
+#include "UserMediaClient.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class Document;
 class MediaDeviceInfo;
 class MediaStream;
 
@@ -85,6 +85,7 @@ private:
     explicit MediaDevices(Document&);
 
     void scheduledEventTimerFired();
+    bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
 
     friend class JSMediaDevicesOwner;
 
@@ -101,8 +102,9 @@ private:
     void derefEventTarget() final { deref(); }
 
     Timer m_scheduledEventTimer;
-    RealtimeMediaSourceCenter::DevicesChangedObserverToken m_deviceChangedToken;
+    UserMediaClient::DeviceChangeObserverToken m_deviceChangeToken;
     const EventNames& m_eventNames; // Need to cache this so we can use it from GC threads.
+    bool m_listeningForDeviceChanges { false };
 };
 
 } // namespace WebCore
