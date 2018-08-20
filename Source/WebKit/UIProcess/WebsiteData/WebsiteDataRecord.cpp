@@ -46,6 +46,9 @@ String WebsiteDataRecord::displayNameForCookieHostName(const String& hostName)
 #if PLATFORM(COCOA)
     if (hostName == String(kCFHTTPCookieLocalFileDomain))
         return displayNameForLocalFiles();
+#else
+    if (hostName == "localhost")
+        return hostName;
 #endif
     return displayNameForHostName(hostName);
 }

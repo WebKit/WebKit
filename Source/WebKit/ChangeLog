@@ -1,3 +1,11 @@
+2018-08-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK/WPE cookie API tests after r234396.
+
+        * UIProcess/WebsiteData/WebsiteDataRecord.cpp:
+        (WebKit::WebsiteDataRecord::displayNameForCookieHostName): Bring back the check to handle localhost as an
+        special case for non cocoa ports.
+
 2018-08-17  Tim Horton  <timothy_horton@apple.com>
 
         Start bringing up Unified Sources in WebKit2
