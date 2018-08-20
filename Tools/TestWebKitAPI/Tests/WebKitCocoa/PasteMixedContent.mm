@@ -266,6 +266,7 @@ TEST(PasteMixedContent, CopyAndPasteWithCustomPasteboardDataOnly)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"same"];
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"different"];
+    WKPreferencesSetCustomPasteboardDataEnabled((WKPreferencesRef)[configuration preferences], true);
 
     auto source = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     [source synchronouslyLoadHTMLString:markupForSource baseURL:[NSURL URLWithString:@"same://"]];
