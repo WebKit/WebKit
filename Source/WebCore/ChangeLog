@@ -1,5 +1,14 @@
 2018-08-20  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r223192): Remove invalid `path` for Modules/geolocation/ios folder
+
+        * WebCore.xcodeproj/project.pbxproj: Remove invalid `path`
+        setting for WebCore/Modules/geolocation/ios folder. This was
+        found while working on a script for Bug 188754: Tool to fix
+        folders that should map to directories in Xcode project files.
+
+2018-08-20  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r235015): Xcode changes `mainGroup` name when updating WebCore project file
 
         * WebCore.xcodeproj/project.pbxproj:

@@ -20097,7 +20097,6 @@
 				837964CE1F8DB69A00218EA0 /* GeolocationPositionIOS.mm */,
 			);
 			name = ios;
-			path = "New Group";
 			sourceTree = "<group>";
 		};
 		83FB33651F508A1700986E54 /* entriesapi */ = {
