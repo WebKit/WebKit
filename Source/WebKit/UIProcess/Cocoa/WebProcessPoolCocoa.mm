@@ -292,7 +292,6 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
 {
-    parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
     parameters.uiProcessBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
     parameters.uiProcessSDKVersion = dyld_get_program_sdk_version();
 

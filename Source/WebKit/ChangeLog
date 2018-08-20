@@ -1,3 +1,17 @@
+2018-08-16  Sihui Liu  <sihui_liu@apple.com>
+
+        Remove unused parentProcessName from NetworkProcessCreationParameters
+        https://bugs.webkit.org/show_bug.cgi?id=188618
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
 2018-08-16  Alex Christensen  <achristensen@webkit.org>
 
         Consolidate data/string API loading paths

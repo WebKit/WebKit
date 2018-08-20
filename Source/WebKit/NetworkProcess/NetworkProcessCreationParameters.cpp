@@ -67,7 +67,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << urlSchemesRegisteredForCustomProtocols;
     encoder << presentingApplicationPID;
 #if PLATFORM(COCOA)
-    encoder << parentProcessName;
     encoder << uiProcessBundleIdentifier;
     encoder << uiProcessSDKVersion;
     encoder << sourceApplicationBundleIdentifier;
@@ -180,8 +179,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.presentingApplicationPID))
         return false;
 #if PLATFORM(COCOA)
-    if (!decoder.decode(result.parentProcessName))
-        return false;
     if (!decoder.decode(result.uiProcessBundleIdentifier))
         return false;
     if (!decoder.decode(result.uiProcessSDKVersion))
