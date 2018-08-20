@@ -15,12 +15,14 @@
         var target = document.getElementById('target');
         assert_equals(observer.root, root, 'Observer starts out with non-null root');
         observer.observe(target);
+        assert_equals(internals.numberOfIntersectionObservers(document), 1);
         root.parentNode.removeChild(root);
         root = null;
         target = null;
         requestAnimationFrame(t.step_func_done(function() {
             GCController.collect();
             assert_equals(observer.root, null, 'Observer has null root after root element is destroyed');
+            assert_equals(internals.numberOfIntersectionObservers(document), 0);
         }));
     }, "IntersectionObserver doesn't keep unreachable root alive");
 </script>

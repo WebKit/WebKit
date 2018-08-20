@@ -2310,6 +2310,13 @@ unsigned Internals::referencingNodeCount(const Document& document) const
     return document.referencingNodeCount();
 }
 
+#if ENABLE(INTERSECTION_OBSERVER)
+unsigned Internals::numberOfIntersectionObservers(const Document& document) const
+{
+    return document.numberOfIntersectionObservers();
+}
+#endif
+
 uint64_t Internals::documentIdentifier(const Document& document) const
 {
     return document.identifier().toUInt64();

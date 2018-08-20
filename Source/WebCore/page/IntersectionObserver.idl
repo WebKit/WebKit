@@ -27,6 +27,7 @@
 
 [
     Conditional=INTERSECTION_OBSERVER,
+    ConstructorCallWith=Document,
     ConstructorMayThrowException,
     Constructor(IntersectionObserverCallback callback, optional IntersectionObserverInit options),
     ImplementationLacksVTable,

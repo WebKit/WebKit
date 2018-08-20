@@ -1,4 +1,4 @@
 
 PASS IntersectionObserverEntry.boundingClientRect should match target.boundingClientRect() 
-FAIL First rAF should generate notification. assert_equals: One notification. expected 1 but got 0
+FAIL First rAF should generate notification. assert_equals: entries[0].boundingClientRect.left expected 8 but got 0
 

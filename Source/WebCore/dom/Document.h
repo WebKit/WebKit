@@ -235,6 +235,10 @@ class MediaSession;
 class HTMLAttachmentElement;
 #endif
 
+#if ENABLE(INTERSECTION_OBSERVER)
+class IntersectionObserver;
+#endif
+
 namespace Style {
 class Scope;
 };
@@ -1359,6 +1363,13 @@ public:
     void addViewportDependentPicture(HTMLPictureElement&);
     void removeViewportDependentPicture(HTMLPictureElement&);
 
+#if ENABLE(INTERSECTION_OBSERVER)
+    void addIntersectionObserver(RefPtr<IntersectionObserver>&&);
+    RefPtr<IntersectionObserver> removeIntersectionObserver(IntersectionObserver&);
+    unsigned numberOfIntersectionObservers() const { return m_intersectionObservers.size(); }
+    void updateIntersectionObservations();
+#endif
+
 #if ENABLE(MEDIA_STREAM)
     void setHasCaptureMediaStreamTrack() { m_hasHadCaptureMediaStreamTrack = true; }
     bool hasHadCaptureMediaStreamTrack() const { return m_hasHadCaptureMediaStreamTrack; }
@@ -1575,6 +1586,10 @@ private:
 
     void checkViewportDependentPictures();
 
+#if ENABLE(INTERSECTION_OBSERVER)
+    void notifyIntersectionObserversTimerFired();
+#endif
+
 #if USE(QUICK_LOOK)
     bool shouldEnforceQuickLookSandbox() const;
     void applyQuickLookSandbox();
@@ -1756,6 +1771,12 @@ private:
 #endif
 
     HashSet<HTMLPictureElement*> m_viewportDependentPictures;
+
+#if ENABLE(INTERSECTION_OBSERVER)
+    Vector<RefPtr<IntersectionObserver>> m_intersectionObservers;
+    Vector<WeakPtr<IntersectionObserver>> m_intersectionObserversWithPendingNotifications;
+    Timer m_intersectionObserversNotifyTimer;
+#endif
 
     Timer m_loadEventDelayTimer;
 

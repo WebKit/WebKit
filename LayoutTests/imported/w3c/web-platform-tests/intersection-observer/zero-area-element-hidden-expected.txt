@@ -1,4 +1,4 @@
 
 PASS A zero-area hidden target should not be intersecting. 
-FAIL First rAF. assert_equals: entries.length expected 1 but got 0
+FAIL First rAF. assert_equals: entries[0].boundingClientRect.left expected 8 but got 0
 

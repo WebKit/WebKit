@@ -1,0 +1,31 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableIntersectionObserver=true ] -->
+<head>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+
+<div id="root" style="position:absolute">
+    <div id="target" style="width: 100px; height: 100px; background-color: green"></div>
+</div>
+
+<script>
+    var observer;
+    var root = document.getElementById('root');
+    var target = document.getElementById('target');
+    test(function() {
+        observer = new IntersectionObserver(function() {}, { root: document.getElementById('root') });;
+        assert_equals(observer.root, root);
+        observer.observe(target);
+        assert_equals(internals.numberOfIntersectionObservers(document), 1);
+        document.body.appendChild(target);
+        var newDoc = document.implementation.createHTMLDocument('New document');
+        newDoc.body.appendChild(root);
+        assert_equals(internals.numberOfIntersectionObservers(document), 0);
+        assert_equals(internals.numberOfIntersectionObservers(newDoc), 1);
+        document.body.appendChild(root);
+        assert_equals(internals.numberOfIntersectionObservers(document), 1);
+        assert_equals(internals.numberOfIntersectionObservers(newDoc), 0);
+    },"Document's active intersection observers get updated");
+</script>
+</body>
+</html>

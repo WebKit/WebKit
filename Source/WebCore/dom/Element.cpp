@@ -1649,6 +1649,15 @@ void Element::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 
     if (UNLIKELY(isDefinedCustomElement()))
         CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(*this, oldDocument, newDocument);
+
+#if ENABLE(INTERSECTION_OBSERVER)
+    if (auto* observerData = intersectionObserverData()) {
+        for (auto observer : observerData->observers) {
+            if (observer->hasObservationTargets())
+                newDocument.addIntersectionObserver(oldDocument.removeIntersectionObserver(*observer));
+        }
+    }
+#endif
 }
 
 bool Element::hasAttributes() const
@@ -3246,7 +3255,11 @@ void Element::disconnectFromIntersectionObservers()
     if (!observerData)
         return;
 
-    for (auto* observer : observerData->observers)
+    for (auto& registration : observerData->registrations)
+        registration.observer->targetDestroyed(*this);
+    observerData->registrations.clear();
+
+    for (auto observer : observerData->observers)
         observer->rootDestroyed();
     observerData->observers.clear();
 }

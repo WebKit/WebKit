@@ -364,6 +364,10 @@ public:
     unsigned numberOfLiveDocuments() const;
     unsigned referencingNodeCount(const Document&) const;
 
+#if ENABLE(INTERSECTION_OBSERVER)
+    unsigned numberOfIntersectionObservers(const Document&) const;
+#endif
+
     uint64_t documentIdentifier(const Document&) const;
     bool isDocumentAlive(uint64_t documentIdentifier) const;
 

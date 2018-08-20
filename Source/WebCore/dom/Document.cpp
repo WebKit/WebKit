@@ -109,6 +109,7 @@
 #include "ImageBitmapRenderingContext.h"
 #include "ImageLoader.h"
 #include "InspectorInstrumentation.h"
+#include "IntersectionObserver.h"
 #include "JSCustomElementInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSLazyEventListener.h"
@@ -503,6 +504,9 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_constantPropertyMap(std::make_unique<ConstantPropertyMap>(*this))
     , m_documentClasses(documentClasses)
     , m_eventQueue(*this)
+#if ENABLE(INTERSECTION_OBSERVER)
+    , m_intersectionObserversNotifyTimer(*this, &Document::notifyIntersectionObserversTimerFired)
+#endif
     , m_loadEventDelayTimer(*this, &Document::loadEventDelayTimerFired)
 #if PLATFORM(IOS)
 #if ENABLE(DEVICE_ORIENTATION)
@@ -639,7 +643,7 @@ Document::~Document()
     if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
         platformMediaSessionManager->stopAllMediaPlaybackForDocument(this);
 #endif
-    
+
     // We must call clearRareData() here since a Document class inherits TreeScope
     // as well as Node. See a comment on TreeScope.h for the reason.
     if (hasRareData())
@@ -7415,6 +7419,76 @@ void Document::removeViewportDependentPicture(HTMLPictureElement& picture)
 {
     m_viewportDependentPictures.remove(&picture);
 }
+
+#if ENABLE(INTERSECTION_OBSERVER)
+void Document::addIntersectionObserver(RefPtr<IntersectionObserver>&& observer)
+{
+    ASSERT(m_intersectionObservers.find(observer) == notFound);
+    m_intersectionObservers.append(WTFMove(observer));
+}
+
+RefPtr<IntersectionObserver> Document::removeIntersectionObserver(IntersectionObserver& observer)
+{
+    RefPtr<IntersectionObserver> observerRef;
+    auto index = m_intersectionObservers.find(&observer);
+    if (index != notFound) {
+        observerRef = WTFMove(m_intersectionObservers[index]);
+        m_intersectionObservers.remove(index);
+    }
+    return observerRef;
+}
+
+void Document::updateIntersectionObservations()
+{
+    for (auto observer : m_intersectionObservers) {
+        bool needNotify = false;
+        for (Element* target : observer->observationTargets()) {
+            auto& targetRegistrations = target->intersectionObserverData()->registrations;
+            auto index = targetRegistrations.findMatching([observer](auto& registration) {
+                return registration.observer.get() == observer;
+            });
+            ASSERT(index != notFound);
+            auto& registration = targetRegistrations[index];
+
+            // FIXME: Compute intersection of target and observer's root.
+            size_t thresholdIndex = 0;
+            double timestamp = 0;
+            std::optional<DOMRectInit> rootBounds;
+            DOMRectInit targetBoundingClientRect;
+            DOMRectInit intersectionRect;
+            double intersectionRatio = 0;
+            bool isIntersecting = false;
+            if (!registration.previousThresholdIndex || thresholdIndex != registration.previousThresholdIndex) {
+                observer->appendQueuedEntry(IntersectionObserverEntry::create({
+                    timestamp,
+                    rootBounds,
+                    targetBoundingClientRect,
+                    intersectionRect,
+                    intersectionRatio,
+                    target,
+                    isIntersecting,
+                }));
+                needNotify = true;
+                registration.previousThresholdIndex = thresholdIndex;
+            }
+        }
+        if (needNotify)
+            m_intersectionObserversWithPendingNotifications.append(makeWeakPtr(observer.get()));
+    }
+
+    if (m_intersectionObserversWithPendingNotifications.size())
+        m_intersectionObserversNotifyTimer.startOneShot(0_s);
+}
+
+void Document::notifyIntersectionObserversTimerFired()
+{
+    for (auto observer : m_intersectionObserversWithPendingNotifications) {
+        if (observer)
+            observer->notify();
+    }
+    m_intersectionObserversWithPendingNotifications.clear();
+}
+#endif
 
 const AtomicString& Document::dir() const
 {

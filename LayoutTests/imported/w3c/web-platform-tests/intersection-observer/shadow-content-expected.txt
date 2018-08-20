@@ -1,4 +1,4 @@
 
 PASS Observing a target inside shadow DOM. 
-FAIL First rAF after creating shadow DOM. assert_equals: entries.length expected 1 but got 0
+FAIL First rAF after creating shadow DOM. assert_equals: entries[0].boundingClientRect.left expected 8 but got 0
 

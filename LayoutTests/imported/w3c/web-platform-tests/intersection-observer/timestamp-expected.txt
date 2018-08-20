@@ -1,6 +1,6 @@
 
 
 PASS Check that timestamps correspond to the to execution context that created the observer. 
-FAIL First rAF after iframe is loaded. assert_equals: One notification to top window observer. expected 1 but got 0
+PASS First rAF after iframe is loaded. 
 FAIL Generate notifications. undefined is not an object (evaluating 'topWindowEntries[1].time')
 

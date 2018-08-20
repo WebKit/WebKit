@@ -1,3 +1,37 @@
+2018-08-18  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Fire an initial dummy notification
+        https://bugs.webkit.org/show_bug.cgi?id=188670
+
+        Reviewed by Simon Fraser.
+
+        Rebaseline tests now that an initial notification is fired.
+
+        * web-platform-tests/intersection-observer/bounding-box-expected.txt:
+        * web-platform-tests/intersection-observer/client-rect-expected.txt:
+        * web-platform-tests/intersection-observer/containing-block-expected.txt:
+        * web-platform-tests/intersection-observer/cross-origin-iframe-expected.txt:
+        * web-platform-tests/intersection-observer/disconnect-expected.txt:
+        * web-platform-tests/intersection-observer/display-none-expected.txt:
+        * web-platform-tests/intersection-observer/edge-inclusive-intersection-expected.txt:
+        * web-platform-tests/intersection-observer/iframe-no-root-expected.txt:
+        * web-platform-tests/intersection-observer/inline-client-rect-expected.txt:
+        * web-platform-tests/intersection-observer/isIntersecting-change-events-expected.txt:
+        * web-platform-tests/intersection-observer/multiple-targets-expected.txt:
+        * web-platform-tests/intersection-observer/multiple-thresholds-expected.txt:
+        * web-platform-tests/intersection-observer/observer-without-js-reference-expected.txt:
+        * web-platform-tests/intersection-observer/remove-element-expected.txt:
+        * web-platform-tests/intersection-observer/root-margin-expected.txt:
+        * web-platform-tests/intersection-observer/same-document-no-root-expected.txt:
+        * web-platform-tests/intersection-observer/same-document-root-expected.txt:
+        * web-platform-tests/intersection-observer/same-document-zero-size-target-expected.txt:
+        * web-platform-tests/intersection-observer/shadow-content-expected.txt:
+        * web-platform-tests/intersection-observer/text-target-expected.txt:
+        * web-platform-tests/intersection-observer/timestamp-expected.txt:
+        * web-platform-tests/intersection-observer/unclipped-root-expected.txt:
+        * web-platform-tests/intersection-observer/zero-area-element-hidden-expected.txt:
+        * web-platform-tests/intersection-observer/zero-area-element-visible-expected.txt:
+
 2018-08-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Custom element constructor doesn't use HTMLElement in new.target's realm
