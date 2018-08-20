@@ -1,3 +1,97 @@
+2018-08-16  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: support breakpoints for arbitrary event names
+        https://bugs.webkit.org/show_bug.cgi?id=183118
+
+        Reviewed by Joseph Pecoraro.
+
+        Create UI for setting breakpoints on event names. Ties into renamed DOMDebugger commands,
+        specifically `setEventBreakpoint` and `removeEventBreakpoint`, that will pause execution if
+        any DOM event is fired that matches any previously registered breakpoints.
+
+        Event breakpoints are distinguished by name, and they currently apply globally, meaning
+        that only one breakpoint per event name can be registered.
+
+        Event breakpoints are created in the Debugger tab in a new "Event Breakpoints" section in
+        the Navigation sidebar. A new type of popover, EventBreakpointPopover, is used, but right
+        now all it contains is a basic text input for the event name. Similarly, a new TreeElement
+        subclass, EventBreakpointTreeElement, is used when showing the list of event listener
+        breakpoints, but all it shows now is the event name.
+
+        The majority of the logic in this patch was derived from XHR breakpoints.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        * UserInterface/Images/EventBreakpoint.svg: Added.
+
+        * UserInterface/Models/EventBreakpoint.js: Added.
+        (WI.EventBreakpoint):
+        (WI.EventBreakpoint.prototype.get eventName):
+        (WI.EventBreakpoint.prototype.get disabled):
+        (WI.EventBreakpoint.prototype.set disabled):
+        (WI.EventBreakpoint.prototype.get serializableInfo):
+        (WI.EventBreakpoint.prototype.saveIdentityToCookie):
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager):
+        (WI.DOMDebuggerManager.prototype.get eventBreakpoints): Added.
+        (WI.DOMDebuggerManager.prototype.eventBreakpointForEventName): Added.
+        (WI.DOMDebuggerManager.prototype.addEventBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype.removeEventBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype._speculativelyResolveBreakpoints):
+        (WI.DOMDebuggerManager.prototype._updateEventBreakpoint.breakpointUpdated): Added.
+        (WI.DOMDebuggerManager.prototype._updateEventBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype._resolveEventBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype._saveEventBreakpoints): Added.
+        (WI.DOMDebuggerManager.prototype._eventBreakpointDisabledStateDidChange): Added.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype._pauseReasonFromPayload):
+
+        * UserInterface/Controllers/EventBreakpointTreeController.js: Added.
+        (WI.EventBreakpointTreeController):
+        (WI.EventBreakpointTreeController.prototype.revealAndSelect):
+        (WI.EventBreakpointTreeController.prototype._eventBreakpointAdded):
+        (WI.EventBreakpointTreeController.prototype._eventBreakpointRemoved):
+        (WI.EventBreakpointTreeController.prototype._addTreeElement):
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel):
+        (WI.DebuggerSidebarPanel.prototype._updatePauseReasonSection):
+        (WI.DebuggerSidebarPanel.prototype._eventBreakpointAddedOrRemoved): Added.
+        (WI.DebuggerSidebarPanel.prototype._addEventBreakpointButtonClicked): Added.
+        (WI.DebuggerSidebarPanel.prototype.willDismissPopover):
+
+        * UserInterface/Views/EventBreakpointTreeElement.js: Added.
+        (WI.EventBreakpointTreeElement):
+        (WI.EventBreakpointTreeElement.prototype.onattach):
+        (WI.EventBreakpointTreeElement.prototype.ondetach):
+        (WI.EventBreakpointTreeElement.prototype.ondelete):
+        (WI.EventBreakpointTreeElement.prototype.onenter):
+        (WI.EventBreakpointTreeElement.prototype.onspace):
+        (WI.EventBreakpointTreeElement.prototype.populateContextMenu):
+        (WI.EventBreakpointTreeElement.prototype._statusImageElementClicked):
+        (WI.EventBreakpointTreeElement.prototype._statusImageElementFocused):
+        (WI.EventBreakpointTreeElement.prototype._statusImageElementMouseDown):
+        (WI.EventBreakpointTreeElement.prototype._toggleBreakpoint):
+        (WI.EventBreakpointTreeElement.prototype._updateStatus):
+        * UserInterface/Views/EventBreakpointTreeElement.css: Added.
+        (.breakpoint.event-listener:not(.breakpoint-paused-icon) .icon):
+
+        * UserInterface/Views/EventBreakpointPopover.js: Added.
+        (WI.EventBreakpointPopover):
+        (WI.EventBreakpointPopover.prototype.get result):
+        (WI.EventBreakpointPopover.prototype.get value):
+        (WI.EventBreakpointPopover.prototype.show):
+        (WI.EventBreakpointPopover.prototype._presentOverTargetElement):
+        * UserInterface/Views/EventBreakpointPopover.css: Added.
+        (.popover .event-listener-breakpoint-content):
+        (.popover .event-listener-breakpoint-content > input):
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WI.NavigationSidebarPanel.prototype._isTreeElementWithoutRepresentedObject):
+
 2018-08-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show Initiator information in Network Table
