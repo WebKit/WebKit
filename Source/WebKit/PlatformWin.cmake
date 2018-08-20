@@ -20,6 +20,8 @@ list(APPEND WebKit_SOURCES
     Platform/win/ModuleWin.cpp
     Platform/win/SharedMemoryWin.cpp
 
+    Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
+
     Shared/win/ChildProcessMainWin.cpp
     Shared/win/NativeWebKeyboardEventWin.cpp
     Shared/win/NativeWebMouseEventWin.cpp
@@ -34,8 +36,12 @@ list(APPEND WebKit_SOURCES
     UIProcess/DefaultUndoController.cpp
     UIProcess/DrawingAreaProxyImpl.cpp
     UIProcess/LegacySessionStateCodingNone.cpp
+    UIProcess/WebGrammarDetail.cpp
     UIProcess/WebResourceLoadStatisticsStore.cpp
     UIProcess/WebResourceLoadStatisticsTelemetry.cpp
+    UIProcess/WebViewportAttributes.cpp
+
+    UIProcess/API/C/WKViewportAttributes.cpp
 
     UIProcess/API/C/win/WKView.cpp
 
@@ -61,6 +67,7 @@ list(APPEND WebKit_SOURCES
 
     WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
 
+    WebProcess/Plugins/Netscape/NetscapePluginNone.cpp
     WebProcess/Plugins/Netscape/win/PluginProxyWin.cpp
 
     WebProcess/WebCoreSupport/win/WebContextMenuClientWin.cpp
@@ -69,6 +76,7 @@ list(APPEND WebKit_SOURCES
     WebProcess/WebPage/AcceleratedDrawingArea.cpp
     WebProcess/WebPage/AcceleratedSurface.cpp
     WebProcess/WebPage/DrawingAreaImpl.cpp
+    WebProcess/WebPage/LayerTreeHost.cpp
 
     WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp

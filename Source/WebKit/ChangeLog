@@ -1,3 +1,32 @@
+2018-08-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Sync unified build with Cocoa ports
+        https://bugs.webkit.org/show_bug.cgi?id=188732
+
+        Reviewed by Tim Horton.
+
+        Sync unified build with Cocoa ports. This enables unified build for WebKit/Platform and
+        WebKit/Shared.
+
+        Lots of files need to be moved around since the existing Sources.txt was not copied from
+        CMakeLists.txt. This replaces the Sources.txt with the sources list from CMakeList.txt.
+        Files that are not built for Cocoa are moved to SourcesGTK.txt, SourcesWPE.txt, and
+        PlatformWin.cmake. Files that are built only on Cocoa are moved to SourcesCocoa.txt. There's
+        plenty of room to determine if many of these files really need to be platform-specific in
+        the future, but let's not change that now.
+
+        Unfortunately, several files under Shared and PluginProcess need to be un-unified to be
+        usable for GTK's WebKitPluginProcess2. I've never managed to understand why, but it won't
+        link otherwise. Fortunately, this only affects a few files (listed in
+        PluginProcessGTK2_SOURCES), only a couple dozen of which are cross-platform.
+
+        * CMakeLists.txt:
+        * PlatformWin.cmake:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+
 2018-08-20  Tim Horton  <timothy_horton@apple.com>
 
         Fix the iOSMac build with unified sources

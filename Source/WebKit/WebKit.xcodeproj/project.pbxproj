@@ -788,6 +788,37 @@
 		2D8786241BDB58FF00D02ABB /* APIUserStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8786221BDB58FF00D02ABB /* APIUserStyleSheet.h */; };
 		2D8949F0182044F600E898AA /* PlatformCALayerRemoteTiledBacking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D8949EE182044F600E898AA /* PlatformCALayerRemoteTiledBacking.cpp */; };
 		2D8949F1182044F600E898AA /* PlatformCALayerRemoteTiledBacking.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8949EF182044F600E898AA /* PlatformCALayerRemoteTiledBacking.h */; };
+		2D92A779212B6A6100F493FD /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A7F2F4125BF8D4008AEB1D /* Logging.cpp */; };
+		2D92A77A212B6A6100F493FD /* Module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E3AA451209E2BA00A49D01 /* Module.cpp */; };
+		2D92A77B212B6A7100F493FD /* ArgumentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D610413A7F03A00F95D4E /* ArgumentCoders.cpp */; };
+		2D92A77C212B6A7100F493FD /* Attachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEE966A112FAF57006BCC24 /* Attachment.cpp */; };
+		2D92A77D212B6A7100F493FD /* Connection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC032DA210F437D10058C15A /* Connection.cpp */; };
+		2D92A77E212B6A7100F493FD /* DataReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC7537D183BE50F0072CB15 /* DataReference.cpp */; };
+		2D92A77F212B6A7100F493FD /* Decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC032D9D10F437D10058C15A /* Decoder.cpp */; };
+		2D92A780212B6A7100F493FD /* Encoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC032D9F10F437D10058C15A /* Encoder.cpp */; };
+		2D92A781212B6A7100F493FD /* MessageReceiverMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3EED0C161A535300AEB4F5 /* MessageReceiverMap.cpp */; };
+		2D92A782212B6A7100F493FD /* MessageSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAB0377185A7C6A00EDF501 /* MessageSender.cpp */; };
+		2D92A783212B6A7100F493FD /* StringReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE00D6918327C1200087DD7 /* StringReference.cpp */; };
+		2D92A784212B6AB100F493FD /* ActivityAssertion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */; };
+		2D92A785212B6AB100F493FD /* BlobDataFileReferenceWithSandboxExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E164A2EF191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.cpp */; };
+		2D92A786212B6AB100F493FD /* ChildProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D956E12848564001EB962 /* ChildProcess.cpp */; };
+		2D92A787212B6AB100F493FD /* ShareableBitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6420E212DCE2FF00CAAE2C /* ShareableBitmap.cpp */; };
+		2D92A788212B6AB100F493FD /* WebCoreArgumentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939AE7651316E99C00AE06A6 /* WebCoreArgumentCoders.cpp */; };
+		2D92A789212B6AB100F493FD /* WebEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0337DAD127A24FE008FF4F4 /* WebEvent.cpp */; };
+		2D92A78A212B6AB100F493FD /* WebKeyboardEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0337DD2127A2A0E008FF4F4 /* WebKeyboardEvent.cpp */; };
+		2D92A78B212B6AB100F493FD /* WebKit2Initialize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9BA5021697C45300E44616 /* WebKit2Initialize.cpp */; };
+		2D92A78C212B6AB100F493FD /* WebMouseEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0337DAF127A28D0008FF4F4 /* WebMouseEvent.cpp */; };
+		2D92A78D212B6AB100F493FD /* WebPlatformTouchPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0337DDC127A521C008FF4F4 /* WebPlatformTouchPoint.cpp */; };
+		2D92A78E212B6AB100F493FD /* WebTouchEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0337DD7127A51B6008FF4F4 /* WebTouchEvent.cpp */; };
+		2D92A78F212B6AB100F493FD /* WebWheelEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0337DD0127A2980008FF4F4 /* WebWheelEvent.cpp */; };
+		2D92A790212B6AD400F493FD /* NPIdentifierData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D848A127F6A49001EB962 /* NPIdentifierData.cpp */; };
+		2D92A791212B6AD400F493FD /* NPObjectMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FA35C127A45BF0050E709 /* NPObjectMessageReceiver.cpp */; };
+		2D92A792212B6AD400F493FD /* NPObjectProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FA284127A13BC0050E709 /* NPObjectProxy.cpp */; };
+		2D92A793212B6AD400F493FD /* NPRemoteObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FA252127A0E4F0050E709 /* NPRemoteObjectMap.cpp */; };
+		2D92A794212B6AD400F493FD /* NPVariantData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D84A2127F6AD1001EB962 /* NPVariantData.cpp */; };
+		2D92A795212B6AD400F493FD /* PluginProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D90D11281C966001EB962 /* PluginProcessCreationParameters.cpp */; };
+		2D92A796212B6ADA00F493FD /* NetscapePluginModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A4A9C5312B816CF008FE984 /* NetscapePluginModule.cpp */; };
+		2D92A797212B6ADA00F493FD /* PluginInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3F8C8E173AF52D007B7F39 /* PluginInformation.cpp */; };
 		2D9EA30D1A96CB59002D2807 /* WKPageInjectedBundleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EA30C1A96CB59002D2807 /* WKPageInjectedBundleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D9EA30F1A96CBFF002D2807 /* WebPageInjectedBundleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EA30E1A96CBFF002D2807 /* WebPageInjectedBundleClient.h */; };
 		2D9EA3111A96D9EB002D2807 /* WebPageInjectedBundleClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9EA3101A96D9EB002D2807 /* WebPageInjectedBundleClient.cpp */; };
@@ -11164,6 +11195,7 @@
 				5120C8361E5B74BE0025B250 /* _WKWebsiteDataStoreConfiguration.mm in Sources */,
 				5CB2378B1DF0DE5300117AA3 /* _WKWebsitePolicies.mm in Sources */,
 				A115DC71191D82D700DA8072 /* _WKWebViewPrintFormatter.mm in Sources */,
+				2D92A784212B6AB100F493FD /* ActivityAssertion.cpp in Sources */,
 				BC64696F11DBE603006455B0 /* APIArray.cpp in Sources */,
 				2E5C770F1FA7D429005932C3 /* APIAttachment.cpp in Sources */,
 				7C89D2B31A6B068C003A5FDE /* APIContentRuleList.cpp in Sources */,
@@ -11200,7 +11232,9 @@
 				5C8DD37E1FE4502000F2A556 /* APIWebsitePolicies.cpp in Sources */,
 				1A6563E41B7A8C50009CF787 /* APIWindowFeatures.cpp in Sources */,
 				1AD4C1921B39F33200ABC28E /* ApplicationStateTracker.mm in Sources */,
+				2D92A77B212B6A7100F493FD /* ArgumentCoders.cpp in Sources */,
 				2DEB1D2E2127473600933906 /* ArgumentCodersCF.cpp in Sources */,
+				2D92A77C212B6A7100F493FD /* Attachment.cpp in Sources */,
 				512F589612A8838800629530 /* AuthenticationChallengeProxy.cpp in Sources */,
 				570AB90220B2517400B8BE87 /* AuthenticationChallengeProxyCocoa.mm in Sources */,
 				512F589812A8838800629530 /* AuthenticationDecisionListener.cpp in Sources */,
@@ -11211,15 +11245,20 @@
 				9955A6F61C7986E300EB6A93 /* AutomationProtocolObjects.cpp in Sources */,
 				990D28BC1C6539DA00986977 /* AutomationSessionClient.mm in Sources */,
 				46A2B6081E5676A600C3DEDA /* BackgroundProcessResponsivenessTimer.cpp in Sources */,
+				2D92A785212B6AB100F493FD /* BlobDataFileReferenceWithSandboxExtension.cpp in Sources */,
 				E170876B16D6CA6900F99226 /* BlobRegistryProxy.cpp in Sources */,
 				41897ED71F415D8A0016FA42 /* CacheStorageEngine.cpp in Sources */,
 				41C8581A1F5136CA0065E085 /* CacheStorageEngineCache.cpp in Sources */,
 				4135FBD11F4FB8090074C47B /* CacheStorageEngineCaches.cpp in Sources */,
 				41897ED91F415D8A0016FA42 /* CacheStorageEngineConnection.cpp in Sources */,
 				517CF0E3163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp in Sources */,
+				2D92A786212B6AB100F493FD /* ChildProcess.cpp in Sources */,
 				51FAEC3B1B0657680009C4E7 /* ChildProcessMessageReceiver.cpp in Sources */,
 				E1513C66166EABB200149FCB /* ChildProcessProxy.cpp in Sources */,
+				2D92A77D212B6A7100F493FD /* Connection.cpp in Sources */,
 				B878B616133428DC006888E9 /* CorrectionPanel.mm in Sources */,
+				2D92A77E212B6A7100F493FD /* DataReference.cpp in Sources */,
+				2D92A77F212B6A7100F493FD /* Decoder.cpp in Sources */,
 				83891B6D1A68C30B0030F386 /* DiagnosticLoggingClient.mm in Sources */,
 				C1817363205844A900DFDA65 /* DisplayLink.cpp in Sources */,
 				5C1427011C23F84C00D41183 /* Download.cpp in Sources */,
@@ -11235,6 +11274,7 @@
 				1A64229912DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp in Sources */,
 				BC2652161182608100243E12 /* DrawingAreaProxy.cpp in Sources */,
 				1A64230812DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp in Sources */,
+				2D92A780212B6A7100F493FD /* Encoder.cpp in Sources */,
 				1AA575FA1496B52600A4EE06 /* EventDispatcher.cpp in Sources */,
 				1AA576021496B97900A4EE06 /* EventDispatcherMessageReceiver.cpp in Sources */,
 				00B9661918E25AE100CE1F88 /* FindClient.mm in Sources */,
@@ -11290,11 +11330,16 @@
 				1A1D8BA11731A36300141DA4 /* LocalStorageDatabase.cpp in Sources */,
 				1A8C728C1738477C000A6554 /* LocalStorageDatabaseTracker.cpp in Sources */,
 				5120C8311E54EDDE0025B250 /* LocalStorageDatabaseTrackerIOS.mm in Sources */,
+				2D92A779212B6A6100F493FD /* Logging.cpp in Sources */,
 				074E76021DF707BE00D318EC /* MediaDeviceSandboxExtensions.cpp in Sources */,
+				2D92A781212B6A7100F493FD /* MessageReceiverMap.cpp in Sources */,
+				2D92A782212B6A7100F493FD /* MessageSender.cpp in Sources */,
+				2D92A77A212B6A6100F493FD /* Module.cpp in Sources */,
 				1ABC3DF51899E437004F0626 /* NavigationState.mm in Sources */,
 				1A6FBA2B11E6862700DB1371 /* NetscapeBrowserFuncs.cpp in Sources */,
 				1A6FBD2911E69BC200DB1371 /* NetscapePlugin.cpp in Sources */,
 				1AE5B7FB11E7AED200BA6767 /* NetscapePluginMac.mm in Sources */,
+				2D92A796212B6ADA00F493FD /* NetscapePluginModule.cpp in Sources */,
 				1AA5889311EE70400061B882 /* NetscapePluginStream.cpp in Sources */,
 				5379DB72207E9470007D8C33 /* NetworkActivityTracker.cpp in Sources */,
 				5315876C2076B762004BF9F3 /* NetworkActivityTrackerCocoa.mm in Sources */,
@@ -11363,10 +11408,15 @@
 				5C0B17781E7C880E00E9123C /* NetworkSocketStreamMessageReceiver.cpp in Sources */,
 				3131261E148FF82C00BA2A39 /* NotificationPermissionRequestManager.cpp in Sources */,
 				31A2EC501489980500810D71 /* NotificationPermissionRequestManagerProxy.cpp in Sources */,
+				2D92A790212B6AD400F493FD /* NPIdentifierData.cpp in Sources */,
 				1AE4976911FF658E0048B464 /* NPJSObject.cpp in Sources */,
+				2D92A791212B6AD400F493FD /* NPObjectMessageReceiver.cpp in Sources */,
 				1A2D8439127F65D5001EB962 /* NPObjectMessageReceiverMessageReceiver.cpp in Sources */,
+				2D92A792212B6AD400F493FD /* NPObjectProxy.cpp in Sources */,
+				2D92A793212B6AD400F493FD /* NPRemoteObjectMap.cpp in Sources */,
 				1A2161B111F37664008AD0F5 /* NPRuntimeObjectMap.cpp in Sources */,
 				1A2162B011F38971008AD0F5 /* NPRuntimeUtilities.cpp in Sources */,
+				2D92A794212B6AD400F493FD /* NPVariantData.cpp in Sources */,
 				7C387434172F5615001BD88A /* PageBanner.cpp in Sources */,
 				7C6D37FC172F555F009D2847 /* PageBannerMac.mm in Sources */,
 				5C6CE6D11F59BC7A0007C6CB /* PageClientImplCocoa.mm in Sources */,
@@ -11395,6 +11445,7 @@
 				1A2D91A61281D739001EB962 /* PluginControllerProxyMac.mm in Sources */,
 				1A8EF96E1252AF6B00F7067F /* PluginControllerProxyMessageReceiver.cpp in Sources */,
 				1A17977F137EE82C00F97D45 /* PluginCreationParameters.cpp in Sources */,
+				2D92A797212B6ADA00F493FD /* PluginInformation.cpp in Sources */,
 				1AEFCC1311D01F96008219D3 /* PluginInfoStore.cpp in Sources */,
 				1AEFCCBD11D02C5E008219D3 /* PluginInfoStoreMac.mm in Sources */,
 				1A043977124D034800FFBFB5 /* PluginProcess.cpp in Sources */,
@@ -11402,6 +11453,7 @@
 				1A0EC910124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp in Sources */,
 				1A7865B916CAC71500ACE83A /* PluginProcessConnectionManagerMessageReceiver.cpp in Sources */,
 				1A2BB6D014117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp in Sources */,
+				2D92A795212B6AD400F493FD /* PluginProcessCreationParameters.cpp in Sources */,
 				1AA4792312A59FD9008236C3 /* PluginProcessMac.mm in Sources */,
 				1A0EC604124A9F2C007EF4A5 /* PluginProcessManager.cpp in Sources */,
 				9F54F8951648AE0F007DF81A /* PluginProcessManagerMac.mm in Sources */,
@@ -11459,6 +11511,7 @@
 				414DEDD81F9EDDE50047C40D /* ServiceWorkerProcessProxy.cpp in Sources */,
 				1A002D48196B345D00B9AD44 /* SessionStateCoding.mm in Sources */,
 				1A7284481959F8040007BCE5 /* SessionStateConversion.cpp in Sources */,
+				2D92A787212B6AB100F493FD /* ShareableBitmap.cpp in Sources */,
 				995226D7207D184600F78420 /* SimulatedInputDispatcher.cpp in Sources */,
 				2DAF06D718BD1A470081CEB1 /* SmartMagnificationController.mm in Sources */,
 				2DE6943D18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp in Sources */,
@@ -11478,6 +11531,7 @@
 				51E35209180F5D6B00E53BE9 /* StorageServiceEntryPoint.mm in Sources */,
 				51E35200180F5D0F00E53BE9 /* StorageToWebProcessConnection.cpp in Sources */,
 				5118E9AC1F295977003EF9F5 /* StorageToWebProcessConnectionMessageReceiver.cpp in Sources */,
+				2D92A783212B6A7100F493FD /* StringReference.cpp in Sources */,
 				515C415C207D7CAE00726E02 /* SuspendedPageProxy.cpp in Sources */,
 				318A1F05204F4764003480BC /* SystemPreviewController.cpp in Sources */,
 				3157135E2040A9B20084F9CF /* SystemPreviewControllerCocoa.mm in Sources */,
@@ -11698,6 +11752,7 @@
 				33AA1066131F060000D4A575 /* WebCookieManagerProxyClient.cpp in Sources */,
 				F6D632BC133D198200743D77 /* WebCookieManagerProxyMac.mm in Sources */,
 				330934491315B9220097A7BC /* WebCookieManagerProxyMessageReceiver.cpp in Sources */,
+				2D92A788212B6AB100F493FD /* WebCoreArgumentCoders.cpp in Sources */,
 				512F589A12A8838800629530 /* WebCredential.cpp in Sources */,
 				575075A820AB8DE100693EA9 /* WebCredentialMac.mm in Sources */,
 				5760828E2029895E00116678 /* WebCredentialsMessenger.cpp in Sources */,
@@ -11716,6 +11771,7 @@
 				BC111A5E112F4FBB00337BAB /* WebEditorClient.cpp in Sources */,
 				2D28F3E61885CCC1004B9EAE /* WebEditorClientIOS.mm in Sources */,
 				C5237F6012441CA300780472 /* WebEditorClientMac.mm in Sources */,
+				2D92A789212B6AB100F493FD /* WebEvent.cpp in Sources */,
 				BCE469531214E6CB000B98EB /* WebFormClient.cpp in Sources */,
 				BCE469551214E6CB000B98EB /* WebFormSubmissionListenerProxy.cpp in Sources */,
 				BC111ADD112F5B9300337BAB /* WebFrame.cpp in Sources */,
@@ -11753,7 +11809,9 @@
 				1CA8B954127C891500576C2B /* WebInspectorUIMac.mm in Sources */,
 				1CBBE4A019B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp in Sources */,
 				A55BA82C1BA38E64007CD33D /* WebInspectorUtilities.cpp in Sources */,
+				2D92A78A212B6AB100F493FD /* WebKeyboardEvent.cpp in Sources */,
 				1A6280F31919982A006AD9F9 /* WebKit.m in Sources */,
+				2D92A78B212B6AB100F493FD /* WebKit2Initialize.cpp in Sources */,
 				51FB08FF1639DE1A00EC324A /* WebLoaderStrategy.cpp in Sources */,
 				41F12A9E2069BB4400FF26E8 /* WebMDNSRegister.cpp in Sources */,
 				51F060E11654318500F3282F /* WebMDNSRegisterMessageReceiver.cpp in Sources */,
@@ -11762,6 +11820,7 @@
 				C9C1833B1B74026A007036A7 /* WebMediaSessionFocusManagerClient.cpp in Sources */,
 				2D3EF4421917646300034184 /* WebMemoryPressureHandlerIOS.mm in Sources */,
 				513FFB90201459C6002596EA /* WebMessagePortChannelProvider.cpp in Sources */,
+				2D92A78C212B6AB100F493FD /* WebMouseEvent.cpp in Sources */,
 				7CCCC8FA1A5F50FD008FB0DA /* WebNavigationState.cpp in Sources */,
 				31A2EC48148997C200810D71 /* WebNotification.cpp in Sources */,
 				31099973146C75A20029DEB9 /* WebNotificationClient.cpp in Sources */,
@@ -11800,6 +11859,7 @@
 				1AB1F7981D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessageReceiver.cpp in Sources */,
 				0F850FE61ED7C39F00FB77A7 /* WebPerformanceLoggingClient.cpp in Sources */,
 				1A3E736211CC2659007BD539 /* WebPlatformStrategies.cpp in Sources */,
+				2D92A78D212B6AB100F493FD /* WebPlatformTouchPoint.cpp in Sources */,
 				31D5929E166E060000E6BF02 /* WebPlugInClient.cpp in Sources */,
 				1A08FEE41D593E2A008BA8CB /* WebPluginInfoProvider.cpp in Sources */,
 				D3B9484611FF4B6500032B39 /* WebPopupMenu.cpp in Sources */,
@@ -11861,6 +11921,7 @@
 				5185430E1FB6816100478F95 /* WebSWServerToContextConnection.cpp in Sources */,
 				515262BD1FB951610070E579 /* WebSWServerToContextConnectionMessageReceiver.cpp in Sources */,
 				5118E99B1F295266003EF9F5 /* WebToStorageProcessConnection.cpp in Sources */,
+				2D92A78E212B6AB100F493FD /* WebTouchEvent.cpp in Sources */,
 				BCA0EF8012331E78007D3CFB /* WebUndoStep.cpp in Sources */,
 				51D124281E6D3F5D002B2820 /* WebURLSchemeHandler.cpp in Sources */,
 				51D124331E6DE6CA002B2820 /* WebURLSchemeHandlerCocoa.mm in Sources */,
@@ -11874,6 +11935,7 @@
 				15739BBE1B42046600D258C1 /* WebUserMediaClient.cpp in Sources */,
 				83EE575B1DB7D61100C74C50 /* WebValidationMessageClient.cpp in Sources */,
 				2DFC7DBC1BCCC19500C1548C /* WebViewImpl.mm in Sources */,
+				2D92A78F212B6AB100F493FD /* WebWheelEvent.cpp in Sources */,
 				868160D0187645570021E79D /* WindowServerConnection.mm in Sources */,
 				29CD55AB128E294F00133C85 /* WKAccessibilityWebPageObjectBase.mm in Sources */,
 				29232DF818B2A9AE00D0596F /* WKAccessibilityWebPageObjectIOS.mm in Sources */,

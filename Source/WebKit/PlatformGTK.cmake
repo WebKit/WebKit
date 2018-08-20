@@ -554,8 +554,7 @@ endif ()
 if (ENABLE_PLUGIN_PROCESS_GTK2)
     set(PluginProcessGTK2_EXECUTABLE_NAME WebKitPluginProcess2)
 
-    # FIXME: We should figure out a way to avoid compiling files that are common between the plugin
-    # process and WebKit only once instead of recompiling them for the plugin process.
+    # FIXME: We should remove WebKitPluginProcess2 in 2020, once Flash is no longer supported.
     list(APPEND PluginProcessGTK2_SOURCES
         Platform/Logging.cpp
         Platform/Module.cpp
