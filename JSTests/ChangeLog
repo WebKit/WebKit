@@ -1,3 +1,67 @@
+2018-08-20  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r235007. rdar://problem/43445973
+
+    intersectionOfPastValuesAtHead must filter values after they've observed an invalidation point
+    https://bugs.webkit.org/show_bug.cgi?id=188707
+    <rdar://problem/43015442>
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    * stress/cfa-expected-values-must-set-clobbered-to-false.js: Added.
+    (foo):
+    (let.comp.valueOf):
+    (result):
+    
+    Source/JavaScriptCore:
+    
+    We use the values in intersectionOfPastValuesAtHead to verify that it is safe to
+    OSR enter at the head of a block. We verify it's safe to OSR enter by checking
+    that each incoming value is compatible with its corresponding AbstractValue.
+            
+    The bug is that we were sometimes filtering the intersectionOfPastValuesAtHead
+    with abstract values that were clobbererd. This meant that the value we're
+    verifying with at OSR entry effectively has an infinite structure set because
+    it's clobbered. So, imagine we have code like this:
+    ```
+    ---> We OSR enter here, and we're clobbered here
+    InvalidationPoint
+    GetByOffset(@base)
+    ```
+            
+    The abstract value for @base inside intersectionOfPastValuesAtHead has a
+    clobberred structure set, so we'd allow an incoming object with any
+    structure. However, this is wrong because the invalidation point is no
+    longer fulfilling its promise that it filters the structure that @base has.
+            
+    We fix this by filtering the AbstractValues in intersectionOfPastValuesAtHead
+    as if the incoming value may be live past an InvalidationPoint.
+    This places a stricter requirement that to safely OSR enter at any basic
+    block, all incoming values must be compatible as if they lived past
+    the execution of an invalidation point.
+    
+    * dfg/DFGCFAPhase.cpp:
+    (JSC::DFG::CFAPhase::run):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@235007 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-17  Saam barati  <sbarati@apple.com>
+
+            intersectionOfPastValuesAtHead must filter values after they've observed an invalidation point
+            https://bugs.webkit.org/show_bug.cgi?id=188707
+            <rdar://problem/43015442>
+
+            Reviewed by Mark Lam.
+
+            * stress/cfa-expected-values-must-set-clobbered-to-false.js: Added.
+            (foo):
+            (let.comp.valueOf):
+            (result):
+
 2018-07-26  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r234269. rdar://problem/42650430
