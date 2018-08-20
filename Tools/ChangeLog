@@ -1,3 +1,12 @@
+2018-08-20  Thomas Denney  <tdenney@apple.com>
+
+        Added Thomas Denney to contributors.json.
+        https://bugs.webkit.org/show_bug.cgi?id=188525
+
+        Reviewed by Myles C. Maxfield.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-08-20  Bernhard M. Wiedemann  <bwiedemann@suse.de>
 
         [GTK] Sort inspector GResource manifest to ensure reproducible builds
