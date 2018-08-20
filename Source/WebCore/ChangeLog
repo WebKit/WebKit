@@ -1,5 +1,19 @@
 2018-08-16  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Custom element doesn't invalidate its style when :defined rule starts to apply
+        https://bugs.webkit.org/show_bug.cgi?id=188637
+
+        Reviewed by Antti Koivisto.
+
+        Fixed the bug by invalidating the subtree when a custom element gets defined.
+
+        Test: fast/custom-elements/defined-update-style.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::setIsDefinedCustomElement):
+
+2018-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
         Perform a microtask checkpoint before creating a custom element
         https://bugs.webkit.org/show_bug.cgi?id=188189
         <rdar://problem/42843022>
