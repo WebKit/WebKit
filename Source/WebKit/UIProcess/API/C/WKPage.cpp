@@ -199,19 +199,24 @@ void WKPageLoadDataWithUserData(WKPageRef pageRef, WKDataRef dataRef, WKStringRe
     toImpl(pageRef)->loadData(toImpl(dataRef)->dataReference(), toWTFString(MIMETypeRef), toWTFString(encodingRef), toWTFString(baseURLRef), toImpl(userDataRef));
 }
 
+static String encodingOf(const String& string)
+{
+    if (string.isNull() || string.is8Bit())
+        "latin1"_s;
+    return "utf-16"_s;
+}
+
+static IPC::DataReference dataFrom(const String& string)
+{
+    if (string.isNull() || string.is8Bit())
+        return { reinterpret_cast<const uint8_t*>(string.characters8()), string.length() * sizeof(LChar) };
+    return { reinterpret_cast<const uint8_t*>(string.characters16()), string.length() * sizeof(UChar) };
+}
+
 static void loadString(WKPageRef pageRef, WKStringRef stringRef, const String& mimeType, const String& baseURL, WKTypeRef userDataRef)
 {
     String string = toWTFString(stringRef);
-    String encoding;
-    IPC::DataReference data;
-    if (string.isNull() || string.is8Bit()) {
-        encoding = "latin1"_s;
-        data = { reinterpret_cast<const uint8_t*>(string.characters8()), string.length() * sizeof(LChar) };
-    } else {
-        encoding = "utf-16"_s;
-        data = { reinterpret_cast<const uint8_t*>(string.characters16()), string.length() * sizeof(UChar) };
-    }
-    toImpl(pageRef)->loadData(data, mimeType, encoding, baseURL, toImpl(userDataRef));
+    toImpl(pageRef)->loadData(dataFrom(string), mimeType, encodingOf(string), baseURL, toImpl(userDataRef));
 }
 
 void WKPageLoadHTMLString(WKPageRef pageRef, WKStringRef htmlStringRef, WKURLRef baseURLRef)
@@ -226,12 +231,13 @@ void WKPageLoadHTMLStringWithUserData(WKPageRef pageRef, WKStringRef htmlStringR
 
 void WKPageLoadAlternateHTMLString(WKPageRef pageRef, WKStringRef htmlStringRef, WKURLRef baseURLRef, WKURLRef unreachableURLRef)
 {
-    toImpl(pageRef)->loadAlternateHTMLString(toWTFString(htmlStringRef), URL(URL(), toWTFString(baseURLRef)), URL(URL(), toWTFString(unreachableURLRef)));
+    WKPageLoadAlternateHTMLStringWithUserData(pageRef, htmlStringRef, baseURLRef, unreachableURLRef, nullptr);
 }
 
 void WKPageLoadAlternateHTMLStringWithUserData(WKPageRef pageRef, WKStringRef htmlStringRef, WKURLRef baseURLRef, WKURLRef unreachableURLRef, WKTypeRef userDataRef)
 {
-    toImpl(pageRef)->loadAlternateHTMLString(toWTFString(htmlStringRef), URL(URL(), toWTFString(baseURLRef)), URL(URL(), toWTFString(unreachableURLRef)), toImpl(userDataRef));
+    String string = toWTFString(htmlStringRef);
+    toImpl(pageRef)->loadAlternateHTML(dataFrom(string), encodingOf(string), URL(URL(), toWTFString(baseURLRef)), URL(URL(), toWTFString(unreachableURLRef)), toImpl(userDataRef));
 }
 
 void WKPageLoadPlainTextString(WKPageRef pageRef, WKStringRef plainTextStringRef)

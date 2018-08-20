@@ -41,7 +41,6 @@ void LoadParameters::encode(IPC::Encoder& encoder) const
 
     encoder << sandboxExtensionHandle;
     encoder << data;
-    encoder << string;
     encoder << MIMEType;
     encoder << encodingName;
     encoder << baseURLString;
@@ -80,9 +79,6 @@ bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
     data.sandboxExtensionHandle = WTFMove(*sandboxExtensionHandle);
 
     if (!decoder.decode(data.data))
-        return false;
-
-    if (!decoder.decode(data.string))
         return false;
 
     if (!decoder.decode(data.MIMEType))
