@@ -27,8 +27,6 @@ WI.FolderTreeElement = class FolderTreeElement extends WI.GeneralTreeElement
 {
     constructor(title, representedObject)
     {
-        console.assert(!representedObject || representedObject instanceof WI.Collection);
-
         const classNames = [WI.FolderTreeElement.FolderIconStyleClassName];
         const subtitle = null;
         super(classNames, title, subtitle, representedObject, {hasChildren: true});

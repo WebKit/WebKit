@@ -50,6 +50,11 @@ WI.GeneralTreeElement = class GeneralTreeElement extends WI.TreeElement
         return this._iconElement;
     }
 
+    get statusElement()
+    {
+        return this._statusElement;
+    }
+
     get titlesElement()
     {
         this._createElementsIfNeeded();
@@ -301,6 +306,7 @@ WI.GeneralTreeElement = class GeneralTreeElement extends WI.TreeElement
             this._createSubtitleElementIfNeeded();
             this._subtitleElement.removeChildren();
             this._subtitleElement.appendChild(this._subtitle);
+            this._titlesElement.classList.remove(WI.GeneralTreeElement.NoSubtitleStyleClassName);
         } else {
             if (this._subtitleElement)
                 this._subtitleElement.textContent = "";

@@ -41,10 +41,8 @@ WI.Recording = class Recording extends WI.Object
         this._visualActionIndexes = [];
         this._source = null;
 
-        this._swizzleTask = null;
-        this._applyTask = null;
         this._processContext = null;
-        this._processPromise = null;
+        this._processing = false;
     }
 
     static fromPayload(payload, frames)
@@ -162,18 +160,33 @@ WI.Recording = class Recording extends WI.Object
     get source() { return this._source; }
     set source(source) { this._source = source; }
 
-    process()
+    get processing() { return this._processing; }
+
+    get ready()
     {
-        if (!this._processPromise) {
-            this._processPromise = new WI.WrappedPromise;
+        return this._actions.lastValue.ready;
+    }
 
-            let items = this._actions.map((action, index) => { return {action, index} });
-            this._swizzleTask = new WI.YieldableTask(this, items);
-            this._applyTask = new WI.YieldableTask(this, items);
+    startProcessing()
+    {
+        console.assert(!this._processing, "Cannot start an already started process().");
+        console.assert(!this.ready, "Cannot start a completed process().");
+        if (this._processing || this.ready)
+            return;
 
-            this._swizzleTask.start();
-        }
-        return this._processPromise.promise;
+        this._processing = true;
+
+        this._process();
+    }
+
+    stopProcessing()
+    {
+        console.assert(this._processing, "Cannot stop an already stopped process().");
+        console.assert(!this.ready, "Cannot stop a completed process().");
+        if (!this._processing || this.ready)
+            return;
+
+        this._processing = false;
     }
 
     createDisplayName(suggestedName)
@@ -332,29 +345,11 @@ WI.Recording = class Recording extends WI.Object
         };
     }
 
-    // YieldableTask delegate
+    // Private
 
-    async yieldableTaskWillProcessItem(task, item)
+    async _process()
     {
-        if (task === this._swizzleTask) {
-            await item.action.swizzle(this);
-
-            this.dispatchEventToListeners(WI.Recording.Event.ProcessedActionSwizzle, {index: item.index});
-        } else if (task === this._applyTask) {
-            item.action.process(this, this._processContext);
-
-            if (item.action.isVisual)
-                this._visualActionIndexes.push(item.index);
-
-            this.dispatchEventToListeners(WI.Recording.Event.ProcessedActionApply, {index: item.index});
-        }
-    }
-
-    async yieldableTaskDidFinish(task)
-    {
-        if (task === this._swizzleTask) {
-            this._swizzleTask = null;
-
+        if (!this._processContext) {
             this._processContext = this.createContext();
 
             if (this._type === WI.Recording.Type.Canvas2D) {
@@ -411,19 +406,68 @@ WI.Recording = class Recording extends WI.Object
                     } catch { }
                 }
             }
-
-            this._applyTask.start();
-        } else if (task === this._applyTask) {
-            this._applyTask = null;
-            this._processContext = null;
-            this._processPromise.resolve();
         }
+
+        // The first action is always a WI.RecordingInitialStateAction, which doesn't need to swizzle().
+        // Since it is not associated with a WI.RecordingFrame, it has to manually process().
+        if (!this._actions[0].ready) {
+            this._actions[0].process(this, this._processContext);
+            this.dispatchEventToListeners(WI.Recording.Event.ProcessedAction, {action: this._actions[0], index: 0});
+        }
+
+        const workInterval = 10;
+        let startTime = Date.now();
+
+        let cumulativeActionIndex = 0;
+        for (let frameIndex = 0; frameIndex < this._frames.length; ++frameIndex) {
+            let frame = this._frames[frameIndex];
+
+            if (frame.actions.lastValue.ready) {
+                cumulativeActionIndex += frame.actions.length;
+                continue;
+            }
+
+            for (let actionIndex = 0; actionIndex < frame.actions.length; ++actionIndex) {
+                ++cumulativeActionIndex;
+
+                let action = frame.actions[actionIndex];
+                if (action.ready)
+                    continue;
+
+                await action.swizzle(this);
+
+                action.process(this, this._processContext);
+
+                if (action.isVisual)
+                    this._visualActionIndexes.push(cumulativeActionIndex);
+
+                if (!actionIndex)
+                    this.dispatchEventToListeners(WI.Recording.Event.StartProcessingFrame, {frame, index: frameIndex});
+
+                this.dispatchEventToListeners(WI.Recording.Event.ProcessedAction, {action, index: cumulativeActionIndex});
+
+                if (Date.now() - startTime > workInterval) {
+                    await Promise.delay(); // yield
+
+                    startTime = Date.now();
+                }
+
+                if (!this._processing)
+                    return;
+            }
+
+            if (!this._processing)
+                return;
+        }
+
+        this._processContext = null;
+        this._processing = false;
     }
 };
 
 WI.Recording.Event = {
-    ProcessedActionApply: "recording-processed-action-apply",
-    ProcessedActionSwizzle: "recording-processed-action-swizzle",
+    ProcessedAction: "recording-processed-action",
+    StartProcessingFrame: "recording-start-processing-frame",
 };
 
 WI.Recording._importedRecordingNameSet = new Set;

@@ -1337,6 +1337,14 @@ Object.defineProperty(Array.prototype, "binaryIndexOf",
     }
 });
 
+Object.defineProperty(Promise, "delay",
+{
+    value(delay)
+    {
+        return new Promise((resolve) => setTimeout(resolve, delay || 0));
+    }
+});
+
 (function() {
     // The `debounce` function lets you call any function on an object with a delay
     // and if the function keeps getting called, the delay gets reset. Since `debounce`

@@ -435,7 +435,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
             return;
 
         if (shaderPrograms.size === 1) {
-            WI.showRepresentedObject(shaderPrograms.values().next().value);
+            WI.showRepresentedObject(Array.from(shaderPrograms)[0]);
             return;
         }
 
@@ -458,7 +458,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
             return;
 
         if (recordings.size === 1) {
-            WI.showRepresentedObject(recordings.values().next().value);
+            WI.showRepresentedObject(Array.from(recordings)[0]);
             return;
         }
 

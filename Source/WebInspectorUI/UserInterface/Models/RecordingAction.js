@@ -48,6 +48,9 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
         this._state = null;
         this._stateModifiers = new Set;
+
+        this._swizzled = false;
+        this._processed = false;
     }
 
     // Static
@@ -108,8 +111,18 @@ WI.RecordingAction = class RecordingAction extends WI.Object
     get state() { return this._state; }
     get stateModifiers() { return this._stateModifiers; }
 
+    get ready()
+    {
+        return this._swizzled && this._processed;
+    }
+
     process(recording, context)
     {
+        console.assert(this._swizzled, "You must swizzle() before you can process().");
+        console.assert(!this._processed, "You should only process() once.");
+
+        this._processed = true;
+
         if (recording.type === WI.Recording.Type.CanvasWebGL) {
             // We add each RecordingAction to the list of visualActionIndexes after it is processed.
             if (this._valid && this._isVisual) {
@@ -187,8 +200,12 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
     async swizzle(recording)
     {
-        if (!this._valid)
+        console.assert(!this._swizzled, "You should only swizzle() once.");
+
+        if (!this._valid) {
+            this._swizzled = true;
             return;
+        }
 
         let swizzleParameter = (item, index) => {
             return recording.swizzle(item, this._payloadSwizzleTypes[index]);
@@ -254,10 +271,15 @@ WI.RecordingAction = class RecordingAction extends WI.Object
                     this._stateModifiers.add(item);
             }
         }
+
+        this._swizzled = true;
     }
 
     apply(context, options = {})
     {
+        console.assert(this._swizzled, "You must swizzle() before you can apply().");
+        console.assert(this._processed, "You must process() before you can apply().");
+
         if (!this.valid)
             return;
 

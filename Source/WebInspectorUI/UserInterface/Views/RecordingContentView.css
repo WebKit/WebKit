@@ -47,6 +47,11 @@
     margin: 4px 8px;
 }
 
+.content-view:not(.tab).recording > header > .slider-container > .slider-value {
+    font-family: Menlo, monospace;
+    font-family: 11px;
+}
+
 .content-view:not(.tab).recording > header > .slider-container > input[type=range] {
     flex: 1;
     width: 100%;

@@ -72,6 +72,27 @@
     line-height: 16px;
 }
 
-.sidebar > .panel.navigation.canvas > .content > .recording-content > .indeterminate-progress-spinner {
-    margin: 16px auto;
+.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.processing .subtitle > progress {
+    width: 100%;
+    max-width: 100px;
+    margin: 2px 4px 0;
+}
+
+.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline:matches(:focus, .force-focus) .item.processing.selected .subtitle > progress {
+    filter: brightness(10);
+}
+
+.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.processing .subtitle::before {
+    content: "";
+}
+
+.sidebar > .panel.navigation.canvas > .content > .recording-content > .recording-processing-options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 16px 0;
+}
+
+.sidebar > .panel.navigation.canvas > .content > .recording-content > .recording-processing-options > .indeterminate-progress-spinner {
+    margin-bottom: 4px;
 }

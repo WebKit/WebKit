@@ -1,3 +1,98 @@
+2018-08-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas tab: allow recording processing to be stopped midway
+        https://bugs.webkit.org/show_bug.cgi?id=185152
+
+        Reviewed by Joseph Pecoraro.
+
+        Previously, `WI.Recording` used a `WI.YieldableTask` to process every action in such a way
+        as to not block the UI. The downside to this approach was that it used a message view to
+        indicate the progress of this process, and prevented the user from viewing the `WI.Recording`
+        until that process was completed.
+
+        This patch changes `WI.Recording` to instead use `async/await` and fire events whenever a
+        `WI.RecordingAction` (and `WI.RecordingFrame`) finished processing, allowing it to be added
+        to the recording `WI.TreeOutline` and selected by the user. Additionally, a pause/resume
+        button is added to the `WI.CanvasSidebarPanel` so the user has greater control over what
+        how much of the `WI.Recording` they want to process.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Base/Utilities.js:
+        (Promise.delay)
+        Utility function for promisifying `setTimeout`.
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording):
+        (WI.Recording.prototype.get processing): Added.
+        (WI.Recording.prototype.get ready): Added.
+        (WI.Recording.prototype.startProcessing): Added.
+        (WI.Recording.prototype.stopProcessing): Added.
+        (WI.Recording.prototype.async._process): Added.
+        (WI.Recording.prototype.process): Deleted.
+        (WI.Recording.prototype.async.yieldableTaskWillProcessItem): Deleted.
+        (WI.Recording.prototype.async.yieldableTaskDidFinish): Deleted.
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction):
+        (WI.RecordingAction.prototype.get ready): Added.
+        (WI.RecordingAction.prototype.async.swizzle):
+        (WI.RecordingAction.prototype.apply):
+
+        * UserInterface/Models/RecordingInitialStateAction.js:
+        (WI.RecordingInitialStateAction):
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel):
+        (WI.CanvasSidebarPanel.prototype.set recording):
+        (WI.CanvasSidebarPanel.prototype.set action):
+        (WI.CanvasSidebarPanel.prototype._recordingAdded):
+        (WI.CanvasSidebarPanel.prototype._recordingRemoved):
+        (WI.CanvasSidebarPanel.prototype._currentRepresentedObjectsDidChange):
+        (WI.CanvasSidebarPanel.prototype._treeOutlineSelectionDidChange):
+        (WI.CanvasSidebarPanel.prototype._recordingChanged):
+        (WI.CanvasSidebarPanel.prototype._recordingChanged.createPauseButton): Added.
+        (WI.CanvasSidebarPanel.prototype._recordingChanged.createResumeButton): Added.
+        (WI.CanvasSidebarPanel.prototype._createRecordingFrameTreeElement): Added.
+        (WI.CanvasSidebarPanel.prototype._createRecordingActionTreeElement): Added.
+        (WI.CanvasSidebarPanel.prototype._handleRecordingProcessedAction): Added.
+        (WI.CanvasSidebarPanel.prototype._handleRecordingStartProcessingFrame): Added.
+        * UserInterface/Views/CanvasSidebarPanel.css:
+        (.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.processing .subtitle > progress): Added.
+        (.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline:matches(:focus, .force-focus) .item.processing.selected .subtitle > progress): Added.
+        (.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.processing .subtitle::before): Added.
+        (.sidebar > .panel.navigation.canvas > .content > .recording-content > .recording-processing-options): Added.
+        (.sidebar > .panel.navigation.canvas > .content > .recording-content > .recording-processing-options > .indeterminate-progress-spinner): Added.
+        (.sidebar > .panel.navigation.canvas > .content > .recording-content > .indeterminate-progress-spinner): Deleted.
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView):
+        (WI.RecordingContentView.prototype.updateActionIndex):
+        (WI.RecordingContentView.prototype.initialLayout):
+        (WI.RecordingContentView.prototype._updateCanvasPath):
+        (WI.RecordingContentView.prototype._handleRecordingProcessedAction): Added.
+        (WI.RecordingContentView.prototype._updateProcessProgress): Deleted.
+        (WI.RecordingContentView.prototype._handleRecordingProcessedActionSwizzle): Deleted.
+        (WI.RecordingContentView.prototype._handleRecordingProcessedActionApply): Deleted.
+        * UserInterface/Views/RecordingContentView.css:
+        (.content-view:not(.tab).recording > header > .slider-container > .slider-value): Added.
+
+        * UserInterface/Views/FolderTreeElement.js:
+        (WI.FolderTreeElement):
+
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WI.GeneralTreeElement.prototype.get statusElement): Added.
+        (WI.GeneralTreeElement.prototype._updateTitleElements):
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.CanvasContentView.prototype._handleViewShaderButtonClicked):
+        (WI.CanvasContentView.prototype._handleViewRecordingButtonClicked):
+        Drive-by: `WI.Collection` doesn't have a `values()` accessor for the underlying `Set`.
+
+        * UserInterface/Views/RecordingNavigationSidebarPanel.css: Removed.
+        * UserInterface/Views/RecordingNavigationSidebarPanel.js: Removed.
+        These files are no longer used since they were "merged" into `WI.CanvasSidebarPanel`.
+
 2018-08-20  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas tab: create icons for recordings/shaders in the preview tile
