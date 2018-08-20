@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,6 @@
 "use strict";
 
 class Type extends Node {
-    get typeParameters() { return []; }
     get kind() { return Type; }
     get isPtr() { return false; }
     get isArray() { return false; }
@@ -36,15 +35,6 @@ class Type extends Node {
     get isFloating() { return false; }
     get isEnum() { return false; }
     get isPrimitive() { return false; }
-    
-    inherits(protocol)
-    {
-        if (!protocol)
-            return {result: true};
-        return protocol.hasHeir(this);
-    }
-    
-    get instantiatedType() { return this.visit(new InstantiateImmediates()); }
     
     // Have to call these on the unifyNode.
     argumentForAndOverload(origin, value)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,34 +20,42 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 "use strict";
 
-function flattenProtocolExtends(program)
+function synthesizeDefaultConstructorOperator(program)
 {
-    let visiting = new VisitingSet();
-    
-    function flatten(protocol)
-    {
-        if (!protocol.extends.length)
-            return;
-        
-        visiting.doVisit(protocol, () => {
-            for (let parent of protocol.extends) {
-                parent = parent.protocolDecl;
-                flatten(parent);
-                for (let signature of parent.signatures) {
-                    let newSignature = signature.visit(
-                        new Substitution([parent.typeVariable], [protocol.typeVariable]));
-                    protocol.add(newSignature);
-                }
-            }
-            protocol.extends = [];
-        });
-    }
-    
-    for (let protocol of program.protocols.values())
-        flatten(protocol);
-}
+    const types = new Set();
 
+    class FindAllTypes extends Visitor {
+        visitNativeType(node)
+        {
+            types.add(node);
+        }
+
+        visitStructType(node)
+        {
+            types.add(node);
+            super.visitStructType(node);
+        }
+
+        visitElementalType(node)
+        {
+            types.add(node);
+            super.visitElementalType(node);
+        }
+    }
+
+    program.visit(new FindAllTypes());
+
+    for (let type of types) {
+        let nativeFunc = new NativeFunc(type.origin, "operator cast", TypeRef.wrap(type), [], true, null);
+        nativeFunc.implementation = ([], node) => {
+            let result = new EPtr(new EBuffer(type.size), 0);
+            node.type.populateDefaultValue(result.buffer, 0);
+            return result;
+        };
+        program.add(nativeFunc);
+    }
+}

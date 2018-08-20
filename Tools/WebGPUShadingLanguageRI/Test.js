@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,9 @@
 
 if (this.window) {
     this.print = (text) => {
-        var span = document.createElement("span");
+        var span = document.createElement("pre");
         document.getElementById("messages").appendChild(span);
-        span.innerHTML = text.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>") + "<br>";
+        span.innerText = text;
         window.scrollTo(0,document.body.scrollHeight);
     };
     this.preciseTime = () => performance.now() / 1000;
@@ -55,17 +55,17 @@ function doLex(code)
 
 function makeInt(program, value)
 {
-    return TypedValue.box(program.intrinsics.int32, value);
+    return TypedValue.box(program.intrinsics.int, value);
 }
 
 function makeUint(program, value)
 {
-    return TypedValue.box(program.intrinsics.uint32, value);
+    return TypedValue.box(program.intrinsics.uint, value);
 }
 
-function makeUint8(program, value)
+function makeUchar(program, value)
 {
-    return TypedValue.box(program.intrinsics.uint8, value);
+    return TypedValue.box(program.intrinsics.uchar, value);
 }
 
 function makeBool(program, value)
@@ -99,7 +99,7 @@ function checkNumber(program, result, expected)
 
 function checkInt(program, result, expected)
 {
-    if (!result.type.equals(program.intrinsics.int32))
+    if (!result.type.equals(program.intrinsics.int))
         throw new Error("Wrong result type; result: " + result);
     checkNumber(program, result, expected);
 }
@@ -114,15 +114,15 @@ function checkEnum(program, result, expected)
 
 function checkUint(program, result, expected)
 {
-    if (!result.type.equals(program.intrinsics.uint32))
+    if (!result.type.equals(program.intrinsics.uint))
         throw new Error("Wrong result type: " + result.type);
     if (result.value != expected)
         throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
 }
 
-function checkUint8(program, result, expected)
+function checkUchar(program, result, expected)
 {
-    if (!result.type.equals(program.intrinsics.uint8))
+    if (!result.type.equals(program.intrinsics.uchar))
         throw new Error("Wrong result type: " + result.type);
     if (result.value != expected)
         throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
@@ -187,7 +187,7 @@ tests.commentParsing = function() {
         runs over multiple lines */
         bool foo() { return true; }
     `);
-    checkBool(program, callFunction(program, "foo", [], []), true);
+    checkBool(program, callFunction(program, "foo", []), true);
 
     checkFail(
         () => doPrep(`
@@ -200,92 +200,92 @@ tests.commentParsing = function() {
 
 tests.literalBool = function() {
     let program = doPrep("bool foo() { return true; }");
-    checkBool(program, callFunction(program, "foo", [], []), true);
+    checkBool(program, callFunction(program, "foo", []), true);
 }
 
 tests.identityBool = function() {
     let program = doPrep("bool foo(bool x) { return x; }");
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true)]), true);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false)]), false);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, true)]), true);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, false)]), false);
 }
 
 tests.intSimpleMath = function() {
     let program = doPrep("int foo(int x, int y) { return x + y; }");
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 5)]), 12);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, 5)]), 12);
     program = doPrep("int foo(int x, int y) { return x - y; }");
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 5)]), 2);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5), makeInt(program, 7)]), -2);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, 5)]), 2);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 5), makeInt(program, 7)]), -2);
     program = doPrep("int foo(int x, int y) { return x * y; }");
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 5)]), 35);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, -5)]), -35);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, 5)]), 35);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, -5)]), -35);
     program = doPrep("int foo(int x, int y) { return x / y; }");
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 2)]), 3);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, -2)]), -3);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, 2)]), 3);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, -2)]), -3);
 }
 
 tests.uintSimpleMath = function() {
     let program = doPrep("uint foo(uint x, uint y) { return x + y; }");
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 5)]), 12);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 7), makeUint(program, 5)]), 12);
     program = doPrep("uint foo(uint x, uint y) { return x - y; }");
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 5)]), 2);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 5), makeUint(program, 7)]), 4294967294);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 7), makeUint(program, 5)]), 2);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 5), makeUint(program, 7)]), 4294967294);
     program = doPrep("uint foo(uint x, uint y) { return x * y; }");
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 5)]), 35);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 7), makeUint(program, 5)]), 35);
     program = doPrep("uint foo(uint x, uint y) { return x / y; }");
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 2)]), 3);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 7), makeUint(program, 2)]), 3);
 }
 
-tests.uint8SimpleMath = function() {
-    let program = doPrep("uint8 foo(uint8 x, uint8 y) { return x + y; }");
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 5)]), 12);
-    program = doPrep("uint8 foo(uint8 x, uint8 y) { return x - y; }");
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 5)]), 2);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 5), makeUint8(program, 7)]), 254);
-    program = doPrep("uint8 foo(uint8 x, uint8 y) { return x * y; }");
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 5)]), 35);
-    program = doPrep("uint8 foo(uint8 x, uint8 y) { return x / y; }");
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 2)]), 3);
+tests.ucharSimpleMath = function() {
+    let program = doPrep("uchar foo(uchar x, uchar y) { return x + y; }");
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 7), makeUchar(program, 5)]), 12);
+    program = doPrep("uchar foo(uchar x, uchar y) { return x - y; }");
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 7), makeUchar(program, 5)]), 2);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 5), makeUchar(program, 7)]), 254);
+    program = doPrep("uchar foo(uchar x, uchar y) { return x * y; }");
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 7), makeUchar(program, 5)]), 35);
+    program = doPrep("uchar foo(uchar x, uchar y) { return x / y; }");
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 7), makeUchar(program, 2)]), 3);
 }
 
 tests.equality = function() {
     let program = doPrep("bool foo(uint x, uint y) { return x == y; }");
-    checkBool(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 5)]), false);
-    checkBool(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 7)]), true);
-    program = doPrep("bool foo(uint8 x, uint8 y) { return x == y; }");
-    checkBool(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 5)]), false);
-    checkBool(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 7)]), true);
+    checkBool(program, callFunction(program, "foo", [makeUint(program, 7), makeUint(program, 5)]), false);
+    checkBool(program, callFunction(program, "foo", [makeUint(program, 7), makeUint(program, 7)]), true);
+    program = doPrep("bool foo(uchar x, uchar y) { return x == y; }");
+    checkBool(program, callFunction(program, "foo", [makeUchar(program, 7), makeUchar(program, 5)]), false);
+    checkBool(program, callFunction(program, "foo", [makeUchar(program, 7), makeUchar(program, 7)]), true);
     program = doPrep("bool foo(int x, int y) { return x == y; }");
-    checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 5)]), false);
-    checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 7)]), true);
+    checkBool(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, 5)]), false);
+    checkBool(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, 7)]), true);
     program = doPrep("bool foo(bool x, bool y) { return x == y; }");
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, true)]), false);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, false)]), false);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, false)]), true);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, true)]), true);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, false), makeBool(program, true)]), false);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, true), makeBool(program, false)]), false);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, false), makeBool(program, false)]), true);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, true), makeBool(program, true)]), true);
 }
 
 tests.logicalNegation = function()
 {
     let program = doPrep("bool foo(bool x) { return !x; }");
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true)]), false);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false)]), true);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, true)]), false);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, false)]), true);
 }
 
 tests.notEquality = function() {
     let program = doPrep("bool foo(uint x, uint y) { return x != y; }");
-    checkBool(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 5)]), true);
-    checkBool(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 7)]), false);
-    program = doPrep("bool foo(uint8 x, uint8 y) { return x != y; }");
-    checkBool(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 5)]), true);
-    checkBool(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 7)]), false);
+    checkBool(program, callFunction(program, "foo", [makeUint(program, 7), makeUint(program, 5)]), true);
+    checkBool(program, callFunction(program, "foo", [makeUint(program, 7), makeUint(program, 7)]), false);
+    program = doPrep("bool foo(uchar x, uchar y) { return x != y; }");
+    checkBool(program, callFunction(program, "foo", [makeUchar(program, 7), makeUchar(program, 5)]), true);
+    checkBool(program, callFunction(program, "foo", [makeUchar(program, 7), makeUchar(program, 7)]), false);
     program = doPrep("bool foo(int x, int y) { return x != y; }");
-    checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 5)]), true);
-    checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 7)]), false);
+    checkBool(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, 5)]), true);
+    checkBool(program, callFunction(program, "foo", [makeInt(program, 7), makeInt(program, 7)]), false);
     program = doPrep("bool foo(bool x, bool y) { return x != y; }");
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, true)]), true);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, false)]), true);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, false)]), false);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, true)]), false);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, false), makeBool(program, true)]), true);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, true), makeBool(program, false)]), true);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, false), makeBool(program, false)]), false);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, true), makeBool(program, true)]), false);
 }
 
 tests.equalityTypeFailure = function()
@@ -298,21 +298,13 @@ tests.equalityTypeFailure = function()
 tests.generalNegation = function()
 {
     let program = doPrep("bool foo(int x) { return !x; }");
-    checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7)]), false);
-    checkBool(program, callFunction(program, "foo", [], [makeInt(program, 0)]), true);
+    checkBool(program, callFunction(program, "foo", [makeInt(program, 7)]), false);
+    checkBool(program, callFunction(program, "foo", [makeInt(program, 0)]), true);
 }
 
 tests.add1 = function() {
     let program = doPrep("int foo(int x) { return x + 1; }");
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 42)]), 43);
-}
-
-tests.simpleGeneric = function() {
-    let program = doPrep(`
-        T id<T>(T x) { return x; }
-        int foo(int x) { return id(x) + 1; }
-    `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 42)]), 43);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 42)]), 43);
 }
 
 tests.nameResolutionFailure = function()
@@ -331,7 +323,7 @@ tests.simpleVariable = function()
             return result;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 42)]), 42);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 42)]), 42);
 }
 
 tests.simpleAssignment = function()
@@ -344,7 +336,7 @@ tests.simpleAssignment = function()
             return result;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 42)]), 42);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 42)]), 42);
 }
 
 tests.simpleDefault = function()
@@ -356,7 +348,7 @@ tests.simpleDefault = function()
             return result;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 0);
+    checkInt(program, callFunction(program, "foo", []), 0);
 }
 
 tests.simpleDereference = function()
@@ -369,7 +361,7 @@ tests.simpleDereference = function()
     `);
     let buffer = new EBuffer(1);
     buffer.set(0, 13);
-    checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
+    checkInt(program, callFunction(program, "foo", [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int), new EPtr(buffer, 0))]), 13);
 }
 
 tests.dereferenceStore = function()
@@ -382,7 +374,7 @@ tests.dereferenceStore = function()
     `);
     let buffer = new EBuffer(1);
     buffer.set(0, 13);
-    callFunction(program, "foo", [], [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int32), new EPtr(buffer, 0))]);
+    callFunction(program, "foo", [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int), new EPtr(buffer, 0))]);
     if (buffer.get(0) != 52)
         throw new Error("Expected buffer to contain 52 but it contains: " + buffer.get(0));
 }
@@ -396,10 +388,10 @@ tests.simpleMakePtr = function()
             return &x;
         }
     `);
-    let result = callFunction(program, "foo", [], []);
+    let result = callFunction(program, "foo", []);
     if (!result.type.isPtr)
         throw new Error("Return type is not a pointer: " + result.type);
-    if (!result.type.elementType.equals(program.intrinsics.int32))
+    if (!result.type.elementType.equals(program.intrinsics.int))
         throw new Error("Return type is not a pointer to an int: " + result.type);
     if (!(result.value instanceof EPtr))
         throw new Error("Return value is not an EPtr: " + result.value);
@@ -418,7 +410,7 @@ tests.threadArrayLoad = function()
     `);
     let buffer = new EBuffer(1);
     buffer.set(0, 89);
-    let result = callFunction(program, "foo", [], [TypedValue.box(new ArrayRefType(externalOrigin, "thread", program.intrinsics.int32), new EArrayRef(new EPtr(buffer, 0), 1))]);
+    let result = callFunction(program, "foo", [TypedValue.box(new ArrayRefType(externalOrigin, "thread", program.intrinsics.int), new EArrayRef(new EPtr(buffer, 0), 1))]);
     checkInt(program, result, 89);
 }
 
@@ -432,7 +424,7 @@ tests.threadArrayLoadIntLiteral = function()
     `);
     let buffer = new EBuffer(1);
     buffer.set(0, 89);
-    let result = callFunction(program, "foo", [], [TypedValue.box(new ArrayRefType(externalOrigin, "thread", program.intrinsics.int32), new EArrayRef(new EPtr(buffer, 0), 1))]);
+    let result = callFunction(program, "foo", [TypedValue.box(new ArrayRefType(externalOrigin, "thread", program.intrinsics.int), new EArrayRef(new EPtr(buffer, 0), 1))]);
     checkInt(program, result, 89);
 }
 
@@ -446,7 +438,7 @@ tests.deviceArrayLoad = function()
     `);
     let buffer = new EBuffer(1);
     buffer.set(0, 89);
-    let result = callFunction(program, "foo", [], [TypedValue.box(new ArrayRefType(externalOrigin, "device", program.intrinsics.int32), new EArrayRef(new EPtr(buffer, 0), 1))]);
+    let result = callFunction(program, "foo", [TypedValue.box(new ArrayRefType(externalOrigin, "device", program.intrinsics.int), new EArrayRef(new EPtr(buffer, 0), 1))]);
     checkInt(program, result, 89);
 }
 
@@ -461,12 +453,12 @@ tests.threadArrayStore = function()
     let buffer = new EBuffer(1);
     buffer.set(0, 15);
     let arrayRef = TypedValue.box(
-        new ArrayRefType(externalOrigin, "thread", program.intrinsics.int32),
+        new ArrayRefType(externalOrigin, "thread", program.intrinsics.int),
         new EArrayRef(new EPtr(buffer, 0), 1));
-    callFunction(program, "foo", [], [arrayRef, makeInt(program, 65)]);
+    callFunction(program, "foo", [arrayRef, makeInt(program, 65)]);
     if (buffer.get(0) != 65)
         throw new Error("Bad value stored into buffer (expected 65): " + buffer.get(0));
-    callFunction(program, "foo", [], [arrayRef, makeInt(program, -111)]);
+    callFunction(program, "foo", [arrayRef, makeInt(program, -111)]);
     if (buffer.get(0) != -111)
         throw new Error("Bad value stored into buffer (expected -111): " + buffer.get(0));
 }
@@ -482,12 +474,12 @@ tests.deviceArrayStore = function()
     let buffer = new EBuffer(1);
     buffer.set(0, 15);
     let arrayRef = TypedValue.box(
-        new ArrayRefType(externalOrigin, "device", program.intrinsics.int32),
+        new ArrayRefType(externalOrigin, "device", program.intrinsics.int),
         new EArrayRef(new EPtr(buffer, 0), 1));
-    callFunction(program, "foo", [], [arrayRef, makeInt(program, 65)]);
+    callFunction(program, "foo", [arrayRef, makeInt(program, 65)]);
     if (buffer.get(0) != 65)
         throw new Error("Bad value stored into buffer (expected 65): " + buffer.get(0));
-    callFunction(program, "foo", [], [arrayRef, makeInt(program, -111)]);
+    callFunction(program, "foo", [arrayRef, makeInt(program, -111)]);
     if (buffer.get(0) != -111)
         throw new Error("Bad value stored into buffer (expected -111): " + buffer.get(0));
 }
@@ -503,32 +495,14 @@ tests.deviceArrayStoreIntLiteral = function()
     let buffer = new EBuffer(1);
     buffer.set(0, 15);
     let arrayRef = TypedValue.box(
-        new ArrayRefType(externalOrigin, "device", program.intrinsics.int32),
+        new ArrayRefType(externalOrigin, "device", program.intrinsics.int),
         new EArrayRef(new EPtr(buffer, 0), 1));
-    callFunction(program, "foo", [], [arrayRef, makeInt(program, 65)]);
+    callFunction(program, "foo", [arrayRef, makeInt(program, 65)]);
     if (buffer.get(0) != 65)
         throw new Error("Bad value stored into buffer (expected 65): " + buffer.get(0));
-    callFunction(program, "foo", [], [arrayRef, makeInt(program, -111)]);
+    callFunction(program, "foo", [arrayRef, makeInt(program, -111)]);
     if (buffer.get(0) != -111)
         throw new Error("Bad value stored into buffer (expected -111): " + buffer.get(0));
-}
-
-tests.simpleProtocol = function()
-{
-    let program = doPrep(`
-        protocol MyAddable {
-            MyAddable operator+(MyAddable, MyAddable);
-        }
-        T add<T:MyAddable>(T a, T b)
-        {
-            return a + b;
-        }
-        int foo(int x)
-        {
-            return add(x, 73);
-        }
-    `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 45)]), 45 + 73);
 }
 
 tests.typeMismatchReturn = function()
@@ -584,13 +558,12 @@ tests.badAdd = function()
 {
     checkFail(
         () => doPrep(`
-            void bar<T>(T) { }
             void foo(int x, uint y)
             {
-                bar(x + y);
+                uint z = x + y;
             }
         `),
-        (e) => e instanceof WTypeError && e.message.indexOf("native int32 operator+<>(int32,int32)") != -1);
+        (e) => e instanceof WTypeError && e.message.indexOf("native int operator+(int,int)") != -1);
 }
 
 tests.lexerKeyword = function()
@@ -666,7 +639,7 @@ tests.simpleStruct = function()
     let buffer = new EBuffer(2);
     buffer.set(0, 62);
     buffer.set(1, 24);
-    let result = callFunction(program, "foo", [], [new TypedValue(structType, new EPtr(buffer, 0))]);
+    let result = callFunction(program, "foo", [new TypedValue(structType, new EPtr(buffer, 0))]);
     if (!result.type.equals(structType))
         throw new Error("Wrong result type: " + result.type);
     let x = result.ePtr.get(0);
@@ -677,57 +650,11 @@ tests.simpleStruct = function()
         throw new Error("Wrong result for y: " + y + " (x + " + x + ")");
 }
 
-tests.genericStructInstance = function()
-{
-    let program = doPrep(`
-        struct Foo<T> {
-            T x;
-            T y;
-        }
-        Foo<int> foo(Foo<int> foo)
-        {
-            Foo<int> result;
-            result.x = foo.y;
-            result.y = foo.x;
-            return result;
-        }
-    `);
-    let structType = TypeRef.instantiate(program.types.get("Foo"), [program.intrinsics.int32]);
-    let buffer = new EBuffer(2);
-    buffer.set(0, 62);
-    buffer.set(1, 24);
-    let result = callFunction(program, "foo", [], [new TypedValue(structType, new EPtr(buffer, 0))]);
-    let x = result.ePtr.get(0);
-    let y = result.ePtr.get(1);
-    if (x != 24)
-        throw new Error("Wrong result for x: " + x + " (y = " + y + ")");
-    if (y != 62)
-        throw new Error("Wrong result for y: " + y + " (x + " + x + ")");
-}
-
-tests.doubleGenericCallsDoubleGeneric = function()
-{
-    doPrep(`
-        void foo<T, U>(T, U) { }
-        void bar<V, W>(V x, W y) { foo(x, y); }
-    `);
-}
-
-tests.doubleGenericCallsSingleGeneric = function()
-{
-    checkFail(
-        () => doPrep(`
-            void foo<T>(T, T) { }
-            void bar<V, W>(V x, W y) { foo(x, y); }
-        `),
-        (e) => e instanceof WTypeError);
-}
-
 tests.loadNull = function()
 {
     checkFail(
         () => doPrep(`
-            void sink<T>(T) { }
+            void sink(thread int* x) { }
             void foo() { sink(*null); }
         `),
         (e) => e instanceof WTypeError && e.message.indexOf("Type passed to dereference is not a pointer: null") != -1);
@@ -747,10 +674,10 @@ tests.returnNull = function()
     let program = doPrep(`
         thread int* foo() { return null; }
     `);
-    let result = callFunction(program, "foo", [], []);
+    let result = callFunction(program, "foo", []);
     if (!result.type.isPtr)
         throw new Error("Return type is not a pointer: " + result.type);
-    if (!result.type.elementType.equals(program.intrinsics.int32))
+    if (!result.type.elementType.equals(program.intrinsics.int))
         throw new Error("Return type is not a pointer to an int: " + result.type);
     if (result.value != null)
         throw new Error("Return value is not null: " + result.value);
@@ -766,7 +693,7 @@ tests.dereferenceDefaultNull = function()
         }
     `);
     checkFail(
-        () => callFunction(program, "foo", [], []),
+        () => callFunction(program, "foo", []),
         (e) => e instanceof WTrapError);
 }
 
@@ -780,7 +707,7 @@ tests.defaultInitializedNull = function()
         }
     `);
     checkFail(
-        () => callFunction(program, "foo", [], []),
+        () => callFunction(program, "foo", []),
         (e) => e instanceof WTrapError);
 }
 
@@ -797,47 +724,15 @@ tests.passNullToPtrMonomorphic = function()
         }
     `);
     checkFail(
-        () => callFunction(program, "bar", [], []),
+        () => callFunction(program, "bar", []),
         (e) => e instanceof WTrapError);
-}
-
-tests.passNullToPtrPolymorphic = function()
-{
-    checkFail(
-        () => doPrep(`
-            T foo<T>(thread T* ptr)
-            {
-                return *ptr;
-            }
-            int bar()
-            {
-                return foo(null);
-            }
-        `),
-        (e) => e instanceof WTypeError);
-}
-
-tests.passNullToPolymorphic = function()
-{
-    checkFail(
-        () => doPrep(`
-            T foo<T>(T ptr)
-            {
-                return ptr;
-            }
-            int bar()
-            {
-                return foo(null);
-            }
-        `),
-        (e) => e instanceof WTypeError);
 }
 
 tests.loadNullArrayRef = function()
 {
     checkFail(
         () => doPrep(`
-            void sink<T>(T) { }
+            void sink(thread int* x) { }
             void foo() { sink(null[0u]); }
         `),
         (e) => e instanceof WTypeError && e.message.indexOf("Cannot resolve access") != -1);
@@ -857,10 +752,10 @@ tests.returnNullArrayRef = function()
     let program = doPrep(`
         thread int[] foo() { return null; }
     `);
-    let result = callFunction(program, "foo", [], []);
+    let result = callFunction(program, "foo", []);
     if (!result.type.isArrayRef)
         throw new Error("Return type is not an array reference: " + result.type);
-    if (!result.type.elementType.equals(program.intrinsics.int32))
+    if (!result.type.elementType.equals(program.intrinsics.int))
         throw new Error("Return type is not an int array reference: " + result.type);
     if (result.value != null)
         throw new Error("Return value is not null: " + result.value);
@@ -876,7 +771,7 @@ tests.dereferenceDefaultNullArrayRef = function()
         }
     `);
     checkFail(
-        () => callFunction(program, "foo", [], []),
+        () => callFunction(program, "foo", []),
         (e) => e instanceof WTrapError);
 }
 
@@ -890,7 +785,7 @@ tests.defaultInitializedNullArrayRef = function()
         }
     `);
     checkFail(
-        () => callFunction(program, "foo", [], []),
+        () => callFunction(program, "foo", []),
         (e) => e instanceof WTrapError);
 }
 
@@ -904,7 +799,7 @@ tests.defaultInitializedNullArrayRefIntLiteral = function()
         }
     `);
     checkFail(
-        () => callFunction(program, "foo", [], []),
+        () => callFunction(program, "foo", []),
         (e) => e instanceof WTrapError);
 }
 
@@ -921,36 +816,20 @@ tests.passNullToPtrMonomorphicArrayRef = function()
         }
     `);
     checkFail(
-        () => callFunction(program, "bar", [], []),
+        () => callFunction(program, "bar", []),
         (e) => e instanceof WTrapError);
-}
-
-tests.passNullToPtrPolymorphicArrayRef = function()
-{
-    checkFail(
-        () => doPrep(`
-            T foo<T>(thread T[] ptr)
-            {
-                return ptr[0u];
-            }
-            int bar()
-            {
-                return foo(null);
-            }
-        `),
-        (e) => e instanceof WTypeError);
 }
 
 tests.returnIntLiteralUint = function()
 {
     let program = doPrep("uint foo() { return 42; }");
-    checkNumber(program, callFunction(program, "foo", [], []), 42);
+    checkNumber(program, callFunction(program, "foo", []), 42);
 }
 
 tests.returnIntLiteralFloat = function()
 {
     let program = doPrep("float foo() { return 42; }");
-    checkNumber(program, callFunction(program, "foo", [], []), 42);
+    checkNumber(program, callFunction(program, "foo", []), 42);
 }
 
 tests.badIntLiteralForInt = function()
@@ -974,115 +853,6 @@ tests.badIntLiteralForFloat = function()
         (e) => e instanceof WSyntaxError);
 }
 
-tests.passNullAndNotNull = function()
-{
-    let program = doPrep(`
-        T bar<T>(device T* p, device T*)
-        {
-            return *p;
-        }
-        int foo(device int* p)
-        {
-            return bar(p, null);
-        }
-    `);
-    let buffer = new EBuffer(1);
-    buffer.set(0, 13);
-    checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
-}
-
-tests.passNullAndNotNullFullPoly = function()
-{
-    let program = doPrep(`
-        T bar<T>(T p, T)
-        {
-            return p;
-        }
-        int foo(device int* p)
-        {
-            return *bar(p, null);
-        }
-    `);
-    let buffer = new EBuffer(1);
-    buffer.set(0, 13);
-    checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
-}
-
-tests.passNullAndNotNullFullPolyReverse = function()
-{
-    let program = doPrep(`
-        T bar<T>(T, T p)
-        {
-            return p;
-        }
-        int foo(device int* p)
-        {
-            return *bar(null, p);
-        }
-    `);
-    let buffer = new EBuffer(1);
-    buffer.set(0, 13);
-    checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
-}
-
-tests.nullTypeVariableUnify = function()
-{
-    let left = new NullType(externalOrigin);
-    let right = new TypeVariable(externalOrigin, "T", null);
-    if (left.equals(right))
-        throw new Error("Should not be equal but are: " + left + " and " + right);
-    if (right.equals(left))
-        throw new Error("Should not be equal but are: " + left + " and " + right);
-    
-    function everyOrder(array, callback)
-    {
-        function recurse(array, callback, order)
-        {
-            if (!array.length)
-                return callback.call(null, order);
-            
-            for (let i = 0; i < array.length; ++i) {
-                let nextArray = array.concat();
-                nextArray.splice(i, 1);
-                recurse(nextArray, callback, order.concat([array[i]]));
-            }
-        }
-        
-        recurse(array, callback, []);
-    }
-    
-    function everyPair(things)
-    {
-        let result = [];
-        for (let i = 0; i < things.length; ++i) {
-            for (let j = 0; j < things.length; ++j) {
-                if (i != j)
-                    result.push([things[i], things[j]]);
-            }
-        }
-        return result;
-    }
-    
-    everyOrder(
-        everyPair(["nullType", "variableType", "ptrType"]),
-        order => {
-            let types = {};
-            types.nullType = new NullType(externalOrigin);
-            types.variableType = new TypeVariable(externalOrigin, "T", null);
-            types.ptrType = new PtrType(externalOrigin, "constant", new NativeType(externalOrigin, "foo_t", []));
-            let unificationContext = new UnificationContext([types.variableType]);
-            for (let [leftName, rightName] of order) {
-                let left = types[leftName];
-                let right = types[rightName];
-                let result = left.unify(unificationContext, right);
-                if (!result)
-                    throw new Error("In order " + order + " cannot unify " + left + " with " + right);
-            }
-            if (!unificationContext.verify().result)
-                throw new Error("In order " + order.map(value => "(" + value + ")") + " cannot verify");
-        });
-}
-
 tests.doubleNot = function()
 {
     let program = doPrep(`
@@ -1091,128 +861,20 @@ tests.doubleNot = function()
             return !!x;
         }
     `);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true)]), true);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false)]), false);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, true)]), true);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, false)]), false);
 }
 
 tests.simpleRecursion = function()
 {
     checkFail(
         () => doPrep(`
-            void foo<T>(T x)
+            void foo(int x)
             {
-                foo(&x);
+                foo(x);
             }
         `),
         (e) => e instanceof WTypeError);
-}
-
-tests.protocolMonoSigPolyDef = function()
-{
-    let program = doPrep(`
-        struct IntAnd<T> {
-            int first;
-            T second;
-        }
-        IntAnd<T> intAnd<T>(int first, T second)
-        {
-            IntAnd<T> result;
-            result.first = first;
-            result.second = second;
-            return result;
-        }
-        protocol IntAndable {
-            IntAnd<int> intAnd(IntAndable, int);
-        }
-        int foo<T:IntAndable>(T first, int second)
-        {
-            IntAnd<int> result = intAnd(first, second);
-            return result.first + result.second;
-        }
-    `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 54), makeInt(program, 12)]), 54 + 12);
-}
-
-tests.protocolPolySigPolyDef = function()
-{
-    let program = doPrep(`
-        struct IntAnd<T> {
-            int first;
-            T second;
-        }
-        IntAnd<T> intAnd<T>(int first, T second)
-        {
-            IntAnd<T> result;
-            result.first = first;
-            result.second = second;
-            return result;
-        }
-        protocol IntAndable {
-            IntAnd<T> intAnd<T>(IntAndable, T);
-        }
-        int foo<T:IntAndable>(T first, int second)
-        {
-            IntAnd<int> result = intAnd(first, second);
-            return result.first + result.second;
-        }
-    `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 54), makeInt(program, 12)]), 54 + 12);
-}
-
-tests.protocolDoublePolySigDoublePolyDef = function()
-{
-    let program = doPrep(`
-        struct IntAnd<T, U> {
-            int first;
-            T second;
-            U third;
-        }
-        IntAnd<T, U> intAnd<T, U>(int first, T second, U third)
-        {
-            IntAnd<T, U> result;
-            result.first = first;
-            result.second = second;
-            result.third = third;
-            return result;
-        }
-        protocol IntAndable {
-            IntAnd<T, U> intAnd<T, U>(IntAndable, T, U);
-        }
-        int foo<T:IntAndable>(T first, int second, int third)
-        {
-            IntAnd<int, int> result = intAnd(first, second, third);
-            return result.first + result.second + result.third;
-        }
-    `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 54), makeInt(program, 12), makeInt(program, 39)]), 54 + 12 + 39);
-}
-
-tests.protocolDoublePolySigDoublePolyDefExplicit = function()
-{
-    let program = doPrep(`
-        struct IntAnd<T, U> {
-            int first;
-            T second;
-            U third;
-        }
-        IntAnd<T, U> intAnd<T, U>(int first, T second, U third)
-        {
-            IntAnd<T, U> result;
-            result.first = first;
-            result.second = second;
-            result.third = third;
-            return result;
-        }
-        protocol IntAndable {
-            IntAnd<T, U> intAnd<T, U>(IntAndable, T, U);
-        }
-        int foo<T:IntAndable>(T first, int second, int third)
-        {
-            IntAnd<int, int> result = intAnd<int, int>(first, second, third);
-            return result.first + result.second + result.third;
-        }
-    `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 54), makeInt(program, 12), makeInt(program, 39)]), 54 + 12 + 39);
 }
 
 tests.variableShadowing = function()
@@ -1229,7 +891,7 @@ tests.variableShadowing = function()
             return y;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 8);
+    checkInt(program, callFunction(program, "foo", []), 8);
     program = doPrep(`
         int foo()
         {
@@ -1242,7 +904,7 @@ tests.variableShadowing = function()
             return y;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 7);
+    checkInt(program, callFunction(program, "foo", []), 7);
 }
 
 tests.ifStatement = function()
@@ -1257,13 +919,13 @@ tests.ifStatement = function()
             return y;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 8);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 8)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 3)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 6)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7)]), 8);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 8)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 9)]), 6);
 }
 
 tests.ifElseStatement = function()
@@ -1280,13 +942,13 @@ tests.ifElseStatement = function()
             return y;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 9);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 9);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 9);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 9);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 8);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 8)]), 9);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 9);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 3)]), 9);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 9);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 9);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 6)]), 9);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7)]), 8);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 8)]), 9);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 9)]), 9);
 }
 
 tests.ifElseIfStatement = function()
@@ -1303,13 +965,13 @@ tests.ifElseIfStatement = function()
             return y;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 8);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 8)]), 9);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 3)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 6)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7)]), 8);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 8)]), 9);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 9)]), 6);
 }
 
 tests.ifElseIfElseStatement = function()
@@ -1328,13 +990,13 @@ tests.ifElseIfElseStatement = function()
             return y;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 10);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 10);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 10);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 8);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 8)]), 9);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 3)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 6)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7)]), 8);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 8)]), 9);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 9)]), 10);
 }
 
 tests.returnIf = function()
@@ -1387,13 +1049,13 @@ tests.returnIf = function()
             }
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 10);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 10);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 10);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 8);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 8)]), 10);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 3)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 6)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7)]), 8);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 8)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 9)]), 10);
     checkFail(
         () => doPrep(`
             int foo(int x)
@@ -1419,13 +1081,13 @@ tests.returnIf = function()
             return y;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 9);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 9);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 9);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 9);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 8);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 8)]), 9);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 9);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 3)]), 9);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 9);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 9);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 6)]), 9);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7)]), 8);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 8)]), 9);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 9)]), 9);
     checkFail(
         () => doPrep(`
             int foo(int x)
@@ -1449,7 +1111,7 @@ tests.returnIf = function()
             return y;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7)]), 6);
 }
 
 tests.simpleWhile = function()
@@ -1462,71 +1124,7 @@ tests.simpleWhile = function()
             return x;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), 16);
-}
-
-tests.protocolMonoPolySigDoublePolyDefExplicit = function()
-{
-    checkFail(
-        () => {
-            let program = doPrep(`
-                struct IntAnd<T, U> {
-                    int first;
-                    T second;
-                    U third;
-                }
-                IntAnd<T, U> intAnd<T, U>(int first, T second, U third)
-                {
-                    IntAnd<T, U> result;
-                    result.first = first;
-                    result.second = second;
-                    result.third = third;
-                    return result;
-                }
-                protocol IntAndable {
-                    IntAnd<T, int> intAnd<T>(IntAndable, T, int);
-                }
-                int foo<T:IntAndable>(T first, int second, int third)
-                {
-                    IntAnd<int, int> result = intAnd<int>(first, second, third);
-                    return result.first + result.second + result.third;
-                }
-            `);
-            callFunction(program, "foo", [], [makeInt(program, 54), makeInt(program, 12), makeInt(program, 39)]);
-        },
-        (e) => e instanceof WTypeError);
-}
-
-tests.ambiguousOverloadSimple = function()
-{
-    checkFail(
-        () => doPrep(`
-            void foo<T>(int, T) { }
-            void foo<T>(T, int) { }
-            void bar(int a, int b) { foo(a, b); }
-        `),
-        (e) => e instanceof WTypeError);
-}
-
-tests.ambiguousOverloadOverlapping = function()
-{
-    checkFail(
-        () => doPrep(`
-            void foo<T>(int, T) { }
-            void foo<T>(T, T) { }
-            void bar(int a, int b) { foo(a, b); }
-        `),
-        (e) => e instanceof WTypeError);
-}
-
-tests.ambiguousOverloadTieBreak = function()
-{
-    doPrep(`
-        void foo<T>(int, T) { }
-        void foo<T>(T, T) { }
-        void foo(int, int) { }
-        void bar(int a, int b) { foo(a, b); }
-    `);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 1)]), 16);
 }
 
 tests.intOverloadResolution = function()
@@ -1537,7 +1135,7 @@ tests.intOverloadResolution = function()
         int foo(float) { return 3; }
         int bar() { return foo(42); }
     `);
-    checkInt(program, callFunction(program, "bar", [], []), 1);
+    checkInt(program, callFunction(program, "bar", []), 1);
 }
 
 tests.intOverloadResolutionReverseOrder = function()
@@ -1548,83 +1146,7 @@ tests.intOverloadResolutionReverseOrder = function()
         int foo(int) { return 1; }
         int bar() { return foo(42); }
     `);
-    checkInt(program, callFunction(program, "bar", [], []), 1);
-}
-
-tests.intOverloadResolutionGeneric = function()
-{
-    let program = doPrep(`
-        int foo(int) { return 1; }
-        int foo<T>(T) { return 2; }
-        int bar() { return foo(42); }
-    `);
-    checkInt(program, callFunction(program, "bar", [], []), 1);
-}
-
-tests.intLiteralGeneric = function()
-{
-    let program = doPrep(`
-        int foo<T>(T x) { return 3478; }
-        int bar() { return foo(42); }
-    `);
-    checkInt(program, callFunction(program, "bar", [], []), 3478);
-}
-
-tests.intLiteralGenericWithProtocols = function()
-{
-    let program = doPrep(`
-        protocol MyConvertibleToInt {
-            operator int(MyConvertibleToInt);
-        }
-        int foo<T:MyConvertibleToInt>(T x) { return int(x); }
-        int bar() { return foo(42); }
-    `);
-    checkInt(program, callFunction(program, "bar", [], []), 42);
-}
-
-tests.uintLiteralGeneric = function()
-{
-    let program = doPrep(`
-        int foo<T>(T x) { return 3478; }
-        int bar() { return foo(42u); }
-    `);
-    checkInt(program, callFunction(program, "bar", [], []), 3478);
-}
-
-tests.uintLiteralGenericWithProtocols = function()
-{
-    let program = doPrep(`
-        protocol MyConvertibleToUint {
-            operator uint(MyConvertibleToUint);
-        }
-        uint foo<T:MyConvertibleToUint>(T x) { return uint(x); }
-        uint bar() { return foo(42u); }
-    `);
-    checkUint(program, callFunction(program, "bar", [], []), 42);
-}
-
-tests.intLiteralGenericSpecific = function()
-{
-    let program = doPrep(`
-        T foo<T>(T x) { return x; }
-        int bar() { return foo(int(42)); }
-    `);
-    checkInt(program, callFunction(program, "bar", [], []), 42);
-}
-
-tests.simpleConstexpr = function()
-{
-    let program = doPrep(`
-        int foo<int a>(int b)
-        {
-            return a + b;
-        }
-        int bar(int b)
-        {
-            return foo<42>(b);
-        }
-    `);
-    checkInt(program, callFunction(program, "bar", [], [makeInt(program, 58)]), 58 + 42);
+    checkInt(program, callFunction(program, "bar", []), 1);
 }
 
 tests.break = function()
@@ -1640,8 +1162,8 @@ tests.break = function()
             return x;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), 8);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 10)]), 20);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 1)]), 8);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 10)]), 20);
     program = doPrep(`
         int foo(int x)
         {
@@ -1658,8 +1180,8 @@ tests.break = function()
             
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), 7);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 10)]), 19);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 1)]), 7);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 10)]), 19);
     checkFail(
         () => doPrep(`
             int foo(int x)
@@ -1695,7 +1217,7 @@ tests.break = function()
                 return x;
             }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), 7);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 1)]), 7);
     program = doPrep(`
             int foo(int x)
             {
@@ -1705,7 +1227,7 @@ tests.break = function()
                 return x;
             }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), 1);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 1)]), 1);
     program = doPrep(`
             int foo()
             {
@@ -1714,7 +1236,7 @@ tests.break = function()
                 }
             }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 7);
+    checkInt(program, callFunction(program, "foo", []), 7);
     checkFail(
         () => doPrep(`
             int foo(int x)
@@ -1743,7 +1265,7 @@ tests.continue = function()
             return x;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), 18);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 1)]), 18);
     checkFail(
         () => doPrep(`
             int foo(int x)
@@ -1769,8 +1291,8 @@ tests.doWhile = function()
             return y;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), 8);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 11)]), 8);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 1)]), 8);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 11)]), 8);
     program = doPrep(`
         int foo(int x)
         {
@@ -1782,7 +1304,7 @@ tests.doWhile = function()
             return y;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), 8);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 1)]), 8);
     program = doPrep(`
         int foo(int x)
         {
@@ -1798,7 +1320,7 @@ tests.doWhile = function()
             return sum;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 19);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 9)]), 19);
 }
 
 tests.forLoop = function()
@@ -1814,9 +1336,9 @@ tests.forLoop = function()
             return sum;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 3);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 3)]), 3);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 10);
     program = doPrep(`
         int foo(int x)
         {
@@ -1827,9 +1349,9 @@ tests.forLoop = function()
             return sum;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 3);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 3)]), 3);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 10);
     program = doPrep(`
         int foo(int x)
         {
@@ -1841,9 +1363,9 @@ tests.forLoop = function()
             return sum;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 3);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 3)]), 3);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 10);
     program = doPrep(`
         int foo(int x)
         {
@@ -1856,10 +1378,10 @@ tests.forLoop = function()
             return sum;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 3);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 11);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 3)]), 3);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 6)]), 11);
     program = doPrep(`
         int foo(int x)
         {
@@ -1872,11 +1394,11 @@ tests.forLoop = function()
             return sum;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 3);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 10);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 3)]), 3);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 6)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7)]), 10);
     program = doPrep(`
         int foo(int x)
         {
@@ -1889,11 +1411,11 @@ tests.forLoop = function()
             return sum;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 3);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 15);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 21);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 3)]), 3);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 6)]), 15);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7)]), 21);
     program = doPrep(`
         int foo(int x)
         {
@@ -1907,11 +1429,11 @@ tests.forLoop = function()
             return sum;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 3);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 15);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 21);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 3)]), 3);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 6)]), 15);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7)]), 21);
     program = doPrep(`
         int foo(int x)
         {
@@ -1926,11 +1448,11 @@ tests.forLoop = function()
             return sum;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 3);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 15);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 21);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 3)]), 3);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 10);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 6)]), 15);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7)]), 21);
     checkFail(
         () => doPrep(`
             void foo(int x)
@@ -1950,11 +1472,11 @@ tests.forLoop = function()
             }
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 7);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 7);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 7);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 7);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 7);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 3)]), 7);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 7);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 7);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 6)]), 7);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7)]), 7);
     checkFail(
         () => doPrep(`
             int foo(int x)
@@ -1973,229 +1495,11 @@ tests.forLoop = function()
             }
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 7);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 7);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 7);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 7);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 7);
-}
-
-tests.chainConstexpr = function()
-{
-    let program = doPrep(`
-        int foo<int a>(int b)
-        {
-            return a + b;
-        }
-        int bar<int a>(int b)
-        {
-            return foo<a>(b);
-        }
-        int baz(int b)
-        {
-            return bar<42>(b);
-        }
-    `);
-    checkInt(program, callFunction(program, "baz", [], [makeInt(program, 58)]), 58 + 42);
-}
-
-tests.chainGeneric = function()
-{
-    let program = doPrep(`
-        T foo<T>(T x)
-        {
-            return x;
-        }
-        T bar<T>(thread T* ptr)
-        {
-            return *foo(ptr);
-        }
-        int baz(int x)
-        {
-            return bar(&x);
-        }
-    `);
-    checkInt(program, callFunction(program, "baz", [], [makeInt(program, 37)]), 37);
-}
-
-tests.chainStruct = function()
-{
-    let program = doPrep(`
-        struct Foo<T> {
-            T f;
-        }
-        struct Bar<T> {
-            Foo<thread T*> f;
-        }
-        int foo(thread Bar<int>* x)
-        {
-            return *x->f.f;
-        }
-        int bar(int a)
-        {
-            Bar<int> x;
-            x.f.f = &a;
-            return foo(&x);
-        }
-    `);
-    checkInt(program, callFunction(program, "bar", [], [makeInt(program, 4657)]), 4657);
-}
-
-tests.chainStructNewlyValid = function()
-{
-    let program = doPrep(`
-        struct Foo<T> {
-            T f;
-        }
-        struct Bar<T> {
-            Foo<device T*> f;
-        }
-        int foo(thread Bar<int>* x)
-        {
-            return *x->f.f;
-        }
-        int bar(device int* a)
-        {
-            Bar<int> x;
-            x.f.f = a;
-            return foo(&x);
-        }
-    `);
-    let buffer = new EBuffer(1);
-    buffer.set(0, 78453);
-    checkInt(program, callFunction(program, "bar", [], [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 78453);
-}
-
-tests.chainStructDevice = function()
-{
-    let program = doPrep(`
-        struct Foo<T> {
-            T f;
-        }
-        struct Bar<T> {
-            Foo<device T*> f;
-        }
-        int foo(thread Bar<int>* x)
-        {
-            return *x->f.f;
-        }
-        int bar(device int* a)
-        {
-            Bar<int> x;
-            x.f.f = a;
-            return foo(&x);
-        }
-    `);
-    let buffer = new EBuffer(1);
-    buffer.set(0, 79201);
-    checkInt(program, callFunction(program, "bar", [], [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 79201);
-}
-
-tests.paramChainStructDevice = function()
-{
-    let program = doPrep(`
-        struct Foo<T> {
-            T f;
-        }
-        struct Bar<T> {
-            Foo<T> f;
-        }
-        int foo(thread Bar<device int*>* x)
-        {
-            return *x->f.f;
-        }
-        int bar(device int* a)
-        {
-            Bar<device int*> x;
-            x.f.f = a;
-            return foo(&x);
-        }
-    `);
-    let buffer = new EBuffer(1);
-    buffer.set(0, 79201);
-    checkInt(program, callFunction(program, "bar", [], [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 79201);
-}
-
-tests.simpleProtocolExtends = function()
-{
-    let program = doPrep(`
-        protocol Foo {
-            void foo(thread Foo*);
-        }
-        protocol Bar : Foo {
-            void bar(thread Bar*);
-        }
-        void fuzz<T:Foo>(thread T* p)
-        {
-            foo(p);
-        }
-        void buzz<T:Bar>(thread T* p)
-        {
-            fuzz(p);
-            bar(p);
-        }
-        void foo(thread int* p)
-        {
-            *p = *p + 743;
-        }
-        void bar(thread int* p)
-        {
-            *p = *p + 91;
-        }
-        int thingy(int a)
-        {
-            buzz(&a);
-            return a;
-        }
-    `);
-    checkInt(program, callFunction(program, "thingy", [], [makeInt(program, 642)]), 642 + 743 + 91);
-}
-
-tests.protocolExtendsTwo = function()
-{
-    let program = doPrep(`
-        protocol Foo {
-            void foo(thread Foo*);
-        }
-        protocol Bar {
-            void bar(thread Bar*);
-        }
-        protocol Baz : Foo, Bar {
-            void baz(thread Baz*);
-        }
-        void fuzz<T:Foo>(thread T* p)
-        {
-            foo(p);
-        }
-        void buzz<T:Bar>(thread T* p)
-        {
-            bar(p);
-        }
-        void xuzz<T:Baz>(thread T* p)
-        {
-            fuzz(p);
-            buzz(p);
-            baz(p);
-        }
-        void foo(thread int* p)
-        {
-            *p = *p + 743;
-        }
-        void bar(thread int* p)
-        {
-            *p = *p + 91;
-        }
-        void baz(thread int* p)
-        {
-            *p = *p + 39;
-        }
-        int thingy(int a)
-        {
-            xuzz(&a);
-            return a;
-        }
-    `);
-    checkInt(program, callFunction(program, "thingy", [], [makeInt(program, 642)]), 642 + 743 + 91 + 39);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 3)]), 7);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 4)]), 7);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 5)]), 7);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 6)]), 7);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 7)]), 7);
 }
 
 tests.prefixPlusPlus = function()
@@ -2207,7 +1511,7 @@ tests.prefixPlusPlus = function()
             return x;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 65);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 64)]), 65);
 }
 
 tests.prefixPlusPlusResult = function()
@@ -2218,7 +1522,7 @@ tests.prefixPlusPlusResult = function()
             return ++x;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 65);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 64)]), 65);
 }
 
 tests.postfixPlusPlus = function()
@@ -2230,7 +1534,7 @@ tests.postfixPlusPlus = function()
             return x;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 65);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 64)]), 65);
 }
 
 tests.postfixPlusPlusResult = function()
@@ -2241,7 +1545,7 @@ tests.postfixPlusPlusResult = function()
             return x++;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 64);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 64)]), 64);
 }
 
 tests.prefixMinusMinus = function()
@@ -2253,7 +1557,7 @@ tests.prefixMinusMinus = function()
             return x;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 63);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 64)]), 63);
 }
 
 tests.prefixMinusMinusResult = function()
@@ -2264,7 +1568,7 @@ tests.prefixMinusMinusResult = function()
             return --x;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 63);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 64)]), 63);
 }
 
 tests.postfixMinusMinus = function()
@@ -2276,7 +1580,7 @@ tests.postfixMinusMinus = function()
             return x;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 63);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 64)]), 63);
 }
 
 tests.postfixMinusMinusResult = function()
@@ -2287,7 +1591,7 @@ tests.postfixMinusMinusResult = function()
             return x--;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 64);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 64)]), 64);
 }
 
 tests.plusEquals = function()
@@ -2299,7 +1603,7 @@ tests.plusEquals = function()
             return x;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 + 42);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 385)]), 385 + 42);
 }
 
 tests.plusEqualsResult = function()
@@ -2310,7 +1614,7 @@ tests.plusEqualsResult = function()
             return x += 42;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 + 42);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 385)]), 385 + 42);
 }
 
 tests.minusEquals = function()
@@ -2322,7 +1626,7 @@ tests.minusEquals = function()
             return x;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 - 42);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 385)]), 385 - 42);
 }
 
 tests.minusEqualsResult = function()
@@ -2333,7 +1637,7 @@ tests.minusEqualsResult = function()
             return x -= 42;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 - 42);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 385)]), 385 - 42);
 }
 
 tests.timesEquals = function()
@@ -2345,7 +1649,7 @@ tests.timesEquals = function()
             return x;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 * 42);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 385)]), 385 * 42);
 }
 
 tests.timesEqualsResult = function()
@@ -2356,7 +1660,7 @@ tests.timesEqualsResult = function()
             return x *= 42;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 * 42);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 385)]), 385 * 42);
 }
 
 tests.divideEquals = function()
@@ -2368,7 +1672,7 @@ tests.divideEquals = function()
             return x;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), (385 / 42) | 0);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 385)]), (385 / 42) | 0);
 }
 
 tests.divideEqualsResult = function()
@@ -2379,7 +1683,7 @@ tests.divideEqualsResult = function()
             return x /= 42;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), (385 / 42) | 0);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 385)]), (385 / 42) | 0);
 }
 
 tests.twoIntLiterals = function()
@@ -2390,67 +1694,7 @@ tests.twoIntLiterals = function()
             return 42 == 42;
         }
     `);
-    checkBool(program, callFunction(program, "foo", [], []), true);
-}
-
-tests.unifyDifferentLiterals = function()
-{
-    checkFail(
-        () => doPrep(`
-            void bar<T>(T, T)
-            {
-            }
-            void foo()
-            {
-                bar(42, 42u);
-            }
-        `),
-        (e) => e instanceof WTypeError);
-}
-
-tests.unifyDifferentLiteralsBackwards = function()
-{
-    checkFail(
-        () => doPrep(`
-            void bar<T>(T, T)
-            {
-            }
-            void foo()
-            {
-                bar(42u, 42);
-            }
-        `),
-        (e) => e instanceof WTypeError);
-}
-
-tests.unifyVeryDifferentLiterals = function()
-{
-    checkFail(
-        () => doPrep(`
-            void bar<T>(T, T)
-            {
-            }
-            void foo()
-            {
-                bar(42, null);
-            }
-        `),
-        (e) => e instanceof WTypeError);
-}
-
-tests.unifyVeryDifferentLiteralsBackwards = function()
-{
-    checkFail(
-        () => doPrep(`
-            void bar<T>(T, T)
-            {
-            }
-            void foo()
-            {
-                bar(null, 42);
-            }
-        `),
-        (e) => e instanceof WTypeError);
+    checkBool(program, callFunction(program, "foo", []), true);
 }
 
 tests.assignUintToInt = function()
@@ -2479,7 +1723,7 @@ tests.buildArrayThenSumIt = function()
             return result;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 42 * 5 + 42 * 41 / 2);
+    checkInt(program, callFunction(program, "foo", []), 42 * 5 + 42 * 41 / 2);
 }
 
 tests.buildArrayThenSumItUsingArrayReference = function()
@@ -2500,7 +1744,7 @@ tests.buildArrayThenSumItUsingArrayReference = function()
             return bar(@array);
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 42 * 5 + 42 * 41 / 2);
+    checkInt(program, callFunction(program, "foo", []), 42 * 5 + 42 * 41 / 2);
 }
 
 tests.overrideSubscriptStruct = function()
@@ -2526,7 +1770,7 @@ tests.overrideSubscriptStruct = function()
             return foo[0] + foo[1] * 3;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 498 + 19 * 3);
+    checkInt(program, callFunction(program, "foo", []), 498 + 19 * 3);
 }
 
 tests.overrideSubscriptStructAndDoStores = function()
@@ -2552,7 +1796,7 @@ tests.overrideSubscriptStructAndDoStores = function()
             return foo.x + foo.y;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 498 + 19);
+    checkInt(program, callFunction(program, "foo", []), 498 + 19);
 }
 
 tests.overrideSubscriptStructAndUsePointers = function()
@@ -2582,7 +1826,7 @@ tests.overrideSubscriptStructAndUsePointers = function()
             return bar(&foo);
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 498 + 19);
+    checkInt(program, callFunction(program, "foo", []), 498 + 19);
 }
 
 tests.overrideSubscriptStructAndUsePointersIncorrectly = function()
@@ -2629,7 +1873,7 @@ tests.makeArrayRefFromLocal = function()
             return bar(@x);
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 48);
+    checkInt(program, callFunction(program, "foo", []), 48);
 }
 
 tests.makeArrayRefFromPointer = function()
@@ -2649,7 +1893,7 @@ tests.makeArrayRefFromPointer = function()
             return baz(&x);
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 48);
+    checkInt(program, callFunction(program, "foo", []), 48);
 }
 
 tests.makeArrayRefFromArrayRef = function()
@@ -2682,7 +1926,7 @@ tests.simpleLength = function()
             return (@array).length;
         }
     `);
-    checkUint(program, callFunction(program, "foo", [], []), 754);
+    checkUint(program, callFunction(program, "foo", []), 754);
 }
 
 tests.nonArrayRefArrayLengthSucceed = function()
@@ -2693,8 +1937,14 @@ tests.nonArrayRefArrayLengthSucceed = function()
             float[754] array;
             return array.length;
         }
+        uint bar()
+        {
+            int[754] array;
+            return array.length;
+        }
     `);
-    checkUint(program, callFunction(program, "foo", [], []), 754);
+    checkUint(program, callFunction(program, "foo", []), 754);
+    checkUint(program, callFunction(program, "bar", []), 754);
 }
 
 tests.nonArrayRefArrayLengthFail = function()
@@ -2710,42 +1960,6 @@ tests.nonArrayRefArrayLengthFail = function()
         e => e instanceof WTypeError);
 }
 
-tests.constexprIsNotLValuePtr = function()
-{
-    checkFail(
-        () => doPrep(`
-            thread int* foo<int x>()
-            {
-                return &x;
-            }
-        `),
-        e => e instanceof WTypeError);
-}
-
-tests.constexprIsNotLValueAssign = function()
-{
-    checkFail(
-        () => doPrep(`
-            void foo<int x>()
-            {
-                x = 42;
-            }
-        `),
-        e => e instanceof WTypeError);
-}
-
-tests.constexprIsNotLValueRMW = function()
-{
-    checkFail(
-        () => doPrep(`
-            void foo<int x>()
-            {
-                x += 42;
-            }
-        `),
-        e => e instanceof WTypeError);
-}
-
 tests.assignLength = function()
 {
     checkFail(
@@ -2756,7 +1970,7 @@ tests.assignLength = function()
                 (@array).length = 42;
             }
         `),
-        (e) => e instanceof WTypeError && e.message.indexOf("Have neither ander nor setter") != -1);
+        (e) => e instanceof WTypeError);
 }
 
 tests.assignLengthHelper = function()
@@ -2773,7 +1987,7 @@ tests.assignLengthHelper = function()
                 bar(@array);
             }
         `),
-        (e) => e instanceof WTypeError && e.message.indexOf("Have neither ander nor setter") != -1);
+        (e) => e instanceof WTypeError);
 }
 
 tests.simpleGetter = function()
@@ -2793,7 +2007,7 @@ tests.simpleGetter = function()
             return foo.y;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 7804);
+    checkInt(program, callFunction(program, "foo", []), 7804);
 }
 
 tests.simpleSetter = function()
@@ -2818,236 +2032,7 @@ tests.simpleSetter = function()
             return foo.x;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 7804);
-}
-
-tests.genericAccessors = function()
-{
-    let program = doPrep(`
-        struct Foo<T> {
-            T x;
-            T[3] y;
-        }
-        struct Bar<T> {
-            T x;
-            T y;
-        }
-        Bar<T> operator.z<T>(Foo<T> foo)
-        {
-            Bar<T> result;
-            result.x = foo.x;
-            result.y = foo.y[1];
-            return result;
-        }
-        Foo<T> operator.z=<T>(Foo<T> foo, Bar<T> bar)
-        {
-            foo.x = bar.x;
-            foo.y[1] = bar.y;
-            return foo;
-        }
-        T operator.sum<T:Addable>(Foo<T> foo)
-        {
-            return foo.x + foo.y[0] + foo.y[1] + foo.y[2];
-        }
-        T operator.sum<T:Addable>(Bar<T> bar)
-        {
-            return bar.x + bar.y;
-        }
-        operator<T> Bar<T>(T x, T y)
-        {
-            Bar<T> result;
-            result.x = x;
-            result.y = y;
-            return result;
-        }
-        void setup(thread Foo<int>* foo)
-        {
-            foo->x = 1;
-            foo->y[0] = 2;
-            foo->y[1] = 3;
-            foo->y[2] = 4;
-        }
-        int testSuperBasic()
-        {
-            Foo<int> foo;
-            setup(&foo);
-            return foo.sum;
-        }
-        int testZSetterDidSetY()
-        {
-            Foo<int> foo;
-            foo.z = Bar<int>(53, 932);
-            return foo.y[1];
-        }
-        int testZSetter()
-        {
-            Foo<int> foo;
-            foo.z = Bar<int>(53, 932);
-            return foo.sum;
-        }
-        int testZGetter()
-        {
-            Foo<int> foo;
-            // This deliberately does not call setup() just so we test this syntax.
-            foo.x = 1;
-            foo.y[0] = 2;
-            foo.y[1] = 3;
-            foo.y[2] = 4;
-            return foo.z.sum;
-        }
-        int testLValueEmulation()
-        {
-            Foo<int> foo;
-            setup(&foo);
-            foo.z.y *= 5;
-            return foo.sum;
-        }
-    `);
-    checkInt(program, callFunction(program, "testSuperBasic", [], []), 1 + 2 + 3 + 4);
-    checkInt(program, callFunction(program, "testZSetterDidSetY", [], []), 932);
-    checkInt(program, callFunction(program, "testZSetter", [], []), 53 + 932);
-    checkInt(program, callFunction(program, "testZGetter", [], []), 1 + 3);
-    checkInt(program, callFunction(program, "testLValueEmulation", [], []), 1 + 2 + 3 * 5 + 4);
-}
-
-tests.bitSubscriptAccessor = function()
-{
-    let program = doPrep(`
-        protocol MyBitmaskable : Equatable {
-            MyBitmaskable operator&(MyBitmaskable, MyBitmaskable);
-            MyBitmaskable operator|(MyBitmaskable, MyBitmaskable);
-            MyBitmaskable operator~(MyBitmaskable);
-            MyBitmaskable operator<<(MyBitmaskable, uint);
-            MyBitmaskable operator>>(MyBitmaskable, uint);
-            operator MyBitmaskable(int);
-        }
-        T maskForBitIndex<T:MyBitmaskable>(uint index)
-        {
-            return T(1) << index;
-        }
-        bool operator[]<T:MyBitmaskable>(T value, uint index)
-        {
-            return bool(value & maskForBitIndex<T>(index));
-        }
-        T operator[]=<T:MyBitmaskable>(T value, uint index, bool bit)
-        {
-            T mask = maskForBitIndex<T>(index);
-            if (bit)
-                value |= mask;
-            else
-                value &= ~mask;
-            return value;
-        }
-        uint operator.length(int)
-        {
-            return 32;
-        }
-        uint operator.length(uint)
-        {
-            return 32;
-        }
-        int testIntSetBit3()
-        {
-            int foo;
-            foo[3] = true;
-            return foo;
-        }
-        bool testIntSetGetBit5()
-        {
-            int foo;
-            foo[5] = true;
-            return foo[5];
-        }
-        bool testIntGetBit1()
-        {
-            int foo;
-            return foo[1];
-        }
-        int testUintSumBits()
-        {
-            int foo = 42;
-            int result;
-            for (uint i = 0; i < foo.length; ++i) {
-                if (foo[i])
-                    result++;
-            }
-            return result;
-        }
-        int testUintSwapBits()
-        {
-            int foo = 42;
-            for (uint i = 0; i < foo.length / 2; ++i) {
-                bool tmp = foo[i];
-                foo[i] = foo[foo.length - i - 1];
-                foo[foo.length - i - 1] = tmp;
-            }
-            return foo;
-        }
-        struct Foo {
-            uint f;
-            uint g;
-        }
-        operator Foo(uint f, uint g)
-        {
-            Foo result;
-            result.f = f;
-            result.g = g;
-            return result;
-        }
-        int operator.h(Foo foo)
-        {
-            return int((foo.f & 0xffff) | ((foo.g & 0xffff) << 16));
-        }
-        Foo operator.h=(Foo foo, int value)
-        {
-            foo.f &= ~0xffffu;
-            foo.f |= uint(value) & 0xffff;
-            foo.g &= ~0xffffu;
-            foo.g |= (uint(value) >> 16) & 0xffff;
-            return foo;
-        }
-        int testLValueEmulation()
-        {
-            Foo foo;
-            foo.f = 42;
-            foo.g = 37;
-            for (uint i = 0; i < foo.h.length; ++i)
-                foo.h[i] ^= true;
-            return int(foo.f + foo.g);
-        }
-        struct Bar {
-            Foo a;
-            Foo b;
-        }
-        Foo operator.c(Bar bar)
-        {
-            return Foo(uint(bar.a.h), uint(bar.b.h));
-        }
-        Bar operator.c=(Bar bar, Foo foo)
-        {
-            bar.a.h = int(foo.f);
-            bar.b.h = int(foo.g);
-            return bar;
-        }
-        int testCrazyLValueEmulation()
-        {
-            Bar bar;
-            bar.a.f = 1;
-            bar.a.g = 2;
-            bar.b.f = 3;
-            bar.b.g = 4;
-            for (uint i = 0; i < bar.c.h.length; i += 2)
-                bar.c.h[i] ^= true;
-            return int(bar.a.f + bar.a.g + bar.b.f + bar.b.g);
-        }
-    `);
-    checkInt(program, callFunction(program, "testIntSetBit3", [], []), 8);
-    checkBool(program, callFunction(program, "testIntSetGetBit5", [], []), true);
-    checkBool(program, callFunction(program, "testIntGetBit1", [], []), false);
-    checkInt(program, callFunction(program, "testUintSumBits", [], []), 3);
-    checkInt(program, callFunction(program, "testUintSwapBits", [], []), 1409286144);
-    checkInt(program, callFunction(program, "testLValueEmulation", [], []), 130991);
-    checkInt(program, callFunction(program, "testCrazyLValueEmulation", [], []), 43696);
+    checkInt(program, callFunction(program, "foo", []), 7804);
 }
 
 tests.nestedSubscriptLValueEmulationSimple = function()
@@ -3150,119 +2135,93 @@ tests.nestedSubscriptLValueEmulationSimple = function()
             return sum(baz);
         }
     `);
-    checkInt(program, callFunction(program, "testSetValuesAndSum", [], []), 1575);
-    checkInt(program, callFunction(program, "testSetValuesMutateValuesAndSum", [], []), 5565);
+    checkInt(program, callFunction(program, "testSetValuesAndSum", []), 1575);
+    checkInt(program, callFunction(program, "testSetValuesMutateValuesAndSum", []), 5565);
 }
 
-tests.nestedSubscriptLValueEmulationGeneric = function()
+tests.operatorBool = function()
 {
     let program = doPrep(`
-        struct Foo<T> {
-            T[7] array;
-        }
-        T operator[]<T>(Foo<T> foo, uint index)
+        bool boolFromUcharFalse() { return bool(uchar(0)); }
+        bool boolFromUcharTrue() { return bool(uchar(1)); }
+
+        bool boolFromUintFalse() { return bool(uint(0)); }
+        bool boolFromUintTrue() { return bool(uint(1)); }
+
+        bool boolFromIntFalse() { return bool(int(0)); }
+        bool boolFromIntTrue() { return bool(int(1)); }
+
+        bool boolFromFloatFalse() { return bool(float(0)); }
+        bool boolFromFloatTrue() { return bool(float(1)); }
+
+        bool boolFromInt2False() { return bool(int2(0, 0)); }
+        bool boolFromInt2True1() { return bool(int2(1, 0)); }
+        bool boolFromInt2True2() { return bool(int2(0, 1)); }
+
+        bool boolFromFloat3False() { return bool(float3(0, 0, 0)); }
+        bool boolFromFloat3True1() { return bool(float3(1, 0, 0)); }
+        bool boolFromFloat3True2() { return bool(float3(0, 1, 0)); }
+        bool boolFromFloat3True3() { return bool(float3(0, 0, 1)); }
+
+        bool boolFromUint4False() { return bool(uint4(0, 0, 0, 0)); }
+        bool boolFromUint4True1() { return bool(uint4(1, 0, 0, 0)); }
+        bool boolFromUint4True2() { return bool(uint4(0, 1, 0, 0)); }
+        bool boolFromUint4True3() { return bool(uint4(0, 0, 1, 0)); }
+        bool boolFromUint4True4() { return bool(uint4(0, 0, 0, 1)); }
+
+        struct X { int x; }
+
+        bool boolFromStructFalse()
         {
-            return foo.array[index];
+            X x;
+            return bool(x);
         }
-        Foo<T> operator[]=<T>(Foo<T> foo, uint index, T value)
+
+        bool boolFromStructTrue()
         {
-            foo.array[index] = value;
-            return foo;
+            X x;
+            x.x = 1;
+            return bool(x);
         }
-        uint operator.length<T>(Foo<T> foo)
-        {
-            return foo.array.length;
-        }
-        protocol MyAddable {
-            MyAddable operator+(MyAddable, MyAddable);
-        }
-        T sum<T:MyAddable>(Foo<T> foo)
-        {
-            T result;
-            for (uint i = foo.length; i--;)
-                result += foo[i];
-            return result;
-        }
-        struct Bar<T> {
-            Foo<T>[6] array;
-        }
-        uint operator.length<T>(Bar<T> bar)
-        {
-            return bar.array.length;
-        }
-        Foo<T> operator[]<T>(Bar<T> bar, uint index)
-        {
-            return bar.array[index];
-        }
-        Bar<T> operator[]=<T>(Bar<T> bar, uint index, Foo<T> value)
-        {
-            bar.array[index] = value;
-            return bar;
-        }
-        T sum<T:MyAddable>(Bar<T> bar)
-        {
-            T result;
-            for (uint i = bar.length; i--;)
-                result += sum(bar[i]);
-            return result;
-        }
-        struct Baz<T> {
-            Bar<T>[5] array;
-        }
-        Bar<T> operator[]<T>(Baz<T> baz, uint index)
-        {
-            return baz.array[index];
-        }
-        Baz<T> operator[]=<T>(Baz<T> baz, uint index, Bar<T> value)
-        {
-            baz.array[index] = value;
-            return baz;
-        }
-        uint operator.length<T>(Baz<T> baz)
-        {
-            return baz.array.length;
-        }
-        T sum<T:MyAddable>(Baz<T> baz)
-        {
-            T result;
-            for (uint i = baz.length; i--;)
-                result += sum(baz[i]);
-            return result;
-        }
-        protocol MyConvertibleFromUint {
-            operator MyConvertibleFromUint(uint);
-        }
-        protocol SetValuable : MyAddable, MyConvertibleFromUint { }
-        void setValues<T:SetValuable>(thread Baz<T>* baz)
-        {
-            for (uint i = baz->length; i--;) {
-                for (uint j = (*baz)[i].length; j--;) {
-                    for (uint k = (*baz)[i][j].length; k--;)
-                        (*baz)[i][j][k] = T(i + j + k);
-                }
-            }
-        }
-        int testSetValuesAndSum()
-        {
-            Baz<int> baz;
-            setValues(&baz);
-            return sum(baz);
-        }
-        int testSetValuesMutateValuesAndSum()
-        {
-            Baz<int> baz;
-            setValues(&baz);
-            for (uint i = baz.length; i--;) {
-                for (uint j = baz[i].length; j--;) {
-                    for (uint k = baz[i][j].length; k--;)
-                        baz[i][j][k] *= int(k);
-                }
-            }
-            return sum(baz);
-        }
+
+        enum Y { A, B }
+
+        bool boolFromEnumFalse() { return bool(Y.A); }
+        bool boolFromEnumTrue() { return bool(Y.B); }
     `);
-    checkInt(program, callFunction(program, "testSetValuesAndSum", [], []), 1575);
-    checkInt(program, callFunction(program, "testSetValuesMutateValuesAndSum", [], []), 5565);
+
+    checkBool(program, callFunction(program, "boolFromUcharFalse", []), false);
+    checkBool(program, callFunction(program, "boolFromUcharTrue", []), true);
+
+    checkBool(program, callFunction(program, "boolFromUintFalse", []), false);
+    checkBool(program, callFunction(program, "boolFromUintTrue", []), true);
+
+    checkBool(program, callFunction(program, "boolFromIntFalse", []), false);
+    checkBool(program, callFunction(program, "boolFromIntTrue", []), true);
+
+    checkBool(program, callFunction(program, "boolFromFloatFalse", []), false);
+    checkBool(program, callFunction(program, "boolFromFloatTrue", []), true);
+
+    checkBool(program, callFunction(program, "boolFromInt2False", []), false);
+    checkBool(program, callFunction(program, "boolFromInt2True1", []), true);
+    checkBool(program, callFunction(program, "boolFromInt2True2", []), true);
+
+    checkBool(program, callFunction(program, "boolFromFloat3False", []), false);
+    checkBool(program, callFunction(program, "boolFromFloat3True1", []), true);
+    checkBool(program, callFunction(program, "boolFromFloat3True2", []), true);
+    checkBool(program, callFunction(program, "boolFromFloat3True3", []), true);
+
+    checkBool(program, callFunction(program, "boolFromUint4False", []), false);
+    checkBool(program, callFunction(program, "boolFromUint4True1", []), true);
+    checkBool(program, callFunction(program, "boolFromUint4True2", []), true);
+    checkBool(program, callFunction(program, "boolFromUint4True3", []), true);
+    checkBool(program, callFunction(program, "boolFromUint4True4", []), true);
+
+    checkBool(program, callFunction(program, "boolFromStructFalse", []), false);
+    checkBool(program, callFunction(program, "boolFromStructTrue", []), true);
+
+    checkBool(program, callFunction(program, "boolFromEnumFalse", []), false);
+    checkBool(program, callFunction(program, "boolFromEnumTrue", []), true);
 }
 
 tests.boolBitAnd = function()
@@ -3273,10 +2232,10 @@ tests.boolBitAnd = function()
             return a & b;
         }
     `);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, false)]), false);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, false)]), false);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, true)]), false);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, true)]), true);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, false), makeBool(program, false)]), false);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, true), makeBool(program, false)]), false);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, false), makeBool(program, true)]), false);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, true), makeBool(program, true)]), true);
 }
 
 tests.boolBitOr = function()
@@ -3287,10 +2246,10 @@ tests.boolBitOr = function()
             return a | b;
         }
     `);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, false)]), false);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, false)]), true);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, true)]), true);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, true)]), true);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, false), makeBool(program, false)]), false);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, true), makeBool(program, false)]), true);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, false), makeBool(program, true)]), true);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, true), makeBool(program, true)]), true);
 }
 
 tests.boolBitXor = function()
@@ -3301,10 +2260,10 @@ tests.boolBitXor = function()
             return a ^ b;
         }
     `);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, false)]), false);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, false)]), true);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, true)]), true);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, true)]), false);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, false), makeBool(program, false)]), false);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, true), makeBool(program, false)]), true);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, false), makeBool(program, true)]), true);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, true), makeBool(program, true)]), false);
 }
 
 tests.boolBitNot = function()
@@ -3315,8 +2274,8 @@ tests.boolBitNot = function()
             return ~a;
         }
     `);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false)]), true);
-    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true)]), false);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, false)]), true);
+    checkBool(program, callFunction(program, "foo", [makeBool(program, true)]), false);
 }
 
 tests.intBitAnd = function()
@@ -3327,10 +2286,10 @@ tests.intBitAnd = function()
             return a & b;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1), makeInt(program, 7)]), 1);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 65535), makeInt(program, 42)]), 42);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, -1), makeInt(program, -7)]), -7);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0), makeInt(program, 85732)]), 0);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 1), makeInt(program, 7)]), 1);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 65535), makeInt(program, 42)]), 42);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, -1), makeInt(program, -7)]), -7);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 0), makeInt(program, 85732)]), 0);
 }
 
 tests.intBitOr = function()
@@ -3341,10 +2300,10 @@ tests.intBitOr = function()
             return a | b;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1), makeInt(program, 7)]), 7);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 65535), makeInt(program, 42)]), 65535);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, -1), makeInt(program, -7)]), -1);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0), makeInt(program, 85732)]), 85732);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 1), makeInt(program, 7)]), 7);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 65535), makeInt(program, 42)]), 65535);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, -1), makeInt(program, -7)]), -1);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 0), makeInt(program, 85732)]), 85732);
 }
 
 tests.intBitXor = function()
@@ -3355,10 +2314,10 @@ tests.intBitXor = function()
             return a ^ b;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1), makeInt(program, 7)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 65535), makeInt(program, 42)]), 65493);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, -1), makeInt(program, -7)]), 6);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0), makeInt(program, 85732)]), 85732);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 1), makeInt(program, 7)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 65535), makeInt(program, 42)]), 65493);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, -1), makeInt(program, -7)]), 6);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 0), makeInt(program, 85732)]), 85732);
 }
 
 tests.intBitNot = function()
@@ -3369,10 +2328,10 @@ tests.intBitNot = function()
             return ~a;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), -2);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 65535)]), -65536);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, -1)]), 0);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0)]), -1);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 1)]), -2);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 65535)]), -65536);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, -1)]), 0);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 0)]), -1);
 }
 
 tests.intLShift = function()
@@ -3383,10 +2342,10 @@ tests.intLShift = function()
             return a << b;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1), makeUint(program, 7)]), 128);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 65535), makeUint(program, 2)]), 262140);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, -1), makeUint(program, 5)]), -32);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0), makeUint(program, 3)]), 0);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 1), makeUint(program, 7)]), 128);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 65535), makeUint(program, 2)]), 262140);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, -1), makeUint(program, 5)]), -32);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 0), makeUint(program, 3)]), 0);
 }
 
 tests.intRShift = function()
@@ -3397,10 +2356,10 @@ tests.intRShift = function()
             return a >> b;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1), makeUint(program, 7)]), 0);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 65535), makeUint(program, 2)]), 16383);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, -1), makeUint(program, 5)]), -1);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0), makeUint(program, 3)]), 0);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 1), makeUint(program, 7)]), 0);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 65535), makeUint(program, 2)]), 16383);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, -1), makeUint(program, 5)]), -1);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 0), makeUint(program, 3)]), 0);
 }
 
 tests.uintBitAnd = function()
@@ -3411,10 +2370,10 @@ tests.uintBitAnd = function()
             return a & b;
         }
     `);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 1), makeUint(program, 7)]), 1);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 65535), makeUint(program, 42)]), 42);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, -1), makeUint(program, -7)]), 4294967289);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0), makeUint(program, 85732)]), 0);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 1), makeUint(program, 7)]), 1);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 65535), makeUint(program, 42)]), 42);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, -1), makeUint(program, -7)]), 4294967289);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 0), makeUint(program, 85732)]), 0);
 }
 
 tests.uintBitOr = function()
@@ -3425,10 +2384,10 @@ tests.uintBitOr = function()
             return a | b;
         }
     `);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 1), makeUint(program, 7)]), 7);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 65535), makeUint(program, 42)]), 65535);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, -1), makeUint(program, -7)]), 4294967295);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0), makeUint(program, 85732)]), 85732);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 1), makeUint(program, 7)]), 7);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 65535), makeUint(program, 42)]), 65535);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, -1), makeUint(program, -7)]), 4294967295);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 0), makeUint(program, 85732)]), 85732);
 }
 
 tests.uintBitXor = function()
@@ -3439,10 +2398,10 @@ tests.uintBitXor = function()
             return a ^ b;
         }
     `);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 1), makeUint(program, 7)]), 6);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 65535), makeUint(program, 42)]), 65493);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, -1), makeUint(program, -7)]), 6);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0), makeUint(program, 85732)]), 85732);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 1), makeUint(program, 7)]), 6);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 65535), makeUint(program, 42)]), 65493);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, -1), makeUint(program, -7)]), 6);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 0), makeUint(program, 85732)]), 85732);
 }
 
 tests.uintBitNot = function()
@@ -3453,10 +2412,10 @@ tests.uintBitNot = function()
             return ~a;
         }
     `);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 1)]), 4294967294);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 65535)]), 4294901760);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, -1)]), 0);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0)]), 4294967295);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 1)]), 4294967294);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 65535)]), 4294901760);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, -1)]), 0);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 0)]), 4294967295);
 }
 
 tests.uintLShift = function()
@@ -3467,10 +2426,10 @@ tests.uintLShift = function()
             return a << b;
         }
     `);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 1), makeUint(program, 7)]), 128);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 65535), makeUint(program, 2)]), 262140);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, -1), makeUint(program, 5)]), 4294967264);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0), makeUint(program, 3)]), 0);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 1), makeUint(program, 7)]), 128);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 65535), makeUint(program, 2)]), 262140);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, -1), makeUint(program, 5)]), 4294967264);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 0), makeUint(program, 3)]), 0);
 }
 
 tests.uintRShift = function()
@@ -3481,94 +2440,94 @@ tests.uintRShift = function()
             return a >> b;
         }
     `);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 1), makeUint(program, 7)]), 0);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 65535), makeUint(program, 2)]), 16383);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, -1), makeUint(program, 5)]), 134217727);
-    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0), makeUint(program, 3)]), 0);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 1), makeUint(program, 7)]), 0);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 65535), makeUint(program, 2)]), 16383);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, -1), makeUint(program, 5)]), 134217727);
+    checkUint(program, callFunction(program, "foo", [makeUint(program, 0), makeUint(program, 3)]), 0);
 }
 
-tests.uint8BitAnd = function()
+tests.ucharBitAnd = function()
 {
     let program = doPrep(`
-        uint8 foo(uint8 a, uint8 b)
+        uchar foo(uchar a, uchar b)
         {
             return a & b;
         }
     `);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 1), makeUint8(program, 7)]), 1);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 65535), makeUint8(program, 42)]), 42);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, -1), makeUint8(program, -7)]), 249);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0), makeUint8(program, 85732)]), 0);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 1), makeUchar(program, 7)]), 1);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 65535), makeUchar(program, 42)]), 42);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, -1), makeUchar(program, -7)]), 249);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 0), makeUchar(program, 85732)]), 0);
 }
 
-tests.uint8BitOr = function()
+tests.ucharBitOr = function()
 {
     let program = doPrep(`
-        uint8 foo(uint8 a, uint8 b)
+        uchar foo(uchar a, uchar b)
         {
             return a | b;
         }
     `);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 1), makeUint8(program, 7)]), 7);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 65535), makeUint8(program, 42)]), 255);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, -1), makeUint8(program, -7)]), 255);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0), makeUint8(program, 85732)]), 228);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 1), makeUchar(program, 7)]), 7);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 65535), makeUchar(program, 42)]), 255);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, -1), makeUchar(program, -7)]), 255);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 0), makeUchar(program, 85732)]), 228);
 }
 
-tests.uint8BitXor = function()
+tests.ucharBitXor = function()
 {
     let program = doPrep(`
-        uint8 foo(uint8 a, uint8 b)
+        uchar foo(uchar a, uchar b)
         {
             return a ^ b;
         }
     `);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 1), makeUint8(program, 7)]), 6);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 65535), makeUint8(program, 42)]), 213);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, -1), makeUint8(program, -7)]), 6);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0), makeUint8(program, 85732)]), 228);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 1), makeUchar(program, 7)]), 6);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 65535), makeUchar(program, 42)]), 213);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, -1), makeUchar(program, -7)]), 6);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 0), makeUchar(program, 85732)]), 228);
 }
 
-tests.uint8BitNot = function()
+tests.ucharBitNot = function()
 {
     let program = doPrep(`
-        uint8 foo(uint8 a)
+        uchar foo(uchar a)
         {
             return ~a;
         }
     `);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 1)]), 254);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 65535)]), 0);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, -1)]), 0);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0)]), 255);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 1)]), 254);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 65535)]), 0);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, -1)]), 0);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 0)]), 255);
 }
 
-tests.uint8LShift = function()
+tests.ucharLShift = function()
 {
     let program = doPrep(`
-        uint8 foo(uint8 a, uint b)
+        uchar foo(uchar a, uint b)
         {
             return a << b;
         }
     `);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 1), makeUint(program, 7)]), 128);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 65535), makeUint(program, 2)]), 252);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, -1), makeUint(program, 5)]), 224);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0), makeUint(program, 3)]), 0);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 1), makeUint(program, 7)]), 128);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 65535), makeUint(program, 2)]), 252);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, -1), makeUint(program, 5)]), 224);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 0), makeUint(program, 3)]), 0);
 }
 
-tests.uint8RShift = function()
+tests.ucharRShift = function()
 {
     let program = doPrep(`
-        uint8 foo(uint8 a, uint b)
+        uchar foo(uchar a, uint b)
         {
             return a >> b;
         }
     `);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 1), makeUint(program, 7)]), 0);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 65535), makeUint(program, 2)]), 255);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, -1), makeUint(program, 5)]), 255);
-    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0), makeUint(program, 3)]), 0);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 1), makeUint(program, 7)]), 0);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 65535), makeUint(program, 2)]), 255);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, -1), makeUint(program, 5)]), 255);
+    checkUchar(program, callFunction(program, "foo", [makeUchar(program, 0), makeUint(program, 3)]), 0);
 }
 
 tests.floatMath = function()
@@ -3624,17 +2583,17 @@ tests.floatMath = function()
             return float(x);
         }
     `);
-    checkBool(program, callFunction(program, "foo", [], []), true);
-    checkBool(program, callFunction(program, "foo2", [], []), true);
-    checkBool(program, callFunction(program, "foo3", [], []), true);
-    checkBool(program, callFunction(program, "foo4", [], []), true);
-    checkBool(program, callFunction(program, "foo5", [], []), true);
-    checkFloat(program, callFunction(program, "foo6", [], []), 7.5);
-    checkFloat(program, callFunction(program, "foo7", [], []), 7.5);
-    checkFloat(program, callFunction(program, "foo9", [], []), 7.5);
-    checkFloat(program, callFunction(program, "foo10", [], []), 7.5);
-    checkFloat(program, callFunction(program, "foo12", [], []), 7);
-    checkFloat(program, callFunction(program, "foo13", [], []), 7.5);
+    checkBool(program, callFunction(program, "foo", []), true);
+    checkBool(program, callFunction(program, "foo2", []), true);
+    checkBool(program, callFunction(program, "foo3", []), true);
+    checkBool(program, callFunction(program, "foo4", []), true);
+    checkBool(program, callFunction(program, "foo5", []), true);
+    checkFloat(program, callFunction(program, "foo6", []), 7.5);
+    checkFloat(program, callFunction(program, "foo7", []), 7.5);
+    checkFloat(program, callFunction(program, "foo9", []), 7.5);
+    checkFloat(program, callFunction(program, "foo10", []), 7.5);
+    checkFloat(program, callFunction(program, "foo12", []), 7);
+    checkFloat(program, callFunction(program, "foo13", []), 7.5);
     checkFail(
         () => doPrep(`
             int bar(int x)
@@ -3707,29 +2666,6 @@ tests.floatMath = function()
             }
         `),
         (e) => e instanceof WTypeError);
-}
-
-tests.genericCastInfer = function()
-{
-    let program = doPrep(`
-        struct Complex<T> {
-            T real;
-            T imag;
-        }
-        operator<T> Complex<T>(T real, T imag)
-        {
-            Complex<T> result;
-            result.real = real;
-            result.imag = imag;
-            return result;
-        }
-        int foo()
-        {
-            Complex<int> x = Complex<int>(1, 2);
-            return x.real + x.imag;
-        }
-    `);
-    checkInt(program, callFunction(program, "foo", [], []), 3);
 }
 
 tests.booleanMath = function()
@@ -3768,14 +2704,14 @@ tests.booleanMath = function()
             return false || false;
         }
     `);
-    checkBool(program, callFunction(program, "foo", [], []), true);
-    checkBool(program, callFunction(program, "foo2", [], []), false);
-    checkBool(program, callFunction(program, "foo3", [], []), false);
-    checkBool(program, callFunction(program, "foo4", [], []), false);
-    checkBool(program, callFunction(program, "foo5", [], []), true);
-    checkBool(program, callFunction(program, "foo6", [], []), true);
-    checkBool(program, callFunction(program, "foo7", [], []), true);
-    checkBool(program, callFunction(program, "foo8", [], []), false);
+    checkBool(program, callFunction(program, "foo", []), true);
+    checkBool(program, callFunction(program, "foo2", []), false);
+    checkBool(program, callFunction(program, "foo3", []), false);
+    checkBool(program, callFunction(program, "foo4", []), false);
+    checkBool(program, callFunction(program, "foo5", []), true);
+    checkBool(program, callFunction(program, "foo6", []), true);
+    checkBool(program, callFunction(program, "foo7", []), true);
+    checkBool(program, callFunction(program, "foo8", []), false);
 }
 
 tests.booleanShortcircuiting = function()
@@ -3816,10 +2752,10 @@ tests.booleanShortcircuiting = function()
         }
     `);
 
-    checkInt(program, callFunction(program, "andTrue", [], []), 2);
-    checkInt(program, callFunction(program, "andFalse", [], []), 1);
-    checkInt(program, callFunction(program, "orTrue", [], []), 1);
-    checkInt(program, callFunction(program, "orFalse", [], []), 2);
+    checkInt(program, callFunction(program, "andTrue", []), 2);
+    checkInt(program, callFunction(program, "andFalse", []), 1);
+    checkInt(program, callFunction(program, "orTrue", []), 1);
+    checkInt(program, callFunction(program, "orFalse", []), 2);
 }
 
 tests.typedefArray = function()
@@ -3832,7 +2768,7 @@ tests.typedefArray = function()
             return arrayTypedef[0];
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 0);
+    checkInt(program, callFunction(program, "foo", []), 0);
 }
 
 tests.shaderTypes = function()
@@ -3966,6 +2902,47 @@ tests.shaderTypes = function()
         (e) => e instanceof WTypeError);
 }
 
+tests.vectorTypeSyntax = function()
+{
+    const program = doPrep(`
+        int foo2()
+        {
+            int2 x;
+            vector<int, 2> z = int2(3, 4);
+            x = z;
+            return x.y;
+        }
+
+        int foo3()
+        {
+            int3 x;
+            vector<int, 3> z = int3(3, 4, 5);
+            x = z;
+            return x.z;
+        }
+
+        int foo4()
+        {
+            int4 x;
+            vector<int,4> z = int4(3, 4, 5, 6);
+            x = z;
+            return x.w;
+        }
+
+        bool vec2OperatorCast()
+        {
+            int2 x = vector<int,2>(1, 2);
+            vector<int, 2> y = int2(1, 2);
+            return x == y && x.x == 1 && x.y == 2 && y.x == 1 && y.y == 2;
+        }`);
+
+    checkInt(program, callFunction(program, "foo2", []), 4);
+    checkInt(program, callFunction(program, "foo3", []), 5);
+    checkInt(program, callFunction(program, "foo4", []), 6);
+
+    checkBool(program, callFunction(program, "vec2OperatorCast", []), true);
+}
+
 tests.builtinVectors = function()
 {
     let program = doPrep(`
@@ -4084,61 +3061,134 @@ tests.builtinVectors = function()
             return b == c;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 3);
-    checkInt(program, callFunction(program, "foo2", [], []), 4);
-    checkInt(program, callFunction(program, "foo3", [], []), 3);
-    checkInt(program, callFunction(program, "foo4", [], []), 5);
-    checkBool(program, callFunction(program, "foo5", [], []), true);
-    checkBool(program, callFunction(program, "foo6", [], []), false);
-    checkUint(program, callFunction(program, "foou", [], []), 3);
-    checkUint(program, callFunction(program, "foou2", [], []), 4);
-    checkUint(program, callFunction(program, "foou3", [], []), 3);
-    checkUint(program, callFunction(program, "foou4", [], []), 5);
-    checkBool(program, callFunction(program, "foou5", [], []), true);
-    checkBool(program, callFunction(program, "foou6", [], []), false);
-    checkFloat(program, callFunction(program, "foof", [], []), 3);
-    checkFloat(program, callFunction(program, "foof2", [], []), 4);
-    checkFloat(program, callFunction(program, "foof3", [], []), 3);
-    checkFloat(program, callFunction(program, "foof4", [], []), 5);
-    checkBool(program, callFunction(program, "foof5", [], []), true);
-    checkBool(program, callFunction(program, "foof6", [], []), false);
+    checkInt(program, callFunction(program, "foo", []), 3);
+    checkInt(program, callFunction(program, "foo2", []), 4);
+    checkInt(program, callFunction(program, "foo3", []), 3);
+    checkInt(program, callFunction(program, "foo4", []), 5);
+    checkBool(program, callFunction(program, "foo5", []), true);
+    checkBool(program, callFunction(program, "foo6", []), false);
+    checkUint(program, callFunction(program, "foou", []), 3);
+    checkUint(program, callFunction(program, "foou2", []), 4);
+    checkUint(program, callFunction(program, "foou3", []), 3);
+    checkUint(program, callFunction(program, "foou4", []), 5);
+    checkBool(program, callFunction(program, "foou5", []), true);
+    checkBool(program, callFunction(program, "foou6", []), false);
+    checkFloat(program, callFunction(program, "foof", []), 3);
+    checkFloat(program, callFunction(program, "foof2", []), 4);
+    checkFloat(program, callFunction(program, "foof3", []), 3);
+    checkFloat(program, callFunction(program, "foof4", []), 5);
+    checkBool(program, callFunction(program, "foof5", []), true);
+    checkBool(program, callFunction(program, "foof6", []), false);
 }
 
-tests.instantiateStructInStruct = function()
+tests.builtinVectorGetters = function()
 {
-    let program = doPrep(`
-        struct Bar<T> {
-            T x;
+    const typeNames = [ "uint", "int", "float" ];
+    const sizes = [ 2, 3, 4 ];
+    const elements = [ "x", "y", "z", "w" ];
+    const initializerList = [ 1, 2, 3, 4 ];
+
+    let tests = [];
+    let src = "";
+    for (let typeName of typeNames) {
+        for (let size of sizes) {
+            for (let i = 0; i < size; i++) {
+                const functionName = `${typeName}${size}${elements[i]}`;
+                src += `${typeName} ${functionName}()
+                        {
+                            ${typeName}${size} x = ${typeName}${size}(${initializerList.slice(0, size).join(", ")});
+                            return x.${elements[i]};
+                        }
+                        `;
+                tests.push({ type: typeName, name: functionName, expectation: initializerList[i] });
+            }
         }
-        struct Foo {
-            Bar<int> x;
-        }
-        int foo()
-        {
-            Foo x;
-            x.x.x = 42;
-            x.x.x++;
-            return x.x.x;
-        }
-    `);
-    checkInt(program, callFunction(program, "foo", [], []), 43);
+    }
+
+    let program = doPrep(src);
+    const checkFuncs = {
+        "uint": checkUint,
+        "int": checkInt,
+        "float": checkFloat
+    };
+    for (let test of tests) {
+        const checkFunc = checkFuncs[test.type];
+        checkFunc(program, callFunction(program, test.name, [], []), test.expectation);
+    }
 }
 
-tests.instantiateStructInStructWithInt2 = function()
+tests.builtinVectorSetters = function()
 {
-    let program = doPrep(`
-        struct Foo {
-            int2 x;
+    const typeNames = [ "uint", "int", "float" ];
+    const sizes = [ 2, 3, 4 ];
+    const elements = [ "x", "y", "z", "w" ];
+    const initializerList = [ 1, 2, 3, 4 ];
+
+    let tests = [];
+    let src = "";
+    for (let typeName of typeNames) {
+        for (let size of sizes) {
+            for (let i = 0; i < size; i++) {
+                const functionName = `${typeName}${size}${elements[i]}`;
+                src += `${typeName} ${functionName}()
+                        {
+                            ${typeName}${size} x = ${typeName}${size}(${initializerList.slice(0, size).join(", ")});
+                            x.${elements[i]} = 34;
+                            return x.${elements[i]};
+                        }
+                        `;
+                tests.push({ type: typeName, name: functionName, expectation: 34 });
+            }
         }
-        int foo()
-        {
-            Foo x;
-            x.x.x = 42;
-            x.x.x++;
-            return x.x.x;
+    }
+
+    let program = doPrep(src);
+    const checkFuncs = {
+        "uint": checkUint,
+        "int": checkInt,
+        "float": checkFloat
+    };
+    for (let test of tests) {
+        const checkFunc = checkFuncs[test.type];
+        checkFunc(program, callFunction(program, test.name, [], []), test.expectation);
+    }
+}
+
+tests.builtinVectorIndexSetters = function()
+{
+    const typeNames = [ "uint", "int", "float" ];
+    const sizes = [ 2, 3, 4 ];
+    const elements = [ "x", "y", "z", "w" ];
+    const initializerList = [ 1, 2, 3, 4 ];
+
+    let tests = [];
+    let src = "";
+    for (let typeName of typeNames) {
+        for (let size of sizes) {
+            for (let i = 0; i < size; i++) {
+                const functionName = `${typeName}${size}${elements[i]}`;
+                src += `${typeName} ${functionName}()
+                        {
+                            ${typeName}${size} x = ${typeName}${size}(${initializerList.slice(0, size).join(", ")});
+                            x[${i}] = 34;
+                            return x[${i}];
+                        }
+                        `;
+                tests.push({ type: typeName, name: functionName, expectation: 34 });
+            }
         }
-    `);
-    checkInt(program, callFunction(program, "foo", [], []), 43);
+    }
+
+    let program = doPrep(src);
+    const checkFuncs = {
+        "uint": checkUint,
+        "int": checkInt,
+        "float": checkFloat
+    };
+    for (let test of tests) {
+        const checkFunc = checkFuncs[test.type];
+        checkFunc(program, callFunction(program, test.name, [], []), test.expectation);
+    }
 }
 
 tests.simpleEnum = function()
@@ -4263,32 +3313,32 @@ tests.simpleEnum = function()
             return Foo(intDeath());
         }
     `);
-    checkEnum(program, callFunction(program, "war", [], []), 0);
-    checkEnum(program, callFunction(program, "famine", [], []), 1);
-    checkEnum(program, callFunction(program, "pestilence", [], []), 2);
-    checkEnum(program, callFunction(program, "death", [], []), 3);
-    checkBool(program, callFunction(program, "testSimpleEqual", [], []), true);
-    checkBool(program, callFunction(program, "testAnotherEqual", [], []), true);
-    checkBool(program, callFunction(program, "testNotEqual", [], []), false);
-    checkBool(program, callFunction(program, "testSimpleNotEqual", [], []), false);
-    checkBool(program, callFunction(program, "testAnotherNotEqual", [], []), false);
-    checkBool(program, callFunction(program, "testNotNotEqual", [], []), true);
-    checkInt(program, callFunction(program, "intWar", [], []), 0);
-    checkInt(program, callFunction(program, "intFamine", [], []), 1);
-    checkInt(program, callFunction(program, "intPestilence", [], []), 2);
-    checkInt(program, callFunction(program, "intDeath", [], []), 3);
-    checkInt(program, callFunction(program, "warValue", [], []), 0);
-    checkInt(program, callFunction(program, "famineValue", [], []), 1);
-    checkInt(program, callFunction(program, "pestilenceValue", [], []), 2);
-    checkInt(program, callFunction(program, "deathValue", [], []), 3);
-    checkInt(program, callFunction(program, "warValueLiteral", [], []), 0);
-    checkInt(program, callFunction(program, "famineValueLiteral", [], []), 1);
-    checkInt(program, callFunction(program, "pestilenceValueLiteral", [], []), 2);
-    checkInt(program, callFunction(program, "deathValueLiteral", [], []), 3);
-    checkEnum(program, callFunction(program, "intWarBackwards", [], []), 0);
-    checkEnum(program, callFunction(program, "intFamineBackwards", [], []), 1);
-    checkEnum(program, callFunction(program, "intPestilenceBackwards", [], []), 2);
-    checkEnum(program, callFunction(program, "intDeathBackwards", [], []), 3);
+    checkEnum(program, callFunction(program, "war", []), 0);
+    checkEnum(program, callFunction(program, "famine", []), 1);
+    checkEnum(program, callFunction(program, "pestilence", []), 2);
+    checkEnum(program, callFunction(program, "death", []), 3);
+    checkBool(program, callFunction(program, "testSimpleEqual", []), true);
+    checkBool(program, callFunction(program, "testAnotherEqual", []), true);
+    checkBool(program, callFunction(program, "testNotEqual", []), false);
+    checkBool(program, callFunction(program, "testSimpleNotEqual", []), false);
+    checkBool(program, callFunction(program, "testAnotherNotEqual", []), false);
+    checkBool(program, callFunction(program, "testNotNotEqual", []), true);
+    checkInt(program, callFunction(program, "intWar", []), 0);
+    checkInt(program, callFunction(program, "intFamine", []), 1);
+    checkInt(program, callFunction(program, "intPestilence", []), 2);
+    checkInt(program, callFunction(program, "intDeath", []), 3);
+    checkInt(program, callFunction(program, "warValue", []), 0);
+    checkInt(program, callFunction(program, "famineValue", []), 1);
+    checkInt(program, callFunction(program, "pestilenceValue", []), 2);
+    checkInt(program, callFunction(program, "deathValue", []), 3);
+    checkInt(program, callFunction(program, "warValueLiteral", []), 0);
+    checkInt(program, callFunction(program, "famineValueLiteral", []), 1);
+    checkInt(program, callFunction(program, "pestilenceValueLiteral", []), 2);
+    checkInt(program, callFunction(program, "deathValueLiteral", []), 3);
+    checkEnum(program, callFunction(program, "intWarBackwards", []), 0);
+    checkEnum(program, callFunction(program, "intFamineBackwards", []), 1);
+    checkEnum(program, callFunction(program, "intPestilenceBackwards", []), 2);
+    checkEnum(program, callFunction(program, "intDeathBackwards", []), 3);
 }
 
 tests.enumWithManualValues = function()
@@ -4317,10 +3367,10 @@ tests.enumWithManualValues = function()
             return Foo.Death;
         }
     `);
-    checkEnum(program, callFunction(program, "war", [], []), 72);
-    checkEnum(program, callFunction(program, "famine", [], []), 0);
-    checkEnum(program, callFunction(program, "pestilence", [], []), 23);
-    checkEnum(program, callFunction(program, "death", [], []), -42);
+    checkEnum(program, callFunction(program, "war", []), 72);
+    checkEnum(program, callFunction(program, "famine", []), 0);
+    checkEnum(program, callFunction(program, "pestilence", []), 23);
+    checkEnum(program, callFunction(program, "death", []), -42);
 }
 
 tests.enumWithoutZero = function()
@@ -4377,43 +3427,10 @@ tests.enumWithSomeManualValues = function()
             return Foo.Death;
         }
     `);
-    checkEnum(program, callFunction(program, "war", [], []), 72);
-    checkEnum(program, callFunction(program, "famine", [], []), 73);
-    checkEnum(program, callFunction(program, "pestilence", [], []), 0);
-    checkEnum(program, callFunction(program, "death", [], []), 1);
-}
-
-tests.enumConstexprGenericFunction = function()
-{
-    let program = doPrep(`
-        enum Axis { X, Y }
-        int foo<Axis axis>() { return int(axis); }
-        int testX() { return foo<Axis.X>(); }
-        int testY() { return foo<Axis.Y>(); }
-    `);
-    checkInt(program, callFunction(program, "testX", [], []), 0);
-    checkInt(program, callFunction(program, "testY", [], []), 1);
-}
-
-tests.enumConstexprGenericStruct = function()
-{
-    let program = doPrep(`
-        enum Axis { X, Y }
-        struct Foo<Axis axis> { }
-        int foo<Axis axis>(Foo<axis>) { return int(axis); }
-        int testX()
-        {   
-            Foo<Axis.X> f;
-            return foo(f);
-        }
-        int testY()
-        {   
-            Foo<Axis.Y> f;
-            return foo(f);
-        }
-    `);
-    checkInt(program, callFunction(program, "testX", [], []), 0);
-    checkInt(program, callFunction(program, "testY", [], []), 1);
+    checkEnum(program, callFunction(program, "war", []), 72);
+    checkEnum(program, callFunction(program, "famine", []), 73);
+    checkEnum(program, callFunction(program, "pestilence", []), 0);
+    checkEnum(program, callFunction(program, "death", []), 1);
 }
 
 tests.trap = function()
@@ -4439,14 +3456,14 @@ tests.trap = function()
         }
     `);
     checkFail(
-        () => callFunction(program, "foo", [], []),
+        () => callFunction(program, "foo", []),
         e => e instanceof WTrapError);
-    checkInt(program, callFunction(program, "foo2", [], [makeInt(program, 1)]), 4);
+    checkInt(program, callFunction(program, "foo2", [makeInt(program, 1)]), 4);
     checkFail(
-        () => callFunction(program, "foo2", [], [makeInt(program, 3)]),
+        () => callFunction(program, "foo2", [makeInt(program, 3)]),
         e => e instanceof WTrapError);
     checkFail(
-        () => callFunction(program, "foo3", [], []),
+        () => callFunction(program, "foo3", []),
         e => e instanceof WTrapError);
 }
 
@@ -4470,9 +3487,9 @@ tests.swizzle = function()
             return quix.z;
         }
     `);
-    checkFloat(program, callFunction(program, "foo", [], []), 3);
-    checkFloat(program, callFunction(program, "foo2", [], []), 6);
-    checkFloat(program, callFunction(program, "foo3", [], []), 4);
+    checkFloat(program, callFunction(program, "foo", []), 3);
+    checkFloat(program, callFunction(program, "foo2", []), 6);
+    checkFloat(program, callFunction(program, "foo3", []), 4);
 }
 
 tests.enumWithExplicitIntBase = function()
@@ -4597,32 +3614,32 @@ tests.enumWithExplicitIntBase = function()
             return Foo(intDeath());
         }
     `);
-    checkEnum(program, callFunction(program, "war", [], []), 0);
-    checkEnum(program, callFunction(program, "famine", [], []), 1);
-    checkEnum(program, callFunction(program, "pestilence", [], []), 2);
-    checkEnum(program, callFunction(program, "death", [], []), 3);
-    checkBool(program, callFunction(program, "testSimpleEqual", [], []), true);
-    checkBool(program, callFunction(program, "testAnotherEqual", [], []), true);
-    checkBool(program, callFunction(program, "testNotEqual", [], []), false);
-    checkBool(program, callFunction(program, "testSimpleNotEqual", [], []), false);
-    checkBool(program, callFunction(program, "testAnotherNotEqual", [], []), false);
-    checkBool(program, callFunction(program, "testNotNotEqual", [], []), true);
-    checkInt(program, callFunction(program, "intWar", [], []), 0);
-    checkInt(program, callFunction(program, "intFamine", [], []), 1);
-    checkInt(program, callFunction(program, "intPestilence", [], []), 2);
-    checkInt(program, callFunction(program, "intDeath", [], []), 3);
-    checkInt(program, callFunction(program, "warValue", [], []), 0);
-    checkInt(program, callFunction(program, "famineValue", [], []), 1);
-    checkInt(program, callFunction(program, "pestilenceValue", [], []), 2);
-    checkInt(program, callFunction(program, "deathValue", [], []), 3);
-    checkInt(program, callFunction(program, "warValueLiteral", [], []), 0);
-    checkInt(program, callFunction(program, "famineValueLiteral", [], []), 1);
-    checkInt(program, callFunction(program, "pestilenceValueLiteral", [], []), 2);
-    checkInt(program, callFunction(program, "deathValueLiteral", [], []), 3);
-    checkEnum(program, callFunction(program, "intWarBackwards", [], []), 0);
-    checkEnum(program, callFunction(program, "intFamineBackwards", [], []), 1);
-    checkEnum(program, callFunction(program, "intPestilenceBackwards", [], []), 2);
-    checkEnum(program, callFunction(program, "intDeathBackwards", [], []), 3);
+    checkEnum(program, callFunction(program, "war", []), 0);
+    checkEnum(program, callFunction(program, "famine", []), 1);
+    checkEnum(program, callFunction(program, "pestilence", []), 2);
+    checkEnum(program, callFunction(program, "death", []), 3);
+    checkBool(program, callFunction(program, "testSimpleEqual", []), true);
+    checkBool(program, callFunction(program, "testAnotherEqual", []), true);
+    checkBool(program, callFunction(program, "testNotEqual", []), false);
+    checkBool(program, callFunction(program, "testSimpleNotEqual", []), false);
+    checkBool(program, callFunction(program, "testAnotherNotEqual", []), false);
+    checkBool(program, callFunction(program, "testNotNotEqual", []), true);
+    checkInt(program, callFunction(program, "intWar", []), 0);
+    checkInt(program, callFunction(program, "intFamine", []), 1);
+    checkInt(program, callFunction(program, "intPestilence", []), 2);
+    checkInt(program, callFunction(program, "intDeath", []), 3);
+    checkInt(program, callFunction(program, "warValue", []), 0);
+    checkInt(program, callFunction(program, "famineValue", []), 1);
+    checkInt(program, callFunction(program, "pestilenceValue", []), 2);
+    checkInt(program, callFunction(program, "deathValue", []), 3);
+    checkInt(program, callFunction(program, "warValueLiteral", []), 0);
+    checkInt(program, callFunction(program, "famineValueLiteral", []), 1);
+    checkInt(program, callFunction(program, "pestilenceValueLiteral", []), 2);
+    checkInt(program, callFunction(program, "deathValueLiteral", []), 3);
+    checkEnum(program, callFunction(program, "intWarBackwards", []), 0);
+    checkEnum(program, callFunction(program, "intFamineBackwards", []), 1);
+    checkEnum(program, callFunction(program, "intPestilenceBackwards", []), 2);
+    checkEnum(program, callFunction(program, "intDeathBackwards", []), 3);
 }
 
 tests.enumWithUintBase = function()
@@ -4747,32 +3764,32 @@ tests.enumWithUintBase = function()
             return Foo(uintDeath());
         }
     `);
-    checkEnum(program, callFunction(program, "war", [], []), 0);
-    checkEnum(program, callFunction(program, "famine", [], []), 1);
-    checkEnum(program, callFunction(program, "pestilence", [], []), 2);
-    checkEnum(program, callFunction(program, "death", [], []), 3);
-    checkBool(program, callFunction(program, "testSimpleEqual", [], []), true);
-    checkBool(program, callFunction(program, "testAnotherEqual", [], []), true);
-    checkBool(program, callFunction(program, "testNotEqual", [], []), false);
-    checkBool(program, callFunction(program, "testSimpleNotEqual", [], []), false);
-    checkBool(program, callFunction(program, "testAnotherNotEqual", [], []), false);
-    checkBool(program, callFunction(program, "testNotNotEqual", [], []), true);
-    checkUint(program, callFunction(program, "uintWar", [], []), 0);
-    checkUint(program, callFunction(program, "uintFamine", [], []), 1);
-    checkUint(program, callFunction(program, "uintPestilence", [], []), 2);
-    checkUint(program, callFunction(program, "uintDeath", [], []), 3);
-    checkUint(program, callFunction(program, "warValue", [], []), 0);
-    checkUint(program, callFunction(program, "famineValue", [], []), 1);
-    checkUint(program, callFunction(program, "pestilenceValue", [], []), 2);
-    checkUint(program, callFunction(program, "deathValue", [], []), 3);
-    checkUint(program, callFunction(program, "warValueLiteral", [], []), 0);
-    checkUint(program, callFunction(program, "famineValueLiteral", [], []), 1);
-    checkUint(program, callFunction(program, "pestilenceValueLiteral", [], []), 2);
-    checkUint(program, callFunction(program, "deathValueLiteral", [], []), 3);
-    checkEnum(program, callFunction(program, "uintWarBackwards", [], []), 0);
-    checkEnum(program, callFunction(program, "uintFamineBackwards", [], []), 1);
-    checkEnum(program, callFunction(program, "uintPestilenceBackwards", [], []), 2);
-    checkEnum(program, callFunction(program, "uintDeathBackwards", [], []), 3);
+    checkEnum(program, callFunction(program, "war", []), 0);
+    checkEnum(program, callFunction(program, "famine", []), 1);
+    checkEnum(program, callFunction(program, "pestilence", []), 2);
+    checkEnum(program, callFunction(program, "death", []), 3);
+    checkBool(program, callFunction(program, "testSimpleEqual", []), true);
+    checkBool(program, callFunction(program, "testAnotherEqual", []), true);
+    checkBool(program, callFunction(program, "testNotEqual", []), false);
+    checkBool(program, callFunction(program, "testSimpleNotEqual", []), false);
+    checkBool(program, callFunction(program, "testAnotherNotEqual", []), false);
+    checkBool(program, callFunction(program, "testNotNotEqual", []), true);
+    checkUint(program, callFunction(program, "uintWar", []), 0);
+    checkUint(program, callFunction(program, "uintFamine", []), 1);
+    checkUint(program, callFunction(program, "uintPestilence", []), 2);
+    checkUint(program, callFunction(program, "uintDeath", []), 3);
+    checkUint(program, callFunction(program, "warValue", []), 0);
+    checkUint(program, callFunction(program, "famineValue", []), 1);
+    checkUint(program, callFunction(program, "pestilenceValue", []), 2);
+    checkUint(program, callFunction(program, "deathValue", []), 3);
+    checkUint(program, callFunction(program, "warValueLiteral", []), 0);
+    checkUint(program, callFunction(program, "famineValueLiteral", []), 1);
+    checkUint(program, callFunction(program, "pestilenceValueLiteral", []), 2);
+    checkUint(program, callFunction(program, "deathValueLiteral", []), 3);
+    checkEnum(program, callFunction(program, "uintWarBackwards", []), 0);
+    checkEnum(program, callFunction(program, "uintFamineBackwards", []), 1);
+    checkEnum(program, callFunction(program, "uintPestilenceBackwards", []), 2);
+    checkEnum(program, callFunction(program, "uintDeathBackwards", []), 3);
 }
 
 tests.enumFloatBase = function()
@@ -4818,7 +3835,7 @@ tests.emptyStruct = function()
             return 46;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 46);
+    checkInt(program, callFunction(program, "foo", []), 46);
 }
 
 tests.enumStructBase = function()
@@ -4857,41 +3874,41 @@ tests.simpleSwitch = function()
             }
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 767)]), 27);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 69)]), 7624);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0)]), 49);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 767)]), 27);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 69)]), 7624);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 0)]), 49);
 }
 
-tests.exhaustiveUint8Switch = function()
+tests.exhaustiveUcharSwitch = function()
 {
-    let text = "float foo(uint8 x) { switch (uint8(x)) {"
+    let text = "float foo(uchar x) { switch (uchar(x)) {"
     for (let i = 0; i <= 0xff; ++i)
         text += "case " + i + ": return " + i * 1.5 + ";";
     text += "} }";
     let program = doPrep(text);
     for (let i = 0; i < 0xff; ++i)
-        checkFloat(program, callFunction(program, "foo", [], [makeUint8(program, i)]), i * 1.5);
+        checkFloat(program, callFunction(program, "foo", [makeUchar(program, i)]), i * 1.5);
 }
 
-tests.notQuiteExhaustiveUint8Switch = function()
+tests.notQuiteExhaustiveUcharSwitch = function()
 {
-    let text = "float foo(uint8 x) { switch (uint8(x)) {"
+    let text = "float foo(uchar x) { switch (uchar(x)) {"
     for (let i = 0; i <= 0xfe; ++i)
         text += "case " + i + ": return " + i * 1.5 + ";";
     text += "} }";
     checkFail(() => doPrep(text), e => e instanceof WTypeError);
 }
 
-tests.notQuiteExhaustiveUint8SwitchWithDefault = function()
+tests.notQuiteExhaustiveUcharSwitchWithDefault = function()
 {
-    let text = "float foo(uint8 x) { switch (uint8(x)) {"
+    let text = "float foo(uchar x) { switch (uchar(x)) {"
     for (let i = 0; i <= 0xfe; ++i)
         text += "case " + i + ": return " + i * 1.5 + ";";
     text += "default: return " + 0xff * 1.5 + ";";
     text += "} }";
     let program = doPrep(text);
     for (let i = 0; i < 0xff; ++i)
-        checkFloat(program, callFunction(program, "foo", [], [makeUint8(program, i)]), i * 1.5);
+        checkFloat(program, callFunction(program, "foo", [makeUchar(program, i)]), i * 1.5);
 }
 
 tests.switchFallThrough = function()
@@ -4913,9 +3930,9 @@ tests.switchFallThrough = function()
             return result;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 767)]), 27 + 7624 + 49);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 69)]), 7624 + 49);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0)]), 49);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 767)]), 27 + 7624 + 49);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 69)]), 7624 + 49);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 0)]), 49);
 }
 
 tests.switchBreak = function()
@@ -4938,9 +3955,9 @@ tests.switchBreak = function()
             return result;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 767)]), 27);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 69)]), 7624);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0)]), 49);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 767)]), 27);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 69)]), 7624);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 0)]), 49);
 }
 
 tests.enumSwitchBreakExhaustive = function()
@@ -4966,9 +3983,9 @@ tests.enumSwitchBreakExhaustive = function()
             return result;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeEnum(program, "Foo", "A")]), 27);
-    checkInt(program, callFunction(program, "foo", [], [makeEnum(program, "Foo", "B")]), 7624);
-    checkInt(program, callFunction(program, "foo", [], [makeEnum(program, "Foo", "C")]), 49);
+    checkInt(program, callFunction(program, "foo", [makeEnum(program, "Foo", "A")]), 27);
+    checkInt(program, callFunction(program, "foo", [makeEnum(program, "Foo", "B")]), 7624);
+    checkInt(program, callFunction(program, "foo", [makeEnum(program, "Foo", "C")]), 49);
 }
 
 tests.enumSwitchBreakNotQuiteExhaustive = function()
@@ -5021,9 +4038,9 @@ tests.enumSwitchBreakNotQuiteExhaustiveWithDefault = function()
             return result;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeEnum(program, "Foo", "A")]), 27);
-    checkInt(program, callFunction(program, "foo", [], [makeEnum(program, "Foo", "B")]), 7624);
-    checkInt(program, callFunction(program, "foo", [], [makeEnum(program, "Foo", "C")]), 49);
+    checkInt(program, callFunction(program, "foo", [makeEnum(program, "Foo", "A")]), 27);
+    checkInt(program, callFunction(program, "foo", [makeEnum(program, "Foo", "B")]), 7624);
+    checkInt(program, callFunction(program, "foo", [makeEnum(program, "Foo", "C")]), 49);
 }
 
 tests.simpleRecursiveStruct = function()
@@ -5072,7 +4089,7 @@ tests.mutuallyRecursiveStructWithPointersBroken = function()
         }
     `);
     checkFail(
-        () => checkInt(program, callFunction(program, "foo", [], []), -511),
+        () => checkInt(program, callFunction(program, "foo", []), -511),
         e => e instanceof WTrapError);
 }
 
@@ -5098,7 +4115,7 @@ tests.mutuallyRecursiveStructWithPointers = function()
             return foo.bar->bar - bar.foo->foo;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), -511);
+    checkInt(program, callFunction(program, "foo", []), -511);
 }
 
 tests.linkedList = function()
@@ -5119,7 +4136,7 @@ tests.linkedList = function()
             return x.next->next->value;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 3);
+    checkInt(program, callFunction(program, "foo", []), 3);
 }
 
 tests.pointerToPointer = function()
@@ -5142,7 +4159,7 @@ tests.pointerToPointer = function()
             return result;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 76 + 39 + 83);
+    checkInt(program, callFunction(program, "foo", []), 76 + 39 + 83);
 }
 
 tests.arrayRefToArrayRef = function()
@@ -5165,7 +4182,7 @@ tests.arrayRefToArrayRef = function()
             return result;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 76 + 39 + 83);
+    checkInt(program, callFunction(program, "foo", []), 76 + 39 + 83);
 }
 
 tests.pointerGetter = function()
@@ -5246,23 +4263,6 @@ tests.setterWithMatchedType = function()
     `);
 }
 
-tests.operatorWithUninferrableTypeVariable = function()
-{
-    checkFail(
-        () => doPrep(`
-            struct Foo {
-                int x;
-            }
-            Foo operator+<T>(Foo a, Foo b)
-            {
-                Foo result;
-                result.x = a.x + b.x;
-                return result;
-            }
-        `),
-        e => e instanceof WTypeError);
-}
-
 tests.operatorWithoutUninferrableTypeVariable = function()
 {
     let program = doPrep(`
@@ -5284,54 +4284,7 @@ tests.operatorWithoutUninferrableTypeVariable = function()
             return (a + b).x;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 645 - 35);
-}
-
-tests.operatorCastWithUninferrableTypeVariable = function()
-{
-    checkFail(
-        () => doPrep(`
-            struct Foo {
-                int x;
-            }
-            operator<T> Foo(int x)
-            {
-                Foo result;
-                result.x = x;
-                return result;
-            }
-        `),
-        e => e instanceof WTypeError);
-}
-
-tests.operatorCastWithTypeVariableInferredFromReturnType = function()
-{
-    let program = doPrep(`
-        struct Foo {
-            int x;
-        }
-        protocol Barable {
-            void bar(thread Barable*, int);
-        }
-        void bar(thread float* result, int value)
-        {
-            *result = float(value);
-        }
-        operator<T:Barable> T(Foo foo)
-        {
-            T result;
-            bar(&result, foo.x);
-            return result;
-        }
-        int foo()
-        {
-            Foo foo;
-            foo.x = 75;
-            float x = float(foo);
-            return int(x * 1.5);
-        }
-    `);
-    checkInt(program, callFunction(program, "foo", [], []), 112);
+    checkInt(program, callFunction(program, "foo", []), 645 - 35);
 }
 
 tests.incWrongArgumentLength = function()
@@ -5823,7 +4776,7 @@ tests.anderWithNothingWrong = function()
             return x.foo;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 13);
+    checkInt(program, callFunction(program, "foo", []), 13);
 }
 
 tests.anderWithWrongNumberOfArguments = function()
@@ -5897,7 +4850,26 @@ tests.anderWithArrayRef = function()
             return (@x).foo;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 13);
+    checkInt(program, callFunction(program, "foo", []), 13);
+}
+
+tests.anderWithBadIndex = function()
+{
+    checkFail(() => doPrep(`
+        int foo(thread int[] x) { return x[-1]; }
+    `), e => e instanceof Error);
+
+    checkFail(() => doPrep(`
+        int foo(thread int[] x) { return x[1.f]; }
+    `), e => e instanceof Error);
+
+    checkFail(() => doPrep(`
+        int foo(thread int[] x, int y) { return x[y]; }
+    `), e => e instanceof Error);
+
+    checkFail(() => doPrep(`
+        int foo(thread int[] x, float y) { return x[y]; }
+    `), e => e instanceof Error);
 }
 
 tests.pointerIndexGetter = function()
@@ -6083,7 +5055,7 @@ tests.indexAnderWithNothingWrong = function()
             return x[666];
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 13);
+    checkInt(program, callFunction(program, "foo", []), 13);
 }
 
 tests.indexAnderWithWrongNumberOfArguments = function()
@@ -6168,7 +5140,7 @@ tests.indexAnderWithArrayRef = function()
             return (@x)[float(-1)];
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 13);
+    checkInt(program, callFunction(program, "foo", []), 13);
 }
 
 tests.devicePtrPtr = function()
@@ -6180,7 +5152,7 @@ tests.devicePtrPtr = function()
                 device int** p;
             }
         `),
-        e => e instanceof WTypeError && e.message.indexOf("Illegal pointer to non-primitive type: int32* device* device") != -1);
+        e => e instanceof WTypeError && e.message.indexOf("Illegal pointer to non-primitive type: int* device* device") != -1);
 }
 
 tests.threadgroupPtrPtr = function()
@@ -6192,7 +5164,7 @@ tests.threadgroupPtrPtr = function()
                 threadgroup int** p;
             }
         `),
-        e => e instanceof WTypeError && e.message.indexOf("Illegal pointer to non-primitive type: int32* threadgroup* threadgroup") != -1);
+        e => e instanceof WTypeError && e.message.indexOf("Illegal pointer to non-primitive type: int* threadgroup* threadgroup") != -1);
 }
 
 tests.constantPtrPtr = function()
@@ -6204,307 +5176,7 @@ tests.constantPtrPtr = function()
                 constant int** p;
             }
         `),
-        e => e instanceof WTypeError && e.message.indexOf("Illegal pointer to non-primitive type: int32* constant* constant") != -1);
-}
-
-tests.pointerIndexGetterInProtocol = function()
-{
-    for (let addressSpace of addressSpaces) {
-        checkFail(
-            () => doPrep(`
-                protocol Foo {
-                    int operator[](${addressSpace} Foo*, uint);
-                }
-                struct Bar { }
-                int operator[](Bar, uint) { return 42; }
-            `),
-            e => e instanceof WTypeError && e.message.indexOf("Cannot have getter for pointer type") != -1);
-    }
-}
-
-tests.loneIndexSetterInProtocol = function()
-{
-    checkFail(
-        () => doPrep(`
-            protocol Foo {
-                Foo operator[]=(Foo, uint, int);
-            }
-            struct Bar { }
-            int operator[](Bar, uint) { return 42; }
-            Bar operator[]=(Bar, uint, int) { return Bar(); }
-        `),
-        e => e instanceof WTypeError && e.message.indexOf("Every setter must have a matching getter") != -1);
-}
-
-tests.notLoneIndexSetterInProtocol = function()
-{
-    doPrep(`
-        protocol Foo {
-            int operator[](Foo, uint);
-            Foo operator[]=(Foo, uint, int);
-        }
-        struct Bar { }
-        int operator[](Bar, uint) { return 42; }
-        Bar operator[]=(Bar, uint, int) { return Bar(); }
-    `);
-}
-
-tests.indexSetterWithMismatchedTypeInProtocol = function()
-{
-    checkFail(
-        () => doPrep(`
-            protocol Foo {
-                float operator[](Foo, uint);
-                Foo operator[]=(Foo, uint, int);
-            }
-            struct Bar { }
-            int operator[](Bar, uint) { return 42; }
-            Bar operator[]=(Bar, uint, int) { return Bar(); }
-        `),
-        e => e instanceof WTypeError && e.message.indexOf("Setter and getter must agree on value type") != -1);
-}
-
-tests.indexOperatorWrongArgumentLengthInProtocol = function()
-{
-    checkFail(
-        () => doPrep(`
-            protocol Foo {
-                int operator[]();
-            }
-            struct Bar { }
-            int operator[](Bar, uint) { return 42; }
-        `),
-        e => e instanceof WTypeError && e.message.indexOf("Protocol's type variable (Foo) not mentioned in signature") != -1);
-    checkFail(
-        () => doPrep(`
-            protocol Foo {
-                int operator[](Foo);
-            }
-            struct Bar { }
-            int operator[](Bar, uint) { return 42; }
-        `),
-        e => e instanceof WTypeError && e.message.indexOf("Incorrect number of parameters") != -1);
-    checkFail(
-        () => doPrep(`
-            protocol Foo {
-                int operator[](Foo, int, int);
-            }
-            struct Bar { }
-            int operator[](Bar, uint) { return 42; }
-        `),
-        e => e instanceof WTypeError && e.message.indexOf("Incorrect number of parameters") != -1);
-}
-
-tests.indexOperatorSetterWrongArgumentLengthInProtocol = function()
-{
-    checkFail(
-        () => doPrep(`
-            protocol Foo {
-                int operator[]=();
-            }
-            struct Bar { }
-            int operator[](Bar, uint) { return 42; }
-            Bar operator[]=(Bar, uint, int) { return Bar(); }
-        `),
-        e => e instanceof WTypeError && e.message.indexOf("Protocol's type variable (Foo) not mentioned in signature") != -1);
-    checkFail(
-        () => doPrep(`
-            protocol Foo {
-                int operator[]=(Foo);
-            }
-            struct Bar { }
-            int operator[](Bar, uint) { return 42; }
-            Bar operator[]=(Bar, uint, int) { return Bar(); }
-        `),
-        e => e instanceof WTypeError && e.message.indexOf("Incorrect number of parameters") != -1);
-    checkFail(
-        () => doPrep(`
-            protocol Foo {
-                int operator[]=(Foo, int);
-            }
-            struct Bar { }
-            int operator[](Bar, uint) { return 42; }
-            Bar operator[]=(Bar, uint, int) { return Bar(); }
-        `),
-        e => e instanceof WTypeError && e.message.indexOf("Incorrect number of parameters") != -1);
-    checkFail(
-        () => doPrep(`
-            protocol Foo {
-                int operator[]=(Foo, int, int, int);
-            }
-            struct Bar { }
-            int operator[](Bar, uint) { return 42; }
-            Bar operator[]=(Bar, uint, int) { return Bar(); }
-        `),
-        e => e instanceof WTypeError && e.message.indexOf("Incorrect number of parameters") != -1);
-}
-
-tests.loneIndexSetterPointerInProtocol = function()
-{
-    checkFail(
-        () => doPrep(`
-            protocol Foo {
-                thread int* operator[]=(thread Foo* ptr, uint, int);
-            }
-            struct Bar { }
-            int operator[](Bar, uint) { return 42; }
-            Bar operator[]=(Bar, uint, int) { return Bar(); }
-        `),
-        e => e instanceof WTypeError && e.message.indexOf("Cannot have setter for pointer type") != -1);
-}
-
-tests.indexSetterWithNoGetterOverloadInProtocol = function()
-{
-    checkFail(
-        () => doPrep(`
-            protocol Foo {
-                int operator[](int, Foo);
-                Foo operator[]=(Foo, uint, int);
-            }
-            struct Bar { }
-            int operator[](Bar, uint) { return 42; }
-            Bar operator[]=(Bar, uint, int) { return Bar(); }
-        `),
-        e => e instanceof WTypeError && e.message.indexOf("Did not find function named operator[]= with arguments Foo,uint32") != -1);
-}
-
-tests.indexSetterWithNoGetterOverloadFixedInProtocol = function()
-{
-    doPrep(`
-        protocol Foo {
-            int operator[](Foo, uint);
-            Foo operator[]=(Foo, uint, int);
-        }
-        struct Bar { }
-        int operator[](Bar, uint) { return 42; }
-        Bar operator[]=(Bar, uint, int) { return Bar(); }
-    `);
-}
-
-tests.indexAnderWithNothingWrongInProtocol = function()
-{
-    let program = doPrep(`
-        protocol Foo {
-            thread int* operator&[](thread Foo* foo, uint);
-        }
-        int bar<T:Foo>(T x)
-        {
-            return x[42];
-        }
-        struct Bar { }
-        thread int* operator&[](thread Bar*, uint)
-        {
-            int result = 1234;
-            return &result;
-        }
-        int foo()
-        {
-            return bar(Bar());
-        }
-    `);
-    checkInt(program, callFunction(program, "foo", [], []), 1234);
-}
-
-tests.indexAnderWithWrongNumberOfArgumentsInProtocol = function()
-{
-    checkFail(
-        () => doPrep(`
-            protocol Foo {
-                thread int* operator&[]();
-            }
-            struct Bar { }
-            thread int* operator&[](thread Bar*, uint)
-            {
-                int result = 1234;
-                return &result;
-            }
-        `),
-        e => e instanceof WTypeError && e.message.indexOf("Protocol's type variable (Foo) not mentioned in signature") != -1);
-    checkFail(
-        () => doPrep(`
-            protocol Foo {
-                thread int* operator&[](thread Foo* foo);
-            }
-            struct Bar { }
-            thread int* operator&[](thread Bar*, uint)
-            {
-                int result = 1234;
-                return &result;
-            }
-        `),
-        e => e instanceof WTypeError && e.message.indexOf("Incorrect number of parameters for operator&[]") != -1);
-    checkFail(
-        () => doPrep(`
-            protocol Foo {
-                thread int* operator&[](thread Foo* foo, uint, uint);
-            }
-            struct Bar { }
-            thread int* operator&[](thread Bar*, uint)
-            {
-                int result = 1234;
-                return &result;
-            }
-        `),
-        e => e instanceof WTypeError && e.message.indexOf("Incorrect number of parameters for operator&[]") != -1);
-}
-
-tests.indexAnderDoesntReturnPointerInProtocol = function()
-{
-    checkFail(
-        () => doPrep(`
-            protocol Foo {
-                int operator&[](thread Foo* foo, uint);
-            }
-            struct Bar { }
-            thread int* operator&[](thread Bar*, uint)
-            {
-                int result = 1234;
-                return &result;
-            }
-        `),
-        e => e instanceof WTypeError && e.message.indexOf("Return type of ander is not a pointer") != -1);
-}
-
-tests.indexAnderDoesntTakeReferenceInProtocol = function()
-{
-    checkFail(
-        () => doPrep(`
-            protocol Foo {
-                thread int* operator&[](Foo foo, uint);
-            }
-            struct Bar { }
-            thread int* operator&[](thread Bar*, uint)
-            {
-                int result = 1234;
-                return &result;
-            }
-        `),
-        e => e instanceof WTypeError && e.message.indexOf("Parameter to ander is not a reference") != -1);
-}
-
-tests.indexAnderWithArrayRefInProtocol = function()
-{
-    let program = doPrep(`
-        protocol Foo {
-            thread int* operator&[](thread Foo[] array, float index);
-        }
-        int bar<T:Foo>(thread T[] x)
-        {
-            return x[1.5];
-        }
-        struct Bar { }
-        thread int* operator&[](thread Bar[], float)
-        {
-            int result = 1234;
-            return &result;
-        }
-        int foo()
-        {
-            Bar x;
-            return bar(@x);
-        }
-    `);
-    checkInt(program, callFunction(program, "foo", [], []), 1234);
+        e => e instanceof WTypeError && e.message.indexOf("Illegal pointer to non-primitive type: int* constant* constant") != -1);
 }
 
 tests.andReturnedArrayRef = function()
@@ -6522,7 +5194,7 @@ tests.andReturnedArrayRef = function()
             return *ptr;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 354);
+    checkInt(program, callFunction(program, "foo", []), 354);
 }
 
 okToTest = true;

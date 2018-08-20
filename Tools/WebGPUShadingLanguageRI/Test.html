@@ -12,6 +12,7 @@
 <script src="CreateLiteralType.js"></script>
 <script src="PropertyAccessExpression.js"></script>
 <script src="SwizzleOp.js"></script>
+<script src="NativeType.js"></script>
 
 <script src="AddressSpace.js"></script>
 <script src="AnonymousVariable.js"></script>
@@ -22,6 +23,12 @@
 <script src="Block.js"></script>
 <script src="BoolLiteral.js"></script>
 <script src="Break.js"></script>
+<script src="BuiltinVectorConstructors.js"></script>
+<script src="BuiltinVectorGetter.js"></script>
+<script src="BuiltinVectorSetter.js"></script>
+<script src="BuiltinVectorIndexGetter.js"></script>
+<script src="BuiltinVectorIndexSetter.js"></script>
+<script src="BuiltinVectorEqualityOperator.js"></script>
 <script src="CallExpression.js"></script>
 <script src="CallFunction.js"></script>
 <script src="Check.js"></script>
@@ -36,7 +43,6 @@
 <script src="CloneProgram.js"></script>
 <script src="CommaExpression.js"></script>
 <script src="ConstexprFolder.js"></script>
-<script src="ConstexprTypeParameter.js"></script>
 <script src="Continue.js"></script>
 <script src="ConvertPtrToArrayRefExpression.js"></script>
 <script src="DoWhileLoop.js"></script>
@@ -55,7 +61,6 @@
 <script src="ExternalOrigin.js"></script>
 <script src="Field.js"></script>
 <script src="FindHighZombies.js"></script>
-<script src="FlattenProtocolExtends.js"></script>
 <script src="FlattenedStructOffsetGatherer.js"></script>
 <script src="FloatLiteral.js"></script>
 <script src="FloatLiteralType.js"></script>
@@ -63,7 +68,6 @@
 <script src="ForLoop.js"></script>
 <script src="Func.js"></script>
 <script src="FuncDef.js"></script>
-<script src="FuncInstantiator.js"></script>
 <script src="FuncParameter.js"></script>
 <script src="FunctionLikeBlock.js"></script>
 <script src="HighZombieFinder.js"></script>
@@ -73,7 +77,6 @@
 <script src="InferTypesForCall.js"></script>
 <script src="Inline.js"></script>
 <script src="Inliner.js"></script>
-<script src="InstantiateImmediates.js"></script>
 <script src="IntLiteral.js"></script>
 <script src="IntLiteralType.js"></script>
 <script src="Intrinsics.js"></script>
@@ -90,12 +93,12 @@
 <script src="NameFinder.js"></script>
 <script src="NameResolver.js"></script>
 <script src="NativeFunc.js"></script>
-<script src="NativeFuncInstance.js"></script>
-<script src="NativeType.js"></script>
-<script src="NativeTypeInstance.js"></script>
 <script src="NormalUsePropertyResolver.js"></script>
 <script src="NullLiteral.js"></script>
 <script src="NullType.js"></script>
+<script src="OperatorAnderIndex.js"></script>
+<script src="OperatorArrayRefLength.js"></script>
+<script src="OperatorBool.js"></script>
 <script src="OriginKind.js"></script>
 <script src="OverloadResolutionFailure.js"></script>
 <script src="Parse.js"></script>
@@ -103,14 +106,11 @@
 <script src="PropertyResolver.js"></script>
 <script src="Program.js"></script>
 <script src="ProgramWithUnnecessaryThingsRemoved.js"></script>
-<script src="Protocol.js"></script>
-<script src="ProtocolDecl.js"></script>
-<script src="ProtocolFuncDecl.js"></script>
-<script src="ProtocolRef.js"></script>
 <script src="PtrType.js"></script>
 <script src="ReadModifyWriteExpression.js"></script>
 <script src="RecursionChecker.js"></script>
 <script src="RecursiveTypeChecker.js"></script>
+<script src="RemoveTypeArguments.js"></script>
 <script src="ResolveNames.js"></script>
 <script src="ResolveOverloadImpl.js"></script>
 <script src="ResolveProperties.js"></script>
@@ -122,19 +122,18 @@
 <script src="StatementCloner.js"></script>
 <script src="StructLayoutBuilder.js"></script>
 <script src="StructType.js"></script>
-<script src="Substitution.js"></script>
 <script src="SwitchCase.js"></script>
 <script src="SwitchStatement.js"></script>
+<script src="SynthesizeArrayOperatorLength.js"></script>
 <script src="SynthesizeEnumFunctions.js"></script>
 <script src="SynthesizeStructAccessors.js"></script>
+<script src="SynthesizeOperatorBool.js"></script>
+<script src="SynthesizeCopyConstructorOperator.js"></script>
+<script src="SynthesizeDefaultConstructorOperator.js"></script>
 <script src="TrapStatement.js"></script>
 <script src="TypeDef.js"></script>
 <script src="TypeDefResolver.js"></script>
-<script src="TypeOrVariableRef.js"></script>
-<script src="TypeParameterRewriter.js"></script>
 <script src="TypeRef.js"></script>
-<script src="TypeVariable.js"></script>
-<script src="TypeVariableTracker.js"></script>
 <script src="TypedValue.js"></script>
 <script src="UintLiteral.js"></script>
 <script src="UintLiteralType.js"></script>
@@ -142,6 +141,7 @@
 <script src="UnreachableCodeChecker.js"></script>
 <script src="VariableDecl.js"></script>
 <script src="VariableRef.js"></script>
+<script src="VectorType.js"></script>
 <script src="VisitingSet.js"></script>
 <script src="WSyntaxError.js"></script>
 <script src="WTrapError.js"></script>
@@ -171,6 +171,12 @@ function doTestInBrowser()
     next();
 }
 </script>
+
+<style>
+    pre {
+        margin:0;
+    }
+</style>
 
 </head>
 <body onload="doTestInBrowser()">

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +48,7 @@ class NameContext {
             return;
         if (!thing.origin)
             throw new Error("Thing does not have origin: " + thing);
-        
+
         if (thing.isNative && !thing.implementation) {
             if (!this._intrinsics)
                 throw new Error("Native function in a scope that does not recognize intrinsics");
@@ -68,8 +68,10 @@ class NameContext {
             array.push(thing);
             return;
         }
+
         if (this._map.has(thing.name))
             throw new WTypeError(thing.origin.originString, "Duplicate name: " + thing.name);
+
         this._set.add(thing);
         this._map.set(thing.name, thing);
     }
@@ -104,13 +106,13 @@ class NameContext {
         yield thing;
     }
     
-    resolveFuncOverload(name, typeArguments, argumentTypes, returnType, allowEntryPoint = false)
+    resolveFuncOverload(name, argumentTypes, returnType, allowEntryPoint = false)
     {
         let functions = this.get(Func, name);
         if (!functions)
             return {failures: []};
         
-        return resolveOverloadImpl(functions, typeArguments, argumentTypes, returnType, allowEntryPoint);
+        return resolveOverloadImpl(functions, argumentTypes, returnType, allowEntryPoint);
     }
     
     get currentStatement()

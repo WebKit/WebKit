@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,9 @@
 "use strict";
 
 class FuncDef extends Func {
-    constructor(origin, name, returnType, typeParameters, parameters, body, isCast, shaderType)
+    constructor(origin, name, returnType, parameters, body, isCast, shaderType)
     {
-        super(origin, name, returnType, typeParameters, parameters, isCast, shaderType);
+        super(origin, name, returnType, parameters, isCast, shaderType);
         this._body = body;
         this.isRestricted = false;
     }
@@ -36,8 +36,6 @@ class FuncDef extends Func {
     
     rewrite(rewriter)
     {
-        if (this._typeParameters.length)
-            throw new Error("Cannot rewrite an uninstantiated function");
         this._returnType = this._returnType.visit(rewriter);
         this._parameters = this._parameters.map(parameter => parameter.visit(rewriter));
         this._body = this.body.visit(rewriter);

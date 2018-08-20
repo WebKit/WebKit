@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,19 +27,13 @@
 function inline(program)
 {
     for (let funcList of program.functions.values()) {
-        for (let func of funcList) {
-            if (!func.typeParameters.length) {
-                func = program.funcInstantiator.getUnique(func, [])
-                _inlineFunction(program, func, new VisitingSet(func));
-            }
-        }
+        for (let func of funcList)
+            _inlineFunction(program, func, new VisitingSet(func));
     }
 }
 
 function _inlineFunction(program, func, visiting)
 {
-    if (func.typeParameters.length)
-        throw new Error("Cannot inline function that has type parameters");
     if (func.inlined || func.isNative)
         return;
     
@@ -55,14 +49,13 @@ function _inlineFunction(program, func, visiting)
     func.inlined = true;
 }
 
-function resolveInlinedFunction(program, name, typeArguments, argumentTypes, allowEntryPoint = false)
+function resolveInlinedFunction(program, name, argumentTypes, allowEntryPoint = false)
 {
-    let overload = program.globalNameContext.resolveFuncOverload(name, typeArguments, argumentTypes, undefined, allowEntryPoint);
+    let overload = program.globalNameContext.resolveFuncOverload(name, argumentTypes, undefined, allowEntryPoint);
     if (!overload.func)
         return overload.failures;
-    if (!overload.func.typeParameters)
-        return overload.func;
-    let func = program.funcInstantiator.getUnique(overload.func, overload.typeArguments);
-    _inlineFunction(program, func, new VisitingSet(overload.func));
+
+    let func = overload.func;
+    _inlineFunction(program, func, new VisitingSet(func));
     return func;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,12 +43,6 @@ class NameFinder extends Visitor {
         this._worklist.push(name);
     }
     
-    visitProtocolRef(node)
-    {
-        this.add(node.name);
-        super.visitProtocolRef(node);
-    }
-    
     visitTypeRef(node)
     {
         this.add(node.name);
@@ -59,11 +53,6 @@ class NameFinder extends Visitor {
     {
         this.add(node.name);
         super.visitVariableRef(node);
-    }
-    
-    visitTypeOrVariableRef(node)
-    {
-        this.add(node.name);
     }
 
     _handlePropertyAccess(node)

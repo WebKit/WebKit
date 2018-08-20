@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,44 +20,44 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 "use strict";
 
-class Substitution extends Rewriter {
-    constructor(parameters, argumentList)
-    {
-        super();
-        if (parameters.length != argumentList.length)
-            throw new Error("Parameters and arguments are mismatched");
-        this._map = new Map();
-        for (let i = 0; i < parameters.length; ++i)
-            this._map.set(parameters[i], argumentList[i]);
-    }
-    
-    get map() { return this._map; }
-    
-    visitTypeRef(node)
-    {
-        let replacement = this._map.get(node.type);
-        if (replacement) {
-            if (node.typeArguments.length)
-                throw new Error("Unexpected type arguments on type variable");
-            let result = replacement.visit(new AutoWrapper());
-            return result;
+function synthesizeCopyConstructorOperator(program)
+{
+    const types = new Set();
+
+    class FindAllTypes extends Visitor {
+        visitNativeType(node)
+        {
+            types.add(node);
         }
-        
-        let result = super.visitTypeRef(node);
-        return result;
+
+        visitStructType(node)
+        {
+            types.add(node);
+            super.visitStructType(node);
+        }
+
+        visitElementalType(node)
+        {
+            types.add(node);
+            super.visitElementalType(node);
+        }
     }
 
-    visitVariableRef(node)
-    {
-        let replacement = this._map.get(node.variable);
-        if (replacement)
-            return replacement.visit(new AutoWrapper());
-        
-        return super.visitVariableRef(node);
+    program.visit(new FindAllTypes());
+
+    for (let type of types) {
+        let nativeFunc = new NativeFunc(type.origin, "operator cast", TypeRef.wrap(type), [
+            new FuncParameter(type.origin, null, TypeRef.wrap(type))
+        ], true, null);
+        nativeFunc.implementation = ([arg], node) => {
+            let result = new EPtr(new EBuffer(type.size), 0);
+            result.copyFrom(arg, type.size);
+            return result;
+        };
+        program.add(nativeFunc);
     }
 }
-

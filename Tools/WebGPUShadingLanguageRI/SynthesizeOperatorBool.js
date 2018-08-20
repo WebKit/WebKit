@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,34 +24,14 @@
  */
 "use strict";
 
-class TypeVariableTracker extends Visitor {
-    constructor()
-    {
-        super();
-        this._set = new Set();
-    }
-    
-    get set() { return this._set; }
-    
-    _consider(thing)
-    {
-        if (thing.isUnifiable)
-            this._set.add(thing);
-    }
-    
-    visitTypeRef(node)
-    {
-        if (node.typeArguments.length) {
-            for (let typeArgument of node.typeArguments)
-                typeArgument.visit(this);
-            return;
-        }
-        this._consider(node.type);
-    }
-    
-    visitVariableRef(node)
-    {
-        this._consider(node.variable);
+function synthesizeOperatorBool(program)
+{
+    for (let type of program.types.values()) {
+        if (!(type instanceof StructType) && !(type instanceof EnumType))
+            continue;
+        const func = new NativeFunc(type.origin, "operator cast", TypeRef.wrap(program.types.get("bool")), [ new FuncParameter(type.origin, null, TypeRef.wrap(type)) ], true, null);
+        const operatorBool = new OperatorBool(type.name);
+        operatorBool.instantiateImplementation(func);
+        program.add(func);
     }
 }
-

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 "use strict";
 
-function resolveOverloadImpl(functions, typeArguments, argumentTypes, returnType, allowEntryPoint = false)
+function resolveOverloadImpl(functions, argumentTypes, returnType, allowEntryPoint = false)
 {
     if (!functions)
         throw new Error("Null functions; that should have been caught by the caller.");
@@ -36,7 +36,7 @@ function resolveOverloadImpl(functions, typeArguments, argumentTypes, returnType
             failures.push(new OverloadResolutionFailure(func, "Function is a " + func.shaderType + " shader, so it cannot be called from within an existing shader."))
             continue;
         }
-        let overload = inferTypesForCall(func, typeArguments, argumentTypes, returnType);
+        let overload = inferTypesForCall(func, argumentTypes, returnType);
         if (overload.failure)
             failures.push(overload.failure);
         else
@@ -74,7 +74,6 @@ function resolveOverloadImpl(functions, typeArguments, argumentTypes, returnType
             let parameterFunc = successes[j].func;
             let overload = inferTypesForCall(
                 parameterFunc,
-                typeArguments.length ? argumentFunc.typeParameters : [],
                 argumentFunc.parameterTypes,
                 argumentFunc.returnTypeForOverloadResolution);
             if (!overload.func) {

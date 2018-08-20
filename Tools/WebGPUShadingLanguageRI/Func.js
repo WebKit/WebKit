@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 "use strict";
 
 class Func extends Node {
-    constructor(origin, name, returnType, typeParameters, parameters, isCast, shaderType)
+    constructor(origin, name, returnType, parameters, isCast, shaderType)
     {
         if (!(origin instanceof LexerToken))
             throw new Error("Bad origin: " + origin);
@@ -39,7 +39,6 @@ class Func extends Node {
         this._origin = origin;
         this._name = name;
         this._returnType = returnType;
-        this._typeParameters = typeParameters;
         this._parameters = parameters;
         this._isCast = isCast;
         this._shaderType = shaderType;
@@ -48,8 +47,6 @@ class Func extends Node {
     get origin() { return this._origin; }
     get name() { return this._name; }
     get returnType() { return this._returnType; }
-    get typeParameters() { return this._typeParameters; }
-    get typeParametersForCallResolution() { return this.typeParameters; }
     get parameters() { return this._parameters; }
     get parameterTypes() { return this.parameters.map(parameter => parameter.type); }
     get isCast() { return this._isCast; }
@@ -65,9 +62,9 @@ class Func extends Node {
         if (this.shaderType)
             result += this.shaderType + " ";
         if (this.isCast)
-            result += "operator<" + this.typeParameters + "> " + this.returnType;
+            result += `operator ${this.returnType}`;
         else
-            result += this.returnType + " " + this.name + "<" + this.typeParameters + ">";
+            result += `${this.returnType} ${this.name}`;
         return result + "(" + this.parameters + ")";
     }
     

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,18 +35,11 @@ class ExpressionFinder extends Visitor {
     visitFunc(node)
     {
         this._callback(node.returnType);
-        for (let typeParameter of node.typeParameters)
-            typeParameter.visit(this);
         for (let parameter of node.parameters)
             parameter.visit(this);
     }
     
     visitFuncParameter(node)
-    {
-        this._callback(node.type);
-    }
-    
-    visitConstexprTypeParameter(node)
     {
         this._callback(node.type);
     }

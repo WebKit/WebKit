@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,51 +31,54 @@ let standardLibrary = `
 
 // Need to bootstrap void first.
 native typedef void;
-
-native typedef uint8;
-native typedef int32;
-native typedef uint32;
 native typedef bool;
-typedef int = int32;
-typedef uint = uint32;
+native typedef uchar;
+native typedef uint;
+native typedef int;
+native typedef float;
 
-native typedef float32;
-typedef float = float32;
+// FIXME: Add support for these types to Intrinsics.js
+// native typedef ushort;
+// native typedef char;
+// native typedef short;
+// native typedef half;
+// native typedef atomic_int;
+// native typedef atomic_uint;
 
-native operator int32(uint32);
-native operator int32(uint8);
-native operator int32(float);
-native operator uint32(int32);
-native operator uint32(uint8);
-native operator uint32(float);
-native operator uint8(int32);
-native operator uint8(uint32);
-native operator uint8(float);
-native operator float(int32);
-native operator float(uint32);
-native operator float(uint8);
+native operator int(uint);
+native operator int(uchar);
+native operator int(float);
+native operator uint(int);
+native operator uint(uchar);
+native operator uint(float);
+native operator uchar(int);
+native operator uchar(uint);
+native operator uchar(float);
+native operator float(int);
+native operator float(uint);
+native operator float(uchar);
 
 native int operator+(int, int);
 native uint operator+(uint, uint);
-uint8 operator+(uint8 a, uint8 b) { return uint8(uint(a) + uint(b)); }
+uchar operator+(uchar a, uchar b) { return uchar(uint(a) + uint(b)); }
 native float operator+(float, float);
 int operator++(int value) { return value + 1; }
 uint operator++(uint value) { return value + 1; }
-uint8 operator++(uint8 value) { return value + 1; }
+uchar operator++(uchar value) { return value + 1; }
 native int operator-(int, int);
 native uint operator-(uint, uint);
-uint8 operator-(uint8 a, uint8 b) { return uint8(uint(a) - uint(b)); }
+uchar operator-(uchar a, uchar b) { return uchar(uint(a) - uint(b)); }
 native float operator-(float, float);
 int operator--(int value) { return value - 1; }
 uint operator--(uint value) { return value - 1; }
-uint8 operator--(uint8 value) { return value - 1; }
+uchar operator--(uchar value) { return value - 1; }
 native int operator*(int, int);
 native uint operator*(uint, uint);
-uint8 operator*(uint8 a, uint8 b) { return uint8(uint(a) * uint(b)); }
+uchar operator*(uchar a, uchar b) { return uchar(uint(a) * uint(b)); }
 native float operator*(float, float);
 native int operator/(int, int);
 native uint operator/(uint, uint);
-uint8 operator/(uint8 a, uint8 b) { return uint8(uint(a) / uint(b)); }
+uchar operator/(uchar a, uchar b) { return uchar(uint(a) / uint(b)); }
 native int operator&(int, int);
 native int operator|(int, int);
 native int operator^(int, int);
@@ -88,33 +91,33 @@ native uint operator^(uint, uint);
 native uint operator~(uint);
 native uint operator<<(uint, uint);
 native uint operator>>(uint, uint);
-uint8 operator&(uint8 a, uint8 b) { return uint8(uint(a) & uint(b)); }
-uint8 operator|(uint8 a, uint8 b) { return uint8(uint(a) | uint(b)); }
-uint8 operator^(uint8 a, uint8 b) { return uint8(uint(a) ^ uint(b)); }
-uint8 operator~(uint8 value) { return uint8(~uint(value)); }
-uint8 operator<<(uint8 a, uint b) { return uint8(uint(a) << (b & 7)); }
-uint8 operator>>(uint8 a, uint b) { return uint8(uint(a) >> (b & 7)); }
+uchar operator&(uchar a, uchar b) { return uchar(uint(a) & uint(b)); }
+uchar operator|(uchar a, uchar b) { return uchar(uint(a) | uint(b)); }
+uchar operator^(uchar a, uchar b) { return uchar(uint(a) ^ uint(b)); }
+uchar operator~(uchar value) { return uchar(~uint(value)); }
+uchar operator<<(uchar a, uint b) { return uchar(uint(a) << (b & 7)); }
+uchar operator>>(uchar a, uint b) { return uchar(uint(a) >> (b & 7)); }
 native float operator/(float, float);
 native bool operator==(int, int);
 native bool operator==(uint, uint);
-bool operator==(uint8 a, uint8 b) { return uint(a) == uint(b); }
+bool operator==(uchar a, uchar b) { return uint(a) == uint(b); }
 native bool operator==(bool, bool);
 native bool operator==(float, float);
 native bool operator<(int, int);
 native bool operator<(uint, uint);
-bool operator<(uint8 a, uint8 b) { return uint(a) < uint(b); }
+bool operator<(uchar a, uchar b) { return uint(a) < uint(b); }
 native bool operator<(float, float);
 native bool operator<=(int, int);
 native bool operator<=(uint, uint);
-bool operator<=(uint8 a, uint8 b) { return uint(a) <= uint(b); }
+bool operator<=(uchar a, uchar b) { return uint(a) <= uint(b); }
 native bool operator<=(float, float);
 native bool operator>(int, int);
 native bool operator>(uint, uint);
-bool operator>(uint8 a, uint8 b) { return uint(a) > uint(b); }
+bool operator>(uchar a, uchar b) { return uint(a) > uint(b); }
 native bool operator>(float, float);
 native bool operator>=(int, int);
 native bool operator>=(uint, uint);
-bool operator>=(uint8 a, uint8 b) { return uint(a) >= uint(b); }
+bool operator>=(uchar a, uchar b) { return uint(a) >= uint(b); }
 native bool operator>=(float, float);
 
 bool operator&(bool a, bool b)
@@ -145,245 +148,54 @@ bool operator~(bool value)
     return !value;
 }
 
-protocol Addable {
-    Addable operator+(Addable, Addable);
-}
+native typedef uchar2;
+native typedef uchar3;
+native typedef uchar4;
 
-protocol Equatable {
-    bool operator==(Equatable, Equatable);
-}
+native typedef uint2;
+native typedef uint3;
+native typedef uint4;
 
-restricted operator<T> T()
-{
-    T defaultValue;
-    return defaultValue;
-}
+native typedef int2;
+native typedef int3;
+native typedef int4;
 
-restricted operator<T> T(T x)
-{
-    return x;
-}
-
-operator<T:Equatable> bool(T x)
-{
-    return x != T();
-}
-
-struct vec2<T> {
-    T x;
-    T y;
-}
-
-typedef int2 = vec2<int>;
-typedef uint2 = vec2<uint>;
-typedef float2 = vec2<float>;
-
-operator<T> vec2<T>(T x, T y)
-{
-    vec2<T> result;
-    result.x = x;
-    result.y = y;
-    return result;
-}
-
-bool operator==<T:Equatable>(vec2<T> a, vec2<T> b)
-{
-    return a.x == b.x && a.y == b.y;
-}
-
-thread T* operator&[]<T>(thread vec2<T>* foo, uint index)
-{
-    if (index == 0)
-        return &foo->x;
-    if (index == 1)
-        return &foo->y;
-    trap;
-}
-
-struct vec3<T> {
-    T x;
-    T y;
-    T z;
-}
-
-typedef int3 = vec3<int>;
-typedef uint3 = vec3<uint>;
-typedef float3 = vec3<float>;
-
-operator<T> vec3<T>(T x, T y, T z)
-{
-    vec3<T> result;
-    result.x = x;
-    result.y = y;
-    result.z = z;
-    return result;
-}
-
-operator<T> vec3<T>(vec2<T> v2, T z)
-{
-    vec3<T> result;
-    result.x = v2.x;
-    result.y = v2.y;
-    result.z = z;
-    return result;
-}
-
-operator<T> vec3<T>(T x, vec2<T> v2)
-{
-    vec3<T> result;
-    result.x = x;
-    result.y = v2.x;
-    result.z = v2.y;
-    return result;
-}
-
-bool operator==<T:Equatable>(vec3<T> a, vec3<T> b)
-{
-    return a.x == b.x && a.y == b.y && a.z == b.z;
-}
-
-thread T* operator&[]<T>(thread vec3<T>* foo, uint index)
-{
-    if (index == 0)
-        return &foo->x;
-    if (index == 1)
-        return &foo->y;
-    if (index == 2)
-        return &foo->z;
-    trap;
-}
-
-struct vec4<T> {
-    T x;
-    T y;
-    T z;
-    T w;
-}
-
-typedef int4 = vec4<int>;
-typedef uint4 = vec4<uint>;
-typedef float4 = vec4<float>;
-
-operator<T> vec4<T>(T x, T y, T z, T w)
-{
-    vec4<T> result;
-    result.x = x;
-    result.y = y;
-    result.z = z;
-    result.w = w;
-    return result;
-}
-
-operator<T> vec4<T>(vec2<T> v2, T z, T w)
-{
-    vec4<T> result;
-    result.x = v2.x;
-    result.y = v2.y;
-    result.z = z;
-    result.w = w;
-    return result;
-}
-
-operator<T> vec4<T>(T x, vec2<T> v2, T w)
-{
-    vec4<T> result;
-    result.x = x;
-    result.y = v2.x;
-    result.z = v2.y;
-    result.w = w;
-    return result;
-}
-
-operator<T> vec4<T>(T x, T y, vec2<T> v2)
-{
-    vec4<T> result;
-    result.x = x;
-    result.y = y;
-    result.z = v2.x;
-    result.w = v2.y;
-    return result;
-}
-
-operator<T> vec4<T>(vec2<T> v2a, vec2<T> v2b)
-{
-    vec4<T> result;
-    result.x = v2a.x;
-    result.y = v2a.y;
-    result.z = v2b.x;
-    result.w = v2b.y;
-    return result;
-}
-
-operator<T> vec4<T>(vec3<T> v3, T w)
-{
-    vec4<T> result;
-    result.x = v3.x;
-    result.y = v3.y;
-    result.z = v3.z;
-    result.w = w;
-    return result;
-}
-
-operator<T> vec4<T>(T x, vec3<T> v3)
-{
-    vec4<T> result;
-    result.x = x;
-    result.y = v3.x;
-    result.z = v3.y;
-    result.w = v3.z;
-    return result;
-}
-
-bool operator==<T:Equatable>(vec4<T> a, vec4<T> b)
-{
-    return a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w;
-}
-
-thread T* operator&[]<T>(thread vec4<T>* foo, uint index)
-{
-    if (index == 0)
-        return &foo->x;
-    if (index == 1)
-        return &foo->y;
-    if (index == 2)
-        return &foo->z;
-    if (index == 3)
-        return &foo->w;
-    trap;
-}
-
-native thread T* operator&[]<T>(thread T[], uint);
-native threadgroup T* operator&[]<T>(threadgroup T[], uint);
-native device T* operator&[]<T>(device T[], uint);
-native constant T* operator&[]<T>(constant T[], uint);
-
-native uint operator.length<T>(thread T[]);
-native uint operator.length<T>(threadgroup T[]);
-native uint operator.length<T>(device T[]);
-native uint operator.length<T>(constant T[]);
-
-uint operator.length<T, uint length>(T[length])
-{
-    return length;
-}
+native typedef float2;
+native typedef float3;
+native typedef float4;
 `;
 
-function intToString(x)
+// FIXME: Once the standard library has been replaced with a new version, this comments should be removed.
+// This list is used to restrict the availability of vector types available in the langauge.
+// Permissible vector element types must appear in this list and in the standard library
+const VectorElementTypes = [ /*"bool",*/ "uchar", /*"char", "ushort", "short",*/ "uint", "int", /* "half", */"float" ];
+const VectorElementSizes = [ 2, 3, 4 ];
+
+function allVectorTypeNames()
 {
-    switch (x) {
-    case 0:
-        return "x";
-    case 1:
-        return "y";
-    case 2:
-        return "z";
-    case 3:
-        return "w";
-    default:
-        throw new Error("Could not generate standard library.");
+    const names = [];
+    for (let elementType of VectorElementTypes) {
+        for (let size of VectorElementSizes)
+            names.push(`${elementType}${size}`);
     }
+    return names;
 }
 
-// There are 481 swizzle operators, so we compile them as native functions
-standardLibrary += SwizzleOp.allSwizzleOperators().join(";\n") + ";";
-console.log(standardLibrary);
+// Provides operator&[]
+standardLibrary += OperatorAnderIndexer.functions().join(";\n") + ";\n";
+
+// Native vector types are like structs in the langauge, but they do not have the ander field access.
+// It is not possible to take the address of a vector field.
+standardLibrary += BuiltinVectorGetter.functions().join(";\n") + ";\n";
+standardLibrary += BuiltinVectorSetter.functions().join(";\n") + ";\n";
+standardLibrary += BuiltinVectorIndexGetter.functions().join(";\n") + ";\n";
+standardLibrary += BuiltinVectorIndexSetter.functions().join(";\n") + ";\n";
+
+// FIXME: For native types these could be included as source in the standard library.
+// https://bugs.webkit.org/show_bug.cgi?id=188685
+standardLibrary += OperatorBool.functions().join(";\n") + ";\n";
+standardLibrary += BuiltinVectorEqualityOperator.functions().join(";\n") + ";\n";
+
+// FIXME: These need to be included as source in the standard library.
+standardLibrary += SwizzleOp.functions().join(";\n") + ";\n";
+standardLibrary += BuiltinVectorConstructors.functions().join(";\n") + ";\n";

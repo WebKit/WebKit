@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,11 +52,6 @@ class WrapChecker extends Visitor {
         throw new Error("Found unwrapped " + node.constructor.name + " at " + originString(node) + ": " + node + "\nWhile visiting " + this._startNode.constructor.name + " at " + originString(this._startNode.origin) + ": " + this._startNode);
     }
     
-    visitConstexprTypeParameter(node)
-    {
-        this._foundUnwrapped(node);
-    }
-    
     visitFuncParameter(node)
     {
         this._foundUnwrapped(node);
@@ -76,14 +71,6 @@ class WrapChecker extends Visitor {
     {
         this._foundUnwrapped(node);
     }
-    
-    visitTypeVariable(node)
-    {
-        this._foundUnwrapped(node);
-    }
-    
-    // NOTE: This does not know how to handle NativeTypeInstance, because this is never called on instantiated
-    // code. Once code is instantiated, you cannot instantiate it further.
     
     // NOTE: This needs to be kept in sync with AutoWrapper.
 }

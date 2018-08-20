@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,29 +20,47 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 "use strict";
 
-class ProtocolRef extends Protocol {
-    constructor(origin, name)
+class BuiltinVectorIndexGetter {
+    constructor(baseTypeName, size)
     {
-        super(origin, name);
-        this.protocolDecl = null;
+        this._baseTypeName = baseTypeName;
+        this._size = size;
     }
-    
-    inherits(other)
+
+    get baseTypeName() { return this._baseTypeName; }
+    get size() { return this._size; }
+
+    toString()
     {
-        return this.protocolDecl.inherits(other);
+        return `native ${this.baseTypeName} operator[](${this.baseTypeName}${this.size},uint)`;
     }
-    
-    hasHeir(type)
+
+    static functions()
     {
-        return this.protocolDecl.hasHeir(type);
+        if (!this._allIndexGetters) {
+            this._allIndexGetters = [];
+
+            for (let typeName of VectorElementTypes) {
+                for (let size of VectorElementSizes)
+                    this._allIndexGetters.push(new BuiltinVectorIndexGetter(typeName, size));
+            }
+        }
+        return this._allIndexGetters;
     }
-    
-    get isPrimitive()
+
+    instantiateImplementation(func)
     {
-        return this.protocolDecl.isPrimitive;
+        func.implementation = ([vec, index], node) => {
+            const indexValue = index.loadValue();
+            if (indexValue >= 0 && indexValue < this.size)
+                return EPtr.box(vec.get(index.loadValue()));
+            else
+                throw new Error(`${indexValue} out of bounds for vector of size ${this.size}`);
+        };
+        func.implementationData = this;
     }
 }

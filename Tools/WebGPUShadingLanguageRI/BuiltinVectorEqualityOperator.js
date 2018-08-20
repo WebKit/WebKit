@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,19 +20,47 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 "use strict";
 
-class TypeParameterRewriter {
-    visitConstexprTypeParameter(node)
+class BuiltinVectorEqualityOperator {
+    constructor(baseTypeName, size)
     {
-        return new ConstexprTypeParameter(node.origin, node.name, node.type.visit(new Rewriter()));
+        this._baseTypeName = baseTypeName;
+        this._size = size;
     }
-    
-    visitTypeVariable(node)
+
+    get baseTypeName() { return this._baseTypeName; }
+    get size() { return this._size; }
+
+    toString()
     {
-        return new TypeVariable(node.origin, node.name, node.protocol);
+        return `native bool operator==(${this.baseTypeName}${this.size},${this.baseTypeName}${this.size})`;
+    }
+
+    static functions()
+    {
+        if (!this._functions) {
+            this._functions = [];
+
+            for (let typeName of VectorElementTypes) {
+                for (let size of VectorElementSizes)
+                    this._functions.push(new BuiltinVectorEqualityOperator(typeName, size));
+            }
+        }
+        return this._functions;
+    }
+
+    instantiateImplementation(func)
+    {
+        func.implementation = ([ref1, ref2], node) => {
+            for (let i = 0; i < this.size; i++) {
+                if (ref1.get(i) != ref2.get(i))
+                    return EPtr.box(false);
+            }
+            return EPtr.box(true);
+        };
+        func.implementationData = this;
     }
 }
-

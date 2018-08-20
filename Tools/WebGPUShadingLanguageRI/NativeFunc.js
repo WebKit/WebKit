@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,15 +25,14 @@
 "use strict";
 
 class NativeFunc extends Func {
-    constructor(origin, name, returnType, typeParameters, parameters, isCast, shaderType)
+    constructor(origin, name, returnType, parameters, isCast, shaderType)
     {
-        super(origin, name, returnType, typeParameters, parameters, isCast, shaderType);
+        super(origin, name, returnType, parameters, isCast, shaderType);
         this.isRestricted = false;
         this.implementation = null;
         this._implementationData = null;
         this.instantiateImplementation = (substitution) => {};
         this.visitImplementationData = (implementationData, visitor) => null;
-        this.didLayoutStructsInImplementationData = implementationData => null;
     }
 
     get isNative() { return true; }

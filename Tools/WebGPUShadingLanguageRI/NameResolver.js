@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,19 +41,9 @@ class NameResolver extends Visitor {
         this._nameContext.doStatement(statement, () => statement.visit(this));
     }
     
-    _visitTypeParametersAndBuildNameContext(node)
-    {
-        let nameContext = new NameContext(this._nameContext);
-        for (let typeParameter of node.typeParameters) {
-            nameContext.add(typeParameter);
-            typeParameter.visit(this);
-        }
-        return nameContext;
-    }
-    
     visitFunc(node)
     {
-        let checker = new NameResolver(this._visitTypeParametersAndBuildNameContext(node));
+        let checker = new NameResolver(new NameContext(this._nameContext));
         node.returnType.visit(checker);
         for (let parameter of node.parameters)
             parameter.visit(checker);
@@ -61,16 +51,14 @@ class NameResolver extends Visitor {
     
     visitFuncDef(node)
     {
-        let contextWithTypeParameters = this._visitTypeParametersAndBuildNameContext(node);
-        let checkerWithTypeParameters = new NameResolver(contextWithTypeParameters);
-        node.returnType.visit(checkerWithTypeParameters);
-        let contextWithParameters = new NameContext(contextWithTypeParameters);
+        let funcDefNameContext = new NameContext(this._nameContext);
+        let funcDefNameResolver = new NameResolver(funcDefNameContext);
+        node.returnType.visit(funcDefNameResolver);
         for (let parameter of node.parameters) {
-            parameter.visit(checkerWithTypeParameters);
-            contextWithParameters.add(parameter);
+            parameter.visit(funcDefNameResolver);
+            funcDefNameContext.add(parameter);
         }
-        let checkerWithParameters = new NameResolver(contextWithParameters);
-        node.body.visit(checkerWithParameters);
+        node.body.visit(funcDefNameResolver);
     }
     
     visitBlock(node)
@@ -115,41 +103,9 @@ class NameResolver extends Visitor {
         node.body.visit(newResolver);
     }
     
-    visitProtocolDecl(node)
-    {
-        for (let parent of node.extends)
-            parent.visit(this);
-        let nameContext = new NameContext(this._nameContext);
-        nameContext.add(node.typeVariable);
-        let checker = new NameResolver(nameContext);
-        for (let signature of node.signatures)
-            signature.visit(checker);
-    }
-    
-    visitProtocolRef(node)
-    {
-        let result = this._nameContext.get(Protocol, node.name);
-        if (!result)
-            throw new WTypeError(node.origin.originString, "Could not find protocol named " + node.name);
-        node.protocolDecl = result;
-    }
-    
-    visitProtocolFuncDecl(node)
-    {
-        this.visitFunc(node);
-        let funcs = this._nameContext.get(Func, node.name);
-        if (!funcs)
-            throw new WTypeError(node.origin.originString, "Cannot find any functions named " + node.name);
-        node.possibleOverloads = funcs;
-    }
-    
     visitTypeDef(node)
     {
         let nameContext = new NameContext(this._nameContext);
-        for (let typeParameter of node.typeParameters) {
-            typeParameter.visit(this);
-            nameContext.add(typeParameter);
-        }
         let checker = new NameResolver(nameContext);
         node.type.visit(checker);
     }
@@ -157,59 +113,19 @@ class NameResolver extends Visitor {
     visitStructType(node)
     {
         let nameContext = new NameContext(this._nameContext);
-        for (let typeParameter of node.typeParameters) {
-            typeParameter.visit(this);
-            nameContext.add(typeParameter);
-        }
         let checker = new NameResolver(nameContext);
         for (let field of node.fields)
             field.visit(checker);
     }
     
-    _resolveTypeArguments(typeArguments)
-    {
-        for (let i = 0; i < typeArguments.length; ++i) {
-            let typeArgument = typeArguments[i];
-            if (typeArgument instanceof TypeOrVariableRef) {
-                let thing = this._nameContext.get(Anything, typeArgument.name);
-                if (!thing)
-                    new WTypeError(typeArgument.origin.originString, "Could not find type or variable named " + typeArgument.name);
-                if (thing instanceof Value)
-                    typeArguments[i] = new VariableRef(typeArgument.origin, typeArgument.name);
-                else if (thing instanceof Type)
-                    typeArguments[i] = new TypeRef(typeArgument.origin, typeArgument.name, []);
-                else
-                    throw new WTypeError(typeArgument.origin.originString, "Type argument resolved to wrong kind of thing: " + thing.kind);
-            }
-            
-            if (typeArgument[i] instanceof Value
-                && !typeArgument[i].isConstexpr)
-                throw new WTypeError(typeArgument[i].origin.originString, "Expected constexpr");
-        }
-    }
-    
     visitTypeRef(node)
     {
-        this._resolveTypeArguments(node.typeArguments);
-        
         let type = node.type;
         if (!type) {
             type = this._nameContext.get(Type, node.name);
             if (!type)
                 throw new WTypeError(node.origin.originString, "Could not find type named " + node.name);
             node.type = type;
-        }
-        
-        if (type.typeParameters.length != node.typeArguments.length)
-            throw new WTypeError(node.origin.originString, "Wrong number of type arguments (passed " + node.typeArguments.length + ", expected " + type.typeParameters.length + ")");
-        for (let i = 0; i < type.typeParameters.length; ++i) {
-            let parameterIsType = type.typeParameters[i] instanceof TypeVariable;
-            let argumentIsType = node.typeArguments[i] instanceof Type;
-            node.typeArguments[i].visit(this);
-            if (parameterIsType && !argumentIsType)
-                throw new WTypeError(node.origin.originString, "Expected type, but got value at argument #" + i);
-            if (!parameterIsType && argumentIsType)
-                throw new WTypeError(node.origin.originString, "Expected value, but got type at argument #" + i);
         }
     }
     
@@ -279,8 +195,6 @@ class NameResolver extends Visitor {
     
     visitCallExpression(node)
     {
-        this._resolveTypeArguments(node.typeArguments);
-        
         let funcs = this._nameContext.get(Func, node.name);
         if (funcs)
             node.possibleOverloads = funcs;
@@ -296,5 +210,9 @@ class NameResolver extends Visitor {
         
         super.visitCallExpression(node);
     }
-}
 
+    visitVectorType(node)
+    {
+        node.elementType.visit(this);
+    }
+}

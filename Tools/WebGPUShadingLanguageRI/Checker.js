@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,8 +43,6 @@ class Checker extends Visitor {
         
         for (let type of node.types.values())
             doStatement(type);
-        for (let protocol of node.protocols.values())
-            doStatement(protocol);
         for (let funcs of node.functions.values()) {
             for (let func of funcs) {
                 this.visitFunc(func);
@@ -59,8 +57,6 @@ class Checker extends Visitor {
     _checkShaderType(node)
     {
         // FIXME: Relax these checks once we have implemented support for textures and samplers.
-        if (node.typeParameters.length != 0)
-            throw new WTypeError(node.origin.originString, "Entry point " + node.name + " must not have type arguments.");
         let shaderFunc = node;
         switch (node.shaderType) {
         case "vertex":
@@ -84,15 +80,6 @@ class Checker extends Visitor {
         if (!func.name.startsWith("operator"))
             throw new Error("Bad operator overload name: " + func.name);
         
-        let typeVariableTracker = new TypeVariableTracker();
-        for (let parameterType of func.parameterTypes)
-            parameterType.visit(typeVariableTracker);
-        Node.visit(func.returnTypeForOverloadResolution, typeVariableTracker);
-        for (let typeParameter of func.typeParameters) {
-            if (!typeVariableTracker.set.has(typeParameter))
-                throw new WTypeError(typeParameter.origin.originString, "Type parameter " + typeParameter + " to operator " + func.toDeclString() + " is not inferrable from value parameters");
-        }
-        
         let checkGetter = (kind) => {
             let numExpectedParameters = kind == "index" ? 2 : 1;
             if (func.parameters.length != numExpectedParameters)
@@ -115,11 +102,10 @@ class Checker extends Visitor {
             if (!getterFuncs)
                 throw new WTypeError(func.origin.originString, "Every setter must have a matching getter, but did not find any function named " + getterName + " to match " + func.name);
             let argumentTypes = func.parameterTypes.slice(0, numExpectedParameters - 1);
-            let overload = resolveOverloadImpl(getterFuncs, [], argumentTypes, null);
+            let overload = resolveOverloadImpl(getterFuncs, argumentTypes, null);
             if (!overload.func)
                 throw new WTypeError(func.origin.originString, "Did not find function named " + func.name + " with arguments " + argumentTypes + (overload.failures.length ? "; tried:\n" + overload.failures.join("\n") : ""));
-            let resultType = overload.func.returnType.substituteToUnification(
-                overload.func.typeParameters, overload.unificationContext);
+            let resultType = overload.func.returnType;
             if (!resultType.equals(valueType))
                 throw new WTypeError(func.origin.originString, "Setter and getter must agree on value type (getter at " + overload.func.origin.originString + " says " + resultType + " while this setter says " + valueType + ")");
         };
@@ -207,27 +193,6 @@ class Checker extends Visitor {
         node.body.visit(this);
     }
     
-    visitNativeFunc(node)
-    {
-    }
-    
-    visitProtocolDecl(node)
-    {
-        for (let signature of node.signatures) {
-            let typeVariableTracker = new TypeVariableTracker();
-            for (let parameterType of signature.parameterTypes)
-                parameterType.visit(typeVariableTracker);
-            Node.visit(signature.returnTypeForOverloadResolution, typeVariableTracker);
-            for (let typeParameter of signature.typeParameters) {
-                if (!typeVariableTracker.set.has(typeParameter))
-                    throw WTypeError(typeParameter.origin.originString, "Type parameter to protocol signature not inferrable from value parameters");
-            }
-            if (!typeVariableTracker.set.has(node.typeVariable))
-                throw new WTypeError(signature.origin.originString, "Protocol's type variable (" + node.name + ") not mentioned in signature: " + signature);
-            this._checkOperatorOverload(signature, name => node.signaturesByName(name));
-        }
-    }
-    
     visitEnumType(node)
     {
         node.baseType.visit(this);
@@ -278,29 +243,31 @@ class Checker extends Visitor {
             throw new WTypeError(node.origin.originString, "Enum does not have a member with the value zero");
     }
     
-    _checkTypeArguments(origin, typeParameters, typeArguments)
-    {
-        for (let i = 0; i < typeParameters.length; ++i) {
-            let argumentIsType = typeArguments[i] instanceof Type;
-            let result = typeArguments[i].visit(this);
-            if (argumentIsType) {
-                let result = typeArguments[i].inherits(typeParameters[i].protocol);
-                if (!result.result)
-                    throw new WTypeError(origin.originString, "Type argument does not inherit protocol: " + result.reason);
-            } else {
-                if (!result.equalsWithCommit(typeParameters[i].type))
-                    throw new WTypeError(origin.originString, "Wrong type for constexpr");
-            }
-        }
-    }
-    
     visitTypeRef(node)
     {
         if (!node.type)
             throw new Error("Type reference without a type in checker: " + node + " at " + node.origin);
         if (!(node.type instanceof StructType))
             node.type.visit(this);
-        this._checkTypeArguments(node.origin, node.type.typeParameters, node.typeArguments);
+    }
+
+    visitVectorType(node)
+    {
+        node.elementType.visit(this);
+
+        let isKnownAllowedVectorElementType = false;
+        for (let vectorElementTypeName of VectorElementTypes) {
+            const vectorElementType = this._program.globalNameContext.get(Type, vectorElementTypeName);
+            if (!vectorElementType)
+                throw new WTypeError(`${vectorElementType} is listed in VectorElementTypes, but it is not a known native type in the standard library or intrinsics.`);
+            if (vectorElementType.equals(node.elementType)) {
+                isKnownAllowedVectorElementType = true;
+                break;
+            }
+        }
+
+        if (!isKnownAllowedVectorElementType)
+            throw new WTypeError(`${node.elementType} is not a permitted vector element type.`);
     }
     
     visitArrayType(node)
@@ -312,8 +279,8 @@ class Checker extends Visitor {
         
         let type = node.numElements.visit(this);
         
-        if (!type.equalsWithCommit(this._program.intrinsics.uint32))
-            throw new WTypeError(node.origin.originString, "Array length must be a uint32");
+        if (!type.equalsWithCommit(this._program.intrinsics.uint))
+            throw new WTypeError(node.origin.originString, "Array length must be a uint");
     }
     
     visitVariableDecl(node)
@@ -401,7 +368,7 @@ class Checker extends Visitor {
             node.numElements = elementType.numElements;
             elementType = elementType.elementType;
         } else
-            node.numElements = UintLiteral.withType(node.origin, 1, this._program.intrinsics.uint32);
+            node.numElements = UintLiteral.withType(node.origin, 1, this._program.intrinsics.uint);
             
         return new ArrayRefType(node.origin, node.lValue.addressSpace, elementType);
     }
@@ -426,8 +393,8 @@ class Checker extends Visitor {
         
         try {
             let result = CallExpression.resolve(
-                node.origin, node.possibleGetOverloads, this._currentStatement.typeParameters,
-                node.getFuncName, [], [node.base, ...extraArgs], [baseType, ...extraArgTypes], null);
+                node.origin, node.possibleGetOverloads,
+                node.getFuncName, [node.base, ...extraArgs], [baseType, ...extraArgTypes], null, this._program);
             node.callForGet = result.call;
             node.resultTypeForGet = result.resultType;
         } catch (e) {
@@ -440,9 +407,9 @@ class Checker extends Visitor {
             let baseForAnd = baseType.argumentForAndOverload(node.origin, node.base);
             
             let result = CallExpression.resolve(
-                node.origin, node.possibleAndOverloads, this._currentStatement.typeParameters,
-                node.andFuncName, [], [baseForAnd, ...extraArgs], [typeForAnd, ...extraArgTypes],
-                null);
+                node.origin, node.possibleAndOverloads,
+                node.andFuncName, [baseForAnd, ...extraArgs], [typeForAnd, ...extraArgTypes],
+                null, this._program);
             node.callForAnd = result.call;
             node.resultTypeForAnd = result.resultType.unifyNode.returnTypeFromAndOverload(node.origin);
         } catch (e) {
@@ -466,8 +433,8 @@ class Checker extends Visitor {
         
         try {
             let result = CallExpression.resolve(
-                node.origin, node.possibleSetOverloads, this._currentStatement.typeParameters,
-                node.setFuncName, [], [node.base, ...extraArgs, null], [baseType, ...extraArgTypes, node.resultType], null);
+                node.origin, node.possibleSetOverloads,
+                node.setFuncName, [node.base, ...extraArgs, null], [baseType, ...extraArgTypes, node.resultType], null, this._program);
             node.callForSet = result.call;
             if (!result.resultType.equals(baseType))
                 throw new WTypeError(node.origin.originString, "Result type of setter " + result.call.func + " is not the base type " + baseType);
@@ -675,7 +642,6 @@ class Checker extends Visitor {
     
     visitCallExpression(node)
     {
-        let typeArguments = node.typeArguments.map(typeArgument => typeArgument.visit(this));
         let argumentTypes = node.argumentList.map(argument => {
             let newArgument = argument.visit(this);
             if (!newArgument)
@@ -687,7 +653,7 @@ class Checker extends Visitor {
         if (node.returnType)
             node.returnType.visit(this);
 
-        let result = node.resolve(node.possibleOverloads, this._currentStatement.typeParameters, typeArguments);
+        let result = node.resolve(node.possibleOverloads, this._program);
         return result;
     }
 }

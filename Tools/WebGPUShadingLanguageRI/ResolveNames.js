@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,12 +33,6 @@ function resolveNamesInTypes(program, nameResolver)
 {
     for (let type of program.types.values())
         nameResolver.doStatement(type);
-}
-
-function resolveNamesInProtocols(program, nameResolver)
-{
-    for (let protocol of program.protocols.values())
-        nameResolver.doStatement(protocol);
 }
 
 function resolveNamesInFunctions(program, nameResolver)

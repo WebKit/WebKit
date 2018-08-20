@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,80 +42,121 @@ class CallExpression extends Expression {
     get isCast() { return this._isCast; }
     get returnType() { return this._returnType; }
     
-    static resolve(origin, possibleOverloads, typeParametersInScope, name, typeArguments, argumentList, argumentTypes, returnType)
+    static resolve(origin, possibleOverloads, name, argumentList, argumentTypes, returnType, program)
     {
-        let call = new CallExpression(origin, name, typeArguments, argumentList);
+        let call = new CallExpression(origin, name, [], argumentList);
         call.argumentTypes = argumentTypes.map(argument => argument.visit(new AutoWrapper()));
         call.possibleOverloads = possibleOverloads;
         if (returnType)
             call.setCastData(returnType);
-        return {call, resultType: call.resolve(possibleOverloads, typeParametersInScope, typeArguments)};
+        return {call, resultType: call.resolve(possibleOverloads, program)};
     }
-    
-    resolve(possibleOverloads, typeParametersInScope, typeArguments)
+
+    resolve(possibleOverloads, program)
     {
         if (!possibleOverloads)
             throw new WTypeError(this.origin.originString, "Did not find any functions named " + this.name);
-        
-        let overload = null;
+
         let failures = [];
-        for (let typeParameter of typeParametersInScope) {
-            if (!(typeParameter instanceof TypeVariable))
-                continue;
-            if (!typeParameter.protocol)
-                continue;
-            let signatures =
-                typeParameter.protocol.protocolDecl.signaturesByNameWithTypeVariable(this.name, typeParameter);
-            if (!signatures)
-                continue;
-            overload = resolveOverloadImpl(signatures, this.typeArguments, this.argumentTypes, this.returnType);
-            if (overload.func)
-                break;
+        let overload = resolveOverloadImpl(possibleOverloads, this.argumentTypes, this.returnType);
+
+        if (!overload.func) {
+            const func = this._resolveByInstantiation(program);
+            if (func)
+                overload.func = func;
+        }
+
+
+        if (!overload.func) {
             failures.push(...overload.failures);
-            overload = null;
+            let message = "Did not find function named " + this.name + " for call with ";
+            message += "argument types (" + this.argumentTypes + ")";
+            if (this.returnType)
+                message +=" and return type " + this.returnType;
+            if (failures.length)
+                message += ", but considered:\n" + failures.join("\n")
+            throw new WTypeError(this.origin.originString, message);
         }
-        if (!overload) {
-            overload = resolveOverloadImpl(
-                possibleOverloads, this.typeArguments, this.argumentTypes, this.returnType);
-            if (!overload.func) {
-                failures.push(...overload.failures);
-                let message = "Did not find function named " + this.name + " for call with ";
-                if (this.typeArguments.length)
-                    message += "type arguments <" + this.typeArguments + "> and ";
-                message += "argument types (" + this.argumentTypes + ")";
-                if (this.returnType)
-                    message +=" and return type " + this.returnType;
-                if (failures.length)
-                    message += ", but considered:\n" + failures.join("\n")
-                throw new WTypeError(this.origin.originString, message);
-            }
-        }
-        for (let i = 0; i < typeArguments.length; ++i) {
-            let typeArgumentType = typeArguments[i];
-            let typeParameter = overload.func.typeParameters[i];
-            if (!(typeParameter instanceof ConstexprTypeParameter))
-                continue;
-            if (!typeParameter.type.equalsWithCommit(typeArgumentType))
-                throw new Error("At " + this.origin.originString + " constexpr type argument and parameter types not equal: argument = " + typeArgumentType + ", parameter = " + typeParameter.type);
-        }
+
         for (let i = 0; i < this.argumentTypes.length; ++i) {
             let argumentType = this.argumentTypes[i];
-            let parameterType = overload.func.parameters[i].type.substituteToUnification(
-                overload.func.typeParameters, overload.unificationContext);
+            let parameterType = overload.func.parameters[i].type;
             let result = argumentType.equalsWithCommit(parameterType);
             if (!result)
                 throw new Error("At " + this.origin.originString + " argument and parameter types not equal after type argument substitution: argument = " + argumentType + ", parameter = " + parameterType);
         }
         return this.resolveToOverload(overload);
     }
+
+    _resolveByInstantiation(program)
+    {
+        let func;
+        if (this.name == "operator&[]")
+            func = this._resolveWithOperatorAnderIndexer(program);
+        else if (this.name == "operator.length")
+            func = this._resolveWithOperatorLength(program);
+        else
+            return null;
+
+        program.add(func);
+        return func;
+    }
+
+    _resolveWithOperatorAnderIndexer(program)
+    {
+        let arrayRefType = this.argumentTypes[0];
+        if (!arrayRefType.isArrayRef)
+            throw new WTypeError(this.origin.originString, `Expected ${arrayRefType} to be an array ref type for operator&[]`);
+
+        let indexType = this.argumentTypes[1];
+        const addressSpace = arrayRefType.addressSpace;
+
+        // The later checkLiteralTypes stage will verify that the literal can be represented as a uint.
+        const uintType = TypeRef.wrap(program.types.get("uint"));
+        indexType.type = uintType;
+
+        const elementType = this.argumentTypes[0].elementType;
+        this.resultType = this._returnType = TypeRef.wrap(new PtrType(this.origin, addressSpace, TypeRef.wrap(elementType)))
+
+        let arrayRefAccessor = new OperatorAnderIndexer(this.returnType.toString(), addressSpace);
+        const func = new NativeFunc(this.origin, "operator&[]", this.resultType, [
+            new FuncParameter(this.origin, null, arrayRefType),
+            new FuncParameter(this.origin, null, uintType)
+        ], false, null);
+
+        arrayRefAccessor.instantiateImplementation(func);
+
+        return func;
+    }
+
+    _resolveWithOperatorLength(program)
+    {
+        this.resultType = this._returnType = TypeRef.wrap(program.types.get("uint"));
+
+        if (this.argumentTypes[0].isArray) {
+            const arrayType = this.argumentTypes[0];
+            const func = new NativeFunc(this.origin, "operator.length", this.resultType, [
+                new FuncParameter(this.origin, null, arrayType)
+            ], false, null);
+            func.implementation = (args, node) => EPtr.box(arrayType.numElementsValue);
+            return func;
+        } else if (this.argumentTypes[0].isArrayRef) {
+            const arrayRefType = this.argumentTypes[0];
+            const addressSpace = arrayRefType.addressSpace;
+            const operatorLength = new OperatorArrayRefLength(arrayRefType.toString(), addressSpace);
+            const func = new NativeFunc(this.origin, "operator.length", this.resultType, [
+                new FuncParameter(this.origin, null, arrayRefType)
+            ], false, null);
+            operatorLength.instantiateImplementation(func);
+            return func;
+        } else
+            throw new WTypeError(this.origin.originString, `Expected ${this.argumentTypes[0]} to be array/array ref type for operator.length`);
+    }
     
     resolveToOverload(overload)
     {
         this.func = overload.func;
-        this.actualTypeArguments = overload.typeArguments.map(typeArgument => typeArgument instanceof Type ? typeArgument.visit(new AutoWrapper()) : typeArgument);
-        this.instantiatedActualTypeArguments = this.actualTypeArguments;
-        let result = overload.func.returnType.substituteToUnification(
-            overload.func.typeParameters, overload.unificationContext);
+        let result = overload.func.returnType;
         if (!result)
             throw new Error("Null return type");
         result = result.visit(new AutoWrapper());
@@ -125,11 +166,10 @@ class CallExpression extends Expression {
     
     becomeCast(returnType)
     {
-        this._returnType = new TypeRef(this.origin, this.name, this._typeArguments);
+        this._returnType = new TypeRef(this.origin, this.name);
         this._returnType.type = returnType;
         this._name = "operator cast";
         this._isCast = true;
-        this._typeArguments = [];
     }
     
     setCastData(returnType)
@@ -141,8 +181,6 @@ class CallExpression extends Expression {
     toString()
     {
         return (this.isCast ? "operator " + this.returnType : this.name) +
-            "<" + this.typeArguments + ">" +
-            (this.actualTypeArguments ? "<<" + this.actualTypeArguments + ">>" : "") +
             "(" + this.argumentList + ")";
     }
 }

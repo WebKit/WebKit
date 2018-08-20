@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@ function createLiteralType(config)
             super();
             this._origin = origin;
             this._value = value;
-            this.preferredType = new TypeRef(origin, config.preferredTypeName, []);
+            this.preferredType = new TypeRef(origin, config.preferredTypeName);
         }
         
         get origin() { return this._origin; }
@@ -58,7 +58,7 @@ function createLiteralType(config)
         prepareToVerify(unificationContext)
         {
             let realThis = unificationContext.find(this);
-            if (realThis instanceof TypeVariable || realThis.isLiteral) {
+            if (realThis.isLiteral) {
                 return () => {
                     if (realThis.unify(unificationContext, this.preferredType))
                         return {result: true};

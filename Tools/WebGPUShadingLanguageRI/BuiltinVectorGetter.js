@@ -20,55 +20,51 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 "use strict";
 
-class StructLayoutBuilder extends Visitor {
-    constructor()
+class BuiltinVectorGetter {
+    constructor(baseTypeName, size, elementName, index)
     {
-        super();
-        this._offset = 0;
+        this._baseTypeName = baseTypeName;
+        this._size = size;
+        this._elementName = elementName;
+        this._index = index;
     }
-    
-    visitReferenceType(node)
+
+    get baseTypeName() { return this._baseTypeName; }
+    get size() { return this._size; }
+    get elementName() { return this._elementName; }
+    get index() { return this._index; }
+
+    toString()
     {
+        return `native ${this.baseTypeName} operator.${this.elementName}(${this.baseTypeName}${this.size})`;
     }
-    
-    visitStructType(node)
+
+    static functions()
     {
-        if (node.size != null)
-            return;
-        let oldOffset = this._offset;
-        this._offset = 0;
-        super.visitStructType(node);
-        node.size = this._offset;
-        this._offset += oldOffset;
+        if (!this._functions) {
+            this._functions = [];
+
+            const elements = [ "x", "y", "z", "w" ];
+
+            for (let typeName of VectorElementTypes) {
+                for (let size of VectorElementSizes) {
+                    for (let i = 0; i < size; i++)
+                        this._functions.push(new BuiltinVectorGetter(typeName, size, elements[i], i));
+                }
+            }
+        }
+        return this._functions;
     }
-    
-    get offset() { return this._offset; }
-    
-    visitField(node)
+
+    instantiateImplementation(func)
     {
-        super.visitField(node);
-        node.offset = this._offset;
-        let size = node.type.size;
-        if (size == null)
-            throw new Error("Type does not have size: " + node.type);
-        this._offset += size;
-    }
-    
-    visitTypeRef(node)
-    {
-        super.visitTypeRef(node);
-        node.type.visit(this);
-    }
-    
-    visitCallExpression(node)
-    {
-        for (let argument of node.argumentList)
-            Node.visit(argument, this);
-        Node.visit(node.resultType, this);
+        func.implementation = ([vec], node) => {
+            return EPtr.box(vec.get(this.index));
+        };
+        func.implementationData = this;
     }
 }
-

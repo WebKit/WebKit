@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,40 +53,10 @@ class Rewriter {
     // that.
     visitFuncDef(node) { return node; }
     visitNativeFunc(node) { return node; }
-    visitNativeFuncInstance(node) { return node; }
     visitNativeType(node) { return node; }
     visitTypeDef(node) { return node; }
     visitStructType(node) { return node; }
-    visitConstexprTypeParameter(node) { return node; }
-    visitProtocolDecl(node) { return node; }
     visitEnumType(node) { return node; }
-
-    // This is almost wrong. We instantiate Func in Substitution in ProtocolDecl. Then, we end up
-    // not rewriting type variables. I think that just works because not rewriting them there is OK.
-    // Everywhere else, it's mandatory that we don't rewrite these because we always assume that
-    // type variables are outside the scope of rewriting.
-    visitTypeVariable(node) { return node; }
-
-    visitProtocolFuncDecl(node)
-    {
-        let result = new ProtocolFuncDecl(
-            node.origin, node.name,
-            node.returnType.visit(this),
-            node.typeParameters.map(parameter => parameter.visit(this)),
-            node.parameters.map(parameter => parameter.visit(this)),
-            node.isCast,
-            node.shaderType);
-        result.protocolDecl = node.protocolDecl;
-        result.possibleOverloads = node.possibleOverloads;
-        return result;
-    }
-    
-    visitNativeTypeInstance(node)
-    {
-        return new NativeTypeInstance(
-            node.type.visit(this),
-            node.typeArguments.map(argument => argument.visit(this)));
-    }
     
     visitFuncParameter(node)
     {
@@ -125,15 +95,11 @@ class Rewriter {
         }));
     }
     
-    visitProtocolRef(node)
-    {
-        return node;
-    }
-    
     visitTypeRef(node)
     {
-        let result = new TypeRef(node.origin, node.name, node.typeArguments.map(typeArgument => typeArgument.visit(this)));
-        result.type = Node.visit(node.type, this);
+        let result = new TypeRef(node.origin, node.name);
+        if (node.type)
+            result.type = Node.visit(node.type, this);
         return result;
     }
     
@@ -317,19 +283,10 @@ class Rewriter {
 
     processDerivedCallData(node, result)
     {
-        let handleTypeArguments = actualTypeArguments => {
-            if (actualTypeArguments)
-                return actualTypeArguments.map(actualTypeArgument => actualTypeArgument.visit(this));
-            else
-                return null;
-        }
-        result.actualTypeArguments = handleTypeArguments(node.actualTypeArguments);
-        result.instantiatedActualTypeArguments = handleTypeArguments(node.instantiatedActualTypeArguments);
         let argumentTypes = node.argumentTypes;
         if (argumentTypes)
             result.argumentTypes = argumentTypes.map(argumentType => argumentType.visit(this));
         result.func = node.func;
-        result.nativeFuncInstance = node.nativeFuncInstance;
         result.possibleOverloads = node.possibleOverloads;
         if (node.isCast)
             result.setCastData(node.returnType.visit(this));
@@ -341,8 +298,7 @@ class Rewriter {
     visitCallExpression(node)
     {
         let result = new CallExpression(
-            node.origin, node.name,
-            node.typeArguments.map(typeArgument => typeArgument.visit(this)),
+            node.origin, node.name, null,
             node.argumentList.map(argument => Node.visit(argument, this)));
         return this.processDerivedCallData(node, result);
     }
@@ -412,7 +368,7 @@ class Rewriter {
     
     visitAnonymousVariable(node)
     {
-        let result = new AnonymousVariable(node.origin, node.type.visit(this));
+        let result = new AnonymousVariable(node.origin, Node.visit(node.type, this));
         result._index = node._index;
         this._mapNode(node, result);
         result.ePtr = node.ePtr;
@@ -422,6 +378,13 @@ class Rewriter {
     visitIdentityExpression(node)
     {
         return new IdentityExpression(node.target.visit(this));
+    }
+
+    visitVectorType(node)
+    {
+        const vecType = new VectorType(node.origin, node.name);
+        vecType._elementType = node.elementType.visit(this);
+        return vecType;
     }
 }
 

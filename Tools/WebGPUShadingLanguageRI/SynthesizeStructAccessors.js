@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,81 +31,36 @@ function synthesizeStructAccessors(program)
             continue;
         
         for (let field of type.fields) {
-            function createTypeParameters()
-            {
-                return type.typeParameters.map(
-                    typeParameter => typeParameter.visit(new TypeParameterRewriter()));
-            }
-            
-            function createTypeArguments()
-            {
-                return typeParameters.map(typeParameter => typeParameter.visit(new AutoWrapper()));
-            }
-            
             function setupImplementationData(nativeFunc, implementation)
             {
-                nativeFunc.instantiateImplementation = substitution => {
-                    let newType = type.instantiate(nativeFunc.typeParameters.map(typeParameter => {
-                        let substitute = substitution.map.get(typeParameter);
-                        if (!substitute)
-                            throw new Error("Null substitute for type parameter " + typeParameter);
-                        return substitute;
-                    }));
-                    return {type: newType, fieldName: field.name};
-                };
                 nativeFunc.visitImplementationData = (implementationData, visitor) => {
                     // Visiting the type first ensures that the struct layout builder figures out the field's
                     // offset.
                     implementationData.type.visit(visitor);
                 };
-                nativeFunc.didLayoutStructsInImplementationData = implementationData => {
-                    let structSize = implementationData.type.size;
-                    if (structSize == null)
-                        throw new Error("No struct size for " + nativeFunc);
-                    let field = implementationData.type.fieldByName(implementationData.fieldName);
-                    if (!field)
-                        throw new Error("Could not find field");
-                    let offset = field.offset;
-                    let fieldSize = field.type.size;
-                    if (fieldSize == null)
-                        throw new Error("No field size for " + nativeFunc);
-                    if (offset == null)
-                        throw new Error("No offset for " + nativeFunc);
-                    
-                    implementationData.offset = offset;
-                    implementationData.structSize = structSize;
-                    implementationData.fieldSize = fieldSize;
-                };
+
                 nativeFunc.implementation = (argumentList, node) => {
-                    let nativeFuncInstance = node.nativeFuncInstance;
-                    let implementationData = nativeFuncInstance.implementationData;
-                    return implementation(
-                        argumentList,
-                        implementationData.offset,
-                        implementationData.structSize,
-                        implementationData.fieldSize);
+                    return implementation(argumentList, field.offset, type.size, field.type.size);
                 };
             }
             
             function createFieldType()
             {
-                return field.type.visit(new Substitution(type.typeParameters, typeParameters));
+                return field.type.visit(new Rewriter());
             }
             
             function createTypeRef()
             {
-                return TypeRef.instantiate(type, createTypeArguments());
+                return TypeRef.instantiate(type);
             }
             
             let isCast = false;
             let shaderType;
-            let typeParameters;
             let nativeFunc;
 
             // The getter: operator.field
-            typeParameters = createTypeParameters();
             nativeFunc = new NativeFunc(
-                field.origin, "operator." + field.name, createFieldType(), typeParameters,
+                field.origin, "operator." + field.name, createFieldType(),
                 [new FuncParameter(field.origin, null, createTypeRef())], isCast, shaderType);
             setupImplementationData(nativeFunc, ([base], offset, structSize, fieldSize) => {
                 let result = new EPtr(new EBuffer(fieldSize), 0);
@@ -115,9 +70,8 @@ function synthesizeStructAccessors(program)
             program.add(nativeFunc);
             
             // The setter: operator.field=
-            typeParameters = createTypeParameters();
             nativeFunc = new NativeFunc(
-                field.origin, "operator." + field.name + "=", createTypeRef(), typeParameters,
+                field.origin, "operator." + field.name + "=", createTypeRef(),
                 [
                     new FuncParameter(field.origin, null, createTypeRef()),
                     new FuncParameter(field.origin, null, createFieldType())
@@ -134,10 +88,8 @@ function synthesizeStructAccessors(program)
             // The ander: operator&.field
             function setupAnder(addressSpace)
             {
-                typeParameters = createTypeParameters();
                 nativeFunc = new NativeFunc(
                     field.origin, "operator&." + field.name, new PtrType(field.origin, addressSpace, createFieldType()),
-                    typeParameters,
                     [
                         new FuncParameter(
                             field.origin, null,

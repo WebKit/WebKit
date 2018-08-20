@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,23 +25,22 @@
 "use strict";
 
 class TypeDef extends Type {
-    constructor(origin, name, typeParameters, type)
+    constructor(origin, name, type)
     {
         super();
         this._origin = origin;
         this._name = name;
-        this._typeParameters = typeParameters;
         this._type = type;
     }
     
+    get unifyNode() { return this.type.unifyNode; }
     get origin() { return this._origin; }
     get name() { return this._name; }
-    get typeParameters() { return this._typeParameters; }
     get type() { return this._type; }
     
     toString()
     {
-        return "typedef " + this.name + "<" + this.typeParameters + "> = " + this.type;
+        return `typedef ${this.name} = ${this.type}`;
     }
 }
 

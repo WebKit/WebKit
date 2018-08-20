@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +31,6 @@ class Program extends Node {
         this._topLevelStatements = [];
         this._functions = new Map();
         this._types = new Map();
-        this._protocols = new Map();
-        this._funcInstantiator = new FuncInstantiator(this);
         this._globalNameContext = new NameContext();
         this._globalNameContext.program = this;
         this._globalNameContext.recognizeIntrinsics();
@@ -42,8 +40,6 @@ class Program extends Node {
     get topLevelStatements() { return this._topLevelStatements; }
     get functions() { return this._functions; }
     get types() { return this._types; }
-    get protocols() { return this._protocols; }
-    get funcInstantiator() { return this._funcInstantiator; }
     get globalNameContext() { return this._globalNameContext; }
     
     add(statement)
@@ -56,8 +52,6 @@ class Program extends Node {
             array.push(statement);
         } else if (statement instanceof Type)
             this._types.set(statement.name, statement);
-        else if (statement instanceof Protocol)
-            this._protocols.set(statement.name, statement);
         else
             throw new Error("Statement is not a function or type: " + statement);
         this._topLevelStatements.push(statement);

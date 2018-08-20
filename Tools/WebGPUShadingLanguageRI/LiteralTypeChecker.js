@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,8 @@ class LiteralTypeChecker extends Visitor {
     {
         if (!node.type)
             throw new Error(node + " at " + node.origin.originString + " does not have type");
+        if (!node.type.type.canRepresent(node.value))
+            throw new Error(`${node.value} at ${node.origin.originString} cannot be represented by ${node.type}`);
     }
 }
 

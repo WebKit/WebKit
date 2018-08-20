@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,11 +33,6 @@ class AutoWrapper extends Rewriter {
     visitTypeRef(node)
     {
         return node;
-    }
-    
-    visitConstexprTypeParameter(node)
-    {
-        return VariableRef.wrap(node);
     }
     
     visitFuncParameter(node)

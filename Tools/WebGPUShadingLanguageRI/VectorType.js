@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,24 +20,46 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 "use strict";
 
-class Protocol extends Node {
+class VectorType extends NativeType {
     constructor(origin, name)
     {
-        super();
-        this._origin = origin;
-        this._name = name;
+        super(origin, name);
+        const match = /^([A-z]+)([0-9])$/.exec(name);
+        if (!match)
+            throw new WTypeError(origin.originString, `${name} doesn't match the format for vector type names.'`);
+
+        this._elementType = new TypeRef(origin, match[1]);
+        this._numElementsValue = parseInt(match[2]);
     }
-    
-    get origin() { return this._origin; }
-    get name() { return this._name; }
-    get kind() { return Protocol; }
-    
+
+    get elementType() { return this._elementType; }
+    get numElementsValue() { return this._numElementsValue; }
+    get size() { return this.elementType.size * this.numElementsValue; }
+
+    unifyImpl(unificationContext, other)
+    {
+        if (!(other instanceof VectorType))
+            return false;
+
+        if (this.numElementsValue !== other.numElementsValue)
+            return false;
+
+        return this.elementType.unify(unificationContext, other.elementType);
+    }
+
+    populateDefaultValue(buffer, offset)
+    {
+        for (let i = 0; i < this.numElementsValue; ++i)
+            this.elementType.populateDefaultValue(buffer, offset + i * this.elementType.size);
+    }
+
     toString()
     {
-        return this.name;
+        return `native typedef ${this.elementType}${this.numElementsValue}`;
     }
 }
+

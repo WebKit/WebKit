@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,17 +34,12 @@ class ConstexprFolder extends Visitor {
         super.visitCallExpression(node);
         
         if (node.name == "operator-"
-            && !node.typeArguments.length
             && node.argumentList.length == 1
             && node.argumentList[0].unifyNode.isConstexpr
             && node.argumentList[0].unifyNode.negConstexpr) {
             node.become(node.argumentList[0].unifyNode.negConstexpr(node.origin));
             return;
         }
-    }
-    
-    visitTypeOrVariableRef(node)
-    {
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,11 @@
 "use strict";
 
 class StructType extends Type {
-    constructor(origin, name, typeParameters)
+    constructor(origin, name)
     {
         super();
         this._origin = origin;
         this._name = name;
-        this._typeParameters = typeParameters;
         this._fields = new Map();
     }
     
@@ -44,7 +43,6 @@ class StructType extends Type {
     
     get name() { return this._name; }
     get origin() { return this._origin; }
-    get typeParameters() { return this._typeParameters; }
     
     get fieldNames() { return this._fields.keys(); }
     fieldByName(name) { return this._fields.get(name); }
@@ -58,32 +56,6 @@ class StructType extends Type {
         return result;
     }
     
-    instantiate(typeArguments = null)
-    {
-        let substitution = null;
-        let typeParameters = this.typeParameters;
-        
-        if (typeArguments) {
-            if (typeArguments.length != this.typeParameters.length)
-                throw new WTypeError(this.origin.originString, "Wrong number of type arguments to instantiation");
-            
-            substitution = new Substitution(this.typeParameters, typeArguments);
-            typeParameters = [];
-        }
-        
-        let instantiateImmediates = new InstantiateImmediates();
-        let result = new StructType(this.origin, this.name, typeParameters);
-        for (let field of this.fields) {
-            let newField = field;
-            if (substitution)
-                newField = newField.visit(substitution);
-            newField = newField.visit(instantiateImmediates);
-            result.add(newField);
-        }
-        
-        return result;
-    }
-    
     populateDefaultValue(buffer, offset)
     {
         if (this.size == null)
@@ -94,6 +66,6 @@ class StructType extends Type {
     
     toString()
     {
-        return "struct " + this.name + "<" + this.typeParameters + "> { " + Array.from(this.fields).join("; ") + "; }";
+        return `struct ${this.name} { ${Array.from(this.fields).join("; ")}; }`;
     }
 }

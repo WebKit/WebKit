@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -307,7 +307,7 @@ class Evaluator extends Visitor {
         let callArguments = [];
         for (let i = 0; i < node.argumentList.length; ++i) {
             let argument = node.argumentList[i];
-            let type = node.nativeFuncInstance.parameterTypes[i];
+            let type = node.func.parameterTypes[i];
             if (!type || !argument)
                 throw new Error("Cannot get type or argument; i = " + i + ", argument = " + argument + ", type = " + type + "; in " + node);
             let argumentValue = argument.visit(this);
@@ -324,7 +324,7 @@ class Evaluator extends Visitor {
         let result = EBuffer.allowAllocation(
             () => node.func.implementation(callArguments.map(thunk => thunk()), node));
         
-        result = this._snapshot(node.nativeFuncInstance.returnType, node.resultEPtr, result);
+        result = this._snapshot(node.func.returnType, node.resultEPtr, result);
         return result;
     }
 }

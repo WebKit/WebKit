@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,6 +61,18 @@ class FlattenedStructOffsetGatherer extends Visitor {
     {
         super.visitTypeRef(node);
         Node.visit(node.type, this);
+    }
+
+    visitVectorType(node)
+    {
+        const fieldNames = [ "x", "y", "z", "w" ];
+        for (let i = 0; i < node.numElementsValue; i++) {
+            this._result.push({
+                name: this._name.join(".") + "." + fieldNames[i],
+                offset: this._offset + i * node.elementType.size,
+                type: node.elementType.name
+            });
+        }
     }
 }
 

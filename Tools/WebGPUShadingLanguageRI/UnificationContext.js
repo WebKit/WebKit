@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,8 @@
 "use strict";
 
 class UnificationContext {
-    constructor(typeParameters)
+    constructor()
     {
-        this._typeParameters = new Set(typeParameters);
         this._nextMap = new Map();
         this._extraNodes = new Set();
     }
@@ -36,19 +35,16 @@ class UnificationContext {
     {
         a = this.find(a);
         b = this.find(b);
+
         if (a == b)
             return;
-        
+
         if (!a.isUnifiable) {
             [a, b] = [b, a];
             if (!a.isUnifiable)
                 throw new Error("Cannot unify non-unifiable things " + a + " and " + b);
         }
-        
-        // Make sure that type parameters don't end up being roots.
-        if (a.isUnifiable && b.isUnifiable && this._typeParameters.has(b))
-            [a, b] = [b, a];
-        
+
         this._nextMap.set(a, b);
     }
     
@@ -85,13 +81,10 @@ class UnificationContext {
         return result;
     }
     
-    typeParameters() { return this._typeParameters; }
     *typeArguments()
     {
         for (let typeArgument of this.nodes) {
             if (!typeArgument.isUnifiable)
-                continue;
-            if (this._typeParameters.has(typeArgument))
                 continue;
             yield typeArgument;
         }
@@ -99,38 +92,12 @@ class UnificationContext {
     
     verify()
     {
-        // We do a two-phase pre-verification. This gives literals a chance to select a more specific type.
-        let preparations = [];
-        for (let node of this.nodes) {
-            let preparation = node.prepareToVerify(this);
-            if (preparation)
-                preparations.push(preparation);
-        }
-        for (let preparation of preparations) {
-            let result = preparation();
-            if (!result.result)
-                return result;
-        }
-        
-        for (let typeParameter of this._typeParameters) {
-            let result = typeParameter.verifyAsParameter(this);
-            if (!result.result)
-                return result;
-        }
-        let numTypeVariableArguments = 0;
-        let argumentSet = new Set();
         for (let typeArgument of this.typeArguments()) {
             let result = typeArgument.verifyAsArgument(this);
             if (!result.result)
                 return result;
-            if (typeArgument.isLiteral)
-                continue;
-            argumentSet.add(this.find(typeArgument));
-            numTypeVariableArguments++;
         }
-        if (argumentSet.size == numTypeVariableArguments)
-            return {result: true};
-        return {result: false, reason: "Type variables used as arguments got unified with each other"};
+        return {result: true};
     }
     
     get conversionCost()

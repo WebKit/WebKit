@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,25 +20,33 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 "use strict";
 
-class InstantiateImmediates extends Rewriter {
-    visitTypeRef(node)
+class OperatorArrayRefLength {
+    constructor(baseTypeName, addressSpace)
     {
-        node = super.visitTypeRef(node);
-        if (!node.type.instantiate) {
-            if (node.typeArguments.length)
-                throw new Error("type does not support instantiation: " + type + " (" + type.constructor.name + ")");
-            return node;
-        }
-        return node.type.instantiate(node.typeArguments).visit(new AutoWrapper());
+        this._baseTypeName = baseTypeName;
+        this._addressSpace = addressSpace;
     }
-    
-    visitReferenceType(node)
+
+    get addressSpace() { return this._addressSpace; }
+    get baseTypeName() { return this._baseTypeName; }
+
+    toString()
     {
-        return node;
+        return `native uint ${this.addressSpace} operator.length(${this.baseTypeName}[] ${this.addressSpace})`;
+    }
+
+    instantiateImplementation(func)
+    {
+        func.implementation = ([ref], node) => {
+            ref = ref.loadValue();
+            if (!ref)
+                return EPtr.box(0);
+            return EPtr.box(ref.length);
+        };
+        func.implementationData = this;
     }
 }
-

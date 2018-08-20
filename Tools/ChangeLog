@@ -1,5 +1,170 @@
 2018-08-20  Thomas Denney  <tdenney@apple.com>
 
+        [WHLSL] Remove generics from the interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=187988
+
+        Reviewed by Myles C. Maxfield.
+
+        This patch completely removes generic and protocol support from WHLSL
+        whilst adding back any features that were originally implemented with
+        generics.
+
+        Many of the changes in this patch just remove occurrences of type
+        arguments and type parameters --- although there are some cases where
+        they have been deliberately left in --- as well as removing tests only
+        relevant to those features. These changes are not listed below.
+
+        * WebGPUShadingLanguageRI/All.js: Add/remove JS dependencies
+        * WebGPUShadingLanguageRI/AutoWrapper.js:
+        (AutoWrapper.prototype.visitConstexprTypeParameter): Deleted.
+        * WebGPUShadingLanguageRI/BuiltinVectorCasts.js: Added. The built-in
+        vectors have many constructors for different scalar and vector types.
+        These were originally implemented with generics.
+        * WebGPUShadingLanguageRI/BuiltinVectorEqualityOperator.js: Adds the
+        equality operator for built-in vectors, again this was removed with
+        generics.
+        * WebGPUShadingLanguageRI/BuiltinVectorGetter.js: Added, as above.
+        Built-in vectors only support the getter and setter, and not the ander.
+        * WebGPUShadingLanguageRI/BuiltinVectorIndexGetter.js: Added.
+        * WebGPUShadingLanguageRI/BuiltinVectorIndexSetter.js: Added.
+        * WebGPUShadingLanguageRI/BuiltinVectorSetter.js: Added.
+        * WebGPUShadingLanguageRI/CallExpression.js: Adds support for
+        instantiating functions which cannot be discovered earlier in
+        preparation because their types are absent (specifically support for the
+        operator &[] for array references and the length operator for array
+        references). Previously support for these was implemented with generics.
+        (CallExpression.resolve):
+        (CallExpression.prototype.resolve):
+        (CallExpression.prototype._resolveByInstantiation):
+        (CallExpression.prototype._resolveToOperatorAnderIndexer):
+        (CallExpression.prototype._resolveToOperatorLength):
+        (CallExpression.prototype.resolveToOverload):
+        (CallExpression.prototype.becomeCast):
+        (CallExpression.prototype.toString):
+        (CallExpression):
+        * WebGPUShadingLanguageRI/CallExpressionTypeArgumentResolver.js: Added.
+        We support syntax like vector<int, 2>(a, b) for constructing vectors;
+        this new preparation step resolves them to specific constructors.
+        * WebGPUShadingLanguageRI/CallFunction.js:
+        * WebGPUShadingLanguageRI/Checker.js:
+        * WebGPUShadingLanguageRI/ConstexprFolder.js:
+        * WebGPUShadingLanguageRI/CreateLiteralType.js:
+        * WebGPUShadingLanguageRI/ExpressionFinder.js:
+        * WebGPUShadingLanguageRI/FlattenProtocolExtends.js: Removed.
+        * WebGPUShadingLanguageRI/FlattenedStructOffsetGatherer.js:
+        * WebGPUShadingLanguageRI/Func.js:
+        * WebGPUShadingLanguageRI/FuncDef.js:
+        * WebGPUShadingLanguageRI/FuncInstantiator.js: Deleted.
+        * WebGPUShadingLanguageRI/InferTypesForCall.js: Removed usage of type arguments.
+        * WebGPUShadingLanguageRI/Inline.js: Remove use of FuncInstantiator.
+        * WebGPUShadingLanguageRI/Inliner.js: Ditto.
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        * WebGPUShadingLanguageRI/Lexer.js:
+        * WebGPUShadingLanguageRI/LiteralTypeChecker.js:
+        * WebGPUShadingLanguageRI/NameContext.js:
+        (NameContext.prototype.add):
+        (NameContext.prototype.get let):
+        (NameContext.underlyingThings.prototype.else):
+        (NameContext.prototype.resolveFuncOverload):
+        * WebGPUShadingLanguageRI/NameFinder.js:
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype.visitFunc):
+        (NameResolver.prototype.visitFuncDef):
+        (NameResolver.prototype.visitTypeDef):
+        (NameResolver.prototype.visitStructType):
+        (NameResolver.prototype.visitTypeRef):
+        (NameResolver.prototype.visitCallExpression):
+        (NameResolver.prototype.visitVectorType):
+        (NameResolver):
+        (NameResolver.prototype._visitTypeParametersAndBuildNameContext): Deleted.
+        (NameResolver.prototype.visitProtocolDecl): Deleted.
+        * WebGPUShadingLanguageRI/NativeFunc.js:
+        (NativeFunc):
+        * WebGPUShadingLanguageRI/NativeFuncInstance.js: Deleted.
+        * WebGPUShadingLanguageRI/NativeType.js:
+        (NativeType):
+        (NativeType.prototype.get name):
+        (NativeType.prototype.toString):
+        (NativeType.prototype.get typeParameters): Deleted.
+        (NativeType.prototype.instantiate): Deleted.
+        * WebGPUShadingLanguageRI/Node.js:
+        (Node.prototype.commit):
+        (Node):
+        (Node.prototype.substitute): Deleted.
+        (Node.prototype.substituteToUnification): Deleted.
+        * WebGPUShadingLanguageRI/OperatorAnderIndex.js: Added, previously
+        implemented with generics.
+        * WebGPUShadingLanguageRI/OperatorArrayRefLength.js: Ditto.
+        * WebGPUShadingLanguageRI/OperatorBool.js: Ditto.
+        * WebGPUShadingLanguageRI/Parse.js: Removed everything related to
+        generics and protocols.
+        * WebGPUShadingLanguageRI/Prepare.js: Added new stages.
+        * WebGPUShadingLanguageRI/Program.js:
+        (Program):
+        (Program.prototype.get types):
+        (Program.prototype.add):
+        (Program.prototype.get protocols): Deleted.
+        * WebGPUShadingLanguageRI/ProtocolDecl.js: Removed.
+        * WebGPUShadingLanguageRI/ProtocolRef.js: Removed.
+        * WebGPUShadingLanguageRI/RecursiveTypeChecker.js:
+        * WebGPUShadingLanguageRI/ResolveCallExpressionsWithTypeArguments.js: Added.
+        * WebGPUShadingLanguageRI/ResolveNames.js:
+        * WebGPUShadingLanguageRI/ResolveOverloadImpl.js:
+        * WebGPUShadingLanguageRI/ResolveTypeDefs.js:
+        (resolveTypeDefsInProtocols): Deleted.
+        * WebGPUShadingLanguageRI/Rewriter.js: Changes for new classes.
+        * WebGPUShadingLanguageRI/SPIRV.html:
+        * WebGPUShadingLanguageRI/SPIRVCodegen.js:
+        * WebGPUShadingLanguageRI/StandardLibrary.js: Replace old generic features.
+        * WebGPUShadingLanguageRI/StatementCloner.js: Changes for new classes.
+        (StructLayoutBuilder):
+        * WebGPUShadingLanguageRI/StructType.js:
+        * WebGPUShadingLanguageRI/SwizzleOp.js:
+        (SwizzleOp):
+        (SwizzleOp.prototype.get baseTypeName):
+        (SwizzleOp.prototype.toString):
+        (SwizzleOp.functions.):
+        (SwizzleOp.functions):
+        (SwizzleOp.prototype.instantiateImplementation):
+        (SwizzleOp.allSwizzleOperators.): Deleted.
+        (SwizzleOp.allSwizzleOperators): Deleted.
+        * WebGPUShadingLanguageRI/SynthesizeArrayOperatorLength.js: Added,
+        previously implemented with generics.
+        * WebGPUShadingLanguageRI/SynthesizeCopyConstructorOperator.js: Ditto.
+        * WebGPUShadingLanguageRI/SynthesizeDefaultConstructorOperator.js: Ditto.
+        * WebGPUShadingLanguageRI/SynthesizeEnumFunctions.js: Ditto.
+        * WebGPUShadingLanguageRI/SynthesizeOperatorBool.js: Ditto.
+        * WebGPUShadingLanguageRI/SynthesizeStructAccessors.js:
+        (synthesizeStructAccessors.setupImplementationData):
+        (synthesizeStructAccessors.createFieldType):
+        (synthesizeStructAccessors.createTypeRef):
+        (synthesizeStructAccessors.setupAnder):
+        (synthesizeStructAccessors):
+        (synthesizeStructAccessors.createTypeParameters): Deleted.
+        (synthesizeStructAccessors.): Deleted.
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js: Removed redundant tests and added new
+        tests for changed language features.
+        * WebGPUShadingLanguageRI/Type.js:
+        * WebGPUShadingLanguageRI/TypeDef.js:
+        * WebGPUShadingLanguageRI/TypeDefResolver.js:
+        * WebGPUShadingLanguageRI/TypeParameterRewriter.js: Removed.
+        * WebGPUShadingLanguageRI/TypeRef.js:
+        * WebGPUShadingLanguageRI/TypeVariable.js: Removed.
+        * WebGPUShadingLanguageRI/UnificationContext.js:
+        * WebGPUShadingLanguageRI/VectorType.js: Added.
+        * WebGPUShadingLanguageRI/Visitor.js: Changes for new classes.
+        * WebGPUShadingLanguageRI/WSL.md: Removed description of
+        generics/protocols.
+        * WebGPUShadingLanguageRI/WrapChecker.js:
+        (WrapChecker):
+        (WrapChecker.visitConstexprTypeParameter): Deleted.
+        (WrapChecker.prototype.visitFuncParameter): Deleted.
+        (WrapChecker.prototype.visitTypeVariable): Deleted.
+        * WebGPUShadingLanguageRI/index.html:
+
+2018-08-20  Thomas Denney  <tdenney@apple.com>
+
         Added Thomas Denney to contributors.json.
         https://bugs.webkit.org/show_bug.cgi?id=188525
 

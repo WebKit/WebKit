@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,10 +35,10 @@ class Inliner extends Rewriter {
     visitCallExpression(node)
     {
         let result = super.visitCallExpression(node);
-        if (result.nativeFuncInstance)
+        if (result.func.isNative)
             return result;
-        return this._visiting.doVisit(node.func, () => {
-            let func = this._program.funcInstantiator.getUnique(result.func, result.actualTypeArguments);
+        return this._visiting.doVisit(result.func, () => {
+            let func = result.func;
             if (func.isNative)
                 throw new Error("Unexpected native func: " + func);
             _inlineFunction(this._program, func, this._visiting);

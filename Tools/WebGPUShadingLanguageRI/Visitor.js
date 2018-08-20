@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,15 +34,8 @@ class Visitor {
     visitFunc(node)
     {
         node.returnType.visit(this);
-        for (let typeParameter of node.typeParameters)
-            typeParameter.visit(this);
         for (let parameter of node.parameters)
             parameter.visit(this);
-    }
-    
-    visitProtocolFuncDecl(node)
-    {
-        this.visitFunc(node);
     }
     
     visitFuncParameter(node)
@@ -61,12 +54,6 @@ class Visitor {
         this.visitFunc(node);
     }
     
-    visitNativeFuncInstance(node)
-    {
-        this.visitFunc(node);
-        node.func.visitImplementationData(node.implementationData, this);
-    }
-    
     visitBlock(node)
     {
         for (let statement of node.statements)
@@ -79,60 +66,23 @@ class Visitor {
             expression.visit(this);
     }
     
-    visitProtocolRef(node)
-    {
-    }
-    
-    visitProtocolDecl(node)
-    {
-        for (let protocol of node.extends)
-            protocol.visit(this);
-        for (let signature of node.signatures)
-            signature.visit(this);
-    }
-    
     visitTypeRef(node)
     {
-        for (let typeArgument of node.typeArguments)
-            typeArgument.visit(this);
     }
     
     visitNativeType(node)
     {
-        for (let typeParameter of node.typeParameters)
-            typeParameter.visit(this);
-    }
-    
-    visitNativeTypeInstance(node)
-    {
-        node.type.visit(this);
-        for (let typeArgument of node.typeArguments)
-            typeArgument.visit(this);
     }
     
     visitTypeDef(node)
     {
-        for (let typeParameter of node.typeParameters)
-            typeParameter.visit(this);
         node.type.visit(this);
     }
     
     visitStructType(node)
     {
-        for (let typeParameter of node.typeParameters)
-            typeParameter.visit(this);
         for (let field of node.fields)
             field.visit(this);
-    }
-    
-    visitTypeVariable(node)
-    {
-        Node.visit(node.protocol, this);
-    }
-    
-    visitConstexprTypeParameter(node)
-    {
-        node.type.visit(this);
     }
     
     visitField(node)
@@ -336,19 +286,8 @@ class Visitor {
     
     visitCallExpression(node)
     {
-        for (let typeArgument of node.typeArguments)
-            typeArgument.visit(this);
         for (let argument of node.argumentList)
             Node.visit(argument, this);
-        let handleTypeArguments = actualTypeArguments => {
-            if (actualTypeArguments) {
-                for (let argument of actualTypeArguments)
-                    argument.visit(this);
-            }
-        };
-        handleTypeArguments(node.actualTypeArguments);
-        handleTypeArguments(node.instantiatedActualTypeArguments);
-        Node.visit(node.nativeFuncInstance, this);
         Node.visit(node.returnType, this);
         Node.visit(node.resultType, this);
     }
@@ -383,6 +322,11 @@ class Visitor {
     visitIdentityExpression(node)
     {
         node.target.visit(this);
+    }
+
+    visitVectorType(node)
+    {
+        node.elementType.visit(this);
     }
 }
 
