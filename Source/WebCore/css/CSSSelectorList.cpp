@@ -42,11 +42,6 @@ CSSSelectorList::CSSSelectorList(const CSSSelectorList& other)
         new (NotNull, &m_selectorArray[i]) CSSSelector(other.m_selectorArray[i]);
 }
 
-CSSSelectorList::CSSSelectorList(CSSSelectorList&& other)
-    : m_selectorArray(WTFMove(other.m_selectorArray))
-{
-}
-
 CSSSelectorList::CSSSelectorList(Vector<std::unique_ptr<CSSParserSelector>>&& selectorVector)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!selectorVector.isEmpty());
@@ -104,12 +99,6 @@ unsigned CSSSelectorList::listSize() const
         ++current;
     }
     return size;
-}
-
-CSSSelectorList& CSSSelectorList::operator=(CSSSelectorList&& other)
-{
-    m_selectorArray = WTFMove(other.m_selectorArray);
-    return *this;
 }
 
 String CSSSelectorList::selectorsText() const

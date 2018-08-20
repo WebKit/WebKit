@@ -38,9 +38,9 @@ class CSSSelectorList {
 public:
     CSSSelectorList() = default;
     CSSSelectorList(const CSSSelectorList&);
-    CSSSelectorList(CSSSelectorList&&);
-    CSSSelectorList(Vector<std::unique_ptr<CSSParserSelector>>&&);
-    CSSSelectorList(UniqueArray<CSSSelector>&& array)
+    CSSSelectorList(CSSSelectorList&&) = default;
+    explicit CSSSelectorList(Vector<std::unique_ptr<CSSParserSelector>>&&);
+    explicit CSSSelectorList(UniqueArray<CSSSelector>&& array)
         : m_selectorArray(WTFMove(array)) { }
 
     bool isValid() const { return !!m_selectorArray; }
@@ -66,11 +66,8 @@ public:
     unsigned componentCount() const;
     unsigned listSize() const;
 
-    CSSSelectorList& operator=(CSSSelectorList&&);
-
+    CSSSelectorList& operator=(CSSSelectorList&&) = default;
 private:
-    void deleteSelectors();
-
     // End of a multipart selector is indicated by m_isLastInTagHistory bit in the last item.
     // End of the array is indicated by m_isLastInSelectorList bit in the last item.
     UniqueArray<CSSSelector> m_selectorArray;

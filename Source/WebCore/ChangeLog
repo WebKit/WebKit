@@ -1,3 +1,22 @@
+2018-08-17  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up CSSSelectorList after r234825
+        https://bugs.webkit.org/show_bug.cgi?id=188566
+
+        Reviewed by Megan Gardner.
+
+        This is responding to Darin's feedback in https://bugs.webkit.org/show_bug.cgi?id=188539
+
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::operator=): Deleted.
+        * css/CSSSelectorList.h:
+        (WebCore::CSSSelectorList::CSSSelectorList):
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::parsePageSelector):
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumeComplexSelectorList):
+        (WebCore::CSSSelectorParser::consumeCompoundSelectorList):
+
 2018-08-17  Brent Fulgham  <bfulgham@apple.com>
 
         Remove Adobe SSO exception now that StorageAccess API is available
