@@ -1,5 +1,28 @@
 2018-08-16  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Custom element constructor doesn't use HTMLElement in new.target's realm
+        https://bugs.webkit.org/show_bug.cgi?id=188634
+
+        Reviewed by Keith Miller.
+
+        Fixed the bug that HTMLElement's constructor was constructing an element of its own realm
+        instead of the realm of new.target. This results in the JS wrapper created for the element
+        belonging to the global object of the HTMLElement constructor which was invoked instead of
+        the global object of new.target as specified in:
+        https://html.spec.whatwg.org/multipage/dom.html#html-element-constructors
+
+        In particular, step 9.2. specifies that we "perform element.[[SetPrototypeOf]](prototype)."
+        where prototype is the result of Get(NewTarget, "prototype") in step 7.
+
+        WebKit's new behavior matches that of Chrome and Firefox.
+
+        Test: imported/w3c/web-platform-tests/custom-elements/htmlconstructor/newtarget.html
+
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::constructJSHTMLElement): 
+
+2018-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
         Custom element doesn't invalidate its style when :defined rule starts to apply
         https://bugs.webkit.org/show_bug.cgi?id=188637
 
