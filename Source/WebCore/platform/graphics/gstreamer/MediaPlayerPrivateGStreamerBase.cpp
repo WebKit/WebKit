@@ -1175,17 +1175,14 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSink()
     }
 
     GstElement* videoSink = nullptr;
+#if ENABLE(MEDIA_STATISTICS)
     m_fpsSink = gst_element_factory_make("fpsdisplaysink", "sink");
     if (m_fpsSink) {
         g_object_set(m_fpsSink.get(), "silent", TRUE , nullptr);
 
-        // Turn off text overlay unless logging is enabled.
-#if LOG_DISABLED
-        g_object_set(m_fpsSink.get(), "text-overlay", FALSE , nullptr);
-#else
-        if (!isLogChannelEnabled("Media"))
+        // Turn off text overlay unless tracing is enabled.
+        if (gst_debug_category_get_threshold(webkit_media_player_debug) < GST_LEVEL_TRACE)
             g_object_set(m_fpsSink.get(), "text-overlay", FALSE , nullptr);
-#endif // LOG_DISABLED
 
         if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_fpsSink.get()), "video-sink")) {
             g_object_set(m_fpsSink.get(), "video-sink", m_videoSink.get(), nullptr);
@@ -1193,6 +1190,7 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSink()
         } else
             m_fpsSink = nullptr;
     }
+#endif
 
     if (!m_fpsSink)
         videoSink = m_videoSink.get();
