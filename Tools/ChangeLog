@@ -1,3 +1,13 @@
+2018-08-20  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Add WPE Debug configuration to the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=188743
+
+        Reviewed by Michael Catanzaro.
+
+        * TestResultServer/static-dashboards/builders.jsonp:
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+
 2018-08-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Add API to throw exceptions using printf formatted strings

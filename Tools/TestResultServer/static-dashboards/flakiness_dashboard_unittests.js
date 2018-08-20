@@ -162,6 +162,7 @@ test('platformAndBuildType', 30, function() {
     runPlatformAndBuildTypeTest('Windows 7 Release (Tests)', 'APPLE_WIN_WIN7', 'RELEASE');
     runPlatformAndBuildTypeTest('Windows XP Debug (Tests)', 'APPLE_WIN_XP', 'DEBUG');
     runPlatformAndBuildTypeTest('WPE Linux 64-bit Release (Tests)', 'WPE_LINUX', 'RELEASE');
+    runPlatformAndBuildTypeTest('WPE Linux 64-bit Debug (Tests)', 'WPE_LINUX', 'DEBUG');
     
     // FIXME: Should WebKit2 be it's own platform?
     runPlatformAndBuildTypeTest('MountainLion Release (WebKit2 Tests)', 'APPLE_MAC_MOUNTAINLION_WK2', 'RELEASE');
