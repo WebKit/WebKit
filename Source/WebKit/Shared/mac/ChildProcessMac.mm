@@ -71,9 +71,9 @@ extern "C" CFDictionaryRef _LSApplicationCheckIn(int sessionID, CFDictionaryRef 
 
 extern "C" OSStatus SetApplicationIsDaemon(Boolean isDaemon);
 
-using namespace WebCore;
 
 namespace WebKit {
+using namespace WebCore;
 
 #if USE(CACHE_COMPILED_SANDBOX)
 using SandboxProfile = typename std::remove_pointer<sandbox_profile_t>::type;

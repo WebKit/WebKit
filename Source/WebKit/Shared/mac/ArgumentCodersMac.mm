@@ -37,8 +37,6 @@
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/ColorMac.h>
 
-using namespace WebCore;
-
 namespace IPC {
 
 enum class NSType {
@@ -62,6 +60,8 @@ enum class NSType {
 }
 
 namespace IPC {
+using namespace WebCore;
+
 static NSType typeFromObject(id object)
 {
     ASSERT(object);
