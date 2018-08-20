@@ -201,16 +201,16 @@ void WKPageLoadDataWithUserData(WKPageRef pageRef, WKDataRef dataRef, WKStringRe
 
 static String encodingOf(const String& string)
 {
-    if (string.isNull() || string.is8Bit())
-        "latin1"_s;
-    return "utf-16"_s;
+    if (string.isNull() || !string.is8Bit())
+        "utf-16"_s;
+    return "latin1"_s;
 }
 
 static IPC::DataReference dataFrom(const String& string)
 {
-    if (string.isNull() || string.is8Bit())
-        return { reinterpret_cast<const uint8_t*>(string.characters8()), string.length() * sizeof(LChar) };
-    return { reinterpret_cast<const uint8_t*>(string.characters16()), string.length() * sizeof(UChar) };
+    if (string.isNull() || !string.is8Bit())
+        return { reinterpret_cast<const uint8_t*>(string.characters16()), string.length() * sizeof(UChar) };
+    return { reinterpret_cast<const uint8_t*>(string.characters8()), string.length() * sizeof(LChar) };
 }
 
 static void loadString(WKPageRef pageRef, WKStringRef stringRef, const String& mimeType, const String& baseURL, WKTypeRef userDataRef)
