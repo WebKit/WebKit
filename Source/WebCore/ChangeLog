@@ -1,3 +1,25 @@
+2018-08-20  Rob Buis  <rbuis@igalia.com>
+
+        Relax Request constructor around referrers
+        https://bugs.webkit.org/show_bug.cgi?id=168649
+
+        Reviewed by Darin Adler.
+
+        Implement remaining part of fetch change
+        https://github.com/whatwg/fetch/pull/377, i.e.
+        if "parsedReferrer’s origin is not same origin with origin",
+        then set request’s referrer to "client", instead of
+        throwing an exception [1].
+
+        WebKit's new behavior matches that of Chrome and Firefox.
+
+        Testing is covered by existing wpt tests.
+
+        [1] Step 15.3.3 of https://fetch.spec.whatwg.org/#main-fetch
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::computeReferrer):
+
 2018-08-19  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Shrink size of WebCore::Event further by reordering members
