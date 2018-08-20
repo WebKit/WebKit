@@ -516,42 +516,42 @@ public:
   constexpr bool has_value() const __NOEXCEPT { return initialized(); }
 
   constexpr T const* operator ->() const {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
     return dataptr();
   }
 
   OPTIONAL_MUTABLE_CONSTEXPR T* operator ->() {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
     return dataptr();
   }
 
   constexpr T const& operator *() const& {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
     return contained_val();
   }
 
   OPTIONAL_MUTABLE_CONSTEXPR T& operator *() & {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
     return contained_val();
   }
 
   OPTIONAL_MUTABLE_CONSTEXPR T&& operator *() && {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
     return detail_::constexpr_move(contained_val());
   }
 
   constexpr T const& value() const& {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
     return contained_val();
   }
 
   OPTIONAL_MUTABLE_CONSTEXPR T& value() & {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
     return contained_val();
   }
 
   OPTIONAL_MUTABLE_CONSTEXPR T&& value() && {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(initialized());
     return std::move(contained_val());
   }
 
@@ -661,17 +661,17 @@ public:
 
   // 20.5.5.3, observers
   constexpr T* operator->() const {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(ref);
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(ref);
     return ref;
   }
 
   constexpr T& operator*() const {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(ref);
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(ref);
     return *ref;
   }
 
   constexpr T& value() const {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(ref());
+    RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(ref());
     return *ref;
   }
 

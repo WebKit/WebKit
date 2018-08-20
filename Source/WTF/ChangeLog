@@ -1,3 +1,25 @@
+2018-08-17  David Kilzer  <ddkilzer@apple.com>
+
+        WTF's internal std::optional implementation should release assert on all bad accesses
+        <https://webkit.org/b/187669>
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/Assertions.h:
+        (RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT): Add macro definitions.
+        * wtf/Optional.h:
+        (std::optional::operator -> const):
+        (std::optional::operator ->):
+        (std::optional::operator * const):
+        (std::optional::operator *):
+        (std::optional::value const):
+        (std::optional::value):
+        (std::optional<T::operator-> const):
+        (std::optional<T::operator* const):
+        (std::optional<T::value const):
+        - Change ASSERT_UNDER_CONSTEXPR_CONTEXT() macros to
+          RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT() macros.
+
 2018-08-16  Alex Christensen  <achristensen@webkit.org>
 
         Re-introduce assertion removed in r234890
