@@ -2495,6 +2495,16 @@ static void createCustomError()
     jsc_context_throw_with_name(jsc_context_get_current(), "CustomAPIError", "API custom exception");
 }
 
+static void createFormattedError(const char* details)
+{
+    jsc_context_throw_printf(jsc_context_get_current(), "API exception: %s", details);
+}
+
+static void createCustomFormattedError(const char* details)
+{
+    jsc_context_throw_with_name_printf(jsc_context_get_current(), "CustomFormattedAPIError", "API custom exception: %s", details);
+}
+
 static void testJSCExceptions()
 {
     {
@@ -2648,6 +2658,68 @@ static void testJSCExceptions()
         g_assert_cmpstr(errorString.get(), ==, "CustomAPIError: API custom exception");
         GUniquePtr<char> reportString(jsc_exception_report(exception));
         g_assert_cmpstr(reportString.get(), ==, ":1:30 CustomAPIError: API custom exception\n  createCustomError@[native code]\n  global code\n");
+
+        jsc_context_clear_exception(context.get());
+        g_assert_null(jsc_context_get_exception(context.get()));
+    }
+
+    {
+        LeakChecker checker;
+        GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        g_assert_false(jsc_context_get_exception(context.get()));
+
+        GRefPtr<JSCValue> function = adoptGRef(jsc_value_new_function(context.get(), "createFormattedError", G_CALLBACK(createFormattedError), nullptr, nullptr, G_TYPE_NONE, 1, G_TYPE_STRING));
+        checker.watch(function.get());
+        jsc_context_set_value(context.get(), "createFormattedError", function.get());
+
+        GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate(context.get(), "var result; createFormattedError('error details'); result = 'No exception';", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_undefined(result.get()));
+        auto* exception = jsc_context_get_exception(context.get());
+        g_assert_true(JSC_IS_EXCEPTION(exception));
+        checker.watch(exception);
+        g_assert_cmpstr(jsc_exception_get_name(exception), ==, "Error");
+        g_assert_cmpstr(jsc_exception_get_message(exception), ==, "API exception: error details");
+        g_assert_cmpuint(jsc_exception_get_line_number(exception), ==, 1);
+        g_assert_cmpuint(jsc_exception_get_column_number(exception), ==, 33);
+        g_assert_null(jsc_exception_get_source_uri(exception));
+        g_assert_cmpstr(jsc_exception_get_backtrace_string(exception), ==, "createFormattedError@[native code]\nglobal code");
+        GUniquePtr<char> errorString(jsc_exception_to_string(exception));
+        g_assert_cmpstr(errorString.get(), ==, "Error: API exception: error details");
+        GUniquePtr<char> reportString(jsc_exception_report(exception));
+        g_assert_cmpstr(reportString.get(), ==, ":1:33 Error: API exception: error details\n  createFormattedError@[native code]\n  global code\n");
+
+        jsc_context_clear_exception(context.get());
+        g_assert_null(jsc_context_get_exception(context.get()));
+    }
+
+    {
+        LeakChecker checker;
+        GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        g_assert_false(jsc_context_get_exception(context.get()));
+
+        GRefPtr<JSCValue> function = adoptGRef(jsc_value_new_function(context.get(), "createCustomFormattedError", G_CALLBACK(createCustomFormattedError), nullptr, nullptr, G_TYPE_NONE, 1, G_TYPE_STRING));
+        checker.watch(function.get());
+        jsc_context_set_value(context.get(), "createCustomFormattedError", function.get());
+
+        GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate(context.get(), "var result; createCustomFormattedError('error details'); result = 'No exception';", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_undefined(result.get()));
+        auto* exception = jsc_context_get_exception(context.get());
+        g_assert_true(JSC_IS_EXCEPTION(exception));
+        checker.watch(exception);
+        g_assert_cmpstr(jsc_exception_get_name(exception), ==, "CustomFormattedAPIError");
+        g_assert_cmpstr(jsc_exception_get_message(exception), ==, "API custom exception: error details");
+        g_assert_cmpuint(jsc_exception_get_line_number(exception), ==, 1);
+        g_assert_cmpuint(jsc_exception_get_column_number(exception), ==, 39);
+        g_assert_null(jsc_exception_get_source_uri(exception));
+        g_assert_cmpstr(jsc_exception_get_backtrace_string(exception), ==, "createCustomFormattedError@[native code]\nglobal code");
+        GUniquePtr<char> errorString(jsc_exception_to_string(exception));
+        g_assert_cmpstr(errorString.get(), ==, "CustomFormattedAPIError: API custom exception: error details");
+        GUniquePtr<char> reportString(jsc_exception_report(exception));
+        g_assert_cmpstr(reportString.get(), ==, ":1:39 CustomFormattedAPIError: API custom exception: error details\n  createCustomFormattedError@[native code]\n  global code\n");
 
         jsc_context_clear_exception(context.get());
         g_assert_null(jsc_context_get_exception(context.get()));

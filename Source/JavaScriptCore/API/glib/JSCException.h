@@ -66,9 +66,31 @@ jsc_exception_new                   (JSCContext   *context,
                                      const char   *message);
 
 JSC_API JSCException *
+jsc_exception_new_printf            (JSCContext   *context,
+                                     const char   *format,
+                                     ...) G_GNUC_PRINTF (2, 3);
+
+JSC_API JSCException *
+jsc_exception_new_vprintf           (JSCContext   *context,
+                                     const char   *format,
+                                     va_list       args) G_GNUC_PRINTF(2, 0);
+
+JSC_API JSCException *
 jsc_exception_new_with_name         (JSCContext   *context,
                                      const char   *name,
                                      const char   *message);
+
+JSC_API JSCException *
+jsc_exception_new_with_name_printf  (JSCContext   *context,
+                                     const char   *name,
+                                     const char   *format,
+                                     ...) G_GNUC_PRINTF (3, 4);
+
+JSC_API JSCException *
+jsc_exception_new_with_name_vprintf (JSCContext   *context,
+                                     const char   *name,
+                                     const char   *format,
+                                     va_list       args) G_GNUC_PRINTF (3, 0);
 
 JSC_API const char *
 jsc_exception_get_name              (JSCException *exception);

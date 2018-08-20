@@ -26,6 +26,7 @@
 #include "JSCInlines.h"
 #include "JSRetainPtr.h"
 #include "StrongInlines.h"
+#include <glib/gprintf.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -133,6 +134,48 @@ JSCException* jsc_exception_new(JSCContext* context, const char* message)
 }
 
 /**
+ * jsc_exception_new_printf:
+ * @context: a #JSCContext
+ * @format: the string format
+ * @...: the parameters to insert into the format string
+ *
+ * Create a new #JSCException in @context using a formatted string
+ * for the message.
+ *
+ * Returns: (transfer full): a new #JSCException.
+ */
+JSCException* jsc_exception_new_printf(JSCContext* context, const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    auto* exception = jsc_exception_new_vprintf(context, format, args);
+    va_end(args);
+
+    return exception;
+}
+
+/**
+ * jsc_exception_new_vprintf:
+ * @context: a #JSCContext
+ * @format: the string format
+ * @args: the parameters to insert into the format string
+ *
+ * Create a new #JSCException in @context using a formatted string
+ * for the message. This is similar to jsc_exception_new_printf()
+ * except that the arguments to the format string are passed as a va_list.
+ *
+ * Returns: (transfer full): a new #JSCException.
+ */
+JSCException* jsc_exception_new_vprintf(JSCContext* context, const char* format, va_list args)
+{
+    g_return_val_if_fail(JSC_IS_CONTEXT(context), nullptr);
+
+    GUniqueOutPtr<char> buffer;
+    g_vasprintf(&buffer.outPtr(), format, args);
+    return jsc_exception_new(context, buffer.get());
+}
+
+/**
  * jsc_exception_new_with_name:
  * @context: a #JSCContext
  * @name: the error name
@@ -161,6 +204,50 @@ JSCException* jsc_exception_new_with_name(JSCContext* context, const char* name,
     }
 
     return exception.leakRef();
+}
+
+/**
+ * jsc_exception_new_with_name_printf:
+ * @context: a #JSCContext
+ * @name: the error name
+ * @format: the string format
+ * @...: the parameters to insert into the format string
+ *
+ * Create a new #JSCException in @context with @name and using a formatted string
+ * for the message.
+ *
+ * Returns: (transfer full): a new #JSCException.
+ */
+JSCException* jsc_exception_new_with_name_printf(JSCContext* context, const char* name, const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    auto* exception = jsc_exception_new_with_name_vprintf(context, name, format, args);
+    va_end(args);
+
+    return exception;
+}
+
+/**
+ * jsc_exception_new_with_name_vprintf:
+ * @context: a #JSCContext
+ * @name: the error name
+ * @format: the string format
+ * @args: the parameters to insert into the format string
+ *
+ * Create a new #JSCException in @context with @name and using a formatted string
+ * for the message. This is similar to jsc_exception_new_with_name_printf()
+ * except that the arguments to the format string are passed as a va_list.
+ *
+ * Returns: (transfer full): a new #JSCException.
+ */
+JSCException* jsc_exception_new_with_name_vprintf(JSCContext* context, const char* name, const char* format, va_list args)
+{
+    g_return_val_if_fail(JSC_IS_CONTEXT(context), nullptr);
+
+    GUniqueOutPtr<char> buffer;
+    g_vasprintf(&buffer.outPtr(), format, args);
+    return jsc_exception_new_with_name(context, name, buffer.get());
 }
 
 /**
