@@ -1,3 +1,39 @@
+2018-08-17  Saam barati  <sbarati@apple.com>
+
+        intersectionOfPastValuesAtHead must filter values after they've observed an invalidation point
+        https://bugs.webkit.org/show_bug.cgi?id=188707
+        <rdar://problem/43015442>
+
+        Reviewed by Mark Lam.
+
+        We use the values in intersectionOfPastValuesAtHead to verify that it is safe to
+        OSR enter at the head of a block. We verify it's safe to OSR enter by checking
+        that each incoming value is compatible with its corresponding AbstractValue.
+        
+        The bug is that we were sometimes filtering the intersectionOfPastValuesAtHead
+        with abstract values that were clobbererd. This meant that the value we're
+        verifying with at OSR entry effectively has an infinite structure set because
+        it's clobbered. So, imagine we have code like this:
+        ```
+        ---> We OSR enter here, and we're clobbered here
+        InvalidationPoint
+        GetByOffset(@base)
+        ```
+        
+        The abstract value for @base inside intersectionOfPastValuesAtHead has a
+        clobberred structure set, so we'd allow an incoming object with any
+        structure. However, this is wrong because the invalidation point is no
+        longer fulfilling its promise that it filters the structure that @base has.
+        
+        We fix this by filtering the AbstractValues in intersectionOfPastValuesAtHead
+        as if the incoming value may be live past an InvalidationPoint.
+        This places a stricter requirement that to safely OSR enter at any basic
+        block, all incoming values must be compatible as if they lived past
+        the execution of an invalidation point.
+
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::run):
+
 2018-08-17  Yusuke Suzuki  <yusukesuzuki@slowstart.org> and Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [JSC] Add GPRReg::InvalidGPRReg and FPRReg::InvalidFPRReg
