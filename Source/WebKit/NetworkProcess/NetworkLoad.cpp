@@ -42,6 +42,7 @@
 
 #if PLATFORM(COCOA)
 #include "NetworkDataTaskCocoa.h"
+#include "NetworkSessionCocoa.h"
 #endif
 
 #if ENABLE(NETWORK_CAPTURE)
@@ -121,10 +122,6 @@ NetworkLoad::~NetworkLoad()
         m_redirectCompletionHandler({ });
     if (m_responseCompletionHandler)
         m_responseCompletionHandler(PolicyAction::Ignore);
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    if (m_challengeCompletionHandler)
-        m_challengeCompletionHandler(AuthenticationChallengeDisposition::Cancel, { });
-#endif
     if (m_task)
         m_task->clearClient();
 }
@@ -256,18 +253,7 @@ void NetworkLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse
 
 void NetworkLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, ChallengeCompletionHandler&& completionHandler)
 {
-    m_challenge = challenge;
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    m_challengeCompletionHandler = WTFMove(completionHandler);
-    m_client.get().canAuthenticateAgainstProtectionSpaceAsync(challenge.protectionSpace());
-#else
-    completeAuthenticationChallenge(WTFMove(completionHandler));
-#endif
-}
-
-void NetworkLoad::completeAuthenticationChallenge(ChallengeCompletionHandler&& completionHandler)
-{
-    auto scheme = m_challenge->protectionSpace().authenticationScheme();
+    auto scheme = challenge.protectionSpace().authenticationScheme();
     bool isTLSHandshake = scheme == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested
         || scheme == ProtectionSpaceAuthenticationSchemeClientCertificateRequested;
     if (!isAllowedToAskUserForCredentials() && !isTLSHandshake) {
@@ -276,35 +262,17 @@ void NetworkLoad::completeAuthenticationChallenge(ChallengeCompletionHandler&& c
         return;
     }
 
-    if (!m_task)
-        return;
-
-    if (auto* pendingDownload = m_task->pendingDownload())
-        NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(*pendingDownload, *m_challenge, WTFMove(completionHandler));
-    else
-        NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, *m_challenge, WTFMove(completionHandler));
-}
-
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
-{
-    if (!m_challengeCompletionHandler) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto completionHandler = std::exchange(m_challengeCompletionHandler, nullptr);
-    if (!result) {
-        if (NetworkSession::allowsSpecificHTTPSCertificateForHost(*m_challenge))
-            completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(*m_challenge));
-        else
-            completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, { });
-        return;
-    }
-
-    completeAuthenticationChallenge(WTFMove(completionHandler));
-}
+#if PLATFORM(COCOA)
+    if (scheme == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested
+        && NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(challenge))
+        return completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(challenge));
 #endif
+    
+    if (auto* pendingDownload = m_task->pendingDownload())
+        NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(*pendingDownload, challenge, WTFMove(completionHandler));
+    else
+        NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, challenge, WTFMove(completionHandler));
+}
 
 void NetworkLoad::didReceiveResponseNetworkSession(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {

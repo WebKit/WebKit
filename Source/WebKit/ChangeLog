@@ -1,3 +1,63 @@
+2018-08-16  Alex Christensen  <achristensen@webkit.org>
+
+        Stop using canAuthenticateAgainstProtectionSpace in modern WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=188639
+
+        Reviewed by Youenn Fablet.
+
+        canAuthenticateAgainstProtectionSpace is an unnecessary step in the authentication process.
+        It is leftover from when it was necessary when we used NSURLConnection, which is only used in WebKitLegacy now.
+        Now it's just an extra IPC roundtrip asking if we should use NSURLSessionAuthChallengeRejectProtectionSpace
+        or if we are going to ask the API client.  We can move this step into the C API for compatibility
+        with the 1 client that still uses it (not for long, see rdar://problem/43358403) and simplify and optimize
+        authentication.
+
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::canAuthenticateAgainstProtectionSpaceAsync): Deleted.
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::didReceiveChallenge):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::~NetworkLoad):
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        (WebKit::NetworkLoad::completeAuthenticationChallenge): Deleted.
+        (WebKit::NetworkLoad::continueCanAuthenticateAgainstProtectionSpace): Deleted.
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkLoadClient.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::cancelDownload):
+        (WebKit::NetworkProcess::canAuthenticateAgainstProtectionSpace): Deleted.
+        (WebKit::NetworkProcess::continueCanAuthenticateAgainstProtectionSpace): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync): Deleted.
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/PreconnectTask.cpp:
+        (WebKit::PreconnectTask::canAuthenticateAgainstProtectionSpaceAsync): Deleted.
+        * NetworkProcess/PreconnectTask.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::canAuthenticateAgainstProtectionSpaceAsync): Deleted.
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::NavigationClient::didReceiveAuthenticationChallenge):
+        (WebKit::NavigationState::NavigationClient::canAuthenticateAgainstProtectionSpace): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::canAuthenticateAgainstProtectionSpace): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::canAuthenticateAgainstProtectionSpace): Deleted.
+        * UIProcess/WebPageProxy.h:
+
 2018-08-16  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, WPE build fix after r234920.
