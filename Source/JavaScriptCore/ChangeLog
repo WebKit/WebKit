@@ -1,5 +1,27 @@
 2018-08-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GLIB] Add API to throw exceptions using printf formatted strings
+        https://bugs.webkit.org/show_bug.cgi?id=188698
+
+        Reviewed by Michael Catanzaro.
+
+        Add jsc_context_throw_printf() and jsc_context_throw_with_name_printf(). Also add new public constructors of
+        JSCException using printf formatted string.
+
+        * API/glib/JSCContext.cpp:
+        (jsc_context_throw_printf):
+        (jsc_context_throw_with_name_printf):
+        * API/glib/JSCContext.h:
+        * API/glib/JSCException.cpp:
+        (jsc_exception_new_printf):
+        (jsc_exception_new_vprintf):
+        (jsc_exception_new_with_name_printf):
+        (jsc_exception_new_with_name_vprintf):
+        * API/glib/JSCException.h:
+        * API/glib/docs/jsc-glib-4.0-sections.txt:
+
+2018-08-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GLIB] Complete the JSCException API
         https://bugs.webkit.org/show_bug.cgi?id=188695
 
