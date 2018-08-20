@@ -1,3 +1,16 @@
+2018-08-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Bail out of subtree verification when trees are out of sync.
+        https://bugs.webkit.org/show_bug.cgi?id=188633
+
+        Reviewed by Antti Koivisto.
+
+        There's no point of trying to match geometry when subtrees are out of sync.
+        They get out of sync when the render tree has unsupported boxes (see LayoutTreeBuilder).
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::verifyAndOutputSubtree):
+
 2018-08-16  Antti Koivisto  <antti@apple.com>
 
         Use OptionSet for ActivityState::Flags
