@@ -1,3 +1,76 @@
+2018-08-17  Tim Horton  <timothy_horton@apple.com>
+
+        Start bringing up Unified Sources in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=188703
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/BaseTarget.xcconfig:
+        Add SRCROOT to the include path, so unified sources can find the source files.
+
+        * Shared/APIWebArchive.mm:
+        (API::releaseWebArchiveData):
+        (API::WebArchive::data):
+        (API::releaseCFData): Deleted.
+        * Shared/APIWebArchiveResource.mm:
+        (API::releaseWebArchiveResourceData):
+        (API::WebArchiveResource::data):
+        (API::releaseCFData): Deleted.
+        Disambiguate two static methods by renaming them.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        Leave a comment about the bizarreness of this file.
+
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::decode):
+        * Shared/WebPlatformTouchPoint.cpp:
+        * Shared/WebPopupItem.cpp:
+        (WebKit::WebPopupItem::WebPopupItem):
+        (WebKit::WebPopupItem::decode):
+        * Shared/WebPreferencesStore.cpp:
+        * Shared/WebRenderLayer.cpp:
+        (WebKit::WebRenderLayer::create):
+        (WebKit::WebRenderLayer::createArrayFromLayerList):
+        (WebKit::WebRenderLayer::WebRenderLayer):
+        * Shared/gtk/WebEventFactory.cpp:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        * Shared/mac/WebMemorySampler.mac.mm:
+        (WebKit::WebMemorySampler::sampleWebKit const):
+        * UIProcess/API/APIAutomationSessionClient.h:
+        (API::AutomationSessionClient::sessionIdentifier const):
+        (API::AutomationSessionClient::messageOfCurrentJavaScriptDialogOnPage):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::ensureBackingStore):
+        (WebKit::RemoteLayerBackingStore::setNeedsDisplay):
+        (WebKit::RemoteLayerBackingStore::backingStoreSize const):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::display):
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        (WebKit::RemoteLayerTreeTransaction::setRootLayerID):
+        (WebKit::RemoteLayerTreeTransaction::setDestroyedLayerIDs):
+        (WebKit::RemoteLayerTreeTransaction::setLayerIDsWithNewlyUnreachableBackingStore):
+        (WebKit::dumpChangedLayers):
+        (WebKit::RemoteLayerTreeTransaction::description const):
+        * Shared/WebPlatformTouchPoint.cpp:
+        (WebKit::WebPlatformTouchPoint::WebPlatformTouchPoint):
+        Get rid of lots of `using namespace`.
+
+        * Sources.txt: Added.
+        * SourcesCocoa.txt: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+        Set up unified sources.
+        Right now, we only unify Platform/ and Shared/[^API].
+
 2018-08-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace canBubble and cancelable booleans in Event by enum classes

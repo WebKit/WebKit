@@ -44,8 +44,6 @@
 #import <mach/mach_port.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
 
 RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote* layer)
@@ -70,7 +68,7 @@ RemoteLayerBackingStore::~RemoteLayerBackingStore()
         context->backingStoreWillBeDestroyed(*this);
 }
 
-void RemoteLayerBackingStore::ensureBackingStore(FloatSize size, float scale, bool acceleratesDrawing, bool deepColor, bool isOpaque)
+void RemoteLayerBackingStore::ensureBackingStore(WebCore::FloatSize size, float scale, bool acceleratesDrawing, bool deepColor, bool isOpaque)
 {
 #if !HAVE(IOSURFACE)
     acceleratesDrawing = false;
@@ -160,19 +158,19 @@ bool RemoteLayerBackingStore::decode(IPC::Decoder& decoder, RemoteLayerBackingSt
     return true;
 }
 
-void RemoteLayerBackingStore::setNeedsDisplay(const IntRect rect)
+void RemoteLayerBackingStore::setNeedsDisplay(const WebCore::IntRect rect)
 {
     m_dirtyRegion.unite(rect);
 }
 
 void RemoteLayerBackingStore::setNeedsDisplay()
 {
-    setNeedsDisplay(IntRect(IntPoint(), expandedIntSize(m_size)));
+    setNeedsDisplay(WebCore::IntRect(WebCore::IntPoint(), WebCore::expandedIntSize(m_size)));
 }
 
-IntSize RemoteLayerBackingStore::backingStoreSize() const
+WebCore::IntSize RemoteLayerBackingStore::backingStoreSize() const
 {
-    FloatSize scaledSize = m_size;
+    WebCore::FloatSize scaledSize = m_size;
     scaledSize.scale(m_scale);
     return roundedIntSize(scaledSize);
 }
@@ -192,7 +190,7 @@ unsigned RemoteLayerBackingStore::bytesPerPixel() const
 
 void RemoteLayerBackingStore::swapToValidFrontBuffer()
 {
-    IntSize expandedScaledSize = backingStoreSize();
+    WebCore::IntSize expandedScaledSize = backingStoreSize();
 
 #if HAVE(IOSURFACE)
     if (m_acceleratesDrawing) {
@@ -205,7 +203,7 @@ void RemoteLayerBackingStore::swapToValidFrontBuffer()
         std::swap(m_frontBuffer, m_backBuffer);
 
         if (!m_frontBuffer.surface)
-            m_frontBuffer.surface = WebCore::IOSurface::create(expandedScaledSize, sRGBColorSpaceRef(), surfaceBufferFormat());
+            m_frontBuffer.surface = WebCore::IOSurface::create(expandedScaledSize, WebCore::sRGBColorSpaceRef(), surfaceBufferFormat());
 
         setBufferVolatility(BufferType::Front, false);
         return;
@@ -235,21 +233,21 @@ bool RemoteLayerBackingStore::display()
     // Make the previous front buffer non-volatile early, so that we can dirty the whole layer if it comes back empty.
     setBufferVolatility(BufferType::Front, false);
 
-    IntSize expandedScaledSize = backingStoreSize();
+    WebCore::IntSize expandedScaledSize = backingStoreSize();
 
     if (m_dirtyRegion.isEmpty() || expandedScaledSize.isEmpty())
         return needToEncodeBackingStore;
 
-    IntRect layerBounds(IntPoint(), expandedIntSize(m_size));
+    WebCore::IntRect layerBounds(WebCore::IntPoint(), WebCore::expandedIntSize(m_size));
     if (!hasFrontBuffer())
         m_dirtyRegion.unite(layerBounds);
 
     if (m_layer->owner()->platformCALayerShowRepaintCounter(m_layer)) {
-        IntRect indicatorRect(0, 0, 52, 27);
+        WebCore::IntRect indicatorRect(0, 0, 52, 27);
         m_dirtyRegion.unite(indicatorRect);
     }
 
-    IntRect expandedScaledLayerBounds(IntPoint(), expandedScaledSize);
+    WebCore::IntRect expandedScaledLayerBounds(WebCore::IntPoint(), expandedScaledSize);
     bool willPaintEntireBackingStore = m_dirtyRegion.contains(layerBounds);
 
     swapToValidFrontBuffer();
@@ -261,9 +259,9 @@ bool RemoteLayerBackingStore::display()
             backImage = m_backBuffer.surface->createImage();
 
         if (m_frontBuffer.surface) {
-            GraphicsContext& context = m_frontBuffer.surface->ensureGraphicsContext();
+            WebCore::GraphicsContext& context = m_frontBuffer.surface->ensureGraphicsContext();
 
-            context.scale(FloatSize(1, -1));
+            context.scale(WebCore::FloatSize(1, -1));
             context.translate(0, -expandedScaledSize.height());
             drawInContext(context, backImage.get());
 
@@ -273,7 +271,7 @@ bool RemoteLayerBackingStore::display()
 #endif
     {
         ASSERT(!m_acceleratesDrawing);
-        std::unique_ptr<GraphicsContext> context = m_frontBuffer.bitmap->createGraphicsContext();
+        std::unique_ptr<WebCore::GraphicsContext> context = m_frontBuffer.bitmap->createGraphicsContext();
 
         RetainPtr<CGImageRef> backImage;
         if (m_backBuffer.bitmap && !willPaintEntireBackingStore)
@@ -287,35 +285,35 @@ bool RemoteLayerBackingStore::display()
     return true;
 }
 
-void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef backImage)
+void RemoteLayerBackingStore::drawInContext(WebCore::GraphicsContext& context, CGImageRef backImage)
 {
-    FloatSize scaledSize = m_size;
+    WebCore::FloatSize scaledSize = m_size;
     scaledSize.scale(m_scale);
-    IntRect scaledLayerBounds(IntPoint(), roundedIntSize(scaledSize));
+    WebCore::IntRect scaledLayerBounds(WebCore::IntPoint(), WebCore::roundedIntSize(scaledSize));
 
     // If we have less than webLayerMaxRectsToPaint rects to paint and they cover less
     // than webLayerWastedSpaceThreshold of the total dirty area, we'll repaint each rect separately.
     // Otherwise, repaint the entire bounding box of the dirty region.
-    IntRect dirtyBounds = m_dirtyRegion.bounds();
+    WebCore::IntRect dirtyBounds = m_dirtyRegion.bounds();
 
-    Vector<IntRect> dirtyRects = m_dirtyRegion.rects();
-    if (dirtyRects.size() > PlatformCALayer::webLayerMaxRectsToPaint || m_dirtyRegion.totalArea() > PlatformCALayer::webLayerWastedSpaceThreshold * dirtyBounds.width() * dirtyBounds.height()) {
+    Vector<WebCore::IntRect> dirtyRects = m_dirtyRegion.rects();
+    if (dirtyRects.size() > WebCore::PlatformCALayer::webLayerMaxRectsToPaint || m_dirtyRegion.totalArea() > WebCore::PlatformCALayer::webLayerWastedSpaceThreshold * dirtyBounds.width() * dirtyBounds.height()) {
         dirtyRects.clear();
         dirtyRects.append(dirtyBounds);
     }
 
     // FIXME: find a consistent way to scale and snap dirty and CG clip rects.
     for (const auto& rect : dirtyRects) {
-        FloatRect scaledRect(rect);
+        WebCore::FloatRect scaledRect(rect);
         scaledRect.scale(m_scale);
-        scaledRect = enclosingIntRect(scaledRect);
+        scaledRect = WebCore::enclosingIntRect(scaledRect);
         scaledRect.scale(1 / m_scale);
         m_paintingRects.append(scaledRect);
     }
 
-    CGRect cgPaintingRects[PlatformCALayer::webLayerMaxRectsToPaint];
+    CGRect cgPaintingRects[WebCore::PlatformCALayer::webLayerMaxRectsToPaint];
     for (size_t i = 0, dirtyRectCount = m_paintingRects.size(); i < dirtyRectCount; ++i) {
-        FloatRect scaledPaintingRect = m_paintingRects[i];
+        WebCore::FloatRect scaledPaintingRect = m_paintingRects[i];
         scaledPaintingRect.scale(m_scale);
         cgPaintingRects[i] = scaledPaintingRect;
     }
@@ -323,7 +321,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
     CGContextRef cgContext = context.platformContext();
 
     if (backImage) {
-        CGContextStateSaver stateSaver(cgContext);
+        WebCore::CGContextStateSaver stateSaver(cgContext);
         CGContextSetBlendMode(cgContext, kCGBlendModeCopy);
         CGContextTranslateCTM(cgContext, 0, scaledLayerBounds.height());
         CGContextScaleCTM(cgContext, 1, -1);
@@ -337,7 +335,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
 
 #ifndef NDEBUG
     if (m_isOpaque)
-        context.fillRect(scaledLayerBounds, Color(255, 47, 146));
+        context.fillRect(scaledLayerBounds, WebCore::Color(255, 47, 146));
 #endif
 
     context.scale(m_scale);
@@ -346,35 +344,35 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
     
     // FIXME: This should be moved to PlatformCALayerRemote for better layering.
     switch (m_layer->layerType()) {
-    case PlatformCALayer::LayerTypeSimpleLayer:
-    case PlatformCALayer::LayerTypeTiledBackingTileLayer:
+    case WebCore::PlatformCALayer::LayerTypeSimpleLayer:
+    case WebCore::PlatformCALayer::LayerTypeTiledBackingTileLayer:
         m_layer->owner()->platformCALayerPaintContents(m_layer, context, dirtyBounds, flags);
         break;
-    case PlatformCALayer::LayerTypeWebLayer:
-    case PlatformCALayer::LayerTypeBackdropLayer:
-        PlatformCALayer::drawLayerContents(cgContext, m_layer, m_paintingRects, flags);
+    case WebCore::PlatformCALayer::LayerTypeWebLayer:
+    case WebCore::PlatformCALayer::LayerTypeBackdropLayer:
+        WebCore::PlatformCALayer::drawLayerContents(cgContext, m_layer, m_paintingRects, flags);
         break;
-    case PlatformCALayer::LayerTypeDarkSystemBackdropLayer:
-    case PlatformCALayer::LayerTypeLightSystemBackdropLayer:
+    case WebCore::PlatformCALayer::LayerTypeDarkSystemBackdropLayer:
+    case WebCore::PlatformCALayer::LayerTypeLightSystemBackdropLayer:
         // FIXME: These have a more complicated layer hierarchy. We need to paint into
         // a child layer in order to see the rendered results.
-        PlatformCALayer::drawLayerContents(cgContext, m_layer, m_paintingRects, flags);
+        WebCore::PlatformCALayer::drawLayerContents(cgContext, m_layer, m_paintingRects, flags);
         break;
-    case PlatformCALayer::LayerTypeLayer:
-    case PlatformCALayer::LayerTypeTransformLayer:
-    case PlatformCALayer::LayerTypeTiledBackingLayer:
-    case PlatformCALayer::LayerTypePageTiledBackingLayer:
-    case PlatformCALayer::LayerTypeRootLayer:
-    case PlatformCALayer::LayerTypeAVPlayerLayer:
-    case PlatformCALayer::LayerTypeContentsProvidedLayer:
-    case PlatformCALayer::LayerTypeShapeLayer:
-    case PlatformCALayer::LayerTypeScrollingLayer:
-    case PlatformCALayer::LayerTypeCustom:
+    case WebCore::PlatformCALayer::LayerTypeLayer:
+    case WebCore::PlatformCALayer::LayerTypeTransformLayer:
+    case WebCore::PlatformCALayer::LayerTypeTiledBackingLayer:
+    case WebCore::PlatformCALayer::LayerTypePageTiledBackingLayer:
+    case WebCore::PlatformCALayer::LayerTypeRootLayer:
+    case WebCore::PlatformCALayer::LayerTypeAVPlayerLayer:
+    case WebCore::PlatformCALayer::LayerTypeContentsProvidedLayer:
+    case WebCore::PlatformCALayer::LayerTypeShapeLayer:
+    case WebCore::PlatformCALayer::LayerTypeScrollingLayer:
+    case WebCore::PlatformCALayer::LayerTypeCustom:
         ASSERT_NOT_REACHED();
         break;
     };
 
-    m_dirtyRegion = Region();
+    m_dirtyRegion = WebCore::Region();
     m_paintingRects.clear();
 
     m_frontContextPendingFlush = context.platformContext();
@@ -405,7 +403,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
         case LayerContentsType::IOSurface:
             if (!m_frontBuffer.surface) {
                 ASSERT(m_frontBufferSendRight);
-                m_frontBuffer.surface = WebCore::IOSurface::createFromSendRight(WTFMove(m_frontBufferSendRight), sRGBColorSpaceRef());
+                m_frontBuffer.surface = WebCore::IOSurface::createFromSendRight(WTFMove(m_frontBufferSendRight), WebCore::sRGBColorSpaceRef());
             }
             layer.contents = m_frontBuffer.surface ? m_frontBuffer.surface->asLayerContents() : nil;
             break;

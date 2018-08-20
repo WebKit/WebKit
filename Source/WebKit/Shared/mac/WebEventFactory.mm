@@ -35,8 +35,6 @@
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/ASCIICType.h>
 
-using namespace WebCore;
-
 @interface NSEvent (WebNSEventDetails)
 - (NSInteger)_scrollCount;
 - (CGFloat)_unacceleratedScrollingDeltaX;
@@ -365,7 +363,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *last
     float deltaZ = [event deltaZ];
     int clickCount = clickCountForEvent(event);
     WebEvent::Modifiers modifiers = modifiersForEvent(event);
-    auto timestamp = eventTimeStampSince1970(event);
+    auto timestamp = WebCore::eventTimeStampSince1970(event);
     int eventNumber = [event eventNumber];
     int menuTypeForEvent = typeForEvent(event);
 
@@ -376,7 +374,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *last
     force = pressure + stage;
 #endif
 
-    return WebMouseEvent(type, button, buttons, IntPoint(position), IntPoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, modifiers, timestamp, force, WebMouseEvent::SyntheticClickType::NoTap, eventNumber, menuTypeForEvent);
+    return WebMouseEvent(type, button, buttons, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, modifiers, timestamp, force, WebMouseEvent::SyntheticClickType::NoTap, eventNumber, menuTypeForEvent);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windowView)
@@ -390,18 +388,18 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
     float wheelTicksX = 0;
     float wheelTicksY = 0;
 
-    getWheelEventDeltas(event, deltaX, deltaY, continuous);
+    WebCore::getWheelEventDeltas(event, deltaX, deltaY, continuous);
     
     if (continuous) {
         // smooth scroll events
-        wheelTicksX = deltaX / static_cast<float>(Scrollbar::pixelsPerLineStep());
-        wheelTicksY = deltaY / static_cast<float>(Scrollbar::pixelsPerLineStep());
+        wheelTicksX = deltaX / static_cast<float>(WebCore::Scrollbar::pixelsPerLineStep());
+        wheelTicksY = deltaY / static_cast<float>(WebCore::Scrollbar::pixelsPerLineStep());
     } else {
         // plain old wheel events
         wheelTicksX = deltaX;
         wheelTicksY = deltaY;
-        deltaX *= static_cast<float>(Scrollbar::pixelsPerLineStep());
-        deltaY *= static_cast<float>(Scrollbar::pixelsPerLineStep());
+        deltaX *= static_cast<float>(WebCore::Scrollbar::pixelsPerLineStep());
+        deltaY *= static_cast<float>(WebCore::Scrollbar::pixelsPerLineStep());
     }
 
     WebWheelEvent::Granularity granularity  = WebWheelEvent::ScrollByPixelWheelEvent;
@@ -411,21 +409,21 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
     bool hasPreciseScrollingDeltas          = continuous;
 
     uint32_t scrollCount;
-    FloatSize unacceleratedScrollingDelta;
+    WebCore::FloatSize unacceleratedScrollingDelta;
 
     static bool nsEventSupportsScrollCount = [NSEvent instancesRespondToSelector:@selector(_scrollCount)];
     if (nsEventSupportsScrollCount) {
         scrollCount = [event _scrollCount];
-        unacceleratedScrollingDelta = FloatSize([event _unacceleratedScrollingDeltaX], [event _unacceleratedScrollingDeltaY]);
+        unacceleratedScrollingDelta = WebCore::FloatSize([event _unacceleratedScrollingDeltaX], [event _unacceleratedScrollingDeltaY]);
     } else {
         scrollCount = 0;
-        unacceleratedScrollingDelta = FloatSize(deltaX, deltaY);
+        unacceleratedScrollingDelta = WebCore::FloatSize(deltaX, deltaY);
     }
 
     WebEvent::Modifiers modifiers           = modifiersForEvent(event);
-    auto timestamp                          = eventTimeStampSince1970(event);
+    auto timestamp                          = WebCore::eventTimeStampSince1970(event);
     
-    return WebWheelEvent(WebEvent::Wheel, IntPoint(position), IntPoint(globalPosition), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, directionInvertedFromDevice, phase, momentumPhase, hasPreciseScrollingDeltas, scrollCount, unacceleratedScrollingDelta, modifiers, timestamp);
+    return WebWheelEvent(WebEvent::Wheel, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), WebCore::FloatSize(deltaX, deltaY), WebCore::FloatSize(wheelTicksX, wheelTicksY), granularity, directionInvertedFromDevice, phase, momentumPhase, hasPreciseScrollingDeltas, scrollCount, unacceleratedScrollingDelta, modifiers, timestamp);
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>& commands)
@@ -433,17 +431,17 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool ha
     WebEvent::Type type             = isKeyUpEvent(event) ? WebEvent::KeyUp : WebEvent::KeyDown;
     String text                     = textFromEvent(event, replacesSoftSpace);
     String unmodifiedText           = unmodifiedTextFromEvent(event, replacesSoftSpace);
-    String key                      = keyForKeyEvent(event);
-    String code                     = codeForKeyEvent(event);
-    String keyIdentifier            = keyIdentifierForKeyEvent(event);
-    int windowsVirtualKeyCode       = windowsKeyCodeForKeyEvent(event);
+    String key                      = WebCore::keyForKeyEvent(event);
+    String code                     = WebCore::codeForKeyEvent(event);
+    String keyIdentifier            = WebCore::keyIdentifierForKeyEvent(event);
+    int windowsVirtualKeyCode       = WebCore::windowsKeyCodeForKeyEvent(event);
     int nativeVirtualKeyCode        = [event keyCode];
-    int macCharCode                 = keyCharForEvent(event);
+    int macCharCode                 = WebCore::keyCharForEvent(event);
     bool autoRepeat                 = [event type] != NSEventTypeFlagsChanged && [event isARepeat];
     bool isKeypad                   = isKeypadEvent(event);
     bool isSystemKey                = false; // SystemKey is always false on the Mac.
     WebEvent::Modifiers modifiers   = modifiersForEvent(event);
-    auto timestamp                  = eventTimeStampSince1970(event);
+    auto timestamp                  = WebCore::eventTimeStampSince1970(event);
 
     // Always use 13 for Enter/Return -- we don't want to use AppKit's different character for Enter.
     if (windowsVirtualKeyCode == VK_RETURN) {

@@ -39,7 +39,6 @@
 #include <wtf/ASCIICType.h>
 
 namespace WebKit {
-using namespace WebCore;
 
 static inline bool isGdkKeyCodeFromKeyPad(unsigned keyval)
 {

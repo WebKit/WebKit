@@ -30,8 +30,6 @@
 #include "WebPreferencesKeys.h"
 #include <wtf/NeverDestroyed.h>
 
-using namespace WebCore;
-
 namespace WebKit {
 
 typedef HashMap<String, bool> BoolOverridesMap;
