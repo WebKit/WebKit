@@ -1,3 +1,12 @@
+2018-08-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Adjust CMAKE_MODULE_LINKER_FLAGS for asan
+        https://bugs.webkit.org/show_bug.cgi?id=188699
+
+        Reviewed by Konstantin Tokarev.
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
 2018-08-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.21.91 release.
