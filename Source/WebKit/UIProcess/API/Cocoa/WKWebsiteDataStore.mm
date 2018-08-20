@@ -48,12 +48,12 @@ using namespace WebCore;
 
 + (WKWebsiteDataStore *)defaultDataStore
 {
-    return WebKit::wrapper(API::WebsiteDataStore::defaultDataStore().get());
+    return wrapper(API::WebsiteDataStore::defaultDataStore());
 }
 
 + (WKWebsiteDataStore *)nonPersistentDataStore
 {
-    return [WebKit::wrapper(API::WebsiteDataStore::createNonPersistentDataStore().leakRef()) autorelease];
+    return wrapper(API::WebsiteDataStore::createNonPersistentDataStore());
 }
 
 - (void)dealloc
@@ -112,7 +112,7 @@ using namespace WebCore;
 
 - (WKHTTPCookieStore *)httpCookieStore
 {
-    return WebKit::wrapper(_websiteDataStore->httpCookieStore());
+    return wrapper(_websiteDataStore->httpCookieStore());
 }
 
 static WallTime toSystemClockTime(NSDate *date)

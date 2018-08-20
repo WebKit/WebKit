@@ -102,7 +102,7 @@
 
 - (_WKUserContentWorld *)_userContentWorld
 {
-    return API::wrapper(_userScript->userContentWorld());
+    return wrapper(_userScript->userContentWorld());
 }
 
 @end

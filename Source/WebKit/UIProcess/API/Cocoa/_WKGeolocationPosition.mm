@@ -39,7 +39,7 @@ using namespace WebKit;
     if (!location)
         return nil;
 
-    return [wrapper(WebGeolocationPosition::create(WebCore::GeolocationPosition { location }).leakRef()) autorelease];
+    return wrapper(WebGeolocationPosition::create(WebCore::GeolocationPosition { location }));
 }
 
 - (void)dealloc

@@ -84,7 +84,7 @@
 + (_WKApplicationManifest *)applicationManifestFromJSON:(NSString *)json manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL
 {
     auto manifest = WebCore::ApplicationManifestParser::parse(WTF::String(json), WebCore::URL(manifestURL), WebCore::URL(documentURL));
-    return [API::wrapper(API::ApplicationManifest::create(manifest).leakRef()) autorelease];
+    return wrapper(API::ApplicationManifest::create(manifest));
 }
 
 - (API::Object&)_apiObject

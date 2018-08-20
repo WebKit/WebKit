@@ -849,9 +849,7 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (_WKApplicationManifest *)_applicationManifest
 {
-    if (auto* manifest = _pageConfiguration->applicationManifest())
-        return wrapper(*manifest);
-    return nil;
+    return wrapper(_pageConfiguration->applicationManifest());
 }
 
 - (void)_setApplicationManifest:(_WKApplicationManifest *)applicationManifest

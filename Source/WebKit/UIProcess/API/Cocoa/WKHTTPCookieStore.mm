@@ -56,7 +56,7 @@ public:
 private:
     void cookiesDidChange(API::HTTPCookieStore& cookieStore) final
     {
-        [m_observer.get() cookiesDidChangeInCookieStore:WebKit::wrapper(cookieStore)];
+        [m_observer cookiesDidChangeInCookieStore:wrapper(cookieStore)];
     }
 
     WeakObjCPtr<id<WKHTTPCookieStoreObserver>> m_observer;

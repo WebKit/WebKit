@@ -137,16 +137,12 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
 
 - (WKFrameInfo *)sourceFrame
 {
-    if (API::FrameInfo* frameInfo = _navigationAction->sourceFrame())
-        return wrapper(*frameInfo);
-    return nil;
+    return wrapper(_navigationAction->sourceFrame());
 }
 
 - (WKFrameInfo *)targetFrame
 {
-    if (API::FrameInfo* frameInfo = _navigationAction->targetFrame())
-        return wrapper(*frameInfo);
-    return nil;
+    return wrapper(_navigationAction->targetFrame());
 }
 
 - (WKNavigationType)navigationType
@@ -226,10 +222,7 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
 
 - (_WKUserInitiatedAction *)_userInitiatedAction
 {
-    auto userInitiatedAction = _navigationAction->userInitiatedAction();
-    if (userInitiatedAction)
-        return wrapper(*userInitiatedAction);
-    return nil;
+    return wrapper(_navigationAction->userInitiatedAction());
 }
 
 - (BOOL)_isRedirect
@@ -239,10 +232,7 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
 
 - (WKNavigation *)_mainFrameNavigation
 {
-    if (auto* navigation = _navigationAction->mainFrameNavigation())
-        return wrapper(*navigation);
-    
-    return nil;
+    return wrapper(_navigationAction->mainFrameNavigation());
 }
 
 @end

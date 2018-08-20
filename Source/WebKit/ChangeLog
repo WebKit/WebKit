@@ -1,5 +1,195 @@
 2018-08-19  Darin Adler  <darin@apple.com>
 
+        [Cocoa] Update uses of wrapper template functions in WebKit for clarity, simplicity, better ARC readiness
+        https://bugs.webkit.org/show_bug.cgi?id=188735
+
+        Reviewed by Dan Bernstein.
+
+        Because of argument-dependent lookup, there should never be a reason to call
+        the wrapper function as WebKit::wrapper or API::wrapper unless there is a need
+        to resolve a name conflict, so removed the explicit namespacing.
+
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm:
+        (WKPageLoadURLRequestReturningNavigation): Removed explicit null check and
+        leakRef/autorelease pair, both done by the wrapper template function now.
+
+        * UIProcess/API/Cocoa/WKBackForwardList.mm:
+        (toWKBackForwardListItem): Deleted.
+        (-[WKBackForwardList currentItem]): Use wrapper instead of toWKBackForwardListItem.
+        (-[WKBackForwardList backItem]): Ditto.
+        (-[WKBackForwardList forwardItem]): Ditto.
+        (-[WKBackForwardList itemAtIndex:]): Ditto.
+        (-[WKBackForwardList backList]): Removed leakRef/autorelease pair.
+        (-[WKBackForwardList forwardList]): Ditto.
+
+        * UIProcess/API/Cocoa/WKContentRuleListStore.mm:
+        (+[WKContentRuleListStore defaultStore]): Removed explicit WebKit namespace.
+        (+[WKContentRuleListStore storeWithURL:]): Fixed a storage leak by removing leakRef,
+        which was not balanced. This is not a copy or create function, so it should not
+        return an object that requires a release to balance it.
+        (-[WKContentRuleListStore _compileContentRuleListForIdentifier:encodedContentRuleList:completionHandler:releasesArgument:]):
+        Removed explicit WebKit namespace and unneeded get().
+        (-[WKContentRuleListStore lookUpContentRuleListForIdentifier:completionHandler:]):
+        Removed explicit WebKit namespace.
+        (+[WKContentRuleListStore defaultStoreWithLegacyFilename]): Ditto.
+        (+[WKContentRuleListStore storeWithURLAndLegacyFilename:]): Fixed storage leak,
+        as above in storeWithURL.
+
+        * UIProcess/API/Cocoa/WKFrameInfo.mm:
+        (-[WKFrameInfo _handle]): Removed explicit WebKit namespace.
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.mm:
+        (WKHTTPCookieStoreObserver::cookiesDidChange): Ditto.
+
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction sourceFrame]): Removed explicit null check, now done by
+        the wrapper template function.
+        (-[WKNavigationAction targetFrame]): Ditto.
+        (-[WKNavigationAction _userInitiatedAction]): Ditto.
+        (-[WKNavigationAction _mainFrameNavigation]): Ditto.
+
+        * UIProcess/API/Cocoa/WKOpenPanelParameters.mm:
+        (-[WKOpenPanelParameters _acceptedMIMETypes]): Removed leakRef/autorelease pair,
+        now done by the wrapper template function.
+        (-[WKOpenPanelParameters _acceptedFileExtensions]): Ditto.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences copyWithZone:]): Use retain instead of leakRef; slightly clearer
+        for when we convert to ARC.
+        (+[WKPreferences _experimentalFeatures]): Removed leakRef/autorelease pair,
+        now done by the wrapper template function.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _configuration]): Fixed a storage leak by removing leakRef,
+        which was not balanced. This is not a copy or create function, so it should not
+        return an object that requires a release to balance it.
+
+        * UIProcess/API/Cocoa/WKURLSchemeTaskInternal.h:
+        Replaced inline wrapper function with WrapperTraits structure template specialization.
+
+        * UIProcess/API/Cocoa/WKUserScript.mm:
+        (-[WKUserScript _userContentWorld]): Removed explicit API namespace.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadRequest:]): Removed explicit null check and
+        leakRef/autorelease pair, both done by the wrapper template function now.
+        (-[WKWebView loadFileURL:allowingReadAccessToURL:]): Ditto.
+        (-[WKWebView loadData:MIMEType:characterEncodingName:baseURL:]): Ditto.
+        (-[WKWebView goToBackForwardListItem:]): Ditto.
+        (-[WKWebView goBack]): Ditto.
+        (-[WKWebView goForward]): Ditto.
+        (-[WKWebView reload]): Ditto.
+        (-[WKWebView reloadFromOrigin]): Ditto.
+        (-[WKWebView _didInsertAttachment:withSource:]): Removed leakRef/autorelease pairs,
+        now done by the wrapper template function.
+        (-[WKWebView _didRemoveAttachment:]): Ditto.
+        (-[WKWebView _loadData:MIMEType:characterEncodingName:baseURL:userData:]): Removed
+        explicit null check and leakRef/autorelease pair, both done by the wrapper template
+        function now.
+        (-[WKWebView _loadRequest:shouldOpenExternalURLs:]): Ditto.
+        (-[WKWebView _reloadWithoutContentBlockers]): Ditto.
+        (-[WKWebView _reloadExpiredOnly]): Ditto.
+        (-[WKWebView _sessionStateData]): Removed explicit leakRef/autorelease pair, done
+        by the wrapper template function now. Also, the old version explicitly dereferenced
+        and would not work when the result of encodeLegacySessionState was null. Decided
+        not to add a call to releaseNonNull to preserve that possibly-incorrect optimization,
+        instead allowing the wrapper function to generate code to handle the null case.
+        (-[WKWebView _sessionState]): Use the Objective-C autorelease instead of adoptNS
+        and RetainPtr's autorelease.
+        (-[WKWebView _sessionStateWithFilter:]): Ditto.
+        (-[WKWebView _restoreSessionState:andNavigate:]): Removed explicit null check and
+        leakRef/autorelease pair, both done by the wrapper template function now.
+        (-[WKWebView _insertAttachmentWithFilename:contentType:data:options:completion:]):
+        Removed explicit leakRef/autorelease pair, done by the wrapper template function now.
+        (-[WKWebView _diagnosticLoggingDelegate]): Replaced a leakRef/autorelease pair with
+        use of RetainPtr's autorelease.
+        (-[WKWebView _findDelegate]): Ditto.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _applicationManifest]): Removed explicit null check,
+        done by the wrapper template function now.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore defaultDataStore]): Removed explicit WebKit namespace
+        and unneeded call to get().
+        (+[WKWebsiteDataStore nonPersistentDataStore]): Removed explicit WebKit namespace
+        and leakRef/autorelease pair, done by the wrapper template function now.
+        (-[WKWebsiteDataStore httpCookieStore]): Removed explicit WebKit namespace.
+
+        * UIProcess/API/Cocoa/_WKApplicationManifest.mm:
+        (+[_WKApplicationManifest applicationManifestFromJSON:manifestURL:documentURL:]):
+        Removed explicit leakRef/autorelease pair, done by the wrapper template function now.
+        * UIProcess/API/Cocoa/_WKGeolocationPosition.mm:
+        (WebKit::wrapper): Ditto.
+
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration copyWithZone:]): Use retain instead of leakRef;
+        slightly clearer for when we convert to ARC.
+
+        * UIProcess/API/Cocoa/_WKUserContentWorld.mm:
+        (+[_WKUserContentWorld worldWithName:]): Removed explicit leakRef/autorelease pair,
+        done by the wrapper template function now.
+
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies websiteDataStore]): Removed explicit null check, done by
+        the wrapper template function now.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::didChangeBackForwardList): Removed
+        explicit null check, done by the wrapper template function now.
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction): Ditto.
+        (WebKit::NavigationState::NavigationClient::didStartProvisionalNavigation): Ditto.
+        (WebKit::NavigationState::NavigationClient::didReceiveServerRedirectForProvisionalNavigation): Ditto.
+        (WebKit::NavigationState::NavigationClient::didFailProvisionalNavigationWithError): Ditto.
+        (WebKit::NavigationState::NavigationClient::didFailProvisionalLoadInSubframeWithError): Ditto.
+        (WebKit::NavigationState::NavigationClient::didCommitNavigation): Ditto.
+        (WebKit::NavigationState::NavigationClient::didFinishDocumentLoad): Ditto.
+        (WebKit::NavigationState::NavigationClient::didFinishNavigation): Ditto.
+        (WebKit::NavigationState::NavigationClient::didFailNavigationWithError): Ditto.
+        (WebKit::NavigationState::NavigationClient::didSameDocumentNavigation): Ditto.
+
+        * UIProcess/Cocoa/SessionStateCoding.mm:
+        (WebKit::encodeSessionState): Removed explicit leakRef/autorelease pair, done
+        by the wrapper template function now. Also, the old version explicitly dereferenced
+        and would not work when the result of encodeLegacySessionState was null. Decided
+        not to add a call to releaseNonNull to preserve that possibly-incorrect optimization,
+        instead allowing the wrapper function to generate code to handle the null case.
+
+        * UIProcess/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController configuration]): Removed explicit WebKit namespace.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (+[WKWebProcessPlugInFrame lookUpFrameFromHandle:]): Removed explicit null check,
+        done by the wrapper template function now.
+        (-[WKWebProcessPlugInFrame hitTest:]): Removed explicit leakRef/autorelease pair, done
+        by the wrapper template function now. Also, the old version explicitly dereferenced
+        and would not work when the result of hitTest was null. Decided not to add a call to
+        releaseNonNull to preserve that possibly-incorrect optimization, instead allowing the
+        wrapper function to generate code to handle the null case.
+        (-[WKWebProcessPlugInFrame childFrames]): Removed explicit leakRef/autorelease pair,
+        done by the wrapper template function now.
+        (-[WKWebProcessPlugInFrame handle]): Ditto.
+        (-[WKWebProcessPlugInFrame _parentFrame]): Removed explicit null check, done by the
+        wrapper template function now.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResult.mm:
+        (-[WKWebProcessPlugInHitTestResult nodeHandle]): Removed explicit null check and
+        leakRef/autorelease pair, both done by the wrapper template function now.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        (+[WKWebProcessPlugInNodeHandle nodeHandleWithJSValue:inContext:]): Ditto.
+        (-[WKWebProcessPlugInNodeHandle htmlIFrameElementContentFrame]): Ditto.
+        (-[WKWebProcessPlugInNodeHandle HTMLTableCellElementCellAbove]): Ditto.
+        (-[WKWebProcessPlugInNodeHandle frame]): Ditto.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.mm:
+        (+[WKWebProcessPlugInRangeHandle rangeHandleWithJSValue:inContext:]): Ditto.
+        (-[WKWebProcessPlugInRangeHandle frame]): Ditto.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.mm:
+        (+[WKWebProcessPlugInScriptWorld world]): Ditto.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController mainFrame]): Ditto.
+        (+[WKWebProcessPlugInBrowserContextController lookUpBrowsingContextFromHandle:]): Ditto.
+
+2018-08-19  Darin Adler  <darin@apple.com>
+
         [Cocoa] Consolidate inline "wrapper" functions in WebKit API into function templates and WrapperTraits
         https://bugs.webkit.org/show_bug.cgi?id=188733
 

@@ -129,7 +129,7 @@ using namespace WebKit;
         }
     }
 
-    [configuration setProcessPool: ::WebKit::wrapper(inspectorProcessPool(inspectorLevelForPage(_inspectedPage)))];
+    [configuration setProcessPool:wrapper(inspectorProcessPool(inspectorLevelForPage(_inspectedPage)))];
     [configuration _setGroupIdentifier:inspectorPageGroupIdentifierForPage(_inspectedPage)];
 
     return configuration.autorelease();

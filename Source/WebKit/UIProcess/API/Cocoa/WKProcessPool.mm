@@ -126,7 +126,7 @@ static WKProcessPool *sharedProcessPool;
 
 - (_WKProcessPoolConfiguration *)_configuration
 {
-    return wrapper(_processPool->configuration().copy().leakRef());
+    return wrapper(_processPool->configuration().copy());
 }
 
 - (API::Object&)_apiObject

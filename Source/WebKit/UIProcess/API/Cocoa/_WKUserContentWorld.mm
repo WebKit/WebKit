@@ -32,7 +32,7 @@
 
 + (_WKUserContentWorld *)worldWithName:(NSString *)name
 {
-    return [wrapper(API::UserContentWorld::worldWithName(name).leakRef()) autorelease];
+    return wrapper(API::UserContentWorld::worldWithName(name));
 }
 
 + (_WKUserContentWorld *)normalWorld

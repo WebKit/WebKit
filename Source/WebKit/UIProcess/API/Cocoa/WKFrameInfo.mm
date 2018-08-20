@@ -86,7 +86,7 @@
 
 - (_WKFrameHandle *)_handle
 {
-    return WebKit::wrapper(_frameInfo->handle());
+    return wrapper(_frameInfo->handle());
 }
 
 @end

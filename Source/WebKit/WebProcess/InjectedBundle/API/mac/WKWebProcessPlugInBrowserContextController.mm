@@ -385,11 +385,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
 
 - (WKWebProcessPlugInFrame *)mainFrame
 {
-    WebFrame *webKitMainFrame = _page->mainWebFrame();
-    if (!webKitMainFrame)
-        return nil;
-
-    return wrapper(*webKitMainFrame);
+    return wrapper(_page->mainWebFrame());
 }
 
 - (WKWebProcessPlugInPageGroup *)pageGroup
@@ -420,11 +416,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
 
 + (instancetype)lookUpBrowsingContextFromHandle:(WKBrowsingContextHandle *)handle
 {
-    WebPage* webPage = WebProcess::singleton().webPage(handle.pageID);
-    if (!webPage)
-        return nil;
-
-    return wrapper(*webPage);
+    return wrapper(WebProcess::singleton().webPage(handle.pageID));
 }
 
 - (_WKRemoteObjectRegistry *)_remoteObjectRegistry

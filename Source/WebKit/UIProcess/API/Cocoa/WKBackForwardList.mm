@@ -44,42 +44,34 @@ using namespace WebKit;
     [super dealloc];
 }
 
-static WKBackForwardListItem *toWKBackForwardListItem(WebBackForwardListItem* item)
-{
-    if (!item)
-        return nil;
-
-    return wrapper(*item);
-}
-
 - (WKBackForwardListItem *)currentItem
 {
-    return toWKBackForwardListItem(_list->currentItem());
+    return wrapper(_list->currentItem());
 }
 
 - (WKBackForwardListItem *)backItem
 {
-    return toWKBackForwardListItem(_list->backItem());
+    return wrapper(_list->backItem());
 }
 
 - (WKBackForwardListItem *)forwardItem
 {
-    return toWKBackForwardListItem(_list->forwardItem());
+    return wrapper(_list->forwardItem());
 }
 
 - (WKBackForwardListItem *)itemAtIndex:(NSInteger)index
 {
-    return toWKBackForwardListItem(_list->itemAtIndex(index));
+    return wrapper(_list->itemAtIndex(index));
 }
 
 - (NSArray *)backList
 {
-    return [wrapper(_list->backList().leakRef()) autorelease];
+    return wrapper(_list->backList());
 }
 
 - (NSArray *)forwardList
 {
-    return [wrapper(_list->forwardList().leakRef()) autorelease];
+    return wrapper(_list->forwardList());
 }
 
 #pragma mark WKObject protocol implementation

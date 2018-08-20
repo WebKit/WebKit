@@ -49,21 +49,13 @@ using namespace WebKit;
 + (WKWebProcessPlugInNodeHandle *)nodeHandleWithJSValue:(JSValue *)value inContext:(JSContext *)context
 {
     JSContextRef contextRef = [context JSGlobalContextRef];
-    JSObjectRef objectRef = JSValueToObject(contextRef, [value JSValueRef], 0);
-    auto nodeHandle = InjectedBundleNodeHandle::getOrCreate(contextRef, objectRef);
-    if (!nodeHandle)
-        return nil;
-
-    return [wrapper(*nodeHandle.leakRef()) autorelease];
+    JSObjectRef objectRef = JSValueToObject(contextRef, [value JSValueRef], nullptr);
+    return wrapper(InjectedBundleNodeHandle::getOrCreate(contextRef, objectRef));
 }
 
 - (WKWebProcessPlugInFrame *)htmlIFrameElementContentFrame
 {
-    auto frame = _nodeHandle->htmlIFrameElementContentFrame();
-    if (!frame)
-        return nil;
-
-    return [wrapper(*frame.leakRef()) autorelease];
+    return wrapper(_nodeHandle->htmlIFrameElementContentFrame());
 }
 
 #if PLATFORM(IOS)
@@ -191,16 +183,12 @@ static _WKAutoFillButtonType toWKAutoFillButtonType(WebCore::AutoFillButtonType 
 
 - (WKWebProcessPlugInNodeHandle *)HTMLTableCellElementCellAbove
 {
-    auto nodeHandle = _nodeHandle->htmlTableCellElementCellAbove();
-    if (!nodeHandle)
-        return nil;
-
-    return [wrapper(*nodeHandle.leakRef()) autorelease];
+    return wrapper(_nodeHandle->htmlTableCellElementCellAbove());
 }
 
 - (WKWebProcessPlugInFrame *)frame
 {
-    return [wrapper(*_nodeHandle->document()->documentFrame().leakRef()) autorelease];
+    return wrapper(_nodeHandle->document()->documentFrame());
 }
 
 - (InjectedBundleNodeHandle&)_nodeHandle

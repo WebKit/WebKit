@@ -857,11 +857,7 @@ static void validate(WKWebViewConfiguration *configuration)
 
 - (WKNavigation *)loadRequest:(NSURLRequest *)request
 {
-    auto navigation = _page->loadRequest(request);
-    if (!navigation)
-        return nil;
-
-    return [wrapper(*navigation.leakRef()) autorelease];
+    return wrapper(_page->loadRequest(request));
 }
 
 - (WKNavigation *)loadFileURL:(NSURL *)URL allowingReadAccessToURL:(NSURL *)readAccessURL
@@ -872,11 +868,7 @@ static void validate(WKWebViewConfiguration *configuration)
     if (![readAccessURL isFileURL])
         [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", readAccessURL];
 
-    auto navigation = _page->loadFile([URL _web_originalDataAsWTFString], [readAccessURL _web_originalDataAsWTFString]);
-    if (!navigation)
-        return nil;
-
-    return [wrapper(*navigation.leakRef()) autorelease];
+    return wrapper(_page->loadFile([URL _web_originalDataAsWTFString], [readAccessURL _web_originalDataAsWTFString]));
 }
 
 - (WKNavigation *)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL
@@ -888,20 +880,12 @@ static void validate(WKWebViewConfiguration *configuration)
 
 - (WKNavigation *)loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL
 {
-    auto navigation = _page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, characterEncodingName, baseURL.absoluteString);
-    if (!navigation)
-        return nil;
-
-    return [wrapper(*navigation.leakRef()) autorelease];
+    return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, characterEncodingName, baseURL.absoluteString));
 }
 
 - (WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item
 {
-    auto navigation = _page->goToBackForwardItem(item._item);
-    if (!navigation)
-        return nil;
-
-    return [wrapper(*navigation.leakRef()) autorelease];
+    return wrapper(_page->goToBackForwardItem(item._item));
 }
 
 - (NSString *)title
@@ -954,20 +938,12 @@ static void validate(WKWebViewConfiguration *configuration)
 
 - (WKNavigation *)goBack
 {
-    auto navigation = _page->goBack();
-    if (!navigation)
-        return nil;
-
-    return [wrapper(*navigation.leakRef()) autorelease];
+    return wrapper(_page->goBack());
 }
 
 - (WKNavigation *)goForward
 {
-    auto navigation = _page->goForward();
-    if (!navigation)
-        return nil;
-
-    return [wrapper(*navigation.leakRef()) autorelease];
+    return wrapper(_page->goForward());
 }
 
 - (WKNavigation *)reload
@@ -976,20 +952,12 @@ static void validate(WKWebViewConfiguration *configuration)
     if (linkedOnOrAfter(WebKit::SDKVersion::FirstWithExpiredOnlyReloadBehavior))
         reloadOptions |= WebCore::ReloadOption::ExpiredOnly;
 
-    auto navigation = _page->reload(reloadOptions);
-    if (!navigation)
-        return nil;
-
-    return [wrapper(*navigation.leakRef()) autorelease];
+    return wrapper(_page->reload(reloadOptions));
 }
 
 - (WKNavigation *)reloadFromOrigin
 {
-    auto navigation = _page->reload(WebCore::ReloadOption::FromOrigin);
-    if (!navigation)
-        return nil;
-
-    return [wrapper(*navigation.leakRef()) autorelease];
+    return wrapper(_page->reload(WebCore::ReloadOption::FromOrigin));
 }
 
 - (void)stopLoading
@@ -1245,16 +1213,16 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
 {
     id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)self.UIDelegate;
     if ([uiDelegate respondsToSelector:@selector(_webView:didInsertAttachment:withSource:)])
-        [uiDelegate _webView:self didInsertAttachment:[wrapper(API::Attachment::create(identifier, *_page).leakRef()) autorelease] withSource:source];
+        [uiDelegate _webView:self didInsertAttachment:wrapper(API::Attachment::create(identifier, *_page)) withSource:source];
     else if ([uiDelegate respondsToSelector:@selector(_webView:didInsertAttachment:)])
-        [uiDelegate _webView:self didInsertAttachment:[wrapper(API::Attachment::create(identifier, *_page).leakRef()) autorelease]];
+        [uiDelegate _webView:self didInsertAttachment:wrapper(API::Attachment::create(identifier, *_page))];
 }
 
 - (void)_didRemoveAttachment:(NSString *)identifier
 {
     id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)self.UIDelegate;
     if ([uiDelegate respondsToSelector:@selector(_webView:didRemoveAttachment:)])
-        [uiDelegate _webView:self didRemoveAttachment:[wrapper(API::Attachment::create(identifier, *_page).leakRef()) autorelease]];
+        [uiDelegate _webView:self didRemoveAttachment:wrapper(API::Attachment::create(identifier, *_page))];
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
@@ -4223,20 +4191,12 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (WKNavigation *)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL userData:(id)userData
 {
-    auto navigation = _page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, characterEncodingName, baseURL.absoluteString, WebKit::ObjCObjectGraph::create(userData).ptr());
-    if (!navigation)
-        return nil;
-
-    return [wrapper(*navigation.leakRef()) autorelease];
+    return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, characterEncodingName, baseURL.absoluteString, WebKit::ObjCObjectGraph::create(userData).ptr()));
 }
 
 - (WKNavigation *)_loadRequest:(NSURLRequest *)request shouldOpenExternalURLs:(BOOL)shouldOpenExternalURLs
 {
-    auto navigation = _page->loadRequest(request, shouldOpenExternalURLs ? WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow : WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
-    if (!navigation)
-        return nil;
-
-    return [wrapper(*navigation.leakRef()) autorelease];
+    return wrapper(_page->loadRequest(request, shouldOpenExternalURLs ? WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow : WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow));
 }
 
 - (NSArray *)_certificateChain
@@ -4314,20 +4274,12 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (WKNavigation *)_reloadWithoutContentBlockers
 {
-    auto navigation = _page->reload(WebCore::ReloadOption::DisableContentBlockers);
-    if (!navigation)
-        return nil;
-
-    return [wrapper(*navigation.leakRef()) autorelease];
+    return wrapper(_page->reload(WebCore::ReloadOption::DisableContentBlockers));
 }
 
 - (WKNavigation *)_reloadExpiredOnly
 {
-    auto navigation = _page->reload(WebCore::ReloadOption::ExpiredOnly);
-    if (!navigation)
-        return nil;
-
-    return [wrapper(*navigation.leakRef()) autorelease];
+    return wrapper(_page->reload(WebCore::ReloadOption::ExpiredOnly));
 }
 
 - (void)_killWebContentProcessAndResetState
@@ -4404,15 +4356,13 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (NSData *)_sessionStateData
 {
-    WebKit::SessionState sessionState = _page->sessionState();
-
     // FIXME: This should not use the legacy session state encoder.
-    return [wrapper(*WebKit::encodeLegacySessionState(sessionState).leakRef()) autorelease];
+    return wrapper(WebKit::encodeLegacySessionState(_page->sessionState()));
 }
 
 - (_WKSessionState *)_sessionState
 {
-    return adoptNS([[_WKSessionState alloc] _initWithSessionState:_page->sessionState()]).autorelease();
+    return [[[_WKSessionState alloc] _initWithSessionState:_page->sessionState()] autorelease];
 }
 
 - (_WKSessionState *)_sessionStateWithFilter:(BOOL (^)(WKBackForwardListItem *item))filter
@@ -4424,7 +4374,7 @@ WEBCORE_COMMAND(yankAndSelect)
         return (bool)filter(wrapper(item));
     });
 
-    return adoptNS([[_WKSessionState alloc] _initWithSessionState:sessionState]).autorelease();
+    return [[[_WKSessionState alloc] _initWithSessionState:sessionState] autorelease];
 }
 
 - (void)_restoreFromSessionStateData:(NSData *)sessionStateData
@@ -4439,11 +4389,7 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (WKNavigation *)_restoreSessionState:(_WKSessionState *)sessionState andNavigate:(BOOL)navigate
 {
-    auto navigation = _page->restoreFromSessionState(sessionState->_sessionState, navigate);
-    if (!navigation)
-        return nil;
-
-    return [wrapper(*navigation.leakRef()) autorelease];
+    return wrapper(_page->restoreFromSessionState(sessionState->_sessionState, navigate));
 }
 
 - (void)_close
@@ -4463,7 +4409,7 @@ WEBCORE_COMMAND(yankAndSelect)
             capturedHandler(error == WebKit::CallbackBase::Error::None);
     });
 
-    return [wrapper(API::Attachment::create(identifier, *_page).leakRef()) autorelease];
+    return wrapper(API::Attachment::create(identifier, *_page));
 #else
     return nil;
 #endif
@@ -4747,7 +4693,7 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     if (!diagnosticLoggingClient)
         return nil;
 
-    return [static_cast<WebKit::DiagnosticLoggingClient&>(*diagnosticLoggingClient).delegate().leakRef() autorelease];
+    return static_cast<WebKit::DiagnosticLoggingClient&>(*diagnosticLoggingClient).delegate().autorelease();
 }
 
 - (void)_setDiagnosticLoggingDelegate:(id<_WKDiagnosticLoggingDelegate>)diagnosticLoggingDelegate
@@ -4761,7 +4707,7 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 
 - (id <_WKFindDelegate>)_findDelegate
 {
-    return [static_cast<WebKit::FindClient&>(_page->findClient()).delegate().leakRef() autorelease];
+    return static_cast<WebKit::FindClient&>(_page->findClient()).delegate().autorelease();
 }
 
 - (void)_setFindDelegate:(id<_WKFindDelegate>)findDelegate

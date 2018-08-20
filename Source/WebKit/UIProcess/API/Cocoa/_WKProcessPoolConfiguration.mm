@@ -347,7 +347,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return wrapper(_processPoolConfiguration->copy().leakRef());
+    return [wrapper(_processPoolConfiguration->copy()) retain];
 }
 
 - (NSString *)customWebContentServiceBundleIdentifier

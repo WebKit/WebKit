@@ -143,12 +143,7 @@ bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url)
 WKNavigation *WKPageLoadURLRequestReturningNavigation(WKPageRef pageRef, WKURLRequestRef urlRequestRef)
 {
     auto resourceRequest = toImpl(urlRequestRef)->resourceRequest();
-    auto navigation = toImpl(pageRef)->loadRequest(WTFMove(resourceRequest));
-
-    if (!navigation)
-        return nil;
-
-    return [API::wrapper(*navigation.leakRef()) autorelease];
+    return wrapper(toImpl(pageRef)->loadRequest(WTFMove(resourceRequest)));
 }
 #endif
 

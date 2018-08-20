@@ -63,14 +63,13 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 + (instancetype)defaultStore
 {
     const bool legacyFilename = false;
-    return WebKit::wrapper(API::ContentRuleListStore::defaultStore(legacyFilename));
+    return wrapper(API::ContentRuleListStore::defaultStore(legacyFilename));
 }
 
 + (instancetype)storeWithURL:(NSURL *)url
 {
     const bool legacyFilename = false;
-    Ref<API::ContentRuleListStore> store = API::ContentRuleListStore::storeWithPath(url.absoluteURL.fileSystemRepresentation, legacyFilename);
-    return WebKit::wrapper(store.leakRef());
+    return wrapper(API::ContentRuleListStore::storeWithPath(url.absoluteURL.fileSystemRepresentation, legacyFilename));
 }
 
 - (void)compileContentRuleListForIdentifier:(NSString *)identifier encodedContentRuleList:(NSString *)encodedContentRuleList completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler
@@ -94,7 +93,7 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
             // We want to use error.message, but here we want to only pass on CompileFailed with userInfo from the std::error_code.
             return completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorContentRuleListStoreCompileFailed userInfo:userInfo]);
         }
-        completionHandler(WebKit::wrapper(*contentRuleList.get()), nil);
+        completionHandler(wrapper(*contentRuleList), nil);
     });
 }
 
@@ -108,7 +107,7 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
             return completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:wkError userInfo:userInfo]);
         }
 
-        completionHandler(WebKit::wrapper(*contentRuleList.get()), nil);
+        completionHandler(wrapper(*contentRuleList), nil);
     });
 }
 
@@ -180,14 +179,13 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 + (instancetype)defaultStoreWithLegacyFilename
 {
     const bool legacyFilename = true;
-    return WebKit::wrapper(API::ContentRuleListStore::defaultStore(legacyFilename));
+    return wrapper(API::ContentRuleListStore::defaultStore(legacyFilename));
 }
 
 + (instancetype)storeWithURLAndLegacyFilename:(NSURL *)url
 {
     const bool legacyFilename = true;
-    Ref<API::ContentRuleListStore> store = API::ContentRuleListStore::storeWithPath(url.absoluteURL.fileSystemRepresentation, legacyFilename);
-    return WebKit::wrapper(store.leakRef());
+    return wrapper(API::ContentRuleListStore::storeWithPath(url.absoluteURL.fileSystemRepresentation, legacyFilename));
 }
 
 @end

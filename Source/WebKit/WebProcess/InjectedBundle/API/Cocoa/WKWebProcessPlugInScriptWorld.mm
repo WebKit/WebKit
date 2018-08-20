@@ -36,8 +36,7 @@ using namespace WebKit;
 
 + (WKWebProcessPlugInScriptWorld *)world
 {
-    auto scriptWorld = InjectedBundleScriptWorld::create();
-    return [wrapper(scriptWorld.leakRef()) autorelease];
+    return wrapper(InjectedBundleScriptWorld::create());
 }
 
 + (WKWebProcessPlugInScriptWorld *)normalWorld

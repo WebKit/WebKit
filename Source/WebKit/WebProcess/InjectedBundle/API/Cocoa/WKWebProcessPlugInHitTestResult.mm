@@ -44,8 +44,7 @@ using namespace WebKit;
 
 - (WKWebProcessPlugInNodeHandle *)nodeHandle
 {
-    auto nodeHandle = _hitTestResult->nodeHandle();
-    return nodeHandle ? [wrapper(*nodeHandle.leakRef()) autorelease] : nil;
+    return wrapper(_hitTestResult->nodeHandle());
 }
 
 #pragma mark WKObject protocol implementation

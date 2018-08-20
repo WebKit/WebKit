@@ -175,8 +175,7 @@
 
 - (WKWebsiteDataStore *)websiteDataStore
 {
-    auto* store = _websitePolicies->websiteDataStore();
-    return store ? WebKit::wrapper(*store) : nil;
+    return wrapper(_websitePolicies->websiteDataStore());
 }
 
 - (void)setWebsiteDataStore:(WKWebsiteDataStore *)websiteDataStore

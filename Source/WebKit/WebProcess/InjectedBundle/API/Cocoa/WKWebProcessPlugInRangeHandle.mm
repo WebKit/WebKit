@@ -52,17 +52,13 @@ using namespace WebKit;
 + (WKWebProcessPlugInRangeHandle *)rangeHandleWithJSValue:(JSValue *)value inContext:(JSContext *)context
 {
     JSContextRef contextRef = [context JSGlobalContextRef];
-    JSObjectRef objectRef = JSValueToObject(contextRef, [value JSValueRef], 0);
-    auto rangeHandle = InjectedBundleRangeHandle::getOrCreate(contextRef, objectRef);
-    if (!rangeHandle)
-        return nil;
-
-    return [wrapper(*rangeHandle.leakRef()) autorelease];
+    JSObjectRef objectRef = JSValueToObject(contextRef, [value JSValueRef], nullptr);
+    return wrapper(InjectedBundleRangeHandle::getOrCreate(contextRef, objectRef));
 }
 
 - (WKWebProcessPlugInFrame *)frame
 {
-    return [wrapper(*_rangeHandle->document()->documentFrame().leakRef()) autorelease];
+    return wrapper(_rangeHandle->document()->documentFrame());
 }
 
 - (NSString *)text
