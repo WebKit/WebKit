@@ -1,5 +1,50 @@
 2018-08-16  Zalan Bujtas  <zalan@apple.com>
 
+        [lFC][Floating] Add estimated margin top computation.
+        https://bugs.webkit.org/show_bug.cgi?id=188619
+
+        Reviewed by Antti Koivisto.
+
+        In order to figure out whether a box should avoid a float, we need to know the final positions of both (ignore relative positioning for now).
+        In block formatting context the final position for a normal flow box includes
+        1. the static position and
+        2. the corresponding (non)collapsed margins.
+        Now the vertical margins are computed when all the descendants are finalized, because the margin values might be depending on the height of the box
+        (and the height might be based on the content).
+        So when we get to the point where we intersect the box with the float to decide if the box needs to move, we don't yet have the final vertical position.
+
+        The idea here is that as long as we don't cross the block formatting context boundary, we should be able to pre-compute the final top margin.
+        (if this holds true for all the cases, the estimated prefix could be removed and just use marginTop() instead.)
+
+        Covered by existing block-only tests.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedMarginTop const):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedMarginTopForAncestors const):
+        (WebCore::Layout::BlockFormattingContext::computeFloatingPosition const):
+        (WebCore::Layout::BlockFormattingContext::computeVerticalPositionForFloatClear const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowHeightAndMargin const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::estimatedMarginTop):
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::Box):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::setHasValidTop):
+        (WebCore::Display::Box::setHasValidLeft):
+        (WebCore::Display::Box::top const):
+        (WebCore::Display::Box::left const):
+        (WebCore::Display::Box::topLeft const):
+        (WebCore::Display::Box::setTopLeft):
+        (WebCore::Display::Box::setTop):
+        (WebCore::Display::Box::setLeft):
+        (WebCore::Display::Box::setVerticalMargin):
+        (WebCore::Display::Box::setEstimatedMarginTop):
+        (WebCore::Display::Box::estimatedMarginTop const):
+
+2018-08-16  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] Display::Box interface should reflect that padding is optional.
         https://bugs.webkit.org/show_bug.cgi?id=188630
 
