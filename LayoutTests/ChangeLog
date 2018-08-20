@@ -1,3 +1,28 @@
+2018-08-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Enable a few subdirectories under fast/ and
+        provide platform-specific baselines as well as failure expectations
+        where required.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/box-shadow: Added 10 baselines.
+        * platform/wpe/fast/box-sizing: Added 4 baselines.
+        * platform/wpe/fast/clip: Added 23 baselines.
+        * platform/wpe/fast/compact: Added 3 baselines.
+        * platform/wpe/fast/css-generated-content: Added 43 baselines.
+        * platform/wpe/fast/doctypes: Added 4 baselines.
+        * platform/wpe/fast/flexbox: Added 26 baselines.
+        * platform/wpe/fast/inline: Added 32 baselines.
+        * platform/wpe/fast/inline-block: Added 9 baselines.
+        * platform/wpe/fast/invalid: Added 29 baselines.
+        * platform/wpe/fast/line-grid: Added 8 baselines.
+        * platform/wpe/fast/lists: Added 27 baselines.
+        * platform/wpe/fast/loader: Added 1 baseline.
+        * platform/wpe/fast/preloader: Added 2 baselines.
+        * platform/wpe/fast/replaced: Added 57 baselines.
+        * platform/wpe/fast/ruby: Added 26 baselines.
+        * platform/wpe/fast/writing-mode: Added 37 baselines.
+
 2018-08-15  Ansh Shukla  <ansh_shukla@apple.com>
 
         NSURLAuthenticationMethodOAuth challenges are surfaced to clients in -didReceiveAuthenticationChallenge as NSURLAuthenticationMethodDefault
