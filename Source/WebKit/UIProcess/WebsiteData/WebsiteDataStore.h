@@ -93,6 +93,8 @@ public:
         String resourceLoadStatisticsDirectory;
         String javaScriptConfigurationDirectory;
         String cookieStorageFile;
+        String sourceApplicationBundleIdentifier;
+        String sourceApplicationSecondaryIdentifier;
 
         explicit Configuration();
     };

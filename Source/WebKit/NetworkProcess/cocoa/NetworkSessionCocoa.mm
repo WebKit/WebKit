@@ -680,13 +680,18 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& para
         configuration._sourceApplicationAuditTokenData = (__bridge NSData *)data.get();
 
     auto& sourceApplicationBundleIdentifier = globalSourceApplicationBundleIdentifier();
-    if (!sourceApplicationBundleIdentifier.isEmpty()) {
+    if (!m_sourceApplicationBundleIdentifier.isEmpty()) {
+        configuration._sourceApplicationBundleIdentifier = m_sourceApplicationBundleIdentifier;
+        configuration._sourceApplicationAuditTokenData = nil;
+    } else if (!sourceApplicationBundleIdentifier.isEmpty()) {
         configuration._sourceApplicationBundleIdentifier = sourceApplicationBundleIdentifier;
         configuration._sourceApplicationAuditTokenData = nil;
     }
 
     auto& sourceApplicationSecondaryIdentifier = globalSourceApplicationSecondaryIdentifier();
-    if (!sourceApplicationSecondaryIdentifier.isEmpty())
+    if (!m_sourceApplicationSecondaryIdentifier.isEmpty())
+        configuration._sourceApplicationSecondaryIdentifier = m_sourceApplicationSecondaryIdentifier;
+    else if (!sourceApplicationSecondaryIdentifier.isEmpty())
         configuration._sourceApplicationSecondaryIdentifier = sourceApplicationSecondaryIdentifier;
 
 #if PLATFORM(IOS)

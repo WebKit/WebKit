@@ -44,6 +44,8 @@ static void checkURLArgument(NSURL *url)
     RetainPtr<NSURL> _resourceLoadStatisticsDirectoryURL;
     RetainPtr<NSURL> _cacheStorageDirectoryURL;
     RetainPtr<NSURL> _serviceWorkerRegistrationDirectoryURL;
+    RetainPtr<NSString> _sourceApplicationBundleIdentifier;
+    RetainPtr<NSString> _sourceApplicationSecondaryIdentifier;
 }
 
 - (NSURL *)_webStorageDirectory
@@ -124,6 +126,26 @@ static void checkURLArgument(NSURL *url)
 {
     checkURLArgument(url);
     _serviceWorkerRegistrationDirectoryURL = adoptNS([url copy]);
+}
+
+- (void)setSourceApplicationBundleIdentifier:(NSString *)identifier
+{
+    _sourceApplicationBundleIdentifier = identifier;
+}
+
+- (NSString *)sourceApplicationBundleIdentifier
+{
+    return _sourceApplicationBundleIdentifier.get();
+}
+
+- (NSString *)sourceApplicationSecondaryIdentifier
+{
+    return _sourceApplicationSecondaryIdentifier.get();
+}
+
+- (void)setSourceApplicationSecondaryIdentifier:(NSString *)identifier
+{
+    _sourceApplicationSecondaryIdentifier = identifier;
 }
 
 @end

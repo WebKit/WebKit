@@ -72,7 +72,7 @@ WebsiteDataStoreParameters WebsiteDataStoreParameters::privateSessionParameters(
     ASSERT(sessionID.isEphemeral());
     return { { }, { }, { }, { sessionID, { }, AllowsCellularAccess::Yes
 #if PLATFORM(COCOA)
-        , nullptr
+        , nullptr , { } , { }
 #endif
     }};
 }

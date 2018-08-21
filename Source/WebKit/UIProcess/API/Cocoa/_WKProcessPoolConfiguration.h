@@ -54,8 +54,8 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @property (nonatomic, copy) NSArray *cachePartitionedURLSchemes;
 @property (nonatomic, copy) NSArray<NSString *> *alwaysRevalidatedURLSchemes WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 @property (nonatomic) BOOL diskCacheSpeculativeValidationEnabled WK_API_AVAILABLE(macosx(10.12), ios(10.0));
-@property (nonatomic, nullable, copy) NSString *sourceApplicationBundleIdentifier WK_API_AVAILABLE(macosx(10.12.3), ios(10.3));
-@property (nonatomic, nullable, copy) NSString *sourceApplicationSecondaryIdentifier WK_API_AVAILABLE(macosx(10.12.3), ios(10.3));
+@property (nonatomic, nullable, copy) NSString *sourceApplicationBundleIdentifier WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.sourceApplicationBundleIdentifier", macosx(10.12.3, WK_MAC_TBA), ios(10.3, WK_IOS_TBA));
+@property (nonatomic, nullable, copy) NSString *sourceApplicationSecondaryIdentifier WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.sourceApplicationSecondaryIdentifier", macosx(10.12.3, WK_MAC_TBA), ios(10.3, WK_IOS_TBA));
 @property (nonatomic) BOOL shouldCaptureAudioInUIProcess WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 #if TARGET_OS_IPHONE
 @property (nonatomic, nullable, copy) NSString *CTDataConnectionServiceType WK_API_AVAILABLE(ios(10.3));

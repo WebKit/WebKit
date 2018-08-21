@@ -49,6 +49,8 @@ struct NetworkSessionCreationParameters {
     AllowsCellularAccess allowsCellularAccess { AllowsCellularAccess::Yes };
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> proxyConfiguration;
+    String sourceApplicationBundleIdentifier;
+    String sourceApplicationSecondaryIdentifier;
 #endif
 };
 
@@ -59,6 +61,8 @@ inline void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) cons
     encoder << allowsCellularAccess;
 #if PLATFORM(COCOA)
     IPC::encode(encoder, proxyConfiguration.get());
+    encoder << sourceApplicationBundleIdentifier;
+    encoder << sourceApplicationSecondaryIdentifier;
 #endif
 }
 
@@ -82,6 +86,16 @@ inline std::optional<NetworkSessionCreationParameters> NetworkSessionCreationPar
     RetainPtr<CFDictionaryRef> proxyConfiguration;
     if (!IPC::decode(decoder, proxyConfiguration))
         return std::nullopt;
+    
+    std::optional<String> sourceApplicationBundleIdentifier;
+    decoder >> sourceApplicationBundleIdentifier;
+    if (!sourceApplicationBundleIdentifier)
+        return std::nullopt;
+    
+    std::optional<String> sourceApplicationSecondaryIdentifier;
+    decoder >> sourceApplicationSecondaryIdentifier;
+    if (!sourceApplicationSecondaryIdentifier)
+        return std::nullopt;
 #endif
     
     return {{
@@ -90,6 +104,8 @@ inline std::optional<NetworkSessionCreationParameters> NetworkSessionCreationPar
         , WTFMove(*allowsCellularAccess)
 #if PLATFORM(COCOA)
         , WTFMove(proxyConfiguration)
+        , WTFMove(*sourceApplicationBundleIdentifier)
+        , WTFMove(*sourceApplicationSecondaryIdentifier)
 #endif
     }};
 }

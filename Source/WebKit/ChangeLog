@@ -1,3 +1,31 @@
+2018-08-21  Alex Christensen  <achristensen@webkit.org>
+
+        Add _WKWebsiteDataStoreConfiguration. sourceApplicationBundleIdentifier and sourceApplicationSecondaryIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=188748
+
+        Reviewed by Ryosuke Niwa.
+
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::privateSessionParameters):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _initWithConfiguration:]):
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration setSourceApplicationBundleIdentifier:]):
+        (-[_WKWebsiteDataStoreConfiguration sourceApplicationBundleIdentifier]):
+        (-[_WKWebsiteDataStoreConfiguration sourceApplicationSecondaryIdentifier]):
+        (-[_WKWebsiteDataStoreConfiguration setSourceApplicationSecondaryIdentifier:]):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2018-08-21  Per Arne Vollan  <pvollan@apple.com>
 
         [WebGL] Contexts are not updated when display configuration changed.

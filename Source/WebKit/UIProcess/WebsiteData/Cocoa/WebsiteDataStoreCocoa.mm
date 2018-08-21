@@ -58,11 +58,17 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     resolveDirectoriesIfNecessary();
 
     WebsiteDataStoreParameters parameters;
-    parameters.networkSessionParameters = { m_sessionID, m_boundInterfaceIdentifier, m_allowsCellularAccess, m_proxyConfiguration };
+    parameters.networkSessionParameters = {
+        m_sessionID,
+        m_boundInterfaceIdentifier,
+        m_allowsCellularAccess,
+        m_proxyConfiguration,
+        m_configuration.sourceApplicationBundleIdentifier,
+        m_configuration.sourceApplicationSecondaryIdentifier,
+    };
 
     auto cookieFile = resolvedCookieStorageFile();
 
-#if PLATFORM(COCOA)
     if (m_uiProcessCookieStorageIdentifier.isEmpty()) {
         auto utf8File = cookieFile.utf8();
         auto url = adoptCF(CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (const UInt8 *)utf8File.data(), (CFIndex)utf8File.length(), true));
@@ -71,7 +77,8 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     }
 
     parameters.uiProcessCookieStorageIdentifier = m_uiProcessCookieStorageIdentifier;
-#endif
+    parameters.networkSessionParameters.sourceApplicationBundleIdentifier = m_configuration.sourceApplicationBundleIdentifier;
+    parameters.networkSessionParameters.sourceApplicationSecondaryIdentifier = m_configuration.sourceApplicationSecondaryIdentifier;
 
     parameters.pendingCookies = copyToVector(m_pendingCookies);
 

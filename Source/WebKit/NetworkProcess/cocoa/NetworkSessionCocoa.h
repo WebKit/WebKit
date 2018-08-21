@@ -82,6 +82,9 @@ private:
 
     String m_boundInterfaceIdentifier;
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
+
+    String m_sourceApplicationBundleIdentifier;
+    String m_sourceApplicationSecondaryIdentifier;
 };
 
 } // namespace WebKit

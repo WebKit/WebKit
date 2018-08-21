@@ -207,6 +207,10 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         config.cacheStorageDirectory = configuration._cacheStorageDirectory.path;
     if (configuration._serviceWorkerRegistrationDirectory)
         config.serviceWorkerRegistrationDirectory = configuration._serviceWorkerRegistrationDirectory.path;
+    if (configuration.sourceApplicationBundleIdentifier)
+        config.sourceApplicationBundleIdentifier = configuration.sourceApplicationBundleIdentifier;
+    if (configuration.sourceApplicationSecondaryIdentifier)
+        config.sourceApplicationSecondaryIdentifier = configuration.sourceApplicationSecondaryIdentifier;
 
     API::Object::constructInWrapper<API::WebsiteDataStore>(self, config, PAL::SessionID::generatePersistentSessionID());
 
