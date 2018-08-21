@@ -161,7 +161,7 @@ public:
     LayoutUnit findNextFloatLogicalBottomBelowForBlock(LayoutUnit logicalHeight);
 
 private:
-    RenderBlockFlow& renderer() const { return *m_renderer; }
+    const RenderBlockFlow& renderer() const { return *m_renderer; }
     void computePlacedFloatsTree();
     const FloatingObjectTree* placedFloatsTree();
     void increaseObjectsCount(FloatingObject::Type);
@@ -173,7 +173,7 @@ private:
     unsigned m_leftObjectsCount;
     unsigned m_rightObjectsCount;
     bool m_horizontalWritingMode;
-    WeakPtr<RenderBlockFlow> m_renderer;
+    WeakPtr<const RenderBlockFlow> m_renderer;
 };
 
 } // namespace WebCore

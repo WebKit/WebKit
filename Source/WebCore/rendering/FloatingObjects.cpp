@@ -124,7 +124,7 @@ class ComputeFloatOffsetAdapter {
 public:
     typedef FloatingObjectInterval IntervalType;
 
-    ComputeFloatOffsetAdapter(RenderBlockFlow& renderer, LayoutUnit lineTop, LayoutUnit lineBottom, LayoutUnit offset)
+    ComputeFloatOffsetAdapter(const RenderBlockFlow& renderer, LayoutUnit lineTop, LayoutUnit lineBottom, LayoutUnit offset)
         : m_renderer(makeWeakPtr(renderer))
         , m_lineTop(lineTop)
         , m_lineBottom(lineBottom)
@@ -144,7 +144,7 @@ public:
 protected:
     virtual bool updateOffsetIfNeeded(const FloatingObject&) = 0;
 
-    WeakPtr<RenderBlockFlow> m_renderer;
+    WeakPtr<const RenderBlockFlow> m_renderer;
     LayoutUnit m_lineTop;
     LayoutUnit m_lineBottom;
     LayoutUnit m_offset;
@@ -154,7 +154,7 @@ protected:
 template <FloatingObject::Type FloatTypeValue>
 class ComputeFloatOffsetForFloatLayoutAdapter : public ComputeFloatOffsetAdapter<FloatTypeValue> {
 public:
-    ComputeFloatOffsetForFloatLayoutAdapter(RenderBlockFlow& renderer, LayoutUnit lineTop, LayoutUnit lineBottom, LayoutUnit offset)
+    ComputeFloatOffsetForFloatLayoutAdapter(const RenderBlockFlow& renderer, LayoutUnit lineTop, LayoutUnit lineBottom, LayoutUnit offset)
         : ComputeFloatOffsetAdapter<FloatTypeValue>(renderer, lineTop, lineBottom, offset)
     {
     }
@@ -170,7 +170,7 @@ protected:
 template <FloatingObject::Type FloatTypeValue>
 class ComputeFloatOffsetForLineLayoutAdapter : public ComputeFloatOffsetAdapter<FloatTypeValue> {
 public:
-    ComputeFloatOffsetForLineLayoutAdapter(RenderBlockFlow& renderer, LayoutUnit lineTop, LayoutUnit lineBottom, LayoutUnit offset)
+    ComputeFloatOffsetForLineLayoutAdapter(const RenderBlockFlow& renderer, LayoutUnit lineTop, LayoutUnit lineBottom, LayoutUnit offset)
         : ComputeFloatOffsetAdapter<FloatTypeValue>(renderer, lineTop, lineBottom, offset)
     {
     }
@@ -185,7 +185,7 @@ class FindNextFloatLogicalBottomAdapter {
 public:
     typedef FloatingObjectInterval IntervalType;
 
-    FindNextFloatLogicalBottomAdapter(RenderBlockFlow& renderer, LayoutUnit belowLogicalHeight)
+    FindNextFloatLogicalBottomAdapter(const RenderBlockFlow& renderer, LayoutUnit belowLogicalHeight)
         : m_renderer(makeWeakPtr(renderer))
         , m_belowLogicalHeight(belowLogicalHeight)
     {
@@ -199,7 +199,7 @@ public:
     LayoutUnit nextShapeLogicalBottom() const { return m_nextShapeLogicalBottom.value_or(nextLogicalBottom()); }
 
 private:
-    WeakPtr<RenderBlockFlow> m_renderer;
+    WeakPtr<const RenderBlockFlow> m_renderer;
     LayoutUnit m_belowLogicalHeight;
     std::optional<LayoutUnit> m_nextLogicalBottom;
     std::optional<LayoutUnit> m_nextShapeLogicalBottom;
@@ -250,7 +250,7 @@ FloatingObjects::FloatingObjects(const RenderBlockFlow& renderer)
     : m_leftObjectsCount(0)
     , m_rightObjectsCount(0)
     , m_horizontalWritingMode(renderer.isHorizontalWritingMode())
-    , m_renderer(makeWeakPtr(const_cast<RenderBlockFlow&>(renderer)))
+    , m_renderer(makeWeakPtr(renderer))
 {
 }
 
