@@ -1,3 +1,22 @@
+2018-08-21  Alex Christensen  <achristensen@webkit.org>
+
+        Transition more API tests from WKPageLoaderClient to WKPageNavigationClient
+        https://bugs.webkit.org/show_bug.cgi?id=188813
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebKit/NewFirstVisuallyNonEmptyLayout.cpp:
+        (TestWebKitAPI::didLayout):
+        (TestWebKitAPI::setPageLoaderClient):
+        * TestWebKitAPI/Tests/WebKit/NewFirstVisuallyNonEmptyLayoutFails.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::didLayout):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/NewFirstVisuallyNonEmptyLayoutForImages.cpp:
+        (TestWebKitAPI::didLayout):
+        (TestWebKitAPI::setPageLoaderClient):
+
 2018-08-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Augment _WKAttachment SPI to handle NSFileWrappers in addition to NSData
