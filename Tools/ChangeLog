@@ -1,3 +1,13 @@
+2018-08-21  David Kilzer  <ddkilzer@apple.com>
+
+        sort-Xcode-project-file: top-level files and folders are sorted unintentionally when `mainGroup` has no name
+        <https://webkit.org/b/188755>
+
+        Reviewed by Andy Estes.
+
+        * Scripts/sort-Xcode-project-file: Fix regular expression to
+        make `mainGroup` name optional.
+
 2018-08-21  Andy VanWagoner  <andy@vanwagoner.family>
 
         Unreviewed, add myself to committers list.

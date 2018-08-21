@@ -80,11 +80,11 @@ for my $projectFile (@ARGV) {
         next;
     }
 
-    # Grab the mainGroup for the project file
+    # Grab the mainGroup for the project file.
     my $mainGroup = "";
     open(IN, "< $projectFile") || die "Could not open $projectFile: $!";
     while (my $line = <IN>) {
-        $mainGroup = $2 if $line =~ m#^(\s*)mainGroup = ([0-9A-F]{24} /\* .+ \*/);$#;
+        $mainGroup = $2 if $line =~ m#^(\s*)mainGroup = ([0-9A-F]{24}( /\* .+ \*/)?);$#;
     }
     close(IN);
 
