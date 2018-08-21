@@ -1,3 +1,21 @@
+==================
+WPE WebKit 2.21.91
+==================
+
+What' new in WPE WebKit 2.21.2?
+
+  - Add API to evaluate code in a new object to JavaScriptCore GLib API.
+  - Add API to check for syntax errors in given code to JavaScriptCore GLib API.
+  - Update jsc_context_evaluate_with_source_uri() to receive also a starting line number.
+  - Add API to allow creating variadic functions to JavaScriptCore GLib API.
+  - Add API to run javascript from a WebKitWebView in an isolated world.
+  - Disable Gigacage if mmap fails to allocate in Linux.
+  - Fix WebProcess crash when trying to use the remote Web Inspector.
+  - Fix a network process crash when trying to get cookies of about:blank page.
+  - Fix some frames being dropped when using requestAnimationFrame() to animate elements.
+  - Fix several crashes and rendering issues.
+
+
 =================
 WPE WebKit 2.21.2
 =================

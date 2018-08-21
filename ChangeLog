@@ -1,5 +1,11 @@
 2018-08-21  Adrian Perez de Castro  <aperez@igalia.com>
 
+        Unreviewed. Update OptionsWPE.cmake and NEWS for 2.21.91 release.
+
+        * Source/cmake/OptionsWPE.cmake: Bump version numbers.
+
+2018-08-21  Adrian Perez de Castro  <aperez@igalia.com>
+
         [WPE] Update to use libwpe-1.0.0 and WPEBackend-fdo-1.0.0
         https://bugs.webkit.org/show_bug.cgi?id=188782
 
