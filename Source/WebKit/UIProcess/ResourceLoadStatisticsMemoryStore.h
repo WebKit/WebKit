@@ -78,6 +78,7 @@ public:
     void grandfatherExistingWebsiteData(CompletionHandler<void()>&&);
     void cancelPendingStatisticsProcessingRequest();
 
+    bool isRegisteredAsSubresourceUnder(const String& subresourcePrimaryDomain, const String& topFramePrimaryDomain) const;
     bool isRegisteredAsSubFrameUnder(const String& subFramePrimaryDomain, const String& topFramePrimaryDomain) const;
     bool isRegisteredAsRedirectingTo(const String& hostRedirectedFromPrimaryDomain, const String& hostRedirectedToPrimaryDomain) const;
 

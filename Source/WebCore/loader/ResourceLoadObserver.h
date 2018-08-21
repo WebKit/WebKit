@@ -44,6 +44,7 @@ class Frame;
 class Page;
 class ResourceRequest;
 class ResourceResponse;
+class ScriptExecutionContext;
 class URL;
 
 struct ResourceLoadStatistics;
@@ -54,7 +55,7 @@ public:
     WEBCORE_EXPORT static ResourceLoadObserver& shared();
 
     void logSubresourceLoading(const Frame*, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
-    void logWebSocketLoading(const Frame*, const URL&);
+    void logWebSocketLoading(const URL& targetURL, const URL& mainFrameURL, bool usesEphemeralSession);
     void logUserInteractionWithReducedTimeResolution(const Document&);
     void logWindowCreation(const URL& popupUrl, uint64_t openerPageID, Document& openerDocument);
 
@@ -74,7 +75,7 @@ public:
 private:
     ResourceLoadObserver();
 
-    bool shouldLog(Page*) const;
+    bool shouldLog(bool usesEphemeralSession) const;
     ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
 
     void scheduleNotificationIfNeeded();

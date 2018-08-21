@@ -279,6 +279,10 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         }
     }
 
+    RunLoop::main().dispatch([targetURL = m_url.isolatedCopy(), mainFrameURL = context.url().isolatedCopy(), usesEphemeralSession = context.sessionID().isEphemeral()]() {
+        ResourceLoadObserver::shared().logWebSocketLoading(targetURL, mainFrameURL, usesEphemeralSession);
+    });
+
     if (is<Document>(context)) {
         Document& document = downcast<Document>(context);
         RefPtr<Frame> frame = document.frame();
@@ -307,7 +311,6 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
 #endif
             return { };
         }
-        ResourceLoadObserver::shared().logWebSocketLoading(frame.get(), m_url);
     }
 
     String protocolString;

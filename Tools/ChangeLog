@@ -1,3 +1,24 @@
+2018-08-21  John Wilander  <wilander@apple.com>
+
+        Make ResourceLoadObserver::logWebSocketLoading() handle websockets in detached frames
+        https://bugs.webkit.org/show_bug.cgi?id=188757
+        <rdar://problem/38713390>
+
+        Reviewed by Alex Christensen.
+
+        These changes add the new WebKitTestRunner function
+        isStatisticsRegisteredAsSubresourceUnder().
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::isStatisticsRegisteredAsSubresourceUnder):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::isStatisticsRegisteredAsSubresourceUnder):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2018-08-21  Alex Christensen  <achristensen@webkit.org>
 
         Transition more API tests from WKPageLoaderClient to WKPageNavigationClient

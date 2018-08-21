@@ -93,6 +93,7 @@ public:
     void setVeryPrevalentResource(const WebCore::URL&, CompletionHandler<void()>&&);
     void isPrevalentResource(const WebCore::URL&, CompletionHandler<void(bool)>&&);
     void isVeryPrevalentResource(const WebCore::URL&, CompletionHandler<void(bool)>&&);
+    void isRegisteredAsSubresourceUnder(const WebCore::URL& subresource, const WebCore::URL& topFrame, CompletionHandler<void(bool)>&&);
     void isRegisteredAsSubFrameUnder(const WebCore::URL& subFrame, const WebCore::URL& topFrame, CompletionHandler<void(bool)>&&);
     void isRegisteredAsRedirectingTo(const WebCore::URL& hostRedirectedFrom, const WebCore::URL& hostRedirectedTo, CompletionHandler<void(bool)>&&);
     void clearPrevalentResource(const WebCore::URL&, CompletionHandler<void()>&&);

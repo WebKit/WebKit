@@ -2737,6 +2737,15 @@ bool TestController::isStatisticsVeryPrevalentResource(WKStringRef host)
     return context.result;
 }
 
+bool TestController::isStatisticsRegisteredAsSubresourceUnder(WKStringRef subresourceHost, WKStringRef topFrameHost)
+{
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreIsStatisticsRegisteredAsSubresourceUnder(dataStore, subresourceHost, topFrameHost, &context, resourceStatisticsBooleanResultCallback);
+    runUntil(context.done, noTimeout);
+    return context.result;
+}
+
 bool TestController::isStatisticsRegisteredAsSubFrameUnder(WKStringRef subFrameHost, WKStringRef topFrameHost)
 {
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());

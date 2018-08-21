@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<head>
+    <script src="../resources/js-test-pre.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
+</head>
+<body onload="runTest()">
+<script>
+    description('Construct a WebSocket in a detached frame. The test passes if Resource Load Statistics logs it properly.');
+
+    window.jsTestIsAsync = true;
+
+    function detachIframe() {
+        var testIframe = document.getElementById('testIframe');
+        testIframe.parentNode.remove(testIframe);
+    }
+
+    function completeTest() {
+        if (testRunner.isStatisticsRegisteredAsSubresourceUnder("http://localhost", "http://127.0.0.1"))
+            testPassed("localhost registered as subresource under 127.0.0.1.");
+        else
+            testFailed("localhost not registered as subresource under 127.0.0.1.");
+        setEnableFeature(false, finishJSTest);
+    }
+
+    let dataRecordsScanned = false;
+    function didScanDataRecords() {
+        dataRecordsScanned = true;
+        if (createdWebSocket)
+            completeTest();
+    }
+
+    let createdWebSocket = false;
+    function didCreateWebSocket() {
+        createdWebSocket = true;
+        if (dataRecordsScanned)
+            completeTest();
+    }
+
+    function runTest() {
+        setEnableFeature(true, function() {
+            if (testRunner.isStatisticsRegisteredAsSubresourceUnder("http://localhost", "http://127.0.0.1"))
+                testFailed("localhost already registered as subresource under 127.0.0.1.");
+
+            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+            testRunner.installStatisticsDidScanDataRecordsCallback(didScanDataRecords);
+
+            let iframeElement = document.createElement("iframe");
+            iframeElement.src = "resources/construct-in-detached-frame-resource-load-statistics.html";
+            iframeElement.id = "testIframe";
+            document.body.appendChild(iframeElement);
+        });
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>

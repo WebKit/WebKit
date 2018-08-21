@@ -36,6 +36,7 @@
 #include "ResourceLoadStatistics.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "URL.h"
@@ -95,13 +96,9 @@ static inline bool is3xxRedirect(const ResourceResponse& response)
     return response.httpStatusCode() >= 300 && response.httpStatusCode() <= 399;
 }
 
-bool ResourceLoadObserver::shouldLog(Page* page) const
+bool ResourceLoadObserver::shouldLog(bool usesEphemeralSession) const
 {
-    // FIXME: Err on the safe side until we have sorted out what to do in worker contexts
-    if (!page)
-        return false;
-
-    return DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() && !page->usesEphemeralSession() && m_notificationCallback;
+    return DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() && !usesEphemeralSession && m_notificationCallback;
 }
 
 void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
@@ -109,7 +106,7 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     ASSERT(frame->page());
 
     auto* page = frame->page();
-    if (!shouldLog(page))
+    if (!shouldLog(page->usesEphemeralSession()))
         return;
 
     bool isRedirect = is3xxRedirect(redirectResponse);
@@ -152,18 +149,10 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
         scheduleNotificationIfNeeded();
 }
 
-void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& targetURL)
+void ResourceLoadObserver::logWebSocketLoading(const URL& targetURL, const URL& mainFrameURL, bool usesEphemeralSession)
 {
-    // FIXME: Web sockets can run in detached frames. Decide how to count such connections.
-    // See LayoutTests/http/tests/websocket/construct-in-detached-frame.html
-    if (!frame)
+    if (!shouldLog(usesEphemeralSession))
         return;
-
-    auto* page = frame->page();
-    if (!shouldLog(page))
-        return;
-
-    auto& mainFrameURL = frame->mainFrame().document()->url();
 
     auto targetHost = targetURL.host();
     auto mainFrameHost = mainFrameURL.host();
@@ -173,9 +162,6 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
     
     auto targetPrimaryDomain = primaryDomain(targetURL);
     auto mainFramePrimaryDomain = primaryDomain(mainFrameURL);
-    
-    if (areDomainsAssociated(page, targetPrimaryDomain, mainFramePrimaryDomain))
-        return;
 
     auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
     targetStatistics.lastSeen = ResourceLoadStatistics::reduceTimeResolution(WallTime::now());
@@ -185,10 +171,10 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
 
 void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Document& document)
 {
-    if (!shouldLog(document.page()))
-        return;
-
     ASSERT(document.page());
+
+    if (!shouldLog(document.page()->usesEphemeralSession()))
+        return;
 
     auto& url = document.url();
     if (url.isBlankURL() || url.isEmpty())

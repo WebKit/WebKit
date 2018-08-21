@@ -1,3 +1,30 @@
+2018-08-21  John Wilander  <wilander@apple.com>
+
+        Make ResourceLoadObserver::logWebSocketLoading() handle websockets in detached frames
+        https://bugs.webkit.org/show_bug.cgi?id=188757
+        <rdar://problem/38713390>
+
+        Reviewed by Alex Christensen.
+
+        Test: http/tests/websocket/construct-in-detached-frame-resource-load-statistics.html
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+            Now logs even when a frame doesn't exist.
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::shouldLog const):
+            Now takes boolean 'usesEphemeralSession' instead of a page to support logging when there is no page.
+        (WebCore::ResourceLoadObserver::logSubresourceLoading):
+            Changed to send a boolean to ResourceLoadObserver::shouldLog().
+        (WebCore::ResourceLoadObserver::logWebSocketLoading):
+            Changed to:
+            - receive the main frame's URL and a boolean for ephemeral sessions instead of the Frame.
+            - send a boolean to ResourceLoadObserver::shouldLog().
+            - No longer call areDomainsAssociated(). It is being removed in https://bugs.webkit.org/show_bug.cgi?id=188756.
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+            Changed to send a boolean to ResourceLoadObserver::shouldLog().
+        * loader/ResourceLoadObserver.h:
+
 2018-08-21  Daniel Bates  <dabates@apple.com>
 
         Disallow navigations when page cache updates the current document of the frame

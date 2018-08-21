@@ -695,6 +695,14 @@ bool ResourceLoadStatisticsMemoryStore::isVeryPrevalentResource(const String& pr
     return mapEntry == m_resourceStatisticsMap.end() ? false : mapEntry->value.isPrevalentResource && mapEntry->value.isVeryPrevalentResource;
 }
 
+bool ResourceLoadStatisticsMemoryStore::isRegisteredAsSubresourceUnder(const String& subresourcePrimaryDomain, const String& topFramePrimaryDomain) const
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto mapEntry = m_resourceStatisticsMap.find(subresourcePrimaryDomain);
+    return mapEntry == m_resourceStatisticsMap.end() ? false : mapEntry->value.subresourceUnderTopFrameOrigins.contains(topFramePrimaryDomain);
+}
+
 bool ResourceLoadStatisticsMemoryStore::isRegisteredAsSubFrameUnder(const String& subFramePrimaryDomain, const String& topFramePrimaryDomain) const
 {
     ASSERT(!RunLoop::isMain());

@@ -1,3 +1,24 @@
+2018-08-21  John Wilander  <wilander@apple.com>
+
+        Make ResourceLoadObserver::logWebSocketLoading() handle websockets in detached frames
+        https://bugs.webkit.org/show_bug.cgi?id=188757
+        <rdar://problem/38713390>
+
+        Reviewed by Alex Christensen.
+
+        These changes are test infrastructure to support the new WebKitTestRunner
+        function isStatisticsRegisteredAsSubresourceUnder().
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsSubresourceUnder):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::isRegisteredAsSubresourceUnder const):
+        * UIProcess/ResourceLoadStatisticsMemoryStore.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsSubresourceUnder):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2018-08-21  Daniel Bates  <dabates@apple.com>
 
         Replace TextCheckingTypeMask with OptionSet

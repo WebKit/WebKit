@@ -537,6 +537,18 @@ void WebResourceLoadStatisticsStore::isVeryPrevalentResource(const URL& url, Com
     });
 }
 
+void WebResourceLoadStatisticsStore::isRegisteredAsSubresourceUnder(const URL& subresource, const URL& topFrame, CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    
+    postTask([this, subresourcePrimaryDomain = isolatedPrimaryDomain(subresource), topFramePrimaryDomain = isolatedPrimaryDomain(topFrame), completionHandler = WTFMove(completionHandler)] () mutable {
+        bool isRegisteredAsSubresourceUnder = m_memoryStore ? m_memoryStore->isRegisteredAsSubresourceUnder(subresourcePrimaryDomain, topFramePrimaryDomain) : false;
+        postTaskReply([isRegisteredAsSubresourceUnder, completionHandler = WTFMove(completionHandler)] () mutable {
+            completionHandler(isRegisteredAsSubresourceUnder);
+        });
+    });
+}
+
 void WebResourceLoadStatisticsStore::isRegisteredAsSubFrameUnder(const URL& subFrame, const URL& topFrame, CompletionHandler<void (bool)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

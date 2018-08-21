@@ -1,0 +1,5 @@
+PASS localhost registered as subresource under 127.0.0.1.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
