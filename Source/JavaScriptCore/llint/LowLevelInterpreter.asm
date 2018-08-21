@@ -1148,6 +1148,13 @@ macro doReturn()
     ret
 end
 
+# This break instruction is needed so that the synthesized llintPCRangeStart label
+# doesn't point to the exact same location as vmEntryToJavaScript which comes after it.
+# Otherwise, libunwind will report vmEntryToJavaScript as llintPCRangeStart in
+# stack traces.
+
+    break
+
 # stub to call into JavaScript or Native functions
 # EncodedJSValue vmEntryToJavaScript(void* code, VM* vm, ProtoCallFrame* protoFrame)
 # EncodedJSValue vmEntryToNativeFunction(void* code, VM* vm, ProtoCallFrame* protoFrame)
