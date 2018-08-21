@@ -1,3 +1,9 @@
+2018-08-21  Andy VanWagoner  <andy@vanwagoner.family>
+
+        Unreviewed, add myself to committers list.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-08-21  Antti Koivisto  <antti@apple.com>
 
         Allow creating WeakPtrs to const objects
