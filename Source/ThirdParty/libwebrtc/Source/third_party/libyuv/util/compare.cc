@@ -29,22 +29,24 @@ int main(int argc, char** argv) {
   FILE* fin2 = name2 ? fopen(name2, "rb") : NULL;
 
   const int kBlockSize = 32768;
-  uint8 buf1[kBlockSize];
-  uint8 buf2[kBlockSize];
-  uint32 hash1 = 5381;
-  uint32 hash2 = 5381;
-  uint64 sum_square_err = 0;
-  uint64 size_min = 0;
+  uint8_t buf1[kBlockSize];
+  uint8_t buf2[kBlockSize];
+  uint32_t hash1 = 5381;
+  uint32_t hash2 = 5381;
+  uint64_t sum_square_err = 0;
+  uint64_t size_min = 0;
   int amt1 = 0;
   int amt2 = 0;
   do {
     amt1 = static_cast<int>(fread(buf1, 1, kBlockSize, fin1));
-    if (amt1 > 0)
+    if (amt1 > 0) {
       hash1 = libyuv::HashDjb2(buf1, amt1, hash1);
+    }
     if (fin2) {
       amt2 = static_cast<int>(fread(buf2, 1, kBlockSize, fin2));
-      if (amt2 > 0)
+      if (amt2 > 0) {
         hash2 = libyuv::HashDjb2(buf2, amt2, hash2);
+      }
       int amt_min = (amt1 < amt2) ? amt1 : amt2;
       size_min += amt_min;
       sum_square_err += libyuv::ComputeSumSquareError(buf1, buf2, amt_min);

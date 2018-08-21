@@ -1,0 +1,86 @@
+# Copyright 2018 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build_overrides/build.gni")
+
+if (build_with_chromium) {
+  visibility = [
+    "//third_party/webrtc/*",
+    "//third_party/abseil-cpp/*",
+    "//third_party/googletest:gtest",
+  ]
+} else {
+  visibility = [ "*" ]
+}
+
+source_set("compressed_tuple") {
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    "//third_party/abseil-cpp:absl_default_cflags_cc",
+  ]
+  public_configs = [ "//third_party/abseil-cpp:absl_include_config" ]
+  public = [
+    "internal/compressed_tuple.h",
+  ]
+  deps = [
+    "../utility",
+  ]
+}
+
+source_set("fixed_array") {
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    "//third_party/abseil-cpp:absl_default_cflags_cc",
+  ]
+  public_configs = [ "//third_party/abseil-cpp:absl_include_config" ]
+  public = [
+    "fixed_array.h",
+  ]
+  deps = [
+    ":compressed_tuple",
+    "../algorithm",
+    "../base:core_headers",
+    "../base:dynamic_annotations",
+    "../base:throw_delegate",
+    "../memory",
+  ]
+}
+
+source_set("inlined_vector") {
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    "//third_party/abseil-cpp:absl_default_cflags_cc",
+  ]
+  public_configs = [ "//third_party/abseil-cpp:absl_include_config" ]
+  public = [
+    "inlined_vector.h",
+  ]
+  deps = [
+    "../algorithm",
+    "../base:core_headers",
+    "../base:throw_delegate",
+    "../memory",
+  ]
+}
+
+source_set("test_instance_tracker") {
+  testonly = true
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    "//third_party/abseil-cpp:absl_default_cflags_cc",
+  ]
+  public_configs = [ "//third_party/abseil-cpp:absl_include_config" ]
+  sources = [
+    "internal/test_instance_tracker.cc",
+  ]
+  public = [
+    "internal/test_instance_tracker.h",
+  ]
+  visibility = []
+  visibility += [ "../*" ]
+}

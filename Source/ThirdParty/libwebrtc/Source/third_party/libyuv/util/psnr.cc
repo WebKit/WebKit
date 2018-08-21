@@ -21,14 +21,14 @@
 extern "C" {
 #endif
 
-typedef unsigned int uint32;  // NOLINT
+typedef unsigned int uint32_t;  // NOLINT
 #ifdef _MSC_VER
-typedef unsigned __int64 uint64;
+typedef unsigned __int64 uint64_t;
 #else  // COMPILER_MSVC
 #if defined(__LP64__) && !defined(__OpenBSD__) && !defined(__APPLE__)
-typedef unsigned long uint64;  // NOLINT
+typedef unsigned long uint64_t;  // NOLINT
 #else   // defined(__LP64__) && !defined(__OpenBSD__) && !defined(__APPLE__)
-typedef unsigned long long uint64;  // NOLINT
+typedef unsigned long long uint64_t;  // NOLINT
 #endif  // __LP64__
 #endif  // _MSC_VER
 
@@ -38,10 +38,10 @@ typedef unsigned long long uint64;  // NOLINT
 #if !defined(LIBYUV_DISABLE_NEON) && defined(__ARM_NEON__) && \
     !defined(__aarch64__)
 #define HAS_SUMSQUAREERROR_NEON
-static uint32 SumSquareError_NEON(const uint8* src_a,
-                                  const uint8* src_b,
-                                  int count) {
-  volatile uint32 sse;
+static uint32_t SumSquareError_NEON(const uint8_t* src_a,
+                                    const uint8_t* src_b,
+                                    int count) {
+  volatile uint32_t sse;
   asm volatile(
       "vmov.u8    q7, #0                         \n"
       "vmov.u8    q9, #0                         \n"
@@ -73,10 +73,10 @@ static uint32 SumSquareError_NEON(const uint8* src_a,
 }
 #elif !defined(LIBYUV_DISABLE_NEON) && defined(__aarch64__)
 #define HAS_SUMSQUAREERROR_NEON
-static uint32 SumSquareError_NEON(const uint8* src_a,
-                                  const uint8* src_b,
-                                  int count) {
-  volatile uint32 sse;
+static uint32_t SumSquareError_NEON(const uint8_t* src_a,
+                                    const uint8_t* src_b,
+                                    int count) {
+  volatile uint32_t sse;
   asm volatile(
       "eor        v16.16b, v16.16b, v16.16b      \n"
       "eor        v18.16b, v18.16b, v18.16b      \n"
@@ -107,9 +107,9 @@ static uint32 SumSquareError_NEON(const uint8* src_a,
 }
 #elif !defined(LIBYUV_DISABLE_X86) && defined(_M_IX86) && defined(_MSC_VER)
 #define HAS_SUMSQUAREERROR_SSE2
-__declspec(naked) static uint32 SumSquareError_SSE2(const uint8* /*src_a*/,
-                                                    const uint8* /*src_b*/,
-                                                    int /*count*/) {
+__declspec(naked) static uint32_t SumSquareError_SSE2(const uint8_t* /*src_a*/,
+                                                      const uint8_t* /*src_b*/,
+                                                      int /*count*/) {
   __asm {
     mov        eax, [esp + 4]  // src_a
     mov        edx, [esp + 8]  // src_b
@@ -146,10 +146,10 @@ __declspec(naked) static uint32 SumSquareError_SSE2(const uint8* /*src_a*/,
 }
 #elif !defined(LIBYUV_DISABLE_X86) && (defined(__x86_64__) || defined(__i386__))
 #define HAS_SUMSQUAREERROR_SSE2
-static uint32 SumSquareError_SSE2(const uint8* src_a,
-                                  const uint8* src_b,
-                                  int count) {
-  uint32 sse;
+static uint32_t SumSquareError_SSE2(const uint8_t* src_a,
+                                    const uint8_t* src_b,
+                                    int count) {
+  uint32_t sse;
   asm volatile(  // NOLINT
       "pxor      %%xmm0,%%xmm0                   \n"
       "pxor      %%xmm5,%%xmm5                   \n"
@@ -228,22 +228,22 @@ static int CpuHasSSE2() {
 }
 #endif  // HAS_SUMSQUAREERROR_SSE2
 
-static uint32 SumSquareError_C(const uint8* src_a,
-                               const uint8* src_b,
-                               int count) {
-  uint32 sse = 0u;
+static uint32_t SumSquareError_C(const uint8_t* src_a,
+                                 const uint8_t* src_b,
+                                 int count) {
+  uint32_t sse = 0u;
   for (int x = 0; x < count; ++x) {
     int diff = src_a[x] - src_b[x];
-    sse += static_cast<uint32>(diff * diff);
+    sse += static_cast<uint32_t>(diff * diff);
   }
   return sse;
 }
 
-double ComputeSumSquareError(const uint8* src_a,
-                             const uint8* src_b,
+double ComputeSumSquareError(const uint8_t* src_a,
+                             const uint8_t* src_b,
                              int count) {
-  uint32 (*SumSquareError)(const uint8* src_a, const uint8* src_b, int count) =
-      SumSquareError_C;
+  uint32_t (*SumSquareError)(const uint8_t* src_a, const uint8_t* src_b,
+                             int count) = SumSquareError_C;
 #if defined(HAS_SUMSQUAREERROR_NEON)
   SumSquareError = SumSquareError_NEON;
 #endif
@@ -253,7 +253,7 @@ double ComputeSumSquareError(const uint8* src_a,
   }
 #endif
   const int kBlockSize = 1 << 15;
-  uint64 sse = 0;
+  uint64_t sse = 0;
 #ifdef _OPENMP
 #pragma omp parallel for reduction(+ : sse)
 #endif
@@ -280,8 +280,9 @@ double ComputeSumSquareError(const uint8* src_a,
 // Returns 128.0 (kMaxPSNR) if sse is 0 (perfect match).
 double ComputePSNR(double sse, double size) {
   const double kMINSSE = 255.0 * 255.0 * size / pow(10.0, kMaxPSNR / 10.0);
-  if (sse <= kMINSSE)
+  if (sse <= kMINSSE) {
     sse = kMINSSE;  // Produces max PSNR of 128
+  }
   return 10.0 * log10(255.0 * 255.0 * size / sse);
 }
 

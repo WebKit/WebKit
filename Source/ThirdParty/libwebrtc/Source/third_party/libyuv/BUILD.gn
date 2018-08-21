@@ -12,6 +12,11 @@ import("//testing/test.gni")
 declare_args() {
   # Set to false to disable building with gflags.
   libyuv_use_gflags = true
+
+  # When building a shared library using a target in WebRTC or
+  # Chromium projects that depends on libyuv, setting this flag
+  # to true makes libyuv symbols visible inside that library.
+  libyuv_symbols_visible = false
 }
 
 config("libyuv_config") {
@@ -42,7 +47,8 @@ group("default") {
 }
 
 group("libyuv") {
-  public_configs = [ ":libyuv_config" ]
+  all_dependent_configs = [ ":libyuv_config" ]
+  deps = []
 
   if (is_win && target_cpu == "x64") {
     # Compile with clang in order to get inline assembly
@@ -55,13 +61,19 @@ group("libyuv") {
     ]
   }
 
+  if (libyuv_use_neon) {
+    deps += [ ":libyuv_neon" ]
+  }
+
+  if (libyuv_use_msa) {
+    deps += [ ":libyuv_msa" ]
+  }
+
   if (!is_ios) {
     # Make sure that clients of libyuv link with libjpeg. This can't go in
     # libyuv_internal because in Windows x64 builds that will generate a clang
     # build of libjpeg, and we don't want two copies.
-    deps = [
-      "//third_party:jpeg",
-    ]
+    deps += [ "//third_party:jpeg" ]
   }
 }
 
@@ -110,19 +122,16 @@ static_library("libyuv_internal") {
     "source/rotate_any.cc",
     "source/rotate_argb.cc",
     "source/rotate_common.cc",
-    "source/rotate_dspr2.cc",
     "source/rotate_gcc.cc",
     "source/rotate_win.cc",
     "source/row_any.cc",
     "source/row_common.cc",
-    "source/row_dspr2.cc",
     "source/row_gcc.cc",
     "source/row_win.cc",
     "source/scale.cc",
     "source/scale_any.cc",
     "source/scale_argb.cc",
     "source/scale_common.cc",
-    "source/scale_dspr2.cc",
     "source/scale_gcc.cc",
     "source/scale_win.cc",
     "source/video_common.cc",
@@ -132,20 +141,17 @@ static_library("libyuv_internal") {
   defines = []
   deps = []
 
+  if (libyuv_symbols_visible) {
+    configs -= [ "//build/config/gcc:symbol_visibility_hidden" ]
+    configs += [ "//build/config/gcc:symbol_visibility_default" ]
+  }
+
   if (!is_ios) {
     defines += [ "HAVE_JPEG" ]
 
     # Needed to pull in libjpeg headers. Can't add //third_party:jpeg to deps
     # because in Windows x64 build it will get compiled with clang.
     deps += [ "//third_party:jpeg_includes" ]
-  }
-
-  if (libyuv_use_neon) {
-    deps += [ ":libyuv_neon" ]
-  }
-
-  if (libyuv_use_msa) {
-    deps += [ ":libyuv_msa" ]
   }
 
   # Always enable optimization for Release and NaCl builds (to workaround
@@ -167,6 +173,7 @@ static_library("libyuv_internal") {
     ]
   }
 }
+
 if (libyuv_use_neon) {
   static_library("libyuv_neon") {
     sources = [
@@ -179,6 +186,10 @@ if (libyuv_use_neon) {
       "source/row_neon64.cc",
       "source/scale_neon.cc",
       "source/scale_neon64.cc",
+    ]
+
+    deps = [
+      ":libyuv_internal",
     ]
 
     public_configs = [ ":libyuv_config" ]
@@ -208,6 +219,10 @@ if (libyuv_use_msa) {
       "source/rotate_msa.cc",
       "source/row_msa.cc",
       "source/scale_msa.cc",
+    ]
+
+    deps = [
+      ":libyuv_internal",
     ]
 
     public_configs = [ ":libyuv_config" ]
@@ -302,7 +317,6 @@ if (libyuv_include_tests) {
       # Enable the following 3 macros to turn off assembly for specified CPU.
       # "LIBYUV_DISABLE_X86",
       # "LIBYUV_DISABLE_NEON",
-      # "LIBYUV_DISABLE_DSPR2",
       # Enable the following macro to build libyuv as a shared library (dll).
       # "LIBYUV_USING_SHARED_LIBRARY"
     ]

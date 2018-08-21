@@ -21,15 +21,15 @@ extern "C" {
 // This module is for GCC Neon armv8 64 bit.
 #if !defined(LIBYUV_DISABLE_NEON) && defined(__aarch64__)
 
-static uvec8 kVTbl4x4Transpose = {0, 4, 8,  12, 1, 5, 9,  13,
-                                  2, 6, 10, 14, 3, 7, 11, 15};
+static const uvec8 kVTbl4x4Transpose = {0, 4, 8,  12, 1, 5, 9,  13,
+                                        2, 6, 10, 14, 3, 7, 11, 15};
 
-void TransposeWx8_NEON(const uint8* src,
+void TransposeWx8_NEON(const uint8_t* src,
                        int src_stride,
-                       uint8* dst,
+                       uint8_t* dst,
                        int dst_stride,
                        int width) {
-  const uint8* src_temp;
+  const uint8_t* src_temp;
   asm volatile(
       // loops are on blocks of 8. loop will stop when
       // counter gets to or below 0. starting the counter
@@ -196,18 +196,18 @@ void TransposeWx8_NEON(const uint8* src,
         "v17", "v18", "v19", "v20", "v21", "v22", "v23");
 }
 
-static uint8 kVTbl4x4TransposeDi[32] = {
+static const uint8_t kVTbl4x4TransposeDi[32] = {
     0, 16, 32, 48, 2, 18, 34, 50, 4, 20, 36, 52, 6, 22, 38, 54,
     1, 17, 33, 49, 3, 19, 35, 51, 5, 21, 37, 53, 7, 23, 39, 55};
 
-void TransposeUVWx8_NEON(const uint8* src,
+void TransposeUVWx8_NEON(const uint8_t* src,
                          int src_stride,
-                         uint8* dst_a,
+                         uint8_t* dst_a,
                          int dst_stride_a,
-                         uint8* dst_b,
+                         uint8_t* dst_b,
                          int dst_stride_b,
                          int width) {
-  const uint8* src_temp;
+  const uint8_t* src_temp;
   asm volatile(
       // loops are on blocks of 8. loop will stop when
       // counter gets to or below 0. starting the counter

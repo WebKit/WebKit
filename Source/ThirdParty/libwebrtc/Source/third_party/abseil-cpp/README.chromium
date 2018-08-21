@@ -1,0 +1,34 @@
+Name: Abseil
+Short Name: absl
+URL: https://github.com/abseil/abseil-cpp
+License: Apache 2.0
+License File: LICENSE
+Version: 0
+Revision: bea85b52733022294eef108a2e42d77b616ddca2
+Security Critical: yes
+
+Description:
+This directory contains the source code of Abseil for C++. This can be used by
+Chromium's dependencies, but shouldn't be used by Chromium itself.
+See: https://goo.gl/TgnJb8.
+
+How to update Abseil:
+
+1. Download the code from the Abseil git repository (see URL).
+
+2. Copy the content of the Abseil git repo to //third_party/abseil-cpp.
+
+3. From //third_party/abseil-cpp/ launch ./rename_dynamic_annotations.sh.
+   This script will rewrite dynamic_annotations macros and function inside
+   Abseil in order to avoid ODR violations and macro clashing with Chromium
+   (see: https://github.com/abseil/abseil-cpp/issues/122).
+
+Local Modifications:
+
+* absl/copts.bzl has been translated to //third_party/absl-cpp/BUILD.gn. Both
+  files contain lists of compiler flags in order to reduce duplication.
+
+* All the BUILD.bazel files has been translated to BUILD.gn files.
+
+* Functions and macros in absl/base/dynamic_annotations.{h,cc} have been renamed
+  to avoid ODR violations (see step 3).

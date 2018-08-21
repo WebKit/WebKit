@@ -22,8 +22,10 @@ namespace libyuv {
 extern "C" {
 #endif
 
-uint32 HammingDistance_MSA(const uint8* src_a, const uint8* src_b, int count) {
-  uint32 diff = 0u;
+uint32_t HammingDistance_MSA(const uint8_t* src_a,
+                             const uint8_t* src_b,
+                             int count) {
+  uint32_t diff = 0u;
   int i;
   v16u8 src0, src1, src2, src3;
   v2i64 vec0 = {0}, vec1 = {0};
@@ -42,13 +44,15 @@ uint32 HammingDistance_MSA(const uint8* src_a, const uint8* src_b, int count) {
   }
 
   vec0 += vec1;
-  diff = (uint32)__msa_copy_u_w((v4i32)vec0, 0);
-  diff += (uint32)__msa_copy_u_w((v4i32)vec0, 2);
+  diff = (uint32_t)__msa_copy_u_w((v4i32)vec0, 0);
+  diff += (uint32_t)__msa_copy_u_w((v4i32)vec0, 2);
   return diff;
 }
 
-uint32 SumSquareError_MSA(const uint8* src_a, const uint8* src_b, int count) {
-  uint32 sse = 0u;
+uint32_t SumSquareError_MSA(const uint8_t* src_a,
+                            const uint8_t* src_b,
+                            int count) {
+  uint32_t sse = 0u;
   int i;
   v16u8 src0, src1, src2, src3;
   v8i16 vec0, vec1, vec2, vec3;
@@ -80,8 +84,8 @@ uint32 SumSquareError_MSA(const uint8* src_a, const uint8* src_b, int count) {
   reg2 += reg3;
   reg0 += reg2;
   tmp0 = __msa_hadd_s_d(reg0, reg0);
-  sse = (uint32)__msa_copy_u_w((v4i32)tmp0, 0);
-  sse += (uint32)__msa_copy_u_w((v4i32)tmp0, 2);
+  sse = (uint32_t)__msa_copy_u_w((v4i32)tmp0, 0);
+  sse += (uint32_t)__msa_copy_u_w((v4i32)tmp0, 2);
   return sse;
 }
 

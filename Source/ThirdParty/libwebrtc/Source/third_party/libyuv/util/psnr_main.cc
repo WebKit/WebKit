@@ -90,9 +90,9 @@ bool ExtractResolutionFromFilename(const char* name,
   fseek(file_org, 0, SEEK_END);
   size_t total_size = ftell(file_org);
   fseek(file_org, 0, SEEK_SET);
-  uint8* const ch_org = new uint8[total_size];
+  uint8_t* const ch_org = new uint8_t[total_size];
   memset(ch_org, 0, total_size);
-  size_t bytes_org = fread(ch_org, sizeof(uint8), total_size, file_org);
+  size_t bytes_org = fread(ch_org, sizeof(uint8_t), total_size, file_org);
   fclose(file_org);
   if (bytes_org == total_size) {
     if (0 == libyuv::MJPGSize(ch_org, total_size, width_ptr, height_ptr)) {
@@ -107,13 +107,15 @@ bool ExtractResolutionFromFilename(const char* name,
 
 // Scale Y channel from 16..240 to 0..255.
 // This can be useful when comparing codecs that are inconsistant about Y
-uint8 ScaleY(uint8 y) {
+uint8_t ScaleY(uint8_t y) {
   int ny = (y - 16) * 256 / 224;
-  if (ny < 0)
+  if (ny < 0) {
     ny = 0;
-  if (ny > 255)
+  }
+  if (ny > 255) {
     ny = 255;
-  return static_cast<uint8>(ny);
+  }
+  return static_cast<uint8_t>(ny);
 }
 
 // MSE = Mean Square Error
@@ -150,8 +152,9 @@ void PrintHelp(const char* program) {
 }
 
 void ParseOptions(int argc, const char* argv[]) {
-  if (argc <= 1)
+  if (argc <= 1) {
     PrintHelp(argv[0]);
+  }
   for (int c = 1; c < argc; ++c) {
     if (!strcmp(argv[c], "-v")) {
       verbose = true;
@@ -237,8 +240,8 @@ void ParseOptions(int argc, const char* argv[]) {
   }
 }
 
-bool UpdateMetrics(uint8* ch_org,
-                   uint8* ch_rec,
+bool UpdateMetrics(uint8_t* ch_org,
+                   uint8_t* ch_rec,
                    const int y_size,
                    const int uv_size,
                    const size_t total_size,
@@ -247,10 +250,10 @@ bool UpdateMetrics(uint8* ch_org,
                    metric* distorted_frame,
                    bool do_psnr) {
   const int uv_offset = (do_swap_uv ? uv_size : 0);
-  const uint8* const u_org = ch_org + y_size + uv_offset;
-  const uint8* const u_rec = ch_rec + y_size;
-  const uint8* const v_org = ch_org + y_size + (uv_size - uv_offset);
-  const uint8* const v_rec = ch_rec + y_size + uv_size;
+  const uint8_t* const u_org = ch_org + y_size + uv_offset;
+  const uint8_t* const u_rec = ch_rec + y_size;
+  const uint8_t* const v_org = ch_org + y_size + (uv_size - uv_offset);
+  const uint8_t* const v_rec = ch_rec + y_size + uv_size;
   if (do_psnr) {
 #ifdef HAVE_JPEG
     double y_err = static_cast<double>(
@@ -301,12 +304,15 @@ bool UpdateMetrics(uint8* ch_org,
   cur_distortion_psnr->all += distorted_frame->all;
 
   bool ismin = false;
-  if (distorted_frame->y < cur_distortion_psnr->min_y)
+  if (distorted_frame->y < cur_distortion_psnr->min_y) {
     cur_distortion_psnr->min_y = distorted_frame->y;
-  if (distorted_frame->u < cur_distortion_psnr->min_u)
+  }
+  if (distorted_frame->u < cur_distortion_psnr->min_u) {
     cur_distortion_psnr->min_u = distorted_frame->u;
-  if (distorted_frame->v < cur_distortion_psnr->min_v)
+  }
+  if (distorted_frame->v < cur_distortion_psnr->min_v) {
     cur_distortion_psnr->min_v = distorted_frame->v;
+  }
   if (distorted_frame->all < cur_distortion_psnr->min_all) {
     cur_distortion_psnr->min_all = distorted_frame->all;
     cur_distortion_psnr->min_frame = number_of_frames;
@@ -374,8 +380,8 @@ int main(int argc, const char* argv[]) {
 #endif
   }
 
-  uint8* const ch_org = new uint8[total_size];
-  uint8* const ch_rec = new uint8[total_size];
+  uint8_t* const ch_org = new uint8_t[total_size];
+  uint8_t* const ch_rec = new uint8_t[total_size];
   if (ch_org == NULL || ch_rec == NULL) {
     fprintf(stderr, "No memory available\n");
     fclose(file_org);
@@ -429,14 +435,15 @@ int main(int argc, const char* argv[]) {
 
   int number_of_frames;
   for (number_of_frames = 0;; ++number_of_frames) {
-    if (num_frames && number_of_frames >= num_frames)
+    if (num_frames && number_of_frames >= num_frames) {
       break;
+    }
 
-    size_t bytes_org = fread(ch_org, sizeof(uint8), total_size, file_org);
+    size_t bytes_org = fread(ch_org, sizeof(uint8_t), total_size, file_org);
     if (bytes_org < total_size) {
 #ifdef HAVE_JPEG
       // Try parsing file as a jpeg.
-      uint8* const ch_jpeg = new uint8[bytes_org];
+      uint8_t* const ch_jpeg = new uint8_t[bytes_org];
       memcpy(ch_jpeg, ch_org, bytes_org);
       memset(ch_org, 0, total_size);
 
@@ -456,11 +463,11 @@ int main(int argc, const char* argv[]) {
 
     for (int cur_rec = 0; cur_rec < num_rec; ++cur_rec) {
       size_t bytes_rec =
-          fread(ch_rec, sizeof(uint8), total_size, file_rec[cur_rec]);
+          fread(ch_rec, sizeof(uint8_t), total_size, file_rec[cur_rec]);
       if (bytes_rec < total_size) {
 #ifdef HAVE_JPEG
         // Try parsing file as a jpeg.
-        uint8* const ch_jpeg = new uint8[bytes_rec];
+        uint8_t* const ch_jpeg = new uint8_t[bytes_rec];
         memcpy(ch_jpeg, ch_rec, bytes_rec);
         memset(ch_rec, 0, total_size);
 
@@ -482,7 +489,7 @@ int main(int argc, const char* argv[]) {
         printf("%5d", number_of_frames);
       }
       if (do_psnr) {
-        metric distorted_frame;
+        metric distorted_frame = {};
         metric* cur_distortion_psnr = &distortion_psnr[cur_rec];
         bool ismin = UpdateMetrics(ch_org, ch_rec, y_size, uv_size, total_size,
                                    number_of_frames, cur_distortion_psnr,
@@ -496,7 +503,7 @@ int main(int argc, const char* argv[]) {
         }
       }
       if (do_ssim) {
-        metric distorted_frame;
+        metric distorted_frame = {};
         metric* cur_distortion_ssim = &distortion_ssim[cur_rec];
         bool ismin = UpdateMetrics(ch_org, ch_rec, y_size, uv_size, total_size,
                                    number_of_frames, cur_distortion_ssim,

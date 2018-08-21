@@ -23,8 +23,10 @@ extern "C" {
 
 // 256 bits at a time
 // uses short accumulator which restricts count to 131 KB
-uint32 HammingDistance_NEON(const uint8* src_a, const uint8* src_b, int count) {
-  uint32 diff;
+uint32_t HammingDistance_NEON(const uint8_t* src_a,
+                              const uint8_t* src_b,
+                              int count) {
+  uint32_t diff;
 
   asm volatile(
       "vmov.u16   q4, #0                         \n"  // accumulator
@@ -52,8 +54,10 @@ uint32 HammingDistance_NEON(const uint8* src_a, const uint8* src_b, int count) {
   return diff;
 }
 
-uint32 SumSquareError_NEON(const uint8* src_a, const uint8* src_b, int count) {
-  uint32 sse;
+uint32_t SumSquareError_NEON(const uint8_t* src_a,
+                             const uint8_t* src_b,
+                             int count) {
+  uint32_t sse;
   asm volatile(
       "vmov.u8    q8, #0                         \n"
       "vmov.u8    q10, #0                        \n"

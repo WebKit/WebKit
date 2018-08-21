@@ -38,8 +38,8 @@ static int TestFilter(int src_width,
   int src_width_uv = (Abs(src_width) + 1) >> 1;
   int src_height_uv = (Abs(src_height) + 1) >> 1;
 
-  int64 src_y_plane_size = (Abs(src_width)) * (Abs(src_height));
-  int64 src_uv_plane_size = (src_width_uv) * (src_height_uv);
+  int64_t src_y_plane_size = (Abs(src_width)) * (Abs(src_height));
+  int64_t src_uv_plane_size = (src_width_uv) * (src_height_uv);
 
   int src_stride_y = Abs(src_width);
   int src_stride_uv = src_width_uv;
@@ -58,8 +58,8 @@ static int TestFilter(int src_width,
   int dst_width_uv = (dst_width + 1) >> 1;
   int dst_height_uv = (dst_height + 1) >> 1;
 
-  int64 dst_y_plane_size = (dst_width) * (dst_height);
-  int64 dst_uv_plane_size = (dst_width_uv) * (dst_height_uv);
+  int64_t dst_y_plane_size = (dst_width) * (dst_height);
+  int64_t dst_uv_plane_size = (dst_width_uv) * (dst_height_uv);
 
   int dst_stride_y = dst_width;
   int dst_stride_uv = dst_width_uv;
@@ -157,8 +157,8 @@ static int TestFilter_16(int src_width,
   int src_width_uv = (Abs(src_width) + 1) >> 1;
   int src_height_uv = (Abs(src_height) + 1) >> 1;
 
-  int64 src_y_plane_size = (Abs(src_width)) * (Abs(src_height));
-  int64 src_uv_plane_size = (src_width_uv) * (src_height_uv);
+  int64_t src_y_plane_size = (Abs(src_width)) * (Abs(src_height));
+  int64_t src_uv_plane_size = (src_width_uv) * (src_height_uv);
 
   int src_stride_y = Abs(src_width);
   int src_stride_uv = src_width_uv;
@@ -173,9 +173,9 @@ static int TestFilter_16(int src_width,
     printf("Skipped.  Alloc failed " FILELINESTR(__FILE__, __LINE__) "\n");
     return 0;
   }
-  uint16* p_src_y_16 = reinterpret_cast<uint16*>(src_y_16);
-  uint16* p_src_u_16 = reinterpret_cast<uint16*>(src_u_16);
-  uint16* p_src_v_16 = reinterpret_cast<uint16*>(src_v_16);
+  uint16_t* p_src_y_16 = reinterpret_cast<uint16_t*>(src_y_16);
+  uint16_t* p_src_u_16 = reinterpret_cast<uint16_t*>(src_u_16);
+  uint16_t* p_src_v_16 = reinterpret_cast<uint16_t*>(src_v_16);
 
   MemRandomize(src_y, src_y_plane_size);
   MemRandomize(src_u, src_uv_plane_size);
@@ -205,9 +205,9 @@ static int TestFilter_16(int src_width,
   align_buffer_page_end(dst_u_16, dst_uv_plane_size * 2);
   align_buffer_page_end(dst_v_16, dst_uv_plane_size * 2);
 
-  uint16* p_dst_y_16 = reinterpret_cast<uint16*>(dst_y_16);
-  uint16* p_dst_u_16 = reinterpret_cast<uint16*>(dst_u_16);
-  uint16* p_dst_v_16 = reinterpret_cast<uint16*>(dst_v_16);
+  uint16_t* p_dst_y_16 = reinterpret_cast<uint16_t*>(dst_y_16);
+  uint16_t* p_dst_u_16 = reinterpret_cast<uint16_t*>(dst_u_16);
+  uint16_t* p_dst_v_16 = reinterpret_cast<uint16_t*>(dst_v_16);
 
   MaskCpuFlags(disable_cpu_flags);  // Disable all CPU optimization.
   I420Scale(src_y, src_stride_y, src_u, src_stride_uv, src_v, src_stride_uv,
@@ -345,9 +345,9 @@ TEST_SCALETO(Scale, 1280, 720)
 
 #ifdef HAS_SCALEROWDOWN2_SSSE3
 TEST_F(LibYUVScaleTest, TestScaleRowDown2Box_Odd_SSSE3) {
-  SIMD_ALIGNED(uint8 orig_pixels[128 * 2]);
-  SIMD_ALIGNED(uint8 dst_pixels_opt[64]);
-  SIMD_ALIGNED(uint8 dst_pixels_c[64]);
+  SIMD_ALIGNED(uint8_t orig_pixels[128 * 2]);
+  SIMD_ALIGNED(uint8_t dst_pixels_opt[64]);
+  SIMD_ALIGNED(uint8_t dst_pixels_c[64]);
   memset(orig_pixels, 0, sizeof(orig_pixels));
   memset(dst_pixels_opt, 0, sizeof(dst_pixels_opt));
   memset(dst_pixels_c, 0, sizeof(dst_pixels_c));
@@ -433,19 +433,19 @@ TEST_F(LibYUVScaleTest, TestScaleRowDown2Box_Odd_SSSE3) {
 }
 #endif  // HAS_SCALEROWDOWN2_SSSE3
 
-extern "C" void ScaleRowUp2_16_NEON(const uint16* src_ptr,
+extern "C" void ScaleRowUp2_16_NEON(const uint16_t* src_ptr,
                                     ptrdiff_t src_stride,
-                                    uint16* dst,
+                                    uint16_t* dst,
                                     int dst_width);
-extern "C" void ScaleRowUp2_16_C(const uint16* src_ptr,
+extern "C" void ScaleRowUp2_16_C(const uint16_t* src_ptr,
                                  ptrdiff_t src_stride,
-                                 uint16* dst,
+                                 uint16_t* dst,
                                  int dst_width);
 
 TEST_F(LibYUVScaleTest, TestScaleRowUp2_16) {
-  SIMD_ALIGNED(uint16 orig_pixels[640 * 2 + 1]);  // 2 rows + 1 pixel overrun.
-  SIMD_ALIGNED(uint16 dst_pixels_opt[1280]);
-  SIMD_ALIGNED(uint16 dst_pixels_c[1280]);
+  SIMD_ALIGNED(uint16_t orig_pixels[640 * 2 + 1]);  // 2 rows + 1 pixel overrun.
+  SIMD_ALIGNED(uint16_t dst_pixels_opt[1280]);
+  SIMD_ALIGNED(uint16_t dst_pixels_c[1280]);
 
   memset(orig_pixels, 0, sizeof(orig_pixels));
   memset(dst_pixels_opt, 1, sizeof(dst_pixels_opt));
@@ -475,15 +475,15 @@ TEST_F(LibYUVScaleTest, TestScaleRowUp2_16) {
   EXPECT_EQ(dst_pixels_c[1279], 800);
 }
 
-extern "C" void ScaleRowDown2Box_16_NEON(const uint16* src_ptr,
+extern "C" void ScaleRowDown2Box_16_NEON(const uint16_t* src_ptr,
                                          ptrdiff_t src_stride,
-                                         uint16* dst,
+                                         uint16_t* dst,
                                          int dst_width);
 
 TEST_F(LibYUVScaleTest, TestScaleRowDown2Box_16) {
-  SIMD_ALIGNED(uint16 orig_pixels[2560 * 2]);
-  SIMD_ALIGNED(uint16 dst_pixels_c[1280]);
-  SIMD_ALIGNED(uint16 dst_pixels_opt[1280]);
+  SIMD_ALIGNED(uint16_t orig_pixels[2560 * 2]);
+  SIMD_ALIGNED(uint16_t dst_pixels_c[1280]);
+  SIMD_ALIGNED(uint16_t dst_pixels_opt[1280]);
 
   memset(orig_pixels, 0, sizeof(orig_pixels));
   memset(dst_pixels_c, 1, sizeof(dst_pixels_c));
@@ -530,7 +530,7 @@ static int TestPlaneFilter_16(int src_width,
   }
 
   int i;
-  int64 src_y_plane_size = (Abs(src_width)) * (Abs(src_height));
+  int64_t src_y_plane_size = (Abs(src_width)) * (Abs(src_height));
   int src_stride_y = Abs(src_width);
   int dst_y_plane_size = dst_width * dst_height;
   int dst_stride_y = dst_width;
@@ -539,8 +539,8 @@ static int TestPlaneFilter_16(int src_width,
   align_buffer_page_end(src_y_16, src_y_plane_size * 2);
   align_buffer_page_end(dst_y_8, dst_y_plane_size);
   align_buffer_page_end(dst_y_16, dst_y_plane_size * 2);
-  uint16* p_src_y_16 = reinterpret_cast<uint16*>(src_y_16);
-  uint16* p_dst_y_16 = reinterpret_cast<uint16*>(dst_y_16);
+  uint16_t* p_src_y_16 = reinterpret_cast<uint16_t*>(src_y_16);
+  uint16_t* p_dst_y_16 = reinterpret_cast<uint16_t*>(dst_y_16);
 
   MemRandomize(src_y, src_y_plane_size);
   memset(dst_y_8, 0, dst_y_plane_size);

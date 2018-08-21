@@ -18,9 +18,13 @@ namespace libyuv {
 extern "C" {
 #endif
 
-#if defined(__pnacl__) || defined(__CLR_VER) || \
+#if defined(__pnacl__) || defined(__CLR_VER) ||            \
+    (defined(__native_client__) && defined(__x86_64__)) || \
     (defined(__i386__) && !defined(__SSE__) && !defined(__clang__))
 #define LIBYUV_DISABLE_X86
+#endif
+#if defined(__native_client__)
+#define LIBYUV_DISABLE_NEON
 #endif
 // MemorySanitizer does not support assembly code yet. http://crbug.com/344505
 #if defined(__has_feature)
@@ -28,7 +32,6 @@ extern "C" {
 #define LIBYUV_DISABLE_X86
 #endif
 #endif
-
 // Visual C 2012 required for AVX2.
 #if defined(_M_IX86) && !defined(__clang__) && defined(_MSC_VER) && \
     _MSC_VER >= 1700
@@ -87,22 +90,44 @@ extern "C" {
 #define HAS_SUMSQUAREERROR_MSA
 #endif
 
-uint32 HammingDistance_C(const uint8* src_a, const uint8* src_b, int count);
-uint32 HammingDistance_SSE42(const uint8* src_a, const uint8* src_b, int count);
-uint32 HammingDistance_SSSE3(const uint8* src_a, const uint8* src_b, int count);
-uint32 HammingDistance_AVX2(const uint8* src_a, const uint8* src_b, int count);
-uint32 HammingDistance_NEON(const uint8* src_a, const uint8* src_b, int count);
-uint32 HammingDistance_MSA(const uint8* src_a, const uint8* src_b, int count);
+uint32_t HammingDistance_C(const uint8_t* src_a,
+                           const uint8_t* src_b,
+                           int count);
+uint32_t HammingDistance_SSE42(const uint8_t* src_a,
+                               const uint8_t* src_b,
+                               int count);
+uint32_t HammingDistance_SSSE3(const uint8_t* src_a,
+                               const uint8_t* src_b,
+                               int count);
+uint32_t HammingDistance_AVX2(const uint8_t* src_a,
+                              const uint8_t* src_b,
+                              int count);
+uint32_t HammingDistance_NEON(const uint8_t* src_a,
+                              const uint8_t* src_b,
+                              int count);
+uint32_t HammingDistance_MSA(const uint8_t* src_a,
+                             const uint8_t* src_b,
+                             int count);
 
-uint32 SumSquareError_C(const uint8* src_a, const uint8* src_b, int count);
-uint32 SumSquareError_SSE2(const uint8* src_a, const uint8* src_b, int count);
-uint32 SumSquareError_AVX2(const uint8* src_a, const uint8* src_b, int count);
-uint32 SumSquareError_NEON(const uint8* src_a, const uint8* src_b, int count);
-uint32 SumSquareError_MSA(const uint8* src_a, const uint8* src_b, int count);
+uint32_t SumSquareError_C(const uint8_t* src_a,
+                          const uint8_t* src_b,
+                          int count);
+uint32_t SumSquareError_SSE2(const uint8_t* src_a,
+                             const uint8_t* src_b,
+                             int count);
+uint32_t SumSquareError_AVX2(const uint8_t* src_a,
+                             const uint8_t* src_b,
+                             int count);
+uint32_t SumSquareError_NEON(const uint8_t* src_a,
+                             const uint8_t* src_b,
+                             int count);
+uint32_t SumSquareError_MSA(const uint8_t* src_a,
+                            const uint8_t* src_b,
+                            int count);
 
-uint32 HashDjb2_C(const uint8* src, int count, uint32 seed);
-uint32 HashDjb2_SSE41(const uint8* src, int count, uint32 seed);
-uint32 HashDjb2_AVX2(const uint8* src, int count, uint32 seed);
+uint32_t HashDjb2_C(const uint8_t* src, int count, uint32_t seed);
+uint32_t HashDjb2_SSE41(const uint8_t* src, int count, uint32_t seed);
+uint32_t HashDjb2_AVX2(const uint8_t* src, int count, uint32_t seed);
 
 #ifdef __cplusplus
 }  // extern "C"

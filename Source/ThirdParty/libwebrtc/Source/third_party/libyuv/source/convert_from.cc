@@ -30,17 +30,17 @@ static __inline int Abs(int v) {
 }
 
 // I420 To any I4xx YUV format with mirroring.
-static int I420ToI4xx(const uint8* src_y,
+static int I420ToI4xx(const uint8_t* src_y,
                       int src_stride_y,
-                      const uint8* src_u,
+                      const uint8_t* src_u,
                       int src_stride_u,
-                      const uint8* src_v,
+                      const uint8_t* src_v,
                       int src_stride_v,
-                      uint8* dst_y,
+                      uint8_t* dst_y,
                       int dst_stride_y,
-                      uint8* dst_u,
+                      uint8_t* dst_u,
                       int dst_stride_u,
-                      uint8* dst_v,
+                      uint8_t* dst_v,
                       int dst_stride_v,
                       int src_y_width,
                       int src_y_height,
@@ -65,20 +65,64 @@ static int I420ToI4xx(const uint8* src_y,
   return 0;
 }
 
+// Convert 8 bit YUV to 10 bit.
+LIBYUV_API
+int I420ToI010(const uint8_t* src_y,
+               int src_stride_y,
+               const uint8_t* src_u,
+               int src_stride_u,
+               const uint8_t* src_v,
+               int src_stride_v,
+               uint16_t* dst_y,
+               int dst_stride_y,
+               uint16_t* dst_u,
+               int dst_stride_u,
+               uint16_t* dst_v,
+               int dst_stride_v,
+               int width,
+               int height) {
+  int halfwidth = (width + 1) >> 1;
+  int halfheight = (height + 1) >> 1;
+  if (!src_u || !src_v || !dst_u || !dst_v || width <= 0 || height == 0) {
+    return -1;
+  }
+  // Negative height means invert the image.
+  if (height < 0) {
+    height = -height;
+    halfheight = (height + 1) >> 1;
+    src_y = src_y + (height - 1) * src_stride_y;
+    src_u = src_u + (halfheight - 1) * src_stride_u;
+    src_v = src_v + (halfheight - 1) * src_stride_v;
+    src_stride_y = -src_stride_y;
+    src_stride_u = -src_stride_u;
+    src_stride_v = -src_stride_v;
+  }
+
+  // Convert Y plane.
+  Convert8To16Plane(src_y, src_stride_y, dst_y, dst_stride_y, 1024, width,
+                    height);
+  // Convert UV planes.
+  Convert8To16Plane(src_u, src_stride_u, dst_u, dst_stride_u, 1024, halfwidth,
+                    halfheight);
+  Convert8To16Plane(src_v, src_stride_v, dst_v, dst_stride_v, 1024, halfwidth,
+                    halfheight);
+  return 0;
+}
+
 // 420 chroma is 1/2 width, 1/2 height
 // 422 chroma is 1/2 width, 1x height
 LIBYUV_API
-int I420ToI422(const uint8* src_y,
+int I420ToI422(const uint8_t* src_y,
                int src_stride_y,
-               const uint8* src_u,
+               const uint8_t* src_u,
                int src_stride_u,
-               const uint8* src_v,
+               const uint8_t* src_v,
                int src_stride_v,
-               uint8* dst_y,
+               uint8_t* dst_y,
                int dst_stride_y,
-               uint8* dst_u,
+               uint8_t* dst_u,
                int dst_stride_u,
-               uint8* dst_v,
+               uint8_t* dst_v,
                int dst_stride_v,
                int width,
                int height) {
@@ -93,17 +137,17 @@ int I420ToI422(const uint8* src_y,
 // 420 chroma is 1/2 width, 1/2 height
 // 444 chroma is 1x width, 1x height
 LIBYUV_API
-int I420ToI444(const uint8* src_y,
+int I420ToI444(const uint8_t* src_y,
                int src_stride_y,
-               const uint8* src_u,
+               const uint8_t* src_u,
                int src_stride_u,
-               const uint8* src_v,
+               const uint8_t* src_v,
                int src_stride_v,
-               uint8* dst_y,
+               uint8_t* dst_y,
                int dst_stride_y,
-               uint8* dst_u,
+               uint8_t* dst_u,
                int dst_stride_u,
-               uint8* dst_v,
+               uint8_t* dst_v,
                int dst_stride_v,
                int width,
                int height) {
@@ -117,9 +161,9 @@ int I420ToI444(const uint8* src_y,
 
 // Copy to I400. Source can be I420,422,444,400,NV12,NV21
 LIBYUV_API
-int I400Copy(const uint8* src_y,
+int I400Copy(const uint8_t* src_y,
              int src_stride_y,
-             uint8* dst_y,
+             uint8_t* dst_y,
              int dst_stride_y,
              int width,
              int height) {
@@ -137,19 +181,19 @@ int I400Copy(const uint8* src_y,
 }
 
 LIBYUV_API
-int I422ToYUY2(const uint8* src_y,
+int I422ToYUY2(const uint8_t* src_y,
                int src_stride_y,
-               const uint8* src_u,
+               const uint8_t* src_u,
                int src_stride_u,
-               const uint8* src_v,
+               const uint8_t* src_v,
                int src_stride_v,
-               uint8* dst_yuy2,
+               uint8_t* dst_yuy2,
                int dst_stride_yuy2,
                int width,
                int height) {
   int y;
-  void (*I422ToYUY2Row)(const uint8* src_y, const uint8* src_u,
-                        const uint8* src_v, uint8* dst_yuy2, int width) =
+  void (*I422ToYUY2Row)(const uint8_t* src_y, const uint8_t* src_u,
+                        const uint8_t* src_v, uint8_t* dst_yuy2, int width) =
       I422ToYUY2Row_C;
   if (!src_y || !src_u || !src_v || !dst_yuy2 || width <= 0 || height == 0) {
     return -1;
@@ -175,6 +219,14 @@ int I422ToYUY2(const uint8* src_y,
     }
   }
 #endif
+#if defined(HAS_I422TOYUY2ROW_AVX2)
+  if (TestCpuFlag(kCpuHasAVX2)) {
+    I422ToYUY2Row = I422ToYUY2Row_Any_AVX2;
+    if (IS_ALIGNED(width, 32)) {
+      I422ToYUY2Row = I422ToYUY2Row_AVX2;
+    }
+  }
+#endif
 #if defined(HAS_I422TOYUY2ROW_NEON)
   if (TestCpuFlag(kCpuHasNEON)) {
     I422ToYUY2Row = I422ToYUY2Row_Any_NEON;
@@ -195,19 +247,19 @@ int I422ToYUY2(const uint8* src_y,
 }
 
 LIBYUV_API
-int I420ToYUY2(const uint8* src_y,
+int I420ToYUY2(const uint8_t* src_y,
                int src_stride_y,
-               const uint8* src_u,
+               const uint8_t* src_u,
                int src_stride_u,
-               const uint8* src_v,
+               const uint8_t* src_v,
                int src_stride_v,
-               uint8* dst_yuy2,
+               uint8_t* dst_yuy2,
                int dst_stride_yuy2,
                int width,
                int height) {
   int y;
-  void (*I422ToYUY2Row)(const uint8* src_y, const uint8* src_u,
-                        const uint8* src_v, uint8* dst_yuy2, int width) =
+  void (*I422ToYUY2Row)(const uint8_t* src_y, const uint8_t* src_u,
+                        const uint8_t* src_v, uint8_t* dst_yuy2, int width) =
       I422ToYUY2Row_C;
   if (!src_y || !src_u || !src_v || !dst_yuy2 || width <= 0 || height == 0) {
     return -1;
@@ -223,6 +275,14 @@ int I420ToYUY2(const uint8* src_y,
     I422ToYUY2Row = I422ToYUY2Row_Any_SSE2;
     if (IS_ALIGNED(width, 16)) {
       I422ToYUY2Row = I422ToYUY2Row_SSE2;
+    }
+  }
+#endif
+#if defined(HAS_I422TOYUY2ROW_AVX2)
+  if (TestCpuFlag(kCpuHasAVX2)) {
+    I422ToYUY2Row = I422ToYUY2Row_Any_AVX2;
+    if (IS_ALIGNED(width, 32)) {
+      I422ToYUY2Row = I422ToYUY2Row_AVX2;
     }
   }
 #endif
@@ -259,19 +319,19 @@ int I420ToYUY2(const uint8* src_y,
 }
 
 LIBYUV_API
-int I422ToUYVY(const uint8* src_y,
+int I422ToUYVY(const uint8_t* src_y,
                int src_stride_y,
-               const uint8* src_u,
+               const uint8_t* src_u,
                int src_stride_u,
-               const uint8* src_v,
+               const uint8_t* src_v,
                int src_stride_v,
-               uint8* dst_uyvy,
+               uint8_t* dst_uyvy,
                int dst_stride_uyvy,
                int width,
                int height) {
   int y;
-  void (*I422ToUYVYRow)(const uint8* src_y, const uint8* src_u,
-                        const uint8* src_v, uint8* dst_uyvy, int width) =
+  void (*I422ToUYVYRow)(const uint8_t* src_y, const uint8_t* src_u,
+                        const uint8_t* src_v, uint8_t* dst_uyvy, int width) =
       I422ToUYVYRow_C;
   if (!src_y || !src_u || !src_v || !dst_uyvy || width <= 0 || height == 0) {
     return -1;
@@ -294,6 +354,14 @@ int I422ToUYVY(const uint8* src_y,
     I422ToUYVYRow = I422ToUYVYRow_Any_SSE2;
     if (IS_ALIGNED(width, 16)) {
       I422ToUYVYRow = I422ToUYVYRow_SSE2;
+    }
+  }
+#endif
+#if defined(HAS_I422TOUYVYROW_AVX2)
+  if (TestCpuFlag(kCpuHasAVX2)) {
+    I422ToUYVYRow = I422ToUYVYRow_Any_AVX2;
+    if (IS_ALIGNED(width, 32)) {
+      I422ToUYVYRow = I422ToUYVYRow_AVX2;
     }
   }
 #endif
@@ -325,19 +393,19 @@ int I422ToUYVY(const uint8* src_y,
 }
 
 LIBYUV_API
-int I420ToUYVY(const uint8* src_y,
+int I420ToUYVY(const uint8_t* src_y,
                int src_stride_y,
-               const uint8* src_u,
+               const uint8_t* src_u,
                int src_stride_u,
-               const uint8* src_v,
+               const uint8_t* src_v,
                int src_stride_v,
-               uint8* dst_uyvy,
+               uint8_t* dst_uyvy,
                int dst_stride_uyvy,
                int width,
                int height) {
   int y;
-  void (*I422ToUYVYRow)(const uint8* src_y, const uint8* src_u,
-                        const uint8* src_v, uint8* dst_uyvy, int width) =
+  void (*I422ToUYVYRow)(const uint8_t* src_y, const uint8_t* src_u,
+                        const uint8_t* src_v, uint8_t* dst_uyvy, int width) =
       I422ToUYVYRow_C;
   if (!src_y || !src_u || !src_v || !dst_uyvy || width <= 0 || height == 0) {
     return -1;
@@ -353,6 +421,14 @@ int I420ToUYVY(const uint8* src_y,
     I422ToUYVYRow = I422ToUYVYRow_Any_SSE2;
     if (IS_ALIGNED(width, 16)) {
       I422ToUYVYRow = I422ToUYVYRow_SSE2;
+    }
+  }
+#endif
+#if defined(HAS_I422TOUYVYROW_AVX2)
+  if (TestCpuFlag(kCpuHasAVX2)) {
+    I422ToUYVYRow = I422ToUYVYRow_Any_AVX2;
+    if (IS_ALIGNED(width, 32)) {
+      I422ToUYVYRow = I422ToUYVYRow_AVX2;
     }
   }
 #endif
@@ -390,15 +466,15 @@ int I420ToUYVY(const uint8* src_y,
 
 // TODO(fbarchard): test negative height for invert.
 LIBYUV_API
-int I420ToNV12(const uint8* src_y,
+int I420ToNV12(const uint8_t* src_y,
                int src_stride_y,
-               const uint8* src_u,
+               const uint8_t* src_u,
                int src_stride_u,
-               const uint8* src_v,
+               const uint8_t* src_v,
                int src_stride_v,
-               uint8* dst_y,
+               uint8_t* dst_y,
                int dst_stride_y,
-               uint8* dst_uv,
+               uint8_t* dst_uv,
                int dst_stride_uv,
                int width,
                int height) {
@@ -417,15 +493,15 @@ int I420ToNV12(const uint8* src_y,
 }
 
 LIBYUV_API
-int I420ToNV21(const uint8* src_y,
+int I420ToNV21(const uint8_t* src_y,
                int src_stride_y,
-               const uint8* src_u,
+               const uint8_t* src_u,
                int src_stride_u,
-               const uint8* src_v,
+               const uint8_t* src_v,
                int src_stride_v,
-               uint8* dst_y,
+               uint8_t* dst_y,
                int dst_stride_y,
-               uint8* dst_vu,
+               uint8_t* dst_vu,
                int dst_stride_vu,
                int width,
                int height) {
@@ -435,20 +511,20 @@ int I420ToNV21(const uint8* src_y,
 }
 
 // Convert I422 to RGBA with matrix
-static int I420ToRGBAMatrix(const uint8* src_y,
+static int I420ToRGBAMatrix(const uint8_t* src_y,
                             int src_stride_y,
-                            const uint8* src_u,
+                            const uint8_t* src_u,
                             int src_stride_u,
-                            const uint8* src_v,
+                            const uint8_t* src_v,
                             int src_stride_v,
-                            uint8* dst_rgba,
+                            uint8_t* dst_rgba,
                             int dst_stride_rgba,
                             const struct YuvConstants* yuvconstants,
                             int width,
                             int height) {
   int y;
-  void (*I422ToRGBARow)(const uint8* y_buf, const uint8* u_buf,
-                        const uint8* v_buf, uint8* rgb_buf,
+  void (*I422ToRGBARow)(const uint8_t* y_buf, const uint8_t* u_buf,
+                        const uint8_t* v_buf, uint8_t* rgb_buf,
                         const struct YuvConstants* yuvconstants, int width) =
       I422ToRGBARow_C;
   if (!src_y || !src_u || !src_v || !dst_rgba || width <= 0 || height == 0) {
@@ -484,15 +560,6 @@ static int I420ToRGBAMatrix(const uint8* src_y,
     }
   }
 #endif
-#if defined(HAS_I422TORGBAROW_DSPR2)
-  if (TestCpuFlag(kCpuHasDSPR2) && IS_ALIGNED(width, 4) &&
-      IS_ALIGNED(src_y, 4) && IS_ALIGNED(src_stride_y, 4) &&
-      IS_ALIGNED(src_u, 2) && IS_ALIGNED(src_stride_u, 2) &&
-      IS_ALIGNED(src_v, 2) && IS_ALIGNED(src_stride_v, 2) &&
-      IS_ALIGNED(dst_rgba, 4) && IS_ALIGNED(dst_stride_rgba, 4)) {
-    I422ToRGBARow = I422ToRGBARow_DSPR2;
-  }
-#endif
 #if defined(HAS_I422TORGBAROW_MSA)
   if (TestCpuFlag(kCpuHasMSA)) {
     I422ToRGBARow = I422ToRGBARow_Any_MSA;
@@ -516,13 +583,13 @@ static int I420ToRGBAMatrix(const uint8* src_y,
 
 // Convert I420 to RGBA.
 LIBYUV_API
-int I420ToRGBA(const uint8* src_y,
+int I420ToRGBA(const uint8_t* src_y,
                int src_stride_y,
-               const uint8* src_u,
+               const uint8_t* src_u,
                int src_stride_u,
-               const uint8* src_v,
+               const uint8_t* src_v,
                int src_stride_v,
-               uint8* dst_rgba,
+               uint8_t* dst_rgba,
                int dst_stride_rgba,
                int width,
                int height) {
@@ -533,13 +600,13 @@ int I420ToRGBA(const uint8* src_y,
 
 // Convert I420 to BGRA.
 LIBYUV_API
-int I420ToBGRA(const uint8* src_y,
+int I420ToBGRA(const uint8_t* src_y,
                int src_stride_y,
-               const uint8* src_u,
+               const uint8_t* src_u,
                int src_stride_u,
-               const uint8* src_v,
+               const uint8_t* src_v,
                int src_stride_v,
-               uint8* dst_bgra,
+               uint8_t* dst_bgra,
                int dst_stride_bgra,
                int width,
                int height) {
@@ -551,20 +618,20 @@ int I420ToBGRA(const uint8* src_y,
 }
 
 // Convert I420 to RGB24 with matrix
-static int I420ToRGB24Matrix(const uint8* src_y,
+static int I420ToRGB24Matrix(const uint8_t* src_y,
                              int src_stride_y,
-                             const uint8* src_u,
+                             const uint8_t* src_u,
                              int src_stride_u,
-                             const uint8* src_v,
+                             const uint8_t* src_v,
                              int src_stride_v,
-                             uint8* dst_rgb24,
+                             uint8_t* dst_rgb24,
                              int dst_stride_rgb24,
                              const struct YuvConstants* yuvconstants,
                              int width,
                              int height) {
   int y;
-  void (*I422ToRGB24Row)(const uint8* y_buf, const uint8* u_buf,
-                         const uint8* v_buf, uint8* rgb_buf,
+  void (*I422ToRGB24Row)(const uint8_t* y_buf, const uint8_t* u_buf,
+                         const uint8_t* v_buf, uint8_t* rgb_buf,
                          const struct YuvConstants* yuvconstants, int width) =
       I422ToRGB24Row_C;
   if (!src_y || !src_u || !src_v || !dst_rgb24 || width <= 0 || height == 0) {
@@ -623,13 +690,13 @@ static int I420ToRGB24Matrix(const uint8* src_y,
 
 // Convert I420 to RGB24.
 LIBYUV_API
-int I420ToRGB24(const uint8* src_y,
+int I420ToRGB24(const uint8_t* src_y,
                 int src_stride_y,
-                const uint8* src_u,
+                const uint8_t* src_u,
                 int src_stride_u,
-                const uint8* src_v,
+                const uint8_t* src_v,
                 int src_stride_v,
-                uint8* dst_rgb24,
+                uint8_t* dst_rgb24,
                 int dst_stride_rgb24,
                 int width,
                 int height) {
@@ -640,13 +707,13 @@ int I420ToRGB24(const uint8* src_y,
 
 // Convert I420 to RAW.
 LIBYUV_API
-int I420ToRAW(const uint8* src_y,
+int I420ToRAW(const uint8_t* src_y,
               int src_stride_y,
-              const uint8* src_u,
+              const uint8_t* src_u,
               int src_stride_u,
-              const uint8* src_v,
+              const uint8_t* src_v,
               int src_stride_v,
-              uint8* dst_raw,
+              uint8_t* dst_raw,
               int dst_stride_raw,
               int width,
               int height) {
@@ -659,13 +726,13 @@ int I420ToRAW(const uint8* src_y,
 
 // Convert H420 to RGB24.
 LIBYUV_API
-int H420ToRGB24(const uint8* src_y,
+int H420ToRGB24(const uint8_t* src_y,
                 int src_stride_y,
-                const uint8* src_u,
+                const uint8_t* src_u,
                 int src_stride_u,
-                const uint8* src_v,
+                const uint8_t* src_v,
                 int src_stride_v,
-                uint8* dst_rgb24,
+                uint8_t* dst_rgb24,
                 int dst_stride_rgb24,
                 int width,
                 int height) {
@@ -676,13 +743,13 @@ int H420ToRGB24(const uint8* src_y,
 
 // Convert H420 to RAW.
 LIBYUV_API
-int H420ToRAW(const uint8* src_y,
+int H420ToRAW(const uint8_t* src_y,
               int src_stride_y,
-              const uint8* src_u,
+              const uint8_t* src_u,
               int src_stride_u,
-              const uint8* src_v,
+              const uint8_t* src_v,
               int src_stride_v,
-              uint8* dst_raw,
+              uint8_t* dst_raw,
               int dst_stride_raw,
               int width,
               int height) {
@@ -695,19 +762,19 @@ int H420ToRAW(const uint8* src_y,
 
 // Convert I420 to ARGB1555.
 LIBYUV_API
-int I420ToARGB1555(const uint8* src_y,
+int I420ToARGB1555(const uint8_t* src_y,
                    int src_stride_y,
-                   const uint8* src_u,
+                   const uint8_t* src_u,
                    int src_stride_u,
-                   const uint8* src_v,
+                   const uint8_t* src_v,
                    int src_stride_v,
-                   uint8* dst_argb1555,
+                   uint8_t* dst_argb1555,
                    int dst_stride_argb1555,
                    int width,
                    int height) {
   int y;
-  void (*I422ToARGB1555Row)(const uint8* y_buf, const uint8* u_buf,
-                            const uint8* v_buf, uint8* rgb_buf,
+  void (*I422ToARGB1555Row)(const uint8_t* y_buf, const uint8_t* u_buf,
+                            const uint8_t* v_buf, uint8_t* rgb_buf,
                             const struct YuvConstants* yuvconstants,
                             int width) = I422ToARGB1555Row_C;
   if (!src_y || !src_u || !src_v || !dst_argb1555 || width <= 0 ||
@@ -744,14 +811,6 @@ int I420ToARGB1555(const uint8* src_y,
     }
   }
 #endif
-#if defined(HAS_I422TOARGB1555ROW_DSPR2)
-  if (TestCpuFlag(kCpuHasDSPR2)) {
-    I422ToARGB1555Row = I422ToARGB1555Row_Any_DSPR2;
-    if (IS_ALIGNED(width, 4)) {
-      I422ToARGB1555Row = I422ToARGB1555Row_DSPR2;
-    }
-  }
-#endif
 #if defined(HAS_I422TOARGB1555ROW_MSA)
   if (TestCpuFlag(kCpuHasMSA)) {
     I422ToARGB1555Row = I422ToARGB1555Row_Any_MSA;
@@ -776,19 +835,19 @@ int I420ToARGB1555(const uint8* src_y,
 
 // Convert I420 to ARGB4444.
 LIBYUV_API
-int I420ToARGB4444(const uint8* src_y,
+int I420ToARGB4444(const uint8_t* src_y,
                    int src_stride_y,
-                   const uint8* src_u,
+                   const uint8_t* src_u,
                    int src_stride_u,
-                   const uint8* src_v,
+                   const uint8_t* src_v,
                    int src_stride_v,
-                   uint8* dst_argb4444,
+                   uint8_t* dst_argb4444,
                    int dst_stride_argb4444,
                    int width,
                    int height) {
   int y;
-  void (*I422ToARGB4444Row)(const uint8* y_buf, const uint8* u_buf,
-                            const uint8* v_buf, uint8* rgb_buf,
+  void (*I422ToARGB4444Row)(const uint8_t* y_buf, const uint8_t* u_buf,
+                            const uint8_t* v_buf, uint8_t* rgb_buf,
                             const struct YuvConstants* yuvconstants,
                             int width) = I422ToARGB4444Row_C;
   if (!src_y || !src_u || !src_v || !dst_argb4444 || width <= 0 ||
@@ -825,14 +884,6 @@ int I420ToARGB4444(const uint8* src_y,
     }
   }
 #endif
-#if defined(HAS_I422TOARGB4444ROW_DSPR2)
-  if (TestCpuFlag(kCpuHasDSPR2)) {
-    I422ToARGB4444Row = I422ToARGB4444Row_Any_DSPR2;
-    if (IS_ALIGNED(width, 4)) {
-      I422ToARGB4444Row = I422ToARGB4444Row_DSPR2;
-    }
-  }
-#endif
 #if defined(HAS_I422TOARGB4444ROW_MSA)
   if (TestCpuFlag(kCpuHasMSA)) {
     I422ToARGB4444Row = I422ToARGB4444Row_Any_MSA;
@@ -857,19 +908,19 @@ int I420ToARGB4444(const uint8* src_y,
 
 // Convert I420 to RGB565.
 LIBYUV_API
-int I420ToRGB565(const uint8* src_y,
+int I420ToRGB565(const uint8_t* src_y,
                  int src_stride_y,
-                 const uint8* src_u,
+                 const uint8_t* src_u,
                  int src_stride_u,
-                 const uint8* src_v,
+                 const uint8_t* src_v,
                  int src_stride_v,
-                 uint8* dst_rgb565,
+                 uint8_t* dst_rgb565,
                  int dst_stride_rgb565,
                  int width,
                  int height) {
   int y;
-  void (*I422ToRGB565Row)(const uint8* y_buf, const uint8* u_buf,
-                          const uint8* v_buf, uint8* rgb_buf,
+  void (*I422ToRGB565Row)(const uint8_t* y_buf, const uint8_t* u_buf,
+                          const uint8_t* v_buf, uint8_t* rgb_buf,
                           const struct YuvConstants* yuvconstants, int width) =
       I422ToRGB565Row_C;
   if (!src_y || !src_u || !src_v || !dst_rgb565 || width <= 0 || height == 0) {
@@ -928,19 +979,19 @@ int I420ToRGB565(const uint8* src_y,
 
 // Convert I422 to RGB565.
 LIBYUV_API
-int I422ToRGB565(const uint8* src_y,
+int I422ToRGB565(const uint8_t* src_y,
                  int src_stride_y,
-                 const uint8* src_u,
+                 const uint8_t* src_u,
                  int src_stride_u,
-                 const uint8* src_v,
+                 const uint8_t* src_v,
                  int src_stride_v,
-                 uint8* dst_rgb565,
+                 uint8_t* dst_rgb565,
                  int dst_stride_rgb565,
                  int width,
                  int height) {
   int y;
-  void (*I422ToRGB565Row)(const uint8* y_buf, const uint8* u_buf,
-                          const uint8* v_buf, uint8* rgb_buf,
+  void (*I422ToRGB565Row)(const uint8_t* y_buf, const uint8_t* u_buf,
+                          const uint8_t* v_buf, uint8_t* rgb_buf,
                           const struct YuvConstants* yuvconstants, int width) =
       I422ToRGB565Row_C;
   if (!src_y || !src_u || !src_v || !dst_rgb565 || width <= 0 || height == 0) {
@@ -996,30 +1047,30 @@ int I422ToRGB565(const uint8* src_y,
 }
 
 // Ordered 8x8 dither for 888 to 565.  Values from 0 to 7.
-static const uint8 kDither565_4x4[16] = {
+static const uint8_t kDither565_4x4[16] = {
     0, 4, 1, 5, 6, 2, 7, 3, 1, 5, 0, 4, 7, 3, 6, 2,
 };
 
 // Convert I420 to RGB565 with dithering.
 LIBYUV_API
-int I420ToRGB565Dither(const uint8* src_y,
+int I420ToRGB565Dither(const uint8_t* src_y,
                        int src_stride_y,
-                       const uint8* src_u,
+                       const uint8_t* src_u,
                        int src_stride_u,
-                       const uint8* src_v,
+                       const uint8_t* src_v,
                        int src_stride_v,
-                       uint8* dst_rgb565,
+                       uint8_t* dst_rgb565,
                        int dst_stride_rgb565,
-                       const uint8* dither4x4,
+                       const uint8_t* dither4x4,
                        int width,
                        int height) {
   int y;
-  void (*I422ToARGBRow)(const uint8* y_buf, const uint8* u_buf,
-                        const uint8* v_buf, uint8* rgb_buf,
+  void (*I422ToARGBRow)(const uint8_t* y_buf, const uint8_t* u_buf,
+                        const uint8_t* v_buf, uint8_t* rgb_buf,
                         const struct YuvConstants* yuvconstants, int width) =
       I422ToARGBRow_C;
-  void (*ARGBToRGB565DitherRow)(const uint8* src_argb, uint8* dst_rgb,
-                                const uint32 dither4, int width) =
+  void (*ARGBToRGB565DitherRow)(const uint8_t* src_argb, uint8_t* dst_rgb,
+                                const uint32_t dither4, int width) =
       ARGBToRGB565DitherRow_C;
   if (!src_y || !src_u || !src_v || !dst_rgb565 || width <= 0 || height == 0) {
     return -1;
@@ -1055,14 +1106,6 @@ int I420ToRGB565Dither(const uint8* src_y,
     if (IS_ALIGNED(width, 8)) {
       I422ToARGBRow = I422ToARGBRow_NEON;
     }
-  }
-#endif
-#if defined(HAS_I422TOARGBROW_DSPR2)
-  if (TestCpuFlag(kCpuHasDSPR2) && IS_ALIGNED(width, 4) &&
-      IS_ALIGNED(src_y, 4) && IS_ALIGNED(src_stride_y, 4) &&
-      IS_ALIGNED(src_u, 2) && IS_ALIGNED(src_stride_u, 2) &&
-      IS_ALIGNED(src_v, 2) && IS_ALIGNED(src_stride_v, 2)) {
-    I422ToARGBRow = I422ToARGBRow_DSPR2;
   }
 #endif
 #if defined(HAS_I422TOARGBROW_MSA)
@@ -1111,8 +1154,8 @@ int I420ToRGB565Dither(const uint8* src_y,
     for (y = 0; y < height; ++y) {
       I422ToARGBRow(src_y, src_u, src_v, row_argb, &kYuvI601Constants, width);
       ARGBToRGB565DitherRow(row_argb, dst_rgb565,
-                            *(uint32*)(dither4x4 + ((y & 3) << 2)),  // NOLINT
-                            width);                                  // NOLINT
+                            *(uint32_t*)(dither4x4 + ((y & 3) << 2)),  // NOLINT
+                            width);                                    // NOLINT
       dst_rgb565 += dst_stride_rgb565;
       src_y += src_stride_y;
       if (y & 1) {
@@ -1125,20 +1168,111 @@ int I420ToRGB565Dither(const uint8* src_y,
   return 0;
 }
 
+// Convert I420 to AR30 with matrix
+static int I420ToAR30Matrix(const uint8_t* src_y,
+                            int src_stride_y,
+                            const uint8_t* src_u,
+                            int src_stride_u,
+                            const uint8_t* src_v,
+                            int src_stride_v,
+                            uint8_t* dst_ar30,
+                            int dst_stride_ar30,
+                            const struct YuvConstants* yuvconstants,
+                            int width,
+                            int height) {
+  int y;
+  void (*I422ToAR30Row)(const uint8_t* y_buf, const uint8_t* u_buf,
+                        const uint8_t* v_buf, uint8_t* rgb_buf,
+                        const struct YuvConstants* yuvconstants, int width) =
+      I422ToAR30Row_C;
+
+  if (!src_y || !src_u || !src_v || !dst_ar30 || width <= 0 || height == 0) {
+    return -1;
+  }
+  // Negative height means invert the image.
+  if (height < 0) {
+    height = -height;
+    dst_ar30 = dst_ar30 + (height - 1) * dst_stride_ar30;
+    dst_stride_ar30 = -dst_stride_ar30;
+  }
+
+#if defined(HAS_I422TOAR30ROW_SSSE3)
+  if (TestCpuFlag(kCpuHasSSSE3)) {
+    I422ToAR30Row = I422ToAR30Row_Any_SSSE3;
+    if (IS_ALIGNED(width, 8)) {
+      I422ToAR30Row = I422ToAR30Row_SSSE3;
+    }
+  }
+#endif
+#if defined(HAS_I422TOAR30ROW_AVX2)
+  if (TestCpuFlag(kCpuHasAVX2)) {
+    I422ToAR30Row = I422ToAR30Row_Any_AVX2;
+    if (IS_ALIGNED(width, 16)) {
+      I422ToAR30Row = I422ToAR30Row_AVX2;
+    }
+  }
+#endif
+
+  for (y = 0; y < height; ++y) {
+    I422ToAR30Row(src_y, src_u, src_v, dst_ar30, yuvconstants, width);
+    dst_ar30 += dst_stride_ar30;
+    src_y += src_stride_y;
+    if (y & 1) {
+      src_u += src_stride_u;
+      src_v += src_stride_v;
+    }
+  }
+  return 0;
+}
+
+// Convert I420 to AR30.
+LIBYUV_API
+int I420ToAR30(const uint8_t* src_y,
+               int src_stride_y,
+               const uint8_t* src_u,
+               int src_stride_u,
+               const uint8_t* src_v,
+               int src_stride_v,
+               uint8_t* dst_ar30,
+               int dst_stride_ar30,
+               int width,
+               int height) {
+  return I420ToAR30Matrix(src_y, src_stride_y, src_u, src_stride_u, src_v,
+                          src_stride_v, dst_ar30, dst_stride_ar30,
+                          &kYuvI601Constants, width, height);
+}
+
+// Convert H420 to AR30.
+LIBYUV_API
+int H420ToAR30(const uint8_t* src_y,
+               int src_stride_y,
+               const uint8_t* src_u,
+               int src_stride_u,
+               const uint8_t* src_v,
+               int src_stride_v,
+               uint8_t* dst_ar30,
+               int dst_stride_ar30,
+               int width,
+               int height) {
+  return I420ToAR30Matrix(src_y, src_stride_y, src_u, src_stride_u, src_v,
+                          src_stride_v, dst_ar30, dst_stride_ar30,
+                          &kYvuH709Constants, width, height);
+}
+
 // Convert I420 to specified format
 LIBYUV_API
-int ConvertFromI420(const uint8* y,
+int ConvertFromI420(const uint8_t* y,
                     int y_stride,
-                    const uint8* u,
+                    const uint8_t* u,
                     int u_stride,
-                    const uint8* v,
+                    const uint8_t* v,
                     int v_stride,
-                    uint8* dst_sample,
+                    uint8_t* dst_sample,
                     int dst_sample_stride,
                     int width,
                     int height,
-                    uint32 fourcc) {
-  uint32 format = CanonicalFourCC(fourcc);
+                    uint32_t fourcc) {
+  uint32_t format = CanonicalFourCC(fourcc);
   int r = 0;
   if (!y || !u || !v || !dst_sample || width <= 0 || height == 0) {
     return -1;
@@ -1200,13 +1334,18 @@ int ConvertFromI420(const uint8* y,
                      dst_sample_stride ? dst_sample_stride : width * 4, width,
                      height);
       break;
+    case FOURCC_AR30:
+      r = I420ToAR30(y, y_stride, u, u_stride, v, v_stride, dst_sample,
+                     dst_sample_stride ? dst_sample_stride : width * 4, width,
+                     height);
+      break;
     case FOURCC_I400:
       r = I400Copy(y, y_stride, dst_sample,
                    dst_sample_stride ? dst_sample_stride : width, width,
                    height);
       break;
     case FOURCC_NV12: {
-      uint8* dst_uv = dst_sample + width * height;
+      uint8_t* dst_uv = dst_sample + width * height;
       r = I420ToNV12(y, y_stride, u, u_stride, v, v_stride, dst_sample,
                      dst_sample_stride ? dst_sample_stride : width, dst_uv,
                      dst_sample_stride ? dst_sample_stride : width, width,
@@ -1214,7 +1353,7 @@ int ConvertFromI420(const uint8* y,
       break;
     }
     case FOURCC_NV21: {
-      uint8* dst_vu = dst_sample + width * height;
+      uint8_t* dst_vu = dst_sample + width * height;
       r = I420ToNV21(y, y_stride, u, u_stride, v, v_stride, dst_sample,
                      dst_sample_stride ? dst_sample_stride : width, dst_vu,
                      dst_sample_stride ? dst_sample_stride : width, width,
@@ -1228,8 +1367,8 @@ int ConvertFromI420(const uint8* y,
       dst_sample_stride = dst_sample_stride ? dst_sample_stride : width;
       int halfstride = (dst_sample_stride + 1) / 2;
       int halfheight = (height + 1) / 2;
-      uint8* dst_u;
-      uint8* dst_v;
+      uint8_t* dst_u;
+      uint8_t* dst_v;
       if (format == FOURCC_YV12) {
         dst_v = dst_sample + dst_sample_stride * height;
         dst_u = dst_v + halfstride * halfheight;
@@ -1246,8 +1385,8 @@ int ConvertFromI420(const uint8* y,
     case FOURCC_YV16: {
       dst_sample_stride = dst_sample_stride ? dst_sample_stride : width;
       int halfstride = (dst_sample_stride + 1) / 2;
-      uint8* dst_u;
-      uint8* dst_v;
+      uint8_t* dst_u;
+      uint8_t* dst_v;
       if (format == FOURCC_YV16) {
         dst_v = dst_sample + dst_sample_stride * height;
         dst_u = dst_v + halfstride * height;
@@ -1263,8 +1402,8 @@ int ConvertFromI420(const uint8* y,
     case FOURCC_I444:
     case FOURCC_YV24: {
       dst_sample_stride = dst_sample_stride ? dst_sample_stride : width;
-      uint8* dst_u;
-      uint8* dst_v;
+      uint8_t* dst_u;
+      uint8_t* dst_v;
       if (format == FOURCC_YV24) {
         dst_v = dst_sample + dst_sample_stride * height;
         dst_u = dst_v + dst_sample_stride * height;

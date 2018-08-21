@@ -51,9 +51,9 @@ extern "C" {
     out3 = (v16u8)__msa_ilvl_d((v2i64)in3, (v2i64)in2);     \
   }
 
-void TransposeWx16_C(const uint8* src,
+void TransposeWx16_C(const uint8_t* src,
                      int src_stride,
-                     uint8* dst,
+                     uint8_t* dst,
                      int dst_stride,
                      int width) {
   TransposeWx8_C(src, src_stride, dst, dst_stride, width);
@@ -61,11 +61,11 @@ void TransposeWx16_C(const uint8* src,
                  width);
 }
 
-void TransposeUVWx16_C(const uint8* src,
+void TransposeUVWx16_C(const uint8_t* src,
                        int src_stride,
-                       uint8* dst_a,
+                       uint8_t* dst_a,
                        int dst_stride_a,
-                       uint8* dst_b,
+                       uint8_t* dst_b,
                        int dst_stride_b,
                        int width) {
   TransposeUVWx8_C(src, src_stride, dst_a, dst_stride_a, dst_b, dst_stride_b,
@@ -74,13 +74,13 @@ void TransposeUVWx16_C(const uint8* src,
                    dst_stride_a, (dst_b + 8), dst_stride_b, width);
 }
 
-void TransposeWx16_MSA(const uint8* src,
+void TransposeWx16_MSA(const uint8_t* src,
                        int src_stride,
-                       uint8* dst,
+                       uint8_t* dst,
                        int dst_stride,
                        int width) {
   int x;
-  const uint8* s;
+  const uint8_t* s;
   v16u8 src0, src1, src2, src3, dst0, dst1, dst2, dst3, vec0, vec1, vec2, vec3;
   v16u8 reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7;
   v16u8 res0, res1, res2, res3, res4, res5, res6, res7, res8, res9;
@@ -153,15 +153,15 @@ void TransposeWx16_MSA(const uint8* src,
   }
 }
 
-void TransposeUVWx16_MSA(const uint8* src,
+void TransposeUVWx16_MSA(const uint8_t* src,
                          int src_stride,
-                         uint8* dst_a,
+                         uint8_t* dst_a,
                          int dst_stride_a,
-                         uint8* dst_b,
+                         uint8_t* dst_b,
                          int dst_stride_b,
                          int width) {
   int x;
-  const uint8* s;
+  const uint8_t* s;
   v16u8 src0, src1, src2, src3, dst0, dst1, dst2, dst3, vec0, vec1, vec2, vec3;
   v16u8 reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7;
   v16u8 res0, res1, res2, res3, res4, res5, res6, res7, res8, res9;

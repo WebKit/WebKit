@@ -28,22 +28,22 @@ typedef enum FilterMode {
 
 // Scale a YUV plane.
 LIBYUV_API
-void ScalePlane(const uint8* src,
+void ScalePlane(const uint8_t* src,
                 int src_stride,
                 int src_width,
                 int src_height,
-                uint8* dst,
+                uint8_t* dst,
                 int dst_stride,
                 int dst_width,
                 int dst_height,
                 enum FilterMode filtering);
 
 LIBYUV_API
-void ScalePlane_16(const uint16* src,
+void ScalePlane_16(const uint16_t* src,
                    int src_stride,
                    int src_width,
                    int src_height,
-                   uint16* dst,
+                   uint16_t* dst,
                    int dst_stride,
                    int dst_width,
                    int dst_height,
@@ -60,38 +60,38 @@ void ScalePlane_16(const uint16* src,
 // Returns 0 if successful.
 
 LIBYUV_API
-int I420Scale(const uint8* src_y,
+int I420Scale(const uint8_t* src_y,
               int src_stride_y,
-              const uint8* src_u,
+              const uint8_t* src_u,
               int src_stride_u,
-              const uint8* src_v,
+              const uint8_t* src_v,
               int src_stride_v,
               int src_width,
               int src_height,
-              uint8* dst_y,
+              uint8_t* dst_y,
               int dst_stride_y,
-              uint8* dst_u,
+              uint8_t* dst_u,
               int dst_stride_u,
-              uint8* dst_v,
+              uint8_t* dst_v,
               int dst_stride_v,
               int dst_width,
               int dst_height,
               enum FilterMode filtering);
 
 LIBYUV_API
-int I420Scale_16(const uint16* src_y,
+int I420Scale_16(const uint16_t* src_y,
                  int src_stride_y,
-                 const uint16* src_u,
+                 const uint16_t* src_u,
                  int src_stride_u,
-                 const uint16* src_v,
+                 const uint16_t* src_v,
                  int src_stride_v,
                  int src_width,
                  int src_height,
-                 uint16* dst_y,
+                 uint16_t* dst_y,
                  int dst_stride_y,
-                 uint16* dst_u,
+                 uint16_t* dst_u,
                  int dst_stride_u,
-                 uint16* dst_v,
+                 uint16_t* dst_v,
                  int dst_stride_v,
                  int dst_width,
                  int dst_height,
@@ -100,34 +100,23 @@ int I420Scale_16(const uint16* src_y,
 #ifdef __cplusplus
 // Legacy API.  Deprecated.
 LIBYUV_API
-int Scale(const uint8* src_y,
-          const uint8* src_u,
-          const uint8* src_v,
+int Scale(const uint8_t* src_y,
+          const uint8_t* src_u,
+          const uint8_t* src_v,
           int src_stride_y,
           int src_stride_u,
           int src_stride_v,
           int src_width,
           int src_height,
-          uint8* dst_y,
-          uint8* dst_u,
-          uint8* dst_v,
+          uint8_t* dst_y,
+          uint8_t* dst_u,
+          uint8_t* dst_v,
           int dst_stride_y,
           int dst_stride_u,
           int dst_stride_v,
           int dst_width,
           int dst_height,
           LIBYUV_BOOL interpolate);
-
-// Legacy API.  Deprecated.
-LIBYUV_API
-int ScaleOffset(const uint8* src_i420,
-                int src_width,
-                int src_height,
-                uint8* dst_i420,
-                int dst_width,
-                int dst_height,
-                int dst_yoffset,
-                LIBYUV_BOOL interpolate);
 
 // For testing, allow disabling of specialized scalers.
 LIBYUV_API

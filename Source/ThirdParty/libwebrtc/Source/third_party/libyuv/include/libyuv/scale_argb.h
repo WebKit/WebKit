@@ -20,11 +20,11 @@ extern "C" {
 #endif
 
 LIBYUV_API
-int ARGBScale(const uint8* src_argb,
+int ARGBScale(const uint8_t* src_argb,
               int src_stride_argb,
               int src_width,
               int src_height,
-              uint8* dst_argb,
+              uint8_t* dst_argb,
               int dst_stride_argb,
               int dst_width,
               int dst_height,
@@ -32,11 +32,11 @@ int ARGBScale(const uint8* src_argb,
 
 // Clipped scale takes destination rectangle coordinates for clip values.
 LIBYUV_API
-int ARGBScaleClip(const uint8* src_argb,
+int ARGBScaleClip(const uint8_t* src_argb,
                   int src_stride_argb,
                   int src_width,
                   int src_height,
-                  uint8* dst_argb,
+                  uint8_t* dst_argb,
                   int dst_stride_argb,
                   int dst_width,
                   int dst_height,
@@ -48,18 +48,18 @@ int ARGBScaleClip(const uint8* src_argb,
 
 // Scale with YUV conversion to ARGB and clipping.
 LIBYUV_API
-int YUVToARGBScaleClip(const uint8* src_y,
+int YUVToARGBScaleClip(const uint8_t* src_y,
                        int src_stride_y,
-                       const uint8* src_u,
+                       const uint8_t* src_u,
                        int src_stride_u,
-                       const uint8* src_v,
+                       const uint8_t* src_v,
                        int src_stride_v,
-                       uint32 src_fourcc,
+                       uint32_t src_fourcc,
                        int src_width,
                        int src_height,
-                       uint8* dst_argb,
+                       uint8_t* dst_argb,
                        int dst_stride_argb,
-                       uint32 dst_fourcc,
+                       uint32_t dst_fourcc,
                        int dst_width,
                        int dst_height,
                        int clip_x,

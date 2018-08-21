@@ -1,12 +1,12 @@
 **libyuv** is an open source project that includes YUV scaling and conversion functionality.
 
 * Scale YUV to prepare content for compression, with point, bilinear or box filter.
-* Convert to YUV from webcam formats.
-* Convert from YUV to formats for rendering/effects.
+* Convert to YUV from webcam formats for compression.
+* Convert to RGB formats for rendering/effects.
 * Rotate by 90/180/270 degrees to adjust for mobile devices in portrait mode.
-* Optimized for SSE2/SSSE3/AVX2 on x86/x64.
+* Optimized for SSSE3/AVX2 on x86/x64.
 * Optimized for Neon on Arm.
-* Optimized for DSP R2 on Mips.
+* Optimized for MSA on Mips.
 
 ### Development
 

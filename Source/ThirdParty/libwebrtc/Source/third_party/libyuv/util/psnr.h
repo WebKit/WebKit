@@ -20,7 +20,7 @@ extern "C" {
 #endif
 
 #if !defined(INT_TYPES_DEFINED) && !defined(UINT8_TYPE_DEFINED)
-typedef unsigned char uint8;
+typedef unsigned char uint8_t;
 #define UINT8_TYPE_DEFINED
 #endif
 
@@ -31,7 +31,9 @@ static const double kMaxPSNR = 128.0;
 #if !defined(HAVE_JPEG)
 // Computer Sum of Squared Error (SSE).
 // Pass this to ComputePSNR for final result.
-double ComputeSumSquareError(const uint8* org, const uint8* rec, int size);
+double ComputeSumSquareError(const uint8_t* src_a,
+                             const uint8_t* src_b,
+                             int count);
 #endif
 
 // PSNR formula: psnr = 10 * log10 (Peak Signal^2 * size / sse)

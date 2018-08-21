@@ -65,8 +65,8 @@ TEST_F(LibYUVBaseTest, TestFixedDiv) {
   }
   EXPECT_EQ(123 * 65536, libyuv::FixedDiv(123, 1));
 
-  MemRandomize(reinterpret_cast<uint8*>(&num[0]), sizeof(num));
-  MemRandomize(reinterpret_cast<uint8*>(&div[0]), sizeof(div));
+  MemRandomize(reinterpret_cast<uint8_t*>(&num[0]), sizeof(num));
+  MemRandomize(reinterpret_cast<uint8_t*>(&div[0]), sizeof(div));
   for (int j = 0; j < 1280; ++j) {
     if (div[j] == 0) {
       div[j] = 1280;
@@ -90,8 +90,8 @@ TEST_F(LibYUVBaseTest, TestFixedDiv_Opt) {
   int result_opt[1280];
   int result_c[1280];
 
-  MemRandomize(reinterpret_cast<uint8*>(&num[0]), sizeof(num));
-  MemRandomize(reinterpret_cast<uint8*>(&div[0]), sizeof(div));
+  MemRandomize(reinterpret_cast<uint8_t*>(&num[0]), sizeof(num));
+  MemRandomize(reinterpret_cast<uint8_t*>(&div[0]), sizeof(div));
   for (int j = 0; j < 1280; ++j) {
     num[j] &= 4095;  // Make numerator smaller.
     div[j] &= 4095;  // Make divisor smaller.
@@ -124,8 +124,8 @@ TEST_F(LibYUVBaseTest, TestFixedDiv1_Opt) {
   int result_opt[1280];
   int result_c[1280];
 
-  MemRandomize(reinterpret_cast<uint8*>(&num[0]), sizeof(num));
-  MemRandomize(reinterpret_cast<uint8*>(&div[0]), sizeof(div));
+  MemRandomize(reinterpret_cast<uint8_t*>(&num[0]), sizeof(num));
+  MemRandomize(reinterpret_cast<uint8_t*>(&div[0]), sizeof(div));
   for (int j = 0; j < 1280; ++j) {
     num[j] &= 4095;  // Make numerator smaller.
     div[j] &= 4095;  // Make divisor smaller.

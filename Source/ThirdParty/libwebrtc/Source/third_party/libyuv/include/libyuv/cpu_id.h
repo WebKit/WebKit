@@ -47,8 +47,7 @@ static const int kCpuHasAVX512VPOPCNTDQ = 0x100000;
 
 // These flags are only valid on MIPS processors.
 static const int kCpuHasMIPS = 0x200000;
-static const int kCpuHasDSPR2 = 0x400000;
-static const int kCpuHasMSA = 0x800000;
+static const int kCpuHasMSA = 0x400000;
 
 // Optional init function. TestCpuFlag does an auto-init.
 // Returns cpu_info flags.
@@ -85,7 +84,7 @@ int MaskCpuFlags(int enable_flags);
 // eax is the info type that you want.
 // ecx is typically the cpu number, and should normally be zero.
 LIBYUV_API
-void CpuId(int eax, int ecx, int* cpu_info);
+void CpuId(int info_eax, int info_ecx, int* cpu_info);
 
 #ifdef __cplusplus
 }  // extern "C"

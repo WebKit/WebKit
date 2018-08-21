@@ -65,8 +65,6 @@ TEST_F(LibYUVBaseTest, TestCpuHas) {
 #if defined(__mips__)
   int has_mips = TestCpuFlag(kCpuHasMIPS);
   printf("Has MIPS %x\n", has_mips);
-  int has_dspr2 = TestCpuFlag(kCpuHasDSPR2);
-  printf("Has DSPR2 %x\n", has_dspr2);
   int has_msa = TestCpuFlag(kCpuHasMSA);
   printf("Has MSA %x\n", has_msa);
 #endif
@@ -147,6 +145,8 @@ static int FileExists(const char* file_name) {
 
 TEST_F(LibYUVBaseTest, TestLinuxNeon) {
   if (FileExists("../../unit_test/testdata/arm_v7.txt")) {
+    printf("Note: testing to load \"../../unit_test/testdata/arm_v7.txt\"\n");
+
     EXPECT_EQ(0, ArmCpuCaps("../../unit_test/testdata/arm_v7.txt"));
     EXPECT_EQ(kCpuHasNEON, ArmCpuCaps("../../unit_test/testdata/tegra3.txt"));
     EXPECT_EQ(kCpuHasNEON, ArmCpuCaps("../../unit_test/testdata/juno.txt"));

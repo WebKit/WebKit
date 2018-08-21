@@ -16,8 +16,8 @@
 extern "C" {
 #endif
 
-typedef unsigned int uint32;    // NOLINT
-typedef unsigned short uint16;  // NOLINT
+typedef unsigned int uint32_t;    // NOLINT
+typedef unsigned short uint16_t;  // NOLINT
 
 #if !defined(LIBYUV_DISABLE_X86) && !defined(__SSE2__) && \
     (defined(_M_X64) || (defined(_M_IX86_FP) && (_M_IX86_FP >= 2)))
@@ -50,7 +50,7 @@ static const double kiW[KERNEL + 1 + 1] = {
 
 #if !defined(LIBYUV_DISABLE_X86) && defined(__SSE2__)
 
-#define PWEIGHT(A, B) static_cast<uint16>(K[(A)] * K[(B)])  // weight product
+#define PWEIGHT(A, B) static_cast<uint16_t>(K[(A)] * K[(B)])  // weight product
 #define MAKE_WEIGHT(L)                                                \
   {                                                                   \
     {                                                                 \
@@ -66,7 +66,7 @@ static const double kiW[KERNEL + 1 + 1] = {
 // values. We can't call _mm_set_epi16() for static compile-time initialization.
 static const struct {
   union {
-    uint16 i16_[8];
+    uint16_t i16_[8];
     __m128i m_;
   } values_;
 } W0 = MAKE_WEIGHT(0), W1 = MAKE_WEIGHT(1), W2 = MAKE_WEIGHT(2),
@@ -88,10 +88,12 @@ static double FinalizeSSIM(double iw,
   double sxx = xxm * iw - iwx * iwx;
   double syy = yym * iw - iwy * iwy;
   // small errors are possible, due to rounding. Clamp to zero.
-  if (sxx < 0.)
+  if (sxx < 0.) {
     sxx = 0.;
-  if (syy < 0.)
+  }
+  if (syy < 0.) {
     syy = 0.;
+  }
   const double sxsy = sqrt(sxx * syy);
   const double sxy = xym * iw - iwx * iwy;
   static const double C11 = (0.01 * 0.01) * (255 * 255);
@@ -109,21 +111,22 @@ static double FinalizeSSIM(double iw,
 // Note: worst case of accumulation is a weight of 33 = 11 + 2 * (7 + 3 + 1)
 // with a diff of 255, squared. The maximum error is thus 0x4388241,
 // which fits into 32 bits integers.
-double GetSSIM(const uint8* org,
-               const uint8* rec,
+double GetSSIM(const uint8_t* org,
+               const uint8_t* rec,
                int xo,
                int yo,
                int W,
                int H,
                int stride) {
-  uint32 ws = 0, xm = 0, ym = 0, xxm = 0, xym = 0, yym = 0;
+  uint32_t ws = 0, xm = 0, ym = 0, xxm = 0, xym = 0, yym = 0;
   org += (yo - KERNEL) * stride;
   org += (xo - KERNEL);
   rec += (yo - KERNEL) * stride;
   rec += (xo - KERNEL);
   for (int y_ = 0; y_ < KERNEL_SIZE; ++y_, org += stride, rec += stride) {
-    if (((yo - KERNEL + y_) < 0) || ((yo - KERNEL + y_) >= H))
+    if (((yo - KERNEL + y_) < 0) || ((yo - KERNEL + y_) >= H)) {
       continue;
+    }
     const int Wy = K[y_];
     for (int x_ = 0; x_ < KERNEL_SIZE; ++x_) {
       const int Wxy = Wy * K[x_];
@@ -142,13 +145,13 @@ double GetSSIM(const uint8* org,
   return FinalizeSSIM(1. / ws, xm, ym, xxm, xym, yym);
 }
 
-double GetSSIMFullKernel(const uint8* org,
-                         const uint8* rec,
+double GetSSIMFullKernel(const uint8_t* org,
+                         const uint8_t* rec,
                          int xo,
                          int yo,
                          int stride,
                          double area_weight) {
-  uint32 xm = 0, ym = 0, xxm = 0, xym = 0, yym = 0;
+  uint32_t xm = 0, ym = 0, xxm = 0, xym = 0, yym = 0;
 
 #if defined(LIBYUV_DISABLE_X86) || !defined(__SSE2__)
 
@@ -262,7 +265,7 @@ double GetSSIMFullKernel(const uint8* org,
 
 #define ADD_AND_STORE_FOUR_EPI32(M, OUT)                    \
   do {                                                      \
-    uint32 tmp[4];                                          \
+    uint32_t tmp[4];                                        \
     _mm_storeu_si128(reinterpret_cast<__m128i*>(tmp), (M)); \
     (OUT) = tmp[3] + tmp[2] + tmp[1] + tmp[0];              \
   } while (0)
@@ -292,8 +295,8 @@ static int start_max(int x, int y) {
   return (x > y) ? x : y;
 }
 
-double CalcSSIM(const uint8* org,
-                const uint8* rec,
+double CalcSSIM(const uint8_t* org,
+                const uint8_t* rec,
                 const int image_width,
                 const int image_height) {
   double SSIM = 0.;
@@ -328,8 +331,8 @@ double CalcSSIM(const uint8* org,
       // NOTE: we could use similar method for the left-most pixels too.
       const int kScratchWidth = 8;
       const int kScratchStride = kScratchWidth + KERNEL + 1;
-      uint8 scratch_org[KERNEL_SIZE * kScratchStride] = {0};
-      uint8 scratch_rec[KERNEL_SIZE * kScratchStride] = {0};
+      uint8_t scratch_org[KERNEL_SIZE * kScratchStride] = {0};
+      uint8_t scratch_rec[KERNEL_SIZE * kScratchStride] = {0};
 
       for (int k = 0; k < KERNEL_SIZE; ++k) {
         const int offset =

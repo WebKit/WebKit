@@ -27,8 +27,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "libyuv/basic_types.h"  // For CPU_X86
-
 #ifdef __cplusplus
 namespace libyuv {
 extern "C" {
@@ -179,7 +177,7 @@ LIBYUV_API SAFEBUFFERS int MipsCpuCaps(const char* cpuinfo_name,
     if (strcmp(ase, " msa") == 0) {
       return kCpuHasMSA;
     }
-    return kCpuHasDSPR2;
+    return 0;
   }
   while (fgets(cpuinfo_line, sizeof(cpuinfo_line) - 1, f)) {
     if (memcmp(cpuinfo_line, "ASEs implemented", 16) == 0) {
@@ -189,7 +187,7 @@ LIBYUV_API SAFEBUFFERS int MipsCpuCaps(const char* cpuinfo_name,
         if (strcmp(ase, " msa") == 0) {
           return kCpuHasMSA;
         }
-        return kCpuHasDSPR2;
+        return 0;
       }
     }
   }
@@ -218,7 +216,9 @@ static LIBYUV_BOOL TestEnv(const char*) {
 
 static SAFEBUFFERS int GetCpuFlags(void) {
   int cpu_info = 0;
-#if !defined(__pnacl__) && !defined(__CLR_VER) && defined(CPU_X86)
+#if !defined(__pnacl__) && !defined(__CLR_VER) &&                   \
+    (defined(__x86_64__) || defined(_M_X64) || defined(__i386__) || \
+     defined(_M_IX86))
   int cpu_info0[4] = {0, 0, 0, 0};
   int cpu_info1[4] = {0, 0, 0, 0};
   int cpu_info7[4] = {0, 0, 0, 0};
@@ -290,16 +290,10 @@ static SAFEBUFFERS int GetCpuFlags(void) {
 
 #endif
 #if defined(__mips__) && defined(__linux__)
-#if defined(__mips_dspr2)
-  cpu_info |= kCpuHasDSPR2;
-#endif
 #if defined(__mips_msa)
   cpu_info = MipsCpuCaps("/proc/cpuinfo", " msa");
 #endif
   cpu_info |= kCpuHasMIPS;
-  if (getenv("LIBYUV_DISABLE_DSPR2")) {
-    cpu_info &= ~kCpuHasDSPR2;
-  }
   if (getenv("LIBYUV_DISABLE_MSA")) {
     cpu_info &= ~kCpuHasMSA;
   }

@@ -33,79 +33,79 @@ typedef enum RotationMode {
 
 // Rotate I420 frame.
 LIBYUV_API
-int I420Rotate(const uint8* src_y,
+int I420Rotate(const uint8_t* src_y,
                int src_stride_y,
-               const uint8* src_u,
+               const uint8_t* src_u,
                int src_stride_u,
-               const uint8* src_v,
+               const uint8_t* src_v,
                int src_stride_v,
-               uint8* dst_y,
+               uint8_t* dst_y,
                int dst_stride_y,
-               uint8* dst_u,
+               uint8_t* dst_u,
                int dst_stride_u,
-               uint8* dst_v,
+               uint8_t* dst_v,
                int dst_stride_v,
-               int src_width,
-               int src_height,
+               int width,
+               int height,
                enum RotationMode mode);
 
 // Rotate NV12 input and store in I420.
 LIBYUV_API
-int NV12ToI420Rotate(const uint8* src_y,
+int NV12ToI420Rotate(const uint8_t* src_y,
                      int src_stride_y,
-                     const uint8* src_uv,
+                     const uint8_t* src_uv,
                      int src_stride_uv,
-                     uint8* dst_y,
+                     uint8_t* dst_y,
                      int dst_stride_y,
-                     uint8* dst_u,
+                     uint8_t* dst_u,
                      int dst_stride_u,
-                     uint8* dst_v,
+                     uint8_t* dst_v,
                      int dst_stride_v,
-                     int src_width,
-                     int src_height,
+                     int width,
+                     int height,
                      enum RotationMode mode);
 
 // Rotate a plane by 0, 90, 180, or 270.
 LIBYUV_API
-int RotatePlane(const uint8* src,
+int RotatePlane(const uint8_t* src,
                 int src_stride,
-                uint8* dst,
+                uint8_t* dst,
                 int dst_stride,
-                int src_width,
-                int src_height,
+                int width,
+                int height,
                 enum RotationMode mode);
 
 // Rotate planes by 90, 180, 270. Deprecated.
 LIBYUV_API
-void RotatePlane90(const uint8* src,
+void RotatePlane90(const uint8_t* src,
                    int src_stride,
-                   uint8* dst,
+                   uint8_t* dst,
                    int dst_stride,
                    int width,
                    int height);
 
 LIBYUV_API
-void RotatePlane180(const uint8* src,
+void RotatePlane180(const uint8_t* src,
                     int src_stride,
-                    uint8* dst,
+                    uint8_t* dst,
                     int dst_stride,
                     int width,
                     int height);
 
 LIBYUV_API
-void RotatePlane270(const uint8* src,
+void RotatePlane270(const uint8_t* src,
                     int src_stride,
-                    uint8* dst,
+                    uint8_t* dst,
                     int dst_stride,
                     int width,
                     int height);
 
 LIBYUV_API
-void RotateUV90(const uint8* src,
+void RotateUV90(const uint8_t* src,
                 int src_stride,
-                uint8* dst_a,
+                uint8_t* dst_a,
                 int dst_stride_a,
-                uint8* dst_b,
+                uint8_t* dst_b,
                 int dst_stride_b,
                 int width,
                 int height);
@@ -115,21 +115,21 @@ void RotateUV90(const uint8* src,
 // split the data into two buffers while
 // rotating them. Deprecated.
 LIBYUV_API
-void RotateUV180(const uint8* src,
+void RotateUV180(const uint8_t* src,
                  int src_stride,
-                 uint8* dst_a,
+                 uint8_t* dst_a,
                  int dst_stride_a,
-                 uint8* dst_b,
+                 uint8_t* dst_b,
                  int dst_stride_b,
                  int width,
                  int height);
 
 LIBYUV_API
-void RotateUV270(const uint8* src,
+void RotateUV270(const uint8_t* src,
                  int src_stride,
-                 uint8* dst_a,
+                 uint8_t* dst_a,
                  int dst_stride_a,
-                 uint8* dst_b,
+                 uint8_t* dst_b,
                  int dst_stride_b,
                  int width,
                  int height);
@@ -139,19 +139,19 @@ void RotateUV270(const uint8* src,
 // order will result in a rotation by +- 90 degrees.
 // Deprecated.
 LIBYUV_API
-void TransposePlane(const uint8* src,
+void TransposePlane(const uint8_t* src,
                     int src_stride,
-                    uint8* dst,
+                    uint8_t* dst,
                     int dst_stride,
                     int width,
                     int height);
 
 LIBYUV_API
-void TransposeUV(const uint8* src,
+void TransposeUV(const uint8_t* src,
                  int src_stride,
-                 uint8* dst_a,
+                 uint8_t* dst_a,
                  int dst_stride_a,
-                 uint8* dst_b,
+                 uint8_t* dst_b,
                  int dst_stride_b,
                  int width,
                  int height);

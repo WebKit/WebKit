@@ -69,8 +69,8 @@ int main(int argc, const char* argv[]) {
     printf("Has NEON %x\n", has_neon);
   }
   if (has_mips) {
-    int has_dspr2 = TestCpuFlag(kCpuHasDSPR2);
-    printf("Has DSPR2 %x\n", has_dspr2);
+    int has_msa = TestCpuFlag(kCpuHasMSA);
+    printf("Has MSA %x\n", has_msa);
   }
   if (has_x86) {
     int has_sse2 = TestCpuFlag(kCpuHasSSE2);

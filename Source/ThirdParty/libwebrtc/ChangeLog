@@ -1,3 +1,17 @@
+2018-08-21  Youenn Fablet  <youenn@apple.com>
+
+        Update some libwebrtc third party libraries as per libwebrtc 984f1a80c0c
+        https://bugs.webkit.org/show_bug.cgi?id=188751
+
+        Reviewed by Eric Carlson.
+
+        Added rnnoise and abseil which will be used by latest libwebrtc.
+        Updated libyuv as it is also required by latest libwebrtc.
+
+        * Source/third_party/abseil-cpp: Added.
+        * Source/third_party/libyuv: Refreshed.
+        * Source/third_party/rnnoise: Added.
+
 2018-08-06  David Kilzer  <ddkilzer@apple.com>
 
         [libwebrtc] SafeSetError() in peerconnection.cc contains use-after-move of webrtc::RTCError variable

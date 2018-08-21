@@ -19,9 +19,9 @@ extern "C" {
 // This module is for 32 bit Visual C x86 and clangcl
 #if !defined(LIBYUV_DISABLE_X86) && defined(_M_IX86) && defined(_MSC_VER)
 
-__declspec(naked) void TransposeWx8_SSSE3(const uint8* src,
+__declspec(naked) void TransposeWx8_SSSE3(const uint8_t* src,
                                           int src_stride,
-                                          uint8* dst,
+                                          uint8_t* dst,
                                           int dst_stride,
                                           int width) {
   __asm {
@@ -112,11 +112,11 @@ __declspec(naked) void TransposeWx8_SSSE3(const uint8* src,
   }
 }
 
-__declspec(naked) void TransposeUVWx8_SSE2(const uint8* src,
+__declspec(naked) void TransposeUVWx8_SSE2(const uint8_t* src,
                                            int src_stride,
-                                           uint8* dst_a,
+                                           uint8_t* dst_a,
                                            int dst_stride_a,
-                                           uint8* dst_b,
+                                           uint8_t* dst_b,
                                            int dst_stride_b,
                                            int w) {
   __asm {

@@ -207,7 +207,13 @@ def BuildDepsentryDict(deps_dict):
   """Builds a dict of paths to DepsEntry objects from a raw parsed deps dict."""
   result = {}
   def AddDepsEntries(deps_subdict):
-    for path, deps_url in deps_subdict.iteritems():
+    for path, deps_url_spec in deps_subdict.iteritems():
+      # The deps url is either an URL and a condition, or just the URL.
+      if isinstance(deps_url_spec, dict):
+        deps_url = deps_url_spec['url']
+      else:
+        deps_url = deps_url_spec
+
       if not result.has_key(path):
         url, revision = deps_url.split('@') if deps_url else (None, None)
         result[path] = DepsEntry(path, url, revision)

@@ -1,0 +1,77 @@
+# Copyright (c) 2018 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Flags specified here must not impact ABI. Code compiled with and without these
+# opts will be linked together, and in some cases headers compiled with and
+# without these options will be part of the same program.
+
+import("//build/toolchain/toolchain.gni")
+
+group("default") {
+  deps = [
+    "absl/types:any",
+    "absl/types:bad_any_cast",
+    "absl/types:span",
+    "absl/types:optional",
+    "absl/types:bad_optional_access",
+  ]
+}
+
+config("absl_include_config") {
+  include_dirs = [ "." ]
+}
+
+config("absl_define_config") {
+  defines = [ "ABSL_ALLOCATOR_NOTHROW=1" ]
+}
+
+config("absl_default_cflags_cc") {
+  cflags_cc = []
+  if (is_clang) {
+    cflags_cc += [
+      # TODO(crbug.com/588506): Explicitly enable conversion warnings.
+      "-Wbool-conversion",
+      "-Wconstant-conversion",
+      "-Wenum-conversion",
+      "-Wint-conversion",
+      "-Wliteral-conversion",
+      "-Wnon-literal-null-conversion",
+      "-Wnull-conversion",
+      "-Wobjc-literal-conversion",
+      "-Wno-sign-conversion",
+      "-Wstring-conversion",
+    ]
+    if (!is_nacl && !use_xcode_clang) {
+      cflags_cc += [ "-Wbitfield-enum-conversion" ]
+    }
+  }
+  if (is_win) {
+    cflags_cc += [
+      "/wd4005",  # macro-redefinition
+      "/wd4018",  # sign-compare
+      "/wd4068",  # unknown pragma
+      "/wd4702",  # unreachable code
+    ]
+  }
+}
+
+config("absl_test_cflags_cc") {
+  cflags_cc = []
+  if (is_clang || !is_win) {
+    cflags_cc += [
+      "-Wno-conversion-null",
+      "-Wno-missing-declarations",
+      "-Wno-sign-compare",
+      "-Wno-unused-function",
+      "-Wno-unused-parameter",
+      "-Wno-unused-private-field",
+    ]
+  }
+  if (is_win) {
+    cflags_cc += [
+      "/wd4018",  # signed/unsigned mismatch
+      "/wd4101",  # unreferenced local variable
+    ]
+  }
+}

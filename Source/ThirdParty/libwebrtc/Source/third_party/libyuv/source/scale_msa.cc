@@ -127,13 +127,13 @@ void ScaleARGBRowDownEven_MSA(const uint8_t* src_argb,
   }
 }
 
-void ScaleARGBRowDownEvenBox_MSA(const uint8* src_argb,
+void ScaleARGBRowDownEvenBox_MSA(const uint8_t* src_argb,
                                  ptrdiff_t src_stride,
                                  int src_stepx,
-                                 uint8* dst_argb,
+                                 uint8_t* dst_argb,
                                  int dst_width) {
   int x;
-  const uint8* nxt_argb = src_argb + src_stride;
+  const uint8_t* nxt_argb = src_argb + src_stride;
   int32_t stepx = src_stepx * 4;
   int64_t data0, data1, data2, data3;
   v16u8 src0 = {0}, src1 = {0}, src2 = {0}, src3 = {0};
@@ -553,8 +553,8 @@ void ScaleAddRow_MSA(const uint8_t* src_ptr, uint16_t* dst_ptr, int src_width) {
   }
 }
 
-void ScaleFilterCols_MSA(uint8* dst_ptr,
-                         const uint8* src_ptr,
+void ScaleFilterCols_MSA(uint8_t* dst_ptr,
+                         const uint8_t* src_ptr,
                          int dst_width,
                          int x,
                          int dx) {
@@ -630,13 +630,13 @@ void ScaleFilterCols_MSA(uint8* dst_ptr,
   }
 }
 
-void ScaleARGBCols_MSA(uint8* dst_argb,
-                       const uint8* src_argb,
+void ScaleARGBCols_MSA(uint8_t* dst_argb,
+                       const uint8_t* src_argb,
                        int dst_width,
                        int x,
                        int dx) {
-  const uint32* src = (const uint32*)(src_argb);
-  uint32* dst = (uint32*)(dst_argb);
+  const uint32_t* src = (const uint32_t*)(src_argb);
+  uint32_t* dst = (uint32_t*)(dst_argb);
   int j;
   v4i32 x_vec = __msa_fill_w(x);
   v4i32 dx_vec = __msa_fill_w(dx);
@@ -657,12 +657,12 @@ void ScaleARGBCols_MSA(uint8* dst_argb,
   }
 }
 
-void ScaleARGBFilterCols_MSA(uint8* dst_argb,
-                             const uint8* src_argb,
+void ScaleARGBFilterCols_MSA(uint8_t* dst_argb,
+                             const uint8_t* src_argb,
                              int dst_width,
                              int x,
                              int dx) {
-  const uint32* src = (const uint32*)(src_argb);
+  const uint32_t* src = (const uint32_t*)(src_argb);
   int j;
   v4u32 src0, src1, src2, src3;
   v4u32 vec0, vec1, vec2, vec3;
@@ -722,9 +722,9 @@ void ScaleARGBFilterCols_MSA(uint8* dst_argb,
   }
 }
 
-void ScaleRowDown34_MSA(const uint8* src_ptr,
+void ScaleRowDown34_MSA(const uint8_t* src_ptr,
                         ptrdiff_t src_stride,
-                        uint8* dst,
+                        uint8_t* dst,
                         int dst_width) {
   int x;
   (void)src_stride;
@@ -753,12 +753,12 @@ void ScaleRowDown34_MSA(const uint8* src_ptr,
   }
 }
 
-void ScaleRowDown34_0_Box_MSA(const uint8* src_ptr,
+void ScaleRowDown34_0_Box_MSA(const uint8_t* src_ptr,
                               ptrdiff_t src_stride,
-                              uint8* d,
+                              uint8_t* d,
                               int dst_width) {
-  const uint8* s = src_ptr;
-  const uint8* t = src_ptr + src_stride;
+  const uint8_t* s = src_ptr;
+  const uint8_t* t = src_ptr + src_stride;
   int x;
   v16u8 src0, src1, src2, src3, src4, src5, src6, src7, dst0, dst1, dst2;
   v16u8 vec0, vec1, vec2, vec3, vec4, vec5;
@@ -847,12 +847,12 @@ void ScaleRowDown34_0_Box_MSA(const uint8* src_ptr,
   }
 }
 
-void ScaleRowDown34_1_Box_MSA(const uint8* src_ptr,
+void ScaleRowDown34_1_Box_MSA(const uint8_t* src_ptr,
                               ptrdiff_t src_stride,
-                              uint8* d,
+                              uint8_t* d,
                               int dst_width) {
-  const uint8* s = src_ptr;
-  const uint8* t = src_ptr + src_stride;
+  const uint8_t* s = src_ptr;
+  const uint8_t* t = src_ptr + src_stride;
   int x;
   v16u8 src0, src1, src2, src3, src4, src5, src6, src7, dst0, dst1, dst2;
   v16u8 vec0, vec1, vec2, vec3, vec4, vec5;

@@ -20,12 +20,12 @@ extern "C" {
 #endif
 
 #if !defined(INT_TYPES_DEFINED) && !defined(UINT8_TYPE_DEFINED)
-typedef unsigned char uint8;
+typedef unsigned char uint8_t;
 #define UINT8_TYPE_DEFINED
 #endif
 
-double CalcSSIM(const uint8* org,
-                const uint8* rec,
+double CalcSSIM(const uint8_t* org,
+                const uint8_t* rec,
                 const int image_width,
                 const int image_height);
 

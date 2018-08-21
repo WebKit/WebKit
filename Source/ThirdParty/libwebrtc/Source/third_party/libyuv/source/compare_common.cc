@@ -18,8 +18,10 @@ extern "C" {
 #endif
 
 #if ORIGINAL_OPT
-uint32 HammingDistance_C1(const uint8* src_a, const uint8* src_b, int count) {
-  uint32 diff = 0u;
+uint32_t HammingDistance_C1(const uint8_t* src_a,
+                            const uint8_t* src_b,
+                            int count) {
+  uint32_t diff = 0u;
 
   int i;
   for (i = 0; i < count; ++i) {
@@ -46,13 +48,15 @@ uint32 HammingDistance_C1(const uint8* src_a, const uint8* src_b, int count) {
 #endif
 
 // Hakmem method for hamming distance.
-uint32 HammingDistance_C(const uint8* src_a, const uint8* src_b, int count) {
-  uint32 diff = 0u;
+uint32_t HammingDistance_C(const uint8_t* src_a,
+                           const uint8_t* src_b,
+                           int count) {
+  uint32_t diff = 0u;
 
   int i;
   for (i = 0; i < count - 3; i += 4) {
-    uint32 x = *((uint32*)src_a) ^ *((uint32*)src_b);
-    uint32 u = x - ((x >> 1) & 0x55555555);
+    uint32_t x = *((uint32_t*)src_a) ^ *((uint32_t*)src_b);  // NOLINT
+    uint32_t u = x - ((x >> 1) & 0x55555555);
     u = ((u >> 2) & 0x33333333) + (u & 0x33333333);
     diff += ((((u + (u >> 4)) & 0x0f0f0f0f) * 0x01010101) >> 24);
     src_a += 4;
@@ -60,8 +64,8 @@ uint32 HammingDistance_C(const uint8* src_a, const uint8* src_b, int count) {
   }
 
   for (; i < count; ++i) {
-    uint32 x = *src_a ^ *src_b;
-    uint32 u = x - ((x >> 1) & 0x55);
+    uint32_t x = *src_a ^ *src_b;
+    uint32_t u = x - ((x >> 1) & 0x55);
     u = ((u >> 2) & 0x33) + (u & 0x33);
     diff += (u + (u >> 4)) & 0x0f;
     src_a += 1;
@@ -71,20 +75,22 @@ uint32 HammingDistance_C(const uint8* src_a, const uint8* src_b, int count) {
   return diff;
 }
 
-uint32 SumSquareError_C(const uint8* src_a, const uint8* src_b, int count) {
-  uint32 sse = 0u;
+uint32_t SumSquareError_C(const uint8_t* src_a,
+                          const uint8_t* src_b,
+                          int count) {
+  uint32_t sse = 0u;
   int i;
   for (i = 0; i < count; ++i) {
     int diff = src_a[i] - src_b[i];
-    sse += (uint32)(diff * diff);
+    sse += (uint32_t)(diff * diff);
   }
   return sse;
 }
 
 // hash seed of 5381 recommended.
 // Internal C version of HashDjb2 with int sized count for efficiency.
-uint32 HashDjb2_C(const uint8* src, int count, uint32 seed) {
-  uint32 hash = seed;
+uint32_t HashDjb2_C(const uint8_t* src, int count, uint32_t seed) {
+  uint32_t hash = seed;
   int i;
   for (i = 0; i < count; ++i) {
     hash += (hash << 5) + src[i];

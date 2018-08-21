@@ -36,8 +36,8 @@ static void ScaleARGBDown2(int src_width,
                            int dst_height,
                            int src_stride,
                            int dst_stride,
-                           const uint8* src_argb,
-                           uint8* dst_argb,
+                           const uint8_t* src_argb,
+                           uint8_t* dst_argb,
                            int x,
                            int dx,
                            int y,
@@ -45,8 +45,8 @@ static void ScaleARGBDown2(int src_width,
                            enum FilterMode filtering) {
   int j;
   int row_stride = src_stride * (dy >> 16);
-  void (*ScaleARGBRowDown2)(const uint8* src_argb, ptrdiff_t src_stride,
-                            uint8* dst_argb, int dst_width) =
+  void (*ScaleARGBRowDown2)(const uint8_t* src_argb, ptrdiff_t src_stride,
+                            uint8_t* dst_argb, int dst_width) =
       filtering == kFilterNone
           ? ScaleARGBRowDown2_C
           : (filtering == kFilterLinear ? ScaleARGBRowDown2Linear_C
@@ -131,8 +131,8 @@ static void ScaleARGBDown4Box(int src_width,
                               int dst_height,
                               int src_stride,
                               int dst_stride,
-                              const uint8* src_argb,
-                              uint8* dst_argb,
+                              const uint8_t* src_argb,
+                              uint8_t* dst_argb,
                               int x,
                               int dx,
                               int y,
@@ -142,8 +142,8 @@ static void ScaleARGBDown4Box(int src_width,
   const int kRowSize = (dst_width * 2 * 4 + 31) & ~31;
   align_buffer_64(row, kRowSize * 2);
   int row_stride = src_stride * (dy >> 16);
-  void (*ScaleARGBRowDown2)(const uint8* src_argb, ptrdiff_t src_stride,
-                            uint8* dst_argb, int dst_width) =
+  void (*ScaleARGBRowDown2)(const uint8_t* src_argb, ptrdiff_t src_stride,
+                            uint8_t* dst_argb, int dst_width) =
       ScaleARGBRowDown2Box_C;
   // Advance to odd row, even column.
   src_argb += (y >> 16) * src_stride + (x >> 16) * 4;
@@ -189,8 +189,8 @@ static void ScaleARGBDownEven(int src_width,
                               int dst_height,
                               int src_stride,
                               int dst_stride,
-                              const uint8* src_argb,
-                              uint8* dst_argb,
+                              const uint8_t* src_argb,
+                              uint8_t* dst_argb,
                               int x,
                               int dx,
                               int y,
@@ -199,8 +199,8 @@ static void ScaleARGBDownEven(int src_width,
   int j;
   int col_step = dx >> 16;
   int row_stride = (dy >> 16) * src_stride;
-  void (*ScaleARGBRowDownEven)(const uint8* src_argb, ptrdiff_t src_stride,
-                               int src_step, uint8* dst_argb, int dst_width) =
+  void (*ScaleARGBRowDownEven)(const uint8_t* src_argb, ptrdiff_t src_stride,
+                               int src_step, uint8_t* dst_argb, int dst_width) =
       filtering ? ScaleARGBRowDownEvenBox_C : ScaleARGBRowDownEven_C;
   (void)src_width;
   (void)src_height;
@@ -255,23 +255,23 @@ static void ScaleARGBBilinearDown(int src_width,
                                   int dst_height,
                                   int src_stride,
                                   int dst_stride,
-                                  const uint8* src_argb,
-                                  uint8* dst_argb,
+                                  const uint8_t* src_argb,
+                                  uint8_t* dst_argb,
                                   int x,
                                   int dx,
                                   int y,
                                   int dy,
                                   enum FilterMode filtering) {
   int j;
-  void (*InterpolateRow)(uint8 * dst_argb, const uint8* src_argb,
+  void (*InterpolateRow)(uint8_t * dst_argb, const uint8_t* src_argb,
                          ptrdiff_t src_stride, int dst_width,
                          int source_y_fraction) = InterpolateRow_C;
-  void (*ScaleARGBFilterCols)(uint8 * dst_argb, const uint8* src_argb,
+  void (*ScaleARGBFilterCols)(uint8_t * dst_argb, const uint8_t* src_argb,
                               int dst_width, int x, int dx) =
       (src_width >= 32768) ? ScaleARGBFilterCols64_C : ScaleARGBFilterCols_C;
-  int64 xlast = x + (int64)(dst_width - 1) * dx;
-  int64 xl = (dx >= 0) ? x : xlast;
-  int64 xr = (dx >= 0) ? xlast : x;
+  int64_t xlast = x + (int64_t)(dst_width - 1) * dx;
+  int64_t xl = (dx >= 0) ? x : xlast;
+  int64_t xr = (dx >= 0) ? xlast : x;
   int clip_src_width;
   xl = (xl >> 16) & ~3;    // Left edge aligned.
   xr = (xr >> 16) + 1;     // Right most pixel used.  Bilinear uses 2 pixels.
@@ -303,15 +303,6 @@ static void ScaleARGBBilinearDown(int src_width,
     InterpolateRow = InterpolateRow_Any_NEON;
     if (IS_ALIGNED(clip_src_width, 16)) {
       InterpolateRow = InterpolateRow_NEON;
-    }
-  }
-#endif
-#if defined(HAS_INTERPOLATEROW_DSPR2)
-  if (TestCpuFlag(kCpuHasDSPR2) && IS_ALIGNED(src_argb, 4) &&
-      IS_ALIGNED(src_stride, 4)) {
-    InterpolateRow = InterpolateRow_Any_DSPR2;
-    if (IS_ALIGNED(clip_src_width, 4)) {
-      InterpolateRow = InterpolateRow_DSPR2;
     }
   }
 #endif
@@ -355,7 +346,7 @@ static void ScaleARGBBilinearDown(int src_width,
     }
     for (j = 0; j < dst_height; ++j) {
       int yi = y >> 16;
-      const uint8* src = src_argb + yi * src_stride;
+      const uint8_t* src = src_argb + yi * src_stride;
       if (filtering == kFilterLinear) {
         ScaleARGBFilterCols(dst_argb, src, dst_width, x, dx);
       } else {
@@ -380,18 +371,18 @@ static void ScaleARGBBilinearUp(int src_width,
                                 int dst_height,
                                 int src_stride,
                                 int dst_stride,
-                                const uint8* src_argb,
-                                uint8* dst_argb,
+                                const uint8_t* src_argb,
+                                uint8_t* dst_argb,
                                 int x,
                                 int dx,
                                 int y,
                                 int dy,
                                 enum FilterMode filtering) {
   int j;
-  void (*InterpolateRow)(uint8 * dst_argb, const uint8* src_argb,
+  void (*InterpolateRow)(uint8_t * dst_argb, const uint8_t* src_argb,
                          ptrdiff_t src_stride, int dst_width,
                          int source_y_fraction) = InterpolateRow_C;
-  void (*ScaleARGBFilterCols)(uint8 * dst_argb, const uint8* src_argb,
+  void (*ScaleARGBFilterCols)(uint8_t * dst_argb, const uint8_t* src_argb,
                               int dst_width, int x, int dx) =
       filtering ? ScaleARGBFilterCols_C : ScaleARGBCols_C;
   const int max_y = (src_height - 1) << 16;
@@ -417,12 +408,6 @@ static void ScaleARGBBilinearUp(int src_width,
     if (IS_ALIGNED(dst_width, 4)) {
       InterpolateRow = InterpolateRow_NEON;
     }
-  }
-#endif
-#if defined(HAS_INTERPOLATEROW_DSPR2)
-  if (TestCpuFlag(kCpuHasDSPR2) && IS_ALIGNED(dst_argb, 4) &&
-      IS_ALIGNED(dst_stride, 4)) {
-    InterpolateRow = InterpolateRow_DSPR2;
   }
 #endif
 #if defined(HAS_INTERPOLATEROW_MSA)
@@ -494,13 +479,13 @@ static void ScaleARGBBilinearUp(int src_width,
 
   {
     int yi = y >> 16;
-    const uint8* src = src_argb + yi * src_stride;
+    const uint8_t* src = src_argb + yi * src_stride;
 
     // Allocate 2 rows of ARGB.
     const int kRowSize = (dst_width * 4 + 31) & ~31;
     align_buffer_64(row, kRowSize * 2);
 
-    uint8* rowptr = row;
+    uint8_t* rowptr = row;
     int rowstride = kRowSize;
     int lasty = yi;
 
@@ -550,18 +535,18 @@ static void ScaleYUVToARGBBilinearUp(int src_width,
                                      int src_stride_u,
                                      int src_stride_v,
                                      int dst_stride_argb,
-                                     const uint8* src_y,
-                                     const uint8* src_u,
-                                     const uint8* src_v,
-                                     uint8* dst_argb,
+                                     const uint8_t* src_y,
+                                     const uint8_t* src_u,
+                                     const uint8_t* src_v,
+                                     uint8_t* dst_argb,
                                      int x,
                                      int dx,
                                      int y,
                                      int dy,
                                      enum FilterMode filtering) {
   int j;
-  void (*I422ToARGBRow)(const uint8* y_buf, const uint8* u_buf,
-                        const uint8* v_buf, uint8* rgb_buf, int width) =
+  void (*I422ToARGBRow)(const uint8_t* y_buf, const uint8_t* u_buf,
+                        const uint8_t* v_buf, uint8_t* rgb_buf, int width) =
       I422ToARGBRow_C;
 #if defined(HAS_I422TOARGBROW_SSSE3)
   if (TestCpuFlag(kCpuHasSSSE3)) {
@@ -587,15 +572,6 @@ static void ScaleYUVToARGBBilinearUp(int src_width,
     }
   }
 #endif
-#if defined(HAS_I422TOARGBROW_DSPR2)
-  if (TestCpuFlag(kCpuHasDSPR2) && IS_ALIGNED(src_width, 4) &&
-      IS_ALIGNED(src_y, 4) && IS_ALIGNED(src_stride_y, 4) &&
-      IS_ALIGNED(src_u, 2) && IS_ALIGNED(src_stride_u, 2) &&
-      IS_ALIGNED(src_v, 2) && IS_ALIGNED(src_stride_v, 2) &&
-      IS_ALIGNED(dst_argb, 4) && IS_ALIGNED(dst_stride_argb, 4)) {
-    I422ToARGBRow = I422ToARGBRow_DSPR2;
-  }
-#endif
 #if defined(HAS_I422TOARGBROW_MSA)
   if (TestCpuFlag(kCpuHasMSA)) {
     I422ToARGBRow = I422ToARGBRow_Any_MSA;
@@ -605,7 +581,7 @@ static void ScaleYUVToARGBBilinearUp(int src_width,
   }
 #endif
 
-  void (*InterpolateRow)(uint8 * dst_argb, const uint8* src_argb,
+  void (*InterpolateRow)(uint8_t * dst_argb, const uint8_t* src_argb,
                          ptrdiff_t src_stride, int dst_width,
                          int source_y_fraction) = InterpolateRow_C;
 #if defined(HAS_INTERPOLATEROW_SSSE3)
@@ -632,12 +608,6 @@ static void ScaleYUVToARGBBilinearUp(int src_width,
     }
   }
 #endif
-#if defined(HAS_INTERPOLATEROW_DSPR2)
-  if (TestCpuFlag(kCpuHasDSPR2) && IS_ALIGNED(dst_argb, 4) &&
-      IS_ALIGNED(dst_stride_argb, 4)) {
-    InterpolateRow = InterpolateRow_DSPR2;
-  }
-#endif
 #if defined(HAS_INTERPOLATEROW_MSA)
   if (TestCpuFlag(kCpuHasMSA)) {
     InterpolateRow = InterpolateRow_Any_MSA;
@@ -647,7 +617,7 @@ static void ScaleYUVToARGBBilinearUp(int src_width,
   }
 #endif
 
-  void (*ScaleARGBFilterCols)(uint8 * dst_argb, const uint8* src_argb,
+  void (*ScaleARGBFilterCols)(uint8_t * dst_argb, const uint8_t* src_argb,
                               int dst_width, int x, int dx) =
       filtering ? ScaleARGBFilterCols_C : ScaleARGBCols_C;
   if (src_width >= 32768) {
@@ -712,9 +682,9 @@ static void ScaleYUVToARGBBilinearUp(int src_width,
   const int kYShift = 1;  // Shift Y by 1 to convert Y plane to UV coordinate.
   int yi = y >> 16;
   int uv_yi = yi >> kYShift;
-  const uint8* src_row_y = src_y + yi * src_stride_y;
-  const uint8* src_row_u = src_u + uv_yi * src_stride_u;
-  const uint8* src_row_v = src_v + uv_yi * src_stride_v;
+  const uint8_t* src_row_y = src_y + yi * src_stride_y;
+  const uint8_t* src_row_u = src_u + uv_yi * src_stride_u;
+  const uint8_t* src_row_v = src_v + uv_yi * src_stride_v;
 
   // Allocate 2 rows of ARGB.
   const int kRowSize = (dst_width * 4 + 31) & ~31;
@@ -723,7 +693,7 @@ static void ScaleYUVToARGBBilinearUp(int src_width,
   // Allocate 1 row of ARGB for source conversion.
   align_buffer_64(argb_row, src_width * 4);
 
-  uint8* rowptr = row;
+  uint8_t* rowptr = row;
   int rowstride = kRowSize;
   int lasty = yi;
 
@@ -795,15 +765,15 @@ static void ScaleARGBSimple(int src_width,
                             int dst_height,
                             int src_stride,
                             int dst_stride,
-                            const uint8* src_argb,
-                            uint8* dst_argb,
+                            const uint8_t* src_argb,
+                            uint8_t* dst_argb,
                             int x,
                             int dx,
                             int y,
                             int dy) {
   int j;
-  void (*ScaleARGBCols)(uint8 * dst_argb, const uint8* src_argb, int dst_width,
-                        int x, int dx) =
+  void (*ScaleARGBCols)(uint8_t * dst_argb, const uint8_t* src_argb,
+                        int dst_width, int x, int dx) =
       (src_width >= 32768) ? ScaleARGBCols64_C : ScaleARGBCols_C;
   (void)src_height;
 #if defined(HAS_SCALEARGBCOLS_SSE2)
@@ -847,11 +817,11 @@ static void ScaleARGBSimple(int src_width,
 // ScaleARGB a ARGB.
 // This function in turn calls a scaling function
 // suitable for handling the desired resolutions.
-static void ScaleARGB(const uint8* src,
+static void ScaleARGB(const uint8_t* src,
                       int src_stride,
                       int src_width,
                       int src_height,
-                      uint8* dst,
+                      uint8_t* dst,
                       int dst_stride,
                       int dst_width,
                       int dst_height,
@@ -880,13 +850,13 @@ static void ScaleARGB(const uint8* src,
              &dx, &dy);
   src_width = Abs(src_width);
   if (clip_x) {
-    int64 clipf = (int64)(clip_x)*dx;
+    int64_t clipf = (int64_t)(clip_x)*dx;
     x += (clipf & 0xffff);
     src += (clipf >> 16) * 4;
     dst += clip_x * 4;
   }
   if (clip_y) {
-    int64 clipf = (int64)(clip_y)*dy;
+    int64_t clipf = (int64_t)(clip_y)*dy;
     y += (clipf & 0xffff);
     src += (clipf >> 16) * src_stride;
     dst += clip_y * dst_stride;
@@ -952,11 +922,11 @@ static void ScaleARGB(const uint8* src,
 }
 
 LIBYUV_API
-int ARGBScaleClip(const uint8* src_argb,
+int ARGBScaleClip(const uint8_t* src_argb,
                   int src_stride_argb,
                   int src_width,
                   int src_height,
-                  uint8* dst_argb,
+                  uint8_t* dst_argb,
                   int dst_stride_argb,
                   int dst_width,
                   int dst_height,
@@ -980,11 +950,11 @@ int ARGBScaleClip(const uint8* src_argb,
 
 // Scale an ARGB image.
 LIBYUV_API
-int ARGBScale(const uint8* src_argb,
+int ARGBScale(const uint8_t* src_argb,
               int src_stride_argb,
               int src_width,
               int src_height,
-              uint8* dst_argb,
+              uint8_t* dst_argb,
               int dst_stride_argb,
               int dst_width,
               int dst_height,
@@ -1001,18 +971,18 @@ int ARGBScale(const uint8* src_argb,
 
 // Scale with YUV conversion to ARGB and clipping.
 LIBYUV_API
-int YUVToARGBScaleClip(const uint8* src_y,
+int YUVToARGBScaleClip(const uint8_t* src_y,
                        int src_stride_y,
-                       const uint8* src_u,
+                       const uint8_t* src_u,
                        int src_stride_u,
-                       const uint8* src_v,
+                       const uint8_t* src_v,
                        int src_stride_v,
-                       uint32 src_fourcc,
+                       uint32_t src_fourcc,
                        int src_width,
                        int src_height,
-                       uint8* dst_argb,
+                       uint8_t* dst_argb,
                        int dst_stride_argb,
-                       uint32 dst_fourcc,
+                       uint32_t dst_fourcc,
                        int dst_width,
                        int dst_height,
                        int clip_x,
@@ -1020,7 +990,7 @@ int YUVToARGBScaleClip(const uint8* src_y,
                        int clip_width,
                        int clip_height,
                        enum FilterMode filtering) {
-  uint8* argb_buffer = (uint8*)malloc(src_width * src_height * 4);
+  uint8_t* argb_buffer = (uint8_t*)malloc(src_width * src_height * 4);
   int r;
   (void)src_fourcc;  // TODO(fbarchard): implement and/or assert.
   (void)dst_fourcc;

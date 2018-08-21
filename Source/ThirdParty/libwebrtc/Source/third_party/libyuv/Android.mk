@@ -24,14 +24,12 @@ LOCAL_SRC_FILES := \
     source/rotate_any.cc        \
     source/rotate_argb.cc       \
     source/rotate_common.cc     \
-    source/rotate_dspr2.cc      \
     source/rotate_gcc.cc        \
     source/rotate_msa.cc        \
     source/rotate_neon.cc       \
     source/rotate_neon64.cc     \
     source/row_any.cc           \
     source/row_common.cc        \
-    source/row_dspr2.cc         \
     source/row_gcc.cc           \
     source/row_msa.cc           \
     source/row_neon.cc          \
@@ -40,7 +38,6 @@ LOCAL_SRC_FILES := \
     source/scale_any.cc         \
     source/scale_argb.cc        \
     source/scale_common.cc      \
-    source/scale_dspr2.cc       \
     source/scale_gcc.cc         \
     source/scale_msa.cc         \
     source/scale_neon.cc        \

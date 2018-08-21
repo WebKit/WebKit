@@ -35,9 +35,8 @@ This is how OSX formats map to libyuv
 # FOURCC (Four Charactacter Code) List
 
 The following is extracted from video_common.h as a complete list of formats supported by libyuv.
-
     enum FourCC {
-      // 8 Primary YUV formats: 5 planar, 2 biplanar, 2 packed.
+      // 9 Primary YUV formats: 5 planar, 2 biplanar, 2 packed.
       FOURCC_I420 = FOURCC('I', '4', '2', '0'),
       FOURCC_I422 = FOURCC('I', '4', '2', '2'),
       FOURCC_I444 = FOURCC('I', '4', '4', '4'),
@@ -46,37 +45,35 @@ The following is extracted from video_common.h as a complete list of formats sup
       FOURCC_NV12 = FOURCC('N', 'V', '1', '2'),
       FOURCC_YUY2 = FOURCC('Y', 'U', 'Y', '2'),
       FOURCC_UYVY = FOURCC('U', 'Y', 'V', 'Y'),
+      FOURCC_H010 = FOURCC('H', '0', '1', '0'),  // unofficial fourcc. 10 bit lsb
 
-      // 1 Secondary YUV formats: row biplanar.
+      // 1 Secondary YUV format: row biplanar.
       FOURCC_M420 = FOURCC('M', '4', '2', '0'),
 
-      // 9 Primary RGB formats: 4 32 bpp, 2 24 bpp, 3 16 bpp.
+      // 11 Primary RGB formats: 4 32 bpp, 2 24 bpp, 3 16 bpp, 1 10 bpc
       FOURCC_ARGB = FOURCC('A', 'R', 'G', 'B'),
       FOURCC_BGRA = FOURCC('B', 'G', 'R', 'A'),
       FOURCC_ABGR = FOURCC('A', 'B', 'G', 'R'),
+      FOURCC_AR30 = FOURCC('A', 'R', '3', '0'),  // 10 bit per channel. 2101010.
+      FOURCC_AB30 = FOURCC('A', 'B', '3', '0'),  // ABGR version of 10 bit
       FOURCC_24BG = FOURCC('2', '4', 'B', 'G'),
-      FOURCC_RAW  = FOURCC('r', 'a', 'w', ' '),
+      FOURCC_RAW = FOURCC('r', 'a', 'w', ' '),
       FOURCC_RGBA = FOURCC('R', 'G', 'B', 'A'),
       FOURCC_RGBP = FOURCC('R', 'G', 'B', 'P'),  // rgb565 LE.
       FOURCC_RGBO = FOURCC('R', 'G', 'B', 'O'),  // argb1555 LE.
       FOURCC_R444 = FOURCC('R', '4', '4', '4'),  // argb4444 LE.
 
-      // 4 Secondary RGB formats: 4 Bayer Patterns.
-      FOURCC_RGGB = FOURCC('R', 'G', 'G', 'B'),
-      FOURCC_BGGR = FOURCC('B', 'G', 'G', 'R'),
-      FOURCC_GRBG = FOURCC('G', 'R', 'B', 'G'),
-      FOURCC_GBRG = FOURCC('G', 'B', 'R', 'G'),
-
       // 1 Primary Compressed YUV format.
       FOURCC_MJPG = FOURCC('M', 'J', 'P', 'G'),
 
-      // 5 Auxiliary YUV variations: 3 with U and V planes are swapped, 1 Alias.
+      // 7 Auxiliary YUV variations: 3 with U and V planes are swapped, 1 Alias.
       FOURCC_YV12 = FOURCC('Y', 'V', '1', '2'),
       FOURCC_YV16 = FOURCC('Y', 'V', '1', '6'),
       FOURCC_YV24 = FOURCC('Y', 'V', '2', '4'),
       FOURCC_YU12 = FOURCC('Y', 'U', '1', '2'),  // Linux version of I420.
       FOURCC_J420 = FOURCC('J', '4', '2', '0'),
-      FOURCC_J400 = FOURCC('J', '4', '0', '0'),
+      FOURCC_J400 = FOURCC('J', '4', '0', '0'),  // unofficial fourcc
+      FOURCC_H420 = FOURCC('H', '4', '2', '0'),  // unofficial fourcc
 
       // 14 Auxiliary aliases.  CanonicalFourCC() maps these to canonical fourcc.
       FOURCC_IYUV = FOURCC('I', 'Y', 'U', 'V'),  // Alias for I420.
@@ -96,9 +93,6 @@ The following is extracted from video_common.h as a complete list of formats sup
       FOURCC_L555 = FOURCC('L', '5', '5', '5'),  // Alias for RGBO.
       FOURCC_L565 = FOURCC('L', '5', '6', '5'),  // Alias for RGBP.
       FOURCC_5551 = FOURCC('5', '5', '5', '1'),  // Alias for RGBO.
-
-      // 1 Auxiliary compressed YUV format set aside for capturer.
-      FOURCC_H264 = FOURCC('H', '2', '6', '4'),
 
 # Planar YUV
       The following formats contains a full size Y plane followed by 1 or 2
@@ -145,3 +139,24 @@ There are 2 RGB layouts - RGB24 (aka 24BG) and RAW
 
 RGB24 is B,G,R in memory
 RAW is R,G,B in memory
+
+# AR30 and XR30
+
+AR30 is 2 10 10 10 ARGB stored in little endian order.
+The 2 bit alpha has 4 values.  Here are the comparable 8 bit alpha values.
+0 - 0.    00000000b = 0x00 = 0
+1 - 33%.  01010101b = 0x55 = 85
+2 - 66%.  10101010b = 0xaa = 170
+3 - 100%. 11111111b = 0xff = 255
+The 10 bit RGB values range from 0 to 1023.
+XR30 is the same as AR30 but with no alpha channel.
+
+# NV12 and NV21
+
+NV12 is a biplanar format with a full sized Y plane followed by a single
+chroma plane with weaved U and V values.
+NV21 is the same but with weaved V and U values.
+The 12 in NV12 refers to 12 bits per pixel.  NV12 has a half width and half
+height chroma channel, and therefore is a 420 subsampling.
+NV16 is 16 bits per pixel, with half width and full height.  aka 422.
+NV24 is 24 bits per pixel with full sized chroma channel. aka 444.
