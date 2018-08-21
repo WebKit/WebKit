@@ -407,11 +407,12 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
             scopeBarItem.selected = true;
         }
 
-        if (this._recording.actions[0].ready) {
-            this._recordingTreeOutline.appendChild(new WI.RecordingActionTreeElement(this._recording.actions[0], 0, this._recording.type));
+        let initialStateAction = this._recording.actions[0];
+        if (initialStateAction.ready && !this._recordingTreeOutline.getCachedTreeElement(initialStateAction)) {
+            this._recordingTreeOutline.appendChild(new WI.RecordingActionTreeElement(initialStateAction, 0, this._recording.type));
 
             if (!this._recording[WI.CanvasSidebarPanel.SelectedActionSymbol])
-                this.action = this._recording.actions[0];
+                this.action = initialStateAction;
         }
 
         let cumulativeActionIndex = 0;
@@ -419,13 +420,15 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
             if (!frame.actions[0].ready)
                 return;
 
-            let folder = this._createRecordingFrameTreeElement(frame, frameIndex, this._recordingTreeOutline);
+            let folder = this._recordingTreeOutline.getCachedTreeElement(frame);
+            if (!folder)
+                folder = this._createRecordingFrameTreeElement(frame, frameIndex, this._recordingTreeOutline);
 
             for (let action of frame.actions) {
-                if (!action.ready)
-                    break;
-
                 ++cumulativeActionIndex;
+
+                if (!action.ready || this._recordingTreeOutline.getCachedTreeElement(action))
+                    break;
 
                 this._createRecordingActionTreeElement(action, cumulativeActionIndex, folder);
             }

@@ -75,7 +75,8 @@
 .sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.processing .subtitle > progress {
     width: 100%;
     max-width: 100px;
-    margin: 2px 4px 0;
+    margin: 0 4px;
+    vertical-align: -3px;
 }
 
 .sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline:matches(:focus, .force-focus) .item.processing.selected .subtitle > progress {

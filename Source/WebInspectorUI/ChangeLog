@@ -1,5 +1,21 @@
 2018-08-21  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r235095): duplicate actions existing in WI.CanvasSidebarPanel
+        https://bugs.webkit.org/show_bug.cgi?id=188808
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype._recordingChanged):
+        Check that the `WI.RecordingAction` is not already represented in the `WI.TreeOutline`
+        before adding it.
+
+        * UserInterface/Views/CanvasSidebarPanel.css:
+        (.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.processing .subtitle > progress):
+        Drive-by: vertically center the <progress> shown for `WI.RecordingFrame` during processing.
+
+2018-08-21  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas: provide default icon for all actions
         https://bugs.webkit.org/show_bug.cgi?id=188807
 
