@@ -1,3 +1,26 @@
+2018-08-21  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused shouldKeepCurrentBackForwardListItemInList check
+        https://bugs.webkit.org/show_bug.cgi?id=188805
+
+        Reviewed by Andy Estes.
+
+        The check was only done in WKPageLoaderClient, and nobody implements the check.
+        It was not needed to put in WKPageNavigationClient or WKNavigationDelegate, so let's remove it!
+        This removes the unused ability to go back and remove the current back/forward list item.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didChangeBackForwardList):
+        (API::LoaderClient::shouldKeepCurrentBackForwardListItemInList): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::addItem):
+        (WebKit::WebBackForwardList::goToItem):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::shouldKeepCurrentBackForwardListItemInList): Deleted.
+        * UIProcess/WebPageProxy.h:
+
 2018-08-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Augment _WKAttachment SPI to handle NSFileWrappers in addition to NSData
