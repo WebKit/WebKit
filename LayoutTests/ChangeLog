@@ -1,3 +1,17 @@
+2018-08-21  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION(r234993): Test results page ignores TestExpectations, shows 1800 failures
+        https://bugs.webkit.org/show_bug.cgi?id=188795
+
+        Reviewed by Tim Horton.
+        
+        A MISSING result would trigger a code path that hit appendActualOnlyLinks() which had
+        a JS error, causing all expected results to be visible. Fix with a change to full_results.json
+        which tests the change.
+
+        * fast/harness/full_results.json:
+        * fast/harness/results.html:
+
 2018-08-21  Per Arne Vollan  <pvollan@apple.com>
 
         [WebGL] Contexts are not updated when display configuration changed.

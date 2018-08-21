@@ -1234,6 +1234,7 @@ class FailuresSectionBuilder extends SectionBuilder {
     
     appendActualOnlyLinks(testResult, cell)
     {
+        let prefix = Utils.stripExtension(testResult.name);
         if (testResult.info.is_missing_audio)
             cell.innerHTML += TestResultsController.resultLink(prefix, '-actual.wav', 'audio result');
 

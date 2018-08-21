@@ -42,6 +42,11 @@ ADD_RESULTS({
                 "expected": "PASS TIMEOUT",
                 "actual": "TEXT PASS TIMEOUT"
             },
+            "scale-transition-no-start.html": {
+                "expected": "FAIL MISSING",
+                "is_missing_text": true,
+                "actual": "MISSING"
+            }
         },
         "canvas": {
             "philip": {
