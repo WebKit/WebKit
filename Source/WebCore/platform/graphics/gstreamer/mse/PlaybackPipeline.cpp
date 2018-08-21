@@ -120,7 +120,6 @@ MediaSourcePrivate::AddStatus PlaybackPipeline::addSourceBuffer(RefPtr<SourceBuf
 
     // No track has been attached yet.
     stream->type = Invalid;
-    stream->parser = nullptr;
     stream->caps = nullptr;
     stream->audioTrack = nullptr;
     stream->videoTrack = nullptr;
@@ -178,96 +177,16 @@ void PlaybackPipeline::attachTrack(RefPtr<SourceBufferPrivateGStreamer> sourceBu
     const char* mediaType = capsMediaType(caps);
     GST_DEBUG_OBJECT(webKitMediaSrc, "Configured track %s: appsrc=%s, padId=%u, mediaType=%s", trackPrivate->id().string().utf8().data(), GST_ELEMENT_NAME(stream->appsrc), padId, mediaType);
 
-    GUniquePtr<gchar> parserBinName(g_strdup_printf("streamparser%u", padId));
-
-    if (areEncryptedCaps(caps)) {
-        GST_DEBUG("It's encrypted content, parsers are not needed before decrypting the content");
-        stream->parser = nullptr;
-    } else if (!g_strcmp0(mediaType, "video/x-h264")) {
-        GRefPtr<GstCaps> filterCaps = adoptGRef(gst_caps_new_simple("video/x-h264", "alignment", G_TYPE_STRING, "au", nullptr));
-        GstElement* capsfilter = gst_element_factory_make("capsfilter", nullptr);
-        g_object_set(capsfilter, "caps", filterCaps.get(), nullptr);
-
-        stream->parser = gst_bin_new(parserBinName.get());
-
-        GstElement* parser = gst_element_factory_make("h264parse", nullptr);
-        gst_bin_add_many(GST_BIN(stream->parser), parser, capsfilter, nullptr);
-        gst_element_link_pads(parser, "src", capsfilter, "sink");
-
-        GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(parser, "sink"));
-        gst_element_add_pad(stream->parser, gst_ghost_pad_new("sink", pad.get()));
-
-        pad = adoptGRef(gst_element_get_static_pad(capsfilter, "src"));
-        gst_element_add_pad(stream->parser, gst_ghost_pad_new("src", pad.get()));
-    } else if (!g_strcmp0(mediaType, "video/x-h265")) {
-        GRefPtr<GstCaps> filterCaps = adoptGRef(gst_caps_new_simple("video/x-h265", "alignment", G_TYPE_STRING, "au", nullptr));
-        GstElement* capsfilter = gst_element_factory_make("capsfilter", nullptr);
-        g_object_set(capsfilter, "caps", filterCaps.get(), nullptr);
-
-        stream->parser = gst_bin_new(parserBinName.get());
-
-        GstElement* parser = gst_element_factory_make("h265parse", nullptr);
-        gst_bin_add_many(GST_BIN(stream->parser), parser, capsfilter, nullptr);
-        gst_element_link_pads(parser, "src", capsfilter, "sink");
-
-        GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(parser, "sink"));
-        gst_element_add_pad(stream->parser, gst_ghost_pad_new("sink", pad.get()));
-
-        pad = adoptGRef(gst_element_get_static_pad(capsfilter, "src"));
-        gst_element_add_pad(stream->parser, gst_ghost_pad_new("src", pad.get()));
-    } else if (!g_strcmp0(mediaType, "audio/mpeg")) {
-        gint mpegversion = -1;
-        GstStructure* structure = gst_caps_get_structure(caps, 0);
-        gst_structure_get_int(structure, "mpegversion", &mpegversion);
-
-        GstElement* parser = nullptr;
-        if (mpegversion == 1)
-            parser = gst_element_factory_make("mpegaudioparse", nullptr);
-        else if (mpegversion == 2 || mpegversion == 4)
-            parser = gst_element_factory_make("aacparse", nullptr);
-        else
-            ASSERT_NOT_REACHED();
-
-        stream->parser = gst_bin_new(parserBinName.get());
-        gst_bin_add(GST_BIN(stream->parser), parser);
-
-        GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(parser, "sink"));
-        gst_element_add_pad(stream->parser, gst_ghost_pad_new("sink", pad.get()));
-
-        pad = adoptGRef(gst_element_get_static_pad(parser, "src"));
-        gst_element_add_pad(stream->parser, gst_ghost_pad_new("src", pad.get()));
-    } else if (!g_strcmp0(mediaType, "video/x-vp8")
-        || !g_strcmp0(mediaType, "video/x-vp9")
-        || !g_strcmp0(mediaType, "audio/x-opus")
-        || !g_strcmp0(mediaType, "audio/x-vorbis"))
-        stream->parser = nullptr;
-    else {
-        GST_ERROR_OBJECT(stream->parent, "Unsupported media format: %s", mediaType);
-        return;
-    }
-
     GST_OBJECT_LOCK(webKitMediaSrc);
     stream->type = Unknown;
     GST_OBJECT_UNLOCK(webKitMediaSrc);
 
-    GRefPtr<GstPad> sourcePad;
-    if (stream->parser) {
-        gst_bin_add(GST_BIN(stream->parent), stream->parser);
-        gst_element_sync_state_with_parent(stream->parser);
-
-        GRefPtr<GstPad> sinkPad = adoptGRef(gst_element_get_static_pad(stream->parser, "sink"));
-        sourcePad = adoptGRef(gst_element_get_static_pad(stream->appsrc, "src"));
-        gst_pad_link(sourcePad.get(), sinkPad.get());
-        sourcePad = adoptGRef(gst_element_get_static_pad(stream->parser, "src"));
-    } else {
-        GST_DEBUG_OBJECT(m_webKitMediaSrc.get(), "Stream of type %s doesn't require a parser bin", mediaType);
-        sourcePad = adoptGRef(gst_element_get_static_pad(stream->appsrc, "src"));
-    }
+    GRefPtr<GstPad> sourcePad = adoptGRef(gst_element_get_static_pad(stream->appsrc, "src"));
     ASSERT(sourcePad);
 
     // FIXME: Is padId the best way to identify the Stream? What about trackId?
     g_object_set_data(G_OBJECT(sourcePad.get()), "padId", GINT_TO_POINTER(padId));
-    webKitMediaSrcLinkParser(sourcePad.get(), caps, stream);
+    webKitMediaSrcLinkSourcePad(sourcePad.get(), caps, stream);
 
     ASSERT(stream->parent->priv->mediaPlayerPrivate);
     int signal = -1;
