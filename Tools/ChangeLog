@@ -1,3 +1,14 @@
+2018-08-21  Alex Christensen  <achristensen@webkit.org>
+
+        Transition ResizeReversePaginatedWebView API test from WKPageLoaderClient to WKPageNavigationClient
+        https://bugs.webkit.org/show_bug.cgi?id=188821
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebKit/ResizeReversePaginatedWebView.cpp:
+        (TestWebKitAPI::didLayout):
+        (TestWebKitAPI::TEST):
+
 2018-08-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Call expressions shouldn't have type arguments

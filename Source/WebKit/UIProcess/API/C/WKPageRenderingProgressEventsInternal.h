@@ -43,5 +43,11 @@ static inline WKPageRenderingProgressEvents pageRenderingProgressEvents(WebCore:
     if (milestones & WebCore::ReachedSessionRestorationRenderTreeSizeThreshold)
         events |= WKPageRenderingProgressEventReachedSessionRestorationRenderTreeSizeThreshold;
     
+    if (milestones & WebCore::DidFirstLayoutAfterSuppressedIncrementalRendering)
+        events |= WKPageRenderingProgressEventFirstLayoutAfterSuppressedIncrementalRendering;
+
+    if (milestones & WebCore::DidFirstPaintAfterSuppressedIncrementalRendering)
+        events |= WKPageRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering;
+
     return events;
 }

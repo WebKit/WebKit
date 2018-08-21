@@ -1,5 +1,18 @@
 2018-08-21  Alex Christensen  <achristensen@webkit.org>
 
+        Transition ResizeReversePaginatedWebView API test from WKPageLoaderClient to WKPageNavigationClient
+        https://bugs.webkit.org/show_bug.cgi?id=188821
+
+        Reviewed by Simon Fraser.
+
+        Add some more values to WKPageRenderingProgressEvents which were already supported by _WKRenderingProgressEvents and WKLayoutMilestones.
+
+        * UIProcess/API/C/WKPageRenderingProgressEvents.h:
+        * UIProcess/API/C/WKPageRenderingProgressEventsInternal.h:
+        (pageRenderingProgressEvents):
+
+2018-08-21  Alex Christensen  <achristensen@webkit.org>
+
         Fix API tests after r235139
         https://bugs.webkit.org/show_bug.cgi?id=188805
 
