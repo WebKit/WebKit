@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.item.action.initial-state > .icon {
+.item.action > .icon {
     content: url("../Images/Source.svg");
 }
 

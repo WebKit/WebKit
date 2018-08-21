@@ -1,3 +1,14 @@
+2018-08-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: provide default icon for all actions
+        https://bugs.webkit.org/show_bug.cgi?id=188807
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/RecordingActionTreeElement.css:
+        (.item.action > .icon):
+        (.item.action.initial-state > .icon): Deleted.
+
 2018-08-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Rulers.svg is missing
