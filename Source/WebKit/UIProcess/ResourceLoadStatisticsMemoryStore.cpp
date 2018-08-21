@@ -474,7 +474,7 @@ void ResourceLoadStatisticsMemoryStore::grantStorageAccess(String&& subFrameHost
         ASSERT(subFrameStatistic.hadUserInteraction);
         subFrameStatistic.storageAccessUnderTopFrameOrigins.add(topFramePrimaryDomain);
     }
-    grantStorageAccessInternal(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, userWasPromptedNow, WTFMove(completionHandler));
+    grantStorageAccessInternal(WTFMove(subFramePrimaryDomain), WTFMove(topFramePrimaryDomain), frameID, pageID, userWasPromptedNow, WTFMove(completionHandler));
 }
 
 void ResourceLoadStatisticsMemoryStore::grantStorageAccessInternal(String&& subFramePrimaryDomain, String&& topFramePrimaryDomain, std::optional<uint64_t> frameID, uint64_t pageID, bool userWasPromptedNowOrEarlier, CompletionHandler<void(bool)>&& callback)

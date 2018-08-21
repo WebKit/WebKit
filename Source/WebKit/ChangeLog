@@ -1,3 +1,15 @@
+2018-08-21  John Wilander  <wilander@apple.com>
+
+        Storage Access API: The call to ResourceLoadStatisticsMemoryStore::grantStorageAccessInternal() should send eTLD+1s, not full host names
+        https://bugs.webkit.org/show_bug.cgi?id=188783
+        <rdar://problem/43559215>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::grantStorageAccess):
+            Now sends the eTLD+1 for the top frame and sub frame.
+
 2018-08-21  Megan Gardner  <megan_gardner@apple.com>
 
         Use VisiblePosition to calculate selection ranges
