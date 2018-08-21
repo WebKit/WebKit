@@ -33,8 +33,6 @@
 #include "MediaPlaybackTargetMock.h"
 #include "WebMediaSessionManager.h"
 
-using namespace WebCore;
-
 namespace WebCore {
 
 static const Seconds timerInterval { 100_ms };

@@ -34,7 +34,7 @@
 #include "InbandTextTrackPrivate.h"
 #include "LoadableTextTrack.h"
 
-using namespace WebCore;
+namespace WebCore {
 
 TextTrackList::TextTrackList(HTMLMediaElement* element, ScriptExecutionContext* context)
     : TrackListBase(element, context)
@@ -270,4 +270,5 @@ const char* TextTrackList::activeDOMObjectName() const
     return "TextTrackList";
 }
 
+} // namespace WebCore
 #endif

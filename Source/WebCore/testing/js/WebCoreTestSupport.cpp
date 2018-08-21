@@ -46,10 +46,9 @@
 #include <JavaScriptCore/IdentifierInlines.h>
 #include <JavaScriptCore/JSValueRef.h>
 
-using namespace WebCore;
-
 namespace WebCoreTestSupport {
 using namespace JSC;
+using namespace WebCore;
 
 void injectInternalsObject(JSContextRef context)
 {

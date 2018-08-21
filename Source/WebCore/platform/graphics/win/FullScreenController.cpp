@@ -38,7 +38,7 @@
 #include "WebCoreInstanceHandle.h"
 #include <wtf/RefPtr.h>
 
-using namespace WebCore;
+namespace WebCore {
 
 static const int kFullScreenAnimationDuration = 500; // milliseconds 
 
@@ -217,4 +217,7 @@ void FullScreenController::close()
     ::RedrawWindow(m_private->m_client->fullScreenClientWindow(), 0, 0, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_ALLCHILDREN);
     m_private->m_backgroundWindow = nullptr;
 }
+
+} // namespace WebCore
+
 #endif

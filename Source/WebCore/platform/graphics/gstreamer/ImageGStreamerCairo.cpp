@@ -29,7 +29,7 @@
 #include <gst/video/gstvideometa.h>
 
 
-using namespace WebCore;
+namespace WebCore {
 
 ImageGStreamer::ImageGStreamer(GstSample* sample)
 {
@@ -117,4 +117,7 @@ ImageGStreamer::~ImageGStreamer()
     if (m_frameMapped)
         gst_video_frame_unmap(&m_videoFrame);
 }
+
+} // namespace WebCore
+
 #endif // USE(GSTREAMER)

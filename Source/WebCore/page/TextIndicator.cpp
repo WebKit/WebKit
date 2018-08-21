@@ -50,8 +50,6 @@
 #include "SelectionRect.h"
 #endif
 
-using namespace WebCore;
-
 namespace WebCore {
 
 static bool initializeIndicator(TextIndicatorData&, Frame&, const Range&, FloatSize margin, bool indicatesCurrentSelection);

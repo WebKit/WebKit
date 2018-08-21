@@ -36,7 +36,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/StringHash.h>
 
-using namespace WebCore;
+namespace WebCore {
 
 CaptureDeviceManager::~CaptureDeviceManager() = default;
 
@@ -59,5 +59,7 @@ void CaptureDeviceManager::deviceChanged()
         RealtimeMediaSourceCenter::singleton().captureDevicesChanged();
     });
 }
+
+} // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
