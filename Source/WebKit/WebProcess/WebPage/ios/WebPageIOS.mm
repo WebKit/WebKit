@@ -1218,7 +1218,7 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
 static RefPtr<Range> rangeForPointInRootViewCoordinates(Frame& frame, const IntPoint& pointInRootViewCoordinates, bool baseIsStart)
 {
     IntPoint pointInDocument = frame.view()->rootViewToContents(pointInRootViewCoordinates);
-    Position result;
+    VisiblePosition result;
     RefPtr<Range> range;
     
     HitTestResult hitTest = frame.eventHandler().hitTestResultAtPoint(pointInDocument, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent);
@@ -1228,23 +1228,25 @@ static RefPtr<Range> rangeForPointInRootViewCoordinates(Frame& frame, const IntP
         result = frame.visiblePositionForPoint(pointInDocument).deepEquivalent();
     
     VisibleSelection existingSelection = frame.selection().selection();
-    Position selectionStart = existingSelection.visibleStart().deepEquivalent();
-    Position selectionEnd = existingSelection.visibleEnd().deepEquivalent();
+    VisiblePosition selectionStart = existingSelection.visibleStart();
+    VisiblePosition selectionEnd = existingSelection.visibleEnd();
     
     if (baseIsStart) {
         if (comparePositions(result, selectionStart) <= 0)
             result = selectionStart.next();
-        else if (&selectionStart.anchorNode()->treeScope() != &hitTest.targetNode()->treeScope())
-            result = VisibleSelection::adjustPositionForEnd(result, selectionStart.containerNode());
+        else if (&selectionStart.deepEquivalent().anchorNode()->treeScope() != &hitTest.targetNode()->treeScope())
+            result = VisibleSelection::adjustPositionForEnd(result.deepEquivalent(), selectionStart.deepEquivalent().containerNode());
+        
         if (result.isNotNull())
             range = Range::create(*frame.document(), selectionStart, result);
     } else {
         if (comparePositions(selectionEnd, result) <= 0)
             result = selectionEnd.previous();
-        else if (&hitTest.targetNode()->treeScope() != &selectionEnd.anchorNode()->treeScope())
-            result = VisibleSelection::adjustPositionForStart(result, selectionEnd.containerNode());
+        else if (&hitTest.targetNode()->treeScope() != &selectionEnd.deepEquivalent().anchorNode()->treeScope())
+            result = VisibleSelection::adjustPositionForStart(result.deepEquivalent(), selectionEnd.deepEquivalent().containerNode());
+        
         if (result.isNotNull())
-            range = Range::create(*frame.document(), result, selectionEnd);
+            range = Range::create(*frame.document(), result.deepEquivalent(), selectionEnd);
     }
     
     return range;

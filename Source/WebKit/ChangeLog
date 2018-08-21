@@ -1,3 +1,19 @@
+2018-08-21  Megan Gardner  <megan_gardner@apple.com>
+
+        Use VisiblePosition to calculate selection ranges
+        https://bugs.webkit.org/show_bug.cgi?id=188767
+        <rdar://problem/43577166>
+
+        Reviewed by Ryosuke Niwa.
+
+        Switches to using VisiblePosition, instead of Position. This code used to use VisiblePosiiton,
+        but it has been changed a lot lately, and using Position causes issues with next and previous
+        when trying to snap a selection. VisiblePosition gives us the correct information, and does not 
+        result in collapsed ranges.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::rangeForPointInRootViewCoordinates):
+
 2018-08-21  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused shouldKeepCurrentBackForwardListItemInList check
