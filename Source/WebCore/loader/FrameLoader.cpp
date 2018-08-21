@@ -2270,8 +2270,15 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     // Use the previous ScrollView's frame rect.
     if (previousViewFrameRect)
         view->setFrameRect(previousViewFrameRect.value());
-    
-    m_frame.setDocument(document);
+
+    {
+        // Setting the document builds the render tree and runs post style resolution callbacks that can do anything,
+        // including loading a child frame before its been re-attached to the frame tree as part of this restore.
+        // For example, the HTML object element may load its content into a frame in a post style resolution callback.
+        NavigationDisabler disableNavigation { &m_frame };
+        m_frame.setDocument(document);
+    }
+
     document->domWindow()->resumeFromDocumentSuspension();
 
     updateFirstPartyForCookies();

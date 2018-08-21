@@ -1,5 +1,26 @@
 2018-08-21  Daniel Bates  <dabates@apple.com>
 
+        Disallow navigations when page cache updates the current document of the frame
+        https://bugs.webkit.org/show_bug.cgi?id=188422
+
+        Reviewed by Ryosuke Niwa.
+
+        Make use of NavigationDisabler to disallow navigations when associating the cached
+        document back with its frame (i.e. calling Frame::setDocument()).
+
+        When we associate a cached document with its frame we will construct its render tree
+        and run post style resolution callbacks that can do anything, including performing
+        a frame load. Until page restoration is comnplete the frame tree is in a transient
+        state that makes reasoning about it difficult and error prone. We should not allow
+        navigations in this state.
+
+        Test: fast/history/go-back-to-object-subframe.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::open):
+
+2018-08-21  Daniel Bates  <dabates@apple.com>
+
         Replace TextCheckingTypeMask with OptionSet
         https://bugs.webkit.org/show_bug.cgi?id=188678
 

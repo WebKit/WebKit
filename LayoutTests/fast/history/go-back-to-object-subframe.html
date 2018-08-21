@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.waitUntilDone();
+}
+
+function runTest(e)
+{
+    if (e.persisted) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    } else {
+        // Navigate using a timeout to make sure we generate a history entry that we can go back to.
+        setTimeout(() => { location.href = "data:text/html,<script>history.back()</" + "script>"; }, 0);
+    }
+}
+
+window.onpageshow = runTest;
+</script>
+</head>
+<body>
+<div>PASS. You didn't crash.</div>
+<object data="resources/subframe.html#dummy"  width="400" height="200" style="border: 1px solid black"></object>
+</body>
+</html>
