@@ -462,6 +462,8 @@ public:
     size_t userScriptInjectedCount() const;
     void injectUserScript(JSStringRef);
 
+    void sendDisplayConfigurationChangedMessageForTesting();
+
 private:
     TestRunner();
 

@@ -328,6 +328,7 @@ UIProcess/API/C/WKIconDatabase.cpp @no-unify
 UIProcess/API/C/WKInspector.cpp @no-unify
 UIProcess/API/C/WKKeyValueStorageManager.cpp @no-unify
 UIProcess/API/C/WKMediaSessionMetadata.cpp @no-unify
+UIProcess/API/C/WKMockDisplay.cpp @no-unify
 UIProcess/API/C/WKMockMediaDevice.cpp @no-unify
 UIProcess/API/C/WKNavigationActionRef.cpp @no-unify
 UIProcess/API/C/WKNavigationDataRef.cpp @no-unify

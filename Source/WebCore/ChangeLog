@@ -1,3 +1,26 @@
+2018-08-21  Per Arne Vollan  <pvollan@apple.com>
+
+        [WebGL] Contexts are not updated when display configuration changed.
+        https://bugs.webkit.org/show_bug.cgi?id=188750
+
+        Reviewed by Brent Fulgham.
+
+        Calling CGDisplayRegisterReconfigurationCallback in GraphicsContext3DManager::addContext
+        returns kCGErrorSuccess when WindowServer access is blocked in the WebContent process,
+        but the callback function is never called. We should register the callback function in
+        the UI process, and send a message to the WebContent process when the display
+        configuration changed.
+
+        Test: fast/canvas/webgl/context-update-on-display-configuration.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContext3DManager.cpp:
+        (WebCore::GraphicsContext3DManager::displayWasReconfigured):
+        (WebCore::GraphicsContext3DManager::addContext):
+        (WebCore::GraphicsContext3DManager::removeContext):
+        (WebCore::displayWasReconfigured): Deleted.
+        * platform/graphics/GraphicsContext3DManager.h:
+
 2018-08-21  John Wilander  <wilander@apple.com>
 
         Make ResourceLoadObserver::logWebSocketLoading() handle websockets in detached frames

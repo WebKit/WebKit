@@ -86,6 +86,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#import <WebCore/GraphicsContext3DManager.h>
 #import <WebCore/ScrollbarThemeMac.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #endif
@@ -601,7 +602,12 @@ void WebProcess::scrollerStylePreferenceChanged(bool useOverlayScrollbars)
     NSScrollerStyle style = useOverlayScrollbars ? NSScrollerStyleOverlay : NSScrollerStyleLegacy;
     [NSScrollerImpPair _updateAllScrollerImpPairsForNewRecommendedScrollerStyle:style];
 }
-#endif    
+
+void WebProcess::displayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
+{
+    GraphicsContext3DManager::displayWasReconfigured(displayID, flags, nullptr);
+}
+#endif
 
 void WebProcess::setMediaMIMETypes(const Vector<String> types)
 {

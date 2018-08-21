@@ -2322,4 +2322,10 @@ void TestRunner::injectUserScript(JSStringRef script)
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), &returnData);
 }
 
+void TestRunner::sendDisplayConfigurationChangedMessageForTesting()
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SendDisplayConfigurationChangedMessageForTesting"));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
+}
+
 } // namespace WTR

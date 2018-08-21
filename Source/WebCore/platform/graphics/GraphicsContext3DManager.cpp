@@ -123,7 +123,7 @@ GraphicsContext3DManager& GraphicsContext3DManager::sharedManager()
 }
 
 #if PLATFORM(MAC)
-static void displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags flags, void*)
+void GraphicsContext3DManager::displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags flags, void*)
 {
     if (flags & kCGDisplaySetModeFlag)
         GraphicsContext3DManager::sharedManager().updateAllContexts();
@@ -158,7 +158,7 @@ void GraphicsContext3DManager::addContext(GraphicsContext3D* context, HostWindow
     if (!context)
         return;
     
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     if (!m_contexts.size())
         CGDisplayRegisterReconfigurationCallback(displayWasReconfigured, nullptr);
 #endif
@@ -175,7 +175,7 @@ void GraphicsContext3DManager::removeContext(GraphicsContext3D* context)
     m_contextWindowMap.remove(context);
     removeContextRequiringHighPerformance(context);
     
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     if (!m_contexts.size())
         CGDisplayRemoveReconfigurationCallback(displayWasReconfigured, nullptr);
 #endif

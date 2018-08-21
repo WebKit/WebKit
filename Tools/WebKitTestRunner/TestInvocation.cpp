@@ -1430,6 +1430,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SendDisplayConfigurationChangedMessageForTesting")) {
+        TestController::singleton().sendDisplayConfigurationChangedMessageForTesting();
+        return nullptr;
+    }
+
     ASSERT_NOT_REACHED();
     return nullptr;
 }

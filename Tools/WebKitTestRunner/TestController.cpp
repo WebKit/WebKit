@@ -43,6 +43,7 @@
 #include <WebKit/WKFrameHandleRef.h>
 #include <WebKit/WKFrameInfoRef.h>
 #include <WebKit/WKIconDatabase.h>
+#include <WebKit/WKMockDisplay.h>
 #include <WebKit/WKMockMediaDevice.h>
 #include <WebKit/WKNavigationResponseRef.h>
 #include <WebKit/WKNotification.h>
@@ -2968,5 +2969,10 @@ void TestController::injectUserScript(WKStringRef)
 }
 
 #endif
+
+void TestController::sendDisplayConfigurationChangedMessageForTesting()
+{
+    WKSendDisplayConfigurationChangedMessageForTesting(platformContext());
+}
 
 } // namespace WTR

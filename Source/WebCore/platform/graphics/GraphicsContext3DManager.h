@@ -25,11 +25,12 @@
 
 #pragma once
 
-#include <Timer.h>
+#include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
 #if PLATFORM(MAC)
+#include <CoreGraphics/CGDisplayConfiguration.h>
 #include <OpenGL/CGLTypes.h>
 #endif
 
@@ -65,6 +66,7 @@ public:
 
 #if PLATFORM(MAC)
     void screenDidChange(PlatformDisplayID, const HostWindow*);
+    WEBCORE_EXPORT static void displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags, void*);
 #endif
     
 private:

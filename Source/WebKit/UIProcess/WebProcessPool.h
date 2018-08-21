@@ -472,6 +472,8 @@ public:
     void removeMockMediaDevice(const String& persistentId);
     void resetMockMediaDevices();
 
+    void sendDisplayConfigurationChangedMessageForTesting();
+
 private:
     void platformInitialize();
 

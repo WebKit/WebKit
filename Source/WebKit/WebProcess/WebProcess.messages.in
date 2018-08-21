@@ -133,6 +133,7 @@ messages -> WebProcess LegacyReceiver {
     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     ScrollerStylePreferenceChanged(bool useOvelayScrollbars)
+    DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
 #endif
 #endif
 

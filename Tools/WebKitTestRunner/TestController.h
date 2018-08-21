@@ -219,6 +219,8 @@ public:
     void resetMockMediaDevices();
 
     void injectUserScript(WKStringRef);
+    
+    void sendDisplayConfigurationChangedMessageForTesting();
 
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);

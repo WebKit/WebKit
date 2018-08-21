@@ -846,3 +846,5 @@ webkit.org/b/183705 http/tests/workers/service/client-removed-from-clients-while
 webkit.org/b/183705 http/tests/workers/service/serviceworkerclients-matchAll.https.html [ Pass Failure ]
 
 webkit.org/b/187658 http/tests/security/bypassing-cors-checks-for-extension-urls.html [ Pass Failure ]
+
+[ Mojave+ ] fast/canvas/webgl/context-update-on-display-configuration.html [ Pass ]
