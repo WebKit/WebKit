@@ -185,7 +185,7 @@
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/PrintContext.h>
-#include <WebCore/PromisedBlobInfo.h>
+#include <WebCore/PromisedAttachmentInfo.h>
 #include <WebCore/Range.h>
 #include <WebCore/RemoteDOMWindow.h>
 #include <WebCore/RemoteFrame.h>
@@ -6073,24 +6073,11 @@ void WebPage::storageAccessResponse(bool wasGranted, uint64_t contextId)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void WebPage::insertAttachment(const String& identifier, const AttachmentDisplayOptions& options, const String& filename, std::optional<String> contentType, const IPC::DataReference& data, CallbackID callbackID)
+void WebPage::insertAttachment(const String& identifier, const AttachmentDisplayOptions& options, uint64_t fileSize, const String& fileName, std::optional<String> contentType, CallbackID callbackID)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
-    frame.editor().insertAttachment(identifier, options, filename, SharedBuffer::create(data.data(), data.size()), contentType);
+    frame.editor().insertAttachment(identifier, options, fileSize, fileName, WTFMove(contentType));
     send(Messages::WebPageProxy::VoidCallback(callbackID));
-}
-
-void WebPage::requestAttachmentInfo(const String& identifier, CallbackID callbackID)
-{
-    auto attachment = attachmentElementWithIdentifier(identifier);
-    if (!attachment) {
-        send(Messages::WebPageProxy::AttachmentInfoCallback({ }, callbackID));
-        return;
-    }
-
-    attachment->requestInfo([callbackID, protectedThis = makeRef(*this), protectedAttachment = WTFMove(attachment)] (const AttachmentInfo& info) {
-        protectedThis->send(Messages::WebPageProxy::AttachmentInfoCallback(info, callbackID));
-    });
 }
 
 void WebPage::setAttachmentDisplayOptions(const String&, const AttachmentDisplayOptions&, CallbackID callbackID)
@@ -6098,11 +6085,11 @@ void WebPage::setAttachmentDisplayOptions(const String&, const AttachmentDisplay
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
-void WebPage::setAttachmentDataAndContentType(const String& identifier, const IPC::DataReference& data, std::optional<String> newContentType, std::optional<String> newFilename, CallbackID callbackID)
+void WebPage::updateAttachmentAttributes(const String& identifier, uint64_t fileSize, std::optional<String> newContentType, std::optional<String> newFilename, CallbackID callbackID)
 {
     if (auto attachment = attachmentElementWithIdentifier(identifier)) {
         attachment->document().updateLayout();
-        attachment->updateFileWithData(SharedBuffer::create(data.data(), data.size()), WTFMove(newContentType), WTFMove(newFilename));
+        attachment->updateAttributes(fileSize, WTFMove(newContentType), WTFMove(newFilename));
     }
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }

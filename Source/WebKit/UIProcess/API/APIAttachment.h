@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+
 #include "APIObject.h"
 #include "WKBase.h"
 #include "WebPageProxy.h"
@@ -32,10 +34,11 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
+OBJC_CLASS NSFileWrapper;
+
 namespace WebCore {
 class SharedBuffer;
 struct AttachmentDisplayOptions;
-struct AttachmentInfo;
 }
 
 namespace WebKit {
@@ -50,15 +53,32 @@ public:
     virtual ~Attachment();
 
     const WTF::String& identifier() const { return m_identifier; }
-    void requestInfo(Function<void(const WebCore::AttachmentInfo&, WebKit::CallbackBase::Error)>&&);
     void setDisplayOptions(WebCore::AttachmentDisplayOptions, Function<void(WebKit::CallbackBase::Error)>&&);
-    void setDataAndContentType(WebCore::SharedBuffer&, const WTF::String& newContentType, const WTF::String& newFilename, Function<void(WebKit::CallbackBase::Error)>&&);
+    void updateAttributes(uint64_t fileSize, const WTF::String& newContentType, const WTF::String& newFilename, Function<void(WebKit::CallbackBase::Error)>&&);
+
+#if PLATFORM(COCOA)
+    NSFileWrapper *fileWrapper() const { return m_fileWrapper.get(); }
+    void setFileWrapper(NSFileWrapper *fileWrapper) { m_fileWrapper = fileWrapper; }
+#endif
+
+    const WTF::String& filePath() const { return m_filePath; }
+    void setFilePath(const WTF::String& filePath) { m_filePath = filePath; }
+
+    const WTF::String& contentType() const { return m_contentType; }
+    void setContentType(const WTF::String& contentType) { m_contentType = contentType; }
 
 private:
     explicit Attachment(const WTF::String& identifier, WebKit::WebPageProxy&);
 
+#if PLATFORM(COCOA)
+    RetainPtr<NSFileWrapper> m_fileWrapper;
+#endif
     WTF::String m_identifier;
+    WTF::String m_filePath;
+    WTF::String m_contentType;
     WeakPtr<WebKit::WebPageProxy> m_webPage;
 };
 
 } // namespace API
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)

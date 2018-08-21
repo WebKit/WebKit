@@ -176,9 +176,6 @@ messages -> WebPageProxy {
     EditingRangeCallback(struct WebKit::EditingRange range, WebKit::CallbackID callbackID)
     UnsignedCallback(uint64_t result, WebKit::CallbackID callbackID)
     RectForCharacterRangeCallback(WebCore::IntRect rect, struct WebKit::EditingRange actualRange, WebKit::CallbackID callbackID)
-#if ENABLE(ATTACHMENT_ELEMENT)
-    AttachmentInfoCallback(struct WebCore::AttachmentInfo info, WebKit::CallbackID callbackID);
-#endif
 #if ENABLE(APPLICATION_MANIFEST)
     ApplicationManifestCallback(std::optional<WebCore::ApplicationManifest> manifest, WebKit::CallbackID callbackID)
 #endif
@@ -529,6 +526,9 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
+    RegisterAttachmentIdentifierFromData(String identifier, String contentType, String preferredFileName, IPC::DataReference data)
+    RegisterAttachmentIdentifierFromFilePath(String identifier, String contentType, String filePath)
+    CloneAttachmentData(String fromIdentifier, String toIdentifier)
     DidInsertAttachment(String identifier, String source)
     DidRemoveAttachment(String identifier)
 #endif

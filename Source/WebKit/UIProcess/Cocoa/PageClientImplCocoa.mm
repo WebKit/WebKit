@@ -52,6 +52,7 @@ void PageClientImplCocoa::didInsertAttachment(const String& identifier, const St
     [m_webView _didInsertAttachment:identifier withSource:source];
 #else
     UNUSED_PARAM(identifier);
+    UNUSED_PARAM(source);
 #endif
 }
 

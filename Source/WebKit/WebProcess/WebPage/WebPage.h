@@ -168,7 +168,7 @@ struct GlobalFrameIdentifier;
 struct GlobalWindowIdentifier;
 struct Highlight;
 struct KeypressCommand;
-struct PromisedBlobInfo;
+struct PromisedAttachmentInfo;
 struct TextCheckingResult;
 struct ViewportArguments;
 
@@ -1075,10 +1075,9 @@ public:
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void insertAttachment(const String& identifier, const WebCore::AttachmentDisplayOptions&, const String& filename, std::optional<String> contentType, const IPC::DataReference&, CallbackID);
-    void requestAttachmentInfo(const String& identifier, CallbackID);
+    void insertAttachment(const String& identifier, const WebCore::AttachmentDisplayOptions&, uint64_t fileSize, const String& fileName, std::optional<String> contentType, CallbackID);
     void setAttachmentDisplayOptions(const String& identifier, const WebCore::AttachmentDisplayOptions&, CallbackID);
-    void setAttachmentDataAndContentType(const String& identifier, const IPC::DataReference&, std::optional<String> newContentType, std::optional<String> newFilename, CallbackID);
+    void updateAttachmentAttributes(const String& identifier, uint64_t fileSize, std::optional<String> newContentType, std::optional<String> newFilename, CallbackID);
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)

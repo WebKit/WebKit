@@ -3818,6 +3818,24 @@ void Editor::scheduleEditorUIUpdate()
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
+void Editor::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& preferredFileName, Ref<SharedBuffer>&& data)
+{
+    if (auto* client = this->client())
+        client->registerAttachmentIdentifier(identifier, contentType, preferredFileName, WTFMove(data));
+}
+
+void Editor::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& filePath)
+{
+    if (auto* client = this->client())
+        client->registerAttachmentIdentifier(identifier, contentType, filePath);
+}
+
+void Editor::cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier)
+{
+    if (auto* client = this->client())
+        client->cloneAttachmentData(fromIdentifier, toIdentifier);
+}
+
 void Editor::didInsertAttachmentElement(HTMLAttachmentElement& attachment)
 {
     auto identifier = attachment.uniqueIdentifier();
@@ -3862,28 +3880,11 @@ void Editor::notifyClientOfAttachmentUpdates()
     }
 }
 
-void Editor::insertAttachment(const String& identifier, const AttachmentDisplayOptions& options, const String& filename, const String& filepath, std::optional<String> contentType)
-{
-    if (!contentType)
-        contentType = File::contentTypeForFile(filename);
-    insertAttachmentFromFile(identifier, options, filename, *contentType, File::create(filepath));
-}
-
-void Editor::insertAttachment(const String& identifier, const AttachmentDisplayOptions& options, const String& filename, Ref<SharedBuffer>&& data, std::optional<String> contentType)
-{
-    if (!contentType)
-        contentType = File::contentTypeForFile(filename);
-    insertAttachmentFromFile(identifier, options, filename, *contentType, File::create(Blob::create(WTFMove(data), *contentType), filename));
-}
-
-void Editor::insertAttachmentFromFile(const String& identifier, const AttachmentDisplayOptions&, const String& filename, const String& contentType, Ref<File>&& file)
+void Editor::insertAttachment(const String& identifier, const AttachmentDisplayOptions&, uint64_t fileSize, const String& fileName, std::optional<String>&& explicitContentType)
 {
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document());
-    attachment->setAttribute(HTMLNames::titleAttr, filename);
-    attachment->setAttribute(HTMLNames::subtitleAttr, fileSizeDescription(file->size()));
-    attachment->setAttribute(HTMLNames::typeAttr, contentType);
     attachment->setUniqueIdentifier(identifier);
-    attachment->setFile(WTFMove(file));
+    attachment->updateAttributes(fileSize, WTFMove(explicitContentType), fileName);
 
     auto fragmentToInsert = document().createDocumentFragment();
     fragmentToInsert->appendChild(attachment.get());

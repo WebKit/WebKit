@@ -35,7 +35,7 @@ OBJC_CLASS WKContentView;
 OBJC_CLASS WKEditorUndoTargetObjC;
 
 namespace WebCore {
-struct PromisedBlobInfo;
+struct PromisedAttachmentInfo;
 }
 
 namespace WebKit {

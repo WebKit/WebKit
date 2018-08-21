@@ -44,19 +44,26 @@ WK_CLASS_AVAILABLE(macosx(10.13.4), ios(11.3))
 
 WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKAttachmentInfo : NSObject
-@property (nonatomic, readonly) NSString *contentType;
-@property (nonatomic, readonly) NSString *name;
-@property (nonatomic, readonly) NSString *filePath;
+@property (nonatomic, readonly, nullable) NSString *contentType;
+@property (nonatomic, readonly, nullable) NSString *name;
+@property (nonatomic, readonly, nullable) NSString *filePath;
 @property (nonatomic, readonly, nullable) NSData *data;
+@property (nonatomic, readonly, nullable) NSFileWrapper *fileWrapper;
 @end
 
 WK_CLASS_AVAILABLE(macosx(10.13.4), ios(11.3))
 @interface _WKAttachment : NSObject
-- (void)requestInfo:(void(^)(_WKAttachmentInfo * _Nullable, NSError * _Nullable))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)requestData:(void(^)(NSData * _Nullable, NSError * _Nullable))completionHandler;
+
 - (void)setDisplayOptions:(_WKAttachmentDisplayOptions *)options completion:(void(^ _Nullable)(NSError * _Nullable))completionHandler;
-- (void)setData:(NSData *)data newContentType:(nullable NSString *)newContentType newFilename:(nullable NSString *)newFilename completion:(void(^ _Nullable)(NSError * _Nullable))completionHandler;
+- (void)setFileWrapper:(NSFileWrapper *)fileWrapper contentType:(nullable NSString *)contentType completion:(void(^ _Nullable)(NSError * _Nullable))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+@property (nonatomic, readonly) _WKAttachmentInfo *info WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, readonly) NSString *uniqueIdentifier;
+
+// Deprecated SPI.
+- (void)requestInfo:(void(^)(_WKAttachmentInfo * _Nullable, NSError * _Nullable))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("-info", macosx(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));
+- (void)setData:(NSData *)data newContentType:(nullable NSString *)newContentType newFilename:(nullable NSString *)newFilename completion:(void(^ _Nullable)(NSError * _Nullable))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("Please use -setFileWrapper:contentType:completion: instead.", macosx(10.13.4, WK_MAC_TBA), ios(11.3, WK_IOS_TBA));
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -69,7 +69,7 @@
 #include "PluginDocument.h"
 #include "PluginViewBase.h"
 #include "Position.h"
-#include "PromisedBlobInfo.h"
+#include "PromisedAttachmentInfo.h"
 #include "RenderAttachment.h"
 #include "RenderFileUploadControl.h"
 #include "RenderImage.h"
@@ -1136,11 +1136,11 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         auto previousSelection = src.selection().selection();
         selectElement(element);
 
-        PromisedBlobInfo promisedBlob;
+        PromisedAttachmentInfo promisedAttachment;
         if (hasData == HasNonDefaultPasteboardData::No) {
-            promisedBlob = promisedBlobInfo(src, attachment);
+            promisedAttachment = promisedAttachmentInfo(src, attachment);
             auto& editor = src.editor();
-            if (!promisedBlob && editor.client()) {
+            if (!promisedAttachment && editor.client()) {
 #if PLATFORM(COCOA)
                 // Otherwise, if no file URL is specified, call out to the injected bundle to populate the pasteboard with data.
                 editor.willWriteSelectionToPasteboard(src.selection().toNormalizedRange().get());
@@ -1164,7 +1164,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             dragLoc = dragLocForSelectionDrag(src);
             m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
         }
-        doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state, WTFMove(promisedBlob));
+        doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state, WTFMove(promisedAttachment));
         if (!element.isContentRichlyEditable())
             src.selection().setSelection(previousSelection);
         src.editor().setIgnoreSelectionChanges(false);
@@ -1270,7 +1270,7 @@ void DragController::beginDrag(DragItem dragItem, Frame& frame, const IntPoint& 
     cleanupAfterSystemDrag();
 }
 
-void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, const IntPoint& eventPos, Frame& frame, const DragState& state, PromisedBlobInfo&& promisedBlob)
+void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, const IntPoint& eventPos, Frame& frame, const DragState& state, PromisedAttachmentInfo&& promisedAttachmentInfo)
 {
     m_didInitiateDrag = true;
     m_dragInitiator = frame.document();
@@ -1281,7 +1281,7 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
     DragItem item;
     item.image = WTFMove(image);
     item.sourceAction = state.type;
-    item.promisedBlob = WTFMove(promisedBlob);
+    item.promisedAttachmentInfo = WTFMove(promisedAttachmentInfo);
 
     auto eventPositionInRootViewCoordinates = frame.view()->contentsToRootView(eventPos);
     auto dragLocationInRootViewCoordinates = frame.view()->contentsToRootView(dragLoc);
@@ -1367,11 +1367,8 @@ String DragController::platformContentTypeForBlobType(const String& type) const
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-PromisedBlobInfo DragController::promisedBlobInfo(Frame& frame, HTMLAttachmentElement& attachment)
+PromisedAttachmentInfo DragController::promisedAttachmentInfo(Frame& frame, HTMLAttachmentElement& attachment)
 {
-    if (!attachment.file())
-        return { };
-
     Vector<String> additionalTypes;
     Vector<RefPtr<SharedBuffer>> additionalData;
 #if PLATFORM(COCOA)
@@ -1379,8 +1376,10 @@ PromisedBlobInfo DragController::promisedBlobInfo(Frame& frame, HTMLAttachmentEl
         frame.editor().getPasteboardTypesAndDataForAttachment(attachment, additionalTypes, additionalData);
 #endif
 
-    auto& file = *attachment.file();
-    return { file.url(), platformContentTypeForBlobType(file.type()), file.name(), WTFMove(additionalTypes), WTFMove(additionalData) };
+    if (auto* file = attachment.file())
+        return { file->url(), platformContentTypeForBlobType(file->type()), file->name(), attachment.uniqueIdentifier(), WTFMove(additionalTypes), WTFMove(additionalData) };
+
+    return { { }, platformContentTypeForBlobType(attachment.attachmentType()), attachment.attachmentTitle(), attachment.uniqueIdentifier(), WTFMove(additionalTypes), WTFMove(additionalData) };
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)

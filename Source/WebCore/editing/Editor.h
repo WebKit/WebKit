@@ -503,8 +503,10 @@ public:
     bool isGettingDictionaryPopupInfo() const { return m_isGettingDictionaryPopupInfo; }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    WEBCORE_EXPORT void insertAttachment(const String& identifier, const AttachmentDisplayOptions&, const String& filename, const String& filepath, std::optional<String> contentType = std::nullopt);
-    WEBCORE_EXPORT void insertAttachment(const String& identifier, const AttachmentDisplayOptions&, const String& filename, Ref<SharedBuffer>&& data, std::optional<String> contentType = std::nullopt);
+    WEBCORE_EXPORT void insertAttachment(const String& identifier, const AttachmentDisplayOptions&, uint64_t fileSize, const String& fileName, std::optional<String>&& explicitContentType = std::nullopt);
+    void registerAttachmentIdentifier(const String&, const String& /* contentType */, const String& /* preferredFileName */, Ref<SharedBuffer>&&);
+    void registerAttachmentIdentifier(const String&, const String& /* contentType */, const String& /* filePath */);
+    void cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier);
     void didInsertAttachmentElement(HTMLAttachmentElement&);
     void didRemoveAttachmentElement(HTMLAttachmentElement&);
 
@@ -515,10 +517,6 @@ public:
 
 private:
     Document& document() const;
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-    void insertAttachmentFromFile(const String& identifier, const AttachmentDisplayOptions&, const String& filename, const String& contentType, Ref<File>&&);
-#endif
 
     bool canDeleteRange(Range*) const;
     bool canSmartReplaceWithPasteboard(Pasteboard&);

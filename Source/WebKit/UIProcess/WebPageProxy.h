@@ -135,6 +135,7 @@ class MediaSessionMetadata;
 #endif
 
 namespace API {
+class Attachment;
 class ContextMenuClient;
 class FindClient;
 class FindMatchesClient;
@@ -197,7 +198,6 @@ using FloatBoxExtent = RectEdges<float>;
 #if ENABLE(ATTACHMENT_ELEMENT)
 namespace WebCore {
 struct AttachmentDisplayOptions;
-struct AttachmentInfo;
 }
 #endif
 
@@ -274,10 +274,6 @@ typedef GenericCallback<uint64_t> UnsignedCallback;
 typedef GenericCallback<EditingRange> EditingRangeCallback;
 typedef GenericCallback<const String&> StringCallback;
 typedef GenericCallback<API::SerializedScriptValue*, bool, const WebCore::ExceptionDetails&> ScriptValueCallback;
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-typedef GenericCallback<const WebCore::AttachmentInfo&> AttachmentInfoCallback;
-#endif
 
 #if PLATFORM(GTK)
 typedef GenericCallback<API::Error*> PrintFinishedCallback;
@@ -1319,11 +1315,10 @@ public:
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void insertAttachment(const String& identifier, const WebCore::AttachmentDisplayOptions&, const String& filename, std::optional<String> contentType, WebCore::SharedBuffer& data, Function<void(CallbackBase::Error)>&&);
-    void requestAttachmentInfo(const String& identifier, Function<void(const WebCore::AttachmentInfo&, CallbackBase::Error)>&&);
+    RefPtr<API::Attachment> attachmentForIdentifier(const String& identifier) const;
+    void insertAttachment(Ref<API::Attachment>&&, const WebCore::AttachmentDisplayOptions&, uint64_t fileSize, const String& fileName, std::optional<String> contentType, Function<void(CallbackBase::Error)>&&);
     void setAttachmentDisplayOptions(const String& identifier, WebCore::AttachmentDisplayOptions, Function<void(CallbackBase::Error)>&&);
-    void setAttachmentDataAndContentType(const String& identifier, WebCore::SharedBuffer& data, std::optional<String>&& newContentType, std::optional<String>&& newFilename, Function<void(CallbackBase::Error)>&&);
-    void attachmentInfoCallback(const WebCore::AttachmentInfo&, CallbackID);
+    void updateAttachmentAttributes(const String& identifier, uint64_t fileSize, std::optional<String>&& newContentType, std::optional<String>&& newFilename, Function<void(CallbackBase::Error)>&&);
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -1808,8 +1803,17 @@ private:
     void stopAllURLSchemeTasks();
 
 #if ENABLE(ATTACHMENT_ELEMENT)
+    void registerAttachmentIdentifierFromData(const String& identifier, const String& contentType, const String& preferredFileName, const IPC::DataReference&);
+    void registerAttachmentIdentifierFromFilePath(const String& identifier, const String& contentType, const String& filePath);
+    void cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier);
+
+    void platformRegisterAttachment(Ref<API::Attachment>&&, const String& preferredFileName, const IPC::DataReference&);
+    void platformRegisterAttachment(Ref<API::Attachment>&&, const String& filePath);
+    void platformCloneAttachment(Ref<API::Attachment>&& fromAttachment, Ref<API::Attachment>&& toAttachment);
+
     void didInsertAttachment(const String& identifier, const String& source);
     void didRemoveAttachment(const String& identifier);
+    Ref<API::Attachment> ensureAttachment(const String& identifier);
 #endif
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
@@ -2209,6 +2213,10 @@ private:
 
     HashMap<String, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByScheme;
     HashMap<uint64_t, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByIdentifier;
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    HashMap<String, Ref<API::Attachment>> m_attachmentIdentifierToAttachmentMap;
+#endif
         
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     std::unique_ptr<DisplayLink> m_displayLink;

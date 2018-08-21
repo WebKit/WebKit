@@ -173,7 +173,6 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/Automation/mac/WebAutomationSessionMac.mm
 
-    UIProcess/API/APIAttachment.cpp
     UIProcess/API/APIUserScript.cpp
     UIProcess/API/APIUserStyleSheet.cpp
     UIProcess/API/APIWebsiteDataRecord.cpp

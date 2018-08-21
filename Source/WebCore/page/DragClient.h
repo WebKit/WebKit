@@ -37,7 +37,7 @@ class DataTransfer;
 class Element;
 class Frame;
 class Image;
-struct PromisedBlobInfo;
+struct PromisedAttachmentInfo;
 
 class DragClient {
 public:

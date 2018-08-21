@@ -32,12 +32,8 @@
 
 namespace WebCore {
 
-class AttachmentDataReader;
 class File;
-class HTMLImageElement;
-class HTMLVideoElement;
 class RenderAttachment;
-class SharedBuffer;
 
 class HTMLAttachmentElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLAttachmentElement);
@@ -53,19 +49,18 @@ public:
     String uniqueIdentifier() const { return m_uniqueIdentifier; }
     void setUniqueIdentifier(const String& uniqueIdentifier) { m_uniqueIdentifier = uniqueIdentifier; }
 
-    WEBCORE_EXPORT void updateFileWithData(Ref<SharedBuffer>&& data, std::optional<String>&& newContentType = std::nullopt, std::optional<String>&& newFilename = std::nullopt);
+    WEBCORE_EXPORT void updateAttributes(uint64_t fileSize, std::optional<String>&& newContentType = std::nullopt, std::optional<String>&& newFilename = std::nullopt);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;
+
+    String ensureUniqueIdentifier();
 
     WEBCORE_EXPORT String attachmentTitle() const;
     String attachmentType() const;
     String attachmentPath() const;
 
     RenderAttachment* renderer() const;
-
-    WEBCORE_EXPORT void requestInfo(Function<void(const AttachmentInfo&)>&& callback);
-    void destroyReader(AttachmentDataReader&);
 
 private:
     HTMLAttachmentElement(const QualifiedName&, Document&);
@@ -83,7 +78,6 @@ private:
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     
     RefPtr<File> m_file;
-    Vector<std::unique_ptr<AttachmentDataReader>> m_attachmentReaders;
     String m_uniqueIdentifier;
 };
 

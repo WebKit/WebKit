@@ -4817,7 +4817,7 @@
 		F478755419983AFF0024A287 /* ScrollSnapAnimatorState.h in Headers */ = {isa = PBXBuildFile; fileRef = F478755219983AFF0024A287 /* ScrollSnapAnimatorState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F47A09D120A93A9700240FAE /* DisabledAdaptations.h in Headers */ = {isa = PBXBuildFile; fileRef = F47A09CF20A939F600240FAE /* DisabledAdaptations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F47A5E3E195B8C8A00483100 /* StyleScrollSnapPoints.h in Headers */ = {isa = PBXBuildFile; fileRef = F47A5E3B195B8C8A00483100 /* StyleScrollSnapPoints.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		F47A633D1FF6FD500081B3CC /* PromisedBlobInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F47A633C1FF6FD500081B3CC /* PromisedBlobInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F47A633D1FF6FD500081B3CC /* PromisedAttachmentInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F47A633C1FF6FD500081B3CC /* PromisedAttachmentInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F48223101E3869B80066FC79 /* WebItemProviderPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = F482230E1E3869B80066FC79 /* WebItemProviderPasteboard.mm */; };
 		F48223111E3869B80066FC79 /* WebItemProviderPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F482230F1E3869B80066FC79 /* WebItemProviderPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F48223131E386E240066FC79 /* AbstractPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F48223121E386E240066FC79 /* AbstractPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14567,7 +14567,7 @@
 		F47A09D420A9DD0400240FAE /* DisabledAdaptations.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisabledAdaptations.cpp; sourceTree = "<group>"; };
 		F47A5E3A195B8C8A00483100 /* StyleScrollSnapPoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleScrollSnapPoints.cpp; sourceTree = "<group>"; };
 		F47A5E3B195B8C8A00483100 /* StyleScrollSnapPoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleScrollSnapPoints.h; sourceTree = "<group>"; };
-		F47A633C1FF6FD500081B3CC /* PromisedBlobInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PromisedBlobInfo.h; sourceTree = "<group>"; };
+		F47A633C1FF6FD500081B3CC /* PromisedAttachmentInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PromisedAttachmentInfo.h; sourceTree = "<group>"; };
 		F482230E1E3869B80066FC79 /* WebItemProviderPasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebItemProviderPasteboard.mm; sourceTree = "<group>"; };
 		F482230F1E3869B80066FC79 /* WebItemProviderPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebItemProviderPasteboard.h; sourceTree = "<group>"; };
 		F48223121E386E240066FC79 /* AbstractPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractPasteboard.h; sourceTree = "<group>"; };
@@ -24603,7 +24603,7 @@
 				BC3BE12A0E98092F00835588 /* PopupMenuStyle.h */,
 				51F645D21FECDBC800B54DED /* Process.cpp */,
 				51F645D31FECDBC800B54DED /* Process.h */,
-				F47A633C1FF6FD500081B3CC /* PromisedBlobInfo.h */,
+				F47A633C1FF6FD500081B3CC /* PromisedAttachmentInfo.h */,
 				0081FEFD16B0A244008AAA7A /* PublicSuffix.h */,
 				5C97A3361F5F7A6500105207 /* RectEdges.h */,
 				CA1635DC2072E76900E7D2CE /* ReferrerPolicy.cpp */,
@@ -29851,7 +29851,7 @@
 				A715E653134BBBEC00D8E713 /* ProgressShadowElement.h in Headers */,
 				1A2A68240B5BEDE70002A480 /* ProgressTracker.h in Headers */,
 				1ACADD791880D91C00D8B71D /* ProgressTrackerClient.h in Headers */,
-				F47A633D1FF6FD500081B3CC /* PromisedBlobInfo.h in Headers */,
+				F47A633D1FF6FD500081B3CC /* PromisedAttachmentInfo.h in Headers */,
 				A578F4351DE00EEB003DFC6A /* PromiseRejectionEvent.h in Headers */,
 				E4BBED0F14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.h in Headers */,
 				37BAAE581980D1DD005DFE71 /* ProtectionSpace.h in Headers */,

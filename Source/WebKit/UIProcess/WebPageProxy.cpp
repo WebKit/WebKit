@@ -5601,22 +5601,6 @@ void WebPageProxy::voidCallback(CallbackID callbackID)
     callback->performCallback();
 }
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-
-void WebPageProxy::attachmentInfoCallback(const WebCore::AttachmentInfo& info, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<AttachmentInfoCallback>(callbackID);
-    if (!callback) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    MESSAGE_CHECK_URL(info.filePath);
-    callback->performCallbackWithReturnValue(info);
-}
-
-#endif
-
 void WebPageProxy::dataCallback(const IPC::DataReference& dataReference, CallbackID callbackID)
 {
     auto callback = m_callbacks.take<DataCallback>(callbackID);
@@ -6194,6 +6178,12 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_currentlyProcessedWheelEvents.clear();
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     m_touchEventQueue.clear();
+#endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    for (auto identifier : m_attachmentIdentifierToAttachmentMap.keys())
+        m_pageClient.didRemoveAttachment(identifier);
+    m_attachmentIdentifierToAttachmentMap.clear();
 #endif
 
     if (terminationReason != ProcessTerminationReason::NavigationSwap) {
@@ -7748,26 +7738,29 @@ void WebPageProxy::touchBarMenuItemDataRemoved(const TouchBarMenuItemData& touch
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void WebPageProxy::insertAttachment(const String& identifier, const AttachmentDisplayOptions& options, const String& filename, std::optional<String> contentType, SharedBuffer& data, Function<void(CallbackBase::Error)>&& callback)
+RefPtr<API::Attachment> WebPageProxy::attachmentForIdentifier(const String& identifier) const
+{
+    if (identifier.isEmpty())
+        return nullptr;
+
+    return m_attachmentIdentifierToAttachmentMap.get(identifier);
+}
+
+void WebPageProxy::insertAttachment(Ref<API::Attachment>&& attachment, const AttachmentDisplayOptions& options, uint64_t fileSize, const String& filename, std::optional<String> contentType, Function<void(CallbackBase::Error)>&& callback)
 {
     if (!isValid()) {
         callback(CallbackBase::Error::OwnerWasInvalidated);
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
-    m_process->send(Messages::WebPage::InsertAttachment(identifier, options, filename, contentType, IPC::SharedBufferDataReference { &data }, callbackID), m_pageID);
-}
+    if (contentType)
+        attachment->setContentType(*contentType);
 
-void WebPageProxy::requestAttachmentInfo(const String& identifier, Function<void(const AttachmentInfo&, CallbackBase::Error)>&& callback)
-{
-    if (!isValid()) {
-        callback({ }, CallbackBase::Error::OwnerWasInvalidated);
-        return;
-    }
+    auto attachmentIdentifier = attachment->identifier();
+    m_attachmentIdentifierToAttachmentMap.set(attachmentIdentifier, WTFMove(attachment));
 
     auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
-    m_process->send(Messages::WebPage::RequestAttachmentInfo(identifier, callbackID), m_pageID);
+    m_process->send(Messages::WebPage::InsertAttachment(attachmentIdentifier, options, fileSize, filename, contentType, callbackID), m_pageID);
 }
 
 void WebPageProxy::setAttachmentDisplayOptions(const String& identifier, AttachmentDisplayOptions options, Function<void(CallbackBase::Error)>&& callback)
@@ -7781,7 +7774,7 @@ void WebPageProxy::setAttachmentDisplayOptions(const String& identifier, Attachm
     m_process->send(Messages::WebPage::SetAttachmentDisplayOptions(identifier, options, callbackID), m_pageID);
 }
 
-void WebPageProxy::setAttachmentDataAndContentType(const String& identifier, SharedBuffer& data, std::optional<String>&& newContentType, std::optional<String>&& newFilename, Function<void(CallbackBase::Error)>&& callback)
+void WebPageProxy::updateAttachmentAttributes(const String& identifier, uint64_t fileSize, std::optional<String>&& newContentType, std::optional<String>&& newFilename, Function<void(CallbackBase::Error)>&& callback)
 {
     if (!isValid()) {
         callback(CallbackBase::Error::OwnerWasInvalidated);
@@ -7789,17 +7782,85 @@ void WebPageProxy::setAttachmentDataAndContentType(const String& identifier, Sha
     }
 
     auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
-    m_process->send(Messages::WebPage::SetAttachmentDataAndContentType(identifier, IPC::SharedBufferDataReference { &data }, WTFMove(newContentType), WTFMove(newFilename), callbackID), m_pageID);
+    m_process->send(Messages::WebPage::UpdateAttachmentAttributes(identifier, fileSize, WTFMove(newContentType), WTFMove(newFilename), callbackID), m_pageID);
 }
+
+void WebPageProxy::registerAttachmentIdentifierFromData(const String& identifier, const String& contentType, const String& preferredFileName, const IPC::DataReference& data)
+{
+    if (attachmentForIdentifier(identifier))
+        return;
+
+    auto attachment = ensureAttachment(identifier);
+    attachment->setContentType(contentType);
+    m_attachmentIdentifierToAttachmentMap.set(identifier, attachment.copyRef());
+
+    platformRegisterAttachment(WTFMove(attachment), preferredFileName, data);
+}
+
+void WebPageProxy::registerAttachmentIdentifierFromFilePath(const String& identifier, const String& contentType, const String& filePath)
+{
+    if (attachmentForIdentifier(identifier))
+        return;
+
+    auto attachment = ensureAttachment(identifier);
+    attachment->setContentType(contentType);
+    attachment->setFilePath(filePath);
+    m_attachmentIdentifierToAttachmentMap.set(identifier, attachment.copyRef());
+
+    platformRegisterAttachment(WTFMove(attachment), filePath);
+}
+
+void WebPageProxy::cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier)
+{
+    auto newAttachment = ensureAttachment(toIdentifier);
+    auto existingAttachment = attachmentForIdentifier(fromIdentifier);
+    if (!existingAttachment) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    newAttachment->setContentType(existingAttachment->contentType());
+    newAttachment->setFilePath(existingAttachment->filePath());
+
+    platformCloneAttachment(existingAttachment.releaseNonNull(), WTFMove(newAttachment));
+}
+
+#if !PLATFORM(COCOA)
+
+void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&&, const String& preferredFileName, const IPC::DataReference&)
+{
+}
+
+void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&&, const String&)
+{
+}
+
+void WebPageProxy::platformCloneAttachment(Ref<API::Attachment>&&, Ref<API::Attachment>&&)
+{
+}
+
+#endif
 
 void WebPageProxy::didInsertAttachment(const String& identifier, const String& source)
 {
+    ensureAttachment(identifier);
     m_pageClient.didInsertAttachment(identifier, source);
 }
 
 void WebPageProxy::didRemoveAttachment(const String& identifier)
 {
+    ASSERT(attachmentForIdentifier(identifier));
     m_pageClient.didRemoveAttachment(identifier);
+}
+
+Ref<API::Attachment> WebPageProxy::ensureAttachment(const String& identifier)
+{
+    if (auto existingAttachment = attachmentForIdentifier(identifier))
+        return *existingAttachment;
+
+    auto attachment = API::Attachment::create(identifier, *this);
+    m_attachmentIdentifierToAttachmentMap.set(identifier, attachment.copyRef());
+    return attachment;
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)

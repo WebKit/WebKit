@@ -32,8 +32,6 @@
 
 namespace WebCore {
 
-class SharedBuffer;
-
 struct AttachmentDisplayOptions {
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<AttachmentDisplayOptions> decode(Decoder&);
@@ -49,13 +47,6 @@ template<class Decoder> inline std::optional<AttachmentDisplayOptions> Attachmen
     UNUSED_PARAM(decoder);
     return AttachmentDisplayOptions();
 }
-
-struct AttachmentInfo {
-    String contentType;
-    String name;
-    String filePath;
-    RefPtr<SharedBuffer> data;
-};
 
 } // namespace WebCore
 

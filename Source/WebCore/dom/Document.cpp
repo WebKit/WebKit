@@ -7944,15 +7944,21 @@ Vector<RefPtr<WebAnimation>> Document::getAnimations()
 void Document::didInsertAttachmentElement(HTMLAttachmentElement& attachment)
 {
     auto identifier = attachment.uniqueIdentifier();
-    if (identifier.isEmpty() || m_attachmentIdentifierToElementMap.contains(identifier)) {
+    auto previousIdentifier = identifier;
+    bool previousIdentifierIsNotUnique = !previousIdentifier.isEmpty() && m_attachmentIdentifierToElementMap.contains(previousIdentifier);
+    if (identifier.isEmpty() || previousIdentifierIsNotUnique) {
+        previousIdentifier = identifier;
         identifier = createCanonicalUUIDString();
         attachment.setUniqueIdentifier(identifier);
     }
 
     m_attachmentIdentifierToElementMap.set(identifier, attachment);
 
-    if (frame())
-        frame()->editor().didInsertAttachmentElement(attachment);
+    if (auto* frame = this->frame()) {
+        if (previousIdentifierIsNotUnique)
+            frame->editor().cloneAttachmentData(previousIdentifier, identifier);
+        frame->editor().didInsertAttachmentElement(attachment);
+    }
 }
 
 void Document::didRemoveAttachmentElement(HTMLAttachmentElement& attachment)

@@ -680,7 +680,7 @@ static NSArray *dragAndDropEventNames()
     return self.overridePerformDropBlock ? self.overridePerformDropBlock(session) : session.items;
 }
 
-- (void)_webView:(WKWebView *)webView didInsertAttachment:(_WKAttachment *)attachment
+- (void)_webView:(WKWebView *)webView didInsertAttachment:(_WKAttachment *)attachment withSource:(NSString *)source
 {
     [_insertedAttachments addObject:attachment];
 }

@@ -1,3 +1,43 @@
+2018-08-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Augment _WKAttachment SPI to handle NSFileWrappers in addition to NSData
+        https://bugs.webkit.org/show_bug.cgi?id=188496
+        <rdar://problem/43216836>
+
+        Reviewed by Tim Horton.
+
+        Adjusts existing attachment API tests. See below for more detail.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (-[TestWKWebView synchronouslyInsertAttachmentWithFileWrapper:contentType:]):
+        (-[TestWKWebView synchronouslyInsertAttachmentWithFilename:contentType:data:]):
+        (-[_WKAttachment synchronouslySetData:newContentType:newFilename:error:]):
+        (-[_WKAttachment synchronouslySetFileWrapper:newContentType:error:]):
+
+        Move off of deprecated attachment SPI, and add new helper functions to synchronously insert a new attachment or
+        update an existing attachment with a file wrapper.
+
+        (-[_WKAttachment expectRequestedDataToBe:]):
+        (TestWebKitAPI::TEST):
+
+        Add a new test to verify that file-URL-backed NSFileWrappers can be used to insert and update attachment data.
+        Also augment an existing test to check that an attachment element which has been copied and pasted within the
+        same document has a different _WKAttachment wrapper object than its duplicate, but both _WKAttachments are
+        backed by the same NSFileWrapper that was originally used to insert the attachment.
+
+        Additionally, add another macOS test to verify that dropping promised files in an attachment-element-enabled
+        editable area inserts attachment elements into the document and notifies the UI client with the inserted
+        attachment data.
+
+        (-[_WKAttachment synchronouslyRequestInfo:]): Deleted.
+        (-[_WKAttachment synchronouslyRequestData:]): Deleted.
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[DragAndDropSimulator _webView:didInsertAttachment:withSource:]):
+
+        Move off of -_webView:didInsertAttachment:.
+
+        (-[DragAndDropSimulator _webView:didInsertAttachment:]): Deleted.
+
 2018-08-21  David Kilzer  <ddkilzer@apple.com>
 
         sort-Xcode-project-file: top-level files and folders are sorted unintentionally when `mainGroup` has no name

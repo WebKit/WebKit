@@ -1,3 +1,124 @@
+2018-08-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Augment _WKAttachment SPI to handle NSFileWrappers in addition to NSData
+        https://bugs.webkit.org/show_bug.cgi?id=188496
+        <rdar://problem/43216836>
+
+        Reviewed by Tim Horton.
+
+        Refactors logic around HTMLAttachmentElement and pasteboard reading helpers, in support of moving the data
+        backing for attachment elements to the client layer, instead of keeping it in the attachment element's File.
+        Augmented existing API tests in WKAttachmentTests, and also added a new API test (see Tools for more detail).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::didInsertAttachmentElement):
+
+        Notify the client layer when a newly inserted attachment element's identifier has been updated to avoid
+        colliding with the identifier of an existing attachment element. This can happen if, for instance, one or more
+        attachments are copied and pasted within the same document.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::registerAttachmentIdentifier):
+        (WebCore::Editor::cloneAttachmentData):
+
+        Add new helper functions to notify the client when the attachment identifier to data mapping needs to be
+        updated. This can happen in three ways: (1) an attachment is created with raw data, or (2) an attachment is
+        created with a file path, or (3) the unique identifier for an attachment element has been reassigned. These
+        correspond to the two versions of `registerAttachmentIdentifier`, and `cloneAttachmentData`, respectively.
+
+        (WebCore::EditorClient::supportsClientSideAttachmentData const):
+
+        Add a new EditorClient hook to determine whether client-side attachment data management is supported. Currently,
+        this only returns true for WebKit2. If this flag is set to true, we register attachment identifiers and don't
+        create a new File object for the attachment element; otherwise, fall back to creating and setting a File for the
+        new attachment element.
+
+        (WebCore::Editor::insertAttachment):
+        (WebCore::Editor::insertAttachmentFromFile): Deleted.
+
+        Adjust logic when inserting an attachment; we now only need to update the attributes of the attachment element
+        with metadata from the client layer.
+
+        * editing/Editor.h:
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::supportsClientSideAttachmentData):
+        (WebCore::createFragmentForImageAttachment):
+
+        Notify the client when creating an attachment element from image data on the pasteboard.
+
+        (WebCore::replaceRichContentWithAttachments):
+
+        Refactor this helper function to no longer connect attachment elements to File objects created from
+        subresources. Instead, just update each attachment element's attributes using information about the subresource,
+        and then notify the client about the new attachment data and attachment identifier.
+
+        (WebCore::createFragmentAndAddResources):
+        (WebCore::sanitizeMarkupWithArchive):
+
+        Plumb the current WebContentReader's Frame& to each of these helpers, so that it can call out to the client.
+
+        (WebCore::WebContentReader::readWebArchive):
+        (WebCore::WebContentMarkupReader::readWebArchive):
+        (WebCore::WebContentReader::readImage):
+        (WebCore::WebContentReader::readFilePaths):
+
+        Notify the client when creating an attachment from the path of a dropped file.
+
+        * html/AttachmentTypes.h:
+
+        Remove AttachmentInfo. This is no longer necessary because we don't need to request attachment data from the web
+        process anymore.
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::ensureUniqueIdentifier):
+
+        Add a helper function on the attachment element to create and return a unique identifier if needed.
+
+        (WebCore::HTMLAttachmentElement::updateAttributes):
+
+        Add a helper method to update the displayed element attributes (type, title and subtitle) or an attachment.
+
+        (WebCore::AttachmentDataReader::create): Deleted.
+        (WebCore::AttachmentDataReader::AttachmentDataReader): Deleted.
+
+        Remove AttachmentDataReader. This helper class was only used to load attachment data when requesting attachment
+        information in the client, but this is now obviated by moving attachment data to the client layer.
+
+        (WebCore::HTMLAttachmentElement::updateFileWithData): Deleted.
+        (WebCore::HTMLAttachmentElement::requestInfo): Deleted.
+        (WebCore::HTMLAttachmentElement::destroyReader): Deleted.
+        (WebCore::AttachmentDataReader::~AttachmentDataReader): Deleted.
+        (WebCore::AttachmentDataReader::didFinishLoading): Deleted.
+        (WebCore::AttachmentDataReader::didFail): Deleted.
+        (WebCore::AttachmentDataReader::invokeCallbackAndFinishReading): Deleted.
+        * html/HTMLAttachmentElement.h:
+        * page/DragClient.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        (WebCore::DragController::doSystemDrag):
+        (WebCore::DragController::promisedAttachmentInfo):
+
+        Allow dragging an attachment (even if it does not have a file) as long as it has a unique identifier and a
+        content type.
+
+        (WebCore::DragController::promisedBlobInfo): Deleted.
+        * page/DragController.h:
+        * page/EditorClient.h:
+        (WebCore::EditorClient::registerAttachmentIdentifier):
+        (WebCore::EditorClient::cloneAttachmentData):
+        * platform/DragItem.h:
+        (WebCore::DragItem::encode const):
+        (WebCore::DragItem::decode):
+        * platform/PromisedAttachmentInfo.h: Renamed from Source/WebCore/platform/PromisedBlobInfo.h.
+
+        Add an attachment identifier to PromisedBlobInfo. Additionally, rename PromisedBlobInfo to
+        PromisedAttachmentInfo, since it is currently exclusively used to attachment element data to the pasteboard.
+        In the future, this could be renamed to something more general (e.g. PromisedPasteboardData), should we use this
+        mechanism to write data from other sources to the pasteboard.
+
+        (WebCore::PromisedAttachmentInfo::operator bool const):
+
 2018-08-21  Brent Fulgham  <bfulgham@apple.com>
 
         Remove experimental affiliated domain code now that StorageAccess API is available

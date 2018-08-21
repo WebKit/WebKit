@@ -73,8 +73,12 @@ public:
     virtual bool shouldMoveRangeAfterDelete(Range*, Range*) = 0;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
+    virtual void registerAttachmentIdentifier(const String& /* identifier */, const String& /* contentType */, const String& /* preferredFileName */, Ref<SharedBuffer>&&) { }
+    virtual void registerAttachmentIdentifier(const String& /* identifier */, const String& /* contentType */, const String& /* filePath */) { }
+    virtual void cloneAttachmentData(const String& /* fromIdentifier */, const String& /* toIdentifier */) { }
     virtual void didInsertAttachment(const String& /* identifier */, const String& /* source */) { }
     virtual void didRemoveAttachment(const String&) { }
+    virtual bool supportsClientSideAttachmentData() const { return false; }
 #endif
 
     virtual void didBeginEditing() = 0;

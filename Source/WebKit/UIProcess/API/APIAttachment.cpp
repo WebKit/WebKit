@@ -26,9 +26,10 @@
 #include "config.h"
 #include "APIAttachment.h"
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+
 #include <WebCore/AttachmentTypes.h>
 #include <WebCore/SharedBuffer.h>
-#include <wtf/BlockPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace API {
@@ -48,14 +49,6 @@ Attachment::~Attachment()
 {
 }
 
-void Attachment::requestInfo(Function<void(const WebCore::AttachmentInfo&, WebKit::CallbackBase::Error)>&& callback)
-{
-    if (m_webPage)
-        m_webPage->requestAttachmentInfo(m_identifier, WTFMove(callback));
-    else
-        callback({ }, WebKit::CallbackBase::Error::OwnerWasInvalidated);
-}
-
 void Attachment::setDisplayOptions(WebCore::AttachmentDisplayOptions options, Function<void(WebKit::CallbackBase::Error)>&& callback)
 {
     if (m_webPage)
@@ -64,14 +57,19 @@ void Attachment::setDisplayOptions(WebCore::AttachmentDisplayOptions options, Fu
         callback(WebKit::CallbackBase::Error::OwnerWasInvalidated);
 }
 
-void Attachment::setDataAndContentType(WebCore::SharedBuffer& data, const WTF::String& newContentType, const WTF::String& newFilename, Function<void(WebKit::CallbackBase::Error)>&& callback)
+void Attachment::updateAttributes(uint64_t fileSize, const WTF::String& newContentType, const WTF::String& newFilename, Function<void(WebKit::CallbackBase::Error)>&& callback)
 {
+    setContentType(newContentType);
+    setFilePath({ });
+
     auto optionalNewContentType = newContentType.isNull() ? std::nullopt : std::optional<WTF::String> { newContentType };
     auto optionalNewFilename = newFilename.isNull() ? std::nullopt : std::optional<WTF::String> { newFilename };
     if (m_webPage)
-        m_webPage->setAttachmentDataAndContentType(m_identifier, data, WTFMove(optionalNewContentType), WTFMove(optionalNewFilename), WTFMove(callback));
+        m_webPage->updateAttachmentAttributes(m_identifier, fileSize, WTFMove(optionalNewContentType), WTFMove(optionalNewFilename), WTFMove(callback));
     else
         callback(WebKit::CallbackBase::Error::OwnerWasInvalidated);
 }
 
 }
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)

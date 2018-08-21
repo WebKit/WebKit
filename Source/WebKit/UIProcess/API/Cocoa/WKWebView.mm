@@ -142,6 +142,7 @@
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
 #import "_WKWebViewPrintFormatter.h"
+#import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIApplication.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/InspectorOverlay.h>
@@ -1212,17 +1213,25 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
 - (void)_didInsertAttachment:(NSString *)identifier withSource:(NSString *)source
 {
     id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)self.UIDelegate;
-    if ([uiDelegate respondsToSelector:@selector(_webView:didInsertAttachment:withSource:)])
-        [uiDelegate _webView:self didInsertAttachment:wrapper(API::Attachment::create(identifier, *_page)) withSource:source];
-    else if ([uiDelegate respondsToSelector:@selector(_webView:didInsertAttachment:)])
-        [uiDelegate _webView:self didInsertAttachment:wrapper(API::Attachment::create(identifier, *_page))];
+    if (![uiDelegate respondsToSelector:@selector(_webView:didInsertAttachment:withSource:)])
+        return;
+
+    if (auto attachment = _page->attachmentForIdentifier(identifier))
+        [uiDelegate _webView:self didInsertAttachment:wrapper(*attachment) withSource:source];
+    else
+        ASSERT_NOT_REACHED();
 }
 
 - (void)_didRemoveAttachment:(NSString *)identifier
 {
     id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)self.UIDelegate;
-    if ([uiDelegate respondsToSelector:@selector(_webView:didRemoveAttachment:)])
-        [uiDelegate _webView:self didRemoveAttachment:wrapper(API::Attachment::create(identifier, *_page))];
+    if (![uiDelegate respondsToSelector:@selector(_webView:didRemoveAttachment:)])
+        return;
+
+    if (auto attachment = _page->attachmentForIdentifier(identifier))
+        [uiDelegate _webView:self didRemoveAttachment:wrapper(*attachment)];
+    else
+        ASSERT_NOT_REACHED();
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
@@ -4399,17 +4408,35 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (_WKAttachment *)_insertAttachmentWithFilename:(NSString *)filename contentType:(NSString *)contentType data:(NSData *)data options:(_WKAttachmentDisplayOptions *)options completion:(void(^)(BOOL success))completionHandler
 {
+    auto fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data]);
+    if (filename)
+        [fileWrapper setPreferredFilename:filename];
+    return [self _insertAttachmentWithFileWrapper:fileWrapper.get() contentType:contentType options:options completion:completionHandler];
+}
+
+- (_WKAttachment *)_insertAttachmentWithFileWrapper:(NSFileWrapper *)fileWrapper contentType:(NSString *)contentType options:(_WKAttachmentDisplayOptions *)options completion:(void(^)(BOOL success))completionHandler
+{
 #if ENABLE(ATTACHMENT_ELEMENT)
     auto identifier = createCanonicalUUIDString();
-
     auto coreOptions = options ? options.coreDisplayOptions : WebCore::AttachmentDisplayOptions { };
-    auto buffer = WebCore::SharedBuffer::create(data);
-    _page->insertAttachment(identifier, coreOptions, filename, contentType.length ? std::optional<String> { contentType } : std::nullopt, buffer.get(), [capturedHandler = makeBlockPtr(completionHandler), capturedBuffer = buffer.copyRef()] (WebKit::CallbackBase::Error error) {
+    auto attachment = API::Attachment::create(identifier, *_page);
+    attachment->setFileWrapper(fileWrapper);
+
+    if (!contentType.length) {
+        if (NSString *pathExtension = (fileWrapper.filename.length ? fileWrapper.filename : fileWrapper.preferredFilename).pathExtension)
+            contentType = WebCore::MIMETypeRegistry::getMIMETypeForExtension(pathExtension);
+    }
+
+    auto fileSize = [[[fileWrapper fileAttributes] objectForKey:NSFileSize] unsignedLongLongValue];
+    if (!fileSize && fileWrapper.regularFile)
+        fileSize = fileWrapper.regularFileContents.length;
+
+    _page->insertAttachment(attachment.copyRef(), coreOptions, fileSize, [fileWrapper preferredFilename], contentType.length ? std::optional<String> { contentType } : std::nullopt, [capturedHandler = makeBlockPtr(completionHandler)] (WebKit::CallbackBase::Error error) {
         if (capturedHandler)
             capturedHandler(error == WebKit::CallbackBase::Error::None);
     });
 
-    return wrapper(API::Attachment::create(identifier, *_page));
+    return wrapper(attachment);
 #else
     return nil;
 #endif

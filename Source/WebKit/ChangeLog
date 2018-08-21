@@ -1,3 +1,198 @@
+2018-08-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Augment _WKAttachment SPI to handle NSFileWrappers in addition to NSData
+        https://bugs.webkit.org/show_bug.cgi?id=188496
+        <rdar://problem/43216836>
+
+        Reviewed by Tim Horton.
+
+        Adjusts WebKit's attachment editing SPI with the following modifications:
+        •   Deprecate `-_insertAttachmentWithFilename:contentType:data:options:completion:` in favor of
+            `-_insertAttachmentWithFileWrapper:contentType:options:completion:`.
+        •   Deprecate `-requestInfo:` and in favor of just `-info`.
+        •   Add a `-fileWrapper` property to `_WKAttachmentInfo` that returns an `NSFileWrapper`.
+        •   Remove some SPI methods that would otherwise be deprecated, but are not even necessary, since they're no
+            longer even used by Mail.
+
+        To make this possible, we refactor where and how attachment data is tracked. Currently, the data is stored in
+        the network process, and made accessible to the web process via blob URLs stored in the File object in the
+        attachment element. As such, requests from the UI process for attachment data would first be routed through the
+        web process to network process and back.
+
+        Instead, we now keep the relevant attachment data (in the form of NSFileWrapper on Cocoa platforms) in the UI
+        process, on API::Attachment. We additionally keep a map of attachment identifiers to API::Attachments, which
+        allows us to propagate the same _WKAttachment wrapper object to the SPI client for each uniquely identified
+        attachment element. This also has the benefit of allowing us to remove the asynchronous version of `-requestInfo:`
+        and replace it with just an `info` property.
+
+        Changes are covered by new and existing API tests.
+
+        * PlatformMac.cmake:
+
+        Remove APIAttachment.cpp, now that APIAttachment.cpp is listed in Sources.txt.
+
+        * Scripts/webkit/messages.py:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+
+        Guard _WKAttachment creation with ENABLE_ATTACHMENT_ELEMENT.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<PromisedAttachmentInfo>::encode):
+        (IPC::ArgumentCoder<PromisedAttachmentInfo>::decode):
+        (IPC::ArgumentCoder<PromisedBlobInfo>::encode): Deleted.
+        (IPC::ArgumentCoder<PromisedBlobInfo>::decode): Deleted.
+        (IPC::ArgumentCoder<AttachmentInfo>::encode): Deleted.
+        (IPC::ArgumentCoder<AttachmentInfo>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+
+        Continue removing encoding support for WebCore::AttachmentInfo. Additionally, rename PromisedBlobInfo to
+        PromisedAttachmentInfo.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+
+        Move APIAttachment.cpp from the SourcesCocoa.txt to the platform-agnostic Sources.txt.
+
+        * UIProcess/API/APIAttachment.cpp:
+        (API::Attachment::updateAttributes):
+
+        Rename setDataAndContentType to just updateAttributes; instead of sending data, only send the information needed
+        to update the presentational attributes of the attachment element.
+
+        (API::Attachment::requestInfo): Deleted.
+
+        Just call the completion handler with the result of `self.info`.
+
+        (API::Attachment::setDataAndContentType): Deleted.
+        * UIProcess/API/APIAttachment.h:
+
+        Add additional attributes: a content type, a file path, and (on Cocoa platforms) an NSFileWrapper.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
+        Remove -_webView:didInsertAttachment:, since this is unused by any client currently, and is superceded by
+        -_webView:didInsertAttachment:withSource:.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didInsertAttachment:withSource:]):
+        (-[WKWebView _didRemoveAttachment:]):
+
+        Look up the API::Attachment corresponding to the identifier, and send its wrapper object to the client.
+
+        (-[WKWebView _insertAttachmentWithFilename:contentType:data:options:completion:]):
+        (-[WKWebView _insertAttachmentWithFileWrapper:contentType:options:completion:]):
+
+        Add a way to insert an attachment using NSFileWrapper, and reimplement _insertAttachmentWithFilename: using it.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKAttachment.h:
+        * UIProcess/API/Cocoa/_WKAttachment.mm:
+        (-[_WKAttachmentInfo initWithFileWrapper:filePath:contentType:]):
+        (-[_WKAttachmentInfo data]):
+        (-[_WKAttachmentInfo name]):
+        (isDeclaredOrDynamicTypeIdentifier):
+        (-[_WKAttachmentInfo _typeIdentifierFromPathExtension]):
+        (-[_WKAttachmentInfo contentType]):
+        (-[_WKAttachmentInfo mimeType]):
+        (-[_WKAttachmentInfo utiType]):
+        (-[_WKAttachmentInfo fileWrapper]):
+        (-[_WKAttachment info]):
+        (-[_WKAttachment requestInfo:]):
+
+        Add a property on _WKAttachment to retrieve a _WKAttachmentInfo (a snapshot of the current state of the
+        attachment, along with the NSFileWrapper). Reimplement requestInfo using this property.
+
+        (-[_WKAttachment setFileWrapper:contentType:completion:]):
+        (-[_WKAttachment setData:newContentType:newFilename:completion:]):
+
+        Reimplemented by calling -setFileWrapper:contentType:completion: with an NSFileWrapper created using the given
+        data. Additionally, create and associate the unique identifier with an API::Attachment right away.
+
+        (-[_WKAttachment uniqueIdentifier]):
+        (-[_WKAttachment description]):
+        (-[_WKAttachmentInfo initWithInfo:]): Deleted.
+        (-[_WKAttachmentInfo fileLoadingError]): Deleted.
+        (-[_WKAttachment isEqual:]): Deleted.
+        (-[_WKAttachment hash]): Deleted.
+
+        There's no longer any point to implementing these methods, since the SPI client is now guaranteed a unique
+        mapping of _WKAttachments to attachment elements in the document.
+
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::didInsertAttachment):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::platformRegisterAttachment):
+        (WebKit::WebPageProxy::platformCloneAttachment):
+
+        Extend the behavior of registering new attachment data on Cocoa platforms by additionally creating and setting
+        NSFileWrappers on the API::Attachment.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+
+        Clear out the map of attachment identifiers to API::Attachments when the web content process is terminated.
+
+        (WebKit::WebPageProxy::attachmentForIdentifier const):
+
+        Helper function to look up an API::Attachment for the given attachment identifier. Returns null if the
+        attachment is not found, or the attachment identifier is invalid.
+
+        (WebKit::WebPageProxy::insertAttachment):
+        (WebKit::WebPageProxy::updateAttachmentAttributes):
+        (WebKit::WebPageProxy::registerAttachmentIdentifierFromData):
+        (WebKit::WebPageProxy::registerAttachmentIdentifierFromFilePath):
+        (WebKit::WebPageProxy::cloneAttachmentData):
+        (WebKit::WebPageProxy::platformRegisterAttachment):
+        (WebKit::WebPageProxy::platformCloneAttachment):
+        (WebKit::WebPageProxy::didInsertAttachment):
+
+        Create an entry in the attachment identifier to API::Attachment map when an attachment is inserted, if one does
+        not already exist. An attachment mapping would not exist only in the case where an attachment element was
+        created via bindings; in this case, the client wouldn't have access to an NSFileWrapper containing the contents
+        of the file; in the future, this can be improved by adding a mechanism to register an attachment element with
+        this data, but for now, this is unnecessary for Mail's purposes.
+
+        (WebKit::WebPageProxy::didRemoveAttachment):
+        (WebKit::WebPageProxy::ensureAttachment):
+
+        Ensures an attachment identifier to API::Attachment mapping.
+
+        (WebKit::WebPageProxy::attachmentInfoCallback): Deleted.
+        (WebKit::WebPageProxy::requestAttachmentInfo): Deleted.
+        (WebKit::WebPageProxy::setAttachmentDataAndContentType): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startDrag:item:]):
+        (-[WKContentView _prepareToDragPromisedAttachment:]):
+        (-[WKContentView _prepareToDragPromisedBlob:]): Deleted.
+
+        Reimplement the way promised attachment data is delivered to the destination when an attachment element is
+        dragged. Instead of relying on the blob URL of the File on the attachment element, first try to find an API
+        Attachment object corresponding to the unique identifier of the dragged attachment, and use its NSFileWrapper to
+        deliver promised data to the destination file URL. The blob URL codepath still exists in the case where script
+        specifies the dragged attachment's File.
+
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::registerAttachmentIdentifier):
+        (WebKit::WebEditorClient::cloneAttachmentData):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::insertAttachment):
+        (WebKit::WebPage::updateAttachmentAttributes):
+        (WebKit::WebPage::requestAttachmentInfo): Deleted.
+        (WebKit::WebPage::setAttachmentDataAndContentType): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        More renaming and IPC message plumbing.
+
 2018-08-21  Alex Christensen  <achristensen@webkit.org>
 
         Increment NetworkCache::Storage::lastStableVersion after r233742

@@ -160,6 +160,21 @@ bool WebEditorClient::shouldApplyStyle(StyleProperties* style, Range* range)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
+void WebEditorClient::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& preferredFileName, Ref<SharedBuffer>&& data)
+{
+    m_page->send(Messages::WebPageProxy::RegisterAttachmentIdentifierFromData(identifier, contentType, preferredFileName, IPC::SharedBufferDataReference { data.ptr() }));
+}
+
+void WebEditorClient::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& filePath)
+{
+    m_page->send(Messages::WebPageProxy::RegisterAttachmentIdentifierFromFilePath(identifier, contentType, filePath));
+}
+
+void WebEditorClient::cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier)
+{
+    m_page->send(Messages::WebPageProxy::CloneAttachmentData(fromIdentifier, toIdentifier));
+}
+
 void WebEditorClient::didInsertAttachment(const String& identifier, const String& source)
 {
     m_page->send(Messages::WebPageProxy::DidInsertAttachment(identifier, source));

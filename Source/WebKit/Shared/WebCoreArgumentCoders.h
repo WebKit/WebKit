@@ -95,7 +95,6 @@ class TransformationMatrix;
 class UserStyleSheet;
 class URL;
 
-struct AttachmentInfo;
 struct CacheQueryOptions;
 struct CompositionUnderline;
 struct DictationAlternative;
@@ -110,7 +109,7 @@ struct PasteboardImage;
 struct PasteboardCustomData;
 struct PasteboardURL;
 struct PluginInfo;
-struct PromisedBlobInfo;
+struct PromisedAttachmentInfo;
 struct RecentSearch;
 struct ResourceLoadStatistics;
 struct ScrollableAreaParameters;
@@ -699,19 +698,10 @@ template<> struct ArgumentCoder<WebCore::MediaSelectionOption> {
     static std::optional<WebCore::MediaSelectionOption> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::PromisedBlobInfo> {
-    static void encode(Encoder&, const WebCore::PromisedBlobInfo&);
-    static bool decode(Decoder&, WebCore::PromisedBlobInfo&);
+template<> struct ArgumentCoder<WebCore::PromisedAttachmentInfo> {
+    static void encode(Encoder&, const WebCore::PromisedAttachmentInfo&);
+    static bool decode(Decoder&, WebCore::PromisedAttachmentInfo&);
 };
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-
-template<> struct ArgumentCoder<WebCore::AttachmentInfo> {
-    static void encode(Encoder&, const WebCore::AttachmentInfo&);
-    static bool decode(Decoder&, WebCore::AttachmentInfo&);
-};
-
-#endif
 
 template<> struct ArgumentCoder<Vector<RefPtr<WebCore::SecurityOrigin>>> {
     static void encode(Encoder&, const Vector<RefPtr<WebCore::SecurityOrigin>>&);

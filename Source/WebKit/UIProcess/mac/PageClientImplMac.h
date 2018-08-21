@@ -38,7 +38,7 @@
 namespace WebCore {
 class AlternativeTextUIController;
 struct DragItem;
-struct PromisedBlobInfo;
+struct PromisedAttachmentInfo;
 }
 
 namespace WebKit {

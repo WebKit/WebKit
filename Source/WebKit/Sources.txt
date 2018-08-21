@@ -285,6 +285,7 @@ UIProcess/WebProcessProxy.cpp @no-unify
 UIProcess/WebURLSchemeHandler.cpp @no-unify
 UIProcess/WebURLSchemeTask.cpp @no-unify
 
+UIProcess/API/APIAttachment.cpp @no-unify
 UIProcess/API/APIContentRuleList.cpp @no-unify
 UIProcess/API/APIContentRuleListStore.cpp @no-unify
 UIProcess/API/APIExperimentalFeature.cpp @no-unify

@@ -134,9 +134,11 @@ void* Object::newObject(size_t size, Type type)
         wrapper = [WKNSArray alloc];
         break;
 
+#if ENABLE(ATTACHMENT_ELEMENT)
     case Type::Attachment:
         wrapper = [_WKAttachment alloc];
         break;
+#endif
 
     case Type::AuthenticationChallenge:
         wrapper = allocateWKObject([WKNSURLAuthenticationChallenge self], size);

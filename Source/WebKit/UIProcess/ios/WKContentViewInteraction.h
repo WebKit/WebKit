@@ -61,7 +61,7 @@ class Color;
 class FloatQuad;
 class IntSize;
 class SelectionRect;
-struct PromisedBlobInfo;
+struct PromisedAttachmentInfo;
 enum class RouteSharingPolicy;
 }
 

@@ -25,21 +25,38 @@
 
 #pragma once
 
-#include "SharedBuffer.h"
+#include <wtf/Forward.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class SharedBuffer;
 class URL;
 
-struct PromisedBlobInfo {
+struct PromisedAttachmentInfo {
     URL blobURL;
     String contentType;
     String filename;
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+    String attachmentIdentifier;
+#endif
+
     Vector<String> additionalTypes;
     Vector<RefPtr<SharedBuffer>> additionalData;
 
-    operator bool() const { return !blobURL.isEmpty(); }
+    operator bool() const
+    {
+        if (contentType.isEmpty())
+            return false;
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+        if (!attachmentIdentifier.isEmpty())
+            return true;
+#endif
+
+        return !blobURL.isEmpty();
+    }
 };
 
 } // namespace WebCore

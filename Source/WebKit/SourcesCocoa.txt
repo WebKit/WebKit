@@ -215,7 +215,6 @@ UIProcess/WKInspectorHighlightView.mm @no-unify
 
 UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp @no-unify
 
-UIProcess/API/APIAttachment.cpp @no-unify
 UIProcess/API/APIWebsiteDataRecord.cpp @no-unify
 
 UIProcess/API/C/WKContextMenuListener.cpp @no-unify

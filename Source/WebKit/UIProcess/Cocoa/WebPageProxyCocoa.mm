@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebPageProxy.h"
 
+#import "APIAttachment.h"
 #import "APIUIClient.h"
 #import "DataDetectionResult.h"
 #import "LoadParameters.h"
@@ -159,5 +160,28 @@ void WebPageProxy::setDragCaretRect(const IntRect& dragCaretRect)
 #endif // PLATFORM(IOS)
 
 #endif // ENABLE(DRAG_SUPPORT)
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment, const String& preferredFileName, const IPC::DataReference& dataReference)
+{
+    auto buffer = SharedBuffer::create(dataReference.data(), dataReference.size());
+    auto fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:buffer->createNSData().autorelease()]);
+    [fileWrapper setPreferredFilename:preferredFileName];
+    attachment->setFileWrapper(fileWrapper.get());
+}
+
+void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment, const String& filePath)
+{
+    auto fileWrapper = adoptNS([[NSFileWrapper alloc] initWithURL:[NSURL fileURLWithPath:filePath] options:0 error:nil]);
+    attachment->setFileWrapper(fileWrapper.get());
+}
+
+void WebPageProxy::platformCloneAttachment(Ref<API::Attachment>&& fromAttachment, Ref<API::Attachment>&& toAttachment)
+{
+    toAttachment->setFileWrapper(fromAttachment->fileWrapper());
+}
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 }

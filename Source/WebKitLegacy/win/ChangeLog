@@ -1,3 +1,16 @@
+2018-08-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Augment _WKAttachment SPI to handle NSFileWrappers in addition to NSData
+        https://bugs.webkit.org/show_bug.cgi?id=188496
+        <rdar://problem/43216836>
+
+        Reviewed by Tim Horton.
+
+        Adjust for changing PromisedAttachmentInfo.h to forward declare WebCore::SharedBuffer rather than include the
+        header directly.
+
+        * WebCoreSupport/WebDragClient.cpp:
+
 2018-08-17  Alex Christensen  <achristensen@webkit.org>
 
         Add some plumbing for safe browsing
