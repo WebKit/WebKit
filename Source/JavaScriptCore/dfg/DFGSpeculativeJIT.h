@@ -1610,6 +1610,8 @@ public:
     void speculateWeakMapObject(Edge, GPRReg cell);
     void speculateWeakSetObject(Edge);
     void speculateWeakSetObject(Edge, GPRReg cell);
+    void speculateDataViewObject(Edge);
+    void speculateDataViewObject(Edge, GPRReg cell);
     void speculateObjectOrOther(Edge);
     void speculateString(Edge edge, GPRReg cell);
     void speculateStringIdentAndLoadStorage(Edge edge, GPRReg string, GPRReg storage);

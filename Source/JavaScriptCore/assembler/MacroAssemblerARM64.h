@@ -451,6 +451,22 @@ public:
         m_assembler.clz<64>(dest, dest);
     }
 
+    void byteSwap16(RegisterID dst)
+    {
+        m_assembler.rev16<32>(dst, dst);
+        zeroExtend16To32(dst, dst);
+    }
+
+    void byteSwap32(RegisterID dst)
+    {
+        m_assembler.rev<32>(dst, dst);
+    }
+
+    void byteSwap64(RegisterID dst)
+    {
+        m_assembler.rev<64>(dst, dst);
+    }
+
     // Only used for testing purposes.
     void illegalInstruction()
     {

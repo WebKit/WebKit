@@ -4553,6 +4553,365 @@ void SpeculativeJIT::compile(Node* node)
         compileClearCatchLocals(node);
         break;
 
+    case DataViewGetFloat:
+    case DataViewGetInt: {
+        SpeculateCellOperand dataView(this, node->child1());
+        GPRReg dataViewGPR = dataView.gpr();
+        speculateDataViewObject(node->child1(), dataViewGPR);
+
+        SpeculateInt32Operand index(this, node->child2());
+        GPRReg indexGPR = index.gpr();
+
+        GPRTemporary temp1(this);
+        GPRReg t1 = temp1.gpr();
+        GPRTemporary temp2(this);
+        GPRReg t2 = temp2.gpr();
+
+        std::optional<SpeculateBooleanOperand> isLittleEndianOperand;
+        if (node->child3())
+            isLittleEndianOperand.emplace(this, node->child3());
+        GPRReg isLittleEndianGPR = isLittleEndianOperand ? isLittleEndianOperand->gpr() : InvalidGPRReg;
+
+        DataViewData data = node->dataViewData();
+
+        m_jit.zeroExtend32ToPtr(indexGPR, t2);
+        if (data.byteSize > 1)
+            m_jit.add64(TrustedImm32(data.byteSize - 1), t2);
+        m_jit.load32(MacroAssembler::Address(dataViewGPR, JSArrayBufferView::offsetOfLength()), t1);
+        speculationCheck(OutOfBounds, JSValueRegs(), node,
+            m_jit.branch64(MacroAssembler::AboveOrEqual, t2, t1));
+
+        m_jit.loadPtr(JITCompiler::Address(dataViewGPR, JSArrayBufferView::offsetOfVector()), t2);
+        cageTypedArrayStorage(t2);
+
+        m_jit.zeroExtend32ToPtr(indexGPR, t1);
+        auto baseIndex = JITCompiler::BaseIndex(t2, t1, MacroAssembler::TimesOne);
+
+        if (node->op() == DataViewGetInt) {
+            switch (data.byteSize) {
+            case 1:
+                if (data.isSigned)
+                    m_jit.load8SignedExtendTo32(baseIndex, t2);
+                else
+                    m_jit.load8(baseIndex, t2);
+                int32Result(t2, node);
+                break;
+            case 2: {
+                auto emitLittleEndianLoad = [&] {
+                    if (data.isSigned)
+                        m_jit.load16SignedExtendTo32(baseIndex, t2);
+                    else
+                        m_jit.load16(baseIndex, t2);
+                };
+                auto emitBigEndianLoad = [&] {
+                    m_jit.load16(baseIndex, t2);
+                    m_jit.byteSwap16(t2);
+                    if (data.isSigned)
+                        m_jit.signExtend16To32(t2, t2);
+                };
+
+                if (data.isLittleEndian == FalseTriState)
+                    emitBigEndianLoad();
+                else if (data.isLittleEndian == TrueTriState)
+                    emitLittleEndianLoad();
+                else {
+                    RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
+                    auto isBigEndian = m_jit.branchTest32(MacroAssembler::Zero, isLittleEndianGPR, TrustedImm32(1));
+                    emitLittleEndianLoad();
+                    auto done = m_jit.jump();
+                    isBigEndian.link(&m_jit);
+                    emitBigEndianLoad();
+                    done.link(&m_jit);
+                }
+                int32Result(t2, node);
+                break;
+            }
+            case 4: {
+                m_jit.load32(baseIndex, t2);
+
+                if (data.isLittleEndian == FalseTriState)
+                    m_jit.byteSwap32(t2);
+                else if (data.isLittleEndian == MixedTriState) {
+                    RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
+                    auto isLittleEndian = m_jit.branchTest32(MacroAssembler::NonZero, isLittleEndianGPR, TrustedImm32(1));
+                    m_jit.byteSwap32(t2);
+                    isLittleEndian.link(&m_jit);
+                }
+
+                if (data.isSigned)
+                    int32Result(t2, node);
+                else
+                    strictInt52Result(t2, node);
+                break;
+            }
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        } else {
+            FPRTemporary result(this);
+            FPRReg resultFPR = result.fpr();
+
+            switch (data.byteSize) {
+            case 4: {
+                auto emitLittleEndianCode = [&] {
+                    m_jit.loadFloat(baseIndex, resultFPR);
+                    m_jit.convertFloatToDouble(resultFPR, resultFPR);
+                };
+
+                auto emitBigEndianCode = [&] {
+                    m_jit.load32(baseIndex, t2);
+                    m_jit.byteSwap32(t2);
+                    m_jit.move32ToFloat(t2, resultFPR);
+                    m_jit.convertFloatToDouble(resultFPR, resultFPR);
+                };
+
+                if (data.isLittleEndian == TrueTriState)
+                    emitLittleEndianCode();
+                else if (data.isLittleEndian == FalseTriState)
+                    emitBigEndianCode();
+                else {
+                    RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
+                    auto isBigEndian = m_jit.branchTest32(MacroAssembler::Zero, isLittleEndianGPR, TrustedImm32(1));
+                    emitLittleEndianCode();
+                    auto done = m_jit.jump();
+                    isBigEndian.link(&m_jit);
+                    emitBigEndianCode();
+                    done.link(&m_jit);
+                }
+
+                break;
+            }
+            case 8: {
+                auto emitLittleEndianCode = [&] {
+                    m_jit.loadDouble(baseIndex, resultFPR);
+                };
+
+                auto emitBigEndianCode = [&] {
+                    m_jit.load64(baseIndex, t2);
+                    m_jit.byteSwap64(t2);
+                    m_jit.move64ToDouble(t2, resultFPR);
+                };
+
+                if (data.isLittleEndian == TrueTriState)
+                    emitLittleEndianCode();
+                else if (data.isLittleEndian == FalseTriState)
+                    emitBigEndianCode();
+                else {
+                    RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
+                    auto isBigEndian = m_jit.branchTest32(MacroAssembler::Zero, isLittleEndianGPR, TrustedImm32(1));
+                    emitLittleEndianCode();
+                    auto done = m_jit.jump();
+                    isBigEndian.link(&m_jit);
+                    emitBigEndianCode();
+                    done.link(&m_jit);
+                }
+
+                break;
+            }
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+
+            doubleResult(resultFPR, node);
+        }
+
+        break;
+    }
+
+    case DataViewSet: {
+        SpeculateCellOperand dataView(this, m_graph.varArgChild(node, 0));
+        GPRReg dataViewGPR = dataView.gpr();
+        speculateDataViewObject(m_graph.varArgChild(node, 0), dataViewGPR);
+
+        SpeculateInt32Operand index(this, m_graph.varArgChild(node, 1));
+        GPRReg indexGPR = index.gpr();
+
+        std::optional<SpeculateStrictInt52Operand> int52Value;
+        std::optional<SpeculateDoubleOperand> doubleValue;
+        std::optional<SpeculateInt32Operand> int32Value;
+        std::optional<FPRTemporary> fprTemporary;
+        GPRReg valueGPR = InvalidGPRReg;
+        FPRReg valueFPR = InvalidFPRReg;
+        FPRReg tempFPR = InvalidFPRReg;
+
+        DataViewData data = node->dataViewData();
+
+        Edge& valueEdge = m_graph.varArgChild(node, 2);
+        switch (valueEdge.useKind()) {
+        case Int32Use:
+            int32Value.emplace(this, valueEdge);
+            valueGPR = int32Value->gpr();
+            break;
+        case DoubleRepUse:
+            doubleValue.emplace(this, valueEdge);
+            valueFPR = doubleValue->fpr();
+            if (data.byteSize == 4) {
+                fprTemporary.emplace(this);
+                tempFPR = fprTemporary->fpr();
+            }
+            break;
+        case Int52RepUse:
+            int52Value.emplace(this, valueEdge);
+            valueGPR = int52Value->gpr();
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        GPRTemporary temp1(this);
+        GPRReg t1 = temp1.gpr();
+        GPRTemporary temp2(this);
+        GPRReg t2 = temp2.gpr();
+        GPRTemporary temp3(this);
+        GPRReg t3 = temp3.gpr();
+
+        std::optional<SpeculateBooleanOperand> isLittleEndianOperand;
+        if (m_graph.varArgChild(node, 3))
+            isLittleEndianOperand.emplace(this, m_graph.varArgChild(node, 3));
+        GPRReg isLittleEndianGPR = isLittleEndianOperand ? isLittleEndianOperand->gpr() : InvalidGPRReg;
+
+        m_jit.zeroExtend32ToPtr(indexGPR, t2);
+        if (data.byteSize > 1)
+            m_jit.add64(TrustedImm32(data.byteSize - 1), t2);
+        m_jit.load32(MacroAssembler::Address(dataViewGPR, JSArrayBufferView::offsetOfLength()), t1);
+        speculationCheck(OutOfBounds, JSValueRegs(), node,
+            m_jit.branch64(MacroAssembler::AboveOrEqual, t2, t1));
+
+        m_jit.loadPtr(JITCompiler::Address(dataViewGPR, JSArrayBufferView::offsetOfVector()), t2);
+        cageTypedArrayStorage(t2);
+
+        m_jit.zeroExtend32ToPtr(indexGPR, t1);
+        auto baseIndex = JITCompiler::BaseIndex(t2, t1, MacroAssembler::TimesOne);
+
+        if (data.isFloatingPoint) {
+            RELEASE_ASSERT(valueFPR != InvalidFPRReg);
+            if (data.byteSize == 4) {
+                RELEASE_ASSERT(tempFPR != InvalidFPRReg);
+                m_jit.convertDoubleToFloat(valueFPR, tempFPR);
+
+                auto emitLittleEndianCode = [&] {
+                    m_jit.storeFloat(tempFPR, baseIndex);
+                };
+
+                auto emitBigEndianCode = [&] {
+                    m_jit.moveFloatTo32(tempFPR, t3);
+                    m_jit.byteSwap32(t3);
+                    m_jit.store32(t3, baseIndex);
+                };
+
+                if (data.isLittleEndian == FalseTriState)
+                    emitBigEndianCode();
+                else if (data.isLittleEndian == TrueTriState)
+                    emitLittleEndianCode();
+                else {
+                    RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
+                    auto isBigEndian = m_jit.branchTest32(MacroAssembler::Zero, isLittleEndianGPR, TrustedImm32(1));
+                    emitLittleEndianCode();
+                    auto done = m_jit.jump();
+                    isBigEndian.link(&m_jit);
+                    emitBigEndianCode();
+                    done.link(&m_jit);
+                }
+            } else {
+                RELEASE_ASSERT(data.byteSize == 8);
+                RELEASE_ASSERT(valueFPR != InvalidFPRReg);
+
+                auto emitLittleEndianCode = [&] {
+                    m_jit.storeDouble(valueFPR, baseIndex);
+                };
+                auto emitBigEndianCode = [&] {
+                    m_jit.moveDoubleTo64(valueFPR, t3);
+                    m_jit.byteSwap64(t3);
+                    m_jit.store64(t3, baseIndex);
+                };
+
+                if (data.isLittleEndian == FalseTriState)
+                    emitBigEndianCode();
+                else if (data.isLittleEndian == TrueTriState)
+                    emitLittleEndianCode();
+                else {
+                    RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
+                    auto isBigEndian = m_jit.branchTest32(MacroAssembler::Zero, isLittleEndianGPR, TrustedImm32(1));
+                    emitLittleEndianCode();
+                    auto done = m_jit.jump();
+                    isBigEndian.link(&m_jit);
+                    emitBigEndianCode();
+                    done.link(&m_jit);
+                }
+            }
+        } else {
+            switch (data.byteSize) {
+            case 1:
+                RELEASE_ASSERT(valueEdge.useKind() == Int32Use);
+                RELEASE_ASSERT(valueGPR != InvalidGPRReg);
+                m_jit.store8(valueGPR, baseIndex);
+                break;
+            case 2: {
+                RELEASE_ASSERT(valueEdge.useKind() == Int32Use);
+                RELEASE_ASSERT(valueGPR != InvalidGPRReg);
+
+                auto emitLittleEndianCode = [&] {
+                    m_jit.store16(valueGPR, baseIndex);
+                };
+                auto emitBigEndianCode = [&] {
+                    m_jit.move(valueGPR, t3);
+                    m_jit.byteSwap16(t3);
+                    m_jit.store16(t3, baseIndex);
+                };
+
+                if (data.isLittleEndian == FalseTriState)
+                    emitBigEndianCode();
+                else if (data.isLittleEndian == TrueTriState)
+                    emitLittleEndianCode();
+                else {
+                    RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
+                    auto isBigEndian = m_jit.branchTest32(MacroAssembler::Zero, isLittleEndianGPR, TrustedImm32(1));
+                    emitLittleEndianCode();
+                    auto done = m_jit.jump();
+                    isBigEndian.link(&m_jit);
+                    emitBigEndianCode();
+                    done.link(&m_jit);
+                }
+                break;
+            }
+            case 4: {
+                RELEASE_ASSERT(valueEdge.useKind() == Int32Use || valueEdge.useKind() == Int52RepUse);
+
+                auto emitLittleEndianCode = [&] {
+                    m_jit.store32(valueGPR, baseIndex);
+                };
+
+                auto emitBigEndianCode = [&] {
+                    m_jit.zeroExtend32ToPtr(valueGPR, t3);
+                    m_jit.byteSwap32(t3);
+                    m_jit.store32(t3, baseIndex);
+                };
+
+                if (data.isLittleEndian == FalseTriState)
+                    emitBigEndianCode();
+                else if (data.isLittleEndian == TrueTriState)
+                    emitLittleEndianCode();
+                else {
+                    RELEASE_ASSERT(isLittleEndianGPR != InvalidGPRReg);
+                    auto isBigEndian = m_jit.branchTest32(MacroAssembler::Zero, isLittleEndianGPR, TrustedImm32(1));
+                    emitLittleEndianCode();
+                    auto done = m_jit.jump();
+                    isBigEndian.link(&m_jit);
+                    emitBigEndianCode();
+                    done.link(&m_jit);
+                }
+
+                break;
+            }
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        }
+
+        noResult(node);
+        break;
+    }
+
 #if ENABLE(FTL_JIT)        
     case CheckTierUpInLoop: {
         MacroAssembler::Jump callTierUp = m_jit.branchAdd32(

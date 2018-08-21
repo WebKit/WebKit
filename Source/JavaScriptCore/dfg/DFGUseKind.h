@@ -70,6 +70,7 @@ enum UseKind {
     SetObjectUse,
     WeakMapObjectUse,
     WeakSetObjectUse,
+    DataViewObjectUse,
     StringObjectUse,
     StringOrStringObjectUse,
     NotStringVarUse,
@@ -160,6 +161,8 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
         return SpecWeakMapObject;
     case WeakSetObjectUse:
         return SpecWeakSetObject;
+    case DataViewObjectUse:
+        return SpecDataViewObject;
     case StringObjectUse:
         return SpecStringObject;
     case StringOrStringObjectUse:
@@ -259,6 +262,7 @@ inline bool isCell(UseKind kind)
     case SetObjectUse:
     case WeakMapObjectUse:
     case WeakSetObjectUse:
+    case DataViewObjectUse:
         return true;
     default:
         return false;

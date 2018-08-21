@@ -318,6 +318,9 @@ bool doesGC(Graph& graph, Node* node)
     case FilterGetByIdStatus:
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
+    case DataViewGetInt:
+    case DataViewGetFloat:
+    case DataViewSet:
         return false;
 
     case PushWithScope:

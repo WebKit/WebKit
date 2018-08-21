@@ -863,6 +863,41 @@ void testProbeModifiesStackValues()
 }
 #endif // ENABLE(MASM_PROBE)
 
+void testByteSwap()
+{
+#if CPU(X86_64) || CPU(ARM64)
+    auto byteSwap16 = compile([] (CCallHelpers& jit) {
+        jit.emitFunctionPrologue();
+        jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+        jit.byteSwap16(GPRInfo::returnValueGPR);
+        jit.emitFunctionEpilogue();
+        jit.ret();
+    });
+    CHECK_EQ(invoke<uint64_t>(byteSwap16, 0xaabbccddee001122), static_cast<uint64_t>(0x2211));
+    CHECK_EQ(invoke<uint64_t>(byteSwap16, 0xaabbccddee00ffaa), static_cast<uint64_t>(0xaaff));
+
+    auto byteSwap32 = compile([] (CCallHelpers& jit) {
+        jit.emitFunctionPrologue();
+        jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+        jit.byteSwap32(GPRInfo::returnValueGPR);
+        jit.emitFunctionEpilogue();
+        jit.ret();
+    });
+    CHECK_EQ(invoke<uint64_t>(byteSwap32, 0xaabbccddee001122), static_cast<uint64_t>(0x221100ee));
+    CHECK_EQ(invoke<uint64_t>(byteSwap32, 0xaabbccddee00ffaa), static_cast<uint64_t>(0xaaff00ee));
+
+    auto byteSwap64 = compile([] (CCallHelpers& jit) {
+        jit.emitFunctionPrologue();
+        jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+        jit.byteSwap64(GPRInfo::returnValueGPR);
+        jit.emitFunctionEpilogue();
+        jit.ret();
+    });
+    CHECK_EQ(invoke<uint64_t>(byteSwap64, 0xaabbccddee001122), static_cast<uint64_t>(0x221100eeddccbbaa));
+    CHECK_EQ(invoke<uint64_t>(byteSwap64, 0xaabbccddee00ffaa), static_cast<uint64_t>(0xaaff00eeddccbbaa));
+#endif
+}
+
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -946,6 +981,8 @@ void run(const char* filter)
     RUN(testProbeModifiesProgramCounter());
     RUN(testProbeModifiesStackValues());
 #endif // ENABLE(MASM_PROBE)
+
+    RUN(testByteSwap());
 
     if (tasks.isEmpty())
         usage();

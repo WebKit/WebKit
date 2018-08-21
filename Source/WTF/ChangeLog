@@ -1,3 +1,13 @@
+2018-08-20  Saam barati  <sbarati@apple.com>
+
+        Inline DataView accesses into DFG/FTL
+        https://bugs.webkit.org/show_bug.cgi?id=188573
+        <rdar://problem/43286746>
+
+        Reviewed by Michael Saboff.
+
+        * wtf/TriState.h:
+
 2018-08-19  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [WTF] Add WTF::unalignedLoad and WTF::unalignedStore

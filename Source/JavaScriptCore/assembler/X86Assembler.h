@@ -339,6 +339,7 @@ private:
         OP2_XADDb           = 0xC0,
         OP2_XADD            = 0xC1,
         OP2_PEXTRW_GdUdIb   = 0xC5,
+        OP2_BSWAP           = 0xC8,
         OP2_PSLLQ_UdqIb     = 0x73,
         OP2_PSRLQ_UdqIb     = 0x73,
         OP2_POR_VdqWdq      = 0XEB,
@@ -1640,6 +1641,18 @@ public:
     }
 #endif
 
+    void bswapl_r(RegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_BSWAP, dst);
+    }
+
+#if CPU(X86_64)
+    void bswapq_r(RegisterID dst)
+    {
+        m_formatter.twoByteOp64(OP2_BSWAP, dst);
+    }
+#endif
+
     void tzcnt_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_F3);
@@ -1703,6 +1716,18 @@ private:
             m_formatter.immediate8(imm);
         }
     }
+
+    template<GroupOpcodeID op>
+    void shiftInstruction16(int imm, RegisterID dst)
+    {
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+        if (imm == 1)
+            m_formatter.oneByteOp(OP_GROUP2_Ev1, op, dst);
+        else {
+            m_formatter.oneByteOp(OP_GROUP2_EvIb, op, dst);
+            m_formatter.immediate8(imm);
+        }
+    }
 public:
 
     void sarl_i8r(int imm, RegisterID dst)
@@ -1753,6 +1778,11 @@ public:
     void roll_CLr(RegisterID dst)
     {
         m_formatter.oneByteOp(OP_GROUP2_EvCL, GROUP2_OP_ROL, dst);
+    }
+
+    void rolw_i8r(int imm, RegisterID dst)
+    {
+        shiftInstruction16<GROUP2_OP_ROL>(imm, dst);
     }
 
 #if CPU(X86_64)
@@ -4334,6 +4364,14 @@ private:
             writer.putByteUnchecked(opcode);
         }
 
+        void twoByteOp(TwoByteOpcodeID opcode, int reg)
+        {
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexIfNeeded(0, 0, reg);
+            writer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            writer.putByteUnchecked(opcode + (reg & 7));
+        }
+
         void twoByteOp(TwoByteOpcodeID opcode, int reg, RegisterID rm)
         {
             SingleInstructionBufferWriter writer(m_buffer);
@@ -4505,6 +4543,14 @@ private:
             writer.emitRexW(reg, 0, 0);
             writer.putByteUnchecked(opcode);
             writer.memoryModRMAddr(reg, address);
+        }
+
+        void twoByteOp64(TwoByteOpcodeID opcode, int reg)
+        {
+            SingleInstructionBufferWriter writer(m_buffer);
+            writer.emitRexW(0, 0, reg);
+            writer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            writer.putByteUnchecked(opcode + (reg & 7));
         }
 
         void twoByteOp64(TwoByteOpcodeID opcode, int reg, RegisterID rm)

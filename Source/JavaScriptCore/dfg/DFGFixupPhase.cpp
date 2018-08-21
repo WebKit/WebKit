@@ -2104,6 +2104,60 @@ private:
             fixEdge<CellUse>(node->child1());
             break;
 
+        case DataViewGetInt:
+        case DataViewGetFloat: {
+            fixEdge<DataViewObjectUse>(node->child1());
+            fixEdge<Int32Use>(node->child2());
+            if (node->child3())
+                fixEdge<BooleanUse>(node->child3());
+
+            if (node->op() == DataViewGetInt) {
+                DataViewData data = node->dataViewData();
+                switch (data.byteSize) {
+                case 1:
+                case 2:
+                    node->setResult(NodeResultInt32);
+                    break;
+                case 4:
+                    if (data.isSigned) 
+                        node->setResult(NodeResultInt32);
+                    else
+                        node->setResult(NodeResultInt52);
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+            }
+            break;
+        }
+
+        case DataViewSet: {
+            fixEdge<DataViewObjectUse>(m_graph.varArgChild(node, 0));
+            fixEdge<Int32Use>(m_graph.varArgChild(node, 1));
+            if (m_graph.varArgChild(node, 3))
+                fixEdge<BooleanUse>(m_graph.varArgChild(node, 3));
+            
+            DataViewData data = node->dataViewData();
+            Edge& valueToStore = m_graph.varArgChild(node, 2);
+            if (data.isFloatingPoint)
+                fixEdge<DoubleRepUse>(valueToStore);
+            else {
+                switch (data.byteSize) {
+                case 1:
+                case 2:
+                    fixEdge<Int32Use>(valueToStore);
+                    break;
+                case 4:
+                    if (data.isSigned)
+                        fixEdge<Int32Use>(valueToStore);
+                    else
+                        fixEdge<Int52RepUse>(valueToStore);
+                    break;
+                }
+            }
+            break;
+        }
+
 #if !ASSERT_DISABLED
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.
         case SetArgument:

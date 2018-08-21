@@ -1758,7 +1758,21 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case NumberToStringWithValidRadixConstant:
         def(PureValue(node, node->validRadixConstant()));
         return;
-        
+
+    case DataViewGetFloat:
+    case DataViewGetInt: {
+        read(MiscFields);
+        read(TypedArrayProperties);
+        return;
+    }
+
+    case DataViewSet: {
+        read(MiscFields);
+        read(TypedArrayProperties);
+        write(TypedArrayProperties);
+        return;
+    }
+
     case LastNodeType:
         RELEASE_ASSERT_NOT_REACHED();
         return;

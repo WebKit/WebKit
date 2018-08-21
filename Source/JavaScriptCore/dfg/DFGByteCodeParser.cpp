@@ -3079,6 +3079,180 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         return true;
     }
 
+    case DataViewGetInt8:
+    case DataViewGetUint8:
+    case DataViewGetInt16:
+    case DataViewGetUint16:
+    case DataViewGetInt32:
+    case DataViewGetUint32:
+    case DataViewGetFloat32:
+    case DataViewGetFloat64: {
+        if (!is64Bit())
+            return false;
+
+        // To inline data view accesses, we assume the architecture we're running on:
+        // - Is little endian.
+        // - Allows unaligned loads/stores without crashing. 
+
+        if (argumentCountIncludingThis < 2)
+            return false;
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+            return false;
+
+        insertChecks();
+
+        uint8_t byteSize;
+        NodeType op = DataViewGetInt;
+        bool isSigned = false;
+        switch (intrinsic) {
+        case DataViewGetInt8:
+            isSigned = true;
+            FALLTHROUGH;
+        case DataViewGetUint8:
+            byteSize = 1;
+            break;
+
+        case DataViewGetInt16:
+            isSigned = true;
+            FALLTHROUGH;
+        case DataViewGetUint16:
+            byteSize = 2;
+            break;
+
+        case DataViewGetInt32:
+            isSigned = true;
+            FALLTHROUGH;
+        case DataViewGetUint32:
+            byteSize = 4;
+            break;
+
+        case DataViewGetFloat32:
+            byteSize = 4;
+            op = DataViewGetFloat;
+            break;
+        case DataViewGetFloat64:
+            byteSize = 8;
+            op = DataViewGetFloat;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        TriState isLittleEndian = MixedTriState;
+        Node* littleEndianChild = nullptr;
+        if (byteSize > 1) {
+            if (argumentCountIncludingThis < 3)
+                isLittleEndian = FalseTriState;
+            else {
+                littleEndianChild = get(virtualRegisterForArgument(2, registerOffset));
+                if (littleEndianChild->hasConstant()) {
+                    JSValue constant = littleEndianChild->constant()->value();
+                    isLittleEndian = constant.pureToBoolean();
+                    if (isLittleEndian != MixedTriState)
+                        littleEndianChild = nullptr;
+                } else
+                    isLittleEndian = MixedTriState;
+            }
+        }
+
+        DataViewData data { };
+        data.isLittleEndian = isLittleEndian;
+        data.isSigned = isSigned;
+        data.byteSize = byteSize;
+
+        set(VirtualRegister(resultOperand),
+            addToGraph(op, OpInfo(data.asQuadWord), OpInfo(prediction), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)), littleEndianChild));
+        return true;
+    }
+
+    case DataViewSetInt8:
+    case DataViewSetUint8:
+    case DataViewSetInt16:
+    case DataViewSetUint16:
+    case DataViewSetInt32:
+    case DataViewSetUint32:
+    case DataViewSetFloat32:
+    case DataViewSetFloat64: {
+        if (!is64Bit())
+            return false;
+
+        if (argumentCountIncludingThis < 3)
+            return false;
+
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+            return false;
+
+        insertChecks();
+
+        uint8_t byteSize;
+        bool isFloatingPoint = false;
+        bool isSigned = false;
+        switch (intrinsic) {
+        case DataViewSetInt8:
+            isSigned = true;
+            FALLTHROUGH;
+        case DataViewSetUint8:
+            byteSize = 1;
+            break;
+
+        case DataViewSetInt16:
+            isSigned = true;
+            FALLTHROUGH;
+        case DataViewSetUint16:
+            byteSize = 2;
+            break;
+
+        case DataViewSetInt32:
+            isSigned = true;
+            FALLTHROUGH;
+        case DataViewSetUint32:
+            byteSize = 4;
+            break;
+
+        case DataViewSetFloat32:
+            isFloatingPoint = true;
+            byteSize = 4;
+            break;
+        case DataViewSetFloat64:
+            isFloatingPoint = true;
+            byteSize = 8;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        TriState isLittleEndian = MixedTriState;
+        Node* littleEndianChild = nullptr;
+        if (byteSize > 1) {
+            if (argumentCountIncludingThis < 4)
+                isLittleEndian = FalseTriState;
+            else {
+                littleEndianChild = get(virtualRegisterForArgument(3, registerOffset));
+                if (littleEndianChild->hasConstant()) {
+                    JSValue constant = littleEndianChild->constant()->value();
+                    isLittleEndian = constant.pureToBoolean();
+                    if (isLittleEndian != MixedTriState)
+                        littleEndianChild = nullptr;
+                } else
+                    isLittleEndian = MixedTriState;
+            }
+        }
+
+        DataViewData data { };
+        data.isLittleEndian = isLittleEndian;
+        data.isSigned = isSigned;
+        data.byteSize = byteSize;
+        data.isFloatingPoint = isFloatingPoint;
+
+        addVarArgChild(get(virtualRegisterForArgument(0, registerOffset)));
+        addVarArgChild(get(virtualRegisterForArgument(1, registerOffset)));
+        addVarArgChild(get(virtualRegisterForArgument(2, registerOffset)));
+        addVarArgChild(littleEndianChild);
+
+        addToGraph(Node::VarArg, DataViewSet, OpInfo(data.asQuadWord), OpInfo());
+        return true;
+    }
+
     case HasOwnPropertyIntrinsic: {
         if (argumentCountIncludingThis != 2)
             return false;

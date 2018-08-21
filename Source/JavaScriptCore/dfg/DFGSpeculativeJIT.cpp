@@ -9903,6 +9903,20 @@ void SpeculativeJIT::speculateWeakSetObject(Edge edge)
     speculateWeakSetObject(edge, operand.gpr());
 }
 
+void SpeculativeJIT::speculateDataViewObject(Edge edge, GPRReg cell)
+{
+    speculateCellType(edge, cell, SpecDataViewObject, DataViewType);
+}
+
+void SpeculativeJIT::speculateDataViewObject(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecDataViewObject))
+        return;
+
+    SpeculateCellOperand operand(this, edge);
+    speculateDataViewObject(edge, operand.gpr());
+}
+
 void SpeculativeJIT::speculateObjectOrOther(Edge edge)
 {
     if (!needsTypeCheck(edge, SpecObject | SpecOther))
@@ -10270,6 +10284,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case WeakSetObjectUse:
         speculateWeakSetObject(edge);
+        break;
+    case DataViewObjectUse:
+        speculateDataViewObject(edge);
         break;
     case ObjectOrOtherUse:
         speculateObjectOrOther(edge);

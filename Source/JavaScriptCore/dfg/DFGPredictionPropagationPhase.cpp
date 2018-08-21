@@ -621,7 +621,14 @@ private:
             }
             break;
         }
-            
+        
+        case DataViewSet: {
+            DataViewData data = node->dataViewData();
+            if (data.isFloatingPoint)
+                m_graph.voteNode(m_graph.varArgChild(node, 2), VoteValue, weight);
+            break;
+        }
+
         case MovHint:
             // Ignore these since they have no effect on in-DFG execution.
             break;
@@ -750,7 +757,9 @@ private:
         case CallDOMGetter:
         case GetDynamicVar:
         case GetPrototypeOf:
-        case ExtractValueFromWeakMapGet: {
+        case ExtractValueFromWeakMapGet: 
+        case DataViewGetInt:
+        case DataViewGetFloat: {
             setPrediction(m_currentNode->getHeapPrediction());
             break;
         }
@@ -1220,6 +1229,7 @@ private:
         case FilterPutByIdStatus:
         case FilterInByIdStatus:
         case ClearCatchLocals:
+        case DataViewSet:
             break;
             
         // This gets ignored because it only pretends to produce a value.

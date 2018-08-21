@@ -1,3 +1,98 @@
+2018-08-20  Saam barati  <sbarati@apple.com>
+
+        Inline DataView accesses into DFG/FTL
+        https://bugs.webkit.org/show_bug.cgi?id=188573
+        <rdar://problem/43286746>
+
+        Reviewed by Michael Saboff.
+
+        * microbenchmarks/data-view-accesses-2.js: Added.
+        (assert):
+        (let.p.of.Object.keys.let.str):
+        (let.p.of.Object.keys):
+        (test):
+        * microbenchmarks/data-view-accesses.js: Added.
+        (assert):
+        (let.p.of.Object.keys.let.str):
+        (let.p.of.Object.keys):
+        * stress/dataview-jit-bounds-checks.js: Added.
+        (assert):
+        (let.p.of.Object.keys.let.str):
+        (let.p.of.Object.keys):
+        * stress/dataview-jit-get.js: Added.
+        (assert):
+        (test1.bigEndian):
+        (test1.littleEndian):
+        (test1.biEndian):
+        (test1):
+        (test2.bigEndian):
+        (test2.littleEndian):
+        (test2.biEndian):
+        (test2):
+        (test3.bigEndian):
+        (test3.littleEndian):
+        (test3.biEndian):
+        (test3):
+        (test4.bigEndian):
+        (test4.littleEndian):
+        (test4.biEndian):
+        (test4):
+        (test5.bigEndian):
+        (test5.littleEndian):
+        (test5.biEndian):
+        (test5):
+        (test6.bigEndian):
+        (test6.littleEndian):
+        (test6.biEndian):
+        (test6):
+        (test7.load):
+        (test7):
+        (test8.load):
+        (test8):
+        * stress/dataview-jit-neuter.js: Added.
+        (assert):
+        (test.load):
+        (test):
+        (test2.load):
+        (test2):
+        * stress/dataview-jit-set.js: Added.
+        (assert):
+        (isLittleEndian):
+        (readByte):
+        (readHex):
+        (test.storeLittleEndian):
+        (test.storeBigEndian):
+        (test.store):
+        (test):
+        (test2.storeLittleEndian):
+        (test2.storeBigEndian):
+        (test2.store):
+        (test2):
+        (test3.storeLittleEndian):
+        (test3.storeBigEndian):
+        (test3.store):
+        (test3):
+        (test4.storeLittleEndian):
+        (test4.storeBigEndian):
+        (test4.store):
+        (test4):
+        (test5.storeLittleEndian):
+        (test5.storeBigEndian):
+        (test5.store):
+        (test5):
+        (test6.storeLittleEndian):
+        (test6.storeBigEndian):
+        (test6.store):
+        (test6):
+        (test7.store):
+        (test7):
+        (test8.store):
+        (test8):
+        * stress/dataview-jit-unaligned-accesses.js: Added.
+        (assert):
+        (let.p.of.Object.keys.let.str):
+        (let.p.of.Object.keys):
+
 2018-08-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [YARR] Extend size of fixed characters bulk matching in 64bit platform

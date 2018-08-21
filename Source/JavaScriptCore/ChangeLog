@@ -1,3 +1,103 @@
+2018-08-20  Saam barati  <sbarati@apple.com>
+
+        Inline DataView accesses into DFG/FTL
+        https://bugs.webkit.org/show_bug.cgi?id=188573
+        <rdar://problem/43286746>
+
+        Reviewed by Michael Saboff.
+
+        This patch teaches the DFG/FTL to inline DataView accesses. The approach is
+        straight forward. We inline the various get*/set* operations as intrinsics.
+        
+        This patch takes the most obvious approach for now. We OSR exit when:
+        - An isLittleEndian argument is provided, and is not a boolean.
+        - The index isn't an integer.
+        - The |this| isn't a DataView.
+        - We do an OOB access (or see a neutered array)
+        
+        To implement this change in a performant way, this patch teaches the macro
+        assembler how to emit byte swap operations. The semantics of the added functions
+        are byteSwap + zero extend. This means for the 16bit byte swaps, we need
+        to actually emit zero extend instructions. For the 32/64bit byte swaps,
+        the instructions already have these semantics.
+        
+        This patch is just a lightweight initial implementation. There are some easy
+        extensions we can do in future changes:
+        - Teach B3 how to byte swap: https://bugs.webkit.org/show_bug.cgi?id=188759
+        - CSE DataViewGet* nodes: https://bugs.webkit.org/show_bug.cgi?id=188768
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::byteSwap16):
+        (JSC::MacroAssemblerARM64::byteSwap32):
+        (JSC::MacroAssemblerARM64::byteSwap64):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::byteSwap32):
+        (JSC::MacroAssemblerX86Common::byteSwap16):
+        (JSC::MacroAssemblerX86Common::byteSwap64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::bswapl_r):
+        (JSC::X86Assembler::bswapq_r):
+        (JSC::X86Assembler::shiftInstruction16):
+        (JSC::X86Assembler::rolw_i8r):
+        (JSC::X86Assembler::X86InstructionFormatter::SingleInstructionBufferWriter::memoryModRM):
+        * assembler/testmasm.cpp:
+        (JSC::testByteSwap):
+        (JSC::run):
+        * bytecode/DataFormat.h:
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationFromClassInfo):
+        (JSC::speculationFromJSType):
+        (JSC::speculationFromString):
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::dataViewData):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateDataViewObject):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::isCell):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::byteSwap32):
+        (JSC::FTL::DFG::LowerDFGToB3::byteSwap64):
+        (JSC::FTL::DFG::LowerDFGToB3::emitCodeBasedOnEndiannessBranch):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDataViewGet):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDataViewSet):
+        (JSC::FTL::DFG::LowerDFGToB3::lowDataViewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::speculate):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateDataViewObject):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/JSDataViewPrototype.cpp:
+
 2018-08-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [YARR] Extend size of fixed characters bulk matching in 64bit platform
