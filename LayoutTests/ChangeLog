@@ -1,3 +1,9 @@
+2018-08-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed WinCairo port test gardening
+
+        * platform/wincairo/TestExpectations: Marked some http tests flaky.
+
 2018-08-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: allow breakpoints to be set for specific event listeners
