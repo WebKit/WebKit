@@ -1,3 +1,21 @@
+2018-08-21  Daniel Bates  <dabates@apple.com>
+
+        [iOS][WK1] Support toggling continuous spell checking from tests
+        https://bugs.webkit.org/show_bug.cgi?id=188763
+
+        Reviewed by Simon Fraser.
+
+        Move some more code out from under a !PLATFORM(IOS)-guard so as to support toggling continuous
+        spell checking from tests in iOS WebKit Legacy.
+
+        * WebCoreSupport/WebEditorClient.h:
+        (WebEditorClient::toggleContinuousSpellChecking): Deleted.
+        * WebCoreSupport/WebEditorClient.mm:
+        * WebView/WebView.h:
+        * WebView/WebView.mm:
+        (-[WebView toggleContinuousSpellChecking:]):
+        (-[WebView toggleSmartInsertDelete:]):
+
 2018-08-17  Alex Christensen  <achristensen@webkit.org>
 
         Add some plumbing for safe browsing

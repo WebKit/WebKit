@@ -102,14 +102,9 @@ fast/forms/file/file-input-capture.html
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
 
-# Spelling and grammar markers are not supported
+# Retro-correction is not supported on iOS
 editing/spelling/retro-correction-spelling-markers.html [ WontFix ]
-editing/spelling/spelling-marker-includes-hyphen.html [ WontFix ]
 editing/spelling/spelling-markers-after-pasting-sentence.html [ WontFix ]
-editing/spelling/spelling-markers-in-overlapping-lines.html [ WontFix ]
-editing/spelling/spelling-markers-in-overlapping-lines-large-font.html [ WontFix ]
-fast/writing-mode/english-bt-text-with-spelling-marker.html [ WontFix ]
-fast/writing-mode/english-rl-text-with-spelling-marker.html [ WontFix ]
 
 # Requires support for testing text replacement
 editing/spelling/text-replacement-after-typing-to-word.html [ Skip ]
@@ -3201,3 +3196,5 @@ webkit.org/b/187982 webgl/2.0.0/conformance2/glsl3 [ Skip ]
 webkit.org/b/188285 platform/mac/media/audio-session-category-video-paused.html [ Skip ]
 
 webkit.org/b/188578 svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html [ Pass Failure ]
+
+webkit.org/b/188762 fast/writing-mode/english-rl-text-with-spelling-marker.html [ ImageOnlyFailure ]

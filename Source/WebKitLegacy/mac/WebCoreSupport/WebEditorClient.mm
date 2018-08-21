@@ -212,12 +212,12 @@ bool WebEditorClient::isContinuousSpellCheckingEnabled()
     return [m_webView isContinuousSpellCheckingEnabled];
 }
 
-#if !PLATFORM(IOS)
-
 void WebEditorClient::toggleContinuousSpellChecking()
 {
     [m_webView toggleContinuousSpellChecking:nil];
 }
+
+#if !PLATFORM(IOS)
 
 bool WebEditorClient::isGrammarCheckingEnabled()
 {

@@ -24,6 +24,9 @@ body {
 <body>
 <div id="test" contenteditable="true"></div>
 <script>
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(true);
+
 var test = document.getElementById("test");
 test.focus();
 document.execCommand("InsertText", false, "mispelled");

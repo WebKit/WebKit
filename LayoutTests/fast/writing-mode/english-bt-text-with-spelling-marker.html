@@ -25,6 +25,9 @@ body {
 <body>
 <div id="test" contenteditable="true"></div>
 <script>
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(true);
+
 var test = document.getElementById("test");
 
 typeText("a mispelled", test);

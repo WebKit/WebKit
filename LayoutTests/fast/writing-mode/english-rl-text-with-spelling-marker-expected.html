@@ -21,6 +21,9 @@
 <body>
 <div id="expected" contenteditable="true"></div>
 <script>
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(true);
+
 var expected = document.getElementById("expected");
 expected.focus();
 document.execCommand("InsertText", false, "mispelled");

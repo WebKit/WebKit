@@ -15,6 +15,9 @@
 <body>
 <div id="test" contenteditable="true"></div>
 <script>
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(true);
+
 var testElement = document.getElementById("test");
 testElement.focus();
 document.execCommand("InsertText", false, "misllHlll"); // The H is a placeholder for the hyphen (had it been automatically inserted).

@@ -22,6 +22,9 @@ body {
 <div id="first" contenteditable="true"></div>
 <div id="second" contenteditable="true"></div>
 <script>
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(true);
+
 var first = document.getElementById("first");
 var second = document.getElementById("second");
 

@@ -230,10 +230,6 @@ inline void WebEditorClient::toggleGrammarChecking()
 {
 }
 
-inline void WebEditorClient::toggleContinuousSpellChecking()
-{
-}
-
 inline int WebEditorClient::spellCheckerDocumentTag()
 {
     return 0;

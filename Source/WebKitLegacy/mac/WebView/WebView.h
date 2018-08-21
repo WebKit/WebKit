@@ -580,8 +580,8 @@ WEBKIT_CLASS_DEPRECATED_MAC(10_3, 10_14, "No longer supported; please adopt WKWe
 - (IBAction)makeTextSmaller:(id)sender;
 @property (nonatomic, readonly) BOOL canMakeTextStandardSize;
 - (IBAction)makeTextStandardSize:(id)sender;
-#if !TARGET_OS_IPHONE
 - (IBAction)toggleContinuousSpellChecking:(id)sender;
+#if !TARGET_OS_IPHONE
 - (IBAction)toggleSmartInsertDelete:(id)sender;
 #endif
 #if TARGET_OS_IPHONE
