@@ -1,3 +1,23 @@
+2018-08-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [Flatpak] Update to GNOME master runtime
+        https://bugs.webkit.org/show_bug.cgi?id=188731
+
+        Reviewed by Philippe Normand.
+
+        The 3.28 runtime is pretty stale at this point. We could wait a couple weeks for the 3.30
+        runtime, but I don't think there's any need to stick with the stable runtime when we have
+        the ability to pin to a particular version of the master runtime. There are also several
+        advantages to switching to the master runtime.
+
+        * flatpak/files/httpd-autogen.sh: Removed.
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.clean_args):
+        * flatpak/org.webkit.GTK.yaml:
+        * flatpak/org.webkit.WebKit.yaml:
+        * flatpak/patches/httpd-0001-configure-use-pkg-config-for-PCRE-detection.patch: Removed.
+        * flatpak/patches/libgcrypt-0001-Use-pkg-config-to-detect-gpg-error.patch: Removed.
+
 2018-08-20  Jonathan Bedard  <jbedard@apple.com>
 
         WebKitTestRunner: Add watchOS entitlements
