@@ -201,6 +201,7 @@ void WebBackForwardList::goToItem(WebBackForwardListItem& item)
     m_currentIndex = targetIndex;
 
     LOG(BackForward, "(Back/Forward) WebBackForwardList %p going to item %s, is now at index %zu", this, item.itemID().logString(), targetIndex);
+    m_page->didChangeBackForwardList(nullptr, { });
 }
 
 WebBackForwardListItem* WebBackForwardList::currentItem() const

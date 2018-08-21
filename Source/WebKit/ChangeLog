@@ -1,3 +1,13 @@
+2018-08-21  Alex Christensen  <achristensen@webkit.org>
+
+        Fix API tests after r235139
+        https://bugs.webkit.org/show_bug.cgi?id=188805
+
+        Apparently the call to didChangeBackForwardList with no changes was observable.  We should rename, but I'm restoring existing behavior for now.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::goToItem):
+
 2018-08-21  John Wilander  <wilander@apple.com>
 
         Storage Access API: The call to ResourceLoadStatisticsMemoryStore::grantStorageAccessInternal() should send eTLD+1s, not full host names
