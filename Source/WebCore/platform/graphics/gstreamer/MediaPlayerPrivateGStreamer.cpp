@@ -724,18 +724,18 @@ void MediaPlayerPrivateGStreamer::updateTracks()
     if (m_hasVideo)
         m_player->sizeChanged();
 
-    if (useMediaSource) {
-        GST_DEBUG("Tracks managed by source element. Bailing out now.");
-        m_player->client().mediaPlayerEngineUpdated(m_player);
-        return;
-    }
-
     m_player->client().mediaPlayerEngineUpdated(m_player);
 }
 #endif // GST_CHECK_VERSION(1, 10, 0)
 
 void MediaPlayerPrivateGStreamer::enableTrack(TrackPrivateBaseGStreamer::TrackType trackType, unsigned index)
 {
+    // FIXME: Remove isMediaSource() test below when fixing https://bugs.webkit.org/show_bug.cgi?id=182531.
+    if (isMediaSource()) {
+        GST_FIXME_OBJECT(m_pipeline.get(), "Audio/Video/Text track switching is not yet supported by the MSE backend.");
+        return;
+    }
+
     const char* propertyName;
     const char* trackTypeAsString;
     Vector<String> selectedStreams;
@@ -801,11 +801,8 @@ void MediaPlayerPrivateGStreamer::enableTrack(TrackPrivateBaseGStreamer::TrackTy
     }
 
     GST_INFO("Enabling %s track with index: %u", trackTypeAsString, index);
-    // FIXME: Remove isMediaSource() test below when fixing https://bugs.webkit.org/show_bug.cgi?id=182531
-    if (m_isLegacyPlaybin || isMediaSource()) {
-        GstElement* element = isMediaSource() ? m_source.get() : m_pipeline.get();
-        g_object_set(element, propertyName, index, nullptr);
-    }
+    if (m_isLegacyPlaybin)
+        g_object_set(m_pipeline.get(), propertyName, index, nullptr);
 #if GST_CHECK_VERSION(1, 10, 0)
     else {
         GList* selectedStreamsList = nullptr;
