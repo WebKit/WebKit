@@ -198,15 +198,13 @@ class NameResolver extends Visitor {
         let funcs = this._nameContext.get(Func, node.name);
         if (funcs)
             node.possibleOverloads = funcs;
-        else {
-            let type = this._nameContext.get(Type, node.name);
-            if (!type)
-                throw new WTypeError(node.origin.originString, "Cannot find any function or type named \"" + node.name + "\"");
-            node.becomeCast(type);
+        else if (node.name != "operator cast"){
+            node.setCastData(new TypeRef(node.origin, node.name));
             node.possibleOverloads = this._nameContext.get(Func, "operator cast");
-            if (!node.possibleOverloads)
-                throw new WTypeError(node.origin.originString, "Cannot find any operator cast implementations in cast to " + type);
         }
+
+        if (!node.possibleOverloads)
+            throw new WTypeError(node.origin.originString, "Cannot find any possible overloads for " + node);
         
         super.visitCallExpression(node);
     }

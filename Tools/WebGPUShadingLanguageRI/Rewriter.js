@@ -298,7 +298,7 @@ class Rewriter {
     visitCallExpression(node)
     {
         let result = new CallExpression(
-            node.origin, node.name, null,
+            node.origin, node.name,
             node.argumentList.map(argument => Node.visit(argument, this)));
         return this.processDerivedCallData(node, result);
     }

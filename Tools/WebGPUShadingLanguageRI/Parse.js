@@ -188,7 +188,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
     {
         let token;
         if (token = tryConsume("-"))
-            return new CallExpression(token, "operator" + token.text, [], [parseTerm()]);
+            return new CallExpression(token, "operator" + token.text, [parseTerm()]);
         let left = parseTerm();
         if (token = tryConsume("."))
             left = new DotExpression(token, left, consumeKind("identifier").text);
@@ -285,7 +285,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         let origin = consume("typedef");
         let name = consumeKind("identifier").text;
         consume("=");
-        let type = parseType(true);
+        let type = parseType();
         consume(";");
         return new TypeDef(origin, name, type);
     }
@@ -304,33 +304,50 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         return genericParseLeft(
             texts, nextParser,
             (token, left, right) =>
-                new CallExpression(token, "operator" + token.text, [], [left, right]));
+                new CallExpression(token, "operator" + token.text, [left, right]));
     }
     
     function parseCallExpression()
     {
-        let name = consumeKind("identifier");
-        let typeArguments = parseTypeArguments();
-        consume("(");
-        let argumentList = [];
-        while (!test(")")) {
-            let argument = parsePossibleAssignment();
-            argumentList.push(argument);
-            if (!tryConsume(","))
-                break;
+        let parseArguments = function(origin, callName) {
+            let argumentList = [];
+            while (!test(")")) {
+                let argument = parsePossibleAssignment();
+                argumentList.push(argument);
+                if (!tryConsume(","))
+                    break;
+            }
+            consume(")");
+            return new CallExpression(origin, callName, argumentList);
         }
-        consume(")");
-        let result = new CallExpression(name, name.text, typeArguments, argumentList);
-        return result;
+
+        let name = lexer.backtrackingScope(() => {
+            let name = consumeKind("identifier");
+            consume("(");
+            return name;
+        });
+
+        if (name) {
+            let result = parseArguments(name, name.text);
+            return result;
+        } else {
+            let returnType = parseType();
+            consume("(");
+            let result = parseArguments(returnType.origin, "operator cast");
+            result.setCastData(returnType);
+            return result;
+        }
     }
     
     function isCallExpression()
     {
         return lexer.testScope(() => {
-            consumeKind("identifier");
-            parseTypeArguments();
-            consume("(");
-        });
+                consumeKind("identifier");
+                consume("(");
+            }) || lexer.testScope(() => {
+                parseType();
+                consume("(");
+            });
     }
     
     function emitIncrement(token, old, extraArg)
@@ -346,7 +363,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         if (name == "operator")
             throw new Error("Invalid name: " + name);
         
-        return new CallExpression(token, name, [], args);
+        return new CallExpression(token, name, args);
     }
     
     function finishParsingPostIncrement(token, left)
@@ -419,7 +436,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         if (test("++", "--"))
             return parsePreIncrement();
         if (token = tryConsume("+", "-", "~"))
-            return new CallExpression(token, "operator" + token.text, [], [parsePossiblePrefix()]);
+            return new CallExpression(token, "operator" + token.text, [parsePossiblePrefix()]);
         if (token = tryConsume("*"))
             return new DereferenceExpression(token, parsePossiblePrefix());
         if (token = tryConsume("&"))
@@ -428,7 +445,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             return new MakeArrayRefExpression(token, parsePossiblePrefix());
         if (token = tryConsume("!")) {
             let remainder = parsePossiblePrefix();
-            return new LogicalNot(token, new CallExpression(remainder.origin, "bool", [], [remainder]));
+            return new LogicalNot(token, new CallExpression(remainder.origin, "bool", [remainder]));
         }
         return parsePossibleSuffix();
     }
@@ -458,7 +475,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         return genericParseLeft(
             ["==", "!="], parsePossibleRelationalInequality,
             (token, left, right) => {
-                let result = new CallExpression(token, "operator==", [], [left, right]);
+                let result = new CallExpression(token, "operator==", [left, right]);
                 if (token.text == "!=")
                     result = new LogicalNot(token, result);
                 return result;
@@ -484,7 +501,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
     {
         return genericParseLeft(
             texts, nextParser,
-            (token, left, right) => new LogicalExpression(token, token.text, new CallExpression(left.origin, "bool", [], [left]), new CallExpression(right.origin, "bool", [], [right])));
+            (token, left, right) => new LogicalExpression(token, token.text, new CallExpression(left.origin, "bool", [left]), new CallExpression(right.origin, "bool", [right])));
     }
     
     function parsePossibleLogicalAnd()
@@ -621,7 +638,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         let elseBody;
         if (tryConsume("else"))
             elseBody = parseStatement();
-        return new IfStatement(origin, new CallExpression(conditional.origin, "bool", [], [conditional]), body, elseBody);
+        return new IfStatement(origin, new CallExpression(conditional.origin, "bool", [conditional]), body, elseBody);
     }
 
     function parseWhile()
@@ -631,7 +648,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         let conditional = parseExpression();
         consume(")");
         let body = parseStatement();
-        return new WhileLoop(origin, new CallExpression(conditional.origin, "bool", [], [conditional]), body);
+        return new WhileLoop(origin, new CallExpression(conditional.origin, "bool", [conditional]), body);
     }
 
     function parseFor()
@@ -652,7 +669,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         else {
             condition = parseExpression();
             consume(";");
-            condition = new CallExpression(condition.origin, "bool", [], [condition]);
+            condition = new CallExpression(condition.origin, "bool", [condition]);
         }
         let increment;
         if (tryConsume(")"))
@@ -673,7 +690,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         consume("(");
         let conditional = parseExpression();
         consume(")");
-        return new DoWhileLoop(origin, body, new CallExpression(conditional.origin, "bool", [], [conditional]));
+        return new DoWhileLoop(origin, body, new CallExpression(conditional.origin, "bool", [conditional]));
     }
     
     function parseVariableDecls()

@@ -1,3 +1,40 @@
+2018-08-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Call expressions shouldn't have type arguments
+        https://bugs.webkit.org/show_bug.cgi?id=188770
+
+        Reviewed by Filip Pizlo.
+
+        Call expressions only had type arguments for casts, becuase native types can have type arguments.
+        However, instead of putting those type arguments on the CallExpression, we should parse the casted
+        type as a real type and not as an identifier, which puts the type arguments in the TypeRef.
+
+        Test: casts
+
+        * WebGPUShadingLanguageRI/CallExpression.js:
+        (CallExpression):
+        (CallExpression.prototype.get name):
+        (CallExpression.resolve):
+        (CallExpression.prototype.get typeArguments): Deleted.
+        (CallExpression.prototype.becomeCast): Deleted.
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype.visitCallExpression):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseConstexpr):
+        (parseTypeDef):
+        (parseLeftOperatorCall):
+        (parseCallExpression.let.parseArguments):
+        (parsePossiblePrefix):
+        (parsePossibleRelationalEquality):
+        (parseLeftLogicalExpression):
+        (parseIfStatement):
+        (parseWhile):
+        (parseFor):
+        (parseDo):
+        * WebGPUShadingLanguageRI/RemoveTypeArguments.js:
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitCallExpression):
+
 2018-08-21  Alex Christensen  <achristensen@webkit.org>
 
         Translate WebKit.LimitTitleSize API test into ObjC

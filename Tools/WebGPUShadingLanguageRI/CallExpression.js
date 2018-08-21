@@ -25,11 +25,10 @@
 "use strict";
 
 class CallExpression extends Expression {
-    constructor(origin, name, typeArguments, argumentList)
+    constructor(origin, name, argumentList)
     {
         super(origin);
         this._name = name;
-        this._typeArguments = typeArguments;
         this._argumentList = argumentList;
         this.func = null;
         this._isCast = false;
@@ -37,14 +36,13 @@ class CallExpression extends Expression {
     }
     
     get name() { return this._name; }
-    get typeArguments() { return this._typeArguments; }
     get argumentList() { return this._argumentList; }
     get isCast() { return this._isCast; }
     get returnType() { return this._returnType; }
     
     static resolve(origin, possibleOverloads, name, argumentList, argumentTypes, returnType, program)
     {
-        let call = new CallExpression(origin, name, [], argumentList);
+        let call = new CallExpression(origin, name, argumentList);
         call.argumentTypes = argumentTypes.map(argument => argument.visit(new AutoWrapper()));
         call.possibleOverloads = possibleOverloads;
         if (returnType)
@@ -162,14 +160,6 @@ class CallExpression extends Expression {
         result = result.visit(new AutoWrapper());
         this.resultType = result;
         return result;
-    }
-    
-    becomeCast(returnType)
-    {
-        this._returnType = new TypeRef(this.origin, this.name);
-        this._returnType.type = returnType;
-        this._name = "operator cast";
-        this._isCast = true;
     }
     
     setCastData(returnType)

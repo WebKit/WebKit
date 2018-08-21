@@ -5197,6 +5197,50 @@ tests.andReturnedArrayRef = function()
     checkInt(program, callFunction(program, "foo", []), 354);
 }
 
+tests.casts = function()
+{
+    let program = doPrep(`
+        struct Foo {
+            int x;
+        }
+        struct Bar {
+            int y;
+        }
+        operator Bar(Foo foo) {
+            Bar b;
+            b.y = foo.x + 7;
+            return b;
+        }
+        int baz(int z) {
+            Foo foo;
+            foo.x = z;
+            Bar b = Bar(foo);
+            return b.y;
+        }
+    `);
+    checkInt(program, callFunction(program, "baz", [makeInt(program, 6)]), 13);
+    program = doPrep(`
+        struct Foo {
+            int x;
+        }
+        struct Bar {
+            int y;
+        }
+        operator thread Bar*(thread Foo* foo) {
+            Bar b;
+            b.y = (*foo).x + 8;
+            return &b;
+        }
+        int baz(int z) {
+            Foo foo;
+            foo.x = z;
+            thread Bar* b = thread Bar*(&foo);
+            return (*b).y;
+        }
+    `);
+    checkInt(program, callFunction(program, "baz", [makeInt(program, 6)]), 14);
+}
+
 okToTest = true;
 
 let testFilter = /.*/; // run everything by default

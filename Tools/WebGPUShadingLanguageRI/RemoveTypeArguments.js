@@ -59,14 +59,6 @@ function removeTypeArguments(program)
             node._name = RemoveTypeArguments.resolveNameAndArguments(node);
             node._typeArguments = null;
         }
-
-        visitCallExpression(node)
-        {
-            node._name = RemoveTypeArguments.resolveNameAndArguments(node);
-            if (!node._name || !node._name.length)
-                throw new Error("lazy");
-            node._typeArguments = null;
-        }
     }
 
     program.visit(new RemoveTypeArguments());
