@@ -48,4 +48,6 @@ Ref<NetworkDataTask> Replayer::replayResource(NetworkSession& session, NetworkDa
 } // namespace NetworkCapture
 } // namespace WebKit
 
+#undef DEBUG_CLASS
+
 #endif // ENABLE(NETWORK_CAPTURE)

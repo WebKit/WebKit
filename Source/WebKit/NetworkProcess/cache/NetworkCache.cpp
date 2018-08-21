@@ -47,10 +47,10 @@
 #include <notify.h>
 #endif
 
-using namespace WebCore::FileSystem;
-
 namespace WebKit {
 namespace NetworkCache {
+
+using namespace WebCore::FileSystem;
 
 static const AtomicString& resourceType()
 {

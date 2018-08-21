@@ -43,11 +43,10 @@
 #include "NetworkDataTaskCocoa.h"
 #endif
 
-using namespace WebCore;
-
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - Download::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
+using namespace WebCore;
 
 Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NetworkDataTask& download, const PAL::SessionID& sessionID, const String& suggestedName)
     : m_downloadManager(downloadManager)
@@ -182,3 +181,5 @@ void Download::platformCancelNetworkLoad()
 #endif
 
 } // namespace WebKit
+
+#undef RELEASE_LOG_IF_ALLOWED

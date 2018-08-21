@@ -33,10 +33,9 @@
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/CacheQueryOptions.h>
 
-using namespace WebCore::DOMCacheEngine;
-using namespace WebKit::CacheStorage;
-
 namespace WebKit {
+using namespace WebCore::DOMCacheEngine;
+using namespace CacheStorage;
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), CacheStorage, "%p - CacheStorageEngineConnection::" fmt, &m_connection.connection(), ##__VA_ARGS__)
 #define RELEASE_LOG_FUNCTION_IF_ALLOWED_IN_CALLBACK(functionName, fmt, resultGetter) \
@@ -166,3 +165,6 @@ void CacheStorageEngineConnection::engineRepresentation(PAL::SessionID sessionID
 }
 
 }
+
+#undef RELEASE_LOG_IF_ALLOWED
+#undef RELEASE_LOG_FUNCTION_IF_ALLOWED_IN_CALLBACK

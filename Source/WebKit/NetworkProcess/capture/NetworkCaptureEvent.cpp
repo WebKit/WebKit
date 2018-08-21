@@ -504,4 +504,6 @@ OptionalCaptureEvent stringToEvent(const char* jsonStr)
 } // namespace NetworkCapture
 } // namespace WebKit
 
+#undef JSON_NOEXCEPTIONS
+
 #endif // ENABLE(NETWORK_CAPTURE)

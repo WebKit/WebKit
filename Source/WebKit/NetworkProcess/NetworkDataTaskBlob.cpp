@@ -52,9 +52,8 @@
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static const unsigned bufferSize = 512 * 1024;
 

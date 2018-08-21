@@ -36,9 +36,8 @@
 #include <pal/SessionID.h>
 #include <wtf/StdLibExtras.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 DownloadManager::DownloadManager(Client& client)
     : m_client(client)

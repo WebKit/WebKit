@@ -62,8 +62,7 @@ void Download::resume(const IPC::DataReference& resumeData, const String& path, 
 void Download::platformCancelNetworkLoad()
 {
     ASSERT(m_downloadTask);
-    [m_downloadTask cancelByProducingResumeData: ^(NSData * _Nullable resumeData)
-    {
+    [m_downloadTask cancelByProducingResumeData:^(NSData *resumeData) {
         if (resumeData && resumeData.bytes && resumeData.length)
             didCancel(IPC::DataReference(reinterpret_cast<const uint8_t*>(resumeData.bytes), resumeData.length));
         else

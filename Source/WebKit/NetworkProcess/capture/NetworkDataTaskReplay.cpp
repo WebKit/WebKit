@@ -288,4 +288,6 @@ void NetworkDataTaskReplay::didFinish(const WebCore::ResourceError& error)
 } // namespace NetworkCapture
 } // namespace WebKit
 
+#undef DEBUG_CLASS
+
 #endif // ENABLE(NETWORK_CAPTURE)

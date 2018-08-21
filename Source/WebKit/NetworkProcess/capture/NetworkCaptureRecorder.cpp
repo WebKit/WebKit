@@ -153,4 +153,6 @@ void Recorder::writeEvents()
 } // namespace NetworkCapture
 } // namespace WebKit
 
+#undef DEBUG_CLASS
+
 #endif // ENABLE(NETWORK_CAPTURE)

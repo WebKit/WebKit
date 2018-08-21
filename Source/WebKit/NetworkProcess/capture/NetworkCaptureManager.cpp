@@ -42,10 +42,10 @@
 
 #define DEBUG_CLASS Manager
 
-using namespace WebCore::FileSystem;
-
 namespace WebKit {
 namespace NetworkCapture {
+
+using namespace WebCore::FileSystem;
 
 static const char* kDirNameRecordReplay = "WebKitPerf/record_replay";
 static const char* kDirNameResources = "resources";
@@ -581,5 +581,7 @@ bool Manager::getWord(uint8_t const *& p, uint8_t const * const end, String& wor
 
 } // namespace NetworkCapture
 } // namespace WebKit
+
+#undef DEBUG_CLASS
 
 #endif // ENABLE(NETWORK_CAPTURE)

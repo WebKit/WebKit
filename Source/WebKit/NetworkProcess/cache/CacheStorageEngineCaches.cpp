@@ -33,12 +33,11 @@
 #include <wtf/UUID.h>
 #include <wtf/text/StringBuilder.h>
 
-using namespace WebCore::DOMCacheEngine;
-using namespace WebKit::NetworkCache;
-
 namespace WebKit {
 
 namespace CacheStorage {
+using namespace WebCore::DOMCacheEngine;
+using namespace NetworkCache;
 
 static inline String cachesListFilename(const String& cachesRootPath)
 {

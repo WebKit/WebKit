@@ -39,12 +39,12 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
-using namespace WebCore::DOMCacheEngine;
-using namespace WebKit::NetworkCache;
-
 namespace WebKit {
 
 namespace CacheStorage {
+
+using namespace WebCore::DOMCacheEngine;
+using namespace NetworkCache;
 
 static HashMap<PAL::SessionID, RefPtr<Engine>>& globalEngineMap()
 {

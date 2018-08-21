@@ -34,9 +34,8 @@
 #include <pal/SessionID.h>
 #include <wtf/UUID.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #define RELEASE_LOG_IF_ALLOWED(sessionID, fmt, ...) RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), Network, "%p - NetworkMDNSRegister::" fmt, this, ##__VA_ARGS__)
 #define RELEASE_LOG_IF_ALLOWED_IN_CALLBACK(sessionID, fmt, ...) RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), Network, "NetworkMDNSRegister callback - " fmt, ##__VA_ARGS__)
@@ -268,5 +267,8 @@ void NetworkMDNSRegister::resolveMDNSName(uint64_t requestIdentifier, PAL::Sessi
 #endif
 
 } // namespace WebKit
+
+#undef RELEASE_LOG_IF_ALLOWED
+#undef RELEASE_LOG_IF_ALLOWED_IN_CALLBACK
 
 #endif // ENABLE(WEB_RTC)

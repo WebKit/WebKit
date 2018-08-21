@@ -29,9 +29,8 @@
 #include <WebCore/BlobRegistryImpl.h>
 #include <wtf/NeverDestroyed.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void NetworkProcessPlatformStrategies::initialize()
 {

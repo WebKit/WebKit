@@ -58,9 +58,8 @@
 #include <WebCore/SecurityPolicy.h>
 #include <pal/SessionID.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Ref<NetworkConnectionToWebProcess> NetworkConnectionToWebProcess::create(IPC::Connection::Identifier connectionIdentifier)
 {

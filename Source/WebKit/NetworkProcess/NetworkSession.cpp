@@ -41,10 +41,8 @@
 #include "NetworkSessionCurl.h"
 #endif
 
-
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Ref<NetworkSession> NetworkSession::create(NetworkSessionCreationParameters&& parameters)
 {
