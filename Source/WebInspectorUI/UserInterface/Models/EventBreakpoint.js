@@ -25,19 +25,31 @@
 
 WI.EventBreakpoint = class EventBreakpoint extends WI.Object
 {
-    constructor(eventName, disabled)
+    constructor(eventName, {disabled, eventListener} = {})
     {
         super();
 
         console.assert(typeof eventName === "string");
 
         this._eventName = eventName;
+
         this._disabled = disabled || false;
+        this._eventListener = eventListener || null;
+    }
+
+    // Static
+
+    static fromPayload(payload)
+    {
+        return new WI.EventBreakpoint(payload.eventName, {
+            disabled: !!payload.disabled,
+        });
     }
 
     // Public
 
     get eventName() { return this._eventName; }
+    get eventListener() { return this._eventListener; }
 
     get disabled()
     {

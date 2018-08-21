@@ -1,3 +1,50 @@
+2018-08-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: allow breakpoints to be set for specific event listeners
+        https://bugs.webkit.org/show_bug.cgi?id=183138
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: inspector/dom/breakpoint-for-event-listener.html
+
+        * inspector/agents/InspectorDOMAgent.h:
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+        (WebCore::InspectorDOMAgent::setEventListenerDisabled):
+        (WebCore::InspectorDOMAgent::setBreakpointForEventListener): Added.
+        (WebCore::InspectorDOMAgent::removeBreakpointForEventListener): Added.
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        (WebCore::InspectorDOMAgent::willRemoveEventListener):
+        (WebCore::InspectorDOMAgent::isEventListenerDisabled):
+        (WebCore::InspectorDOMAgent::hasBreakpointForEventListener): Added.
+        (WebCore::InspectorDOMAgent::idForEventListener): Added.
+        Rework the event listener data structure to be based on ID instead of `EventListener`, since
+        it is possible to have the same `EventListener` be used for multiple events.
+
+        * inspector/agents/InspectorDOMDebuggerAgent.h:
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::setEventListenerBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::setInstrumentationBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::removeEventListenerBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::removeInstrumentationBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::willHandleEvent): Added.
+        (WebCore::InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded):
+        For DOM events, also check to see if there is a matching event listener specific breakpoint
+        set via the DOMAgent, and break on it if one is found.
+
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didInstallTimerImpl):
+        (WebCore::InspectorInstrumentation::didRemoveTimerImpl):
+        (WebCore::InspectorInstrumentation::willHandleEventImpl):
+        (WebCore::InspectorInstrumentation::willFireTimerImpl):
+        (WebCore::InspectorInstrumentation::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorInstrumentation::didRequestAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::didCancelAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::willFireAnimationFrameImpl):
+        Split off `pauseOnNativeEventIfNeeded` to only handle non-DOM events, since all DOM events
+        would already only go through `willHandleEvent`.
+
 2018-08-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Sync unified build with Cocoa ports

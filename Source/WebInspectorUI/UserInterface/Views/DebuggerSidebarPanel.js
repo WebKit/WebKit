@@ -1057,18 +1057,35 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         case WI.DebuggerManager.PauseReason.EventListener:
             console.assert(pauseData, "Expected data with an event listener, but found none.");
             if (pauseData) {
-                let eventBreakpoint = WI.domDebuggerManager.eventBreakpointForEventName(pauseData.eventName);
+                let eventBreakpoint = null;
+                if (pauseData.eventListenerId)
+                    eventBreakpoint = WI.domTreeManager.breakpointForEventListenerId(pauseData.eventListenerId);
+                if (!eventBreakpoint)
+                    eventBreakpoint = WI.domDebuggerManager.eventBreakpointForEventName(pauseData.eventName);
                 console.assert(eventBreakpoint, "Expected Event Listener breakpoint for event name.", pauseData.eventName);
 
                 this._pauseReasonTreeOutline = this.createContentTreeOutline(true);
 
-                let eventBreakpointTreeElement = new WI.EventBreakpointTreeElement(eventBreakpoint, WI.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName, WI.UIString("“%s“ Event Fired").format(pauseData.eventName));
+                let eventBreakpointTreeElement = new WI.EventBreakpointTreeElement(eventBreakpoint, {
+                    className: WI.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName,
+                    title: WI.UIString("“%s“ Event Fired").format(pauseData.eventName),
+                });
                 this._pauseReasonTreeOutline.appendChild(eventBreakpointTreeElement);
 
                 let eventBreakpointRow = new WI.DetailsSectionRow;
                 eventBreakpointRow.element.appendChild(this._pauseReasonTreeOutline.element);
 
-                this._pauseReasonGroup.rows = [eventBreakpointRow];
+                let rows = [eventBreakpointRow];
+
+                let eventListener = eventBreakpoint.eventListener;
+                if (eventListener) {
+                    console.assert(eventListener.eventListenerId === pauseData.eventListenerId);
+
+                    let ownerElementRow = new WI.DetailsSectionSimpleRow(WI.UIString("Element"), WI.linkifyNodeReference(eventListener.node));
+                    rows.push(ownerElementRow);
+                }
+
+                this._pauseReasonGroup.rows = rows;
             }
             return true;
 

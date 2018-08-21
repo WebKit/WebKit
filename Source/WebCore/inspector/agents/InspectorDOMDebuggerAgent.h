@@ -41,9 +41,11 @@
 namespace WebCore {
 
 class Element;
+class Event;
 class Frame;
 class InspectorDOMAgent;
 class Node;
+class RegisteredEventListener;
 
 typedef String ErrorString;
 
@@ -72,8 +74,10 @@ public:
     void didRemoveDOMNode(Node&);
     void willModifyDOMAttr(Element&);
     void willSendXMLHttpRequest(const String& url);
-    void pauseOnNativeEventIfNeeded(bool isDOMEvent, const String& eventName, bool synchronous);
     void frameDocumentUpdated(Frame&);
+    void willHandleEvent(const Event&, const RegisteredEventListener&);
+    void pauseOnNativeEventIfNeeded(const String& eventName, bool synchronous);
+    void mainFrameDOMContentLoaded();
 
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) final;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) final;

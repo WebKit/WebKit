@@ -1,0 +1,211 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function handleButton1Click(event) {
+    TestPage.dispatchEventToFrontend("TestPageButton1Click");
+}
+
+function handleButton2Click(event) {
+    TestPage.dispatchEventToFrontend("TestPageButton2Click");
+}
+
+function clickButton1() {
+    document.getElementById("button1").click();
+}
+
+function clickButton2() {
+    document.getElementById("button2").click();
+}
+
+function test() {
+    let button1Node = null;
+    let button2Node = null;
+
+    function awaitGetClickEventListener(nodeId) {
+        return DOMAgent.getEventListenersForNode(nodeId)
+        .then(({listeners}) => listeners.find((eventListener) => eventListener.type === "click"));
+    }
+
+    let suite = InspectorTest.createAsyncSuite("DOM.BreakpointForEventListener");
+
+    suite.addTestCase({
+        name: "DOM.setBreakpointForEventListener",
+        description: "Check that the debugger pauses for this event.",
+        test(resolve, reject) {
+            let paused = false;
+            let clickingButton1 = false;
+
+            let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                if (clickingButton1)
+                    InspectorTest.pass("Should pause before button1 event handler is run.");
+                else
+                    InspectorTest.fail("Should not pause before button2 event handler is run.");
+
+                paused = true;
+
+                let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
+                InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.EventListener, `Pause reason should be EventListener.`);
+                InspectorTest.expectEqual(targetData.pauseData.eventName, "click", `Pause data eventName should be "click".`);
+
+                awaitGetClickEventListener(button1Node.id)
+                .then((clickEventListener) => {
+                    InspectorTest.assert(targetData.pauseData.eventListenerId === clickEventListener.eventListenerId, `Pause data eventListenerId should be "${clickEventListener.eventListenerId}".`);
+                    InspectorTest.assert(clickEventListener.hasBreakpoint, "Click event listener for button1 should have a breakpoint.");
+
+                    WI.debuggerManager.resume();
+                });
+            });
+
+            InspectorTest.singleFireEventListener("TestPageButton1Click", (event) => {
+                if (!paused) {
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+
+                    InspectorTest.fail("Should pause before button1 event handler is run.");
+                }
+
+                resolve();
+            });
+
+            InspectorTest.singleFireEventListener("TestPageButton2Click", (event) => {
+                if (!paused)
+                    InspectorTest.pass("Should not pause before button2 event handler is run.");
+
+                InspectorTest.log("Clicking button1...");
+                clickingButton1 = true;
+                InspectorTest.evaluateInPage(`clickButton1()`);
+            });
+
+            awaitGetClickEventListener(button1Node.id)
+            .then((clickEventListener) => {
+                InspectorTest.assert(!clickEventListener.hasBreakpoint, "Click event listener for button1 should not have a breakpoint.");
+
+                InspectorTest.log("Adding breakpoint for event listener...");
+                return DOMAgent.setBreakpointForEventListener(clickEventListener.eventListenerId);
+            })
+            .then(() => {
+                InspectorTest.log("Clicking button2...");
+                return InspectorTest.evaluateInPage(`clickButton2()`);
+            })
+            .catch(reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.removeBreakpointForEventListener",
+        description: "Check that the debugger does the not pause for this event.",
+        test(resolve, reject) {
+            let paused = false;
+            let clickingButton1 = false;
+
+            let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                if (clickingButton1)
+                    InspectorTest.fail("Should not pause before button1 event handler is run.");
+                else
+                    InspectorTest.fail("Should not pause before button2 event handler is run.");
+
+                paused = true;
+
+                let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
+                InspectorTest.assert(targetData.pauseReason, WI.DebuggerManager.PauseReason.EventListener, `Pause reason should be EventListener.`);
+                InspectorTest.assert(targetData.pauseData.eventName, "click", `Pause data eventName should be "click".`);
+
+                awaitGetClickEventListener(button1Node.id)
+                .then((clickEventListener) => {
+                    InspectorTest.assert(targetData.pauseData.eventListenerId === clickEventListener.eventListenerId, `Pause data eventListenerId should be "${clickEventListener.eventListenerId}".`);
+                    InspectorTest.assert(clickEventListener.hasBreakpoint, "Click event listener for button1 should have a breakpoint.");
+
+                    WI.debuggerManager.resume();
+                });
+            });
+
+            InspectorTest.singleFireEventListener("TestPageButton1Click", (event) => {
+                if (!paused) {
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+
+                    InspectorTest.pass("Should not pause before button1 event handler is run.");
+                }
+
+                resolve();
+            });
+
+            InspectorTest.singleFireEventListener("TestPageButton2Click", (event) => {
+                if (!paused)
+                    InspectorTest.pass("Should not pause before button2 event handler is run.");
+
+                InspectorTest.log("Clicking button1...");
+                clickingButton1 = true;
+                InspectorTest.evaluateInPage(`clickButton1()`);
+            });
+
+            awaitGetClickEventListener(button1Node.id)
+            .then((clickEventListener) => {
+                InspectorTest.assert(clickEventListener.hasBreakpoint, "Click event listener for button1 should have a breakpoint.");
+
+                InspectorTest.log("Removing breakpoint for event listener...");
+                return DOMAgent.removeBreakpointForEventListener(clickEventListener.eventListenerId);
+            })
+            .then(() => {
+                InspectorTest.log("Clicking button2...");
+                return InspectorTest.evaluateInPage(`clickButton2()`);
+            })
+            .catch(reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.setBreakpointForEventListener.Invalid",
+        description: "Invalid event listener identifiers should cause an error.",
+        test(resolve, reject) {
+            const invalidEventListenerId = 9999999;
+            DOMAgent.setBreakpointForEventListener(invalidEventListenerId, (error) => {
+                InspectorTest.expectThat(error, "Should produce an error.");
+                InspectorTest.log("Error: " + error);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.removeBreakpointForEventListener.Invalid",
+        description: "Invalid event listener identifiers should cause an error.",
+        test(resolve, reject) {
+            const invalidEventListenerId = 9999999;
+            DOMAgent.removeBreakpointForEventListener(invalidEventListenerId, (error) => {
+                InspectorTest.expectThat(error, "Should produce an error.");
+                InspectorTest.log("Error: " + error);
+                resolve();
+            });
+        }
+    });
+
+    WI.domTreeManager.requestDocument((documentNode) => {
+        Promise.all([
+            WI.domTreeManager.querySelector(documentNode.id, "#button1"),
+            WI.domTreeManager.querySelector(documentNode.id, "#button2"),
+        ])
+        .then(([button1Id, button2Id]) => {
+            button1Node = WI.domTreeManager.nodeForId(button1Id);
+            button2Node = WI.domTreeManager.nodeForId(button2Id);
+
+            suite.runTestCasesAndFinish();
+        })
+        .catch(() => {
+            InspectorTest.fail("Unable to retrieve nodes.");
+            InspectorTest.completeTest();
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing DOMAgent.setBreakpointForEventListener and DOMAgent.removeBreakpointForEventListener.</p>
+    <button id="button1"></button>
+    <button id="button2"></button>
+    <script>
+        document.getElementById("button1").addEventListener("click", handleButton1Click);
+        document.getElementById("button2").addEventListener("click", handleButton2Click);
+    </script>
+</body>
+</html>

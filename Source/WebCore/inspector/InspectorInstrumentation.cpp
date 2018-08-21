@@ -294,7 +294,7 @@ void InspectorInstrumentation::willSendXMLHttpRequestImpl(InstrumentingAgents& i
 
 void InspectorInstrumentation::didInstallTimerImpl(InstrumentingAgents& instrumentingAgents, int timerId, Seconds timeout, bool singleShot, ScriptExecutionContext& context)
 {
-    pauseOnNativeEventIfNeeded(instrumentingAgents, false, setTimerEventName, true);
+    pauseOnNativeEventIfNeeded(instrumentingAgents, setTimerEventName, true);
 
     if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent())
         debuggerAgent->didScheduleAsyncCall(context.execState(), InspectorDebuggerAgent::AsyncCallType::DOMTimer, timerId, singleShot);
@@ -305,7 +305,7 @@ void InspectorInstrumentation::didInstallTimerImpl(InstrumentingAgents& instrume
 
 void InspectorInstrumentation::didRemoveTimerImpl(InstrumentingAgents& instrumentingAgents, int timerId, ScriptExecutionContext& context)
 {
-    pauseOnNativeEventIfNeeded(instrumentingAgents, false, clearTimerEventName, true);
+    pauseOnNativeEventIfNeeded(instrumentingAgents, clearTimerEventName, true);
 
     if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent())
         debuggerAgent->didCancelAsyncCall(InspectorDebuggerAgent::AsyncCallType::DOMTimer, timerId);
@@ -393,7 +393,8 @@ void InspectorInstrumentation::willHandleEventImpl(InstrumentingAgents& instrume
     if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
         pageDebuggerAgent->willHandleEvent(listener);
 
-    pauseOnNativeEventIfNeeded(instrumentingAgents, true, event.type(), false);
+    if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents.inspectorDOMDebuggerAgent())
+        domDebuggerAgent->willHandleEvent(event, listener);
 }
 
 void InspectorInstrumentation::didHandleEventImpl(InstrumentingAgents& instrumentingAgents)
@@ -444,7 +445,7 @@ void InspectorInstrumentation::didEvaluateScriptImpl(const InspectorInstrumentat
 
 InspectorInstrumentationCookie InspectorInstrumentation::willFireTimerImpl(InstrumentingAgents& instrumentingAgents, int timerId, ScriptExecutionContext& context)
 {
-    pauseOnNativeEventIfNeeded(instrumentingAgents, false, timerFiredEventName, false);
+    pauseOnNativeEventIfNeeded(instrumentingAgents, timerFiredEventName, false);
 
     if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent())
         debuggerAgent->willDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::DOMTimer, timerId);
@@ -1043,15 +1044,15 @@ bool InspectorInstrumentation::timelineAgentEnabled(ScriptExecutionContext* scri
     return instrumentingAgents && instrumentingAgents->inspectorTimelineAgent();
 }
 
-void InspectorInstrumentation::pauseOnNativeEventIfNeeded(InstrumentingAgents& instrumentingAgents, bool isDOMEvent, const String& eventName, bool synchronous)
+void InspectorInstrumentation::pauseOnNativeEventIfNeeded(InstrumentingAgents& instrumentingAgents, const String& eventName, bool synchronous)
 {
     if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents.inspectorDOMDebuggerAgent())
-        domDebuggerAgent->pauseOnNativeEventIfNeeded(isDOMEvent, eventName, synchronous);
+        domDebuggerAgent->pauseOnNativeEventIfNeeded(eventName, synchronous);
 }
 
 void InspectorInstrumentation::didRequestAnimationFrameImpl(InstrumentingAgents& instrumentingAgents, int callbackId, Document& document)
 {
-    pauseOnNativeEventIfNeeded(instrumentingAgents, false, requestAnimationFrameEventName, true);
+    pauseOnNativeEventIfNeeded(instrumentingAgents, requestAnimationFrameEventName, true);
 
     if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
         pageDebuggerAgent->didRequestAnimationFrame(callbackId, document);
@@ -1061,7 +1062,7 @@ void InspectorInstrumentation::didRequestAnimationFrameImpl(InstrumentingAgents&
 
 void InspectorInstrumentation::didCancelAnimationFrameImpl(InstrumentingAgents& instrumentingAgents, int callbackId, Document& document)
 {
-    pauseOnNativeEventIfNeeded(instrumentingAgents, false, cancelAnimationFrameEventName, true);
+    pauseOnNativeEventIfNeeded(instrumentingAgents, cancelAnimationFrameEventName, true);
 
     if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
         pageDebuggerAgent->didCancelAnimationFrame(callbackId);
@@ -1071,7 +1072,7 @@ void InspectorInstrumentation::didCancelAnimationFrameImpl(InstrumentingAgents& 
 
 InspectorInstrumentationCookie InspectorInstrumentation::willFireAnimationFrameImpl(InstrumentingAgents& instrumentingAgents, int callbackId, Document& document)
 {
-    pauseOnNativeEventIfNeeded(instrumentingAgents, false, animationFrameFiredEventName, false);
+    pauseOnNativeEventIfNeeded(instrumentingAgents, animationFrameFiredEventName, false);
 
     if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
         pageDebuggerAgent->willFireAnimationFrame(callbackId);

@@ -841,20 +841,28 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString& errorString, int n
     auto addListener = [&] (RegisteredEventListener& listener, const EventListenerInfo& info) {
         int identifier = 0;
         bool disabled = false;
+        bool hasBreakpoint = false;
 
-        auto it = m_eventListenerEntries.find(&listener.callback());
-        if (it == m_eventListenerEntries.end()) {
-            InspectorEventListener inspectorEventListener(m_lastEventListenerId++, *info.node, info.eventType, listener.useCapture());
-            m_eventListenerEntries.add(&listener.callback(), inspectorEventListener);
+        for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
+            if (inspectorEventListener.matches(*info.node, info.eventType, listener.callback(), listener.useCapture())) {
+                identifier = inspectorEventListener.identifier;
+                disabled = inspectorEventListener.disabled;
+                hasBreakpoint = inspectorEventListener.hasBreakpoint;
+                break;
+            }
+        }
+
+        if (!identifier) {
+            InspectorEventListener inspectorEventListener(m_lastEventListenerId++, *info.node, info.eventType, listener.callback(), listener.useCapture());
 
             identifier = inspectorEventListener.identifier;
             disabled = inspectorEventListener.disabled;
-        } else {
-            identifier = it->value.identifier;
-            disabled = it->value.disabled;
+            hasBreakpoint = inspectorEventListener.hasBreakpoint;
+
+            m_eventListenerEntries.add(identifier, inspectorEventListener);
         }
 
-        listenersArray->addItem(buildObjectForEventListener(listener, identifier, info.eventType, info.node, objectGroup, disabled));
+        listenersArray->addItem(buildObjectForEventListener(listener, identifier, info.eventType, info.node, objectGroup, disabled, hasBreakpoint));
     };
 
     // Get Capturing Listeners (in this order)
@@ -910,14 +918,35 @@ void InspectorDOMAgent::getEventListeners(Node* node, Vector<EventListenerInfo>&
 
 void InspectorDOMAgent::setEventListenerDisabled(ErrorString& errorString, int eventListenerId, bool disabled)
 {
-    for (InspectorEventListener& inspectorEventListener : m_eventListenerEntries.values()) {
-        if (inspectorEventListener.identifier == eventListenerId) {
-            inspectorEventListener.disabled = disabled;
-            return;
-        }
+    auto it = m_eventListenerEntries.find(eventListenerId);
+    if (it == m_eventListenerEntries.end()) {
+        errorString = "No event listener for given identifier."_s;
+        return;
     }
 
-    errorString = "No event listener for given identifier."_s;
+    it->value.disabled = disabled;
+}
+
+void InspectorDOMAgent::setBreakpointForEventListener(ErrorString& errorString, int eventListenerId)
+{
+    auto it = m_eventListenerEntries.find(eventListenerId);
+    if (it == m_eventListenerEntries.end()) {
+        errorString = "No event listener for given identifier."_s;
+        return;
+    }
+
+    it->value.hasBreakpoint = true;
+}
+
+void InspectorDOMAgent::removeBreakpointForEventListener(ErrorString& errorString, int eventListenerId)
+{
+    auto it = m_eventListenerEntries.find(eventListenerId);
+    if (it == m_eventListenerEntries.end()) {
+        errorString = "No event listener for given identifier."_s;
+        return;
+    }
+
+    it->value.hasBreakpoint = false;
 }
 
 void InspectorDOMAgent::getAccessibilityPropertiesForNode(ErrorString& errorString, int nodeId, RefPtr<Inspector::Protocol::DOM::AccessibilityProperties>& axProperties)
@@ -1593,7 +1622,7 @@ RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> InspectorDOMAgent::buildAr
     return WTFMove(pseudoElements);
 }
 
-Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, int identifier, const AtomicString& eventType, Node* node, const String* objectGroupId, bool disabled)
+Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, int identifier, const AtomicString& eventType, Node* node, const String* objectGroupId, bool disabled, bool hasBreakpoint)
 {
     Ref<EventListener> eventListener = registeredEventListener.callback();
 
@@ -1653,6 +1682,8 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
         value->setOnce(true);
     if (disabled)
         value->setDisabled(disabled);
+    if (hasBreakpoint)
+        value->setHasBreakpoint(hasBreakpoint);
     return value;
 }
     
@@ -2271,21 +2302,38 @@ void InspectorDOMAgent::willRemoveEventListener(EventTarget& target, const Atomi
     if (!listenerExists)
         return;
 
-    m_eventListenerEntries.remove(&listener);
+    m_eventListenerEntries.removeIf([&] (auto& entry) {
+        return entry.value.matches(target, eventType, listener, capture);
+    });
 
     m_frontendDispatcher->willRemoveEventListener(nodeId);
 }
 
 bool InspectorDOMAgent::isEventListenerDisabled(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
 {
-    auto it = m_eventListenerEntries.find(&listener);
-    if (it == m_eventListenerEntries.end())
-        return false;
+    for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
+        if (inspectorEventListener.matches(target, eventType, listener, capture))
+            return inspectorEventListener.disabled;
+    }
+    return false;
+}
 
-    if (!it->value.disabled)
-        return false;
+bool InspectorDOMAgent::hasBreakpointForEventListener(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
+{
+    for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
+        if (inspectorEventListener.matches(target, eventType, listener, capture))
+            return inspectorEventListener.hasBreakpoint;
+    }
+    return false;
+}
 
-    return it->value.eventTarget.get() == &target && it->value.eventType == eventType && it->value.useCapture == capture;
+int InspectorDOMAgent::idForEventListener(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
+{
+    for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
+        if (inspectorEventListener.matches(target, eventType, listener, capture))
+            return inspectorEventListener.identifier;
+    }
+    return 0;
 }
 
 Node* InspectorDOMAgent::nodeForPath(const String& path)

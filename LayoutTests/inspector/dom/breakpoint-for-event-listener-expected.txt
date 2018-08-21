@@ -1,0 +1,29 @@
+Testing DOMAgent.setBreakpointForEventListener and DOMAgent.removeBreakpointForEventListener.
+
+  
+
+== Running test suite: DOM.BreakpointForEventListener
+-- Running test case: DOM.setBreakpointForEventListener
+Adding breakpoint for event listener...
+Clicking button2...
+PASS: Should not pause before button2 event handler is run.
+Clicking button1...
+PASS: Should pause before button1 event handler is run.
+PASS: Pause reason should be EventListener.
+PASS: Pause data eventName should be "click".
+
+-- Running test case: DOM.removeBreakpointForEventListener
+Removing breakpoint for event listener...
+Clicking button2...
+PASS: Should not pause before button2 event handler is run.
+Clicking button1...
+PASS: Should not pause before button1 event handler is run.
+
+-- Running test case: DOM.setBreakpointForEventListener.Invalid
+PASS: Should produce an error.
+Error: No event listener for given identifier.
+
+-- Running test case: DOM.removeBreakpointForEventListener.Invalid
+PASS: Should produce an error.
+Error: No event listener for given identifier.
+

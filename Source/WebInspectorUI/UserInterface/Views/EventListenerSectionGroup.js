@@ -52,8 +52,13 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
         if (this._eventListener.once)
             rows.push(new WI.DetailsSectionSimpleRow(WI.UIString("Once"), WI.UIString("Yes")));
 
-        if (DOMAgent.setEventListenerDisabled && this._eventListener.eventListenerId)
-            rows.push(this._createDisabledToggleRow());
+        if (this._eventListener.eventListenerId) {
+            if (DOMAgent.setEventListenerDisabled)
+                rows.push(this._createDisabledToggleRow());
+
+            if (DOMAgent.setBreakpointForEventListener && DOMAgent.removeBreakpointForEventListener)
+                rows.push(this._createBreakpointToggleRow());
+        }
 
         this.rows = rows;
     }
@@ -125,7 +130,7 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
 
         toggleElement.addEventListener("change", (event) => {
             this._eventListener.disabled = !toggleElement.checked;
-            WI.domTreeManager.setEventListenerDisabled(this._eventListener.eventListenerId, this._eventListener.disabled);
+            WI.domTreeManager.setEventListenerDisabled(this._eventListener, this._eventListener.disabled);
             updateTitle();
         });
 
@@ -136,5 +141,39 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
         });
 
         return new WI.DetailsSectionSimpleRow(toggleLabel, toggleElement);
+    }
+
+    _createBreakpointToggleRow()
+    {
+        let checkboxElement = document.createElement("input");
+        checkboxElement.type = "checkbox";
+        checkboxElement.checked = !!this._eventListener.hasBreakpoint;
+
+        let updateTitle = () => {
+            if (this._eventListener.hasBreakpoint)
+                checkboxElement.title = WI.UIString("Delete Breakpoint");
+            else
+                checkboxElement.title = WI.UIString("Add Breakpoint");
+        };
+
+        updateTitle();
+
+        checkboxElement.addEventListener("change", (event) => {
+            this._eventListener.hasBreakpoint = !!checkboxElement.checked;
+            if (this._eventListener.hasBreakpoint)
+                WI.domTreeManager.setBreakpointForEventListener(this._eventListener);
+            else
+                WI.domTreeManager.removeBreakpointForEventListener(this._eventListener);
+
+            updateTitle();
+        });
+
+        let labelElement = document.createElement("span");
+        labelElement.textContent = WI.UIString("Breakpoint");
+        labelElement.addEventListener("click", (event) => {
+            checkboxElement.click();
+        });
+
+        return new WI.DetailsSectionSimpleRow(labelElement, checkboxElement);
     }
 };

@@ -32,6 +32,9 @@ WI.EventBreakpointTreeController = class EventBreakpointTreeController
         WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.EventBreakpointAdded, this._eventBreakpointAdded, this);
         WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.EventBreakpointRemoved, this._eventBreakpointRemoved, this);
 
+        for (let breakpoint of WI.domTreeManager.eventListenerBreakpoints)
+            this._addTreeElement(breakpoint);
+
         for (let breakpoint of WI.domDebuggerManager.eventBreakpoints)
             this._addTreeElement(breakpoint);
     }
@@ -71,6 +74,8 @@ WI.EventBreakpointTreeController = class EventBreakpointTreeController
         if (treeElement)
             return;
 
-        this._treeOutline.appendChild(new WI.EventBreakpointTreeElement(breakpoint));
+        this._treeOutline.appendChild(new WI.EventBreakpointTreeElement(breakpoint, {
+            linkifyNode: true,
+        }));
     }
 };

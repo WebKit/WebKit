@@ -43,10 +43,17 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
         this._loadNodeAttributesTimeout = 0;
         this._inspectedNode = null;
 
+        this._breakpointsForEventListeners = new Map;
+
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     }
 
     // Public
+
+    get eventListenerBreakpoints()
+    {
+        return Array.from(this._breakpointsForEventListeners.values());
+    }
 
     requestDocument(callback)
     {
@@ -219,6 +226,7 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
     _setDocument(payload)
     {
         this._idToDOMNode = {};
+        this._breakpointsForEventListeners.clear();
 
         let newDocument = null;
         if (payload && "nodeId" in payload)
@@ -538,9 +546,50 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
         DOMAgent.setInspectedNode(node.id, callback);
     }
 
-    setEventListenerDisabled(eventListenerId, disabled)
+    setEventListenerDisabled(eventListener, disabled)
     {
-        DOMAgent.setEventListenerDisabled(eventListenerId, disabled);
+        DOMAgent.setEventListenerDisabled(eventListener.eventListenerId, disabled, (error) => {
+            if (error)
+                console.error(error);
+        });
+    }
+
+    setBreakpointForEventListener(eventListener)
+    {
+        let breakpoint = new WI.EventBreakpoint(eventListener.type, {eventListener});
+        this._breakpointsForEventListeners.set(eventListener.eventListenerId, breakpoint);
+
+        DOMAgent.setBreakpointForEventListener(eventListener.eventListenerId, (error) => {
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            WI.domDebuggerManager.dispatchEventToListeners(WI.DOMDebuggerManager.Event.EventBreakpointAdded, {breakpoint});
+        });
+    }
+
+    removeBreakpointForEventListener(eventListener)
+    {
+        let breakpoint = this._breakpointsForEventListeners.get(eventListener.eventListenerId);
+        console.assert(breakpoint);
+
+        this._breakpointsForEventListeners.delete(eventListener.eventListenerId);
+
+        DOMAgent.removeBreakpointForEventListener(eventListener.eventListenerId, (error) => {
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            if (breakpoint)
+                WI.domDebuggerManager.dispatchEventToListeners(WI.DOMDebuggerManager.Event.EventBreakpointRemoved, {breakpoint});
+        });
+    }
+
+    breakpointForEventListenerId(eventListenerId)
+    {
+        return this._breakpointsForEventListeners.get(eventListenerId) || null;
     }
 
     _buildHighlightConfig(mode = "all")

@@ -62,10 +62,8 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
                 this.addDOMBreakpoint(breakpoint);
             }
 
-            for (let cookie of this._eventBreakpointSetting.value) {
-                let breakpoint = new WI.EventBreakpoint(cookie.eventName, cookie.disabled);
-                this.addEventBreakpoint(breakpoint);
-            }
+            for (let payload of this._eventBreakpointSetting.value)
+                this.addEventBreakpoint(WI.EventBreakpoint.fromPayload(payload));
 
             for (let cookie of this._xhrBreakpointsSetting.value) {
                 let breakpoint = new WI.XHRBreakpoint(cookie.type, cookie.url, cookie.disabled);
