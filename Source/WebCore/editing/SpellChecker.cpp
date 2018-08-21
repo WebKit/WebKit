@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-SpellCheckRequest::SpellCheckRequest(Ref<Range>&& checkingRange, Ref<Range>&& automaticReplacementRange, Ref<Range>&& paragraphRange, const String& text, TextCheckingTypeMask mask, TextCheckingProcessType processType)
+SpellCheckRequest::SpellCheckRequest(Ref<Range>&& checkingRange, Ref<Range>&& automaticReplacementRange, Ref<Range>&& paragraphRange, const String& text, OptionSet<TextCheckingType> mask, TextCheckingProcessType processType)
     : m_checkingRange(WTFMove(checkingRange))
     , m_automaticReplacementRange(WTFMove(automaticReplacementRange))
     , m_paragraphRange(WTFMove(paragraphRange))
@@ -51,7 +51,7 @@ SpellCheckRequest::SpellCheckRequest(Ref<Range>&& checkingRange, Ref<Range>&& au
 
 SpellCheckRequest::~SpellCheckRequest() = default;
 
-RefPtr<SpellCheckRequest> SpellCheckRequest::create(TextCheckingTypeMask textCheckingOptions, TextCheckingProcessType processType, Ref<Range>&& checkingRange, Ref<Range>&& automaticReplacementRange, Ref<Range>&& paragraphRange)
+RefPtr<SpellCheckRequest> SpellCheckRequest::create(OptionSet<TextCheckingType> textCheckingOptions, TextCheckingProcessType processType, Ref<Range>&& checkingRange, Ref<Range>&& automaticReplacementRange, Ref<Range>&& paragraphRange)
 {
     String text = checkingRange->text();
     if (!text.length())
@@ -217,9 +217,9 @@ void SpellChecker::didCheckSucceed(int sequence, const Vector<TextCheckingResult
     TextCheckingRequestData requestData = m_processingRequest->data();
     if (requestData.sequence() == sequence) {
         OptionSet<DocumentMarker::MarkerType> markerTypes;
-        if (requestData.mask() & TextCheckingTypeSpelling)
+        if (requestData.checkingTypes().contains(TextCheckingType::Spelling))
             markerTypes |= DocumentMarker::Spelling;
-        if (requestData.mask() & TextCheckingTypeGrammar)
+        if (requestData.checkingTypes().contains(TextCheckingType::Grammar))
             markerTypes |= DocumentMarker::Grammar;
         if (!markerTypes.isEmpty())
             m_frame.document()->markers().removeMarkers(&m_processingRequest->checkingRange(), markerTypes);

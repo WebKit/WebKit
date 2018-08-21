@@ -44,7 +44,7 @@ class SpellChecker;
 
 class SpellCheckRequest : public TextCheckingRequest {
 public:
-    static RefPtr<SpellCheckRequest> create(TextCheckingTypeMask, TextCheckingProcessType, Ref<Range>&& checkingRange, Ref<Range>&& automaticReplacementRange, Ref<Range>&& paragraphRange);
+    static RefPtr<SpellCheckRequest> create(OptionSet<TextCheckingType>, TextCheckingProcessType, Ref<Range>&& checkingRange, Ref<Range>&& automaticReplacementRange, Ref<Range>&& paragraphRange);
     virtual ~SpellCheckRequest();
 
     Range& checkingRange() const { return m_checkingRange.get(); }
@@ -61,7 +61,7 @@ public:
     void didCancel() override;
 
 private:
-    SpellCheckRequest(Ref<Range>&& checkingRange, Ref<Range>&& automaticReplacementRange, Ref<Range>&& paragraphRange, const String&, TextCheckingTypeMask, TextCheckingProcessType);
+    SpellCheckRequest(Ref<Range>&& checkingRange, Ref<Range>&& automaticReplacementRange, Ref<Range>&& paragraphRange, const String&, OptionSet<TextCheckingType>, TextCheckingProcessType);
 
     SpellChecker* m_checker { nullptr };
     Ref<Range> m_checkingRange;

@@ -74,7 +74,7 @@ public:
     static int64_t uniqueSpellDocumentTag(WebPageProxy*);
     static void closeSpellDocumentWithTag(int64_t);
 #if USE(UNIFIED_TEXT_CHECKING)
-    static Vector<WebCore::TextCheckingResult> checkTextOfParagraph(int64_t spellDocumentTag, StringView text, int32_t insertionPoint, uint64_t checkingTypes, bool initialCapitalizationEnabled);
+    static Vector<WebCore::TextCheckingResult> checkTextOfParagraph(int64_t spellDocumentTag, StringView, int32_t insertionPoint, OptionSet<WebCore::TextCheckingType>, bool initialCapitalizationEnabled);
 #endif
     static void checkSpellingOfString(int64_t spellDocumentTag, StringView text, int32_t& misspellingLocation, int32_t& misspellingLength);
     static void checkGrammarOfString(int64_t spellDocumentTag, StringView text, Vector<WebCore::GrammarDetail>&, int32_t& badGrammarLocation, int32_t& badGrammarLength);

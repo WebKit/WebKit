@@ -2196,7 +2196,7 @@ void Internals::handleAcceptedCandidate(const String& candidate, unsigned locati
         return;
 
     TextCheckingResult result;
-    result.type = TextCheckingTypeNone;
+    result.type = TextCheckingType::None;
     result.location = location;
     result.length = length;
     result.replacement = candidate;

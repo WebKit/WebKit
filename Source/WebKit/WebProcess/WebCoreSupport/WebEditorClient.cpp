@@ -467,7 +467,7 @@ bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(WebCore::TextChecki
 {
     // This prevents erasing spelling markers on OS X Lion or later to match AppKit on these Mac OS X versions.
 #if PLATFORM(COCOA)
-    return type != TextCheckingTypeSpelling;
+    return type != TextCheckingType::Spelling;
 #else
     UNUSED_PARAM(type);
     return true;
@@ -518,12 +518,10 @@ static int32_t insertionPointFromCurrentSelection(const VisibleSelection& curren
 }
 
 #if USE(UNIFIED_TEXT_CHECKING)
-Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView stringView, WebCore::TextCheckingTypeMask checkingTypes, const VisibleSelection& currentSelection)
+Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView stringView, OptionSet<WebCore::TextCheckingType> checkingTypes, const VisibleSelection& currentSelection)
 {
     Vector<TextCheckingResult> results;
-
     m_page->sendSync(Messages::WebPageProxy::CheckTextOfParagraph(stringView.toStringWithoutCopying(), checkingTypes, insertionPointFromCurrentSelection(currentSelection)), Messages::WebPageProxy::CheckTextOfParagraph::Reply(results));
-
     return results;
 }
 #endif

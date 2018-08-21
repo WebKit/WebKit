@@ -326,7 +326,7 @@ void TextChecker::closeSpellDocumentWithTag(int64_t tag)
 
 #if USE(UNIFIED_TEXT_CHECKING)
 
-Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, StringView text, int32_t insertionPoint, uint64_t checkingTypes, bool initialCapitalizationEnabled)
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, StringView text, int32_t insertionPoint, OptionSet<TextCheckingType> checkingTypes, bool initialCapitalizationEnabled)
 {
     Vector<TextCheckingResult> results;
 
@@ -340,7 +340,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
 #endif
     NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString.get()
                                                                           range:NSMakeRange(0, text.length())
-                                                                          types:checkingTypes | NSTextCheckingTypeOrthography
+                                                                          types:nsTextCheckingTypes(checkingTypes) | NSTextCheckingTypeOrthography
                                                                         options:options
                                                          inSpellDocumentWithTag:spellDocumentTag 
                                                                     orthography:NULL
@@ -350,16 +350,16 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
         NSTextCheckingType resultType = [incomingResult resultType];
         ASSERT(resultRange.location != NSNotFound);
         ASSERT(resultRange.length > 0);
-        if (resultType == NSTextCheckingTypeSpelling && (checkingTypes & NSTextCheckingTypeSpelling)) {
+        if (resultType == NSTextCheckingTypeSpelling && checkingTypes.contains(TextCheckingType::Spelling)) {
             TextCheckingResult result;
-            result.type = TextCheckingTypeSpelling;
+            result.type = TextCheckingType::Spelling;
             result.location = resultRange.location;
             result.length = resultRange.length;
             results.append(result);
-        } else if (resultType == NSTextCheckingTypeGrammar && (checkingTypes & NSTextCheckingTypeGrammar)) {
+        } else if (resultType == NSTextCheckingTypeGrammar && checkingTypes.contains(TextCheckingType::Grammar)) {
             TextCheckingResult result;
             NSArray *details = [incomingResult grammarDetails];
-            result.type = TextCheckingTypeGrammar;
+            result.type = TextCheckingType::Grammar;
             result.location = resultRange.location;
             result.length = resultRange.length;
             for (NSDictionary *incomingDetail in details) {
@@ -379,37 +379,37 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
                 result.details.append(detail);
             }
             results.append(result);
-        } else if (resultType == NSTextCheckingTypeLink && (checkingTypes & NSTextCheckingTypeLink)) {
+        } else if (resultType == NSTextCheckingTypeLink && checkingTypes.contains(TextCheckingType::Link)) {
             TextCheckingResult result;
-            result.type = TextCheckingTypeLink;
+            result.type = TextCheckingType::Link;
             result.location = resultRange.location;
             result.length = resultRange.length;
             result.replacement = [[incomingResult URL] absoluteString];
             results.append(result);
-        } else if (resultType == NSTextCheckingTypeQuote && (checkingTypes & NSTextCheckingTypeQuote)) {
+        } else if (resultType == NSTextCheckingTypeQuote && checkingTypes.contains(TextCheckingType::Quote)) {
             TextCheckingResult result;
-            result.type = TextCheckingTypeQuote;
+            result.type = TextCheckingType::Quote;
             result.location = resultRange.location;
             result.length = resultRange.length;
             result.replacement = [incomingResult replacementString];
             results.append(result);
-        } else if (resultType == NSTextCheckingTypeDash && (checkingTypes & NSTextCheckingTypeDash)) {
+        } else if (resultType == NSTextCheckingTypeDash && checkingTypes.contains(TextCheckingType::Dash)) {
             TextCheckingResult result;
-            result.type = TextCheckingTypeDash;
+            result.type = TextCheckingType::Dash;
             result.location = resultRange.location;
             result.length = resultRange.length;
             result.replacement = [incomingResult replacementString];
             results.append(result);
-        } else if (resultType == NSTextCheckingTypeReplacement && (checkingTypes & NSTextCheckingTypeReplacement)) {
+        } else if (resultType == NSTextCheckingTypeReplacement && checkingTypes.contains(TextCheckingType::Replacement)) {
             TextCheckingResult result;
-            result.type = TextCheckingTypeReplacement;
+            result.type = TextCheckingType::Replacement;
             result.location = resultRange.location;
             result.length = resultRange.length;
             result.replacement = [incomingResult replacementString];
             results.append(result);
-        } else if (resultType == NSTextCheckingTypeCorrection && (checkingTypes & NSTextCheckingTypeCorrection)) {
+        } else if (resultType == NSTextCheckingTypeCorrection && checkingTypes.contains(TextCheckingType::Correction)) {
             TextCheckingResult result;
-            result.type = TextCheckingTypeCorrection;
+            result.type = TextCheckingType::Correction;
             result.location = resultRange.location;
             result.length = resultRange.length;
             result.replacement = [incomingResult replacementString];
@@ -420,7 +420,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
     return results;
 }
 
-#endif
+#endif // USE(UNIFIED_TEXT_CHECKING)
 
 void TextChecker::checkSpellingOfString(int64_t, StringView, int32_t&, int32_t&)
 {

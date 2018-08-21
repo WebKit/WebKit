@@ -108,7 +108,7 @@ private:
 #endif
 };
 
-void checkTextOfParagraph(TextCheckerClient&, StringView, TextCheckingTypeMask, Vector<TextCheckingResult>&, const VisibleSelection& currentSelection);
+void checkTextOfParagraph(TextCheckerClient&, StringView, OptionSet<TextCheckingType>, Vector<TextCheckingResult>&, const VisibleSelection& currentSelection);
 
 bool unifiedTextCheckerEnabled(const Frame*);
 

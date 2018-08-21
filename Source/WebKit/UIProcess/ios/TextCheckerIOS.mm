@@ -145,7 +145,7 @@ void TextChecker::closeSpellDocumentWithTag(int64_t)
 
 #if USE(UNIFIED_TEXT_CHECKING)
 
-Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t, StringView, int32_t, uint64_t, bool)
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t, StringView, int32_t, OptionSet<TextCheckingType>, bool)
 {
     notImplemented();
     return Vector<TextCheckingResult>();

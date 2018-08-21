@@ -1956,7 +1956,7 @@ void ArgumentCoder<TextCheckingRequestData>::encode(Encoder& encoder, const Text
 {
     encoder << request.sequence();
     encoder << request.text();
-    encoder << request.mask();
+    encoder << request.checkingTypes();
     encoder.encodeEnum(request.processType());
 }
 
@@ -1970,15 +1970,15 @@ bool ArgumentCoder<TextCheckingRequestData>::decode(Decoder& decoder, TextChecki
     if (!decoder.decode(text))
         return false;
 
-    TextCheckingTypeMask mask;
-    if (!decoder.decode(mask))
+    OptionSet<TextCheckingType> checkingTypes;
+    if (!decoder.decode(checkingTypes))
         return false;
 
     TextCheckingProcessType processType;
     if (!decoder.decodeEnum(processType))
         return false;
 
-    request = TextCheckingRequestData(sequence, text, mask, processType);
+    request = TextCheckingRequestData { sequence, text, checkingTypes, processType };
     return true;
 }
 

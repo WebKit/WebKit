@@ -203,9 +203,9 @@ void TextChecker::requestCheckingOfString(Ref<TextCheckerCompletion>&& completio
 #if ENABLE(SPELLCHECK)
     TextCheckingRequestData request = completion->textCheckingRequestData();
     ASSERT(request.sequence() != unrequestedTextCheckingSequence);
-    ASSERT(request.mask() != TextCheckingTypeNone);
+    ASSERT(request.checkingTypes());
 
-    completion->didFinishCheckingText(checkTextOfParagraph(completion->spellDocumentTag(), request.text(), insertionPoint, request.mask(), false));
+    completion->didFinishCheckingText(checkTextOfParagraph(completion->spellDocumentTag(), request.text(), insertionPoint, request.checkingTypes(), false));
 #else
     UNUSED_PARAM(completion);
 #endif
@@ -240,16 +240,16 @@ static unsigned nextWordOffset(StringView text, unsigned currentOffset)
 #endif
 
 #if USE(UNIFIED_TEXT_CHECKING)
-Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, StringView text, int32_t insertionPoint, uint64_t checkingTypes, bool)
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, StringView text, int32_t insertionPoint, OptionSet<TextCheckingType> checkingTypes, bool)
 {
     UNUSED_PARAM(insertionPoint);
 #if ENABLE(SPELLCHECK)
-    if (!(checkingTypes & TextCheckingTypeSpelling))
-        return Vector<TextCheckingResult>();
+    if (!checkingTypes.contains(TextCheckingType::Spelling))
+        return { };
 
     UBreakIterator* textIterator = wordBreakIterator(text);
     if (!textIterator)
-        return Vector<TextCheckingResult>();
+        return { };
 
     // Omit the word separators at the beginning/end of the text to don't unnecessarily
     // involve the client to check spelling for them.
@@ -267,7 +267,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
             break;
 
         TextCheckingResult misspellingResult;
-        misspellingResult.type = TextCheckingTypeSpelling;
+        misspellingResult.type = TextCheckingType::Spelling;
         misspellingResult.location = offset + misspellingLocation;
         misspellingResult.length = misspellingLength;
         paragraphCheckingResult.append(misspellingResult);

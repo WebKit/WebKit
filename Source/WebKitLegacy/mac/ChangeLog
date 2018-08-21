@@ -1,5 +1,29 @@
 2018-08-21  Daniel Bates  <dabates@apple.com>
 
+        Replace TextCheckingTypeMask with OptionSet
+        https://bugs.webkit.org/show_bug.cgi?id=188678
+
+        Reviewed by Antti Koivisto.
+
+        Currently we have code in WebEditorClient::checkTextOfParagraph() that incorrectly assumes
+        that the enumerators of TextCheckingType have a one-to-one correspondence with NSTextCheckingType.
+        (This is not the case because there is not corresponding NSTextCheckingType for TextCheckingTypeShowCorrectionPanel).
+        We now explicitly convert from OptionSet<TextCheckingType> to NSTextCheckingTypes.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::checkTextOfParagraph):
+        (WebEditorClient::shouldEraseMarkersAfterChangeSelection const):
+        (core): Fix up code style nits; compare resultType on the right-hand side instead of the
+        left as this is more readable and unncessary now that modern compilers like Clang have
+        diagnostics to catch accidental assignments when equality was intended.
+        (WebEditorClient::didCheckSucceed):
+        * WebView/WebView.mm:
+        (coreTextCheckingType):
+        (textCheckingResultFromNSTextCheckingResult):
+
+2018-08-21  Daniel Bates  <dabates@apple.com>
+
         [iOS][WK1] Support toggling continuous spell checking from tests
         https://bugs.webkit.org/show_bug.cgi?id=188763
 
