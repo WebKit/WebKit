@@ -1,3 +1,135 @@
+2018-08-21  Saam barati  <sbarati@apple.com>
+
+        JSRunLoopTimer may run part of a member function after it's destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=188426
+
+        Reviewed by Mark Lam.
+
+        When I was reading the JSRunLoopTimer code, I noticed that it is possible
+        to end up running timer code after the class had been destroyed.
+        
+        The issue I spotted was in this function:
+        ```
+        void JSRunLoopTimer::timerDidFire()
+        {
+            JSLock* apiLock = m_apiLock.get();
+            if (!apiLock) {
+                // Likely a buggy usage: the timer fired while JSRunLoopTimer was being destroyed.
+                return;
+            }
+            // HERE
+            std::lock_guard<JSLock> lock(*apiLock);
+            RefPtr<VM> vm = apiLock->vm();
+            if (!vm) {
+                // The VM has been destroyed, so we should just give up.
+                return;
+            }
+        
+            doWork();
+        }
+        ```
+        
+        Look at the comment 'HERE'. Let's say that the timer callback thread gets context
+        switched before grabbing the API lock. Then, some other thread destroys the VM.
+        And let's say that the VM owns (perhaps transitively) this timer. Then, the
+        timer would run code and access member variables after it was destroyed.
+        
+        This patch fixes this issue by introducing a new timer manager class. 
+        This class manages timers on a per VM basis. When a timer is scheduled,
+        this class refs the timer. It also calls the timer callback while actively
+        maintaining a +1 ref to it. So, it's no longer possible to call the timer
+        callback after the timer has been destroyed. However, calling a timer callback
+        can still race with the VM being destroyed. We continue to detect this case and
+        bail out of the callback early.
+        
+        This patch also removes a lot of duplicate code between GCActivityCallback
+        and JSRunLoopTimer.
+
+        * heap/EdenGCActivityCallback.cpp:
+        (JSC::EdenGCActivityCallback::doCollection):
+        (JSC::EdenGCActivityCallback::lastGCLength):
+        (JSC::EdenGCActivityCallback::deathRate):
+        * heap/EdenGCActivityCallback.h:
+        * heap/FullGCActivityCallback.cpp:
+        (JSC::FullGCActivityCallback::doCollection):
+        (JSC::FullGCActivityCallback::lastGCLength):
+        (JSC::FullGCActivityCallback::deathRate):
+        * heap/FullGCActivityCallback.h:
+        * heap/GCActivityCallback.cpp:
+        (JSC::GCActivityCallback::doWork):
+        (JSC::GCActivityCallback::scheduleTimer):
+        (JSC::GCActivityCallback::didAllocate):
+        (JSC::GCActivityCallback::willCollect):
+        (JSC::GCActivityCallback::cancel):
+        (JSC::GCActivityCallback::cancelTimer): Deleted.
+        (JSC::GCActivityCallback::nextFireTime): Deleted.
+        * heap/GCActivityCallback.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::reportAbandonedObjectGraph):
+        (JSC::Heap::notifyIncrementalSweeper):
+        (JSC::Heap::updateAllocationLimits):
+        (JSC::Heap::didAllocate):
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::scheduleTimer):
+        (JSC::IncrementalSweeper::doWork):
+        (JSC::IncrementalSweeper::doSweep):
+        (JSC::IncrementalSweeper::sweepNextBlock):
+        (JSC::IncrementalSweeper::startSweeping):
+        (JSC::IncrementalSweeper::stopSweeping):
+        * heap/IncrementalSweeper.h:
+        * heap/StopIfNecessaryTimer.cpp:
+        (JSC::StopIfNecessaryTimer::doWork):
+        (JSC::StopIfNecessaryTimer::scheduleSoon):
+        * heap/StopIfNecessaryTimer.h:
+        * runtime/JSRunLoopTimer.cpp:
+        (JSC::epochTime):
+        (JSC::JSRunLoopTimer::Manager::timerDidFireCallback):
+        (JSC::JSRunLoopTimer::Manager::PerVMData::setRunLoop):
+        (JSC::JSRunLoopTimer::Manager::PerVMData::PerVMData):
+        (JSC::JSRunLoopTimer::Manager::PerVMData::~PerVMData):
+        (JSC::JSRunLoopTimer::Manager::timerDidFire):
+        (JSC::JSRunLoopTimer::Manager::shared):
+        (JSC::JSRunLoopTimer::Manager::registerVM):
+        (JSC::JSRunLoopTimer::Manager::unregisterVM):
+        (JSC::JSRunLoopTimer::Manager::scheduleTimer):
+        (JSC::JSRunLoopTimer::Manager::cancelTimer):
+        (JSC::JSRunLoopTimer::Manager::timeUntilFire):
+        (JSC::JSRunLoopTimer::Manager::didChangeRunLoop):
+        (JSC::JSRunLoopTimer::timerDidFire):
+        (JSC::JSRunLoopTimer::JSRunLoopTimer):
+        (JSC::JSRunLoopTimer::timeUntilFire):
+        (JSC::JSRunLoopTimer::setTimeUntilFire):
+        (JSC::JSRunLoopTimer::cancelTimer):
+        (JSC::JSRunLoopTimer::setRunLoop): Deleted.
+        (JSC::JSRunLoopTimer::timerDidFireCallback): Deleted.
+        (JSC::JSRunLoopTimer::scheduleTimer): Deleted.
+        * runtime/JSRunLoopTimer.h:
+        (JSC::JSRunLoopTimer::Manager::PerVMData::PerVMData):
+        * runtime/PromiseDeferredTimer.cpp:
+        (JSC::PromiseDeferredTimer::doWork):
+        (JSC::PromiseDeferredTimer::runRunLoop):
+        (JSC::PromiseDeferredTimer::addPendingPromise):
+        (JSC::PromiseDeferredTimer::hasPendingPromise):
+        (JSC::PromiseDeferredTimer::hasDependancyInPendingPromise):
+        (JSC::PromiseDeferredTimer::cancelPendingPromise):
+        (JSC::PromiseDeferredTimer::scheduleWorkSoon):
+        * runtime/PromiseDeferredTimer.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        (JSC::VM::setRunLoop):
+        (JSC::VM::registerRunLoopTimer): Deleted.
+        (JSC::VM::unregisterRunLoopTimer): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::runLoop const):
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::webAssemblyModuleValidateAsyncInternal):
+        (JSC::instantiate):
+        (JSC::compileAndInstantiate):
+        (JSC::webAssemblyModuleInstantinateAsyncInternal):
+        (JSC::webAssemblyCompileStreamingInternal):
+        (JSC::webAssemblyInstantiateStreamingInternal):
+
 2018-08-20  Saam barati  <sbarati@apple.com>
 
         Inline DataView accesses into DFG/FTL

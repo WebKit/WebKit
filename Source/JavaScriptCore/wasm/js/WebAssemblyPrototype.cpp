@@ -91,7 +91,7 @@ static void webAssemblyModuleValidateAsyncInternal(ExecState* exec, JSPromiseDef
     Vector<Strong<JSCell>> dependencies;
     dependencies.append(Strong<JSCell>(vm, globalObject));
 
-    vm.promiseDeferredTimer->addPendingPromise(promise, WTFMove(dependencies));
+    vm.promiseDeferredTimer->addPendingPromise(vm, promise, WTFMove(dependencies));
 
     Wasm::Module::validateAsync(&vm.wasmContext, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([promise, globalObject, &vm] (Wasm::Module::ValidationResult&& result) mutable {
         vm.promiseDeferredTimer->scheduleWorkSoon(promise, [promise, globalObject, result = WTFMove(result), &vm] () mutable {
@@ -173,7 +173,7 @@ static void instantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSW
     // The instance keeps the module alive.
     dependencies.append(Strong<JSCell>(vm, instance));
     dependencies.append(Strong<JSCell>(vm, importObject));
-    vm.promiseDeferredTimer->addPendingPromise(promise, WTFMove(dependencies));
+    vm.promiseDeferredTimer->addPendingPromise(vm, promise, WTFMove(dependencies));
     // Note: This completion task may or may not get called immediately.
     module->module().compileAsync(&vm.wasmContext, instance->memoryMode(), createSharedTask<Wasm::CodeBlock::CallbackType>([promise, instance, module, importObject, resolveKind, creationMode, &vm] (Ref<Wasm::CodeBlock>&& refCodeBlock) mutable {
         RefPtr<Wasm::CodeBlock> codeBlock = WTFMove(refCodeBlock);
@@ -194,7 +194,7 @@ static void compileAndInstantiate(VM& vm, ExecState* exec, JSPromiseDeferred* pr
     Vector<Strong<JSCell>> dependencies;
     dependencies.append(Strong<JSCell>(vm, importObject));
     dependencies.append(Strong<JSCell>(vm, moduleKeyCell));
-    vm.promiseDeferredTimer->addPendingPromise(promise, WTFMove(dependencies));
+    vm.promiseDeferredTimer->addPendingPromise(vm, promise, WTFMove(dependencies));
 
     Vector<uint8_t> source = createSourceBufferFromValue(vm, exec, buffer);
     RETURN_IF_EXCEPTION(scope, reject(exec, scope, promise));
@@ -231,7 +231,7 @@ static void webAssemblyModuleInstantinateAsyncInternal(ExecState* exec, JSPromis
     Vector<Strong<JSCell>> dependencies;
     dependencies.append(Strong<JSCell>(vm, importObject));
     dependencies.append(Strong<JSCell>(vm, globalObject));
-    vm.promiseDeferredTimer->addPendingPromise(promise, WTFMove(dependencies));
+    vm.promiseDeferredTimer->addPendingPromise(vm, promise, WTFMove(dependencies));
 
     Wasm::Module::validateAsync(&vm.wasmContext, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([promise, importObject, globalObject, &vm] (Wasm::Module::ValidationResult&& result) mutable {
         vm.promiseDeferredTimer->scheduleWorkSoon(promise, [promise, importObject, globalObject, result = WTFMove(result), &vm] () mutable {
@@ -310,7 +310,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyCompileStreamingInternal(ExecState* exec
 
     Vector<Strong<JSCell>> dependencies;
     dependencies.append(Strong<JSCell>(vm, globalObject));
-    vm.promiseDeferredTimer->addPendingPromise(promise, WTFMove(dependencies));
+    vm.promiseDeferredTimer->addPendingPromise(vm, promise, WTFMove(dependencies));
 
     if (globalObject->globalObjectMethodTable()->compileStreaming)
         globalObject->globalObjectMethodTable()->compileStreaming(globalObject, exec, promise, exec->argument(0));
@@ -347,7 +347,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateStreamingInternal(ExecState* 
                 Vector<Strong<JSCell>> dependencies;
                 dependencies.append(Strong<JSCell>(vm, globalObject));
                 dependencies.append(Strong<JSCell>(vm, importObject));
-                vm.promiseDeferredTimer->addPendingPromise(promise, WTFMove(dependencies));
+                vm.promiseDeferredTimer->addPendingPromise(vm, promise, WTFMove(dependencies));
 
                 // FIXME: <http://webkit.org/b/184888> if there's an importObject and it contains a Memory, then we can compile the module with the right memory type (fast or not) by looking at the memory's type.
                 globalObject->globalObjectMethodTable()->instantiateStreaming(globalObject, exec, promise, exec->argument(0), importObject);
