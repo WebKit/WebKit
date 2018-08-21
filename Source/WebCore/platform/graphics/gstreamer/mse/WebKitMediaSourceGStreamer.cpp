@@ -40,14 +40,11 @@
 #include "VideoTrackPrivateGStreamer.h"
 #include "WebKitMediaSourceGStreamerPrivate.h"
 
-#include <gst/app/app.h>
-#include <gst/app/gstappsrc.h>
-#include <gst/gst.h>
-#include <gst/pbutils/missing-plugins.h>
 #include <gst/pbutils/pbutils.h>
 #include <gst/video/video.h>
 #include <wtf/Condition.h>
 #include <wtf/MainThread.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/CString.h>
 
 GST_DEBUG_CATEGORY_STATIC(webkit_media_src_debug);
@@ -85,6 +82,8 @@ GstAppSrcCallbacks disabledAppsrcCallbacks = {
 };
 
 static Stream* getStreamByAppsrc(WebKitMediaSrc*, GstElement*);
+static void seekNeedsDataMainThread(WebKitMediaSrc*);
+static void notifyReadyForMoreSamplesMainThread(WebKitMediaSrc*, Stream*);
 
 static void enabledAppsrcNeedData(GstAppSrc* appsrc, guint, gpointer userData)
 {
@@ -119,13 +118,11 @@ static void enabledAppsrcNeedData(GstAppSrc* appsrc, guint, gpointer userData)
         GST_DEBUG("All expected appsrcSeekData() and appsrcNeedData() calls performed. Running next action (%d)", static_cast<int>(appsrcSeekDataNextAction));
 
         switch (appsrcSeekDataNextAction) {
-        case MediaSourceSeekToTime: {
-            GstStructure* structure = gst_structure_new_empty("seek-needs-data");
-            GstMessage* message = gst_message_new_application(GST_OBJECT(appsrc), structure);
-            gst_bus_post(webKitMediaSrc->priv->bus.get(), message);
-            GST_TRACE("seek-needs-data message posted to the bus");
+        case MediaSourceSeekToTime:
+            webKitMediaSrc->priv->notifier->notify(WebKitMediaSrcMainThreadNotification::SeekNeedsData, [webKitMediaSrc] {
+                seekNeedsDataMainThread(webKitMediaSrc);
+            });
             break;
-        }
         case Nothing:
             break;
         }
@@ -137,12 +134,10 @@ static void enabledAppsrcNeedData(GstAppSrc* appsrc, guint, gpointer userData)
         // Search again for the Stream, just in case it was removed between the previous lock and this one.
         appsrcStream = getStreamByAppsrc(webKitMediaSrc, GST_ELEMENT(appsrc));
 
-        if (appsrcStream && appsrcStream->type != WebCore::Invalid) {
-            GstStructure* structure = gst_structure_new("ready-for-more-samples", "appsrc-stream", G_TYPE_POINTER, appsrcStream, nullptr);
-            GstMessage* message = gst_message_new_application(GST_OBJECT(appsrc), structure);
-            gst_bus_post(webKitMediaSrc->priv->bus.get(), message);
-            GST_TRACE("ready-for-more-samples message posted to the bus");
-        }
+        if (appsrcStream && appsrcStream->type != WebCore::Invalid)
+            webKitMediaSrc->priv->notifier->notify(WebKitMediaSrcMainThreadNotification::ReadyForMoreSamples, [webKitMediaSrc, appsrcStream] {
+                notifyReadyForMoreSamplesMainThread(webKitMediaSrc, appsrcStream);
+            });
 
         GST_OBJECT_UNLOCK(webKitMediaSrc);
     }
@@ -264,6 +259,7 @@ static void webkit_media_src_init(WebKitMediaSrc* source)
     source->priv->appsrcNeedDataCount = 0;
     source->priv->appsrcSeekDataNextAction = Nothing;
     source->priv->flowCombiner = GUniquePtr<GstFlowCombiner>(gst_flow_combiner_new());
+    source->priv->notifier = WebCore::MainThreadNotifier<WebKitMediaSrcMainThreadNotification>::create();
 
     // No need to reset Stream.appsrcNeedDataFlag because there are no Streams at this point yet.
 }
@@ -282,6 +278,8 @@ void webKitMediaSrcFinalize(GObject* object)
         webKitMediaSrcFreeStream(source, stream);
 
     priv->seekTime = MediaTime::invalidTime();
+
+    source->priv->notifier->invalidate();
 
     if (priv->mediaPlayerPrivate)
         webKitMediaSrcSetMediaPlayerPrivate(source, nullptr);
@@ -694,43 +692,12 @@ static void notifyReadyForMoreSamplesMainThread(WebKitMediaSrc* source, Stream* 
     GST_OBJECT_UNLOCK(source);
 }
 
-static void applicationMessageCallback(GstBus*, GstMessage* message, WebKitMediaSrc* source)
-{
-    ASSERT(WTF::isMainThread());
-    ASSERT(GST_MESSAGE_TYPE(message) == GST_MESSAGE_APPLICATION);
-
-    const GstStructure* structure = gst_message_get_structure(message);
-
-    if (gst_structure_has_name(structure, "seek-needs-data")) {
-        seekNeedsDataMainThread(source);
-        return;
-    }
-
-    if (gst_structure_has_name(structure, "ready-for-more-samples")) {
-        Stream* appsrcStream = nullptr;
-        gst_structure_get(structure, "appsrc-stream", G_TYPE_POINTER, &appsrcStream, nullptr);
-        ASSERT(appsrcStream);
-
-        notifyReadyForMoreSamplesMainThread(source, appsrcStream);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
 void webKitMediaSrcSetMediaPlayerPrivate(WebKitMediaSrc* source, WebCore::MediaPlayerPrivateGStreamerMSE* mediaPlayerPrivate)
 {
     GST_OBJECT_LOCK(source);
-    if (source->priv->mediaPlayerPrivate && source->priv->mediaPlayerPrivate != mediaPlayerPrivate && source->priv->bus)
-        g_signal_handlers_disconnect_by_func(source->priv->bus.get(), gpointer(applicationMessageCallback), source);
 
     // Set to nullptr on MediaPlayerPrivateGStreamer destruction, never a dangling pointer.
     source->priv->mediaPlayerPrivate = mediaPlayerPrivate;
-    source->priv->bus = mediaPlayerPrivate ? adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(mediaPlayerPrivate->pipeline()))) : nullptr;
-    if (source->priv->bus) {
-        // MediaPlayerPrivateGStreamer has called gst_bus_add_signal_watch() at this point, so we can subscribe.
-        g_signal_connect(source->priv->bus.get(), "message::application", G_CALLBACK(applicationMessageCallback), source);
-    }
     GST_OBJECT_UNLOCK(source);
 }
 
