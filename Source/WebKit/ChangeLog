@@ -1,3 +1,22 @@
+2018-08-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove experimental affiliated domain code now that StorageAccess API is available
+        https://bugs.webkit.org/show_bug.cgi?id=188756
+        <rdar://problem/43527848>
+
+        Reviewed by Alex Christensen.
+
+        In Bug 174661 we added a compatibility quirk to support wsj.com authentication. This quirk is no longer needed,
+        since the StorageAccess API provides the necessary tools to do this type of interaction without needing global
+        cross-site access.
+
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::logFrameNavigation):
+        * UIProcess/ResourceLoadStatisticsMemoryStore.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::logFrameNavigation):
+        (WebKit::areDomainsAssociated): Deleted.
+
 2018-08-21  Alex Christensen  <achristensen@webkit.org>
 
         Add _WKWebsiteDataStoreConfiguration. sourceApplicationBundleIdentifier and sourceApplicationSecondaryIdentifier

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -351,40 +351,6 @@ String ResourceLoadStatistics::primaryDomain(StringView host)
 #endif
 
     return hostString;
-}
-
-// FIXME: Temporary fix for <rdar://problem/32343256> until content can be updated.
-bool ResourceLoadStatistics::areDomainsAssociated(bool needsSiteSpecificQuirks, const String& firstDomain, const String& secondDomain)
-{
-    ASSERT(isMainThread());
-
-    static NeverDestroyed<HashMap<String, unsigned>> metaDomainIdentifiers = [] {
-        HashMap<String, unsigned> map;
-
-        // Domains owned by Dow Jones & Company, Inc.
-        const unsigned dowJonesIdentifier = 1;
-        map.add("dowjones.com"_s, dowJonesIdentifier);
-        map.add("wsj.com"_s, dowJonesIdentifier);
-        map.add("barrons.com"_s, dowJonesIdentifier);
-        map.add("marketwatch.com"_s, dowJonesIdentifier);
-        map.add("wsjplus.com"_s, dowJonesIdentifier);
-
-        return map;
-    }();
-
-    if (firstDomain == secondDomain)
-        return true;
-
-    ASSERT(!equalIgnoringASCIICase(firstDomain, secondDomain));
-
-    if (!needsSiteSpecificQuirks)
-        return false;
-
-    unsigned firstMetaDomainIdentifier = metaDomainIdentifiers.get().get(firstDomain);
-    if (!firstMetaDomainIdentifier)
-        return false;
-
-    return firstMetaDomainIdentifier == metaDomainIdentifiers.get().get(secondDomain);
 }
 
 WallTime ResourceLoadStatistics::reduceTimeResolution(WallTime time)

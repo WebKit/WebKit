@@ -50,12 +50,6 @@ template<typename T> static inline String isolatedPrimaryDomain(const T& value)
     return ResourceLoadStatistics::primaryDomain(value).isolatedCopy();
 }
 
-static bool areDomainsAssociated(WebPageProxy* page, const String& firstDomain, const String& secondDomain)
-{
-    bool needsSiteSpecificQuirks = page && page->preferences().needsSiteSpecificQuirks();
-    return ResourceLoadStatistics::areDomainsAssociated(needsSiteSpecificQuirks, firstDomain, secondDomain);
-}
-
 const OptionSet<WebsiteDataType>& WebResourceLoadStatisticsStore::monitoredDataTypes()
 {
     static NeverDestroyed<OptionSet<WebsiteDataType>> dataTypes(std::initializer_list<WebsiteDataType>({
@@ -392,17 +386,14 @@ void WebResourceLoadStatisticsStore::logFrameNavigation(const WebFrameProxy& fra
     if (targetHost.isEmpty() || mainFrameHost.isEmpty() || targetHost == sourceURL.host())
         return;
 
-    auto* page = frame.page();
     auto targetPrimaryDomain = ResourceLoadStatistics::primaryDomain(targetURL);
     auto mainFramePrimaryDomain = ResourceLoadStatistics::primaryDomain(pageURL);
     auto sourcePrimaryDomain = ResourceLoadStatistics::primaryDomain(sourceURL);
 
-    bool areTargetAndMainFrameDomainsAssociated = areDomainsAssociated(page, targetPrimaryDomain, mainFramePrimaryDomain);
-    bool areTargetAndSourceDomainsAssociated = areDomainsAssociated(page, targetPrimaryDomain, sourcePrimaryDomain);
-
-    postTask([this, targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), sourcePrimaryDomain = sourcePrimaryDomain.isolatedCopy(), targetHost = targetHost.toString().isolatedCopy(), mainFrameHost = mainFrameHost.toString().isolatedCopy(), areTargetAndMainFrameDomainsAssociated, areTargetAndSourceDomainsAssociated, isRedirect, isMainFrame = frame.isMainFrame()] {
+    postTask([this, targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), sourcePrimaryDomain = sourcePrimaryDomain.isolatedCopy(), targetHost = targetHost.toString().isolatedCopy(), mainFrameHost = mainFrameHost.toString().isolatedCopy(), isRedirect, isMainFrame = frame.isMainFrame()] {
+        
         if (m_memoryStore)
-            m_memoryStore->logFrameNavigation(targetPrimaryDomain, mainFramePrimaryDomain, sourcePrimaryDomain, targetHost, mainFrameHost, areTargetAndMainFrameDomainsAssociated, areTargetAndSourceDomainsAssociated, isRedirect, isMainFrame);
+            m_memoryStore->logFrameNavigation(targetPrimaryDomain, mainFramePrimaryDomain, sourcePrimaryDomain, targetHost, mainFrameHost, isRedirect, isMainFrame);
     });
 }
 

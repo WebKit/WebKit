@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,6 @@ struct ResourceLoadStatistics {
     WEBCORE_EXPORT static String primaryDomain(const URL&);
     WEBCORE_EXPORT static String primaryDomain(StringView host);
 
-    WEBCORE_EXPORT static bool areDomainsAssociated(bool needsSiteSpecificQuirks, const String&, const String&);
     WEBCORE_EXPORT static WallTime reduceTimeResolution(WallTime);
 
     WEBCORE_EXPORT void encode(KeyedEncoder&) const;

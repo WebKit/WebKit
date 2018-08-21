@@ -56,24 +56,6 @@ ResourceLoadObserver& ResourceLoadObserver::shared()
     return resourceLoadObserver;
 }
 
-static bool shouldEnableSiteSpecificQuirks(Page* page)
-{
-#if PLATFORM(IOS)
-    UNUSED_PARAM(page);
-
-    // There is currently no way to toggle the needsSiteSpecificQuirks setting on iOS so we always enable
-    // the site-specific quirks on iOS.
-    return true;
-#else
-    return page && page->settings().needsSiteSpecificQuirks();
-#endif
-}
-
-static bool areDomainsAssociated(Page* page, const String& firstDomain, const String& secondDomain)
-{
-    return ResourceLoadStatistics::areDomainsAssociated(shouldEnableSiteSpecificQuirks(page), firstDomain, secondDomain);
-}
-
 void ResourceLoadObserver::setNotificationCallback(WTF::Function<void (Vector<ResourceLoadStatistics>&&)>&& notificationCallback)
 {
     ASSERT(!m_notificationCallback);
@@ -123,8 +105,8 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     auto targetPrimaryDomain = primaryDomain(targetURL);
     auto mainFramePrimaryDomain = primaryDomain(mainFrameURL);
     auto sourcePrimaryDomain = primaryDomain(sourceURL);
-    
-    if (areDomainsAssociated(page, targetPrimaryDomain, mainFramePrimaryDomain) || (isRedirect && areDomainsAssociated(page, targetPrimaryDomain, sourcePrimaryDomain)))
+
+    if (targetPrimaryDomain == mainFramePrimaryDomain || (isRedirect && targetPrimaryDomain == sourcePrimaryDomain))
         return;
 
     bool shouldCallNotificationCallback = false;
@@ -162,6 +144,9 @@ void ResourceLoadObserver::logWebSocketLoading(const URL& targetURL, const URL& 
     
     auto targetPrimaryDomain = primaryDomain(targetURL);
     auto mainFramePrimaryDomain = primaryDomain(mainFrameURL);
+
+    if (targetPrimaryDomain == mainFramePrimaryDomain)
+        return;
 
     auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
     targetStatistics.lastSeen = ResourceLoadStatistics::reduceTimeResolution(WallTime::now());

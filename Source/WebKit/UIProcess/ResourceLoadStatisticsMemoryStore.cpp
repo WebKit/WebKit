@@ -602,9 +602,12 @@ void ResourceLoadStatisticsMemoryStore::cancelPendingStatisticsProcessingRequest
     m_pendingStatisticsProcessingRequestIdentifier = std::nullopt;
 }
 
-void ResourceLoadStatisticsMemoryStore::logFrameNavigation(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, const String& sourcePrimaryDomain, const String& targetHost, const String& mainFrameHost, bool areTargetAndMainFrameDomainsAssociated, bool areTargetAndSourceDomainsAssociated, bool isRedirect, bool isMainFrame)
+void ResourceLoadStatisticsMemoryStore::logFrameNavigation(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, const String& sourcePrimaryDomain, const String& targetHost, const String& mainFrameHost, bool isRedirect, bool isMainFrame)
 {
     ASSERT(!RunLoop::isMain());
+
+    bool areTargetAndMainFrameDomainsAssociated = targetPrimaryDomain == mainFramePrimaryDomain;
+    bool areTargetAndSourceDomainsAssociated = targetPrimaryDomain == sourcePrimaryDomain;
 
     bool statisticsWereUpdated = false;
     if (targetHost != mainFrameHost && !(areTargetAndMainFrameDomainsAssociated || areTargetAndSourceDomainsAssociated)) {
