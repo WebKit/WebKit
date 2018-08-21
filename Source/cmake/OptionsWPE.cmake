@@ -84,7 +84,7 @@ find_package(PNG REQUIRED)
 find_package(Sqlite REQUIRED)
 find_package(Threads REQUIRED)
 find_package(WebP REQUIRED)
-find_package(WPEBackend REQUIRED)
+find_package(WPE REQUIRED)
 find_package(ZLIB REQUIRED)
 
 if (USE_WOFF2)

@@ -1,33 +1,15 @@
 - name: wpebackend
   buildsystem: cmake-ninja
   sources:
-    - type: git
-      url: https://github.com/WebPlatformForEmbedded/WPEBackend.git
-      branch: 45148ff5e802c6cd1d30d3c318ff6bb5bdf2c4aa
+    - type: archive
+      url: https://wpewebkit.org/releases/libwpe-1.0.0.tar.xz
+      sha256: aff11612123f9ab85a8b9a4bcdfb3a7503eba0a0d2d96f2cdecd30e911091719
 - name: wpebackend-fdo
   buildsystem: cmake-ninja
   sources:
-    - type: git
-      url: https://github.com/Igalia/WPEBackend-fdo.git
-      branch: fac3fe1ea78b6fc5b6005adfceb93eeb46681485
-- name: lua
-  buildsystem: simple
-  build-commands:
-    - make MYCFLAGS="$CFLAGS -fPIC -DLUA_COMPAT_5_2 -DLUA_COMPAT_5_1" linux
-    - make install INSTALL_TOP=/app INSTALL_MAN=/app/share/man/man1 INSTALL_DATA='cp -d'
-  sources:
     - type: archive
-      url: https://www.lua.org/ftp/lua-5.3.4.tar.gz
-      sha1: 79790cfd40e09ba796b01a571d4d63b52b1cd950
-- name: luajit
-  buildsystem: simple
-  build-commands:
-    - make amalg PREFIX=/app
-    - make install PREFIX=/app
-  sources:
-    - type: archive
-      url: https://luajit.org/download/LuaJIT-2.0.5.tar.gz
-      md5: 48353202cbcacab84ee41a5a70ea0a2c
+      url: https://wpewebkit.org/releases/wpebackend-fdo-1.0.0.tar.xz
+      sha256: 7a747f87a1ae46d30144369050e3ce348b58986d04e1a139ba75c198fa636729
 - name: webkitgtk-test-fonts
   no-autogen: true
   sources:
