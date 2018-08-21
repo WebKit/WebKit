@@ -966,7 +966,8 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext& context, const Floa
     if (!gstImage)
         return;
 
-    context.drawImage(gstImage->image(), rect, gstImage->rect(), paintingOptions);
+    if (Image* image = reinterpret_cast<Image*>(gstImage->image()))
+        context.drawImage(*image, rect, gstImage->rect(), paintingOptions);
 }
 
 #if USE(GSTREAMER_GL)
