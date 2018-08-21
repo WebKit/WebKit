@@ -1,3 +1,17 @@
+2018-08-21  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Support "name" option for dedicated workers
+        https://bugs.webkit.org/show_bug.cgi?id=188779
+
+        Reviewed by Joseph Pecoraro.
+
+        * http/wpt/workers/name-property-enhanced-expected.txt: Added.
+        * http/wpt/workers/name-property-enhanced.html: Added.
+        * http/wpt/workers/support/name.js: Added.
+        (test):
+        * http/wpt/workers/support/no-name.js: Added.
+        (test):
+
 2018-08-21  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION(r234993): Test results page ignores TestExpectations, shows 1800 failures

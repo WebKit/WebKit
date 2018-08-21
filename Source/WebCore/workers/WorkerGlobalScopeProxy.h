@@ -50,7 +50,7 @@ class WorkerGlobalScopeProxy {
 public:
     static WorkerGlobalScopeProxy& create(Worker&);
 
-    virtual void startWorkerGlobalScope(const URL& scriptURL, const String& userAgent, bool isOnline, const String& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, MonotonicTime timeOrigin, JSC::RuntimeFlags, PAL::SessionID) = 0;
+    virtual void startWorkerGlobalScope(const URL& scriptURL, const String& name, const String& userAgent, bool isOnline, const String& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, MonotonicTime timeOrigin, JSC::RuntimeFlags, PAL::SessionID) = 0;
     virtual void terminateWorkerGlobalScope() = 0;
     virtual void postMessageToWorkerGlobalScope(MessageWithMessagePorts&&) = 0;
     virtual bool hasPendingActivity() const = 0;

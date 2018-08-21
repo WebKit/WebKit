@@ -1,3 +1,55 @@
+2018-08-21  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Support "name" option for dedicated workers
+        https://bugs.webkit.org/show_bug.cgi?id=188779
+
+        Reviewed by Joseph Pecoraro.
+
+        This patch adds `new Worker(url, { name: "Worker Name" })` option support[1].
+        This name can be accessible from `self.name` of DedicatedWorkerGlobalScope.
+        It is useful for debugging dedicated workers if the inspector can show the
+        names of the workers. This enhancement is tracked by [2].
+
+        [1]: https://github.com/whatwg/html/issues/2477
+        [2]: https://bugs.webkit.org/show_bug.cgi?id=164678
+
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::create):
+        (WebCore::DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope):
+        Hold `name` member.
+
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerGlobalScope.idl:
+        Add `name` attribute.
+
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::DedicatedWorkerThread):
+        (WebCore::DedicatedWorkerThread::createWorkerGlobalScope):
+        * workers/DedicatedWorkerThread.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker):
+        (WebCore::Worker::create):
+        (WebCore::Worker::notifyFinished):
+        * workers/Worker.h:
+        * workers/Worker.idl:
+        Add WorkerOptions for dedicated worker creation.
+
+        * workers/WorkerGlobalScopeProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+        Isolate copy the given `name` to pass the worker thread.
+
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::workerThread):
+        * workers/WorkerThread.h:
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::ServiceWorkerThread):
+        (WebCore::ServiceWorkerThread::createWorkerGlobalScope):
+        * workers/service/context/ServiceWorkerThread.h:
+
 2018-08-21  Per Arne Vollan  <pvollan@apple.com>
 
         [WebGL] Contexts are not updated when display configuration changed.
