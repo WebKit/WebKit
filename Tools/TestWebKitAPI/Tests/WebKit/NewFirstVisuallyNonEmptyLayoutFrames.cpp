@@ -46,15 +46,15 @@ static void didForceRepaint(WKErrorRef error, void*)
     test2Done = true;
 }
 
-static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo)
 {
     test1Done = true;
     WKPageForceRepaint(page, 0, didForceRepaint);
 }
 
-static void didLayout(WKPageRef, WKLayoutMilestones type, WKTypeRef, const void *)
+static void renderingProgressDidChange(WKPageRef, WKPageRenderingProgressEvents type, WKTypeRef, const void *)
 {
-    if (type != kWKDidHitRelevantRepaintedObjectsAreaThreshold)
+    if (type != WKPageRenderingProgressEventFirstPaintWithSignificantArea)
         return;
 
     ++didHitRelevantRepaintedObjectsAreaThresholdCounter;
@@ -64,14 +64,14 @@ static void didLayout(WKPageRef, WKLayoutMilestones type, WKTypeRef, const void 
 
 static void setPageLoaderClient(WKPageRef page)
 {
-    WKPageLoaderClientV3 loaderClient;
+    WKPageNavigationClientV3 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
     loaderClient.base.version = 3;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    loaderClient.didLayout = didLayout;
+    loaderClient.didFinishNavigation = didFinishNavigation;
+    loaderClient.renderingProgressDidChange = renderingProgressDidChange;
 
-    WKPageSetPageLoaderClient(page, &loaderClient.base);
+    WKPageSetPageNavigationClient(page, &loaderClient.base);
 }
 
 TEST(WebKit, NewFirstVisuallyNonEmptyLayoutFrames)

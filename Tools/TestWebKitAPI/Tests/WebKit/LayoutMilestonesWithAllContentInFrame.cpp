@@ -37,11 +37,11 @@ namespace TestWebKitAPI {
 
 static bool testDone;
 
-static void didLayout(WKPageRef page, WKLayoutMilestones milestones, WKTypeRef, const void* clientInfo)
+static void renderingProgressDidChange(WKPageRef page, WKPageRenderingProgressEvents milestones, WKTypeRef, const void* clientInfo)
 {
     // This test ensures that the DidFirstVisuallyNonEmptyLayout will be reached for the main frame
     // even when all of the content is in a subframe.
-    if (milestones & kWKDidFirstVisuallyNonEmptyLayout)
+    if (milestones & WKPageRenderingProgressEventFirstVisuallyNonEmptyLayout)
         testDone = true;
 }
 
@@ -50,16 +50,16 @@ TEST(WebKit, LayoutMilestonesWithAllContentInFrame)
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClientV3 loaderClient;
+    WKPageNavigationClientV3 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
     loaderClient.base.version = 3;
     loaderClient.base.clientInfo = &webView;
-    loaderClient.didLayout = didLayout;
+    loaderClient.renderingProgressDidChange = renderingProgressDidChange;
 
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
-    WKPageListenForLayoutMilestones(webView.page(), kWKDidFirstVisuallyNonEmptyLayout);
+    WKPageListenForLayoutMilestones(webView.page(), WKPageRenderingProgressEventFirstVisuallyNonEmptyLayout);
     WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("all-content-in-one-iframe", "html")).get());
 
     Util::run(&testDone);

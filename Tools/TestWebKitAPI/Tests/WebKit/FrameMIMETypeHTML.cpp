@@ -36,21 +36,21 @@ namespace TestWebKitAPI {
 
 static bool testDone;
 
-static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void didStartProvisionalNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo)
 {
-    WKRetainPtr<WKStringRef> wkMIME = adoptWK(WKFrameCopyMIMEType(frame));
+    WKRetainPtr<WKStringRef> wkMIME = adoptWK(WKFrameCopyMIMEType(WKPageGetMainFrame(page)));
     EXPECT_TRUE(WKStringIsEmpty(wkMIME.get()));
 }
 
-static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void didCommitNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo)
 {
-    WKRetainPtr<WKStringRef> wkMIME = adoptWK(WKFrameCopyMIMEType(frame));
+    WKRetainPtr<WKStringRef> wkMIME = adoptWK(WKFrameCopyMIMEType(WKPageGetMainFrame(page)));
     EXPECT_WK_STREQ("text/html", wkMIME);
 }
 
-static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo)
 {
-    WKRetainPtr<WKStringRef> wkMIME = adoptWK(WKFrameCopyMIMEType(frame));
+    WKRetainPtr<WKStringRef> wkMIME = adoptWK(WKFrameCopyMIMEType(WKPageGetMainFrame(page)));
     EXPECT_WK_STREQ("text/html", wkMIME);
 
     testDone = true;
@@ -61,15 +61,15 @@ TEST(WebKit, FrameMIMETypeHTML)
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
     loaderClient.base.version = 0;
-    loaderClient.didStartProvisionalLoadForFrame = didStartProvisionalLoadForFrame;
-    loaderClient.didCommitLoadForFrame = didCommitLoadForFrame;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+    loaderClient.didStartProvisionalNavigation = didStartProvisionalNavigation;
+    loaderClient.didCommitNavigation = didCommitNavigation;
+    loaderClient.didFinishNavigation = didFinishNavigation;
 
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
     WKPageLoadURL(webView.page(), url.get());

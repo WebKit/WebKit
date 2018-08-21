@@ -112,11 +112,6 @@ public:
     WKRetainPtr<WKURLRef> file1;
     WKRetainPtr<WKURLRef> file2;
 
-    static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void* clientInfo)
-    {
-        didFinishNavigation = true;
-    }
-
     virtual void SetUp()
     {
         WebKit2_CommandBackForwardTest::SetUp();
@@ -127,13 +122,15 @@ public:
 
         webView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configurationRef:configuration.get()];
 
-        WKPageLoaderClientV6 loaderClient;
+        WKPageNavigationClientV0 loaderClient;
         memset(&loaderClient, 0, sizeof(loaderClient));
 
-        loaderClient.base.version = 6;
-        loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+        loaderClient.base.version = 0;
+        loaderClient.didFinishNavigation = [] (WKPageRef, WKNavigationRef, WKTypeRef, const void* clientInfo) {
+            didFinishNavigation = true;
+        };
 
-        WKPageSetPageLoaderClient([webView pageRef], &loaderClient.base);
+        WKPageSetPageNavigationClient([webView pageRef], &loaderClient.base);
         
         file1 = adoptWK(TestWebKitAPI::Util::createURLForResource("simple", "html"));
         file2 = adoptWK(TestWebKitAPI::Util::createURLForResource("simple2", "html"));

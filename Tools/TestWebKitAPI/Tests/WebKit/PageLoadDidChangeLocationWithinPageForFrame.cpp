@@ -38,14 +38,10 @@ static void nullJavaScriptCallback(WKSerializedScriptValueRef, WKErrorRef error,
 }
 
 static bool didFinishLoad;
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
-{
-    didFinishLoad = true;
-}
-
 static bool didPopStateWithinPage;
 static bool didChangeLocationWithinPage;
-static void didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef, WKSameDocumentNavigationType type, WKTypeRef, const void*)
+
+static void didSameDocumentNavigation(WKPageRef, WKNavigationRef, WKSameDocumentNavigationType type, WKTypeRef, const void*)
 {
     if (!didPopStateWithinPage) {
         EXPECT_EQ(static_cast<uint32_t>(kWKSameDocumentNavigationSessionStatePop), type);
@@ -58,19 +54,21 @@ static void didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef, WKSameDocum
     didChangeLocationWithinPage = true;
 }
 
-TEST(WebKit, PageLoadDidChangeLocationWithinPageForFrame)
+TEST(WebKit, PageLoadDidChangeLocationWithinPage)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
     loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    loaderClient.didSameDocumentNavigationForFrame = didSameDocumentNavigationForFrame;
+    loaderClient.didFinishNavigation = [] (WKPageRef, WKNavigationRef, WKTypeRef, const void*) {
+        didFinishLoad = true;
+    };
+    loaderClient.didSameDocumentNavigation = didSameDocumentNavigation;
 
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("file-with-anchor", "html"));
     WKPageLoadURL(webView.page(), url.get());

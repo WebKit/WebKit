@@ -46,7 +46,7 @@ static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef
     didGetPageSignalToContinue = true;
 }
 
-static void didFinishLoad(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void didFinishLoad(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo)
 {
     // First load before WebProcess was terminated.
     if (!loadBeforeCrash) {
@@ -56,7 +56,7 @@ static void didFinishLoad(WKPageRef page, WKFrameRef frame, WKTypeRef userData, 
 
     // Next load after WebProcess was terminated (hopefully
     // it will be correctly re-spawned).
-    EXPECT_EQ(static_cast<uint32_t>(kWKFrameLoadStateFinished), WKFrameGetFrameLoadState(frame));
+    EXPECT_EQ(static_cast<uint32_t>(kWKFrameLoadStateFinished), WKFrameGetFrameLoadState(WKPageGetMainFrame(page)));
     EXPECT_FALSE(loadAfterCrash);
 
     // Set it, otherwise the loop will not end.
@@ -78,12 +78,12 @@ TEST(WebKit, RestoreStateAfterTermination)
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:webView.platformView().frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
     [window.get().contentView addSubview:webView.platformView()];
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
     loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoad;
-    loaderClient.processDidCrash = didCrash;
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    loaderClient.didFinishNavigation = didFinishLoad;
+    loaderClient.webProcessDidCrash = didCrash;
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKPageUIClientV0 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));

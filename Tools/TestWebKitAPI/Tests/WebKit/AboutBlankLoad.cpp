@@ -34,9 +34,9 @@ namespace TestWebKitAPI {
     
 static bool done;
 
-static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo)
 {
-    WKRetainPtr<WKStringRef> mimeType = adoptWK(WKFrameCopyMIMEType(frame));
+    WKRetainPtr<WKStringRef> mimeType = adoptWK(WKFrameCopyMIMEType(WKPageGetMainFrame(page)));
     EXPECT_WK_STREQ("text/html", mimeType);
     done = true;
 }
@@ -46,13 +46,13 @@ TEST(WebKit, AboutBlankLoad)
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
     loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+    loaderClient.didFinishNavigation = didFinishNavigation;
 
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKPageLoadURL(webView.page(), adoptWK(WKURLCreateWithUTF8CString("about:blank")).get());
 

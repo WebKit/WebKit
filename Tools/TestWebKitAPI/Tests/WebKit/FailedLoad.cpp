@@ -38,8 +38,9 @@ namespace TestWebKitAPI {
 
 static bool testDone;
 
-static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
+static void didFailProvisionalNavigation(WKPageRef page, WKNavigationRef, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
 {
+    auto frame = WKPageGetMainFrame(page);
     EXPECT_EQ(static_cast<uint32_t>(kWKFrameLoadStateFinished), WKFrameGetFrameLoadState(frame));
 
     WKURLRef url = WKFrameCopyProvisionalURL(frame);
@@ -53,13 +54,13 @@ TEST(WebKit, FailedLoad)
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
     loaderClient.base.version = 0;
-    loaderClient.didFailProvisionalLoadWithErrorForFrame = didFailProvisionalLoadWithErrorForFrame;
+    loaderClient.didFailProvisionalNavigation = didFailProvisionalNavigation;
 
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKRetainPtr<WKURLRef> url(AdoptWK, Util::URLForNonExistentResource());
     WKPageLoadURL(webView.page(), url.get());

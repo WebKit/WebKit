@@ -37,7 +37,7 @@ namespace TestWebKitAPI {
 static bool loadBeforeCrash = false;
 static bool loadAfterCrash = false;
 
-static void didFinishLoad(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void didFinishLoad(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo)
 {
     // First load before WebProcess was terminated.
     if (!loadBeforeCrash) {
@@ -47,7 +47,7 @@ static void didFinishLoad(WKPageRef page, WKFrameRef frame, WKTypeRef userData, 
 
     // Next load after WebProcess was terminated (hopefully
     // it will be correctly re-spawned).
-    EXPECT_EQ(static_cast<uint32_t>(kWKFrameLoadStateFinished), WKFrameGetFrameLoadState(frame));
+    EXPECT_EQ(static_cast<uint32_t>(kWKFrameLoadStateFinished), WKFrameGetFrameLoadState(WKPageGetMainFrame(page)));
     EXPECT_FALSE(loadAfterCrash);
 
     // Set it, otherwise the loop will not end.
@@ -68,14 +68,14 @@ TEST(WebKit, ReloadPageAfterCrash)
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
     loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoad;
-    loaderClient.processDidCrash = didCrash;
+    loaderClient.didFinishNavigation = didFinishLoad;
+    loaderClient.webProcessDidCrash = didCrash;
 
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKRetainPtr<WKURLRef> url = adoptWK(WKURLCreateWithUTF8CString("about:blank"));
     // Load a blank page and next kills WebProcess.
