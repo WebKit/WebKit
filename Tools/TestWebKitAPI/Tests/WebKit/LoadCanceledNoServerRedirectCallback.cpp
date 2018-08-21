@@ -37,20 +37,13 @@
 
 namespace TestWebKitAPI {
 
-static bool loadedMainFrame;
-static bool loadedIFrame;
 static bool loadedAllFrames;
 
 static bool performedServerRedirect;
 
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef, const void*)
+static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*)
 {
-    if (WKFrameIsMainFrame(frame))
-        loadedMainFrame = true;
-    else
-        loadedIFrame = true;
-
-    loadedAllFrames = loadedMainFrame && loadedIFrame;
+    loadedAllFrames = true;
 }
 
 static void didPerformServerRedirect(WKContextRef context, WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo)
@@ -71,13 +64,13 @@ TEST(WebKit, LoadCanceledNoServerRedirectCallback)
 
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
     
     loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+    loaderClient.didFinishNavigation = didFinishNavigation;
 
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
     
     WKContextHistoryClientV0 historyClient;
     memset(&historyClient, 0, sizeof(historyClient));

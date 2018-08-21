@@ -38,24 +38,20 @@ namespace TestWebKitAPI {
 static bool finished = false;
 static int didRemoveFrameFromHierarchyCount;
 
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef, const void*)
+static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*)
 {
-    // Only mark finished when the main frame loads
-    if (!WKFrameIsMainFrame(frame))
-        return;
-
     finished = true;
 }
 
 static void setPageLoaderClient(WKPageRef page)
 {
-    WKPageLoaderClientV1 loaderClient;
+    WKPageNavigationClientV1 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
     loaderClient.base.version = 1;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+    loaderClient.didFinishNavigation = didFinishNavigation;
 
-    WKPageSetPageLoaderClient(page, &loaderClient.base);
+    WKPageSetPageNavigationClient(page, &loaderClient.base);
 }
 
 static void didReceivePageMessageFromInjectedBundle(WKPageRef, WKStringRef messageName, WKTypeRef, const void*)

@@ -59,21 +59,21 @@
 
 namespace TestWebKitAPI {
 
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void* context)
+static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void* context)
 {
     *static_cast<bool*>(const_cast<void*>(context)) = true;
 }
 
 static void setPageLoaderClient(WKPageRef page, bool* didFinishLoad)
 {
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
     loaderClient.base.version = 0;
     loaderClient.base.clientInfo = didFinishLoad;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+    loaderClient.didFinishNavigation = didFinishNavigation;
 
-    WKPageSetPageLoaderClient(page, &loaderClient.base);
+    WKPageSetPageNavigationClient(page, &loaderClient.base);
 }
 
 WebKitAgnosticTest::WebKitAgnosticTest()

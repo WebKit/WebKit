@@ -36,7 +36,7 @@ namespace TestWebKitAPI {
 static bool didFinishLoad { false };
 static bool mouseMoveCallbackFinished { false };
 
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
+static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*)
 {
     didFinishLoad = true;
 }
@@ -49,11 +49,11 @@ static void mouseDidMoveOverElement(WKPageRef, WKHitTestResultRef, WKEventModifi
 
 static void setClients(WKPageRef page)
 {
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
     loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    WKPageSetPageLoaderClient(page, &loaderClient.base);
+    loaderClient.didFinishNavigation = didFinishNavigation;
+    WKPageSetPageNavigationClient(page, &loaderClient.base);
     
     WKPageUIClientV1 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));

@@ -58,7 +58,7 @@ static WKFindOptions findOptions = kWKFindOptionsAtWordStarts;
 
 RetainPtr<WebView> webkit1View;
 
-static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo)
 {
     didFinishLoad = true;
 }
@@ -121,13 +121,13 @@ TEST(WebKit, FindMatches)
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());
     
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
     
     loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+    loaderClient.didFinishNavigation = didFinishNavigation;
 
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKPageFindMatchesClientV0 findMatchesClient;
     memset(&findMatchesClient, 0, sizeof(findMatchesClient));

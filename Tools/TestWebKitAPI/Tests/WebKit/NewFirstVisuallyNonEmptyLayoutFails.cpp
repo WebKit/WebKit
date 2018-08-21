@@ -45,7 +45,7 @@ static void didForceRepaint(WKErrorRef error, void*)
     test2Done = true;
 }
 
-static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void didFinishLoadForFrame(WKPageRef page, WKFrameRef, WKTypeRef userData, const void* clientInfo)
 {
     test1Done = true;
     WKPageForceRepaint(page, 0, didForceRepaint);

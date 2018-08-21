@@ -38,7 +38,7 @@ namespace TestWebKitAPI {
 static bool didFinishLoad;
 static bool didNotHandleKeyDownEvent;
 
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
+static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*)
 {
     didFinishLoad = true;
 }
@@ -61,13 +61,13 @@ TEST(WebKit, SpacebarScrolling)
 
     PlatformWebView webView(context.get(), pageGroup.get());
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
     loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+    loaderClient.didFinishNavigation = didFinishNavigation;
 
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKPageUIClientV0 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));

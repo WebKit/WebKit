@@ -37,10 +37,6 @@ namespace TestWebKitAPI {
 static bool didFinishTest;
 static bool didNotHandleKeyDownEvent;
 
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
-{
-}
-
 static void didNotHandleKeyEventCallback(WKPageRef, WKNativeEventPtr event, const void*)
 {
     if (Util::isKeyDown(event))
@@ -52,14 +48,6 @@ TEST(WebKit, DidNotHandleKeyDown)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
     PlatformWebView webView(context.get());
-
-    WKPageLoaderClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
-    
-    loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
 
     WKPageUIClientV0 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));

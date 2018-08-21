@@ -47,7 +47,7 @@ struct TestStatesData {
     bool resizeAfterCrash;
 };
 
-static void didFinishLoad(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void didFinishLoad(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo)
 {
     TestStatesData* states = const_cast<TestStatesData*>(static_cast<const TestStatesData*>(clientInfo));
     if (!states->firstLoad) {
@@ -78,15 +78,15 @@ TEST(WebKit, ResizeWindowAfterCrash)
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     TestStatesData states(context.get());
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
     loaderClient.base.version = 0;
     loaderClient.base.clientInfo = &states;
-    loaderClient.didFinishLoadForFrame = didFinishLoad;
-    loaderClient.processDidCrash = didCrash;
+    loaderClient.didFinishNavigation = didFinishLoad;
+    loaderClient.webProcessDidCrash = didCrash;
 
-    WKPageSetPageLoaderClient(states.webView.page(), &loaderClient.base);
+    WKPageSetPageNavigationClient(states.webView.page(), &loaderClient.base);
 
     WKRetainPtr<WKURLRef> url = adoptWK(WKURLCreateWithUTF8CString("about:blank"));
     // Load a blank page and next kills WebProcess.

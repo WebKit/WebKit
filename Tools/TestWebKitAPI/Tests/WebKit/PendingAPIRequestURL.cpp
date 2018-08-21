@@ -41,11 +41,13 @@ TEST(WebKit, PendingAPIRequestURL)
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
     loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = [](WKPageRef, WKFrameRef, WKTypeRef, const void*) { done = true; };
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    loaderClient.didFinishNavigation = [](WKPageRef, WKNavigationRef, WKTypeRef, const void*) {
+        done = true;
+    };
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKRetainPtr<WKURLRef> activeURL = adoptWK(WKPageCopyActiveURL(webView.page()));
     EXPECT_NULL(activeURL.get());

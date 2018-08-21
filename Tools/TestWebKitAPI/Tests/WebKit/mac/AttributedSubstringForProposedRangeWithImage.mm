@@ -40,7 +40,7 @@ static bool didFinishTest = false;
 static bool didObserveWebProcessToCrash = false;
 static bool didReceiveInvalidMessage = false;
 
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
+static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*)
 {
     didFinishLoad = true;
 }
@@ -61,12 +61,12 @@ TEST(WebKit, AttributedSubstringForProposedRangeWithImage)
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("AttributedSubstringForProposedRangeWithImagePageGroup").get()));
     PlatformWebView webView(context.get(), pageGroup.get());
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
     loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    loaderClient.processDidCrash = processDidCrash;
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    loaderClient.didFinishNavigation = didFinishNavigation;
+    loaderClient.webProcessDidCrash = processDidCrash;
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKContextSetInvalidMessageFunction(invalidMessageFunction);
 

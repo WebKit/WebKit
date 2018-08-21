@@ -182,22 +182,22 @@ TEST(WebKit, PageLoadTwiceAndReload)
     test1Done = false;
     static unsigned loadsCount = 0;
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
     loaderClient.base.version = 0;
     loaderClient.base.clientInfo = nullptr;
-    loaderClient.didFailProvisionalLoadWithErrorForFrame = [](WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void *clientInfo) {
+    loaderClient.didFailProvisionalNavigation = [](WKPageRef page, WKNavigationRef, WKErrorRef error, WKTypeRef userData, const void *clientInfo) {
         loadsCount++;
         WKPageReload(page);
     };
-    loaderClient.didFinishLoadForFrame = [](WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo) {
+    loaderClient.didFinishNavigation = [](WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo) {
         if (++loadsCount == 3) {
             test1Done = true;
             return;
         }
         WKPageReload(page);
     };
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKRetainPtr<WKURLRef> url1(AdoptWK, Util::createURLForResource("simple", "html"));
     WKRetainPtr<WKURLRef> url2(AdoptWK, Util::createURLForResource("simple2", "html"));

@@ -64,7 +64,7 @@ static void didGetUserHTTPCookieAcceptPolicy(WKHTTPCookieAcceptPolicy policy, WK
     WKCookieManagerGetHTTPCookieAcceptPolicy(cookieManager, reinterpret_cast<void*>(0x1234578), didGetTestHTTPCookieAcceptPolicy);
 }
 
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
+static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*)
 {
     WKCookieManagerRef cookieManager = WKContextGetCookieManager(wkContext.get());
     WKCookieManagerGetHTTPCookieAcceptPolicy(cookieManager, reinterpret_cast<void*>(0x1234578), didGetUserHTTPCookieAcceptPolicy);
@@ -75,13 +75,13 @@ TEST(WebKit, CookieManager)
     wkContext.adopt(WKContextCreate());
     PlatformWebView webView(wkContext.get());
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
     loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+    loaderClient.didFinishNavigation = didFinishNavigation;
 
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKPageLoadURL(webView.page(), adoptWK(WKURLCreateWithUTF8CString("about:blank")).get());
 

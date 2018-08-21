@@ -34,7 +34,7 @@
 
 namespace TestWebKitAPI {
 
-static void didFinishLoad(WKPageRef, WKFrameRef, WKTypeRef, const void*);
+static void didFinishLoad(WKPageRef, WKNavigationRef, WKTypeRef, const void*);
 
 class WebKit2CrashLoader {
 public:
@@ -49,9 +49,9 @@ public:
 
         loaderClient.base.version = 0;
         loaderClient.base.clientInfo = this;
-        loaderClient.didFinishLoadForFrame = didFinishLoad;
+        loaderClient.didFinishNavigation = didFinishLoad;
 
-        WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+        WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
     }
 
     void loadUrl()
@@ -65,7 +65,7 @@ public:
     }
 
     WKRetainPtr<WKContextRef> context;
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     PlatformWebView webView;
     WKRetainPtr<WKURLRef> url;
 
@@ -75,7 +75,7 @@ public:
 
 // We are going to have 2 load events intertwined by a simulated crash
 // (i.e. Load -> Crash -> Load).
-void didFinishLoad(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+void didFinishLoad(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo)
 {
     WebKit2CrashLoader* testHelper = const_cast<WebKit2CrashLoader*>(static_cast<const WebKit2CrashLoader*>(clientInfo));
 

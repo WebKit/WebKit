@@ -38,7 +38,7 @@ static bool waitUntilLongTitleReceived = false;
 static bool didFinishLoad = false;
 static size_t maxTitleLength = 4096;
 
-static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void didFinishLoadForFrame(WKPageRef page, WKFrameRef, WKTypeRef userData, const void* clientInfo)
 {
     didFinishLoad = true;
 }

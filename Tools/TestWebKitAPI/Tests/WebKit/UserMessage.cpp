@@ -59,7 +59,7 @@ public:
         ((WebKit2UserMessageRoundTripTest*)clientInfo)->didReceiveMessage = true;
     }
 
-    static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void* clientInfo)
+    static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void* clientInfo)
     {
         ((WebKit2UserMessageRoundTripTest*)clientInfo)->didFinishLoad = true;
     }
@@ -78,14 +78,14 @@ public:
 
     static void setPageLoaderClient(WKPageRef page, const void* clientInfo)
     {
-        WKPageLoaderClientV3 loaderClient;
+        WKPageNavigationClientV3 loaderClient;
         memset(&loaderClient, 0, sizeof(loaderClient));
 
         loaderClient.base.version = 3;
         loaderClient.base.clientInfo = clientInfo;
-        loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+        loaderClient.didFinishNavigation = didFinishNavigation;
 
-        WKPageSetPageLoaderClient(page, &loaderClient.base);
+        WKPageSetPageNavigationClient(page, &loaderClient.base);
     }
 
     virtual void SetUp()

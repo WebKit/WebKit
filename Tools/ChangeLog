@@ -1,3 +1,188 @@
+2018-08-20  Alex Christensen  <achristensen@webkit.org>
+
+        Replace WKPageLoaderClient with WKPageNavigationClient in many API tests
+        https://bugs.webkit.org/show_bug.cgi?id=188771
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKit/CloseThenTerminate.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/CookieManager.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/DeferredViewInWindowStateChange.mm:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/DidNotHandleKeyDown.cpp:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/DidRemoveFrameFromHiearchyInPageCache.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/EventModifiers.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::setClients):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/Find.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/FindMatches.mm:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/ForceRepaint.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/FrameHandle.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/Geolocation.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/HitTestResultNodeHandle.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleBasic.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/LimitTitleSize.cpp:
+        (TestWebKitAPI::didFinishLoadForFrame):
+        * TestWebKitAPI/Tests/WebKit/LoadAlternateHTMLStringWithNonDirectoryURL.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::loadAlternateHTMLString):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/LoadCanceledNoServerRedirectCallback.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/LoadPageOnCrash.cpp:
+        (TestWebKitAPI::WebKit2CrashLoader::WebKit2CrashLoader):
+        (TestWebKitAPI::didFinishLoad):
+        * TestWebKitAPI/Tests/WebKit/MenuTypesForMouseEvents.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/MouseMoveAfterCrash.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/NewFirstVisuallyNonEmptyLayoutFails.cpp:
+        (TestWebKitAPI::didFinishLoadForFrame):
+        * TestWebKitAPI/Tests/WebKit/PageLoadBasic.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/PendingAPIRequestURL.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/ResizeWindowAfterCrash.cpp:
+        (TestWebKitAPI::didFinishLoad):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/RestoreSessionState.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/RestoreSessionStateContainingFormData.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/ScrollPinningBehaviors.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishDocumentLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/SpacebarScrolling.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/StopLoadingDuringDidFailProvisionalLoad.cpp:
+        (TestWebKitAPI::didFailProvisionalNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFailProvisionalLoadWithErrorForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/TerminateTwice.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/TextFieldDidBeginAndEndEditing.cpp:
+        (TestWebKitAPI::WebKit2TextFieldBeginAndEditEditingTest::didFinishNavigation):
+        (TestWebKitAPI::WebKit2TextFieldBeginAndEditEditingTest::setPageLoaderClient):
+        (TestWebKitAPI::WebKit2TextFieldBeginAndEditEditingTest::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/UserMessage.cpp:
+        (TestWebKitAPI::WebKit2UserMessageRoundTripTest::didFinishNavigation):
+        (TestWebKitAPI::WebKit2UserMessageRoundTripTest::setPageLoaderClient):
+        (TestWebKitAPI::WebKit2UserMessageRoundTripTest::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/WKPageConfiguration.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/WKPageCopySessionStateWithFiltering.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/WKPageGetScaleFactorNotZero.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/WKPageIsPlayingAudio.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::setUpClients):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/WKThumbnailView.mm:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/WebArchive.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/mac/AttributedSubstringForProposedRangeWithImage.mm:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/mac/ContextMenuDownload.mm:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/mac/CustomBundleParameter.mm:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/mac/EditorCommands.mm:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/mac/GetPIDAfterAbortedProcessLaunch.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/mac/InjectedBundleAppleEvent.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/FullscreenDelegate.mm:
+        (didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/PictureInPictureDelegate.mm:
+        (didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/mac/FirstResponderScrollingPosition.mm:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/mac/WebKitAgnosticTest.mm:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+
 2018-08-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Update to use libwpe-1.0.0 and WPEBackend-fdo-1.0.0

@@ -53,7 +53,7 @@ static void setInjectedBundleClient(WKContextRef context)
     WKContextSetInjectedBundleClient(context, &injectedBundleClient.base);
 }
 
-static void didFailProvisionalLoadWithErrorForFrame(WKPageRef, WKFrameRef, WKErrorRef, WKTypeRef, const void*)
+static void didFailProvisionalNavigation(WKPageRef, WKNavigationRef, WKErrorRef, WKTypeRef, const void*)
 {
     // The injected bundle is notified of the failed load first. If we also receive this callback, the test didn't crash.
     EXPECT_TRUE(receivedMessageFromBundle);
@@ -67,10 +67,10 @@ TEST(WebKit, StopLoadingDuringDidFailProvisionalLoadTest)
 
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
-    loaderClient.didFailProvisionalLoadWithErrorForFrame = didFailProvisionalLoadWithErrorForFrame;
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    loaderClient.didFailProvisionalNavigation = didFailProvisionalNavigation;
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKRetainPtr<WKURLRef> url(AdoptWK, Util::URLForNonExistentResource());
     WKPageLoadURL(webView.page(), url.get());
