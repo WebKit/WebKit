@@ -1,5 +1,22 @@
 2018-08-21  Alex Christensen  <achristensen@webkit.org>
 
+        Translate WebKit.LimitTitleSize API test into ObjC
+        https://bugs.webkit.org/show_bug.cgi?id=188810
+
+        Reviewed by Andy Estes.
+
+        It uses WKPageLoaderClient.didReceiveTitleForFrame which has been replaced by KVO.
+        I'm translating the test into ObjC rather than introducing a new callback to WKPageNavigationClient.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/LimitTitleSize.cpp: Removed.
+        * TestWebKitAPI/Tests/mac/LimitTitleSize.mm:
+        (TEST):
+        (-[LimitTitleSizeTestObserver observeValueForKeyPath:ofObject:change:context:]):
+        (TestWebKitAPI::TEST): Deleted.
+
+2018-08-21  Alex Christensen  <achristensen@webkit.org>
+
         Remove unused shouldKeepCurrentBackForwardListItemInList check
         https://bugs.webkit.org/show_bug.cgi?id=188805
 
