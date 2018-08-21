@@ -386,6 +386,9 @@ bool shouldDumpDisassemblyFor(CodeBlock*);
 #define FINALIZE_DFG_CODE(linkBufferReference, resultPtrTag, ...)  \
     FINALIZE_CODE_IF((JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpDFGDisassembly()), linkBufferReference, resultPtrTag, __VA_ARGS__)
 
+#define FINALIZE_REGEXP_CODE(linkBufferReference, resultPtrTag, dataLogFArgumentsForHeading)  \
+    FINALIZE_CODE_IF(JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpRegExpDisassembly(), linkBufferReference, resultPtrTag, dataLogFArgumentsForHeading)
+
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER)

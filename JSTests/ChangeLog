@@ -1,3 +1,35 @@
+2018-08-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [YARR] Extend size of fixed characters bulk matching in 64bit platform
+        https://bugs.webkit.org/show_bug.cgi?id=181989
+
+        Reviewed by Michael Saboff.
+
+        * stress/characters-regexp-ignore-case.js: Added.
+        (shouldBe):
+        (testH):
+        (testHe):
+        (testHel):
+        (testHell):
+        (testHello):
+        (testHelloW):
+        (testHelloWo):
+        (testHelloWor):
+        (testHelloWorl):
+        (testHelloWorld):
+        * stress/characters-regexp.js: Added.
+        (shouldBe):
+        (testH):
+        (testHe):
+        (testHel):
+        (testHell):
+        (testHello):
+        (testHelloW):
+        (testHelloWo):
+        (testHelloWor):
+        (testHelloWorl):
+        (testHelloWorld):
+
 2018-08-17  Saam barati  <sbarati@apple.com>
 
         intersectionOfPastValuesAtHead must filter values after they've observed an invalidation point
