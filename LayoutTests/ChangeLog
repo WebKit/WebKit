@@ -7,6 +7,15 @@
 
         * platform/win/TestExpectations:
 
+2018-08-22  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Some video tests under http/tests/security are crashing on EWS.
+        https://bugs.webkit.org/show_bug.cgi?id=188853
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-08-22  Rob Buis  <rbuis@igalia.com>
 
         Fetch: Stop checking Request.integrity's value in no-cors mode

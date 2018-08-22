@@ -4166,4 +4166,6 @@ editing/pasteboard/drag-and-drop-color-input-events.html [ Skip ]
 
 webkit.org/b/188853 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Crash Pass ]
 webkit.org/b/188853 http/tests/security/local-video-source-from-remote.html [ Crash Pass ]
-
+webkit.org/b/188853 http/tests/security/contentSecurityPolicy/video-redirect-allowed.html [ Crash Pass ]
+webkit.org/b/188853 http/tests/security/contentSecurityPolicy/video-redirect-allowed2.html [ Crash Pass ]
+webkit.org/b/188853 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Crash Pass ]
