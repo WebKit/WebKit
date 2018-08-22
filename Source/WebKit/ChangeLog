@@ -1,3 +1,14 @@
+2018-08-22  John Wilander  <wilander@apple.com>
+
+        The Storage Access API prompt should show the eTLD+1s, not the full host names
+        https://bugs.webkit.org/show_bug.cgi?id=188830
+        <rdar://problem/43380645>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestStorageAccess):
+
 2018-08-22  Tim Horton  <timothy_horton@apple.com>
 
         De-unify WebPage
