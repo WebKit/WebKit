@@ -1,3 +1,12 @@
+2018-08-22  Zalan Bujtas  <zalan@apple.com>
+
+        Add changes missing from r234925.
+
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::isMarginTopCollapsedWithParent):
+        (WebCore::Layout::isMarginBottomCollapsedThrough):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent):
+
 2018-08-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Switch to Nicosia::CompositionLayer state tracking
