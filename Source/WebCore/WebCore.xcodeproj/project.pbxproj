@@ -6041,7 +6041,7 @@
 		1A85B2AD0A1B2A6D00D8C87C /* HTMLDivElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDivElement.idl; sourceTree = "<group>"; };
 		1A85B2B40A1B2AC700D8C87C /* JSHTMLDivElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDivElement.cpp; sourceTree = "<group>"; };
 		1A85B2B50A1B2AC700D8C87C /* JSHTMLDivElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLDivElement.h; sourceTree = "<group>"; };
-		1A874ADE19085E9100B03171 /* WAKViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKViewInternal.h; path = ../../WAKViewInternal.h; sourceTree = "<group>"; };
+		1A874ADE19085E9100B03171 /* WAKViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WAKViewInternal.h; sourceTree = "<group>"; };
 		1A88A90217553CD7000C74F9 /* FileIconLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileIconLoader.cpp; sourceTree = "<group>"; };
 		1A88A90317553CD7000C74F9 /* FileIconLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileIconLoader.h; sourceTree = "<group>"; };
 		1A8A64371D19FC5300D0E00F /* Payment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Payment.h; sourceTree = "<group>"; };
@@ -6281,7 +6281,7 @@
 		1AFFC4501D5E7EC700267A66 /* PluginBlacklist.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginBlacklist.mm; sourceTree = "<group>"; };
 		1AFFC4511D5E7EC700267A66 /* WebGLBlacklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLBlacklist.h; sourceTree = "<group>"; };
 		1AFFC4521D5E7EC700267A66 /* WebGLBlacklist.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGLBlacklist.mm; sourceTree = "<group>"; };
-		1B124D8C1D380B7000ECDFB0 /* MediaSampleAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaSampleAVFObjC.h; path = ../MediaSampleAVFObjC.h; sourceTree = "<group>"; };
+		1B124D8C1D380B7000ECDFB0 /* MediaSampleAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSampleAVFObjC.h; sourceTree = "<group>"; };
 		1B124D8E1D380BB600ECDFB0 /* MediaSampleAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSampleAVFObjC.mm; sourceTree = "<group>"; };
 		1BE5BFC11D515715001666D9 /* MediaConstraints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaConstraints.cpp; sourceTree = "<group>"; };
 		1C0106FE192594DF008A4201 /* InlineTextBoxStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineTextBoxStyle.cpp; sourceTree = "<group>"; };
@@ -7078,7 +7078,7 @@
 		339B5B62131DAA3200F48D02 /* CookiesStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookiesStrategy.h; sourceTree = "<group>"; };
 		3662F984047CEDBE5DDDAFAA /* RenderMathMLMenclose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLMenclose.cpp; sourceTree = "<group>"; };
 		37119A7920CCB610002C6DC9 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
-		3717D7E517ECC3A6003C276D /* extract-localizable-strings.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "extract-localizable-strings.pl"; sourceTree = "<group>"; };
+		3717D7E517ECC3A6003C276D /* extract-localizable-strings.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = extract-localizable-strings.pl; path = "Scripts/extract-localizable-strings.pl"; sourceTree = "<group>"; };
 		371A67CA11C6C7DB00047B8B /* HyphenationCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HyphenationCF.cpp; sourceTree = "<group>"; };
 		371E65CB13661EDC00BEEDB0 /* PageSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageSerializer.h; sourceTree = "<group>"; };
 		371E65CD13661EED00BEEDB0 /* PageSerializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageSerializer.cpp; sourceTree = "<group>"; };
@@ -7121,7 +7121,7 @@
 		37C738EE1EDBD718003F2B0B /* MathMLUnknownElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLUnknownElement.h; sourceTree = "<group>"; };
 		37C738F11EDBDE87003F2B0B /* DateTimeChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeChooser.h; sourceTree = "<group>"; };
 		37C738F21EDBDE87003F2B0B /* DateTimeChooserClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeChooserClient.h; sourceTree = "<group>"; };
-		37D456FB1A9A50B6003330A1 /* LocalizableStrings.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = LocalizableStrings.pm; sourceTree = "<group>"; };
+		37D456FB1A9A50B6003330A1 /* LocalizableStrings.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = LocalizableStrings.pm; path = Scripts/LocalizableStrings.pm; sourceTree = "<group>"; };
 		37DDCD9D13844FFA0008B793 /* Archive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Archive.cpp; sourceTree = "<group>"; };
 		37E3524A12450C5200BAF5D9 /* InputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InputType.cpp; sourceTree = "<group>"; };
 		37E3524C12450C6600BAF5D9 /* InputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputType.h; sourceTree = "<group>"; };
@@ -13361,8 +13361,8 @@
 		CDE5959C1BF2757100A1CBE8 /* CDMSessionMediaSourceAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CDMSessionMediaSourceAVFObjC.mm; sourceTree = "<group>"; };
 		CDE6560E17CA6E7600526BA7 /* mediaControlsApple.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = mediaControlsApple.js; sourceTree = "<group>"; };
 		CDE667A11E4BBA4D00E8154A /* PlatformAudioData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformAudioData.h; sourceTree = "<group>"; };
-		CDE667A21E4BBF1500E8154A /* WebAudioBufferList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAudioBufferList.cpp; sourceTree = "<group>"; };
-		CDE667A31E4BBF1500E8154A /* WebAudioBufferList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAudioBufferList.h; sourceTree = "<group>"; };
+		CDE667A21E4BBF1500E8154A /* WebAudioBufferList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cocoa/WebAudioBufferList.cpp; sourceTree = "<group>"; };
+		CDE667A31E4BBF1500E8154A /* WebAudioBufferList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoa/WebAudioBufferList.h; sourceTree = "<group>"; };
 		CDE7FC42181904B1002BBB77 /* OrderIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OrderIterator.cpp; sourceTree = "<group>"; };
 		CDE7FC43181904B1002BBB77 /* OrderIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrderIterator.h; sourceTree = "<group>"; };
 		CDE83DAF183C44060031EAA3 /* VideoPlaybackQuality.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoPlaybackQuality.cpp; sourceTree = "<group>"; };

@@ -1,3 +1,14 @@
+2018-08-22  David Kilzer  <ddkilzer@apple.com>
+
+        Move files in WebCore project to match Xcode folder structure
+        <https://webkit.org/b/188851>
+
+        Reviewed by Tim Horton.
+
+        * Scripts/extract-localizable-strings:
+        * Scripts/update-webkit-localizable-strings:
+        - Update to match new location of extract-localizable-strings.pl.
+
 2018-08-21  Alex Christensen  <achristensen@webkit.org>
 
         Roll out r235139 and r235146

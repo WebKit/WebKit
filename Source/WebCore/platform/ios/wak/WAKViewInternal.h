@@ -28,13 +28,15 @@
 #import "WAKView.h"
 #import "WKView.h"
 
-@interface WAKView () {
+@interface WAKView ()
+{
 @package
     WKViewContext viewContext;
     WKViewRef viewRef;
 
-    NSMutableSet *subviewReferences;    // This array is only used to keep WAKViews alive.
-                                        // The actual subviews are maintained by the WKView.
+    // This array is only used to keep WAKViews alive.
+    // The actual subviews are maintained by the WKView.
+    NSMutableSet *subviewReferences;
 
     BOOL _isHidden;
     BOOL _drawsOwnDescendants;

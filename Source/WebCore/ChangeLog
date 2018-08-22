@@ -1,3 +1,19 @@
+2018-08-22  David Kilzer  <ddkilzer@apple.com>
+
+        Move files in WebCore project to match Xcode folder structure
+        <https://webkit.org/b/188851>
+
+        Reviewed by Tim Horton.
+
+        * Scripts/LocalizableStrings.pm: Renamed from Source/WebCore/LocalizableStrings.pm.
+        * Scripts/extract-localizable-strings.pl: Renamed from Source/WebCore/extract-localizable-strings.pl.
+        * WebCore.xcodeproj/project.pbxproj: Update to match new location of files.
+        * platform/audio/cocoa/WebAudioBufferList.cpp: Renamed from Source/WebCore/platform/audio/WebAudioBufferList.cpp.
+        * platform/audio/cocoa/WebAudioBufferList.h: Renamed from Source/WebCore/platform/audio/WebAudioBufferList.h.
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h: Renamed from Source/WebCore/platform/graphics/avfoundation/MediaSampleAVFObjC.h.
+        * platform/ios/wak/WAKViewInternal.h: Renamed from Source/WebCore/platform/WAKViewInternal.h.
+          Also fix 3 webkit-style warnings.
+
 2018-08-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Move files to a dedicated directory.
