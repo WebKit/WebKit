@@ -1,3 +1,64 @@
+2018-08-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] Move files to a dedicated directory.
+        https://bugs.webkit.org/show_bug.cgi?id=188846
+
+        Reviewed by Simon Fraser.
+
+        layout/Float* -> layout/floats
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/floatformatting/FloatingContext.cpp: Renamed from Source/WebCore/layout/FloatingContext.cpp.
+        (WebCore::Layout::FloatingPair::isEmpty const):
+        (WebCore::Layout::FloatingPair::verticalPosition const):
+        (WebCore::Layout::Iterator::operator* const):
+        (WebCore::Layout::begin):
+        (WebCore::Layout::end):
+        (WebCore::Layout::FloatingContext::FloatingContext):
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::verticalPositionWithClearance const):
+        (WebCore::Layout::FloatingContext::floatingPosition const):
+        (WebCore::Layout::FloatingContext::initialVerticalPosition const):
+        (WebCore::Layout::FloatingContext::alignWithContainingBlock const):
+        (WebCore::Layout::FloatingContext::alignWithFloatings const):
+        (WebCore::Layout::FloatingContext::toContainingBlock const):
+        (WebCore::Layout::FloatingPair::FloatingPair):
+        (WebCore::Layout::FloatingPair::left const):
+        (WebCore::Layout::FloatingPair::right const):
+        (WebCore::Layout::FloatingPair::intersects const):
+        (WebCore::Layout::FloatingPair::operator == const):
+        (WebCore::Layout::FloatingPair::bottom const):
+        (WebCore::Layout::Iterator::Iterator):
+        (WebCore::Layout::previousFloatingIndex):
+        (WebCore::Layout::Iterator::operator++):
+        (WebCore::Layout::Iterator::set):
+        (WebCore::Layout::Iterator::operator== const):
+        (WebCore::Layout::Iterator::operator!= const):
+        * layout/floatformatting/FloatingContext.h: Renamed from Source/WebCore/layout/FloatingContext.h.
+        (WebCore::Layout::FloatingContext::floatingState const):
+        (WebCore::Layout::FloatingContext::layoutContext const):
+        * layout/floatformatting/FloatingState.cpp: Renamed from Source/WebCore/layout/FloatingState.cpp.
+        (WebCore::Layout::FloatingState::FloatItem::FloatItem):
+        (WebCore::Layout::FloatingState::FloatingState):
+        (WebCore::Layout::belongsToThisFloatingContext):
+        (WebCore::Layout::FloatingState::remove):
+        (WebCore::Layout::FloatingState::append):
+        (WebCore::Layout::FloatingState::bottom const):
+        * layout/floatformatting/FloatingState.h: Renamed from Source/WebCore/layout/FloatingState.h.
+        (WebCore::Layout::FloatingState::create):
+        (WebCore::Layout::FloatingState::isEmpty const):
+        (WebCore::Layout::FloatingState::FloatItem::layoutBox const):
+        (WebCore::Layout::FloatingState::FloatItem::containingBlock const):
+        (WebCore::Layout::FloatingState::FloatItem::displayBox const):
+        (WebCore::Layout::FloatingState::FloatItem::containingBlockDisplayBox const):
+        (WebCore::Layout::FloatingState::floats const):
+        (WebCore::Layout::FloatingState::last const):
+        (WebCore::Layout::FloatingState::layoutContext const):
+        (WebCore::Layout::FloatingState::root const):
+        (WebCore::Layout::FloatingState::leftBottom const):
+        (WebCore::Layout::FloatingState::rightBottom const):
+        (WebCore::Layout::FloatingState::bottom const):
+
 2018-08-22  Rob Buis  <rbuis@igalia.com>
 
         Fetch: Stop checking Request.integrity's value in no-cors mode

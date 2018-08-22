@@ -30,6 +30,7 @@
 
 #include "FormattingContext.h"
 #include "LayoutBox.h"
+#include "LayoutContainer.h"
 #include "LayoutContext.h"
 #include <wtf/IsoMallocInlines.h>
 

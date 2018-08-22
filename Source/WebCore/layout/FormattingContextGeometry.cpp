@@ -24,11 +24,12 @@
  */
 
 #include "config.h"
-#include "FloatingState.h"
 #include "FormattingContext.h"
-#include "FormattingState.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+
+#include "FloatingState.h"
+#include "FormattingState.h"
 
 namespace WebCore {
 namespace Layout {

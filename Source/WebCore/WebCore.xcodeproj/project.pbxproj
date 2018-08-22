@@ -15665,12 +15665,9 @@
 			children = (
 				115CFA99208BC09A001E6991 /* blockformatting */,
 				1199FA58208E3C4C002358CC /* displaytree */,
+				6FCFC055212DACC2007695D2 /* floats */,
 				115CFA9A208BC140001E6991 /* inlineformatting */,
 				115CFA90208B9441001E6991 /* layouttree */,
-				115CFA85208B9066001E6991 /* FloatingContext.cpp */,
-				115CFA84208B9066001E6991 /* FloatingContext.h */,
-				115CFA81208B8EDA001E6991 /* FloatingState.cpp */,
-				115CFA80208B8EDA001E6991 /* FloatingState.h */,
 				115CFA69208AF7D0001E6991 /* FormattingContext.cpp */,
 				115CFA68208AF7D0001E6991 /* FormattingContext.h */,
 				6FBB860520B464B600DAD938 /* FormattingContextGeometry.cpp */,
@@ -19469,6 +19466,17 @@
 				11EA57FC20FFAFB700311EBB /* SimpleTextRunGenerator.h */,
 			);
 			path = simple;
+			sourceTree = "<group>";
+		};
+		6FCFC055212DACC2007695D2 /* floats */ = {
+			isa = PBXGroup;
+			children = (
+				115CFA85208B9066001E6991 /* FloatingContext.cpp */,
+				115CFA84208B9066001E6991 /* FloatingContext.h */,
+				115CFA81208B8EDA001E6991 /* FloatingState.cpp */,
+				115CFA80208B8EDA001E6991 /* FloatingState.h */,
+			);
+			path = floats;
 			sourceTree = "<group>";
 		};
 		6FE7DDDD20EC6E8B008B5B4E /* textlayout */ = {

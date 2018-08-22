@@ -1217,8 +1217,6 @@ inspector/agents/worker/WorkerDebuggerAgent.cpp
 inspector/agents/worker/WorkerNetworkAgent.cpp
 inspector/agents/worker/WorkerRuntimeAgent.cpp
 
-layout/FloatingContext.cpp
-layout/FloatingState.cpp
 layout/FormattingContext.cpp
 layout/FormattingContextGeometry.cpp
 layout/FormattingState.cpp
@@ -1230,6 +1228,8 @@ layout/blockformatting/BlockFormattingState.cpp
 layout/blockformatting/BlockMarginCollapse.cpp
 layout/blockformatting/BlockInvalidation.cpp
 layout/displaytree/DisplayBox.cpp
+layout/floats/FloatingContext.cpp
+layout/floats/FloatingState.cpp
 layout/inlineformatting/InlineFormattingContext.cpp
 layout/inlineformatting/InlineFormattingState.cpp
 layout/inlineformatting/InlineInvalidation.cpp
