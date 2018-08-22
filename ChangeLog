@@ -1,3 +1,14 @@
+2018-08-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Switch to Nicosia::CompositionLayer state tracking
+        https://bugs.webkit.org/show_bug.cgi?id=188693
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsGTK.cmake: Enable USE_NICOSIA alongside
+        USE_COORDINATED_GRAPHICS and USE_COORDINATED_GRAPHICS_THREADED.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+
 2018-08-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for 2.21.91 release.

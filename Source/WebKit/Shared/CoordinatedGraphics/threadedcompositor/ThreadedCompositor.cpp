@@ -215,11 +215,21 @@ void ThreadedCompositor::renderLayerTree()
             // Coordinate scene update completion with the client in case of changed or updated platform layers.
             // But do not change coordinateUpdateCompletionWithClient while in force repaint because that
             // demands immediate scene update completion regardless of platform layers.
+            // FIXME: Check whether we still need all this coordinateUpdateCompletionWithClient logic.
+            // https://bugs.webkit.org/show_bug.cgi?id=188839
+            // Relatedly, we should only ever operate with a single Nicosia::Scene object, not with a Vector
+            // of CoordinatedGraphicsState instances (which at this time will all contain RefPtr to the same
+            // Nicosia::State object anyway).
             if (!m_inForceRepaint) {
                 bool coordinateUpdate = false;
-                for (auto& state : states)
-                    coordinateUpdate |= std::any_of(state.layersToUpdate.begin(), state.layersToUpdate.end(),
-                        [](auto& it) { return it.second.platformLayerChanged || it.second.platformLayerUpdated; });
+                for (auto& state : states) {
+                    state.nicosia.scene->accessState(
+                        [&coordinateUpdate](Nicosia::Scene::State& state)
+                        {
+                            coordinateUpdate |= state.platformLayerUpdated;
+                            state.platformLayerUpdated = false;
+                        });
+                }
                 m_attributes.coordinateUpdateCompletionWithClient = coordinateUpdate;
             }
         }

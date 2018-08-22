@@ -110,7 +110,7 @@ public:
     void removeAnimation(const String&) override;
     void suspendAnimations(MonotonicTime) override;
     void resumeAnimations() override;
-    bool usesContentsLayer() const override { return m_platformLayer || m_compositedImage; }
+    bool usesContentsLayer() const override { return m_platformLayer || m_nicosia.contentLayer || m_compositedImage; }
 
     void syncPendingStateChangesIncludingSubLayers();
     void updateContentBuffersIncludingSubLayers();
@@ -161,7 +161,6 @@ private:
     void computeTransformedVisibleRect();
     void updateContentBuffers();
 
-    void createBackingStore();
     void releaseImageBackingIfNeeded();
 
     void notifyFlushRequired();
@@ -171,7 +170,6 @@ private:
     bool shouldHaveBackingStore() const;
     bool selfOrAncestorHasActiveTransformAnimation() const;
     bool selfOrAncestorHaveNonAffineTransforms();
-    void adjustContentsScale();
 
     void setShouldUpdateVisibleRect();
     float effectiveContentsScale();
@@ -231,6 +229,11 @@ private:
         Nicosia::CompositionLayer::LayerState::Delta delta;
         Nicosia::CompositionLayer::LayerState::RepaintCounter repaintCounter;
         Nicosia::CompositionLayer::LayerState::DebugBorder debugBorder;
+        bool performLayerSync { false };
+
+        RefPtr<Nicosia::BackingStore> backingStore;
+        RefPtr<Nicosia::ContentLayer> contentLayer;
+        RefPtr<Nicosia::ImageBacking> imageBacking;
     } m_nicosia;
 };
 

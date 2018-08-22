@@ -1,3 +1,96 @@
+2018-08-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Switch to Nicosia::CompositionLayer state tracking
+        https://bugs.webkit.org/show_bug.cgi?id=188693
+
+        Reviewed by Carlos Garcia Campos.
+
+        Populate Nicosia::CompositionLayer with additional LayerState member
+        objects. For now we're using pending, staging and committed states,
+        though it might be possible to narrow down these to just two.
+
+        Pending state contains state that will be moved to staging during the
+        final steps of the next layer flush. flushState() method accumulates all
+        state changes in the staging state, and also allows the caller to
+        additionally perform flushing operations that are specific to backing
+        store, image backing or content layer containers.
+
+        commitState() method moves staging state over into the committed state,
+        again allowing user to pass a functor that receives the just-committed
+        state and apply it to their composition engine.
+
+        Changes in state objects are done under a thread-safe lock. This might
+        not be completely necessary at this point, but will be useful when
+        additonal layer state updates will be coming from e.g. the scrolling
+        thread. It might also make sense to tie in this lock use with the
+        Nicosia::Scene lock in the future.
+
+        Nicosia::ContentLayerTextureMapperImpl is modified slightly to allow
+        determining during flushes whether an update is pending. This is
+        necessary for a special case in ThreadedCompositor where content (i.e.
+        platform) layers like WebGL or video require an additional level of
+        scene update coordination. This complete special case has to go through
+        another review to see whether it's still necessary. Ideally we would be
+        able to remove it.
+
+        CoordinatedGraphicsLayer is finally switched over to using
+        Nicosia layer objects for state updates of any kind. This patch only
+        adds all the necessary bits, but doesn't yet remove any of the existing
+        code (but rather disables it temporarily, before it's removed).
+
+        Updating of simple state values is already in place. For backing stores,
+        the flushCompositingStateForThisLayerOnly() method now takes care of
+        preparing the backing store object if necessary as per layer state,
+        while the updateContentBuffers() method is switched to operate with
+        TiledBackingStore objects now kept on the BackingStoreTextureMapperImpl
+        instance associated with that backing store. Helper methods like
+        adjustContentsScale() and createBackingStore(), only called from the
+        updateContentBuffers() method, are removed and the code there inlined.
+
+        For image-backed layers, the update is now done directly in
+        the flushCompositingStateForThisLayerOnly() method, if necessary. The
+        helper syncImageBacking() method is commented out in order to prevent
+        double-painting of image buffers for now, but all this (along with the
+        CoordinatedImageBacking logic in CompositingCoordinator) will be removed
+        later.
+
+        For layers backed by platform layer objects, integration is relatively
+        simple. setContentsToPlatformLayer() is changed to properly handle any
+        passed-in platform layer object, and updatePlatformLayer() invokes the
+        swapBuffersIfNeeded() method on the ContentLayerTextureMapperImpl object
+        during each flush, if necessary.
+
+        In order to ensure any Nicosia-specific state update properly triggers
+        a composition update, m_nicosia.performLayerUpdate is added and flipped
+        to true during the flush in case of any state change. This then triggers
+        a layer sync in the CompositingCoordinator object when the
+        syncPendingStateChangesIncludingSubLayers() method is called. While no
+        old-style layer state update is provided, it causes the necessary
+        synchronization step that properly picks up the Nicosia-provided state
+        changes. Once the old-style layer state tracking is removed, this method
+        of update triggering will have to be updated as well.
+
+        * platform/graphics/nicosia/NicosiaPlatformLayer.h:
+        (Nicosia::CompositionLayer::flushState):
+        (Nicosia::CompositionLayer::commitState):
+        (Nicosia::CompositionLayer::accessCommitted):
+        * platform/graphics/nicosia/NicosiaScene.h:
+        * platform/graphics/nicosia/texmap/NicosiaContentLayerTextureMapperImpl.cpp:
+        (Nicosia::ContentLayerTextureMapperImpl::flushUpdate):
+        * platform/graphics/nicosia/texmap/NicosiaContentLayerTextureMapperImpl.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::setContentsNeedsDisplay):
+        (WebCore::CoordinatedGraphicsLayer::setContentsToPlatformLayer):
+        (WebCore::CoordinatedGraphicsLayer::updatePlatformLayer):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        (WebCore::CoordinatedGraphicsLayer::syncPendingStateChangesIncludingSubLayers):
+        (WebCore::CoordinatedGraphicsLayer::updateContentBuffers):
+        (WebCore::CoordinatedGraphicsLayer::purgeBackingStores):
+        (WebCore::CoordinatedGraphicsLayer::adjustContentsScale): Deleted.
+        (WebCore::CoordinatedGraphicsLayer::createBackingStore): Deleted.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+
 2018-08-22  David Kilzer  <ddkilzer@apple.com>
 
         Remove stale file references in WebCore Xcode project

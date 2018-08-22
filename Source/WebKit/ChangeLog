@@ -1,3 +1,82 @@
+2018-08-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Switch to Nicosia::CompositionLayer state tracking
+        https://bugs.webkit.org/show_bug.cgi?id=188693
+
+        Reviewed by Carlos Garcia Campos.
+
+        Switch CoordinatedGraphicsScene to utilizing Nicosia::CompositionLayer
+        objects for state updates of the TextureMapper layer tree.
+
+        CoordinatedGraphicsScene::paintToCurrentGLContext() now calls
+        updateSceneState() at the beginning. This is a new method that manages
+        all updates for a given Nicosia::Scene instance. Any removed layers
+        have their composition-side state cleaned up, and the current set of
+        layers is then iterated to ensure and update the corresponding
+        TextureMapperLayer objects.
+
+        Layers with any backing (painted backing store, platform-layer or image
+        content) are temporarly stored for updating outside of mutex-controlled
+        scene update. Performing all other state updates outside of this mutex
+        area will be investigated at a later point.
+
+        We then iterate over vectors for each layer backing, gathering any
+        affected CoordinatedBackingStore or TextureMapperPlatformLayerProxy
+        objects that we have to update.
+
+        This drops a bunch of member variables and helper methods off the
+        CoordinatedGraphicsScene class. The applyStateChanges() method will be
+        further simplified in the future. coordinateUpdateCompletionWithClient
+        logic in ThreadedCompositor should be checked to see whether it still
+        addresses any real-life problem, because at the moment it imposes a few
+        additional operations in terms of scene updates that we could really do
+        without. This will be checked later and removed if possible.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::applyStateChanges):
+        (WebKit::CoordinatedGraphicsScene::paintToCurrentGLContext):
+        (WebKit::compositionLayerImpl):
+        (WebKit::contentLayerImpl):
+        (WebKit::backingStoreImpl):
+        (WebKit::imageBackingImpl):
+        (WebKit::texmapLayer):
+        (WebKit::updateBackingStore):
+        (WebKit::updateImageBacking):
+        (WebKit::removeLayer):
+        (WebKit::CoordinatedGraphicsScene::commitSceneState):
+        (WebKit::CoordinatedGraphicsScene::updateSceneState):
+        (WebKit::CoordinatedGraphicsScene::purgeGLResources):
+        (WebKit::CoordinatedGraphicsScene::syncPlatformLayerIfNeeded): Deleted.
+        (WebKit::CoordinatedGraphicsScene::setLayerChildrenIfNeeded): Deleted.
+        (WebKit::CoordinatedGraphicsScene::setLayerFiltersIfNeeded): Deleted.
+        (WebKit::CoordinatedGraphicsScene::setLayerState): Deleted.
+        (WebKit::CoordinatedGraphicsScene::getLayerByIDIfExists): Deleted.
+        (WebKit::CoordinatedGraphicsScene::createLayers): Deleted.
+        (WebKit::CoordinatedGraphicsScene::createLayer): Deleted.
+        (WebKit::CoordinatedGraphicsScene::deleteLayers): Deleted.
+        (WebKit::CoordinatedGraphicsScene::deleteLayer): Deleted.
+        (WebKit::CoordinatedGraphicsScene::setRootLayerID): Deleted.
+        (WebKit::CoordinatedGraphicsScene::prepareContentBackingStore): Deleted.
+        (WebKit::CoordinatedGraphicsScene::createBackingStoreIfNeeded): Deleted.
+        (WebKit::CoordinatedGraphicsScene::removeBackingStoreIfNeeded): Deleted.
+        (WebKit::CoordinatedGraphicsScene::resetBackingStoreSizeToLayerSize): Deleted.
+        (WebKit::CoordinatedGraphicsScene::createTilesIfNeeded): Deleted.
+        (WebKit::CoordinatedGraphicsScene::removeTilesIfNeeded): Deleted.
+        (WebKit::CoordinatedGraphicsScene::updateTilesIfNeeded): Deleted.
+        (WebKit::CoordinatedGraphicsScene::syncImageBackings): Deleted.
+        (WebKit::CoordinatedGraphicsScene::createImageBacking): Deleted.
+        (WebKit::CoordinatedGraphicsScene::updateImageBacking): Deleted.
+        (WebKit::CoordinatedGraphicsScene::clearImageBackingContents): Deleted.
+        (WebKit::CoordinatedGraphicsScene::removeImageBacking): Deleted.
+        (WebKit::CoordinatedGraphicsScene::assignImageBackingToLayer): Deleted.
+        (WebKit::CoordinatedGraphicsScene::setLayerAnimationsIfNeeded): Deleted.
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        (WebKit::CoordinatedGraphicsScene::layerByID): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::renderLayerTree):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::flushPendingLayerChanges):
+
 2018-08-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace booleans for modifier keys in UIEventWithKeyState with OptionSet<Modifier>

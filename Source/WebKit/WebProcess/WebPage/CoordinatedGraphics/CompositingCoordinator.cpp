@@ -35,6 +35,9 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/InspectorController.h>
+#include <WebCore/NicosiaBackingStoreTextureMapperImpl.h>
+#include <WebCore/NicosiaContentLayerTextureMapperImpl.h>
+#include <WebCore/NicosiaImageBackingTextureMapperImpl.h>
 #include <WebCore/NicosiaPaintingEngine.h>
 #include <WebCore/Page.h>
 #include <wtf/MemoryPressureHandler.h>
@@ -130,7 +133,31 @@ bool CompositingCoordinator::flushPendingLayerChanges()
         m_state.nicosia.scene->accessState(
             [this](Nicosia::Scene::State& state)
             {
+                bool platformLayerUpdated = false;
+                for (auto& compositionLayer : m_nicosia.state.layers) {
+                    compositionLayer->flushState(
+                        [&platformLayerUpdated]
+                        (const Nicosia::CompositionLayer::LayerState& state)
+                        {
+                            if (state.backingStore) {
+                                auto& impl = downcast<Nicosia::BackingStoreTextureMapperImpl>(state.backingStore->impl());
+                                impl.flushUpdate();
+                            }
+
+                            if (state.imageBacking) {
+                                auto& impl = downcast<Nicosia::ImageBackingTextureMapperImpl>(state.imageBacking->impl());
+                                impl.flushUpdate();
+                            }
+
+                            if (state.contentLayer) {
+                                auto& impl = downcast<Nicosia::ContentLayerTextureMapperImpl>(state.contentLayer->impl());
+                                platformLayerUpdated |= impl.flushUpdate();
+                            }
+                        });
+                }
+
                 ++state.id;
+                state.platformLayerUpdated = platformLayerUpdated;
                 state.layers = m_nicosia.state.layers;
                 state.rootLayer = m_nicosia.state.rootLayer;
             });

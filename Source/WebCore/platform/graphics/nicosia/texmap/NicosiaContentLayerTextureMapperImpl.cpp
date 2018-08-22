@@ -63,6 +63,12 @@ void ContentLayerTextureMapperImpl::invalidateClient()
     m_client.client = nullptr;
 }
 
+bool ContentLayerTextureMapperImpl::flushUpdate()
+{
+    LockHolder locker(m_client.lock);
+    return std::exchange(m_client.pendingUpdate, false);
+}
+
 void ContentLayerTextureMapperImpl::swapBuffersIfNeeded()
 {
     LockHolder locker(m_client.lock);

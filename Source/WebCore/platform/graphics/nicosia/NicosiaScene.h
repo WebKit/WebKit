@@ -51,6 +51,10 @@ public:
         ~State();
 
         uint32_t id { 0 };
+        // FIXME: This is needed for a ThreadedCompositor oddity that might not even be
+        // necessary anymore. It that has to be checked and ideally removed.
+        // https://bugs.webkit.org/show_bug.cgi?id=188839
+        bool platformLayerUpdated { false };
         HashSet<RefPtr<Nicosia::CompositionLayer>> layers;
         RefPtr<Nicosia::CompositionLayer> rootLayer;
     };

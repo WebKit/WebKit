@@ -81,75 +81,29 @@ public:
     bool isActive() const { return m_isActive; }
     void setActive(bool active) { m_isActive = active; }
 
-    void commitSceneState(const WebCore::CoordinatedGraphicsState&);
-
     void setViewBackgroundColor(const WebCore::Color& color) { m_viewBackgroundColor = color; }
     WebCore::Color viewBackgroundColor() const { return m_viewBackgroundColor; }
 
 private:
-    struct CommitScope {
-        CommitScope() = default;
-        CommitScope(CommitScope&) = delete;
-        CommitScope& operator=(const CommitScope&) = delete;
+    void commitSceneState(const WebCore::CoordinatedGraphicsState::NicosiaState&);
+    void updateSceneState();
 
-        Vector<RefPtr<WebCore::CoordinatedBackingStore>> releasedImageBackings;
-        HashSet<RefPtr<WebCore::CoordinatedBackingStore>> backingStoresWithPendingBuffers;
-    };
-
-    void setRootLayerID(WebCore::CoordinatedLayerID);
-    void createLayers(const Vector<WebCore::CoordinatedLayerID>&);
-    void deleteLayers(const Vector<WebCore::CoordinatedLayerID>&);
-    void setLayerState(WebCore::CoordinatedLayerID, const WebCore::CoordinatedGraphicsLayerState&, CommitScope&);
-    void setLayerChildrenIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
-    void updateTilesIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&, CommitScope&);
-    void createTilesIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
-    void removeTilesIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&, CommitScope&);
-    void setLayerFiltersIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
-    void setLayerAnimationsIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
-    void syncPlatformLayerIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
-
-    void syncImageBackings(const WebCore::CoordinatedGraphicsState&, CommitScope&);
-    void createImageBacking(WebCore::CoordinatedImageBackingID);
-    void updateImageBacking(WebCore::CoordinatedImageBackingID, RefPtr<Nicosia::Buffer>&&, CommitScope&);
-    void clearImageBackingContents(WebCore::CoordinatedImageBackingID, CommitScope&);
-    void removeImageBacking(WebCore::CoordinatedImageBackingID, CommitScope&);
-
-    WebCore::TextureMapperLayer* layerByID(WebCore::CoordinatedLayerID id)
-    {
-        ASSERT(m_layers.contains(id));
-        ASSERT(id != WebCore::InvalidCoordinatedLayerID);
-        return m_layers.get(id);
-    }
-    WebCore::TextureMapperLayer* getLayerByIDIfExists(WebCore::CoordinatedLayerID);
     WebCore::TextureMapperLayer* rootLayer() { return m_rootLayer.get(); }
 
     void updateViewport();
 
-    void createLayer(WebCore::CoordinatedLayerID);
-    void deleteLayer(WebCore::CoordinatedLayerID);
-
-    void assignImageBackingToLayer(WebCore::TextureMapperLayer*, WebCore::CoordinatedImageBackingID);
     void ensureRootLayer();
-
-    void prepareContentBackingStore(WebCore::TextureMapperLayer*, CommitScope&);
-    void createBackingStoreIfNeeded(WebCore::TextureMapperLayer*);
-    void removeBackingStoreIfNeeded(WebCore::TextureMapperLayer*);
-    void resetBackingStoreSizeToLayerSize(WebCore::TextureMapperLayer*, CommitScope&);
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
     void onNewBufferAvailable() override;
 #endif
 
-    WebCore::CoordinatedGraphicsState::NicosiaState m_nicosia;
+    struct {
+        RefPtr<Nicosia::Scene> scene;
+        Nicosia::Scene::State state;
+    } m_nicosia;
 
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
-
-    HashMap<WebCore::CoordinatedImageBackingID, RefPtr<WebCore::CoordinatedBackingStore>> m_imageBackings;
-    HashMap<WebCore::TextureMapperLayer*, RefPtr<WebCore::CoordinatedBackingStore>> m_backingStores;
-
-#if USE(COORDINATED_GRAPHICS_THREADED)
-    HashMap<WebCore::TextureMapperLayer*, RefPtr<WebCore::TextureMapperPlatformLayerProxy>> m_platformLayerProxies;
-#endif
 
     // Below two members are accessed by only the main thread. The painting thread must lock the main thread to access both members.
     CoordinatedGraphicsSceneClient* m_client;
@@ -157,7 +111,6 @@ private:
 
     std::unique_ptr<WebCore::TextureMapperLayer> m_rootLayer;
 
-    HashMap<WebCore::CoordinatedLayerID, std::unique_ptr<WebCore::TextureMapperLayer>> m_layers;
     WebCore::CoordinatedLayerID m_rootLayerID { WebCore::InvalidCoordinatedLayerID };
     WebCore::Color m_viewBackgroundColor { WebCore::Color::white };
 
