@@ -1,3 +1,11 @@
+2018-08-21  Alex Christensen  <achristensen@webkit.org>
+
+        Roll out r235139 and r235146
+        https://bugs.webkit.org/show_bug.cgi?id=188805
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/ShouldKeepCurrentBackForwardListItemInList.cpp:
+
 2018-08-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Remove _WKAttachments and notify the UI client upon mainframe navigation

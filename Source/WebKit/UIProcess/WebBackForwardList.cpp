@@ -141,8 +141,11 @@ void WebBackForwardList::addItem(Ref<WebBackForwardListItem>&& newItem)
         ASSERT(m_entries.isEmpty());
         m_currentIndex = 0;
         m_hasCurrentIndex = true;
-    } else
-        m_currentIndex++;
+    } else {
+        shouldKeepCurrentItem = m_page->shouldKeepCurrentBackForwardListItemInList(m_entries[m_currentIndex]);
+        if (shouldKeepCurrentItem)
+            m_currentIndex++;
+    }
 
     auto* newItemPtr = newItem.ptr();
     if (!shouldKeepCurrentItem) {
@@ -195,13 +198,31 @@ void WebBackForwardList::goToItem(WebBackForwardListItem& item)
     // If we're going to an item different from the current item, ask the client if the current
     // item should remain in the list.
     auto& currentItem = m_entries[m_currentIndex];
-    if (currentItem.ptr() != &item)
+    bool shouldKeepCurrentItem = true;
+    if (currentItem.ptr() != &item) {
         m_page->recordAutomaticNavigationSnapshot();
+        shouldKeepCurrentItem = m_page->shouldKeepCurrentBackForwardListItemInList(m_entries[m_currentIndex]);
+    }
+
+    // If the client said to remove the current item, remove it and then update the target index.
+    Vector<Ref<WebBackForwardListItem>> removedItems;
+    if (!shouldKeepCurrentItem) {
+        removedItems.append(currentItem.copyRef());
+        m_entries.remove(m_currentIndex);
+        targetIndex = notFound;
+        for (size_t i = 0; i < m_entries.size(); ++i) {
+            if (m_entries[i].ptr() == &item) {
+                targetIndex = i;
+                break;
+            }
+        }
+        ASSERT(targetIndex != notFound);
+    }
 
     m_currentIndex = targetIndex;
 
     LOG(BackForward, "(Back/Forward) WebBackForwardList %p going to item %s, is now at index %zu", this, item.itemID().logString(), targetIndex);
-    m_page->didChangeBackForwardList(nullptr, { });
+    m_page->didChangeBackForwardList(nullptr, WTFMove(removedItems));
 }
 
 WebBackForwardListItem* WebBackForwardList::currentItem() const

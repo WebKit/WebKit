@@ -1,3 +1,21 @@
+2018-08-21  Alex Christensen  <achristensen@webkit.org>
+
+        Roll out r235139 and r235146
+        https://bugs.webkit.org/show_bug.cgi?id=188805
+
+        It turns out shouldKeepCurrentBackForwardListItemInList has one use left.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::shouldKeepCurrentBackForwardListItemInList):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::addItem):
+        (WebKit::WebBackForwardList::goToItem):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::shouldKeepCurrentBackForwardListItemInList):
+        * UIProcess/WebPageProxy.h:
+
 2018-08-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Remove _WKAttachments and notify the UI client upon mainframe navigation

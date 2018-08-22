@@ -1290,6 +1290,13 @@ void WebPageProxy::willGoToBackForwardListItem(const BackForwardItemIdentifier& 
     }
 }
 
+bool WebPageProxy::shouldKeepCurrentBackForwardListItemInList(WebBackForwardListItem& item)
+{
+    PageClientProtector protector(m_pageClient);
+
+    return m_loaderClient->shouldKeepCurrentBackForwardListItemInList(*this, item);
+}
+
 bool WebPageProxy::canShowMIMEType(const String& mimeType)
 {
     if (MIMETypeRegistry::canShowMIMEType(mimeType))
