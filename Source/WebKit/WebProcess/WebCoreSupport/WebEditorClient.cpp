@@ -175,14 +175,14 @@ void WebEditorClient::cloneAttachmentData(const String& fromIdentifier, const St
     m_page->send(Messages::WebPageProxy::CloneAttachmentData(fromIdentifier, toIdentifier));
 }
 
-void WebEditorClient::didInsertAttachment(const String& identifier, const String& source)
+void WebEditorClient::didInsertAttachmentWithIdentifier(const String& identifier, const String& source)
 {
-    m_page->send(Messages::WebPageProxy::DidInsertAttachment(identifier, source));
+    m_page->send(Messages::WebPageProxy::DidInsertAttachmentWithIdentifier(identifier, source));
 }
 
-void WebEditorClient::didRemoveAttachment(const String& identifier)
+void WebEditorClient::didRemoveAttachmentWithIdentifier(const String& identifier)
 {
-    m_page->send(Messages::WebPageProxy::DidRemoveAttachment(identifier));
+    m_page->send(Messages::WebPageProxy::DidRemoveAttachmentWithIdentifier(identifier));
 }
 
 #endif

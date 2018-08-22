@@ -1210,28 +1210,18 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-- (void)_didInsertAttachment:(NSString *)identifier withSource:(NSString *)source
+- (void)_didInsertAttachment:(API::Attachment&)attachment withSource:(NSString *)source
 {
     id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)self.UIDelegate;
-    if (![uiDelegate respondsToSelector:@selector(_webView:didInsertAttachment:withSource:)])
-        return;
-
-    if (auto attachment = _page->attachmentForIdentifier(identifier))
-        [uiDelegate _webView:self didInsertAttachment:wrapper(*attachment) withSource:source];
-    else
-        ASSERT_NOT_REACHED();
+    if ([uiDelegate respondsToSelector:@selector(_webView:didInsertAttachment:withSource:)])
+        [uiDelegate _webView:self didInsertAttachment:wrapper(attachment) withSource:source];
 }
 
-- (void)_didRemoveAttachment:(NSString *)identifier
+- (void)_didRemoveAttachment:(API::Attachment&)attachment
 {
     id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)self.UIDelegate;
-    if (![uiDelegate respondsToSelector:@selector(_webView:didRemoveAttachment:)])
-        return;
-
-    if (auto attachment = _page->attachmentForIdentifier(identifier))
-        [uiDelegate _webView:self didRemoveAttachment:wrapper(*attachment)];
-    else
-        ASSERT_NOT_REACHED();
+    if ([uiDelegate respondsToSelector:@selector(_webView:didRemoveAttachment:)])
+        [uiDelegate _webView:self didRemoveAttachment:wrapper(attachment)];
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)

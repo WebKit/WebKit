@@ -1,3 +1,94 @@
+2018-08-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Remove _WKAttachments and notify the UI client upon mainframe navigation
+        https://bugs.webkit.org/show_bug.cgi?id=188715
+        <rdar://problem/43541790>
+
+        Reviewed by Tim Horton.
+
+        Adds logic for invalidating Attachment objects upon mainframe navigation, or upon web content process
+        termination. An invalid Attachment's wrapper may still be retained by a UI client; however, calls to -info and
+        other SPI methods will either return nil or immediately invoke their completion handlers with a nil result and
+        an NSError. See changes below for more detail.
+
+        This patch also takes some extra measures to avoid sending redundant or unexpected removal updates to the UI
+        client upon invalidating all Attachments.
+
+        See Tools changes for new API tests.
+
+        * UIProcess/API/APIAttachment.cpp:
+        (API::Attachment::invalidate):
+        * UIProcess/API/APIAttachment.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didInsertAttachment:withSource:]):
+        (-[WKWebView _didRemoveAttachment:]):
+
+        Refactor these methods to take references to the API::Attachment that is being inserted or removed, rather than
+        take attachment identifiers. This allows us to keep logic for setting the InsertionState of Attachment objects
+        in WebPageProxy, rather than in platform code.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/_WKAttachment.h:
+        * UIProcess/API/Cocoa/_WKAttachment.mm:
+        (-[_WKAttachment info]):
+
+        If the attachment object is invalid, return nil.
+
+        (-[_WKAttachment setDisplayOptions:completion:]):
+        (-[_WKAttachment setFileWrapper:contentType:completion:]):
+
+        If the attachment object is invalid, immediately invoke the completion block with an error.
+
+        (-[_WKAttachment isConnected]):
+
+        Add a new readonly property for a client to easily determine whether a _WKAttachment is connected to the
+        document, without having to maintain the current set of connected attachment objects by observing insertion and
+        removal callbacks.
+
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::didInsertAttachment):
+        (WebKit::PageClientImplCocoa::didRemoveAttachment):
+
+        Make these take API::Attachment&s rather than identifier strings.
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::didInsertAttachment):
+        (WebKit::PageClient::didRemoveAttachment):
+
+        Also make these take API::Attachment&s rather than identifier strings.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        (WebKit::WebPageProxy::invalidateAllAttachments):
+
+        Introduce a helper function that invalidates all Attachments and notifies the UI client if needed. This is
+        invoked upon mainframe navigation, and when the web content process terminates.
+
+        (WebKit::WebPageProxy::platformRegisterAttachment):
+        (WebKit::WebPageProxy::didInsertAttachmentWithIdentifier):
+        (WebKit::WebPageProxy::didRemoveAttachmentWithIdentifier):
+        (WebKit::WebPageProxy::didInsertAttachment):
+        (WebKit::WebPageProxy::didRemoveAttachment):
+
+        Keep track of whether we've notified the UI client that an Attachment has been inserted into the document. This
+        allows us to send removal updates to the UI client only for Attachments that are currently in the document, from
+        the perspective of the UI client, and allows us to avoid sending extra removal updates in
+        invalidateAllAttachments for Attachments that either have already been removed, or Attachments which we haven't
+        inserted yet.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::didInsertAttachmentWithIdentifier):
+        (WebKit::WebEditorClient::didRemoveAttachmentWithIdentifier):
+        (WebKit::WebEditorClient::didInsertAttachment): Deleted.
+        (WebKit::WebEditorClient::didRemoveAttachment): Deleted.
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+
+        Rename did{Insert|Remove}Attachment to did{Insert|Remove}AttachmentWithIdentifier.
+
 2018-08-21  Megan Gardner  <megan_gardner@apple.com>
 
         Change Selection modification to not snap the grabber when selecting above or below the selection anchor

@@ -3670,6 +3670,11 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
             m_navigationClient->didCommitNavigation(*this, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
     } else
         m_loaderClient->didCommitLoadForFrame(*this, *frame, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    if (frame->isMainFrame())
+        invalidateAllAttachments();
+#endif
 }
 
 void WebPageProxy::didFinishDocumentLoadForFrame(uint64_t frameID, uint64_t navigationID, const UserData& userData)
@@ -6174,9 +6179,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    for (auto identifier : m_attachmentIdentifierToAttachmentMap.keys())
-        m_pageClient.didRemoveAttachment(identifier);
-    m_attachmentIdentifierToAttachmentMap.clear();
+    invalidateAllAttachments();
 #endif
 
     if (terminationReason != ProcessTerminationReason::NavigationSwap) {
@@ -7818,9 +7821,19 @@ void WebPageProxy::cloneAttachmentData(const String& fromIdentifier, const Strin
     platformCloneAttachment(existingAttachment.releaseNonNull(), WTFMove(newAttachment));
 }
 
+void WebPageProxy::invalidateAllAttachments()
+{
+    for (auto& attachment : m_attachmentIdentifierToAttachmentMap.values()) {
+        if (attachment->insertionState() == API::Attachment::InsertionState::Inserted)
+            didRemoveAttachment(attachment.get());
+        attachment->invalidate();
+    }
+    m_attachmentIdentifierToAttachmentMap.clear();
+}
+
 #if !PLATFORM(COCOA)
 
-void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&&, const String& preferredFileName, const IPC::DataReference&)
+void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&&, const String&, const IPC::DataReference&)
 {
 }
 
@@ -7834,16 +7847,28 @@ void WebPageProxy::platformCloneAttachment(Ref<API::Attachment>&&, Ref<API::Atta
 
 #endif
 
-void WebPageProxy::didInsertAttachment(const String& identifier, const String& source)
+void WebPageProxy::didInsertAttachmentWithIdentifier(const String& identifier, const String& source)
 {
-    ensureAttachment(identifier);
-    m_pageClient.didInsertAttachment(identifier, source);
+    auto attachment = ensureAttachment(identifier);
+    didInsertAttachment(attachment.get(), source);
 }
 
-void WebPageProxy::didRemoveAttachment(const String& identifier)
+void WebPageProxy::didRemoveAttachmentWithIdentifier(const String& identifier)
 {
-    ASSERT(attachmentForIdentifier(identifier));
-    m_pageClient.didRemoveAttachment(identifier);
+    if (auto attachment = attachmentForIdentifier(identifier))
+        didRemoveAttachment(*attachment);
+}
+
+void WebPageProxy::didInsertAttachment(API::Attachment& attachment, const String& source)
+{
+    attachment.setInsertionState(API::Attachment::InsertionState::Inserted);
+    m_pageClient.didInsertAttachment(attachment, source);
+}
+
+void WebPageProxy::didRemoveAttachment(API::Attachment& attachment)
+{
+    attachment.setInsertionState(API::Attachment::InsertionState::NotInserted);
+    m_pageClient.didRemoveAttachment(attachment);
 }
 
 Ref<API::Attachment> WebPageProxy::ensureAttachment(const String& identifier)

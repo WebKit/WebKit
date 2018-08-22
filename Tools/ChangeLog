@@ -1,3 +1,18 @@
+2018-08-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Remove _WKAttachments and notify the UI client upon mainframe navigation
+        https://bugs.webkit.org/show_bug.cgi?id=188715
+        <rdar://problem/43541790>
+
+        Reviewed by Tim Horton.
+
+        Adds API tests to exercises cases where (1) the UI client is notified of attachment removal upon mainframe
+        navigation, and (2) the UI client is notified of attachment removal upon web content process termination.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::ObserveAttachmentUpdatesForScope::expectAttachmentUpdates):
+        (TestWebKitAPI::TEST):
+
 2018-08-21  Alex Christensen  <achristensen@webkit.org>
 
         Transition ResizeReversePaginatedWebView API test from WKPageLoaderClient to WKPageNavigationClient

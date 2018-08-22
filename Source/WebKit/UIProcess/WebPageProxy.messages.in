@@ -529,8 +529,8 @@ messages -> WebPageProxy {
     RegisterAttachmentIdentifierFromData(String identifier, String contentType, String preferredFileName, IPC::DataReference data)
     RegisterAttachmentIdentifierFromFilePath(String identifier, String contentType, String filePath)
     CloneAttachmentData(String fromIdentifier, String toIdentifier)
-    DidInsertAttachment(String identifier, String source)
-    DidRemoveAttachment(String identifier)
+    DidInsertAttachmentWithIdentifier(String identifier, String source)
+    DidRemoveAttachmentWithIdentifier(String identifier)
 #endif
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)

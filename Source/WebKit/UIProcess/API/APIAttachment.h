@@ -52,9 +52,14 @@ public:
     static Ref<Attachment> create(const WTF::String& identifier, WebKit::WebPageProxy&);
     virtual ~Attachment();
 
+    enum class InsertionState : uint8_t { NotInserted, Inserted };
+
     const WTF::String& identifier() const { return m_identifier; }
     void setDisplayOptions(WebCore::AttachmentDisplayOptions, Function<void(WebKit::CallbackBase::Error)>&&);
     void updateAttributes(uint64_t fileSize, const WTF::String& newContentType, const WTF::String& newFilename, Function<void(WebKit::CallbackBase::Error)>&&);
+
+    void invalidate();
+    bool isValid() const { return !!m_webPage; }
 
 #if PLATFORM(COCOA)
     NSFileWrapper *fileWrapper() const { return m_fileWrapper.get(); }
@@ -67,6 +72,9 @@ public:
     const WTF::String& contentType() const { return m_contentType; }
     void setContentType(const WTF::String& contentType) { m_contentType = contentType; }
 
+    InsertionState insertionState() const { return m_insertionState; }
+    void setInsertionState(InsertionState state) { m_insertionState = state; }
+
 private:
     explicit Attachment(const WTF::String& identifier, WebKit::WebPageProxy&);
 
@@ -77,6 +85,7 @@ private:
     WTF::String m_filePath;
     WTF::String m_contentType;
     WeakPtr<WebKit::WebPageProxy> m_webPage;
+    InsertionState m_insertionState { InsertionState::NotInserted };
 };
 
 } // namespace API

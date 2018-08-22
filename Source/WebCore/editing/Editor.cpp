@@ -3866,7 +3866,7 @@ void Editor::notifyClientOfAttachmentUpdates()
         return;
 
     for (auto& identifier : removedAttachmentIdentifiers)
-        client()->didRemoveAttachment(identifier);
+        client()->didRemoveAttachmentWithIdentifier(identifier);
 
     auto* document = m_frame.document();
     if (!document)
@@ -3874,7 +3874,7 @@ void Editor::notifyClientOfAttachmentUpdates()
 
     for (auto& identifier : insertedAttachmentIdentifiers) {
         if (auto attachment = document->attachmentForIdentifier(identifier))
-            client()->didInsertAttachment(identifier, attachment->attributeWithoutSynchronization(HTMLNames::srcAttr));
+            client()->didInsertAttachmentWithIdentifier(identifier, attachment->attributeWithoutSynchronization(HTMLNames::srcAttr));
         else
             ASSERT_NOT_REACHED();
     }

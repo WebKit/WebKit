@@ -52,6 +52,7 @@ OBJC_CLASS NSTextAlternatives;
 #endif
 
 namespace API {
+class Attachment;
 class HitTestResult;
 class Object;
 class OpenPanelParameters;
@@ -437,8 +438,8 @@ public:
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    virtual void didInsertAttachment(const String& identifier, const String& source) { }
-    virtual void didRemoveAttachment(const String& identifier) { }
+    virtual void didInsertAttachment(API::Attachment&, const String& source) { }
+    virtual void didRemoveAttachment(API::Attachment&) { }
 #endif
 };
 

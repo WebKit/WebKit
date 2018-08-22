@@ -27,6 +27,7 @@
 
 #import "DragAndDropSimulator.h"
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKPreferencesRefPrivate.h>
@@ -114,12 +115,12 @@ public:
 
     void expectAttachmentUpdates(NSArray<_WKAttachment *> *removed, NSArray<_WKAttachment *> *inserted)
     {
-        BOOL removedAttachmentsMatch = [observer().removed isEqual:removed];
+        BOOL removedAttachmentsMatch = [[NSSet setWithArray:observer().removed] isEqual:[NSSet setWithArray:removed]];
         if (!removedAttachmentsMatch)
             NSLog(@"Expected removed attachments: %@ to match %@.", observer().removed, removed);
         EXPECT_TRUE(removedAttachmentsMatch);
 
-        BOOL insertedAttachmentsMatch = [observer().inserted isEqual:inserted];
+        BOOL insertedAttachmentsMatch = [[NSSet setWithArray:observer().inserted] isEqual:[NSSet setWithArray:inserted]];
         if (!insertedAttachmentsMatch)
             NSLog(@"Expected inserted attachments: %@ to match %@.", observer().inserted, inserted);
         EXPECT_TRUE(insertedAttachmentsMatch);
@@ -1010,6 +1011,70 @@ TEST(WKAttachmentTests, InsertAttachmentUsingFileWrapperWithFilePath)
     EXPECT_WK_STREQ("test.pdf", infoAfterUpdate.name);
     EXPECT_TRUE([newFileWrapper isEqual:infoAfterUpdate.fileWrapper]);
     [attachment expectRequestedDataToBe:testPDFData()];
+}
+
+TEST(WKAttachmentTests, InvalidateAttachmentsAfterMainFrameNavigation)
+{
+    auto webView = webViewForTestingAttachments();
+    RetainPtr<_WKAttachment> pdfAttachment;
+    RetainPtr<_WKAttachment> htmlAttachment;
+    {
+        ObserveAttachmentUpdatesForScope insertionObserver(webView.get());
+        pdfAttachment = [webView synchronouslyInsertAttachmentWithFilename:@"attachment.pdf" contentType:@"application/pdf" data:testPDFData()];
+        htmlAttachment = [webView synchronouslyInsertAttachmentWithFilename:@"index.html" contentType:@"text/html" data:testHTMLData()];
+        insertionObserver.expectAttachmentUpdates(@[ ], @[ pdfAttachment.get(), htmlAttachment.get() ]);
+        EXPECT_TRUE([pdfAttachment isConnected]);
+        EXPECT_TRUE([htmlAttachment isConnected]);
+    }
+
+    ObserveAttachmentUpdatesForScope removalObserver(webView.get());
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    removalObserver.expectAttachmentUpdates(@[ pdfAttachment.get(), htmlAttachment.get() ], @[ ]);
+    EXPECT_FALSE([pdfAttachment isConnected]);
+    EXPECT_FALSE([htmlAttachment isConnected]);
+    [pdfAttachment expectRequestedDataToBe:nil];
+    [htmlAttachment expectRequestedDataToBe:nil];
+}
+
+TEST(WKAttachmentTests, InvalidateAttachmentsAfterWebProcessTermination)
+{
+    auto webView = webViewForTestingAttachments();
+    RetainPtr<_WKAttachment> pdfAttachment;
+    RetainPtr<_WKAttachment> htmlAttachment;
+    {
+        ObserveAttachmentUpdatesForScope insertionObserver(webView.get());
+        pdfAttachment = [webView synchronouslyInsertAttachmentWithFilename:@"attachment.pdf" contentType:@"application/pdf" data:testPDFData()];
+        htmlAttachment = [webView synchronouslyInsertAttachmentWithFilename:@"index.html" contentType:@"text/html" data:testHTMLData()];
+        insertionObserver.expectAttachmentUpdates(@[ ], @[ pdfAttachment.get(), htmlAttachment.get() ]);
+        EXPECT_TRUE([pdfAttachment isConnected]);
+        EXPECT_TRUE([htmlAttachment isConnected]);
+    }
+    {
+        ObserveAttachmentUpdatesForScope removalObserver(webView.get());
+        [webView stringByEvaluatingJavaScript:@"getSelection().collapseToEnd()"];
+        [webView _synchronouslyExecuteEditCommand:@"DeleteBackward" argument:nil];
+        removalObserver.expectAttachmentUpdates(@[ htmlAttachment.get() ], @[ ]);
+        EXPECT_TRUE([pdfAttachment isConnected]);
+        EXPECT_FALSE([htmlAttachment isConnected]);
+        [htmlAttachment expectRequestedDataToBe:testHTMLData()];
+    }
+
+    __block bool webProcessTerminated = false;
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *) {
+        webProcessTerminated = true;
+    }];
+
+    ObserveAttachmentUpdatesForScope observer(webView.get());
+    [webView _killWebContentProcess];
+    TestWebKitAPI::Util::run(&webProcessTerminated);
+
+    observer.expectAttachmentUpdates(@[ pdfAttachment.get() ], @[ ]);
+    EXPECT_FALSE([pdfAttachment isConnected]);
+    EXPECT_FALSE([htmlAttachment isConnected]);
+    [pdfAttachment expectRequestedDataToBe:nil];
+    [htmlAttachment expectRequestedDataToBe:nil];
 }
 
 #pragma mark - Platform-specific tests

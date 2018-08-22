@@ -1,3 +1,24 @@
+2018-08-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Remove _WKAttachments and notify the UI client upon mainframe navigation
+        https://bugs.webkit.org/show_bug.cgi?id=188715
+        <rdar://problem/43541790>
+
+        Reviewed by Tim Horton.
+
+        Rename didInsertAttachment to didInsertAttachmentWithIdentifier. See WebKit ChangeLog for more detail.
+
+        Tests:  WKAttachmentTests.InvalidateAttachmentsAfterMainFrameNavigation
+                WKAttachmentTests.InvalidateAttachmentsAfterWebProcessTermination
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::notifyClientOfAttachmentUpdates):
+        * page/EditorClient.h:
+        (WebCore::EditorClient::didInsertAttachmentWithIdentifier):
+        (WebCore::EditorClient::didRemoveAttachmentWithIdentifier):
+        (WebCore::EditorClient::didInsertAttachment): Deleted.
+        (WebCore::EditorClient::didRemoveAttachment): Deleted.
+
 2018-08-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r235128.

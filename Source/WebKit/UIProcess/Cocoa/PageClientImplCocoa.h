@@ -29,6 +29,10 @@
 
 @class WKWebView;
 
+namespace API {
+class Attachment;
+}
+
 namespace WebKit {
 
 class PageClientImplCocoa : public PageClient {
@@ -39,8 +43,8 @@ public:
     void isPlayingAudioDidChange() final;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void didInsertAttachment(const String& identifier, const String& source) final;
-    void didRemoveAttachment(const String& identifier) final;
+    void didInsertAttachment(API::Attachment&, const String& source) final;
+    void didRemoveAttachment(API::Attachment&) final;
 #endif
 
 protected:

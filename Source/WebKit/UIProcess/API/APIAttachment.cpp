@@ -70,6 +70,17 @@ void Attachment::updateAttributes(uint64_t fileSize, const WTF::String& newConte
         callback(WebKit::CallbackBase::Error::OwnerWasInvalidated);
 }
 
+void Attachment::invalidate()
+{
+    m_identifier = { };
+    m_filePath = { };
+    m_contentType = { };
+    m_webPage.clear();
+#if PLATFORM(COCOA)
+    m_fileWrapper.clear();
+#endif
+}
+
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)

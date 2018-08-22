@@ -46,22 +46,22 @@ void PageClientImplCocoa::isPlayingAudioDidChange()
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void PageClientImplCocoa::didInsertAttachment(const String& identifier, const String& source)
+void PageClientImplCocoa::didInsertAttachment(API::Attachment& attachment, const String& source)
 {
 #if WK_API_ENABLED
-    [m_webView _didInsertAttachment:identifier withSource:source];
+    [m_webView _didInsertAttachment:attachment withSource:source];
 #else
-    UNUSED_PARAM(identifier);
+    UNUSED_PARAM(attachment);
     UNUSED_PARAM(source);
 #endif
 }
 
-void PageClientImplCocoa::didRemoveAttachment(const String& identifier)
+void PageClientImplCocoa::didRemoveAttachment(API::Attachment& attachment)
 {
 #if WK_API_ENABLED
-    [m_webView _didRemoveAttachment:identifier];
+    [m_webView _didRemoveAttachment:attachment];
 #else
-    UNUSED_PARAM(identifier);
+    UNUSED_PARAM(attachment);
 #endif
 }
 

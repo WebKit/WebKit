@@ -42,6 +42,9 @@
 
 using namespace WebKit;
 
+static const NSInteger UnspecifiedAttachmentErrorCode = 1;
+static const NSInteger InvalidAttachmentErrorCode = 2;
+
 @implementation _WKAttachmentDisplayOptions : NSObject
 
 - (WebCore::AttachmentDisplayOptions)coreDisplayOptions
@@ -146,6 +149,9 @@ static BOOL isDeclaredOrDynamicTypeIdentifier(NSString *type)
 
 - (_WKAttachmentInfo *)info
 {
+    if (!_attachment->isValid())
+        return nil;
+
     return [[[_WKAttachmentInfo alloc] initWithFileWrapper:_attachment->fileWrapper() filePath:_attachment->filePath() contentType:_attachment->contentType()] autorelease];
 }
 
@@ -156,6 +162,11 @@ static BOOL isDeclaredOrDynamicTypeIdentifier(NSString *type)
 
 - (void)setDisplayOptions:(_WKAttachmentDisplayOptions *)options completion:(void(^)(NSError *))completionHandler
 {
+    if (!_attachment->isValid()) {
+        completionHandler([NSError errorWithDomain:WKErrorDomain code:InvalidAttachmentErrorCode userInfo:nil]);
+        return;
+    }
+
     auto coreOptions = options ? options.coreDisplayOptions : WebCore::AttachmentDisplayOptions { };
     _attachment->setDisplayOptions(coreOptions, [capturedBlock = makeBlockPtr(completionHandler)] (CallbackBase::Error error) {
         if (!capturedBlock)
@@ -164,12 +175,17 @@ static BOOL isDeclaredOrDynamicTypeIdentifier(NSString *type)
         if (error == CallbackBase::Error::None)
             capturedBlock(nil);
         else
-            capturedBlock([NSError errorWithDomain:WKErrorDomain code:1 userInfo:nil]);
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:UnspecifiedAttachmentErrorCode userInfo:nil]);
     });
 }
 
 - (void)setFileWrapper:(NSFileWrapper *)fileWrapper contentType:(NSString *)contentType completion:(void (^)(NSError *))completionHandler
 {
+    if (!_attachment->isValid()) {
+        completionHandler([NSError errorWithDomain:WKErrorDomain code:InvalidAttachmentErrorCode userInfo:nil]);
+        return;
+    }
+
     auto fileSize = [fileWrapper.fileAttributes[NSFileSize] unsignedLongLongValue];
     if (!fileSize && fileWrapper.regularFile)
         fileSize = fileWrapper.regularFileContents.length;
@@ -187,7 +203,7 @@ static BOOL isDeclaredOrDynamicTypeIdentifier(NSString *type)
         if (error == CallbackBase::Error::None)
             capturedBlock(nil);
         else
-            capturedBlock([NSError errorWithDomain:WKErrorDomain code:1 userInfo:nil]);
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:UnspecifiedAttachmentErrorCode userInfo:nil]);
     });
 }
 
@@ -207,6 +223,11 @@ static BOOL isDeclaredOrDynamicTypeIdentifier(NSString *type)
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@ %p id='%@'>", [self class], self, self.uniqueIdentifier];
+}
+
+- (BOOL)isConnected
+{
+    return _attachment->insertionState() == API::Attachment::InsertionState::Inserted;
 }
 
 @end

@@ -1809,9 +1809,12 @@ private:
     void platformRegisterAttachment(Ref<API::Attachment>&&, const String& filePath);
     void platformCloneAttachment(Ref<API::Attachment>&& fromAttachment, Ref<API::Attachment>&& toAttachment);
 
-    void didInsertAttachment(const String& identifier, const String& source);
-    void didRemoveAttachment(const String& identifier);
+    void didInsertAttachmentWithIdentifier(const String& identifier, const String& source);
+    void didRemoveAttachmentWithIdentifier(const String& identifier);
+    void didInsertAttachment(API::Attachment&, const String& source);
+    void didRemoveAttachment(API::Attachment&);
     Ref<API::Attachment> ensureAttachment(const String& identifier);
+    void invalidateAllAttachments();
 #endif
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)

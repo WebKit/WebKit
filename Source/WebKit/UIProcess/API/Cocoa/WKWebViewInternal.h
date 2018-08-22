@@ -53,6 +53,10 @@
 
 typedef const struct OpaqueWKPage* WKPageRef;
 
+namespace API {
+class Attachment;
+}
+
 namespace WebKit {
 class ViewSnapshot;
 class WebPageProxy;
@@ -157,8 +161,8 @@ struct PrintInfo;
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-- (void)_didRemoveAttachment:(NSString *)identifier;
-- (void)_didInsertAttachment:(NSString *)identifier withSource:(NSString *)source;
+- (void)_didRemoveAttachment:(API::Attachment&)attachment;
+- (void)_didInsertAttachment:(API::Attachment&)attachment withSource:(NSString *)source;
 #endif
 
 - (WKPageRef)_pageForTesting;
