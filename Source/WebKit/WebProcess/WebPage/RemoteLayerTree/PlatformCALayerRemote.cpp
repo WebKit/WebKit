@@ -39,8 +39,9 @@
 #import <WebCore/PlatformCALayerCocoa.h>
 #import <WebCore/TiledBacking.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {

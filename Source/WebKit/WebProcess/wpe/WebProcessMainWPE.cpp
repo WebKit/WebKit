@@ -35,10 +35,11 @@
 #include <libsoup/soup.h>
 #include <wpe/wpe.h>
 
-namespace WebKit {
 using namespace WebCore;
 
-class WebProcessMain final : public ChildProcessMainBase {
+namespace WebKit {
+
+class WebProcessMain final: public ChildProcessMainBase {
 public:
     bool platformInitialize() override
     {

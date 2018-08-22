@@ -34,8 +34,9 @@
 #include "WebProcess.h"
 #include <WebCore/ColorChooserClient.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 WebColorChooser::WebColorChooser(WebPage* page, ColorChooserClient* client, const Color& initialColor)
     : m_colorChooserClient(client)

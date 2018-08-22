@@ -32,6 +32,7 @@
 #include <WebCore/Settings.h>
 
 namespace WebKit {
+
 using namespace WebCore;
 
 WebDiagnosticLoggingClient::WebDiagnosticLoggingClient(WebPage& page)

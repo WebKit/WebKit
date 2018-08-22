@@ -32,8 +32,9 @@
 #include <WebCore/PageOverlay.h>
 #include <wtf/NeverDestroyed.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 static HashMap<PageOverlay*, WebPageOverlay*>& overlayMap()
 {

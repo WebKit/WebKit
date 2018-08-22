@@ -49,8 +49,9 @@
 #include <WebCore/TextIndicatorWindow.h>
 #endif
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 WebCore::FindOptions core(FindOptions options)
 {

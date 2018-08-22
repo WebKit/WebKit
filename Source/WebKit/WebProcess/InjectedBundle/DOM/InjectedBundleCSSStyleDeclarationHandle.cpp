@@ -30,14 +30,15 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
-namespace WebKit {
 using namespace WebCore;
 
-typedef HashMap<CSSStyleDeclaration*, InjectedBundleCSSStyleDeclarationHandle*> DOMStyleDeclarationHandleCache;
+namespace WebKit {
 
-static DOMStyleDeclarationHandleCache& domStyleDeclarationHandleCache()
+typedef HashMap<CSSStyleDeclaration*, InjectedBundleCSSStyleDeclarationHandle*> DOMHandleCache;
+
+static DOMHandleCache& domHandleCache()
 {
-    static NeverDestroyed<DOMStyleDeclarationHandleCache> cache;
+    static NeverDestroyed<DOMHandleCache> cache;
     return cache;
 }
 
@@ -46,7 +47,7 @@ RefPtr<InjectedBundleCSSStyleDeclarationHandle> InjectedBundleCSSStyleDeclaratio
     if (!styleDeclaration)
         return nullptr;
 
-    DOMStyleDeclarationHandleCache::AddResult result = domStyleDeclarationHandleCache().add(styleDeclaration, nullptr);
+    DOMHandleCache::AddResult result = domHandleCache().add(styleDeclaration, nullptr);
     if (!result.isNewEntry)
         return result.iterator->value;
 
@@ -62,7 +63,7 @@ InjectedBundleCSSStyleDeclarationHandle::InjectedBundleCSSStyleDeclarationHandle
 
 InjectedBundleCSSStyleDeclarationHandle::~InjectedBundleCSSStyleDeclarationHandle()
 {
-    domStyleDeclarationHandleCache().remove(m_styleDeclaration.ptr());
+    domHandleCache().remove(m_styleDeclaration.ptr());
 }
 
 } // namespace WebKit

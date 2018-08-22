@@ -97,8 +97,9 @@
 #import <WebCore/MediaPlaybackTargetMock.h>
 #endif
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 void WebPage::platformInitialize()
 {

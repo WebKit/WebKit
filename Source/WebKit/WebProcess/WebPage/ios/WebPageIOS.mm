@@ -125,8 +125,9 @@ SOFT_LINK_CLASS_OPTIONAL(Celestial, AVSystemController)
 SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_PIDToInheritApplicationStateFrom, NSString *)
 #endif
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 const int blockSelectionStartWidth = 100;
 const int blockSelectionStartHeight = 100;

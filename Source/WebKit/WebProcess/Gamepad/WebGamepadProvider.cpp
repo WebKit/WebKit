@@ -35,8 +35,9 @@
 #include <WebCore/GamepadProviderClient.h>
 #include <wtf/NeverDestroyed.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 WebGamepadProvider& WebGamepadProvider::singleton()
 {

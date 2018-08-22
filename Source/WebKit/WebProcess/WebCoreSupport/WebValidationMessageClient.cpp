@@ -33,6 +33,7 @@
 #include <WebCore/Frame.h>
 
 namespace WebKit {
+
 using namespace WebCore;
 
 WebValidationMessageClient::WebValidationMessageClient(WebPage& page)

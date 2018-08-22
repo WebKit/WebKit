@@ -32,8 +32,9 @@
 #include <WebCore/Page.h>
 #include <WebCore/ProgressTracker.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 WebProgressTrackerClient::WebProgressTrackerClient(WebPage& webPage)
     : m_webPage(webPage)

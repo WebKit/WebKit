@@ -40,8 +40,9 @@
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVPlayerLayer)
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 static NSString * const platformCALayerPointer = @"WKPlatformCALayer";
 

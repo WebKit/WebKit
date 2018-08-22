@@ -37,9 +37,11 @@
 #import <WebCore/HTMLElement.h>
 #import <WebCore/KeyboardEvent.h>
 
-namespace WebKit {
 using namespace WebCore;
+
 using namespace HTMLNames;
+
+namespace WebKit {
 
 Ref<PDFPluginPasswordField> PDFPluginPasswordField::create(PDFLayerController *pdfLayerController, PDFPlugin* plugin)
 {

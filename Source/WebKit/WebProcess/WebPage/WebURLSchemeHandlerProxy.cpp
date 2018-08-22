@@ -39,8 +39,9 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 WebURLSchemeHandlerProxy::WebURLSchemeHandlerProxy(WebPage& page, uint64_t identifier)
     : m_webPage(page)

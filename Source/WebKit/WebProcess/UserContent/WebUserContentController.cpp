@@ -48,8 +48,9 @@
 #include <WebCore/UserMessageHandlerDescriptor.h>
 #endif
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 static HashMap<UserContentControllerIdentifier, WebUserContentController*>& userContentControllers()
 {

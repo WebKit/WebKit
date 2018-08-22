@@ -30,8 +30,9 @@
 #include <WebCore/PlatformDisplayWPE.h>
 #include <wpe/wpe-egl.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 std::unique_ptr<AcceleratedSurfaceWPE> AcceleratedSurfaceWPE::create(WebPage& webPage, Client& client)
 {

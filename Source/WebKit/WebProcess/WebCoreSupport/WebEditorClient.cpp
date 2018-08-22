@@ -61,9 +61,10 @@
 #include <WebCore/PlatformDisplay.h>
 #endif
 
-namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
+
+namespace WebKit {
 
 static uint64_t generateTextCheckingRequestID()
 {

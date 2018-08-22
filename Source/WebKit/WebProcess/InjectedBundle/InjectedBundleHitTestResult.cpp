@@ -40,8 +40,9 @@
 #include <WebCore/URL.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 Ref<InjectedBundleHitTestResult> InjectedBundleHitTestResult::create(const HitTestResult& hitTestResult)
 {

@@ -31,8 +31,9 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/PopupMenuClient.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 void WebPopupMenu::setUpPlatformData(const IntRect&, PlatformPopupMenuData& data)
 {

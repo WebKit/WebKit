@@ -29,8 +29,9 @@
 #include "WebProcess.h"
 #include <wtf/text/AtomicString.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 Ref<WebSearchPopupMenu> WebSearchPopupMenu::create(WebPage* page, PopupMenuClient* client)
 {

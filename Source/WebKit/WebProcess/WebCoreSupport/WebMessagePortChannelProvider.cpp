@@ -32,8 +32,9 @@
 #include <WebCore/MessagePortIdentifier.h>
 #include <WebCore/MessageWithMessagePorts.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 WebMessagePortChannelProvider& WebMessagePortChannelProvider::singleton()
 {

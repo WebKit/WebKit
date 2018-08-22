@@ -281,9 +281,10 @@
 #include <WebCore/AuthenticatorManager.h>
 #endif
 
-namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
+
+namespace WebKit {
 
 static const Seconds pageScrollHysteresisDuration { 300_ms };
 static const Seconds initialLayerVolatilityTimerInterval { 20_ms };
@@ -6132,6 +6133,3 @@ void WebPage::didFinishLoadingApplicationManifest(uint64_t coreCallbackID, const
 #endif // ENABLE(APPLICATION_MANIFEST)
 
 } // namespace WebKit
-
-#undef RELEASE_LOG_IF_ALLOWED
-#undef RELEASE_LOG_ERROR_IF_ALLOWED

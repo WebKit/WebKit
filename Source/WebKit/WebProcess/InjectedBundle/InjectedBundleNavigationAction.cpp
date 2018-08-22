@@ -34,8 +34,9 @@
 #include <WebCore/NavigationAction.h>
 #include <WebCore/UIEventWithKeyState.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 static WebMouseEvent::Button mouseButtonForMouseEventData(const std::optional<NavigationAction::MouseEventData>& mouseEventData)
 {

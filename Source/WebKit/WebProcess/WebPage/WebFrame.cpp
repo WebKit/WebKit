@@ -90,9 +90,10 @@
 #include <wtf/RefCountedLeakCounter.h>
 #endif
 
-namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
+
+namespace WebKit {
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webFrameCounter, ("WebFrame"));
 

@@ -38,8 +38,9 @@
 #include <WebCore/SWContextManager.h>
 #include <wtf/RunLoop.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 WebServiceWorkerFetchTaskClient::~WebServiceWorkerFetchTaskClient()
 {

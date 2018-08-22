@@ -40,8 +40,9 @@
 #include <WebCore/Settings.h>
 #include <wtf/ProcessPrivilege.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
 {

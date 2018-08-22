@@ -83,8 +83,6 @@ private:
     int GetOption(rtc::Socket::Option, int*) final;
     int SetOption(rtc::Socket::Option, int) final;
 
-    static void sendOnMainThread(Function<void(IPC::Connection&)>&&);
-
     LibWebRTCSocketFactory& m_factory;
     uint64_t m_identifier { 0 };
     Type m_type;

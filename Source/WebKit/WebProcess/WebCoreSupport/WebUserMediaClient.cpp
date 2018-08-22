@@ -27,8 +27,9 @@
 #include <WebCore/UserMediaController.h>
 #include <WebCore/UserMediaRequest.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 WebUserMediaClient::WebUserMediaClient(WebPage& page)
     : m_page(page)

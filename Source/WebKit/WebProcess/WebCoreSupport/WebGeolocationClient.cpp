@@ -35,8 +35,9 @@
 #include <WebCore/Geolocation.h>
 #include <WebCore/GeolocationPosition.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 WebGeolocationClient::~WebGeolocationClient()
 {

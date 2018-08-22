@@ -30,8 +30,9 @@
 #include "PlatformCALayerRemote.h"
 #include <WebCore/PlatformScreen.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 GraphicsLayerCARemote::~GraphicsLayerCARemote()
 {

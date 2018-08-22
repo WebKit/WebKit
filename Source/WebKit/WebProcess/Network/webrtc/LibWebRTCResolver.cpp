@@ -36,7 +36,7 @@
 
 namespace WebKit {
 
-void LibWebRTCResolver::sendOnMainThread(Function<void(IPC::Connection&)>&& callback)
+static inline void sendOnMainThread(Function<void(IPC::Connection&)>&& callback)
 {
     callOnMainThread([callback = WTFMove(callback)]() {
         callback(WebProcess::singleton().ensureNetworkProcessConnection().connection());

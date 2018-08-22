@@ -33,8 +33,9 @@
 #include "ThreadedCoordinatedLayerTreeHost.h"
 #endif
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 RefPtr<LayerTreeHost> LayerTreeHost::create(WebPage& webPage)
 {

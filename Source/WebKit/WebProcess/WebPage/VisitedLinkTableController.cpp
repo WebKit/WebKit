@@ -33,8 +33,9 @@
 #include <WebCore/PageCache.h>
 #include <wtf/NeverDestroyed.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 static HashMap<uint64_t, VisitedLinkTableController*>& visitedLinkTableControllers()
 {

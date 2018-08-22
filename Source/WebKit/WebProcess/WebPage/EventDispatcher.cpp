@@ -43,8 +43,9 @@
 #include <WebCore/ThreadedScrollingTree.h>
 #endif
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 Ref<EventDispatcher> EventDispatcher::create()
 {

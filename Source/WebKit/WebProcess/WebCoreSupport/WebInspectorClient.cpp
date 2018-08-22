@@ -39,8 +39,9 @@
 #include <WebCore/InspectorOverlay.h>
 #endif
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 class RepaintIndicatorLayerClient final : public GraphicsLayerClient {
 public:

@@ -55,8 +55,10 @@
 #import "UIKitSPI.h"
 #endif
 
-namespace WebKit {
 using namespace WebCore;
+using namespace WebKit;
+
+namespace WebKit {
 
 #if PLATFORM(MAC)
 

@@ -33,8 +33,9 @@
 #include "WebFrame.h"
 #include "WebPage.h"
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForNavigationAction(WebPage* page, WebFrame* frame, InjectedBundleNavigationAction* action, const ResourceRequest& resourceRequest, RefPtr<API::Object>& userData)
 {

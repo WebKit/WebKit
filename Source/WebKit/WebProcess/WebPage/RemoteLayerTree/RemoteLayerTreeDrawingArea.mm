@@ -50,8 +50,9 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/SystemTracing.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const WebPageCreationParameters&)
     : DrawingArea(DrawingAreaTypeRemoteLayerTree, webPage)

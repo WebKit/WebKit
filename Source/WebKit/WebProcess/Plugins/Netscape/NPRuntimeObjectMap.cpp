@@ -44,9 +44,10 @@
 #include <WebCore/ScriptController.h>
 #include <wtf/NeverDestroyed.h>
 
-namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
+
+namespace WebKit {
 
 
 NPRuntimeObjectMap::NPRuntimeObjectMap(PluginView* pluginView)

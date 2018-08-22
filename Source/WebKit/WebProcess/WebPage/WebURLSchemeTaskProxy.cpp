@@ -36,8 +36,9 @@
 #include <WebCore/ResourceLoader.h>
 #include <wtf/CompletionHandler.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 WebURLSchemeTaskProxy::WebURLSchemeTaskProxy(WebURLSchemeHandlerProxy& handler, ResourceLoader& loader)
     : m_urlSchemeHandler(handler)

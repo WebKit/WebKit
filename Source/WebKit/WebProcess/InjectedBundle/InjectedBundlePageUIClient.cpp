@@ -35,8 +35,9 @@
 #include "WebPage.h"
 #include <wtf/text/WTFString.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 InjectedBundlePageUIClient::InjectedBundlePageUIClient(const WKBundlePageUIClientBase* client)
 {

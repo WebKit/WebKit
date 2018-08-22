@@ -39,8 +39,9 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 static uint64_t generateGeolocationID()
 {

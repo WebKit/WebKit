@@ -43,8 +43,9 @@
 #import <WebCore/UserGestureIndicator.h>
 #import <mach/mach_port.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 static uint64_t nextContextId()
 {

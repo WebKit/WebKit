@@ -44,7 +44,6 @@
 #import <WebCore/Settings.h>
 #import <WebCore/TextIndicator.h>
 
-namespace WebKit {
 using namespace WebCore;
 
 const int cornerRadius = 3;
@@ -57,6 +56,8 @@ static Color highlightColor()
 {
     return Color(255, 228, 56, 255);
 }
+
+namespace WebKit {
 
 void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsContext& context, const IntRect& dirtyRect)
 {

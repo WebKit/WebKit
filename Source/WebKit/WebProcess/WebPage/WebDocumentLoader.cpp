@@ -28,8 +28,9 @@
 
 #include "WebFrame.h"
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 WebDocumentLoader::WebDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
     : DocumentLoader(request, substituteData)

@@ -40,8 +40,9 @@
 #include <WebCore/DocumentFragment.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 InjectedBundlePageEditorClient::InjectedBundlePageEditorClient(const WKBundlePageEditorClientBase& client)
 {

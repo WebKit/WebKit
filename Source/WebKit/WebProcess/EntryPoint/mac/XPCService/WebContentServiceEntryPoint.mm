@@ -35,18 +35,21 @@
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #endif
 
+using namespace WebCore;
+using namespace WebKit;
+
 extern "C" WK_EXPORT void WebContentServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage);
 
 void WebContentServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage)
 {
     // Remove the WebProcessShim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
     // the this process don't try to insert the shim and crash.
-    WebKit::EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
+    EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
 
 #if PLATFORM(IOS)
     GSInitialize();
     InitWebCoreThreadSystemInterface();
 #endif // PLATFORM(IOS)
 
-    WebKit::XPCServiceInitializer<WebKit::WebProcess, WebKit::XPCServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage, priorityBoostMessage);
+    XPCServiceInitializer<WebProcess, XPCServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage, priorityBoostMessage);
 }

@@ -38,8 +38,9 @@
 #include "WebPage.h"
 #include <WebCore/Element.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 bool InjectedBundlePageFullScreenClient::supportsFullScreen(WebPage *page, bool withKeyboard)
 {

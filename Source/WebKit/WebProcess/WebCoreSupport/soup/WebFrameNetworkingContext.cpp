@@ -39,8 +39,9 @@
 #include <WebCore/SoupNetworkSession.h>
 #include <pal/SessionID.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
 {

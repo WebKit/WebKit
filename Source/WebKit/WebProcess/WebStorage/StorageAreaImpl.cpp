@@ -34,8 +34,9 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Settings.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 static uint64_t generateStorageAreaID()
 {

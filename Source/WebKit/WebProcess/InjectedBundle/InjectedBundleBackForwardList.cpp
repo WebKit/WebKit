@@ -32,8 +32,9 @@
 #include <WebCore/BackForwardController.h>
 #include <WebCore/Page.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 RefPtr<InjectedBundleBackForwardListItem> InjectedBundleBackForwardList::itemAtIndex(int index) const
 {

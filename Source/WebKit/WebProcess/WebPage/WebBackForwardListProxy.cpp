@@ -42,8 +42,9 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessID.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 // FIXME <rdar://problem/8819268>: This leaks all HistoryItems that go into these maps.
 // We need to clear up the life time of these objects.

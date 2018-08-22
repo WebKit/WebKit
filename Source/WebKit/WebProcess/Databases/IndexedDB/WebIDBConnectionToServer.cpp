@@ -51,8 +51,9 @@
 #include <WebCore/IDBTransactionInfo.h>
 #include <WebCore/IDBValue.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 Ref<WebIDBConnectionToServer> WebIDBConnectionToServer::create(PAL::SessionID sessionID)
 {

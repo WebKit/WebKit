@@ -33,8 +33,9 @@
 
 #include "WebSocketStream.h"
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 Ref<SocketStreamHandle> WebSocketProvider::createSocketStreamHandle(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition)
 {

@@ -34,8 +34,9 @@
 #include "WebProcess.h"
 #include <WebCore/ScriptExecutionContext.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 WebNotificationClient::WebNotificationClient(WebPage* page)
     : m_page(page)

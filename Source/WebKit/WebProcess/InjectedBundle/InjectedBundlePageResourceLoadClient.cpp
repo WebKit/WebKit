@@ -31,8 +31,9 @@
 #include "WebFrame.h"
 #include "WebPage.h"
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 InjectedBundlePageResourceLoadClient::InjectedBundlePageResourceLoadClient(const WKBundlePageResourceLoadClientBase* client)
 {

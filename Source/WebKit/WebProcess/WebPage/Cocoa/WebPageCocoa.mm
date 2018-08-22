@@ -32,8 +32,9 @@
 
 #if PLATFORM(COCOA)
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParameters)
 {

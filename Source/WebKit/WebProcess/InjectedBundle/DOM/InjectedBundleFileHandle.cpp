@@ -30,14 +30,15 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
-namespace WebKit {
 using namespace WebCore;
 
-typedef HashMap<File*, InjectedBundleFileHandle*> DOMFileHandleCache;
+namespace WebKit {
 
-static DOMFileHandleCache& domFileHandleCache()
+typedef HashMap<File*, InjectedBundleFileHandle*> DOMHandleCache;
+
+static DOMHandleCache& domHandleCache()
 {
-    static NeverDestroyed<DOMFileHandleCache> cache;
+    static NeverDestroyed<DOMHandleCache> cache;
     return cache;
 }
 
@@ -52,7 +53,7 @@ RefPtr<InjectedBundleFileHandle> InjectedBundleFileHandle::getOrCreate(File* fil
     if (!file)
         return nullptr;
 
-    DOMFileHandleCache::AddResult result = domFileHandleCache().add(file, nullptr);
+    DOMHandleCache::AddResult result = domHandleCache().add(file, nullptr);
     if (!result.isNewEntry)
         return RefPtr<InjectedBundleFileHandle>(result.iterator->value);
 
@@ -68,7 +69,7 @@ InjectedBundleFileHandle::InjectedBundleFileHandle(File& file)
 
 InjectedBundleFileHandle::~InjectedBundleFileHandle()
 {
-    domFileHandleCache().remove(m_file.ptr());
+    domHandleCache().remove(m_file.ptr());
 }
 
 File* InjectedBundleFileHandle::coreFile()

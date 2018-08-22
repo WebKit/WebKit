@@ -49,8 +49,9 @@
 #include "PlaybackSessionManager.h"
 #endif
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 static IntRect screenRectOfContents(Element* element)
 {

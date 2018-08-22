@@ -30,8 +30,9 @@
 
 #include "WebPage.h"
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 void WebDragClient::willPerformDragDestinationAction(DragDestinationAction action, const DragData&)
 {

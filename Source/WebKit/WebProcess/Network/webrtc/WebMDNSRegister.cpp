@@ -33,8 +33,9 @@
 #include "WebProcess.h"
 #include <WebCore/Document.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 void WebMDNSRegister::finishedRegisteringMDNSName(uint64_t identifier, LibWebRTCProvider::MDNSNameOrError&& result)
 {

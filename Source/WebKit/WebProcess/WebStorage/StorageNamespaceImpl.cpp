@@ -37,8 +37,9 @@
 #include <WebCore/Settings.h>
 #include <WebCore/StorageType.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 RefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(uint64_t identifier, unsigned quotaInBytes)
 {

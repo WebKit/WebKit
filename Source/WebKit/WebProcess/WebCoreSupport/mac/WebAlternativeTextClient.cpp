@@ -30,8 +30,9 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 WebAlternativeTextClient::WebAlternativeTextClient(WebPage* webPage)
 : m_page(webPage)

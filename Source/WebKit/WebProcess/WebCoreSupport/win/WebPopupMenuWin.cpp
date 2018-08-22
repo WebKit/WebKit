@@ -31,8 +31,9 @@
 #include <WebCore/PopupMenuClient.h>
 #include <WebCore/RenderTheme.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 static const int separatorPadding = 4;
 static const int separatorHeight = 1;

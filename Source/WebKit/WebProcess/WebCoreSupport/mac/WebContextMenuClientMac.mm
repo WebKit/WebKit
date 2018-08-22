@@ -39,8 +39,9 @@
 #import <WebCore/TextIndicator.h>
 #import <wtf/text/WTFString.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 void WebContextMenuClient::lookUpInDictionary(Frame* frame)
 {

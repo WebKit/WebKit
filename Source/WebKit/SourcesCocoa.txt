@@ -201,6 +201,7 @@ StorageProcess/ios/StorageProcessIOS.mm @no-unify
 StorageProcess/mac/StorageProcessMac.mm @no-unify
 
 UIProcess/_WKWebViewPrintFormatter.mm @no-unify
+UIProcess/AcceleratedDrawingAreaProxy.cpp @no-unify
 UIProcess/ApplicationStateTracker.mm @no-unify
 UIProcess/HighPerformanceGraphicsUsageSampler.cpp @no-unify
 UIProcess/PerActivityStateCPUUsageSampler.cpp @no-unify
@@ -456,16 +457,16 @@ UIProcess/WebStorage/StorageManager.cpp @no-unify
 
 UIProcess/WebStorage/ios/LocalStorageDatabaseTrackerIOS.mm @no-unify
 
-WebProcess/ApplePay/WebPaymentCoordinator.cpp
+WebProcess/ApplePay/WebPaymentCoordinator.cpp @no-unify
 
-WebProcess/CredentialManagement/WebCredentialsMessenger.cpp
+WebProcess/CredentialManagement/WebCredentialsMessenger.cpp @no-unify
 
-WebProcess/cocoa/PlaybackSessionManager.mm
-WebProcess/cocoa/UserMediaCaptureManager.cpp
-WebProcess/cocoa/VideoFullscreenManager.mm
-WebProcess/cocoa/WebProcessCocoa.mm
+WebProcess/cocoa/PlaybackSessionManager.mm @no-unify
+WebProcess/cocoa/UserMediaCaptureManager.cpp @no-unify
+WebProcess/cocoa/VideoFullscreenManager.mm @no-unify
+WebProcess/cocoa/WebProcessCocoa.mm @no-unify
 
-WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm
+WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm @no-unify
 
 WebProcess/InjectedBundle/API/c/WKBundleFileHandleRef.cpp @no-unify
 WebProcess/InjectedBundle/API/c/WKBundlePageBanner.cpp @no-unify
@@ -491,58 +492,57 @@ WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.mm @no-unify
 WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm @no-unify
 WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm @no-unify
 
-WebProcess/InjectedBundle/mac/InjectedBundleMac.mm
+WebProcess/InjectedBundle/mac/InjectedBundleMac.mm @no-unify
 
-WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
+WebProcess/MediaCache/WebMediaKeyStorageManager.cpp @no-unify
 
-WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm
-WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm
+WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm @no-unify
+WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm @no-unify
 
-WebProcess/Plugins/PDF/PDFPlugin.mm
-WebProcess/Plugins/PDF/PDFPluginAnnotation.mm
-WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm
-WebProcess/Plugins/PDF/PDFPluginPasswordField.mm
-WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm
+WebProcess/Plugins/PDF/PDFPlugin.mm @no-unify
+WebProcess/Plugins/PDF/PDFPluginAnnotation.mm @no-unify
+WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm @no-unify
+WebProcess/Plugins/PDF/PDFPluginPasswordField.mm @no-unify
+WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm @no-unify
 
-WebProcess/WebCoreSupport/WebDataListSuggestionPicker.cpp
-WebProcess/WebCoreSupport/WebPasteboardOverrides.cpp
-WebProcess/WebCoreSupport/WebValidationMessageClient.cpp
+WebProcess/WebCoreSupport/WebDataListSuggestionPicker.cpp @no-unify
+WebProcess/WebCoreSupport/WebPasteboardOverrides.cpp @no-unify
+WebProcess/WebCoreSupport/WebValidationMessageClient.cpp @no-unify
 
-WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm
-WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm
-WebProcess/WebCoreSupport/ios/WebFrameLoaderClientIOS.mm
-WebProcess/WebCoreSupport/ios/WebPreviewLoaderClient.cpp
+WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm @no-unify
+WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm @no-unify
+WebProcess/WebCoreSupport/ios/WebFrameLoaderClientIOS.mm @no-unify
+WebProcess/WebCoreSupport/ios/WebPreviewLoaderClient.cpp @no-unify
 
-WebProcess/WebCoreSupport/mac/WebAlternativeTextClient.cpp
-WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm
-WebProcess/WebCoreSupport/mac/WebDragClientMac.mm
-WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm
-WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm
-WebProcess/WebCoreSupport/mac/WebPopupMenuMac.mm
+WebProcess/WebCoreSupport/mac/WebAlternativeTextClient.cpp @no-unify
+WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm @no-unify
+WebProcess/WebCoreSupport/mac/WebDragClientMac.mm @no-unify
+WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm @no-unify
+WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm @no-unify
+WebProcess/WebCoreSupport/mac/WebPopupMenuMac.mm @no-unify
 
-WebProcess/WebPage/ViewGestureGeometryCollector.cpp
-WebProcess/WebPage/ViewUpdateDispatcher.cpp
-WebProcess/WebPage/WKAccessibilityWebPageObjectIOS.mm
+WebProcess/WebPage/AcceleratedDrawingArea.cpp @no-unify
+WebProcess/WebPage/ViewGestureGeometryCollector.cpp @no-unify
+WebProcess/WebPage/ViewUpdateDispatcher.cpp @no-unify
+WebProcess/WebPage/WKAccessibilityWebPageObjectIOS.mm @no-unify
 
-WebProcess/WebPage/Cocoa/WebPageCocoa.mm
+WebProcess/WebPage/Cocoa/WebPageCocoa.mm @no-unify
 
-WebProcess/WebPage/ios/FindControllerIOS.mm
-WebProcess/WebPage/ios/WebPageIOS.mm
+WebProcess/WebPage/ios/FindControllerIOS.mm @no-unify
+WebProcess/WebPage/ios/WebPageIOS.mm @no-unify
 
-WebProcess/WebPage/mac/DrawingAreaMac.cpp
-WebProcess/WebPage/mac/PageBannerMac.mm
-WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm
-WebProcess/WebPage/mac/WebInspectorUIMac.mm
-WebProcess/WebPage/mac/WebPageMac.mm
-WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm
-WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm
+WebProcess/WebPage/mac/DrawingAreaMac.cpp @no-unify
+WebProcess/WebPage/mac/PageBannerMac.mm @no-unify
+WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm @no-unify
+WebProcess/WebPage/mac/WebInspectorUIMac.mm @no-unify
+WebProcess/WebPage/mac/WebPageMac.mm @no-unify
+WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm @no-unify
+WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm @no-unify
 
-WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.cpp
-WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm
-WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp
-WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.mm
-WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteTiledBacking.cpp
-WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm
-WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm
+WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm @no-unify
+WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.mm @no-unify
+WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm @no-unify
+WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm @no-unify
 WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm @no-unify
-WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm
+WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm @no-unify
+

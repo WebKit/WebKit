@@ -43,6 +43,7 @@
 #import <WebCore/Scrollbar.h>
 #import <wtf/ObjcRuntimeExtras.h>
 
+using namespace WebCore;
 using namespace WebKit;
 
 @implementation WKAccessibilityWebPageObjectBase
@@ -71,7 +72,7 @@ using namespace WebKit;
     if (!cache)
         return nil;
     
-    if (WebCore::AccessibilityObject* root = cache->rootObject())
+    if (AccessibilityObject* root = cache->rootObject())
         return root->wrapper();
     
     return nil;

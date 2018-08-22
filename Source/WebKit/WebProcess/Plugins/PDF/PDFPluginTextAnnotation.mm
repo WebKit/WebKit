@@ -45,8 +45,10 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/Page.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
+
 using namespace HTMLNames;
 
 static const String cssAlignmentValueForNSTextAlignment(NSTextAlignment alignment)

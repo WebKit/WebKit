@@ -38,8 +38,9 @@
 #include <JavaScriptCore/JSObject.h>
 #include <WebCore/FileSystem.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 PluginProcessConnection::PluginProcessConnection(PluginProcessConnectionManager* pluginProcessConnectionManager, uint64_t pluginProcessToken, IPC::Connection::Identifier connectionIdentifier, bool supportsAsynchronousPluginInitialization)
     : m_pluginProcessConnectionManager(pluginProcessConnectionManager)

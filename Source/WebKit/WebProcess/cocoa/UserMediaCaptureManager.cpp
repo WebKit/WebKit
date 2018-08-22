@@ -40,8 +40,9 @@
 #include <WebCore/WebAudioBufferList.h>
 #include <WebCore/WebAudioSourceProviderAVFObjC.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 static uint64_t nextSessionID()
 {

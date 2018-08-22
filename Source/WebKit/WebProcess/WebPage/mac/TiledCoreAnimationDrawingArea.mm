@@ -69,8 +69,9 @@
 + (void)synchronize;
 @end
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaTypeTiledCoreAnimation, webPage)

@@ -38,8 +38,9 @@
 #import <wtf/SetForScope.h>
 #import <wtf/SystemTracing.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 RemoteLayerTreeContext::RemoteLayerTreeContext(WebPage& webPage)
     : m_webPage(webPage)

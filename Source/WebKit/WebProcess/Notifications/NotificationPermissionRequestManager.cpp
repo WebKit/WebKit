@@ -40,8 +40,9 @@
 #include "WebNotificationManager.h"
 #endif
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 #if ENABLE(NOTIFICATIONS)
 static uint64_t generateRequestID()

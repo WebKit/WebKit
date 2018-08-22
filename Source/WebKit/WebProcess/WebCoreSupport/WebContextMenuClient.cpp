@@ -41,8 +41,9 @@
 #include <WebCore/Page.h>
 #include <WebCore/UserGestureIndicator.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 void WebContextMenuClient::contextMenuDestroyed()
 {
