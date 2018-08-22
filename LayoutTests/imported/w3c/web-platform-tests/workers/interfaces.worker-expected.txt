@@ -68,7 +68,7 @@ PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of
 PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to its original value via Reflect.setPrototypeOf should return true 
 PASS DedicatedWorkerGlobalScope interface: existence and properties of interface prototype object's "constructor" property 
 PASS DedicatedWorkerGlobalScope interface: existence and properties of interface prototype object's @@unscopables property 
-PASS DedicatedWorkerGlobalScope interface: attribute name 
+FAIL DedicatedWorkerGlobalScope interface: attribute name assert_own_property: The global object must have a property "name" expected property "name" missing
 PASS Unscopable handled correctly for name property on DedicatedWorkerGlobalScope 
 PASS DedicatedWorkerGlobalScope interface: operation postMessage(any, [object Object]) 
 PASS Unscopable handled correctly for postMessage(any, [object Object]) on DedicatedWorkerGlobalScope 
@@ -86,7 +86,7 @@ PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of
 PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of global platform object - setting to its original value via Reflect.setPrototypeOf should return true 
 PASS DedicatedWorkerGlobalScope must be primary interface of self 
 PASS Stringification of self 
-PASS DedicatedWorkerGlobalScope interface: self must inherit property "name" with the proper type 
+FAIL DedicatedWorkerGlobalScope interface: self must inherit property "name" with the proper type assert_own_property: expected property "name" missing
 PASS DedicatedWorkerGlobalScope interface: self must inherit property "postMessage(any, [object Object])" with the proper type 
 PASS DedicatedWorkerGlobalScope interface: calling postMessage(any, [object Object]) on self with too few arguments must throw TypeError 
 PASS DedicatedWorkerGlobalScope interface: self must inherit property "close()" with the proper type 
