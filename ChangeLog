@@ -1,3 +1,13 @@
+2018-08-22  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [MSVC] Stop disabling /O2 features.
+        https://bugs.webkit.org/show_bug.cgi?id=188811
+
+        Reviewed by Per Arne Vollan.
+
+        * Source/cmake/OptionsMSVC.cmake:
+        Don't disable /GF (string pooling) or /Gy (function-level linking).
+
 2018-08-22  Alberto Garcia  <berto@igalia.com>
 
         Don't use WTF_CPU_MIPS when building for mips64

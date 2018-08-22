@@ -26,9 +26,6 @@ if (NOT COMPILER_IS_CLANG_CL)
     add_definitions(-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1)
 endif ()
 
-# Turn off certain link features
-add_compile_options(/Gy- /openmp- /GF-)
-
 # Enable C++17
 # https://docs.microsoft.com/en-us/cpp/build/reference/std-specify-language-standard-version
 add_compile_options(/std:c++17)
