@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "APIAttachment.h"
 #import "APILegacyContextHistoryClient.h"
 #import "APINavigation.h"
 #import "AttributedString.h"
@@ -54,6 +55,7 @@
 #import "UndoOrRedo.h"
 #import "ViewGestureController.h"
 #import "WKBrowsingContextControllerInternal.h"
+#import "WKErrorInternal.h"
 #import "WKFullScreenWindowController.h"
 #import "WKImmediateActionController.h"
 #import "WKPrintingView.h"
@@ -83,6 +85,7 @@
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PlatformEventFactoryMac.h>
+#import <WebCore/PromisedAttachmentInfo.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextUndoInsertionMarkupMac.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
@@ -870,6 +873,51 @@ static const NSUInteger orderedListSegment = 2;
     if (!_textListTouchBarViewController)
         _textListTouchBarViewController = adoptNS([[WKTextListTouchBarViewController alloc] initWithWebViewImpl:_webViewImpl]);
     return _textListTouchBarViewController.get();
+}
+
+@end
+
+@interface WKPromisedAttachmentContext : NSObject {
+@private
+    RetainPtr<NSURL> _blobURL;
+    RetainPtr<NSString> _filename;
+    RetainPtr<NSString> _attachmentIdentifier;
+}
+
+- (instancetype)initWithAttachmentInfo:(const WebCore::PromisedAttachmentInfo&)info;
+
+@property (nonatomic, readonly) NSURL *blobURL;
+@property (nonatomic, readonly) NSString *filename;
+@property (nonatomic, readonly) NSString *attachmentIdentifier;
+
+@end
+
+@implementation WKPromisedAttachmentContext
+
+- (instancetype)initWithAttachmentInfo:(const WebCore::PromisedAttachmentInfo&)info
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _blobURL = info.blobURL;
+    _filename = info.filename;
+    _attachmentIdentifier = info.attachmentIdentifier;
+    return self;
+}
+
+- (NSURL *)blobURL
+{
+    return _blobURL.get();
+}
+
+- (NSString *)filename
+{
+    return _filename.get();
+}
+
+- (NSString *)attachmentIdentifier
+{
+    return _attachmentIdentifier.get();
 }
 
 @end
@@ -3660,7 +3708,12 @@ WKBrowsingContextController *WebViewImpl::browsingContextController()
 #endif // WK_API_ENABLED
 
 #if ENABLE(DRAG_SUPPORT)
-void WebViewImpl::draggedImage(NSImage *image, CGPoint endPoint, NSDragOperation operation)
+void WebViewImpl::draggedImage(NSImage *, CGPoint endPoint, NSDragOperation operation)
+{
+    sendDragEndToPage(endPoint, operation);
+}
+
+void WebViewImpl::sendDragEndToPage(CGPoint endPoint, NSDragOperation operation)
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -3849,6 +3902,66 @@ void WebViewImpl::registerDraggedTypes()
     [m_view registerForDraggedTypes:[types allObjects]];
 }
 
+NSString *WebViewImpl::fileNameForFilePromiseProvider(NSFilePromiseProvider *provider, NSString *)
+{
+    id userInfo = provider.userInfo;
+    if (![userInfo isKindOfClass:[WKPromisedAttachmentContext class]])
+        return nil;
+
+    return [(WKPromisedAttachmentContext *)userInfo filename];
+}
+
+static NSError *webKitUnknownError()
+{
+#if WK_API_ENABLED
+    return [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil];
+#else
+    return [NSError errorWithDomain:@"WKErrorDomain" code:1 userInfo:nil];
+#endif
+}
+
+void WebViewImpl::writeToURLForFilePromiseProvider(NSFilePromiseProvider *provider, NSURL *fileURL, void(^completionHandler)(NSError *))
+{
+    id userInfo = provider.userInfo;
+    if (![userInfo isKindOfClass:[WKPromisedAttachmentContext class]]) {
+        completionHandler(webKitUnknownError());
+        return;
+    }
+
+    WKPromisedAttachmentContext *info = (WKPromisedAttachmentContext *)userInfo;
+    auto attachment = m_page->attachmentForIdentifier(info.attachmentIdentifier);
+    if (NSFileWrapper *fileWrapper = attachment ? attachment->fileWrapper() : nil) {
+        NSError *attachmentWritingError = nil;
+        if ([fileWrapper writeToURL:fileURL options:0 originalContentsURL:nil error:&attachmentWritingError])
+            completionHandler(nil);
+        else
+            completionHandler(attachmentWritingError);
+        return;
+    }
+
+    WebCore::URL blobURL { info.blobURL };
+    if (blobURL.isEmpty()) {
+        completionHandler(webKitUnknownError());
+        return;
+    }
+
+    m_page->writeBlobToFilePath(blobURL, fileURL.path, [protectedCompletionHandler = makeBlockPtr(completionHandler)] (bool success) {
+        protectedCompletionHandler(success ? nil : webKitUnknownError());
+    });
+}
+
+NSDragOperation WebViewImpl::dragSourceOperationMask(NSDraggingSession *, NSDraggingContext context)
+{
+    if (context == NSDraggingContextOutsideApplication || m_page->currentDragIsOverFileInput())
+        return NSDragOperationCopy;
+    return NSDragOperationGeneric | NSDragOperationMove | NSDragOperationCopy;
+}
+
+void WebViewImpl::draggingSessionEnded(NSDraggingSession *, NSPoint endPoint, NSDragOperation operation)
+{
+    sendDragEndToPage(NSPointToCGPoint(endPoint), operation);
+}
+
 #endif // ENABLE(DRAG_SUPPORT)
 
 void WebViewImpl::startWindowDrag()
@@ -3873,14 +3986,34 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, const ShareableBitmap
 
     // The call below could release the view.
     auto protector = m_view.get();
+    auto clientDragLocation = item.dragLocationInWindowCoordinates;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
 #pragma clang diagnostic pop
+
+    if (auto& attachmentInfo = item.promisedAttachmentInfo) {
+        auto provider = adoptNS([[NSFilePromiseProvider alloc] initWithFileType:attachmentInfo.contentType delegate:(id <NSFilePromiseProviderDelegate>)m_view.getAutoreleased()]);
+        [provider setUserInfo:[[[WKPromisedAttachmentContext alloc] initWithAttachmentInfo:attachmentInfo] autorelease]];
+        auto draggingItem = adoptNS([[NSDraggingItem alloc] initWithPasteboardWriter:provider.get()]);
+        [draggingItem setDraggingFrame:NSMakeRect(clientDragLocation.x(), clientDragLocation.y() - size.height(), size.width(), size.height()) contents:dragNSImage.get()];
+        [m_view beginDraggingSessionWithItems:@[draggingItem.get()] event:m_lastMouseDownEvent.get() source:(id <NSDraggingSource>)m_view.getAutoreleased()];
+
+        ASSERT(attachmentInfo.additionalTypes.size() == attachmentInfo.additionalData.size());
+        if (attachmentInfo.additionalTypes.size() == attachmentInfo.additionalData.size()) {
+            for (size_t index = 0; index < attachmentInfo.additionalTypes.size(); ++index) {
+                auto nsData = attachmentInfo.additionalData[index]->createNSData();
+                [pasteboard setData:nsData.get() forType:attachmentInfo.additionalTypes[index]];
+            }
+        }
+        m_page->didStartDrag();
+        return;
+    }
+
     [pasteboard setString:@"" forType:PasteboardTypes::WebDummyPboardType];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [m_view dragImage:dragNSImage.get() at:NSPointFromCGPoint(item.dragLocationInWindowCoordinates) offset:NSZeroSize event:m_lastMouseDownEvent.get() pasteboard:pasteboard source:m_view.getAutoreleased() slideBack:YES];
+    [m_view dragImage:dragNSImage.get() at:NSPointFromCGPoint(clientDragLocation) offset:NSZeroSize event:m_lastMouseDownEvent.get() pasteboard:pasteboard source:m_view.getAutoreleased() slideBack:YES];
 #pragma clang diagnostic pop
     m_page->didStartDrag();
 }

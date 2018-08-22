@@ -1,3 +1,67 @@
+2018-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Support dragging attachment elements out as files on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=181294
+        <rdar://problem/36298801>
+
+        Reviewed by Tim Horton.
+
+        Add DragAndDropSimulator support for intercepting calls to -beginDraggingSessionWithitems:event:source:. This
+        enables us to write API tests for macOS that exercise the attachment SPI in combination with dragging attachment
+        elements.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (-[TestWKWebView attachmentElementMidPoint]):
+
+        Add a helper method local to this test suite that grabs the midpoint (in client coordinates) or the first
+        attachment element in the document.
+
+        (TestWebKitAPI::TEST):
+
+        Add a new API test to verify that dragging an attachment element on macOS produces file providers which may be
+        used to write attachment data to a path on disk. Additionally, refactor an existing API test,
+        MoveAttachmentElementAsIconByDragging, so that it runs on both iOS and macOS, to test the ability to move
+        attachment elements around in a document by using drag and drop.
+
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+        * TestWebKitAPI/mac/DragAndDropSimulatorMac.mm:
+        (-[DragAndDropTestWKWebView beginDraggingSessionWithItems:event:source:]):
+        (-[DragAndDropSimulator initWithWebViewFrame:configuration:]):
+        (-[DragAndDropSimulator dealloc]):
+        (-[DragAndDropSimulator runFrom:to:]):
+        (-[DragAndDropSimulator beginDraggingSessionInWebView:withItems:source:]):
+
+        Begin a drag session and kick off the -continueDragSession loop. Unlike -performDragInWebView:…, which spins
+        the main runloop until dragging ends, this version returns execution to the web view and schedules dragging
+        updates asynchronously. This matches AppKit behavior.
+
+        (-[DragAndDropSimulator continueDragSession]):
+
+        Increment the dragging progress amount, send a drag update to the web view, and continue scheduling calls to
+        itself until the progress reaches 1.
+
+        (-[DragAndDropSimulator performDragInWebView:atLocation:withImage:pasteboard:source:]):
+        (-[DragAndDropSimulator initializeDraggingInfo:dragImage:source:]):
+
+        Pull out common logic for creating a new TestDraggingInfo after starting a drag.
+
+        (-[DragAndDropSimulator insertedAttachments]):
+        (-[DragAndDropSimulator removedAttachments]):
+        (-[DragAndDropSimulator draggingSession]):
+        (-[DragAndDropSimulator receivePromisedFiles]):
+
+        Helper method to save promised files written to the pasteboard after a drag to the temporary directory. These
+        files are tracked by DragAndDropSimulator and automatically cleaned up after the test finishes.
+
+        (-[DragAndDropSimulator endDataTransfer]):
+
+        Add a method stub on macOS, so that MoveAttachmentElementAsIconByDragging can be made cross-platform.
+
+        (-[DragAndDropSimulator _webView:didInsertAttachment:withSource:]):
+        (-[DragAndDropSimulator _webView:didRemoveAttachment:]):
+
+        Implement method stubs to keep track of inserted or removed attachments while simulating a drag.
+
 2018-08-22  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Add support for the inputmode attribute

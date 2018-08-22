@@ -265,6 +265,18 @@ static NSData *testPDFData()
     return attachment.autorelease();
 }
 
+- (CGPoint)attachmentElementMidPoint
+{
+    __block CGPoint midPoint;
+    __block bool doneEvaluatingScript = false;
+    [self evaluateJavaScript:@"r = document.querySelector('attachment').getBoundingClientRect(); [r.left + r.width / 2, r.top + r.height / 2]" completionHandler:^(NSArray<NSNumber *> *result, NSError *) {
+        midPoint = CGPointMake(result.firstObject.floatValue, result.lastObject.floatValue);
+        doneEvaluatingScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingScript);
+    return midPoint;
+}
+
 - (CGSize)attachmentElementSize
 {
     __block CGSize size;
@@ -1077,6 +1089,34 @@ TEST(WKAttachmentTests, InvalidateAttachmentsAfterWebProcessTermination)
     [htmlAttachment expectRequestedDataToBe:nil];
 }
 
+TEST(WKAttachmentTests, MoveAttachmentElementAsIconByDragging)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAttachmentElementEnabled:YES];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    TestWKWebView *webView = [simulator webView];
+    [webView synchronouslyLoadHTMLString:attachmentEditingTestMarkup];
+
+    auto data = retainPtr(testPDFData());
+    auto attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"document.pdf" contentType:@"application/pdf" data:data.get()]);
+
+    [webView _executeEditCommand:@"InsertParagraph" argument:nil completion:nil];
+    [webView _executeEditCommand:@"InsertHTML" argument:@"<strong>text</strong>" completion:nil];
+    [webView _synchronouslyExecuteEditCommand:@"InsertParagraph" argument:nil];
+    [webView expectElementTag:@"ATTACHMENT" toComeBefore:@"STRONG"];
+
+    // Drag the attachment element to somewhere below the strong text.
+    [simulator runFrom:[webView attachmentElementMidPoint] to:CGPointMake(50, 300)];
+
+    EXPECT_EQ([simulator insertedAttachments].count, [simulator removedAttachments].count);
+    [attachment expectRequestedDataToBe:data.get()];
+    EXPECT_WK_STREQ("document.pdf", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
+    EXPECT_WK_STREQ("application/pdf", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+
+    [webView expectElementTag:@"STRONG" toComeBefore:@"ATTACHMENT"];
+    [simulator endDataTransfer];
+}
+
 #pragma mark - Platform-specific tests
 
 #if PLATFORM(MAC)
@@ -1128,15 +1168,14 @@ TEST(WKAttachmentTestsMac, InsertDroppedFilePromisesAsAttachments)
     [webView synchronouslyLoadHTMLString:attachmentEditingTestMarkup];
     [simulator writePromisedFiles:@[ testPDFFileURL(), testImageFileURL() ]];
 
-    ObserveAttachmentUpdatesForScope observer(webView);
     [simulator runFrom:CGPointMake(0, 0) to:CGPointMake(50, 50)];
     while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
-        if (observer.observer().inserted.count == 2)
+        if ([simulator insertedAttachments].count == 2)
             break;
     }
     EXPECT_EQ(2, [[webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment').length"] intValue]);
 
-    auto insertedAttachments = retainPtr(observer.observer().inserted);
+    auto insertedAttachments = retainPtr([simulator insertedAttachments]);
     NSArray<NSData *> *expectedData = @[ testPDFData(), testImageData() ];
     for (_WKAttachment *attachment in insertedAttachments.get()) {
         EXPECT_GT(attachment.info.filePath.length, 0U);
@@ -1149,11 +1188,28 @@ TEST(WKAttachmentTestsMac, InsertDroppedFilePromisesAsAttachments)
 
     [webView _synchronouslyExecuteEditCommand:@"SelectAll" argument:nil];
     [webView _synchronouslyExecuteEditCommand:@"DeleteBackward" argument:nil];
-    NSArray<_WKAttachment *> *removedAttachments = [observer.observer() removed];
-    EXPECT_EQ(2U, removedAttachments.count);
+    auto removedAttachments = retainPtr([simulator removedAttachments]);
+    EXPECT_EQ(2U, [removedAttachments count]);
     EXPECT_EQ(0, [[webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment').length"] intValue]);
     EXPECT_TRUE([removedAttachments containsObject:[insertedAttachments firstObject]]);
     EXPECT_TRUE([removedAttachments containsObject:[insertedAttachments lastObject]]);
+}
+
+TEST(WKAttachmentTestsMac, DragAttachmentAsFilePromise)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAttachmentElementEnabled:YES];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    TestWKWebView *webView = [simulator webView];
+    [webView synchronouslyLoadHTMLString:attachmentEditingTestMarkup];
+
+    auto fileWrapper = adoptNS([[NSFileWrapper alloc] initWithURL:testPDFFileURL() options:0 error:nil]);
+    auto attachment = retainPtr([webView synchronouslyInsertAttachmentWithFileWrapper:fileWrapper.get() contentType:nil]);
+    [simulator runFrom:[webView attachmentElementMidPoint] to:CGPointMake(300, 300)];
+
+    NSArray<NSURL *> *urls = [simulator receivePromisedFiles];
+    EXPECT_EQ(1U, urls.count);
+    EXPECT_TRUE([[NSData dataWithContentsOfURL:urls.firstObject] isEqualToData:testPDFData()]);
 }
 
 #endif // PLATFORM(MAC)
@@ -1364,34 +1420,6 @@ TEST(WKAttachmentTestsIOS, DragAttachmentInsertedAsData)
     EXPECT_EQ(UIPreferredPresentationStyleAttachment, itemProvider.preferredPresentationStyle);
     [itemProvider expectType:(NSString *)kUTTypePDF withData:data.get()];
     EXPECT_WK_STREQ("document.pdf", [itemProvider suggestedName]);
-    [dragAndDropSimulator endDataTransfer];
-}
-
-TEST(WKAttachmentTestsIOS, MoveAttachmentElementAsIconByDragging)
-{
-    auto webView = webViewForTestingAttachments();
-    auto data = retainPtr(testPDFData());
-    RetainPtr<_WKAttachment> attachment;
-    {
-        ObserveAttachmentUpdatesForScope observer(webView.get());
-        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"document.pdf" contentType:@"application/pdf" data:data.get()];
-        observer.expectAttachmentUpdates(@[], @[attachment.get()]);
-    }
-
-    [webView _executeEditCommand:@"InsertParagraph" argument:nil completion:nil];
-    [webView _executeEditCommand:@"InsertHTML" argument:@"<strong>text</strong>" completion:nil];
-    [webView _synchronouslyExecuteEditCommand:@"InsertParagraph" argument:nil];
-    [webView expectElementTag:@"ATTACHMENT" toComeBefore:@"STRONG"];
-
-    auto dragAndDropSimulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
-    [dragAndDropSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(25, 425)];
-
-    attachment = [[dragAndDropSimulator insertedAttachments] firstObject];
-    [attachment expectRequestedDataToBe:data.get()];
-    EXPECT_WK_STREQ("document.pdf", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
-    EXPECT_WK_STREQ("application/pdf", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
-
-    [webView expectElementTag:@"STRONG" toComeBefore:@"ATTACHMENT"];
     [dragAndDropSimulator endDataTransfer];
 }
 

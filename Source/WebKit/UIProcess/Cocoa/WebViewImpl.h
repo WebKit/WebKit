@@ -424,6 +424,12 @@ public:
     bool performDragOperation(id <NSDraggingInfo>);
     NSView *hitTestForDragTypes(CGPoint, NSSet *types);
     void registerDraggedTypes();
+
+    NSDragOperation dragSourceOperationMask(NSDraggingSession *, NSDraggingContext);
+    void draggingSessionEnded(NSDraggingSession *, NSPoint, NSDragOperation);
+
+    NSString *fileNameForFilePromiseProvider(NSFilePromiseProvider *, NSString *fileType);
+    void writeToURLForFilePromiseProvider(NSFilePromiseProvider *, NSURL *, void(^)(NSError *));
 #endif
 
     void startWindowDrag();
@@ -626,6 +632,10 @@ private:
 
     void handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates);
     void flushPendingMouseEventCallbacks();
+
+#if ENABLE(DRAG_SUPPORT)
+    void sendDragEndToPage(CGPoint endPoint, NSDragOperation);
+#endif
 
     WeakObjCPtr<NSView<WebViewImplDelegate>> m_view;
     std::unique_ptr<PageClient> m_pageClient;

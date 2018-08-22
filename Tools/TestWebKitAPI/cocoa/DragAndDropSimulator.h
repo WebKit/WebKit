@@ -79,6 +79,7 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 - (instancetype)initWithWebViewFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration;
 // The start location, end location, and locations of additional item requests are all in window coordinates.
 - (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation;
+- (void)endDataTransfer;
 @property (nonatomic, readonly) NSArray<_WKAttachment *> *insertedAttachments;
 @property (nonatomic, readonly) NSArray<_WKAttachment *> *removedAttachments;
 @property (nonatomic, readonly) TestWKWebView *webView;
@@ -88,7 +89,6 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 - (instancetype)initWithWebView:(TestWKWebView *)webView;
 - (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation additionalItemRequestLocations:(ProgressToCGPointValueMap)additionalItemRequestLocations;
 - (void)waitForInputSession;
-- (void)endDataTransfer;
 
 @property (nonatomic, readonly) DragAndDropPhase phase;
 @property (nonatomic) BOOL allowsFocusToStartInputSession;
@@ -121,6 +121,7 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 
 - (void)writePromisedFiles:(NSArray<NSURL *> *)fileURLs;
 - (void)writeFiles:(NSArray<NSURL *> *)fileURLs;
+- (NSArray<NSURL *> *)receivePromisedFiles;
 
 #endif // PLATFORM(MAC)
 

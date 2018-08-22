@@ -201,6 +201,13 @@ Boolean _AXSWebAccessibilityEventsEnabled();
 #endif
 #endif
 
+#if PLATFORM(MAC) && ENABLE(DRAG_SUPPORT)
+
+@interface WKWebView () <NSFilePromiseProviderDelegate, NSDraggingSource>
+@end
+
+#endif
+
 static HashMap<WebKit::WebPageProxy*, WKWebView *>& pageToViewMap()
 {
     static NeverDestroyed<HashMap<WebKit::WebPageProxy*, WKWebView *>> map;
@@ -4078,6 +4085,30 @@ WEBCORE_COMMAND(yankAndSelect)
 {
     [self _gestureEventWasNotHandledByWebCore:event];
 }
+
+#if ENABLE(DRAG_SUPPORT)
+
+- (NSString *)filePromiseProvider:(NSFilePromiseProvider *)filePromiseProvider fileNameForType:(NSString *)fileType
+{
+    return _impl->fileNameForFilePromiseProvider(filePromiseProvider, fileType);
+}
+
+- (void)filePromiseProvider:(NSFilePromiseProvider *)filePromiseProvider writePromiseToURL:(NSURL *)url completionHandler:(void (^)(NSError *error))completionHandler
+{
+    _impl->writeToURLForFilePromiseProvider(filePromiseProvider, url, completionHandler);
+}
+
+- (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context
+{
+    return _impl->dragSourceOperationMask(session, context);
+}
+
+- (void)draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation
+{
+    _impl->draggingSessionEnded(session, screenPoint, operation);
+}
+
+#endif // ENABLE(DRAG_SUPPORT)
 
 #endif // PLATFORM(MAC)
 

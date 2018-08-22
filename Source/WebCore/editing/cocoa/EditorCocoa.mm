@@ -169,6 +169,17 @@ void Editor::getPasteboardTypesAndDataForAttachment(HTMLAttachmentElement& attac
     // display mode when dragging and dropping or cutting and pasting. For the time being, this is disabled because
     // inserting attachment elements from web archive data sometimes causes attachment data to be lost; this requires
     // further investigation.
+#if PLATFORM(MAC)
+    // On macOS, we currently write the attachment as a web archive; we can't do the same for iOS and remove the platform guard above
+    // quite yet without breaking drag moves. This investigation is tracked in <https://bugs.webkit.org/show_bug.cgi?id=181514>.
+    // See the above FIXME for more details.
+    if (auto archive = LegacyWebArchive::create(attachmentRange.ptr())) {
+        if (auto webArchiveData = archive->rawDataRepresentation()) {
+            outTypes.append(WebArchivePboardType);
+            outData.append(SharedBuffer::create(webArchiveData.get()));
+        }
+    }
+#endif
 }
 
 #endif

@@ -66,6 +66,13 @@ using namespace WebCore;
 @end
 #endif
 
+#if ENABLE(DRAG_SUPPORT)
+
+@interface WKView () <NSFilePromiseProviderDelegate, NSDraggingSource>
+@end
+
+#endif
+
 @implementation WKView
 
 #if WK_API_ENABLED
@@ -1083,6 +1090,30 @@ Some other editing-related methods still unimplemented:
 }
 
 #endif // HAVE(TOUCH_BAR)
+
+#if ENABLE(DRAG_SUPPORT)
+
+- (NSString *)filePromiseProvider:(NSFilePromiseProvider *)filePromiseProvider fileNameForType:(NSString *)fileType
+{
+    return _data->_impl->fileNameForFilePromiseProvider(filePromiseProvider, fileType);
+}
+
+- (void)filePromiseProvider:(NSFilePromiseProvider *)filePromiseProvider writePromiseToURL:(NSURL *)url completionHandler:(void (^)(NSError *error))completionHandler
+{
+    _data->_impl->writeToURLForFilePromiseProvider(filePromiseProvider, url, completionHandler);
+}
+
+- (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context
+{
+    return _data->_impl->dragSourceOperationMask(session, context);
+}
+
+- (void)draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation
+{
+    _data->_impl->draggingSessionEnded(session, screenPoint, operation);
+}
+
+#endif // ENABLE(DRAG_SUPPORT)
 
 @end
 

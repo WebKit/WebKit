@@ -1,3 +1,56 @@
+2018-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Support dragging attachment elements out as files on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=181294
+        <rdar://problem/36298801>
+
+        Reviewed by Tim Horton.
+
+        Add support for dragging attachment elements on macOS by writing promised files to drag pasteboard. See changes
+        below for more details.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView filePromiseProvider:fileNameForType:]):
+        (-[WKWebView filePromiseProvider:writePromiseToURL:completionHandler:]):
+        (-[WKWebView draggingSession:sourceOperationMaskForDraggingContext:]):
+        (-[WKWebView draggingSession:endedAtPoint:operation:]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView filePromiseProvider:fileNameForType:]):
+        (-[WKView filePromiseProvider:writePromiseToURL:completionHandler:]):
+        (-[WKView draggingSession:sourceOperationMaskForDraggingContext:]):
+        (-[WKView draggingSession:endedAtPoint:operation:]):
+
+        Plumb NSFilePromiseProviderDelegate and NSDraggingSource method implementations to WebViewImpl.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKPromisedAttachmentContext initWithAttachmentInfo:]):
+        (-[WKPromisedAttachmentContext blobURL]):
+        (-[WKPromisedAttachmentContext filename]):
+        (-[WKPromisedAttachmentContext attachmentIdentifier]):
+
+        Add an object that contains the information needed to deliver a dragged attachment element's data via
+        NSFilePromiseProvider. This is stored as the userInfo of the NSFilePromiseProvider created upon drag start.
+
+        (WebKit::WebViewImpl::draggedImage):
+        (WebKit::WebViewImpl::sendDragEndToPage):
+
+        Add a helper method to handle cleanup after the dragging has finished, and call it from -draggedImage:… and
+        -draggingSessionEnded:…. The latter is only triggered in the where -beginDraggingSessionWithItems:… is used,
+        which currently only happens when dragging attachment elements.
+
+        (WebKit::WebViewImpl::fileNameForFilePromiseProvider):
+        (WebKit::webKitUnknownError):
+        (WebKit::WebViewImpl::writeToURLForFilePromiseProvider):
+
+        Deliver either NSFileWrapper data to the destination URL (in the case where an attachment identifier is known
+        and the corresponding API::Attachment is backed by a file wrapper), or save the contents of the blob URL to the
+        destination.
+
+        (WebKit::WebViewImpl::dragSourceOperationMask):
+        (WebKit::WebViewImpl::draggingSessionEnded):
+        (WebKit::WebViewImpl::startDrag):
+
 2018-08-22  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Add support for the inputmode attribute

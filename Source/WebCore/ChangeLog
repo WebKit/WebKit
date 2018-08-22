@@ -1,3 +1,22 @@
+2018-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Support dragging attachment elements out as files on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=181294
+        <rdar://problem/36298801>
+
+        Reviewed by Tim Horton.
+
+        Serialize a dragged attachment element as a web archive on macOS. This allows us to move attachment elements
+        around a document by dragging, without performing a file upload upon every drop. Ideally, we should do this on
+        iOS as well, but this currently causes attachment data to go missing; further investigation to fix this for iOS
+        is tracked in <https://bugs.webkit.org/show_bug.cgi?id=181514>.
+
+        Tests:  WKAttachmentTestsMac.DragAttachmentAsFilePromise
+                WKAttachmentTests.MoveAttachmentElementAsIconByDragging
+
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::getPasteboardTypesAndDataForAttachment):
+
 2018-08-22  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Add support for the inputmode attribute
