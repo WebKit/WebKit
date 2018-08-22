@@ -1,9 +1,9 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/shader-linking.html
-[unexpected link status] OpenGL ES Shading Language 3.00 vertex shader should not link with OpenGL ES Shading Language 1.00 fragment shader.
-[unexpected link status] OpenGL ES Shading Language 1.00 vertex shader should not link with OpenGL ES Shading Language 3.00 fragment shader.
-2 failures reported
-2 passes reported
+OpenGL ES Shading Language 3.00 vertex shader should link with OpenGL ES Shading Language 3.00 fragment shader.
+[ FAIL: 2 ] [unexpected link status] OpenGL ES Shading Language 3.00 vertex shader should not link with OpenGL ES Shading Language 1.00 fragment shader.
+[ FAIL: 3 ] [unexpected link status] OpenGL ES Shading Language 1.00 vertex shader should not link with OpenGL ES Shading Language 3.00 fragment shader.
+successfullyParsed is true
 FAIL
 

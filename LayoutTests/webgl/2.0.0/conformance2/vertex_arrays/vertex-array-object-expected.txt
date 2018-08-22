@@ -1,5 +1,40 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/vertex_arrays/vertex-array-object.html
+WebGL context exists
+gl.VERTEX_ARRAY_BINDING is 0x85B5
+getError was expected value: NO_ERROR : VERTEX_ARRAY_BINDING query should succeed
+Default value of VERTEX_ARRAY_BINDING is null
+gl.getParameter(gl.VERTEX_ARRAY_BINDING) is null
+gl.getParameter(gl.VERTEX_ARRAY_BINDING) is expected VAO
+gl.getParameter(gl.VERTEX_ARRAY_BINDING) is expected VAO
+gl.getParameter(gl.VERTEX_ARRAY_BINDING) is null
+getError was expected value: INVALID_OPERATION : binding a deleted vertex array object
+gl.getParameter(gl.VERTEX_ARRAY_BINDING) is null
+getError was expected value: NO_ERROR : createVertexArray should not set an error
+vao is non-null.
+gl.isVertexArray(vao) is false
+gl.isVertexArray(vao) is true
+gl.isVertexArray(vao) is true
+gl.isVertexArray(null) is false
+All attributes preserved across bindings
+Vertex attribute values are not attached to bindings
+Draw 0 passed pixel test
+Draw 1 passed pixel test
+Draw 2 passed pixel test
+should be green
+should be green
+should be 255,0,0,255
+should be 0,255,0,255
+should be 0,0,255,255
+should be 0,255,255,255
+getError was expected value: INVALID_OPERATION : Draw call should fail.
+getError was expected value: NO_ERROR : Draw call should not fail.
+getError was expected value: NO_ERROR : Draw call should not fail.
+getError was expected value: NO_ERROR : Draw call should not fail.
+should be red
+should be green
+getError was expected value: NO_ERROR : there should be no errors
+successfullyParsed is true
 PASS
 

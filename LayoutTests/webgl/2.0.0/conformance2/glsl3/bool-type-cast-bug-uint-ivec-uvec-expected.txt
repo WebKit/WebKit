@@ -1,5 +1,48 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/bool-type-cast-bug-uint-ivec-uvec.html
+should be 0,255,0,255
+should be 255,0,0,255
+getError was expected value: NO_ERROR : Should be no errors from testing
+should be 0,255,0,255
+should be 255,0,0,255
+getError was expected value: NO_ERROR : Should be no errors from testing
+should be 0,255,0,255
+should be 255,0,0,255
+getError was expected value: NO_ERROR : Should be no errors from testing
+should be 0,255,0,255
+should be 255,0,0,255
+getError was expected value: NO_ERROR : Should be no errors from testing
+should be 0,255,0,255
+should be 255,0,0,255
+getError was expected value: NO_ERROR : Should be no errors from testing
+should be 0,255,0,255
+should be 255,0,0,255
+getError was expected value: NO_ERROR : Should be no errors from testing
+should be 0,255,0,255
+should be 255,0,0,255
+getError was expected value: NO_ERROR : Should be no errors from testing
+should be 0,255,0,255
+should be 255,0,0,255
+getError was expected value: NO_ERROR : Should be no errors from testing
+should be 0,255,0,255
+should be 255,0,0,255
+getError was expected value: NO_ERROR : Should be no errors from testing
+should be 0,255,0,255
+should be 255,0,0,255
+getError was expected value: NO_ERROR : Should be no errors from testing
+should be 0,255,0,255
+should be 255,0,0,255
+getError was expected value: NO_ERROR : Should be no errors from testing
+should be 0,255,0,255
+should be 255,0,0,255
+getError was expected value: NO_ERROR : Should be no errors from testing
+should be 0,255,0,255
+should be 255,0,0,255
+getError was expected value: NO_ERROR : Should be no errors from testing
+should be 0,255,0,255
+should be 255,0,0,255
+getError was expected value: NO_ERROR : Should be no errors from testing
+successfullyParsed is true
 PASS
 

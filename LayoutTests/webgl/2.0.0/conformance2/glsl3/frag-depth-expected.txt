@@ -1,5 +1,12 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/frag-depth.html
+WebGL context exists
+gl_FragDepth disallowed in ESSL1 shader
+gl_FragDepth allowed in ESSL3 shader
+gl_FragDepthEXT disallowed in ESSL3 shader
+should be 255,255,255,255
+should be 255,0,0,255
+successfullyParsed is true
 PASS
 

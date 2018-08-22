@@ -1,7 +1,8 @@
 "use strict";
 (function() {
-  var numSuccesses = 0;
   var numFailures = 0;
+  var resultsList = null;
+  var resultNum = 1;
 
   if (window.testRunner && !window.layoutTestController) {
     window.layoutTestController = window.testRunner;
@@ -22,6 +23,21 @@
     window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
   }
 
+  var list = function(msg, color) {
+    if (!resultsList) {
+      resultsList = document.createElement("ol");
+      document.getElementById("result").appendChild(resultsList);
+    }
+
+    var item = document.createElement("li");
+    item.appendChild(document.createTextNode(msg));
+    if (color) {
+      item.style.color = color;
+    }
+
+    resultsList.appendChild(item);
+  }
+
   var log = function(msg, color) {
     var div = document.createElement("div");
     div.appendChild(document.createTextNode(msg));
@@ -34,20 +50,18 @@
   window.webglTestHarness = {
     reportResults: function(url, success, msg) {
       if (success) {
-        ++numSuccesses;
+        list(msg, "green");
       } else {
-        log(msg, "red");
+        list("[ FAIL: " + resultNum + " ] " + msg, "red");
         ++numFailures;
       }
+
+      ++resultNum;
     },
 
     notifyFinished: function(url) {
       var iframe = document.getElementById("iframe");
       if (numFailures > 0) {
-        if (numSuccesses > 0) {
-          log(numFailures + " failures reported", "red");
-          log(numSuccesses + " passes reported", "green");
-        }
         log("FAIL", "red");
       } else {
         log("PASS", "green");

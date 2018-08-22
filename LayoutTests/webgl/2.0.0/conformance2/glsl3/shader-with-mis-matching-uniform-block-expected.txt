@@ -1,8 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/shader-with-mis-matching-uniform-block.html
-[unexpected link status] Shaders with precision mis-matching uniform blocks should fail
-1 failures reported
-1 passes reported
+[ FAIL: 1 ] [unexpected link status] Shaders with precision mis-matching uniform blocks should fail
+successfullyParsed is true
 FAIL
 

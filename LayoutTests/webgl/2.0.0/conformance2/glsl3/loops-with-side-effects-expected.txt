@@ -1,5 +1,15 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/loops-with-side-effects.html
+WebGL context exists
+should be 255,255,0,255
+should be 255,255,0,255
+should be 255,255,0,255
+should be 255,255,0,255
+should be 255,255,0,255
+should be 255,255,0,255
+should be 255,255,0,255
+should be 255,255,0,255
+successfullyParsed is true
 PASS
 
