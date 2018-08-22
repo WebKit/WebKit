@@ -1,3 +1,11 @@
+2018-08-22  Alex Christensen  <achristensen@webkit.org>
+
+        Fix API test on Sierra after r235139
+        https://bugs.webkit.org/show_bug.cgi?id=188810
+
+        * TestWebKitAPI/Tests/mac/LimitTitleSize.mm:
+        (TEST):
+
 2018-08-22  David Kilzer  <ddkilzer@apple.com>
 
         Move files in WebCore project to match Xcode folder structure

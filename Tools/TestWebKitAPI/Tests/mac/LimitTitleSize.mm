@@ -94,6 +94,7 @@ TEST(WebKit, LimitTitleSize)
     [webView addObserver:observer.get() forKeyPath:@"title" options:NSKeyValueObservingOptionNew context:nil];
     
     TestWebKitAPI::Util::run(&waitUntilLongTitleReceived);
+    [webView removeObserver:observer.get() forKeyPath:@"title"];
 }
 
 #endif // WK_API_ENABLED
