@@ -41,7 +41,6 @@ NetworkProcessCreationParameters::NetworkProcessCreationParameters()
 
 void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
-    encoder << defaultSessionParameters;
     encoder << privateBrowsingEnabled;
     encoder.encodeEnum(cacheModel);
     encoder << diskCacheSizeOverride;
@@ -113,12 +112,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 
 bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProcessCreationParameters& result)
 {
-    std::optional<NetworkSessionCreationParameters> defaultSessionParameters;
-    decoder >> defaultSessionParameters;
-    if (!defaultSessionParameters)
-        return false;
-    result.defaultSessionParameters = WTFMove(*defaultSessionParameters);
-
     if (!decoder.decode(result.privateBrowsingEnabled))
         return false;
     if (!decoder.decodeEnum(result.cacheModel))

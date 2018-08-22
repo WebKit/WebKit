@@ -490,15 +490,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 
     NetworkProcessCreationParameters parameters;
 
-    if (withWebsiteDataStore) {
-        auto websiteDataStoreParameters = withWebsiteDataStore->parameters();
-        parameters.defaultSessionParameters = WTFMove(websiteDataStoreParameters.networkSessionParameters);
-
-        // FIXME: This isn't conceptually correct, but it's needed to preserve behavior introduced in r213241.
-        // We should separate the concept of the default session from the currently used persistent session.
-        parameters.defaultSessionParameters.sessionID = PAL::SessionID::defaultSessionID();
-    }
-
     if (m_websiteDataStore) {
         parameters.defaultSessionPendingCookies = copyToVector(m_websiteDataStore->websiteDataStore().pendingCookies());
         m_websiteDataStore->websiteDataStore().clearPendingCookies();

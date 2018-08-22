@@ -1,3 +1,19 @@
+2018-08-22  Sihui Liu  <sihui_liu@apple.com>
+
+        Try removing defaultSessionParameters from NetworkProcessCreationParameters
+        https://bugs.webkit.org/show_bug.cgi?id=188831
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2018-08-22  Tim Horton  <timothy_horton@apple.com>
 
         Use unified build for WebProcess

@@ -51,7 +51,6 @@ struct NetworkProcessCreationParameters {
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, NetworkProcessCreationParameters&);
 
-    NetworkSessionCreationParameters defaultSessionParameters;
     bool privateBrowsingEnabled { false };
     CacheModel cacheModel { CacheModelDocumentViewer };
     int64_t diskCacheSizeOverride { -1 };

@@ -46,6 +46,7 @@
 #include "NetworkProximityManager.h"
 #include "NetworkResourceLoader.h"
 #include "NetworkSession.h"
+#include "NetworkSessionCreationParameters.h"
 #include "PreconnectTask.h"
 #include "RemoteNetworkingContext.h"
 #include "SessionTracker.h"
@@ -286,7 +287,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     m_logCookieInformation = parameters.logCookieInformation;
 #endif
 
-    SessionTracker::setSession(PAL::SessionID::defaultSessionID(), NetworkSession::create(WTFMove(parameters.defaultSessionParameters)));
+    SessionTracker::setSession(PAL::SessionID::defaultSessionID(), NetworkSession::create(NetworkSessionCreationParameters()));
 
     auto* defaultSession = SessionTracker::networkSession(PAL::SessionID::defaultSessionID());
     for (const auto& cookie : parameters.defaultSessionPendingCookies)
