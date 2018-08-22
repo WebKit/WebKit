@@ -1223,7 +1223,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             return;
         }
 
-        if (this._domBreakpointsContentTreeOutline.element.parent)
+        if (this._domBreakpointsContentTreeOutline.element.parentNode)
             return;
 
         this._domBreakpointsRow.hideEmptyMessage();
@@ -1239,7 +1239,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             return;
         }
 
-        if (this._eventBreakpointsContentTreeOutline.element.parent)
+        if (this._eventBreakpointsContentTreeOutline.element.parentNode)
             return;
 
         this._eventBreakpointsRow.hideEmptyMessage();

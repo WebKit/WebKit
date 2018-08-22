@@ -1,3 +1,15 @@
+2018-08-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: cannot delete multiple event breakpoints by repeatedly hitting delete
+        https://bugs.webkit.org/show_bug.cgi?id=188803
+        <rdar://problem/43572838>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype._domBreakpointAddedOrRemoved):
+        (WI.DebuggerSidebarPanel.prototype._eventBreakpointAddedOrRemoved):
+
 2018-08-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Do not include TreeOutlineDataGridSynchronizer.js in inspector main.
