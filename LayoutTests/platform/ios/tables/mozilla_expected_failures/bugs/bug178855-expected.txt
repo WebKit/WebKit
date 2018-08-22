@@ -1,6 +1,6 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 40x26
+layer at (0,0) size 39x26
   RenderTable {table} at (0,0) size 40x26
     RenderTableSection (anonymous) at (0,0) size 40x26
       RenderTableRow {tr} at (0,2) size 40x22

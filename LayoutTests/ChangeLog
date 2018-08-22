@@ -1,3 +1,13 @@
+2018-08-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [iOS] Rebaseline table tests
+        https://bugs.webkit.org/show_bug.cgi?id=188833
+
+        Unreviewed test gardening.
+`
+        * platform/ios/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
 2018-08-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Focus navigation order in slot fallback contents is wrong

@@ -9,22 +9,22 @@ layer at (0,0) size 800x557
           text run at (592,5) width 39: "have"
           text run at (0,37) width 155: "display: table-cell. "
           text run at (154,37) width 131: "They disappear:"
-      RenderTable at (3,67) size 304x21
-        RenderTableSection (anonymous) at (0,0) size 304x21
-          RenderTableRow {UL} at (0,0) size 304x21 [bgcolor=#00CC99]
+      RenderTable at (3,67) size 302x21
+        RenderTableSection (anonymous) at (0,0) size 302x21
+          RenderTableRow {UL} at (0,0) size 302x21 [bgcolor=#00CC99]
             RenderTableCell {LI} at (0,0) size 76x21 [r=0 c=0 rs=1 cs=1]
               RenderInline {A} at (0,0) size 54x21 [color=#0000EE]
                 RenderText {#text} at (11,0) size 54x21
                   text run at (11,0) width 54: "people"
-            RenderTableCell {LI} at (76,0) size 76x21 [r=0 c=1 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 52x21 [color=#0000EE]
-                RenderText {#text} at (12,0) size 52x21
-                  text run at (12,0) width 52: "places"
-            RenderTableCell {LI} at (152,0) size 76x21 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {LI} at (75,0) size 76x21 [r=0 c=1 rs=1 cs=1]
+              RenderInline {A} at (0,0) size 51x21 [color=#0000EE]
+                RenderText {#text} at (12,0) size 51x21
+                  text run at (12,0) width 51: "places"
+            RenderTableCell {LI} at (150,0) size 76x21 [r=0 c=2 rs=1 cs=1]
               RenderInline {A} at (0,0) size 76x21 [color=#0000EE]
                 RenderText {#text} at (0,0) size 76x21
                   text run at (0,0) width 76: "members"
-            RenderTableCell {LI} at (228,0) size 76x21 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {LI} at (225,0) size 77x21 [r=0 c=3 rs=1 cs=1]
               RenderInline {A} at (0,0) size 38x21 [color=#0000EE]
                 RenderText {#text} at (19,0) size 38x21
                   text run at (19,0) width 38: "links"
@@ -51,9 +51,9 @@ layer at (0,0) size 800x557
                 RenderTableRow (anonymous) at (0,28) size 134x32
                   RenderTableCell (anonymous) at (0,28) size 134x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,8) size 111x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-            RenderText {#text} at (134,5) size 6x21
-              text run at (134,5) width 6: " "
-            RenderTable {SPAN} at (139,3) size 134x60
+            RenderText {#text} at (133,5) size 6x21
+              text run at (133,5) width 6: " "
+            RenderTable {SPAN} at (138,3) size 133x60
               RenderTableSection (anonymous) at (0,0) size 133x60
                 RenderTableRow {SPAN} at (0,0) size 133x28
                   RenderTableCell (anonymous) at (0,0) size 133x28 [r=0 c=0 rs=1 cs=1]
@@ -84,8 +84,8 @@ layer at (0,0) size 800x557
                 RenderTableRow (anonymous) at (0,28) size 115x32
                   RenderTableCell (anonymous) at (0,28) size 115x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,8) size 111x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-            RenderText {#text} at (115,5) size 6x21
-              text run at (115,5) width 6: " "
+            RenderText {#text} at (114,5) size 7x21
+              text run at (114,5) width 7: " "
             RenderTable {SPAN} at (120,3) size 116x60
               RenderTableSection (anonymous) at (0,0) size 115x60
                 RenderTableRow {SPAN} at (0,0) size 115x28
@@ -110,7 +110,7 @@ layer at (0,0) size 800x557
             RenderText {#text} at (0,0) size 0x0
 layer at (165,295) size 97x14
   RenderBlock {DIV} at (6,3) size 99x15
-layer at (304,295) size 97x14
+layer at (303,295) size 97x14
   RenderBlock {DIV} at (6,3) size 99x15
 layer at (165,358) size 244x14
   RenderBlock {DIV} at (6,3) size 246x15

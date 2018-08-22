@@ -80,7 +80,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (1,1) size 20x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 16x19
                 text run at (2,2) width 16: "1. "
-            RenderTableCell {TD} at (22,1) size 229x84 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (22,1) size 230x84 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 68x19
                 text run at (2,2) width 68: "Some One"
               RenderBR {BR} at (69,17) size 1x0
@@ -90,22 +90,22 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,42) size 130x19
                 text run at (2,42) width 130: "4633 Ocean Avenue"
               RenderBR {BR} at (131,57) size 1x0
-              RenderText {#text} at (2,62) size 176x19
+              RenderText {#text} at (2,62) size 177x19
                 text run at (2,62) width 103: "San Francisco,  "
-                text run at (104,62) width 30: "CA  "
-                text run at (133,62) width 45: "94132 "
-              RenderBR {BR} at (0,0) size 0x0
-            RenderTableCell {TD} at (252,1) size 24x5 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                text run at (104,62) width 31: "CA  "
+                text run at (134,62) width 45: "94132 "
+              RenderBR {BR} at (178,77) size 1x0
+            RenderTableCell {TD} at (252,1) size 25x5 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 20x1
-            RenderTableCell {TD} at (277,1) size 147x38 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-              RenderImage {IMG} at (7,2) size 38x34
-              RenderImage {IMG} at (45,35) size 12x1
-              RenderImage {IMG} at (57,2) size 38x34
-              RenderImage {IMG} at (95,35) size 12x1
-              RenderImage {IMG} at (107,2) size 38x34
+            RenderTableCell {TD} at (277,1) size 148x38 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+              RenderImage {IMG} at (6,2) size 39x34
+              RenderImage {IMG} at (44,35) size 13x1
+              RenderImage {IMG} at (56,2) size 39x34
+              RenderImage {IMG} at (94,35) size 13x1
+              RenderImage {IMG} at (106,2) size 39x34
           RenderTableRow {TR} at (0,86) size 425x25
-            RenderTableCell {TD} at (1,96) size 20x4 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (22,86) size 402x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=3]
+            RenderTableCell {TD} at (1,96) size 20x5 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (22,86) size 403x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=3]
               RenderImage {IMG} at (2,2) size 398x1
               RenderBR {BR} at (400,3) size 0x0
               RenderText {#text} at (2,3) size 4x19
@@ -114,7 +114,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (1,112) size 20x24 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 16x19
                 text run at (2,2) width 16: "2. "
-            RenderTableCell {TD} at (22,112) size 229x104 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (22,112) size 230x104 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 221x39
                 text run at (2,2) width 221: "FORECLOSURES AAA HOMES"
                 text run at (2,22) width 112: "UP TO 50% OFF"
@@ -122,17 +122,17 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,42) size 131x19
                 text run at (2,42) width 131: "Real Estate Services"
               RenderBR {BR} at (132,57) size 1x0
-              RenderText {#text} at (2,62) size 74x19
-                text run at (2,62) width 30: "CA  "
-                text run at (31,62) width 45: "00000 "
-              RenderBR {BR} at (0,0) size 0x0
+              RenderText {#text} at (2,62) size 75x19
+                text run at (2,62) width 31: "CA  "
+                text run at (32,62) width 45: "00000 "
+              RenderBR {BR} at (76,77) size 1x0
               RenderText {#text} at (2,82) size 100x19
                 text run at (2,82) width 100: "(000) 000-0000"
-            RenderTableCell {TD} at (252,112) size 24x5 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (252,112) size 25x5 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 20x1
-            RenderTableCell {TD} at (277,112) size 147x38 [border: (1px inset #808080)] [r=2 c=3 rs=1 cs=1]
-              RenderImage {IMG} at (7,2) size 38x34
-              RenderImage {IMG} at (45,35) size 12x1
-              RenderImage {IMG} at (57,2) size 38x34
-              RenderImage {IMG} at (95,35) size 12x1
-              RenderImage {IMG} at (107,2) size 38x34
+            RenderTableCell {TD} at (277,112) size 148x38 [border: (1px inset #808080)] [r=2 c=3 rs=1 cs=1]
+              RenderImage {IMG} at (6,2) size 39x34
+              RenderImage {IMG} at (44,35) size 13x1
+              RenderImage {IMG} at (56,2) size 39x34
+              RenderImage {IMG} at (94,35) size 13x1
+              RenderImage {IMG} at (106,2) size 39x34
