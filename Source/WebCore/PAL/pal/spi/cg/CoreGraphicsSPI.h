@@ -304,6 +304,10 @@ size_t CGDisplayModeGetPixelsHigh(CGDisplayModeRef);
 
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 CGError CGSSetDenyWindowServerConnections(bool);
+
+typedef int32_t CGSDisplayID;
+CGSDisplayID CGSMainDisplayID(void);
+
 #endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 
 #endif

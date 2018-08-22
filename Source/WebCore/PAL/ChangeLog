@@ -1,3 +1,9 @@
+2018-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed macOS Mojave build fix after r235125.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+
 2018-08-15  Ansh Shukla  <ansh_shukla@apple.com>
 
         NSURLAuthenticationMethodOAuth challenges are surfaced to clients in -didReceiveAuthenticationChallenge as NSURLAuthenticationMethodDefault
