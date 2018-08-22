@@ -24,61 +24,104 @@
 #pragma once
 
 #include "EventModifierInit.h"
+#include "PlatformEvent.h"
 #include "UIEvent.h"
 
 namespace WebCore {
 
 class UIEventWithKeyState : public UIEvent {
 public:
-    bool ctrlKey() const { return m_ctrlKey; }
-    bool shiftKey() const { return m_shiftKey; }
-    bool altKey() const { return m_altKey; }
-    bool metaKey() const { return m_metaKey; }
-    bool altGraphKey() const { return m_altGraphKey; }
-    bool capsLockKey() const { return m_capsLockKey; }
+    using Modifier = PlatformEvent::Modifier;
+
+    bool ctrlKey() const { return m_modifiers.contains(Modifier::CtrlKey); }
+    bool shiftKey() const { return m_modifiers.contains(Modifier::ShiftKey); }
+    bool altKey() const { return m_modifiers.contains(Modifier::AltKey); }
+    bool metaKey() const { return m_modifiers.contains(Modifier::MetaKey); }
+    bool altGraphKey() const { return m_modifiers.contains(Modifier::AltGraphKey); }
+    bool capsLockKey() const { return m_modifiers.contains(Modifier::CapsLockKey); }
+
+    OptionSet<Modifier> modifierKeys() { return m_modifiers; }
 
 protected:
     UIEventWithKeyState() = default;
 
-    UIEventWithKeyState(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<WindowProxy>&& view, int detail, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
+    UIEventWithKeyState(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<WindowProxy>&& view, int detail, OptionSet<Modifier> modifiers)
         : UIEvent(type, canBubble, cancelable, WTFMove(view), detail)
-        , m_ctrlKey(ctrlKey)
-        , m_altKey(altKey)
-        , m_shiftKey(shiftKey)
-        , m_metaKey(metaKey)
+        , m_modifiers(modifiers)
     {
     }
 
-    UIEventWithKeyState(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view,
-        int detail, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey, bool capsLockKey)
-            : UIEvent(type, canBubble, cancelable, timestamp, WTFMove(view), detail)
-            , m_ctrlKey(ctrlKey)
-            , m_altKey(altKey)
-            , m_shiftKey(shiftKey)
-            , m_metaKey(metaKey)
-            , m_altGraphKey(altGraphKey)
-            , m_capsLockKey(capsLockKey)
+    UIEventWithKeyState(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail, OptionSet<Modifier> modifiers)
+        : UIEvent(type, canBubble, cancelable, timestamp, WTFMove(view), detail)
+        , m_modifiers(modifiers)
     {
     }
 
     UIEventWithKeyState(const AtomicString& type, const EventModifierInit& initializer, IsTrusted isTrusted)
         : UIEvent(type, initializer, isTrusted)
-        , m_ctrlKey(initializer.ctrlKey)
-        , m_altKey(initializer.altKey)
-        , m_shiftKey(initializer.shiftKey)
-        , m_metaKey(initializer.metaKey)
-        , m_altGraphKey(initializer.modifierAltGraph)
-        , m_capsLockKey(initializer.modifierCapsLock)
+        , m_modifiers(modifiersFromInitializer(initializer))
     {
     }
 
-    // Expose these so init functions can set them.
-    bool m_ctrlKey { false };
-    bool m_altKey { false };
-    bool m_shiftKey { false };
-    bool m_metaKey { false };
-    bool m_altGraphKey { false };
-    bool m_capsLockKey { false };
+    void setModifierKeys(bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey)
+    {
+        OptionSet<Modifier> result;
+        if (ctrlKey)
+            result |= Modifier::CtrlKey;
+        if (altKey)
+            result |= Modifier::AltKey;
+        if (shiftKey)
+            result |= Modifier::ShiftKey;
+        if (metaKey)
+            result |= Modifier::MetaKey;
+        if (altGraphKey)
+            result |= Modifier::AltGraphKey;
+        //  FIXME: Chrome or Firefox don't preserve this state.
+        if (m_modifiers & Modifier::CapsLockKey)
+            result |= Modifier::CapsLockKey;
+        m_modifiers = result;
+    }
+
+    void setModifierKeys(bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
+    {
+        OptionSet<Modifier> result;
+        if (ctrlKey)
+            result |= Modifier::CtrlKey;
+        if (altKey)
+            result |= Modifier::AltKey;
+        if (shiftKey)
+            result |= Modifier::ShiftKey;
+        if (metaKey)
+            result |= Modifier::MetaKey;
+        //  FIXME: Chrome or Firefox don't preserve these states.
+        if (m_modifiers & Modifier::AltGraphKey)
+            result |= Modifier::AltGraphKey;
+        if (m_modifiers & Modifier::CapsLockKey)
+            result |= Modifier::CapsLockKey;
+        m_modifiers = result;
+    }
+
+private:
+    OptionSet<Modifier> m_modifiers;
+
+    OptionSet<Modifier> modifiersFromInitializer(const EventModifierInit& initializer)
+    {
+        OptionSet<Modifier> result;
+        if (initializer.ctrlKey)
+            result |= Modifier::CtrlKey;
+        if (initializer.altKey)
+            result |= Modifier::AltKey;
+        if (initializer.shiftKey)
+            result |= Modifier::ShiftKey;
+        if (initializer.metaKey)
+            result |= Modifier::MetaKey;
+        if (initializer.modifierAltGraph)
+            result |= Modifier::AltGraphKey;
+        if (initializer.modifierCapsLock)
+            result |= Modifier::CapsLockKey;
+        return result;
+    }
+    
 };
 
 UIEventWithKeyState* findEventWithKeyState(Event*);

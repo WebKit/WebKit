@@ -37,13 +37,8 @@ namespace WebCore {
 TouchEvent::TouchEvent() = default;
 
 TouchEvent::TouchEvent(TouchList* touches, TouchList* targetTouches, TouchList* changedTouches, const AtomicString& type,
-    RefPtr<WindowProxy>&& view, int screenX, int screenY, int pageX, int pageY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
-    : MouseRelatedEvent(type, CanBubble::Yes, IsCancelable::Yes, MonotonicTime::now(), WTFMove(view), 0, IntPoint(screenX, screenY),
-        IntPoint(pageX, pageY),
-#if ENABLE(POINTER_LOCK)
-        IntPoint(0, 0),
-#endif
-        ctrlKey, altKey, shiftKey, metaKey)
+    RefPtr<WindowProxy>&& view, const IntPoint& globalLocation, OptionSet<Modifier> modifiers)
+    : MouseRelatedEvent(type, IsCancelable::Yes, MonotonicTime::now(), WTFMove(view), globalLocation, modifiers)
     , m_touches(touches)
     , m_targetTouches(targetTouches)
     , m_changedTouches(changedTouches)
@@ -74,10 +69,7 @@ void TouchEvent::initTouchEvent(TouchList* touches, TouchList* targetTouches,
     m_targetTouches = targetTouches;
     m_changedTouches = changedTouches;
     m_screenLocation = IntPoint(screenX, screenY);
-    m_ctrlKey = ctrlKey;
-    m_altKey = altKey;
-    m_shiftKey = shiftKey;
-    m_metaKey = metaKey;
+    setModifierKeys(ctrlKey, altKey, shiftKey, metaKey);
     initCoordinates(IntPoint(clientX, clientY));
 }
 

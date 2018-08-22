@@ -661,7 +661,7 @@ static inline bool isKeyUpEvent(NSEvent *event)
     return false;
 }
 
-static inline OptionSet<PlatformEvent::Modifier> modifiersForEvent(NSEvent *event)
+OptionSet<PlatformEvent::Modifier> modifiersForEvent(NSEvent *event)
 {
     OptionSet<PlatformEvent::Modifier> modifiers;
 

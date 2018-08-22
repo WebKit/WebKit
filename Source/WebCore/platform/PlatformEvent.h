@@ -70,12 +70,15 @@ public:
 #endif
     };
 
-    enum class Modifier {
+    enum class Modifier : uint8_t {
         AltKey      = 1 << 0,
         CtrlKey     = 1 << 1,
         MetaKey     = 1 << 2,
         ShiftKey    = 1 << 3,
         CapsLockKey = 1 << 4,
+
+        // Never used in native platforms but added for initEvent
+        AltGraphKey = 1 << 5,
     };
 
     Type type() const { return static_cast<Type>(m_type); }

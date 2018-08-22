@@ -95,8 +95,7 @@ inline KeyboardEvent::KeyboardEvent() = default;
 
 inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<WindowProxy>&& view)
     : UIEventWithKeyState(eventTypeForKeyboardEventType(key.type()), CanBubble::Yes, IsCancelable::Yes,
-        key.timestamp().approximateMonotonicTime(), view.copyRef(), 0, key.ctrlKey(), key.altKey(), key.shiftKey(), key.metaKey(),
-        false, key.modifiers().contains(PlatformEvent::Modifier::CapsLockKey))
+        key.timestamp().approximateMonotonicTime(), view.copyRef(), 0, key.modifiers())
     , m_underlyingPlatformEvent(std::make_unique<PlatformKeyboardEvent>(key))
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     , m_key(key.key())
@@ -160,11 +159,8 @@ void KeyboardEvent::initKeyboardEvent(const AtomicString& type, bool canBubble, 
 
     m_keyIdentifier = keyIdentifier;
     m_location = location;
-    m_ctrlKey = ctrlKey;
-    m_shiftKey = shiftKey;
-    m_altKey = altKey;
-    m_metaKey = metaKey;
-    m_altGraphKey = altGraphKey;
+
+    setModifierKeys(ctrlKey, altKey, shiftKey, metaKey, altGraphKey);
 
     m_charCode = std::nullopt;
     m_isComposing = false;

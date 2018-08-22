@@ -1,3 +1,18 @@
+2018-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Replace booleans for modifier keys in UIEventWithKeyState with OptionSet<Modifier>
+        https://bugs.webkit.org/show_bug.cgi?id=188777
+
+        Reviewed by Simon Fraser.
+
+        Create MouseEvent::create with IsSimulated set to Yes; correspoding to the last argument
+        being "true" before the code change.
+
+        Use modifiersForEvent to convert [nsEvent modifierFlags] to OptionSet<Modifier>.
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+
 2018-08-21  Daniel Bates  <dabates@apple.com>
 
         Replace TextCheckingTypeMask with OptionSet
