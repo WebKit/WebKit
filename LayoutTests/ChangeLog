@@ -1,3 +1,20 @@
+2018-08-22  John Wilander  <wilander@apple.com>
+
+        Make ResourceLoadObserver::logWebSocketLoading() handle websockets in detached frames
+        https://bugs.webkit.org/show_bug.cgi?id=188856
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+            Skipped test since it's only valid on WK2 platforms.
+        * http/tests/websocket/connection-refusal-in-frame-resource-load-statistics-expected.txt: Added.
+        * http/tests/websocket/connection-refusal-in-frame-resource-load-statistics.html: Renamed from LayoutTests/http/tests/websocket/construct-in-detached-frame-resource-load-statistics.html.
+        * http/tests/websocket/construct-in-detached-frame-resource-load-statistics-expected.txt: Removed.
+        * http/tests/websocket/resources/construct-in-detached-frame-resource-load-statistics.html: Removed.
+        * http/tests/websocket/resources/localhost-websocket-connect.html: Added.
+        * platform/wk2/TestExpectations:
+            Marked test as [ Pass ].
+
 2018-08-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         [iOS] Rebaseline table tests

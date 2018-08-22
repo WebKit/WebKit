@@ -5,14 +5,9 @@
 </head>
 <body onload="runTest()">
 <script>
-    description('Construct a WebSocket in a detached frame. The test passes if Resource Load Statistics logs it properly.');
+    description('Construct a cross-site WebSocket in a frame with server-side refusal. The test passes if Resource Load Statistics logs it properly.');
 
     window.jsTestIsAsync = true;
-
-    function detachIframe() {
-        var testIframe = document.getElementById('testIframe');
-        testIframe.parentNode.remove(testIframe);
-    }
 
     function completeTest() {
         if (testRunner.isStatisticsRegisteredAsSubresourceUnder("http://localhost", "http://127.0.0.1"))
@@ -22,30 +17,16 @@
         setEnableFeature(false, finishJSTest);
     }
 
-    let dataRecordsScanned = false;
-    function didScanDataRecords() {
-        dataRecordsScanned = true;
-        if (createdWebSocket)
-            completeTest();
-    }
-
-    let createdWebSocket = false;
-    function didCreateWebSocket() {
-        createdWebSocket = true;
-        if (dataRecordsScanned)
-            completeTest();
-    }
-
     function runTest() {
         setEnableFeature(true, function() {
             if (testRunner.isStatisticsRegisteredAsSubresourceUnder("http://localhost", "http://127.0.0.1"))
                 testFailed("localhost already registered as subresource under 127.0.0.1.");
 
             testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
-            testRunner.installStatisticsDidScanDataRecordsCallback(didScanDataRecords);
+            testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
 
             let iframeElement = document.createElement("iframe");
-            iframeElement.src = "resources/construct-in-detached-frame-resource-load-statistics.html";
+            iframeElement.src = "resources/localhost-websocket-connect.html";
             iframeElement.id = "testIframe";
             document.body.appendChild(iframeElement);
         });

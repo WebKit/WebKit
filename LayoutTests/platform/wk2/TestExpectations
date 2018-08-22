@@ -721,7 +721,7 @@ http/tests/resourceLoadStatistics/grandfathering.html [ Pass ]
 webkit.org/b/180703 http/tests/resourceLoadStatistics/telemetry-generation.html [ Pass Failure ]
 http/tests/resourceLoadStatistics/prune-statistics.html [ Pass ]
 http/tests/resourceLoadStatistics [ Pass ]
-http/tests/websocket/construct-in-detached-frame-resource-load-statistics.html [ Pass ]
+http/tests/websocket/connection-refusal-in-frame-resource-load-statistics.html [ Pass ]
 # These are only supported behind a compile time flag in macOS High Sierra + iOS 11, and above.
 http/tests/resourceLoadStatistics/cookie-deletion.html [ Skip ]
 http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction.html [ Skip ]
