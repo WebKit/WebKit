@@ -2140,62 +2140,62 @@ WebPreferencesStore WebPageProxy::preferencesStore() const
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, const String& urlString, const String& frameURLString, const String& pageURLString, bool allowOnlyApplicationPlugins, uint64_t& pluginProcessToken, String& newMimeType, uint32_t& pluginLoadPolicy, String& unavailabilityDescription, bool& isUnsupported)
+void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, const String& urlString, const String& frameURLString, const String& pageURLString, bool allowOnlyApplicationPlugins, Messages::WebPageProxy::FindPlugin::DelayedReply&& reply)
 {
     PageClientProtector protector(m_pageClient);
 
     MESSAGE_CHECK_URL(urlString);
 
     URL pluginURL = URL { URL(), urlString };
-    newMimeType = mimeType.convertToASCIILowercase();
+    String newMimeType = mimeType.convertToASCIILowercase();
 
     PluginData::AllowedPluginTypes allowedPluginTypes = allowOnlyApplicationPlugins ? PluginData::OnlyApplicationPlugins : PluginData::AllPlugins;
 
     URL pageURL = URL { URL(), pageURLString };
     if (!m_process->processPool().pluginInfoStore().isSupportedPlugin(mimeType, pluginURL, frameURLString, pageURL)) {
-        isUnsupported = true;
-        pluginProcessToken = 0;
+        reply(0, newMimeType, PluginModuleLoadNormally, { }, true);
         return;
     }
 
-    isUnsupported = false;
-    pluginLoadPolicy = PluginModuleLoadNormally;
     PluginModuleInfo plugin = m_process->processPool().pluginInfoStore().findPlugin(newMimeType, pluginURL, allowedPluginTypes);
     if (!plugin.path) {
-        pluginProcessToken = 0;
+        reply(0, newMimeType, PluginModuleLoadNormally, { }, false);
         return;
     }
 
-    pluginLoadPolicy = PluginInfoStore::defaultLoadPolicyForPlugin(plugin);
+    uint32_t pluginLoadPolicy = PluginInfoStore::defaultLoadPolicyForPlugin(plugin);
 
 #if PLATFORM(COCOA)
     auto pluginInformation = createPluginInformationDictionary(plugin, frameURLString, String(), pageURLString, String(), String());
-    if (m_navigationClient)
-        pluginLoadPolicy = m_navigationClient->decidePolicyForPluginLoad(*this, static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy), pluginInformation.get(), unavailabilityDescription);
-    else
-        pluginLoadPolicy = m_loaderClient->pluginLoadPolicy(*this, static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy), pluginInformation.get(), unavailabilityDescription);
-#else
-    UNUSED_PARAM(frameURLString);
-    UNUSED_PARAM(pageURLString);
-    UNUSED_PARAM(unavailabilityDescription);
 #endif
 
-    PluginProcessSandboxPolicy pluginProcessSandboxPolicy = PluginProcessSandboxPolicyNormal;
-    switch (pluginLoadPolicy) {
-    case PluginModuleLoadNormally:
-        pluginProcessSandboxPolicy = PluginProcessSandboxPolicyNormal;
-        break;
-    case PluginModuleLoadUnsandboxed:
-        pluginProcessSandboxPolicy = PluginProcessSandboxPolicyUnsandboxed;
-        break;
+    auto findPluginCompletion = [processType, reply = WTFMove(reply), newMimeType = WTFMove(newMimeType), plugin = WTFMove(plugin)] (uint32_t pluginLoadPolicy, const String& unavailabilityDescription) mutable {
+        PluginProcessSandboxPolicy pluginProcessSandboxPolicy = PluginProcessSandboxPolicyNormal;
+        switch (pluginLoadPolicy) {
+        case PluginModuleLoadNormally:
+            pluginProcessSandboxPolicy = PluginProcessSandboxPolicyNormal;
+            break;
+        case PluginModuleLoadUnsandboxed:
+            pluginProcessSandboxPolicy = PluginProcessSandboxPolicyUnsandboxed;
+            break;
 
-    case PluginModuleBlockedForSecurity:
-    case PluginModuleBlockedForCompatibility:
-        pluginProcessToken = 0;
-        return;
-    }
+        case PluginModuleBlockedForSecurity:
+        case PluginModuleBlockedForCompatibility:
+            reply(0, newMimeType, pluginLoadPolicy, unavailabilityDescription, false);
+            return;
+        }
 
-    pluginProcessToken = PluginProcessManager::singleton().pluginProcessToken(plugin, static_cast<PluginProcessType>(processType), pluginProcessSandboxPolicy);
+        reply(PluginProcessManager::singleton().pluginProcessToken(plugin, static_cast<PluginProcessType>(processType), pluginProcessSandboxPolicy), newMimeType, pluginLoadPolicy, unavailabilityDescription, false);
+    };
+
+#if PLATFORM(COCOA)
+    if (m_navigationClient)
+        m_navigationClient->decidePolicyForPluginLoad(*this, static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy), pluginInformation.get(), WTFMove(findPluginCompletion));
+    else
+        m_loaderClient->pluginLoadPolicy(*this, static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy), pluginInformation.get(), WTFMove(findPluginCompletion));
+#else
+    findPluginCompletion(pluginLoadPolicy, { });
+#endif
 }
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

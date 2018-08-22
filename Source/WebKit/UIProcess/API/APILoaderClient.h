@@ -103,7 +103,7 @@ public:
     virtual void navigationGestureDidEnd(WebKit::WebPageProxy&, bool willNavigate, WebKit::WebBackForwardListItem&) { }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    virtual WebKit::PluginModuleLoadPolicy pluginLoadPolicy(WebKit::WebPageProxy&, WebKit::PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary&, WTF::String& /* unavailabilityDescription */) { return currentPluginLoadPolicy; }
+    virtual void pluginLoadPolicy(WebKit::WebPageProxy&, WebKit::PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary&, CompletionHandler<void(WebKit::PluginModuleLoadPolicy, const WTF::String&)>&& completionHandler) { completionHandler(currentPluginLoadPolicy, { }); }
     virtual void didFailToInitializePlugin(WebKit::WebPageProxy&, API::Dictionary&) { }
     virtual void didBlockInsecurePluginVersion(WebKit::WebPageProxy&, API::Dictionary&) { }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

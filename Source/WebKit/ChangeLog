@@ -1,3 +1,59 @@
+2018-08-22  Jeff Miller  <jeffm@apple.com>
+
+        WKNavigationDelegate needs to allow clients to specify a custom blocked plug-in message
+        https://bugs.webkit.org/show_bug.cgi?id=188764
+
+        Reviewed by Alex Christensen.
+
+        Add a new private WKNavigationDelegate method that takes a completion handler so clients can return
+        a custom unavailability description in addition to the policy. Change WebPageProxy::findPlugin() to
+        send a delayed reply and API::LoaderClient::pluginLoadPolicy()/API::NavigationClient::decidePolicyForPluginLoad()
+        to take a completion handler to support this.
+    
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::pluginLoadPolicy):
+        Changed to take a completion handler. The default implementation doesn't return a custom
+        unavailability description.
+
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::decidePolicyForPluginLoad):
+        Ditto.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        Changed pluginLoadPolicy() to take a completion handler.
+
+        (WKPageSetPageNavigationClient):
+        Changed decidePolicyForPluginLoad() to take a completion handler.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        Add alternate version of -decidePolicyForPluginLoadWithCurrentPolicy: that allows clients to return
+        the unavailibility description.
+    
+        * UIProcess/Cocoa/NavigationState.h:
+        Add flag for new delegate method.
+        Changed decidePolicyForPluginLoad() to take a completion handler.
+    
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        Calculate flag for new delegate method.
+    
+        (WebKit::NavigationState::NavigationClient::decidePolicyForPluginLoad):
+        Changed to take a completion handler.
+        Prefer new delegate method, if available.
+    
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findPlugin):
+        Changed to send a delayed reply.
+        Refactored some code into a lambda so it can be shared when using m_navigationClient->decidePolicyForPluginLoad().
+        Removed unneeded UNUSED_PARAM() macros.
+    
+        * UIProcess/WebPageProxy.h:
+        Changed findPlugin() to send a delayed reply.
+    
+        * UIProcess/WebPageProxy.messages.in:
+        Ditto.
+
 2018-08-22  Sihui Liu  <sihui_liu@apple.com>
 
         Try removing defaultSessionParameters from NetworkProcessCreationParameters

@@ -107,6 +107,7 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 - (void)_webView:(WKWebView *)webView didFailToInitializePlugInWithInfo:(NSDictionary *)info WK_API_AVAILABLE(macosx(10.13.4));
 - (void)_webView:(WKWebView *)webView didBlockInsecurePluginVersionWithInfo:(NSDictionary *)info WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (_WKPluginModuleLoadPolicy)_webView:(WKWebView *)webView decidePolicyForPluginLoadWithCurrentPolicy:(_WKPluginModuleLoadPolicy)policy pluginInfo:(NSDictionary *)info unavailabilityDescription:(NSString *)unavailabilityDescription WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_webView:(WKWebView *)webView decidePolicyForPluginLoadWithCurrentPolicy:(_WKPluginModuleLoadPolicy)policy pluginInfo:(NSDictionary *)info completionHandler:(void (^)(_WKPluginModuleLoadPolicy policy, NSString * unavailabilityDescription))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView backForwardListItemAdded:(WKBackForwardListItem *)itemAdded removed:(NSArray<WKBackForwardListItem *> *)itemsRemoved WK_API_AVAILABLE(macosx(10.13.4));
 #endif
 

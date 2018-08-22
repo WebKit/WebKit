@@ -1302,7 +1302,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
                 m_client.pluginDidFail(toAPI(&page), kWKErrorCodeInsecurePlugInVersion, toAPI(&pluginInformation), m_client.base.clientInfo);
         }
 
-        PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy& page, PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary& pluginInformation, String& unavailabilityDescription) override
+        void pluginLoadPolicy(WebPageProxy& page, PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary& pluginInformation, CompletionHandler<void(WebKit::PluginModuleLoadPolicy, const String&)>&& completionHandler) override
         {
             WKStringRef unavailabilityDescriptionOut = 0;
             PluginModuleLoadPolicy loadPolicy = currentPluginLoadPolicy;
@@ -1312,12 +1312,13 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             else if (m_client.pluginLoadPolicy)
                 loadPolicy = toPluginModuleLoadPolicy(m_client.pluginLoadPolicy(toAPI(&page), toWKPluginLoadPolicy(currentPluginLoadPolicy), toAPI(&pluginInformation), &unavailabilityDescriptionOut, m_client.base.clientInfo));
 
+            String unavailabilityDescription;
             if (unavailabilityDescriptionOut) {
                 RefPtr<API::String> webUnavailabilityDescription = adoptRef(toImpl(unavailabilityDescriptionOut));
                 unavailabilityDescription = webUnavailabilityDescription->string();
             }
             
-            return loadPolicy;
+            completionHandler(loadPolicy, unavailabilityDescription);
         }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
@@ -2405,7 +2406,7 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             m_client.contentRuleListNotification(toAPI(&page), toURLRef(url.string().impl()), toAPI(API::Array::create(WTFMove(apiListIdentifiers)).ptr()), toAPI(API::Array::create(WTFMove(apiNotifications)).ptr()), m_client.base.clientInfo);
         }
 #if ENABLE(NETSCAPE_PLUGIN_API)
-        PluginModuleLoadPolicy decidePolicyForPluginLoad(WebPageProxy& page, PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary& pluginInformation, String& unavailabilityDescription) override
+        void decidePolicyForPluginLoad(WebPageProxy& page, PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary& pluginInformation, CompletionHandler<void(PluginModuleLoadPolicy, const String&)>&& completionHandler) override
         {
             WKStringRef unavailabilityDescriptionOut = 0;
             PluginModuleLoadPolicy loadPolicy = currentPluginLoadPolicy;
@@ -2413,12 +2414,13 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             if (m_client.decidePolicyForPluginLoad)
                 loadPolicy = toPluginModuleLoadPolicy(m_client.decidePolicyForPluginLoad(toAPI(&page), toWKPluginLoadPolicy(currentPluginLoadPolicy), toAPI(&pluginInformation), &unavailabilityDescriptionOut, m_client.base.clientInfo));
             
+            String unavailabilityDescription;
             if (unavailabilityDescriptionOut) {
                 RefPtr<API::String> webUnavailabilityDescription = adoptRef(toImpl(unavailabilityDescriptionOut));
                 unavailabilityDescription = webUnavailabilityDescription->string();
             }
             
-            return loadPolicy;
+            completionHandler(loadPolicy, unavailabilityDescription);
         }
 #endif
     };
