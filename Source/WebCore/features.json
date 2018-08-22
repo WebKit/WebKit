@@ -970,6 +970,15 @@
         "description": "The \"pointer\" media defines how percise the pointing device is. The \"hover\" media defines the ability of the poiting device to hover elements."
     },
     {
+        "name": "MediaStream Recording API",
+        "status": {
+            "status": "Under Consideration"
+        },
+        "url": "https://w3c.github.io/mediacapture-record",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=85851",
+        "comment": "Allows recording of audio and/or video MediaStream."
+    },
+    {
         "name": "MicroData",
         "status": {
             "status": "Removed"
