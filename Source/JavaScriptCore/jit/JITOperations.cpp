@@ -114,34 +114,6 @@ void JIT_OPERATION operationThrowStackOverflowError(ExecState* exec, CodeBlock* 
     throwStackOverflowError(callerFrame, scope);
 }
 
-#if ENABLE(WEBASSEMBLY)
-void JIT_OPERATION operationThrowDivideError(ExecState* exec)
-{
-    VM* vm = &exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(*vm);
-
-    EntryFrame* entryFrame = vm->topEntryFrame;
-    CallFrame* callerFrame = exec->callerFrame(entryFrame);
-
-    NativeCallFrameTracerWithRestore tracer(vm, entryFrame, callerFrame);
-    ErrorHandlingScope errorScope(*vm);
-    throwException(callerFrame, scope, createError(callerFrame, "Division by zero or division overflow."_s));
-}
-
-void JIT_OPERATION operationThrowOutOfBoundsAccessError(ExecState* exec)
-{
-    VM* vm = &exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(*vm);
-
-    EntryFrame* entryFrame = vm->topEntryFrame;
-    CallFrame* callerFrame = exec->callerFrame(entryFrame);
-
-    NativeCallFrameTracerWithRestore tracer(vm, entryFrame, callerFrame);
-    ErrorHandlingScope errorScope(*vm);
-    throwException(callerFrame, scope, createError(callerFrame, "Out-of-bounds access."_s));
-}
-#endif
-
 int32_t JIT_OPERATION operationCallArityCheck(ExecState* exec)
 {
     VM* vm = &exec->vm();

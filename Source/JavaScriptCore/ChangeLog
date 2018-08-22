@@ -1,3 +1,15 @@
+2018-08-22  Michael Saboff  <msaboff@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=188859
+        Eliminate dead code operationThrowDivideError() and operationThrowOutOfBoundsAccessError()
+
+        Rubber-stamped by Saam Barati.
+
+        Deleted these two functions.
+
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+
 2018-08-22  Mark Lam  <mark.lam@apple.com>
 
         The DFG CFGSimplification phase shouldn’t jettison a block when it’s the target of both branch directions.
