@@ -1,3 +1,23 @@
+2018-08-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Do not try to update the compositing policy when not in accelerated compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=188787
+
+        Reviewed by Simon Fraser.
+
+        RenderLayerCompositor::updateCompositingPolicy() is called very often (called from
+        RenderLayerCompositor::cacheAcceleratedCompositingFlags()) and it uses WTF::memoryFootprint() to decide the
+        current compositing policy. Getting the memory footprint is an expensive operation in Linux (and I suspect other
+        non-cocoa ports too), causing an excessive CPU usage. This caused the WPE and GTK+ unit test
+        /webkit/WebKitWebContext/uri-scheme to start timing out in the bots, because the test expects things to happen
+        fast and that's no longer the case. We could reduce the CPU usage a lot by not trying to update the policy when
+        not in accelerated compositing mode. We will need a solution for the accelerated compositing mode, though.
+
+        Fixes WPE/GTK+ unit test /webkit/WebKitWebContext/uri-scheme.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingPolicy): Return early when not in accelerated compositing mode.
+
 2018-08-21  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Support "name" option for dedicated workers
