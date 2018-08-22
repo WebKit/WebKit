@@ -59,7 +59,7 @@ function test() {
     const size = 16*1024;
     let ab = new ArrayBuffer(size);
     let dv = new DataView(ab);
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < 100000; ++i) {
         let index = (Math.random() * size) >>> 0;
         index = Math.max(index - 8, 0);
         for (let f of getFuncs) {
@@ -70,6 +70,5 @@ function test() {
             f(dv, index, 10);
         }
     }
-
 }
 test();

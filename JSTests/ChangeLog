@@ -1,3 +1,9 @@
+2018-08-22  Saam barati  <sbarati@apple.com>
+
+        Make data-view-access.js run less time to prevent timeouts on 32-bit
+
+        * microbenchmarks/data-view-accesses.js:
+
 2018-08-22  Mark Lam  <mark.lam@apple.com>
 
         The DFG CFGSimplification phase shouldn’t jettison a block when it’s the target of both branch directions.
