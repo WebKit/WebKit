@@ -1,3 +1,13 @@
+2018-08-22  Mark Lam  <mark.lam@apple.com>
+
+        The DFG CFGSimplification phase shouldn’t jettison a block when it’s the target of both branch directions.
+        https://bugs.webkit.org/show_bug.cgi?id=188298
+        <rdar://problem/42888427>
+
+        Reviewed by Saam Barati.
+
+        * stress/bug-188298.js: Added.
+
 2018-08-20  Saam barati  <sbarati@apple.com>
 
         Inline DataView accesses into DFG/FTL
