@@ -323,6 +323,8 @@ typedef GenericCallback<const WTF::MachSendRight&> MachSendRightCallback;
 typedef GenericCallback<bool, bool, String, double, double, uint64_t> NowPlayingInfoCallback;
 #endif
 
+using SpellDocumentTag = int64_t;
+
 class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
 #if ENABLE(INPUT_TYPE_COLOR)
     , public WebColorPicker::Client
@@ -1119,7 +1121,8 @@ public:
 
     void didReceiveAuthenticationChallengeProxy(uint64_t frameID, Ref<AuthenticationChallengeProxy>&&);
 
-    int64_t spellDocumentTag();
+    SpellDocumentTag spellDocumentTag();
+
     void didFinishCheckingText(uint64_t requestID, const Vector<WebCore::TextCheckingResult>&);
     void didCancelCheckingText(uint64_t requestID);
 
@@ -2087,8 +2090,6 @@ private:
     WebCore::Color m_backgroundColor { WebCore::Color::white };
 #endif
 
-    int64_t m_spellDocumentTag { 0 }; // FIXME: use std::optional<>.
-    bool m_hasSpellDocumentTag { false }; 
     unsigned m_pendingLearnOrIgnoreWordMessageCount { 0 };
 
     bool m_mainFrameHasCustomContentProvider { false };
@@ -2224,6 +2225,8 @@ private:
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     std::unique_ptr<DisplayLink> m_displayLink;
 #endif
+
+    std::optional<SpellDocumentTag> m_spellDocumentTag;
 
     std::optional<MonotonicTime> m_pageLoadStart;
 

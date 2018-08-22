@@ -78,20 +78,20 @@ void TextChecker::grammarCheckingEnabledStateChanged(bool)
 {
 }
 
-int64_t TextChecker::uniqueSpellDocumentTag(WebPageProxy*)
+SpellDocumentTag TextChecker::uniqueSpellDocumentTag(WebPageProxy*)
 {
-    return 0;
+    return { };
 }
 
-void TextChecker::closeSpellDocumentWithTag(int64_t)
-{
-}
-
-void TextChecker::checkSpellingOfString(int64_t /* spellDocumentTag */, StringView, int32_t&, int32_t&)
+void TextChecker::closeSpellDocumentWithTag(SpellDocumentTag)
 {
 }
 
-void TextChecker::checkGrammarOfString(int64_t /* spellDocumentTag */, StringView /* text */, Vector<WebCore::GrammarDetail>& /* grammarDetails */, int32_t& /* badGrammarLocation */, int32_t& /* badGrammarLength */)
+void TextChecker::checkSpellingOfString(SpellDocumentTag, StringView, int32_t&, int32_t&)
+{
+}
+
+void TextChecker::checkGrammarOfString(SpellDocumentTag, StringView /* text */, Vector<WebCore::GrammarDetail>& /* grammarDetails */, int32_t& /* badGrammarLocation */, int32_t& /* badGrammarLength */)
 {
 }
 
@@ -104,23 +104,23 @@ void TextChecker::toggleSpellingUIIsShowing()
 {
 }
 
-void TextChecker::updateSpellingUIWithMisspelledWord(int64_t /* spellDocumentTag */, const String& /* misspelledWord */)
+void TextChecker::updateSpellingUIWithMisspelledWord(SpellDocumentTag, const String& /* misspelledWord */)
 {
 }
 
-void TextChecker::updateSpellingUIWithGrammarString(int64_t /* spellDocumentTag */, const String& /* badGrammarPhrase */, const GrammarDetail& /* grammarDetail */)
+void TextChecker::updateSpellingUIWithGrammarString(SpellDocumentTag, const String& /* badGrammarPhrase */, const GrammarDetail& /* grammarDetail */)
 {
 }
 
-void TextChecker::getGuessesForWord(int64_t /* spellDocumentTag */, const String&, const String& /* context */, int32_t /* insertionPoint */, Vector<String>&, bool)
+void TextChecker::getGuessesForWord(SpellDocumentTag, const String&, const String& /* context */, int32_t /* insertionPoint */, Vector<String>&, bool)
 {
 }
 
-void TextChecker::learnWord(int64_t /* spellDocumentTag */, const String&)
+void TextChecker::learnWord(SpellDocumentTag, const String&)
 {
 }
 
-void TextChecker::ignoreWord(int64_t /* spellDocumentTag */, const String&)
+void TextChecker::ignoreWord(SpellDocumentTag, const String&)
 {
 }
 
@@ -130,7 +130,7 @@ void TextChecker::requestCheckingOfString(Ref<TextCheckerCompletion>&&, int32_t)
 
 #if USE(UNIFIED_TEXT_CHECKING)
 
-Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t, StringView, int32_t, OptionSet<TextCheckingType>, bool)
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag, StringView, int32_t, OptionSet<TextCheckingType>, bool)
 {
     return { };
 }

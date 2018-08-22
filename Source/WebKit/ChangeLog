@@ -1,3 +1,74 @@
+2018-08-22  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Add type alias for spell document tag
+        https://bugs.webkit.org/show_bug.cgi?id=188817
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/TextChecker.h:
+        * UIProcess/TextCheckerCompletion.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::~WebPageProxy):
+        (WebKit::WebPageProxy::spellDocumentTag):
+        * UIProcess/WebPageProxy.h: Also addressed FIXME comment and modernized the code to use a std::optional
+        while I am here.
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::TextChecker::uniqueSpellDocumentTag):
+        (WebKit::TextChecker::closeSpellDocumentWithTag):
+        (WebKit::TextChecker::checkSpellingOfString):
+        (WebKit::TextChecker::checkGrammarOfString):
+        (WebKit::TextChecker::updateSpellingUIWithMisspelledWord):
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        (WebKit::TextChecker::getGuessesForWord):
+        (WebKit::TextChecker::learnWord):
+        (WebKit::TextChecker::ignoreWord):
+        (WebKit::TextChecker::checkTextOfParagraph):
+        * UIProcess/ios/TextCheckerIOS.mm:
+        (WebKit::spellDocumentTagMap):
+        (WebKit::TextChecker::uniqueSpellDocumentTag):
+        (WebKit::TextChecker::closeSpellDocumentWithTag):
+        (WebKit::textCheckerFor):
+        (WebKit::TextChecker::checkTextOfParagraph):
+        (WebKit::TextChecker::checkSpellingOfString):
+        (WebKit::TextChecker::checkGrammarOfString):
+        (WebKit::TextChecker::updateSpellingUIWithMisspelledWord):
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        (WebKit::TextChecker::getGuessesForWord):
+        (WebKit::TextChecker::learnWord):
+        (WebKit::TextChecker::ignoreWord):
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::uniqueSpellDocumentTag):
+        (WebKit::TextChecker::closeSpellDocumentWithTag):
+        (WebKit::TextChecker::checkTextOfParagraph):
+        (WebKit::TextChecker::checkSpellingOfString):
+        (WebKit::TextChecker::checkGrammarOfString):
+        (WebKit::TextChecker::updateSpellingUIWithMisspelledWord):
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        (WebKit::TextChecker::getGuessesForWord):
+        (WebKit::TextChecker::learnWord):
+        (WebKit::TextChecker::ignoreWord):
+        * UIProcess/win/TextCheckerWin.cpp:
+        (WebKit::TextChecker::uniqueSpellDocumentTag):
+        (WebKit::TextChecker::closeSpellDocumentWithTag):
+        (WebKit::TextChecker::checkSpellingOfString):
+        (WebKit::TextChecker::checkGrammarOfString):
+        (WebKit::TextChecker::updateSpellingUIWithMisspelledWord):
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        (WebKit::TextChecker::getGuessesForWord):
+        (WebKit::TextChecker::learnWord):
+        (WebKit::TextChecker::ignoreWord):
+        (WebKit::TextChecker::checkTextOfParagraph):
+        * UIProcess/wpe/TextCheckerWPE.cpp:
+        (WebKit::TextChecker::uniqueSpellDocumentTag):
+        (WebKit::TextChecker::closeSpellDocumentWithTag):
+        (WebKit::TextChecker::checkSpellingOfString):
+        (WebKit::TextChecker::checkGrammarOfString):
+        (WebKit::TextChecker::updateSpellingUIWithMisspelledWord):
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        (WebKit::TextChecker::getGuessesForWord):
+        (WebKit::TextChecker::learnWord):
+        (WebKit::TextChecker::ignoreWord):
+
 2018-08-22  Antti Koivisto  <antti@apple.com>
 
         Use OptionSet for NetworkCache::Storage::TraverseFlags

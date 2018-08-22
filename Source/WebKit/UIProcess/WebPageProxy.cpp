@@ -489,8 +489,8 @@ WebPageProxy::~WebPageProxy()
 
     WebProcessPool::statistics().wkPageCount--;
 
-    if (m_hasSpellDocumentTag)
-        TextChecker::closeSpellDocumentWithTag(m_spellDocumentTag);
+    if (m_spellDocumentTag)
+        TextChecker::closeSpellDocumentWithTag(m_spellDocumentTag.value());
 
     m_preferences->removePage(*this);
     m_pageGroup->removePage(this);
@@ -5334,14 +5334,11 @@ bool WebPageProxy::isValidEditCommand(WebEditCommandProxy* command)
     return m_editCommandSet.find(command) != m_editCommandSet.end();
 }
 
-int64_t WebPageProxy::spellDocumentTag()
+SpellDocumentTag WebPageProxy::spellDocumentTag()
 {
-    if (!m_hasSpellDocumentTag) {
+    if (!m_spellDocumentTag)
         m_spellDocumentTag = TextChecker::uniqueSpellDocumentTag(this);
-        m_hasSpellDocumentTag = true;
-    }
-
-    return m_spellDocumentTag;
+    return m_spellDocumentTag.value();
 }
 
 #if USE(UNIFIED_TEXT_CHECKING)

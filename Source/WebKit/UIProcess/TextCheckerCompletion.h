@@ -36,7 +36,7 @@ public:
     static Ref<TextCheckerCompletion> create(uint64_t requestID, const WebCore::TextCheckingRequestData&, WebPageProxy*);
 
     const WebCore::TextCheckingRequestData& textCheckingRequestData() const;
-    int64_t spellDocumentTag();
+    SpellDocumentTag spellDocumentTag();
     void didFinishCheckingText(const Vector<WebCore::TextCheckingResult>&) const;
     void didCancelCheckingText() const;
 

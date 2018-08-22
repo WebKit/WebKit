@@ -146,25 +146,25 @@ void TextChecker::grammarCheckingEnabledStateChanged(bool)
 
 #if USE(UNIFIED_TEXT_CHECKING)
 
-static HashMap<int64_t, RetainPtr<UITextChecker>>& spellDocumentTagMap()
+static HashMap<SpellDocumentTag, RetainPtr<UITextChecker>>& spellDocumentTagMap()
 {
-    static NeverDestroyed<HashMap<int64_t, RetainPtr<UITextChecker>>> tagMap;
+    static NeverDestroyed<HashMap<SpellDocumentTag, RetainPtr<UITextChecker>>> tagMap;
     return tagMap;
 }
 
 #endif
 
-int64_t TextChecker::uniqueSpellDocumentTag(WebPageProxy*)
+SpellDocumentTag TextChecker::uniqueSpellDocumentTag(WebPageProxy*)
 {
 #if USE(UNIFIED_TEXT_CHECKING)
-    static int64_t nextSpellDocumentTag;
+    static SpellDocumentTag nextSpellDocumentTag;
     return ++nextSpellDocumentTag;
 #else
-    return 0;
+    return { };
 #endif
 }
 
-void TextChecker::closeSpellDocumentWithTag(int64_t spellDocumentTag)
+void TextChecker::closeSpellDocumentWithTag(SpellDocumentTag spellDocumentTag)
 {
 #if USE(UNIFIED_TEXT_CHECKING)
     spellDocumentTagMap().remove(spellDocumentTag);
@@ -175,7 +175,7 @@ void TextChecker::closeSpellDocumentWithTag(int64_t spellDocumentTag)
 
 #if USE(UNIFIED_TEXT_CHECKING)
 
-static RetainPtr<UITextChecker> textCheckerFor(int64_t spellDocumentTag)
+static RetainPtr<UITextChecker> textCheckerFor(SpellDocumentTag spellDocumentTag)
 {
     auto addResult = spellDocumentTagMap().add(spellDocumentTag, nullptr);
     if (addResult.isNewEntry)
@@ -183,7 +183,7 @@ static RetainPtr<UITextChecker> textCheckerFor(int64_t spellDocumentTag)
     return addResult.iterator->value;
 }
 
-Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, StringView text, int32_t /* insertionPoint */, OptionSet<TextCheckingType> checkingTypes, bool /* initialCapitalizationEnabled */)
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag spellDocumentTag, StringView text, int32_t /* insertionPoint */, OptionSet<TextCheckingType> checkingTypes, bool /* initialCapitalizationEnabled */)
 {
     Vector<TextCheckingResult> results;
     if (!checkingTypes.contains(TextCheckingType::Spelling))
@@ -221,13 +221,13 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
 
 #endif
 
-void TextChecker::checkSpellingOfString(int64_t, StringView, int32_t&, int32_t&)
+void TextChecker::checkSpellingOfString(SpellDocumentTag, StringView, int32_t&, int32_t&)
 {
     // iOS uses checkTextOfParagraph() instead.
     notImplemented();
 }
 
-void TextChecker::checkGrammarOfString(int64_t, StringView, Vector<WebCore::GrammarDetail>&, int32_t&, int32_t&)
+void TextChecker::checkGrammarOfString(SpellDocumentTag, StringView, Vector<WebCore::GrammarDetail>&, int32_t&, int32_t&)
 {
     // iOS uses checkTextOfParagraph() instead.
     notImplemented();
@@ -244,27 +244,27 @@ void TextChecker::toggleSpellingUIIsShowing()
     notImplemented();
 }
 
-void TextChecker::updateSpellingUIWithMisspelledWord(int64_t, const String&)
+void TextChecker::updateSpellingUIWithMisspelledWord(SpellDocumentTag, const String&)
 {
     notImplemented();
 }
 
-void TextChecker::updateSpellingUIWithGrammarString(int64_t, const String&, const GrammarDetail&)
+void TextChecker::updateSpellingUIWithGrammarString(SpellDocumentTag, const String&, const GrammarDetail&)
 {
     notImplemented();
 }
 
-void TextChecker::getGuessesForWord(int64_t, const String&, const String&, int32_t, Vector<String>&, bool)
+void TextChecker::getGuessesForWord(SpellDocumentTag, const String&, const String&, int32_t, Vector<String>&, bool)
 {
     notImplemented();
 }
 
-void TextChecker::learnWord(int64_t, const String&)
+void TextChecker::learnWord(SpellDocumentTag, const String&)
 {
     notImplemented();
 }
 
-void TextChecker::ignoreWord(int64_t, const String&)
+void TextChecker::ignoreWord(SpellDocumentTag, const String&)
 {
     notImplemented();
 }

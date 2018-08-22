@@ -314,19 +314,19 @@ void TextChecker::grammarCheckingEnabledStateChanged(bool enabled)
     textCheckerState.isGrammarCheckingEnabled = enabled;
 }
 
-int64_t TextChecker::uniqueSpellDocumentTag(WebPageProxy*)
+SpellDocumentTag TextChecker::uniqueSpellDocumentTag(WebPageProxy*)
 {
     return [NSSpellChecker uniqueSpellDocumentTag];
 }
 
-void TextChecker::closeSpellDocumentWithTag(int64_t tag)
+void TextChecker::closeSpellDocumentWithTag(SpellDocumentTag tag)
 {
     [[NSSpellChecker sharedSpellChecker] closeSpellDocumentWithTag:tag];
 }
 
 #if USE(UNIFIED_TEXT_CHECKING)
 
-Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, StringView text, int32_t insertionPoint, OptionSet<TextCheckingType> checkingTypes, bool initialCapitalizationEnabled)
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag spellDocumentTag, StringView text, int32_t insertionPoint, OptionSet<TextCheckingType> checkingTypes, bool initialCapitalizationEnabled)
 {
     Vector<TextCheckingResult> results;
 
@@ -422,13 +422,13 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
 
 #endif // USE(UNIFIED_TEXT_CHECKING)
 
-void TextChecker::checkSpellingOfString(int64_t, StringView, int32_t&, int32_t&)
+void TextChecker::checkSpellingOfString(SpellDocumentTag, StringView, int32_t&, int32_t&)
 {
     // Mac uses checkTextOfParagraph instead.
     notImplemented();
 }
 
-void TextChecker::checkGrammarOfString(int64_t, StringView, Vector<WebCore::GrammarDetail>&, int32_t&, int32_t&)
+void TextChecker::checkGrammarOfString(SpellDocumentTag, StringView, Vector<WebCore::GrammarDetail>&, int32_t&, int32_t&)
 {
     // Mac uses checkTextOfParagraph instead.
     notImplemented();
@@ -448,12 +448,12 @@ void TextChecker::toggleSpellingUIIsShowing()
         [spellingPanel orderFront:nil];
 }
 
-void TextChecker::updateSpellingUIWithMisspelledWord(int64_t, const String& misspelledWord)
+void TextChecker::updateSpellingUIWithMisspelledWord(SpellDocumentTag, const String& misspelledWord)
 {
     [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithMisspelledWord:misspelledWord];
 }
 
-void TextChecker::updateSpellingUIWithGrammarString(int64_t, const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
+void TextChecker::updateSpellingUIWithGrammarString(SpellDocumentTag, const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
 {
     RetainPtr<NSMutableArray> corrections = adoptNS([[NSMutableArray alloc] init]);
     for (size_t i = 0; i < grammarDetail.guesses.size(); ++i) {
@@ -468,7 +468,7 @@ void TextChecker::updateSpellingUIWithGrammarString(int64_t, const String& badGr
     [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithGrammarString:badGrammarPhrase detail:grammarDetailDict.get()];
 }
 
-void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, int32_t insertionPoint, Vector<String>& guesses, bool initialCapitalizationEnabled)
+void TextChecker::getGuessesForWord(SpellDocumentTag spellDocumentTag, const String& word, const String& context, int32_t insertionPoint, Vector<String>& guesses, bool initialCapitalizationEnabled)
 {
     NSString* language = nil;
     NSOrthography* orthography = nil;
@@ -490,12 +490,12 @@ void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word
         guesses.append(guess);
 }
 
-void TextChecker::learnWord(int64_t, const String& word)
+void TextChecker::learnWord(SpellDocumentTag, const String& word)
 {
     [[NSSpellChecker sharedSpellChecker] learnWord:word];
 }
 
-void TextChecker::ignoreWord(int64_t spellDocumentTag, const String& word)
+void TextChecker::ignoreWord(SpellDocumentTag spellDocumentTag, const String& word)
 {
     [[NSSpellChecker sharedSpellChecker] ignoreWord:word inSpellDocumentWithTag:spellDocumentTag];
 }
