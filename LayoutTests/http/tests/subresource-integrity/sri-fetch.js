@@ -59,7 +59,7 @@ integrity("Credential CORS invalid integrity", crossorigin_creds_resource, { 'in
 integrity("Ineligible CORS empty integrity", crossorigin_ineligible_resource, { 'integrity': "" }, new TypeError());
 integrity("Ineligible CORS SHA-512 integrity", crossorigin_ineligible_resource, { 'integrity': topSha512 }, new TypeError());
 integrity("Ineligible CORS invalid integrity", crossorigin_ineligible_resource, { 'integrity': invalidSha512 }, new TypeError());
-integrity("SHA-256 integrity with 'no-cors' mode", resource, { 'integrity': topSha256, 'mode': 'no-cors' }, new TypeError());
+integrity("SHA-256 integrity with 'no-cors' mode", resource, { 'integrity': topSha256, 'mode': 'no-cors' });
 integrity("Resource with zero length body", empty_resource, { 'integrity': "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=" });
 
 done();
