@@ -1202,10 +1202,11 @@
     {
         "name": "Web Authentication",
         "status": {
-            "status": "Under Consideration"
+            "status": "In Development"
         },
         "url": "https://w3c.github.io/webauthn/",
-        "keywords": ["authentication", "credentials"],
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=181943",
+        "keywords": ["authentication", "credentials", "webauthn"],
         "description": "An API enabling the creation and use of strong, attested, cryptographic scoped credentials by web applications, for the purpose of strongly authenticating users."
     },
     {

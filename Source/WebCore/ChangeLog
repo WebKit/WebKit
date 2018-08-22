@@ -1,3 +1,10 @@
+2018-08-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, update "Web Authentication" from "Under Consideration" to "In Development"
+        in features.json.
+
+        * features.json:
+
 2018-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Support dragging attachment elements out as files on macOS
