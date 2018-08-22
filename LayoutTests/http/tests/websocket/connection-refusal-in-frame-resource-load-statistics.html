@@ -9,12 +9,22 @@
 
     window.jsTestIsAsync = true;
 
+    const numberOfNotificationsExpected = 2;
+    let numberOfNotificationsReceived = 0;
     function completeTest() {
-        if (testRunner.isStatisticsRegisteredAsSubresourceUnder("http://localhost", "http://127.0.0.1"))
+        numberOfNotificationsReceived++;
+        if (testRunner.isStatisticsRegisteredAsSubresourceUnder("http://localhost", "http://127.0.0.1")) {
             testPassed("localhost registered as subresource under 127.0.0.1.");
-        else
-            testFailed("localhost not registered as subresource under 127.0.0.1.");
-        setEnableFeature(false, finishJSTest);
+            setEnableFeature(false, finishJSTest);
+        } else {
+            if (numberOfNotificationsReceived >= numberOfNotificationsExpected) {
+                testFailed("localhost not registered as subresource under 127.0.0.1.");
+                setEnableFeature(false, finishJSTest);
+            } else {
+                testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
+                testRunner.statisticsNotifyObserver();
+            }
+        }
     }
 
     function runTest() {
@@ -22,13 +32,13 @@
             if (testRunner.isStatisticsRegisteredAsSubresourceUnder("http://localhost", "http://127.0.0.1"))
                 testFailed("localhost already registered as subresource under 127.0.0.1.");
 
-            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
-            testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
-
             let iframeElement = document.createElement("iframe");
             iframeElement.src = "resources/localhost-websocket-connect.html";
             iframeElement.id = "testIframe";
             document.body.appendChild(iframeElement);
+
+            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+            testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
         });
     }
 </script>

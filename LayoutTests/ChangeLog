@@ -1,3 +1,12 @@
+2018-08-22  John Wilander  <wilander@apple.com>
+
+        Further adjustments to http/tests/websocket/connection-refusal-in-frame-resource-load-statistics.html
+        https://bugs.webkit.org/show_bug.cgi?id=188856
+
+        Unreviewed test gardening. Trying to address flakiness I can't reproduce locally.
+
+        * http/tests/websocket/connection-refusal-in-frame-resource-load-statistics.html:
+
 2018-08-22  Justin Fan  <justin_fan@apple.com>
 
         Update webkit-webgl-test-harness.js for more details on WebGL 2 conformance tests
