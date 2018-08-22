@@ -44,6 +44,7 @@
 #import <UIKit/UIImage_Private.h>
 #import <UIKit/UIInterface_Private.h>
 #import <UIKit/UIKeyboardImpl.h>
+#import <UIKit/UIKeyboardInputModeController.h>
 #import <UIKit/UIKeyboardIntl.h>
 #import <UIKit/UIKeyboard_Private.h>
 #import <UIKit/UILongPressGestureRecognizer_Private.h>
@@ -57,6 +58,7 @@
 #import <UIKit/UIStringDrawing_Private.h>
 #import <UIKit/UITableViewCell_Private.h>
 #import <UIKit/UITapGestureRecognizer_Private.h>
+#import <UIKit/UITextChecker_Private.h>
 #import <UIKit/UITextEffectsWindow.h>
 #import <UIKit/UITextInput_Private.h>
 #import <UIKit/UITextInteractionAssistant_Private.h>
@@ -884,6 +886,25 @@ typedef enum {
 
 @interface UIViewControllerPreviewAction ()
 + (instancetype)actionWithTitle:(NSString *)title handler:(void (^)(UIViewControllerPreviewAction *action, UIViewController *previewViewController))handler;
+@end
+
+@interface UITextChecker ()
+- (id)_initWithAsynchronousLoading:(BOOL)asynchronousLoading;
+- (BOOL)_doneLoading;
+- (NSRange)rangeOfMisspelledWordInString:(NSString *)stringToCheck range:(NSRange)range startingAt:(NSInteger)startingOffset wrap:(BOOL)wrapFlag languages:(NSArray *)languagesArray;
+@end
+
+@interface UIKeyboardInputMode : UITextInputMode <NSCopying>
+@property (nonatomic, readonly, retain) NSArray <NSString *> *multilingualLanguages;
+@property (nonatomic, readonly, retain) NSString *languageWithRegion;
+@end
+
+@interface UIKeyboardInputModeController : NSObject
+@end
+
+@interface UIKeyboardInputModeController ()
++ (UIKeyboardInputModeController *)sharedInputModeController;
+@property (readwrite, retain) UIKeyboardInputMode *currentInputMode;
 @end
 
 #if ENABLE(DRAG_SUPPORT)

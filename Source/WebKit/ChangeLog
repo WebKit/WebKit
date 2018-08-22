@@ -1,3 +1,44 @@
+2018-08-21  Daniel Bates  <dabates@apple.com>
+
+        [iOS][WK2] Misspelled words are not underlined
+        https://bugs.webkit.org/show_bug.cgi?id=188800
+        <rdar://problem/34811332>
+
+        Reviewed by Wenson Hsieh.
+
+        Implement enough of TextChecker for iOS to compute the list of misspelled words in a
+        paragraph and advertise support for continuous spell checking. The WebCore editing
+        machinery queries TextChecker for the list of the misspelled words, creating document
+        markers that demarcate the misspelled words. When we paint a line of text we paint
+        the spelling correction dots under each misspelled word.
+
+        On iOS we make use of UITextChecker to perform spell checking of a string. We maintain
+        a side table that maps a "spell document tag" to a UITextChecker* to conform to the
+        shape of the TextChecker interface.
+
+        * Platform/spi/ios/UIKitSPI.h: Forward declare some SPI.
+        * UIProcess/ios/TextCheckerIOS.mm:
+        (WebKit::mutableState): Added.
+        (WebKit::TextChecker::state): Turns around and returns mutableState().
+        (WebKit::TextChecker::isContinuousSpellCheckingAllowed): Returns true if we are building
+        with USE(UNIFIED_TEXT_CHECKING). Otherwise, do what we do now.
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled): Update state.
+        (WebKit::TextChecker::continuousSpellCheckingEnabledStateChanged): Ditto.
+        (WebKit::spellDocumentTagMap): Returns HashMap that maps a "spell document tag" (int64_t) to
+        a RetainPtr<UITextChecker>>.
+        (WebKit::TextChecker::uniqueSpellDocumentTag): Generates a unique identifier for the page
+        this text checker is associated with.
+        (WebKit::TextChecker::closeSpellDocumentWithTag): Removes the entry for the specified identifier
+        from the HashMap.
+        (WebKit::textCheckerFor): Query the HashMap for the UITextChecker for the specified spell
+        document tag, if it exists. Otherwise, create a new UITextChecker and add a new map entry
+        that associates it with the specified spell document tag. 
+        (WebKit::TextChecker::checkTextOfParagraph): Spell check the specified string and return a list
+        that represents the misspelled words.
+        (WebKit::TextChecker::checkSpellingOfString): Added a comment to explain that iOS does not implement
+        this function and instead implements checkTextOfParagraph().
+        (WebKit::TextChecker::checkGrammarOfString): Ditto.
+
 2018-08-21  Alex Christensen  <achristensen@webkit.org>
 
         Transition ResizeReversePaginatedWebView API test from WKPageLoaderClient to WKPageNavigationClient
