@@ -84,7 +84,7 @@ public:
         // It's possible for a butterfly pointer to point past the end of a butterfly. Check this now.
         if (pointer <= bitwise_cast<char*>(candidate) + sizeof(IndexingHeader)) {
             // We may be interested in the last cell of the previous MarkedBlock.
-            char* previousPointer = pointer - sizeof(IndexingHeader) - 1;
+            char* previousPointer = bitwise_cast<char*>(bitwise_cast<uintptr_t>(pointer) - sizeof(IndexingHeader) - 1);
             MarkedBlock* previousCandidate = MarkedBlock::blockFor(previousPointer);
             if (!filter.ruleOut(bitwise_cast<Bits>(previousCandidate))
                 && set.contains(previousCandidate)
