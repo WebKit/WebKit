@@ -259,7 +259,7 @@ WI.NetworkTimelineView = class NetworkTimelineView extends WI.TimelineView
             dataGridNode = new WI.ResourceTimelineDataGridNode(resourceTimelineRecord, includesGraph, this, shouldShowPopover);
             this._resourceDataGridNodeMap.set(resourceTimelineRecord.resource, dataGridNode);
 
-            this._dataGrid.addRowInSortOrder(null, dataGridNode);
+            this._dataGrid.addRowInSortOrder(dataGridNode);
         }
 
         this._pendingRecords = [];

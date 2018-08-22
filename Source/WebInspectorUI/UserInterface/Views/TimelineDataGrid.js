@@ -25,12 +25,9 @@
 
 WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
 {
-    constructor(columns, treeOutline, synchronizerDelegate, editCallback, deleteCallback)
+    constructor(columns, editCallback, deleteCallback)
     {
         super(columns, editCallback, deleteCallback);
-
-        if (treeOutline)
-            this._treeOutlineDataGridSynchronizer = new WI.TreeOutlineDataGridSynchronizer(treeOutline, this, synchronizerDelegate);
 
         this.element.classList.add("timeline");
 
@@ -101,8 +98,7 @@ WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
     {
         // May be overridden by subclasses. If so, they should call the superclass.
 
-        if (!this._treeOutlineDataGridSynchronizer)
-            this.removeChildren();
+        this.removeChildren();
 
         this._hidePopover();
     }
@@ -110,9 +106,6 @@ WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
     shown()
     {
         // May be overridden by subclasses. If so, they should call the superclass.
-
-        if (this._treeOutlineDataGridSynchronizer)
-            this._treeOutlineDataGridSynchronizer.synchronize();
     }
 
     hidden()
@@ -122,61 +115,21 @@ WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
         this._hidePopover();
     }
 
-    treeElementForDataGridNode(dataGridNode)
-    {
-        if (!this._treeOutlineDataGridSynchronizer)
-            return null;
-
-        return this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(dataGridNode);
-    }
-
-    dataGridNodeForTreeElement(treeElement)
-    {
-        if (!this._treeOutlineDataGridSynchronizer)
-            return null;
-
-        return this._treeOutlineDataGridSynchronizer.dataGridNodeForTreeElement(treeElement);
-    }
-
     callFramePopoverAnchorElement()
     {
         // Implemented by subclasses.
         return null;
     }
 
-    addRowInSortOrder(treeElement, dataGridNode, parentTreeElementOrDataGridNode)
+    addRowInSortOrder(dataGridNode, parentDataGridNode)
     {
-        let parentDataGridNode;
-        let childElement = dataGridNode;
-
-        if (treeElement) {
-            console.assert(this._treeOutlineDataGridSynchronizer);
-            if (!this._treeOutlineDataGridSynchronizer)
-                return;
-
-            this._treeOutlineDataGridSynchronizer.associate(treeElement, dataGridNode);
-
-            console.assert(!parentTreeElementOrDataGridNode || parentTreeElementOrDataGridNode instanceof WI.TreeElement);
-
-            let parentTreeElement = parentTreeElementOrDataGridNode || this._treeOutlineDataGridSynchronizer.treeOutline;
-            parentDataGridNode = parentTreeElement.root ? this : this._treeOutlineDataGridSynchronizer.dataGridNodeForTreeElement(parentTreeElement);
-
-            parentTreeElementOrDataGridNode = parentTreeElement;
-            childElement = treeElement;
-        } else {
-            parentTreeElementOrDataGridNode = parentTreeElementOrDataGridNode || this;
-            parentDataGridNode = parentTreeElementOrDataGridNode;
-        }
+        parentDataGridNode = parentDataGridNode || this;
 
         if (this.sortColumnIdentifier) {
             let insertionIndex = insertionIndexForObjectInListSortedByFunction(dataGridNode, parentDataGridNode.children, this._sortComparator.bind(this));
-
-            // If parent is a tree element, the synchronizer will insert into the data grid.
-            parentTreeElementOrDataGridNode.insertChild(childElement, insertionIndex);
-        } else {
-            // If parent is a tree element, the synchronizer will append to the data grid.
-            parentTreeElementOrDataGridNode.appendChild(childElement);
-        }
+            parentDataGridNode.insertChild(dataGridNode, insertionIndex);
+        } else
+            parentDataGridNode.appendChild(dataGridNode);
     }
 
     shouldIgnoreSelectionEvent()
@@ -236,9 +189,6 @@ WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
         let selectedNode = this.selectedNode;
         let sortComparator = this._sortComparator.bind(this);
 
-        if (this._treeOutlineDataGridSynchronizer)
-            this._treeOutlineDataGridSynchronizer.enabled = false;
-
         for (let dataGridNode of this._dirtyDataGridNodes) {
             dataGridNode.refresh();
 
@@ -259,23 +209,7 @@ WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
                 selectedNode.revealAndSelect();
                 this._ignoreSelectionEvent = false;
             }
-
-            if (!this._treeOutlineDataGridSynchronizer)
-                continue;
-
-            let treeOutline = this._treeOutlineDataGridSynchronizer.treeOutline;
-            let treeElement = this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(dataGridNode);
-            console.assert(treeElement);
-
-            treeOutline.reattachIfIndexChanged(treeElement, insertionIndex);
-
-            // Adding the tree element back to the tree outline subjects it to filters.
-            // Make sure we keep the hidden state in-sync while the synchronizer is disabled.
-            dataGridNode.element.classList.toggle("hidden", treeElement.hidden);
         }
-
-        if (this._treeOutlineDataGridSynchronizer)
-            this._treeOutlineDataGridSynchronizer.enabled = true;
 
         this._dirtyDataGridNodes = null;
     }
@@ -292,15 +226,6 @@ WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
         let selectedNode = this.selectedNode;
         this._ignoreSelectionEvent = true;
 
-        let treeOutline;
-        if (this._treeOutlineDataGridSynchronizer) {
-            this._treeOutlineDataGridSynchronizer.enabled = false;
-
-            treeOutline = this._treeOutlineDataGridSynchronizer.treeOutline;
-            if (treeOutline.selectedTreeElement)
-                treeOutline.selectedTreeElement.deselect(true);
-        }
-
         // Collect parent nodes that need their children sorted. So this in two phases since
         // traverseNextNode would get confused if we sort the tree while traversing it.
         let parentDataGridNodes = [this];
@@ -315,36 +240,11 @@ WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
         for (let parentDataGridNode of parentDataGridNodes) {
             let childDataGridNodes = parentDataGridNode.children.slice();
             parentDataGridNode.removeChildren();
-
-            let parentTreeElement;
-            if (this._treeOutlineDataGridSynchronizer) {
-                parentTreeElement = parentDataGridNode === this ? treeOutline : this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(parentDataGridNode);
-                console.assert(parentTreeElement);
-
-                parentTreeElement.removeChildren();
-            }
-
             childDataGridNodes.sort(this._sortComparator.bind(this));
 
-            for (let dataGridNode of childDataGridNodes) {
-                if (this._treeOutlineDataGridSynchronizer) {
-                    let treeElement = this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(dataGridNode);
-                    console.assert(treeElement);
-
-                    if (parentTreeElement)
-                        parentTreeElement.appendChild(treeElement);
-
-                    // Adding the tree element back to the tree outline subjects it to filters.
-                    // Make sure we keep the hidden state in-sync while the synchronizer is disabled.
-                    dataGridNode.element.classList.toggle("hidden", treeElement.hidden);
-                }
-
+            for (let dataGridNode of childDataGridNodes)
                 parentDataGridNode.appendChild(dataGridNode);
-            }
         }
-
-        if (this._treeOutlineDataGridSynchronizer)
-            this._treeOutlineDataGridSynchronizer.enabled = true;
 
         if (selectedNode)
             selectedNode.revealAndSelect();

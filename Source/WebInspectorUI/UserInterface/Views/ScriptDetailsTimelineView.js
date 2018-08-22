@@ -211,11 +211,11 @@ WI.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WI.Timeli
             }
 
             let dataGridNode = new WI.ScriptTimelineDataGridNode(scriptTimelineRecord, zeroTime);
-            this._dataGrid.addRowInSortOrder(null, dataGridNode);
+            this._dataGrid.addRowInSortOrder(dataGridNode);
 
             for (let profileNode of rootNodes) {
                 let profileNodeDataGridNode = new WI.ProfileNodeDataGridNode(profileNode, zeroTime, startTime, endTime);
-                this._dataGrid.addRowInSortOrder(null, profileNodeDataGridNode, dataGridNode);
+                this._dataGrid.addRowInSortOrder(profileNodeDataGridNode, dataGridNode);
             }
         }
 

@@ -268,7 +268,7 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
         if (this._pendingRecords.length) {
             for (let heapAllocationsTimelineRecord of this._pendingRecords) {
                 let dataGridNode = new WI.HeapAllocationsTimelineDataGridNode(heapAllocationsTimelineRecord, this.zeroTime, this);
-                this._dataGrid.addRowInSortOrder(null, dataGridNode);
+                this._dataGrid.addRowInSortOrder(dataGridNode);
                 if (!this.zeroTime)
                     this._pendingZeroTimeDataGridNodes.push(dataGridNode);
             }

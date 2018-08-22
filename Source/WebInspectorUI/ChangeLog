@@ -1,3 +1,33 @@
+2018-08-21  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Remove TreeOutlineDataGridSynchronizer
+        https://bugs.webkit.org/show_bug.cgi?id=188449
+        <rdar://problem/43107980>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WI.HeapAllocationsTimelineView.prototype.layout):
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WI.LayoutTimelineView.prototype._processPendingRecords):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WI.NetworkTimelineView.prototype._processPendingRecords):
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WI.RenderingFrameTimelineView.prototype._processPendingRecords):
+        (WI.RenderingFrameTimelineView.prototype.dataGridNodeForTreeElement): Deleted.
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        (WI.ScriptDetailsTimelineView.prototype._processPendingRecords):
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WI.TimelineDataGrid):
+        (WI.TimelineDataGrid.prototype.reset):
+        (WI.TimelineDataGrid.prototype.shown):
+        (WI.TimelineDataGrid.prototype.addRowInSortOrder):
+        (WI.TimelineDataGrid.prototype._refreshDirtyDataGridNodes):
+        (WI.TimelineDataGrid.prototype._sort):
+        (WI.TimelineDataGrid.prototype.treeElementForDataGridNode): Deleted.
+        (WI.TimelineDataGrid.prototype.dataGridNodeForTreeElement): Deleted.
+        * UserInterface/Views/TreeOutlineDataGridSynchronizer.js: Removed.
+
 2018-08-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ⌘G does not while find banner is focused

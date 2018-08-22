@@ -203,7 +203,7 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
         for (var layoutTimelineRecord of this._pendingRecords) {
             let dataGridNode = new WI.LayoutTimelineDataGridNode(layoutTimelineRecord, this.zeroTime);
 
-            this._dataGrid.addRowInSortOrder(null, dataGridNode);
+            this._dataGrid.addRowInSortOrder(dataGridNode);
 
             let stack = [{children: layoutTimelineRecord.children, parentDataGridNode: dataGridNode, index: 0}];
             while (stack.length) {
@@ -218,7 +218,7 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
 
                 let childDataGridNode = new WI.LayoutTimelineDataGridNode(childRecord, this.zeroTime);
                 console.assert(entry.parentDataGridNode, "Missing parent node for entry.", entry);
-                this._dataGrid.addRowInSortOrder(null, childDataGridNode, entry.parentDataGridNode);
+                this._dataGrid.addRowInSortOrder(childDataGridNode, entry.parentDataGridNode);
 
                 if (childDataGridNode && childRecord.children.length)
                     stack.push({children: childRecord.children, parentDataGridNode: childDataGridNode, index: 0});

@@ -195,13 +195,6 @@ WI.RenderingFrameTimelineView = class RenderingFrameTimelineView extends WI.Time
         dataGridNode.revealAndSelect();
     }
 
-    dataGridNodeForTreeElement(treeElement)
-    {
-        if (treeElement instanceof WI.ProfileNodeTreeElement)
-            return new WI.ProfileNodeDataGridNode(treeElement.profileNode, this.zeroTime, this.startTime, this.endTime);
-        return null;
-    }
-
     matchDataGridNodeAgainstCustomFilters(node)
     {
         if (!super.matchDataGridNodeAgainstCustomFilters(node))
@@ -240,7 +233,7 @@ WI.RenderingFrameTimelineView = class RenderingFrameTimelineView extends WI.Time
             console.assert(renderingFrameTimelineRecord instanceof WI.RenderingFrameTimelineRecord);
 
             let dataGridNode = new WI.RenderingFrameTimelineDataGridNode(renderingFrameTimelineRecord, this.zeroTime);
-            this._dataGrid.addRowInSortOrder(null, dataGridNode);
+            this._dataGrid.addRowInSortOrder(dataGridNode);
 
             let stack = [{children: renderingFrameTimelineRecord.children, parentDataGridNode: dataGridNode, index: 0}];
             while (stack.length) {
@@ -255,7 +248,7 @@ WI.RenderingFrameTimelineView = class RenderingFrameTimelineView extends WI.Time
                 if (childRecord.type === WI.TimelineRecord.Type.Layout) {
                     childDataGridNode = new WI.LayoutTimelineDataGridNode(childRecord, this.zeroTime);
 
-                    this._dataGrid.addRowInSortOrder(null, childDataGridNode, entry.parentDataGridNode);
+                    this._dataGrid.addRowInSortOrder(childDataGridNode, entry.parentDataGridNode);
                 } else if (childRecord.type === WI.TimelineRecord.Type.Script) {
                     let rootNodes = [];
                     if (childRecord.profile) {
@@ -265,11 +258,11 @@ WI.RenderingFrameTimelineView = class RenderingFrameTimelineView extends WI.Time
 
                     childDataGridNode = new WI.ScriptTimelineDataGridNode(childRecord, this.zeroTime);
 
-                    this._dataGrid.addRowInSortOrder(null, childDataGridNode, entry.parentDataGridNode);
+                    this._dataGrid.addRowInSortOrder(childDataGridNode, entry.parentDataGridNode);
 
                     for (let profileNode of rootNodes) {
                         let profileNodeDataGridNode = new WI.ProfileNodeDataGridNode(profileNode, this.zeroTime, this.startTime, this.endTime);
-                        this._dataGrid.addRowInSortOrder(null, profileNodeDataGridNode, childDataGridNode);
+                        this._dataGrid.addRowInSortOrder(profileNodeDataGridNode, childDataGridNode);
                     }
                 }
 
