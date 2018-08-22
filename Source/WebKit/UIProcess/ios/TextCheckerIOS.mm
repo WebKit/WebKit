@@ -112,13 +112,10 @@ bool TextChecker::isTestingMode()
     return testingModeEnabled;
 }
 
-
-static bool smartInsertDeleteEnabled;
-
 bool TextChecker::isSmartInsertDeleteEnabled()
 {
     notImplemented();
-    return smartInsertDeleteEnabled;
+    return false;
 }
 
 void TextChecker::setSmartInsertDeleteEnabled(bool)
