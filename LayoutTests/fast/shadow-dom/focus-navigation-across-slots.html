@@ -102,13 +102,13 @@ window.onload = function () {
     shadowWithSlotFallback.closedShadowRoot.innerHTML = `
         <slot name="slot1" onfocus="log(this)">
             Non-focusable slot should not be focused.
-            <div tabindex="0">16. Non-focusable slot fallback with tabindex=0</div>
-            <div tabindex="1">13. Non-focusable slot fallback with tabindex=1</div>
+            <div tabindex="0">17. Non-focusable slot fallback with tabindex=0</div>
+            <div tabindex="1">16. Non-focusable slot fallback with tabindex=1</div>
         </slot>
         <div tabindex="2" onfocus="log(this)">15. Shadow content with tabindex=2</div>
         <slot name="slot2" tabindex="1" style="display:block;" onfocus="log(this)">
-            14. Focusable slot element.
-            <div tabindex="0">17. Focusable slot fallback content with tabindex=0</div>
+            13. Focusable slot element.
+            <div tabindex="0">14. Focusable slot fallback content with tabindex=0</div>
         </slot>`;
 
     document.getElementById('first').focus();

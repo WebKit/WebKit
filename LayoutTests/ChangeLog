@@ -1,3 +1,18 @@
+2018-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Focus navigation order in slot fallback contents is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=178001
+        <rdar://problem/42842997>
+
+        Reviewed by Antti Koivisto.
+
+        Updated the sequential focus navigation test for shadow DOM and its expectation.
+
+        New test passes in Firefox & Chrome other than the fact both browsers fail to focus a slot elemennt.
+
+        * fast/shadow-dom/focus-navigation-across-slots-expected.txt:
+        * fast/shadow-dom/focus-navigation-across-slots.html:
+
 2018-08-22  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Some video tests under http/tests/security are crashing on EWS.

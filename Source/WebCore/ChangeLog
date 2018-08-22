@@ -1,3 +1,49 @@
+2018-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Focus navigation order in slot fallback contents is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=178001
+        <rdar://problem/42842997>
+
+        Reviewed by Antti Koivisto.
+
+        The bug here is that when a slot uses its fallback content, the fallback content's focus order doesn't get
+        grouped by that of the slot. Consider the following DOM tree:
+
+        - ShadowRoot
+            - div tabindex = 2
+            - slot tabindex = 1
+                - span tabindex = 3
+
+        In this example, the sequential focus navigation should be slot, span, then div. Even though span has tabindex
+        order of 3, which is lower than that of div, the fallback content of the slot should be grouped together
+        before the focus moves out of the slot content.
+
+        In WebKit, this concept of grouping elements for the sequential focus navigation ordering is implemeneted
+        as FocusNavigationScope. Both ShadowRoot and HTMLSlotElement are treated as a focus scope owner but we had
+        a bug that a slot element which uses its fallback content was not treated as a focus scope owner.
+
+        This patch addresses the bug by treating a slot wich uses its fallback content as a focus scope owner.
+
+        Test: fast/shadow-dom/focus-navigation-across-slots.html
+
+        * page/FocusController.cpp:
+        (WebCore::isFocusScopeOwner): Treat a slot elment hs a focus scope owner regardless of whether it has assigned
+        nodes or not.
+        (WebCore::FocusNavigationScope::SlotKind): Added.
+        (WebCore::FocusNavigationScope::m_slotKind): Added.
+        (WebCore::FocusNavigationScope::parentInScope const): Return null if `node` is a child of the slot element for
+        which this FocusNavigationScope is created (i.e. `node` is slot's fallback content).
+        (WebCore::FocusNavigationScope::firstNodeInScope const): Return the first child node when this
+        FocusNavigationScope is for a slot element using its fallback content.
+        (WebCore::FocusNavigationScope::lastNodeInScope const): Ditto for the last child.
+        (WebCore::FocusNavigationScope::FocusNavigationScope):
+        (WebCore::FocusNavigationScope::scopeOf): The scope of a child of a slot element which uses its fallback content
+        is its slot element (i.e. the current node is a fallback content). We can't simply check the current node is
+        a slot element which uses a fallback content since the scope of a slot element is the parent scope. e.g. its
+        tree scope like ShadowRoot or Document inside which this slot element appears.
+        (WebCore::FocusNavigationScope::scopeOwnedByScopeOwner): Create the appropriate FocusNavigationScope based on
+        whether the slot element has assigned or it uses its fallback content.
+
 2018-08-22  David Kilzer  <ddkilzer@apple.com>
 
         Move files in WebCore project to match Xcode folder structure

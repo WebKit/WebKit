@@ -75,7 +75,7 @@ static inline bool isFocusScopeOwner(const Element& element)
 {
     if (element.shadowRoot() && !hasCustomFocusLogic(element))
         return true;
-    if (is<HTMLSlotElement>(element) && downcast<HTMLSlotElement>(element).assignedNodes()) {
+    if (is<HTMLSlotElement>(element)) {
         ShadowRoot* root = element.containingShadowRoot();
         if (root && root->host() && !hasCustomFocusLogic(*root->host()))
             return true;
@@ -97,6 +97,8 @@ public:
     Node* lastChildInScope(const Node&) const;
 
 private:
+    enum class SlotKind : uint8_t { Assigned, Fallback };
+
     Node* firstChildInScope(const Node&) const;
 
     Node* parentInScope(const Node&) const;
@@ -105,11 +107,11 @@ private:
     Node* previousSiblingInScope(const Node&) const;
 
     explicit FocusNavigationScope(TreeScope&);
-
-    explicit FocusNavigationScope(HTMLSlotElement&);
+    explicit FocusNavigationScope(HTMLSlotElement&, SlotKind);
 
     TreeScope* m_rootTreeScope { nullptr };
     HTMLSlotElement* m_slotElement { nullptr };
+    SlotKind m_slotKind { SlotKind::Assigned };
 };
 
 // FIXME: Focus navigation should work with shadow trees that have slots.
@@ -132,8 +134,17 @@ Node* FocusNavigationScope::parentInScope(const Node& node) const
     if (m_rootTreeScope && &m_rootTreeScope->rootNode() == &node)
         return nullptr;
 
-    if (UNLIKELY(m_slotElement && m_slotElement == node.assignedSlot()))
-        return nullptr;
+    if (UNLIKELY(m_slotElement)) {
+        if (m_slotKind == SlotKind::Assigned) {
+            if (m_slotElement == node.assignedSlot())
+                return nullptr;
+        } else {
+            ASSERT(m_slotKind == SlotKind::Fallback);
+            auto* parentNode = node.parentNode();
+            if (parentNode == m_slotElement)
+                return nullptr;
+        }
+    }
 
     return node.parentNode();
 }
@@ -166,8 +177,12 @@ Node* FocusNavigationScope::firstNodeInScope() const
 {
     if (UNLIKELY(m_slotElement)) {
         auto* assigneNodes = m_slotElement->assignedNodes();
-        ASSERT(assigneNodes);
-        return assigneNodes->first();
+        if (m_slotKind == SlotKind::Assigned) {
+            ASSERT(assigneNodes);
+            return assigneNodes->first();
+        }
+        ASSERT(m_slotKind == SlotKind::Fallback);
+        return m_slotElement->firstChild();
     }
     ASSERT(m_rootTreeScope);
     return &m_rootTreeScope->rootNode();
@@ -177,8 +192,12 @@ Node* FocusNavigationScope::lastNodeInScope() const
 {
     if (UNLIKELY(m_slotElement)) {
         auto* assigneNodes = m_slotElement->assignedNodes();
-        ASSERT(assigneNodes);
-        return assigneNodes->last();
+        if (m_slotKind == SlotKind::Assigned) {
+            ASSERT(assigneNodes);
+            return assigneNodes->last();
+        }
+        ASSERT(m_slotKind == SlotKind::Fallback);
+        return m_slotElement->lastChild();
     }
     ASSERT(m_rootTreeScope);
     return &m_rootTreeScope->rootNode();
@@ -213,8 +232,9 @@ FocusNavigationScope::FocusNavigationScope(TreeScope& treeScope)
 {
 }
 
-FocusNavigationScope::FocusNavigationScope(HTMLSlotElement& slotElement)
+FocusNavigationScope::FocusNavigationScope(HTMLSlotElement& slotElement, SlotKind slotKind)
     : m_slotElement(&slotElement)
+    , m_slotKind(slotKind)
 {
 }
 
@@ -235,15 +255,21 @@ Element* FocusNavigationScope::owner() const
 FocusNavigationScope FocusNavigationScope::scopeOf(Node& startingNode)
 {
     ASSERT(startingNode.isInTreeScope());
-    Node* root = nullptr;
-    for (Node* currentNode = &startingNode; currentNode; currentNode = currentNode->parentNode()) {
+    RefPtr<Node> root;
+    RefPtr<Node> parentNode;
+    for (RefPtr<Node> currentNode = &startingNode; currentNode; currentNode = parentNode) {
         root = currentNode;
         if (HTMLSlotElement* slot = currentNode->assignedSlot()) {
             if (isFocusScopeOwner(*slot))
-                return FocusNavigationScope(*slot);
+                return FocusNavigationScope(*slot, SlotKind::Assigned);
         }
         if (is<ShadowRoot>(currentNode))
             return FocusNavigationScope(downcast<ShadowRoot>(*currentNode));
+        parentNode = currentNode->parentNode();
+        // The scope of a fallback content of a HTMLSlotElement is the slot element
+        // but the scope of a HTMLSlotElement is its parent scope.
+        if (parentNode && is<HTMLSlotElement>(parentNode) && !downcast<HTMLSlotElement>(*parentNode).assignedNodes())
+            return FocusNavigationScope(downcast<HTMLSlotElement>(*parentNode), SlotKind::Fallback);
     }
     ASSERT(root);
     return FocusNavigationScope(root->treeScope());
@@ -252,8 +278,10 @@ FocusNavigationScope FocusNavigationScope::scopeOf(Node& startingNode)
 FocusNavigationScope FocusNavigationScope::scopeOwnedByScopeOwner(Element& element)
 {
     ASSERT(element.shadowRoot() || is<HTMLSlotElement>(element));
-    if (is<HTMLSlotElement>(element))
-        return FocusNavigationScope(downcast<HTMLSlotElement>(element));
+    if (is<HTMLSlotElement>(element)) {
+        auto& slot = downcast<HTMLSlotElement>(element);
+        return FocusNavigationScope(slot, slot.assignedNodes() ? SlotKind::Assigned : SlotKind::Fallback);
+    }
     return FocusNavigationScope(*element.shadowRoot());
 }
 
