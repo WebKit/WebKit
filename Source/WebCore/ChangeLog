@@ -1,3 +1,107 @@
+2018-08-22  David Kilzer  <ddkilzer@apple.com>
+
+        Remove stale file references in WebCore Xcode project
+
+        I manually removed these using Xcode and verified that there was
+        a commit that removed the original files.
+
+        Found by tool created for Bug 188754: Tool to fix folders that
+        should map to directories in Xcode project files.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        (dom/DOMExceptions.in): Removed in r219741.
+        (Modules/modern-media-controls/start-button.js):
+        (Modules/modern-media-controls/volume-slider.css):
+        (Modules/modern-media-controls/icon-button.css):
+        (Modules/modern-media-controls/volume-slider.js):
+        (Modules/modern-media-controls/macos-media-controls.js):
+        (Modules/modern-media-controls/ios-inline-media-controls.css):
+        (Modules/modern-media-controls/scrubber.css):
+        (Modules/modern-media-controls/start-button.css):
+        (Modules/modern-media-controls/scrubber.js):
+        (Modules/modern-media-controls/icon-button.js):
+        (Modules/modern-media-controls/macos-compact-inline-media-controls.css):
+        (Modules/modern-media-controls/images/iOS/enter-fullscreen@2x.png):
+        (Modules/modern-media-controls/images/iOS/start@1x.png):
+        (Modules/modern-media-controls/images/iOS/enter-fullscreen@1x.png):
+        (Modules/modern-media-controls/images/iOS/pause@2x.png):
+        (Modules/modern-media-controls/images/iOS/play@3x.png):
+        (Modules/modern-media-controls/images/iOS/interval-skip-back@2x.png):
+        (Modules/modern-media-controls/images/iOS/interval-skip-back@3x.png):
+        (Modules/modern-media-controls/images/iOS/pip-in@2x.png):
+        (Modules/modern-media-controls/images/iOS/start@3x.png):
+        (Modules/modern-media-controls/images/iOS/airplay@1x.png):
+        (Modules/modern-media-controls/images/iOS/enter-fullscreen@3x.png):
+        (Modules/modern-media-controls/images/iOS/slider-thumb@2x.png):
+        (Modules/modern-media-controls/images/iOS/airplay@2x.png):
+        (Modules/modern-media-controls/images/iOS/pause@3x.png):
+        (Modules/modern-media-controls/images/iOS/pip-in@3x.png):
+        (Modules/modern-media-controls/images/iOS/interval-skip-back@1x.png):
+        (Modules/modern-media-controls/images/iOS/pause@1x.png):
+        (Modules/modern-media-controls/images/iOS/start@2x.png):
+        (Modules/modern-media-controls/images/iOS/play@2x.png):
+        (Modules/modern-media-controls/images/iOS/pip-in@1x.png):
+        (Modules/modern-media-controls/images/iOS/play@1x.png):
+        (Modules/modern-media-controls/images/macOS/enter-fullscreen-compact@1x.png):
+        (Modules/modern-media-controls/images/macOS/rewind@1x.png):
+        (Modules/modern-media-controls/images/macOS/play@2x.png):
+        (Modules/modern-media-controls/images/macOS/volume-mute@2x.png):
+        (Modules/modern-media-controls/images/macOS/airplay-fullscreen@1x.png):
+        (Modules/modern-media-controls/images/macOS/volume@2x.png):
+        (Modules/modern-media-controls/images/macOS/interval-skip-back@2x.png):
+        (Modules/modern-media-controls/images/macOS/volume-compact@2x.png):
+        (Modules/modern-media-controls/images/macOS/start@2x.png):
+        (Modules/modern-media-controls/images/macOS/exit-fullscreen@2x.png):
+        (Modules/modern-media-controls/images/macOS/airplay@2x.png):
+        (Modules/modern-media-controls/images/macOS/media-selection-fullscreen@1x.png):
+        (Modules/modern-media-controls/images/macOS/interval-skip-back@1x.png):
+        (Modules/modern-media-controls/images/macOS/airplay@1x.png):
+        (Modules/modern-media-controls/images/macOS/pip-in@1x.png):
+        (Modules/modern-media-controls/images/macOS/scale-to-fill@2x.png):
+        (Modules/modern-media-controls/images/macOS/rewind@2x.png):
+        (Modules/modern-media-controls/images/macOS/play-compact@1x.png):
+        (Modules/modern-media-controls/images/macOS/media-selection-fullscreen@2x.png):
+        (Modules/modern-media-controls/images/macOS/pip-in-fullscreen@1x.png):
+        (Modules/modern-media-controls/images/macOS/volume@1x.png):
+        (Modules/modern-media-controls/images/macOS/pip-in@2x.png):
+        (Modules/modern-media-controls/images/macOS/play-fullscreen@2x.png):
+        (Modules/modern-media-controls/images/macOS/volume-down-fullscreen@1x.png):
+        (Modules/modern-media-controls/images/macOS/pause-fullscreen@2x.png):
+        (Modules/modern-media-controls/images/macOS/enter-fullscreen-compact@2x.png):
+        (Modules/modern-media-controls/images/macOS/enter-fullscreen@1x.png):
+        (Modules/modern-media-controls/images/macOS/pause-compact@1x.png):
+        (Modules/modern-media-controls/images/macOS/start@1x.png):
+        (Modules/modern-media-controls/images/macOS/pip-in-fullscreen@2x.png):
+        (Modules/modern-media-controls/images/macOS/pause-fullscreen@1x.png):
+        (Modules/modern-media-controls/images/macOS/play@1x.png):
+        (Modules/modern-media-controls/images/macOS/exit-fullscreen@1x.png):
+        (Modules/modern-media-controls/images/macOS/forward@1x.png):
+        (Modules/modern-media-controls/images/macOS/enter-fullscreen@2x.png):
+        (Modules/modern-media-controls/images/macOS/pause@1x.png):
+        (Modules/modern-media-controls/images/macOS/scale-to-fit@2x.png):
+        (Modules/modern-media-controls/images/macOS/interval-skip-back-compact@2x.png):
+        (Modules/modern-media-controls/images/macOS/pause@2x.png):
+        (Modules/modern-media-controls/images/macOS/volume-up-fullscreen@1x.png):
+        (Modules/modern-media-controls/images/macOS/volume-compact@1x.png):
+        (Modules/modern-media-controls/images/macOS/play-compact@2x.png):
+        (Modules/modern-media-controls/images/macOS/media-selection@2x.png):
+        (Modules/modern-media-controls/images/macOS/forward@2x.png):
+        (Modules/modern-media-controls/images/macOS/interval-skip-back-compact@1x.png):
+        (Modules/modern-media-controls/images/macOS/scale-to-fill@1x.png):
+        (Modules/modern-media-controls/images/macOS/airplay-fullscreen@2x.png):
+        (Modules/modern-media-controls/images/macOS/media-selection@1x.png):
+        (Modules/modern-media-controls/images/macOS/volume-mute@1x.png):
+        (Modules/modern-media-controls/images/macOS/pause-compact@2x.png):
+        (Modules/modern-media-controls/images/macOS/volume-up-fullscreen@2x.png):
+        (Modules/modern-media-controls/images/macOS/scale-to-fit@1x.png):
+        (Modules/modern-media-controls/images/macOS/play-fullscreen@1x.png):
+        (Modules/modern-media-controls/images/macOS/volume-down-fullscreen@2x.png):
+        (Modules/modern-media-controls/media/time-labels-support.js):
+        - Removed in r217823.
+        (Modules/webvr/VRDisplayCapabilities.cpp): Removed in r229089.
+        (Modules/webvr/VRFieldOfView.cpp): Removed in r228819.
+        (rendering/svg/RenderSVGAllInOne.cpp): Removed in r234655.
+
 2018-08-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Do not try to update the compositing policy when not in accelerated compositing mode
