@@ -33,9 +33,8 @@
 #include <wtf/text/StringConcatenate.h>
 #include <wtf/text/WTFString.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 typedef HashMap<DOMWrapperWorld*, InjectedBundleScriptWorld*> WorldMap;
 

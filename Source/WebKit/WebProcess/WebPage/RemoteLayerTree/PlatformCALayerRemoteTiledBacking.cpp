@@ -31,9 +31,8 @@
 #import <WebCore/PlatformCALayerCocoa.h>
 #import <wtf/RetainPtr.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 PlatformCALayerRemoteTiledBacking::PlatformCALayerRemoteTiledBacking(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
     : PlatformCALayerRemote(layerType, owner, context)

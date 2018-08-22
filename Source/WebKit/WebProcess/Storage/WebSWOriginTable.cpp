@@ -31,7 +31,6 @@
 #include <WebCore/SecurityOrigin.h>
 
 namespace WebKit {
-
 using namespace WebCore;
 
 bool WebSWOriginTable::contains(const SecurityOriginData& origin) const

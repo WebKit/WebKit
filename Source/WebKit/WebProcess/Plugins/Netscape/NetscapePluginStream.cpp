@@ -32,9 +32,8 @@
 #include <utility>
 #include <wtf/Vector.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 NetscapePluginStream::NetscapePluginStream(Ref<NetscapePlugin>&& plugin, uint64_t streamID, const String& requestURLString, bool sendNotification, void* notificationData)
     : m_plugin(WTFMove(plugin))

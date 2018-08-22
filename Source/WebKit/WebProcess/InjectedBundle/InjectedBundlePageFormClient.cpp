@@ -37,9 +37,8 @@
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 InjectedBundlePageFormClient::InjectedBundlePageFormClient(const WKBundlePageFormClientBase* client)
 {

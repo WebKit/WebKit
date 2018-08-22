@@ -46,9 +46,8 @@
 #include "NetscapePluginUnix.h"
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 // The plug-in that we're currently calling NPP_New for.
 static NetscapePlugin* currentNPPNewPlugin;

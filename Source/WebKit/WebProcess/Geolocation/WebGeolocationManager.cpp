@@ -36,9 +36,8 @@
 #include <WebCore/GeolocationPosition.h>
 #include <WebCore/Page.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 const char* WebGeolocationManager::supplementName()
 {

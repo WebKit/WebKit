@@ -29,9 +29,8 @@
 
 #include "NetscapePlugin.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void NetscapePlugin::platformPreInitialize()
 {

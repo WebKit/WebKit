@@ -50,9 +50,8 @@
 #include "ViewGestureControllerMessages.h"
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #if PLATFORM(IOS)
 static const double minimumScaleDifferenceForZooming = 0.3;

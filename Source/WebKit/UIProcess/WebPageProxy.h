@@ -158,6 +158,7 @@ class Connection;
 
 namespace WebCore {
 class AuthenticationChallenge;
+class CertificateInfo;
 class Cursor;
 class DragData;
 class FloatRect;
@@ -218,7 +219,6 @@ typedef HWND PlatformWidget;
 #endif
 
 namespace WebKit {
-class CertificateInfo;
 class DrawingAreaProxy;
 class NativeWebGestureEvent;
 class NativeWebKeyboardEvent;

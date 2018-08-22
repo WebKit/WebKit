@@ -85,10 +85,9 @@
 #include "WebNotificationManager.h"
 #endif
 
+namespace WebKit {
 using namespace WebCore;
 using namespace JSC;
-
-namespace WebKit {
 
 RefPtr<InjectedBundle> InjectedBundle::create(WebProcessCreationParameters& parameters, API::Object* initializationUserData)
 {

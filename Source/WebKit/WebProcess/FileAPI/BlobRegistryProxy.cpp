@@ -33,9 +33,8 @@
 #include <WebCore/BlobDataFileReference.h>
 #include <WebCore/SWContextManager.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void BlobRegistryProxy::registerFileBlobURL(const WebCore::URL& url, Ref<BlobDataFileReference>&& file, const String& contentType)
 {

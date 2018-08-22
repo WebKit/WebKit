@@ -33,14 +33,14 @@
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 
-using namespace WebCore;
-using namespace WebKit;
-
 namespace API {
 template<> struct ClientTraits<WKBundlePageBannerClientBase> {
     typedef std::tuple<WKBundlePageBannerClientV0> Versions;
 };
 }
+
+namespace WebKit {
+using namespace WebCore;
 
 class PageBannerClientImpl : API::Client<WKBundlePageBannerClientBase>, public PageBanner::Client {
 public:
@@ -96,18 +96,20 @@ private:
     }
 };
 
+}
+
 WKBundlePageBannerRef WKBundlePageBannerCreateBannerWithCALayer(CALayer *layer, int height, WKBundlePageBannerClientBase* wkClient)
 {
     if (wkClient && wkClient->version)
         return 0;
 
-    auto clientImpl = std::make_unique<PageBannerClientImpl>(wkClient);
-    return toAPI(&PageBanner::create(layer, height, clientImpl.release()).leakRef());
+    auto clientImpl = std::make_unique<WebKit::PageBannerClientImpl>(wkClient);
+    return toAPI(&WebKit::PageBanner::create(layer, height, clientImpl.release()).leakRef());
 }
 
-CALayer * WKBundlePageBannerGetLayer(WKBundlePageBannerRef pageBanner)
+CALayer *WKBundlePageBannerGetLayer(WKBundlePageBannerRef pageBanner)
 {
-    return toImpl(pageBanner)->layer();
+    return WebKit::toImpl(pageBanner)->layer();
 }
 
 #endif // !PLATFORM(IOS)

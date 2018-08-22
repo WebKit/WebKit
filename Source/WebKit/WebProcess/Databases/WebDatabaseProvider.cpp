@@ -32,9 +32,8 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static HashMap<uint64_t, WebDatabaseProvider*>& databaseProviders()
 {

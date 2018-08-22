@@ -28,9 +28,8 @@
 
 #include "APIArray.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Ref<API::Array> InjectedBundleBackForwardListItem::children() const
 {

@@ -55,16 +55,15 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
 
-namespace WebKit {
+typedef HashMap<Node*, InjectedBundleNodeHandle*> DOMNodeHandleCache;
 
-typedef HashMap<Node*, InjectedBundleNodeHandle*> DOMHandleCache;
-
-static DOMHandleCache& domHandleCache()
+static DOMNodeHandleCache& domNodeHandleCache()
 {
-    static NeverDestroyed<DOMHandleCache> cache;
+    static NeverDestroyed<DOMNodeHandleCache> cache;
     return cache;
 }
 
@@ -84,7 +83,7 @@ RefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::getOrCreate(Node* nod
 
 Ref<InjectedBundleNodeHandle> InjectedBundleNodeHandle::getOrCreate(Node& node)
 {
-    DOMHandleCache::AddResult result = domHandleCache().add(&node, nullptr);
+    DOMNodeHandleCache::AddResult result = domNodeHandleCache().add(&node, nullptr);
     if (!result.isNewEntry)
         return Ref<InjectedBundleNodeHandle>(*result.iterator->value);
 
@@ -105,7 +104,7 @@ InjectedBundleNodeHandle::InjectedBundleNodeHandle(Node& node)
 
 InjectedBundleNodeHandle::~InjectedBundleNodeHandle()
 {
-    domHandleCache().remove(m_node.ptr());
+    domNodeHandleCache().remove(m_node.ptr());
 }
 
 Node* InjectedBundleNodeHandle::coreNode()

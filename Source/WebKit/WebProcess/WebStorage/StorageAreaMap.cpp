@@ -44,9 +44,8 @@
 #include <WebCore/StorageMap.h>
 #include <WebCore/StorageType.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static uint64_t generateStorageMapID()
 {

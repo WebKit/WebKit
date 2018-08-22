@@ -45,9 +45,8 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/SharedBuffer.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static uint64_t generatePluginInstanceID()
 {

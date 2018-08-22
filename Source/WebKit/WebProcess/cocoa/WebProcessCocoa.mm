@@ -95,9 +95,8 @@
 #import <os/state_private.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #if PLATFORM(MAC)
 static const Seconds cpuMonitoringInterval { 8_min };
