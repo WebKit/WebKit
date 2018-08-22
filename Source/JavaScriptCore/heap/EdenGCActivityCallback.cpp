@@ -36,20 +36,21 @@ EdenGCActivityCallback::EdenGCActivityCallback(Heap* heap)
 {
 }
 
-void EdenGCActivityCallback::doCollection(VM& vm)
+void EdenGCActivityCallback::doCollection()
 {
-    vm.heap.collectAsync(CollectionScope::Eden);
+    m_vm->heap.collectAsync(CollectionScope::Eden);
 }
 
-Seconds EdenGCActivityCallback::lastGCLength(Heap& heap)
+Seconds EdenGCActivityCallback::lastGCLength()
 {
-    return heap.lastEdenGCLength();
+    return m_vm->heap.lastEdenGCLength();
 }
 
-double EdenGCActivityCallback::deathRate(Heap& heap)
+double EdenGCActivityCallback::deathRate()
 {
-    size_t sizeBefore = heap.sizeBeforeLastEdenCollection();
-    size_t sizeAfter = heap.sizeAfterLastEdenCollection();
+    Heap* heap = &m_vm->heap;
+    size_t sizeBefore = heap->sizeBeforeLastEdenCollection();
+    size_t sizeAfter = heap->sizeAfterLastEdenCollection();
     if (!sizeBefore)
         return 1.0;
     if (sizeAfter > sizeBefore) {

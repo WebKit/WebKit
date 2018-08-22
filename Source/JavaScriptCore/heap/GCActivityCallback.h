@@ -48,22 +48,24 @@ public:
 
     GCActivityCallback(Heap*);
 
-    void doWork(VM&) override;
+    void doWork() override;
 
-    virtual void doCollection(VM&) = 0;
+    virtual void doCollection() = 0;
 
-    void didAllocate(Heap&, size_t);
-    void willCollect();
-    void cancel();
+    virtual void didAllocate(size_t);
+    virtual void willCollect();
+    virtual void cancel();
     bool isEnabled() const { return m_enabled; }
     void setEnabled(bool enabled) { m_enabled = enabled; }
 
     static bool s_shouldCreateGCTimer;
 
+    MonotonicTime nextFireTime();
+
 protected:
-    virtual Seconds lastGCLength(Heap&) = 0;
+    virtual Seconds lastGCLength() = 0;
     virtual double gcTimeSlice(size_t bytes) = 0;
-    virtual double deathRate(Heap&) = 0;
+    virtual double deathRate() = 0;
 
     GCActivityCallback(VM* vm)
         : Base(vm)
@@ -75,6 +77,7 @@ protected:
     bool m_enabled;
 
 protected:
+    void cancelTimer();
     void scheduleTimer(Seconds);
 
 private:

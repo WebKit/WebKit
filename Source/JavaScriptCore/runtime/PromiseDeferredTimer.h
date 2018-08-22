@@ -44,9 +44,9 @@ public:
 
     PromiseDeferredTimer(VM&);
 
-    void doWork(VM&) override;
+    void doWork() override;
 
-    void addPendingPromise(VM&, JSPromiseDeferred*, Vector<Strong<JSCell>>&& dependencies);
+    void addPendingPromise(JSPromiseDeferred*, Vector<Strong<JSCell>>&& dependencies);
     JS_EXPORT_PRIVATE bool hasPendingPromise(JSPromiseDeferred* ticket);
     JS_EXPORT_PRIVATE bool hasDependancyInPendingPromise(JSPromiseDeferred* ticket, JSCell* dependency);
     // JSPromiseDeferred should handle canceling when the promise is resolved or rejected.

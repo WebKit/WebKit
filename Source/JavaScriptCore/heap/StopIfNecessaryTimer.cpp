@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,11 +35,11 @@ StopIfNecessaryTimer::StopIfNecessaryTimer(VM* vm)
 {
 }
 
-void StopIfNecessaryTimer::doWork(VM& vm)
+void StopIfNecessaryTimer::doWork()
 {
     cancelTimer();
     WTF::storeStoreFence();
-    vm.heap.stopIfNecessary();
+    m_vm->heap.stopIfNecessary();
 }
 
 void StopIfNecessaryTimer::scheduleSoon()
@@ -48,7 +48,7 @@ void StopIfNecessaryTimer::scheduleSoon()
         WTF::loadLoadFence();
         return;
     }
-    setTimeUntilFire(0_s);
+    scheduleTimer(0_s);
 }
 
 } // namespace JSC

@@ -39,9 +39,9 @@ FullGCActivityCallback::FullGCActivityCallback(Heap* heap)
 {
 }
 
-void FullGCActivityCallback::doCollection(VM& vm)
+void FullGCActivityCallback::doCollection()
 {
-    Heap& heap = vm.heap;
+    Heap& heap = m_vm->heap;
     m_didGCRecently = false;
 
 #if !PLATFORM(IOS)
@@ -56,15 +56,16 @@ void FullGCActivityCallback::doCollection(VM& vm)
     heap.collectAsync(CollectionScope::Full);
 }
 
-Seconds FullGCActivityCallback::lastGCLength(Heap& heap)
+Seconds FullGCActivityCallback::lastGCLength()
 {
-    return heap.lastFullGCLength();
+    return m_vm->heap.lastFullGCLength();
 }
 
-double FullGCActivityCallback::deathRate(Heap& heap)
+double FullGCActivityCallback::deathRate()
 {
-    size_t sizeBefore = heap.sizeBeforeLastFullCollection();
-    size_t sizeAfter = heap.sizeAfterLastFullCollection();
+    Heap* heap = &m_vm->heap;
+    size_t sizeBefore = heap->sizeBeforeLastFullCollection();
+    size_t sizeAfter = heap->sizeAfterLastFullCollection();
     if (!sizeBefore)
         return 1.0;
     if (sizeAfter > sizeBefore) {

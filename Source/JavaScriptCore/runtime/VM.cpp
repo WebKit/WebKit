@@ -381,8 +381,6 @@ VM::VM(VMType vmType, HeapType heapType)
     updateSoftReservedZoneSize(Options::softReservedZoneSize());
     setLastStackTop(stack.origin());
 
-    JSRunLoopTimer::Manager::shared().registerVM(*this);
-
     // Need to be careful to keep everything consistent here
     JSLockHolder lock(this);
     AtomicStringTable* existingEntryAtomicStringTable = Thread::current().setCurrentAtomicStringTable(m_atomicStringTable);
@@ -583,8 +581,6 @@ VM::~VM()
     ASSERT(currentThreadIsHoldingAPILock());
     m_apiLock->willDestroyVM(this);
     heap.lastChanceToFinalize();
-
-    JSRunLoopTimer::Manager::shared().unregisterVM(*this);
     
     delete interpreter;
 #ifndef NDEBUG
@@ -1213,11 +1209,27 @@ void VM::verifyExceptionCheckNeedIsSatisfied(unsigned recursionDepth, ExceptionE
 #endif
 
 #if USE(CF)
+void VM::registerRunLoopTimer(JSRunLoopTimer* timer)
+{
+    ASSERT(runLoop());
+    ASSERT(!m_runLoopTimers.contains(timer));
+    m_runLoopTimers.add(timer);
+    timer->setRunLoop(runLoop());
+}
+
+void VM::unregisterRunLoopTimer(JSRunLoopTimer* timer)
+{
+    ASSERT(m_runLoopTimers.contains(timer));
+    m_runLoopTimers.remove(timer);
+    timer->setRunLoop(nullptr);
+}
+
 void VM::setRunLoop(CFRunLoopRef runLoop)
 {
     ASSERT(runLoop);
     m_runLoop = runLoop;
-    JSRunLoopTimer::Manager::shared().didChangeRunLoop(*this, runLoop);
+    for (auto timer : m_runLoopTimers)
+        timer->setRunLoop(runLoop);
 }
 #endif // USE(CF)
 
