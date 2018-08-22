@@ -1,3 +1,19 @@
+2018-08-21  Megan Gardner  <megan_gardner@apple.com>
+
+        Change Selection modification to not snap the grabber when selecting above or below the selection anchor
+        https://bugs.webkit.org/show_bug.cgi?id=188826
+
+        Reviewed by Tim Horton.
+
+        Selecting single lines is sometimes difficult because we currently snap selections to single
+        characters if we move past the position of the other anchor in our selection. This patch changes
+        this behaviour to reflect the behaviour in the rest of this system, which snaps the selection
+        to the position on the line of the other anchor, rather than snapping it all the way a single
+        character. This updates the tests to reflect this new behaviour.
+
+        * fast/events/touch/ios/long-press-then-drag-down-to-change-selected-text.html:
+        * fast/events/touch/ios/long-press-then-drag-up-to-change-selected-text.html:
+
 2018-08-21  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Support "name" option for dedicated workers

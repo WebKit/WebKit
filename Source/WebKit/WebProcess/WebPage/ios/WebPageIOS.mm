@@ -1217,7 +1217,25 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
 
 static RefPtr<Range> rangeForPointInRootViewCoordinates(Frame& frame, const IntPoint& pointInRootViewCoordinates, bool baseIsStart)
 {
-    IntPoint pointInDocument = frame.view()->rootViewToContents(pointInRootViewCoordinates);
+    VisibleSelection existingSelection = frame.selection().selection();
+    VisiblePosition selectionStart = existingSelection.visibleStart();
+    VisiblePosition selectionEnd = existingSelection.visibleEnd();
+    
+    IntPoint adjustedPoint = pointInRootViewCoordinates;
+    
+    if (baseIsStart) {
+        IntRect caret = existingSelection.visibleStart().absoluteCaretBounds();
+        int startY = caret.center().y();
+        if (adjustedPoint.y() < startY)
+            adjustedPoint.setY(startY);
+    } else {
+        IntRect caret = existingSelection.visibleEnd().absoluteCaretBounds();
+        int endY = caret.center().y();
+        if (adjustedPoint.y() > endY)
+            adjustedPoint.setY(endY);
+    }
+    
+    IntPoint pointInDocument = frame.view()->rootViewToContents(adjustedPoint);
     VisiblePosition result;
     RefPtr<Range> range;
     
@@ -1226,10 +1244,6 @@ static RefPtr<Range> rangeForPointInRootViewCoordinates(Frame& frame, const IntP
         result = frame.eventHandler().selectionExtentRespectingEditingBoundary(frame.selection().selection(), hitTest.localPoint(), hitTest.targetNode()).deepEquivalent();
     else
         result = frame.visiblePositionForPoint(pointInDocument).deepEquivalent();
-    
-    VisibleSelection existingSelection = frame.selection().selection();
-    VisiblePosition selectionStart = existingSelection.visibleStart();
-    VisiblePosition selectionEnd = existingSelection.visibleEnd();
     
     if (baseIsStart) {
         if (comparePositions(result, selectionStart) <= 0)

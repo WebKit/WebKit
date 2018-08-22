@@ -63,7 +63,7 @@
             output += '<br>';
 
             var result = await touchAndDragFromPointToPoint(dragX, dragY, dragX, dragY4);
-            if (document.getSelection().toString() == "s")
+            if (document.getSelection().toString() == "sed")
                 output += 'PASS: Correct Selection';
             else
                 output += 'FAIL: failed to reduce selection to a single character by dragging up. Incorrect Selection: ' + document.getSelection().toString();
