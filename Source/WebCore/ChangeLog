@@ -1,3 +1,18 @@
+2018-08-22  Eric Carlson  <eric.carlson@apple.com>
+
+        Log more often during AirPlay state changes
+        https://bugs.webkit.org/show_bug.cgi?id=188854
+
+        Always log some infrequent but important AirPlay state changes to make debugging easier.
+
+        Reviewed by Jer Noble.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::webkitShowPlaybackTargetPicker): Low always.
+        (WebCore::HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged): Ditto.
+        (WebCore::HTMLMediaElement::setWirelessPlaybackTarget): Ditto.
+        (WebCore::HTMLMediaElement::setShouldPlayToPlaybackTarget): Ditto.
+
 2018-08-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Focus navigation order in slot fallback contents is wrong
