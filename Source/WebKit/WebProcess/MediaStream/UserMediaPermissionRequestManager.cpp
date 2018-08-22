@@ -254,7 +254,7 @@ void UserMediaPermissionRequestManager::captureDevicesChanged(DeviceAccessState 
     // * any of the input devices are attached to an active MediaStream in the browsing context, or
     // * the active document is fully active and has focus.
 
-    bool isActive = (m_page.corePage()->activityState() & focusedActiveWindow) == focusedActiveWindow;
+    bool isActive = m_page.corePage()->activityState().containsAll(focusedActiveWindow);
     if (!isActive && accessState == DeviceAccessState::NoAccess) {
         if (!isActive) {
             if (!m_monitoringActivityStateChange) {
@@ -277,7 +277,7 @@ void UserMediaPermissionRequestManager::captureDevicesChanged(DeviceAccessState 
 
 void UserMediaPermissionRequestManager::activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> oldActivityState, OptionSet<WebCore::ActivityState::Flag> newActivityState)
 {
-    if ((newActivityState & focusedActiveWindow) != focusedActiveWindow)
+    if (!newActivityState.containsAll(focusedActiveWindow))
         return;
 
     RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this)]() mutable {

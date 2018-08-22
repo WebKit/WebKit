@@ -483,7 +483,7 @@ void Cache::traverse(Function<void (const TraversalEntry*)>&& traverseHandler)
 
     ++m_traverseCount;
 
-    m_storage->traverse(resourceType(), 0, [this, protectedThis = makeRef(*this), traverseHandler = WTFMove(traverseHandler)](const Storage::Record* record, const Storage::RecordInfo& recordInfo) {
+    m_storage->traverse(resourceType(), { }, [this, protectedThis = makeRef(*this), traverseHandler = WTFMove(traverseHandler)](const Storage::Record* record, const Storage::RecordInfo& recordInfo) {
         if (!record) {
             --m_traverseCount;
             traverseHandler(nullptr);
@@ -518,7 +518,7 @@ void Cache::dumpContentsToFile()
         size_t bodySize { 0 };
     };
     Totals totals;
-    auto flags = Storage::TraverseFlag::ComputeWorth | Storage::TraverseFlag::ShareCount;
+    auto flags = { Storage::TraverseFlag::ComputeWorth, Storage::TraverseFlag::ShareCount };
     size_t capacity = m_storage->capacity();
     m_storage->traverse(resourceType(), flags, [fd, totals, capacity](const Storage::Record* record, const Storage::RecordInfo& info) mutable {
         if (!record) {

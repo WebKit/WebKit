@@ -1,3 +1,28 @@
+2018-08-22  Antti Koivisto  <antti@apple.com>
+
+        Use OptionSet for NetworkCache::Storage::TraverseFlags
+        https://bugs.webkit.org/show_bug.cgi?id=188837
+
+        Reviewed by Anders Carlsson.
+
+        Type safe flags.
+
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::initializeSize):
+        (WebKit::CacheStorage::Caches::readRecordsList):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::traverse):
+        (WebKit::NetworkCache::Cache::dumpContentsToFile):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::TraverseOperation::TraverseOperation):
+        (WebKit::NetworkCache::Storage::traverse):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::captureDevicesChanged):
+        (WebKit::UserMediaPermissionRequestManager::activityStateDidChange):
+
+        Also use OptionSet<>::containsAll() in a few places.
+
 2018-08-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] pkg-config files should require libwpe

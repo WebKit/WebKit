@@ -98,10 +98,9 @@ public:
         ComputeWorth = 1 << 0,
         ShareCount = 1 << 1,
     };
-    typedef unsigned TraverseFlags;
-    typedef Function<void (const Record*, const RecordInfo&)> TraverseHandler;
+    using TraverseHandler = Function<void (const Record*, const RecordInfo&)>;
     // Null record signals end.
-    void traverse(const String& type, TraverseFlags, TraverseHandler&&);
+    void traverse(const String& type, OptionSet<TraverseFlag>, TraverseHandler&&);
 
     void setCapacity(size_t);
     size_t capacity() const { return m_capacity; }

@@ -123,7 +123,7 @@ public:
 struct Storage::TraverseOperation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TraverseOperation(Storage& storage, const String& type, TraverseFlags flags, TraverseHandler&& handler)
+    TraverseOperation(Storage& storage, const String& type, OptionSet<TraverseFlag> flags, TraverseHandler&& handler)
         : storage(storage)
         , type(type)
         , flags(flags)
@@ -132,7 +132,7 @@ public:
     Ref<Storage> storage;
 
     const String type;
-    const TraverseFlags flags;
+    const OptionSet<TraverseFlag> flags;
     const TraverseHandler handler;
 
     Lock activeMutex;
@@ -902,7 +902,7 @@ void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler,
     m_writeOperationDispatchTimer.startOneShot(m_initialWriteDelay);
 }
 
-void Storage::traverse(const String& type, TraverseFlags flags, TraverseHandler&& traverseHandler)
+void Storage::traverse(const String& type, OptionSet<TraverseFlag> flags, TraverseHandler&& traverseHandler)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(traverseHandler);
