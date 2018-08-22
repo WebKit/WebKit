@@ -1,3 +1,17 @@
+2018-08-22  Tim Horton  <timothy_horton@apple.com>
+
+        De-unify WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=188865
+
+        Reviewed by Wenson Hsieh.
+
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        WebPage being unified is causing mysterious build issues inside Carbon headers
+        on High Sierra only. Also, WebPage by itself takes longer to build than
+        most full unified source files, so it might not make sense to unify it
+        with others (to maximize parallelism).
+
 2018-08-22  David Fenton  <david_fenton@apple.com>
 
         Unreviewed, rolling out r235204.
