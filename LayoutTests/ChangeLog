@@ -1,3 +1,12 @@
+2018-08-22  Ms2ger  <Ms2ger@igalia.com>
+
+        REGRESSION(r234330): [GTK] svg/as-image/svg-image-with-data-uri-background.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=188220
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations: Re-enable svg/as-image/svg-image-with-data-uri-background.html.
+
 2018-08-21  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Support "name" option for dedicated workers
