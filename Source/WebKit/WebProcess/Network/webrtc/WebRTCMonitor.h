@@ -52,6 +52,8 @@ private:
     void StartUpdating() final;
     void StopUpdating() final;
 
+    static void sendOnMainThread(Function<void(IPC::Connection&)>&&);
+
     unsigned m_clientCount { 0 };
     bool m_receivedNetworkList { false };
 };

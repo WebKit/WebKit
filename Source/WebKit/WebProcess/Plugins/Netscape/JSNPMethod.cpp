@@ -38,10 +38,9 @@
 #include <WebCore/JSHTMLElement.h>
 #include <WebCore/JSPluginElementFunctions.h>
 
+namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
-
-namespace WebKit {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSNPMethod);
 

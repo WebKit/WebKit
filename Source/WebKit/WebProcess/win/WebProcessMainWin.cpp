@@ -29,11 +29,10 @@
 #include "ChildProcessMain.h"
 #include "WebProcess.h"
 
+namespace WebKit {
 using namespace WebCore;
 
-namespace WebKit {
-
-class WebProcessMain final: public ChildProcessMainBase {
+class WebProcessMain final : public ChildProcessMainBase {
 public:
     bool platformInitialize() override
     {

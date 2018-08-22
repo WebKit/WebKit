@@ -29,9 +29,8 @@
 #include "WebConnectionMessages.h"
 #include "WebProcess.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Ref<WebConnectionToUIProcess> WebConnectionToUIProcess::create(WebProcess* process)
 {

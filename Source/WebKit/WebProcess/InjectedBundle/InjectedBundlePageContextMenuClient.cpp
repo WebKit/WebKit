@@ -38,9 +38,8 @@
 #include "WebPage.h"
 #include <WebCore/ContextMenu.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 InjectedBundlePageContextMenuClient::InjectedBundlePageContextMenuClient(const WKBundlePageContextMenuClientBase* client)
 {

@@ -40,9 +40,8 @@
 #import <WebCore/NotImplemented.h>
 #import <wtf/RefPtr.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 

@@ -37,9 +37,8 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/Page.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 WebContextMenu::WebContextMenu(WebPage* page)
     : m_page(page)

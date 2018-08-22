@@ -44,9 +44,8 @@
 #import <WebCore/ScrollingTreeFixedNode.h>
 #import <WebCore/ScrollingTreeStickyNode.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 RemoteScrollingCoordinator::RemoteScrollingCoordinator(WebPage* page)
     : AsyncScrollingCoordinator(page->corePage())

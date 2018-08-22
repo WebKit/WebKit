@@ -42,9 +42,8 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/WebCoreNSURLExtras.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
     
 void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {

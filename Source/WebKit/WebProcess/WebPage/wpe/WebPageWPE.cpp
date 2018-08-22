@@ -32,9 +32,8 @@
 #include <WebCore/Settings.h>
 #include <WebCore/SharedBuffer.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void WebPage::platformInitialize()
 {

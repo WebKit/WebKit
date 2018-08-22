@@ -50,9 +50,8 @@
 #include <WebCore/SharedBuffer.h>
 #include <pal/SessionID.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier connectionIdentifier)
     : m_connection(IPC::Connection::createClientConnection(connectionIdentifier, *this))

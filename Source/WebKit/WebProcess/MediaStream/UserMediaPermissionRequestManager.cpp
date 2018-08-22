@@ -34,10 +34,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 
-using namespace WebCore;
-
 namespace WebKit {
-
 using namespace WebCore;
 
 static constexpr OptionSet<WebCore::ActivityState::Flag> focusedActiveWindow = { WebCore::ActivityState::IsFocused, WebCore::ActivityState::WindowIsActive };

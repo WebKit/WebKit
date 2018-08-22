@@ -34,9 +34,8 @@
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/InspectorController.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Ref<RemoteWebInspectorUI> RemoteWebInspectorUI::create(WebPage& page)
 {

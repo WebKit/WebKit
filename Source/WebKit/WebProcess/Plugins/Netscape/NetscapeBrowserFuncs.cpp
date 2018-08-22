@@ -49,9 +49,8 @@
 #include <WebCore/PlatformDisplayX11.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 // Helper class for delaying destruction of a plug-in.
 class PluginDestructionProtector {

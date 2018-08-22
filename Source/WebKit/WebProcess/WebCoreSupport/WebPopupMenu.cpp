@@ -30,9 +30,8 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/PopupMenuClient.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Ref<WebPopupMenu> WebPopupMenu::create(WebPage* page, PopupMenuClient* client)
 {

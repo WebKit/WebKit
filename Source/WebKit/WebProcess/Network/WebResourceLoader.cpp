@@ -45,11 +45,10 @@
 #include <WebCore/SubresourceLoader.h>
 #include <wtf/CompletionHandler.h>
 
-using namespace WebCore;
-
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - WebResourceLoader::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
+using namespace WebCore;
 
 Ref<WebResourceLoader> WebResourceLoader::create(Ref<ResourceLoader>&& coreLoader, const TrackingParameters& trackingParameters)
 {
@@ -230,3 +229,5 @@ bool WebResourceLoader::isAlwaysOnLoggingAllowed() const
 }
 
 } // namespace WebKit
+
+#undef RELEASE_LOG_IF_ALLOWED

@@ -53,9 +53,8 @@
 #import <mach/mach_port.h>
 #import <wtf/MachSendRight.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static IntRect inlineVideoFrame(HTMLVideoElement& element)
 {

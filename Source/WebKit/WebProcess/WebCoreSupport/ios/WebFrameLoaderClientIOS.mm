@@ -45,9 +45,8 @@
 #import <WebCore/QuickLook.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void WebFrameLoaderClient::didRestoreFrameHierarchyForCachedFrame()
 {

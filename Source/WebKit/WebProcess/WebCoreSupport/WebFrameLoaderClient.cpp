@@ -94,9 +94,8 @@
 #include <wtf/ProcessID.h>
 #include <wtf/ProcessPrivilege.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 WebFrameLoaderClient::WebFrameLoaderClient()
     : m_frame(0)

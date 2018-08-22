@@ -92,10 +92,9 @@
 #include "PrinterListGtk.h"
 #endif
 
+namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
-
-namespace WebKit {
 
 static double area(WebFrame* frame)
 {

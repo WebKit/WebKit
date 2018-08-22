@@ -72,9 +72,8 @@
 #include "WebSelectionData.h"
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void WebPlatformStrategies::initialize()
 {

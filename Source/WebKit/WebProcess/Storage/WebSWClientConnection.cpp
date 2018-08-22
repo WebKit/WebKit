@@ -47,10 +47,9 @@
 #include <WebCore/ServiceWorkerRegistrationData.h>
 #include <WebCore/ServiceWorkerRegistrationKey.h>
 
+namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
-
-namespace WebKit {
 
 WebSWClientConnection::WebSWClientConnection(IPC::Connection& connection, SessionID sessionID)
     : m_sessionID(sessionID)

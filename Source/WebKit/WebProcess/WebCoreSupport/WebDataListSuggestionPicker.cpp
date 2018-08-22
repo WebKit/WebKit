@@ -34,9 +34,8 @@
 #include "WebProcess.h"
 #include <WebCore/DataListSuggestionsClient.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 WebDataListSuggestionPicker::WebDataListSuggestionPicker(WebPage* page, DataListSuggestionsClient* client)
     : m_dataListSuggestionsClient(client)

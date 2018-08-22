@@ -48,9 +48,8 @@
 #include <WebCore/UserAgent.h>
 #include <WebCore/WindowsKeyboardCodes.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void WebPage::platformInitialize()
 {

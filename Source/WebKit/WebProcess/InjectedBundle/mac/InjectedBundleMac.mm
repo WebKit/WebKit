@@ -44,13 +44,12 @@
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
-using namespace WebCore;
-
 @interface NSBundle (WKAppDetails)
 - (CFBundleRef)_cfBundle;
 @end
 
 namespace WebKit {
+using namespace WebCore;
 
 bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, API::Object* initializationUserData)
 {

@@ -49,15 +49,14 @@
 #include <WebCore/LocalDefaultSystemAppearance.h>
 #endif
 
+namespace WebKit {
 using namespace WebCore;
 
-namespace WebKit {
+typedef HashMap<Range*, InjectedBundleRangeHandle*> DOMRangeHandleCache;
 
-typedef HashMap<Range*, InjectedBundleRangeHandle*> DOMHandleCache;
-
-static DOMHandleCache& domHandleCache()
+static DOMRangeHandleCache& domRangeHandleCache()
 {
-    static NeverDestroyed<DOMHandleCache> cache;
+    static NeverDestroyed<DOMRangeHandleCache> cache;
     return cache;
 }
 
@@ -72,7 +71,7 @@ RefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(Range* 
     if (!range)
         return nullptr;
 
-    DOMHandleCache::AddResult result = domHandleCache().add(range, nullptr);
+    DOMRangeHandleCache::AddResult result = domRangeHandleCache().add(range, nullptr);
     if (!result.isNewEntry)
         return result.iterator->value;
 
@@ -93,7 +92,7 @@ InjectedBundleRangeHandle::InjectedBundleRangeHandle(Range& range)
 
 InjectedBundleRangeHandle::~InjectedBundleRangeHandle()
 {
-    domHandleCache().remove(m_range.ptr());
+    domRangeHandleCache().remove(m_range.ptr());
 }
 
 Range& InjectedBundleRangeHandle::coreRange() const

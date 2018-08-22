@@ -47,10 +47,9 @@
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
-
-namespace WebKit {
 
 static NPIdentifier npIdentifierFromIdentifier(PropertyName propertyName)
 {

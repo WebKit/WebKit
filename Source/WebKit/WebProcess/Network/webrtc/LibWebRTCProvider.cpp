@@ -32,9 +32,8 @@
 #include "WebProcess.h"
 #include <webrtc/pc/peerconnectionfactory.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {

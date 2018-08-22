@@ -44,9 +44,8 @@
 #include <WebCore/UserGestureIndicator.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #if ENABLE(NOTIFICATIONS)
 static uint64_t generateNotificationID()

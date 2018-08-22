@@ -36,9 +36,8 @@
 #include <WebCore/WindowsKeyboardCodes.h>
 #include <wtf/NeverDestroyed.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 // The idea for the array/map below comes from Blink's EditingBehavior.cpp.
 

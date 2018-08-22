@@ -63,10 +63,9 @@
 #include <WebCore/PreviewLoaderClient.h>
 #endif
 
+namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
-
-namespace WebKit {
 
 static const Seconds asyncWorkerTerminationTimeout { 10_s };
 static const Seconds syncWorkerTerminationTimeout { 100_ms }; // Only used by layout tests.
