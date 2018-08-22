@@ -59,4 +59,5 @@ interface HTMLTextAreaElement : HTMLElement {
     void setSelectionRange(optional long start = 0, optional long end = 0, optional DOMString direction);
 
     attribute DOMString autocomplete;
+    attribute DOMString inputMode;
 };

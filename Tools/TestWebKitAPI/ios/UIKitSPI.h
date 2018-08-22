@@ -59,6 +59,9 @@ WTF_EXTERN_C_END
 
 @end
 
+@interface UITextInputTraits : NSObject <UITextInputTraits>
+@end
+
 @protocol UIDragInteractionDelegate_ForWebKitOnly <UIDragInteractionDelegate>
 @optional
 - (void)_dragInteraction:(UIDragInteraction *)interaction prepareForSession:(id<UIDragSession>)session completion:(void(^)(void))completion;
@@ -71,6 +74,7 @@ WTF_EXTERN_C_END
 @class WebEvent;
 
 @protocol UITextInputPrivate <UITextInput, UITextInputTraits_Private>
+- (UITextInputTraits *)textInputTraits;
 - (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion;
 - (void)handleKeyWebEvent:(WebEvent *)theEvent withCompletionHandler:(void (^)(WebEvent *, BOOL))completionHandler;
 @end

@@ -4790,6 +4790,7 @@
 		E517670320B88C1400D41167 /* DataListSuggestionInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = E517670220B88C1400D41167 /* DataListSuggestionInformation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E52CF54D20A268AC00DADA27 /* DataListSuggestionsClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E52CF54C20A268AC00DADA27 /* DataListSuggestionsClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E52CF54F20A35A2800DADA27 /* DataListSuggestionPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = E52CF54E20A35A2800DADA27 /* DataListSuggestionPicker.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E52EFDF42112875A00AD282A /* InputModeNames.h in Headers */ = {isa = PBXBuildFile; fileRef = E52EFDF22112875A00AD282A /* InputModeNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E58B45BA20AD07DD00991025 /* DataListButtonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E58B45B820AD07DD00991025 /* DataListButtonElement.h */; };
 		E58B45BB20AD07DD00991025 /* DataListButtonElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E58B45B920AD07DD00991025 /* DataListButtonElement.cpp */; };
 		E59DD4B821098287003C8B47 /* ListButtonArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = E59DD4B721098285003C8B47 /* ListButtonArrow.png */; };
@@ -14434,6 +14435,8 @@
 		E526AF3E1727F8F200E41781 /* Performance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Performance.cpp; sourceTree = "<group>"; };
 		E52CF54C20A268AC00DADA27 /* DataListSuggestionsClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataListSuggestionsClient.h; sourceTree = "<group>"; };
 		E52CF54E20A35A2800DADA27 /* DataListSuggestionPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataListSuggestionPicker.h; sourceTree = "<group>"; };
+		E52EFDF22112875A00AD282A /* InputModeNames.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InputModeNames.h; sourceTree = "<group>"; };
+		E52EFDF32112875A00AD282A /* InputModeNames.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InputModeNames.cpp; sourceTree = "<group>"; };
 		E55F4979151B888000BB67DB /* LengthFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LengthFunctions.cpp; sourceTree = "<group>"; };
 		E58B45B820AD07DD00991025 /* DataListButtonElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataListButtonElement.h; sourceTree = "<group>"; };
 		E58B45B920AD07DD00991025 /* DataListButtonElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DataListButtonElement.cpp; sourceTree = "<group>"; };
@@ -20633,6 +20636,8 @@
 				97205AB21239291000B17380 /* ImageDocument.h */,
 				F55B3D8D1251F12D003EF269 /* ImageInputType.cpp */,
 				F55B3D8E1251F12D003EF269 /* ImageInputType.h */,
+				E52EFDF32112875A00AD282A /* InputModeNames.cpp */,
+				E52EFDF22112875A00AD282A /* InputModeNames.h */,
 				37E3524A12450C5200BAF5D9 /* InputType.cpp */,
 				37E3524C12450C6600BAF5D9 /* InputType.h */,
 				C348612115FDE21E007A1CC9 /* InputTypeNames.cpp */,
@@ -28264,6 +28269,7 @@
 				1C010701192594DF008A4201 /* InlineTextBoxStyle.h in Headers */,
 				510A58E51BAA40B100C19282 /* InProcessIDBServer.h in Headers */,
 				2EB767571DA19BDF003E23B5 /* InputEvent.h in Headers */,
+				E52EFDF42112875A00AD282A /* InputModeNames.h in Headers */,
 				37E3524D12450C6600BAF5D9 /* InputType.h in Headers */,
 				C348612415FDE21E007A1CC9 /* InputTypeNames.h in Headers */,
 				93309DEA099E64920056E581 /* InsertIntoTextNodeCommand.h in Headers */,

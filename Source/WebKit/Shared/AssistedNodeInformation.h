@@ -59,6 +59,17 @@ enum class InputType {
 #endif
 };
 
+enum class InputMode : uint8_t {
+    Auto,
+    Text,
+    Telephone,
+    Url,
+    Email,
+    Numeric,
+    Decimal,
+    Search
+};
+
 #if PLATFORM(IOS)
 struct OptionItem {
     OptionItem() { }
@@ -110,6 +121,7 @@ struct AssistedNodeInformation {
     bool insideFixedPosition { false };
     AutocapitalizeType autocapitalizeType { AutocapitalizeTypeDefault };
     InputType elementType { InputType::None };
+    InputMode inputMode { InputMode::Auto };
     String formAction;
     Vector<OptionItem> selectOptions;
     int selectedIndex { -1 };

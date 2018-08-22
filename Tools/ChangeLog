@@ -1,3 +1,17 @@
+2018-08-22  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Add support for the inputmode attribute
+        https://bugs.webkit.org/show_bug.cgi?id=183621
+
+        Reviewed by Tim Horton.
+
+        Added an API test to verify that the correct UIKeyboardType is set depending on
+        the type, inputmode, and pattern specified for an input field.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2018-08-22  Alex Christensen  <achristensen@webkit.org>
 
         Fix API test on Sierra after r235139

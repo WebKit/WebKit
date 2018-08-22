@@ -1,3 +1,15 @@
+2018-08-22  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Add support for the inputmode attribute
+        https://bugs.webkit.org/show_bug.cgi?id=183621
+
+        Reviewed by Tim Horton.
+
+        Added test to verify behavior when getting and setting the inputmode attribute.
+
+        * fast/forms/inputmode-attribute-expected.txt: Added.
+        * fast/forms/inputmode-attribute.html: Added.
+
 2018-08-22  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Some video tests under http/tests/security are crashing on EWS.

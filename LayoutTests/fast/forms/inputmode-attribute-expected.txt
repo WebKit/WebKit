@@ -1,0 +1,44 @@
+Test inputmode attribute
+
+
+Missing value default:
+PASS input.inputMode is ""
+PASS input.getAttribute("inputmode") is null
+
+Invalid value default:
+PASS input.inputMode = "foobar"; input.inputMode is ""
+PASS input.getAttribute("inputmode") is "foobar"
+PASS input.setAttribute("inputmode", "baz"); input.inputMode is ""
+
+Valid values:
+PASS input.inputMode = "text"; input.inputMode is "text"
+PASS input.getAttribute("inputmode") is "text"
+PASS input.setAttribute("inputmode", "text"); input.inputMode is "text"
+PASS input.inputMode = "tel"; input.inputMode is "tel"
+PASS input.getAttribute("inputmode") is "tel"
+PASS input.setAttribute("inputmode", "tel"); input.inputMode is "tel"
+PASS input.inputMode = "url"; input.inputMode is "url"
+PASS input.getAttribute("inputmode") is "url"
+PASS input.setAttribute("inputmode", "url"); input.inputMode is "url"
+PASS input.inputMode = "email"; input.inputMode is "email"
+PASS input.getAttribute("inputmode") is "email"
+PASS input.setAttribute("inputmode", "email"); input.inputMode is "email"
+PASS input.inputMode = "numeric"; input.inputMode is "numeric"
+PASS input.getAttribute("inputmode") is "numeric"
+PASS input.setAttribute("inputmode", "numeric"); input.inputMode is "numeric"
+PASS input.inputMode = "decimal"; input.inputMode is "decimal"
+PASS input.getAttribute("inputmode") is "decimal"
+PASS input.setAttribute("inputmode", "decimal"); input.inputMode is "decimal"
+PASS input.inputMode = "search"; input.inputMode is "search"
+PASS input.getAttribute("inputmode") is "search"
+PASS input.setAttribute("inputmode", "search"); input.inputMode is "search"
+
+Valid case-insensitive values:
+PASS input.inputMode = "tExt"; input.inputMode is "text"
+PASS input.getAttribute("inputmode") is "tExt"
+PASS input.setAttribute("inputmode", "tExt"); input.inputMode is "text"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

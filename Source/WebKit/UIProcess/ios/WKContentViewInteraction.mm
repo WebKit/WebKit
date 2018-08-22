@@ -3547,24 +3547,64 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         [_traits setAutocorrectionType:_assistedNodeInformation.isAutocorrect ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo];
     }
 
-    switch (_assistedNodeInformation.elementType) {
-    case InputType::Phone:
+    switch (_assistedNodeInformation.inputMode) {
+    case InputMode::Auto:
+        switch (_assistedNodeInformation.elementType) {
+        case InputType::Phone:
+            [_traits setKeyboardType:UIKeyboardTypePhonePad];
+            break;
+        case InputType::URL:
+            [_traits setKeyboardType:UIKeyboardTypeURL];
+            break;
+        case InputType::Email:
+            [_traits setKeyboardType:UIKeyboardTypeEmailAddress];
+            break;
+        case InputType::Number:
+            [_traits setKeyboardType:UIKeyboardTypeNumbersAndPunctuation];
+            break;
+        case InputType::NumberPad:
+            [_traits setKeyboardType:UIKeyboardTypeNumberPad];
+            break;
+        case InputType::None:
+        case InputType::ContentEditable:
+        case InputType::Text:
+        case InputType::Password:
+        case InputType::TextArea:
+        case InputType::Search:
+        case InputType::Date:
+        case InputType::DateTime:
+        case InputType::DateTimeLocal:
+        case InputType::Month:
+        case InputType::Week:
+        case InputType::Time:
+        case InputType::Select:
+#if ENABLE(INPUT_TYPE_COLOR)
+        case InputType::Color:
+#endif
+            [_traits setKeyboardType:UIKeyboardTypeDefault];
+        }
+        break;
+    case InputMode::Text:
+        [_traits setKeyboardType:UIKeyboardTypeDefault];
+        break;
+    case InputMode::Telephone:
         [_traits setKeyboardType:UIKeyboardTypePhonePad];
         break;
-    case InputType::URL:
+    case InputMode::Url:
         [_traits setKeyboardType:UIKeyboardTypeURL];
         break;
-    case InputType::Email:
+    case InputMode::Email:
         [_traits setKeyboardType:UIKeyboardTypeEmailAddress];
         break;
-    case InputType::Number:
+    case InputMode::Numeric:
         [_traits setKeyboardType:UIKeyboardTypeNumbersAndPunctuation];
         break;
-    case InputType::NumberPad:
-        [_traits setKeyboardType:UIKeyboardTypeNumberPad];
+    case InputMode::Decimal:
+        [_traits setKeyboardType:UIKeyboardTypeDecimalPad];
         break;
-    default:
-        [_traits setKeyboardType:UIKeyboardTypeDefault];
+    case InputMode::Search:
+        [_traits setKeyboardType:UIKeyboardTypeWebSearch];
+        break;
     }
 
     [_traits setTextContentType:contentTypeFromFieldName(_assistedNodeInformation.autofillFieldName)];

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<p>Test inputmode attribute</p>
+<input id="input">
+<div id=console></div>
+<script>
+debug('Missing value default:');
+shouldBe('input.inputMode', '""');
+shouldBeNull('input.getAttribute("inputmode")');
+
+debug('');
+debug('Invalid value default:');
+shouldBe('input.inputMode = "foobar"; input.inputMode', '""');
+shouldBe('input.getAttribute("inputmode")', '"foobar"');
+shouldBe('input.setAttribute("inputmode", "baz"); input.inputMode', '""');
+
+debug('');
+debug('Valid values:');
+shouldBe('input.inputMode = "text"; input.inputMode', '"text"');
+shouldBe('input.getAttribute("inputmode")', '"text"');
+shouldBe('input.setAttribute("inputmode", "text"); input.inputMode', '"text"');
+shouldBe('input.inputMode = "tel"; input.inputMode', '"tel"');
+shouldBe('input.getAttribute("inputmode")', '"tel"');
+shouldBe('input.setAttribute("inputmode", "tel"); input.inputMode', '"tel"');
+shouldBe('input.inputMode = "url"; input.inputMode', '"url"');
+shouldBe('input.getAttribute("inputmode")', '"url"');
+shouldBe('input.setAttribute("inputmode", "url"); input.inputMode', '"url"');
+shouldBe('input.inputMode = "email"; input.inputMode', '"email"');
+shouldBe('input.getAttribute("inputmode")', '"email"');
+shouldBe('input.setAttribute("inputmode", "email"); input.inputMode', '"email"');
+shouldBe('input.inputMode = "numeric"; input.inputMode', '"numeric"');
+shouldBe('input.getAttribute("inputmode")', '"numeric"');
+shouldBe('input.setAttribute("inputmode", "numeric"); input.inputMode', '"numeric"');
+shouldBe('input.inputMode = "decimal"; input.inputMode', '"decimal"');
+shouldBe('input.getAttribute("inputmode")', '"decimal"');
+shouldBe('input.setAttribute("inputmode", "decimal"); input.inputMode', '"decimal"');
+shouldBe('input.inputMode = "search"; input.inputMode', '"search"');
+shouldBe('input.getAttribute("inputmode")', '"search"');
+shouldBe('input.setAttribute("inputmode", "search"); input.inputMode', '"search"');
+
+debug('');
+debug('Valid case-insensitive values:');
+shouldBe('input.inputMode = "tExt"; input.inputMode', '"text"');
+shouldBe('input.getAttribute("inputmode")', '"tExt"');
+shouldBe('input.setAttribute("inputmode", "tExt"); input.inputMode', '"text"');
+
+debug('');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

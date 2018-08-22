@@ -84,8 +84,10 @@
 #import <WebCore/HTMLParserIdioms.h>
 #import <WebCore/HTMLSelectElement.h>
 #import <WebCore/HTMLTextAreaElement.h>
+#import <WebCore/HTMLTextFormControlElement.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/InputModeNames.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LibWebRTCProvider.h>
 #import <WebCore/MediaSessionManagerIOS.h>
@@ -2312,6 +2314,27 @@ static IntRect elementRectInRootViewCoordinates(const Node& node, const Frame& f
     return view->contentsToRootView(renderer->absoluteBoundingBoxRect());
 }
 
+static InputMode inputModeForAssistedNode(const Node& node)
+{
+    const AtomicString& inputMode = downcast<HTMLTextFormControlElement>(node).inputMode();
+    if (inputMode == InputModeNames::text())
+        return InputMode::Text;
+    if (inputMode == InputModeNames::tel())
+        return InputMode::Telephone;
+    if (inputMode == InputModeNames::url())
+        return InputMode::Url;
+    if (inputMode == InputModeNames::email())
+        return InputMode::Email;
+    if (inputMode == InputModeNames::numeric())
+        return InputMode::Numeric;
+    if (inputMode == InputModeNames::decimal())
+        return InputMode::Decimal;
+    if (inputMode == InputModeNames::search())
+        return InputMode::Search;
+
+    return InputMode::Auto;
+}
+
 void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
 {
     layoutIfNeeded();
@@ -2417,6 +2440,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         information.value = element.value();
         information.autofillFieldName = WebCore::toAutofillFieldName(element.autofillData().fieldName);
         information.placeholder = element.attributeWithoutSynchronization(HTMLNames::placeholderAttr);
+        information.inputMode = inputModeForAssistedNode(element);
     } else if (is<HTMLInputElement>(*m_assistedNode)) {
         HTMLInputElement& element = downcast<HTMLInputElement>(*m_assistedNode);
         HTMLFormElement* form = element.form();
@@ -2474,6 +2498,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         }
 #endif
 
+        information.inputMode = inputModeForAssistedNode(element);
         information.isReadOnly = element.isReadOnly();
         information.value = element.value();
         information.valueAsNumber = element.valueAsNumber();

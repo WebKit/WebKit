@@ -77,6 +77,7 @@ void AssistedNodeInformation::encode(IPC::Encoder& encoder) const
     encoder << isRTL;
     encoder.encodeEnum(autocapitalizeType);
     encoder.encodeEnum(elementType);
+    encoder.encodeEnum(inputMode);
     encoder << formAction;
     encoder << selectOptions;
     encoder << selectedIndex;
@@ -143,6 +144,9 @@ bool AssistedNodeInformation::decode(IPC::Decoder& decoder, AssistedNodeInformat
         return false;
 
     if (!decoder.decodeEnum(result.elementType))
+        return false;
+
+    if (!decoder.decodeEnum(result.inputMode))
         return false;
 
     if (!decoder.decode(result.formAction))
