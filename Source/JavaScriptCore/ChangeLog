@@ -1,3 +1,19 @@
+2018-08-19  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Should not rotate constant with 64
+        https://bugs.webkit.org/show_bug.cgi?id=188556
+
+        Reviewed by Saam Barati.
+
+        To defend against JIT splaying, we rotate a constant with a randomly generated seed.
+        But if a seed becomes 64 or 0, the following code performs `value << 64` or `value >> 64`
+        where value's type is uint64_t, and they cause undefined behaviors (UBs). This patch limits
+        the seed in the range of [1, 63] not to generate code causing UBs. This is found by UBSan.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::generateRotationSeed):
+        (JSC::MacroAssembler::rotationBlindConstant):
+
 2018-08-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r235107.
