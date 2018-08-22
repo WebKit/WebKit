@@ -1,5 +1,18 @@
 2018-08-22  Ms2ger  <Ms2ger@igalia.com>
 
+        [GTK] imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=187591
+
+        Unreviewed test gardening.
+
+        Re-enable mediasource-getvideoplaybackquality.html.
+
+        The crash was fixed in r233981, and the failure in r234981-r234983.
+
+        * platform/gtk/TestExpectations:
+
+2018-08-22  Ms2ger  <Ms2ger@igalia.com>
+
         REGRESSION(r234330): [GTK] svg/as-image/svg-image-with-data-uri-background.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=188220
 

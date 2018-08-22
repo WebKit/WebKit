@@ -2004,8 +2004,6 @@ webkit.org/b/187589 inspector/unit-tests/debounce.html [ Timeout Pass ]
 
 webkit.org/b/187590 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/document-timelines.html [ Failure Pass ]
 
-webkit.org/b/187591 imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html [ Failure Crash ]
-
 webkit.org/b/187761 http/tests/security/contentSecurityPolicy/1.1/plugintypes-affects-child.html [ Pass Failure ]
 
 webkit.org/b/187760 fast/mediastream/get-user-media-on-loadedmetadata.html [ Pass Failure ]
