@@ -1,3 +1,11 @@
+2018-08-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Do not include TreeOutlineDataGridSynchronizer.js in inspector main.
+
+        The script was removed in r235151.
+
+        * UserInterface/Main.html:
+
 2018-08-21  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Remove TreeOutlineDataGridSynchronizer
