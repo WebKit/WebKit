@@ -425,7 +425,7 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
         if (compositingReasons.opacityWithCompositedDescendants)
             addReason(WI.UIString("Element has opacity applied and composited descendants"));
         if (compositingReasons.maskWithCompositedDescendants)
-            addReason(WI.UIString("Element is masked and composited descendants"));
+            addReason(WI.UIString("Element is masked and has composited descendants"));
         if (compositingReasons.reflectionWithCompositedDescendants)
             addReason(WI.UIString("Element has a reflection and composited descendants"));
         if (compositingReasons.filterWithCompositedDescendants)
@@ -439,7 +439,7 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
         if (compositingReasons.preserve3D)
             addReason(WI.UIString("Element has “transform-style: preserve-3d” style"));
         if (compositingReasons.willChange)
-            addReason(WI.UIString("Element has “will-change” style with includes opacity, transform, transform-style, perspective, filter or backdrop-filter"));
+            addReason(WI.UIString("Element has “will-change” style which includes opacity, transform, transform-style, perspective, filter or backdrop-filter"));
         if (compositingReasons.root)
             addReason(WI.UIString("Element is the root element"));
         if (compositingReasons.blending)
