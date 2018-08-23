@@ -1,3 +1,17 @@
+2018-08-23  Don Olmstead  <don.olmstead@sony.com>
+
+        [WTF] Add generic implementation for Memory querying
+        https://bugs.webkit.org/show_bug.cgi?id=188867
+        <rdar://problem/43630726>
+
+        Unreviewed build fix.
+
+        Adding MemoryPressureHandler::memoryMeasurementTimerFired was done
+        prematurely.
+
+        * wtf/generic/MemoryPressureHandlerGeneric.cpp:
+        (WTF::MemoryPressureHandler::memoryMeasurementTimerFired): Deleted.
+
 2018-08-22  Don Olmstead  <don.olmstead@sony.com>
 
         [WTF] Add generic implementation for Memory querying

@@ -28,10 +28,6 @@
 
 namespace WTF {
 
-void MemoryPressureHandler::memoryMeasurementTimerFired()
-{
-}
-
 void MemoryPressureHandler::platformReleaseMemory(Critical)
 {
 }
