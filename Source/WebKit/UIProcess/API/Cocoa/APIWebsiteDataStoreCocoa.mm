@@ -29,19 +29,11 @@
 #include "SandboxExtension.h"
 #include "SandboxUtilities.h"
 
-#include <Foundation/Foundation.h>
-#include <WebCore/FileSystem.h>
-
 #if PLATFORM(IOS)
 #import <WebCore/RuntimeApplicationChecks.h>
 #endif
 
 namespace API {
-
-NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
-NSString *WebStorageDirectoryDefaultsKey = @"WebKitLocalStorageDatabasePathPreferenceKey";
-NSString *WebKitMediaCacheDirectoryDefaultsKey = @"WebKitMediaCacheDirectory";
-NSString *WebKitMediaKeysStorageDirectoryDefaultsKey = @"WebKitMediaKeysStorageDirectory";
 
 String WebsiteDataStore::defaultApplicationCacheDirectory()
 {
@@ -108,113 +100,6 @@ String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
 String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
 {
     return tempDirectoryFileSystemRepresentation("JavaScriptCoreDebug", DontCreateDirectory);
-}
-
-String WebsiteDataStore::legacyDefaultApplicationCacheDirectory()
-{
-    NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
-    if (!appName)
-        appName = [[NSProcessInfo processInfo] processName];
-#if PLATFORM(IOS)
-    // This quirk used to make these apps share application cache storage, but doesn't accomplish that any more.
-    // Preserving it avoids the need to migrate data when upgrading.
-    if (WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isWebApp())
-        appName = @"com.apple.WebAppCache";
-#endif
-    
-    ASSERT(appName);
-    
-#if PLATFORM(IOS)
-    NSString *cacheDir = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches"];
-#else
-    char cacheDirectory[MAXPATHLEN];
-    size_t cacheDirectoryLen = confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectory, MAXPATHLEN);
-    if (!cacheDirectoryLen)
-        return String();
-    
-    NSString *cacheDir = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:cacheDirectory length:cacheDirectoryLen - 1];
-#endif
-    NSString* cachePath = [cacheDir stringByAppendingPathComponent:appName];
-    return WebKit::stringByResolvingSymlinksInPath([cachePath stringByStandardizingPath]);
-}
-
-String WebsiteDataStore::legacyDefaultNetworkCacheDirectory()
-{
-    NSString *cachePath = CFBridgingRelease(_CFURLCacheCopyCacheDirectory([[NSURLCache sharedURLCache] _CFURLCache]));
-    if (!cachePath)
-        cachePath = @"~/Library/Caches/com.apple.WebKit.WebProcess";
-    
-    cachePath = [cachePath stringByAppendingPathComponent:@"WebKitCache"];
-    
-    return WebKit::stringByResolvingSymlinksInPath([cachePath stringByStandardizingPath]);
-}
-
-String WebsiteDataStore::legacyDefaultWebSQLDatabaseDirectory()
-{
-    NSString *databasesDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebDatabaseDirectoryDefaultsKey];
-    if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
-        databasesDirectory = @"~/Library/WebKit/Databases";
-    return WebKit::stringByResolvingSymlinksInPath([databasesDirectory stringByStandardizingPath]);
-}
-
-String WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory()
-{
-    // Indexed databases exist in a subdirectory of the "database directory path."
-    // Currently, the top level of that directory contains entities related to WebSQL databases.
-    // We should fix this, and move WebSQL into a subdirectory (https://bugs.webkit.org/show_bug.cgi?id=124807)
-    // In the meantime, an entity name prefixed with three underscores will not conflict with any WebSQL entities.
-    return WebCore::FileSystem::pathByAppendingComponent(legacyDefaultWebSQLDatabaseDirectory(), "___IndexedDB");
-}
-
-String WebsiteDataStore::legacyDefaultLocalStorageDirectory()
-{
-    NSString *localStorageDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebStorageDirectoryDefaultsKey];
-    if (!localStorageDirectory || ![localStorageDirectory isKindOfClass:[NSString class]])
-        localStorageDirectory = @"~/Library/WebKit/LocalStorage";
-    return WebKit::stringByResolvingSymlinksInPath([localStorageDirectory stringByStandardizingPath]);
-}
-
-String WebsiteDataStore::legacyDefaultMediaCacheDirectory()
-{
-    NSString *mediaKeysCacheDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebKitMediaCacheDirectoryDefaultsKey];
-    if (!mediaKeysCacheDirectory || ![mediaKeysCacheDirectory isKindOfClass:[NSString class]]) {
-        mediaKeysCacheDirectory = NSTemporaryDirectory();
-        
-        if (!WebKit::processHasContainer()) {
-            NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
-            if (!bundleIdentifier)
-                bundleIdentifier = [NSProcessInfo processInfo].processName;
-            mediaKeysCacheDirectory = [mediaKeysCacheDirectory stringByAppendingPathComponent:bundleIdentifier];
-        }
-        mediaKeysCacheDirectory = [mediaKeysCacheDirectory stringByAppendingPathComponent:@"WebKit/MediaCache"];
-    }
-    return WebKit::stringByResolvingSymlinksInPath([mediaKeysCacheDirectory stringByStandardizingPath]);
-}
-
-String WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory()
-{
-    NSString *mediaKeysStorageDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebKitMediaKeysStorageDirectoryDefaultsKey];
-    if (!mediaKeysStorageDirectory || ![mediaKeysStorageDirectory isKindOfClass:[NSString class]])
-        mediaKeysStorageDirectory = @"~/Library/WebKit/MediaKeys";
-    return WebKit::stringByResolvingSymlinksInPath([mediaKeysStorageDirectory stringByStandardizingPath]);
-}
-
-String WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory()
-{
-#if PLATFORM(IOS)
-    String path = WebKit::pathForProcessContainer();
-    if (path.isEmpty())
-        path = NSHomeDirectory();
-    
-    path = path + "/Library/WebKit/JavaScriptCoreDebug";
-    path = WebKit::stringByResolvingSymlinksInPath(path);
-    
-    return path;
-#else
-    RetainPtr<NSString> javaScriptConfigPath = @"~/Library/WebKit/JavaScriptCoreDebug";
-    
-    return WebKit::stringByResolvingSymlinksInPath([javaScriptConfigPath stringByStandardizingPath]);
-#endif
 }
 
 String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory shouldCreateDirectory)
@@ -324,4 +209,4 @@ WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfig
     return configuration;
 }
 
-} // namespace API
+}

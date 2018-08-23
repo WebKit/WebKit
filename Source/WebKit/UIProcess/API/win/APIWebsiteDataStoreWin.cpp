@@ -85,46 +85,6 @@ String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const Stri
     return WebCore::FileSystem::pathByAppendingComponent(WebCore::FileSystem::localUserSpecificStorageDirectory(), directoryName);
 }
 
-String WebsiteDataStore::legacyDefaultApplicationCacheDirectory()
-{
-    return WebCore::FileSystem::pathByAppendingComponent(WebCore::FileSystem::localUserSpecificStorageDirectory(), "ApplicationCache");
-}
-
-String WebsiteDataStore::legacyDefaultNetworkCacheDirectory()
-{
-    return WebCore::FileSystem::pathByAppendingComponent(WebCore::FileSystem::localUserSpecificStorageDirectory(), "NetworkCache");
-}
-
-String WebsiteDataStore::legacyDefaultWebSQLDatabaseDirectory()
-{
-    return WebCore::FileSystem::pathByAppendingComponent(WebCore::FileSystem::localUserSpecificStorageDirectory(), "WebSQL");
-}
-
-String WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory()
-{
-    return WebCore::FileSystem::pathByAppendingComponent(WebCore::FileSystem::localUserSpecificStorageDirectory(), "IndexedDB");
-}
-
-String WebsiteDataStore::legacyDefaultLocalStorageDirectory()
-{
-    return WebCore::FileSystem::pathByAppendingComponent(WebCore::FileSystem::localUserSpecificStorageDirectory(), "LocalStorage");
-}
-
-String WebsiteDataStore::legacyDefaultMediaCacheDirectory()
-{
-    return WebCore::FileSystem::pathByAppendingComponent(WebCore::FileSystem::localUserSpecificStorageDirectory(), "MediaCache");
-}
-
-String WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory()
-{
-    return WebCore::FileSystem::pathByAppendingComponent(WebCore::FileSystem::localUserSpecificStorageDirectory(), "MediaKeyStorage");
-}
-
-String WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory()
-{
-    return WebCore::FileSystem::pathByAppendingComponent(WebCore::FileSystem::localUserSpecificStorageDirectory(), "JavaScriptCoreDebug");
-}
-
 WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfiguration()
 {
     WebKit::WebsiteDataStore::Configuration configuration;
