@@ -50,8 +50,7 @@ public:
     virtual void detachLayer(CoordinatedGraphicsLayer*) = 0;
     virtual void attachLayer(CoordinatedGraphicsLayer*) = 0;
     virtual Nicosia::PaintingEngine& paintingEngine() = 0;
-
-    virtual void syncLayerState(CoordinatedLayerID, CoordinatedGraphicsLayerState&) = 0;
+    virtual void syncLayerState() = 0;
 };
 
 class WEBCORE_EXPORT CoordinatedGraphicsLayer : public GraphicsLayer {
@@ -112,7 +111,7 @@ public:
     FloatPoint computePositionRelativeToBase();
     void computePixelAlignment(FloatPoint& position, FloatSize&, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset);
 
-    CoordinatedLayerID id() const { return m_id; }
+    Nicosia::PlatformLayer::LayerID id() const { return m_id; }
 
     IntRect transformedVisibleRect();
 
@@ -131,22 +130,14 @@ private:
 
     void setDebugBorder(const Color&, float width) override;
 
-    void didChangeLayerState();
     void didChangeAnimations();
     void didChangeGeometry();
     void didChangeChildren();
     void didChangeFilters();
     void didUpdateTileBuffers();
 
-    void resetLayerState();
-    void syncLayerState();
-    void syncAnimations();
-    void syncChildren();
-    void syncFilters();
     void computeTransformedVisibleRect();
     void updateContentBuffers();
-
-    void releaseImageBackingIfNeeded();
 
     void notifyFlushRequired();
 
@@ -161,8 +152,7 @@ private:
 
     bool filtersCanBeComposited(const FilterOperations&) const;
 
-    CoordinatedLayerID m_id;
-    CoordinatedGraphicsLayerState m_layerState;
+    Nicosia::PlatformLayer::LayerID m_id;
     GraphicsLayerTransform m_layerTransform;
     TransformationMatrix m_cachedInverseTransform;
     FloatSize m_pixelAlignmentOffset;
@@ -177,15 +167,10 @@ private:
 #endif
     bool m_shouldUpdateVisibleRect: 1;
     bool m_shouldSyncLayerState: 1;
-    bool m_shouldSyncChildren: 1;
-    bool m_shouldSyncFilters: 1;
-    bool m_shouldSyncAnimations: 1;
     bool m_movingVisibleRect : 1;
     bool m_pendingContentsScaleAdjustment : 1;
     bool m_pendingVisibleRectAdjustment : 1;
-#if USE(COORDINATED_GRAPHICS_THREADED)
     bool m_shouldUpdatePlatformLayer : 1;
-#endif
 
     CoordinatedGraphicsLayerClient* m_coordinator;
 

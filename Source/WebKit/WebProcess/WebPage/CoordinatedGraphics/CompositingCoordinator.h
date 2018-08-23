@@ -36,6 +36,7 @@
 #include <WebCore/GraphicsLayerFactory.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/NicosiaBuffer.h>
+#include <WebCore/NicosiaPlatformLayer.h>
 
 namespace Nicosia {
 class PaintingEngine;
@@ -99,13 +100,12 @@ private:
     void detachLayer(WebCore::CoordinatedGraphicsLayer*) override;
     void attachLayer(WebCore::CoordinatedGraphicsLayer*) override;
     Nicosia::PaintingEngine& paintingEngine() override;
-    void syncLayerState(WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayerState&) override;
+    void syncLayerState() override;
 
     // GraphicsLayerFactory
     std::unique_ptr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
 
     void initializeRootCompositingLayerIfNeeded();
-    void clearPendingStateChanges();
 
     void purgeBackingStores();
 
@@ -124,7 +124,7 @@ private:
     } m_nicosia;
     WebCore::CoordinatedGraphicsState m_state;
 
-    HashMap<WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;
+    HashMap<Nicosia::PlatformLayer::LayerID, WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;
 
     std::unique_ptr<Nicosia::PaintingEngine> m_paintingEngine;
 

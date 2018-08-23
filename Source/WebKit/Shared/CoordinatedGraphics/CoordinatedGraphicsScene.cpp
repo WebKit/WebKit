@@ -449,7 +449,7 @@ void CoordinatedGraphicsScene::purgeGLResources()
     }
 
     m_rootLayer = nullptr;
-    m_rootLayerID = InvalidCoordinatedLayerID;
+    m_rootLayerID = 0;
     m_textureMapper = nullptr;
 }
 

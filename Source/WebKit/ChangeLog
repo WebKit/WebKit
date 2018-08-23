@@ -1,3 +1,31 @@
+2018-08-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Remove the remaining CoordinatedGraphicsLayerState cruft
+        https://bugs.webkit.org/show_bug.cgi?id=188881
+
+        Reviewed by Carlos Garcia Campos.
+
+        Rid CompositingCoordinator class of code that manages now-deleted state
+        tracking of layer creation, update and removal on the
+        CoordinatedGraphicsState class. The syncLayerState() method is changed
+        accordingly, now only enforcing a frame synchronization when called.
+
+        Use of Nicosia::PlatformLayer::LayerID is adopted since the
+        CoordinatedLayerID type has been removed.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::purgeGLResources):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::flushPendingLayerChanges):
+        (WebKit::CompositingCoordinator::initializeRootCompositingLayerIfNeeded):
+        (WebKit::CompositingCoordinator::syncLayerState):
+        (WebKit::CompositingCoordinator::createGraphicsLayer):
+        (WebKit::CompositingCoordinator::detachLayer):
+        (WebKit::CompositingCoordinator::attachLayer):
+        (WebKit::CompositingCoordinator::clearPendingStateChanges): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+
 2018-08-22  Antti Koivisto  <antti@apple.com>
 
         NetworkCache::Storage::lastStableVersion should be a developer-only feature

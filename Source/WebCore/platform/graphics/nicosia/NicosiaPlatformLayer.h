@@ -50,7 +50,8 @@ public:
     virtual bool isCompositionLayer() const { return false; }
     virtual bool isContentLayer() const { return false; }
 
-    uint64_t id() const { return m_id; }
+    using LayerID = uint64_t;
+    LayerID id() const { return m_id; }
 
 protected:
     explicit PlatformLayer(uint64_t);

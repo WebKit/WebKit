@@ -30,121 +30,14 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "Color.h"
-#include "FilterOperations.h"
-#include "FloatRect.h"
-#include "FloatSize.h"
-#include "IntRect.h"
-#include "IntSize.h"
-#include "NicosiaBuffer.h"
-#include "NicosiaPlatformLayer.h"
 #include "NicosiaScene.h"
-#include "SurfaceUpdateInfo.h"
-#include "TextureMapperAnimation.h"
-#include "TransformationMatrix.h"
 
 namespace WebCore {
-
-typedef uint32_t CoordinatedLayerID;
-enum { InvalidCoordinatedLayerID = 0 };
-
-struct DebugVisuals {
-    Color debugBorderColor;
-    float debugBorderWidth { 0 };
-    bool showDebugBorders { false };
-};
-
-struct RepaintCount {
-    unsigned count { 0 };
-    bool showRepaintCounter { false };
-};
-
-struct CoordinatedGraphicsLayerState {
-    union {
-        struct {
-            bool positionChanged: 1;
-            bool anchorPointChanged: 1;
-            bool sizeChanged: 1;
-            bool transformChanged: 1;
-            bool childrenTransformChanged: 1;
-            bool contentsRectChanged: 1;
-            bool opacityChanged: 1;
-            bool solidColorChanged: 1;
-            bool debugVisualsChanged: 1;
-            bool replicaChanged: 1;
-            bool maskChanged: 1;
-            bool flagsChanged: 1;
-            bool animationsChanged: 1;
-            bool filtersChanged: 1;
-            bool childrenChanged: 1;
-            bool repaintCountChanged : 1;
-            bool isScrollableChanged: 1;
-            bool contentsTilingChanged: 1;
-        };
-        unsigned changeMask;
-    };
-    union {
-        struct {
-            bool contentsOpaque : 1;
-            bool drawsContent : 1;
-            bool contentsVisible : 1;
-            bool backfaceVisible : 1;
-            bool masksToBounds : 1;
-            bool preserves3D : 1;
-            bool isScrollable: 1;
-        };
-        unsigned flags;
-    };
-
-    CoordinatedGraphicsLayerState()
-        : changeMask(0)
-        , contentsOpaque(false)
-        , drawsContent(false)
-        , contentsVisible(true)
-        , backfaceVisible(true)
-        , masksToBounds(false)
-        , preserves3D(false)
-        , isScrollable(false)
-        , opacity(0)
-        , replica(InvalidCoordinatedLayerID)
-        , mask(InvalidCoordinatedLayerID)
-    {
-    }
-
-    FloatPoint pos;
-    FloatPoint3D anchorPoint;
-    FloatSize size;
-    TransformationMatrix transform;
-    TransformationMatrix childrenTransform;
-    FloatRect contentsRect;
-    FloatSize contentsTilePhase;
-    FloatSize contentsTileSize;
-    float opacity;
-    Color solidColor;
-    FilterOperations filters;
-    TextureMapperAnimations animations;
-    Vector<uint32_t> children;
-    CoordinatedLayerID replica;
-    CoordinatedLayerID mask;
-    DebugVisuals debugVisuals;
-    RepaintCount repaintCount;
-
-    bool hasPendingChanges() const
-    {
-        return changeMask;
-    }
-};
 
 struct CoordinatedGraphicsState {
     struct NicosiaState {
         RefPtr<Nicosia::Scene> scene;
     } nicosia;
-
-    uint32_t rootCompositingLayer;
-
-    Vector<CoordinatedLayerID> layersToCreate;
-    Vector<std::pair<CoordinatedLayerID, CoordinatedGraphicsLayerState>> layersToUpdate;
-    Vector<CoordinatedLayerID> layersToRemove;
 };
 
 } // namespace WebCore

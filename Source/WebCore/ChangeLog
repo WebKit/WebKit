@@ -1,3 +1,79 @@
+2018-08-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Remove the remaining CoordinatedGraphicsLayerState cruft
+        https://bugs.webkit.org/show_bug.cgi?id=188881
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove what's left of CoordinatedGraphicsLayerState usage in the
+        CoordinatedGraphics subsystem. In CoordinatedGraphicsLayer, this means
+        dropping the m_layerState member variable since at this point it is not
+        used anymore in any capacity. Affected helper methods and member
+        variables are also removed where possible.
+
+        The syncLayerState() method on the CoordinatedGraphicsLayerClient
+        interface is adjusted to not accept any parameters. Client should just
+        mark frame synchronization as required while the layer state is now
+        managed differently.
+
+        Instead of the CoordinatedLayerID (which is removed) the
+        Nicosia::PlatformLayer::LayerID alias is introduced as a layer ID type,
+        aliased to the uint64_t type.
+
+        CoordinatedGraphicsState.h file is rid of all structs except the
+        basic CoordinatedGraphicsState struct that at this point contains only
+        a reference to the Nicosia::Scene object. This will be further
+        simplified in the patches that follow.
+
+        * platform/graphics/nicosia/NicosiaPlatformLayer.h:
+        (Nicosia::PlatformLayer::id const):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::didChangeAnimations):
+        (WebCore::CoordinatedGraphicsLayer::didChangeChildren):
+        (WebCore::CoordinatedGraphicsLayer::didChangeFilters):
+        (WebCore::CoordinatedGraphicsLayer::didUpdateTileBuffers):
+        (WebCore::CoordinatedGraphicsLayer::didChangeGeometry):
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::setPosition):
+        (WebCore::CoordinatedGraphicsLayer::setAnchorPoint):
+        (WebCore::CoordinatedGraphicsLayer::setSize):
+        (WebCore::CoordinatedGraphicsLayer::setTransform):
+        (WebCore::CoordinatedGraphicsLayer::setChildrenTransform):
+        (WebCore::CoordinatedGraphicsLayer::setPreserves3D):
+        (WebCore::CoordinatedGraphicsLayer::setMasksToBounds):
+        (WebCore::CoordinatedGraphicsLayer::setDrawsContent):
+        (WebCore::CoordinatedGraphicsLayer::setContentsVisible):
+        (WebCore::CoordinatedGraphicsLayer::setContentsOpaque):
+        (WebCore::CoordinatedGraphicsLayer::setBackfaceVisibility):
+        (WebCore::CoordinatedGraphicsLayer::setOpacity):
+        (WebCore::CoordinatedGraphicsLayer::setContentsRect):
+        (WebCore::CoordinatedGraphicsLayer::setContentsTileSize):
+        (WebCore::CoordinatedGraphicsLayer::setContentsTilePhase):
+        (WebCore::CoordinatedGraphicsLayer::setContentsToSolidColor):
+        (WebCore::CoordinatedGraphicsLayer::setShowDebugBorder):
+        (WebCore::CoordinatedGraphicsLayer::setShowRepaintCounter):
+        (WebCore::CoordinatedGraphicsLayer::setMaskLayer):
+        (WebCore::CoordinatedGraphicsLayer::setReplicatedByLayer):
+        (WebCore::CoordinatedGraphicsLayer::setNeedsDisplay):
+        (WebCore::CoordinatedGraphicsLayer::setNeedsDisplayInRect):
+        (WebCore::CoordinatedGraphicsLayer::setDebugBorder):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        (WebCore::CoordinatedGraphicsLayer::syncPendingStateChangesIncludingSubLayers):
+        (WebCore::CoordinatedGraphicsLayer::purgeBackingStores):
+        (WebCore::CoordinatedGraphicsLayer::setCoordinatorIncludingSubLayersIfNeeded):
+        (WebCore::toCoordinatedLayerID): Deleted.
+        (WebCore::CoordinatedGraphicsLayer::didChangeLayerState): Deleted.
+        (WebCore::CoordinatedGraphicsLayer::syncChildren): Deleted.
+        (WebCore::CoordinatedGraphicsLayer::syncFilters): Deleted.
+        (WebCore::CoordinatedGraphicsLayer::syncLayerState): Deleted.
+        (WebCore::CoordinatedGraphicsLayer::syncAnimations): Deleted.
+        (WebCore::CoordinatedGraphicsLayer::resetLayerState): Deleted.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsState.h:
+        (): Deleted.
+        (WebCore::CoordinatedGraphicsLayerState::CoordinatedGraphicsLayerState): Deleted.
+        (WebCore::CoordinatedGraphicsLayerState::hasPendingChanges const): Deleted.
+
 2018-08-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Drop old-school PlatformLayer management in CoordinatedGraphicsLayer

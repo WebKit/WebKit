@@ -28,6 +28,7 @@
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/NicosiaPlatformLayer.h>
 #include <WebCore/TextureMapper.h>
 #include <WebCore/TextureMapperBackingStore.h>
 #include <WebCore/TextureMapperFPSCounter.h>
@@ -111,7 +112,7 @@ private:
 
     std::unique_ptr<WebCore::TextureMapperLayer> m_rootLayer;
 
-    WebCore::CoordinatedLayerID m_rootLayerID { WebCore::InvalidCoordinatedLayerID };
+    Nicosia::PlatformLayer::LayerID m_rootLayerID { 0 };
     WebCore::Color m_viewBackgroundColor { WebCore::Color::white };
 
     WebCore::TextureMapperFPSCounter m_fpsCounter;
