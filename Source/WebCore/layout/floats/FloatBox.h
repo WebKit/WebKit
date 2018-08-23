@@ -27,38 +27,52 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FloatingState.h"
-#include "LayoutUnits.h"
+#include "DisplayBox.h"
+#include "LayoutUnit.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 namespace Layout {
 
-class FloatBox;
 class Box;
-class Container;
-class FloatingPair;
+class FloatingState;
 class LayoutContext;
 
-// FloatingContext is responsible for adjusting the position of a box in the current formatting context
-// by taking the floating boxes into account.
-class FloatingContext {
-    WTF_MAKE_ISO_ALLOCATED(FloatingContext);
+class FloatBox {
+    WTF_MAKE_ISO_ALLOCATED(FloatBox);
 public:
-    FloatingContext(FloatingState&);
+    FloatBox(const Box&, const FloatingState&, const LayoutContext&);
 
-    FloatingState& floatingState() const { return m_floatingState; }
+    PositionInContextRoot top() const { return m_absoluteDisplayBox.top(); }
+    PositionInContextRoot left() const { return m_absoluteDisplayBox.left(); }
+    PointInContainingBlock topLeftInContainingBlock() const;
 
-    PointInContainingBlock positionForFloat(const Box&) const;
-    std::optional<PositionInContainingBlock> verticalPositionWithClearance(const Box&) const;
+    LayoutUnit marginTop() const { return m_absoluteDisplayBox.marginTop(); }
+    LayoutUnit marginLeft() const { return m_absoluteDisplayBox.marginLeft(); }
+    LayoutUnit marginBottom() const { return m_absoluteDisplayBox.marginBottom(); }
+    LayoutUnit marginRight() const { return m_absoluteDisplayBox.marginRight(); }
+
+    Display::Box::Rect rectWithMargin() const { return m_absoluteDisplayBox.rectWithMargin(); }
+
+    void setTop(PositionInContextRoot top) { m_absoluteDisplayBox.setTop(top); }
+    void setLeft(PositionInContextRoot);
+    void setTopLeft(PointInContextRoot);
+
+    void resetHorizontally();
+    void resetVertically();
+
+    bool isLeftAligned() const;
 
 private:
-    LayoutContext& layoutContext() const { return m_floatingState.layoutContext(); }
+    void initializePosition();
 
-    void floatingPosition(FloatBox&) const;
+    WeakPtr<Box> m_layoutBox;
+    const FloatingState& m_floatingState;
 
-    FloatingState& m_floatingState;
+    Display::Box m_absoluteDisplayBox;
+    Display::Box m_containingBlockAbsoluteDisplayBox;
 };
 
 }

@@ -1,3 +1,59 @@
+2018-08-23  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] Decouple the incoming floats and floats already placed in the list
+        https://bugs.webkit.org/show_bug.cgi?id=188886
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for the float avoidance feature where formatting context root boxes avoid existing floats.
+
+        1. Introduce FloatBox class for the incoming floats (This will need to be renamed when adding support for avoidance -incoming box is actually not a float).
+        2. Use the existing FloatState::FloatItem class for placed floats.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/LayoutUnits.h:
+        * layout/Verification.cpp:
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree const):
+        * layout/displaytree/DisplayBox.h:
+        * layout/floats/FloatBox.cpp: Added.
+        (WebCore::Layout::FloatBox::FloatBox):
+        (WebCore::Layout::FloatBox::initializePosition):
+        (WebCore::Layout::FloatBox::isLeftAligned const):
+        (WebCore::Layout::FloatBox::setLeft):
+        (WebCore::Layout::FloatBox::setTopLeft):
+        (WebCore::Layout::FloatBox::resetVertically):
+        (WebCore::Layout::FloatBox::resetHorizontally):
+        (WebCore::Layout::FloatBox::topLeftInContainingBlock const):
+        * layout/floats/FloatBox.h: Copied from Source/WebCore/layout/floats/FloatingContext.h.
+        (WebCore::Layout::FloatBox::top const):
+        (WebCore::Layout::FloatBox::left const):
+        (WebCore::Layout::FloatBox::marginTop const):
+        (WebCore::Layout::FloatBox::marginLeft const):
+        (WebCore::Layout::FloatBox::marginBottom const):
+        (WebCore::Layout::FloatBox::marginRight const):
+        (WebCore::Layout::FloatBox::rectWithMargin const):
+        (WebCore::Layout::FloatBox::setTop):
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingPair::verticalPosition const):
+        (WebCore::Layout::begin):
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::verticalPositionWithClearance const):
+        (WebCore::Layout::FloatingContext::floatingPosition const):
+        (WebCore::Layout::FloatingPair::horiztonalPosition const):
+        (WebCore::Layout::FloatingPair::bottom const):
+        (WebCore::Layout::Iterator::Iterator):
+        (WebCore::Layout::Iterator::operator++):
+        (WebCore::Layout::Iterator::set):
+        (WebCore::Layout::FloatingContext::initialVerticalPosition const): Deleted.
+        (WebCore::Layout::FloatingContext::alignWithContainingBlock const): Deleted.
+        (WebCore::Layout::FloatingContext::alignWithFloatings const): Deleted.
+        (WebCore::Layout::FloatingContext::toContainingBlock const): Deleted.
+        * layout/floats/FloatingContext.h:
+        * layout/floats/FloatingState.h:
+        (WebCore::Layout::FloatingState::root const):
+        (WebCore::Layout::FloatingState::layoutContext const):
+
 2018-08-23  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Remove the remaining CoordinatedGraphicsLayerState cruft

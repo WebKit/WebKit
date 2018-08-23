@@ -1989,6 +1989,7 @@
 		6F995A381A70833700A735F4 /* JSWebGLTransformFeedback.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A2E1A70833700A735F4 /* JSWebGLTransformFeedback.h */; };
 		6F995A3A1A70833700A735F4 /* JSWebGLVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A301A70833700A735F4 /* JSWebGLVertexArrayObject.h */; };
 		6FA4454E898F2FC168BC38C1 /* JSBeforeUnloadEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 29E04A27BED2F81F98E9022B /* JSBeforeUnloadEvent.h */; };
+		6FFDC442212EFF1700A9CA91 /* FloatBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FFDC440212EFF1600A9CA91 /* FloatBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		709A01FE1E3D0BDD006B0D4C /* ModuleFetchFailureKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 709A01FD1E3D0BCC006B0D4C /* ModuleFetchFailureKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71025ECD1F99F0CE004A250C /* AnimationTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025EC71F99F096004A250C /* AnimationTimeline.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71025ED01F99F0CE004A250C /* DocumentTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025EC51F99F096004A250C /* DocumentTimeline.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8966,6 +8967,8 @@
 		6FCD19C120F9727A00FD4529 /* TextContentProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextContentProvider.h; sourceTree = "<group>"; };
 		6FCD19C720F9727D00FD4529 /* TextContentProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextContentProvider.cpp; sourceTree = "<group>"; };
 		6FCF975220F02B3500214960 /* Runs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Runs.h; sourceTree = "<group>"; };
+		6FFDC43E212EFF1600A9CA91 /* FloatBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatBox.cpp; sourceTree = "<group>"; };
+		6FFDC440212EFF1600A9CA91 /* FloatBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatBox.h; sourceTree = "<group>"; };
 		709A01FD1E3D0BCC006B0D4C /* ModuleFetchFailureKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleFetchFailureKind.h; sourceTree = "<group>"; };
 		71004B9D1DC1398800A52A38 /* playback-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "playback-support.js"; sourceTree = "<group>"; };
 		71025EC21F99F096004A250C /* WebAnimation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAnimation.h; sourceTree = "<group>"; };
@@ -19474,6 +19477,8 @@
 		6FCFC055212DACC2007695D2 /* floats */ = {
 			isa = PBXGroup;
 			children = (
+				6FFDC43E212EFF1600A9CA91 /* FloatBox.cpp */,
+				6FFDC440212EFF1600A9CA91 /* FloatBox.h */,
 				115CFA85208B9066001E6991 /* FloatingContext.cpp */,
 				115CFA84208B9066001E6991 /* FloatingContext.h */,
 				115CFA81208B8EDA001E6991 /* FloatingState.cpp */,
@@ -27862,6 +27867,7 @@
 				49ECEB701499790D00CDD3A4 /* FilterOperations.h in Headers */,
 				372C00D9129619F8005C9575 /* FindOptions.h in Headers */,
 				A8CFF04F0A154F09000A4234 /* FixedTableLayout.h in Headers */,
+				6FFDC442212EFF1700A9CA91 /* FloatBox.h in Headers */,
 				BC073BAA0C399B1F000F5979 /* FloatConversion.h in Headers */,
 				115CFA86208B9066001E6991 /* FloatingContext.h in Headers */,
 				9A528E8417D7F52F00AA9518 /* FloatingObjects.h in Headers */,

@@ -52,6 +52,8 @@ public:
 
     bool isEmpty() const { return m_floats.isEmpty(); }
 
+    const Box& root() const { return *m_formattingContextRoot; }
+
     std::optional<LayoutUnit> leftBottom(const Box& formattingContextRoot) const;
     std::optional<LayoutUnit> rightBottom(const Box& formattingContextRoot) const;
     std::optional<LayoutUnit> bottom(const Box& formattingContextRoot) const;
@@ -82,7 +84,6 @@ private:
     FloatingState(LayoutContext&, const Box& formattingContextRoot);
 
     LayoutContext& layoutContext() const { return m_layoutContext; }
-    const Box& root() const { return *m_formattingContextRoot; }
 
     std::optional<LayoutUnit> bottom(const Box& formattingContextRoot, Clear) const;
 

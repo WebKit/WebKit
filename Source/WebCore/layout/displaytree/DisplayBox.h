@@ -36,6 +36,7 @@ namespace WebCore {
 class RenderStyle;
 
 namespace Layout {
+class FloatBox;
 class BlockFormattingContext;
 class FormattingContext;
 class FloatingContext;
@@ -47,6 +48,7 @@ namespace Display {
 class Box {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
+    friend class Layout::FloatBox;
     friend class Layout::BlockFormattingContext;
     friend class Layout::FormattingContext;
     friend class Layout::FloatingContext;
