@@ -375,6 +375,18 @@ std::optional<Inspector::Protocol::Debugger::Reason> parseEnumValueFromString<In
 } // namespace Protocol
 
 } // namespace Inspector
+
+namespace WTF {
+
+template<typename T> struct DefaultHash;
+
+// Hash declarations in the 'Debugger' Domain
+template<>
+struct DefaultHash<Inspector::Protocol::Debugger::Reason> {
+    typedef IntHash<Inspector::Protocol::Debugger::Reason> Hash;
+};
+
+} // namespace WTF
 ### End File: TestProtocolObjects.h
 
 ### Begin File: TestProtocolObjects.cpp

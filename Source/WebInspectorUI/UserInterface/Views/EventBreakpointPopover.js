@@ -29,10 +29,8 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.Popover
     {
         super(delegate);
 
-        this._result = WI.InputPopover.Result.None;
-        this._value = null;
+        this._breakpoint = null;
 
-        this._codeMirror = null;
         this._targetElement = null;
         this._preferredEdges = null;
 
@@ -41,8 +39,7 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.Popover
 
     // Public
 
-    get result() { return this._result; }
-    get value() { return this._value; }
+    get breakpoint() { return this._breakpoint; }
 
     show(targetElement, preferredEdges)
     {
@@ -56,15 +53,37 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.Popover
         label.classList.add("label");
         label.textContent = WI.UIString("Break on events with name:");
 
-        this._inputElement = contentElement.appendChild(document.createElement("input"));
-        this._inputElement.placeholder = "click";
-        this._inputElement.spellcheck = false;
-        this._inputElement.addEventListener("keydown", (event) => {
+        let typeContainer = contentElement.appendChild(document.createElement("div"));
+        typeContainer.classList.add("event-type");
+
+        this._typeSelectElement = typeContainer.appendChild(document.createElement("select"));
+        this._typeSelectElement.addEventListener("change", this._handleTypeSelectChange.bind(this));
+        this._typeSelectElement.addEventListener("keydown", (event) => {
+            if (isEnterKey(event))
+                this.dismiss();
+        });
+
+        let createOption = (text, value) => {
+            let optionElement = this._typeSelectElement.appendChild(document.createElement("option"));
+            optionElement.value = value;
+            optionElement.textContent = text;
+        };
+
+        createOption(WI.UIString("DOM Event"), WI.EventBreakpoint.Type.Listener);
+
+        if (WI.DOMDebuggerManager.supportsEventBreakpoints()) {
+            createOption(WI.unlocalizedString("requestAnimationFrame"), "requestAnimationFrame");
+            createOption(WI.unlocalizedString("setTimeout"), "setTimeout");
+            createOption(WI.unlocalizedString("setInterval"), "setInterval");
+        } else
+            this._typeSelectElement.hidden = true;
+
+        this._domEventNameInputElement = typeContainer.appendChild(document.createElement("input"));
+        this._domEventNameInputElement.placeholder = WI.UIString("Example: “%s”").format("click");
+        this._domEventNameInputElement.spellcheck = false;
+        this._domEventNameInputElement.addEventListener("keydown", (event) => {
             if (!isEnterKey(event))
                 return;
-
-            this._result = WI.InputPopover.Result.Committed;
-            this._value = event.target.value.trim();
 
             this.dismiss();
         });
@@ -72,6 +91,31 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.Popover
         this.content = contentElement;
 
         this._presentOverTargetElement();
+
+        this._typeSelectElement.value = WI.EventBreakpoint.Type.Listener;
+        this._domEventNameInputElement.select();
+    }
+
+    dismiss()
+    {
+        let type = this._typeSelectElement.value;
+        let value = null;
+
+        if (type === WI.EventBreakpoint.Type.Listener)
+            value = this._domEventNameInputElement.value;
+        else {
+            value = type;
+
+            if (value === "requestAnimationFrame")
+                type = WI.EventBreakpoint.Type.AnimationFrame;
+            else if (value === "setTimeout" || value === "setInterval")
+                type = WI.EventBreakpoint.Type.Timer;
+        }
+
+        if (type && value)
+            this._breakpoint = new WI.EventBreakpoint(type, value);
+
+        super.dismiss();
     }
 
     // Private
@@ -83,7 +127,12 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.Popover
 
         let targetFrame = WI.Rect.rectFromClientRect(this._targetElement.getBoundingClientRect());
         this.present(targetFrame, this._preferredEdges);
+    }
 
-        this._inputElement.select();
+    _handleTypeSelectChange(event)
+    {
+        this._domEventNameInputElement.hidden = this._typeSelectElement.value !== WI.EventBreakpoint.Type.Listener;
+
+        this.update();
     }
 };

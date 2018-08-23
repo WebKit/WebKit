@@ -374,6 +374,22 @@ std::optional<Inspector::Protocol::Runtime::TwoLeggedAnimals> parseEnumValueFrom
 } // namespace Protocol
 
 } // namespace Inspector
+
+namespace WTF {
+
+template<typename T> struct DefaultHash;
+
+// Hash declarations in the 'Runtime' Domain
+template<>
+struct DefaultHash<Inspector::Protocol::Runtime::FarmAnimals> {
+    typedef IntHash<Inspector::Protocol::Runtime::FarmAnimals> Hash;
+};
+template<>
+struct DefaultHash<Inspector::Protocol::Runtime::TwoLeggedAnimals> {
+    typedef IntHash<Inspector::Protocol::Runtime::TwoLeggedAnimals> Hash;
+};
+
+} // namespace WTF
 ### End File: TestProtocolObjects.h
 
 ### Begin File: TestProtocolObjects.cpp

@@ -1,5 +1,75 @@
 2018-08-23  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: support breakpoints for timers and animation-frame events
+        https://bugs.webkit.org/show_bug.cgi?id=188778
+
+        Reviewed by Brian Burg.
+
+        Add a `type` to `WI.EventBreakpoint` that matches `DOMDebugger.EventBreakpointType`:
+         - `AnimationFrame` for `requestAnimationFrame`
+         - `Listener` for any named DOM Event
+         - `Timer` for `setTimeout` and `setInterval`
+
+        Modified `WI.EventBreakpointPopover` to provide ways for selecting these other types, which
+        is then passed to `WI.DOMDebuggerManager`, which now calls through to the newly added
+        `DOMDebugger.removeEventBreakpoint` and `DOMDebugger.setEventBreakpoint` that sets
+        breakpoints for all event types.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Images/EventBreakpointAnimationFrame.svg: Added.
+        * UserInterface/Images/EventBreakpointListener.svg: Renamed from Source/WebInspectorUI/UserInterface/Images/EventBreakpoint.svg.
+        * UserInterface/Images/EventBreakpointTimer.svg: Added.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager.supportsEventBreakpoints): Added.
+        (WI.DOMDebuggerManager.prototype.eventBreakpointForTypeAndEventName): Added.
+        (WI.DOMDebuggerManager.prototype.addEventBreakpoint):
+        (WI.DOMDebuggerManager.prototype.removeEventBreakpoint.breakpointRemoved): Added.
+        (WI.DOMDebuggerManager.prototype.removeEventBreakpoint):
+        (WI.DOMDebuggerManager.prototype._updateEventBreakpoint):
+        (WI.DOMDebuggerManager.prototype.eventBreakpointForEventName): Deleted.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WI.DOMTreeManager.prototype.setBreakpointForEventListener):
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype._pauseReasonFromPayload):
+
+        * UserInterface/Models/EventBreakpoint.js:
+        (WI.EventBreakpoint):
+        (WI.EventBreakpoint.fromPayload):
+        (WI.EventBreakpoint.prototype.get type): Added.
+        (WI.EventBreakpoint.prototype.get serializableInfo):
+        (WI.EventBreakpoint.prototype.saveIdentityToCookie):
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype._updatePauseReasonSection):
+        (WI.DebuggerSidebarPanel.prototype.willDismissPopover):
+
+        * UserInterface/Views/EventBreakpointPopover.js:
+        (WI.EventBreakpointPopover):
+        (WI.EventBreakpointPopover.prototype.get breakpoint): Added.
+        (WI.EventBreakpointPopover.prototype.show):
+        (WI.EventBreakpointPopover.prototype.show.createOption): Added.
+        (WI.EventBreakpointPopover.prototype.dismiss): Added.
+        (WI.EventBreakpointPopover.prototype._presentOverTargetElement):
+        (WI.EventBreakpointPopover.prototype._handleTypeSelectChange): Added.
+        (WI.EventBreakpointPopover.prototype.get result): Deleted.
+        (WI.EventBreakpointPopover.prototype.get value): Deleted.
+        * UserInterface/Views/EventBreakpointPopover.css:
+        (.popover .event-breakpoint-content > .event-type): Added.
+        (.popover .event-breakpoint-content > input): Deleted.
+
+        * UserInterface/Views/EventBreakpointTreeElement.js:
+        (WI.EventBreakpointTreeElement):
+        * UserInterface/Views/EventBreakpointTreeElement.css:
+        (.breakpoint.event.animation-frame:not(.breakpoint-paused-icon) .icon): Added.
+        (.breakpoint.event.listener:not(.breakpoint-paused-icon) .icon): Added.
+        (.breakpoint.event.timer:not(.breakpoint-paused-icon) .icon): Added.
+        (.breakpoint.event:not(.breakpoint-paused-icon) .icon): Deleted.
+
+2018-08-23  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: `console.inspect(sessionStorage)` first time does not show Session Storage content view if Storage tab was previously unvisited
         https://bugs.webkit.org/show_bug.cgi?id=188801
 

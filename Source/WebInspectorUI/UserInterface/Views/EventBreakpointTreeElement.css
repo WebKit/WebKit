@@ -23,6 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.breakpoint.event:not(.breakpoint-paused-icon) .icon {
-    content: url(../Images/EventBreakpoint.svg);
+.breakpoint.event.breakpoint-for-animation-frame:not(.breakpoint-paused-icon) .icon {
+    content: url(../Images/EventBreakpointAnimationFrame.svg);
+}
+
+.breakpoint.event.breakpoint-for-listener:not(.breakpoint-paused-icon) .icon {
+    content: url(../Images/EventBreakpointListener.svg);
+}
+
+.breakpoint.event.breakpoint-for-timer:not(.breakpoint-paused-icon) .icon {
+    content: url(../Images/EventBreakpointTimer.svg);
 }

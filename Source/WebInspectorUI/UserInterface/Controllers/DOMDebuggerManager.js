@@ -78,6 +78,13 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         }
     }
 
+    // Static
+
+    static supportsEventBreakpoints()
+    {
+        return DOMDebuggerAgent.setEventBreakpoint && DOMDebuggerAgent.removeEventBreakpoint;
+    }
+
     // Public
 
     get supported()
@@ -193,9 +200,9 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         this._saveDOMBreakpoints();
     }
 
-    eventBreakpointForEventName(eventName)
+    eventBreakpointForTypeAndEventName(type, eventName)
     {
-        return this._eventBreakpoints.find((breakpoint) => breakpoint.eventName === eventName) || null;
+        return this._eventBreakpoints.find((breakpoint) => breakpoint.type === type && breakpoint.eventName === eventName) || null;
     }
 
     addEventBreakpoint(breakpoint)
@@ -204,7 +211,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         if (!breakpoint)
             return;
 
-        if (this._eventBreakpoints.some((item) => item.eventName === breakpoint.eventName))
+        if (this.eventBreakpointForTypeAndEventName(breakpoint.type, breakpoint.eventName))
             return;
 
         this._eventBreakpoints.push(breakpoint);
@@ -232,10 +239,19 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         if (breakpoint.disabled)
             return;
 
-        DOMDebuggerAgent.removeEventListenerBreakpoint(breakpoint.eventName, (error) => {
+        function breakpointRemoved(error) {
             if (error)
                 console.error(error);
-        });
+        }
+
+        // Compatibility (iOS 12): DOMDebuggerAgent.removeEventBreakpoint did not exist.
+        if (!WI.DOMDebuggerManager.supportsEventBreakpoints()) {
+            console.assert(breakpoint.type === WI.EventBreakpoint.Type.Listener);
+            DOMDebuggerAgent.removeEventListenerBreakpoint(breakpoint.eventName, breakpointRemoved);
+            return;
+        }
+
+        DOMDebuggerAgent.removeEventBreakpoint(breakpoint.type, breakpoint.eventName, breakpointRemoved);
     }
 
     xhrBreakpointForURL(url)
@@ -415,10 +431,20 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
                 callback(error);
         }
 
+        // Compatibility (iOS 12): DOMDebuggerAgent.removeEventBreakpoint did not exist.
+        if (!WI.DOMDebuggerManager.supportsEventBreakpoints()) {
+            console.assert(breakpoint.type === WI.EventBreakpoint.Type.Listener);
+            if (breakpoint.disabled)
+                DOMDebuggerAgent.removeEventListenerBreakpoint(breakpoint.eventName, breakpointUpdated);
+            else
+                DOMDebuggerAgent.setEventListenerBreakpoint(breakpoint.eventName, breakpointUpdated);
+            return;
+        }
+
         if (breakpoint.disabled)
-            DOMDebuggerAgent.removeEventListenerBreakpoint(breakpoint.eventName, breakpointUpdated);
+            DOMDebuggerAgent.removeEventBreakpoint(breakpoint.type, breakpoint.eventName, breakpointUpdated);
         else
-            DOMDebuggerAgent.setEventListenerBreakpoint(breakpoint.eventName, breakpointUpdated);
+            DOMDebuggerAgent.setEventBreakpoint(breakpoint.type, breakpoint.eventName, breakpointUpdated);
     }
 
     _updateXHRBreakpoint(breakpoint, callback)

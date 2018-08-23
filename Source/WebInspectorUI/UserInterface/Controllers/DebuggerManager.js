@@ -818,6 +818,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     {
         // FIXME: Handle other backend pause reasons.
         switch (payload) {
+        case DebuggerAgent.PausedReason.AnimationFrame:
+            return WI.DebuggerManager.PauseReason.AnimationFrame;
         case DebuggerAgent.PausedReason.Assert:
             return WI.DebuggerManager.PauseReason.Assertion;
         case DebuggerAgent.PausedReason.Breakpoint:
@@ -834,6 +836,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return WI.DebuggerManager.PauseReason.Exception;
         case DebuggerAgent.PausedReason.PauseOnNextStatement:
             return WI.DebuggerManager.PauseReason.PauseOnNextStatement;
+        case DebuggerAgent.PausedReason.Timer:
+            return WI.DebuggerManager.PauseReason.Timer;
         case DebuggerAgent.PausedReason.XHR:
             return WI.DebuggerManager.PauseReason.XHR;
         default:
@@ -1233,6 +1237,7 @@ WI.DebuggerManager.Event = {
 };
 
 WI.DebuggerManager.PauseReason = {
+    AnimationFrame: "animation-frame",
     Assertion: "assertion",
     Breakpoint: "breakpoint",
     CSPViolation: "CSP-violation",
@@ -1241,6 +1246,7 @@ WI.DebuggerManager.PauseReason = {
     EventListener: "event-listener",
     Exception: "exception",
     PauseOnNextStatement: "pause-on-next-statement",
+    Timer: "timer",
     XHR: "xhr",
     Other: "other",
 };

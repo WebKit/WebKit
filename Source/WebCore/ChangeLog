@@ -1,3 +1,51 @@
+2018-08-23  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: support breakpoints for timers and animation-frame events
+        https://bugs.webkit.org/show_bug.cgi?id=188778
+
+        Reviewed by Brian Burg.
+
+        The original implementation of "instrumentation" breakpoints relied upon the frontend
+        sending somewhat arbitrary strings when enabling breakpoints for specific events. As an
+        example, setting a breakpoint for `requestAnimationFrame` expects `"animationFrameFired"`
+        as the string, which doesn't make much sense. This patch removes the usage of these strings
+        and instead expects the agent to implement a method that matches what is happening.
+
+        Tests: inspector/dom-debugger/event-animation-frame-breakpoints.html
+               inspector/dom-debugger/event-listener-breakpoints.html
+               inspector/dom-debugger/event-timer-breakpoints.html
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willFireTimer):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didInstallTimerImpl):
+        (WebCore::InspectorInstrumentation::didRemoveTimerImpl):
+        (WebCore::InspectorInstrumentation::willFireTimerImpl):
+        (WebCore::InspectorInstrumentation::didRequestAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::didCancelAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::willFireAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::pauseOnNativeEventIfNeeded): Deleted.
+
+        * inspector/agents/InspectorDOMDebuggerAgent.h:
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::setEventBreakpoint): Added.
+        (WebCore::InspectorDOMDebuggerAgent::removeEventBreakpoint): Added.
+        (WebCore::InspectorDOMDebuggerAgent::willHandleEvent):
+        (WebCore::InspectorDOMDebuggerAgent::willFireTimer): Added.
+        (WebCore::InspectorDOMDebuggerAgent::willFireAnimationFrame): Added.
+        (WebCore::InspectorDOMDebuggerAgent::setEventListenerBreakpoint): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::setInstrumentationBreakpoint): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::setBreakpoint): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::removeEventListenerBreakpoint): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::removeInstrumentationBreakpoint): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::removeBreakpoint): Deleted.
+        (WebCore::InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded): Deleted.
+        Unify the event listener and instrumentation breakpoint commands into a single method,
+        `setEventBreakpoint`, that takes in both an `EventBreakpointType` and `eventName`.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::fired):
+
 2018-08-23  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Support the inputmode attribute on contenteditable elements

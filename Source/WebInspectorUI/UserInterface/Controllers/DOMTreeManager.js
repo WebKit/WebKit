@@ -556,7 +556,7 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
 
     setBreakpointForEventListener(eventListener)
     {
-        let breakpoint = new WI.EventBreakpoint(eventListener.type, {eventListener});
+        let breakpoint = new WI.EventBreakpoint(WI.EventBreakpoint.Type.Listener, eventListener.type, {eventListener});
         this._breakpointsForEventListeners.set(eventListener.eventListenerId, breakpoint);
 
         DOMAgent.setBreakpointForEventListener(eventListener.eventListenerId, (error) => {

@@ -1,3 +1,36 @@
+2018-08-23  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: support breakpoints for timers and animation-frame events
+        https://bugs.webkit.org/show_bug.cgi?id=188778
+
+        Reviewed by Brian Burg.
+
+        * inspector/protocol/Debugger.json:
+        Add `AnimationFrame` and `Timer` types to the list of pause reasons.
+
+        * inspector/protocol/DOMDebugger.json:
+        Introduced `setEventBreakpoint` and `removeEventBreakpoint` to replace the more specific:
+         - `setEventListenerBreakpoint`
+         - `removeEventListenerBreakpoint`
+         - `setInstrumentationBreakpoint`
+         - `removeInstrumentationBreakpoint`
+        Also created an `EventBreakpointType` to enumerate the available types of event breakpoints.
+
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (CppProtocolTypesHeaderGenerator.generate_output):
+        (CppProtocolTypesHeaderGenerator._generate_forward_declarations_for_binding_traits):
+        (CppProtocolTypesHeaderGenerator._generate_declarations_for_enum_conversion_methods):
+        (CppProtocolTypesHeaderGenerator._generate_hash_declarations): Added.
+        Generate `DefaultHash` for all `enum class` used by inspector protocols.
+
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/enum-values.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-requiring-runtime-casts.json-result:
+
 2018-08-23  Michael Saboff  <msaboff@apple.com>
 
         YARR: Need to JIT compile a RegExp before using containsNestedSubpatterns flag

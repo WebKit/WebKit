@@ -321,7 +321,7 @@ void DOMTimer::fired()
     // Only the first execution of a multi-shot timer should get an affirmative user gesture indicator.
     m_userGestureTokenToForward = nullptr;
 
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireTimer(context, m_timeoutId);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireTimer(context, m_timeoutId, !repeatInterval());
 
     // Simple case for non-one-shot timers.
     if (isActive()) {

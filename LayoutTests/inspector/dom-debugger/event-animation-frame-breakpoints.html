@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/log-active-stack-trace.js"></script>
+<script src="resources/event-breakpoint-utilities.js"></script>
+<script>
+
+function handleWindow_requestAnimationFrame() {
+    TestPage.dispatchEventToFrontend("TestPage-requestAnimationFrame");
+}
+
+function trigger_requestAnimationFrame() {
+    requestAnimationFrame(handleWindow_requestAnimationFrame);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("DOMDebugger.Event.AnimationFrame");
+
+    function addTestCasesForEventName(eventName) {
+        suite.addTestCase({
+            name: `DOMDebugger.Event.AnimationFrame.AddBreakpoint "${eventName}"`,
+            description: "Check that the debugger pauses for enabled breakpoints.",
+            test(resolve, reject) {
+                let paused = false;
+
+                let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    paused = true;
+
+                    InspectorTest.pass("Should pause before event handler is run.");
+                    logActiveStackTrace();
+
+                    WI.debuggerManager.resume()
+                    .catch(reject);
+                });
+
+                InspectorTest.singleFireEventListener(`TestPage-${eventName}`, (event) => {
+                    if (!paused) {
+                        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+
+                        InspectorTest.fail("Should pause before event handler is run.");
+                    }
+
+                    resolve();
+                });
+
+                InspectorTest.EventBreakpoint.addBreakpoint(WI.EventBreakpoint.Type.AnimationFrame, eventName)
+                .then(InspectorTest.EventBreakpoint.awaitEvent("window", eventName))
+                .catch(reject);
+            },
+            teardown: InspectorTest.EventBreakpoint.teardown,
+        });
+
+        suite.addTestCase({
+            name: `DOMDebugger.Event.AnimationFrame.AddDisabledBreakpoint "${eventName}"`,
+            description: "Check that debugger does not pause for disabled breakpoints.",
+            test(resolve, reject) {
+                InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.AnimationFrame, eventName, "Should not pause for disabled breakpoint.");
+
+                InspectorTest.EventBreakpoint.addBreakpoint(WI.EventBreakpoint.Type.AnimationFrame, eventName)
+                .then(InspectorTest.EventBreakpoint.disableBreakpoint)
+                .then(InspectorTest.EventBreakpoint.awaitEvent("window", eventName))
+                .catch(reject);
+            },
+            teardown: InspectorTest.EventBreakpoint.teardown,
+        });
+
+        suite.addTestCase({
+            name: `DOMDebugger.Event.AnimationFrame.RemoveBreakpoint "${eventName}"`,
+            description: "Check that debugger does not pause for removed breakpoint.",
+            test(resolve, reject) {
+                InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.AnimationFrame, eventName, "Should not pause for removed breakpoint.");
+
+                InspectorTest.EventBreakpoint.addBreakpoint(WI.EventBreakpoint.Type.AnimationFrame, eventName)
+                .then(InspectorTest.EventBreakpoint.removeBreakpoint)
+                .then(InspectorTest.EventBreakpoint.awaitEvent("window", eventName))
+                .catch(reject);
+            },
+            teardown: InspectorTest.EventBreakpoint.teardown,
+        });
+
+        suite.addTestCase({
+            name: `DOMDebugger.Event.AnimationFrame.RemoveDisabledBreakpoint "${eventName}"`,
+            description: "Check that a disabled breakpoint can be removed.",
+            test(resolve, reject) {
+                InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.AnimationFrame, eventName, "Should not pause for removed disabled breakpoint.");
+
+                InspectorTest.EventBreakpoint.addBreakpoint(WI.EventBreakpoint.Type.AnimationFrame, eventName)
+                .then(InspectorTest.EventBreakpoint.disableBreakpoint)
+                .then(InspectorTest.EventBreakpoint.removeBreakpoint)
+                .then(InspectorTest.EventBreakpoint.awaitEvent("window", eventName))
+                .catch(reject);
+            },
+            teardown: InspectorTest.EventBreakpoint.teardown,
+        });
+    }
+
+    addTestCasesForEventName("requestAnimationFrame");
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for Event AnimationFrame breakpoints.</p>
+</body>
+</html>

@@ -8,6 +8,12 @@
             "type": "string",
             "enum": ["subtree-modified", "attribute-modified", "node-removed"],
             "description": "DOM breakpoint type."
+        },
+        {
+            "id": "EventBreakpointType",
+            "type": "string",
+            "enum": ["animation-frame", "listener", "timer"],
+            "description": "Event breakpoint type."
         }
     ],
     "commands": [
@@ -28,31 +34,19 @@
             ]
         },
         {
-            "name": "setEventListenerBreakpoint",
-            "description": "Sets breakpoint on particular DOM event.",
+            "name": "setEventBreakpoint",
+            "description": "Sets breakpoint on particular event of given type.",
             "parameters": [
-                { "name": "eventName", "type": "string", "description": "DOM Event name to stop on (any DOM event will do)." }
+                { "name": "breakpointType", "$ref": "EventBreakpointType" },
+                { "name": "eventName", "type": "string", "description": "The name of the event to stop on." }
             ]
         },
         {
-            "name": "removeEventListenerBreakpoint",
-            "description": "Removes breakpoint on particular DOM event.",
+            "name": "removeEventBreakpoint",
+            "description": "Removes breakpoint on particular event of given type.",
             "parameters": [
-                { "name": "eventName", "type": "string", "description": "Event name." }
-            ]
-        },
-        {
-            "name": "setInstrumentationBreakpoint",
-            "description": "Sets breakpoint on particular native event.",
-            "parameters": [
-                { "name": "eventName", "type": "string", "description": "Instrumentation name to stop on." }
-            ]
-        },
-        {
-            "name": "removeInstrumentationBreakpoint",
-            "description": "Sets breakpoint on particular native event.",
-            "parameters": [
-                { "name": "eventName", "type": "string", "description": "Instrumentation name to stop on." }
+                { "name": "breakpointType", "$ref": "EventBreakpointType" },
+                { "name": "eventName", "type": "string", "description": "The name of the event to stop on." }
             ]
         },
         {

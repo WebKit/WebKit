@@ -25,12 +25,15 @@
 
 WI.EventBreakpoint = class EventBreakpoint extends WI.Object
 {
-    constructor(eventName, {disabled, eventListener} = {})
+    constructor(type, eventName, {disabled, eventListener} = {})
     {
         super();
 
+        console.assert(typeof type === "string");
+        console.assert(Object.values(WI.EventBreakpoint.Type).includes(type));
         console.assert(typeof eventName === "string");
 
+        this._type = type;
         this._eventName = eventName;
 
         this._disabled = disabled || false;
@@ -41,13 +44,14 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Object
 
     static fromPayload(payload)
     {
-        return new WI.EventBreakpoint(payload.eventName, {
+        return new WI.EventBreakpoint(payload.type, payload.eventName, {
             disabled: !!payload.disabled,
         });
     }
 
     // Public
 
+    get type() { return this._type; }
     get eventName() { return this._eventName; }
     get eventListener() { return this._eventListener; }
 
@@ -69,6 +73,7 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Object
     get serializableInfo()
     {
         let info = {
+            type: this._type,
             eventName: this._eventName,
         };
         if (this._disabled)
@@ -79,10 +84,18 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Object
 
     saveIdentityToCookie(cookie)
     {
+        cookie[WI.EventBreakpoint.TypeCookieKey] = this._type;
         cookie[WI.EventBreakpoint.EventNameCookieKey] = this._eventName;
     }
 };
 
+WI.EventBreakpoint.Type = {
+    AnimationFrame: "animation-frame",
+    Listener: "listener",
+    Timer: "timer",
+};
+
+WI.EventBreakpoint.TypeCookieKey = "event-breakpoint-type";
 WI.EventBreakpoint.EventNameCookieKey = "event-breakpoint-event-name";
 
 WI.EventBreakpoint.Event = {

@@ -29,7 +29,7 @@ WI.EventBreakpointTreeElement = class EventBreakpointTreeElement extends WI.Gene
     {
         console.assert(breakpoint instanceof WI.EventBreakpoint);
 
-        let classNames = ["breakpoint", "event"];
+        let classNames = ["breakpoint", "event", `breakpoint-for-${breakpoint.type}`];
         if (className)
             classNames.push(className);
 

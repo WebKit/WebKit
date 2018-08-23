@@ -157,7 +157,7 @@ public:
     static void didDispatchEventOnWindow(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willEvaluateScript(Frame&, const String& url, int lineNumber);
     static void didEvaluateScript(const InspectorInstrumentationCookie&, Frame&);
-    static InspectorInstrumentationCookie willFireTimer(ScriptExecutionContext&, int timerId);
+    static InspectorInstrumentationCookie willFireTimer(ScriptExecutionContext&, int timerId, bool oneShot);
     static void didFireTimer(const InspectorInstrumentationCookie&);
     static void didInvalidateLayout(Frame&);
     static InspectorInstrumentationCookie willLayout(Frame&);
@@ -341,7 +341,7 @@ private:
     static void didDispatchEventOnWindowImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willEvaluateScriptImpl(InstrumentingAgents&, Frame&, const String& url, int lineNumber);
     static void didEvaluateScriptImpl(const InspectorInstrumentationCookie&, Frame&);
-    static InspectorInstrumentationCookie willFireTimerImpl(InstrumentingAgents&, int timerId, ScriptExecutionContext&);
+    static InspectorInstrumentationCookie willFireTimerImpl(InstrumentingAgents&, int timerId, bool oneShot, ScriptExecutionContext&);
     static void didFireTimerImpl(const InspectorInstrumentationCookie&);
     static void didInvalidateLayoutImpl(InstrumentingAgents&, Frame&);
     static InspectorInstrumentationCookie willLayoutImpl(InstrumentingAgents&, Frame&);
@@ -452,8 +452,6 @@ private:
     static InstrumentingAgents* instrumentingAgentsForWorkerGlobalScope(WorkerGlobalScope*);
 
     static InspectorTimelineAgent* retrieveTimelineAgent(const InspectorInstrumentationCookie&);
-
-    static void pauseOnNativeEventIfNeeded(InstrumentingAgents&, const String& eventName, bool synchronous);
 
     WEBCORE_EXPORT static int s_frontendCounter;
 };
@@ -807,11 +805,11 @@ inline void InspectorInstrumentation::didEvaluateScript(const InspectorInstrumen
         didEvaluateScriptImpl(cookie, frame);
 }
 
-inline InspectorInstrumentationCookie InspectorInstrumentation::willFireTimer(ScriptExecutionContext& context, int timerId)
+inline InspectorInstrumentationCookie InspectorInstrumentation::willFireTimer(ScriptExecutionContext& context, int timerId, bool oneShot)
 {
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        return willFireTimerImpl(*instrumentingAgents, timerId, context);
+        return willFireTimerImpl(*instrumentingAgents, timerId, oneShot, context);
     return InspectorInstrumentationCookie();
 }
 

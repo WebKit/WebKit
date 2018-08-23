@@ -951,6 +951,31 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         let {pauseReason, pauseData} = targetData;
 
         switch (pauseReason) {
+        case WI.DebuggerManager.PauseReason.AnimationFrame:
+            console.assert(pauseData, "Expected data with an animation frame, but found none.");
+            if (!pauseData)
+                return false;
+
+            var eventBreakpoint = WI.domDebuggerManager.eventBreakpointForTypeAndEventName(WI.EventBreakpoint.Type.AnimationFrame, pauseData.eventName);
+            console.assert(eventBreakpoint, "Expected AnimationFrame breakpoint for event name.", pauseData.eventName);
+            if (!eventBreakpoint)
+                return false;
+
+            var suppressFiltering = true;
+            this._pauseReasonTreeOutline = this.createContentTreeOutline(suppressFiltering);
+
+            var eventBreakpointTreeElement = new WI.EventBreakpointTreeElement(eventBreakpoint, {
+                className: WI.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName,
+                title: WI.UIString("%s Fired").format(pauseData.eventName),
+            });
+            this._pauseReasonTreeOutline.appendChild(eventBreakpointTreeElement);
+
+            var eventBreakpointRow = new WI.DetailsSectionRow;
+            eventBreakpointRow.element.appendChild(this._pauseReasonTreeOutline.element);
+
+            this._pauseReasonGroup.rows = [eventBreakpointRow];
+            return true;
+
         case WI.DebuggerManager.PauseReason.Assertion:
             // FIXME: We should include the assertion condition string.
             console.assert(pauseData, "Expected data with an assertion, but found none.");
@@ -1056,37 +1081,42 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
         case WI.DebuggerManager.PauseReason.EventListener:
             console.assert(pauseData, "Expected data with an event listener, but found none.");
-            if (pauseData) {
-                let eventBreakpoint = null;
-                if (pauseData.eventListenerId)
-                    eventBreakpoint = WI.domTreeManager.breakpointForEventListenerId(pauseData.eventListenerId);
-                if (!eventBreakpoint)
-                    eventBreakpoint = WI.domDebuggerManager.eventBreakpointForEventName(pauseData.eventName);
-                console.assert(eventBreakpoint, "Expected Event Listener breakpoint for event name.", pauseData.eventName);
+            if (!pauseData)
+                return false;
 
-                this._pauseReasonTreeOutline = this.createContentTreeOutline(true);
+            var eventBreakpoint = null;
+            if (pauseData.eventListenerId)
+                eventBreakpoint = WI.domTreeManager.breakpointForEventListenerId(pauseData.eventListenerId);
+            if (!eventBreakpoint)
+                eventBreakpoint = WI.domDebuggerManager.eventBreakpointForTypeAndEventName(WI.EventBreakpoint.Type.Listener, pauseData.eventName);
 
-                let eventBreakpointTreeElement = new WI.EventBreakpointTreeElement(eventBreakpoint, {
-                    className: WI.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName,
-                    title: WI.UIString("“%s“ Event Fired").format(pauseData.eventName),
-                });
-                this._pauseReasonTreeOutline.appendChild(eventBreakpointTreeElement);
+            console.assert(eventBreakpoint, "Expected Event Listener breakpoint for event name.", pauseData.eventName);
+            if (!eventBreakpoint)
+                return false;
 
-                let eventBreakpointRow = new WI.DetailsSectionRow;
-                eventBreakpointRow.element.appendChild(this._pauseReasonTreeOutline.element);
+            var suppressFiltering = true;
+            this._pauseReasonTreeOutline = this.createContentTreeOutline(suppressFiltering);
 
-                let rows = [eventBreakpointRow];
+            var eventBreakpointTreeElement = new WI.EventBreakpointTreeElement(eventBreakpoint, {
+                className: WI.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName,
+                title: WI.UIString("“%s“ Event Fired").format(pauseData.eventName),
+            });
+            this._pauseReasonTreeOutline.appendChild(eventBreakpointTreeElement);
 
-                let eventListener = eventBreakpoint.eventListener;
-                if (eventListener) {
-                    console.assert(eventListener.eventListenerId === pauseData.eventListenerId);
+            var eventBreakpointRow = new WI.DetailsSectionRow;
+            eventBreakpointRow.element.appendChild(this._pauseReasonTreeOutline.element);
 
-                    let ownerElementRow = new WI.DetailsSectionSimpleRow(WI.UIString("Element"), WI.linkifyNodeReference(eventListener.node));
-                    rows.push(ownerElementRow);
-                }
+            var rows = [eventBreakpointRow];
 
-                this._pauseReasonGroup.rows = rows;
+            var eventListener = eventBreakpoint.eventListener;
+            if (eventListener) {
+                console.assert(eventListener.eventListenerId === pauseData.eventListenerId);
+
+                let ownerElementRow = new WI.DetailsSectionSimpleRow(WI.UIString("Element"), WI.linkifyNodeReference(eventListener.node));
+                rows.push(ownerElementRow);
             }
+
+            this._pauseReasonGroup.rows = rows;
             return true;
 
         case WI.DebuggerManager.PauseReason.Exception:
@@ -1103,6 +1133,31 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         case WI.DebuggerManager.PauseReason.PauseOnNextStatement:
             this._pauseReasonTextRow.text = WI.UIString("Immediate Pause Requested");
             this._pauseReasonGroup.rows = [this._pauseReasonTextRow];
+            return true;
+
+        case WI.DebuggerManager.PauseReason.Timer:
+            console.assert(pauseData, "Expected data with a timer, but found none.");
+            if (!pauseData)
+                return false;
+
+            var eventBreakpoint = WI.domDebuggerManager.eventBreakpointForTypeAndEventName(WI.EventBreakpoint.Type.Timer, pauseData.eventName);
+            console.assert(eventBreakpoint, "Expected Timer breakpoint for event name.", pauseData.eventName);
+            if (!eventBreakpoint)
+                return false;
+
+            var suppressFiltering = true;
+            this._pauseReasonTreeOutline = this.createContentTreeOutline(suppressFiltering);
+
+            var eventBreakpointTreeElement = new WI.EventBreakpointTreeElement(eventBreakpoint, {
+                className: WI.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName,
+                title: WI.UIString("%s Fired").format(pauseData.eventName),
+            });
+            this._pauseReasonTreeOutline.appendChild(eventBreakpointTreeElement);
+
+            var eventBreakpointRow = new WI.DetailsSectionRow;
+            eventBreakpointRow.element.appendChild(this._pauseReasonTreeOutline.element);
+
+            this._pauseReasonGroup.rows = [eventBreakpointRow];
             return true;
 
         case WI.DebuggerManager.PauseReason.XHR:
@@ -1264,17 +1319,14 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
     willDismissPopover(popover)
     {
-        if (popover.result !== WI.InputPopover.Result.Committed)
-            return;
-
         if (popover instanceof WI.EventBreakpointPopover) {
-            let eventName = popover.value;
-            if (eventName)
-                WI.domDebuggerManager.addEventBreakpoint(new WI.EventBreakpoint(eventName));
+            let breakpoint = popover.breakpoint;
+            if (breakpoint)
+                WI.domDebuggerManager.addEventBreakpoint(breakpoint);
             return;
         }
 
-        if (popover instanceof WI.XHRBreakpointPopover) {
+        if (popover instanceof WI.XHRBreakpointPopover && popover.result === WI.InputPopover.Result.Committed) {
             let url = popover.value;
             if (url)
                 WI.domDebuggerManager.addXHRBreakpoint(new WI.XHRBreakpoint(popover.type, url));

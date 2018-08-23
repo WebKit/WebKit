@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/log-active-stack-trace.js"></script>
+<script src="resources/event-breakpoint-utilities.js"></script>
+<script>
+
+let intervalID = NaN;
+
+function handleWindow_setTimeout() {
+    TestPage.dispatchEventToFrontend("TestPage-setTimeout");
+}
+
+function handleWindow_setInterval() {
+    TestPage.dispatchEventToFrontend("TestPage-setInterval");
+
+    repeatClearInterval();
+}
+
+function handleRepeat() {
+}
+
+function trigger_setTimeout() {
+    setTimeout(handleWindow_setTimeout, 100);
+}
+
+function trigger_setInterval() {
+    intervalID = setInterval(handleWindow_setInterval, 100);
+}
+
+function repeatSetInterval() {
+    intervalID = setInterval(handleRepeat, 100);
+}
+
+function repeatClearInterval() {
+    clearInterval(intervalID);
+    intervalID = NaN;
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("DOMDebugger.Event.Timer");
+
+    function addTestCasesForEventName(eventName) {
+        suite.addTestCase({
+            name: `DOMDebugger.Event.Timer.AddBreakpoint "${eventName}"`,
+            description: "Check that the debugger pauses for enabled breakpoints.",
+            test(resolve, reject) {
+                let paused = false;
+
+                let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    paused = true;
+
+                    InspectorTest.pass("Should pause before event handler is run.");
+                    logActiveStackTrace();
+
+                    WI.debuggerManager.resume()
+                    .catch(reject);
+                });
+
+                InspectorTest.singleFireEventListener(`TestPage-${eventName}`, (event) => {
+                    if (!paused) {
+                        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+
+                        InspectorTest.fail("Should pause before event handler is run.");
+                    }
+
+                    resolve();
+                });
+
+                InspectorTest.EventBreakpoint.addBreakpoint(WI.EventBreakpoint.Type.Timer, eventName)
+                .then(InspectorTest.EventBreakpoint.awaitEvent("window", eventName))
+                .catch(reject);
+            },
+            teardown: InspectorTest.EventBreakpoint.teardown,
+        });
+
+        suite.addTestCase({
+            name: `DOMDebugger.Event.Timer.AddDisabledBreakpoint "${eventName}"`,
+            description: "Check that debugger does not pause for disabled breakpoints.",
+            test(resolve, reject) {
+                InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.Timer, eventName, "Should not pause for disabled breakpoint.");
+
+                InspectorTest.EventBreakpoint.addBreakpoint(WI.EventBreakpoint.Type.Timer, eventName)
+                .then(InspectorTest.EventBreakpoint.disableBreakpoint)
+                .then(InspectorTest.EventBreakpoint.awaitEvent("window", eventName))
+                .catch(reject);
+            },
+            teardown: InspectorTest.EventBreakpoint.teardown,
+        });
+
+        suite.addTestCase({
+            name: `DOMDebugger.Event.Timer.RemoveBreakpoint "${eventName}"`,
+            description: "Check that debugger does not pause for removed breakpoint.",
+            test(resolve, reject) {
+                InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.Timer, eventName, "Should not pause for removed breakpoint.");
+
+                InspectorTest.EventBreakpoint.addBreakpoint(WI.EventBreakpoint.Type.Timer, eventName)
+                .then(InspectorTest.EventBreakpoint.removeBreakpoint)
+                .then(InspectorTest.EventBreakpoint.awaitEvent("window", eventName))
+                .catch(reject);
+            },
+            teardown: InspectorTest.EventBreakpoint.teardown,
+        });
+
+        suite.addTestCase({
+            name: `DOMDebugger.Event.Timer.RemoveDisabledBreakpoint "${eventName}"`,
+            description: "Check that a disabled breakpoint can be removed.",
+            test(resolve, reject) {
+                InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.Timer, eventName, "Should not pause for removed disabled breakpoint.");
+
+                InspectorTest.EventBreakpoint.addBreakpoint(WI.EventBreakpoint.Type.Timer, eventName)
+                .then(InspectorTest.EventBreakpoint.disableBreakpoint)
+                .then(InspectorTest.EventBreakpoint.removeBreakpoint)
+                .then(InspectorTest.EventBreakpoint.awaitEvent("window", eventName))
+                .catch(reject);
+            },
+            teardown: InspectorTest.EventBreakpoint.teardown,
+        });
+    }
+
+    addTestCasesForEventName("setTimeout");
+    addTestCasesForEventName("setInterval");
+
+    suite.addTestCase({
+        name: `DOMDebugger.Event.Listener.RepeatFireBreakpoint`,
+        description: "Check that a single breakpoint pauses multiple times for the same interval.",
+        test(resolve, reject) {
+            let pauseCount = 0;
+
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                ++pauseCount;
+
+                InspectorTest.pass("Should pause before event handler is run.");
+                logActiveStackTrace();
+
+                WI.debuggerManager.resume()
+                .catch(reject);
+
+                if (pauseCount >= 2) {
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+
+                    InspectorTest.evaluateInPage(`repeatClearInterval()`)
+                    .then(resolve, reject)
+                }
+            });
+
+            InspectorTest.EventBreakpoint.addBreakpoint(WI.EventBreakpoint.Type.Timer, "setInterval")
+            .then(() => {
+                InspectorTest.log("Firing \"setInterval\" on window...");
+                return InspectorTest.evaluateInPage(`repeatSetInterval()`);
+            })
+            .catch(reject);
+        },
+        teardown: InspectorTest.EventBreakpoint.teardown,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for Event Timer breakpoints.</p>
+</body>
+</html>

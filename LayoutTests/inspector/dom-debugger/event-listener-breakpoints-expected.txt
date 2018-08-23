@@ -1,32 +1,32 @@
 Tests for Event Listener breakpoints.
 
 
-== Running test suite: DOMDebugger.Event
--- Running test case: DOMDebugger.Event.AddBreakpoint "click"
+== Running test suite: DOMDebugger.Event.Listener
+-- Running test case: DOMDebugger.Event.Listener.AddBreakpoint "click"
 Adding "click" Event Breakpoint...
 Firing "click" on body...
 PASS: Should pause before event handler is run.
 CALL STACK:
 0: [F] handleBody_click
-1: [F] bodyFire_click
+1: [F] trigger_click
 2: [P] Global Code
 -- Running test teardown.
 
--- Running test case: DOMDebugger.Event.AddDisabledBreakpoint "click"
+-- Running test case: DOMDebugger.Event.Listener.AddDisabledBreakpoint "click"
 Adding "click" Event Breakpoint...
 Disabling "click" Event Breakpoint...
 Firing "click" on body...
 PASS: Should not pause for disabled breakpoint.
 -- Running test teardown.
 
--- Running test case: DOMDebugger.Event.RemoveBreakpoint "click"
+-- Running test case: DOMDebugger.Event.Listener.RemoveBreakpoint "click"
 Adding "click" Event Breakpoint...
 Removing "click" Event Breakpoint...
 Firing "click" on body...
 PASS: Should not pause for removed breakpoint.
 -- Running test teardown.
 
--- Running test case: DOMDebugger.Event.RemoveDisabledBreakpoint "click"
+-- Running test case: DOMDebugger.Event.Listener.RemoveDisabledBreakpoint "click"
 Adding "click" Event Breakpoint...
 Disabling "click" Event Breakpoint...
 Removing "click" Event Breakpoint...
@@ -34,31 +34,31 @@ Firing "click" on body...
 PASS: Should not pause for removed disabled breakpoint.
 -- Running test teardown.
 
--- Running test case: DOMDebugger.Event.AddBreakpoint "custom"
+-- Running test case: DOMDebugger.Event.Listener.AddBreakpoint "custom"
 Adding "custom" Event Breakpoint...
 Firing "custom" on body...
 PASS: Should pause before event handler is run.
 CALL STACK:
 0: [F] handleBody_custom
-1: [F] bodyFire_custom
+1: [F] trigger_custom
 2: [P] Global Code
 -- Running test teardown.
 
--- Running test case: DOMDebugger.Event.AddDisabledBreakpoint "custom"
+-- Running test case: DOMDebugger.Event.Listener.AddDisabledBreakpoint "custom"
 Adding "custom" Event Breakpoint...
 Disabling "custom" Event Breakpoint...
 Firing "custom" on body...
 PASS: Should not pause for disabled breakpoint.
 -- Running test teardown.
 
--- Running test case: DOMDebugger.Event.RemoveBreakpoint "custom"
+-- Running test case: DOMDebugger.Event.Listener.RemoveBreakpoint "custom"
 Adding "custom" Event Breakpoint...
 Removing "custom" Event Breakpoint...
 Firing "custom" on body...
 PASS: Should not pause for removed breakpoint.
 -- Running test teardown.
 
--- Running test case: DOMDebugger.Event.RemoveDisabledBreakpoint "custom"
+-- Running test case: DOMDebugger.Event.Listener.RemoveDisabledBreakpoint "custom"
 Adding "custom" Event Breakpoint...
 Disabling "custom" Event Breakpoint...
 Removing "custom" Event Breakpoint...
@@ -66,18 +66,18 @@ Firing "custom" on body...
 PASS: Should not pause for removed disabled breakpoint.
 -- Running test teardown.
 
--- Running test case: DOMDebugger.Event.AddMultipleBreakpoints
+-- Running test case: DOMDebugger.Event.Listener.AddMultipleBreakpoints
 Adding "click" Event Breakpoint...
 Firing "click" on div#x...
 PASS: Should pause before event handler is run.
 CALL STACK:
 0: [F] handleX_click
-1: [F] xFire_click
+1: [F] clickX
 2: [P] Global Code
 PASS: Should pause before event handler is run.
 CALL STACK:
 0: [F] handleBody_click
-1: [F] xFire_click
+1: [F] clickX
 2: [P] Global Code
 -- Running test teardown.
 

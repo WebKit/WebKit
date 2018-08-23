@@ -897,6 +897,18 @@ std::optional<Inspector::Protocol::Test::ParameterBundle::Directionality> parseE
 } // namespace Protocol
 
 } // namespace Inspector
+
+namespace WTF {
+
+template<typename T> struct DefaultHash;
+
+// Hash declarations in the 'Database' Domain
+template<>
+struct DefaultHash<Inspector::Protocol::Database::MouseButton> {
+    typedef IntHash<Inspector::Protocol::Database::MouseButton> Hash;
+};
+
+} // namespace WTF
 ### End File: TestProtocolObjects.h
 
 ### Begin File: TestProtocolObjects.cpp

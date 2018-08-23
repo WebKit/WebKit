@@ -44,11 +44,12 @@ function test() {
 
             InspectorTest.log("Adding \"load\" Event Breakpoint...");
 
-            let breakpoint = new WI.EventBreakpoint("load");
+            let breakpoint = new WI.EventBreakpoint(WI.EventBreakpoint.Type.Listener, "load");
 
             WI.domDebuggerManager.awaitEvent(WI.DOMDebuggerManager.Event.EventBreakpointAdded)
             .then((event) => {
-                InspectorTest.assert(event.data.breakpoint.eventName, "load", "Breakpoint should be for expected event name.");
+                InspectorTest.assert(event.data.breakpoint.type === WI.EventBreakpoint.Type.Listener, "Breakpoint should be for expected type.");
+                InspectorTest.assert(event.data.breakpoint.eventName === "load", "Breakpoint should be for expected event name.");
 
                 InspectorTest.log("Reloading WebInspector...");
                 return InspectorTest.reloadPage();

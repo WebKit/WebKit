@@ -64,10 +64,11 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         sections.extend(self._generate_enum_constant_value_conversion_methods())
         builder_sections = map(self._generate_builders_for_domain, domains)
         sections.extend(filter(lambda section: len(section) > 0, builder_sections))
-        sections.append(self._generate_forward_declarations_for_binding_traits())
-        sections.extend(self._generate_declarations_for_enum_conversion_methods())
+        sections.append(self._generate_forward_declarations_for_binding_traits(domains))
+        sections.extend(self._generate_declarations_for_enum_conversion_methods(domains))
         sections.append('} // namespace Protocol')
         sections.append(Template(CppTemplates.HeaderPostlude).substitute(None, **header_args))
+        sections.extend(self._generate_hash_declarations(domains))
         return "\n\n".join(sections)
 
     # Private methods.
@@ -337,11 +338,11 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         lines.append('    }')
         return '\n'.join(lines)
 
-    def _generate_forward_declarations_for_binding_traits(self):
+    def _generate_forward_declarations_for_binding_traits(self, domains):
         # A list of (builder_type, needs_runtime_cast)
         type_arguments = []
 
-        for domain in self.domains_to_generate():
+        for domain in domains:
             type_declarations = self.type_declarations_for_domain(domain)
             declarations_to_generate = filter(lambda decl: self.type_needs_shape_assertions(decl.type), type_declarations)
 
@@ -369,7 +370,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             lines.append('};')
         return '\n'.join(lines)
 
-    def _generate_declarations_for_enum_conversion_methods(self):
+    def _generate_declarations_for_enum_conversion_methods(self, domains):
         sections = []
         sections.append('\n'.join([
             'namespace %s {' % self.helpers_namespace(),
@@ -389,7 +390,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         def type_member_is_anonymous_enum_type(type_member):
             return isinstance(type_member.type, EnumType) and type_member.type.is_anonymous
 
-        for domain in self.domains_to_generate():
+        for domain in domains:
             type_declarations = self.type_declarations_for_domain(domain)
             declaration_types = [decl.type for decl in type_declarations]
             object_types = filter(lambda _type: isinstance(_type, ObjectType), declaration_types)
@@ -424,3 +425,35 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         sections.append('} // namespace %s' % self.helpers_namespace())
 
         return ['\n\n'.join(sections)]
+
+    def _generate_hash_declarations(self, domains):
+        lines = []
+
+        for domain in domains:
+            type_declarations = self.type_declarations_for_domain(domain)
+            declaration_types = [decl.type for decl in type_declarations]
+            enum_types = filter(lambda _type: isinstance(_type, EnumType), declaration_types)
+
+            if len(enum_types) == 0:
+                continue
+
+            if len(lines) == 0:
+                lines.append('namespace WTF {')
+                lines.append('')
+                lines.append('template<typename T> struct DefaultHash;')
+
+            lines.append('')
+            lines.append("// Hash declarations in the '%s' Domain" % domain.domain_name)
+
+            for enum_type in enum_types:
+                lines.append('template<>')
+                lines.append('struct DefaultHash<Inspector::Protocol::%s::%s> {' % (domain.domain_name, enum_type.raw_name()))
+                lines.append('    typedef IntHash<Inspector::Protocol::%s::%s> Hash;' % (domain.domain_name, enum_type.raw_name()))
+                lines.append('};')
+
+        if len(lines) == 0:
+            return []
+
+        lines.append('')
+        lines.append('} // namespace WTF')
+        return ['\n'.join(lines)]
