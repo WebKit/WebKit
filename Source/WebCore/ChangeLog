@@ -1,3 +1,9 @@
+2018-08-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, attempt to fix the build after r235230.
+
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp:
+
 2018-08-23  Youenn Fablet  <youenn@apple.com>
 
         Update libwebrtc up to 984f1a80c0

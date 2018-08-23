@@ -36,7 +36,6 @@
 #include <webrtc/api/video/i420_buffer.h>
 #include <webrtc/common_video/libyuv/include/webrtc_libyuv.h>
 #include <webrtc/sdk/WebKit/WebKitUtilities.h>
-#include <webrtc/sdk/objc/Framework/Classes/Video/corevideo_frame_buffer.h>
 
 #pragma clang diagnostic pop
 
