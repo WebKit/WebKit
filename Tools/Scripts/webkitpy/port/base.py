@@ -1373,8 +1373,10 @@ class Port(object):
         This is likely used only by diff_image()"""
         return self._build_path('ImageDiff')
 
+    API_TEST_BINARY_NAMES = ['TestWTF', 'TestWebKitAPI']
+
     def path_to_api_test_binaries(self):
-        return {binary: self._build_path(binary) for binary in ['TestWTF', 'TestWebKitAPI']}
+        return {binary: self._build_path(binary) for binary in self.API_TEST_BINARY_NAMES}
 
     def _path_to_lighttpd(self):
         """Returns the path to the LigHTTPd binary.

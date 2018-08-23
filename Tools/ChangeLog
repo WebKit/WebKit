@@ -1,3 +1,22 @@
+2018-08-23  Jonathan Bedard  <jbedard@apple.com>
+
+        Explain test name matching in run-api-tests help
+        https://bugs.webkit.org/show_bug.cgi?id=188280
+
+        Reviewed by Ryosuke Niwa.
+
+        Improve the run-api-tests help message to explain how test
+        name matching works.
+
+        * Scripts/webkitpy/api_tests/run_api_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/port/base.py:
+        (Port):
+        (Port.path_to_api_test_binaries): Make binary names a globally accessible array.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort):
+        (WinPort.path_to_api_test_binaries): Ditto.
+
 2018-08-23  Youenn Fablet  <youenn@apple.com>
 
         Use "wpt serve" to launch WPT server

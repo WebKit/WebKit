@@ -29,7 +29,7 @@ import traceback
 from webkitpy.api_tests.manager import Manager
 from webkitpy.common.host import Host
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
-from webkitpy.port import configuration_options, platform_options
+from webkitpy.port import configuration_options, platform_options, base, win
 
 EXCEPTIONAL_EXIT_STATUS = -1
 INTERRUPT_EXIT_STATUS = -2
@@ -133,7 +133,16 @@ def parse_args(args):
                              help='Run all tests, even DISABLED tests'),
     ]))
 
-    option_parser = optparse.OptionParser(usage='%prog [options] [<path>...]')
+    option_parser = optparse.OptionParser(
+        usage='run-api-tests [options] [<test names>...]',
+        description="""By default, run-api-tests will run all API tests. It also allows the user to specify tests of the \
+format <suite>.<test> or <canonicalized binary name>.<suite>.<test>. Note that in the case where a binary is not \
+specified, one will be inferred by listing all available tests. Specifying just a binary or just a suite will cause every \
+test contained within to be run. The canonicalized binary name is the binary name with any filename extension \
+stripped. For Unix ports, these binaries are {} and {}. For Windows ports, they are {} and {}.""".format(
+            ', '.join(base.Port.API_TEST_BINARY_NAMES[:-1]), base.Port.API_TEST_BINARY_NAMES[-1],
+            ', '.join(win.WinPort.API_TEST_BINARY_NAMES[:-1]), win.WinPort.API_TEST_BINARY_NAMES[-1],
+    ))
 
     for group_name, group_options in option_group_definitions:
         option_group = optparse.OptionGroup(option_parser, group_name)

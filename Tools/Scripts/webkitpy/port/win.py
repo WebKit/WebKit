@@ -212,8 +212,10 @@ class WinPort(ApplePort):
 
         return self._build_path('ImageDiff.exe')
 
+    API_TEST_BINARY_NAMES = ['TestWTF.exe', 'TestWebCore.exe', 'TestWebKitLegacy.exe']
+
     def path_to_api_test_binaries(self):
-        return {binary.split('.')[0]: self._build_path(binary) for binary in ['TestWTF.exe', 'TestWebCore.exe', 'TestWebKitLegacy.exe']}
+        return {binary.split('.')[0]: self._build_path(binary) for binary in self.API_TEST_BINARY_NAMES}
 
     def test_search_path(self):
         test_fallback_names = [path for path in self.baseline_search_path() if not path.startswith(self._webkit_baseline_path('mac'))]
