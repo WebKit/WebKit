@@ -1,3 +1,23 @@
+2018-08-23  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Store video preset sizes in a map
+        https://bugs.webkit.org/show_bug.cgi?id=188866
+        <rdar://problem/43622643>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, tested manually.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::AVVideoCaptureSource):
+        (WebCore::AVVideoCaptureSource::initializeCapabilities):
+        (WebCore::AVVideoCaptureSource::sizeForPreset):
+        (WebCore::AVVideoCaptureSource::setPreset):
+        (WebCore::AVVideoCaptureSource::bestSessionPresetForVideoDimensions):
+        (WebCore::sizeForPreset): Deleted.
+        (WebCore::AVVideoCaptureSource::bestSessionPresetForVideoDimensions const): Deleted.
+
 2018-08-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, attempt to fix the build after r235230.

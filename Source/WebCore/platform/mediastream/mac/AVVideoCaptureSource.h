@@ -71,7 +71,7 @@ private:
 
     bool isFrameRateSupported(double frameRate);
 
-    NSString *bestSessionPresetForVideoDimensions(std::optional<int> width, std::optional<int> height) const;
+    NSString *bestSessionPresetForVideoDimensions(std::optional<int> width, std::optional<int> height);
     bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
 
     void initializeCapabilities(RealtimeMediaSourceCapabilities&) final;
@@ -84,16 +84,23 @@ private:
 
     void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*) final;
     void processNewFrame(RetainPtr<CMSampleBufferRef>, RetainPtr<AVCaptureConnection>);
+    IntSize sizeForPreset(NSString*);
+
+    using VideoPresetMap = HashMap<String, IntSize>;
+    VideoPresetMap& videoPresets() { return m_supportedPresets; }
 
     RetainPtr<NSString> m_pendingPreset;
     RetainPtr<CMSampleBufferRef> m_buffer;
     RetainPtr<AVCaptureVideoDataOutput> m_videoOutput;
 
+    IntSize m_presetSize;
     int32_t m_width { 0 };
     int32_t m_height { 0 };
     int m_sensorOrientation { 0 };
     int m_deviceOrientation { 0 };
     MediaSample::VideoRotation m_sampleRotation { MediaSample::VideoRotation::None };
+
+    VideoPresetMap m_supportedPresets;
 };
 
 } // namespace WebCore
