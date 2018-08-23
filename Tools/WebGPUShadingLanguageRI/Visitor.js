@@ -162,6 +162,13 @@ class Visitor {
     {
         node.ptr.visit(this);
     }
+
+    visitTernaryExpression(node)
+    {
+        node.predicate.visit(this);
+        node.bodyExpression.visit(this);
+        node.elseExpression.visit(this);
+    }
     
     _handlePropertyAccessExpression(node)
     {

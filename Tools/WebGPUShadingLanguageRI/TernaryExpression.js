@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,22 +24,24 @@
  */
 "use strict";
 
-class NormalUsePropertyResolver extends Rewriter {
-    visitDotExpression(node)
+class TernaryExpression extends Expression {
+    constructor(origin, predicate, bodyExpression, elseExpression)
     {
-        return super.visitDotExpression(node).rewriteAfterCloning();
+        super(origin);
+        this._predicate = predicate;
+        this._bodyExpression = bodyExpression;
+        this._elseExpression = elseExpression;
+        this._isLValue = null; // We use null to indicate that we don't know yet.
     }
     
-    visitIndexExpression(node)
+    get predicate() { return this._predicate; }
+    get bodyExpression() { return this._bodyExpression; }
+    get elseExpression() { return this._elseExpression; }
+    get isLValue() { return this._isLValue; }
+    set isLValue(value) { this._isLValue = value; }
+    
+    toString()
     {
-        return super.visitIndexExpression(node).rewriteAfterCloning();
-    }
-
-    visitTernaryExpression(node)
-    {
-        let result = super.visitTernaryExpression(node);
-        result.isLValue = node.isLValue;
-        return result;
+        return "(" + this.predicate + ") ? (" + this.bodyExpression + ") : (" + this.elseExpression + ")";
     }
 }
-

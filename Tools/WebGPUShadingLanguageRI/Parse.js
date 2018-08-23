@@ -520,7 +520,10 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         let operator = tryConsume("?");
         if (!operator)
             return predicate;
-        return new TernaryExpression(operator, predicate, parsePossibleAssignment(), parsePossibleAssignment());
+        let bodyExpression = parsePossibleAssignment();
+        consume(":");
+        let elseExpression = parsePossibleAssignment();
+        return new TernaryExpression(operator, predicate, bodyExpression, elseExpression);
     }
     
     function parsePossibleAssignment(mode)

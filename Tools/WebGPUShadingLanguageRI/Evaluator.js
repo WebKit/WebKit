@@ -142,6 +142,14 @@ class Evaluator extends Visitor {
         // This should almost snapshot, except that tail-returning a pointer is totally OK.
         return result;
     }
+
+    visitTernaryExpression(node)
+    {
+        if (node.predicate.visit(this).loadValue())
+            return node.bodyExpression.visit(this);
+        return node.elseExpression.visit(this);
+        
+    }
     
     visitVariableRef(node)
     {

@@ -59,6 +59,10 @@ class PropertyResolver extends Visitor {
             {
                 visit(node.lValue);
             }
+
+            visitTernaryExpression(node)
+            {
+            }
         }
         
         node.visit(new RValueFinder());

@@ -153,6 +153,7 @@ load("SynthesizeStructAccessors.js");
 load("SynthesizeOperatorBool.js");
 load("SynthesizeCopyConstructorOperator.js");
 load("SynthesizeDefaultConstructorOperator.js");
+load("TernaryExpression.js");
 load("TrapStatement.js");
 load("TypeDef.js");
 load("TypeDefResolver.js");

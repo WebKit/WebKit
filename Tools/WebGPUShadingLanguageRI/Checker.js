@@ -648,6 +648,21 @@ class Checker extends Visitor {
             result = expression.visit(this);
         return result;
     }
+
+    visitTernaryExpression(node)
+    {
+        this._requireBool(node.predicate);
+        let bodyType = node.bodyExpression.visit(this);
+        let elseType = node.elseExpression.visit(this);
+        if (!bodyType)
+            throw new Error("Ternary expression body has no type: " + node.bodyExpression);
+        if (!elseType)
+            throw new Error("Ternary expression else has no type: " + node.elseExpression);
+        if (!bodyType.equalsWithCommit(elseType))
+            throw new WTypeError("Body and else clause of ternary statement don't have the same type: " + node);
+        node.isLValue = node.bodyExpression.isLValue && node.elseExpression.isLValue;
+        return bodyType;
+    }
     
     visitCallExpression(node)
     {

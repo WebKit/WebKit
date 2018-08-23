@@ -1,3 +1,36 @@
+2018-08-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WSL] Ternary expressions appear to be unimplemented
+        https://bugs.webkit.org/show_bug.cgi?id=178981
+
+        Reviewed by Saam Barati.
+
+        Implement ternary statements. These can be both lvalues and rvalues. (a ? b : c ? d : e)
+        is parsed as (a ? b : (c ? d : e)).
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitTernaryExpression):
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitTernaryExpression):
+        * WebGPUShadingLanguageRI/NormalUsePropertyResolver.js:
+        (NormalUsePropertyResolver.prototype.visitTernaryExpression):
+        (NormalUsePropertyResolver):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parsePossibleTernaryConditional):
+        * WebGPUShadingLanguageRI/PropertyResolver.js:
+        (PropertyResolver.prototype._visitRValuesWithinLValue.RValueFinder.prototype.visitTernaryExpression):
+        (PropertyResolver.prototype._visitRValuesWithinLValue.RValueFinder):
+        (PropertyResolver.prototype._visitRValuesWithinLValue):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitTernaryExpression):
+        * WebGPUShadingLanguageRI/SPIRV.html:
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitProtocolDecl):
+        * WebGPUShadingLanguageRI/index.html:
+
 2018-08-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Assert in NetworkBlobRegistry::unregisterBlobURL after network process had terminated

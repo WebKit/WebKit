@@ -164,6 +164,11 @@ class Rewriter {
         result.addressSpace = node.addressSpace;
         return result;
     }
+
+    visitTernaryExpression(node)
+    {
+        return new TernaryExpression(node.origin, node.predicate.visit(this), node.bodyExpression.visit(this), node.elseExpression.visit(this));
+    }
     
     _handlePropertyAccessExpression(result, node)
     {
