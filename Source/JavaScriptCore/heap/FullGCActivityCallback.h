@@ -33,15 +33,15 @@ class JS_EXPORT_PRIVATE FullGCActivityCallback : public GCActivityCallback {
 public:
     FullGCActivityCallback(Heap*);
 
-    void doCollection() override;
+    void doCollection(VM&) override;
 
     bool didGCRecently() const { return m_didGCRecently; }
     void setDidGCRecently() { m_didGCRecently = true; }
 
 protected:
-    Seconds lastGCLength() override;
+    Seconds lastGCLength(Heap&) override;
     double gcTimeSlice(size_t bytes) override;
-    double deathRate() override;
+    double deathRate(Heap&) override;
 
     bool m_didGCRecently { false };
 };

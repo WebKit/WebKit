@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,83 +45,52 @@ GCActivityCallback::GCActivityCallback(Heap* heap)
 {
 }
 
-void GCActivityCallback::doWork()
+void GCActivityCallback::doWork(VM& vm)
 {
-    Heap* heap = &m_vm->heap;
     if (!isEnabled())
         return;
     
-    JSLockHolder locker(m_vm);
-    if (heap->isDeferred()) {
+    ASSERT(vm.currentThreadIsHoldingAPILock());
+    Heap& heap = vm.heap;
+    if (heap.isDeferred()) {
         scheduleTimer(0_s);
         return;
     }
 
-    doCollection();
+    doCollection(vm);
 }
 
-#if USE(CF)
 void GCActivityCallback::scheduleTimer(Seconds newDelay)
 {
     if (newDelay * timerSlop > m_delay)
         return;
     Seconds delta = m_delay - newDelay;
     m_delay = newDelay;
-    CFRunLoopTimerSetNextFireDate(m_timer.get(), CFRunLoopTimerGetNextFireDate(m_timer.get()) - delta.seconds());
+    if (auto timeUntilFire = this->timeUntilFire())
+        setTimeUntilFire(*timeUntilFire - delta);
+    else
+        setTimeUntilFire(newDelay);
 }
 
-void GCActivityCallback::cancelTimer()
-{
-    m_delay = s_decade;
-    CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + s_decade.seconds());
-}
-
-MonotonicTime GCActivityCallback::nextFireTime()
-{
-    return MonotonicTime::now() + Seconds(CFRunLoopTimerGetNextFireDate(m_timer.get()) - CFAbsoluteTimeGetCurrent());
-}
-#else
-void GCActivityCallback::scheduleTimer(Seconds newDelay)
-{
-    if (newDelay * timerSlop > m_delay)
-        return;
-    Seconds delta = m_delay - newDelay;
-    m_delay = newDelay;
-
-    Seconds secondsUntilFire = m_timer.secondsUntilFire();
-    m_timer.startOneShot(std::max<Seconds>(secondsUntilFire - delta, 0_s));
-}
-
-void GCActivityCallback::cancelTimer()
-{
-    m_delay = s_decade;
-    m_timer.startOneShot(s_decade);
-}
-
-MonotonicTime GCActivityCallback::nextFireTime()
-{
-    return MonotonicTime::now() + m_timer.secondsUntilFire();
-}
-#endif
-
-void GCActivityCallback::didAllocate(size_t bytes)
+void GCActivityCallback::didAllocate(Heap& heap, size_t bytes)
 {
     // The first byte allocated in an allocation cycle will report 0 bytes to didAllocate. 
     // We pretend it's one byte so that we don't ignore this allocation entirely.
     if (!bytes)
         bytes = 1;
-    double bytesExpectedToReclaim = static_cast<double>(bytes) * deathRate();
-    Seconds newDelay = lastGCLength() / gcTimeSlice(bytesExpectedToReclaim);
+    double bytesExpectedToReclaim = static_cast<double>(bytes) * deathRate(heap);
+    Seconds newDelay = lastGCLength(heap) / gcTimeSlice(bytesExpectedToReclaim);
     scheduleTimer(newDelay);
 }
 
 void GCActivityCallback::willCollect()
 {
-    cancelTimer();
+    cancel();
 }
 
 void GCActivityCallback::cancel()
 {
+    m_delay = s_decade;
     cancelTimer();
 }
 

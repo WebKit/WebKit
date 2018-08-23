@@ -36,7 +36,7 @@ public:
     using Base = JSRunLoopTimer;
     explicit StopIfNecessaryTimer(VM*);
     
-    void doWork() override;
+    void doWork(VM&) override;
     
     void scheduleSoon();
 };
