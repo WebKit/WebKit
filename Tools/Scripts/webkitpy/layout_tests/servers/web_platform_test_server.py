@@ -86,17 +86,16 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         self._pid_file = pidfile
         if not self._pid_file:
             self._pid_file = self._filesystem.join(self._runtime_path, '%s.pid' % self._name)
-        self._servers_file = self._filesystem.join(self._runtime_path, '%s_servers.json' % (self._name))
 
         self._filesystem = port_obj.host.filesystem
         self._layout_root = port_obj.layout_tests_dir()
         self._doc_root = self._filesystem.join(self._layout_root, doc_root(port_obj))
 
-        self._resources_files_to_copy = []
-
-        current_dir_path = self._filesystem.abspath(self._filesystem.split(__file__)[0])
-        self._start_cmd = ["python", self._filesystem.join(current_dir_path, "web_platform_test_launcher.py"), self._servers_file]
         self._doc_root_path = self._filesystem.join(self._layout_root, self._doc_root)
+        self._config_filename = self._filesystem.join(self._doc_root_path, "config.json")
+
+        wpt_file = self._filesystem.join(self._doc_root_path, "wpt.py")
+        self._start_cmd = ["python", wpt_file, "serve", "--config", self._config_filename]
 
         self._mappings = []
         config = wpt_config_json(port_obj)
@@ -112,39 +111,16 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
     def ports_to_forward(self):
         return [mapping['port'] for mapping in self._mappings]
 
-    def _copy_webkit_test_files(self):
-        _log.debug('Copying WebKit resources files')
-        for f in self._resources_files_to_copy:
-            webkit_filename = self._filesystem.join(self._layout_root, "resources", f)
-            if self._filesystem.isfile(webkit_filename):
-                self._filesystem.copyfile(webkit_filename, self._filesystem.join(self._doc_root, "resources", f))
-        _log.debug('Copying WebKit web platform server config.json')
-        config_wk_filename = self._filesystem.join(self._layout_root, "imported", "w3c", "resources", "config.json")
-        if self._filesystem.isfile(config_wk_filename):
-            config_json = self._filesystem.read_text_file(config_wk_filename).replace("%CERTS_DIR%", self._filesystem.join(self._output_dir, "_wpt_certs"))
-            self._filesystem.write_text_file(self._filesystem.join(self._doc_root, "config.json"), config_json)
-
-        wpt_testharnessjs_file = self._filesystem.join(self._doc_root, "resources", "testharness.js")
-        layout_tests_testharnessjs_file = self._filesystem.join(self._layout_root, "resources", "testharness.js")
-        if (not self._filesystem.compare(wpt_testharnessjs_file, layout_tests_testharnessjs_file)):
-            _log.warning("\n//////////\nWPT tests are not using the same testharness.js file as other WebKit Layout tests.\nWebKit testharness.js might need to be updated according WPT testharness.js.\n//////////\n")
-
-    def _clean_webkit_test_files(self):
-        _log.debug('Cleaning WPT resources files')
-        for f in self._resources_files_to_copy:
-            wpt_filename = self._filesystem.join(self._doc_root, "resources", f)
-            if self._filesystem.isfile(wpt_filename):
-                self._filesystem.remove(wpt_filename)
-        _log.debug('Cleaning WPT web platform server config.json')
-        config_wpt_filename = self._filesystem.join(self._doc_root, "config.json")
-        if self._filesystem.isfile(config_wpt_filename):
-            self._filesystem.remove(config_wpt_filename)
-
     def _prepare_config(self):
         self._filesystem.maybe_make_directory(self._output_dir)
         self._output_log_path = self._filesystem.join(self._output_dir, self._log_file_name)
         self._wsout = self._filesystem.open_text_file_for_writing(self._output_log_path)
-        self._copy_webkit_test_files()
+
+        _log.debug('Copying WebKit web platform server config.json')
+        config_wk_filename = self._filesystem.join(self._layout_root, "imported", "w3c", "resources", "config.json")
+        if self._filesystem.isfile(config_wk_filename):
+            config_json = self._filesystem.read_text_file(config_wk_filename).replace("%CERTS_DIR%", self._filesystem.join(self._output_dir, "_wpt_certs"))
+            self._filesystem.write_text_file(self._config_filename, config_json)
 
     def _spawn_process(self):
         self._process = self._executive.popen(self._start_cmd, cwd=self._doc_root_path, shell=False, stdin=self._executive.PIPE, stdout=self._wsout, stderr=self._wsout)
@@ -165,37 +141,17 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
 
         return self._process.pid
 
-    def _stop_running_subservers(self):
-        if self._filesystem.exists(self._servers_file):
-            try:
-                json_data = self._filesystem.read_text_file(self._servers_file)
-                started_servers = json.loads(json_data)
-                for server in started_servers:
-                    if self._executive.check_running_pid(server['pid']):
-                        _log.warning('Killing server process (protocol: %s , port: %d, pid: %d).' % (server['protocol'], server['port'], server['pid']))
-                        self._executive.kill_process(server['pid'])
-            finally:
-                self._filesystem.remove(self._servers_file)
-
-    def stop(self):
-        super(WebPlatformTestServer, self).stop()
-        # In case of orphaned pid, kill the running subservers if any still alive.
-        self._stop_running_subservers()
-
     def _stop_running_server(self):
-        _log.debug('Stopping %s server' % (self._name))
-        self._clean_webkit_test_files()
+        _log.debug('Cleaning WPT web platform server config.json')
+        if self._filesystem.isfile(self._config_filename):
+            self._filesystem.remove(self._config_filename)
 
-        if self._process:
-            self._process.communicate(input='\n')
         if self._wsout:
             self._wsout.close()
             self._wsout = None
 
-        if self._pid and self._executive.check_running_pid(self._pid):
-            _log.warning('Cannot stop %s server normally.' % (self._name))
-            _log.warning('Killing server launcher process (pid: %d).' % (self._pid))
-            self._executive.kill_process(self._pid)
+        if self._pid:
+            # kill_process will not kill the subprocesses, interrupt does the job.
+            self._executive.interrupt(self._pid)
 
         self._remove_pid_file()
-        self._stop_running_subservers()

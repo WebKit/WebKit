@@ -143,6 +143,9 @@ class MockExecutive(object):
     def kill_process(self, pid):
         pass
 
+    def interrupt(self, pid):
+        pass
+
     def popen(self, args, cwd=None, env=None, **kwargs):
         self.calls.append(args)
         if self._should_log:

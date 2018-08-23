@@ -1,3 +1,13 @@
+2018-08-23  Youenn Fablet  <youenn@apple.com>
+
+        Use "wpt serve" to launch WPT server
+        https://bugs.webkit.org/show_bug.cgi?id=188848
+
+        Reviewed by Ryosuke Niwa.
+
+        * resources/config.json:
+        Use config alias to serve http/wpt content as /WebKit/
+
 2018-08-22  Rob Buis  <rbuis@igalia.com>
 
         Fetch: Stop checking Request.integrity's value in no-cors mode

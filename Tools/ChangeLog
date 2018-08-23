@@ -1,3 +1,27 @@
+2018-08-23  Youenn Fablet  <youenn@apple.com>
+
+        Use "wpt serve" to launch WPT server
+        https://bugs.webkit.org/show_bug.cgi?id=188848
+
+        Reviewed by Ryosuke Niwa.
+
+        Use "wpt serve" provided by WPT instead of using our custom launcher.
+        This simplifies things and will avoid future breakage.
+        Further simplify web_platform_test_server.py by removing no longer needed actions.
+        - Do not copy files but use alias
+        - Do not kill main pid, which leaves subprocesses alive, use interrupt instead.
+        - Stop enumerating subprocess pids.
+
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockExecutive.interrupt):
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_launcher.py: Removed.
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (WebPlatformTestServer.__init__):
+        (WebPlatformTestServer.ports_to_forward):
+        (WebPlatformTestServer._prepare_config):
+        (WebPlatformTestServer._spawn_process):
+        (WebPlatformTestServer._stop_running_server):
+
 2018-08-23  Jonathan Bedard  <jbedard@apple.com>
 
         run-api-tests: Add --webkit-only, --webcore-only and --webkit-legacy-only options to run WebKit, WebCore and WebKitLegacy tests 
