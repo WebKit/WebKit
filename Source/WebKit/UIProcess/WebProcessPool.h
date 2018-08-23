@@ -417,16 +417,6 @@ public:
         return m_hiddenPageThrottlingAutoIncreasesCounter.count();
     }
 
-    // FIXME: Move these to API::WebsiteDataStore.
-    static String legacyPlatformDefaultLocalStorageDirectory();
-    static String legacyPlatformDefaultIndexedDBDatabaseDirectory();
-    static String legacyPlatformDefaultWebSQLDatabaseDirectory();
-    static String legacyPlatformDefaultMediaKeysStorageDirectory();
-    static String legacyPlatformDefaultMediaCacheDirectory();
-    static String legacyPlatformDefaultApplicationCacheDirectory();
-    static String legacyPlatformDefaultNetworkCacheDirectory();
-    static String legacyPlatformDefaultJavaScriptConfigurationDirectory();
-
     void setResourceLoadStatisticsEnabled(bool);
     void clearResourceLoadStatistics();
 

@@ -119,4 +119,21 @@ String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
 }
 #endif
 
+WebKit::WebsiteDataStore::Configuration WebsiteDataStore::legacyDefaultDataStoreConfiguration()
+{
+    WebKit::WebsiteDataStore::Configuration configuration = defaultDataStoreConfiguration();
+
+    configuration.applicationCacheDirectory = legacyDefaultApplicationCacheDirectory();
+    configuration.applicationCacheFlatFileSubdirectoryName = "ApplicationCache";
+    configuration.networkCacheDirectory = legacyDefaultNetworkCacheDirectory();
+    configuration.mediaCacheDirectory = legacyDefaultMediaCacheDirectory();
+    configuration.mediaKeysStorageDirectory = legacyDefaultMediaKeysStorageDirectory();
+    configuration.indexedDBDatabaseDirectory = legacyDefaultIndexedDBDatabaseDirectory();
+    configuration.webSQLDatabaseDirectory = legacyDefaultWebSQLDatabaseDirectory();
+    configuration.localStorageDirectory = legacyDefaultLocalStorageDirectory();
+    configuration.javaScriptConfigurationDirectory = legacyDefaultJavaScriptConfigurationDirectory();
+    
+    return configuration;
 }
+
+} // namespace API

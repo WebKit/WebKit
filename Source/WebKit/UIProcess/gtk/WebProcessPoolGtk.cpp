@@ -77,16 +77,6 @@ void WebProcessPool::platformInitialize()
 #endif
 }
 
-WTF::String WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory()
-{
-    return API::WebsiteDataStore::defaultApplicationCacheDirectory();
-}
-
-WTF::String WebProcessPool::legacyPlatformDefaultMediaCacheDirectory()
-{
-    return API::WebsiteDataStore::defaultMediaCacheDirectory();
-}
-
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     parameters.memoryCacheDisabled = m_memoryCacheDisabled || cacheModel() == CacheModelDocumentViewer;
@@ -108,37 +98,6 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 
 void WebProcessPool::platformInvalidateContext()
 {
-}
-
-String WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory()
-{
-    return API::WebsiteDataStore::defaultWebSQLDatabaseDirectory();
-}
-
-String WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory()
-{
-    return API::WebsiteDataStore::defaultIndexedDBDatabaseDirectory();
-}
-
-String WebProcessPool::legacyPlatformDefaultLocalStorageDirectory()
-{
-    return API::WebsiteDataStore::defaultLocalStorageDirectory();
-}
-
-String WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory()
-{
-    return API::WebsiteDataStore::defaultMediaKeysStorageDirectory();
-}
-
-String WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory()
-{
-    return API::WebsiteDataStore::defaultNetworkCacheDirectory();
-}
-
-String WebProcessPool::legacyPlatformDefaultJavaScriptConfigurationDirectory()
-{
-    GUniquePtr<gchar> javaScriptCoreConfigDirectory(g_build_filename(g_get_user_data_dir(), "webkitgtk", "JavaScriptCoreDebug", nullptr));
-    return WebCore::FileSystem::stringFromFileSystemRepresentation(javaScriptCoreConfigDirectory.get());
 }
 
 void WebProcessPool::platformResolvePathsForSandboxExtensions()
