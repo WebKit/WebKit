@@ -1,0 +1,43 @@
+Test inputmode attribute on contenteditable element
+
+Missing value default:
+PASS editor.inputMode is ""
+PASS editor.getAttribute("inputmode") is null
+
+Invalid value default:
+PASS editor.inputMode = "foobar"; editor.inputMode is ""
+PASS editor.getAttribute("inputmode") is "foobar"
+PASS editor.setAttribute("inputmode", "baz"); editor.inputMode is ""
+
+Valid values:
+PASS editor.inputMode = "text"; editor.inputMode is "text"
+PASS editor.getAttribute("inputmode") is "text"
+PASS editor.setAttribute("inputmode", "text"); editor.inputMode is "text"
+PASS editor.inputMode = "tel"; editor.inputMode is "tel"
+PASS editor.getAttribute("inputmode") is "tel"
+PASS editor.setAttribute("inputmode", "tel"); editor.inputMode is "tel"
+PASS editor.inputMode = "url"; editor.inputMode is "url"
+PASS editor.getAttribute("inputmode") is "url"
+PASS editor.setAttribute("inputmode", "url"); editor.inputMode is "url"
+PASS editor.inputMode = "email"; editor.inputMode is "email"
+PASS editor.getAttribute("inputmode") is "email"
+PASS editor.setAttribute("inputmode", "email"); editor.inputMode is "email"
+PASS editor.inputMode = "numeric"; editor.inputMode is "numeric"
+PASS editor.getAttribute("inputmode") is "numeric"
+PASS editor.setAttribute("inputmode", "numeric"); editor.inputMode is "numeric"
+PASS editor.inputMode = "decimal"; editor.inputMode is "decimal"
+PASS editor.getAttribute("inputmode") is "decimal"
+PASS editor.setAttribute("inputmode", "decimal"); editor.inputMode is "decimal"
+PASS editor.inputMode = "search"; editor.inputMode is "search"
+PASS editor.getAttribute("inputmode") is "search"
+PASS editor.setAttribute("inputmode", "search"); editor.inputMode is "search"
+
+Valid case-insensitive values:
+PASS editor.inputMode = "tExt"; editor.inputMode is "text"
+PASS editor.getAttribute("inputmode") is "tExt"
+PASS editor.setAttribute("inputmode", "tExt"); editor.inputMode is "text"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

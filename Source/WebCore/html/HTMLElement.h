@@ -26,6 +26,7 @@
 #include "Autocapitalize.h"
 #endif
 
+#include "InputMode.h"
 #include "StyledElement.h"
 
 namespace WebCore {
@@ -106,6 +107,10 @@ public:
     WEBCORE_EXPORT virtual bool shouldAutocorrect() const;
     WEBCORE_EXPORT void setAutocorrect(bool);
 #endif
+
+    WEBCORE_EXPORT InputMode canonicalInputMode() const;
+    const AtomicString& inputMode() const;
+    void setInputMode(const AtomicString& value);
 
 protected:
     HTMLElement(const QualifiedName& tagName, Document&, ConstructionType);

@@ -1086,6 +1086,21 @@ void HTMLElement::setAutocorrect(bool autocorrect)
 
 #endif
 
+InputMode HTMLElement::canonicalInputMode() const
+{
+    return inputModeForAttributeValue(attributeWithoutSynchronization(inputmodeAttr));
+}
+
+const AtomicString& HTMLElement::inputMode() const
+{
+    return stringForInputMode(canonicalInputMode());
+}
+
+void HTMLElement::setInputMode(const AtomicString& value)
+{
+    setAttributeWithoutSynchronization(inputmodeAttr, value);
+}
+
 } // namespace WebCore
 
 #ifndef NDEBUG

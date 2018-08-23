@@ -39,7 +39,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "InputModeNames.h"
 #include "LayoutDisallowedScope.h"
 #include "Logging.h"
 #include "NodeTraversal.h"
@@ -674,32 +673,6 @@ void HTMLTextFormControlElement::showPlaceholderIfNecessary()
         placeholder->setInlineStyleProperty(CSSPropertyVisibility, CSSValueVisible, true);
 }
 #endif
-
-String HTMLTextFormControlElement::inputMode() const
-{
-    const AtomicString& inputMode = attributeWithoutSynchronization(inputmodeAttr);
-    if (equalIgnoringASCIICase(inputMode, InputModeNames::text()))
-        return InputModeNames::text();
-    if (equalIgnoringASCIICase(inputMode, InputModeNames::tel()))
-        return InputModeNames::tel();
-    if (equalIgnoringASCIICase(inputMode, InputModeNames::url()))
-        return InputModeNames::url();
-    if (equalIgnoringASCIICase(inputMode, InputModeNames::email()))
-        return InputModeNames::email();
-    if (equalIgnoringASCIICase(inputMode, InputModeNames::numeric()))
-        return InputModeNames::numeric();
-    if (equalIgnoringASCIICase(inputMode, InputModeNames::decimal()))
-        return InputModeNames::decimal();
-    if (equalIgnoringASCIICase(inputMode, InputModeNames::search()))
-        return InputModeNames::search();
-
-    return emptyString();
-}
-
-void HTMLTextFormControlElement::setInputMode(const String& value)
-{
-    setAttributeWithoutSynchronization(inputmodeAttr, value);
-}
 
 static void getNextSoftBreak(RootInlineBox*& line, Node*& breakNode, unsigned& breakOffset)
 {

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<p>Test inputmode attribute on contenteditable element</p>
+<div id=editor contenteditable></div>
+<div id=console></div>
+<script>
+debug('Missing value default:');
+shouldBe('editor.inputMode', '""');
+shouldBeNull('editor.getAttribute("inputmode")');
+
+debug('');
+debug('Invalid value default:');
+shouldBe('editor.inputMode = "foobar"; editor.inputMode', '""');
+shouldBe('editor.getAttribute("inputmode")', '"foobar"');
+shouldBe('editor.setAttribute("inputmode", "baz"); editor.inputMode', '""');
+
+debug('');
+debug('Valid values:');
+shouldBe('editor.inputMode = "text"; editor.inputMode', '"text"');
+shouldBe('editor.getAttribute("inputmode")', '"text"');
+shouldBe('editor.setAttribute("inputmode", "text"); editor.inputMode', '"text"');
+shouldBe('editor.inputMode = "tel"; editor.inputMode', '"tel"');
+shouldBe('editor.getAttribute("inputmode")', '"tel"');
+shouldBe('editor.setAttribute("inputmode", "tel"); editor.inputMode', '"tel"');
+shouldBe('editor.inputMode = "url"; editor.inputMode', '"url"');
+shouldBe('editor.getAttribute("inputmode")', '"url"');
+shouldBe('editor.setAttribute("inputmode", "url"); editor.inputMode', '"url"');
+shouldBe('editor.inputMode = "email"; editor.inputMode', '"email"');
+shouldBe('editor.getAttribute("inputmode")', '"email"');
+shouldBe('editor.setAttribute("inputmode", "email"); editor.inputMode', '"email"');
+shouldBe('editor.inputMode = "numeric"; editor.inputMode', '"numeric"');
+shouldBe('editor.getAttribute("inputmode")', '"numeric"');
+shouldBe('editor.setAttribute("inputmode", "numeric"); editor.inputMode', '"numeric"');
+shouldBe('editor.inputMode = "decimal"; editor.inputMode', '"decimal"');
+shouldBe('editor.getAttribute("inputmode")', '"decimal"');
+shouldBe('editor.setAttribute("inputmode", "decimal"); editor.inputMode', '"decimal"');
+shouldBe('editor.inputMode = "search"; editor.inputMode', '"search"');
+shouldBe('editor.getAttribute("inputmode")', '"search"');
+shouldBe('editor.setAttribute("inputmode", "search"); editor.inputMode', '"search"');
+
+debug('');
+debug('Valid case-insensitive values:');
+shouldBe('editor.inputMode = "tExt"; editor.inputMode', '"text"');
+shouldBe('editor.getAttribute("inputmode")', '"tExt"');
+shouldBe('editor.setAttribute("inputmode", "tExt"); editor.inputMode', '"text"');
+
+debug('');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

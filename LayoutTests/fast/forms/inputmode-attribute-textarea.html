@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<p>Test inputmode attribute on textarea</p>
+<textarea id="textarea"></textarea>
+<div id=console></div>
+<script>
+debug('Missing value default:');
+shouldBe('textarea.inputMode', '""');
+shouldBeNull('textarea.getAttribute("inputmode")');
+
+debug('');
+debug('Invalid value default:');
+shouldBe('textarea.inputMode = "foobar"; textarea.inputMode', '""');
+shouldBe('textarea.getAttribute("inputmode")', '"foobar"');
+shouldBe('textarea.setAttribute("inputmode", "baz"); textarea.inputMode', '""');
+
+debug('');
+debug('Valid values:');
+shouldBe('textarea.inputMode = "text"; textarea.inputMode', '"text"');
+shouldBe('textarea.getAttribute("inputmode")', '"text"');
+shouldBe('textarea.setAttribute("inputmode", "text"); textarea.inputMode', '"text"');
+shouldBe('textarea.inputMode = "tel"; textarea.inputMode', '"tel"');
+shouldBe('textarea.getAttribute("inputmode")', '"tel"');
+shouldBe('textarea.setAttribute("inputmode", "tel"); textarea.inputMode', '"tel"');
+shouldBe('textarea.inputMode = "url"; textarea.inputMode', '"url"');
+shouldBe('textarea.getAttribute("inputmode")', '"url"');
+shouldBe('textarea.setAttribute("inputmode", "url"); textarea.inputMode', '"url"');
+shouldBe('textarea.inputMode = "email"; textarea.inputMode', '"email"');
+shouldBe('textarea.getAttribute("inputmode")', '"email"');
+shouldBe('textarea.setAttribute("inputmode", "email"); textarea.inputMode', '"email"');
+shouldBe('textarea.inputMode = "numeric"; textarea.inputMode', '"numeric"');
+shouldBe('textarea.getAttribute("inputmode")', '"numeric"');
+shouldBe('textarea.setAttribute("inputmode", "numeric"); textarea.inputMode', '"numeric"');
+shouldBe('textarea.inputMode = "decimal"; textarea.inputMode', '"decimal"');
+shouldBe('textarea.getAttribute("inputmode")', '"decimal"');
+shouldBe('textarea.setAttribute("inputmode", "decimal"); textarea.inputMode', '"decimal"');
+shouldBe('textarea.inputMode = "search"; textarea.inputMode', '"search"');
+shouldBe('textarea.getAttribute("inputmode")', '"search"');
+shouldBe('textarea.setAttribute("inputmode", "search"); textarea.inputMode', '"search"');
+
+debug('');
+debug('Valid case-insensitive values:');
+shouldBe('textarea.inputMode = "tExt"; textarea.inputMode', '"text"');
+shouldBe('textarea.getAttribute("inputmode")', '"tExt"');
+shouldBe('textarea.setAttribute("inputmode", "tExt"); textarea.inputMode', '"text"');
+
+debug('');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

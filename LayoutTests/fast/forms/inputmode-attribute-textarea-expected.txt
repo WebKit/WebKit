@@ -1,0 +1,44 @@
+Test inputmode attribute on textarea
+
+
+Missing value default:
+PASS textarea.inputMode is ""
+PASS textarea.getAttribute("inputmode") is null
+
+Invalid value default:
+PASS textarea.inputMode = "foobar"; textarea.inputMode is ""
+PASS textarea.getAttribute("inputmode") is "foobar"
+PASS textarea.setAttribute("inputmode", "baz"); textarea.inputMode is ""
+
+Valid values:
+PASS textarea.inputMode = "text"; textarea.inputMode is "text"
+PASS textarea.getAttribute("inputmode") is "text"
+PASS textarea.setAttribute("inputmode", "text"); textarea.inputMode is "text"
+PASS textarea.inputMode = "tel"; textarea.inputMode is "tel"
+PASS textarea.getAttribute("inputmode") is "tel"
+PASS textarea.setAttribute("inputmode", "tel"); textarea.inputMode is "tel"
+PASS textarea.inputMode = "url"; textarea.inputMode is "url"
+PASS textarea.getAttribute("inputmode") is "url"
+PASS textarea.setAttribute("inputmode", "url"); textarea.inputMode is "url"
+PASS textarea.inputMode = "email"; textarea.inputMode is "email"
+PASS textarea.getAttribute("inputmode") is "email"
+PASS textarea.setAttribute("inputmode", "email"); textarea.inputMode is "email"
+PASS textarea.inputMode = "numeric"; textarea.inputMode is "numeric"
+PASS textarea.getAttribute("inputmode") is "numeric"
+PASS textarea.setAttribute("inputmode", "numeric"); textarea.inputMode is "numeric"
+PASS textarea.inputMode = "decimal"; textarea.inputMode is "decimal"
+PASS textarea.getAttribute("inputmode") is "decimal"
+PASS textarea.setAttribute("inputmode", "decimal"); textarea.inputMode is "decimal"
+PASS textarea.inputMode = "search"; textarea.inputMode is "search"
+PASS textarea.getAttribute("inputmode") is "search"
+PASS textarea.setAttribute("inputmode", "search"); textarea.inputMode is "search"
+
+Valid case-insensitive values:
+PASS textarea.inputMode = "tExt"; textarea.inputMode is "text"
+PASS textarea.getAttribute("inputmode") is "tExt"
+PASS textarea.setAttribute("inputmode", "tExt"); textarea.inputMode is "text"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

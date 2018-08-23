@@ -67,6 +67,8 @@
 
     // FIXME: We are the only browser to support this now that Blink dropped it (http://crbug.com/688943).
     [CEReactions, Reflect] attribute DOMString webkitdropzone;
+
+    attribute DOMString inputMode;
 };
 
 HTMLElement implements ElementCSSInlineStyle;

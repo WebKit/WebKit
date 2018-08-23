@@ -1,3 +1,21 @@
+2018-08-23  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Support the inputmode attribute on contenteditable elements
+        https://bugs.webkit.org/show_bug.cgi?id=188878
+
+        Reviewed by Ryosuke Niwa.
+
+        Added additional tests to verify the inputmode attribute is accessible on
+        HTMLElements.
+
+        * fast/forms/inputmode-attribute-contenteditable-expected.txt: Added.
+        * fast/forms/inputmode-attribute-contenteditable.html: Added.
+        * fast/forms/inputmode-attribute-input-expected.txt: Renamed from LayoutTests/fast/forms/inputmode-attribute-expected.txt.
+        * fast/forms/inputmode-attribute-input.html: Renamed from LayoutTests/fast/forms/inputmode-attribute.html.
+        * fast/forms/inputmode-attribute-textarea-expected.txt: Added.
+        * fast/forms/inputmode-attribute-textarea.html: Added.
+        * js/dom/dom-static-property-for-in-iteration-expected.txt: Rebaseline.
+
 2018-08-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Assert in NetworkBlobRegistry::unregisterBlobURL after network process had terminated

@@ -29,6 +29,7 @@
 #include <WebCore/AutocapitalizeTypes.h>
 #include <WebCore/Autofill.h>
 #include <WebCore/Color.h>
+#include <WebCore/InputMode.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/URL.h>
 #include <wtf/text/WTFString.h>
@@ -57,17 +58,6 @@ enum class InputType {
 #if ENABLE(INPUT_TYPE_COLOR)
     Color
 #endif
-};
-
-enum class InputMode : uint8_t {
-    Auto,
-    Text,
-    Telephone,
-    Url,
-    Email,
-    Numeric,
-    Decimal,
-    Search
 };
 
 #if PLATFORM(IOS)
@@ -121,7 +111,7 @@ struct AssistedNodeInformation {
     bool insideFixedPosition { false };
     AutocapitalizeType autocapitalizeType { AutocapitalizeTypeDefault };
     InputType elementType { InputType::None };
-    InputMode inputMode { InputMode::Auto };
+    WebCore::InputMode inputMode { WebCore::InputMode::Unspecified };
     String formAction;
     Vector<OptionItem> selectOptions;
     int selectedIndex { -1 };

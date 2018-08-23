@@ -23,56 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InputModeNames.h"
+#pragma once
 
-#include <wtf/NeverDestroyed.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
+enum class InputMode : uint8_t {
+    Unspecified,
+    Text,
+    Telephone,
+    Url,
+    Email,
+    Numeric,
+    Decimal,
+    Search
+};
+
+InputMode inputModeForAttributeValue(const AtomicString&);
+const AtomicString& stringForInputMode(InputMode);
+
 namespace InputModeNames {
 
-const AtomicString& text()
-{
-    static NeverDestroyed<AtomicString> mode("text", AtomicString::ConstructFromLiteral);
-    return mode;
-}
-
-const AtomicString& tel()
-{
-    static NeverDestroyed<AtomicString> mode("tel", AtomicString::ConstructFromLiteral);
-    return mode;
-}
-
-const AtomicString& url()
-{
-    static NeverDestroyed<AtomicString> mode("url", AtomicString::ConstructFromLiteral);
-    return mode;
-}
-
-const AtomicString& email()
-{
-    static NeverDestroyed<AtomicString> mode("email", AtomicString::ConstructFromLiteral);
-    return mode;
-}
-
-const AtomicString& numeric()
-{
-    static NeverDestroyed<AtomicString> mode("numeric", AtomicString::ConstructFromLiteral);
-    return mode;
-}
-
-const AtomicString& decimal()
-{
-    static NeverDestroyed<AtomicString> mode("decimal", AtomicString::ConstructFromLiteral);
-    return mode;
-}
-
-const AtomicString& search()
-{
-    static NeverDestroyed<AtomicString> mode("search", AtomicString::ConstructFromLiteral);
-    return mode;
-}
+const AtomicString& text();
+const AtomicString& tel();
+const AtomicString& url();
+const AtomicString& email();
+const AtomicString& numeric();
+const AtomicString& decimal();
+const AtomicString& search();
 
 } // namespace InputModeNames
 

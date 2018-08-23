@@ -75,6 +75,7 @@
 #import <WebCore/Color.h>
 #import <WebCore/DataDetection.h>
 #import <WebCore/FloatQuad.h>
+#import <WebCore/InputMode.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Pasteboard.h>
@@ -3548,7 +3549,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     }
 
     switch (_assistedNodeInformation.inputMode) {
-    case InputMode::Auto:
+    case InputMode::Unspecified:
         switch (_assistedNodeInformation.elementType) {
         case InputType::Phone:
             [_traits setKeyboardType:UIKeyboardTypePhonePad];

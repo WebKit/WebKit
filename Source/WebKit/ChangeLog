@@ -1,3 +1,20 @@
+2018-08-23  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Support the inputmode attribute on contenteditable elements
+        https://bugs.webkit.org/show_bug.cgi?id=188878
+
+        Reviewed by Ryosuke Niwa.
+
+        Ensured that the assistedNodeInformation for a contenteditable element reflects
+        the value of the element's inputmode attribute.
+
+        Moved logic to obtain the InputMode from the attribute value into WebCore.
+
+        * Shared/AssistedNodeInformation.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getAssistedNodeInformation):
+
 2018-08-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Assert in NetworkBlobRegistry::unregisterBlobURL after network process had terminated

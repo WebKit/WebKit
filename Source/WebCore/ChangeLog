@@ -1,3 +1,44 @@
+2018-08-23  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Support the inputmode attribute on contenteditable elements
+        https://bugs.webkit.org/show_bug.cgi?id=188878
+
+        Reviewed by Ryosuke Niwa.
+
+        The inputmode attribute should apply to contenteditable elements, in addition to
+        textfield inputs and textareas.
+
+        Moved the inputmode attribute from HTMLInputElement.idl and
+        HTMLTextAreaElement.idl to HTMLElement.idl to reflect the specification.
+
+        Also moved all logic to convert between the InputMode enum and string values
+        into InputMode.cpp to avoid exposing unnecessary details to WebKit. Furthermore,
+        InputMode::Auto was renamed to InputMode::Unspecified to avoid confusion with the
+        specification.
+
+        Spec: https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute
+
+        Tests: fast/forms/inputmode-attribute-contenteditable.html
+               fast/forms/inputmode-attribute-input.html
+               fast/forms/inputmode-attribute-textarea.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::canonicalInputMode const):
+        (WebCore::HTMLElement::inputMode const):
+        (WebCore::HTMLElement::setInputMode):
+        * html/HTMLElement.h:
+        * html/HTMLElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/HTMLTextFormControlElement.cpp:
+        * html/HTMLTextFormControlElement.h:
+        * html/InputMode.cpp: Renamed from Source/WebCore/html/InputModeNames.cpp.
+        (WebCore::inputModeForAttributeValue):
+        (WebCore::stringForInputMode):
+        * html/InputMode.h: Renamed from Source/WebCore/html/InputModeNames.h.
+
 2018-08-23  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Store video preset sizes in a map

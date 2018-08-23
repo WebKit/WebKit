@@ -98,9 +98,6 @@ public:
     WEBCORE_EXPORT void showPlaceholderIfNecessary();
 #endif
 
-    WEBCORE_EXPORT String inputMode() const;
-    void setInputMode(const String&);
-
 protected:
     HTMLTextFormControlElement(const QualifiedName&, Document&, HTMLFormElement*);
     bool isPlaceholderEmpty() const;

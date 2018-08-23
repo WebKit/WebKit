@@ -1,4 +1,4 @@
-Test inputmode attribute
+Test inputmode attribute on input
 
 
 Missing value default:
