@@ -362,22 +362,22 @@ endmacro()
 
 macro(WEBKIT_CHECK_HAVE_INCLUDE _variable _header)
     check_include_file(${_header} ${_variable}_value)
-    SET_AND_EXPOSE_TO_BUILD(${_variable} ${_variable}_value)
+    SET_AND_EXPOSE_TO_BUILD(${_variable} ${${_variable}_value})
 endmacro()
 
 macro(WEBKIT_CHECK_HAVE_FUNCTION _variable _function)
     check_function_exists(${_function} ${_variable}_value)
-    SET_AND_EXPOSE_TO_BUILD(${_variable} ${_variable}_value)
+    SET_AND_EXPOSE_TO_BUILD(${_variable} ${${_variable}_value})
 endmacro()
 
 macro(WEBKIT_CHECK_HAVE_SYMBOL _variable _symbol _header)
     check_symbol_exists(${_symbol} ${_header} ${_variable}_value)
-    SET_AND_EXPOSE_TO_BUILD(${_variable} ${_variable}_value)
+    SET_AND_EXPOSE_TO_BUILD(${_variable} ${${_variable}_value})
 endmacro()
 
 macro(WEBKIT_CHECK_HAVE_STRUCT _variable _struct _member _header)
     check_struct_has_member(${_struct} ${_member} ${_header} ${_variable}_value)
-    SET_AND_EXPOSE_TO_BUILD(${_variable} ${_variable}_value)
+    SET_AND_EXPOSE_TO_BUILD(${_variable} ${${_variable}_value})
 endmacro()
 
 option(ENABLE_EXPERIMENTAL_FEATURES "Enable experimental features" OFF)

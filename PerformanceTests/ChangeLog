@@ -1,5 +1,16 @@
 2018-08-23  Don Olmstead  <don.olmstead@sony.com>
 
+        [CMake] Have checks are not getting set inside CMake properly
+        https://bugs.webkit.org/show_bug.cgi?id=188901
+
+        Reviewed by Michael Catanzaro.
+
+        Add notification that MallocBench is disabled.
+
+        * CMakeLists.txt:
+
+2018-08-23  Don Olmstead  <don.olmstead@sony.com>
+
         [CMake] Add HAVE_MALLOC_TRIM definition
         https://bugs.webkit.org/show_bug.cgi?id=188897
 
