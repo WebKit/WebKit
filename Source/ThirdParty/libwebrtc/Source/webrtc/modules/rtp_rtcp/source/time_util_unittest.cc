@@ -16,29 +16,6 @@
 
 namespace webrtc {
 
-// Disabled as flake: http://bugs.webrtc.org/8610
-#ifdef WEBRTC_IOS
-#define MAYBE_TimeMicrosToNtpMatchRealTimeClockInitially \
-  DISABLED_TimeMicrosToNtpMatchRealTimeClockInitially
-#else
-#define MAYBE_TimeMicrosToNtpMatchRealTimeClockInitially \
-  TimeMicrosToNtpMatchRealTimeClockInitially
-#endif
-TEST(TimeUtilTest, MAYBE_TimeMicrosToNtpMatchRealTimeClockInitially) {
-  Clock* legacy_clock = Clock::GetRealTimeClock();
-  NtpTime before_legacy_time = TimeMicrosToNtp(rtc::TimeMicros());
-  NtpTime legacy_time = legacy_clock->CurrentNtpTime();
-  NtpTime after_legacy_time = TimeMicrosToNtp(rtc::TimeMicros());
-
-  // This test will fail once every 136 years, when NtpTime wraparound.
-  // More often than that, it will fail if system adjust ntp time while test
-  // is running.
-  // To mitigate ntp time adjustment and potentional different precisions of
-  // Clock and TimeMicrosToNtp, relax expectation by a millisecond.
-  EXPECT_GE(legacy_time.ToMs(), before_legacy_time.ToMs() - 1);
-  EXPECT_LE(legacy_time.ToMs(), after_legacy_time.ToMs() + 1);
-}
-
 TEST(TimeUtilTest, TimeMicrosToNtpDoesntChangeBetweenRuns) {
   rtc::ScopedFakeClock clock;
   // TimeMicrosToNtp is not pure: it behave differently between different

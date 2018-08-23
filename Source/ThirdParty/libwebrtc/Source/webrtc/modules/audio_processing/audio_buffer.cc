@@ -49,20 +49,20 @@ AudioBuffer::AudioBuffer(size_t input_num_frames,
                          size_t process_num_frames,
                          size_t num_process_channels,
                          size_t output_num_frames)
-  : input_num_frames_(input_num_frames),
-    num_input_channels_(num_input_channels),
-    proc_num_frames_(process_num_frames),
-    num_proc_channels_(num_process_channels),
-    output_num_frames_(output_num_frames),
-    num_channels_(num_process_channels),
-    num_bands_(NumBandsFromSamplesPerChannel(proc_num_frames_)),
-    num_split_frames_(rtc::CheckedDivExact(proc_num_frames_, num_bands_)),
-    mixed_low_pass_valid_(false),
-    reference_copied_(false),
-    activity_(AudioFrame::kVadUnknown),
-    keyboard_data_(NULL),
-    data_(new IFChannelBuffer(proc_num_frames_, num_proc_channels_)),
-    output_buffer_(new IFChannelBuffer(output_num_frames_, num_channels_)) {
+    : input_num_frames_(input_num_frames),
+      num_input_channels_(num_input_channels),
+      proc_num_frames_(process_num_frames),
+      num_proc_channels_(num_process_channels),
+      output_num_frames_(output_num_frames),
+      num_channels_(num_process_channels),
+      num_bands_(NumBandsFromSamplesPerChannel(proc_num_frames_)),
+      num_split_frames_(rtc::CheckedDivExact(proc_num_frames_, num_bands_)),
+      mixed_low_pass_valid_(false),
+      reference_copied_(false),
+      activity_(AudioFrame::kVadUnknown),
+      keyboard_data_(NULL),
+      data_(new IFChannelBuffer(proc_num_frames_, num_proc_channels_)),
+      output_buffer_(new IFChannelBuffer(output_num_frames_, num_channels_)) {
   RTC_DCHECK_GT(input_num_frames_, 0);
   RTC_DCHECK_GT(proc_num_frames_, 0);
   RTC_DCHECK_GT(output_num_frames_, 0);
@@ -73,8 +73,8 @@ AudioBuffer::AudioBuffer(size_t input_num_frames,
   if (input_num_frames_ != proc_num_frames_ ||
       output_num_frames_ != proc_num_frames_) {
     // Create an intermediate buffer for resampling.
-    process_buffer_.reset(new ChannelBuffer<float>(proc_num_frames_,
-                                                   num_proc_channels_));
+    process_buffer_.reset(
+        new ChannelBuffer<float>(proc_num_frames_, num_proc_channels_));
 
     if (input_num_frames_ != proc_num_frames_) {
       for (size_t i = 0; i < num_proc_channels_; ++i) {
@@ -92,12 +92,10 @@ AudioBuffer::AudioBuffer(size_t input_num_frames,
   }
 
   if (num_bands_ > 1) {
-    split_data_.reset(new IFChannelBuffer(proc_num_frames_,
-                                          num_proc_channels_,
-                                          num_bands_));
-    splitting_filter_.reset(new SplittingFilter(num_proc_channels_,
-                                                num_bands_,
-                                                proc_num_frames_));
+    split_data_.reset(
+        new IFChannelBuffer(proc_num_frames_, num_proc_channels_, num_bands_));
+    splitting_filter_.reset(
+        new SplittingFilter(num_proc_channels_, num_bands_, proc_num_frames_));
   }
 }
 
@@ -132,8 +130,7 @@ void AudioBuffer::CopyFrom(const float* const* data,
   // Resample.
   if (input_num_frames_ != proc_num_frames_) {
     for (size_t i = 0; i < num_proc_channels_; ++i) {
-      input_resamplers_[i]->Resample(data_ptr[i],
-                                     input_num_frames_,
+      input_resamplers_[i]->Resample(data_ptr[i], input_num_frames_,
                                      process_buffer_->channels()[i],
                                      proc_num_frames_);
     }
@@ -142,8 +139,7 @@ void AudioBuffer::CopyFrom(const float* const* data,
 
   // Convert to the S16 range.
   for (size_t i = 0; i < num_proc_channels_; ++i) {
-    FloatToFloatS16(data_ptr[i],
-                    proc_num_frames_,
+    FloatToFloatS16(data_ptr[i], proc_num_frames_,
                     data_->fbuf()->channels()[i]);
   }
 }
@@ -161,17 +157,14 @@ void AudioBuffer::CopyTo(const StreamConfig& stream_config,
     data_ptr = process_buffer_->channels();
   }
   for (size_t i = 0; i < num_channels_; ++i) {
-    FloatS16ToFloat(data_->fbuf()->channels()[i],
-                    proc_num_frames_,
+    FloatS16ToFloat(data_->fbuf()->channels()[i], proc_num_frames_,
                     data_ptr[i]);
   }
 
   // Resample.
   if (output_num_frames_ != proc_num_frames_) {
     for (size_t i = 0; i < num_channels_; ++i) {
-      output_resamplers_[i]->Resample(data_ptr[i],
-                                      proc_num_frames_,
-                                      data[i],
+      output_resamplers_[i]->Resample(data_ptr[i], proc_num_frames_, data[i],
                                       output_num_frames_);
     }
   }
@@ -204,16 +197,14 @@ int16_t* const* AudioBuffer::channels() {
 }
 
 const int16_t* const* AudioBuffer::split_bands_const(size_t channel) const {
-  return split_data_.get() ?
-         split_data_->ibuf_const()->bands(channel) :
-         data_->ibuf_const()->bands(channel);
+  return split_data_.get() ? split_data_->ibuf_const()->bands(channel)
+                           : data_->ibuf_const()->bands(channel);
 }
 
 int16_t* const* AudioBuffer::split_bands(size_t channel) {
   mixed_low_pass_valid_ = false;
-  return split_data_.get() ?
-         split_data_->ibuf()->bands(channel) :
-         data_->ibuf()->bands(channel);
+  return split_data_.get() ? split_data_->ibuf()->bands(channel)
+                           : data_->ibuf()->bands(channel);
 }
 
 const int16_t* const* AudioBuffer::split_channels_const(Band band) const {
@@ -261,16 +252,14 @@ float* const* AudioBuffer::channels_f() {
 }
 
 const float* const* AudioBuffer::split_bands_const_f(size_t channel) const {
-  return split_data_.get() ?
-         split_data_->fbuf_const()->bands(channel) :
-         data_->fbuf_const()->bands(channel);
+  return split_data_.get() ? split_data_->fbuf_const()->bands(channel)
+                           : data_->fbuf_const()->bands(channel);
 }
 
 float* const* AudioBuffer::split_bands_f(size_t channel) {
   mixed_low_pass_valid_ = false;
-  return split_data_.get() ?
-         split_data_->fbuf()->bands(channel) :
-         data_->fbuf()->bands(channel);
+  return split_data_.get() ? split_data_->fbuf()->bands(channel)
+                           : data_->fbuf()->bands(channel);
 }
 
 const float* const* AudioBuffer::split_channels_const_f(Band band) const {
@@ -401,19 +390,16 @@ void AudioBuffer::DeinterleaveFrom(AudioFrame* frame) {
                              num_input_channels_, deinterleaved[0]);
   } else {
     RTC_DCHECK_EQ(num_proc_channels_, num_input_channels_);
-    Deinterleave(frame->data(),
-                 input_num_frames_,
-                 num_proc_channels_,
+    Deinterleave(frame->data(), input_num_frames_, num_proc_channels_,
                  deinterleaved);
   }
 
   // Resample.
   if (input_num_frames_ != proc_num_frames_) {
     for (size_t i = 0; i < num_proc_channels_; ++i) {
-      input_resamplers_[i]->Resample(input_buffer_->fbuf_const()->channels()[i],
-                                     input_num_frames_,
-                                     data_->fbuf()->channels()[i],
-                                     proc_num_frames_);
+      input_resamplers_[i]->Resample(
+          input_buffer_->fbuf_const()->channels()[i], input_num_frames_,
+          data_->fbuf()->channels()[i], proc_num_frames_);
     }
   }
 }
@@ -453,8 +439,7 @@ void AudioBuffer::CopyLowPassToReference() {
   if (!low_pass_reference_channels_.get() ||
       low_pass_reference_channels_->num_channels() != num_channels_) {
     low_pass_reference_channels_.reset(
-        new ChannelBuffer<int16_t>(num_split_frames_,
-                                   num_proc_channels_));
+        new ChannelBuffer<int16_t>(num_split_frames_, num_proc_channels_));
   }
   for (size_t i = 0; i < num_proc_channels_; i++) {
     memcpy(low_pass_reference_channels_->channels()[i],

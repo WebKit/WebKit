@@ -6,11 +6,13 @@
  *  tree. An additional intellectual property rights grant can be found
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
-  */
+ */
 
 #include "modules/audio_processing/aec3/matched_filter.h"
 
-#include "typedefs.h"  // NOLINT(build/include)
+// Defines WEBRTC_ARCH_X86_FAMILY, used below.
+#include "rtc_base/system/arch.h"
+
 #if defined(WEBRTC_ARCH_X86_FAMILY)
 #include <emmintrin.h>
 #endif
@@ -183,7 +185,7 @@ TEST(MatchedFilter, LagEstimation) {
       auto lag_estimates = filter.GetLagEstimates();
 
       // Find which lag estimate should be the most accurate.
-      rtc::Optional<size_t> expected_most_accurate_lag_estimate;
+      absl::optional<size_t> expected_most_accurate_lag_estimate;
       size_t alignment_shift_sub_blocks = 0;
       for (size_t k = 0; k < config.delay.num_filters; ++k) {
         if ((alignment_shift_sub_blocks + 3 * kWindowSizeSubBlocks / 4) *

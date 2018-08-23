@@ -48,12 +48,12 @@ void HistogramPercentileCounter::Add(uint32_t value) {
   Add(value, 1);
 }
 
-rtc::Optional<uint32_t> HistogramPercentileCounter::GetPercentile(
+absl::optional<uint32_t> HistogramPercentileCounter::GetPercentile(
     float fraction) {
   RTC_CHECK_LE(fraction, 1.0);
   RTC_CHECK_GE(fraction, 0.0);
   if (total_elements_ == 0)
-    return rtc::nullopt;
+    return absl::nullopt;
   size_t elements_to_skip = static_cast<size_t>(
       std::max(0.0f, std::ceil(total_elements_ * fraction) - 1));
   if (elements_to_skip >= total_elements_)
@@ -73,7 +73,7 @@ rtc::Optional<uint32_t> HistogramPercentileCounter::GetPercentile(
     }
   }
   RTC_NOTREACHED();
-  return rtc::nullopt;
+  return absl::nullopt;
 }
 
 }  // namespace rtc

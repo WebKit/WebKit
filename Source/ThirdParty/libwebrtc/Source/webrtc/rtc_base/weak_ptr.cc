@@ -51,8 +51,7 @@ bool WeakReference::is_valid() const {
   return flag_.get() && flag_->IsValid();
 }
 
-WeakReferenceOwner::WeakReferenceOwner() {
-}
+WeakReferenceOwner::WeakReferenceOwner() {}
 
 WeakReferenceOwner::~WeakReferenceOwner() {
   Invalidate();

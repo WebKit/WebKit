@@ -59,18 +59,17 @@ bool FrameBufsEqual(const rtc::scoped_refptr<webrtc::VideoFrameBuffer>& f1,
 
   rtc::scoped_refptr<webrtc::I420BufferInterface> f1_i420 = f1->ToI420();
   rtc::scoped_refptr<webrtc::I420BufferInterface> f2_i420 = f2->ToI420();
-  return EqualPlane(f1_i420->DataY(), f2_i420->DataY(),
-                    f1_i420->StrideY(), f2_i420->StrideY(),
-                    f1_i420->width(), f1_i420->height()) &&
-         EqualPlane(f1_i420->DataU(), f2_i420->DataU(),
-                    f1_i420->StrideU(), f2_i420->StrideU(),
-                    f1_i420->ChromaWidth(), f1_i420->ChromaHeight()) &&
-         EqualPlane(f1_i420->DataV(), f2_i420->DataV(),
-                    f1_i420->StrideV(), f2_i420->StrideV(),
-                    f1_i420->ChromaWidth(), f1_i420->ChromaHeight());
+  return EqualPlane(f1_i420->DataY(), f2_i420->DataY(), f1_i420->StrideY(),
+                    f2_i420->StrideY(), f1_i420->width(), f1_i420->height()) &&
+         EqualPlane(f1_i420->DataU(), f2_i420->DataU(), f1_i420->StrideU(),
+                    f2_i420->StrideU(), f1_i420->ChromaWidth(),
+                    f1_i420->ChromaHeight()) &&
+         EqualPlane(f1_i420->DataV(), f2_i420->DataV(), f1_i420->StrideV(),
+                    f2_i420->StrideV(), f1_i420->ChromaWidth(),
+                    f1_i420->ChromaHeight());
 }
 
-rtc::scoped_refptr<I420Buffer> ReadI420Buffer(int width, int height, FILE *f) {
+rtc::scoped_refptr<I420Buffer> ReadI420Buffer(int width, int height, FILE* f) {
   int half_width = (width + 1) / 2;
   rtc::scoped_refptr<I420Buffer> buffer(
       // Explicit stride, no padding between rows.

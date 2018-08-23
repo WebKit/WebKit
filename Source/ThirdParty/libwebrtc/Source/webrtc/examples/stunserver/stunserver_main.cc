@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  rtc::Thread *pthMain = rtc::Thread::Current();
+  rtc::Thread* pthMain = rtc::Thread::Current();
 
   rtc::AsyncUDPSocket* server_socket =
       rtc::AsyncUDPSocket::Create(pthMain->socketserver(), server_addr);

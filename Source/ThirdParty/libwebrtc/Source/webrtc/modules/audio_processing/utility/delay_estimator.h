@@ -14,7 +14,7 @@
 #ifndef MODULES_AUDIO_PROCESSING_UTILITY_DELAY_ESTIMATOR_H_
 #define MODULES_AUDIO_PROCESSING_UTILITY_DELAY_ESTIMATOR_H_
 
-#include "typedefs.h"  // NOLINT(build/include)
+#include <stdint.h>
 
 static const int32_t kMaxBitCountsQ9 = (32 << 9);  // 32 matching bits in Q9.
 
@@ -117,7 +117,8 @@ void WebRtc_InitBinaryDelayEstimatorFarend(BinaryDelayEstimatorFarend* self);
 //    - delay_shift   : The amount of blocks to shift history buffers.
 //
 void WebRtc_SoftResetBinaryDelayEstimatorFarend(
-    BinaryDelayEstimatorFarend* self, int delay_shift);
+    BinaryDelayEstimatorFarend* self,
+    int delay_shift);
 
 // Adds the binary far-end spectrum to the internal far-end history buffer. This
 // spectrum is used as reference when calculating the delay using
@@ -153,7 +154,8 @@ void WebRtc_FreeBinaryDelayEstimator(BinaryDelayEstimator* self);
 // See WebRtc_CreateDelayEstimator(..) in delay_estimator_wrapper.c for detailed
 // description.
 BinaryDelayEstimator* WebRtc_CreateBinaryDelayEstimator(
-    BinaryDelayEstimatorFarend* farend, int max_lookahead);
+    BinaryDelayEstimatorFarend* farend,
+    int max_lookahead);
 
 // Re-allocates |history_size| dependent buffers. The far-end buffers will be
 // updated at the same time if needed.

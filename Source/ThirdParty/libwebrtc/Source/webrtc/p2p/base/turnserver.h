@@ -23,8 +23,9 @@
 #include "rtc_base/asyncinvoker.h"
 #include "rtc_base/asyncpacketsocket.h"
 #include "rtc_base/messagequeue.h"
-#include "rtc_base/sigslot.h"
 #include "rtc_base/socketaddress.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
+#include "rtc_base/thread_checker.h"
 
 namespace rtc {
 class ByteBufferWriter;
@@ -178,30 +179,54 @@ class TurnServer : public sigslot::has_slots<> {
   ~TurnServer() override;
 
   // Gets/sets the realm value to use for the server.
-  const std::string& realm() const { return realm_; }
-  void set_realm(const std::string& realm) { realm_ = realm; }
+  const std::string& realm() const {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
+    return realm_;
+  }
+  void set_realm(const std::string& realm) {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
+    realm_ = realm;
+  }
 
   // Gets/sets the value for the SOFTWARE attribute for TURN messages.
-  const std::string& software() const { return software_; }
-  void set_software(const std::string& software) { software_ = software; }
+  const std::string& software() const {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
+    return software_;
+  }
+  void set_software(const std::string& software) {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
+    software_ = software;
+  }
 
-  const AllocationMap& allocations() const { return allocations_; }
+  const AllocationMap& allocations() const {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
+    return allocations_;
+  }
 
   // Sets the authentication callback; does not take ownership.
-  void set_auth_hook(TurnAuthInterface* auth_hook) { auth_hook_ = auth_hook; }
+  void set_auth_hook(TurnAuthInterface* auth_hook) {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
+    auth_hook_ = auth_hook;
+  }
 
   void set_redirect_hook(TurnRedirectInterface* redirect_hook) {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
     redirect_hook_ = redirect_hook;
   }
 
-  void set_enable_otu_nonce(bool enable) { enable_otu_nonce_ = enable; }
+  void set_enable_otu_nonce(bool enable) {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
+    enable_otu_nonce_ = enable;
+  }
 
   // If set to true, reject CreatePermission requests to RFC1918 addresses.
   void set_reject_private_addresses(bool filter) {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
     reject_private_addresses_ = filter;
   }
 
   void set_enable_permission_checks(bool enable) {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
     enable_permission_checks_ = enable;
   }
 
@@ -218,12 +243,14 @@ class TurnServer : public sigslot::has_slots<> {
                                 const rtc::SocketAddress& address);
   // For testing only.
   std::string SetTimestampForNextNonce(int64_t timestamp) {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
     ts_for_next_nonce_ = timestamp;
     return GenerateNonce(timestamp);
   }
 
   void SetStunMessageObserver(
       std::unique_ptr<StunMessageObserver> observer) {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
     stun_message_observer_ = std::move(observer);
   }
 
@@ -282,6 +309,7 @@ class TurnServer : public sigslot::has_slots<> {
                    ProtocolType> ServerSocketMap;
 
   rtc::Thread* thread_;
+  rtc::ThreadChecker thread_checker_;
   std::string nonce_key_;
   std::string realm_;
   std::string software_;

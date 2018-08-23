@@ -13,8 +13,8 @@
 @
 @ Output is bit-exact with the reference C code in pitch_filter.c.
 
-#include "system_wrappers/include/asm_defines.h"
-#include "settings.h"
+#include "modules/audio_coding/codecs/isac/fix/source/settings.h"
+#include "rtc_base/system/asm_defines.h"
 
 GLOBAL_FUNCTION WebRtcIsacfix_PitchFilterCore
 .align  2

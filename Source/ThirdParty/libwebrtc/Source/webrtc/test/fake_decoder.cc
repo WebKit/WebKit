@@ -12,25 +12,32 @@
 
 #include "api/video/i420_buffer.h"
 #include "rtc_base/timeutils.h"
+#include "test/call_test.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace test {
 
-FakeDecoder::FakeDecoder() : callback_(NULL) {}
+FakeDecoder::FakeDecoder()
+    : callback_(NULL),
+      width_(CallTest::kDefaultWidth),
+      height_(CallTest::kDefaultHeight) {}
 
 int32_t FakeDecoder::InitDecode(const VideoCodec* config,
                                 int32_t number_of_cores) {
-  config_ = *config;
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
 int32_t FakeDecoder::Decode(const EncodedImage& input,
                             bool missing_frames,
-                            const RTPFragmentationHeader* fragmentation,
                             const CodecSpecificInfo* codec_specific_info,
                             int64_t render_time_ms) {
-  VideoFrame frame(I420Buffer::Create(config_.width, config_.height),
+  if (input._encodedWidth > 0 && input._encodedHeight > 0) {
+    width_ = input._encodedWidth;
+    height_ = input._encodedHeight;
+  }
+
+  VideoFrame frame(I420Buffer::Create(width_, height_),
                    webrtc::kVideoRotation_0,
                    render_time_ms * rtc::kNumMicrosecsPerMillisec);
   frame.set_timestamp(input._timeStamp);
@@ -58,7 +65,6 @@ const char* FakeDecoder::ImplementationName() const {
 
 int32_t FakeH264Decoder::Decode(const EncodedImage& input,
                                 bool missing_frames,
-                                const RTPFragmentationHeader* fragmentation,
                                 const CodecSpecificInfo* codec_specific_info,
                                 int64_t render_time_ms) {
   uint8_t value = 0;
@@ -75,10 +81,7 @@ int32_t FakeH264Decoder::Decode(const EncodedImage& input,
     }
     ++value;
   }
-  return FakeDecoder::Decode(input,
-                             missing_frames,
-                             fragmentation,
-                             codec_specific_info,
+  return FakeDecoder::Decode(input, missing_frames, codec_specific_info,
                              render_time_ms);
 }
 

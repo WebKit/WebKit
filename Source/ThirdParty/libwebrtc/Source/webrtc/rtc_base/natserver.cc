@@ -18,8 +18,7 @@
 
 namespace rtc {
 
-RouteCmp::RouteCmp(NAT* nat) : symmetric(nat->IsSymmetric()) {
-}
+RouteCmp::RouteCmp(NAT* nat) : symmetric(nat->IsSymmetric()) {}
 
 size_t RouteCmp::operator()(const SocketAddressPair& r) const {
   size_t h = r.source().Hash();
@@ -28,8 +27,8 @@ size_t RouteCmp::operator()(const SocketAddressPair& r) const {
   return h;
 }
 
-bool RouteCmp::operator()(
-      const SocketAddressPair& r1, const SocketAddressPair& r2) const {
+bool RouteCmp::operator()(const SocketAddressPair& r1,
+                          const SocketAddressPair& r2) const {
   if (r1.source() < r2.source())
     return true;
   if (r2.source() < r1.source())
@@ -42,8 +41,7 @@ bool RouteCmp::operator()(
 }
 
 AddrCmp::AddrCmp(NAT* nat)
-    : use_ip(nat->FiltersIP()), use_port(nat->FiltersPort()) {
-}
+    : use_ip(nat->FiltersIP()), use_port(nat->FiltersPort()) {}
 
 size_t AddrCmp::operator()(const SocketAddress& a) const {
   size_t h = 0;
@@ -54,8 +52,8 @@ size_t AddrCmp::operator()(const SocketAddress& a) const {
   return h;
 }
 
-bool AddrCmp::operator()(
-      const SocketAddress& a1, const SocketAddress& a2) const {
+bool AddrCmp::operator()(const SocketAddress& a1,
+                         const SocketAddress& a2) const {
   if (use_ip && (a1.ipaddr() < a2.ipaddr()))
     return true;
   if (use_ip && (a2.ipaddr() < a1.ipaddr()))
@@ -109,15 +107,15 @@ class NATProxyServerSocket : public AsyncProxyServerSocket {
       SignalReadEvent(this);
     }
   }
-
 };
 
 class NATProxyServer : public ProxyServer {
  public:
-  NATProxyServer(SocketFactory* int_factory, const SocketAddress& int_addr,
-                 SocketFactory* ext_factory, const SocketAddress& ext_ip)
-      : ProxyServer(int_factory, int_addr, ext_factory, ext_ip) {
-  }
+  NATProxyServer(SocketFactory* int_factory,
+                 const SocketAddress& int_addr,
+                 SocketFactory* ext_factory,
+                 const SocketAddress& ext_ip)
+      : ProxyServer(int_factory, int_addr, ext_factory, ext_ip) {}
 
  protected:
   AsyncProxyServerSocket* WrapSocket(AsyncSocket* socket) override {
@@ -125,27 +123,27 @@ class NATProxyServer : public ProxyServer {
   }
 };
 
-NATServer::NATServer(
-    NATType type, SocketFactory* internal,
-    const SocketAddress& internal_udp_addr,
-    const SocketAddress& internal_tcp_addr,
-    SocketFactory* external, const SocketAddress& external_ip)
+NATServer::NATServer(NATType type,
+                     SocketFactory* internal,
+                     const SocketAddress& internal_udp_addr,
+                     const SocketAddress& internal_tcp_addr,
+                     SocketFactory* external,
+                     const SocketAddress& external_ip)
     : external_(external), external_ip_(external_ip.ipaddr(), 0) {
   nat_ = NAT::Create(type);
 
   udp_server_socket_ = AsyncUDPSocket::Create(internal, internal_udp_addr);
   udp_server_socket_->SignalReadPacket.connect(this,
                                                &NATServer::OnInternalUDPPacket);
-  tcp_proxy_server_ = new NATProxyServer(internal, internal_tcp_addr, external,
-                                         external_ip);
+  tcp_proxy_server_ =
+      new NATProxyServer(internal, internal_tcp_addr, external, external_ip);
 
   int_map_ = new InternalMap(RouteCmp(nat_));
   ext_map_ = new ExternalMap();
 }
 
 NATServer::~NATServer() {
-  for (InternalMap::iterator iter = int_map_->begin();
-       iter != int_map_->end();
+  for (InternalMap::iterator iter = int_map_->begin(); iter != int_map_->end();
        iter++)
     delete iter->second;
 
@@ -156,9 +154,11 @@ NATServer::~NATServer() {
   delete ext_map_;
 }
 
-void NATServer::OnInternalUDPPacket(
-    AsyncPacketSocket* socket, const char* buf, size_t size,
-    const SocketAddress& addr, const PacketTime& packet_time) {
+void NATServer::OnInternalUDPPacket(AsyncPacketSocket* socket,
+                                    const char* buf,
+                                    size_t size,
+                                    const SocketAddress& addr,
+                                    const PacketTime& packet_time) {
   // Read the intended destination from the wire.
   SocketAddress dest_addr;
   size_t length = UnpackAddressFromNAT(buf, size, &dest_addr);
@@ -180,9 +180,11 @@ void NATServer::OnInternalUDPPacket(
   iter->second->socket->SendTo(buf + length, size - length, dest_addr, options);
 }
 
-void NATServer::OnExternalUDPPacket(
-    AsyncPacketSocket* socket, const char* buf, size_t size,
-    const SocketAddress& remote_addr, const PacketTime& packet_time) {
+void NATServer::OnExternalUDPPacket(AsyncPacketSocket* socket,
+                                    const char* buf,
+                                    size_t size,
+                                    const SocketAddress& remote_addr,
+                                    const PacketTime& packet_time) {
   SocketAddress local_addr = socket->GetLocalAddress();
 
   // Find the translation for this addresses.
@@ -199,9 +201,8 @@ void NATServer::OnExternalUDPPacket(
   // Forward this packet to the internal address.
   // First prepend the address in a quasi-STUN format.
   std::unique_ptr<char[]> real_buf(new char[size + kNATEncodedIPv6AddressSize]);
-  size_t addrlength = PackAddressForNAT(real_buf.get(),
-                                        size + kNATEncodedIPv6AddressSize,
-                                        remote_addr);
+  size_t addrlength = PackAddressForNAT(
+      real_buf.get(), size + kNATEncodedIPv6AddressSize, remote_addr);
   // Copy the data part after the address.
   rtc::PacketOptions options;
   memcpy(real_buf.get() + addrlength, buf, size);
@@ -228,8 +229,9 @@ bool NATServer::ShouldFilterOut(TransEntry* entry,
   return entry->WhitelistContains(ext_addr);
 }
 
-NATServer::TransEntry::TransEntry(
-    const SocketAddressPair& r, AsyncUDPSocket* s, NAT* nat)
+NATServer::TransEntry::TransEntry(const SocketAddressPair& r,
+                                  AsyncUDPSocket* s,
+                                  NAT* nat)
     : route(r), socket(s) {
   whitelist = new AddressSet(AddrCmp(nat));
 }

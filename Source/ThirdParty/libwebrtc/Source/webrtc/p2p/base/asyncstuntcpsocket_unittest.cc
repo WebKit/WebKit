@@ -20,48 +20,33 @@
 namespace cricket {
 
 static unsigned char kStunMessageWithZeroLength[] = {
-  0x00, 0x01, 0x00, 0x00,  // length of 0 (last 2 bytes)
-  0x21, 0x12, 0xA4, 0x42,
-  '0', '1', '2', '3',
-  '4', '5', '6', '7',
-  '8', '9', 'a', 'b',
+    0x00, 0x01, 0x00, 0x00,  // length of 0 (last 2 bytes)
+    0x21, 0x12, 0xA4, 0x42, '0', '1', '2', '3',
+    '4',  '5',  '6',  '7',  '8', '9', 'a', 'b',
 };
 
-
 static unsigned char kTurnChannelDataMessageWithZeroLength[] = {
-  0x40, 0x00, 0x00, 0x00,  // length of 0 (last 2 bytes)
+    0x40, 0x00, 0x00, 0x00,  // length of 0 (last 2 bytes)
 };
 
 static unsigned char kTurnChannelDataMessage[] = {
-  0x40, 0x00, 0x00, 0x10,
-  0x21, 0x12, 0xA4, 0x42,
-  '0', '1', '2', '3',
-  '4', '5', '6', '7',
-  '8', '9', 'a', 'b',
+    0x40, 0x00, 0x00, 0x10, 0x21, 0x12, 0xA4, 0x42, '0', '1',
+    '2',  '3',  '4',  '5',  '6',  '7',  '8',  '9',  'a', 'b',
 };
 
 static unsigned char kStunMessageWithInvalidLength[] = {
-  0x00, 0x01, 0x00, 0x10,
-  0x21, 0x12, 0xA4, 0x42,
-  '0', '1', '2', '3',
-  '4', '5', '6', '7',
-  '8', '9', 'a', 'b',
+    0x00, 0x01, 0x00, 0x10, 0x21, 0x12, 0xA4, 0x42, '0', '1',
+    '2',  '3',  '4',  '5',  '6',  '7',  '8',  '9',  'a', 'b',
 };
 
 static unsigned char kTurnChannelDataMessageWithInvalidLength[] = {
-  0x80, 0x00, 0x00, 0x20,
-  0x21, 0x12, 0xA4, 0x42,
-  '0', '1', '2', '3',
-  '4', '5', '6', '7',
-  '8', '9', 'a', 'b',
+    0x80, 0x00, 0x00, 0x20, 0x21, 0x12, 0xA4, 0x42, '0', '1',
+    '2',  '3',  '4',  '5',  '6',  '7',  '8',  '9',  'a', 'b',
 };
 
 static unsigned char kTurnChannelDataMessageWithOddLength[] = {
-  0x40, 0x00, 0x00, 0x05,
-  0x21, 0x12, 0xA4, 0x42,
-  '0',
+    0x40, 0x00, 0x00, 0x05, 0x21, 0x12, 0xA4, 0x42, '0',
 };
-
 
 static const rtc::SocketAddress kClientAddr("11.11.11.11", 0);
 static const rtc::SocketAddress kServerAddr("22.22.22.22", 0);
@@ -72,20 +57,18 @@ class AsyncStunTCPSocketTest : public testing::Test,
   AsyncStunTCPSocketTest()
       : vss_(new rtc::VirtualSocketServer()), thread_(vss_.get()) {}
 
-  virtual void SetUp() {
-    CreateSockets();
-  }
+  virtual void SetUp() { CreateSockets(); }
 
   void CreateSockets() {
-    rtc::AsyncSocket* server = vss_->CreateAsyncSocket(
-        kServerAddr.family(), SOCK_STREAM);
+    rtc::AsyncSocket* server =
+        vss_->CreateAsyncSocket(kServerAddr.family(), SOCK_STREAM);
     server->Bind(kServerAddr);
     recv_socket_.reset(new AsyncStunTCPSocket(server, true));
     recv_socket_->SignalNewConnection.connect(
         this, &AsyncStunTCPSocketTest::OnNewConnection);
 
-    rtc::AsyncSocket* client = vss_->CreateAsyncSocket(
-        kClientAddr.family(), SOCK_STREAM);
+    rtc::AsyncSocket* client =
+        vss_->CreateAsyncSocket(kClientAddr.family(), SOCK_STREAM);
     send_socket_.reset(AsyncStunTCPSocket::Create(
         client, kClientAddr, recv_socket_->GetLocalAddress()));
     send_socket_->SignalSentPacket.connect(
@@ -94,8 +77,10 @@ class AsyncStunTCPSocketTest : public testing::Test,
     vss_->ProcessMessagesUntilIdle();
   }
 
-  void OnReadPacket(rtc::AsyncPacketSocket* socket, const char* data,
-                    size_t len, const rtc::SocketAddress& remote_addr,
+  void OnReadPacket(rtc::AsyncPacketSocket* socket,
+                    const char* data,
+                    size_t len,
+                    const rtc::SocketAddress& remote_addr,
                     const rtc::PacketTime& packet_time) {
     recv_packets_.push_back(std::string(data, len));
   }
@@ -108,14 +93,14 @@ class AsyncStunTCPSocketTest : public testing::Test,
   void OnNewConnection(rtc::AsyncPacketSocket* server,
                        rtc::AsyncPacketSocket* new_socket) {
     listen_socket_.reset(new_socket);
-    new_socket->SignalReadPacket.connect(
-        this, &AsyncStunTCPSocketTest::OnReadPacket);
+    new_socket->SignalReadPacket.connect(this,
+                                         &AsyncStunTCPSocketTest::OnReadPacket);
   }
 
   bool Send(const void* data, size_t len) {
     rtc::PacketOptions options;
-    size_t ret = send_socket_->Send(
-        reinterpret_cast<const char*>(data), len, options);
+    size_t ret =
+        send_socket_->Send(reinterpret_cast<const char*>(data), len, options);
     vss_->ProcessMessagesUntilIdle();
     return (ret == len);
   }
@@ -123,7 +108,7 @@ class AsyncStunTCPSocketTest : public testing::Test,
   bool CheckData(const void* data, int len) {
     bool ret = false;
     if (recv_packets_.size()) {
-      std::string packet =  recv_packets_.front();
+      std::string packet = recv_packets_.front();
       recv_packets_.pop_front();
       ret = (memcmp(data, packet.c_str(), len) == 0);
     }
@@ -141,8 +126,8 @@ class AsyncStunTCPSocketTest : public testing::Test,
 
 // Testing a stun packet sent/recv properly.
 TEST_F(AsyncStunTCPSocketTest, TestSingleStunPacket) {
-  EXPECT_TRUE(Send(kStunMessageWithZeroLength,
-                   sizeof(kStunMessageWithZeroLength)));
+  EXPECT_TRUE(
+      Send(kStunMessageWithZeroLength, sizeof(kStunMessageWithZeroLength)));
   EXPECT_EQ(1u, recv_packets_.size());
   EXPECT_TRUE(CheckData(kStunMessageWithZeroLength,
                         sizeof(kStunMessageWithZeroLength)));
@@ -150,14 +135,14 @@ TEST_F(AsyncStunTCPSocketTest, TestSingleStunPacket) {
 
 // Verify sending multiple packets.
 TEST_F(AsyncStunTCPSocketTest, TestMultipleStunPackets) {
-  EXPECT_TRUE(Send(kStunMessageWithZeroLength,
-                   sizeof(kStunMessageWithZeroLength)));
-  EXPECT_TRUE(Send(kStunMessageWithZeroLength,
-                   sizeof(kStunMessageWithZeroLength)));
-  EXPECT_TRUE(Send(kStunMessageWithZeroLength,
-                   sizeof(kStunMessageWithZeroLength)));
-  EXPECT_TRUE(Send(kStunMessageWithZeroLength,
-                   sizeof(kStunMessageWithZeroLength)));
+  EXPECT_TRUE(
+      Send(kStunMessageWithZeroLength, sizeof(kStunMessageWithZeroLength)));
+  EXPECT_TRUE(
+      Send(kStunMessageWithZeroLength, sizeof(kStunMessageWithZeroLength)));
+  EXPECT_TRUE(
+      Send(kStunMessageWithZeroLength, sizeof(kStunMessageWithZeroLength)));
+  EXPECT_TRUE(
+      Send(kStunMessageWithZeroLength, sizeof(kStunMessageWithZeroLength)));
   EXPECT_EQ(4u, recv_packets_.size());
 }
 
@@ -172,11 +157,10 @@ TEST_F(AsyncStunTCPSocketTest, TestTurnChannelDataWithZeroLength) {
 
 // Verifying TURN channel data message.
 TEST_F(AsyncStunTCPSocketTest, TestTurnChannelData) {
-  EXPECT_TRUE(Send(kTurnChannelDataMessage,
-                   sizeof(kTurnChannelDataMessage)));
+  EXPECT_TRUE(Send(kTurnChannelDataMessage, sizeof(kTurnChannelDataMessage)));
   EXPECT_EQ(1u, recv_packets_.size());
-  EXPECT_TRUE(CheckData(kTurnChannelDataMessage,
-                        sizeof(kTurnChannelDataMessage)));
+  EXPECT_TRUE(
+      CheckData(kTurnChannelDataMessage, sizeof(kTurnChannelDataMessage)));
 }
 
 // Verifying TURN channel messages which needs padding handled properly.
@@ -210,18 +194,18 @@ TEST_F(AsyncStunTCPSocketTest, TestStunInvalidLength) {
 // Verifying TURN channel data message with invalid length.
 TEST_F(AsyncStunTCPSocketTest, TestTurnChannelDataWithInvalidLength) {
   EXPECT_FALSE(Send(kTurnChannelDataMessageWithInvalidLength,
-                   sizeof(kTurnChannelDataMessageWithInvalidLength)));
+                    sizeof(kTurnChannelDataMessageWithInvalidLength)));
   // Modify the length to larger value.
   kTurnChannelDataMessageWithInvalidLength[2] = 0xFF;
   kTurnChannelDataMessageWithInvalidLength[3] = 0xF0;
   EXPECT_FALSE(Send(kTurnChannelDataMessageWithInvalidLength,
-                   sizeof(kTurnChannelDataMessageWithInvalidLength)));
+                    sizeof(kTurnChannelDataMessageWithInvalidLength)));
 
   // Modify the length to smaller value.
   kTurnChannelDataMessageWithInvalidLength[2] = 0x00;
   kTurnChannelDataMessageWithInvalidLength[3] = 0x00;
   EXPECT_FALSE(Send(kTurnChannelDataMessageWithInvalidLength,
-                   sizeof(kTurnChannelDataMessageWithInvalidLength)));
+                    sizeof(kTurnChannelDataMessageWithInvalidLength)));
 }
 
 // Verifying a small buffer handled (dropped) properly. This will be

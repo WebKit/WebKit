@@ -14,11 +14,22 @@
 #include <jni.h>
 #include <string>
 
+#include "rtc_base/system/arch.h"
+
 // Abort the process if |jni| has a Java exception pending.
 // TODO(henrika): merge with CHECK_JNI_EXCEPTION() in jni_helpers.h.
 #define CHECK_EXCEPTION(jni)        \
   RTC_CHECK(!jni->ExceptionCheck()) \
       << (jni->ExceptionDescribe(), jni->ExceptionClear(), "")
+
+#if defined(WEBRTC_ARCH_X86)
+// Dalvik JIT generated code doesn't guarantee 16-byte stack alignment on
+// x86 - use force_align_arg_pointer to realign the stack at the JNI
+// boundary. bugs.webrtc.org/9050
+#define JNI_FUNCTION_ALIGN __attribute__((force_align_arg_pointer))
+#else
+#define JNI_FUNCTION_ALIGN
+#endif
 
 namespace webrtc {
 
@@ -33,11 +44,15 @@ jlong PointerTojlong(void* ptr);
 // JNIEnv-helper methods that wraps the API which uses the JNI interface
 // pointer (JNIEnv*). It allows us to RTC_CHECK success and that no Java
 // exception is thrown while calling the method.
-jmethodID GetMethodID(
-    JNIEnv* jni, jclass c, const char* name, const char* signature);
+jmethodID GetMethodID(JNIEnv* jni,
+                      jclass c,
+                      const char* name,
+                      const char* signature);
 
-jmethodID GetStaticMethodID(
-    JNIEnv* jni, jclass c, const char* name, const char* signature);
+jmethodID GetStaticMethodID(JNIEnv* jni,
+                            jclass c,
+                            const char* name,
+                            const char* signature);
 
 jclass FindClass(JNIEnv* jni, const char* name);
 

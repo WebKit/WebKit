@@ -11,14 +11,13 @@
 #include "modules/audio_processing/transient/file_utils.h"
 
 #include <string.h>
-#include <string>
 #include <memory>
+#include <string>
 #include <vector>
 
-#include "system_wrappers/include/file_wrapper.h"
+#include "rtc_base/system/file_wrapper.h"
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -26,18 +25,18 @@ static const uint8_t kPiBytesf[4] = {0xDB, 0x0F, 0x49, 0x40};
 static const uint8_t kEBytesf[4] = {0x54, 0xF8, 0x2D, 0x40};
 static const uint8_t kAvogadroBytesf[4] = {0x2F, 0x0C, 0xFF, 0x66};
 
-static const uint8_t kPiBytes[8] =
-    {0x18, 0x2D, 0x44, 0x54, 0xFB, 0x21, 0x09, 0x40};
-static const uint8_t kEBytes[8] =
-    {0x69, 0x57, 0x14, 0x8B, 0x0A, 0xBF, 0x05, 0x40};
-static const uint8_t kAvogadroBytes[8] =
-    {0xF4, 0xBC, 0xA8, 0xDF, 0x85, 0xE1, 0xDF, 0x44};
+static const uint8_t kPiBytes[8] = {0x18, 0x2D, 0x44, 0x54,
+                                    0xFB, 0x21, 0x09, 0x40};
+static const uint8_t kEBytes[8] = {0x69, 0x57, 0x14, 0x8B,
+                                   0x0A, 0xBF, 0x05, 0x40};
+static const uint8_t kAvogadroBytes[8] = {0xF4, 0xBC, 0xA8, 0xDF,
+                                          0x85, 0xE1, 0xDF, 0x44};
 
 static const double kPi = 3.14159265358979323846;
 static const double kE = 2.71828182845904523536;
 static const double kAvogadro = 602214100000000000000000.0;
 
-class TransientFileUtilsTest: public ::testing::Test {
+class TransientFileUtilsTest : public ::testing::Test {
  protected:
   TransientFileUtilsTest()
       : kTestFileName(
@@ -47,12 +46,10 @@ class TransientFileUtilsTest: public ::testing::Test {
             test::ResourcePath("audio_processing/transient/float-utils",
                                "dat")) {}
 
-  ~TransientFileUtilsTest() override {
-    CleanupTempFiles();
-  }
+  ~TransientFileUtilsTest() override { CleanupTempFiles(); }
 
   std::string CreateTempFilename(const std::string& dir,
-      const std::string& prefix) {
+                                 const std::string& prefix) {
     std::string filename = test::TempFilename(dir, prefix);
     temp_filenames_.push_back(filename);
     return filename;
@@ -170,9 +167,8 @@ TEST_F(TransientFileUtilsTest, MAYBE_ReadInt16BufferFromFile) {
   const size_t kBufferLength = 12;
   std::unique_ptr<int16_t[]> buffer(new int16_t[kBufferLength]);
 
-  EXPECT_EQ(kBufferLength, ReadInt16BufferFromFile(file.get(),
-                                                   kBufferLength,
-                                                   buffer.get()));
+  EXPECT_EQ(kBufferLength,
+            ReadInt16BufferFromFile(file.get(), kBufferLength, buffer.get()));
   EXPECT_EQ(22377, buffer[4]);
   EXPECT_EQ(16389, buffer[7]);
   EXPECT_EQ(17631, buffer[kBufferLength - 1]);
@@ -184,9 +180,9 @@ TEST_F(TransientFileUtilsTest, MAYBE_ReadInt16BufferFromFile) {
   // int16s read.
   const size_t kBufferLenghtLargerThanFile = kBufferLength * 2;
   buffer.reset(new int16_t[kBufferLenghtLargerThanFile]);
-  EXPECT_EQ(kBufferLength, ReadInt16BufferFromFile(file.get(),
-                                                   kBufferLenghtLargerThanFile,
-                                                   buffer.get()));
+  EXPECT_EQ(kBufferLength,
+            ReadInt16BufferFromFile(file.get(), kBufferLenghtLargerThanFile,
+                                    buffer.get()));
   EXPECT_EQ(11544, buffer[0]);
   EXPECT_EQ(22377, buffer[4]);
   EXPECT_EQ(16389, buffer[7]);
@@ -211,9 +207,8 @@ TEST_F(TransientFileUtilsTest, MAYBE_ReadInt16FromFileToFloatBuffer) {
   const size_t kBufferLength = 12;
   std::unique_ptr<float[]> buffer(new float[kBufferLength]);
 
-  EXPECT_EQ(kBufferLength, ReadInt16FromFileToFloatBuffer(file.get(),
-                                                          kBufferLength,
-                                                          buffer.get()));
+  EXPECT_EQ(kBufferLength, ReadInt16FromFileToFloatBuffer(
+                               file.get(), kBufferLength, buffer.get()));
 
   EXPECT_DOUBLE_EQ(11544, buffer[0]);
   EXPECT_DOUBLE_EQ(22377, buffer[4]);
@@ -228,9 +223,8 @@ TEST_F(TransientFileUtilsTest, MAYBE_ReadInt16FromFileToFloatBuffer) {
   const size_t kBufferLenghtLargerThanFile = kBufferLength * 2;
   buffer.reset(new float[kBufferLenghtLargerThanFile]);
   EXPECT_EQ(kBufferLength,
-            ReadInt16FromFileToFloatBuffer(file.get(),
-                                           kBufferLenghtLargerThanFile,
-                                           buffer.get()));
+            ReadInt16FromFileToFloatBuffer(
+                file.get(), kBufferLenghtLargerThanFile, buffer.get()));
   EXPECT_DOUBLE_EQ(11544, buffer[0]);
   EXPECT_DOUBLE_EQ(22377, buffer[4]);
   EXPECT_DOUBLE_EQ(16389, buffer[7]);
@@ -255,9 +249,8 @@ TEST_F(TransientFileUtilsTest, MAYBE_ReadInt16FromFileToDoubleBuffer) {
   const size_t kBufferLength = 12;
   std::unique_ptr<double[]> buffer(new double[kBufferLength]);
 
-  EXPECT_EQ(kBufferLength, ReadInt16FromFileToDoubleBuffer(file.get(),
-                                                           kBufferLength,
-                                                           buffer.get()));
+  EXPECT_EQ(kBufferLength, ReadInt16FromFileToDoubleBuffer(
+                               file.get(), kBufferLength, buffer.get()));
   EXPECT_DOUBLE_EQ(11544, buffer[0]);
   EXPECT_DOUBLE_EQ(22377, buffer[4]);
   EXPECT_DOUBLE_EQ(16389, buffer[7]);
@@ -271,9 +264,8 @@ TEST_F(TransientFileUtilsTest, MAYBE_ReadInt16FromFileToDoubleBuffer) {
   const size_t kBufferLenghtLargerThanFile = kBufferLength * 2;
   buffer.reset(new double[kBufferLenghtLargerThanFile]);
   EXPECT_EQ(kBufferLength,
-            ReadInt16FromFileToDoubleBuffer(file.get(),
-                                            kBufferLenghtLargerThanFile,
-                                            buffer.get()));
+            ReadInt16FromFileToDoubleBuffer(
+                file.get(), kBufferLenghtLargerThanFile, buffer.get()));
   EXPECT_DOUBLE_EQ(11544, buffer[0]);
   EXPECT_DOUBLE_EQ(22377, buffer[4]);
   EXPECT_DOUBLE_EQ(16389, buffer[7]);
@@ -297,9 +289,8 @@ TEST_F(TransientFileUtilsTest, MAYBE_ReadFloatBufferFromFile) {
   const size_t kBufferLength = 3;
   std::unique_ptr<float[]> buffer(new float[kBufferLength]);
 
-  EXPECT_EQ(kBufferLength, ReadFloatBufferFromFile(file.get(),
-                                                   kBufferLength,
-                                                   buffer.get()));
+  EXPECT_EQ(kBufferLength,
+            ReadFloatBufferFromFile(file.get(), kBufferLength, buffer.get()));
   EXPECT_FLOAT_EQ(kPi, buffer[0]);
   EXPECT_FLOAT_EQ(kE, buffer[1]);
   EXPECT_FLOAT_EQ(kAvogadro, buffer[2]);
@@ -311,9 +302,9 @@ TEST_F(TransientFileUtilsTest, MAYBE_ReadFloatBufferFromFile) {
   // doubles read.
   const size_t kBufferLenghtLargerThanFile = kBufferLength * 2;
   buffer.reset(new float[kBufferLenghtLargerThanFile]);
-  EXPECT_EQ(kBufferLength, ReadFloatBufferFromFile(file.get(),
-                                                   kBufferLenghtLargerThanFile,
-                                                   buffer.get()));
+  EXPECT_EQ(kBufferLength,
+            ReadFloatBufferFromFile(file.get(), kBufferLenghtLargerThanFile,
+                                    buffer.get()));
   EXPECT_FLOAT_EQ(kPi, buffer[0]);
   EXPECT_FLOAT_EQ(kE, buffer[1]);
   EXPECT_FLOAT_EQ(kAvogadro, buffer[2]);
@@ -336,9 +327,8 @@ TEST_F(TransientFileUtilsTest, MAYBE_ReadDoubleBufferFromFile) {
   const size_t kBufferLength = 3;
   std::unique_ptr<double[]> buffer(new double[kBufferLength]);
 
-  EXPECT_EQ(kBufferLength, ReadDoubleBufferFromFile(file.get(),
-                                                    kBufferLength,
-                                                    buffer.get()));
+  EXPECT_EQ(kBufferLength,
+            ReadDoubleBufferFromFile(file.get(), kBufferLength, buffer.get()));
   EXPECT_DOUBLE_EQ(kPi, buffer[0]);
   EXPECT_DOUBLE_EQ(kE, buffer[1]);
   EXPECT_DOUBLE_EQ(kAvogadro, buffer[2]);
@@ -350,9 +340,9 @@ TEST_F(TransientFileUtilsTest, MAYBE_ReadDoubleBufferFromFile) {
   // doubles read.
   const size_t kBufferLenghtLargerThanFile = kBufferLength * 2;
   buffer.reset(new double[kBufferLenghtLargerThanFile]);
-  EXPECT_EQ(kBufferLength, ReadDoubleBufferFromFile(file.get(),
-                                                    kBufferLenghtLargerThanFile,
-                                                    buffer.get()));
+  EXPECT_EQ(kBufferLength,
+            ReadDoubleBufferFromFile(file.get(), kBufferLenghtLargerThanFile,
+                                     buffer.get()));
   EXPECT_DOUBLE_EQ(kPi, buffer[0]);
   EXPECT_DOUBLE_EQ(kE, buffer[1]);
   EXPECT_DOUBLE_EQ(kAvogadro, buffer[2]);
@@ -366,8 +356,8 @@ TEST_F(TransientFileUtilsTest, MAYBE_ReadDoubleBufferFromFile) {
 TEST_F(TransientFileUtilsTest, MAYBE_WriteInt16BufferToFile) {
   std::unique_ptr<FileWrapper> file(FileWrapper::Create());
 
-  std::string kOutFileName = CreateTempFilename(test::OutputPath(),
-                                                "utils_test");
+  std::string kOutFileName =
+      CreateTempFilename(test::OutputPath(), "utils_test");
 
   file->OpenFile(kOutFileName.c_str(), false);  // Write mode.
   ASSERT_TRUE(file->is_open()) << "File could not be opened:\n"
@@ -381,8 +371,7 @@ TEST_F(TransientFileUtilsTest, MAYBE_WriteInt16BufferToFile) {
   written_buffer[1] = 2;
   written_buffer[2] = 3;
 
-  EXPECT_EQ(kBufferLength, WriteInt16BufferToFile(file.get(),
-                                                  kBufferLength,
+  EXPECT_EQ(kBufferLength, WriteInt16BufferToFile(file.get(), kBufferLength,
                                                   written_buffer.get()));
 
   file->CloseFile();
@@ -391,11 +380,9 @@ TEST_F(TransientFileUtilsTest, MAYBE_WriteInt16BufferToFile) {
   ASSERT_TRUE(file->is_open()) << "File could not be opened:\n"
                                << kOutFileName.c_str();
 
-  EXPECT_EQ(kBufferLength, ReadInt16BufferFromFile(file.get(),
-                                                   kBufferLength,
+  EXPECT_EQ(kBufferLength, ReadInt16BufferFromFile(file.get(), kBufferLength,
                                                    read_buffer.get()));
-  EXPECT_EQ(0, memcmp(written_buffer.get(),
-                      read_buffer.get(),
+  EXPECT_EQ(0, memcmp(written_buffer.get(), read_buffer.get(),
                       kBufferLength * sizeof(written_buffer[0])));
 }
 
@@ -407,8 +394,8 @@ TEST_F(TransientFileUtilsTest, MAYBE_WriteInt16BufferToFile) {
 TEST_F(TransientFileUtilsTest, MAYBE_WriteFloatBufferToFile) {
   std::unique_ptr<FileWrapper> file(FileWrapper::Create());
 
-  std::string kOutFileName = CreateTempFilename(test::OutputPath(),
-                                                "utils_test");
+  std::string kOutFileName =
+      CreateTempFilename(test::OutputPath(), "utils_test");
 
   file->OpenFile(kOutFileName.c_str(), false);  // Write mode.
   ASSERT_TRUE(file->is_open()) << "File could not be opened:\n"
@@ -422,8 +409,7 @@ TEST_F(TransientFileUtilsTest, MAYBE_WriteFloatBufferToFile) {
   written_buffer[1] = static_cast<float>(kE);
   written_buffer[2] = static_cast<float>(kAvogadro);
 
-  EXPECT_EQ(kBufferLength, WriteFloatBufferToFile(file.get(),
-                                                  kBufferLength,
+  EXPECT_EQ(kBufferLength, WriteFloatBufferToFile(file.get(), kBufferLength,
                                                   written_buffer.get()));
 
   file->CloseFile();
@@ -432,11 +418,9 @@ TEST_F(TransientFileUtilsTest, MAYBE_WriteFloatBufferToFile) {
   ASSERT_TRUE(file->is_open()) << "File could not be opened:\n"
                                << kOutFileName.c_str();
 
-  EXPECT_EQ(kBufferLength, ReadFloatBufferFromFile(file.get(),
-                                                   kBufferLength,
+  EXPECT_EQ(kBufferLength, ReadFloatBufferFromFile(file.get(), kBufferLength,
                                                    read_buffer.get()));
-  EXPECT_EQ(0, memcmp(written_buffer.get(),
-                      read_buffer.get(),
+  EXPECT_EQ(0, memcmp(written_buffer.get(), read_buffer.get(),
                       kBufferLength * sizeof(written_buffer[0])));
 }
 
@@ -448,8 +432,8 @@ TEST_F(TransientFileUtilsTest, MAYBE_WriteFloatBufferToFile) {
 TEST_F(TransientFileUtilsTest, MAYBE_WriteDoubleBufferToFile) {
   std::unique_ptr<FileWrapper> file(FileWrapper::Create());
 
-  std::string kOutFileName = CreateTempFilename(test::OutputPath(),
-                                                "utils_test");
+  std::string kOutFileName =
+      CreateTempFilename(test::OutputPath(), "utils_test");
 
   file->OpenFile(kOutFileName.c_str(), false);  // Write mode.
   ASSERT_TRUE(file->is_open()) << "File could not be opened:\n"
@@ -463,8 +447,7 @@ TEST_F(TransientFileUtilsTest, MAYBE_WriteDoubleBufferToFile) {
   written_buffer[1] = kE;
   written_buffer[2] = kAvogadro;
 
-  EXPECT_EQ(kBufferLength, WriteDoubleBufferToFile(file.get(),
-                                                   kBufferLength,
+  EXPECT_EQ(kBufferLength, WriteDoubleBufferToFile(file.get(), kBufferLength,
                                                    written_buffer.get()));
 
   file->CloseFile();
@@ -473,11 +456,9 @@ TEST_F(TransientFileUtilsTest, MAYBE_WriteDoubleBufferToFile) {
   ASSERT_TRUE(file->is_open()) << "File could not be opened:\n"
                                << kOutFileName.c_str();
 
-  EXPECT_EQ(kBufferLength, ReadDoubleBufferFromFile(file.get(),
-                                                    kBufferLength,
+  EXPECT_EQ(kBufferLength, ReadDoubleBufferFromFile(file.get(), kBufferLength,
                                                     read_buffer.get()));
-  EXPECT_EQ(0, memcmp(written_buffer.get(),
-                      read_buffer.get(),
+  EXPECT_EQ(0, memcmp(written_buffer.get(), read_buffer.get(),
                       kBufferLength * sizeof(written_buffer[0])));
 }
 
@@ -501,9 +482,8 @@ TEST_F(TransientFileUtilsTest, MAYBE_ExpectedErrorReturnValues) {
 
   // Tests with file not opened.
   EXPECT_EQ(0u, ReadInt16BufferFromFile(file.get(), 1, int16_buffer.get()));
-  EXPECT_EQ(0u, ReadInt16FromFileToDoubleBuffer(file.get(),
-                                                1,
-                                                double_buffer.get()));
+  EXPECT_EQ(
+      0u, ReadInt16FromFileToDoubleBuffer(file.get(), 1, double_buffer.get()));
   EXPECT_EQ(0u, ReadDoubleBufferFromFile(file.get(), 1, double_buffer.get()));
   EXPECT_EQ(0u, WriteInt16BufferToFile(file.get(), 1, int16_buffer.get()));
   EXPECT_EQ(0u, WriteDoubleBufferToFile(file.get(), 1, double_buffer.get()));
@@ -518,9 +498,8 @@ TEST_F(TransientFileUtilsTest, MAYBE_ExpectedErrorReturnValues) {
 
   EXPECT_EQ(0u, ReadInt16FromFileToDoubleBuffer(NULL, 1, double_buffer.get()));
   EXPECT_EQ(0u, ReadInt16FromFileToDoubleBuffer(file.get(), 1, NULL));
-  EXPECT_EQ(0u, ReadInt16FromFileToDoubleBuffer(file.get(),
-                                                0,
-                                                double_buffer.get()));
+  EXPECT_EQ(
+      0u, ReadInt16FromFileToDoubleBuffer(file.get(), 0, double_buffer.get()));
 
   EXPECT_EQ(0u, ReadDoubleBufferFromFile(NULL, 1, double_buffer.get()));
   EXPECT_EQ(0u, ReadDoubleBufferFromFile(file.get(), 1, NULL));
@@ -536,4 +515,3 @@ TEST_F(TransientFileUtilsTest, MAYBE_ExpectedErrorReturnValues) {
 }
 
 }  // namespace webrtc
-

@@ -15,7 +15,72 @@ rtc_static_library("alr_experiment") {
   ]
   deps = [
     "../:rtc_base_approved",
-    "../../api:optional",
     "../../system_wrappers:field_trial_api",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
+}
+
+rtc_static_library("field_trial_parser") {
+  sources = [
+    "field_trial_parser.cc",
+    "field_trial_parser.h",
+    "field_trial_units.cc",
+    "field_trial_units.h",
+  ]
+  deps = [
+    "../:rtc_base_approved",
+    "../../api/units:data_rate",
+    "../../api/units:data_size",
+    "../../api/units:time_delta",
+    "../../system_wrappers:field_trial_api",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_static_library("congestion_controller_experiment") {
+  sources = [
+    "congestion_controller_experiment.cc",
+    "congestion_controller_experiment.h",
+  ]
+  deps = [
+    "../:rtc_base_approved",
+    "../../system_wrappers:field_trial_api",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_static_library("quality_scaling_experiment") {
+  sources = [
+    "quality_scaling_experiment.cc",
+    "quality_scaling_experiment.h",
+  ]
+  deps = [
+    "../:rtc_base_approved",
+    "../..:webrtc_common",
+    "../../api/video_codecs:video_codecs_api",
+    "../../system_wrappers:field_trial_api",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("experiments_unittests") {
+    testonly = true
+
+    sources = [
+      "congestion_controller_experiment_unittest.cc",
+      "field_trial_parser_unittest.cc",
+      "field_trial_units_unittest.cc",
+      "quality_scaling_experiment_unittest.cc",
+    ]
+    deps = [
+      ":congestion_controller_experiment",
+      ":field_trial_parser",
+      ":quality_scaling_experiment",
+      "../:rtc_base_tests_main",
+      "../:rtc_base_tests_utils",
+      "../../system_wrappers:field_trial_api",
+      "../../test:field_trial",
+    ]
+  }
 }

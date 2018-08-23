@@ -19,20 +19,20 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_DECODER_INTERPOLATE_LSF_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_DECODER_INTERPOLATE_LSF_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  obtain synthesis and weighting filters form lsf coefficients
  *---------------------------------------------------------------*/
 
 void WebRtcIlbcfix_DecoderInterpolateLsp(
-    int16_t *syntdenum,  /* (o) synthesis filter coefficients */
-    int16_t *weightdenum, /* (o) weighting denumerator
+    int16_t* syntdenum, /* (o) synthesis filter coefficients */
+    int16_t* weightdenum, /* (o) weighting denumerator
                                    coefficients */
-    int16_t *lsfdeq,   /* (i) dequantized lsf coefficients */
-    int16_t length,   /* (i) length of lsf coefficient vector */
-    IlbcDecoder *iLBCdec_inst
+    int16_t* lsfdeq, /* (i) dequantized lsf coefficients */
+    int16_t length,  /* (i) length of lsf coefficient vector */
+    IlbcDecoder* iLBCdec_inst
     /* (i) the decoder state structure */
-                                          );
+    );
 
 #endif

@@ -12,30 +12,27 @@
 #include <utility>
 #include <vector>
 
+#include "absl/memory/memory.h"
+#include "api/units/time_delta.h"
 #include "audio/audio_send_stream.h"
 #include "audio/audio_state.h"
 #include "audio/conversion.h"
-#include "call/fake_rtp_transport_controller_send.h"
-#include "call/rtp_transport_controller_send_interface.h"
+#include "audio/mock_voe_channel_proxy.h"
+#include "call/test/mock_rtp_transport_controller_send.h"
 #include "logging/rtc_event_log/mock/mock_rtc_event_log.h"
 #include "modules/audio_device/include/mock_audio_device.h"
 #include "modules/audio_mixer/audio_mixer_impl.h"
 #include "modules/audio_processing/include/audio_processing_statistics.h"
 #include "modules/audio_processing/include/mock_audio_processing.h"
-#include "modules/congestion_controller/include/mock/mock_congestion_observer.h"
-#include "modules/congestion_controller/include/send_side_congestion_controller.h"
-#include "modules/pacing/mock/mock_paced_sender.h"
+#include "modules/rtp_rtcp/mocks/mock_rtcp_bandwidth_observer.h"
 #include "modules/rtp_rtcp/mocks/mock_rtcp_rtt_stats.h"
 #include "modules/rtp_rtcp/mocks/mock_rtp_rtcp.h"
 #include "rtc_base/fakeclock.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/task_queue.h"
-#include "rtc_base/timedelta.h"
 #include "test/gtest.h"
 #include "test/mock_audio_encoder.h"
 #include "test/mock_audio_encoder_factory.h"
 #include "test/mock_transport.h"
-#include "test/mock_voe_channel_proxy.h"
 
 namespace webrtc {
 namespace test {
@@ -59,8 +56,8 @@ const double kEchoReturnLoss = -65;
 const double kEchoReturnLossEnhancement = 101;
 const double kResidualEchoLikelihood = -1.0f;
 const double kResidualEchoLikelihoodMax = 23.0f;
-const CallStatistics kCallStats = {
-    1345,  1678,  1901, 1234,  112, 13456, 17890, 1567, -1890, -1123};
+const CallStatistics kCallStats = {1345,  1678,  1901, 1234,  112,
+                                   13456, 17890, 1567, -1890, -1123};
 const ReportBlock kReportBlock = {456, 780, 123, 567, 890, 132, 143, 13354};
 const int kTelephoneEventPayloadType = 123;
 const int kTelephoneEventPayloadFrequency = 65432;
@@ -78,9 +75,11 @@ const AudioCodecSpec kCodecSpecs[] = {
 
 class MockLimitObserver : public BitrateAllocator::LimitObserver {
  public:
-  MOCK_METHOD2(OnAllocationLimitsChanged,
+  MOCK_METHOD4(OnAllocationLimitsChanged,
                void(uint32_t min_send_bitrate_bps,
-                    uint32_t max_padding_bitrate_bps));
+                    uint32_t max_padding_bitrate_bps,
+                    uint32_t total_bitrate_bps,
+                    bool has_packet_feedback));
 };
 
 std::unique_ptr<MockAudioEncoder> SetupAudioEncoderMock(
@@ -88,7 +87,8 @@ std::unique_ptr<MockAudioEncoder> SetupAudioEncoderMock(
     const SdpAudioFormat& format) {
   for (const auto& spec : kCodecSpecs) {
     if (format == spec.format) {
-      std::unique_ptr<MockAudioEncoder> encoder(new MockAudioEncoder);
+      std::unique_ptr<MockAudioEncoder> encoder(
+          new testing::NiceMock<MockAudioEncoder>());
       ON_CALL(*encoder.get(), SampleRateHz())
           .WillByDefault(Return(spec.info.sample_rate_hz));
       ON_CALL(*encoder.get(), NumChannels())
@@ -109,16 +109,17 @@ rtc::scoped_refptr<MockAudioEncoderFactory> SetupEncoderFactoryMock() {
           std::begin(kCodecSpecs), std::end(kCodecSpecs))));
   ON_CALL(*factory.get(), QueryAudioEncoder(_))
       .WillByDefault(Invoke(
-          [](const SdpAudioFormat& format) -> rtc::Optional<AudioCodecInfo> {
+          [](const SdpAudioFormat& format) -> absl::optional<AudioCodecInfo> {
             for (const auto& spec : kCodecSpecs) {
               if (format == spec.format) {
                 return spec.info;
               }
             }
-            return rtc::nullopt;
+            return absl::nullopt;
           }));
-  ON_CALL(*factory.get(), MakeAudioEncoderMock(_, _, _))
+  ON_CALL(*factory.get(), MakeAudioEncoderMock(_, _, _, _))
       .WillByDefault(Invoke([](int payload_type, const SdpAudioFormat& format,
+                               absl::optional<AudioCodecPairId> codec_pair_id,
                                std::unique_ptr<AudioEncoder>* return_value) {
         *return_value = SetupAudioEncoderMock(payload_type, format);
       }));
@@ -129,13 +130,6 @@ struct ConfigHelper {
   ConfigHelper(bool audio_bwe_enabled, bool expect_set_encoder_call)
       : stream_config_(nullptr),
         audio_processing_(new rtc::RefCountedObject<MockAudioProcessing>()),
-        simulated_clock_(123456),
-        send_side_cc_(rtc::MakeUnique<SendSideCongestionController>(
-            &simulated_clock_,
-            nullptr /* observer */,
-            &event_log_,
-            &pacer_)),
-        fake_transport_(&packet_router_, &pacer_, send_side_cc_.get()),
         bitrate_allocator_(&limit_observer_),
         worker_queue_("ConfigHelper_worker_queue"),
         audio_encoder_(nullptr) {
@@ -171,8 +165,8 @@ struct ConfigHelper {
   std::unique_ptr<internal::AudioSendStream> CreateAudioSendStream() {
     return std::unique_ptr<internal::AudioSendStream>(
         new internal::AudioSendStream(
-            stream_config_, audio_state_, &worker_queue_, &fake_transport_,
-            &bitrate_allocator_, &event_log_, &rtcp_rtt_stats_, rtc::nullopt,
+            stream_config_, audio_state_, &worker_queue_, &rtp_transport_,
+            &bitrate_allocator_, &event_log_, &rtcp_rtt_stats_, absl::nullopt,
             &active_lifetime_,
             std::unique_ptr<voe::ChannelProxy>(channel_proxy_)));
   }
@@ -183,24 +177,21 @@ struct ConfigHelper {
         stream_config_.encoder_factory.get());
   }
   MockVoEChannelProxy* channel_proxy() { return channel_proxy_; }
-  RtpTransportControllerSendInterface* transport() { return &fake_transport_; }
+  RtpTransportControllerSendInterface* transport() { return &rtp_transport_; }
   TimeInterval* active_lifetime() { return &active_lifetime_; }
 
   static void AddBweToConfig(AudioSendStream::Config* config) {
-    config->rtp.extensions.push_back(
-        RtpExtension(RtpExtension::kTransportSequenceNumberUri,
-                     kTransportSequenceNumberId));
+    config->rtp.extensions.push_back(RtpExtension(
+        RtpExtension::kTransportSequenceNumberUri, kTransportSequenceNumberId));
     config->send_codec_spec->transport_cc_enabled = true;
   }
 
   void SetupDefaultChannelProxy(bool audio_bwe_enabled) {
+    EXPECT_TRUE(channel_proxy_ == nullptr);
     channel_proxy_ = new testing::StrictMock<MockVoEChannelProxy>();
-    EXPECT_CALL(*channel_proxy_, GetRtpRtcp(_, _))
-        .WillRepeatedly(Invoke(
-            [this](RtpRtcp** rtp_rtcp_module, RtpReceiver** rtp_receiver) {
-              *rtp_rtcp_module = &this->rtp_rtcp_;
-              *rtp_receiver = nullptr;  // Not deemed necessary for tests yet.
-            }));
+    EXPECT_CALL(*channel_proxy_, GetRtpRtcp()).WillRepeatedly(Invoke([this]() {
+      return &this->rtp_rtcp_;
+    }));
     EXPECT_CALL(*channel_proxy_, SetRTCPStatus(true)).Times(1);
     EXPECT_CALL(*channel_proxy_, SetLocalSSRC(kSsrc)).Times(1);
     EXPECT_CALL(*channel_proxy_, SetRTCP_CNAME(StrEq(kCName))).Times(1);
@@ -208,16 +199,19 @@ struct ConfigHelper {
     EXPECT_CALL(*channel_proxy_,
                 SetSendAudioLevelIndicationStatus(true, kAudioLevelId))
         .Times(1);
+    EXPECT_CALL(rtp_transport_, GetBandwidthObserver())
+        .WillRepeatedly(Return(&bandwidth_observer_));
     if (audio_bwe_enabled) {
       EXPECT_CALL(*channel_proxy_,
                   EnableSendTransportSequenceNumber(kTransportSequenceNumberId))
           .Times(1);
-      EXPECT_CALL(*channel_proxy_, RegisterSenderCongestionControlObjects(
-                                       &fake_transport_, Ne(nullptr)))
+      EXPECT_CALL(*channel_proxy_,
+                  RegisterSenderCongestionControlObjects(
+                      &rtp_transport_, Eq(&bandwidth_observer_)))
           .Times(1);
     } else {
       EXPECT_CALL(*channel_proxy_, RegisterSenderCongestionControlObjects(
-                                       &fake_transport_, Eq(nullptr)))
+                                       &rtp_transport_, Eq(nullptr)))
           .Times(1);
     }
     EXPECT_CALL(*channel_proxy_, ResetSenderCongestionControlObjects())
@@ -227,12 +221,6 @@ struct ConfigHelper {
       EXPECT_CALL(*channel_proxy_, RegisterTransport(_)).Times(1);
       EXPECT_CALL(*channel_proxy_, RegisterTransport(nullptr)).Times(1);
     }
-    EXPECT_CALL(*channel_proxy_, SetRtcEventLog(testing::NotNull())).Times(1);
-    EXPECT_CALL(*channel_proxy_, SetRtcEventLog(testing::IsNull()))
-        .Times(1);  // Destructor resets the event log
-    EXPECT_CALL(*channel_proxy_, SetRtcpRttStats(&rtcp_rtt_stats_)).Times(1);
-    EXPECT_CALL(*channel_proxy_, SetRtcpRttStats(testing::IsNull()))
-        .Times(1);  // Destructor resets the rtt stats.
   }
 
   void SetupMockForSetupSendCodec(bool expect_set_encoder_call) {
@@ -259,13 +247,14 @@ struct ConfigHelper {
 
   void SetupMockForSendTelephoneEvent() {
     EXPECT_TRUE(channel_proxy_);
-    EXPECT_CALL(*channel_proxy_,
-        SetSendTelephoneEventPayloadType(kTelephoneEventPayloadType,
-                                         kTelephoneEventPayloadFrequency))
-            .WillOnce(Return(true));
-    EXPECT_CALL(*channel_proxy_,
+    EXPECT_CALL(*channel_proxy_, SetSendTelephoneEventPayloadType(
+                                     kTelephoneEventPayloadType,
+                                     kTelephoneEventPayloadFrequency))
+        .WillOnce(Return(true));
+    EXPECT_CALL(
+        *channel_proxy_,
         SendTelephoneEventOutband(kTelephoneEventCode, kTelephoneEventDuration))
-            .WillOnce(Return(true));
+        .WillOnce(Return(true));
   }
 
   void SetupMockForGetStats() {
@@ -310,14 +299,11 @@ struct ConfigHelper {
   testing::StrictMock<MockVoEChannelProxy>* channel_proxy_ = nullptr;
   rtc::scoped_refptr<MockAudioProcessing> audio_processing_;
   AudioProcessingStats audio_processing_stats_;
-  SimulatedClock simulated_clock_;
   TimeInterval active_lifetime_;
-  PacketRouter packet_router_;
-  testing::NiceMock<MockPacedSender> pacer_;
-  std::unique_ptr<SendSideCongestionController> send_side_cc_;
-  FakeRtpTransportControllerSend fake_transport_;
-  MockRtcEventLog event_log_;
-  MockRtpRtcp rtp_rtcp_;
+  testing::StrictMock<MockRtcpBandwidthObserver> bandwidth_observer_;
+  testing::NiceMock<MockRtcEventLog> event_log_;
+  testing::NiceMock<MockRtpTransportControllerSend> rtp_transport_;
+  testing::NiceMock<MockRtpRtcp> rtp_rtcp_;
   MockRtcpRttStats rtcp_rtt_stats_;
   testing::NiceMock<MockLimitObserver> limit_observer_;
   BitrateAllocator bitrate_allocator_;
@@ -363,9 +349,9 @@ TEST(AudioSendStreamTest, SendTelephoneEvent) {
   ConfigHelper helper(false, true);
   auto send_stream = helper.CreateAudioSendStream();
   helper.SetupMockForSendTelephoneEvent();
-  EXPECT_TRUE(send_stream->SendTelephoneEvent(kTelephoneEventPayloadType,
-      kTelephoneEventPayloadFrequency, kTelephoneEventCode,
-      kTelephoneEventDuration));
+  EXPECT_TRUE(send_stream->SendTelephoneEvent(
+      kTelephoneEventPayloadType, kTelephoneEventPayloadFrequency,
+      kTelephoneEventCode, kTelephoneEventDuration));
 }
 
 TEST(AudioSendStreamTest, SetMuted) {
@@ -393,8 +379,7 @@ TEST(AudioSendStreamTest, GetStats) {
   EXPECT_EQ(kSsrc, stats.local_ssrc);
   EXPECT_EQ(static_cast<int64_t>(kCallStats.bytesSent), stats.bytes_sent);
   EXPECT_EQ(kCallStats.packetsSent, stats.packets_sent);
-  EXPECT_EQ(static_cast<int32_t>(kReportBlock.cumulative_num_packets_lost),
-            stats.packets_lost);
+  EXPECT_EQ(kReportBlock.cumulative_num_packets_lost, stats.packets_lost);
   EXPECT_EQ(Q8ToFloat(kReportBlock.fraction_lost), stats.fraction_lost);
   EXPECT_EQ(std::string(kIsacCodec.plname), stats.codec_name);
   EXPECT_EQ(static_cast<int32_t>(kReportBlock.extended_highest_sequence_number),
@@ -429,9 +414,10 @@ TEST(AudioSendStreamTest, SendCodecAppliesAudioNetworkAdaptor) {
 
   helper.config().audio_network_adaptor_config = kAnaConfigString;
 
-  EXPECT_CALL(helper.mock_encoder_factory(), MakeAudioEncoderMock(_, _, _))
+  EXPECT_CALL(helper.mock_encoder_factory(), MakeAudioEncoderMock(_, _, _, _))
       .WillOnce(Invoke([&kAnaConfigString, &kAnaReconfigString](
                            int payload_type, const SdpAudioFormat& format,
+                           absl::optional<AudioCodecPairId> codec_pair_id,
                            std::unique_ptr<AudioEncoder>* return_value) {
         auto mock_encoder = SetupAudioEncoderMock(payload_type, format);
         EXPECT_CALL(*mock_encoder,
@@ -525,7 +511,7 @@ TEST(AudioSendStreamTest, ReconfigureTransportCcResetsFirst) {
     EXPECT_CALL(*helper.channel_proxy(), ResetSenderCongestionControlObjects())
         .Times(1);
     EXPECT_CALL(*helper.channel_proxy(), RegisterSenderCongestionControlObjects(
-        helper.transport(), Ne(nullptr)))
+                                             helper.transport(), Ne(nullptr)))
         .Times(1);
   }
   send_stream->Reconfigure(new_config);
@@ -552,8 +538,7 @@ TEST(AudioSendStreamTest, UpdateLifetime) {
     EXPECT_CALL(mock_transport, SendRtp(_, _, _)).Times(2);
     const PacketOptions options;
     registered_transport->SendRtp(nullptr, 0, options);
-    fake_clock.AdvanceTime(
-        rtc::TimeDelta::FromMilliseconds(kTimeBetweenSendRtpCallsMs));
+    fake_clock.AdvanceTime(TimeDelta::ms(kTimeBetweenSendRtpCallsMs));
     registered_transport->SendRtp(nullptr, 0, options);
   }
   EXPECT_TRUE(!helper.active_lifetime()->Empty());

@@ -33,10 +33,15 @@
 #include "LibWebRTCMacros.h"
 #include "MediaStreamTrackPrivate.h"
 #include <Timer.h>
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+
 #include <webrtc/api/mediastreaminterface.h>
-#include <webrtc/api/optional.h>
 #include <webrtc/common_video/include/i420_buffer_pool.h>
-#include <webrtc/api/videosinkinterface.h>
+
+#pragma clang diagnostic pop
+
 #include <wtf/Optional.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -54,9 +59,8 @@ public:
     void AddRef() const final { ref(); }
     rtc::RefCountReleaseStatus Release() const final
     {
-        auto result = hasOneRef() ? rtc::RefCountReleaseStatus::kDroppedLastRef : rtc::RefCountReleaseStatus::kOtherRefsRemained;
         deref();
-        return result;
+        return rtc::RefCountReleaseStatus::kOtherRefsRemained;
     }
 
     void setApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = shouldApplyRotation; }
@@ -88,7 +92,7 @@ private:
 
     // VideoTrackSourceInterface API
     bool is_screencast() const final { return false; }
-    rtc::Optional<bool> needs_denoising() const final { return rtc::Optional<bool>(); }
+    absl::optional<bool> needs_denoising() const final { return absl::optional<bool>(); }
     bool GetStats(Stats*) final { return false; };
 
     // MediaSourceInterface API

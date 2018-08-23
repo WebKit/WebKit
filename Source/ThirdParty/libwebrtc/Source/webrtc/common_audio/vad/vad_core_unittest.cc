@@ -12,7 +12,6 @@
 
 #include "common_audio/vad/vad_unittest.h"
 #include "test/gtest.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 extern "C" {
 #include "common_audio/vad/vad_core.h"

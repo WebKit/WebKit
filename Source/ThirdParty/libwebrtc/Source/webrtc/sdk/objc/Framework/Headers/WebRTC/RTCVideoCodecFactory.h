@@ -17,7 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** RTCVideoEncoderFactory is an Objective-C version of webrtc::VideoEncoderFactory. */
 RTC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCVideoEncoderFactory")))
 @protocol RTCVideoEncoderFactory <NSObject>
 
 - (nullable id<RTCVideoEncoder>)createEncoder:(RTCVideoCodecInfo *)info;
@@ -27,7 +26,6 @@ __attribute__((objc_runtime_name("WK_RTCVideoEncoderFactory")))
 
 /** RTCVideoDecoderFactory is an Objective-C version of webrtc::VideoDecoderFactory. */
 RTC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCVideoDecoderFactory")))
 @protocol RTCVideoDecoderFactory <NSObject>
 
 - (nullable id<RTCVideoDecoder>)createDecoder:(RTCVideoCodecInfo *)info;

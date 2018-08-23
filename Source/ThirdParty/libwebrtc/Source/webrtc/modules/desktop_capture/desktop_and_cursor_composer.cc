@@ -14,13 +14,13 @@
 
 #include <utility>
 
+#include "absl/memory/memory.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/mouse_cursor.h"
 #include "modules/desktop_capture/mouse_cursor_monitor.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/constructormagic.h"
-#include "rtc_base/ptr_util.h"
 
 namespace webrtc {
 
@@ -28,8 +28,10 @@ namespace {
 
 // Helper function that blends one image into another. Source image must be
 // pre-multiplied with the alpha channel. Destination is assumed to be opaque.
-void AlphaBlend(uint8_t* dest, int dest_stride,
-                const uint8_t* src, int src_stride,
+void AlphaBlend(uint8_t* dest,
+                int dest_stride,
+                const uint8_t* src,
+                int src_stride,
                 const DesktopSize& size) {
   for (int y = 0; y < size.height(); ++y) {
     for (int x = 0; x < size.width(); ++x) {
@@ -111,8 +113,7 @@ DesktopFrameWithCursor::DesktopFrameWithCursor(
              cursor.image()->data() +
                  origin_shift.y() * cursor.image()->stride() +
                  origin_shift.x() * DesktopFrame::kBytesPerPixel,
-             cursor.image()->stride(),
-             target_rect.size());
+             cursor.image()->stride(), target_rect.size());
 }
 
 DesktopFrameWithCursor::~DesktopFrameWithCursor() {
@@ -128,25 +129,15 @@ DesktopFrameWithCursor::~DesktopFrameWithCursor() {
 }  // namespace
 
 DesktopAndCursorComposer::DesktopAndCursorComposer(
-    DesktopCapturer* desktop_capturer,
-    MouseCursorMonitor* mouse_monitor)
-    : DesktopAndCursorComposer(desktop_capturer, mouse_monitor, false) {}
-
-DesktopAndCursorComposer::DesktopAndCursorComposer(
     std::unique_ptr<DesktopCapturer> desktop_capturer,
     const DesktopCaptureOptions& options)
     : DesktopAndCursorComposer(desktop_capturer.release(),
-                               MouseCursorMonitor::Create(options).release(),
-                               true) {}
+                               MouseCursorMonitor::Create(options).release()) {}
 
 DesktopAndCursorComposer::DesktopAndCursorComposer(
     DesktopCapturer* desktop_capturer,
-    MouseCursorMonitor* mouse_monitor,
-    bool use_desktop_relative_cursor_position)
-    : desktop_capturer_(desktop_capturer),
-      mouse_monitor_(mouse_monitor),
-      use_desktop_relative_cursor_position_(
-          use_desktop_relative_cursor_position) {
+    MouseCursorMonitor* mouse_monitor)
+    : desktop_capturer_(desktop_capturer), mouse_monitor_(mouse_monitor) {
   RTC_DCHECK(desktop_capturer_);
 }
 
@@ -178,19 +169,15 @@ void DesktopAndCursorComposer::OnCaptureResult(
     DesktopCapturer::Result result,
     std::unique_ptr<DesktopFrame> frame) {
   if (frame && cursor_) {
-    if (use_desktop_relative_cursor_position_) {
-      if (frame->rect().Contains(cursor_position_) &&
-          !desktop_capturer_->IsOccluded(cursor_position_)) {
-        const DesktopVector relative_position =
-            cursor_position_.subtract(frame->top_left());
-        frame = rtc::MakeUnique<DesktopFrameWithCursor>(
-            std::move(frame), *cursor_, relative_position);
-      }
-    } else {
-      if (cursor_state_ == MouseCursorMonitor::INSIDE) {
-        frame = rtc::MakeUnique<DesktopFrameWithCursor>(
-            std::move(frame), *cursor_, cursor_position_);
-      }
+    if (frame->rect().Contains(cursor_position_) &&
+        !desktop_capturer_->IsOccluded(cursor_position_)) {
+      const float scale = frame->scale_factor();
+      DesktopVector relative_position =
+          cursor_position_.subtract(frame->top_left());
+      relative_position.set(relative_position.x() * scale,
+                            relative_position.y() * scale);
+      frame = absl::make_unique<DesktopFrameWithCursor>(
+          std::move(frame), *cursor_, relative_position);
     }
   }
 
@@ -204,17 +191,12 @@ void DesktopAndCursorComposer::OnMouseCursor(MouseCursor* cursor) {
 void DesktopAndCursorComposer::OnMouseCursorPosition(
     MouseCursorMonitor::CursorState state,
     const DesktopVector& position) {
-  if (!use_desktop_relative_cursor_position_) {
-    cursor_state_ = state;
-    cursor_position_ = position;
-  }
+  RTC_NOTREACHED();
 }
 
 void DesktopAndCursorComposer::OnMouseCursorPosition(
     const DesktopVector& position) {
-  if (use_desktop_relative_cursor_position_) {
-    cursor_position_ = position;
-  }
+  cursor_position_ = position;
 }
 
 }  // namespace webrtc

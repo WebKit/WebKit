@@ -11,7 +11,6 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_BYTE_IO_H_
 #define MODULES_RTP_RTCP_SOURCE_BYTE_IO_H_
 
-
 // This file contains classes for reading and writing integer types from/to
 // byte array representations. Signed/unsigned, partial (whole byte) sizes,
 // and big/little endian byte order is all supported.
@@ -35,10 +34,8 @@
 // These classes are implemented as recursive templetizations, inteded to make
 // it easy for the compiler to completely inline the reading/writing.
 
-
+#include <stdint.h>
 #include <limits>
-
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -129,8 +126,8 @@ class ByteReader<T, B, true> {
   // two's complement for is used.
   static T ReinterpretAsSigned(U unsigned_val) {
     // An unsigned value with only the highest order bit set (ex 0x80).
-    const U kUnsignedHighestBitMask =
-        static_cast<U>(1) << ((sizeof(U) * 8) - 1);
+    const U kUnsignedHighestBitMask = static_cast<U>(1)
+                                      << ((sizeof(U) * 8) - 1);
     // A signed value with only the highest bit set. Since this is two's
     // complement form, we can use the min value from std::numeric_limits.
     const T kSignedHighestBitMask = std::numeric_limits<T>::min();
@@ -353,20 +350,16 @@ class ByteReader<T, 8, false> {
  public:
   static T ReadBigEndian(const uint8_t* data) {
     static_assert(sizeof(T) >= 8, kSizeErrorMsg);
-    return
-        (Get(data, 0) << 56) | (Get(data, 1) << 48) |
-        (Get(data, 2) << 40) | (Get(data, 3) << 32) |
-        (Get(data, 4) << 24) | (Get(data, 5) << 16) |
-        (Get(data, 6) << 8)  |  Get(data, 7);
+    return (Get(data, 0) << 56) | (Get(data, 1) << 48) | (Get(data, 2) << 40) |
+           (Get(data, 3) << 32) | (Get(data, 4) << 24) | (Get(data, 5) << 16) |
+           (Get(data, 6) << 8) | Get(data, 7);
   }
 
   static T ReadLittleEndian(const uint8_t* data) {
     static_assert(sizeof(T) >= 8, kSizeErrorMsg);
-    return
-         Get(data, 0)        | (Get(data, 1) << 8)  |
-        (Get(data, 2) << 16) | (Get(data, 3) << 24) |
-        (Get(data, 4) << 32) | (Get(data, 5) << 40) |
-        (Get(data, 6) << 48) | (Get(data, 7) << 56);
+    return Get(data, 0) | (Get(data, 1) << 8) | (Get(data, 2) << 16) |
+           (Get(data, 3) << 24) | (Get(data, 4) << 32) | (Get(data, 5) << 40) |
+           (Get(data, 6) << 48) | (Get(data, 7) << 56);
   }
 
  private:

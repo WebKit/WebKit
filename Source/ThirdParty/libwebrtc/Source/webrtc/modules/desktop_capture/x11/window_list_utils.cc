@@ -10,10 +10,10 @@
 
 #include "modules/desktop_capture/x11/window_list_utils.h"
 
-#include <string.h>
-#include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <string.h>
 
 #include <algorithm>
 
@@ -49,10 +49,9 @@ class XWindowProperty {
     Atom actual_type;
     int actual_format;
     unsigned long bytes_after;  // NOLINT: type required by XGetWindowProperty
-    int status = XGetWindowProperty(display, window, property, 0L, ~0L, False,
-                                    AnyPropertyType, &actual_type,
-                                    &actual_format, &size_,
-                                    &bytes_after, &data_);
+    int status = XGetWindowProperty(
+        display, window, property, 0L, ~0L, False, AnyPropertyType,
+        &actual_type, &actual_format, &size_, &bytes_after, &data_);
     if (status != Success) {
       data_ = nullptr;
       return;
@@ -78,9 +77,7 @@ class XWindowProperty {
   const PropertyType* data() const {
     return reinterpret_cast<PropertyType*>(data_);
   }
-  PropertyType* data() {
-    return reinterpret_cast<PropertyType*>(data_);
-  }
+  PropertyType* data() { return reinterpret_cast<PropertyType*>(data_); }
 
  private:
   bool is_valid_ = false;
@@ -106,7 +103,7 @@ class XWindowProperty {
   RTC_DCHECK_EQ(state, WithdrawnState);
   // If the window is in WithdrawnState then look at all of its children.
   ::Window root, parent;
-  ::Window *children;
+  ::Window* children;
   unsigned int num_children;
   if (!XQueryTree(cache->display(), window, &root, &parent, &children,
                   &num_children)) {
@@ -137,14 +134,12 @@ bool IsDesktopElement(XAtomCache* cache, ::Window window) {
   // says this hint *should* be present on all windows, and we use the existence
   // of _NET_WM_WINDOW_TYPE_NORMAL in the property to indicate a window is not
   // a desktop element (that is, only "normal" windows should be shareable).
-  XWindowProperty<uint32_t> window_type(
-      cache->display(), window, cache->WindowType());
+  XWindowProperty<uint32_t> window_type(cache->display(), window,
+                                        cache->WindowType());
   if (window_type.is_valid() && window_type.size() > 0) {
     uint32_t* end = window_type.data() + window_type.size();
-    bool is_normal = (end != std::find(
-        window_type.data(),
-        end,
-        cache->WindowTypeNormal()));
+    bool is_normal =
+        (end != std::find(window_type.data(), end, cache->WindowTypeNormal()));
     return !is_normal;
   }
 
@@ -166,8 +161,8 @@ bool IsDesktopElement(XAtomCache* cache, ::Window window) {
 
 int32_t GetWindowState(XAtomCache* cache, ::Window window) {
   // Get WM_STATE property of the window.
-  XWindowProperty<uint32_t> window_state(
-      cache->display(), window, cache->WmState());
+  XWindowProperty<uint32_t> window_state(cache->display(), window,
+                                         cache->WmState());
 
   // WM_STATE is considered to be set to WithdrawnState when it missing.
   return window_state.is_valid() ? *window_state.data() : WithdrawnState;
@@ -188,11 +183,7 @@ bool GetWindowList(XAtomCache* cache,
     unsigned int num_children;
     {
       XErrorTrap error_trap(display);
-      if (XQueryTree(display,
-                     root_window,
-                     &root_window,
-                     &parent,
-                     &children,
+      if (XQueryTree(display, root_window, &root_window, &parent, &children,
                      &num_children) == 0 ||
           error_trap.GetLastErrorAndDisable() != 0) {
         failed_screens++;
@@ -242,14 +233,8 @@ bool GetWindowRect(::Display* display,
   {
     XErrorTrap error_trap(display);
     ::Window child;
-    if (!XTranslateCoordinates(display,
-                               window,
-                               attributes->root,
-                               -rect->left(),
-                               -rect->top(),
-                               &offset_x,
-                               &offset_y,
-                               &child) ||
+    if (!XTranslateCoordinates(display, window, attributes->root, -rect->left(),
+                               -rect->top(), &offset_x, &offset_y, &child) ||
         error_trap.GetLastErrorAndDisable() != 0) {
       return false;
     }

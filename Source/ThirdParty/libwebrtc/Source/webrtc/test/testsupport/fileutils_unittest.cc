@@ -17,9 +17,8 @@
 #include <list>
 #include <string>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/pathutils.h"
 #include "test/gtest.h"
 
 #ifdef WIN32
@@ -42,7 +41,7 @@ namespace {
 void CleanDir(const std::string& dir, size_t* num_deleted_entries) {
   RTC_DCHECK(num_deleted_entries);
   *num_deleted_entries = 0;
-  rtc::Optional<std::vector<std::string>> dir_content = ReadDirectory(dir);
+  absl::optional<std::vector<std::string>> dir_content = ReadDirectory(dir);
   EXPECT_TRUE(dir_content);
   for (const auto& entry : *dir_content) {
     if (DirExists(entry)) {
@@ -70,19 +69,17 @@ void WriteStringInFile(const std::string& what, const std::string& file_path) {
 // gtest framework).
 class FileUtilsTest : public testing::Test {
  protected:
-  FileUtilsTest() {
-  }
+  FileUtilsTest() {}
   ~FileUtilsTest() override {}
   // Runs before the first test
   static void SetUpTestCase() {
     original_working_dir_ = webrtc::test::WorkingDir();
   }
-  void SetUp() override {
-    ASSERT_EQ(chdir(original_working_dir_.c_str()), 0);
-  }
+  void SetUp() override { ASSERT_EQ(chdir(original_working_dir_.c_str()), 0); }
   void TearDown() override {
     ASSERT_EQ(chdir(original_working_dir_.c_str()), 0);
   }
+
  private:
   static std::string original_working_dir_;
 };
@@ -124,6 +121,19 @@ TEST_F(FileUtilsTest, TempFilename) {
       webrtc::test::OutputPath(), "TempFilenameTest");
   ASSERT_TRUE(webrtc::test::FileExists(temp_filename))
       << "Couldn't find file: " << temp_filename;
+  remove(temp_filename.c_str());
+}
+
+TEST_F(FileUtilsTest, GenerateTempFilename) {
+  std::string temp_filename = webrtc::test::GenerateTempFilename(
+      webrtc::test::OutputPath(), "TempFilenameTest");
+  ASSERT_FALSE(webrtc::test::FileExists(temp_filename))
+      << "File exists: " << temp_filename;
+  FILE* file = fopen(temp_filename.c_str(), "wb");
+  ASSERT_TRUE(file != NULL) << "Failed to open file: " << temp_filename;
+  ASSERT_GT(fprintf(file, "%s", "Dummy data"), 0)
+      << "Failed to write to file: " << temp_filename;
+  fclose(file);
   remove(temp_filename.c_str());
 }
 
@@ -174,8 +184,8 @@ TEST_F(FileUtilsTest, GetFileSizeExistingFile) {
       webrtc::test::OutputPath(), "fileutils_unittest");
   FILE* file = fopen(temp_filename.c_str(), "wb");
   ASSERT_TRUE(file != NULL) << "Failed to open file: " << temp_filename;
-  ASSERT_GT(fprintf(file, "%s",  "Dummy data"), 0) <<
-      "Failed to write to file: " << temp_filename;
+  ASSERT_GT(fprintf(file, "%s", "Dummy data"), 0)
+      << "Failed to write to file: " << temp_filename;
   fclose(file);
   ASSERT_GT(webrtc::test::GetFileSize(std::string(temp_filename.c_str())), 0u);
   remove(temp_filename.c_str());
@@ -226,7 +236,7 @@ TEST_F(FileUtilsTest, WriteReadDeleteFilesAndDirs) {
   EXPECT_TRUE(DirExists(temp_subdir));
 
   // Checks.
-  rtc::Optional<std::vector<std::string>> dir_content =
+  absl::optional<std::vector<std::string>> dir_content =
       ReadDirectory(temp_directory);
   EXPECT_TRUE(dir_content);
   EXPECT_EQ(2u, dir_content->size());

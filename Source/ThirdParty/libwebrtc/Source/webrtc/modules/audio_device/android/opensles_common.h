@@ -11,8 +11,8 @@
 #ifndef MODULES_AUDIO_DEVICE_ANDROID_OPENSLES_COMMON_H_
 #define MODULES_AUDIO_DEVICE_ANDROID_OPENSLES_COMMON_H_
 
-#include <stddef.h>
 #include <SLES/OpenSLES.h>
+#include <stddef.h>
 
 #include "rtc_base/checks.h"
 

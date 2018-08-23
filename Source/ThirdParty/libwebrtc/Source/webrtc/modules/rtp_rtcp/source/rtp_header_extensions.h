@@ -30,7 +30,7 @@ class AbsoluteSendTime {
 
   static bool Parse(rtc::ArrayView<const uint8_t> data, uint32_t* time_24bits);
   static size_t ValueSize(uint32_t time_24bits) { return kValueSizeBytes; }
-  static bool Write(uint8_t* data, uint32_t time_24bits);
+  static bool Write(rtc::ArrayView<uint8_t> data, uint32_t time_24bits);
 
   static constexpr uint32_t MsTo24Bits(int64_t time_ms) {
     return static_cast<uint32_t>(((time_ms << 18) + 500) / 1000) & 0x00FFFFFF;
@@ -50,7 +50,9 @@ class AudioLevel {
   static size_t ValueSize(bool voice_activity, uint8_t audio_level) {
     return kValueSizeBytes;
   }
-  static bool Write(uint8_t* data, bool voice_activity, uint8_t audio_level);
+  static bool Write(rtc::ArrayView<uint8_t> data,
+                    bool voice_activity,
+                    uint8_t audio_level);
 };
 
 class TransmissionOffset {
@@ -61,7 +63,7 @@ class TransmissionOffset {
 
   static bool Parse(rtc::ArrayView<const uint8_t> data, int32_t* rtp_time);
   static size_t ValueSize(int32_t rtp_time) { return kValueSizeBytes; }
-  static bool Write(uint8_t* data, int32_t rtp_time);
+  static bool Write(rtc::ArrayView<uint8_t> data, int32_t rtp_time);
 };
 
 class TransportSequenceNumber {
@@ -73,7 +75,7 @@ class TransportSequenceNumber {
       "draft-holmer-rmcat-transport-wide-cc-extensions-01";
   static bool Parse(rtc::ArrayView<const uint8_t> data, uint16_t* value);
   static size_t ValueSize(uint16_t value) { return kValueSizeBytes; }
-  static bool Write(uint8_t* data, uint16_t value);
+  static bool Write(rtc::ArrayView<uint8_t> data, uint16_t value);
 };
 
 class VideoOrientation {
@@ -84,10 +86,10 @@ class VideoOrientation {
 
   static bool Parse(rtc::ArrayView<const uint8_t> data, VideoRotation* value);
   static size_t ValueSize(VideoRotation) { return kValueSizeBytes; }
-  static bool Write(uint8_t* data, VideoRotation value);
+  static bool Write(rtc::ArrayView<uint8_t> data, VideoRotation value);
   static bool Parse(rtc::ArrayView<const uint8_t> data, uint8_t* value);
   static size_t ValueSize(uint8_t value) { return kValueSizeBytes; }
-  static bool Write(uint8_t* data, uint8_t value);
+  static bool Write(rtc::ArrayView<uint8_t> data, uint8_t value);
 };
 
 class PlayoutDelayLimits {
@@ -109,7 +111,8 @@ class PlayoutDelayLimits {
   static size_t ValueSize(const PlayoutDelay&) {
     return kValueSizeBytes;
   }
-  static bool Write(uint8_t* data, const PlayoutDelay& playout_delay);
+  static bool Write(rtc::ArrayView<uint8_t> data,
+                    const PlayoutDelay& playout_delay);
 };
 
 class VideoContentTypeExtension {
@@ -124,7 +127,8 @@ class VideoContentTypeExtension {
   static size_t ValueSize(VideoContentType) {
     return kValueSizeBytes;
   }
-  static bool Write(uint8_t* data, VideoContentType content_type);
+  static bool Write(rtc::ArrayView<uint8_t> data,
+                    VideoContentType content_type);
 };
 
 class VideoTimingExtension {
@@ -137,29 +141,37 @@ class VideoTimingExtension {
   static bool Parse(rtc::ArrayView<const uint8_t> data,
                     VideoSendTiming* timing);
   static size_t ValueSize(const VideoSendTiming&) { return kValueSizeBytes; }
-  static bool Write(uint8_t* data, const VideoSendTiming& timing);
+  static bool Write(rtc::ArrayView<uint8_t> data,
+                    const VideoSendTiming& timing);
 
   static size_t ValueSize(uint16_t time_delta_ms, uint8_t idx) {
     return kValueSizeBytes;
   }
   // Writes only single time delta to position idx.
-  static bool Write(uint8_t* data, uint16_t time_delta_ms, uint8_t idx);
+  static bool Write(rtc::ArrayView<uint8_t> data,
+                    uint16_t time_delta_ms,
+                    uint8_t idx);
 };
 
 // Base extension class for RTP header extensions which are strings.
 // Subclasses must defined kId and kUri static constexpr members.
 class BaseRtpStringExtension {
  public:
+  // String RTP header extensions are limited to 16 bytes because it is the
+  // maximum length that can be encoded with one-byte header extensions.
+  static constexpr uint8_t kMaxValueSizeBytes = 16;
+
   static bool Parse(rtc::ArrayView<const uint8_t> data,
                     StringRtpHeaderExtension* str);
   static size_t ValueSize(const StringRtpHeaderExtension& str) {
     return str.size();
   }
-  static bool Write(uint8_t* data, const StringRtpHeaderExtension& str);
+  static bool Write(rtc::ArrayView<uint8_t> data,
+                    const StringRtpHeaderExtension& str);
 
   static bool Parse(rtc::ArrayView<const uint8_t> data, std::string* str);
   static size_t ValueSize(const std::string& str) { return str.size(); }
-  static bool Write(uint8_t* data, const std::string& str);
+  static bool Write(rtc::ArrayView<uint8_t> data, const std::string& str);
 };
 
 class RtpStreamId : public BaseRtpStringExtension {

@@ -16,8 +16,7 @@
 
 namespace webrtc {
 
-Desktop::Desktop(HDESK desktop, bool own) : desktop_(desktop), own_(own) {
-}
+Desktop::Desktop(HDESK desktop, bool own) : desktop_(desktop), own_(own) {}
 
 Desktop::~Desktop() {
   if (own_ && desktop_ != NULL) {
@@ -72,10 +71,10 @@ bool Desktop::SetThreadDesktop() const {
 }
 
 Desktop* Desktop::GetDesktop(const WCHAR* desktop_name) {
-  ACCESS_MASK desired_access =
-      DESKTOP_CREATEMENU | DESKTOP_CREATEWINDOW | DESKTOP_ENUMERATE |
-      DESKTOP_HOOKCONTROL | DESKTOP_WRITEOBJECTS | DESKTOP_READOBJECTS |
-      DESKTOP_SWITCHDESKTOP | GENERIC_WRITE;
+  ACCESS_MASK desired_access = DESKTOP_CREATEMENU | DESKTOP_CREATEWINDOW |
+                               DESKTOP_ENUMERATE | DESKTOP_HOOKCONTROL |
+                               DESKTOP_WRITEOBJECTS | DESKTOP_READOBJECTS |
+                               DESKTOP_SWITCHDESKTOP | GENERIC_WRITE;
   HDESK desktop = OpenDesktop(desktop_name, 0, FALSE, desired_access);
   if (desktop == NULL) {
     RTC_LOG(LS_ERROR) << "Failed to open the desktop '" << desktop_name

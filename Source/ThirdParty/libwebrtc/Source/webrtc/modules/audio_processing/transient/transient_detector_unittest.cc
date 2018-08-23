@@ -16,15 +16,13 @@
 
 #include "modules/audio_processing/transient/common.h"
 #include "modules/audio_processing/transient/file_utils.h"
-#include "system_wrappers/include/file_wrapper.h"
+#include "rtc_base/system/file_wrapper.h"
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
-static const int kSampleRatesHz[] = {ts::kSampleRate8kHz,
-                                     ts::kSampleRate16kHz,
+static const int kSampleRatesHz[] = {ts::kSampleRate8kHz, ts::kSampleRate16kHz,
                                      ts::kSampleRate32kHz,
                                      ts::kSampleRate48kHz};
 static const size_t kNumberOfSampleRates =
@@ -57,7 +55,7 @@ TEST(TransientDetectorTest, CorrectnessBasedOnFiles) {
 
     bool file_opened = detect_file->is_open();
     ASSERT_TRUE(file_opened) << "File could not be opened.\n"
-          << detect_file_name.str().c_str();
+                             << detect_file_name.str().c_str();
 
     // Prepare audio file.
     std::stringstream audio_file_name;
@@ -80,8 +78,7 @@ TEST(TransientDetectorTest, CorrectnessBasedOnFiles) {
 
     size_t frames_read = 0;
 
-    while (ReadInt16FromFileToFloatBuffer(audio_file.get(),
-                                          buffer_length,
+    while (ReadInt16FromFileToFloatBuffer(audio_file.get(), buffer_length,
                                           buffer.get()) == buffer_length) {
       ++frames_read;
 
@@ -92,8 +89,8 @@ TEST(TransientDetectorTest, CorrectnessBasedOnFiles) {
           << "Detect test file is malformed.\n";
 
       // Compare results with data from the matlab test file.
-      EXPECT_NEAR(file_value, detector_value, kTolerance) << "Frame: "
-          << frames_read;
+      EXPECT_NEAR(file_value, detector_value, kTolerance)
+          << "Frame: " << frames_read;
     }
 
     detect_file->CloseFile();

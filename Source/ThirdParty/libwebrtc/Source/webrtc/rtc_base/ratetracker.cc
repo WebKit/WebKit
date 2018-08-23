@@ -79,13 +79,12 @@ double RateTracker::ComputeRateForInterval(
   // Only count a portion of the first bucket according to how much of the
   // first bucket is within the current interval.
   size_t total_samples = ((sample_buckets_[start_bucket] *
-      (bucket_milliseconds_ - milliseconds_to_skip)) +
-      (bucket_milliseconds_ >> 1)) /
-      bucket_milliseconds_;
+                           (bucket_milliseconds_ - milliseconds_to_skip)) +
+                          (bucket_milliseconds_ >> 1)) /
+                         bucket_milliseconds_;
   // All other buckets in the interval are counted in their entirety.
   for (size_t i = NextBucketIndex(start_bucket);
-      i != NextBucketIndex(current_bucket_);
-      i = NextBucketIndex(i)) {
+       i != NextBucketIndex(current_bucket_); i = NextBucketIndex(i)) {
     total_samples += sample_buckets_[i];
   }
   // Convert to samples per second.
@@ -125,7 +124,8 @@ void RateTracker::AddSamples(size_t sample_count) {
   }
   // Ensure that bucket_start_time_milliseconds_ is updated appropriately if
   // the entire buffer of samples has been expired.
-  bucket_start_time_milliseconds_ += bucket_milliseconds_ *
+  bucket_start_time_milliseconds_ +=
+      bucket_milliseconds_ *
       ((current_time - bucket_start_time_milliseconds_) / bucket_milliseconds_);
   // Add all samples in the bucket that includes the current time.
   sample_buckets_[current_bucket_] += sample_count;

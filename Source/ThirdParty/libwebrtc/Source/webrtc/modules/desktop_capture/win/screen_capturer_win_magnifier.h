@@ -13,9 +13,9 @@
 
 #include <memory>
 
-#include <windows.h>
 #include <magnification.h>
 #include <wincodec.h>
+#include <windows.h>
 
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/screen_capture_frame_queue.h"

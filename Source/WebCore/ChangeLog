@@ -1,3 +1,60 @@
+2018-08-23  Youenn Fablet  <youenn@apple.com>
+
+        Update libwebrtc up to 984f1a80c0
+        https://bugs.webkit.org/show_bug.cgi?id=188745
+        <rdar://problem/43539177>
+
+        Reviewed by Eric Carlson.
+
+        Updated implementation according new webrtc backend.
+        Instead of modifying libwebrtc header files, we disable unused parameter warning for such headers included in WebCore.
+        WebCore implementation is updated according new webrtc API, mostly AddRef/Release.
+        RealtimeOutgoingVideoSource now uses a pixel convolver to convert RGB pixel buffers as I420.
+
+        Covered by existing tests.
+
+        * CMakeLists.txt:
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::addTrack):
+        (WebCore::LibWebRTCMediaEndpoint::mediaStreamFromRTCStream):
+        (WebCore::fillEncodingParameters):
+        (WebCore::fillRtpParameters):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        (WebCore::LibWebRTCMediaEndpoint::Release const):
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/RealtimeIncomingAudioSource.h:
+        * platform/mediastream/RealtimeIncomingVideoSource.h:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::supportsSizeAndFrameRate):
+        (WebCore::RealtimeMediaSource::supportsConstraint const):
+        (WebCore::RealtimeMediaSource::supportsConstraints):
+        * platform/mediastream/RealtimeOutgoingAudioSource.h:
+        * platform/mediastream/RealtimeOutgoingVideoSource.h:
+        * platform/mediastream/libwebrtc/GStreamerVideoDecoderFactory.cpp:
+        (WebCore::GStreamerVideoDecoder::newSampleCallback):
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+        (WebCore::GStreamerVideoEncoder::GStreamerVideoEncoder):
+        (WebCore::GStreamerVideoEncoder::newSampleCallback):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+        * platform/mediastream/libwebrtc/LibWebRTCAudioModule.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSourceMac::CMSampleBufferFromPixelBuffer):
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp:
+        (WebCore::ConvertToI420):
+        (WebCore::RealtimeOutgoingVideoSourceCocoa::sampleBufferUpdated):
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.h:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.mm: Added.
+        (WebCore::RealtimeOutgoingVideoSourceCocoa::convertToYUV):
+        * testing/MockLibWebRTCPeerConnection.cpp:
+        (WebCore::MockLibWebRTCPeerConnection::AddTrack):
+        * testing/MockLibWebRTCPeerConnection.h:
+        (WebCore::MockRtpSender::GetParameters):
+        (WebCore::MockRtpSender::SetParameters):
+
 2018-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Attachment elements don't appear in drag images on macOS

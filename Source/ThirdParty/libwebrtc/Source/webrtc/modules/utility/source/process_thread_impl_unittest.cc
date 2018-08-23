@@ -137,9 +137,8 @@ TEST(ProcessThreadImpl, Deregister) {
       .WillOnce(Return(0))
       .WillRepeatedly(Return(1));
   EXPECT_CALL(module, Process())
-      .WillOnce(DoAll(SetEvent(event.get()),
-                      Increment(&process_count),
-                      Return()))
+      .WillOnce(
+          DoAll(SetEvent(event.get()), Increment(&process_count), Return()))
       .WillRepeatedly(DoAll(Increment(&process_count), Return()));
 
   thread.RegisterModule(&module, RTC_FROM_HERE);
@@ -174,13 +173,11 @@ void ProcessCallAfterAFewMs(int64_t milliseconds) {
   int64_t start_time = 0;
   int64_t called_time = 0;
   EXPECT_CALL(module, TimeUntilNextProcess())
-      .WillOnce(DoAll(SetTimestamp(&start_time),
-                      Return(milliseconds)))
+      .WillOnce(DoAll(SetTimestamp(&start_time), Return(milliseconds)))
       .WillRepeatedly(Return(milliseconds));
   EXPECT_CALL(module, Process())
-      .WillOnce(DoAll(SetTimestamp(&called_time),
-                      SetEvent(event.get()),
-                      Return()))
+      .WillOnce(
+          DoAll(SetTimestamp(&called_time), SetEvent(event.get()), Return()))
       .WillRepeatedly(Return());
 
   EXPECT_CALL(module, ProcessThreadAttached(&thread)).Times(1);
@@ -238,11 +235,9 @@ TEST(ProcessThreadImpl, DISABLED_Process50Times) {
   MockModule module;
   int callback_count = 0;
   // Ask for a callback after 20ms.
-  EXPECT_CALL(module, TimeUntilNextProcess())
-      .WillRepeatedly(Return(20));
+  EXPECT_CALL(module, TimeUntilNextProcess()).WillRepeatedly(Return(20));
   EXPECT_CALL(module, Process())
-      .WillRepeatedly(DoAll(Increment(&callback_count),
-                            Return()));
+      .WillRepeatedly(DoAll(Increment(&callback_count), Return()));
 
   EXPECT_CALL(module, ProcessThreadAttached(&thread)).Times(1);
   thread.RegisterModule(&module, RTC_FROM_HERE);
@@ -281,8 +276,7 @@ TEST(ProcessThreadImpl, WakeUp) {
   // The second time TimeUntilNextProcess is then called, is after Process
   // has been called and we don't expect any more calls.
   EXPECT_CALL(module, TimeUntilNextProcess())
-      .WillOnce(DoAll(SetTimestamp(&start_time),
-                      SetEvent(started.get()),
+      .WillOnce(DoAll(SetTimestamp(&start_time), SetEvent(started.get()),
                       Return(1000)))
       .WillOnce(Return(1000));
   EXPECT_CALL(module, Process())

@@ -10,7 +10,7 @@
 
 #include "rtc_base/logsinks.h"
 
-#include <iostream>
+#include <cstdio>
 #include <string>
 
 #include "rtc_base/checks.h"
@@ -24,22 +24,32 @@ FileRotatingLogSink::FileRotatingLogSink(const std::string& log_dir_path,
     : FileRotatingLogSink(new FileRotatingStream(log_dir_path,
                                                  log_prefix,
                                                  max_log_size,
-                                                 num_log_files)) {
-}
+                                                 num_log_files)) {}
 
 FileRotatingLogSink::FileRotatingLogSink(FileRotatingStream* stream)
     : stream_(stream) {
   RTC_DCHECK(stream);
 }
 
-FileRotatingLogSink::~FileRotatingLogSink() {
-}
+FileRotatingLogSink::~FileRotatingLogSink() {}
 
 void FileRotatingLogSink::OnLogMessage(const std::string& message) {
   if (stream_->GetState() != SS_OPEN) {
-    std::cerr << "Init() must be called before adding this sink." << std::endl;
+    std::fprintf(stderr, "Init() must be called before adding this sink.\n");
     return;
   }
+  stream_->WriteAll(message.c_str(), message.size(), nullptr, nullptr);
+}
+
+void FileRotatingLogSink::OnLogMessage(const std::string& message,
+                                       LoggingSeverity sev,
+                                       const char* tag) {
+  if (stream_->GetState() != SS_OPEN) {
+    std::fprintf(stderr, "Init() must be called before adding this sink.\n");
+    return;
+  }
+  stream_->WriteAll(tag, strlen(tag), nullptr, nullptr);
+  stream_->WriteAll(": ", 2, nullptr, nullptr);
   stream_->WriteAll(message.c_str(), message.size(), nullptr, nullptr);
 }
 
@@ -58,7 +68,6 @@ CallSessionFileRotatingLogSink::CallSessionFileRotatingLogSink(
           new CallSessionFileRotatingStream(log_dir_path, max_total_log_size)) {
 }
 
-CallSessionFileRotatingLogSink::~CallSessionFileRotatingLogSink() {
-}
+CallSessionFileRotatingLogSink::~CallSessionFileRotatingLogSink() {}
 
 }  // namespace rtc

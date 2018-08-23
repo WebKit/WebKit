@@ -14,7 +14,6 @@
 #include <dispatch/dispatch.h>
 #endif
 
-#include "rtc_base/platform_thread.h"
 #include "rtc_base/sequenced_task_checker.h"
 #include "rtc_base/task_queue.h"
 

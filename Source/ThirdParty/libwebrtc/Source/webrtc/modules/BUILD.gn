@@ -17,7 +17,6 @@ group("modules") {
     "audio_processing",
     "bitrate_controller",
     "congestion_controller",
-    "media_file",
     "pacing",
     "remote_bitrate_estimator",
     "rtp_rtcp",
@@ -37,8 +36,7 @@ rtc_source_set("module_api_public") {
   ]
   deps = [
     "..:webrtc_common",
-    "../:typedefs",
-    "../api:optional",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
@@ -50,15 +48,24 @@ rtc_source_set("module_api") {
   ]
   deps = [
     ":module_api_public",
+    ":module_fec_api",
     "..:webrtc_common",
-    "../:typedefs",
     "../api:libjingle_peerconnection_api",
-    "../api:optional",
-    "../api:video_frame_api",
-    "../api:video_frame_api_i420",
+    "../api/transport:network_control",
+    "../api/video:video_frame",
+    "../api/video:video_frame_i420",
+    "../modules/rtp_rtcp:rtp_video_header",
     "../rtc_base:deprecation",
     "../rtc_base:rtc_base_approved",
     "video_coding:codec_globals_headers",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("module_fec_api") {
+  visibility = [ "*" ]
+  sources = [
+    "include/module_fec_types.h",
   ]
 }
 
@@ -67,7 +74,6 @@ if (rtc_include_tests) {
     "../resources/audio_coding/testfile32kHz.pcm",
     "../resources/audio_coding/teststereo32kHz.pcm",
     "../resources/foreman_cif.yuv",
-    "../resources/paris_qcif.yuv",
   ]
 
   if (is_ios) {
@@ -89,7 +95,6 @@ if (rtc_include_tests) {
       "audio_coding:audio_coding_modules_tests",
       "rtp_rtcp:rtp_rtcp_modules_tests",
       "video_coding:video_coding_modules_tests",
-      "//testing/gmock",
       "//testing/gtest",
     ]
 
@@ -112,19 +117,6 @@ if (rtc_include_tests) {
 
     if (is_ios) {
       deps += [ ":modules_tests_bundle_data" ]
-    }
-
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-    if (is_win) {
-      cflags = [
-        # TODO(phoglund): get rid of 4373 supression when
-        # http://code.google.com/p/webrtc/issues/detail?id=261 is solved.
-        # legacy warning for ignoring const / volatile in signatures.
-        "/wd4373",
-      ]
     }
   }
 
@@ -246,11 +238,6 @@ if (rtc_include_tests) {
       "module_common_types_unittest.cc",
     ]
 
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-
     deps = [
       ":module_api",
       "../test:test_main",
@@ -258,9 +245,9 @@ if (rtc_include_tests) {
       "audio_device:audio_device_unittests",
       "audio_mixer:audio_mixer_unittests",
       "audio_processing:audio_processing_unittests",
+      "audio_processing/aec3:aec3_unittests",
       "bitrate_controller:bitrate_controller_unittests",
       "congestion_controller:congestion_controller_unittests",
-      "media_file:media_file_unittests",
       "pacing:pacing_unittests",
       "remote_bitrate_estimator:remote_bitrate_estimator_unittests",
       "rtp_rtcp:rtp_rtcp_unittests",

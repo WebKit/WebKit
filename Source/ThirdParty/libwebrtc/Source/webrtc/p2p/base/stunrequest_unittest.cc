@@ -20,13 +20,15 @@
 
 namespace cricket {
 
-class StunRequestTest : public testing::Test,
-                        public sigslot::has_slots<> {
+class StunRequestTest : public testing::Test, public sigslot::has_slots<> {
  public:
   StunRequestTest()
       : manager_(rtc::Thread::Current()),
-        request_count_(0), response_(NULL),
-        success_(false), failure_(false), timeout_(false) {
+        request_count_(0),
+        response_(NULL),
+        success_(false),
+        failure_(false),
+        timeout_(false) {
     manager_.SignalSendPacket.connect(this, &StunRequestTest::OnSendPacket);
   }
 
@@ -42,9 +44,7 @@ class StunRequestTest : public testing::Test,
     response_ = res;
     failure_ = true;
   }
-  void OnTimeout() {
-    timeout_ = true;
-  }
+  void OnTimeout() { timeout_ = true; }
 
  protected:
   static StunMessage* CreateStunMessage(StunMessageType type,
@@ -76,16 +76,13 @@ class StunRequestThunker : public StunRequest {
   StunRequestThunker(StunMessage* msg, StunRequestTest* test)
       : StunRequest(msg), test_(test) {}
   explicit StunRequestThunker(StunRequestTest* test) : test_(test) {}
+
  private:
-  virtual void OnResponse(StunMessage* res) {
-    test_->OnResponse(res);
-  }
+  virtual void OnResponse(StunMessage* res) { test_->OnResponse(res); }
   virtual void OnErrorResponse(StunMessage* res) {
     test_->OnErrorResponse(res);
   }
-  virtual void OnTimeout() {
-    test_->OnTimeout();
-  }
+  virtual void OnTimeout() { test_->OnTimeout(); }
 
   virtual void Prepare(StunMessage* request) {
     request->SetType(STUN_BINDING_REQUEST);

@@ -44,7 +44,7 @@ class ScreenCapturerWinGdi : public DesktopCapturer {
   bool SelectSource(SourceId id) override;
 
  private:
-  typedef HRESULT (WINAPI * DwmEnableCompositionFunc)(UINT);
+  typedef HRESULT(WINAPI* DwmEnableCompositionFunc)(UINT);
 
   // Make sure that the device contexts match the screen configuration.
   void PrepareCaptureResources();

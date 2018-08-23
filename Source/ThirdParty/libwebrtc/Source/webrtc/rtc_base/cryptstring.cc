@@ -34,15 +34,12 @@ void EmptyCryptStringImpl::CopyRawTo(std::vector<unsigned char>* dest) const {
   dest->clear();
 }
 
-CryptString::CryptString() : impl_(new EmptyCryptStringImpl()) {
-}
+CryptString::CryptString() : impl_(new EmptyCryptStringImpl()) {}
 
 CryptString::CryptString(const CryptString& other)
-    : impl_(other.impl_->Copy()) {
-}
+    : impl_(other.impl_->Copy()) {}
 
-CryptString::CryptString(const CryptStringImpl& impl) : impl_(impl.Copy()) {
-}
+CryptString::CryptString(const CryptStringImpl& impl) : impl_(impl.Copy()) {}
 
 CryptString::~CryptString() = default;
 

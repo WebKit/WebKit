@@ -19,7 +19,7 @@
 #include "ortc/rtptransportcontrolleradapter.h"
 #include "pc/rtpsender.h"
 #include "rtc_base/constructormagic.h"
-#include "rtc_base/sigslot.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace webrtc {
 

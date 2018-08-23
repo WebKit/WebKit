@@ -16,7 +16,7 @@
  *
  */
 
-#include "filterbank_tables.h"
+#include "modules/audio_coding/codecs/isac/fix/source/filterbank_tables.h"
 
 /* HPstcoeff_in_Q14 = {a1, a2, b1 - b0 * a1, b2 - b0 * a2};
  * In float, they are: {-1.94895953203325f, 0.94984516000000f,

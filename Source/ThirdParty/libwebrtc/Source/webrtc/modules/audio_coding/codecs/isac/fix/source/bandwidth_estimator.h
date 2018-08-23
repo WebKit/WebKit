@@ -19,8 +19,7 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_BANDWIDTH_ESTIMATOR_H_
 #define MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_BANDWIDTH_ESTIMATOR_H_
 
-#include "structs.h"
-
+#include "modules/audio_coding/codecs/isac/fix/source/structs.h"
 
 /****************************************************************************
  * WebRtcIsacfix_InitBandwidthEstimator(...)
@@ -33,8 +32,7 @@
  * Return value            : 0
  */
 
-int32_t WebRtcIsacfix_InitBandwidthEstimator(BwEstimatorstr *bwest_str);
-
+int32_t WebRtcIsacfix_InitBandwidthEstimator(BwEstimatorstr* bwest_str);
 
 /****************************************************************************
  * WebRtcIsacfix_UpdateUplinkBwImpl(...)
@@ -57,16 +55,17 @@ int32_t WebRtcIsacfix_InitBandwidthEstimator(BwEstimatorstr *bwest_str);
  *                           -1 otherwise
  */
 
-int32_t WebRtcIsacfix_UpdateUplinkBwImpl(BwEstimatorstr       *bwest_str,
-                                         const uint16_t        rtp_number,
-                                         const int16_t         frameSize,
-                                         const uint32_t        send_ts,
-                                         const uint32_t        arr_ts,
-                                         const size_t          pksize,
-                                         const uint16_t        Index);
+int32_t WebRtcIsacfix_UpdateUplinkBwImpl(BwEstimatorstr* bwest_str,
+                                         const uint16_t rtp_number,
+                                         const int16_t frameSize,
+                                         const uint32_t send_ts,
+                                         const uint32_t arr_ts,
+                                         const size_t pksize,
+                                         const uint16_t Index);
 
-/* Update receiving estimates. Used when we only receive BWE index, no iSAC data packet. */
-int16_t WebRtcIsacfix_UpdateUplinkBwRec(BwEstimatorstr *bwest_str,
+/* Update receiving estimates. Used when we only receive BWE index, no iSAC data
+ * packet. */
+int16_t WebRtcIsacfix_UpdateUplinkBwRec(BwEstimatorstr* bwest_str,
                                         const int16_t Index);
 
 /****************************************************************************
@@ -81,19 +80,19 @@ int16_t WebRtcIsacfix_UpdateUplinkBwRec(BwEstimatorstr *bwest_str,
  * Return:
  *      bandwith and jitter index (0..23)
  */
-uint16_t WebRtcIsacfix_GetDownlinkBwIndexImpl(BwEstimatorstr *bwest_str);
+uint16_t WebRtcIsacfix_GetDownlinkBwIndexImpl(BwEstimatorstr* bwest_str);
 
 /* Returns the bandwidth estimation (in bps) */
-uint16_t WebRtcIsacfix_GetDownlinkBandwidth(const BwEstimatorstr *bwest_str);
+uint16_t WebRtcIsacfix_GetDownlinkBandwidth(const BwEstimatorstr* bwest_str);
 
 /* Returns the bandwidth that iSAC should send with in bps */
-int16_t WebRtcIsacfix_GetUplinkBandwidth(const BwEstimatorstr *bwest_str);
+int16_t WebRtcIsacfix_GetUplinkBandwidth(const BwEstimatorstr* bwest_str);
 
 /* Returns the max delay (in ms) */
-int16_t WebRtcIsacfix_GetDownlinkMaxDelay(const BwEstimatorstr *bwest_str);
+int16_t WebRtcIsacfix_GetDownlinkMaxDelay(const BwEstimatorstr* bwest_str);
 
 /* Returns the max delay value from the other side in ms */
-int16_t WebRtcIsacfix_GetUplinkMaxDelay(const BwEstimatorstr *bwest_str);
+int16_t WebRtcIsacfix_GetUplinkMaxDelay(const BwEstimatorstr* bwest_str);
 
 /* Fills in an IsacExternalBandwidthInfo struct. */
 void WebRtcIsacfixBw_GetBandwidthInfo(BwEstimatorstr* bwest_str,
@@ -107,29 +106,31 @@ void WebRtcIsacfixBw_SetBandwidthInfo(BwEstimatorstr* bwest_str,
  * update amount of data in bottle neck buffer and burst handling
  * returns minimum payload size (bytes)
  */
-uint16_t WebRtcIsacfix_GetMinBytes(RateModel *State,
-                                   int16_t StreamSize,     /* bytes in bitstream */
-                                   const int16_t FrameLen,    /* ms per frame */
-                                   const int16_t BottleNeck,        /* bottle neck rate; excl headers (bps) */
-                                   const int16_t DelayBuildUp);     /* max delay from bottle neck buffering (ms) */
+uint16_t WebRtcIsacfix_GetMinBytes(
+    RateModel* State,
+    int16_t StreamSize,          /* bytes in bitstream */
+    const int16_t FrameLen,      /* ms per frame */
+    const int16_t BottleNeck,    /* bottle neck rate; excl headers (bps) */
+    const int16_t DelayBuildUp); /* max delay from bottle neck buffering (ms) */
 
 /*
  * update long-term average bitrate and amount of data in buffer
  */
-void WebRtcIsacfix_UpdateRateModel(RateModel *State,
-                                   int16_t StreamSize,    /* bytes in bitstream */
-                                   const int16_t FrameSamples,  /* samples per frame */
-                                   const int16_t BottleNeck);       /* bottle neck rate; excl headers (bps) */
+void WebRtcIsacfix_UpdateRateModel(
+    RateModel* State,
+    int16_t StreamSize,         /* bytes in bitstream */
+    const int16_t FrameSamples, /* samples per frame */
+    const int16_t BottleNeck);  /* bottle neck rate; excl headers (bps) */
 
-
-void WebRtcIsacfix_InitRateModel(RateModel *State);
+void WebRtcIsacfix_InitRateModel(RateModel* State);
 
 /* Returns the new framelength value (input argument: bottle_neck) */
-int16_t WebRtcIsacfix_GetNewFrameLength(int16_t bottle_neck, int16_t current_framelength);
+int16_t WebRtcIsacfix_GetNewFrameLength(int16_t bottle_neck,
+                                        int16_t current_framelength);
 
 /* Returns the new SNR value (input argument: bottle_neck) */
-//returns snr in Q10
+// returns snr in Q10
 int16_t WebRtcIsacfix_GetSnr(int16_t bottle_neck, int16_t framesamples);
 
-
-#endif /*  MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_BANDWIDTH_ESTIMATOR_H_ */
+#endif /*  MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_BANDWIDTH_ESTIMATOR_H_ \
+        */

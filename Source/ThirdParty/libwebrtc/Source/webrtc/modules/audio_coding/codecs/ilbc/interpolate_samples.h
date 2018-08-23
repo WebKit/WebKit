@@ -19,16 +19,16 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_INTERPOLATE_SAMPLES_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_INTERPOLATE_SAMPLES_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  Construct the interpolated samples for the Augmented CB
  *---------------------------------------------------------------*/
 
 void WebRtcIlbcfix_InterpolateSamples(
-    int16_t *interpSamples, /* (o) The interpolated samples */
-    int16_t *CBmem,   /* (i) The CB memory */
-    size_t lMem    /* (i) Length of the CB memory */
-                                      );
+    int16_t* interpSamples, /* (o) The interpolated samples */
+    int16_t* CBmem,         /* (i) The CB memory */
+    size_t lMem             /* (i) Length of the CB memory */
+    );
 
 #endif

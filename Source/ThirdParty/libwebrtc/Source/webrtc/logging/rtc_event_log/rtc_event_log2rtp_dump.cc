@@ -16,7 +16,7 @@
 #include <string>
 
 #include "logging/rtc_event_log/rtc_event_log.h"
-#include "logging/rtc_event_log/rtc_event_log_parser.h"
+#include "logging/rtc_event_log/rtc_event_log_parser_new.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_utility.h"
 #include "rtc_base/checks.h"
@@ -25,7 +25,7 @@
 
 namespace {
 
-using MediaType = webrtc::ParsedRtcEventLog::MediaType;
+using MediaType = webrtc::ParsedRtcEventLogNew::MediaType;
 
 DEFINE_bool(
     audio,
@@ -84,8 +84,8 @@ int main(int argc, char* argv[]) {
       " --help for usage.\n"
       "Example usage:\n" +
       program_name + " input.rel output.rtp\n";
-  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) ||
-      FLAG_help || argc != 3) {
+  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) || FLAG_help ||
+      argc != 3) {
     std::cout << usage;
     if (FLAG_help) {
       rtc::FlagList::Print(nullptr, false);
@@ -102,7 +102,7 @@ int main(int argc, char* argv[]) {
     RTC_CHECK(ParseSsrc(FLAG_ssrc, &ssrc_filter))
         << "Flag verification has failed.";
 
-  webrtc::ParsedRtcEventLog parsed_stream;
+  webrtc::ParsedRtcEventLogNew parsed_stream;
   if (!parsed_stream.ParseFile(input_file)) {
     std::cerr << "Error while parsing input file: " << input_file << std::endl;
     return -1;
@@ -127,8 +127,8 @@ int main(int argc, char* argv[]) {
     // some required fields and we attempt to access them. We could consider
     // a softer failure option, but it does not seem useful to generate
     // RTP dumps based on broken event logs.
-    if (FLAG_rtp &&
-        parsed_stream.GetEventType(i) == webrtc::ParsedRtcEventLog::RTP_EVENT) {
+    if (FLAG_rtp && parsed_stream.GetEventType(i) ==
+                        webrtc::ParsedRtcEventLogNew::EventType::RTP_EVENT) {
       webrtc::test::RtpPacket packet;
       webrtc::PacketDirection direction;
       parsed_stream.GetRtpHeader(i, &direction, packet.data, &packet.length,
@@ -166,7 +166,7 @@ int main(int argc, char* argv[]) {
       rtp_counter++;
     }
     if (FLAG_rtcp && parsed_stream.GetEventType(i) ==
-                         webrtc::ParsedRtcEventLog::RTCP_EVENT) {
+                         webrtc::ParsedRtcEventLogNew::EventType::RTCP_EVENT) {
       webrtc::test::RtpPacket packet;
       webrtc::PacketDirection direction;
       parsed_stream.GetRtcpPacket(i, &direction, packet.data, &packet.length);

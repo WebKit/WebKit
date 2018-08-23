@@ -8,15 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "rtc_base/string_to_number.h"
+
 #include <cerrno>
 #include <cstdlib>
 
-#include "rtc_base/string_to_number.h"
+#include "rtc_base/checks.h"
 
 namespace rtc {
 namespace string_to_number_internal {
 
-rtc::Optional<signed_type> ParseSigned(const char* str, int base) {
+absl::optional<signed_type> ParseSigned(const char* str, int base) {
   RTC_DCHECK(str);
   if (isdigit(str[0]) || str[0] == '-') {
     char* end = nullptr;
@@ -26,10 +28,10 @@ rtc::Optional<signed_type> ParseSigned(const char* str, int base) {
       return value;
     }
   }
-  return rtc::nullopt;
+  return absl::nullopt;
 }
 
-rtc::Optional<unsigned_type> ParseUnsigned(const char* str, int base) {
+absl::optional<unsigned_type> ParseUnsigned(const char* str, int base) {
   RTC_DCHECK(str);
   if (isdigit(str[0]) || str[0] == '-') {
     // Explicitly discard negative values. std::strtoull parsing causes unsigned
@@ -43,8 +45,44 @@ rtc::Optional<unsigned_type> ParseUnsigned(const char* str, int base) {
       return value;
     }
   }
-  return rtc::nullopt;
+  return absl::nullopt;
 }
+
+template <typename T>
+T StrToT(const char* str, char** str_end);
+
+template <>
+inline float StrToT(const char* str, char** str_end) {
+  return std::strtof(str, str_end);
+}
+
+template <>
+inline double StrToT(const char* str, char** str_end) {
+  return std::strtod(str, str_end);
+}
+
+template <>
+inline long double StrToT(const char* str, char** str_end) {
+  return std::strtold(str, str_end);
+}
+
+template <typename T>
+absl::optional<T> ParseFloatingPoint(const char* str) {
+  RTC_DCHECK(str);
+  if (*str == '\0')
+    return absl::nullopt;
+  char* end = nullptr;
+  errno = 0;
+  const T value = StrToT<T>(str, &end);
+  if (end && *end == '\0' && errno == 0) {
+    return value;
+  }
+  return absl::nullopt;
+}
+
+template absl::optional<float> ParseFloatingPoint(const char* str);
+template absl::optional<double> ParseFloatingPoint(const char* str);
+template absl::optional<long double> ParseFloatingPoint(const char* str);
 
 }  // namespace string_to_number_internal
 }  // namespace rtc

@@ -49,13 +49,18 @@ class PseudoTcpTestBase : public testing::Test,
         remote_mtu_(65535),
         delay_(0),
         loss_(0) {
-    // Set use of the test RNG to get predictable loss patterns.
+    // Set use of the test RNG to get predictable loss patterns. Otherwise,
+    // this test would occasionally get really unlucky loss and time out.
     rtc::SetRandomTestMode(true);
   }
   ~PseudoTcpTestBase() {
     // Put it back for the next test.
     rtc::SetRandomTestMode(false);
   }
+  // If true, both endpoints will send the "connect" segment simultaneously,
+  // rather than |local_| sending it followed by a response from |remote_|.
+  // Note that this is what chromoting ends up doing.
+  void SetSimultaneousOpen(bool enabled) { simultaneous_open_ = enabled; }
   void SetLocalMtu(int mtu) {
     local_.NotifyMTU(mtu);
     local_mtu_ = mtu;
@@ -66,6 +71,9 @@ class PseudoTcpTestBase : public testing::Test,
   }
   void SetDelay(int delay) { delay_ = delay; }
   void SetLoss(int percent) { loss_ = percent; }
+  // Used to cause the initial "connect" segment to be lost, needed for a
+  // regression test.
+  void DropNextPacket() { drop_next_packet_ = true; }
   void SetOptNagling(bool enable_nagles) {
     local_.SetOption(PseudoTcp::OPT_NODELAY, !enable_nagles);
     remote_.SetOption(PseudoTcp::OPT_NODELAY, !enable_nagles);
@@ -92,6 +100,12 @@ class PseudoTcpTestBase : public testing::Test,
     int ret = local_.Connect();
     if (ret == 0) {
       UpdateLocalClock();
+    }
+    if (simultaneous_open_) {
+      ret = remote_.Connect();
+      if (ret == 0) {
+        UpdateRemoteClock();
+      }
     }
     return ret;
   }
@@ -134,19 +148,28 @@ class PseudoTcpTestBase : public testing::Test,
   virtual WriteResult TcpWritePacket(PseudoTcp* tcp,
                                      const char* buffer,
                                      size_t len) {
+    // Drop a packet if the test called DropNextPacket.
+    if (drop_next_packet_) {
+      drop_next_packet_ = false;
+      RTC_LOG(LS_VERBOSE) << "Dropping packet due to DropNextPacket, size="
+                          << len;
+      return WR_SUCCESS;
+    }
     // Randomly drop the desired percentage of packets.
-    // Also drop packets that are larger than the configured MTU.
     if (rtc::CreateRandomId() % 100 < static_cast<uint32_t>(loss_)) {
       RTC_LOG(LS_VERBOSE) << "Randomly dropping packet, size=" << len;
-    } else if (len > static_cast<size_t>(std::min(local_mtu_, remote_mtu_))) {
+      return WR_SUCCESS;
+    }
+    // Also drop packets that are larger than the configured MTU.
+    if (len > static_cast<size_t>(std::min(local_mtu_, remote_mtu_))) {
       RTC_LOG(LS_VERBOSE) << "Dropping packet that exceeds path MTU, size="
                           << len;
-    } else {
-      int id = (tcp == &local_) ? MSG_RPACKET : MSG_LPACKET;
-      std::string packet(buffer, len);
-      rtc::Thread::Current()->PostDelayed(RTC_FROM_HERE, delay_, this, id,
-                                          rtc::WrapMessageData(packet));
+      return WR_SUCCESS;
     }
+    int id = (tcp == &local_) ? MSG_RPACKET : MSG_LPACKET;
+    std::string packet(buffer, len);
+    rtc::Thread::Current()->PostDelayed(RTC_FROM_HERE, delay_, this, id,
+                                        rtc::WrapMessageData(packet));
     return WR_SUCCESS;
   }
 
@@ -198,6 +221,8 @@ class PseudoTcpTestBase : public testing::Test,
   int remote_mtu_;
   int delay_;
   int loss_;
+  bool drop_next_packet_ = false;
+  bool simultaneous_open_ = false;
 };
 
 class PseudoTcpTest : public PseudoTcpTestBase {
@@ -554,8 +579,8 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
     } else {
       if (!remote_.isReceiveBufferFull()) {
         RTC_LOG(LS_ERROR) << "This shouldn't happen - the send buffer is full, "
-                          << "the receive buffer is not, and there are no "
-                          << "remaining messages to process.";
+                             "the receive buffer is not, and there are no "
+                             "remaining messages to process.";
       }
       send_stream_.GetPosition(&position);
       send_position_.push_back(position);
@@ -618,6 +643,27 @@ TEST_F(PseudoTcpTest, TestSendWithLossAndOptNaglingOff) {
   SetLoss(10);
   SetOptNagling(false);
   TestTransfer(100000);  // less data so test runs faster
+}
+
+// Regression test for bugs.webrtc.org/9208.
+//
+// This bug resulted in corrupted data if a "connect" segment was received after
+// a data segment. This is only possible if:
+//
+// * The initial "connect" segment is lost, and retransmitted later.
+// * Both sides send "connect"s simultaneously, such that the local side thinks
+//   a connection is established even before its "connect" has been
+//   acknowledged.
+// * Nagle algorithm disabled, allowing a data segment to be sent before the
+//   "connect" has been acknowledged.
+TEST_F(PseudoTcpTest,
+       TestSendWhenFirstPacketLostWithOptNaglingOffAndSimultaneousOpen) {
+  SetLocalMtu(1500);
+  SetRemoteMtu(1500);
+  DropNextPacket();
+  SetOptNagling(false);
+  SetSimultaneousOpen(true);
+  TestTransfer(10000);
 }
 
 // Test sending data with 10% packet loss and Delayed ACK disabled.

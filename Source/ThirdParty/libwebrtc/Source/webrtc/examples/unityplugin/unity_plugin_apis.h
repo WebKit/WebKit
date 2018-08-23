@@ -19,9 +19,11 @@
 typedef void (*I420FRAMEREADY_CALLBACK)(const uint8_t* data_y,
                                         const uint8_t* data_u,
                                         const uint8_t* data_v,
+                                        const uint8_t* data_a,
                                         int stride_y,
                                         int stride_u,
                                         int stride_v,
+                                        int stride_a,
                                         uint32_t width,
                                         uint32_t height);
 typedef void (*LOCALDATACHANNELREADY_CALLBACK)();
@@ -47,7 +49,8 @@ extern "C" {
 WEBRTC_PLUGIN_API int CreatePeerConnection(const char** turn_urls,
                                            const int no_of_urls,
                                            const char* username,
-                                           const char* credential);
+                                           const char* credential,
+                                           bool mandatory_receive_video);
 // Close a peerconnection.
 WEBRTC_PLUGIN_API bool ClosePeerConnection(int peer_connection_id);
 // Add a audio stream. If audio_only is true, the stream only has an audio

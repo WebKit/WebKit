@@ -28,8 +28,14 @@ Win32Window::~Win32Window() {
   RTC_DCHECK(nullptr == wnd_);
 }
 
-bool Win32Window::Create(HWND parent, const wchar_t* title, DWORD style,
-                         DWORD exstyle, int x, int y, int cx, int cy) {
+bool Win32Window::Create(HWND parent,
+                         const wchar_t* title,
+                         DWORD style,
+                         DWORD exstyle,
+                         int x,
+                         int y,
+                         int cx,
+                         int cy) {
   if (wnd_) {
     // Window already exists.
     return false;
@@ -37,7 +43,7 @@ bool Win32Window::Create(HWND parent, const wchar_t* title, DWORD style,
 
   if (!window_class_) {
     if (!GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
-                           GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                               GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
                            reinterpret_cast<LPCWSTR>(&Win32Window::WndProc),
                            &instance_)) {
       RTC_LOG_GLE(LS_ERROR) << "GetModuleHandleEx failed";
@@ -74,15 +80,17 @@ void Win32Window::Shutdown() {
   }
 }
 
-bool Win32Window::OnMessage(UINT uMsg, WPARAM wParam, LPARAM lParam,
+bool Win32Window::OnMessage(UINT uMsg,
+                            WPARAM wParam,
+                            LPARAM lParam,
                             LRESULT& result) {
   switch (uMsg) {
-  case WM_CLOSE:
-    if (!OnClose()) {
-      result = 0;
-      return true;
-    }
-    break;
+    case WM_CLOSE:
+      if (!OnClose()) {
+        result = 0;
+        return true;
+      }
+      break;
   }
   return false;
 }

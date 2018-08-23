@@ -11,8 +11,6 @@
 #ifndef RTC_BASE_CHECKS_H_
 #define RTC_BASE_CHECKS_H_
 
-#include "typedefs.h"  // NOLINT(build/include)
-
 // If you for some reson need to know if DCHECKs are on, test the value of
 // RTC_DCHECK_IS_ON. (Test its value, not if it's defined; it'll always be
 // defined, to either a true or a false value.)
@@ -22,10 +20,19 @@
 #define RTC_DCHECK_IS_ON 0
 #endif
 
+// Annotate a function that will not return control flow to the caller.
+#if defined(_MSC_VER)
+#define RTC_NORETURN __declspec(noreturn)
+#elif defined(__GNUC__)
+#define RTC_NORETURN __attribute__ ((__noreturn__))
+#else
+#define RTC_NORETURN
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-NO_RETURN void rtc_FatalMessage(const char* file, int line, const char* msg);
+RTC_NORETURN void rtc_FatalMessage(const char* file, int line, const char* msg);
 #ifdef __cplusplus
 }  // extern "C"
 #endif
@@ -33,10 +40,11 @@ NO_RETURN void rtc_FatalMessage(const char* file, int line, const char* msg);
 #ifdef __cplusplus
 // C++ version.
 
-#include <sstream>
+#include <sstream>  // no-presubmit-check TODO(webrtc:8982)
 #include <string>
 
 #include "rtc_base/numerics/safe_compare.h"
+#include "rtc_base/system/inline.h"
 
 // The macros here print a message to stderr and abort under various
 // conditions. All will accept additional stream messages. For example:
@@ -79,21 +87,209 @@ NO_RETURN void rtc_FatalMessage(const char* file, int line, const char* msg);
 // consolidation with system_wrappers/logging.h should happen first.
 
 namespace rtc {
+namespace webrtc_checks_impl {
+enum class CheckArgType : int8_t {
+  kEnd = 0,
+  kInt,
+  kLong,
+  kLongLong,
+  kUInt,
+  kULong,
+  kULongLong,
+  kDouble,
+  kLongDouble,
+  kCharP,
+  kStdString,
+  kVoidP,
 
-// Helper macro which avoids evaluating the arguments to a stream if
-// the condition doesn't hold.
-#define RTC_LAZY_STREAM(stream, condition)                                    \
-  !(condition) ? static_cast<void>(0) : rtc::FatalMessageVoidify() & (stream)
+  // kCheckOp doesn't represent an argument type. Instead, it is sent as the
+  // first argument from RTC_CHECK_OP to make FatalLog use the next two
+  // arguments to build the special CHECK_OP error message
+  // (the "a == b (1 vs. 2)" bit).
+  kCheckOp,
+};
+
+RTC_NORETURN void FatalLog(const char* file,
+                           int line,
+                           const char* message,
+                           const CheckArgType* fmt,
+                           ...);
+
+// Wrapper for log arguments. Only ever make values of this type with the
+// MakeVal() functions.
+template <CheckArgType N, typename T>
+struct Val {
+  static constexpr CheckArgType Type() { return N; }
+  T GetVal() const { return val; }
+  T val;
+};
+
+inline Val<CheckArgType::kInt, int> MakeVal(int x) {
+  return {x};
+}
+inline Val<CheckArgType::kLong, long> MakeVal(long x) {
+  return {x};
+}
+inline Val<CheckArgType::kLongLong, long long> MakeVal(long long x) {
+  return {x};
+}
+inline Val<CheckArgType::kUInt, unsigned int> MakeVal(unsigned int x) {
+  return {x};
+}
+inline Val<CheckArgType::kULong, unsigned long> MakeVal(unsigned long x) {
+  return {x};
+}
+inline Val<CheckArgType::kULongLong, unsigned long long> MakeVal(
+    unsigned long long x) {
+  return {x};
+}
+
+inline Val<CheckArgType::kDouble, double> MakeVal(double x) {
+  return {x};
+}
+inline Val<CheckArgType::kLongDouble, long double> MakeVal(long double x) {
+  return {x};
+}
+
+inline Val<CheckArgType::kCharP, const char*> MakeVal(const char* x) {
+  return {x};
+}
+inline Val<CheckArgType::kStdString, const std::string*> MakeVal(
+    const std::string& x) {
+  return {&x};
+}
+
+inline Val<CheckArgType::kVoidP, const void*> MakeVal(const void* x) {
+  return {x};
+}
+
+// Ephemeral type that represents the result of the logging << operator.
+template <typename... Ts>
+class LogStreamer;
+
+// Base case: Before the first << argument.
+template <>
+class LogStreamer<> final {
+ public:
+  template <
+      typename U,
+      typename std::enable_if<std::is_arithmetic<U>::value>::type* = nullptr>
+  RTC_FORCE_INLINE LogStreamer<decltype(MakeVal(std::declval<U>()))> operator<<(
+      U arg) const {
+    return LogStreamer<decltype(MakeVal(std::declval<U>()))>(MakeVal(arg),
+                                                             this);
+  }
+
+  template <
+      typename U,
+      typename std::enable_if<!std::is_arithmetic<U>::value>::type* = nullptr>
+  RTC_FORCE_INLINE LogStreamer<decltype(MakeVal(std::declval<U>()))> operator<<(
+      const U& arg) const {
+    return LogStreamer<decltype(MakeVal(std::declval<U>()))>(MakeVal(arg),
+                                                             this);
+  }
+
+  template <typename... Us>
+  RTC_NORETURN RTC_FORCE_INLINE static void Call(const char* file,
+                                                 const int line,
+                                                 const char* message,
+                                                 const Us&... args) {
+    static constexpr CheckArgType t[] = {Us::Type()..., CheckArgType::kEnd};
+    FatalLog(file, line, message, t, args.GetVal()...);
+  }
+
+  template <typename... Us>
+  RTC_NORETURN RTC_FORCE_INLINE static void CallCheckOp(const char* file,
+                                                        const int line,
+                                                        const char* message,
+                                                        const Us&... args) {
+    static constexpr CheckArgType t[] = {CheckArgType::kCheckOp, Us::Type()...,
+                                         CheckArgType::kEnd};
+    FatalLog(file, line, message, t, args.GetVal()...);
+  }
+};
+
+// Inductive case: We've already seen at least one << argument. The most recent
+// one had type `T`, and the earlier ones had types `Ts`.
+template <typename T, typename... Ts>
+class LogStreamer<T, Ts...> final {
+ public:
+  RTC_FORCE_INLINE LogStreamer(T arg, const LogStreamer<Ts...>* prior)
+      : arg_(arg), prior_(prior) {}
+
+  template <
+      typename U,
+      typename std::enable_if<std::is_arithmetic<U>::value>::type* = nullptr>
+  RTC_FORCE_INLINE LogStreamer<decltype(MakeVal(std::declval<U>())), T, Ts...>
+  operator<<(U arg) const {
+    return LogStreamer<decltype(MakeVal(std::declval<U>())), T, Ts...>(
+        MakeVal(arg), this);
+  }
+
+  template <
+      typename U,
+      typename std::enable_if<!std::is_arithmetic<U>::value>::type* = nullptr>
+  RTC_FORCE_INLINE LogStreamer<decltype(MakeVal(std::declval<U>())), T, Ts...>
+  operator<<(const U& arg) const {
+    return LogStreamer<decltype(MakeVal(std::declval<U>())), T, Ts...>(
+        MakeVal(arg), this);
+  }
+
+  template <typename... Us>
+  RTC_NORETURN RTC_FORCE_INLINE void Call(const char* file,
+                                          const int line,
+                                          const char* message,
+                                          const Us&... args) const {
+    prior_->Call(file, line, message, arg_, args...);
+  }
+
+  template <typename... Us>
+  RTC_NORETURN RTC_FORCE_INLINE void CallCheckOp(const char* file,
+                                                 const int line,
+                                                 const char* message,
+                                                 const Us&... args) const {
+    prior_->CallCheckOp(file, line, message, arg_, args...);
+  }
+
+ private:
+  // The most recent argument.
+  T arg_;
+
+  // Earlier arguments.
+  const LogStreamer<Ts...>* prior_;
+};
+
+template <bool isCheckOp>
+class FatalLogCall final {
+ public:
+  FatalLogCall(const char* file, int line, const char* message)
+      : file_(file), line_(line), message_(message) {}
+
+  // This can be any binary operator with precedence lower than <<.
+  template <typename... Ts>
+  RTC_NORETURN RTC_FORCE_INLINE void operator&(
+      const LogStreamer<Ts...>& streamer) {
+    isCheckOp ? streamer.CallCheckOp(file_, line_, message_)
+              : streamer.Call(file_, line_, message_);
+  }
+
+ private:
+  const char* file_;
+  int line_;
+  const char* message_;
+};
+}  // namespace webrtc_checks_impl
 
 // The actual stream used isn't important. We reference |ignored| in the code
 // but don't evaluate it; this is to avoid "unused variable" warnings (we do so
 // in a particularly convoluted way with an extra ?: because that appears to be
 // the simplest construct that keeps Visual Studio from complaining about
 // condition being unused).
-#define RTC_EAT_STREAM_PARAMETERS(ignored) \
-  (true ? true : ((void)(ignored), true))  \
-      ? static_cast<void>(0)               \
-      : rtc::FatalMessageVoidify() & rtc::FatalMessage("", 0).stream()
+#define RTC_EAT_STREAM_PARAMETERS(ignored)                        \
+  (true ? true : ((void)(ignored), true))                         \
+      ? static_cast<void>(0)                                      \
+      : rtc::webrtc_checks_impl::FatalLogCall<false>("", 0, "") & \
+            rtc::webrtc_checks_impl::LogStreamer<>()
 
 // Call RTC_EAT_STREAM_PARAMETERS with an argument that fails to compile if
 // values of the same types as |a| and |b| can't be compared with the given
@@ -105,81 +301,21 @@ namespace rtc {
 // controlled by NDEBUG or anything else, so the check will be executed
 // regardless of compilation mode.
 //
-// We make sure RTC_CHECK et al. always evaluates their arguments, as
+// We make sure RTC_CHECK et al. always evaluates |condition|, as
 // doing RTC_CHECK(FunctionWithSideEffect()) is a common idiom.
-#define RTC_CHECK(condition)                                      \
-  RTC_LAZY_STREAM(rtc::FatalMessage(__FILE__, __LINE__).stream(), \
-                  !(condition))                                   \
-      << "Check failed: " #condition << std::endl << "# "
+#define RTC_CHECK(condition)                                       \
+  while (!(condition))                                             \
+  rtc::webrtc_checks_impl::FatalLogCall<false>(__FILE__, __LINE__, \
+                                               #condition) &       \
+      rtc::webrtc_checks_impl::LogStreamer<>()
 
 // Helper macro for binary operators.
 // Don't use this macro directly in your code, use RTC_CHECK_EQ et al below.
-//
-// TODO(akalin): Rewrite this so that constructs like if (...)
-// RTC_CHECK_EQ(...) else { ... } work properly.
-#define RTC_CHECK_OP(name, op, val1, val2)                                 \
-  if (std::string* _result =                                               \
-          rtc::Check##name##Impl((val1), (val2), #val1 " " #op " " #val2)) \
-    rtc::FatalMessage(__FILE__, __LINE__, _result).stream()
-
-// Build the error message string.  This is separate from the "Impl"
-// function template because it is not performance critical and so can
-// be out of line, while the "Impl" code should be inline.  Caller
-// takes ownership of the returned string.
-template<class t1, class t2>
-std::string* MakeCheckOpString(const t1& v1, const t2& v2, const char* names) {
-  std::ostringstream ss;
-  ss << names << " (" << v1 << " vs. " << v2 << ")";
-  std::string* msg = new std::string(ss.str());
-  return msg;
-}
-
-// MSVC doesn't like complex extern templates and DLLs. WebKit build system neither.
-#if 0 //!defined(COMPILER_MSVC)
-// Commonly used instantiations of MakeCheckOpString<>. Explicitly instantiated
-// in logging.cc.
-extern template std::string* MakeCheckOpString<int, int>(
-    const int&, const int&, const char* names);
-extern template
-std::string* MakeCheckOpString<unsigned long, unsigned long>(
-    const unsigned long&, const unsigned long&, const char* names);
-extern template
-std::string* MakeCheckOpString<unsigned long, unsigned int>(
-    const unsigned long&, const unsigned int&, const char* names);
-extern template
-std::string* MakeCheckOpString<unsigned int, unsigned long>(
-    const unsigned int&, const unsigned long&, const char* names);
-extern template
-std::string* MakeCheckOpString<std::string, std::string>(
-    const std::string&, const std::string&, const char* name);
-#endif
-
-// Helper functions for RTC_CHECK_OP macro.
-// The (int, int) specialization works around the issue that the compiler
-// will not instantiate the template version of the function on values of
-// unnamed enum type - see comment below.
-#define DEFINE_RTC_CHECK_OP_IMPL(name)                                       \
-  template <class t1, class t2>                                              \
-  inline std::string* Check##name##Impl(const t1& v1, const t2& v2,          \
-                                        const char* names) {                 \
-    if (rtc::Safe##name(v1, v2))                                             \
-      return nullptr;                                                        \
-    else                                                                     \
-      return rtc::MakeCheckOpString(v1, v2, names);                          \
-  }                                                                          \
-  inline std::string* Check##name##Impl(int v1, int v2, const char* names) { \
-    if (rtc::Safe##name(v1, v2))                                             \
-      return nullptr;                                                        \
-    else                                                                     \
-      return rtc::MakeCheckOpString(v1, v2, names);                          \
-  }
-DEFINE_RTC_CHECK_OP_IMPL(Eq)
-DEFINE_RTC_CHECK_OP_IMPL(Ne)
-DEFINE_RTC_CHECK_OP_IMPL(Le)
-DEFINE_RTC_CHECK_OP_IMPL(Lt)
-DEFINE_RTC_CHECK_OP_IMPL(Ge)
-DEFINE_RTC_CHECK_OP_IMPL(Gt)
-#undef DEFINE_RTC_CHECK_OP_IMPL
+#define RTC_CHECK_OP(name, op, val1, val2)                               \
+  while (!rtc::Safe##name((val1), (val2)))                               \
+  rtc::webrtc_checks_impl::FatalLogCall<true>(__FILE__, __LINE__,        \
+                                              #val1 " " #op " " #val2) & \
+      rtc::webrtc_checks_impl::LogStreamer<>() << (val1) << (val2)
 
 #define RTC_CHECK_EQ(val1, val2) RTC_CHECK_OP(Eq, ==, val1, val2)
 #define RTC_CHECK_NE(val1, val2) RTC_CHECK_OP(Ne, !=, val1, val2)
@@ -209,39 +345,14 @@ DEFINE_RTC_CHECK_OP_IMPL(Gt)
 #define RTC_DCHECK_GT(v1, v2) RTC_EAT_STREAM_PARAMETERS_OP(Gt, v1, v2)
 #endif
 
-// This is identical to LogMessageVoidify but in name.
-class FatalMessageVoidify {
- public:
-  FatalMessageVoidify() { }
-  // This has to be an operator with a precedence lower than << but
-  // higher than ?:
-  void operator&(std::ostream&) { }
-};
-
 #define RTC_UNREACHABLE_CODE_HIT false
 #define RTC_NOTREACHED() RTC_DCHECK(RTC_UNREACHABLE_CODE_HIT)
 
 // TODO(bugs.webrtc.org/8454): Add an RTC_ prefix or rename differently.
-#define RTC_FATAL() rtc::FatalMessage(__FILE__, __LINE__).stream()
-// TODO(ajm): Consider adding RTC_NOTIMPLEMENTED macro when
-// base/logging.h and system_wrappers/logging.h are consolidated such that we
-// can match the Chromium behavior.
-
-// Like a stripped-down LogMessage from logging.h, except that it aborts.
-class FatalMessage {
- public:
-  FatalMessage(const char* file, int line);
-  // Used for RTC_CHECK_EQ(), etc. Takes ownership of the given string.
-  FatalMessage(const char* file, int line, std::string* result);
-  NO_RETURN ~FatalMessage();
-
-  std::ostream& stream() { return stream_; }
-
- private:
-  void Init(const char* file, int line);
-
-  std::ostringstream stream_;
-};
+#define RTC_FATAL()                                                    \
+  rtc::webrtc_checks_impl::FatalLogCall<false>(__FILE__, __LINE__, \
+                                               "FATAL()") &        \
+      rtc::webrtc_checks_impl::LogStreamer<>()
 
 // Performs the integer division a/b and returns the result. CHECKs that the
 // remainder is zero.

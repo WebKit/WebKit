@@ -44,7 +44,7 @@ class ChannelController final : public Controller {
  private:
   const Config config_;
   size_t channels_to_encode_;
-  rtc::Optional<int> uplink_bandwidth_bps_;
+  absl::optional<int> uplink_bandwidth_bps_;
   RTC_DISALLOW_COPY_AND_ASSIGN(ChannelController);
 };
 

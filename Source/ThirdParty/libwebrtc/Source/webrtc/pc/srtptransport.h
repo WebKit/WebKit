@@ -16,21 +16,28 @@
 #include <utility>
 #include <vector>
 
+#include "api/ortc/srtptransportinterface.h"
+#include "p2p/base/dtlstransportinternal.h"
 #include "p2p/base/icetransportinternal.h"
-#include "pc/rtptransportinternaladapter.h"
-#include "pc/srtpfilter.h"
+#include "pc/rtptransport.h"
 #include "pc/srtpsession.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
 
-// This class will eventually be a wrapper around RtpTransportInternal
-// that protects and unprotects sent and received RTP packets.
-class SrtpTransport : public RtpTransportInternalAdapter {
+// This subclass of the RtpTransport is used for SRTP which is reponsible for
+// protecting/unprotecting the packets. It provides interfaces to set the crypto
+// parameters for the SrtpSession underneath.
+class SrtpTransport : public RtpTransport {
  public:
   explicit SrtpTransport(bool rtcp_mux_enabled);
 
-  explicit SrtpTransport(std::unique_ptr<RtpTransportInternal> rtp_transport);
+  virtual ~SrtpTransport() = default;
+
+  // SrtpTransportInterface specific implementation.
+  RTCError SetSrtpSendKey(const cricket::CryptoParams& params) override;
+  RTCError SetSrtpReceiveKey(const cricket::CryptoParams& params) override;
 
   bool SendRtpPacket(rtc::CopyOnWriteBuffer* packet,
                      const rtc::PacketOptions& options,
@@ -42,10 +49,9 @@ class SrtpTransport : public RtpTransportInternalAdapter {
 
   // The transport becomes active if the send_session_ and recv_session_ are
   // created.
-  bool IsActive() const;
+  bool IsSrtpActive() const override;
 
-  // TODO(zstein): Remove this when we remove RtpTransportAdapter.
-  RtpTransportAdapter* GetInternal() override { return nullptr; }
+  bool IsWritable(bool rtcp) const override;
 
   // Create new send/recv sessions and set the negotiated crypto keys for RTP
   // packet encryption. The keys can either come from SDES negotiation or DTLS
@@ -98,26 +104,23 @@ class SrtpTransport : public RtpTransportInternalAdapter {
     rtp_abs_sendtime_extn_id_ = rtp_abs_sendtime_extn_id;
   }
 
+ protected:
+  // If the writable state changed, fire the SignalWritableState.
+  void MaybeUpdateWritableState();
+
  private:
   void ConnectToRtpTransport();
   void CreateSrtpSessions();
 
-  bool SendPacket(bool rtcp,
-                  rtc::CopyOnWriteBuffer* packet,
-                  const rtc::PacketOptions& options,
-                  int flags);
+  void OnRtpPacketReceived(rtc::CopyOnWriteBuffer* packet,
+                           const rtc::PacketTime& packet_time) override;
+  void OnRtcpPacketReceived(rtc::CopyOnWriteBuffer* packet,
+                            const rtc::PacketTime& packet_time) override;
+  void OnNetworkRouteChanged(
+      absl::optional<rtc::NetworkRoute> network_route) override;
 
-  void OnPacketReceived(bool rtcp,
-                        rtc::CopyOnWriteBuffer* packet,
-                        const rtc::PacketTime& packet_time);
-  void OnReadyToSend(bool ready) { SignalReadyToSend(ready); }
-  void OnNetworkRouteChanged(rtc::Optional<rtc::NetworkRoute> network_route);
-
-  void OnWritableState(bool writable) { SignalWritableState(writable); }
-
-  void OnSentPacket(const rtc::SentPacket& sent_packet) {
-    SignalSentPacket(sent_packet);
-  }
+  // Override the RtpTransport::OnWritableState.
+  void OnWritableState(rtc::PacketTransportInternal* packet_transport) override;
 
   bool ProtectRtp(void* data, int in_len, int max_len, int* out_len);
 
@@ -135,13 +138,24 @@ class SrtpTransport : public RtpTransportInternalAdapter {
 
   bool UnprotectRtcp(void* data, int in_len, int* out_len);
 
+  bool MaybeSetKeyParams();
+  bool ParseKeyParams(const std::string& key_params, uint8_t* key, size_t len);
+
   const std::string content_name_;
-  std::unique_ptr<RtpTransportInternal> rtp_transport_;
 
   std::unique_ptr<cricket::SrtpSession> send_session_;
   std::unique_ptr<cricket::SrtpSession> recv_session_;
   std::unique_ptr<cricket::SrtpSession> send_rtcp_session_;
   std::unique_ptr<cricket::SrtpSession> recv_rtcp_session_;
+
+  absl::optional<cricket::CryptoParams> send_params_;
+  absl::optional<cricket::CryptoParams> recv_params_;
+  absl::optional<int> send_cipher_suite_;
+  absl::optional<int> recv_cipher_suite_;
+  rtc::ZeroOnFreeBuffer<uint8_t> send_key_;
+  rtc::ZeroOnFreeBuffer<uint8_t> recv_key_;
+
+  bool writable_ = false;
 
   bool external_auth_enabled_ = false;
 

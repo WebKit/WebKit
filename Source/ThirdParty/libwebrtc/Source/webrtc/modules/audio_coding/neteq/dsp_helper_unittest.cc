@@ -12,7 +12,6 @@
 
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "test/gtest.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -30,8 +29,8 @@ TEST(DspHelper, RampSignalArray) {
   int increment = (16384 << 6) / kLen;
 
   // Test first method.
-  int stop_factor = DspHelper::RampSignal(input, kLen, start_factor, increment,
-                                          output);
+  int stop_factor =
+      DspHelper::RampSignal(input, kLen, start_factor, increment, output);
   EXPECT_EQ(16383, stop_factor);  // Almost reach 1 in Q14.
   for (int i = 0; i < kLen; ++i) {
     EXPECT_EQ(1000 * i / kLen, output[i]);
@@ -63,8 +62,8 @@ TEST(DspHelper, RampSignalAudioMultiVector) {
   // Q20, while the factor is in Q14, hence the shift by 6.
   int increment = (16384 << 6) / kLen;
 
-  int stop_factor = DspHelper::RampSignal(&input, start_index, kLen,
-                                          start_factor, increment);
+  int stop_factor =
+      DspHelper::RampSignal(&input, start_index, kLen, start_factor, increment);
   EXPECT_EQ(16383, stop_factor);  // Almost reach 1 in Q14.
   // Verify that the first |kLen| samples are left untouched.
   int i;

@@ -13,18 +13,18 @@
 #include <memory>
 #include <vector>
 
+#include "absl/memory/memory.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/codecs/ilbc/audio_decoder_ilbc.h"
-#include "rtc_base/ptr_util.h"
 
 namespace webrtc {
 
-rtc::Optional<AudioDecoderIlbc::Config> AudioDecoderIlbc::SdpToConfig(
+absl::optional<AudioDecoderIlbc::Config> AudioDecoderIlbc::SdpToConfig(
     const SdpAudioFormat& format) {
   return STR_CASE_CMP(format.name.c_str(), "ILBC") == 0 &&
                  format.clockrate_hz == 8000 && format.num_channels == 1
-             ? rtc::Optional<Config>(Config())
-             : rtc::nullopt;
+             ? absl::optional<Config>(Config())
+             : absl::nullopt;
 }
 
 void AudioDecoderIlbc::AppendSupportedDecoders(
@@ -33,8 +33,9 @@ void AudioDecoderIlbc::AppendSupportedDecoders(
 }
 
 std::unique_ptr<AudioDecoder> AudioDecoderIlbc::MakeAudioDecoder(
-    Config config) {
-  return rtc::MakeUnique<AudioDecoderIlbcImpl>();
+    Config config,
+    absl::optional<AudioCodecPairId> /*codec_pair_id*/) {
+  return absl::make_unique<AudioDecoderIlbcImpl>();
 }
 
 }  // namespace webrtc

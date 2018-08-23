@@ -29,7 +29,7 @@ RateLimiter::~RateLimiter() {}
 bool RateLimiter::TryUseRate(size_t packet_size_bytes) {
   rtc::CritScope cs(&lock_);
   int64_t now_ms = clock_->TimeInMilliseconds();
-  rtc::Optional<uint32_t> current_rate = current_rate_.Rate(now_ms);
+  absl::optional<uint32_t> current_rate = current_rate_.Rate(now_ms);
   if (current_rate) {
     // If there is a current rate, check if adding bytes would cause maximum
     // bitrate target to be exceeded. If there is NOT a valid current rate,

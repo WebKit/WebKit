@@ -13,20 +13,18 @@
 
 #include <stddef.h>
 #include <string.h>
-#include <ostream>
 #include <string>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "api/array_view.h"
-#include "api/optional.h"
 #include "api/video/video_content_type.h"
 #include "api/video/video_rotation.h"
 #include "api/video/video_timing.h"
 
+#include "common_types.h"  // NOLINT(build/include)
 #include "rtc_base/checks.h"
 #include "rtc_base/deprecation.h"
-#include "common_types.h"  // NOLINT(build/include)
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -41,7 +39,14 @@ class StringRtpHeaderExtension {
   // maximum length that can be encoded with one-byte header extensions.
   static constexpr size_t kMaxSize = 16;
 
-  static bool IsLegalName(rtc::ArrayView<const char> name);
+  static bool IsLegalMidName(rtc::ArrayView<const char> name);
+  static bool IsLegalRsidName(rtc::ArrayView<const char> name);
+
+  // TODO(bugs.webrtc.org/9537): Deprecate and remove when third parties have
+  // migrated to "IsLegalRsidName".
+  static bool IsLegalName(rtc::ArrayView<const char> name) {
+    return IsLegalRsidName(name);
+  }
 
   StringRtpHeaderExtension() { value_[0] = 0; }
   explicit StringRtpHeaderExtension(rtc::ArrayView<const char> value) {
@@ -103,7 +108,7 @@ struct RTPHeaderExtension {
   bool hasVideoRotation;
   VideoRotation videoRotation;
 
-  // TODO(ilnik): Refactor this and one above to be rtc::Optional() and remove
+  // TODO(ilnik): Refactor this and one above to be absl::optional() and remove
   // a corresponding bool flag.
   bool hasVideoContentType;
   VideoContentType videoContentType;
@@ -166,11 +171,6 @@ struct RtpKeepAliveConfig final {
            payload_type == o.payload_type;
   }
   bool operator!=(const RtpKeepAliveConfig& o) const { return !(*this == o); }
-};
-
-// Currently only VP8/VP9 specific.
-struct RtpPayloadState {
-  int16_t picture_id = -1;
 };
 
 }  // namespace webrtc

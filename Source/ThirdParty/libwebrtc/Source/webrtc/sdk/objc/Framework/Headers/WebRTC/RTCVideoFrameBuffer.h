@@ -13,12 +13,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-__attribute__((objc_runtime_name("WK_RTCI420Buffer")))
 @protocol RTCI420Buffer;
 
 // RTCVideoFrameBuffer is an ObjectiveC version of webrtc::VideoFrameBuffer.
 RTC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCVideoFrameBuffer")))
 @protocol RTCVideoFrameBuffer <NSObject>
 
 @property(nonatomic, readonly) int width;
@@ -29,7 +27,6 @@ __attribute__((objc_runtime_name("WK_RTCVideoFrameBuffer")))
 @end
 
 /** Protocol for RTCVideoFrameBuffers containing YUV planar data. */
-__attribute__((objc_runtime_name("WK_RTCYUVPlanarBuffer")))
 @protocol RTCYUVPlanarBuffer <RTCVideoFrameBuffer>
 
 @property(nonatomic, readonly) int chromaWidth;
@@ -41,6 +38,11 @@ __attribute__((objc_runtime_name("WK_RTCYUVPlanarBuffer")))
 @property(nonatomic, readonly) int strideU;
 @property(nonatomic, readonly) int strideV;
 
+- (instancetype)initWithWidth:(int)width
+                       height:(int)height
+                        dataY:(const uint8_t *)dataY
+                        dataU:(const uint8_t *)dataU
+                        dataV:(const uint8_t *)dataV;
 - (instancetype)initWithWidth:(int)width height:(int)height;
 - (instancetype)initWithWidth:(int)width
                        height:(int)height
@@ -51,7 +53,6 @@ __attribute__((objc_runtime_name("WK_RTCYUVPlanarBuffer")))
 @end
 
 /** Extension of the YUV planar data buffer with mutable data access */
-__attribute__((objc_runtime_name("WK_RTCMutableYUVPlanarBuffer")))
 @protocol RTCMutableYUVPlanarBuffer <RTCYUVPlanarBuffer>
 
 @property(nonatomic, readonly) uint8_t *mutableDataY;
@@ -61,12 +62,10 @@ __attribute__((objc_runtime_name("WK_RTCMutableYUVPlanarBuffer")))
 @end
 
 /** Protocol for RTCYUVPlanarBuffers containing I420 data */
-__attribute__((objc_runtime_name("WK_RTCI420Buffer")))
 @protocol RTCI420Buffer <RTCYUVPlanarBuffer>
 @end
 
 /** Extension of the I420 buffer with mutable data access */
-__attribute__((objc_runtime_name("WK_RTCMutableI420Buffer")))
 @protocol RTCMutableI420Buffer <RTCI420Buffer, RTCMutableYUVPlanarBuffer>
 @end
 
@@ -78,6 +77,8 @@ __attribute__((objc_runtime_name("WK_RTCCVPixelBuffer")))
 @property(nonatomic, readonly) CVPixelBufferRef pixelBuffer;
 @property(nonatomic, readonly) int cropX;
 @property(nonatomic, readonly) int cropY;
+@property(nonatomic, readonly) int cropWidth;
+@property(nonatomic, readonly) int cropHeight;
 
 + (NSSet<NSNumber *> *)supportedPixelFormats;
 
@@ -93,10 +94,13 @@ __attribute__((objc_runtime_name("WK_RTCCVPixelBuffer")))
 - (BOOL)requiresCropping;
 - (BOOL)requiresScalingToWidth:(int)width height:(int)height;
 - (int)bufferSizeForCroppingAndScalingToWidth:(int)width height:(int)height;
+
 /** The minimum size of the |tmpBuffer| must be the number of bytes returned from the
  * bufferSizeForCroppingAndScalingToWidth:height: method.
+ * If that size is 0, the |tmpBuffer| may be nil.
  */
-- (BOOL)cropAndScaleTo:(CVPixelBufferRef)outputPixelBuffer withTempBuffer:(uint8_t *)tmpBuffer;
+- (BOOL)cropAndScaleTo:(CVPixelBufferRef)outputPixelBuffer
+        withTempBuffer:(nullable uint8_t *)tmpBuffer;
 
 @end
 

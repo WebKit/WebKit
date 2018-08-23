@@ -16,7 +16,6 @@
 
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "rtc_base/constructormagic.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -57,7 +56,7 @@ class Expand {
   virtual void SetParametersForMergeAfterExpand();
 
   // Returns the mute factor for |channel|.
-  int16_t MuteFactor(size_t channel) {
+  int16_t MuteFactor(size_t channel) const {
     assert(channel < num_channels_);
     return channel_parameters_[channel].mute_factor;
   }
@@ -114,7 +113,7 @@ class Expand {
     int16_t ar_filter_state[kUnvoicedLpcOrder];
     int16_t ar_gain;
     int16_t ar_gain_scale;
-    int16_t voice_mix_factor; /* Q14 */
+    int16_t voice_mix_factor;         /* Q14 */
     int16_t current_voice_mix_factor; /* Q14 */
     AudioVector expand_vector0;
     AudioVector expand_vector1;

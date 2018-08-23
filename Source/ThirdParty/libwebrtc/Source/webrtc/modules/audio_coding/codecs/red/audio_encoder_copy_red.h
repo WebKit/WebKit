@@ -57,7 +57,7 @@ class AudioEncoderCopyRed final : public AudioEncoder {
       float uplink_recoverable_packet_loss_fraction) override;
   void OnReceivedUplinkBandwidth(
       int target_audio_bitrate_bps,
-      rtc::Optional<int64_t> bwe_period_ms) override;
+      absl::optional<int64_t> bwe_period_ms) override;
 
  protected:
   EncodedInfo EncodeImpl(uint32_t rtp_timestamp,

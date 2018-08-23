@@ -25,16 +25,6 @@ VCMFrameBuffer::VCMFrameBuffer()
 
 VCMFrameBuffer::~VCMFrameBuffer() {}
 
-VCMFrameBuffer::VCMFrameBuffer(const VCMFrameBuffer& rhs)
-    : VCMEncodedFrame(rhs),
-      _state(rhs._state),
-      _sessionInfo(),
-      _nackCount(rhs._nackCount),
-      _latestPacketTimeMs(rhs._latestPacketTimeMs) {
-  _sessionInfo = rhs._sessionInfo;
-  _sessionInfo.UpdateDataPointers(rhs._buffer, _buffer);
-}
-
 webrtc::FrameType VCMFrameBuffer::FrameType() const {
   return _sessionInfo.FrameType();
 }
@@ -61,10 +51,6 @@ bool VCMFrameBuffer::LayerSync() const {
 
 int VCMFrameBuffer::Tl0PicId() const {
   return _sessionInfo.Tl0PicId();
-}
-
-bool VCMFrameBuffer::NonReference() const {
-  return _sessionInfo.NonReference();
 }
 
 std::vector<NaluInfo> VCMFrameBuffer::GetNaluInfos() const {
@@ -164,7 +150,7 @@ VCMFrameBufferEnum VCMFrameBuffer::InsertPacket(
     rotation_ = packet.video_header.rotation;
     _rotation_set = true;
     content_type_ = packet.video_header.content_type;
-    if (packet.video_header.video_timing.flags != TimingFrameFlags::kInvalid) {
+    if (packet.video_header.video_timing.flags != VideoSendTiming::kInvalid) {
       timing_.encode_start_ms =
           ntp_time_ms_ + packet.video_header.video_timing.encode_start_delta_ms;
       timing_.encode_finish_ms =
@@ -219,11 +205,6 @@ bool VCMFrameBuffer::HaveFirstPacket() const {
   return _sessionInfo.HaveFirstPacket();
 }
 
-bool VCMFrameBuffer::HaveLastPacket() const {
-  TRACE_EVENT0("webrtc", "VCMFrameBuffer::HaveLastPacket");
-  return _sessionInfo.HaveLastPacket();
-}
-
 int VCMFrameBuffer::NumPackets() const {
   TRACE_EVENT0("webrtc", "VCMFrameBuffer::NumPackets");
   return _sessionInfo.NumPackets();
@@ -276,17 +257,6 @@ void VCMFrameBuffer::SetState(VCMFrameBufferStateEnum state) {
 // Get current state of frame
 VCMFrameBufferStateEnum VCMFrameBuffer::GetState() const {
   return _state;
-}
-
-// Get current state of frame
-VCMFrameBufferStateEnum VCMFrameBuffer::GetState(uint32_t& timeStamp) const {
-  TRACE_EVENT0("webrtc", "VCMFrameBuffer::GetState");
-  timeStamp = TimeStamp();
-  return GetState();
-}
-
-bool VCMFrameBuffer::IsRetransmitted() const {
-  return _sessionInfo.session_nack();
 }
 
 void VCMFrameBuffer::PrepareForDecode(bool continuous) {

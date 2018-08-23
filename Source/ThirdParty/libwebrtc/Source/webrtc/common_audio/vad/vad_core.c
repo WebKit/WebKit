@@ -15,7 +15,6 @@
 #include "common_audio/vad/vad_filterbank.h"
 #include "common_audio/vad/vad_gmm.h"
 #include "common_audio/vad/vad_sp.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 // Spectrum Weighting
 static const int16_t kSpectrumWeight[kNumChannels] = { 6, 8, 10, 12, 14, 16 };

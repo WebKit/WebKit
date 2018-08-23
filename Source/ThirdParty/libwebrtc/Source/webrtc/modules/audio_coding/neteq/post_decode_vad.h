@@ -19,7 +19,6 @@
 #include "modules/audio_coding/neteq/defines.h"
 #include "modules/audio_coding/neteq/packet.h"
 #include "rtc_base/constructormagic.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -30,8 +29,7 @@ class PostDecodeVad {
         running_(false),
         active_speech_(true),
         sid_interval_counter_(0),
-        vad_instance_(NULL) {
-  }
+        vad_instance_(NULL) {}
 
   virtual ~PostDecodeVad();
 
@@ -46,8 +44,11 @@ class PostDecodeVad {
 
   // Updates post-decode VAD with the audio data in |signal| having |length|
   // samples. The data is of type |speech_type|, at the sample rate |fs_hz|.
-  void Update(int16_t* signal, size_t length,
-              AudioDecoder::SpeechType speech_type, bool sid_frame, int fs_hz);
+  void Update(int16_t* signal,
+              size_t length,
+              AudioDecoder::SpeechType speech_type,
+              bool sid_frame,
+              int fs_hz);
 
   // Accessors.
   bool enabled() const { return enabled_; }

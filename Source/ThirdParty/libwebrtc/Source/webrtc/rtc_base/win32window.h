@@ -28,22 +28,32 @@ class Win32Window {
 
   HWND handle() const { return wnd_; }
 
-  bool Create(HWND parent, const wchar_t* title, DWORD style, DWORD exstyle,
-              int x, int y, int cx, int cy);
+  bool Create(HWND parent,
+              const wchar_t* title,
+              DWORD style,
+              DWORD exstyle,
+              int x,
+              int y,
+              int cx,
+              int cy);
   void Destroy();
 
   // Call this when your DLL unloads.
   static void Shutdown();
 
  protected:
-  virtual bool OnMessage(UINT uMsg, WPARAM wParam, LPARAM lParam,
+  virtual bool OnMessage(UINT uMsg,
+                         WPARAM wParam,
+                         LPARAM lParam,
                          LRESULT& result);
 
   virtual bool OnClose();
   virtual void OnNcDestroy();
 
  private:
-  static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam,
+  static LRESULT CALLBACK WndProc(HWND hwnd,
+                                  UINT uMsg,
+                                  WPARAM wParam,
                                   LPARAM lParam);
 
   HWND wnd_;

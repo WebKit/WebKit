@@ -11,9 +11,8 @@
 #ifndef MODULES_AUDIO_PROCESSING_RMS_LEVEL_H_
 #define MODULES_AUDIO_PROCESSING_RMS_LEVEL_H_
 
+#include "absl/types/optional.h"
 #include "api/array_view.h"
-#include "api/optional.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -66,10 +65,9 @@ class RmsLevel {
   float sum_square_;
   size_t sample_count_;
   float max_sum_square_;
-  rtc::Optional<size_t> block_size_;
+  absl::optional<size_t> block_size_;
 };
 
 }  // namespace webrtc
 
 #endif  // MODULES_AUDIO_PROCESSING_RMS_LEVEL_H_
-

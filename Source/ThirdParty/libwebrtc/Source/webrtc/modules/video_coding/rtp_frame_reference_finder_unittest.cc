@@ -64,9 +64,9 @@ class TestRtpFrameReferenceFinder : public ::testing::Test,
 
   uint16_t Rand() { return rand_.Rand<uint16_t>(); }
 
-  void OnCompleteFrame(std::unique_ptr<FrameObject> frame) override {
-    int64_t pid = frame->picture_id;
-    uint16_t sidx = frame->spatial_layer;
+  void OnCompleteFrame(std::unique_ptr<EncodedFrame> frame) override {
+    int64_t pid = frame->id.picture_id;
+    uint16_t sidx = frame->id.spatial_layer;
     auto frame_it = frames_from_callback_.find(std::make_pair(pid, sidx));
     if (frame_it != frames_from_callback_.end()) {
       ADD_FAILURE() << "Already received frame with (pid:sidx): (" << pid << ":"
@@ -108,10 +108,10 @@ class TestRtpFrameReferenceFinder : public ::testing::Test,
     packet.seqNum = seq_num_start;
     packet.markerBit = (seq_num_start == seq_num_end);
     packet.frameType = keyframe ? kVideoFrameKey : kVideoFrameDelta;
-    packet.video_header.codecHeader.VP8.pictureId = pid % (1 << 15);
-    packet.video_header.codecHeader.VP8.temporalIdx = tid;
-    packet.video_header.codecHeader.VP8.tl0PicIdx = tl0;
-    packet.video_header.codecHeader.VP8.layerSync = sync;
+    packet.video_header.vp8().pictureId = pid % (1 << 15);
+    packet.video_header.vp8().temporalIdx = tid;
+    packet.video_header.vp8().tl0PicIdx = tl0;
+    packet.video_header.vp8().layerSync = sync;
     ref_packet_buffer_->InsertPacket(&packet);
 
     if (seq_num_start != seq_num_end) {
@@ -135,26 +135,28 @@ class TestRtpFrameReferenceFinder : public ::testing::Test,
                     bool up_switch = false,
                     GofInfoVP9* ss = nullptr) {
     VCMPacket packet;
+    auto& vp9_header =
+        packet.video_header.video_type_header.emplace<RTPVideoHeaderVP9>();
     packet.timestamp = pid;
     packet.codec = kVideoCodecVP9;
     packet.seqNum = seq_num_start;
     packet.markerBit = (seq_num_start == seq_num_end);
     packet.frameType = keyframe ? kVideoFrameKey : kVideoFrameDelta;
-    packet.video_header.codecHeader.VP9.flexible_mode = false;
-    packet.video_header.codecHeader.VP9.picture_id = pid % (1 << 15);
-    packet.video_header.codecHeader.VP9.temporal_idx = tid;
-    packet.video_header.codecHeader.VP9.spatial_idx = sid;
-    packet.video_header.codecHeader.VP9.tl0_pic_idx = tl0;
-    packet.video_header.codecHeader.VP9.temporal_up_switch = up_switch;
+    vp9_header.flexible_mode = false;
+    vp9_header.picture_id = pid % (1 << 15);
+    vp9_header.temporal_idx = tid;
+    vp9_header.spatial_idx = sid;
+    vp9_header.tl0_pic_idx = tl0;
+    vp9_header.temporal_up_switch = up_switch;
     if (ss != nullptr) {
-      packet.video_header.codecHeader.VP9.ss_data_available = true;
-      packet.video_header.codecHeader.VP9.gof = *ss;
+      vp9_header.ss_data_available = true;
+      vp9_header.gof = *ss;
     }
     ref_packet_buffer_->InsertPacket(&packet);
 
     if (seq_num_start != seq_num_end) {
       packet.markerBit = true;
-      packet.video_header.codecHeader.VP9.ss_data_available = false;
+      vp9_header.ss_data_available = false;
       packet.seqNum = seq_num_end;
       ref_packet_buffer_->InsertPacket(&packet);
     }
@@ -174,20 +176,22 @@ class TestRtpFrameReferenceFinder : public ::testing::Test,
                      bool inter = false,
                      std::vector<uint8_t> refs = std::vector<uint8_t>()) {
     VCMPacket packet;
+    auto& vp9_header =
+        packet.video_header.video_type_header.emplace<RTPVideoHeaderVP9>();
     packet.timestamp = pid;
     packet.codec = kVideoCodecVP9;
     packet.seqNum = seq_num_start;
     packet.markerBit = (seq_num_start == seq_num_end);
     packet.frameType = keyframe ? kVideoFrameKey : kVideoFrameDelta;
-    packet.video_header.codecHeader.VP9.inter_layer_predicted = inter;
-    packet.video_header.codecHeader.VP9.flexible_mode = true;
-    packet.video_header.codecHeader.VP9.picture_id = pid % (1 << 15);
-    packet.video_header.codecHeader.VP9.temporal_idx = tid;
-    packet.video_header.codecHeader.VP9.spatial_idx = sid;
-    packet.video_header.codecHeader.VP9.tl0_pic_idx = tl0;
-    packet.video_header.codecHeader.VP9.num_ref_pics = refs.size();
+    vp9_header.inter_layer_predicted = inter;
+    vp9_header.flexible_mode = true;
+    vp9_header.picture_id = pid % (1 << 15);
+    vp9_header.temporal_idx = tid;
+    vp9_header.spatial_idx = sid;
+    vp9_header.tl0_pic_idx = tl0;
+    vp9_header.num_ref_pics = refs.size();
     for (size_t i = 0; i < refs.size(); ++i)
-      packet.video_header.codecHeader.VP9.pid_diff[i] = refs[i];
+      vp9_header.pid_diff[i] = refs[i];
     ref_packet_buffer_->InsertPacket(&packet);
 
     if (seq_num_start != seq_num_end) {
@@ -260,8 +264,9 @@ class TestRtpFrameReferenceFinder : public ::testing::Test,
       return f1.first < f2.first;
     }
   };
-  std::map<std::pair<int64_t, uint8_t>, std::unique_ptr<FrameObject>, FrameComp>
-      frames_from_callback_;
+  std::
+      map<std::pair<int64_t, uint8_t>, std::unique_ptr<EncodedFrame>, FrameComp>
+          frames_from_callback_;
 };
 
 TEST_F(TestRtpFrameReferenceFinder, PaddingPackets) {
@@ -879,7 +884,7 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9GofSkipFramesTemporalLayers_0212) {
   CheckReferencesVp9(0, 0);
   CheckReferencesVp9(1, 0, 0);
   CheckReferencesVp9(2, 0, 0);
-  CheckReferencesVp9(3, 0, 1, 2);
+  CheckReferencesVp9(3, 0, 2);
 
   // Skip frames with tl0 = 1
 
@@ -892,7 +897,7 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9GofSkipFramesTemporalLayers_0212) {
   CheckReferencesVp9(8, 0);
   CheckReferencesVp9(9, 0, 8);
   CheckReferencesVp9(10, 0, 8);
-  CheckReferencesVp9(11, 0, 9, 10);
+  CheckReferencesVp9(11, 0, 10);
 
   // Now insert frames with tl0 = 1
   InsertVp9Gof(sn + 4, sn + 4, true, pid + 4, 0, 0, 1, false, &ss);
@@ -1042,23 +1047,23 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayers_0212) {
   CheckReferencesVp9(0, 0);
   CheckReferencesVp9(1, 0, 0);
   CheckReferencesVp9(2, 0, 0);
-  CheckReferencesVp9(3, 0, 1, 2);
+  CheckReferencesVp9(3, 0, 2);
   CheckReferencesVp9(4, 0, 0);
   CheckReferencesVp9(5, 0, 4);
   CheckReferencesVp9(6, 0, 4);
-  CheckReferencesVp9(7, 0, 5, 6);
+  CheckReferencesVp9(7, 0, 6);
   CheckReferencesVp9(8, 0, 4);
   CheckReferencesVp9(9, 0, 8);
   CheckReferencesVp9(10, 0, 8);
-  CheckReferencesVp9(11, 0, 9, 10);
+  CheckReferencesVp9(11, 0, 10);
   CheckReferencesVp9(12, 0, 8);
   CheckReferencesVp9(13, 0, 12);
   CheckReferencesVp9(14, 0, 12);
-  CheckReferencesVp9(15, 0, 13, 14);
+  CheckReferencesVp9(15, 0, 14);
   CheckReferencesVp9(16, 0, 12);
   CheckReferencesVp9(17, 0, 16);
   CheckReferencesVp9(18, 0, 16);
-  CheckReferencesVp9(19, 0, 17, 18);
+  CheckReferencesVp9(19, 0, 18);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayersReordered_0212) {
@@ -1092,23 +1097,23 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayersReordered_0212) {
   CheckReferencesVp9(0, 0);
   CheckReferencesVp9(1, 0, 0);
   CheckReferencesVp9(2, 0, 0);
-  CheckReferencesVp9(3, 0, 1, 2);
+  CheckReferencesVp9(3, 0, 2);
   CheckReferencesVp9(4, 0, 0);
   CheckReferencesVp9(5, 0, 4);
   CheckReferencesVp9(6, 0, 4);
-  CheckReferencesVp9(7, 0, 5, 6);
+  CheckReferencesVp9(7, 0, 6);
   CheckReferencesVp9(8, 0, 4);
   CheckReferencesVp9(9, 0, 8);
   CheckReferencesVp9(10, 0, 8);
-  CheckReferencesVp9(11, 0, 9, 10);
+  CheckReferencesVp9(11, 0, 10);
   CheckReferencesVp9(12, 0, 8);
   CheckReferencesVp9(13, 0, 12);
   CheckReferencesVp9(14, 0, 12);
-  CheckReferencesVp9(15, 0, 13, 14);
+  CheckReferencesVp9(15, 0, 14);
   CheckReferencesVp9(16, 0, 12);
   CheckReferencesVp9(17, 0, 16);
   CheckReferencesVp9(18, 0, 16);
-  CheckReferencesVp9(19, 0, 17, 18);
+  CheckReferencesVp9(19, 0, 18);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayersUpSwitch_02120212) {
@@ -1224,11 +1229,11 @@ TEST_F(TestRtpFrameReferenceFinder, Vp9GofTemporalLayersReordered_01_0212) {
   CheckReferencesVp9(4, 0, 0);
   CheckReferencesVp9(5, 0, 4);
   CheckReferencesVp9(6, 0, 4);
-  CheckReferencesVp9(7, 0, 5, 6);
+  CheckReferencesVp9(7, 0, 6);
   CheckReferencesVp9(8, 0, 4);
   CheckReferencesVp9(9, 0, 8);
   CheckReferencesVp9(10, 0, 8);
-  CheckReferencesVp9(11, 0, 9, 10);
+  CheckReferencesVp9(11, 0, 10);
 }
 
 TEST_F(TestRtpFrameReferenceFinder, Vp9FlexibleModeOneFrame) {
@@ -1318,6 +1323,42 @@ TEST_F(TestRtpFrameReferenceFinder, WrappingFlexReference) {
 
   ASSERT_EQ(1UL, frames_from_callback_.size());
   CheckReferencesVp9(1, 0, 0);
+}
+
+TEST_F(TestRtpFrameReferenceFinder, Vp9GofPidJump) {
+  uint16_t pid = Rand();
+  uint16_t sn = Rand();
+  GofInfoVP9 ss;
+  ss.SetGofInfoVP9(kTemporalStructureMode3);
+
+  InsertVp9Gof(sn, sn, true, pid, 0, 0, 0, false, &ss);
+  InsertVp9Gof(sn + 1, sn + 1, false, pid + 1000, 0, 0, 1);
+}
+
+TEST_F(TestRtpFrameReferenceFinder, Vp9GofTl0Jump) {
+  uint16_t pid = Rand();
+  uint16_t sn = Rand();
+  GofInfoVP9 ss;
+  ss.SetGofInfoVP9(kTemporalStructureMode3);
+
+  InsertVp9Gof(sn, sn, true, pid + 0, 0, 0, 125, true, &ss);
+  InsertVp9Gof(sn + 1, sn + 1, false, pid + 1, 0, 0, 0, false, &ss);
+}
+
+TEST_F(TestRtpFrameReferenceFinder, Vp9GofTidTooHigh) {
+  // Same as RtpFrameReferenceFinder::kMaxTemporalLayers.
+  const int kMaxTemporalLayers = 5;
+  uint16_t pid = Rand();
+  uint16_t sn = Rand();
+  GofInfoVP9 ss;
+  ss.SetGofInfoVP9(kTemporalStructureMode2);
+  ss.temporal_idx[1] = kMaxTemporalLayers;
+
+  InsertVp9Gof(sn, sn, true, pid, 0, 0, 0, false, &ss);
+  InsertVp9Gof(sn + 1, sn + 1, false, pid + 1, 0, 0, 1);
+
+  ASSERT_EQ(1UL, frames_from_callback_.size());
+  CheckReferencesVp9(0, 0);
 }
 
 }  // namespace video_coding

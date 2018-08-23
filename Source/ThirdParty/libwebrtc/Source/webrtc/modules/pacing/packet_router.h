@@ -91,10 +91,11 @@ class PacketRouter : public PacedSender::PacketSender,
   void UnsetActiveRembModule() RTC_EXCLUSIVE_LOCKS_REQUIRED(modules_crit_);
   void DetermineActiveRembModule() RTC_EXCLUSIVE_LOCKS_REQUIRED(modules_crit_);
 
-  rtc::RaceChecker pacer_race_;
   rtc::CriticalSection modules_crit_;
   // Rtp and Rtcp modules of the rtp senders.
   std::list<RtpRtcp*> rtp_send_modules_ RTC_GUARDED_BY(modules_crit_);
+  // The last module used to send media.
+  RtpRtcp* last_send_module_ RTC_GUARDED_BY(modules_crit_);
   // Rtcp modules of the rtp receivers.
   std::vector<RtcpFeedbackSenderInterface*> rtcp_feedback_senders_
       RTC_GUARDED_BY(modules_crit_);

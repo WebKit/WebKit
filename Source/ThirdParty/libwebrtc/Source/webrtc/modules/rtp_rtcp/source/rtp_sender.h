@@ -13,12 +13,13 @@
 
 #include <map>
 #include <memory>
+#include <string>
 #include <utility>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/call/transport.h"
-#include "api/optional.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/rtp_rtcp/include/flexfec_sender.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
@@ -60,7 +61,8 @@ class RTPSender {
             RtcEventLog* event_log,
             SendPacketObserver* send_packet_observer,
             RateLimiter* nack_rate_limiter,
-            OverheadObserver* overhead_observer);
+            OverheadObserver* overhead_observer,
+            bool populate_network2_timestamp);
 
   ~RTPSender();
 
@@ -80,8 +82,6 @@ class RTPSender {
 
   int32_t DeRegisterSendPayload(const int8_t payload_type);
 
-  void SetSendPayloadType(int8_t payload_type);
-
   void SetSendingMediaStatus(bool enabled);
   bool SendingMedia() const;
 
@@ -92,6 +92,8 @@ class RTPSender {
   void SetTimestampOffset(uint32_t timestamp);
 
   void SetSSRC(uint32_t ssrc);
+
+  void SetMid(const std::string& mid);
 
   uint16_t SequenceNumber() const;
   void SetSequenceNumber(uint16_t seq);
@@ -133,9 +135,10 @@ class RTPSender {
 
   bool StorePackets() const;
 
-  int32_t ReSendPacket(uint16_t packet_id, int64_t min_resend_time = 0);
+  int32_t ReSendPacket(uint16_t packet_id);
 
-  // Feedback to decide when to stop sending playout delay.
+  // Feedback to decide when to stop sending the playout delay and MID header
+  // extensions.
   void OnReceivedRtcpReportBlocks(const ReportBlockList& report_blocks);
 
   // RTX.
@@ -149,6 +152,9 @@ class RTPSender {
 
   // Size info for header extensions used by FEC packets.
   static rtc::ArrayView<const RtpExtensionSize> FecExtensionSizes();
+
+  // Size info for header extensions used by video packets.
+  static rtc::ArrayView<const RtpExtensionSize> VideoExtensionSizes();
 
   // Create empty packet, fills ssrc, csrcs and reserve place for header
   // extensions RtpSender updates before sending.
@@ -166,7 +172,7 @@ class RTPSender {
 
   uint32_t SSRC() const;
 
-  rtc::Optional<uint32_t> FlexfecSsrc() const;
+  absl::optional<uint32_t> FlexfecSsrc() const;
 
   bool SendToNetwork(std::unique_ptr<RtpPacketToSend> packet,
                      StorageType storage,
@@ -180,8 +186,6 @@ class RTPSender {
   // Store the audio level in d_bov for
   // header-extension-for-audio-level-indication.
   int32_t SetAudioLevel(uint8_t level_d_bov);
-
-  RtpVideoCodecTypes VideoCodecType() const;
 
   uint32_t MaxConfiguredBitrateVideo() const;
 
@@ -208,7 +212,7 @@ class RTPSender {
   void SetRtt(int64_t rtt_ms);
 
  protected:
-  int32_t CheckPayloadType(int8_t payload_type, RtpVideoCodecTypes* video_type);
+  int32_t CheckPayloadType(int8_t payload_type, VideoCodecType* video_type);
 
  private:
   // Maps capture time in milliseconds to send-side delay in milliseconds.
@@ -273,7 +277,7 @@ class RTPSender {
 
   size_t max_packet_size_;
 
-  int8_t payload_type_ RTC_GUARDED_BY(send_critsect_);
+  int8_t last_payload_type_ RTC_GUARDED_BY(send_critsect_);
   std::map<int8_t, RtpUtility::Payload*> payload_type_map_;
 
   RtpHeaderExtensionMap rtp_header_extension_map_
@@ -311,9 +315,11 @@ class RTPSender {
   bool sequence_number_forced_ RTC_GUARDED_BY(send_critsect_);
   uint16_t sequence_number_ RTC_GUARDED_BY(send_critsect_);
   uint16_t sequence_number_rtx_ RTC_GUARDED_BY(send_critsect_);
-  // Must be explicitly set by the application, use of rtc::Optional
+  // Must be explicitly set by the application, use of absl::optional
   // only to keep track of correct use.
-  rtc::Optional<uint32_t> ssrc_ RTC_GUARDED_BY(send_critsect_);
+  absl::optional<uint32_t> ssrc_ RTC_GUARDED_BY(send_critsect_);
+  // MID value to send in the MID header extension.
+  std::string mid_ RTC_GUARDED_BY(send_critsect_);
   uint32_t last_rtp_timestamp_ RTC_GUARDED_BY(send_critsect_);
   int64_t capture_time_ms_ RTC_GUARDED_BY(send_critsect_);
   int64_t last_timestamp_time_ms_ RTC_GUARDED_BY(send_critsect_);
@@ -321,13 +327,14 @@ class RTPSender {
   bool last_packet_marker_bit_ RTC_GUARDED_BY(send_critsect_);
   std::vector<uint32_t> csrcs_ RTC_GUARDED_BY(send_critsect_);
   int rtx_ RTC_GUARDED_BY(send_critsect_);
-  rtc::Optional<uint32_t> ssrc_rtx_ RTC_GUARDED_BY(send_critsect_);
+  absl::optional<uint32_t> ssrc_rtx_ RTC_GUARDED_BY(send_critsect_);
   // Mapping rtx_payload_type_map_[associated] = rtx.
   std::map<int8_t, int8_t> rtx_payload_type_map_ RTC_GUARDED_BY(send_critsect_);
   size_t rtp_overhead_bytes_per_packet_ RTC_GUARDED_BY(send_critsect_);
 
   RateLimiter* const retransmission_rate_limiter_;
   OverheadObserver* overhead_observer_;
+  const bool populate_network2_timestamp_;
 
   const bool send_side_bwe_with_overhead_;
 

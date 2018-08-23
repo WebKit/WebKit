@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/block_processor_metrics.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
 
 #include "test/gtest.h"
 

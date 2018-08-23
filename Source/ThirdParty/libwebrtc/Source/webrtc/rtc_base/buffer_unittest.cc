@@ -208,16 +208,16 @@ TEST(BufferTest, TestClear) {
   EXPECT_EQ(buf.size(), 15u);
   EXPECT_EQ(buf.capacity(), 15u);
   EXPECT_FALSE(buf.empty());
-  const char *data = buf.data<char>();
+  const char* data = buf.data<char>();
   buf.Clear();
   EXPECT_EQ(buf.size(), 0u);
-  EXPECT_EQ(buf.capacity(), 15u);  // Hasn't shrunk.
-  EXPECT_EQ(buf.data<char>(), data); // No reallocation.
+  EXPECT_EQ(buf.capacity(), 15u);     // Hasn't shrunk.
+  EXPECT_EQ(buf.data<char>(), data);  // No reallocation.
   EXPECT_TRUE(buf.empty());
 }
 
 TEST(BufferTest, TestLambdaSetAppend) {
-  auto setter = [] (rtc::ArrayView<uint8_t> av) {
+  auto setter = [](rtc::ArrayView<uint8_t> av) {
     for (int i = 0; i != 15; ++i)
       av[i] = kTestData[i];
     return 15;
@@ -237,7 +237,7 @@ TEST(BufferTest, TestLambdaSetAppend) {
 }
 
 TEST(BufferTest, TestLambdaSetAppendSigned) {
-  auto setter = [] (rtc::ArrayView<int8_t> av) {
+  auto setter = [](rtc::ArrayView<int8_t> av) {
     for (int i = 0; i != 15; ++i)
       av[i] = kTestData[i];
     return 15;
@@ -257,7 +257,7 @@ TEST(BufferTest, TestLambdaSetAppendSigned) {
 }
 
 TEST(BufferTest, TestLambdaAppendEmpty) {
-  auto setter = [] (rtc::ArrayView<uint8_t> av) {
+  auto setter = [](rtc::ArrayView<uint8_t> av) {
     for (int i = 0; i != 15; ++i)
       av[i] = kTestData[i];
     return 15;
@@ -275,7 +275,7 @@ TEST(BufferTest, TestLambdaAppendEmpty) {
 }
 
 TEST(BufferTest, TestLambdaAppendPartial) {
-  auto setter = [] (rtc::ArrayView<uint8_t> av) {
+  auto setter = [](rtc::ArrayView<uint8_t> av) {
     for (int i = 0; i != 7; ++i)
       av[i] = kTestData[i];
     return 7;
@@ -283,15 +283,15 @@ TEST(BufferTest, TestLambdaAppendPartial) {
 
   Buffer buf;
   EXPECT_EQ(buf.AppendData(15, setter), 7u);
-  EXPECT_EQ(buf.size(), 7u);            // Size is exactly what we wrote.
-  EXPECT_GE(buf.capacity(), 7u);        // Capacity is valid.
-  EXPECT_NE(buf.data<char>(), nullptr); // Data is actually stored.
+  EXPECT_EQ(buf.size(), 7u);             // Size is exactly what we wrote.
+  EXPECT_GE(buf.capacity(), 7u);         // Capacity is valid.
+  EXPECT_NE(buf.data<char>(), nullptr);  // Data is actually stored.
   EXPECT_FALSE(buf.empty());
 }
 
 TEST(BufferTest, TestMutableLambdaSetAppend) {
   uint8_t magic_number = 17;
-  auto setter = [magic_number] (rtc::ArrayView<uint8_t> av) mutable {
+  auto setter = [magic_number](rtc::ArrayView<uint8_t> av) mutable {
     for (int i = 0; i != 15; ++i) {
       av[i] = magic_number;
       ++magic_number;
@@ -304,9 +304,9 @@ TEST(BufferTest, TestMutableLambdaSetAppend) {
   Buffer buf;
   EXPECT_EQ(buf.SetData(15, setter), 15u);
   EXPECT_EQ(buf.AppendData(15, setter), 15u);
-  EXPECT_EQ(buf.size(), 30u);           // Size is exactly what we wrote.
-  EXPECT_GE(buf.capacity(), 30u);       // Capacity is valid.
-  EXPECT_NE(buf.data<char>(), nullptr); // Data is actually stored.
+  EXPECT_EQ(buf.size(), 30u);            // Size is exactly what we wrote.
+  EXPECT_GE(buf.capacity(), 30u);        // Capacity is valid.
+  EXPECT_NE(buf.data<char>(), nullptr);  // Data is actually stored.
   EXPECT_FALSE(buf.empty());
 
   for (uint8_t i = 0; i != buf.size(); ++i) {
@@ -432,6 +432,83 @@ TEST(BufferTest, TestStruct) {
   static const char kObsidian[] = "obsidian";
   buf2[2]->stone = kObsidian;
   EXPECT_EQ(kObsidian, buf[2].stone);
+}
+
+TEST(ZeroOnFreeBufferTest, TestZeroOnSetData) {
+  ZeroOnFreeBuffer<uint8_t> buf(kTestData, 7);
+  const uint8_t* old_data = buf.data();
+  const size_t old_capacity = buf.capacity();
+  const size_t old_size = buf.size();
+  constexpr size_t offset = 1;
+  buf.SetData(kTestData + offset, 2);
+  // Sanity checks to make sure the underlying heap memory was not reallocated.
+  EXPECT_EQ(old_data, buf.data());
+  EXPECT_EQ(old_capacity, buf.capacity());
+  // The first two elements have been overwritten, and the remaining five have
+  // been zeroed.
+  EXPECT_EQ(kTestData[offset], buf[0]);
+  EXPECT_EQ(kTestData[offset + 1], buf[1]);
+  for (size_t i = 2; i < old_size; i++) {
+    EXPECT_EQ(0, old_data[i]);
+  }
+}
+
+TEST(ZeroOnFreeBufferTest, TestZeroOnSetDataFromSetter) {
+  static constexpr size_t offset = 1;
+  const auto setter = [](rtc::ArrayView<uint8_t> av) {
+    for (int i = 0; i != 2; ++i)
+      av[i] = kTestData[offset + i];
+    return 2;
+  };
+
+  ZeroOnFreeBuffer<uint8_t> buf(kTestData, 7);
+  const uint8_t* old_data = buf.data();
+  const size_t old_capacity = buf.capacity();
+  const size_t old_size = buf.size();
+  buf.SetData(2, setter);
+  // Sanity checks to make sure the underlying heap memory was not reallocated.
+  EXPECT_EQ(old_data, buf.data());
+  EXPECT_EQ(old_capacity, buf.capacity());
+  // The first two elements have been overwritten, and the remaining five have
+  // been zeroed.
+  EXPECT_EQ(kTestData[offset], buf[0]);
+  EXPECT_EQ(kTestData[offset + 1], buf[1]);
+  for (size_t i = 2; i < old_size; i++) {
+    EXPECT_EQ(0, old_data[i]);
+  }
+}
+
+TEST(ZeroOnFreeBufferTest, TestZeroOnSetSize) {
+  ZeroOnFreeBuffer<uint8_t> buf(kTestData, 7);
+  const uint8_t* old_data = buf.data();
+  const size_t old_capacity = buf.capacity();
+  const size_t old_size = buf.size();
+  buf.SetSize(2);
+  // Sanity checks to make sure the underlying heap memory was not reallocated.
+  EXPECT_EQ(old_data, buf.data());
+  EXPECT_EQ(old_capacity, buf.capacity());
+  // The first two elements have not been modified and the remaining five have
+  // been zeroed.
+  EXPECT_EQ(kTestData[0], buf[0]);
+  EXPECT_EQ(kTestData[1], buf[1]);
+  for (size_t i = 2; i < old_size; i++) {
+    EXPECT_EQ(0, old_data[i]);
+  }
+}
+
+TEST(ZeroOnFreeBufferTest, TestZeroOnClear) {
+  ZeroOnFreeBuffer<uint8_t> buf(kTestData, 7);
+  const uint8_t* old_data = buf.data();
+  const size_t old_capacity = buf.capacity();
+  const size_t old_size = buf.size();
+  buf.Clear();
+  // Sanity checks to make sure the underlying heap memory was not reallocated.
+  EXPECT_EQ(old_data, buf.data());
+  EXPECT_EQ(old_capacity, buf.capacity());
+  // The underlying memory was not released but cleared.
+  for (size_t i = 0; i < old_size; i++) {
+    EXPECT_EQ(0, old_data[i]);
+  }
 }
 
 }  // namespace rtc

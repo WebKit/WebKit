@@ -16,10 +16,10 @@
 
 ******************************************************************/
 
-#include "defines.h"
-#include "constants.h"
-#include "comp_corr.h"
-#include "bw_expand.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
+#include "modules/audio_coding/codecs/ilbc/comp_corr.h"
+#include "modules/audio_coding/codecs/ilbc/bw_expand.h"
 
 /*----------------------------------------------------------------*
  *  Packet loss concealment routine. Conceals a residual signal
@@ -40,6 +40,7 @@ void WebRtcIlbcfix_DoThePlc(
   size_t i;
   int32_t cross, ener, cross_comp, ener_comp = 0;
   int32_t measure, maxMeasure, energy;
+  int32_t noise_energy_threshold_30dB;
   int16_t max, crossSquareMax, crossSquare;
   size_t j, lag, randlag;
   int16_t tmp1, tmp2;
@@ -231,8 +232,8 @@ void WebRtcIlbcfix_DoThePlc(
     }
 
     /* compute concealed residual */
+    noise_energy_threshold_30dB = (int32_t)iLBCdec_inst->blockl * 900;
     energy = 0;
-
     for (i=0; i<iLBCdec_inst->blockl; i++) {
 
       /* noise component -  52 < randlagFIX < 117 */
@@ -268,15 +269,14 @@ void WebRtcIlbcfix_DoThePlc(
           ((pitchfact * PLCresidual[i] + (32767 - pitchfact) * randvec[i] +
               16384) >> 15)) >> 15);
 
-      /* Shifting down the result one step extra to ensure that no overflow
-         will occur */
-      energy += (PLCresidual[i] * PLCresidual[i]) >>
-          (iLBCdec_inst->prevScale + 1);
+      /* Compute energy until threshold for noise energy is reached */
+      if (energy < noise_energy_threshold_30dB) {
+        energy += PLCresidual[i] * PLCresidual[i];
+      }
     }
 
     /* less than 30 dB, use only noise */
-    if (energy < (WEBRTC_SPL_SHIFT_W32(((int32_t)iLBCdec_inst->blockl*900),-(iLBCdec_inst->prevScale+1)))) {
-      energy = 0;
+    if (energy < noise_energy_threshold_30dB) {
       for (i=0; i<iLBCdec_inst->blockl; i++) {
         PLCresidual[i] = randvec[i];
       }

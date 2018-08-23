@@ -43,8 +43,7 @@ __attribute__((objc_runtime_name("WK_RTCIceCandidate")))
  */
 - (instancetype)initWithSdp:(NSString *)sdp
               sdpMLineIndex:(int)sdpMLineIndex
-                     sdpMid:(nullable NSString *)sdpMid
-    NS_DESIGNATED_INITIALIZER;
+                     sdpMid:(nullable NSString *)sdpMid NS_DESIGNATED_INITIALIZER;
 
 @end
 

@@ -30,6 +30,17 @@ constexpr uint8_t kVp8PayloadType = 120;
 constexpr int kPacketTimestampIncrement = 3000;
 }  // namespace
 
+MediaPacketGenerator::MediaPacketGenerator(uint32_t min_packet_size,
+                                           uint32_t max_packet_size,
+                                           uint32_t ssrc,
+                                           Random* random)
+    : min_packet_size_(min_packet_size),
+      max_packet_size_(max_packet_size),
+      ssrc_(ssrc),
+      random_(random) {}
+
+MediaPacketGenerator::~MediaPacketGenerator() = default;
+
 ForwardErrorCorrection::PacketList MediaPacketGenerator::ConstructMediaPackets(
     int num_media_packets,
     uint16_t start_seq_num) {
@@ -112,7 +123,6 @@ std::unique_ptr<AugmentedPacket> AugmentedPacketGenerator::NextPacket(
   for (size_t i = 0; i < length; ++i)
     packet->data[i + kRtpHeaderSize] = offset + i;
   packet->length = length + kRtpHeaderSize;
-  memset(&packet->header, 0, sizeof(WebRtcRTPHeader));
   packet->header.frameType = kVideoFrameDelta;
   packet->header.header.headerLength = kRtpHeaderSize;
   packet->header.header.markerBit = (num_packets_ == 1);

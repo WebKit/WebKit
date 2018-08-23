@@ -16,9 +16,9 @@
 
 ******************************************************************/
 
-#include "defines.h"
-#include "split_vq.h"
-#include "constants.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/split_vq.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
 
 /*----------------------------------------------------------------*
  *  lsf quantizer (subrutine to LPCencode)

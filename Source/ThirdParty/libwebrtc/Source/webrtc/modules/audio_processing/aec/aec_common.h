@@ -11,8 +11,6 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC_AEC_COMMON_H_
 #define MODULES_AUDIO_PROCESSING_AEC_AEC_COMMON_H_
 
-#include "typedefs.h"  // NOLINT(build/include)
-
 #ifdef _MSC_VER /* visual c++ */
 #define ALIGN16_BEG __declspec(align(16))
 #define ALIGN16_END

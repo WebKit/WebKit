@@ -17,16 +17,11 @@ namespace {
 
 class TestStatistics {
  public:
-  TestStatistics() : events_logged_(0) {
-  }
+  TestStatistics() : events_logged_(0) {}
 
-  void Reset() {
-    events_logged_ = 0;
-  }
+  void Reset() { events_logged_ = 0; }
 
-  void Increment() {
-    ++events_logged_;
-  }
+  void Increment() { ++events_logged_; }
 
   int Count() const { return events_logged_; }
 
@@ -62,18 +57,14 @@ static void AddTraceEventHandler(char phase,
 namespace webrtc {
 
 TEST(EventTracerTest, EventTracerDisabled) {
-  {
-    TRACE_EVENT0("test", "EventTracerDisabled");
-  }
+  { TRACE_EVENT0("test", "EventTracerDisabled"); }
   EXPECT_FALSE(TestStatistics::Get()->Count());
   TestStatistics::Get()->Reset();
 }
 
 TEST(EventTracerTest, ScopedTraceEvent) {
   SetupEventTracer(&GetCategoryEnabledHandler, &AddTraceEventHandler);
-  {
-    TRACE_EVENT0("test", "ScopedTraceEvent");
-  }
+  { TRACE_EVENT0("test", "ScopedTraceEvent"); }
   EXPECT_EQ(2, TestStatistics::Get()->Count());
   TestStatistics::Get()->Reset();
 }

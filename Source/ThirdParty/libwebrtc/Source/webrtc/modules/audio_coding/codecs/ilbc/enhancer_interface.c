@@ -18,11 +18,11 @@
 
 #include <string.h>
 
-#include "defines.h"
-#include "constants.h"
-#include "xcorr_coef.h"
-#include "enhancer.h"
-#include "hp_output.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
+#include "modules/audio_coding/codecs/ilbc/xcorr_coef.h"
+#include "modules/audio_coding/codecs/ilbc/enhancer.h"
+#include "modules/audio_coding/codecs/ilbc/hp_output.h"
 
 
 

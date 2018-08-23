@@ -6,8 +6,10 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("//build/config/android/rules.gni")
+if (is_android) {
+  import("//build/config/android/rules.gni")
 
-android_java_prebuilt("autobanh_java") {
-  jar_path = "lib/autobanh.jar"
+  android_java_prebuilt("autobanh_java") {
+    jar_path = "lib/autobanh.jar"
+  }
 }

@@ -22,8 +22,7 @@ namespace rtc {
 
 class Win32Test : public testing::Test {
  public:
-  Win32Test() {
-  }
+  Win32Test() {}
 };
 
 TEST_F(Win32Test, IPv6AddressCompression) {

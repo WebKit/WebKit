@@ -11,10 +11,10 @@
 #include "modules/remote_bitrate_estimator/overuse_detector.h"
 
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include <algorithm>
-#include <sstream>
 #include <string>
 
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
@@ -142,8 +142,7 @@ void OveruseDetector::UpdateThreshold(double modified_offset, int64_t now_ms) {
   const double k = fabs(modified_offset) < threshold_ ? k_down_ : k_up_;
   const int64_t kMaxTimeDeltaMs = 100;
   int64_t time_delta_ms = std::min(now_ms - last_update_ms_, kMaxTimeDeltaMs);
-  threshold_ +=
-      k * (fabs(modified_offset) - threshold_) * time_delta_ms;
+  threshold_ += k * (fabs(modified_offset) - threshold_) * time_delta_ms;
   threshold_ = rtc::SafeClamp(threshold_, 6.f, 600.f);
   last_update_ms_ = now_ms;
 }

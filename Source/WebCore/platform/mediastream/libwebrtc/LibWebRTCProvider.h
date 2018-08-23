@@ -35,12 +35,15 @@
 
 #if USE(LIBWEBRTC)
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+
 #include <webrtc/api/peerconnectioninterface.h>
-#include <webrtc/api/video_codecs/video_decoder_factory.h>
 #include <webrtc/api/video_codecs/video_encoder_factory.h>
+#include <webrtc/api/video_codecs/video_decoder_factory.h>
 #include <webrtc/rtc_base/scoped_ref_ptr.h>
-#include <webrtc/media/engine/webrtcvideodecoderfactory.h>
-#include <webrtc/media/engine/webrtcvideoencoderfactory.h>
+
+#pragma clang diagnostic pop
 
 namespace rtc {
 class NetworkManager;

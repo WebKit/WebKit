@@ -45,7 +45,7 @@ class DesktopConfigurationMonitor : public rtc::RefCountedBase {
  private:
   static void DisplaysReconfiguredCallback(CGDirectDisplayID display,
                                            CGDisplayChangeSummaryFlags flags,
-                                           void *user_parameter);
+                                           void* user_parameter);
   void DisplaysReconfigured(CGDirectDisplayID display,
                             CGDisplayChangeSummaryFlags flags);
 

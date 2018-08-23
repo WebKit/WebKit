@@ -20,11 +20,11 @@
 #include <utility>
 #include <vector>
 
+#include "absl/memory/memory.h"
 #include "api/datachannelinterface.h"
 #include "api/jsepicecandidate.h"
 #include "pc/streamcollection.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/ptr_util.h"
 
 namespace webrtc {
 
@@ -93,8 +93,13 @@ class MockPeerConnectionObserver : public PeerConnectionObserver {
   void OnIceConnectionChange(
       PeerConnectionInterface::IceConnectionState new_state) override {
     RTC_DCHECK(pc_->ice_connection_state() == new_state);
+    // When ICE is finished, the caller will get to a kIceConnectionCompleted
+    // state, because it has the ICE controlling role, while the callee
+    // will get to a kIceConnectionConnected state. This means that both ICE
+    // and DTLS are connected.
     ice_connected_ =
-        (new_state == PeerConnectionInterface::kIceConnectionConnected);
+        (new_state == PeerConnectionInterface::kIceConnectionConnected) ||
+        (new_state == PeerConnectionInterface::kIceConnectionCompleted);
     callback_triggered_ = true;
   }
   void OnIceGatheringChange(
@@ -107,7 +112,7 @@ class MockPeerConnectionObserver : public PeerConnectionObserver {
   void OnIceCandidate(const IceCandidateInterface* candidate) override {
     RTC_DCHECK(PeerConnectionInterface::kIceGatheringNew !=
                pc_->ice_gathering_state());
-    candidates_.push_back(rtc::MakeUnique<JsepIceCandidate>(
+    candidates_.push_back(absl::make_unique<JsepIceCandidate>(
         candidate->sdp_mid(), candidate->sdp_mline_index(),
         candidate->candidate()));
     callback_triggered_ = true;
@@ -132,6 +137,11 @@ class MockPeerConnectionObserver : public PeerConnectionObserver {
     add_track_events_.push_back(AddTrackEvent(receiver, streams));
   }
 
+  void OnTrack(
+      rtc::scoped_refptr<RtpTransceiverInterface> transceiver) override {
+    on_track_transceivers_.push_back(transceiver);
+  }
+
   void OnRemoveTrack(
       rtc::scoped_refptr<RtpReceiverInterface> receiver) override {
     remove_track_events_.push_back(receiver);
@@ -145,16 +155,33 @@ class MockPeerConnectionObserver : public PeerConnectionObserver {
     return receivers;
   }
 
-  // Returns the label of the last added stream.
+  int CountAddTrackEventsForStream(const std::string& stream_id) {
+    int found_tracks = 0;
+    for (const AddTrackEvent& event : add_track_events_) {
+      bool has_stream_id = false;
+      for (auto stream : event.streams) {
+        if (stream->id() == stream_id) {
+          has_stream_id = true;
+          break;
+        }
+      }
+      if (has_stream_id) {
+        ++found_tracks;
+      }
+    }
+    return found_tracks;
+  }
+
+  // Returns the id of the last added stream.
   // Empty string if no stream have been added.
-  std::string GetLastAddedStreamLabel() {
+  std::string GetLastAddedStreamId() {
     if (last_added_stream_.get())
-      return last_added_stream_->label();
+      return last_added_stream_->id();
     return "";
   }
-  std::string GetLastRemovedStreamLabel() {
+  std::string GetLastRemovedStreamId() {
     if (last_removed_stream_.get())
-      return last_removed_stream_->label();
+      return last_removed_stream_->id();
     return "";
   }
 
@@ -164,6 +191,14 @@ class MockPeerConnectionObserver : public PeerConnectionObserver {
     } else {
       return candidates_.back().get();
     }
+  }
+
+  std::vector<const IceCandidateInterface*> GetAllCandidates() {
+    std::vector<const IceCandidateInterface*> candidates;
+    for (const auto& candidate : candidates_) {
+      candidates.push_back(candidate.get());
+    }
+    return candidates;
   }
 
   std::vector<IceCandidateInterface*> GetCandidatesByMline(int mline_index) {
@@ -192,6 +227,8 @@ class MockPeerConnectionObserver : public PeerConnectionObserver {
   std::string last_added_track_label_;
   std::vector<AddTrackEvent> add_track_events_;
   std::vector<rtc::scoped_refptr<RtpReceiverInterface>> remove_track_events_;
+  std::vector<rtc::scoped_refptr<RtpTransceiverInterface>>
+      on_track_transceivers_;
   int num_candidates_removed_ = 0;
 
  private:
@@ -206,14 +243,14 @@ class MockCreateSessionDescriptionObserver
       : called_(false),
         error_("MockCreateSessionDescriptionObserver not called") {}
   virtual ~MockCreateSessionDescriptionObserver() {}
-  virtual void OnSuccess(SessionDescriptionInterface* desc) {
+  void OnSuccess(SessionDescriptionInterface* desc) override {
     called_ = true;
     error_ = "";
     desc_.reset(desc);
   }
-  virtual void OnFailure(const std::string& error) {
+  void OnFailure(webrtc::RTCError error) override {
     called_ = true;
-    error_ = error;
+    error_ = error.message();
   }
   bool called() const { return called_; }
   bool result() const { return error_.empty(); }
@@ -239,10 +276,11 @@ class MockSetSessionDescriptionObserver
     called_ = true;
     error_ = "";
   }
-  void OnFailure(const std::string& error) override {
+  void OnFailure(webrtc::RTCError error) override {
     called_ = true;
-    error_ = error;
+    error_ = error.message();
   }
+
   bool called() const { return called_; }
   bool result() const { return error_.empty(); }
   const std::string& error() const { return error_; }
@@ -268,7 +306,7 @@ class MockSetRemoteDescriptionObserver
 
  private:
   // Set on complete, on success this is set to an RTCError::OK() error.
-  rtc::Optional<RTCError> error_;
+  absl::optional<RTCError> error_;
 };
 
 class MockDataChannelObserver : public webrtc::DataChannelObserver {
@@ -278,9 +316,7 @@ class MockDataChannelObserver : public webrtc::DataChannelObserver {
     channel_->RegisterObserver(this);
     state_ = channel_->state();
   }
-  virtual ~MockDataChannelObserver() {
-    channel_->UnregisterObserver();
-  }
+  virtual ~MockDataChannelObserver() { channel_->UnregisterObserver(); }
 
   void OnBufferedAmountChange(uint64_t previous_amount) override {}
 
@@ -317,25 +353,25 @@ class MockStatsObserver : public webrtc::StatsObserver {
       if (r->type() == StatsReport::kStatsReportTypeSsrc) {
         stats_.timestamp = r->timestamp();
         GetIntValue(r, StatsReport::kStatsValueNameAudioOutputLevel,
-            &stats_.audio_output_level);
+                    &stats_.audio_output_level);
         GetIntValue(r, StatsReport::kStatsValueNameAudioInputLevel,
-            &stats_.audio_input_level);
+                    &stats_.audio_input_level);
         GetIntValue(r, StatsReport::kStatsValueNameBytesReceived,
-            &stats_.bytes_received);
+                    &stats_.bytes_received);
         GetIntValue(r, StatsReport::kStatsValueNameBytesSent,
-            &stats_.bytes_sent);
+                    &stats_.bytes_sent);
         GetInt64Value(r, StatsReport::kStatsValueNameCaptureStartNtpTimeMs,
-            &stats_.capture_start_ntp_time);
+                      &stats_.capture_start_ntp_time);
       } else if (r->type() == StatsReport::kStatsReportTypeBwe) {
         stats_.timestamp = r->timestamp();
         GetIntValue(r, StatsReport::kStatsValueNameAvailableReceiveBandwidth,
-            &stats_.available_receive_bandwidth);
+                    &stats_.available_receive_bandwidth);
       } else if (r->type() == StatsReport::kStatsReportTypeComponent) {
         stats_.timestamp = r->timestamp();
         GetStringValue(r, StatsReport::kStatsValueNameDtlsCipher,
-            &stats_.dtls_cipher);
+                       &stats_.dtls_cipher);
         GetStringValue(r, StatsReport::kStatsValueNameSrtpCipher,
-            &stats_.srtp_cipher);
+                       &stats_.srtp_cipher);
       }
     }
   }
@@ -397,8 +433,8 @@ class MockStatsObserver : public webrtc::StatsObserver {
   }
 
   bool GetInt64Value(const StatsReport* report,
-                   StatsReport::StatsValueName name,
-                   int64_t* value) {
+                     StatsReport::StatsValueName name,
+                     int64_t* value) {
     const StatsReport::Value* v = report->FindValue(name);
     if (v) {
       // TODO(tommi): We should really just be using an int here :-/

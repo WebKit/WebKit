@@ -1,7 +1,4 @@
 include_rules = [
-  # TODO(aleloi): remove when clients update. See
-  # bugs.webrtc.org/6548.
-  "+audio/utility/audio_frame_operations.h",
   "+common_audio",
   "+common_video",
   "+system_wrappers",

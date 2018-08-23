@@ -69,24 +69,6 @@ Pathname::Pathname(const std::string& folder, const std::string& filename)
 Pathname& Pathname::operator=(const Pathname&) = default;
 Pathname& Pathname::operator=(Pathname&&) = default;
 
-void Pathname::Normalize() {
-  for (size_t i=0; i<folder_.length(); ++i) {
-    if (IsFolderDelimiter(folder_[i])) {
-      folder_[i] = folder_delimiter_;
-    }
-  }
-}
-
-void Pathname::clear() {
-  folder_.clear();
-  basename_.clear();
-  extension_.clear();
-}
-
-bool Pathname::empty() const {
-  return folder_.empty() && basename_.empty() && extension_.empty();
-}
-
 std::string Pathname::pathname() const {
   std::string pathname(folder_);
   pathname.append(basename_);
@@ -114,22 +96,6 @@ void Pathname::SetPathname(const std::string& folder,
                            const std::string& filename) {
   SetFolder(folder);
   SetFilename(filename);
-}
-
-std::string Pathname::folder() const {
-  return folder_;
-}
-
-std::string Pathname::parent_folder() const {
-  std::string::size_type pos = std::string::npos;
-  if (folder_.size() >= 2) {
-    pos = folder_.find_last_of(FOLDER_DELIMS, folder_.length() - 2);
-  }
-  if (pos != std::string::npos) {
-    return folder_.substr(0, pos + 1);
-  } else {
-    return EMPTY_STR;
-  }
 }
 
 void Pathname::SetFolder(const std::string& folder) {

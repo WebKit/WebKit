@@ -14,11 +14,11 @@
 
 #include "modules/audio_processing/aec/aec_core.h"
 
-#include <algorithm>
 #include <math.h>
 #include <stddef.h>  // size_t
 #include <stdlib.h>
 #include <string.h>
+#include <algorithm>
 
 #include "rtc_base/checks.h"
 extern "C" {
@@ -30,9 +30,9 @@ extern "C" {
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "modules/audio_processing/utility/delay_estimator_wrapper.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/system/arch.h"
 #include "system_wrappers/include/cpu_features_wrapper.h"
 #include "system_wrappers/include/metrics.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace {
@@ -178,9 +178,7 @@ __inline static float MulIm(float aRe, float aIm, float bRe, float bIm) {
 // window, of which the length is 1 unit longer than indicated. Remove "+1" when
 // the code is refactored.
 PowerLevel::PowerLevel()
-    : framelevel(kSubCountLen + 1),
-      averagelevel(kCountLen + 1) {
-}
+    : framelevel(kSubCountLen + 1), averagelevel(kCountLen + 1) {}
 
 BlockBuffer::BlockBuffer() {
   buffer_ = WebRtc_CreateBuffer(kBufferSizeBlocks, sizeof(float) * PART_LEN);
@@ -238,10 +236,7 @@ size_t BlockBuffer::AvaliableSpace() {
 }
 
 DivergentFilterFraction::DivergentFilterFraction()
-    : count_(0),
-      occurrence_(0),
-      fraction_(-1.0) {
-}
+    : count_(0), occurrence_(0), fraction_(-1.0) {}
 
 void DivergentFilterFraction::Reset() {
   Clear();
@@ -254,19 +249,18 @@ void DivergentFilterFraction::AddObservation(const PowerLevel& nearlevel,
   const float near_level = nearlevel.framelevel.GetLatestMean();
   const float level_increase =
       linoutlevel.framelevel.GetLatestMean() - near_level;
-  const bool output_signal_active = nlpoutlevel.framelevel.GetLatestMean() >
-          40.0 * nlpoutlevel.minlevel;
+  const bool output_signal_active =
+      nlpoutlevel.framelevel.GetLatestMean() > 40.0 * nlpoutlevel.minlevel;
   // Level increase should be, in principle, negative, when the filter
   // does not diverge. Here we allow some margin (0.01 * near end level) and
   // numerical error (1.0). We count divergence only when the AEC output
   // signal is active.
-  if (output_signal_active &&
-      level_increase > std::max(0.01 * near_level, 1.0))
+  if (output_signal_active && level_increase > std::max(0.01 * near_level, 1.0))
     occurrence_++;
   ++count_;
   if (count_ == kDivergentFilterFractionAggregationWindowSize) {
     fraction_ = static_cast<float>(occurrence_) /
-        kDivergentFilterFractionAggregationWindowSize;
+                kDivergentFilterFractionAggregationWindowSize;
     Clear();
   }
 }
@@ -416,9 +410,9 @@ static void Suppress(const float hNl[PART_LEN1], float efw[2][PART_LEN1]) {
   }
 }
 
-static int PartitionDelay(int num_partitions,
-                          float h_fft_buf[2]
-                                         [kExtendedNumPartitions * PART_LEN1]) {
+static int PartitionDelay(
+    int num_partitions,
+    float h_fft_buf[2][kExtendedNumPartitions * PART_LEN1]) {
   // Measures the energy in each filter partition and returns the partition with
   // highest energy.
   // TODO(bjornv): Spread computational cost by computing one partition per
@@ -445,7 +439,8 @@ static int PartitionDelay(int num_partitions,
 }
 
 // Update metric with 10 * log10(numerator / denominator).
-static void UpdateLogRatioMetric(Stats* metric, float numerator,
+static void UpdateLogRatioMetric(Stats* metric,
+                                 float numerator,
                                  float denominator) {
   RTC_DCHECK(metric);
   RTC_CHECK(numerator >= 0);
@@ -736,9 +731,8 @@ static void UpdateMetrics(AecCore* aec) {
   }
 
   if (aec->linoutlevel.framelevel.EndOfBlock()) {
-    aec->divergent_filter_fraction.AddObservation(aec->nearlevel,
-                                                  aec->linoutlevel,
-                                                  aec->nlpoutlevel);
+    aec->divergent_filter_fraction.AddObservation(
+        aec->nearlevel, aec->linoutlevel, aec->nlpoutlevel);
   }
 
   if (aec->farlevel.averagelevel.EndOfBlock()) {
@@ -755,7 +749,6 @@ static void UpdateMetrics(AecCore* aec) {
     if ((aec->stateCounter > (0.5f * kCountLen * kSubCountLen)) &&
         (aec->farlevel.framelevel.EndOfBlock()) &&
         (far_average_level > (actThreshold * aec->farlevel.minlevel))) {
-
       // ERL: error return loss.
       const float near_average_level =
           aec->nearlevel.averagelevel.GetLatestMean();
@@ -815,9 +808,9 @@ static void UpdateDelayMetrics(AecCore* self) {
   for (i = 0; i < kHistorySizeBlocks; i++) {
     l1_norm += abs(i - median) * self->delay_histogram[i];
   }
-  self->delay_std =
-      static_cast<int>((l1_norm + self->num_delay_values / 2) /
-                       self->num_delay_values) * kMsPerBlock;
+  self->delay_std = static_cast<int>((l1_norm + self->num_delay_values / 2) /
+                                     self->num_delay_values) *
+                    kMsPerBlock;
 
   // Determine fraction of delays that are out of bounds, that is, either
   // negative (anti-causal system) or larger than the AEC filter length.
@@ -949,11 +942,11 @@ static int SignalBasedDelayCorrection(AecCore* self) {
   return delay_correction;
 }
 
-static void RegressorPower(int num_partitions,
-                           int latest_added_partition,
-                           float x_fft_buf[2]
-                                          [kExtendedNumPartitions * PART_LEN1],
-                           float x_pow[PART_LEN1]) {
+static void RegressorPower(
+    int num_partitions,
+    int latest_added_partition,
+    float x_fft_buf[2][kExtendedNumPartitions * PART_LEN1],
+    float x_pow[PART_LEN1]) {
   RTC_DCHECK_LT(latest_added_partition, num_partitions);
   memset(x_pow, 0, PART_LEN1 * sizeof(x_pow[0]));
 
@@ -976,21 +969,20 @@ static void RegressorPower(int num_partitions,
   }
 }
 
-static void EchoSubtraction(const OouraFft& ooura_fft,
-                            int num_partitions,
-                            int extended_filter_enabled,
-                            int* extreme_filter_divergence,
-                            float filter_step_size,
-                            float error_threshold,
-                            float* x_fft,
-                            int* x_fft_buf_block_pos,
-                            float x_fft_buf[2]
-                                           [kExtendedNumPartitions * PART_LEN1],
-                            float* const y,
-                            float x_pow[PART_LEN1],
-                            float h_fft_buf[2]
-                                           [kExtendedNumPartitions * PART_LEN1],
-                            float echo_subtractor_output[PART_LEN]) {
+static void EchoSubtraction(
+    const OouraFft& ooura_fft,
+    int num_partitions,
+    int extended_filter_enabled,
+    int* extreme_filter_divergence,
+    float filter_step_size,
+    float error_threshold,
+    float* x_fft,
+    int* x_fft_buf_block_pos,
+    float x_fft_buf[2][kExtendedNumPartitions * PART_LEN1],
+    float* const y,
+    float x_pow[PART_LEN1],
+    float h_fft_buf[2][kExtendedNumPartitions * PART_LEN1],
+    float echo_subtractor_output[PART_LEN]) {
   float s_fft[2][PART_LEN1];
   float e_extended[PART_LEN2];
   float s_extended[PART_LEN2];
@@ -1095,6 +1087,7 @@ static void FormSuppressionGain(AecCore* aec,
     } else {
       for (int i = 0; i < PART_LEN1; ++i) {
         hNl[i] = 1 - cohxd[i];
+        hNl[i] = std::max(hNl[i], 0.f);
       }
       hNlFb = hNlXdAvg;
       hNlFbLow = hNlXdAvg;
@@ -1109,6 +1102,7 @@ static void FormSuppressionGain(AecCore* aec,
       aec->echoState = 1;
       for (int i = 0; i < PART_LEN1; ++i) {
         hNl[i] = WEBRTC_SPL_MIN(cohde[i], 1 - cohxd[i]);
+        hNl[i] = std::max(hNl[i], 0.f);
       }
 
       // Select an order statistic from the preferred bands.
@@ -1116,10 +1110,10 @@ static void FormSuppressionGain(AecCore* aec,
       // preferred.
       memcpy(hNlPref, &hNl[minPrefBand], sizeof(float) * prefBandSize);
       qsort(hNlPref, prefBandSize, sizeof(float), CmpFloat);
-      hNlFb = hNlPref[static_cast<int>(floor(prefBandQuant *
-                                             (prefBandSize - 1)))];
-      hNlFbLow = hNlPref[static_cast<int>(floor(prefBandQuantLow *
-                                                (prefBandSize - 1)))];
+      hNlFb =
+          hNlPref[static_cast<int>(floor(prefBandQuant * (prefBandSize - 1)))];
+      hNlFbLow = hNlPref[static_cast<int>(
+          floor(prefBandQuantLow * (prefBandSize - 1)))];
     }
   }
 
@@ -1140,10 +1134,10 @@ static void FormSuppressionGain(AecCore* aec,
   if (aec->hNlMinCtr == 2) {
     aec->hNlNewMin = 0;
     aec->hNlMinCtr = 0;
-    aec->overDrive =
-        WEBRTC_SPL_MAX(kTargetSupp[aec->nlp_mode] /
-                       static_cast<float>(log(aec->hNlFbMin + 1e-10f) + 1e-10f),
-                       min_overdrive[aec->nlp_mode]);
+    aec->overDrive = WEBRTC_SPL_MAX(
+        kTargetSupp[aec->nlp_mode] /
+            static_cast<float>(log(aec->hNlFbMin + 1e-10f) + 1e-10f),
+        min_overdrive[aec->nlp_mode]);
   }
 
   // Smooth the overdrive.
@@ -1771,20 +1765,18 @@ void BufferNearendFrame(
     float nearend_buffer[NUM_HIGH_BANDS_MAX + 1]
                         [PART_LEN - (FRAME_LEN - PART_LEN)]) {
   for (size_t i = 0; i < num_bands; ++i) {
-    memcpy(
-        &nearend_buffer[i][0],
-        &nearend_frame[i]
-                      [nearend_start_index + FRAME_LEN - num_samples_to_buffer],
-        num_samples_to_buffer * sizeof(float));
+    memcpy(&nearend_buffer[i][0],
+           &nearend_frame[i][nearend_start_index + FRAME_LEN -
+                             num_samples_to_buffer],
+           num_samples_to_buffer * sizeof(float));
   }
 }
 
-void BufferOutputBlock(size_t num_bands,
-                       const float output_block[NUM_HIGH_BANDS_MAX + 1]
-                                               [PART_LEN],
-                       size_t* output_buffer_size,
-                       float output_buffer[NUM_HIGH_BANDS_MAX + 1]
-                                          [2 * PART_LEN]) {
+void BufferOutputBlock(
+    size_t num_bands,
+    const float output_block[NUM_HIGH_BANDS_MAX + 1][PART_LEN],
+    size_t* output_buffer_size,
+    float output_buffer[NUM_HIGH_BANDS_MAX + 1][2 * PART_LEN]) {
   for (size_t i = 0; i < num_bands; ++i) {
     memcpy(&output_buffer[i][*output_buffer_size], &output_block[i][0],
            PART_LEN * sizeof(float));

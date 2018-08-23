@@ -1,0 +1,75 @@
+import("//webrtc.gni")
+
+if (is_android) {
+  rtc_android_apk("androidnativeapi") {
+    testonly = true
+    apk_name = "androidnativeapi"
+    android_manifest = "AndroidManifest.xml"
+
+    java_files = [
+      "java/org/webrtc/examples/androidnativeapi/MainActivity.java",
+      "java/org/webrtc/examples/androidnativeapi/CallClient.java",
+    ]
+
+    deps = [
+      ":resources",
+      "//modules/audio_device:audio_device_java",
+      "//sdk/android:camera_java",
+      "//sdk/android:surfaceviewrenderer_java",
+      "//sdk/android:video_api_java",
+      "//sdk/android:video_java",
+    ]
+
+    shared_libraries = [ ":examples_androidnativeapi_jni" ]
+  }
+
+  generate_jni("generated_jni") {
+    testonly = true
+    sources = [
+      "java/org/webrtc/examples/androidnativeapi/CallClient.java",
+    ]
+    jni_package = ""
+    namespace = "webrtc_examples"
+    jni_generator_include = "//sdk/android/src/jni/jni_generator_helper.h"
+  }
+
+  rtc_shared_library("examples_androidnativeapi_jni") {
+    testonly = true
+    sources = [
+      "jni/androidcallclient.cc",
+      "jni/androidcallclient.h",
+      "jni/onload.cc",
+    ]
+
+    suppressed_configs += [ "//build/config/android:hide_all_but_jni_onload" ]
+    configs += [ "//build/config/android:hide_all_but_jni" ]
+
+    deps = [
+      ":generated_jni",
+      "//api:libjingle_peerconnection_api",
+      "//api/audio_codecs:builtin_audio_decoder_factory",
+      "//api/audio_codecs:builtin_audio_encoder_factory",
+      "//logging:rtc_event_log_impl_base",
+      "//media:rtc_audio_video",
+      "//media:rtc_internal_video_codecs",
+      "//modules/audio_processing",
+      "//modules/utility:utility",
+      "//pc:libjingle_peerconnection",
+      "//rtc_base:rtc_base",
+      "//rtc_base:rtc_base_approved",
+      "//sdk/android:native_api_base",
+      "//sdk/android:native_api_jni",
+      "//sdk/android:native_api_video",
+      "//system_wrappers:field_trial_default",
+      "//system_wrappers:metrics_default",
+      "//system_wrappers:runtime_enabled_features_default",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+  }
+
+  android_resources("resources") {
+    testonly = true
+    resource_dirs = [ "res" ]
+    custom_package = "org.webrtc.examples.androidnativeapi"
+  }
+}

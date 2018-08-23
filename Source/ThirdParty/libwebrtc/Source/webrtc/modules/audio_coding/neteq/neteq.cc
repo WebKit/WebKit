@@ -11,23 +11,28 @@
 #include "modules/audio_coding/neteq/include/neteq.h"
 
 #include <memory>
-#include <sstream>
 
 #include "modules/audio_coding/neteq/neteq_impl.h"
+#include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
 
+NetEq::Config::Config() = default;
+NetEq::Config::Config(const Config&) = default;
+NetEq::Config::Config(Config&&) = default;
+NetEq::Config::~Config() = default;
+NetEq::Config& NetEq::Config::operator=(const Config&) = default;
+NetEq::Config& NetEq::Config::operator=(Config&&) = default;
+
 std::string NetEq::Config::ToString() const {
-  std::stringstream ss;
-  ss << "sample_rate_hz=" << sample_rate_hz
-     << ", enable_post_decode_vad="
+  char buf[1024];
+  rtc::SimpleStringBuilder ss(buf);
+  ss << "sample_rate_hz=" << sample_rate_hz << ", enable_post_decode_vad="
      << (enable_post_decode_vad ? "true" : "false")
      << ", max_packets_in_buffer=" << max_packets_in_buffer
-     << ", background_noise_mode=" << background_noise_mode
-     << ", playout_mode=" << playout_mode
      << ", enable_fast_accelerate="
-     << (enable_fast_accelerate ? " true": "false")
-     << ", enable_muted_state=" << (enable_muted_state ? " true": "false");
+     << (enable_fast_accelerate ? " true" : "false")
+     << ", enable_muted_state=" << (enable_muted_state ? " true" : "false");
   return ss.str();
 }
 

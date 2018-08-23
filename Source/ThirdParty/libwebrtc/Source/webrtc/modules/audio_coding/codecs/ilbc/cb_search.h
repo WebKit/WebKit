@@ -20,16 +20,16 @@
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_CB_SEARCH_H_
 
 void WebRtcIlbcfix_CbSearch(
-    IlbcEncoder *iLBCenc_inst,
+    IlbcEncoder* iLBCenc_inst,
     /* (i) the encoder state structure */
-    int16_t *index,  /* (o) Codebook indices */
-    int16_t *gain_index, /* (o) Gain quantization indices */
-    int16_t *intarget, /* (i) Target vector for encoding */
-    int16_t *decResidual,/* (i) Decoded residual for codebook construction */
-    size_t lMem,  /* (i) Length of buffer */
-    size_t lTarget,  /* (i) Length of vector */
-    int16_t *weightDenum,/* (i) weighting filter coefficients in Q12 */
-    size_t block  /* (i) the subblock number */
-                            );
+    int16_t* index,       /* (o) Codebook indices */
+    int16_t* gain_index,  /* (o) Gain quantization indices */
+    int16_t* intarget,    /* (i) Target vector for encoding */
+    int16_t* decResidual, /* (i) Decoded residual for codebook construction */
+    size_t lMem,          /* (i) Length of buffer */
+    size_t lTarget,       /* (i) Length of vector */
+    int16_t* weightDenum, /* (i) weighting filter coefficients in Q12 */
+    size_t block          /* (i) the subblock number */
+    );
 
 #endif

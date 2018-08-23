@@ -16,7 +16,7 @@
 
 ******************************************************************/
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 /*----------------------------------------------------------------*
  *  Convert the codebook indexes to make the search easier
  *---------------------------------------------------------------*/

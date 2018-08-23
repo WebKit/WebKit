@@ -16,7 +16,7 @@
 
 #include <stdint.h>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
 
 namespace webrtc {
 
@@ -34,7 +34,7 @@ class Syncable {
   virtual ~Syncable();
 
   virtual int id() const = 0;
-  virtual rtc::Optional<Info> GetInfo() const = 0;
+  virtual absl::optional<Info> GetInfo() const = 0;
   virtual uint32_t GetPlayoutTimestamp() const = 0;
   virtual void SetMinimumPlayoutDelay(int delay_ms) = 0;
 };

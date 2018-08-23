@@ -14,7 +14,7 @@
 #include <limits>
 #include <type_traits>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
 #include "rtc_base/numerics/mod_ops.h"
 #include "rtc_base/numerics/safe_compare.h"
 
@@ -120,7 +120,7 @@ class SeqNumUnwrapper {
 
  private:
   uint64_t last_unwrapped_;
-  rtc::Optional<T> last_value_;
+  absl::optional<T> last_value_;
 };
 
 }  // namespace webrtc

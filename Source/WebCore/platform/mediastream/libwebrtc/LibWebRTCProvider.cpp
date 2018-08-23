@@ -30,6 +30,10 @@
 #include "LibWebRTCAudioModule.h"
 #include "Logging.h"
 #include <dlfcn.h>
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+
 #include <webrtc/api/audio_codecs/builtin_audio_decoder_factory.h>
 #include <webrtc/api/audio_codecs/builtin_audio_encoder_factory.h>
 #include <webrtc/api/peerconnectionfactoryproxy.h>
@@ -38,6 +42,9 @@
 #include <webrtc/p2p/client/basicportallocator.h>
 #include <webrtc/pc/peerconnectionfactory.h>
 #include <webrtc/rtc_base/physicalsocketserver.h>
+
+#pragma clang diagnostic pop
+
 #include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>
 #endif

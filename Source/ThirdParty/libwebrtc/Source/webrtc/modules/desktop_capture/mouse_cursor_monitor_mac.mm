@@ -111,8 +111,6 @@ void MouseCursorMonitorMac::Init(Callback* callback, Mode mode) {
 void MouseCursorMonitorMac::Capture() {
   assert(callback_);
 
-  CursorState state = INSIDE;
-
   CGEventRef event = CGEventCreate(NULL);
   CGPoint gc_position = CGEventGetLocation(event);
   CFRelease(event);
@@ -130,110 +128,7 @@ void MouseCursorMonitorMac::Capture() {
   if (mode_ != SHAPE_AND_POSITION)
     return;
 
-  // If we are capturing cursor for a specific window then we need to figure out
-  // if the current mouse position is covered by another window and also adjust
-  // |position| to make it relative to the window origin.
-  if (window_id_ != kCGNullWindowID) {
-    CGWindowID on_screen_window = window_id_;
-    if (full_screen_chrome_window_detector_) {
-      CGWindowID full_screen_window =
-          full_screen_chrome_window_detector_->FindFullScreenWindow(window_id_);
-
-      if (full_screen_window != kCGNullWindowID)
-        on_screen_window = full_screen_window;
-    }
-
-    // Get list of windows that may be covering parts of |on_screen_window|.
-    // CGWindowListCopyWindowInfo() returns windows in order from front to back,
-    // so |on_screen_window| is expected to be the last in the list.
-    CFArrayRef window_array =
-        CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly |
-                                       kCGWindowListOptionOnScreenAboveWindow |
-                                       kCGWindowListOptionIncludingWindow,
-                                   on_screen_window);
-    bool found_window = false;
-    if (window_array) {
-      CFIndex count = CFArrayGetCount(window_array);
-      for (CFIndex i = 0; i < count; ++i) {
-        CFDictionaryRef window = reinterpret_cast<CFDictionaryRef>(
-            CFArrayGetValueAtIndex(window_array, i));
-
-        // Skip the Dock window. Dock window covers the whole screen, but it is
-        // transparent.
-        CFStringRef window_name = reinterpret_cast<CFStringRef>(
-            CFDictionaryGetValue(window, kCGWindowName));
-        if (window_name && CFStringCompare(window_name, CFSTR("Dock"), 0) == 0)
-          continue;
-
-        CFDictionaryRef window_bounds = reinterpret_cast<CFDictionaryRef>(
-            CFDictionaryGetValue(window, kCGWindowBounds));
-        CFNumberRef window_number = reinterpret_cast<CFNumberRef>(
-            CFDictionaryGetValue(window, kCGWindowNumber));
-
-        if (window_bounds && window_number) {
-          CGRect gc_window_rect;
-          if (!CGRectMakeWithDictionaryRepresentation(window_bounds,
-                                                      &gc_window_rect)) {
-            continue;
-          }
-          DesktopRect window_rect =
-              DesktopRect::MakeXYWH(gc_window_rect.origin.x,
-                                    gc_window_rect.origin.y,
-                                    gc_window_rect.size.width,
-                                    gc_window_rect.size.height);
-
-          CGWindowID window_id;
-          if (!CFNumberGetValue(window_number, kCFNumberIntType, &window_id))
-            continue;
-
-          if (window_id == on_screen_window) {
-            found_window = true;
-            if (!window_rect.Contains(position))
-              state = OUTSIDE;
-            position = position.subtract(window_rect.top_left());
-
-            assert(i == count - 1);
-            break;
-          } else if (window_rect.Contains(position)) {
-            state = OUTSIDE;
-            position.set(-1, -1);
-            break;
-          }
-        }
-      }
-      CFRelease(window_array);
-    }
-    if (!found_window) {
-      // If we failed to get list of windows or the window wasn't in the list
-      // pretend that the cursor is outside the window. This can happen, e.g. if
-      // the window was closed.
-      state = OUTSIDE;
-      position.set(-1, -1);
-    }
-  } else {
-    assert(screen_id_ >= kFullDesktopScreenId);
-    if (screen_id_ != kFullDesktopScreenId) {
-      // For single screen capturing, convert the position to relative to the
-      // target screen.
-      const MacDisplayConfiguration* config =
-          configuration.FindDisplayConfigurationById(
-              static_cast<CGDirectDisplayID>(screen_id_));
-      if (config) {
-        if (!config->pixel_bounds.Contains(position))
-          state = OUTSIDE;
-        position = position.subtract(config->bounds.top_left());
-      } else {
-        // The target screen is no longer valid.
-        state = OUTSIDE;
-        position.set(-1, -1);
-      }
-    }
-  }
-  // Convert Density Independent Pixel to physical pixel.
-  position = DesktopVector(round(position.x() * scale),
-                           round(position.y() * scale));
-  // TODO(zijiehe): Remove this overload.
-  callback_->OnMouseCursorPosition(state, position);
+  // Always report cursor position in DIP pixel.
   callback_->OnMouseCursorPosition(
       position.subtract(configuration.bounds.top_left()));
 }

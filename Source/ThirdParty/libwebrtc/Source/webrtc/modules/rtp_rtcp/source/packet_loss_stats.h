@@ -21,7 +21,7 @@ namespace webrtc {
 class PacketLossStats {
  public:
   PacketLossStats();
-  ~PacketLossStats() {}
+  ~PacketLossStats();
 
   // Adds a lost packet to the stats by sequence number.
   void AddLostPacket(uint16_t sequence_number);

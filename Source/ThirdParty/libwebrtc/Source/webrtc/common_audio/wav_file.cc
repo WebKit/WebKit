@@ -13,12 +13,13 @@
 #include <algorithm>
 #include <cstdio>
 #include <limits>
-#include <sstream>
 
 #include "common_audio/include/audio_util.h"
 #include "common_audio/wav_header.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/system/arch.h"
 
 namespace webrtc {
 
@@ -30,7 +31,7 @@ static const size_t kBytesPerSample = 2;
 class ReadableWavFile : public ReadableWav {
  public:
   explicit ReadableWavFile(FILE* file) : file_(file) {}
-  virtual size_t Read(void* buf, size_t num_bytes) {
+  size_t Read(void* buf, size_t num_bytes) override {
     return fread(buf, 1, num_bytes, file_);
   }
 
@@ -38,17 +39,22 @@ class ReadableWavFile : public ReadableWav {
   FILE* file_;
 };
 
-std::string WavFile::FormatAsString() const {
-  std::ostringstream s;
-  s << "Sample rate: " << sample_rate() << " Hz, Channels: " << num_channels()
-    << ", Duration: "
-    << (1.f * num_samples()) / (num_channels() * sample_rate()) << " s";
-  return s.str();
-}
-
 WavReader::WavReader(const std::string& filename)
-    : file_handle_(fopen(filename.c_str(), "rb")) {
-  RTC_CHECK(file_handle_) << "Could not open wav file for reading.";
+    : WavReader(rtc::OpenPlatformFileReadOnly(filename)) {}
+
+WavReader::WavReader(rtc::PlatformFile file) {
+  RTC_CHECK_NE(file, rtc::kInvalidPlatformFileValue)
+      << "Invalid file. Could not create file handle for wav file.";
+  file_handle_ = rtc::FdopenPlatformFile(file, "rb");
+  if (!file_handle_) {
+    RTC_LOG(LS_ERROR) << "Could not open wav file for reading: " << errno;
+    // Even though we failed to open a FILE*, the file is still open
+    // and needs to be closed.
+    if (!rtc::ClosePlatformFile(file)) {
+      RTC_LOG(LS_ERROR) << "Can't close file.";
+    }
+    RTC_FATAL() << "Could not open wav file for reading.";
+  }
 
   ReadableWavFile readable(file_handle_);
   WavFormat format;
@@ -110,13 +116,31 @@ void WavReader::Close() {
   file_handle_ = nullptr;
 }
 
-WavWriter::WavWriter(const std::string& filename, int sample_rate,
+WavWriter::WavWriter(const std::string& filename,
+                     int sample_rate,
                      size_t num_channels)
-    : sample_rate_(sample_rate),
-      num_channels_(num_channels),
-      num_samples_(0),
-      file_handle_(fopen(filename.c_str(), "wb")) {
-  RTC_CHECK(file_handle_) << "Could not open wav file for writing.";
+    // Unlike plain fopen, CreatePlatformFile takes care of filename utf8 ->
+    // wchar conversion on windows.
+    : WavWriter(rtc::CreatePlatformFile(filename), sample_rate, num_channels) {}
+
+WavWriter::WavWriter(rtc::PlatformFile file,
+                     int sample_rate,
+                     size_t num_channels)
+    : sample_rate_(sample_rate), num_channels_(num_channels), num_samples_(0) {
+  // Handle errors from the CreatePlatformFile call in above constructor.
+  RTC_CHECK_NE(file, rtc::kInvalidPlatformFileValue)
+      << "Invalid file. Could not create wav file.";
+  file_handle_ = rtc::FdopenPlatformFile(file, "wb");
+  if (!file_handle_) {
+    RTC_LOG(LS_ERROR) << "Could not open wav file for writing.";
+    // Even though we failed to open a FILE*, the file is still open
+    // and needs to be closed.
+    if (!rtc::ClosePlatformFile(file)) {
+      RTC_LOG(LS_ERROR) << "Can't close file.";
+    }
+    RTC_FATAL() << "Could not open wav file for writing.";
+  }
+
   RTC_CHECK(CheckWavParameters(num_channels_, sample_rate_, kWavFormat,
                                kBytesPerSample, num_samples_));
 

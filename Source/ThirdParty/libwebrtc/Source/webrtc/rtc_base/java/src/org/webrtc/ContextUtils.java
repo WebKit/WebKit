@@ -36,7 +36,10 @@ public class ContextUtils {
 
   /**
    * Returns the stored application context.
+   *
+   * @deprecated crbug.com/webrtc/8937
    */
+  @Deprecated
   public static Context getApplicationContext() {
     return applicationContext;
   }

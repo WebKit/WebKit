@@ -64,7 +64,9 @@ int set_flags(struct ifaddrs* ifaddr) {
   return 0;
 }
 
-int set_addresses(struct ifaddrs* ifaddr, ifaddrmsg* msg, void* data,
+int set_addresses(struct ifaddrs* ifaddr,
+                  ifaddrmsg* msg,
+                  void* data,
                   size_t len) {
   if (msg->ifa_family == AF_INET) {
     sockaddr_in* sa = new sockaddr_in;
@@ -115,7 +117,9 @@ int make_prefixes(struct ifaddrs* ifaddr, int family, int prefixlen) {
   return 0;
 }
 
-int populate_ifaddrs(struct ifaddrs* ifaddr, ifaddrmsg* msg, void* bytes,
+int populate_ifaddrs(struct ifaddrs* ifaddr,
+                     ifaddrmsg* msg,
+                     void* bytes,
                      size_t len) {
   if (set_ifname(ifaddr, msg->ifa_index) != 0) {
     return -1;
@@ -156,8 +160,8 @@ int getifaddrs(struct ifaddrs** result) {
   while (amount_read > 0) {
     nlmsghdr* header = reinterpret_cast<nlmsghdr*>(&buf[0]);
     size_t header_size = static_cast<size_t>(amount_read);
-    for ( ; NLMSG_OK(header, header_size);
-          header = NLMSG_NEXT(header, header_size)) {
+    for (; NLMSG_OK(header, header_size);
+         header = NLMSG_NEXT(header, header_size)) {
       switch (header->nlmsg_type) {
         case NLMSG_DONE:
           // Success. Return.
@@ -174,24 +178,24 @@ int getifaddrs(struct ifaddrs** result) {
           rtattr* rta = IFA_RTA(address_msg);
           ssize_t payload_len = IFA_PAYLOAD(header);
           while (RTA_OK(rta, payload_len)) {
-            if (rta->rta_type == IFA_ADDRESS) {
-              int family = address_msg->ifa_family;
-              if (family == AF_INET || family == AF_INET6) {
-                ifaddrs* newest = new ifaddrs;
-                memset(newest, 0, sizeof(ifaddrs));
-                if (current) {
-                  current->ifa_next = newest;
-                } else {
-                  start = newest;
-                }
-                if (populate_ifaddrs(newest, address_msg, RTA_DATA(rta),
-                                     RTA_PAYLOAD(rta)) != 0) {
-                  freeifaddrs(start);
-                  *result = nullptr;
-                  return -1;
-                }
-                current = newest;
+            if ((address_msg->ifa_family == AF_INET &&
+                 rta->rta_type == IFA_LOCAL) ||
+                (address_msg->ifa_family == AF_INET6 &&
+                 rta->rta_type == IFA_ADDRESS)) {
+              ifaddrs* newest = new ifaddrs;
+              memset(newest, 0, sizeof(ifaddrs));
+              if (current) {
+                current->ifa_next = newest;
+              } else {
+                start = newest;
               }
+              if (populate_ifaddrs(newest, address_msg, RTA_DATA(rta),
+                                   RTA_PAYLOAD(rta)) != 0) {
+                freeifaddrs(start);
+                *result = nullptr;
+                return -1;
+              }
+              current = newest;
             }
             rta = RTA_NEXT(rta, payload_len);
           }

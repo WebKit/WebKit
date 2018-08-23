@@ -42,6 +42,9 @@ class BlockProcessor {
   // Get current metrics.
   virtual void GetMetrics(EchoControl::Metrics* metrics) const = 0;
 
+  // Provides an optional external estimate of the audio buffer delay.
+  virtual void SetAudioBufferDelay(size_t delay_ms) = 0;
+
   // Processes a block of capture data.
   virtual void ProcessCapture(
       bool echo_path_gain_change,

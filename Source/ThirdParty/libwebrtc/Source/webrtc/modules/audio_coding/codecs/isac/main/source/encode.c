@@ -21,20 +21,22 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "structs.h"
-#include "codec.h"
-#include "pitch_estimator.h"
-#include "entropy_coding.h"
-#include "arith_routines.h"
-#include "pitch_gain_tables.h"
-#include "pitch_lag_tables.h"
-#include "spectrum_ar_model_tables.h"
-#include "lpc_tables.h"
-#include "lpc_analysis.h"
-#include "bandwidth_estimator.h"
-#include "lpc_shape_swb12_tables.h"
-#include "lpc_shape_swb16_tables.h"
-#include "lpc_gain_swb_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/structs.h"
+#include "modules/audio_coding/codecs/isac/main/source/codec.h"
+#include "modules/audio_coding/codecs/isac/main/source/pitch_estimator.h"
+#include "modules/audio_coding/codecs/isac/main/source/entropy_coding.h"
+#include "modules/audio_coding/codecs/isac/main/source/arith_routines.h"
+#include "modules/audio_coding/codecs/isac/main/source/pitch_gain_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/pitch_lag_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/spectrum_ar_model_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/lpc_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/lpc_analysis.h"
+#include "modules/audio_coding/codecs/isac/main/source/bandwidth_estimator.h"
+#include "modules/audio_coding/codecs/isac/main/source/lpc_shape_swb12_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/lpc_shape_swb16_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/lpc_gain_swb_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/isac_vad.h"
+#include "modules/audio_coding/codecs/isac/main/source/pitch_filter.h"
 
 
 #define UB_LOOKAHEAD 24

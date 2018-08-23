@@ -39,5 +39,4 @@ static inline Callback0<void> KeepRefUntilDone(
 
 }  // namespace rtc
 
-
 #endif  // RTC_BASE_KEEP_REF_UNTIL_DONE_H_

@@ -1,3 +1,15 @@
+2018-08-23  Youenn Fablet  <youenn@apple.com>
+
+        Update libwebrtc up to 984f1a80c0
+        https://bugs.webkit.org/show_bug.cgi?id=188745
+
+        Reviewed by Eric Carlson.
+
+        Updated tests according new webrtc backend.
+
+        * webrtc/libwebrtc/setLocalDescriptionCrash.html:
+        * webrtc/video-getParameters.html:
+
 2018-08-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update iOS selection tests to reflect new behavior introduced by r235153

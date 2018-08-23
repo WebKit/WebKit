@@ -20,7 +20,10 @@
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_CB_CONSTRUCT_H_
 
 #include <stdbool.h>
-#include "defines.h"
+#include <stdint.h>
+
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "rtc_base/system/unused.h"
 
 /*----------------------------------------------------------------*
  *  Construct decoded vector from codebook and gains.

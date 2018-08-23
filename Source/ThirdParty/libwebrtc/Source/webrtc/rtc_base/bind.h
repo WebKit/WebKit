@@ -77,7 +77,10 @@ namespace detail {
 // matches to the function prototype, but the parameters to bind have
 // references stripped. This trick allows the compiler to dictate the Bind
 // parameter types rather than deduce them.
-template <class T> struct identity { typedef T type; };
+template <class T>
+struct identity {
+  typedef T type;
+};
 
 // IsRefCounted<T>::value will be true for types that can be used in
 // rtc::scoped_refptr<T>, i.e. types that implements nullary functions AddRef()
@@ -88,8 +91,12 @@ class IsRefCounted {
   // This is a complex implementation detail done with SFINAE.
 
   // Define types such that sizeof(Yes) != sizeof(No).
-  struct Yes { char dummy[1]; };
-  struct No { char dummy[2]; };
+  struct Yes {
+    char dummy[1];
+  };
+  struct No {
+    char dummy[2];
+  };
   // Define two overloaded template functions with return types of different
   // size. This way, we can use sizeof() on the return type to determine which
   // function the compiler would have chosen. One function will be preferred
@@ -98,9 +105,10 @@ class IsRefCounted {
   // preferred function.
   template <typename R>
   static Yes test(R* r, decltype(r->AddRef(), r->Release(), 42));
-  template <typename C> static No test(...);
+  template <typename C>
+  static No test(...);
 
-public:
+ public:
   // Trick the compiler to tell if it's possible to call AddRef() and Release().
   static const bool value = sizeof(test<T>((T*)nullptr, 42)) == sizeof(Yes);
 };

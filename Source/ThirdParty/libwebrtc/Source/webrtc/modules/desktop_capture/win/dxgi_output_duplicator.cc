@@ -12,10 +12,10 @@
 
 #include <string.h>
 
-#include <unknwn.h>
 #include <DXGI.h>
 #include <DXGIFormat.h>
 #include <Windows.h>
+#include <unknwn.h>
 
 #include <algorithm>
 
@@ -23,6 +23,7 @@
 #include "modules/desktop_capture/win/dxgi_texture_staging.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/stringutils.h"
 #include "rtc_base/win32.h"
 
 namespace webrtc {
@@ -176,9 +177,7 @@ bool DxgiOutputDuplicator::Duplicate(Context* context,
   // context here. The |updated_region| always starts from (0, 0).
   DesktopRegion updated_region;
   updated_region.Swap(&context->updated_region);
-  if (error.Error() == S_OK &&
-      frame_info.AccumulatedFrames > 0 &&
-      resource) {
+  if (error.Error() == S_OK && frame_info.AccumulatedFrames > 0 && resource) {
     DetectUpdatedRegion(frame_info, &context->updated_region);
     SpreadContextChange(context);
     if (!texture_->CopyFrom(frame_info, resource.Get())) {
@@ -194,8 +193,8 @@ bool DxgiOutputDuplicator::Duplicate(Context* context,
            it.Advance()) {
         // The |updated_region| returned by Windows is rotated, but the |source|
         // frame is not. So we need to rotate it reversely.
-        const DesktopRect source_rect = RotateRect(
-            it.rect(), desktop_size(), ReverseRotation(rotation_));
+        const DesktopRect source_rect =
+            RotateRect(it.rect(), desktop_size(), ReverseRotation(rotation_));
         RotateDesktopFrame(source, source_rect, rotation_, offset, target);
       }
     } else {

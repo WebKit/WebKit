@@ -15,12 +15,12 @@
 #if defined(WEBRTC_LINUX)
 #include <time.h>
 #elif defined(WEBRTC_MAC)
-#include <sys/resource.h>
-#include <sys/types.h>
-#include <sys/times.h>
+#include <mach/mach_init.h>
 #include <mach/thread_act.h>
 #include <mach/thread_info.h>
-#include <mach/mach_port.h>
+#include <sys/resource.h>
+#include <sys/times.h>
+#include <sys/types.h>
 #include <unistd.h>
 #elif defined(WEBRTC_WIN)
 #include <windows.h>
@@ -83,10 +83,8 @@ int64_t GetThreadCpuTimeNanos() {
 #elif defined(WEBRTC_MAC)
   thread_basic_info_data_t info;
   mach_msg_type_number_t count = THREAD_BASIC_INFO_COUNT;
-  auto port = mach_thread_self();
-  auto result = thread_info(port, THREAD_BASIC_INFO, (thread_info_t)&info, &count);
-  mach_port_deallocate(mach_task_self(), port);
-  if (result == KERN_SUCCESS) {
+  if (thread_info(mach_thread_self(), THREAD_BASIC_INFO, (thread_info_t)&info,
+                  &count) == KERN_SUCCESS) {
     return info.user_time.seconds * kNumNanosecsPerSec +
            info.user_time.microseconds * kNumNanosecsPerMicrosec;
   } else {

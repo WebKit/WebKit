@@ -139,10 +139,10 @@ void VCMJitterEstimator::UpdateEstimate(int64_t frameDelayMS,
     // Update the variance anyway since we want to capture cases where we only
     // get
     // key frames.
-    _varFrameSize = VCM_MAX(_phi * _varFrameSize +
-                                (1 - _phi) * (frameSizeBytes - avgFrameSize) *
-                                    (frameSizeBytes - avgFrameSize),
-                            1.0);
+    _varFrameSize = VCM_MAX(
+        _phi * _varFrameSize + (1 - _phi) * (frameSizeBytes - avgFrameSize) *
+                                   (frameSizeBytes - avgFrameSize),
+        1.0);
   }
 
   // Update max frameSize estimate

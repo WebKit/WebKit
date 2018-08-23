@@ -15,12 +15,13 @@
 #include <array>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/downsampled_render_buffer.h"
 #include "modules/audio_processing/aec3/fft_data.h"
 #include "modules/audio_processing/aec3/render_buffer.h"
-#include "modules/audio_processing/include/audio_processing.h"
 
 namespace webrtc {
 
@@ -56,7 +57,7 @@ class RenderDelayBuffer {
   virtual bool SetDelay(size_t delay) = 0;
 
   // Gets the buffer delay.
-  virtual rtc::Optional<size_t> Delay() const = 0;
+  virtual size_t Delay() const = 0;
 
   // Gets the buffer delay.
   virtual size_t MaxDelay() const = 0;
@@ -72,6 +73,9 @@ class RenderDelayBuffer {
 
   // Returns the maximum non calusal offset that can occur in the delay buffer.
   static int DelayEstimatorOffset(const EchoCanceller3Config& config);
+
+  // Provides an optional external estimate of the audio buffer delay.
+  virtual void SetAudioBufferDelay(size_t delay_ms) = 0;
 };
 
 }  // namespace webrtc

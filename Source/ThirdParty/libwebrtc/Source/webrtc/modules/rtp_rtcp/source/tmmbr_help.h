@@ -13,7 +13,6 @@
 
 #include <vector>
 #include "modules/rtp_rtcp/source/rtcp_packet/tmmb_item.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 

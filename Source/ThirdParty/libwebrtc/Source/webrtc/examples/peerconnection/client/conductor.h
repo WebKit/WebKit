@@ -14,8 +14,8 @@
 #include <deque>
 #include <map>
 #include <memory>
-#include <set>
 #include <string>
+#include <vector>
 
 #include "api/mediastreaminterface.h"
 #include "api/peerconnectioninterface.h"
@@ -30,25 +30,24 @@ namespace cricket {
 class VideoRenderer;
 }  // namespace cricket
 
-class Conductor
-  : public webrtc::PeerConnectionObserver,
-    public webrtc::CreateSessionDescriptionObserver,
-    public PeerConnectionClientObserver,
-    public MainWndCallback {
+class Conductor : public webrtc::PeerConnectionObserver,
+                  public webrtc::CreateSessionDescriptionObserver,
+                  public PeerConnectionClientObserver,
+                  public MainWndCallback {
  public:
   enum CallbackID {
     MEDIA_CHANNELS_INITIALIZED = 1,
     PEER_CONNECTION_CLOSED,
     SEND_MESSAGE_TO_PEER,
-    NEW_STREAM_ADDED,
-    STREAM_REMOVED,
+    NEW_TRACK_ADDED,
+    TRACK_REMOVED,
   };
 
   Conductor(PeerConnectionClient* client, MainWindow* main_wnd);
 
   bool connection_active() const;
 
-  virtual void Close();
+  void Close() override;
 
  protected:
   ~Conductor();
@@ -57,7 +56,7 @@ class Conductor
   bool CreatePeerConnection(bool dtls);
   void DeletePeerConnection();
   void EnsureStreamingUI();
-  void AddStreams();
+  void AddTracks();
   std::unique_ptr<cricket::VideoCapturer> OpenVideoCaptureDevice();
 
   //
@@ -66,10 +65,12 @@ class Conductor
 
   void OnSignalingChange(
       webrtc::PeerConnectionInterface::SignalingState new_state) override{};
-  void OnAddStream(
-      rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) override;
-  void OnRemoveStream(
-      rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) override;
+  void OnAddTrack(
+      rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver,
+      const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>&
+          streams) override;
+  void OnRemoveTrack(
+      rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver) override;
   void OnDataChannel(
       rtc::scoped_refptr<webrtc::DataChannelInterface> channel) override {}
   void OnRenegotiationNeeded() override {}
@@ -114,7 +115,7 @@ class Conductor
 
   // CreateSessionDescriptionObserver implementation.
   void OnSuccess(webrtc::SessionDescriptionInterface* desc) override;
-  void OnFailure(const std::string& error) override;
+  void OnFailure(webrtc::RTCError error) override;
 
  protected:
   // Send a message to the remote peer.
@@ -128,8 +129,6 @@ class Conductor
   PeerConnectionClient* client_;
   MainWindow* main_wnd_;
   std::deque<std::string*> pending_messages_;
-  std::map<std::string, rtc::scoped_refptr<webrtc::MediaStreamInterface> >
-      active_streams_;
   std::string server_;
 };
 

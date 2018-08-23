@@ -10,12 +10,20 @@
 
 #include "logging/rtc_event_log/events/rtc_event_probe_result_failure.h"
 
+#include "absl/memory/memory.h"
+
 namespace webrtc {
 
 RtcEventProbeResultFailure::RtcEventProbeResultFailure(
-    int id,
+    int32_t id,
     ProbeFailureReason failure_reason)
     : id_(id), failure_reason_(failure_reason) {}
+
+RtcEventProbeResultFailure::RtcEventProbeResultFailure(
+    const RtcEventProbeResultFailure& other)
+    : RtcEvent(other.timestamp_us_),
+      id_(other.id_),
+      failure_reason_(other.failure_reason_) {}
 
 RtcEvent::Type RtcEventProbeResultFailure::GetType() const {
   return RtcEvent::Type::ProbeResultFailure;
@@ -23,6 +31,10 @@ RtcEvent::Type RtcEventProbeResultFailure::GetType() const {
 
 bool RtcEventProbeResultFailure::IsConfigEvent() const {
   return false;
+}
+
+std::unique_ptr<RtcEvent> RtcEventProbeResultFailure::Copy() const {
+  return absl::WrapUnique<RtcEvent>(new RtcEventProbeResultFailure(*this));
 }
 
 }  // namespace webrtc

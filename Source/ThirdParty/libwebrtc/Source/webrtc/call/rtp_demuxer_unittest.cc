@@ -14,6 +14,7 @@
 #include <set>
 #include <string>
 
+#include "absl/memory/memory.h"
 #include "call/ssrc_binding_observer.h"
 #include "call/test/mock_rtp_packet_sink_interface.h"
 #include "common_types.h"  // NOLINT(build/include)
@@ -21,10 +22,8 @@
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/arraysize.h"
-#include "rtc_base/basictypes.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
-#include "rtc_base/ptr_util.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -136,7 +135,7 @@ class RtpDemuxerTest : public testing::Test {
   std::unique_ptr<RtpPacketReceived> CreatePacket(
       uint32_t ssrc,
       RtpPacketReceived::ExtensionManager* extension_manager) {
-    auto packet = rtc::MakeUnique<RtpPacketReceived>(extension_manager);
+    auto packet = absl::make_unique<RtpPacketReceived>(extension_manager);
     packet->SetSsrc(ssrc);
     packet->SetSequenceNumber(next_sequence_number_++);
     return packet;
@@ -347,8 +346,8 @@ TEST_F(RtpDemuxerTest, OnRtpPacketCalledOnCorrectSinkByRsid) {
   }
 
   for (size_t i = 0; i < arraysize(rsids); i++) {
-    auto packet = CreatePacketWithSsrcRsid(rtc::checked_cast<uint32_t>(i),
-                                           rsids[i]);
+    auto packet =
+        CreatePacketWithSsrcRsid(rtc::checked_cast<uint32_t>(i), rsids[i]);
     EXPECT_CALL(sinks[i], OnRtpPacket(SamePacketAs(*packet))).Times(1);
     EXPECT_TRUE(demuxer_.OnRtpPacket(*packet));
   }
@@ -362,8 +361,8 @@ TEST_F(RtpDemuxerTest, OnRtpPacketCalledOnCorrectSinkByMid) {
   }
 
   for (size_t i = 0; i < arraysize(mids); i++) {
-    auto packet = CreatePacketWithSsrcMid(rtc::checked_cast<uint32_t>(i),
-                                          mids[i]);
+    auto packet =
+        CreatePacketWithSsrcMid(rtc::checked_cast<uint32_t>(i), mids[i]);
     EXPECT_CALL(sinks[i], OnRtpPacket(SamePacketAs(*packet))).Times(1);
     EXPECT_TRUE(demuxer_.OnRtpPacket(*packet));
   }
@@ -1492,9 +1491,9 @@ TEST_F(RtpDemuxerTest, RsidMustBeAlphaNumeric) {
   EXPECT_DEATH(AddSinkOnlyRsid("a_3", &sink), "");
 }
 
-TEST_F(RtpDemuxerTest, MidMustBeAlphaNumeric) {
+TEST_F(RtpDemuxerTest, MidMustBeToken) {
   MockRtpPacketSink sink;
-  EXPECT_DEATH(AddSinkOnlyMid("a_3", &sink), "");
+  EXPECT_DEATH(AddSinkOnlyMid("a(3)", &sink), "");
 }
 
 TEST_F(RtpDemuxerTest, RsidMustNotExceedMaximumLength) {

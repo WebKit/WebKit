@@ -98,9 +98,8 @@ int DtmfBuffer::ParseEvent(uint32_t rtp_timestamp,
 // already in the buffer. If so, the new event is simply merged with the
 // existing one.
 int DtmfBuffer::InsertEvent(const DtmfEvent& event) {
-  if (event.event_no < 0 || event.event_no > 15 ||
-      event.volume < 0 || event.volume > 63 ||
-      event.duration <= 0 || event.duration > 65535) {
+  if (event.event_no < 0 || event.event_no > 15 || event.volume < 0 ||
+      event.volume > 63 || event.duration <= 0 || event.duration > 65535) {
     RTC_LOG(LS_WARNING) << "InsertEvent invalid parameters";
     return kInvalidEventParameters;
   }
@@ -142,8 +141,8 @@ bool DtmfBuffer::GetEvent(uint32_t current_timestamp, DtmfEvent* event) {
 #endif
       }
     }
-    if (current_timestamp >= it->timestamp
-        && current_timestamp <= event_end) {  // TODO(hlundin): Change to <.
+    if (current_timestamp >= it->timestamp &&
+        current_timestamp <= event_end) {  // TODO(hlundin): Change to <.
       // Found a matching event.
       if (event) {
         event->event_no = it->event_no;
@@ -153,16 +152,15 @@ bool DtmfBuffer::GetEvent(uint32_t current_timestamp, DtmfEvent* event) {
         event->timestamp = it->timestamp;
       }
 #ifdef LEGACY_BITEXACT
-      if (it->end_bit &&
-          current_timestamp + frame_len_samples_ >= event_end) {
+      if (it->end_bit && current_timestamp + frame_len_samples_ >= event_end) {
         // We are done playing this. Erase the event.
         buffer_.erase(it);
       }
 #endif
       return true;
     } else if (current_timestamp > event_end) {  // TODO(hlundin): Change to >=.
-      // Erase old event. Operation returns a valid pointer to the next element
-      // in the list.
+// Erase old event. Operation returns a valid pointer to the next element
+// in the list.
 #ifdef LEGACY_BITEXACT
       if (!next_available) {
         if (event) {
@@ -196,10 +194,7 @@ bool DtmfBuffer::Empty() const {
 }
 
 int DtmfBuffer::SetSampleRate(int fs_hz) {
-  if (fs_hz != 8000 &&
-      fs_hz != 16000 &&
-      fs_hz != 32000 &&
-      fs_hz != 48000) {
+  if (fs_hz != 8000 && fs_hz != 16000 && fs_hz != 32000 && fs_hz != 48000) {
     return kInvalidSampleRate;
   }
   max_extrapolation_samples_ = 7 * fs_hz / 100;

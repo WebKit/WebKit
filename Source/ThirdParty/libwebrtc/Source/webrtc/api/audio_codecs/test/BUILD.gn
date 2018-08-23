@@ -38,7 +38,7 @@ if (rtc_include_tests) {
       "../isac:audio_encoder_isac_float",
       "../opus:audio_decoder_opus",
       "../opus:audio_encoder_opus",
-      "//testing/gmock",
+      "//third_party/abseil-cpp/absl/memory",
     ]
   }
 }

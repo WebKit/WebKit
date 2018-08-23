@@ -29,8 +29,7 @@ struct TransportInfo {
 
   TransportInfo(const std::string& content_name,
                 const TransportDescription& description)
-      : content_name(content_name),
-        description(description) {}
+      : content_name(content_name), description(description) {}
 
   std::string content_name;
   TransportDescription description;

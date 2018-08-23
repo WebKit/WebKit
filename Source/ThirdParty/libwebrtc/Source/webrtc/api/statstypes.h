@@ -20,7 +20,6 @@
 #include <string>
 #include <vector>
 
-#include "rtc_base/basictypes.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/refcount.h"
 #include "rtc_base/scoped_ref_ptr.h"
@@ -129,6 +128,10 @@ class StatsReport {
     kStatsValueNameSentPingResponses,
     kStatsValueNameRecvPingRequests,
     kStatsValueNameRecvPingResponses,
+    kStatsValueNameSentStunKeepaliveRequests,
+    kStatsValueNameRecvStunKeepaliveResponses,
+    kStatsValueNameStunKeepaliveRttTotal,
+    kStatsValueNameStunKeepaliveRttSquaredTotal,
 
     // Internal StatsValue names.
     kStatsValueNameAccelerateRate,
@@ -185,6 +188,7 @@ class StatsReport {
     kStatsValueNameFrameWidthReceived,
     kStatsValueNameFrameWidthSent,
     kStatsValueNameHasEnteredLowResolution,
+    kStatsValueNameHugeFramesSent,
     kStatsValueNameInitiator,
     kStatsValueNameInterframeDelayMaxMs,  // Max over last 10 seconds.
     kStatsValueNameIssuerId,
@@ -337,7 +341,7 @@ class StatsReport {
 
    private:
     rtc::ThreadChecker thread_checker_;
-    mutable int ref_count_ RTC_ACCESS_ON(thread_checker_) = 0;
+    mutable int ref_count_ RTC_GUARDED_BY(thread_checker_) = 0;
 
     const Type type_;
     // TODO(tommi): Use C++ 11 union and make value_ const.
@@ -365,13 +369,14 @@ class StatsReport {
   static Id NewBandwidthEstimationId();
   static Id NewTypedId(StatsType type, const std::string& id);
   static Id NewTypedIntId(StatsType type, int id);
-  static Id NewIdWithDirection(
-      StatsType type, const std::string& id, Direction direction);
+  static Id NewIdWithDirection(StatsType type,
+                               const std::string& id,
+                               Direction direction);
   static Id NewCandidateId(bool local, const std::string& id);
-  static Id NewComponentId(
-      const std::string& content_name, int component);
-  static Id NewCandidatePairId(
-      const std::string& content_name, int component, int index);
+  static Id NewComponentId(const std::string& content_name, int component);
+  static Id NewCandidatePairId(const std::string& content_name,
+                               int component,
+                               int index);
 
   const Id& id() const { return id_; }
   StatsType type() const { return id_->type(); }

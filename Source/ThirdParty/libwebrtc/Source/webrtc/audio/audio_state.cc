@@ -14,12 +14,12 @@
 #include <utility>
 #include <vector>
 
+#include "absl/memory/memory.h"
 #include "audio/audio_receive_stream.h"
 #include "modules/audio_device/include/audio_device.h"
 #include "rtc_base/atomicops.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {
@@ -27,9 +27,7 @@ namespace internal {
 
 AudioState::AudioState(const AudioState::Config& config)
     : config_(config),
-      audio_transport_(config_.audio_mixer,
-                       config_.audio_processing.get(),
-                       config_.audio_device_module.get()) {
+      audio_transport_(config_.audio_mixer, config_.audio_processing.get()) {
   process_thread_checker_.DetachFromThread();
   RTC_DCHECK(config_.audio_mixer);
   RTC_DCHECK(config_.audio_device_module);
@@ -51,8 +49,8 @@ void AudioState::AddReceivingStream(webrtc::AudioReceiveStream* stream) {
   RTC_DCHECK_EQ(0, receiving_streams_.count(stream));
   receiving_streams_.insert(stream);
   if (!config_.audio_mixer->AddSource(
-      static_cast<internal::AudioReceiveStream*>(stream))) {
-    RTC_LOG(LS_ERROR) << "Failed to add source to mixer.";
+          static_cast<internal::AudioReceiveStream*>(stream))) {
+    RTC_DLOG(LS_ERROR) << "Failed to add source to mixer.";
   }
 
   // Make sure playback is initialized; start playing if enabled.
@@ -80,7 +78,8 @@ void AudioState::RemoveReceivingStream(webrtc::AudioReceiveStream* stream) {
 }
 
 void AudioState::AddSendingStream(webrtc::AudioSendStream* stream,
-                                  int sample_rate_hz, size_t num_channels) {
+                                  int sample_rate_hz,
+                                  size_t num_channels) {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   auto& properties = sending_streams_[stream];
   properties.sample_rate_hz = sample_rate_hz;
@@ -123,7 +122,7 @@ void AudioState::SetPlayout(bool enabled) {
     } else {
       config_.audio_device_module->StopPlayout();
       null_audio_poller_ =
-          rtc::MakeUnique<NullAudioPoller>(&audio_transport_);
+          absl::make_unique<NullAudioPoller>(&audio_transport_);
     }
   }
 }
@@ -150,9 +149,6 @@ AudioState::Stats AudioState::GetAudioInputStats() const {
   result.audio_level = audio_level.LevelFullRange();
   RTC_DCHECK_LE(0, result.audio_level);
   RTC_DCHECK_GE(32767, result.audio_level);
-  result.quantized_audio_level = audio_level.Level();
-  RTC_DCHECK_LE(0, result.quantized_audio_level);
-  RTC_DCHECK_GE(9, result.quantized_audio_level);
   result.total_energy = audio_level.TotalEnergy();
   result.total_duration = audio_level.TotalDuration();
   return result;

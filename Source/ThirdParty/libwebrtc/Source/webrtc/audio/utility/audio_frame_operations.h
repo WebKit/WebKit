@@ -13,11 +13,9 @@
 
 #include <stddef.h>
 
-#include "typedefs.h"  // NOLINT(build/include)
+#include "api/audio/audio_frame.h"
 
 namespace webrtc {
-
-class AudioFrame;
 
 // TODO(andrew): consolidate this with utility.h and audio_frame_manipulator.h.
 // Change reference parameters to pointers. Consider using a namespace rather

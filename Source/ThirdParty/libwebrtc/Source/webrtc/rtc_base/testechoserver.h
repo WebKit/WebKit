@@ -40,7 +40,9 @@ class TestEchoServer : public sigslot::has_slots<> {
       client_sockets_.push_back(packet_socket);
     }
   }
-  void OnPacket(AsyncPacketSocket* socket, const char* buf, size_t size,
+  void OnPacket(AsyncPacketSocket* socket,
+                const char* buf,
+                size_t size,
                 const SocketAddress& remote_addr,
                 const PacketTime& packet_time) {
     rtc::PacketOptions options;

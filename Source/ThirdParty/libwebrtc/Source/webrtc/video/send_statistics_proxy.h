@@ -16,6 +16,8 @@
 #include <string>
 #include <vector>
 
+#include "api/video/video_stream_encoder_observer.h"
+#include "call/video_send_stream.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_coding_defines.h"
@@ -24,15 +26,12 @@
 #include "rtc_base/ratetracker.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
-#include "video/overuse_frame_detector.h"
 #include "video/report_block_stats.h"
 #include "video/stats_counter.h"
-#include "video/video_stream_encoder.h"
-#include "call/video_send_stream.h"
 
 namespace webrtc {
 
-class SendStatisticsProxy : public CpuOveruseMetricsObserver,
+class SendStatisticsProxy : public VideoStreamEncoderObserver,
                             public RtcpStatisticsCallback,
                             public RtcpPacketTypeCounterObserver,
                             public StreamDataCountersCallback,
@@ -48,50 +47,42 @@ class SendStatisticsProxy : public CpuOveruseMetricsObserver,
   SendStatisticsProxy(Clock* clock,
                       const VideoSendStream::Config& config,
                       VideoEncoderConfig::ContentType content_type);
-  virtual ~SendStatisticsProxy();
+  ~SendStatisticsProxy() override;
 
   virtual VideoSendStream::Stats GetStats();
 
-  virtual void OnSendEncodedImage(const EncodedImage& encoded_image,
-                                  const CodecSpecificInfo* codec_info);
+  void OnSendEncodedImage(const EncodedImage& encoded_image,
+                          const CodecSpecificInfo* codec_info) override;
   // Used to update incoming frame rate.
-  void OnIncomingFrame(int width, int height);
+  void OnIncomingFrame(int width, int height) override;
 
   // Dropped frame stats.
-  void OnFrameDroppedBySource();
-  void OnFrameDroppedInEncoderQueue();
-  void OnFrameDroppedByEncoder();
-  void OnFrameDroppedByMediaOptimizations();
+  void OnFrameDropped(DropReason) override;
 
   // Adaptation stats.
-  void SetAdaptationStats(
-      const VideoStreamEncoder::AdaptCounts& cpu_counts,
-      const VideoStreamEncoder::AdaptCounts& quality_counts);
-  void OnCpuAdaptationChanged(
-      const VideoStreamEncoder::AdaptCounts& cpu_counts,
-      const VideoStreamEncoder::AdaptCounts& quality_counts);
-  void OnQualityAdaptationChanged(
-      const VideoStreamEncoder::AdaptCounts& cpu_counts,
-      const VideoStreamEncoder::AdaptCounts& quality_counts);
-  void OnMinPixelLimitReached();
-  void OnInitialQualityResolutionAdaptDown();
+  void OnAdaptationChanged(AdaptationReason reason,
+                           const AdaptationSteps& cpu_counts,
+                           const AdaptationSteps& quality_counts) override;
 
-  void OnSuspendChange(bool is_suspended);
+  void OnMinPixelLimitReached() override;
+  void OnInitialQualityResolutionAdaptDown() override;
+
+  void OnSuspendChange(bool is_suspended) override;
   void OnInactiveSsrc(uint32_t ssrc);
 
   // Used to indicate change in content type, which may require a change in
-  // how stats are collected and set the configured preferred media bitrate.
+  // how stats are collected.
   void OnEncoderReconfigured(const VideoEncoderConfig& encoder_config,
-                             const std::vector<VideoStream>& streams,
-                             uint32_t preferred_bitrate_bps);
+                             const std::vector<VideoStream>& streams) override;
 
   // Used to update the encoder target rate.
   void OnSetEncoderTargetRate(uint32_t bitrate_bps);
 
   // Implements CpuOveruseMetricsObserver.
   void OnEncodedFrameTimeMeasured(int encode_time_ms,
-                                  const CpuOveruseMetrics& metrics) override;
+                                  int encode_usage_percent) override;
 
+  int GetInputFrameRate() const override;
   int GetSendFrameRate() const;
 
  protected:
@@ -159,11 +150,12 @@ class SendStatisticsProxy : public CpuOveruseMetricsObserver,
     int64_t last_ms;
   };
   struct FallbackEncoderInfo {
+    FallbackEncoderInfo() = default;
     bool is_possible = true;
     bool is_active = false;
     int on_off_events = 0;
     int64_t elapsed_ms = 0;
-    rtc::Optional<int64_t> last_update_ms;
+    absl::optional<int64_t> last_update_ms;
     const int max_frame_diff_ms = 2000;
   };
   struct FallbackEncoderInfoDisabled {
@@ -216,14 +208,13 @@ class SendStatisticsProxy : public CpuOveruseMetricsObserver,
   VideoSendStream::StreamStats* GetStatsEntry(uint32_t ssrc)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
-  void SetAdaptTimer(const VideoStreamEncoder::AdaptCounts& counts,
-                     StatsTimer* timer) RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
-  void UpdateAdaptationStats(
-      const VideoStreamEncoder::AdaptCounts& cpu_counts,
-      const VideoStreamEncoder::AdaptCounts& quality_counts)
+  void SetAdaptTimer(const AdaptationSteps& counts, StatsTimer* timer)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+  void UpdateAdaptationStats(const AdaptationSteps& cpu_counts,
+                             const AdaptationSteps& quality_counts)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
   void TryUpdateInitialQualityResolutionAdaptUp(
-      const VideoStreamEncoder::AdaptCounts& quality_counts)
+      const AdaptationSteps& quality_counts)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   void UpdateEncoderFallbackStats(const CodecSpecificInfo* codec_info,
@@ -235,9 +226,9 @@ class SendStatisticsProxy : public CpuOveruseMetricsObserver,
 
   Clock* const clock_;
   const std::string payload_name_;
-  const VideoSendStream::Config::Rtp rtp_config_;
-  const rtc::Optional<int> fallback_max_pixels_;
-  const rtc::Optional<int> fallback_max_pixels_disabled_;
+  const RtpConfig rtp_config_;
+  const absl::optional<int> fallback_max_pixels_;
+  const absl::optional<int> fallback_max_pixels_disabled_;
   rtc::CriticalSection crit_;
   VideoEncoderConfig::ContentType content_type_ RTC_GUARDED_BY(crit_);
   const int64_t start_ms_;
@@ -249,6 +240,8 @@ class SendStatisticsProxy : public CpuOveruseMetricsObserver,
   rtc::RateTracker media_byte_rate_tracker_ RTC_GUARDED_BY(crit_);
   rtc::RateTracker encoded_frame_rate_tracker_ RTC_GUARDED_BY(crit_);
 
+  absl::optional<int64_t> last_outlier_timestamp_ RTC_GUARDED_BY(crit_);
+
   // Contains stats used for UMA histograms. These stats will be reset if
   // content type changes between real-time video and screenshare, since these
   // will be reported separately.
@@ -258,7 +251,7 @@ class SendStatisticsProxy : public CpuOveruseMetricsObserver,
                         Clock* clock);
     ~UmaSamplesContainer();
 
-    void UpdateHistograms(const VideoSendStream::Config::Rtp& rtp_config,
+    void UpdateHistograms(const RtpConfig& rtp_config,
                           const VideoSendStream::Stats& current_stats);
 
     void InitializeBitrateCounters(const VideoSendStream::Stats& stats);

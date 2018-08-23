@@ -22,13 +22,11 @@ scoped_refptr<RTCCertificate> RTCCertificate::Create(
   return new RefCountedObject<RTCCertificate>(identity.release());
 }
 
-RTCCertificate::RTCCertificate(SSLIdentity* identity)
-    : identity_(identity) {
+RTCCertificate::RTCCertificate(SSLIdentity* identity) : identity_(identity) {
   RTC_DCHECK(identity_);
 }
 
-RTCCertificate::~RTCCertificate() {
-}
+RTCCertificate::~RTCCertificate() {}
 
 uint64_t RTCCertificate::Expires() const {
   int64_t expires = ssl_certificate().CertificateExpirationTime();
@@ -46,6 +44,10 @@ const SSLCertificate& RTCCertificate::ssl_certificate() const {
   return identity_->certificate();
 }
 
+const SSLCertChain& RTCCertificate::ssl_cert_chain() const {
+  return identity_->cert_chain();
+}
+
 RTCCertificatePEM RTCCertificate::ToPEM() const {
   return RTCCertificatePEM(identity_->PrivateKeyToPEMString(),
                            ssl_certificate().ToPEMString());
@@ -53,8 +55,8 @@ RTCCertificatePEM RTCCertificate::ToPEM() const {
 
 scoped_refptr<RTCCertificate> RTCCertificate::FromPEM(
     const RTCCertificatePEM& pem) {
-  std::unique_ptr<SSLIdentity> identity(SSLIdentity::FromPEMStrings(
-      pem.private_key(), pem.certificate()));
+  std::unique_ptr<SSLIdentity> identity(
+      SSLIdentity::FromPEMStrings(pem.private_key(), pem.certificate()));
   if (!identity)
     return nullptr;
   return new RefCountedObject<RTCCertificate>(identity.release());

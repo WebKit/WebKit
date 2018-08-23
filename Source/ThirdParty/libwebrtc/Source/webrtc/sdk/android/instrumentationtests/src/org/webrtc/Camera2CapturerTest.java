@@ -27,6 +27,7 @@ import android.support.test.filters.MediumTest;
 import android.support.test.filters.SmallTest;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
+import javax.annotation.Nullable;
 import org.chromium.base.test.BaseJUnit4ClassRunner;
 import org.junit.After;
 import org.junit.Before;
@@ -46,7 +47,7 @@ public class Camera2CapturerTest {
     final LooperThread looperThread;
     final CountDownLatch openDoneSignal;
     final Object cameraDeviceLock;
-    CameraDevice cameraDevice; // Guarded by cameraDeviceLock
+    @Nullable CameraDevice cameraDevice; // Guarded by cameraDeviceLock
     boolean openSucceeded; // Guarded by cameraDeviceLock
 
     private class LooperThread extends Thread {
@@ -243,12 +244,6 @@ public class Camera2CapturerTest {
   @MediumTest
   public void testCameraEvents() throws InterruptedException {
     fixtures.cameraEventsInvoked();
-  }
-
-  @Test
-  @MediumTest
-  public void testUpdateMediaRecorder() throws InterruptedException, IOException {
-    fixtures.updateMediaRecorder(true /* useSurfaceCapture */);
   }
 
   // Test what happens when attempting to call e.g. switchCamera() after camera has been stopped.

@@ -11,7 +11,7 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_FILTERBANK_INTERNAL_H_
 #define MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_FILTERBANK_INTERNAL_H_
 
-#include "typedefs.h"  // NOLINT(build/include)
+#include <stdint.h>
 
 #if defined(__cplusplus) || defined(c_plusplus)
 extern "C" {
@@ -42,44 +42,41 @@ void WebRtcIsacfix_HighpassFilterFixDec32MIPS(int16_t* io,
 #endif
 
 typedef void (*AllpassFilter2FixDec16)(
-    int16_t *data_ch1,           // Input and output in channel 1, in Q0
-    int16_t *data_ch2,           // Input and output in channel 2, in Q0
-    const int16_t *factor_ch1,   // Scaling factor for channel 1, in Q15
-    const int16_t *factor_ch2,   // Scaling factor for channel 2, in Q15
+    int16_t* data_ch1,           // Input and output in channel 1, in Q0
+    int16_t* data_ch2,           // Input and output in channel 2, in Q0
+    const int16_t* factor_ch1,   // Scaling factor for channel 1, in Q15
+    const int16_t* factor_ch2,   // Scaling factor for channel 2, in Q15
     const int length,            // Length of the data buffers
-    int32_t *filter_state_ch1,   // Filter state for channel 1, in Q16
-    int32_t *filter_state_ch2);  // Filter state for channel 2, in Q16
+    int32_t* filter_state_ch1,   // Filter state for channel 1, in Q16
+    int32_t* filter_state_ch2);  // Filter state for channel 2, in Q16
 extern AllpassFilter2FixDec16 WebRtcIsacfix_AllpassFilter2FixDec16;
 
-void WebRtcIsacfix_AllpassFilter2FixDec16C(
-   int16_t *data_ch1,
-   int16_t *data_ch2,
-   const int16_t *factor_ch1,
-   const int16_t *factor_ch2,
-   const int length,
-   int32_t *filter_state_ch1,
-   int32_t *filter_state_ch2);
+void WebRtcIsacfix_AllpassFilter2FixDec16C(int16_t* data_ch1,
+                                           int16_t* data_ch2,
+                                           const int16_t* factor_ch1,
+                                           const int16_t* factor_ch2,
+                                           const int length,
+                                           int32_t* filter_state_ch1,
+                                           int32_t* filter_state_ch2);
 
 #if defined(WEBRTC_HAS_NEON)
-void WebRtcIsacfix_AllpassFilter2FixDec16Neon(
-   int16_t *data_ch1,
-   int16_t *data_ch2,
-   const int16_t *factor_ch1,
-   const int16_t *factor_ch2,
-   const int length,
-   int32_t *filter_state_ch1,
-   int32_t *filter_state_ch2);
+void WebRtcIsacfix_AllpassFilter2FixDec16Neon(int16_t* data_ch1,
+                                              int16_t* data_ch2,
+                                              const int16_t* factor_ch1,
+                                              const int16_t* factor_ch2,
+                                              const int length,
+                                              int32_t* filter_state_ch1,
+                                              int32_t* filter_state_ch2);
 #endif
 
 #if defined(MIPS_DSP_R1_LE)
-void WebRtcIsacfix_AllpassFilter2FixDec16MIPS(
-   int16_t *data_ch1,
-   int16_t *data_ch2,
-   const int16_t *factor_ch1,
-   const int16_t *factor_ch2,
-   const int length,
-   int32_t *filter_state_ch1,
-   int32_t *filter_state_ch2);
+void WebRtcIsacfix_AllpassFilter2FixDec16MIPS(int16_t* data_ch1,
+                                              int16_t* data_ch2,
+                                              const int16_t* factor_ch1,
+                                              const int16_t* factor_ch2,
+                                              const int length,
+                                              int32_t* filter_state_ch1,
+                                              int32_t* filter_state_ch2);
 #endif
 
 #if defined(__cplusplus) || defined(c_plusplus)

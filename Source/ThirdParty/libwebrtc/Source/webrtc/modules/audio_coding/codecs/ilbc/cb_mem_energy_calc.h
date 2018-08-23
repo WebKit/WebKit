@@ -20,14 +20,14 @@
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_CB_MEM_ENERGY_CALC_H_
 
 void WebRtcIlbcfix_CbMemEnergyCalc(
-    int32_t energy,   /* (i) input start energy */
-    size_t range,   /* (i) number of iterations */
-    int16_t *ppi,   /* (i) input pointer 1 */
-    int16_t *ppo,   /* (i) input pointer 2 */
-    int16_t *energyW16,  /* (o) Energy in the CB vectors */
-    int16_t *energyShifts, /* (o) Shift value of the energy */
-    int scale,   /* (i) The scaling of all energy values */
-    size_t base_size  /* (i) Index to where energy values should be stored */
-                                   );
+    int32_t energy,        /* (i) input start energy */
+    size_t range,          /* (i) number of iterations */
+    int16_t* ppi,          /* (i) input pointer 1 */
+    int16_t* ppo,          /* (i) input pointer 2 */
+    int16_t* energyW16,    /* (o) Energy in the CB vectors */
+    int16_t* energyShifts, /* (o) Shift value of the energy */
+    int scale,             /* (i) The scaling of all energy values */
+    size_t base_size /* (i) Index to where energy values should be stored */
+    );
 
 #endif

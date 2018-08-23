@@ -15,8 +15,6 @@
 
 #include <algorithm>
 
-#include "modules/include/module_common_types.h"
-
 namespace webrtc {
 
 void Rtcp::Init(uint16_t start_sequence_number) {

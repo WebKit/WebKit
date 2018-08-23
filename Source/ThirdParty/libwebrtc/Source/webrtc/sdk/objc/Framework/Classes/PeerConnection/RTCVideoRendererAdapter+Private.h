@@ -30,8 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
  * to this interface will be adapted and passed to the RTCVideoRenderer supplied
  * during construction. This pointer is unsafe and owned by this class.
  */
-@property(nonatomic, readonly)
-    rtc::VideoSinkInterface<webrtc::VideoFrame> *nativeVideoRenderer;
+@property(nonatomic, readonly) rtc::VideoSinkInterface<webrtc::VideoFrame> *nativeVideoRenderer;
 
 /** Initialize an RTCVideoRendererAdapter with an RTCVideoRenderer. */
 - (instancetype)initWithNativeRenderer:(id<RTCVideoRenderer>)videoRenderer

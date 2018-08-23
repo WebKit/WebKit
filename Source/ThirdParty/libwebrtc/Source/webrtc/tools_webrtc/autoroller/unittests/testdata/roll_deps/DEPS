@@ -1,0 +1,37 @@
+# DEPS file for unit tests.
+
+vars = {
+  'chromium_git': 'https://chromium.googlesource.com',
+  'chromium_revision': '1b9c098a08e40114e44b6c1ec33ddf95c40b901d',
+}
+
+deps = {
+  # Entry that is a directory in Chromium, so we're using a Git subtree mirror for it.
+  'src/build':
+    Var('chromium_git') + '/chromium/src/build' + '@' + '52f7afeca991d96d68cf0507e20dbdd5b845691f',
+
+  # Entry that's also a DEPS entry in the Chromium DEPS file.
+  'src/buildtools':
+    Var('chromium_git') + '/chromium/buildtools.git' + '@' + '64e38f0cebdde27aa0cfb405f330063582f9ac76',
+
+  # Entry that's also a CIPD entry in the Chromium DEPS file.
+  'src/third_party/xstream': {
+      'packages': [
+          {
+              'package': 'chromium/third_party/xstream',
+              'version': 'version:1.4.8-cr0',
+          },
+      ],
+      'condition': 'checkout_android',
+      'dep_type': 'cipd',
+  },
+}
+
+deps_os = {
+  # Entry only present in WebRTC, not Chromium.
+  'android': {
+    'src/examples/androidtests/third_party/gradle':
+      Var('chromium_git') + '/external/github.com/gradle/gradle.git' + '@' +
+        '89af43c4d0506f69980f00dde78c97b2f81437f8',
+  },
+}

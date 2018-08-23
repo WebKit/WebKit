@@ -51,8 +51,8 @@ bool InterArrival::ComputeDeltas(uint32_t timestamp,
   } else if (NewTimestampGroup(arrival_time_ms, timestamp)) {
     // First packet of a later frame, the previous frame sample is ready.
     if (prev_timestamp_group_.complete_time_ms >= 0) {
-      *timestamp_delta = current_timestamp_group_.timestamp -
-                         prev_timestamp_group_.timestamp;
+      *timestamp_delta =
+          current_timestamp_group_.timestamp - prev_timestamp_group_.timestamp;
       *arrival_time_delta_ms = current_timestamp_group_.complete_time_ms -
                                prev_timestamp_group_.complete_time_ms;
       // Check system time differences to see if we have an unproportional jump
@@ -86,7 +86,7 @@ bool InterArrival::ComputeDeltas(uint32_t timestamp,
       }
       assert(*arrival_time_delta_ms >= 0);
       *packet_size_delta = static_cast<int>(current_timestamp_group_.size) -
-          static_cast<int>(prev_timestamp_group_.size);
+                           static_cast<int>(prev_timestamp_group_.size);
       calculated_deltas = true;
     }
     prev_timestamp_group_ = current_timestamp_group_;
@@ -95,8 +95,8 @@ bool InterArrival::ComputeDeltas(uint32_t timestamp,
     current_timestamp_group_.timestamp = timestamp;
     current_timestamp_group_.size = 0;
   } else {
-    current_timestamp_group_.timestamp = LatestTimestamp(
-        current_timestamp_group_.timestamp, timestamp);
+    current_timestamp_group_.timestamp =
+        LatestTimestamp(current_timestamp_group_.timestamp, timestamp);
   }
   // Accumulate the frame size.
   current_timestamp_group_.size += packet_size;
@@ -113,8 +113,8 @@ bool InterArrival::PacketInOrder(uint32_t timestamp) {
     // Assume that a diff which is bigger than half the timestamp interval
     // (32 bits) must be due to reordering. This code is almost identical to
     // that in IsNewerTimestamp() in module_common_types.h.
-    uint32_t timestamp_diff = timestamp -
-        current_timestamp_group_.first_timestamp;
+    uint32_t timestamp_diff =
+        timestamp - current_timestamp_group_.first_timestamp;
     return timestamp_diff < 0x80000000;
   }
 }
@@ -128,8 +128,8 @@ bool InterArrival::NewTimestampGroup(int64_t arrival_time_ms,
   } else if (BelongsToBurst(arrival_time_ms, timestamp)) {
     return false;
   } else {
-    uint32_t timestamp_diff = timestamp -
-        current_timestamp_group_.first_timestamp;
+    uint32_t timestamp_diff =
+        timestamp - current_timestamp_group_.first_timestamp;
     return timestamp_diff > kTimestampGroupLengthTicks;
   }
 }
@@ -140,15 +140,15 @@ bool InterArrival::BelongsToBurst(int64_t arrival_time_ms,
     return false;
   }
   assert(current_timestamp_group_.complete_time_ms >= 0);
-  int64_t arrival_time_delta_ms = arrival_time_ms -
-      current_timestamp_group_.complete_time_ms;
+  int64_t arrival_time_delta_ms =
+      arrival_time_ms - current_timestamp_group_.complete_time_ms;
   uint32_t timestamp_diff = timestamp - current_timestamp_group_.timestamp;
   int64_t ts_delta_ms = timestamp_to_ms_coeff_ * timestamp_diff + 0.5;
   if (ts_delta_ms == 0)
     return true;
   int propagation_delta_ms = arrival_time_delta_ms - ts_delta_ms;
   return propagation_delta_ms < 0 &&
-      arrival_time_delta_ms <= kBurstDeltaThresholdMs;
+         arrival_time_delta_ms <= kBurstDeltaThresholdMs;
 }
 
 void InterArrival::Reset() {

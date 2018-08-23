@@ -20,10 +20,14 @@
 
 // Define command line flags.
 DEFINE_int(red, 117, "RTP payload type for RED");
-DEFINE_int(audio_level, -1, "Extension ID for audio level (RFC 6464); "
-                            "-1 not to print audio level");
-DEFINE_int(abs_send_time, -1, "Extension ID for absolute sender time; "
-                             "-1 not to print absolute send time");
+DEFINE_int(audio_level,
+           -1,
+           "Extension ID for audio level (RFC 6464); "
+           "-1 not to print audio level");
+DEFINE_int(abs_send_time,
+           -1,
+           "Extension ID for absolute sender time; "
+           "-1 not to print absolute send time");
 DEFINE_bool(help, false, "Print this message");
 
 int main(int argc, char* argv[]) {
@@ -37,8 +41,8 @@ int main(int argc, char* argv[]) {
       program_name + " input.rtp output.txt\n\n" +
       "Output is sent to stdout if no output file is given. " +
       "Note that this tool can read files with or without payloads.\n";
-  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) ||
-      FLAG_help || (argc != 2 && argc != 3)) {
+  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) || FLAG_help ||
+      (argc != 2 && argc != 3)) {
     printf("%s", usage.c_str());
     if (FLAG_help) {
       rtc::FlagList::Print(nullptr, false);
@@ -47,10 +51,11 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  RTC_CHECK(FLAG_red >= 0 && FLAG_red <= 127);  // Payload type
-  RTC_CHECK(FLAG_audio_level == -1 ||  // Default
-      (FLAG_audio_level > 0 && FLAG_audio_level <= 255));  // Extension ID
-  RTC_CHECK(FLAG_abs_send_time == -1 ||  // Default
+  RTC_CHECK(FLAG_red >= 0 && FLAG_red <= 127);                   // Payload type
+  RTC_CHECK(FLAG_audio_level == -1 ||                            // Default
+            (FLAG_audio_level > 0 && FLAG_audio_level <= 255));  // Extension ID
+  RTC_CHECK(
+      FLAG_abs_send_time == -1 ||                              // Default
       (FLAG_abs_send_time > 0 && FLAG_abs_send_time <= 255));  // Extension ID
 
   printf("Input file: %s\n", argv[1]);
@@ -104,19 +109,14 @@ int main(int argc, char* argv[]) {
     }
     // Write packet data to file. Use virtual_packet_length_bytes so that the
     // correct packet sizes are printed also for RTP header-only dumps.
-    fprintf(out_file,
-            "%5u %10u %10u %5i %5i %2i %#08X",
-            packet->header().sequenceNumber,
-            packet->header().timestamp,
+    fprintf(out_file, "%5u %10u %10u %5i %5i %2i %#08X",
+            packet->header().sequenceNumber, packet->header().timestamp,
             static_cast<unsigned int>(packet->time_ms()),
             static_cast<int>(packet->virtual_packet_length_bytes()),
-            packet->header().payloadType,
-            packet->header().markerBit,
+            packet->header().payloadType, packet->header().markerBit,
             packet->header().ssrc);
     if (print_audio_level && packet->header().extension.hasAudioLevel) {
-      fprintf(out_file,
-              " %5u (%1i)",
-              packet->header().extension.audioLevel,
+      fprintf(out_file, " %5u (%1i)", packet->header().extension.audioLevel,
               packet->header().extension.voiceActivity);
     }
     if (print_abs_send_time && packet->header().extension.hasAbsoluteSendTime) {
@@ -156,11 +156,8 @@ int main(int argc, char* argv[]) {
       while (!red_headers.empty()) {
         webrtc::RTPHeader* red = red_headers.front();
         assert(red);
-        fprintf(out_file,
-                "* %5u %10u %10u %5i\n",
-                red->sequenceNumber,
-                red->timestamp,
-                static_cast<unsigned int>(packet->time_ms()),
+        fprintf(out_file, "* %5u %10u %10u %5i\n", red->sequenceNumber,
+                red->timestamp, static_cast<unsigned int>(packet->time_ms()),
                 red->payloadType);
         red_headers.pop_front();
         delete red;

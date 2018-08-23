@@ -16,10 +16,11 @@
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/audio/audio_frame.h"
+#include "modules/audio_processing/include/audio_frame_view.h"
+#include "modules/audio_processing/include/audio_processing.h"
 
 namespace webrtc {
-
-class AudioFrame;
 
 // Struct for passing current config from APM without having to
 // include protobuf headers.
@@ -50,50 +51,9 @@ struct InternalAPMConfig {
   bool transient_suppression_enabled = false;
   bool intelligibility_enhancer_enabled = false;
   bool noise_robust_agc_enabled = false;
+  bool pre_amplifier_enabled = false;
+  float pre_amplifier_fixed_gain_factor = 1.f;
   std::string experiments_description = "";
-};
-
-struct InternalAPMStreamsConfig {
-  int input_sample_rate = 0;
-  int output_sample_rate = 0;
-  int render_input_sample_rate = 0;
-  int render_output_sample_rate = 0;
-
-  size_t input_num_channels = 0;
-  size_t output_num_channels = 0;
-  size_t render_input_num_channels = 0;
-  size_t render_output_num_channels = 0;
-};
-
-// Class to pass audio data in float** format. This is to avoid
-// dependence on AudioBuffer, and avoid problems associated with
-// rtc::ArrayView<rtc::ArrayView>.
-class FloatAudioFrame {
- public:
-  // |num_channels| and |channel_size| describe the float**
-  // |audio_samples|. |audio_samples| is assumed to point to a
-  // two-dimensional |num_channels * channel_size| array of floats.
-  FloatAudioFrame(const float* const* audio_samples,
-                  size_t num_channels,
-                  size_t channel_size)
-      : audio_samples_(audio_samples),
-        num_channels_(num_channels),
-        channel_size_(channel_size) {}
-
-  FloatAudioFrame() = delete;
-
-  size_t num_channels() const { return num_channels_; }
-
-  rtc::ArrayView<const float> channel(size_t idx) const {
-    RTC_DCHECK_LE(0, idx);
-    RTC_DCHECK_LE(idx, num_channels_);
-    return rtc::ArrayView<const float>(audio_samples_[idx], channel_size_);
-  }
-
- private:
-  const float* const* audio_samples_;
-  size_t num_channels_;
-  size_t channel_size_;
 };
 
 // An interface for recording configuration and input/output streams
@@ -116,14 +76,19 @@ class AecDump {
   virtual ~AecDump() = default;
 
   // Logs Event::Type INIT message.
-  virtual void WriteInitMessage(
-      const InternalAPMStreamsConfig& streams_config) = 0;
+  virtual void WriteInitMessage(const ProcessingConfig& api_format,
+                                int64_t time_now_ms) = 0;
+  RTC_DEPRECATED void WriteInitMessage(const ProcessingConfig& api_format) {
+    WriteInitMessage(api_format, 0);
+  }
 
   // Logs Event::Type STREAM message. To log an input/output pair,
   // call the AddCapture* and AddAudioProcessingState methods followed
   // by a WriteCaptureStreamMessage call.
-  virtual void AddCaptureStreamInput(const FloatAudioFrame& src) = 0;
-  virtual void AddCaptureStreamOutput(const FloatAudioFrame& src) = 0;
+  virtual void AddCaptureStreamInput(
+      const AudioFrameView<const float>& src) = 0;
+  virtual void AddCaptureStreamOutput(
+      const AudioFrameView<const float>& src) = 0;
   virtual void AddCaptureStreamInput(const AudioFrame& frame) = 0;
   virtual void AddCaptureStreamOutput(const AudioFrame& frame) = 0;
   virtual void AddAudioProcessingState(const AudioProcessingState& state) = 0;
@@ -131,7 +96,8 @@ class AecDump {
 
   // Logs Event::Type REVERSE_STREAM message.
   virtual void WriteRenderStreamMessage(const AudioFrame& frame) = 0;
-  virtual void WriteRenderStreamMessage(const FloatAudioFrame& src) = 0;
+  virtual void WriteRenderStreamMessage(
+      const AudioFrameView<const float>& src) = 0;
 
   // Logs Event::Type CONFIG message.
   virtual void WriteConfig(const InternalAPMConfig& config) = 0;

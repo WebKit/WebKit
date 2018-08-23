@@ -12,11 +12,11 @@
 
 #include <memory>
 
+#include "absl/memory/memory.h"
 #include "p2p/base/port.h"
 #include "pc/mediasession.h"
 #include "pc/webrtcsdp.h"
 #include "rtc_base/arraysize.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/stringencode.h"
 
 using cricket::SessionDescription;
@@ -112,7 +112,7 @@ const char* SdpTypeToString(SdpType type) {
   return "";
 }
 
-rtc::Optional<SdpType> SdpTypeFromString(const std::string& type_str) {
+absl::optional<SdpType> SdpTypeFromString(const std::string& type_str) {
   if (type_str == SessionDescriptionInterface::kOffer) {
     return SdpType::kOffer;
   } else if (type_str == SessionDescriptionInterface::kPrAnswer) {
@@ -120,14 +120,14 @@ rtc::Optional<SdpType> SdpTypeFromString(const std::string& type_str) {
   } else if (type_str == SessionDescriptionInterface::kAnswer) {
     return SdpType::kAnswer;
   } else {
-    return rtc::nullopt;
+    return absl::nullopt;
   }
 }
 
 // TODO(steveanton): Remove this default implementation once Chromium has been
 // updated.
 SdpType SessionDescriptionInterface::GetType() const {
-  rtc::Optional<SdpType> maybe_type = SdpTypeFromString(type());
+  absl::optional<SdpType> maybe_type = SdpTypeFromString(type());
   if (maybe_type) {
     return *maybe_type;
   } else {
@@ -142,7 +142,7 @@ SdpType SessionDescriptionInterface::GetType() const {
 SessionDescriptionInterface* CreateSessionDescription(const std::string& type,
                                                       const std::string& sdp,
                                                       SdpParseError* error) {
-  rtc::Optional<SdpType> maybe_type = SdpTypeFromString(type);
+  absl::optional<SdpType> maybe_type = SdpTypeFromString(type);
   if (!maybe_type) {
     return nullptr;
   }
@@ -160,17 +160,29 @@ std::unique_ptr<SessionDescriptionInterface> CreateSessionDescription(
     SdpType type,
     const std::string& sdp,
     SdpParseError* error_out) {
-  auto jsep_desc = rtc::MakeUnique<JsepSessionDescription>(type);
+  auto jsep_desc = absl::make_unique<JsepSessionDescription>(type);
   if (!SdpDeserialize(sdp, jsep_desc.get(), error_out)) {
     return nullptr;
   }
   return std::move(jsep_desc);
 }
 
+std::unique_ptr<SessionDescriptionInterface> CreateSessionDescription(
+    SdpType type,
+    const std::string& session_id,
+    const std::string& session_version,
+    std::unique_ptr<cricket::SessionDescription> description) {
+  auto jsep_description = absl::make_unique<JsepSessionDescription>(type);
+  bool initialize_success = jsep_description->Initialize(
+      description.release(), session_id, session_version);
+  RTC_DCHECK(initialize_success);
+  return std::move(jsep_description);
+}
+
 JsepSessionDescription::JsepSessionDescription(SdpType type) : type_(type) {}
 
 JsepSessionDescription::JsepSessionDescription(const std::string& type) {
-  rtc::Optional<SdpType> maybe_type = SdpTypeFromString(type);
+  absl::optional<SdpType> maybe_type = SdpTypeFromString(type);
   if (maybe_type) {
     type_ = *maybe_type;
   } else {
@@ -273,7 +285,7 @@ bool JsepSessionDescription::ToString(std::string* out) const {
   if (!description_ || !out) {
     return false;
   }
-  *out = SdpSerialize(*this, false);
+  *out = SdpSerialize(*this);
   return !out->empty();
 }
 

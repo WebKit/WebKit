@@ -12,11 +12,11 @@
 #define COMMON_AUDIO_INCLUDE_AUDIO_UTIL_H_
 
 #include <algorithm>
-#include <limits>
+#include <cmath>
 #include <cstring>
+#include <limits>
 
 #include "rtc_base/checks.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -26,6 +26,10 @@ typedef std::numeric_limits<int16_t> limits_int16;
 // S16:      int16_t [-32768, 32767]
 // Float:    float   [-1.0, 1.0]
 // FloatS16: float   [-32768.0, 32767.0]
+// Dbfs: float [-20.0*log(10, 32768), 0] = [-90.3, 0]
+// The ratio conversion functions use this naming convention:
+// Ratio: float (0, +inf)
+// Db: float (-inf, +inf)
 static inline int16_t FloatToS16(float v) {
   if (v > 0)
     return v >= 1 ? limits_int16::max()
@@ -64,6 +68,27 @@ void S16ToFloat(const int16_t* src, size_t size, float* dest);
 void FloatS16ToS16(const float* src, size_t size, int16_t* dest);
 void FloatToFloatS16(const float* src, size_t size, float* dest);
 void FloatS16ToFloat(const float* src, size_t size, float* dest);
+
+inline float DbToRatio(float v) {
+  return std::pow(10.0f, v / 20.0f);
+}
+
+inline float DbfsToFloatS16(float v) {
+  static constexpr float kMaximumAbsFloatS16 = -limits_int16::min();
+  return DbToRatio(v) * kMaximumAbsFloatS16;
+}
+
+inline float FloatS16ToDbfs(float v) {
+  RTC_DCHECK_GE(v, 0);
+
+  // kMinDbfs is equal to -20.0 * log10(-limits_int16::min())
+  static constexpr float kMinDbfs = -90.30899869919436f;
+  if (v <= 1.0f) {
+    return kMinDbfs;
+  }
+  // Equal to 20 * log10(v / (-limits_int16::min()))
+  return 20.0f * std::log10(v) + kMinDbfs;
+}
 
 // Copy audio from |src| channels to |dest| channels unless |src| and |dest|
 // point to the same address. |src| and |dest| must have the same number of

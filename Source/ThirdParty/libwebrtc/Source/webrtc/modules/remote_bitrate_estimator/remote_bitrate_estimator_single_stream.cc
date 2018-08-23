@@ -19,7 +19,6 @@
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/metrics.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -76,8 +75,8 @@ void RemoteBitrateEstimatorSingleStream::IncomingPacket(
     uma_recorded_ = true;
   }
   uint32_t ssrc = header.ssrc;
-  uint32_t rtp_timestamp = header.timestamp +
-      header.extension.transmissionTimeOffset;
+  uint32_t rtp_timestamp =
+      header.timestamp + header.extension.transmissionTimeOffset;
   int64_t now_ms = clock_->TimeInMilliseconds();
   rtc::CritScope cs(&crit_sect_);
   SsrcOveruseEstimatorMap::iterator it = overuse_detectors_.find(ssrc);
@@ -97,7 +96,7 @@ void RemoteBitrateEstimatorSingleStream::IncomingPacket(
   estimator->last_packet_time_ms = now_ms;
 
   // Check if incoming bitrate estimate is valid, and if it needs to be reset.
-  rtc::Optional<uint32_t> incoming_bitrate = incoming_bitrate_.Rate(now_ms);
+  absl::optional<uint32_t> incoming_bitrate = incoming_bitrate_.Rate(now_ms);
   if (incoming_bitrate) {
     last_valid_incoming_bitrate_ = *incoming_bitrate;
   } else if (last_valid_incoming_bitrate_ > 0) {
@@ -124,7 +123,7 @@ void RemoteBitrateEstimatorSingleStream::IncomingPacket(
                                estimator->estimator.num_of_deltas(), now_ms);
   }
   if (estimator->detector.State() == BandwidthUsage::kBwOverusing) {
-    rtc::Optional<uint32_t> incoming_bitrate_bps =
+    absl::optional<uint32_t> incoming_bitrate_bps =
         incoming_bitrate_.Rate(now_ms);
     if (incoming_bitrate_bps &&
         (prior_state != BandwidthUsage::kBwOverusing ||
@@ -152,12 +151,11 @@ int64_t RemoteBitrateEstimatorSingleStream::TimeUntilNextProcess() {
   rtc::CritScope cs_(&crit_sect_);
   RTC_DCHECK_GT(process_interval_ms_, 0);
   return last_process_time_ + process_interval_ms_ -
-      clock_->TimeInMilliseconds();
+         clock_->TimeInMilliseconds();
 }
 
 void RemoteBitrateEstimatorSingleStream::UpdateEstimate(int64_t now_ms) {
   BandwidthUsage bw_state = BandwidthUsage::kBwNormal;
-  double sum_var_noise = 0.0;
   SsrcOveruseEstimatorMap::iterator it = overuse_detectors_.begin();
   while (it != overuse_detectors_.end()) {
     const int64_t time_of_last_received_packet =
@@ -169,7 +167,6 @@ void RemoteBitrateEstimatorSingleStream::UpdateEstimate(int64_t now_ms) {
       delete it->second;
       overuse_detectors_.erase(it++);
     } else {
-      sum_var_noise += it->second->estimator.var_noise();
       // Make sure that we trigger an over-use if any of the over-use detectors
       // is detecting over-use.
       if (it->second->detector.State() > bw_state) {
@@ -184,11 +181,7 @@ void RemoteBitrateEstimatorSingleStream::UpdateEstimate(int64_t now_ms) {
   }
   AimdRateControl* remote_rate = GetRemoteRate();
 
-  double mean_noise_var = sum_var_noise /
-      static_cast<double>(overuse_detectors_.size());
-  const RateControlInput input(bw_state,
-                               incoming_bitrate_.Rate(now_ms),
-                               mean_noise_var);
+  const RateControlInput input(bw_state, incoming_bitrate_.Rate(now_ms));
   uint32_t target_bitrate = remote_rate->Update(&input, now_ms);
   if (remote_rate->ValidEstimate()) {
     process_interval_ms_ = remote_rate->GetFeedbackInterval();
@@ -237,7 +230,7 @@ void RemoteBitrateEstimatorSingleStream::GetSsrcs(
   ssrcs->resize(overuse_detectors_.size());
   int i = 0;
   for (SsrcOveruseEstimatorMap::const_iterator it = overuse_detectors_.begin();
-      it != overuse_detectors_.end(); ++it, ++i) {
+       it != overuse_detectors_.end(); ++it, ++i) {
     (*ssrcs)[i] = it->first;
   }
 }

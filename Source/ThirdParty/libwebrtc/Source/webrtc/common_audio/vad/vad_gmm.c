@@ -11,7 +11,6 @@
 #include "common_audio/vad/vad_gmm.h"
 
 #include "common_audio/signal_processing/include/signal_processing_library.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 static const int32_t kCompVar = 22005;
 static const int16_t kLog2Exp = 5909;  // log2(exp(1)) in Q12.

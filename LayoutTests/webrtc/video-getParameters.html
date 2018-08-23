@@ -45,6 +45,9 @@ promise_test((test) => {
         receiverParameters.encodings[0].fec.ssrc = 1;
         receiverParameters.encodings[0].rtx.ssrc = 1;
 
+        senderParameters.transactionId = "";
+        receiverParameters.transactionId = "";
+
         assert_equals(JSON.stringify(senderParameters), JSON.stringify(receiverParameters), "testing sender vs. receiver parameters");
 
         senderParameters.encodings[0].ssrc = 1;

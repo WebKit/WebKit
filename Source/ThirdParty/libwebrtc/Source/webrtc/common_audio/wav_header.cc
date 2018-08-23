@@ -21,6 +21,7 @@
 
 #include "common_audio/include/audio_util.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/system/arch.h"
 
 namespace webrtc {
 namespace {
@@ -112,17 +113,23 @@ bool CheckWavParameters(size_t num_channels,
 }
 
 #ifdef WEBRTC_ARCH_LITTLE_ENDIAN
-static inline void WriteLE16(uint16_t* f, uint16_t x) { *f = x; }
-static inline void WriteLE32(uint32_t* f, uint32_t x) { *f = x; }
+static inline void WriteLE16(uint16_t* f, uint16_t x) {
+  *f = x;
+}
+static inline void WriteLE32(uint32_t* f, uint32_t x) {
+  *f = x;
+}
 static inline void WriteFourCC(uint32_t* f, char a, char b, char c, char d) {
-  *f = static_cast<uint32_t>(a)
-      | static_cast<uint32_t>(b) << 8
-      | static_cast<uint32_t>(c) << 16
-      | static_cast<uint32_t>(d) << 24;
+  *f = static_cast<uint32_t>(a) | static_cast<uint32_t>(b) << 8 |
+       static_cast<uint32_t>(c) << 16 | static_cast<uint32_t>(d) << 24;
 }
 
-static inline uint16_t ReadLE16(uint16_t x) { return x; }
-static inline uint32_t ReadLE32(uint32_t x) { return x; }
+static inline uint16_t ReadLE16(uint16_t x) {
+  return x;
+}
+static inline uint32_t ReadLE32(uint32_t x) {
+  return x;
+}
 static inline std::string ReadFourCC(uint32_t x) {
   return std::string(reinterpret_cast<char*>(&x), 4);
 }
@@ -131,11 +138,12 @@ static inline std::string ReadFourCC(uint32_t x) {
 #endif
 
 static inline uint32_t RiffChunkSize(size_t bytes_in_payload) {
-  return static_cast<uint32_t>(
-      bytes_in_payload + kWavHeaderSize - sizeof(ChunkHeader));
+  return static_cast<uint32_t>(bytes_in_payload + kWavHeaderSize -
+                               sizeof(ChunkHeader));
 }
 
-static inline uint32_t ByteRate(size_t num_channels, int sample_rate,
+static inline uint32_t ByteRate(size_t num_channels,
+                                int sample_rate,
                                 size_t bytes_per_sample) {
   return static_cast<uint32_t>(num_channels * sample_rate * bytes_per_sample);
 }
@@ -166,8 +174,8 @@ void WriteWavHeader(uint8_t* buf,
   WriteLE16(&header.fmt.AudioFormat, format);
   WriteLE16(&header.fmt.NumChannels, static_cast<uint16_t>(num_channels));
   WriteLE32(&header.fmt.SampleRate, sample_rate);
-  WriteLE32(&header.fmt.ByteRate, ByteRate(num_channels, sample_rate,
-                                           bytes_per_sample));
+  WriteLE32(&header.fmt.ByteRate,
+            ByteRate(num_channels, sample_rate, bytes_per_sample));
   WriteLE16(&header.fmt.BlockAlign, BlockAlign(num_channels, bytes_per_sample));
   WriteLE16(&header.fmt.BitsPerSample,
             static_cast<uint16_t>(8 * bytes_per_sample));
@@ -238,6 +246,5 @@ bool ReadWavHeader(ReadableWav* readable,
   return CheckWavParameters(*num_channels, *sample_rate, *format,
                             *bytes_per_sample, *num_samples);
 }
-
 
 }  // namespace webrtc

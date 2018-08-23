@@ -39,16 +39,16 @@ AsyncStunTCPSocket* AsyncStunTCPSocket::Create(
     rtc::AsyncSocket* socket,
     const rtc::SocketAddress& bind_address,
     const rtc::SocketAddress& remote_address) {
-  return new AsyncStunTCPSocket(AsyncTCPSocketBase::ConnectSocket(
-      socket, bind_address, remote_address), false);
+  return new AsyncStunTCPSocket(
+      AsyncTCPSocketBase::ConnectSocket(socket, bind_address, remote_address),
+      false);
 }
 
-AsyncStunTCPSocket::AsyncStunTCPSocket(
-    rtc::AsyncSocket* socket, bool listen)
-    : rtc::AsyncTCPSocketBase(socket, listen, kBufSize) {
-}
+AsyncStunTCPSocket::AsyncStunTCPSocket(rtc::AsyncSocket* socket, bool listen)
+    : rtc::AsyncTCPSocketBase(socket, listen, kBufSize) {}
 
-int AsyncStunTCPSocket::Send(const void *pv, size_t cb,
+int AsyncStunTCPSocket::Send(const void* pv,
+                             size_t cb,
                              const rtc::PacketOptions& options) {
   if (cb > kBufSize || cb < kPacketLenSize + kPacketLenOffset) {
     SetError(EMSGSIZE);
@@ -121,12 +121,12 @@ void AsyncStunTCPSocket::ProcessInput(char* data, size_t* len) {
   }
 }
 
-void AsyncStunTCPSocket::HandleIncomingConnection(
-    rtc::AsyncSocket* socket) {
+void AsyncStunTCPSocket::HandleIncomingConnection(rtc::AsyncSocket* socket) {
   SignalNewConnection(this, new AsyncStunTCPSocket(socket, false));
 }
 
-size_t AsyncStunTCPSocket::GetExpectedLength(const void* data, size_t len,
+size_t AsyncStunTCPSocket::GetExpectedLength(const void* data,
+                                             size_t len,
                                              int* pad_bytes) {
   *pad_bytes = 0;
   PacketLength pkt_len =

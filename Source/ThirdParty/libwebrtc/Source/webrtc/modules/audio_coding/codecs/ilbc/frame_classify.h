@@ -21,9 +21,9 @@
 
 size_t WebRtcIlbcfix_FrameClassify(
     /* (o) Index to the max-energy sub frame */
-    IlbcEncoder *iLBCenc_inst,
+    IlbcEncoder* iLBCenc_inst,
     /* (i/o) the encoder state structure */
-    int16_t *residualFIX /* (i) lpc residual signal */
-                                                );
+    int16_t* residualFIX /* (i) lpc residual signal */
+    );
 
 #endif

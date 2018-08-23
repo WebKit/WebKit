@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <string.h>
 #include <limits>
 
 #include "common_audio/wav_header.h"
@@ -31,13 +32,13 @@ class ReadableWavBuffer : public ReadableWav {
         buf_exhausted_(false),
         check_read_size_(check_read_size) {}
 
-  virtual ~ReadableWavBuffer() {
+  ~ReadableWavBuffer() override {
     // Verify the entire buffer has been read.
     if (check_read_size_)
       EXPECT_EQ(size_, pos_);
   }
 
-  virtual size_t Read(void* buf, size_t num_bytes) {
+  size_t Read(void* buf, size_t num_bytes) override {
     // Verify we don't try to read outside of a properly sized header.
     if (size_ >= kWavHeaderSize)
       EXPECT_GE(size_, pos_ + num_bytes);
@@ -83,8 +84,8 @@ TEST(WavHeaderTest, CheckWavParameters) {
 
   // Too large values.
   EXPECT_FALSE(CheckWavParameters(1 << 20, 1 << 20, kWavFormatPcm, 1, 0));
-  EXPECT_FALSE(CheckWavParameters(
-      1, 8000, kWavFormatPcm, 1, std::numeric_limits<uint32_t>::max()));
+  EXPECT_FALSE(CheckWavParameters(1, 8000, kWavFormatPcm, 1,
+                                  std::numeric_limits<uint32_t>::max()));
 
   // Not the same number of samples for each channel.
   EXPECT_FALSE(CheckWavParameters(3, 8000, kWavFormatPcm, 1, 5));
@@ -103,6 +104,8 @@ TEST(WavHeaderTest, ReadWavHeaderWithErrors) {
   // *BAD*.
   {
     static const uint8_t kBadRiffID[] = {
+        // clang-format off
+        // clang formatting doesn't respect inline comments.
       'R', 'i', 'f', 'f',  // *BAD*
       0xbd, 0xd0, 0x5b, 0x07,  // size of whole file - 8: 123457689 + 44 - 8
       'W', 'A', 'V', 'E',
@@ -116,14 +119,16 @@ TEST(WavHeaderTest, ReadWavHeaderWithErrors) {
       8, 0,  // bits per sample: 1 * 8
       'd', 'a', 't', 'a',
       0x99, 0xd0, 0x5b, 0x07,  // size of payload: 123457689
+        // clang-format on
     };
     ReadableWavBuffer r(kBadRiffID, sizeof(kBadRiffID));
-    EXPECT_FALSE(
-        ReadWavHeader(&r, &num_channels, &sample_rate, &format,
-                      &bytes_per_sample, &num_samples));
+    EXPECT_FALSE(ReadWavHeader(&r, &num_channels, &sample_rate, &format,
+                               &bytes_per_sample, &num_samples));
   }
   {
     static const uint8_t kBadBitsPerSample[] = {
+        // clang-format off
+        // clang formatting doesn't respect inline comments.
       'R', 'I', 'F', 'F',
       0xbd, 0xd0, 0x5b, 0x07,  // size of whole file - 8: 123457689 + 44 - 8
       'W', 'A', 'V', 'E',
@@ -137,14 +142,16 @@ TEST(WavHeaderTest, ReadWavHeaderWithErrors) {
       1, 0,  // bits per sample: *BAD*
       'd', 'a', 't', 'a',
       0x99, 0xd0, 0x5b, 0x07,  // size of payload: 123457689
+        // clang-format on
     };
     ReadableWavBuffer r(kBadBitsPerSample, sizeof(kBadBitsPerSample));
-    EXPECT_FALSE(
-        ReadWavHeader(&r, &num_channels, &sample_rate, &format,
-                      &bytes_per_sample, &num_samples));
+    EXPECT_FALSE(ReadWavHeader(&r, &num_channels, &sample_rate, &format,
+                               &bytes_per_sample, &num_samples));
   }
   {
     static const uint8_t kBadByteRate[] = {
+        // clang-format off
+        // clang formatting doesn't respect inline comments.
       'R', 'I', 'F', 'F',
       0xbd, 0xd0, 0x5b, 0x07,  // size of whole file - 8: 123457689 + 44 - 8
       'W', 'A', 'V', 'E',
@@ -158,14 +165,16 @@ TEST(WavHeaderTest, ReadWavHeaderWithErrors) {
       8, 0,  // bits per sample: 1 * 8
       'd', 'a', 't', 'a',
       0x99, 0xd0, 0x5b, 0x07,  // size of payload: 123457689
+        // clang-format on
     };
     ReadableWavBuffer r(kBadByteRate, sizeof(kBadByteRate));
-    EXPECT_FALSE(
-        ReadWavHeader(&r, &num_channels, &sample_rate, &format,
-                      &bytes_per_sample, &num_samples));
+    EXPECT_FALSE(ReadWavHeader(&r, &num_channels, &sample_rate, &format,
+                               &bytes_per_sample, &num_samples));
   }
   {
     static const uint8_t kBadFmtHeaderSize[] = {
+        // clang-format off
+        // clang formatting doesn't respect inline comments.
       'R', 'I', 'F', 'F',
       0xbd, 0xd0, 0x5b, 0x07,  // size of whole file - 8: 123457689 + 44 - 8
       'W', 'A', 'V', 'E',
@@ -180,14 +189,16 @@ TEST(WavHeaderTest, ReadWavHeaderWithErrors) {
       0,  // extra (though invalid) header byte
       'd', 'a', 't', 'a',
       0x99, 0xd0, 0x5b, 0x07,  // size of payload: 123457689
+        // clang-format on
     };
     ReadableWavBuffer r(kBadFmtHeaderSize, sizeof(kBadFmtHeaderSize), false);
-    EXPECT_FALSE(
-        ReadWavHeader(&r, &num_channels, &sample_rate, &format,
-                      &bytes_per_sample, &num_samples));
+    EXPECT_FALSE(ReadWavHeader(&r, &num_channels, &sample_rate, &format,
+                               &bytes_per_sample, &num_samples));
   }
   {
     static const uint8_t kNonZeroExtensionField[] = {
+        // clang-format off
+        // clang formatting doesn't respect inline comments.
       'R', 'I', 'F', 'F',
       0xbd, 0xd0, 0x5b, 0x07,  // size of whole file - 8: 123457689 + 44 - 8
       'W', 'A', 'V', 'E',
@@ -202,15 +213,17 @@ TEST(WavHeaderTest, ReadWavHeaderWithErrors) {
       1, 0,  // non-zero extension field *BAD*
       'd', 'a', 't', 'a',
       0x99, 0xd0, 0x5b, 0x07,  // size of payload: 123457689
+        // clang-format on
     };
     ReadableWavBuffer r(kNonZeroExtensionField, sizeof(kNonZeroExtensionField),
                         false);
-    EXPECT_FALSE(
-        ReadWavHeader(&r, &num_channels, &sample_rate, &format,
-                      &bytes_per_sample, &num_samples));
+    EXPECT_FALSE(ReadWavHeader(&r, &num_channels, &sample_rate, &format,
+                               &bytes_per_sample, &num_samples));
   }
   {
     static const uint8_t kMissingDataChunk[] = {
+        // clang-format off
+        // clang formatting doesn't respect inline comments.
       'R', 'I', 'F', 'F',
       0xbd, 0xd0, 0x5b, 0x07,  // size of whole file - 8: 123457689 + 44 - 8
       'W', 'A', 'V', 'E',
@@ -222,23 +235,25 @@ TEST(WavHeaderTest, ReadWavHeaderWithErrors) {
       0xc9, 0x33, 0x03, 0,  // byte rate: 1 * 17 * 12345
       17, 0,  // block align: NumChannels * BytesPerSample
       8, 0,  // bits per sample: 1 * 8
+        // clang-format on
     };
     ReadableWavBuffer r(kMissingDataChunk, sizeof(kMissingDataChunk));
-    EXPECT_FALSE(
-        ReadWavHeader(&r, &num_channels, &sample_rate, &format,
-                      &bytes_per_sample, &num_samples));
+    EXPECT_FALSE(ReadWavHeader(&r, &num_channels, &sample_rate, &format,
+                               &bytes_per_sample, &num_samples));
   }
   {
     static const uint8_t kMissingFmtAndDataChunks[] = {
+        // clang-format off
+        // clang formatting doesn't respect inline comments.
       'R', 'I', 'F', 'F',
       0xbd, 0xd0, 0x5b, 0x07,  // size of whole file - 8: 123457689 + 44 - 8
       'W', 'A', 'V', 'E',
+        // clang-format on
     };
     ReadableWavBuffer r(kMissingFmtAndDataChunks,
                         sizeof(kMissingFmtAndDataChunks));
-    EXPECT_FALSE(
-        ReadWavHeader(&r, &num_channels, &sample_rate, &format,
-                      &bytes_per_sample, &num_samples));
+    EXPECT_FALSE(ReadWavHeader(&r, &num_channels, &sample_rate, &format,
+                               &bytes_per_sample, &num_samples));
   }
 }
 
@@ -249,6 +264,8 @@ TEST(WavHeaderTest, WriteAndReadWavHeader) {
   memset(buf, 0xa4, sizeof(buf));
   WriteWavHeader(buf + 4, 17, 12345, kWavFormatALaw, 1, 123457689);
   static const uint8_t kExpectedBuf[] = {
+      // clang-format off
+      // clang formatting doesn't respect inline comments.
     0xa4, 0xa4, 0xa4, 0xa4,  // untouched bytes before header
     'R', 'I', 'F', 'F',
     0xbd, 0xd0, 0x5b, 0x07,  // size of whole file - 8: 123457689 + 44 - 8
@@ -264,6 +281,7 @@ TEST(WavHeaderTest, WriteAndReadWavHeader) {
     'd', 'a', 't', 'a',
     0x99, 0xd0, 0x5b, 0x07,  // size of payload: 123457689
     0xa4, 0xa4, 0xa4, 0xa4,  // untouched bytes after header
+      // clang-format on
   };
   static_assert(sizeof(kExpectedBuf) == kSize, "buffer size");
   EXPECT_EQ(0, memcmp(kExpectedBuf, buf, kSize));
@@ -274,9 +292,8 @@ TEST(WavHeaderTest, WriteAndReadWavHeader) {
   size_t bytes_per_sample = 0;
   size_t num_samples = 0;
   ReadableWavBuffer r(buf + 4, sizeof(buf) - 8);
-  EXPECT_TRUE(
-      ReadWavHeader(&r, &num_channels, &sample_rate, &format,
-                    &bytes_per_sample, &num_samples));
+  EXPECT_TRUE(ReadWavHeader(&r, &num_channels, &sample_rate, &format,
+                            &bytes_per_sample, &num_samples));
   EXPECT_EQ(17u, num_channels);
   EXPECT_EQ(12345, sample_rate);
   EXPECT_EQ(kWavFormatALaw, format);
@@ -287,6 +304,8 @@ TEST(WavHeaderTest, WriteAndReadWavHeader) {
 // Try reading an atypical but valid WAV header and make sure it's parsed OK.
 TEST(WavHeaderTest, ReadAtypicalWavHeader) {
   static const uint8_t kBuf[] = {
+      // clang-format off
+      // clang formatting doesn't respect inline comments.
     'R', 'I', 'F', 'F',
     0x3d, 0xd1, 0x5b, 0x07,  // size of whole file - 8 + an extra 128 bytes of
                              // "metadata": 123457689 + 44 - 8 + 128. (atypical)
@@ -302,6 +321,7 @@ TEST(WavHeaderTest, ReadAtypicalWavHeader) {
     0, 0,  // zero extension size field (atypical)
     'd', 'a', 't', 'a',
     0x99, 0xd0, 0x5b, 0x07,  // size of payload: 123457689
+      // clang-format on
   };
 
   size_t num_channels = 0;
@@ -310,9 +330,8 @@ TEST(WavHeaderTest, ReadAtypicalWavHeader) {
   size_t bytes_per_sample = 0;
   size_t num_samples = 0;
   ReadableWavBuffer r(kBuf, sizeof(kBuf));
-  EXPECT_TRUE(
-      ReadWavHeader(&r, &num_channels, &sample_rate, &format,
-                    &bytes_per_sample, &num_samples));
+  EXPECT_TRUE(ReadWavHeader(&r, &num_channels, &sample_rate, &format,
+                            &bytes_per_sample, &num_samples));
   EXPECT_EQ(17u, num_channels);
   EXPECT_EQ(12345, sample_rate);
   EXPECT_EQ(kWavFormatALaw, format);

@@ -73,12 +73,9 @@ class ScreenCapturerTest : public testing::Test {
 class FakeSharedMemory : public SharedMemory {
  public:
   FakeSharedMemory(char* buffer, size_t size)
-    : SharedMemory(buffer, size, 0, kTestSharedMemoryId),
-      buffer_(buffer) {
-  }
-  virtual ~FakeSharedMemory() {
-    delete[] buffer_;
-  }
+      : SharedMemory(buffer, size, 0, kTestSharedMemoryId), buffer_(buffer) {}
+  ~FakeSharedMemory() override { delete[] buffer_; }
+
  private:
   char* buffer_;
   RTC_DISALLOW_COPY_AND_ASSIGN(FakeSharedMemory);

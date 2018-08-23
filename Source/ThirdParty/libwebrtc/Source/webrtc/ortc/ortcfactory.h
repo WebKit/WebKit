@@ -81,10 +81,6 @@ class OrtcFactory : public OrtcFactoryInterface {
   rtc::scoped_refptr<AudioSourceInterface> CreateAudioSource(
       const cricket::AudioOptions& options) override;
 
-  rtc::scoped_refptr<VideoTrackSourceInterface> CreateVideoSource(
-      std::unique_ptr<cricket::VideoCapturer> capturer,
-      const MediaConstraintsInterface* constraints) override;
-
   rtc::scoped_refptr<VideoTrackInterface> CreateVideoTrack(
       const std::string& id,
       VideoTrackSourceInterface* source) override;

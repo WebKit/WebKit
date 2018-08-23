@@ -23,5 +23,5 @@ public class AudioTrack extends MediaStreamTrack {
     nativeSetVolume(super.nativeTrack, volume);
   }
 
-  private static native void nativeSetVolume(long nativeTrack, double volume);
+  private static native void nativeSetVolume(long track, double volume);
 }

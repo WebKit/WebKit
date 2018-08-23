@@ -93,7 +93,7 @@ class IntelligibilityEnhancer : public LappedTransform::Callback {
 
   static const size_t kMaxNumNoiseEstimatesToBuffer = 5;
 
-  const size_t freqs_;         // Num frequencies in frequency domain.
+  const size_t freqs_;  // Num frequencies in frequency domain.
   const size_t num_noise_bins_;
   const size_t chunk_length_;  // Chunk size in samples.
   const size_t bank_size_;     // Num ERB filters.

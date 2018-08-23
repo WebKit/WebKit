@@ -19,20 +19,20 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_SPLIT_VQ_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_SPLIT_VQ_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  split vector quantization
  *---------------------------------------------------------------*/
 
 void WebRtcIlbcfix_SplitVq(
-    int16_t *qX,  /* (o) the quantized vector in Q13 */
-    int16_t *index, /* (o) a vector of indexes for all vector
+    int16_t* qX,    /* (o) the quantized vector in Q13 */
+    int16_t* index, /* (o) a vector of indexes for all vector
                                    codebooks in the split */
-    int16_t *X,  /* (i) the vector to quantize */
-    int16_t *CB,  /* (i) the quantizer codebook in Q13 */
-    int16_t *dim, /* (i) the dimension of X and qX */
-    int16_t *cbsize /* (i) the number of vectors in the codebook */
-                           );
+    int16_t* X,     /* (i) the vector to quantize */
+    int16_t* CB,    /* (i) the quantizer codebook in Q13 */
+    int16_t* dim,   /* (i) the dimension of X and qX */
+    int16_t* cbsize /* (i) the number of vectors in the codebook */
+    );
 
 #endif

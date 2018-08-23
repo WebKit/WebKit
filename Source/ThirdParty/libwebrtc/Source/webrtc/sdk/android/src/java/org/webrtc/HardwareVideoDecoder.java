@@ -21,13 +21,13 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Nullable;
 import org.webrtc.ThreadUtils.ThreadChecker;
 
 /** Android hardware video decoder. */
 @TargetApi(16)
 @SuppressWarnings("deprecation") // Cannot support API 16 without using deprecated methods.
-class HardwareVideoDecoder
-    implements VideoDecoder, SurfaceTextureHelper.OnTextureFrameAvailableListener {
+class HardwareVideoDecoder implements VideoDecoder, VideoSink {
   private static final String TAG = "HardwareVideoDecoder";
 
   // TODO(magjed): Use MediaFormat.KEY_* constants when part of the public API.
@@ -52,6 +52,7 @@ class HardwareVideoDecoder
   // MediaCodec.
   private static final int DEQUEUE_OUTPUT_BUFFER_TIMEOUT_US = 100000;
 
+  private final MediaCodecWrapperFactory mediaCodecWrapperFactory;
   private final String codecName;
   private final VideoCodecType codecType;
 
@@ -71,7 +72,7 @@ class HardwareVideoDecoder
   // Output thread runs a loop which polls MediaCodec for decoded output buffers.  It reformats
   // those buffers into VideoFrames and delivers them to the callback.  Variable is set on decoder
   // thread and is immutable while the codec is running.
-  private Thread outputThread;
+  @Nullable private Thread outputThread;
 
   // Checker that ensures work is run on the output thread.
   private ThreadChecker outputThreadChecker;
@@ -81,7 +82,7 @@ class HardwareVideoDecoder
   private ThreadChecker decoderThreadChecker;
 
   private volatile boolean running = false;
-  private volatile Exception shutdownException = null;
+  @Nullable private volatile Exception shutdownException = null;
 
   // Dimensions (width, height, stride, and sliceHeight) may be accessed by either the decode thread
   // or the output thread.  Accesses should be protected with this lock.
@@ -101,21 +102,14 @@ class HardwareVideoDecoder
 
   private final EglBase.Context sharedContext;
   // Valid and immutable while the decoder is running.
-  private SurfaceTextureHelper surfaceTextureHelper;
-  private Surface surface = null;
+  @Nullable private SurfaceTextureHelper surfaceTextureHelper;
+  @Nullable private Surface surface = null;
 
   private static class DecodedTextureMetadata {
-    final int width;
-    final int height;
-    final int rotation;
     final long presentationTimestampUs;
     final Integer decodeTimeMs;
 
-    DecodedTextureMetadata(
-        int width, int height, int rotation, long presentationTimestampUs, Integer decodeTimeMs) {
-      this.width = width;
-      this.height = height;
-      this.rotation = rotation;
+    DecodedTextureMetadata(long presentationTimestampUs, Integer decodeTimeMs) {
       this.presentationTimestampUs = presentationTimestampUs;
       this.decodeTimeMs = decodeTimeMs;
     }
@@ -123,20 +117,21 @@ class HardwareVideoDecoder
 
   // Metadata for the last frame rendered to the texture.
   private final Object renderedTextureMetadataLock = new Object();
-  private DecodedTextureMetadata renderedTextureMetadata;
+  @Nullable private DecodedTextureMetadata renderedTextureMetadata;
 
   // Decoding proceeds asynchronously.  This callback returns decoded frames to the caller.  Valid
   // and immutable while the decoder is running.
-  private Callback callback;
+  @Nullable private Callback callback;
 
   // Valid and immutable while the decoder is running.
-  private MediaCodec codec = null;
+  @Nullable private MediaCodecWrapper codec = null;
 
-  HardwareVideoDecoder(
-      String codecName, VideoCodecType codecType, int colorFormat, EglBase.Context sharedContext) {
+  HardwareVideoDecoder(MediaCodecWrapperFactory mediaCodecWrapperFactory, String codecName,
+      VideoCodecType codecType, int colorFormat, EglBase.Context sharedContext) {
     if (!isSupportedColorFormat(colorFormat)) {
       throw new IllegalArgumentException("Unsupported color format: " + colorFormat);
     }
+    this.mediaCodecWrapperFactory = mediaCodecWrapperFactory;
     this.codecName = codecName;
     this.codecType = codecType;
     this.colorFormat = colorFormat;
@@ -150,7 +145,7 @@ class HardwareVideoDecoder
 
     this.callback = callback;
     if (sharedContext != null) {
-      surfaceTextureHelper = SurfaceTextureHelper.create("decoder-texture-thread", sharedContext);
+      surfaceTextureHelper = createSurfaceTextureHelper();
       surface = new Surface(surfaceTextureHelper.getSurfaceTexture());
       surfaceTextureHelper.startListening(this);
     }
@@ -163,7 +158,7 @@ class HardwareVideoDecoder
     Logging.d(TAG, "initDecodeInternal");
     if (outputThread != null) {
       Logging.e(TAG, "initDecodeInternal called while the codec is already running");
-      return VideoCodecStatus.ERROR;
+      return VideoCodecStatus.FALLBACK_SOFTWARE;
     }
 
     // Note:  it is not necessary to initialize dimensions under the lock, since the output thread
@@ -177,10 +172,10 @@ class HardwareVideoDecoder
     keyFrameRequired = true;
 
     try {
-      codec = MediaCodec.createByCodecName(codecName);
+      codec = mediaCodecWrapperFactory.createByCodecName(codecName);
     } catch (IOException | IllegalArgumentException e) {
       Logging.e(TAG, "Cannot create media decoder " + codecName);
-      return VideoCodecStatus.ERROR;
+      return VideoCodecStatus.FALLBACK_SOFTWARE;
     }
     try {
       MediaFormat format = MediaFormat.createVideoFormat(codecType.mimeType(), width, height);
@@ -192,7 +187,7 @@ class HardwareVideoDecoder
     } catch (IllegalStateException e) {
       Logging.e(TAG, "initDecode failed", e);
       release();
-      return VideoCodecStatus.ERROR;
+      return VideoCodecStatus.FALLBACK_SOFTWARE;
     }
     running = true;
     outputThread = createOutputThread();
@@ -206,7 +201,7 @@ class HardwareVideoDecoder
   public VideoCodecStatus decode(EncodedImage frame, DecodeInfo info) {
     decoderThreadChecker.checkIsOnValidThread();
     if (codec == null || callback == null) {
-      Logging.d(TAG, "decode uninitalized, codec: " + codec + ", callback: " + callback);
+      Logging.d(TAG, "decode uninitalized, codec: " + (codec != null) + ", callback: " + callback);
       return VideoCodecStatus.UNINITIALIZED;
     }
 
@@ -222,7 +217,8 @@ class HardwareVideoDecoder
     }
 
     // Load dimensions from shared memory under the dimension lock.
-    int width, height;
+    final int width;
+    final int height;
     synchronized (dimensionLock) {
       width = this.width;
       height = this.height;
@@ -241,11 +237,11 @@ class HardwareVideoDecoder
       // Need to process a key frame first.
       if (frame.frameType != EncodedImage.FrameType.VideoFrameKey) {
         Logging.e(TAG, "decode() - key frame required first");
-        return VideoCodecStatus.ERROR;
+        return VideoCodecStatus.NO_OUTPUT;
       }
       if (!frame.completeFrame) {
         Logging.e(TAG, "decode() - complete frame required first");
-        return VideoCodecStatus.ERROR;
+        return VideoCodecStatus.NO_OUTPUT;
       }
     }
 
@@ -310,7 +306,7 @@ class HardwareVideoDecoder
     Logging.d(TAG, "release");
     VideoCodecStatus status = releaseInternal();
     if (surface != null) {
-      surface.release();
+      releaseSurface();
       surface = null;
       surfaceTextureHelper.stopListening();
       surfaceTextureHelper.dispose();
@@ -374,7 +370,8 @@ class HardwareVideoDecoder
     };
   }
 
-  private void deliverDecodedFrame() {
+  // Visible for testing.
+  protected void deliverDecodedFrame() {
     outputThreadChecker.checkIsOnValidThread();
     try {
       MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
@@ -417,7 +414,8 @@ class HardwareVideoDecoder
   private void deliverTextureFrame(final int index, final MediaCodec.BufferInfo info,
       final int rotation, final Integer decodeTimeMs) {
     // Load dimensions from shared memory under the dimension lock.
-    final int width, height;
+    final int width;
+    final int height;
     synchronized (dimensionLock) {
       width = this.width;
       height = this.height;
@@ -425,34 +423,34 @@ class HardwareVideoDecoder
 
     synchronized (renderedTextureMetadataLock) {
       if (renderedTextureMetadata != null) {
+        codec.releaseOutputBuffer(index, false);
         return; // We are still waiting for texture for the previous frame, drop this one.
       }
-      renderedTextureMetadata = new DecodedTextureMetadata(
-          width, height, rotation, info.presentationTimeUs, decodeTimeMs);
-      codec.releaseOutputBuffer(index, true);
+      surfaceTextureHelper.setTextureSize(width, height);
+      surfaceTextureHelper.setFrameRotation(rotation);
+      renderedTextureMetadata = new DecodedTextureMetadata(info.presentationTimeUs, decodeTimeMs);
+      codec.releaseOutputBuffer(index, /* render= */ true);
     }
   }
 
   @Override
-  public void onTextureFrameAvailable(int oesTextureId, float[] transformMatrix, long timestampNs) {
-    final VideoFrame frame;
+  public void onFrame(VideoFrame frame) {
+    final VideoFrame newFrame;
     final int decodeTimeMs;
+    final long timestampNs;
     synchronized (renderedTextureMetadataLock) {
       if (renderedTextureMetadata == null) {
         throw new IllegalStateException(
             "Rendered texture metadata was null in onTextureFrameAvailable.");
       }
-      VideoFrame.TextureBuffer oesBuffer = surfaceTextureHelper.createTextureBuffer(
-          renderedTextureMetadata.width, renderedTextureMetadata.height,
-          RendererCommon.convertMatrixToAndroidGraphicsMatrix(transformMatrix));
-      frame = new VideoFrame(oesBuffer, renderedTextureMetadata.rotation,
-          renderedTextureMetadata.presentationTimestampUs * 1000);
+      timestampNs = renderedTextureMetadata.presentationTimestampUs * 1000;
       decodeTimeMs = renderedTextureMetadata.decodeTimeMs;
       renderedTextureMetadata = null;
     }
-
-    callback.onDecodedFrame(frame, decodeTimeMs, null /* qp */);
-    frame.release();
+    // Change timestamp of frame.
+    final VideoFrame frameWithModifiedTimeStamp =
+        new VideoFrame(frame.getBuffer(), frame.getRotation(), timestampNs);
+    callback.onDecodedFrame(frameWithModifiedTimeStamp, decodeTimeMs, null /* qp */);
   }
 
   private void deliverByteFrame(
@@ -492,7 +490,7 @@ class HardwareVideoDecoder
       // All other supported color formats are NV12.
       frameBuffer = copyNV12ToI420Buffer(buffer, stride, sliceHeight, width, height);
     }
-    codec.releaseOutputBuffer(result, false);
+    codec.releaseOutputBuffer(result, /* render= */ false);
 
     long presentationTimeNs = info.presentationTimeUs * 1000;
     VideoFrame frame = new VideoFrame(frameBuffer, rotation, presentationTimeNs);
@@ -511,37 +509,57 @@ class HardwareVideoDecoder
 
   private VideoFrame.Buffer copyI420Buffer(
       ByteBuffer buffer, int stride, int sliceHeight, int width, int height) {
+    if (stride % 2 != 0) {
+      throw new AssertionError("Stride is not divisible by two: " + stride);
+    }
+
+    // Note that the case with odd |sliceHeight| is handled in a special way.
+    // The chroma height contained in the payload is rounded down instead of
+    // up, making it one row less than what we expect in WebRTC. Therefore, we
+    // have to duplicate the last chroma rows for this case. Also, the offset
+    // between the Y plane and the U plane is unintuitive for this case. See
+    // http://bugs.webrtc.org/6651 for more info.
+    final int chromaWidth = (width + 1) / 2;
+    final int chromaHeight = (sliceHeight % 2 == 0) ? (height + 1) / 2 : height / 2;
+
     final int uvStride = stride / 2;
 
     final int yPos = 0;
+    final int yEnd = yPos + stride * height;
     final int uPos = yPos + stride * sliceHeight;
-    final int uEnd = uPos + uvStride * (sliceHeight / 2);
+    final int uEnd = uPos + uvStride * chromaHeight;
     final int vPos = uPos + uvStride * sliceHeight / 2;
-    final int vEnd = vPos + uvStride * (sliceHeight / 2);
+    final int vEnd = vPos + uvStride * chromaHeight;
 
-    VideoFrame.I420Buffer frameBuffer = JavaI420Buffer.allocate(width, height);
+    VideoFrame.I420Buffer frameBuffer = allocateI420Buffer(width, height);
 
-    ByteBuffer dataY = frameBuffer.getDataY();
+    buffer.limit(yEnd);
     buffer.position(yPos);
-    buffer.limit(uPos);
-    dataY.put(buffer);
+    copyPlane(
+        buffer.slice(), stride, frameBuffer.getDataY(), frameBuffer.getStrideY(), width, height);
 
-    ByteBuffer dataU = frameBuffer.getDataU();
-    buffer.position(uPos);
     buffer.limit(uEnd);
-    dataU.put(buffer);
-    if (sliceHeight % 2 != 0) {
-      buffer.position(uEnd - uvStride); // Repeat the last row.
-      dataU.put(buffer);
+    buffer.position(uPos);
+    copyPlane(buffer.slice(), uvStride, frameBuffer.getDataU(), frameBuffer.getStrideU(),
+        chromaWidth, chromaHeight);
+    if (sliceHeight % 2 == 1) {
+      buffer.position(uPos + uvStride * (chromaHeight - 1)); // Seek to beginning of last full row.
+
+      ByteBuffer dataU = frameBuffer.getDataU();
+      dataU.position(frameBuffer.getStrideU() * chromaHeight); // Seek to beginning of last row.
+      dataU.put(buffer); // Copy the last row.
     }
 
-    ByteBuffer dataV = frameBuffer.getDataV();
-    buffer.position(vPos);
     buffer.limit(vEnd);
-    dataV.put(buffer);
-    if (sliceHeight % 2 != 0) {
-      buffer.position(vEnd - uvStride); // Repeat the last row.
-      dataV.put(buffer);
+    buffer.position(vPos);
+    copyPlane(buffer.slice(), uvStride, frameBuffer.getDataV(), frameBuffer.getStrideV(),
+        chromaWidth, chromaHeight);
+    if (sliceHeight % 2 == 1) {
+      buffer.position(vPos + uvStride * (chromaHeight - 1)); // Seek to beginning of last full row.
+
+      ByteBuffer dataV = frameBuffer.getDataV();
+      dataV.position(frameBuffer.getStrideV() * chromaHeight); // Seek to beginning of last row.
+      dataV.put(buffer); // Copy the last row.
     }
 
     return frameBuffer;
@@ -631,5 +649,27 @@ class HardwareVideoDecoder
       }
     }
     return false;
+  }
+
+  // Visible for testing.
+  protected SurfaceTextureHelper createSurfaceTextureHelper() {
+    return SurfaceTextureHelper.create("decoder-texture-thread", sharedContext);
+  }
+
+  // Visible for testing.
+  // TODO(sakal): Remove once Robolectric commit fa991a0 has been rolled to WebRTC.
+  protected void releaseSurface() {
+    surface.release();
+  }
+
+  // Visible for testing.
+  protected VideoFrame.I420Buffer allocateI420Buffer(int width, int height) {
+    return JavaI420Buffer.allocate(width, height);
+  }
+
+  // Visible for testing.
+  protected void copyPlane(
+      ByteBuffer src, int srcStride, ByteBuffer dst, int dstStride, int width, int height) {
+    YuvHelper.copyPlane(src, srcStride, dst, dstStride, width, height);
   }
 }

@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "modules/include/module_common_types.h"
+#include "rtc_base/checks.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -30,8 +30,8 @@ PCMFile::PCMFile()
       rewinded_(false),
       read_stereo_(false),
       save_stereo_(false) {
-  timestamp_ = (((uint32_t) rand() & 0x0000FFFF) << 16) |
-      ((uint32_t) rand() & 0x0000FFFF);
+  timestamp_ =
+      (((uint32_t)rand() & 0x0000FFFF) << 16) | ((uint32_t)rand() & 0x0000FFFF);
 }
 
 PCMFile::PCMFile(uint32_t timestamp)
@@ -52,7 +52,8 @@ PCMFile::~PCMFile() {
   }
 }
 
-int16_t PCMFile::ChooseFile(std::string* file_name, int16_t max_len,
+int16_t PCMFile::ChooseFile(std::string* file_name,
+                            int16_t max_len,
                             uint16_t* frequency_hz) {
   char tmp_name[MAX_FILE_NAME_LENGTH_BYTE];
 
@@ -61,8 +62,8 @@ int16_t PCMFile::ChooseFile(std::string* file_name, int16_t max_len,
   int16_t n = 0;
 
   // Removing trailing spaces.
-  while ((isspace(tmp_name[n]) || iscntrl(tmp_name[n])) && (tmp_name[n] != 0)
-      && (n < MAX_FILE_NAME_LENGTH_BYTE)) {
+  while ((isspace(tmp_name[n]) || iscntrl(tmp_name[n])) && (tmp_name[n] != 0) &&
+         (n < MAX_FILE_NAME_LENGTH_BYTE)) {
     n++;
   }
   if (n > 0) {
@@ -80,7 +81,7 @@ int16_t PCMFile::ChooseFile(std::string* file_name, int16_t max_len,
     tmp_name[n + 1] = '\0';
   }
 
-  int16_t len = (int16_t) strlen(tmp_name);
+  int16_t len = (int16_t)strlen(tmp_name);
   if (len > max_len) {
     return -1;
   }
@@ -91,15 +92,17 @@ int16_t PCMFile::ChooseFile(std::string* file_name, int16_t max_len,
   printf("Enter the sampling frequency (in Hz) of the above file [%u]: ",
          *frequency_hz);
   EXPECT_TRUE(fgets(tmp_name, 10, stdin) != NULL);
-  uint16_t tmp_frequency = (uint16_t) atoi(tmp_name);
+  uint16_t tmp_frequency = (uint16_t)atoi(tmp_name);
   if (tmp_frequency > 0) {
     *frequency_hz = tmp_frequency;
   }
   return 0;
 }
 
-void PCMFile::Open(const std::string& file_name, uint16_t frequency,
-                   const char* mode, bool auto_rewind) {
+void PCMFile::Open(const std::string& file_name,
+                   uint16_t frequency,
+                   const char* mode,
+                   bool auto_rewind) {
   if ((pcm_file_ = fopen(file_name.c_str(), mode)) == NULL) {
     printf("Cannot open file %s.\n", file_name.c_str());
     ADD_FAILURE() << "Unable to read file";
@@ -125,9 +128,9 @@ int32_t PCMFile::Read10MsData(AudioFrame& audio_frame) {
     channels = 2;
   }
 
-  int32_t payload_size = (int32_t) fread(audio_frame.mutable_data(),
-                                         sizeof(uint16_t),
-                                         samples_10ms_ * channels, pcm_file_);
+  int32_t payload_size =
+      (int32_t)fread(audio_frame.mutable_data(), sizeof(uint16_t),
+                     samples_10ms_ * channels, pcm_file_);
   if (payload_size < samples_10ms_ * channels) {
     int16_t* frame_data = audio_frame.mutable_data();
     for (int k = payload_size; k < samples_10ms_ * channels; k++) {

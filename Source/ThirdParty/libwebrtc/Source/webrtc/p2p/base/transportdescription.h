@@ -30,18 +30,10 @@ namespace cricket {
 //               or unsupported crypto.
 // TODO(deadbeef): Remove this or rename it to something more appropriate, like
 // SdesPolicy.
-enum SecurePolicy {
-  SEC_DISABLED,
-  SEC_ENABLED,
-  SEC_REQUIRED
-};
+enum SecurePolicy { SEC_DISABLED, SEC_ENABLED, SEC_REQUIRED };
 
 // Whether our side of the call is driving the negotiation, or the other side.
-enum IceRole {
-  ICEROLE_CONTROLLING = 0,
-  ICEROLE_CONTROLLED,
-  ICEROLE_UNKNOWN
-};
+enum IceRole { ICEROLE_CONTROLLING = 0, ICEROLE_CONTROLLED, ICEROLE_UNKNOWN };
 
 // ICE RFC 5245 implementation type.
 enum IceMode {
@@ -123,8 +115,7 @@ struct TransportDescription {
                          HasOption(ICE_OPTION_RENOMINATION));
   }
 
-  static rtc::SSLFingerprint* CopyFingerprint(
-      const rtc::SSLFingerprint* from) {
+  static rtc::SSLFingerprint* CopyFingerprint(const rtc::SSLFingerprint* from) {
     if (!from)
       return NULL;
 

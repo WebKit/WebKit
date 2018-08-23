@@ -18,12 +18,6 @@
 
 namespace webrtc {
 
-RtpFeedback* NullObjectRtpFeedback() {
-  static std::aligned_storage<sizeof(NullRtpFeedback), std::alignment_of<NullRtpFeedback>::value>::type null_rtp_feedback_storage;
-  static NullRtpFeedback* null_rtp_feedback = new (&null_rtp_feedback_storage) NullRtpFeedback;
-  return null_rtp_feedback;
-}
-
 namespace RtpUtility {
 
 enum {
@@ -39,8 +33,7 @@ enum {
  * Misc utility routines
  */
 
-bool StringCompare(const char* str1, const char* str2,
-                   const uint32_t length) {
+bool StringCompare(const char* str1, const char* str2, const uint32_t length) {
   return _strnicmp(str1, str2, length) == 0;
 }
 
@@ -54,11 +47,9 @@ size_t Word32Align(size_t size) {
 RtpHeaderParser::RtpHeaderParser(const uint8_t* rtpData,
                                  const size_t rtpDataLength)
     : _ptrRTPDataBegin(rtpData),
-      _ptrRTPDataEnd(rtpData ? (rtpData + rtpDataLength) : NULL) {
-}
+      _ptrRTPDataEnd(rtpData ? (rtpData + rtpDataLength) : NULL) {}
 
-RtpHeaderParser::~RtpHeaderParser() {
-}
+RtpHeaderParser::~RtpHeaderParser() {}
 
 bool RtpHeaderParser::RTCP() const {
   // 72 to 76 is reserved for RTP
@@ -66,21 +57,21 @@ bool RtpHeaderParser::RTCP() const {
   // for RTCP 200 SR  == marker bit + 72
   // for RTCP 204 APP == marker bit + 76
   /*
-  *       RTCP
-  *
-  * FIR      full INTRA-frame request             192     [RFC2032]   supported
-  * NACK     negative acknowledgement             193     [RFC2032]
-  * IJ       Extended inter-arrival jitter report 195     [RFC-ietf-avt-rtp-toff
-  * set-07.txt] http://tools.ietf.org/html/draft-ietf-avt-rtp-toffset-07
-  * SR       sender report                        200     [RFC3551]   supported
-  * RR       receiver report                      201     [RFC3551]   supported
-  * SDES     source description                   202     [RFC3551]   supported
-  * BYE      goodbye                              203     [RFC3551]   supported
-  * APP      application-defined                  204     [RFC3551]   ignored
-  * RTPFB    Transport layer FB message           205     [RFC4585]   supported
-  * PSFB     Payload-specific FB message          206     [RFC4585]   supported
-  * XR       extended report                      207     [RFC3611]   supported
-  */
+   *       RTCP
+   *
+   * FIR      full INTRA-frame request             192     [RFC2032]   supported
+   * NACK     negative acknowledgement             193     [RFC2032]
+   * IJ       Extended inter-arrival jitter report 195 [RFC-ietf-avt-rtp-toff
+   * set-07.txt] http://tools.ietf.org/html/draft-ietf-avt-rtp-toffset-07
+   * SR       sender report                        200     [RFC3551]   supported
+   * RR       receiver report                      201     [RFC3551]   supported
+   * SDES     source description                   202     [RFC3551]   supported
+   * BYE      goodbye                              203     [RFC3551]   supported
+   * APP      application-defined                  204     [RFC3551]   ignored
+   * RTPFB    Transport layer FB message           205     [RFC4585]   supported
+   * PSFB     Payload-specific FB message          206     [RFC4585]   supported
+   * XR       extended report                      207     [RFC3611]   supported
+   */
 
   /* 205       RFC 5104
    * FMT 1      NACK       supported
@@ -90,15 +81,15 @@ bool RtpHeaderParser::RTCP() const {
    */
 
   /* 206      RFC 5104
-  * FMT 1:     Picture Loss Indication (PLI)                      supported
-  * FMT 2:     Slice Lost Indication (SLI)
-  * FMT 3:     Reference Picture Selection Indication (RPSI)
-  * FMT 4:     Full Intra Request (FIR) Command                   supported
-  * FMT 5:     Temporal-Spatial Trade-off Request (TSTR)
-  * FMT 6:     Temporal-Spatial Trade-off Notification (TSTN)
-  * FMT 7:     Video Back Channel Message (VBCM)
-  * FMT 15:    Application layer FB message
-  */
+   * FMT 1:     Picture Loss Indication (PLI)                      supported
+   * FMT 2:     Slice Lost Indication (SLI)
+   * FMT 3:     Reference Picture Selection Indication (RPSI)
+   * FMT 4:     Full Intra Request (FIR) Command                   supported
+   * FMT 5:     Temporal-Spatial Trade-off Request (TSTR)
+   * FMT 6:     Temporal-Spatial Trade-off Notification (TSTN)
+   * FMT 7:     Video Back Channel Message (VBCM)
+   * FMT 15:    Application layer FB message
+   */
 
   const ptrdiff_t length = _ptrRTPDataEnd - _ptrRTPDataBegin;
   if (length < kRtcpMinHeaderLength) {
@@ -153,33 +144,34 @@ bool RtpHeaderParser::ParseRtcp(RTPHeader* header) const {
   uint32_t SSRC = ByteReader<uint32_t>::ReadBigEndian(ptr);
   ptr += 4;
 
-  header->payloadType  = PT;
-  header->ssrc         = SSRC;
+  header->payloadType = PT;
+  header->ssrc = SSRC;
   header->headerLength = 4 + (len << 2);
 
   return true;
 }
 
-bool RtpHeaderParser::Parse(RTPHeader* header,
-                            RtpHeaderExtensionMap* ptrExtensionMap) const {
+bool RtpHeaderParser::Parse(
+    RTPHeader* header,
+    const RtpHeaderExtensionMap* ptrExtensionMap) const {
   const ptrdiff_t length = _ptrRTPDataEnd - _ptrRTPDataBegin;
   if (length < kRtpMinParseLength) {
     return false;
   }
 
   // Version
-  const uint8_t V  = _ptrRTPDataBegin[0] >> 6;
+  const uint8_t V = _ptrRTPDataBegin[0] >> 6;
   // Padding
-  const bool          P  = ((_ptrRTPDataBegin[0] & 0x20) == 0) ? false : true;
+  const bool P = ((_ptrRTPDataBegin[0] & 0x20) == 0) ? false : true;
   // eXtension
-  const bool          X  = ((_ptrRTPDataBegin[0] & 0x10) == 0) ? false : true;
+  const bool X = ((_ptrRTPDataBegin[0] & 0x10) == 0) ? false : true;
   const uint8_t CC = _ptrRTPDataBegin[0] & 0x0f;
-  const bool          M  = ((_ptrRTPDataBegin[1] & 0x80) == 0) ? false : true;
+  const bool M = ((_ptrRTPDataBegin[1] & 0x80) == 0) ? false : true;
 
   const uint8_t PT = _ptrRTPDataBegin[1] & 0x7f;
 
-  const uint16_t sequenceNumber = (_ptrRTPDataBegin[2] << 8) +
-      _ptrRTPDataBegin[3];
+  const uint16_t sequenceNumber =
+      (_ptrRTPDataBegin[2] << 8) + _ptrRTPDataBegin[3];
 
   const uint8_t* ptr = &_ptrRTPDataBegin[4];
 
@@ -199,13 +191,13 @@ bool RtpHeaderParser::Parse(RTPHeader* header,
     return false;
   }
 
-  header->markerBit      = M;
-  header->payloadType    = PT;
+  header->markerBit = M;
+  header->payloadType = PT;
   header->sequenceNumber = sequenceNumber;
-  header->timestamp      = RTPTimestamp;
-  header->ssrc           = SSRC;
-  header->numCSRCs       = CC;
-  header->paddingLength  = P ? *(_ptrRTPDataEnd - 1) : 0;
+  header->timestamp = RTPTimestamp;
+  header->ssrc = SSRC;
+  header->numCSRCs = CC;
+  header->paddingLength = P ? *(_ptrRTPDataEnd - 1) : 0;
 
   for (uint8_t i = 0; i < CC; ++i) {
     uint32_t CSRC = ByteReader<uint32_t>::ReadBigEndian(ptr);
@@ -213,7 +205,7 @@ bool RtpHeaderParser::Parse(RTPHeader* header,
     header->arrOfCSRCs[i] = CSRC;
   }
 
-  header->headerLength   = 12 + CSRCocts;
+  header->headerLength = 12 + CSRCocts;
 
   // If in effect, MAY be omitted for those packets for which the offset
   // is zero.
@@ -275,10 +267,8 @@ bool RtpHeaderParser::Parse(RTPHeader* header,
     static constexpr uint16_t kRtpOneByteHeaderExtensionId = 0xBEDE;
     if (definedByProfile == kRtpOneByteHeaderExtensionId) {
       const uint8_t* ptrRTPDataExtensionEnd = ptr + XLen;
-      ParseOneByteExtensionHeader(header,
-                                  ptrExtensionMap,
-                                  ptrRTPDataExtensionEnd,
-                                  ptr);
+      ParseOneByteExtensionHeader(header, ptrExtensionMap,
+                                  ptrRTPDataExtensionEnd, ptr);
     }
     header->headerLength += XLen;
   }
@@ -477,6 +467,10 @@ void RtpHeaderParser::ParseOneByteExtensionHeader(
           header->extension.mid.Set(rtc::MakeArrayView(ptr, len + 1));
           break;
         }
+        case kRtpExtensionGenericFrameDescriptor:
+          RTC_LOG(WARNING)
+              << "RtpGenericFrameDescriptor unsupported by rtp header parser.";
+          break;
         case kRtpExtensionNone:
         case kRtpExtensionNumberOfExtensions: {
           RTC_NOTREACHED() << "Invalid extension type: " << type;

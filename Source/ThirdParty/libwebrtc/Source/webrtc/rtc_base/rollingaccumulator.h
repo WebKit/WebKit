@@ -23,23 +23,17 @@ namespace rtc {
 // over N most recent samples.
 //
 // T is assumed to be an int, long, double or float.
-template<typename T>
+template <typename T>
 class RollingAccumulator {
  public:
-  explicit RollingAccumulator(size_t max_count)
-    : samples_(max_count) {
+  explicit RollingAccumulator(size_t max_count) : samples_(max_count) {
     Reset();
   }
-  ~RollingAccumulator() {
-  }
+  ~RollingAccumulator() {}
 
-  size_t max_count() const {
-    return samples_.size();
-  }
+  size_t max_count() const { return samples_.size(); }
 
-  size_t count() const {
-    return count_;
-  }
+  size_t count() const { return count_; }
 
   void Reset() {
     count_ = 0U;
@@ -84,9 +78,7 @@ class RollingAccumulator {
     next_index_ = (next_index_ + 1) % max_count();
   }
 
-  T ComputeSum() const {
-    return static_cast<T>(sum_);
-  }
+  T ComputeSum() const { return static_cast<T>(sum_); }
 
   double ComputeMean() const {
     if (count_ == 0) {
@@ -97,8 +89,8 @@ class RollingAccumulator {
 
   T ComputeMax() const {
     if (max_stale_) {
-      RTC_DCHECK(count_ > 0) <<
-                 "It shouldn't be possible for max_stale_ && count_ == 0";
+      RTC_DCHECK(count_ > 0)
+          << "It shouldn't be possible for max_stale_ && count_ == 0";
       max_ = samples_[next_index_];
       for (size_t i = 1u; i < count_; i++) {
         max_ = std::max(max_, samples_[(next_index_ + i) % max_count()]);
@@ -110,8 +102,8 @@ class RollingAccumulator {
 
   T ComputeMin() const {
     if (min_stale_) {
-      RTC_DCHECK(count_ > 0) <<
-                 "It shouldn't be possible for min_stale_ && count_ == 0";
+      RTC_DCHECK(count_ > 0)
+          << "It shouldn't be possible for min_stale_ && count_ == 0";
       min_ = samples_[next_index_];
       for (size_t i = 1u; i < count_; i++) {
         min_ = std::min(min_, samples_[(next_index_ + i) % max_count()]);

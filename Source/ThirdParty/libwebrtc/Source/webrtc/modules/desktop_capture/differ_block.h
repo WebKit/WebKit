@@ -35,9 +35,7 @@ bool BlockDifference(const uint8_t* image1,
 
 // Low level function to compare 2 blocks of pixels of size
 // (kBlockSize, kBlockSize).  Returns whether the blocks differ.
-bool BlockDifference(const uint8_t* image1,
-                     const uint8_t* image2,
-                     int stride);
+bool BlockDifference(const uint8_t* image1, const uint8_t* image2, int stride);
 
 }  // namespace webrtc
 

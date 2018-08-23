@@ -21,11 +21,12 @@
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/format_macros.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/system/arch.h"
 
 namespace webrtc {
 namespace test {
 
-static const size_t kFirstLineLength = 40;
+static const size_t kFirstLineLength = 80;
 static uint16_t kPacketHeaderSize = 8;
 
 #define TRY(expr)                           \
@@ -90,7 +91,7 @@ class InterleavedRtpFileReader : public RtpFileReaderImpl {
     uint32_t len = 0;
     TRY(ReadUint32(&len, file_));
     if (packet->length < len) {
-      RTC_FATAL() << "Packet is too large to fit: " << len << " bytes vs "
+      FATAL() << "Packet is too large to fit: " << len << " bytes vs "
               << packet->length
               << " bytes allocated. Consider increasing the buffer "
                  "size";
@@ -178,7 +179,7 @@ class RtpDumpReader : public RtpFileReaderImpl {
     // Use 'len' here because a 'plen' of 0 specifies rtcp.
     len -= kPacketHeaderSize;
     if (packet->length < len) {
-      RTC_FATAL() << "Packet is too large to fit: " << len << " bytes vs "
+      FATAL() << "Packet is too large to fit: " << len << " bytes vs "
               << packet->length
               << " bytes allocated. Consider increasing the buffer "
                  "size";
@@ -241,17 +242,17 @@ const uint32_t kPcapBOMNoSwapOrder = 0xa1b2c3d4UL;
 class PcapReader : public RtpFileReaderImpl {
  public:
   PcapReader()
-    : file_(NULL),
-      swap_pcap_byte_order_(false),
+      : file_(NULL),
+        swap_pcap_byte_order_(false),
 #ifdef WEBRTC_ARCH_BIG_ENDIAN
-      swap_network_byte_order_(false),
+        swap_network_byte_order_(false),
 #else
-      swap_network_byte_order_(true),
+        swap_network_byte_order_(true),
 #endif
-      read_buffer_(),
-      packets_by_ssrc_(),
-      packets_(),
-      next_packet_it_() {
+        read_buffer_(),
+        packets_by_ssrc_(),
+        packets_(),
+        next_packet_it_() {
   }
 
   virtual ~PcapReader() {
@@ -304,7 +305,7 @@ class PcapReader : public RtpFileReaderImpl {
     printf("Total RTP/RTCP packets: %" PRIuS "\n", packets_.size());
 
     for (SsrcMapIterator mit = packets_by_ssrc_.begin();
-        mit != packets_by_ssrc_.end(); ++mit) {
+         mit != packets_by_ssrc_.end(); ++mit) {
       uint32_t ssrc = mit->first;
       const std::vector<uint32_t>& packet_indices = mit->second;
       uint8_t pt = packets_[packet_indices[0]].rtp_header.payloadType;
@@ -364,14 +365,14 @@ class PcapReader : public RtpFileReaderImpl {
  private:
   // A marker of an RTP packet within the file.
   struct RtpPacketMarker {
-    uint32_t packet_number;   // One-based index (like in WireShark)
+    uint32_t packet_number;  // One-based index (like in WireShark)
     uint32_t time_offset_ms;
     uint32_t source_ip;
     uint32_t dest_ip;
     uint16_t source_port;
     uint16_t dest_port;
     RTPHeader rtp_header;
-    int32_t pos_in_file;      // Byte offset of payload from start of file.
+    int32_t pos_in_file;  // Byte offset of payload from start of file.
     uint32_t payload_length;
   };
 
@@ -505,8 +506,8 @@ class PcapReader : public RtpFileReaderImpl {
 
   uint32_t CalcTimeDelta(uint32_t ts_sec, uint32_t ts_usec, uint32_t start_ms) {
     // Round to nearest ms.
-    uint64_t t2_ms = ((static_cast<uint64_t>(ts_sec) * 1000000) + ts_usec +
-        500) / 1000;
+    uint64_t t2_ms =
+        ((static_cast<uint64_t>(ts_sec) * 1000000) + ts_usec + 500) / 1000;
     uint64_t t1_ms = static_cast<uint64_t>(start_ms);
     if (t2_ms < t1_ms) {
       return 0;
@@ -577,7 +578,7 @@ class PcapReader : public RtpFileReaderImpl {
     if ((!expect_network_order && swap_pcap_byte_order_) ||
         (expect_network_order && swap_network_byte_order_)) {
       tmp = ((tmp >> 24) & 0x000000ff) | (tmp << 24) |
-          ((tmp >> 8) & 0x0000ff00) | ((tmp << 8) & 0x00ff0000);
+            ((tmp >> 8) & 0x0000ff00) | ((tmp << 8) & 0x00ff0000);
     }
     *out = tmp;
     return kResultSuccess;
@@ -611,7 +612,7 @@ class PcapReader : public RtpFileReaderImpl {
     if ((!expect_network_order && swap_pcap_byte_order_) ||
         (expect_network_order && swap_network_byte_order_)) {
       tmp = ((tmp >> 24) & 0x000000ff) | (tmp << 24) |
-          ((tmp >> 8) & 0x0000ff00) | ((tmp << 8) & 0x00ff0000);
+            ((tmp >> 8) & 0x0000ff00) | ((tmp << 8) & 0x00ff0000);
     }
     *out = tmp;
     return kResultSuccess;

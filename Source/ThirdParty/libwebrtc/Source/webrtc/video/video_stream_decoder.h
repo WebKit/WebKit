@@ -16,21 +16,16 @@
 #include <memory>
 #include <vector>
 
-#include "api/videosinkinterface.h"
+#include "api/video/video_sink_interface.h"
 #include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
 #include "modules/video_coding/include/video_coding_defines.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/scoped_ref_ptr.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
-class CallStatsObserver;
-class ChannelStatsObserver;
-class EncodedImageCallback;
 class ReceiveStatisticsProxy;
-class VideoRenderCallback;
 
 namespace vcm {
 class VideoReceiver;
@@ -42,11 +37,8 @@ enum StreamType {
 };
 
 class VideoStreamDecoder : public VCMReceiveCallback,
-                           public VCMReceiveStatisticsCallback,
-                           public CallStatsObserver {
+                           public VCMReceiveStatisticsCallback {
  public:
-  friend class ChannelStatsObserver;
-
   VideoStreamDecoder(
       vcm::VideoReceiver* video_receiver,
       VCMFrameTypeCallback* vcm_frame_type_callback,
@@ -59,7 +51,7 @@ class VideoStreamDecoder : public VCMReceiveCallback,
 
   // Implements VCMReceiveCallback.
   int32_t FrameToRender(VideoFrame& video_frame,
-                        rtc::Optional<uint8_t> qp,
+                        absl::optional<uint8_t> qp,
                         VideoContentType content_type) override;
   int32_t ReceivedDecodedReferenceFrame(const uint64_t picture_id) override;
   void OnIncomingPayloadType(int payload_type) override;
@@ -85,8 +77,8 @@ class VideoStreamDecoder : public VCMReceiveCallback,
   void RegisterReceiveStatisticsProxy(
       ReceiveStatisticsProxy* receive_statistics_proxy);
 
-  // Implements StatsObserver.
-  void OnRttUpdate(int64_t avg_rtt_ms, int64_t max_rtt_ms) override;
+  // Called by VideoReceiveStream when stats are updated.
+  void UpdateRtt(int64_t max_rtt_ms);
 
  private:
   // Used for all registered callbacks except rendering.
@@ -96,8 +88,6 @@ class VideoStreamDecoder : public VCMReceiveCallback,
 
   ReceiveStatisticsProxy* const receive_stats_callback_;
   rtc::VideoSinkInterface<VideoFrame>* const incoming_video_stream_;
-
-  int64_t last_rtt_ms_ RTC_GUARDED_BY(crit_);
 };
 
 }  // namespace webrtc

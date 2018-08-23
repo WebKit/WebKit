@@ -12,15 +12,16 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 #include <limits>
 #include <string>
 
+#include "absl/memory/memory.h"
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
 #include "logging/rtc_event_log/rtc_event_log.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/ptr_util.h"
 #include "system_wrappers/include/field_trial.h"
 #include "system_wrappers/include/metrics.h"
 
@@ -104,7 +105,7 @@ bool ReadBweLossExperimentParameters(float* low_loss_threshold,
 }  // namespace
 
 SendSideBandwidthEstimation::SendSideBandwidthEstimation(RtcEventLog* event_log)
-    : lost_packets_since_last_loss_update_Q8_(0),
+    : lost_packets_since_last_loss_update_(0),
       expected_packets_since_last_loss_update_(0),
       current_bitrate_bps_(0),
       min_bitrate_configured_(congestion_controller::GetMinBitrateBps()),
@@ -124,6 +125,7 @@ SendSideBandwidthEstimation::SendSideBandwidthEstimation(RtcEventLog* event_log)
       initially_lost_packets_(0),
       bitrate_at_2_seconds_kbps_(0),
       uma_update_state_(kNoUpdate),
+      uma_rtt_state_(kNoUpdate),
       rampup_uma_stats_updated_(kNumUmaRampupMetrics, false),
       event_log_(event_log),
       last_rtc_event_log_ms_(-1),
@@ -191,8 +193,8 @@ void SendSideBandwidthEstimation::CurrentEstimate(int* bitrate,
   *rtt = last_round_trip_time_ms_;
 }
 
-void SendSideBandwidthEstimation::UpdateReceiverEstimate(
-    int64_t now_ms, uint32_t bandwidth) {
+void SendSideBandwidthEstimation::UpdateReceiverEstimate(int64_t now_ms,
+                                                         uint32_t bandwidth) {
   bwe_incoming_ = bandwidth;
   CapBitrateToThresholds(now_ms, current_bitrate_bps_);
 }
@@ -205,24 +207,28 @@ void SendSideBandwidthEstimation::UpdateDelayBasedEstimate(
 }
 
 void SendSideBandwidthEstimation::UpdateReceiverBlock(uint8_t fraction_loss,
-                                                      int64_t rtt,
+                                                      int64_t rtt_ms,
                                                       int number_of_packets,
                                                       int64_t now_ms) {
+  const int kRoundingConstant = 128;
+  int packets_lost = (static_cast<int>(fraction_loss) * number_of_packets +
+                      kRoundingConstant) >>
+                     8;
+  UpdatePacketsLost(packets_lost, number_of_packets, now_ms);
+  UpdateRtt(rtt_ms, now_ms);
+}
+
+void SendSideBandwidthEstimation::UpdatePacketsLost(int packets_lost,
+                                                    int number_of_packets,
+                                                    int64_t now_ms) {
   last_feedback_ms_ = now_ms;
   if (first_report_time_ms_ == -1)
     first_report_time_ms_ = now_ms;
 
-  // Update RTT if we were able to compute an RTT based on this RTCP.
-  // FlexFEC doesn't send RTCP SR, which means we won't be able to compute RTT.
-  if (rtt > 0)
-    last_round_trip_time_ms_ = rtt;
-
   // Check sequence number diff and weight loss report
   if (number_of_packets > 0) {
-    // Calculate number of lost packets.
-    const int num_lost_packets_Q8 = fraction_loss * number_of_packets;
     // Accumulate reports.
-    lost_packets_since_last_loss_update_Q8_ += num_lost_packets_Q8;
+    lost_packets_since_last_loss_update_ += packets_lost;
     expected_packets_since_last_loss_update_ += number_of_packets;
 
     // Don't generate a loss rate until it can be based on enough packets.
@@ -230,21 +236,22 @@ void SendSideBandwidthEstimation::UpdateReceiverBlock(uint8_t fraction_loss,
       return;
 
     has_decreased_since_last_fraction_loss_ = false;
-    last_fraction_loss_ = lost_packets_since_last_loss_update_Q8_ /
-                          expected_packets_since_last_loss_update_;
+    int64_t lost_q8 = lost_packets_since_last_loss_update_ << 8;
+    int64_t expected = expected_packets_since_last_loss_update_;
+    last_fraction_loss_ = std::min<int>(lost_q8 / expected, 255);
 
     // Reset accumulators.
-    lost_packets_since_last_loss_update_Q8_ = 0;
+
+    lost_packets_since_last_loss_update_ = 0;
     expected_packets_since_last_loss_update_ = 0;
     last_packet_report_ms_ = now_ms;
     UpdateEstimate(now_ms);
   }
-  UpdateUmaStats(now_ms, rtt, (fraction_loss * number_of_packets) >> 8);
+  UpdateUmaStatsPacketsLost(now_ms, packets_lost);
 }
 
-void SendSideBandwidthEstimation::UpdateUmaStats(int64_t now_ms,
-                                                 int64_t rtt,
-                                                 int lost_packets) {
+void SendSideBandwidthEstimation::UpdateUmaStatsPacketsLost(int64_t now_ms,
+                                                            int packets_lost) {
   int bitrate_kbps = static_cast<int>((current_bitrate_bps_ + 500) / 1000);
   for (size_t i = 0; i < kNumUmaRampupMetrics; ++i) {
     if (!rampup_uma_stats_updated_[i] &&
@@ -255,14 +262,12 @@ void SendSideBandwidthEstimation::UpdateUmaStats(int64_t now_ms,
     }
   }
   if (IsInStartPhase(now_ms)) {
-    initially_lost_packets_ += lost_packets;
+    initially_lost_packets_ += packets_lost;
   } else if (uma_update_state_ == kNoUpdate) {
     uma_update_state_ = kFirstDone;
     bitrate_at_2_seconds_kbps_ = bitrate_kbps;
     RTC_HISTOGRAM_COUNTS("WebRTC.BWE.InitiallyLostPackets",
                          initially_lost_packets_, 0, 100, 50);
-    RTC_HISTOGRAM_COUNTS("WebRTC.BWE.InitialRtt", static_cast<int>(rtt), 0,
-                         2000, 50);
     RTC_HISTOGRAM_COUNTS("WebRTC.BWE.InitialBandwidthEstimate",
                          bitrate_at_2_seconds_kbps_, 0, 2000, 50);
   } else if (uma_update_state_ == kFirstDone &&
@@ -272,6 +277,19 @@ void SendSideBandwidthEstimation::UpdateUmaStats(int64_t now_ms,
         std::max(bitrate_at_2_seconds_kbps_ - bitrate_kbps, 0);
     RTC_HISTOGRAM_COUNTS("WebRTC.BWE.InitialVsConvergedDiff", bitrate_diff_kbps,
                          0, 2000, 50);
+  }
+}
+
+void SendSideBandwidthEstimation::UpdateRtt(int64_t rtt_ms, int64_t now_ms) {
+  // Update RTT if we were able to compute an RTT based on this RTCP.
+  // FlexFEC doesn't send RTCP SR, which means we won't be able to compute RTT.
+  if (rtt_ms > 0)
+    last_round_trip_time_ms_ = rtt_ms;
+
+  if (!IsInStartPhase(now_ms) && uma_rtt_state_ == kNoUpdate) {
+    uma_rtt_state_ = kDone;
+    RTC_HISTOGRAM_COUNTS("WebRTC.BWE.InitialRtt", static_cast<int>(rtt_ms), 0,
+                         2000, 50);
   }
 }
 
@@ -356,7 +374,7 @@ void SendSideBandwidthEstimation::UpdateEstimate(int64_t now_ms) {
       new_bitrate *= 0.8;
       // Reset accumulators since we've already acted on missing feedback and
       // shouldn't to act again on these old lost packets.
-      lost_packets_since_last_loss_update_Q8_ = 0;
+      lost_packets_since_last_loss_update_ = 0;
       expected_packets_since_last_loss_update_ = 0;
       last_timeout_ms_ = now_ms;
     }
@@ -416,7 +434,7 @@ void SendSideBandwidthEstimation::CapBitrateToThresholds(int64_t now_ms,
   if (bitrate_bps != current_bitrate_bps_ ||
       last_fraction_loss_ != last_logged_fraction_loss_ ||
       now_ms - last_rtc_event_log_ms_ > kRtcEventLogPeriodMs) {
-    event_log_->Log(rtc::MakeUnique<RtcEventBweUpdateLossBased>(
+    event_log_->Log(absl::make_unique<RtcEventBweUpdateLossBased>(
         bitrate_bps, last_fraction_loss_,
         expected_packets_since_last_loss_update_));
     last_logged_fraction_loss_ = last_fraction_loss_;

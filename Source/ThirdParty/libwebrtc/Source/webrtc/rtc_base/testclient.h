@@ -34,7 +34,7 @@ class TestClient : public sigslot::has_slots<> {
     virtual ~Packet();
 
     SocketAddress addr;
-    char*  buf;
+    char* buf;
     size_t size;
     PacketTime packet_time;
   };
@@ -93,7 +93,9 @@ class TestClient : public sigslot::has_slots<> {
   // Workaround for the fact that AsyncPacketSocket::GetConnState doesn't exist.
   Socket::ConnState GetState();
   // Slot for packets read on the socket.
-  void OnPacket(AsyncPacketSocket* socket, const char* buf, size_t len,
+  void OnPacket(AsyncPacketSocket* socket,
+                const char* buf,
+                size_t len,
                 const SocketAddress& remote_addr,
                 const PacketTime& packet_time);
   void OnReadyToSend(AsyncPacketSocket* socket);

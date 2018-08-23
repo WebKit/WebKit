@@ -21,6 +21,7 @@ rtc_source_set("audio_encoder_g722_config") {
 
 rtc_static_library("audio_encoder_g722") {
   visibility = [ "*" ]
+  poisonous = [ "audio_codecs" ]
   sources = [
     "audio_encoder_g722.cc",
     "audio_encoder_g722.h",
@@ -28,24 +29,28 @@ rtc_static_library("audio_encoder_g722") {
   deps = [
     ":audio_encoder_g722_config",
     "..:audio_codecs_api",
-    "../..:optional",
     "../../..:webrtc_common",
     "../../../modules/audio_coding:g722",
     "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:safe_minmax",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
 rtc_static_library("audio_decoder_g722") {
   visibility = [ "*" ]
+  poisonous = [ "audio_codecs" ]
   sources = [
     "audio_decoder_g722.cc",
     "audio_decoder_g722.h",
   ]
   deps = [
     "..:audio_codecs_api",
-    "../..:optional",
     "../../..:webrtc_common",
     "../../../modules/audio_coding:g722",
     "../../../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }

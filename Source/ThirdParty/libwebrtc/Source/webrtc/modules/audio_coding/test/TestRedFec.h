@@ -26,11 +26,13 @@ class TestRedFec : public ACMTest {
   ~TestRedFec();
 
   void Perform();
+
  private:
   // The default value of '-1' indicates that the registration is based only on
   // codec name and a sampling frequency matching is not required. This is
   // useful for codecs which support several sampling frequency.
-  int16_t RegisterSendCodec(char side, const char* codecName,
+  int16_t RegisterSendCodec(char side,
+                            const char* codecName,
                             int32_t sampFreqHz = -1);
   void Run();
   void OpenOutFile(int16_t testNumber);

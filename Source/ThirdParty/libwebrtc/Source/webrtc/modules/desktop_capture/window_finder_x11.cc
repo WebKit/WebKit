@@ -10,14 +10,13 @@
 
 #include "modules/desktop_capture/window_finder_x11.h"
 
+#include "absl/memory/memory.h"
 #include "modules/desktop_capture/x11/window_list_utils.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/ptr_util.h"
 
 namespace webrtc {
 
-WindowFinderX11::WindowFinderX11(XAtomCache* cache)
-    : cache_(cache) {
+WindowFinderX11::WindowFinderX11(XAtomCache* cache) : cache_(cache) {
   RTC_DCHECK(cache_);
 }
 
@@ -25,16 +24,15 @@ WindowFinderX11::~WindowFinderX11() = default;
 
 WindowId WindowFinderX11::GetWindowUnderPoint(DesktopVector point) {
   WindowId id = kNullWindowId;
-  GetWindowList(cache_,
-                [&id, this, point](::Window window) {
-                  DesktopRect rect;
-                  if (GetWindowRect(this->cache_->display(), window, &rect) &&
-                      rect.Contains(point)) {
-                    id = window;
-                    return false;
-                  }
-                  return true;
-                });
+  GetWindowList(cache_, [&id, this, point](::Window window) {
+    DesktopRect rect;
+    if (GetWindowRect(this->cache_->display(), window, &rect) &&
+        rect.Contains(point)) {
+      id = window;
+      return false;
+    }
+    return true;
+  });
   return id;
 }
 
@@ -45,7 +43,7 @@ std::unique_ptr<WindowFinder> WindowFinder::Create(
     return nullptr;
   }
 
-  return rtc::MakeUnique<WindowFinderX11>(options.cache);
+  return absl::make_unique<WindowFinderX11>(options.cache);
 }
 
 }  // namespace webrtc

@@ -25,24 +25,21 @@ namespace rtc {
 // HttpServer
 ///////////////////////////////////////////////////////////////////////////////
 
-HttpServer::HttpServer() : next_connection_id_(1), closing_(false) {
-}
+HttpServer::HttpServer() : next_connection_id_(1), closing_(false) {}
 
 HttpServer::~HttpServer() {
   if (closing_) {
     RTC_LOG(LS_WARNING) << "HttpServer::CloseAll has not completed";
   }
   for (ConnectionMap::iterator it = connections_.begin();
-       it != connections_.end();
-       ++it) {
+       it != connections_.end(); ++it) {
     StreamInterface* stream = it->second->EndProcess();
     delete stream;
     delete it->second;
   }
 }
 
-int
-HttpServer::HandleConnection(StreamInterface* stream) {
+int HttpServer::HandleConnection(StreamInterface* stream) {
   int connection_id = next_connection_id_++;
   RTC_DCHECK(connection_id != HTTP_INVALID_CONNECTION_ID);
   Connection* connection = new Connection(connection_id, this);
@@ -51,8 +48,7 @@ HttpServer::HandleConnection(StreamInterface* stream) {
   return connection_id;
 }
 
-void
-HttpServer::Respond(HttpServerTransaction* transaction) {
+void HttpServer::Respond(HttpServerTransaction* transaction) {
   int connection_id = transaction->connection_id();
   if (Connection* connection = Find(connection_id)) {
     connection->Respond(transaction);
@@ -63,15 +59,13 @@ HttpServer::Respond(HttpServerTransaction* transaction) {
   }
 }
 
-void
-HttpServer::Close(int connection_id, bool force) {
+void HttpServer::Close(int connection_id, bool force) {
   if (Connection* connection = Find(connection_id)) {
     connection->InitiateClose(force);
   }
 }
 
-void
-HttpServer::CloseAll(bool force) {
+void HttpServer::CloseAll(bool force) {
   if (connections_.empty()) {
     SignalCloseAllComplete(this);
     return;
@@ -83,21 +77,19 @@ HttpServer::CloseAll(bool force) {
     connections.push_back(it->second);
   }
   for (std::list<Connection*>::const_iterator it = connections.begin();
-      it != connections.end(); ++it) {
+       it != connections.end(); ++it) {
     (*it)->InitiateClose(force);
   }
 }
 
-HttpServer::Connection*
-HttpServer::Find(int connection_id) {
+HttpServer::Connection* HttpServer::Find(int connection_id) {
   ConnectionMap::iterator it = connections_.find(connection_id);
   if (it == connections_.end())
     return nullptr;
   return it->second;
 }
 
-void
-HttpServer::Remove(int connection_id) {
+void HttpServer::Remove(int connection_id) {
   ConnectionMap::iterator it = connections_.find(connection_id);
   if (it == connections_.end()) {
     RTC_NOTREACHED();
@@ -130,8 +122,7 @@ HttpServer::Connection::~Connection() {
   Thread::Current()->Dispose(current_);
 }
 
-void
-HttpServer::Connection::BeginProcess(StreamInterface* stream) {
+void HttpServer::Connection::BeginProcess(StreamInterface* stream) {
   base_.notify(this);
   base_.attach(stream);
   current_ = new HttpServerTransaction(connection_id_);
@@ -139,15 +130,13 @@ HttpServer::Connection::BeginProcess(StreamInterface* stream) {
     base_.recv(&current_->request);
 }
 
-StreamInterface*
-HttpServer::Connection::EndProcess() {
+StreamInterface* HttpServer::Connection::EndProcess() {
   base_.notify(nullptr);
   base_.abort(HE_DISCONNECTED);
   return base_.detach();
 }
 
-void
-HttpServer::Connection::Respond(HttpServerTransaction* transaction) {
+void HttpServer::Connection::Respond(HttpServerTransaction* transaction) {
   RTC_DCHECK(current_ == nullptr);
   current_ = transaction;
   if (current_->response.begin() == current_->response.end()) {
@@ -155,14 +144,12 @@ HttpServer::Connection::Respond(HttpServerTransaction* transaction) {
   }
   bool keep_alive = HttpShouldKeepAlive(current_->request);
   current_->response.setHeader(HH_CONNECTION,
-                               keep_alive ? "Keep-Alive" : "Close",
-                               false);
+                               keep_alive ? "Keep-Alive" : "Close", false);
   close_ = !HttpShouldKeepAlive(current_->response);
   base_.send(&current_->response);
 }
 
-void
-HttpServer::Connection::InitiateClose(bool force) {
+void HttpServer::Connection::InitiateClose(bool force) {
   bool request_in_progress = (HM_SEND == base_.mode()) || (nullptr == current_);
   if (!signalling_ && (force || !request_in_progress)) {
     server_->Remove(connection_id_);
@@ -175,8 +162,8 @@ HttpServer::Connection::InitiateClose(bool force) {
 // IHttpNotify Implementation
 //
 
-HttpError
-HttpServer::Connection::onHttpHeaderComplete(bool chunked, size_t& data_size) {
+HttpError HttpServer::Connection::onHttpHeaderComplete(bool chunked,
+                                                       size_t& data_size) {
   if (data_size == SIZE_UNKNOWN) {
     data_size = 0;
   }
@@ -189,8 +176,7 @@ HttpServer::Connection::onHttpHeaderComplete(bool chunked, size_t& data_size) {
   return HE_NONE;
 }
 
-void
-HttpServer::Connection::onHttpComplete(HttpMode mode, HttpError err) {
+void HttpServer::Connection::onHttpComplete(HttpMode mode, HttpError err) {
   if (mode == HM_SEND) {
     RTC_DCHECK(current_ != nullptr);
     signalling_ = true;
@@ -208,7 +194,7 @@ HttpServer::Connection::onHttpComplete(HttpMode mode, HttpError err) {
   } else if (mode == HM_RECV) {
     RTC_DCHECK(current_ != nullptr);
     // TODO: do we need this?
-    //request_.document_->rewind();
+    // request_.document_->rewind();
     HttpServerTransaction* transaction = current_;
     current_ = nullptr;
     server_->SignalHttpRequest(server_, transaction);
@@ -222,8 +208,7 @@ HttpServer::Connection::onHttpComplete(HttpMode mode, HttpError err) {
   }
 }
 
-void
-HttpServer::Connection::onHttpClosed(HttpError err) {
+void HttpServer::Connection::onHttpClosed(HttpError err) {
   server_->Remove(connection_id_);
 }
 
@@ -235,13 +220,11 @@ HttpListenServer::HttpListenServer() {
   SignalConnectionClosed.connect(this, &HttpListenServer::OnConnectionClosed);
 }
 
-HttpListenServer::~HttpListenServer() {
-}
+HttpListenServer::~HttpListenServer() {}
 
 int HttpListenServer::Listen(const SocketAddress& address) {
-  AsyncSocket* sock =
-      Thread::Current()->socketserver()->CreateAsyncSocket(address.family(),
-                                                           SOCK_STREAM);
+  AsyncSocket* sock = Thread::Current()->socketserver()->CreateAsyncSocket(
+      address.family(), SOCK_STREAM);
   if (!sock) {
     return SOCKET_ERROR;
   }

@@ -18,6 +18,10 @@
 // > python tools/sslroots/generate_sslroots.py
 //    https://pki.google.com/roots.pem
 
+// clang-format off
+// Don't bother formatting generated code,
+// also it would breaks subject/issuer lines.
+
 /* subject:/C=BE/O=GlobalSign nv-sa/OU=Root CA/CN=GlobalSign Root CA */
 /* issuer :/C=BE/O=GlobalSign nv-sa/OU=Root CA/CN=GlobalSign Root CA */
 
@@ -4276,5 +4280,7 @@ const size_t kSSLCertCertificateSizeList[] = {
   1500,
   1122,
 };
+
+// clang-format on
 
 #endif  // RTC_BASE_SSLROOTS_H_

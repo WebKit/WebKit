@@ -24,6 +24,8 @@ namespace webrtc {
 // methods.
 class RtpTransportInternalAdapter : public RtpTransportInternal {
  public:
+  RtpTransportInternalAdapter() {}
+
   explicit RtpTransportInternalAdapter(RtpTransportInternal* transport)
       : transport_(transport) {
     RTC_DCHECK(transport_);
@@ -51,6 +53,8 @@ class RtpTransportInternalAdapter : public RtpTransportInternal {
     transport_->SetRtcpPacketTransport(rtcp);
   }
 
+  bool IsReadyToSend() const override { return transport_->IsReadyToSend(); }
+
   bool IsWritable(bool rtcp) const override {
     return transport_->IsWritable(rtcp);
   }
@@ -67,12 +71,18 @@ class RtpTransportInternalAdapter : public RtpTransportInternal {
     return transport_->SendRtcpPacket(packet, options, flags);
   }
 
-  bool HandlesPayloadType(int payload_type) const override {
-    return transport_->HandlesPayloadType(payload_type);
+  void UpdateRtpHeaderExtensionMap(
+      const cricket::RtpHeaderExtensions& header_extensions) override {
+    transport_->UpdateRtpHeaderExtensionMap(header_extensions);
   }
 
-  void AddHandledPayloadType(int payload_type) override {
-    return transport_->AddHandledPayloadType(payload_type);
+  bool RegisterRtpDemuxerSink(const RtpDemuxerCriteria& criteria,
+                              RtpPacketSinkInterface* sink) override {
+    return transport_->RegisterRtpDemuxerSink(criteria, sink);
+  }
+
+  bool UnregisterRtpDemuxerSink(RtpPacketSinkInterface* sink) override {
+    return transport_->UnregisterRtpDemuxerSink(sink);
   }
 
   // RtpTransportInterface overrides.
@@ -92,9 +102,11 @@ class RtpTransportInternalAdapter : public RtpTransportInternal {
     return transport_->GetParameters();
   }
 
+  RtpTransportAdapter* GetInternal() override { return nullptr; }
+
  protected:
   // Owned by the subclasses.
-  RtpTransportInternal* transport_;
+  RtpTransportInternal* transport_ = nullptr;
 };
 
 }  // namespace webrtc

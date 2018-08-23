@@ -31,9 +31,9 @@ bool AlrExperimentSettings::MaxOneFieldTrialEnabled() {
              .empty();
 }
 
-rtc::Optional<AlrExperimentSettings>
+absl::optional<AlrExperimentSettings>
 AlrExperimentSettings::CreateFromFieldTrial(const char* experiment_name) {
-  rtc::Optional<AlrExperimentSettings> ret;
+  absl::optional<AlrExperimentSettings> ret;
   std::string group_name = field_trial::FindFullName(experiment_name);
 
   const std::string kIgnoredSuffix = "_Dogfood";

@@ -14,6 +14,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RTCPeerConnectionFactory;
+
 namespace webrtc {
 
 class RtpReceiverDelegateAdapter : public RtpReceiverObserverInterface {
@@ -30,15 +32,18 @@ class RtpReceiverDelegateAdapter : public RtpReceiverObserverInterface {
 
 @interface RTCRtpReceiver ()
 
-@property(nonatomic, readonly)
-    rtc::scoped_refptr<webrtc::RtpReceiverInterface> nativeRtpReceiver;
+@property(nonatomic, readonly) rtc::scoped_refptr<webrtc::RtpReceiverInterface> nativeRtpReceiver;
 
 /** Initialize an RTCRtpReceiver with a native RtpReceiverInterface. */
-- (instancetype)initWithNativeRtpReceiver:
-    (rtc::scoped_refptr<webrtc::RtpReceiverInterface>)nativeRtpReceiver
+- (instancetype)initWithFactory:(RTCPeerConnectionFactory*)factory
+              nativeRtpReceiver:(rtc::scoped_refptr<webrtc::RtpReceiverInterface>)nativeRtpReceiver
     NS_DESIGNATED_INITIALIZER;
 
 + (RTCRtpMediaType)mediaTypeForNativeMediaType:(cricket::MediaType)nativeMediaType;
+
++ (cricket::MediaType)nativeMediaTypeForMediaType:(RTCRtpMediaType)mediaType;
+
++ (NSString*)stringForMediaType:(RTCRtpMediaType)mediaType;
 
 @end
 

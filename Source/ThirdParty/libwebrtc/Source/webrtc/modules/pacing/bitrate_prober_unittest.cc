@@ -49,7 +49,7 @@ TEST(BitrateProberTest, VerifyStatesAndTimeBetweenProbes) {
   // Verify that the actual bitrate is withing 10% of the target.
   double bitrate = kProbeSize * (kClusterSize - 1) * 8 * 1000.0 / now_ms;
   EXPECT_GT(bitrate, kTestBitrate1 * 0.9);
-  EXPECT_LT(bitrate,  kTestBitrate1 * 1.1);
+  EXPECT_LT(bitrate, kTestBitrate1 * 1.1);
 
   now_ms += prober.TimeUntilNextProbe(now_ms);
   int64_t probe2_started = now_ms;
@@ -66,7 +66,7 @@ TEST(BitrateProberTest, VerifyStatesAndTimeBetweenProbes) {
   EXPECT_GE(duration, kMinProbeDurationMs);
   bitrate = kProbeSize * (kClusterSize - 1) * 8 * 1000.0 / duration;
   EXPECT_GT(bitrate, kTestBitrate2 * 0.9);
-  EXPECT_LT(bitrate,  kTestBitrate2 * 1.1);
+  EXPECT_LT(bitrate, kTestBitrate2 * 1.1);
 
   EXPECT_EQ(-1, prober.TimeUntilNextProbe(now_ms));
   EXPECT_FALSE(prober.IsProbing());

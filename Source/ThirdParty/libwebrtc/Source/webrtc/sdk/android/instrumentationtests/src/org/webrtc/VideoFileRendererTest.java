@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
 public class VideoFileRendererTest {
   @Before
   public void setUp() {
-    NativeLibrary.initialize(new NativeLibrary.DefaultLoader());
+    NativeLibrary.initialize(new NativeLibrary.DefaultLoader(), TestConstants.NATIVE_LIBRARY);
   }
 
   @Test
@@ -51,22 +51,25 @@ public class VideoFileRendererTest {
     for (String frameStr : frames) {
       int[] planeSizes = {
           frameWidth * frameWidth, frameWidth * frameHeight / 4, frameWidth * frameHeight / 4};
+      int[] yuvStrides = {frameWidth, frameWidth / 2, frameWidth / 2};
 
-      byte[] frameBytes = frameStr.getBytes(Charset.forName("US-ASCII"));
       ByteBuffer[] yuvPlanes = new ByteBuffer[3];
+      byte[] frameBytes = frameStr.getBytes(Charset.forName("US-ASCII"));
       int pos = 0;
       for (int i = 0; i < 3; i++) {
         yuvPlanes[i] = ByteBuffer.allocateDirect(planeSizes[i]);
         yuvPlanes[i].put(frameBytes, pos, planeSizes[i]);
+        yuvPlanes[i].rewind();
         pos += planeSizes[i];
       }
 
-      int[] yuvStrides = {frameWidth, frameWidth / 2, frameWidth / 2};
+      VideoFrame.I420Buffer buffer =
+          JavaI420Buffer.wrap(frameWidth, frameHeight, yuvPlanes[0], yuvStrides[0], yuvPlanes[1],
+              yuvStrides[1], yuvPlanes[2], yuvStrides[2], null /* releaseCallback */);
 
-      VideoRenderer.I420Frame frame =
-          new VideoRenderer.I420Frame(frameWidth, frameHeight, 0, yuvStrides, yuvPlanes, 0);
-
-      videoFileRenderer.renderFrame(frame);
+      VideoFrame frame = new VideoFrame(buffer, 0 /* rotation */, 0 /* timestampNs */);
+      videoFileRenderer.onFrame(frame);
+      frame.release();
     }
     videoFileRenderer.release();
 

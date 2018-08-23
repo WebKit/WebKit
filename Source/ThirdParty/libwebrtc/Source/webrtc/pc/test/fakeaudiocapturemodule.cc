@@ -45,8 +45,7 @@ FakeAudioCaptureModule::FakeAudioCaptureModule()
       current_mic_level_(kMaxVolume),
       started_(false),
       next_frame_time_(0),
-      frames_received_(0) {
-}
+      frames_received_(0) {}
 
 FakeAudioCaptureModule::~FakeAudioCaptureModule() {
   if (process_thread_) {
@@ -426,7 +425,8 @@ bool FakeAudioCaptureModule::CheckRecBuffer(int value) {
   const size_t buffer_size_in_samples =
       sizeof(rec_buffer_) / kNumberBytesPerSample;
   for (size_t i = 0; i < buffer_size_in_samples; ++i) {
-    if (buffer_ptr[i] >= value) return true;
+    if (buffer_ptr[i] >= value)
+      return true;
   }
   return false;
 }
@@ -496,10 +496,10 @@ void FakeAudioCaptureModule::ReceiveFrameP() {
     size_t nSamplesOut = 0;
     int64_t elapsed_time_ms = 0;
     int64_t ntp_time_ms = 0;
-    if (audio_callback_->NeedMorePlayData(kNumberSamples, kNumberBytesPerSample,
-                                         kNumberOfChannels, kSamplesPerSecond,
-                                         rec_buffer_, nSamplesOut,
-                                         &elapsed_time_ms, &ntp_time_ms) != 0) {
+    if (audio_callback_->NeedMorePlayData(
+            kNumberSamples, kNumberBytesPerSample, kNumberOfChannels,
+            kSamplesPerSecond, rec_buffer_, nSamplesOut, &elapsed_time_ms,
+            &ntp_time_ms) != 0) {
       RTC_NOTREACHED();
     }
     RTC_CHECK(nSamplesOut == kNumberSamples);
@@ -525,13 +525,10 @@ void FakeAudioCaptureModule::SendFrameP() {
   bool key_pressed = false;
   uint32_t current_mic_level = 0;
   MicrophoneVolume(&current_mic_level);
-  if (audio_callback_->RecordedDataIsAvailable(send_buffer_, kNumberSamples,
-                                              kNumberBytesPerSample,
-                                              kNumberOfChannels,
-                                              kSamplesPerSecond, kTotalDelayMs,
-                                              kClockDriftMs, current_mic_level,
-                                              key_pressed,
-                                              current_mic_level) != 0) {
+  if (audio_callback_->RecordedDataIsAvailable(
+          send_buffer_, kNumberSamples, kNumberBytesPerSample,
+          kNumberOfChannels, kSamplesPerSecond, kTotalDelayMs, kClockDriftMs,
+          current_mic_level, key_pressed, current_mic_level) != 0) {
     RTC_NOTREACHED();
   }
   SetMicrophoneVolume(current_mic_level);

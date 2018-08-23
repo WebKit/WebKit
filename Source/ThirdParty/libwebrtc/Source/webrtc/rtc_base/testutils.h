@@ -37,8 +37,8 @@ using namespace rtc;
 // event.
 
 enum StreamSinkEvent {
-  SSE_OPEN  = SE_OPEN,
-  SSE_READ  = SE_READ,
+  SSE_OPEN = SE_OPEN,
+  SSE_READ = SE_READ,
   SSE_WRITE = SE_WRITE,
   SSE_CLOSE = SE_CLOSE,
   SSE_ERROR = 16
@@ -50,15 +50,17 @@ class StreamSink : public sigslot::has_slots<> {
   ~StreamSink() override;
 
   void Monitor(StreamInterface* stream) {
-   stream->SignalEvent.connect(this, &StreamSink::OnEvent);
-   events_.erase(stream);
+    stream->SignalEvent.connect(this, &StreamSink::OnEvent);
+    events_.erase(stream);
   }
   void Unmonitor(StreamInterface* stream) {
-   stream->SignalEvent.disconnect(this);
-   // In case you forgot to unmonitor a previous object with this address
-   events_.erase(stream);
+    stream->SignalEvent.disconnect(this);
+    // In case you forgot to unmonitor a previous object with this address
+    events_.erase(stream);
   }
-  bool Check(StreamInterface* stream, StreamSinkEvent event, bool reset = true) {
+  bool Check(StreamInterface* stream,
+             StreamSinkEvent event,
+             bool reset = true) {
     return DoCheck(stream, event, reset);
   }
   int Events(StreamInterface* stream, bool reset = true) {
@@ -66,19 +68,19 @@ class StreamSink : public sigslot::has_slots<> {
   }
 
   void Monitor(AsyncSocket* socket) {
-   socket->SignalConnectEvent.connect(this, &StreamSink::OnConnectEvent);
-   socket->SignalReadEvent.connect(this, &StreamSink::OnReadEvent);
-   socket->SignalWriteEvent.connect(this, &StreamSink::OnWriteEvent);
-   socket->SignalCloseEvent.connect(this, &StreamSink::OnCloseEvent);
-   // In case you forgot to unmonitor a previous object with this address
-   events_.erase(socket);
+    socket->SignalConnectEvent.connect(this, &StreamSink::OnConnectEvent);
+    socket->SignalReadEvent.connect(this, &StreamSink::OnReadEvent);
+    socket->SignalWriteEvent.connect(this, &StreamSink::OnWriteEvent);
+    socket->SignalCloseEvent.connect(this, &StreamSink::OnCloseEvent);
+    // In case you forgot to unmonitor a previous object with this address
+    events_.erase(socket);
   }
   void Unmonitor(AsyncSocket* socket) {
-   socket->SignalConnectEvent.disconnect(this);
-   socket->SignalReadEvent.disconnect(this);
-   socket->SignalWriteEvent.disconnect(this);
-   socket->SignalCloseEvent.disconnect(this);
-   events_.erase(socket);
+    socket->SignalConnectEvent.disconnect(this);
+    socket->SignalReadEvent.disconnect(this);
+    socket->SignalWriteEvent.disconnect(this);
+    socket->SignalCloseEvent.disconnect(this);
+    events_.erase(socket);
   }
   bool Check(AsyncSocket* socket, StreamSinkEvent event, bool reset = true) {
     return DoCheck(socket, event, reset);
@@ -88,7 +90,7 @@ class StreamSink : public sigslot::has_slots<> {
   }
 
  private:
-  typedef std::map<void*,int> EventMap;
+  typedef std::map<void*, int> EventMap;
 
   void OnEvent(StreamInterface* stream, int events, int error) {
     if (error) {
@@ -96,15 +98,9 @@ class StreamSink : public sigslot::has_slots<> {
     }
     AddEvents(stream, events);
   }
-  void OnConnectEvent(AsyncSocket* socket) {
-    AddEvents(socket, SSE_OPEN);
-  }
-  void OnReadEvent(AsyncSocket* socket) {
-    AddEvents(socket, SSE_READ);
-  }
-  void OnWriteEvent(AsyncSocket* socket) {
-    AddEvents(socket, SSE_WRITE);
-  }
+  void OnConnectEvent(AsyncSocket* socket) { AddEvents(socket, SSE_OPEN); }
+  void OnReadEvent(AsyncSocket* socket) { AddEvents(socket, SSE_READ); }
+  void OnWriteEvent(AsyncSocket* socket) { AddEvents(socket, SSE_WRITE); }
   void OnCloseEvent(AsyncSocket* socket, int error) {
     AddEvents(socket, (0 == error) ? SSE_CLOSE : SSE_ERROR);
   }
@@ -147,25 +143,24 @@ class StreamSink : public sigslot::has_slots<> {
 ///////////////////////////////////////////////////////////////////////////////
 
 class StreamSource : public StreamInterface {
-public:
- StreamSource();
- ~StreamSource() override;
+ public:
+  StreamSource();
+  ~StreamSource() override;
 
- void Clear() {
-   readable_data_.clear();
-   written_data_.clear();
-   state_ = SS_CLOSED;
-   read_block_ = 0;
-   write_block_ = SIZE_UNKNOWN;
+  void Clear() {
+    readable_data_.clear();
+    written_data_.clear();
+    state_ = SS_CLOSED;
+    read_block_ = 0;
+    write_block_ = SIZE_UNKNOWN;
   }
-  void QueueString(const char* data) {
-    QueueData(data, strlen(data));
-  }
+  void QueueString(const char* data) { QueueData(data, strlen(data)); }
 #if defined(__GNUC__)
   // Note: Implicit |this| argument counts as the first argument.
   __attribute__((__format__(__printf__, 2, 3)))
 #endif
-  void QueueStringF(const char* format, ...) {
+  void
+  QueueStringF(const char* format, ...) {
     va_list args;
     va_start(args, format);
     char buffer[1024];

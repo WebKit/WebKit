@@ -12,12 +12,11 @@
 
 #include <algorithm>
 
-#include "modules/congestion_controller/delay_based_bwe.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/mod_ops.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 
@@ -28,10 +27,7 @@ const int64_t kBaseTimestampScaleFactor =
 const int64_t kBaseTimestampRangeSizeUs = kBaseTimestampScaleFactor * (1 << 24);
 
 TransportFeedbackAdapter::TransportFeedbackAdapter(const Clock* clock)
-    : send_side_bwe_with_overhead_(
-          webrtc::field_trial::IsEnabled("WebRTC-SendSideBwe-WithOverhead")),
-      transport_overhead_bytes_per_packet_(0),
-      send_time_history_(clock, kSendTimeHistoryWindowMs),
+    : send_time_history_(clock, kSendTimeHistoryWindowMs),
       clock_(clock),
       current_offset_ms_(kNoTimestamp),
       last_timestamp_us_(kNoTimestamp),
@@ -66,9 +62,6 @@ void TransportFeedbackAdapter::AddPacket(uint32_t ssrc,
                                          const PacedPacketInfo& pacing_info) {
   {
     rtc::CritScope cs(&lock_);
-    if (send_side_bwe_with_overhead_) {
-      length += transport_overhead_bytes_per_packet_;
-    }
     const int64_t creation_time_ms = clock_->TimeInMilliseconds();
     send_time_history_.AddAndRemoveOld(
         PacketFeedback(creation_time_ms, sequence_number, length, local_net_id_,
@@ -77,7 +70,7 @@ void TransportFeedbackAdapter::AddPacket(uint32_t ssrc,
 
   {
     rtc::CritScope cs(&observers_lock_);
-    for (auto observer : observers_) {
+    for (auto* observer : observers_) {
       observer->OnPacketAdded(ssrc, sequence_number);
     }
   }
@@ -87,12 +80,6 @@ void TransportFeedbackAdapter::OnSentPacket(uint16_t sequence_number,
                                             int64_t send_time_ms) {
   rtc::CritScope cs(&lock_);
   send_time_history_.OnSentPacket(sequence_number, send_time_ms);
-}
-
-void TransportFeedbackAdapter::SetTransportOverhead(
-    int transport_overhead_bytes_per_packet) {
-  rtc::CritScope cs(&lock_);
-  transport_overhead_bytes_per_packet_ = transport_overhead_bytes_per_packet;
 }
 
 void TransportFeedbackAdapter::SetNetworkIds(uint16_t local_id,
@@ -195,7 +182,7 @@ void TransportFeedbackAdapter::OnTransportFeedback(
   last_packet_feedback_vector_ = GetPacketFeedbackVector(feedback);
   {
     rtc::CritScope cs(&observers_lock_);
-    for (auto observer : observers_) {
+    for (auto* observer : observers_) {
       observer->OnPacketFeedbackVector(last_packet_feedback_vector_);
     }
   }
@@ -206,7 +193,8 @@ TransportFeedbackAdapter::GetTransportFeedbackVector() const {
   return last_packet_feedback_vector_;
 }
 
-rtc::Optional<int64_t> TransportFeedbackAdapter::GetMinFeedbackLoopRtt() const {
+absl::optional<int64_t> TransportFeedbackAdapter::GetMinFeedbackLoopRtt()
+    const {
   rtc::CritScope cs(&lock_);
   return min_feedback_rtt_;
 }

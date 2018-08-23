@@ -19,8 +19,7 @@ namespace cricket {
 std::unique_ptr<VideoCapturer> WebRtcVideoDeviceCapturerFactory::Create(
     const Device& device) {
 #ifdef HAVE_WEBRTC_VIDEO
-  std::unique_ptr<WebRtcVideoCapturer> capturer(
-      new WebRtcVideoCapturer());
+  std::unique_ptr<WebRtcVideoCapturer> capturer(new WebRtcVideoCapturer());
   if (!capturer->Init(device)) {
     return std::unique_ptr<VideoCapturer>();
   }

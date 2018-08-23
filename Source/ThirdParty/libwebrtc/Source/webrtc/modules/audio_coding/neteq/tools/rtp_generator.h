@@ -14,7 +14,6 @@
 #include "api/rtp_headers.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "rtc_base/constructormagic.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace test {
@@ -32,8 +31,7 @@ class RtpGenerator {
         next_send_time_ms_(start_send_time_ms),
         ssrc_(ssrc),
         samples_per_ms_(samples_per_ms),
-        drift_factor_(0.0) {
-  }
+        drift_factor_(0.0) {}
 
   virtual ~RtpGenerator() {}
 

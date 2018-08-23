@@ -21,7 +21,6 @@ namespace webrtc {
 namespace test {
 
 class RtpFileSource;
-class RtcEventLogSource;
 
 // An adapter class to dress up a PacketSource object as a NetEqInput.
 class NetEqPacketSourceInput : public NetEqInput {
@@ -29,16 +28,17 @@ class NetEqPacketSourceInput : public NetEqInput {
   using RtpHeaderExtensionMap = std::map<int, webrtc::RTPExtensionType>;
 
   NetEqPacketSourceInput();
-  rtc::Optional<int64_t> NextPacketTime() const override;
+  absl::optional<int64_t> NextPacketTime() const override;
   std::unique_ptr<PacketData> PopPacket() override;
-  rtc::Optional<RTPHeader> NextHeader() const override;
+  absl::optional<RTPHeader> NextHeader() const override;
   bool ended() const override { return !next_output_event_ms_; }
+  void SelectSsrc(uint32_t);
 
  protected:
   virtual PacketSource* source() = 0;
   void LoadNextPacket();
 
-  rtc::Optional<int64_t> next_output_event_ms_;
+  absl::optional<int64_t> next_output_event_ms_;
 
  private:
   std::unique_ptr<Packet> packet_;
@@ -50,7 +50,7 @@ class NetEqRtpDumpInput final : public NetEqPacketSourceInput {
   NetEqRtpDumpInput(const std::string& file_name,
                     const RtpHeaderExtensionMap& hdr_ext_map);
 
-  rtc::Optional<int64_t> NextOutputEventTime() const override;
+  absl::optional<int64_t> NextOutputEventTime() const override;
   void AdvanceOutputEvent() override;
 
  protected:
@@ -60,23 +60,6 @@ class NetEqRtpDumpInput final : public NetEqPacketSourceInput {
   static constexpr int64_t kOutputPeriodMs = 10;
 
   std::unique_ptr<RtpFileSource> source_;
-};
-
-// Implementation of NetEqPacketSourceInput to be used with an
-// RtcEventLogSource.
-class NetEqEventLogInput final : public NetEqPacketSourceInput {
- public:
-  NetEqEventLogInput(const std::string& file_name,
-                     const RtpHeaderExtensionMap& hdr_ext_map);
-
-  rtc::Optional<int64_t> NextOutputEventTime() const override;
-  void AdvanceOutputEvent() override;
-
- protected:
-  PacketSource* source() override;
-
- private:
-  std::unique_ptr<RtcEventLogSource> source_;
 };
 
 }  // namespace test

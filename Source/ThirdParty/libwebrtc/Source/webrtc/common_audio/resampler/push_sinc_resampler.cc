@@ -28,8 +28,7 @@ PushSincResampler::PushSincResampler(size_t source_frames,
       first_pass_(true),
       source_available_(0) {}
 
-PushSincResampler::~PushSincResampler() {
-}
+PushSincResampler::~PushSincResampler() {}
 
 size_t PushSincResampler::Resample(const int16_t* source,
                                    size_t source_length,

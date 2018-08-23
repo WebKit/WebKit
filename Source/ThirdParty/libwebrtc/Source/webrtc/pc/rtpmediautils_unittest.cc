@@ -8,16 +8,24 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <tuple>
+
 #include "pc/rtpmediautils.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
+using ::testing::Bool;
+using ::testing::Combine;
 using ::testing::Values;
+using ::testing::ValuesIn;
+
+RtpTransceiverDirection kAllDirections[] = {
+    RtpTransceiverDirection::kSendRecv, RtpTransceiverDirection::kSendOnly,
+    RtpTransceiverDirection::kRecvOnly, RtpTransceiverDirection::kInactive};
 
 class EnumerateAllDirectionsTest
-    : public ::testing::Test,
-      public ::testing::WithParamInterface<RtpTransceiverDirection> {};
+    : public ::testing::TestWithParam<RtpTransceiverDirection> {};
 
 // Test that converting the direction to send/recv and back again results in the
 // same direction.
@@ -51,9 +59,38 @@ TEST_P(EnumerateAllDirectionsTest, TestReversedIdentity) {
 
 INSTANTIATE_TEST_CASE_P(RtpTransceiverDirectionTest,
                         EnumerateAllDirectionsTest,
-                        Values(RtpTransceiverDirection::kSendRecv,
-                               RtpTransceiverDirection::kSendOnly,
-                               RtpTransceiverDirection::kRecvOnly,
-                               RtpTransceiverDirection::kInactive));
+                        ValuesIn(kAllDirections));
+
+class EnumerateAllDirectionsAndBool
+    : public ::testing::TestWithParam<
+          std::tuple<RtpTransceiverDirection, bool>> {};
+
+TEST_P(EnumerateAllDirectionsAndBool, TestWithSendSet) {
+  RtpTransceiverDirection direction = std::get<0>(GetParam());
+  bool send = std::get<1>(GetParam());
+
+  RtpTransceiverDirection result =
+      RtpTransceiverDirectionWithSendSet(direction, send);
+
+  EXPECT_EQ(send, RtpTransceiverDirectionHasSend(result));
+  EXPECT_EQ(RtpTransceiverDirectionHasRecv(direction),
+            RtpTransceiverDirectionHasRecv(result));
+}
+
+TEST_P(EnumerateAllDirectionsAndBool, TestWithRecvSet) {
+  RtpTransceiverDirection direction = std::get<0>(GetParam());
+  bool recv = std::get<1>(GetParam());
+
+  RtpTransceiverDirection result =
+      RtpTransceiverDirectionWithRecvSet(direction, recv);
+
+  EXPECT_EQ(RtpTransceiverDirectionHasSend(direction),
+            RtpTransceiverDirectionHasSend(result));
+  EXPECT_EQ(recv, RtpTransceiverDirectionHasRecv(result));
+}
+
+INSTANTIATE_TEST_CASE_P(RtpTransceiverDirectionTest,
+                        EnumerateAllDirectionsAndBool,
+                        Combine(ValuesIn(kAllDirections), Bool()));
 
 }  // namespace webrtc

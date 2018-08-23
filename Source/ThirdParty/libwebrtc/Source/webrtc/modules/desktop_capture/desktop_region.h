@@ -16,7 +16,6 @@
 
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "rtc_base/constructormagic.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -166,4 +165,3 @@ class DesktopRegion {
 }  // namespace webrtc
 
 #endif  // MODULES_DESKTOP_CAPTURE_DESKTOP_REGION_H_
-

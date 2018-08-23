@@ -360,12 +360,11 @@ OSStatus AudioDeviceIOS::OnDeliverRecordedData(AudioUnitRenderActionFlags* flags
   // Simply return if recording is not enabled.
   if (!rtc::AtomicOps::AcquireLoad(&recording_)) return result;
 
-  const size_t num_bytes = num_frames * VoiceProcessingAudioUnit::kBytesPerSample;
   // Set the size of our own audio buffer and clear it first to avoid copying
   // in combination with potential reallocations.
   // On real iOS devices, the size will only be set once (at first callback).
   record_audio_buffer_.Clear();
-  record_audio_buffer_.SetSize(num_bytes);
+  record_audio_buffer_.SetSize(num_frames);
 
   // Allocate AudioBuffers to be used as storage for the received audio.
   // The AudioBufferList structure works as a placeholder for the
@@ -376,8 +375,9 @@ OSStatus AudioDeviceIOS::OnDeliverRecordedData(AudioUnitRenderActionFlags* flags
   audio_buffer_list.mNumberBuffers = 1;
   AudioBuffer* audio_buffer = &audio_buffer_list.mBuffers[0];
   audio_buffer->mNumberChannels = record_parameters_.channels();
-  audio_buffer->mDataByteSize = record_audio_buffer_.size();
-  audio_buffer->mData = record_audio_buffer_.data();
+  audio_buffer->mDataByteSize =
+      record_audio_buffer_.size() * VoiceProcessingAudioUnit::kBytesPerSample;
+  audio_buffer->mData = reinterpret_cast<int8_t*>(record_audio_buffer_.data());
 
   // Obtain the recorded audio samples by initiating a rendering cycle.
   // Since it happens on the input bus, the |io_data| parameter is a reference
@@ -394,8 +394,7 @@ OSStatus AudioDeviceIOS::OnDeliverRecordedData(AudioUnitRenderActionFlags* flags
   // Get a pointer to the recorded audio and send it to the WebRTC ADB.
   // Use the FineAudioBuffer instance to convert between native buffer size
   // and the 10ms buffer size used by WebRTC.
-  fine_audio_buffer_->DeliverRecordedData(
-      record_audio_buffer_, kFixedPlayoutDelayEstimate, kFixedRecordDelayEstimate);
+  fine_audio_buffer_->DeliverRecordedData(record_audio_buffer_, kFixedRecordDelayEstimate);
   return noErr;
 }
 
@@ -410,16 +409,13 @@ OSStatus AudioDeviceIOS::OnGetPlayoutData(AudioUnitRenderActionFlags* flags,
   AudioBuffer* audio_buffer = &io_data->mBuffers[0];
   RTC_DCHECK_EQ(1, audio_buffer->mNumberChannels);
 
-  // Get pointer to internal audio buffer to which new audio data shall be
-  // written.
-  const size_t size_in_bytes = audio_buffer->mDataByteSize;
-  RTC_CHECK_EQ(size_in_bytes / VoiceProcessingAudioUnit::kBytesPerSample, num_frames);
-  int8_t* destination = reinterpret_cast<int8_t*>(audio_buffer->mData);
   // Produce silence and give audio unit a hint about it if playout is not
   // activated.
   if (!rtc::AtomicOps::AcquireLoad(&playing_)) {
+    const size_t size_in_bytes = audio_buffer->mDataByteSize;
+    RTC_CHECK_EQ(size_in_bytes / VoiceProcessingAudioUnit::kBytesPerSample, num_frames);
     *flags |= kAudioUnitRenderAction_OutputIsSilence;
-    memset(destination, 0, size_in_bytes);
+    memset(static_cast<int8_t*>(audio_buffer->mData), 0, size_in_bytes);
     return noErr;
   }
 
@@ -455,7 +451,9 @@ OSStatus AudioDeviceIOS::OnGetPlayoutData(AudioUnitRenderActionFlags* flags,
   // Read decoded 16-bit PCM samples from WebRTC (using a size that matches
   // the native I/O audio unit) and copy the result to the audio buffer in the
   // |io_data| destination.
-  fine_audio_buffer_->GetPlayoutData(rtc::ArrayView<int8_t>(destination, size_in_bytes));
+  fine_audio_buffer_->GetPlayoutData(
+      rtc::ArrayView<int16_t>(static_cast<int16_t*>(audio_buffer->mData), num_frames),
+      kFixedPlayoutDelayEstimate);
   return noErr;
 }
 
@@ -493,14 +491,7 @@ void AudioDeviceIOS::HandleInterruptionBegin() {
     if (!audio_unit_->Stop()) {
       RTCLogError(@"Failed to stop the audio unit for interruption begin.");
     } else {
-      // The audio unit has been stopped but will be restarted when the
-      // interruption ends in HandleInterruptionEnd(). It will result in audio
-      // callbacks from a new native I/O thread which means that we must detach
-      // thread checkers here to be prepared for an upcoming new audio stream.
-      io_thread_checker_.DetachFromThread();
-      // The audio device buffer must also be informed about the interrupted
-      // state so it can detach its thread checkers as well.
-      audio_device_buffer_->NativeAudioInterrupted();
+      PrepareForNewStart();
     }
   }
   is_interrupted_ = true;
@@ -582,6 +573,7 @@ void AudioDeviceIOS::HandleSampleRateChange(float sample_rate) {
   if (audio_unit_->GetState() == VoiceProcessingAudioUnit::kStarted) {
     audio_unit_->Stop();
     restart_audio_unit = true;
+    PrepareForNewStart();
   }
   if (audio_unit_->GetState() == VoiceProcessingAudioUnit::kInitialized) {
     audio_unit_->Uninitialize();
@@ -700,12 +692,9 @@ void AudioDeviceIOS::SetupAudioBuffersForActiveAudioSession() {
 
   // Create a modified audio buffer class which allows us to ask for,
   // or deliver, any number of samples (and not only multiple of 10ms) to match
-  // the native audio unit buffer size. Use a reasonable capacity to avoid
-  // reallocations while audio is played to reduce risk of glitches.
+  // the native audio unit buffer size.
   RTC_DCHECK(audio_device_buffer_);
-  const size_t capacity_in_bytes = 2 * playout_parameters_.GetBytesPerBuffer();
-  fine_audio_buffer_.reset(new FineAudioBuffer(
-      audio_device_buffer_, playout_parameters_.sample_rate(), capacity_in_bytes));
+  fine_audio_buffer_.reset(new FineAudioBuffer(audio_device_buffer_));
 }
 
 bool AudioDeviceIOS::CreateAudioUnit() {
@@ -857,6 +846,7 @@ bool AudioDeviceIOS::InitPlayOrRecord() {
   if (![session beginWebRTCSession:&error]) {
     [session unlockForConfiguration];
     RTCLogError(@"Failed to begin WebRTC session: %@", error.localizedDescription);
+    audio_unit_.reset();
     return false;
   }
 
@@ -868,6 +858,7 @@ bool AudioDeviceIOS::InitPlayOrRecord() {
       // audio session during or after a Media Services failure.
       // See AVAudioSessionErrorCodeMediaServicesFailed for details.
       [session unlockForConfiguration];
+      audio_unit_.reset();
       return false;
     }
     SetupAudioBuffersForActiveAudioSession();
@@ -903,6 +894,21 @@ void AudioDeviceIOS::ShutdownPlayOrRecord() {
   UnconfigureAudioSession();
   [session endWebRTCSession:nil];
   [session unlockForConfiguration];
+}
+
+void AudioDeviceIOS::PrepareForNewStart() {
+  LOGI() << "PrepareForNewStart";
+  // The audio unit has been stopped and preparations are needed for an upcoming
+  // restart. It will result in audio callbacks from a new native I/O thread
+  // which means that we must detach thread checkers here to be prepared for an
+  // upcoming new audio stream.
+  io_thread_checker_.DetachFromThread();
+  // The audio device buffer must also be informed about the interrupted
+  // state so it can detach its thread checkers as well.
+  if (audio_device_buffer_) {
+    audio_device_buffer_->NativeAudioPlayoutInterrupted();
+    audio_device_buffer_->NativeAudioRecordingInterrupted();
+  }
 }
 
 }  // namespace webrtc

@@ -25,12 +25,11 @@ namespace {
 complex<float> I0(complex<float> x) {
   complex<float> y = x / 3.75f;
   y *= y;
-  return 1.0f + y * (
-    3.5156229f + y * (
-      3.0899424f + y * (
-        1.2067492f + y * (
-          0.2659732f + y * (
-            0.360768e-1f + y * 0.45813e-2f)))));
+  return 1.0f + y * (3.5156229f +
+                     y * (3.0899424f +
+                          y * (1.2067492f +
+                               y * (0.2659732f +
+                                    y * (0.360768e-1f + y * 0.45813e-2f)))));
 }
 
 }  // namespace
@@ -41,12 +40,13 @@ void WindowGenerator::Hanning(int length, float* window) {
   RTC_CHECK_GT(length, 1);
   RTC_CHECK(window != nullptr);
   for (int i = 0; i < length; ++i) {
-    window[i] = 0.5f * (1 - cosf(2 * static_cast<float>(M_PI) * i /
-                                 (length - 1)));
+    window[i] =
+        0.5f * (1 - cosf(2 * static_cast<float>(M_PI) * i / (length - 1)));
   }
 }
 
-void WindowGenerator::KaiserBesselDerived(float alpha, size_t length,
+void WindowGenerator::KaiserBesselDerived(float alpha,
+                                          size_t length,
                                           float* window) {
   RTC_CHECK_GT(length, 1U);
   RTC_CHECK(window != nullptr);
@@ -69,4 +69,3 @@ void WindowGenerator::KaiserBesselDerived(float alpha, size_t length,
 }
 
 }  // namespace webrtc
-

@@ -23,9 +23,8 @@ namespace {
 const uint32_t kSenderSsrc = 0x12345678;
 const uint32_t kRemoteSsrc = 0x23456789;
 // Manually created Pli packet matching constants above.
-const uint8_t kPacket[] = {0x81, 206,  0x00, 0x02,
-                           0x12, 0x34, 0x56, 0x78,
-                           0x23, 0x45, 0x67, 0x89};
+const uint8_t kPacket[] = {0x81, 206,  0x00, 0x02, 0x12, 0x34,
+                           0x56, 0x78, 0x23, 0x45, 0x67, 0x89};
 }  // namespace
 
 TEST(RtcpPacketPliTest, Parse) {
@@ -45,7 +44,7 @@ TEST(RtcpPacketPliTest, Create) {
   rtc::Buffer packet = pli.Build();
 
   EXPECT_THAT(make_tuple(packet.data(), packet.size()),
-      ElementsAreArray(kPacket));
+              ElementsAreArray(kPacket));
 }
 
 TEST(RtcpPacketPliTest, ParseFailsOnTooSmallPacket) {

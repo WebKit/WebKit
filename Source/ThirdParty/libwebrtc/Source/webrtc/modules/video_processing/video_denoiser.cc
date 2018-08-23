@@ -31,10 +31,14 @@ static void ShowRect(const std::unique_ptr<DenoiserFilter>& filter,
                      const std::unique_ptr<uint8_t[]>& moving_edge_red,
                      const std::unique_ptr<uint8_t[]>& x_density,
                      const std::unique_ptr<uint8_t[]>& y_density,
-                     const uint8_t* u_src, int stride_u_src,
-                     const uint8_t* v_src, int stride_v_src,
-                     uint8_t* u_dst, int stride_u_dst,
-                     uint8_t* v_dst, int stride_v_dst,
+                     const uint8_t* u_src,
+                     int stride_u_src,
+                     const uint8_t* v_src,
+                     int stride_v_src,
+                     uint8_t* u_dst,
+                     int stride_u_dst,
+                     uint8_t* v_dst,
+                     int stride_v_dst,
                      int mb_rows_,
                      int mb_cols_) {
   for (int mb_row = 0; mb_row < mb_rows_; ++mb_row) {
@@ -323,20 +327,17 @@ rtc::scoped_refptr<I420BufferInterface> VideoDenoiser::DenoiseFrame(
     CopyLumaOnMargin(y_src, stride_y_src, y_dst, stride_y_dst);
 
   // Copy u/v planes.
-  libyuv::CopyPlane(frame->DataU(), frame->StrideU(),
-                    dst->MutableDataU(), dst->StrideU(),
-                    (width_ + 1) >> 1, (height_ + 1) >> 1);
-  libyuv::CopyPlane(frame->DataV(), frame->StrideV(),
-                    dst->MutableDataV(), dst->StrideV(),
-                    (width_ + 1) >> 1, (height_ + 1) >> 1);
+  libyuv::CopyPlane(frame->DataU(), frame->StrideU(), dst->MutableDataU(),
+                    dst->StrideU(), (width_ + 1) >> 1, (height_ + 1) >> 1);
+  libyuv::CopyPlane(frame->DataV(), frame->StrideV(), dst->MutableDataV(),
+                    dst->StrideV(), (width_ + 1) >> 1, (height_ + 1) >> 1);
 
 #if DISPLAY || DISPLAYNEON
   // Show rectangular region
   ShowRect(filter_, moving_edge_, moving_object_, x_density_, y_density_,
            frame->DataU(), frame->StrideU(), frame->DataV(), frame->StrideV(),
-           dst->MutableDataU(), dst->StrideU(),
-           dst->MutableDataV(), dst->StrideV(),
-           mb_rows_, mb_cols_);
+           dst->MutableDataU(), dst->StrideU(), dst->MutableDataV(),
+           dst->StrideV(), mb_rows_, mb_cols_);
 #endif
   prev_buffer_ = dst;
   return dst;

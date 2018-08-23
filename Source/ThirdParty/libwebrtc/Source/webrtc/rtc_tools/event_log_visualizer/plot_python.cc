@@ -17,7 +17,6 @@
 #include "rtc_base/checks.h"
 
 namespace webrtc {
-namespace plotting {
 
 PythonPlot::PythonPlot() {}
 
@@ -39,9 +38,9 @@ void PythonPlot::Draw() {
       // List x coordinates
       printf("x%zu = [", i);
       if (series_list_[i].points.size() > 0)
-        printf("%G", series_list_[i].points[0].x);
+        printf("%.3f", series_list_[i].points[0].x);
       for (size_t j = 1; j < series_list_[i].points.size(); j++)
-        printf(", %G", series_list_[i].points[j].x);
+        printf(", %.3f", series_list_[i].points[j].x);
       printf("]\n");
 
       // List y coordinates
@@ -103,8 +102,8 @@ void PythonPlot::Draw() {
     }
 
     // IntervalSeries
-    printf("interval_colors = ['#ff8e82','#5092fc','#c4ffc4']\n");
-    RTC_CHECK_LE(interval_list_.size(), 3);
+    printf("interval_colors = ['#ff8e82','#5092fc','#c4ffc4','#aaaaaa']\n");
+    RTC_CHECK_LE(interval_list_.size(), 4);
     // To get the intervals to show up in the legend we have to create patches
     // for them.
     printf("legend_patches = []\n");
@@ -180,5 +179,4 @@ Plot* PythonPlotCollection::AppendNewPlot() {
   return plot;
 }
 
-}  // namespace plotting
 }  // namespace webrtc

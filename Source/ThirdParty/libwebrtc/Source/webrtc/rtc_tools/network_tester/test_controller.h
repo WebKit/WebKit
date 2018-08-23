@@ -49,7 +49,7 @@ class TestController : public sigslot::has_slots<> {
   void SendConnectTo(const std::string& hostname, int port);
 
   void SendData(const NetworkTesterPacket& packet,
-                rtc::Optional<size_t> data_size);
+                absl::optional<size_t> data_size);
 
   void OnTestDone();
 

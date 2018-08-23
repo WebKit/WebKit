@@ -16,10 +16,10 @@
 
 ******************************************************************/
 
-#include "defines.h"
-#include "constants.h"
-#include "enh_upsample.h"
-#include "my_corr.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
+#include "modules/audio_coding/codecs/ilbc/enh_upsample.h"
+#include "modules/audio_coding/codecs/ilbc/my_corr.h"
 
 /*----------------------------------------------------------------*
  * find segment starting near idata+estSegPos that has highest

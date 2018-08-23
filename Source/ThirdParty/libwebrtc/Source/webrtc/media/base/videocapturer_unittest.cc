@@ -21,7 +21,7 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/thread.h"
 
-using cricket::FakeVideoCapturer;
+using cricket::FakeVideoCapturerWithTaskQueue;
 
 namespace {
 
@@ -31,9 +31,7 @@ const int kMinHdHeight = 720;
 
 }  // namespace
 
-class VideoCapturerTest
-    : public sigslot::has_slots<>,
-      public testing::Test {
+class VideoCapturerTest : public sigslot::has_slots<>, public testing::Test {
  public:
   VideoCapturerTest()
       : capture_state_(cricket::CS_STOPPED), num_state_changes_(0) {
@@ -42,8 +40,8 @@ class VideoCapturerTest
 
  protected:
   void InitCapturer(bool is_screencast) {
-    capturer_ = std::unique_ptr<FakeVideoCapturer>(
-        new FakeVideoCapturer(is_screencast));
+    capturer_ = std::unique_ptr<FakeVideoCapturerWithTaskQueue>(
+        new FakeVideoCapturerWithTaskQueue(is_screencast));
     capturer_->SignalStateChange.connect(this,
                                          &VideoCapturerTest::OnStateChange);
     capturer_->AddOrUpdateSink(&renderer_, rtc::VideoSinkWants());
@@ -58,7 +56,7 @@ class VideoCapturerTest
   cricket::CaptureState capture_state() { return capture_state_; }
   int num_state_changes() { return num_state_changes_; }
 
-  std::unique_ptr<cricket::FakeVideoCapturer> capturer_;
+  std::unique_ptr<FakeVideoCapturerWithTaskQueue> capturer_;
   cricket::CaptureState capture_state_;
   int num_state_changes_;
   cricket::FakeVideoRenderer renderer_;
@@ -67,11 +65,10 @@ class VideoCapturerTest
 
 TEST_F(VideoCapturerTest, CaptureState) {
   EXPECT_TRUE(capturer_->enable_video_adapter());
-  EXPECT_EQ(cricket::CS_RUNNING, capturer_->Start(cricket::VideoFormat(
-      640,
-      480,
-      cricket::VideoFormat::FpsToInterval(30),
-      cricket::FOURCC_I420)));
+  EXPECT_EQ(cricket::CS_RUNNING,
+            capturer_->Start(cricket::VideoFormat(
+                640, 480, cricket::VideoFormat::FpsToInterval(30),
+                cricket::FOURCC_I420)));
   EXPECT_TRUE(capturer_->IsRunning());
   EXPECT_EQ_WAIT(cricket::CS_RUNNING, capture_state(), kMsCallbackWait);
   EXPECT_EQ(1, num_state_changes());
@@ -327,9 +324,8 @@ TEST_F(VideoCapturerTest, SinkWantsMaxPixelAndMaxPixelCountStepUp) {
 }
 
 TEST_F(VideoCapturerTest, TestFourccMatch) {
-  cricket::VideoFormat desired(640, 480,
-                               cricket::VideoFormat::FpsToInterval(30),
-                               cricket::FOURCC_ANY);
+  cricket::VideoFormat desired(
+      640, 480, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_ANY);
   cricket::VideoFormat best;
   EXPECT_TRUE(capturer_->GetBestCaptureFormat(desired, &best));
   EXPECT_EQ(640, best.width);
@@ -344,9 +340,8 @@ TEST_F(VideoCapturerTest, TestFourccMatch) {
 }
 
 TEST_F(VideoCapturerTest, TestResolutionMatch) {
-  cricket::VideoFormat desired(1920, 1080,
-                               cricket::VideoFormat::FpsToInterval(30),
-                               cricket::FOURCC_ANY);
+  cricket::VideoFormat desired(
+      1920, 1080, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_ANY);
   cricket::VideoFormat best;
   // Ask for 1920x1080. Get HD 1280x720 which is the highest.
   EXPECT_TRUE(capturer_->GetBestCaptureFormat(desired, &best));
@@ -390,21 +385,22 @@ TEST_F(VideoCapturerTest, TestResolutionMatch) {
 TEST_F(VideoCapturerTest, TestHDResolutionMatch) {
   // Add some HD formats typical of a mediocre HD webcam.
   std::vector<cricket::VideoFormat> formats;
-  formats.push_back(cricket::VideoFormat(320, 240,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  formats.push_back(cricket::VideoFormat(640, 480,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  formats.push_back(cricket::VideoFormat(960, 544,
-      cricket::VideoFormat::FpsToInterval(24), cricket::FOURCC_I420));
-  formats.push_back(cricket::VideoFormat(1280, 720,
-      cricket::VideoFormat::FpsToInterval(15), cricket::FOURCC_I420));
+  formats.push_back(cricket::VideoFormat(
+      320, 240, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  formats.push_back(cricket::VideoFormat(
+      640, 480, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  formats.push_back(cricket::VideoFormat(
+      960, 544, cricket::VideoFormat::FpsToInterval(24), cricket::FOURCC_I420));
+  formats.push_back(
+      cricket::VideoFormat(1280, 720, cricket::VideoFormat::FpsToInterval(15),
+                           cricket::FOURCC_I420));
   formats.push_back(cricket::VideoFormat(2592, 1944,
-      cricket::VideoFormat::FpsToInterval(7), cricket::FOURCC_I420));
+                                         cricket::VideoFormat::FpsToInterval(7),
+                                         cricket::FOURCC_I420));
   capturer_->ResetSupportedFormats(formats);
 
-  cricket::VideoFormat desired(960, 720,
-                               cricket::VideoFormat::FpsToInterval(30),
-                               cricket::FOURCC_ANY);
+  cricket::VideoFormat desired(
+      960, 720, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_ANY);
   cricket::VideoFormat best;
   // Ask for 960x720 30 fps. Get qHD 24 fps
   EXPECT_TRUE(capturer_->GetBestCaptureFormat(desired, &best));
@@ -484,19 +480,19 @@ TEST_F(VideoCapturerTest, TestHDResolutionMatch) {
 // Some cameras support 320x240 and 320x640. Verify we choose 320x240.
 TEST_F(VideoCapturerTest, TestStrangeFormats) {
   std::vector<cricket::VideoFormat> supported_formats;
-  supported_formats.push_back(cricket::VideoFormat(320, 240,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(320, 640,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      320, 240, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      320, 640, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
   capturer_->ResetSupportedFormats(supported_formats);
 
   std::vector<cricket::VideoFormat> required_formats;
-  required_formats.push_back(cricket::VideoFormat(320, 240,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  required_formats.push_back(cricket::VideoFormat(320, 200,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  required_formats.push_back(cricket::VideoFormat(320, 180,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  required_formats.push_back(cricket::VideoFormat(
+      320, 240, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  required_formats.push_back(cricket::VideoFormat(
+      320, 200, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  required_formats.push_back(cricket::VideoFormat(
+      320, 180, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
   cricket::VideoFormat best;
   for (size_t i = 0; i < required_formats.size(); ++i) {
     EXPECT_TRUE(capturer_->GetBestCaptureFormat(required_formats[i], &best));
@@ -505,10 +501,10 @@ TEST_F(VideoCapturerTest, TestStrangeFormats) {
   }
 
   supported_formats.clear();
-  supported_formats.push_back(cricket::VideoFormat(320, 640,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(320, 240,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      320, 640, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      320, 240, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
   capturer_->ResetSupportedFormats(supported_formats);
 
   for (size_t i = 0; i < required_formats.size(); ++i) {
@@ -522,19 +518,19 @@ TEST_F(VideoCapturerTest, TestStrangeFormats) {
 TEST_F(VideoCapturerTest, TestPoorFpsFormats) {
   // all formats are low framerate
   std::vector<cricket::VideoFormat> supported_formats;
-  supported_formats.push_back(cricket::VideoFormat(320, 240,
-      cricket::VideoFormat::FpsToInterval(10), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(640, 480,
-      cricket::VideoFormat::FpsToInterval(7), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(1280, 720,
-      cricket::VideoFormat::FpsToInterval(2), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      320, 240, cricket::VideoFormat::FpsToInterval(10), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 480, cricket::VideoFormat::FpsToInterval(7), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      1280, 720, cricket::VideoFormat::FpsToInterval(2), cricket::FOURCC_I420));
   capturer_->ResetSupportedFormats(supported_formats);
 
   std::vector<cricket::VideoFormat> required_formats;
-  required_formats.push_back(cricket::VideoFormat(320, 240,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  required_formats.push_back(cricket::VideoFormat(640, 480,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  required_formats.push_back(cricket::VideoFormat(
+      320, 240, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  required_formats.push_back(cricket::VideoFormat(
+      640, 480, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
   cricket::VideoFormat best;
   for (size_t i = 0; i < required_formats.size(); ++i) {
     EXPECT_TRUE(capturer_->GetBestCaptureFormat(required_formats[i], &best));
@@ -544,12 +540,12 @@ TEST_F(VideoCapturerTest, TestPoorFpsFormats) {
 
   // Increase framerate of 320x240. Expect low fps VGA avoided.
   supported_formats.clear();
-  supported_formats.push_back(cricket::VideoFormat(320, 240,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(640, 480,
-      cricket::VideoFormat::FpsToInterval(7), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(1280, 720,
-      cricket::VideoFormat::FpsToInterval(2), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      320, 240, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 480, cricket::VideoFormat::FpsToInterval(7), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      1280, 720, cricket::VideoFormat::FpsToInterval(2), cricket::FOURCC_I420));
   capturer_->ResetSupportedFormats(supported_formats);
 
   for (size_t i = 0; i < required_formats.size(); ++i) {
@@ -563,12 +559,12 @@ TEST_F(VideoCapturerTest, TestPoorFpsFormats) {
 // the frame rate properly.
 TEST_F(VideoCapturerTest, TestSameSizeDifferentFpsFormats) {
   std::vector<cricket::VideoFormat> supported_formats;
-  supported_formats.push_back(cricket::VideoFormat(320, 240,
-      cricket::VideoFormat::FpsToInterval(10), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(320, 240,
-      cricket::VideoFormat::FpsToInterval(20), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(320, 240,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      320, 240, cricket::VideoFormat::FpsToInterval(10), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      320, 240, cricket::VideoFormat::FpsToInterval(20), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      320, 240, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
   capturer_->ResetSupportedFormats(supported_formats);
 
   std::vector<cricket::VideoFormat> required_formats = supported_formats;
@@ -586,23 +582,24 @@ TEST_F(VideoCapturerTest, TestSameSizeDifferentFpsFormats) {
 TEST_F(VideoCapturerTest, TestFpsFormats) {
   // We have VGA but low fps. Choose VGA, not HD
   std::vector<cricket::VideoFormat> supported_formats;
-  supported_formats.push_back(cricket::VideoFormat(1280, 720,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(640, 480,
-      cricket::VideoFormat::FpsToInterval(15), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(640, 400,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(640, 360,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(
+      cricket::VideoFormat(1280, 720, cricket::VideoFormat::FpsToInterval(30),
+                           cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 480, cricket::VideoFormat::FpsToInterval(15), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 400, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 360, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
   capturer_->ResetSupportedFormats(supported_formats);
 
   std::vector<cricket::VideoFormat> required_formats;
-  required_formats.push_back(cricket::VideoFormat(640, 480,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_ANY));
-  required_formats.push_back(cricket::VideoFormat(640, 480,
-      cricket::VideoFormat::FpsToInterval(20), cricket::FOURCC_ANY));
-  required_formats.push_back(cricket::VideoFormat(640, 480,
-      cricket::VideoFormat::FpsToInterval(10), cricket::FOURCC_ANY));
+  required_formats.push_back(cricket::VideoFormat(
+      640, 480, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_ANY));
+  required_formats.push_back(cricket::VideoFormat(
+      640, 480, cricket::VideoFormat::FpsToInterval(20), cricket::FOURCC_ANY));
+  required_formats.push_back(cricket::VideoFormat(
+      640, 480, cricket::VideoFormat::FpsToInterval(10), cricket::FOURCC_ANY));
   cricket::VideoFormat best;
 
   // Expect 30 fps to choose 30 fps format.
@@ -625,16 +622,17 @@ TEST_F(VideoCapturerTest, TestFpsFormats) {
 
   // We have VGA 60 fps and 15 fps. Choose best fps.
   supported_formats.clear();
-  supported_formats.push_back(cricket::VideoFormat(1280, 720,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(640, 480,
-      cricket::VideoFormat::FpsToInterval(60), cricket::FOURCC_MJPG));
-  supported_formats.push_back(cricket::VideoFormat(640, 480,
-      cricket::VideoFormat::FpsToInterval(15), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(640, 400,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(640, 360,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(
+      cricket::VideoFormat(1280, 720, cricket::VideoFormat::FpsToInterval(30),
+                           cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 480, cricket::VideoFormat::FpsToInterval(60), cricket::FOURCC_MJPG));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 480, cricket::VideoFormat::FpsToInterval(15), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 400, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 360, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
   capturer_->ResetSupportedFormats(supported_formats);
 
   // Expect 30 fps to choose 60 fps format and will set best fps to 60.
@@ -659,12 +657,12 @@ TEST_F(VideoCapturerTest, TestFpsFormats) {
 TEST_F(VideoCapturerTest, TestRequest16x10_9) {
   std::vector<cricket::VideoFormat> supported_formats;
   // We do not support HD, expect 4x3 for 4x3, 16x10, and 16x9 requests.
-  supported_formats.push_back(cricket::VideoFormat(640, 480,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(640, 400,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(640, 360,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 480, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 400, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 360, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
   capturer_->ResetSupportedFormats(supported_formats);
 
   std::vector<cricket::VideoFormat> required_formats = supported_formats;
@@ -678,14 +676,14 @@ TEST_F(VideoCapturerTest, TestRequest16x10_9) {
 
   // We do not support 16x9 HD, expect 4x3 for 4x3, 16x10, and 16x9 requests.
   supported_formats.clear();
-  supported_formats.push_back(cricket::VideoFormat(960, 720,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(640, 480,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(640, 400,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(640, 360,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      960, 720, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 480, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 400, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 360, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
   capturer_->ResetSupportedFormats(supported_formats);
 
   // Expect 4x3, 16x10, and 16x9 requests are respected.
@@ -697,14 +695,15 @@ TEST_F(VideoCapturerTest, TestRequest16x10_9) {
 
   // We support 16x9HD, Expect 4x3, 16x10, and 16x9 requests are respected.
   supported_formats.clear();
-  supported_formats.push_back(cricket::VideoFormat(1280, 720,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(640, 480,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(640, 400,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(640, 360,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(
+      cricket::VideoFormat(1280, 720, cricket::VideoFormat::FpsToInterval(30),
+                           cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 480, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 400, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(cricket::VideoFormat(
+      640, 360, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
   capturer_->ResetSupportedFormats(supported_formats);
 
   // Expect 4x3 for 4x3 and 16x10 requests.
@@ -722,7 +721,8 @@ TEST_F(VideoCapturerTest, TestRequest16x10_9) {
 
 bool HdFormatInList(const std::vector<cricket::VideoFormat>& formats) {
   for (std::vector<cricket::VideoFormat>::const_iterator found =
-           formats.begin(); found != formats.end(); ++found) {
+           formats.begin();
+       found != formats.end(); ++found) {
     if (found->height >= kMinHdHeight) {
       return true;
     }
@@ -734,13 +734,11 @@ TEST_F(VideoCapturerTest, Whitelist) {
   // The definition of HD only applies to the height. Set the HD width to the
   // smallest legal number to document this fact in this test.
   const int kMinHdWidth = 1;
-  cricket::VideoFormat hd_format(kMinHdWidth,
-                                 kMinHdHeight,
+  cricket::VideoFormat hd_format(kMinHdWidth, kMinHdHeight,
                                  cricket::VideoFormat::FpsToInterval(30),
                                  cricket::FOURCC_I420);
-  cricket::VideoFormat vga_format(640, 480,
-                                  cricket::VideoFormat::FpsToInterval(30),
-                                  cricket::FOURCC_I420);
+  cricket::VideoFormat vga_format(
+      640, 480, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420);
   std::vector<cricket::VideoFormat> formats = *capturer_->GetSupportedFormats();
   formats.push_back(hd_format);
 
@@ -760,15 +758,16 @@ TEST_F(VideoCapturerTest, Whitelist) {
 }
 
 TEST_F(VideoCapturerTest, BlacklistAllFormats) {
-  cricket::VideoFormat vga_format(640, 480,
-                                  cricket::VideoFormat::FpsToInterval(30),
-                                  cricket::FOURCC_I420);
+  cricket::VideoFormat vga_format(
+      640, 480, cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420);
   std::vector<cricket::VideoFormat> supported_formats;
   // Mock a device that only supports HD formats.
-  supported_formats.push_back(cricket::VideoFormat(1280, 720,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
-  supported_formats.push_back(cricket::VideoFormat(1920, 1080,
-      cricket::VideoFormat::FpsToInterval(30), cricket::FOURCC_I420));
+  supported_formats.push_back(
+      cricket::VideoFormat(1280, 720, cricket::VideoFormat::FpsToInterval(30),
+                           cricket::FOURCC_I420));
+  supported_formats.push_back(
+      cricket::VideoFormat(1920, 1080, cricket::VideoFormat::FpsToInterval(30),
+                           cricket::FOURCC_I420));
   capturer_->ResetSupportedFormats(supported_formats);
   EXPECT_EQ(2u, capturer_->GetSupportedFormats()->size());
   // Now, enable the list, which would exclude both formats. However, since

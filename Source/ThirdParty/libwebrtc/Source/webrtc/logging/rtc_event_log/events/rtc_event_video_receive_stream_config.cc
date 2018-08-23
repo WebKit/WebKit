@@ -12,11 +12,18 @@
 
 #include <utility>
 
+#include "absl/memory/memory.h"
+
 namespace webrtc {
 
 RtcEventVideoReceiveStreamConfig::RtcEventVideoReceiveStreamConfig(
     std::unique_ptr<rtclog::StreamConfig> config)
     : config_(std::move(config)) {}
+
+RtcEventVideoReceiveStreamConfig::RtcEventVideoReceiveStreamConfig(
+    const RtcEventVideoReceiveStreamConfig& other)
+    : RtcEvent(other.timestamp_us_),
+      config_(absl::make_unique<rtclog::StreamConfig>(*other.config_)) {}
 
 RtcEventVideoReceiveStreamConfig::~RtcEventVideoReceiveStreamConfig() = default;
 
@@ -26,6 +33,11 @@ RtcEvent::Type RtcEventVideoReceiveStreamConfig::GetType() const {
 
 bool RtcEventVideoReceiveStreamConfig::IsConfigEvent() const {
   return true;
+}
+
+std::unique_ptr<RtcEvent> RtcEventVideoReceiveStreamConfig::Copy() const {
+  return absl::WrapUnique<RtcEvent>(
+      new RtcEventVideoReceiveStreamConfig(*this));
 }
 
 }  // namespace webrtc

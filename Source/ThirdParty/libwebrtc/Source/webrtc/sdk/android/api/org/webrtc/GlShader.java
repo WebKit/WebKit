@@ -29,7 +29,7 @@ public class GlShader {
     GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compileStatus, 0);
     if (compileStatus[0] != GLES20.GL_TRUE) {
       Logging.e(
-          TAG, "Could not compile shader " + shaderType + ":" + GLES20.glGetShaderInfoLog(shader));
+          TAG, "Compile error " + GLES20.glGetShaderInfoLog(shader) + " in shader:\n" + source);
       throw new RuntimeException(GLES20.glGetShaderInfoLog(shader));
     }
     GlUtil.checkNoGLES2Error("compileShader");

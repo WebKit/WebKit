@@ -10,6 +10,7 @@
 
 #import <Foundation/Foundation.h>
 
+#import <WebRTC/RTCCertificate.h>
 #import <WebRTC/RTCMacros.h>
 
 @class RTCIceServer;
@@ -34,10 +35,7 @@ typedef NS_ENUM(NSInteger, RTCBundlePolicy) {
 };
 
 /** Represents the rtcp mux policy. */
-typedef NS_ENUM(NSInteger, RTCRtcpMuxPolicy) {
-  RTCRtcpMuxPolicyNegotiate,
-  RTCRtcpMuxPolicyRequire
-};
+typedef NS_ENUM(NSInteger, RTCRtcpMuxPolicy) { RTCRtcpMuxPolicyNegotiate, RTCRtcpMuxPolicyRequire };
 
 /** Represents the tcp candidate policy. */
 typedef NS_ENUM(NSInteger, RTCTcpCandidatePolicy) {
@@ -63,14 +61,22 @@ typedef NS_ENUM(NSInteger, RTCEncryptionKeyType) {
   RTCEncryptionKeyTypeECDSA,
 };
 
-NS_ASSUME_NONNULL_BEGIN
+/** Represents the chosen SDP semantics for the RTCPeerConnection. */
+typedef NS_ENUM(NSInteger, RTCSdpSemantics) {
+  RTCSdpSemanticsPlanB,
+  RTCSdpSemanticsUnifiedPlan,
+};
 
+NS_ASSUME_NONNULL_BEGIN
 RTC_EXPORT
 __attribute__((objc_runtime_name("WK_RTCConfiguration")))
 @interface RTCConfiguration : NSObject
 
 /** An array of Ice Servers available to be used by ICE. */
 @property(nonatomic, copy) NSArray<RTCIceServer *> *iceServers;
+
+/** An RTCCertificate for 're' use. */
+@property(nonatomic, nullable) RTCCertificate *certificate;
 
 /** Which candidates the ICE agent is allowed to use. The W3C calls it
  * |iceTransportPolicy|, while in C++ it is called |type|. */
@@ -83,8 +89,7 @@ __attribute__((objc_runtime_name("WK_RTCConfiguration")))
 @property(nonatomic, assign) RTCRtcpMuxPolicy rtcpMuxPolicy;
 @property(nonatomic, assign) RTCTcpCandidatePolicy tcpCandidatePolicy;
 @property(nonatomic, assign) RTCCandidateNetworkPolicy candidateNetworkPolicy;
-@property(nonatomic, assign)
-    RTCContinualGatheringPolicy continualGatheringPolicy;
+@property(nonatomic, assign) RTCContinualGatheringPolicy continualGatheringPolicy;
 
 /** By default, the PeerConnection will use a limited number of IPv6 network
  *  interfaces, in order to avoid too many ICE candidate pairs being created
@@ -93,6 +98,12 @@ __attribute__((objc_runtime_name("WK_RTCConfiguration")))
  *  Can be set to INT_MAX to effectively disable the limit.
  */
 @property(nonatomic, assign) int maxIPv6Networks;
+
+/** Exclude link-local network interfaces
+ *  from considertaion for gathering ICE candidates.
+ *  Defaults to NO.
+ */
+@property(nonatomic, assign) BOOL disableLinkLocalNetworks;
 
 @property(nonatomic, assign) int audioJitterBufferMaxPackets;
 @property(nonatomic, assign) BOOL audioJitterBufferFastAccelerate;
@@ -126,6 +137,36 @@ __attribute__((objc_runtime_name("WK_RTCConfiguration")))
  *  interval specified in milliseconds by the uniform distribution [a, b].
  */
 @property(nonatomic, strong, nullable) RTCIntervalRange *iceRegatherIntervalRange;
+
+/** Configure the SDP semantics used by this PeerConnection. Note that the
+ *  WebRTC 1.0 specification requires UnifiedPlan semantics. The
+ *  RTCRtpTransceiver API is only available with UnifiedPlan semantics.
+ *
+ *  PlanB will cause RTCPeerConnection to create offers and answers with at
+ *  most one audio and one video m= section with multiple RTCRtpSenders and
+ *  RTCRtpReceivers specified as multiple a=ssrc lines within the section. This
+ *  will also cause RTCPeerConnection to ignore all but the first m= section of
+ *  the same media type.
+ *
+ *  UnifiedPlan will cause RTCPeerConnection to create offers and answers with
+ *  multiple m= sections where each m= section maps to one RTCRtpSender and one
+ *  RTCRtpReceiver (an RTCRtpTransceiver), either both audio or both video. This
+ *  will also cause RTCPeerConnection to ignore all but the first a=ssrc lines
+ *  that form a Plan B stream.
+ *
+ *  For users who wish to send multiple audio/video streams and need to stay
+ *  interoperable with legacy WebRTC implementations or use legacy APIs,
+ *  specify PlanB.
+ *
+ *  For all other users, specify UnifiedPlan.
+ */
+@property(nonatomic, assign) RTCSdpSemantics sdpSemantics;
+
+/** Actively reset the SRTP parameters when the DTLS transports underneath are
+ *  changed after offer/answer negotiation. This is only intended to be a
+ *  workaround for crbug.com/835958
+ */
+@property(nonatomic, assign) BOOL activeResetSrtpParams;
 
 - (instancetype)init;
 

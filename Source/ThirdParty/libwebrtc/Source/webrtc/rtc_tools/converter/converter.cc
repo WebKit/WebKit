@@ -27,10 +27,7 @@
 namespace webrtc {
 namespace test {
 
-Converter::Converter(int width, int height)
-    : width_(width),
-      height_(height) {
-}
+Converter::Converter(int width, int height) : width_(width), height_(height) {}
 
 bool Converter::ConvertRGBAToI420Video(std::string frames_dir,
                                        std::string output_file_name,
@@ -53,7 +50,7 @@ bool Converter::ConvertRGBAToI420Video(std::string frames_dir,
   int v_plane_size = VPlaneSize();
   uint8_t* dst_v = new uint8_t[v_plane_size];
 
-  int counter = 0;  // Counter to form frame names.
+  int counter = 0;       // Counter to form frame names.
   bool success = false;  // Is conversion successful.
 
   while (true) {
@@ -79,16 +76,13 @@ bool Converter::ConvertRGBAToI420Video(std::string frames_dir,
     }
 
     // Convert to I420 frame.
-    libyuv::ABGRToI420(rgba_buffer, SrcStrideFrame(),
-                       dst_y, DstStrideY(),
-                       dst_u, DstStrideU(),
-                       dst_v, DstStrideV(),
-                       width_, height_);
+    libyuv::ABGRToI420(rgba_buffer, SrcStrideFrame(), dst_y, DstStrideY(),
+                       dst_u, DstStrideU(), dst_v, DstStrideV(), width_,
+                       height_);
 
     // Add the I420 frame to the YUV video file.
-    success = AddYUVToFile(dst_y, y_plane_size, dst_u, u_plane_size,
-                           dst_v, v_plane_size, output_file);
-
+    success = AddYUVToFile(dst_y, y_plane_size, dst_u, u_plane_size, dst_v,
+                           v_plane_size, output_file);
 
     if (!success) {
       fprintf(stderr, "LibYUV error during RGBA to I420 frame conversion\n");
@@ -125,14 +119,17 @@ bool Converter::AddYUVPlaneToFile(uint8_t* yuv_plane,
   size_t bytes_written = fwrite(yuv_plane, 1, yuv_plane_size, file);
 
   if (bytes_written != static_cast<size_t>(yuv_plane_size)) {
-    fprintf(stderr, "Number of bytes written (%d) doesn't match size of y plane"
-            " (%d)\n", static_cast<int>(bytes_written), yuv_plane_size);
+    fprintf(stderr,
+            "Number of bytes written (%d) doesn't match size of y plane"
+            " (%d)\n",
+            static_cast<int>(bytes_written), yuv_plane_size);
     return false;
   }
   return true;
 }
 
-bool Converter::ReadRGBAFrame(const char* input_file_name, int input_frame_size,
+bool Converter::ReadRGBAFrame(const char* input_file_name,
+                              int input_frame_size,
                               unsigned char* buffer) {
   FILE* input_file = fopen(input_file_name, "rb");
   if (input_file == NULL) {
@@ -157,7 +154,7 @@ std::string Converter::FindFullFileName(std::string dir_name,
   return dir_name + SEPARATOR + file_name;
 }
 
-bool Converter:: FileExists(std::string file_name_to_check) {
+bool Converter::FileExists(std::string file_name_to_check) {
   struct STAT file_info;
   int result = STAT(file_name_to_check.c_str(), &file_info);
   return (result == 0);

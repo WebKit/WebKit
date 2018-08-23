@@ -45,4 +45,17 @@ AudioProcessorInterface::GetStats(bool /*has_remote_tracks*/) {
   return new_stats;
 }
 
+VideoTrackInterface::ContentHint VideoTrackInterface::content_hint() const {
+  return ContentHint::kNone;
+}
+
+bool AudioTrackInterface::GetSignalLevel(int* level) {
+  return false;
+}
+
+rtc::scoped_refptr<AudioProcessorInterface>
+AudioTrackInterface::GetAudioProcessor() {
+  return nullptr;
+}
+
 }  // namespace webrtc

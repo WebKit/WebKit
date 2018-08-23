@@ -21,9 +21,9 @@
 static const int kShiftsAtZero = 13;  // Right shifts at zero binary spectrum.
 static const int kShiftsLinearSlope = 3;
 
-static const int32_t kProbabilityOffset = 1024;  // 2 in Q9.
+static const int32_t kProbabilityOffset = 1024;      // 2 in Q9.
 static const int32_t kProbabilityLowerLimit = 8704;  // 17 in Q9.
-static const int32_t kProbabilityMinSpread = 2816;  // 5.5 in Q9.
+static const int32_t kProbabilityMinSpread = 2816;   // 5.5 in Q9.
 
 // Robust validation settings
 static const float kHistogramMax = 3000.f;
@@ -39,13 +39,13 @@ static const float kMinFractionWhenPossiblyNonCausal = 0.25f;
 
 // Counts and returns number of bits of a 32-bit word.
 static int BitCount(uint32_t u32) {
-  uint32_t tmp = u32 - ((u32 >> 1) & 033333333333) -
-      ((u32 >> 2) & 011111111111);
+  uint32_t tmp =
+      u32 - ((u32 >> 1) & 033333333333) - ((u32 >> 2) & 011111111111);
   tmp = ((tmp + (tmp >> 3)) & 030707070707);
   tmp = (tmp + (tmp >> 6));
   tmp = (tmp + (tmp >> 12) + (tmp >> 24)) & 077;
 
-  return ((int) tmp);
+  return ((int)tmp);
 }
 
 // Compares the |binary_vector| with all rows of the |binary_matrix| and counts
@@ -69,7 +69,7 @@ static void BitCountComparison(uint32_t binary_vector,
 
   // Compare |binary_vector| with all rows of the |binary_matrix|
   for (; n < matrix_size; n++) {
-    bit_counts[n] = (int32_t) BitCount(binary_vector ^ binary_matrix[n]);
+    bit_counts[n] = (int32_t)BitCount(binary_vector ^ binary_matrix[n]);
   }
 }
 
@@ -96,8 +96,9 @@ static void UpdateRobustValidationStatistics(BinaryDelayEstimator* self,
                                              int32_t valley_level_q14) {
   const float valley_depth = valley_depth_q14 * kQ14Scaling;
   float decrease_in_last_set = valley_depth;
-  const int max_hits_for_slow_change = (candidate_delay < self->last_delay) ?
-      kMaxHitsWhenPossiblyNonCausal : kMaxHitsWhenPossiblyCausal;
+  const int max_hits_for_slow_change = (candidate_delay < self->last_delay)
+                                           ? kMaxHitsWhenPossiblyNonCausal
+                                           : kMaxHitsWhenPossiblyCausal;
   int i = 0;
 
   RTC_DCHECK_EQ(self->history_size, self->farend->history_size);
@@ -127,18 +128,20 @@ static void UpdateRobustValidationStatistics(BinaryDelayEstimator* self,
   //    |candidate_delay| is a "potential" candidate and we start decreasing
   //    these histogram bins more rapidly with |valley_depth|.
   if (self->candidate_hits < max_hits_for_slow_change) {
-    decrease_in_last_set = (self->mean_bit_counts[self->compare_delay] -
-        valley_level_q14) * kQ14Scaling;
+    decrease_in_last_set =
+        (self->mean_bit_counts[self->compare_delay] - valley_level_q14) *
+        kQ14Scaling;
   }
   // 4. All other bins are decreased with |valley_depth|.
   // TODO(bjornv): Investigate how to make this loop more efficient.  Split up
   // the loop?  Remove parts that doesn't add too much.
   for (i = 0; i < self->history_size; ++i) {
     int is_in_last_set = (i >= self->last_delay - 2) &&
-        (i <= self->last_delay + 1) && (i != candidate_delay);
-    int is_in_candidate_set = (i >= candidate_delay - 2) &&
-        (i <= candidate_delay + 1);
-    self->histogram[i] -= decrease_in_last_set * is_in_last_set +
+                         (i <= self->last_delay + 1) && (i != candidate_delay);
+    int is_in_candidate_set =
+        (i >= candidate_delay - 2) && (i <= candidate_delay + 1);
+    self->histogram[i] -=
+        decrease_in_last_set * is_in_last_set +
         valley_depth * (!is_in_last_set && !is_in_candidate_set);
     // 5. No histogram bin can go below 0.
     if (self->histogram[i] < 0) {
@@ -196,16 +199,18 @@ static int HistogramBasedValidation(const BinaryDelayEstimator* self,
   // into tables?
   if (delay_difference > self->allowed_offset) {
     fraction = 1.f - kFractionSlope * (delay_difference - self->allowed_offset);
-    fraction = (fraction > kMinFractionWhenPossiblyCausal ? fraction :
-        kMinFractionWhenPossiblyCausal);
+    fraction = (fraction > kMinFractionWhenPossiblyCausal
+                    ? fraction
+                    : kMinFractionWhenPossiblyCausal);
   } else if (delay_difference < 0) {
-    fraction = kMinFractionWhenPossiblyNonCausal -
-        kFractionSlope * delay_difference;
+    fraction =
+        kMinFractionWhenPossiblyNonCausal - kFractionSlope * delay_difference;
     fraction = (fraction > 1.f ? 1.f : fraction);
   }
   histogram_threshold *= fraction;
-  histogram_threshold = (histogram_threshold > kMinHistogramThreshold ?
-      histogram_threshold : kMinHistogramThreshold);
+  histogram_threshold =
+      (histogram_threshold > kMinHistogramThreshold ? histogram_threshold
+                                                    : kMinHistogramThreshold);
 
   is_histogram_valid =
       (self->histogram[candidate_delay] >= histogram_threshold) &&
@@ -243,8 +248,8 @@ static int RobustValidation(const BinaryDelayEstimator* self,
   //   i) Before we actually have a valid estimate (|last_delay| == -2), we say
   //      a candidate is valid if either algorithm states so
   //      (|is_instantaneous_valid| OR |is_histogram_valid|).
-  is_robust = (self->last_delay < 0) &&
-      (is_instantaneous_valid || is_histogram_valid);
+  is_robust =
+      (self->last_delay < 0) && (is_instantaneous_valid || is_histogram_valid);
   //  ii) Otherwise, we need both algorithms to be certain
   //      (|is_instantaneous_valid| AND |is_histogram_valid|)
   is_robust |= is_instantaneous_valid && is_histogram_valid;
@@ -252,13 +257,12 @@ static int RobustValidation(const BinaryDelayEstimator* self,
   //      the instantaneous one if |is_histogram_valid| = 1 and the histogram
   //      is significantly strong.
   is_robust |= is_histogram_valid &&
-      (self->histogram[candidate_delay] > self->last_delay_histogram);
+               (self->histogram[candidate_delay] > self->last_delay_histogram);
 
   return is_robust;
 }
 
 void WebRtc_FreeBinaryDelayEstimatorFarend(BinaryDelayEstimatorFarend* self) {
-
   if (self == NULL) {
     return;
   }
@@ -302,20 +306,17 @@ int WebRtc_AllocateFarendBufferMemory(BinaryDelayEstimatorFarend* self,
   self->binary_far_history = static_cast<uint32_t*>(
       realloc(self->binary_far_history,
               history_size * sizeof(*self->binary_far_history)));
-  self->far_bit_counts = static_cast<int*>(
-      realloc(self->far_bit_counts,
-              history_size * sizeof(*self->far_bit_counts)));
+  self->far_bit_counts = static_cast<int*>(realloc(
+      self->far_bit_counts, history_size * sizeof(*self->far_bit_counts)));
   if ((self->binary_far_history == NULL) || (self->far_bit_counts == NULL)) {
     history_size = 0;
   }
   // Fill with zeros if we have expanded the buffers.
   if (history_size > self->history_size) {
     int size_diff = history_size - self->history_size;
-    memset(&self->binary_far_history[self->history_size],
-           0,
+    memset(&self->binary_far_history[self->history_size], 0,
            sizeof(*self->binary_far_history) * size_diff);
-    memset(&self->far_bit_counts[self->history_size],
-           0,
+    memset(&self->far_bit_counts[self->history_size], 0,
            sizeof(*self->far_bit_counts) * size_diff);
   }
   self->history_size = history_size;
@@ -330,7 +331,8 @@ void WebRtc_InitBinaryDelayEstimatorFarend(BinaryDelayEstimatorFarend* self) {
 }
 
 void WebRtc_SoftResetBinaryDelayEstimatorFarend(
-    BinaryDelayEstimatorFarend* self, int delay_shift) {
+    BinaryDelayEstimatorFarend* self,
+    int delay_shift) {
   int abs_shift = abs(delay_shift);
   int shift_size = 0;
   int dest_index = 0;
@@ -355,8 +357,7 @@ void WebRtc_SoftResetBinaryDelayEstimatorFarend(
           sizeof(*self->binary_far_history) * shift_size);
   memset(&self->binary_far_history[padding_index], 0,
          sizeof(*self->binary_far_history) * abs_shift);
-  memmove(&self->far_bit_counts[dest_index],
-          &self->far_bit_counts[src_index],
+  memmove(&self->far_bit_counts[dest_index], &self->far_bit_counts[src_index],
           sizeof(*self->far_bit_counts) * shift_size);
   memset(&self->far_bit_counts[padding_index], 0,
          sizeof(*self->far_bit_counts) * abs_shift);
@@ -378,7 +379,6 @@ void WebRtc_AddBinaryFarSpectrum(BinaryDelayEstimatorFarend* handle,
 }
 
 void WebRtc_FreeBinaryDelayEstimator(BinaryDelayEstimator* self) {
-
   if (self == NULL) {
     return;
   }
@@ -403,7 +403,8 @@ void WebRtc_FreeBinaryDelayEstimator(BinaryDelayEstimator* self) {
 }
 
 BinaryDelayEstimator* WebRtc_CreateBinaryDelayEstimator(
-    BinaryDelayEstimatorFarend* farend, int max_lookahead) {
+    BinaryDelayEstimatorFarend* farend,
+    int max_lookahead) {
   BinaryDelayEstimator* self = NULL;
 
   if ((farend != NULL) && (max_lookahead >= 0)) {
@@ -457,22 +458,18 @@ int WebRtc_AllocateHistoryBufferMemory(BinaryDelayEstimator* self,
   self->histogram = static_cast<float*>(
       realloc(self->histogram, (history_size + 1) * sizeof(*self->histogram)));
 
-  if ((self->mean_bit_counts == NULL) ||
-      (self->bit_counts == NULL) ||
+  if ((self->mean_bit_counts == NULL) || (self->bit_counts == NULL) ||
       (self->histogram == NULL)) {
     history_size = 0;
   }
   // Fill with zeros if we have expanded the buffers.
   if (history_size > self->history_size) {
     int size_diff = history_size - self->history_size;
-    memset(&self->mean_bit_counts[self->history_size],
-           0,
+    memset(&self->mean_bit_counts[self->history_size], 0,
            sizeof(*self->mean_bit_counts) * size_diff);
-    memset(&self->bit_counts[self->history_size],
-           0,
+    memset(&self->bit_counts[self->history_size], 0,
            sizeof(*self->bit_counts) * size_diff);
-    memset(&self->histogram[self->history_size],
-           0,
+    memset(&self->histogram[self->history_size], 0,
            sizeof(*self->histogram) * size_diff);
   }
   self->history_size = history_size;
@@ -485,15 +482,14 @@ void WebRtc_InitBinaryDelayEstimator(BinaryDelayEstimator* self) {
   RTC_DCHECK(self);
 
   memset(self->bit_counts, 0, sizeof(int32_t) * self->history_size);
-  memset(self->binary_near_history,
-         0,
+  memset(self->binary_near_history, 0,
          sizeof(uint32_t) * self->near_history_size);
   for (i = 0; i <= self->history_size; ++i) {
     self->mean_bit_counts[i] = (20 << 9);  // 20 in Q9.
     self->histogram[i] = 0.f;
   }
-  self->minimum_probability = kMaxBitCountsQ9;  // 32 in Q9.
-  self->last_delay_probability = (int) kMaxBitCountsQ9;  // 32 in Q9.
+  self->minimum_probability = kMaxBitCountsQ9;          // 32 in Q9.
+  self->last_delay_probability = (int)kMaxBitCountsQ9;  // 32 in Q9.
 
   // Default return value if we're unable to estimate. -1 is used for errors.
   self->last_delay = -2;
@@ -617,8 +613,8 @@ int WebRtc_ProcessBinarySpectrum(BinaryDelayEstimator* self,
   //     and deeper than the best estimate so far
   //      (|value_best_candidate| < |last_delay_probability|)
   valid_candidate = ((valley_depth > kProbabilityOffset) &&
-      ((value_best_candidate < self->minimum_probability) ||
-          (value_best_candidate < self->last_delay_probability)));
+                     ((value_best_candidate < self->minimum_probability) ||
+                      (value_best_candidate < self->last_delay_probability)));
 
   // Check for nonstationary farend signal.
   const bool non_stationary_farend =
@@ -637,7 +633,6 @@ int WebRtc_ProcessBinarySpectrum(BinaryDelayEstimator* self,
     int is_histogram_valid = HistogramBasedValidation(self, candidate_delay);
     valid_candidate = RobustValidation(self, candidate_delay, valid_candidate,
                                        is_histogram_valid);
-
   }
 
   // Only update the delay estimate when the farend is nonstationary and when
@@ -645,8 +640,9 @@ int WebRtc_ProcessBinarySpectrum(BinaryDelayEstimator* self,
   if (non_stationary_farend && valid_candidate) {
     if (candidate_delay != self->last_delay) {
       self->last_delay_histogram =
-          (self->histogram[candidate_delay] > kLastHistogramMax ?
-              kLastHistogramMax : self->histogram[candidate_delay]);
+          (self->histogram[candidate_delay] > kLastHistogramMax
+               ? kLastHistogramMax
+               : self->histogram[candidate_delay]);
       // Adjust the histogram if we made a change to |last_delay|, though it was
       // not the most likely one according to the histogram.
       if (self->histogram[candidate_delay] <
@@ -679,8 +675,8 @@ float WebRtc_binary_last_delay_quality(BinaryDelayEstimator* self) {
   } else {
     // Note that |last_delay_probability| states how deep the minimum of the
     // cost function is, so it is rather an error probability.
-    quality = (float) (kMaxBitCountsQ9 - self->last_delay_probability) /
-        kMaxBitCountsQ9;
+    quality = (float)(kMaxBitCountsQ9 - self->last_delay_probability) /
+              kMaxBitCountsQ9;
     if (quality < 0) {
       quality = 0;
     }

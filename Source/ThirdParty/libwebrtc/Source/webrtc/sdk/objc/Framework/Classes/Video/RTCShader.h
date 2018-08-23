@@ -12,9 +12,10 @@
 
 RTC_EXTERN const char kRTCVertexShaderSource[];
 
-RTC_EXTERN GLuint RTCCreateShader(GLenum type, const GLchar *source);
+RTC_EXTERN GLuint RTCCreateShader(GLenum type, const GLchar* source);
 RTC_EXTERN GLuint RTCCreateProgram(GLuint vertexShader, GLuint fragmentShader);
-RTC_EXTERN GLuint RTCCreateProgramFromFragmentSource(const char fragmentShaderSource[]);
+RTC_EXTERN GLuint
+RTCCreateProgramFromFragmentSource(const char fragmentShaderSource[]);
 RTC_EXTERN BOOL RTCCreateVertexBuffer(GLuint* vertexBuffer,
                                       GLuint* vertexArray);
 RTC_EXTERN void RTCSetVertexData(RTCVideoRotation rotation);

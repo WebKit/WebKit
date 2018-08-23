@@ -19,6 +19,7 @@ if (is_android) {
 
 rtc_source_set("audio_encoder_isac") {
   visibility = [ "*" ]
+  poisonous = [ "audio_codecs" ]
   public = [
     "audio_encoder_isac.h",
   ]
@@ -36,6 +37,7 @@ rtc_source_set("audio_encoder_isac") {
 
 rtc_source_set("audio_decoder_isac") {
   visibility = [ "*" ]
+  poisonous = [ "audio_codecs" ]
   public = [
     "audio_decoder_isac.h",
   ]
@@ -68,60 +70,68 @@ config("isac_config") {
 
 rtc_static_library("audio_encoder_isac_fix") {
   visibility = [ "*" ]
+  poisonous = [ "audio_codecs" ]
   sources = [
     "audio_encoder_isac_fix.cc",
     "audio_encoder_isac_fix.h",
   ]
   deps = [
     "..:audio_codecs_api",
-    "../..:optional",
     "../../..:webrtc_common",
     "../../../modules/audio_coding:isac_fix",
     "../../../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
 rtc_static_library("audio_decoder_isac_fix") {
   visibility = [ "*" ]
+  poisonous = [ "audio_codecs" ]
   sources = [
     "audio_decoder_isac_fix.cc",
     "audio_decoder_isac_fix.h",
   ]
   deps = [
     "..:audio_codecs_api",
-    "../..:optional",
     "../../..:webrtc_common",
     "../../../modules/audio_coding:isac_fix",
     "../../../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
 rtc_static_library("audio_encoder_isac_float") {
   visibility = [ "*" ]
+  poisonous = [ "audio_codecs" ]
   sources = [
     "audio_encoder_isac_float.cc",
     "audio_encoder_isac_float.h",
   ]
   deps = [
     "..:audio_codecs_api",
-    "../..:optional",
     "../../..:webrtc_common",
     "../../../modules/audio_coding:isac",
     "../../../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
 rtc_static_library("audio_decoder_isac_float") {
   visibility = [ "*" ]
+  poisonous = [ "audio_codecs" ]
   sources = [
     "audio_decoder_isac_float.cc",
     "audio_decoder_isac_float.h",
   ]
   deps = [
     "..:audio_codecs_api",
-    "../..:optional",
     "../../..:webrtc_common",
     "../../../modules/audio_coding:isac",
     "../../../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }

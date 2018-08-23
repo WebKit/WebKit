@@ -13,6 +13,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/platform_thread.h"
+#include "rtc_base/stringencode.h"
 #include "test/encoder_settings.h"
 #include "test/gtest.h"
 #include "test/testsupport/perf_test.h"
@@ -24,7 +25,9 @@ static const int64_t kPollIntervalMs = 20;
 static const int kExpectedHighVideoBitrateBps = 80000;
 static const int kExpectedHighAudioBitrateBps = 30000;
 static const int kLowBandwidthLimitBps = 20000;
-static const int kExpectedLowBitrateBps = 20000;
+// Set target detected bitrate to slightly larger than the target bitrate to
+// avoid flakiness.
+static const int kLowBitrateMarginBps = 2000;
 
 std::vector<uint32_t> GenerateSsrcs(size_t num_streams, uint32_t ssrc_offset) {
   std::vector<uint32_t> ssrcs;
@@ -72,16 +75,13 @@ RampUpTester::RampUpTester(size_t num_video_streams,
   EXPECT_LE(num_audio_streams_, 1u);
 }
 
-RampUpTester::~RampUpTester() {
-}
+RampUpTester::~RampUpTester() {}
 
-Call::Config RampUpTester::GetSenderCallConfig() {
-  Call::Config call_config(&event_log_);
+void RampUpTester::ModifySenderCallConfig(Call::Config* config) {
   if (start_bitrate_bps_ != 0) {
-    call_config.bitrate_config.start_bitrate_bps = start_bitrate_bps_;
+    config->bitrate_config.start_bitrate_bps = start_bitrate_bps_;
   }
-  call_config.bitrate_config.min_bitrate_bps = 10000;
-  return call_config;
+  config->bitrate_config.min_bitrate_bps = 10000;
 }
 
 void RampUpTester::OnVideoStreamsCreated(
@@ -217,7 +217,7 @@ void RampUpTester::ModifyVideoConfigs(
       recv_config.rtp.rtx_ssrc = video_rtx_ssrcs_[i];
       recv_config.rtp
           .rtx_associated_payload_types[send_config->rtp.rtx.payload_type] =
-          send_config->encoder_settings.payload_type;
+          send_config->rtp.payload_type;
     }
     ++i;
   }
@@ -436,26 +436,20 @@ void RampUpDownUpTester::PollStats() {
   } while (!stop_event_.Wait(kPollIntervalMs));
 }
 
-Call::Config RampUpDownUpTester::GetReceiverCallConfig() {
-  Call::Config config(&event_log_);
-  config.bitrate_config.min_bitrate_bps = 10000;
-  return config;
+void RampUpDownUpTester::ModifyReceiverCallConfig(Call::Config* config) {
+  config->bitrate_config.min_bitrate_bps = 10000;
 }
 
 std::string RampUpDownUpTester::GetModifierString() const {
   std::string str("_");
   if (num_video_streams_ > 0) {
-    std::ostringstream s;
-    s << num_video_streams_;
-    str += s.str();
+    str += rtc::ToString(num_video_streams_);
     str += "stream";
     str += (num_video_streams_ > 1 ? "s" : "");
     str += "_";
   }
   if (num_audio_streams_ > 0) {
-    std::ostringstream s;
-    s << num_audio_streams_;
-    str += s.str();
+    str += rtc::ToString(num_audio_streams_);
     str += "stream";
     str += (num_audio_streams_ > 1 ? "s" : "");
     str += "_";
@@ -510,7 +504,7 @@ void RampUpDownUpTester::EvolveTestState(int bitrate_bps, bool suspended) {
     case kLowRate: {
       // Audio streams are never suspended.
       bool check_suspend_state = num_video_streams_ > 0;
-      if (bitrate_bps < kExpectedLowBitrateBps &&
+      if (bitrate_bps < kLowBandwidthLimitBps + kLowBitrateMarginBps &&
           suspended == check_suspend_state) {
         if (report_perf_stats_) {
           webrtc::test::PrintResult("ramp_up_down_up", GetModifierString(),
@@ -561,11 +555,6 @@ void RampUpDownUpTester::EvolveTestState(int bitrate_bps, bool suspended) {
 class RampUpTest : public test::CallTest {
  public:
   RampUpTest() {}
-
-  virtual ~RampUpTest() {
-    EXPECT_EQ(nullptr, video_send_stream_);
-    EXPECT_TRUE(video_receive_streams_.empty());
-  }
 };
 
 static const uint32_t kStartBitrateBps = 60000;
@@ -578,7 +567,15 @@ TEST_F(RampUpTest, UpDownUpAbsSendTimeSimulcastRedRtx) {
   RunBaseTest(&test);
 }
 
-TEST_F(RampUpTest, UpDownUpTransportSequenceNumberRtx) {
+// TODO(bugs.webrtc.org/8878)
+#if defined(WEBRTC_MAC)
+#define MAYBE_UpDownUpTransportSequenceNumberRtx \
+  DISABLED_UpDownUpTransportSequenceNumberRtx
+#else
+#define MAYBE_UpDownUpTransportSequenceNumberRtx \
+  UpDownUpTransportSequenceNumberRtx
+#endif
+TEST_F(RampUpTest, MAYBE_UpDownUpTransportSequenceNumberRtx) {
   std::vector<int> loss_rates = {0, 0, 0, 0};
   RampUpDownUpTester test(3, 0, 0, kStartBitrateBps,
                           RtpExtension::kTransportSequenceNumberUri, true,
@@ -598,7 +595,15 @@ TEST_F(RampUpTest, DISABLED_UpDownUpTransportSequenceNumberPacketLoss) {
   RunBaseTest(&test);
 }
 
-TEST_F(RampUpTest, UpDownUpAudioVideoTransportSequenceNumberRtx) {
+// TODO(bugs.webrtc.org/8878)
+#if defined(WEBRTC_MAC)
+#define MAYBE_UpDownUpAudioVideoTransportSequenceNumberRtx \
+  DISABLED_UpDownUpAudioVideoTransportSequenceNumberRtx
+#else
+#define MAYBE_UpDownUpAudioVideoTransportSequenceNumberRtx \
+  UpDownUpAudioVideoTransportSequenceNumberRtx
+#endif
+TEST_F(RampUpTest, MAYBE_UpDownUpAudioVideoTransportSequenceNumberRtx) {
   std::vector<int> loss_rates = {0, 0, 0, 0};
   RampUpDownUpTester test(3, 1, 0, kStartBitrateBps,
                           RtpExtension::kTransportSequenceNumberUri, true,
@@ -650,7 +655,13 @@ TEST_F(RampUpTest, TransportSequenceNumberSimulcastRedRtx) {
   RunBaseTest(&test);
 }
 
-TEST_F(RampUpTest, AudioTransportSequenceNumber) {
+// TODO(bugs.webrtc.org/8878)
+#if defined(WEBRTC_MAC)
+#define MAYBE_AudioTransportSequenceNumber DISABLED_AudioTransportSequenceNumber
+#else
+#define MAYBE_AudioTransportSequenceNumber AudioTransportSequenceNumber
+#endif
+TEST_F(RampUpTest, MAYBE_AudioTransportSequenceNumber) {
   RampUpTester test(0, 1, 0, 300000, 10000,
                     RtpExtension::kTransportSequenceNumberUri, false, false,
                     false);

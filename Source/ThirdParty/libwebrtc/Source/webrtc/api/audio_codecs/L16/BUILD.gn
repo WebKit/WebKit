@@ -14,30 +14,35 @@ if (is_android) {
 
 rtc_static_library("audio_encoder_L16") {
   visibility = [ "*" ]
+  poisonous = [ "audio_codecs" ]
   sources = [
     "audio_encoder_L16.cc",
     "audio_encoder_L16.h",
   ]
   deps = [
     "..:audio_codecs_api",
-    "../..:optional",
     "../../..:webrtc_common",
     "../../../modules/audio_coding:pcm16b",
     "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:safe_minmax",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
 rtc_static_library("audio_decoder_L16") {
   visibility = [ "*" ]
+  poisonous = [ "audio_codecs" ]
   sources = [
     "audio_decoder_L16.cc",
     "audio_decoder_L16.h",
   ]
   deps = [
     "..:audio_codecs_api",
-    "../..:optional",
     "../../..:webrtc_common",
     "../../../modules/audio_coding:pcm16b",
     "../../../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }

@@ -8,13 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-
-
 #include <stdlib.h>
 #include <string.h>
-#include "g722_enc_dec.h"
-#include "g722_interface.h"
-#include "typedefs.h"  // NOLINT(build/include)
+
+#include "modules/audio_coding/codecs/g722/g722_interface.h"
+#include "modules/third_party/g722/g722_enc_dec.h"
 
 int16_t WebRtcG722_CreateEncoder(G722EncInst **G722enc_inst)
 {
@@ -104,4 +102,3 @@ int16_t WebRtcG722_Version(char *versionStr, short len)
         return -1;
     }
 }
-

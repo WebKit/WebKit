@@ -15,10 +15,16 @@
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/sslstreamadapter.h"
+#include "system_wrappers/include/metrics.h"
 #include "third_party/libsrtp/include/srtp.h"
 #include "third_party/libsrtp/include/srtp_priv.h"
 
 namespace cricket {
+
+// One more than the maximum libsrtp error code. Required by
+// RTC_HISTOGRAM_ENUMERATION. Keep this in sync with srtp_error_status_t defined
+// in srtp.h.
+constexpr int kSrtpErrorCodeBoundary = 28;
 
 SrtpSession::SrtpSession() {}
 
@@ -133,6 +139,8 @@ bool SrtpSession::UnprotectRtp(void* p, int in_len, int* out_len) {
   int err = srtp_unprotect(session_, p, out_len);
   if (err != srtp_err_status_ok) {
     RTC_LOG(LS_WARNING) << "Failed to unprotect SRTP packet, err=" << err;
+    RTC_HISTOGRAM_ENUMERATION("WebRTC.PeerConnection.SrtpUnprotectError",
+                              static_cast<int>(err), kSrtpErrorCodeBoundary);
     return false;
   }
   return true;
@@ -149,6 +157,8 @@ bool SrtpSession::UnprotectRtcp(void* p, int in_len, int* out_len) {
   int err = srtp_unprotect_rtcp(session_, p, out_len);
   if (err != srtp_err_status_ok) {
     RTC_LOG(LS_WARNING) << "Failed to unprotect SRTCP packet, err=" << err;
+    RTC_HISTOGRAM_ENUMERATION("WebRTC.PeerConnection.SrtcpUnprotectError",
+                              static_cast<int>(err), kSrtpErrorCodeBoundary);
     return false;
   }
   return true;
@@ -248,6 +258,7 @@ bool SrtpSession::DoSetKey(int type,
   if (!rtc::GetSrtpKeyAndSaltLengths(cs, &expected_key_len,
                                      &expected_salt_len)) {
     // This should never happen.
+    RTC_NOTREACHED();
     RTC_LOG(LS_WARNING)
         << "Failed to " << (session_ ? "update" : "create")
         << " SRTP session: unsupported cipher_suite without length information"
@@ -314,7 +325,7 @@ bool SrtpSession::SetKey(int type,
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   if (session_) {
     RTC_LOG(LS_ERROR) << "Failed to create SRTP session: "
-                      << "SRTP session already created";
+                         "SRTP session already created";
     return false;
   }
 

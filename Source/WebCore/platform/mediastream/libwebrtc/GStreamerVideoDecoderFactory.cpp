@@ -143,7 +143,6 @@ public:
 
     int32_t Decode(const webrtc::EncodedImage& inputImage,
         bool,
-        const webrtc::RTPFragmentationHeader*,
         const webrtc::CodecSpecificInfo*,
         int64_t renderTimeMs) override
     {
@@ -233,7 +232,7 @@ public:
         GST_LOG_OBJECT(pipeline(), "Output decoded frame! %d -> %" GST_PTR_FORMAT,
             frame->timestamp(), buffer);
 
-        m_imageReadyCb->Decoded(*frame.get(), rtc::Optional<int32_t>(), rtc::Optional<uint8_t>());
+        m_imageReadyCb->Decoded(*frame.get(), absl::optional<int32_t>(), absl::optional<uint8_t>());
 
         return GST_FLOW_OK;
     }

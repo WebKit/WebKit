@@ -10,10 +10,10 @@
 
 #include "modules/audio_processing/aec3/residual_echo_estimator.h"
 
+#include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_fft.h"
 #include "modules/audio_processing/aec3/aec_state.h"
 #include "modules/audio_processing/aec3/render_delay_buffer.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/test/echo_canceller_test_tools.h"
 #include "rtc_base/random.h"
 #include "test/gtest.h"
@@ -61,8 +61,10 @@ TEST(ResidualEchoEstimator, DISABLED_BasicTest) {
   std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
   std::vector<std::array<float, kFftLengthBy2Plus1>> H2(10);
   Random random_generator(42U);
-  std::array<float, kBlockSize> s;
+  SubtractorOutput output;
+  std::array<float, kBlockSize> y;
   Aec3Fft fft;
+  absl::optional<DelayEstimate> delay_estimate;
 
   for (auto& H2_k : H2) {
     H2_k.fill(0.01f);
@@ -73,7 +75,9 @@ TEST(ResidualEchoEstimator, DISABLED_BasicTest) {
   std::vector<float> h(GetTimeDomainLength(config.filter.main.length_blocks),
                        0.f);
 
-  s.fill(100.f);
+  output.Reset();
+  output.s_main.fill(100.f);
+  y.fill(0.f);
 
   constexpr float kLevel = 10.f;
   E2_shadow.fill(kLevel);
@@ -92,8 +96,9 @@ TEST(ResidualEchoEstimator, DISABLED_BasicTest) {
     render_delay_buffer->PrepareCaptureProcessing();
 
     aec_state.HandleEchoPathChange(echo_path_variability);
-    aec_state.Update(H2, h, true, *render_delay_buffer->GetRenderBuffer(),
-                     E2_main, Y2, s, false);
+    aec_state.Update(delay_estimate, H2, h,
+                     *render_delay_buffer->GetRenderBuffer(), E2_main, Y2,
+                     output, y);
 
     estimator.Estimate(aec_state, *render_delay_buffer->GetRenderBuffer(),
                        S2_linear, Y2, &R2);

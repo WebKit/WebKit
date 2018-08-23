@@ -14,10 +14,10 @@
 #include <errno.h>
 
 #if defined(WEBRTC_POSIX)
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 #define SOCKET_EACCES EACCES
 #endif
 
@@ -25,7 +25,7 @@
 #include "rtc_base/win32.h"
 #endif
 
-#include "rtc_base/basictypes.h"
+#include "absl/types/optional.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/socketaddress.h"
 
@@ -108,7 +108,6 @@
 #define ESTALE WSAESTALE
 #undef EREMOTE
 #define EREMOTE WSAEREMOTE
-#undef EACCES
 #define SOCKET_EACCES WSAEACCES
 #endif  // WEBRTC_WIN
 
@@ -124,13 +123,48 @@ inline bool IsBlockingError(int e) {
   return (e == EWOULDBLOCK) || (e == EAGAIN) || (e == EINPROGRESS);
 }
 
-struct SentPacket {
-  SentPacket() : packet_id(-1), send_time_ms(-1) {}
-  SentPacket(int packet_id, int64_t send_time_ms)
-      : packet_id(packet_id), send_time_ms(send_time_ms) {}
+enum class PacketType {
+  kUnknown,
+  kData,
+  kIceConnectivityCheck,
+  kIceConnectivityCheckResponse,
+  kStunMessage,
+  kTurnMessage,
+};
 
-  int packet_id;
-  int64_t send_time_ms;
+enum class PacketInfoProtocolType {
+  kUnknown,
+  kUdp,
+  kTcp,
+  kSsltcp,
+  kTls,
+};
+
+struct PacketInfo {
+  PacketInfo();
+  PacketInfo(const PacketInfo& info);
+  ~PacketInfo();
+
+  PacketType packet_type = PacketType::kUnknown;
+  PacketInfoProtocolType protocol = PacketInfoProtocolType::kUnknown;
+  // A unique id assigned by the network manager, and absl::nullopt if not set.
+  absl::optional<uint16_t> network_id;
+  size_t packet_size_bytes = 0;
+  size_t turn_overhead_bytes = 0;
+  SocketAddress local_socket_address;
+  SocketAddress remote_socket_address;
+};
+
+struct SentPacket {
+  SentPacket();
+  SentPacket(int64_t packet_id, int64_t send_time_ms);
+  SentPacket(int64_t packet_id,
+             int64_t send_time_ms,
+             const rtc::PacketInfo& info);
+
+  int64_t packet_id = -1;
+  int64_t send_time_ms = -1;
+  rtc::PacketInfo info;
 };
 
 // General interface for the socket implementations of various networks.  The
@@ -149,8 +183,8 @@ class Socket {
 
   virtual int Bind(const SocketAddress& addr) = 0;
   virtual int Connect(const SocketAddress& addr) = 0;
-  virtual int Send(const void *pv, size_t cb) = 0;
-  virtual int SendTo(const void *pv, size_t cb, const SocketAddress& addr) = 0;
+  virtual int Send(const void* pv, size_t cb) = 0;
+  virtual int SendTo(const void* pv, size_t cb, const SocketAddress& addr) = 0;
   // |timestamp| is in units of microseconds.
   virtual int Recv(void* pv, size_t cb, int64_t* timestamp) = 0;
   virtual int RecvFrom(void* pv,
@@ -158,26 +192,22 @@ class Socket {
                        SocketAddress* paddr,
                        int64_t* timestamp) = 0;
   virtual int Listen(int backlog) = 0;
-  virtual Socket *Accept(SocketAddress *paddr) = 0;
+  virtual Socket* Accept(SocketAddress* paddr) = 0;
   virtual int Close() = 0;
   virtual int GetError() const = 0;
   virtual void SetError(int error) = 0;
   inline bool IsBlocking() const { return IsBlockingError(GetError()); }
 
-  enum ConnState {
-    CS_CLOSED,
-    CS_CONNECTING,
-    CS_CONNECTED
-  };
+  enum ConnState { CS_CLOSED, CS_CONNECTING, CS_CONNECTED };
   virtual ConnState GetState() const = 0;
 
   enum Option {
     OPT_DONTFRAGMENT,
-    OPT_RCVBUF,      // receive buffer size
-    OPT_SNDBUF,      // send buffer size
-    OPT_NODELAY,     // whether Nagle algorithm is enabled
-    OPT_IPV6_V6ONLY, // Whether the socket is IPv6 only.
-    OPT_DSCP,        // DSCP code
+    OPT_RCVBUF,                // receive buffer size
+    OPT_SNDBUF,                // send buffer size
+    OPT_NODELAY,               // whether Nagle algorithm is enabled
+    OPT_IPV6_V6ONLY,           // Whether the socket is IPv6 only.
+    OPT_DSCP,                  // DSCP code
     OPT_RTP_SENDTIME_EXTN_ID,  // This is a non-traditional socket option param.
                                // This is specific to libjingle and will be used
                                // if SendTime option is needed at socket level.

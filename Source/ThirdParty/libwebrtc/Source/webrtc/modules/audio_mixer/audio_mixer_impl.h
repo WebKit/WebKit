@@ -17,12 +17,9 @@
 #include "api/audio/audio_mixer.h"
 #include "modules/audio_mixer/frame_combiner.h"
 #include "modules/audio_mixer/output_rate_calculator.h"
-#include "modules/audio_processing/include/audio_processing.h"
-#include "modules/include/module_common_types.h"
 #include "rtc_base/race_checker.h"
 #include "rtc_base/scoped_ref_ptr.h"
 #include "rtc_base/thread_annotations.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 

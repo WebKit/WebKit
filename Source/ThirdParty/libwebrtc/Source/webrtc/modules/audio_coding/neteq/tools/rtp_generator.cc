@@ -32,8 +32,8 @@ uint32_t RtpGenerator::GetRtpHeader(uint8_t payload_type,
 
   uint32_t this_send_time = next_send_time_ms_;
   assert(samples_per_ms_ > 0);
-  next_send_time_ms_ += ((1.0 + drift_factor_) * payload_length_samples) /
-      samples_per_ms_;
+  next_send_time_ms_ +=
+      ((1.0 + drift_factor_) * payload_length_samples) / samples_per_ms_;
   return this_send_time;
 }
 
@@ -46,8 +46,8 @@ void RtpGenerator::set_drift_factor(double factor) {
 uint32_t TimestampJumpRtpGenerator::GetRtpHeader(uint8_t payload_type,
                                                  size_t payload_length_samples,
                                                  RTPHeader* rtp_header) {
-  uint32_t ret = RtpGenerator::GetRtpHeader(
-      payload_type, payload_length_samples, rtp_header);
+  uint32_t ret = RtpGenerator::GetRtpHeader(payload_type,
+                                            payload_length_samples, rtp_header);
   if (timestamp_ - static_cast<uint32_t>(payload_length_samples) <=
           jump_from_timestamp_ &&
       timestamp_ > jump_from_timestamp_) {

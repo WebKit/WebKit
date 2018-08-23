@@ -16,11 +16,20 @@
 
 ******************************************************************/
 
-#include "cb_construct.h"
+#include "modules/audio_coding/codecs/ilbc/cb_construct.h"
 
-#include "defines.h"
-#include "gain_dequant.h"
-#include "get_cd_vec.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/gain_dequant.h"
+#include "modules/audio_coding/codecs/ilbc/get_cd_vec.h"
+#include "rtc_base/sanitizer.h"
+
+// An arithmetic operation that is allowed to overflow. (It's still undefined
+// behavior, so not a good idea; this just makes UBSan ignore the violation, so
+// that our old code can continue to do what it's always been doing.)
+static inline int32_t RTC_NO_SANITIZE("signed-integer-overflow")
+    OverflowingAddS32S32ToS32(int32_t a, int32_t b) {
+  return a + b;
+}
 
 /*----------------------------------------------------------------*
  *  Construct decoded vector from codebook and gains.
@@ -62,7 +71,7 @@ bool WebRtcIlbcfix_CbConstruct(
   for (j=0;j<veclen;j++) {
     a32 = (*gainPtr++) * cbvec0[j];
     a32 += (*gainPtr++) * cbvec1[j];
-    a32 += (*gainPtr) * cbvec2[j];
+    a32 = OverflowingAddS32S32ToS32(a32, (*gainPtr) * cbvec2[j]);
     gainPtr -= 2;
     decvector[j] = (int16_t)((a32 + 8192) >> 14);
   }

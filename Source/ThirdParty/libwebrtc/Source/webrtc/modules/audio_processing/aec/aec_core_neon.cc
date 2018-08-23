@@ -38,13 +38,12 @@ __inline static float MulIm(float aRe, float aIm, float bRe, float bIm) {
   return aRe * bIm + aIm * bRe;
 }
 
-static void FilterFarNEON(int num_partitions,
-                          int x_fft_buf_block_pos,
-                          float x_fft_buf[2]
-                                         [kExtendedNumPartitions * PART_LEN1],
-                          float h_fft_buf[2]
-                                         [kExtendedNumPartitions * PART_LEN1],
-                          float y_fft[2][PART_LEN1]) {
+static void FilterFarNEON(
+    int num_partitions,
+    int x_fft_buf_block_pos,
+    float x_fft_buf[2][kExtendedNumPartitions * PART_LEN1],
+    float h_fft_buf[2][kExtendedNumPartitions * PART_LEN1],
+    float y_fft[2][PART_LEN1]) {
   int i;
   for (i = 0; i < num_partitions; i++) {
     int j;

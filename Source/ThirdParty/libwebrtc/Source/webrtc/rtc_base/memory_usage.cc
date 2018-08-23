@@ -12,14 +12,17 @@
 
 #if defined(WEBRTC_LINUX)
 #include <unistd.h>
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #elif defined(WEBRTC_MAC)
 #include <mach/mach.h>
 #elif defined(WEBRTC_WIN)
+// clang-format off
+// clang formating would change include order.
 #include <windows.h>
-#include <psapi.h>
+#include <psapi.h> // must come after windows.h
+// clang-format on
 #endif
 
 #include "rtc_base/logging.h"

@@ -11,22 +11,22 @@
 #include "rtc_base/filerotatingstream.h"
 
 #include <algorithm>
-#include <iostream>
+#include <cstdio>
 #include <string>
 
 #include "rtc_base/checks.h"
 #include "rtc_base/fileutils.h"
 #include "rtc_base/pathutils.h"
+#include "rtc_base/strings/string_builder.h"
 
-// Note: We use std::cerr for logging in the write paths of this stream to avoid
+// Note: We use fprintf for logging in the write paths of this stream to avoid
 // infinite loops when logging.
 
 namespace rtc {
 
 FileRotatingStream::FileRotatingStream(const std::string& dir_path,
                                        const std::string& file_prefix)
-    : FileRotatingStream(dir_path, file_prefix, 0, 0, kRead) {
-}
+    : FileRotatingStream(dir_path, file_prefix, 0, 0, kRead) {}
 
 FileRotatingStream::FileRotatingStream(const std::string& dir_path,
                                        const std::string& file_prefix,
@@ -77,8 +77,7 @@ FileRotatingStream::FileRotatingStream(const std::string& dir_path,
   }
 }
 
-FileRotatingStream::~FileRotatingStream() {
-}
+FileRotatingStream::~FileRotatingStream() {}
 
 StreamState FileRotatingStream::GetState() const {
   if (mode_ == kRead && current_file_index_ < file_names_.size()) {
@@ -149,7 +148,7 @@ StreamResult FileRotatingStream::Write(const void* data,
     return SR_EOS;
   }
   if (!file_stream_) {
-    std::cerr << "Open() must be called before Write." << std::endl;
+    std::fprintf(stderr, "Open() must be called before Write.\n");
     return SR_ERROR;
   }
   // Write as much as will fit in to the current file.
@@ -213,7 +212,7 @@ bool FileRotatingStream::Open() {
       std::vector<std::string> matching_files = GetFilesWithPrefix();
       for (auto matching_file : matching_files) {
         if (!Filesystem::DeleteFile(matching_file)) {
-          std::cerr << "Failed to delete: " << matching_file << std::endl;
+          std::fprintf(stderr, "Failed to delete: %s\n", matching_file.c_str());
         }
       }
       return OpenCurrentFile();
@@ -225,8 +224,7 @@ bool FileRotatingStream::Open() {
 bool FileRotatingStream::DisableBuffering() {
   disable_buffering_ = true;
   if (!file_stream_) {
-    std::cerr << "Open() must be called before DisableBuffering()."
-              << std::endl;
+    std::fprintf(stderr, "Open() must be called before DisableBuffering().\n");
     return false;
   }
   return file_stream_->DisableBuffering();
@@ -257,8 +255,8 @@ bool FileRotatingStream::OpenCurrentFile() {
   }
   int error = 0;
   if (!file_stream_->Open(file_path, mode, &error)) {
-    std::cerr << "Failed to open: " << file_path << "Error: " << error
-              << std::endl;
+    std::fprintf(stderr, "Failed to open: %s Error: %i\n", file_path.c_str(),
+                 error);
     file_stream_.reset();
     return false;
   }
@@ -286,7 +284,7 @@ void FileRotatingStream::RotateFiles() {
   std::string file_to_delete = file_names_[rotation_index_];
   if (Filesystem::IsFile(file_to_delete)) {
     if (!Filesystem::DeleteFile(file_to_delete)) {
-      std::cerr << "Failed to delete: " << file_to_delete << std::endl;
+      std::fprintf(stderr, "Failed to delete: %s\n", file_to_delete.c_str());
     }
   }
   for (auto i = rotation_index_; i > 0; --i) {
@@ -294,8 +292,8 @@ void FileRotatingStream::RotateFiles() {
     std::string unrotated_name = file_names_[i - 1];
     if (Filesystem::IsFile(unrotated_name)) {
       if (!Filesystem::MoveFile(unrotated_name, rotated_name)) {
-        std::cerr << "Failed to move: " << unrotated_name << " to "
-                  << rotated_name << std::endl;
+        std::fprintf(stderr, "Failed to move: %s to %s\n",
+                     unrotated_name.c_str(), rotated_name.c_str());
       }
     }
   }
@@ -327,21 +325,15 @@ std::vector<std::string> FileRotatingStream::GetFilesWithPrefix() const {
 std::string FileRotatingStream::GetFilePath(size_t index,
                                             size_t num_files) const {
   RTC_DCHECK_LT(index, num_files);
-  std::ostringstream file_name;
-  // The format will be "_%<num_digits>zu". We want to zero pad the index so
-  // that it will sort nicely.
-  size_t max_digits = ((num_files - 1) / 10) + 1;
-  size_t num_digits = (index / 10) + 1;
-  RTC_DCHECK_LE(num_digits, max_digits);
-  size_t padding = max_digits - num_digits;
 
-  file_name << file_prefix_ << "_";
-  for (size_t i = 0; i < padding; ++i) {
-    file_name << "0";
-  }
-  file_name << index;
+  const size_t buffer_size = 32;
+  char file_postfix[buffer_size];
+  // We want to zero pad the index so that it will sort nicely.
+  const int max_digits = std::snprintf(nullptr, 0, "%zu", num_files - 1);
+  RTC_DCHECK_LT(1 + max_digits, buffer_size);
+  std::snprintf(file_postfix, buffer_size, "_%0*zu", max_digits, index);
 
-  Pathname file_path(dir_path_, file_name.str());
+  Pathname file_path(dir_path_, file_prefix_ + file_postfix);
   return file_path.pathname();
 }
 
@@ -349,8 +341,7 @@ CallSessionFileRotatingStream::CallSessionFileRotatingStream(
     const std::string& dir_path)
     : FileRotatingStream(dir_path, kLogPrefix),
       max_total_log_size_(0),
-      num_rotations_(0) {
-}
+      num_rotations_(0) {}
 
 CallSessionFileRotatingStream::CallSessionFileRotatingStream(
     const std::string& dir_path,

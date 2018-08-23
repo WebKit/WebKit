@@ -12,6 +12,7 @@
 
 #include "pc/srtptransport.h"
 
+#include "absl/memory/memory.h"
 #include "media/base/fakertp.h"
 #include "p2p/base/dtlstransportinternal.h"
 #include "p2p/base/fakepackettransport.h"
@@ -20,7 +21,6 @@
 #include "pc/srtptestutil.h"
 #include "rtc_base/asyncpacketsocket.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/sslstreamadapter.h"
 
 using rtc::kTestKey1;
@@ -42,50 +42,42 @@ class SrtpTransportTest : public testing::Test, public sigslot::has_slots<> {
  protected:
   SrtpTransportTest() {
     bool rtcp_mux_enabled = true;
-    auto rtp_transport1 = rtc::MakeUnique<RtpTransport>(rtcp_mux_enabled);
-    auto rtp_transport2 = rtc::MakeUnique<RtpTransport>(rtcp_mux_enabled);
 
     rtp_packet_transport1_ =
-        rtc::MakeUnique<rtc::FakePacketTransport>("fake_packet_transport1");
+        absl::make_unique<rtc::FakePacketTransport>("fake_packet_transport1");
     rtp_packet_transport2_ =
-        rtc::MakeUnique<rtc::FakePacketTransport>("fake_packet_transport2");
+        absl::make_unique<rtc::FakePacketTransport>("fake_packet_transport2");
 
     bool asymmetric = false;
     rtp_packet_transport1_->SetDestination(rtp_packet_transport2_.get(),
                                            asymmetric);
 
-    rtp_transport1->SetRtpPacketTransport(rtp_packet_transport1_.get());
-    rtp_transport2->SetRtpPacketTransport(rtp_packet_transport2_.get());
+    srtp_transport1_ = absl::make_unique<SrtpTransport>(rtcp_mux_enabled);
+    srtp_transport2_ = absl::make_unique<SrtpTransport>(rtcp_mux_enabled);
 
-    // Add payload type for RTP packet and RTCP packet.
-    rtp_transport1->AddHandledPayloadType(0x00);
-    rtp_transport2->AddHandledPayloadType(0x00);
-    rtp_transport1->AddHandledPayloadType(0xc9);
-    rtp_transport2->AddHandledPayloadType(0xc9);
+    srtp_transport1_->SetRtpPacketTransport(rtp_packet_transport1_.get());
+    srtp_transport2_->SetRtpPacketTransport(rtp_packet_transport2_.get());
 
-    srtp_transport1_ =
-        rtc::MakeUnique<SrtpTransport>(std::move(rtp_transport1));
-    srtp_transport2_ =
-        rtc::MakeUnique<SrtpTransport>(std::move(rtp_transport2));
+    srtp_transport1_->SignalRtcpPacketReceived.connect(
+        &rtp_sink1_, &TransportObserver::OnRtcpPacketReceived);
+    srtp_transport2_->SignalRtcpPacketReceived.connect(
+        &rtp_sink2_, &TransportObserver::OnRtcpPacketReceived);
 
-    srtp_transport1_->SignalPacketReceived.connect(
-        this, &SrtpTransportTest::OnPacketReceived1);
-    srtp_transport2_->SignalPacketReceived.connect(
-        this, &SrtpTransportTest::OnPacketReceived2);
+    RtpDemuxerCriteria demuxer_criteria;
+    // 0x00 is the payload type used in kPcmuFrame.
+    demuxer_criteria.payload_types = {0x00};
+
+    srtp_transport1_->RegisterRtpDemuxerSink(demuxer_criteria, &rtp_sink1_);
+    srtp_transport2_->RegisterRtpDemuxerSink(demuxer_criteria, &rtp_sink2_);
   }
 
-  void OnPacketReceived1(bool rtcp,
-                         rtc::CopyOnWriteBuffer* packet,
-                         const rtc::PacketTime& packet_time) {
-    RTC_LOG(LS_INFO) << "SrtpTransport1 Received a packet.";
-    last_recv_packet1_ = *packet;
-  }
-
-  void OnPacketReceived2(bool rtcp,
-                         rtc::CopyOnWriteBuffer* packet,
-                         const rtc::PacketTime& packet_time) {
-    RTC_LOG(LS_INFO) << "SrtpTransport2 Received a packet.";
-    last_recv_packet2_ = *packet;
+  ~SrtpTransportTest() {
+    if (srtp_transport1_) {
+      srtp_transport1_->UnregisterRtpDemuxerSink(&rtp_sink1_);
+    }
+    if (srtp_transport2_) {
+      srtp_transport2_->UnregisterRtpDemuxerSink(&rtp_sink2_);
+    }
   }
 
   // With external auth enabled, SRTP doesn't write the auth tag and
@@ -142,9 +134,9 @@ class SrtpTransportTest : public testing::Test, public sigslot::has_slots<> {
     if (srtp_transport1_->IsExternalAuthActive()) {
       TestRtpAuthParams(srtp_transport1_.get(), cipher_suite_name);
     } else {
-      ASSERT_TRUE(last_recv_packet2_.data());
-      EXPECT_EQ(0,
-                memcmp(last_recv_packet2_.data(), original_rtp_data, rtp_len));
+      ASSERT_TRUE(rtp_sink2_.last_recv_rtp_packet().data());
+      EXPECT_EQ(0, memcmp(rtp_sink2_.last_recv_rtp_packet().data(),
+                          original_rtp_data, rtp_len));
       // Get the encrypted packet from underneath packet transport and verify
       // the data is actually encrypted.
       auto fake_rtp_packet_transport = static_cast<rtc::FakePacketTransport*>(
@@ -159,9 +151,9 @@ class SrtpTransportTest : public testing::Test, public sigslot::has_slots<> {
     if (srtp_transport2_->IsExternalAuthActive()) {
       TestRtpAuthParams(srtp_transport2_.get(), cipher_suite_name);
     } else {
-      ASSERT_TRUE(last_recv_packet1_.data());
-      EXPECT_EQ(0,
-                memcmp(last_recv_packet1_.data(), original_rtp_data, rtp_len));
+      ASSERT_TRUE(rtp_sink1_.last_recv_rtp_packet().data());
+      EXPECT_EQ(0, memcmp(rtp_sink1_.last_recv_rtp_packet().data(),
+                          original_rtp_data, rtp_len));
       auto fake_rtp_packet_transport = static_cast<rtc::FakePacketTransport*>(
           srtp_transport2_->rtp_packet_transport());
       EXPECT_NE(0, memcmp(fake_rtp_packet_transport->last_sent_packet()->data(),
@@ -170,12 +162,12 @@ class SrtpTransportTest : public testing::Test, public sigslot::has_slots<> {
   }
 
   void TestSendRecvRtcpPacket(const std::string& cipher_suite_name) {
-    size_t rtcp_len = sizeof(kRtcpReport);
+    size_t rtcp_len = sizeof(::kRtcpReport);
     size_t packet_size =
         rtcp_len + 4 + rtc::rtcp_auth_tag_len(cipher_suite_name);
     rtc::Buffer rtcp_packet_buffer(packet_size);
     char* rtcp_packet_data = rtcp_packet_buffer.data<char>();
-    memcpy(rtcp_packet_data, kRtcpReport, rtcp_len);
+    memcpy(rtcp_packet_data, ::kRtcpReport, rtcp_len);
 
     rtc::CopyOnWriteBuffer rtcp_packet1to2(rtcp_packet_data, rtcp_len,
                                            packet_size);
@@ -187,8 +179,9 @@ class SrtpTransportTest : public testing::Test, public sigslot::has_slots<> {
     // that the packet can be successfully received and decrypted.
     ASSERT_TRUE(srtp_transport1_->SendRtcpPacket(&rtcp_packet1to2, options,
                                                  cricket::PF_SRTP_BYPASS));
-    ASSERT_TRUE(last_recv_packet2_.data());
-    EXPECT_EQ(0, memcmp(last_recv_packet2_.data(), rtcp_packet_data, rtcp_len));
+    ASSERT_TRUE(rtp_sink2_.last_recv_rtcp_packet().data());
+    EXPECT_EQ(0, memcmp(rtp_sink2_.last_recv_rtcp_packet().data(),
+                        rtcp_packet_data, rtcp_len));
     // Get the encrypted packet from underneath packet transport and verify the
     // data is actually encrypted.
     auto fake_rtp_packet_transport = static_cast<rtc::FakePacketTransport*>(
@@ -199,8 +192,9 @@ class SrtpTransportTest : public testing::Test, public sigslot::has_slots<> {
     // Do the same thing in the opposite direction;
     ASSERT_TRUE(srtp_transport2_->SendRtcpPacket(&rtcp_packet2to1, options,
                                                  cricket::PF_SRTP_BYPASS));
-    ASSERT_TRUE(last_recv_packet1_.data());
-    EXPECT_EQ(0, memcmp(last_recv_packet1_.data(), rtcp_packet_data, rtcp_len));
+    ASSERT_TRUE(rtp_sink1_.last_recv_rtcp_packet().data());
+    EXPECT_EQ(0, memcmp(rtp_sink1_.last_recv_rtcp_packet().data(),
+                        rtcp_packet_data, rtcp_len));
     fake_rtp_packet_transport = static_cast<rtc::FakePacketTransport*>(
         srtp_transport2_->rtp_packet_transport());
     EXPECT_NE(0, memcmp(fake_rtp_packet_transport->last_sent_packet()->data(),
@@ -229,8 +223,8 @@ class SrtpTransportTest : public testing::Test, public sigslot::has_slots<> {
         cs, key1, key1_len, extension_ids, cs, key2, key2_len, extension_ids));
     EXPECT_TRUE(srtp_transport2_->SetRtcpParams(
         cs, key2, key2_len, extension_ids, cs, key1, key1_len, extension_ids));
-    EXPECT_TRUE(srtp_transport1_->IsActive());
-    EXPECT_TRUE(srtp_transport2_->IsActive());
+    EXPECT_TRUE(srtp_transport1_->IsSrtpActive());
+    EXPECT_TRUE(srtp_transport2_->IsSrtpActive());
     if (rtc::IsGcmCryptoSuite(cs)) {
       EXPECT_FALSE(srtp_transport1_->IsExternalAuthActive());
       EXPECT_FALSE(srtp_transport2_->IsExternalAuthActive());
@@ -267,8 +261,9 @@ class SrtpTransportTest : public testing::Test, public sigslot::has_slots<> {
     // that the packet can be successfully received and decrypted.
     ASSERT_TRUE(srtp_transport1_->SendRtpPacket(&rtp_packet1to2, options,
                                                 cricket::PF_SRTP_BYPASS));
-    ASSERT_TRUE(last_recv_packet2_.data());
-    EXPECT_EQ(0, memcmp(last_recv_packet2_.data(), original_rtp_data, rtp_len));
+    ASSERT_TRUE(rtp_sink2_.last_recv_rtp_packet().data());
+    EXPECT_EQ(0, memcmp(rtp_sink2_.last_recv_rtp_packet().data(),
+                        original_rtp_data, rtp_len));
     // Get the encrypted packet from underneath packet transport and verify the
     // data and header extension are actually encrypted.
     auto fake_rtp_packet_transport = static_cast<rtc::FakePacketTransport*>(
@@ -284,8 +279,9 @@ class SrtpTransportTest : public testing::Test, public sigslot::has_slots<> {
     // Do the same thing in the opposite direction;
     ASSERT_TRUE(srtp_transport2_->SendRtpPacket(&rtp_packet2to1, options,
                                                 cricket::PF_SRTP_BYPASS));
-    ASSERT_TRUE(last_recv_packet1_.data());
-    EXPECT_EQ(0, memcmp(last_recv_packet1_.data(), original_rtp_data, rtp_len));
+    ASSERT_TRUE(rtp_sink1_.last_recv_rtp_packet().data());
+    EXPECT_EQ(0, memcmp(rtp_sink1_.last_recv_rtp_packet().data(),
+                        original_rtp_data, rtp_len));
     fake_rtp_packet_transport = static_cast<rtc::FakePacketTransport*>(
         srtp_transport2_->rtp_packet_transport());
     EXPECT_NE(0, memcmp(fake_rtp_packet_transport->last_sent_packet()->data(),
@@ -315,8 +311,8 @@ class SrtpTransportTest : public testing::Test, public sigslot::has_slots<> {
     EXPECT_TRUE(srtp_transport2_->SetRtpParams(cs, key2, key2_len,
                                                encrypted_headers, cs, key1,
                                                key1_len, encrypted_headers));
-    EXPECT_TRUE(srtp_transport1_->IsActive());
-    EXPECT_TRUE(srtp_transport2_->IsActive());
+    EXPECT_TRUE(srtp_transport1_->IsSrtpActive());
+    EXPECT_TRUE(srtp_transport2_->IsSrtpActive());
     EXPECT_FALSE(srtp_transport1_->IsExternalAuthActive());
     EXPECT_FALSE(srtp_transport2_->IsExternalAuthActive());
     TestSendRecvPacketWithEncryptedHeaderExtension(cs_name, encrypted_headers);
@@ -328,8 +324,9 @@ class SrtpTransportTest : public testing::Test, public sigslot::has_slots<> {
   std::unique_ptr<rtc::FakePacketTransport> rtp_packet_transport1_;
   std::unique_ptr<rtc::FakePacketTransport> rtp_packet_transport2_;
 
-  rtc::CopyOnWriteBuffer last_recv_packet1_;
-  rtc::CopyOnWriteBuffer last_recv_packet2_;
+  TransportObserver rtp_sink1_;
+  TransportObserver rtp_sink2_;
+
   int sequence_number_ = 0;
 };
 

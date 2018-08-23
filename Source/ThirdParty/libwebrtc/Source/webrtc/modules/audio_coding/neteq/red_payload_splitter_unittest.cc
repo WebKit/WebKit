@@ -100,8 +100,8 @@ Packet CreateRedPayload(size_t num_payloads,
     // Not the last block; set F = 1.
     *payload_ptr |= 0x80;
     ++payload_ptr;
-    int this_offset = rtc::checked_cast<int>(
-        (num_payloads - i - 1) * timestamp_offset);
+    int this_offset =
+        rtc::checked_cast<int>((num_payloads - i - 1) * timestamp_offset);
     *payload_ptr = this_offset >> 6;
     ++payload_ptr;
     assert(kPayloadLength <= 1023);  // Max length described by 10 bits.
@@ -299,7 +299,7 @@ TEST(RedPayloadSplitter, CheckRedPayloads) {
   // easier to just register the payload types and let the actual implementation
   // do its job.
   DecoderDatabase decoder_database(
-      new rtc::RefCountedObject<MockAudioDecoderFactory>);
+      new rtc::RefCountedObject<MockAudioDecoderFactory>, absl::nullopt);
   decoder_database.RegisterPayload(0, NetEqDecoder::kDecoderCNGnb, "cng-nb");
   decoder_database.RegisterPayload(1, NetEqDecoder::kDecoderPCMu, "pcmu");
   decoder_database.RegisterPayload(2, NetEqDecoder::kDecoderAVT, "avt");
@@ -317,6 +317,30 @@ TEST(RedPayloadSplitter, CheckRedPayloads) {
     packet_list.pop_front();
   }
   EXPECT_TRUE(packet_list.empty());
+}
+
+// This test creates a RED packet where the payloads also have the payload type
+// for RED. That is, some kind of weird nested RED packet. This is not supported
+// and the splitter should discard all packets.
+TEST(RedPayloadSplitter, CheckRedPayloadsRecursiveRed) {
+  PacketList packet_list;
+  for (uint8_t i = 0; i <= 3; ++i) {
+    // Create packet with RED payload type, payload length 10 bytes, all 0.
+    packet_list.push_back(CreatePacket(kRedPayloadType, 10, 0));
+  }
+
+  // Use a real DecoderDatabase object here instead of a mock, since it is
+  // easier to just register the payload types and let the actual implementation
+  // do its job.
+  DecoderDatabase decoder_database(
+      new rtc::RefCountedObject<MockAudioDecoderFactory>, absl::nullopt);
+  decoder_database.RegisterPayload(kRedPayloadType, NetEqDecoder::kDecoderRED,
+                                   "red");
+
+  RedPayloadSplitter splitter;
+  splitter.CheckRedPayloads(&packet_list, decoder_database);
+
+  EXPECT_TRUE(packet_list.empty());  // Should have dropped all packets.
 }
 
 // Packet A is split into A1, A2 and A3. But the length parameter is off, so

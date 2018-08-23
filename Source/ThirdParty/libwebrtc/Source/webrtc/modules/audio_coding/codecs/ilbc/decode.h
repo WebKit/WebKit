@@ -19,7 +19,10 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_DECODE_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_DECODE_H_
 
-#include "defines.h"
+#include <stdint.h>
+
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "rtc_base/system/unused.h"
 
 /*----------------------------------------------------------------*
  *  main decoder function
@@ -31,8 +34,8 @@ int WebRtcIlbcfix_DecodeImpl(
     const uint16_t* bytes,     /* (i) encoded signal bits */
     IlbcDecoder* iLBCdec_inst, /* (i/o) the decoder state
                                            structure */
-    int16_t mode               /* (i) 0: bad packet, PLC,
-                                      1: normal */
+    int16_t mode /* (i) 0: bad packet, PLC,
+                        1: normal */
     ) RTC_WARN_UNUSED_RESULT;
 
 #endif

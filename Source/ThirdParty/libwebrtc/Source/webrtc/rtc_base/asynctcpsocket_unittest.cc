@@ -17,9 +17,7 @@
 
 namespace rtc {
 
-class AsyncTCPSocketTest
-    : public testing::Test,
-      public sigslot::has_slots<> {
+class AsyncTCPSocketTest : public testing::Test, public sigslot::has_slots<> {
  public:
   AsyncTCPSocketTest()
       : vss_(new rtc::VirtualSocketServer()),
@@ -30,9 +28,7 @@ class AsyncTCPSocketTest
                                            &AsyncTCPSocketTest::OnReadyToSend);
   }
 
-  void OnReadyToSend(rtc::AsyncPacketSocket* socket) {
-    ready_to_send_ = true;
-  }
+  void OnReadyToSend(rtc::AsyncPacketSocket* socket) { ready_to_send_ = true; }
 
  protected:
   std::unique_ptr<VirtualSocketServer> vss_;

@@ -34,9 +34,8 @@ class WinsockInitializer {
     if (!err_)
       WSACleanup();
   }
-  int error() {
-    return err_;
-  }
+  int error() { return err_; }
+
  private:
   int err_;
 };

@@ -76,6 +76,10 @@ ParsedRtcEventLog::EventType GetRuntimeEventType(
       return ParsedRtcEventLog::EventType::BWE_PROBE_RESULT_EVENT;
     case rtclog::Event::ALR_STATE_EVENT:
       return ParsedRtcEventLog::EventType::ALR_STATE_EVENT;
+    case rtclog::Event::ICE_CANDIDATE_PAIR_CONFIG:
+      return ParsedRtcEventLog::EventType::ICE_CANDIDATE_PAIR_CONFIG;
+    case rtclog::Event::ICE_CANDIDATE_PAIR_EVENT:
+      return ParsedRtcEventLog::EventType::ICE_CANDIDATE_PAIR_EVENT;
   }
   return ParsedRtcEventLog::EventType::UNKNOWN_EVENT;
 }
@@ -92,6 +96,108 @@ BandwidthUsage GetRuntimeDetectorState(
   }
   RTC_NOTREACHED();
   return BandwidthUsage::kBwNormal;
+}
+
+IceCandidatePairConfigType GetRuntimeIceCandidatePairConfigType(
+    rtclog::IceCandidatePairConfig::IceCandidatePairConfigType type) {
+  switch (type) {
+    case rtclog::IceCandidatePairConfig::ADDED:
+      return IceCandidatePairConfigType::kAdded;
+    case rtclog::IceCandidatePairConfig::UPDATED:
+      return IceCandidatePairConfigType::kUpdated;
+    case rtclog::IceCandidatePairConfig::DESTROYED:
+      return IceCandidatePairConfigType::kDestroyed;
+    case rtclog::IceCandidatePairConfig::SELECTED:
+      return IceCandidatePairConfigType::kSelected;
+  }
+  RTC_NOTREACHED();
+  return IceCandidatePairConfigType::kAdded;
+}
+
+IceCandidateType GetRuntimeIceCandidateType(
+    rtclog::IceCandidatePairConfig::IceCandidateType type) {
+  switch (type) {
+    case rtclog::IceCandidatePairConfig::LOCAL:
+      return IceCandidateType::kLocal;
+    case rtclog::IceCandidatePairConfig::STUN:
+      return IceCandidateType::kStun;
+    case rtclog::IceCandidatePairConfig::PRFLX:
+      return IceCandidateType::kPrflx;
+    case rtclog::IceCandidatePairConfig::RELAY:
+      return IceCandidateType::kRelay;
+    case rtclog::IceCandidatePairConfig::UNKNOWN_CANDIDATE_TYPE:
+      return IceCandidateType::kUnknown;
+  }
+  RTC_NOTREACHED();
+  return IceCandidateType::kUnknown;
+}
+
+IceCandidatePairProtocol GetRuntimeIceCandidatePairProtocol(
+    rtclog::IceCandidatePairConfig::Protocol protocol) {
+  switch (protocol) {
+    case rtclog::IceCandidatePairConfig::UDP:
+      return IceCandidatePairProtocol::kUdp;
+    case rtclog::IceCandidatePairConfig::TCP:
+      return IceCandidatePairProtocol::kTcp;
+    case rtclog::IceCandidatePairConfig::SSLTCP:
+      return IceCandidatePairProtocol::kSsltcp;
+    case rtclog::IceCandidatePairConfig::TLS:
+      return IceCandidatePairProtocol::kTls;
+    case rtclog::IceCandidatePairConfig::UNKNOWN_PROTOCOL:
+      return IceCandidatePairProtocol::kUnknown;
+  }
+  RTC_NOTREACHED();
+  return IceCandidatePairProtocol::kUnknown;
+}
+
+IceCandidatePairAddressFamily GetRuntimeIceCandidatePairAddressFamily(
+    rtclog::IceCandidatePairConfig::AddressFamily address_family) {
+  switch (address_family) {
+    case rtclog::IceCandidatePairConfig::IPV4:
+      return IceCandidatePairAddressFamily::kIpv4;
+    case rtclog::IceCandidatePairConfig::IPV6:
+      return IceCandidatePairAddressFamily::kIpv6;
+    case rtclog::IceCandidatePairConfig::UNKNOWN_ADDRESS_FAMILY:
+      return IceCandidatePairAddressFamily::kUnknown;
+  }
+  RTC_NOTREACHED();
+  return IceCandidatePairAddressFamily::kUnknown;
+}
+
+IceCandidateNetworkType GetRuntimeIceCandidateNetworkType(
+    rtclog::IceCandidatePairConfig::NetworkType network_type) {
+  switch (network_type) {
+    case rtclog::IceCandidatePairConfig::ETHERNET:
+      return IceCandidateNetworkType::kEthernet;
+    case rtclog::IceCandidatePairConfig::LOOPBACK:
+      return IceCandidateNetworkType::kLoopback;
+    case rtclog::IceCandidatePairConfig::WIFI:
+      return IceCandidateNetworkType::kWifi;
+    case rtclog::IceCandidatePairConfig::VPN:
+      return IceCandidateNetworkType::kVpn;
+    case rtclog::IceCandidatePairConfig::CELLULAR:
+      return IceCandidateNetworkType::kCellular;
+    case rtclog::IceCandidatePairConfig::UNKNOWN_NETWORK_TYPE:
+      return IceCandidateNetworkType::kUnknown;
+  }
+  RTC_NOTREACHED();
+  return IceCandidateNetworkType::kUnknown;
+}
+
+IceCandidatePairEventType GetRuntimeIceCandidatePairEventType(
+    rtclog::IceCandidatePairEvent::IceCandidatePairEventType type) {
+  switch (type) {
+    case rtclog::IceCandidatePairEvent::CHECK_SENT:
+      return IceCandidatePairEventType::kCheckSent;
+    case rtclog::IceCandidatePairEvent::CHECK_RECEIVED:
+      return IceCandidatePairEventType::kCheckReceived;
+    case rtclog::IceCandidatePairEvent::CHECK_RESPONSE_SENT:
+      return IceCandidatePairEventType::kCheckResponseSent;
+    case rtclog::IceCandidatePairEvent::CHECK_RESPONSE_RECEIVED:
+      return IceCandidatePairEventType::kCheckResponseReceived;
+  }
+  RTC_NOTREACHED();
+  return IceCandidatePairEventType::kCheckSent;
 }
 
 std::pair<uint64_t, bool> ParseVarInt(std::istream& stream) {
@@ -115,10 +221,9 @@ std::pair<uint64_t, bool> ParseVarInt(std::istream& stream) {
   return std::make_pair(varint, false);
 }
 
-void GetHeaderExtensions(
-    std::vector<RtpExtension>* header_extensions,
-    const RepeatedPtrField<rtclog::RtpHeaderExtension>&
-    proto_header_extensions) {
+void GetHeaderExtensions(std::vector<RtpExtension>* header_extensions,
+                         const RepeatedPtrField<rtclog::RtpHeaderExtension>&
+                             proto_header_extensions) {
   header_extensions->clear();
   for (auto& p : proto_header_extensions) {
     RTC_CHECK(p.has_name());
@@ -667,6 +772,61 @@ ParsedRtcEventLog::AlrStateEvent ParsedRtcEventLog::GetAlrState(
   RTC_CHECK(alr_event.has_in_alr());
   res.in_alr = alr_event.in_alr();
 
+  return res;
+}
+
+ParsedRtcEventLog::IceCandidatePairConfig
+ParsedRtcEventLog::GetIceCandidatePairConfig(size_t index) const {
+  RTC_CHECK_LT(index, GetNumberOfEvents());
+  const rtclog::Event& rtc_event = events_[index];
+  RTC_CHECK(rtc_event.has_type());
+  RTC_CHECK_EQ(rtc_event.type(), rtclog::Event::ICE_CANDIDATE_PAIR_CONFIG);
+  IceCandidatePairConfig res;
+  const rtclog::IceCandidatePairConfig& config =
+      rtc_event.ice_candidate_pair_config();
+  res.timestamp = GetTimestamp(index);
+  RTC_CHECK(config.has_config_type());
+  res.type = GetRuntimeIceCandidatePairConfigType(config.config_type());
+  RTC_CHECK(config.has_candidate_pair_id());
+  res.candidate_pair_id = config.candidate_pair_id();
+  RTC_CHECK(config.has_local_candidate_type());
+  res.local_candidate_type =
+      GetRuntimeIceCandidateType(config.local_candidate_type());
+  RTC_CHECK(config.has_local_relay_protocol());
+  res.local_relay_protocol =
+      GetRuntimeIceCandidatePairProtocol(config.local_relay_protocol());
+  RTC_CHECK(config.has_local_network_type());
+  res.local_network_type =
+      GetRuntimeIceCandidateNetworkType(config.local_network_type());
+  RTC_CHECK(config.has_local_address_family());
+  res.local_address_family =
+      GetRuntimeIceCandidatePairAddressFamily(config.local_address_family());
+  RTC_CHECK(config.has_remote_candidate_type());
+  res.remote_candidate_type =
+      GetRuntimeIceCandidateType(config.remote_candidate_type());
+  RTC_CHECK(config.has_remote_address_family());
+  res.remote_address_family =
+      GetRuntimeIceCandidatePairAddressFamily(config.remote_address_family());
+  RTC_CHECK(config.has_candidate_pair_protocol());
+  res.candidate_pair_protocol =
+      GetRuntimeIceCandidatePairProtocol(config.candidate_pair_protocol());
+  return res;
+}
+
+ParsedRtcEventLog::IceCandidatePairEvent
+ParsedRtcEventLog::GetIceCandidatePairEvent(size_t index) const {
+  RTC_CHECK_LT(index, GetNumberOfEvents());
+  const rtclog::Event& rtc_event = events_[index];
+  RTC_CHECK(rtc_event.has_type());
+  RTC_CHECK_EQ(rtc_event.type(), rtclog::Event::ICE_CANDIDATE_PAIR_EVENT);
+  IceCandidatePairEvent res;
+  const rtclog::IceCandidatePairEvent& event =
+      rtc_event.ice_candidate_pair_event();
+  res.timestamp = GetTimestamp(index);
+  RTC_CHECK(event.has_event_type());
+  res.type = GetRuntimeIceCandidatePairEventType(event.event_type());
+  RTC_CHECK(event.has_candidate_pair_id());
+  res.candidate_pair_id = event.candidate_pair_id();
   return res;
 }
 

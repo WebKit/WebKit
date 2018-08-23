@@ -63,8 +63,7 @@ void RtxReceiveStream::OnRtpPacket(const RtpPacketReceived& rtx_packet) {
   media_packet.set_recovered(true);
 
   // Skip the RTX header.
-  rtc::ArrayView<const uint8_t> rtx_payload =
-      payload.subview(kRtxHeaderSize);
+  rtc::ArrayView<const uint8_t> rtx_payload = payload.subview(kRtxHeaderSize);
 
   uint8_t* media_payload = media_packet.AllocatePayload(rtx_payload.size());
   RTC_DCHECK(media_payload != nullptr);

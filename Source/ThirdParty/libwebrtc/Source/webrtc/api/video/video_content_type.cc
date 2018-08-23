@@ -68,19 +68,16 @@ bool SetSimulcastId(VideoContentType* content_type, uint8_t simulcast_id) {
   return true;
 }
 
-uint8_t GetExperimentId(
-    const VideoContentType& content_type) {
+uint8_t GetExperimentId(const VideoContentType& content_type) {
   return (static_cast<uint8_t>(content_type) & kExperimentBitsMask) >>
          kExperimentShift;
 }
-uint8_t GetSimulcastId(
-    const VideoContentType& content_type) {
+uint8_t GetSimulcastId(const VideoContentType& content_type) {
   return (static_cast<uint8_t>(content_type) & kSimulcastBitsMask) >>
          kSimulcastShift;
 }
 
-bool IsScreenshare(
-    const VideoContentType& content_type) {
+bool IsScreenshare(const VideoContentType& content_type) {
   return (static_cast<uint8_t>(content_type) & kScreenshareBitsMask) > 0;
 }
 

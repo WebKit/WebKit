@@ -19,11 +19,9 @@ struct MyExperiment {
   static const int kDefaultFactor;
   static const int kDefaultOffset;
 
-  MyExperiment()
-    : factor(kDefaultFactor), offset(kDefaultOffset) {}
+  MyExperiment() : factor(kDefaultFactor), offset(kDefaultOffset) {}
 
-  MyExperiment(int factor, int offset)
-    : factor(factor), offset(offset) {}
+  MyExperiment(int factor, int offset) : factor(factor), offset(offset) {}
 
   int factor;
   int offset;
@@ -61,17 +59,13 @@ struct Algo1_CostFunction {
       ConfigOptionID::kAlgo1CostFunctionForTest;
   Algo1_CostFunction() {}
 
-  virtual int cost(int x) const {
-    return x;
-  }
+  virtual int cost(int x) const { return x; }
 
   virtual ~Algo1_CostFunction() {}
 };
 
 struct SqrCost : Algo1_CostFunction {
-  virtual int cost(int x) const {
-    return x*x;
-  }
+  virtual int cost(int x) const { return x * x; }
 };
 
 TEST(Config, SupportsPolymorphism) {

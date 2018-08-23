@@ -11,54 +11,52 @@
 #ifndef MEDIA_ENGINE_SIMULCAST_H_
 #define MEDIA_ENGINE_SIMULCAST_H_
 
-#include <string>
 #include <vector>
 
-#include "call/video_config.h"
-#include "rtc_base/basictypes.h"
+#include "api/video_codecs/video_encoder_config.h"
 
 namespace cricket {
-struct StreamParams;
 
-// TODO(sprang): Remove this, as we're moving away from temporal layer mode.
-// Config for use with screen cast when temporal layers are enabled.
-struct ScreenshareLayerConfig {
- public:
-  ScreenshareLayerConfig(int tl0_bitrate, int tl1_bitrate);
-
-  // Bitrates, for temporal layers 0 and 1.
-  int tl0_bitrate_kbps;
-  int tl1_bitrate_kbps;
-
-  static ScreenshareLayerConfig GetDefault();
-
-  // Parse bitrate from group name on format "(tl0_bitrate)-(tl1_bitrate)",
-  // eg. "100-1000" for the default rates.
-  static bool FromFieldTrialGroup(const std::string& group,
-                                  ScreenshareLayerConfig* config);
-};
-
-// TODO(pthatcher): Write unit tests just for these functions,
-// independent of WebrtcVideoEngine.
-
+// Gets the total maximum bitrate for the |streams|.
 int GetTotalMaxBitrateBps(const std::vector<webrtc::VideoStream>& streams);
 
-// Get the ssrcs of the SIM group from the stream params.
-void GetSimulcastSsrcs(const StreamParams& sp, std::vector<uint32_t>* ssrcs);
+// Adds any bitrate of |max_bitrate_bps| that is above the total maximum bitrate
+// for the |layers| to the highest quality layer.
+void BoostMaxSimulcastLayer(int max_bitrate_bps,
+                            std::vector<webrtc::VideoStream>* layers);
 
-// Get simulcast settings.
-// TODO(sprang): Remove default parameter when it's not longer referenced.
-std::vector<webrtc::VideoStream> GetSimulcastConfig(size_t max_streams,
-                                                    int width,
-                                                    int height,
-                                                    int max_bitrate_bps,
-                                                    double bitrate_priority,
-                                                    int max_qp,
-                                                    int max_framerate,
-                                                    bool is_screencast = false);
+// Gets simulcast settings.
+// TODO(asapersson): Remove max_bitrate_bps.
+std::vector<webrtc::VideoStream> GetSimulcastConfig(
+    size_t max_layers,
+    int width,
+    int height,
+    int /*max_bitrate_bps*/,
+    double bitrate_priority,
+    int max_qp,
+    int max_framerate,
+    bool is_screenshare,
+    bool temporal_layers_supported = true);
 
-bool UseSimulcastScreenshare();
+// Gets the simulcast config layers for a non-screensharing case.
+std::vector<webrtc::VideoStream> GetNormalSimulcastLayers(
+    size_t max_layers,
+    int width,
+    int height,
+    double bitrate_priority,
+    int max_qp,
+    int max_framerate,
+    bool temporal_layers_supported = true);
 
+// Gets simulcast config layers for screenshare settings.
+std::vector<webrtc::VideoStream> GetScreenshareLayers(
+    size_t max_layers,
+    int width,
+    int height,
+    double bitrate_priority,
+    int max_qp,
+    int max_framerate,
+    bool temporal_layers_supported = true);
 }  // namespace cricket
 
 #endif  // MEDIA_ENGINE_SIMULCAST_H_

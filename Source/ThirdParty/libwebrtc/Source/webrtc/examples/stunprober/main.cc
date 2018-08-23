@@ -100,7 +100,7 @@ void StopTrial(rtc::Thread* thread, StunProber* prober, int result) {
 
 }  // namespace
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
   rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true);
   if (FLAG_help) {
     rtc::FlagList::Print(nullptr, false);

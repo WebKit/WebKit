@@ -21,8 +21,7 @@ namespace rtc {
 class FirewallSocket : public AsyncSocketAdapter {
  public:
   FirewallSocket(FirewallSocketServer* server, AsyncSocket* socket, int type)
-    : AsyncSocketAdapter(socket), server_(server), type_(type) {
-  }
+      : AsyncSocketAdapter(socket), server_(server), type_(type) {}
 
   int Bind(const SocketAddress& addr) override {
     if (!server_->IsBindableIp(addr.ipaddr())) {
@@ -117,9 +116,11 @@ class FirewallSocket : public AsyncSocketAdapter {
 FirewallSocketServer::FirewallSocketServer(SocketServer* server,
                                            FirewallManager* manager,
                                            bool should_delete_server)
-    : server_(server), manager_(manager),
+    : server_(server),
+      manager_(manager),
       should_delete_server_(should_delete_server),
-      udp_sockets_enabled_(true), tcp_sockets_enabled_(true),
+      udp_sockets_enabled_(true),
+      tcp_sockets_enabled_(true),
       tcp_listen_enabled_(true) {
   if (manager_)
     manager_->AddServer(this);
@@ -135,7 +136,8 @@ FirewallSocketServer::~FirewallSocketServer() {
   }
 }
 
-void FirewallSocketServer::AddRule(bool allow, FirewallProtocol p,
+void FirewallSocketServer::AddRule(bool allow,
+                                   FirewallProtocol p,
                                    FirewallDirection d,
                                    const SocketAddress& addr) {
   SocketAddress any;
@@ -147,8 +149,8 @@ void FirewallSocketServer::AddRule(bool allow, FirewallProtocol p,
   }
 }
 
-
-void FirewallSocketServer::AddRule(bool allow, FirewallProtocol p,
+void FirewallSocketServer::AddRule(bool allow,
+                                   FirewallProtocol p,
                                    const SocketAddress& src,
                                    const SocketAddress& dst) {
   Rule r;
@@ -196,16 +198,8 @@ bool FirewallSocketServer::IsBindableIp(const rtc::IPAddress& ip) {
          unbindable_ips_.end();
 }
 
-Socket* FirewallSocketServer::CreateSocket(int type) {
-  return CreateSocket(AF_INET, type);
-}
-
 Socket* FirewallSocketServer::CreateSocket(int family, int type) {
   return WrapSocket(server_->CreateAsyncSocket(family, type), type);
-}
-
-AsyncSocket* FirewallSocketServer::CreateAsyncSocket(int type) {
-  return CreateAsyncSocket(AF_INET, type);
 }
 
 AsyncSocket* FirewallSocketServer::CreateAsyncSocket(int family, int type) {
@@ -225,8 +219,7 @@ void FirewallSocketServer::WakeUp() {
 }
 
 AsyncSocket* FirewallSocketServer::WrapSocket(AsyncSocket* sock, int type) {
-  if (!sock ||
-      (type == SOCK_STREAM && !tcp_sockets_enabled_) ||
+  if (!sock || (type == SOCK_STREAM && !tcp_sockets_enabled_) ||
       (type == SOCK_DGRAM && !udp_sockets_enabled_)) {
     RTC_LOG(LS_VERBOSE) << "FirewallSocketServer socket creation denied";
     delete sock;
@@ -235,8 +228,7 @@ AsyncSocket* FirewallSocketServer::WrapSocket(AsyncSocket* sock, int type) {
   return new FirewallSocket(this, sock, type);
 }
 
-FirewallManager::FirewallManager() {
-}
+FirewallManager::FirewallManager() {}
 
 FirewallManager::~FirewallManager() {
   RTC_DCHECK(servers_.empty());
@@ -253,19 +245,21 @@ void FirewallManager::RemoveServer(FirewallSocketServer* server) {
                  servers_.end());
 }
 
-void FirewallManager::AddRule(bool allow, FirewallProtocol p,
-                              FirewallDirection d, const SocketAddress& addr) {
+void FirewallManager::AddRule(bool allow,
+                              FirewallProtocol p,
+                              FirewallDirection d,
+                              const SocketAddress& addr) {
   CritScope scope(&crit_);
-  for (std::vector<FirewallSocketServer*>::const_iterator it =
-      servers_.begin(); it != servers_.end(); ++it) {
+  for (std::vector<FirewallSocketServer*>::const_iterator it = servers_.begin();
+       it != servers_.end(); ++it) {
     (*it)->AddRule(allow, p, d, addr);
   }
 }
 
 void FirewallManager::ClearRules() {
   CritScope scope(&crit_);
-  for (std::vector<FirewallSocketServer*>::const_iterator it =
-      servers_.begin(); it != servers_.end(); ++it) {
+  for (std::vector<FirewallSocketServer*>::const_iterator it = servers_.begin();
+       it != servers_.end(); ++it) {
     (*it)->ClearRules();
   }
 }

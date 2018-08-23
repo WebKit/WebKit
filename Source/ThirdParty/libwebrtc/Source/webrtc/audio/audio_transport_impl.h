@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "api/audio/audio_mixer.h"
+#include "audio/audio_level.h"
 #include "common_audio/resampler/include/push_resampler.h"
 #include "modules/audio_device/include/audio_device.h"
 #include "modules/audio_processing/include/audio_processing.h"
@@ -22,7 +23,6 @@
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/scoped_ref_ptr.h"
 #include "rtc_base/thread_annotations.h"
-#include "voice_engine/audio_level.h"
 
 namespace webrtc {
 
@@ -30,9 +30,7 @@ class AudioSendStream;
 
 class AudioTransportImpl : public AudioTransport {
  public:
-  AudioTransportImpl(AudioMixer* mixer,
-                     AudioProcessing* audio_processing,
-                     AudioDeviceModule* audio_device_module);
+  AudioTransportImpl(AudioMixer* mixer, AudioProcessing* audio_processing);
   ~AudioTransportImpl() override;
 
   int32_t RecordedDataIsAvailable(const void* audioSamples,
@@ -64,12 +62,11 @@ class AudioTransportImpl : public AudioTransport {
                       int64_t* ntp_time_ms) override;
 
   void UpdateSendingStreams(std::vector<AudioSendStream*> streams,
-                            int send_sample_rate_hz, size_t send_num_channels);
+                            int send_sample_rate_hz,
+                            size_t send_num_channels);
   void SetStereoChannelSwapping(bool enable);
   bool typing_noise_detected() const;
-  const voe::AudioLevel& audio_level() const {
-    return audio_level_;
-  }
+  const voe::AudioLevel& audio_level() const { return audio_level_; }
 
  private:
   // Shared.
@@ -82,7 +79,6 @@ class AudioTransportImpl : public AudioTransport {
   size_t send_num_channels_ RTC_GUARDED_BY(capture_lock_) = 1;
   bool typing_noise_detected_ RTC_GUARDED_BY(capture_lock_) = false;
   bool swap_stereo_channels_ RTC_GUARDED_BY(capture_lock_) = false;
-  AudioDeviceModule* audio_device_module_ = nullptr;
   PushResampler<int16_t> capture_resampler_;
   voe::AudioLevel audio_level_;
   TypingDetection typing_detection_;

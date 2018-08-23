@@ -20,6 +20,7 @@
 #include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/type_traits.h"
+#include "rtc_base/zero_memory.h"
 
 namespace rtc {
 
@@ -44,7 +45,10 @@ struct BufferCompat {
 
 // Basic buffer class, can be grown and shrunk dynamically.
 // Unlike std::string/vector, does not initialize data when increasing size.
-template <typename T>
+// If "ZeroOnFree" is true, any memory is explicitly cleared before releasing.
+// The type alias "ZeroOnFreeBuffer" below should be used instead of setting
+// "ZeroOnFree" in the template manually to "true".
+template <typename T, bool ZeroOnFree = false>
 class BufferT {
   // We want T's destructor and default constructor to be trivial, i.e. perform
   // no action, so that we don't have to touch the memory we allocate and
@@ -83,7 +87,7 @@ class BufferT {
   BufferT(size_t size, size_t capacity)
       : size_(size),
         capacity_(std::max(size, capacity)),
-        data_(new T[capacity_]) {
+        data_(capacity_ > 0 ? new T[capacity_] : nullptr) {
     RTC_DCHECK(IsConsistent());
   }
 
@@ -107,6 +111,8 @@ class BufferT {
             typename std::enable_if<
                 internal::BufferCompat<T, U>::value>::type* = nullptr>
   BufferT(U (&array)[N]) : BufferT(array, N) {}
+
+  ~BufferT() { MaybeZeroCompleteBuffer(); }
 
   // Get a pointer to the data. Just .data() will give you a (const) T*, but if
   // T is a byte-sized integer, you may also use .data<U>() for any other
@@ -195,8 +201,12 @@ class BufferT {
                 internal::BufferCompat<T, U>::value>::type* = nullptr>
   void SetData(const U* data, size_t size) {
     RTC_DCHECK(IsConsistent());
+    const size_t old_size = size_;
     size_ = 0;
     AppendData(data, size);
+    if (ZeroOnFree && size_ < old_size) {
+      ZeroTrailingData(old_size - size_);
+    }
   }
 
   template <typename U,
@@ -229,8 +239,13 @@ class BufferT {
                 internal::BufferCompat<T, U>::value>::type* = nullptr>
   size_t SetData(size_t max_elements, F&& setter) {
     RTC_DCHECK(IsConsistent());
+    const size_t old_size = size_;
     size_ = 0;
-    return AppendData<U>(max_elements, std::forward<F>(setter));
+    const size_t written = AppendData<U>(max_elements, std::forward<F>(setter));
+    if (ZeroOnFree && size_ < old_size) {
+      ZeroTrailingData(old_size - size_);
+    }
+    return written;
   }
 
   // The AppendData functions add data to the end of the buffer. They accept
@@ -301,8 +316,12 @@ class BufferT {
   // the existing contents will be kept and the new space will be
   // uninitialized.
   void SetSize(size_t size) {
+    const size_t old_size = size_;
     EnsureCapacityWithHeadroom(size, true);
     size_ = size;
+    if (ZeroOnFree && size_ < old_size) {
+      ZeroTrailingData(old_size - size_);
+    }
   }
 
   // Ensure that the buffer size can be increased to at least capacity without
@@ -317,6 +336,7 @@ class BufferT {
   // Resets the buffer to zero size without altering capacity. Works even if the
   // buffer has been moved from.
   void Clear() {
+    MaybeZeroCompleteBuffer();
     size_ = 0;
     RTC_DCHECK(IsConsistent());
   }
@@ -346,9 +366,27 @@ class BufferT {
 
     std::unique_ptr<T[]> new_data(new T[new_capacity]);
     std::memcpy(new_data.get(), data_.get(), size_ * sizeof(T));
+    MaybeZeroCompleteBuffer();
     data_ = std::move(new_data);
     capacity_ = new_capacity;
     RTC_DCHECK(IsConsistent());
+  }
+
+  // Zero the complete buffer if template argument "ZeroOnFree" is true.
+  void MaybeZeroCompleteBuffer() {
+    if (ZeroOnFree && capacity_) {
+      // It would be sufficient to only zero "size_" elements, as all other
+      // methods already ensure that the unused capacity contains no sensitive
+      // data - but better safe than sorry.
+      ExplicitZeroMemory(data_.get(), capacity_ * sizeof(T));
+    }
+  }
+
+  // Zero the first "count" elements of unused capacity.
+  void ZeroTrailingData(size_t count) {
+    RTC_DCHECK(IsConsistent());
+    RTC_DCHECK_LE(count, capacity_ - size_);
+    ExplicitZeroMemory(data_.get() + size_, count * sizeof(T));
   }
 
   // Precondition for all methods except Clear and the destructor.
@@ -381,6 +419,10 @@ class BufferT {
 
 // By far the most common sort of buffer.
 using Buffer = BufferT<uint8_t>;
+
+// A buffer that zeros memory before releasing it.
+template <typename T>
+using ZeroOnFreeBuffer = BufferT<T, true>;
 
 }  // namespace rtc
 

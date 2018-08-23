@@ -18,7 +18,6 @@ class PortInterface;
 class StunMessage;
 }  // namespace cricket
 
-
 namespace webrtc {
 
 class TurnCustomizer {

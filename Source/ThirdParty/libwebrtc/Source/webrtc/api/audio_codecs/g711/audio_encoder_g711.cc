@@ -13,16 +13,16 @@
 #include <memory>
 #include <vector>
 
+#include "absl/memory/memory.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/codecs/g711/audio_encoder_pcm.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/numerics/safe_minmax.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/string_to_number.h"
 
 namespace webrtc {
 
-rtc::Optional<AudioEncoderG711::Config> AudioEncoderG711::SdpToConfig(
+absl::optional<AudioEncoderG711::Config> AudioEncoderG711::SdpToConfig(
     const SdpAudioFormat& format) {
   const bool is_pcmu = STR_CASE_CMP(format.name.c_str(), "PCMU") == 0;
   const bool is_pcma = STR_CASE_CMP(format.name.c_str(), "PCMA") == 0;
@@ -42,7 +42,7 @@ rtc::Optional<AudioEncoderG711::Config> AudioEncoderG711::SdpToConfig(
     RTC_DCHECK(config.IsOk());
     return config;
   } else {
-    return rtc::nullopt;
+    return absl::nullopt;
   }
 }
 
@@ -61,7 +61,8 @@ AudioCodecInfo AudioEncoderG711::QueryAudioEncoder(const Config& config) {
 
 std::unique_ptr<AudioEncoder> AudioEncoderG711::MakeAudioEncoder(
     const Config& config,
-    int payload_type) {
+    int payload_type,
+    absl::optional<AudioCodecPairId> /*codec_pair_id*/) {
   RTC_DCHECK(config.IsOk());
   switch (config.type) {
     case Config::Type::kPcmU: {
@@ -69,14 +70,14 @@ std::unique_ptr<AudioEncoder> AudioEncoderG711::MakeAudioEncoder(
       impl_config.num_channels = config.num_channels;
       impl_config.frame_size_ms = config.frame_size_ms;
       impl_config.payload_type = payload_type;
-      return rtc::MakeUnique<AudioEncoderPcmU>(impl_config);
+      return absl::make_unique<AudioEncoderPcmU>(impl_config);
     }
     case Config::Type::kPcmA: {
       AudioEncoderPcmA::Config impl_config;
       impl_config.num_channels = config.num_channels;
       impl_config.frame_size_ms = config.frame_size_ms;
       impl_config.payload_type = payload_type;
-      return rtc::MakeUnique<AudioEncoderPcmA>(impl_config);
+      return absl::make_unique<AudioEncoderPcmA>(impl_config);
     }
     default: { return nullptr; }
   }

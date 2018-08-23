@@ -7,9 +7,11 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
+#include <algorithm>
+#include <cstdio>
 
-#include "rtc_base/stringutils.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/stringutils.h"
 
 namespace rtc {
 
@@ -31,8 +33,8 @@ bool string_match(const char* target, const char* pattern) {
         return true;
       }
       while (*target) {
-        if ((toupper(*pattern) == toupper(*target))
-            && string_match(target + 1, pattern + 1)) {
+        if ((toupper(*pattern) == toupper(*target)) &&
+            string_match(target + 1, pattern + 1)) {
           return true;
         }
         ++target;
@@ -50,25 +52,32 @@ bool string_match(const char* target, const char* pattern) {
 }
 
 #if defined(WEBRTC_WIN)
-int ascii_string_compare(const wchar_t* s1, const char* s2, size_t n,
+int ascii_string_compare(const wchar_t* s1,
+                         const char* s2,
+                         size_t n,
                          CharacterTransformation transformation) {
   wchar_t c1, c2;
   while (true) {
-    if (n-- == 0) return 0;
+    if (n-- == 0)
+      return 0;
     c1 = transformation(*s1);
     // Double check that characters are not UTF-8
     RTC_DCHECK_LT(*s2, 128);
     // Note: *s2 gets implicitly promoted to wchar_t
     c2 = transformation(*s2);
-    if (c1 != c2) return (c1 < c2) ? -1 : 1;
-    if (!c1) return 0;
+    if (c1 != c2)
+      return (c1 < c2) ? -1 : 1;
+    if (!c1)
+      return 0;
     ++s1;
     ++s2;
   }
 }
 
-size_t asccpyn(wchar_t* buffer, size_t buflen,
-               const char* source, size_t srclen) {
+size_t asccpyn(wchar_t* buffer,
+               size_t buflen,
+               const char* source,
+               size_t srclen) {
   if (buflen <= 0)
     return 0;
 
@@ -89,11 +98,11 @@ size_t asccpyn(wchar_t* buffer, size_t buflen,
 
 #endif  // WEBRTC_WIN
 
-void replace_substrs(const char *search,
+void replace_substrs(const char* search,
                      size_t search_len,
-                     const char *replace,
+                     const char* replace,
                      size_t replace_len,
-                     std::string *s) {
+                     std::string* s) {
   size_t pos = 0;
   while ((pos = s->find(search, pos, search_len)) != std::string::npos) {
     s->replace(pos, search_len, replace, replace_len);
@@ -101,11 +110,11 @@ void replace_substrs(const char *search,
   }
 }
 
-bool starts_with(const char *s1, const char *s2) {
+bool starts_with(const char* s1, const char* s2) {
   return strncmp(s1, s2, strlen(s2)) == 0;
 }
 
-bool ends_with(const char *s1, const char *s2) {
+bool ends_with(const char* s1, const char* s2) {
   size_t s1_length = strlen(s1);
   size_t s2_length = strlen(s2);
 
@@ -121,13 +130,20 @@ static const char kWhitespace[] = " \n\r\t";
 
 std::string string_trim(const std::string& s) {
   std::string::size_type first = s.find_first_not_of(kWhitespace);
-  std::string::size_type last  = s.find_last_not_of(kWhitespace);
+  std::string::size_type last = s.find_last_not_of(kWhitespace);
 
   if (first == std::string::npos || last == std::string::npos) {
     return std::string("");
   }
 
   return s.substr(first, last - first + 1);
+}
+
+std::string ToHex(const int i) {
+  char buffer[50];
+  snprintf(buffer, sizeof(buffer), "%x", i);
+
+  return std::string(buffer);
 }
 
 }  // namespace rtc

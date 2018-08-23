@@ -15,7 +15,6 @@ import static org.junit.Assert.assertEquals;
 import static org.webrtc.RendererCommon.ScalingType.*;
 import static org.webrtc.RendererCommon.getDisplaySize;
 import static org.webrtc.RendererCommon.getLayoutMatrix;
-import static org.webrtc.RendererCommon.rotateTextureMatrix;
 
 import android.graphics.Point;
 import android.support.test.filters.SmallTest;
@@ -147,54 +146,6 @@ public class RendererCommonTest {
            0, 1, 0, 0,
            0, 0, 1, 0,
         0.25, 0, 0, 1}, round(layoutMatrix), 0.0);
-    // clang-format on
-  }
-
-  @Test
-  @SmallTest
-  public void testRotateTextureMatrixDefault() {
-    // Test that rotation with 0 degrees returns an identical matrix.
-    // clang-format off
-    final float[] matrix = new float[] {
-        1, 2, 3, 4,
-        5, 6, 7, 8,
-        9, 0, 1, 2,
-        3, 4, 5, 6
-    };
-    // clang-format on
-    final float rotatedMatrix[] = rotateTextureMatrix(matrix, 0);
-    assertArrayEquals(round(matrix), round(rotatedMatrix), 0.0);
-  }
-
-  @Test
-  @SmallTest
-  public void testRotateTextureMatrix90Deg() {
-    final float samplingMatrix[] = rotateTextureMatrix(RendererCommon.identityMatrix(), 90);
-    // Assert:
-    // u' = 1 - v.
-    // v' = u.
-    // clang-format off
-    assertArrayEquals(new double[] {
-         0, 1, 0, 0,
-        -1, 0, 0, 0,
-         0, 0, 1, 0,
-         1, 0, 0, 1}, round(samplingMatrix), 0.0);
-    // clang-format on
-  }
-
-  @Test
-  @SmallTest
-  public void testRotateTextureMatrix180Deg() {
-    final float samplingMatrix[] = rotateTextureMatrix(RendererCommon.identityMatrix(), 180);
-    // Assert:
-    // u' = 1 - u.
-    // v' = 1 - v.
-    // clang-format off
-    assertArrayEquals(new double[] {
-        -1,  0, 0, 0,
-         0, -1, 0, 0,
-         0,  0, 1, 0,
-         1,  1, 0, 1}, round(samplingMatrix), 0.0);
     // clang-format on
   }
 }

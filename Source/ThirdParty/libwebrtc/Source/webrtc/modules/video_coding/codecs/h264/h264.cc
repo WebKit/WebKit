@@ -19,9 +19,9 @@
 #include "modules/video_coding/codecs/h264/h264_encoder_impl.h"
 #endif
 
+#include "absl/memory/memory.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/ptr_util.h"
 
 namespace webrtc {
 
@@ -40,14 +40,17 @@ bool IsH264CodecSupported() {
 #endif
 }
 
-SdpVideoFormat CreateH264Format(H264::Profile profile, H264::Level level) {
-  const rtc::Optional<std::string> profile_string =
+SdpVideoFormat CreateH264Format(H264::Profile profile,
+                                H264::Level level,
+                                const std::string& packetization_mode) {
+  const absl::optional<std::string> profile_string =
       H264::ProfileLevelIdToString(H264::ProfileLevelId(profile, level));
   RTC_CHECK(profile_string);
-  return SdpVideoFormat(cricket::kH264CodecName,
-                        {{cricket::kH264FmtpProfileLevelId, *profile_string},
-                         {cricket::kH264FmtpLevelAsymmetryAllowed, "1"},
-                         {cricket::kH264FmtpPacketizationMode, "1"}});
+  return SdpVideoFormat(
+      cricket::kH264CodecName,
+      {{cricket::kH264FmtpProfileLevelId, *profile_string},
+       {cricket::kH264FmtpLevelAsymmetryAllowed, "1"},
+       {cricket::kH264FmtpPacketizationMode, packetization_mode}});
 }
 
 }  // namespace
@@ -67,8 +70,15 @@ std::vector<SdpVideoFormat> SupportedH264Codecs() {
   // decoder for that profile is required to be able to decode CBP. This means
   // we can encode and send CBP even though we negotiated a potentially
   // higher profile. See the H264 spec for more information.
-  return {CreateH264Format(H264::kProfileBaseline, H264::kLevel3_1),
-          CreateH264Format(H264::kProfileConstrainedBaseline, H264::kLevel3_1)};
+  //
+  // We support both packetization modes 0 (mandatory) and 1 (optional,
+  // preferred).
+  return {
+      CreateH264Format(H264::kProfileBaseline, H264::kLevel3_1, "1"),
+      CreateH264Format(H264::kProfileBaseline, H264::kLevel3_1, "0"),
+      CreateH264Format(H264::kProfileConstrainedBaseline, H264::kLevel3_1, "1"),
+      CreateH264Format(H264::kProfileConstrainedBaseline, H264::kLevel3_1,
+                       "0")};
 }
 
 std::unique_ptr<H264Encoder> H264Encoder::Create(
@@ -77,7 +87,7 @@ std::unique_ptr<H264Encoder> H264Encoder::Create(
 #if defined(WEBRTC_USE_H264)
   RTC_CHECK(g_rtc_use_h264);
   RTC_LOG(LS_INFO) << "Creating H264EncoderImpl.";
-  return rtc::MakeUnique<H264EncoderImpl>(codec);
+  return absl::make_unique<H264EncoderImpl>(codec);
 #else
   RTC_NOTREACHED();
   return nullptr;
@@ -93,7 +103,7 @@ std::unique_ptr<H264Decoder> H264Decoder::Create() {
 #if defined(WEBRTC_USE_H264)
   RTC_CHECK(g_rtc_use_h264);
   RTC_LOG(LS_INFO) << "Creating H264DecoderImpl.";
-  return rtc::MakeUnique<H264DecoderImpl>();
+  return absl::make_unique<H264DecoderImpl>();
 #else
   RTC_NOTREACHED();
   return nullptr;

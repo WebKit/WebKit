@@ -28,50 +28,46 @@ class Thread;
 namespace webrtc {
 
 // This class implements the audio source used by the remote audio track.
+// This class works by configuring itself as a sink with the underlying media
+// engine, then when receiving data will fan out to all added sinks.
 class RemoteAudioSource : public Notifier<AudioSourceInterface>,
                           rtc::MessageHandler {
  public:
-  // Creates an instance of RemoteAudioSource.
-  static rtc::scoped_refptr<RemoteAudioSource> Create(
-      rtc::Thread* worker_thread,
-      cricket::VoiceMediaChannel* media_channel,
-      uint32_t ssrc);
+  explicit RemoteAudioSource(rtc::Thread* worker_thread);
+
+  // Register and unregister remote audio source with the underlying media
+  // engine.
+  void Start(cricket::VoiceMediaChannel* media_channel, uint32_t ssrc);
+  void Stop(cricket::VoiceMediaChannel* media_channel, uint32_t ssrc);
 
   // MediaSourceInterface implementation.
   MediaSourceInterface::SourceState state() const override;
   bool remote() const override;
-
-  void AddSink(AudioTrackSinkInterface* sink) override;
-  void RemoveSink(AudioTrackSinkInterface* sink) override;
-
- protected:
-  RemoteAudioSource();
-  ~RemoteAudioSource() override;
-
-  // Post construction initialize where we can do things like save a reference
-  // to ourselves (need to be fully constructed).
-  void Initialize(rtc::Thread* worker_thread,
-                  cricket::VoiceMediaChannel* media_channel,
-                  uint32_t ssrc);
-
- private:
-  typedef std::list<AudioObserver*> AudioObserverList;
 
   // AudioSourceInterface implementation.
   void SetVolume(double volume) override;
   void RegisterAudioObserver(AudioObserver* observer) override;
   void UnregisterAudioObserver(AudioObserver* observer) override;
 
-  class Sink;
+  void AddSink(AudioTrackSinkInterface* sink) override;
+  void RemoveSink(AudioTrackSinkInterface* sink) override;
+
+ protected:
+  ~RemoteAudioSource() override;
+
+ private:
+  // These are callbacks from the media engine.
+  class AudioDataProxy;
   void OnData(const AudioSinkInterface::Data& audio);
   void OnAudioChannelGone();
 
   void OnMessage(rtc::Message* msg) override;
 
-  AudioObserverList audio_observers_;
+  rtc::Thread* const main_thread_;
+  rtc::Thread* const worker_thread_;
+  std::list<AudioObserver*> audio_observers_;
   rtc::CriticalSection sink_lock_;
   std::list<AudioTrackSinkInterface*> sinks_;
-  rtc::Thread* const main_thread_;
   SourceState state_;
 };
 

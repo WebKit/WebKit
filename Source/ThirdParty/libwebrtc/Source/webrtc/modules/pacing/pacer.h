@@ -18,6 +18,8 @@ namespace webrtc {
 class Pacer : public Module, public RtpPacketSender {
  public:
   virtual void SetEstimatedBitrate(uint32_t bitrate_bps) {}
+  virtual void SetPacingRates(uint32_t pacing_rate_bps,
+                              uint32_t padding_rate_bps) {}
   virtual void SetEstimatedBitrateAndCongestionWindow(
       uint32_t bitrate_bps,
       bool in_probe_rtt,

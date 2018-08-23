@@ -16,12 +16,12 @@ namespace rtc {
 // Tests for string_match().
 
 TEST(string_matchTest, Matches) {
-  EXPECT_TRUE( string_match("A.B.C.D", "a.b.c.d"));
-  EXPECT_TRUE( string_match("www.TEST.GOOGLE.COM", "www.*.com"));
-  EXPECT_TRUE( string_match("127.0.0.1",  "12*.0.*1"));
-  EXPECT_TRUE( string_match("127.1.0.21", "12*.0.*1"));
-  EXPECT_FALSE(string_match("127.0.0.0",  "12*.0.*1"));
-  EXPECT_FALSE(string_match("127.0.0.0",  "12*.0.*1"));
+  EXPECT_TRUE(string_match("A.B.C.D", "a.b.c.d"));
+  EXPECT_TRUE(string_match("www.TEST.GOOGLE.COM", "www.*.com"));
+  EXPECT_TRUE(string_match("127.0.0.1", "12*.0.*1"));
+  EXPECT_TRUE(string_match("127.1.0.21", "12*.0.*1"));
+  EXPECT_FALSE(string_match("127.0.0.0", "12*.0.*1"));
+  EXPECT_FALSE(string_match("127.0.0.0", "12*.0.*1"));
   EXPECT_FALSE(string_match("127.1.1.21", "12*.0.*1"));
 }
 
@@ -75,7 +75,7 @@ TEST(ascii_string_compareTest, GreaterThan) {
   EXPECT_EQ(1, ascii_string_compare(L"xyz", "xy", 5, identity));
   EXPECT_EQ(1, ascii_string_compare(L"abc", "ABB", 5, tolowercase));
 }
-#endif  // WEBRTC_WIN 
+#endif  // WEBRTC_WIN
 
 TEST(string_trim_Test, Trimming) {
   EXPECT_EQ("temp", string_trim("\n\r\t temp \n\r\t"));
@@ -105,4 +105,10 @@ TEST(string_endsTest, EndsWith) {
   EXPECT_FALSE(ends_with("", "f"));
 }
 
-} // namespace rtc
+TEST(string_toHexTest, ToHex) {
+  EXPECT_EQ(ToHex(0), "0");
+  EXPECT_EQ(ToHex(0X1243E), "1243e");
+  EXPECT_EQ(ToHex(-20), "ffffffec");
+}
+
+}  // namespace rtc

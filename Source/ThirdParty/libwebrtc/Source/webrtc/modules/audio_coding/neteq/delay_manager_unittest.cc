@@ -49,8 +49,7 @@ DelayManagerTest::DelayManagerTest()
     : dm_(NULL), detector_(&tick_timer_), seq_no_(0x1234), ts_(0x12345678) {}
 
 void DelayManagerTest::SetUp() {
-  EXPECT_CALL(detector_, Reset())
-            .Times(1);
+  EXPECT_CALL(detector_, Reset()).Times(1);
   dm_ = new DelayManager(kMaxNumberOfPackets, &detector_, &tick_timer_);
 }
 
@@ -94,8 +93,7 @@ TEST_F(DelayManagerTest, VectorInitialization) {
 TEST_F(DelayManagerTest, SetPacketAudioLength) {
   const int kLengthMs = 30;
   // Expect DelayManager to pass on the new length to the detector object.
-  EXPECT_CALL(detector_, SetPacketAudioLength(kLengthMs))
-      .Times(1);
+  EXPECT_CALL(detector_, SetPacketAudioLength(kLengthMs)).Times(1);
   EXPECT_EQ(0, dm_->SetPacketAudioLength(kLengthMs));
   EXPECT_EQ(-1, dm_->SetPacketAudioLength(-1));  // Illegal parameter value.
 }
@@ -121,8 +119,7 @@ TEST_F(DelayManagerTest, UpdateNormal) {
   // Expect detector update method to be called once with inter-arrival time
   // equal to 1 packet, and (base) target level equal to 1 as well.
   // Return false to indicate no peaks found.
-  EXPECT_CALL(detector_, Update(1, 1))
-      .WillOnce(Return(false));
+  EXPECT_CALL(detector_, Update(1, 1)).WillOnce(Return(false));
   InsertNextPacket();
   EXPECT_EQ(1 << 8, dm_->TargetLevel());  // In Q8.
   EXPECT_EQ(1, dm_->base_target_level());
@@ -145,8 +142,7 @@ TEST_F(DelayManagerTest, UpdateLongInterArrivalTime) {
   // Expect detector update method to be called once with inter-arrival time
   // equal to 1 packet, and (base) target level equal to 1 as well.
   // Return false to indicate no peaks found.
-  EXPECT_CALL(detector_, Update(2, 2))
-      .WillOnce(Return(false));
+  EXPECT_CALL(detector_, Update(2, 2)).WillOnce(Return(false));
   InsertNextPacket();
   EXPECT_EQ(2 << 8, dm_->TargetLevel());  // In Q8.
   EXPECT_EQ(2, dm_->base_target_level());
@@ -169,10 +165,8 @@ TEST_F(DelayManagerTest, UpdatePeakFound) {
   // Expect detector update method to be called once with inter-arrival time
   // equal to 1 packet, and (base) target level equal to 1 as well.
   // Return true to indicate that peaks are found. Let the peak height be 5.
-  EXPECT_CALL(detector_, Update(1, 1))
-      .WillOnce(Return(true));
-  EXPECT_CALL(detector_, MaxPeakHeight())
-      .WillOnce(Return(5));
+  EXPECT_CALL(detector_, Update(1, 1)).WillOnce(Return(true));
+  EXPECT_CALL(detector_, MaxPeakHeight()).WillOnce(Return(5));
   InsertNextPacket();
   EXPECT_EQ(5 << 8, dm_->TargetLevel());
   EXPECT_EQ(1, dm_->base_target_level());  // Base target level is w/o peaks.
@@ -193,8 +187,7 @@ TEST_F(DelayManagerTest, TargetDelay) {
   // Expect detector update method to be called once with inter-arrival time
   // equal to 1 packet, and (base) target level equal to 1 as well.
   // Return false to indicate no peaks found.
-  EXPECT_CALL(detector_, Update(1, 1))
-      .WillOnce(Return(false));
+  EXPECT_CALL(detector_, Update(1, 1)).WillOnce(Return(false));
   InsertNextPacket();
   const int kExpectedTarget = 1;
   EXPECT_EQ(kExpectedTarget << 8, dm_->TargetLevel());  // In Q8.

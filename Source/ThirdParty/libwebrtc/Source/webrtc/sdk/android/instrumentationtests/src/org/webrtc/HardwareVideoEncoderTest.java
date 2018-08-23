@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Nullable;
 import org.chromium.base.test.params.BaseJUnit4RunnerDelegate;
 import org.chromium.base.test.params.ParameterAnnotations.ClassParameter;
 import org.chromium.base.test.params.ParameterAnnotations.UseRunnerDelegate;
@@ -87,7 +88,22 @@ public class HardwareVideoEncoderTest {
     public void onEncodedFrame(EncodedImage frame, VideoEncoder.CodecSpecificInfo info) {
       assertNotNull(frame);
       assertNotNull(info);
-      frameQueue.offer(frame);
+
+      // Make a copy because keeping a reference to the buffer is not allowed.
+      final ByteBuffer bufferCopy = ByteBuffer.allocateDirect(frame.buffer.remaining());
+      bufferCopy.put(frame.buffer);
+      bufferCopy.rewind();
+
+      frameQueue.offer(EncodedImage.builder()
+                           .setBuffer(bufferCopy)
+                           .setEncodedWidth(frame.encodedWidth)
+                           .setEncodedHeight(frame.encodedHeight)
+                           .setCaptureTimeNs(frame.captureTimeNs)
+                           .setFrameType(frame.frameType)
+                           .setRotation(frame.rotation)
+                           .setCompleteFrame(frame.completeFrame)
+                           .setQp(frame.qp)
+                           .createEncodedImage());
     }
 
     public EncodedImage poll() {
@@ -196,7 +212,6 @@ public class HardwareVideoEncoderTest {
 
     public MockI420Buffer(int width, int height, Runnable releaseCallback) {
       super(width, height, releaseCallback);
-      // We never release this but it is not a problem in practice because the release is a no-op.
       realBuffer = JavaI420Buffer.allocate(width, height);
     }
 
@@ -237,6 +252,18 @@ public class HardwareVideoEncoderTest {
     }
 
     @Override
+    public void retain() {
+      super.retain();
+      realBuffer.retain();
+    }
+
+    @Override
+    public void release() {
+      super.release();
+      realBuffer.release();
+    }
+
+    @Override
     public VideoFrame.Buffer cropAndScale(
         int cropX, int cropY, int cropWidth, int cropHeight, int scaleWidth, int scaleHeight) {
       return realBuffer.cropAndScale(cropX, cropY, cropWidth, cropHeight, scaleWidth, scaleHeight);
@@ -265,7 +292,7 @@ public class HardwareVideoEncoderTest {
         eglContext, ENABLE_INTEL_VP8_ENCODER, ENABLE_H264_HIGH_PROFILE);
   }
 
-  private VideoEncoder createEncoder() {
+  private @Nullable VideoEncoder createEncoder() {
     VideoEncoderFactory factory =
         createEncoderFactory(useEglContext ? eglBase.getEglBaseContext() : null);
     VideoCodecInfo[] supportedCodecs = factory.getSupportedCodecs();
@@ -327,7 +354,7 @@ public class HardwareVideoEncoderTest {
   // # Tests
   @Before
   public void setUp() {
-    NativeLibrary.initialize(new NativeLibrary.DefaultLoader());
+    NativeLibrary.initialize(new NativeLibrary.DefaultLoader(), TestConstants.NATIVE_LIBRARY);
 
     eglBase = new EglBase14(null, EglBase.CONFIG_PLAIN);
     eglBase.createDummyPbufferSurface();

@@ -11,9 +11,9 @@
 #ifndef P2P_BASE_TESTTURNCUSTOMIZER_H_
 #define P2P_BASE_TESTTURNCUSTOMIZER_H_
 
+#include "absl/memory/memory.h"
 #include "api/turncustomizer.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/ptr_util.h"
 
 namespace cricket {
 
@@ -24,17 +24,16 @@ class TestTurnCustomizer : public webrtc::TurnCustomizer {
 
   enum TestTurnAttributeExtensions {
     // Test only attribute
-    STUN_ATTR_COUNTER                     = 0xFF02   // Number
+    STUN_ATTR_COUNTER = 0xFF02  // Number
   };
 
-  void MaybeModifyOutgoingStunMessage(
-      cricket::PortInterface* port,
-      cricket::StunMessage* message) override {
+  void MaybeModifyOutgoingStunMessage(cricket::PortInterface* port,
+                                      cricket::StunMessage* message) override {
     modify_cnt_++;
 
     ASSERT_NE(0, message->type());
     if (add_counter_) {
-      message->AddAttribute(rtc::MakeUnique<cricket::StunUInt32Attribute>(
+      message->AddAttribute(absl::make_unique<cricket::StunUInt32Attribute>(
           STUN_ATTR_COUNTER, modify_cnt_));
     }
     return;

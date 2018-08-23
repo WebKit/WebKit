@@ -136,8 +136,8 @@ bool ScreenCapturerWinMagnifier::SelectSource(SourceId id) {
 void ScreenCapturerWinMagnifier::SetExcludedWindow(WindowId excluded_window) {
   excluded_window_ = (HWND)excluded_window;
   if (excluded_window_ && magnifier_initialized_) {
-    set_window_filter_list_func_(
-        magnifier_window_, MW_FILTERMODE_EXCLUDE, 1, &excluded_window_);
+    set_window_filter_list_func_(magnifier_window_, MW_FILTERMODE_EXCLUDE, 1,
+                                 &excluded_window_);
   }
 }
 
@@ -186,8 +186,7 @@ BOOL ScreenCapturerWinMagnifier::OnMagImageScalingCallback(
     RECT clipped,
     HRGN dirty) {
   ScreenCapturerWinMagnifier* owner =
-      reinterpret_cast<ScreenCapturerWinMagnifier*>(
-          TlsGetValue(GetTlsIndex()));
+      reinterpret_cast<ScreenCapturerWinMagnifier*>(TlsGetValue(GetTlsIndex()));
   TlsSetValue(GetTlsIndex(), nullptr);
   owner->OnCaptured(srcdata, srcheader);
 
@@ -243,10 +242,10 @@ bool ScreenCapturerWinMagnifier::InitializeMagnifier() {
   }
 
   HMODULE hInstance = nullptr;
-  result = GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
-                                  GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-                              reinterpret_cast<char*>(&DefWindowProc),
-                              &hInstance);
+  result =
+      GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+                             GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                         reinterpret_cast<char*>(&DefWindowProc), &hInstance);
   if (!result) {
     mag_uninitialize_func_();
     RTC_LOG_F(LS_WARNING) << "Failed to initialize ScreenCapturerWinMagnifier: "
@@ -346,8 +345,7 @@ void ScreenCapturerWinMagnifier::OnCaptured(void* data,
 
   // Copy the data into the frame.
   current_frame->CopyPixelsFrom(
-      reinterpret_cast<uint8_t*>(data),
-      header.stride,
+      reinterpret_cast<uint8_t*>(data), header.stride,
       DesktopRect::MakeXYWH(0, 0, header.width, header.height));
 
   magnifier_capture_succeeded_ = true;

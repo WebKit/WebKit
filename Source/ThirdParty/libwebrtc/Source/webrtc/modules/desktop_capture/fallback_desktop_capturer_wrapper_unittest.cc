@@ -180,8 +180,8 @@ TEST_F(FallbackDesktopCapturerWrapperTest, BothFailed) {
 }
 
 TEST_F(FallbackDesktopCapturerWrapperTest, WithSharedMemory) {
-  wrapper_->SetSharedMemoryFactory(std::unique_ptr<SharedMemoryFactory>(
-      new FakeSharedMemoryFactory()));
+  wrapper_->SetSharedMemoryFactory(
+      std::unique_ptr<SharedMemoryFactory>(new FakeSharedMemoryFactory()));
   wrapper_->CaptureFrame();
   main_capturer_->set_result(DesktopCapturer::Result::ERROR_TEMPORARY);
   wrapper_->CaptureFrame();

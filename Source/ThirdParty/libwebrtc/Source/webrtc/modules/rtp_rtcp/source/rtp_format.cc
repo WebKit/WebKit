@@ -14,57 +14,53 @@
 
 #include "modules/rtp_rtcp/source/rtp_format_h264.h"
 #include "modules/rtp_rtcp/source/rtp_format_video_generic.h"
-#include "modules/rtp_rtcp/source/rtp_format_video_stereo.h"
 #include "modules/rtp_rtcp/source/rtp_format_vp8.h"
 #include "modules/rtp_rtcp/source/rtp_format_vp9.h"
 
 namespace webrtc {
-RtpPacketizer* RtpPacketizer::Create(RtpVideoCodecTypes type,
+RtpPacketizer* RtpPacketizer::Create(VideoCodecType type,
                                      size_t max_payload_len,
                                      size_t last_packet_reduction_len,
-                                     const RTPVideoTypeHeader* rtp_type_header,
+                                     const RTPVideoHeader* rtp_video_header,
                                      FrameType frame_type) {
+  RTC_CHECK(type == kVideoCodecGeneric || rtp_video_header);
   switch (type) {
-    case kRtpVideoH264:
-      RTC_CHECK(rtp_type_header);
+    case kVideoCodecH264: {
+      const auto& h264 =
+          absl::get<RTPVideoHeaderH264>(rtp_video_header->video_type_header);
       return new RtpPacketizerH264(max_payload_len, last_packet_reduction_len,
-                                   rtp_type_header->H264.packetization_mode);
-    case kRtpVideoVp8:
-      RTC_CHECK(rtp_type_header);
-      return new RtpPacketizerVp8(rtp_type_header->VP8, max_payload_len,
+                                   h264.packetization_mode);
+    }
+    case kVideoCodecVP8:
+      return new RtpPacketizerVp8(rtp_video_header->vp8(), max_payload_len,
                                   last_packet_reduction_len);
-    case kRtpVideoVp9:
-      RTC_CHECK(rtp_type_header);
-      return new RtpPacketizerVp9(rtp_type_header->VP9, max_payload_len,
+    case kVideoCodecVP9: {
+      const auto& vp9 =
+          absl::get<RTPVideoHeaderVP9>(rtp_video_header->video_type_header);
+      return new RtpPacketizerVp9(vp9, max_payload_len,
                                   last_packet_reduction_len);
-    case kRtpVideoStereo:
-      return new RtpPacketizerStereo(rtp_type_header->stereo, frame_type,
-                                     max_payload_len,
-                                     last_packet_reduction_len);
-    case kRtpVideoGeneric:
-      return new RtpPacketizerGeneric(frame_type, max_payload_len,
+    }
+    case kVideoCodecGeneric:
+      RTC_CHECK(rtp_video_header);
+      return new RtpPacketizerGeneric(*rtp_video_header, frame_type,
+                                      max_payload_len,
                                       last_packet_reduction_len);
-    case kRtpVideoNone:
+    default:
       RTC_NOTREACHED();
   }
   return nullptr;
 }
 
-RtpDepacketizer* RtpDepacketizer::Create(RtpVideoCodecTypes type) {
+RtpDepacketizer* RtpDepacketizer::Create(VideoCodecType type) {
   switch (type) {
-    case kRtpVideoH264:
+    case kVideoCodecH264:
       return new RtpDepacketizerH264();
-    case kRtpVideoVp8:
+    case kVideoCodecVP8:
       return new RtpDepacketizerVp8();
-    case kRtpVideoVp9:
+    case kVideoCodecVP9:
       return new RtpDepacketizerVp9();
-    case kRtpVideoStereo:
-      return new RtpDepacketizerStereo();
-    case kRtpVideoGeneric:
+    default:
       return new RtpDepacketizerGeneric();
-    case kRtpVideoNone:
-      assert(false);
   }
-  return nullptr;
 }
 }  // namespace webrtc

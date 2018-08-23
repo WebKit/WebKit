@@ -11,6 +11,8 @@
 #ifndef RTC_BASE_NETWORKROUTE_H_
 #define RTC_BASE_NETWORKROUTE_H_
 
+#include <stdint.h>
+
 // TODO(honghaiz): Make a directory that describes the interfaces and structs
 // the media code can rely on and the network code can implement, and both can
 // depend on that, but not depend on each other. Then, move this file to that
@@ -18,30 +20,13 @@
 namespace rtc {
 
 struct NetworkRoute {
-  bool connected;
-  uint16_t local_network_id;
-  uint16_t remote_network_id;
-  int last_sent_packet_id;  // Last packet id sent on the PREVIOUS route.
-  int packet_overhead;      // The overhead in bytes from IP layer and above.
-
-  NetworkRoute()
-      : connected(false),
-        local_network_id(0),
-        remote_network_id(0),
-        last_sent_packet_id(-1),
-        packet_overhead(0) {}
-
-  // The route is connected if the local and remote network ids are provided.
-  // TODO(zhihuang): Remove this and let the caller set the fields explicitly.
-  NetworkRoute(bool connected,
-               uint16_t local_net_id,
-               uint16_t remote_net_id,
-               int last_packet_id)
-      : connected(connected),
-        local_network_id(local_net_id),
-        remote_network_id(remote_net_id),
-        last_sent_packet_id(last_packet_id),
-        packet_overhead(0) {}
+  bool connected = false;
+  uint16_t local_network_id = 0;
+  uint16_t remote_network_id = 0;
+  // Last packet id sent on the PREVIOUS route.
+  int last_sent_packet_id = -1;
+  // The overhead in bytes from IP layer and above.
+  int packet_overhead = 0;
 
   // |last_sent_packet_id| and |packet_overhead| do not affect the NetworkRoute
   // comparison.

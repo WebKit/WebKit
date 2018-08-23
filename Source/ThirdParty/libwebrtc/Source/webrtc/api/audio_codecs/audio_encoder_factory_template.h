@@ -29,13 +29,14 @@ struct Helper;
 template <>
 struct Helper<> {
   static void AppendSupportedEncoders(std::vector<AudioCodecSpec>* specs) {}
-  static rtc::Optional<AudioCodecInfo> QueryAudioEncoder(
+  static absl::optional<AudioCodecInfo> QueryAudioEncoder(
       const SdpAudioFormat& format) {
-    return rtc::nullopt;
+    return absl::nullopt;
   }
   static std::unique_ptr<AudioEncoder> MakeAudioEncoder(
       int payload_type,
-      const SdpAudioFormat& format) {
+      const SdpAudioFormat& format,
+      absl::optional<AudioCodecPairId> codec_pair_id) {
     return nullptr;
   }
 };
@@ -48,25 +49,27 @@ struct Helper<T, Ts...> {
     T::AppendSupportedEncoders(specs);
     Helper<Ts...>::AppendSupportedEncoders(specs);
   }
-  static rtc::Optional<AudioCodecInfo> QueryAudioEncoder(
+  static absl::optional<AudioCodecInfo> QueryAudioEncoder(
       const SdpAudioFormat& format) {
     auto opt_config = T::SdpToConfig(format);
     static_assert(std::is_same<decltype(opt_config),
-                               rtc::Optional<typename T::Config>>::value,
+                               absl::optional<typename T::Config>>::value,
                   "T::SdpToConfig() must return a value of type "
-                  "rtc::Optional<T::Config>");
-    return opt_config ? rtc::Optional<AudioCodecInfo>(
+                  "absl::optional<T::Config>");
+    return opt_config ? absl::optional<AudioCodecInfo>(
                             T::QueryAudioEncoder(*opt_config))
                       : Helper<Ts...>::QueryAudioEncoder(format);
   }
   static std::unique_ptr<AudioEncoder> MakeAudioEncoder(
       int payload_type,
-      const SdpAudioFormat& format) {
+      const SdpAudioFormat& format,
+      absl::optional<AudioCodecPairId> codec_pair_id) {
     auto opt_config = T::SdpToConfig(format);
     if (opt_config) {
-      return T::MakeAudioEncoder(*opt_config, payload_type);
+      return T::MakeAudioEncoder(*opt_config, payload_type, codec_pair_id);
     } else {
-      return Helper<Ts...>::MakeAudioEncoder(payload_type, format);
+      return Helper<Ts...>::MakeAudioEncoder(payload_type, format,
+                                             codec_pair_id);
     }
   }
 };
@@ -80,15 +83,16 @@ class AudioEncoderFactoryT : public AudioEncoderFactory {
     return specs;
   }
 
-  rtc::Optional<AudioCodecInfo> QueryAudioEncoder(
+  absl::optional<AudioCodecInfo> QueryAudioEncoder(
       const SdpAudioFormat& format) override {
     return Helper<Ts...>::QueryAudioEncoder(format);
   }
 
   std::unique_ptr<AudioEncoder> MakeAudioEncoder(
       int payload_type,
-      const SdpAudioFormat& format) override {
-    return Helper<Ts...>::MakeAudioEncoder(payload_type, format);
+      const SdpAudioFormat& format,
+      absl::optional<AudioCodecPairId> codec_pair_id) override {
+    return Helper<Ts...>::MakeAudioEncoder(payload_type, format, codec_pair_id);
   }
 };
 
@@ -102,7 +106,7 @@ class AudioEncoderFactoryT : public AudioEncoderFactory {
 //   // Converts |audio_format| to a ConfigType instance. Returns an empty
 //   // optional if |audio_format| doesn't correctly specify an encoder of our
 //   // type.
-//   rtc::Optional<ConfigType> SdpToConfig(const SdpAudioFormat& audio_format);
+//   absl::optional<ConfigType> SdpToConfig(const SdpAudioFormat& audio_format);
 //
 //   // Appends zero or more AudioCodecSpecs to the list that will be returned
 //   // by AudioEncoderFactory::GetSupportedEncoders().
@@ -114,8 +118,10 @@ class AudioEncoderFactoryT : public AudioEncoderFactory {
 //
 //   // Creates an AudioEncoder for the specified format. Used to implement
 //   // AudioEncoderFactory::MakeAudioEncoder().
-//   std::unique_ptr<AudioEncoder> MakeAudioEncoder(const ConfigType& config,
-//                                                  int payload_type);
+//   std::unique_ptr<AudioDecoder> MakeAudioEncoder(
+//       const ConfigType& config,
+//       int payload_type,
+//       absl::optional<AudioCodecPairId> codec_pair_id);
 //
 // ConfigType should be a type that encapsulates all the settings needed to
 // create an AudioEncoder. T::Config (where T is the encoder struct) should

@@ -121,12 +121,6 @@ public class Camera1CapturerUsingByteBufferTest {
     fixtures.cameraEventsInvoked();
   }
 
-  @Test
-  @MediumTest
-  public void testUpdateMediaRecorder() throws InterruptedException, IOException {
-    fixtures.updateMediaRecorder(false /* useSurfaceCapture */);
-  }
-
   // Test what happens when attempting to call e.g. switchCamera() after camera has been stopped.
   @Test
   @MediumTest

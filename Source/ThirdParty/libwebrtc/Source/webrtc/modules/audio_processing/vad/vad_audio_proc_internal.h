@@ -14,23 +14,10 @@
 namespace webrtc {
 
 // These values should match MATLAB counterparts for unit-tests to pass.
-static const double kCorrWeight[] = {1.000000,
-                                     0.985000,
-                                     0.970225,
-                                     0.955672,
-                                     0.941337,
-                                     0.927217,
-                                     0.913308,
-                                     0.899609,
-                                     0.886115,
-                                     0.872823,
-                                     0.859730,
-                                     0.846834,
-                                     0.834132,
-                                     0.821620,
-                                     0.809296,
-                                     0.797156,
-                                     0.785199};
+static const double kCorrWeight[] = {
+    1.000000, 0.985000, 0.970225, 0.955672, 0.941337, 0.927217,
+    0.913308, 0.899609, 0.886115, 0.872823, 0.859730, 0.846834,
+    0.834132, 0.821620, 0.809296, 0.797156, 0.785199};
 
 static const double kLpcAnalWin[] = {
     0.00000000, 0.01314436, 0.02628645, 0.03942400, 0.05255473, 0.06567639,
@@ -75,11 +62,9 @@ static const double kLpcAnalWin[] = {
     0.06567639, 0.05255473, 0.03942400, 0.02628645, 0.01314436, 0.00000000};
 
 static const size_t kFilterOrder = 2;
-static const float kCoeffNumerator[kFilterOrder + 1] = {0.974827f,
-                                                        -1.949650f,
+static const float kCoeffNumerator[kFilterOrder + 1] = {0.974827f, -1.949650f,
                                                         0.974827f};
-static const float kCoeffDenominator[kFilterOrder + 1] = {1.0f,
-                                                          -1.971999f,
+static const float kCoeffDenominator[kFilterOrder + 1] = {1.0f, -1.971999f,
                                                           0.972457f};
 
 static_assert(kFilterOrder + 1 ==

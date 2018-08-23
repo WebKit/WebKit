@@ -1,0 +1,53 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_source_set("aecm_core") {
+  sources = [
+    "aecm_core.cc",
+    "aecm_core.h",
+    "aecm_defines.h",
+    "echo_control_mobile.cc",
+    "echo_control_mobile.h",
+  ]
+  deps = [
+    "../../../common_audio:common_audio_c",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:sanitizer",
+    "../../../system_wrappers:cpu_features_api",
+    "../utility:legacy_delay_estimator",
+  ]
+  cflags = []
+
+  if (rtc_build_with_neon) {
+    sources += [ "aecm_core_neon.cc" ]
+
+    if (current_cpu != "arm64") {
+      # Enable compilation for the NEON instruction set.
+      suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+      cflags += [ "-mfpu=neon" ]
+    }
+
+    # Disable LTO on NEON targets due to compiler bug.
+    # TODO(fdegans): Enable this. See crbug.com/408997.
+    if (rtc_use_lto) {
+      cflags -= [
+        "-flto",
+        "-ffat-lto-objects",
+      ]
+    }
+  }
+
+  if (current_cpu == "mipsel") {
+    sources += [ "aecm_core_mips.cc" ]
+  } else {
+    sources += [ "aecm_core_c.cc" ]
+  }
+}

@@ -33,14 +33,14 @@ class OldStyleEncodedFrame final : public AudioDecoder::EncodedAudioFrame {
     return ret < 0 ? 0 : static_cast<size_t>(ret);
   }
 
-  rtc::Optional<DecodeResult> Decode(
+  absl::optional<DecodeResult> Decode(
       rtc::ArrayView<int16_t> decoded) const override {
     auto speech_type = AudioDecoder::kSpeech;
     const int ret = decoder_->Decode(
         payload_.data(), payload_.size(), decoder_->SampleRateHz(),
         decoded.size() * sizeof(int16_t), decoded.data(), &speech_type);
-    return ret < 0 ? rtc::nullopt
-                   : rtc::Optional<DecodeResult>(
+    return ret < 0 ? absl::nullopt
+                   : absl::optional<DecodeResult>(
                          {static_cast<size_t>(ret), speech_type});
   }
 
@@ -50,6 +50,10 @@ class OldStyleEncodedFrame final : public AudioDecoder::EncodedAudioFrame {
 };
 
 }  // namespace
+
+bool AudioDecoder::EncodedAudioFrame::IsDtxPacket() const {
+  return false;
+}
 
 AudioDecoder::ParseResult::ParseResult() = default;
 AudioDecoder::ParseResult::ParseResult(ParseResult&& b) = default;

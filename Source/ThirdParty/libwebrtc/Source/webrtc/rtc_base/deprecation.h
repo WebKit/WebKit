@@ -37,7 +37,7 @@
 // (https://bugs.chromium.org/p/webrtc/issues/detail?id=5368).
 #define RTC_DEPRECATED __declspec(deprecated)
 #elif defined(__GNUC__)
-#define RTC_DEPRECATED __attribute__ ((__deprecated__))
+#define RTC_DEPRECATED __attribute__((__deprecated__))
 #else
 #define RTC_DEPRECATED
 #endif

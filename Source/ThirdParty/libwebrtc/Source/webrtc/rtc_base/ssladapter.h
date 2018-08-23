@@ -11,7 +11,11 @@
 #ifndef RTC_BASE_SSLADAPTER_H_
 #define RTC_BASE_SSLADAPTER_H_
 
+#include <string>
+#include <vector>
+
 #include "rtc_base/asyncsocket.h"
+#include "rtc_base/sslcertificate.h"
 #include "rtc_base/sslstreamadapter.h"
 
 namespace rtc {
@@ -26,8 +30,13 @@ class SSLAdapter;
 class SSLAdapterFactory {
  public:
   virtual ~SSLAdapterFactory() {}
+
   // Specifies whether TLS or DTLS is to be used for the SSL adapters.
   virtual void SetMode(SSLMode mode) = 0;
+
+  // Specify a custom certificate verifier for SSL.
+  virtual void SetCertVerifier(SSLCertificateVerifier* ssl_cert_verifier) = 0;
+
   // Creates a new SSL adapter, but from a shared context.
   virtual SSLAdapter* CreateAdapter(AsyncSocket* socket) = 0;
 
@@ -54,6 +63,8 @@ class SSLAdapter : public AsyncSocketAdapter {
 
   // Do DTLS or TLS (default is TLS, if unspecified)
   virtual void SetMode(SSLMode mode) = 0;
+  // Specify a custom certificate verifier for SSL.
+  virtual void SetCertVerifier(SSLCertificateVerifier* ssl_cert_verifier) = 0;
 
   // Set the certificate this socket will present to incoming clients.
   virtual void SetIdentity(SSLIdentity* identity) = 0;
@@ -82,14 +93,9 @@ class SSLAdapter : public AsyncSocketAdapter {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-typedef bool (*VerificationCallback)(void* cert);
-
 // Call this on the main thread, before using SSL.
-// Call CleanupSSLThread when finished with SSL.
-bool InitializeSSL(VerificationCallback callback = nullptr);
-
-// Call to initialize additional threads.
-bool InitializeSSLThread();
+// Call CleanupSSL when finished with SSL.
+bool InitializeSSL();
 
 // Call to cleanup additional threads, and also the main thread.
 bool CleanupSSL();

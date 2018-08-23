@@ -18,15 +18,16 @@
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
-#include "modules/desktop_capture/window_finder_mac.h"
 #include "modules/desktop_capture/mac/desktop_configuration.h"
 #include "modules/desktop_capture/mac/desktop_configuration_monitor.h"
 #include "modules/desktop_capture/mac/full_screen_chrome_window_detector.h"
 #include "modules/desktop_capture/mac/window_list_utils.h"
+#include "modules/desktop_capture/window_finder_mac.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/macutils.h"
 #include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/trace_event.h"
 
 namespace webrtc {
 
@@ -155,7 +156,10 @@ void WindowCapturerMac::Start(Callback* callback) {
 }
 
 void WindowCapturerMac::CaptureFrame() {
+  TRACE_EVENT0("webrtc", "WindowCapturerMac::CaptureFrame");
+
   if (!IsWindowValid(window_id_)) {
+    RTC_LOG(LS_ERROR) << "The window is not valid any longer.";
     callback_->OnCaptureResult(Result::ERROR_PERMANENT, nullptr);
     return;
   }
@@ -174,6 +178,7 @@ void WindowCapturerMac::CaptureFrame() {
       on_screen_window, kCGWindowImageBoundsIgnoreFraming);
 
   if (!window_image) {
+    RTC_LOG(LS_WARNING) << "Temporarily failed to capture window.";
     callback_->OnCaptureResult(Result::ERROR_TEMPORARY, nullptr);
     return;
   }
@@ -205,17 +210,10 @@ void WindowCapturerMac::CaptureFrame() {
 
   frame->mutable_updated_region()->SetRect(
       DesktopRect::MakeSize(frame->size()));
-  DesktopVector top_left;
-  if (configuration_monitor_) {
-    configuration_monitor_->Lock();
-    auto configuration = configuration_monitor_->desktop_configuration();
-    configuration_monitor_->Unlock();
-    top_left = GetWindowBounds(configuration, on_screen_window).top_left();
-    top_left = top_left.subtract(configuration.bounds.top_left());
-  } else {
-    top_left = GetWindowBounds(on_screen_window).top_left();
-  }
-  frame->set_top_left(top_left);
+  frame->set_top_left(GetWindowBounds(on_screen_window).top_left());
+
+  float scale_factor = GetWindowScaleFactor(window_id_, frame->size());
+  frame->set_dpi(DesktopVector(kStandardDPI * scale_factor, kStandardDPI * scale_factor));
 
   callback_->OnCaptureResult(Result::SUCCESS, std::move(frame));
 

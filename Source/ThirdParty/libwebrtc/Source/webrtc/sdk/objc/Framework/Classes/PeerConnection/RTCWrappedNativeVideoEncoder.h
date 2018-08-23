@@ -15,7 +15,6 @@
 #include "api/video_codecs/video_encoder.h"
 #include "media/base/codec.h"
 
-__attribute__((objc_runtime_name("WK_RTCWrappedNativeVideoEncoder")))
 @interface RTCWrappedNativeVideoEncoder : NSObject <RTCVideoEncoder>
 
 - (instancetype)initWithNativeEncoder:(std::unique_ptr<webrtc::VideoEncoder>)encoder;

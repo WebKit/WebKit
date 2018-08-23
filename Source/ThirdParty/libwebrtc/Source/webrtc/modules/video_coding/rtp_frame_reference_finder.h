@@ -12,9 +12,9 @@
 #define MODULES_VIDEO_CODING_RTP_FRAME_REFERENCE_FINDER_H_
 
 #include <array>
+#include <deque>
 #include <map>
 #include <memory>
-#include <deque>
 #include <set>
 #include <utility>
 
@@ -26,7 +26,7 @@
 namespace webrtc {
 namespace video_coding {
 
-class FrameObject;
+class EncodedFrame;
 class RtpFrameObject;
 
 // A complete frame is a frame which has received all its packets and all its
@@ -34,7 +34,7 @@ class RtpFrameObject;
 class OnCompleteFrameCallback {
  public:
   virtual ~OnCompleteFrameCallback() {}
-  virtual void OnCompleteFrame(std::unique_ptr<FrameObject> frame) = 0;
+  virtual void OnCompleteFrame(std::unique_ptr<EncodedFrame> frame) = 0;
 };
 
 class RtpFrameReferenceFinder {
@@ -60,7 +60,7 @@ class RtpFrameReferenceFinder {
   static const uint16_t kPicIdLength = 1 << 15;
   static const uint8_t kMaxTemporalLayers = 5;
   static const int kMaxLayerInfo = 50;
-  static const int kMaxStashedFrames = 50;
+  static const int kMaxStashedFrames = 100;
   static const int kMaxNotYetReceivedFrames = 100;
   static const int kMaxGofSaved = 50;
   static const int kMaxPaddingAge = 100;
@@ -100,7 +100,8 @@ class RtpFrameReferenceFinder {
   // Updates necessary layer info state used to determine frame references for
   // Vp8.
   void UpdateLayerInfoVp8(RtpFrameObject* frame,
-                          const RTPVideoHeaderVP8& codec_header)
+                          int64_t unwrapped_tl0,
+                          uint8_t temporal_idx)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Find references for Vp9 frames
@@ -127,25 +128,6 @@ class RtpFrameReferenceFinder {
 
   // Unwrap |frame|s picture id and its references to 16 bits.
   void UnwrapPictureIds(RtpFrameObject* frame)
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
-
-  // Returns true if the frame is old and should be dropped.
-  // TODO(philipel): Remove when VP9 PID/TL0 does not jump mid-stream (should be
-  //                 around M59).
-  bool Vp9PidTl0Fix(const RtpFrameObject& frame,
-                    int16_t* picture_id,
-                    int16_t* tl0_pic_idx) RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
-
-  // TODO(philipel): Remove when VP9 PID/TL0 does not jump mid-stream (should be
-  //                 around M59).
-  bool DetectVp9PicIdJump(int fixed_pid,
-                          int fixed_tl0,
-                          uint32_t timestamp) const
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
-
-  // TODO(philipel): Remove when VP9 PID/TL0 does not jump mid-stream (should be
-  //                 around M59).
-  bool DetectVp9Tl0PicIdxJump(int fixed_tl0, uint32_t timestamp) const
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // For every group of pictures, hold two sequence numbers. The first being
@@ -181,11 +163,9 @@ class RtpFrameReferenceFinder {
       RTC_GUARDED_BY(crit_);
 
   // Holds the information about the last completed frame for a given temporal
-  // layer given a Tl0 picture index.
-  std::map<uint8_t,
-           std::array<int16_t, kMaxTemporalLayers>,
-           DescendingSeqNumComp<uint8_t>>
-      layer_info_ RTC_GUARDED_BY(crit_);
+  // layer given an unwrapped Tl0 picture index.
+  std::map<int64_t, std::array<int16_t, kMaxTemporalLayers>> layer_info_
+      RTC_GUARDED_BY(crit_);
 
   // Where the current scalability structure is in the
   // |scalability_structures_| array.
@@ -195,9 +175,8 @@ class RtpFrameReferenceFinder {
   std::array<GofInfoVP9, kMaxGofSaved> scalability_structures_
       RTC_GUARDED_BY(crit_);
 
-  // Holds the the Gof information for a given TL0 picture index.
-  std::map<uint8_t, GofInfo, DescendingSeqNumComp<uint8_t>> gof_info_
-      RTC_GUARDED_BY(crit_);
+  // Holds the the Gof information for a given unwrapped TL0 picture index.
+  std::map<int64_t, GofInfo> gof_info_ RTC_GUARDED_BY(crit_);
 
   // Keep track of which picture id and which temporal layer that had the
   // up switch flag set.
@@ -223,6 +202,8 @@ class RtpFrameReferenceFinder {
   // Unwrapper used to unwrap VP8/VP9 streams which have their picture id
   // specified.
   SeqNumUnwrapper<uint16_t, kPicIdLength> unwrapper_ RTC_GUARDED_BY(crit_);
+
+  SeqNumUnwrapper<uint8_t> tl0_unwrapper_ RTC_GUARDED_BY(crit_);
 };
 
 }  // namespace video_coding

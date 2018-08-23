@@ -73,7 +73,7 @@ TEST(FunctionViewTest, Null) {
   EXPECT_FALSE(rtc::FunctionView<int()>(nullptr));
 
   // This calls the constructor for function pointers.
-  EXPECT_FALSE(rtc::FunctionView<int()>(reinterpret_cast<int(*)()>(0)));
+  EXPECT_FALSE(rtc::FunctionView<int()>(reinterpret_cast<int (*)()>(0)));
 }
 
 // Ensure that FunctionView handles move-only arguments and return values.

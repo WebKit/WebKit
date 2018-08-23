@@ -8,7 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-
 /*
  * A wrapper for resampling a numerous amount of sampling combinations.
  */
@@ -17,8 +16,7 @@
 #define COMMON_AUDIO_RESAMPLER_INCLUDE_RESAMPLER_H_
 
 #include <stddef.h>
-
-#include "typedefs.h"  // NOLINT(build/include)
+#include <stdint.h>
 
 namespace webrtc {
 
@@ -36,8 +34,11 @@ class Resampler {
   int ResetIfNeeded(int inFreq, int outFreq, size_t num_channels);
 
   // Resample samplesIn to samplesOut.
-  int Push(const int16_t* samplesIn, size_t lengthIn, int16_t* samplesOut,
-           size_t maxLen, size_t& outLen);  // NOLINT: to avoid changing APIs
+  int Push(const int16_t* samplesIn,
+           size_t lengthIn,
+           int16_t* samplesOut,
+           size_t maxLen,
+           size_t& outLen);  // NOLINT: to avoid changing APIs
 
  private:
   enum ResamplerMode {

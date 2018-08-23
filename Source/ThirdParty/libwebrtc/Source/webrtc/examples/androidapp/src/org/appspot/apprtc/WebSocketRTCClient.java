@@ -10,6 +10,7 @@
 
 package org.appspot.apprtc;
 
+import javax.annotation.Nullable;
 import org.appspot.apprtc.RoomParametersFetcher.RoomParametersFetcherEvents;
 import org.appspot.apprtc.WebSocketChannelClient.WebSocketChannelEvents;
 import org.appspot.apprtc.WebSocketChannelClient.WebSocketConnectionState;
@@ -380,7 +381,7 @@ public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelEvents 
 
   // Send SDP or ICE candidate to a room server.
   private void sendPostMessage(
-      final MessageType messageType, final String url, final String message) {
+      final MessageType messageType, final String url, @Nullable final String message) {
     String logInfo = url;
     if (message != null) {
       logInfo += ". Message: " + message;

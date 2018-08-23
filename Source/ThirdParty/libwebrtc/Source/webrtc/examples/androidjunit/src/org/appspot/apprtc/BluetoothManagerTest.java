@@ -11,11 +11,8 @@
 package org.appspot.apprtc;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -39,8 +36,8 @@ import org.chromium.testing.local.LocalRobolectricTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLog;
 
 /**
@@ -68,7 +65,7 @@ public class BluetoothManagerTest {
   @Before
   public void setUp() {
     ShadowLog.stream = System.out;
-    context = ShadowApplication.getInstance().getApplicationContext();
+    context = RuntimeEnvironment.application;
     mockedAppRtcAudioManager = mock(AppRTCAudioManager.class);
     mockedAudioManager = mock(AudioManager.class);
     mockedBluetoothHeadset = mock(BluetoothHeadset.class);

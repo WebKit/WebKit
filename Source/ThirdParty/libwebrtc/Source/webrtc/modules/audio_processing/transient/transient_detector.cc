@@ -51,8 +51,7 @@ TransientDetector::TransientDetector(int sample_rate_hz)
   wpd_tree_.reset(new WPDTree(samples_per_chunk_,
                               kDaubechies8HighPassCoefficients,
                               kDaubechies8LowPassCoefficients,
-                              kDaubechies8CoefficientsLength,
-                              kLevels));
+                              kDaubechies8CoefficientsLength, kLevels));
   for (size_t i = 0; i < kLeaves; ++i) {
     moving_moments_[i].reset(
         new MovingMoments(samples_per_transient / kLeaves));
@@ -86,8 +85,7 @@ float TransientDetector::Detect(const float* data,
   for (size_t i = 0; i < kLeaves; ++i) {
     WPDNode* leaf = wpd_tree_->NodeAt(kLevels, i);
 
-    moving_moments_[i]->CalculateMoments(leaf->data(),
-                                         tree_leaves_data_length_,
+    moving_moments_[i]->CalculateMoments(leaf->data(), tree_leaves_data_length_,
                                          first_moments_.get(),
                                          second_moments_.get());
 
@@ -127,8 +125,9 @@ float TransientDetector::Detect(const float* data,
     const float kVerticalScaling = 0.5f;
     const float kVerticalShift = 1.f;
 
-    result = (cos(result * horizontal_scaling + kHorizontalShift)
-        + kVerticalShift) * kVerticalScaling;
+    result =
+        (cos(result * horizontal_scaling + kHorizontalShift) + kVerticalShift) *
+        kVerticalScaling;
     result *= result;
   }
 

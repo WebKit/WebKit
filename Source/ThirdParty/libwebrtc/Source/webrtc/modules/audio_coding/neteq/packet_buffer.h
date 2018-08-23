@@ -11,11 +11,11 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_PACKET_BUFFER_H_
 #define MODULES_AUDIO_CODING_NETEQ_PACKET_BUFFER_H_
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
+#include "modules/audio_coding/neteq/decoder_database.h"
 #include "modules/audio_coding/neteq/packet.h"
 #include "modules/include/module_common_types.h"
 #include "rtc_base/constructormagic.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -65,8 +65,8 @@ class PacketBuffer {
   virtual int InsertPacketList(
       PacketList* packet_list,
       const DecoderDatabase& decoder_database,
-      rtc::Optional<uint8_t>* current_rtp_payload_type,
-      rtc::Optional<uint8_t>* current_cng_rtp_payload_type,
+      absl::optional<uint8_t>* current_rtp_payload_type,
+      absl::optional<uint8_t>* current_cng_rtp_payload_type,
       StatisticsCalculator* stats);
 
   // Gets the timestamp for the first packet in the buffer and writes it to the
@@ -89,7 +89,7 @@ class PacketBuffer {
 
   // Extracts the first packet in the buffer and returns it.
   // Returns an empty optional if the buffer is empty.
-  virtual rtc::Optional<Packet> GetNextPacket();
+  virtual absl::optional<Packet> GetNextPacket();
 
   // Discards the first packet in the buffer. The packet is deleted.
   // Returns PacketBuffer::kBufferEmpty if the buffer is empty,
@@ -120,6 +120,10 @@ class PacketBuffer {
   // Returns the number of samples in the buffer, including samples carried in
   // duplicate and redundant packets.
   virtual size_t NumSamplesInBuffer(size_t last_decoded_length) const;
+
+  // Returns true if the packet buffer contains any DTX or CNG packets.
+  virtual bool ContainsDtxOrCngPacket(
+      const DecoderDatabase* decoder_database) const;
 
   virtual void BufferStat(int* num_packets, int* max_num_packets) const;
 

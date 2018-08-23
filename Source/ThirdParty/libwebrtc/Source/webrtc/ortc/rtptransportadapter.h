@@ -14,24 +14,28 @@
 #include <memory>
 #include <vector>
 
-#include "api/ortc/srtptransportinterface.h"
 #include "api/rtcerror.h"
 #include "media/base/streamparams.h"
 #include "ortc/rtptransportcontrolleradapter.h"
 #include "pc/channel.h"
+#include "pc/rtptransportinternaladapter.h"
+#include "pc/srtptransport.h"
 #include "rtc_base/constructormagic.h"
-#include "rtc_base/sigslot.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace webrtc {
-
-// Implementation of SrtpTransportInterface to be used with RtpSenderAdapter,
-// RtpReceiverAdapter, and RtpTransportControllerAdapter classes. This class
-// is used to implement both a secure and insecure RTP transport.
+// This class is a wrapper over an RtpTransport or an SrtpTransport. The base
+// class RtpTransportInternalAdapter keeps a raw pointer, |transport_|, of the
+// transport object and implements both the public SrtpTransportInterface and
+// RtpTransport internal interface by calling the |transport_| underneath.
+//
+// This adapter can be used as an unencrypted RTP transport or an SrtpTransport
+// with RtpSenderAdapter, RtpReceiverAdapter, and RtpTransportControllerAdapter.
 //
 // TODO(deadbeef): When BaseChannel is split apart into separate
 // "RtpTransport"/"RtpTransceiver"/"RtpSender"/"RtpReceiver" objects, this
 // adapter object can be removed.
-class RtpTransportAdapter : public SrtpTransportInterface {
+class RtpTransportAdapter : public RtpTransportInternalAdapter {
  public:
   // |rtp| can't be null. |rtcp| can if RTCP muxing is used immediately (meaning
   // |rtcp_parameters.mux| is also true).
@@ -50,8 +54,12 @@ class RtpTransportAdapter : public SrtpTransportInterface {
   ~RtpTransportAdapter() override;
 
   // RtpTransportInterface implementation.
-  PacketTransportInterface* GetRtpPacketTransport() const override;
-  PacketTransportInterface* GetRtcpPacketTransport() const override;
+  PacketTransportInterface* GetRtpPacketTransport() const override {
+    return rtp_packet_transport_;
+  }
+  PacketTransportInterface* GetRtcpPacketTransport() const override {
+    return rtcp_packet_transport_;
+  }
   RTCError SetParameters(const RtpTransportParameters& parameters) override;
   RtpTransportParameters GetParameters() const override { return parameters_; }
 
@@ -70,13 +78,7 @@ class RtpTransportAdapter : public SrtpTransportInterface {
   // returning this transport from GetTransports().
   sigslot::signal1<RtpTransportAdapter*> SignalDestroyed;
 
-  // Used by the RtpTransportControllerAdapter to tell if an rtp sender or
-  // receiver can be created.
-  bool is_srtp_transport() { return is_srtp_transport_; }
-  // Used by the RtpTransportControllerAdapter to set keys for senders and
-  // receivers.
-  rtc::Optional<cricket::CryptoParams> send_key() { return send_key_; }
-  rtc::Optional<cricket::CryptoParams> receive_key() { return receive_key_; }
+  bool IsSrtpActive() const override { return transport_->IsSrtpActive(); }
 
  protected:
   RtpTransportAdapter* GetInternal() override { return this; }
@@ -88,18 +90,28 @@ class RtpTransportAdapter : public SrtpTransportInterface {
                       RtpTransportControllerAdapter* rtp_transport_controller,
                       bool is_srtp_transport);
 
-  PacketTransportInterface* rtp_packet_transport_;
-  PacketTransportInterface* rtcp_packet_transport_;
-  RtpTransportControllerAdapter* const rtp_transport_controller_;
+  void OnReadyToSend(bool ready) { SignalReadyToSend(ready); }
+
+  void OnRtcpPacketReceived(rtc::CopyOnWriteBuffer* packet,
+                            const rtc::PacketTime& time) {
+    SignalRtcpPacketReceived(packet, time);
+  }
+
+  void OnWritableState(bool writable) { SignalWritableState(writable); }
+
+  PacketTransportInterface* rtp_packet_transport_ = nullptr;
+  PacketTransportInterface* rtcp_packet_transport_ = nullptr;
+  RtpTransportControllerAdapter* const rtp_transport_controller_ = nullptr;
   // Non-null if this class owns the transport controller.
   std::unique_ptr<RtpTransportControllerInterface>
       owned_rtp_transport_controller_;
   RtpTransportParameters parameters_;
 
-  // SRTP specific members.
-  rtc::Optional<cricket::CryptoParams> send_key_;
-  rtc::Optional<cricket::CryptoParams> receive_key_;
-  bool is_srtp_transport_;
+  // Only one of them is non-null;
+  std::unique_ptr<RtpTransport> unencrypted_rtp_transport_;
+  std::unique_ptr<SrtpTransport> srtp_transport_;
+
+  rtc::Thread* network_thread_ = nullptr;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(RtpTransportAdapter);
 };

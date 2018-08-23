@@ -20,4 +20,4 @@ TEST_F(SessionDescriptionTest, CreateSessionDescription) {
   EXPECT_EQ(-1, s.session_id());
   EXPECT_EQ("0", s.session_version());
 }
-}
+}  // namespace webrtc

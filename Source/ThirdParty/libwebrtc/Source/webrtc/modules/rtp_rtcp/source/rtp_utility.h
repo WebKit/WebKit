@@ -19,13 +19,10 @@
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_config.h"
 #include "rtc_base/deprecation.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
 const uint8_t kRtpMarkerBitMask = 0x80;
-
-RtpFeedback* NullObjectRtpFeedback();
 
 namespace RtpUtility {
 
@@ -51,7 +48,7 @@ class RtpHeaderParser {
   bool RTCP() const;
   bool ParseRtcp(RTPHeader* header) const;
   bool Parse(RTPHeader* parsedPacket,
-             RtpHeaderExtensionMap* ptrExtensionMap = nullptr) const;
+             const RtpHeaderExtensionMap* ptrExtensionMap = nullptr) const;
 
  private:
   void ParseOneByteExtensionHeader(RTPHeader* parsedPacket,

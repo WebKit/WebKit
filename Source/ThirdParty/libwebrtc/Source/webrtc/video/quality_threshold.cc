@@ -74,13 +74,13 @@ void QualityThreshold::AddMeasurement(int measurement) {
   }
 }
 
-rtc::Optional<bool> QualityThreshold::IsHigh() const {
+absl::optional<bool> QualityThreshold::IsHigh() const {
   return is_high_;
 }
 
-rtc::Optional<double> QualityThreshold::CalculateVariance() const {
+absl::optional<double> QualityThreshold::CalculateVariance() const {
   if (until_full_ > 0) {
-    return rtc::nullopt;
+    return absl::nullopt;
   }
 
   double variance = 0;
@@ -91,11 +91,11 @@ rtc::Optional<double> QualityThreshold::CalculateVariance() const {
   return variance / (max_measurements_ - 1);
 }
 
-rtc::Optional<double> QualityThreshold::FractionHigh(
+absl::optional<double> QualityThreshold::FractionHigh(
     int min_required_samples) const {
   RTC_DCHECK_GT(min_required_samples, 0);
   if (num_certain_states_ < min_required_samples)
-    return rtc::nullopt;
+    return absl::nullopt;
 
   return static_cast<double>(num_high_states_) / num_certain_states_;
 }

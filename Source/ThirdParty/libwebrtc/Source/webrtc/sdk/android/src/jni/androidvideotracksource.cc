@@ -12,30 +12,34 @@
 
 #include <utility>
 
+#include "api/videosourceproxy.h"
 #include "rtc_base/logging.h"
-#include "sdk/android/src/jni/classreferenceholder.h"
-
-namespace {
-// MediaCodec wants resolution to be divisible by 2.
-const int kRequiredResolutionAlignment = 2;
-}
 
 namespace webrtc {
 namespace jni {
 
-AndroidVideoTrackSource::AndroidVideoTrackSource(
-    rtc::Thread* signaling_thread,
-    JNIEnv* jni,
-    jobject j_surface_texture_helper,
-    bool is_screencast)
+namespace {
+// MediaCodec wants resolution to be divisible by 2.
+const int kRequiredResolutionAlignment = 2;
+}  // namespace
+
+AndroidVideoTrackSource::AndroidVideoTrackSource(rtc::Thread* signaling_thread,
+                                                 JNIEnv* jni,
+                                                 bool is_screencast)
     : AdaptedVideoTrackSource(kRequiredResolutionAlignment),
       signaling_thread_(signaling_thread),
-      surface_texture_helper_(new rtc::RefCountedObject<SurfaceTextureHelper>(
-          jni,
-          j_surface_texture_helper)),
       is_screencast_(is_screencast) {
   RTC_LOG(LS_INFO) << "AndroidVideoTrackSource ctor";
   camera_thread_checker_.DetachFromThread();
+}
+AndroidVideoTrackSource::~AndroidVideoTrackSource() = default;
+
+bool AndroidVideoTrackSource::is_screencast() const {
+  return is_screencast_;
+}
+
+absl::optional<bool> AndroidVideoTrackSource::needs_denoising() const {
+  return false;
 }
 
 void AndroidVideoTrackSource::SetState(SourceState state) {
@@ -52,112 +56,21 @@ void AndroidVideoTrackSource::SetState(SourceState state) {
   }
 }
 
-void AndroidVideoTrackSource::OnByteBufferFrameCaptured(const void* frame_data,
-                                                        int length,
-                                                        int width,
-                                                        int height,
-                                                        VideoRotation rotation,
-                                                        int64_t timestamp_ns) {
-  RTC_DCHECK(camera_thread_checker_.CalledOnValidThread());
-
-  int64_t camera_time_us = timestamp_ns / rtc::kNumNanosecsPerMicrosec;
-  int64_t translated_camera_time_us =
-      timestamp_aligner_.TranslateTimestamp(camera_time_us, rtc::TimeMicros());
-
-  int adapted_width;
-  int adapted_height;
-  int crop_width;
-  int crop_height;
-  int crop_x;
-  int crop_y;
-
-  if (!AdaptFrame(width, height, camera_time_us, &adapted_width,
-                  &adapted_height, &crop_width, &crop_height, &crop_x,
-                  &crop_y)) {
-    return;
-  }
-
-  const uint8_t* y_plane = static_cast<const uint8_t*>(frame_data);
-  const uint8_t* uv_plane = y_plane + width * height;
-  const int uv_width = (width + 1) / 2;
-
-  RTC_CHECK_GE(length, width * height + 2 * uv_width * ((height + 1) / 2));
-
-  // Can only crop at even pixels.
-  crop_x &= ~1;
-  crop_y &= ~1;
-  // Crop just by modifying pointers.
-  y_plane += width * crop_y + crop_x;
-  uv_plane += uv_width * crop_y + crop_x;
-
-  rtc::scoped_refptr<I420Buffer> buffer =
-      buffer_pool_.CreateBuffer(adapted_width, adapted_height);
-
-  nv12toi420_scaler_.NV12ToI420Scale(
-      y_plane, width, uv_plane, uv_width * 2, crop_width, crop_height,
-      buffer->MutableDataY(), buffer->StrideY(),
-      // Swap U and V, since we have NV21, not NV12.
-      buffer->MutableDataV(), buffer->StrideV(), buffer->MutableDataU(),
-      buffer->StrideU(), buffer->width(), buffer->height());
-
-  OnFrame(VideoFrame(buffer, rotation, translated_camera_time_us));
+AndroidVideoTrackSource::SourceState AndroidVideoTrackSource::state() const {
+  return state_;
 }
 
-void AndroidVideoTrackSource::OnTextureFrameCaptured(
+bool AndroidVideoTrackSource::remote() const {
+  return false;
+}
+
+void AndroidVideoTrackSource::OnFrameCaptured(
+    JNIEnv* jni,
     int width,
     int height,
-    VideoRotation rotation,
     int64_t timestamp_ns,
-    const NativeHandleImpl& handle) {
-  RTC_DCHECK(camera_thread_checker_.CalledOnValidThread());
-
-  int64_t camera_time_us = timestamp_ns / rtc::kNumNanosecsPerMicrosec;
-  int64_t translated_camera_time_us =
-      timestamp_aligner_.TranslateTimestamp(camera_time_us, rtc::TimeMicros());
-
-  int adapted_width;
-  int adapted_height;
-  int crop_width;
-  int crop_height;
-  int crop_x;
-  int crop_y;
-
-  if (!AdaptFrame(width, height, camera_time_us, &adapted_width,
-                  &adapted_height, &crop_width, &crop_height, &crop_x,
-                  &crop_y)) {
-    surface_texture_helper_->ReturnTextureFrame();
-    return;
-  }
-
-  Matrix matrix = handle.sampling_matrix;
-
-  matrix.Crop(crop_width / static_cast<float>(width),
-              crop_height / static_cast<float>(height),
-              crop_x / static_cast<float>(width),
-              crop_y / static_cast<float>(height));
-
-  // Note that apply_rotation() may change under our feet, so we should only
-  // check once.
-  if (apply_rotation()) {
-    if (rotation == kVideoRotation_90 || rotation == kVideoRotation_270) {
-      std::swap(adapted_width, adapted_height);
-    }
-    matrix.Rotate(rotation);
-    rotation = kVideoRotation_0;
-  }
-
-  OnFrame(VideoFrame(surface_texture_helper_->CreateTextureFrame(
-                         adapted_width, adapted_height,
-                         NativeHandleImpl(handle.oes_texture_id, matrix)),
-                     rotation, translated_camera_time_us));
-}
-
-void AndroidVideoTrackSource::OnFrameCaptured(JNIEnv* jni,
-                                              int width,
-                                              int height,
-                                              int64_t timestamp_ns,
-                                              VideoRotation rotation,
-                                              jobject j_video_frame_buffer) {
+    VideoRotation rotation,
+    const JavaRef<jobject>& j_video_frame_buffer) {
   RTC_DCHECK(camera_thread_checker_.CalledOnValidThread());
 
   int64_t camera_time_us = timestamp_ns / rtc::kNumNanosecsPerMicrosec;
@@ -198,5 +111,5 @@ void AndroidVideoTrackSource::OnOutputFormatRequest(int width,
   video_adapter()->OnOutputFormatRequest(format);
 }
 
-}  // namespace webrtc
+}  // namespace jni
 }  // namespace webrtc

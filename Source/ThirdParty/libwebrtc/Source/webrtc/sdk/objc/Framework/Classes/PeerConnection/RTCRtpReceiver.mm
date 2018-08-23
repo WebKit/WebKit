@@ -36,6 +36,7 @@ void RtpReceiverDelegateAdapter::OnFirstPacketReceived(
 }  // namespace webrtc
 
 @implementation RTCRtpReceiver {
+  RTCPeerConnectionFactory *_factory;
   rtc::scoped_refptr<webrtc::RtpReceiverInterface> _nativeRtpReceiver;
   std::unique_ptr<webrtc::RtpReceiverDelegateAdapter> _observer;
 }
@@ -62,7 +63,7 @@ void RtpReceiverDelegateAdapter::OnFirstPacketReceived(
   rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> nativeTrack(
     _nativeRtpReceiver->track());
   if (nativeTrack) {
-    return [[RTCMediaStreamTrack alloc] initWithNativeTrack:nativeTrack];
+    return [RTCMediaStreamTrack mediaTrackForNativeTrack:nativeTrack factory:_factory];
   }
   return nil;
 }
@@ -70,6 +71,12 @@ void RtpReceiverDelegateAdapter::OnFirstPacketReceived(
 - (NSString *)description {
   return [NSString stringWithFormat:@"RTCRtpReceiver {\n  receiverId: %@\n}",
       self.receiverId];
+}
+
+- (void)dealloc {
+  if (_nativeRtpReceiver) {
+    _nativeRtpReceiver->SetObserver(nullptr);
+  }
 }
 
 - (BOOL)isEqual:(id)object {
@@ -96,9 +103,11 @@ void RtpReceiverDelegateAdapter::OnFirstPacketReceived(
   return _nativeRtpReceiver;
 }
 
-- (instancetype)initWithNativeRtpReceiver:
-    (rtc::scoped_refptr<webrtc::RtpReceiverInterface>)nativeRtpReceiver {
+- (instancetype)initWithFactory:(RTCPeerConnectionFactory *)factory
+              nativeRtpReceiver:
+                  (rtc::scoped_refptr<webrtc::RtpReceiverInterface>)nativeRtpReceiver {
   if (self = [super init]) {
+    _factory = factory;
     _nativeRtpReceiver = nativeRtpReceiver;
     RTCLogInfo(
         @"RTCRtpReceiver(%p): created receiver: %@", self, self.description);
@@ -117,6 +126,28 @@ void RtpReceiverDelegateAdapter::OnFirstPacketReceived(
       return RTCRtpMediaTypeVideo;
     case cricket::MEDIA_TYPE_DATA:
       return RTCRtpMediaTypeData;
+  }
+}
+
++ (cricket::MediaType)nativeMediaTypeForMediaType:(RTCRtpMediaType)mediaType {
+  switch (mediaType) {
+    case RTCRtpMediaTypeAudio:
+      return cricket::MEDIA_TYPE_AUDIO;
+    case RTCRtpMediaTypeVideo:
+      return cricket::MEDIA_TYPE_VIDEO;
+    case RTCRtpMediaTypeData:
+      return cricket::MEDIA_TYPE_DATA;
+  }
+}
+
++ (NSString *)stringForMediaType:(RTCRtpMediaType)mediaType {
+  switch (mediaType) {
+    case RTCRtpMediaTypeAudio:
+      return @"AUDIO";
+    case RTCRtpMediaTypeVideo:
+      return @"VIDEO";
+    case RTCRtpMediaTypeData:
+      return @"DATA";
   }
 }
 

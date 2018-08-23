@@ -68,6 +68,7 @@ class GainControlForExperimentalAgc : public GainControl,
   GainControl* real_gain_control_;
   int volume_;
   rtc::CriticalSection* crit_capture_;
+  bool do_log_level_ = true;
   static int instance_counter_;
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(GainControlForExperimentalAgc);
 };

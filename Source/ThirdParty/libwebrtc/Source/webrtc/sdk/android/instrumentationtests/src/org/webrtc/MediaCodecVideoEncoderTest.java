@@ -40,8 +40,8 @@ public class MediaCodecVideoEncoderTest {
       return;
     }
     MediaCodecVideoEncoder encoder = new MediaCodecVideoEncoder();
-    assertTrue(encoder.initEncode(
-        MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, profile, 640, 480, 300, 30, null));
+    assertTrue(encoder.initEncode(MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, profile,
+        640, 480, 300, 30, /* useSurface= */ false));
     encoder.release();
   }
 
@@ -53,10 +53,12 @@ public class MediaCodecVideoEncoderTest {
       return;
     }
     EglBase14 eglBase = new EglBase14(null, EglBase.CONFIG_PLAIN);
+    MediaCodecVideoEncoder.setEglContext(eglBase.getEglBaseContext());
     MediaCodecVideoEncoder encoder = new MediaCodecVideoEncoder();
     assertTrue(encoder.initEncode(MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, profile,
-        640, 480, 300, 30, eglBase.getEglBaseContext()));
+        640, 480, 300, 30, /* useSurface= */ true));
     encoder.release();
+    MediaCodecVideoEncoder.disposeEglContext();
     eglBase.release();
   }
 
@@ -68,13 +70,15 @@ public class MediaCodecVideoEncoderTest {
       return;
     }
     MediaCodecVideoEncoder encoder = new MediaCodecVideoEncoder();
-    assertTrue(encoder.initEncode(
-        MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, profile, 640, 480, 300, 30, null));
+    assertTrue(encoder.initEncode(MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, profile,
+        640, 480, 300, 30, /* useSurface= */ false));
     encoder.release();
     EglBase14 eglBase = new EglBase14(null, EglBase.CONFIG_PLAIN);
+    MediaCodecVideoEncoder.setEglContext(eglBase.getEglBaseContext());
     assertTrue(encoder.initEncode(MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, profile,
-        640, 480, 300, 30, eglBase.getEglBaseContext()));
+        640, 480, 300, 30, /* useSurface= */ true));
     encoder.release();
+    MediaCodecVideoEncoder.disposeEglContext();
     eglBase.release();
   }
 
@@ -94,7 +98,7 @@ public class MediaCodecVideoEncoderTest {
     MediaCodecVideoEncoder encoder = new MediaCodecVideoEncoder();
 
     assertTrue(encoder.initEncode(MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, profile,
-        width, height, 300, 30, null));
+        width, height, 300, 30, /* useSurface= */ false));
     ByteBuffer[] inputBuffers = encoder.getInputBuffers();
     assertNotNull(inputBuffers);
     assertTrue(min_size <= inputBuffers[0].capacity());
@@ -120,51 +124,5 @@ public class MediaCodecVideoEncoderTest {
     encoder.releaseOutputBuffer(info.index);
 
     encoder.release();
-  }
-
-  @Test
-  @SmallTest
-  public void testEncoderUsingTextures() throws InterruptedException {
-    if (!MediaCodecVideoEncoder.isVp8HwSupportedUsingTextures()) {
-      Log.i(TAG, "Hardware does not support VP8 encoding, skipping testEncoderUsingTextures");
-      return;
-    }
-
-    final int width = 640;
-    final int height = 480;
-    final long presentationTs = 2;
-
-    final EglBase14 eglOesBase = new EglBase14(null, EglBase.CONFIG_PIXEL_BUFFER);
-    eglOesBase.createDummyPbufferSurface();
-    eglOesBase.makeCurrent();
-    int oesTextureId = GlUtil.generateTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES);
-
-    // TODO(perkj): This test is week since we don't fill the texture with valid data with correct
-    // width and height and verify the encoded data. Fill the OES texture and figure out a way to
-    // verify that the output make sense.
-
-    MediaCodecVideoEncoder encoder = new MediaCodecVideoEncoder();
-
-    assertTrue(encoder.initEncode(MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, profile,
-        width, height, 300, 30, eglOesBase.getEglBaseContext()));
-    assertTrue(
-        encoder.encodeTexture(true, oesTextureId, RendererCommon.identityMatrix(), presentationTs));
-    GlUtil.checkNoGLES2Error("encodeTexture");
-
-    // It should be Ok to delete the texture after calling encodeTexture.
-    GLES20.glDeleteTextures(1, new int[] {oesTextureId}, 0);
-
-    OutputBufferInfo info = encoder.dequeueOutputBuffer();
-    while (info == null) {
-      info = encoder.dequeueOutputBuffer();
-      Thread.sleep(20);
-    }
-    assertTrue(info.index != -1);
-    assertTrue(info.buffer.capacity() > 0);
-    assertEquals(presentationTs, info.presentationTimestampUs);
-    encoder.releaseOutputBuffer(info.index);
-
-    encoder.release();
-    eglOesBase.release();
   }
 }

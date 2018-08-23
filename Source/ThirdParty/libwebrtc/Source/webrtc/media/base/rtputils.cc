@@ -35,9 +35,8 @@ namespace {
 // Fake auth tag written by the sender when external authentication is enabled.
 // HMAC in packet will be compared against this value before updating packet
 // with actual HMAC value.
-static const uint8_t kFakeAuthTag[10] = {
-    0xba, 0xdd, 0xba, 0xdd, 0xba, 0xdd, 0xba, 0xdd, 0xba, 0xdd
-};
+static const uint8_t kFakeAuthTag[10] = {0xba, 0xdd, 0xba, 0xdd, 0xba,
+                                         0xdd, 0xba, 0xdd, 0xba, 0xdd};
 
 void UpdateAbsSendTimeExtensionValue(uint8_t* extension_data,
                                      size_t length,
@@ -99,10 +98,10 @@ void UpdateRtpAuthTag(uint8_t* rtp,
   size_t auth_required_length = length - tag_length + kRocLength;
 
   uint8_t output[64];
-  size_t result = rtc::ComputeHmac(
-      rtc::DIGEST_SHA_1, &packet_time_params.srtp_auth_key[0],
-      packet_time_params.srtp_auth_key.size(), rtp,
-      auth_required_length, output, sizeof(output));
+  size_t result =
+      rtc::ComputeHmac(rtc::DIGEST_SHA_1, &packet_time_params.srtp_auth_key[0],
+                       packet_time_params.srtp_auth_key.size(), rtp,
+                       auth_required_length, output, sizeof(output));
 
   if (result < tag_length) {
     RTC_NOTREACHED();
@@ -205,18 +204,21 @@ bool GetRtpSsrc(const void* data, size_t len, uint32_t* value) {
 }
 
 bool GetRtpHeaderLen(const void* data, size_t len, size_t* value) {
-  if (!data || len < kMinRtpPacketLen || !value) return false;
+  if (!data || len < kMinRtpPacketLen || !value)
+    return false;
   const uint8_t* header = static_cast<const uint8_t*>(data);
   // Get base header size + length of CSRCs (not counting extension yet).
   size_t header_size = kMinRtpPacketLen + (header[0] & 0xF) * sizeof(uint32_t);
-  if (len < header_size) return false;
+  if (len < header_size)
+    return false;
   // If there's an extension, read and add in the extension size.
   if (header[0] & 0x10) {
     if (len < header_size + sizeof(uint32_t))
       return false;
     header_size +=
         ((rtc::GetBE16(header + header_size + 2) + 1) * sizeof(uint32_t));
-    if (len < header_size) return false;
+    if (len < header_size)
+      return false;
   }
   *value = header_size;
   return true;
@@ -241,11 +243,14 @@ bool GetRtcpType(const void* data, size_t len, int* value) {
 // to send non-compound packets only to feedback messages.
 bool GetRtcpSsrc(const void* data, size_t len, uint32_t* value) {
   // Packet should be at least of 8 bytes, to get SSRC from a RTCP packet.
-  if (!data || len < kMinRtcpPacketLen + 4 || !value) return false;
+  if (!data || len < kMinRtcpPacketLen + 4 || !value)
+    return false;
   int pl_type;
-  if (!GetRtcpType(data, len, &pl_type)) return false;
+  if (!GetRtcpType(data, len, &pl_type))
+    return false;
   // SDES packet parsing is not supported.
-  if (pl_type == kRtcpTypeSDES) return false;
+  if (pl_type == kRtcpTypeSDES)
+    return false;
   *value = rtc::GetBE32(static_cast<const uint8_t*>(data) + 4);
   return true;
 }
@@ -256,8 +261,8 @@ bool SetRtpSsrc(void* data, size_t len, uint32_t value) {
 
 // Assumes version 2, no padding, no extensions, no csrcs.
 bool SetRtpHeader(void* data, size_t len, const RtpHeader& header) {
-  if (!IsValidRtpPayloadType(header.payload_type) ||
-      header.seq_num < 0 || header.seq_num > UINT16_MAX) {
+  if (!IsValidRtpPayloadType(header.payload_type) || header.seq_num < 0 ||
+      header.seq_num > static_cast<int>(UINT16_MAX)) {
     return false;
   }
   return (SetUint8(data, kRtpFlagsOffset, kRtpVersion << 6) &&
@@ -273,6 +278,16 @@ bool IsRtpPacket(const void* data, size_t len) {
     return false;
 
   return (static_cast<const uint8_t*>(data)[0] >> 6) == kRtpVersion;
+}
+
+// Check the RTP payload type. If 63 < payload type < 96, it's RTCP.
+// For additional details, see http://tools.ietf.org/html/rfc5761.
+bool IsRtcpPacket(const char* data, size_t len) {
+  if (len < 2) {
+    return false;
+  }
+  char pt = data[1] & 0x7F;
+  return (63 < pt) && (pt < 96);
 }
 
 bool IsValidRtpPayloadType(int payload_type) {

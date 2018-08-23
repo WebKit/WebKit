@@ -56,12 +56,12 @@ class FecControllerPlrBased final : public Controller {
   void MakeDecision(AudioEncoderRuntimeConfig* config) override;
 
  private:
-  bool FecEnablingDecision(const rtc::Optional<float>& packet_loss) const;
-  bool FecDisablingDecision(const rtc::Optional<float>& packet_loss) const;
+  bool FecEnablingDecision(const absl::optional<float>& packet_loss) const;
+  bool FecDisablingDecision(const absl::optional<float>& packet_loss) const;
 
   const Config config_;
   bool fec_enabled_;
-  rtc::Optional<int> uplink_bandwidth_bps_;
+  absl::optional<int> uplink_bandwidth_bps_;
   const std::unique_ptr<SmoothingFilter> packet_loss_smoother_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(FecControllerPlrBased);

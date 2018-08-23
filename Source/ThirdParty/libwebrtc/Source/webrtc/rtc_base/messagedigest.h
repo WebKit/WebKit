@@ -52,13 +52,19 @@ bool IsFips180DigestAlgorithm(const std::string& alg);
 // implementation, and outputs the hash to the buffer |output|, which is
 // |out_len| bytes long. Returns the number of bytes written to |output| if
 // successful, or 0 if |out_len| was too small.
-size_t ComputeDigest(MessageDigest* digest, const void* input, size_t in_len,
-                     void* output, size_t out_len);
+size_t ComputeDigest(MessageDigest* digest,
+                     const void* input,
+                     size_t in_len,
+                     void* output,
+                     size_t out_len);
 // Like the previous function, but creates a digest implementation based on
 // the desired digest name |alg|, e.g. DIGEST_SHA_1. Returns 0 if there is no
 // digest with the given name.
-size_t ComputeDigest(const std::string& alg, const void* input, size_t in_len,
-                     void* output, size_t out_len);
+size_t ComputeDigest(const std::string& alg,
+                     const void* input,
+                     size_t in_len,
+                     void* output,
+                     size_t out_len);
 // Computes the hash of |input| using the |digest| hash implementation, and
 // returns it as a hex-encoded string.
 std::string ComputeDigest(MessageDigest* digest, const std::string& input);
@@ -67,7 +73,8 @@ std::string ComputeDigest(MessageDigest* digest, const std::string& input);
 // there is no digest with the given name.
 std::string ComputeDigest(const std::string& alg, const std::string& input);
 // Like the previous function, but returns an explicit result code.
-bool ComputeDigest(const std::string& alg, const std::string& input,
+bool ComputeDigest(const std::string& alg,
+                   const std::string& input,
                    std::string* output);
 
 // Shorthand way to compute a hex-encoded hash using MD5.
@@ -82,27 +89,39 @@ inline std::string MD5(const std::string& input) {
 // the HMAC to the buffer |output|, which is |out_len| bytes long. Returns the
 // number of bytes written to |output| if successful, or 0 if |out_len| was too
 // small.
-size_t ComputeHmac(MessageDigest* digest, const void* key, size_t key_len,
-                   const void* input, size_t in_len,
-                   void* output, size_t out_len);
+size_t ComputeHmac(MessageDigest* digest,
+                   const void* key,
+                   size_t key_len,
+                   const void* input,
+                   size_t in_len,
+                   void* output,
+                   size_t out_len);
 // Like the previous function, but creates a digest implementation based on
 // the desired digest name |alg|, e.g. DIGEST_SHA_1. Returns 0 if there is no
 // digest with the given name.
-size_t ComputeHmac(const std::string& alg, const void* key, size_t key_len,
-                   const void* input, size_t in_len,
-                   void* output, size_t out_len);
+size_t ComputeHmac(const std::string& alg,
+                   const void* key,
+                   size_t key_len,
+                   const void* input,
+                   size_t in_len,
+                   void* output,
+                   size_t out_len);
 // Computes the HMAC of |input| using the |digest| hash implementation and |key|
 // to key the HMAC, and returns it as a hex-encoded string.
-std::string ComputeHmac(MessageDigest* digest, const std::string& key,
+std::string ComputeHmac(MessageDigest* digest,
+                        const std::string& key,
                         const std::string& input);
 // Like the previous function, but creates a digest implementation based on
 // the desired digest name |alg|, e.g. DIGEST_SHA_1. Returns empty string if
 // there is no digest with the given name.
-std::string ComputeHmac(const std::string& alg, const std::string& key,
+std::string ComputeHmac(const std::string& alg,
+                        const std::string& key,
                         const std::string& input);
 // Like the previous function, but returns an explicit result code.
-bool ComputeHmac(const std::string& alg, const std::string& key,
-                 const std::string& input, std::string* output);
+bool ComputeHmac(const std::string& alg,
+                 const std::string& key,
+                 const std::string& input,
+                 std::string* output);
 
 }  // namespace rtc
 

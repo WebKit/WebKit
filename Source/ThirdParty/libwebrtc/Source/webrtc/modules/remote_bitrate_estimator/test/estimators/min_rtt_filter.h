@@ -16,7 +16,7 @@
 #include <limits>
 #include <list>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
 
 namespace webrtc {
 namespace testing {
@@ -33,10 +33,10 @@ class MinRttFilter {
   // This class implements a simple filter to ensure that PROBE_RTT is only
   // entered when RTTs start to increase, instead of fixed 10 second window as
   // in orginal BBR design doc, to avoid unnecessary freezes in stream.
-  MinRttFilter() {}
-  ~MinRttFilter() {}
+  MinRttFilter();
+  ~MinRttFilter();
 
-  rtc::Optional<int64_t> min_rtt_ms() { return min_rtt_ms_; }
+  absl::optional<int64_t> min_rtt_ms() { return min_rtt_ms_; }
   void AddRttSample(int64_t rtt_ms, int64_t now_ms) {
     if (!min_rtt_ms_ || rtt_ms <= *min_rtt_ms_ || MinRttExpired(now_ms)) {
       min_rtt_ms_.emplace(rtt_ms);
@@ -63,7 +63,7 @@ class MinRttFilter {
   }
 
  private:
-  rtc::Optional<int64_t> min_rtt_ms_;
+  absl::optional<int64_t> min_rtt_ms_;
   std::list<int64_t> rtt_samples_;
 };
 }  // namespace bwe

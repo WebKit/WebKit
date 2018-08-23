@@ -234,14 +234,17 @@ int32_t AudioDeviceBuffer::SetTypingStatus(bool typing_status) {
   return 0;
 }
 
-void AudioDeviceBuffer::NativeAudioInterrupted() {
+void AudioDeviceBuffer::NativeAudioPlayoutInterrupted() {
   RTC_DCHECK(main_thread_checker_.CalledOnValidThread());
   playout_thread_checker_.DetachFromThread();
+}
+
+void AudioDeviceBuffer::NativeAudioRecordingInterrupted() {
+  RTC_DCHECK(main_thread_checker_.CalledOnValidThread());
   recording_thread_checker_.DetachFromThread();
 }
 
-void AudioDeviceBuffer::SetVQEData(int play_delay_ms,
-                                   int rec_delay_ms) {
+void AudioDeviceBuffer::SetVQEData(int play_delay_ms, int rec_delay_ms) {
   RTC_DCHECK_RUN_ON(&recording_thread_checker_);
   play_delay_ms_ = play_delay_ms;
   rec_delay_ms_ = rec_delay_ms;
@@ -352,9 +355,17 @@ int32_t AudioDeviceBuffer::GetPlayoutData(void* audio_buffer) {
   const double phase_increment =
       k2Pi * 440.0 / static_cast<double>(play_sample_rate_);
   int16_t* destination_r = reinterpret_cast<int16_t*>(audio_buffer);
-  for (size_t i = 0; i < play_buffer_.size(); ++i) {
-    destination_r[i] = static_cast<int16_t>((sin(phase_) * (1 << 14)));
-    phase_ += phase_increment;
+  if (play_channels_ == 1) {
+    for (size_t i = 0; i < play_buffer_.size(); ++i) {
+      destination_r[i] = static_cast<int16_t>((sin(phase_) * (1 << 14)));
+      phase_ += phase_increment;
+    }
+  } else if (play_channels_ == 2) {
+    for (size_t i = 0; i < play_buffer_.size() / 2; ++i) {
+      destination_r[2 * i] = destination_r[2 * i + 1] =
+          static_cast<int16_t>((sin(phase_) * (1 << 14)));
+      phase_ += phase_increment;
+    }
   }
 #else
   memcpy(audio_buffer, play_buffer_.data(),

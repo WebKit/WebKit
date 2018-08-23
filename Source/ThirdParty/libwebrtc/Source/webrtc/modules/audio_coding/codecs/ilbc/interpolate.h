@@ -19,17 +19,17 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_INTERPOLATE_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_INTERPOLATE_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  interpolation between vectors
  *---------------------------------------------------------------*/
 
 void WebRtcIlbcfix_Interpolate(
-    int16_t *out, /* (o) output vector */
-    int16_t *in1, /* (i) first input vector */
-    int16_t *in2, /* (i) second input vector */
-    int16_t coef, /* (i) weight coefficient in Q14 */
+    int16_t* out,    /* (o) output vector */
+    int16_t* in1,    /* (i) first input vector */
+    int16_t* in2,    /* (i) second input vector */
+    int16_t coef,    /* (i) weight coefficient in Q14 */
     int16_t length); /* (i) number of sample is vectors */
 
 #endif

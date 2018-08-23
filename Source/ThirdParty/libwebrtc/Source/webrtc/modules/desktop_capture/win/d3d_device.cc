@@ -69,8 +69,9 @@ bool D3dDevice::Initialize(const ComPtr<IDXGIAdapter>& adapter) {
 // static
 std::vector<D3dDevice> D3dDevice::EnumDevices() {
   ComPtr<IDXGIFactory1> factory;
-  _com_error error = CreateDXGIFactory1(__uuidof(IDXGIFactory1),
-      reinterpret_cast<void**>(factory.GetAddressOf()));
+  _com_error error =
+      CreateDXGIFactory1(__uuidof(IDXGIFactory1),
+                         reinterpret_cast<void**>(factory.GetAddressOf()));
   if (error.Error() != S_OK || !factory) {
     RTC_LOG(LS_WARNING) << "Cannot create IDXGIFactory1.";
     return std::vector<D3dDevice>();

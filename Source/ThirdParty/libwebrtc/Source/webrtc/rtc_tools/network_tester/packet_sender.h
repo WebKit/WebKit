@@ -49,10 +49,10 @@ class PacketSender {
 
  private:
   rtc::SequencedTaskChecker worker_queue_checker_;
-  size_t packet_size_ RTC_ACCESS_ON(worker_queue_checker_);
-  int64_t send_interval_ms_ RTC_ACCESS_ON(worker_queue_checker_);
-  int64_t sequence_number_ RTC_ACCESS_ON(worker_queue_checker_);
-  bool sending_ RTC_ACCESS_ON(worker_queue_checker_);
+  size_t packet_size_ RTC_GUARDED_BY(worker_queue_checker_);
+  int64_t send_interval_ms_ RTC_GUARDED_BY(worker_queue_checker_);
+  int64_t sequence_number_ RTC_GUARDED_BY(worker_queue_checker_);
+  bool sending_ RTC_GUARDED_BY(worker_queue_checker_);
   const std::string config_file_path_;
   TestController* const test_controller_;
   rtc::TaskQueue worker_queue_;

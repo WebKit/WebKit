@@ -16,8 +16,18 @@
 
 ******************************************************************/
 
-#include "defines.h"
-#include "constants.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
+#include "rtc_base/sanitizer.h"
+
+// An s32 + s32 -> s32 addition that's allowed to overflow. (It's still
+// undefined behavior, so not a good idea; this just makes UBSan ignore the
+// violation, so that our old code can continue to do what it's always been
+// doing.)
+static inline int32_t RTC_NO_SANITIZE("signed-integer-overflow")
+    OverflowingAdd_S32_S32_To_S32(int32_t a, int32_t b) {
+  return a + b;
+}
 
 int32_t WebRtcIlbcfix_Smooth_odata(
     int16_t *odata,
@@ -37,7 +47,7 @@ int32_t WebRtcIlbcfix_Smooth_odata(
   errs=0;
   for(i=0;i<80;i++) {
     err = (psseq[i] - odata[i]) >> 3;
-    errs += err * err;  /* errs in Q-6 */
+    errs = OverflowingAdd_S32_S32_To_S32(errs, err * err);  // errs in Q-6
   }
 
   return errs;

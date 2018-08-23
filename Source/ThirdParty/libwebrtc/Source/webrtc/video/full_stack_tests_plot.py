@@ -196,9 +196,9 @@ def AverageOverCycle(values, length):
 
   total = [0.0] * length
   count = [0] * length
-  for k in range(len(values)):
-    if values[k] is not None:
-      total[k % length] += values[k]
+  for k, val in enumerate(values):
+    if val is not None:
+      total[k % length] += val
       count[k % length] += 1
 
   result = [0.0] * length
@@ -386,11 +386,11 @@ def PlotConfigsFromArgs(args):
   #   argparse.ArgumentParser, modified to remember the order of arguments.
   #   Then we traverse the argument list and fill the PlotConfig.
   args = itertools.groupby(args, lambda x: x in ["-n", "--next"])
-  args = list(list(group) for match, group in args if not match)
+  prep_args = list(list(group) for match, group in args if not match)
 
   parser = GetParser()
   plot_configs = []
-  for index, raw_args in enumerate(args):
+  for index, raw_args in enumerate(prep_args):
     graph_args = parser.parse_args(raw_args).ordered_args
     plot_configs.append(_PlotConfigFromArgs(graph_args, index))
   return plot_configs

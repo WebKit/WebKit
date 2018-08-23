@@ -15,16 +15,16 @@
 #include <string>
 #include <vector>
 
+#include "api/audio/audio_frame.h"
 #include "modules/audio_processing/aec_dump/capture_stream_info.h"
 #include "modules/audio_processing/aec_dump/write_to_file_task.h"
 #include "modules/audio_processing/include/aec_dump.h"
-#include "modules/include/module_common_types.h"
 #include "rtc_base/ignore_wundef.h"
 #include "rtc_base/platform_file.h"
 #include "rtc_base/race_checker.h"
+#include "rtc_base/system/file_wrapper.h"
 #include "rtc_base/task_queue.h"
 #include "rtc_base/thread_annotations.h"
-#include "system_wrappers/include/file_wrapper.h"
 
 // Files generated at build-time by the protobuf compiler.
 RTC_PUSH_IGNORING_WUNDEF()
@@ -52,17 +52,18 @@ class AecDumpImpl : public AecDump {
 
   ~AecDumpImpl() override;
 
-  void WriteInitMessage(const InternalAPMStreamsConfig& api_format) override;
-
-  void AddCaptureStreamInput(const FloatAudioFrame& src) override;
-  void AddCaptureStreamOutput(const FloatAudioFrame& src) override;
+  void WriteInitMessage(const ProcessingConfig& api_format,
+                        int64_t time_now_ms) override;
+  void AddCaptureStreamInput(const AudioFrameView<const float>& src) override;
+  void AddCaptureStreamOutput(const AudioFrameView<const float>& src) override;
   void AddCaptureStreamInput(const AudioFrame& frame) override;
   void AddCaptureStreamOutput(const AudioFrame& frame) override;
   void AddAudioProcessingState(const AudioProcessingState& state) override;
   void WriteCaptureStreamMessage() override;
 
   void WriteRenderStreamMessage(const AudioFrame& frame) override;
-  void WriteRenderStreamMessage(const FloatAudioFrame& src) override;
+  void WriteRenderStreamMessage(
+      const AudioFrameView<const float>& src) override;
 
   void WriteConfig(const InternalAPMConfig& config) override;
 

@@ -25,10 +25,11 @@ StunServer::~StunServer() {
   socket_->SignalReadPacket.disconnect(this);
 }
 
-void StunServer::OnPacket(
-    rtc::AsyncPacketSocket* socket, const char* buf, size_t size,
-    const rtc::SocketAddress& remote_addr,
-    const rtc::PacketTime& packet_time) {
+void StunServer::OnPacket(rtc::AsyncPacketSocket* socket,
+                          const char* buf,
+                          size_t size,
+                          const rtc::SocketAddress& remote_addr,
+                          const rtc::PacketTime& packet_time) {
   // Parse the STUN message; eat any messages that fail to parse.
   rtc::ByteBufferReader bbuf(buf, size);
   StunMessage msg;
@@ -50,16 +51,17 @@ void StunServer::OnPacket(
   }
 }
 
-void StunServer::OnBindingRequest(
-    StunMessage* msg, const rtc::SocketAddress& remote_addr) {
+void StunServer::OnBindingRequest(StunMessage* msg,
+                                  const rtc::SocketAddress& remote_addr) {
   StunMessage response;
-  GetStunBindReqponse(msg, remote_addr, &response);
+  GetStunBindResponse(msg, remote_addr, &response);
   SendResponse(response, remote_addr);
 }
 
-void StunServer::SendErrorResponse(
-    const StunMessage& msg, const rtc::SocketAddress& addr,
-    int error_code, const char* error_desc) {
+void StunServer::SendErrorResponse(const StunMessage& msg,
+                                   const rtc::SocketAddress& addr,
+                                   int error_code,
+                                   const char* error_desc) {
   StunMessage err_msg;
   err_msg.SetType(GetStunErrorResponseType(msg.type()));
   err_msg.SetTransactionID(msg.transaction_id());
@@ -72,8 +74,8 @@ void StunServer::SendErrorResponse(
   SendResponse(err_msg, addr);
 }
 
-void StunServer::SendResponse(
-    const StunMessage& msg, const rtc::SocketAddress& addr) {
+void StunServer::SendResponse(const StunMessage& msg,
+                              const rtc::SocketAddress& addr) {
   rtc::ByteBufferWriter buf;
   msg.Write(&buf);
   rtc::PacketOptions options;
@@ -81,7 +83,7 @@ void StunServer::SendResponse(
     RTC_LOG_ERR(LS_ERROR) << "sendto";
 }
 
-void StunServer::GetStunBindReqponse(StunMessage* request,
+void StunServer::GetStunBindResponse(StunMessage* request,
                                      const rtc::SocketAddress& remote_addr,
                                      StunMessage* response) const {
   response->SetType(STUN_BINDING_RESPONSE);

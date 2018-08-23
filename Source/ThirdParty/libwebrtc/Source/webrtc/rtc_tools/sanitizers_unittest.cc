@@ -12,9 +12,9 @@
 #include <stdio.h>
 #include <random>
 
+#include "absl/memory/memory.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/nullsocketserver.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/thread.h"
 #include "test/gtest.h"
 
@@ -39,7 +39,7 @@ TEST(SanitizersDeathTest, MemorySanitizer) {
 
 #if defined(ADDRESS_SANITIZER)
 void HeapUseAfterFree() {
-  char *buf = new char[2];
+  char* buf = new char[2];
   delete[] buf;
   buf[0] = buf[1];
 }
@@ -61,8 +61,7 @@ struct Base {
   virtual void f() {}
   virtual ~Base() {}
 };
-struct Derived : public Base {
-};
+struct Derived : public Base {};
 
 void InvalidVptr() {
   Base b;
@@ -71,7 +70,12 @@ void InvalidVptr() {
 }
 
 TEST(SanitizersDeathTest, UndefinedSanitizer) {
-  EXPECT_DEATH({ SignedIntegerOverflow(); InvalidVptr(); }, "runtime error");
+  EXPECT_DEATH(
+      {
+        SignedIntegerOverflow();
+        InvalidVptr();
+      },
+      "runtime error");
 }
 #endif
 
@@ -79,8 +83,7 @@ TEST(SanitizersDeathTest, UndefinedSanitizer) {
 class IncrementThread : public Thread {
  public:
   explicit IncrementThread(int* value)
-      : Thread(rtc::MakeUnique<NullSocketServer>()),
-        value_(value) {}
+      : Thread(absl::make_unique<NullSocketServer>()), value_(value) {}
 
   void Run() override {
     ++*value_;
@@ -88,9 +91,7 @@ class IncrementThread : public Thread {
   }
 
   // Un-protect Thread::Join for the test.
-  void Join() {
-    Thread::Join();
-  }
+  void Join() { Thread::Join(); }
 
  private:
   int* value_;

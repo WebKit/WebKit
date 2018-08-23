@@ -25,16 +25,16 @@ const char CS_AEAD_AES_256_GCM[] = "AEAD_AES_256_GCM";
 
 std::string SrtpCryptoSuiteToName(int crypto_suite) {
   switch (crypto_suite) {
-  case SRTP_AES128_CM_SHA1_32:
-    return CS_AES_CM_128_HMAC_SHA1_32;
-  case SRTP_AES128_CM_SHA1_80:
-    return CS_AES_CM_128_HMAC_SHA1_80;
-  case SRTP_AEAD_AES_128_GCM:
-    return CS_AEAD_AES_128_GCM;
-  case SRTP_AEAD_AES_256_GCM:
-    return CS_AEAD_AES_256_GCM;
-  default:
-    return std::string();
+    case SRTP_AES128_CM_SHA1_32:
+      return CS_AES_CM_128_HMAC_SHA1_32;
+    case SRTP_AES128_CM_SHA1_80:
+      return CS_AES_CM_128_HMAC_SHA1_80;
+    case SRTP_AEAD_AES_128_GCM:
+      return CS_AEAD_AES_128_GCM;
+    case SRTP_AEAD_AES_256_GCM:
+      return CS_AEAD_AES_256_GCM;
+    default:
+      return std::string();
   }
 }
 
@@ -50,30 +50,31 @@ int SrtpCryptoSuiteFromName(const std::string& crypto_suite) {
   return SRTP_INVALID_CRYPTO_SUITE;
 }
 
-bool GetSrtpKeyAndSaltLengths(int crypto_suite, int *key_length,
-    int *salt_length) {
+bool GetSrtpKeyAndSaltLengths(int crypto_suite,
+                              int* key_length,
+                              int* salt_length) {
   switch (crypto_suite) {
-  case SRTP_AES128_CM_SHA1_32:
-  case SRTP_AES128_CM_SHA1_80:
-    // SRTP_AES128_CM_HMAC_SHA1_32 and SRTP_AES128_CM_HMAC_SHA1_80 are defined
-    // in RFC 5764 to use a 128 bits key and 112 bits salt for the cipher.
-    *key_length = 16;
-    *salt_length = 14;
-    break;
-  case SRTP_AEAD_AES_128_GCM:
-    // SRTP_AEAD_AES_128_GCM is defined in RFC 7714 to use a 128 bits key and
-    // a 96 bits salt for the cipher.
-    *key_length = 16;
-    *salt_length = 12;
-    break;
-  case SRTP_AEAD_AES_256_GCM:
-    // SRTP_AEAD_AES_256_GCM is defined in RFC 7714 to use a 256 bits key and
-    // a 96 bits salt for the cipher.
-    *key_length = 32;
-    *salt_length = 12;
-    break;
-  default:
-    return false;
+    case SRTP_AES128_CM_SHA1_32:
+    case SRTP_AES128_CM_SHA1_80:
+      // SRTP_AES128_CM_HMAC_SHA1_32 and SRTP_AES128_CM_HMAC_SHA1_80 are defined
+      // in RFC 5764 to use a 128 bits key and 112 bits salt for the cipher.
+      *key_length = 16;
+      *salt_length = 14;
+      break;
+    case SRTP_AEAD_AES_128_GCM:
+      // SRTP_AEAD_AES_128_GCM is defined in RFC 7714 to use a 128 bits key and
+      // a 96 bits salt for the cipher.
+      *key_length = 16;
+      *salt_length = 12;
+      break;
+    case SRTP_AEAD_AES_256_GCM:
+      // SRTP_AEAD_AES_256_GCM is defined in RFC 7714 to use a 256 bits key and
+      // a 96 bits salt for the cipher.
+      *key_length = 32;
+      *salt_length = 12;
+      break;
+    default:
+      return false;
   }
   return true;
 }
@@ -105,7 +106,11 @@ std::vector<int> GetSupportedDtlsSrtpCryptoSuites(
   // Note: SRTP_AES128_CM_SHA1_80 is what is required to be supported (by
   // draft-ietf-rtcweb-security-arch), but SRTP_AES128_CM_SHA1_32 is allowed as
   // well, and saves a few bytes per packet if it ends up selected.
-  crypto_suites.push_back(rtc::SRTP_AES128_CM_SHA1_32);
+  // As the cipher suite is potentially insecure, it will only be used if
+  // enabled by both peers.
+  if (crypto_options.enable_aes128_sha1_32_crypto_cipher) {
+    crypto_suites.push_back(rtc::SRTP_AES128_CM_SHA1_32);
+  }
   crypto_suites.push_back(rtc::SRTP_AES128_CM_SHA1_80);
   return crypto_suites;
 }

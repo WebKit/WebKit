@@ -191,6 +191,16 @@ public final class WebRtcAudioUtils {
     return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
   }
 
+  public static boolean runningOnOreoOrHigher() {
+    // API Level 26.
+    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+  }
+
+  public static boolean runningOnOreoMR1OrHigher() {
+    // API Level 27.
+    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1;
+  }
+
   // Helper method for building a string of thread information.
   public static String getThreadInfo() {
     return "@[name=" + Thread.currentThread().getName() + ", id=" + Thread.currentThread().getId()

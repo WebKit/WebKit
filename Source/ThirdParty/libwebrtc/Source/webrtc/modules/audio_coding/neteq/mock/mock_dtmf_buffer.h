@@ -22,16 +22,11 @@ class MockDtmfBuffer : public DtmfBuffer {
   MockDtmfBuffer(int fs) : DtmfBuffer(fs) {}
   virtual ~MockDtmfBuffer() { Die(); }
   MOCK_METHOD0(Die, void());
-  MOCK_METHOD0(Flush,
-      void());
-  MOCK_METHOD1(InsertEvent,
-      int(const DtmfEvent& event));
-  MOCK_METHOD2(GetEvent,
-      bool(uint32_t current_timestamp, DtmfEvent* event));
-  MOCK_CONST_METHOD0(Length,
-      size_t());
-  MOCK_CONST_METHOD0(Empty,
-      bool());
+  MOCK_METHOD0(Flush, void());
+  MOCK_METHOD1(InsertEvent, int(const DtmfEvent& event));
+  MOCK_METHOD2(GetEvent, bool(uint32_t current_timestamp, DtmfEvent* event));
+  MOCK_CONST_METHOD0(Length, size_t());
+  MOCK_CONST_METHOD0(Empty, bool());
 };
 
 }  // namespace webrtc

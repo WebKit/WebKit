@@ -8,35 +8,24 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-// Android's FindClass() is trickier than usual because the app-specific
-// ClassLoader is not consulted when there is no app-specific frame on the
-// stack.  Consequently, we only look up all classes once in app/webrtc.
-// http://developer.android.com/training/articles/perf-jni.html#faq_FindClass
-
 #ifndef SDK_ANDROID_SRC_JNI_CLASSREFERENCEHOLDER_H_
 #define SDK_ANDROID_SRC_JNI_CLASSREFERENCEHOLDER_H_
 
-// TODO(magjed): Remove this whole file and replace with either generated JNI
-// code or class_loader.h.
-
-#include <jni.h>
-#include <map>
-#include <string>
+// TODO(magjed): Update external clients to call webrtc::jni::InitClassLoader
+// immediately instead.
+#include "sdk/android/native_api/jni/class_loader.h"
+#include "sdk/android/src/jni/jni_helpers.h"
 
 namespace webrtc {
 namespace jni {
 
-// LoadGlobalClassReferenceHolder must be called in JNI_OnLoad.
-void LoadGlobalClassReferenceHolder();
-// FreeGlobalClassReferenceHolder must be called in JNI_UnLoad.
-void FreeGlobalClassReferenceHolder();
+// Deprecated. Call webrtc::jni::InitClassLoader() immediately instead..
+inline void LoadGlobalClassReferenceHolder() {
+  webrtc::InitClassLoader(GetEnv());
+}
 
-// Deprecated. Most cases of finding classes should be done with generated JNI
-// code, and the few remaining cases should use the function from
-// class_loader.h.
-// Returns a global reference guaranteed to be valid for the lifetime of the
-// process.
-jclass FindClass(JNIEnv* jni, const char* name);
+// Deprecated. Do not call at all.
+inline void FreeGlobalClassReferenceHolder() {}
 
 }  // namespace jni
 }  // namespace webrtc

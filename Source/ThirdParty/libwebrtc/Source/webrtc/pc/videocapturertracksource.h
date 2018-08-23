@@ -18,7 +18,7 @@
 #include "media/base/videocommon.h"
 #include "pc/videotracksource.h"
 #include "rtc_base/asyncinvoker.h"
-#include "rtc_base/sigslot.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 
 // VideoCapturerTrackSource implements VideoTrackSourceInterface. It owns a
 // cricket::VideoCapturer and make sure the camera is started at a resolution
@@ -48,7 +48,9 @@ class VideoCapturerTrackSource : public VideoTrackSource,
       bool remote);
 
   bool is_screencast() const final { return video_capturer_->IsScreencast(); }
-  rtc::Optional<bool> needs_denoising() const final { return needs_denoising_; }
+  absl::optional<bool> needs_denoising() const final {
+    return needs_denoising_;
+  }
 
   bool GetStats(Stats* stats) final;
 
@@ -57,6 +59,11 @@ class VideoCapturerTrackSource : public VideoTrackSource,
                            std::unique_ptr<cricket::VideoCapturer> capturer,
                            bool remote);
   virtual ~VideoCapturerTrackSource();
+
+  rtc::VideoSourceInterface<VideoFrame>* source() override {
+    return video_capturer_.get();
+  }
+
   void Initialize(const webrtc::MediaConstraintsInterface* constraints);
 
  private:
@@ -71,7 +78,7 @@ class VideoCapturerTrackSource : public VideoTrackSource,
   std::unique_ptr<cricket::VideoCapturer> video_capturer_;
   bool started_;
   cricket::VideoFormat format_;
-  rtc::Optional<bool> needs_denoising_;
+  absl::optional<bool> needs_denoising_;
 };
 
 }  // namespace webrtc

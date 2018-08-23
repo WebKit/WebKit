@@ -40,7 +40,7 @@ class DtxController final : public Controller {
  private:
   const Config config_;
   bool dtx_enabled_;
-  rtc::Optional<int> uplink_bandwidth_bps_;
+  absl::optional<int> uplink_bandwidth_bps_;
   RTC_DISALLOW_COPY_AND_ASSIGN(DtxController);
 };
 

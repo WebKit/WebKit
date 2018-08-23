@@ -15,6 +15,7 @@
 #include <memory>
 #include <vector>
 
+#include "api/video/i420_buffer.h"
 #include "common_video/h264/h264_bitstream_parser.h"
 #include "modules/video_coding/codecs/h264/include/h264.h"
 #include "modules/video_coding/utility/quality_scaler.h"
@@ -26,6 +27,22 @@ class ISVCEncoder;
 namespace webrtc {
 
 class H264EncoderImpl : public H264Encoder {
+ public:
+  struct LayerConfig {
+    int simulcast_idx = 0;
+    int width = -1;
+    int height = -1;
+    bool sending = true;
+    bool key_frame_request = false;
+    float max_frame_rate = 0;
+    uint32_t target_bps = 0;
+    uint32_t max_bps = 0;
+    bool frame_dropping_on = false;
+    int key_frame_interval = 0;
+
+    void SetStreamState(bool send_stream);
+  };
+
  public:
   explicit H264EncoderImpl(const cricket::VideoCodec& codec);
   ~H264EncoderImpl() override;
@@ -44,7 +61,7 @@ class H264EncoderImpl : public H264Encoder {
 
   int32_t RegisterEncodeCompleteCallback(
       EncodedImageCallback* callback) override;
-  int32_t SetRateAllocation(const BitrateAllocation& bitrate_allocation,
+  int32_t SetRateAllocation(const VideoBitrateAllocation& bitrate_allocation,
                             uint32_t framerate) override;
 
   // The result of encoding - an EncodedImage and RTPFragmentationHeader - are
@@ -59,7 +76,6 @@ class H264EncoderImpl : public H264Encoder {
 
   // Unsupported / Do nothing.
   int32_t SetChannelParameters(uint32_t packet_loss, int64_t rtt) override;
-  int32_t SetPeriodicKeyFrames(bool enable) override;
 
   // Exposed for testing.
   H264PacketizationMode PacketizationModeForTesting() const {
@@ -67,32 +83,24 @@ class H264EncoderImpl : public H264Encoder {
   }
 
  private:
-  bool IsInitialized() const;
-  SEncParamExt CreateEncoderParams() const;
+  SEncParamExt CreateEncoderParams(size_t i) const;
 
   webrtc::H264BitstreamParser h264_bitstream_parser_;
   // Reports statistics with histograms.
   void ReportInit();
   void ReportError();
 
-  ISVCEncoder* openh264_encoder_;
-  // Settings that are used by this encoder.
-  int width_;
-  int height_;
-  float max_frame_rate_;
-  uint32_t target_bps_;
-  uint32_t max_bps_;
-  VideoCodecMode mode_;
-  // H.264 specifc parameters
-  bool frame_dropping_on_;
-  int key_frame_interval_;
-  H264PacketizationMode packetization_mode_;
+  std::vector<ISVCEncoder*> encoders_;
+  std::vector<SSourcePicture> pictures_;
+  std::vector<rtc::scoped_refptr<I420Buffer>> downscaled_buffers_;
+  std::vector<LayerConfig> configurations_;
+  std::vector<EncodedImage> encoded_images_;
+  std::vector<std::unique_ptr<uint8_t[]>> encoded_image_buffers_;
 
+  VideoCodec codec_;
+  H264PacketizationMode packetization_mode_;
   size_t max_payload_size_;
   int32_t number_of_cores_;
-
-  EncodedImage encoded_image_;
-  std::unique_ptr<uint8_t[]> encoded_image_buffer_;
   EncodedImageCallback* encoded_image_callback_;
 
   bool has_reported_init_;

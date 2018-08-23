@@ -34,6 +34,14 @@ public class GlRectDrawerTest {
   // When comparing pixels, allow some slack for float arithmetic and integer rounding.
   private static final float MAX_DIFF = 1.5f;
 
+  // clang-format off
+  private static final float[] IDENTITY_MATRIX = {
+      1, 0, 0, 0,
+      0, 1, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1};
+  // clang-format on
+
   private static float normalizedByte(byte b) {
     return (b & 0xFF) / 255.0f;
   }
@@ -85,6 +93,8 @@ public class GlRectDrawerTest {
     return rgbBuffer;
   }
 
+  // TODO(titovartem) make correct fix during webrtc:9175
+  @SuppressWarnings("ByteBufferBackingArray")
   @Test
   @SmallTest
   public void testRgbRendering() {
@@ -108,8 +118,8 @@ public class GlRectDrawerTest {
 
     // Draw the RGB frame onto the pixel buffer.
     final GlRectDrawer drawer = new GlRectDrawer();
-    drawer.drawRgb(rgbTexture, RendererCommon.identityMatrix(), WIDTH, HEIGHT, 0 /* viewportX */,
-        0 /* viewportY */, WIDTH, HEIGHT);
+    drawer.drawRgb(rgbTexture, IDENTITY_MATRIX, WIDTH, HEIGHT, 0 /* viewportX */, 0 /* viewportY */,
+        WIDTH, HEIGHT);
 
     // Download the pixels in the pixel buffer as RGBA. Not all platforms support RGB, e.g. Nexus 9.
     final ByteBuffer rgbaData = ByteBuffer.allocateDirect(WIDTH * HEIGHT * 4);
@@ -124,6 +134,8 @@ public class GlRectDrawerTest {
     eglBase.release();
   }
 
+  // TODO(titovartem) make correct fix during webrtc:9175
+  @SuppressWarnings("ByteBufferBackingArray")
   @Test
   @SmallTest
   public void testYuvRendering() {
@@ -157,7 +169,7 @@ public class GlRectDrawerTest {
 
     // Draw the YUV frame onto the pixel buffer.
     final GlRectDrawer drawer = new GlRectDrawer();
-    drawer.drawYuv(yuvTextures, RendererCommon.identityMatrix(), WIDTH, HEIGHT, 0 /* viewportX */,
+    drawer.drawYuv(yuvTextures, IDENTITY_MATRIX, WIDTH, HEIGHT, 0 /* viewportX */,
         0 /* viewportY */, WIDTH, HEIGHT);
 
     // Download the pixels in the pixel buffer as RGBA. Not all platforms support RGB, e.g. Nexus 9.
@@ -212,6 +224,8 @@ public class GlRectDrawerTest {
    *  - Render the OES texture onto the pixel buffer.
    *  - Read back the pixel buffer and compare it with the known RGB data.
    */
+  // TODO(titovartem) make correct fix during webrtc:9175
+  @SuppressWarnings("ByteBufferBackingArray")
   @Test
   @MediumTest
   public void testOesRendering() throws InterruptedException {
@@ -223,11 +237,11 @@ public class GlRectDrawerTest {
       private final GlRectDrawer drawer;
       private final int rgbTexture;
 
-      public StubOesTextureProducer(
-          EglBase.Context sharedContext, SurfaceTexture surfaceTexture, int width, int height) {
+      public StubOesTextureProducer(EglBase.Context sharedContext,
+          SurfaceTextureHelper surfaceTextureHelper, int width, int height) {
         eglBase = EglBase.create(sharedContext, EglBase.CONFIG_PLAIN);
-        surfaceTexture.setDefaultBufferSize(width, height);
-        eglBase.createSurface(surfaceTexture);
+        surfaceTextureHelper.setTextureSize(width, height);
+        eglBase.createSurface(surfaceTextureHelper.getSurfaceTexture());
         assertEquals(eglBase.surfaceWidth(), width);
         assertEquals(eglBase.surfaceHeight(), height);
 
@@ -246,8 +260,8 @@ public class GlRectDrawerTest {
         GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGB, WIDTH, HEIGHT, 0, GLES20.GL_RGB,
             GLES20.GL_UNSIGNED_BYTE, rgbPlane);
         // Draw the RGB data onto the SurfaceTexture.
-        drawer.drawRgb(rgbTexture, RendererCommon.identityMatrix(), WIDTH, HEIGHT,
-            0 /* viewportX */, 0 /* viewportY */, WIDTH, HEIGHT);
+        drawer.drawRgb(rgbTexture, IDENTITY_MATRIX, WIDTH, HEIGHT, 0 /* viewportX */,
+            0 /* viewportY */, WIDTH, HEIGHT);
         eglBase.swapBuffers();
       }
 
@@ -267,7 +281,7 @@ public class GlRectDrawerTest {
     final SurfaceTextureHelper surfaceTextureHelper = SurfaceTextureHelper.create(
         "SurfaceTextureHelper test" /* threadName */, eglBase.getEglBaseContext());
     final StubOesTextureProducer oesProducer = new StubOesTextureProducer(
-        eglBase.getEglBaseContext(), surfaceTextureHelper.getSurfaceTexture(), WIDTH, HEIGHT);
+        eglBase.getEglBaseContext(), surfaceTextureHelper, WIDTH, HEIGHT);
     final SurfaceTextureHelperTest.MockTextureListener listener =
         new SurfaceTextureHelperTest.MockTextureListener();
     surfaceTextureHelper.startListening(listener);
@@ -279,14 +293,15 @@ public class GlRectDrawerTest {
 
     // Draw the frame and block until an OES texture is delivered.
     oesProducer.draw(rgbPlane);
-    listener.waitForNewFrame();
+    final VideoFrame.TextureBuffer textureBuffer = listener.waitForTextureBuffer();
 
     // Real test starts here.
     // Draw the OES texture on the pixel buffer.
     eglBase.makeCurrent();
     final GlRectDrawer drawer = new GlRectDrawer();
-    drawer.drawOes(listener.oesTextureId, listener.transformMatrix, WIDTH, HEIGHT,
-        0 /* viewportX */, 0 /* viewportY */, WIDTH, HEIGHT);
+    drawer.drawOes(textureBuffer.getTextureId(),
+        RendererCommon.convertMatrixFromAndroidGraphicsMatrix(textureBuffer.getTransformMatrix()),
+        WIDTH, HEIGHT, 0 /* viewportX */, 0 /* viewportY */, WIDTH, HEIGHT);
 
     // Download the pixels in the pixel buffer as RGBA. Not all platforms support RGB, e.g. Nexus 9.
     final ByteBuffer rgbaData = ByteBuffer.allocateDirect(WIDTH * HEIGHT * 4);
@@ -297,7 +312,7 @@ public class GlRectDrawerTest {
     assertByteBufferEquals(WIDTH, HEIGHT, stripAlphaChannel(rgbaData), rgbPlane);
 
     drawer.release();
-    surfaceTextureHelper.returnTextureFrame();
+    textureBuffer.release();
     oesProducer.release();
     surfaceTextureHelper.dispose();
     eglBase.release();

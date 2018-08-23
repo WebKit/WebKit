@@ -10,8 +10,8 @@
 
 #include "modules/desktop_capture/win/screen_capturer_win_directx.h"
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "test/gtest.h"
@@ -22,9 +22,7 @@ namespace webrtc {
 // devices in its output, since the device name is missing.
 TEST(ScreenCaptureUtilsTest, GetScreenListFromDeviceNamesAndGetIndex) {
   const std::vector<std::string> device_names = {
-    "\\\\.\\DISPLAY0",
-    "\\\\.\\DISPLAY1",
-    "\\\\.\\DISPLAY2",
+      "\\\\.\\DISPLAY0", "\\\\.\\DISPLAY1", "\\\\.\\DISPLAY2",
   };
   DesktopCapturer::SourceList screens;
   ASSERT_TRUE(ScreenCapturerWinDirectx::GetScreenListFromDeviceNames(
@@ -32,8 +30,8 @@ TEST(ScreenCaptureUtilsTest, GetScreenListFromDeviceNamesAndGetIndex) {
   ASSERT_EQ(device_names.size(), screens.size());
 
   for (size_t i = 0; i < screens.size(); i++) {
-    ASSERT_EQ(ScreenCapturerWinDirectx::GetIndexFromScreenId(
-                  screens[i].id, device_names),
+    ASSERT_EQ(ScreenCapturerWinDirectx::GetIndexFromScreenId(screens[i].id,
+                                                             device_names),
               static_cast<int>(i));
   }
 }

@@ -18,6 +18,7 @@
 #include <string>
 
 #include "rtc_base/constructormagic.h"
+#include "rtc_base/platform_file.h"
 
 namespace webrtc {
 
@@ -29,9 +30,6 @@ class WavFile {
   virtual int sample_rate() const = 0;
   virtual size_t num_channels() const = 0;
   virtual size_t num_samples() const = 0;
-
-  // Returns a human-readable string containing the audio format.
-  std::string FormatAsString() const;
 };
 
 // Simple C++ class for writing 16-bit PCM WAV files. All error handling is
@@ -40,6 +38,9 @@ class WavWriter final : public WavFile {
  public:
   // Open a new WAV file for writing.
   WavWriter(const std::string& filename, int sample_rate, size_t num_channels);
+
+  // Open a new WAV file for writing.
+  WavWriter(rtc::PlatformFile file, int sample_rate, size_t num_channels);
 
   // Close the WAV file, after writing its header.
   ~WavWriter() override;
@@ -59,7 +60,7 @@ class WavWriter final : public WavFile {
   const int sample_rate_;
   const size_t num_channels_;
   size_t num_samples_;  // Total number of samples written to file.
-  FILE* file_handle_;  // Output file, owned by this class
+  FILE* file_handle_;   // Output file, owned by this class
 
   RTC_DISALLOW_COPY_AND_ASSIGN(WavWriter);
 };
@@ -69,6 +70,9 @@ class WavReader final : public WavFile {
  public:
   // Opens an existing WAV file for reading.
   explicit WavReader(const std::string& filename);
+
+  // Opens an existing WAV file for reading.
+  explicit WavReader(rtc::PlatformFile file);
 
   // Close the WAV file.
   ~WavReader() override;

@@ -33,7 +33,9 @@ const int MAX_LIFETIME = 15 * 60 * 1000;
 const uint32_t USERNAME_LENGTH = 16;
 
 // Calls SendTo on the given socket and logs any bad results.
-void Send(rtc::AsyncPacketSocket* socket, const char* bytes, size_t size,
+void Send(rtc::AsyncPacketSocket* socket,
+          const char* bytes,
+          size_t size,
           const rtc::SocketAddress& addr) {
   rtc::PacketOptions options;
   int result = socket->SendTo(bytes, size, addr, options);
@@ -55,9 +57,12 @@ void SendStun(const StunMessage& msg,
 }
 
 // Constructs a STUN error response and sends it on the given socket.
-void SendStunError(const StunMessage& msg, rtc::AsyncPacketSocket* socket,
-                   const rtc::SocketAddress& remote_addr, int error_code,
-                   const char* error_desc, const std::string& magic_cookie) {
+void SendStunError(const StunMessage& msg,
+                   rtc::AsyncPacketSocket* socket,
+                   const rtc::SocketAddress& remote_addr,
+                   int error_code,
+                   const char* error_desc,
+                   const std::string& magic_cookie) {
   RelayMessage err_msg;
   err_msg.SetType(GetStunErrorResponseType(msg.type()));
   err_msg.SetTransactionID(msg.transaction_id());
@@ -82,8 +87,7 @@ void SendStunError(const StunMessage& msg, rtc::AsyncPacketSocket* socket,
 }
 
 RelayServer::RelayServer(rtc::Thread* thread)
-  : thread_(thread), random_(rtc::SystemTimeNanos()), log_bindings_(true) {
-}
+    : thread_(thread), random_(rtc::SystemTimeNanos()), log_bindings_(true) {}
 
 RelayServer::~RelayServer() {
   // Deleting the binding will cause it to be removed from the map.
@@ -143,8 +147,7 @@ void RelayServer::AddInternalServerSocket(rtc::AsyncSocket* socket,
   socket->SignalReadEvent.connect(this, &RelayServer::OnReadEvent);
 }
 
-void RelayServer::RemoveInternalServerSocket(
-    rtc::AsyncSocket* socket) {
+void RelayServer::RemoveInternalServerSocket(rtc::AsyncSocket* socket) {
   ServerSocketMap::iterator iter = server_sockets_.find(socket);
   RTC_DCHECK(iter != server_sockets_.end());
   server_sockets_.erase(iter);
@@ -182,11 +185,11 @@ void RelayServer::OnReadEvent(rtc::AsyncSocket* socket) {
   AcceptConnection(socket);
 }
 
-void RelayServer::OnInternalPacket(
-    rtc::AsyncPacketSocket* socket, const char* bytes, size_t size,
-    const rtc::SocketAddress& remote_addr,
-    const rtc::PacketTime& packet_time) {
-
+void RelayServer::OnInternalPacket(rtc::AsyncPacketSocket* socket,
+                                   const char* bytes,
+                                   size_t size,
+                                   const rtc::SocketAddress& remote_addr,
+                                   const rtc::PacketTime& packet_time) {
   // Get the address of the connection we just received on.
   rtc::SocketAddressPair ap(remote_addr, socket->GetLocalAddress());
   RTC_DCHECK(!ap.destination().IsNil());
@@ -227,11 +230,11 @@ void RelayServer::OnInternalPacket(
   }
 }
 
-void RelayServer::OnExternalPacket(
-    rtc::AsyncPacketSocket* socket, const char* bytes, size_t size,
-    const rtc::SocketAddress& remote_addr,
-    const rtc::PacketTime& packet_time) {
-
+void RelayServer::OnExternalPacket(rtc::AsyncPacketSocket* socket,
+                                   const char* bytes,
+                                   size_t size,
+                                   const rtc::SocketAddress& remote_addr,
+                                   const rtc::PacketTime& packet_time) {
   // Get the address of the connection we just received on.
   rtc::SocketAddressPair ap(remote_addr, socket->GetLocalAddress());
   RTC_DCHECK(!ap.destination().IsNil());
@@ -296,11 +299,12 @@ void RelayServer::OnExternalPacket(
   int_conn->Send(bytes, size, ext_conn->addr_pair().source());
 }
 
-bool RelayServer::HandleStun(
-    const char* bytes, size_t size, const rtc::SocketAddress& remote_addr,
-    rtc::AsyncPacketSocket* socket, std::string* username,
-    StunMessage* msg) {
-
+bool RelayServer::HandleStun(const char* bytes,
+                             size_t size,
+                             const rtc::SocketAddress& remote_addr,
+                             rtc::AsyncPacketSocket* socket,
+                             std::string* username,
+                             StunMessage* msg) {
   // Parse this into a stun message. Eat the message if this fails.
   rtc::ByteBufferReader buf(bytes, size);
   if (!msg->Read(&buf)) {
@@ -324,10 +328,10 @@ bool RelayServer::HandleStun(
   return true;
 }
 
-void RelayServer::HandleStunAllocate(
-    const char* bytes, size_t size, const rtc::SocketAddressPair& ap,
-    rtc::AsyncPacketSocket* socket) {
-
+void RelayServer::HandleStunAllocate(const char* bytes,
+                                     size_t size,
+                                     const rtc::SocketAddressPair& ap,
+                                     rtc::AsyncPacketSocket* socket) {
   // Make sure this is a valid STUN request.
   RelayMessage request;
   std::string username;
@@ -336,11 +340,7 @@ void RelayServer::HandleStunAllocate(
 
   // Make sure this is a an allocate request.
   if (request.type() != STUN_ALLOCATE_REQUEST) {
-    SendStunError(request,
-                  socket,
-                  ap.source(),
-                  600,
-                  "Operation Not Supported",
+    SendStunError(request, socket, ap.source(), 600, "Operation Not Supported",
                   "");
     return;
   }
@@ -386,9 +386,9 @@ void RelayServer::HandleStunAllocate(
   HandleStunAllocate(int_conn, request);
 }
 
-void RelayServer::HandleStun(
-    RelayServerConnection* int_conn, const char* bytes, size_t size) {
-
+void RelayServer::HandleStun(RelayServerConnection* int_conn,
+                             const char* bytes,
+                             size_t size) {
   // Make sure this is a valid STUN request.
   RelayMessage request;
   std::string username;
@@ -413,9 +413,8 @@ void RelayServer::HandleStun(
     int_conn->SendStunError(request, 600, "Operation Not Supported");
 }
 
-void RelayServer::HandleStunAllocate(
-    RelayServerConnection* int_conn, const StunMessage& request) {
-
+void RelayServer::HandleStunAllocate(RelayServerConnection* int_conn,
+                                     const StunMessage& request) {
   // Create a response message that includes an address with which external
   // clients can communicate.
 
@@ -430,10 +429,9 @@ void RelayServer::HandleStunAllocate(
   response.AddAttribute(std::move(magic_cookie_attr));
 
   RTC_DCHECK_GT(external_sockets_.size(), 0);
-  size_t index = random_.Rand(rtc::dchecked_cast<uint32_t>(
-      external_sockets_.size() - 1));
-  rtc::SocketAddress ext_addr =
-      external_sockets_[index]->GetLocalAddress();
+  size_t index =
+      random_.Rand(rtc::dchecked_cast<uint32_t>(external_sockets_.size() - 1));
+  rtc::SocketAddress ext_addr = external_sockets_[index]->GetLocalAddress();
 
   auto addr_attr = StunAttribute::CreateAddress(STUN_ATTR_MAPPED_ADDRESS);
   addr_attr->SetIP(ext_addr.ipaddr());
@@ -452,9 +450,8 @@ void RelayServer::HandleStunAllocate(
   int_conn->SendStun(response);
 }
 
-void RelayServer::HandleStunSend(
-    RelayServerConnection* int_conn, const StunMessage& request) {
-
+void RelayServer::HandleStunSend(RelayServerConnection* int_conn,
+                                 const StunMessage& request) {
   const StunAddressAttribute* addr_attr =
       request.GetAddress(STUN_ATTR_DESTINATION_ADDRESS);
   if (!addr_attr) {
@@ -533,14 +530,13 @@ void RelayServer::RemoveBinding(RelayServerBinding* binding) {
   }
 }
 
-void RelayServer::OnMessage(rtc::Message *pmsg) {
+void RelayServer::OnMessage(rtc::Message* pmsg) {
   static const uint32_t kMessageAcceptConnection = 1;
   RTC_DCHECK(pmsg->message_id == kMessageAcceptConnection);
 
   rtc::MessageData* data = pmsg->pdata;
   rtc::AsyncSocket* socket =
-      static_cast <rtc::TypedMessageData<rtc::AsyncSocket*>*>
-      (data)->data();
+      static_cast<rtc::TypedMessageData<rtc::AsyncSocket*>*>(data)->data();
   AcceptConnection(socket);
   delete data;
 }
@@ -554,8 +550,7 @@ void RelayServer::OnTimeout(RelayServerBinding* binding) {
 void RelayServer::AcceptConnection(rtc::AsyncSocket* server_socket) {
   // Check if someone is trying to connect to us.
   rtc::SocketAddress accept_addr;
-  rtc::AsyncSocket* accepted_socket =
-      server_socket->Accept(&accept_addr);
+  rtc::AsyncSocket* accepted_socket = server_socket->Accept(&accept_addr);
   if (accepted_socket != NULL) {
     // We had someone trying to connect, now check which protocol to
     // use and create a packet socket.
@@ -573,9 +568,10 @@ void RelayServer::AcceptConnection(rtc::AsyncSocket* server_socket) {
 }
 
 RelayServerConnection::RelayServerConnection(
-    RelayServerBinding* binding, const rtc::SocketAddressPair& addrs,
+    RelayServerBinding* binding,
+    const rtc::SocketAddressPair& addrs,
     rtc::AsyncPacketSocket* socket)
-  : binding_(binding), addr_pair_(addrs), socket_(socket), locked_(false) {
+    : binding_(binding), addr_pair_(addrs), socket_(socket), locked_(false) {
   // The creation of a new connection constitutes a use of the binding.
   binding_->NoteUsed();
 }
@@ -592,8 +588,9 @@ void RelayServerConnection::Send(const char* data, size_t size) {
   cricket::Send(socket_, data, size, addr_pair_.source());
 }
 
-void RelayServerConnection::Send(
-    const char* data, size_t size, const rtc::SocketAddress& from_addr) {
+void RelayServerConnection::Send(const char* data,
+                                 size_t size,
+                                 const rtc::SocketAddress& from_addr) {
   // If the from address is known to the client, we don't need to send it.
   if (locked() && (from_addr == default_dest_)) {
     Send(data, size);
@@ -631,14 +628,14 @@ void RelayServerConnection::SendStun(const StunMessage& msg) {
   cricket::SendStun(msg, socket_, addr_pair_.source());
 }
 
-void RelayServerConnection::SendStunError(
-      const StunMessage& request, int error_code, const char* error_desc) {
+void RelayServerConnection::SendStunError(const StunMessage& request,
+                                          int error_code,
+                                          const char* error_desc) {
   // An error does not indicate use.  If no legitimate use off the binding
   // occurs, we want it to be cleaned up even if errors are still occuring.
 
-  cricket::SendStunError(
-      request, socket_, addr_pair_.source(), error_code, error_desc,
-      binding_->magic_cookie());
+  cricket::SendStunError(request, socket_, addr_pair_.source(), error_code,
+                         error_desc, binding_->magic_cookie());
 }
 
 void RelayServerConnection::Lock() {
@@ -661,9 +658,8 @@ RelayServerBinding::RelayServerBinding(RelayServer* server,
       password_(password),
       lifetime_(lifetime) {
   // For now, every connection uses the standard magic cookie value.
-  magic_cookie_.append(
-      reinterpret_cast<const char*>(TURN_MAGIC_COOKIE_VALUE),
-      sizeof(TURN_MAGIC_COOKIE_VALUE));
+  magic_cookie_.append(reinterpret_cast<const char*>(TURN_MAGIC_COOKIE_VALUE),
+                       sizeof(TURN_MAGIC_COOKIE_VALUE));
 
   // Initialize the last-used time to now.
   NoteUsed();
@@ -709,7 +705,6 @@ bool RelayServerBinding::HasMagicCookie(const char* bytes, size_t size) const {
 
 RelayServerConnection* RelayServerBinding::GetInternalConnection(
     const rtc::SocketAddress& ext_addr) {
-
   // Look for an internal connection that is locked to this address.
   for (size_t i = 0; i < internal_connections_.size(); ++i) {
     if (internal_connections_[i]->locked() &&
@@ -731,7 +726,7 @@ RelayServerConnection* RelayServerBinding::GetExternalConnection(
   return 0;
 }
 
-void RelayServerBinding::OnMessage(rtc::Message *pmsg) {
+void RelayServerBinding::OnMessage(rtc::Message* pmsg) {
   if (pmsg->message_id == MSG_LIFETIME_TIMER) {
     RTC_DCHECK(!pmsg->pdata);
 

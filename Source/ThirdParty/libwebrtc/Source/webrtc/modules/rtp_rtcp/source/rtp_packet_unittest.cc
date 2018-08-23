@@ -196,50 +196,27 @@ TEST(RtpPacketTest, TryToCreateWithLongMid) {
   EXPECT_FALSE(packet.SetExtension<RtpMid>(kLongMid));
 }
 
-TEST(RtpPacketTest, CreateWithExtensionsWithoutManager) {
-  RtpPacketToSend packet(nullptr);
-  packet.SetPayloadType(kPayloadType);
-  packet.SetSequenceNumber(kSeqNum);
-  packet.SetTimestamp(kTimestamp);
-  packet.SetSsrc(kSsrc);
-
-  auto raw = packet.AllocateRawExtension(kTransmissionOffsetExtensionId,
-                                         TransmissionOffset::kValueSizeBytes);
-  EXPECT_EQ(raw.size(), TransmissionOffset::kValueSizeBytes);
-  TransmissionOffset::Write(raw.data(), kTimeOffset);
-
-  raw = packet.AllocateRawExtension(kAudioLevelExtensionId,
-                                    AudioLevel::kValueSizeBytes);
-  EXPECT_EQ(raw.size(), AudioLevel::kValueSizeBytes);
-  AudioLevel::Write(raw.data(), kVoiceActive, kAudioLevel);
-
-  EXPECT_THAT(kPacketWithTOAndAL,
-              ElementsAreArray(packet.data(), packet.size()));
-}
-
 TEST(RtpPacketTest, CreateWithMaxSizeHeaderExtension) {
-  const size_t kMaxExtensionSize = 16;
-  const int kId = 1;
-  const uint8_t kValue[16] = "123456789abcdef";
+  const std::string kValue = "123456789abcdef";
+  RtpPacket::ExtensionManager extensions;
+  extensions.Register<RtpMid>(1);
+  extensions.Register<RtpStreamId>(2);
 
-  // Write packet with a custom extension.
-  RtpPacketToSend packet(nullptr);
-  packet.SetRawExtension(kId, kValue);
-  // Using different size for same id is not allowed.
-  EXPECT_TRUE(packet.AllocateRawExtension(kId, kMaxExtensionSize - 1).empty());
+  RtpPacket packet(&extensions);
+  EXPECT_TRUE(packet.SetExtension<RtpMid>(kValue));
 
   packet.SetPayloadSize(42);
   // Rewriting allocated extension is allowed.
-  EXPECT_EQ(packet.AllocateRawExtension(kId, kMaxExtensionSize).size(),
-            kMaxExtensionSize);
+  EXPECT_TRUE(packet.SetExtension<RtpMid>(kValue));
   // Adding another extension after payload is set is not allowed.
-  EXPECT_TRUE(packet.AllocateRawExtension(kId + 1, kMaxExtensionSize).empty());
+  EXPECT_FALSE(packet.SetExtension<RtpStreamId>(kValue));
 
-  // Read packet with the custom extension.
-  RtpPacketReceived parsed;
+  // Read packet with the extension.
+  RtpPacketReceived parsed(&extensions);
   EXPECT_TRUE(parsed.Parse(packet.Buffer()));
-  auto read_raw = parsed.GetRawExtension(kId);
-  EXPECT_THAT(read_raw, ElementsAreArray(kValue, kMaxExtensionSize));
+  std::string read;
+  EXPECT_TRUE(parsed.GetExtension<RtpMid>(&read));
+  EXPECT_EQ(read, kValue);
 }
 
 TEST(RtpPacketTest, SetReservedExtensionsAfterPayload) {
@@ -426,23 +403,6 @@ TEST(RtpPacketTest, ParseWithExtensionDelayed) {
   EXPECT_EQ(0u, packet.padding_size());
 }
 
-TEST(RtpPacketTest, ParseWithoutExtensionManager) {
-  RtpPacketReceived packet;
-  EXPECT_TRUE(packet.Parse(kPacketWithTO, sizeof(kPacketWithTO)));
-
-  EXPECT_FALSE(packet.HasRawExtension(kAudioLevelExtensionId));
-  EXPECT_TRUE(packet.GetRawExtension(kAudioLevelExtensionId).empty());
-
-  EXPECT_TRUE(packet.HasRawExtension(kTransmissionOffsetExtensionId));
-
-  int32_t time_offset = 0;
-  auto raw_extension = packet.GetRawExtension(kTransmissionOffsetExtensionId);
-  EXPECT_EQ(raw_extension.size(), TransmissionOffset::kValueSizeBytes);
-  EXPECT_TRUE(TransmissionOffset::Parse(raw_extension, &time_offset));
-
-  EXPECT_EQ(time_offset, kTimeOffset);
-}
-
 TEST(RtpPacketTest, ParseDynamicSizeExtension) {
   // clang-format off
   const uint8_t kPacket1[] = {
@@ -493,23 +453,6 @@ TEST(RtpPacketTest, ParseWithMid) {
   EXPECT_EQ(mid, kMid);
 }
 
-TEST(RtpPacketTest, RawExtensionFunctionsAcceptZeroIdAndReturnFalse) {
-  RtpPacketReceived::ExtensionManager extensions;
-  RtpPacketReceived packet(&extensions);
-  // Use ExtensionManager to set kInvalidId to 0 to demonstrate natural way for
-  // using zero value as a parameter to Packet::*RawExtension functions.
-  const int kInvalidId = extensions.GetId(TransmissionOffset::kId);
-  ASSERT_EQ(kInvalidId, 0);
-
-  ASSERT_TRUE(packet.Parse(kPacket, sizeof(kPacket)));
-
-  EXPECT_FALSE(packet.HasRawExtension(kInvalidId));
-  EXPECT_THAT(packet.GetRawExtension(kInvalidId), IsEmpty());
-  const uint8_t kExtension[] = {'e', 'x', 't'};
-  EXPECT_FALSE(packet.SetRawExtension(kInvalidId, kExtension));
-  EXPECT_THAT(packet.AllocateRawExtension(kInvalidId, 3), IsEmpty());
-}
-
 TEST(RtpPacketTest, CreateAndParseTimingFrameExtension) {
   // Create a packet with video frame timing extension populated.
   RtpPacketToSend::ExtensionManager send_extensions;
@@ -526,7 +469,7 @@ TEST(RtpPacketTest, CreateAndParseTimingFrameExtension) {
   timing.packetization_finish_delta_ms = 3;
   timing.pacer_exit_delta_ms = 4;
   timing.flags =
-      TimingFrameFlags::kTriggeredByTimer + TimingFrameFlags::kTriggeredBySize;
+      VideoSendTiming::kTriggeredByTimer | VideoSendTiming::kTriggeredBySize;
 
   send_packet.SetExtension<VideoTimingExtension>(timing);
 

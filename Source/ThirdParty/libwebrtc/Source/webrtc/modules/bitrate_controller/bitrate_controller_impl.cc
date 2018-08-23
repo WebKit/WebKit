@@ -25,8 +25,7 @@ class BitrateControllerImpl::RtcpBandwidthObserverImpl
     : public RtcpBandwidthObserver {
  public:
   explicit RtcpBandwidthObserverImpl(BitrateControllerImpl* owner)
-      : owner_(owner) {
-  }
+      : owner_(owner) {}
   ~RtcpBandwidthObserverImpl() override = default;
   // Received RTCP REMB or TMMBR.
   void OnReceivedEstimatedBitrate(uint32_t bitrate) override {
@@ -102,8 +101,7 @@ void BitrateControllerImpl::SetBitrates(int start_bitrate_bps,
                                         int max_bitrate_bps) {
   {
     rtc::CritScope cs(&critsect_);
-    bandwidth_estimation_.SetBitrates(start_bitrate_bps,
-                                      min_bitrate_bps,
+    bandwidth_estimation_.SetBitrates(start_bitrate_bps, min_bitrate_bps,
                                       max_bitrate_bps);
   }
   MaybeTriggerOnNetworkChanged();

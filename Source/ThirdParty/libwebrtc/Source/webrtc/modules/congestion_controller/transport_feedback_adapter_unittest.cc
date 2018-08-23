@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "modules/bitrate_controller/include/mock/mock_bitrate_controller.h"
-#include "modules/congestion_controller/congestion_controller_unittests_helper.h"
+#include "modules/congestion_controller/rtp/congestion_controller_unittests_helper.h"
 #include "modules/congestion_controller/transport_feedback_adapter.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
@@ -34,7 +34,7 @@ const PacedPacketInfo kPacingInfo1(1, 8, 4000);
 const PacedPacketInfo kPacingInfo2(2, 14, 7000);
 const PacedPacketInfo kPacingInfo3(3, 20, 10000);
 const PacedPacketInfo kPacingInfo4(4, 22, 10000);
-}
+}  // namespace
 
 namespace test {
 
@@ -45,11 +45,11 @@ class MockPacketFeedbackObserver : public webrtc::PacketFeedbackObserver {
                void(const std::vector<PacketFeedback>& packet_feedback_vector));
 };
 
-class TransportFeedbackAdapterTest : public ::testing::Test {
+class LegacyTransportFeedbackAdapterTest : public ::testing::Test {
  public:
-  TransportFeedbackAdapterTest() : clock_(0) {}
+  LegacyTransportFeedbackAdapterTest() : clock_(0) {}
 
-  virtual ~TransportFeedbackAdapterTest() {}
+  virtual ~LegacyTransportFeedbackAdapterTest() {}
 
   virtual void SetUp() {
     adapter_.reset(new TransportFeedbackAdapter(&clock_));
@@ -78,15 +78,14 @@ class TransportFeedbackAdapterTest : public ::testing::Test {
   std::unique_ptr<TransportFeedbackAdapter> adapter_;
 };
 
-TEST_F(TransportFeedbackAdapterTest, ObserverSanity) {
+TEST_F(LegacyTransportFeedbackAdapterTest, ObserverSanity) {
   MockPacketFeedbackObserver mock;
   adapter_->RegisterPacketFeedbackObserver(&mock);
 
   const std::vector<PacketFeedback> packets = {
       PacketFeedback(100, 200, 0, 1000, kPacingInfo0),
       PacketFeedback(110, 210, 1, 2000, kPacingInfo0),
-      PacketFeedback(120, 220, 2, 3000, kPacingInfo0)
-  };
+      PacketFeedback(120, 220, 2, 3000, kPacingInfo0)};
 
   rtcp::TransportFeedback feedback;
   feedback.SetBase(packets[0].sequence_number,
@@ -119,14 +118,16 @@ TEST_F(TransportFeedbackAdapterTest, ObserverSanity) {
 }
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-TEST_F(TransportFeedbackAdapterTest, ObserverDoubleRegistrationDeathTest) {
+TEST_F(LegacyTransportFeedbackAdapterTest,
+       ObserverDoubleRegistrationDeathTest) {
   MockPacketFeedbackObserver mock;
   adapter_->RegisterPacketFeedbackObserver(&mock);
   EXPECT_DEATH(adapter_->RegisterPacketFeedbackObserver(&mock), "");
   adapter_->DeRegisterPacketFeedbackObserver(&mock);
 }
 
-TEST_F(TransportFeedbackAdapterTest, ObserverMissingDeRegistrationDeathTest) {
+TEST_F(LegacyTransportFeedbackAdapterTest,
+       ObserverMissingDeRegistrationDeathTest) {
   MockPacketFeedbackObserver mock;
   adapter_->RegisterPacketFeedbackObserver(&mock);
   EXPECT_DEATH(adapter_.reset(), "");
@@ -134,7 +135,8 @@ TEST_F(TransportFeedbackAdapterTest, ObserverMissingDeRegistrationDeathTest) {
 }
 #endif
 
-TEST_F(TransportFeedbackAdapterTest, AdaptsFeedbackAndPopulatesSendTimes) {
+TEST_F(LegacyTransportFeedbackAdapterTest,
+       AdaptsFeedbackAndPopulatesSendTimes) {
   std::vector<PacketFeedback> packets;
   packets.push_back(PacketFeedback(100, 200, 0, 1500, kPacingInfo0));
   packets.push_back(PacketFeedback(110, 210, 1, 1500, kPacingInfo0));
@@ -160,7 +162,7 @@ TEST_F(TransportFeedbackAdapterTest, AdaptsFeedbackAndPopulatesSendTimes) {
   ComparePacketFeedbackVectors(packets, adapter_->GetTransportFeedbackVector());
 }
 
-TEST_F(TransportFeedbackAdapterTest, FeedbackVectorReportsUnreceived) {
+TEST_F(LegacyTransportFeedbackAdapterTest, FeedbackVectorReportsUnreceived) {
   std::vector<PacketFeedback> sent_packets = {
       PacketFeedback(100, 220, 0, 1500, kPacingInfo0),
       PacketFeedback(110, 210, 1, 1500, kPacingInfo0),
@@ -168,8 +170,7 @@ TEST_F(TransportFeedbackAdapterTest, FeedbackVectorReportsUnreceived) {
       PacketFeedback(130, 230, 3, 1500, kPacingInfo0),
       PacketFeedback(140, 240, 4, 1500, kPacingInfo0),
       PacketFeedback(150, 250, 5, 1500, kPacingInfo0),
-      PacketFeedback(160, 260, 6, 1500, kPacingInfo0)
-  };
+      PacketFeedback(160, 260, 6, 1500, kPacingInfo0)};
 
   for (const PacketFeedback& packet : sent_packets)
     OnSentPacket(packet);
@@ -177,8 +178,7 @@ TEST_F(TransportFeedbackAdapterTest, FeedbackVectorReportsUnreceived) {
   // Note: Important to include the last packet, as only unreceived packets in
   // between received packets can be inferred.
   std::vector<PacketFeedback> received_packets = {
-    sent_packets[0], sent_packets[2], sent_packets[6]
-  };
+      sent_packets[0], sent_packets[2], sent_packets[6]};
 
   rtcp::TransportFeedback feedback;
   feedback.SetBase(received_packets[0].sequence_number,
@@ -196,7 +196,7 @@ TEST_F(TransportFeedbackAdapterTest, FeedbackVectorReportsUnreceived) {
                                adapter_->GetTransportFeedbackVector());
 }
 
-TEST_F(TransportFeedbackAdapterTest, HandlesDroppedPackets) {
+TEST_F(LegacyTransportFeedbackAdapterTest, HandlesDroppedPackets) {
   std::vector<PacketFeedback> packets;
   packets.push_back(PacketFeedback(100, 200, 0, 1500, kPacingInfo0));
   packets.push_back(PacketFeedback(110, 210, 1, 1500, kPacingInfo1));
@@ -240,7 +240,7 @@ TEST_F(TransportFeedbackAdapterTest, HandlesDroppedPackets) {
                                adapter_->GetTransportFeedbackVector());
 }
 
-TEST_F(TransportFeedbackAdapterTest, SendTimeWrapsBothWays) {
+TEST_F(LegacyTransportFeedbackAdapterTest, SendTimeWrapsBothWays) {
   int64_t kHighArrivalTimeMs = rtcp::TransportFeedback::kDeltaScaleFactor *
                                static_cast<int64_t>(1 << 8) *
                                static_cast<int64_t>((1 << 23) - 1) / 1000;
@@ -277,7 +277,7 @@ TEST_F(TransportFeedbackAdapterTest, SendTimeWrapsBothWays) {
   }
 }
 
-TEST_F(TransportFeedbackAdapterTest, HandlesArrivalReordering) {
+TEST_F(LegacyTransportFeedbackAdapterTest, HandlesArrivalReordering) {
   std::vector<PacketFeedback> packets;
   packets.push_back(PacketFeedback(120, 200, 0, 1500, kPacingInfo0));
   packets.push_back(PacketFeedback(110, 210, 1, 1500, kPacingInfo0));
@@ -304,7 +304,7 @@ TEST_F(TransportFeedbackAdapterTest, HandlesArrivalReordering) {
   ComparePacketFeedbackVectors(packets, adapter_->GetTransportFeedbackVector());
 }
 
-TEST_F(TransportFeedbackAdapterTest, TimestampDeltas) {
+TEST_F(LegacyTransportFeedbackAdapterTest, TimestampDeltas) {
   std::vector<PacketFeedback> sent_packets;
   const int64_t kSmallDeltaUs =
       rtcp::TransportFeedback::kDeltaScaleFactor * ((1 << 8) - 1);

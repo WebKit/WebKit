@@ -32,7 +32,6 @@
 #include "modules/include/module_common_types.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
 #include "rtc_base/constructormagic.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -45,7 +44,7 @@ class RtpPacketizerVp8 : public RtpPacketizer {
                    size_t max_payload_len,
                    size_t last_packet_reduction_len);
 
-  virtual ~RtpPacketizerVp8();
+  ~RtpPacketizerVp8() override;
 
   size_t SetPayloadData(const uint8_t* payload_data,
                         size_t payload_size,
@@ -82,13 +81,10 @@ class RtpPacketizerVp8 : public RtpPacketizer {
 
   // Splits given part of payload to packets with a given capacity. The last
   // packet should be reduced by last_packet_reduction_len_.
-  void GeneratePacketsSplitPayloadBalanced(size_t payload_len,
-                                           size_t capacity);
+  void GeneratePacketsSplitPayloadBalanced(size_t payload_len, size_t capacity);
 
   // Insert packet into packet queue.
-  void QueuePacket(size_t start_pos,
-                   size_t packet_size,
-                   bool first_packet);
+  void QueuePacket(size_t start_pos, size_t packet_size, bool first_packet);
 
   // Write the payload header and copy the payload to the buffer.
   // The info in packet_info determines which part of the payload is written
@@ -159,7 +155,7 @@ class RtpPacketizerVp8 : public RtpPacketizer {
 // Depacketizer for VP8.
 class RtpDepacketizerVp8 : public RtpDepacketizer {
  public:
-  virtual ~RtpDepacketizerVp8() {}
+  ~RtpDepacketizerVp8() override = default;
 
   bool Parse(ParsedPayload* parsed_payload,
              const uint8_t* payload_data,

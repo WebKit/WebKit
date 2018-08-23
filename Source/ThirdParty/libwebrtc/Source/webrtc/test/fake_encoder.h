@@ -11,8 +11,8 @@
 #ifndef TEST_FAKE_ENCODER_H_
 #define TEST_FAKE_ENCODER_H_
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include "api/video_codecs/video_encoder.h"
 #include "common_types.h"  // NOLINT(build/include)
@@ -42,7 +42,7 @@ class FakeEncoder : public VideoEncoder {
       EncodedImageCallback* callback) override;
   int32_t Release() override;
   int32_t SetChannelParameters(uint32_t packet_loss, int64_t rtt) override;
-  int32_t SetRateAllocation(const BitrateAllocation& rate_allocation,
+  int32_t SetRateAllocation(const VideoBitrateAllocation& rate_allocation,
                             uint32_t framerate) override;
   const char* ImplementationName() const override;
   int GetConfiguredInputFramerate() const;
@@ -53,7 +53,7 @@ class FakeEncoder : public VideoEncoder {
   Clock* const clock_;
   VideoCodec config_ RTC_GUARDED_BY(crit_sect_);
   EncodedImageCallback* callback_ RTC_GUARDED_BY(crit_sect_);
-  BitrateAllocation target_bitrate_ RTC_GUARDED_BY(crit_sect_);
+  VideoBitrateAllocation target_bitrate_ RTC_GUARDED_BY(crit_sect_);
   int configured_input_framerate_ RTC_GUARDED_BY(crit_sect_);
   int max_target_bitrate_kbps_ RTC_GUARDED_BY(crit_sect_);
   bool pending_keyframe_ RTC_GUARDED_BY(crit_sect_);
@@ -95,7 +95,7 @@ class DelayedEncoder : public test::FakeEncoder {
                  const std::vector<FrameType>* frame_types) override;
 
  private:
-  int delay_ms_ RTC_ACCESS_ON(sequence_checker_);
+  int delay_ms_ RTC_GUARDED_BY(sequence_checker_);
   rtc::SequencedTaskChecker sequence_checker_;
 };
 
@@ -125,9 +125,9 @@ class MultithreadedFakeH264Encoder : public test::FakeH264Encoder {
  protected:
   class EncodeTask;
 
-  int current_queue_ RTC_ACCESS_ON(sequence_checker_);
-  std::unique_ptr<rtc::TaskQueue> queue1_ RTC_ACCESS_ON(sequence_checker_);
-  std::unique_ptr<rtc::TaskQueue> queue2_ RTC_ACCESS_ON(sequence_checker_);
+  int current_queue_ RTC_GUARDED_BY(sequence_checker_);
+  std::unique_ptr<rtc::TaskQueue> queue1_ RTC_GUARDED_BY(sequence_checker_);
+  std::unique_ptr<rtc::TaskQueue> queue2_ RTC_GUARDED_BY(sequence_checker_);
   rtc::SequencedTaskChecker sequence_checker_;
 };
 

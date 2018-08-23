@@ -65,8 +65,8 @@ TEST(DelayPeakDetector, TriggerPeakMode) {
   int next = 1;  // Start with the second packet to get a proper IAT.
   while (next < kNumPackets) {
     while (next < kNumPackets && arrival_times_ms[next] <= time) {
-      int iat_packets = (arrival_times_ms[next] - arrival_times_ms[next - 1]) /
-          kPacketSizeMs;
+      int iat_packets =
+          (arrival_times_ms[next] - arrival_times_ms[next - 1]) / kPacketSizeMs;
       const int kTargetBufferLevel = 1;  // Define peaks to be iat > 2.
       if (time < peak_mode_start_ms || time > peak_mode_end_ms) {
         EXPECT_FALSE(detector.Update(iat_packets, kTargetBufferLevel));
@@ -112,8 +112,8 @@ TEST(DelayPeakDetector, DoNotTriggerPeakMode) {
   int next = 1;  // Start with the second packet to get a proper IAT.
   while (next < kNumPackets) {
     while (next < kNumPackets && arrival_times_ms[next] <= time) {
-      int iat_packets = (arrival_times_ms[next] - arrival_times_ms[next - 1]) /
-          kPacketSizeMs;
+      int iat_packets =
+          (arrival_times_ms[next] - arrival_times_ms[next - 1]) / kPacketSizeMs;
       const int kTargetBufferLevel = 2;  // Define peaks to be iat > 4.
       EXPECT_FALSE(detector.Update(iat_packets, kTargetBufferLevel));
       ++next;

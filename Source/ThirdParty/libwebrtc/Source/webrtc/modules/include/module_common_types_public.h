@@ -13,8 +13,7 @@
 
 #include <limits>
 
-#include "api/optional.h"
-#include "typedefs.h"  // NOLINT(build/include)
+#include "absl/types/optional.h"
 
 namespace webrtc {
 
@@ -68,9 +67,7 @@ class Unwrapper {
   }
 
   // Only update the internal state to the specified last (unwrapped) value.
-  void UpdateLast(int64_t last_value) {
-    last_value_ = last_value;
-  }
+  void UpdateLast(int64_t last_value) { last_value_ = last_value; }
 
   // Unwrap the value and update the internal state.
   int64_t Unwrap(U value) {
@@ -80,17 +77,21 @@ class Unwrapper {
   }
 
  private:
-  rtc::Optional<int64_t> last_value_;
+  absl::optional<int64_t> last_value_;
 };
 
 using SequenceNumberUnwrapper = Unwrapper<uint16_t>;
 using TimestampUnwrapper = Unwrapper<uint32_t>;
 
+// NB: Doesn't fulfill strict weak ordering requirements.
+//     Mustn't be used as std::map Compare function.
 inline bool IsNewerSequenceNumber(uint16_t sequence_number,
                                   uint16_t prev_sequence_number) {
   return IsNewer(sequence_number, prev_sequence_number);
 }
 
+// NB: Doesn't fulfill strict weak ordering requirements.
+//     Mustn't be used as std::map Compare function.
 inline bool IsNewerTimestamp(uint32_t timestamp, uint32_t prev_timestamp) {
   return IsNewer(timestamp, prev_timestamp);
 }

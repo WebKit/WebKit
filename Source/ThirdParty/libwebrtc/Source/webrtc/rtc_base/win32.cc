@@ -15,10 +15,10 @@
 #include <algorithm>
 
 #include "rtc_base/arraysize.h"
-#include "rtc_base/basictypes.h"
 #include "rtc_base/byteorder.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/stringutils.h"
 
 namespace rtc {
 
@@ -32,8 +32,10 @@ static int inet_pton_v6(const char* src, void* dst);
 // ip address). XP doesn't have its own inet_ntop, and
 // WSAAddressToString requires both IPv6 to be  installed and for Winsock
 // to be initialized.
-const char* win32_inet_ntop(int af, const void *src,
-                            char* dst, socklen_t size) {
+const char* win32_inet_ntop(int af,
+                            const void* src,
+                            char* dst,
+                            socklen_t size) {
   if (!src || !dst) {
     return nullptr;
   }
@@ -70,11 +72,9 @@ const char* inet_ntop_v4(const void* src, char* dst, socklen_t size) {
   }
   const struct in_addr* as_in_addr =
       reinterpret_cast<const struct in_addr*>(src);
-  rtc::sprintfn(dst, size, "%d.%d.%d.%d",
-                      as_in_addr->S_un.S_un_b.s_b1,
-                      as_in_addr->S_un.S_un_b.s_b2,
-                      as_in_addr->S_un.S_un_b.s_b3,
-                      as_in_addr->S_un.S_un_b.s_b4);
+  rtc::sprintfn(dst, size, "%d.%d.%d.%d", as_in_addr->S_un.S_un_b.s_b1,
+                as_in_addr->S_un.S_un_b.s_b2, as_in_addr->S_un.S_un_b.s_b3,
+                as_in_addr->S_un.S_un_b.s_b4);
   return dst;
 }
 
@@ -122,8 +122,8 @@ const char* inet_ntop_v6(const void* src, char* dst, socklen_t size) {
   // Print IPv4 compatible and IPv4 mapped addresses using the IPv4 helper.
   // These addresses have an initial run of either eight zero-bytes followed
   // by 0xFFFF, or an initial run of ten zero-bytes.
-  if (runpos[0] == 1 && (maxpos == 5 ||
-                         (maxpos == 4 && as_shorts[5] == 0xFFFF))) {
+  if (runpos[0] == 1 &&
+      (maxpos == 5 || (maxpos == 4 && as_shorts[5] == 0xFFFF))) {
     *cursor++ = ':';
     *cursor++ = ':';
     if (maxpos == 4) {
@@ -136,9 +136,8 @@ const char* inet_ntop_v6(const void* src, char* dst, socklen_t size) {
   } else {
     for (int i = 0; i < run_array_size; ++i) {
       if (runpos[i] == -1) {
-        cursor += rtc::sprintfn(cursor,
-                                      INET6_ADDRSTRLEN - (cursor - dst),
-                                      "%x", NetworkToHost16(as_shorts[i]));
+        cursor += rtc::sprintfn(cursor, INET6_ADDRSTRLEN - (cursor - dst), "%x",
+                                NetworkToHost16(as_shorts[i]));
         if (i != 7 && runpos[i + 1] != 1) {
           *cursor++ = ':';
         }
@@ -221,7 +220,7 @@ int inet_pton_v6(const char* src, void* dst) {
   // Addresses that start with "::" (i.e., a run of initial zeros) or
   // "::ffff:" can potentially be IPv4 mapped or compatibility addresses.
   // These have dotted-style IPv4 addresses on the end (e.g. "::192.168.7.1").
-  if (*readcursor == ':' && *(readcursor+1) == ':' &&
+  if (*readcursor == ':' && *(readcursor + 1) == ':' &&
       *(readcursor + 2) != 0) {
     // Check for periods, which we'll take as a sign of v4 addresses.
     const char* addrstart = readcursor + 2;
@@ -326,8 +325,8 @@ bool Utf8ToWindowsFilename(const std::string& utf8, std::wstring* filename) {
   }
   wchar_t* wfilename = STACK_ARRAY(wchar_t, wlen);
   if (0 == ::MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(),
-                                 static_cast<int>(utf8.length() + 1),
-                                 wfilename, wlen)) {
+                                 static_cast<int>(utf8.length() + 1), wfilename,
+                                 wlen)) {
     return false;
   }
   // Replace forward slashes with backslashes
@@ -368,9 +367,12 @@ bool GetOsVersion(int* major, int* minor, int* build) {
   OSVERSIONINFO info = {0};
   info.dwOSVersionInfoSize = sizeof(info);
   if (GetVersionEx(&info)) {
-    if (major) *major = info.dwMajorVersion;
-    if (minor) *minor = info.dwMinorVersion;
-    if (build) *build = info.dwBuildNumber;
+    if (major)
+      *major = info.dwMajorVersion;
+    if (minor)
+      *minor = info.dwMinorVersion;
+    if (build)
+      *build = info.dwBuildNumber;
     return true;
   }
   return false;
@@ -387,7 +389,6 @@ bool GetCurrentProcessIntegrityLevel(int* level) {
       TOKEN_MANDATORY_LABEL* til =
           reinterpret_cast<TOKEN_MANDATORY_LABEL*>(buf);
       if (GetTokenInformation(token, TokenIntegrityLevel, til, size, &size)) {
-
         DWORD count = *GetSidSubAuthorityCount(til->Label.Sid);
         *level = *GetSidSubAuthority(til->Label.Sid, count - 1);
         ret = true;

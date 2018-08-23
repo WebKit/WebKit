@@ -17,7 +17,6 @@ RTC_POP_IGNORING_WUNDEF()
 #include "rtc_tools/event_log_visualizer/plot_base.h"
 
 namespace webrtc {
-namespace plotting {
 
 class ProtobufPlot final : public Plot {
  public:
@@ -36,7 +35,6 @@ class ProtobufPlotCollection final : public PlotCollection {
   void ExportProtobuf(webrtc::analytics::ChartCollection* collection);
 };
 
-}  // namespace plotting
 }  // namespace webrtc
 
 #endif  // RTC_TOOLS_EVENT_LOG_VISUALIZER_PLOT_PROTOBUF_H_

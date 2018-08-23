@@ -21,7 +21,6 @@
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/thread_checker.h"
 #include "system_wrappers/include/event_wrapper.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -85,4 +84,4 @@ class ProcessThreadImpl : public ProcessThread {
 
 }  // namespace webrtc
 
-#endif // MODULES_UTILITY_SOURCE_PROCESS_THREAD_IMPL_H_
+#endif  // MODULES_UTILITY_SOURCE_PROCESS_THREAD_IMPL_H_

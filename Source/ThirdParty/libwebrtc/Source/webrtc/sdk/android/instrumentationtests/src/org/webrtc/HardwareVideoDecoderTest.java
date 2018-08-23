@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Nullable;
 import org.chromium.base.test.params.BaseJUnit4RunnerDelegate;
 import org.chromium.base.test.params.ParameterAnnotations.ClassParameter;
 import org.chromium.base.test.params.ParameterAnnotations.UseRunnerDelegate;
@@ -39,18 +40,28 @@ public final class HardwareVideoDecoderTest {
 
   static {
     CLASS_PARAMS.add(new ParameterSet()
-                         .value("VP8" /* codecType */, false /* useEglContext */)
+                         .value(/* codecName= */ "VP8", false /* useEglContext */)
                          .name("VP8WithoutEglContext"));
     CLASS_PARAMS.add(new ParameterSet()
-                         .value("VP8" /* codecType */, true /* useEglContext */)
+                         .value(/* codecName= */ "VP8", true /* useEglContext */)
                          .name("VP8WithEglContext"));
+    CLASS_PARAMS.add(new ParameterSet()
+                         .value(/* codecName= */ "H264", false /* useEglContext */)
+                         .name("H264WithoutEglContext"));
+    CLASS_PARAMS.add(new ParameterSet()
+                         .value(/* codecName= */ "H264", true /* useEglContext */)
+                         .name("H264WithEglContext"));
   }
 
-  private final String codecType;
+  private final VideoCodecInfo codecType;
   private final boolean useEglContext;
 
-  public HardwareVideoDecoderTest(String codecType, boolean useEglContext) {
-    this.codecType = codecType;
+  public HardwareVideoDecoderTest(String codecName, boolean useEglContext) {
+    if (codecName.equals("H264")) {
+      this.codecType = H264Utils.DEFAULT_H264_BASELINE_PROFILE_CODEC;
+    } else {
+      this.codecType = new VideoCodecInfo(codecName, new HashMap<>());
+    }
     this.useEglContext = useEglContext;
   }
 
@@ -59,17 +70,17 @@ public final class HardwareVideoDecoderTest {
   private static final int TEST_FRAME_COUNT = 10;
   private static final int TEST_FRAME_WIDTH = 640;
   private static final int TEST_FRAME_HEIGHT = 360;
-  private static final VideoFrame.I420Buffer[] TEST_FRAMES = generateTestFrames();
+  private VideoFrame.I420Buffer[] TEST_FRAMES;
 
   private static final boolean ENABLE_INTEL_VP8_ENCODER = true;
   private static final boolean ENABLE_H264_HIGH_PROFILE = true;
   private static final VideoEncoder.Settings ENCODER_SETTINGS =
-      new VideoEncoder.Settings(1 /* core */, 640 /* width */, 480 /* height */, 300 /* kbps */,
+      new VideoEncoder.Settings(1 /* core */, TEST_FRAME_WIDTH, TEST_FRAME_HEIGHT, 300 /* kbps */,
           30 /* fps */, true /* automaticResizeOn */);
 
   private static final int DECODE_TIMEOUT_MS = 1000;
   private static final VideoDecoder.Settings SETTINGS =
-      new VideoDecoder.Settings(1 /* core */, 640 /* width */, 480 /* height */);
+      new VideoDecoder.Settings(1 /* core */, TEST_FRAME_WIDTH, TEST_FRAME_HEIGHT);
 
   private static class MockDecodeCallback implements VideoDecoder.Callback {
     private BlockingQueue<VideoFrame> frameQueue = new LinkedBlockingQueue<>();
@@ -118,7 +129,7 @@ public final class HardwareVideoDecoderTest {
     return new HardwareVideoDecoderFactory(eglContext);
   }
 
-  private VideoDecoder createDecoder() {
+  private @Nullable VideoDecoder createDecoder() {
     VideoDecoderFactory factory =
         createDecoderFactory(useEglContext ? eglBase.getEglBaseContext() : null);
     return factory.createDecoder(codecType);
@@ -127,8 +138,7 @@ public final class HardwareVideoDecoderTest {
   private void encodeTestFrames() {
     VideoEncoderFactory encoderFactory = new HardwareVideoEncoderFactory(
         eglBase.getEglBaseContext(), ENABLE_INTEL_VP8_ENCODER, ENABLE_H264_HIGH_PROFILE);
-    VideoEncoder encoder =
-        encoderFactory.createEncoder(new VideoCodecInfo(codecType, new HashMap<>()));
+    VideoEncoder encoder = encoderFactory.createEncoder(codecType);
     HardwareVideoEncoderTest.MockEncoderCallback encodeCallback =
         new HardwareVideoEncoderTest.MockEncoderCallback();
     assertEquals(VideoCodecStatus.OK, encoder.initEncode(ENCODER_SETTINGS, encodeCallback));
@@ -148,7 +158,9 @@ public final class HardwareVideoDecoderTest {
 
   @Before
   public void setUp() {
-    NativeLibrary.initialize(new NativeLibrary.DefaultLoader());
+    NativeLibrary.initialize(new NativeLibrary.DefaultLoader(), TestConstants.NATIVE_LIBRARY);
+
+    TEST_FRAMES = generateTestFrames();
 
     eglBase = new EglBase14(null, EglBase.CONFIG_PLAIN);
     eglBase.createDummyPbufferSurface();

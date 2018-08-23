@@ -16,7 +16,7 @@
 
 ******************************************************************/
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /* Compute the energy of the rest of the cb memory
  * by step wise adding and subtracting the next

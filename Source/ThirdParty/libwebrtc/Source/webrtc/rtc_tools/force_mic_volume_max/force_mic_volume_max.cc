@@ -22,7 +22,7 @@ using webrtc::AudioDeviceModule;
 #define DEFAULT_INPUT_DEVICE (0)
 #endif
 
-int main(int /*argc*/, char** /*argv*/) {
+int main(int /*argc*/, char* /*argv*/ []) {
   // Create and initialize the ADM.
   rtc::scoped_refptr<AudioDeviceModule> adm(
       AudioDeviceModule::Create(AudioDeviceModule::kPlatformDefaultAudio));

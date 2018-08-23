@@ -23,64 +23,63 @@
 static const rtc::RTCCertificatePEM kRsaPems[] = {
     rtc::RTCCertificatePEM(
         "-----BEGIN RSA PRIVATE KEY-----\n"
-         "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAMYRkbhmI7kVA/rM\n"
-         "czsZ+6JDhDvnkF+vn6yCAGuRPV03zuRqZtDy4N4to7PZu9PjqrRl7nDMXrG3YG9y\n"
-         "rlIAZ72KjcKKFAJxQyAKLCIdawKRyp8RdK3LEySWEZb0AV58IadqPZDTNHHRX8dz\n"
-         "5aTSMsbbkZ+C/OzTnbiMqLL/vg6jAgMBAAECgYAvgOs4FJcgvp+TuREx7YtiYVsH\n"
-         "mwQPTum2z/8VzWGwR8BBHBvIpVe1MbD/Y4seyI2aco/7UaisatSgJhsU46/9Y4fq\n"
-         "2TwXH9QANf4at4d9n/R6rzwpAJOpgwZgKvdQjkfrKTtgLV+/dawvpxUYkRH4JZM1\n"
-         "CVGukMfKNrSVH4Ap4QJBAOJmGV1ASPnB4r4nc99at7JuIJmd7fmuVUwUgYi4XgaR\n"
-         "WhScBsgYwZ/JoywdyZJgnbcrTDuVcWG56B3vXbhdpMsCQQDf9zeJrjnPZ3Cqm79y\n"
-         "kdqANep0uwZciiNiWxsQrCHztywOvbFhdp8iYVFG9EK8DMY41Y5TxUwsHD+67zao\n"
-         "ZNqJAkEA1suLUP/GvL8IwuRneQd2tWDqqRQ/Td3qq03hP7e77XtF/buya3Ghclo5\n"
-         "54czUR89QyVfJEC6278nzA7n2h1uVQJAcG6mztNL6ja/dKZjYZye2CY44QjSlLo0\n"
-         "MTgTSjdfg/28fFn2Jjtqf9Pi/X+50LWI/RcYMC2no606wRk9kyOuIQJBAK6VSAim\n"
-         "1pOEjsYQn0X5KEIrz1G3bfCbB848Ime3U2/FWlCHMr6ch8kCZ5d1WUeJD3LbwMNG\n"
-         "UCXiYxSsu20QNVw=\n"
-         "-----END RSA PRIVATE KEY-----\n",
-         "-----BEGIN CERTIFICATE-----\n"
-         "MIIBmTCCAQKgAwIBAgIEbzBSAjANBgkqhkiG9w0BAQsFADARMQ8wDQYDVQQDEwZX\n"
-         "ZWJSVEMwHhcNMTQwMTAyMTgyNDQ3WhcNMTQwMjAxMTgyNDQ3WjARMQ8wDQYDVQQD\n"
-         "EwZXZWJSVEMwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAMYRkbhmI7kVA/rM\n"
-         "czsZ+6JDhDvnkF+vn6yCAGuRPV03zuRqZtDy4N4to7PZu9PjqrRl7nDMXrG3YG9y\n"
-         "rlIAZ72KjcKKFAJxQyAKLCIdawKRyp8RdK3LEySWEZb0AV58IadqPZDTNHHRX8dz\n"
-         "5aTSMsbbkZ+C/OzTnbiMqLL/vg6jAgMBAAEwDQYJKoZIhvcNAQELBQADgYEAUflI\n"
-         "VUe5Krqf5RVa5C3u/UTAOAUJBiDS3VANTCLBxjuMsvqOG0WvaYWP3HYPgrz0jXK2\n"
-         "LJE/mGw3MyFHEqi81jh95J+ypl6xKW6Rm8jKLR87gUvCaVYn/Z4/P3AqcQTB7wOv\n"
-         "UD0A8qfhfDM+LK6rPAnCsVN0NRDY3jvd6rzix9M=\n"
-         "-----END CERTIFICATE-----\n"),
+        "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAMYRkbhmI7kVA/rM\n"
+        "czsZ+6JDhDvnkF+vn6yCAGuRPV03zuRqZtDy4N4to7PZu9PjqrRl7nDMXrG3YG9y\n"
+        "rlIAZ72KjcKKFAJxQyAKLCIdawKRyp8RdK3LEySWEZb0AV58IadqPZDTNHHRX8dz\n"
+        "5aTSMsbbkZ+C/OzTnbiMqLL/vg6jAgMBAAECgYAvgOs4FJcgvp+TuREx7YtiYVsH\n"
+        "mwQPTum2z/8VzWGwR8BBHBvIpVe1MbD/Y4seyI2aco/7UaisatSgJhsU46/9Y4fq\n"
+        "2TwXH9QANf4at4d9n/R6rzwpAJOpgwZgKvdQjkfrKTtgLV+/dawvpxUYkRH4JZM1\n"
+        "CVGukMfKNrSVH4Ap4QJBAOJmGV1ASPnB4r4nc99at7JuIJmd7fmuVUwUgYi4XgaR\n"
+        "WhScBsgYwZ/JoywdyZJgnbcrTDuVcWG56B3vXbhdpMsCQQDf9zeJrjnPZ3Cqm79y\n"
+        "kdqANep0uwZciiNiWxsQrCHztywOvbFhdp8iYVFG9EK8DMY41Y5TxUwsHD+67zao\n"
+        "ZNqJAkEA1suLUP/GvL8IwuRneQd2tWDqqRQ/Td3qq03hP7e77XtF/buya3Ghclo5\n"
+        "54czUR89QyVfJEC6278nzA7n2h1uVQJAcG6mztNL6ja/dKZjYZye2CY44QjSlLo0\n"
+        "MTgTSjdfg/28fFn2Jjtqf9Pi/X+50LWI/RcYMC2no606wRk9kyOuIQJBAK6VSAim\n"
+        "1pOEjsYQn0X5KEIrz1G3bfCbB848Ime3U2/FWlCHMr6ch8kCZ5d1WUeJD3LbwMNG\n"
+        "UCXiYxSsu20QNVw=\n"
+        "-----END RSA PRIVATE KEY-----\n",
+        "-----BEGIN CERTIFICATE-----\n"
+        "MIIBmTCCAQKgAwIBAgIEbzBSAjANBgkqhkiG9w0BAQsFADARMQ8wDQYDVQQDEwZX\n"
+        "ZWJSVEMwHhcNMTQwMTAyMTgyNDQ3WhcNMTQwMjAxMTgyNDQ3WjARMQ8wDQYDVQQD\n"
+        "EwZXZWJSVEMwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAMYRkbhmI7kVA/rM\n"
+        "czsZ+6JDhDvnkF+vn6yCAGuRPV03zuRqZtDy4N4to7PZu9PjqrRl7nDMXrG3YG9y\n"
+        "rlIAZ72KjcKKFAJxQyAKLCIdawKRyp8RdK3LEySWEZb0AV58IadqPZDTNHHRX8dz\n"
+        "5aTSMsbbkZ+C/OzTnbiMqLL/vg6jAgMBAAEwDQYJKoZIhvcNAQELBQADgYEAUflI\n"
+        "VUe5Krqf5RVa5C3u/UTAOAUJBiDS3VANTCLBxjuMsvqOG0WvaYWP3HYPgrz0jXK2\n"
+        "LJE/mGw3MyFHEqi81jh95J+ypl6xKW6Rm8jKLR87gUvCaVYn/Z4/P3AqcQTB7wOv\n"
+        "UD0A8qfhfDM+LK6rPAnCsVN0NRDY3jvd6rzix9M=\n"
+        "-----END CERTIFICATE-----\n"),
     rtc::RTCCertificatePEM(
-         "-----BEGIN RSA PRIVATE KEY-----\n"
-         "MIICXQIBAAKBgQDeYqlyJ1wuiMsi905e3X81/WA/G3ym50PIDZBVtSwZi7JVQPgj\n"
-         "Bl8CPZMvDh9EwB4Ji9ytA8dZZbQ4WbJWPr73zPpJSCvQqz6sOXSlenBRi72acNaQ\n"
-         "sOR/qPvviJx5I6Hqo4qemfnjZhAW85a5BpgrAwKgMLIQTHCTLWwVSyrDrwIDAQAB\n"
-         "AoGARni9eY8/hv+SX+I+05EdXt6MQXNUbQ+cSykBNCfVccLzIFEWUQMT2IHqwl6X\n"
-         "ShIXcq7/n1QzOAEiuzixauM3YHg4xZ1Um2Ha9a7ig5Xg4v6b43bmMkNE6LkoAtYs\n"
-         "qnQdfMh442b1liDud6IMb1Qk0amt3fSrgRMc547TZQVx4QECQQDxUeDm94r3p4ng\n"
-         "5rCLLC1K5/6HSTZsh7jatKPlz7GfP/IZlYV7iE5784/n0wRiCjZOS7hQRy/8m2Gp\n"
-         "pf4aZq+DAkEA6+np4d36FYikydvUrupLT3FkdRHGn/v83qOll/VmeNh+L1xMZlIP\n"
-         "tM26hAXCcQb7O5+J9y3cx2CAQsBS11ZXZQJAfGgTo76WG9p5UEJdXUInD2jOZPwv\n"
-         "XIATolxh6kXKcijLLLlSmT7KB0inNYIpzkkpee+7U1d/u6B3FriGaSHq9QJBAM/J\n"
-         "ICnDdLCgwNvWVraVQC3BpwSB2pswvCFwq7py94V60XFvbw80Ogc6qIv98qvQxVlX\n"
-         "hJIEgA/PjEi+0ng94Q0CQQDm8XSDby35gmjO+6eRmJtAjtB7nguLvrPXM6CPXRmD\n"
-         "sRoBocpHw6j9UdzZ6qYG0FkdXZghezXFY58ro2BYYRR3\n"
-         "-----END RSA PRIVATE KEY-----\n",
-         "-----BEGIN CERTIFICATE-----\n"
-         "MIICWDCCAcGgAwIBAgIJALgDjxMbBOhbMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNV\n"
-         "BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX\n"
-         "aWRnaXRzIFB0eSBMdGQwHhcNMTUxMTEzMjIzMjEzWhcNMTYxMTEyMjIzMjEzWjBF\n"
-         "MQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50\n"
-         "ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKB\n"
-         "gQDeYqlyJ1wuiMsi905e3X81/WA/G3ym50PIDZBVtSwZi7JVQPgjBl8CPZMvDh9E\n"
-         "wB4Ji9ytA8dZZbQ4WbJWPr73zPpJSCvQqz6sOXSlenBRi72acNaQsOR/qPvviJx5\n"
-         "I6Hqo4qemfnjZhAW85a5BpgrAwKgMLIQTHCTLWwVSyrDrwIDAQABo1AwTjAdBgNV\n"
-         "HQ4EFgQUx2tbJdlcSTCepn09UdYORXKuSTAwHwYDVR0jBBgwFoAUx2tbJdlcSTCe\n"
-         "pn09UdYORXKuSTAwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOBgQAmp9Id\n"
-         "E716gHMqeBG4S2FCgVFCr0a0ugkaneQAN/c2L9CbMemEN9W6jvucUIVOtYd90dDW\n"
-         "lXuowWmT/JctPe3D2qt4yvYW3puECHk2tVQmrJOZiZiTRtWm6HxkmoUYHYp/DtaS\n"
-         "1Xe29gSTnZtI5sQCrGMzk3SGRSSs7ejLKiVDBQ==\n"
-         "-----END CERTIFICATE-----\n")
-};
+        "-----BEGIN RSA PRIVATE KEY-----\n"
+        "MIICXQIBAAKBgQDeYqlyJ1wuiMsi905e3X81/WA/G3ym50PIDZBVtSwZi7JVQPgj\n"
+        "Bl8CPZMvDh9EwB4Ji9ytA8dZZbQ4WbJWPr73zPpJSCvQqz6sOXSlenBRi72acNaQ\n"
+        "sOR/qPvviJx5I6Hqo4qemfnjZhAW85a5BpgrAwKgMLIQTHCTLWwVSyrDrwIDAQAB\n"
+        "AoGARni9eY8/hv+SX+I+05EdXt6MQXNUbQ+cSykBNCfVccLzIFEWUQMT2IHqwl6X\n"
+        "ShIXcq7/n1QzOAEiuzixauM3YHg4xZ1Um2Ha9a7ig5Xg4v6b43bmMkNE6LkoAtYs\n"
+        "qnQdfMh442b1liDud6IMb1Qk0amt3fSrgRMc547TZQVx4QECQQDxUeDm94r3p4ng\n"
+        "5rCLLC1K5/6HSTZsh7jatKPlz7GfP/IZlYV7iE5784/n0wRiCjZOS7hQRy/8m2Gp\n"
+        "pf4aZq+DAkEA6+np4d36FYikydvUrupLT3FkdRHGn/v83qOll/VmeNh+L1xMZlIP\n"
+        "tM26hAXCcQb7O5+J9y3cx2CAQsBS11ZXZQJAfGgTo76WG9p5UEJdXUInD2jOZPwv\n"
+        "XIATolxh6kXKcijLLLlSmT7KB0inNYIpzkkpee+7U1d/u6B3FriGaSHq9QJBAM/J\n"
+        "ICnDdLCgwNvWVraVQC3BpwSB2pswvCFwq7py94V60XFvbw80Ogc6qIv98qvQxVlX\n"
+        "hJIEgA/PjEi+0ng94Q0CQQDm8XSDby35gmjO+6eRmJtAjtB7nguLvrPXM6CPXRmD\n"
+        "sRoBocpHw6j9UdzZ6qYG0FkdXZghezXFY58ro2BYYRR3\n"
+        "-----END RSA PRIVATE KEY-----\n",
+        "-----BEGIN CERTIFICATE-----\n"
+        "MIICWDCCAcGgAwIBAgIJALgDjxMbBOhbMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNV\n"
+        "BAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX\n"
+        "aWRnaXRzIFB0eSBMdGQwHhcNMTUxMTEzMjIzMjEzWhcNMTYxMTEyMjIzMjEzWjBF\n"
+        "MQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50\n"
+        "ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKB\n"
+        "gQDeYqlyJ1wuiMsi905e3X81/WA/G3ym50PIDZBVtSwZi7JVQPgjBl8CPZMvDh9E\n"
+        "wB4Ji9ytA8dZZbQ4WbJWPr73zPpJSCvQqz6sOXSlenBRi72acNaQsOR/qPvviJx5\n"
+        "I6Hqo4qemfnjZhAW85a5BpgrAwKgMLIQTHCTLWwVSyrDrwIDAQABo1AwTjAdBgNV\n"
+        "HQ4EFgQUx2tbJdlcSTCepn09UdYORXKuSTAwHwYDVR0jBBgwFoAUx2tbJdlcSTCe\n"
+        "pn09UdYORXKuSTAwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOBgQAmp9Id\n"
+        "E716gHMqeBG4S2FCgVFCr0a0ugkaneQAN/c2L9CbMemEN9W6jvucUIVOtYd90dDW\n"
+        "lXuowWmT/JctPe3D2qt4yvYW3puECHk2tVQmrJOZiZiTRtWm6HxkmoUYHYp/DtaS\n"
+        "1Xe29gSTnZtI5sQCrGMzk3SGRSSs7ejLKiVDBQ==\n"
+        "-----END CERTIFICATE-----\n")};
 
 // ECDSA with EC_NIST_P256.
 // These PEM strings were created by generating an identity with
@@ -115,21 +114,19 @@ static const rtc::RTCCertificatePEM kEcdsaPems[] = {
         "IkzTd8/pHHkZjV0RnTT5nKSMkjzdV8MDK+alG4ZqE20EfSFz7vGQMJt6jpMzS03f\n"
         "nGswCgYIKoZIzj0EAwIDSAAwRQIgb/LBc8OtsC5lEDyjCP6M9xt5mwzUNrQBOFWZ\n"
         "1fE/g68CIQD7uoFfbiq6dTp8ZwzbwQ8jJf08KjriamqA9OW/4268Dw==\n"
-        "-----END CERTIFICATE-----\n")
-};
+        "-----END CERTIFICATE-----\n")};
 
 class FakeRTCCertificateGenerator
     : public rtc::RTCCertificateGeneratorInterface,
       public rtc::MessageHandler {
  public:
-  typedef rtc::TypedMessageData<rtc::scoped_refptr<
-      rtc::RTCCertificateGeneratorCallback> > MessageData;
+  typedef rtc::TypedMessageData<
+      rtc::scoped_refptr<rtc::RTCCertificateGeneratorCallback> >
+      MessageData;
 
   FakeRTCCertificateGenerator() : should_fail_(false), should_wait_(false) {}
 
-  void set_should_fail(bool should_fail) {
-    should_fail_ = should_fail;
-  }
+  void set_should_fail(bool should_fail) { should_fail_ = should_fail; }
 
   // If set to true, stalls the generation of the fake certificate until it is
   // set to false.
@@ -143,9 +140,9 @@ class FakeRTCCertificateGenerator
 
   void GenerateCertificateAsync(
       const rtc::KeyParams& key_params,
-      const rtc::Optional<uint64_t>& expires_ms,
-      const rtc::scoped_refptr<rtc::RTCCertificateGeneratorCallback>&
-          callback) override {
+      const absl::optional<uint64_t>& expires_ms,
+      const rtc::scoped_refptr<rtc::RTCCertificateGeneratorCallback>& callback)
+      override {
     // The certificates are created from constant PEM strings and use its coded
     // expiration time, we do not support modifying it.
     RTC_DCHECK(!expires_ms);
@@ -169,13 +166,13 @@ class FakeRTCCertificateGenerator
 
   static rtc::scoped_refptr<rtc::RTCCertificate> GenerateCertificate() {
     switch (rtc::KT_DEFAULT) {
-    case rtc::KT_RSA:
-      return rtc::RTCCertificate::FromPEM(kRsaPems[0]);
-    case rtc::KT_ECDSA:
-      return rtc::RTCCertificate::FromPEM(kEcdsaPems[0]);
-    default:
-      RTC_NOTREACHED();
-      return nullptr;
+      case rtc::KT_RSA:
+        return rtc::RTCCertificate::FromPEM(kRsaPems[0]);
+      case rtc::KT_ECDSA:
+        return rtc::RTCCertificate::FromPEM(kEcdsaPems[0]);
+      default:
+        RTC_NOTREACHED();
+        return nullptr;
     }
   }
 
@@ -188,13 +185,13 @@ class FakeRTCCertificateGenerator
 
   const rtc::RTCCertificatePEM& get_pem(const rtc::KeyType& key_type) const {
     switch (key_type) {
-    case rtc::KT_RSA:
-      return kRsaPems[key_index_];
-    case rtc::KT_ECDSA:
-      return kEcdsaPems[key_index_];
-    default:
-      RTC_NOTREACHED();
-      return kEcdsaPems[key_index_];
+      case rtc::KT_RSA:
+        return kRsaPems[key_index_];
+      case rtc::KT_ECDSA:
+        return kEcdsaPems[key_index_];
+      default:
+        RTC_NOTREACHED();
+        return kEcdsaPems[key_index_];
     }
   }
   const std::string& get_key(const rtc::KeyType& key_type) const {

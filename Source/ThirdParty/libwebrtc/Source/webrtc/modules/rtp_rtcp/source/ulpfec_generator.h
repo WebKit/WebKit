@@ -24,6 +24,7 @@ class FlexfecSender;
 class RedPacket {
  public:
   explicit RedPacket(size_t length);
+  ~RedPacket();
 
   void CreateHeader(const uint8_t* rtp_header,
                     size_t header_length,

@@ -20,6 +20,9 @@
 #include "system_wrappers/include/field_trial_default.h"  // nogncheck
 
 NSString * const kRTCFieldTrialAudioSendSideBweKey = @"WebRTC-Audio-SendSideBwe";
+NSString * const kRTCFieldTrialAudioSendSideBweForVideoKey = @"WebRTC-Audio-SendSideBwe-For-Video";
+NSString * const kRTCFieldTrialAudioForceNoTWCCKey = @"WebRTC-Audio-ForceNoTWCC";
+NSString * const kRTCFieldTrialAudioForceABWENoTWCCKey = @"WebRTC-Audio-ABWENoTWCC";
 NSString * const kRTCFieldTrialSendSideBweWithOverheadKey = @"WebRTC-SendSideBwe-WithOverhead";
 NSString * const kRTCFieldTrialFlexFec03AdvertisedKey = @"WebRTC-FlexFEC-03-Advertised";
 NSString * const kRTCFieldTrialFlexFec03Key = @"WebRTC-FlexFEC-03";

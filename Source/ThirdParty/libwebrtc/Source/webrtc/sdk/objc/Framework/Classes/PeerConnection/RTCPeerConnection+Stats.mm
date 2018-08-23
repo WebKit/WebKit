@@ -25,9 +25,7 @@ class StatsObserverAdapter : public StatsObserver {
     completion_handler_ = completionHandler;
   }
 
-  ~StatsObserverAdapter() {
-    completion_handler_ = nil;
-  }
+  ~StatsObserverAdapter() override { completion_handler_ = nil; }
 
   void OnComplete(const StatsReports& reports) override {
     RTC_DCHECK(completion_handler_);

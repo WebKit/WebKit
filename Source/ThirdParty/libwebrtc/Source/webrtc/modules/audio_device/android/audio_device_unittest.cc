@@ -92,6 +92,7 @@ class AudioStreamInterface {
  public:
   virtual void Write(const void* source, size_t num_frames) = 0;
   virtual void Read(void* destination, size_t num_frames) = 0;
+
  protected:
   virtual ~AudioStreamInterface() {}
 };
@@ -100,11 +101,10 @@ class AudioStreamInterface {
 // construction.
 class FileAudioStream : public AudioStreamInterface {
  public:
-  FileAudioStream(
-      size_t num_callbacks, const std::string& file_name, int sample_rate)
-      : file_size_in_bytes_(0),
-        sample_rate_(sample_rate),
-        file_pos_(0) {
+  FileAudioStream(size_t num_callbacks,
+                  const std::string& file_name,
+                  int sample_rate)
+      : file_size_in_bytes_(0), sample_rate_(sample_rate), file_pos_(0) {
     file_size_in_bytes_ = test::GetFileSize(file_name);
     sample_rate_ = sample_rate;
     EXPECT_GE(file_size_in_callbacks(), num_callbacks)
@@ -114,8 +114,8 @@ class FileAudioStream : public AudioStreamInterface {
     file_.reset(new int16_t[num_16bit_samples]);
     FILE* audio_file = fopen(file_name.c_str(), "rb");
     EXPECT_NE(audio_file, nullptr);
-    size_t num_samples_read = fread(
-        file_.get(), sizeof(int16_t), num_16bit_samples, audio_file);
+    size_t num_samples_read =
+        fread(file_.get(), sizeof(int16_t), num_16bit_samples, audio_file);
     EXPECT_EQ(num_samples_read, num_16bit_samples);
     fclose(audio_file);
   }
@@ -126,15 +126,14 @@ class FileAudioStream : public AudioStreamInterface {
   // Read samples from file stored in memory (at construction) and copy
   // |num_frames| (<=> 10ms) to the |destination| byte buffer.
   void Read(void* destination, size_t num_frames) override {
-    memcpy(destination,
-           static_cast<int16_t*> (&file_[file_pos_]),
+    memcpy(destination, static_cast<int16_t*>(&file_[file_pos_]),
            num_frames * sizeof(int16_t));
     file_pos_ += num_frames;
   }
 
   int file_size_in_seconds() const {
-    return static_cast<int>(
-        file_size_in_bytes_ / (kBytesPerSample * sample_rate_));
+    return static_cast<int>(file_size_in_bytes_ /
+                            (kBytesPerSample * sample_rate_));
   }
   size_t file_size_in_callbacks() const {
     return file_size_in_seconds() * kNumCallbacksPerSecond;
@@ -167,9 +166,7 @@ class FifoAudioStream : public AudioStreamInterface {
     EXPECT_NE(fifo_.get(), nullptr);
   }
 
-  ~FifoAudioStream() {
-    Flush();
-  }
+  ~FifoAudioStream() { Flush(); }
 
   // Allocate new memory, copy |num_frames| samples from |source| into memory
   // and add pointer to the memory location to end of the list.
@@ -181,9 +178,7 @@ class FifoAudioStream : public AudioStreamInterface {
       return;
     }
     int16_t* memory = new int16_t[frames_per_buffer_];
-    memcpy(static_cast<int16_t*> (&memory[0]),
-           source,
-           bytes_per_buffer_);
+    memcpy(static_cast<int16_t*>(&memory[0]), source, bytes_per_buffer_);
     rtc::CritScope lock(&lock_);
     fifo_->push_back(memory);
     const size_t size = fifo_->size();
@@ -206,24 +201,20 @@ class FifoAudioStream : public AudioStreamInterface {
     } else {
       int16_t* memory = fifo_->front();
       fifo_->pop_front();
-      memcpy(destination,
-             static_cast<int16_t*> (&memory[0]),
-             bytes_per_buffer_);
+      memcpy(destination, static_cast<int16_t*>(&memory[0]), bytes_per_buffer_);
       delete memory;
     }
   }
 
-  size_t size() const {
-    return fifo_->size();
-  }
+  size_t size() const { return fifo_->size(); }
 
-  size_t largest_size() const {
-    return largest_size_;
-  }
+  size_t largest_size() const { return largest_size_; }
 
   size_t average_size() const {
-    return (total_written_elements_ == 0) ? 0.0 : 0.5 + static_cast<float> (
-      total_written_elements_) / (write_count_ - kNumIgnoreFirstCallbacks);
+    return (total_written_elements_ == 0)
+               ? 0.0
+               : 0.5 + static_cast<float>(total_written_elements_) /
+                           (write_count_ - kNumIgnoreFirstCallbacks);
   }
 
  private:
@@ -255,8 +246,7 @@ class LatencyMeasuringAudioStream : public AudioStreamInterface {
         bytes_per_buffer_(frames_per_buffer_ * sizeof(int16_t)),
         play_count_(0),
         rec_count_(0),
-        pulse_time_(0) {
-  }
+        pulse_time_(0) {}
 
   // Insert periodic impulses in first two samples of |destination|.
   void Read(void* destination, size_t num_frames) override {
@@ -272,7 +262,7 @@ class LatencyMeasuringAudioStream : public AudioStreamInterface {
       }
       PRINT(".");
       const int16_t impulse = std::numeric_limits<int16_t>::max();
-      int16_t* ptr16 = static_cast<int16_t*> (destination);
+      int16_t* ptr16 = static_cast<int16_t*>(destination);
       for (size_t i = 0; i < 2; ++i) {
         ptr16[i] = impulse;
       }
@@ -289,19 +279,18 @@ class LatencyMeasuringAudioStream : public AudioStreamInterface {
       // been transmitted (sets |pulse_time_| to value larger than zero).
       return;
     }
-    const int16_t* ptr16 = static_cast<const int16_t*> (source);
+    const int16_t* ptr16 = static_cast<const int16_t*>(source);
     std::vector<int16_t> vec(ptr16, ptr16 + num_frames);
     // Find max value in the audio buffer.
     int max = *std::max_element(vec.begin(), vec.end());
     // Find index (element position in vector) of the max element.
-    int index_of_max = std::distance(vec.begin(),
-                                     std::find(vec.begin(), vec.end(),
-                                     max));
+    int index_of_max =
+        std::distance(vec.begin(), std::find(vec.begin(), vec.end(), max));
     if (max > kImpulseThreshold) {
       PRINTD("(%d,%d)", max, index_of_max);
       int64_t now_time = rtc::TimeMillis();
-      int extra_delay = IndexToMilliseconds(static_cast<double> (index_of_max));
-      PRINTD("[%d]", static_cast<int> (now_time - pulse_time_));
+      int extra_delay = IndexToMilliseconds(static_cast<double>(index_of_max));
+      PRINTD("[%d]", static_cast<int>(now_time - pulse_time_));
       PRINTD("[%d]", extra_delay);
       // Total latency is the difference between transmit time and detection
       // tome plus the extra delay within the buffer in which we detected the
@@ -315,9 +304,7 @@ class LatencyMeasuringAudioStream : public AudioStreamInterface {
     }
   }
 
-  size_t num_latency_values() const {
-    return latencies_.size();
-  }
+  size_t num_latency_values() const { return latencies_.size(); }
 
   int min_latency() const {
     if (latencies_.empty())
@@ -334,9 +321,9 @@ class LatencyMeasuringAudioStream : public AudioStreamInterface {
   int average_latency() const {
     if (latencies_.empty())
       return 0;
-    return 0.5 + static_cast<double> (
-        std::accumulate(latencies_.begin(), latencies_.end(), 0)) /
-        latencies_.size();
+    return 0.5 + static_cast<double>(
+                     std::accumulate(latencies_.begin(), latencies_.end(), 0)) /
+                     latencies_.size();
   }
 
   void PrintResults() const {
@@ -345,8 +332,8 @@ class LatencyMeasuringAudioStream : public AudioStreamInterface {
       PRINT("%d ", *it);
     }
     PRINT("\n");
-    PRINT("%s[min, max, avg]=[%d, %d, %d] ms\n", kTag,
-        min_latency(), max_latency(), average_latency());
+    PRINT("%s[min, max, avg]=[%d, %d, %d] ms\n", kTag, min_latency(),
+          max_latency(), average_latency());
   }
 
   int IndexToMilliseconds(double index) const {
@@ -405,7 +392,7 @@ class MockAudioTransportAndroid : public test::MockAudioTransport {
                                       const int32_t clockDrift,
                                       const uint32_t currentMicLevel,
                                       const bool keyPressed,
-                                      uint32_t& newMicLevel) {
+                                      uint32_t& newMicLevel) {  // NOLINT
     EXPECT_TRUE(rec_mode()) << "No test is expecting these callbacks.";
     rec_count_++;
     // Process the recorded audio stream if an AudioStreamInterface
@@ -424,7 +411,7 @@ class MockAudioTransportAndroid : public test::MockAudioTransport {
                                const size_t nChannels,
                                const uint32_t samplesPerSec,
                                void* audioSamples,
-                               size_t& nSamplesOut,
+                               size_t& nSamplesOut,  // NOLINT
                                int64_t* elapsed_time_ms,
                                int64_t* ntp_time_ms) {
     EXPECT_TRUE(play_mode()) << "No test is expecting these callbacks.";
@@ -473,8 +460,7 @@ class MockAudioTransportAndroid : public test::MockAudioTransport {
 // AudioDeviceTest test fixture.
 class AudioDeviceTest : public ::testing::Test {
  protected:
-  AudioDeviceTest()
-      : test_is_done_(EventWrapper::Create()) {
+  AudioDeviceTest() : test_is_done_(EventWrapper::Create()) {
     // One-time initialization of JVM and application context. Ensures that we
     // can do calls between C++ and Java. Initializes both Java and OpenSL ES
     // implementations.
@@ -487,22 +473,12 @@ class AudioDeviceTest : public ::testing::Test {
     record_parameters_ = audio_manager()->GetRecordAudioParameters();
     build_info_.reset(new BuildInfo());
   }
-  virtual ~AudioDeviceTest() {
-    EXPECT_EQ(0, audio_device_->Terminate());
-  }
+  virtual ~AudioDeviceTest() { EXPECT_EQ(0, audio_device_->Terminate()); }
 
-  int playout_sample_rate() const {
-    return playout_parameters_.sample_rate();
-  }
-  int record_sample_rate() const {
-    return record_parameters_.sample_rate();
-  }
-  size_t playout_channels() const {
-    return playout_parameters_.channels();
-  }
-  size_t record_channels() const {
-    return record_parameters_.channels();
-  }
+  int playout_sample_rate() const { return playout_parameters_.sample_rate(); }
+  int record_sample_rate() const { return record_parameters_.sample_rate(); }
+  size_t playout_channels() const { return playout_parameters_.channels(); }
+  size_t record_channels() const { return record_parameters_.channels(); }
   size_t playout_frames_per_10ms_buffer() const {
     return playout_parameters_.frames_per_10ms_buffer();
   }
@@ -527,8 +503,8 @@ class AudioDeviceTest : public ::testing::Test {
   }
 
   AudioManager* GetAudioManager(AudioDeviceModule* adm) const {
-    return static_cast<AudioDeviceModuleImpl*>(adm)->
-        GetAndroidAudioManagerForTest();
+    return static_cast<AudioDeviceModuleImpl*>(adm)
+        ->GetAndroidAudioManagerForTest();
   }
 
   AudioDeviceBuffer* audio_device_buffer() const {
@@ -546,9 +522,7 @@ class AudioDeviceTest : public ::testing::Test {
   std::string GetFileName(int sample_rate) {
     EXPECT_TRUE(sample_rate == 48000 || sample_rate == 44100);
     char fname[64];
-    snprintf(fname,
-             sizeof(fname),
-             "audio_device/audio_short%d",
+    snprintf(fname, sizeof(fname), "audio_device/audio_short%d",
              sample_rate / 1000);
     std::string file_name(webrtc::test::ResourcePath(fname, "pcm"));
     EXPECT_TRUE(test::FileExists(file_name));
@@ -684,8 +658,11 @@ TEST_F(AudioDeviceTest, VerifyDefaultAudioLayer) {
   const AudioDeviceModule::AudioLayer audio_layer = GetActiveAudioLayer();
   bool low_latency_output = audio_manager()->IsLowLatencyPlayoutSupported();
   bool low_latency_input = audio_manager()->IsLowLatencyRecordSupported();
+  bool aaudio = audio_manager()->IsAAudioSupported();
   AudioDeviceModule::AudioLayer expected_audio_layer;
-  if (low_latency_output && low_latency_input) {
+  if (aaudio) {
+    expected_audio_layer = AudioDeviceModule::kAndroidAAudioAudio;
+  } else if (low_latency_output && low_latency_input) {
     expected_audio_layer = AudioDeviceModule::kAndroidOpenSLESAudio;
   } else if (low_latency_output && !low_latency_input) {
     expected_audio_layer =
@@ -702,22 +679,56 @@ TEST_F(AudioDeviceTest, VerifyDefaultAudioLayer) {
 TEST_F(AudioDeviceTest, CorrectAudioLayerIsUsedForCombinedJavaOpenSLCombo) {
   AudioDeviceModule::AudioLayer expected_layer =
       AudioDeviceModule::kAndroidJavaInputAndOpenSLESOutputAudio;
-  AudioDeviceModule::AudioLayer active_layer = TestActiveAudioLayer(
-      expected_layer);
+  AudioDeviceModule::AudioLayer active_layer =
+      TestActiveAudioLayer(expected_layer);
   EXPECT_EQ(expected_layer, active_layer);
 }
 
 TEST_F(AudioDeviceTest, CorrectAudioLayerIsUsedForJavaInBothDirections) {
   AudioDeviceModule::AudioLayer expected_layer =
       AudioDeviceModule::kAndroidJavaAudio;
-  AudioDeviceModule::AudioLayer active_layer = TestActiveAudioLayer(
-      expected_layer);
+  AudioDeviceModule::AudioLayer active_layer =
+      TestActiveAudioLayer(expected_layer);
   EXPECT_EQ(expected_layer, active_layer);
 }
 
 TEST_F(AudioDeviceTest, CorrectAudioLayerIsUsedForOpenSLInBothDirections) {
   AudioDeviceModule::AudioLayer expected_layer =
       AudioDeviceModule::kAndroidOpenSLESAudio;
+  AudioDeviceModule::AudioLayer active_layer =
+      TestActiveAudioLayer(expected_layer);
+  EXPECT_EQ(expected_layer, active_layer);
+}
+
+// TODO(bugs.webrtc.org/8914)
+#if !defined(AUDIO_DEVICE_INCLUDE_ANDROID_AAUDIO)
+#define MAYBE_CorrectAudioLayerIsUsedForAAudioInBothDirections \
+  DISABLED_CorrectAudioLayerIsUsedForAAudioInBothDirections
+#else
+#define MAYBE_CorrectAudioLayerIsUsedForAAudioInBothDirections \
+  CorrectAudioLayerIsUsedForAAudioInBothDirections
+#endif
+TEST_F(AudioDeviceTest,
+       MAYBE_CorrectAudioLayerIsUsedForAAudioInBothDirections) {
+  AudioDeviceModule::AudioLayer expected_layer =
+      AudioDeviceModule::kAndroidAAudioAudio;
+  AudioDeviceModule::AudioLayer active_layer =
+      TestActiveAudioLayer(expected_layer);
+  EXPECT_EQ(expected_layer, active_layer);
+}
+
+// TODO(bugs.webrtc.org/8914)
+#if !defined(AUDIO_DEVICE_INCLUDE_ANDROID_AAUDIO)
+#define MAYBE_CorrectAudioLayerIsUsedForCombinedJavaAAudioCombo \
+  DISABLED_CorrectAudioLayerIsUsedForCombinedJavaAAudioCombo
+#else
+#define MAYBE_CorrectAudioLayerIsUsedForCombinedJavaAAudioCombo \
+  CorrectAudioLayerIsUsedForCombinedJavaAAudioCombo
+#endif
+TEST_F(AudioDeviceTest,
+       MAYBE_CorrectAudioLayerIsUsedForCombinedJavaAAudioCombo) {
+  AudioDeviceModule::AudioLayer expected_layer =
+      AudioDeviceModule::kAndroidJavaInputAndAAudioOutputAudio;
   AudioDeviceModule::AudioLayer active_layer =
       TestActiveAudioLayer(expected_layer);
   EXPECT_EQ(expected_layer, active_layer);
@@ -737,7 +748,7 @@ TEST_F(AudioDeviceTest, UsesCorrectDelayEstimateForHighLatencyOutputPath) {
 TEST_F(AudioDeviceTest, UsesCorrectDelayEstimateForLowLatencyOutputPath) {
   EXPECT_EQ(kLowLatencyModeDelayEstimateInMilliseconds,
             TestDelayOnAudioLayer(
-      AudioDeviceModule::kAndroidJavaInputAndOpenSLESOutputAudio));
+                AudioDeviceModule::kAndroidJavaInputAndOpenSLESOutputAudio));
 }
 
 // Ensure that the ADM internal audio device buffer is configured to use the
@@ -752,7 +763,6 @@ TEST_F(AudioDeviceTest, VerifyAudioDeviceBufferParameters) {
   EXPECT_EQ(record_parameters_.channels(),
             audio_device_buffer()->RecordingChannels());
 }
-
 
 TEST_F(AudioDeviceTest, InitTerminate) {
   // Initialization is part of the test fixture.
@@ -859,11 +869,8 @@ TEST_F(AudioDeviceTest, StartPlayoutVerifyCallbacks) {
   MockAudioTransportAndroid mock(kPlayout);
   mock.HandleCallbacks(test_is_done_.get(), nullptr, kNumCallbacks);
   EXPECT_CALL(mock, NeedMorePlayData(playout_frames_per_10ms_buffer(),
-                                     kBytesPerSample,
-                                     playout_channels(),
-                                     playout_sample_rate(),
-                                     NotNull(),
-                                     _, _, _))
+                                     kBytesPerSample, playout_channels(),
+                                     playout_sample_rate(), NotNull(), _, _, _))
       .Times(AtLeast(kNumCallbacks));
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartPlayout();
@@ -873,19 +880,15 @@ TEST_F(AudioDeviceTest, StartPlayoutVerifyCallbacks) {
 
 // Start recording and verify that the native audio layer starts feeding real
 // audio samples via the RecordedDataIsAvailable callback.
+// TODO(henrika): investigate if it is possible to perform a sanity check of
+// delay estimates as well (argument #6).
 TEST_F(AudioDeviceTest, StartRecordingVerifyCallbacks) {
   MockAudioTransportAndroid mock(kRecording);
   mock.HandleCallbacks(test_is_done_.get(), nullptr, kNumCallbacks);
-  EXPECT_CALL(mock, RecordedDataIsAvailable(NotNull(),
-                                            record_frames_per_10ms_buffer(),
-                                            kBytesPerSample,
-                                            record_channels(),
-                                            record_sample_rate(),
-                                            total_delay_ms(),
-                                            0,
-                                            0,
-                                            false,
-                                            _))
+  EXPECT_CALL(
+      mock, RecordedDataIsAvailable(NotNull(), record_frames_per_10ms_buffer(),
+                                    kBytesPerSample, record_channels(),
+                                    record_sample_rate(), _, 0, 0, false, _))
       .Times(AtLeast(kNumCallbacks));
 
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
@@ -894,29 +897,19 @@ TEST_F(AudioDeviceTest, StartRecordingVerifyCallbacks) {
   StopRecording();
 }
 
-
 // Start playout and recording (full-duplex audio) and verify that audio is
 // active in both directions.
 TEST_F(AudioDeviceTest, StartPlayoutAndRecordingVerifyCallbacks) {
   MockAudioTransportAndroid mock(kPlayout | kRecording);
-  mock.HandleCallbacks(test_is_done_.get(), nullptr,  kNumCallbacks);
+  mock.HandleCallbacks(test_is_done_.get(), nullptr, kNumCallbacks);
   EXPECT_CALL(mock, NeedMorePlayData(playout_frames_per_10ms_buffer(),
-                                     kBytesPerSample,
-                                     playout_channels(),
-                                     playout_sample_rate(),
-                                     NotNull(),
-                                     _, _, _))
+                                     kBytesPerSample, playout_channels(),
+                                     playout_sample_rate(), NotNull(), _, _, _))
       .Times(AtLeast(kNumCallbacks));
-  EXPECT_CALL(mock, RecordedDataIsAvailable(NotNull(),
-                                            record_frames_per_10ms_buffer(),
-                                            kBytesPerSample,
-                                            record_channels(),
-                                            record_sample_rate(),
-                                            total_delay_ms(),
-                                            0,
-                                            0,
-                                            false,
-                                            _))
+  EXPECT_CALL(
+      mock, RecordedDataIsAvailable(NotNull(), record_frames_per_10ms_buffer(),
+                                    kBytesPerSample, record_channels(),
+                                    record_sample_rate(), _, 0, 0, false, _))
       .Times(AtLeast(kNumCallbacks));
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartPlayout();
@@ -937,8 +930,7 @@ TEST_F(AudioDeviceTest, RunPlayoutWithFileAsSource) {
   std::string file_name = GetFileName(playout_sample_rate());
   std::unique_ptr<FileAudioStream> file_audio_stream(
       new FileAudioStream(num_callbacks, file_name, playout_sample_rate()));
-  mock.HandleCallbacks(test_is_done_.get(),
-                       file_audio_stream.get(),
+  mock.HandleCallbacks(test_is_done_.get(), file_audio_stream.get(),
                        num_callbacks);
   // SetMaxPlayoutVolume();
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
@@ -972,15 +964,14 @@ TEST_F(AudioDeviceTest, DISABLED_RunPlayoutAndRecordingInFullDuplex) {
   NiceMock<MockAudioTransportAndroid> mock(kPlayout | kRecording);
   std::unique_ptr<FifoAudioStream> fifo_audio_stream(
       new FifoAudioStream(playout_frames_per_10ms_buffer()));
-  mock.HandleCallbacks(test_is_done_.get(),
-                       fifo_audio_stream.get(),
+  mock.HandleCallbacks(test_is_done_.get(), fifo_audio_stream.get(),
                        kFullDuplexTimeInSec * kNumCallbacksPerSecond);
   SetMaxPlayoutVolume();
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartRecording();
   StartPlayout();
-  test_is_done_->Wait(std::max(kTestTimeOutInMilliseconds,
-                               1000 * kFullDuplexTimeInSec));
+  test_is_done_->Wait(
+      std::max(kTestTimeOutInMilliseconds, 1000 * kFullDuplexTimeInSec));
   StopPlayout();
   StopRecording();
 
@@ -1006,16 +997,15 @@ TEST_F(AudioDeviceTest, DISABLED_MeasureLoopbackLatency) {
   NiceMock<MockAudioTransportAndroid> mock(kPlayout | kRecording);
   std::unique_ptr<LatencyMeasuringAudioStream> latency_audio_stream(
       new LatencyMeasuringAudioStream(playout_frames_per_10ms_buffer()));
-  mock.HandleCallbacks(test_is_done_.get(),
-                       latency_audio_stream.get(),
+  mock.HandleCallbacks(test_is_done_.get(), latency_audio_stream.get(),
                        kMeasureLatencyTimeInSec * kNumCallbacksPerSecond);
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   SetMaxPlayoutVolume();
   DisableBuiltInAECIfAvailable();
   StartRecording();
   StartPlayout();
-  test_is_done_->Wait(std::max(kTestTimeOutInMilliseconds,
-                               1000 * kMeasureLatencyTimeInSec));
+  test_is_done_->Wait(
+      std::max(kTestTimeOutInMilliseconds, 1000 * kMeasureLatencyTimeInSec));
   StopPlayout();
   StopRecording();
   // Verify that the correct number of transmitted impulses are detected.

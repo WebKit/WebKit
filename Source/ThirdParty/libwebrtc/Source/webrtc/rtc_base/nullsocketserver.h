@@ -24,9 +24,7 @@ class NullSocketServer : public SocketServer {
   bool Wait(int cms, bool process_io) override;
   void WakeUp() override;
 
-  Socket* CreateSocket(int type) override;
   Socket* CreateSocket(int family, int type) override;
-  AsyncSocket* CreateAsyncSocket(int type) override;
   AsyncSocket* CreateAsyncSocket(int family, int type) override;
 
  private:

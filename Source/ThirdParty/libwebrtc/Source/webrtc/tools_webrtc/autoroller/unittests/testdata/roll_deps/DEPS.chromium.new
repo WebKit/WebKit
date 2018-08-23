@@ -1,0 +1,25 @@
+# DEPS file for unit tests.
+
+vars = {
+  'chromium_git': 'https://chromium.googlesource.com',
+
+  # This is updated compared to the DEPS file.
+  'buildtools_revision': '55ad626b08ef971fd82a62b7abb325359542952b',
+}
+
+deps = {
+  'src/buildtools':
+    Var('chromium_git') + '/chromium/buildtools.git' + '@' +  Var('buildtools_revision'),
+
+  'src/third_party/xstream': {
+      'packages': [
+          {
+              'package': 'chromium/third_party/xstream',
+              # This is updated compared to the DEPS file.
+              'version': 'version:1.10.0-cr0',
+          },
+      ],
+      'condition': 'checkout_android',
+      'dep_type': 'cipd',
+  },
+}

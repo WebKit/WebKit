@@ -14,12 +14,11 @@
 #include <string.h>
 
 #include "rtc_base/checks.h"
-#include "system_wrappers/include/aligned_malloc.h"
+#include "rtc_base/memory/aligned_malloc.h"
 
 namespace webrtc {
 
-FIRFilterNEON::~FIRFilterNEON() {
-}
+FIRFilterNEON::~FIRFilterNEON() {}
 
 FIRFilterNEON::FIRFilterNEON(const float* coefficients,
                              size_t coefficients_length,
@@ -40,8 +39,7 @@ FIRFilterNEON::FIRFilterNEON(const float* coefficients,
   for (size_t i = 0; i < coefficients_length; ++i) {
     coefficients_[i + padding] = coefficients[coefficients_length - i - 1];
   }
-  memset(state_.get(),
-         0.f,
+  memset(state_.get(), 0.f,
          (max_input_length + state_length_) * sizeof(state_[0]));
 }
 
@@ -60,8 +58,8 @@ void FIRFilterNEON::Filter(const float* in, size_t length, float* out) {
     float32x4_t m_in;
 
     for (size_t j = 0; j < coefficients_length_; j += 4) {
-       m_in = vld1q_f32(in_ptr + j);
-       m_sum = vmlaq_f32(m_sum, m_in, vld1q_f32(coef_ptr + j));
+      m_in = vld1q_f32(in_ptr + j);
+      m_sum = vmlaq_f32(m_sum, m_in, vld1q_f32(coef_ptr + j));
     }
 
     float32x2_t m_half = vadd_f32(vget_high_f32(m_sum), vget_low_f32(m_sum));

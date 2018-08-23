@@ -16,7 +16,6 @@
 #include <string>
 
 #include "api/video/video_frame.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace test {
@@ -86,7 +85,7 @@ class Y4mFrameWriterImpl : public YuvFrameWriterImpl {
 // LibJpeg is not available on iOS. This class will do nothing on iOS.
 class JpegFrameWriter {
  public:
-  JpegFrameWriter(const std::string &output_filename);
+  JpegFrameWriter(const std::string& output_filename);
   // Quality can be from 0 (worst) to 100 (best). Best quality is still lossy.
   // WriteFrame can be called only once. Subsequent calls will fail.
   bool WriteFrame(const VideoFrame& input_frame, int quality);

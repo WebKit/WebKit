@@ -19,15 +19,14 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_LSF_CHECK_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_LSF_CHECK_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  check for stability of lsf coefficients
  *---------------------------------------------------------------*/
 
-int WebRtcIlbcfix_LsfCheck(
-    int16_t *lsf, /* LSF parameters */
-    int dim, /* dimension of LSF */
-    int NoAn); /* No of analysis per frame */
+int WebRtcIlbcfix_LsfCheck(int16_t* lsf, /* LSF parameters */
+                           int dim,      /* dimension of LSF */
+                           int NoAn);    /* No of analysis per frame */
 
 #endif

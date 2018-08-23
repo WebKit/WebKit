@@ -15,7 +15,6 @@
 
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "rtc_base/constructormagic.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -85,9 +84,12 @@ class DspHelper {
   // locations and values are written to the arrays |peak_index| and
   // |peak_value|, respectively. Both arrays must hold at least |num_peaks|
   // elements.
-  static void PeakDetection(int16_t* data, size_t data_length,
-                            size_t num_peaks, int fs_mult,
-                            size_t* peak_index, int16_t* peak_value);
+  static void PeakDetection(int16_t* data,
+                            size_t data_length,
+                            size_t num_peaks,
+                            int fs_mult,
+                            size_t* peak_index,
+                            int16_t* peak_value);
 
   // Estimates the height and location of a maximum. The three values in the
   // array |signal_points| are used as basis for a parabolic fit, which is then
@@ -95,30 +97,40 @@ class DspHelper {
   // assumed to be from a 4 kHz signal, while the maximum, written to
   // |peak_index| and |peak_value| is given in the full sample rate, as
   // indicated by the sample rate multiplier |fs_mult|.
-  static void ParabolicFit(int16_t* signal_points, int fs_mult,
-                           size_t* peak_index, int16_t* peak_value);
+  static void ParabolicFit(int16_t* signal_points,
+                           int fs_mult,
+                           size_t* peak_index,
+                           int16_t* peak_value);
 
   // Calculates the sum-abs-diff for |signal| when compared to a displaced
   // version of itself. Returns the displacement lag that results in the minimum
   // distortion. The resulting distortion is written to |distortion_value|.
   // The values of |min_lag| and |max_lag| are boundaries for the search.
-  static size_t MinDistortion(const int16_t* signal, size_t min_lag,
-                           size_t max_lag, size_t length,
-                           int32_t* distortion_value);
+  static size_t MinDistortion(const int16_t* signal,
+                              size_t min_lag,
+                              size_t max_lag,
+                              size_t length,
+                              int32_t* distortion_value);
 
   // Mixes |length| samples from |input1| and |input2| together and writes the
   // result to |output|. The gain for |input1| starts at |mix_factor| (Q14) and
   // is decreased by |factor_decrement| (Q14) for each sample. The gain for
   // |input2| is the complement 16384 - mix_factor.
-  static void CrossFade(const int16_t* input1, const int16_t* input2,
-                        size_t length, int16_t* mix_factor,
-                        int16_t factor_decrement, int16_t* output);
+  static void CrossFade(const int16_t* input1,
+                        const int16_t* input2,
+                        size_t length,
+                        int16_t* mix_factor,
+                        int16_t factor_decrement,
+                        int16_t* output);
 
   // Scales |input| with an increasing gain. Applies |factor| (Q14) to the first
   // sample and increases the gain by |increment| (Q20) for each sample. The
   // result is written to |output|. |length| samples are processed.
-  static void UnmuteSignal(const int16_t* input, size_t length, int16_t* factor,
-                           int increment, int16_t* output);
+  static void UnmuteSignal(const int16_t* input,
+                           size_t length,
+                           int16_t* factor,
+                           int increment,
+                           int16_t* output);
 
   // Starts at unity gain and gradually fades out |signal|. For each sample,
   // the gain is reduced by |mute_slope| (Q14). |length| samples are processed.
@@ -129,9 +141,12 @@ class DspHelper {
   // samples to |output|. Compensates for the phase delay of the downsampling
   // filters if |compensate_delay| is true. Returns -1 if the input is too short
   // to produce |output_length| samples, otherwise 0.
-  static int DownsampleTo4kHz(const int16_t* input, size_t input_length,
-                              size_t output_length, int input_rate_hz,
-                              bool compensate_delay, int16_t* output);
+  static int DownsampleTo4kHz(const int16_t* input,
+                              size_t input_length,
+                              size_t output_length,
+                              int input_rate_hz,
+                              bool compensate_delay,
+                              int16_t* output);
 
  private:
   // Table of constants used in method DspHelper::ParabolicFit().

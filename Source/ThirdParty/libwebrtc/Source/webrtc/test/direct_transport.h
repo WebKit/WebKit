@@ -16,9 +16,9 @@
 
 #include "api/call/transport.h"
 #include "call/call.h"
+#include "call/fake_network_pipe.h"
 #include "rtc_base/sequenced_task_checker.h"
 #include "rtc_base/thread_annotations.h"
-#include "test/fake_network_pipe.h"
 #include "test/single_threaded_task_queue.h"
 
 namespace webrtc {
@@ -27,6 +27,15 @@ class Clock;
 class PacketReceiver;
 
 namespace test {
+class Demuxer {
+ public:
+  explicit Demuxer(const std::map<uint8_t, MediaType>& payload_type_map);
+  ~Demuxer() = default;
+  MediaType GetMediaType(const uint8_t* packet_data,
+                         const size_t packet_length) const;
+  const std::map<uint8_t, MediaType> payload_type_map_;
+  RTC_DISALLOW_COPY_AND_ASSIGN(Demuxer);
+};
 
 // Objects of this class are expected to be allocated and destroyed  on the
 // same task-queue - the one that's passed in via the constructor.
@@ -42,14 +51,13 @@ class DirectTransport : public Transport {
                   const std::map<uint8_t, MediaType>& payload_type_map);
 
   DirectTransport(SingleThreadedTaskQueueForTesting* task_queue,
-                  const FakeNetworkPipe::Config& config,
+                  std::unique_ptr<FakeNetworkPipe> pipe,
                   Call* send_call,
-                  std::unique_ptr<Demuxer> demuxer);
-
-  DirectTransport(SingleThreadedTaskQueueForTesting* task_queue,
-                  std::unique_ptr<FakeNetworkPipe> pipe, Call* send_call);
+                  const std::map<uint8_t, MediaType>& payload_type_map);
 
   ~DirectTransport() override;
+
+  void SetClockOffset(int64_t offset_ms);
 
   void SetConfig(const FakeNetworkPipe::Config& config);
 
@@ -67,6 +75,7 @@ class DirectTransport : public Transport {
 
  private:
   void SendPackets();
+  void SendPacket(const uint8_t* data, size_t length);
   void Start();
 
   Call* const send_call_;
@@ -76,7 +85,8 @@ class DirectTransport : public Transport {
   SingleThreadedTaskQueueForTesting::TaskId next_scheduled_task_
       RTC_GUARDED_BY(&sequence_checker_);
 
-  std::unique_ptr<FakeNetworkPipe> fake_network_;
+  const Demuxer demuxer_;
+  const std::unique_ptr<FakeNetworkPipe> fake_network_;
 
   rtc::SequencedTaskChecker sequence_checker_;
 };

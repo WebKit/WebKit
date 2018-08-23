@@ -13,34 +13,32 @@
 #include <stdlib.h>  // For malloc/free.
 
 #include "rtc_base/logging.h"
+#include "rtc_base/zero_memory.h"
 
 #include "third_party/libsrtp/crypto/include/crypto_kernel.h"
 #include "third_party/libsrtp/include/srtp.h"
 
 // Begin test case 0 */
 static const uint8_t kExternalHmacTestCase0Key[20] = {
-  0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b,
-  0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b,
-  0x0b, 0x0b, 0x0b, 0x0b
-};
+    0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b,
+    0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b, 0x0b};
 
 static const uint8_t kExternalHmacTestCase0Data[8] = {
-  0x48, 0x69, 0x20, 0x54, 0x68, 0x65, 0x72, 0x65   // "Hi There"
+    0x48, 0x69, 0x20, 0x54, 0x68, 0x65, 0x72, 0x65  // "Hi There"
 };
 
-static const uint8_t kExternalHmacFakeTag[10] = {
-  0xba, 0xdd, 0xba, 0xdd, 0xba, 0xdd, 0xba, 0xdd, 0xba, 0xdd
-};
+static const uint8_t kExternalHmacFakeTag[10] = {0xba, 0xdd, 0xba, 0xdd, 0xba,
+                                                 0xdd, 0xba, 0xdd, 0xba, 0xdd};
 
 static const srtp_auth_test_case_t kExternalHmacTestCase0 = {
-  20,                                                    // Octets in key
-  const_cast<uint8_t*>(kExternalHmacTestCase0Key),   // Key
-  8,                                                     // Octets in data
-  const_cast<uint8_t*>(kExternalHmacTestCase0Data),  // Data
-  10,                                                    // Octets in tag
-  const_cast<uint8_t*>(kExternalHmacFakeTag),          // Tag
-  NULL                                                   // Pointer to next
-                                                         // testcase
+    20,                                                // Octets in key
+    const_cast<uint8_t*>(kExternalHmacTestCase0Key),   // Key
+    8,                                                 // Octets in data
+    const_cast<uint8_t*>(kExternalHmacTestCase0Data),  // Data
+    10,                                                // Octets in tag
+    const_cast<uint8_t*>(kExternalHmacFakeTag),        // Tag
+    NULL                                               // Pointer to next
+                                                       // testcase
 };
 
 static const char kExternalHmacDescription[] =
@@ -48,17 +46,16 @@ static const char kExternalHmacDescription[] =
 
 // srtp_auth_type_t external_hmac is the hmac metaobject
 
-static const srtp_auth_type_t external_hmac  = {
-  external_hmac_alloc,
-  external_hmac_dealloc,
-  external_hmac_init,
-  external_hmac_compute,
-  external_hmac_update,
-  external_hmac_start,
-  const_cast<char*>(kExternalHmacDescription),
-  const_cast<srtp_auth_test_case_t*>(&kExternalHmacTestCase0),
-  EXTERNAL_HMAC_SHA1
-};
+static const srtp_auth_type_t external_hmac = {
+    external_hmac_alloc,
+    external_hmac_dealloc,
+    external_hmac_init,
+    external_hmac_compute,
+    external_hmac_update,
+    external_hmac_start,
+    const_cast<char*>(kExternalHmacDescription),
+    const_cast<srtp_auth_test_case_t*>(&kExternalHmacTestCase0),
+    EXTERNAL_HMAC_SHA1};
 
 srtp_err_status_t external_hmac_alloc(srtp_auth_t** a,
                                       int key_len,
@@ -94,9 +91,7 @@ srtp_err_status_t external_hmac_alloc(srtp_auth_t** a,
 }
 
 srtp_err_status_t external_hmac_dealloc(srtp_auth_t* a) {
-  // Zeroize entire state
-  memset(reinterpret_cast<uint8_t*>(a), 0,
-         sizeof(ExternalHmacContext) + sizeof(srtp_auth_t));
+  rtc::ExplicitZeroMemory(a, sizeof(ExternalHmacContext) + sizeof(srtp_auth_t));
 
   // Free memory
   delete[] a;

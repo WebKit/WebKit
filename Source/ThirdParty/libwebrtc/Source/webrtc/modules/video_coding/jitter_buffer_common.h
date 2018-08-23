@@ -11,8 +11,6 @@
 #ifndef MODULES_VIDEO_CODING_JITTER_BUFFER_COMMON_H_
 #define MODULES_VIDEO_CODING_JITTER_BUFFER_COMMON_H_
 
-#include "typedefs.h"  // NOLINT(build/include)
-
 namespace webrtc {
 
 // Used to estimate rolling average of packets per frame.
@@ -58,15 +56,6 @@ enum VCMFrameBufferStateEnum {
 };
 
 enum { kH264StartCodeLengthBytes = 4 };
-
-// Used to indicate if a received packet contain a complete NALU (or equivalent)
-enum VCMNaluCompleteness {
-  kNaluUnset = 0,     // Packet has not been filled.
-  kNaluComplete = 1,  // Packet can be decoded as is.
-  kNaluStart,         // Packet contain beginning of NALU
-  kNaluIncomplete,    // Packet is not beginning or end of NALU
-  kNaluEnd,           // Packet is the end of a NALU
-};
 }  // namespace webrtc
 
 #endif  // MODULES_VIDEO_CODING_JITTER_BUFFER_COMMON_H_

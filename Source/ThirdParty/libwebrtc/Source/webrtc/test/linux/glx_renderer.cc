@@ -22,15 +22,14 @@ namespace webrtc {
 namespace test {
 
 GlxRenderer::GlxRenderer(size_t width, size_t height)
-    : width_(width),
-      height_(height),
-      display_(NULL),
-      context_(NULL) {
+    : width_(width), height_(height), display_(NULL), context_(NULL) {
   assert(width > 0);
   assert(height > 0);
 }
 
-GlxRenderer::~GlxRenderer() { Destroy(); }
+GlxRenderer::~GlxRenderer() {
+  Destroy();
+}
 
 bool GlxRenderer::Init(const char* window_title) {
   if ((display_ = XOpenDisplay(NULL)) == NULL) {
@@ -41,9 +40,10 @@ bool GlxRenderer::Init(const char* window_title) {
   int screen = DefaultScreen(display_);
 
   XVisualInfo* vi;
-  int attr_list[] = { GLX_DOUBLEBUFFER, GLX_RGBA, GLX_RED_SIZE, 4,
-                      GLX_GREEN_SIZE, 4, GLX_BLUE_SIZE, 4, GLX_DEPTH_SIZE, 16,
-                      None, };
+  int attr_list[] = {
+      GLX_DOUBLEBUFFER, GLX_RGBA, GLX_RED_SIZE,   4,  GLX_GREEN_SIZE, 4,
+      GLX_BLUE_SIZE,    4,        GLX_DEPTH_SIZE, 16, None,
+  };
 
   if ((vi = glXChooseVisual(display_, screen, attr_list)) == NULL) {
     Destroy();
@@ -106,7 +106,8 @@ void GlxRenderer::Destroy() {
   }
 }
 
-GlxRenderer* GlxRenderer::Create(const char* window_title, size_t width,
+GlxRenderer* GlxRenderer::Create(const char* window_title,
+                                 size_t width,
                                  size_t height) {
   GlxRenderer* glx_renderer = new GlxRenderer(width, height);
   if (!glx_renderer->Init(window_title)) {
@@ -174,5 +175,5 @@ void GlxRenderer::OnFrame(const webrtc::VideoFrame& frame) {
     abort();
   }
 }
-}  // test
-}  // webrtc
+}  // namespace test
+}  // namespace webrtc

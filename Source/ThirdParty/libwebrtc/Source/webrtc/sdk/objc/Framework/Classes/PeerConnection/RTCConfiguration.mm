@@ -23,6 +23,7 @@
 @implementation RTCConfiguration
 
 @synthesize iceServers = _iceServers;
+@synthesize certificate = _certificate;
 @synthesize iceTransportPolicy = _iceTransportPolicy;
 @synthesize bundlePolicy = _bundlePolicy;
 @synthesize rtcpMuxPolicy = _rtcpMuxPolicy;
@@ -30,6 +31,7 @@
 @synthesize candidateNetworkPolicy = _candidateNetworkPolicy;
 @synthesize continualGatheringPolicy = _continualGatheringPolicy;
 @synthesize maxIPv6Networks = _maxIPv6Networks;
+@synthesize disableLinkLocalNetworks = _disableLinkLocalNetworks;
 @synthesize audioJitterBufferMaxPackets = _audioJitterBufferMaxPackets;
 @synthesize audioJitterBufferFastAccelerate = _audioJitterBufferFastAccelerate;
 @synthesize iceConnectionReceivingTimeout = _iceConnectionReceivingTimeout;
@@ -42,7 +44,9 @@
     _shouldPresumeWritableWhenFullyRelayed;
 @synthesize iceCheckMinInterval = _iceCheckMinInterval;
 @synthesize iceRegatherIntervalRange = _iceRegatherIntervalRange;
+@synthesize sdpSemantics = _sdpSemantics;
 @synthesize turnCustomizer = _turnCustomizer;
+@synthesize activeResetSrtpParams = _activeResetSrtpParams;
 
 - (instancetype)init {
   // Copy defaults.
@@ -60,6 +64,14 @@
       [iceServers addObject:iceServer];
     }
     _iceServers = iceServers;
+    if (!config.certificates.empty()) {
+      rtc::scoped_refptr<rtc::RTCCertificate> native_cert;
+      native_cert = config.certificates[0];
+      rtc::RTCCertificatePEM native_pem = native_cert->ToPEM();
+      _certificate =
+          [[RTCCertificate alloc] initWithPrivateKey:@(native_pem.private_key().c_str())
+                                         certificate:@(native_pem.certificate().c_str())];
+    }
     _iceTransportPolicy =
         [[self class] transportPolicyForTransportsType:config.type];
     _bundlePolicy =
@@ -75,6 +87,7 @@
     _continualGatheringPolicy =
         [[self class] continualGatheringPolicyForNativePolicy:nativePolicy];
     _maxIPv6Networks = config.max_ipv6_networks;
+    _disableLinkLocalNetworks = config.disable_link_local_networks;
     _audioJitterBufferMaxPackets = config.audio_jitter_buffer_max_packets;
     _audioJitterBufferFastAccelerate = config.audio_jitter_buffer_fast_accelerate;
     _iceConnectionReceivingTimeout = config.ice_connection_receiving_timeout;
@@ -94,33 +107,40 @@
       _iceRegatherIntervalRange =
           [[RTCIntervalRange alloc] initWithNativeIntervalRange:nativeIntervalRange];
     }
+    _sdpSemantics = [[self class] sdpSemanticsForNativeSdpSemantics:config.sdp_semantics];
     _turnCustomizer = config.turn_customizer;
+    _activeResetSrtpParams = config.active_reset_srtp_params;
   }
   return self;
 }
 
 - (NSString *)description {
-  return
-      [NSString stringWithFormat:
-                    @"RTCConfiguration: "
-                    @"{\n%@\n%@\n%@\n%@\n%@\n%@\n%@\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%@\n%@\n%d\n}\n",
-                    _iceServers,
-                    [[self class] stringForTransportPolicy:_iceTransportPolicy],
-                    [[self class] stringForBundlePolicy:_bundlePolicy],
-                    [[self class] stringForRtcpMuxPolicy:_rtcpMuxPolicy],
-                    [[self class] stringForTcpCandidatePolicy:_tcpCandidatePolicy],
-                    [[self class] stringForCandidateNetworkPolicy:_candidateNetworkPolicy],
-                    [[self class] stringForContinualGatheringPolicy:_continualGatheringPolicy],
-                    _audioJitterBufferMaxPackets,
-                    _audioJitterBufferFastAccelerate,
-                    _iceConnectionReceivingTimeout,
-                    _iceBackupCandidatePairPingInterval,
-                    _iceCandidatePoolSize,
-                    _shouldPruneTurnPorts,
-                    _shouldPresumeWritableWhenFullyRelayed,
-                    _iceCheckMinInterval,
-                    _iceRegatherIntervalRange,
-                    _maxIPv6Networks];
+  static NSString *formatString =
+      @"RTCConfiguration: "
+      @"{\n%@\n%@\n%@\n%@\n%@\n%@\n%@\n%@\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%@\n%@\n%d\n%d\n%d\n}\n";
+
+  return [NSString
+      stringWithFormat:formatString,
+                       _iceServers,
+                       [[self class] stringForTransportPolicy:_iceTransportPolicy],
+                       [[self class] stringForBundlePolicy:_bundlePolicy],
+                       [[self class] stringForRtcpMuxPolicy:_rtcpMuxPolicy],
+                       [[self class] stringForTcpCandidatePolicy:_tcpCandidatePolicy],
+                       [[self class] stringForCandidateNetworkPolicy:_candidateNetworkPolicy],
+                       [[self class] stringForContinualGatheringPolicy:_continualGatheringPolicy],
+                       [[self class] stringForSdpSemantics:_sdpSemantics],
+                       _audioJitterBufferMaxPackets,
+                       _audioJitterBufferFastAccelerate,
+                       _iceConnectionReceivingTimeout,
+                       _iceBackupCandidatePairPingInterval,
+                       _iceCandidatePoolSize,
+                       _shouldPruneTurnPorts,
+                       _shouldPresumeWritableWhenFullyRelayed,
+                       _iceCheckMinInterval,
+                       _iceRegatherIntervalRange,
+                       _disableLinkLocalNetworks,
+                       _maxIPv6Networks,
+                       _activeResetSrtpParams];
 }
 
 #pragma mark - Private
@@ -147,6 +167,7 @@
   nativeConfig->continual_gathering_policy = [[self class]
       nativeContinualGatheringPolicyForPolicy:_continualGatheringPolicy];
   nativeConfig->max_ipv6_networks = _maxIPv6Networks;
+  nativeConfig->disable_link_local_networks = _disableLinkLocalNetworks;
   nativeConfig->audio_jitter_buffer_max_packets = _audioJitterBufferMaxPackets;
   nativeConfig->audio_jitter_buffer_fast_accelerate =
       _audioJitterBufferFastAccelerate  ? true : false;
@@ -156,34 +177,51 @@
       _iceBackupCandidatePairPingInterval;
   rtc::KeyType keyType =
       [[self class] nativeEncryptionKeyTypeForKeyType:_keyType];
-  // Generate non-default certificate.
-  if (keyType != rtc::KT_DEFAULT) {
-    rtc::scoped_refptr<rtc::RTCCertificate> certificate =
-        rtc::RTCCertificateGenerator::GenerateCertificate(
-            rtc::KeyParams(keyType), rtc::Optional<uint64_t>());
+  if (_certificate != nullptr) {
+    // if offered a pemcert use it...
+    RTC_LOG(LS_INFO) << "Have configured cert - using it.";
+    std::string pem_private_key = [[_certificate private_key] UTF8String];
+    std::string pem_certificate = [[_certificate certificate] UTF8String];
+    rtc::RTCCertificatePEM pem = rtc::RTCCertificatePEM(pem_private_key, pem_certificate);
+    rtc::scoped_refptr<rtc::RTCCertificate> certificate = rtc::RTCCertificate::FromPEM(pem);
+    RTC_LOG(LS_INFO) << "Created cert from PEM strings.";
     if (!certificate) {
-      RTCLogError(@"Failed to generate certificate.");
+      RTC_LOG(LS_ERROR) << "Failed to generate certificate from PEM.";
       return nullptr;
     }
     nativeConfig->certificates.push_back(certificate);
+  } else {
+    RTC_LOG(LS_INFO) << "Don't have configured cert.";
+    // Generate non-default certificate.
+    if (keyType != rtc::KT_DEFAULT) {
+      rtc::scoped_refptr<rtc::RTCCertificate> certificate =
+          rtc::RTCCertificateGenerator::GenerateCertificate(rtc::KeyParams(keyType),
+                                                            absl::optional<uint64_t>());
+      if (!certificate) {
+        RTCLogError(@"Failed to generate certificate.");
+        return nullptr;
+      }
+      nativeConfig->certificates.push_back(certificate);
+    }
   }
   nativeConfig->ice_candidate_pool_size = _iceCandidatePoolSize;
   nativeConfig->prune_turn_ports = _shouldPruneTurnPorts ? true : false;
   nativeConfig->presume_writable_when_fully_relayed =
       _shouldPresumeWritableWhenFullyRelayed ? true : false;
   if (_iceCheckMinInterval != nil) {
-    nativeConfig->ice_check_min_interval =
-        rtc::Optional<int>(_iceCheckMinInterval.intValue);
+    nativeConfig->ice_check_min_interval = absl::optional<int>(_iceCheckMinInterval.intValue);
   }
   if (_iceRegatherIntervalRange != nil) {
     std::unique_ptr<rtc::IntervalRange> nativeIntervalRange(
         _iceRegatherIntervalRange.nativeIntervalRange);
     nativeConfig->ice_regather_interval_range =
-        rtc::Optional<rtc::IntervalRange>(*nativeIntervalRange);
+        absl::optional<rtc::IntervalRange>(*nativeIntervalRange);
   }
+  nativeConfig->sdp_semantics = [[self class] nativeSdpSemanticsForSdpSemantics:_sdpSemantics];
   if (_turnCustomizer) {
     nativeConfig->turn_customizer = _turnCustomizer;
   }
+  nativeConfig->active_reset_srtp_params = _activeResetSrtpParams ? true : false;
   return nativeConfig.release();
 }
 
@@ -389,6 +427,33 @@
       return rtc::KT_RSA;
     case RTCEncryptionKeyTypeECDSA:
       return rtc::KT_ECDSA;
+  }
+}
+
++ (webrtc::SdpSemantics)nativeSdpSemanticsForSdpSemantics:(RTCSdpSemantics)sdpSemantics {
+  switch (sdpSemantics) {
+    case RTCSdpSemanticsPlanB:
+      return webrtc::SdpSemantics::kPlanB;
+    case RTCSdpSemanticsUnifiedPlan:
+      return webrtc::SdpSemantics::kUnifiedPlan;
+  }
+}
+
++ (RTCSdpSemantics)sdpSemanticsForNativeSdpSemantics:(webrtc::SdpSemantics)sdpSemantics {
+  switch (sdpSemantics) {
+    case webrtc::SdpSemantics::kPlanB:
+      return RTCSdpSemanticsPlanB;
+    case webrtc::SdpSemantics::kUnifiedPlan:
+      return RTCSdpSemanticsUnifiedPlan;
+  }
+}
+
++ (NSString *)stringForSdpSemantics:(RTCSdpSemantics)sdpSemantics {
+  switch (sdpSemantics) {
+    case RTCSdpSemanticsPlanB:
+      return @"PLAN_B";
+    case RTCSdpSemanticsUnifiedPlan:
+      return @"UNIFIED_PLAN";
   }
 }
 

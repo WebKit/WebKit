@@ -19,23 +19,23 @@ namespace rtc {
 // identify a connection between two machines.  (For UDP, this "connection" is
 // not maintained explicitly in a socket.)
 class SocketAddressPair {
-public:
+ public:
   SocketAddressPair() {}
   SocketAddressPair(const SocketAddress& srs, const SocketAddress& dest);
 
   const SocketAddress& source() const { return src_; }
   const SocketAddress& destination() const { return dest_; }
 
-  bool operator ==(const SocketAddressPair& r) const;
-  bool operator <(const SocketAddressPair& r) const;
+  bool operator==(const SocketAddressPair& r) const;
+  bool operator<(const SocketAddressPair& r) const;
 
   size_t Hash() const;
 
-private:
+ private:
   SocketAddress src_;
   SocketAddress dest_;
 };
 
-} // namespace rtc
+}  // namespace rtc
 
-#endif // RTC_BASE_SOCKETADDRESSPAIR_H_
+#endif  // RTC_BASE_SOCKETADDRESSPAIR_H_

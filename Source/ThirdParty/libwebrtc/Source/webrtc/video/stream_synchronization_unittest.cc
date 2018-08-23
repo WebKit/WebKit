@@ -31,8 +31,7 @@ static const int kSmoothingFilter = 4 * 2;
 class Time {
  public:
   explicit Time(int64_t offset)
-      : kNtpJan1970(2208988800UL),
-        time_now_ms_(offset) {}
+      : kNtpJan1970(2208988800UL), time_now_ms_(offset) {}
 
   NtpTime GetNowNtp() const {
     uint32_t ntp_secs = time_now_ms_ / 1000 + kNtpJan1970;
@@ -46,13 +45,9 @@ class Time {
     return frequency * time_now_ms_ / 1000 + offset;
   }
 
-  void IncreaseTimeMs(int64_t inc) {
-    time_now_ms_ += inc;
-  }
+  void IncreaseTimeMs(int64_t inc) { time_now_ms_ += inc; }
 
-  int64_t time_now_ms() const {
-    return time_now_ms_;
-  }
+  int64_t time_now_ms() const { return time_now_ms_; }
 
  private:
   // January 1970, in NTP seconds.
@@ -87,11 +82,11 @@ class StreamSynchronizationTest : public ::testing::Test {
                       int current_audio_delay_ms,
                       int* extra_audio_delay_ms,
                       int* total_video_delay_ms) {
-    int audio_frequency = static_cast<int>(kDefaultAudioFrequency *
-                                           audio_clock_drift_ + 0.5);
+    int audio_frequency =
+        static_cast<int>(kDefaultAudioFrequency * audio_clock_drift_ + 0.5);
     int audio_offset = 0;
-    int video_frequency = static_cast<int>(kDefaultVideoFrequency *
-                                           video_clock_drift_ + 0.5);
+    int video_frequency =
+        static_cast<int>(kDefaultVideoFrequency * video_clock_drift_ + 0.5);
     bool new_sr;
     int video_offset = 0;
     StreamSynchronization::Measurements audio;
@@ -147,10 +142,8 @@ class StreamSynchronizationTest : public ::testing::Test {
     StreamSynchronization::ComputeRelativeDelay(audio, video,
                                                 &relative_delay_ms);
     EXPECT_EQ(video_delay_ms - audio_delay_ms, relative_delay_ms);
-    return sync_->ComputeDelays(relative_delay_ms,
-                                current_audio_delay_ms,
-                                extra_audio_delay_ms,
-                                total_video_delay_ms);
+    return sync_->ComputeDelays(relative_delay_ms, current_audio_delay_ms,
+                                extra_audio_delay_ms, total_video_delay_ms);
   }
 
   // Simulate audio playback 300 ms after capture and video rendering 100 ms
@@ -170,38 +163,32 @@ class StreamSynchronizationTest : public ::testing::Test {
     const int kNeteqDelayIncrease = 50;
     const int kNeteqDelayDecrease = 10;
 
-    EXPECT_TRUE(DelayedStreams(audio_delay_ms,
-                               video_delay_ms,
-                               current_audio_delay_ms,
-                               &extra_audio_delay_ms,
+    EXPECT_TRUE(DelayedStreams(audio_delay_ms, video_delay_ms,
+                               current_audio_delay_ms, &extra_audio_delay_ms,
                                &total_video_delay_ms));
     EXPECT_EQ(base_target_delay + filtered_move, total_video_delay_ms);
     EXPECT_EQ(base_target_delay, extra_audio_delay_ms);
     current_audio_delay_ms = extra_audio_delay_ms;
 
     send_time_->IncreaseTimeMs(1000);
-    receive_time_->IncreaseTimeMs(1000 - std::max(audio_delay_ms,
-                                                  video_delay_ms));
+    receive_time_->IncreaseTimeMs(1000 -
+                                  std::max(audio_delay_ms, video_delay_ms));
     // Simulate base_target_delay minimum delay in the VCM.
     total_video_delay_ms = base_target_delay;
-    EXPECT_TRUE(DelayedStreams(audio_delay_ms,
-                               video_delay_ms,
-                               current_audio_delay_ms,
-                               &extra_audio_delay_ms,
+    EXPECT_TRUE(DelayedStreams(audio_delay_ms, video_delay_ms,
+                               current_audio_delay_ms, &extra_audio_delay_ms,
                                &total_video_delay_ms));
     EXPECT_EQ(base_target_delay + 2 * filtered_move, total_video_delay_ms);
     EXPECT_EQ(base_target_delay, extra_audio_delay_ms);
     current_audio_delay_ms = extra_audio_delay_ms;
 
     send_time_->IncreaseTimeMs(1000);
-    receive_time_->IncreaseTimeMs(1000 - std::max(audio_delay_ms,
-                                                  video_delay_ms));
+    receive_time_->IncreaseTimeMs(1000 -
+                                  std::max(audio_delay_ms, video_delay_ms));
     // Simulate base_target_delay minimum delay in the VCM.
     total_video_delay_ms = base_target_delay;
-    EXPECT_TRUE(DelayedStreams(audio_delay_ms,
-                               video_delay_ms,
-                               current_audio_delay_ms,
-                               &extra_audio_delay_ms,
+    EXPECT_TRUE(DelayedStreams(audio_delay_ms, video_delay_ms,
+                               current_audio_delay_ms, &extra_audio_delay_ms,
                                &total_video_delay_ms));
     EXPECT_EQ(base_target_delay + 3 * filtered_move, total_video_delay_ms);
     EXPECT_EQ(base_target_delay, extra_audio_delay_ms);
@@ -209,37 +196,33 @@ class StreamSynchronizationTest : public ::testing::Test {
     // Simulate that NetEQ introduces some audio delay.
     current_audio_delay_ms = base_target_delay + kNeteqDelayIncrease;
     send_time_->IncreaseTimeMs(1000);
-    receive_time_->IncreaseTimeMs(1000 - std::max(audio_delay_ms,
-                                                  video_delay_ms));
+    receive_time_->IncreaseTimeMs(1000 -
+                                  std::max(audio_delay_ms, video_delay_ms));
     // Simulate base_target_delay minimum delay in the VCM.
     total_video_delay_ms = base_target_delay;
-    EXPECT_TRUE(DelayedStreams(audio_delay_ms,
-                               video_delay_ms,
-                               current_audio_delay_ms,
-                               &extra_audio_delay_ms,
+    EXPECT_TRUE(DelayedStreams(audio_delay_ms, video_delay_ms,
+                               current_audio_delay_ms, &extra_audio_delay_ms,
                                &total_video_delay_ms));
     filtered_move = 3 * filtered_move +
-        (kNeteqDelayIncrease + audio_delay_ms - video_delay_ms) /
-        kSmoothingFilter;
+                    (kNeteqDelayIncrease + audio_delay_ms - video_delay_ms) /
+                        kSmoothingFilter;
     EXPECT_EQ(base_target_delay + filtered_move, total_video_delay_ms);
     EXPECT_EQ(base_target_delay, extra_audio_delay_ms);
 
     // Simulate that NetEQ reduces its delay.
     current_audio_delay_ms = base_target_delay + kNeteqDelayDecrease;
     send_time_->IncreaseTimeMs(1000);
-    receive_time_->IncreaseTimeMs(1000 - std::max(audio_delay_ms,
-                                                  video_delay_ms));
+    receive_time_->IncreaseTimeMs(1000 -
+                                  std::max(audio_delay_ms, video_delay_ms));
     // Simulate base_target_delay minimum delay in the VCM.
     total_video_delay_ms = base_target_delay;
-    EXPECT_TRUE(DelayedStreams(audio_delay_ms,
-                               video_delay_ms,
-                               current_audio_delay_ms,
-                               &extra_audio_delay_ms,
+    EXPECT_TRUE(DelayedStreams(audio_delay_ms, video_delay_ms,
+                               current_audio_delay_ms, &extra_audio_delay_ms,
                                &total_video_delay_ms));
 
     filtered_move = filtered_move +
-        (kNeteqDelayDecrease + audio_delay_ms - video_delay_ms) /
-        kSmoothingFilter;
+                    (kNeteqDelayDecrease + audio_delay_ms - video_delay_ms) /
+                        kSmoothingFilter;
 
     EXPECT_EQ(base_target_delay + filtered_move, total_video_delay_ms);
     EXPECT_EQ(base_target_delay, extra_audio_delay_ms);
@@ -252,10 +235,8 @@ class StreamSynchronizationTest : public ::testing::Test {
     int extra_audio_delay_ms = 0;
     int total_video_delay_ms = base_target_delay;
 
-    EXPECT_TRUE(DelayedStreams(audio_delay_ms,
-                               video_delay_ms,
-                               current_audio_delay_ms,
-                               &extra_audio_delay_ms,
+    EXPECT_TRUE(DelayedStreams(audio_delay_ms, video_delay_ms,
+                               current_audio_delay_ms, &extra_audio_delay_ms,
                                &total_video_delay_ms));
     EXPECT_EQ(base_target_delay, total_video_delay_ms);
     // The audio delay is not allowed to change more than this in 1 second.
@@ -265,77 +246,73 @@ class StreamSynchronizationTest : public ::testing::Test {
 
     send_time_->IncreaseTimeMs(1000);
     receive_time_->IncreaseTimeMs(800);
-    EXPECT_TRUE(DelayedStreams(audio_delay_ms,
-                               video_delay_ms,
-                               current_audio_delay_ms,
-                               &extra_audio_delay_ms,
+    EXPECT_TRUE(DelayedStreams(audio_delay_ms, video_delay_ms,
+                               current_audio_delay_ms, &extra_audio_delay_ms,
                                &total_video_delay_ms));
     EXPECT_EQ(base_target_delay, total_video_delay_ms);
     // The audio delay is not allowed to change more than the half of the
     // required change in delay.
-    EXPECT_EQ(current_extra_delay_ms + MaxAudioDelayIncrease(
-        current_audio_delay_ms,
-        base_target_delay + video_delay_ms - audio_delay_ms),
-        extra_audio_delay_ms);
+    EXPECT_EQ(current_extra_delay_ms +
+                  MaxAudioDelayIncrease(
+                      current_audio_delay_ms,
+                      base_target_delay + video_delay_ms - audio_delay_ms),
+              extra_audio_delay_ms);
     current_audio_delay_ms = extra_audio_delay_ms;
     current_extra_delay_ms = extra_audio_delay_ms;
 
     send_time_->IncreaseTimeMs(1000);
     receive_time_->IncreaseTimeMs(800);
-    EXPECT_TRUE(DelayedStreams(audio_delay_ms,
-                               video_delay_ms,
-                               current_audio_delay_ms,
-                               &extra_audio_delay_ms,
+    EXPECT_TRUE(DelayedStreams(audio_delay_ms, video_delay_ms,
+                               current_audio_delay_ms, &extra_audio_delay_ms,
                                &total_video_delay_ms));
     EXPECT_EQ(base_target_delay, total_video_delay_ms);
     // The audio delay is not allowed to change more than the half of the
     // required change in delay.
-    EXPECT_EQ(current_extra_delay_ms + MaxAudioDelayIncrease(
-        current_audio_delay_ms,
-        base_target_delay + video_delay_ms - audio_delay_ms),
-        extra_audio_delay_ms);
+    EXPECT_EQ(current_extra_delay_ms +
+                  MaxAudioDelayIncrease(
+                      current_audio_delay_ms,
+                      base_target_delay + video_delay_ms - audio_delay_ms),
+              extra_audio_delay_ms);
     current_extra_delay_ms = extra_audio_delay_ms;
 
     // Simulate that NetEQ for some reason reduced the delay.
     current_audio_delay_ms = base_target_delay + 10;
     send_time_->IncreaseTimeMs(1000);
     receive_time_->IncreaseTimeMs(800);
-    EXPECT_TRUE(DelayedStreams(audio_delay_ms,
-                               video_delay_ms,
-                               current_audio_delay_ms,
-                               &extra_audio_delay_ms,
+    EXPECT_TRUE(DelayedStreams(audio_delay_ms, video_delay_ms,
+                               current_audio_delay_ms, &extra_audio_delay_ms,
                                &total_video_delay_ms));
     EXPECT_EQ(base_target_delay, total_video_delay_ms);
     // Since we only can ask NetEQ for a certain amount of extra delay, and
     // we only measure the total NetEQ delay, we will ask for additional delay
     // here to try to stay in sync.
-    EXPECT_EQ(current_extra_delay_ms + MaxAudioDelayIncrease(
-        current_audio_delay_ms,
-        base_target_delay + video_delay_ms - audio_delay_ms),
-        extra_audio_delay_ms);
+    EXPECT_EQ(current_extra_delay_ms +
+                  MaxAudioDelayIncrease(
+                      current_audio_delay_ms,
+                      base_target_delay + video_delay_ms - audio_delay_ms),
+              extra_audio_delay_ms);
     current_extra_delay_ms = extra_audio_delay_ms;
 
     // Simulate that NetEQ for some reason significantly increased the delay.
     current_audio_delay_ms = base_target_delay + 350;
     send_time_->IncreaseTimeMs(1000);
     receive_time_->IncreaseTimeMs(800);
-    EXPECT_TRUE(DelayedStreams(audio_delay_ms,
-                               video_delay_ms,
-                               current_audio_delay_ms,
-                               &extra_audio_delay_ms,
+    EXPECT_TRUE(DelayedStreams(audio_delay_ms, video_delay_ms,
+                               current_audio_delay_ms, &extra_audio_delay_ms,
                                &total_video_delay_ms));
     EXPECT_EQ(base_target_delay, total_video_delay_ms);
     // The audio delay is not allowed to change more than the half of the
     // required change in delay.
-    EXPECT_EQ(current_extra_delay_ms + MaxAudioDelayIncrease(
-        current_audio_delay_ms,
-        base_target_delay + video_delay_ms - audio_delay_ms),
-        extra_audio_delay_ms);
+    EXPECT_EQ(current_extra_delay_ms +
+                  MaxAudioDelayIncrease(
+                      current_audio_delay_ms,
+                      base_target_delay + video_delay_ms - audio_delay_ms),
+              extra_audio_delay_ms);
   }
 
   int MaxAudioDelayIncrease(int current_audio_delay_ms, int delay_ms) {
     return std::min((delay_ms - current_audio_delay_ms) / kSmoothingFilter,
-                     static_cast<int>(kMaxAudioDiffMs));
+                    static_cast<int>(kMaxAudioDiffMs));
   }
 
   int MaxAudioDelayDecrease(int current_audio_delay_ms, int delay_ms) {
@@ -347,7 +324,7 @@ class StreamSynchronizationTest : public ::testing::Test {
   enum { kReceiveTimeOffsetMs = 43210 };
 
   StreamSynchronization* sync_;
-  Time* send_time_;  // The simulated clock at the sender.
+  Time* send_time_;     // The simulated clock at the sender.
   Time* receive_time_;  // The simulated clock at the receiver.
   double audio_clock_drift_;
   double video_clock_drift_;
@@ -418,7 +395,7 @@ TEST_F(StreamSynchronizationTest, AudioDelay) {
   // The audio delay is not allowed to change more than the half of the required
   // change in delay.
   EXPECT_EQ(current_extra_delay_ms +
-            MaxAudioDelayIncrease(current_audio_delay_ms, delay_ms),
+                MaxAudioDelayIncrease(current_audio_delay_ms, delay_ms),
             extra_audio_delay_ms);
   current_audio_delay_ms = extra_audio_delay_ms;
   current_extra_delay_ms = extra_audio_delay_ms;
@@ -431,7 +408,7 @@ TEST_F(StreamSynchronizationTest, AudioDelay) {
   // The audio delay is not allowed to change more than the half of the required
   // change in delay.
   EXPECT_EQ(current_extra_delay_ms +
-            MaxAudioDelayIncrease(current_audio_delay_ms, delay_ms),
+                MaxAudioDelayIncrease(current_audio_delay_ms, delay_ms),
             extra_audio_delay_ms);
   current_extra_delay_ms = extra_audio_delay_ms;
 
@@ -446,7 +423,7 @@ TEST_F(StreamSynchronizationTest, AudioDelay) {
   // we only measure the total NetEQ delay, we will ask for additional delay
   // here to try to
   EXPECT_EQ(current_extra_delay_ms +
-            MaxAudioDelayIncrease(current_audio_delay_ms, delay_ms),
+                MaxAudioDelayIncrease(current_audio_delay_ms, delay_ms),
             extra_audio_delay_ms);
   current_extra_delay_ms = extra_audio_delay_ms;
 
@@ -460,7 +437,7 @@ TEST_F(StreamSynchronizationTest, AudioDelay) {
   // The audio delay is not allowed to change more than the half of the required
   // change in delay.
   EXPECT_EQ(current_extra_delay_ms +
-            MaxAudioDelayDecrease(current_audio_delay_ms, delay_ms),
+                MaxAudioDelayDecrease(current_audio_delay_ms, delay_ms),
             extra_audio_delay_ms);
 }
 
@@ -500,8 +477,8 @@ TEST_F(StreamSynchronizationTest, BaseDelay) {
   sync_->SetTargetBufferingDelay(base_target_delay_ms);
   // We are in sync don't change.
   EXPECT_FALSE(DelayedStreams(base_target_delay_ms, base_target_delay_ms,
-                              current_audio_delay_ms,
-                              &extra_audio_delay_ms, &total_video_delay_ms));
+                              current_audio_delay_ms, &extra_audio_delay_ms,
+                              &total_video_delay_ms));
   // Triggering another call with the same values. Delay should not be modified.
   base_target_delay_ms = 2000;
   current_audio_delay_ms = base_target_delay_ms;
@@ -509,8 +486,8 @@ TEST_F(StreamSynchronizationTest, BaseDelay) {
   sync_->SetTargetBufferingDelay(base_target_delay_ms);
   // We are in sync don't change.
   EXPECT_FALSE(DelayedStreams(base_target_delay_ms, base_target_delay_ms,
-                              current_audio_delay_ms,
-                              &extra_audio_delay_ms, &total_video_delay_ms));
+                              current_audio_delay_ms, &extra_audio_delay_ms,
+                              &total_video_delay_ms));
   // Changing delay value - intended to test this module only. In practice it
   // would take VoE time to adapt.
   base_target_delay_ms = 5000;
@@ -519,8 +496,8 @@ TEST_F(StreamSynchronizationTest, BaseDelay) {
   sync_->SetTargetBufferingDelay(base_target_delay_ms);
   // We are in sync don't change.
   EXPECT_FALSE(DelayedStreams(base_target_delay_ms, base_target_delay_ms,
-                              current_audio_delay_ms,
-                              &extra_audio_delay_ms, &total_video_delay_ms));
+                              current_audio_delay_ms, &extra_audio_delay_ms,
+                              &total_video_delay_ms));
 }
 
 TEST_F(StreamSynchronizationTest, BothDelayedAudioLaterWithBaseDelay) {

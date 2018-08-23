@@ -21,8 +21,11 @@
 
 #define MAX_NUM_FRAMES_PER_FILE INT_MAX
 
-void CompareFiles(const char* reference_file_name, const char* test_file_name,
-                  const char* results_file_name, int width, int height) {
+void CompareFiles(const char* reference_file_name,
+                  const char* test_file_name,
+                  const char* results_file_name,
+                  int width,
+                  int height) {
   // Check if the reference_file_name ends with "y4m".
   bool y4m_mode = false;
   if (std::string(reference_file_name).find("y4m") != std::string::npos) {
@@ -39,13 +42,15 @@ void CompareFiles(const char* reference_file_name, const char* test_file_name,
 
   bool read_result = true;
   for (int frame_counter = 0; frame_counter < MAX_NUM_FRAMES_PER_FILE;
-      ++frame_counter) {
-    read_result &= (y4m_mode) ? webrtc::test::ExtractFrameFromY4mFile(
-        reference_file_name, width, height, frame_counter, ref_frame):
-        webrtc::test::ExtractFrameFromYuvFile(reference_file_name, width,
-                                              height, frame_counter, ref_frame);
-    read_result &=  webrtc::test::ExtractFrameFromYuvFile(test_file_name, width,
-        height, frame_counter, test_frame);
+       ++frame_counter) {
+    read_result &=
+        (y4m_mode)
+            ? webrtc::test::ExtractFrameFromY4mFile(
+                  reference_file_name, width, height, frame_counter, ref_frame)
+            : webrtc::test::ExtractFrameFromYuvFile(
+                  reference_file_name, width, height, frame_counter, ref_frame);
+    read_result &= webrtc::test::ExtractFrameFromYuvFile(
+        test_file_name, width, height, frame_counter, test_frame);
 
     if (!read_result)
       break;
@@ -80,11 +85,14 @@ void CompareFiles(const char* reference_file_name, const char* test_file_name,
  * --results_file=<name_of_file> --width=<width_of_frames>
  * --height=<height_of_frames>
  */
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
   std::string program_name = argv[0];
-  std::string usage = "Runs PSNR and SSIM on two I420 videos and write the"
+  std::string usage =
+      "Runs PSNR and SSIM on two I420 videos and write the"
       "results in a file.\n"
-      "Example usage:\n" + program_name + " --reference_file=ref.yuv "
+      "Example usage:\n" +
+      program_name +
+      " --reference_file=ref.yuv "
       "--test_file=test.yuv --results_file=results.txt --width=320 "
       "--height=240\n"
       "Command line flags:\n"
@@ -130,4 +138,5 @@ int main(int argc, char** argv) {
   CompareFiles(parser.GetFlag("reference_file").c_str(),
                parser.GetFlag("test_file").c_str(),
                parser.GetFlag("results_file").c_str(), width, height);
+  return 0;
 }

@@ -25,7 +25,7 @@ const float kProcessCpuThreshold = 0.10f;
 const char kRtxCodecName[] = "rtx";
 const char kRedCodecName[] = "red";
 const char kUlpfecCodecName[] = "ulpfec";
-const char kStereoCodecName[] = "stereo";
+const char kMultiplexCodecName[] = "multiplex";
 
 // TODO(brandtr): Change this to 'flexfec' when we are confident that the
 // header format is not changing anymore.
@@ -39,12 +39,12 @@ const char kCodecParamAssociatedCodecName[] = "acn";
 
 const char kOpusCodecName[] = "opus";
 const char kIsacCodecName[] = "ISAC";
-const char kL16CodecName[]  = "L16";
+const char kL16CodecName[] = "L16";
 const char kG722CodecName[] = "G722";
 const char kIlbcCodecName[] = "ILBC";
 const char kPcmuCodecName[] = "PCMU";
 const char kPcmaCodecName[] = "PCMA";
-const char kCnCodecName[]   = "CN";
+const char kCnCodecName[] = "CN";
 const char kDtmfCodecName[] = "telephone-event";
 
 // draft-spittka-payload-rtp-opus-03.txt
@@ -86,6 +86,7 @@ const char kRtcpFbParamTransportCc[] = "transport-cc";
 
 const char kRtcpFbParamCcm[] = "ccm";
 const char kRtcpFbCcmParamFir[] = "fir";
+const char kRtcpFbParamRrtr[] = "rrtr";
 const char kCodecParamMaxBitrate[] = "x-google-max-bitrate";
 const char kCodecParamMinBitrate[] = "x-google-min-bitrate";
 const char kCodecParamStartBitrate[] = "x-google-start-bitrate";
@@ -112,4 +113,8 @@ const char kH264FmtpSpropParameterSets[] = "sprop-parameter-sets";
 const char kH264ProfileLevelConstrainedBaseline[] = "42e01f";
 
 const int kDefaultVideoMaxFramerate = 60;
+
+const size_t kConferenceMaxNumSpatialLayers = 3;
+const size_t kConferenceMaxNumTemporalLayers = 3;
+const size_t kConferenceDefaultNumTemporalLayers = 3;
 }  // namespace cricket

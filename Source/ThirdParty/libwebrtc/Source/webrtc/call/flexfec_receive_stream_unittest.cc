@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <memory>
 
+#include "absl/memory/memory.h"
 #include "api/array_view.h"
 #include "call/rtp_stream_receiver_controller.h"
 #include "modules/pacing/packet_router.h"
@@ -22,7 +23,6 @@
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/utility/include/mock/mock_process_thread.h"
-#include "rtc_base/ptr_util.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
@@ -84,7 +84,7 @@ class FlexfecReceiveStreamTest : public ::testing::Test {
   FlexfecReceiveStreamTest()
       : config_(CreateDefaultConfig(&rtcp_send_transport_)) {
     EXPECT_CALL(process_thread_, RegisterModule(_, _)).Times(1);
-    receive_stream_ = rtc::MakeUnique<FlexfecReceiveStreamImpl>(
+    receive_stream_ = absl::make_unique<FlexfecReceiveStreamImpl>(
         &rtp_stream_receiver_controller_, config_, &recovered_packet_receiver_,
         &rtt_stats_, &process_thread_);
   }

@@ -8,6 +8,7 @@ include_rules = [
   "+media",
   "+modules/audio_device",
   "+modules/audio_processing",
+  "+modules/congestion_controller",
   "+modules/rtp_rtcp",
   "+modules/video_coding",
   "+modules/video_render",
@@ -18,18 +19,8 @@ include_rules = [
 specific_include_rules = {
   "androidtestinitializer\.cc": [
     "+base/android",  # Allowed only for Android tests.
-    "+voice_engine",
   ],
   "srtpfilter_unittest\.cc": [
     "+crypto",
-  ],
-
-  # TODO(ossu): Remove these exceptions when audio_encoder_factory.h
-  # has moved to api/.
-  "peerconnectionfactory\.cc": [
-    "+modules/audio_coding/codecs/builtin_audio_encoder_factory.h",
-  ],
-  "peerconnectioninterface_unittest\.cc": [
-    "+modules/audio_coding/codecs/builtin_audio_encoder_factory.h",
   ],
 }

@@ -26,8 +26,8 @@
 #include <math.h>
 
 /* include API */
-#include "isac.h"
-#include "utility.h"
+#include "modules/audio_coding/codecs/isac/main/include/isac.h"
+#include "modules/audio_coding/codecs/isac/main/util/utility.h"
 #include "rtc_base/format_macros.h"
 
 /* max number of samples per frame (= 60 ms frame) */
@@ -416,7 +416,7 @@ int main(int argc, char* argv[]) {
   printf("Rate Limit.................. %d bits/sec \n", rateLimit);
 
 #ifdef WIN32
-  fprintf(bitrateFile, "%d  %10u     %d     %6.3f  %6.3f    %6.3f\n",
+  fprintf(bitrateFile, "%d  %10lu     %d     %6.3f  %6.3f    %6.3f\n",
           sampFreqKHz, framecnt, bottleneck, rateLB, rateUB, rate);
   fclose(bitrateFile);
 #endif  // WIN32

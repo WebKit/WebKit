@@ -20,7 +20,7 @@
 namespace rtc {
 namespace {
 
-const int kMaxMsgLatency = 150;  // 150 ms
+const int kMaxMsgLatency = 150;                // 150 ms
 const int kSlowDispatchLoggingThreshold = 50;  // 50 ms
 
 class RTC_SCOPED_LOCKABLE MarkProcessingCritScope {
@@ -64,26 +64,26 @@ bool MessageQueueManager::IsInitialized() {
 
 MessageQueueManager::MessageQueueManager() : processing_(0) {}
 
-MessageQueueManager::~MessageQueueManager() {
-}
+MessageQueueManager::~MessageQueueManager() {}
 
-void MessageQueueManager::Add(MessageQueue *message_queue) {
+void MessageQueueManager::Add(MessageQueue* message_queue) {
   return Instance()->AddInternal(message_queue);
 }
-void MessageQueueManager::AddInternal(MessageQueue *message_queue) {
+void MessageQueueManager::AddInternal(MessageQueue* message_queue) {
   CritScope cs(&crit_);
   // Prevent changes while the list of message queues is processed.
   RTC_DCHECK_EQ(processing_, 0);
   message_queues_.push_back(message_queue);
 }
 
-void MessageQueueManager::Remove(MessageQueue *message_queue) {
+void MessageQueueManager::Remove(MessageQueue* message_queue) {
   // If there isn't a message queue manager instance, then there isn't a queue
   // to remove.
-  if (!instance_) return;
+  if (!instance_)
+    return;
   return Instance()->RemoveInternal(message_queue);
 }
-void MessageQueueManager::RemoveInternal(MessageQueue *message_queue) {
+void MessageQueueManager::RemoveInternal(MessageQueue* message_queue) {
   // If this is the last MessageQueue, destroy the manager as well so that
   // we don't leak this object at program shutdown. As mentioned above, this is
   // not thread-safe, but this should only happen at program termination (when
@@ -93,7 +93,7 @@ void MessageQueueManager::RemoveInternal(MessageQueue *message_queue) {
     CritScope cs(&crit_);
     // Prevent changes while the list of message queues is processed.
     RTC_DCHECK_EQ(processing_, 0);
-    std::vector<MessageQueue *>::iterator iter;
+    std::vector<MessageQueue*>::iterator iter;
     iter = std::find(message_queues_.begin(), message_queues_.end(),
                      message_queue);
     if (iter != message_queues_.end()) {
@@ -107,18 +107,18 @@ void MessageQueueManager::RemoveInternal(MessageQueue *message_queue) {
   }
 }
 
-void MessageQueueManager::Clear(MessageHandler *handler) {
+void MessageQueueManager::Clear(MessageHandler* handler) {
   // If there isn't a message queue manager instance, then there aren't any
   // queues to remove this handler from.
-  if (!instance_) return;
+  if (!instance_)
+    return;
   return Instance()->ClearInternal(handler);
 }
-void MessageQueueManager::ClearInternal(MessageHandler *handler) {
+void MessageQueueManager::ClearInternal(MessageHandler* handler) {
   // Deleted objects may cause re-entrant calls to ClearInternal. This is
   // allowed as the list of message queues does not change while queues are
   // cleared.
   MarkProcessingCritScope cs(&crit_, &processing_);
-  std::vector<MessageQueue *>::iterator iter;
   for (MessageQueue* queue : message_queues_) {
     queue->Clear(handler);
   }
@@ -253,7 +253,7 @@ void MessageQueue::Restart() {
   AtomicOps::ReleaseStore(&stop_, 0);
 }
 
-bool MessageQueue::Peek(Message *pmsg, int cmsWait) {
+bool MessageQueue::Peek(Message* pmsg, int cmsWait) {
   if (fPeekKeep_) {
     *pmsg = msgPeek_;
     return true;
@@ -265,7 +265,7 @@ bool MessageQueue::Peek(Message *pmsg, int cmsWait) {
   return true;
 }
 
-bool MessageQueue::Get(Message *pmsg, int cmsWait, bool process_io) {
+bool MessageQueue::Get(Message* pmsg, int cmsWait, bool process_io) {
   // Return and clear peek if present
   // Always return the peek if it exists so there is Peek/Get symmetry
 
@@ -367,8 +367,7 @@ bool MessageQueue::Get(Message *pmsg, int cmsWait, bool process_io) {
   return false;
 }
 
-void MessageQueue::ReceiveSends() {
-}
+void MessageQueue::ReceiveSends() {}
 
 void MessageQueue::Post(const Location& posted_from,
                         MessageHandler* phandler,
@@ -523,7 +522,7 @@ void MessageQueue::Clear(MessageHandler* phandler,
   dmsgq_.reheap();
 }
 
-void MessageQueue::Dispatch(Message *pmsg) {
+void MessageQueue::Dispatch(Message* pmsg) {
   TRACE_EVENT2("webrtc", "MessageQueue::Dispatch", "src_file_and_line",
                pmsg->posted_from.file_and_line(), "src_func",
                pmsg->posted_from.function_name());

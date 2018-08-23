@@ -10,16 +10,15 @@
 
 #include <limits>
 
-#include "media/base/videobroadcaster.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
 #include "media/base/fakevideorenderer.h"
+#include "media/base/videobroadcaster.h"
 #include "rtc_base/gunit.h"
 
 using rtc::VideoBroadcaster;
 using rtc::VideoSinkWants;
 using cricket::FakeVideoRenderer;
-
 
 TEST(VideoBroadcasterTest, frame_wanted) {
   VideoBroadcaster broadcaster;

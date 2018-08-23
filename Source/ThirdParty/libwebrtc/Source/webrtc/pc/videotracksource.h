@@ -13,27 +13,26 @@
 
 #include "api/mediastreaminterface.h"
 #include "api/notifier.h"
-#include "api/videosinkinterface.h"
+#include "api/video/video_sink_interface.h"
 #include "media/base/mediachannel.h"
 #include "rtc_base/thread_checker.h"
 
-// VideoTrackSource implements VideoTrackSourceInterface.
 namespace webrtc {
 
+// VideoTrackSource is a convenience base class for implementations of
+// VideoTrackSourceInterface.
 class VideoTrackSource : public Notifier<VideoTrackSourceInterface> {
  public:
-  VideoTrackSource(rtc::VideoSourceInterface<VideoFrame>* source, bool remote);
+  explicit VideoTrackSource(bool remote);
   void SetState(SourceState new_state);
-  // OnSourceDestroyed clears this instance pointer to |source_|. It is useful
-  // when the underlying rtc::VideoSourceInterface is destroyed before the
-  // reference counted VideoTrackSource.
-  void OnSourceDestroyed();
 
   SourceState state() const override { return state_; }
   bool remote() const override { return remote_; }
 
   bool is_screencast() const override { return false; }
-  rtc::Optional<bool> needs_denoising() const override { return rtc::nullopt; }
+  absl::optional<bool> needs_denoising() const override {
+    return absl::nullopt;
+  }
 
   bool GetStats(Stats* stats) override { return false; }
 
@@ -41,10 +40,11 @@ class VideoTrackSource : public Notifier<VideoTrackSourceInterface> {
                        const rtc::VideoSinkWants& wants) override;
   void RemoveSink(rtc::VideoSinkInterface<VideoFrame>* sink) override;
 
+ protected:
+  virtual rtc::VideoSourceInterface<VideoFrame>* source() = 0;
+
  private:
   rtc::ThreadChecker worker_thread_checker_;
-  rtc::VideoSourceInterface<VideoFrame>* source_;
-  cricket::VideoOptions options_;
   SourceState state_;
   const bool remote_;
 };

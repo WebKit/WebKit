@@ -20,8 +20,8 @@ namespace webrtc {
 // Converts time obtained using rtc::TimeMicros to ntp format.
 // TimeMicrosToNtp guarantees difference of the returned values matches
 // difference of the passed values.
-// As a result TimeMicrosToNtp(rtc::TimeMicros()) doesn't guarantte to match
-// system time after first call.
+// As a result TimeMicrosToNtp(rtc::TimeMicros()) doesn't guarantee to match
+// system time.
 NtpTime TimeMicrosToNtp(int64_t time_us);
 
 // Converts NTP timestamp to RTP timestamp.

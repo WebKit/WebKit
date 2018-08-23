@@ -15,9 +15,9 @@
 #include <utility>
 #include <vector>
 
+#include "api/audio/audio_frame.h"
 #include "modules/audio_processing/aec_dump/write_to_file_task.h"
 #include "modules/audio_processing/include/aec_dump.h"
-#include "modules/include/module_common_types.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/ignore_wundef.h"
 #include "rtc_base/logging.h"
@@ -37,8 +37,8 @@ class CaptureStreamInfo {
  public:
   explicit CaptureStreamInfo(std::unique_ptr<WriteToFileTask> task);
   ~CaptureStreamInfo();
-  void AddInput(const FloatAudioFrame& src);
-  void AddOutput(const FloatAudioFrame& src);
+  void AddInput(const AudioFrameView<const float>& src);
+  void AddOutput(const AudioFrameView<const float>& src);
 
   void AddInput(const AudioFrame& frame);
   void AddOutput(const AudioFrame& frame);

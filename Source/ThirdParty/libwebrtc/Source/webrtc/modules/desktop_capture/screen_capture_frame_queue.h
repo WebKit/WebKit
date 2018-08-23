@@ -16,9 +16,8 @@
 #include "rtc_base/constructormagic.h"
 // TODO(zijiehe): These headers are not used in this file, but to avoid build
 // break in remoting/host. We should add headers in each individual files.
-#include "modules/desktop_capture/desktop_frame.h"  // Remove
+#include "modules/desktop_capture/desktop_frame.h"         // Remove
 #include "modules/desktop_capture/shared_desktop_frame.h"  // Remove
-
 
 namespace webrtc {
 
@@ -43,9 +42,7 @@ class ScreenCaptureFrameQueue {
 
   // Moves to the next frame in the queue, moving the 'current' frame to become
   // the 'previous' one.
-  void MoveToNextFrame() {
-    current_ = (current_ + 1) % kQueueLength;
-  }
+  void MoveToNextFrame() { current_ = (current_ + 1) % kQueueLength; }
 
   // Replaces the current frame with a new one allocated by the caller. The
   // existing frame (if any) is destroyed. Takes ownership of |frame|.
@@ -62,9 +59,7 @@ class ScreenCaptureFrameQueue {
     current_ = 0;
   }
 
-  FrameType* current_frame() const {
-    return frames_[current_].get();
-  }
+  FrameType* current_frame() const { return frames_[current_].get(); }
 
   FrameType* previous_frame() const {
     return frames_[(current_ + kQueueLength - 1) % kQueueLength].get();

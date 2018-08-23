@@ -59,6 +59,15 @@ WindowId GetWindowId(CFDictionaryRef window);
 float GetScaleFactorAtPosition(const MacDesktopConfiguration& desktop_config,
                                DesktopVector position);
 
+// Returns the DIP to physical pixel scale factor of the window with |id|.
+// The bounds of the window with |id| is in DIP coordinates and |size| is the
+// CGImage size of the window with |id| in physical coordinates. Comparing them
+// can give the current scale factor.
+// If the window overlaps multiple monitors, OS will decide on which monitor the
+// window is displayed and use its scale factor to the window. So this method
+// still works.
+float GetWindowScaleFactor(CGWindowID id, DesktopSize size);
+
 // Returns the bounds of |window|. If |window| is not a window or the bounds
 // cannot be retrieved, this function returns an empty DesktopRect. The returned
 // DesktopRect is in system coordinate, i.e. the primary monitor always starts
@@ -67,22 +76,12 @@ float GetScaleFactorAtPosition(const MacDesktopConfiguration& desktop_config,
 // MacDesktopConfiguration.
 DesktopRect GetWindowBounds(CFDictionaryRef window);
 
-// Same as GetWindowBounds(CFDictionaryRef), but this function stretches the
-// result with the scale factor.
-DesktopRect GetWindowBounds(const MacDesktopConfiguration& desktop_config,
-                            CFDictionaryRef window);
-
 // Returns the bounds of window with |id|. If |id| does not represent a window
 // or the bounds cannot be retrieved, this function returns an empty
 // DesktopRect. The returned DesktopRect is in system coordinates.
 // Deprecated: This function should be avoided in favor of the overload with
 // MacDesktopConfiguration.
 DesktopRect GetWindowBounds(CGWindowID id);
-
-// Same as GetWindowBounds(CGWindowID), but this function stretches the result
-// with the scale factor.
-DesktopRect GetWindowBounds(const MacDesktopConfiguration& desktop_config,
-                            CGWindowID id);
 
 }  // namespace webrtc
 

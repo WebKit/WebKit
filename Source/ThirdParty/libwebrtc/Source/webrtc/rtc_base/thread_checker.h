@@ -32,9 +32,7 @@ namespace rtc {
 // right version for your build configuration.
 class ThreadCheckerDoNothing {
  public:
-  bool CalledOnValidThread() const {
-    return true;
-  }
+  bool CalledOnValidThread() const { return true; }
 
   void DetachFromThread() {}
 };
@@ -86,7 +84,7 @@ class RTC_SCOPED_LOCKABLE AnnounceOnThread {
       RTC_EXCLUSIVE_LOCK_FUNCTION(thread_like_object) {}
   ~AnnounceOnThread() RTC_UNLOCK_FUNCTION() {}
 
-  template<typename ThreadLikeObject>
+  template <typename ThreadLikeObject>
   static bool IsCurrent(const ThreadLikeObject* thread_like_object) {
     return thread_like_object->IsCurrent();
   }
@@ -101,7 +99,7 @@ class RTC_SCOPED_LOCKABLE AnnounceOnThread {
 }  // namespace internal
 }  // namespace rtc
 
-// RTC_RUN_ON/RTC_ACCESS_ON/RTC_DCHECK_RUN_ON macros allows to annotate
+// RTC_RUN_ON/RTC_GUARDED_BY/RTC_DCHECK_RUN_ON macros allows to annotate
 // variables are accessed from same thread/task queue.
 // Using tools designed to check mutexes, it checks at compile time everywhere
 // variable is access, there is a run-time dcheck thread/task queue is correct.
@@ -115,7 +113,7 @@ class RTC_SCOPED_LOCKABLE AnnounceOnThread {
 //
 //  private:
 //   rtc::Thread* network_thread_;
-//   int transport_ RTC_ACCESS_ON(network_thread_);
+//   int transport_ RTC_GUARDED_BY(network_thread_);
 // };
 //
 // class ExampleThreadChecker {
@@ -131,7 +129,7 @@ class RTC_SCOPED_LOCKABLE AnnounceOnThread {
 //   }
 //
 //  private:
-//   int pacer_var_ RTC_ACCESS_ON(pacer_thread_checker_);
+//   int pacer_var_ RTC_GUARDED_BY(pacer_thread_checker_);
 //   rtc::ThreadChecker pacer_thread_checker_;
 // };
 //
@@ -147,7 +145,7 @@ class RTC_SCOPED_LOCKABLE AnnounceOnThread {
 //
 //    private:
 //     rtc::TaskQueue* const encoder_queue_;
-//     Frame var_ RTC_ACCESS_ON(encoder_queue_);
+//     Frame var_ RTC_GUARDED_BY(encoder_queue_);
 //   };
 //
 //   void Encode() {
@@ -162,14 +160,11 @@ class RTC_SCOPED_LOCKABLE AnnounceOnThread {
 //   rtc::scoped_ref_ptr<Encoder> encoder_;
 // }
 
-// Document if a variable/field is not shared and should be accessed from
-// same thread/task queue.
-#define RTC_ACCESS_ON(x) RTC_THREAD_ANNOTATION_ATTRIBUTE__(guarded_by(x))
-
 // Document if a function expected to be called from same thread/task queue.
-#define RTC_RUN_ON(x) RTC_THREAD_ANNOTATION_ATTRIBUTE__(exclusive_locks_required(x))
+#define RTC_RUN_ON(x) \
+  RTC_THREAD_ANNOTATION_ATTRIBUTE__(exclusive_locks_required(x))
 
-#define RTC_DCHECK_RUN_ON(thread_like_object) \
+#define RTC_DCHECK_RUN_ON(thread_like_object)                           \
   rtc::internal::AnnounceOnThread thread_announcer(thread_like_object); \
   RTC_DCHECK(rtc::internal::AnnounceOnThread::IsCurrent(thread_like_object))
 

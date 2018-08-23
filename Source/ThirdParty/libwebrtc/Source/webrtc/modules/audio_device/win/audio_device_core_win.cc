@@ -28,9 +28,9 @@
 #include <assert.h>
 #include <string.h>
 
-#include <Functiondiscoverykeys_devpkey.h>
 #include <comdef.h>
 #include <dmo.h>
+#include <functiondiscoverykeys_devpkey.h>
 #include <mmsystem.h>
 #include <strsafe.h>
 #include <uuids.h>
@@ -40,6 +40,8 @@
 
 #include "rtc_base/logging.h"
 #include "rtc_base/platform_thread.h"
+#include "rtc_base/stringutils.h"
+#include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/sleep.h"
 
 // Macro that calls a COM method returning HRESULT value.
@@ -379,7 +381,9 @@ bool AudioDeviceWindowsCore::CoreAudioIsSupported() {
 // ----------------------------------------------------------------------------
 
 AudioDeviceWindowsCore::AudioDeviceWindowsCore()
-    : _comInit(ScopedCOMInitializer::kMTA),
+    : _avrtLibrary(NULL),
+      _winSupportAvrt(false),
+      _comInit(ScopedCOMInitializer::kMTA),
       _ptrAudioBuffer(NULL),
       _ptrEnumerator(NULL),
       _ptrRenderCollection(NULL),
@@ -395,6 +399,15 @@ AudioDeviceWindowsCore::AudioDeviceWindowsCore()
       _dmo(NULL),
       _mediaBuffer(NULL),
       _builtInAecEnabled(false),
+      _hRenderSamplesReadyEvent(NULL),
+      _hPlayThread(NULL),
+      _hRenderStartedEvent(NULL),
+      _hShutdownRenderEvent(NULL),
+      _hCaptureSamplesReadyEvent(NULL),
+      _hRecThread(NULL),
+      _hCaptureStartedEvent(NULL),
+      _hShutdownCaptureEvent(NULL),
+      _hMmTask(NULL),
       _playAudioFrameSize(0),
       _playSampleRate(0),
       _playBlockSize(0),
@@ -407,17 +420,6 @@ AudioDeviceWindowsCore::AudioDeviceWindowsCore()
       _recSampleRate(0),
       _recBlockSize(0),
       _recChannels(2),
-      _avrtLibrary(NULL),
-      _winSupportAvrt(false),
-      _hRenderSamplesReadyEvent(NULL),
-      _hPlayThread(NULL),
-      _hCaptureSamplesReadyEvent(NULL),
-      _hRecThread(NULL),
-      _hShutdownRenderEvent(NULL),
-      _hShutdownCaptureEvent(NULL),
-      _hRenderStartedEvent(NULL),
-      _hCaptureStartedEvent(NULL),
-      _hMmTask(NULL),
       _initialized(false),
       _recording(false),
       _playing(false),
@@ -425,7 +427,6 @@ AudioDeviceWindowsCore::AudioDeviceWindowsCore()
       _playIsInitialized(false),
       _speakerIsInitialized(false),
       _microphoneIsInitialized(false),
-      _playBufDelay(80),
       _usingInputDeviceIndex(false),
       _usingOutputDeviceIndex(false),
       _inputDevice(AudioDeviceModule::kDefaultCommunicationDevice),
@@ -1872,8 +1873,8 @@ int32_t AudioDeviceWindowsCore::InitPlayout() {
   if (SUCCEEDED(hr)) {
     RTC_LOG(LS_VERBOSE) << "Audio Engine's current rendering mix format:";
     // format type
-    RTC_LOG(LS_VERBOSE) << "wFormatTag     : 0x" << std::hex
-                        << pWfxOut->wFormatTag << std::dec << " ("
+    RTC_LOG(LS_VERBOSE) << "wFormatTag     : 0x"
+                        << rtc::ToHex(pWfxOut->wFormatTag) << " ("
                         << pWfxOut->wFormatTag << ")";
     // number of channels (i.e. mono, stereo...)
     RTC_LOG(LS_VERBOSE) << "nChannels      : " << pWfxOut->nChannels;
@@ -1947,8 +1948,8 @@ int32_t AudioDeviceWindowsCore::InitPlayout() {
     _playChannels = Wfx.nChannels;
 
     RTC_LOG(LS_VERBOSE) << "VoE selected this rendering format:";
-    RTC_LOG(LS_VERBOSE) << "wFormatTag         : 0x" << std::hex
-                        << Wfx.wFormatTag << std::dec << " (" << Wfx.wFormatTag
+    RTC_LOG(LS_VERBOSE) << "wFormatTag         : 0x"
+                        << rtc::ToHex(Wfx.wFormatTag) << " (" << Wfx.wFormatTag
                         << ")";
     RTC_LOG(LS_VERBOSE) << "nChannels          : " << Wfx.nChannels;
     RTC_LOG(LS_VERBOSE) << "nSamplesPerSec     : " << Wfx.nSamplesPerSec;
@@ -1958,8 +1959,7 @@ int32_t AudioDeviceWindowsCore::InitPlayout() {
     RTC_LOG(LS_VERBOSE) << "cbSize             : " << Wfx.cbSize;
     RTC_LOG(LS_VERBOSE) << "Additional settings:";
     RTC_LOG(LS_VERBOSE) << "_playAudioFrameSize: " << _playAudioFrameSize;
-    RTC_LOG(LS_VERBOSE) << "_playBlockSize     : "
-                        << _playBlockSize;
+    RTC_LOG(LS_VERBOSE) << "_playBlockSize     : " << _playBlockSize;
     RTC_LOG(LS_VERBOSE) << "_playChannels      : " << _playChannels;
   }
 
@@ -2070,7 +2070,7 @@ int32_t AudioDeviceWindowsCore::InitRecordingDMO() {
     return -1;
   }
 
-  DMO_MEDIA_TYPE mt = {0};
+  DMO_MEDIA_TYPE mt = {};
   HRESULT hr = MoInitMediaType(&mt, sizeof(WAVEFORMATEX));
   if (FAILED(hr)) {
     MoFreeMediaType(&mt);
@@ -2189,8 +2189,8 @@ int32_t AudioDeviceWindowsCore::InitRecording() {
   if (SUCCEEDED(hr)) {
     RTC_LOG(LS_VERBOSE) << "Audio Engine's current capturing mix format:";
     // format type
-    RTC_LOG(LS_VERBOSE) << "wFormatTag     : 0x" << std::hex
-                        << pWfxIn->wFormatTag << std::dec << " ("
+    RTC_LOG(LS_VERBOSE) << "wFormatTag     : 0x"
+                        << rtc::ToHex(pWfxIn->wFormatTag) << " ("
                         << pWfxIn->wFormatTag << ")";
     // number of channels (i.e. mono, stereo...)
     RTC_LOG(LS_VERBOSE) << "nChannels      : " << pWfxIn->nChannels;
@@ -2262,8 +2262,8 @@ int32_t AudioDeviceWindowsCore::InitRecording() {
     _recChannels = Wfx.Format.nChannels;
 
     RTC_LOG(LS_VERBOSE) << "VoE selected this capturing format:";
-    RTC_LOG(LS_VERBOSE) << "wFormatTag        : 0x" << std::hex
-                        << Wfx.Format.wFormatTag << std::dec << " ("
+    RTC_LOG(LS_VERBOSE) << "wFormatTag        : 0x"
+                        << rtc::ToHex(Wfx.Format.wFormatTag) << " ("
                         << Wfx.Format.wFormatTag << ")";
     RTC_LOG(LS_VERBOSE) << "nChannels         : " << Wfx.Format.nChannels;
     RTC_LOG(LS_VERBOSE) << "nSamplesPerSec    : " << Wfx.Format.nSamplesPerSec;
@@ -2632,6 +2632,10 @@ int32_t AudioDeviceWindowsCore::PlayoutDelay(uint16_t& delayMS) const {
   rtc::CritScope critScoped(&_critSect);
   delayMS = static_cast<uint16_t>(_sndCardPlayDelay);
   return 0;
+}
+
+bool AudioDeviceWindowsCore::BuiltInAECIsAvailable() const {
+  return _dmo != nullptr;
 }
 
 // ----------------------------------------------------------------------------
@@ -3323,8 +3327,8 @@ DWORD AudioDeviceWindowsCore::DoCaptureThread() {
         // IAudioClient::Stop, IAudioClient::Reset, and releasing the audio
         // client.
         RTC_LOG(LS_ERROR) << "IAudioCaptureClient::GetBuffer returned"
-                          << " AUDCLNT_E_BUFFER_ERROR, hr = 0x" << std::hex
-                          << hr << std::dec;
+                          << " AUDCLNT_E_BUFFER_ERROR, hr = 0x"
+                          << rtc::ToHex(hr);
         goto Exit;
       }
 
@@ -3394,6 +3398,14 @@ int32_t AudioDeviceWindowsCore::EnableBuiltInAEC(bool enable) {
 
   _builtInAecEnabled = enable;
   return 0;
+}
+
+void AudioDeviceWindowsCore::_Lock() RTC_NO_THREAD_SAFETY_ANALYSIS {
+  _critSect.Enter();
+}
+
+void AudioDeviceWindowsCore::_UnLock() RTC_NO_THREAD_SAFETY_ANALYSIS {
+  _critSect.Leave();
 }
 
 int AudioDeviceWindowsCore::SetDMOProperties() {
@@ -3829,7 +3841,7 @@ int32_t AudioDeviceWindowsCore::_GetDeviceName(IMMDevice* pDevice,
     hr = pDevice->OpenPropertyStore(STGM_READ, &pProps);
     if (FAILED(hr)) {
       RTC_LOG(LS_ERROR) << "IMMDevice::OpenPropertyStore failed, hr = 0x"
-                        << std::hex << hr << std::dec;
+                        << rtc::ToHex(hr);
     }
   }
 
@@ -3841,21 +3853,21 @@ int32_t AudioDeviceWindowsCore::_GetDeviceName(IMMDevice* pDevice,
     hr = pProps->GetValue(PKEY_Device_FriendlyName, &varName);
     if (FAILED(hr)) {
       RTC_LOG(LS_ERROR) << "IPropertyStore::GetValue failed, hr = 0x"
-                        << std::hex << hr << std::dec;
+                        << rtc::ToHex(hr);
     }
   }
 
   if ((SUCCEEDED(hr)) && (VT_EMPTY == varName.vt)) {
     hr = E_FAIL;
     RTC_LOG(LS_ERROR) << "IPropertyStore::GetValue returned no value,"
-                      << " hr = 0x" << std::hex << hr << std::dec;
+                      << " hr = 0x" << rtc::ToHex(hr);
   }
 
   if ((SUCCEEDED(hr)) && (VT_LPWSTR != varName.vt)) {
     // The returned value is not a wide null terminated string.
     hr = E_UNEXPECTED;
     RTC_LOG(LS_ERROR) << "IPropertyStore::GetValue returned unexpected"
-                      << " type, hr = 0x" << std::hex << hr << std::dec;
+                      << " type, hr = 0x" << rtc::ToHex(hr);
   }
 
   if (SUCCEEDED(hr) && (varName.pwszVal != NULL)) {
@@ -4044,16 +4056,16 @@ int32_t AudioDeviceWindowsCore::_EnumerateEndpointDevicesAll(
     hr = pEndpoint->GetState(&dwState);
     CONTINUE_ON_ERROR(hr);
     if (dwState & DEVICE_STATE_ACTIVE)
-      RTC_LOG(LS_VERBOSE) << "state (0x" << std::hex << dwState << std::dec
+      RTC_LOG(LS_VERBOSE) << "state (0x" << rtc::ToHex(dwState)
                           << ")  : *ACTIVE*";
     if (dwState & DEVICE_STATE_DISABLED)
-      RTC_LOG(LS_VERBOSE) << "state (0x" << std::hex << dwState << std::dec
+      RTC_LOG(LS_VERBOSE) << "state (0x" << rtc::ToHex(dwState)
                           << ")  : DISABLED";
     if (dwState & DEVICE_STATE_NOTPRESENT)
-      RTC_LOG(LS_VERBOSE) << "state (0x" << std::hex << dwState << std::dec
+      RTC_LOG(LS_VERBOSE) << "state (0x" << rtc::ToHex(dwState)
                           << ")  : NOTPRESENT";
     if (dwState & DEVICE_STATE_UNPLUGGED)
-      RTC_LOG(LS_VERBOSE) << "state (0x" << std::hex << dwState << std::dec
+      RTC_LOG(LS_VERBOSE) << "state (0x" << rtc::ToHex(dwState)
                           << ")  : UNPLUGGED";
 
     // Check the hardware volume capabilities.
@@ -4065,16 +4077,16 @@ int32_t AudioDeviceWindowsCore::_EnumerateEndpointDevicesAll(
     CONTINUE_ON_ERROR(hr);
     if (dwHwSupportMask & ENDPOINT_HARDWARE_SUPPORT_VOLUME)
       // The audio endpoint device supports a hardware volume control
-      RTC_LOG(LS_VERBOSE) << "hwmask (0x" << std::hex << dwHwSupportMask
-                          << std::dec << ") : HARDWARE_SUPPORT_VOLUME";
+      RTC_LOG(LS_VERBOSE) << "hwmask (0x" << rtc::ToHex(dwHwSupportMask)
+                          << ") : HARDWARE_SUPPORT_VOLUME";
     if (dwHwSupportMask & ENDPOINT_HARDWARE_SUPPORT_MUTE)
       // The audio endpoint device supports a hardware mute control
-      RTC_LOG(LS_VERBOSE) << "hwmask (0x" << std::hex << dwHwSupportMask
-                          << std::dec << ") : HARDWARE_SUPPORT_MUTE";
+      RTC_LOG(LS_VERBOSE) << "hwmask (0x" << rtc::ToHex(dwHwSupportMask)
+                          << ") : HARDWARE_SUPPORT_MUTE";
     if (dwHwSupportMask & ENDPOINT_HARDWARE_SUPPORT_METER)
       // The audio endpoint device supports a hardware peak meter
-      RTC_LOG(LS_VERBOSE) << "hwmask (0x" << std::hex << dwHwSupportMask
-                          << std::dec << ") : HARDWARE_SUPPORT_METER";
+      RTC_LOG(LS_VERBOSE) << "hwmask (0x" << rtc::ToHex(dwHwSupportMask)
+                          << ") : HARDWARE_SUPPORT_METER";
 
     // Check the channel count (#channels in the audio stream that enters or
     // leaves the audio endpoint device)

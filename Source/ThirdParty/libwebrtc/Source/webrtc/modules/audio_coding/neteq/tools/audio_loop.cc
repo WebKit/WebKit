@@ -21,16 +21,18 @@ bool AudioLoop::Init(const std::string file_name,
                      size_t max_loop_length_samples,
                      size_t block_length_samples) {
   FILE* fp = fopen(file_name.c_str(), "rb");
-  if (!fp) return false;
+  if (!fp)
+    return false;
 
-  audio_array_.reset(new int16_t[max_loop_length_samples +
-                                 block_length_samples]);
-  size_t samples_read = fread(audio_array_.get(), sizeof(int16_t),
-                              max_loop_length_samples, fp);
+  audio_array_.reset(
+      new int16_t[max_loop_length_samples + block_length_samples]);
+  size_t samples_read =
+      fread(audio_array_.get(), sizeof(int16_t), max_loop_length_samples, fp);
   fclose(fp);
 
   // Block length must be shorter than the loop length.
-  if (block_length_samples > samples_read) return false;
+  if (block_length_samples > samples_read)
+    return false;
 
   // Add an extra block length of samples to the end of the array, starting
   // over again from the beginning of the array. This is done to simplify
@@ -53,7 +55,6 @@ rtc::ArrayView<const int16_t> AudioLoop::GetNextBlock() {
   next_index_ = (next_index_ + block_length_samples_) % loop_length_samples_;
   return rtc::ArrayView<const int16_t>(output_ptr, block_length_samples_);
 }
-
 
 }  // namespace test
 }  // namespace webrtc

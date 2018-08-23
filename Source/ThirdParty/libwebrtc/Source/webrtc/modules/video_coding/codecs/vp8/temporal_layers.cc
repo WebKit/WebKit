@@ -14,17 +14,79 @@
 #include <set>
 #include <vector>
 
+#include "absl/memory/memory.h"
 #include "modules/include/module_common_types.h"
-#include "modules/video_coding/codecs/vp8/include/vp8_common_types.h"
+#include "modules/video_coding/codecs/vp8/default_temporal_layers.h"
+#include "modules/video_coding/codecs/vp8/screenshare_layers.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
+namespace {
+uint8_t NumTemporalLayers(const VideoCodec& codec, int spatial_id) {
+  uint8_t num_temporal_layers =
+      std::max<uint8_t>(1, codec.VP8().numberOfTemporalLayers);
+  if (codec.numberOfSimulcastStreams > 0) {
+    RTC_DCHECK_LT(spatial_id, codec.numberOfSimulcastStreams);
+    num_temporal_layers =
+        std::max(num_temporal_layers,
+                 codec.simulcastStream[spatial_id].numberOfTemporalLayers);
+  }
+  return num_temporal_layers;
+}
 
-TemporalLayersChecker::TemporalLayersChecker(int num_temporal_layers,
-                                             uint8_t /*initial_tl0_pic_idx*/)
+bool IsConferenceModeScreenshare(const VideoCodec& codec) {
+  if (codec.mode != VideoCodecMode::kScreensharing ||
+      NumTemporalLayers(codec, 0) != 2) {
+    return false;
+  }
+  // Fixed default bitrates for legacy screenshare layers mode.
+  return (codec.numberOfSimulcastStreams == 0 && codec.maxBitrate == 1000) ||
+         (codec.numberOfSimulcastStreams >= 1 &&
+          codec.simulcastStream[0].maxBitrate == 1000 &&
+          codec.simulcastStream[0].targetBitrate == 200);
+}
+}  // namespace
+
+bool TemporalLayers::FrameConfig::operator==(const FrameConfig& o) const {
+  return drop_frame == o.drop_frame &&
+         last_buffer_flags == o.last_buffer_flags &&
+         golden_buffer_flags == o.golden_buffer_flags &&
+         arf_buffer_flags == o.arf_buffer_flags && layer_sync == o.layer_sync &&
+         freeze_entropy == o.freeze_entropy &&
+         encoder_layer_id == o.encoder_layer_id &&
+         packetizer_temporal_idx == o.packetizer_temporal_idx;
+}
+
+std::unique_ptr<TemporalLayers> TemporalLayers::CreateTemporalLayers(
+    const VideoCodec& codec,
+    size_t spatial_id) {
+  if (IsConferenceModeScreenshare(codec) && spatial_id == 0) {
+    // Conference mode temporal layering for screen content in base stream.
+    return absl::make_unique<ScreenshareLayers>(2, Clock::GetRealTimeClock());
+  }
+
+  return absl::make_unique<DefaultTemporalLayers>(
+      NumTemporalLayers(codec, spatial_id));
+}
+
+std::unique_ptr<TemporalLayersChecker>
+TemporalLayers::CreateTemporalLayersChecker(const VideoCodec& codec,
+                                            size_t spatial_id) {
+  if (IsConferenceModeScreenshare(codec) && spatial_id == 0) {
+    // Conference mode temporal layering for screen content in base stream,
+    // use generic checker.
+    return absl::make_unique<TemporalLayersChecker>(2);
+  }
+
+  return absl::make_unique<DefaultTemporalLayersChecker>(
+      NumTemporalLayers(codec, spatial_id));
+}
+
+TemporalLayersChecker::TemporalLayersChecker(int num_temporal_layers)
     : num_temporal_layers_(num_temporal_layers),
       sequence_number_(0),
       last_sync_sequence_number_(0),
@@ -39,7 +101,7 @@ bool TemporalLayersChecker::CheckAndUpdateBufferState(
     uint32_t sequence_number,
     uint32_t* lowest_sequence_referenced) {
   if (flags & TemporalLayers::BufferFlags::kReference) {
-    if (state->temporal_layer > 0) {
+    if (state->temporal_layer > 0 && !state->is_keyframe) {
       *need_sync = false;
     }
     if (!state->is_keyframe && !frame_is_keyframe &&
@@ -125,7 +187,8 @@ bool TemporalLayersChecker::CheckTemporalConfig(
     last_sync_sequence_number_ = last_tl0_sequence_number_;
   }
 
-  if (need_sync != frame_config.layer_sync) {
+  // Ignore sync flag on key-frames as it really doesn't matter.
+  if (need_sync != frame_config.layer_sync && !frame_is_keyframe) {
     RTC_LOG(LS_ERROR) << "Sync bit is set incorrectly on a frame. Expected: "
                       << need_sync << " Actual: " << frame_config.layer_sync;
     return false;

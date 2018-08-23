@@ -18,20 +18,27 @@
 namespace webrtc {
 
 static const size_t kGenericHeaderLength = 1;
+static const size_t kExtendedHeaderLength = 2;
 
-RtpPacketizerGeneric::RtpPacketizerGeneric(FrameType frame_type,
-                                           size_t max_payload_len,
-                                           size_t last_packet_reduction_len)
-    : payload_data_(NULL),
+RtpPacketizerGeneric::RtpPacketizerGeneric(
+    const RTPVideoHeader& rtp_video_header,
+    FrameType frame_type,
+    size_t max_payload_len,
+    size_t last_packet_reduction_len)
+    : picture_id_(
+          rtp_video_header.frame_id != kNoPictureId
+              ? absl::optional<uint16_t>(rtp_video_header.frame_id & 0x7FFF)
+              : absl::nullopt),
+      payload_data_(nullptr),
       payload_size_(0),
-      max_payload_len_(max_payload_len - kGenericHeaderLength),
+      max_payload_len_(max_payload_len - kGenericHeaderLength -
+                       (picture_id_.has_value() ? kExtendedHeaderLength : 0)),
       last_packet_reduction_len_(last_packet_reduction_len),
       frame_type_(frame_type),
       num_packets_left_(0),
       num_larger_packets_(0) {}
 
-RtpPacketizerGeneric::~RtpPacketizerGeneric() {
-}
+RtpPacketizerGeneric::~RtpPacketizerGeneric() {}
 
 size_t RtpPacketizerGeneric::SetPayloadData(
     const uint8_t* payload_data,
@@ -63,6 +70,10 @@ size_t RtpPacketizerGeneric::SetPayloadData(
   if (frame_type_ == kVideoFrameKey) {
     generic_header_ |= RtpFormatVideoGeneric::kKeyFrameBit;
   }
+  if (picture_id_.has_value()) {
+    generic_header_ |= RtpFormatVideoGeneric::kExtendedHeaderBit;
+  }
+
   return num_packets_left_;
 }
 
@@ -87,16 +98,24 @@ bool RtpPacketizerGeneric::NextPacket(RtpPacketToSend* packet) {
   }
   RTC_DCHECK_LE(next_packet_payload_len, max_payload_len_);
 
-  uint8_t* out_ptr =
-      packet->AllocatePayload(kGenericHeaderLength + next_packet_payload_len);
+  size_t total_length = next_packet_payload_len + kGenericHeaderLength +
+                        (picture_id_.has_value() ? kExtendedHeaderLength : 0);
+  uint8_t* out_ptr = packet->AllocatePayload(total_length);
+
   // Put generic header in packet.
   out_ptr[0] = generic_header_;
+  out_ptr += kGenericHeaderLength;
+
+  if (picture_id_.has_value()) {
+    WriteExtendedHeader(out_ptr);
+    out_ptr += kExtendedHeaderLength;
+  }
+
   // Remove first-packet bit, following packets are intermediate.
   generic_header_ &= ~RtpFormatVideoGeneric::kFirstPacketBit;
 
   // Put payload in packet.
-  memcpy(out_ptr + kGenericHeaderLength, payload_data_,
-         next_packet_payload_len);
+  memcpy(out_ptr, payload_data_, next_packet_payload_len);
   payload_data_ += next_packet_payload_len;
   payload_size_ -= next_packet_payload_len;
   --num_packets_left_;
@@ -112,12 +131,21 @@ std::string RtpPacketizerGeneric::ToString() {
   return "RtpPacketizerGeneric";
 }
 
+void RtpPacketizerGeneric::WriteExtendedHeader(uint8_t* out_ptr) {
+  // Store bottom 15 bits of the the sequence number. Only 15 bits are used for
+  // compatibility with other packetizer implemenetations that also use 15 bits.
+  out_ptr[0] = (*picture_id_ >> 8) & 0x7F;
+  out_ptr[1] = *picture_id_ & 0xFF;
+}
+
+RtpDepacketizerGeneric::~RtpDepacketizerGeneric() = default;
+
 bool RtpDepacketizerGeneric::Parse(ParsedPayload* parsed_payload,
                                    const uint8_t* payload_data,
                                    size_t payload_data_length) {
   assert(parsed_payload != NULL);
   if (payload_data_length == 0) {
-    RTC_LOG(LS_ERROR) << "Empty payload.";
+    RTC_LOG(LS_WARNING) << "Empty payload.";
     return false;
   }
 
@@ -128,11 +156,22 @@ bool RtpDepacketizerGeneric::Parse(ParsedPayload* parsed_payload,
       ((generic_header & RtpFormatVideoGeneric::kKeyFrameBit) != 0)
           ? kVideoFrameKey
           : kVideoFrameDelta;
-  parsed_payload->type.Video.is_first_packet_in_frame =
+  parsed_payload->video_header().is_first_packet_in_frame =
       (generic_header & RtpFormatVideoGeneric::kFirstPacketBit) != 0;
-  parsed_payload->type.Video.codec = kRtpVideoGeneric;
-  parsed_payload->type.Video.width = 0;
-  parsed_payload->type.Video.height = 0;
+  parsed_payload->video_header().codec = kVideoCodecGeneric;
+  parsed_payload->video_header().width = 0;
+  parsed_payload->video_header().height = 0;
+
+  if (generic_header & RtpFormatVideoGeneric::kExtendedHeaderBit) {
+    if (payload_data_length < kExtendedHeaderLength) {
+      RTC_LOG(LS_WARNING) << "Too short payload for generic header.";
+      return false;
+    }
+    parsed_payload->video_header().frame_id =
+        ((payload_data[0] & 0x7F) << 8) | payload_data[1];
+    payload_data += kExtendedHeaderLength;
+    payload_data_length -= kExtendedHeaderLength;
+  }
 
   parsed_payload->payload = payload_data;
   parsed_payload->payload_length = payload_data_length;

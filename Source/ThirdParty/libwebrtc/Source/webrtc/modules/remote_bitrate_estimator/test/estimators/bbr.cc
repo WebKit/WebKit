@@ -123,6 +123,34 @@ BbrBweSender::BbrBweSender(BitrateObserver* observer, Clock* clock)
 
 BbrBweSender::~BbrBweSender() {}
 
+BbrBweSender::PacketStats::PacketStats() = default;
+
+BbrBweSender::PacketStats::PacketStats(
+    uint16_t sequence_number_,
+    int64_t last_sent_packet_send_time_ms_,
+    int64_t send_time_ms_,
+    int64_t ack_time_ms_,
+    int64_t last_acked_packet_ack_time_ms_,
+    size_t payload_size_bytes_,
+    size_t data_sent_bytes_,
+    size_t data_sent_before_last_sent_packet_bytes_,
+    size_t data_acked_bytes_,
+    size_t data_acked_before_last_acked_packet_bytes_)
+    : sequence_number(sequence_number_),
+      last_sent_packet_send_time_ms(last_sent_packet_send_time_ms_),
+      send_time_ms(send_time_ms_),
+      ack_time_ms(ack_time_ms_),
+      last_acked_packet_ack_time_ms(last_acked_packet_ack_time_ms_),
+      payload_size_bytes(payload_size_bytes_),
+      data_sent_bytes(data_sent_bytes_),
+      data_sent_before_last_sent_packet_bytes(
+          data_sent_before_last_sent_packet_bytes_),
+      data_acked_bytes(data_acked_bytes_),
+      data_acked_before_last_acked_packet_bytes(
+          data_acked_before_last_acked_packet_bytes_) {}
+
+BbrBweSender::PacketStats::PacketStats(const PacketStats&) = default;
+
 int BbrBweSender::GetFeedbackIntervalMs() const {
   return kFeedbackIntervalsMs;
 }
@@ -277,15 +305,15 @@ size_t BbrBweSender::TargetCongestionWindow(float gain) {
   return target_congestion_window;
 }
 
-rtc::Optional<int64_t> BbrBweSender::CalculateBandwidthSample(
+absl::optional<int64_t> BbrBweSender::CalculateBandwidthSample(
     size_t data_sent_bytes,
     int64_t send_time_delta_ms,
     size_t data_acked_bytes,
     int64_t ack_time_delta_ms) {
-  rtc::Optional<int64_t> bandwidth_sample;
+  absl::optional<int64_t> bandwidth_sample;
   if (send_time_delta_ms > 0)
     bandwidth_sample.emplace(data_sent_bytes * 8000 / send_time_delta_ms);
-  rtc::Optional<int64_t> ack_rate;
+  absl::optional<int64_t> ack_rate;
   if (ack_time_delta_ms > 0)
     ack_rate.emplace(data_acked_bytes * 8000 / ack_time_delta_ms);
   // If send rate couldn't be calculated automaticaly set |bandwidth_sample| to
@@ -311,7 +339,7 @@ void BbrBweSender::AddSampleForHighGain() {
                             data_acked_before_high_gain_started_bytes_;
   int64_t ack_time_delta_ms = last_packet_ack_time_during_high_gain_ms_ -
                               first_packet_ack_time_during_high_gain_ms_;
-  rtc::Optional<int64_t> bandwidth_sample = CalculateBandwidthSample(
+  absl::optional<int64_t> bandwidth_sample = CalculateBandwidthSample(
       data_sent_bytes, send_time_delta_ms, data_acked_bytes, ack_time_delta_ms);
   if (bandwidth_sample)
     max_bandwidth_filter_->AddBandwidthSample(*bandwidth_sample, round_count_);
@@ -322,7 +350,7 @@ void BbrBweSender::UpdateBandwidthAndMinRtt(
     int64_t now_ms,
     const std::vector<uint16_t>& feedback_vector,
     int64_t bytes_acked) {
-  rtc::Optional<int64_t> min_rtt_sample_ms;
+  absl::optional<int64_t> min_rtt_sample_ms;
   for (uint16_t f : feedback_vector) {
     PacketStats packet = packet_stats_[f];
     size_t data_sent_bytes =
@@ -333,7 +361,7 @@ void BbrBweSender::UpdateBandwidthAndMinRtt(
                               packet.data_acked_before_last_acked_packet_bytes;
     int64_t ack_time_delta_ms =
         packet.ack_time_ms - packet.last_acked_packet_ack_time_ms;
-    rtc::Optional<int64_t> bandwidth_sample =
+    absl::optional<int64_t> bandwidth_sample =
         CalculateBandwidthSample(data_sent_bytes, send_time_delta_ms,
                                  data_acked_bytes, ack_time_delta_ms);
     if (bandwidth_sample)
@@ -539,9 +567,9 @@ FeedbackPacket* BbrBweReceiver::GetFeedback(int64_t now_ms) {
   last_feedback_ms_ = now_ms;
   int64_t corrected_send_time_ms = 0L;
   if (!received_packets_.empty()) {
-    PacketIdentifierNode* latest = *(received_packets_.begin());
+    PacketIdentifierNode& latest = *(received_packets_.begin());
     corrected_send_time_ms =
-        latest->send_time_ms + now_ms - latest->arrival_time_ms;
+        latest.send_time_ms + now_ms - latest.arrival_time_ms;
   }
   FeedbackPacket* fb = new BbrBweFeedback(
       flow_id_, now_ms * 1000, corrected_send_time_ms, packet_feedbacks_);

@@ -13,7 +13,7 @@
 
 namespace rtc {
 namespace {
-  const uint32_t kBucketIntervalMs = 100;
+const uint32_t kBucketIntervalMs = 100;
 }  // namespace
 
 class RateTrackerForTest : public RateTracker {
@@ -107,7 +107,7 @@ TEST(RateTrackerTest, TestRateTrackerBasics) {
   EXPECT_DOUBLE_EQ(9876.0 * 10.0, tracker.ComputeRate());
   EXPECT_EQ(1234U * 2 + 9876U * 55, tracker.TotalSampleCount());
   EXPECT_DOUBLE_EQ((1234.0 * 2.0 + 9876.0 * 55.0) / 7.5,
-      tracker.ComputeTotalRate());
+                   tracker.ComputeTotalRate());
 
   // Advance the clock by 500 ms. Since we sent nothing over this half-second,
   // the reported rate should be reduced by half.
@@ -116,7 +116,7 @@ TEST(RateTrackerTest, TestRateTrackerBasics) {
   EXPECT_DOUBLE_EQ(9876.0 * 5.0, tracker.ComputeRate());
   EXPECT_EQ(1234U * 2 + 9876U * 55, tracker.TotalSampleCount());
   EXPECT_DOUBLE_EQ((1234.0 * 2.0 + 9876.0 * 55.0) / 8.0,
-      tracker.ComputeTotalRate());
+                   tracker.ComputeTotalRate());
 
   // Rate over the last half second should be zero.
   EXPECT_DOUBLE_EQ(0.0, tracker.ComputeRateForInterval(500));

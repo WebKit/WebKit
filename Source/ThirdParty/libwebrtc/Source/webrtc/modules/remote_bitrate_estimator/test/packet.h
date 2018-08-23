@@ -17,8 +17,8 @@
 #include <vector>
 
 #include "common_types.h"  // NOLINT(build/include)
-#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace webrtc {
 namespace testing {
@@ -34,22 +34,16 @@ class Packet {
 
   virtual bool operator<(const Packet& rhs) const;
 
-  virtual int flow_id() const { return flow_id_; }
+  virtual int flow_id() const;
   virtual void set_send_time_us(int64_t send_time_us);
-  virtual int64_t send_time_us() const { return send_time_us_; }
-  virtual int64_t sender_timestamp_us() const { return sender_timestamp_us_; }
-  virtual size_t payload_size() const { return payload_size_; }
+  virtual int64_t send_time_us() const;
+  virtual int64_t sender_timestamp_us() const;
+  virtual size_t payload_size() const;
   virtual Packet::Type GetPacketType() const = 0;
-  virtual void set_sender_timestamp_us(int64_t sender_timestamp_us) {
-    sender_timestamp_us_ = sender_timestamp_us;
-  }
-  virtual int64_t creation_time_ms() const {
-    return (creation_time_us_ + 500) / 1000;
-  }
-  virtual int64_t sender_timestamp_ms() const {
-    return (sender_timestamp_us_ + 500) / 1000;
-  }
-  virtual int64_t send_time_ms() const { return (send_time_us_ + 500) / 1000; }
+  virtual void set_sender_timestamp_us(int64_t sender_timestamp_us);
+  virtual int64_t creation_time_ms() const;
+  virtual int64_t sender_timestamp_ms() const;
+  virtual int64_t send_time_ms() const;
 
  protected:
   int flow_id_;
@@ -72,7 +66,7 @@ class MediaPacket : public Packet {
               const RTPHeader& header);
   MediaPacket(int64_t send_time_us, uint16_t sequence_number);
 
-  virtual ~MediaPacket() {}
+  ~MediaPacket() override {}
 
   int64_t GetAbsSendTimeInMs() const {
     int64_t timestamp = header_.extension.absoluteSendTime
@@ -81,7 +75,7 @@ class MediaPacket : public Packet {
   }
   void SetAbsSendTimeMs(int64_t abs_send_time_ms);
   const RTPHeader& header() const { return header_; }
-  virtual Packet::Type GetPacketType() const { return kMedia; }
+  Packet::Type GetPacketType() const override;
   uint16_t sequence_number() const { return header_.sequenceNumber; }
 
  private:
@@ -100,9 +94,9 @@ class FeedbackPacket : public Packet {
                  int64_t latest_send_time_ms)
       : Packet(flow_id, this_send_time_us, 0),
         latest_send_time_ms_(latest_send_time_ms) {}
-  virtual ~FeedbackPacket() {}
+  ~FeedbackPacket() override {}
 
-  virtual Packet::Type GetPacketType() const { return kFeedback; }
+  Packet::Type GetPacketType() const override;
   int64_t latest_send_time_ms() const { return latest_send_time_ms_; }
 
  private:
@@ -115,7 +109,7 @@ class BbrBweFeedback : public FeedbackPacket {
                  int64_t send_time_us,
                  int64_t latest_send_time_ms,
                  const std::vector<uint16_t>& packet_feedback_vector);
-  virtual ~BbrBweFeedback() {}
+  ~BbrBweFeedback() override;
 
   const std::vector<uint16_t>& packet_feedback_vector() const {
     return packet_feedback_vector_;
@@ -132,7 +126,7 @@ class RembFeedback : public FeedbackPacket {
                int64_t latest_send_time_ms,
                uint32_t estimated_bps,
                RTCPReportBlock report_block);
-  virtual ~RembFeedback() {}
+  ~RembFeedback() override {}
 
   uint32_t estimated_bps() const { return estimated_bps_; }
   RTCPReportBlock report_block() const { return report_block_; }
@@ -150,7 +144,7 @@ class SendSideBweFeedback : public FeedbackPacket {
       int64_t send_time_us,
       int64_t latest_send_time_ms,
       const std::vector<PacketFeedback>& packet_feedback_vector);
-  virtual ~SendSideBweFeedback() {}
+  ~SendSideBweFeedback() override;
 
   const std::vector<PacketFeedback>& packet_feedback_vector() const {
     return packet_feedback_vector_;
@@ -176,7 +170,7 @@ class NadaFeedback : public FeedbackPacket {
         congestion_signal_(congestion_signal),
         derivative_(derivative),
         receiving_rate_(receiving_rate) {}
-  virtual ~NadaFeedback() {}
+  ~NadaFeedback() override {}
 
   int64_t exp_smoothed_delay_ms() const { return exp_smoothed_delay_ms_; }
   int64_t est_queuing_delay_signal_ms() const {
@@ -199,10 +193,8 @@ class TcpFeedback : public FeedbackPacket {
   TcpFeedback(int flow_id,
               int64_t send_time_us,
               int64_t latest_send_time_ms,
-              const std::vector<uint16_t>& acked_packets)
-      : FeedbackPacket(flow_id, send_time_us, latest_send_time_ms),
-        acked_packets_(acked_packets) {}
-  virtual ~TcpFeedback() {}
+              const std::vector<uint16_t>& acked_packets);
+  ~TcpFeedback() override;
 
   const std::vector<uint16_t>& acked_packets() const { return acked_packets_; }
 

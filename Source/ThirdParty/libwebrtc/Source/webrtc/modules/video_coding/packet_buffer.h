@@ -12,6 +12,7 @@
 #define MODULES_VIDEO_CODING_PACKET_BUFFER_H_
 
 #include <memory>
+#include <queue>
 #include <set>
 #include <vector>
 
@@ -29,7 +30,6 @@ class Clock;
 
 namespace video_coding {
 
-class FrameObject;
 class RtpFrameObject;
 
 // A received frame is a frame which has received all its packets.
@@ -58,8 +58,11 @@ class PacketBuffer {
   void PaddingReceived(uint16_t seq_num);
 
   // Timestamp (not RTP timestamp) of the last received packet/keyframe packet.
-  rtc::Optional<int64_t> LastReceivedPacketMs() const;
-  rtc::Optional<int64_t> LastReceivedKeyframePacketMs() const;
+  absl::optional<int64_t> LastReceivedPacketMs() const;
+  absl::optional<int64_t> LastReceivedKeyframePacketMs() const;
+
+  // Returns number of different frames seen in the packet buffer
+  int GetUniqueFramesSeen() const;
 
   int AddRef() const;
   int Release() const;
@@ -126,6 +129,10 @@ class PacketBuffer {
   void UpdateMissingPackets(uint16_t seq_num)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
+  // Counts unique received timestamps and updates |unique_frames_seen_|.
+  void OnTimestampReceived(uint32_t rtp_timestamp)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
+
   rtc::CriticalSection crit_;
 
   // Buffer size_ and max_size_ must always be a power of two.
@@ -152,17 +159,24 @@ class PacketBuffer {
   OnReceivedFrameCallback* const received_frame_callback_;
 
   // Timestamp (not RTP timestamp) of the last received packet/keyframe packet.
-  rtc::Optional<int64_t> last_received_packet_ms_ RTC_GUARDED_BY(crit_);
-  rtc::Optional<int64_t> last_received_keyframe_packet_ms_
+  absl::optional<int64_t> last_received_packet_ms_ RTC_GUARDED_BY(crit_);
+  absl::optional<int64_t> last_received_keyframe_packet_ms_
       RTC_GUARDED_BY(crit_);
 
-  rtc::Optional<uint16_t> newest_inserted_seq_num_ RTC_GUARDED_BY(crit_);
+  int unique_frames_seen_ RTC_GUARDED_BY(crit_);
+
+  absl::optional<uint16_t> newest_inserted_seq_num_ RTC_GUARDED_BY(crit_);
   std::set<uint16_t, DescendingSeqNumComp<uint16_t>> missing_packets_
       RTC_GUARDED_BY(crit_);
 
   // Indicates if we should require SPS, PPS, and IDR for a particular
   // RTP timestamp to treat the corresponding frame as a keyframe.
   const bool sps_pps_idr_is_h264_keyframe_;
+
+  // Stores several last seen unique timestamps for quick search.
+  std::set<uint32_t> rtp_timestamps_history_set_ RTC_GUARDED_BY(crit_);
+  // Stores the same unique timestamps in the order of insertion.
+  std::queue<uint32_t> rtp_timestamps_history_queue_ RTC_GUARDED_BY(crit_);
 
   mutable volatile int ref_count_ = 0;
 };

@@ -23,7 +23,6 @@ class TestSessionInfo : public ::testing::Test {
     memset(packet_buffer_, 0, sizeof(packet_buffer_));
     memset(frame_buffer_, 0, sizeof(frame_buffer_));
     session_.Reset();
-    packet_.Reset();
     packet_.frameType = kVideoFrameDelta;
     packet_.sizeBytes = packet_buffer_size();
     packet_.dataPtr = packet_buffer_;

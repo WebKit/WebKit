@@ -2,9 +2,3 @@ include_rules = [
   "+logging/rtc_event_log",
   "+system_wrappers",
 ]
-
-specific_include_rules = {
-  "nada\.h": [
-    "+voice_engine",
-  ],
-}

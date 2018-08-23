@@ -97,16 +97,20 @@ class PeerConnectionWrapper {
   // generating the offer and the given PeerConnectionWrapper generating the
   // answer.
   // Equivalent to:
-  // 1. this->CreateOffer()
+  // 1. this->CreateOffer(offer_options)
   // 2. this->SetLocalDescription(offer)
   // 3. answerer->SetRemoteDescription(offer)
-  // 4. answerer->CreateAnswer()
+  // 4. answerer->CreateAnswer(answer_options)
   // 5. answerer->SetLocalDescription(answer)
   // 6. this->SetRemoteDescription(answer)
   // Returns true if all steps succeed, false otherwise.
   // Suggested usage:
   //   ASSERT_TRUE(caller->ExchangeOfferAnswerWith(callee.get()));
   bool ExchangeOfferAnswerWith(PeerConnectionWrapper* answerer);
+  bool ExchangeOfferAnswerWith(
+      PeerConnectionWrapper* answerer,
+      const PeerConnectionInterface::RTCOfferAnswerOptions& offer_options,
+      const PeerConnectionInterface::RTCOfferAnswerOptions& answer_options);
 
   // The following are wrappers for the underlying PeerConnection's
   // AddTransceiver method. They return the result of calling AddTransceiver
@@ -134,19 +138,19 @@ class PeerConnectionWrapper {
   // AddTrack fails.
   rtc::scoped_refptr<RtpSenderInterface> AddTrack(
       rtc::scoped_refptr<MediaStreamTrackInterface> track,
-      const std::vector<std::string>& stream_labels = {});
+      const std::vector<std::string>& stream_ids = {});
 
   // Calls the underlying PeerConnection's AddTrack method with an audio media
   // stream track not bound to any source.
   rtc::scoped_refptr<RtpSenderInterface> AddAudioTrack(
       const std::string& track_label,
-      const std::vector<std::string>& stream_labels = {});
+      const std::vector<std::string>& stream_ids = {});
 
   // Calls the underlying PeerConnection's AddTrack method with a video media
-  // stream track fed by a fake video capturer.
+  // stream track fed by a FakeVideoTrackSource.
   rtc::scoped_refptr<RtpSenderInterface> AddVideoTrack(
       const std::string& track_label,
-      const std::vector<std::string>& stream_labels = {});
+      const std::vector<std::string>& stream_ids = {});
 
   // Calls the underlying PeerConnection's CreateDataChannel method with default
   // initialization parameters.

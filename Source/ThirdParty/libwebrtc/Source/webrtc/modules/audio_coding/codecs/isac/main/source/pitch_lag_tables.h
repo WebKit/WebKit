@@ -11,16 +11,20 @@
 /*
  * pitch_lag_tables.h
  *
- * This file contains tables for the pitch filter side-info in the entropy coder.
+ * This file contains tables for the pitch filter side-info in the entropy
+ * coder.
  *
  */
 
 #ifndef MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_PITCH_LAG_TABLES_H_
 #define MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_PITCH_LAG_TABLES_H_
 
-#include "typedefs.h"  // NOLINT(build/include)
-/* header file for coding tables for the pitch filter side-info in the entropy coder */
-/********************* Pitch Filter Lag Coefficient Tables ************************/
+#include <stdint.h>
+
+/* header file for coding tables for the pitch filter side-info in the entropy
+ * coder */
+/********************* Pitch Filter Lag Coefficient Tables
+ * ************************/
 
 /* tables for use with small pitch gain */
 
@@ -30,7 +34,7 @@ extern const uint16_t WebRtcIsac_kQPitchLagCdf2Lo[20];
 extern const uint16_t WebRtcIsac_kQPitchLagCdf3Lo[2];
 extern const uint16_t WebRtcIsac_kQPitchLagCdf4Lo[10];
 
-extern const uint16_t *WebRtcIsac_kQPitchLagCdfPtrLo[4];
+extern const uint16_t* WebRtcIsac_kQPitchLagCdfPtrLo[4];
 
 /* size of first cdf table */
 extern const uint16_t WebRtcIsac_kQPitchLagCdfSizeLo[1];
@@ -49,7 +53,6 @@ extern const double WebRtcIsac_kQMeanLag4Lo[9];
 
 extern const double WebRtcIsac_kQPitchLagStepsizeLo;
 
-
 /* tables for use with medium pitch gain */
 
 /* cdfs for quantized pitch lags */
@@ -58,7 +61,7 @@ extern const uint16_t WebRtcIsac_kQPitchLagCdf2Mid[36];
 extern const uint16_t WebRtcIsac_kQPitchLagCdf3Mid[2];
 extern const uint16_t WebRtcIsac_kQPitchLagCdf4Mid[20];
 
-extern const uint16_t *WebRtcIsac_kQPitchLagCdfPtrMid[4];
+extern const uint16_t* WebRtcIsac_kQPitchLagCdfPtrMid[4];
 
 /* size of first cdf table */
 extern const uint16_t WebRtcIsac_kQPitchLagCdfSizeMid[1];
@@ -77,7 +80,6 @@ extern const double WebRtcIsac_kQMeanLag4Mid[19];
 
 extern const double WebRtcIsac_kQPitchLagStepsizeMid;
 
-
 /* tables for use with large pitch gain */
 
 /* cdfs for quantized pitch lags */
@@ -86,7 +88,7 @@ extern const uint16_t WebRtcIsac_kQPitchLagCdf2Hi[68];
 extern const uint16_t WebRtcIsac_kQPitchLagCdf3Hi[2];
 extern const uint16_t WebRtcIsac_kQPitchLagCdf4Hi[35];
 
-extern const uint16_t *WebRtcIsac_kQPitchLagCdfPtrHi[4];
+extern const uint16_t* WebRtcIsac_kQPitchLagCdfPtrHi[4];
 
 /* size of first cdf table */
 extern const uint16_t WebRtcIsac_kQPitchLagCdfSizeHi[1];

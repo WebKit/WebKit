@@ -22,34 +22,24 @@ int FakeDecodeFromFile::DecodeInternal(const uint8_t* encoded,
                                        int sample_rate_hz,
                                        int16_t* decoded,
                                        SpeechType* speech_type) {
+  RTC_DCHECK_EQ(sample_rate_hz, SampleRateHz());
+
+  const int samples_to_decode = PacketDuration(encoded, encoded_len);
+  const int total_samples_to_decode = samples_to_decode * (stereo_ ? 2 : 1);
+
   if (encoded_len == 0) {
     // Decoder is asked to produce codec-internal comfort noise.
     RTC_DCHECK(!encoded);  // NetEq always sends nullptr in this case.
     RTC_DCHECK(cng_mode_);
-    RTC_DCHECK_GT(last_decoded_length_, 0);
-    std::fill_n(decoded, last_decoded_length_, 0);
+    RTC_DCHECK_GT(total_samples_to_decode, 0);
+    std::fill_n(decoded, total_samples_to_decode, 0);
     *speech_type = kComfortNoise;
-    return rtc::dchecked_cast<int>(last_decoded_length_);
+    return rtc::dchecked_cast<int>(total_samples_to_decode);
   }
 
   RTC_CHECK_GE(encoded_len, 12);
   uint32_t timestamp_to_decode =
       ByteReader<uint32_t>::ReadLittleEndian(encoded);
-  uint32_t samples_to_decode =
-      ByteReader<uint32_t>::ReadLittleEndian(&encoded[4]);
-  if (samples_to_decode == 0) {
-    // Number of samples in packet is unknown.
-    if (last_decoded_length_ > 0) {
-      // Use length of last decoded packet, but since this is the total for all
-      // channels, we have to divide by 2 in the stereo case.
-      samples_to_decode = rtc::dchecked_cast<int>(rtc::CheckedDivExact(
-          last_decoded_length_, static_cast<size_t>(stereo_ ? 2uL : 1uL)));
-    } else {
-      // This is the first packet to decode, and we do not know the length of
-      // it. Set it to 10 ms.
-      samples_to_decode = rtc::CheckedDivExact(sample_rate_hz, 100);
-    }
-  }
 
   if (next_timestamp_from_input_ &&
       timestamp_to_decode != *next_timestamp_from_input_) {
@@ -65,11 +55,11 @@ int FakeDecodeFromFile::DecodeInternal(const uint8_t* encoded,
       ByteReader<uint32_t>::ReadLittleEndian(&encoded[8]);
   if (original_payload_size_bytes == 1) {
     // This is a comfort noise payload.
-    RTC_DCHECK_GT(last_decoded_length_, 0);
-    std::fill_n(decoded, last_decoded_length_, 0);
+    RTC_DCHECK_GT(total_samples_to_decode, 0);
+    std::fill_n(decoded, total_samples_to_decode, 0);
     *speech_type = kComfortNoise;
     cng_mode_ = true;
-    return rtc::dchecked_cast<int>(last_decoded_length_);
+    return rtc::dchecked_cast<int>(total_samples_to_decode);
   }
 
   cng_mode_ = false;
@@ -78,12 +68,39 @@ int FakeDecodeFromFile::DecodeInternal(const uint8_t* encoded,
   if (stereo_) {
     InputAudioFile::DuplicateInterleaved(decoded, samples_to_decode, 2,
                                          decoded);
-    samples_to_decode *= 2;
   }
 
   *speech_type = kSpeech;
   last_decoded_length_ = samples_to_decode;
-  return rtc::dchecked_cast<int>(last_decoded_length_);
+  return rtc::dchecked_cast<int>(total_samples_to_decode);
+}
+
+int FakeDecodeFromFile::PacketDuration(const uint8_t* encoded,
+                                       size_t encoded_len) const {
+  const uint32_t original_payload_size_bytes =
+      encoded_len < 8 + sizeof(uint32_t)
+          ? 0
+          : ByteReader<uint32_t>::ReadLittleEndian(&encoded[8]);
+  const uint32_t samples_to_decode =
+      encoded_len < 4 + sizeof(uint32_t)
+          ? 0
+          : ByteReader<uint32_t>::ReadLittleEndian(&encoded[4]);
+  if (  // Decoder is asked to produce codec-internal comfort noise
+      encoded_len == 0 ||
+      // Comfort noise payload
+      original_payload_size_bytes == 1 || samples_to_decode == 0 ||
+      // Erroneous duration since it is not a multiple of 10ms
+      samples_to_decode % rtc::CheckedDivExact(SampleRateHz(), 100) != 0) {
+    if (last_decoded_length_ > 0) {
+      // Use length of last decoded packet.
+      return rtc::dchecked_cast<int>(last_decoded_length_);
+    } else {
+      // This is the first packet to decode, and we do not know the length of
+      // it. Set it to 10 ms.
+      return rtc::CheckedDivExact(SampleRateHz(), 100);
+    }
+  }
+  return samples_to_decode;
 }
 
 void FakeDecodeFromFile::PrepareEncoded(uint32_t timestamp,

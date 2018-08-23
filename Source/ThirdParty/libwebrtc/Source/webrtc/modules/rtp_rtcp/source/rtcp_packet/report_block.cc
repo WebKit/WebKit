@@ -54,7 +54,7 @@ bool ReportBlock::Parse(const uint8_t* buffer, size_t length) {
 
   source_ssrc_ = ByteReader<uint32_t>::ReadBigEndian(&buffer[0]);
   fraction_lost_ = buffer[4];
-  cumulative_lost_ = ByteReader<uint32_t, 3>::ReadBigEndian(&buffer[5]);
+  cumulative_lost_ = ByteReader<int32_t, 3>::ReadBigEndian(&buffer[5]);
   extended_high_seq_num_ = ByteReader<uint32_t>::ReadBigEndian(&buffer[8]);
   jitter_ = ByteReader<uint32_t>::ReadBigEndian(&buffer[12]);
   last_sr_ = ByteReader<uint32_t>::ReadBigEndian(&buffer[16]);

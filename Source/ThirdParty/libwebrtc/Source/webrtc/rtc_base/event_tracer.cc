@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 
+#include "rtc_base/atomicops.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/event.h"
@@ -62,15 +63,8 @@ void EventTracer::AddTraceEvent(char phase,
                                 const unsigned long long* arg_values,
                                 unsigned char flags) {
   if (g_add_trace_event_ptr) {
-    g_add_trace_event_ptr(phase,
-                          category_enabled,
-                          name,
-                          id,
-                          num_args,
-                          arg_names,
-                          arg_types,
-                          arg_values,
-                          flags);
+    g_add_trace_event_ptr(phase, category_enabled, name, id, num_args,
+                          arg_names, arg_types, arg_values, flags);
   }
 }
 
@@ -127,8 +121,8 @@ class EventLogger final {
         {name, category_enabled, phase, args, timestamp, 1, thread_id});
   }
 
-// The TraceEvent format is documented here:
-// https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU/preview
+  // The TraceEvent format is documented here:
+  // https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU/preview
   void Log() {
     RTC_DCHECK(output_file_);
     static const int kLoggingIntervalMs = 100;

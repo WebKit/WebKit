@@ -103,11 +103,11 @@ class scoped_refptr {
   operator T*() const { return ptr_; }
   T* operator->() const { return ptr_; }
 
-  // Release a pointer.
-  // The return value is the current pointer held by this object.
-  // If this object holds a null pointer, the return value is null.
-  // After this operation, this object will hold a null pointer,
-  // and will not own the object any more.
+  // Returns the (possibly null) raw pointer, and makes the scoped_refptr hold a
+  // null pointer, all without touching the reference count of the underlying
+  // pointed-to object. The object is still reference counted, and the caller of
+  // release() is now the proud owner of one reference, so it is responsible for
+  // calling Release() once on the object when no longer using it.
   T* release() {
     T* retVal = ptr_;
     ptr_ = nullptr;
@@ -118,8 +118,8 @@ class scoped_refptr {
     // AddRef first so that self assignment should work
     if (p)
       p->AddRef();
-    if (ptr_ )
-      ptr_ ->Release();
+    if (ptr_)
+      ptr_->Release();
     ptr_ = p;
     return *this;
   }
@@ -150,9 +150,7 @@ class scoped_refptr {
     *pp = p;
   }
 
-  void swap(scoped_refptr<T>& r) {
-    swap(&r.ptr_);
-  }
+  void swap(scoped_refptr<T>& r) { swap(&r.ptr_); }
 
  protected:
   T* ptr_;

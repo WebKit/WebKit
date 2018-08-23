@@ -18,6 +18,7 @@ class NullEventFactory : public webrtc::EventFactory {
   virtual ~NullEventFactory() {}
 
   webrtc::EventWrapper* CreateEvent() override { return new NullEvent; }
+
  private:
   // Private class to avoid more dependencies on it in tests.
   class NullEvent : public webrtc::EventWrapper {

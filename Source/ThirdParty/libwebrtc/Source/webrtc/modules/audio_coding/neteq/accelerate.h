@@ -16,7 +16,6 @@
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "modules/audio_coding/neteq/time_stretch.h"
 #include "rtc_base/constructormagic.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -29,10 +28,10 @@ class BackgroundNoise;
 // Accelerate are implemented.
 class Accelerate : public TimeStretch {
  public:
-  Accelerate(int sample_rate_hz, size_t num_channels,
+  Accelerate(int sample_rate_hz,
+             size_t num_channels,
              const BackgroundNoise& background_noise)
-      : TimeStretch(sample_rate_hz, num_channels, background_noise) {
-  }
+      : TimeStretch(sample_rate_hz, num_channels, background_noise) {}
 
   // This method performs the actual Accelerate operation. The samples are
   // read from |input|, of length |input_length| elements, and are written to

@@ -36,21 +36,34 @@ enum class DelayChangesCategory {
   kNumCategories
 };
 
+constexpr int kMaxSkewShiftCount = 20;
+
 }  // namespace
 
-void RenderDelayControllerMetrics::Update(rtc::Optional<size_t> delay_samples,
-                                          size_t buffer_delay_blocks) {
+RenderDelayControllerMetrics::RenderDelayControllerMetrics() = default;
+
+void RenderDelayControllerMetrics::Update(
+    absl::optional<size_t> delay_samples,
+    size_t buffer_delay_blocks,
+    absl::optional<int> skew_shift_blocks) {
   ++call_counter_;
 
   if (!initial_update) {
+    size_t delay_blocks;
     if (delay_samples) {
       ++reliable_delay_estimate_counter_;
-      size_t delay_blocks = (*delay_samples) / kBlockSize;
+      delay_blocks = (*delay_samples) / kBlockSize + 2;
+    } else {
+      delay_blocks = 0;
+    }
 
-      if (delay_blocks != delay_blocks_) {
-        ++delay_change_counter_;
-        delay_blocks_ = delay_blocks;
-      }
+    if (delay_blocks != delay_blocks_) {
+      ++delay_change_counter_;
+      delay_blocks_ = delay_blocks;
+    }
+
+    if (skew_shift_blocks) {
+      skew_shift_count_ = std::min(kMaxSkewShiftCount, skew_shift_count_);
     }
   } else if (++initial_call_counter_ == 5 * kNumBlocksPerSecond) {
     initial_update = false;
@@ -58,12 +71,12 @@ void RenderDelayControllerMetrics::Update(rtc::Optional<size_t> delay_samples,
 
   if (call_counter_ == kMetricsReportingIntervalBlocks) {
     int value_to_report = static_cast<int>(delay_blocks_);
-    value_to_report = std::min(124, value_to_report);
+    value_to_report = std::min(124, value_to_report >> 1);
     RTC_HISTOGRAM_COUNTS_LINEAR("WebRTC.Audio.EchoCanceller.EchoPathDelay",
                                 value_to_report, 0, 124, 125);
 
-    value_to_report = static_cast<int>(buffer_delay_blocks);
-    value_to_report = std::min(124, value_to_report);
+    value_to_report = static_cast<int>(buffer_delay_blocks + 2);
+    value_to_report = std::min(124, value_to_report >> 1);
     RTC_HISTOGRAM_COUNTS_LINEAR("WebRTC.Audio.EchoCanceller.BufferDelay",
                                 value_to_report, 0, 124, 125);
 
@@ -106,6 +119,15 @@ void RenderDelayControllerMetrics::Update(rtc::Optional<size_t> delay_samples,
     ResetMetrics();
   } else {
     metrics_reported_ = false;
+  }
+
+  if (!initial_update && ++skew_report_timer_ == 60 * kNumBlocksPerSecond) {
+    RTC_HISTOGRAM_COUNTS_LINEAR("WebRTC.Audio.EchoCanceller.MaxSkewShiftCount",
+                                skew_shift_count_, 0, kMaxSkewShiftCount,
+                                kMaxSkewShiftCount + 1);
+
+    skew_shift_count_ = 0;
+    skew_report_timer_ = 0;
   }
 }
 

@@ -18,14 +18,12 @@
 
 - (void)joinRoomWithRoomId:(NSString *)roomId
                 isLoopback:(BOOL)isLoopback
-         completionHandler:(void (^)(ARDJoinResponse *response,
-                                     NSError *error))completionHandler;
+         completionHandler:(void (^)(ARDJoinResponse *response, NSError *error))completionHandler;
 
 - (void)sendMessage:(ARDSignalingMessage *)message
             forRoomId:(NSString *)roomId
              clientId:(NSString *)clientId
-    completionHandler:(void (^)(ARDMessageResponse *response,
-                                NSError *error))completionHandler;
+    completionHandler:(void (^)(ARDMessageResponse *response, NSError *error))completionHandler;
 
 - (void)leaveRoomWithRoomId:(NSString *)roomId
                    clientId:(NSString *)clientId

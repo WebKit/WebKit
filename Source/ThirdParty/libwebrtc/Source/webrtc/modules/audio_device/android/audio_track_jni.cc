@@ -127,8 +127,12 @@ int32_t AudioTrackJni::InitPlayout() {
 int32_t AudioTrackJni::StartPlayout() {
   RTC_LOG(INFO) << "StartPlayout";
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
-  RTC_DCHECK(initialized_);
   RTC_DCHECK(!playing_);
+  if (!initialized_) {
+    RTC_DLOG(LS_WARNING)
+        << "Playout can not start since InitPlayout must succeed first";
+    return 0;
+  }
   if (!j_audio_track_->StartPlayout()) {
     RTC_LOG(LS_ERROR) << "StartPlayout failed";
     return -1;
@@ -200,6 +204,7 @@ void AudioTrackJni::AttachAudioBuffer(AudioDeviceBuffer* audioBuffer) {
   audio_device_buffer_->SetPlayoutChannels(channels);
 }
 
+JNI_FUNCTION_ALIGN
 void JNICALL AudioTrackJni::CacheDirectBufferAddress(JNIEnv* env,
                                                      jobject obj,
                                                      jobject byte_buffer,
@@ -216,13 +221,14 @@ void AudioTrackJni::OnCacheDirectBufferAddress(JNIEnv* env,
   RTC_DCHECK(!direct_buffer_address_);
   direct_buffer_address_ = env->GetDirectBufferAddress(byte_buffer);
   jlong capacity = env->GetDirectBufferCapacity(byte_buffer);
-  RTC_LOG(INFO) <<  "direct buffer capacity: " << capacity;
+  RTC_LOG(INFO) << "direct buffer capacity: " << capacity;
   direct_buffer_capacity_in_bytes_ = static_cast<size_t>(capacity);
   const size_t bytes_per_frame = audio_parameters_.channels() * sizeof(int16_t);
   frames_per_buffer_ = direct_buffer_capacity_in_bytes_ / bytes_per_frame;
-  RTC_LOG(INFO) <<  "frames_per_buffer: " << frames_per_buffer_;
+  RTC_LOG(INFO) << "frames_per_buffer: " << frames_per_buffer_;
 }
 
+JNI_FUNCTION_ALIGN
 void JNICALL AudioTrackJni::GetPlayoutData(JNIEnv* env,
                                            jobject obj,
                                            jint length,

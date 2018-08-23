@@ -47,9 +47,7 @@ class RTCCertificateTest : public testing::Test {
   //   As a result, ExpiresSeconds and HasExpiredSeconds are used instead of
   // RTCCertificate::Expires and ::HasExpired for ms -> s conversion.
 
-  uint64_t NowSeconds() const {
-    return TimeNanos() / kNumNanosecsPerSec;
-  }
+  uint64_t NowSeconds() const { return TimeNanos() / kNumNanosecsPerSec; }
 
   uint64_t ExpiresSeconds(const scoped_refptr<RTCCertificate>& cert) const {
     uint64_t exp_ms = cert->Expires();
@@ -94,7 +92,7 @@ TEST_F(RTCCertificateTest, NewCertificateNotExpired) {
   EXPECT_FALSE(HasExpiredSeconds(certificate, now));
   // Even without specifying the expiration time we would expect it to be valid
   // for at least half an hour.
-  EXPECT_FALSE(HasExpiredSeconds(certificate, now + 30*60));
+  EXPECT_FALSE(HasExpiredSeconds(certificate, now + 30 * 60));
 }
 
 TEST_F(RTCCertificateTest, UsesExpiresAskedFor) {

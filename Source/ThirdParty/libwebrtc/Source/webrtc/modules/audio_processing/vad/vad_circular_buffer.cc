@@ -19,11 +19,9 @@ VadCircularBuffer::VadCircularBuffer(int buffer_size)
       is_full_(false),
       index_(0),
       buffer_size_(buffer_size),
-      sum_(0) {
-}
+      sum_(0) {}
 
-VadCircularBuffer::~VadCircularBuffer() {
-}
+VadCircularBuffer::~VadCircularBuffer() {}
 
 void VadCircularBuffer::Reset() {
   is_full_ = false;

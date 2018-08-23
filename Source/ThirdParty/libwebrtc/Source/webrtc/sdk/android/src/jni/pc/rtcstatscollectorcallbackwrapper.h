@@ -24,21 +24,15 @@ namespace jni {
 // Java.
 class RTCStatsCollectorCallbackWrapper : public RTCStatsCollectorCallback {
  public:
-  RTCStatsCollectorCallbackWrapper(JNIEnv* jni, jobject j_callback);
+  RTCStatsCollectorCallbackWrapper(JNIEnv* jni,
+                                   const JavaRef<jobject>& j_callback);
+  ~RTCStatsCollectorCallbackWrapper() override;
 
   void OnStatsDelivered(
       const rtc::scoped_refptr<const RTCStatsReport>& report) override;
 
  private:
-  // Helper functions for converting C++ RTCStatsReport to Java equivalent.
-  jobject ReportToJava(JNIEnv* jni,
-                       const rtc::scoped_refptr<const RTCStatsReport>& report);
-  jobject StatsToJava(JNIEnv* jni, const RTCStats& stats);
-
-  const ScopedGlobalRef<jobject> j_callback_global_;
-  const jclass j_linked_hash_map_class_;
-  const jmethodID j_linked_hash_map_ctor_;
-  const jmethodID j_linked_hash_map_put_;
+  const ScopedJavaGlobalRef<jobject> j_callback_global_;
 };
 
 }  // namespace jni

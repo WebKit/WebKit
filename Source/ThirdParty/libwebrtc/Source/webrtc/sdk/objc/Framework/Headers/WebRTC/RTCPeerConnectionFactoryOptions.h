@@ -15,7 +15,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCPeerConnectionFactoryOptions")))
 @interface RTCPeerConnectionFactoryOptions : NSObject
 
 @property(nonatomic, assign) BOOL disableEncryption;
@@ -31,6 +30,10 @@ __attribute__((objc_runtime_name("WK_RTCPeerConnectionFactoryOptions")))
 @property(nonatomic, assign) BOOL ignoreWiFiNetworkAdapter;
 
 @property(nonatomic, assign) BOOL ignoreEthernetNetworkAdapter;
+
+@property(nonatomic, assign) BOOL enableAes128Sha1_32CryptoCipher;
+
+@property(nonatomic, assign) BOOL enableGcmCryptoSuites;
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 

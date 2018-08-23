@@ -28,15 +28,14 @@
 
 namespace rtc {
 #if defined(WEBRTC_WIN)
-const in_addr kInitialNextIPv4 = { { { 0x01, 0, 0, 0 } } };
+const in_addr kInitialNextIPv4 = {{{0x01, 0, 0, 0}}};
 #else
 // This value is entirely arbitrary, hence the lack of concern about endianness.
-const in_addr kInitialNextIPv4 = { 0x01000000 };
+const in_addr kInitialNextIPv4 = {0x01000000};
 #endif
 // Starts at ::2 so as to not cause confusion with ::1.
-const in6_addr kInitialNextIPv6 = { { {
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2
-    } } };
+const in6_addr kInitialNextIPv6 = {
+    {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2}}};
 
 const uint16_t kFirstEphemeralPort = 49152;
 const uint16_t kLastEphemeralPort = 65535;
@@ -65,15 +64,13 @@ enum {
 class Packet : public MessageData {
  public:
   Packet(const char* data, size_t size, const SocketAddress& from)
-        : size_(size), consumed_(0), from_(from) {
+      : size_(size), consumed_(0), from_(from) {
     RTC_DCHECK(nullptr != data);
     data_ = new char[size_];
     memcpy(data_, data, size_);
   }
 
-  ~Packet() override {
-    delete[] data_;
-  }
+  ~Packet() override { delete[] data_; }
 
   const char* data() const { return data_ + consumed_; }
   size_t size() const { return size_ - consumed_; }
@@ -92,7 +89,7 @@ class Packet : public MessageData {
 };
 
 struct MessageAddress : public MessageData {
-  explicit MessageAddress(const SocketAddress& a) : addr(a) { }
+  explicit MessageAddress(const SocketAddress& a) : addr(a) {}
   SocketAddress addr;
 };
 
@@ -236,15 +233,15 @@ int VirtualSocket::Close() {
 }
 
 int VirtualSocket::Send(const void* pv, size_t cb) {
-    if (CS_CONNECTED != state_) {
-      error_ = ENOTCONN;
-      return -1;
-    }
-    if (SOCK_DGRAM == type_) {
-      return SendUdp(pv, cb, remote_addr_);
-    } else {
-      return SendTcp(pv, cb);
-    }
+  if (CS_CONNECTED != state_) {
+    error_ = ENOTCONN;
+    return -1;
+  }
+  if (SOCK_DGRAM == type_) {
+    return SendUdp(pv, cb, remote_addr_);
+  } else {
+    return SendTcp(pv, cb);
+  }
 }
 
 int VirtualSocket::SendTo(const void* pv,
@@ -409,7 +406,8 @@ void VirtualSocket::OnMessage(Message* pmsg) {
     } else if ((SOCK_STREAM == type_) && (CS_CONNECTING == state_)) {
       CompleteConnect(data->addr, true);
     } else {
-      RTC_LOG(LS_VERBOSE) << "Socket at " << local_addr_ << " is not listening";
+      RTC_LOG(LS_VERBOSE) << "Socket at " << local_addr_.ToString()
+                          << " is not listening";
       server_->Disconnect(server_->LookupBinding(data->addr));
     }
     delete data;
@@ -554,8 +552,7 @@ VirtualSocketServer::~VirtualSocketServer() {
 IPAddress VirtualSocketServer::GetNextIP(int family) {
   if (family == AF_INET) {
     IPAddress next_ip(next_ipv4_);
-    next_ipv4_.s_addr =
-        HostToNetwork32(NetworkToHost32(next_ipv4_.s_addr) + 1);
+    next_ipv4_.s_addr = HostToNetwork32(NetworkToHost32(next_ipv4_.s_addr) + 1);
     return next_ip;
   } else if (family == AF_INET6) {
     IPAddress next_ip(next_ipv6_);
@@ -589,16 +586,8 @@ void VirtualSocketServer::SetSendingBlocked(bool blocked) {
   }
 }
 
-Socket* VirtualSocketServer::CreateSocket(int type) {
-  return CreateSocket(AF_INET, type);
-}
-
 Socket* VirtualSocketServer::CreateSocket(int family, int type) {
   return CreateSocketInternal(family, type);
-}
-
-AsyncSocket* VirtualSocketServer::CreateAsyncSocket(int type) {
-  return CreateAsyncSocket(AF_INET, type);
 }
 
 AsyncSocket* VirtualSocketServer::CreateAsyncSocket(int family, int type) {
@@ -614,8 +603,8 @@ VirtualSocket* VirtualSocketServer::CreateSocketInternal(int family, int type) {
 void VirtualSocketServer::SetMessageQueue(MessageQueue* msg_queue) {
   msg_queue_ = msg_queue;
   if (msg_queue_) {
-    msg_queue_->SignalQueueDestroyed.connect(this,
-        &VirtualSocketServer::OnMessageQueueDestroyed);
+    msg_queue_->SignalQueueDestroyed.connect(
+        this, &VirtualSocketServer::OnMessageQueueDestroyed);
   }
 }
 
@@ -649,7 +638,7 @@ bool VirtualSocketServer::ProcessMessagesUntilIdle() {
     if (fake_clock_) {
       // If using a fake clock, advance it in millisecond increments until the
       // queue is empty.
-      fake_clock_->AdvanceTime(rtc::TimeDelta::FromMilliseconds(1));
+      fake_clock_->AdvanceTime(webrtc::TimeDelta::ms(1));
     } else {
       // Otherwise, run a normal message loop.
       Message msg;
@@ -728,8 +717,7 @@ int VirtualSocketServer::Bind(VirtualSocket* socket, SocketAddress* addr) {
 }
 
 VirtualSocket* VirtualSocketServer::LookupBinding(const SocketAddress& addr) {
-  SocketAddress normalized(addr.ipaddr().Normalized(),
-                           addr.port());
+  SocketAddress normalized(addr.ipaddr().Normalized(), addr.port());
   AddressMap::iterator it = bindings_->find(normalized);
   if (it != bindings_->end()) {
     return it->second;
@@ -751,8 +739,7 @@ VirtualSocket* VirtualSocketServer::LookupBinding(const SocketAddress& addr) {
 
 int VirtualSocketServer::Unbind(const SocketAddress& addr,
                                 VirtualSocket* socket) {
-  SocketAddress normalized(addr.ipaddr().Normalized(),
-                           addr.port());
+  SocketAddress normalized(addr.ipaddr().Normalized(), addr.port());
   RTC_DCHECK((*bindings_)[normalized] == socket);
   bindings_->erase(bindings_->find(normalized));
   return 0;
@@ -763,22 +750,18 @@ void VirtualSocketServer::AddConnection(const SocketAddress& local,
                                         VirtualSocket* remote_socket) {
   // Add this socket pair to our routing table. This will allow
   // multiple clients to connect to the same server address.
-  SocketAddress local_normalized(local.ipaddr().Normalized(),
-                                 local.port());
-  SocketAddress remote_normalized(remote.ipaddr().Normalized(),
-                                  remote.port());
+  SocketAddress local_normalized(local.ipaddr().Normalized(), local.port());
+  SocketAddress remote_normalized(remote.ipaddr().Normalized(), remote.port());
   SocketAddressPair address_pair(local_normalized, remote_normalized);
-  connections_->insert(std::pair<SocketAddressPair,
-                       VirtualSocket*>(address_pair, remote_socket));
+  connections_->insert(std::pair<SocketAddressPair, VirtualSocket*>(
+      address_pair, remote_socket));
 }
 
 VirtualSocket* VirtualSocketServer::LookupConnection(
     const SocketAddress& local,
     const SocketAddress& remote) {
-  SocketAddress local_normalized(local.ipaddr().Normalized(),
-                                 local.port());
-  SocketAddress remote_normalized(remote.ipaddr().Normalized(),
-                                  remote.port());
+  SocketAddress local_normalized(local.ipaddr().Normalized(), local.port());
+  SocketAddress remote_normalized(remote.ipaddr().Normalized(), remote.port());
   SocketAddressPair address_pair(local_normalized, remote_normalized);
   ConnectionMap::iterator it = connections_->find(address_pair);
   return (connections_->end() != it) ? it->second : nullptr;
@@ -786,10 +769,8 @@ VirtualSocket* VirtualSocketServer::LookupConnection(
 
 void VirtualSocketServer::RemoveConnection(const SocketAddress& local,
                                            const SocketAddress& remote) {
-  SocketAddress local_normalized(local.ipaddr().Normalized(),
-                                local.port());
-  SocketAddress remote_normalized(remote.ipaddr().Normalized(),
-                                 remote.port());
+  SocketAddress local_normalized(local.ipaddr().Normalized(), local.port());
+  SocketAddress remote_normalized(remote.ipaddr().Normalized(), remote.port());
   SocketAddressPair address_pair(local_normalized, remote_normalized);
   connections_->erase(address_pair);
 }
@@ -805,7 +786,8 @@ int VirtualSocketServer::Connect(VirtualSocket* socket,
   VirtualSocket* remote = LookupBinding(remote_addr);
   if (!CanInteractWith(socket, remote)) {
     RTC_LOG(LS_INFO) << "Address family mismatch between "
-                     << socket->GetLocalAddress() << " and " << remote_addr;
+                     << socket->GetLocalAddress().ToString() << " and "
+                     << remote_addr.ToString();
     return -1;
   }
   if (remote != nullptr) {
@@ -813,7 +795,7 @@ int VirtualSocketServer::Connect(VirtualSocket* socket,
     msg_queue_->PostDelayed(RTC_FROM_HERE, delay, remote, MSG_ID_CONNECT,
                             new MessageAddress(addr));
   } else {
-    RTC_LOG(LS_INFO) << "No one listening at " << remote_addr;
+    RTC_LOG(LS_INFO) << "No one listening at " << remote_addr.ToString();
     msg_queue_->PostDelayed(RTC_FROM_HERE, delay, socket, MSG_ID_DISCONNECT);
   }
   return 0;
@@ -832,7 +814,8 @@ bool VirtualSocketServer::Disconnect(VirtualSocket* socket) {
 }
 
 int VirtualSocketServer::SendUdp(VirtualSocket* socket,
-                                 const char* data, size_t data_size,
+                                 const char* data,
+                                 size_t data_size,
                                  const SocketAddress& remote_addr) {
   ++sent_packets_;
   if (sending_blocked_) {
@@ -856,17 +839,18 @@ int VirtualSocketServer::SendUdp(VirtualSocket* socket,
     dummy_socket->SetLocalAddress(remote_addr);
     if (!CanInteractWith(socket, dummy_socket.get())) {
       RTC_LOG(LS_VERBOSE) << "Incompatible address families: "
-                          << socket->GetLocalAddress() << " and "
-                          << remote_addr;
+                          << socket->GetLocalAddress().ToString() << " and "
+                          << remote_addr.ToString();
       return -1;
     }
-    RTC_LOG(LS_VERBOSE) << "No one listening at " << remote_addr;
+    RTC_LOG(LS_VERBOSE) << "No one listening at " << remote_addr.ToString();
     return static_cast<int>(data_size);
   }
 
   if (!CanInteractWith(socket, recipient)) {
     RTC_LOG(LS_VERBOSE) << "Incompatible address families: "
-                        << socket->GetLocalAddress() << " and " << remote_addr;
+                        << socket->GetLocalAddress().ToString() << " and "
+                        << remote_addr.ToString();
     return -1;
   }
 
@@ -912,8 +896,8 @@ void VirtualSocketServer::SendTcp(VirtualSocket* socket) {
   // is read from the recv_buffer.
 
   // Lookup the local/remote pair in the connections table.
-  VirtualSocket* recipient = LookupConnection(socket->local_addr_,
-                                              socket->remote_addr_);
+  VirtualSocket* recipient =
+      LookupConnection(socket->local_addr_, socket->remote_addr_);
   if (!recipient) {
     RTC_LOG(LS_VERBOSE) << "Sending data to no one.";
     return;
@@ -1034,8 +1018,8 @@ void PrintFunction(std::vector<std::pair<double, double> >* f) {
 #endif  // <unused>
 
 void VirtualSocketServer::UpdateDelayDistribution() {
-  Function* dist = CreateDistribution(delay_mean_, delay_stddev_,
-                                      delay_samples_);
+  Function* dist =
+      CreateDistribution(delay_mean_, delay_stddev_, delay_samples_);
   // We take a lock just to make sure we don't leak memory.
   {
     CritScope cs(&delay_crit_);
@@ -1043,9 +1027,11 @@ void VirtualSocketServer::UpdateDelayDistribution() {
   }
 }
 
+static double PI = 4 * atan(1.0);
+
 static double Normal(double x, double mean, double stddev) {
   double a = (x - mean) * (x - mean) / (2 * stddev * stddev);
-  return exp(-a) / (stddev * sqrt(2 * M_PI));
+  return exp(-a) / (stddev * sqrt(2 * PI));
 }
 
 #if 0  // static unused gives a warning
@@ -1095,7 +1081,7 @@ uint32_t VirtualSocketServer::GetTransitDelay(Socket* socket) {
 
 struct FunctionDomainCmp {
   bool operator()(const VirtualSocketServer::Point& p1,
-                   const VirtualSocketServer::Point& p2) {
+                  const VirtualSocketServer::Point& p2) {
     return p1.first < p2.first;
   }
   bool operator()(double v1, const VirtualSocketServer::Point& p2) {
@@ -1115,7 +1101,7 @@ VirtualSocketServer::Function* VirtualSocketServer::Accumulate(Function* f) {
     (*f)[i].second = v;
     v = v + dx * avgy;
   }
-  (*f)[f->size()-1].second = v;
+  (*f)[f->size() - 1].second = v;
   return f;
 }
 

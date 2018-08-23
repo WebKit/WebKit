@@ -14,7 +14,7 @@
 #include <memory>
 #include <string>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
 #include "api/ortc/udptransportinterface.h"
 #include "p2p/base/packettransportinternal.h"
 #include "rtc_base/asyncpacketsocket.h"  // For PacketOptions.
@@ -25,7 +25,7 @@ class AsyncPacketSocket;
 struct PacketTime;
 struct SentPacket;
 class SocketAddress;
-}
+}  // namespace rtc
 
 namespace cricket {
 
@@ -61,7 +61,7 @@ class UdpTransport : public rtc::PacketTransportInternal,
 
   int GetError() override;
 
-  rtc::Optional<rtc::NetworkRoute> network_route() const override;
+  absl::optional<rtc::NetworkRoute> network_route() const override;
 
  protected:
   PacketTransportInternal* GetInternal() override;

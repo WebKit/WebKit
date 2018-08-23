@@ -43,8 +43,7 @@ void SinusoidalLinearChirpSource::Run(size_t frames, float* destination) {
       } else {
         // Sinusoidal linear chirp.
         double t = (current_index_ - delay_samples_) / sample_rate_;
-        destination[i] =
-            sin(2 * M_PI * (kMinFrequency * t + (k_ / 2) * t * t));
+        destination[i] = sin(2 * M_PI * (kMinFrequency * t + (k_ / 2) * t * t));
       }
     }
   }
@@ -52,7 +51,7 @@ void SinusoidalLinearChirpSource::Run(size_t frames, float* destination) {
 
 double SinusoidalLinearChirpSource::Frequency(size_t position) {
   return kMinFrequency + (position - delay_samples_) *
-      (max_frequency_ - kMinFrequency) / total_samples_;
+                             (max_frequency_ - kMinFrequency) / total_samples_;
 }
 
 }  // namespace webrtc

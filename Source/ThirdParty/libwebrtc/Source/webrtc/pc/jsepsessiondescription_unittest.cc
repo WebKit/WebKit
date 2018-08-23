@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 
+#include "absl/memory/memory.h"
 #include "api/candidate.h"
 #include "api/jsepicecandidate.h"
 #include "api/jsepsessiondescription.h"
@@ -20,7 +21,6 @@
 #include "pc/sessiondescription.h"
 #include "pc/webrtcsdp.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/stringencode.h"
 
 using cricket::MediaProtocolType;
@@ -81,13 +81,11 @@ class JsepSessionDescriptionTest : public testing::Test {
     cricket::Candidate candidate(cricket::ICE_CANDIDATE_COMPONENT_RTP, "udp",
                                  address, 1, "", "", "local", 0, "1");
     candidate_ = candidate;
-    const std::string session_id =
-        rtc::ToString(rtc::CreateRandomId64());
-    const std::string session_version =
-        rtc::ToString(rtc::CreateRandomId());
-    jsep_desc_ = rtc::MakeUnique<JsepSessionDescription>(SdpType::kOffer);
+    const std::string session_id = rtc::ToString(rtc::CreateRandomId64());
+    const std::string session_version = rtc::ToString(rtc::CreateRandomId());
+    jsep_desc_ = absl::make_unique<JsepSessionDescription>(SdpType::kOffer);
     ASSERT_TRUE(jsep_desc_->Initialize(CreateCricketSessionDescription(),
-        session_id, session_version));
+                                       session_id, session_version));
   }
 
   std::string Serialize(const SessionDescriptionInterface* desc) {
@@ -99,7 +97,7 @@ class JsepSessionDescriptionTest : public testing::Test {
 
   std::unique_ptr<SessionDescriptionInterface> DeSerialize(
       const std::string& sdp) {
-    auto jsep_desc = rtc::MakeUnique<JsepSessionDescription>(SdpType::kOffer);
+    auto jsep_desc = absl::make_unique<JsepSessionDescription>(SdpType::kOffer);
     EXPECT_TRUE(webrtc::SdpDeserialize(sdp, jsep_desc.get(), nullptr));
     return std::move(jsep_desc);
   }

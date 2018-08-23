@@ -12,7 +12,6 @@
 #include "rtc_base/logging.h"
 #include "test/testsupport/frame_writer.h"
 
-
 namespace webrtc {
 namespace test {
 

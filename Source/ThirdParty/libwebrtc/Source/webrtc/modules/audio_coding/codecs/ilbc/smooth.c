@@ -16,9 +16,9 @@
 
 ******************************************************************/
 
-#include "defines.h"
-#include "constants.h"
-#include "smooth_out_data.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
+#include "modules/audio_coding/codecs/ilbc/smooth_out_data.h"
 
 /*----------------------------------------------------------------*
  * find the smoothed output data

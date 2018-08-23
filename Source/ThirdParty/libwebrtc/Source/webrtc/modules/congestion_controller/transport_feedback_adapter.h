@@ -14,7 +14,7 @@
 #include <deque>
 #include <vector>
 
-#include "modules/remote_bitrate_estimator/include/send_time_history.h"
+#include "modules/congestion_controller/rtp/send_time_history.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/thread_checker.h"
@@ -47,9 +47,9 @@ class TransportFeedbackAdapter {
   // to the CongestionController interface.
   void OnTransportFeedback(const rtcp::TransportFeedback& feedback);
   std::vector<PacketFeedback> GetTransportFeedbackVector() const;
-  rtc::Optional<int64_t> GetMinFeedbackLoopRtt() const;
+  absl::optional<int64_t> GetMinFeedbackLoopRtt() const;
 
-  void SetTransportOverhead(int transport_overhead_bytes_per_packet);
+  void SetTransportOverhead(size_t transport_overhead_bytes_per_packet);
 
   void SetNetworkIds(uint16_t local_id, uint16_t remote_id);
 
@@ -59,9 +59,7 @@ class TransportFeedbackAdapter {
   std::vector<PacketFeedback> GetPacketFeedbackVector(
       const rtcp::TransportFeedback& feedback);
 
-  const bool send_side_bwe_with_overhead_;
   rtc::CriticalSection lock_;
-  int transport_overhead_bytes_per_packet_ RTC_GUARDED_BY(&lock_);
   SendTimeHistory send_time_history_ RTC_GUARDED_BY(&lock_);
   const Clock* const clock_;
   int64_t current_offset_ms_;
@@ -70,7 +68,7 @@ class TransportFeedbackAdapter {
   uint16_t local_net_id_ RTC_GUARDED_BY(&lock_);
   uint16_t remote_net_id_ RTC_GUARDED_BY(&lock_);
   std::deque<int64_t> feedback_rtts_ RTC_GUARDED_BY(&lock_);
-  rtc::Optional<int64_t> min_feedback_rtt_ RTC_GUARDED_BY(&lock_);
+  absl::optional<int64_t> min_feedback_rtt_ RTC_GUARDED_BY(&lock_);
 
   rtc::CriticalSection observers_lock_;
   std::vector<PacketFeedbackObserver*> observers_

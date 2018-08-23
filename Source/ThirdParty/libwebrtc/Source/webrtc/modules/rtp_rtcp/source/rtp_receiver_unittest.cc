@@ -16,7 +16,6 @@
 #include "modules/rtp_rtcp/include/rtp_receiver.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/mocks/mock_rtp_rtcp.h"
-#include "modules/rtp_rtcp/source/rtp_receiver_impl.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -48,7 +47,6 @@ class RtpReceiverTest : public ::testing::Test {
         rtp_receiver_(
             RtpReceiver::CreateAudioReceiver(&fake_clock_,
                                              &mock_rtp_data_,
-                                             nullptr,
                                              &rtp_payload_registry_)) {
     rtp_receiver_->RegisterReceivePayload(kPcmuPayloadType,
                                           SdpAudioFormat("PCMU", 8000, 1));
@@ -236,20 +234,11 @@ TEST_F(RtpReceiverTest, GetSourcesRemoveOutdatedSource) {
   header.arrOfCSRCs[0] = kCsrc1;
   EXPECT_TRUE(rtp_receiver_->IncomingRtpPacket(
       header, kTestPayload, sizeof(kTestPayload), payload_specific));
-  auto rtp_receiver_impl = static_cast<RtpReceiverImpl*>(rtp_receiver_.get());
-  auto ssrc_sources = rtp_receiver_impl->ssrc_sources_for_testing();
-  ASSERT_EQ(1u, ssrc_sources.size());
-  EXPECT_EQ(kSsrc1, ssrc_sources.begin()->source_id());
-  EXPECT_EQ(RtpSourceType::SSRC, ssrc_sources.begin()->source_type());
-  EXPECT_EQ(fake_clock_.TimeInMilliseconds(),
-            ssrc_sources.begin()->timestamp_ms());
-
-  auto csrc_sources = rtp_receiver_impl->csrc_sources_for_testing();
-  ASSERT_EQ(1u, csrc_sources.size());
-  EXPECT_EQ(kCsrc1, csrc_sources.begin()->source_id());
-  EXPECT_EQ(RtpSourceType::CSRC, csrc_sources.begin()->source_type());
-  EXPECT_EQ(fake_clock_.TimeInMilliseconds(),
-            csrc_sources.begin()->timestamp_ms());
+  now_ms = fake_clock_.TimeInMilliseconds();
+  sources = rtp_receiver_->GetSources();
+  EXPECT_THAT(sources, UnorderedElementsAre(
+                           RtpSource(now_ms, kSsrc1, RtpSourceType::SSRC),
+                           RtpSource(now_ms, kCsrc1, RtpSourceType::CSRC)));
 }
 
 // The audio level from the RTPHeader extension should be stored in the

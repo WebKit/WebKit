@@ -65,7 +65,7 @@ class TestVideoReceiver : public ::testing::Test {
       ++header->header.sequenceNumber;
     }
     receiver_->Process();
-    EXPECT_CALL(decoder_, Decode(_, _, _, _, _)).Times(0);
+    EXPECT_CALL(decoder_, Decode(_, _, _, _)).Times(0);
     EXPECT_EQ(VCM_FRAME_NOT_READY, receiver_->Decode(100));
   }
 
@@ -76,8 +76,8 @@ class TestVideoReceiver : public ::testing::Test {
     EXPECT_EQ(0, receiver_->IncomingPacket(payload, length, *header));
     ++header->header.sequenceNumber;
     EXPECT_CALL(packet_request_callback_, ResendPackets(_, _)).Times(0);
-    receiver_->Process();;
-    EXPECT_CALL(decoder_, Decode(_, _, _, _, _)).Times(1);
+    receiver_->Process();
+    EXPECT_CALL(decoder_, Decode(_, _, _, _)).Times(1);
     EXPECT_EQ(0, receiver_->Decode(100));
   }
 
@@ -98,15 +98,14 @@ TEST_F(TestVideoReceiver, PaddingOnlyFrames) {
       0, receiver_->RegisterPacketRequestCallback(&packet_request_callback_));
   const size_t kPaddingSize = 220;
   const uint8_t payload[kPaddingSize] = {0};
-  WebRtcRTPHeader header;
-  memset(&header, 0, sizeof(header));
+  WebRtcRTPHeader header = {};
   header.frameType = kEmptyFrame;
   header.header.markerBit = false;
   header.header.paddingLength = kPaddingSize;
   header.header.payloadType = kUnusedPayloadType;
   header.header.ssrc = 1;
   header.header.headerLength = 12;
-  header.type.Video.codec = kRtpVideoVp8;
+  header.video_header().codec = kVideoCodecVP8;
   for (int i = 0; i < 10; ++i) {
     EXPECT_CALL(packet_request_callback_, ResendPackets(_, _)).Times(0);
     InsertAndVerifyPaddingFrame(payload, &header);
@@ -122,25 +121,24 @@ TEST_F(TestVideoReceiver, PaddingOnlyFramesWithLosses) {
   const size_t kFrameSize = 1200;
   const size_t kPaddingSize = 220;
   const uint8_t payload[kFrameSize] = {0};
-  WebRtcRTPHeader header;
-  memset(&header, 0, sizeof(header));
+  WebRtcRTPHeader header = {};
   header.frameType = kEmptyFrame;
   header.header.markerBit = false;
   header.header.paddingLength = kPaddingSize;
   header.header.payloadType = kUnusedPayloadType;
   header.header.ssrc = 1;
   header.header.headerLength = 12;
-  header.type.Video.codec = kRtpVideoVp8;
+  header.video_header().codec = kVideoCodecVP8;
   // Insert one video frame to get one frame decoded.
   header.frameType = kVideoFrameKey;
-  header.type.Video.is_first_packet_in_frame = true;
+  header.video_header().is_first_packet_in_frame = true;
   header.header.markerBit = true;
   InsertAndVerifyDecodableFrame(payload, kFrameSize, &header);
   clock_.AdvanceTimeMilliseconds(33);
   header.header.timestamp += 3000;
 
   header.frameType = kEmptyFrame;
-  header.type.Video.is_first_packet_in_frame = false;
+  header.video_header().is_first_packet_in_frame = false;
   header.header.markerBit = false;
   // Insert padding frames.
   for (int i = 0; i < 10; ++i) {
@@ -173,18 +171,17 @@ TEST_F(TestVideoReceiver, PaddingOnlyAndVideo) {
   const size_t kFrameSize = 1200;
   const size_t kPaddingSize = 220;
   const uint8_t payload[kFrameSize] = {0};
-  WebRtcRTPHeader header;
-  memset(&header, 0, sizeof(header));
+  WebRtcRTPHeader header = {};
   header.frameType = kEmptyFrame;
-  header.type.Video.is_first_packet_in_frame = false;
+  header.video_header().is_first_packet_in_frame = false;
   header.header.markerBit = false;
   header.header.paddingLength = kPaddingSize;
   header.header.payloadType = kUnusedPayloadType;
   header.header.ssrc = 1;
   header.header.headerLength = 12;
-  header.type.Video.codec = kRtpVideoVp8;
-  header.type.Video.codecHeader.VP8.pictureId = -1;
-  header.type.Video.codecHeader.VP8.tl0PicIdx = -1;
+  header.video_header().codec = kVideoCodecVP8;
+  header.video_header().vp8().pictureId = -1;
+  header.video_header().vp8().tl0PicIdx = -1;
   for (int i = 0; i < 3; ++i) {
     // Insert 2 video frames.
     for (int j = 0; j < 2; ++j) {
@@ -192,7 +189,7 @@ TEST_F(TestVideoReceiver, PaddingOnlyAndVideo) {
         header.frameType = kVideoFrameKey;
       else
         header.frameType = kVideoFrameDelta;
-      header.type.Video.is_first_packet_in_frame = true;
+      header.video_header().is_first_packet_in_frame = true;
       header.header.markerBit = true;
       InsertAndVerifyDecodableFrame(payload, kFrameSize, &header);
       clock_.AdvanceTimeMilliseconds(33);
@@ -201,7 +198,7 @@ TEST_F(TestVideoReceiver, PaddingOnlyAndVideo) {
 
     // Insert 2 padding only frames.
     header.frameType = kEmptyFrame;
-    header.type.Video.is_first_packet_in_frame = false;
+    header.video_header().is_first_packet_in_frame = false;
     header.header.markerBit = false;
     for (int j = 0; j < 2; ++j) {
       // InsertAndVerifyPaddingFrame(payload, &header);
@@ -209,13 +206,6 @@ TEST_F(TestVideoReceiver, PaddingOnlyAndVideo) {
       header.header.timestamp += 3000;
     }
   }
-}
-
-TEST_F(TestVideoReceiver, ReceiverDelay) {
-  EXPECT_EQ(0, receiver_->SetMinReceiverDelay(0));
-  EXPECT_EQ(0, receiver_->SetMinReceiverDelay(5000));
-  EXPECT_EQ(-1, receiver_->SetMinReceiverDelay(-100));
-  EXPECT_EQ(-1, receiver_->SetMinReceiverDelay(10010));
 }
 
 }  // namespace

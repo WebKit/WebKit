@@ -12,7 +12,7 @@
 @ for ARMv5 platforms.
 @ Reference C code is in file complex_bit_reverse.c. Bit-exact.
 
-#include "system_wrappers/include/asm_defines.h"
+#include "rtc_base/system/asm_defines.h"
 
 GLOBAL_FUNCTION WebRtcSpl_ComplexBitReverse
 .align  2

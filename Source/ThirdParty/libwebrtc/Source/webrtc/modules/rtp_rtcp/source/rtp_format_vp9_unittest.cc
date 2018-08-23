@@ -15,7 +15,6 @@
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace {
@@ -27,6 +26,8 @@ void VerifyHeader(const RTPVideoHeaderVP9& expected,
   EXPECT_EQ(expected.beginning_of_frame, actual.beginning_of_frame);
   EXPECT_EQ(expected.end_of_frame, actual.end_of_frame);
   EXPECT_EQ(expected.ss_data_available, actual.ss_data_available);
+  EXPECT_EQ(expected.non_ref_for_inter_layer_pred,
+            actual.non_ref_for_inter_layer_pred);
   EXPECT_EQ(expected.picture_id, actual.picture_id);
   EXPECT_EQ(expected.max_picture_id, actual.max_picture_id);
   EXPECT_EQ(expected.temporal_idx, actual.temporal_idx);
@@ -80,8 +81,10 @@ void ParseAndCheckPacket(const uint8_t* packet,
   std::unique_ptr<RtpDepacketizer> depacketizer(new RtpDepacketizerVp9());
   RtpDepacketizer::ParsedPayload parsed;
   ASSERT_TRUE(depacketizer->Parse(&parsed, packet, expected_length));
-  EXPECT_EQ(kRtpVideoVp9, parsed.type.Video.codec);
-  VerifyHeader(expected, parsed.type.Video.codecHeader.VP9);
+  EXPECT_EQ(kVideoCodecVP9, parsed.video_header().codec);
+  auto& vp9_header =
+      absl::get<RTPVideoHeaderVP9>(parsed.video_header().video_type_header);
+  VerifyHeader(expected, vp9_header);
   const size_t kExpectedPayloadLength = expected_length - expected_hdr_length;
   VerifyPayload(parsed, packet + expected_hdr_length, kExpectedPayloadLength);
 }
@@ -90,7 +93,7 @@ void ParseAndCheckPacket(const uint8_t* packet,
 // Payload descriptor for flexible mode
 //        0 1 2 3 4 5 6 7
 //        +-+-+-+-+-+-+-+-+
-//        |I|P|L|F|B|E|V|-| (REQUIRED)
+//        |I|P|L|F|B|E|V|Z| (REQUIRED)
 //        +-+-+-+-+-+-+-+-+
 //   I:   |M| PICTURE ID  | (RECOMMENDED)
 //        +-+-+-+-+-+-+-+-+
@@ -107,7 +110,7 @@ void ParseAndCheckPacket(const uint8_t* packet,
 // Payload descriptor for non-flexible mode
 //        0 1 2 3 4 5 6 7
 //        +-+-+-+-+-+-+-+-+
-//        |I|P|L|F|B|E|V|-| (REQUIRED)
+//        |I|P|L|F|B|E|V|Z| (REQUIRED)
 //        +-+-+-+-+-+-+-+-+
 //   I:   |M| PICTURE ID  | (RECOMMENDED)
 //        +-+-+-+-+-+-+-+-+
@@ -127,9 +130,7 @@ class RtpPacketizerVp9Test : public ::testing::Test {
   static constexpr size_t kMaxPacketSize = 1200;
 
   RtpPacketizerVp9Test() : packet_(kNoExtensions, kMaxPacketSize) {}
-  virtual void SetUp() {
-    expected_.InitRTPVideoHeaderVP9();
-  }
+  void SetUp() override { expected_.InitRTPVideoHeaderVP9(); }
 
   RtpPacketToSend packet_;
   std::unique_ptr<uint8_t[]> payload_;
@@ -191,7 +192,7 @@ TEST_F(RtpPacketizerVp9Test, TestEqualSizedMode_OnePacket) {
   Init(kFrameSize, kPacketSize);
 
   // One packet:
-  // I:0, P:0, L:0, F:0, B:1, E:1, V:0  (1hdr + 25 payload)
+  // I:0, P:0, L:0, F:0, B:1, E:1, V:0, Z:0  (1hdr + 25 payload)
   const size_t kExpectedHdrSizes[] = {1};
   const size_t kExpectedSizes[] = {26};
   const size_t kExpectedNum = GTEST_ARRAY_SIZE_(kExpectedSizes);
@@ -204,8 +205,8 @@ TEST_F(RtpPacketizerVp9Test, TestEqualSizedMode_TwoPackets) {
   Init(kFrameSize, kPacketSize);
 
   // Two packets:
-  // I:0, P:0, L:0, F:0, B:1, E:0, V:0  (1hdr + 14 payload)
-  // I:0, P:0, L:0, F:0, B:0, E:1, V:0  (1hdr + 13 payload)
+  // I:0, P:0, L:0, F:0, B:1, E:0, V:0, Z:0  (1hdr + 14 payload)
+  // I:0, P:0, L:0, F:0, B:0, E:1, V:0, Z:0  (1hdr + 13 payload)
   const size_t kExpectedHdrSizes[] = {1, 1};
   const size_t kExpectedSizes[] = {14, 15};
   const size_t kExpectedNum = GTEST_ARRAY_SIZE_(kExpectedSizes);
@@ -225,14 +226,14 @@ TEST_F(RtpPacketizerVp9Test, TestOneBytePictureId) {
   const size_t kFrameSize = 30;
   const size_t kPacketSize = 12;
 
-  expected_.picture_id = kMaxOneBytePictureId;   // 2 byte payload descriptor
+  expected_.picture_id = kMaxOneBytePictureId;  // 2 byte payload descriptor
   expected_.max_picture_id = kMaxOneBytePictureId;
   Init(kFrameSize, kPacketSize);
 
   // Three packets:
-  // I:1, P:0, L:0, F:0, B:1, E:0, V:0 (2hdr + 10 payload)
-  // I:1, P:0, L:0, F:0, B:0, E:0, V:0 (2hdr + 10 payload)
-  // I:1, P:0, L:0, F:0, B:0, E:1, V:0 (2hdr + 10 payload)
+  // I:1, P:0, L:0, F:0, B:1, E:0, V:0, Z:0 (2hdr + 10 payload)
+  // I:1, P:0, L:0, F:0, B:0, E:0, V:0, Z:0 (2hdr + 10 payload)
+  // I:1, P:0, L:0, F:0, B:0, E:1, V:0, Z:0 (2hdr + 10 payload)
   const size_t kExpectedHdrSizes[] = {2, 2, 2};
   const size_t kExpectedSizes[] = {12, 12, 12};
   const size_t kExpectedNum = GTEST_ARRAY_SIZE_(kExpectedSizes);
@@ -247,10 +248,10 @@ TEST_F(RtpPacketizerVp9Test, TestTwoBytePictureId) {
   Init(kFrameSize, kPacketSize);
 
   // Four packets:
-  // I:1, P:0, L:0, F:0, B:1, E:0, V:0 (3hdr + 8 payload)
-  // I:1, P:0, L:0, F:0, B:0, E:0, V:0 (3hdr + 8 payload)
-  // I:1, P:0, L:0, F:0, B:0, E:0, V:0 (3hdr + 8 payload)
-  // I:1, P:0, L:0, F:0, B:0, E:1, V:0 (3hdr + 7 payload)
+  // I:1, P:0, L:0, F:0, B:1, E:0, V:0, Z:0 (3hdr + 8 payload)
+  // I:1, P:0, L:0, F:0, B:0, E:0, V:0, Z:0 (3hdr + 8 payload)
+  // I:1, P:0, L:0, F:0, B:0, E:0, V:0, Z:0 (3hdr + 8 payload)
+  // I:1, P:0, L:0, F:0, B:0, E:1, V:0, Z:0 (3hdr + 7 payload)
   const size_t kExpectedHdrSizes[] = {3, 3, 3, 3};
   const size_t kExpectedSizes[] = {10, 11, 11, 11};
   const size_t kExpectedNum = GTEST_ARRAY_SIZE_(kExpectedSizes);
@@ -270,9 +271,9 @@ TEST_F(RtpPacketizerVp9Test, TestLayerInfoWithNonFlexibleMode) {
   Init(kFrameSize, kPacketSize);
 
   // Two packets:
-  //    | I:0, P:0, L:1, F:0, B:1, E:0, V:0 | (3hdr + 15 payload)
+  //    | I:0, P:0, L:1, F:0, B:1, E:0, V:0 Z:0 | (3hdr + 15 payload)
   // L: | T:3, U:1, S:2, D:1 | TL0PICIDX:117 |
-  //    | I:0, P:0, L:1, F:0, B:0, E:1, V:0 | (3hdr + 15 payload)
+  //    | I:0, P:0, L:1, F:0, B:0, E:1, V:0 Z:0 | (3hdr + 15 payload)
   // L: | T:3, U:1, S:2, D:1 | TL0PICIDX:117 |
   const size_t kExpectedHdrSizes[] = {3, 3};
   const size_t kExpectedSizes[] = {18, 18};
@@ -320,7 +321,7 @@ TEST_F(RtpPacketizerVp9Test, TestRefIdx) {
   Init(kFrameSize, kPacketSize);
 
   // Two packets:
-  // I:1, P:1, L:0, F:1, B:1, E:1, V:0 (5hdr + 16 payload)
+  // I:1, P:1, L:0, F:1, B:1, E:1, V:0, Z:0 (5hdr + 16 payload)
   // I:   2
   // P,F: P_DIFF:1,   N:1
   //      P_DIFF:3,   N:1
@@ -360,7 +361,7 @@ TEST_F(RtpPacketizerVp9Test, TestSsDataWithoutSpatialResolutionPresent) {
   Init(kFrameSize, kPacketSize);
 
   // One packet:
-  // I:0, P:0, L:0, F:0, B:1, E:1, V:1 (5hdr + 21 payload)
+  // I:0, P:0, L:0, F:0, B:1, E:1, V:1, Z:0 (5hdr + 21 payload)
   // N_S:0, Y:0, G:1
   // N_G:1
   // T:0, U:1, R:1 | P_DIFF[0][0]:4
@@ -381,7 +382,7 @@ TEST_F(RtpPacketizerVp9Test, TestSsDataWithoutGbitPresent) {
   Init(kFrameSize, kPacketSize);
 
   // One packet:
-  // I:0, P:0, L:0, F:0, B:1, E:1, V:1 (2hdr + 21 payload)
+  // I:0, P:0, L:0, F:0, B:1, E:1, V:1, Z:0 (2hdr + 21 payload)
   // N_S:0, Y:0, G:0
   const size_t kExpectedHdrSizes[] = {2};
   const size_t kExpectedSizes[] = {23};
@@ -418,7 +419,7 @@ TEST_F(RtpPacketizerVp9Test, TestSsData) {
   Init(kFrameSize, kPacketSize);
 
   // One packet:
-  // I:0, P:0, L:0, F:0, B:1, E:1, V:1 (19hdr + 21 payload)
+  // I:0, P:0, L:0, F:0, B:1, E:1, V:1, Z:0 (19hdr + 21 payload)
   // N_S:1, Y:1, G:1
   // WIDTH:640   // 2 bytes
   // HEIGHT:360  // 2 bytes
@@ -463,7 +464,7 @@ TEST_F(RtpPacketizerVp9Test, TestSsDataDoesNotFitInAveragePacket) {
   Init(kFrameSize, kPacketSize);
 
   // Three packets:
-  // I:0, P:0, L:0, F:0, B:1, E:1, V:1 (19hdr + 1 payload)
+  // I:0, P:0, L:0, F:0, B:1, E:1, V:1, Z:0 (19hdr + 1 payload)
   // N_S:1, Y:1, G:1
   // WIDTH:640   // 2 bytes
   // HEIGHT:360  // 2 bytes
@@ -480,7 +481,7 @@ TEST_F(RtpPacketizerVp9Test, TestSsDataDoesNotFitInAveragePacket) {
   CreateParseAndCheckPackets(kExpectedHdrSizes, kExpectedSizes, kExpectedNum);
 }
 
-TEST_F(RtpPacketizerVp9Test, TestOnlyHighestSpatialLayerSetMarker) {
+TEST_F(RtpPacketizerVp9Test, EndOfPictureSetsSetMarker) {
   const size_t kFrameSize = 10;
   const size_t kPacketSize = 8;
   const size_t kLastPacketReductionLen = 0;
@@ -494,32 +495,21 @@ TEST_F(RtpPacketizerVp9Test, TestOnlyHighestSpatialLayerSetMarker) {
 
   RtpPacketToSend packet(kNoExtensions);
 
-  vp9_header.spatial_idx = 0;
-  RtpPacketizerVp9 packetizer0(vp9_header, kPacketSize,
-                               kLastPacketReductionLen);
-  packetizer0.SetPayloadData(kFrame, sizeof(kFrame), kNoFragmentation);
-  ASSERT_TRUE(packetizer0.NextPacket(&packet));
-  EXPECT_FALSE(packet.Marker());
-  ASSERT_TRUE(packetizer0.NextPacket(&packet));
-  EXPECT_FALSE(packet.Marker());
-
-  vp9_header.spatial_idx = 1;
-  RtpPacketizerVp9 packetizer1(vp9_header, kPacketSize,
-                               kLastPacketReductionLen);
-  packetizer1.SetPayloadData(kFrame, sizeof(kFrame), kNoFragmentation);
-  ASSERT_TRUE(packetizer1.NextPacket(&packet));
-  EXPECT_FALSE(packet.Marker());
-  ASSERT_TRUE(packetizer1.NextPacket(&packet));
-  EXPECT_FALSE(packet.Marker());
-
-  vp9_header.spatial_idx = 2;
-  RtpPacketizerVp9 packetizer2(vp9_header, kPacketSize,
-                               kLastPacketReductionLen);
-  packetizer2.SetPayloadData(kFrame, sizeof(kFrame), kNoFragmentation);
-  ASSERT_TRUE(packetizer2.NextPacket(&packet));
-  EXPECT_FALSE(packet.Marker());
-  ASSERT_TRUE(packetizer2.NextPacket(&packet));
-  EXPECT_TRUE(packet.Marker());
+  // Drop top layer and ensure that marker bit is set on last encoded layer.
+  for (size_t spatial_idx = 0; spatial_idx < vp9_header.num_spatial_layers - 1;
+       ++spatial_idx) {
+    const bool end_of_picture =
+        spatial_idx + 1 == vp9_header.num_spatial_layers - 1;
+    vp9_header.spatial_idx = spatial_idx;
+    vp9_header.end_of_picture = end_of_picture;
+    RtpPacketizerVp9 packetizer(vp9_header, kPacketSize,
+                                kLastPacketReductionLen);
+    packetizer.SetPayloadData(kFrame, sizeof(kFrame), kNoFragmentation);
+    ASSERT_TRUE(packetizer.NextPacket(&packet));
+    EXPECT_FALSE(packet.Marker());
+    ASSERT_TRUE(packetizer.NextPacket(&packet));
+    EXPECT_EQ(packet.Marker(), end_of_picture);
+  }
 }
 
 TEST_F(RtpPacketizerVp9Test, TestGeneratesMinimumNumberOfPackets) {
@@ -579,14 +569,25 @@ TEST_F(RtpPacketizerVp9Test, TestRespectsLastPacketReductionLen) {
   EXPECT_TRUE(packet.Marker());
 }
 
+TEST_F(RtpPacketizerVp9Test, TestNonRefForInterLayerPred) {
+  const size_t kFrameSize = 25;
+  const size_t kPacketSize = 26;
+
+  expected_.non_ref_for_inter_layer_pred = true;
+  Init(kFrameSize, kPacketSize);
+
+  // I:0, P:0, L:0, F:0, B:1, E:1, V:0, Z:1  (1hdr + 25 payload)
+  const size_t kExpectedHdrSizes[] = {1};
+  const size_t kExpectedSizes[] = {26};
+  const size_t kExpectedNum = GTEST_ARRAY_SIZE_(kExpectedSizes);
+  CreateParseAndCheckPackets(kExpectedHdrSizes, kExpectedSizes, kExpectedNum);
+}
+
 class RtpDepacketizerVp9Test : public ::testing::Test {
  protected:
-  RtpDepacketizerVp9Test()
-      : depacketizer_(new RtpDepacketizerVp9()) {}
+  RtpDepacketizerVp9Test() : depacketizer_(new RtpDepacketizerVp9()) {}
 
-  virtual void SetUp() {
-    expected_.InitRTPVideoHeaderVP9();
-  }
+  void SetUp() override { expected_.InitRTPVideoHeaderVP9(); }
 
   RTPVideoHeaderVP9 expected_;
   std::unique_ptr<RtpDepacketizer> depacketizer_;
@@ -595,7 +596,7 @@ class RtpDepacketizerVp9Test : public ::testing::Test {
 TEST_F(RtpDepacketizerVp9Test, ParseBasicHeader) {
   const uint8_t kHeaderLength = 1;
   uint8_t packet[4] = {0};
-  packet[0] = 0x0C;  // I:0 P:0 L:0 F:0 B:1 E:1 V:0 R:0
+  packet[0] = 0x0C;  // I:0 P:0 L:0 F:0 B:1 E:1 V:0 Z:0
   expected_.beginning_of_frame = true;
   expected_.end_of_frame = true;
   ParseAndCheckPacket(packet, expected_, kHeaderLength, sizeof(packet));
@@ -604,7 +605,7 @@ TEST_F(RtpDepacketizerVp9Test, ParseBasicHeader) {
 TEST_F(RtpDepacketizerVp9Test, ParseOneBytePictureId) {
   const uint8_t kHeaderLength = 2;
   uint8_t packet[10] = {0};
-  packet[0] = 0x80;  // I:1 P:0 L:0 F:0 B:0 E:0 V:0 R:0
+  packet[0] = 0x80;  // I:1 P:0 L:0 F:0 B:0 E:0 V:0 Z:0
   packet[1] = kMaxOneBytePictureId;
 
   expected_.picture_id = kMaxOneBytePictureId;
@@ -615,7 +616,7 @@ TEST_F(RtpDepacketizerVp9Test, ParseOneBytePictureId) {
 TEST_F(RtpDepacketizerVp9Test, ParseTwoBytePictureId) {
   const uint8_t kHeaderLength = 3;
   uint8_t packet[10] = {0};
-  packet[0] = 0x80;  // I:1 P:0 L:0 F:0 B:0 E:0 V:0 R:0
+  packet[0] = 0x80;  // I:1 P:0 L:0 F:0 B:0 E:0 V:0 Z:0
   packet[1] = 0x80 | ((kMaxTwoBytePictureId >> 8) & 0x7F);
   packet[2] = kMaxTwoBytePictureId & 0xFF;
 
@@ -632,7 +633,7 @@ TEST_F(RtpDepacketizerVp9Test, ParseLayerInfoWithNonFlexibleMode) {
   const uint8_t kDbit = 1;
   const uint8_t kTl0PicIdx = 17;
   uint8_t packet[13] = {0};
-  packet[0] = 0x20;  // I:0 P:0 L:1 F:0 B:0 E:0 V:0 R:0
+  packet[0] = 0x20;  // I:0 P:0 L:1 F:0 B:0 E:0 V:0 Z:0
   packet[1] = (kTemporalIdx << 5) | (kUbit << 4) | (kSpatialIdx << 1) | kDbit;
   packet[2] = kTl0PicIdx;
 
@@ -653,10 +654,10 @@ TEST_F(RtpDepacketizerVp9Test, ParseLayerInfoWithFlexibleMode) {
   const uint8_t kSpatialIdx = 0;
   const uint8_t kDbit = 0;
   uint8_t packet[13] = {0};
-  packet[0] = 0x38;  // I:0 P:0 L:1 F:1 B:1 E:0 V:0 R:0
+  packet[0] = 0x38;  // I:0 P:0 L:1 F:1 B:1 E:0 V:0 Z:0
   packet[1] = (kTemporalIdx << 5) | (kUbit << 4) | (kSpatialIdx << 1) | kDbit;
 
-  // I:0 P:0 L:1 F:1 B:1 E:0 V:0
+  // I:0 P:0 L:1 F:1 B:1 E:0 V:0 Z:0
   // L:   T:2 U:1 S:0 D:0
   expected_.beginning_of_frame = true;
   expected_.flexible_mode = true;
@@ -674,14 +675,14 @@ TEST_F(RtpDepacketizerVp9Test, ParseRefIdx) {
   const uint8_t kPdiff2 = 18;
   const uint8_t kPdiff3 = 127;
   uint8_t packet[13] = {0};
-  packet[0] = 0xD8;  // I:1 P:1 L:0 F:1 B:1 E:0 V:0 R:0
+  packet[0] = 0xD8;  // I:1 P:1 L:0 F:1 B:1 E:0 V:0 Z:0
   packet[1] = 0x80 | ((kPictureId >> 8) & 0x7F);  // Two byte pictureID.
   packet[2] = kPictureId;
   packet[3] = (kPdiff1 << 1) | 1;  // P_DIFF N:1
   packet[4] = (kPdiff2 << 1) | 1;  // P_DIFF N:1
   packet[5] = (kPdiff3 << 1) | 0;  // P_DIFF N:0
 
-  // I:1 P:1 L:0 F:1 B:1 E:0 V:0
+  // I:1 P:1 L:0 F:1 B:1 E:0 V:0 Z:0
   // I:    PICTURE ID:17
   // I:
   // P,F:  P_DIFF:17  N:1 => refPicId = 17 - 17 = 0
@@ -704,8 +705,8 @@ TEST_F(RtpDepacketizerVp9Test, ParseRefIdx) {
 TEST_F(RtpDepacketizerVp9Test, ParseRefIdxFailsWithNoPictureId) {
   const uint8_t kPdiff = 3;
   uint8_t packet[13] = {0};
-  packet[0] = 0x58;            // I:0 P:1 L:0 F:1 B:1 E:0 V:0 R:0
-  packet[1] = (kPdiff << 1);   // P,F:  P_DIFF:3 N:0
+  packet[0] = 0x58;           // I:0 P:1 L:0 F:1 B:1 E:0 V:0 Z:0
+  packet[1] = (kPdiff << 1);  // P,F:  P_DIFF:3 N:0
 
   RtpDepacketizer::ParsedPayload parsed;
   EXPECT_FALSE(depacketizer_->Parse(&parsed, packet, sizeof(packet)));
@@ -714,7 +715,7 @@ TEST_F(RtpDepacketizerVp9Test, ParseRefIdxFailsWithNoPictureId) {
 TEST_F(RtpDepacketizerVp9Test, ParseRefIdxFailsWithTooManyRefPics) {
   const uint8_t kPdiff = 3;
   uint8_t packet[13] = {0};
-  packet[0] = 0xD8;                  // I:1 P:1 L:0 F:1 B:1 E:0 V:0 R:0
+  packet[0] = 0xD8;                  // I:1 P:1 L:0 F:1 B:1 E:0 V:0 Z:0
   packet[1] = kMaxOneBytePictureId;  // I:    PICTURE ID:127
   packet[2] = (kPdiff << 1) | 1;     // P,F:  P_DIFF:3 N:1
   packet[3] = (kPdiff << 1) | 1;     // P,F:  P_DIFF:3 N:1
@@ -731,7 +732,7 @@ TEST_F(RtpDepacketizerVp9Test, ParseSsData) {
   const size_t kNs = 2;
   const size_t kNg = 2;
   uint8_t packet[23] = {0};
-  packet[0] = 0x0A;  // I:0 P:0 L:0 F:0 B:1 E:0 V:1 R:0
+  packet[0] = 0x0A;  // I:0 P:0 L:0 F:0 B:1 E:0 V:1 Z:0
   packet[1] = ((kNs - 1) << 5) | (kYbit << 4) | (1 << 3);  // N_S Y G:1 -
   packet[2] = kNg;                                         // N_G
   packet[3] = (0 << 5) | (1 << 4) | (0 << 2) | 0;          // T:0 U:1 R:0 -
@@ -755,29 +756,29 @@ TEST_F(RtpDepacketizerVp9Test, ParseSsData) {
 
 TEST_F(RtpDepacketizerVp9Test, ParseFirstPacketInKeyFrame) {
   uint8_t packet[2] = {0};
-  packet[0] = 0x08;  // I:0 P:0 L:0 F:0 B:1 E:0 V:0 R:0
+  packet[0] = 0x08;  // I:0 P:0 L:0 F:0 B:1 E:0 V:0 Z:0
 
   RtpDepacketizer::ParsedPayload parsed;
   ASSERT_TRUE(depacketizer_->Parse(&parsed, packet, sizeof(packet)));
   EXPECT_EQ(kVideoFrameKey, parsed.frame_type);
-  EXPECT_TRUE(parsed.type.Video.is_first_packet_in_frame);
+  EXPECT_TRUE(parsed.video_header().is_first_packet_in_frame);
 }
 
 TEST_F(RtpDepacketizerVp9Test, ParseLastPacketInDeltaFrame) {
   uint8_t packet[2] = {0};
-  packet[0] = 0x44;  // I:0 P:1 L:0 F:0 B:0 E:1 V:0 R:0
+  packet[0] = 0x44;  // I:0 P:1 L:0 F:0 B:0 E:1 V:0 Z:0
 
   RtpDepacketizer::ParsedPayload parsed;
   ASSERT_TRUE(depacketizer_->Parse(&parsed, packet, sizeof(packet)));
   EXPECT_EQ(kVideoFrameDelta, parsed.frame_type);
-  EXPECT_FALSE(parsed.type.Video.is_first_packet_in_frame);
+  EXPECT_FALSE(parsed.video_header().is_first_packet_in_frame);
 }
 
 TEST_F(RtpDepacketizerVp9Test, ParseResolution) {
   const uint16_t kWidth[2] = {640, 1280};
   const uint16_t kHeight[2] = {360, 720};
   uint8_t packet[20] = {0};
-  packet[0] = 0x0A;  // I:0 P:0 L:0 F:0 B:1 E:0 V:1 R:0
+  packet[0] = 0x0A;                     // I:0 P:0 L:0 F:0 B:1 E:0 V:1 Z:0
   packet[1] = (1 << 5) | (1 << 4) | 0;  // N_S:1 Y:1 G:0
   packet[2] = kWidth[0] >> 8;
   packet[3] = kWidth[0] & 0xFF;
@@ -790,8 +791,8 @@ TEST_F(RtpDepacketizerVp9Test, ParseResolution) {
 
   RtpDepacketizer::ParsedPayload parsed;
   ASSERT_TRUE(depacketizer_->Parse(&parsed, packet, sizeof(packet)));
-  EXPECT_EQ(kWidth[0], parsed.type.Video.width);
-  EXPECT_EQ(kHeight[0], parsed.type.Video.height);
+  EXPECT_EQ(kWidth[0], parsed.video_header().width);
+  EXPECT_EQ(kHeight[0], parsed.video_header().height);
 }
 
 TEST_F(RtpDepacketizerVp9Test, ParseFailsForNoPayloadLength) {
@@ -805,6 +806,21 @@ TEST_F(RtpDepacketizerVp9Test, ParseFailsForTooShortBufferToFitPayload) {
   uint8_t packet[kHeaderLength] = {0};
   RtpDepacketizer::ParsedPayload parsed;
   EXPECT_FALSE(depacketizer_->Parse(&parsed, packet, sizeof(packet)));
+}
+
+TEST_F(RtpDepacketizerVp9Test, ParseNonRefForInterLayerPred) {
+  uint8_t packet[2] = {0};
+
+  packet[0] = 0x08;  // I:0 P:0 L:0 F:0 B:1 E:0 V:0 Z:0
+  expected_.beginning_of_frame = true;
+  expected_.non_ref_for_inter_layer_pred = false;
+  ParseAndCheckPacket(packet, expected_, 1, sizeof(packet));
+
+  packet[0] = 0x05;  // I:0 P:0 L:0 F:0 B:0 E:1 V:0 Z:1
+  expected_.beginning_of_frame = false;
+  expected_.end_of_frame = true;
+  expected_.non_ref_for_inter_layer_pred = true;
+  ParseAndCheckPacket(packet, expected_, 1, sizeof(packet));
 }
 
 }  // namespace webrtc

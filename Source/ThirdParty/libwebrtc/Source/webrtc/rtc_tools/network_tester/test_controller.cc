@@ -37,7 +37,7 @@ void TestController::SendConnectTo(const std::string& hostname, int port) {
   udp_transport_->SetRemoteAddress(rtc::SocketAddress(hostname, port));
   NetworkTesterPacket packet;
   packet.set_type(NetworkTesterPacket::HAND_SHAKING);
-  SendData(packet, rtc::Optional<size_t>());
+  SendData(packet, absl::nullopt);
   rtc::CritScope scoped_lock(&local_test_done_lock_);
   local_test_done_ = false;
   remote_test_done_ = false;
@@ -49,9 +49,9 @@ void TestController::Run() {
 }
 
 void TestController::SendData(const NetworkTesterPacket& packet,
-                              rtc::Optional<size_t> data_size) {
+                              absl::optional<size_t> data_size) {
   // Can be call from packet_sender or from test_controller thread.
-  size_t packet_size = packet.ByteSize();
+  size_t packet_size = packet.ByteSizeLong();
   send_data_[0] = packet_size;
   packet_size++;
   packet.SerializeToArray(&send_data_[1], std::numeric_limits<char>::max());
@@ -65,7 +65,7 @@ void TestController::OnTestDone() {
   RTC_DCHECK_CALLED_SEQUENTIALLY(&packet_sender_checker_);
   NetworkTesterPacket packet;
   packet.set_type(NetworkTesterPacket::TEST_DONE);
-  SendData(packet, rtc::Optional<size_t>());
+  SendData(packet, absl::nullopt);
   rtc::CritScope scoped_lock(&local_test_done_lock_);
   local_test_done_ = true;
 }
@@ -92,7 +92,7 @@ void TestController::OnReadPacket(rtc::AsyncPacketSocket* socket,
       NetworkTesterPacket packet;
       packet.set_type(NetworkTesterPacket::TEST_START);
       udp_transport_->SetRemoteAddress(remote_addr);
-      SendData(packet, rtc::Optional<size_t>());
+      SendData(packet, absl::nullopt);
       packet_sender_.reset(new PacketSender(this, config_file_path_));
       packet_sender_->StartSending();
       rtc::CritScope scoped_lock(&local_test_done_lock_);

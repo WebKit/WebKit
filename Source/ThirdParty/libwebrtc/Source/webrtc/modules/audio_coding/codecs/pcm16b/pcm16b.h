@@ -15,8 +15,7 @@
  */
 
 #include <stddef.h>
-
-#include "typedefs.h"  // NOLINT(build/include)
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,9 +37,7 @@ extern "C" {
  *                                Always equal to twice the len input parameter.
  */
 
-size_t WebRtcPcm16b_Encode(const int16_t* speech,
-                           size_t len,
-                           uint8_t* encoded);
+size_t WebRtcPcm16b_Encode(const int16_t* speech, size_t len, uint8_t* encoded);
 
 /****************************************************************************
  * WebRtcPcm16b_Decode(...)
@@ -57,9 +54,7 @@ size_t WebRtcPcm16b_Encode(const int16_t* speech,
  * Returned value               : Samples in speech
  */
 
-size_t WebRtcPcm16b_Decode(const uint8_t* encoded,
-                           size_t len,
-                           int16_t* speech);
+size_t WebRtcPcm16b_Decode(const uint8_t* encoded, size_t len, int16_t* speech);
 
 #ifdef __cplusplus
 }

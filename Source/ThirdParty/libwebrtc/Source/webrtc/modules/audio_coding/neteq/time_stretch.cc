@@ -80,7 +80,7 @@ TimeStretch::ReturnCodes TimeStretch::Process(const int16_t* input,
   // Calculate scaling to ensure that |peak_index| samples can be square-summed
   // without overflowing.
   int scaling = 31 - WebRtcSpl_NormW32(max_input_value_ * max_input_value_) -
-      WebRtcSpl_NormW32(static_cast<int32_t>(peak_index));
+                WebRtcSpl_NormW32(static_cast<int32_t>(peak_index));
   scaling = std::max(0, scaling);
 
   // |vec1| starts at 15 ms minus one pitch period.
@@ -99,8 +99,8 @@ TimeStretch::ReturnCodes TimeStretch::Process(const int16_t* input,
       WebRtcSpl_DotProductWithScale(vec1, vec2, peak_index, scaling);
 
   // Check if the signal seems to be active speech or not (simple VAD).
-  bool active_speech = SpeechDetection(vec1_energy, vec2_energy, peak_index,
-                                       scaling);
+  bool active_speech =
+      SpeechDetection(vec1_energy, vec2_energy, peak_index, scaling);
 
   int16_t best_correlation;
   if (!active_speech) {
@@ -126,8 +126,8 @@ TimeStretch::ReturnCodes TimeStretch::Process(const int16_t* input,
         static_cast<int16_t>(vec2_energy >> energy2_scale);
 
     // Calculate square-root of energy product.
-    int16_t sqrt_energy_prod = WebRtcSpl_SqrtFloor(vec1_energy_int16 *
-                                                   vec2_energy_int16);
+    int16_t sqrt_energy_prod =
+        WebRtcSpl_SqrtFloor(vec1_energy_int16 * vec2_energy_int16);
 
     // Calculate cross_corr / sqrt(en1*en2) in Q14.
     int temp_scale = 14 - (energy1_scale + energy2_scale) / 2;
@@ -137,7 +137,6 @@ TimeStretch::ReturnCodes TimeStretch::Process(const int16_t* input,
     // Make sure |best_correlation| is no larger than 1 in Q14.
     best_correlation = std::min(static_cast<int16_t>(16384), best_correlation);
   }
-
 
   // Check accelerate criteria and stretch the signal.
   ReturnCodes return_value =
@@ -172,8 +171,10 @@ void TimeStretch::AutoCorrelation() {
                                    auto_corr, scaling);
 }
 
-bool TimeStretch::SpeechDetection(int32_t vec1_energy, int32_t vec2_energy,
-                                  size_t peak_index, int scaling) const {
+bool TimeStretch::SpeechDetection(int32_t vec1_energy,
+                                  int32_t vec2_energy,
+                                  size_t peak_index,
+                                  int scaling) const {
   // Check if the signal seems to be active speech or not (simple VAD).
   // If (vec1_energy + vec2_energy) / (2 * peak_index) <=
   // 8 * background_noise_energy, then we say that the signal contains no

@@ -12,7 +12,7 @@
 
 #include <windows.h>
 
-#include "rtc_base/ptr_util.h"
+#include "absl/memory/memory.h"
 
 namespace webrtc {
 
@@ -20,7 +20,7 @@ WindowFinderWin::WindowFinderWin() = default;
 WindowFinderWin::~WindowFinderWin() = default;
 
 WindowId WindowFinderWin::GetWindowUnderPoint(DesktopVector point) {
-  HWND window = WindowFromPoint(POINT { point.x(), point.y() });
+  HWND window = WindowFromPoint(POINT{point.x(), point.y()});
   if (!window) {
     return kNullWindowId;
   }
@@ -40,7 +40,7 @@ WindowId WindowFinderWin::GetWindowUnderPoint(DesktopVector point) {
 // static
 std::unique_ptr<WindowFinder> WindowFinder::Create(
     const WindowFinder::Options& options) {
-  return rtc::MakeUnique<WindowFinderWin>();
+  return absl::make_unique<WindowFinderWin>();
 }
 
 }  // namespace webrtc

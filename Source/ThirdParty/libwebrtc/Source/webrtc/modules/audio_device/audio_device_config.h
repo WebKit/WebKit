@@ -28,4 +28,3 @@ enum { GET_MIC_VOLUME_INTERVAL_MS = 1000 };
 #endif
 
 #endif  // AUDIO_DEVICE_AUDIO_DEVICE_CONFIG_H_
-

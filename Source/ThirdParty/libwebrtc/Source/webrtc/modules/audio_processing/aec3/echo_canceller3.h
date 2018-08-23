@@ -11,12 +11,12 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_ECHO_CANCELLER3_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_ECHO_CANCELLER3_H_
 
+#include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/block_framer.h"
 #include "modules/audio_processing/aec3/block_processor.h"
 #include "modules/audio_processing/aec3/cascaded_biquad_filter.h"
 #include "modules/audio_processing/aec3/frame_blocker.h"
 #include "modules/audio_processing/audio_buffer.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/race_checker.h"
@@ -82,6 +82,8 @@ class EchoCanceller3 : public EchoControl {
   void ProcessCapture(AudioBuffer* capture, bool level_change) override;
   // Collect current metrics from the echo canceller.
   Metrics GetMetrics() const override;
+  // Provides an optional external estimate of the audio buffer delay.
+  void SetAudioBufferDelay(size_t delay_ms) override;
 
   // Signals whether an external detector has detected echo leakage from the
   // echo canceller.
@@ -91,9 +93,6 @@ class EchoCanceller3 : public EchoControl {
     RTC_DCHECK_RUNS_SERIALIZED(&capture_race_checker_);
     block_processor_->UpdateEchoLeakageStatus(leakage_detected);
   }
-
-  // Validates a config.
-  static bool Validate(const EchoCanceller3Config& config);
 
  private:
   class RenderWriter;

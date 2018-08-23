@@ -181,7 +181,6 @@ class AudioAnnotationsExtractor(object):
     ext_kwargs = {'extvad_conf-' + ext_vad:
                   self._external_vads[ext_vad].GetVadOutput()
                   for ext_vad in self._external_vads}
-    # pylint: disable=star-args
     np.savez_compressed(
         file=os.path.join(
             output_path,

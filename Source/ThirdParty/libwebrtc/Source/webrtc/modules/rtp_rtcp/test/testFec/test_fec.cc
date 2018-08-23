@@ -192,10 +192,9 @@ void RunTest(bool use_flexfec) {
                    num_media_packets * mask_bytes_per_fec_packet);
 
             // Transfer packet masks from bit-mask to byte-mask.
-            internal::GeneratePacketMasks(num_media_packets, num_fec_packets,
-                                          num_imp_packets,
-                                          kUseUnequalProtection,
-                                          mask_table, packet_mask.get());
+            internal::GeneratePacketMasks(
+                num_media_packets, num_fec_packets, num_imp_packets,
+                kUseUnequalProtection, &mask_table, packet_mask.get());
 
 #ifdef VERBOSE_OUTPUT
             printf(
@@ -253,8 +252,8 @@ void RunTest(bool use_flexfec) {
               const uint32_t kMinPacketSize = 12;
               const uint32_t kMaxPacketSize = static_cast<uint32_t>(
                   IP_PACKET_SIZE - 12 - 28 - fec->MaxPacketOverhead());
-              media_packet->length = random.Rand(kMinPacketSize,
-                                                 kMaxPacketSize);
+              media_packet->length =
+                  random.Rand(kMinPacketSize, kMaxPacketSize);
 
               // Generate random values for the first 2 bytes.
               media_packet->data[0] = random.Rand<uint8_t>();
@@ -457,8 +456,8 @@ void RunTest(bool use_flexfec) {
           }  // loop over num_imp_packets
         }    // loop over FecPackets
       }      // loop over num_media_packets
-    }  // loop over loss rates
-  }    // loop over mask types
+    }        // loop over loss rates
+  }          // loop over mask types
 
   // Have DecodeFec clear the recovered packet list.
   fec->ResetState(&recovered_packet_list);

@@ -15,7 +15,6 @@
 #include <stdio.h>
 #endif
 #include "common_audio/signal_processing/include/signal_processing_library.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 // the 32 most significant bits of A(19) * B(26) >> 13
 #define AGC_MUL32(A, B) (((B) >> 13) * (A) + (((0x00001FFF & (B)) * (A)) >> 13))

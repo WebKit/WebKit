@@ -12,18 +12,18 @@
 
 #include <Windows.h>
 #include <d3d9.h>
-#pragma comment(lib, "d3d9.lib")       // located in DirectX SDK
+#pragma comment(lib, "d3d9.lib")  // located in DirectX SDK
 
 #include "rtc_base/scoped_ref_ptr.h"
 #include "test/video_renderer.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace test {
 
 class D3dRenderer : public VideoRenderer {
  public:
-  static D3dRenderer* Create(const char* window_title, size_t width,
+  static D3dRenderer* Create(const char* window_title,
+                             size_t width,
                              size_t height);
   virtual ~D3dRenderer();
 
@@ -32,7 +32,9 @@ class D3dRenderer : public VideoRenderer {
  private:
   D3dRenderer(size_t width, size_t height);
 
-  static LRESULT WINAPI WindowProc(HWND hwnd, UINT msg, WPARAM wparam,
+  static LRESULT WINAPI WindowProc(HWND hwnd,
+                                   UINT msg,
+                                   WPARAM wparam,
                                    LPARAM lparam);
   bool Init(const char* window_title);
   void Resize(size_t width, size_t height);

@@ -10,8 +10,8 @@
 
 #include "modules/audio_processing/transient/transient_suppressor.h"
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <memory>
@@ -19,11 +19,9 @@
 
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_processing/agc/agc.h"
-#include "modules/include/module_common_types.h"
 #include "rtc_base/flags.h"
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 DEFINE_string(in_file_name, "", "PCM file that contains the signal.");
 DEFINE_string(detection_file_name,
@@ -37,9 +35,7 @@ DEFINE_int(chunk_size_ms,
            10,
            "Time between each chunk of samples in milliseconds.");
 
-DEFINE_int(sample_rate_hz,
-           16000,
-           "Sampling frequency of the signal in Hertz.");
+DEFINE_int(sample_rate_hz, 16000, "Sampling frequency of the signal in Hertz.");
 DEFINE_int(detection_rate_hz,
            0,
            "Sampling frequency of the detection signal in Hertz.");
@@ -80,9 +76,7 @@ bool ReadBuffers(FILE* in_file,
     tmpbuf.reset(new int16_t[num_channels * audio_buffer_size]);
     read_ptr = tmpbuf.get();
   }
-  if (fread(read_ptr,
-            sizeof(*read_ptr),
-            num_channels * audio_buffer_size,
+  if (fread(read_ptr, sizeof(*read_ptr), num_channels * audio_buffer_size,
             in_file) != num_channels * audio_buffer_size) {
     return false;
   }
@@ -105,8 +99,8 @@ bool ReadBuffers(FILE* in_file,
   }
   if (reference_file) {
     std::unique_ptr<int16_t[]> ibuf(new int16_t[audio_buffer_size]);
-    if (fread(ibuf.get(), sizeof(ibuf[0]), audio_buffer_size, reference_file)
-        != audio_buffer_size)
+    if (fread(ibuf.get(), sizeof(ibuf[0]), audio_buffer_size, reference_file) !=
+        audio_buffer_size)
       return false;
     S16ToFloat(ibuf.get(), audio_buffer_size, reference_buffer);
   }
@@ -164,8 +158,8 @@ void void_main() {
   Agc agc;
 
   TransientSuppressor suppressor;
-  suppressor.Initialize(
-      FLAG_sample_rate_hz, detection_rate_hz, FLAG_num_channels);
+  suppressor.Initialize(FLAG_sample_rate_hz, detection_rate_hz,
+                        FLAG_num_channels);
 
   const size_t audio_buffer_size =
       FLAG_chunk_size_ms * FLAG_sample_rate_hz / 1000;
@@ -185,40 +179,27 @@ void void_main() {
   if (reference_file)
     reference_buffer.reset(new float[audio_buffer_size]);
 
-  while (ReadBuffers(in_file,
-                     audio_buffer_size,
-                     FLAG_num_channels,
-                     audio_buffer_i.get(),
-                     detection_file,
-                     detection_buffer_size,
-                     detection_buffer.get(),
-                     reference_file,
-                     reference_buffer.get())) {
-    ASSERT_EQ(0,
-              agc.Process(audio_buffer_i.get(),
-                          static_cast<int>(audio_buffer_size),
-                          FLAG_sample_rate_hz))
-        << "The AGC could not process the frame";
+  while (ReadBuffers(in_file, audio_buffer_size, FLAG_num_channels,
+                     audio_buffer_i.get(), detection_file,
+                     detection_buffer_size, detection_buffer.get(),
+                     reference_file, reference_buffer.get())) {
+    agc.Process(audio_buffer_i.get(), static_cast<int>(audio_buffer_size),
+                FLAG_sample_rate_hz);
 
     for (size_t i = 0; i < FLAG_num_channels * audio_buffer_size; ++i) {
       audio_buffer_f[i] = audio_buffer_i[i];
     }
 
-    ASSERT_EQ(0,
-              suppressor.Suppress(audio_buffer_f.get(),
-                                  audio_buffer_size,
-                                  FLAG_num_channels,
-                                  detection_buffer.get(),
-                                  detection_buffer_size,
-                                  reference_buffer.get(),
-                                  audio_buffer_size,
-                                  agc.voice_probability(),
-                                  true))
+    ASSERT_EQ(0, suppressor.Suppress(audio_buffer_f.get(), audio_buffer_size,
+                                     FLAG_num_channels, detection_buffer.get(),
+                                     detection_buffer_size,
+                                     reference_buffer.get(), audio_buffer_size,
+                                     agc.voice_probability(), true))
         << "The transient suppressor could not suppress the frame";
 
     // Write result to out file.
-    WritePCM(
-        out_file, audio_buffer_size, FLAG_num_channels, audio_buffer_f.get());
+    WritePCM(out_file, audio_buffer_size, FLAG_num_channels,
+             audio_buffer_f.get());
   }
 
   fclose(in_file);
@@ -234,8 +215,8 @@ void void_main() {
 }  // namespace webrtc
 
 int main(int argc, char* argv[]) {
-  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) ||
-      FLAG_help || argc != 1) {
+  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) || FLAG_help ||
+      argc != 1) {
     printf("%s", webrtc::kUsage);
     if (FLAG_help) {
       rtc::FlagList::Print(nullptr, false);

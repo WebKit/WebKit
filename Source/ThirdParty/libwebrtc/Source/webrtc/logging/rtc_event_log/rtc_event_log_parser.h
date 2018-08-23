@@ -17,6 +17,8 @@
 
 #include "call/video_receive_stream.h"
 #include "call/video_send_stream.h"
+#include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair.h"
+#include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair_config.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_failure.h"
 #include "logging/rtc_event_log/rtc_event_log.h"
 #include "logging/rtc_event_log/rtc_stream_config.h"
@@ -55,8 +57,8 @@ class ParsedRtcEventLog {
   struct BweProbeResultEvent {
     uint64_t timestamp;
     uint32_t id;
-    rtc::Optional<uint64_t> bitrate_bps;
-    rtc::Optional<ProbeFailureReason> failure_reason;
+    absl::optional<uint64_t> bitrate_bps;
+    absl::optional<ProbeFailureReason> failure_reason;
   };
 
   struct BweDelayBasedUpdate {
@@ -68,6 +70,25 @@ class ParsedRtcEventLog {
   struct AlrStateEvent {
     uint64_t timestamp;
     bool in_alr;
+  };
+
+  struct IceCandidatePairConfig {
+    uint64_t timestamp;
+    IceCandidatePairConfigType type;
+    uint32_t candidate_pair_id;
+    IceCandidateType local_candidate_type;
+    IceCandidatePairProtocol local_relay_protocol;
+    IceCandidateNetworkType local_network_type;
+    IceCandidatePairAddressFamily local_address_family;
+    IceCandidateType remote_candidate_type;
+    IceCandidatePairAddressFamily remote_address_family;
+    IceCandidatePairProtocol candidate_pair_protocol;
+  };
+
+  struct IceCandidatePairEvent {
+    uint64_t timestamp;
+    IceCandidatePairEventType type;
+    uint32_t candidate_pair_id;
   };
 
   enum EventType {
@@ -86,7 +107,9 @@ class ParsedRtcEventLog {
     AUDIO_NETWORK_ADAPTATION_EVENT = 16,
     BWE_PROBE_CLUSTER_CREATED_EVENT = 17,
     BWE_PROBE_RESULT_EVENT = 18,
-    ALR_STATE_EVENT = 19
+    ALR_STATE_EVENT = 19,
+    ICE_CANDIDATE_PAIR_CONFIG = 20,
+    ICE_CANDIDATE_PAIR_EVENT = 21,
   };
 
   enum class MediaType { ANY, AUDIO, VIDEO, DATA };
@@ -187,6 +210,9 @@ class ParsedRtcEventLog {
   MediaType GetMediaType(uint32_t ssrc, PacketDirection direction) const;
 
   AlrStateEvent GetAlrState(size_t index) const;
+
+  IceCandidatePairConfig GetIceCandidatePairConfig(size_t index) const;
+  IceCandidatePairEvent GetIceCandidatePairEvent(size_t index) const;
 
  private:
   rtclog::StreamConfig GetVideoReceiveConfig(const rtclog::Event& event) const;

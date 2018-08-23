@@ -55,7 +55,18 @@ public class YuvHelperTest {
 
   @Before
   public void setUp() {
-    NativeLibrary.initialize(new NativeLibrary.DefaultLoader());
+    NativeLibrary.initialize(new NativeLibrary.DefaultLoader(), TestConstants.NATIVE_LIBRARY);
+  }
+
+  @SmallTest
+  @Test
+  public void testCopyPlane() {
+    final int dstStride = TEST_WIDTH;
+    final ByteBuffer dst = ByteBuffer.allocateDirect(TEST_HEIGHT * dstStride);
+
+    YuvHelper.copyPlane(TEST_I420_Y, TEST_I420_STRIDE_Y, dst, dstStride, TEST_WIDTH, TEST_HEIGHT);
+
+    assertByteBufferContentEquals(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9}, dst);
   }
 
   @SmallTest
@@ -128,5 +139,37 @@ public class YuvHelperTest {
     for (int i = 0; i < expected.length; i++) {
       assertEquals("Unexpected ByteBuffer contents at index: " + i, expected[i], test.get(i));
     }
+  }
+
+  @SmallTest
+  @Test
+  public void testI420Rotate90() {
+    final int dstStrideY = TEST_HEIGHT;
+    final int dstStrideU = TEST_CHROMA_HEIGHT;
+    final int dstStrideV = TEST_CHROMA_HEIGHT;
+    final ByteBuffer dstY = ByteBuffer.allocateDirect(TEST_WIDTH * dstStrideY);
+    final ByteBuffer dstU = ByteBuffer.allocateDirect(TEST_CHROMA_WIDTH * dstStrideU);
+    final ByteBuffer dstV = ByteBuffer.allocateDirect(TEST_CHROMA_WIDTH * dstStrideV);
+
+    YuvHelper.I420Rotate(TEST_I420_Y, TEST_I420_STRIDE_Y, TEST_I420_U, TEST_I420_STRIDE_V,
+        TEST_I420_V, TEST_I420_STRIDE_U, dstY, dstStrideY, dstU, dstStrideU, dstV, dstStrideV,
+        TEST_WIDTH, TEST_HEIGHT, 90);
+
+    assertByteBufferContentEquals(new byte[] {7, 4, 1, 8, 5, 2, 9, 6, 3}, dstY);
+    assertByteBufferContentEquals(new byte[] {53, 51, 54, 52}, dstU);
+    assertByteBufferContentEquals(new byte[] {105, 101, 106, 102}, dstV);
+  }
+
+  @SmallTest
+  @Test
+  public void testI420Rotate90Tight() {
+    final ByteBuffer dst = ByteBuffer.allocateDirect(
+        TEST_WIDTH * TEST_HEIGHT + TEST_CHROMA_WIDTH * TEST_CHROMA_HEIGHT * 2);
+
+    YuvHelper.I420Rotate(TEST_I420_Y, TEST_I420_STRIDE_Y, TEST_I420_U, TEST_I420_STRIDE_V,
+        TEST_I420_V, TEST_I420_STRIDE_U, dst, TEST_WIDTH, TEST_HEIGHT, 90);
+
+    assertByteBufferContentEquals(
+        new byte[] {7, 4, 1, 8, 5, 2, 9, 6, 3, 53, 51, 54, 52, 105, 101, 106, 102}, dst);
   }
 }

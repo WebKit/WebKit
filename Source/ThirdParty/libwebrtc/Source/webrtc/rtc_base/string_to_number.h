@@ -11,10 +11,10 @@
 #ifndef RTC_BASE_STRING_TO_NUMBER_H_
 #define RTC_BASE_STRING_TO_NUMBER_H_
 
-#include <string>
 #include <limits>
+#include <string>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
 
 namespace rtc {
 
@@ -25,8 +25,8 @@ namespace rtc {
 // are disabled in WebRTC.
 //
 // Integers are parsed using one of the following functions:
-//   rtc::Optional<int-type> StringToNumber(const char* str, int base = 10);
-//   rtc::Optional<int-type> StringToNumber(const std::string& str,
+//   absl::optional<int-type> StringToNumber(const char* str, int base = 10);
+//   absl::optional<int-type> StringToNumber(const std::string& str,
 //                                          int base = 10);
 //
 // These functions parse a value from the beginning of a string into one of the
@@ -44,15 +44,18 @@ namespace rtc {
 namespace string_to_number_internal {
 // These must be (unsigned) long long, to match the signature of strto(u)ll.
 using unsigned_type = unsigned long long;  // NOLINT(runtime/int)
-using signed_type = long long;  // NOLINT(runtime/int)
+using signed_type = long long;             // NOLINT(runtime/int)
 
-rtc::Optional<signed_type> ParseSigned(const char* str, int base);
-rtc::Optional<unsigned_type> ParseUnsigned(const char* str, int base);
+absl::optional<signed_type> ParseSigned(const char* str, int base);
+absl::optional<unsigned_type> ParseUnsigned(const char* str, int base);
+
+template <typename T>
+absl::optional<T> ParseFloatingPoint(const char* str);
 }  // namespace string_to_number_internal
 
 template <typename T>
 typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value,
-                        rtc::Optional<T>>::type
+                        absl::optional<T>>::type
 StringToNumber(const char* str, int base = 10) {
   using string_to_number_internal::signed_type;
   static_assert(
@@ -61,31 +64,42 @@ StringToNumber(const char* str, int base = 10) {
           std::numeric_limits<T>::lowest() >=
               std::numeric_limits<signed_type>::lowest(),
       "StringToNumber only supports signed integers as large as long long int");
-  rtc::Optional<signed_type> value =
+  absl::optional<signed_type> value =
       string_to_number_internal::ParseSigned(str, base);
   if (value && *value >= std::numeric_limits<T>::lowest() &&
       *value <= std::numeric_limits<T>::max()) {
     return static_cast<T>(*value);
   }
-  return rtc::nullopt;
+  return absl::nullopt;
 }
 
 template <typename T>
 typename std::enable_if<std::is_integral<T>::value &&
                             std::is_unsigned<T>::value,
-                        rtc::Optional<T>>::type
+                        absl::optional<T>>::type
 StringToNumber(const char* str, int base = 10) {
   using string_to_number_internal::unsigned_type;
   static_assert(std::numeric_limits<T>::max() <=
                     std::numeric_limits<unsigned_type>::max(),
                 "StringToNumber only supports unsigned integers as large as "
                 "unsigned long long int");
-  rtc::Optional<unsigned_type> value =
+  absl::optional<unsigned_type> value =
       string_to_number_internal::ParseUnsigned(str, base);
   if (value && *value <= std::numeric_limits<T>::max()) {
     return static_cast<T>(*value);
   }
-  return rtc::nullopt;
+  return absl::nullopt;
+}
+
+template <typename T>
+typename std::enable_if<std::is_floating_point<T>::value,
+                        absl::optional<T>>::type
+StringToNumber(const char* str, int base = 10) {
+  static_assert(
+      std::numeric_limits<T>::max() <= std::numeric_limits<long double>::max(),
+      "StringToNumber only supports floating-point numbers as large "
+      "as long double");
+  return string_to_number_internal::ParseFloatingPoint<T>(str);
 }
 
 // The std::string overloads only exists if there is a matching const char*

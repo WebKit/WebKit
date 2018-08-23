@@ -11,10 +11,10 @@
 #ifndef MODULES_VIDEO_CODING_UTILITY_FRAME_DROPPER_H_
 #define MODULES_VIDEO_CODING_UTILITY_FRAME_DROPPER_H_
 
-#include <cstddef>
+#include <stddef.h>
+#include <stdint.h>
 
 #include "rtc_base/numerics/exp_filter.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 

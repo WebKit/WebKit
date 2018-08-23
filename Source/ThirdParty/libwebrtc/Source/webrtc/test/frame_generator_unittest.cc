@@ -169,8 +169,8 @@ TEST_F(FrameGeneratorTest, SlideGenerator) {
   const int kGenCount = 9;
   const int kRepeatCount = 3;
   std::unique_ptr<FrameGenerator> generator(
-      FrameGenerator::CreateSlideGenerator(
-          kFrameWidth, kFrameHeight, kRepeatCount));
+      FrameGenerator::CreateSlideGenerator(kFrameWidth, kFrameHeight,
+                                           kRepeatCount));
   uint64_t hashes[kGenCount];
   for (int i = 0; i < kGenCount; ++i) {
     hashes[i] = Hash(generator->NextFrame());
@@ -178,9 +178,9 @@ TEST_F(FrameGeneratorTest, SlideGenerator) {
   // Check that the buffer changes only every |kRepeatCount| frames.
   for (int i = 1; i < kGenCount; ++i) {
     if (i % kRepeatCount == 0) {
-      EXPECT_NE(hashes[i-1], hashes[i]);
+      EXPECT_NE(hashes[i - 1], hashes[i]);
     } else {
-      EXPECT_EQ(hashes[i-1], hashes[i]);
+      EXPECT_EQ(hashes[i - 1], hashes[i]);
     }
   }
 }

@@ -104,6 +104,8 @@ class CaptureTransportVerificationProcessor : public BlockProcessor {
 
   void GetMetrics(EchoControl::Metrics* metrics) const override {}
 
+  void SetAudioBufferDelay(size_t delay_ms) override{};
+
  private:
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(CaptureTransportVerificationProcessor);
 };
@@ -131,6 +133,8 @@ class RenderTransportVerificationProcessor : public BlockProcessor {
   void UpdateEchoLeakageStatus(bool leakage_detected) override {}
 
   void GetMetrics(EchoControl::Metrics* metrics) const override {}
+
+  void SetAudioBufferDelay(size_t delay_ms) override{};
 
  private:
   std::deque<std::vector<std::vector<float>>> received_render_blocks_;
@@ -679,11 +683,6 @@ TEST(EchoCanceller3Messaging, EchoLeakage) {
       EchoCanceller3Tester(rate).RunEchoLeakageVerificationTest(variant);
     }
   }
-}
-
-TEST(EchoCanceller3, ConfigValidation) {
-  EchoCanceller3Config config;
-  EXPECT_TRUE(EchoCanceller3::Validate(config));
 }
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)

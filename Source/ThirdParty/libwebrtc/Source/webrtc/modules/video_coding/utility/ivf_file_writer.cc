@@ -25,7 +25,7 @@ namespace webrtc {
 const size_t kIvfHeaderSize = 32;
 
 IvfFileWriter::IvfFileWriter(rtc::File file, size_t byte_limit)
-    : codec_type_(kVideoCodecUnknown),
+    : codec_type_(kVideoCodecGeneric),
       bytes_written_(0),
       byte_limit_(byte_limit),
       num_frames_(0),
@@ -122,8 +122,7 @@ bool IvfFileWriter::InitFromFirstFrame(const EncodedImage& encoded_image,
   if (!WriteHeader())
     return false;
 
-  const char* codec_name =
-      CodecTypeToPayloadString(codec_type_);
+  const char* codec_name = CodecTypeToPayloadString(codec_type_);
   RTC_LOG(LS_WARNING) << "Created IVF file for codec data of type "
                       << codec_name << " at resolution " << width_ << " x "
                       << height_ << ", using "

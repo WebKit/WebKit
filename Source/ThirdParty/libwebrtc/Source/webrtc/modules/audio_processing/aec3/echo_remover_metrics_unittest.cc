@@ -12,8 +12,8 @@
 
 #include <math.h>
 
-#include "modules/audio_processing/aec3/aec_state.h"
 #include "modules/audio_processing/aec3/aec3_fft.h"
+#include "modules/audio_processing/aec3/aec_state.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -78,23 +78,19 @@ TEST(TransformDbMetricForReporting, DbFsScaling) {
 // Verifies that the TransformDbMetricForReporting method is able to properly
 // limit the output.
 TEST(TransformDbMetricForReporting, Limits) {
-  EXPECT_EQ(
-      0,
-      aec3::TransformDbMetricForReporting(false, 0.f, 10.f, 0.f, 1.f, 0.001f));
-  EXPECT_EQ(
-      10,
-      aec3::TransformDbMetricForReporting(false, 0.f, 10.f, 0.f, 1.f, 100.f));
+  EXPECT_EQ(0, aec3::TransformDbMetricForReporting(false, 0.f, 10.f, 0.f, 1.f,
+                                                   0.001f));
+  EXPECT_EQ(10, aec3::TransformDbMetricForReporting(false, 0.f, 10.f, 0.f, 1.f,
+                                                    100.f));
 }
 
 // Verifies that the TransformDbMetricForReporting method is able to properly
 // negate output.
 TEST(TransformDbMetricForReporting, Negate) {
-  EXPECT_EQ(
-      10,
-      aec3::TransformDbMetricForReporting(true, -20.f, 20.f, 0.f, 1.f, 0.1f));
-  EXPECT_EQ(
-      -10,
-      aec3::TransformDbMetricForReporting(true, -20.f, 20.f, 0.f, 1.f, 10.f));
+  EXPECT_EQ(10, aec3::TransformDbMetricForReporting(true, -20.f, 20.f, 0.f, 1.f,
+                                                    0.1f));
+  EXPECT_EQ(-10, aec3::TransformDbMetricForReporting(true, -20.f, 20.f, 0.f,
+                                                     1.f, 10.f));
 }
 
 // Verify the Update functionality of DbMetric.

@@ -26,7 +26,8 @@
 #include <string>
 #include <vector>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
+#include "api/rtcerror.h"
 #include "rtc_base/refcount.h"
 
 namespace cricket {
@@ -77,6 +78,12 @@ IceCandidateInterface* CreateIceCandidate(const std::string& sdp_mid,
                                           const std::string& sdp,
                                           SdpParseError* error);
 
+// Creates an IceCandidateInterface based on a parsed candidate structure.
+std::unique_ptr<IceCandidateInterface> CreateIceCandidate(
+    const std::string& sdp_mid,
+    int sdp_mline_index,
+    const cricket::Candidate& candidate);
+
 // This class represents a collection of candidates for a specific m= section.
 // Used in SessionDescriptionInterface.
 class IceCandidateCollection {
@@ -106,7 +113,7 @@ const char* SdpTypeToString(SdpType type);
 // Returns the SdpType from its string form. The string form can be one of the
 // constants defined in SessionDescriptionInterface. Passing in any other string
 // results in nullopt.
-rtc::Optional<SdpType> SdpTypeFromString(const std::string& type_str);
+absl::optional<SdpType> SdpTypeFromString(const std::string& type_str);
 
 // Class representation of an SDP session description.
 //
@@ -190,6 +197,14 @@ std::unique_ptr<SessionDescriptionInterface> CreateSessionDescription(
     const std::string& sdp,
     SdpParseError* error_out);
 
+// Creates a SessionDescriptionInterface based on a parsed SDP structure and the
+// given type, ID and version.
+std::unique_ptr<SessionDescriptionInterface> CreateSessionDescription(
+    SdpType type,
+    const std::string& session_id,
+    const std::string& session_version,
+    std::unique_ptr<cricket::SessionDescription> description);
+
 // CreateOffer and CreateAnswer callback interface.
 class CreateSessionDescriptionObserver : public rtc::RefCountInterface {
  public:
@@ -197,7 +212,15 @@ class CreateSessionDescriptionObserver : public rtc::RefCountInterface {
   // TODO(deadbeef): Make this take an std::unique_ptr<> to avoid confusion
   // around ownership.
   virtual void OnSuccess(SessionDescriptionInterface* desc) = 0;
-  virtual void OnFailure(const std::string& error) = 0;
+  // The OnFailure callback takes an RTCError, which consists of an
+  // error code and a string.
+  // RTCError is non-copyable, so it must be passed using std::move.
+  // Earlier versions of the API used a string argument. This version
+  // is deprecated; in order to let clients remove the old version, it has a
+  // default implementation. If both versions are unimplemented, the
+  // result will be a runtime error (stack overflow). This is intentional.
+  virtual void OnFailure(RTCError error);
+  virtual void OnFailure(const std::string& error);
 
  protected:
   ~CreateSessionDescriptionObserver() override = default;
@@ -207,7 +230,10 @@ class CreateSessionDescriptionObserver : public rtc::RefCountInterface {
 class SetSessionDescriptionObserver : public rtc::RefCountInterface {
  public:
   virtual void OnSuccess() = 0;
-  virtual void OnFailure(const std::string& error) = 0;
+  // See description in CreateSessionDescriptionObserver for OnFailure.
+  virtual void OnFailure(RTCError error);
+
+  virtual void OnFailure(const std::string& error);
 
  protected:
   ~SetSessionDescriptionObserver() override = default;

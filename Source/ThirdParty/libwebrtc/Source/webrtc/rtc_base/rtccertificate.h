@@ -29,11 +29,9 @@ namespace rtc {
 // the string representations used by OpenSSL.
 class RTCCertificatePEM {
  public:
-  RTCCertificatePEM(
-      const std::string& private_key,
-      const std::string& certificate)
-      : private_key_(private_key),
-        certificate_(certificate) {}
+  RTCCertificatePEM(const std::string& private_key,
+                    const std::string& certificate)
+      : private_key_(private_key), certificate_(certificate) {}
 
   const std::string& private_key() const { return private_key_; }
   const std::string& certificate() const { return certificate_; }
@@ -58,6 +56,7 @@ class RTCCertificate : public RefCountInterface {
   // relative to epoch, 1970-01-01T00:00:00Z.
   bool HasExpired(uint64_t now) const;
   const SSLCertificate& ssl_certificate() const;
+  const SSLCertChain& ssl_cert_chain() const;
 
   // TODO(hbos): If possible, remove once RTCCertificate and its
   // ssl_certificate() is used in all relevant places. Should not pass around

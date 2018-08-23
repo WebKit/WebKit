@@ -18,19 +18,23 @@
 @synthesize volume = _volume;
 @synthesize nativeAudioSource = _nativeAudioSource;
 
-- (instancetype)initWithNativeAudioSource:
-    (rtc::scoped_refptr<webrtc::AudioSourceInterface>)nativeAudioSource {
+- (instancetype)initWithFactory:(RTCPeerConnectionFactory *)factory
+              nativeAudioSource:
+                  (rtc::scoped_refptr<webrtc::AudioSourceInterface>)nativeAudioSource {
+  RTC_DCHECK(factory);
   RTC_DCHECK(nativeAudioSource);
-  if (self = [super initWithNativeMediaSource:nativeAudioSource
-                                         type:RTCMediaSourceTypeAudio]) {
+
+  if (self = [super initWithFactory:factory
+                  nativeMediaSource:nativeAudioSource
+                               type:RTCMediaSourceTypeAudio]) {
     _nativeAudioSource = nativeAudioSource;
   }
   return self;
 }
 
-- (instancetype)initWithNativeMediaSource:
-    (rtc::scoped_refptr<webrtc::MediaSourceInterface>)nativeMediaSource
-                                     type:(RTCMediaSourceType)type {
+- (instancetype)initWithFactory:(RTCPeerConnectionFactory *)factory
+              nativeMediaSource:(rtc::scoped_refptr<webrtc::MediaSourceInterface>)nativeMediaSource
+                           type:(RTCMediaSourceType)type {
   RTC_NOTREACHED();
   return nil;
 }

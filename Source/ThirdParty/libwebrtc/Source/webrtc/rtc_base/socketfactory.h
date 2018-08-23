@@ -17,22 +17,17 @@
 namespace rtc {
 
 class SocketFactory {
-public:
+ public:
   virtual ~SocketFactory() {}
 
   // Returns a new socket for blocking communication.  The type can be
   // SOCK_DGRAM and SOCK_STREAM.
-  // TODO: C++ inheritance rules mean that all users must have both
-  // CreateSocket(int) and CreateSocket(int,int). Will remove CreateSocket(int)
-  // (and CreateAsyncSocket(int) when all callers are changed.
-  virtual Socket* CreateSocket(int type) = 0;
   virtual Socket* CreateSocket(int family, int type) = 0;
   // Returns a new socket for nonblocking communication.  The type can be
   // SOCK_DGRAM and SOCK_STREAM.
-  virtual AsyncSocket* CreateAsyncSocket(int type) = 0;
   virtual AsyncSocket* CreateAsyncSocket(int family, int type) = 0;
 };
 
-} // namespace rtc
+}  // namespace rtc
 
-#endif // RTC_BASE_SOCKETFACTORY_H_
+#endif  // RTC_BASE_SOCKETFACTORY_H_

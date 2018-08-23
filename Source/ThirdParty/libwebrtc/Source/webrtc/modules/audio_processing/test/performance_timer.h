@@ -13,7 +13,7 @@
 
 #include <vector>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -37,7 +37,7 @@ class PerformanceTimer {
 
  private:
   webrtc::Clock* clock_;
-  rtc::Optional<int64_t> start_timestamp_us_;
+  absl::optional<int64_t> start_timestamp_us_;
   std::vector<int64_t> timestamps_us_;
 };
 

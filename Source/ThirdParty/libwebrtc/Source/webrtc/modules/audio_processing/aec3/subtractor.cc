@@ -16,17 +16,46 @@
 #include "api/array_view.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_minmax.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 
 namespace {
+
+bool EnableAgcGainChangeResponse() {
+  return !field_trial::IsEnabled("WebRTC-Aec3AgcGainChangeResponseKillSwitch");
+}
+
+bool EnableAdaptationDuringSaturation() {
+  return !field_trial::IsEnabled("WebRTC-Aec3RapidAgcGainRecoveryKillSwitch");
+}
+
+bool EnableMisadjustmentEstimator() {
+  return !field_trial::IsEnabled("WebRTC-Aec3MisadjustmentEstimatorKillSwitch");
+}
+
+bool EnableShadowFilterJumpstart() {
+  return !field_trial::IsEnabled("WebRTC-Aec3ShadowFilterJumpstartKillSwitch");
+}
+
+bool EnableShadowFilterBoostedJumpstart() {
+  return !field_trial::IsEnabled(
+      "WebRTC-Aec3ShadowFilterBoostedJumpstartKillSwitch");
+}
+
+bool EnableEarlyShadowFilterJumpstart() {
+  return !field_trial::IsEnabled(
+      "WebRTC-Aec3EarlyShadowFilterJumpstartKillSwitch");
+}
 
 void PredictionError(const Aec3Fft& fft,
                      const FftData& S,
                      rtc::ArrayView<const float> y,
                      std::array<float, kBlockSize>* e,
                      std::array<float, kBlockSize>* s,
+                     bool adaptation_during_saturation,
                      bool* saturation) {
   std::array<float, kFftLength> tmp;
   fft.Ifft(S, &tmp);
@@ -48,8 +77,24 @@ void PredictionError(const Aec3Fft& fft,
     *saturation = *result.first <= -32768 || *result.first >= 32767;
   }
 
-  std::for_each(e->begin(), e->end(),
-                [](float& a) { a = rtc::SafeClamp(a, -32768.f, 32767.f); });
+  if (!adaptation_during_saturation) {
+    std::for_each(e->begin(), e->end(),
+                  [](float& a) { a = rtc::SafeClamp(a, -32768.f, 32767.f); });
+  } else {
+    *saturation = false;
+  }
+}
+
+void ScaleFilterOutput(rtc::ArrayView<const float> y,
+                       float factor,
+                       rtc::ArrayView<float> e,
+                       rtc::ArrayView<float> s) {
+  RTC_DCHECK_EQ(y.size(), e.size());
+  RTC_DCHECK_EQ(y.size(), s.size());
+  for (size_t k = 0; k < y.size(); ++k) {
+    s[k] *= factor;
+    e[k] = y[k] - s[k];
+  }
 }
 
 }  // namespace
@@ -61,29 +106,28 @@ Subtractor::Subtractor(const EchoCanceller3Config& config,
       data_dumper_(data_dumper),
       optimization_(optimization),
       config_(config),
+      adaptation_during_saturation_(EnableAdaptationDuringSaturation()),
+      enable_misadjustment_estimator_(EnableMisadjustmentEstimator()),
+      enable_agc_gain_change_response_(EnableAgcGainChangeResponse()),
+      enable_shadow_filter_jumpstart_(EnableShadowFilterJumpstart()),
+      enable_shadow_filter_boosted_jumpstart_(
+          EnableShadowFilterBoostedJumpstart()),
+      enable_early_shadow_filter_jumpstart_(EnableEarlyShadowFilterJumpstart()),
       main_filter_(config_.filter.main.length_blocks,
+                   config_.filter.main_initial.length_blocks,
+                   config.filter.config_change_duration_blocks,
                    optimization,
                    data_dumper_),
       shadow_filter_(config_.filter.shadow.length_blocks,
+                     config_.filter.shadow_initial.length_blocks,
+                     config.filter.config_change_duration_blocks,
                      optimization,
                      data_dumper_),
-      G_main_(config_.filter.main_initial),
-      G_shadow_(config_.filter.shadow_initial) {
+      G_main_(config_.filter.main_initial,
+              config_.filter.config_change_duration_blocks),
+      G_shadow_(config_.filter.shadow_initial,
+                config.filter.config_change_duration_blocks) {
   RTC_DCHECK(data_dumper_);
-  // Currently, the rest of AEC3 requires the main and shadow filter lengths to
-  // be identical.
-  RTC_DCHECK_EQ(config_.filter.main.length_blocks,
-                config_.filter.shadow.length_blocks);
-  RTC_DCHECK_EQ(config_.filter.main_initial.length_blocks,
-                config_.filter.shadow_initial.length_blocks);
-
-  RTC_DCHECK_GE(config_.filter.main.length_blocks,
-                config_.filter.main_initial.length_blocks);
-  RTC_DCHECK_GE(config_.filter.shadow.length_blocks,
-                config_.filter.shadow_initial.length_blocks);
-
-  main_filter_.SetSizePartitions(config_.filter.main_initial.length_blocks);
-  shadow_filter_.SetSizePartitions(config_.filter.shadow_initial.length_blocks);
 }
 
 Subtractor::~Subtractor() = default;
@@ -95,35 +139,31 @@ void Subtractor::HandleEchoPathChange(
     shadow_filter_.HandleEchoPathChange();
     G_main_.HandleEchoPathChange(echo_path_variability);
     G_shadow_.HandleEchoPathChange();
-    G_main_.SetConfig(config_.filter.main_initial);
-    G_shadow_.SetConfig(config_.filter.shadow_initial);
-    main_filter_converged_ = false;
-    shadow_filter_converged_ = false;
-    main_filter_.SetSizePartitions(config_.filter.main_initial.length_blocks);
+    G_main_.SetConfig(config_.filter.main_initial, true);
+    G_shadow_.SetConfig(config_.filter.shadow_initial, true);
+    main_filter_.SetSizePartitions(config_.filter.main_initial.length_blocks,
+                                   true);
     shadow_filter_.SetSizePartitions(
-        config_.filter.shadow_initial.length_blocks);
+        config_.filter.shadow_initial.length_blocks, true);
   };
 
-  // TODO(peah): Add delay-change specific reset behavior.
-  if ((echo_path_variability.delay_change ==
-       EchoPathVariability::DelayAdjustment::kBufferFlush) ||
-      (echo_path_variability.delay_change ==
-       EchoPathVariability::DelayAdjustment::kDelayReset)) {
+  if (echo_path_variability.delay_change !=
+      EchoPathVariability::DelayAdjustment::kNone) {
     full_reset();
-  } else if (echo_path_variability.delay_change ==
-             EchoPathVariability::DelayAdjustment::kNewDetectedDelay) {
-    full_reset();
-  } else if (echo_path_variability.delay_change ==
-             EchoPathVariability::DelayAdjustment::kBufferReadjustment) {
-    full_reset();
+  }
+
+  if (echo_path_variability.gain_change && enable_agc_gain_change_response_) {
+    RTC_LOG(LS_WARNING) << "Resetting main filter adaptation speed due to "
+                           "microphone gain change";
+    G_main_.HandleEchoPathChange(echo_path_variability);
   }
 }
 
 void Subtractor::ExitInitialState() {
-  G_main_.SetConfig(config_.filter.main);
-  G_shadow_.SetConfig(config_.filter.shadow);
-  main_filter_.SetSizePartitions(config_.filter.main.length_blocks);
-  shadow_filter_.SetSizePartitions(config_.filter.shadow.length_blocks);
+  G_main_.SetConfig(config_.filter.main, false);
+  G_shadow_.SetConfig(config_.filter.shadow, false);
+  main_filter_.SetSizePartitions(config_.filter.main.length_blocks, false);
+  shadow_filter_.SetSizePartitions(config_.filter.shadow.length_blocks, false);
 }
 
 void Subtractor::Process(const RenderBuffer& render_buffer,
@@ -134,7 +174,6 @@ void Subtractor::Process(const RenderBuffer& render_buffer,
   RTC_DCHECK_EQ(kBlockSize, capture.size());
   rtc::ArrayView<const float> y = capture;
   FftData& E_main = output->E_main;
-  FftData& E_main_nonwindowed = output->E_main_nonwindowed;
   FftData E_shadow;
   std::array<float, kBlockSize>& e_main = output->e_main;
   std::array<float, kBlockSize>& e_shadow = output->e_shadow;
@@ -142,72 +181,151 @@ void Subtractor::Process(const RenderBuffer& render_buffer,
   FftData S;
   FftData& G = S;
 
-  // Form the output of the main filter.
+  // Form the outputs of the main and shadow filters.
   main_filter_.Filter(render_buffer, &S);
   bool main_saturation = false;
-  PredictionError(fft_, S, y, &e_main, &output->s_main, &main_saturation);
-  fft_.ZeroPaddedFft(e_main, Aec3Fft::Window::kHanning, &E_main);
+  PredictionError(fft_, S, y, &e_main, &output->s_main,
+                  adaptation_during_saturation_, &main_saturation);
 
-  // Form the output of the shadow filter.
   shadow_filter_.Filter(render_buffer, &S);
   bool shadow_saturation = false;
-  PredictionError(fft_, S, y, &e_shadow, nullptr, &shadow_saturation);
-  fft_.ZeroPaddedFft(e_shadow, Aec3Fft::Window::kHanning, &E_shadow);
+  PredictionError(fft_, S, y, &e_shadow, &output->s_shadow,
+                  adaptation_during_saturation_, &shadow_saturation);
 
-  if (!(main_filter_converged_ || shadow_filter_converged_)) {
-    const auto sum_of_squares = [](float a, float b) { return a + b * b; };
-    const float y2 = std::accumulate(y.begin(), y.end(), 0.f, sum_of_squares);
+  // Compute the signal powers in the subtractor output.
+  output->UpdatePowers(y);
 
-    if (!main_filter_converged_) {
-      const float e2_main =
-          std::accumulate(e_main.begin(), e_main.end(), 0.f, sum_of_squares);
-      main_filter_converged_ = e2_main > 0.1 * y2;
-    }
-
-    if (!shadow_filter_converged_) {
-      const float e2_shadow = std::accumulate(e_shadow.begin(), e_shadow.end(),
-                                              0.f, sum_of_squares);
-      shadow_filter_converged_ = e2_shadow > 0.1 * y2;
+  // Adjust the filter if needed.
+  bool main_filter_adjusted = false;
+  if (enable_misadjustment_estimator_) {
+    filter_misadjustment_estimator_.Update(*output);
+    if (filter_misadjustment_estimator_.IsAdjustmentNeeded()) {
+      float scale = filter_misadjustment_estimator_.GetMisadjustment();
+      main_filter_.ScaleFilter(scale);
+      ScaleFilterOutput(y, scale, e_main, output->s_main);
+      filter_misadjustment_estimator_.Reset();
+      main_filter_adjusted = true;
     }
   }
+
+  // Compute the FFts of the main and shadow filter outputs.
+  fft_.ZeroPaddedFft(e_main, Aec3Fft::Window::kHanning, &E_main);
+  fft_.ZeroPaddedFft(e_shadow, Aec3Fft::Window::kHanning, &E_shadow);
 
   // Compute spectra for future use.
   E_shadow.Spectrum(optimization_, output->E2_shadow);
   E_main.Spectrum(optimization_, output->E2_main);
 
-  if (main_filter_converged_ || !shadow_filter_converged_) {
-    fft_.ZeroPaddedFft(e_main, Aec3Fft::Window::kRectangular,
-                       &E_main_nonwindowed);
-    E_main_nonwindowed.Spectrum(optimization_, output->E2_main_nonwindowed);
+  // Compute the render powers.
+  std::array<float, kFftLengthBy2Plus1> X2_main;
+  std::array<float, kFftLengthBy2Plus1> X2_shadow_data;
+  std::array<float, kFftLengthBy2Plus1>& X2_shadow =
+      main_filter_.SizePartitions() == shadow_filter_.SizePartitions()
+          ? X2_main
+          : X2_shadow_data;
+  if (main_filter_.SizePartitions() == shadow_filter_.SizePartitions()) {
+    render_buffer.SpectralSum(main_filter_.SizePartitions(), &X2_main);
+  } else if (main_filter_.SizePartitions() > shadow_filter_.SizePartitions()) {
+    render_buffer.SpectralSums(shadow_filter_.SizePartitions(),
+                               main_filter_.SizePartitions(), &X2_shadow,
+                               &X2_main);
   } else {
-    fft_.ZeroPaddedFft(e_shadow, Aec3Fft::Window::kRectangular,
-                       &E_main_nonwindowed);
-    E_main_nonwindowed.Spectrum(optimization_, output->E2_main_nonwindowed);
+    render_buffer.SpectralSums(main_filter_.SizePartitions(),
+                               shadow_filter_.SizePartitions(), &X2_main,
+                               &X2_shadow);
   }
 
   // Update the main filter.
-  std::array<float, kFftLengthBy2Plus1> X2;
-  render_buffer.SpectralSum(main_filter_.SizePartitions(), &X2);
-  G_main_.Compute(X2, render_signal_analyzer, *output, main_filter_,
-                  aec_state.SaturatedCapture() || main_saturation, &G);
+  if (!main_filter_adjusted) {
+    G_main_.Compute(X2_main, render_signal_analyzer, *output, main_filter_,
+                    aec_state.SaturatedCapture() || main_saturation, &G);
+  } else {
+    G.re.fill(0.f);
+    G.im.fill(0.f);
+  }
   main_filter_.Adapt(render_buffer, G);
   data_dumper_->DumpRaw("aec3_subtractor_G_main", G.re);
   data_dumper_->DumpRaw("aec3_subtractor_G_main", G.im);
 
   // Update the shadow filter.
-  if (shadow_filter_.SizePartitions() != main_filter_.SizePartitions()) {
-    render_buffer.SpectralSum(shadow_filter_.SizePartitions(), &X2);
+  poor_shadow_filter_counter_ =
+      output->e2_main < output->e2_shadow ? poor_shadow_filter_counter_ + 1 : 0;
+  if (((poor_shadow_filter_counter_ < 5 &&
+        enable_early_shadow_filter_jumpstart_) ||
+       (poor_shadow_filter_counter_ < 10 &&
+        !enable_early_shadow_filter_jumpstart_)) ||
+      !enable_shadow_filter_jumpstart_) {
+    G_shadow_.Compute(X2_shadow, render_signal_analyzer, E_shadow,
+                      shadow_filter_.SizePartitions(),
+                      aec_state.SaturatedCapture() || shadow_saturation, &G);
+    shadow_filter_.Adapt(render_buffer, G);
+  } else {
+    poor_shadow_filter_counter_ = 0;
+    if (enable_shadow_filter_boosted_jumpstart_) {
+      shadow_filter_.SetFilter(main_filter_.GetFilter());
+      G_shadow_.Compute(X2_shadow, render_signal_analyzer, E_main,
+                        shadow_filter_.SizePartitions(),
+                        aec_state.SaturatedCapture() || main_saturation, &G);
+      shadow_filter_.Adapt(render_buffer, G);
+    } else {
+      G.re.fill(0.f);
+      G.im.fill(0.f);
+      shadow_filter_.Adapt(render_buffer, G);
+      shadow_filter_.SetFilter(main_filter_.GetFilter());
+    }
   }
-  G_shadow_.Compute(X2, render_signal_analyzer, E_shadow,
-                    shadow_filter_.SizePartitions(),
-                    aec_state.SaturatedCapture() || shadow_saturation, &G);
-  shadow_filter_.Adapt(render_buffer, G);
 
   data_dumper_->DumpRaw("aec3_subtractor_G_shadow", G.re);
   data_dumper_->DumpRaw("aec3_subtractor_G_shadow", G.im);
+  filter_misadjustment_estimator_.Dump(data_dumper_);
+  DumpFilters();
 
-  main_filter_.DumpFilter("aec3_subtractor_H_main");
-  shadow_filter_.DumpFilter("aec3_subtractor_H_shadow");
+  if (adaptation_during_saturation_) {
+    std::for_each(e_main.begin(), e_main.end(),
+                  [](float& a) { a = rtc::SafeClamp(a, -32768.f, 32767.f); });
+  }
+
+  data_dumper_->DumpWav("aec3_main_filter_output", kBlockSize, &e_main[0],
+                        16000, 1);
+  data_dumper_->DumpWav("aec3_shadow_filter_output", kBlockSize, &e_shadow[0],
+                        16000, 1);
+}
+
+void Subtractor::FilterMisadjustmentEstimator::Update(
+    const SubtractorOutput& output) {
+  e2_acum_ += output.e2_main;
+  y2_acum_ += output.y2;
+  if (++n_blocks_acum_ == n_blocks_) {
+    if (y2_acum_ > n_blocks_ * 200.f * 200.f * kBlockSize) {
+      float update = (e2_acum_ / y2_acum_);
+      if (e2_acum_ > n_blocks_ * 7500.f * 7500.f * kBlockSize) {
+        // Duration equal to blockSizeMs * n_blocks_ * 4.
+        overhang_ = 4;
+      } else {
+        overhang_ = std::max(overhang_ - 1, 0);
+      }
+
+      if ((update < inv_misadjustment_) || (overhang_ > 0)) {
+        inv_misadjustment_ += 0.1f * (update - inv_misadjustment_);
+      }
+    }
+    e2_acum_ = 0.f;
+    y2_acum_ = 0.f;
+    n_blocks_acum_ = 0;
+  }
+}
+
+void Subtractor::FilterMisadjustmentEstimator::Reset() {
+  e2_acum_ = 0.f;
+  y2_acum_ = 0.f;
+  n_blocks_acum_ = 0;
+  inv_misadjustment_ = 0.f;
+  overhang_ = 0.f;
+}
+
+void Subtractor::FilterMisadjustmentEstimator::Dump(
+    ApmDataDumper* data_dumper) const {
+  data_dumper->DumpRaw("aec3_inv_misadjustment_factor", inv_misadjustment_);
 }
 
 }  // namespace webrtc

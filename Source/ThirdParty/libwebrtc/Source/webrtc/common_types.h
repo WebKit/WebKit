@@ -13,32 +13,19 @@
 
 #include <stddef.h>
 #include <string.h>
-#include <ostream>
 #include <string>
 #include <vector>
 
 #include "api/array_view.h"
-#include "api/optional.h"
+// TODO(sprang): Remove this include when all usage includes it directly.
+#include "api/video/video_bitrate_allocation.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/deprecation.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 #if defined(_MSC_VER)
 // Disable "new behavior: elements of array will be default initialized"
 // warning. Affects OverUseDetectorOptions.
 #pragma warning(disable : 4351)
-#endif
-
-#if defined(WEBRTC_EXPORT)
-#define WEBRTC_DLLEXPORT _declspec(dllexport)
-#elif defined(WEBRTC_DLL)
-#define WEBRTC_DLLEXPORT _declspec(dllimport)
-#else
-#define WEBRTC_DLLEXPORT
-#endif
-
-#ifndef NULL
-#define NULL 0
 #endif
 
 #define RTP_PAYLOAD_NAME_SIZE 32u
@@ -54,34 +41,6 @@
 #endif
 
 namespace webrtc {
-
-class RewindableStream {
- public:
-  virtual ~RewindableStream() {}
-  virtual int Rewind() = 0;
-};
-
-class InStream : public RewindableStream {
- public:
-  // Reads |len| bytes from file to |buf|. Returns the number of bytes read
-  // or -1 on error.
-  virtual int Read(void* buf, size_t len) = 0;
-};
-
-class OutStream : public RewindableStream {
- public:
-  // Writes |len| bytes from |buf| to file. The actual writing may happen
-  // some time later. Call Flush() to force a write.
-  virtual bool Write(const void* buf, size_t len) = 0;
-};
-
-// For the deprecated MediaFile module.
-enum FileFormats {
-  kFileFormatWavFile = 1,
-  kFileFormatPcm16kHzFile = 7,
-  kFileFormatPcm8kHzFile = 8,
-  kFileFormatPcm32kHzFile = 9,
-};
 
 enum FrameType {
   kEmptyFrame = 0,
@@ -100,14 +59,8 @@ struct RtcpStatistics {
         jitter(0) {}
 
   uint8_t fraction_lost;
-  union {
-    int32_t packets_lost;  // Defined as a 24 bit signed integer in RTCP
-    RTC_DEPRECATED uint32_t cumulative_lost;
-  };
-  union {
-    uint32_t extended_highest_sequence_number;
-    RTC_DEPRECATED uint32_t extended_max_sequence_number;
-  };
+  int32_t packets_lost;  // Defined as a 24 bit signed integer in RTCP
+  uint32_t extended_highest_sequence_number;
   uint32_t jitter;
 };
 
@@ -186,14 +139,6 @@ class RtcpPacketTypeCounterObserver {
       const RtcpPacketTypeCounter& packet_counter) = 0;
 };
 
-// Rate statistics for a stream.
-struct BitrateStatistics {
-  BitrateStatistics() : bitrate_bps(0), packet_rate(0) {}
-
-  uint32_t bitrate_bps;  // Bitrate in bits per second.
-  uint32_t packet_rate;  // Packet rate in packets per second.
-};
-
 // Callback, used to notify an observer whenever new rates have been estimated.
 class BitrateStatisticsObserver {
  public:
@@ -268,34 +213,10 @@ struct CodecInst {
   }
 
   bool operator!=(const CodecInst& other) const { return !(*this == other); }
-
-  friend std::ostream& operator<<(std::ostream& os, const CodecInst& ci) {
-    os << "{pltype: " << ci.pltype;
-    os << ", plname: " << ci.plname;
-    os << ", plfreq: " << ci.plfreq;
-    os << ", pacsize: " << ci.pacsize;
-    os << ", channels: " << ci.channels;
-    os << ", rate: " << ci.rate << "}";
-    return os;
-  }
 };
 
 // RTP
 enum { kRtpCsrcSize = 15 };  // RFC 3550 page 13
-
-enum PayloadFrequencies {
-  kFreq8000Hz = 8000,
-  kFreq16000Hz = 16000,
-  kFreq32000Hz = 32000
-};
-
-// Degree of bandwidth reduction.
-enum VadModes {
-  kVadConventional = 0,  // lowest reduction
-  kVadAggressiveLow,
-  kVadAggressiveMid,
-  kVadAggressiveHigh  // highest reduction
-};
 
 // NETEQ statistics.
 struct NetworkStatistics {
@@ -367,7 +288,7 @@ struct AudioDecodingCallStats {
   int decoded_normal;  // Number of calls where audio RTP packet decoded.
   int decoded_plc;     // Number of calls resulted in PLC.
   int decoded_cng;  // Number of calls where comfort noise generated due to DTX.
-  int decoded_plc_cng;  // Number of calls resulted where PLC faded to CNG.
+  int decoded_plc_cng;       // Number of calls resulted where PLC faded to CNG.
   int decoded_muted_output;  // Number of calls returning a muted state output.
 };
 
@@ -396,60 +317,6 @@ enum class VideoType {
   kBGRA,
 };
 
-// Video codec
-enum { kPayloadNameSize = 32 };
-enum { kMaxSimulcastStreams = 4 };
-enum { kMaxSpatialLayers = 5 };
-enum { kMaxTemporalStreams = 4 };
-
-enum VideoCodecComplexity {
-  kComplexityNormal = 0,
-  kComplexityHigh = 1,
-  kComplexityHigher = 2,
-  kComplexityMax = 3
-};
-
-enum VP8ResilienceMode {
-  kResilienceOff,    // The stream produced by the encoder requires a
-                     // recovery frame (typically a key frame) to be
-                     // decodable after a packet loss.
-  kResilientStream,  // A stream produced by the encoder is resilient to
-                     // packet losses, but packets within a frame subsequent
-                     // to a loss can't be decoded.
-  kResilientFrames   // Same as kResilientStream but with added resilience
-                     // within a frame.
-};
-
-class TemporalLayersFactory;
-// VP8 specific
-struct VideoCodecVP8 {
-  // TODO(nisse): Unused, delete?
-  bool pictureLossIndicationOn;
-  VideoCodecComplexity complexity;
-  VP8ResilienceMode resilience;
-  unsigned char numberOfTemporalLayers;
-  bool denoisingOn;
-  bool errorConcealmentOn;
-  bool automaticResizeOn;
-  bool frameDroppingOn;
-  int keyFrameInterval;
-  TemporalLayersFactory* tl_factory;
-};
-
-// VP9 specific.
-struct VideoCodecVP9 {
-  VideoCodecComplexity complexity;
-  bool resilienceOn;
-  unsigned char numberOfTemporalLayers;
-  bool denoisingOn;
-  bool frameDroppingOn;
-  int keyFrameInterval;
-  bool adaptiveQpMode;
-  bool automaticResizeOn;
-  unsigned char numberOfSpatialLayers;
-  bool flexibleMode;
-};
-
 // TODO(magjed): Move this and other H264 related classes out to their own file.
 namespace H264 {
 
@@ -463,45 +330,35 @@ enum Profile {
 
 }  // namespace H264
 
-// H264 specific.
-struct VideoCodecH264 {
-  bool frameDroppingOn;
-  int keyFrameInterval;
-  // These are NULL/0 if not externally negotiated.
-  const uint8_t* spsData;
-  size_t spsLen;
-  const uint8_t* ppsData;
-  size_t ppsLen;
-  H264::Profile profile;
-};
-
 // Video codec types
 enum VideoCodecType {
+  // There are various memset(..., 0, ...) calls in the code that rely on
+  // kVideoCodecGeneric being zero.
+  kVideoCodecGeneric = 0,
   kVideoCodecVP8,
   kVideoCodecVP9,
   kVideoCodecH264,
   kVideoCodecI420,
-  kVideoCodecRED,
-  kVideoCodecULPFEC,
-  kVideoCodecFlexfec,
-  kVideoCodecGeneric,
-  kVideoCodecStereo,
-  kVideoCodecUnknown
+  kVideoCodecMultiplex,
+  // DEPRECATED. Do not use.
+  kVideoCodecUnknown,
+
+  // TODO(nisse): Deprecated aliases, for code expecting RtpVideoCodecTypes.
+  kRtpVideoNone = kVideoCodecGeneric,
+  kRtpVideoGeneric = kVideoCodecGeneric,
+  kRtpVideoVp8 = kVideoCodecVP8,
+  kRtpVideoVp9 = kVideoCodecVP9,
+  kRtpVideoH264 = kVideoCodecH264,
 };
 
 // Translates from name of codec to codec type and vice versa.
 const char* CodecTypeToPayloadString(VideoCodecType type);
 VideoCodecType PayloadStringToCodecType(const std::string& name);
 
-union VideoCodecUnion {
-  VideoCodecVP8 VP8;
-  VideoCodecVP9 VP9;
-  VideoCodecH264 H264;
-};
+struct SpatialLayer {
+  bool operator==(const SpatialLayer& other) const;
+  bool operator!=(const SpatialLayer& other) const { return !(*this == other); }
 
-// Simulcast is when the same stream is encoded multiple times with different
-// settings such as resolution.
-struct SimulcastStream {
   unsigned short width;
   unsigned short height;
   unsigned char numberOfTemporalLayers;
@@ -509,117 +366,15 @@ struct SimulcastStream {
   unsigned int targetBitrate;  // kilobits/sec.
   unsigned int minBitrate;     // kilobits/sec.
   unsigned int qpMax;          // minimum quality
+  bool active;                 // encoded and sent.
 };
 
-struct SpatialLayer {
-  int scaling_factor_num;
-  int scaling_factor_den;
-  int target_bitrate_bps;
-  // TODO(ivica): Add max_quantizer and min_quantizer?
-};
+// Simulcast is when the same stream is encoded multiple times with different
+// settings such as resolution.
+typedef SpatialLayer SimulcastStream;
 
-enum VideoCodecMode { kRealtimeVideo, kScreensharing };
-
-// Common video codec properties
-class VideoCodec {
- public:
-  VideoCodec();
-
-  // Public variables. TODO(hta): Make them private with accessors.
-  VideoCodecType codecType;
-  char plName[kPayloadNameSize];
-  unsigned char plType;
-
-  unsigned short width;
-  unsigned short height;
-
-  unsigned int startBitrate;   // kilobits/sec.
-  unsigned int maxBitrate;     // kilobits/sec.
-  unsigned int minBitrate;     // kilobits/sec.
-  unsigned int targetBitrate;  // kilobits/sec.
-
-  uint32_t maxFramerate;
-
-  unsigned int qpMax;
-  unsigned char numberOfSimulcastStreams;
-  SimulcastStream simulcastStream[kMaxSimulcastStreams];
-  SpatialLayer spatialLayers[kMaxSpatialLayers];
-
-  VideoCodecMode mode;
-  bool expect_encode_from_texture;
-
-  // Timing frames configuration. There is delay of delay_ms between two
-  // consequent timing frames, excluding outliers. Frame is always made a
-  // timing frame if it's at least outlier_ratio in percent of "ideal" average
-  // frame given bitrate and framerate, i.e. if it's bigger than
-  // |outlier_ratio / 100.0 * bitrate_bps / fps| in bits. This way, timing
-  // frames will not be sent too often usually. Yet large frames will always
-  // have timing information for debug purposes because they are more likely to
-  // cause extra delays.
-  struct TimingFrameTriggerThresholds {
-    int64_t delay_ms;
-    uint16_t outlier_ratio_percent;
-  } timing_frame_thresholds;
-
-  bool operator==(const VideoCodec& other) const = delete;
-  bool operator!=(const VideoCodec& other) const = delete;
-
-  // Accessors for codec specific information.
-  // There is a const version of each that returns a reference,
-  // and a non-const version that returns a pointer, in order
-  // to allow modification of the parameters.
-  VideoCodecVP8* VP8();
-  const VideoCodecVP8& VP8() const;
-  VideoCodecVP9* VP9();
-  const VideoCodecVP9& VP9() const;
-  VideoCodecH264* H264();
-  const VideoCodecH264& H264() const;
-
- private:
-  // TODO(hta): Consider replacing the union with a pointer type.
-  // This will allow removing the VideoCodec* types from this file.
-  VideoCodecUnion codec_specific_;
-};
-
-class BitrateAllocation {
- public:
-  static const uint32_t kMaxBitrateBps;
-  BitrateAllocation();
-
-  bool SetBitrate(size_t spatial_index,
-                  size_t temporal_index,
-                  uint32_t bitrate_bps);
-
-  bool HasBitrate(size_t spatial_index, size_t temporal_index) const;
-
-  uint32_t GetBitrate(size_t spatial_index, size_t temporal_index) const;
-
-  // Whether the specific spatial layers has the bitrate set in any of its
-  // temporal layers.
-  bool IsSpatialLayerUsed(size_t spatial_index) const;
-
-  // Get the sum of all the temporal layer for a specific spatial layer.
-  uint32_t GetSpatialLayerSum(size_t spatial_index) const;
-
-  uint32_t get_sum_bps() const { return sum_; }  // Sum of all bitrates.
-  uint32_t get_sum_kbps() const { return (sum_ + 500) / 1000; }
-
-  inline bool operator==(const BitrateAllocation& other) const {
-    return memcmp(bitrates_, other.bitrates_, sizeof(bitrates_)) == 0;
-  }
-  inline bool operator!=(const BitrateAllocation& other) const {
-    return !(*this == other);
-  }
-
-  // Expensive, please use only in tests.
-  std::string ToString() const;
-  std::ostream& operator<<(std::ostream& os) const;
-
- private:
-  uint32_t sum_;
-  uint32_t bitrates_[kMaxSpatialLayers][kMaxTemporalStreams];
-  bool has_bitrate_[kMaxSpatialLayers][kMaxTemporalStreams];
-};
+// TODO(sprang): Remove this when downstream projects have been updated.
+using BitrateAllocation = VideoBitrateAllocation;
 
 // Bandwidth over-use detector options.  These are used to drive
 // experimentation with bandwidth estimation parameters.
@@ -648,6 +403,9 @@ struct OverUseDetectorOptions {
   double initial_avg_noise;
   double initial_var_noise;
 };
+
+// TODO(nisse): This struct is phased out, delete as soon as down stream code is
+// updated.
 
 // This structure will have the information about when packet is actually
 // received by socket.

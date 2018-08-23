@@ -127,10 +127,13 @@
 
 // Histogram for enumerators (evenly spaced buckets).
 // |boundary| should be above the max enumerator sample.
+//
+// TODO(qingsi): Refactor the default implementation given by RtcHistogram,
+// which is already sparse, and remove the boundary argument from the macro.
 #define RTC_HISTOGRAM_ENUMERATION_SPARSE(name, sample, boundary) \
-  RTC_HISTOGRAM_COMMON_BLOCK_SLOW(                               \
+  RTC_HISTOGRAM_COMMON_BLOCK(                                    \
       name, sample,                                              \
-      webrtc::metrics::HistogramFactoryGetEnumeration(name, boundary))
+      webrtc::metrics::SparseHistogramFactoryGetEnumeration(name, boundary))
 
 // Histogram for percentage (evenly spaced buckets).
 #define RTC_HISTOGRAM_PERCENTAGE(name, sample) \
@@ -262,6 +265,11 @@ Histogram* HistogramFactoryGetCountsLinear(const std::string& name,
 // |boundary| should be above the max enumerator sample.
 Histogram* HistogramFactoryGetEnumeration(const std::string& name,
                                           int boundary);
+
+// Get sparse histogram for enumerators.
+// |boundary| should be above the max enumerator sample.
+Histogram* SparseHistogramFactoryGetEnumeration(const std::string& name,
+                                                int boundary);
 
 // Function for adding a |sample| to a histogram.
 void HistogramAdd(Histogram* histogram_pointer, int sample);

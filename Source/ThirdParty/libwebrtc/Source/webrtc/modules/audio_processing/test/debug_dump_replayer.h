@@ -34,7 +34,7 @@ class DebugDumpReplayer {
   bool SetDumpFile(const std::string& filename);
 
   // Return next event.
-  rtc::Optional<audioproc::Event> GetNextEvent() const;
+  absl::optional<audioproc::Event> GetNextEvent() const;
 
   // Run the next event. Returns true if succeeded.
   bool RunNextEvent();

@@ -11,8 +11,8 @@
 #ifndef RTC_BASE_FAKECLOCK_H_
 #define RTC_BASE_FAKECLOCK_H_
 
+#include "api/units/time_delta.h"
 #include "rtc_base/criticalsection.h"
-#include "rtc_base/timedelta.h"
 #include "rtc_base/timeutils.h"
 
 namespace rtc {
@@ -36,10 +36,11 @@ class FakeClock : public ClockInterface {
     SetTimeNanos(kNumNanosecsPerMicrosec * micros);
   }
 
-  void AdvanceTime(TimeDelta delta);
+  void AdvanceTime(webrtc::TimeDelta delta);
   void AdvanceTimeMicros(int64_t micros) {
-    AdvanceTime(rtc::TimeDelta::FromMicroseconds(micros));
+    AdvanceTime(webrtc::TimeDelta::us(micros));
   }
+
  private:
   CriticalSection lock_;
   int64_t time_ RTC_GUARDED_BY(lock_) = 0;

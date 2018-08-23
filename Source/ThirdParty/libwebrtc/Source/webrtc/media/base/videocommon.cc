@@ -12,9 +12,9 @@
 
 #include <limits.h>  // For INT_MAX
 #include <math.h>
-#include <sstream>
 
 #include "rtc_base/arraysize.h"
+#include "rtc_base/strings/string_builder.h"
 
 namespace cricket {
 
@@ -24,20 +24,20 @@ struct FourCCAliasEntry {
 };
 
 static const FourCCAliasEntry kFourCCAliases[] = {
-  {FOURCC_IYUV, FOURCC_I420},
-  {FOURCC_YU16, FOURCC_I422},
-  {FOURCC_YU24, FOURCC_I444},
-  {FOURCC_YUYV, FOURCC_YUY2},
-  {FOURCC_YUVS, FOURCC_YUY2},
-  {FOURCC_HDYC, FOURCC_UYVY},
-  {FOURCC_2VUY, FOURCC_UYVY},
-  {FOURCC_JPEG, FOURCC_MJPG},  // Note: JPEG has DHT while MJPG does not.
-  {FOURCC_DMB1, FOURCC_MJPG},
-  {FOURCC_BA81, FOURCC_BGGR},
-  {FOURCC_RGB3, FOURCC_RAW},
-  {FOURCC_BGR3, FOURCC_24BG},
-  {FOURCC_CM32, FOURCC_BGRA},
-  {FOURCC_CM24, FOURCC_RAW},
+    {FOURCC_IYUV, FOURCC_I420},
+    {FOURCC_YU16, FOURCC_I422},
+    {FOURCC_YU24, FOURCC_I444},
+    {FOURCC_YUYV, FOURCC_YUY2},
+    {FOURCC_YUVS, FOURCC_YUY2},
+    {FOURCC_HDYC, FOURCC_UYVY},
+    {FOURCC_2VUY, FOURCC_UYVY},
+    {FOURCC_JPEG, FOURCC_MJPG},  // Note: JPEG has DHT while MJPG does not.
+    {FOURCC_DMB1, FOURCC_MJPG},
+    {FOURCC_BA81, FOURCC_BGGR},
+    {FOURCC_RGB3, FOURCC_RAW},
+    {FOURCC_BGR3, FOURCC_24BG},
+    {FOURCC_CM32, FOURCC_BGRA},
+    {FOURCC_CM24, FOURCC_RAW},
 };
 
 uint32_t CanonicalFourCC(uint32_t fourcc) {
@@ -62,7 +62,7 @@ const int64_t VideoFormat::kMinimumInterval;  // Initialized in header.
 std::string VideoFormat::ToString() const {
   std::string fourcc_name = GetFourccName(fourcc) + " ";
   for (std::string::const_iterator i = fourcc_name.begin();
-      i < fourcc_name.end(); ++i) {
+       i < fourcc_name.end(); ++i) {
     // Test character is printable; Avoid isprint() which asserts on negatives.
     if (*i < 32 || *i >= 127) {
       fourcc_name = "";
@@ -70,10 +70,11 @@ std::string VideoFormat::ToString() const {
     }
   }
 
-  std::ostringstream ss;
-  ss << fourcc_name << width << "x" << height << "x"
+  char buf[256];
+  rtc::SimpleStringBuilder sb(buf);
+  sb << fourcc_name << width << "x" << height << "x"
      << IntervalToFpsFloat(interval);
-  return ss.str();
+  return sb.str();
 }
 
 }  // namespace cricket

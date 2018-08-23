@@ -16,90 +16,80 @@
     },
     'all_webrtc': {
       # NOTE: if you like this you might like webrtc-reviews@webrtc.org!
-      'filepath': '^webrtc/.*',
+      'filepath': '^.*',
     },
     'root_files': {
-      # webrtc/build/ and non-recursive contents of ./ and webrtc/
-      'filepath': '^[^/]*$|^webrtc/[^/]*$|^webrtc/build/.*',
-    },
-    'documented_interfaces': {
-      'filepath': '^webrtc/[^/]*\.h$|'\
-                  'webrtc/voice_engine/include/.*',
+      # Non-recursive contents of ./
+      'filepath': '^[^/]*$',
     },
     'build_files': {
-      'filepath': '\.gyp$|\.gypi$|Android\.mk$',
+      'filepath': '\.gni$|\.gn$',
     },
     'java_files': {
       'filepath': '\.java$|\.xml$',
     },
     'api': {
-      'filepath': 'webrtc/api/.*',
+      'filepath': 'api/.*',
     },
     'audio': {
-      'filepath': 'webrtc/audio/.*',
+      'filepath': 'audio/.*',
     },
     'base': {
-      'filepath': 'webrtc/base/.*',
+      'filepath': 'rtc_base/.*',
     },
     'call': {
-      'filepath': 'webrtc/call/.*',
+      'filepath': 'call/.*',
     },
     'media_engine': {
-      'filepath': 'webrtc/media/engine/.*',
+      'filepath': 'media/engine/.*',
     },
     'video': {
-      'filepath': 'webrtc/video/.*',
-    },
-    'voice_engine': {
-      'filepath': 'webrtc/voice_engine/.*',
+      'filepath': 'video/.*',
     },
     'common_audio': {
-      'filepath': 'webrtc/common_audio/.*',
+      'filepath': 'common_audio/.*',
     },
     'common_video': {
-      'filepath': 'webrtc/common_video/.*',
+      'filepath': 'common_video/.*',
     },
     'video_capture': {
-      'filepath': 'webrtc/modules/video_capture/.*',
-    },
-    'video_render': {
-      'filepath': 'webrtc/modules/video_render/.*',
+      'filepath': 'modules/video_capture/.*',
     },
     'audio_device': {
-      'filepath': 'webrtc/modules/audio_device/.*',
+      'filepath': 'modules/audio_device/.*',
     },
     'audio_coding': {
-      'filepath': 'webrtc/modules/audio_coding/.*',
+      'filepath': 'modules/audio_coding/.*',
     },
     'neteq': {
-      'filepath': 'webrtc/modules/audio_coding/neteq/.*',
+      'filepath': 'modules/audio_coding/neteq/.*',
     },
     'audio_mixer': {
-      'filepath': 'webrtc/modules/audio_mixer/.*',
+      'filepath': 'modules/audio_mixer/.*',
     },
     'audio_processing': {
-      'filepath': 'webrtc/modules/audio_processing/.*',
+      'filepath': 'modules/audio_processing/.*',
     },
     'video_coding': {
-      'filepath': 'webrtc/modules/video_coding/.*',
+      'filepath': 'modules/video_coding/.*',
     },
     'video_processing': {
-      'filepath': 'webrtc/modules/video_processing/.*',
+      'filepath': 'modules/video_processing/.*',
     },
     'bitrate_controller': {
-      'filepath': 'webrtc/modules/bitrate_controller/.*'
+      'filepath': 'modules/bitrate_controller/.*'
     },
     'remote_bitrate_estimator': {
-      'filepath': 'webrtc/modules/remote_bitrate_estimator/.*'
+      'filepath': 'modules/remote_bitrate_estimator/.*'
     },
     'pacing': {
-      'filepath': 'webrtc/modules/pacing/.*'
+      'filepath': 'modules/pacing/.*'
     },
     'rtp_rtcp': {
-      'filepath': 'webrtc/modules/rtp_rtcp/.*'
+      'filepath': 'modules/rtp_rtcp/.*'
     },
     'system_wrappers': {
-      'filepath': 'webrtc/system_wrappers/.*',
+      'filepath': 'system_wrappers/.*',
     },
   },
 
@@ -110,7 +100,7 @@
                    'peah@webrtc.org',
                    'qiang.lu@intel.com',
                    'yujie.mao@webrtc.org'],
-    'documented_interfaces': ['interface-changes@webrtc.org'],
+    'build_files': ['mbonadei@webrtc.org'],
     'common_audio': ['alessiob@webrtc.org',
                      'aluebs@webrtc.org',
                      'andrew@webrtc.org',
@@ -126,28 +116,15 @@
     'call': ['mflodman@webrtc.org',
              'solenberg@webrtc.org',
              'stefan@webrtc.org'],
-    'media_engine': ['solenberg@webrtc.org'],
     'video': ['mflodman@webrtc.org',
               'stefan@webrtc.org',
               'video-team@agora.io',
               'yujie.mao@webrtc.org',
               'zhengzhonghou@agora.io'],
-    'voice_engine': ['alessiob@webrtc.org',
-                     'andrew@webrtc.org',
-                     'audio-team@agora.io',
-                     'henrika@webrtc.org',
-                     'henrik.lundin@webrtc.org',
-                     'minyue@webrtc.org',
-                     'peah@webrtc.org',
-                     'solenberg@webrtc.org'],
     'video_capture': ['mflodman@webrtc.org',
                       'perkj@webrtc.org',
                       'sdk-team@agora.io',
                       'zhengzhonghou@agora.io'],
-    'video_render': ['mflodman@webrtc.org',
-                     'perkj@webrtc.org',
-                     'sdk-team@agora.io',
-                     'zhengzhonghou@agora.io'],
     'audio_device': ['audio-team@agora.io',
                      'henrika@webrtc.org',
                      'peah@webrtc.org',

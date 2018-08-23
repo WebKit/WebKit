@@ -15,8 +15,8 @@
 namespace webrtc {
 
 bool DesktopRect::Contains(const DesktopVector& point) const {
-  return point.x() >= left() && point.x() < right() &&
-         point.y() >= top() && point.y() < bottom();
+  return point.x() >= left() && point.x() < right() && point.y() >= top() &&
+         point.y() < bottom();
 }
 
 bool DesktopRect::ContainsRect(const DesktopRect& rect) const {
@@ -76,4 +76,3 @@ void DesktopRect::Scale(double horizontal, double vertical) {
 }
 
 }  // namespace webrtc
-

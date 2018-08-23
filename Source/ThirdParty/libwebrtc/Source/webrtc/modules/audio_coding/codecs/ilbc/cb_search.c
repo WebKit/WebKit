@@ -16,18 +16,18 @@
 
 ******************************************************************/
 
-#include "defines.h"
-#include "gain_quant.h"
-#include "filtered_cb_vecs.h"
-#include "constants.h"
-#include "cb_mem_energy.h"
-#include "interpolate_samples.h"
-#include "cb_mem_energy_augmentation.h"
-#include "cb_search_core.h"
-#include "energy_inverse.h"
-#include "augmented_cb_corr.h"
-#include "cb_update_best_index.h"
-#include "create_augmented_vec.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/gain_quant.h"
+#include "modules/audio_coding/codecs/ilbc/filtered_cb_vecs.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
+#include "modules/audio_coding/codecs/ilbc/cb_mem_energy.h"
+#include "modules/audio_coding/codecs/ilbc/interpolate_samples.h"
+#include "modules/audio_coding/codecs/ilbc/cb_mem_energy_augmentation.h"
+#include "modules/audio_coding/codecs/ilbc/cb_search_core.h"
+#include "modules/audio_coding/codecs/ilbc/energy_inverse.h"
+#include "modules/audio_coding/codecs/ilbc/augmented_cb_corr.h"
+#include "modules/audio_coding/codecs/ilbc/cb_update_best_index.h"
+#include "modules/audio_coding/codecs/ilbc/create_augmented_vec.h"
 
 /*----------------------------------------------------------------*
  *  Search routine for codebook encoding and gain quantization.

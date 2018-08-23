@@ -26,8 +26,8 @@ class ReadableWav {
 };
 
 enum WavFormat {
-  kWavFormatPcm   = 1,  // PCM, each sample of size bytes_per_sample
-  kWavFormatALaw  = 6,  // 8-bit ITU-T G.711 A-law
+  kWavFormatPcm = 1,    // PCM, each sample of size bytes_per_sample
+  kWavFormatALaw = 6,   // 8-bit ITU-T G.711 A-law
   kWavFormatMuLaw = 7,  // 8-bit ITU-T G.711 mu-law
 };
 

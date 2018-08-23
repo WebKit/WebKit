@@ -19,17 +19,18 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_INIT_DECODE_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_INIT_DECODE_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  Initiation of decoder instance.
  *---------------------------------------------------------------*/
 
-int WebRtcIlbcfix_InitDecode(  /* (o) Number of decoded samples */
-    IlbcDecoder *iLBCdec_inst, /* (i/o) Decoder instance */
-    int16_t mode,     /* (i) frame size mode */
-    int use_enhancer           /* (i) 1 to use enhancer
-                                  0 to run without enhancer */
-                                         );
+int WebRtcIlbcfix_InitDecode(/* (o) Number of decoded samples */
+                             IlbcDecoder*
+                                 iLBCdec_inst, /* (i/o) Decoder instance */
+                             int16_t mode,     /* (i) frame size mode */
+                             int use_enhancer  /* (i) 1 to use enhancer
+                                                  0 to run without enhancer */
+                             );
 
 #endif

@@ -11,10 +11,10 @@
 #include <memory>
 #include <string>
 
+#include "absl/memory/memory.h"
 #include "p2p/base/stunserver.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/testclient.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/virtualsocketserver.h"
@@ -30,10 +30,10 @@ class StunServerTest : public testing::Test {
  public:
   StunServerTest() : ss_(new rtc::VirtualSocketServer()), network_(ss_.get()) {}
   virtual void SetUp() {
-    server_.reset(new StunServer(
-        rtc::AsyncUDPSocket::Create(ss_.get(), server_addr)));
+    server_.reset(
+        new StunServer(rtc::AsyncUDPSocket::Create(ss_.get(), server_addr)));
     client_.reset(new rtc::TestClient(
-        WrapUnique(rtc::AsyncUDPSocket::Create(ss_.get(), client_addr))));
+        absl::WrapUnique(rtc::AsyncUDPSocket::Create(ss_.get(), client_addr))));
 
     network_.Start();
   }
@@ -45,9 +45,7 @@ class StunServerTest : public testing::Test {
   void Send(const char* buf, int len) {
     client_->SendTo(buf, len, server_addr);
   }
-  bool ReceiveFails() {
-    return(client_->CheckNoPacket());
-  }
+  bool ReceiveFails() { return (client_->CheckNoPacket()); }
   StunMessage* Receive() {
     StunMessage* msg = NULL;
     std::unique_ptr<rtc::TestClient::Packet> packet =
@@ -89,8 +87,9 @@ TEST_F(StunServerTest, TestGood) {
   EXPECT_EQ(1, mapped_addr->family());
   EXPECT_EQ(client_addr.port(), mapped_addr->port());
   if (mapped_addr->ipaddr() != client_addr.ipaddr()) {
-    RTC_LOG(LS_WARNING) << "Warning: mapped IP (" << mapped_addr->ipaddr()
-                        << ") != local IP (" << client_addr.ipaddr() << ")";
+    RTC_LOG(LS_WARNING) << "Warning: mapped IP ("
+                        << mapped_addr->ipaddr().ToString() << ") != local IP ("
+                        << client_addr.ipaddr().ToString() << ")";
   }
 
   delete msg;
@@ -99,9 +98,10 @@ TEST_F(StunServerTest, TestGood) {
 #endif  // if !defined(THREAD_SANITIZER)
 
 TEST_F(StunServerTest, TestBad) {
-  const char* bad = "this is a completely nonsensical message whose only "
-                    "purpose is to make the parser go 'ack'.  it doesn't "
-                    "look anything like a normal stun message";
+  const char* bad =
+      "this is a completely nonsensical message whose only "
+      "purpose is to make the parser go 'ack'.  it doesn't "
+      "look anything like a normal stun message";
   Send(bad, static_cast<int>(strlen(bad)));
 
   ASSERT_TRUE(ReceiveFails());

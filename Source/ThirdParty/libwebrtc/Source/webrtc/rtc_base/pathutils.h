@@ -38,7 +38,7 @@ namespace rtc {
 ///////////////////////////////////////////////////////////////////////////////
 
 class Pathname {
-public:
+ public:
   // Folder delimiters are slash and backslash
   static bool IsFolderDelimiter(char ch);
   static char DefaultFolderDelimiter();
@@ -52,16 +52,6 @@ public:
   Pathname& operator=(const Pathname&);
   Pathname& operator=(Pathname&&);
 
-  // Normalize changes all folder delimiters to folder_delimiter()
-  void Normalize();
-
-  // Reset to the empty pathname
-  void clear();
-
-  // Returns true if the pathname is empty.  Note: this->pathname().empty()
-  // is always false.
-  bool empty() const;
-
   // Returns the folder and filename components.  If the pathname is empty,
   // returns a string representing the current directory (as a relative path,
   // i.e., ".").
@@ -69,8 +59,6 @@ public:
   void SetPathname(const std::string& pathname);
   void SetPathname(const std::string& folder, const std::string& filename);
 
-  std::string folder() const;
-  std::string parent_folder() const;
   // SetFolder and AppendFolder will append a folder delimiter, if needed.
   void SetFolder(const std::string& folder);
   void AppendFolder(const std::string& folder);
@@ -83,11 +71,11 @@ public:
   std::string filename() const;
   bool SetFilename(const std::string& filename);
 
-private:
+ private:
   std::string folder_, basename_, extension_;
   char folder_delimiter_;
 };
 
 }  // namespace rtc
 
-#endif // RTC_BASE_PATHUTILS_H_
+#endif  // RTC_BASE_PATHUTILS_H_

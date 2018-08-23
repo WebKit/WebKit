@@ -19,17 +19,15 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_SMOOTH_OUT_DATA_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_SMOOTH_OUT_DATA_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  * help function to WebRtcIlbcfix_Smooth()
  *---------------------------------------------------------------*/
 
-int32_t WebRtcIlbcfix_Smooth_odata(
-    int16_t *odata,
-    int16_t *psseq,
-    int16_t *surround,
-    int16_t C);
-
+int32_t WebRtcIlbcfix_Smooth_odata(int16_t* odata,
+                                   int16_t* psseq,
+                                   int16_t* surround,
+                                   int16_t C);
 
 #endif

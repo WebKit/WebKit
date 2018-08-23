@@ -14,10 +14,12 @@
 namespace webrtc {
 namespace jni {
 
-DataChannelInit JavaToNativeDataChannelInit(JNIEnv* env, jobject j_init);
+DataChannelInit JavaToNativeDataChannelInit(JNIEnv* env,
+                                            const JavaRef<jobject>& j_init);
 
-jobject WrapNativeDataChannel(JNIEnv* env,
-                              rtc::scoped_refptr<DataChannelInterface> channel);
+ScopedJavaLocalRef<jobject> WrapNativeDataChannel(
+    JNIEnv* env,
+    rtc::scoped_refptr<DataChannelInterface> channel);
 
 }  // namespace jni
 }  // namespace webrtc

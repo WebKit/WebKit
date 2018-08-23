@@ -27,23 +27,16 @@
 namespace rtc {
 
 BasicPacketSocketFactory::BasicPacketSocketFactory()
-    : thread_(Thread::Current()),
-      socket_factory_(NULL) {
-}
+    : thread_(Thread::Current()), socket_factory_(NULL) {}
 
 BasicPacketSocketFactory::BasicPacketSocketFactory(Thread* thread)
-    : thread_(thread),
-      socket_factory_(NULL) {
-}
+    : thread_(thread), socket_factory_(NULL) {}
 
 BasicPacketSocketFactory::BasicPacketSocketFactory(
     SocketFactory* socket_factory)
-    : thread_(NULL),
-      socket_factory_(socket_factory) {
-}
+    : thread_(NULL), socket_factory_(socket_factory) {}
 
-BasicPacketSocketFactory::~BasicPacketSocketFactory() {
-}
+BasicPacketSocketFactory::~BasicPacketSocketFactory() {}
 
 AsyncPacketSocket* BasicPacketSocketFactory::CreateUdpSocket(
     const SocketAddress& address,
@@ -170,6 +163,7 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
 
     ssl_adapter->SetAlpnProtocols(tcp_options.tls_alpn_protocols);
     ssl_adapter->SetEllipticCurves(tcp_options.tls_elliptic_curves);
+    ssl_adapter->SetCertVerifier(tcp_options.tls_cert_verifier);
 
     socket = ssl_adapter;
 

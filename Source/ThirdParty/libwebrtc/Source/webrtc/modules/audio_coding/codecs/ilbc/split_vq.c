@@ -16,10 +16,10 @@
 
 ******************************************************************/
 
-#include "defines.h"
-#include "constants.h"
-#include "vq3.h"
-#include "vq4.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
+#include "modules/audio_coding/codecs/ilbc/vq3.h"
+#include "modules/audio_coding/codecs/ilbc/vq4.h"
 
 /*----------------------------------------------------------------*
  *  split vector quantization

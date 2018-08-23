@@ -1,3 +1,0 @@
-diff a/Source/ThirdParty/libwebrtc/Source/webrtc/examples/aarproject/app/.gitignore b/Source/ThirdParty/libwebrtc/Source/webrtc/examples/aarproject/app/.gitignore	(rejected hunks)
-@@ -0,0 +1 @@
-+/build

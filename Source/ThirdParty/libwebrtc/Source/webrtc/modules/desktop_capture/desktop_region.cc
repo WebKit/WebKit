@@ -17,15 +17,13 @@
 namespace webrtc {
 
 DesktopRegion::RowSpan::RowSpan(int32_t left, int32_t right)
-    : left(left), right(right) {
-}
+    : left(left), right(right) {}
 
 DesktopRegion::Row::Row(const Row&) = default;
 DesktopRegion::Row::Row(Row&&) = default;
 
 DesktopRegion::Row::Row(int32_t top, int32_t bottom)
-    : top(top), bottom(bottom) {
-}
+    : top(top), bottom(bottom) {}
 
 DesktopRegion::Row::~Row() {}
 
@@ -63,8 +61,7 @@ bool DesktopRegion::Equals(const DesktopRegion& region) const {
   Rows::const_iterator it1 = rows_.begin();
   Rows::const_iterator it2 = region.rows_.begin();
   while (it1 != rows_.end()) {
-    if (it2 == region.rows_.end() ||
-        it1->first != it2->first ||
+    if (it2 == region.rows_.end() || it1->first != it2->first ||
         it1->second->top != it2->second->top ||
         it1->second->bottom != it2->second->bottom ||
         it1->second->spans != it2->second->spans) {
@@ -100,14 +97,13 @@ void DesktopRegion::AddRect(const DesktopRect& rect) {
   // necessary.
   Rows::iterator row = rows_.upper_bound(top);
   while (top < rect.bottom()) {
-    if (row == rows_.end() || top < row->second->top)  {
+    if (row == rows_.end() || top < row->second->top) {
       // If |top| is above the top of the current |row| then add a new row above
       // the current one.
       int32_t bottom = rect.bottom();
       if (row != rows_.end() && row->second->top < bottom)
         bottom = row->second->top;
-      row = rows_.insert(
-          row, Rows::value_type(bottom, new Row(top, bottom)));
+      row = rows_.insert(row, Rows::value_type(bottom, new Row(top, bottom)));
     } else if (top > row->second->top) {
       // If the |top| falls in the middle of the |row| then split |row| into
       // two, at |top|, and leave |row| referring to the lower of the two,
@@ -421,9 +417,8 @@ void DesktopRegion::AddSpanToRow(Row* row, int left, int right) {
   }
 
   // Find the first span that ends at or after |left|.
-  RowSpanSet::iterator start =
-      std::lower_bound(row->spans.begin(), row->spans.end(), left,
-                       CompareSpanRight);
+  RowSpanSet::iterator start = std::lower_bound(
+      row->spans.begin(), row->spans.end(), left, CompareSpanRight);
   assert(start < row->spans.end());
 
   // Find the first span that starts after |right|.
@@ -462,9 +457,8 @@ void DesktopRegion::AddSpanToRow(Row* row, int left, int right) {
 bool DesktopRegion::IsSpanInRow(const Row& row, const RowSpan& span) {
   // Find the first span that starts at or after |span.left| and then check if
   // it's the same span.
-  RowSpanSet::const_iterator it =
-      std::lower_bound(row.spans.begin(), row.spans.end(), span.left,
-                       CompareSpanLeft);
+  RowSpanSet::const_iterator it = std::lower_bound(
+      row.spans.begin(), row.spans.end(), span.left, CompareSpanLeft);
   return it != row.spans.end() && *it == span;
 }
 

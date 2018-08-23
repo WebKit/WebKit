@@ -13,7 +13,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
 #include "common_video/h264/pps_parser.h"
 #include "common_video/h264/sps_parser.h"
 
@@ -53,11 +53,11 @@ class H264BitstreamParser {
                                   uint8_t nalu_type);
 
   // SPS/PPS state, updated when parsing new SPS/PPS, used to parse slices.
-  rtc::Optional<SpsParser::SpsState> sps_;
-  rtc::Optional<PpsParser::PpsState> pps_;
+  absl::optional<SpsParser::SpsState> sps_;
+  absl::optional<PpsParser::PpsState> pps_;
 
   // Last parsed slice QP.
-  rtc::Optional<int32_t> last_slice_qp_delta_;
+  absl::optional<int32_t> last_slice_qp_delta_;
 };
 
 }  // namespace webrtc

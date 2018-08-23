@@ -21,8 +21,7 @@
 
 // Registers with the WebSocket server for the given room and client id once
 // the web socket connection is open.
-- (void)registerForRoomId:(NSString *)roomId
-                 clientId:(NSString *)clientId;
+- (void)registerForRoomId:(NSString *)roomId clientId:(NSString *)clientId;
 
 // Sends message over the WebSocket connection if registered, otherwise POSTs to
 // the web socket server instead.

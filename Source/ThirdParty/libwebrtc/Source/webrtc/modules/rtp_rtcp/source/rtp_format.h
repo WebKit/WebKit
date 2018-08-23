@@ -13,6 +13,7 @@
 
 #include <string>
 
+#include "common_types.h"  // NOLINT(build/include)
 #include "modules/include/module_common_types.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/constructormagic.h"
@@ -22,10 +23,10 @@ class RtpPacketToSend;
 
 class RtpPacketizer {
  public:
-  static RtpPacketizer* Create(RtpVideoCodecTypes type,
+  static RtpPacketizer* Create(VideoCodecType type,
                                size_t max_payload_len,
                                size_t last_packet_reduction_len,
-                               const RTPVideoTypeHeader* rtp_type_header,
+                               const RTPVideoHeader* rtp_video_header,
                                FrameType frame_type);
 
   virtual ~RtpPacketizer() {}
@@ -51,13 +52,16 @@ class RtpPacketizer {
 class RtpDepacketizer {
  public:
   struct ParsedPayload {
+    RTPVideoHeader& video_header() { return video; }
+    const RTPVideoHeader& video_header() const { return video; }
+    RTPVideoHeader video;
+
     const uint8_t* payload;
     size_t payload_length;
     FrameType frame_type;
-    RTPTypeHeader type;
   };
 
-  static RtpDepacketizer* Create(RtpVideoCodecTypes type);
+  static RtpDepacketizer* Create(VideoCodecType type);
 
   virtual ~RtpDepacketizer() {}
 

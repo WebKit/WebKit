@@ -17,7 +17,6 @@
 #include "modules/rtp_rtcp/source/flexfec_header_reader_writer.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/ulpfec_header_reader_writer.h"
-#include "rtc_base/basictypes.h"
 #include "rtc_base/random.h"
 #include "test/gtest.h"
 
@@ -156,19 +155,19 @@ bool RtpFecTest<ForwardErrorCorrectionType>::IsRecoveryComplete() {
 
   // All recovered packets must be identical to the corresponding
   // original packets.
-  auto cmp = [](
-      const std::unique_ptr<ForwardErrorCorrection::Packet>& media_packet,
-      const std::unique_ptr<ForwardErrorCorrection::RecoveredPacket>&
-          recovered_packet) {
-    if (media_packet->length != recovered_packet->pkt->length) {
-      return false;
-    }
-    if (memcmp(media_packet->data, recovered_packet->pkt->data,
-               media_packet->length) != 0) {
-      return false;
-    }
-    return true;
-  };
+  auto cmp =
+      [](const std::unique_ptr<ForwardErrorCorrection::Packet>& media_packet,
+         const std::unique_ptr<ForwardErrorCorrection::RecoveredPacket>&
+             recovered_packet) {
+        if (media_packet->length != recovered_packet->pkt->length) {
+          return false;
+        }
+        if (memcmp(media_packet->data, recovered_packet->pkt->data,
+                   media_packet->length) != 0) {
+          return false;
+        }
+        return true;
+      };
   return std::equal(media_packets_.cbegin(), media_packets_.cend(),
                     recovered_packets_.cbegin(), cmp);
 }
@@ -287,8 +286,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryNoLoss) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // No packets lost, expect complete recovery.
@@ -319,8 +317,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryWithLoss) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // One packet lost, one FEC packet, expect complete recovery.
@@ -335,8 +332,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryWithLoss) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // 2 packets lost, one FEC packet, cannot get complete recovery.
@@ -399,8 +395,7 @@ TYPED_TEST(RtpFecTest, NoFecRecoveryWithOldFecPacket) {
   this->ReceivedPackets(this->media_packets_, this->media_loss_mask_, false);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // Expect that no decoding is done to get missing packet (seq#0) of third
@@ -442,8 +437,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryWithSeqNumGapOneFrameRecovery) {
                         true);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // Expect 3 media packets in recovered list, and complete recovery.
@@ -494,8 +488,7 @@ TEST_F(RtpFecTestUlpfecOnly, FecRecoveryWithSeqNumGapOneFrameRecovery) {
                         true);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // The two FEC packets are received and should allow for complete recovery,
@@ -553,8 +546,7 @@ TEST_F(RtpFecTestFlexfecOnly, FecRecoveryWithSeqNumGapOneFrameNoRecovery) {
                         true);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // The two FEC packets are received and should allow for complete recovery,
@@ -599,8 +591,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryWithMediaOutOfOrder) {
   std::swap(*it0, *it1);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // Expect 3 media packets in recovered list, and complete recovery.
@@ -639,8 +630,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryWithFecOutOfOrder) {
   this->ReceivedPackets(this->media_packets_, this->media_loss_mask_, false);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // Expect 3 media packets in recovered list, and complete recovery.
@@ -688,8 +678,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryWithLoss50percRandomMask) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // With media packet#1 and FEC packets #1, #2, #3, expect complete recovery.
@@ -706,8 +695,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryWithLoss50percRandomMask) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // Cannot get complete recovery for this loss configuration with random mask.
@@ -754,8 +742,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryWithLoss50percBurstyMask) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // Expect complete recovery for consecutive packet loss <= 50%.
@@ -772,8 +759,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryWithLoss50percBurstyMask) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // Expect complete recovery for consecutive packet loss <= 50%.
@@ -790,8 +776,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryWithLoss50percBurstyMask) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // Cannot get complete recovery for this loss configuration.
@@ -821,8 +806,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryNoLossUep) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // No packets lost, expect complete recovery.
@@ -853,8 +837,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryWithLossUep) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // One packet lost, one FEC packet, expect complete recovery.
@@ -869,8 +852,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryWithLossUep) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // 2 packets lost, one FEC packet, cannot get complete recovery.
@@ -915,8 +897,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryWithLoss50percUepRandomMask) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // With media packet#3 and FEC packets #0, #1, #3, expect complete recovery.
@@ -934,8 +915,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryWithLoss50percUepRandomMask) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // Cannot get complete recovery for this loss configuration.
@@ -971,8 +951,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryNonConsecutivePackets) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // One packet lost, one FEC packet, expect complete recovery.
@@ -986,8 +965,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryNonConsecutivePackets) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // Unprotected packet lost. Recovery not possible.
@@ -1002,8 +980,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryNonConsecutivePackets) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // 2 protected packets lost, one FEC packet, cannot get complete recovery.
@@ -1042,8 +1019,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryNonConsecutivePacketsExtension) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // One packet lost, one FEC packet, expect complete recovery.
@@ -1057,8 +1033,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryNonConsecutivePacketsExtension) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // Unprotected packet lost. Recovery not possible.
@@ -1077,8 +1052,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryNonConsecutivePacketsExtension) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // 5 protected packets lost, one FEC packet, cannot get complete recovery.
@@ -1117,8 +1091,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryNonConsecutivePacketsWrap) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // One packet lost, one FEC packet, expect complete recovery.
@@ -1132,8 +1105,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryNonConsecutivePacketsWrap) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // Unprotected packet lost. Recovery not possible.
@@ -1152,8 +1124,7 @@ TYPED_TEST(RtpFecTest, FecRecoveryNonConsecutivePacketsWrap) {
   this->NetworkReceivedPackets(this->media_loss_mask_, this->fec_loss_mask_);
 
   for (const auto& received_packet : this->received_packets_) {
-    this->fec_.DecodeFec(*received_packet,
-                         &this->recovered_packets_);
+    this->fec_.DecodeFec(*received_packet, &this->recovered_packets_);
   }
 
   // 5 protected packets lost, one FEC packet, cannot get complete recovery.

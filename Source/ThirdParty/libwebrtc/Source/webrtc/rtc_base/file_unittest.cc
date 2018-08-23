@@ -163,39 +163,13 @@ TEST_F(FileTest, RandomAccessReadWrite) {
   EXPECT_TRUE(VerifyBuffer(out, 2, 0));
 }
 
-TEST_F(FileTest, OpenFromPathname) {
-  {
-    File file = File::Open(Pathname(path_));
-    ASSERT_TRUE(file.IsOpen()) << "Error: " << LastError();
-  }
-
-  {
-    Pathname path(path_);
-    File file = File::Open(path);
-    ASSERT_TRUE(file.IsOpen()) << "Error: " << LastError();
-  }
-}
-
-TEST_F(FileTest, CreateFromPathname) {
-  {
-    File file = File::Create(Pathname(path_));
-    ASSERT_TRUE(file.IsOpen()) << "Error: " << LastError();
-  }
-
-  {
-    Pathname path(path_);
-    File file = File::Create(path);
-    ASSERT_TRUE(file.IsOpen()) << "Error: " << LastError();
-  }
-}
-
 TEST_F(FileTest, ShouldBeAbleToRemoveFile) {
   {
-    File file = File::Open(Pathname(path_));
+    File file = File::Open(path_);
     ASSERT_TRUE(file.IsOpen()) << "Error: " << LastError();
   }
 
-  ASSERT_TRUE(File::Remove(Pathname(path_))) << "Error: " << LastError();
+  ASSERT_TRUE(File::Remove(path_)) << "Error: " << LastError();
 }
 
 }  // namespace rtc

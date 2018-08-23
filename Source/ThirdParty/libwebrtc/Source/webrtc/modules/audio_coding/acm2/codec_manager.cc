@@ -14,7 +14,6 @@
 //#include "rtc_base/format_macros.h"
 #include "modules/audio_coding/acm2/rent_a_codec.h"
 #include "rtc_base/logging.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace acm2 {

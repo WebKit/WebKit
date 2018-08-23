@@ -13,7 +13,6 @@
 
 #include <list>
 
-#include "rtc_base/basictypes.h"
 #include "rtc_base/stream.h"
 
 namespace cricket {
@@ -35,7 +34,8 @@ class IPseudoTcpNotify {
   // Write the packet onto the network
   enum WriteResult { WR_SUCCESS, WR_TOO_LARGE, WR_FAIL };
   virtual WriteResult TcpWritePacket(PseudoTcp* tcp,
-                                     const char* buffer, size_t len) = 0;
+                                     const char* buffer,
+                                     size_t len) = 0;
 
  protected:
   virtual ~IPseudoTcpNotify() {}
@@ -59,7 +59,11 @@ class PseudoTcp {
   int GetError();
 
   enum TcpState {
-    TCP_LISTEN, TCP_SYN_SENT, TCP_SYN_RECEIVED, TCP_ESTABLISHED, TCP_CLOSED
+    TCP_LISTEN,
+    TCP_SYN_SENT,
+    TCP_SYN_RECEIVED,
+    TCP_ESTABLISHED,
+    TCP_CLOSED
   };
   TcpState State() const { return m_state; }
 
@@ -72,7 +76,7 @@ class PseudoTcp {
 
   // Call this whenever a packet arrives.
   // Returns true if the packet was processed successfully.
-  bool NotifyPacket(const char * buffer, size_t len);
+  bool NotifyPacket(const char* buffer, size_t len);
 
   // Call this to determine the next time NotifyClock should be called.
   // Returns false if the socket is ready to be destroyed.
@@ -85,10 +89,10 @@ class PseudoTcp {
   // Setting options for OPT_RCVBUF or OPT_SNDBUF after Connect() is called
   // will result in an assertion.
   enum Option {
-    OPT_NODELAY,      // Whether to enable Nagle's algorithm (0 == off)
-    OPT_ACKDELAY,     // The Delayed ACK timeout (0 == off).
-    OPT_RCVBUF,       // Set the receive buffer size, in bytes.
-    OPT_SNDBUF,       // Set the send buffer size, in bytes.
+    OPT_NODELAY,   // Whether to enable Nagle's algorithm (0 == off)
+    OPT_ACKDELAY,  // The Delayed ACK timeout (0 == off).
+    OPT_RCVBUF,    // Set the receive buffer size, in bytes.
+    OPT_SNDBUF,    // Set the send buffer size, in bytes.
   };
   void GetOption(Option opt, int* value);
   void SetOption(Option opt, int value);
@@ -114,7 +118,7 @@ class PseudoTcp {
     uint32_t conv, seq, ack;
     uint8_t flags;
     uint16_t wnd;
-    const char * data;
+    const char* data;
     uint32_t len;
     uint32_t tsval, tsecr;
   };

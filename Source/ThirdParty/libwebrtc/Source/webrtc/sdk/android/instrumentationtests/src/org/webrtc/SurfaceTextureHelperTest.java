@@ -12,6 +12,7 @@ package org.webrtc;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import android.graphics.SurfaceTexture;
@@ -21,6 +22,7 @@ import android.support.test.filters.MediumTest;
 import android.support.test.filters.SmallTest;
 import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
+import javax.annotation.Nullable;
 import org.chromium.base.test.BaseJUnit4ClassRunner;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,13 +33,11 @@ public class SurfaceTextureHelperTest {
   /**
    * Mock texture listener with blocking wait functionality.
    */
-  public static final class MockTextureListener
-      implements SurfaceTextureHelper.OnTextureFrameAvailableListener {
-    public int oesTextureId;
-    public float[] transformMatrix;
-    private boolean hasNewFrame = false;
+  public static final class MockTextureListener implements VideoSink {
+    private final Object lock = new Object();
+    private @Nullable VideoFrame.TextureBuffer textureBuffer;
     // Thread where frames are expected to be received on.
-    private final Thread expectedThread;
+    private final @Nullable Thread expectedThread;
 
     MockTextureListener() {
       this.expectedThread = null;
@@ -48,48 +48,43 @@ public class SurfaceTextureHelperTest {
     }
 
     @Override
-    // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
-    @SuppressWarnings("NoSynchronizedMethodCheck")
-    public synchronized void onTextureFrameAvailable(
-        int oesTextureId, float[] transformMatrix, long timestampNs) {
+    public void onFrame(VideoFrame frame) {
       if (expectedThread != null && Thread.currentThread() != expectedThread) {
         throw new IllegalStateException("onTextureFrameAvailable called on wrong thread.");
       }
-      this.oesTextureId = oesTextureId;
-      this.transformMatrix = transformMatrix;
-      hasNewFrame = true;
-      notifyAll();
-    }
-
-    /**
-     * Wait indefinitely for a new frame.
-     */
-    // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
-    @SuppressWarnings("NoSynchronizedMethodCheck")
-    public synchronized void waitForNewFrame() throws InterruptedException {
-      while (!hasNewFrame) {
-        wait();
+      synchronized (lock) {
+        this.textureBuffer = (VideoFrame.TextureBuffer) frame.getBuffer();
+        textureBuffer.retain();
+        lock.notifyAll();
       }
-      hasNewFrame = false;
     }
 
-    /**
-     * Wait for a new frame, or until the specified timeout elapses. Returns true if a new frame was
-     * received before the timeout.
-     */
-    // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
-    @SuppressWarnings("NoSynchronizedMethodCheck")
-    public synchronized boolean waitForNewFrame(final long timeoutMs) throws InterruptedException {
+    /** Wait indefinitely for a new textureBuffer. */
+    public VideoFrame.TextureBuffer waitForTextureBuffer() throws InterruptedException {
+      synchronized (lock) {
+        while (true) {
+          final VideoFrame.TextureBuffer textureBufferToReturn = textureBuffer;
+          if (textureBufferToReturn != null) {
+            textureBuffer = null;
+            return textureBufferToReturn;
+          }
+          lock.wait();
+        }
+      }
+    }
+
+    /** Make sure we get no frame in the specified time period. */
+    public void assertNoFrameIsDelivered(final long waitPeriodMs) throws InterruptedException {
       final long startTimeMs = SystemClock.elapsedRealtime();
-      long timeRemainingMs = timeoutMs;
-      while (!hasNewFrame && timeRemainingMs > 0) {
-        wait(timeRemainingMs);
-        final long elapsedTimeMs = SystemClock.elapsedRealtime() - startTimeMs;
-        timeRemainingMs = timeoutMs - elapsedTimeMs;
+      long timeRemainingMs = waitPeriodMs;
+      synchronized (lock) {
+        while (textureBuffer == null && timeRemainingMs > 0) {
+          lock.wait(timeRemainingMs);
+          final long elapsedTimeMs = SystemClock.elapsedRealtime() - startTimeMs;
+          timeRemainingMs = waitPeriodMs - elapsedTimeMs;
+        }
+        assertTrue(textureBuffer == null);
       }
-      final boolean didReceiveFrame = hasNewFrame;
-      hasNewFrame = false;
-      return didReceiveFrame;
     }
   }
 
@@ -105,7 +100,7 @@ public class SurfaceTextureHelperTest {
   @Before
   public void setUp() {
     // Load the JNI library for textureToYuv.
-    NativeLibrary.initialize(new NativeLibrary.DefaultLoader());
+    NativeLibrary.initialize(new NativeLibrary.DefaultLoader(), TestConstants.NATIVE_LIBRARY);
   }
 
   /**
@@ -128,7 +123,7 @@ public class SurfaceTextureHelperTest {
         "SurfaceTextureHelper test" /* threadName */, eglBase.getEglBaseContext());
     final MockTextureListener listener = new MockTextureListener();
     surfaceTextureHelper.startListening(listener);
-    surfaceTextureHelper.getSurfaceTexture().setDefaultBufferSize(width, height);
+    surfaceTextureHelper.setTextureSize(width, height);
 
     // Create resources for stubbing an OES texture producer. |eglOesBase| has the SurfaceTexture in
     // |surfaceTextureHelper| as the target EGLSurface.
@@ -150,12 +145,12 @@ public class SurfaceTextureHelperTest {
       eglOesBase.swapBuffers();
 
       // Wait for an OES texture to arrive and draw it onto the pixel buffer.
-      listener.waitForNewFrame();
+      final VideoFrame.TextureBuffer textureBuffer = listener.waitForTextureBuffer();
       eglBase.makeCurrent();
-      drawer.drawOes(
-          listener.oesTextureId, listener.transformMatrix, width, height, 0, 0, width, height);
-
-      surfaceTextureHelper.returnTextureFrame();
+      drawer.drawOes(textureBuffer.getTextureId(),
+          RendererCommon.convertMatrixFromAndroidGraphicsMatrix(textureBuffer.getTransformMatrix()),
+          width, height, 0, 0, width, height);
+      textureBuffer.release();
 
       // Download the pixels in the pixel buffer as RGBA. Not all platforms support RGB, e.g.
       // Nexus 9.
@@ -196,7 +191,7 @@ public class SurfaceTextureHelperTest {
         "SurfaceTextureHelper test" /* threadName */, eglBase.getEglBaseContext());
     final MockTextureListener listener = new MockTextureListener();
     surfaceTextureHelper.startListening(listener);
-    surfaceTextureHelper.getSurfaceTexture().setDefaultBufferSize(width, height);
+    surfaceTextureHelper.setTextureSize(width, height);
 
     // Create resources for stubbing an OES texture producer. |eglOesBase| has the SurfaceTexture in
     // |surfaceTextureHelper| as the target EGLSurface.
@@ -217,15 +212,16 @@ public class SurfaceTextureHelperTest {
     eglOesBase.release();
 
     // Wait for OES texture frame.
-    listener.waitForNewFrame();
+    final VideoFrame.TextureBuffer textureBuffer = listener.waitForTextureBuffer();
     // Diconnect while holding the frame.
     surfaceTextureHelper.dispose();
 
     // Draw the pending texture frame onto the pixel buffer.
     eglBase.makeCurrent();
     final GlRectDrawer drawer = new GlRectDrawer();
-    drawer.drawOes(
-        listener.oesTextureId, listener.transformMatrix, width, height, 0, 0, width, height);
+    drawer.drawOes(textureBuffer.getTextureId(),
+        RendererCommon.convertMatrixFromAndroidGraphicsMatrix(textureBuffer.getTransformMatrix()),
+        width, height, 0, 0, width, height);
     drawer.release();
 
     // Download the pixels in the pixel buffer as RGBA. Not all platforms support RGB, e.g. Nexus 9.
@@ -242,7 +238,7 @@ public class SurfaceTextureHelperTest {
       assertEquals(rgbaData.get() & 0xFF, 255);
     }
     // Late frame return after everything has been disposed and released.
-    surfaceTextureHelper.returnTextureFrame();
+    textureBuffer.release();
   }
 
   /**
@@ -259,16 +255,16 @@ public class SurfaceTextureHelperTest {
     surfaceTextureHelper.startListening(listener);
     // Create EglBase with the SurfaceTexture as target EGLSurface.
     final EglBase eglBase = EglBase.create(null, EglBase.CONFIG_PLAIN);
+    surfaceTextureHelper.setTextureSize(/* textureWidth= */ 32, /* textureHeight= */ 32);
     eglBase.createSurface(surfaceTextureHelper.getSurfaceTexture());
     eglBase.makeCurrent();
     // Assert no frame has been received yet.
-    assertFalse(listener.waitForNewFrame(1));
+    listener.assertNoFrameIsDelivered(/* waitPeriodMs= */ 1);
     // Draw and wait for one frame.
     GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
     // swapBuffers() will ultimately trigger onTextureFrameAvailable().
     eglBase.swapBuffers();
-    listener.waitForNewFrame();
-    surfaceTextureHelper.returnTextureFrame();
+    listener.waitForTextureBuffer().release();
 
     // Dispose - we should not receive any textures after this.
     surfaceTextureHelper.dispose();
@@ -278,7 +274,7 @@ public class SurfaceTextureHelperTest {
     eglBase.swapBuffers();
     // swapBuffers() should not trigger onTextureFrameAvailable() because disposed has been called.
     // Assert that no OES texture was delivered.
-    assertFalse(listener.waitForNewFrame(500));
+    listener.assertNoFrameIsDelivered(/* waitPeriodMs= */ 500);
 
     eglBase.release();
   }
@@ -305,6 +301,7 @@ public class SurfaceTextureHelperTest {
     // Create SurfaceTextureHelper and listener.
     final SurfaceTextureHelper surfaceTextureHelper =
         SurfaceTextureHelper.create("SurfaceTextureHelper test" /* threadName */, null);
+    surfaceTextureHelper.setTextureSize(/* textureWidth= */ 32, /* textureHeight= */ 32);
     final MockTextureListener listener = new MockTextureListener();
     surfaceTextureHelper.startListening(listener);
     // Create EglBase with the SurfaceTexture as target EGLSurface.
@@ -312,13 +309,12 @@ public class SurfaceTextureHelperTest {
     eglBase.createSurface(surfaceTextureHelper.getSurfaceTexture());
     eglBase.makeCurrent();
     // Assert no frame has been received yet.
-    assertFalse(listener.waitForNewFrame(1));
+    listener.assertNoFrameIsDelivered(/* waitPeriodMs= */ 1);
     // Draw and wait for one frame.
     GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
     // swapBuffers() will ultimately trigger onTextureFrameAvailable().
     eglBase.swapBuffers();
-    listener.waitForNewFrame();
-    surfaceTextureHelper.returnTextureFrame();
+    listener.waitForTextureBuffer().release();
 
     // Stop listening - we should not receive any textures after this.
     surfaceTextureHelper.stopListening();
@@ -328,7 +324,7 @@ public class SurfaceTextureHelperTest {
     eglBase.swapBuffers();
     // swapBuffers() should not trigger onTextureFrameAvailable() because disposed has been called.
     // Assert that no OES texture was delivered.
-    assertFalse(listener.waitForNewFrame(500));
+    listener.assertNoFrameIsDelivered(/* waitPeriodMs= */ 500);
 
     surfaceTextureHelper.dispose();
     eglBase.release();
@@ -401,6 +397,7 @@ public class SurfaceTextureHelperTest {
     // Create SurfaceTextureHelper and listener.
     final SurfaceTextureHelper surfaceTextureHelper =
         SurfaceTextureHelper.create("SurfaceTextureHelper test" /* threadName */, null);
+    surfaceTextureHelper.setTextureSize(/* textureWidth= */ 32, /* textureHeight= */ 32);
     final MockTextureListener listener1 = new MockTextureListener();
     surfaceTextureHelper.startListening(listener1);
     // Create EglBase with the SurfaceTexture as target EGLSurface.
@@ -408,13 +405,12 @@ public class SurfaceTextureHelperTest {
     eglBase.createSurface(surfaceTextureHelper.getSurfaceTexture());
     eglBase.makeCurrent();
     // Assert no frame has been received yet.
-    assertFalse(listener1.waitForNewFrame(1));
+    listener1.assertNoFrameIsDelivered(/* waitPeriodMs= */ 1);
     // Draw and wait for one frame.
     GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
     // swapBuffers() will ultimately trigger onTextureFrameAvailable().
     eglBase.swapBuffers();
-    listener1.waitForNewFrame();
-    surfaceTextureHelper.returnTextureFrame();
+    listener1.waitForTextureBuffer().release();
 
     // Stop listening - |listener1| should not receive any textures after this.
     surfaceTextureHelper.stopListening();
@@ -423,17 +419,15 @@ public class SurfaceTextureHelperTest {
     final MockTextureListener listener2 = new MockTextureListener();
     surfaceTextureHelper.startListening(listener2);
     // Assert no frame has been received yet.
-    assertFalse(listener2.waitForNewFrame(1));
+    listener2.assertNoFrameIsDelivered(/* waitPeriodMs= */ 1);
 
     // Draw one frame.
     GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
     eglBase.swapBuffers();
 
     // Check that |listener2| received the frame, and not |listener1|.
-    listener2.waitForNewFrame();
-    assertFalse(listener1.waitForNewFrame(1));
-
-    surfaceTextureHelper.returnTextureFrame();
+    listener2.waitForTextureBuffer().release();
+    listener1.assertNoFrameIsDelivered(/* waitPeriodMs= */ 1);
 
     surfaceTextureHelper.dispose();
     eglBase.release();
@@ -452,7 +446,7 @@ public class SurfaceTextureHelperTest {
         "SurfaceTextureHelper test" /* threadName */, eglBase.getEglBaseContext());
     final MockTextureListener listener = new MockTextureListener();
     surfaceTextureHelper.startListening(listener);
-    surfaceTextureHelper.getSurfaceTexture().setDefaultBufferSize(width, height);
+    surfaceTextureHelper.setTextureSize(width, height);
 
     // Create resources for stubbing an OES texture producer. |eglBase| has the SurfaceTexture in
     // |surfaceTextureHelper| as the target EGLSurface.
@@ -479,7 +473,9 @@ public class SurfaceTextureHelperTest {
       eglBase.swapBuffers();
 
       // Wait for an OES texture to arrive.
-      listener.waitForNewFrame();
+      final VideoFrame.TextureBuffer textureBuffer = listener.waitForTextureBuffer();
+      final VideoFrame.I420Buffer i420 = textureBuffer.toI420();
+      textureBuffer.release();
 
       // Memory layout: Lines are 16 bytes. First 16 lines are
       // the Y data. These are followed by 8 lines with 8 bytes of U
@@ -495,11 +491,6 @@ public class SurfaceTextureHelperTest {
       //    ...
       //    368 UUUUUUUU VVVVVVVV
       //    384 buffer end
-      final VideoFrame.I420Buffer i420 =
-          surfaceTextureHelper.textureToYuv(surfaceTextureHelper.createTextureBuffer(width, height,
-              RendererCommon.convertMatrixToAndroidGraphicsMatrix(listener.transformMatrix)));
-
-      surfaceTextureHelper.returnTextureFrame();
 
       // Allow off-by-one differences due to different rounding.
       final ByteBuffer dataY = i420.getDataY();
@@ -523,6 +514,7 @@ public class SurfaceTextureHelperTest {
           assertClose(1, ref_v[i], dataV.get(y * strideV + x) & 0xFF);
         }
       }
+      i420.release();
     }
 
     surfaceTextureHelper.dispose();

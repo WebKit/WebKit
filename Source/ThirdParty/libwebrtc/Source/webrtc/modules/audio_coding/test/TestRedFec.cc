@@ -12,43 +12,34 @@
 
 #include <assert.h>
 
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/codecs/audio_format_conversion.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/audio_coding/test/utility.h"
 #include "test/testsupport/fileutils.h"
-#include "typedefs.h"  // NOLINT(build/include)
-
-#ifdef SUPPORT_RED_WB
-#undef SUPPORT_RED_WB
-#endif
-
-#ifdef SUPPORT_RED_SWB
-#undef SUPPORT_RED_SWB
-#endif
-
-#ifdef SUPPORT_RED_FB
-#undef SUPPORT_RED_FB
-#endif
 
 namespace webrtc {
 
 namespace {
-  const char kNameL16[] = "L16";
-  const char kNamePCMU[] = "PCMU";
-  const char kNameCN[] = "CN";
-  const char kNameRED[] = "RED";
-  const char kNameISAC[] = "ISAC";
-  const char kNameG722[] = "G722";
-  const char kNameOPUS[] = "opus";
-}
+
+const char kNameL16[] = "L16";
+const char kNamePCMU[] = "PCMU";
+const char kNameCN[] = "CN";
+const char kNameRED[] = "RED";
+const char kNameISAC[] = "ISAC";
+const char kNameG722[] = "G722";
+const char kNameOPUS[] = "opus";
+
+}  // namespace
 
 TestRedFec::TestRedFec()
-    : _acmA(AudioCodingModule::Create()),
-      _acmB(AudioCodingModule::Create()),
+    : _acmA(AudioCodingModule::Create(
+          AudioCodingModule::Config(CreateBuiltinAudioDecoderFactory()))),
+      _acmB(AudioCodingModule::Create(
+          AudioCodingModule::Config(CreateBuiltinAudioDecoderFactory()))),
       _channelA2B(NULL),
-      _testCntr(0) {
-}
+      _testCntr(0) {}
 
 TestRedFec::~TestRedFec() {
   if (_channelA2B != NULL) {
@@ -103,37 +94,22 @@ void TestRedFec::Perform() {
   EXPECT_EQ(0, RegisterSendCodec('A', kNameG722, 16000));
   EXPECT_EQ(0, RegisterSendCodec('A', kNameCN, 16000));
 
-#ifdef SUPPORT_RED_WB
-  // Switch codec, RED should remain.
-  EXPECT_TRUE(_acmA->REDStatus());
-#else
   // Switch to a 16 kHz codec, RED should have been switched off.
   EXPECT_FALSE(_acmA->REDStatus());
-#endif
 
   OpenOutFile(_testCntr);
   EXPECT_EQ(0, SetVAD(true, true, VADAggr));
   EXPECT_EQ(0, _acmA->SetREDStatus(false));
   EXPECT_FALSE(_acmA->REDStatus());
   Run();
-#ifdef SUPPORT_RED_WB
-  EXPECT_EQ(0, _acmA->SetREDStatus(true));
-  EXPECT_TRUE(_acmA->REDStatus());
-#else
   EXPECT_EQ(-1, _acmA->SetREDStatus(true));
   EXPECT_FALSE(_acmA->REDStatus());
-#endif
   Run();
   _outFileB.Close();
 
   RegisterSendCodec('A', kNameISAC, 16000);
 
-#ifdef SUPPORT_RED_WB
-  // Switch codec, RED should remain.
-  EXPECT_TRUE(_acmA->REDStatus());
-#else
   EXPECT_FALSE(_acmA->REDStatus());
-#endif
 
   OpenOutFile(_testCntr);
   EXPECT_EQ(0, SetVAD(true, true, VADVeryAggr));
@@ -142,26 +118,16 @@ void TestRedFec::Perform() {
   Run();
   _outFileB.Close();
 
-#ifdef SUPPORT_RED_WB
-  EXPECT_EQ(0, _acmA->SetREDStatus(true));
-  EXPECT_TRUE(_acmA->REDStatus());
-#else
   EXPECT_EQ(-1, _acmA->SetREDStatus(true));
   EXPECT_FALSE(_acmA->REDStatus());
-#endif
   OpenOutFile(_testCntr);
   Run();
   _outFileB.Close();
 
   RegisterSendCodec('A', kNameISAC, 32000);
 
-#if defined(SUPPORT_RED_SWB) && defined(SUPPORT_RED_WB)
-  // Switch codec, RED should remain.
-  EXPECT_TRUE(_acmA->REDStatus());
-#else
   // Switch to a 32 kHz codec, RED should have been switched off.
   EXPECT_FALSE(_acmA->REDStatus());
-#endif
 
   OpenOutFile(_testCntr);
   EXPECT_EQ(0, SetVAD(true, true, VADVeryAggr));
@@ -170,13 +136,8 @@ void TestRedFec::Perform() {
   Run();
   _outFileB.Close();
 
-#ifdef SUPPORT_RED_SWB
-  EXPECT_EQ(0, _acmA->SetREDStatus(true));
-  EXPECT_TRUE(_acmA->REDStatus());
-#else
   EXPECT_EQ(-1, _acmA->SetREDStatus(true));
   EXPECT_FALSE(_acmA->REDStatus());
-#endif
   OpenOutFile(_testCntr);
   Run();
   _outFileB.Close();
@@ -184,28 +145,8 @@ void TestRedFec::Perform() {
   RegisterSendCodec('A', kNameISAC, 32000);
   EXPECT_EQ(0, SetVAD(false, false, VADNormal));
 
-#if defined(SUPPORT_RED_SWB) && defined(SUPPORT_RED_WB)
-  OpenOutFile(_testCntr);
-  EXPECT_EQ(0, _acmA->SetREDStatus(true));
-  EXPECT_TRUE(_acmA->REDStatus());
-  Run();
-
-  RegisterSendCodec('A', kNameISAC, 16000);
-  EXPECT_TRUE(_acmA->REDStatus());
-  Run();
-
-  RegisterSendCodec('A', kNameISAC, 32000);
-  EXPECT_TRUE(_acmA->REDStatus());
-  Run();
-
-  RegisterSendCodec('A', kNameISAC, 16000);
-  EXPECT_TRUE(_acmA->REDStatus());
-  Run();
-  _outFileB.Close();
-#else
   EXPECT_EQ(-1, _acmA->SetREDStatus(true));
   EXPECT_FALSE(_acmA->REDStatus());
-#endif
 
   _channelA2B->SetFECTestWithPacketLoss(true);
   // Following tests are under packet losses.
@@ -213,13 +154,8 @@ void TestRedFec::Perform() {
   EXPECT_EQ(0, RegisterSendCodec('A', kNameG722));
   EXPECT_EQ(0, RegisterSendCodec('A', kNameCN, 16000));
 
-#if defined(SUPPORT_RED_WB) && defined(SUPPORT_RED_SWB)
-  // Switch codec, RED should remain.
-  EXPECT_TRUE(_acmA->REDStatus());
-#else
   // Switch to a 16 kHz codec, RED should have been switched off.
   EXPECT_FALSE(_acmA->REDStatus());
-#endif
 
   OpenOutFile(_testCntr);
   EXPECT_EQ(0, SetVAD(true, true, VADAggr));
@@ -228,26 +164,16 @@ void TestRedFec::Perform() {
   Run();
   _outFileB.Close();
 
-#ifdef SUPPORT_RED_WB
-  EXPECT_EQ(0, _acmA->SetREDStatus(true));
-  EXPECT_TRUE(_acmA->REDStatus());
-#else
   EXPECT_EQ(-1, _acmA->SetREDStatus(true));
   EXPECT_FALSE(_acmA->REDStatus());
-#endif
   OpenOutFile(_testCntr);
   Run();
   _outFileB.Close();
 
   RegisterSendCodec('A', kNameISAC, 16000);
 
-#ifdef SUPPORT_RED_WB
-  // Switch codec, RED should remain.
-  EXPECT_TRUE(_acmA->REDStatus());
-#else
   // Switch to a 16 kHz codec, RED should have been switched off.
   EXPECT_FALSE(_acmA->REDStatus());
-#endif
 
   OpenOutFile(_testCntr);
   EXPECT_EQ(0, SetVAD(true, true, VADVeryAggr));
@@ -255,66 +181,31 @@ void TestRedFec::Perform() {
   EXPECT_FALSE(_acmA->REDStatus());
   Run();
   _outFileB.Close();
-#ifdef SUPPORT_RED_WB
-  EXPECT_EQ(0, _acmA->SetREDStatus(true));
-  EXPECT_TRUE(_acmA->REDStatus());
-#else
   EXPECT_EQ(-1, _acmA->SetREDStatus(true));
   EXPECT_FALSE(_acmA->REDStatus());
-#endif
   OpenOutFile(_testCntr);
   Run();
   _outFileB.Close();
 
   RegisterSendCodec('A', kNameISAC, 32000);
 
-#if defined(SUPPORT_RED_SWB) && defined(SUPPORT_RED_WB)
-  // Switch codec, RED should remain.
-  EXPECT_TRUE(_acmA->REDStatus());
-#else
   // Switch to a 32 kHz codec, RED should have been switched off.
   EXPECT_FALSE(_acmA->REDStatus());
-#endif
 
   OpenOutFile(_testCntr);
   EXPECT_EQ(0, SetVAD(true, true, VADVeryAggr));
   EXPECT_EQ(0, _acmA->SetREDStatus(false));
   EXPECT_FALSE(_acmA->REDStatus());
-#ifdef SUPPORT_RED_SWB
-  EXPECT_EQ(0, _acmA->SetREDStatus(true));
-  EXPECT_TRUE(_acmA->REDStatus());
-#else
   EXPECT_EQ(-1, _acmA->SetREDStatus(true));
   EXPECT_FALSE(_acmA->REDStatus());
-#endif
   OpenOutFile(_testCntr);
   Run();
   _outFileB.Close();
 
   RegisterSendCodec('A', kNameISAC, 32000);
   EXPECT_EQ(0, SetVAD(false, false, VADNormal));
-#if defined(SUPPORT_RED_SWB) && defined(SUPPORT_RED_WB)
-  OpenOutFile(_testCntr);
-  EXPECT_EQ(0, _acmA->SetREDStatus(true));
-  EXPECT_TRUE(_acmA->REDStatus());
-  Run();
-
-  RegisterSendCodec('A', kNameISAC, 16000);
-  EXPECT_TRUE(_acmA->REDStatus());
-  Run();
-
-  RegisterSendCodec('A', kNameISAC, 32000);
-  EXPECT_TRUE(_acmA->REDStatus());
-  Run();
-
-  RegisterSendCodec('A', kNameISAC, 16000);
-  EXPECT_TRUE(_acmA->REDStatus());
-  Run();
-  _outFileB.Close();
-#else
   EXPECT_EQ(-1, _acmA->SetREDStatus(true));
   EXPECT_FALSE(_acmA->REDStatus());
-#endif
 
 #ifndef WEBRTC_CODEC_OPUS
   EXPECT_TRUE(false);
@@ -324,33 +215,14 @@ void TestRedFec::Perform() {
 
   RegisterSendCodec('A', kNameOPUS, 48000);
 
-#if defined(SUPPORT_RED_FB) && defined(SUPPORT_RED_SWB) &&\
-  defined(SUPPORT_RED_WB)
-  // Switch to codec, RED should remain switched on.
-  EXPECT_TRUE(_acmA->REDStatus());
-#else
   EXPECT_FALSE(_acmA->REDStatus());
-#endif
 
   // _channelA2B imposes 25% packet loss rate.
   EXPECT_EQ(0, _acmA->SetPacketLossRate(25));
 
-#ifdef SUPPORT_RED_FB
-  EXPECT_EQ(0, _acmA->SetREDStatus(true));
-  EXPECT_TRUE(_acmA->REDStatus());
-  // Codec FEC and RED are mutually exclusive.
-  EXPECT_EQ(-1, _acmA->SetCodecFEC(true));
-
-  EXPECT_EQ(0, _acmA->SetREDStatus(false));
-  EXPECT_EQ(0, _acmA->SetCodecFEC(true));
-
-  // Codec FEC and RED are mutually exclusive.
-  EXPECT_EQ(-1, _acmA->SetREDStatus(true));
-#else
   EXPECT_EQ(-1, _acmA->SetREDStatus(true));
   EXPECT_FALSE(_acmA->REDStatus());
   EXPECT_EQ(0, _acmA->SetCodecFEC(true));
-#endif
 
   EXPECT_TRUE(_acmA->CodecFEC());
   OpenOutFile(_testCntr);
@@ -369,12 +241,7 @@ void TestRedFec::Perform() {
 
   // Switch to Opus again.
   RegisterSendCodec('A', kNameOPUS, 48000);
-#ifdef SUPPORT_RED_FB
-  // Switch to codec, RED should remain switched on.
-  EXPECT_TRUE(_acmA->REDStatus());
-#else
   EXPECT_FALSE(_acmA->REDStatus());
-#endif
   EXPECT_EQ(0, _acmA->SetREDStatus(false));
   EXPECT_EQ(0, _acmA->SetCodecFEC(false));
   Run();

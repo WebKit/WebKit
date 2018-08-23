@@ -21,7 +21,6 @@ const size_t kNumRtcpReportsToUse = 2;
 // Number of parameters samples used to smooth.
 const size_t kNumSamplesToSmooth = 20;
 
-
 // Calculates the RTP timestamp frequency from two pairs of NTP/RTP timestamps.
 bool CalculateFrequency(int64_t ntp_ms1,
                         uint32_t rtp_timestamp1,
@@ -194,9 +193,9 @@ bool RtpToNtpEstimator::Estimate(int64_t rtp_timestamp,
   return true;
 }
 
-const rtc::Optional<RtpToNtpEstimator::Parameters> RtpToNtpEstimator::params()
+const absl::optional<RtpToNtpEstimator::Parameters> RtpToNtpEstimator::params()
     const {
-  rtc::Optional<Parameters> res;
+  absl::optional<Parameters> res;
   if (params_calculated_) {
     res.emplace(smoothing_filter_.GetFilteredValue());
   }

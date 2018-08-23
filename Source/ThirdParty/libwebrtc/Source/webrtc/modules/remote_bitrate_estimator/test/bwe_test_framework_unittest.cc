@@ -153,8 +153,10 @@ class BweTestFramework_RateCounterFilterTest : public ::testing::Test {
   virtual ~BweTestFramework_RateCounterFilterTest() {}
 
  protected:
-  void TestRateCounter(int64_t run_for_ms, uint32_t payload_bits,
-                       uint32_t expected_pps, uint32_t expected_bps) {
+  void TestRateCounter(int64_t run_for_ms,
+                       uint32_t payload_bits,
+                       uint32_t expected_pps,
+                       uint32_t expected_bps) {
     Packets packets;
     RTPHeader header;
     // "Send" a packet every 10 ms.
@@ -280,7 +282,8 @@ class BweTestFramework_DelayFilterTest : public ::testing::Test {
   }
 
  protected:
-  void TestDelayFilter(int64_t run_for_ms, uint32_t in_packets,
+  void TestDelayFilter(int64_t run_for_ms,
+                       uint32_t in_packets,
                        uint32_t out_packets) {
     Packets packets;
     for (uint32_t i = 0; i < in_packets; ++i) {
@@ -301,7 +304,7 @@ class BweTestFramework_DelayFilterTest : public ::testing::Test {
 
   void TestDelayFilter(int64_t delay_ms) {
     filter_.SetOneWayDelayMs(delay_ms);
-    TestDelayFilter(1, 0, 0);    // No input should yield no output
+    TestDelayFilter(1, 0, 0);  // No input should yield no output
 
     // Single packet
     TestDelayFilter(0, 1, 1);
@@ -357,8 +360,8 @@ TEST_F(BweTestFramework_DelayFilterTest, Delay0) {
   TestDelayFilter(1, 10, 10);  // Expect no delay (delay time is zero)
   TestDelayFilter(1, 0, 0);    // Check no packets are still in buffer
   filter_.SetOneWayDelayMs(0);
-  TestDelayFilter(1, 5, 5);    // Expect no delay (delay time is zero)
-  TestDelayFilter(1, 0, 0);    // Check no packets are still in buffer
+  TestDelayFilter(1, 5, 5);  // Expect no delay (delay time is zero)
+  TestDelayFilter(1, 0, 0);  // Check no packets are still in buffer
 }
 
 TEST_F(BweTestFramework_DelayFilterTest, Delay1) {
@@ -580,11 +583,7 @@ TEST(BweTestFramework_ReorderFilterTest, Reorder100) {
 class BweTestFramework_ChokeFilterTest : public ::testing::Test {
  public:
   BweTestFramework_ChokeFilterTest()
-    : now_ms_(0),
-      sequence_number_(0),
-      output_packets_(),
-      send_times_us_() {
-  }
+      : now_ms_(0), sequence_number_(0), output_packets_(), send_times_us_() {}
   virtual ~BweTestFramework_ChokeFilterTest() {
     for (auto* packet : output_packets_)
       delete packet;

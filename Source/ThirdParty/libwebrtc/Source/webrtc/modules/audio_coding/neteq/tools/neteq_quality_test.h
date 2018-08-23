@@ -19,29 +19,35 @@
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "modules/audio_coding/neteq/tools/rtp_generator.h"
-#include "modules/include/module_common_types.h"
 #include "rtc_base/flags.h"
 #include "test/gtest.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace test {
 
+enum LossModes {
+  kNoLoss,
+  kUniformLoss,
+  kGilbertElliotLoss,
+  kFixedLoss,
+  kLastLossMode
+};
+
 class LossModel {
  public:
-  virtual ~LossModel() {};
-  virtual bool Lost() = 0;
+  virtual ~LossModel(){};
+  virtual bool Lost(int now_ms) = 0;
 };
 
 class NoLoss : public LossModel {
  public:
-  bool Lost() override;
+  bool Lost(int now_ms) override;
 };
 
 class UniformLoss : public LossModel {
  public:
   UniformLoss(double loss_rate);
-  bool Lost() override;
+  bool Lost(int now_ms) override;
   void set_loss_rate(double loss_rate) { loss_rate_ = loss_rate; }
 
  private:
@@ -52,7 +58,7 @@ class GilbertElliotLoss : public LossModel {
  public:
   GilbertElliotLoss(double prob_trans_11, double prob_trans_01);
   ~GilbertElliotLoss() override;
-  bool Lost() override;
+  bool Lost(int now_ms) override;
 
  private:
   // Prob. of losing current packet, when previous packet is lost.
@@ -61,6 +67,31 @@ class GilbertElliotLoss : public LossModel {
   double prob_trans_01_;
   bool lost_last_;
   std::unique_ptr<UniformLoss> uniform_loss_model_;
+};
+
+struct FixedLossEvent {
+  int start_ms;
+  int duration_ms;
+  FixedLossEvent(int start_ms, int duration_ms)
+      : start_ms(start_ms), duration_ms(duration_ms) {}
+};
+
+struct FixedLossEventCmp {
+  bool operator()(const FixedLossEvent& l_event,
+                  const FixedLossEvent& r_event) const {
+    return l_event.start_ms < r_event.start_ms;
+  }
+};
+
+class FixedLossModel : public LossModel {
+ public:
+  FixedLossModel(std::set<FixedLossEvent, FixedLossEventCmp> loss_events);
+  ~FixedLossModel() override;
+  bool Lost(int now_ms) override;
+
+ private:
+  std::set<FixedLossEvent, FixedLossEventCmp> loss_events_;
+  std::set<FixedLossEvent, FixedLossEventCmp>::iterator loss_events_it_;
 };
 
 class NetEqQualityTest : public ::testing::Test {
@@ -78,8 +109,10 @@ class NetEqQualityTest : public ::testing::Test {
   // |block_size_samples| (samples per channel),
   // 2. save the bit stream to |payload| of |max_bytes| bytes in size,
   // 3. returns the length of the payload (in bytes),
-  virtual int EncodeBlock(int16_t* in_data, size_t block_size_samples,
-                          rtc::Buffer* payload, size_t max_bytes) = 0;
+  virtual int EncodeBlock(int16_t* in_data,
+                          size_t block_size_samples,
+                          rtc::Buffer* payload,
+                          size_t max_bytes) = 0;
 
   // PacketLost(...) determines weather a packet sent at an indicated time gets
   // lost or not.

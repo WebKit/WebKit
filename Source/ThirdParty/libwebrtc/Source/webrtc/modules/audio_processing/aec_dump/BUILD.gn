@@ -14,11 +14,8 @@ rtc_source_set("aec_dump") {
     "aec_dump_factory.h",
   ]
 
-  public_deps = [
-    "..:aec_dump_interface",
-  ]
-
   deps = [
+    "../",
     "../../../rtc_base:rtc_base_approved",
   ]
 }
@@ -31,12 +28,8 @@ rtc_source_set("mock_aec_dump") {
   ]
 
   deps = [
-    "..:aec_dump_interface",
-  ]
-  public_deps = [
-    "../..:module_api",
+    "../",
     "../../../test:test_support",
-    "//testing/gmock",
   ]
 }
 
@@ -49,9 +42,10 @@ rtc_source_set("mock_aec_dump_unittests") {
 
   deps = [
     ":mock_aec_dump",
-    "..:audio_processing",
+    "../",
     "../../../rtc_base:rtc_base_approved",
     "//testing/gtest",
+    "//third_party/abseil-cpp/absl/memory",
   ]
 }
 
@@ -66,20 +60,17 @@ if (rtc_enable_protobuf) {
       "write_to_file_task.h",
     ]
 
-    public = []
-
-    public_deps = [
-      ":aec_dump",
-      "..:aec_dump_interface",
-    ]
-
     deps = [
-      "../../../modules:module_api",
+      ":aec_dump",
+      "../",
+      "../../../api/audio:audio_frame_api",
       "../../../rtc_base:checks",
       "../../../rtc_base:protobuf_utils",
       "../../../rtc_base:rtc_base_approved",
       "../../../rtc_base:rtc_task_queue",
+      "../../../rtc_base/system:file_wrapper",
       "../../../system_wrappers",
+      "//third_party/abseil-cpp/absl/memory",
     ]
 
     deps += [ "../:audioproc_debug_proto" ]
@@ -89,11 +80,12 @@ if (rtc_enable_protobuf) {
     testonly = true
     defines = []
     deps = [
+      ":aec_dump",
       ":aec_dump_impl",
-      "..:aec_dump_interface",
       "..:audioproc_debug_proto",
-      "../../../modules:module_api",
+      "../",
       "../../../rtc_base:rtc_task_queue",
+      "../../../test:fileutils",
       "../../../test:test_support",
       "//testing/gtest",
     ]
@@ -109,8 +101,8 @@ rtc_source_set("null_aec_dump_factory") {
     "null_aec_dump_factory.cc",
   ]
 
-  public_deps = [
+  deps = [
     ":aec_dump",
-    "..:aec_dump_interface",
+    "../",
   ]
 }

@@ -19,8 +19,6 @@
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/metrics.h"
-#include "vpx/vp8cx.h"
-#include "vpx/vpx_encoder.h"
 
 namespace webrtc {
 
@@ -39,48 +37,11 @@ constexpr int ScreenshareLayers::kMaxNumTemporalLayers;
 // been exceeded. This prevents needless keyframe requests.
 const int ScreenshareLayers::kMaxFrameIntervalMs = 2750;
 
-webrtc::TemporalLayers* ScreenshareTemporalLayersFactory::Create(
-    int simulcast_id,
-    int num_temporal_layers,
-    uint8_t initial_tl0_pic_idx) const {
-  webrtc::TemporalLayers* tl;
-  if (simulcast_id == 0) {
-    tl = new webrtc::ScreenshareLayers(num_temporal_layers, rand(),
-                                       webrtc::Clock::GetRealTimeClock());
-  } else {
-    TemporalLayersFactory rt_tl_factory;
-    tl = rt_tl_factory.Create(simulcast_id, num_temporal_layers, rand());
-  }
-  if (listener_)
-    listener_->OnTemporalLayersCreated(simulcast_id, tl);
-  return tl;
-}
-
-std::unique_ptr<webrtc::TemporalLayersChecker>
-ScreenshareTemporalLayersFactory::CreateChecker(
-    int simulcast_id,
-    int temporal_layers,
-    uint8_t initial_tl0_pic_idx) const {
-  webrtc::TemporalLayersChecker* tlc;
-  if (simulcast_id == 0) {
-    tlc =
-        new webrtc::TemporalLayersChecker(temporal_layers, initial_tl0_pic_idx);
-  } else {
-    TemporalLayersFactory rt_tl_factory;
-    return rt_tl_factory.CreateChecker(simulcast_id, temporal_layers,
-                                       initial_tl0_pic_idx);
-  }
-  return std::unique_ptr<webrtc::TemporalLayersChecker>(tlc);
-}
-
 ScreenshareLayers::ScreenshareLayers(int num_temporal_layers,
-                                     uint8_t initial_tl0_pic_idx,
                                      Clock* clock)
     : clock_(clock),
       number_of_temporal_layers_(
           std::min(kMaxNumTemporalLayers, num_temporal_layers)),
-      last_base_layer_sync_(false),
-      tl0_pic_idx_(initial_tl0_pic_idx),
       active_layer_(-1),
       last_timestamp_(-1),
       last_sync_timestamp_(-1),
@@ -97,10 +58,6 @@ ScreenshareLayers::ScreenshareLayers(int num_temporal_layers,
 
 ScreenshareLayers::~ScreenshareLayers() {
   UpdateHistograms();
-}
-
-uint8_t ScreenshareLayers::Tl0PicIdx() const {
-  return tl0_pic_idx_;
 }
 
 TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
@@ -189,7 +146,8 @@ TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
       break;
     case 1:
       if (layers_[1].state != TemporalLayer::State::kDropped) {
-        if (TimeToSync(unwrapped_timestamp)) {
+        if (TimeToSync(unwrapped_timestamp) ||
+            layers_[1].state == TemporalLayer::State::kKeyFrame) {
           last_sync_timestamp_ = unwrapped_timestamp;
           layer_state = TemporalLayerState::kTl1Sync;
         } else {
@@ -241,40 +199,47 @@ TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
   return tl_config;
 }
 
-std::vector<uint32_t> ScreenshareLayers::OnRatesUpdated(int bitrate_kbps,
-                                                        int max_bitrate_kbps,
-                                                        int framerate) {
-  RTC_DCHECK_GT(framerate, 0);
+void ScreenshareLayers::OnRatesUpdated(
+    const std::vector<uint32_t>& bitrates_bps,
+    int framerate_fps) {
+  RTC_DCHECK_GT(framerate_fps, 0);
+  RTC_DCHECK_GE(bitrates_bps.size(), 1);
+  RTC_DCHECK_LE(bitrates_bps.size(), 2);
+
+  // |bitrates_bps| uses individual rates per layer, but we want to use the
+  // accumulated rate here.
+  uint32_t tl0_kbps = bitrates_bps[0] / 1000;
+  uint32_t tl1_kbps = tl0_kbps;
+  if (bitrates_bps.size() > 1) {
+    tl1_kbps += bitrates_bps[1] / 1000;
+  }
+
   if (!target_framerate_) {
-    // First OnRatesUpdated() is called during construction, with the configured
-    // targets as parameters.
-    target_framerate_.emplace(framerate);
+    // First OnRatesUpdated() is called during construction, with the
+    // configured targets as parameters.
+    target_framerate_ = framerate_fps;
     capture_framerate_ = target_framerate_;
     bitrate_updated_ = true;
   } else {
-    bitrate_updated_ =
-        bitrate_kbps != static_cast<int>(layers_[0].target_rate_kbps_) ||
-        max_bitrate_kbps != static_cast<int>(layers_[1].target_rate_kbps_) ||
-        (capture_framerate_ &&
-         framerate != static_cast<int>(*capture_framerate_));
-    if (framerate < 0) {
+    if ((capture_framerate_ &&
+         framerate_fps != static_cast<int>(*capture_framerate_)) ||
+        (tl0_kbps != layers_[0].target_rate_kbps_) ||
+        (tl1_kbps != layers_[1].target_rate_kbps_)) {
+      bitrate_updated_ = true;
+    }
+
+    if (framerate_fps < 0) {
       capture_framerate_.reset();
     } else {
-      capture_framerate_.emplace(framerate);
+      capture_framerate_ = framerate_fps;
     }
   }
 
-  layers_[0].target_rate_kbps_ = bitrate_kbps;
-  layers_[1].target_rate_kbps_ = max_bitrate_kbps;
-
-  std::vector<uint32_t> allocation;
-  allocation.push_back(bitrate_kbps);
-  if (max_bitrate_kbps > bitrate_kbps)
-    allocation.push_back(max_bitrate_kbps - bitrate_kbps);
-  return allocation;
+  layers_[0].target_rate_kbps_ = tl0_kbps;
+  layers_[1].target_rate_kbps_ = tl1_kbps;
 }
 
-void ScreenshareLayers::FrameEncoded(unsigned int size, int qp) {
+void ScreenshareLayers::FrameEncoded(uint32_t timestamp, size_t size, int qp) {
   if (size > 0)
     encode_framerate_.Update(1, clock_->TimeInMilliseconds());
 
@@ -317,7 +282,6 @@ void ScreenshareLayers::PopulateCodecSpecific(
   if (number_of_temporal_layers_ == 1) {
     vp8_info->temporalIdx = kNoTemporalIdx;
     vp8_info->layerSync = false;
-    vp8_info->tl0PicIdx = kNoTl0PicIdx;
   } else {
     int64_t unwrapped_timestamp = time_wrap_handler_.Unwrap(timestamp);
     vp8_info->temporalIdx = tl_config.packetizer_temporal_idx;
@@ -326,17 +290,9 @@ void ScreenshareLayers::PopulateCodecSpecific(
       vp8_info->temporalIdx = 0;
       last_sync_timestamp_ = unwrapped_timestamp;
       vp8_info->layerSync = true;
-    } else if (last_base_layer_sync_ && vp8_info->temporalIdx != 0) {
-      // Regardless of pattern the frame after a base layer sync will always
-      // be a layer sync.
-      last_sync_timestamp_ = unwrapped_timestamp;
-      vp8_info->layerSync = true;
+      layers_[0].state = TemporalLayer::State::kKeyFrame;
+      layers_[1].state = TemporalLayer::State::kKeyFrame;
     }
-    if (vp8_info->temporalIdx == 0) {
-      tl0_pic_idx_++;
-    }
-    last_base_layer_sync_ = frame_is_keyframe;
-    vp8_info->tl0PicIdx = tl0_pic_idx_;
   }
 }
 
@@ -381,7 +337,7 @@ uint32_t ScreenshareLayers::GetCodecTargetBitrateKbps() const {
   return std::max(layers_[0].target_rate_kbps_, target_bitrate_kbps);
 }
 
-bool ScreenshareLayers::UpdateConfiguration(vpx_codec_enc_cfg_t* cfg) {
+bool ScreenshareLayers::UpdateConfiguration(Vp8EncoderConfig* cfg) {
   bool cfg_updated = false;
   uint32_t target_bitrate_kbps = GetCodecTargetBitrateKbps();
 

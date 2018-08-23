@@ -53,7 +53,7 @@ TEST_F(RateStatisticsTest, TestStrictMode) {
     // Approximately 1200 kbps expected. Not exact since when packets
     // are removed we will jump 10 ms to the next packet.
     if (i > kInterval) {
-      rtc::Optional<uint32_t> rate = stats_.Rate(now_ms);
+      absl::optional<uint32_t> rate = stats_.Rate(now_ms);
       EXPECT_TRUE(static_cast<bool>(rate));
       uint32_t samples = i / kInterval + 1;
       uint64_t total_bits = samples * kPacketSize * 8;
@@ -78,7 +78,7 @@ TEST_F(RateStatisticsTest, IncreasingThenDecreasingBitrate) {
   const uint32_t kExpectedBitrate = 8000000;
   // 1000 bytes per millisecond until plateau is reached.
   int prev_error = kExpectedBitrate;
-  rtc::Optional<uint32_t> bitrate;
+  absl::optional<uint32_t> bitrate;
   while (++now_ms < 10000) {
     stats_.Update(1000, now_ms);
     bitrate = stats_.Rate(now_ms);
@@ -102,7 +102,7 @@ TEST_F(RateStatisticsTest, IncreasingThenDecreasingBitrate) {
   // Zero bytes per millisecond until 0 is reached.
   while (++now_ms < 20000) {
     stats_.Update(0, now_ms);
-    rtc::Optional<uint32_t> new_bitrate = stats_.Rate(now_ms);
+    absl::optional<uint32_t> new_bitrate = stats_.Rate(now_ms);
     if (static_cast<bool>(new_bitrate) && *new_bitrate != *bitrate) {
       // New bitrate must be lower than previous one.
       EXPECT_LT(*new_bitrate, *bitrate);
@@ -130,7 +130,7 @@ TEST_F(RateStatisticsTest, ResetAfterSilence) {
   const uint32_t kExpectedBitrate = 8000000;
   // 1000 bytes per millisecond until the window has been filled.
   int prev_error = kExpectedBitrate;
-  rtc::Optional<uint32_t> bitrate;
+  absl::optional<uint32_t> bitrate;
   while (++now_ms < 10000) {
     stats_.Update(1000, now_ms);
     bitrate = stats_.Rate(now_ms);
@@ -213,7 +213,7 @@ TEST_F(RateStatisticsTest, RespectsWindowSizeEdges) {
 
   // Window size should be full, and the single data point should be accepted.
   ++now_ms;
-  rtc::Optional<uint32_t> bitrate = stats_.Rate(now_ms);
+  absl::optional<uint32_t> bitrate = stats_.Rate(now_ms);
   EXPECT_TRUE(static_cast<bool>(bitrate));
   EXPECT_EQ(1000 * 8u, *bitrate);
 
@@ -239,7 +239,7 @@ TEST_F(RateStatisticsTest, HandlesZeroCounts) {
   stats_.Update(kWindowMs, now_ms);
   now_ms += kWindowMs - 1;
   stats_.Update(0, now_ms);
-  rtc::Optional<uint32_t> bitrate = stats_.Rate(now_ms);
+  absl::optional<uint32_t> bitrate = stats_.Rate(now_ms);
   EXPECT_TRUE(static_cast<bool>(bitrate));
   EXPECT_EQ(1000 * 8u, *bitrate);
 
@@ -262,7 +262,7 @@ TEST_F(RateStatisticsTest, HandlesQuietPeriods) {
 
   stats_.Update(0, now_ms);
   now_ms += kWindowMs - 1;
-  rtc::Optional<uint32_t> bitrate = stats_.Rate(now_ms);
+  absl::optional<uint32_t> bitrate = stats_.Rate(now_ms);
   EXPECT_TRUE(static_cast<bool>(bitrate));
   EXPECT_EQ(0u, *bitrate);
 

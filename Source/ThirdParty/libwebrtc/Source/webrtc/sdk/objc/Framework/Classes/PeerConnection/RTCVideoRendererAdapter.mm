@@ -9,13 +9,13 @@
  */
 
 #import "RTCI420Buffer+Private.h"
-#import "RTCVideoFrame+Private.h"
 #import "RTCVideoRendererAdapter+Private.h"
 #import "WebRTC/RTCVideoFrame.h"
 #import "WebRTC/RTCVideoFrameBuffer.h"
-#import "objc_frame_buffer.h"
 
 #include <memory>
+
+#include "sdk/objc/Framework/Native/api/video_frame.h"
 
 namespace webrtc {
 
@@ -28,7 +28,7 @@ class VideoRendererAdapter
   }
 
   void OnFrame(const webrtc::VideoFrame& nativeVideoFrame) override {
-    RTCVideoFrame* videoFrame = [[RTCVideoFrame alloc] initWithNativeVideoFrame:nativeVideoFrame];
+    RTCVideoFrame* videoFrame = NativeToObjCVideoFrame(nativeVideoFrame);
 
     CGSize current_size = (videoFrame.rotation % 180 == 0)
                               ? CGSizeMake(videoFrame.width, videoFrame.height)

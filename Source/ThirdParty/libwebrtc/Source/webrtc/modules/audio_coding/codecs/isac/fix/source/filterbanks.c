@@ -18,11 +18,11 @@
  *
  */
 
-#include "filterbank_internal.h"
+#include "modules/audio_coding/codecs/isac/fix/source/filterbank_internal.h"
 
-#include "codec.h"
-#include "filterbank_tables.h"
-#include "settings.h"
+#include "modules/audio_coding/codecs/isac/fix/source/codec.h"
+#include "modules/audio_coding/codecs/isac/fix/source/filterbank_tables.h"
+#include "modules/audio_coding/codecs/isac/fix/source/settings.h"
 #include "rtc_base/checks.h"
 
 // Declare a function pointer.

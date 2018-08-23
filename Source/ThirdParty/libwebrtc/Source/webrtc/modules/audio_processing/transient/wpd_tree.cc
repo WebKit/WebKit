@@ -19,8 +19,10 @@
 
 namespace webrtc {
 
-WPDTree::WPDTree(size_t data_length, const float* high_pass_coefficients,
-                 const float* low_pass_coefficients, size_t coefficients_length,
+WPDTree::WPDTree(size_t data_length,
+                 const float* high_pass_coefficients,
+                 const float* low_pass_coefficients,
+                 size_t coefficients_length,
                  int levels)
     : data_length_(data_length),
       levels_(levels),
@@ -98,8 +100,8 @@ int WPDTree::Update(const float* data, size_t data_length) {
       index_left_child = index * 2;
       index_right_child = index_left_child + 1;
 
-      update_result = nodes_[index_left_child]->Update(
-          nodes_[index]->data(), nodes_[index]->length());
+      update_result = nodes_[index_left_child]->Update(nodes_[index]->data(),
+                                                       nodes_[index]->length());
       if (update_result != 0) {
         return -1;
       }

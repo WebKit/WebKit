@@ -14,13 +14,11 @@
 #include <map>
 #include <vector>
 
-#include "common_video/include/frame_callback.h"
 #include "modules/video_coding/video_coding_impl.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/metrics.h"
 #include "video/call_stats.h"
-#include "video/payload_router.h"
 #include "video/receive_statistics_proxy.h"
 
 namespace webrtc {
@@ -35,14 +33,12 @@ VideoStreamDecoder::VideoStreamDecoder(
     rtc::VideoSinkInterface<VideoFrame>* incoming_video_stream)
     : video_receiver_(video_receiver),
       receive_stats_callback_(receive_statistics_proxy),
-      incoming_video_stream_(incoming_video_stream),
-      last_rtt_ms_(0) {
+      incoming_video_stream_(incoming_video_stream) {
   RTC_DCHECK(video_receiver_);
 
   static const int kMaxPacketAgeToNack = 450;
   static const int kMaxNackListSize = 250;
-  video_receiver_->SetNackSettings(kMaxNackListSize,
-                                   kMaxPacketAgeToNack, 0);
+  video_receiver_->SetNackSettings(kMaxNackListSize, kMaxPacketAgeToNack, 0);
   video_receiver_->RegisterReceiveCallback(this);
   video_receiver_->RegisterFrameTypeCallback(vcm_frame_type_callback);
   video_receiver_->RegisterReceiveStatisticsCallback(this);
@@ -76,15 +72,16 @@ VideoStreamDecoder::~VideoStreamDecoder() {
 // thread may have held the lock when calling VideoDecoder::Decode, Reset, or
 // Release. Acquiring the same lock in the path of decode callback can deadlock.
 int32_t VideoStreamDecoder::FrameToRender(VideoFrame& video_frame,
-                                          rtc::Optional<uint8_t> qp,
+                                          absl::optional<uint8_t> qp,
                                           VideoContentType content_type) {
-  receive_stats_callback_->OnDecodedFrame(qp, content_type);
+  receive_stats_callback_->OnDecodedFrame(qp, video_frame.width(),
+                                          video_frame.height(), content_type);
   incoming_video_stream_->OnFrame(video_frame);
   return 0;
 }
 
 int32_t VideoStreamDecoder::ReceivedDecodedReferenceFrame(
-  const uint64_t picture_id) {
+    const uint64_t picture_id) {
   RTC_NOTREACHED();
   return 0;
 }
@@ -126,10 +123,7 @@ void VideoStreamDecoder::OnCompleteFrame(bool is_keyframe,
                                          size_t size_bytes,
                                          VideoContentType content_type) {}
 
-void VideoStreamDecoder::OnRttUpdate(int64_t avg_rtt_ms, int64_t max_rtt_ms) {
+void VideoStreamDecoder::UpdateRtt(int64_t max_rtt_ms) {
   video_receiver_->SetReceiveChannelParameters(max_rtt_ms);
-
-  rtc::CritScope lock(&crit_);
-  last_rtt_ms_ = avg_rtt_ms;
 }
 }  // namespace webrtc

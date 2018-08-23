@@ -31,6 +31,7 @@ class PacketTransportInterface {
 
   // Classes that can use this internal interface.
   friend class RtpTransportControllerAdapter;
+  friend class RtpTransportAdapter;
 };
 
 }  // namespace webrtc

@@ -107,7 +107,8 @@ TEST_F(SendDelayStatsTest, HistogramsAreUpdated) {
   const int64_t kDelayMs1 = 5;
   const int64_t kDelayMs2 = 15;
   const int kNumSamples = kMinRequiredPeriodicSamples * kProcessIntervalMs /
-                          (kDelayMs1 + kDelayMs2) + 1;
+                              (kDelayMs1 + kDelayMs2) +
+                          1;
 
   uint16_t id = 0;
   for (int i = 0; i < kNumSamples; ++i) {

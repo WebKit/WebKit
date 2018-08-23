@@ -18,3 +18,5 @@
 
 # Format all Java in WebRTC.
 b6760f9e4442410f2bcb6090b3b89bf709e2fce2
+# Format all C++ in WebRTC.
+665174fdbb4e0540eccb27cf7412348f1b65534c

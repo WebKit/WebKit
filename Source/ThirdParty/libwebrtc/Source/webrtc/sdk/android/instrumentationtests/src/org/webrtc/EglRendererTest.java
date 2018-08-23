@@ -115,6 +115,7 @@ public class EglRendererTest {
   public void setUp() throws Exception {
     PeerConnectionFactory.initialize(PeerConnectionFactory.InitializationOptions
                                          .builder(InstrumentationRegistry.getTargetContext())
+                                         .setNativeLibraryName(TestConstants.NATIVE_LIBRARY)
                                          .createInitializationOptions());
     eglRenderer = new EglRenderer("TestRenderer: ");
     eglRenderer.init(null /* sharedContext */, EglBase.CONFIG_RGBA, new GlRectDrawer());
@@ -224,6 +225,8 @@ public class EglRendererTest {
   }
 
   /** Checks that the bitmap content matches the test frame with the given index. */
+  // TODO(titovartem) make correct fix during webrtc:9175
+  @SuppressWarnings("ByteBufferBackingArray")
   private static void checkBitmapContent(Bitmap bitmap, int frame) {
     checkBitmap(bitmap, 1f);
 
@@ -246,9 +249,12 @@ public class EglRendererTest {
 
   /** Tells eglRenderer to render test frame with given index. */
   private void feedFrame(int i) {
-    eglRenderer.renderFrame(new VideoRenderer.I420Frame(TEST_FRAME_WIDTH, TEST_FRAME_HEIGHT, 0,
-        new int[] {TEST_FRAME_WIDTH, TEST_FRAME_WIDTH / 2, TEST_FRAME_WIDTH / 2}, TEST_FRAMES[i],
-        0));
+    final VideoFrame.I420Buffer buffer = JavaI420Buffer.wrap(TEST_FRAME_WIDTH, TEST_FRAME_HEIGHT,
+        TEST_FRAMES[i][0], TEST_FRAME_WIDTH, TEST_FRAMES[i][1], TEST_FRAME_WIDTH / 2,
+        TEST_FRAMES[i][2], TEST_FRAME_WIDTH / 2, null /* releaseCallback */);
+    final VideoFrame frame = new VideoFrame(buffer, 0 /* rotation */, 0 /* timestamp */);
+    eglRenderer.onFrame(frame);
+    frame.release();
   }
 
   @Test

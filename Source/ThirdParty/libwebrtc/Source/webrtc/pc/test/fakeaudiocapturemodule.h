@@ -24,7 +24,6 @@
 
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_device/include/audio_device.h"
-#include "rtc_base/basictypes.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/messagehandler.h"
 #include "rtc_base/scoped_ref_ptr.h"
@@ -33,9 +32,8 @@ namespace rtc {
 class Thread;
 }  // namespace rtc
 
-class FakeAudioCaptureModule
-    : public webrtc::AudioDeviceModule,
-      public rtc::MessageHandler {
+class FakeAudioCaptureModule : public webrtc::AudioDeviceModule,
+                               public rtc::MessageHandler {
  public:
   typedef uint16_t Sample;
 

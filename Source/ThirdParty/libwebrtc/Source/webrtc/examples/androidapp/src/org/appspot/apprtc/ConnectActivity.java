@@ -235,7 +235,7 @@ public class ConnectActivity extends Activity {
    */
   private boolean sharedPrefGetBoolean(
       int attributeId, String intentName, int defaultId, boolean useFromIntent) {
-    boolean defaultValue = Boolean.valueOf(getString(defaultId));
+    boolean defaultValue = Boolean.parseBoolean(getString(defaultId));
     if (useFromIntent) {
       return getIntent().getBooleanExtra(intentName, defaultValue);
     } else {
@@ -266,6 +266,7 @@ public class ConnectActivity extends Activity {
     }
   }
 
+  @SuppressWarnings("StringSplitter")
   private void connectToRoom(String roomId, boolean commandLineRun, boolean loopback,
       boolean useValuesFromIntent, int runTimeMs) {
     ConnectActivity.commandLineRun = commandLineRun;
@@ -314,9 +315,13 @@ public class ConnectActivity extends Activity {
         CallActivity.EXTRA_NOAUDIOPROCESSING_ENABLED, R.string.pref_noaudioprocessing_default,
         useValuesFromIntent);
 
-    // Check Disable Audio Processing flag.
     boolean aecDump = sharedPrefGetBoolean(R.string.pref_aecdump_key,
         CallActivity.EXTRA_AECDUMP_ENABLED, R.string.pref_aecdump_default, useValuesFromIntent);
+
+    boolean saveInputAudioToFile =
+        sharedPrefGetBoolean(R.string.pref_enable_save_input_audio_to_file_key,
+            CallActivity.EXTRA_SAVE_INPUT_AUDIO_TO_FILE_ENABLED,
+            R.string.pref_enable_save_input_audio_to_file_default, useValuesFromIntent);
 
     // Check OpenSL ES enabled flag.
     boolean useOpenSLES = sharedPrefGetBoolean(R.string.pref_opensles_key,
@@ -335,11 +340,6 @@ public class ConnectActivity extends Activity {
     // Check Disable built-in NS flag.
     boolean disableBuiltInNS = sharedPrefGetBoolean(R.string.pref_disable_built_in_ns_key,
         CallActivity.EXTRA_DISABLE_BUILT_IN_NS, R.string.pref_disable_built_in_ns_default,
-        useValuesFromIntent);
-
-    // Check Enable level control.
-    boolean enableLevelControl = sharedPrefGetBoolean(R.string.pref_enable_level_control_key,
-        CallActivity.EXTRA_ENABLE_LEVEL_CONTROL, R.string.pref_enable_level_control_key,
         useValuesFromIntent);
 
     // Check Disable gain control
@@ -429,6 +429,15 @@ public class ConnectActivity extends Activity {
     boolean tracing = sharedPrefGetBoolean(R.string.pref_tracing_key, CallActivity.EXTRA_TRACING,
         R.string.pref_tracing_default, useValuesFromIntent);
 
+    // Check Enable RtcEventLog.
+    boolean rtcEventLogEnabled = sharedPrefGetBoolean(R.string.pref_enable_rtceventlog_key,
+        CallActivity.EXTRA_ENABLE_RTCEVENTLOG, R.string.pref_enable_rtceventlog_default,
+        useValuesFromIntent);
+
+    boolean useLegacyAudioDevice = sharedPrefGetBoolean(R.string.pref_use_legacy_audio_device_key,
+        CallActivity.EXTRA_USE_LEGACY_AUDIO_DEVICE, R.string.pref_use_legacy_audio_device_default,
+        useValuesFromIntent);
+
     // Get datachannel options
     boolean dataChannelEnabled = sharedPrefGetBoolean(R.string.pref_enable_datachannel_key,
         CallActivity.EXTRA_DATA_CHANNEL_ENABLED, R.string.pref_enable_datachannel_default,
@@ -470,18 +479,20 @@ public class ConnectActivity extends Activity {
       intent.putExtra(CallActivity.EXTRA_FLEXFEC_ENABLED, flexfecEnabled);
       intent.putExtra(CallActivity.EXTRA_NOAUDIOPROCESSING_ENABLED, noAudioProcessing);
       intent.putExtra(CallActivity.EXTRA_AECDUMP_ENABLED, aecDump);
+      intent.putExtra(CallActivity.EXTRA_SAVE_INPUT_AUDIO_TO_FILE_ENABLED, saveInputAudioToFile);
       intent.putExtra(CallActivity.EXTRA_OPENSLES_ENABLED, useOpenSLES);
       intent.putExtra(CallActivity.EXTRA_DISABLE_BUILT_IN_AEC, disableBuiltInAEC);
       intent.putExtra(CallActivity.EXTRA_DISABLE_BUILT_IN_AGC, disableBuiltInAGC);
       intent.putExtra(CallActivity.EXTRA_DISABLE_BUILT_IN_NS, disableBuiltInNS);
-      intent.putExtra(CallActivity.EXTRA_ENABLE_LEVEL_CONTROL, enableLevelControl);
       intent.putExtra(CallActivity.EXTRA_DISABLE_WEBRTC_AGC_AND_HPF, disableWebRtcAGCAndHPF);
       intent.putExtra(CallActivity.EXTRA_AUDIO_BITRATE, audioStartBitrate);
       intent.putExtra(CallActivity.EXTRA_AUDIOCODEC, audioCodec);
       intent.putExtra(CallActivity.EXTRA_DISPLAY_HUD, displayHud);
       intent.putExtra(CallActivity.EXTRA_TRACING, tracing);
+      intent.putExtra(CallActivity.EXTRA_ENABLE_RTCEVENTLOG, rtcEventLogEnabled);
       intent.putExtra(CallActivity.EXTRA_CMDLINE, commandLineRun);
       intent.putExtra(CallActivity.EXTRA_RUNTIME, runTimeMs);
+      intent.putExtra(CallActivity.EXTRA_USE_LEGACY_AUDIO_DEVICE, useLegacyAudioDevice);
 
       intent.putExtra(CallActivity.EXTRA_DATA_CHANNEL_ENABLED, dataChannelEnabled);
 

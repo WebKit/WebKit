@@ -14,8 +14,6 @@
 #include <queue>
 
 #include "modules/include/module_common_types.h"
-#include "rtc_base/basictypes.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 class RtcEventLog;
@@ -26,6 +24,7 @@ class BitrateProber {
  public:
   BitrateProber();
   explicit BitrateProber(RtcEventLog* event_log);
+  ~BitrateProber();
 
   void SetEnabled(bool enable);
 

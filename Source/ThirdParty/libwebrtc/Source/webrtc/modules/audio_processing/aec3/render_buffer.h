@@ -61,10 +61,44 @@ class RenderBuffer {
   void SpectralSum(size_t num_spectra,
                    std::array<float, kFftLengthBy2Plus1>* X2) const;
 
+  // Returns the sums of the spectrums for two numbers of FFTs.
+  void SpectralSums(size_t num_spectra_shorter,
+                    size_t num_spectra_longer,
+                    std::array<float, kFftLengthBy2Plus1>* X2_shorter,
+                    std::array<float, kFftLengthBy2Plus1>* X2_longer) const;
+
+  // Gets the recent activity seen in the render signal.
+  bool GetRenderActivity() const { return render_activity_; }
+
+  // Specifies the recent activity seen in the render signal.
+  void SetRenderActivity(bool activity) { render_activity_ = activity; }
+
+  // Returns the headroom between the write and the read positions in the
+  // buffer.
+  int Headroom() const {
+    // The write and read indices are decreased over time.
+    int headroom =
+        fft_buffer_->write < fft_buffer_->read
+            ? fft_buffer_->read - fft_buffer_->write
+            : fft_buffer_->size - fft_buffer_->write + fft_buffer_->read;
+
+    RTC_DCHECK_LE(0, headroom);
+    RTC_DCHECK_GE(fft_buffer_->size, headroom);
+
+    return headroom;
+  }
+
+  // Returns a reference to the spectrum buffer.
+  const VectorBuffer& GetSpectrumBuffer() const { return *spectrum_buffer_; }
+
+  // Returns a reference to the block buffer.
+  const MatrixBuffer& GetBlockBuffer() const { return *block_buffer_; }
+
  private:
   const MatrixBuffer* const block_buffer_;
   const VectorBuffer* const spectrum_buffer_;
   const FftBuffer* const fft_buffer_;
+  bool render_activity_ = false;
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(RenderBuffer);
 };
 

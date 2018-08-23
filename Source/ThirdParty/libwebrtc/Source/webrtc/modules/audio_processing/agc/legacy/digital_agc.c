@@ -412,8 +412,10 @@ int32_t WebRtcAgc_ProcessDigital(DigitalAgc* stt,
     }
     tmp32 = ((uint32_t)cur_level << zeros) & 0x7FFFFFFF;
     frac = (int16_t)(tmp32 >> 19);  // Q12.
-    tmp32 = (stt->gainTable[zeros - 1] - stt->gainTable[zeros]) * frac;
-    gains[k + 1] = stt->gainTable[zeros] + (tmp32 >> 12);
+    // Interpolate between gainTable[zeros] and gainTable[zeros-1].
+    tmp32 = ((stt->gainTable[zeros - 1] - stt->gainTable[zeros]) *
+             (int64_t)frac) >> 12;
+    gains[k + 1] = stt->gainTable[zeros] + tmp32;
 #ifdef WEBRTC_AGC_DEBUG_DUMP
     if (k == 0) {
       fprintf(stt->logFile, "%d\t%d\t%d\t%d\t%d\n", env[0], cur_level,
@@ -465,9 +467,10 @@ int32_t WebRtcAgc_ProcessDigital(DigitalAgc* stt,
 
   // Limit gain to avoid overload distortion
   for (k = 0; k < 10; k++) {
-    // To prevent wrap around
+    // Find a shift of gains[k + 1] such that it can be squared without
+    // overflow, but at least by 10 bits.
     zeros = 10;
-    if (gains[k + 1] > 47453132) {
+    if (gains[k + 1] > 47452159) {
       zeros = 16 - WebRtcSpl_NormW32(gains[k + 1]);
     }
     gain32 = (gains[k + 1] >> zeros) + 1;
@@ -502,18 +505,16 @@ int32_t WebRtcAgc_ProcessDigital(DigitalAgc* stt,
   // iterate over samples
   for (n = 0; n < L; n++) {
     for (i = 0; i < num_bands; ++i) {
-      tmp32 = out[i][n] * ((gain32 + 127) >> 7);
-      out_tmp = tmp32 >> 16;
+      out_tmp = (int64_t)out[i][n] * ((gain32 + 127) >> 7) >> 16;
       if (out_tmp > 4095) {
         out[i][n] = (int16_t)32767;
       } else if (out_tmp < -4096) {
         out[i][n] = (int16_t)-32768;
       } else {
-        tmp32 = out[i][n] * (gain32 >> 4);
-        out[i][n] = (int16_t)(tmp32 >> 16);
+        tmp32 = ((int64_t)out[i][n] * (gain32 >> 4)) >> 16;
+        out[i][n] = (int16_t)tmp32;
       }
     }
-    //
 
     gain32 += delta;
   }
@@ -582,6 +583,7 @@ int16_t WebRtcAgc_ProcessVad(AgcVad* state,      // (i) VAD state
   int16_t buf2[4];
   int16_t HPstate;
   int16_t zeros, dB;
+  int64_t tmp64;
 
   // process in 10 sub frames of 1 ms (to save on memory)
   nrg = 0;
@@ -687,17 +689,17 @@ int16_t WebRtcAgc_ProcessVad(AgcVad* state,      // (i) VAD state
   tmp32 = WebRtcSpl_DivW32W16(tmp32, state->stdLongTerm);
   tmpU16 = (13 << 12);
   tmp32b = WEBRTC_SPL_MUL_16_U16(state->logRatio, tmpU16);
-  tmp32 += tmp32b >> 10;
-
-  state->logRatio = (int16_t)(tmp32 >> 6);
+  tmp64 = tmp32;
+  tmp64 += tmp32b >> 10;
+  tmp64 >>= 6;
 
   // limit
-  if (state->logRatio > 2048) {
-    state->logRatio = 2048;
+  if (tmp64 > 2048) {
+    tmp64 = 2048;
+  } else if (tmp64 < -2048) {
+    tmp64 = -2048;
   }
-  if (state->logRatio < -2048) {
-    state->logRatio = -2048;
-  }
+  state->logRatio = (int16_t)tmp64;
 
   return state->logRatio;  // Q10
 }

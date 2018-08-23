@@ -13,20 +13,20 @@
 #include <memory>
 #include <vector>
 
+#include "absl/memory/memory.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/codecs/g722/audio_encoder_g722.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/numerics/safe_minmax.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/string_to_number.h"
 
 namespace webrtc {
 
-rtc::Optional<AudioEncoderG722Config> AudioEncoderG722::SdpToConfig(
+absl::optional<AudioEncoderG722Config> AudioEncoderG722::SdpToConfig(
     const SdpAudioFormat& format) {
   if (STR_CASE_CMP(format.name.c_str(), "g722") != 0 ||
       format.clockrate_hz != 8000) {
-    return rtc::nullopt;
+    return absl::nullopt;
   }
 
   AudioEncoderG722Config config;
@@ -39,8 +39,8 @@ rtc::Optional<AudioEncoderG722Config> AudioEncoderG722::SdpToConfig(
       config.frame_size_ms = rtc::SafeClamp<int>(whole_packets * 10, 10, 60);
     }
   }
-  return config.IsOk() ? rtc::Optional<AudioEncoderG722Config>(config)
-                       : rtc::nullopt;
+  return config.IsOk() ? absl::optional<AudioEncoderG722Config>(config)
+                       : absl::nullopt;
 }
 
 void AudioEncoderG722::AppendSupportedEncoders(
@@ -59,9 +59,10 @@ AudioCodecInfo AudioEncoderG722::QueryAudioEncoder(
 
 std::unique_ptr<AudioEncoder> AudioEncoderG722::MakeAudioEncoder(
     const AudioEncoderG722Config& config,
-    int payload_type) {
+    int payload_type,
+    absl::optional<AudioCodecPairId> /*codec_pair_id*/) {
   RTC_DCHECK(config.IsOk());
-  return rtc::MakeUnique<AudioEncoderG722Impl>(config, payload_type);
+  return absl::make_unique<AudioEncoderG722Impl>(config, payload_type);
 }
 
 }  // namespace webrtc

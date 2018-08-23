@@ -86,7 +86,8 @@ class CheckNewlineAtTheEndOfProtoFilesTest(unittest.TestCase):
     self._GenerateProtoWithoutNewlineAtTheEnd()
     self.input_api.files = [MockFile(self.proto_file_path)]
     errors = PRESUBMIT.CheckNewlineAtTheEndOfProtoFiles(self.input_api,
-                                                        self.output_api)
+                                                        self.output_api,
+                                                        lambda x: True)
     self.assertEqual(1, len(errors))
     self.assertEqual(
         'File %s must end with exactly one newline.' % self.proto_file_path,
@@ -96,7 +97,8 @@ class CheckNewlineAtTheEndOfProtoFilesTest(unittest.TestCase):
     self._GenerateProtoWithNewlineAtTheEnd()
     self.input_api.files = [MockFile(self.proto_file_path)]
     errors = PRESUBMIT.CheckNewlineAtTheEndOfProtoFiles(self.input_api,
-                                                        self.output_api)
+                                                        self.output_api,
+                                                        lambda x: True)
     self.assertEqual(0, len(errors))
 
   def _GenerateProtoWithNewlineAtTheEnd(self):
@@ -235,7 +237,7 @@ class CheckNoMixingSourcesTest(unittest.TestCase):
     self.assertTrue('bar.c' in str(errors[0]))
 
   def _AssertNumberOfErrorsWithSources(self, number_of_errors, sources):
-    assert 3 == len(sources), 'This function accepts a list of 3 source files'
+    assert len(sources) == 3, 'This function accepts a list of 3 source files'
     self._GenerateBuildFile(textwrap.dedent("""
       rtc_static_library("bar_foo") {
         sources = [

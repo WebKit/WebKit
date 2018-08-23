@@ -18,62 +18,28 @@
 #include <utility>
 #include <vector>
 
-#include "logging/rtc_event_log/rtc_event_log_parser.h"
-#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
-#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "modules/rtp_rtcp/source/rtcp_packet.h"
-#include "rtc_base/function_view.h"
+#include "logging/rtc_event_log/rtc_event_log_parser_new.h"
+#include "modules/audio_coding/neteq/tools/neteq_stats_getter.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_tools/event_log_visualizer/plot_base.h"
+#include "rtc_tools/event_log_visualizer/triage_notifications.h"
 
 namespace webrtc {
-namespace plotting {
-
-struct LoggedRtpPacket {
-  LoggedRtpPacket(uint64_t timestamp, RTPHeader header, size_t total_length)
-      : timestamp(timestamp), header(header), total_length(total_length) {}
-  uint64_t timestamp;
-  // TODO(terelius): This allocates space for 15 CSRCs even if none are used.
-  RTPHeader header;
-  size_t total_length;
-};
-
-struct LoggedRtcpPacket {
-  LoggedRtcpPacket(uint64_t timestamp,
-                   RTCPPacketType rtcp_type,
-                   std::unique_ptr<rtcp::RtcpPacket> rtcp_packet)
-      : timestamp(timestamp), type(rtcp_type), packet(std::move(rtcp_packet)) {}
-  uint64_t timestamp;
-  RTCPPacketType type;
-  std::unique_ptr<rtcp::RtcpPacket> packet;
-};
-
-struct LossBasedBweUpdate {
-  uint64_t timestamp;
-  int32_t new_bitrate;
-  uint8_t fraction_loss;
-  int32_t expected_packets;
-};
-
-struct AudioNetworkAdaptationEvent {
-  uint64_t timestamp;
-  AudioEncoderRuntimeConfig config;
-};
 
 class EventLogAnalyzer {
  public:
-  // The EventLogAnalyzer keeps a reference to the ParsedRtcEventLog for the
-  // duration of its lifetime. The ParsedRtcEventLog must not be destroyed or
+  // The EventLogAnalyzer keeps a reference to the ParsedRtcEventLogNew for the
+  // duration of its lifetime. The ParsedRtcEventLogNew must not be destroyed or
   // modified while the EventLogAnalyzer is being used.
-  explicit EventLogAnalyzer(const ParsedRtcEventLog& log);
+  EventLogAnalyzer(const ParsedRtcEventLogNew& log, bool normalize_time);
 
-  void CreatePacketGraph(PacketDirection desired_direction, Plot* plot);
+  void CreatePacketGraph(PacketDirection direction, Plot* plot);
 
-  void CreateAccumulatedPacketsGraph(PacketDirection desired_direction,
-                                     Plot* plot);
+  void CreateAccumulatedPacketsGraph(PacketDirection direction, Plot* plot);
 
   void CreatePlayoutGraph(Plot* plot);
 
-  void CreateAudioLevelGraph(Plot* plot);
+  void CreateAudioLevelGraph(PacketDirection direction, Plot* plot);
 
   void CreateSequenceNumberGraph(Plot* plot);
 
@@ -84,18 +50,26 @@ class EventLogAnalyzer {
 
   void CreateFractionLossGraph(Plot* plot);
 
-  void CreateTotalBitrateGraph(PacketDirection desired_direction,
-                               Plot* plot,
-                               bool show_detector_state = false);
+  void CreateTotalIncomingBitrateGraph(Plot* plot);
+  void CreateTotalOutgoingBitrateGraph(Plot* plot,
+                                       bool show_detector_state = false,
+                                       bool show_alr_state = false);
 
-  void CreateStreamBitrateGraph(PacketDirection desired_direction, Plot* plot);
+  void CreateStreamBitrateGraph(PacketDirection direction, Plot* plot);
 
   void CreateSendSideBweSimulationGraph(Plot* plot);
   void CreateReceiveSideBweSimulationGraph(Plot* plot);
 
   void CreateNetworkDelayFeedbackGraph(Plot* plot);
   void CreatePacerDelayGraph(Plot* plot);
-  void CreateTimestampGraph(Plot* plot);
+
+  void CreateTimestampGraph(PacketDirection direction, Plot* plot);
+  void CreateSenderAndReceiverReportPlot(
+      PacketDirection direction,
+      rtc::FunctionView<float(const rtcp::ReportBlock&)> fy,
+      std::string title,
+      std::string yaxis_label,
+      Plot* plot);
 
   void CreateAudioEncoderTargetBitrateGraph(Plot* plot);
   void CreateAudioEncoderFrameLengthGraph(Plot* plot);
@@ -103,110 +77,188 @@ class EventLogAnalyzer {
   void CreateAudioEncoderEnableFecGraph(Plot* plot);
   void CreateAudioEncoderEnableDtxGraph(Plot* plot);
   void CreateAudioEncoderNumChannelsGraph(Plot* plot);
-  void CreateAudioJitterBufferGraph(const std::string& replacement_file_name,
-                                    int file_sample_rate_hz,
-                                    Plot* plot);
 
-  // Returns a vector of capture and arrival timestamps for the video frames
-  // of the stream with the most number of frames.
-  std::vector<std::pair<int64_t, int64_t>> GetFrameTimestamps() const;
+  using NetEqStatsGetterMap =
+      std::map<uint32_t, std::unique_ptr<test::NetEqStatsGetter>>;
+  NetEqStatsGetterMap SimulateNetEq(const std::string& replacement_file_name,
+                                    int file_sample_rate_hz) const;
+
+  void CreateAudioJitterBufferGraph(uint32_t ssrc,
+                                    const test::NetEqStatsGetter* stats_getter,
+                                    Plot* plot) const;
+  void CreateNetEqNetworkStatsGraph(
+      const NetEqStatsGetterMap& neteq_stats_getters,
+      rtc::FunctionView<float(const NetEqNetworkStatistics&)> stats_extractor,
+      const std::string& plot_name,
+      Plot* plot) const;
+  void CreateNetEqLifetimeStatsGraph(
+      const NetEqStatsGetterMap& neteq_stats_getters,
+      rtc::FunctionView<float(const NetEqLifetimeStatistics&)> stats_extractor,
+      const std::string& plot_name,
+      Plot* plot) const;
+
+  void CreateIceCandidatePairConfigGraph(Plot* plot);
+  void CreateIceConnectivityCheckGraph(Plot* plot);
+
+  void CreateTriageNotifications();
+  void PrintNotifications(FILE* file);
 
  private:
-  class StreamId {
-   public:
-    StreamId(uint32_t ssrc, webrtc::PacketDirection direction)
-        : ssrc_(ssrc), direction_(direction) {}
-    bool operator<(const StreamId& other) const {
-      return std::tie(ssrc_, direction_) <
-             std::tie(other.ssrc_, other.direction_);
+  bool IsRtxSsrc(PacketDirection direction, uint32_t ssrc) const {
+    if (direction == kIncomingPacket) {
+      return parsed_log_.incoming_rtx_ssrcs().find(ssrc) !=
+             parsed_log_.incoming_rtx_ssrcs().end();
+    } else {
+      return parsed_log_.outgoing_rtx_ssrcs().find(ssrc) !=
+             parsed_log_.outgoing_rtx_ssrcs().end();
     }
-    bool operator==(const StreamId& other) const {
-      return std::tie(ssrc_, direction_) ==
-             std::tie(other.ssrc_, other.direction_);
+  }
+
+  bool IsVideoSsrc(PacketDirection direction, uint32_t ssrc) const {
+    if (direction == kIncomingPacket) {
+      return parsed_log_.incoming_video_ssrcs().find(ssrc) !=
+             parsed_log_.incoming_video_ssrcs().end();
+    } else {
+      return parsed_log_.outgoing_video_ssrcs().find(ssrc) !=
+             parsed_log_.outgoing_video_ssrcs().end();
     }
-    uint32_t GetSsrc() const { return ssrc_; }
-    webrtc::PacketDirection GetDirection() const { return direction_; }
+  }
 
-   private:
-    uint32_t ssrc_;
-    webrtc::PacketDirection direction_;
-  };
+  bool IsAudioSsrc(PacketDirection direction, uint32_t ssrc) const {
+    if (direction == kIncomingPacket) {
+      return parsed_log_.incoming_audio_ssrcs().find(ssrc) !=
+             parsed_log_.incoming_audio_ssrcs().end();
+    } else {
+      return parsed_log_.outgoing_audio_ssrcs().find(ssrc) !=
+             parsed_log_.outgoing_audio_ssrcs().end();
+    }
+  }
 
-  template <typename T>
-  void CreateAccumulatedPacketsTimeSeries(
-      PacketDirection desired_direction,
-      Plot* plot,
-      const std::map<StreamId, std::vector<T>>& packets,
-      const std::string& label_prefix);
+  template <typename NetEqStatsType>
+  void CreateNetEqStatsGraphInternal(
+      const NetEqStatsGetterMap& neteq_stats,
+      rtc::FunctionView<const std::vector<std::pair<int64_t, NetEqStatsType>>*(
+          const test::NetEqStatsGetter*)> data_extractor,
+      rtc::FunctionView<float(const NetEqStatsType&)> stats_extractor,
+      const std::string& plot_name,
+      Plot* plot) const;
 
-  bool IsRtxSsrc(StreamId stream_id) const;
+  template <typename IterableType>
+  void CreateAccumulatedPacketsTimeSeries(Plot* plot,
+                                          const IterableType& packets,
+                                          const std::string& label);
 
-  bool IsVideoSsrc(StreamId stream_id) const;
+  void CreateStreamGapAlerts(PacketDirection direction);
+  void CreateTransmissionGapAlerts(PacketDirection direction);
 
-  bool IsAudioSsrc(StreamId stream_id) const;
+  std::string GetStreamName(PacketDirection direction, uint32_t ssrc) const {
+    char buffer[200];
+    rtc::SimpleStringBuilder name(buffer);
+    if (IsAudioSsrc(direction, ssrc)) {
+      name << "Audio ";
+    } else if (IsVideoSsrc(direction, ssrc)) {
+      name << "Video ";
+    } else {
+      name << "Unknown ";
+    }
+    if (IsRtxSsrc(direction, ssrc)) {
+      name << "RTX ";
+    }
+    if (direction == kIncomingPacket)
+      name << "(In) ";
+    else
+      name << "(Out) ";
+    name << "SSRC " << ssrc;
+    return name.str();
+  }
 
-  std::string GetStreamName(StreamId stream_id) const;
+  int64_t ToCallTimeUs(int64_t timestamp) const;
+  float ToCallTimeSec(int64_t timestamp) const;
 
-  rtc::Optional<uint32_t> EstimateRtpClockFrequency(
-      const std::vector<LoggedRtpPacket>& packets) const;
+  void Alert_RtpLogTimeGap(PacketDirection direction,
+                           float time_seconds,
+                           int64_t duration) {
+    if (direction == kIncomingPacket) {
+      incoming_rtp_recv_time_gaps_.emplace_back(time_seconds, duration);
+    } else {
+      outgoing_rtp_send_time_gaps_.emplace_back(time_seconds, duration);
+    }
+  }
 
-  const ParsedRtcEventLog& parsed_log_;
+  void Alert_RtcpLogTimeGap(PacketDirection direction,
+                            float time_seconds,
+                            int64_t duration) {
+    if (direction == kIncomingPacket) {
+      incoming_rtcp_recv_time_gaps_.emplace_back(time_seconds, duration);
+    } else {
+      outgoing_rtcp_send_time_gaps_.emplace_back(time_seconds, duration);
+    }
+  }
+
+  void Alert_SeqNumJump(PacketDirection direction,
+                        float time_seconds,
+                        uint32_t ssrc) {
+    if (direction == kIncomingPacket) {
+      incoming_seq_num_jumps_.emplace_back(time_seconds, ssrc);
+    } else {
+      outgoing_seq_num_jumps_.emplace_back(time_seconds, ssrc);
+    }
+  }
+
+  void Alert_CaptureTimeJump(PacketDirection direction,
+                             float time_seconds,
+                             uint32_t ssrc) {
+    if (direction == kIncomingPacket) {
+      incoming_capture_time_jumps_.emplace_back(time_seconds, ssrc);
+    } else {
+      outgoing_capture_time_jumps_.emplace_back(time_seconds, ssrc);
+    }
+  }
+
+  void Alert_OutgoingHighLoss(double avg_loss_fraction) {
+    outgoing_high_loss_alerts_.emplace_back(avg_loss_fraction);
+  }
+
+  std::string GetCandidatePairLogDescriptionFromId(uint32_t candidate_pair_id);
+
+  const ParsedRtcEventLogNew& parsed_log_;
 
   // A list of SSRCs we are interested in analysing.
   // If left empty, all SSRCs will be considered relevant.
   std::vector<uint32_t> desired_ssrc_;
 
-  // Tracks what each stream is configured for. Note that a single SSRC can be
-  // in several sets. For example, the SSRC used for sending video over RTX
-  // will appear in both video_ssrcs_ and rtx_ssrcs_. In the unlikely case that
-  // an SSRC is reconfigured to a different media type mid-call, it will also
-  // appear in multiple sets.
-  std::set<StreamId> rtx_ssrcs_;
-  std::set<StreamId> video_ssrcs_;
-  std::set<StreamId> audio_ssrcs_;
-
-  // Maps a stream identifier consisting of ssrc and direction to the parsed
-  // RTP headers in that stream. Header extensions are parsed if the stream
-  // has been configured.
-  std::map<StreamId, std::vector<LoggedRtpPacket>> rtp_packets_;
-
-  std::map<StreamId, std::vector<LoggedRtcpPacket>> rtcp_packets_;
-
-  // Maps an SSRC to the timestamps of parsed audio playout events.
-  std::map<uint32_t, std::vector<uint64_t>> audio_playout_events_;
-
   // Stores the timestamps for all log segments, in the form of associated start
   // and end events.
-  std::vector<std::pair<uint64_t, uint64_t>> log_segments_;
+  std::vector<std::pair<int64_t, int64_t>> log_segments_;
 
-  // A list of all updates from the send-side loss-based bandwidth estimator.
-  std::vector<LossBasedBweUpdate> bwe_loss_updates_;
+  std::vector<IncomingRtpReceiveTimeGap> incoming_rtp_recv_time_gaps_;
+  std::vector<IncomingRtcpReceiveTimeGap> incoming_rtcp_recv_time_gaps_;
+  std::vector<OutgoingRtpSendTimeGap> outgoing_rtp_send_time_gaps_;
+  std::vector<OutgoingRtcpSendTimeGap> outgoing_rtcp_send_time_gaps_;
+  std::vector<IncomingSeqNumJump> incoming_seq_num_jumps_;
+  std::vector<IncomingCaptureTimeJump> incoming_capture_time_jumps_;
+  std::vector<OutgoingSeqNoJump> outgoing_seq_num_jumps_;
+  std::vector<OutgoingCaptureTimeJump> outgoing_capture_time_jumps_;
+  std::vector<OutgoingHighLoss> outgoing_high_loss_alerts_;
 
-  std::vector<AudioNetworkAdaptationEvent> audio_network_adaptation_events_;
-
-  std::vector<ParsedRtcEventLog::BweProbeClusterCreatedEvent>
-      bwe_probe_cluster_created_events_;
-
-  std::vector<ParsedRtcEventLog::BweProbeResultEvent> bwe_probe_result_events_;
-
-  std::vector<ParsedRtcEventLog::BweDelayBasedUpdate> bwe_delay_updates_;
+  std::map<uint32_t, std::string> candidate_pair_desc_by_id_;
 
   // Window and step size used for calculating moving averages, e.g. bitrate.
   // The generated data points will be |step_| microseconds apart.
   // Only events occuring at most |window_duration_| microseconds before the
   // current data point will be part of the average.
-  uint64_t window_duration_;
-  uint64_t step_;
+  int64_t window_duration_;
+  int64_t step_;
 
   // First and last events of the log.
-  uint64_t begin_time_;
-  uint64_t end_time_;
+  int64_t begin_time_;
+  int64_t end_time_;
+  const bool normalize_time_;
 
   // Duration (in seconds) of log file.
   float call_duration_s_;
 };
 
-}  // namespace plotting
 }  // namespace webrtc
 
 #endif  // RTC_TOOLS_EVENT_LOG_VISUALIZER_ANALYZER_H_

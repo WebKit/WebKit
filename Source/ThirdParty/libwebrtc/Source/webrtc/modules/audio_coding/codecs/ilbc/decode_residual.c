@@ -16,19 +16,19 @@
 
 ******************************************************************/
 
-#include "decode_residual.h"
+#include "modules/audio_coding/codecs/ilbc/decode_residual.h"
 
 #include <string.h>
 
-#include "defines.h"
-#include "state_construct.h"
-#include "cb_construct.h"
-#include "index_conv_dec.h"
-#include "do_plc.h"
-#include "constants.h"
-#include "enhancer_interface.h"
-#include "xcorr_coef.h"
-#include "lsf_check.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/state_construct.h"
+#include "modules/audio_coding/codecs/ilbc/cb_construct.h"
+#include "modules/audio_coding/codecs/ilbc/index_conv_dec.h"
+#include "modules/audio_coding/codecs/ilbc/do_plc.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
+#include "modules/audio_coding/codecs/ilbc/enhancer_interface.h"
+#include "modules/audio_coding/codecs/ilbc/xcorr_coef.h"
+#include "modules/audio_coding/codecs/ilbc/lsf_check.h"
 
 /*----------------------------------------------------------------*
  *  frame residual decoder function (subrutine to iLBC_decode)

@@ -23,7 +23,6 @@
 #include "modules/audio_coding/neteq/packet.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/scoped_ref_ptr.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -43,11 +42,14 @@ class DecoderDatabase {
   class DecoderInfo {
    public:
     DecoderInfo(const SdpAudioFormat& audio_format,
+                absl::optional<AudioCodecPairId> codec_pair_id,
                 AudioDecoderFactory* factory,
                 const std::string& codec_name);
     explicit DecoderInfo(const SdpAudioFormat& audio_format,
+                         absl::optional<AudioCodecPairId> codec_pair_id,
                          AudioDecoderFactory* factory = nullptr);
     explicit DecoderInfo(NetEqDecoder ct,
+                         absl::optional<AudioCodecPairId> codec_pair_id,
                          AudioDecoderFactory* factory = nullptr);
     DecoderInfo(const SdpAudioFormat& audio_format,
                 AudioDecoder* ext_dec,
@@ -85,14 +87,10 @@ class DecoderDatabase {
     }
 
     // Returns true if the decoder's format is DTMF.
-    bool IsDtmf() const {
-      return subtype_ == Subtype::kDtmf;
-    }
+    bool IsDtmf() const { return subtype_ == Subtype::kDtmf; }
 
     // Returns true if the decoder's format is RED.
-    bool IsRed() const {
-      return subtype_ == Subtype::kRed;
-    }
+    bool IsRed() const { return subtype_ == Subtype::kRed; }
 
     // Returns true if the decoder's format is named |name|.
     bool IsType(const char* name) const;
@@ -108,6 +106,7 @@ class DecoderDatabase {
     const std::string name_;
 
     const SdpAudioFormat audio_format_;
+    const absl::optional<AudioCodecPairId> codec_pair_id_;
     AudioDecoderFactory* const factory_;
     mutable std::unique_ptr<AudioDecoder> decoder_;
 
@@ -116,17 +115,12 @@ class DecoderDatabase {
 
     // Set iff this is a comfort noise decoder.
     struct CngDecoder {
-      static rtc::Optional<CngDecoder> Create(const SdpAudioFormat& format);
+      static absl::optional<CngDecoder> Create(const SdpAudioFormat& format);
       int sample_rate_hz;
     };
-    const rtc::Optional<CngDecoder> cng_decoder_;
+    const absl::optional<CngDecoder> cng_decoder_;
 
-    enum class Subtype : int8_t {
-      kNormal,
-      kComfortNoise,
-      kDtmf,
-      kRed
-    };
+    enum class Subtype : int8_t { kNormal, kComfortNoise, kDtmf, kRed };
 
     static Subtype SubtypeFromFormat(const SdpAudioFormat& format);
 
@@ -138,7 +132,8 @@ class DecoderDatabase {
   static const uint8_t kRtpPayloadTypeError = 0xFF;
 
   DecoderDatabase(
-      const rtc::scoped_refptr<AudioDecoderFactory>& decoder_factory);
+      const rtc::scoped_refptr<AudioDecoderFactory>& decoder_factory,
+      absl::optional<AudioCodecPairId> codec_pair_id);
 
   virtual ~DecoderDatabase();
 
@@ -242,6 +237,7 @@ class DecoderDatabase {
   int active_cng_decoder_type_;
   mutable std::unique_ptr<ComfortNoiseDecoder> active_cng_decoder_;
   rtc::scoped_refptr<AudioDecoderFactory> decoder_factory_;
+  const absl::optional<AudioCodecPairId> codec_pair_id_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(DecoderDatabase);
 };

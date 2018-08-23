@@ -19,16 +19,16 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_SIMPLE_LSF_DEQUANT_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_SIMPLE_LSF_DEQUANT_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  obtain dequantized lsf coefficients from quantization index
  *---------------------------------------------------------------*/
 
 void WebRtcIlbcfix_SimpleLsfDeQ(
-    int16_t *lsfdeq,  /* (o) dequantized lsf coefficients */
-    int16_t *index,  /* (i) quantization index */
-    int16_t lpc_n  /* (i) number of LPCs */
-                                );
+    int16_t* lsfdeq, /* (o) dequantized lsf coefficients */
+    int16_t* index,  /* (i) quantization index */
+    int16_t lpc_n    /* (i) number of LPCs */
+    );
 
 #endif

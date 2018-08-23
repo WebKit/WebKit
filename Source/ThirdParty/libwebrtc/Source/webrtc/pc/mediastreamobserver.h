@@ -13,7 +13,7 @@
 
 #include "api/mediastreaminterface.h"
 #include "rtc_base/scoped_ref_ptr.h"
-#include "rtc_base/sigslot.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace webrtc {
 
@@ -22,7 +22,7 @@ namespace webrtc {
 class MediaStreamObserver : public ObserverInterface {
  public:
   explicit MediaStreamObserver(MediaStreamInterface* stream);
-  ~MediaStreamObserver();
+  ~MediaStreamObserver() override;
 
   const MediaStreamInterface* stream() const { return stream_; }
 

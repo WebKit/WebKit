@@ -16,7 +16,6 @@
 #include <set>
 
 #include "rtc_base/gtest_prod_util.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 

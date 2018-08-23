@@ -17,12 +17,12 @@
 
 #include <string.h>
 
-#include "bandwidth_estimator.h"
-#include "codec.h"
-#include "entropy_coding.h"
-#include "pitch_estimator.h"
-#include "settings.h"
-#include "structs.h"
+#include "modules/audio_coding/codecs/isac/fix/source/bandwidth_estimator.h"
+#include "modules/audio_coding/codecs/isac/fix/source/codec.h"
+#include "modules/audio_coding/codecs/isac/fix/source/entropy_coding.h"
+#include "modules/audio_coding/codecs/isac/fix/source/pitch_estimator.h"
+#include "modules/audio_coding/codecs/isac/fix/source/settings.h"
+#include "modules/audio_coding/codecs/isac/fix/source/structs.h"
 
 
 

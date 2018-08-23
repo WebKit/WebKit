@@ -15,8 +15,6 @@
 
 #include <memory>
 
-#include "typedefs.h"  // NOLINT(build/include)
-
 namespace webrtc {
 
 // This class implements the histogram of loudness with circular buffers so that

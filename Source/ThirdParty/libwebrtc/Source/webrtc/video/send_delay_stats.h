@@ -15,20 +15,20 @@
 #include <memory>
 #include <set>
 
+#include "call/video_send_stream.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/include/module_common_types.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
 #include "video/stats_counter.h"
-#include "call/video_send_stream.h"
 
 namespace webrtc {
 
 class SendDelayStats : public SendPacketObserver {
  public:
   explicit SendDelayStats(Clock* clock);
-  virtual ~SendDelayStats();
+  ~SendDelayStats() override;
 
   // Adds the configured ssrcs for the rtp streams.
   // Stats will be calculated for these streams.

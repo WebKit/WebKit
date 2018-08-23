@@ -19,15 +19,14 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_POLY_TO_LSF_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_POLY_TO_LSF_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  conversion from lpc coefficients to lsf coefficients
  *---------------------------------------------------------------*/
 
-void WebRtcIlbcfix_Poly2Lsf(
-    int16_t *lsf,   /* (o) lsf coefficients (Q13) */
-    int16_t *a    /* (i) A coefficients (Q12) */
+void WebRtcIlbcfix_Poly2Lsf(int16_t* lsf, /* (o) lsf coefficients (Q13) */
+                            int16_t* a    /* (i) A coefficients (Q12) */
                             );
 
 #endif

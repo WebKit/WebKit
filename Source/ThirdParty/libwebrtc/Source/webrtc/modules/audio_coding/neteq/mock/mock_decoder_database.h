@@ -23,18 +23,16 @@ class MockDecoderDatabase : public DecoderDatabase {
  public:
   explicit MockDecoderDatabase(
       rtc::scoped_refptr<AudioDecoderFactory> factory = nullptr)
-      : DecoderDatabase(factory) {}
+      : DecoderDatabase(factory, absl::nullopt) {}
   virtual ~MockDecoderDatabase() { Die(); }
   MOCK_METHOD0(Die, void());
-  MOCK_CONST_METHOD0(Empty,
-      bool());
-  MOCK_CONST_METHOD0(Size,
-      int());
-  MOCK_METHOD0(Reset,
-      void());
+  MOCK_CONST_METHOD0(Empty, bool());
+  MOCK_CONST_METHOD0(Size, int());
+  MOCK_METHOD0(Reset, void());
   MOCK_METHOD3(RegisterPayload,
-      int(uint8_t rtp_payload_type, NetEqDecoder codec_type,
-          const std::string& name));
+               int(uint8_t rtp_payload_type,
+                   NetEqDecoder codec_type,
+                   const std::string& name));
   MOCK_METHOD2(RegisterPayload,
                int(int rtp_payload_type, const SdpAudioFormat& audio_format));
   MOCK_METHOD4(InsertExternal,
@@ -42,19 +40,15 @@ class MockDecoderDatabase : public DecoderDatabase {
                    NetEqDecoder codec_type,
                    const std::string& codec_name,
                    AudioDecoder* decoder));
-  MOCK_METHOD1(Remove,
-      int(uint8_t rtp_payload_type));
+  MOCK_METHOD1(Remove, int(uint8_t rtp_payload_type));
   MOCK_METHOD0(RemoveAll, void());
   MOCK_CONST_METHOD1(GetDecoderInfo,
-      const DecoderInfo*(uint8_t rtp_payload_type));
+                     const DecoderInfo*(uint8_t rtp_payload_type));
   MOCK_METHOD2(SetActiveDecoder,
-      int(uint8_t rtp_payload_type, bool* new_decoder));
-  MOCK_CONST_METHOD0(GetActiveDecoder,
-      AudioDecoder*());
-  MOCK_METHOD1(SetActiveCngDecoder,
-      int(uint8_t rtp_payload_type));
-  MOCK_CONST_METHOD0(GetActiveCngDecoder,
-      ComfortNoiseDecoder*());
+               int(uint8_t rtp_payload_type, bool* new_decoder));
+  MOCK_CONST_METHOD0(GetActiveDecoder, AudioDecoder*());
+  MOCK_METHOD1(SetActiveCngDecoder, int(uint8_t rtp_payload_type));
+  MOCK_CONST_METHOD0(GetActiveCngDecoder, ComfortNoiseDecoder*());
 };
 
 }  // namespace webrtc

@@ -30,8 +30,7 @@ class VideoCaptureMF : public VideoCaptureImpl {
   virtual int32_t StartCapture(const VideoCaptureCapability& capability);
   virtual int32_t StopCapture();
   virtual bool CaptureStarted();
-  virtual int32_t CaptureSettings(
-      VideoCaptureCapability& settings);  // NOLINT
+  virtual int32_t CaptureSettings(VideoCaptureCapability& settings);  // NOLINT
 
  protected:
   virtual ~VideoCaptureMF();

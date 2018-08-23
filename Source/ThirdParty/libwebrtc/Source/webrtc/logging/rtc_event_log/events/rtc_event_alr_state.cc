@@ -9,10 +9,14 @@
  */
 
 #include "logging/rtc_event_log/events/rtc_event_alr_state.h"
+#include "absl/memory/memory.h"
 
 namespace webrtc {
 
 RtcEventAlrState::RtcEventAlrState(bool in_alr) : in_alr_(in_alr) {}
+
+RtcEventAlrState::RtcEventAlrState(const RtcEventAlrState& other)
+    : RtcEvent(other.timestamp_us_), in_alr_(other.in_alr_) {}
 
 RtcEventAlrState::~RtcEventAlrState() = default;
 
@@ -22,6 +26,10 @@ RtcEvent::Type RtcEventAlrState::GetType() const {
 
 bool RtcEventAlrState::IsConfigEvent() const {
   return false;
+}
+
+std::unique_ptr<RtcEvent> RtcEventAlrState::Copy() const {
+  return absl::WrapUnique<RtcEvent>(new RtcEventAlrState(*this));
 }
 
 }  // namespace webrtc

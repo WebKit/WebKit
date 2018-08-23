@@ -15,13 +15,13 @@
 
 #include "modules/include/module_common_types.h"
 #include "rtc_base/numerics/percentile_filter.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
 class VCMCodecTimer {
  public:
   VCMCodecTimer();
+  ~VCMCodecTimer();
 
   // Add a new decode time to the filter.
   void AddTiming(int64_t new_decode_time_ms, int64_t now_ms);

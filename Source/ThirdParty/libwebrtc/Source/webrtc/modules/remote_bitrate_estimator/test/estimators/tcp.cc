@@ -22,13 +22,9 @@ namespace testing {
 namespace bwe {
 
 TcpBweReceiver::TcpBweReceiver(int flow_id)
-    : BweReceiver(flow_id),
-      last_feedback_ms_(0),
-      latest_owd_ms_(0) {
-}
+    : BweReceiver(flow_id), last_feedback_ms_(0), latest_owd_ms_(0) {}
 
-TcpBweReceiver::~TcpBweReceiver() {
-}
+TcpBweReceiver::~TcpBweReceiver() {}
 
 void TcpBweReceiver::ReceivePacket(int64_t arrival_time_ms,
                                    const MediaPacket& media_packet) {

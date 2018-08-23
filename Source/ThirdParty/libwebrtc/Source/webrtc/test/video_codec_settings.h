@@ -26,82 +26,50 @@ const uint16_t kTestOutlierFrameSizePercent = 250;
 
 static void CodecSettings(VideoCodecType codec_type, VideoCodec* settings) {
   memset(settings, 0, sizeof(VideoCodec));
+
+  settings->plType = kTestPayloadType;
+
+  settings->width = kTestWidth;
+  settings->height = kTestHeight;
+
+  settings->startBitrate = kTestStartBitrateKbps;
+  settings->maxBitrate = 0;
+  settings->minBitrate = kTestMinBitrateKbps;
+  settings->targetBitrate = 0;
+
+  settings->maxFramerate = kTestFrameRate;
+
+  settings->active = true;
+
+  settings->qpMax = 56;  // See webrtcvideoengine.h.
+  settings->numberOfSimulcastStreams = 0;
+
+  settings->timing_frame_thresholds = {
+      kTestTimingFramesDelayMs, kTestOutlierFrameSizePercent,
+  };
+
   switch (codec_type) {
     case kVideoCodecVP8:
-      strncpy(settings->plName, "VP8", 4);
       settings->codecType = kVideoCodecVP8;
-      // 96 to 127 dynamic payload types for video codecs.
-      settings->plType = kTestPayloadType;
-      settings->startBitrate = kTestStartBitrateKbps;
-      settings->minBitrate = kTestMinBitrateKbps;
-      settings->maxBitrate = 0;
-      settings->maxFramerate = kTestFrameRate;
-      settings->width = kTestWidth;
-      settings->height = kTestHeight;
-      settings->numberOfSimulcastStreams = 0;
-      settings->qpMax = 56;
-      settings->timing_frame_thresholds = {
-          kTestTimingFramesDelayMs, kTestOutlierFrameSizePercent,
-      };
       *(settings->VP8()) = VideoEncoder::GetDefaultVp8Settings();
       return;
     case kVideoCodecVP9:
-      strncpy(settings->plName, "VP9", 4);
       settings->codecType = kVideoCodecVP9;
-      // 96 to 127 dynamic payload types for video codecs.
-      settings->plType = kTestPayloadType;
-      settings->startBitrate = 100;
-      settings->minBitrate = kTestMinBitrateKbps;
-      settings->maxBitrate = 0;
-      settings->maxFramerate = kTestFrameRate;
-      settings->width = kTestWidth;
-      settings->height = kTestHeight;
-      settings->numberOfSimulcastStreams = 0;
-      settings->qpMax = 56;
-      settings->timing_frame_thresholds = {
-          kTestTimingFramesDelayMs, kTestOutlierFrameSizePercent,
-      };
       *(settings->VP9()) = VideoEncoder::GetDefaultVp9Settings();
       return;
     case kVideoCodecH264:
-      strncpy(settings->plName, "H264", 5);
       settings->codecType = kVideoCodecH264;
-      // 96 to 127 dynamic payload types for video codecs.
-      settings->plType = kTestPayloadType;
-      settings->startBitrate = kTestStartBitrateKbps;
-      settings->minBitrate = kTestMinBitrateKbps;
-      settings->maxBitrate = 0;
-      settings->maxFramerate = kTestFrameRate;
-      settings->width = kTestWidth;
-      settings->height = kTestHeight;
-      settings->numberOfSimulcastStreams = 0;
-      settings->qpMax = 56;
-      settings->timing_frame_thresholds = {
-          kTestTimingFramesDelayMs, kTestOutlierFrameSizePercent,
-      };
+      // TODO(brandtr): Set |qpMax| here, when the OpenH264 wrapper supports it.
       *(settings->H264()) = VideoEncoder::GetDefaultH264Settings();
       return;
     case kVideoCodecI420:
-      strncpy(settings->plName, "I420", 5);
       settings->codecType = kVideoCodecI420;
-      // 96 to 127 dynamic payload types for video codecs.
-      settings->plType = kTestPayloadType;
       // Bitrate needed for this size and framerate.
       settings->startBitrate =
           3 * kTestWidth * kTestHeight * 8 * kTestFrameRate / 1000 / 2;
       settings->maxBitrate = settings->startBitrate;
-      settings->maxFramerate = kTestFrameRate;
-      settings->width = kTestWidth;
-      settings->height = kTestHeight;
-      settings->minBitrate = kTestMinBitrateKbps;
-      settings->numberOfSimulcastStreams = 0;
       return;
-    case kVideoCodecRED:
-    case kVideoCodecULPFEC:
-    case kVideoCodecFlexfec:
-    case kVideoCodecStereo:
-    case kVideoCodecGeneric:
-    case kVideoCodecUnknown:
+    default:
       RTC_NOTREACHED();
       return;
   }

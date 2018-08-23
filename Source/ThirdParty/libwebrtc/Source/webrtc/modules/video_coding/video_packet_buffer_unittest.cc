@@ -54,14 +54,16 @@ class TestPacketBuffer : public ::testing::Test,
   enum IsFirst { kFirst, kNotFirst };
   enum IsLast { kLast, kNotLast };
 
-  bool Insert(uint16_t seq_num,           // packet sequence number
-              IsKeyFrame keyframe,        // is keyframe
-              IsFirst first,              // is first packet of frame
-              IsLast last,                // is last packet of frame
-              int data_size = 0,          // size of data
-              uint8_t* data = nullptr) {  // data pointer
+  bool Insert(uint16_t seq_num,             // packet sequence number
+              IsKeyFrame keyframe,          // is keyframe
+              IsFirst first,                // is first packet of frame
+              IsLast last,                  // is last packet of frame
+              int data_size = 0,            // size of data
+              uint8_t* data = nullptr,      // data pointer
+              uint32_t timestamp = 123u) {  // rtp timestamp
     VCMPacket packet;
     packet.codec = kVideoCodecGeneric;
+    packet.timestamp = timestamp;
     packet.seqNum = seq_num;
     packet.frameType =
         keyframe == kKeyFrame ? kVideoFrameKey : kVideoFrameDelta;
@@ -193,6 +195,64 @@ TEST_F(TestPacketBuffer, FrameSize) {
 
   ASSERT_EQ(1UL, frames_from_callback_.size());
   EXPECT_EQ(20UL, frames_from_callback_.begin()->second->size());
+}
+
+TEST_F(TestPacketBuffer, CountsUniqueFrames) {
+  const uint16_t seq_num = Rand();
+
+  ASSERT_EQ(0, packet_buffer_->GetUniqueFramesSeen());
+
+  EXPECT_TRUE(Insert(seq_num, kKeyFrame, kFirst, kNotLast, 0, nullptr, 100));
+  ASSERT_EQ(1, packet_buffer_->GetUniqueFramesSeen());
+  // Still the same frame.
+  EXPECT_TRUE(
+      Insert(seq_num + 1, kKeyFrame, kNotFirst, kLast, 0, nullptr, 100));
+  ASSERT_EQ(1, packet_buffer_->GetUniqueFramesSeen());
+
+  // Second frame.
+  EXPECT_TRUE(
+      Insert(seq_num + 2, kKeyFrame, kFirst, kNotLast, 0, nullptr, 200));
+  ASSERT_EQ(2, packet_buffer_->GetUniqueFramesSeen());
+  EXPECT_TRUE(
+      Insert(seq_num + 3, kKeyFrame, kNotFirst, kLast, 0, nullptr, 200));
+  ASSERT_EQ(2, packet_buffer_->GetUniqueFramesSeen());
+
+  // Old packet.
+  EXPECT_TRUE(
+      Insert(seq_num + 1, kKeyFrame, kNotFirst, kLast, 0, nullptr, 100));
+  ASSERT_EQ(2, packet_buffer_->GetUniqueFramesSeen());
+
+  // Missing middle packet.
+  EXPECT_TRUE(
+      Insert(seq_num + 4, kKeyFrame, kFirst, kNotLast, 0, nullptr, 300));
+  EXPECT_TRUE(
+      Insert(seq_num + 6, kKeyFrame, kNotFirst, kLast, 0, nullptr, 300));
+  ASSERT_EQ(3, packet_buffer_->GetUniqueFramesSeen());
+}
+
+TEST_F(TestPacketBuffer, HasHistoryOfUniqueFrames) {
+  const int kNumFrames = 1500;
+  const int kRequiredHistoryLength = 1000;
+  const uint16_t seq_num = Rand();
+  const uint32_t timestamp = 0xFFFFFFF0;  // Large enough to cause wrap-around.
+
+  for (int i = 0; i < kNumFrames; ++i) {
+    EXPECT_TRUE(Insert(seq_num + i, kKeyFrame, kFirst, kNotLast, 0, nullptr,
+                       timestamp + 10 * i));
+  }
+  ASSERT_EQ(kNumFrames, packet_buffer_->GetUniqueFramesSeen());
+
+  // Old packets within history should not affect number of seen unique frames.
+  for (int i = kNumFrames - kRequiredHistoryLength; i < kNumFrames; ++i) {
+    EXPECT_TRUE(Insert(seq_num + i, kKeyFrame, kFirst, kNotLast, 0, nullptr,
+                       timestamp + 10 * i));
+  }
+  ASSERT_EQ(kNumFrames, packet_buffer_->GetUniqueFramesSeen());
+
+  // Very old packets should be treated as unique.
+  EXPECT_TRUE(
+      Insert(seq_num, kKeyFrame, kFirst, kNotLast, 0, nullptr, timestamp));
+  ASSERT_EQ(kNumFrames + 1, packet_buffer_->GetUniqueFramesSeen());
 }
 
 TEST_F(TestPacketBuffer, ExpandBuffer) {
@@ -448,21 +508,19 @@ class TestPacketBufferH264 : public TestPacketBuffer {
                   uint8_t* data = nullptr) {  // data pointer
     VCMPacket packet;
     packet.codec = kVideoCodecH264;
+    auto& h264_header =
+        packet.video_header.video_type_header.emplace<RTPVideoHeaderH264>();
     packet.seqNum = seq_num;
     packet.timestamp = timestamp;
     if (keyframe == kKeyFrame) {
       if (sps_pps_idr_is_keyframe_) {
-        packet.video_header.codecHeader.H264.nalus[0].type =
-            H264::NaluType::kSps;
-        packet.video_header.codecHeader.H264.nalus[1].type =
-            H264::NaluType::kPps;
-        packet.video_header.codecHeader.H264.nalus[2].type =
-            H264::NaluType::kIdr;
-        packet.video_header.codecHeader.H264.nalus_length = 3;
+        h264_header.nalus[0].type = H264::NaluType::kSps;
+        h264_header.nalus[1].type = H264::NaluType::kPps;
+        h264_header.nalus[2].type = H264::NaluType::kIdr;
+        h264_header.nalus_length = 3;
       } else {
-        packet.video_header.codecHeader.H264.nalus[0].type =
-            H264::NaluType::kIdr;
-        packet.video_header.codecHeader.H264.nalus_length = 1;
+        h264_header.nalus[0].type = H264::NaluType::kIdr;
+        h264_header.nalus_length = 1;
       }
     }
     packet.is_first_packet_in_frame = first == kFirst;
@@ -536,12 +594,14 @@ TEST_P(TestPacketBufferH264Parameterized, GetBitstreamBufferPadding) {
       new uint8_t[sizeof(data_data) + EncodedImage::kBufferPaddingBytesH264]);
 
   VCMPacket packet;
-  packet.video_header.codecHeader.H264.nalus_length = 1;
-  packet.video_header.codecHeader.H264.nalus[0].type = H264::NaluType::kIdr;
+  auto& h264_header =
+      packet.video_header.video_type_header.emplace<RTPVideoHeaderH264>();
+  h264_header.nalus_length = 1;
+  h264_header.nalus[0].type = H264::NaluType::kIdr;
+  h264_header.packetization_type = kH264SingleNalu;
   packet.seqNum = seq_num;
   packet.codec = kVideoCodecH264;
   packet.insertStartCode = true;
-  packet.video_header.codecHeader.H264.packetization_type = kH264SingleNalu;
   packet.dataPtr = data;
   packet.sizeBytes = sizeof(data_data);
   packet.is_first_packet_in_frame = true;
@@ -651,8 +711,8 @@ TEST_F(TestPacketBuffer, ContinuousSeqNumDoubleMarkerBit) {
 }
 
 TEST_F(TestPacketBuffer, PacketTimestamps) {
-  rtc::Optional<int64_t> packet_ms;
-  rtc::Optional<int64_t> packet_keyframe_ms;
+  absl::optional<int64_t> packet_ms;
+  absl::optional<int64_t> packet_keyframe_ms;
 
   packet_ms = packet_buffer_->LastReceivedPacketMs();
   packet_keyframe_ms = packet_buffer_->LastReceivedKeyframePacketMs();
@@ -683,6 +743,55 @@ TEST_F(TestPacketBuffer, PacketTimestamps) {
   packet_keyframe_ms = packet_buffer_->LastReceivedKeyframePacketMs();
   EXPECT_FALSE(packet_ms);
   EXPECT_FALSE(packet_keyframe_ms);
+}
+
+TEST_F(TestPacketBuffer, IncomingCodecChange) {
+  VCMPacket packet;
+  packet.is_first_packet_in_frame = true;
+  packet.markerBit = true;
+  packet.sizeBytes = 0;
+  packet.dataPtr = nullptr;
+
+  packet.codec = kVideoCodecVP8;
+  packet.timestamp = 1;
+  packet.seqNum = 1;
+  packet.frameType = kVideoFrameKey;
+  EXPECT_TRUE(packet_buffer_->InsertPacket(&packet));
+
+  packet.codec = kVideoCodecH264;
+  auto& h264_header =
+      packet.video_header.video_type_header.emplace<RTPVideoHeaderH264>();
+  h264_header.nalus_length = 1;
+  packet.timestamp = 3;
+  packet.seqNum = 3;
+  EXPECT_TRUE(packet_buffer_->InsertPacket(&packet));
+
+  packet.codec = kVideoCodecVP8;
+  packet.timestamp = 2;
+  packet.seqNum = 2;
+  packet.frameType = kVideoFrameDelta;
+
+  EXPECT_TRUE(packet_buffer_->InsertPacket(&packet));
+
+  EXPECT_EQ(3UL, frames_from_callback_.size());
+}
+
+TEST_F(TestPacketBuffer, TooManyNalusInPacket) {
+  VCMPacket packet;
+  packet.codec = kVideoCodecH264;
+  packet.timestamp = 1;
+  packet.seqNum = 1;
+  packet.frameType = kVideoFrameKey;
+  packet.is_first_packet_in_frame = true;
+  packet.markerBit = true;
+  auto& h264_header =
+      packet.video_header.video_type_header.emplace<RTPVideoHeaderH264>();
+  h264_header.nalus_length = kMaxNalusPerPacket;
+  packet.sizeBytes = 0;
+  packet.dataPtr = nullptr;
+  EXPECT_TRUE(packet_buffer_->InsertPacket(&packet));
+
+  EXPECT_EQ(0UL, frames_from_callback_.size());
 }
 
 TEST_P(TestPacketBufferH264Parameterized, OneFrameFillBuffer) {
@@ -772,9 +881,10 @@ class TestPacketBufferH264IdrIsKeyframe
 };
 
 TEST_F(TestPacketBufferH264IdrIsKeyframe, IdrIsKeyframe) {
-  packet_.video_header.codecHeader.H264.nalus[0].type = H264::NaluType::kIdr;
-  packet_.video_header.codecHeader.H264.nalus_length = 1;
-
+  auto& h264_header =
+      packet_.video_header.video_type_header.emplace<RTPVideoHeaderH264>();
+  h264_header.nalus[0].type = H264::NaluType::kIdr;
+  h264_header.nalus_length = 1;
   packet_buffer_->InsertPacket(&packet_);
 
   ASSERT_EQ(1u, frames_from_callback_.size());
@@ -782,10 +892,12 @@ TEST_F(TestPacketBufferH264IdrIsKeyframe, IdrIsKeyframe) {
 }
 
 TEST_F(TestPacketBufferH264IdrIsKeyframe, SpsPpsIdrIsKeyframe) {
-  packet_.video_header.codecHeader.H264.nalus[0].type = H264::NaluType::kSps;
-  packet_.video_header.codecHeader.H264.nalus[1].type = H264::NaluType::kPps;
-  packet_.video_header.codecHeader.H264.nalus[2].type = H264::NaluType::kIdr;
-  packet_.video_header.codecHeader.H264.nalus_length = 3;
+  auto& h264_header =
+      packet_.video_header.video_type_header.emplace<RTPVideoHeaderH264>();
+  h264_header.nalus[0].type = H264::NaluType::kSps;
+  h264_header.nalus[1].type = H264::NaluType::kPps;
+  h264_header.nalus[2].type = H264::NaluType::kIdr;
+  h264_header.nalus_length = 3;
 
   packet_buffer_->InsertPacket(&packet_);
 
@@ -801,8 +913,10 @@ class TestPacketBufferH264SpsPpsIdrIsKeyframe
 };
 
 TEST_F(TestPacketBufferH264SpsPpsIdrIsKeyframe, IdrIsNotKeyframe) {
-  packet_.video_header.codecHeader.H264.nalus[0].type = H264::NaluType::kIdr;
-  packet_.video_header.codecHeader.H264.nalus_length = 1;
+  auto& h264_header =
+      packet_.video_header.video_type_header.emplace<RTPVideoHeaderH264>();
+  h264_header.nalus[0].type = H264::NaluType::kIdr;
+  h264_header.nalus_length = 1;
 
   packet_buffer_->InsertPacket(&packet_);
 
@@ -811,9 +925,11 @@ TEST_F(TestPacketBufferH264SpsPpsIdrIsKeyframe, IdrIsNotKeyframe) {
 }
 
 TEST_F(TestPacketBufferH264SpsPpsIdrIsKeyframe, SpsPpsIsNotKeyframe) {
-  packet_.video_header.codecHeader.H264.nalus[0].type = H264::NaluType::kSps;
-  packet_.video_header.codecHeader.H264.nalus[1].type = H264::NaluType::kPps;
-  packet_.video_header.codecHeader.H264.nalus_length = 2;
+  auto& h264_header =
+      packet_.video_header.video_type_header.emplace<RTPVideoHeaderH264>();
+  h264_header.nalus[0].type = H264::NaluType::kSps;
+  h264_header.nalus[1].type = H264::NaluType::kPps;
+  h264_header.nalus_length = 2;
 
   packet_buffer_->InsertPacket(&packet_);
 
@@ -822,10 +938,12 @@ TEST_F(TestPacketBufferH264SpsPpsIdrIsKeyframe, SpsPpsIsNotKeyframe) {
 }
 
 TEST_F(TestPacketBufferH264SpsPpsIdrIsKeyframe, SpsPpsIdrIsKeyframe) {
-  packet_.video_header.codecHeader.H264.nalus[0].type = H264::NaluType::kSps;
-  packet_.video_header.codecHeader.H264.nalus[1].type = H264::NaluType::kPps;
-  packet_.video_header.codecHeader.H264.nalus[2].type = H264::NaluType::kIdr;
-  packet_.video_header.codecHeader.H264.nalus_length = 3;
+  auto& h264_header =
+      packet_.video_header.video_type_header.emplace<RTPVideoHeaderH264>();
+  h264_header.nalus[0].type = H264::NaluType::kSps;
+  h264_header.nalus[1].type = H264::NaluType::kPps;
+  h264_header.nalus[2].type = H264::NaluType::kIdr;
+  h264_header.nalus_length = 3;
 
   packet_buffer_->InsertPacket(&packet_);
 

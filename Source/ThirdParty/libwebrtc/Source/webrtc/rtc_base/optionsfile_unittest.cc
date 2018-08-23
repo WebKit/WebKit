@@ -26,16 +26,18 @@ static const std::string kOptionWithNewline = "foo\nbar";
 static const std::string kValueWithEquals = "baz=quux";
 static const std::string kValueWithNewline = "baz\nquux";
 static const std::string kEmptyString = "";
-static const char kOptionWithUtf8[] = {'O', 'p', 't', '\302', '\256', 'i', 'o',
-    'n', '\342', '\204', '\242', '\0'};  // Opt(R)io(TM).
-static const char kValueWithUtf8[] = {'V', 'a', 'l', '\302', '\256', 'v', 'e',
-    '\342', '\204', '\242', '\0'};  // Val(R)ue(TM).
+static const char kOptionWithUtf8[] = {'O',    'p', 't', '\302', '\256',
+                                       'i',    'o', 'n', '\342', '\204',
+                                       '\242', '\0'};  // Opt(R)io(TM).
+static const char kValueWithUtf8[] = {
+    'V', 'a',    'l',    '\302', '\256', 'v',
+    'e', '\342', '\204', '\242', '\0'};  // Val(R)ue(TM).
 static int kTestInt1 = 12345;
 static int kTestInt2 = 67890;
 static int kNegInt = -634;
 static int kZero = 0;
 
-#if defined (WEBRTC_ANDROID)
+#if defined(WEBRTC_ANDROID)
 // Fails on Android: https://bugs.chromium.org/p/webrtc/issues/detail?id=4364.
 #define MAYBE_OptionsFileTest DISABLED_OptionsFileTest
 #else
@@ -50,14 +52,10 @@ class MAYBE_OptionsFileTest : public testing::Test {
     OpenStore();
   }
 
-  ~MAYBE_OptionsFileTest() override {
-    webrtc::test::RemoveFile(test_file_);
-  }
+  ~MAYBE_OptionsFileTest() override { webrtc::test::RemoveFile(test_file_); }
 
  protected:
-  void OpenStore() {
-    store_.reset(new OptionsFile(test_file_));
-  }
+  void OpenStore() { store_.reset(new OptionsFile(test_file_)); }
 
   std::unique_ptr<OptionsFile> store_;
 

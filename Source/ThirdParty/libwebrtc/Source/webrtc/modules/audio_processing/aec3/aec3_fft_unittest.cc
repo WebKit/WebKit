@@ -199,6 +199,7 @@ TEST(Aec3Fft, PaddedFft) {
     std::for_each(x_ref.begin(), x_ref.end(), [](float& a) { a *= 64.f; });
 
     fft.PaddedFft(x_in, x_old, &X);
+    std::copy(x_in.begin(), x_in.end(), x_old.begin());
     fft.Ifft(X, &x_out);
 
     for (size_t j = 0; j < x_out.size(); ++j) {

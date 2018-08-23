@@ -11,15 +11,15 @@
 #include <memory>
 #include <utility>
 
+#include "absl/memory/memory.h"
 #include "modules/desktop_capture/cropped_desktop_frame.h"
 #include "modules/desktop_capture/desktop_frame.h"
-#include "rtc_base/ptr_util.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
 std::unique_ptr<DesktopFrame> CreateTestFrame() {
-  return rtc::MakeUnique<BasicDesktopFrame>(DesktopSize(10, 20));
+  return absl::make_unique<BasicDesktopFrame>(DesktopSize(10, 20));
 }
 
 TEST(CroppedDesktopFrameTest, DoNotCreateWrapperIfSizeIsNotChanged) {
@@ -32,15 +32,16 @@ TEST(CroppedDesktopFrameTest, DoNotCreateWrapperIfSizeIsNotChanged) {
 }
 
 TEST(CroppedDesktopFrameTest, ReturnNullptrIfSizeIsNotSufficient) {
-  ASSERT_EQ(nullptr, CreateCroppedDesktopFrame(
-      CreateTestFrame(), DesktopRect::MakeWH(11, 10)));
+  ASSERT_EQ(nullptr, CreateCroppedDesktopFrame(CreateTestFrame(),
+                                               DesktopRect::MakeWH(11, 10)));
 }
 
 TEST(CroppedDesktopFrameTest, ReturnNullIfCropRegionIsOutOfBounds) {
   std::unique_ptr<DesktopFrame> frame = CreateTestFrame();
   frame->set_top_left(DesktopVector(100, 200));
-  ASSERT_EQ(nullptr, CreateCroppedDesktopFrame(std::move(frame),
-      DesktopRect::MakeLTRB(101, 203, 109, 218)));
+  ASSERT_EQ(nullptr,
+            CreateCroppedDesktopFrame(
+                std::move(frame), DesktopRect::MakeLTRB(101, 203, 109, 218)));
 }
 
 TEST(CroppedDesktopFrameTest, CropASubArea) {
@@ -56,7 +57,7 @@ TEST(CroppedDesktopFrameTest, SetTopLeft) {
   std::unique_ptr<DesktopFrame> frame = CreateTestFrame();
   frame->set_top_left(DesktopVector(100, 200));
   frame = CreateCroppedDesktopFrame(std::move(frame),
-      DesktopRect::MakeLTRB(1, 3, 9, 18));
+                                    DesktopRect::MakeLTRB(1, 3, 9, 18));
   ASSERT_EQ(frame->size().width(), 8);
   ASSERT_EQ(frame->size().height(), 15);
   ASSERT_EQ(frame->top_left().x(), 101);

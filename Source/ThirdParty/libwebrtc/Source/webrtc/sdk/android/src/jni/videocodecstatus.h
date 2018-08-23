@@ -14,9 +14,13 @@
 #include <jni.h>
 #include <stdint.h>
 
+#include "sdk/android/native_api/jni/scoped_java_ref.h"
+
 namespace webrtc {
 namespace jni {
-int32_t JavaToNativeVideoCodecStatus(JNIEnv* env, jobject j_video_codec_status);
+int32_t JavaToNativeVideoCodecStatus(
+    JNIEnv* env,
+    const JavaRef<jobject>& j_video_codec_status);
 }  // namespace jni
 }  // namespace webrtc
 

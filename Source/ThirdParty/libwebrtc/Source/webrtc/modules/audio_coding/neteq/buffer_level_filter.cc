@@ -31,7 +31,8 @@ void BufferLevelFilter::Update(size_t buffer_size_packets,
   //                            (1 - |level_factor_|) * |buffer_size_packets|
   // |level_factor_| and |filtered_current_level_| are in Q8.
   // |buffer_size_packets| is in Q0.
-  filtered_current_level_ = ((level_factor_ * filtered_current_level_) >> 8) +
+  filtered_current_level_ =
+      ((level_factor_ * filtered_current_level_) >> 8) +
       ((256 - level_factor_) * static_cast<int>(buffer_size_packets));
 
   // Account for time-scale operations (accelerate and pre-emptive expand).

@@ -19,15 +19,17 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_ABS_QUANT_LOOP_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_ABS_QUANT_LOOP_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  predictive noise shaping encoding of scaled start state
  *  (subrutine for WebRtcIlbcfix_StateSearch)
  *---------------------------------------------------------------*/
 
-void WebRtcIlbcfix_AbsQuantLoop(int16_t *syntOutIN, int16_t *in_weightedIN,
-                                int16_t *weightDenumIN, size_t *quantLenIN,
-                                int16_t *idxVecIN);
+void WebRtcIlbcfix_AbsQuantLoop(int16_t* syntOutIN,
+                                int16_t* in_weightedIN,
+                                int16_t* weightDenumIN,
+                                size_t* quantLenIN,
+                                int16_t* idxVecIN);
 
 #endif

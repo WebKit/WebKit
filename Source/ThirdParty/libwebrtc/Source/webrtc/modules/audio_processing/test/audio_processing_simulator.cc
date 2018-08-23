@@ -11,23 +11,325 @@
 #include "modules/audio_processing/test/audio_processing_simulator.h"
 
 #include <algorithm>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "absl/memory/memory.h"
+#include "api/audio/echo_canceller3_factory.h"
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_processing/aec_dump/aec_dump_factory.h"
 #include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/test/fake_recording_device.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/json.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/stringutils.h"
 
 namespace webrtc {
 namespace test {
 namespace {
+
+void ReadParam(const Json::Value& root, std::string param_name, bool* param) {
+  RTC_CHECK(param);
+  bool v;
+  if (rtc::GetBoolFromJsonObject(root, param_name, &v)) {
+    *param = v;
+    std::cout << param_name << ":" << (*param ? "true" : "false") << std::endl;
+  }
+}
+
+void ReadParam(const Json::Value& root, std::string param_name, size_t* param) {
+  RTC_CHECK(param);
+  int v;
+  if (rtc::GetIntFromJsonObject(root, param_name, &v)) {
+    *param = v;
+    std::cout << param_name << ":" << *param << std::endl;
+  }
+}
+
+void ReadParam(const Json::Value& root, std::string param_name, int* param) {
+  RTC_CHECK(param);
+  int v;
+  if (rtc::GetIntFromJsonObject(root, param_name, &v)) {
+    *param = v;
+    std::cout << param_name << ":" << *param << std::endl;
+  }
+}
+
+void ReadParam(const Json::Value& root, std::string param_name, float* param) {
+  RTC_CHECK(param);
+  double v;
+  if (rtc::GetDoubleFromJsonObject(root, param_name, &v)) {
+    *param = static_cast<float>(v);
+    std::cout << param_name << ":" << *param << std::endl;
+  }
+}
+
+void ReadParam(const Json::Value& root,
+               std::string param_name,
+               EchoCanceller3Config::Filter::MainConfiguration* param) {
+  RTC_CHECK(param);
+  Json::Value json_array;
+  if (rtc::GetValueFromJsonObject(root, param_name, &json_array)) {
+    std::vector<double> v;
+    rtc::JsonArrayToDoubleVector(json_array, &v);
+    if (v.size() != 5) {
+      std::cout << "Incorrect array size for " << param_name << std::endl;
+      RTC_CHECK(false);
+    }
+    param->length_blocks = static_cast<size_t>(v[0]);
+    param->leakage_converged = static_cast<float>(v[1]);
+    param->leakage_diverged = static_cast<float>(v[2]);
+    param->error_floor = static_cast<float>(v[3]);
+    param->noise_gate = static_cast<float>(v[4]);
+
+    std::cout << param_name << ":"
+              << "[" << param->length_blocks << "," << param->leakage_converged
+              << "," << param->leakage_diverged << "," << param->error_floor
+              << "," << param->noise_gate << "]" << std::endl;
+  }
+}
+
+void ReadParam(const Json::Value& root,
+               std::string param_name,
+               EchoCanceller3Config::Filter::ShadowConfiguration* param) {
+  RTC_CHECK(param);
+  Json::Value json_array;
+  if (rtc::GetValueFromJsonObject(root, param_name, &json_array)) {
+    std::vector<double> v;
+    rtc::JsonArrayToDoubleVector(json_array, &v);
+    if (v.size() != 3) {
+      std::cout << "Incorrect array size for " << param_name << std::endl;
+      RTC_CHECK(false);
+    }
+    param->length_blocks = static_cast<size_t>(v[0]);
+    param->rate = static_cast<float>(v[1]);
+    param->noise_gate = static_cast<float>(v[2]);
+    std::cout << param_name << ":"
+              << "[" << param->length_blocks << "," << param->rate << ","
+              << param->noise_gate << "]" << std::endl;
+  }
+}
+
+void ReadParam(const Json::Value& root,
+               std::string param_name,
+               EchoCanceller3Config::GainUpdates::GainChanges* param) {
+  RTC_CHECK(param);
+  Json::Value json_array;
+  if (rtc::GetValueFromJsonObject(root, param_name, &json_array)) {
+    std::vector<double> v;
+    rtc::JsonArrayToDoubleVector(json_array, &v);
+    if (v.size() != 6) {
+      std::cout << "Incorrect array size for " << param_name << std::endl;
+      RTC_CHECK(false);
+    }
+    param->max_inc = static_cast<float>(v[0]);
+    param->max_dec = static_cast<float>(v[1]);
+    param->rate_inc = static_cast<float>(v[2]);
+    param->rate_dec = static_cast<float>(v[3]);
+    param->min_inc = static_cast<float>(v[4]);
+    param->min_dec = static_cast<float>(v[5]);
+
+    std::cout << param_name << ":"
+              << "[" << param->max_inc << "," << param->max_dec << ","
+              << param->rate_inc << "," << param->rate_dec << ","
+              << param->min_inc << "," << param->min_dec << "]" << std::endl;
+  }
+}
+
+void ReadParam(const Json::Value& root,
+               std::string param_name,
+               EchoCanceller3Config::Suppressor::MaskingThresholds* param) {
+  RTC_CHECK(param);
+  Json::Value json_array;
+  if (rtc::GetValueFromJsonObject(root, param_name, &json_array)) {
+    std::vector<double> v;
+    rtc::JsonArrayToDoubleVector(json_array, &v);
+    if (v.size() != 3) {
+      std::cout << "Incorrect array size for " << param_name << std::endl;
+      RTC_CHECK(false);
+    }
+    param->enr_transparent = static_cast<float>(v[0]);
+    param->enr_suppress = static_cast<float>(v[1]);
+    param->emr_transparent = static_cast<float>(v[2]);
+
+    std::cout << param_name << ":"
+              << "[" << param->enr_transparent << "," << param->enr_suppress
+              << "," << param->emr_transparent << "]" << std::endl;
+  }
+}
+
+EchoCanceller3Config ParseAec3Parameters(const std::string& filename) {
+  EchoCanceller3Config cfg;
+  Json::Value root;
+  std::string s;
+  std::string json_string;
+  std::ifstream f(filename.c_str());
+
+  if (f.fail()) {
+    std::cout << "Failed to open the file " << filename << std::endl;
+    RTC_CHECK(false);
+  }
+
+  while (std::getline(f, s)) {
+    json_string += s;
+  }
+  bool success = Json::Reader().parse(json_string, root);
+  if (!success) {
+    std::cout << "Incorrect JSON format:" << std::endl;
+    std::cout << json_string << std::endl;
+    RTC_CHECK(false);
+  }
+
+  std::cout << "AEC3 Parameters from JSON input:" << std::endl;
+  Json::Value section;
+  if (rtc::GetValueFromJsonObject(root, "delay", &section)) {
+    ReadParam(section, "default_delay", &cfg.delay.default_delay);
+    ReadParam(section, "down_sampling_factor", &cfg.delay.down_sampling_factor);
+    ReadParam(section, "num_filters", &cfg.delay.num_filters);
+    ReadParam(section, "api_call_jitter_blocks",
+              &cfg.delay.api_call_jitter_blocks);
+    ReadParam(section, "min_echo_path_delay_blocks",
+              &cfg.delay.min_echo_path_delay_blocks);
+    ReadParam(section, "delay_headroom_blocks",
+              &cfg.delay.delay_headroom_blocks);
+    ReadParam(section, "hysteresis_limit_1_blocks",
+              &cfg.delay.hysteresis_limit_1_blocks);
+    ReadParam(section, "hysteresis_limit_2_blocks",
+              &cfg.delay.hysteresis_limit_2_blocks);
+    ReadParam(section, "skew_hysteresis_blocks",
+              &cfg.delay.skew_hysteresis_blocks);
+  }
+
+  if (rtc::GetValueFromJsonObject(root, "filter", &section)) {
+    ReadParam(section, "main", &cfg.filter.main);
+    ReadParam(section, "shadow", &cfg.filter.shadow);
+    ReadParam(section, "main_initial", &cfg.filter.main_initial);
+    ReadParam(section, "shadow_initial", &cfg.filter.shadow_initial);
+  }
+
+  if (rtc::GetValueFromJsonObject(root, "erle", &section)) {
+    ReadParam(section, "min", &cfg.erle.min);
+    ReadParam(section, "max_l", &cfg.erle.max_l);
+    ReadParam(section, "max_h", &cfg.erle.max_h);
+  }
+
+  if (rtc::GetValueFromJsonObject(root, "ep_strength", &section)) {
+    ReadParam(section, "lf", &cfg.ep_strength.lf);
+    ReadParam(section, "mf", &cfg.ep_strength.mf);
+    ReadParam(section, "hf", &cfg.ep_strength.hf);
+    ReadParam(section, "default_len", &cfg.ep_strength.default_len);
+    ReadParam(section, "reverb_based_on_render",
+              &cfg.ep_strength.reverb_based_on_render);
+    ReadParam(section, "echo_can_saturate", &cfg.ep_strength.echo_can_saturate);
+    ReadParam(section, "bounded_erl", &cfg.ep_strength.bounded_erl);
+  }
+
+  if (rtc::GetValueFromJsonObject(root, "gain_mask", &section)) {
+    ReadParam(section, "m1", &cfg.gain_mask.m1);
+    ReadParam(section, "m2", &cfg.gain_mask.m2);
+    ReadParam(section, "m3", &cfg.gain_mask.m3);
+    ReadParam(section, "m5", &cfg.gain_mask.m5);
+    ReadParam(section, "m6", &cfg.gain_mask.m6);
+    ReadParam(section, "m7", &cfg.gain_mask.m7);
+    ReadParam(section, "m8", &cfg.gain_mask.m8);
+    ReadParam(section, "m9", &cfg.gain_mask.m9);
+
+    ReadParam(section, "gain_curve_offset", &cfg.gain_mask.gain_curve_offset);
+    ReadParam(section, "gain_curve_slope", &cfg.gain_mask.gain_curve_slope);
+    ReadParam(section, "temporal_masking_lf",
+              &cfg.gain_mask.temporal_masking_lf);
+    ReadParam(section, "temporal_masking_hf",
+              &cfg.gain_mask.temporal_masking_hf);
+    ReadParam(section, "temporal_masking_lf_bands",
+              &cfg.gain_mask.temporal_masking_lf_bands);
+  }
+
+  if (rtc::GetValueFromJsonObject(root, "echo_audibility", &section)) {
+    ReadParam(section, "low_render_limit",
+              &cfg.echo_audibility.low_render_limit);
+    ReadParam(section, "normal_render_limit",
+              &cfg.echo_audibility.normal_render_limit);
+
+    ReadParam(section, "floor_power", &cfg.echo_audibility.floor_power);
+    ReadParam(section, "audibility_threshold_lf",
+              &cfg.echo_audibility.audibility_threshold_lf);
+    ReadParam(section, "audibility_threshold_mf",
+              &cfg.echo_audibility.audibility_threshold_mf);
+    ReadParam(section, "audibility_threshold_hf",
+              &cfg.echo_audibility.audibility_threshold_hf);
+    ReadParam(section, "use_stationary_properties",
+              &cfg.echo_audibility.use_stationary_properties);
+  }
+
+  if (rtc::GetValueFromJsonObject(root, "gain_updates", &section)) {
+    ReadParam(section, "low_noise", &cfg.gain_updates.low_noise);
+    ReadParam(section, "initial", &cfg.gain_updates.initial);
+    ReadParam(section, "normal", &cfg.gain_updates.normal);
+    ReadParam(section, "saturation", &cfg.gain_updates.saturation);
+    ReadParam(section, "nonlinear", &cfg.gain_updates.nonlinear);
+    ReadParam(section, "max_inc_factor", &cfg.gain_updates.max_inc_factor);
+    ReadParam(section, "max_dec_factor_lf",
+              &cfg.gain_updates.max_dec_factor_lf);
+    ReadParam(section, "floor_first_increase",
+              &cfg.gain_updates.floor_first_increase);
+  }
+
+  if (rtc::GetValueFromJsonObject(root, "echo_removal_control", &section)) {
+    Json::Value subsection;
+    if (rtc::GetValueFromJsonObject(section, "gain_rampup", &subsection)) {
+      ReadParam(subsection, "initial_gain",
+                &cfg.echo_removal_control.gain_rampup.initial_gain);
+      ReadParam(subsection, "first_non_zero_gain",
+                &cfg.echo_removal_control.gain_rampup.first_non_zero_gain);
+      ReadParam(subsection, "non_zero_gain_blocks",
+                &cfg.echo_removal_control.gain_rampup.non_zero_gain_blocks);
+      ReadParam(subsection, "full_gain_blocks",
+                &cfg.echo_removal_control.gain_rampup.full_gain_blocks);
+    }
+    ReadParam(section, "has_clock_drift",
+              &cfg.echo_removal_control.has_clock_drift);
+    ReadParam(section, "linear_and_stable_echo_path",
+              &cfg.echo_removal_control.linear_and_stable_echo_path);
+  }
+
+  if (rtc::GetValueFromJsonObject(root, "echo_model", &section)) {
+    Json::Value subsection;
+    ReadParam(section, "noise_floor_hold", &cfg.echo_model.noise_floor_hold);
+    ReadParam(section, "min_noise_floor_power",
+              &cfg.echo_model.min_noise_floor_power);
+    ReadParam(section, "stationary_gate_slope",
+              &cfg.echo_model.stationary_gate_slope);
+    ReadParam(section, "noise_gate_power", &cfg.echo_model.noise_gate_power);
+    ReadParam(section, "noise_gate_slope", &cfg.echo_model.noise_gate_slope);
+    ReadParam(section, "render_pre_window_size",
+              &cfg.echo_model.render_pre_window_size);
+    ReadParam(section, "render_post_window_size",
+              &cfg.echo_model.render_post_window_size);
+    ReadParam(section, "render_pre_window_size_init",
+              &cfg.echo_model.render_pre_window_size_init);
+    ReadParam(section, "render_post_window_size_init",
+              &cfg.echo_model.render_post_window_size_init);
+    ReadParam(section, "nonlinear_hold", &cfg.echo_model.nonlinear_hold);
+    ReadParam(section, "nonlinear_release", &cfg.echo_model.nonlinear_release);
+  }
+
+  if (rtc::GetValueFromJsonObject(root, "suppressor", &section)) {
+    ReadParam(section, "bands_with_reliable_coherence",
+              &cfg.suppressor.bands_with_reliable_coherence);
+    ReadParam(section, "nearend_average_blocks",
+              &cfg.suppressor.nearend_average_blocks);
+    ReadParam(section, "mask_lf", &cfg.suppressor.mask_lf);
+    ReadParam(section, "mask_hf", &cfg.suppressor.mask_hf);
+  }
+
+  std::cout << std::endl;
+  return cfg;
+}
 
 void CopyFromAudioFrame(const AudioFrame& src, ChannelBuffer<float>* dest) {
   RTC_CHECK_EQ(src.num_channels_, dest->num_channels());
@@ -83,8 +385,11 @@ void CopyToAudioFrame(const ChannelBuffer<float>& src, AudioFrame* dest) {
 }
 
 AudioProcessingSimulator::AudioProcessingSimulator(
-    const SimulationSettings& settings)
+    const SimulationSettings& settings,
+    std::unique_ptr<AudioProcessingBuilder> ap_builder)
     : settings_(settings),
+      ap_builder_(ap_builder ? std::move(ap_builder)
+                             : absl::make_unique<AudioProcessingBuilder>()),
       analog_mic_level_(settings.initial_mic_level),
       fake_recording_device_(
           settings.initial_mic_level,
@@ -308,12 +613,6 @@ void AudioProcessingSimulator::CreateAudioProcessor() {
   Config config;
   AudioProcessing::Config apm_config;
   std::unique_ptr<EchoControlFactory> echo_control_factory;
-  if (settings_.use_bf && *settings_.use_bf) {
-    config.Set<Beamforming>(new Beamforming(
-        true, ParseArrayGeometry(*settings_.microphone_positions),
-        SphericalPointf(DegreesToRadians(settings_.target_angle_degrees), 0.f,
-                        1.f)));
-  }
   if (settings_.use_ts) {
     config.Set<ExperimentalNs>(new ExperimentalNs(*settings_.use_ts));
   }
@@ -324,11 +623,18 @@ void AudioProcessingSimulator::CreateAudioProcessor() {
     apm_config.gain_controller2.enabled = *settings_.use_agc2;
     apm_config.gain_controller2.fixed_gain_db = settings_.agc2_fixed_gain_db;
   }
-  if (settings_.use_aec3 && *settings_.use_aec3) {
-    echo_control_factory.reset(new EchoCanceller3Factory());
+  if (settings_.use_pre_amplifier) {
+    apm_config.pre_amplifier.enabled = *settings_.use_pre_amplifier;
+    apm_config.pre_amplifier.fixed_gain_factor =
+        settings_.pre_amplifier_gain_factor;
   }
-  if (settings_.use_lc) {
-    apm_config.level_controller.enabled = *settings_.use_lc;
+
+  if (settings_.use_aec3 && *settings_.use_aec3) {
+    EchoCanceller3Config cfg;
+    if (settings_.aec3_settings_filename) {
+      cfg = ParseAec3Parameters(*settings_.aec3_settings_filename);
+    }
+    echo_control_factory.reset(new EchoCanceller3Factory(cfg));
   }
   if (settings_.use_hpf) {
     apm_config.high_pass_filter.enabled = *settings_.use_hpf;
@@ -343,12 +649,17 @@ void AudioProcessingSimulator::CreateAudioProcessor() {
   config.Set<DelayAgnostic>(new DelayAgnostic(!settings_.use_delay_agnostic ||
                                               *settings_.use_delay_agnostic));
   config.Set<ExperimentalAgc>(new ExperimentalAgc(
-      !settings_.use_experimental_agc || *settings_.use_experimental_agc));
+      !settings_.use_experimental_agc || *settings_.use_experimental_agc,
+      !!settings_.use_experimental_agc_agc2_level_estimator &&
+          *settings_.use_experimental_agc_agc2_level_estimator,
+      !!settings_.experimental_agc_disable_digital_adaptive &&
+          *settings_.experimental_agc_disable_digital_adaptive));
   if (settings_.use_ed) {
     apm_config.residual_echo_detector.enabled = *settings_.use_ed;
   }
 
-  ap_.reset(AudioProcessingBuilder()
+  RTC_CHECK(ap_builder_);
+  ap_.reset((*ap_builder_)
                 .SetEchoControlFactory(std::move(echo_control_factory))
                 .Create(config));
   RTC_CHECK(ap_);

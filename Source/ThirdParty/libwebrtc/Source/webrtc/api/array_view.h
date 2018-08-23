@@ -12,6 +12,7 @@
 #define API_ARRAY_VIEW_H_
 
 #include <algorithm>
+#include <array>
 #include <type_traits>
 
 #include "rtc_base/checks.h"
@@ -94,7 +95,7 @@ class ArrayViewBase {
   static_assert(Size > 0, "ArrayView size must be variable or non-negative");
 
  public:
-  ArrayViewBase(T* data, size_t) : data_(data) {}
+  ArrayViewBase(T* data, size_t size) : data_(data) {}
 
   static constexpr size_t size() { return Size; }
   static constexpr bool empty() { return false; }
@@ -111,7 +112,7 @@ class ArrayViewBase {
 template <typename T>
 class ArrayViewBase<T, 0> {
  public:
-  explicit ArrayViewBase(T*, size_t) {}
+  explicit ArrayViewBase(T* data, size_t size) {}
 
   static constexpr size_t size() { return 0; }
   static constexpr bool empty() { return true; }
@@ -169,13 +170,33 @@ class ArrayView final : public impl::ArrayViewBase<T, Size> {
     RTC_DCHECK_EQ(0, size);
   }
 
-  // Construct an ArrayView from an array.
+  // Construct an ArrayView from a C-style array.
   template <typename U, size_t N>
   ArrayView(U (&array)[N])  // NOLINT
       : ArrayView(array, N) {
     static_assert(Size == N || Size == impl::kArrayViewVarSize,
                   "Array size must match ArrayView size");
   }
+
+  // (Only if size is fixed.) Construct a fixed size ArrayView<T, N> from a
+  // non-const std::array instance. For an ArrayView with variable size, the
+  // used ctor is ArrayView(U& u) instead.
+  template <typename U,
+            size_t N,
+            typename std::enable_if<
+                Size == static_cast<std::ptrdiff_t>(N)>::type* = nullptr>
+  ArrayView(std::array<U, N>& u)  // NOLINT
+      : ArrayView(u.data(), u.size()) {}
+
+  // (Only if size is fixed.) Construct a fixed size ArrayView<T, N> where T is
+  // const from a const(expr) std::array instance. For an ArrayView with
+  // variable size, the used ctor is ArrayView(U& u) instead.
+  template <typename U,
+            size_t N,
+            typename std::enable_if<
+                Size == static_cast<std::ptrdiff_t>(N)>::type* = nullptr>
+  ArrayView(const std::array<U, N>& u)  // NOLINT
+      : ArrayView(u.data(), u.size()) {}
 
   // (Only if size is fixed.) Construct an ArrayView from any type U that has a
   // static constexpr size() method whose return value is equal to Size, and a

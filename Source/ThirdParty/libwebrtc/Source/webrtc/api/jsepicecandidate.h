@@ -28,24 +28,23 @@ namespace webrtc {
 class JsepIceCandidate : public IceCandidateInterface {
  public:
   JsepIceCandidate(const std::string& sdp_mid, int sdp_mline_index);
-  JsepIceCandidate(const std::string& sdp_mid, int sdp_mline_index,
+  JsepIceCandidate(const std::string& sdp_mid,
+                   int sdp_mline_index,
                    const cricket::Candidate& candidate);
-  ~JsepIceCandidate();
+  ~JsepIceCandidate() override;
   // |err| may be null.
   bool Initialize(const std::string& sdp, SdpParseError* err);
   void SetCandidate(const cricket::Candidate& candidate) {
     candidate_ = candidate;
   }
 
-  virtual std::string sdp_mid() const { return sdp_mid_; }
-  virtual int sdp_mline_index() const { return sdp_mline_index_; }
-  virtual const cricket::Candidate& candidate() const {
-    return candidate_;
-  }
+  std::string sdp_mid() const override;
+  int sdp_mline_index() const override;
+  const cricket::Candidate& candidate() const override;
 
-  virtual std::string server_url() const { return candidate_.url(); }
+  std::string server_url() const override;
 
-  virtual bool ToString(std::string* out) const;
+  bool ToString(std::string* out) const override;
 
  private:
   std::string sdp_mid_;
@@ -58,25 +57,18 @@ class JsepIceCandidate : public IceCandidateInterface {
 // Implementation of IceCandidateCollection which stores JsepIceCandidates.
 class JsepCandidateCollection : public IceCandidateCollection {
  public:
-  JsepCandidateCollection() {}
+  JsepCandidateCollection();
   // Move constructor is defined so that a vector of JsepCandidateCollections
   // can be resized.
-  JsepCandidateCollection(JsepCandidateCollection&& o)
-      : candidates_(std::move(o.candidates_)) {}
-  ~JsepCandidateCollection();
-  virtual size_t count() const {
-    return candidates_.size();
-  }
-  virtual bool HasCandidate(const IceCandidateInterface* candidate) const;
+  JsepCandidateCollection(JsepCandidateCollection&& o);
+  ~JsepCandidateCollection() override;
+  size_t count() const override;
+  bool HasCandidate(const IceCandidateInterface* candidate) const override;
   // Adds and takes ownership of the JsepIceCandidate.
   // TODO(deadbeef): Make this use an std::unique_ptr<>, so ownership logic is
   // more clear.
-  virtual void add(JsepIceCandidate* candidate) {
-    candidates_.push_back(candidate);
-  }
-  virtual const IceCandidateInterface* at(size_t index) const {
-    return candidates_[index];
-  }
+  virtual void add(JsepIceCandidate* candidate);
+  const IceCandidateInterface* at(size_t index) const override;
   // Removes the candidate that has a matching address and protocol.
   //
   // Returns the number of candidates that were removed.

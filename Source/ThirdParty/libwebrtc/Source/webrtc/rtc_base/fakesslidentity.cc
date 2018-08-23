@@ -14,25 +14,16 @@
 #include <string>
 #include <utility>
 
+#include "absl/memory/memory.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/messagedigest.h"
-#include "rtc_base/ptr_util.h"
 
 namespace rtc {
 
-FakeSSLCertificate::FakeSSLCertificate(const std::string& data)
-    : data_(data), digest_algorithm_(DIGEST_SHA_1), expiration_time_(-1) {}
-
-FakeSSLCertificate::FakeSSLCertificate(const std::vector<std::string>& certs)
-    : data_(certs.front()),
+FakeSSLCertificate::FakeSSLCertificate(const std::string& pem_string)
+    : pem_string_(pem_string),
       digest_algorithm_(DIGEST_SHA_1),
-      expiration_time_(-1) {
-  std::vector<std::string>::const_iterator it;
-  // Skip certs[0].
-  for (it = certs.begin() + 1; it != certs.end(); ++it) {
-    certs_.push_back(FakeSSLCertificate(*it));
-  }
-}
+      expiration_time_(-1) {}
 
 FakeSSLCertificate::FakeSSLCertificate(const FakeSSLCertificate&) = default;
 
@@ -43,12 +34,13 @@ FakeSSLCertificate* FakeSSLCertificate::GetReference() const {
 }
 
 std::string FakeSSLCertificate::ToPEMString() const {
-  return data_;
+  return pem_string_;
 }
 
 void FakeSSLCertificate::ToDER(Buffer* der_buffer) const {
   std::string der_string;
-  RTC_CHECK(SSLIdentity::PemToDer(kPemTypeCertificate, data_, &der_string));
+  RTC_CHECK(
+      SSLIdentity::PemToDer(kPemTypeCertificate, pem_string_, &der_string));
   der_buffer->SetData(der_string.c_str(), der_string.size());
 }
 
@@ -74,30 +66,40 @@ bool FakeSSLCertificate::ComputeDigest(const std::string& algorithm,
                                        unsigned char* digest,
                                        size_t size,
                                        size_t* length) const {
-  *length =
-      rtc::ComputeDigest(algorithm, data_.c_str(), data_.size(), digest, size);
+  *length = rtc::ComputeDigest(algorithm, pem_string_.c_str(),
+                               pem_string_.size(), digest, size);
   return (*length != 0);
 }
 
-std::unique_ptr<SSLCertChain> FakeSSLCertificate::GetChain() const {
-  if (certs_.empty())
-    return nullptr;
-  std::vector<std::unique_ptr<SSLCertificate>> new_certs(certs_.size());
-  std::transform(certs_.begin(), certs_.end(), new_certs.begin(), DupCert);
-  return MakeUnique<SSLCertChain>(std::move(new_certs));
+FakeSSLIdentity::FakeSSLIdentity(const std::string& pem_string)
+    : FakeSSLIdentity(FakeSSLCertificate(pem_string)) {}
+
+FakeSSLIdentity::FakeSSLIdentity(const std::vector<std::string>& pem_strings) {
+  std::vector<std::unique_ptr<SSLCertificate>> certs;
+  for (const std::string& pem_string : pem_strings) {
+    certs.push_back(absl::make_unique<FakeSSLCertificate>(pem_string));
+  }
+  cert_chain_ = absl::make_unique<SSLCertChain>(std::move(certs));
 }
 
-FakeSSLIdentity::FakeSSLIdentity(const std::string& data) : cert_(data) {}
-
 FakeSSLIdentity::FakeSSLIdentity(const FakeSSLCertificate& cert)
-    : cert_(cert) {}
+    : cert_chain_(absl::make_unique<SSLCertChain>(&cert)) {}
+
+FakeSSLIdentity::FakeSSLIdentity(const FakeSSLIdentity& o)
+    : cert_chain_(o.cert_chain_->UniqueCopy()) {}
+
+FakeSSLIdentity::~FakeSSLIdentity() = default;
 
 FakeSSLIdentity* FakeSSLIdentity::GetReference() const {
   return new FakeSSLIdentity(*this);
 }
 
-const FakeSSLCertificate& FakeSSLIdentity::certificate() const {
-  return cert_;
+const SSLCertificate& FakeSSLIdentity::certificate() const {
+  return cert_chain_->Get(0);
+}
+
+const SSLCertChain& FakeSSLIdentity::cert_chain() const {
+  return *cert_chain_.get();
 }
 
 std::string FakeSSLIdentity::PrivateKeyToPEMString() const {

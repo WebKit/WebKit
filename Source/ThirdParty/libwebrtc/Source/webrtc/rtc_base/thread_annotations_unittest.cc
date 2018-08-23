@@ -32,13 +32,9 @@ class RTC_SCOPED_LOCKABLE ScopeLock {
 
 class ThreadSafe {
  public:
-  ThreadSafe() {
-    pt_protected_by_lock_ = new int;
-  }
+  ThreadSafe() { pt_protected_by_lock_ = new int; }
 
-  ~ThreadSafe() {
-    delete pt_protected_by_lock_;
-  }
+  ~ThreadSafe() { delete pt_protected_by_lock_; }
 
   void LockInOrder() {
     beforelock_.EnterWrite();

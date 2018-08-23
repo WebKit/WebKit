@@ -50,8 +50,7 @@ void PreemptiveExpand::SetParametersForPassiveSpeech(size_t len,
   // but we must ensure that best_correlation is not larger than the length of
   // the new data.
   // but we must ensure that best_correlation is not larger than the new data.
-  *peak_index = std::min(*peak_index,
-                         len - old_data_length_per_channel_);
+  *peak_index = std::min(*peak_index, len - old_data_length_per_channel_);
 }
 
 PreemptiveExpand::ReturnCodes PreemptiveExpand::CheckCriteriaAndStretch(
@@ -68,13 +67,13 @@ PreemptiveExpand::ReturnCodes PreemptiveExpand::CheckCriteriaAndStretch(
   // Check for strong correlation (>0.9 in Q14) and at least 15 ms new data,
   // or passive speech.
   if (((best_correlation > kCorrelationThreshold) &&
-      (old_data_length_per_channel_ <= fs_mult_120)) ||
+       (old_data_length_per_channel_ <= fs_mult_120)) ||
       !active_speech) {
     // Do accelerate operation by overlap add.
 
     // Set length of the first part, not to be modified.
-    size_t unmodified_length = std::max(old_data_length_per_channel_,
-                                        fs_mult_120);
+    size_t unmodified_length =
+        std::max(old_data_length_per_channel_, fs_mult_120);
     // Copy first part, including cross-fade region.
     output->PushBackInterleaved(
         input, (unmodified_length + peak_index) * num_channels_);
@@ -107,8 +106,8 @@ PreemptiveExpand* PreemptiveExpandFactory::Create(
     size_t num_channels,
     const BackgroundNoise& background_noise,
     size_t overlap_samples) const {
-  return new PreemptiveExpand(
-      sample_rate_hz, num_channels, background_noise, overlap_samples);
+  return new PreemptiveExpand(sample_rate_hz, num_channels, background_noise,
+                              overlap_samples);
 }
 
 }  // namespace webrtc

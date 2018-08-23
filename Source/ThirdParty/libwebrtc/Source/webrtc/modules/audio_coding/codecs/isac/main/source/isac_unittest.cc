@@ -35,15 +35,13 @@ class IsacTest : public ::testing::Test {
   uint8_t bitstream_small_[7];  // Simulate sync packets.
 };
 
-IsacTest::IsacTest()
-    : isac_codec_(NULL) {
-}
+IsacTest::IsacTest() : isac_codec_(NULL) {}
 
 void IsacTest::SetUp() {
   // Read some samples from a speech file, to be used in the encode test.
   FILE* input_file;
   const std::string file_name =
-        webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm");
+      webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm");
   input_file = fopen(file_name.c_str(), "rb");
   ASSERT_TRUE(input_file != NULL);
   ASSERT_EQ(kIsacNumberOfSamples,
@@ -69,7 +67,8 @@ TEST_F(IsacTest, IsacFreeFail) {
 TEST_F(IsacTest, IsacCreateFree) {
   EXPECT_EQ(0, WebRtcIsac_Create(&isac_codec_));
   EXPECT_TRUE(isac_codec_ != NULL);
-  EXPECT_EQ(0, WebRtcIsac_Free(isac_codec_));}
+  EXPECT_EQ(0, WebRtcIsac_Free(isac_codec_));
+}
 
 TEST_F(IsacTest, IsacUpdateBWE) {
   // Create encoder memory.
@@ -86,17 +85,17 @@ TEST_F(IsacTest, IsacUpdateBWE) {
                                             12345, 56789));
 
   // Encode 60 ms of data (needed to create a first packet).
-  encoded_bytes =  WebRtcIsac_Encode(isac_codec_, speech_data_, bitstream_);
+  encoded_bytes = WebRtcIsac_Encode(isac_codec_, speech_data_, bitstream_);
   EXPECT_EQ(0, encoded_bytes);
-  encoded_bytes =  WebRtcIsac_Encode(isac_codec_, speech_data_, bitstream_);
+  encoded_bytes = WebRtcIsac_Encode(isac_codec_, speech_data_, bitstream_);
   EXPECT_EQ(0, encoded_bytes);
-  encoded_bytes =  WebRtcIsac_Encode(isac_codec_, speech_data_, bitstream_);
+  encoded_bytes = WebRtcIsac_Encode(isac_codec_, speech_data_, bitstream_);
   EXPECT_EQ(0, encoded_bytes);
-  encoded_bytes =  WebRtcIsac_Encode(isac_codec_, speech_data_, bitstream_);
+  encoded_bytes = WebRtcIsac_Encode(isac_codec_, speech_data_, bitstream_);
   EXPECT_EQ(0, encoded_bytes);
-  encoded_bytes =  WebRtcIsac_Encode(isac_codec_, speech_data_, bitstream_);
+  encoded_bytes = WebRtcIsac_Encode(isac_codec_, speech_data_, bitstream_);
   EXPECT_EQ(0, encoded_bytes);
-  encoded_bytes =  WebRtcIsac_Encode(isac_codec_, speech_data_, bitstream_);
+  encoded_bytes = WebRtcIsac_Encode(isac_codec_, speech_data_, bitstream_);
   EXPECT_GT(encoded_bytes, 0);
 
   // Call to update bandwidth estimator with real data.

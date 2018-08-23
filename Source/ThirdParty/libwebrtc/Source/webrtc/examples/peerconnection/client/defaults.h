@@ -17,7 +17,7 @@
 
 extern const char kAudioLabel[];
 extern const char kVideoLabel[];
-extern const char kStreamLabel[];
+extern const char kStreamId[];
 extern const uint16_t kDefaultServerPort;
 
 std::string GetEnvVarOrDefault(const char* env_var_name,

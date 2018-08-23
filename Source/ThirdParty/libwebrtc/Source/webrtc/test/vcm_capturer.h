@@ -22,9 +22,8 @@
 namespace webrtc {
 namespace test {
 
-class VcmCapturer
-    : public VideoCapturer,
-      public rtc::VideoSinkInterface<VideoFrame> {
+class VcmCapturer : public VideoCapturer,
+                    public rtc::VideoSinkInterface<VideoFrame> {
  public:
   static VcmCapturer* Create(size_t width,
                              size_t height,
@@ -55,7 +54,7 @@ class VcmCapturer
   VideoCaptureCapability capability_;
 };
 
-}  // test
-}  // webrtc
+}  // namespace test
+}  // namespace webrtc
 
 #endif  // TEST_VCM_CAPTURER_H_

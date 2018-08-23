@@ -10,14 +10,14 @@
 
 #include "api/audio_codecs/isac/audio_encoder_isac_fix.h"
 
+#include "absl/memory/memory.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/codecs/isac/fix/include/audio_encoder_isacfix.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/string_to_number.h"
 
 namespace webrtc {
 
-rtc::Optional<AudioEncoderIsacFix::Config> AudioEncoderIsacFix::SdpToConfig(
+absl::optional<AudioEncoderIsacFix::Config> AudioEncoderIsacFix::SdpToConfig(
     const SdpAudioFormat& format) {
   if (STR_CASE_CMP(format.name.c_str(), "ISAC") == 0 &&
       format.clockrate_hz == 16000 && format.num_channels == 1) {
@@ -31,7 +31,7 @@ rtc::Optional<AudioEncoderIsacFix::Config> AudioEncoderIsacFix::SdpToConfig(
     }
     return config;
   } else {
-    return rtc::nullopt;
+    return absl::nullopt;
   }
 }
 
@@ -50,12 +50,13 @@ AudioCodecInfo AudioEncoderIsacFix::QueryAudioEncoder(
 
 std::unique_ptr<AudioEncoder> AudioEncoderIsacFix::MakeAudioEncoder(
     AudioEncoderIsacFix::Config config,
-    int payload_type) {
+    int payload_type,
+    absl::optional<AudioCodecPairId> /*codec_pair_id*/) {
   RTC_DCHECK(config.IsOk());
   AudioEncoderIsacFixImpl::Config c;
   c.frame_size_ms = config.frame_size_ms;
   c.payload_type = payload_type;
-  return rtc::MakeUnique<AudioEncoderIsacFixImpl>(c);
+  return absl::make_unique<AudioEncoderIsacFixImpl>(c);
 }
 
 }  // namespace webrtc

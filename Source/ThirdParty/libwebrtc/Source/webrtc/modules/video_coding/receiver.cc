@@ -20,6 +20,7 @@
 #include "modules/video_coding/internal_defines.h"
 #include "modules/video_coding/media_opt_util.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/trace_event.h"
 #include "system_wrappers/include/clock.h"
 
@@ -192,8 +193,8 @@ VCMEncodedFrame* VCMReceiver::FrameForDecoding(uint16_t max_wait_time_ms,
         static_cast<int32_t>(clock_->TimeInMilliseconds() - start_time_ms);
     uint16_t new_max_wait_time =
         static_cast<uint16_t>(VCM_MAX(available_wait_time, 0));
-    uint32_t wait_time_ms =
-        timing_->MaxWaitingTime(render_time_ms, clock_->TimeInMilliseconds());
+    uint32_t wait_time_ms = rtc::saturated_cast<uint32_t>(
+        timing_->MaxWaitingTime(render_time_ms, clock_->TimeInMilliseconds()));
     if (new_max_wait_time < wait_time_ms) {
       // We're not allowed to wait until the frame is supposed to be rendered,
       // waiting as long as we're allowed to avoid busy looping, and then return
@@ -269,17 +270,6 @@ void VCMReceiver::SetDecodeErrorMode(VCMDecodeErrorMode decode_error_mode) {
 
 VCMDecodeErrorMode VCMReceiver::DecodeErrorMode() const {
   return jitter_buffer_.decode_error_mode();
-}
-
-int VCMReceiver::SetMinReceiverDelay(int desired_delay_ms) {
-  rtc::CritScope cs(&crit_sect_);
-  if (desired_delay_ms < 0 || desired_delay_ms > kMaxReceiverDelayMs) {
-    return -1;
-  }
-  max_video_delay_ms_ = desired_delay_ms + kMaxVideoDelayMs;
-  // Initializing timing to the desired delay.
-  timing_->set_min_playout_delay(desired_delay_ms);
-  return 0;
 }
 
 void VCMReceiver::RegisterStatsCallback(

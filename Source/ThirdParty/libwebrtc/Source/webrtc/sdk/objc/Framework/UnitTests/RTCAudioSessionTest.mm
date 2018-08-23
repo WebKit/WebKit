@@ -299,7 +299,7 @@ namespace webrtc {
 
 class AudioSessionTest : public ::testing::Test {
  protected:
-  void TearDown() {
+  void TearDown() override {
     RTCAudioSession *session = [RTCAudioSession sharedInstance];
     for (id<RTCAudioSessionDelegate> delegate : session.delegates) {
       [session removeDelegate:delegate];

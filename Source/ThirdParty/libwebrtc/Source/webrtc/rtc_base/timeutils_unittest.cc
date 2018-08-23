@@ -33,7 +33,7 @@ TEST(TimeTest, Intervals) {
 
   // We can't depend on ts_later and ts_earlier to be exactly 500 apart
   // since time elapses between the calls to TimeMillis() and TimeAfter(500)
-  EXPECT_LE(500,  TimeDiff(ts_later, ts_earlier));
+  EXPECT_LE(500, TimeDiff(ts_later, ts_earlier));
   EXPECT_GE(-500, TimeDiff(ts_earlier, ts_later));
 
   // Time has elapsed since ts_earlier
@@ -125,7 +125,6 @@ class TmToSeconds : public testing::Test {
   void TestTmToSeconds(int times) {
     static char mdays[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     for (int i = 0; i < times; i++) {
-
       // First generate something correct and check that TmToSeconds is happy.
       int year = rtc::CreateRandomId() % 400 + 1970;
 
@@ -206,96 +205,6 @@ TEST_F(TmToSeconds, TestTmToSeconds) {
   TestTmToSeconds(100000);
 }
 
-TEST(TimeDelta, FromAndTo) {
-  EXPECT_TRUE(TimeDelta::FromSeconds(2) == TimeDelta::FromMilliseconds(2000));
-  EXPECT_TRUE(TimeDelta::FromMilliseconds(3) ==
-              TimeDelta::FromMicroseconds(3000));
-  EXPECT_TRUE(TimeDelta::FromMicroseconds(4) ==
-              TimeDelta::FromNanoseconds(4000));
-  EXPECT_EQ(13, TimeDelta::FromSeconds(13).ToSeconds());
-  EXPECT_EQ(13, TimeDelta::FromMilliseconds(13).ToMilliseconds());
-  EXPECT_EQ(13, TimeDelta::FromMicroseconds(13).ToMicroseconds());
-  EXPECT_EQ(13, TimeDelta::FromNanoseconds(13).ToNanoseconds());
-}
-
-TEST(TimeDelta, ComparisonOperators) {
-  EXPECT_LT(TimeDelta::FromSeconds(1), TimeDelta::FromSeconds(2));
-  EXPECT_EQ(TimeDelta::FromSeconds(3), TimeDelta::FromSeconds(3));
-  EXPECT_GT(TimeDelta::FromSeconds(5), TimeDelta::FromSeconds(4));
-}
-
-TEST(TimeDelta, NumericOperators) {
-  double d = 0.5;
-  EXPECT_EQ(TimeDelta::FromMilliseconds(500),
-            TimeDelta::FromMilliseconds(1000) * d);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(2000),
-            TimeDelta::FromMilliseconds(1000) / d);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(500),
-            TimeDelta::FromMilliseconds(1000) *= d);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(2000),
-            TimeDelta::FromMilliseconds(1000) /= d);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(500),
-            d * TimeDelta::FromMilliseconds(1000));
-
-  float f = 0.5;
-  EXPECT_EQ(TimeDelta::FromMilliseconds(500),
-            TimeDelta::FromMilliseconds(1000) * f);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(2000),
-            TimeDelta::FromMilliseconds(1000) / f);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(500),
-            TimeDelta::FromMilliseconds(1000) *= f);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(2000),
-            TimeDelta::FromMilliseconds(1000) /= f);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(500),
-            f * TimeDelta::FromMilliseconds(1000));
-
-  int i = 2;
-  EXPECT_EQ(TimeDelta::FromMilliseconds(2000),
-            TimeDelta::FromMilliseconds(1000) * i);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(500),
-            TimeDelta::FromMilliseconds(1000) / i);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(2000),
-            TimeDelta::FromMilliseconds(1000) *= i);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(500),
-            TimeDelta::FromMilliseconds(1000) /= i);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(2000),
-            i * TimeDelta::FromMilliseconds(1000));
-
-  int64_t i64 = 2;
-  EXPECT_EQ(TimeDelta::FromMilliseconds(2000),
-            TimeDelta::FromMilliseconds(1000) * i64);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(500),
-            TimeDelta::FromMilliseconds(1000) / i64);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(2000),
-            TimeDelta::FromMilliseconds(1000) *= i64);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(500),
-            TimeDelta::FromMilliseconds(1000) /= i64);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(2000),
-            i64 * TimeDelta::FromMilliseconds(1000));
-
-  EXPECT_EQ(TimeDelta::FromMilliseconds(500),
-            TimeDelta::FromMilliseconds(1000) * 0.5);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(2000),
-            TimeDelta::FromMilliseconds(1000) / 0.5);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(500),
-            TimeDelta::FromMilliseconds(1000) *= 0.5);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(2000),
-            TimeDelta::FromMilliseconds(1000) /= 0.5);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(500),
-            0.5 * TimeDelta::FromMilliseconds(1000));
-
-  EXPECT_EQ(TimeDelta::FromMilliseconds(2000),
-            TimeDelta::FromMilliseconds(1000) * 2);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(500),
-            TimeDelta::FromMilliseconds(1000) / 2);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(2000),
-            TimeDelta::FromMilliseconds(1000) *= 2);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(500),
-            TimeDelta::FromMilliseconds(1000) /= 2);
-  EXPECT_EQ(TimeDelta::FromMilliseconds(2000),
-            2 * TimeDelta::FromMilliseconds(1000));
-}
-
 // Test that all the time functions exposed by TimeUtils get time from the
 // fake clock when it's set.
 TEST(FakeClock, TimeFunctionsUseFakeClock) {
@@ -329,14 +238,14 @@ TEST(FakeClock, SetTimeNanos) {
 
 TEST(FakeClock, AdvanceTime) {
   FakeClock clock;
-  clock.AdvanceTime(TimeDelta::FromNanoseconds(1111u));
-  EXPECT_EQ(1111, clock.TimeNanos());
-  clock.AdvanceTime(TimeDelta::FromMicroseconds(2222u));
-  EXPECT_EQ(2223111, clock.TimeNanos());
-  clock.AdvanceTime(TimeDelta::FromMilliseconds(3333u));
-  EXPECT_EQ(3335223111, clock.TimeNanos());
-  clock.AdvanceTime(TimeDelta::FromSeconds(4444u));
-  EXPECT_EQ(4447335223111, clock.TimeNanos());
+  clock.AdvanceTime(webrtc::TimeDelta::us(1u));
+  EXPECT_EQ(1000, clock.TimeNanos());
+  clock.AdvanceTime(webrtc::TimeDelta::us(2222u));
+  EXPECT_EQ(2223000, clock.TimeNanos());
+  clock.AdvanceTime(webrtc::TimeDelta::ms(3333u));
+  EXPECT_EQ(3335223000, clock.TimeNanos());
+  clock.AdvanceTime(webrtc::TimeDelta::seconds(4444u));
+  EXPECT_EQ(4447335223000, clock.TimeNanos());
 }
 
 // When the clock is advanced, threads that are waiting in a socket select
@@ -367,7 +276,7 @@ TEST(FakeClock, SettingTimeWakesThreads) {
 
   // Advance the fake clock, expecting the worker thread to wake up
   // and dispatch the message instantly.
-  clock.AdvanceTime(TimeDelta::FromSeconds(60u));
+  clock.AdvanceTime(webrtc::TimeDelta::seconds(60u));
   EXPECT_TRUE(message_handler_dispatched.Wait(0));
   worker->Stop();
 

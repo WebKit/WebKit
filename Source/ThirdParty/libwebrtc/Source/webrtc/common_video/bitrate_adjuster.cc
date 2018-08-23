@@ -15,7 +15,7 @@
 
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "system_wrappers/include/clock.h"
+#include "rtc_base/timeutils.h"
 
 namespace webrtc {
 
@@ -30,11 +30,9 @@ const float BitrateAdjuster::kBitrateTolerancePct = .1f;
 
 const float BitrateAdjuster::kBytesPerMsToBitsPerSecond = 8 * 1000;
 
-BitrateAdjuster::BitrateAdjuster(Clock* clock,
-                                 float min_adjusted_bitrate_pct,
+BitrateAdjuster::BitrateAdjuster(float min_adjusted_bitrate_pct,
                                  float max_adjusted_bitrate_pct)
-    : clock_(clock),
-      min_adjusted_bitrate_pct_(min_adjusted_bitrate_pct),
+    : min_adjusted_bitrate_pct_(min_adjusted_bitrate_pct),
       max_adjusted_bitrate_pct_(max_adjusted_bitrate_pct),
       bitrate_tracker_(1.5 * kBitrateUpdateIntervalMs,
                        kBytesPerMsToBitsPerSecond) {
@@ -70,14 +68,14 @@ uint32_t BitrateAdjuster::GetAdjustedBitrateBps() const {
   return adjusted_bitrate_bps_;
 }
 
-rtc::Optional<uint32_t> BitrateAdjuster::GetEstimatedBitrateBps() {
+absl::optional<uint32_t> BitrateAdjuster::GetEstimatedBitrateBps() {
   rtc::CritScope cs(&crit_);
-  return bitrate_tracker_.Rate(clock_->TimeInMilliseconds());
+  return bitrate_tracker_.Rate(rtc::TimeMillis());
 }
 
 void BitrateAdjuster::Update(size_t frame_size) {
   rtc::CritScope cs(&crit_);
-  uint32_t current_time_ms = clock_->TimeInMilliseconds();
+  uint32_t current_time_ms = rtc::TimeMillis();
   bitrate_tracker_.Update(frame_size, current_time_ms);
   UpdateBitrate(current_time_ms);
 }

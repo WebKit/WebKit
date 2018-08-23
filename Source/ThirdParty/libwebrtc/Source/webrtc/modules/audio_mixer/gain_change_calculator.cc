@@ -29,6 +29,10 @@ float GainChangeCalculator::CalculateGainChange(
   return CalculateDifferences(gain);
 }
 
+float GainChangeCalculator::LatestGain() const {
+  return last_reliable_gain_;
+}
+
 void GainChangeCalculator::CalculateGain(rtc::ArrayView<const int16_t> in,
                                          rtc::ArrayView<const int16_t> out,
                                          rtc::ArrayView<float> gain) {

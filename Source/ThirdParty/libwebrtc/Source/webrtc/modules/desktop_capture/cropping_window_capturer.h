@@ -13,8 +13,8 @@
 
 #include <memory>
 
-#include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
+#include "modules/desktop_capture/desktop_capturer.h"
 
 namespace webrtc {
 
@@ -76,4 +76,3 @@ class CroppingWindowCapturer : public DesktopCapturer,
 }  // namespace webrtc
 
 #endif  // MODULES_DESKTOP_CAPTURE_CROPPING_WINDOW_CAPTURER_H_
-

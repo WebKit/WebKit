@@ -16,7 +16,6 @@
 
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "test/gmock.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -46,9 +45,8 @@ class MockVideoEncoder : public VideoEncoder {
   MOCK_METHOD2(SetChannelParameters, int32_t(uint32_t packetLoss, int64_t rtt));
   MOCK_METHOD2(SetRates, int32_t(uint32_t newBitRate, uint32_t frameRate));
   MOCK_METHOD2(SetRateAllocation,
-               int32_t(const BitrateAllocation& newBitRate,
+               int32_t(const VideoBitrateAllocation& newBitRate,
                        uint32_t frameRate));
-  MOCK_METHOD1(SetPeriodicKeyFrames, int32_t(bool enable));
 };
 
 class MockDecodedImageCallback : public DecodedImageCallback {
@@ -59,8 +57,8 @@ class MockDecodedImageCallback : public DecodedImageCallback {
                        int64_t decode_time_ms));
   MOCK_METHOD3(Decoded,
                void(VideoFrame& decodedImage,  // NOLINT
-                    rtc::Optional<int32_t> decode_time_ms,
-                    rtc::Optional<uint8_t> qp));
+                    absl::optional<int32_t> decode_time_ms,
+                    absl::optional<uint8_t> qp));
   MOCK_METHOD1(ReceivedDecodedReferenceFrame,
                int32_t(const uint64_t pictureId));
   MOCK_METHOD1(ReceivedDecodedFrame, int32_t(const uint64_t pictureId));
@@ -70,10 +68,9 @@ class MockVideoDecoder : public VideoDecoder {
  public:
   MOCK_METHOD2(InitDecode,
                int32_t(const VideoCodec* codecSettings, int32_t numberOfCores));
-  MOCK_METHOD5(Decode,
+  MOCK_METHOD4(Decode,
                int32_t(const EncodedImage& inputImage,
                        bool missingFrames,
-                       const RTPFragmentationHeader* fragmentation,
                        const CodecSpecificInfo* codecSpecificInfo,
                        int64_t renderTimeMs));
   MOCK_METHOD1(RegisterDecodeCompleteCallback,

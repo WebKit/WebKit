@@ -256,7 +256,7 @@ class DtlsTestClient : public sigslot::has_slots<> {
                                     size_t size,
                                     const rtc::PacketTime& time,
                                     int flags) {
-    // Flags shouldn't be set on the underlying TransportChannel packets.
+    // Flags shouldn't be set on the underlying Transport packets.
     ASSERT_EQ(0, flags);
 
     // Look at the handshake packets to see what role we played.
@@ -291,15 +291,14 @@ class DtlsTestClient : public sigslot::has_slots<> {
   rtc::SentPacket sent_packet_;
 };
 
-// Base class for DtlsTransportChannelTest and DtlsEventOrderingTest, which
+// Base class for DtlsTransportTest and DtlsEventOrderingTest, which
 // inherit from different variants of testing::Test.
 //
 // Note that this test always uses a FakeClock, due to the |fake_clock_| member
 // variable.
-class DtlsTransportChannelTestBase {
+class DtlsTransportTestBase {
  public:
-  DtlsTransportChannelTestBase()
-      : client1_("P1"), client2_("P2"), use_dtls_(false) {}
+  DtlsTransportTestBase() : client1_("P1"), client2_("P2"), use_dtls_(false) {}
 
   void SetMaxProtocolVersions(rtc::SSLProtocolVersion c1,
                               rtc::SSLProtocolVersion c2) {
@@ -335,9 +334,9 @@ class DtlsTransportChannelTestBase {
 
     if (use_dtls_) {
       // Check that we negotiated the right ciphers. Since GCM ciphers are not
-      // negotiated by default, we should end up with SRTP_AES128_CM_SHA1_32.
-      client1_.CheckSrtp(rtc::SRTP_AES128_CM_SHA1_32);
-      client2_.CheckSrtp(rtc::SRTP_AES128_CM_SHA1_32);
+      // negotiated by default, we should end up with SRTP_AES128_CM_SHA1_80.
+      client1_.CheckSrtp(rtc::SRTP_AES128_CM_SHA1_80);
+      client2_.CheckSrtp(rtc::SRTP_AES128_CM_SHA1_80);
     } else {
       // If DTLS isn't actually being used, GetSrtpCryptoSuite should return
       // false.
@@ -354,10 +353,10 @@ class DtlsTransportChannelTestBase {
   void Negotiate(bool client1_server = true) {
     client1_.SetupTransports(ICEROLE_CONTROLLING);
     client2_.SetupTransports(ICEROLE_CONTROLLED);
-    client1_.dtls_transport()->SetSslRole(client1_server ? rtc::SSL_SERVER
-                                                         : rtc::SSL_CLIENT);
-    client2_.dtls_transport()->SetSslRole(client1_server ? rtc::SSL_CLIENT
-                                                         : rtc::SSL_SERVER);
+    client1_.dtls_transport()->SetDtlsRole(client1_server ? rtc::SSL_SERVER
+                                                          : rtc::SSL_CLIENT);
+    client2_.dtls_transport()->SetDtlsRole(client1_server ? rtc::SSL_CLIENT
+                                                          : rtc::SSL_SERVER);
     if (client2_.certificate()) {
       SetRemoteFingerprintFromCert(client1_.dtls_transport(),
                                    client2_.certificate());
@@ -380,22 +379,21 @@ class DtlsTransportChannelTestBase {
   rtc::ScopedFakeClock fake_clock_;
   DtlsTestClient client1_;
   DtlsTestClient client2_;
-  int channel_ct_;
   bool use_dtls_;
   rtc::SSLProtocolVersion ssl_expected_version_;
 };
 
-class DtlsTransportChannelTest : public DtlsTransportChannelTestBase,
-                                 public ::testing::Test {};
+class DtlsTransportTest : public DtlsTransportTestBase,
+                          public ::testing::Test {};
 
 // Connect without DTLS, and transfer RTP data.
-TEST_F(DtlsTransportChannelTest, TestTransferRtp) {
+TEST_F(DtlsTransportTest, TestTransferRtp) {
   ASSERT_TRUE(Connect());
   TestTransfer(1000, 100, /*srtp=*/false);
 }
 
 // Test that the SignalSentPacket signal is wired up.
-TEST_F(DtlsTransportChannelTest, TestSignalSentPacket) {
+TEST_F(DtlsTransportTest, TestSignalSentPacket) {
   ASSERT_TRUE(Connect());
   // Sanity check default value (-1).
   ASSERT_EQ(client1_.sent_packet().send_time_ms, -1);
@@ -407,13 +405,13 @@ TEST_F(DtlsTransportChannelTest, TestSignalSentPacket) {
 }
 
 // Connect without DTLS, and transfer SRTP data.
-TEST_F(DtlsTransportChannelTest, TestTransferSrtp) {
+TEST_F(DtlsTransportTest, TestTransferSrtp) {
   ASSERT_TRUE(Connect());
   TestTransfer(1000, 100, /*srtp=*/true);
 }
 
 // Connect with DTLS, and transfer data over DTLS.
-TEST_F(DtlsTransportChannelTest, TestTransferDtls) {
+TEST_F(DtlsTransportTest, TestTransferDtls) {
   PrepareDtls(rtc::KT_DEFAULT);
   ASSERT_TRUE(Connect());
   TestTransfer(1000, 100, /*srtp=*/false);
@@ -423,7 +421,7 @@ TEST_F(DtlsTransportChannelTest, TestTransferDtls) {
 // Our DTLS implementation doesn't do this, but other implementations may;
 // see https://tools.ietf.org/html/rfc6347#section-4.1.1.
 // This has caused interoperability problems with ORTCLib in the past.
-TEST_F(DtlsTransportChannelTest, TestTransferDtlsCombineRecords) {
+TEST_F(DtlsTransportTest, TestTransferDtlsCombineRecords) {
   PrepareDtls(rtc::KT_DEFAULT);
   ASSERT_TRUE(Connect());
   // Our DTLS implementation always sends one record per packet, so to simulate
@@ -435,8 +433,8 @@ TEST_F(DtlsTransportChannelTest, TestTransferDtlsCombineRecords) {
   TestTransfer(500, 100, /*srtp=*/false);
 }
 
-class DtlsTransportChannelVersionTest
-    : public DtlsTransportChannelTestBase,
+class DtlsTransportVersionTest
+    : public DtlsTransportTestBase,
       public ::testing::TestWithParam<
           ::testing::tuple<rtc::SSLProtocolVersion, rtc::SSLProtocolVersion>> {
 };
@@ -444,7 +442,7 @@ class DtlsTransportChannelVersionTest
 // Test that an acceptable cipher suite is negotiated when different versions
 // of DTLS are supported. Note that it's IsAcceptableCipher that does the actual
 // work.
-TEST_P(DtlsTransportChannelVersionTest, TestCipherSuiteNegotiation) {
+TEST_P(DtlsTransportVersionTest, TestCipherSuiteNegotiation) {
   PrepareDtls(rtc::KT_DEFAULT);
   SetMaxProtocolVersions(::testing::get<0>(GetParam()),
                          ::testing::get<1>(GetParam()));
@@ -454,14 +452,14 @@ TEST_P(DtlsTransportChannelVersionTest, TestCipherSuiteNegotiation) {
 // Will test every combination of 1.0/1.2 on the client and server.
 INSTANTIATE_TEST_CASE_P(
     TestCipherSuiteNegotiation,
-    DtlsTransportChannelVersionTest,
+    DtlsTransportVersionTest,
     ::testing::Combine(::testing::Values(rtc::SSL_PROTOCOL_DTLS_10,
                                          rtc::SSL_PROTOCOL_DTLS_12),
                        ::testing::Values(rtc::SSL_PROTOCOL_DTLS_10,
                                          rtc::SSL_PROTOCOL_DTLS_12)));
 
 // Connect with DTLS, negotiating DTLS-SRTP, and transfer SRTP using bypass.
-TEST_F(DtlsTransportChannelTest, TestTransferDtlsSrtp) {
+TEST_F(DtlsTransportTest, TestTransferDtlsSrtp) {
   PrepareDtls(rtc::KT_DEFAULT);
   ASSERT_TRUE(Connect());
   TestTransfer(1000, 100, /*srtp=*/true);
@@ -469,14 +467,15 @@ TEST_F(DtlsTransportChannelTest, TestTransferDtlsSrtp) {
 
 // Connect with DTLS-SRTP, transfer an invalid SRTP packet, and expects -1
 // returned.
-TEST_F(DtlsTransportChannelTest, TestTransferDtlsInvalidSrtpPacket) {
+TEST_F(DtlsTransportTest, TestTransferDtlsInvalidSrtpPacket) {
   PrepareDtls(rtc::KT_DEFAULT);
   ASSERT_TRUE(Connect());
   EXPECT_EQ(-1, client1_.SendInvalidSrtpPacket(100));
 }
 
-// Create a single channel with DTLS, and send normal data and SRTP data on it.
-TEST_F(DtlsTransportChannelTest, TestTransferDtlsSrtpDemux) {
+// Create a single transport with DTLS, and send normal data and SRTP data on
+// it.
+TEST_F(DtlsTransportTest, TestTransferDtlsSrtpDemux) {
   PrepareDtls(rtc::KT_DEFAULT);
   ASSERT_TRUE(Connect());
   TestTransfer(1000, 100, /*srtp=*/false);
@@ -484,7 +483,7 @@ TEST_F(DtlsTransportChannelTest, TestTransferDtlsSrtpDemux) {
 }
 
 // Test transferring when the "answerer" has the server role.
-TEST_F(DtlsTransportChannelTest, TestTransferDtlsSrtpAnswererIsPassive) {
+TEST_F(DtlsTransportTest, TestTransferDtlsSrtpAnswererIsPassive) {
   PrepareDtls(rtc::KT_DEFAULT);
   ASSERT_TRUE(Connect(/*client1_server=*/false));
   TestTransfer(1000, 100, /*srtp=*/true);
@@ -492,7 +491,7 @@ TEST_F(DtlsTransportChannelTest, TestTransferDtlsSrtpAnswererIsPassive) {
 
 // Test that renegotiation (setting same role and fingerprint again) can be
 // started before the clients become connected in the first negotiation.
-TEST_F(DtlsTransportChannelTest, TestRenegotiateBeforeConnect) {
+TEST_F(DtlsTransportTest, TestRenegotiateBeforeConnect) {
   PrepareDtls(rtc::KT_DEFAULT);
   // Note: This is doing the same thing Connect normally does, minus some
   // additional checks not relevant for this test.
@@ -506,7 +505,7 @@ TEST_F(DtlsTransportChannelTest, TestRenegotiateBeforeConnect) {
 }
 
 // Test Certificates state after negotiation but before connection.
-TEST_F(DtlsTransportChannelTest, TestCertificatesBeforeConnect) {
+TEST_F(DtlsTransportTest, TestCertificatesBeforeConnect) {
   PrepareDtls(rtc::KT_DEFAULT);
   Negotiate();
 
@@ -516,12 +515,12 @@ TEST_F(DtlsTransportChannelTest, TestCertificatesBeforeConnect) {
   auto certificate2 = client2_.dtls_transport()->GetLocalCertificate();
   ASSERT_NE(certificate1->ssl_certificate().ToPEMString(),
             certificate2->ssl_certificate().ToPEMString());
-  ASSERT_FALSE(client1_.dtls_transport()->GetRemoteSSLCertificate());
-  ASSERT_FALSE(client2_.dtls_transport()->GetRemoteSSLCertificate());
+  ASSERT_FALSE(client1_.dtls_transport()->GetRemoteSSLCertChain());
+  ASSERT_FALSE(client2_.dtls_transport()->GetRemoteSSLCertChain());
 }
 
 // Test Certificates state after connection.
-TEST_F(DtlsTransportChannelTest, TestCertificatesAfterConnect) {
+TEST_F(DtlsTransportTest, TestCertificatesAfterConnect) {
   PrepareDtls(rtc::KT_DEFAULT);
   ASSERT_TRUE(Connect());
 
@@ -532,15 +531,17 @@ TEST_F(DtlsTransportChannelTest, TestCertificatesAfterConnect) {
             certificate2->ssl_certificate().ToPEMString());
 
   // Each side's remote certificate is the other side's local certificate.
-  std::unique_ptr<rtc::SSLCertificate> remote_cert1 =
-      client1_.dtls_transport()->GetRemoteSSLCertificate();
+  std::unique_ptr<rtc::SSLCertChain> remote_cert1 =
+      client1_.dtls_transport()->GetRemoteSSLCertChain();
   ASSERT_TRUE(remote_cert1);
-  ASSERT_EQ(remote_cert1->ToPEMString(),
+  ASSERT_EQ(1u, remote_cert1->GetSize());
+  ASSERT_EQ(remote_cert1->Get(0).ToPEMString(),
             certificate2->ssl_certificate().ToPEMString());
-  std::unique_ptr<rtc::SSLCertificate> remote_cert2 =
-      client2_.dtls_transport()->GetRemoteSSLCertificate();
+  std::unique_ptr<rtc::SSLCertChain> remote_cert2 =
+      client2_.dtls_transport()->GetRemoteSSLCertChain();
   ASSERT_TRUE(remote_cert2);
-  ASSERT_EQ(remote_cert2->ToPEMString(),
+  ASSERT_EQ(1u, remote_cert2->GetSize());
+  ASSERT_EQ(remote_cert2->Get(0).ToPEMString(),
             certificate1->ssl_certificate().ToPEMString());
 }
 
@@ -548,7 +549,7 @@ TEST_F(DtlsTransportChannelTest, TestCertificatesAfterConnect) {
 // Each time a timeout occurs, the retransmission timer should be doubled up to
 // 60 seconds. The timer defaults to 1 second, but for WebRTC we should be
 // initializing it to 50ms.
-TEST_F(DtlsTransportChannelTest, TestRetransmissionSchedule) {
+TEST_F(DtlsTransportTest, TestRetransmissionSchedule) {
   // We can only change the retransmission schedule with a recently-added
   // BoringSSL API. Skip the test if not built with BoringSSL.
   MAYBE_SKIP_TEST(IsBoringSsl);
@@ -578,10 +579,9 @@ TEST_F(DtlsTransportChannelTest, TestRetransmissionSchedule) {
     // millisecond before the expected time and verify that no unexpected
     // retransmissions were sent. Then advance it the final millisecond and
     // verify that the expected retransmission was sent.
-    fake_clock_.AdvanceTime(
-        rtc::TimeDelta::FromMilliseconds(timeout_schedule_ms[i] - 1));
+    fake_clock_.AdvanceTime(webrtc::TimeDelta::ms(timeout_schedule_ms[i] - 1));
     EXPECT_EQ(expected_hellos, client1_.received_dtls_client_hellos());
-    fake_clock_.AdvanceTime(rtc::TimeDelta::FromMilliseconds(1));
+    fake_clock_.AdvanceTime(webrtc::TimeDelta::ms(1));
     EXPECT_EQ(++expected_hellos, client1_.received_dtls_client_hellos());
   }
 }
@@ -609,7 +609,7 @@ enum DtlsTransportEvent {
 };
 
 class DtlsEventOrderingTest
-    : public DtlsTransportChannelTestBase,
+    : public DtlsTransportTestBase,
       public ::testing::TestWithParam<
           ::testing::tuple<std::vector<DtlsTransportEvent>, bool>> {
  protected:
@@ -628,8 +628,8 @@ class DtlsEventOrderingTest
     client1_.SetupTransports(ICEROLE_CONTROLLING, simulated_delay_ms);
     client2_.SetupTransports(ICEROLE_CONTROLLED, simulated_delay_ms);
     // Similar to how NegotiateOrdering works.
-    client1_.dtls_transport()->SetSslRole(rtc::SSL_SERVER);
-    client2_.dtls_transport()->SetSslRole(rtc::SSL_CLIENT);
+    client1_.dtls_transport()->SetDtlsRole(rtc::SSL_SERVER);
+    client2_.dtls_transport()->SetDtlsRole(rtc::SSL_CLIENT);
     SetRemoteFingerprintFromCert(client2_.dtls_transport(),
                                  client1_.certificate());
 
@@ -683,7 +683,7 @@ class DtlsEventOrderingTest
                              client2_.dtls_transport()->dtls_state(), kTimeout,
                              fake_clock_);
 
-    // Channel should be writable iff there was a valid fingerprint.
+    // Transports should be writable iff there was a valid fingerprint.
     EXPECT_EQ(valid_fingerprint, client1_.dtls_transport()->writable());
     EXPECT_EQ(valid_fingerprint, client2_.dtls_transport()->writable());
 

@@ -28,8 +28,8 @@ class RefCounter {
   // the reference counter can be deleted.
   rtc::RefCountReleaseStatus DecRef() {
     return (rtc::AtomicOps::Decrement(&ref_count_) == 0)
-        ? rtc::RefCountReleaseStatus::kDroppedLastRef
-        : rtc::RefCountReleaseStatus::kOtherRefsRemained;
+               ? rtc::RefCountReleaseStatus::kDroppedLastRef
+               : rtc::RefCountReleaseStatus::kOtherRefsRemained;
   }
 
   // Return whether the reference count is one. If the reference count is used

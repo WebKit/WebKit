@@ -16,7 +16,7 @@
 
 ******************************************************************/
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  * Swap bytes (to simplify operations on Little Endian machines)

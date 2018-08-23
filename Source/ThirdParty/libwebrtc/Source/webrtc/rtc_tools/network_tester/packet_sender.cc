@@ -115,7 +115,7 @@ void PacketSender::SendPacket() {
   packet.set_type(NetworkTesterPacket::TEST_DATA);
   packet.set_sequence_number(sequence_number_++);
   packet.set_send_timestamp(rtc::TimeMicros());
-  test_controller_->SendData(packet, rtc::Optional<size_t>(packet_size_));
+  test_controller_->SendData(packet, packet_size_);
 }
 
 int64_t PacketSender::GetSendIntervalMs() const {

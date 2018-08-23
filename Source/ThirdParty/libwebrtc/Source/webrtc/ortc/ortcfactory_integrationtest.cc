@@ -17,17 +17,20 @@
 #include "ortc/testrtpparameters.h"
 #include "p2p/base/udptransport.h"
 #include "pc/test/fakeaudiocapturemodule.h"
-#include "pc/test/fakeperiodicvideocapturer.h"
+#include "pc/test/fakeperiodicvideotracksource.h"
 #include "pc/test/fakevideotrackrenderer.h"
+#include "pc/videotracksource.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/fakenetwork.h"
 #include "rtc_base/gunit.h"
+#include "rtc_base/system/arch.h"
 #include "rtc_base/virtualsocketserver.h"
 
 namespace {
 
 const int kDefaultTimeout = 10000;    // 10 seconds.
 const int kReceivingDuration = 1000;  // 1 second.
+
 // Default number of audio/video frames to wait for before considering a test a
 // success.
 const int kDefaultNumFrames = 3;
@@ -77,6 +80,7 @@ class OrtcFactoryIntegrationTest : public testing::Test {
     // Sockets are bound to the ANY address, so this is needed to tell the
     // virtual network which address to use in this case.
     virtual_socket_server_.SetDefaultRoute(kIPv4LocalHostAddress);
+    network_thread_.SetName("TestNetworkThread", this);
     network_thread_.Start();
     // Need to create after network thread is started.
     ortc_factory1_ =
@@ -216,18 +220,15 @@ class OrtcFactoryIntegrationTest : public testing::Test {
     return ortc_factory->CreateAudioTrack(id, source);
   }
 
-  // Stores created capturer in |fake_video_capturers_|.
+  // Stores created video source in |fake_video_track_sources_|.
   rtc::scoped_refptr<webrtc::VideoTrackInterface>
-  CreateLocalVideoTrackAndFakeCapturer(const std::string& id,
-                                       OrtcFactoryInterface* ortc_factory) {
-    cricket::FakeVideoCapturer* fake_capturer =
-        new webrtc::FakePeriodicVideoCapturer();
-    fake_video_capturers_.push_back(fake_capturer);
-    rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> source =
-        ortc_factory->CreateVideoSource(
-            std::unique_ptr<cricket::VideoCapturer>(fake_capturer));
-    return rtc::scoped_refptr<webrtc::VideoTrackInterface>(
-        ortc_factory->CreateVideoTrack(id, source));
+  CreateLocalVideoTrackAndFakeSource(const std::string& id,
+                                     OrtcFactoryInterface* ortc_factory) {
+    fake_video_track_sources_.emplace_back(
+        new rtc::RefCountedObject<FakePeriodicVideoTrackSource>(
+            false /* remote */));
+    return rtc::scoped_refptr<VideoTrackInterface>(
+        ortc_factory->CreateVideoTrack(id, fake_video_track_sources_.back()));
   }
 
   // Helper function used to test two way RTP senders and receivers with basic
@@ -282,13 +283,13 @@ class OrtcFactoryIntegrationTest : public testing::Test {
         CreateLocalAudioTrack("audio", ortc_factory1_.get()));
     EXPECT_TRUE(error.ok());
     error = video_sender1->SetTrack(
-        CreateLocalVideoTrackAndFakeCapturer("video", ortc_factory1_.get()));
+        CreateLocalVideoTrackAndFakeSource("video", ortc_factory1_.get()));
     EXPECT_TRUE(error.ok());
     error = audio_sender2->SetTrack(
         CreateLocalAudioTrack("audio", ortc_factory2_.get()));
     EXPECT_TRUE(error.ok());
     error = video_sender2->SetTrack(
-        CreateLocalVideoTrackAndFakeCapturer("video", ortc_factory2_.get()));
+        CreateLocalVideoTrackAndFakeSource("video", ortc_factory2_.get()));
     EXPECT_TRUE(error.ok());
 
     // "sent_X_parameters1" are the parameters that endpoint 1 sends with and
@@ -324,15 +325,15 @@ class OrtcFactoryIntegrationTest : public testing::Test {
               fake_audio_capture_module2_->frames_received() >
                   kDefaultNumFrames &&
               fake_video_renderer2.num_rendered_frames() > kDefaultNumFrames,
-          kDefaultTimeout) << "Audio capture module 1 received "
-                           << fake_audio_capture_module1_->frames_received()
-                           << " frames, Video renderer 1 rendered "
-                           << fake_video_renderer1.num_rendered_frames()
-                           << " frames, Audio capture module 2 received "
-                           << fake_audio_capture_module2_->frames_received()
-                           << " frames, Video renderer 2 rendered "
-                           << fake_video_renderer2.num_rendered_frames()
-                           << " frames.";
+          kDefaultTimeout)
+          << "Audio capture module 1 received "
+          << fake_audio_capture_module1_->frames_received()
+          << " frames, Video renderer 1 rendered "
+          << fake_video_renderer1.num_rendered_frames()
+          << " frames, Audio capture module 2 received "
+          << fake_audio_capture_module2_->frames_received()
+          << " frames, Video renderer 2 rendered "
+          << fake_video_renderer2.num_rendered_frames() << " frames.";
     } else {
       WAIT(false, kReceivingDuration);
       rendered_video_frames1_ = fake_video_renderer1.num_rendered_frames();
@@ -349,8 +350,7 @@ class OrtcFactoryIntegrationTest : public testing::Test {
   rtc::scoped_refptr<FakeAudioCaptureModule> fake_audio_capture_module2_;
   std::unique_ptr<OrtcFactoryInterface> ortc_factory1_;
   std::unique_ptr<OrtcFactoryInterface> ortc_factory2_;
-  // Actually owned by video tracks.
-  std::vector<cricket::FakeVideoCapturer*> fake_video_capturers_;
+  std::vector<rtc::scoped_refptr<VideoTrackSource>> fake_video_track_sources_;
   int received_audio_frames1_ = 0;
   int received_audio_frames2_ = 0;
   int rendered_video_frames1_ = 0;
@@ -414,7 +414,7 @@ TEST_F(OrtcFactoryIntegrationTest, BasicOneWayVideoRtpSenderAndReceiver) {
   auto receiver = receiver_result.MoveValue();
 
   RTCError error = sender->SetTrack(
-      CreateLocalVideoTrackAndFakeCapturer("video", ortc_factory1_.get()));
+      CreateLocalVideoTrackAndFakeSource("video", ortc_factory1_.get()));
   EXPECT_TRUE(error.ok());
 
   RtpParameters vp8_parameters = MakeMinimalVp8Parameters();
@@ -449,7 +449,7 @@ TEST_F(OrtcFactoryIntegrationTest, SetTrackWhileSending) {
   auto receiver = receiver_result.MoveValue();
 
   RTCError error = sender->SetTrack(
-      CreateLocalVideoTrackAndFakeCapturer("video_1", ortc_factory1_.get()));
+      CreateLocalVideoTrackAndFakeSource("video_1", ortc_factory1_.get()));
   EXPECT_TRUE(error.ok());
   RtpParameters vp8_parameters = MakeMinimalVp8Parameters();
   EXPECT_TRUE(receiver->Receive(vp8_parameters).ok());
@@ -459,27 +459,50 @@ TEST_F(OrtcFactoryIntegrationTest, SetTrackWhileSending) {
   // Expect for some initial number of frames to be received.
   EXPECT_TRUE_WAIT(fake_renderer.num_rendered_frames() > kDefaultNumFrames,
                    kDefaultTimeout);
-  // Stop the old capturer, set a new track, and verify new frames are received
-  // from the new track. Stopping the old capturer ensures that we aren't
-  // actually still getting frames from it.
-  fake_video_capturers_[0]->Stop();
+  // Destroy old source, set a new track, and verify new frames are received
+  // from the new track. The VideoTrackSource is reference counted and may live
+  // a little longer, so tell it that its source is going away now.
+  fake_video_track_sources_[0] = nullptr;
   int prev_num_frames = fake_renderer.num_rendered_frames();
   error = sender->SetTrack(
-      CreateLocalVideoTrackAndFakeCapturer("video_2", ortc_factory1_.get()));
+      CreateLocalVideoTrackAndFakeSource("video_2", ortc_factory1_.get()));
   EXPECT_TRUE(error.ok());
   EXPECT_TRUE_WAIT(
       fake_renderer.num_rendered_frames() > kDefaultNumFrames + prev_num_frames,
       kDefaultTimeout);
 }
 
+// TODO(webrtc:7915, webrtc:9184): Tests below are disabled for iOS 64 on debug
+// builds because of flakiness.
+#if !(defined(WEBRTC_IOS) && defined(WEBRTC_ARCH_64_BITS) && !defined(NDEBUG))
+#define MAYBE_BasicTwoWayAudioVideoRtpSendersAndReceivers \
+  BasicTwoWayAudioVideoRtpSendersAndReceivers
+#define MAYBE_BasicTwoWayAudioVideoSrtpSendersAndReceivers \
+  BasicTwoWayAudioVideoSrtpSendersAndReceivers
+#define MAYBE_SrtpSendersAndReceiversWithMismatchingKeys \
+  SrtpSendersAndReceiversWithMismatchingKeys
+#define MAYBE_OneSideSrtpSenderAndReceiver OneSideSrtpSenderAndReceiver
+#define MAYBE_FullTwoWayAudioVideoSrtpSendersAndReceivers \
+  FullTwoWayAudioVideoSrtpSendersAndReceivers
+#else
+#define MAYBE_BasicTwoWayAudioVideoRtpSendersAndReceivers \
+  DISABLED_BasicTwoWayAudioVideoRtpSendersAndReceivers
+#define MAYBE_BasicTwoWayAudioVideoSrtpSendersAndReceivers \
+  DISABLED_BasicTwoWayAudioVideoSrtpSendersAndReceivers
+#define MAYBE_SrtpSendersAndReceiversWithMismatchingKeys \
+  DISABLED_SrtpSendersAndReceiversWithMismatchingKeys
+#define MAYBE_OneSideSrtpSenderAndReceiver DISABLED_OneSideSrtpSenderAndReceiver
+#define MAYBE_FullTwoWayAudioVideoSrtpSendersAndReceivers \
+  DISABLED_FullTwoWayAudioVideoSrtpSendersAndReceivers
+#endif
+
 // End-to-end test with two pairs of RTP senders and receivers, for audio and
 // video.
 //
 // Uses muxed RTCP, and minimal parameters with hard-coded configs that are
 // known to work.
-#if !(defined(WEBRTC_IOS) && defined(WEBRTC_ARCH_64_BITS) && !defined(NDEBUG))
 TEST_F(OrtcFactoryIntegrationTest,
-       BasicTwoWayAudioVideoRtpSendersAndReceivers) {
+       MAYBE_BasicTwoWayAudioVideoRtpSendersAndReceivers) {
   auto udp_transports = CreateAndConnectUdpTransportPair();
   auto rtp_transports =
       CreateRtpTransportPair(MakeRtcpMuxParameters(), udp_transports);
@@ -489,7 +512,7 @@ TEST_F(OrtcFactoryIntegrationTest,
 }
 
 TEST_F(OrtcFactoryIntegrationTest,
-       BasicTwoWayAudioVideoSrtpSendersAndReceivers) {
+       MAYBE_BasicTwoWayAudioVideoSrtpSendersAndReceivers) {
   auto udp_transports = CreateAndConnectUdpTransportPair();
   auto srtp_transports = CreateSrtpTransportPairAndSetKeys(
       MakeRtcpMuxParameters(), udp_transports);
@@ -497,10 +520,11 @@ TEST_F(OrtcFactoryIntegrationTest,
   BasicTwoWayRtpSendersAndReceiversTest(std::move(srtp_transports),
                                         expect_success);
 }
-#endif
 
 // Tests that the packets cannot be decoded if the keys are mismatched.
-TEST_F(OrtcFactoryIntegrationTest, SrtpSendersAndReceiversWithMismatchingKeys) {
+// TODO(webrtc:9184): Disabled because this test is flaky.
+TEST_F(OrtcFactoryIntegrationTest,
+       MAYBE_SrtpSendersAndReceiversWithMismatchingKeys) {
   auto udp_transports = CreateAndConnectUdpTransportPair();
   auto srtp_transports = CreateSrtpTransportPairAndSetMismatchingKeys(
       MakeRtcpMuxParameters(), udp_transports);
@@ -513,7 +537,7 @@ TEST_F(OrtcFactoryIntegrationTest, SrtpSendersAndReceiversWithMismatchingKeys) {
 }
 
 // Tests that the frames cannot be decoded if only one side uses SRTP.
-TEST_F(OrtcFactoryIntegrationTest, OneSideSrtpSenderAndReceiver) {
+TEST_F(OrtcFactoryIntegrationTest, MAYBE_OneSideSrtpSenderAndReceiver) {
   auto rtcp_parameters = MakeRtcpMuxParameters();
   auto udp_transports = CreateAndConnectUdpTransportPair();
   auto rtcp_udp_transports = UdpTransportPair();
@@ -552,7 +576,7 @@ TEST_F(OrtcFactoryIntegrationTest, OneSideSrtpSenderAndReceiver) {
 // TODO(deadbeef): Update this test as more audio/video features become
 // supported.
 TEST_F(OrtcFactoryIntegrationTest,
-       FullTwoWayAudioVideoSrtpSendersAndReceivers) {
+       MAYBE_FullTwoWayAudioVideoSrtpSendersAndReceivers) {
   // We want four pairs of UDP transports for this test, for audio/video and
   // RTP/RTCP.
   auto audio_rtp_udp_transports = CreateAndConnectUdpTransportPair();
@@ -627,13 +651,13 @@ TEST_F(OrtcFactoryIntegrationTest,
       CreateLocalAudioTrack("audio", ortc_factory1_.get()));
   EXPECT_TRUE(error.ok());
   error = video_sender1->SetTrack(
-      CreateLocalVideoTrackAndFakeCapturer("video", ortc_factory1_.get()));
+      CreateLocalVideoTrackAndFakeSource("video", ortc_factory1_.get()));
   EXPECT_TRUE(error.ok());
   error = audio_sender2->SetTrack(
       CreateLocalAudioTrack("audio", ortc_factory2_.get()));
   EXPECT_TRUE(error.ok());
   error = video_sender2->SetTrack(
-      CreateLocalVideoTrackAndFakeCapturer("video", ortc_factory2_.get()));
+      CreateLocalVideoTrackAndFakeSource("video", ortc_factory2_.get()));
   EXPECT_TRUE(error.ok());
 
   // Use different codecs in different directions for extra challenge.

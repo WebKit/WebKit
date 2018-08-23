@@ -21,4 +21,21 @@ size_t SessionDescriptionInterface::RemoveCandidates(
   return 0;
 }
 
+void CreateSessionDescriptionObserver::OnFailure(RTCError error) {
+  OnFailure(error.message());
+}
+
+void CreateSessionDescriptionObserver::OnFailure(const std::string& error) {
+  OnFailure(RTCError(RTCErrorType::INTERNAL_ERROR, std::string(error)));
+}
+
+void SetSessionDescriptionObserver::OnFailure(RTCError error) {
+  std::string message(error.message());
+  OnFailure(message);
+}
+
+void SetSessionDescriptionObserver::OnFailure(const std::string& error) {
+  OnFailure(RTCError(RTCErrorType::INTERNAL_ERROR, std::string(error)));
+}
+
 }  // namespace webrtc

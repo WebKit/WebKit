@@ -26,6 +26,7 @@ class AdaptedVideoTrackSource
     : public webrtc::Notifier<webrtc::VideoTrackSourceInterface> {
  public:
   AdaptedVideoTrackSource();
+  ~AdaptedVideoTrackSource() override;
 
  protected:
   // Allows derived classes to initialize |video_adapter_| with a custom
@@ -74,7 +75,7 @@ class AdaptedVideoTrackSource
   cricket::VideoAdapter video_adapter_;
 
   rtc::CriticalSection stats_crit_;
-  rtc::Optional<Stats> stats_ RTC_GUARDED_BY(stats_crit_);
+  absl::optional<Stats> stats_ RTC_GUARDED_BY(stats_crit_);
 
   VideoBroadcaster broadcaster_;
 };

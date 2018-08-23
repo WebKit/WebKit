@@ -14,8 +14,8 @@
 
 #include "common_video/include/i420_buffer_pool.h"
 #include "modules/video_processing/video_denoiser.h"
-#include "test/gtest.h"
 #include "test/frame_utils.h"
+#include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
 
 namespace webrtc {

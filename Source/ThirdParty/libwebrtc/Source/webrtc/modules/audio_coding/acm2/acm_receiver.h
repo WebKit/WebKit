@@ -16,17 +16,16 @@
 #include <string>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "api/array_view.h"
-#include "api/optional.h"
+#include "api/audio/audio_frame.h"
 #include "common_audio/vad/include/webrtc_vad.h"
 #include "modules/audio_coding/acm2/acm_resampler.h"
 #include "modules/audio_coding/acm2/call_statistics.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/audio_coding/neteq/include/neteq.h"
-#include "modules/include/module_common_types.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/thread_annotations.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -159,7 +158,7 @@ class AcmReceiver {
   // packet. If no packet of a registered non-CNG codec has been received, the
   // return value is empty. Also, if the decoder was unregistered since the last
   // packet was inserted, the return value is empty.
-  rtc::Optional<int> last_packet_sample_rate_hz() const;
+  absl::optional<int> last_packet_sample_rate_hz() const;
 
   // Returns last_output_sample_rate_hz from the NetEq instance.
   int last_output_sample_rate_hz() const;
@@ -195,7 +194,7 @@ class AcmReceiver {
 
   // Returns the RTP timestamp for the last sample delivered by GetAudio().
   // The return value will be empty if no valid timestamp is available.
-  rtc::Optional<uint32_t> GetPlayoutTimestamp();
+  absl::optional<uint32_t> GetPlayoutTimestamp();
 
   // Returns the current total delay from NetEq (packet buffer and sync buffer)
   // in ms, with smoothing applied to even out short-time fluctuations due to
@@ -215,7 +214,7 @@ class AcmReceiver {
   //
   int LastAudioCodec(CodecInst* codec) const;
 
-  rtc::Optional<SdpAudioFormat> LastAudioFormat() const;
+  absl::optional<SdpAudioFormat> LastAudioFormat() const;
 
   //
   // Get a decoder given its registered payload-type.
@@ -273,22 +272,23 @@ class AcmReceiver {
     int sample_rate_hz;
   };
 
-  const rtc::Optional<CodecInst> RtpHeaderToDecoder(const RTPHeader& rtp_header,
-                                                    uint8_t first_payload_byte)
-      const RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
+  const absl::optional<CodecInst> RtpHeaderToDecoder(
+      const RTPHeader& rtp_header,
+      uint8_t first_payload_byte) const
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   uint32_t NowInTimestamp(int decoder_sampling_rate) const;
 
   rtc::CriticalSection crit_sect_;
-  rtc::Optional<CodecInst> last_audio_decoder_ RTC_GUARDED_BY(crit_sect_);
-  rtc::Optional<SdpAudioFormat> last_audio_format_ RTC_GUARDED_BY(crit_sect_);
+  absl::optional<CodecInst> last_audio_decoder_ RTC_GUARDED_BY(crit_sect_);
+  absl::optional<SdpAudioFormat> last_audio_format_ RTC_GUARDED_BY(crit_sect_);
   ACMResampler resampler_ RTC_GUARDED_BY(crit_sect_);
   std::unique_ptr<int16_t[]> last_audio_buffer_ RTC_GUARDED_BY(crit_sect_);
   CallStatistics call_stats_ RTC_GUARDED_BY(crit_sect_);
   const std::unique_ptr<NetEq> neteq_;  // NetEq is thread-safe; no lock needed.
   const Clock* const clock_;
   bool resampled_last_output_frame_ RTC_GUARDED_BY(crit_sect_);
-  rtc::Optional<int> last_packet_sample_rate_hz_ RTC_GUARDED_BY(crit_sect_);
+  absl::optional<int> last_packet_sample_rate_hz_ RTC_GUARDED_BY(crit_sect_);
 };
 
 }  // namespace acm2

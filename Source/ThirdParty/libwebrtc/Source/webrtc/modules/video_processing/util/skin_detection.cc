@@ -16,11 +16,14 @@
 namespace webrtc {
 
 // Fixed-point skin color model parameters.
-static const int skin_mean[5][2] = {
-    {7463, 9614}, {6400, 10240}, {7040, 10240}, {8320, 9280}, {6800, 9614}};
+static const int skin_mean[5][2] = {{7463, 9614},
+                                    {6400, 10240},
+                                    {7040, 10240},
+                                    {8320, 9280},
+                                    {6800, 9614}};
 static const int skin_inv_cov[4] = {4107, 1663, 1663, 2157};  // q16
-static const int skin_threshold[6] = {1570636, 1400000, 800000, 800000, 800000,
-    800000};  // q18
+static const int skin_threshold[6] = {1570636, 1400000, 800000,
+                                      800000,  800000,  800000};  // q18
 
 // Thresholds on luminance.
 static const int y_low = 40;
@@ -39,10 +42,9 @@ static int EvaluateSkinColorDifference(int cb, int cr, int idx) {
   const int cb_diff_q2 = (cb_diff_q12 + (1 << 9)) >> 10;
   const int cbcr_diff_q2 = (cbcr_diff_q12 + (1 << 9)) >> 10;
   const int cr_diff_q2 = (cr_diff_q12 + (1 << 9)) >> 10;
-  const int skin_diff = skin_inv_cov[0] * cb_diff_q2 +
-      skin_inv_cov[1] * cbcr_diff_q2 +
-      skin_inv_cov[2] * cbcr_diff_q2 +
-      skin_inv_cov[3] * cr_diff_q2;
+  const int skin_diff =
+      skin_inv_cov[0] * cb_diff_q2 + skin_inv_cov[1] * cbcr_diff_q2 +
+      skin_inv_cov[2] * cbcr_diff_q2 + skin_inv_cov[3] * cr_diff_q2;
   return skin_diff;
 }
 

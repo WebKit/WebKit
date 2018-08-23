@@ -21,7 +21,7 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/messagehandler.h"
 #include "rtc_base/messagequeue.h"
-#include "rtc_base/sigslot.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace rtc {
 
@@ -55,14 +55,12 @@ class Thread;
 
 struct StreamEventData : public MessageData {
   int events, error;
-  StreamEventData(int ev, int er) : events(ev), error(er) { }
+  StreamEventData(int ev, int er) : events(ev), error(er) {}
 };
 
 class StreamInterface : public MessageHandler {
  public:
-  enum {
-    MSG_POST_EVENT = 0xF1F1, MSG_MAX = MSG_POST_EVENT
-  };
+  enum { MSG_POST_EVENT = 0xF1F1, MSG_MAX = MSG_POST_EVENT };
 
   ~StreamInterface() override;
 
@@ -81,10 +79,14 @@ class StreamInterface : public MessageHandler {
   //    block, or the stream is in SS_OPENING state.
   //  SR_EOS: the end-of-stream has been reached, or the stream is in the
   //    SS_CLOSED state.
-  virtual StreamResult Read(void* buffer, size_t buffer_len,
-                            size_t* read, int* error) = 0;
-  virtual StreamResult Write(const void* data, size_t data_len,
-                             size_t* written, int* error) = 0;
+  virtual StreamResult Read(void* buffer,
+                            size_t buffer_len,
+                            size_t* read,
+                            int* error) = 0;
+  virtual StreamResult Write(const void* data,
+                             size_t data_len,
+                             size_t* written,
+                             int* error) = 0;
   // Attempt to transition to the SS_CLOSED state.  SE_CLOSE will not be
   // signalled as a result of this call.
   virtual void Close() = 0;
@@ -132,7 +134,7 @@ class StreamInterface : public MessageHandler {
   // processed.  Read and ConsumeReadData invalidate the buffer returned by
   // GetReadData.
   virtual const void* GetReadData(size_t* data_len);
-  virtual void ConsumeReadData(size_t) {}
+  virtual void ConsumeReadData(size_t used) {}
 
   // GetWriteBuffer returns a pointer to a buffer which is owned by the stream.
   // The buffer has a capacity of buf_len bytes.  null is returned if there is
@@ -146,7 +148,7 @@ class StreamInterface : public MessageHandler {
   // when it is available.  If the requested amount is too large, return an
   // error.
   virtual void* GetWriteBuffer(size_t* buf_len);
-  virtual void ConsumeWriteBuffer(size_t) {}
+  virtual void ConsumeWriteBuffer(size_t used) {}
 
   // Write data_len bytes found in data, circumventing any throttling which
   // would could cause SR_BLOCK to be returned.  Returns true if all the data
@@ -158,7 +160,7 @@ class StreamInterface : public MessageHandler {
   // NOTE: This interface is being considered experimentally at the moment.  It
   // would be used by JUDP and BandwidthStream as a way to circumvent certain
   // soft limits in writing.
-  //virtual bool ForceWrite(const void* data, size_t data_len, int* error) {
+  // virtual bool ForceWrite(const void* data, size_t data_len, int* error) {
   //  if (error) *error = -1;
   //  return false;
   //}
@@ -208,13 +210,17 @@ class StreamInterface : public MessageHandler {
   // unlike Write, the argument 'written' is always set, and may be non-zero
   // on results other than SR_SUCCESS.  The remaining arguments have the
   // same semantics as Write.
-  StreamResult WriteAll(const void* data, size_t data_len,
-                        size_t* written, int* error);
+  StreamResult WriteAll(const void* data,
+                        size_t data_len,
+                        size_t* written,
+                        int* error);
 
   // Similar to ReadAll.  Calls Read until buffer_len bytes have been read, or
   // until a non-SR_SUCCESS result is returned.  'read' is always set.
-  StreamResult ReadAll(void* buffer, size_t buffer_len,
-                       size_t* read, int* error);
+  StreamResult ReadAll(void* buffer,
+                       size_t buffer_len,
+                       size_t* read,
+                       int* error);
 
   // ReadLine is a helper function which repeatedly calls Read until it hits
   // the end-of-line character, or something other than SR_SUCCESS.
@@ -310,60 +316,6 @@ class StreamAdapterInterface : public StreamInterface,
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-// StreamTap is a non-modifying, pass-through adapter, which copies all data
-// in either direction to the tap.  Note that errors or blocking on writing to
-// the tap will prevent further tap writes from occurring.
-///////////////////////////////////////////////////////////////////////////////
-
-class StreamTap : public StreamAdapterInterface {
- public:
-  explicit StreamTap(StreamInterface* stream, StreamInterface* tap);
-  ~StreamTap() override;
-
-  void AttachTap(StreamInterface* tap);
-  StreamInterface* DetachTap();
-  StreamResult GetTapResult(int* error);
-
-  // StreamAdapterInterface Interface
-  StreamResult Read(void* buffer,
-                    size_t buffer_len,
-                    size_t* read,
-                    int* error) override;
-  StreamResult Write(const void* data,
-                     size_t data_len,
-                     size_t* written,
-                     int* error) override;
-
- private:
-  std::unique_ptr<StreamInterface> tap_;
-  StreamResult tap_result_;
-  int tap_error_;
-  RTC_DISALLOW_COPY_AND_ASSIGN(StreamTap);
-};
-
-///////////////////////////////////////////////////////////////////////////////
-// NullStream gives errors on read, and silently discards all written data.
-///////////////////////////////////////////////////////////////////////////////
-
-class NullStream : public StreamInterface {
- public:
-  NullStream();
-  ~NullStream() override;
-
-  // StreamInterface Interface
-  StreamState GetState() const override;
-  StreamResult Read(void* buffer,
-                    size_t buffer_len,
-                    size_t* read,
-                    int* error) override;
-  StreamResult Write(const void* data,
-                     size_t data_len,
-                     size_t* written,
-                     int* error) override;
-  void Close() override;
-};
-
-///////////////////////////////////////////////////////////////////////////////
 // FileStream is a simple implementation of a StreamInterface, which does not
 // support asynchronous notification.
 ///////////////////////////////////////////////////////////////////////////////
@@ -375,8 +327,10 @@ class FileStream : public StreamInterface {
 
   // The semantics of filename and mode are the same as stdio's fopen
   virtual bool Open(const std::string& filename, const char* mode, int* error);
-  virtual bool OpenShare(const std::string& filename, const char* mode,
-                         int shflag, int* error);
+  virtual bool OpenShare(const std::string& filename,
+                         const char* mode,
+                         int shflag,
+                         int* error);
 
   // By default, reads and writes are buffered for efficiency.  Disabling
   // buffering causes writes to block until the bytes on disk are updated.
@@ -399,13 +353,6 @@ class FileStream : public StreamInterface {
   bool ReserveSize(size_t size) override;
 
   bool Flush() override;
-
-#if defined(WEBRTC_POSIX) && !defined(__native_client__)
-  // Tries to aquire an exclusive lock on the file.
-  // Use OpenShare(...) on win32 to get similar functionality.
-  bool TryLock();
-  bool Unlock();
-#endif
 
  protected:
   virtual void DoClose();
@@ -472,21 +419,6 @@ class MemoryStream : public MemoryStreamBase {
 
  protected:
   StreamResult DoReserve(size_t size, int* error) override;
-  // Memory Streams are aligned for efficiency.
-  static const int kAlignment = 16;
-  char* buffer_alloc_;
-};
-
-// ExternalMemoryStream adapts an external memory buffer, so writes which would
-// extend past the end of the buffer will return end-of-stream.
-
-class ExternalMemoryStream : public MemoryStreamBase {
- public:
-  ExternalMemoryStream();
-  ExternalMemoryStream(void* data, size_t length);
-  ~ExternalMemoryStream() override;
-
-  void SetData(void* data, size_t length);
 };
 
 // FifoBuffer allows for efficient, thread-safe buffering of data between
@@ -509,14 +441,18 @@ class FifoBuffer : public StreamInterface {
   // is specified in number of bytes.
   // This method doesn't adjust read position nor the number of available
   // bytes, user has to call ConsumeReadData() to do this.
-  StreamResult ReadOffset(void* buffer, size_t bytes, size_t offset,
+  StreamResult ReadOffset(void* buffer,
+                          size_t bytes,
+                          size_t offset,
                           size_t* bytes_read);
 
   // Write |buffer| with an offset from the current write position, offset is
   // specified in number of bytes.
   // This method doesn't adjust the number of buffered bytes, user has to call
   // ConsumeWriteBuffer() to do this.
-  StreamResult WriteOffset(const void* buffer, size_t bytes, size_t offset,
+  StreamResult WriteOffset(const void* buffer,
+                           size_t bytes,
+                           size_t offset,
                            size_t* bytes_written);
 
   // StreamInterface methods
@@ -568,97 +504,6 @@ class FifoBuffer : public StreamInterface {
   // object lock
   CriticalSection crit_;
   RTC_DISALLOW_COPY_AND_ASSIGN(FifoBuffer);
-};
-
-///////////////////////////////////////////////////////////////////////////////
-// StringStream - Reads/Writes to an external std::string
-///////////////////////////////////////////////////////////////////////////////
-
-class StringStream : public StreamInterface {
- public:
-  explicit StringStream(std::string* str);
-  explicit StringStream(const std::string& str);
-
-  StreamState GetState() const override;
-  StreamResult Read(void* buffer,
-                    size_t buffer_len,
-                    size_t* read,
-                    int* error) override;
-  StreamResult Write(const void* data,
-                     size_t data_len,
-                     size_t* written,
-                     int* error) override;
-  void Close() override;
-  bool SetPosition(size_t position) override;
-  bool GetPosition(size_t* position) const override;
-  bool GetSize(size_t* size) const override;
-  bool GetAvailable(size_t* size) const override;
-  bool ReserveSize(size_t size) override;
-
- private:
-  std::string& str_;
-  size_t read_pos_;
-  bool read_only_;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-// StreamReference - A reference counting stream adapter
-///////////////////////////////////////////////////////////////////////////////
-
-// Keep in mind that the streams and adapters defined in this file are
-// not thread-safe, so this has limited uses.
-
-// A StreamRefCount holds the reference count and a pointer to the
-// wrapped stream. It deletes the wrapped stream when there are no
-// more references. We can then have multiple StreamReference
-// instances pointing to one StreamRefCount, all wrapping the same
-// stream.
-
-class StreamReference : public StreamAdapterInterface {
-  class StreamRefCount;
- public:
-  // Constructor for the first reference to a stream
-  // Note: get more references through NewReference(). Use this
-  // constructor only once on a given stream.
-  explicit StreamReference(StreamInterface* stream);
-  StreamInterface* GetStream() { return stream(); }
-  StreamInterface* NewReference();
-  ~StreamReference() override;
-
- private:
-  class StreamRefCount {
-   public:
-    explicit StreamRefCount(StreamInterface* stream)
-        : stream_(stream), ref_count_(1) {
-    }
-    void AddReference() {
-      CritScope lock(&cs_);
-      ++ref_count_;
-    }
-    void Release() {
-      int ref_count;
-      {  // Atomic ops would have been a better fit here.
-        CritScope lock(&cs_);
-        ref_count = --ref_count_;
-      }
-      if (ref_count == 0) {
-        delete stream_;
-        delete this;
-      }
-    }
-   private:
-    StreamInterface* stream_;
-    int ref_count_;
-    CriticalSection cs_;
-    RTC_DISALLOW_COPY_AND_ASSIGN(StreamRefCount);
-  };
-
-  // Constructor for adding references
-  explicit StreamReference(StreamRefCount* stream_ref_count,
-                           StreamInterface* stream);
-
-  StreamRefCount* stream_ref_count_;
-  RTC_DISALLOW_COPY_AND_ASSIGN(StreamReference);
 };
 
 ///////////////////////////////////////////////////////////////////////////////

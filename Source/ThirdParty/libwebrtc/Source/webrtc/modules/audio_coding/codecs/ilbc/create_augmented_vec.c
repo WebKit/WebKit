@@ -16,8 +16,8 @@
 
 ******************************************************************/
 
-#include "defines.h"
-#include "constants.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
 #include "rtc_base/sanitizer.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 

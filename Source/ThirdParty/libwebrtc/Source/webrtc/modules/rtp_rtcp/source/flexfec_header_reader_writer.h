@@ -12,7 +12,6 @@
 #define MODULES_RTP_RTCP_SOURCE_FLEXFEC_HEADER_READER_WRITER_H_
 
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
-#include "rtc_base/basictypes.h"
 
 namespace webrtc {
 

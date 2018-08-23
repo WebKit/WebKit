@@ -14,6 +14,7 @@
 #include <signal.h>
 #include <string.h>
 #include <unistd.h>
+#include <list>
 
 #if defined(WEBRTC_LINUX)
 #include <event2/event.h>
@@ -24,11 +25,13 @@
 #endif
 
 #include "rtc_base/checks.h"
+#include "rtc_base/criticalsection.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/refcount.h"
 #include "rtc_base/refcountedobject.h"
+#include "rtc_base/system/unused.h"
 #include "rtc_base/task_queue.h"
 #include "rtc_base/task_queue_posix.h"
 #include "rtc_base/timeutils.h"
@@ -238,7 +241,7 @@ class TaskQueue::Impl::PostAndReplyTask : public QueuedTask {
     // PostAndReplyTask(), the reply task may or may not actually run.
     // In either case, it will be deleted.
     char message = kRunReplyTask;
-    write(reply_pipe_, &message, sizeof(message));
+    RTC_UNUSED(write(reply_pipe_, &message, sizeof(message)));
   }
 
  private:

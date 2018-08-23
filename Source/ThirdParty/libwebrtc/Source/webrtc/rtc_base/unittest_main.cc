@@ -19,6 +19,8 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/ssladapter.h"
 #include "rtc_base/sslstreamadapter.h"
+#include "system_wrappers/include/field_trial_default.h"
+#include "system_wrappers/include/metrics_default.h"
 #include "test/field_trial.h"
 #include "test/testsupport/fileutils.h"
 
@@ -36,7 +38,8 @@ DEFINE_string(
     " will assign the group Enable to field trial WebRTC-FooFeature.");
 #if defined(WEBRTC_WIN)
 DEFINE_int(crt_break_alloc, -1, "memory allocation to break on");
-DEFINE_bool(default_error_handlers, false,
+DEFINE_bool(default_error_handlers,
+            false,
             "leave the default exception/dbg handler functions in place");
 
 void TestInvalidParameterHandler(const wchar_t* expression,
@@ -44,11 +47,10 @@ void TestInvalidParameterHandler(const wchar_t* expression,
                                  const wchar_t* file,
                                  unsigned int line,
                                  uintptr_t pReserved) {
+  // In order to log `expression`, `function`, and `file` here, we would have
+  // to convert them to const char*. std::wcsrtombs can do that, but it's
+  // locale dependent.
   RTC_LOG(LS_ERROR) << "InvalidParameter Handler called.  Exiting.";
-  RTC_LOG(LS_ERROR) << expression << std::endl
-                    << function << std::endl
-                    << file << std::endl
-                    << line;
   exit(1);
 }
 void TestPureCallHandler() {
@@ -76,7 +78,11 @@ int main(int argc, char* argv[]) {
   }
 
   webrtc::test::SetExecutablePath(argv[0]);
-  webrtc::test::InitFieldTrialsFromString(FLAG_force_fieldtrials);
+  webrtc::test::ValidateFieldTrialsStringOrDie(FLAG_force_fieldtrials);
+  // InitFieldTrialsFromString stores the char*, so the char array must outlive
+  // the application.
+  webrtc::field_trial::InitFieldTrialsFromString(FLAG_force_fieldtrials);
+  webrtc::metrics::Enable();
 
 #if defined(WEBRTC_WIN)
   if (!FLAG_default_error_handlers) {
@@ -87,7 +93,7 @@ int main(int argc, char* argv[]) {
   }
 
 #if !defined(NDEBUG)  // Turn on memory leak checking on Windows.
-  _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF |_CRTDBG_LEAK_CHECK_DF);
+  _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
   if (FLAG_crt_break_alloc >= 0) {
     _crtBreakAlloc = FLAG_crt_break_alloc;
   }

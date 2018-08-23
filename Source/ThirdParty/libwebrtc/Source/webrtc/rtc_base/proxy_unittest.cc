@@ -32,8 +32,8 @@ static const SocketAddress kBogusProxyIntAddr("1.2.3.4", 999);
 class ProxyTest : public testing::Test {
  public:
   ProxyTest() : ss_(new rtc::VirtualSocketServer()), thread_(ss_.get()) {
-    socks_.reset(new rtc::SocksProxyServer(
-        ss_.get(), kSocksProxyIntAddr, ss_.get(), kSocksProxyExtAddr));
+    socks_.reset(new rtc::SocksProxyServer(ss_.get(), kSocksProxyIntAddr,
+                                           ss_.get(), kSocksProxyExtAddr));
     https_.reset(new rtc::HttpListenServer());
     https_->Listen(kHttpsProxyIntAddr);
   }
@@ -52,13 +52,11 @@ class ProxyTest : public testing::Test {
 TEST_F(ProxyTest, TestSocks5Connect) {
   rtc::AsyncSocket* socket =
       ss()->CreateAsyncSocket(kSocksProxyIntAddr.family(), SOCK_STREAM);
-  rtc::AsyncSocksProxySocket* proxy_socket =
-      new rtc::AsyncSocksProxySocket(socket, kSocksProxyIntAddr,
-                                           "", rtc::CryptString());
+  rtc::AsyncSocksProxySocket* proxy_socket = new rtc::AsyncSocksProxySocket(
+      socket, kSocksProxyIntAddr, "", rtc::CryptString());
   // TODO: IPv6-ize these tests when proxy supports IPv6.
 
-  rtc::TestEchoServer server(Thread::Current(),
-                                   SocketAddress(INADDR_ANY, 0));
+  rtc::TestEchoServer server(Thread::Current(), SocketAddress(INADDR_ANY, 0));
 
   std::unique_ptr<rtc::AsyncTCPSocket> packet_socket(
       rtc::AsyncTCPSocket::Create(proxy_socket, SocketAddress(INADDR_ANY, 0),

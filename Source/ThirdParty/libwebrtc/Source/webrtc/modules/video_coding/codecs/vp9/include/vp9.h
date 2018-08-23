@@ -13,25 +13,34 @@
 #define MODULES_VIDEO_CODING_CODECS_VP9_INCLUDE_VP9_H_
 
 #include <memory>
+#include <vector>
 
+#include "api/video_codecs/sdp_video_format.h"
+#include "media/base/codec.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 
 namespace webrtc {
 
+// Returns a vector with all supported internal VP9 profiles that we can
+// negotiate in SDP, in order of preference.
+std::vector<SdpVideoFormat> SupportedVP9Codecs();
+
 class VP9Encoder : public VideoEncoder {
  public:
-  static bool IsSupported();
+  // Deprecated. Returns default implementation using VP9 Profile 0.
+  // TODO(emircan): Remove once this is no longer used.
   static std::unique_ptr<VP9Encoder> Create();
+  // Parses VP9 Profile from |codec| and returns the appropriate implementation.
+  static std::unique_ptr<VP9Encoder> Create(const cricket::VideoCodec& codec);
 
-  virtual ~VP9Encoder() {}
+  ~VP9Encoder() override {}
 };
 
 class VP9Decoder : public VideoDecoder {
  public:
-  static bool IsSupported();
   static std::unique_ptr<VP9Decoder> Create();
 
-  virtual ~VP9Decoder() {}
+  ~VP9Decoder() override {}
 };
 }  // namespace webrtc
 

@@ -20,10 +20,14 @@
 
 #if defined(_WIN32)
 #if defined(WEBRTC_WINDOWS_CORE_AUDIO_BUILD)
-#include "audio_device_core_win.h"
+#include "modules/audio_device/win/audio_device_core_win.h"
 #endif
 #elif defined(WEBRTC_ANDROID)
 #include <stdlib.h>
+#if defined(AUDIO_DEVICE_INCLUDE_ANDROID_AAUDIO)
+#include "modules/audio_device/android/aaudio_player.h"
+#include "modules/audio_device/android/aaudio_recorder.h"
+#endif
 #include "modules/audio_device/android/audio_device_template.h"
 #include "modules/audio_device/android/audio_manager.h"
 #include "modules/audio_device/android/audio_record_jni.h"
@@ -32,15 +36,15 @@
 #include "modules/audio_device/android/opensles_recorder.h"
 #elif defined(WEBRTC_LINUX)
 #if defined(LINUX_ALSA)
-#include "audio_device_alsa_linux.h"
+#include "modules/audio_device/linux/audio_device_alsa_linux.h"
 #endif
 #if defined(LINUX_PULSE)
-#include "audio_device_pulse_linux.h"
+#include "modules/audio_device/linux/audio_device_pulse_linux.h"
 #endif
 #elif defined(WEBRTC_IOS)
-#include "audio_device_ios.h"
+#include "modules/audio_device/ios/audio_device_ios.h"
 #elif defined(WEBRTC_MAC)
-#include "audio_device_mac.h"
+#include "modules/audio_device/mac/audio_device_mac.h"
 #endif
 #if defined(WEBRTC_DUMMY_FILE_DEVICES)
 #include "modules/audio_device/dummy/file_audio_device_factory.h"
@@ -52,14 +56,14 @@
   {                         \
     if (!initialized_) {    \
       return -1;            \
-    };                      \
+    }                       \
   }
 
 #define CHECKinitialized__BOOL() \
   {                              \
     if (!initialized_) {         \
       return false;              \
-    };                           \
+    }                            \
   }
 
 namespace webrtc {
@@ -68,6 +72,15 @@ namespace webrtc {
 rtc::scoped_refptr<AudioDeviceModule> AudioDeviceModule::Create(
     const AudioLayer audio_layer) {
   RTC_LOG(INFO) << __FUNCTION__;
+
+  // The "AudioDeviceModule::kWindowsCoreAudio2" audio layer has its own
+  // dedicated factory method which should be used instead.
+  if (audio_layer == AudioDeviceModule::kWindowsCoreAudio2) {
+    RTC_LOG(LS_ERROR) << "Use the CreateWindowsCoreAudioAudioDeviceModule() "
+                         "factory method instead for this option.";
+    return nullptr;
+  }
+
   // Create the generic reference counted (platform independent) implementation.
   rtc::scoped_refptr<AudioDeviceModuleImpl> audioDevice(
       new rtc::RefCountedObject<AudioDeviceModuleImpl>(audio_layer));
@@ -170,8 +183,11 @@ int32_t AudioDeviceModuleImpl::CreatePlatformSpecificObjects() {
   audio_manager_android_.reset(new AudioManager());
   // Select best possible combination of audio layers.
   if (audio_layer == kPlatformDefaultAudio) {
-    if (audio_manager_android_->IsLowLatencyPlayoutSupported() &&
-        audio_manager_android_->IsLowLatencyRecordSupported()) {
+    if (audio_manager_android_->IsAAudioSupported()) {
+      // Use of AAudio for both playout and recording has highest priority.
+      audio_layer = kAndroidAAudioAudio;
+    } else if (audio_manager_android_->IsLowLatencyPlayoutSupported() &&
+               audio_manager_android_->IsLowLatencyRecordSupported()) {
       // Use OpenSL ES for both playout and recording.
       audio_layer = kAndroidOpenSLESAudio;
     } else if (audio_manager_android_->IsLowLatencyPlayoutSupported() &&
@@ -201,31 +217,58 @@ int32_t AudioDeviceModuleImpl::CreatePlatformSpecificObjects() {
     // time support for HW AEC using the AudioRecord Java API.
     audio_device_.reset(new AudioDeviceTemplate<AudioRecordJni, OpenSLESPlayer>(
         audio_layer, audio_manager));
+  } else if (audio_layer == kAndroidAAudioAudio) {
+#if defined(AUDIO_DEVICE_INCLUDE_ANDROID_AAUDIO)
+    // AAudio based audio for both input and output.
+    audio_device_.reset(new AudioDeviceTemplate<AAudioRecorder, AAudioPlayer>(
+        audio_layer, audio_manager));
+#endif
+  } else if (audio_layer == kAndroidJavaInputAndAAudioOutputAudio) {
+#if defined(AUDIO_DEVICE_INCLUDE_ANDROID_AAUDIO)
+    // Java audio for input and AAudio for output audio (i.e. mixed APIs).
+    audio_device_.reset(new AudioDeviceTemplate<AudioRecordJni, AAudioPlayer>(
+        audio_layer, audio_manager));
+#endif
   } else {
-    // Invalid audio layer.
+    RTC_LOG(LS_ERROR) << "The requested audio layer is not supported";
     audio_device_.reset(nullptr);
   }
 // END #if defined(WEBRTC_ANDROID)
 
 // Linux ADM implementation.
+// Note that, LINUX_ALSA is always defined by default when WEBRTC_LINUX is
+// defined. LINUX_PULSE depends on the 'rtc_include_pulse_audio' build flag.
+// TODO(bugs.webrtc.org/9127): improve support and make it more clear that
+// PulseAudio is the default selection.
 #elif defined(WEBRTC_LINUX)
-  if ((audio_layer == kLinuxPulseAudio) ||
+#if !defined(LINUX_PULSE)
+  // Build flag 'rtc_include_pulse_audio' is set to false. In this mode:
+  // - kPlatformDefaultAudio => ALSA, and
+  // - kLinuxAlsaAudio => ALSA, and
+  // - kLinuxPulseAudio => Invalid selection.
+  RTC_LOG(WARNING) << "PulseAudio is disabled using build flag.";
+  if ((audio_layer == kLinuxAlsaAudio) ||
       (audio_layer == kPlatformDefaultAudio)) {
-#if defined(LINUX_PULSE)
-    RTC_LOG(INFO) << "Attempting to use Linux PulseAudio APIs...";
-    // Linux PulseAudio implementation.
-    audio_device_.reset(new AudioDeviceLinuxPulse());
-    RTC_LOG(INFO) << "Linux PulseAudio APIs will be utilized";
-#endif
-#if defined(LINUX_PULSE)
-#endif
-  } else if (audio_layer == kLinuxAlsaAudio) {
-#if defined(LINUX_ALSA)
-    // Linux ALSA implementation.
     audio_device_.reset(new AudioDeviceLinuxALSA());
     RTC_LOG(INFO) << "Linux ALSA APIs will be utilized.";
-#endif
   }
+#else
+  // Build flag 'rtc_include_pulse_audio' is set to true (default). In this
+  // mode:
+  // - kPlatformDefaultAudio => PulseAudio, and
+  // - kLinuxPulseAudio => PulseAudio, and
+  // - kLinuxAlsaAudio => ALSA (supported but not default).
+  RTC_LOG(INFO) << "PulseAudio support is enabled.";
+  if ((audio_layer == kLinuxPulseAudio) ||
+      (audio_layer == kPlatformDefaultAudio)) {
+    // Linux PulseAudio implementation is default.
+    audio_device_.reset(new AudioDeviceLinuxPulse());
+    RTC_LOG(INFO) << "Linux PulseAudio APIs will be utilized";
+  } else if (audio_layer == kLinuxAlsaAudio) {
+    audio_device_.reset(new AudioDeviceLinuxALSA());
+    RTC_LOG(WARNING) << "Linux ALSA APIs will be utilized.";
+  }
+#endif  // #if !defined(LINUX_PULSE)
 #endif  // #if defined(WEBRTC_LINUX)
 
 // iOS ADM implementation.

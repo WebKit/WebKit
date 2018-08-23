@@ -15,10 +15,7 @@
 namespace webrtc {
 
 BlockMeanCalculator::BlockMeanCalculator(size_t block_length)
-    : block_length_(block_length),
-      count_(0),
-      sum_(0.0),
-      mean_(0.0) {
+    : block_length_(block_length), count_(0), sum_(0.0), mean_(0.0) {
   RTC_DCHECK(block_length_ != 0);
 }
 

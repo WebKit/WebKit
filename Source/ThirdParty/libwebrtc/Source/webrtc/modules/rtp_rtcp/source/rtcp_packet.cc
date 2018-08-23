@@ -75,8 +75,8 @@ void RtcpPacket::CreateHeader(
   RTC_DCHECK_LE(count_or_format, 0x1f);
   constexpr uint8_t kVersionBits = 2 << 6;
   constexpr uint8_t kNoPaddingBit = 0 << 5;
-  buffer[*pos + 0] = kVersionBits | kNoPaddingBit |
-                     static_cast<uint8_t>(count_or_format);
+  buffer[*pos + 0] =
+      kVersionBits | kNoPaddingBit | static_cast<uint8_t>(count_or_format);
   buffer[*pos + 1] = packet_type;
   buffer[*pos + 2] = (length >> 8) & 0xff;
   buffer[*pos + 3] = length & 0xff;

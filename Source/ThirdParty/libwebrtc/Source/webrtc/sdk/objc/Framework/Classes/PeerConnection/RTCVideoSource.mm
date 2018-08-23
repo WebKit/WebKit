@@ -12,37 +12,51 @@
 
 #include "api/videosourceproxy.h"
 #include "rtc_base/checks.h"
-#include "sdk/objc/Framework/Classes/Video/objcvideotracksource.h"
+#include "sdk/objc/Framework/Native/src/objc_video_track_source.h"
 
-static webrtc::ObjcVideoTrackSource *getObjcVideoSource(
+static webrtc::ObjCVideoTrackSource *getObjCVideoSource(
     const rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> nativeSource) {
   webrtc::VideoTrackSourceProxy *proxy_source =
       static_cast<webrtc::VideoTrackSourceProxy *>(nativeSource.get());
-  return static_cast<webrtc::ObjcVideoTrackSource *>(proxy_source->internal());
+  return static_cast<webrtc::ObjCVideoTrackSource *>(proxy_source->internal());
 }
 
-// TODO(magjed): Refactor this class and target ObjcVideoTrackSource only once
+// TODO(magjed): Refactor this class and target ObjCVideoTrackSource only once
 // RTCAVFoundationVideoSource is gone. See http://crbug/webrtc/7177 for more
 // info.
 @implementation RTCVideoSource {
   rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> _nativeVideoSource;
 }
 
-- (instancetype)initWithNativeVideoSource:
-    (rtc::scoped_refptr<webrtc::VideoTrackSourceInterface>)nativeVideoSource {
+- (instancetype)initWithFactory:(RTCPeerConnectionFactory *)factory
+              nativeVideoSource:
+                  (rtc::scoped_refptr<webrtc::VideoTrackSourceInterface>)nativeVideoSource {
+  RTC_DCHECK(factory);
   RTC_DCHECK(nativeVideoSource);
-  if (self = [super initWithNativeMediaSource:nativeVideoSource
-                                         type:RTCMediaSourceTypeVideo]) {
+  if (self = [super initWithFactory:factory
+                  nativeMediaSource:nativeVideoSource
+                               type:RTCMediaSourceTypeVideo]) {
     _nativeVideoSource = nativeVideoSource;
   }
   return self;
 }
 
-- (instancetype)initWithNativeMediaSource:
-    (rtc::scoped_refptr<webrtc::MediaSourceInterface>)nativeMediaSource
-                                     type:(RTCMediaSourceType)type {
+- (instancetype)initWithFactory:(RTCPeerConnectionFactory *)factory
+              nativeMediaSource:(rtc::scoped_refptr<webrtc::MediaSourceInterface>)nativeMediaSource
+                           type:(RTCMediaSourceType)type {
   RTC_NOTREACHED();
   return nil;
+}
+
+- (instancetype)initWithFactory:(RTCPeerConnectionFactory *)factory
+                signalingThread:(rtc::Thread *)signalingThread
+                   workerThread:(rtc::Thread *)workerThread {
+  rtc::scoped_refptr<webrtc::ObjCVideoTrackSource> objCVideoTrackSource(
+      new rtc::RefCountedObject<webrtc::ObjCVideoTrackSource>());
+
+  return [self initWithFactory:factory
+             nativeVideoSource:webrtc::VideoTrackSourceProxy::Create(
+                                   signalingThread, workerThread, objCVideoTrackSource)];
 }
 
 - (NSString *)description {
@@ -51,11 +65,11 @@ static webrtc::ObjcVideoTrackSource *getObjcVideoSource(
 }
 
 - (void)capturer:(RTCVideoCapturer *)capturer didCaptureVideoFrame:(RTCVideoFrame *)frame {
-  getObjcVideoSource(_nativeVideoSource)->OnCapturedFrame(frame);
+  getObjCVideoSource(_nativeVideoSource)->OnCapturedFrame(frame);
 }
 
 - (void)adaptOutputFormatToWidth:(int)width height:(int)height fps:(int)fps {
-  getObjcVideoSource(_nativeVideoSource)->OnOutputFormatRequest(width, height, fps);
+  getObjCVideoSource(_nativeVideoSource)->OnOutputFormatRequest(width, height, fps);
 }
 
 #pragma mark - Private

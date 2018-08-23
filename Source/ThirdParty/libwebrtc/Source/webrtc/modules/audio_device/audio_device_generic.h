@@ -122,8 +122,8 @@ class AudioDeviceGeneric {
   virtual int32_t EnableBuiltInAGC(bool enable);
   virtual int32_t EnableBuiltInNS(bool enable);
 
-  // iOS only.
-  // TODO(henrika): add Android support.
+// iOS only.
+// TODO(henrika): add Android support.
 #if defined(WEBRTC_IOS)
   virtual int GetPlayoutAudioParameters(AudioParameters* params) const;
   virtual int GetRecordAudioParameters(AudioParameters* params) const;

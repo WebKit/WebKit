@@ -96,11 +96,11 @@ int UdpTransport::SendPacket(const char* data,
   return result;
 }
 
-rtc::Optional<rtc::NetworkRoute> UdpTransport::network_route() const {
+absl::optional<rtc::NetworkRoute> UdpTransport::network_route() const {
   rtc::NetworkRoute network_route;
   network_route.packet_overhead =
       /*kUdpOverhead=*/8 + GetIpOverhead(GetLocalAddress().family());
-  return rtc::Optional<rtc::NetworkRoute>(network_route);
+  return absl::optional<rtc::NetworkRoute>(network_route);
 }
 
 int UdpTransport::SetOption(rtc::Socket::Option opt, int value) {

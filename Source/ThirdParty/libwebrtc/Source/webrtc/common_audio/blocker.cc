@@ -41,8 +41,7 @@ void CopyFrames(const float* const* src,
                 float* const* dst,
                 size_t dst_start_index) {
   for (size_t i = 0; i < num_channels; ++i) {
-    memcpy(&dst[i][dst_start_index],
-           &src[i][src_start_index],
+    memcpy(&dst[i][dst_start_index], &src[i][src_start_index],
            num_frames * sizeof(dst[i][dst_start_index]));
   }
 }
@@ -55,8 +54,7 @@ void MoveFrames(const float* const* src,
                 float* const* dst,
                 size_t dst_start_index) {
   for (size_t i = 0; i < num_channels; ++i) {
-    memmove(&dst[i][dst_start_index],
-            &src[i][src_start_index],
+    memmove(&dst[i][dst_start_index], &src[i][src_start_index],
             num_frames * sizeof(dst[i][dst_start_index]));
   }
 }
@@ -87,9 +85,9 @@ void ApplyWindow(const float* window,
 size_t gcd(size_t a, size_t b) {
   size_t tmp;
   while (b) {
-     tmp = a;
-     a = b;
-     b = tmp % b;
+    tmp = a;
+    a = b;
+    b = tmp % b;
   }
   return a;
 }
@@ -184,51 +182,30 @@ void Blocker::ProcessChunk(const float* const* input,
                        block_size_);
     input_buffer_.MoveReadPositionBackward(block_size_ - shift_amount_);
 
-    ApplyWindow(window_.get(),
-                block_size_,
-                num_input_channels_,
+    ApplyWindow(window_.get(), block_size_, num_input_channels_,
                 input_block_.channels());
-    callback_->ProcessBlock(input_block_.channels(),
-                            block_size_,
-                            num_input_channels_,
-                            num_output_channels_,
+    callback_->ProcessBlock(input_block_.channels(), block_size_,
+                            num_input_channels_, num_output_channels_,
                             output_block_.channels());
-    ApplyWindow(window_.get(),
-                block_size_,
-                num_output_channels_,
+    ApplyWindow(window_.get(), block_size_, num_output_channels_,
                 output_block_.channels());
 
-    AddFrames(output_buffer_.channels(),
-              first_frame_in_block,
-              output_block_.channels(),
-              0,
-              block_size_,
-              num_output_channels_,
-              output_buffer_.channels(),
-              first_frame_in_block);
+    AddFrames(output_buffer_.channels(), first_frame_in_block,
+              output_block_.channels(), 0, block_size_, num_output_channels_,
+              output_buffer_.channels(), first_frame_in_block);
 
     first_frame_in_block += shift_amount_;
   }
 
   // Copy output buffer to output
-  CopyFrames(output_buffer_.channels(),
-             0,
-             chunk_size_,
-             num_output_channels_,
-             output,
-             0);
+  CopyFrames(output_buffer_.channels(), 0, chunk_size_, num_output_channels_,
+             output, 0);
 
   // Copy output buffer [chunk_size_, chunk_size_ + initial_delay]
   // to output buffer [0, initial_delay], zero the rest.
-  MoveFrames(output_buffer_.channels(),
-             chunk_size,
-             initial_delay_,
-             num_output_channels_,
-             output_buffer_.channels(),
-             0);
-  ZeroOut(output_buffer_.channels(),
-          initial_delay_,
-          chunk_size_,
+  MoveFrames(output_buffer_.channels(), chunk_size, initial_delay_,
+             num_output_channels_, output_buffer_.channels(), 0);
+  ZeroOut(output_buffer_.channels(), initial_delay_, chunk_size_,
           num_output_channels_);
 
   // Calculate new starting frames.

@@ -10,10 +10,19 @@
 
 #include "logging/rtc_event_log/events/rtc_event_probe_result_success.h"
 
+#include "absl/memory/memory.h"
+
 namespace webrtc {
 
-RtcEventProbeResultSuccess::RtcEventProbeResultSuccess(int id, int bitrate_bps)
+RtcEventProbeResultSuccess::RtcEventProbeResultSuccess(int32_t id,
+                                                       int32_t bitrate_bps)
     : id_(id), bitrate_bps_(bitrate_bps) {}
+
+RtcEventProbeResultSuccess::RtcEventProbeResultSuccess(
+    const RtcEventProbeResultSuccess& other)
+    : RtcEvent(other.timestamp_us_),
+      id_(other.id_),
+      bitrate_bps_(other.bitrate_bps_) {}
 
 RtcEvent::Type RtcEventProbeResultSuccess::GetType() const {
   return RtcEvent::Type::ProbeResultSuccess;
@@ -21,6 +30,10 @@ RtcEvent::Type RtcEventProbeResultSuccess::GetType() const {
 
 bool RtcEventProbeResultSuccess::IsConfigEvent() const {
   return false;
+}
+
+std::unique_ptr<RtcEvent> RtcEventProbeResultSuccess::Copy() const {
+  return absl::WrapUnique<RtcEvent>(new RtcEventProbeResultSuccess(*this));
 }
 
 }  // namespace webrtc

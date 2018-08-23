@@ -12,18 +12,31 @@
 
 namespace rtc {
 
-PacketTimeUpdateParams::PacketTimeUpdateParams()
-    : rtp_sendtime_extension_id(-1),
-      srtp_auth_tag_len(-1),
-      srtp_packet_index(-1) {
-}
+PacketTimeUpdateParams::PacketTimeUpdateParams() = default;
+
+PacketTimeUpdateParams::PacketTimeUpdateParams(
+    const PacketTimeUpdateParams& other) = default;
 
 PacketTimeUpdateParams::~PacketTimeUpdateParams() = default;
 
-AsyncPacketSocket::AsyncPacketSocket() {
-}
+PacketOptions::PacketOptions() = default;
+PacketOptions::PacketOptions(DiffServCodePoint dscp) : dscp(dscp) {}
+PacketOptions::PacketOptions(const PacketOptions& other) = default;
+PacketOptions::~PacketOptions() = default;
 
-AsyncPacketSocket::~AsyncPacketSocket() {
+AsyncPacketSocket::AsyncPacketSocket() = default;
+
+AsyncPacketSocket::~AsyncPacketSocket() = default;
+
+void CopySocketInformationToPacketInfo(size_t packet_size_bytes,
+                                       const AsyncPacketSocket& socket_from,
+                                       bool is_connectionless,
+                                       rtc::PacketInfo* info) {
+  info->packet_size_bytes = packet_size_bytes;
+  info->local_socket_address = socket_from.GetLocalAddress();
+  if (!is_connectionless) {
+    info->remote_socket_address = socket_from.GetRemoteAddress();
+  }
 }
 
 };  // namespace rtc

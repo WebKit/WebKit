@@ -24,10 +24,10 @@
 #include "modules/desktop_capture/mock_desktop_capturer_callback.h"
 #include "modules/desktop_capture/rgba_color.h"
 #include "modules/desktop_capture/screen_drawer.h"
-#include "rtc_base/base64.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/third_party/base64/base64.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -89,8 +89,8 @@ class ScreenCapturerIntegrationTest : public testing::Test {
   void TestCaptureUpdatedRegion(
       std::initializer_list<DesktopCapturer*> capturers) {
     RTC_DCHECK(capturers.size() > 0);
-    // A large enough area for the tests, which should be able to be fulfilled
-    // by most systems.
+// A large enough area for the tests, which should be able to be fulfilled
+// by most systems.
 #if defined(WEBRTC_WIN)
     // On Windows, an interesting warning window may pop up randomly. The root
     // cause is still under investigation, so reduce the test area to work
@@ -212,8 +212,8 @@ class ScreenCapturerIntegrationTest : public testing::Test {
           return;
         }
 
-        if (ArePixelsColoredBy(
-            *frame, rect, color, drawer->MayDrawIncompleteShapes())) {
+        if (ArePixelsColoredBy(*frame, rect, color,
+                               drawer->MayDrawIncompleteShapes())) {
           capturers[j] = nullptr;
           succeeded_capturers++;
         }
@@ -222,17 +222,15 @@ class ScreenCapturerIntegrationTest : public testing::Test {
         // been resolved.
         else if (i == wait_capture_round - 1) {
           std::string result;
-          rtc::Base64::EncodeFromArray(frame->data(),
-                                       frame->size().height() * frame->stride(),
-                                       &result);
+          rtc::Base64::EncodeFromArray(
+              frame->data(), frame->size().height() * frame->stride(), &result);
           std::cout << frame->size().width() << " x " << frame->size().height()
                     << std::endl;
           // Split the entire string (can be over 4M) into several lines to
           // avoid browser from sticking.
           static const size_t kLineLength = 32768;
           const char* result_end = result.c_str() + result.length();
-          for (const char* it = result.c_str();
-               it < result_end;
+          for (const char* it = result.c_str(); it < result_end;
                it += kLineLength) {
             const size_t max_length = result_end - it;
             std::cout << std::string(it, std::min(kLineLength, max_length))

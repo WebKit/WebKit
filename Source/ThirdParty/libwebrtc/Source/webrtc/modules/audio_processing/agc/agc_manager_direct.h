@@ -14,7 +14,9 @@
 #include <memory>
 
 #include "modules/audio_processing/agc/agc.h"
+#include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/constructormagic.h"
+#include "rtc_base/gtest_prod_util.h"
 
 namespace webrtc {
 
@@ -47,14 +49,10 @@ class AgcManagerDirect final {
   AgcManagerDirect(GainControl* gctrl,
                    VolumeCallbacks* volume_callbacks,
                    int startup_min_level,
-                   int clipped_level_min);
-  // Dependency injection for testing. Don't delete |agc| as the memory is owned
-  // by the manager.
-  AgcManagerDirect(Agc* agc,
-                   GainControl* gctrl,
-                   VolumeCallbacks* volume_callbacks,
-                   int startup_min_level,
-                   int clipped_level_min);
+                   int clipped_level_min,
+                   bool use_agc2_level_estimation,
+                   bool disable_digital_adaptive);
+
   ~AgcManagerDirect();
 
   int Initialize();
@@ -72,6 +70,28 @@ class AgcManagerDirect final {
   float voice_probability();
 
  private:
+  friend class AgcManagerDirectTest;
+
+  FRIEND_TEST_ALL_PREFIXES(AgcManagerDirectStandaloneTest,
+                           DisableDigitalDisablesDigital);
+
+  // Dependency injection for testing. Don't delete |agc| as the memory is owned
+  // by the manager.
+  AgcManagerDirect(Agc* agc,
+                   GainControl* gctrl,
+                   VolumeCallbacks* volume_callbacks,
+                   int startup_min_level,
+                   int clipped_level_min);
+
+  // Most general c-tor.
+  AgcManagerDirect(Agc* agc,
+                   GainControl* gctrl,
+                   VolumeCallbacks* volume_callbacks,
+                   int startup_min_level,
+                   int clipped_level_min,
+                   bool use_agc2_level_estimation,
+                   bool disable_digital_adaptive);
+
   // Sets a new microphone level, after first checking that it hasn't been
   // updated by the user, in which case no action is taken.
   void SetLevel(int new_level);
@@ -84,6 +104,9 @@ class AgcManagerDirect final {
   int CheckVolumeAndReset();
   void UpdateGain();
   void UpdateCompressor();
+
+  std::unique_ptr<ApmDataDumper> data_dumper_;
+  static int instance_counter_;
 
   std::unique_ptr<Agc> agc_;
   GainControl* gctrl_;
@@ -99,8 +122,11 @@ class AgcManagerDirect final {
   bool capture_muted_;
   bool check_volume_on_next_process_;
   bool startup_;
+  const bool use_agc2_level_estimation_;
+  const bool disable_digital_adaptive_;
   int startup_min_level_;
   const int clipped_level_min_;
+  int calls_since_last_gain_log_ = 0;
 
   std::unique_ptr<DebugFile> file_preproc_;
   std::unique_ptr<DebugFile> file_postproc_;

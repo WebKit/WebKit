@@ -11,8 +11,8 @@
 #include "modules/audio_coding/codecs/cng/audio_encoder_cng.h"
 
 #include <algorithm>
-#include <memory>
 #include <limits>
+#include <memory>
 #include <utility>
 
 namespace webrtc {
@@ -44,19 +44,19 @@ bool AudioEncoderCng::Config::IsOk() const {
 }
 
 AudioEncoderCng::AudioEncoderCng(Config&& config)
-    : speech_encoder_(
-          ([&] { RTC_CHECK(config.IsOk()) << "Invalid configuration."; }(),
-           std::move(config.speech_encoder))),
+    : speech_encoder_((static_cast<void>([&] {
+                         RTC_CHECK(config.IsOk()) << "Invalid configuration.";
+                       }()),
+                       std::move(config.speech_encoder))),
       cng_payload_type_(config.payload_type),
       num_cng_coefficients_(config.num_cng_coefficients),
       sid_frame_interval_ms_(config.sid_frame_interval_ms),
       last_frame_active_(true),
       vad_(config.vad ? std::unique_ptr<Vad>(config.vad)
-           : CreateVad(config.vad_mode)),
+                      : CreateVad(config.vad_mode)),
       cng_encoder_(new ComfortNoiseEncoder(SampleRateHz(),
                                            sid_frame_interval_ms_,
-                                           num_cng_coefficients_)) {
-}
+                                           num_cng_coefficients_)) {}
 
 AudioEncoderCng::~AudioEncoderCng() = default;
 
@@ -158,9 +158,8 @@ void AudioEncoderCng::Reset() {
   rtp_timestamps_.clear();
   last_frame_active_ = true;
   vad_->Reset();
-  cng_encoder_.reset(
-      new ComfortNoiseEncoder(SampleRateHz(), sid_frame_interval_ms_,
-                              num_cng_coefficients_));
+  cng_encoder_.reset(new ComfortNoiseEncoder(
+      SampleRateHz(), sid_frame_interval_ms_, num_cng_coefficients_));
 }
 
 bool AudioEncoderCng::SetFec(bool enable) {
@@ -198,7 +197,7 @@ void AudioEncoderCng::OnReceivedUplinkRecoverablePacketLossFraction(
 
 void AudioEncoderCng::OnReceivedUplinkBandwidth(
     int target_audio_bitrate_bps,
-    rtc::Optional<int64_t> bwe_period_ms) {
+    absl::optional<int64_t> bwe_period_ms) {
   speech_encoder_->OnReceivedUplinkBandwidth(target_audio_bitrate_bps,
                                              bwe_period_ms);
 }
@@ -217,11 +216,10 @@ AudioEncoder::EncodedInfo AudioEncoderCng::EncodePassive(
     // that value, in which case we don't want to overwrite any value from
     // an earlier iteration.
     size_t encoded_bytes_tmp =
-        cng_encoder_->Encode(
-            rtc::ArrayView<const int16_t>(
-                &speech_buffer_[i * samples_per_10ms_frame],
-                samples_per_10ms_frame),
-            force_sid, encoded);
+        cng_encoder_->Encode(rtc::ArrayView<const int16_t>(
+                                 &speech_buffer_[i * samples_per_10ms_frame],
+                                 samples_per_10ms_frame),
+                             force_sid, encoded);
 
     if (encoded_bytes_tmp > 0) {
       RTC_CHECK(!output_produced);
@@ -238,9 +236,8 @@ AudioEncoder::EncodedInfo AudioEncoderCng::EncodePassive(
   return info;
 }
 
-AudioEncoder::EncodedInfo AudioEncoderCng::EncodeActive(
-    size_t frames_to_encode,
-    rtc::Buffer* encoded) {
+AudioEncoder::EncodedInfo AudioEncoderCng::EncodeActive(size_t frames_to_encode,
+                                                        rtc::Buffer* encoded) {
   const size_t samples_per_10ms_frame = SamplesPer10msFrame();
   AudioEncoder::EncodedInfo info;
   for (size_t i = 0; i < frames_to_encode; ++i) {

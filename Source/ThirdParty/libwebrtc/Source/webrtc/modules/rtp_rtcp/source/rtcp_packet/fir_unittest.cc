@@ -29,11 +29,9 @@ constexpr uint32_t kSenderSsrc = 0x12345678;
 constexpr uint32_t kRemoteSsrc = 0x23456789;
 constexpr uint8_t kSeqNr = 13;
 // Manually created Fir packet matching constants above.
-constexpr uint8_t kPacket[] = {0x84,  206, 0x00, 0x04,
-                               0x12, 0x34, 0x56, 0x78,
-                               0x00, 0x00, 0x00, 0x00,
-                               0x23, 0x45, 0x67, 0x89,
-                               0x0d, 0x00, 0x00, 0x00};
+constexpr uint8_t kPacket[] = {0x84, 206,  0x00, 0x04, 0x12, 0x34, 0x56,
+                               0x78, 0x00, 0x00, 0x00, 0x00, 0x23, 0x45,
+                               0x67, 0x89, 0x0d, 0x00, 0x00, 0x00};
 }  // namespace
 
 TEST(RtcpPacketFirTest, Parse) {
@@ -77,20 +75,16 @@ TEST(RtcpPacketFirTest, TwoFciEntries) {
 }
 
 TEST(RtcpPacketFirTest, ParseFailsOnZeroFciEntries) {
-  constexpr uint8_t kPacketWithoutFci[] = {0x84,  206, 0x00, 0x02,
-                                           0x12, 0x34, 0x56, 0x78,
-                                           0x00, 0x00, 0x00, 0x00};
+  constexpr uint8_t kPacketWithoutFci[] = {0x84, 206,  0x00, 0x02, 0x12, 0x34,
+                                           0x56, 0x78, 0x00, 0x00, 0x00, 0x00};
   Fir parsed;
   EXPECT_FALSE(test::ParseSinglePacket(kPacketWithoutFci, &parsed));
 }
 
 TEST(RtcpPacketFirTest, ParseFailsOnFractionalFciEntries) {
-  constexpr uint8_t kPacketWithOneAndHalfFci[] = {0x84,  206, 0x00, 0x05,
-                                                  0x12, 0x34, 0x56, 0x78,
-                                                  0x00, 0x00, 0x00, 0x00,
-                                                  0x23, 0x45, 0x67, 0x89,
-                                                  0x0d, 0x00, 0x00, 0x00,
-                                                   'h',  'a',  'l',  'f'};
+  constexpr uint8_t kPacketWithOneAndHalfFci[] = {
+      0x84, 206,  0x00, 0x05, 0x12, 0x34, 0x56, 0x78, 0x00, 0x00, 0x00, 0x00,
+      0x23, 0x45, 0x67, 0x89, 0x0d, 0x00, 0x00, 0x00, 'h',  'a',  'l',  'f'};
 
   Fir parsed;
   EXPECT_FALSE(test::ParseSinglePacket(kPacketWithOneAndHalfFci, &parsed));

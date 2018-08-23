@@ -17,13 +17,8 @@
 
 namespace rtc {
 
-enum ProxyType {
-  PROXY_NONE,
-  PROXY_HTTPS,
-  PROXY_SOCKS5,
-  PROXY_UNKNOWN
-};
-const char * ProxyToString(ProxyType proxy);
+enum ProxyType { PROXY_NONE, PROXY_HTTPS, PROXY_SOCKS5, PROXY_UNKNOWN };
+const char* ProxyToString(ProxyType proxy);
 
 struct ProxyInfo {
   ProxyType type;
@@ -38,6 +33,6 @@ struct ProxyInfo {
   ~ProxyInfo();
 };
 
-} // namespace rtc
+}  // namespace rtc
 
-#endif // RTC_BASE_PROXYINFO_H_
+#endif  // RTC_BASE_PROXYINFO_H_

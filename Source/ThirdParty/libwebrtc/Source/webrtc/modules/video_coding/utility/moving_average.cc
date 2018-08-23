@@ -15,6 +15,7 @@
 namespace webrtc {
 
 MovingAverage::MovingAverage(size_t s) : sum_history_(s + 1, 0) {}
+MovingAverage::~MovingAverage() = default;
 
 void MovingAverage::AddSample(int sample) {
   count_++;
@@ -22,13 +23,13 @@ void MovingAverage::AddSample(int sample) {
   sum_history_[count_ % sum_history_.size()] = sum_;
 }
 
-rtc::Optional<int> MovingAverage::GetAverage() const {
+absl::optional<int> MovingAverage::GetAverage() const {
   return GetAverage(size());
 }
 
-rtc::Optional<int> MovingAverage::GetAverage(size_t num_samples) const {
+absl::optional<int> MovingAverage::GetAverage(size_t num_samples) const {
   if (num_samples > size() || num_samples == 0)
-    return rtc::nullopt;
+    return absl::nullopt;
   int sum = sum_ - sum_history_[(count_ - num_samples) % sum_history_.size()];
   return sum / static_cast<int>(num_samples);
 }

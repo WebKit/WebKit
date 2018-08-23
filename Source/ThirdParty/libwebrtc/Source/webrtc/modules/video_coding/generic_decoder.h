@@ -46,8 +46,8 @@ class VCMDecodedFrameCallback : public DecodedImageCallback {
   int32_t Decoded(VideoFrame& decodedImage) override;
   int32_t Decoded(VideoFrame& decodedImage, int64_t decode_time_ms) override;
   void Decoded(VideoFrame& decodedImage,
-               rtc::Optional<int32_t> decode_time_ms,
-               rtc::Optional<uint8_t> qp) override;
+               absl::optional<int32_t> decode_time_ms,
+               absl::optional<uint8_t> qp) override;
   int32_t ReceivedDecodedReferenceFrame(const uint64_t pictureId) override;
   int32_t ReceivedDecodedFrame(const uint64_t pictureId) override;
 
@@ -81,20 +81,20 @@ class VCMGenericDecoder {
   ~VCMGenericDecoder();
 
   /**
-  * Initialize the decoder with the information from the VideoCodec
-  */
+   * Initialize the decoder with the information from the VideoCodec
+   */
   int32_t InitDecode(const VideoCodec* settings, int32_t numberOfCores);
 
   /**
-  * Decode to a raw I420 frame,
-  *
-  * inputVideoBuffer reference to encoded video frame
-  */
+   * Decode to a raw I420 frame,
+   *
+   * inputVideoBuffer reference to encoded video frame
+   */
   int32_t Decode(const VCMEncodedFrame& inputFrame, int64_t nowMs);
 
   /**
-  * Set decode callback. Deregistering while decoding is illegal.
-  */
+   * Set decode callback. Deregistering while decoding is illegal.
+   */
   int32_t RegisterDecodeCompleteCallback(VCMDecodedFrameCallback* callback);
 
   bool External() const;

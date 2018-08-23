@@ -12,7 +12,10 @@
 
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/video_codecs/builtin_video_decoder_factory.h"
+#include "api/video_codecs/builtin_video_encoder_factory.h"
 #include "media/engine/webrtcmediaengine.h"
+#include "modules/audio_processing/include/audio_processing.h"
 #include "test/gtest.h"
 
 using webrtc::RtpExtension;
@@ -101,14 +104,14 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensions_EmptyList) {
   std::vector<RtpExtension> extensions;
   std::vector<webrtc::RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions1, true);
-  EXPECT_EQ(0, filtered.size());
+  EXPECT_EQ(0u, filtered.size());
 }
 
 TEST(WebRtcMediaEngineTest, FilterRtpExtensions_IncludeOnlySupported) {
   std::vector<RtpExtension> extensions = MakeUniqueExtensions();
   std::vector<webrtc::RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions1, false);
-  EXPECT_EQ(2, filtered.size());
+  EXPECT_EQ(2u, filtered.size());
   EXPECT_EQ("c", filtered[0].uri);
   EXPECT_EQ("i", filtered[1].uri);
 }
@@ -117,7 +120,7 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensions_SortedByName_1) {
   std::vector<RtpExtension> extensions = MakeUniqueExtensions();
   std::vector<webrtc::RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, false);
-  EXPECT_EQ(12, filtered.size());
+  EXPECT_EQ(12u, filtered.size());
   EXPECT_TRUE(IsSorted(filtered));
 }
 
@@ -125,7 +128,7 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensions_SortedByName_2) {
   std::vector<RtpExtension> extensions = MakeUniqueExtensions();
   std::vector<webrtc::RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true);
-  EXPECT_EQ(12, filtered.size());
+  EXPECT_EQ(12u, filtered.size());
   EXPECT_TRUE(IsSorted(filtered));
 }
 
@@ -133,7 +136,7 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensions_DontRemoveRedundant) {
   std::vector<RtpExtension> extensions = MakeRedundantExtensions();
   std::vector<webrtc::RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, false);
-  EXPECT_EQ(12, filtered.size());
+  EXPECT_EQ(12u, filtered.size());
   EXPECT_TRUE(IsSorted(filtered));
   EXPECT_EQ(filtered[0].uri, filtered[1].uri);
 }
@@ -142,7 +145,7 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensions_RemoveRedundant) {
   std::vector<RtpExtension> extensions = MakeRedundantExtensions();
   std::vector<webrtc::RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true);
-  EXPECT_EQ(6, filtered.size());
+  EXPECT_EQ(6u, filtered.size());
   EXPECT_TRUE(IsSorted(filtered));
   EXPECT_NE(filtered[0].uri, filtered[1].uri);
 }
@@ -155,7 +158,7 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensions_RemoveRedundantEncrypted_1) {
   extensions.push_back(webrtc::RtpExtension("b", 4));
   std::vector<webrtc::RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true);
-  EXPECT_EQ(3, filtered.size());
+  EXPECT_EQ(3u, filtered.size());
   EXPECT_TRUE(IsSorted(filtered));
   EXPECT_EQ(filtered[0].uri, filtered[1].uri);
   EXPECT_NE(filtered[0].encrypt, filtered[1].encrypt);
@@ -171,7 +174,7 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensions_RemoveRedundantEncrypted_2) {
   extensions.push_back(webrtc::RtpExtension("b", 4));
   std::vector<webrtc::RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true);
-  EXPECT_EQ(3, filtered.size());
+  EXPECT_EQ(3u, filtered.size());
   EXPECT_TRUE(IsSorted(filtered));
   EXPECT_EQ(filtered[0].uri, filtered[1].uri);
   EXPECT_NE(filtered[0].encrypt, filtered[1].encrypt);
@@ -190,7 +193,7 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensions_RemoveRedundantBwe_1) {
   extensions.push_back(RtpExtension(RtpExtension::kTimestampOffsetUri, 14));
   std::vector<webrtc::RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true);
-  EXPECT_EQ(1, filtered.size());
+  EXPECT_EQ(1u, filtered.size());
   EXPECT_EQ(RtpExtension::kTransportSequenceNumberUri, filtered[0].uri);
 }
 
@@ -209,7 +212,7 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensions_RemoveRedundantBweEncrypted_1) {
   extensions.push_back(RtpExtension(RtpExtension::kTimestampOffsetUri, 14));
   std::vector<webrtc::RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true);
-  EXPECT_EQ(2, filtered.size());
+  EXPECT_EQ(2u, filtered.size());
   EXPECT_EQ(RtpExtension::kTransportSequenceNumberUri, filtered[0].uri);
   EXPECT_EQ(RtpExtension::kTransportSequenceNumberUri, filtered[1].uri);
   EXPECT_NE(filtered[0].encrypt, filtered[1].encrypt);
@@ -222,7 +225,7 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensions_RemoveRedundantBwe_2) {
   extensions.push_back(RtpExtension(RtpExtension::kTimestampOffsetUri, 7));
   std::vector<webrtc::RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true);
-  EXPECT_EQ(1, filtered.size());
+  EXPECT_EQ(1u, filtered.size());
   EXPECT_EQ(RtpExtension::kAbsSendTimeUri, filtered[0].uri);
 }
 
@@ -232,14 +235,17 @@ TEST(WebRtcMediaEngineTest, FilterRtpExtensions_RemoveRedundantBwe_3) {
   extensions.push_back(RtpExtension(RtpExtension::kTimestampOffsetUri, 14));
   std::vector<webrtc::RtpExtension> filtered =
       FilterRtpExtensions(extensions, SupportedExtensions2, true);
-  EXPECT_EQ(1, filtered.size());
+  EXPECT_EQ(1u, filtered.size());
   EXPECT_EQ(RtpExtension::kTimestampOffsetUri, filtered[0].uri);
 }
 
 TEST(WebRtcMediaEngineFactoryTest, CreateWithBuiltinDecoders) {
   std::unique_ptr<MediaEngineInterface> engine(WebRtcMediaEngineFactory::Create(
-      nullptr, webrtc::CreateBuiltinAudioEncoderFactory(),
-      webrtc::CreateBuiltinAudioDecoderFactory(), nullptr, nullptr));
+      nullptr /* adm */, webrtc::CreateBuiltinAudioEncoderFactory(),
+      webrtc::CreateBuiltinAudioDecoderFactory(),
+      webrtc::CreateBuiltinVideoEncoderFactory(),
+      webrtc::CreateBuiltinVideoDecoderFactory(), nullptr /* audio_mixer */,
+      webrtc::AudioProcessingBuilder().Create()));
   EXPECT_TRUE(engine);
 }
 

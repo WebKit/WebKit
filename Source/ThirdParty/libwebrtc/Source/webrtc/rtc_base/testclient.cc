@@ -10,8 +10,8 @@
 
 #include "rtc_base/testclient.h"
 
+#include "absl/memory/memory.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/timeutils.h"
 
@@ -49,7 +49,8 @@ int TestClient::Send(const char* buf, size_t size) {
   return socket_->Send(buf, size, options);
 }
 
-int TestClient::SendTo(const char* buf, size_t size,
+int TestClient::SendTo(const char* buf,
+                       size_t size,
                        const SocketAddress& dest) {
   rtc::PacketOptions options;
   return socket_->SendTo(buf, size, dest, options);
@@ -89,7 +90,8 @@ std::unique_ptr<TestClient::Packet> TestClient::NextPacket(int timeout_ms) {
   return packet;
 }
 
-bool TestClient::CheckNextPacket(const char* buf, size_t size,
+bool TestClient::CheckNextPacket(const char* buf,
+                                 size_t size,
                                  SocketAddress* addr) {
   bool res = false;
   std::unique_ptr<Packet> packet = NextPacket(kTimeoutMs);
@@ -138,11 +140,14 @@ int TestClient::SetOption(Socket::Option opt, int value) {
   return socket_->SetOption(opt, value);
 }
 
-void TestClient::OnPacket(AsyncPacketSocket* socket, const char* buf,
-                          size_t size, const SocketAddress& remote_addr,
+void TestClient::OnPacket(AsyncPacketSocket* socket,
+                          const char* buf,
+                          size_t size,
+                          const SocketAddress& remote_addr,
                           const PacketTime& packet_time) {
   CritScope cs(&crit_);
-  packets_.push_back(MakeUnique<Packet>(remote_addr, buf, size, packet_time));
+  packets_.push_back(
+      absl::make_unique<Packet>(remote_addr, buf, size, packet_time));
 }
 
 void TestClient::OnReadyToSend(AsyncPacketSocket* socket) {

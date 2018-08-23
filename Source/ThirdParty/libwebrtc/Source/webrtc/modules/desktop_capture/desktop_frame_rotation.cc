@@ -12,8 +12,8 @@
 
 #include <string.h>
 
-#include "third_party/libyuv/include/libyuv/rotate_argb.h"
 #include "rtc_base/checks.h"
+#include "third_party/libyuv/include/libyuv/rotate_argb.h"
 
 namespace webrtc {
 
@@ -109,10 +109,10 @@ void RotateDesktopFrame(const DesktopFrame& source,
   }
 
   int result = libyuv::ARGBRotate(
-       source.GetFrameDataAtPos(source_rect.top_left()), source.stride(),
-       target->GetFrameDataAtPos(target_rect.top_left()), target->stride(),
-       source_rect.width(), source_rect.height(),
-       ToLibyuvRotationMode(rotation));
+      source.GetFrameDataAtPos(source_rect.top_left()), source.stride(),
+      target->GetFrameDataAtPos(target_rect.top_left()), target->stride(),
+      source_rect.width(), source_rect.height(),
+      ToLibyuvRotationMode(rotation));
   RTC_DCHECK_EQ(result, 0);
 }
 

@@ -19,10 +19,10 @@ namespace webrtc {
 namespace test {
 namespace conversational_speech {
 
-bool Turn::operator==(const Turn &b) const {
+bool Turn::operator==(const Turn& b) const {
   return b.speaker_name == speaker_name &&
-         b.audiotrack_file_name == audiotrack_file_name &&
-         b.offset == offset;
+         b.audiotrack_file_name == audiotrack_file_name && b.offset == offset &&
+         b.gain == gain;
 }
 
 std::vector<Turn> LoadTiming(const std::string& timing_filepath) {
@@ -30,8 +30,13 @@ std::vector<Turn> LoadTiming(const std::string& timing_filepath) {
   auto parse_line = [](const std::string& line) {
     std::vector<std::string> fields;
     rtc::split(line, ' ', &fields);
-    RTC_CHECK_EQ(fields.size(), 3);
-    return Turn(fields[0], fields[1], std::atol(fields[2].c_str()));
+    RTC_CHECK_GE(fields.size(), 3);
+    RTC_CHECK_LE(fields.size(), 4);
+    int gain = 0;
+    if (fields.size() == 4) {
+      gain = std::atof(fields[3].c_str());
+    }
+    return Turn(fields[0], fields[1], std::atol(fields[2].c_str()), gain);
   };
 
   // Init.
@@ -55,8 +60,8 @@ void SaveTiming(const std::string& timing_filepath,
   std::ofstream outfile(timing_filepath);
   RTC_CHECK(outfile.is_open());
   for (const Turn& turn : timing) {
-    outfile << turn.speaker_name << " " << turn.audiotrack_file_name
-        << " " << turn.offset << std::endl;
+    outfile << turn.speaker_name << " " << turn.audiotrack_file_name << " "
+            << turn.offset << " " << turn.gain << std::endl;
   }
   outfile.close();
 }

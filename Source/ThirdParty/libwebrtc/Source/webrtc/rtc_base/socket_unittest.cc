@@ -12,12 +12,12 @@
 
 #include "rtc_base/socket_unittest.h"
 
+#include "absl/memory/memory.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/asyncudpsocket.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/nethelpers.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/socketserver.h"
 #include "rtc_base/testclient.h"
 #include "rtc_base/testutils.h"
@@ -224,7 +224,7 @@ void SocketTest::ConnectInternal(const IPAddress& loopback) {
       ss_->CreateAsyncSocket(loopback.family(), SOCK_STREAM));
   sink.Monitor(client.get());
   EXPECT_EQ(AsyncSocket::CS_CLOSED, client->GetState());
-  EXPECT_PRED1(IsUnspecOrEmptyIP, client->GetLocalAddress().ipaddr());
+  EXPECT_TRUE(IsUnspecOrEmptyIP(client->GetLocalAddress().ipaddr()));
 
   // Create server and listen.
   std::unique_ptr<AsyncSocket> server(
@@ -291,7 +291,7 @@ void SocketTest::ConnectWithDnsLookupInternal(const IPAddress& loopback,
   dns_addr.SetIP(host);
   EXPECT_EQ(0, client->Connect(dns_addr));
   // TODO: Bind when doing DNS lookup.
-  //EXPECT_NE(kEmptyAddr, client->GetLocalAddress());  // Implicit Bind
+  // EXPECT_NE(kEmptyAddr, client->GetLocalAddress());  // Implicit Bind
 
   // Client is connecting, outcome not yet determined.
   EXPECT_EQ(AsyncSocket::CS_CONNECTING, client->GetState());
@@ -444,9 +444,8 @@ void SocketTest::ConnectWhileNotClosedInternal(const IPAddress& loopback) {
 
   // Try to connect again, to an unresolved hostname.
   // Shouldn't break anything.
-  EXPECT_EQ(SOCKET_ERROR,
-            client->Connect(SocketAddress("localhost",
-                                          server->GetLocalAddress().port())));
+  EXPECT_EQ(SOCKET_ERROR, client->Connect(SocketAddress(
+                              "localhost", server->GetLocalAddress().port())));
   EXPECT_EQ(AsyncSocket::CS_CONNECTED, accepted->GetState());
   EXPECT_EQ(AsyncSocket::CS_CONNECTED, client->GetState());
   EXPECT_EQ(client->GetRemoteAddress(), server->GetLocalAddress());
@@ -694,8 +693,9 @@ void SocketTest::SocketServerWaitInternal(const IPAddress& loopback) {
   EXPECT_LT(0, accepted->Recv(buf, 1024, nullptr));
 }
 
-void SocketTest::TcpInternal(const IPAddress& loopback, size_t data_size,
-    ptrdiff_t max_send_size) {
+void SocketTest::TcpInternal(const IPAddress& loopback,
+                             size_t data_size,
+                             ptrdiff_t max_send_size) {
   StreamSink sink;
   SocketAddress accept_addr;
 
@@ -792,7 +792,7 @@ void SocketTest::TcpInternal(const IPAddress& loopback, size_t data_size,
       }
       if (recved_size >= 0) {
         EXPECT_LE(static_cast<size_t>(recved_size),
-            sent_size - recv_buffer.size());
+                  sent_size - recv_buffer.size());
         recv_buffer.AppendData(recved_data.data(), recved_size);
       } else {
         ASSERT_TRUE(receiver->IsBlocking());
@@ -858,7 +858,8 @@ void SocketTest::SingleFlowControlCallbackInternal(const IPAddress& loopback) {
   // Fill the socket buffer.
   char buf[1024 * 16] = {0};
   int sends = 0;
-  while (++sends && accepted->Send(&buf, arraysize(buf)) != -1) {}
+  while (++sends && accepted->Send(&buf, arraysize(buf)) != -1) {
+  }
   EXPECT_TRUE(accepted->IsBlocking());
 
   // Wait until data is available.
@@ -892,8 +893,7 @@ void SocketTest::SingleFlowControlCallbackInternal(const IPAddress& loopback) {
 void SocketTest::UdpInternal(const IPAddress& loopback) {
   SocketAddress empty = EmptySocketAddressWithFamily(loopback.family());
   // Test basic bind and connect behavior.
-  AsyncSocket* socket =
-      ss_->CreateAsyncSocket(loopback.family(), SOCK_DGRAM);
+  AsyncSocket* socket = ss_->CreateAsyncSocket(loopback.family(), SOCK_DGRAM);
   EXPECT_EQ(AsyncSocket::CS_CLOSED, socket->GetState());
   EXPECT_EQ(0, socket->Bind(SocketAddress(loopback, 0)));
   SocketAddress addr1 = socket->GetLocalAddress();
@@ -905,9 +905,9 @@ void SocketTest::UdpInternal(const IPAddress& loopback) {
 
   // Test send/receive behavior.
   std::unique_ptr<TestClient> client1(
-      new TestClient(WrapUnique(AsyncUDPSocket::Create(ss_, addr1))));
+      new TestClient(absl::WrapUnique(AsyncUDPSocket::Create(ss_, addr1))));
   std::unique_ptr<TestClient> client2(
-      new TestClient(WrapUnique(AsyncUDPSocket::Create(ss_, empty))));
+      new TestClient(absl::WrapUnique(AsyncUDPSocket::Create(ss_, empty))));
 
   SocketAddress addr2;
   EXPECT_EQ(3, client2->SendTo("foo", 3, addr1));
@@ -920,7 +920,7 @@ void SocketTest::UdpInternal(const IPAddress& loopback) {
   // TODO: figure out what the intent is here
   for (int i = 0; i < 10; ++i) {
     client2.reset(
-        new TestClient(WrapUnique(AsyncUDPSocket::Create(ss_, empty))));
+        new TestClient(absl::WrapUnique(AsyncUDPSocket::Create(ss_, empty))));
 
     SocketAddress addr4;
     EXPECT_EQ(3, client2->SendTo("foo", 3, addr1));
@@ -941,13 +941,13 @@ void SocketTest::UdpReadyToSend(const IPAddress& loopback) {
   // RFC 5737 - The blocks 192.0.2.0/24 (TEST-NET-1) ... are provided for use in
   // documentation.
   // RFC 3849 - 2001:DB8::/32 as a documentation-only prefix.
-  std::string dest = (loopback.family() == AF_INET6) ?
-      "2001:db8::1" : "192.0.2.0";
+  std::string dest =
+      (loopback.family() == AF_INET6) ? "2001:db8::1" : "192.0.2.0";
   SocketAddress test_addr(dest, 2345);
 
   // Test send
   std::unique_ptr<TestClient> client(
-      new TestClient(WrapUnique(AsyncUDPSocket::Create(ss_, empty))));
+      new TestClient(absl::WrapUnique(AsyncUDPSocket::Create(ss_, empty))));
   int test_packet_size = 1200;
   std::unique_ptr<char[]> test_packet(new char[test_packet_size]);
   // Init the test packet just to avoid memcheck warning.

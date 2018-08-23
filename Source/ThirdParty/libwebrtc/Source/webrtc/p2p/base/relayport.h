@@ -62,7 +62,7 @@ class RelayPort : public Port {
   bool SupportsProtocol(const std::string& protocol) const override;
   ProtocolType GetProtocol() const override;
 
-  const ProtocolAddress * ServerAddress(size_t index) const;
+  const ProtocolAddress* ServerAddress(size_t index) const;
   bool IsReady() { return ready_; }
 
   // Used for testing.
@@ -88,7 +88,8 @@ class RelayPort : public Port {
              bool payload) override;
 
   // Dispatches the given packet to the port or connection as appropriate.
-  void OnReadPacket(const char* data, size_t size,
+  void OnReadPacket(const char* data,
+                    size_t size,
                     const rtc::SocketAddress& remote_addr,
                     ProtocolType proto,
                     const rtc::PacketTime& packet_time);

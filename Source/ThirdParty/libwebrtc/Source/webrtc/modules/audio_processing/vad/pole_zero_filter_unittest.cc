@@ -53,7 +53,7 @@ class PoleZeroFilterTest : public ::testing::Test {
                                           kCoeffDenominator,
                                           kFilterOrder)) {}
 
-  ~PoleZeroFilterTest() {}
+  ~PoleZeroFilterTest() override {}
 
   void FilterSubframes(int num_subframes);
 

@@ -20,10 +20,8 @@
 
 #include "api/video/video_frame.h"
 #include "common_types.h"  // NOLINT(build/include)  // VideoTypes.
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
-
 
 // This is the max PSNR value our algorithms can return.
 const double kPerfectPSNR = 48.0f;
@@ -93,12 +91,18 @@ double I420SSIM(const I420BufferInterface& ref_buffer,
 // |tmp_buffer| should be:
 //   (src_width/2) * (src_height/2) * 2 + (dst_width/2) * (dst_height/2) * 2
 void NV12Scale(uint8_t* tmp_buffer,
-               const uint8_t* src_y, int src_stride_y,
-               const uint8_t* src_uv, int src_stride_uv,
-               int src_width, int src_height,
-               uint8_t* dst_y, int dst_stride_y,
-               uint8_t* dst_uv, int dst_stride_uv,
-               int dst_width, int dst_height);
+               const uint8_t* src_y,
+               int src_stride_y,
+               const uint8_t* src_uv,
+               int src_stride_uv,
+               int src_width,
+               int src_height,
+               uint8_t* dst_y,
+               int dst_stride_y,
+               uint8_t* dst_uv,
+               int dst_stride_uv,
+               int dst_width,
+               int dst_height);
 
 // Helper class for directly converting and scaling NV12 to I420. The Y-plane
 // will be scaled directly to the I420 destination, which makes this faster
@@ -107,13 +111,21 @@ class NV12ToI420Scaler {
  public:
   NV12ToI420Scaler();
   ~NV12ToI420Scaler();
-  void NV12ToI420Scale(const uint8_t* src_y, int src_stride_y,
-                       const uint8_t* src_uv, int src_stride_uv,
-                       int src_width, int src_height,
-                       uint8_t* dst_y, int dst_stride_y,
-                       uint8_t* dst_u, int dst_stride_u,
-                       uint8_t* dst_v, int dst_stride_v,
-                       int dst_width, int dst_height);
+  void NV12ToI420Scale(const uint8_t* src_y,
+                       int src_stride_y,
+                       const uint8_t* src_uv,
+                       int src_stride_uv,
+                       int src_width,
+                       int src_height,
+                       uint8_t* dst_y,
+                       int dst_stride_y,
+                       uint8_t* dst_u,
+                       int dst_stride_u,
+                       uint8_t* dst_v,
+                       int dst_stride_v,
+                       int dst_width,
+                       int dst_height);
+
  private:
   std::vector<uint8_t> tmp_uv_planes_;
 };

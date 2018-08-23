@@ -13,9 +13,9 @@
 
 #include <memory>
 
+#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/audio_codecs/audio_decoder.h"
-#include "api/optional.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 
 namespace webrtc {
@@ -50,6 +50,8 @@ class FakeDecodeFromFile : public AudioDecoder {
                      int16_t* decoded,
                      SpeechType* speech_type) override;
 
+  int PacketDuration(const uint8_t* encoded, size_t encoded_len) const override;
+
   // Helper method. Writes |timestamp|, |samples| and
   // |original_payload_size_bytes| to |encoded| in a format that the
   // FakeDecodeFromFile decoder will understand. |encoded| must be at least 12
@@ -61,7 +63,7 @@ class FakeDecodeFromFile : public AudioDecoder {
 
  private:
   std::unique_ptr<InputAudioFile> input_;
-  rtc::Optional<uint32_t> next_timestamp_from_input_;
+  absl::optional<uint32_t> next_timestamp_from_input_;
   const int sample_rate_hz_;
   const bool stereo_;
   size_t last_decoded_length_ = 0;

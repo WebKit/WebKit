@@ -19,7 +19,6 @@
 #include "rtc_base/timeutils.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace {
@@ -36,14 +35,13 @@ T DBFS(T x) {
 }  // namespace
 
 class PushSincResamplerTest : public ::testing::TestWithParam<
-    ::testing::tuple<int, int, double, double>> {
+                                  ::testing::tuple<int, int, double, double>> {
  public:
   PushSincResamplerTest()
       : input_rate_(::testing::get<0>(GetParam())),
         output_rate_(::testing::get<1>(GetParam())),
         rms_error_(::testing::get<2>(GetParam())),
-        low_freq_error_(::testing::get<3>(GetParam())) {
-  }
+        low_freq_error_(::testing::get<3>(GetParam())) {}
 
   ~PushSincResamplerTest() override {}
 
@@ -59,7 +57,7 @@ class PushSincResamplerTest : public ::testing::TestWithParam<
 
 class ZeroSource : public SincResamplerCallback {
  public:
-  void Run(size_t frames, float* destination) {
+  void Run(size_t frames, float* destination) override {
     std::memset(destination, 0, sizeof(float) * frames);
   }
 };
@@ -82,8 +80,8 @@ void PushSincResamplerTest::ResampleBenchmarkTest(bool int_format) {
     source_int[i] = static_cast<int16_t>(floor(32767 * source[i] + 0.5));
   }
 
-  printf("Benchmarking %d iterations of %d Hz -> %d Hz:\n",
-         kResampleIterations, input_rate_, output_rate_);
+  printf("Benchmarking %d iterations of %d Hz -> %d Hz:\n", kResampleIterations,
+         input_rate_, output_rate_);
   const double io_ratio = input_rate_ / static_cast<double>(output_rate_);
   SincResampler sinc_resampler(io_ratio, SincResampler::kDefaultRequestSize,
                                &resampler_source);
@@ -101,25 +99,23 @@ void PushSincResamplerTest::ResampleBenchmarkTest(bool int_format) {
   if (int_format) {
     for (int i = 0; i < kResampleIterations; ++i) {
       EXPECT_EQ(output_samples,
-                resampler.Resample(source_int.get(),
-                                   input_samples,
-                                   destination_int.get(),
-                                   output_samples));
+                resampler.Resample(source_int.get(), input_samples,
+                                   destination_int.get(), output_samples));
     }
   } else {
     for (int i = 0; i < kResampleIterations; ++i) {
-      EXPECT_EQ(output_samples,
-                resampler.Resample(source.get(),
-                                   input_samples,
-                                   resampled_destination.get(),
-                                   output_samples));
+      EXPECT_EQ(output_samples, resampler.Resample(source.get(), input_samples,
+                                                   resampled_destination.get(),
+                                                   output_samples));
     }
   }
   double total_time_us =
       (rtc::TimeNanos() - start) / rtc::kNumNanosecsPerMicrosec;
-  printf("PushSincResampler took %.2f us per frame; which is a %.1f%% overhead "
-         "on SincResampler.\n\n", total_time_us / kResampleIterations,
-         (total_time_us - total_time_sinc_us) / total_time_sinc_us * 100);
+  printf(
+      "PushSincResampler took %.2f us per frame; which is a %.1f%% overhead "
+      "on SincResampler.\n\n",
+      total_time_us / kResampleIterations,
+      (total_time_us - total_time_sinc_us) / total_time_sinc_us * 100);
 }
 
 // Disabled because it takes too long to run routinely. Use for performance
@@ -149,8 +145,8 @@ void PushSincResamplerTest::ResampleTest(bool int_format) {
   const double input_nyquist_freq = 0.5 * input_rate_;
 
   // Source for data to be resampled.
-  SinusoidalLinearChirpSource resampler_source(
-      input_rate_, input_samples, input_nyquist_freq, 0);
+  SinusoidalLinearChirpSource resampler_source(input_rate_, input_samples,
+                                               input_nyquist_freq, 0);
 
   PushSincResampler resampler(input_block_size, output_block_size);
 
@@ -168,8 +164,8 @@ void PushSincResamplerTest::ResampleTest(bool int_format) {
   // deal with it in the test by delaying the "pure" source to match. It must be
   // checked before the first call to Resample(), because ChunkSize() will
   // change afterwards.
-  const size_t output_delay_samples = output_block_size -
-      resampler.get_resampler_for_testing()->ChunkSize();
+  const size_t output_delay_samples =
+      output_block_size - resampler.get_resampler_for_testing()->ChunkSize();
 
   // Generate resampled signal.
   // With the PushSincResampler, we produce the signal block-by-10ms-block
@@ -178,21 +174,18 @@ void PushSincResamplerTest::ResampleTest(bool int_format) {
   if (int_format) {
     for (size_t i = 0; i < kNumBlocks; ++i) {
       FloatToS16(&source[i * input_block_size], input_block_size,
-               source_int.get());
+                 source_int.get());
       EXPECT_EQ(output_block_size,
-                resampler.Resample(source_int.get(),
-                                   input_block_size,
-                                   destination_int.get(),
-                                   output_block_size));
+                resampler.Resample(source_int.get(), input_block_size,
+                                   destination_int.get(), output_block_size));
       S16ToFloat(destination_int.get(), output_block_size,
-               &resampled_destination[i * output_block_size]);
+                 &resampled_destination[i * output_block_size]);
     }
   } else {
     for (size_t i = 0; i < kNumBlocks; ++i) {
       EXPECT_EQ(
           output_block_size,
-          resampler.Resample(&source[i * input_block_size],
-                             input_block_size,
+          resampler.Resample(&source[i * input_block_size], input_block_size,
                              &resampled_destination[i * output_block_size],
                              output_block_size));
     }
@@ -252,9 +245,13 @@ void PushSincResamplerTest::ResampleTest(bool int_format) {
   EXPECT_LE(high_freq_max_error, kHighFrequencyMaxError);
 }
 
-TEST_P(PushSincResamplerTest, ResampleInt) { ResampleTest(true); }
+TEST_P(PushSincResamplerTest, ResampleInt) {
+  ResampleTest(true);
+}
 
-TEST_P(PushSincResamplerTest, ResampleFloat) { ResampleTest(false); }
+TEST_P(PushSincResamplerTest, ResampleFloat) {
+  ResampleTest(false);
+}
 
 // Thresholds chosen arbitrarily based on what each resampling reported during
 // testing.  All thresholds are in dbFS, http://en.wikipedia.org/wiki/DBFS.

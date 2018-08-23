@@ -32,7 +32,7 @@ std::unique_ptr<ChannelController> CreateChannelController(int init_channels) {
 }
 
 void CheckDecision(ChannelController* controller,
-                   const rtc::Optional<int>& uplink_bandwidth_bps,
+                   const absl::optional<int>& uplink_bandwidth_bps,
                    size_t expected_num_channels) {
   if (uplink_bandwidth_bps) {
     Controller::NetworkMetrics network_metrics;
@@ -49,7 +49,7 @@ void CheckDecision(ChannelController* controller,
 TEST(ChannelControllerTest, OutputInitValueWhenUplinkBandwidthUnknown) {
   constexpr int kInitChannels = 2;
   auto controller = CreateChannelController(kInitChannels);
-  CheckDecision(controller.get(), rtc::nullopt, kInitChannels);
+  CheckDecision(controller.get(), absl::nullopt, kInitChannels);
 }
 
 TEST(ChannelControllerTest, SwitchTo2ChannelsOnHighUplinkBandwidth) {

@@ -16,9 +16,8 @@
  *
  */
 
-#include "lpc_gain_swb_tables.h"
-#include "settings.h"
-#include "typedefs.h"  // NOLINT(build/include)
+#include "modules/audio_coding/codecs/isac/main/source/lpc_gain_swb_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/settings.h"
 
 const double WebRtcIsac_kQSizeLpcGain = 0.100000;
 

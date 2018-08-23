@@ -15,11 +15,9 @@
 
 namespace cricket {
 
-BundleFilter::BundleFilter() {
-}
+BundleFilter::BundleFilter() {}
 
-BundleFilter::~BundleFilter() {
-}
+BundleFilter::~BundleFilter() {}
 
 bool BundleFilter::DemuxPacket(const uint8_t* data, size_t len) {
   // For RTP packets, we check whether the payload type can be found.

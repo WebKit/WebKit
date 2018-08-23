@@ -8,10 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "modules/video_coding/include/video_coding_defines.h"
 #include "modules/video_coding/encoded_frame.h"
-#include "modules/video_coding/generic_encoder.h"
-#include "modules/video_coding/jitter_buffer_common.h"
 
 namespace webrtc {
 
@@ -20,46 +17,9 @@ VCMEncodedFrame::VCMEncodedFrame()
       _renderTimeMs(-1),
       _payloadType(0),
       _missingFrame(false),
-      _codec(kVideoCodecUnknown),
+      _codec(kVideoCodecGeneric),
       _rotation_set(false) {
-  _codecSpecificInfo.codecType = kVideoCodecUnknown;
-}
-
-VCMEncodedFrame::VCMEncodedFrame(const webrtc::EncodedImage& rhs)
-    : webrtc::EncodedImage(rhs),
-      _renderTimeMs(-1),
-      _payloadType(0),
-      _missingFrame(false),
-      _codec(kVideoCodecUnknown),
-      _rotation_set(false) {
-  _codecSpecificInfo.codecType = kVideoCodecUnknown;
-  _buffer = NULL;
-  _size = 0;
-  _length = 0;
-  if (rhs._buffer != NULL) {
-    VerifyAndAllocate(rhs._length +
-                      EncodedImage::GetBufferPaddingBytes(_codec));
-    memcpy(_buffer, rhs._buffer, rhs._length);
-  }
-}
-
-VCMEncodedFrame::VCMEncodedFrame(const VCMEncodedFrame& rhs)
-    : webrtc::EncodedImage(rhs),
-      _renderTimeMs(rhs._renderTimeMs),
-      _payloadType(rhs._payloadType),
-      _missingFrame(rhs._missingFrame),
-      _codecSpecificInfo(rhs._codecSpecificInfo),
-      _codec(rhs._codec),
-      _rotation_set(rhs._rotation_set) {
-  _buffer = NULL;
-  _size = 0;
-  _length = 0;
-  if (rhs._buffer != NULL) {
-    VerifyAndAllocate(rhs._length +
-                      EncodedImage::GetBufferPaddingBytes(_codec));
-    memcpy(_buffer, rhs._buffer, rhs._length);
-    _length = rhs._length;
-  }
+  _codecSpecificInfo.codecType = kVideoCodecGeneric;
 }
 
 VCMEncodedFrame::~VCMEncodedFrame() {
@@ -84,139 +44,101 @@ void VCMEncodedFrame::Reset() {
   _completeFrame = false;
   _missingFrame = false;
   _length = 0;
-  _codecSpecificInfo.codecType = kVideoCodecUnknown;
-  _codec = kVideoCodecUnknown;
+  _codecSpecificInfo.codecType = kVideoCodecGeneric;
+  _codec = kVideoCodecGeneric;
   rotation_ = kVideoRotation_0;
   content_type_ = VideoContentType::UNSPECIFIED;
-  timing_.flags = TimingFrameFlags::kInvalid;
+  timing_.flags = VideoSendTiming::kInvalid;
   _rotation_set = false;
 }
 
 void VCMEncodedFrame::CopyCodecSpecific(const RTPVideoHeader* header) {
   if (header) {
     switch (header->codec) {
-      case kRtpVideoVp8: {
+      case kVideoCodecVP8: {
         if (_codecSpecificInfo.codecType != kVideoCodecVP8) {
           // This is the first packet for this frame.
-          _codecSpecificInfo.codecSpecific.VP8.pictureId = -1;
           _codecSpecificInfo.codecSpecific.VP8.temporalIdx = 0;
           _codecSpecificInfo.codecSpecific.VP8.layerSync = false;
           _codecSpecificInfo.codecSpecific.VP8.keyIdx = -1;
           _codecSpecificInfo.codecType = kVideoCodecVP8;
         }
         _codecSpecificInfo.codecSpecific.VP8.nonReference =
-            header->codecHeader.VP8.nonReference;
-        if (header->codecHeader.VP8.pictureId != kNoPictureId) {
-          _codecSpecificInfo.codecSpecific.VP8.pictureId =
-              header->codecHeader.VP8.pictureId;
-        }
-        if (header->codecHeader.VP8.temporalIdx != kNoTemporalIdx) {
+            header->vp8().nonReference;
+        if (header->vp8().temporalIdx != kNoTemporalIdx) {
           _codecSpecificInfo.codecSpecific.VP8.temporalIdx =
-              header->codecHeader.VP8.temporalIdx;
+              header->vp8().temporalIdx;
           _codecSpecificInfo.codecSpecific.VP8.layerSync =
-              header->codecHeader.VP8.layerSync;
+              header->vp8().layerSync;
         }
-        if (header->codecHeader.VP8.keyIdx != kNoKeyIdx) {
-          _codecSpecificInfo.codecSpecific.VP8.keyIdx =
-              header->codecHeader.VP8.keyIdx;
+        if (header->vp8().keyIdx != kNoKeyIdx) {
+          _codecSpecificInfo.codecSpecific.VP8.keyIdx = header->vp8().keyIdx;
         }
         break;
       }
-      case kRtpVideoVp9: {
+      case kVideoCodecVP9: {
+        const auto& vp9_header =
+            absl::get<RTPVideoHeaderVP9>(header->video_type_header);
         if (_codecSpecificInfo.codecType != kVideoCodecVP9) {
           // This is the first packet for this frame.
-          _codecSpecificInfo.codecSpecific.VP9.picture_id = -1;
           _codecSpecificInfo.codecSpecific.VP9.temporal_idx = 0;
           _codecSpecificInfo.codecSpecific.VP9.spatial_idx = 0;
           _codecSpecificInfo.codecSpecific.VP9.gof_idx = 0;
           _codecSpecificInfo.codecSpecific.VP9.inter_layer_predicted = false;
-          _codecSpecificInfo.codecSpecific.VP9.tl0_pic_idx = -1;
           _codecSpecificInfo.codecType = kVideoCodecVP9;
         }
         _codecSpecificInfo.codecSpecific.VP9.inter_pic_predicted =
-            header->codecHeader.VP9.inter_pic_predicted;
+            vp9_header.inter_pic_predicted;
         _codecSpecificInfo.codecSpecific.VP9.flexible_mode =
-            header->codecHeader.VP9.flexible_mode;
+            vp9_header.flexible_mode;
         _codecSpecificInfo.codecSpecific.VP9.num_ref_pics =
-            header->codecHeader.VP9.num_ref_pics;
-        for (uint8_t r = 0; r < header->codecHeader.VP9.num_ref_pics; ++r) {
+            vp9_header.num_ref_pics;
+        for (uint8_t r = 0; r < vp9_header.num_ref_pics; ++r) {
           _codecSpecificInfo.codecSpecific.VP9.p_diff[r] =
-              header->codecHeader.VP9.pid_diff[r];
+              vp9_header.pid_diff[r];
         }
         _codecSpecificInfo.codecSpecific.VP9.ss_data_available =
-            header->codecHeader.VP9.ss_data_available;
-        if (header->codecHeader.VP9.picture_id != kNoPictureId) {
-          _codecSpecificInfo.codecSpecific.VP9.picture_id =
-              header->codecHeader.VP9.picture_id;
-        }
-        if (header->codecHeader.VP9.tl0_pic_idx != kNoTl0PicIdx) {
-          _codecSpecificInfo.codecSpecific.VP9.tl0_pic_idx =
-              header->codecHeader.VP9.tl0_pic_idx;
-        }
-        if (header->codecHeader.VP9.temporal_idx != kNoTemporalIdx) {
+            vp9_header.ss_data_available;
+        if (vp9_header.temporal_idx != kNoTemporalIdx) {
           _codecSpecificInfo.codecSpecific.VP9.temporal_idx =
-              header->codecHeader.VP9.temporal_idx;
+              vp9_header.temporal_idx;
           _codecSpecificInfo.codecSpecific.VP9.temporal_up_switch =
-              header->codecHeader.VP9.temporal_up_switch;
+              vp9_header.temporal_up_switch;
         }
-        if (header->codecHeader.VP9.spatial_idx != kNoSpatialIdx) {
+        if (vp9_header.spatial_idx != kNoSpatialIdx) {
           _codecSpecificInfo.codecSpecific.VP9.spatial_idx =
-              header->codecHeader.VP9.spatial_idx;
+              vp9_header.spatial_idx;
           _codecSpecificInfo.codecSpecific.VP9.inter_layer_predicted =
-              header->codecHeader.VP9.inter_layer_predicted;
+              vp9_header.inter_layer_predicted;
         }
-        if (header->codecHeader.VP9.gof_idx != kNoGofIdx) {
-          _codecSpecificInfo.codecSpecific.VP9.gof_idx =
-              header->codecHeader.VP9.gof_idx;
+        if (vp9_header.gof_idx != kNoGofIdx) {
+          _codecSpecificInfo.codecSpecific.VP9.gof_idx = vp9_header.gof_idx;
         }
-        if (header->codecHeader.VP9.ss_data_available) {
+        if (vp9_header.ss_data_available) {
           _codecSpecificInfo.codecSpecific.VP9.num_spatial_layers =
-              header->codecHeader.VP9.num_spatial_layers;
+              vp9_header.num_spatial_layers;
           _codecSpecificInfo.codecSpecific.VP9
               .spatial_layer_resolution_present =
-              header->codecHeader.VP9.spatial_layer_resolution_present;
-          if (header->codecHeader.VP9.spatial_layer_resolution_present) {
-            for (size_t i = 0; i < header->codecHeader.VP9.num_spatial_layers;
-                 ++i) {
+              vp9_header.spatial_layer_resolution_present;
+          if (vp9_header.spatial_layer_resolution_present) {
+            for (size_t i = 0; i < vp9_header.num_spatial_layers; ++i) {
               _codecSpecificInfo.codecSpecific.VP9.width[i] =
-                  header->codecHeader.VP9.width[i];
+                  vp9_header.width[i];
               _codecSpecificInfo.codecSpecific.VP9.height[i] =
-                  header->codecHeader.VP9.height[i];
+                  vp9_header.height[i];
             }
           }
           _codecSpecificInfo.codecSpecific.VP9.gof.CopyGofInfoVP9(
-              header->codecHeader.VP9.gof);
+              vp9_header.gof);
         }
         break;
       }
-      case kRtpVideoH264: {
+      case kVideoCodecH264: {
         _codecSpecificInfo.codecType = kVideoCodecH264;
         break;
       }
-      case kRtpVideoStereo: {
-        _codecSpecificInfo.codecType = kVideoCodecStereo;
-        VideoCodecType associated_codec_type = kVideoCodecUnknown;
-        switch (header->codecHeader.stereo.associated_codec_type) {
-          case kRtpVideoVp8:
-            associated_codec_type = kVideoCodecVP8;
-            break;
-          case kRtpVideoVp9:
-            associated_codec_type = kVideoCodecVP9;
-            break;
-          case kRtpVideoH264:
-            associated_codec_type = kVideoCodecH264;
-            break;
-          default:
-            RTC_NOTREACHED();
-        }
-        _codecSpecificInfo.codecSpecific.stereo.associated_codec_type =
-            associated_codec_type;
-        _codecSpecificInfo.codecSpecific.stereo.indices =
-            header->codecHeader.stereo.indices;
-        break;
-      }
       default: {
-        _codecSpecificInfo.codecType = kVideoCodecUnknown;
+        _codecSpecificInfo.codecType = kVideoCodecGeneric;
         break;
       }
     }

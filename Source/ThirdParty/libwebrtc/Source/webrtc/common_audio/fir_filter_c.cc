@@ -20,8 +20,7 @@
 
 namespace webrtc {
 
-FIRFilterC::~FIRFilterC() {
-}
+FIRFilterC::~FIRFilterC() {}
 
 FIRFilterC::FIRFilterC(const float* coefficients, size_t coefficients_length)
     : coefficients_length_(coefficients_length),
@@ -52,11 +51,10 @@ void FIRFilterC::Filter(const float* in, size_t length, float* out) {
 
   // Update current state.
   if (length >= state_length_) {
-    memcpy(
-        state_.get(), &in[length - state_length_], state_length_ * sizeof(*in));
+    memcpy(state_.get(), &in[length - state_length_],
+           state_length_ * sizeof(*in));
   } else {
-    memmove(state_.get(),
-            &state_[length],
+    memmove(state_.get(), &state_[length],
             (state_length_ - length) * sizeof(state_[0]));
     memcpy(&state_[state_length_ - length], in, length * sizeof(*in));
   }

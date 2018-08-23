@@ -21,8 +21,8 @@ class MockRedPayloadSplitter : public RedPayloadSplitter {
  public:
   MOCK_METHOD1(SplitRed, bool(PacketList* packet_list));
   MOCK_METHOD2(CheckRedPayloads,
-               int(PacketList* packet_list,
-                   const DecoderDatabase& decoder_database));
+               void(PacketList* packet_list,
+                    const DecoderDatabase& decoder_database));
 };
 
 }  // namespace webrtc

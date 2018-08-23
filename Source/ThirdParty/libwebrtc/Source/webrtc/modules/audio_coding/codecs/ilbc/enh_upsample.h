@@ -19,15 +19,15 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_ENH_UPSAMPLE_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_ENH_UPSAMPLE_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  * upsample finite array assuming zeros outside bounds
  *---------------------------------------------------------------*/
 
 void WebRtcIlbcfix_EnhUpsample(
-    int32_t *useq1, /* (o) upsampled output sequence */
-    int16_t *seq1 /* (i) unupsampled sequence */
-                                );
+    int32_t* useq1, /* (o) upsampled output sequence */
+    int16_t* seq1   /* (i) unupsampled sequence */
+    );
 
 #endif

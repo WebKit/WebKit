@@ -15,7 +15,7 @@
 namespace webrtc {
 namespace test {
 
-void RunTest(void(*test)()) {
+void RunTest(void (*test)()) {
   (*test)();
 }
 

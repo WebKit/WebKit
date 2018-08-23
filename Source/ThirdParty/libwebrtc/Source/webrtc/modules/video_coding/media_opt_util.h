@@ -18,7 +18,6 @@
 
 #include "modules/video_coding/internal_defines.h"
 #include "rtc_base/numerics/exp_filter.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace media_optimization {
@@ -48,19 +47,7 @@ const int64_t kLowRttNackMs = 20;
 const int kMaxRttDelayThreshold = 500;
 
 struct VCMProtectionParameters {
-  VCMProtectionParameters()
-      : rtt(0),
-        lossPr(0.0f),
-        bitRate(0.0f),
-        packetsPerFrame(0.0f),
-        packetsPerFrameKey(0.0f),
-        frameRate(0.0f),
-        keyFrameSize(0.0f),
-        fecRateDelta(0),
-        fecRateKey(0),
-        codecWidth(0),
-        codecHeight(0),
-        numLayers(1) {}
+  VCMProtectionParameters();
 
   int64_t rtt;
   float lossPr;
@@ -107,38 +94,38 @@ class VCMProtectionMethod {
   // Returns the protection type
   //
   // Return value                 : The protection type
-  enum VCMProtectionMethodEnum Type() const { return _type; }
+  VCMProtectionMethodEnum Type() const;
 
   // Returns the effective packet loss for ER, required by this protection
   // method
   //
   // Return value                 : Required effective packet loss
-  virtual uint8_t RequiredPacketLossER() { return _effectivePacketLoss; }
+  virtual uint8_t RequiredPacketLossER();
 
   // Extracts the FEC protection factor for Key frame, required by this
   // protection method
   //
   // Return value                 : Required protectionFactor for Key frame
-  virtual uint8_t RequiredProtectionFactorK() { return _protectionFactorK; }
+  virtual uint8_t RequiredProtectionFactorK();
 
   // Extracts the FEC protection factor for Delta frame, required by this
   // protection method
   //
   // Return value                 : Required protectionFactor for delta frame
-  virtual uint8_t RequiredProtectionFactorD() { return _protectionFactorD; }
+  virtual uint8_t RequiredProtectionFactorD();
 
   // Extracts whether the FEC Unequal protection (UEP) is used for Key frame.
   //
   // Return value                 : Required Unequal protection on/off state.
-  virtual bool RequiredUepProtectionK() { return _useUepProtectionK; }
+  virtual bool RequiredUepProtectionK();
 
   // Extracts whether the the FEC Unequal protection (UEP) is used for Delta
   // frame.
   //
   // Return value                 : Required Unequal protection on/off state.
-  virtual bool RequiredUepProtectionD() { return _useUepProtectionD; }
+  virtual bool RequiredUepProtectionD();
 
-  virtual int MaxFramesFec() const { return 1; }
+  virtual int MaxFramesFec() const;
 
  protected:
   uint8_t _effectivePacketLoss;
@@ -151,14 +138,14 @@ class VCMProtectionMethod {
   bool _useUepProtectionK;
   bool _useUepProtectionD;
   float _corrFecCost;
-  enum VCMProtectionMethodEnum _type;
+  VCMProtectionMethodEnum _type;
 };
 
 class VCMNackMethod : public VCMProtectionMethod {
  public:
   VCMNackMethod();
-  virtual ~VCMNackMethod();
-  virtual bool UpdateParameters(const VCMProtectionParameters* parameters);
+  ~VCMNackMethod() override;
+  bool UpdateParameters(const VCMProtectionParameters* parameters) override;
   // Get the effective packet loss
   bool EffectivePacketLoss(const VCMProtectionParameters* parameter);
 };
@@ -166,8 +153,8 @@ class VCMNackMethod : public VCMProtectionMethod {
 class VCMFecMethod : public VCMProtectionMethod {
  public:
   VCMFecMethod();
-  virtual ~VCMFecMethod();
-  virtual bool UpdateParameters(const VCMProtectionParameters* parameters);
+  ~VCMFecMethod() override;
+  bool UpdateParameters(const VCMProtectionParameters* parameters) override;
   // Get the effective packet loss for ER
   bool EffectivePacketLoss(const VCMProtectionParameters* parameters);
   // Get the FEC protection factors
@@ -202,14 +189,14 @@ class VCMNackFecMethod : public VCMFecMethod {
  public:
   VCMNackFecMethod(int64_t lowRttNackThresholdMs,
                    int64_t highRttNackThresholdMs);
-  virtual ~VCMNackFecMethod();
-  virtual bool UpdateParameters(const VCMProtectionParameters* parameters);
+  ~VCMNackFecMethod() override;
+  bool UpdateParameters(const VCMProtectionParameters* parameters) override;
   // Get the effective packet loss for ER
   bool EffectivePacketLoss(const VCMProtectionParameters* parameters);
   // Get the protection factors
   bool ProtectionFactor(const VCMProtectionParameters* parameters);
   // Get the max number of frames the FEC is allowed to be based on.
-  int MaxFramesFec() const;
+  int MaxFramesFec() const override;
   // Turn off the FEC based on low bitrate and other factors.
   bool BitRateTooLowForFec(const VCMProtectionParameters* parameters);
 

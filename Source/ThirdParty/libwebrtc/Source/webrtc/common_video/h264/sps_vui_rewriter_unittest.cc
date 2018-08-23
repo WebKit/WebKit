@@ -159,7 +159,7 @@ void TestSps(SpsMode mode, SpsVuiRewriter::ParseResult expected_parse_result) {
   index.payload_start_offset += H264::kNaluTypeSize;
   index.payload_size -= H264::kNaluTypeSize;
 
-  rtc::Optional<SpsParser::SpsState> sps;
+  absl::optional<SpsParser::SpsState> sps;
   rtc::Buffer out_buffer;
   SpsVuiRewriter::ParseResult result =
       SpsVuiRewriter::ParseAndRewriteSps(&buffer[index.payload_start_offset],

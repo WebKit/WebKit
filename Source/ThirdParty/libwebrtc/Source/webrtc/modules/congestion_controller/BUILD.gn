@@ -20,18 +20,15 @@ rtc_static_library("congestion_controller") {
   visibility = [ "*" ]
   configs += [ ":bwe_test_logging" ]
   sources = [
+    "congestion_window_pushback_controller.cc",
+    "congestion_window_pushback_controller.h",
+    "include/network_changed_observer.h",
     "include/receive_side_congestion_controller.h",
     "include/send_side_congestion_controller.h",
-    "probe_controller.cc",
-    "probe_controller.h",
+    "include/send_side_congestion_controller_interface.h",
     "receive_side_congestion_controller.cc",
     "send_side_congestion_controller.cc",
-    "transport_feedback_adapter.cc",
-    "transport_feedback_adapter.h",
   ]
-
-  # TODO(jschuh): Bug 1348: fix this warning.
-  configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
 
   if (!build_with_chromium && is_clang) {
     # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
@@ -39,11 +36,12 @@ rtc_static_library("congestion_controller") {
   }
 
   deps = [
-    ":delay_based_bwe",
-    ":estimators",
+    ":transport_feedback",
     "..:module_api",
     "../..:webrtc_common",
+    "../../api/transport:network_control",
     "../../rtc_base:checks",
+    "../../rtc_base:ptr_util",
     "../../rtc_base:rate_limiter",
     "../../system_wrappers",
     "../../system_wrappers:field_trial_api",
@@ -53,6 +51,10 @@ rtc_static_library("congestion_controller") {
     "../pacing",
     "../remote_bitrate_estimator",
     "../rtp_rtcp:rtp_rtcp_format",
+    "goog_cc:delay_based_bwe",
+    "goog_cc:estimators",
+    "goog_cc:probe_controller",
+    "//third_party/abseil-cpp/absl/memory",
   ]
 
   if (!build_with_mozilla) {
@@ -60,90 +62,52 @@ rtc_static_library("congestion_controller") {
   }
 }
 
-rtc_source_set("estimators") {
-  configs += [ ":bwe_test_logging" ]
+rtc_static_library("transport_feedback") {
+  visibility = [ "*" ]
   sources = [
-    "acknowledged_bitrate_estimator.cc",
-    "acknowledged_bitrate_estimator.h",
-    "bitrate_estimator.cc",
-    "bitrate_estimator.h",
-    "median_slope_estimator.cc",
-    "median_slope_estimator.h",
-    "probe_bitrate_estimator.cc",
-    "probe_bitrate_estimator.h",
-    "trendline_estimator.cc",
-    "trendline_estimator.h",
+    "transport_feedback_adapter.cc",
+    "transport_feedback_adapter.h",
   ]
 
-  # TODO(jschuh): Bug 1348: fix this warning.
-  configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
-
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
-
   deps = [
-    "../../api:optional",
-    "../../logging:rtc_event_log_api",
+    "../../modules:module_api",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
-    "../../rtc_base:rtc_numerics",
-    "../../system_wrappers:field_trial_api",
-    "../../system_wrappers:metrics_api",
-    "../remote_bitrate_estimator:remote_bitrate_estimator",
+    "../../system_wrappers:system_wrappers",
     "../rtp_rtcp:rtp_rtcp_format",
+    "rtp:transport_feedback",
   ]
-}
-
-rtc_source_set("delay_based_bwe") {
-  configs += [ ":bwe_test_logging" ]
-  sources = [
-    "delay_based_bwe.cc",
-    "delay_based_bwe.h",
-  ]
-  deps = [
-    ":estimators",
-    "../../:typedefs",
-    "../../logging:rtc_event_log_api",
-    "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
-    "../../system_wrappers:field_trial_api",
-    "../../system_wrappers:metrics_api",
-    "../pacing",
-    "../remote_bitrate_estimator",
-  ]
-
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
 }
 
 if (rtc_include_tests) {
+  rtc_source_set("test_controller_printer") {
+    testonly = true
+    sources = [
+      "test/controller_printer.cc",
+      "test/controller_printer.h",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+    deps = [
+      "../../api/transport:network_control",
+      "../../rtc_base:checks",
+    ]
+  }
   rtc_source_set("congestion_controller_unittests") {
     testonly = true
 
     sources = [
-      "acknowledged_bitrate_estimator_unittest.cc",
-      "congestion_controller_unittests_helper.cc",
-      "congestion_controller_unittests_helper.h",
-      "delay_based_bwe_unittest.cc",
-      "delay_based_bwe_unittest_helper.cc",
-      "delay_based_bwe_unittest_helper.h",
-      "median_slope_estimator_unittest.cc",
-      "probe_bitrate_estimator_unittest.cc",
-      "probe_controller_unittest.cc",
+      "congestion_window_pushback_controller_unittest.cc",
       "receive_side_congestion_controller_unittest.cc",
       "send_side_congestion_controller_unittest.cc",
       "transport_feedback_adapter_unittest.cc",
-      "trendline_estimator_unittest.cc",
     ]
     deps = [
       ":congestion_controller",
-      ":delay_based_bwe",
-      ":estimators",
       ":mock_congestion_controller",
+      ":transport_feedback",
       "../../logging:mocks",
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base",
@@ -158,7 +122,10 @@ if (rtc_include_tests) {
       "../pacing:pacing",
       "../remote_bitrate_estimator:remote_bitrate_estimator",
       "../rtp_rtcp:rtp_rtcp_format",
-      "//testing/gmock",
+      "bbr:bbr_unittests",
+      "goog_cc:estimators",
+      "goog_cc:goog_cc_unittests",
+      "rtp:congestion_controller_unittests",
     ]
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
@@ -170,7 +137,6 @@ if (rtc_include_tests) {
     testonly = true
     sources = [
       "include/mock/mock_congestion_observer.h",
-      "include/mock/mock_send_side_congestion_controller.h",
     ]
     deps = [
       ":congestion_controller",

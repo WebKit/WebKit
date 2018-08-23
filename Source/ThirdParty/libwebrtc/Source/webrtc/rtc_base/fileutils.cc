@@ -35,7 +35,7 @@ namespace rtc {
 // to the first file in the directory, and can be advanecd with Next(). This
 // allows you to get information about each file.
 
-  // Constructor
+// Constructor
 DirectoryIterator::DirectoryIterator()
 #ifdef WEBRTC_WIN
     : handle_(INVALID_HANDLE_VALUE) {
@@ -45,7 +45,7 @@ DirectoryIterator::DirectoryIterator()
 #endif
 }
 
-  // Destructor
+// Destructor
 DirectoryIterator::~DirectoryIterator() {
 #if defined(WEBRTC_WIN)
   if (handle_ != INVALID_HANDLE_VALUE)
@@ -56,10 +56,10 @@ DirectoryIterator::~DirectoryIterator() {
 #endif
 }
 
-  // Starts traversing a directory.
-  // dir is the directory to traverse
-  // returns true if the directory exists and is valid
-bool DirectoryIterator::Iterate(const Pathname &dir) {
+// Starts traversing a directory.
+// dir is the directory to traverse
+// returns true if the directory exists and is valid
+bool DirectoryIterator::Iterate(const Pathname& dir) {
   directory_ = dir.pathname();
 #if defined(WEBRTC_WIN)
   if (handle_ != INVALID_HANDLE_VALUE)
@@ -84,8 +84,8 @@ bool DirectoryIterator::Iterate(const Pathname &dir) {
   return true;
 }
 
-  // Advances to the next file
-  // returns true if there were more files in the directory.
+// Advances to the next file
+// returns true if there were more files in the directory.
 bool DirectoryIterator::Next() {
 #if defined(WEBRTC_WIN)
   return ::FindNextFile(handle_, &data_) == TRUE;
@@ -98,7 +98,7 @@ bool DirectoryIterator::Next() {
 #endif
 }
 
-  // returns true if the file currently pointed to is a directory
+// returns true if the file currently pointed to is a directory
 bool DirectoryIterator::IsDirectory() const {
 #if defined(WEBRTC_WIN)
   return (data_.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != FALSE;
@@ -107,7 +107,7 @@ bool DirectoryIterator::IsDirectory() const {
 #endif
 }
 
-  // returns the name of the file currently pointed to
+// returns the name of the file currently pointed to
 std::string DirectoryIterator::Name() const {
 #if defined(WEBRTC_WIN)
   return ToUtf8(data_.cFileName);
@@ -117,17 +117,14 @@ std::string DirectoryIterator::Name() const {
 #endif
 }
 
-FilesystemInterface* Filesystem::default_filesystem_ = nullptr;
-
-FilesystemInterface *Filesystem::EnsureDefaultFilesystem() {
-  if (!default_filesystem_) {
+FilesystemInterface* Filesystem::GetFilesystem() {
 #if defined(WEBRTC_WIN)
-    default_filesystem_ = new Win32Filesystem();
+  static FilesystemInterface* const filesystem = new Win32Filesystem();
 #else
-    default_filesystem_ = new UnixFilesystem();
+  static FilesystemInterface* const filesystem = new UnixFilesystem();
 #endif
-  }
-  return default_filesystem_;
+
+  return filesystem;
 }
 
 }  // namespace rtc

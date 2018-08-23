@@ -30,7 +30,8 @@ namespace test {
 // Used to perform an audio processing simulation from an aec dump.
 class AecDumpBasedSimulator final : public AudioProcessingSimulator {
  public:
-  explicit AecDumpBasedSimulator(const SimulationSettings& settings);
+  AecDumpBasedSimulator(const SimulationSettings& settings,
+                        std::unique_ptr<AudioProcessingBuilder> ap_builder);
   ~AecDumpBasedSimulator() override;
 
   // Processes the messages in the aecdump file.

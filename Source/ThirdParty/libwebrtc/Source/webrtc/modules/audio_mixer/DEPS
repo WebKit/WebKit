@@ -5,10 +5,8 @@ include_rules = [
   "+modules/audio_coding",
   "+modules/audio_device",
   "+modules/audio_processing",
-  "+modules/media_file",
   "+modules/pacing",
   "+modules/rtp_rtcp",
   "+modules/utility",
   "+system_wrappers",
-  "+voice_engine",
 ]

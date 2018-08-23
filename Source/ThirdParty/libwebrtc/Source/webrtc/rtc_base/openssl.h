@@ -11,10 +11,15 @@
 #ifndef RTC_BASE_OPENSSL_H_
 #define RTC_BASE_OPENSSL_H_
 
+#if defined(WEBRTC_WIN)
+// Must be included first before openssl headers.
+#include "rtc_base/win32.h"  // NOLINT
+#endif                       // WEBRTC_WIN
+
 #include <openssl/ssl.h>
 
-#if (OPENSSL_VERSION_NUMBER < 0x10000000L)
-#error OpenSSL is older than 1.0.0, which is the minimum supported version.
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
+#error OpenSSL is older than 1.1.0, which is the minimum supported version.
 #endif
 
 #endif  // RTC_BASE_OPENSSL_H_

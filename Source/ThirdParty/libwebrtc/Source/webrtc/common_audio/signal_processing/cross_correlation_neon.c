@@ -9,6 +9,7 @@
  */
 
 #include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "rtc_base/system/arch.h"
 
 #include <arm_neon.h>
 

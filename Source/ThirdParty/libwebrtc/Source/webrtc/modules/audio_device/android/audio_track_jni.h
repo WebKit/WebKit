@@ -90,8 +90,10 @@ class AudioTrackJni {
   // |byte_buffer| in |direct_buffer_address_|. The size of the buffer
   // is also stored in |direct_buffer_capacity_in_bytes_|.
   // Called on the same thread as the creating thread.
-  static void JNICALL CacheDirectBufferAddress(
-    JNIEnv* env, jobject obj, jobject byte_buffer, jlong nativeAudioTrack);
+  static void JNICALL CacheDirectBufferAddress(JNIEnv* env,
+                                               jobject obj,
+                                               jobject byte_buffer,
+                                               jlong nativeAudioTrack);
   void OnCacheDirectBufferAddress(JNIEnv* env, jobject byte_buffer);
 
   // Called periodically by the Java based WebRtcAudioTrack object when
@@ -99,8 +101,10 @@ class AudioTrackJni {
   // be written to the memory area |direct_buffer_address_| for playout.
   // This method is called on a high-priority thread from Java. The name of
   // the thread is 'AudioTrackThread'.
-  static void JNICALL GetPlayoutData(
-    JNIEnv* env, jobject obj, jint length, jlong nativeAudioTrack);
+  static void JNICALL GetPlayoutData(JNIEnv* env,
+                                     jobject obj,
+                                     jint length,
+                                     jlong nativeAudioTrack);
   void OnGetPlayoutData(size_t length);
 
   // Stores thread ID in constructor.

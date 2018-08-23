@@ -12,7 +12,6 @@
 
 #include "rtc_base/checks.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 // Constants used in LogOfEnergy().
 static const int16_t kLogConst = 24660;  // 160*log10(2) in Q9.

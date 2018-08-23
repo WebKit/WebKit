@@ -17,7 +17,6 @@
 #include "modules/include/module_common_types.h"
 #include "modules/video_coding/include/video_coding.h"
 #include "modules/video_coding/packet.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 // Used to pass data from jitter buffer to session info.
@@ -30,22 +29,10 @@ struct FrameData {
 class VCMSessionInfo {
  public:
   VCMSessionInfo();
+  ~VCMSessionInfo();
 
   void UpdateDataPointers(const uint8_t* old_base_ptr,
                           const uint8_t* new_base_ptr);
-  // NACK - Building the NACK lists.
-  // Build hard NACK list: Zero out all entries in list up to and including
-  // _lowSeqNum.
-  int BuildHardNackList(int* seq_num_list,
-                        int seq_num_list_length,
-                        int nack_seq_nums_index);
-
-  // Build soft NACK list:  Zero out only a subset of the packets, discard
-  // empty packets.
-  int BuildSoftNackList(int* seq_num_list,
-                        int seq_num_list_length,
-                        int nack_seq_nums_index,
-                        int rtt_ms);
   void Reset();
   int InsertPacket(const VCMPacket& packet,
                    uint8_t* frame_buffer,
@@ -60,17 +47,11 @@ class VCMSessionInfo {
   // Returns the number of bytes deleted from the session.
   size_t MakeDecodable();
 
-  // Sets decodable_ to false.
-  // Used by the dual decoder. After the mode is changed to kNoErrors from
-  // kWithErrors or kSelective errors, any states that have been marked
-  // decodable and are not complete are marked as non-decodable.
-  void SetNotDecodableIfIncomplete();
-
+  // TODO(nisse): Used by tests only.
   size_t SessionLength() const;
   int NumPackets() const;
   bool HaveFirstPacket() const;
   bool HaveLastPacket() const;
-  bool session_nack() const;
   webrtc::FrameType FrameType() const { return frame_type_; }
   int LowSequenceNumber() const;
 
@@ -80,15 +61,10 @@ class VCMSessionInfo {
   int TemporalId() const;
   bool LayerSync() const;
   int Tl0PicId() const;
-  bool NonReference() const;
 
   std::vector<NaluInfo> GetNaluInfos() const;
 
   void SetGofInfo(const GofInfoVP9& gof_info, size_t idx);
-
-  // The number of packets discarded because the decoder can't make use of
-  // them.
-  int packets_not_decodable() const;
 
  private:
   enum { kMaxVP8Partitions = 9 };
@@ -142,8 +118,6 @@ class VCMSessionInfo {
   //        frame, we know that the frame is medium or large-sized.
   void UpdateDecodableSession(const FrameData& frame_data);
 
-  // If this session has been NACKed by the jitter buffer.
-  bool session_nack_;
   bool complete_;
   bool decodable_;
   webrtc::FrameType frame_type_;

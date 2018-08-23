@@ -8,16 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "lpc_analysis.h"
-#include "settings.h"
-#include "codec.h"
-#include "entropy_coding.h"
-
 #include <math.h>
 #include <string.h>
 
-#define LEVINSON_EPS    1.0e-10
-
+#include "modules/audio_coding/codecs/isac/main/source/lpc_analysis.h"
+#include "modules/audio_coding/codecs/isac/main/source/settings.h"
+#include "modules/audio_coding/codecs/isac/main/source/codec.h"
+#include "modules/audio_coding/codecs/isac/main/source/entropy_coding.h"
+#include "modules/audio_coding/codecs/isac/main/source/filter_functions.h"
+#include "modules/audio_coding/codecs/isac/main/source/isac_vad.h"
 
 /* window */
 /* Matlab generation code:
@@ -75,45 +74,10 @@ static const double kLpcCorrWindow[WINLEN] = {
   0.00155690, 0.00124918, 0.00094895, 0.00066112, 0.00039320, 0.00015881
 };
 
-double WebRtcIsac_LevDurb(double *a, double *k, double *r, size_t order)
-{
-
-  double sum, alpha;
-  size_t m, m_h, i;
-  alpha = 0; //warning -DH
-  a[0] = 1.0;
-  if (r[0] < LEVINSON_EPS) { /* if r[0] <= 0, set LPC coeff. to zero */
-    for (i = 0; i < order; i++) {
-      k[i] = 0;
-      a[i+1] = 0;
-    }
-  } else {
-    a[1] = k[0] = -r[1]/r[0];
-    alpha = r[0] + r[1] * k[0];
-    for (m = 1; m < order; m++){
-      sum = r[m + 1];
-      for (i = 0; i < m; i++){
-        sum += a[i+1] * r[m - i];
-      }
-      k[m] = -sum / alpha;
-      alpha += k[m] * sum;
-      m_h = (m + 1) >> 1;
-      for (i = 0; i < m_h; i++){
-        sum = a[i+1] + k[m] * a[m - i];
-        a[m - i] += k[m] * a[i+1];
-        a[i+1] = sum;
-      }
-      a[m+1] = k[m];
-    }
-  }
-  return alpha;
-}
-
-
-//was static before, but didn't work with MEX file
-void WebRtcIsac_GetVars(const double *input, const int16_t *pitchGains_Q12,
-                       double *oldEnergy, double *varscale)
-{
+static void WebRtcIsac_GetVars(const double* input,
+                               const int16_t* pitchGains_Q12,
+                               double* oldEnergy,
+                               double* varscale) {
   double nrg[4], chng, pg;
   int k;
 
@@ -162,12 +126,9 @@ void WebRtcIsac_GetVars(const double *input, const int16_t *pitchGains_Q12,
   *oldEnergy = nrg[3];
 }
 
-void
-WebRtcIsac_GetVarsUB(
-    const double* input,
-    double*       oldEnergy,
-    double*       varscale)
-{
+static void WebRtcIsac_GetVarsUB(const double* input,
+                                 double* oldEnergy,
+                                 double* varscale) {
   double nrg[4], chng;
   int k;
 

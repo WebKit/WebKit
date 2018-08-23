@@ -29,11 +29,18 @@ rtc_source_set("call_api") {
 
   deps = [
     # TODO(kjellander): Add remaining dependencies when webrtc:4243 is done.
-    ":audio_mixer_api",
     ":transport_api",
     "..:webrtc_common",
     "../rtc_base:rtc_base_approved",
+    "audio:audio_mixer_api",
     "audio_codecs:audio_codecs_api",
+  ]
+}
+
+rtc_source_set("callfactory_api") {
+  visibility = [ "*" ]
+  sources = [
+    "call/callfactoryinterface.h",
   ]
 }
 
@@ -41,13 +48,17 @@ rtc_static_library("libjingle_peerconnection_api") {
   visibility = [ "*" ]
   cflags = []
   sources = [
+    "asyncresolverfactory.h",
+    "bitrate_constraints.h",
     "candidate.cc",
     "candidate.h",
     "cryptoparams.h",
+    "datachannelinterface.cc",
     "datachannelinterface.h",
     "dtmfsenderinterface.h",
     "jsep.cc",
     "jsep.h",
+    "jsepicecandidate.cc",
     "jsepicecandidate.h",
     "jsepsessiondescription.h",
     "mediaconstraintsinterface.cc",
@@ -60,6 +71,8 @@ rtc_static_library("libjingle_peerconnection_api") {
     "mediatypes.h",
     "notifier.h",
     "peerconnectionfactoryproxy.h",
+    "peerconnectioninterface.cc",
+    "peerconnectioninterface.h",
     "peerconnectionproxy.h",
     "proxy.cc",
     "proxy.h",
@@ -69,39 +82,39 @@ rtc_static_library("libjingle_peerconnection_api") {
     "rtp_headers.h",
     "rtpparameters.cc",
     "rtpparameters.h",
+    "rtpreceiverinterface.cc",
     "rtpreceiverinterface.h",
     "rtpsenderinterface.h",
+    "rtptransceiverinterface.cc",
     "rtptransceiverinterface.h",
     "setremotedescriptionobserverinterface.h",
     "statstypes.cc",
     "statstypes.h",
     "turncustomizer.h",
-    "umametrics.cc",
     "umametrics.h",
-    "videosinkinterface.h",
-    "videosourceinterface.cc",
-    "videosourceinterface.h",
     "videosourceproxy.h",
   ]
 
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
-
   deps = [
     ":array_view",
-    ":optional",
-    ":peerconnection_and_implicit_call_api",
+    ":audio_options_api",
+    ":callfactory_api",
+    ":fec_controller_api",
+    ":libjingle_logging_api",
     ":rtc_stats_api",
-    ":video_frame_api",
+    "audio:audio_mixer_api",
     "audio_codecs:audio_codecs_api",
+    "transport:bitrate_settings",
+    "transport:network_control",
+    "video:video_frame",
+    "//third_party/abseil-cpp/absl/types:optional",
 
     # Basically, don't add stuff here. You might break sensitive downstream
     # targets like pnacl. API should not depend on anything outside of this
     # file, really. All these should arguably go away in time.
-    "..:typedefs",
     "..:webrtc_common",
+    "../logging:rtc_event_log_api",
+    "../media:rtc_media_config",
     "../modules/audio_processing:audio_processing_statistics",
     "../rtc_base:checks",
     "../rtc_base:deprecation",
@@ -109,24 +122,54 @@ rtc_static_library("libjingle_peerconnection_api") {
     "../rtc_base:rtc_base_approved",
     "../rtc_base:stringutils",
   ]
+
   if (is_nacl) {
     # This is needed by .h files included from rtc_base.
     deps += [ "//native_client_sdk/src/libraries/nacl_io" ]
   }
 }
 
-rtc_source_set("peerconnection_and_implicit_call_api") {
+rtc_source_set("video_quality_test_fixture_api") {
   visibility = [ "*" ]
-
-  # The peerconnectioninterface.h file pulls in call/callfactoryinterface.h
-  # and the entire call module with it. We need to either get rid of this
-  # dependency or pull most of call/ into the API. For now, silence the warnings
-  # this creates since it creates a circular dependency (call very much depends
-  # on API). See bugs.webrtc.org/8667.
-  check_includes = false
+  testonly = true
   sources = [
-    "peerconnectioninterface.h",
+    "test/video_quality_test_fixture.h",
   ]
+  deps = [
+    ":libjingle_peerconnection_api",
+    ":simulated_network_api",
+    "../call:fake_network",
+    "../call:rtp_interfaces",
+    "../test:test_common",
+    "../test:video_test_common",
+    "video_codecs:video_codecs_api",
+  ]
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("create_video_quality_test_fixture_api") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [
+      "test/create_video_quality_test_fixture.cc",
+      "test/create_video_quality_test_fixture.h",
+    ]
+    deps = [
+      ":fec_controller_api",
+      ":video_quality_test_fixture_api",
+      "../rtc_base:ptr_util",
+      "../video:video_quality_test",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
 }
 
 rtc_source_set("libjingle_logging_api") {
@@ -159,9 +202,9 @@ rtc_source_set("ortc_api") {
   # libjingle_peerconnection_api.
   deps = [
     ":libjingle_peerconnection_api",
-    ":optional",
     "..:webrtc_common",
     "../rtc_base:rtc_base",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
   if (!build_with_chromium && is_clang) {
     # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
@@ -185,57 +228,48 @@ rtc_source_set("rtc_stats_api") {
   ]
 }
 
-rtc_source_set("audio_mixer_api") {
+rtc_source_set("audio_options_api") {
   visibility = [ "*" ]
   sources = [
-    "audio/audio_mixer.h",
+    "audio_options.cc",
+    "audio_options.h",
   ]
 
   deps = [
-    "../modules:module_api",
     "../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
 rtc_source_set("transport_api") {
   visibility = [ "*" ]
   sources = [
+    "call/transport.cc",
     "call/transport.h",
   ]
 }
 
-rtc_source_set("video_frame_api") {
+rtc_source_set("simulated_network_api") {
   visibility = [ "*" ]
   sources = [
-    "video/video_content_type.cc",
-    "video/video_content_type.h",
-    "video/video_frame.cc",
-    "video/video_frame.h",
-    "video/video_frame_buffer.cc",
-    "video/video_frame_buffer.h",
-    "video/video_rotation.h",
-    "video/video_timing.cc",
-    "video/video_timing.h",
+    "test/simulated_network.h",
   ]
-
   deps = [
-    "../rtc_base:checks",
-    "../rtc_base:rtc_base_approved",
+    "../rtc_base:criticalsection",
+    "../rtc_base:rtc_base",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
-rtc_source_set("video_frame_api_i420") {
+rtc_source_set("fec_controller_api") {
   visibility = [ "*" ]
   sources = [
-    "video/i420_buffer.cc",
-    "video/i420_buffer.h",
+    "fec_controller.h",
   ]
+
   deps = [
-    ":video_frame_api",
-    "../rtc_base:checks",
-    "../rtc_base:rtc_base",
-    "../system_wrappers",
-    "//third_party/libyuv",
+    "..:webrtc_common",
+    "../modules:module_fec_api",
   ]
 }
 
@@ -247,19 +281,6 @@ rtc_source_set("array_view") {
   deps = [
     "../rtc_base:checks",
     "../rtc_base:type_traits",
-  ]
-}
-
-rtc_source_set("optional") {
-  visibility = [ "*" ]
-  sources = [
-    "optional.cc",
-    "optional.h",
-  ]
-  deps = [
-    ":array_view",
-    "../rtc_base:checks",
-    "../rtc_base:sanitizer",
   ]
 }
 
@@ -287,6 +308,86 @@ rtc_source_set("libjingle_peerconnection_test_api") {
 }
 
 if (rtc_include_tests) {
+  if (rtc_enable_protobuf) {
+    rtc_source_set("audioproc_f_api") {
+      visibility = [ "*" ]
+      testonly = true
+      sources = [
+        "test/audioproc_float.cc",
+        "test/audioproc_float.h",
+      ]
+
+      deps = [
+        "../modules/audio_processing:audio_processing",
+        "../modules/audio_processing:audioproc_f_impl",
+      ]
+    }
+  }
+
+  rtc_source_set("simulcast_test_fixture_api") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [
+      "test/simulcast_test_fixture.h",
+    ]
+  }
+
+  rtc_source_set("create_simulcast_test_fixture_api") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [
+      "test/create_simulcast_test_fixture.cc",
+      "test/create_simulcast_test_fixture.h",
+    ]
+    deps = [
+      ":simulcast_test_fixture_api",
+      "../modules/video_coding:simulcast_test_fixture_impl",
+      "../rtc_base:rtc_base_approved",
+      "video_codecs:video_codecs_api",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+
+  rtc_source_set("videocodec_test_fixture_api") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [
+      "test/videocodec_test_fixture.h",
+      "test/videocodec_test_stats.cc",
+      "test/videocodec_test_stats.h",
+    ]
+    deps = [
+      "..:webrtc_common",
+      "../modules/video_coding:video_codec_interface",
+      "video_codecs:video_codecs_api",
+    ]
+  }
+
+  rtc_source_set("create_videocodec_test_fixture_api") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [
+      "test/create_videocodec_test_fixture.cc",
+      "test/create_videocodec_test_fixture.h",
+    ]
+    deps = [
+      ":videocodec_test_fixture_api",
+      "../modules/video_coding:video_codecs_test_framework",
+      "../modules/video_coding:videocodec_test_impl",
+      "../rtc_base:rtc_base_approved",
+      "video_codecs:video_codecs_api",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+
   rtc_source_set("mock_audio_mixer") {
     testonly = true
     sources = [
@@ -294,9 +395,20 @@ if (rtc_include_tests) {
     ]
 
     deps = [
-      ":audio_mixer_api",
       "../test:test_support",
-      "//testing/gmock",
+      "audio:audio_mixer_api",
+    ]
+  }
+
+  rtc_source_set("mock_peerconnectioninterface") {
+    testonly = true
+    sources = [
+      "test/mock_peerconnectioninterface.h",
+    ]
+
+    deps = [
+      ":libjingle_peerconnection_api",
+      "../test:test_support",
     ]
   }
 
@@ -310,7 +422,18 @@ if (rtc_include_tests) {
     deps = [
       ":libjingle_peerconnection_api",
       "../test:test_support",
-      "//testing/gmock",
+    ]
+  }
+
+  rtc_source_set("mock_video_bitrate_allocator") {
+    testonly = true
+    sources = [
+      "test/mock_video_bitrate_allocator.h",
+    ]
+
+    deps = [
+      "../api/video:video_bitrate_allocator",
+      "../test:test_support",
     ]
   }
 
@@ -324,29 +447,7 @@ if (rtc_include_tests) {
     deps = [
       "../api/video_codecs:video_codecs_api",
       "../test:test_support",
-      "//testing/gmock",
     ]
-  }
-
-  rtc_source_set("fakemetricsobserver") {
-    testonly = true
-    sources = [
-      "fakemetricsobserver.cc",
-      "fakemetricsobserver.h",
-    ]
-    deps = [
-      "../api:peerconnection_and_implicit_call_api",
-      "../media:rtc_media_base",
-      "../rtc_base:checks",
-      "../rtc_base:rtc_base_approved",
-    ]
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-    if (!build_with_mozilla) {
-      deps += [ ":libjingle_peerconnection_api" ]
-    }
   }
 
   rtc_source_set("rtc_api_unittests") {
@@ -354,7 +455,6 @@ if (rtc_include_tests) {
 
     sources = [
       "array_view_unittest.cc",
-      "optional_unittest.cc",
       "ortc/mediadescription_unittest.cc",
       "ortc/sessiondescription_unittest.cc",
       "rtcerror_unittest.cc",
@@ -370,12 +470,12 @@ if (rtc_include_tests) {
       ":array_view",
       ":libjingle_peerconnection_api",
       ":libjingle_peerconnection_test_api",
-      ":optional",
       ":ortc_api",
       "../rtc_base:checks",
       "../rtc_base:rtc_base_approved",
       "../rtc_base:rtc_base_tests_utils",
       "../test:test_support",
+      "units:units_unittests",
     ]
   }
 }

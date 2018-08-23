@@ -89,4 +89,3 @@ TEST(WindowGeneratorTest, Hanning) {
 }
 
 }  // namespace webrtc
-

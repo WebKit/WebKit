@@ -21,13 +21,15 @@ namespace rtc {
 // Url
 ///////////////////////////////////////////////////////////////////////////////
 
-template<class CTYPE>
+template <class CTYPE>
 void Url<CTYPE>::do_set_url(const CTYPE* val, size_t len) {
   if (ascnicmp(val, "http://", 7) == 0) {
-    val += 7; len -= 7;
+    val += 7;
+    len -= 7;
     secure_ = false;
   } else if (ascnicmp(val, "https://", 8) == 0) {
-    val += 8; len -= 8;
+    val += 8;
+    len -= 8;
     secure_ = true;
   } else {
     clear();
@@ -42,7 +44,7 @@ void Url<CTYPE>::do_set_url(const CTYPE* val, size_t len) {
   do_set_full_path(path, len - address_length);
 }
 
-template<class CTYPE>
+template <class CTYPE>
 void Url<CTYPE>::do_set_address(const CTYPE* val, size_t len) {
   if (const CTYPE* at = strchrn(val, len, static_cast<CTYPE>('@'))) {
     // Everything before the @ is a user:password combo, so skip it.
@@ -61,7 +63,7 @@ void Url<CTYPE>::do_set_address(const CTYPE* val, size_t len) {
   }
 }
 
-template<class CTYPE>
+template <class CTYPE>
 void Url<CTYPE>::do_set_full_path(const CTYPE* val, size_t len) {
   const CTYPE* query = strchrn(val, len, static_cast<CTYPE>('?'));
   if (!query) {
@@ -78,7 +80,7 @@ void Url<CTYPE>::do_set_full_path(const CTYPE* val, size_t len) {
   query_.assign(query, len - path_length);
 }
 
-template<class CTYPE>
+template <class CTYPE>
 void Url<CTYPE>::do_get_url(string* val) const {
   CTYPE protocol[9];
   asccpyn(protocol, arraysize(protocol), secure_ ? "https://" : "http://");
@@ -87,7 +89,7 @@ void Url<CTYPE>::do_get_url(string* val) const {
   do_get_full_path(val);
 }
 
-template<class CTYPE>
+template <class CTYPE>
 void Url<CTYPE>::do_get_address(string* val) const {
   val->append(host_);
   if (port_ != HttpDefaultPort(secure_)) {
@@ -98,13 +100,13 @@ void Url<CTYPE>::do_get_address(string* val) const {
   }
 }
 
-template<class CTYPE>
+template <class CTYPE>
 void Url<CTYPE>::do_get_full_path(string* val) const {
   val->append(path_);
   val->append(query_);
 }
 
-template<class CTYPE>
+template <class CTYPE>
 bool Url<CTYPE>::get_attribute(const string& name, string* value) const {
   if (query_.empty())
     return false;
@@ -114,7 +116,7 @@ bool Url<CTYPE>::get_attribute(const string& name, string* value) const {
     return false;
 
   pos += name.length() + 1;
-  if ((pos > query_.length()) || (static_cast<CTYPE>('=') != query_[pos-1]))
+  if ((pos > query_.length()) || (static_cast<CTYPE>('=') != query_[pos - 1]))
     return false;
 
   std::string::size_type end = query_.find(static_cast<CTYPE>('&'), pos);

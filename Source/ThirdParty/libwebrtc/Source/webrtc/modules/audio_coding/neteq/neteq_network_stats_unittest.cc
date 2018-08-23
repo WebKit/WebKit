@@ -10,10 +10,10 @@
 
 #include <memory>
 
+#include "api/audio/audio_frame.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/neteq/tools/neteq_external_decoder_test.h"
 #include "modules/audio_coding/neteq/tools/rtp_generator.h"
-#include "modules/include/module_common_types.h"
 #include "test/gmock.h"
 
 namespace webrtc {
@@ -46,7 +46,7 @@ class MockAudioDecoder final : public AudioDecoder {
 
     size_t Duration() const override { return kPacketDuration; }
 
-    rtc::Optional<DecodeResult> Decode(
+    absl::optional<DecodeResult> Decode(
         rtc::ArrayView<int16_t> decoded) const override {
       const size_t output_size =
           sizeof(int16_t) * kPacketDuration * num_channels_;
@@ -57,7 +57,7 @@ class MockAudioDecoder final : public AudioDecoder {
       } else {
         ADD_FAILURE() << "Expected decoded.size() to be >= output_size ("
                       << decoded.size() << " vs. " << output_size << ")";
-        return rtc::nullopt;
+        return absl::nullopt;
       }
     }
 
@@ -86,8 +86,8 @@ class MockAudioDecoder final : public AudioDecoder {
     return kPacketDuration;
   }
 
-  bool PacketHasFec(
-      const uint8_t* encoded, size_t encoded_len) const /* override */ {
+  bool PacketHasFec(const uint8_t* encoded, size_t encoded_len) const
+  /* override */ {
     ADD_FAILURE() << "Since going through ParsePayload, PacketHasFec should "
                      "never get called.";
     return fec_enabled_;
@@ -123,40 +123,40 @@ class NetEqNetworkStatsTest : public NetEqExternalDecoderTest {
   static const int kPayloadSizeByte = 30;
   static const int kFrameSizeMs = 20;
 
-enum logic {
-  kIgnore,
-  kEqual,
-  kSmallerThan,
-  kLargerThan,
-};
+  enum logic {
+    kIgnore,
+    kEqual,
+    kSmallerThan,
+    kLargerThan,
+  };
 
-struct NetEqNetworkStatsCheck {
-  logic current_buffer_size_ms;
-  logic preferred_buffer_size_ms;
-  logic jitter_peaks_found;
-  logic packet_loss_rate;
-  logic expand_rate;
-  logic speech_expand_rate;
-  logic preemptive_rate;
-  logic accelerate_rate;
-  logic secondary_decoded_rate;
-  logic secondary_discarded_rate;
-  logic clockdrift_ppm;
-  logic added_zero_samples;
-  NetEqNetworkStatistics stats_ref;
-};
+  struct NetEqNetworkStatsCheck {
+    logic current_buffer_size_ms;
+    logic preferred_buffer_size_ms;
+    logic jitter_peaks_found;
+    logic packet_loss_rate;
+    logic expand_rate;
+    logic speech_expand_rate;
+    logic preemptive_rate;
+    logic accelerate_rate;
+    logic secondary_decoded_rate;
+    logic secondary_discarded_rate;
+    logic clockdrift_ppm;
+    logic added_zero_samples;
+    NetEqNetworkStatistics stats_ref;
+  };
 
-NetEqNetworkStatsTest(NetEqDecoder codec,
-                      int sample_rate_hz,
-                      MockAudioDecoder* decoder)
-    : NetEqExternalDecoderTest(codec, sample_rate_hz, decoder),
-      external_decoder_(decoder),
-      samples_per_ms_(sample_rate_hz / 1000),
-      frame_size_samples_(kFrameSizeMs * samples_per_ms_),
-      rtp_generator_(new test::RtpGenerator(samples_per_ms_)),
-      last_lost_time_(0),
-      packet_loss_interval_(0xffffffff) {
-  Init();
+  NetEqNetworkStatsTest(NetEqDecoder codec,
+                        int sample_rate_hz,
+                        MockAudioDecoder* decoder)
+      : NetEqExternalDecoderTest(codec, sample_rate_hz, decoder),
+        external_decoder_(decoder),
+        samples_per_ms_(sample_rate_hz / 1000),
+        frame_size_samples_(kFrameSizeMs * samples_per_ms_),
+        rtp_generator_(new test::RtpGenerator(samples_per_ms_)),
+        last_lost_time_(0),
+        packet_loss_interval_(0xffffffff) {
+    Init();
   }
 
   bool Lost(uint32_t send_time) {
@@ -168,8 +168,9 @@ NetEqNetworkStatsTest(NetEqDecoder codec,
   }
 
   void SetPacketLossRate(double loss_rate) {
-      packet_loss_interval_ = (loss_rate >= 1e-3 ?
-          static_cast<double>(kFrameSizeMs) / loss_rate : 0xffffffff);
+    packet_loss_interval_ =
+        (loss_rate >= 1e-3 ? static_cast<double>(kFrameSizeMs) / loss_rate
+                           : 0xffffffff);
   }
 
   // |stats_ref|
@@ -181,19 +182,19 @@ NetEqNetworkStatsTest(NetEqDecoder codec,
     NetEqNetworkStatistics stats;
     neteq()->NetworkStatistics(&stats);
 
-#define CHECK_NETEQ_NETWORK_STATS(x)\
-  switch (expects.x) {\
-    case kEqual:\
-      EXPECT_EQ(stats.x, expects.stats_ref.x);\
-      break;\
-    case kSmallerThan:\
-      EXPECT_LT(stats.x, expects.stats_ref.x);\
-      break;\
-    case kLargerThan:\
-      EXPECT_GT(stats.x, expects.stats_ref.x);\
-      break;\
-    default:\
-      break;\
+#define CHECK_NETEQ_NETWORK_STATS(x)           \
+  switch (expects.x) {                         \
+    case kEqual:                               \
+      EXPECT_EQ(stats.x, expects.stats_ref.x); \
+      break;                                   \
+    case kSmallerThan:                         \
+      EXPECT_LT(stats.x, expects.stats_ref.x); \
+      break;                                   \
+    case kLargerThan:                          \
+      EXPECT_GT(stats.x, expects.stats_ref.x); \
+      break;                                   \
+    default:                                   \
+      break;                                   \
   }
 
     CHECK_NETEQ_NETWORK_STATS(current_buffer_size_ms);
@@ -220,15 +221,13 @@ NetEqNetworkStatsTest(NetEqDecoder codec,
     uint32_t next_send_time;
 
     // Initiate |last_lost_time_|.
-    time_now = next_send_time = last_lost_time_ =
-        rtp_generator_->GetRtpHeader(kPayloadType, frame_size_samples_,
-                                     &rtp_header_);
+    time_now = next_send_time = last_lost_time_ = rtp_generator_->GetRtpHeader(
+        kPayloadType, frame_size_samples_, &rtp_header_);
     for (int k = 0; k < num_loops; ++k) {
       // Delay by one frame such that the FEC can come in.
       while (time_now + kFrameSizeMs >= next_send_time) {
-        next_send_time = rtp_generator_->GetRtpHeader(kPayloadType,
-                                                      frame_size_samples_,
-                                                      &rtp_header_);
+        next_send_time = rtp_generator_->GetRtpHeader(
+            kPayloadType, frame_size_samples_, &rtp_header_);
         if (!Lost(next_send_time)) {
           static const uint8_t payload[kPayloadSizeByte] = {0};
           InsertPacket(rtp_header_, payload, next_send_time);
@@ -243,21 +242,19 @@ NetEqNetworkStatsTest(NetEqDecoder codec,
 
   void DecodeFecTest() {
     external_decoder_->set_fec_enabled(false);
-    NetEqNetworkStatsCheck expects = {
-      kIgnore,  // current_buffer_size_ms
-      kIgnore,  // preferred_buffer_size_ms
-      kIgnore,  // jitter_peaks_found
-      kEqual,  // packet_loss_rate
-      kEqual,  // expand_rate
-      kEqual,  // voice_expand_rate
-      kIgnore,  // preemptive_rate
-      kEqual,  // accelerate_rate
-      kEqual,  // decoded_fec_rate
-      kEqual,  // discarded_fec_rate
-      kIgnore,  // clockdrift_ppm
-      kEqual,  // added_zero_samples
-      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    };
+    NetEqNetworkStatsCheck expects = {kIgnore,  // current_buffer_size_ms
+                                      kIgnore,  // preferred_buffer_size_ms
+                                      kIgnore,  // jitter_peaks_found
+                                      kEqual,   // packet_loss_rate
+                                      kEqual,   // expand_rate
+                                      kEqual,   // voice_expand_rate
+                                      kIgnore,  // preemptive_rate
+                                      kEqual,   // accelerate_rate
+                                      kEqual,   // decoded_fec_rate
+                                      kEqual,   // discarded_fec_rate
+                                      kIgnore,  // clockdrift_ppm
+                                      kEqual,   // added_zero_samples
+                                      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
     RunTest(50, expects);
 
     // Next we introduce packet losses.
@@ -277,21 +274,19 @@ NetEqNetworkStatsTest(NetEqDecoder codec,
   }
 
   void NoiseExpansionTest() {
-    NetEqNetworkStatsCheck expects = {
-      kIgnore,  // current_buffer_size_ms
-      kIgnore,  // preferred_buffer_size_ms
-      kIgnore,  // jitter_peaks_found
-      kEqual,  // packet_loss_rate
-      kEqual,  // expand_rate
-      kEqual,  // speech_expand_rate
-      kIgnore,  // preemptive_rate
-      kEqual,  // accelerate_rate
-      kEqual,  // decoded_fec_rate
-      kEqual,  // discard_fec_rate
-      kIgnore,  // clockdrift_ppm
-      kEqual,  // added_zero_samples
-      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    };
+    NetEqNetworkStatsCheck expects = {kIgnore,  // current_buffer_size_ms
+                                      kIgnore,  // preferred_buffer_size_ms
+                                      kIgnore,  // jitter_peaks_found
+                                      kEqual,   // packet_loss_rate
+                                      kEqual,   // expand_rate
+                                      kEqual,   // speech_expand_rate
+                                      kIgnore,  // preemptive_rate
+                                      kEqual,   // accelerate_rate
+                                      kEqual,   // decoded_fec_rate
+                                      kEqual,   // discard_fec_rate
+                                      kIgnore,  // clockdrift_ppm
+                                      kEqual,   // added_zero_samples
+                                      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
     RunTest(50, expects);
 
     SetPacketLossRate(1);

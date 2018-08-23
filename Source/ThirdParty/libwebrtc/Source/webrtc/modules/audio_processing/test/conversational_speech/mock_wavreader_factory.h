@@ -25,7 +25,7 @@ namespace conversational_speech {
 
 class MockWavReaderFactory : public WavReaderAbstractFactory {
  public:
-  struct Params{
+  struct Params {
     int sample_rate;
     size_t num_channels;
     size_t num_samples;
@@ -36,8 +36,8 @@ class MockWavReaderFactory : public WavReaderAbstractFactory {
   explicit MockWavReaderFactory(const Params& default_params);
   ~MockWavReaderFactory();
 
-  MOCK_CONST_METHOD1(Create, std::unique_ptr<WavReaderInterface>(
-      const std::string&));
+  MOCK_CONST_METHOD1(Create,
+                     std::unique_ptr<WavReaderInterface>(const std::string&));
 
  private:
   // Creates a MockWavReader instance using the parameters in

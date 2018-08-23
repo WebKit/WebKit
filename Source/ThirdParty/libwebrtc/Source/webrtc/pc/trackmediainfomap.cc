@@ -10,6 +10,7 @@
 
 #include "pc/trackmediainfomap.h"
 
+#include <string>
 #include <utility>
 
 namespace webrtc {
@@ -29,8 +30,8 @@ const V* FindAddressOrNull(const std::map<K, V>& map, const K& key) {
 }
 
 void GetAudioAndVideoTrackBySsrc(
-    const std::vector<rtc::scoped_refptr<RtpSenderInterface>>& rtp_senders,
-    const std::vector<rtc::scoped_refptr<RtpReceiverInterface>>& rtp_receivers,
+    const std::vector<rtc::scoped_refptr<RtpSenderInternal>>& rtp_senders,
+    const std::vector<rtc::scoped_refptr<RtpReceiverInternal>>& rtp_receivers,
     std::map<uint32_t, AudioTrackInterface*>* local_audio_track_by_ssrc,
     std::map<uint32_t, VideoTrackInterface*>* local_video_track_by_ssrc,
     std::map<uint32_t, AudioTrackInterface*>* remote_audio_track_by_ssrc,
@@ -46,7 +47,7 @@ void GetAudioAndVideoTrackBySsrc(
   // means one thread jump if on signaling thread and two thread jumps if on any
   // other threads). Is there a way to avoid thread jump(s) on a per
   // sender/receiver, per method basis?
-  for (const rtc::scoped_refptr<RtpSenderInterface>& rtp_sender : rtp_senders) {
+  for (auto rtp_sender : rtp_senders) {
     cricket::MediaType media_type = rtp_sender->media_type();
     MediaStreamTrackInterface* track = rtp_sender->track();
     if (!track) {
@@ -71,8 +72,7 @@ void GetAudioAndVideoTrackBySsrc(
       }
     }
   }
-  for (const rtc::scoped_refptr<RtpReceiverInterface>& rtp_receiver :
-       rtp_receivers) {
+  for (auto rtp_receiver : rtp_receivers) {
     cricket::MediaType media_type = rtp_receiver->media_type();
     MediaStreamTrackInterface* track = rtp_receiver->track();
     RTC_DCHECK(track);
@@ -110,8 +110,8 @@ void GetAudioAndVideoTrackBySsrc(
 TrackMediaInfoMap::TrackMediaInfoMap(
     std::unique_ptr<cricket::VoiceMediaInfo> voice_media_info,
     std::unique_ptr<cricket::VideoMediaInfo> video_media_info,
-    const std::vector<rtc::scoped_refptr<RtpSenderInterface>>& rtp_senders,
-    const std::vector<rtc::scoped_refptr<RtpReceiverInterface>>& rtp_receivers)
+    const std::vector<rtc::scoped_refptr<RtpSenderInternal>>& rtp_senders,
+    const std::vector<rtc::scoped_refptr<RtpReceiverInternal>>& rtp_receivers)
     : voice_media_info_(std::move(voice_media_info)),
       video_media_info_(std::move(video_media_info)) {
   std::map<uint32_t, AudioTrackInterface*> local_audio_track_by_ssrc;
@@ -126,10 +126,10 @@ TrackMediaInfoMap::TrackMediaInfoMap(
       &remote_video_track_by_ssrc, &unsignaled_audio_track,
       &unsignaled_video_track);
 
-  for (auto& sender : rtp_senders) {
+  for (auto sender : rtp_senders) {
     attachment_id_by_track_[sender->track()] = sender->AttachmentId();
   }
-  for (auto& receiver : rtp_receivers) {
+  for (auto receiver : rtp_receivers) {
     attachment_id_by_track_[receiver->track()] = receiver->AttachmentId();
   }
 
@@ -266,11 +266,11 @@ rtc::scoped_refptr<VideoTrackInterface> TrackMediaInfoMap::GetVideoTrack(
   return FindValueOrNull(video_track_by_receiver_info_, &video_receiver_info);
 }
 
-rtc::Optional<int> TrackMediaInfoMap::GetAttachmentIdByTrack(
+absl::optional<int> TrackMediaInfoMap::GetAttachmentIdByTrack(
     const MediaStreamTrackInterface* track) const {
   auto it = attachment_id_by_track_.find(track);
-  return it != attachment_id_by_track_.end() ? rtc::Optional<int>(it->second)
-                                             : rtc::nullopt;
+  return it != attachment_id_by_track_.end() ? absl::optional<int>(it->second)
+                                             : absl::nullopt;
 }
 
 }  // namespace webrtc

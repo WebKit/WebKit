@@ -56,9 +56,6 @@ class PacketLossEstimator {
 
   std::size_t tracked_packet_count_for_testing() const;
 
-  // Output tracked packet state as a string.
-  std::string TrackedPacketsStringForTesting(std::size_t max) const;
-
  private:
   struct PacketInfo {
     int64_t sent_time;

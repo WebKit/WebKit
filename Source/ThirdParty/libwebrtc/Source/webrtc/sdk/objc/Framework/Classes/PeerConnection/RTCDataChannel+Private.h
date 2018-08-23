@@ -15,6 +15,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RTCPeerConnectionFactory;
+
 @interface RTCDataBuffer ()
 
 /**
@@ -24,23 +26,22 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) const webrtc::DataBuffer *nativeDataBuffer;
 
 /** Initialize an RTCDataBuffer from a native DataBuffer. */
-- (instancetype)initWithNativeBuffer:(const webrtc::DataBuffer&)nativeBuffer;
+- (instancetype)initWithNativeBuffer:(const webrtc::DataBuffer &)nativeBuffer;
 
 @end
-
 
 @interface RTCDataChannel ()
 
 /** Initialize an RTCDataChannel from a native DataChannelInterface. */
-- (instancetype)initWithNativeDataChannel:
-    (rtc::scoped_refptr<webrtc::DataChannelInterface>)nativeDataChannel
+- (instancetype)initWithFactory:(RTCPeerConnectionFactory *)factory
+              nativeDataChannel:(rtc::scoped_refptr<webrtc::DataChannelInterface>)nativeDataChannel
     NS_DESIGNATED_INITIALIZER;
 
-+ (webrtc::DataChannelInterface::DataState)
-    nativeDataChannelStateForState:(RTCDataChannelState)state;
++ (webrtc::DataChannelInterface::DataState)nativeDataChannelStateForState:
+        (RTCDataChannelState)state;
 
 + (RTCDataChannelState)dataChannelStateForNativeState:
-    (webrtc::DataChannelInterface::DataState)nativeState;
+        (webrtc::DataChannelInterface::DataState)nativeState;
 
 + (NSString *)stringForState:(RTCDataChannelState)state;
 

@@ -21,9 +21,8 @@ import android.view.SurfaceView;
 /**
  * Display the video stream on a SurfaceView.
  */
-public class SurfaceViewRenderer extends SurfaceView implements SurfaceHolder.Callback,
-                                                                VideoRenderer.Callbacks, VideoSink,
-                                                                RendererCommon.RendererEvents {
+public class SurfaceViewRenderer extends SurfaceView
+    implements SurfaceHolder.Callback, VideoSink, RendererCommon.RendererEvents {
   private static final String TAG = "SurfaceViewRenderer";
 
   // Cached resource name.
@@ -178,12 +177,6 @@ public class SurfaceViewRenderer extends SurfaceView implements SurfaceHolder.Ca
 
   public void pauseVideo() {
     eglRenderer.pauseVideo();
-  }
-
-  // VideoRenderer.Callbacks interface.
-  @Override
-  public void renderFrame(VideoRenderer.I420Frame frame) {
-    eglRenderer.renderFrame(frame);
   }
 
   // VideoSink interface.

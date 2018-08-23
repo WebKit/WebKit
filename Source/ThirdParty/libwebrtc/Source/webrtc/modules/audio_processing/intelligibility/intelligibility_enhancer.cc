@@ -31,16 +31,16 @@ const int kWindowSizeMs = 16;
 const int kChunkSizeMs = 10;  // Size provided by APM.
 const float kClipFreqKhz = 0.2f;
 const float kKbdAlpha = 1.5f;
-const float kLambdaBot = -1.f;      // Extreme values in bisection
-const float kLambdaTop = -1e-5f;      // search for lamda.
+const float kLambdaBot = -1.f;    // Extreme values in bisection
+const float kLambdaTop = -1e-5f;  // search for lamda.
 const float kVoiceProbabilityThreshold = 0.5f;
 // Number of chunks after voice activity which is still considered speech.
 const size_t kSpeechOffsetDelay = 10;
-const float kDecayRate = 0.995f;              // Power estimation decay rate.
+const float kDecayRate = 0.995f;  // Power estimation decay rate.
 const float kMaxRelativeGainChange = 0.005f;
 const float kRho = 0.0004f;  // Default production and interpretation SNR.
 const float kPowerNormalizationFactor = 1.f / (1 << 30);
-const float kMaxActiveSNR = 128.f;  // 21dB
+const float kMaxActiveSNR = 128.f;   // 21dB
 const float kMinInactiveSNR = 32.f;  // 15dB
 const size_t kGainUpdatePeriod = 10u;
 
@@ -133,8 +133,8 @@ IntelligibilityEnhancer::~IntelligibilityEnhancer() {
   }
 }
 
-void IntelligibilityEnhancer::SetCaptureNoiseEstimate(
-    std::vector<float> noise, float gain) {
+void IntelligibilityEnhancer::SetCaptureNoiseEstimate(std::vector<float> noise,
+                                                      float gain) {
   RTC_DCHECK_EQ(noise.size(), num_noise_bins_);
   for (auto& bin : noise) {
     bin *= gain;
@@ -176,10 +176,9 @@ void IntelligibilityEnhancer::ProcessAudioBlock(
       MapToErbBands(noise_power_estimator_.power().data(), capture_filter_bank_,
                     filtered_noise_pow_.data());
       SolveForGainsGivenLambda(kLambdaTop, start_freq_, gains_eq_.data());
-      const float power_target = std::accumulate(
-          filtered_clear_pow_.data(),
-          filtered_clear_pow_.data() + bank_size_,
-          0.f);
+      const float power_target =
+          std::accumulate(filtered_clear_pow_.data(),
+                          filtered_clear_pow_.data() + bank_size_, 0.f);
       const float power_top =
           DotProduct(gains_eq_.data(), filtered_clear_pow_.data(), bank_size_);
       SolveForGainsGivenLambda(kLambdaBot, start_freq_, gains_eq_.data());
@@ -199,12 +198,11 @@ void IntelligibilityEnhancer::ProcessAudioBlock(
 void IntelligibilityEnhancer::SnrBasedEffectActivation() {
   const float* clear_psd = clear_power_estimator_.power().data();
   const float* noise_psd = noise_power_estimator_.power().data();
-  const float clear_power =
-      std::accumulate(clear_psd, clear_psd + freqs_, 0.f);
-  const float noise_power =
-      std::accumulate(noise_psd, noise_psd + freqs_, 0.f);
-  snr_ = kDecayRate * snr_ + (1.f - kDecayRate) * clear_power /
-      (noise_power + std::numeric_limits<float>::epsilon());
+  const float clear_power = std::accumulate(clear_psd, clear_psd + freqs_, 0.f);
+  const float noise_power = std::accumulate(noise_psd, noise_psd + freqs_, 0.f);
+  snr_ = kDecayRate * snr_ +
+         (1.f - kDecayRate) * clear_power /
+             (noise_power + std::numeric_limits<float>::epsilon());
   if (is_active_) {
     if (snr_ > kMaxActiveSNR) {
       RTC_LOG(LS_INFO) << "Intelligibility Enhancer was deactivated at chunk "

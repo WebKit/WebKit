@@ -69,7 +69,7 @@ class RemoteBitrateEstimatorAbsSendTime : public RemoteBitrateEstimator {
  public:
   RemoteBitrateEstimatorAbsSendTime(RemoteBitrateObserver* observer,
                                     const Clock* clock);
-  virtual ~RemoteBitrateEstimatorAbsSendTime() {}
+  ~RemoteBitrateEstimatorAbsSendTime() override;
 
   void IncomingPacket(int64_t arrival_time_ms,
                       size_t payload_size,

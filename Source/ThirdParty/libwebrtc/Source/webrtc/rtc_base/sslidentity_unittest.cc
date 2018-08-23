@@ -21,7 +21,8 @@
 
 using rtc::SSLIdentity;
 
-const char kTestCertificate[] = "-----BEGIN CERTIFICATE-----\n"
+const char kTestCertificate[] =
+    "-----BEGIN CERTIFICATE-----\n"
     "MIIB6TCCAVICAQYwDQYJKoZIhvcNAQEEBQAwWzELMAkGA1UEBhMCQVUxEzARBgNV\n"
     "BAgTClF1ZWVuc2xhbmQxGjAYBgNVBAoTEUNyeXB0U29mdCBQdHkgTHRkMRswGQYD\n"
     "VQQDExJUZXN0IENBICgxMDI0IGJpdCkwHhcNMDAxMDE2MjIzMTAzWhcNMDMwMTE0\n"
@@ -35,36 +36,29 @@ const char kTestCertificate[] = "-----BEGIN CERTIFICATE-----\n"
     "itAE+OjGF+PFKbwX8Q==\n"
     "-----END CERTIFICATE-----\n";
 
-const unsigned char kTestCertSha1[] = {
-    0xA6, 0xC8, 0x59, 0xEA, 0xC3, 0x7E, 0x6D, 0x33,
-    0xCF, 0xE2, 0x69, 0x9D, 0x74, 0xE6, 0xF6, 0x8A,
-    0x9E, 0x47, 0xA7, 0xCA};
+const unsigned char kTestCertSha1[] = {0xA6, 0xC8, 0x59, 0xEA, 0xC3, 0x7E, 0x6D,
+                                       0x33, 0xCF, 0xE2, 0x69, 0x9D, 0x74, 0xE6,
+                                       0xF6, 0x8A, 0x9E, 0x47, 0xA7, 0xCA};
 const unsigned char kTestCertSha224[] = {
-    0xd4, 0xce, 0xc6, 0xcf, 0x28, 0xcb, 0xe9, 0x77,
-    0x38, 0x36, 0xcf, 0xb1, 0x3b, 0x4a, 0xd7, 0xbd,
-    0xae, 0x24, 0x21, 0x08, 0xcf, 0x6a, 0x44, 0x0d,
-    0x3f, 0x94, 0x2a, 0x5b};
+    0xd4, 0xce, 0xc6, 0xcf, 0x28, 0xcb, 0xe9, 0x77, 0x38, 0x36,
+    0xcf, 0xb1, 0x3b, 0x4a, 0xd7, 0xbd, 0xae, 0x24, 0x21, 0x08,
+    0xcf, 0x6a, 0x44, 0x0d, 0x3f, 0x94, 0x2a, 0x5b};
 const unsigned char kTestCertSha256[] = {
-    0x41, 0x6b, 0xb4, 0x93, 0x47, 0x79, 0x77, 0x24,
-    0x77, 0x0b, 0x8b, 0x2e, 0xa6, 0x2b, 0xe0, 0xf9,
-    0x0a, 0xed, 0x1f, 0x31, 0xa6, 0xf7, 0x5c, 0xa1,
-    0x5a, 0xc4, 0xb0, 0xa2, 0xa4, 0x78, 0xb9, 0x76};
+    0x41, 0x6b, 0xb4, 0x93, 0x47, 0x79, 0x77, 0x24, 0x77, 0x0b, 0x8b,
+    0x2e, 0xa6, 0x2b, 0xe0, 0xf9, 0x0a, 0xed, 0x1f, 0x31, 0xa6, 0xf7,
+    0x5c, 0xa1, 0x5a, 0xc4, 0xb0, 0xa2, 0xa4, 0x78, 0xb9, 0x76};
 const unsigned char kTestCertSha384[] = {
-    0x42, 0x31, 0x9a, 0x79, 0x1d, 0xd6, 0x08, 0xbf,
-    0x3b, 0xba, 0x36, 0xd8, 0x37, 0x4a, 0x9a, 0x75,
-    0xd3, 0x25, 0x6e, 0x28, 0x92, 0xbe, 0x06, 0xb7,
-    0xc5, 0xa0, 0x83, 0xe3, 0x86, 0xb1, 0x03, 0xfc,
-    0x64, 0x47, 0xd6, 0xd8, 0xaa, 0xd9, 0x36, 0x60,
-    0x04, 0xcc, 0xbe, 0x7d, 0x6a, 0xe8, 0x34, 0x49};
+    0x42, 0x31, 0x9a, 0x79, 0x1d, 0xd6, 0x08, 0xbf, 0x3b, 0xba, 0x36, 0xd8,
+    0x37, 0x4a, 0x9a, 0x75, 0xd3, 0x25, 0x6e, 0x28, 0x92, 0xbe, 0x06, 0xb7,
+    0xc5, 0xa0, 0x83, 0xe3, 0x86, 0xb1, 0x03, 0xfc, 0x64, 0x47, 0xd6, 0xd8,
+    0xaa, 0xd9, 0x36, 0x60, 0x04, 0xcc, 0xbe, 0x7d, 0x6a, 0xe8, 0x34, 0x49};
 const unsigned char kTestCertSha512[] = {
-    0x51, 0x1d, 0xec, 0x02, 0x3d, 0x51, 0x45, 0xd3,
-    0xd8, 0x1d, 0xa4, 0x9d, 0x43, 0xc9, 0xee, 0x32,
-    0x6f, 0x4f, 0x37, 0xee, 0xab, 0x3f, 0x25, 0xdf,
-    0x72, 0xfc, 0x61, 0x1a, 0xd5, 0x92, 0xff, 0x6b,
-    0x28, 0x71, 0x58, 0xb3, 0xe1, 0x8a, 0x18, 0xcf,
-    0x61, 0x33, 0x0e, 0x14, 0xc3, 0x04, 0xaa, 0x07,
-    0xf6, 0xa5, 0xda, 0xdc, 0x42, 0x42, 0x22, 0x35,
-    0xce, 0x26, 0x58, 0x4a, 0x33, 0x6d, 0xbc, 0xb6};
+    0x51, 0x1d, 0xec, 0x02, 0x3d, 0x51, 0x45, 0xd3, 0xd8, 0x1d, 0xa4,
+    0x9d, 0x43, 0xc9, 0xee, 0x32, 0x6f, 0x4f, 0x37, 0xee, 0xab, 0x3f,
+    0x25, 0xdf, 0x72, 0xfc, 0x61, 0x1a, 0xd5, 0x92, 0xff, 0x6b, 0x28,
+    0x71, 0x58, 0xb3, 0xe1, 0x8a, 0x18, 0xcf, 0x61, 0x33, 0x0e, 0x14,
+    0xc3, 0x04, 0xaa, 0x07, 0xf6, 0xa5, 0xda, 0xdc, 0x42, 0x42, 0x22,
+    0x35, 0xce, 0x26, 0x58, 0x4a, 0x33, 0x6d, 0xbc, 0xb6};
 
 // These PEM strings were created by generating an identity with
 // |SSLIdentity::Generate| and invoking |identity->PrivateKeyToPEMString()|,
@@ -112,8 +106,7 @@ static const char kRSA_CERT_PEM[] =
 static const char kRSA_FINGERPRINT[] =
     "3C:E8:B2:70:09:CF:A9:09:5A:F4:EF:8F:8D:8A:32:FF:EA:04:91:BA:6E:D4:17:78:16"
     ":2A:EE:F9:9A:DD:E2:2B";
-static const char kRSA_FINGERPRINT_ALGORITHM[] =
-    "sha-256";
+static const char kRSA_FINGERPRINT_ALGORITHM[] = "sha-256";
 static const char kRSA_BASE64_CERTIFICATE[] =
     "MIIBnDCCAQWgAwIBAgIJAOEHLgeWYwrpMA0GCSqGSIb3DQEBCwUAMBAxDjAMBgNVBAMMBXRlc3"
     "QxMB4XDTE2MDQyNDE4MTAyMloXDTE2MDUyNTE4MTAyMlowEDEOMAwGA1UEAwwFdGVzdDEwgZ8w"
@@ -147,8 +140,7 @@ static const char kECDSA_CERT_PEM[] =
 static const char kECDSA_FINGERPRINT[] =
     "9F:47:FA:88:76:3D:18:B8:00:A0:59:9D:C3:5D:34:0B:1F:B8:99:9E:68:DA:F3:A5:DA"
     ":50:33:A9:FF:4D:31:89";
-static const char kECDSA_FINGERPRINT_ALGORITHM[] =
-    "sha-256";
+static const char kECDSA_FINGERPRINT_ALGORITHM[] = "sha-256";
 static const char kECDSA_BASE64_CERTIFICATE[] =
     "MIIBFDCBu6ADAgECAgkArpkxjw62sW4wCgYIKoZIzj0EAwIwEDEOMAwGA1UEAwwFdGVzdDMwHh"
     "cNMTYwNDI0MTgxNDM4WhcNMTYwNTI1MTgxNDM4WjAQMQ4wDAYDVQQDDAV0ZXN0MzBZMBMGByqG"
@@ -171,35 +163,25 @@ IdentityAndInfo CreateFakeIdentityAndInfoFromDers(
   info.ders = ders;
   for (const std::string& der : ders) {
     info.pems.push_back(rtc::SSLIdentity::DerToPem(
-        "CERTIFICATE",
-        reinterpret_cast<const unsigned char*>(der.c_str()),
+        "CERTIFICATE", reinterpret_cast<const unsigned char*>(der.c_str()),
         der.length()));
   }
-  info.identity.reset(
-      new rtc::FakeSSLIdentity(rtc::FakeSSLCertificate(info.pems)));
+  info.identity.reset(new rtc::FakeSSLIdentity(info.pems));
   // Strip header/footer and newline characters of PEM strings.
   for (size_t i = 0; i < info.pems.size(); ++i) {
-    rtc::replace_substrs("-----BEGIN CERTIFICATE-----", 27,
-                         "", 0, &info.pems[i]);
-    rtc::replace_substrs("-----END CERTIFICATE-----", 25,
-                         "", 0, &info.pems[i]);
-    rtc::replace_substrs("\n", 1,
-                         "", 0, &info.pems[i]);
+    rtc::replace_substrs("-----BEGIN CERTIFICATE-----", 27, "", 0,
+                         &info.pems[i]);
+    rtc::replace_substrs("-----END CERTIFICATE-----", 25, "", 0, &info.pems[i]);
+    rtc::replace_substrs("\n", 1, "", 0, &info.pems[i]);
   }
-  // Fingerprint of leaf certificate.
-  std::unique_ptr<rtc::SSLFingerprint> fp(
-      rtc::SSLFingerprint::Create("sha-1", &info.identity->certificate()));
-  EXPECT_TRUE(fp);
-  info.fingerprints.push_back(fp->GetRfc4572Fingerprint());
-  // Fingerprints of the rest of the chain.
-  std::unique_ptr<rtc::SSLCertChain> chain =
-      info.identity->certificate().GetChain();
-  if (chain) {
-    for (size_t i = 0; i < chain->GetSize(); i++) {
-      fp.reset(rtc::SSLFingerprint::Create("sha-1", &chain->Get(i)));
-      EXPECT_TRUE(fp);
-      info.fingerprints.push_back(fp->GetRfc4572Fingerprint());
-    }
+  // Fingerprints for the whole certificate chain, starting with leaf
+  // certificate.
+  const rtc::SSLCertChain& chain = info.identity->cert_chain();
+  std::unique_ptr<rtc::SSLFingerprint> fp;
+  for (size_t i = 0; i < chain.GetSize(); i++) {
+    fp.reset(rtc::SSLFingerprint::Create("sha-1", &chain.Get(i)));
+    EXPECT_TRUE(fp);
+    info.fingerprints.push_back(fp->GetRfc4572Fingerprint());
   }
   EXPECT_EQ(info.ders.size(), info.fingerprints.size());
   return info;
@@ -434,9 +416,11 @@ TEST_F(SSLIdentityTest, PemDerConversion) {
   std::string der;
   EXPECT_TRUE(SSLIdentity::PemToDer("CERTIFICATE", kTestCertificate, &der));
 
-  EXPECT_EQ(kTestCertificate, SSLIdentity::DerToPem(
-      "CERTIFICATE",
-      reinterpret_cast<const unsigned char*>(der.data()), der.length()));
+  EXPECT_EQ(
+      kTestCertificate,
+      SSLIdentity::DerToPem("CERTIFICATE",
+                            reinterpret_cast<const unsigned char*>(der.data()),
+                            der.length()));
 }
 
 TEST_F(SSLIdentityTest, GetSignatureDigestAlgorithm) {
@@ -477,7 +461,7 @@ TEST_F(SSLIdentityTest, SSLCertificateGetStatsWithChain) {
   EXPECT_EQ(info.fingerprints.size(), info.ders.size());
 
   std::unique_ptr<rtc::SSLCertificateStats> first_stats =
-      info.identity->certificate().GetStats();
+      info.identity->cert_chain().GetStats();
   rtc::SSLCertificateStats* cert_stats = first_stats.get();
   for (size_t i = 0; i < info.ders.size(); ++i) {
     EXPECT_EQ(cert_stats->fingerprint, info.fingerprints[i]);
@@ -505,6 +489,9 @@ class SSLIdentityExpirationTest : public testing::Test {
       bool long_format;
       int64_t want;
     } static const data[] = {
+        // clang-format off
+        // clang formatting breaks this nice alignment
+
       // Valid examples.
       {"19700101000000Z",  true,  0},
       {"700101000000Z",    false, 0},
@@ -553,6 +540,8 @@ class SSLIdentityExpirationTest : public testing::Test {
       {"500101000000Z",     false, -1},  // but too old for epoch
       {"691231235959Z",     false, -1},  // too old for epoch
       {"19611118043000Z",   false, -1},  // way too old for epoch
+
+        // clang-format off
     };
 
     unsigned char buf[20];

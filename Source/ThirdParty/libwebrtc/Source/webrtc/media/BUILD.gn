@@ -26,15 +26,6 @@ config("rtc_media_defines_config") {
   ]
 }
 
-config("rtc_media_warnings_config") {
-  # GN orders flags on a target before flags from configs. The default config
-  # adds these flags so to cancel them out they need to come from a config and
-  # cannot be on the target directly.
-  if (!is_win) {
-    cflags = [ "-Wno-deprecated-declarations" ]
-  }
-}
-
 rtc_source_set("rtc_h264_profile_id") {
   visibility = [ "*" ]
   sources = [
@@ -49,9 +40,30 @@ rtc_source_set("rtc_h264_profile_id") {
 
   deps = [
     "..:webrtc_common",
-    "../api:optional",
     "../rtc_base:rtc_base",
     "../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("rtc_media_config") {
+  visibility = [ "*" ]
+  sources = [
+    "base/mediaconfig.h",
+  ]
+}
+
+rtc_source_set("rtc_vp9_profile") {
+  sources = [
+    "base/vp9_profile.cc",
+    "base/vp9_profile.h",
+  ]
+
+  deps = [
+    "..:webrtc_common",
+    "../api/video_codecs:video_codecs_api",
+    "../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
@@ -60,8 +72,12 @@ rtc_static_library("rtc_media_base") {
   defines = []
   libs = []
   deps = [
+    "../api:audio_options_api",
     "../rtc_base:checks",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base:rtc_task_queue",
     "../rtc_base:sanitizer",
+    "../rtc_base:sequenced_task_checker",
     "../rtc_base:stringutils",
   ]
   sources = [
@@ -72,6 +88,7 @@ rtc_static_library("rtc_media_base") {
     "base/codec.h",
     "base/cryptoparams.h",
     "base/device.h",
+    "base/mediachannel.cc",
     "base/mediachannel.h",
     "base/mediaconstants.cc",
     "base/mediaconstants.h",
@@ -105,20 +122,22 @@ rtc_static_library("rtc_media_base") {
 
   deps += [
     ":rtc_h264_profile_id",
+    ":rtc_media_config",
+    ":rtc_vp9_profile",
     "..:webrtc_common",
     "../api:libjingle_peerconnection_api",
-    "../api:optional",
-    "../api:video_frame_api",
-    "../api:video_frame_api_i420",
     "../api/audio_codecs:audio_codecs_api",
+    "../api/video:video_frame",
+    "../api/video:video_frame_i420",
     "../api/video_codecs:video_codecs_api",
     "../call:call_interfaces",
-    "../call:video_stream_api",
     "../common_video",
     "../modules/audio_processing:audio_processing_statistics",
     "../rtc_base:rtc_base",
     "../rtc_base:rtc_base_approved",
+    "../rtc_base/third_party/sigslot",
     "../system_wrappers:field_trial_api",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 
   if (!build_with_mozilla) {
@@ -142,11 +161,13 @@ rtc_static_library("rtc_constants") {
 
 rtc_static_library("rtc_internal_video_codecs") {
   visibility = [ "*" ]
+  allow_poison = [ "software_video_codecs" ]
   defines = []
   libs = []
   deps = [
     ":rtc_h264_profile_id",
     "../modules/video_coding:video_codec_interface",
+    "//third_party/abseil-cpp/absl/memory",
   ]
   sources = [
     "engine/convert_legacy_video_factory.cc",
@@ -155,41 +176,23 @@ rtc_static_library("rtc_internal_video_codecs") {
     "engine/internaldecoderfactory.h",
     "engine/internalencoderfactory.cc",
     "engine/internalencoderfactory.h",
+    "engine/multiplexcodecfactory.cc",
+    "engine/multiplexcodecfactory.h",
     "engine/scopedvideodecoder.cc",
     "engine/scopedvideodecoder.h",
     "engine/scopedvideoencoder.cc",
     "engine/scopedvideoencoder.h",
-    "engine/simulcast.cc",
-    "engine/simulcast.h",
     "engine/simulcast_encoder_adapter.cc",
     "engine/simulcast_encoder_adapter.h",
-    "engine/stereocodecfactory.cc",
-    "engine/stereocodecfactory.h",
-    "engine/videodecodersoftwarefallbackwrapper.cc",
-    "engine/videodecodersoftwarefallbackwrapper.h",
-    "engine/videoencodersoftwarefallbackwrapper.cc",
-    "engine/videoencodersoftwarefallbackwrapper.h",
     "engine/vp8_encoder_simulcast_proxy.cc",
     "engine/vp8_encoder_simulcast_proxy.h",
-    "engine/webrtcvideodecoderfactory.cc",
     "engine/webrtcvideodecoderfactory.h",
-    "engine/webrtcvideoencoderfactory.cc",
     "engine/webrtcvideoencoderfactory.h",
   ]
-
-  configs += [ ":rtc_media_warnings_config" ]
 
   if (!build_with_chromium && is_clang) {
     # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
     suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
-
-  if (is_win) {
-    cflags = [
-      "/wd4245",  # conversion from "int" to "size_t", signed/unsigned mismatch.
-      "/wd4267",  # conversion from "size_t" to "int", possible loss of data.
-      "/wd4389",  # signed/unsigned mismatch.
-    ]
   }
 
   include_dirs = []
@@ -199,14 +202,16 @@ rtc_static_library("rtc_internal_video_codecs") {
     ":rtc_constants",
     ":rtc_media_base",
     "..:webrtc_common",
-    "../api:video_frame_api_i420",
+    "../api/video:video_bitrate_allocation",
+    "../api/video:video_frame_i420",
+    "../api/video_codecs:rtc_software_fallback_wrappers",
     "../api/video_codecs:video_codecs_api",
     "../call:call_interfaces",
     "../call:video_stream_api",
+    "../modules/video_coding:video_coding_utility",
     "../modules/video_coding:webrtc_h264",
-    "../modules/video_coding:webrtc_stereo",
+    "../modules/video_coding:webrtc_multiplex",
     "../modules/video_coding:webrtc_vp8",
-    "../modules/video_coding:webrtc_vp8_helpers",
     "../modules/video_coding:webrtc_vp9",
     "../rtc_base:checks",
     "../rtc_base:rtc_base_approved",
@@ -220,12 +225,20 @@ rtc_static_library("rtc_internal_video_codecs") {
 
 rtc_static_library("rtc_audio_video") {
   visibility = [ "*" ]
+  allow_poison = [
+    "audio_codecs",  # TODO(bugs.webrtc.org/8396): Remove.
+    "software_video_codecs",  # TODO(bugs.webrtc.org/7925): Remove.
+  ]
   defines = []
   libs = []
   deps = [
+    "../modules/audio_processing/aec_dump:aec_dump",
     "../modules/video_coding:video_codec_interface",
     "../modules/video_coding:video_coding",
+    "../modules/video_coding:video_coding_utility",
+    "../rtc_base:audio_format_to_string",
     "../rtc_base:checks",
+    "../rtc_base/third_party/base64",
   ]
 
   sources = [
@@ -236,31 +249,27 @@ rtc_static_library("rtc_audio_video") {
     "engine/nullwebrtcvideoengine.h",
     "engine/payload_type_mapper.cc",
     "engine/payload_type_mapper.h",
+    "engine/simulcast.cc",
+    "engine/simulcast.h",
     "engine/webrtcmediaengine.cc",
     "engine/webrtcmediaengine.h",
     "engine/webrtcvideocapturer.cc",
     "engine/webrtcvideocapturer.h",
     "engine/webrtcvideocapturerfactory.cc",
     "engine/webrtcvideocapturerfactory.h",
+    "engine/webrtcvideodecoderfactory.cc",
+    "engine/webrtcvideodecoderfactory.h",
+    "engine/webrtcvideoencoderfactory.cc",
+    "engine/webrtcvideoencoderfactory.h",
     "engine/webrtcvideoengine.cc",
     "engine/webrtcvideoengine.h",
     "engine/webrtcvoiceengine.cc",
     "engine/webrtcvoiceengine.h",
   ]
 
-  configs += [ ":rtc_media_warnings_config" ]
-
   if (!build_with_chromium && is_clang) {
     # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
     suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
-
-  if (is_win) {
-    cflags = [
-      "/wd4245",  # conversion from "int" to "size_t", signed/unsigned mismatch.
-      "/wd4267",  # conversion from "size_t" to "int", possible loss of data.
-      "/wd4389",  # signed/unsigned mismatch.
-    ]
   }
 
   if (rtc_enable_intelligibility_enhancer) {
@@ -289,24 +298,27 @@ rtc_static_library("rtc_audio_video") {
   } else {
     deps += [ "../modules/audio_processing/aec_dump:null_aec_dump_factory" ]
   }
+  if (rtc_use_builtin_sw_codecs) {
+    deps += [ ":rtc_internal_video_codecs" ]
+  }
   deps += [
     ":rtc_constants",
-    ":rtc_internal_video_codecs",
     ":rtc_media_base",
     "..:webrtc_common",
     "../api:call_api",
     "../api:libjingle_peerconnection_api",
-    "../api:optional",
     "../api:transport_api",
-    "../api:video_frame_api",
-    "../api:video_frame_api_i420",
     "../api/audio_codecs:audio_codecs_api",
+    "../api/video:video_frame",
+    "../api/video:video_frame_i420",
+    "../api/video_codecs:rtc_software_fallback_wrappers",
     "../api/video_codecs:video_codecs_api",
     "../call",
     "../call:call_interfaces",
     "../call:video_stream_api",
     "../common_video:common_video",
     "../modules/audio_device:audio_device",
+    "../modules/audio_device:audio_device_impl",
     "../modules/audio_mixer:audio_mixer_impl",
     "../modules/audio_processing:audio_processing",
     "../modules/video_capture:video_capture_module",
@@ -317,7 +329,7 @@ rtc_static_library("rtc_audio_video") {
     "../system_wrappers",
     "../system_wrappers:field_trial_api",
     "../system_wrappers:metrics_api",
-    "../voice_engine",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
@@ -338,19 +350,9 @@ rtc_static_library("rtc_data") {
     ]
   }
 
-  configs += [ ":rtc_media_warnings_config" ]
-
   if (!build_with_chromium && is_clang) {
     # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
     suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
-
-  if (is_win) {
-    cflags = [
-      "/wd4245",  # conversion from "int" to "size_t", signed/unsigned mismatch.
-      "/wd4267",  # conversion from "size_t" to "int", possible loss of data.
-      "/wd4389",  # signed/unsigned mismatch.
-    ]
   }
 
   if (rtc_enable_sctp && rtc_build_usrsctp) {
@@ -370,12 +372,17 @@ rtc_static_library("rtc_data") {
     "../p2p:rtc_p2p",
     "../rtc_base:rtc_base",
     "../rtc_base:rtc_base_approved",
+    "../rtc_base/third_party/sigslot",
     "../system_wrappers",
   ]
 }
 
 rtc_source_set("rtc_media") {
   visibility = [ "*" ]
+  allow_poison = [
+    "audio_codecs",  # TODO(bugs.webrtc.org/8396): Remove.
+    "software_video_codecs",  # TODO(bugs.webrtc.org/7925): Remove.
+  ]
   deps = [
     ":rtc_audio_video",
     ":rtc_data",
@@ -383,23 +390,15 @@ rtc_source_set("rtc_media") {
 }
 
 if (rtc_include_tests) {
-  config("rtc_unittest_main_config") {
-    # GN orders flags on a target before flags from configs. The default config
-    # adds -Wall, and this flag have to be after -Wall -- so they need to
-    # come from a config and can"t be on the target directly.
-    if (is_clang && is_ios) {
-      cflags = [ "-Wno-unused-variable" ]
-    }
-  }
-
   rtc_source_set("rtc_media_tests_utils") {
     testonly = true
 
+    defines = []
     include_dirs = []
     deps = [
       ":rtc_audio_video",
       "../api:libjingle_peerconnection_api",
-      "../api:video_frame_api_i420",
+      "../api/video:video_frame_i420",
       "../call:video_stream_api",
       "../common_video:common_video",
       "../modules/audio_coding:rent_a_codec",
@@ -409,16 +408,21 @@ if (rtc_include_tests) {
       "../modules/video_coding:video_coding_utility",
       "../p2p:rtc_p2p",
       "../rtc_base:checks",
+      "../rtc_base:rtc_task_queue",
       "../rtc_base:stringutils",
+      "//third_party/abseil-cpp/absl/memory",
     ]
     sources = [
+      "base/fakeframesource.cc",
+      "base/fakeframesource.h",
       "base/fakemediaengine.h",
       "base/fakenetworkinterface.h",
       "base/fakertp.cc",
       "base/fakertp.h",
+      "base/fakevideocapturer.cc",
       "base/fakevideocapturer.h",
+      "base/fakevideorenderer.cc",
       "base/fakevideorenderer.h",
-      "base/test/mock_mediachannel.h",
       "base/testutils.cc",
       "base/testutils.h",
       "engine/fakewebrtccall.cc",
@@ -426,14 +430,17 @@ if (rtc_include_tests) {
       "engine/fakewebrtcdeviceinfo.h",
       "engine/fakewebrtcvcmfactory.h",
       "engine/fakewebrtcvideocapturemodule.h",
+      "engine/fakewebrtcvideoengine.cc",
       "engine/fakewebrtcvideoengine.h",
     ]
-
-    configs += [ ":rtc_unittest_main_config" ]
 
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+
+    if (rtc_use_h264) {
+      defines += [ "WEBRTC_USE_H264" ]
     }
 
     deps += [
@@ -442,34 +449,19 @@ if (rtc_include_tests) {
       ":rtc_media_base",
       "..:webrtc_common",
       "../api:call_api",
-      "../api:video_frame_api",
+      "../api/video:video_bitrate_allocation",
+      "../api/video:video_frame",
       "../api/video_codecs:video_codecs_api",
       "../call:call_interfaces",
+      "../call:mock_rtp_interfaces",
       "../rtc_base:rtc_base",
       "../rtc_base:rtc_base_approved",
       "../rtc_base:rtc_base_tests_utils",
+      "../rtc_base:rtc_task_queue_for_test",
+      "../rtc_base/third_party/sigslot",
       "../test:test_support",
-      "//testing/gmock",
       "//testing/gtest",
     ]
-  }
-
-  config("rtc_media_unittests_config") {
-    # GN orders flags on a target before flags from configs. The default config
-    # adds -Wall, and this flag have to be after -Wall -- so they need to
-    # come from a config and can"t be on the target directly.
-    # TODO(kjellander): Make the code compile without disabling these flags.
-    # See https://bugs.webrtc.org/3307.
-    if (is_clang && is_win) {
-      cflags = [
-        # See https://bugs.chromium.org/p/webrtc/issues/detail?id=6266
-        # for -Wno-sign-compare
-        "-Wno-sign-compare",
-      ]
-    }
-    if (!is_win) {
-      cflags = [ "-Wno-sign-compare" ]
-    }
   }
 
   rtc_media_unittests_resources = [
@@ -500,14 +492,19 @@ if (rtc_include_tests) {
       ":rtc_audio_video",
       ":rtc_constants",
       ":rtc_data",
-      "../api:video_frame_api_i420",
+      "../api/video:video_frame_i420",
       "../modules/audio_processing:mocks",
+      "../modules/rtp_rtcp",
       "../modules/video_coding:video_codec_interface",
+      "../modules/video_coding:webrtc_vp8",
       "../pc:rtc_pc",
       "../pc:rtc_pc_base",
       "../rtc_base:checks",
+      "../rtc_base:rtc_task_queue",
       "../rtc_base:stringutils",
       "../test:field_trial",
+      "../test:test_common",
+      "//third_party/abseil-cpp/absl/memory",
     ]
     sources = [
       "base/codec_unittest.cc",
@@ -519,16 +516,13 @@ if (rtc_include_tests) {
       "base/videobroadcaster_unittest.cc",
       "base/videocapturer_unittest.cc",
       "base/videocommon_unittest.cc",
-      "base/videoengine_unittest.h",
       "engine/apm_helpers_unittest.cc",
       "engine/internaldecoderfactory_unittest.cc",
+      "engine/multiplexcodecfactory_unittest.cc",
       "engine/nullwebrtcvideoengine_unittest.cc",
       "engine/payload_type_mapper_unittest.cc",
       "engine/simulcast_encoder_adapter_unittest.cc",
       "engine/simulcast_unittest.cc",
-      "engine/stereocodecfactory_unittest.cc",
-      "engine/videodecodersoftwarefallbackwrapper_unittest.cc",
-      "engine/videoencodersoftwarefallbackwrapper_unittest.cc",
       "engine/vp8_encoder_simulcast_proxy_unittest.cc",
       "engine/webrtcmediaengine_unittest.cc",
       "engine/webrtcvideocapturer_unittest.cc",
@@ -546,8 +540,6 @@ if (rtc_include_tests) {
       sources += [ "sctp/sctptransport_unittest.cc" ]
     }
 
-    configs += [ ":rtc_media_unittests_config" ]
-
     if (rtc_use_h264) {
       defines += [ "WEBRTC_USE_H264" ]
     }
@@ -558,18 +550,8 @@ if (rtc_include_tests) {
       defines += [ "WEBRTC_OPUS_SUPPORT_120MS_PTIME=0" ]
     }
 
-    if (is_win) {
-      cflags = [
-        "/wd4245",  # conversion from int to size_t, signed/unsigned mismatch.
-        "/wd4373",  # virtual function override.
-        "/wd4389",  # signed/unsigned mismatch.
-      ]
-    }
-
     if (!build_with_chromium && is_clang) {
       suppressed_configs += [
-        "//build/config/clang:extra_warnings",
-
         # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
         "//build/config/clang:find_bad_constructs",
       ]
@@ -591,22 +573,26 @@ if (rtc_include_tests) {
       ":rtc_media",
       ":rtc_media_base",
       ":rtc_media_tests_utils",
+      ":rtc_vp9_profile",
+      "../api:create_simulcast_test_fixture_api",
       "../api:libjingle_peerconnection_api",
       "../api:mock_video_codec_factory",
-      "../api:video_frame_api",
+      "../api:simulcast_test_fixture_api",
       "../api/audio_codecs:builtin_audio_decoder_factory",
       "../api/audio_codecs:builtin_audio_encoder_factory",
+      "../api/video:video_bitrate_allocation",
+      "../api/video:video_frame",
+      "../api/video_codecs:builtin_video_decoder_factory",
+      "../api/video_codecs:builtin_video_encoder_factory",
       "../api/video_codecs:video_codecs_api",
       "../audio",
       "../call:call_interfaces",
       "../common_video:common_video",
       "../logging:rtc_event_log_api",
+      "../logging:rtc_event_log_impl_base",
       "../modules/audio_device:mock_audio_device",
       "../modules/audio_processing:audio_processing",
-      "../modules/video_coding:simulcast_test_utility",
-      "../modules/video_coding:video_coding_utility",
-      "../modules/video_coding:webrtc_vp8",
-      "../modules/video_coding:webrtc_vp8_helpers",
+      "../modules/video_coding:simulcast_test_fixture_impl",
       "../p2p:p2p_test_utils",
       "../rtc_base:rtc_base",
       "../rtc_base:rtc_base_approved",
@@ -617,7 +603,6 @@ if (rtc_include_tests) {
       "../test:audio_codec_mocks",
       "../test:test_support",
       "../test:video_test_common",
-      "../voice_engine:voice_engine",
     ]
   }
 }

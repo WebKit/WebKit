@@ -19,8 +19,8 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_ENTROPY_CODING_H_
 #define MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_ENTROPY_CODING_H_
 
-#include "settings.h"
-#include "structs.h"
+#include "modules/audio_coding/codecs/isac/main/source/settings.h"
+#include "modules/audio_coding/codecs/isac/main/source/structs.h"
 
 /******************************************************************************
  * WebRtcIsac_DecodeSpec()
@@ -46,8 +46,11 @@
  * Return value             : < 0 if an error occures
  *                              0 if succeeded.
  */
-int WebRtcIsac_DecodeSpec(Bitstr* streamdata, int16_t AvgPitchGain_Q12,
-                          enum ISACBand band, double* fr, double* fi);
+int WebRtcIsac_DecodeSpec(Bitstr* streamdata,
+                          int16_t AvgPitchGain_Q12,
+                          enum ISACBand band,
+                          double* fr,
+                          double* fi);
 
 /******************************************************************************
  * WebRtcIsac_EncodeSpec()
@@ -72,24 +75,31 @@ int WebRtcIsac_DecodeSpec(Bitstr* streamdata, int16_t AvgPitchGain_Q12,
  * Return value             : < 0 if an error occures
  *                              0 if succeeded.
  */
-int WebRtcIsac_EncodeSpec(const int16_t* fr, const int16_t* fi,
-                          int16_t AvgPitchGain_Q12, enum ISACBand band,
+int WebRtcIsac_EncodeSpec(const int16_t* fr,
+                          const int16_t* fi,
+                          int16_t AvgPitchGain_Q12,
+                          enum ISACBand band,
                           Bitstr* streamdata);
 
 /* decode & dequantize LPC Coef */
 int WebRtcIsac_DecodeLpcCoef(Bitstr* streamdata, double* LPCCoef);
-int WebRtcIsac_DecodeLpcCoefUB(Bitstr* streamdata, double* lpcVecs,
+int WebRtcIsac_DecodeLpcCoefUB(Bitstr* streamdata,
+                               double* lpcVecs,
                                double* percepFilterGains,
                                int16_t bandwidth);
 
-int WebRtcIsac_DecodeLpc(Bitstr* streamdata, double* LPCCoef_lo,
+int WebRtcIsac_DecodeLpc(Bitstr* streamdata,
+                         double* LPCCoef_lo,
                          double* LPCCoef_hi);
 
 /* quantize & code LPC Coef */
-void WebRtcIsac_EncodeLpcLb(double* LPCCoef_lo, double* LPCCoef_hi,
-                            Bitstr* streamdata, IsacSaveEncoderData* encData);
+void WebRtcIsac_EncodeLpcLb(double* LPCCoef_lo,
+                            double* LPCCoef_hi,
+                            Bitstr* streamdata,
+                            IsacSaveEncoderData* encData);
 
-void WebRtcIsac_EncodeLpcGainLb(double* LPCCoef_lo, double* LPCCoef_hi,
+void WebRtcIsac_EncodeLpcGainLb(double* LPCCoef_lo,
+                                double* LPCCoef_hi,
                                 Bitstr* streamdata,
                                 IsacSaveEncoderData* encData);
 
@@ -126,7 +136,8 @@ void WebRtcIsac_EncodeLpcGainLb(double* LPCCoef_lo, double* LPCCoef_hi,
  * Return value             : 0 if encoding is successful,
  *                           <0 if failed to encode.
  */
-int16_t WebRtcIsac_EncodeLpcUB(double* lpcCoeff, Bitstr* streamdata,
+int16_t WebRtcIsac_EncodeLpcUB(double* lpcCoeff,
+                               Bitstr* streamdata,
                                double* interpolLPCCoeff,
                                int16_t bandwidth,
                                ISACUBSaveEncDataStruct* encData);
@@ -184,9 +195,9 @@ void WebRtcIsac_EncodePitchLag(double* PitchLags,
                                Bitstr* streamdata,
                                IsacSaveEncoderData* encData);
 
-int WebRtcIsac_DecodePitchGain(Bitstr* streamdata,
-                               int16_t* PitchGain_Q12);
-int WebRtcIsac_DecodePitchLag(Bitstr* streamdata, int16_t* PitchGain_Q12,
+int WebRtcIsac_DecodePitchGain(Bitstr* streamdata, int16_t* PitchGain_Q12);
+int WebRtcIsac_DecodePitchLag(Bitstr* streamdata,
+                              int16_t* PitchGain_Q12,
                               double* PitchLag);
 
 int WebRtcIsac_DecodeFrameLen(Bitstr* streamdata, int16_t* framelength);
@@ -200,9 +211,9 @@ void WebRtcIsac_Poly2Rc(double* a, int N, double* RC);
 /* Step-up */
 void WebRtcIsac_Rc2Poly(double* RC, int N, double* a);
 
-void WebRtcIsac_TranscodeLPCCoef(double* LPCCoef_lo, double* LPCCoef_hi,
+void WebRtcIsac_TranscodeLPCCoef(double* LPCCoef_lo,
+                                 double* LPCCoef_hi,
                                  int* index_g);
-
 
 /******************************************************************************
  * WebRtcIsac_EncodeLpcGainUb()
@@ -220,9 +231,9 @@ void WebRtcIsac_TranscodeLPCCoef(double* LPCCoef_lo, double* LPCCoef_hi,
  *  - lpcGainIndex          : quantization indices for lpc gains, these will
  *                            be stored to be used  for FEC.
  */
-void WebRtcIsac_EncodeLpcGainUb(double* lpGains, Bitstr* streamdata,
+void WebRtcIsac_EncodeLpcGainUb(double* lpGains,
+                                Bitstr* streamdata,
                                 int* lpcGainIndex);
-
 
 /******************************************************************************
  * WebRtcIsac_EncodeLpcGainUb()
@@ -238,7 +249,6 @@ void WebRtcIsac_EncodeLpcGainUb(double* lpGains, Bitstr* streamdata,
  *
  */
 void WebRtcIsac_StoreLpcGainUb(double* lpGains, Bitstr* streamdata);
-
 
 /******************************************************************************
  * WebRtcIsac_DecodeLpcGainUb()
@@ -256,7 +266,6 @@ void WebRtcIsac_StoreLpcGainUb(double* lpGains, Bitstr* streamdata);
  *                           <0 if failed.
  */
 int16_t WebRtcIsac_DecodeLpcGainUb(double* lpGains, Bitstr* streamdata);
-
 
 /******************************************************************************
  * WebRtcIsac_EncodeBandwidth()
@@ -276,7 +285,6 @@ int16_t WebRtcIsac_DecodeLpcGainUb(double* lpGains, Bitstr* streamdata);
  */
 int16_t WebRtcIsac_EncodeBandwidth(enum ISACBandwidth bandwidth,
                                    Bitstr* streamData);
-
 
 /******************************************************************************
  * WebRtcIsac_DecodeBandwidth()
@@ -298,7 +306,6 @@ int16_t WebRtcIsac_EncodeBandwidth(enum ISACBandwidth bandwidth,
 int16_t WebRtcIsac_DecodeBandwidth(Bitstr* streamData,
                                    enum ISACBandwidth* bandwidth);
 
-
 /******************************************************************************
  * WebRtcIsac_EncodeJitterInfo()
  * Decode the jitter information.
@@ -316,9 +323,7 @@ int16_t WebRtcIsac_DecodeBandwidth(Bitstr* streamData,
  * Return value             : 0 if succeeded.
  *                           <0 if failed.
  */
-int16_t WebRtcIsac_EncodeJitterInfo(int32_t jitterIndex,
-                                    Bitstr* streamData);
-
+int16_t WebRtcIsac_EncodeJitterInfo(int32_t jitterIndex, Bitstr* streamData);
 
 /******************************************************************************
  * WebRtcIsac_DecodeJitterInfo()
@@ -337,7 +342,6 @@ int16_t WebRtcIsac_EncodeJitterInfo(int32_t jitterIndex,
  * Return value             : 0 if succeeded.
  *                           <0 if failed.
  */
-int16_t WebRtcIsac_DecodeJitterInfo(Bitstr* streamData,
-                                    int32_t* jitterInfo);
+int16_t WebRtcIsac_DecodeJitterInfo(Bitstr* streamData, int32_t* jitterInfo);
 
 #endif /* MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_ENTROPY_CODING_H_ */

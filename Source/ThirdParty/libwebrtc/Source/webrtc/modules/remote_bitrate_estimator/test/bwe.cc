@@ -10,6 +10,7 @@
 
 #include "modules/remote_bitrate_estimator/test/bwe.h"
 
+#include <algorithm>
 #include <limits>
 
 #include "modules/remote_bitrate_estimator/test/estimators/bbr.h"
@@ -18,30 +19,26 @@
 #include "modules/remote_bitrate_estimator/test/estimators/send_side.h"
 #include "modules/remote_bitrate_estimator/test/estimators/tcp.h"
 #include "rtc_base/constructormagic.h"
+#include "rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/system/fallthrough.h"
 
 namespace webrtc {
 namespace testing {
 namespace bwe {
 
-// With the assumption that packet loss is lower than 97%, the max gap
-// between elements in the set is lower than 0x8000, hence we have a
-// total order in the set. For (x,y,z) subset of the LinkedSet,
-// (x<=y and y<=z) ==> x<=z so the set can be sorted.
 const int kSetCapacity = 1000;
 
 BweReceiver::BweReceiver(int flow_id)
     : flow_id_(flow_id),
       received_packets_(kSetCapacity),
       rate_counter_(),
-      loss_account_() {
-}
+      loss_account_() {}
 
 BweReceiver::BweReceiver(int flow_id, int64_t window_size_ms)
     : flow_id_(flow_id),
       received_packets_(kSetCapacity),
       rate_counter_(window_size_ms),
-      loss_account_() {
-}
+      loss_account_() {}
 
 void BweReceiver::ReceivePacket(int64_t arrival_time_ms,
                                 const MediaPacket& media_packet) {
@@ -57,10 +54,14 @@ void BweReceiver::ReceivePacket(int64_t arrival_time_ms,
                             static_cast<uint32_t>(media_packet.payload_size()));
 }
 
+FeedbackPacket* BweReceiver::GetFeedback(int64_t now_ms) {
+  return nullptr;
+}
+
 class NullBweSender : public BweSender {
  public:
   NullBweSender() {}
-  virtual ~NullBweSender() {}
+  ~NullBweSender() override {}
 
   int GetFeedbackIntervalMs() const override { return 1000; }
   void GiveFeedback(const FeedbackPacket& feedback) override {}
@@ -97,7 +98,7 @@ BweSender* CreateBweSender(BandwidthEstimatorType estimator,
     case kBbrEstimator:
       return new BbrBweSender(observer, clock);
     case kTcpEstimator:
-      FALLTHROUGH();
+      RTC_FALLTHROUGH();
     case kNullEstimator:
       return new NullBweSender();
   }
@@ -160,12 +161,7 @@ LossAccount BweReceiver::LinkedSetPacketLossRatio() {
     return LossAccount();
   }
 
-  uint16_t oldest_seq_num = received_packets_.OldestSeqNumber();
-  uint16_t newest_seq_num = received_packets_.NewestSeqNumber();
-
-  size_t set_total_packets =
-      static_cast<uint16_t>(newest_seq_num - oldest_seq_num + 1);
-
+  size_t set_total_packets = received_packets_.Range();
   size_t set_received_packets = received_packets_.size();
   size_t set_lost_packets = set_total_packets - set_received_packets;
 
@@ -190,78 +186,63 @@ float BweReceiver::RecentPacketLossRatio() {
   PacketNodeIt node_it = received_packets_.begin();  // Latest.
 
   // Lowest timestamp limit, oldest one that should be checked.
-  int64_t time_limit_ms = (*node_it)->arrival_time_ms - kPacketLossTimeWindowMs;
+  int64_t time_limit_ms = node_it->arrival_time_ms - kPacketLossTimeWindowMs;
   // Oldest and newest values found within the given time window.
-  uint16_t oldest_seq_num = (*node_it)->sequence_number;
-  uint16_t newest_seq_num = oldest_seq_num;
+  int64_t oldest_seq_num = node_it->unwrapped_sequence_number;
+  int64_t newest_seq_num = oldest_seq_num;
 
   while (node_it != received_packets_.end()) {
-    if ((*node_it)->arrival_time_ms < time_limit_ms) {
+    if (node_it->arrival_time_ms < time_limit_ms) {
       break;
     }
-    uint16_t seq_num = (*node_it)->sequence_number;
-    if (IsNewerSequenceNumber(seq_num, newest_seq_num)) {
-      newest_seq_num = seq_num;
-    }
-    if (IsNewerSequenceNumber(oldest_seq_num, seq_num)) {
-      oldest_seq_num = seq_num;
-    }
+    int64_t seq_num = node_it->unwrapped_sequence_number;
+    newest_seq_num = std::max(newest_seq_num, seq_num);
+    oldest_seq_num = std::min(oldest_seq_num, seq_num);
     ++node_it;
     ++number_packets_received;
   }
   // Interval width between oldest and newest sequence number.
-  // There was an overflow if newest_seq_num < oldest_seq_num.
-  int gap = static_cast<uint16_t>(newest_seq_num - oldest_seq_num + 1);
+  int gap = rtc::dchecked_cast<int>(newest_seq_num - oldest_seq_num + 1);
 
   return static_cast<float>(gap - number_packets_received) / gap;
 }
 
+LinkedSet::LinkedSet(int capacity) : capacity_(capacity) {}
+
 LinkedSet::~LinkedSet() {
-  while (!empty())
-    RemoveTail();
 }
 
 void LinkedSet::Insert(uint16_t sequence_number,
                        int64_t send_time_ms,
                        int64_t arrival_time_ms,
                        size_t payload_size) {
-  auto it = map_.find(sequence_number);
+  auto unwrapped_sequence_number = unwrapper_.Unwrap(sequence_number);
+  auto it = map_.find(unwrapped_sequence_number);
+  // Handle duplicate unwrapped sequence number.
   if (it != map_.end()) {
     PacketNodeIt node_it = it->second;
-    PacketIdentifierNode* node = *node_it;
-    node->arrival_time_ms = arrival_time_ms;
-    if (node_it != list_.begin()) {
-      list_.erase(node_it);
-      list_.push_front(node);
-      map_[sequence_number] = list_.begin();
-    }
+    PacketIdentifierNode& node = *node_it;
+    node.arrival_time_ms = arrival_time_ms;
+    // Move to front, without invalidating iterators.
+    list_.splice(list_.begin(), list_, node_it);
   } else {
     if (size() == capacity_) {
       RemoveTail();
     }
-    UpdateHead(new PacketIdentifierNode(sequence_number, send_time_ms,
-                                        arrival_time_ms, payload_size));
+    // Push new element to the front of the list and insert it in the map.
+    PacketIdentifierNode new_head(unwrapped_sequence_number, send_time_ms,
+                                  arrival_time_ms, payload_size);
+    list_.push_front(new_head);
+    map_[unwrapped_sequence_number] = list_.begin();
   }
 }
 
-void LinkedSet::Insert(PacketIdentifierNode packet_identifier) {
-  Insert(packet_identifier.sequence_number, packet_identifier.send_time_ms,
-         packet_identifier.arrival_time_ms, packet_identifier.payload_size);
-}
-
 void LinkedSet::RemoveTail() {
-  map_.erase(list_.back()->sequence_number);
-  delete list_.back();
-  list_.pop_back();
-}
-void LinkedSet::UpdateHead(PacketIdentifierNode* new_head) {
-  list_.push_front(new_head);
-  map_[new_head->sequence_number] = list_.begin();
+  Erase(--list_.end());
 }
 
 void LinkedSet::Erase(PacketNodeIt node_it) {
-  map_.erase((*node_it)->sequence_number);
-  delete (*node_it);
+  map_.erase(node_it->unwrapped_sequence_number);
   list_.erase(node_it);
 }
 

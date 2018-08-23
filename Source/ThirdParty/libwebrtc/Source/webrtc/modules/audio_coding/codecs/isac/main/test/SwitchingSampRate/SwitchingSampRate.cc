@@ -13,20 +13,19 @@
 //
 
 #include <iostream>
-#include "isac.h"
-#include "utility.h"
-#include "signal_processing_library.h"
 
-#define MAX_FILE_NAME  500
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "modules/audio_coding/codecs/isac/main/include/isac.h"
+#include "modules/audio_coding/codecs/isac/main/util/utility.h"
+
+#define MAX_FILE_NAME 500
 #define MAX_NUM_CLIENTS 2
-
 
 #define NUM_CLIENTS 2
 
 using namespace std;
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
   char fileNameWB[MAX_FILE_NAME];
   char fileNameSWB[MAX_FILE_NAME];
 
@@ -67,21 +66,18 @@ int main(int argc, char* argv[])
   printf("    iSAC-swb version %s\n", versionNumber);
   printf("____________________________________________\n");
 
-
-  fileNameWB[0]  = '\0';
+  fileNameWB[0] = '\0';
   fileNameSWB[0] = '\0';
 
   char myFlag[20];
   strcpy(myFlag, "-wb");
   // READ THE WIDEBAND AND SUPER-WIDEBAND FILE NAMES
-  if(readParamString(argc, argv, myFlag, fileNameWB, MAX_FILE_NAME) <= 0)
-  {
+  if (readParamString(argc, argv, myFlag, fileNameWB, MAX_FILE_NAME) <= 0) {
     printf("No wideband file is specified");
   }
 
   strcpy(myFlag, "-swb");
-  if(readParamString(argc, argv, myFlag, fileNameSWB, MAX_FILE_NAME) <= 0)
-  {
+  if (readParamString(argc, argv, myFlag, fileNameSWB, MAX_FILE_NAME) <= 0) {
     printf("No super-wideband file is specified");
   }
 
@@ -96,16 +92,15 @@ int main(int argc, char* argv[])
   strcpy(myFlag, "-I");
   short codingMode = readSwitch(argc, argv, myFlag);
 
-  for(clientCntr = 0; clientCntr < NUM_CLIENTS; clientCntr++)
-  {
+  for (clientCntr = 0; clientCntr < NUM_CLIENTS; clientCntr++) {
     codecInstance[clientCntr] = NULL;
 
     printf("\n");
     printf("Client %d\n", clientCntr + 1);
     printf("---------\n");
-    printf("Starting %s",
-           (encoderSampRate[clientCntr] == 16000)
-           ? "wideband":"super-wideband");
+    printf("Starting %s", (encoderSampRate[clientCntr] == 16000)
+                              ? "wideband"
+                              : "super-wideband");
 
     // Open output File Name
     OPEN_FILE_WB(outFile[clientCntr], outFileName[clientCntr]);
@@ -113,30 +108,27 @@ int main(int argc, char* argv[])
 
     samplesIn10ms[clientCntr] = encoderSampRate[clientCntr] * 10;
 
-    if(codingMode == 1)
-    {
-      bottleneck[clientCntr] = (clientCntr)? bnSWB:bnWB;
-    }
-    else
-    {
-      bottleneck[clientCntr] = (clientCntr)? minBn:maxBn;
+    if (codingMode == 1) {
+      bottleneck[clientCntr] = (clientCntr) ? bnSWB : bnWB;
+    } else {
+      bottleneck[clientCntr] = (clientCntr) ? minBn : maxBn;
     }
 
     printf("Bottleneck....................... %0.3f kbits/sec \n",
            bottleneck[clientCntr] / 1000.0);
 
     // coding-mode
-    printf("Encoding Mode.................... %s\n",
-           (codingMode == 1)? "Channel-Independent (Instantaneous)":"Adaptive");
+    printf(
+        "Encoding Mode.................... %s\n",
+        (codingMode == 1) ? "Channel-Independent (Instantaneous)" : "Adaptive");
 
     lenEncodedInBytes[clientCntr] = 0;
     lenAudioIn10ms[clientCntr] = 0;
     lenEncodedInBytesTmp[clientCntr] = 0;
     lenAudioIn10msTmp[clientCntr] = 0;
 
-    packetData[clientCntr] = (BottleNeckModel*)new(BottleNeckModel);
-    if(packetData[clientCntr] == NULL)
-    {
+    packetData[clientCntr] = (BottleNeckModel*)new (BottleNeckModel);
+    if (packetData[clientCntr] == NULL) {
       printf("Could not allocate memory for packetData \n");
       return -1;
     }
@@ -144,24 +136,22 @@ int main(int argc, char* argv[])
     memset(resamplerState[clientCntr], 0, sizeof(int32_t) * 8);
   }
 
-  for(clientCntr = 0; clientCntr < NUM_CLIENTS; clientCntr++)
-  {
+  for (clientCntr = 0; clientCntr < NUM_CLIENTS; clientCntr++) {
     // Create
-    if(WebRtcIsac_Create(&codecInstance[clientCntr]))
-    {
+    if (WebRtcIsac_Create(&codecInstance[clientCntr])) {
       printf("Could not creat client %d\n", clientCntr + 1);
       return -1;
     }
 
-    WebRtcIsac_SetEncSampRate(codecInstance[clientCntr], encoderSampRate[clientCntr]);
+    WebRtcIsac_SetEncSampRate(codecInstance[clientCntr],
+                              encoderSampRate[clientCntr]);
 
-    WebRtcIsac_SetDecSampRate(codecInstance[clientCntr],
-                              encoderSampRate[clientCntr + (1 - ((clientCntr & 1)<<1))]);
+    WebRtcIsac_SetDecSampRate(
+        codecInstance[clientCntr],
+        encoderSampRate[clientCntr + (1 - ((clientCntr & 1) << 1))]);
 
     // Initialize Encoder
-    if(WebRtcIsac_EncoderInit(codecInstance[clientCntr],
-                              codingMode) < 0)
-    {
+    if (WebRtcIsac_EncoderInit(codecInstance[clientCntr], codingMode) < 0) {
       printf("Could not initialize client, %d\n", clientCntr + 1);
       return -1;
     }
@@ -169,19 +159,16 @@ int main(int argc, char* argv[])
     WebRtcIsac_DecoderInit(codecInstance[clientCntr]);
 
     // setup Rate if in Instantaneous mode
-    if(codingMode != 0)
-    {
+    if (codingMode != 0) {
       // ONLY Clients who are not in Adaptive mode
-      if(WebRtcIsac_Control(codecInstance[clientCntr],
-                            bottleneck[clientCntr], 30) < 0)
-      {
+      if (WebRtcIsac_Control(codecInstance[clientCntr], bottleneck[clientCntr],
+                             30) < 0) {
         printf("Could not setup bottleneck and frame-size for client %d\n",
                clientCntr + 1);
         return -1;
       }
     }
   }
-
 
   size_t streamLen;
   short numSamplesRead;
@@ -191,7 +178,7 @@ int main(int argc, char* argv[])
 
   printf("\n");
   short num10ms[MAX_NUM_CLIENTS];
-  memset(num10ms, 0, sizeof(short)*MAX_NUM_CLIENTS);
+  memset(num10ms, 0, sizeof(short) * MAX_NUM_CLIENTS);
   FILE* arrivalTimeFile1 = fopen("arrivalTime1.dat", "wb");
   FILE* arrivalTimeFile2 = fopen("arrivalTime2.dat", "wb");
   short numPrint[MAX_NUM_CLIENTS];
@@ -204,61 +191,60 @@ int main(int argc, char* argv[])
   short audioBuff60ms[60 * 32];
   short resampledAudio60ms[60 * 32];
 
-  unsigned short bitStream[600+600];
+  unsigned short bitStream[600 + 600];
   short speechType[1];
 
   short numSampFreqChanged = 0;
-  while(numSampFreqChanged < 10)
-  {
-    for(clientCntr = 0; clientCntr < NUM_CLIENTS; clientCntr++)
-    {
+  while (numSampFreqChanged < 10) {
+    for (clientCntr = 0; clientCntr < NUM_CLIENTS; clientCntr++) {
       // Encoding/decoding for this pair of clients, if there is
       // audio for any of them
-      //if(audioLeft[clientCntr] || audioLeft[clientCntr + 1])
+      // if(audioLeft[clientCntr] || audioLeft[clientCntr + 1])
       //{
-      //for(pairCntr = 0; pairCntr < 2; pairCntr++)
+      // for(pairCntr = 0; pairCntr < 2; pairCntr++)
       //{
-      senderIdx = clientCntr; // + pairCntr;
-      receiverIdx = 1 - clientCntr;//  + (1 - pairCntr);
+      senderIdx = clientCntr;        // + pairCntr;
+      receiverIdx = 1 - clientCntr;  //  + (1 - pairCntr);
 
-      //if(num10ms[senderIdx] > 6)
+      // if(num10ms[senderIdx] > 6)
       //{
       //    printf("Too many frames read for client %d",
       //        senderIdx + 1);
       //    return -1;
       //}
 
-      numSamplesRead = (short)fread(audioBuff10ms, sizeof(short),
-                                    samplesIn10ms[senderIdx], inFile[senderIdx]);
-      if(numSamplesRead != samplesIn10ms[senderIdx])
-      {
+      numSamplesRead =
+          (short)fread(audioBuff10ms, sizeof(short), samplesIn10ms[senderIdx],
+                       inFile[senderIdx]);
+      if (numSamplesRead != samplesIn10ms[senderIdx]) {
         // file finished switch encoder sampling frequency.
-        printf("Changing Encoder Sampling frequency in client %d to ", senderIdx+1);
+        printf("Changing Encoder Sampling frequency in client %d to ",
+               senderIdx + 1);
         fclose(inFile[senderIdx]);
         numSampFreqChanged++;
-        if(encoderSampRate[senderIdx] == 16000)
-        {
+        if (encoderSampRate[senderIdx] == 16000) {
           printf("super-wideband.\n");
           OPEN_FILE_RB(inFile[senderIdx], fileNameSWB);
           encoderSampRate[senderIdx] = 32000;
-        }
-        else
-        {
+        } else {
           printf("wideband.\n");
           OPEN_FILE_RB(inFile[senderIdx], fileNameWB);
           encoderSampRate[senderIdx] = 16000;
         }
-        WebRtcIsac_SetEncSampRate(codecInstance[senderIdx], encoderSampRate[senderIdx]);
-        WebRtcIsac_SetDecSampRate(codecInstance[receiverIdx], encoderSampRate[senderIdx]);
+        WebRtcIsac_SetEncSampRate(codecInstance[senderIdx],
+                                  encoderSampRate[senderIdx]);
+        WebRtcIsac_SetDecSampRate(codecInstance[receiverIdx],
+                                  encoderSampRate[senderIdx]);
 
         samplesIn10ms[clientCntr] = encoderSampRate[clientCntr] * 10;
 
-        numSamplesRead = (short)fread(audioBuff10ms, sizeof(short),
-                                      samplesIn10ms[senderIdx], inFile[senderIdx]);
-        if(numSamplesRead != samplesIn10ms[senderIdx])
-        {
+        numSamplesRead =
+            (short)fread(audioBuff10ms, sizeof(short), samplesIn10ms[senderIdx],
+                         inFile[senderIdx]);
+        if (numSamplesRead != samplesIn10ms[senderIdx]) {
           printf(" File %s for client %d has not enough audio\n",
-                 (encoderSampRate[senderIdx]==16000)? "wideband":"super-wideband",
+                 (encoderSampRate[senderIdx] == 16000) ? "wideband"
+                                                       : "super-wideband",
                  senderIdx + 1);
           return -1;
         }
@@ -266,39 +252,34 @@ int main(int argc, char* argv[])
       num10ms[senderIdx]++;
 
       // sanity check
-      //if(num10ms[senderIdx] > 6)
+      // if(num10ms[senderIdx] > 6)
       //{
-      //    printf("Client %d has got more than 60 ms audio and encoded no packet.\n",
+      //    printf("Client %d has got more than 60 ms audio and encoded no
+      //    packet.\n",
       //        senderIdx);
       //    return -1;
       //}
 
       // Encode
 
-
       int streamLen_int = WebRtcIsac_Encode(codecInstance[senderIdx],
-                                            audioBuff10ms,
-                                            (uint8_t*)bitStream);
+                                            audioBuff10ms, (uint8_t*)bitStream);
       int16_t ggg;
       if (streamLen_int > 0) {
         if ((WebRtcIsac_ReadFrameLen(
                 codecInstance[receiverIdx],
-                reinterpret_cast<const uint8_t*>(bitStream),
-                &ggg)) < 0)
+                reinterpret_cast<const uint8_t*>(bitStream), &ggg)) < 0)
           printf("ERROR\n");
       }
 
       // Sanity check
-      if(streamLen_int < 0)
-      {
+      if (streamLen_int < 0) {
         printf(" Encoder error in client %d \n", senderIdx + 1);
         return -1;
       }
       streamLen = static_cast<size_t>(streamLen_int);
 
-
-      if(streamLen > 0)
-      {
+      if (streamLen > 0) {
         // Packet generated; model sending through a channel, do bandwidth
         // estimation at the receiver and decode.
         lenEncodedInBytes[senderIdx] += streamLen;
@@ -307,32 +288,30 @@ int main(int argc, char* argv[])
         lenAudioIn10msTmp[senderIdx] += (unsigned int)num10ms[senderIdx];
 
         // Print after ~5 sec.
-        if(lenAudioIn10msTmp[senderIdx] >= 100)
-        {
+        if (lenAudioIn10msTmp[senderIdx] >= 100) {
           numPrint[senderIdx]++;
-          printf("  %d,  %6.3f => %6.3f ", senderIdx+1,
+          printf("  %d,  %6.3f => %6.3f ", senderIdx + 1,
                  bottleneck[senderIdx] / 1000.0,
                  lenEncodedInBytesTmp[senderIdx] * 0.8 /
-                 lenAudioIn10msTmp[senderIdx]);
+                     lenAudioIn10msTmp[senderIdx]);
 
-          if(codingMode == 0)
-          {
+          if (codingMode == 0) {
             int32_t bn;
             WebRtcIsac_GetUplinkBw(codecInstance[senderIdx], &bn);
             printf("[%d] ", bn);
           }
-          //int16_t rateIndexLB;
-          //int16_t rateIndexUB;
-          //WebRtcIsac_GetDownLinkBwIndex(codecInstance[receiverIdx],
+          // int16_t rateIndexLB;
+          // int16_t rateIndexUB;
+          // WebRtcIsac_GetDownLinkBwIndex(codecInstance[receiverIdx],
           //    &rateIndexLB, &rateIndexUB);
-          //printf(" (%2d, %2d) ", rateIndexLB, rateIndexUB);
+          // printf(" (%2d, %2d) ", rateIndexLB, rateIndexUB);
 
           cout << flush;
           lenEncodedInBytesTmp[senderIdx] = 0;
-          lenAudioIn10msTmp[senderIdx]    = 0;
-          //if(senderIdx == (NUM_CLIENTS - 1))
+          lenAudioIn10msTmp[senderIdx] = 0;
+          // if(senderIdx == (NUM_CLIENTS - 1))
           //{
-          printf("  %0.1f \n", lenAudioIn10ms[senderIdx] * 10. /1000);
+          printf("  %0.1f \n", lenAudioIn10ms[senderIdx] * 10. / 1000);
           //}
 
           // After ~20 sec change the bottleneck.
@@ -384,23 +363,20 @@ int main(int argc, char* argv[])
 
         // model a channel of given bottleneck, to get the receive timestamp
         get_arrival_time(num10ms[senderIdx] * samplesIn10ms[senderIdx],
-                         streamLen, bottleneck[senderIdx], packetData[senderIdx],
-                         encoderSampRate[senderIdx]*1000, encoderSampRate[senderIdx]*1000);
+                         streamLen, bottleneck[senderIdx],
+                         packetData[senderIdx],
+                         encoderSampRate[senderIdx] * 1000,
+                         encoderSampRate[senderIdx] * 1000);
 
         // Write the arrival time.
-        if(senderIdx == 0)
-        {
+        if (senderIdx == 0) {
           if (fwrite(&(packetData[senderIdx]->arrival_time),
-                     sizeof(unsigned int),
-                     1, arrivalTimeFile1) != 1) {
+                     sizeof(unsigned int), 1, arrivalTimeFile1) != 1) {
             return -1;
           }
-        }
-        else
-        {
+        } else {
           if (fwrite(&(packetData[senderIdx]->arrival_time),
-                     sizeof(unsigned int),
-                     1, arrivalTimeFile2) != 1) {
+                     sizeof(unsigned int), 1, arrivalTimeFile2) != 1) {
             return -1;
           }
         }
@@ -408,8 +384,7 @@ int main(int argc, char* argv[])
         // BWE
         if (WebRtcIsac_UpdateBwEstimate(
                 codecInstance[receiverIdx],
-                reinterpret_cast<const uint8_t*>(bitStream),
-                streamLen,
+                reinterpret_cast<const uint8_t*>(bitStream), streamLen,
                 packetData[senderIdx]->rtp_number,
                 packetData[senderIdx]->sample_count,
                 packetData[senderIdx]->arrival_time) < 0) {
@@ -418,34 +393,27 @@ int main(int argc, char* argv[])
         }
         /**/
         // Decode
-        int lenDecodedAudio_int = WebRtcIsac_Decode(
-            codecInstance[receiverIdx],
-            reinterpret_cast<const uint8_t*>(bitStream),
-            streamLen,
-            audioBuff60ms,
-            speechType);
-        if(lenDecodedAudio_int < 0)
-        {
+        int lenDecodedAudio_int =
+            WebRtcIsac_Decode(codecInstance[receiverIdx],
+                              reinterpret_cast<const uint8_t*>(bitStream),
+                              streamLen, audioBuff60ms, speechType);
+        if (lenDecodedAudio_int < 0) {
           printf(" Decoder error in client %d \n", receiverIdx + 1);
           return -1;
         }
         lenDecodedAudio = static_cast<size_t>(lenDecodedAudio_int);
 
-        if(encoderSampRate[senderIdx] == 16000)
-        {
-          WebRtcSpl_UpsampleBy2(audioBuff60ms, lenDecodedAudio, resampledAudio60ms,
+        if (encoderSampRate[senderIdx] == 16000) {
+          WebRtcSpl_UpsampleBy2(audioBuff60ms, lenDecodedAudio,
+                                resampledAudio60ms,
                                 resamplerState[receiverIdx]);
           if (fwrite(resampledAudio60ms, sizeof(short), lenDecodedAudio << 1,
-                     outFile[receiverIdx]) !=
-              lenDecodedAudio << 1) {
+                     outFile[receiverIdx]) != lenDecodedAudio << 1) {
             return -1;
           }
-        }
-        else
-        {
+        } else {
           if (fwrite(audioBuff60ms, sizeof(short), lenDecodedAudio,
-                     outFile[receiverIdx]) !=
-              lenDecodedAudio) {
+                     outFile[receiverIdx]) != lenDecodedAudio) {
             return -1;
           }
         }

@@ -29,11 +29,8 @@ namespace {
 class NewTimestampIsLarger {
  public:
   explicit NewTimestampIsLarger(const Packet& new_packet)
-      : new_packet_(new_packet) {
-  }
-  bool operator()(const Packet& packet) {
-    return (new_packet_ >= packet);
-  }
+      : new_packet_(new_packet) {}
+  bool operator()(const Packet& packet) { return (new_packet_ >= packet); }
 
  private:
   const Packet& new_packet_;
@@ -102,8 +99,7 @@ int PacketBuffer::InsertPacket(Packet&& packet, StatisticsCalculator* stats) {
   // should be inserted. The list is searched from the back, since the most
   // likely case is that the new packet should be near the end of the list.
   PacketList::reverse_iterator rit = std::find_if(
-      buffer_.rbegin(), buffer_.rend(),
-      NewTimestampIsLarger(packet));
+      buffer_.rbegin(), buffer_.rend(), NewTimestampIsLarger(packet));
 
   // The new packet is to be inserted to the right of |rit|. If it has the same
   // timestamp as |rit|, which has a higher priority, do not insert the new
@@ -118,7 +114,7 @@ int PacketBuffer::InsertPacket(Packet&& packet, StatisticsCalculator* stats) {
   // packet.
   PacketList::iterator it = rit.base();
   if (it != buffer_.end() && packet.timestamp == it->timestamp) {
-    LogPacketDiscarded(packet.priority.codec_level, stats);
+    LogPacketDiscarded(it->priority.codec_level, stats);
     it = buffer_.erase(it);
   }
   buffer_.insert(it, std::move(packet));  // Insert the packet at that position.
@@ -129,8 +125,8 @@ int PacketBuffer::InsertPacket(Packet&& packet, StatisticsCalculator* stats) {
 int PacketBuffer::InsertPacketList(
     PacketList* packet_list,
     const DecoderDatabase& decoder_database,
-    rtc::Optional<uint8_t>* current_rtp_payload_type,
-    rtc::Optional<uint8_t>* current_cng_rtp_payload_type,
+    absl::optional<uint8_t>* current_rtp_payload_type,
+    absl::optional<uint8_t>* current_cng_rtp_payload_type,
     StatisticsCalculator* stats) {
   RTC_DCHECK(stats);
   bool flushed = false;
@@ -139,7 +135,7 @@ int PacketBuffer::InsertPacketList(
       if (*current_cng_rtp_payload_type &&
           **current_cng_rtp_payload_type != packet.payload_type) {
         // New CNG payload type implies new codec type.
-        *current_rtp_payload_type = rtc::nullopt;
+        *current_rtp_payload_type = absl::nullopt;
         Flush();
         flushed = true;
       }
@@ -152,7 +148,7 @@ int PacketBuffer::InsertPacketList(
            !EqualSampleRates(packet.payload_type,
                              **current_cng_rtp_payload_type,
                              decoder_database))) {
-        *current_cng_rtp_payload_type = rtc::nullopt;
+        *current_cng_rtp_payload_type = absl::nullopt;
         Flush();
         flushed = true;
       }
@@ -206,13 +202,13 @@ const Packet* PacketBuffer::PeekNextPacket() const {
   return buffer_.empty() ? nullptr : &buffer_.front();
 }
 
-rtc::Optional<Packet> PacketBuffer::GetNextPacket() {
+absl::optional<Packet> PacketBuffer::GetNextPacket() {
   if (Empty()) {
     // Buffer is empty.
-    return rtc::nullopt;
+    return absl::nullopt;
   }
 
-  rtc::Optional<Packet> packet(std::move(buffer_.front()));
+  absl::optional<Packet> packet(std::move(buffer_.front()));
   // Assert that the packet sanity checks in InsertPacket method works.
   RTC_DCHECK(!packet->empty());
   buffer_.pop_front();
@@ -283,6 +279,18 @@ size_t PacketBuffer::NumSamplesInBuffer(size_t last_decoded_length) const {
     num_samples += last_duration;
   }
   return num_samples;
+}
+
+bool PacketBuffer::ContainsDtxOrCngPacket(
+    const DecoderDatabase* decoder_database) const {
+  RTC_DCHECK(decoder_database);
+  for (const Packet& packet : buffer_) {
+    if ((packet.frame && packet.frame->IsDtxPacket()) ||
+        decoder_database->IsComfortNoise(packet.payload_type)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 void PacketBuffer::BufferStat(int* num_packets, int* max_num_packets) const {

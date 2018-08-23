@@ -44,14 +44,14 @@ constexpr float kEnablingRecoverablePacketLossAtHighBw = 0.05f;
 
 constexpr float kEpsilon = 1e-5f;
 
-rtc::Optional<float> GetRandomProbabilityOrUnknown() {
+absl::optional<float> GetRandomProbabilityOrUnknown() {
   std::random_device rd;
   std::mt19937 generator(rd());
   std::uniform_real_distribution<> distribution(0, 1);
 
   return (distribution(generator) < 0.2)
-             ? rtc::nullopt
-             : rtc::Optional<float>(distribution(generator));
+             ? absl::nullopt
+             : absl::optional<float>(distribution(generator));
 }
 
 std::unique_ptr<FecControllerRplrBased> CreateFecControllerRplrBased(
@@ -70,9 +70,9 @@ std::unique_ptr<FecControllerRplrBased> CreateFecControllerRplrBased(
 
 void UpdateNetworkMetrics(
     FecControllerRplrBased* controller,
-    const rtc::Optional<int>& uplink_bandwidth_bps,
-    const rtc::Optional<float>& uplink_packet_loss,
-    const rtc::Optional<float>& uplink_recoveralbe_packet_loss) {
+    const absl::optional<int>& uplink_bandwidth_bps,
+    const absl::optional<float>& uplink_packet_loss,
+    const absl::optional<float>& uplink_recoveralbe_packet_loss) {
   // UpdateNetworkMetrics can accept multiple network metric updates at once.
   // However, currently, the most used case is to update one metric at a time.
   // To reflect this fact, we separate the calls.
@@ -96,8 +96,8 @@ void UpdateNetworkMetrics(
 
 void UpdateNetworkMetrics(
     FecControllerRplrBased* controller,
-    const rtc::Optional<int>& uplink_bandwidth_bps,
-    const rtc::Optional<float>& uplink_recoveralbe_packet_loss) {
+    const absl::optional<int>& uplink_bandwidth_bps,
+    const absl::optional<float>& uplink_recoveralbe_packet_loss) {
   // FecControllerRplrBased doesn't currently use the PLR (general packet-loss
   // rate) at all. (This might be changed in the future.) The unit-tests will
   // use a random value (including unknown), to show this does not interfere.
@@ -148,7 +148,7 @@ TEST(FecControllerRplrBasedTest, OutputInitValueWhenUplinkBandwidthUnknown) {
           kEnablingRecoverablePacketLossAtHighBw,
           kEnablingRecoverablePacketLossAtHighBw + kEpsilon}) {
       auto controller = CreateFecControllerRplrBased(initial_fec_enabled);
-      UpdateNetworkMetrics(controller.get(), rtc::nullopt,
+      UpdateNetworkMetrics(controller.get(), absl::nullopt,
                            recoverable_packet_loss);
       CheckDecision(controller.get(), initial_fec_enabled,
                     recoverable_packet_loss);
@@ -165,7 +165,7 @@ TEST(FecControllerRplrBasedTest,
                           kDisablingBandwidthLow + 1, kEnablingBandwidthLow - 1,
                           kEnablingBandwidthLow, kEnablingBandwidthLow + 1}) {
       auto controller = CreateFecControllerRplrBased(initial_fec_enabled);
-      UpdateNetworkMetrics(controller.get(), bandwidth, rtc::nullopt);
+      UpdateNetworkMetrics(controller.get(), bandwidth, absl::nullopt);
       CheckDecision(controller.get(), initial_fec_enabled, 0.0);
     }
   }
@@ -209,11 +209,11 @@ TEST(FecControllerRplrBasedTest, EnableFecForMediumBandwidth) {
   auto controller = CreateFecControllerRplrBased(false);
   constexpr float kRecoverablePacketLoss =
       (kEnablingRecoverablePacketLossAtLowBw +
-       kEnablingRecoverablePacketLossAtHighBw) / 2.0;
-  UpdateNetworkMetrics(
-      controller.get(),
-      (kEnablingBandwidthHigh + kEnablingBandwidthLow) / 2,
-      kRecoverablePacketLoss);
+       kEnablingRecoverablePacketLossAtHighBw) /
+      2.0;
+  UpdateNetworkMetrics(controller.get(),
+                       (kEnablingBandwidthHigh + kEnablingBandwidthLow) / 2,
+                       kRecoverablePacketLoss);
   CheckDecision(controller.get(), true, kRecoverablePacketLoss);
 }
 
@@ -274,11 +274,12 @@ TEST(FecControllerRplrBasedTest, DisableFecOnMediumBandwidth) {
   auto controller = CreateFecControllerRplrBased(true);
   constexpr float kRecoverablePacketLoss =
       ((kDisablingRecoverablePacketLossAtLowBw +
-        kDisablingRecoverablePacketLossAtHighBw) / 2.0f) - kEpsilon;
-  UpdateNetworkMetrics(
-      controller.get(),
-      (kDisablingBandwidthHigh + kDisablingBandwidthLow) / 2,
-      kRecoverablePacketLoss);
+        kDisablingRecoverablePacketLossAtHighBw) /
+       2.0f) -
+      kEpsilon;
+  UpdateNetworkMetrics(controller.get(),
+                       (kDisablingBandwidthHigh + kDisablingBandwidthLow) / 2,
+                       kRecoverablePacketLoss);
   CheckDecision(controller.get(), false, kRecoverablePacketLoss);
 }
 

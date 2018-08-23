@@ -17,29 +17,6 @@ namespace webrtc {
 RTPReceiverStrategy::RTPReceiverStrategy(RtpData* data_callback)
     : data_callback_(data_callback) {}
 
-void RTPReceiverStrategy::GetLastMediaSpecificPayload(
-    PayloadUnion* payload) const {
-  rtc::CritScope cs(&crit_sect_);
-  if (last_payload_) {
-    *payload = *last_payload_;
-  }
-}
-
-void RTPReceiverStrategy::SetLastMediaSpecificPayload(
-    const PayloadUnion& payload) {
-  rtc::CritScope cs(&crit_sect_);
-  last_payload_.emplace(payload);
-}
-
-void RTPReceiverStrategy::CheckPayloadChanged(int8_t payload_type,
-                                              PayloadUnion* specific_payload,
-                                              bool* should_discard_changes) {
-  // Default: Keep changes.
-  *should_discard_changes = false;
-}
-
-int RTPReceiverStrategy::Energy(uint8_t array_of_energy[kRtpCsrcSize]) const {
-  return -1;
-}
+RTPReceiverStrategy::~RTPReceiverStrategy() = default;
 
 }  // namespace webrtc

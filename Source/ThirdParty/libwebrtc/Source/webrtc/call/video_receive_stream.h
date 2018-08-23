@@ -16,12 +16,12 @@
 #include <string>
 #include <vector>
 
-#include "api/rtp_headers.h"
 #include "api/call/transport.h"
+#include "api/rtp_headers.h"
 #include "api/rtpparameters.h"
 #include "api/video/video_content_type.h"
+#include "api/video/video_sink_interface.h"
 #include "api/video/video_timing.h"
-#include "api/videosinkinterface.h"
 #include "call/rtp_config.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "common_video/include/frame_callback.h"
@@ -82,7 +82,7 @@ class VideoReceiveStream {
     int render_delay_ms = 10;
     int64_t interframe_delay_max_ms = -1;
     uint32_t frames_decoded = 0;
-    rtc::Optional<uint64_t> qp_sum;
+    absl::optional<uint64_t> qp_sum;
 
     int current_payload_type = -1;
 
@@ -104,7 +104,7 @@ class VideoReceiveStream {
 
     // Timing frame info: all important timestamps for a full lifetime of a
     // single 'timing frame'.
-    rtc::Optional<webrtc::TimingFrameInfo> timing_frame_info;
+    absl::optional<webrtc::TimingFrameInfo> timing_frame_info;
   };
 
   struct Config {
@@ -212,11 +212,6 @@ class VideoReceiveStream {
     // TODO(pbos): Synchronize streams in a sync group, not just video streams
     // to one of the audio streams.
     std::string sync_group;
-
-    // Called for each incoming video frame, i.e. in encoded state. E.g. used
-    // when
-    // saving the stream to a file. 'nullptr' disables the callback.
-    EncodedFrameObserver* pre_decode_callback = nullptr;
 
     // Target delay in milliseconds. A positive value indicates this stream is
     // used for streaming instead of a real-time call.

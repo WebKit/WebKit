@@ -13,8 +13,6 @@
 
 #include <memory>
 
-#include "typedefs.h"  // NOLINT(build/include)
-
 namespace webrtc {
 
 class PushSincResampler;
@@ -29,7 +27,8 @@ class PushResampler {
 
   // Must be called whenever the parameters change. Free to be called at any
   // time as it is a no-op if parameters have not changed since the last call.
-  int InitializeIfNeeded(int src_sample_rate_hz, int dst_sample_rate_hz,
+  int InitializeIfNeeded(int src_sample_rate_hz,
+                         int dst_sample_rate_hz,
                          size_t num_channels);
 
   // Returns the total number of samples provided in destination (e.g. 32 kHz,

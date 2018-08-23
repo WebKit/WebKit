@@ -19,17 +19,17 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_SIMPLE_LPC_ANALYSIS_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_SIMPLE_LPC_ANALYSIS_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  lpc analysis (subrutine to LPCencode)
  *---------------------------------------------------------------*/
 
 void WebRtcIlbcfix_SimpleLpcAnalysis(
-    int16_t *lsf,   /* (o) lsf coefficients */
-    int16_t *data,   /* (i) new block of speech */
-    IlbcEncoder *iLBCenc_inst
+    int16_t* lsf,  /* (o) lsf coefficients */
+    int16_t* data, /* (i) new block of speech */
+    IlbcEncoder* iLBCenc_inst
     /* (i/o) the encoder state structure */
-                                     );
+    );
 
 #endif

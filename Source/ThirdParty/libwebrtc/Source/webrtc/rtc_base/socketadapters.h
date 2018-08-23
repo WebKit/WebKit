@@ -49,7 +49,7 @@ class BufferedReadAdapter : public AsyncSocketAdapter {
   void OnReadEvent(AsyncSocket* socket) override;
 
  private:
-  char * buffer_;
+  char* buffer_;
   size_t buffer_size_, data_len_;
   bool buffering_;
   RTC_DISALLOW_COPY_AND_ASSIGN(BufferedReadAdapter);
@@ -62,8 +62,8 @@ class AsyncProxyServerSocket : public BufferedReadAdapter {
  public:
   AsyncProxyServerSocket(AsyncSocket* socket, size_t buffer_size);
   ~AsyncProxyServerSocket() override;
-  sigslot::signal2<AsyncProxyServerSocket*,
-                   const SocketAddress&>  SignalConnectRequest;
+  sigslot::signal2<AsyncProxyServerSocket*, const SocketAddress&>
+      SignalConnectRequest;
   virtual void SendConnectResult(int err, const SocketAddress& addr) = 0;
 };
 
@@ -99,9 +99,11 @@ class AsyncSSLServerSocket : public BufferedReadAdapter {
 // Implements a socket adapter that speaks the HTTP/S proxy protocol.
 class AsyncHttpsProxySocket : public BufferedReadAdapter {
  public:
-  AsyncHttpsProxySocket(AsyncSocket* socket, const std::string& user_agent,
-    const SocketAddress& proxy,
-    const std::string& username, const CryptString& password);
+  AsyncHttpsProxySocket(AsyncSocket* socket,
+                        const std::string& user_agent,
+                        const SocketAddress& proxy,
+                        const std::string& username,
+                        const CryptString& password);
   ~AsyncHttpsProxySocket() override;
 
   // If connect is forced, the adapter will always issue an HTTP CONNECT to the
@@ -134,10 +136,18 @@ class AsyncHttpsProxySocket : public BufferedReadAdapter {
   int defer_error_;
   bool expect_close_;
   enum ProxyState {
-    PS_INIT, PS_LEADER, PS_AUTHENTICATE, PS_SKIP_HEADERS, PS_ERROR_HEADERS,
-    PS_TUNNEL_HEADERS, PS_SKIP_BODY, PS_TUNNEL, PS_WAIT_CLOSE, PS_ERROR
+    PS_INIT,
+    PS_LEADER,
+    PS_AUTHENTICATE,
+    PS_SKIP_HEADERS,
+    PS_ERROR_HEADERS,
+    PS_TUNNEL_HEADERS,
+    PS_SKIP_BODY,
+    PS_TUNNEL,
+    PS_WAIT_CLOSE,
+    PS_ERROR
   } state_;
-  HttpAuthContext * context_;
+  HttpAuthContext* context_;
   std::string unknown_mechanisms_;
   RTC_DISALLOW_COPY_AND_ASSIGN(AsyncHttpsProxySocket);
 };
@@ -147,8 +157,10 @@ class AsyncHttpsProxySocket : public BufferedReadAdapter {
 // Implements a socket adapter that speaks the SOCKS proxy protocol.
 class AsyncSocksProxySocket : public BufferedReadAdapter {
  public:
-  AsyncSocksProxySocket(AsyncSocket* socket, const SocketAddress& proxy,
-    const std::string& username, const CryptString& password);
+  AsyncSocksProxySocket(AsyncSocket* socket,
+                        const SocketAddress& proxy,
+                        const std::string& username,
+                        const CryptString& password);
   ~AsyncSocksProxySocket() override;
 
   int Connect(const SocketAddress& addr) override;
@@ -166,9 +178,7 @@ class AsyncSocksProxySocket : public BufferedReadAdapter {
   void Error(int error);
 
  private:
-  enum State {
-    SS_INIT, SS_HELLO, SS_AUTH, SS_CONNECT, SS_TUNNEL, SS_ERROR
-  };
+  enum State { SS_INIT, SS_HELLO, SS_AUTH, SS_CONNECT, SS_TUNNEL, SS_ERROR };
   State state_;
   SocketAddress proxy_, dest_;
   std::string user_;
@@ -196,7 +206,12 @@ class AsyncSocksProxyServerSocket : public AsyncProxyServerSocket {
 
   static const int kBufferSize = 1024;
   enum State {
-    SS_HELLO, SS_AUTH, SS_CONNECT, SS_CONNECT_PENDING, SS_TUNNEL, SS_ERROR
+    SS_HELLO,
+    SS_AUTH,
+    SS_CONNECT,
+    SS_CONNECT_PENDING,
+    SS_TUNNEL,
+    SS_ERROR
   };
   State state_;
   RTC_DISALLOW_COPY_AND_ASSIGN(AsyncSocksProxyServerSocket);

@@ -32,13 +32,14 @@
 
 namespace rtc {
 
-int ResolveHostname(const std::string& hostname, int family,
+int ResolveHostname(const std::string& hostname,
+                    int family,
                     std::vector<IPAddress>* addresses) {
 #ifdef __native_client__
   RTC_NOTREACHED();
   RTC_LOG(LS_WARNING) << "ResolveHostname() is not implemented for NaCl";
   return -1;
-#else  // __native_client__
+#else   // __native_client__
   if (!addresses) {
     return -1;
   }
@@ -83,8 +84,7 @@ int ResolveHostname(const std::string& hostname, int family,
 }
 
 // AsyncResolver
-AsyncResolver::AsyncResolver()
-    : SignalThread(false /* use_socket_server */), error_(-1) {}
+AsyncResolver::AsyncResolver() : SignalThread(), error_(-1) {}
 
 AsyncResolver::~AsyncResolver() = default;
 
@@ -117,15 +117,15 @@ void AsyncResolver::Destroy(bool wait) {
 }
 
 void AsyncResolver::DoWork() {
-  error_ = ResolveHostname(addr_.hostname().c_str(), addr_.family(),
-                           &addresses_);
+  error_ =
+      ResolveHostname(addr_.hostname().c_str(), addr_.family(), &addresses_);
 }
 
 void AsyncResolver::OnWorkDone() {
   SignalDone(this);
 }
 
-const char* inet_ntop(int af, const void *src, char* dst, socklen_t size) {
+const char* inet_ntop(int af, const void* src, char* dst, socklen_t size) {
 #if defined(WEBRTC_WIN)
   return win32_inet_ntop(af, src, dst, size);
 #else
@@ -133,7 +133,7 @@ const char* inet_ntop(int af, const void *src, char* dst, socklen_t size) {
 #endif
 }
 
-int inet_pton(int af, const char* src, void *dst) {
+int inet_pton(int af, const char* src, void* dst) {
 #if defined(WEBRTC_WIN)
   return win32_inet_pton(af, src, dst);
 #else
@@ -182,8 +182,8 @@ bool HasIPv6Enabled() {
   do {
     protocols.reset(new char[protbuff_size]);
     protocol_infos = reinterpret_cast<LPWSAPROTOCOL_INFOW>(protocols.get());
-    ret = WSCEnumProtocols(requested_protocols, protocol_infos,
-                           &protbuff_size, &err);
+    ret = WSCEnumProtocols(requested_protocols, protocol_infos, &protbuff_size,
+                           &err);
   } while (ret == SOCKET_ERROR && err == WSAENOBUFS);
 
   if (ret == SOCKET_ERROR) {

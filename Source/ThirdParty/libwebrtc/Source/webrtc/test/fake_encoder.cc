@@ -116,8 +116,8 @@ int32_t FakeEncoder::Encode(const VideoFrame& input_image,
         (simulcast_streams[i].minBitrate * 1000) / framerate);
     size_t max_stream_bits = static_cast<size_t>(
         (simulcast_streams[i].maxBitrate * 1000) / framerate);
-    size_t stream_bits = (bits_available > max_stream_bits) ? max_stream_bits :
-        bits_available;
+    size_t stream_bits =
+        (bits_available > max_stream_bits) ? max_stream_bits : bits_available;
     size_t stream_bytes = (stream_bits + 7) / 8;
     if (keyframe) {
       // The first frame is a key frame and should be larger.
@@ -150,7 +150,7 @@ int32_t FakeEncoder::Encode(const VideoFrame& input_image,
     encoded._encodedWidth = simulcast_streams[i].width;
     encoded._encodedHeight = simulcast_streams[i].height;
     encoded.rotation_ = input_image.rotation();
-    encoded.content_type_ = (mode == kScreensharing)
+    encoded.content_type_ = (mode == VideoCodecMode::kScreensharing)
                                 ? VideoContentType::SCREENSHARE
                                 : VideoContentType::UNSPECIFIED;
     specifics.codec_name = ImplementationName();
@@ -172,14 +172,17 @@ int32_t FakeEncoder::RegisterEncodeCompleteCallback(
   return 0;
 }
 
-int32_t FakeEncoder::Release() { return 0; }
+int32_t FakeEncoder::Release() {
+  return 0;
+}
 
 int32_t FakeEncoder::SetChannelParameters(uint32_t packet_loss, int64_t rtt) {
   return 0;
 }
 
-int32_t FakeEncoder::SetRateAllocation(const BitrateAllocation& rate_allocation,
-                                       uint32_t framerate) {
+int32_t FakeEncoder::SetRateAllocation(
+    const VideoBitrateAllocation& rate_allocation,
+    uint32_t framerate) {
   rtc::CritScope cs(&crit_sect_);
   target_bitrate_ = rate_allocation;
   configured_input_framerate_ = framerate;

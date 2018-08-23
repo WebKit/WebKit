@@ -99,21 +99,6 @@ TEST(Decimator, NoLeakageFromUpperFrequencies) {
   }
 }
 
-// Verifies that the impact of low-frequency content is small during the
-// downsampling.
-TEST(Decimator, NoImpactOnLowerFrequencies) {
-  float input_power;
-  float output_power;
-  for (auto rate : {8000, 16000, 32000, 48000}) {
-    for (auto down_sampling_factor : kDownSamplingFactors) {
-      ProduceDebugText(rate);
-      ProduceDecimatedSinusoidalOutputPower(rate, down_sampling_factor, 200.f,
-                                            &input_power, &output_power);
-      EXPECT_LT(0.7f * input_power, output_power);
-    }
-  }
-}
-
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 // Verifies the check for the input size.
 TEST(Decimator, WrongInputSize) {

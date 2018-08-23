@@ -15,15 +15,14 @@
 #include <map>
 #include <memory>
 
+#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "api/audio_codecs/audio_encoder.h"
-#include "api/optional.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/audio_coding/neteq/neteq_decoder_enum.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/scoped_ref_ptr.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -107,28 +106,28 @@ class RentACodec {
     return static_cast<size_t>(CodecId::kNumCodecs);
   }
 
-  static inline rtc::Optional<int> CodecIndexFromId(CodecId codec_id) {
+  static inline absl::optional<int> CodecIndexFromId(CodecId codec_id) {
     const int i = static_cast<int>(codec_id);
     return i >= 0 && i < static_cast<int>(NumberOfCodecs())
-               ? rtc::Optional<int>(i)
-               : rtc::nullopt;
+               ? absl::optional<int>(i)
+               : absl::nullopt;
   }
 
-  static inline rtc::Optional<CodecId> CodecIdFromIndex(int codec_index) {
+  static inline absl::optional<CodecId> CodecIdFromIndex(int codec_index) {
     return static_cast<size_t>(codec_index) < NumberOfCodecs()
-               ? rtc::Optional<RentACodec::CodecId>(
+               ? absl::optional<RentACodec::CodecId>(
                      static_cast<RentACodec::CodecId>(codec_index))
-               : rtc::nullopt;
+               : absl::nullopt;
   }
 
-  static rtc::Optional<CodecId> CodecIdByParams(const char* payload_name,
-                                                int sampling_freq_hz,
-                                                size_t channels);
-  static rtc::Optional<CodecInst> CodecInstById(CodecId codec_id);
-  static rtc::Optional<CodecId> CodecIdByInst(const CodecInst& codec_inst);
-  static rtc::Optional<CodecInst> CodecInstByParams(const char* payload_name,
-                                                    int sampling_freq_hz,
-                                                    size_t channels);
+  static absl::optional<CodecId> CodecIdByParams(const char* payload_name,
+                                                 int sampling_freq_hz,
+                                                 size_t channels);
+  static absl::optional<CodecInst> CodecInstById(CodecId codec_id);
+  static absl::optional<CodecId> CodecIdByInst(const CodecInst& codec_inst);
+  static absl::optional<CodecInst> CodecInstByParams(const char* payload_name,
+                                                     int sampling_freq_hz,
+                                                     size_t channels);
   static bool IsCodecValid(const CodecInst& codec_inst);
 
   static inline bool IsPayloadTypeValid(int payload_type) {
@@ -137,10 +136,10 @@ class RentACodec {
 
   static rtc::ArrayView<const CodecInst> Database();
 
-  static rtc::Optional<bool> IsSupportedNumChannels(CodecId codec_id,
-                                                    size_t num_channels);
+  static absl::optional<bool> IsSupportedNumChannels(CodecId codec_id,
+                                                     size_t num_channels);
 
-  static rtc::Optional<NetEqDecoder> NetEqDecoderFromCodecId(
+  static absl::optional<NetEqDecoder> NetEqDecoderFromCodecId(
       CodecId codec_id,
       size_t num_channels);
 

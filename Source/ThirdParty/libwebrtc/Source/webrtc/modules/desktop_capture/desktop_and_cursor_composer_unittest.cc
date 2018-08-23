@@ -11,8 +11,8 @@
 #include <memory>
 
 #include "modules/desktop_capture/desktop_and_cursor_composer.h"
-#include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
+#include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/mouse_cursor.h"
 #include "modules/desktop_capture/shared_desktop_frame.h"
@@ -30,9 +30,15 @@ const int kCursorHeight = 10;
 
 const int kTestCursorSize = 3;
 const uint32_t kTestCursorData[kTestCursorSize][kTestCursorSize] = {
-  { 0xffffffff, 0x99990000, 0xaa222222, },
-  { 0x88008800, 0xaa0000aa, 0xaa333333, },
-  { 0x00000000, 0xaa0000aa, 0xaa333333, },
+    {
+        0xffffffff, 0x99990000, 0xaa222222,
+    },
+    {
+        0x88008800, 0xaa0000aa, 0xaa333333,
+    },
+    {
+        0x00000000, 0xaa0000aa, 0xaa333333,
+    },
 };
 
 uint32_t GetFakeFramePixelValue(const DesktopVector& p) {
@@ -131,7 +137,6 @@ class FakeMouseMonitor : public MouseCursorMonitor {
       callback_->OnMouseCursor(new MouseCursor(image.release(), hotspot_));
     }
 
-    callback_->OnMouseCursorPosition(state_, position_);
     callback_->OnMouseCursorPosition(position_);
   }
 
@@ -167,16 +172,13 @@ void VerifyFrame(const DesktopFrame& frame,
 
 }  // namespace
 
-template <bool use_desktop_relative_cursor_position>
 class DesktopAndCursorComposerTest : public testing::Test,
                                      public DesktopCapturer::Callback {
  public:
   DesktopAndCursorComposerTest()
       : fake_screen_(new FakeScreenCapturer()),
         fake_cursor_(new FakeMouseMonitor()),
-        blender_(fake_screen_,
-                 fake_cursor_,
-                 use_desktop_relative_cursor_position) {
+        blender_(fake_screen_, fake_cursor_) {
     blender_.Start(this);
   }
 
@@ -195,40 +197,17 @@ class DesktopAndCursorComposerTest : public testing::Test,
   std::unique_ptr<DesktopFrame> frame_;
 };
 
-using DesktopAndCursorComposerWithRelativePositionTest =
-    DesktopAndCursorComposerTest<false>;
-
-// Verify DesktopAndCursorComposer can handle the case when the screen capturer
-// fails.
-TEST_F(DesktopAndCursorComposerWithRelativePositionTest, Error) {
-  fake_cursor_->SetHotspot(DesktopVector());
-  fake_cursor_->SetState(MouseCursorMonitor::INSIDE, DesktopVector());
-  fake_screen_->SetNextFrame(nullptr);
-
-  blender_.CaptureFrame();
-
-  EXPECT_FALSE(frame_);
-}
-
-TEST_F(DesktopAndCursorComposerWithRelativePositionTest, Blend) {
+TEST_F(DesktopAndCursorComposerTest, CursorShouldBeIgnoredIfNoFrameCaptured) {
   struct {
     int x, y;
     int hotspot_x, hotspot_y;
     bool inside;
   } tests[] = {
-    {0, 0, 0, 0, true},
-    {50, 50, 0, 0, true},
-    {100, 50, 0, 0, true},
-    {50, 100, 0, 0, true},
-    {100, 100, 0, 0, true},
-    {0, 0, 2, 5, true},
-    {1, 1, 2, 5, true},
-    {50, 50, 2, 5, true},
-    {100, 100, 2, 5, true},
-    {0, 0, 5, 2, true},
-    {50, 50, 5, 2, true},
-    {100, 100, 5, 2, true},
-    {0, 0, 0, 0, false},
+      {0, 0, 0, 0, true},    {50, 50, 0, 0, true},   {100, 50, 0, 0, true},
+      {50, 100, 0, 0, true}, {100, 100, 0, 0, true}, {0, 0, 2, 5, true},
+      {1, 1, 2, 5, true},    {50, 50, 2, 5, true},   {100, 100, 2, 5, true},
+      {0, 0, 5, 2, true},    {50, 50, 5, 2, true},   {100, 100, 5, 2, true},
+      {0, 0, 0, 0, false},
   };
 
   for (size_t i = 0; i < arraysize(tests); i++) {
@@ -245,23 +224,15 @@ TEST_F(DesktopAndCursorComposerWithRelativePositionTest, Blend) {
 
     std::unique_ptr<SharedDesktopFrame> frame(
         SharedDesktopFrame::Wrap(CreateTestFrame()));
-    fake_screen_->SetNextFrame(frame->Share());
 
     blender_.CaptureFrame();
-
-    VerifyFrame(*frame_, state, pos);
-
-    // Verify that the cursor is erased before the frame buffer is returned to
-    // the screen capturer.
-    frame_.reset();
-    VerifyFrame(*frame, MouseCursorMonitor::OUTSIDE, DesktopVector());
+    // If capturer captured nothing, then cursor should be ignored, not matter
+    // its state or position.
+    EXPECT_EQ(frame_, nullptr);
   }
 }
 
-using DesktopAndCursorComposerWithAbsolutePositionTest =
-    DesktopAndCursorComposerTest<true>;
-
-TEST_F(DesktopAndCursorComposerWithAbsolutePositionTest,
+TEST_F(DesktopAndCursorComposerTest,
        CursorShouldBeIgnoredIfItIsOutOfDesktopFrame) {
   std::unique_ptr<SharedDesktopFrame> frame(
       SharedDesktopFrame::Wrap(CreateTestFrame()));
@@ -272,19 +243,9 @@ TEST_F(DesktopAndCursorComposerWithAbsolutePositionTest,
     int x;
     int y;
   } tests[] = {
-    { 0, 0 },
-    { 50, 50 },
-    { 50, 150 },
-    { 100, 150 },
-    { 50, 200 },
-    { 99, 200 },
-    { 100, 199 },
-    { 200, 300 },
-    { 200, 299 },
-    { 199, 300 },
-    { -1, -1 },
-    { -10000, -10000 },
-    { 10000, 10000 },
+      {0, 0},    {50, 50},         {50, 150},      {100, 150}, {50, 200},
+      {99, 200}, {100, 199},       {200, 300},     {200, 299}, {199, 300},
+      {-1, -1},  {-10000, -10000}, {10000, 10000},
   };
   for (size_t i = 0; i < arraysize(tests); i++) {
     SCOPED_TRACE(i);
@@ -298,8 +259,7 @@ TEST_F(DesktopAndCursorComposerWithAbsolutePositionTest,
   }
 }
 
-TEST_F(DesktopAndCursorComposerWithAbsolutePositionTest,
-       IsOccludedShouldBeConsidered) {
+TEST_F(DesktopAndCursorComposerTest, IsOccludedShouldBeConsidered) {
   std::unique_ptr<SharedDesktopFrame> frame(
       SharedDesktopFrame::Wrap(CreateTestFrame()));
   frame->set_top_left(DesktopVector(100, 200));
@@ -309,12 +269,7 @@ TEST_F(DesktopAndCursorComposerWithAbsolutePositionTest,
     int x;
     int y;
   } tests[] = {
-    { 100, 200 },
-    { 101, 200 },
-    { 100, 201 },
-    { 101, 201 },
-    { 150, 250 },
-    { 199, 299 },
+      {100, 200}, {101, 200}, {100, 201}, {101, 201}, {150, 250}, {199, 299},
   };
   fake_screen_->set_is_occluded(true);
   for (size_t i = 0; i < arraysize(tests); i++) {
@@ -329,7 +284,7 @@ TEST_F(DesktopAndCursorComposerWithAbsolutePositionTest,
   }
 }
 
-TEST_F(DesktopAndCursorComposerWithAbsolutePositionTest, CursorIncluded) {
+TEST_F(DesktopAndCursorComposerTest, CursorIncluded) {
   std::unique_ptr<SharedDesktopFrame> frame(
       SharedDesktopFrame::Wrap(CreateTestFrame()));
   frame->set_top_left(DesktopVector(100, 200));
@@ -339,12 +294,7 @@ TEST_F(DesktopAndCursorComposerWithAbsolutePositionTest, CursorIncluded) {
     int x;
     int y;
   } tests[] = {
-    { 100, 200 },
-    { 101, 200 },
-    { 100, 201 },
-    { 101, 201 },
-    { 150, 250 },
-    { 199, 299 },
+      {100, 200}, {101, 200}, {100, 201}, {101, 201}, {150, 250}, {199, 299},
   };
   for (size_t i = 0; i < arraysize(tests); i++) {
     SCOPED_TRACE(i);

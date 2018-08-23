@@ -33,16 +33,11 @@ class MockExpand : public Expand {
                num_channels) {}
   virtual ~MockExpand() { Die(); }
   MOCK_METHOD0(Die, void());
-  MOCK_METHOD0(Reset,
-      void());
-  MOCK_METHOD1(Process,
-      int(AudioMultiVector* output));
-  MOCK_METHOD0(SetParametersForNormalAfterExpand,
-      void());
-  MOCK_METHOD0(SetParametersForMergeAfterExpand,
-      void());
-  MOCK_CONST_METHOD0(overlap_length,
-      size_t());
+  MOCK_METHOD0(Reset, void());
+  MOCK_METHOD1(Process, int(AudioMultiVector* output));
+  MOCK_METHOD0(SetParametersForNormalAfterExpand, void());
+  MOCK_METHOD0(SetParametersForMergeAfterExpand, void());
+  MOCK_CONST_METHOD0(overlap_length, size_t());
 };
 
 }  // namespace webrtc

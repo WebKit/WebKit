@@ -78,8 +78,9 @@ class NativeRegistration : public JavaClass {
   NativeRegistration(JNIEnv* jni, jclass clazz);
   ~NativeRegistration();
 
-  std::unique_ptr<GlobalRef> NewObject(
-      const char* name, const char* signature, ...);
+  std::unique_ptr<GlobalRef> NewObject(const char* name,
+                                       const char* signature,
+                                       ...);
 
  private:
   JNIEnv* const jni_;
@@ -99,7 +100,9 @@ class JNIEnvironment {
   // |loaded_classes| array defined in jvm_android.cc.
   // This method must be called on the construction thread.
   std::unique_ptr<NativeRegistration> RegisterNatives(
-      const char* name, const JNINativeMethod *methods, int num_methods);
+      const char* name,
+      const JNINativeMethod* methods,
+      int num_methods);
 
   // Converts from Java string to std::string.
   // This method must be called on the construction thread.

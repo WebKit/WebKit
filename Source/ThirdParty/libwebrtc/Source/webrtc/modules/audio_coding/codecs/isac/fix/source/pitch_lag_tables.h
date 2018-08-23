@@ -11,16 +11,18 @@
 /*
  * pitch_lag_tables.h
  *
- * This file contains tables for the pitch filter side-info in the entropy coder.
+ * This file contains tables for the pitch filter side-info in the entropy
+ * coder.
  *
  */
 
 #ifndef MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_PITCH_LAG_TABLES_H_
 #define MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_PITCH_LAG_TABLES_H_
 
-#include "typedefs.h"  // NOLINT(build/include)
+#include <stdint.h>
 
-/********************* Pitch Filter Lag Coefficient Tables ************************/
+/********************* Pitch Filter Lag Coefficient Tables
+ * ************************/
 
 /* tables for use with small pitch gain */
 
@@ -30,7 +32,7 @@ extern const uint16_t WebRtcIsacfix_kPitchLagCdf2Lo[20];
 extern const uint16_t WebRtcIsacfix_kPitchLagCdf3Lo[2];
 extern const uint16_t WebRtcIsacfix_kPitchLagCdf4Lo[10];
 
-extern const uint16_t *WebRtcIsacfix_kPitchLagPtrLo[4];
+extern const uint16_t* WebRtcIsacfix_kPitchLagPtrLo[4];
 
 /* size of first cdf table */
 extern const uint16_t WebRtcIsacfix_kPitchLagSizeLo[1];
@@ -46,8 +48,6 @@ extern const uint16_t WebRtcIsacfix_kInitIndLo[3];
 extern const int16_t WebRtcIsacfix_kMeanLag2Lo[19];
 extern const int16_t WebRtcIsacfix_kMeanLag4Lo[9];
 
-
-
 /* tables for use with medium pitch gain */
 
 /* cdfs for quantized pitch lags */
@@ -56,7 +56,7 @@ extern const uint16_t WebRtcIsacfix_kPitchLagCdf2Mid[36];
 extern const uint16_t WebRtcIsacfix_kPitchLagCdf3Mid[2];
 extern const uint16_t WebRtcIsacfix_kPitchLagCdf4Mid[20];
 
-extern const uint16_t *WebRtcIsacfix_kPitchLagPtrMid[4];
+extern const uint16_t* WebRtcIsacfix_kPitchLagPtrMid[4];
 
 /* size of first cdf table */
 extern const uint16_t WebRtcIsacfix_kPitchLagSizeMid[1];
@@ -72,7 +72,6 @@ extern const uint16_t WebRtcIsacfix_kInitIndMid[3];
 extern const int16_t WebRtcIsacfix_kMeanLag2Mid[35];
 extern const int16_t WebRtcIsacfix_kMeanLag4Mid[19];
 
-
 /* tables for use with large pitch gain */
 
 /* cdfs for quantized pitch lags */
@@ -81,7 +80,7 @@ extern const uint16_t WebRtcIsacfix_kPitchLagCdf2Hi[68];
 extern const uint16_t WebRtcIsacfix_kPitchLagCdf3Hi[2];
 extern const uint16_t WebRtcIsacfix_kPitchLagCdf4Hi[35];
 
-extern const uint16_t *WebRtcIsacfix_kPitchLagPtrHi[4];
+extern const uint16_t* WebRtcIsacfix_kPitchLagPtrHi[4];
 
 /* size of first cdf table */
 extern const uint16_t WebRtcIsacfix_kPitchLagSizeHi[1];
@@ -96,6 +95,5 @@ extern const uint16_t WebRtcIsacfix_kInitIndHi[3];
 /* mean values of pitch filter lags */
 extern const int16_t WebRtcIsacfix_kMeanLag2Hi[67];
 extern const int16_t WebRtcIsacfix_kMeanLag4Hi[34];
-
 
 #endif /* MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_PITCH_LAG_TABLES_H_ */

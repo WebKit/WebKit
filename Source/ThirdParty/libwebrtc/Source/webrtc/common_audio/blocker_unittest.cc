@@ -71,11 +71,8 @@ class BlockerTest : public ::testing::Test {
     size_t end = chunk_size - 1;
     while (end < num_frames) {
       CopyTo(input_chunk, 0, start, num_input_channels, chunk_size, input);
-      blocker->ProcessChunk(input_chunk,
-                            chunk_size,
-                            num_input_channels,
-                            num_output_channels,
-                            output_chunk);
+      blocker->ProcessChunk(input_chunk, chunk_size, num_input_channels,
+                            num_output_channels, output_chunk);
       CopyTo(output, start, 0, num_output_channels, chunk_size, output_chunk);
 
       start += chunk_size;
@@ -116,8 +113,7 @@ class BlockerTest : public ::testing::Test {
                      size_t num_frames,
                      const float* const* src) {
     for (size_t i = 0; i < num_channels; ++i) {
-      memcpy(&dst[i][start_index_dst],
-             &src[i][start_index_src],
+      memcpy(&dst[i][start_index_dst], &src[i][start_index_src],
              num_frames * sizeof(float));
     }
   }
@@ -152,27 +148,15 @@ TEST_F(BlockerTest, TestBlockerMutuallyPrimeChunkandBlockSize) {
   ChannelBuffer<float> output_chunk_cb(kChunkSize, kNumOutputChannels);
 
   PlusThreeBlockerCallback callback;
-  Blocker blocker(kChunkSize,
-                  kBlockSize,
-                  kNumInputChannels,
-                  kNumOutputChannels,
-                  kWindow,
-                  kShiftAmount,
-                  &callback);
+  Blocker blocker(kChunkSize, kBlockSize, kNumInputChannels, kNumOutputChannels,
+                  kWindow, kShiftAmount, &callback);
 
-  RunTest(&blocker,
-          kChunkSize,
-          kNumFrames,
-          input_cb.channels(),
-          input_chunk_cb.channels(),
-          actual_output_cb.channels(),
-          output_chunk_cb.channels(),
-          kNumInputChannels,
-          kNumOutputChannels);
+  RunTest(&blocker, kChunkSize, kNumFrames, input_cb.channels(),
+          input_chunk_cb.channels(), actual_output_cb.channels(),
+          output_chunk_cb.channels(), kNumInputChannels, kNumOutputChannels);
 
   ValidateSignalEquality(expected_output_cb.channels(),
-                         actual_output_cb.channels(),
-                         kNumOutputChannels,
+                         actual_output_cb.channels(), kNumOutputChannels,
                          kNumFrames);
 }
 
@@ -205,27 +189,15 @@ TEST_F(BlockerTest, TestBlockerMutuallyPrimeShiftAndBlockSize) {
   ChannelBuffer<float> output_chunk_cb(kChunkSize, kNumOutputChannels);
 
   PlusThreeBlockerCallback callback;
-  Blocker blocker(kChunkSize,
-                  kBlockSize,
-                  kNumInputChannels,
-                  kNumOutputChannels,
-                  kWindow,
-                  kShiftAmount,
-                  &callback);
+  Blocker blocker(kChunkSize, kBlockSize, kNumInputChannels, kNumOutputChannels,
+                  kWindow, kShiftAmount, &callback);
 
-  RunTest(&blocker,
-          kChunkSize,
-          kNumFrames,
-          input_cb.channels(),
-          input_chunk_cb.channels(),
-          actual_output_cb.channels(),
-          output_chunk_cb.channels(),
-          kNumInputChannels,
-          kNumOutputChannels);
+  RunTest(&blocker, kChunkSize, kNumFrames, input_cb.channels(),
+          input_chunk_cb.channels(), actual_output_cb.channels(),
+          output_chunk_cb.channels(), kNumInputChannels, kNumOutputChannels);
 
   ValidateSignalEquality(expected_output_cb.channels(),
-                         actual_output_cb.channels(),
-                         kNumOutputChannels,
+                         actual_output_cb.channels(), kNumOutputChannels,
                          kNumFrames);
 }
 
@@ -258,27 +230,15 @@ TEST_F(BlockerTest, TestBlockerNoOverlap) {
   ChannelBuffer<float> output_chunk_cb(kChunkSize, kNumOutputChannels);
 
   PlusThreeBlockerCallback callback;
-  Blocker blocker(kChunkSize,
-                  kBlockSize,
-                  kNumInputChannels,
-                  kNumOutputChannels,
-                  kWindow,
-                  kShiftAmount,
-                  &callback);
+  Blocker blocker(kChunkSize, kBlockSize, kNumInputChannels, kNumOutputChannels,
+                  kWindow, kShiftAmount, &callback);
 
-  RunTest(&blocker,
-          kChunkSize,
-          kNumFrames,
-          input_cb.channels(),
-          input_chunk_cb.channels(),
-          actual_output_cb.channels(),
-          output_chunk_cb.channels(),
-          kNumInputChannels,
-          kNumOutputChannels);
+  RunTest(&blocker, kChunkSize, kNumFrames, input_cb.channels(),
+          input_chunk_cb.channels(), actual_output_cb.channels(),
+          output_chunk_cb.channels(), kNumInputChannels, kNumOutputChannels);
 
   ValidateSignalEquality(expected_output_cb.channels(),
-                         actual_output_cb.channels(),
-                         kNumOutputChannels,
+                         actual_output_cb.channels(), kNumOutputChannels,
                          kNumFrames);
 }
 
@@ -286,14 +246,14 @@ TEST_F(BlockerTest, InitialDelaysAreMinimum) {
   const size_t kNumInputChannels = 3;
   const size_t kNumOutputChannels = 2;
   const size_t kNumFrames = 1280;
-  const size_t kChunkSize[] =
-      {80, 80, 80, 80, 80, 80, 160, 160, 160, 160, 160, 160};
-  const size_t kBlockSize[] =
-      {64, 64, 64, 128, 128, 128, 128, 128, 128, 256, 256, 256};
-  const size_t kShiftAmount[] =
-      {16, 32, 64, 32, 64, 128, 32, 64, 128, 64, 128, 256};
-  const size_t kInitialDelay[] =
-      {48, 48, 48, 112, 112, 112, 96, 96, 96, 224, 224, 224};
+  const size_t kChunkSize[] = {80,  80,  80,  80,  80,  80,
+                               160, 160, 160, 160, 160, 160};
+  const size_t kBlockSize[] = {64,  64,  64,  128, 128, 128,
+                               128, 128, 128, 256, 256, 256};
+  const size_t kShiftAmount[] = {16, 32, 64,  32, 64,  128,
+                                 32, 64, 128, 64, 128, 256};
+  const size_t kInitialDelay[] = {48, 48, 48, 112, 112, 112,
+                                  96, 96, 96, 224, 224, 224};
 
   float input[kNumInputChannels][kNumFrames];
   for (size_t i = 0; i < kNumInputChannels; ++i) {
@@ -317,27 +277,15 @@ TEST_F(BlockerTest, InitialDelaysAreMinimum) {
     ChannelBuffer<float> input_chunk_cb(kChunkSize[i], kNumInputChannels);
     ChannelBuffer<float> output_chunk_cb(kChunkSize[i], kNumOutputChannels);
 
-    Blocker blocker(kChunkSize[i],
-                    kBlockSize[i],
-                    kNumInputChannels,
-                    kNumOutputChannels,
-                    window.get(),
-                    kShiftAmount[i],
+    Blocker blocker(kChunkSize[i], kBlockSize[i], kNumInputChannels,
+                    kNumOutputChannels, window.get(), kShiftAmount[i],
                     &callback);
 
-    RunTest(&blocker,
-            kChunkSize[i],
-            kNumFrames,
-            input_cb.channels(),
-            input_chunk_cb.channels(),
-            output_cb.channels(),
-            output_chunk_cb.channels(),
-            kNumInputChannels,
-            kNumOutputChannels);
+    RunTest(&blocker, kChunkSize[i], kNumFrames, input_cb.channels(),
+            input_chunk_cb.channels(), output_cb.channels(),
+            output_chunk_cb.channels(), kNumInputChannels, kNumOutputChannels);
 
-    ValidateInitialDelay(output_cb.channels(),
-                         kNumOutputChannels,
-                         kNumFrames,
+    ValidateInitialDelay(output_cb.channels(), kNumOutputChannels, kNumFrames,
                          kInitialDelay[i]);
   }
 }

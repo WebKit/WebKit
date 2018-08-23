@@ -21,8 +21,6 @@ rtc_static_library("ortc") {
     "ortcrtpreceiveradapter.h",
     "ortcrtpsenderadapter.cc",
     "ortcrtpsenderadapter.h",
-    "rtpparametersconversion.cc",
-    "rtpparametersconversion.h",
     "rtptransportadapter.cc",
     "rtptransportadapter.h",
     "rtptransportcontrolleradapter.cc",
@@ -34,11 +32,13 @@ rtc_static_library("ortc") {
   # libjingle_peerconnection.
   deps = [
     "../api:libjingle_peerconnection_api",
-    "../api:optional",
     "../api:ortc_api",
+    "../api/video_codecs:builtin_video_decoder_factory",
+    "../api/video_codecs:builtin_video_encoder_factory",
     "../call:call_interfaces",
     "../call:rtp_sender",
     "../logging:rtc_event_log_api",
+    "../logging:rtc_event_log_impl_base",
     "../media:rtc_audio_video",
     "../media:rtc_media",
     "../media:rtc_media_base",
@@ -51,6 +51,9 @@ rtc_static_library("ortc") {
     "../rtc_base:checks",
     "../rtc_base:rtc_base",
     "../rtc_base:rtc_base_approved",
+    "../rtc_base/third_party/sigslot",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 
   if (!build_with_chromium && is_clang) {
@@ -68,7 +71,6 @@ if (rtc_include_tests) {
       "ortcfactory_unittest.cc",
       "ortcrtpreceiver_unittest.cc",
       "ortcrtpsender_unittest.cc",
-      "rtpparametersconversion_unittest.cc",
       "rtptransport_unittest.cc",
       "rtptransportcontroller_unittest.cc",
       "srtptransport_unittest.cc",
@@ -86,10 +88,12 @@ if (rtc_include_tests) {
       "../p2p:p2p_test_utils",
       "../p2p:rtc_p2p",
       "../pc:pc_test_utils",
+      "../pc:peerconnection",
       "../rtc_base:rtc_base",
       "../rtc_base:rtc_base_approved",
       "../rtc_base:rtc_base_tests_main",
       "../rtc_base:rtc_base_tests_utils",
+      "../rtc_base/system:arch",
       "../system_wrappers:metrics_default",
       "../system_wrappers:runtime_enabled_features_default",
     ]

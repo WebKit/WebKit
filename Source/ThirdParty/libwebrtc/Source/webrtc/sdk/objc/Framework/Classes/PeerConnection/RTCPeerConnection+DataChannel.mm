@@ -27,7 +27,7 @@
   if (!dataChannel) {
     return nil;
   }
-  return [[RTCDataChannel alloc] initWithNativeDataChannel:dataChannel];
+  return [[RTCDataChannel alloc] initWithFactory:self.factory nativeDataChannel:dataChannel];
 }
 
 @end

@@ -51,12 +51,10 @@ void RunBitexactnessTest(int sample_rate,
       (stream_config.num_frames() * stream_config.num_channels());
   for (size_t frame_no = 0; frame_no < num_frames_to_process; ++frame_no) {
     std::vector<float> frame_input(
-        input.begin() +
-            stream_config.num_frames() * stream_config.num_channels() *
-                frame_no,
-        input.begin() +
-            stream_config.num_frames() * stream_config.num_channels() *
-                (frame_no + 1));
+        input.begin() + stream_config.num_frames() *
+                            stream_config.num_channels() * frame_no,
+        input.begin() + stream_config.num_frames() *
+                            stream_config.num_channels() * (frame_no + 1));
 
     output = ProcessOneFrame(frame_input, stream_config, &low_cut_filter);
   }

@@ -32,7 +32,7 @@ class BaseBitrateAdjuster implements BitrateAdjuster {
   }
 
   @Override
-  public int getAdjustedFramerate() {
+  public int getCodecConfigFramerate() {
     return targetFps;
   }
 }

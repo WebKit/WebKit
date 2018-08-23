@@ -16,21 +16,24 @@
 
 ******************************************************************/
 
-#include "defines.h"
-#include "simple_lsf_dequant.h"
-#include "decoder_interpolate_lsf.h"
-#include "index_conv_dec.h"
-#include "do_plc.h"
-#include "constants.h"
-#include "enhancer_interface.h"
-#include "xcorr_coef.h"
-#include "lsf_check.h"
-#include "decode_residual.h"
-#include "unpack_bits.h"
-#include "hp_output.h"
-#include "init_decode.h"
+// Defines WEBRTC_ARCH_BIG_ENDIAN, used below.
+#include "rtc_base/system/arch.h"
+
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/simple_lsf_dequant.h"
+#include "modules/audio_coding/codecs/ilbc/decoder_interpolate_lsf.h"
+#include "modules/audio_coding/codecs/ilbc/index_conv_dec.h"
+#include "modules/audio_coding/codecs/ilbc/do_plc.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
+#include "modules/audio_coding/codecs/ilbc/enhancer_interface.h"
+#include "modules/audio_coding/codecs/ilbc/xcorr_coef.h"
+#include "modules/audio_coding/codecs/ilbc/lsf_check.h"
+#include "modules/audio_coding/codecs/ilbc/decode_residual.h"
+#include "modules/audio_coding/codecs/ilbc/unpack_bits.h"
+#include "modules/audio_coding/codecs/ilbc/hp_output.h"
+#include "modules/audio_coding/codecs/ilbc/init_decode.h"
 #ifndef WEBRTC_ARCH_BIG_ENDIAN
-#include "swap_bytes.h"
+#include "modules/audio_coding/codecs/ilbc/swap_bytes.h"
 #endif
 
 /*----------------------------------------------------------------*

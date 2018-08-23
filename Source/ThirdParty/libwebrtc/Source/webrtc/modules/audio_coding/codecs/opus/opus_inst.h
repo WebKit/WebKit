@@ -32,5 +32,4 @@ struct WebRtcOpusDecInst {
   int in_dtx_mode;
 };
 
-
 #endif  // MODULES_AUDIO_CODING_CODECS_OPUS_OPUS_INST_H_

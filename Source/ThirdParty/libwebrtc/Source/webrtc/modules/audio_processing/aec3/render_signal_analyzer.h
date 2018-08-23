@@ -14,7 +14,8 @@
 #include <array>
 #include <memory>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
+#include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/render_buffer.h"
 #include "rtc_base/constructormagic.h"
@@ -24,12 +25,12 @@ namespace webrtc {
 // Provides functionality for analyzing the properties of the render signal.
 class RenderSignalAnalyzer {
  public:
-  RenderSignalAnalyzer();
+  explicit RenderSignalAnalyzer(const EchoCanceller3Config& config);
   ~RenderSignalAnalyzer();
 
   // Updates the render signal analysis with the most recent render signal.
   void Update(const RenderBuffer& render_buffer,
-              const rtc::Optional<size_t>& delay_partitions);
+              const absl::optional<size_t>& delay_partitions);
 
   // Returns true if the render signal is poorly exciting.
   bool PoorSignalExcitation() const {
@@ -43,11 +44,12 @@ class RenderSignalAnalyzer {
   void MaskRegionsAroundNarrowBands(
       std::array<float, kFftLengthBy2Plus1>* v) const;
 
-  rtc::Optional<int> NarrowPeakBand() const { return narrow_peak_band_; }
+  absl::optional<int> NarrowPeakBand() const { return narrow_peak_band_; }
 
  private:
+  const int strong_peak_freeze_duration_;
   std::array<size_t, kFftLengthBy2 - 1> narrow_band_counters_;
-  rtc::Optional<int> narrow_peak_band_;
+  absl::optional<int> narrow_peak_band_;
   size_t narrow_peak_counter_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(RenderSignalAnalyzer);

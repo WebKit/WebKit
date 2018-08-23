@@ -1,12 +1,12 @@
 /*
-*  Copyright (c) 2013 The WebRTC project authors. All Rights Reserved.
-*
-*  Use of this source code is governed by a BSD-style license
-*  that can be found in the LICENSE file in the root of the source
-*  tree. An additional intellectual property rights grant can be found
-*  in the file PATENTS.  All contributing project authors may
-*  be found in the AUTHORS file in the root of the source tree.
-*/
+ *  Copyright (c) 2013 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
 
 #include <algorithm>
 #include <iterator>
@@ -62,9 +62,7 @@ class RtxLoopBackTransport : public webrtc::Transport {
         count_rtx_ssrc_(0),
         module_(NULL) {}
 
-  void SetSendModule(RtpRtcp* rtpRtcpModule) {
-    module_ = rtpRtcpModule;
-  }
+  void SetSendModule(RtpRtcp* rtpRtcpModule) { module_ = rtpRtcpModule; }
 
   void DropEveryNthPacket(int n) { packet_loss_ = n; }
 
@@ -120,13 +118,11 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
   RtpRtcpRtxNackTest()
       : rtp_rtcp_module_(nullptr),
         transport_(kTestRtxSsrc),
-        rtx_stream_(&media_stream_,
-                    rtx_associated_payload_types_,
-                    kTestSsrc),
+        rtx_stream_(&media_stream_, rtx_associated_payload_types_, kTestSsrc),
         payload_data_length(sizeof(payload_data)),
         fake_clock(123456),
         retransmission_rate_limiter_(&fake_clock, kMaxRttMs) {}
-  ~RtpRtcpRtxNackTest() {}
+  ~RtpRtcpRtxNackTest() override {}
 
   void SetUp() override {
     RtpRtcp::Configuration configuration;
@@ -206,9 +202,10 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
     uint32_t timestamp = 3000;
     uint16_t nack_list[kVideoNackListSize];
     for (int frame = 0; frame < kNumFrames; ++frame) {
+      RTPVideoHeader video_header;
       EXPECT_TRUE(rtp_rtcp_module_->SendOutgoingData(
           webrtc::kVideoFrameDelta, kPayloadType, timestamp, timestamp / 90,
-          payload_data, payload_data_length, nullptr, nullptr, nullptr));
+          payload_data, payload_data_length, nullptr, &video_header, nullptr));
       // Min required delay until retransmit = 5 + RTT ms (RTT = 0).
       fake_clock.AdvanceTimeMilliseconds(5);
       int length = BuildNackList(nack_list);
@@ -227,8 +224,8 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
   std::unique_ptr<ReceiveStatistics> receive_statistics_;
   RtpRtcp* rtp_rtcp_module_;
   RtxLoopBackTransport transport_;
-  const std::map<int, int> rtx_associated_payload_types_ =
-      {{kRtxPayloadType, kPayloadType}};
+  const std::map<int, int> rtx_associated_payload_types_ = {
+      {kRtxPayloadType, kPayloadType}};
   VerifyingMediaStream media_stream_;
   RtxReceiveStream rtx_stream_;
   uint8_t payload_data[65000];
@@ -254,9 +251,10 @@ TEST_F(RtpRtcpRtxNackTest, LongNackList) {
   // Send 30 frames which at the default size is roughly what we need to get
   // enough packets.
   for (int frame = 0; frame < kNumFrames; ++frame) {
+    RTPVideoHeader video_header;
     EXPECT_TRUE(rtp_rtcp_module_->SendOutgoingData(
         webrtc::kVideoFrameDelta, kPayloadType, timestamp, timestamp / 90,
-        payload_data, payload_data_length, nullptr, nullptr, nullptr));
+        payload_data, payload_data_length, nullptr, &video_header, nullptr));
     // Prepare next frame.
     timestamp += 3000;
     fake_clock.AdvanceTimeMilliseconds(33);

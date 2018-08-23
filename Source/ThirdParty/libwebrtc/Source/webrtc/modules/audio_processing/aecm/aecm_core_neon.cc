@@ -77,12 +77,12 @@ void WebRtcAecm_CalcLinearEnergiesNeon(AecmCore* aecm,
     echo_stored_v = vaddq_u32(echo_est_v_low, echo_stored_v);
     echo_stored_v = vaddq_u32(echo_est_v_high, echo_stored_v);
 
-    echo_adapt_v = vmlal_u16(echo_adapt_v,
-                             vreinterpret_u16_s16(vget_low_s16(adapt_v)),
-                             vget_low_u16(spectrum_v));
-    echo_adapt_v = vmlal_u16(echo_adapt_v,
-                             vreinterpret_u16_s16(vget_high_s16(adapt_v)),
-                             vget_high_u16(spectrum_v));
+    echo_adapt_v =
+        vmlal_u16(echo_adapt_v, vreinterpret_u16_s16(vget_low_s16(adapt_v)),
+                  vget_low_u16(spectrum_v));
+    echo_adapt_v =
+        vmlal_u16(echo_adapt_v, vreinterpret_u16_s16(vget_high_s16(adapt_v)),
+                  vget_high_u16(spectrum_v));
 
     start_stored_p += 8;
     start_adapt_p += 8;

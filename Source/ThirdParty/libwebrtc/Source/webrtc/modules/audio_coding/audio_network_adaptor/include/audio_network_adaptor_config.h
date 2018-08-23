@@ -11,7 +11,7 @@
 #ifndef MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_INCLUDE_AUDIO_NETWORK_ADAPTOR_CONFIG_H_
 #define MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_INCLUDE_AUDIO_NETWORK_ADAPTOR_CONFIG_H_
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
 
 namespace webrtc {
 
@@ -21,18 +21,18 @@ struct AudioEncoderRuntimeConfig {
   ~AudioEncoderRuntimeConfig();
   AudioEncoderRuntimeConfig& operator=(const AudioEncoderRuntimeConfig& other);
   bool operator==(const AudioEncoderRuntimeConfig& other) const;
-  rtc::Optional<int> bitrate_bps;
-  rtc::Optional<int> frame_length_ms;
+  absl::optional<int> bitrate_bps;
+  absl::optional<int> frame_length_ms;
   // Note: This is what we tell the encoder. It doesn't have to reflect
   // the actual NetworkMetrics; it's subject to our decision.
-  rtc::Optional<float> uplink_packet_loss_fraction;
-  rtc::Optional<bool> enable_fec;
-  rtc::Optional<bool> enable_dtx;
+  absl::optional<float> uplink_packet_loss_fraction;
+  absl::optional<bool> enable_fec;
+  absl::optional<bool> enable_dtx;
 
   // Some encoders can encode fewer channels than the actual input to make
   // better use of the bandwidth. |num_channels| sets the number of channels
   // to encode.
-  rtc::Optional<size_t> num_channels;
+  absl::optional<size_t> num_channels;
 
   // This is true if the last frame length change was an increase, and otherwise
   // false.

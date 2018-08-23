@@ -11,13 +11,13 @@
 #ifndef MODULES_CONGESTION_CONTROLLER_INCLUDE_MOCK_MOCK_CONGESTION_OBSERVER_H_
 #define MODULES_CONGESTION_CONTROLLER_INCLUDE_MOCK_MOCK_CONGESTION_OBSERVER_H_
 
-#include "modules/congestion_controller/include/send_side_congestion_controller.h"
+#include "modules/congestion_controller/include/network_changed_observer.h"
 #include "test/gmock.h"
 
 namespace webrtc {
 namespace test {
 
-class MockCongestionObserver : public SendSideCongestionController::Observer {
+class MockCongestionObserver : public NetworkChangedObserver {
  public:
   MOCK_METHOD4(OnNetworkChanged,
                void(uint32_t bitrate_bps,

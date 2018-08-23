@@ -8,14 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-
 // This file includes specific signal processing tools used in vad_core.c.
 
 #ifndef COMMON_AUDIO_VAD_VAD_SP_H_
 #define COMMON_AUDIO_VAD_VAD_SP_H_
 
 #include "common_audio/vad/vad_core.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 // Downsamples the signal by a factor 2, eg. 32->16 or 16->8.
 //

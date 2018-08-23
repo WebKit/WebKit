@@ -99,7 +99,6 @@ int H264VideoToolboxDecoder::InitDecode(const VideoCodec* video_codec,
 int H264VideoToolboxDecoder::Decode(
     const EncodedImage& input_image,
     bool missing_frames,
-    const RTPFragmentationHeader* fragmentation,
     const CodecSpecificInfo* codec_specific_info,
     int64_t render_time_ms) {
   RTC_DCHECK(input_image._buffer);

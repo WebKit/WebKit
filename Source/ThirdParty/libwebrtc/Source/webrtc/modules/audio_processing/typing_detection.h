@@ -11,9 +11,6 @@
 #ifndef MODULES_AUDIO_PROCESSING_TYPING_DETECTION_H_
 #define MODULES_AUDIO_PROCESSING_TYPING_DETECTION_H_
 
-#include "modules/include/module_common_types.h"
-#include "typedefs.h"  // NOLINT(build/include)
-
 namespace webrtc {
 
 class TypingDetection {

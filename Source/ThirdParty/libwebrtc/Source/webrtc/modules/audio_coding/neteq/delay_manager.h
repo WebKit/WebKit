@@ -18,7 +18,6 @@
 
 #include "modules/audio_coding/neteq/tick_timer.h"
 #include "rtc_base/constructormagic.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -117,9 +116,9 @@ class DelayManager {
   virtual void set_last_pack_cng_or_dtmf(int value);
 
  private:
-  static const int kLimitProbability = 53687091;  // 1/20 in Q30.
+  static const int kLimitProbability = 53687091;         // 1/20 in Q30.
   static const int kLimitProbabilityStreaming = 536871;  // 1/2000 in Q30.
-  static const int kMaxStreamingPeakPeriodMs = 600000;  // 10 minutes in ms.
+  static const int kMaxStreamingPeakPeriodMs = 600000;   // 10 minutes in ms.
   static const int kCumulativeSumDrift = 2;  // Drift term for cumulative sum
                                              // |iat_cumulative_sum_|.
   // Steady-state forgetting factor for |iat_vector_|, 0.9993 in Q15.
@@ -146,28 +145,29 @@ class DelayManager {
 
   bool first_packet_received_;
   const size_t max_packets_in_buffer_;  // Capacity of the packet buffer.
-  IATVector iat_vector_;  // Histogram of inter-arrival times.
+  IATVector iat_vector_;                // Histogram of inter-arrival times.
   int iat_factor_;  // Forgetting factor for updating the IAT histogram (Q15).
   const TickTimer* tick_timer_;
   // Time elapsed since last packet.
   std::unique_ptr<TickTimer::Stopwatch> packet_iat_stopwatch_;
-  int base_target_level_;   // Currently preferred buffer level before peak
-                            // detection and streaming mode (Q0).
+  int base_target_level_;  // Currently preferred buffer level before peak
+                           // detection and streaming mode (Q0).
   // TODO(turajs) change the comment according to the implementation of
   // minimum-delay.
-  int target_level_;  // Currently preferred buffer level in (fractions)
-                      // of packets (Q8), before adding any extra delay.
+  int target_level_;   // Currently preferred buffer level in (fractions)
+                       // of packets (Q8), before adding any extra delay.
   int packet_len_ms_;  // Length of audio in each incoming packet [ms].
   bool streaming_mode_;
-  uint16_t last_seq_no_;  // Sequence number for last received packet.
-  uint32_t last_timestamp_;  // Timestamp for the last received packet.
-  int minimum_delay_ms_;  // Externally set minimum delay.
+  uint16_t last_seq_no_;         // Sequence number for last received packet.
+  uint32_t last_timestamp_;      // Timestamp for the last received packet.
+  int minimum_delay_ms_;         // Externally set minimum delay.
   int least_required_delay_ms_;  // Smallest preferred buffer level (same unit
-                              // as |target_level_|), before applying
-                              // |minimum_delay_ms_| and/or |maximum_delay_ms_|.
-  int maximum_delay_ms_;  // Externally set maximum allowed delay.
-  int iat_cumulative_sum_;  // Cumulative sum of delta inter-arrival times.
-  int max_iat_cumulative_sum_;  // Max of |iat_cumulative_sum_|.
+                                 // as |target_level_|), before applying
+                                 // |minimum_delay_ms_| and/or
+                                 // |maximum_delay_ms_|.
+  int maximum_delay_ms_;         // Externally set maximum allowed delay.
+  int iat_cumulative_sum_;       // Cumulative sum of delta inter-arrival times.
+  int max_iat_cumulative_sum_;   // Max of |iat_cumulative_sum_|.
   // Time elapsed since maximum was observed.
   std::unique_ptr<TickTimer::Stopwatch> max_iat_stopwatch_;
   DelayPeakDetector& peak_detector_;

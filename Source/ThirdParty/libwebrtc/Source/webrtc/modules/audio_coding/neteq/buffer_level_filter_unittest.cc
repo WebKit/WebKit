@@ -39,8 +39,7 @@ TEST(BufferLevelFilter, ConvergenceTest) {
       }
       // Expect the filtered value to be (theoretically)
       // (1 - (251/256) ^ |times|) * |value|.
-      double expected_value_double =
-          (1 - pow(251.0 / 256.0, times)) * value;
+      double expected_value_double = (1 - pow(251.0 / 256.0, times)) * value;
       int expected_value = static_cast<int>(expected_value_double);
       // filtered_current_level() returns the value in Q8.
       // The actual value may differ slightly from the expected value due to
@@ -93,7 +92,6 @@ TEST(BufferLevelFilter, FilterFactor) {
   // filtered_current_level() returns the value in Q8.
   EXPECT_EQ(expected_value, filter.filtered_current_level() >> 8);
 }
-
 
 TEST(BufferLevelFilter, TimeStretchedSamples) {
   BufferLevelFilter filter;

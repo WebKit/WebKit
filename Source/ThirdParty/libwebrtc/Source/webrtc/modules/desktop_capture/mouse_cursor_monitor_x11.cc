@@ -12,9 +12,9 @@
 
 #include "modules/desktop_capture/mouse_cursor_monitor.h"
 
-#include <X11/extensions/Xfixes.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/extensions/Xfixes.h>
 
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capture_types.h"
@@ -35,7 +35,7 @@ Window GetTopLevelWindow(Display* display, Window window) {
   while (true) {
     // If the window is in WithdrawnState then look at all of its children.
     ::Window root, parent;
-    ::Window *children;
+    ::Window* children;
     unsigned int num_children;
     if (!XQueryTree(display, window, &root, &parent, &children,
                     &num_children)) {
@@ -104,12 +104,9 @@ MouseCursorMonitorX11::MouseCursorMonitorX11(
   std::unique_ptr<DesktopFrame> default_cursor(
       new BasicDesktopFrame(DesktopSize(kSize, kSize)));
   const uint8_t pixels[kSize * kSize] = {
-    0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0xff, 0xff, 0xff, 0x00,
-    0x00, 0xff, 0xff, 0xff, 0x00,
-    0x00, 0xff, 0xff, 0xff, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00
-  };
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff,
+      0x00, 0x00, 0xff, 0xff, 0xff, 0x00, 0x00, 0xff, 0xff,
+      0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
   uint8_t* ptr = default_cursor->data();
   for (int y = 0; y < kSize; ++y) {
     for (int x = 0; x < kSize; ++x) {
@@ -201,8 +198,6 @@ void MouseCursorMonitorX11::Capture() {
       }
     }
 
-    // TODO(zijiehe): Remove this overload.
-    callback_->OnMouseCursorPosition(state, DesktopVector(win_x, win_y));
     // X11 always starts the coordinate from (0, 0), so we do not need to
     // translate here.
     callback_->OnMouseCursorPosition(DesktopVector(root_x, root_y));
@@ -230,11 +225,11 @@ void MouseCursorMonitorX11::CaptureCursor() {
     XErrorTrap error_trap(display());
     img = XFixesGetCursorImage(display());
     if (!img || error_trap.GetLastErrorAndDisable() != 0)
-       return;
-   }
+      return;
+  }
 
-   std::unique_ptr<DesktopFrame> image(
-       new BasicDesktopFrame(DesktopSize(img->width, img->height)));
+  std::unique_ptr<DesktopFrame> image(
+      new BasicDesktopFrame(DesktopSize(img->width, img->height)));
 
   // Xlib stores 32-bit data in longs, even if longs are 64-bits long.
   unsigned long* src = img->pixels;
@@ -254,7 +249,8 @@ void MouseCursorMonitorX11::CaptureCursor() {
 
 // static
 MouseCursorMonitor* MouseCursorMonitor::CreateForWindow(
-    const DesktopCaptureOptions& options, WindowId window) {
+    const DesktopCaptureOptions& options,
+    WindowId window) {
   if (!options.x_display())
     return NULL;
   window = GetTopLevelWindow(options.x_display()->display(), window);

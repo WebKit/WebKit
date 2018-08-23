@@ -18,42 +18,37 @@ import re
 import matplotlib.pyplot as plt
 
 # Log events.
-EVENT_START = \
-  'RUN      ] CodecSettings/VideoProcessorIntegrationTestParameterized.'
-EVENT_END = 'OK ] CodecSettings/VideoProcessorIntegrationTestParameterized.'
+EVENT_START = 'RUN      ] CodecSettings/VideoCodecTestParameterized.'
+EVENT_END = 'OK ] CodecSettings/VideoCodecTestParameterized.'
 
 # Metrics to plot, tuple: (name to parse in file, label to use when plotting).
-BITRATE = ('Target bitrate', 'target bitrate (kbps)')
-WIDTH = ('Width', 'width')
-HEIGHT = ('Height', 'height')
-FILENAME = ('Filename', 'clip')
-CODEC_TYPE = ('Codec type', 'Codec')
-ENCODER_IMPLEMENTATION_NAME = ('Encoder implementation name', 'enc name')
-DECODER_IMPLEMENTATION_NAME = ('Decoder implementation name', 'dec name')
-CODEC_IMPLEMENTATION_NAME = ('Codec implementation name', 'codec name')
-CORES = ('# CPU cores used', 'CPU cores used')
-DENOISING = ('Denoising', 'denoising')
-RESILIENCE = ('Resilience', 'resilience')
-ERROR_CONCEALMENT = ('Error concealment', 'error concealment')
-QP = ('Average QP', 'avg QP')
-CPU_USAGE = ('CPU usage %', 'CPU usage (%)')
-PSNR = ('PSNR avg', 'PSNR (dB)')
-SSIM = ('SSIM avg', 'SSIM')
-ENC_BITRATE = ('Encoded bitrate', 'encoded bitrate (kbps)')
-FRAMERATE = ('Frame rate', 'fps')
-NUM_FRAMES = ('# processed frames', 'num frames')
-NUM_DROPPED_FRAMES = ('# dropped frames', 'num dropped frames')
-NUM_FRAMES_TO_TARGET = ('# frames to convergence',
-                        'frames to reach target rate')
-ENCODE_TIME = ('Encoding time', 'encode time (us)')
-ENCODE_TIME_AVG = ('Encoding time', 'encode time (us) avg')
-DECODE_TIME = ('Decoding time', 'decode time (us)')
-DECODE_TIME_AVG = ('Decoding time', 'decode time (us) avg')
-FRAME_SIZE = ('Frame sizes', 'frame size (bytes)')
-FRAME_SIZE_AVG = ('Frame sizes', 'frame size (bytes) avg')
-AVG_KEY_FRAME_SIZE = ('Average key frame size', 'avg key frame size (bytes)')
-AVG_NON_KEY_FRAME_SIZE = ('Average non-key frame size',
-                          'avg non-key frame size (bytes)')
+WIDTH = ('width', 'width')
+HEIGHT = ('height', 'height')
+FILENAME = ('filename', 'clip')
+CODEC_TYPE = ('codec_type', 'Codec')
+ENCODER_IMPLEMENTATION_NAME = ('enc_impl_name', 'enc name')
+DECODER_IMPLEMENTATION_NAME = ('dec_impl_name', 'dec name')
+CODEC_IMPLEMENTATION_NAME = ('codec_impl_name', 'codec name')
+CORES = ('num_cores', 'CPU cores used')
+DENOISING = ('denoising', 'denoising')
+RESILIENCE = ('resilience', 'resilience')
+ERROR_CONCEALMENT = ('error_concealment', 'error concealment')
+CPU_USAGE = ('cpu_usage_percent', 'CPU usage (%)')
+BITRATE = ('target_bitrate_kbps', 'target bitrate (kbps)')
+FRAMERATE = ('input_framerate_fps', 'fps')
+QP = ('avg_qp', 'QP avg')
+PSNR = ('avg_psnr', 'PSNR (dB)')
+SSIM = ('avg_ssim', 'SSIM')
+ENC_BITRATE = ('bitrate_kbps', 'encoded bitrate (kbps)')
+NUM_FRAMES = ('num_input_frames', 'num frames')
+NUM_DROPPED_FRAMES = ('num_dropped_frames', 'num dropped frames')
+TIME_TO_TARGET = ('time_to_reach_target_bitrate_sec',
+                  'time to reach target rate (sec)')
+ENCODE_SPEED_FPS = ('enc_speed_fps', 'encode speed (fps)')
+DECODE_SPEED_FPS = ('dec_speed_fps', 'decode speed (fps)')
+AVG_KEY_FRAME_SIZE = ('avg_key_frame_size_bytes', 'avg key frame size (bytes)')
+AVG_DELTA_FRAME_SIZE = ('avg_delta_frame_size_bytes',
+                        'avg delta frame size (bytes)')
 
 # Settings.
 SETTINGS = [
@@ -61,9 +56,6 @@ SETTINGS = [
   HEIGHT,
   FILENAME,
   NUM_FRAMES,
-  ENCODE_TIME,
-  DECODE_TIME,
-  FRAME_SIZE,
 ]
 
 # Settings, options for x-axis.
@@ -90,13 +82,13 @@ RESULTS = [
   SSIM,
   ENC_BITRATE,
   NUM_DROPPED_FRAMES,
-  NUM_FRAMES_TO_TARGET,
-  ENCODE_TIME_AVG,
-  DECODE_TIME_AVG,
+  TIME_TO_TARGET,
+  ENCODE_SPEED_FPS,
+  DECODE_SPEED_FPS,
   QP,
   CPU_USAGE,
   AVG_KEY_FRAME_SIZE,
-  AVG_NON_KEY_FRAME_SIZE,
+  AVG_DELTA_FRAME_SIZE,
 ]
 
 METRICS_TO_PARSE = SETTINGS + SUBPLOT_SETTINGS + RESULTS
@@ -141,7 +133,7 @@ def ParseSetting(filename, setting):
               settings.append(s)
           break
 
-        TryFindMetric(parsed, line, settings_file)
+        TryFindMetric(parsed, line)
 
   settings_file.close()
   return settings
@@ -214,36 +206,20 @@ def ParseMetrics(filename, setting1, setting2):
 
           break
 
-        TryFindMetric(parsed, line, settings_file)
+        TryFindMetric(parsed, line)
 
   settings_file.close()
   return metrics
 
 
-def TryFindMetric(parsed, line, settings_file):
+def TryFindMetric(parsed, line):
   for metric in METRICS_TO_PARSE:
     name = metric[0]
     label = metric[1]
     if re.search(r'%s' % name, line):
       found, value = GetMetric(name, line)
-      if not found:
-        # TODO(asapersson): Change format.
-        # Try find min, max, average stats.
-        found, minimum = GetMetric("Min", settings_file.readline())
-        if not found:
-          return
-        found, maximum = GetMetric("Max", settings_file.readline())
-        if not found:
-          return
-        found, average = GetMetric("Average", settings_file.readline())
-        if not found:
-          return
-
-        parsed[label + ' min'] = minimum
-        parsed[label + ' max'] = maximum
-        parsed[label + ' avg'] = average
-
-      parsed[label] = value
+      if found:
+        parsed[label] = value
       return
 
 

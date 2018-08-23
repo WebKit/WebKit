@@ -21,7 +21,7 @@
 // TODO(deadbeef): Actually use this, after we decide on some style points on
 // using signals, so it doesn't get deleted again.
 
-#include "rtc_base/sigslot.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace sigslot {
 

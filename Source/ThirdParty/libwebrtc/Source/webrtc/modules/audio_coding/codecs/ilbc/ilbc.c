@@ -16,14 +16,15 @@
 
 ******************************************************************/
 
-#include "ilbc.h"
-#include "defines.h"
-#include "init_encode.h"
-#include "encode.h"
-#include "init_decode.h"
-#include "decode.h"
-#include "rtc_base/checks.h"
 #include <stdlib.h>
+
+#include "modules/audio_coding/codecs/ilbc/ilbc.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/init_encode.h"
+#include "modules/audio_coding/codecs/ilbc/encode.h"
+#include "modules/audio_coding/codecs/ilbc/init_decode.h"
+#include "modules/audio_coding/codecs/ilbc/decode.h"
+#include "rtc_base/checks.h"
 
 int16_t WebRtcIlbcfix_EncoderAssign(IlbcEncoderInstance** iLBC_encinst,
                                     int16_t* ILBCENC_inst_Addr,

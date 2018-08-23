@@ -13,7 +13,6 @@
 
 #include <string>
 
-#include "rtc_base/basictypes.h"
 #include "rtc_base/copyonwritebuffer.h"
 #include "rtc_base/rtccertificate.h"
 #include "rtc_base/sslidentity.h"

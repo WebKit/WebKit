@@ -38,8 +38,8 @@ class MockPacketBuffer : public PacketBuffer {
   MOCK_METHOD5(InsertPacketList,
                int(PacketList* packet_list,
                    const DecoderDatabase& decoder_database,
-                   rtc::Optional<uint8_t>* current_rtp_payload_type,
-                   rtc::Optional<uint8_t>* current_cng_rtp_payload_type,
+                   absl::optional<uint8_t>* current_rtp_payload_type,
+                   absl::optional<uint8_t>* current_cng_rtp_payload_type,
                    StatisticsCalculator* stats));
   MOCK_CONST_METHOD1(NextTimestamp,
       int(uint32_t* next_timestamp));
@@ -47,8 +47,7 @@ class MockPacketBuffer : public PacketBuffer {
       int(uint32_t timestamp, uint32_t* next_timestamp));
   MOCK_CONST_METHOD0(PeekNextPacket,
       const Packet*());
-  MOCK_METHOD0(GetNextPacket,
-      rtc::Optional<Packet>());
+  MOCK_METHOD0(GetNextPacket, absl::optional<Packet>());
   MOCK_METHOD1(DiscardNextPacket, int(StatisticsCalculator* stats));
   MOCK_METHOD3(DiscardOldPackets,
                void(uint32_t timestamp_limit,

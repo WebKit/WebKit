@@ -16,8 +16,8 @@
 #include "modules/remote_bitrate_estimator/remote_bitrate_estimator_abs_send_time.h"
 #include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
 #include "modules/rtp_rtcp/include/receive_statistics.h"
+#include "rtc_base/system/unused.h"
 #include "test/gtest.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace testing {
@@ -37,8 +37,7 @@ RembBweSender::RembBweSender(int kbps, BitrateObserver* observer, Clock* clock)
                                         1000 * kMaxBitrateKbps);
 }
 
-RembBweSender::~RembBweSender() {
-}
+RembBweSender::~RembBweSender() {}
 
 void RembBweSender::GiveFeedback(const FeedbackPacket& feedback) {
   const RembFeedback& remb_feedback =
@@ -80,8 +79,7 @@ RembReceiver::RembReceiver(int flow_id, bool plot)
   estimator_->SetMinBitrate(kRemoteBitrateEstimatorMinBitrateBps);
 }
 
-RembReceiver::~RembReceiver() {
-}
+RembReceiver::~RembReceiver() {}
 
 void RembReceiver::ReceivePacket(int64_t arrival_time_ms,
                                  const MediaPacket& media_packet) {

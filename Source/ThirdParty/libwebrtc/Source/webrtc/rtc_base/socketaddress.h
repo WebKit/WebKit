@@ -13,8 +13,10 @@
 
 #include <iosfwd>
 #include <string>
+#ifdef UNIT_TEST
+#include <ostream>  // no-presubmit-check TODO(webrtc:8982)
+#endif              // UNIT_TEST
 #include <vector>
-#include "rtc_base/basictypes.h"
 #include "rtc_base/ipaddress.h"
 
 #undef SetPort
@@ -92,7 +94,7 @@ class SocketAddress {
 
   const IPAddress& ipaddr() const;
 
-  int family() const {return ip_.family(); }
+  int family() const { return ip_.family(); }
 
   // Returns the port part of this address.
   uint16_t port() const;
@@ -102,7 +104,7 @@ class SocketAddress {
   // interfaces having different scope-ids for their link-local addresses.
   // IPv4 address do not have scope_ids and sockaddr_in structures do not have
   // a field for them.
-  int scope_id() const {return scope_id_; }
+  int scope_id() const { return scope_id_; }
   void SetScopeID(int id) { scope_id_ = id; }
 
   // Returns the 'host' portion of the address (hostname or IP) in a form
@@ -126,7 +128,12 @@ class SocketAddress {
   // Parses hostname:port and [hostname]:port.
   bool FromString(const std::string& str);
 
-  friend std::ostream& operator<<(std::ostream& os, const SocketAddress& addr);
+#ifdef UNIT_TEST
+  inline std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
+      std::ostream& os) {           // no-presubmit-check TODO(webrtc:8982)
+    return os << HostAsURIString() << ":" << port();
+  }
+#endif  // UNIT_TEST
 
   // Determines whether this represents a missing / any IP address.
   // That is, 0.0.0.0 or ::.
@@ -147,13 +154,13 @@ class SocketAddress {
   bool IsUnresolvedIP() const;
 
   // Determines whether this address is identical to the given one.
-  bool operator ==(const SocketAddress& addr) const;
-  inline bool operator !=(const SocketAddress& addr) const {
-    return !this->operator ==(addr);
+  bool operator==(const SocketAddress& addr) const;
+  inline bool operator!=(const SocketAddress& addr) const {
+    return !this->operator==(addr);
   }
 
   // Compares based on IP and then port.
-  bool operator <(const SocketAddress& addr) const;
+  bool operator<(const SocketAddress& addr) const;
 
   // Determines whether this address has the same IP as the one given.
   bool EqualIPs(const SocketAddress& addr) const;

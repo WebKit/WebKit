@@ -11,7 +11,7 @@
 #ifndef MODULES_AUDIO_MIXER_SINE_WAVE_GENERATOR_H_
 #define MODULES_AUDIO_MIXER_SINE_WAVE_GENERATOR_H_
 
-#include "modules/include/module_common_types.h"
+#include "api/audio/audio_frame.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

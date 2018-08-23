@@ -15,8 +15,8 @@
  *
  */
 
-#include "codec.h"
-#include "settings.h"
+#include "modules/audio_coding/codecs/isac/fix/source/codec.h"
+#include "modules/audio_coding/codecs/isac/fix/source/settings.h"
 #include "rtc_base/sanitizer.h"
 
 #define LATTICE_MUL_32_32_RSFT16(a32a, a32b, b32)                  \
@@ -279,8 +279,7 @@ void WebRtcIsacfix_NormLatticeFilterAr(size_t orderCoef,
 
     for (i=0;i<HALF_SUBFRAMELEN;i++)
     {
-
-      tmp32 = lat_inQ25[i + temp1] * (1 << 1);  // Q25->Q26
+      tmp32 = OverflowingLShiftS32(lat_inQ25[i + temp1], 1);  // Q25->Q26
       tmp32 = WEBRTC_SPL_MUL_16_32_RSFT16(inv_gain16, tmp32); //lat_in[]*inv_gain in (Q(18-sh)*Q26)>>16 = Q(28-sh)
       tmp32 = WEBRTC_SPL_SHIFT_W32(tmp32, -(28-sh)); // lat_in[]*inv_gain in Q0
 

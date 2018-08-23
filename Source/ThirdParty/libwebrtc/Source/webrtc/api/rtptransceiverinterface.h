@@ -14,7 +14,8 @@
 #include <string>
 #include <vector>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
+#include "api/array_view.h"
 #include "api/rtpreceiverinterface.h"
 #include "api/rtpsenderinterface.h"
 #include "rtc_base/refcount.h"
@@ -29,19 +30,18 @@ enum class RtpTransceiverDirection {
   kInactive
 };
 
-// This is provided as a debugging aid. The format of the output is unspecified.
-std::ostream& operator<<(std::ostream& os, RtpTransceiverDirection direction);
-
 // Structure for initializing an RtpTransceiver in a call to
 // PeerConnectionInterface::AddTransceiver.
 // https://w3c.github.io/webrtc-pc/#dom-rtcrtptransceiverinit
 struct RtpTransceiverInit final {
+  RtpTransceiverInit();
+  RtpTransceiverInit(const RtpTransceiverInit&);
+  ~RtpTransceiverInit();
   // Direction of the RtpTransceiver. See RtpTransceiverInterface::direction().
   RtpTransceiverDirection direction = RtpTransceiverDirection::kSendRecv;
 
   // The added RtpTransceiver will be added to these streams.
-  // TODO(bugs.webrtc.org/7600): Not implemented.
-  std::vector<std::string> stream_labels;
+  std::vector<std::string> stream_ids;
 
   // TODO(bugs.webrtc.org/7600): Not implemented.
   std::vector<RtpEncodingParameters> send_encodings;
@@ -63,11 +63,15 @@ struct RtpTransceiverInit final {
 // https://w3c.github.io/webrtc-pc/#dom-rtcrtptransceiver
 class RtpTransceiverInterface : public rtc::RefCountInterface {
  public:
+  // Media type of the transceiver. Any sender(s)/receiver(s) will have this
+  // type as well.
+  virtual cricket::MediaType media_type() const = 0;
+
   // The mid attribute is the mid negotiated and present in the local and
   // remote descriptions. Before negotiation is complete, the mid value may be
   // null. After rollbacks, the value may change from a non-null value to null.
   // https://w3c.github.io/webrtc-pc/#dom-rtcrtptransceiver-mid
-  virtual rtc::Optional<std::string> mid() const = 0;
+  virtual absl::optional<std::string> mid() const = 0;
 
   // The sender attribute exposes the RtpSender corresponding to the RTP media
   // that may be sent with the transceiver's mid. The sender is always present,
@@ -104,7 +108,14 @@ class RtpTransceiverInterface : public rtc::RefCountInterface {
   // for this transceiver. If this transceiver has never been represented in an
   // offer/answer exchange, or if the transceiver is stopped, the value is null.
   // https://w3c.github.io/webrtc-pc/#dom-rtcrtptransceiver-currentdirection
-  virtual rtc::Optional<RtpTransceiverDirection> current_direction() const = 0;
+  virtual absl::optional<RtpTransceiverDirection> current_direction() const = 0;
+
+  // An internal slot designating for which direction the relevant
+  // PeerConnection events have been fired. This is to ensure that events like
+  // OnAddTrack only get fired once even if the same session description is
+  // applied again.
+  // Exposed in the public interface for use by Chromium.
+  virtual absl::optional<RtpTransceiverDirection> fired_direction() const;
 
   // The Stop method irreversibly stops the RtpTransceiver. The sender of this
   // transceiver will no longer send, the receiver will no longer receive.
@@ -119,7 +130,7 @@ class RtpTransceiverInterface : public rtc::RefCountInterface {
       rtc::ArrayView<RtpCodecCapability> codecs) = 0;
 
  protected:
-  virtual ~RtpTransceiverInterface() = default;
+  ~RtpTransceiverInterface() override = default;
 };
 
 }  // namespace webrtc

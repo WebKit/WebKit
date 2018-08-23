@@ -18,13 +18,12 @@ namespace webrtc {
 
 class MediaConstraints : public MediaConstraintsInterface {
  public:
-  virtual ~MediaConstraints();
+  ~MediaConstraints() override;
   MediaConstraints();
-  MediaConstraints(
-      const MediaConstraintsInterface::Constraints& mandatory,
-      const MediaConstraintsInterface::Constraints& optional);
-  virtual const Constraints& GetMandatory() const;
-  virtual const Constraints& GetOptional() const;
+  MediaConstraints(const MediaConstraintsInterface::Constraints& mandatory,
+                   const MediaConstraintsInterface::Constraints& optional);
+  const Constraints& GetMandatory() const override;
+  const Constraints& GetOptional() const override;
 
  private:
   MediaConstraintsInterface::Constraints mandatory_;
@@ -32,7 +31,6 @@ class MediaConstraints : public MediaConstraintsInterface {
 };
 
 }  // namespace webrtc
-
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -45,9 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (std::unique_ptr<webrtc::MediaConstraints>)nativeConstraints;
 
 /** Return a native Constraints object representing these constraints */
-+ (webrtc::MediaConstraintsInterface::Constraints)
-    nativeConstraintsForConstraints:
-        (NSDictionary<NSString *, NSString *> *)constraints;
++ (webrtc::MediaConstraintsInterface::Constraints)nativeConstraintsForConstraints:
+        (NSDictionary<NSString*, NSString*>*)constraints;
 
 @end
 

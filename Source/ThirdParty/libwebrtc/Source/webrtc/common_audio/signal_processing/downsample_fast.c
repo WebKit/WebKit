@@ -42,8 +42,13 @@ int WebRtcSpl_DownsampleFastC(const int16_t* data_in,
     out_s32 = 2048;  // Round value, 0.5 in Q12.
 
     for (j = 0; j < coefficients_length; j++) {
-      rtc_MsanCheckInitialized(&data_in[i - j], sizeof(data_in[0]), 1);
-      out_s32 += coefficients[j] * data_in[i - j];  // Q12.
+      // Negative overflow is permitted here, because this is
+      // auto-regressive filters, and the state for each batch run is
+      // stored in the "negative" positions of the output vector.
+      rtc_MsanCheckInitialized(&data_in[(ptrdiff_t) i - (ptrdiff_t) j],
+          sizeof(data_in[0]), 1);
+      // out_s32 is in Q12 domain.
+      out_s32 += coefficients[j] * data_in[(ptrdiff_t) i - (ptrdiff_t) j];
     }
 
     out_s32 >>= 12;  // Q0.

@@ -8,14 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "pitch_estimator.h"
-
 #include <math.h>
 #include <memory.h>
 #include <stdlib.h>
 
-#include "os_specific_inline.h"
-
+#include "modules/audio_coding/codecs/isac/main/source/pitch_estimator.h"
+#include "modules/audio_coding/codecs/isac/main/source/os_specific_inline.h"
 #include "rtc_base/compile_assert_c.h"
 
 /*

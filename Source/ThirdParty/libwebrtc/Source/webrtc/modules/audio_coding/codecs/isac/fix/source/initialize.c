@@ -15,9 +15,9 @@
  *
  */
 
-#include "codec.h"
-#include "structs.h"
-#include "pitch_estimator.h"
+#include "modules/audio_coding/codecs/isac/fix/source/codec.h"
+#include "modules/audio_coding/codecs/isac/fix/source/structs.h"
+#include "modules/audio_coding/codecs/isac/fix/source/pitch_estimator.h"
 
 
 void WebRtcIsacfix_InitMaskingEnc(MaskFiltstr_enc *maskdata) {

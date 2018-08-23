@@ -17,9 +17,9 @@
 #include "media/base/rtputils.h"
 #include "media/base/streamparams.h"
 #include "rtc_base/copyonwritebuffer.h"
+#include "rtc_base/data_rate_limiter.h"
 #include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/ratelimiter.h"
 #include "rtc_base/sanitizer.h"
 #include "rtc_base/stringutils.h"
 
@@ -28,9 +28,7 @@ namespace cricket {
 // We want to avoid IP fragmentation.
 static const size_t kDataMaxRtpPacketLen = 1200U;
 // We reserve space after the RTP header for future wiggle room.
-static const unsigned char kReservedSpace[] = {
-  0x00, 0x00, 0x00, 0x00
-};
+static const unsigned char kReservedSpace[] = {0x00, 0x00, 0x00, 0x00};
 
 // Amount of overhead SRTP may take.  We need to leave room in the
 // buffer for it, otherwise SRTP will fail later.  If SRTP ever uses
@@ -42,8 +40,7 @@ RtpDataEngine::RtpDataEngine() {
       DataCodec(kGoogleRtpDataCodecPlType, kGoogleRtpDataCodecName));
 }
 
-DataMediaChannel* RtpDataEngine::CreateChannel(
-    const MediaConfig& config) {
+DataMediaChannel* RtpDataEngine::CreateChannel(const MediaConfig& config) {
   return new RtpDataMediaChannel(config);
 }
 
@@ -64,21 +61,19 @@ RtpDataMediaChannel::RtpDataMediaChannel(const MediaConfig& config)
 void RtpDataMediaChannel::Construct() {
   sending_ = false;
   receiving_ = false;
-  send_limiter_.reset(new rtc::RateLimiter(kDataMaxBandwidth / 8, 1.0));
+  send_limiter_.reset(new rtc::DataRateLimiter(kDataMaxBandwidth / 8, 1.0));
 }
-
 
 RtpDataMediaChannel::~RtpDataMediaChannel() {
   std::map<uint32_t, RtpClock*>::const_iterator iter;
   for (iter = rtp_clock_by_send_ssrc_.begin();
-       iter != rtp_clock_by_send_ssrc_.end();
-       ++iter) {
+       iter != rtp_clock_by_send_ssrc_.end(); ++iter) {
     delete iter->second;
   }
 }
 
 void RTC_NO_SANITIZE("float-cast-overflow")  // bugs.webrtc.org/8204
-RtpClock::Tick(double now, int* seq_num, uint32_t* timestamp) {
+    RtpClock::Tick(double now, int* seq_num, uint32_t* timestamp) {
   *seq_num = ++last_seq_num_;
   *timestamp = timestamp_offset_ + static_cast<uint32_t>(now * clockrate_);
   // UBSan: 5.92374e+10 is outside the range of representable values of type
@@ -155,9 +150,9 @@ bool RtpDataMediaChannel::AddSendStream(const StreamParams& stream) {
   send_streams_.push_back(stream);
   // TODO(pthatcher): This should be per-stream, not per-ssrc.
   // And we should probably allow more than one per stream.
-  rtp_clock_by_send_ssrc_[stream.first_ssrc()] = new RtpClock(
-      kDataCodecClockrate,
-      rtc::CreateRandomNonZeroId(), rtc::CreateRandomNonZeroId());
+  rtp_clock_by_send_ssrc_[stream.first_ssrc()] =
+      new RtpClock(kDataCodecClockrate, rtc::CreateRandomNonZeroId(),
+                   rtc::CreateRandomNonZeroId());
 
   RTC_LOG(LS_INFO) << "Added data send stream '" << stream.id
                    << "' with ssrc=" << stream.first_ssrc();
@@ -198,22 +193,15 @@ bool RtpDataMediaChannel::RemoveRecvStream(uint32_t ssrc) {
   return true;
 }
 
-void RtpDataMediaChannel::OnPacketReceived(
-    rtc::CopyOnWriteBuffer* packet, const rtc::PacketTime& packet_time) {
+void RtpDataMediaChannel::OnPacketReceived(rtc::CopyOnWriteBuffer* packet,
+                                           const rtc::PacketTime& packet_time) {
   RtpHeader header;
   if (!GetRtpHeader(packet->cdata(), packet->size(), &header)) {
-    // Don't want to log for every corrupt packet.
-    // RTC_LOG(LS_WARNING) << "Could not read rtp header from packet of length "
-    //                 << packet->length() << ".";
     return;
   }
 
   size_t header_length;
   if (!GetRtpHeaderLen(packet->cdata(), packet->size(), &header_length)) {
-    // Don't want to log for every corrupt packet.
-    // RTC_LOG(LS_WARNING) << "Could not read rtp header"
-    //                 << length from packet of length "
-    //                 << packet->length() << ".";
     return;
   }
   const char* data =
@@ -227,12 +215,6 @@ void RtpDataMediaChannel::OnPacketReceived(
   }
 
   if (!FindCodecById(recv_codecs_, header.payload_type)) {
-    // For bundling, this will be logged for every message.
-    // So disable this logging.
-    // RTC_LOG(LS_WARNING) << "Not receiving packet "
-    //                << header.ssrc << ":" << header.seq_num
-    //                << " (" << data_len << ")"
-    //                << " because unknown payload id: " << header.payload_type;
     return;
   }
 
@@ -261,16 +243,15 @@ bool RtpDataMediaChannel::SetMaxSendBandwidth(int bps) {
   if (bps <= 0) {
     bps = kDataMaxBandwidth;
   }
-  send_limiter_.reset(new rtc::RateLimiter(bps / 8, 1.0));
+  send_limiter_.reset(new rtc::DataRateLimiter(bps / 8, 1.0));
   RTC_LOG(LS_INFO) << "RtpDataMediaChannel::SetSendBandwidth to " << bps
                    << "bps.";
   return true;
 }
 
-bool RtpDataMediaChannel::SendData(
-    const SendDataParams& params,
-    const rtc::CopyOnWriteBuffer& payload,
-    SendDataResult* result) {
+bool RtpDataMediaChannel::SendData(const SendDataParams& params,
+                                   const rtc::CopyOnWriteBuffer& payload,
+                                   SendDataResult* result) {
   if (result) {
     // If we return true, we'll set this to SDR_SUCCESS.
     *result = SDR_ERROR;
@@ -323,8 +304,8 @@ bool RtpDataMediaChannel::SendData(
   RtpHeader header;
   header.payload_type = found_codec->id;
   header.ssrc = params.ssrc;
-  rtp_clock_by_send_ssrc_[header.ssrc]->Tick(
-      now, &header.seq_num, &header.timestamp);
+  rtp_clock_by_send_ssrc_[header.ssrc]->Tick(now, &header.seq_num,
+                                             &header.timestamp);
 
   rtc::CopyOnWriteBuffer packet(kMinRtpPacketLen, packet_len);
   if (!SetRtpHeader(packet.data(), packet.size(), header)) {
@@ -340,7 +321,9 @@ bool RtpDataMediaChannel::SendData(
                       << ", timestamp=" << header.timestamp
                       << ", len=" << payload.size();
 
-  MediaChannel::SendPacket(&packet, rtc::PacketOptions());
+  rtc::PacketOptions options;
+  options.info_signaled_after_sent.packet_type = rtc::PacketType::kData;
+  MediaChannel::SendPacket(&packet, options);
   send_limiter_->Use(packet_len, now);
   if (result) {
     *result = SDR_SUCCESS;

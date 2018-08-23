@@ -25,7 +25,7 @@ constexpr int64_t kClockInitialTime = 123456;
 struct SmoothingFilterStates {
   explicit SmoothingFilterStates(int init_time_ms)
       : smoothing_filter(init_time_ms) {
-    fake_clock.AdvanceTime(rtc::TimeDelta::FromMilliseconds(kClockInitialTime));
+    fake_clock.AdvanceTime(TimeDelta::ms(kClockInitialTime));
   }
   rtc::ScopedFakeClock fake_clock;
   SmoothingFilterImpl smoothing_filter;
@@ -41,8 +41,7 @@ void CheckOutput(SmoothingFilterStates* states,
                  int advance_time_ms,
                  float expected_ouput) {
   states->smoothing_filter.AddSample(sample);
-  states->fake_clock.AdvanceTime(
-      rtc::TimeDelta::FromMilliseconds(advance_time_ms));
+  states->fake_clock.AdvanceTime(TimeDelta::ms(advance_time_ms));
   auto output = states->smoothing_filter.GetAverage();
   EXPECT_TRUE(output);
   EXPECT_NEAR(expected_ouput, *output, kMaxAbsError);
@@ -141,14 +140,13 @@ TEST(SmoothingFilterTest, CannotChangeTimeConstantDuringInitialization) {
   states.smoothing_filter.AddSample(0.0);
 
   // During initialization, |SetTimeConstantMs| does not take effect.
-  states.fake_clock.AdvanceTime(
-      rtc::TimeDelta::FromMilliseconds(kInitTimeMs - 1));
+  states.fake_clock.AdvanceTime(TimeDelta::ms(kInitTimeMs - 1));
   states.smoothing_filter.AddSample(0.0);
 
   EXPECT_FALSE(states.smoothing_filter.SetTimeConstantMs(kInitTimeMs * 2));
   EXPECT_NE(exp(-1.0f / (kInitTimeMs * 2)), states.smoothing_filter.alpha());
 
-  states.fake_clock.AdvanceTime(rtc::TimeDelta::FromMilliseconds(1));
+  states.fake_clock.AdvanceTime(TimeDelta::ms(1));
   states.smoothing_filter.AddSample(0.0);
   // When initialization finishes, the time constant should be come
   // |kInitTimeConstantMs|.

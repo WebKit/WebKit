@@ -15,21 +15,95 @@ if (is_android) {
 rtc_source_set("video_codecs_api") {
   visibility = [ "*" ]
   sources = [
+    "sdp_video_format.cc",
     "sdp_video_format.h",
+    "video_codec.cc",
+    "video_codec.h",
+    "video_decoder.cc",
     "video_decoder.h",
     "video_decoder_factory.h",
     "video_encoder.cc",
     "video_encoder.h",
+    "video_encoder_config.cc",
+    "video_encoder_config.h",
     "video_encoder_factory.h",
   ]
 
   deps = [
-    "..:optional",
-    "..:video_frame_api",
     "../..:webrtc_common",
-    "../../:typedefs",
     "../../common_video",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
+    "../video:video_bitrate_allocation",
+    "../video:video_frame",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_static_library("builtin_video_decoder_factory") {
+  visibility = [ "*" ]
+  allow_poison = [
+    "audio_codecs",  # TODO(bugs.webrtc.org/8396): Remove.
+    "software_video_codecs",
+  ]
+  sources = [
+    "builtin_video_decoder_factory.cc",
+    "builtin_video_decoder_factory.h",
+  ]
+
+  deps = [
+    ":video_codecs_api",
+    "../../media:rtc_internal_video_codecs",
+    "../../rtc_base:ptr_util",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_static_library("builtin_video_encoder_factory") {
+  visibility = [ "*" ]
+  allow_poison = [
+    "audio_codecs",  # TODO(bugs.webrtc.org/8396): Remove.
+    "software_video_codecs",
+  ]
+  sources = [
+    "builtin_video_encoder_factory.cc",
+    "builtin_video_encoder_factory.h",
+  ]
+
+  deps = [
+    ":video_codecs_api",
+    "../../media:rtc_internal_video_codecs",
+    "../../media:rtc_media_base",
+    "../../rtc_base:ptr_util",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_static_library("rtc_software_fallback_wrappers") {
+  visibility = [ "*" ]
+
+  sources = [
+    "video_decoder_software_fallback_wrapper.cc",
+    "video_decoder_software_fallback_wrapper.h",
+    "video_encoder_software_fallback_wrapper.cc",
+    "video_encoder_software_fallback_wrapper.h",
+  ]
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+
+  deps = [
+    ":video_codecs_api",
+    "../../media:rtc_h264_profile_id",
+    "../../media:rtc_media_base",
+    "../../modules/video_coding:video_codec_interface",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base/system:fallthrough",
+    "../../system_wrappers:field_trial_api",
+    "../video:video_bitrate_allocation",
+    "//third_party/abseil-cpp/absl/memory",
   ]
 }

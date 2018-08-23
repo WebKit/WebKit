@@ -49,7 +49,7 @@ class BlankDetectorDesktopCapturerWrapperTest
 };
 
 BlankDetectorDesktopCapturerWrapperTest::
-BlankDetectorDesktopCapturerWrapperTest() {
+    BlankDetectorDesktopCapturerWrapperTest() {
   frame_generator_.size()->set(frame_width_, frame_height_);
   frame_generator_.set_desktop_frame_painter(&painter_);
   std::unique_ptr<DesktopCapturer> capturer(new FakeDesktopCapturer());
@@ -63,7 +63,7 @@ BlankDetectorDesktopCapturerWrapperTest() {
 }
 
 BlankDetectorDesktopCapturerWrapperTest::
-~BlankDetectorDesktopCapturerWrapperTest() = default;
+    ~BlankDetectorDesktopCapturerWrapperTest() = default;
 
 void BlankDetectorDesktopCapturerWrapperTest::OnCaptureResult(
     DesktopCapturer::Result result,

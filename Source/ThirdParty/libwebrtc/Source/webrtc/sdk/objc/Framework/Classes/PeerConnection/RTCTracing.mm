@@ -12,7 +12,7 @@
 
 #include "rtc_base/event_tracer.h"
 
-void RTCSetupInternalTracer() {
+void RTCSetupInternalTracer(void) {
   rtc::tracing::SetupInternalTracer();
 }
 
@@ -20,10 +20,10 @@ BOOL RTCStartInternalCapture(NSString *filePath) {
   return rtc::tracing::StartInternalCapture(filePath.UTF8String);
 }
 
-void RTCStopInternalCapture() {
+void RTCStopInternalCapture(void) {
   rtc::tracing::StopInternalCapture();
 }
 
-void RTCShutdownInternalTracer() {
+void RTCShutdownInternalTracer(void) {
   rtc::tracing::ShutdownInternalTracer();
 }

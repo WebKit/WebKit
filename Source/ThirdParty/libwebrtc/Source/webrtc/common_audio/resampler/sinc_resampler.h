@@ -18,8 +18,8 @@
 
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/gtest_prod_util.h"
-#include "system_wrappers/include/aligned_malloc.h"
-#include "typedefs.h"  // NOLINT(build/include)
+#include "rtc_base/memory/aligned_malloc.h"
+#include "rtc_base/system/arch.h"
 
 namespace webrtc {
 
@@ -101,14 +101,18 @@ class SincResampler {
   // Compute convolution of |k1| and |k2| over |input_ptr|, resultant sums are
   // linearly interpolated using |kernel_interpolation_factor|.  On x86 and ARM
   // the underlying implementation is chosen at run time.
-  static float Convolve_C(const float* input_ptr, const float* k1,
-                          const float* k2, double kernel_interpolation_factor);
+  static float Convolve_C(const float* input_ptr,
+                          const float* k1,
+                          const float* k2,
+                          double kernel_interpolation_factor);
 #if defined(WEBRTC_ARCH_X86_FAMILY)
-  static float Convolve_SSE(const float* input_ptr, const float* k1,
+  static float Convolve_SSE(const float* input_ptr,
+                            const float* k1,
                             const float* k2,
                             double kernel_interpolation_factor);
 #elif defined(WEBRTC_HAS_NEON)
-  static float Convolve_NEON(const float* input_ptr, const float* k1,
+  static float Convolve_NEON(const float* input_ptr,
+                             const float* k1,
                              const float* k2,
                              double kernel_interpolation_factor);
 #endif
@@ -145,12 +149,14 @@ class SincResampler {
   // Data from the source is copied into this buffer for each processing pass.
   std::unique_ptr<float[], AlignedFreeDeleter> input_buffer_;
 
-  // Stores the runtime selection of which Convolve function to use.
-  // TODO(ajm): Move to using a global static which must only be initialized
-  // once by the user. We're not doing this initially, because we don't have
-  // e.g. a LazyInstance helper in webrtc.
-#if defined(WEBRTC_CPU_DETECTION)
-  typedef float (*ConvolveProc)(const float*, const float*, const float*,
+// Stores the runtime selection of which Convolve function to use.
+// TODO(ajm): Move to using a global static which must only be initialized
+// once by the user. We're not doing this initially, because we don't have
+// e.g. a LazyInstance helper in webrtc.
+#if defined(WEBRTC_ARCH_X86_FAMILY) && !defined(__SSE2__)
+  typedef float (*ConvolveProc)(const float*,
+                                const float*,
+                                const float*,
                                 double);
   ConvolveProc convolve_proc_;
 #endif

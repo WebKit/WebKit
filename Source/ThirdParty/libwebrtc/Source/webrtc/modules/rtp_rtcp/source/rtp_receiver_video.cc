@@ -32,34 +32,16 @@ RTPReceiverStrategy* RTPReceiverStrategy::CreateVideoStrategy(
 }
 
 RTPReceiverVideo::RTPReceiverVideo(RtpData* data_callback)
-    : RTPReceiverStrategy(data_callback) {
-}
+    : RTPReceiverStrategy(data_callback) {}
 
-RTPReceiverVideo::~RTPReceiverVideo() {
-}
-
-bool RTPReceiverVideo::ShouldReportCsrcChanges(uint8_t payload_type) const {
-  // Always do this for video packets.
-  return true;
-}
-
-int32_t RTPReceiverVideo::OnNewPayloadTypeCreated(
-    int payload_type,
-    const SdpAudioFormat& audio_format) {
-  RTC_NOTREACHED();
-  return 0;
-}
+RTPReceiverVideo::~RTPReceiverVideo() {}
 
 int32_t RTPReceiverVideo::ParseRtpPacket(WebRtcRTPHeader* rtp_header,
                                          const PayloadUnion& specific_payload,
-                                         bool is_red,
                                          const uint8_t* payload,
                                          size_t payload_length,
                                          int64_t timestamp_ms) {
-  TRACE_EVENT2(TRACE_DISABLED_BY_DEFAULT("webrtc_rtp"), "Video::ParseRtp",
-               "seqnum", rtp_header->header.sequenceNumber, "timestamp",
-               rtp_header->header.timestamp);
-  rtp_header->type.Video.codec =
+  rtp_header->video_header().codec =
       specific_payload.video_payload().videoCodecType;
 
   RTC_DCHECK_GE(payload_length, rtp_header->header.paddingLength);
@@ -77,7 +59,7 @@ int32_t RTPReceiverVideo::ParseRtpPacket(WebRtcRTPHeader* rtp_header,
 
   // We are not allowed to hold a critical section when calling below functions.
   std::unique_ptr<RtpDepacketizer> depacketizer(
-      RtpDepacketizer::Create(rtp_header->type.Video.codec));
+      RtpDepacketizer::Create(rtp_header->video_header().codec));
   if (depacketizer.get() == NULL) {
     RTC_LOG(LS_ERROR) << "Failed to create depacketizer.";
     return -1;
@@ -88,28 +70,28 @@ int32_t RTPReceiverVideo::ParseRtpPacket(WebRtcRTPHeader* rtp_header,
     return -1;
 
   rtp_header->frameType = parsed_payload.frame_type;
-  rtp_header->type = parsed_payload.type;
-  rtp_header->type.Video.rotation = kVideoRotation_0;
-  rtp_header->type.Video.content_type = VideoContentType::UNSPECIFIED;
-  rtp_header->type.Video.video_timing.flags = TimingFrameFlags::kInvalid;
+  rtp_header->video_header() = parsed_payload.video_header();
+  rtp_header->video_header().rotation = kVideoRotation_0;
+  rtp_header->video_header().content_type = VideoContentType::UNSPECIFIED;
+  rtp_header->video_header().video_timing.flags = VideoSendTiming::kInvalid;
 
   // Retrieve the video rotation information.
   if (rtp_header->header.extension.hasVideoRotation) {
-    rtp_header->type.Video.rotation =
+    rtp_header->video_header().rotation =
         rtp_header->header.extension.videoRotation;
   }
 
   if (rtp_header->header.extension.hasVideoContentType) {
-    rtp_header->type.Video.content_type =
+    rtp_header->video_header().content_type =
         rtp_header->header.extension.videoContentType;
   }
 
   if (rtp_header->header.extension.has_video_timing) {
-    rtp_header->type.Video.video_timing =
+    rtp_header->video_header().video_timing =
         rtp_header->header.extension.video_timing;
   }
 
-  rtp_header->type.Video.playout_delay =
+  rtp_header->video_header().playout_delay =
       rtp_header->header.extension.playout_delay;
 
   return data_callback_->OnReceivedPayloadData(parsed_payload.payload,
@@ -117,21 +99,6 @@ int32_t RTPReceiverVideo::ParseRtpPacket(WebRtcRTPHeader* rtp_header,
                                                rtp_header) == 0
              ? 0
              : -1;
-}
-
-RTPAliveType RTPReceiverVideo::ProcessDeadOrAlive(
-    uint16_t last_payload_length) const {
-  return kRtpDead;
-}
-
-int32_t RTPReceiverVideo::InvokeOnInitializeDecoder(
-    RtpFeedback* callback,
-    int8_t payload_type,
-    const char payload_name[RTP_PAYLOAD_NAME_SIZE],
-    const PayloadUnion& specific_payload) const {
-  // TODO(pbos): Remove as soon as audio can handle a changing payload type
-  // without this callback.
-  return 0;
 }
 
 }  // namespace webrtc

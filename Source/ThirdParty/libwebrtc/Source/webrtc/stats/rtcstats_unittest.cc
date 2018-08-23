@@ -42,28 +42,27 @@ class RTCChildStats : public RTCStats {
   WEBRTC_RTCSTATS_DECL();
 
   RTCChildStats(const std::string& id, int64_t timestamp_us)
-      : RTCStats(id, timestamp_us),
-        child_int("childInt") {}
+      : RTCStats(id, timestamp_us), child_int("childInt") {}
 
   RTCStatsMember<int32_t> child_int;
 };
 
-WEBRTC_RTCSTATS_IMPL(RTCChildStats, RTCStats, "child-stats",
-    &child_int);
+WEBRTC_RTCSTATS_IMPL(RTCChildStats, RTCStats, "child-stats", &child_int);
 
 class RTCGrandChildStats : public RTCChildStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 
   RTCGrandChildStats(const std::string& id, int64_t timestamp_us)
-      : RTCChildStats(id, timestamp_us),
-        grandchild_int("grandchildInt") {}
+      : RTCChildStats(id, timestamp_us), grandchild_int("grandchildInt") {}
 
   RTCStatsMember<int32_t> grandchild_int;
 };
 
-WEBRTC_RTCSTATS_IMPL(RTCGrandChildStats, RTCChildStats, "grandchild-stats",
-      &grandchild_int);
+WEBRTC_RTCSTATS_IMPL(RTCGrandChildStats,
+                     RTCChildStats,
+                     "grandchild-stats",
+                     &grandchild_int);
 
 TEST(RTCStatsTest, RTCStatsAndMembers) {
   RTCTestStats stats("testId", 42);
@@ -123,7 +122,7 @@ TEST(RTCStatsTest, RTCStatsAndMembers) {
   EXPECT_EQ(*stats.m_sequence_double, sequence_double);
   EXPECT_EQ(*stats.m_sequence_string, sequence_string);
 
-  int32_t numbers[] = { 4, 8, 15, 16, 23, 42 };
+  int32_t numbers[] = {4, 8, 15, 16, 23, 42};
   std::vector<int32_t> numbers_sequence(&numbers[0], &numbers[6]);
   stats.m_sequence_int32->clear();
   stats.m_sequence_int32->insert(stats.m_sequence_int32->end(),
@@ -156,11 +155,11 @@ TEST(RTCStatsTest, EqualityOperator) {
   EXPECT_NE(stats_with_all_values.m_int32, stats_with_all_values.m_uint32);
 
   RTCTestStats one_member_different[] = {
-    stats_with_all_values, stats_with_all_values, stats_with_all_values,
-    stats_with_all_values, stats_with_all_values, stats_with_all_values,
-    stats_with_all_values, stats_with_all_values, stats_with_all_values,
-    stats_with_all_values, stats_with_all_values, stats_with_all_values,
-    stats_with_all_values, stats_with_all_values,
+      stats_with_all_values, stats_with_all_values, stats_with_all_values,
+      stats_with_all_values, stats_with_all_values, stats_with_all_values,
+      stats_with_all_values, stats_with_all_values, stats_with_all_values,
+      stats_with_all_values, stats_with_all_values, stats_with_all_values,
+      stats_with_all_values, stats_with_all_values,
   };
   for (size_t i = 0; i < 14; ++i) {
     EXPECT_EQ(stats_with_all_values, one_member_different[i]);
@@ -329,6 +328,13 @@ TEST(RTCStatsTest, RTCStatsPrintsValidJson) {
   EXPECT_FALSE(rtc::GetIntFromJsonObject(json_output, "mUint64", &m_uint64));
 
   std::cout << stats.ToJson() << std::endl;
+}
+
+TEST(RTCStatsTest, IsStandardized) {
+  RTCStatsMember<int32_t> standardized("standardized");
+  RTCNonStandardStatsMember<int32_t> unstandardized("unstandardized");
+  EXPECT_TRUE(standardized.is_standardized());
+  EXPECT_FALSE(unstandardized.is_standardized());
 }
 
 // Death tests.

@@ -26,14 +26,14 @@ class MockAudioSendStream : public AudioSendStream {
   MOCK_METHOD0(Start, void());
   MOCK_METHOD0(Stop, void());
   // GMock doesn't like move-only types, such as std::unique_ptr.
-  virtual void SendAudioData(
-      std::unique_ptr<webrtc::AudioFrame> audio_frame) {
+  virtual void SendAudioData(std::unique_ptr<webrtc::AudioFrame> audio_frame) {
     SendAudioDataForMock(audio_frame.get());
   }
-  MOCK_METHOD1(SendAudioDataForMock,
-               void(webrtc::AudioFrame* audio_frame));
+  MOCK_METHOD1(SendAudioDataForMock, void(webrtc::AudioFrame* audio_frame));
   MOCK_METHOD4(SendTelephoneEvent,
-               bool(int payload_type, int payload_frequency, int event,
+               bool(int payload_type,
+                    int payload_frequency,
+                    int event,
                     int duration_ms));
   MOCK_METHOD1(SetMuted, void(bool muted));
   MOCK_CONST_METHOD0(GetStats, Stats());

@@ -41,7 +41,7 @@ def ParsePlotLine(line):
   # The variable name can contain any non-whitespace character except "#:@"
   match = re.match(r'([^\s#:@]+)(?:#\d)?:(\d+)@(\S+)', annotated_var)
 
-  if match == None:
+  if match is None:
     raise ParsePlotLineException("Could not parse variable name, ssrc and \
                                  algorithm name", annotated_var)
   var_name = match.group(1)

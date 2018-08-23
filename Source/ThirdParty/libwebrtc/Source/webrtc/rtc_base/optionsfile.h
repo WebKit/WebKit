@@ -21,7 +21,7 @@ namespace rtc {
 // first-class options storage system.
 class OptionsFile {
  public:
-  OptionsFile(const std::string &path);
+  OptionsFile(const std::string& path);
   ~OptionsFile();
 
   // Loads the file from disk, overwriting the in-memory values.
@@ -38,8 +38,8 @@ class OptionsFile {
  private:
   typedef std::map<std::string, std::string> OptionsMap;
 
-  static bool IsLegalName(const std::string &name);
-  static bool IsLegalValue(const std::string &value);
+  static bool IsLegalName(const std::string& name);
+  static bool IsLegalValue(const std::string& value);
 
   std::string path_;
   OptionsMap options_;

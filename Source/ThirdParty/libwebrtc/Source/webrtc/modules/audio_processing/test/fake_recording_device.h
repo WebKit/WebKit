@@ -16,8 +16,8 @@
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/audio/audio_frame.h"
 #include "common_audio/channel_buffer.h"
-#include "modules/include/module_common_types.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

@@ -17,13 +17,6 @@
 namespace webrtc {
 namespace video_coding {
 
-FrameObject::FrameObject()
-    : picture_id(0),
-      spatial_layer(0),
-      timestamp(0),
-      num_references(0),
-      inter_layer_predicted(false) {}
-
 RtpFrameObject::RtpFrameObject(PacketBuffer* packet_buffer,
                                uint16_t first_seq_num,
                                uint16_t last_seq_num,
@@ -39,18 +32,13 @@ RtpFrameObject::RtpFrameObject(PacketBuffer* packet_buffer,
   VCMPacket* first_packet = packet_buffer_->GetPacket(first_seq_num);
   RTC_CHECK(first_packet);
 
-  // RtpFrameObject members
+  // EncodedFrame members
   frame_type_ = first_packet->frameType;
   codec_type_ = first_packet->codec;
 
-  // Stereo codec appends CopyCodecSpecific to last packet to avoid copy.
-  VCMPacket* packet_with_codec_specific =
-      codec_type_ == kVideoCodecStereo ? packet_buffer_->GetPacket(last_seq_num)
-                                       : first_packet;
-
-  // TODO(philipel): Remove when encoded image is replaced by FrameObject.
+  // TODO(philipel): Remove when encoded image is replaced by EncodedFrame.
   // VCMEncodedFrame members
-  CopyCodecSpecific(&packet_with_codec_specific->video_header);
+  CopyCodecSpecific(&first_packet->video_header);
   _completeFrame = true;
   _payloadType = first_packet->payloadType;
   _timeStamp = first_packet->timestamp;
@@ -80,7 +68,7 @@ RtpFrameObject::RtpFrameObject(PacketBuffer* packet_buffer,
   _encodedWidth = first_packet->width;
   _encodedHeight = first_packet->height;
 
-  // FrameObject members
+  // EncodedFrame members
   timestamp = first_packet->timestamp;
 
   VCMPacket* last_packet = packet_buffer_->GetPacket(last_seq_num);
@@ -96,7 +84,7 @@ RtpFrameObject::RtpFrameObject(PacketBuffer* packet_buffer,
   _rotation_set = true;
   content_type_ = last_packet->video_header.content_type;
   if (last_packet->video_header.video_timing.flags !=
-      TimingFrameFlags::kInvalid) {
+      VideoSendTiming::kInvalid) {
     // ntp_time_ms_ may be -1 if not estimated yet. This is not a problem,
     // as this will be dealt with at the time of reporting.
     timing_.encode_start_ms =
@@ -168,12 +156,12 @@ bool RtpFrameObject::delayed_by_retransmission() const {
   return times_nacked() > 0;
 }
 
-rtc::Optional<RTPVideoTypeHeader> RtpFrameObject::GetCodecHeader() const {
+absl::optional<RTPVideoTypeHeader> RtpFrameObject::GetCodecHeader() const {
   rtc::CritScope lock(&packet_buffer_->crit_);
   VCMPacket* packet = packet_buffer_->GetPacket(first_seq_num_);
   if (!packet)
-    return rtc::nullopt;
-  return packet->video_header.codecHeader;
+    return absl::nullopt;
+  return packet->video_header.video_type_header;
 }
 
 }  // namespace video_coding

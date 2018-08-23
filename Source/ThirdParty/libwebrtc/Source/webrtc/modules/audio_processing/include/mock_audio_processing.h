@@ -40,8 +40,8 @@ class MockEchoCancellation : public EchoCancellation {
   MOCK_METHOD1(enable_delay_logging, int(bool enable));
   MOCK_CONST_METHOD0(is_delay_logging_enabled, bool());
   MOCK_METHOD2(GetDelayMetrics, int(int* median, int* std));
-  MOCK_METHOD3(GetDelayMetrics, int(int* median, int* std,
-                                    float* fraction_poor_delays));
+  MOCK_METHOD3(GetDelayMetrics,
+               int(int* median, int* std, float* fraction_poor_delays));
   MOCK_CONST_METHOD0(aec_core, struct AecCore*());
 };
 
@@ -110,6 +110,8 @@ class MockCustomProcessing : public CustomProcessing {
   virtual ~MockCustomProcessing() {}
   MOCK_METHOD2(Initialize, void(int sample_rate_hz, int num_channels));
   MOCK_METHOD1(Process, void(AudioBuffer* audio));
+  MOCK_METHOD1(SetRuntimeSetting,
+               void(AudioProcessing::RuntimeSetting setting));
   MOCK_CONST_METHOD0(ToString, std::string());
 };
 
@@ -121,6 +123,7 @@ class MockEchoControl : public EchoControl {
   MOCK_METHOD2(ProcessCapture,
                void(AudioBuffer* capture, bool echo_path_change));
   MOCK_CONST_METHOD0(GetMetrics, Metrics());
+  MOCK_METHOD1(SetAudioBufferDelay, void(size_t delay_ms));
 };
 
 class MockVoiceDetection : public VoiceDetection {
@@ -136,7 +139,7 @@ class MockVoiceDetection : public VoiceDetection {
   MOCK_CONST_METHOD0(frame_size_ms, int());
 };
 
-class MockAudioProcessing : public AudioProcessing {
+class MockAudioProcessing : public testing::NiceMock<AudioProcessing> {
  public:
   MockAudioProcessing()
       : echo_cancellation_(new testing::NiceMock<MockEchoCancellation>()),
@@ -145,18 +148,18 @@ class MockAudioProcessing : public AudioProcessing {
         high_pass_filter_(new testing::NiceMock<MockHighPassFilter>()),
         level_estimator_(new testing::NiceMock<MockLevelEstimator>()),
         noise_suppression_(new testing::NiceMock<MockNoiseSuppression>()),
-        voice_detection_(new testing::NiceMock<MockVoiceDetection>()) {
-  }
+        voice_detection_(new testing::NiceMock<MockVoiceDetection>()) {}
 
   virtual ~MockAudioProcessing() {}
 
   MOCK_METHOD0(Initialize, int());
-  MOCK_METHOD6(Initialize, int(int capture_input_sample_rate_hz,
-                               int capture_output_sample_rate_hz,
-                               int render_sample_rate_hz,
-                               ChannelLayout capture_input_layout,
-                               ChannelLayout capture_output_layout,
-                               ChannelLayout render_input_layout));
+  MOCK_METHOD6(Initialize,
+               int(int capture_input_sample_rate_hz,
+                   int capture_output_sample_rate_hz,
+                   int render_sample_rate_hz,
+                   ChannelLayout capture_input_layout,
+                   ChannelLayout capture_output_layout,
+                   ChannelLayout render_input_layout));
   MOCK_METHOD1(Initialize, int(const ProcessingConfig& processing_config));
   MOCK_METHOD1(ApplyConfig, void(const Config& config));
   MOCK_METHOD1(SetExtraOptions, void(const webrtc::Config& config));
@@ -167,27 +170,32 @@ class MockAudioProcessing : public AudioProcessing {
   MOCK_CONST_METHOD0(num_output_channels, size_t());
   MOCK_CONST_METHOD0(num_reverse_channels, size_t());
   MOCK_METHOD1(set_output_will_be_muted, void(bool muted));
+  MOCK_METHOD1(SetRuntimeSetting, void(RuntimeSetting setting));
   MOCK_METHOD1(ProcessStream, int(AudioFrame* frame));
-  MOCK_METHOD7(ProcessStream, int(const float* const* src,
-                                  size_t samples_per_channel,
-                                  int input_sample_rate_hz,
-                                  ChannelLayout input_layout,
-                                  int output_sample_rate_hz,
-                                  ChannelLayout output_layout,
-                                  float* const* dest));
-  MOCK_METHOD4(ProcessStream, int(const float* const* src,
-                                 const StreamConfig& input_config,
-                                 const StreamConfig& output_config,
-                                 float* const* dest));
+  MOCK_METHOD7(ProcessStream,
+               int(const float* const* src,
+                   size_t samples_per_channel,
+                   int input_sample_rate_hz,
+                   ChannelLayout input_layout,
+                   int output_sample_rate_hz,
+                   ChannelLayout output_layout,
+                   float* const* dest));
+  MOCK_METHOD4(ProcessStream,
+               int(const float* const* src,
+                   const StreamConfig& input_config,
+                   const StreamConfig& output_config,
+                   float* const* dest));
   MOCK_METHOD1(ProcessReverseStream, int(AudioFrame* frame));
-  MOCK_METHOD4(AnalyzeReverseStream, int(const float* const* data,
-                                         size_t samples_per_channel,
-                                         int sample_rate_hz,
-                                         ChannelLayout layout));
-  MOCK_METHOD4(ProcessReverseStream, int(const float* const* src,
-                                         const StreamConfig& input_config,
-                                         const StreamConfig& output_config,
-                                         float* const* dest));
+  MOCK_METHOD4(AnalyzeReverseStream,
+               int(const float* const* data,
+                   size_t samples_per_channel,
+                   int sample_rate_hz,
+                   ChannelLayout layout));
+  MOCK_METHOD4(ProcessReverseStream,
+               int(const float* const* src,
+                   const StreamConfig& input_config,
+                   const StreamConfig& output_config,
+                   float* const* dest));
   MOCK_METHOD1(set_stream_delay_ms, int(int delay));
   MOCK_CONST_METHOD0(stream_delay_ms, int());
   MOCK_CONST_METHOD0(was_stream_delay_set, bool());
@@ -198,6 +206,10 @@ class MockAudioProcessing : public AudioProcessing {
   virtual void AttachAecDump(std::unique_ptr<AecDump> aec_dump) {}
   MOCK_METHOD0(DetachAecDump, void());
 
+  virtual void AttachPlayoutAudioGenerator(
+      std::unique_ptr<AudioGenerator> audio_generator) {}
+  MOCK_METHOD0(DetachPlayoutAudioGenerator, void());
+
   MOCK_METHOD0(UpdateHistogramsOnCallEnd, void());
   MOCK_CONST_METHOD0(GetStatistics, AudioProcessingStatistics());
   MOCK_CONST_METHOD1(GetStatistics, AudioProcessingStats(bool));
@@ -207,9 +219,7 @@ class MockAudioProcessing : public AudioProcessing {
   virtual MockEchoControlMobile* echo_control_mobile() const {
     return echo_control_mobile_.get();
   }
-  virtual MockGainControl* gain_control() const {
-    return gain_control_.get();
-  }
+  virtual MockGainControl* gain_control() const { return gain_control_.get(); }
   virtual MockHighPassFilter* high_pass_filter() const {
     return high_pass_filter_.get();
   }

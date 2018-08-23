@@ -11,11 +11,11 @@
 #include "rtc_tools/event_log_visualizer/plot_base.h"
 
 #include <algorithm>
+#include <limits>
 
 #include "rtc_base/checks.h"
 
 namespace webrtc {
-namespace plotting {
 
 void Plot::SetXAxis(float min_value,
                     float max_value,
@@ -85,5 +85,4 @@ void Plot::AppendTimeSeriesIfNotEmpty(TimeSeries&& time_series) {
   }
 }
 
-}  // namespace plotting
 }  // namespace webrtc

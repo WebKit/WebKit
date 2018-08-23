@@ -12,15 +12,14 @@
 #include "modules/audio_processing/aec/echo_cancellation.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/gtest.h"
-#include "typedefs.h"  // NOLINT(build/include)
 namespace webrtc {
 namespace {
 
 class SystemDelayTest : public ::testing::Test {
  protected:
   SystemDelayTest();
-  virtual void SetUp();
-  virtual void TearDown();
+  void SetUp() override;
+  void TearDown() override;
 
   // Initialization of AEC handle with respect to |sample_rate_hz|. Since the
   // device sample rate is unimportant we set that value to 48000 Hz.
@@ -104,14 +103,8 @@ void SystemDelayTest::Init(int sample_rate_hz) {
 
 void SystemDelayTest::RenderAndCapture(int device_buffer_ms) {
   EXPECT_EQ(0, WebRtcAec_BufferFarend(handle_, far_, samples_per_frame_));
-  EXPECT_EQ(0,
-            WebRtcAec_Process(handle_,
-                              &near_ptr_,
-                              1,
-                              &out_ptr_,
-                              samples_per_frame_,
-                              device_buffer_ms,
-                              0));
+  EXPECT_EQ(0, WebRtcAec_Process(handle_, &near_ptr_, 1, &out_ptr_,
+                                 samples_per_frame_, device_buffer_ms, 0));
 }
 
 size_t SystemDelayTest::BufferFillUp() {
@@ -157,16 +150,15 @@ void SystemDelayTest::RunStableStartup() {
     EXPECT_GT(kStableConvergenceMs, process_time_ms);
   }
   // Verify that the buffer has been flushed.
-  EXPECT_GE(static_cast<int>(buffer_size),
-            WebRtcAec_system_delay(self_->aec));
+  EXPECT_GE(static_cast<int>(buffer_size), WebRtcAec_system_delay(self_->aec));
 }
 
-  int SystemDelayTest::MapBufferSizeToSamples(int size_in_ms,
-                                              bool extended_filter) {
+int SystemDelayTest::MapBufferSizeToSamples(int size_in_ms,
+                                            bool extended_filter) {
   // If extended_filter is disabled we add an extra 10 ms for the unprocessed
   // frame. That is simply how the algorithm is constructed.
-  return static_cast<int>(
-      (size_in_ms + (extended_filter ? 0 : 10)) * samples_per_frame_ / 10);
+  return static_cast<int>((size_in_ms + (extended_filter ? 0 : 10)) *
+                          samples_per_frame_ / 10);
 }
 
 // The tests should meet basic requirements and not be adjusted to what is
@@ -241,9 +233,9 @@ TEST_F(SystemDelayTest, CorrectDelayAfterStableStartup) {
             static_cast<int>(kDeviceBufMs * samples_per_frame_ / 10);
         EXPECT_GE(average_reported_delay, WebRtcAec_system_delay(self_->aec));
         int lower_bound = WebRtcAec_extended_filter_enabled(self_->aec)
-            ? (average_reported_delay / 2 -
-               rtc::checked_cast<int>(samples_per_frame_))
-            : average_reported_delay * 3 / 4;
+                              ? (average_reported_delay / 2 -
+                                 rtc::checked_cast<int>(samples_per_frame_))
+                              : average_reported_delay * 3 / 4;
         EXPECT_LE(lower_bound, WebRtcAec_system_delay(self_->aec));
       }
     }
@@ -322,14 +314,8 @@ TEST_F(SystemDelayTest, CorrectDelayAfterStableBufferBuildUp) {
     // can make that assumption since we have a separate stability test.
     int process_time_ms = 0;
     for (; process_time_ms < kStableConvergenceMs; process_time_ms += 10) {
-      EXPECT_EQ(0,
-                WebRtcAec_Process(handle_,
-                                  &near_ptr_,
-                                  1,
-                                  &out_ptr_,
-                                  samples_per_frame_,
-                                  kDeviceBufMs,
-                                  0));
+      EXPECT_EQ(0, WebRtcAec_Process(handle_, &near_ptr_, 1, &out_ptr_,
+                                     samples_per_frame_, kDeviceBufMs, 0));
     }
     // Verify that a buffer size has been established.
     EXPECT_EQ(0, self_->checkBuffSize);
@@ -414,8 +400,8 @@ TEST_F(SystemDelayTest, CorrectDelayDuringDrift) {
         for (int j = 0; j < 1000; j++) {
           // Drift = -1 ms per 100 ms of data.
           int device_buf_ms = kDeviceBufMs - (j / 10) + jump;
-          int device_buf = MapBufferSizeToSamples(device_buf_ms,
-                                                  extended_filter == 1);
+          int device_buf =
+              MapBufferSizeToSamples(device_buf_ms, extended_filter == 1);
 
           if (device_buf_ms < 30) {
             // Add 10 ms data, taking affect next frame.
@@ -452,8 +438,8 @@ TEST_F(SystemDelayTest, ShouldRecoverAfterGlitch) {
       for (size_t i = 0; i < kNumSampleRates; i++) {
         Init(kSampleRateHz[i]);
         RunStableStartup();
-        int device_buf = MapBufferSizeToSamples(kDeviceBufMs,
-                                                extended_filter == 1);
+        int device_buf =
+            MapBufferSizeToSamples(kDeviceBufMs, extended_filter == 1);
         // Glitch state.
         for (int j = 0; j < 20; j++) {
           EXPECT_EQ(0,
@@ -513,8 +499,8 @@ TEST_F(SystemDelayTest, UnaffectedWhenSpuriousDeviceBufferValues) {
     for (size_t i = 0; i < kNumSampleRates; i++) {
       Init(kSampleRateHz[i]);
       RunStableStartup();
-      int device_buf = MapBufferSizeToSamples(kDeviceBufMs,
-                                              extended_filter == 1);
+      int device_buf =
+          MapBufferSizeToSamples(kDeviceBufMs, extended_filter == 1);
 
       // Normal state. We are currently not in a non-causal state.
       bool non_causal = false;
@@ -566,8 +552,8 @@ TEST_F(SystemDelayTest, CorrectImpactWhenTogglingDeviceBufferValues) {
       for (size_t i = 0; i < kNumSampleRates; i++) {
         Init(kSampleRateHz[i]);
         RunStableStartup();
-        const int device_buf = MapBufferSizeToSamples(kDeviceBufMs,
-                                                      extended_filter == 1);
+        const int device_buf =
+            MapBufferSizeToSamples(kDeviceBufMs, extended_filter == 1);
 
         // Normal state. We are currently not in a non-causal state.
         bool non_causal = false;

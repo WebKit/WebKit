@@ -15,6 +15,7 @@
 #include <sstream>
 #include <utility>  // For std::move.
 
+#include "absl/memory/memory.h"
 #include "api/proxy.h"
 #include "rtc_base/logging.h"
 
@@ -115,10 +116,11 @@ RtpTransportAdapter::CreateSrtpProxied(
     LOG_AND_RETURN_ERROR(RTCErrorType::INVALID_PARAMETER,
                          "Must provide an RTP transport controller.");
   }
-  std::unique_ptr<RtpTransportAdapter> transport_adapter(
-      new RtpTransportAdapter(parameters.rtcp, rtp, rtcp,
-                              rtp_transport_controller,
-                              true /*is_srtp_transport*/));
+
+  std::unique_ptr<RtpTransportAdapter> transport_adapter;
+  transport_adapter.reset(new RtpTransportAdapter(parameters.rtcp, rtp, rtcp,
+                                                  rtp_transport_controller,
+                                                  true /*is_srtp_transport*/));
   RTCError params_result = transport_adapter->SetParameters(parameters);
   if (!params_result.ok()) {
     return std::move(params_result);
@@ -145,23 +147,39 @@ RtpTransportAdapter::RtpTransportAdapter(
     : rtp_packet_transport_(rtp),
       rtcp_packet_transport_(rtcp),
       rtp_transport_controller_(rtp_transport_controller),
-      is_srtp_transport_(is_srtp_transport) {
+      network_thread_(rtp_transport_controller_->network_thread()) {
   parameters_.rtcp = rtcp_params;
   // CNAME should have been filled by OrtcFactory if empty.
   RTC_DCHECK(!parameters_.rtcp.cname.empty());
   RTC_DCHECK(rtp_transport_controller);
+
+  if (is_srtp_transport) {
+    srtp_transport_ = absl::make_unique<SrtpTransport>(rtcp == nullptr);
+    transport_ = srtp_transport_.get();
+  } else {
+    unencrypted_rtp_transport_ =
+        absl::make_unique<RtpTransport>(rtcp == nullptr);
+    transport_ = unencrypted_rtp_transport_.get();
+  }
+  RTC_DCHECK(transport_);
+
+  network_thread_->Invoke<void>(RTC_FROM_HERE, [=] {
+    SetRtpPacketTransport(rtp->GetInternal());
+    if (rtcp) {
+      SetRtcpPacketTransport(rtcp->GetInternal());
+    }
+  });
+
+  transport_->SignalReadyToSend.connect(this,
+                                        &RtpTransportAdapter::OnReadyToSend);
+  transport_->SignalRtcpPacketReceived.connect(
+      this, &RtpTransportAdapter::OnRtcpPacketReceived);
+  transport_->SignalWritableState.connect(
+      this, &RtpTransportAdapter::OnWritableState);
 }
 
 RtpTransportAdapter::~RtpTransportAdapter() {
   SignalDestroyed(this);
-}
-
-PacketTransportInterface* RtpTransportAdapter::GetRtpPacketTransport() const {
-  return rtp_packet_transport_;
-}
-
-PacketTransportInterface* RtpTransportAdapter::GetRtcpPacketTransport() const {
-  return rtcp_packet_transport_;
 }
 
 RTCError RtpTransportAdapter::SetParameters(
@@ -194,34 +212,20 @@ RTCError RtpTransportAdapter::SetParameters(
 
 RTCError RtpTransportAdapter::SetSrtpSendKey(
     const cricket::CryptoParams& params) {
-  if (send_key_) {
-    LOG_AND_RETURN_ERROR(
-        webrtc::RTCErrorType::UNSUPPORTED_OPERATION,
-        "Setting the SRTP send key twice is currently unsupported.");
+  if (!network_thread_->IsCurrent()) {
+    return network_thread_->Invoke<RTCError>(
+        RTC_FROM_HERE, [&] { return SetSrtpSendKey(params); });
   }
-  if (receive_key_ && receive_key_->cipher_suite != params.cipher_suite) {
-    LOG_AND_RETURN_ERROR(
-        webrtc::RTCErrorType::UNSUPPORTED_OPERATION,
-        "The send key and receive key must have the same cipher suite.");
-  }
-  send_key_ = params;
-  return RTCError::OK();
+  return transport_->SetSrtpSendKey(params);
 }
 
 RTCError RtpTransportAdapter::SetSrtpReceiveKey(
     const cricket::CryptoParams& params) {
-  if (receive_key_) {
-    LOG_AND_RETURN_ERROR(
-        webrtc::RTCErrorType::UNSUPPORTED_OPERATION,
-        "Setting the SRTP receive key twice is currently unsupported.");
+  if (!network_thread_->IsCurrent()) {
+    return network_thread_->Invoke<RTCError>(
+        RTC_FROM_HERE, [&] { return SetSrtpReceiveKey(params); });
   }
-  if (send_key_ && send_key_->cipher_suite != params.cipher_suite) {
-    LOG_AND_RETURN_ERROR(
-        webrtc::RTCErrorType::UNSUPPORTED_OPERATION,
-        "The send key and receive key must have the same cipher suite.");
-  }
-  receive_key_ = params;
-  return RTCError::OK();
+  return transport_->SetSrtpReceiveKey(params);
 }
 
 }  // namespace webrtc

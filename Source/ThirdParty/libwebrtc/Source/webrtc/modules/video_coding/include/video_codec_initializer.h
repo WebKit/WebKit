@@ -15,45 +15,35 @@
 #include <string>
 #include <vector>
 
-#include "call/video_send_stream.h"
+#include "api/video_codecs/video_encoder_config.h"
 
 namespace webrtc {
 
-class TemporalLayersFactory;
 class VideoBitrateAllocator;
 class VideoCodec;
-class VideoEncoderConfig;
 
 class VideoCodecInitializer {
  public:
-  // Takes an EncoderSettings, a VideoEncoderConfig and the VideoStream
-  // configuration and translated them into the old school VideoCodec type.
+  // Takes a VideoEncoderConfig and the VideoStream configuration and
+  // translates them into the old school VideoCodec type.
   // It also creates a VideoBitrateAllocator instance, suitable for the codec
   // type used. For instance, VP8 will create an allocator than can handle
   // simulcast and temporal layering.
   // GetBitrateAllocator is called implicitly from here, no need to call again.
   static bool SetupCodec(
       const VideoEncoderConfig& config,
-      const VideoSendStream::Config::EncoderSettings settings,
       const std::vector<VideoStream>& streams,
-      bool nack_enabled,
       VideoCodec* codec,
       std::unique_ptr<VideoBitrateAllocator>* bitrate_allocator);
 
-  // Create a bitrate allocator for the specified codec. |tl_factory| is
-  // optional, if it is populated, ownership of that instance will be
-  // transferred to the VideoBitrateAllocator instance.
+  // Create a bitrate allocator for the specified codec.
   static std::unique_ptr<VideoBitrateAllocator> CreateBitrateAllocator(
-      const VideoCodec& codec,
-      std::unique_ptr<TemporalLayersFactory> tl_factory);
+      const VideoCodec& codec);
 
  private:
   static VideoCodec VideoEncoderConfigToVideoCodec(
       const VideoEncoderConfig& config,
-      const std::vector<VideoStream>& streams,
-      const std::string& payload_name,
-      int payload_type,
-      bool nack_enabled);
+      const std::vector<VideoStream>& streams);
 };
 
 }  // namespace webrtc

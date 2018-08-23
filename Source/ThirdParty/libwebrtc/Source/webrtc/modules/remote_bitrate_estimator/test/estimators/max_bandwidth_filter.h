@@ -20,7 +20,6 @@
 #include <vector>
 
 #include "logging/rtc_event_log/mock/mock_rtc_event_log.h"
-#include "modules/remote_bitrate_estimator/include/send_time_history.h"
 #include "modules/remote_bitrate_estimator/test/bwe.h"
 
 namespace webrtc {

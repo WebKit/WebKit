@@ -73,11 +73,11 @@ class FrameLengthController final : public Controller {
 
   std::vector<int>::const_iterator frame_length_ms_;
 
-  rtc::Optional<int> uplink_bandwidth_bps_;
+  absl::optional<int> uplink_bandwidth_bps_;
 
-  rtc::Optional<float> uplink_packet_loss_fraction_;
+  absl::optional<float> uplink_packet_loss_fraction_;
 
-  rtc::Optional<size_t> overhead_bytes_per_packet_;
+  absl::optional<size_t> overhead_bytes_per_packet_;
 
   // True if the previous frame length decision was an increase, otherwise
   // false.

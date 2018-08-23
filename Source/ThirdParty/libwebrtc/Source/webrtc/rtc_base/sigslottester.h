@@ -18,7 +18,6 @@
 // To generate sigslottester.h from sigslottester.h.pump, execute:
 // /home/build/google3/third_party/gtest/scripts/pump.py sigslottester.h.pump
 
-
 // SigslotTester(s) are utility classes to check if signals owned by an
 // object are being invoked at the right time and with the right arguments.
 // They are meant to be used in tests. Tests must provide "capture" pointers
@@ -40,7 +39,7 @@
 //   /* See unit-tests for more examples */
 
 #include "rtc_base/constructormagic.h"
-#include "rtc_base/sigslot.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace rtc {
 
@@ -70,10 +69,8 @@ class SigslotTester0 : public sigslot::has_slots<> {
 template <class A1, class C1>
 class SigslotTester1 : public sigslot::has_slots<> {
  public:
-  SigslotTester1(sigslot::signal1<A1>* signal,
-                C1* capture1)
-      : callback_count_(0),
-      capture1_(capture1) {
+  SigslotTester1(sigslot::signal1<A1>* signal, C1* capture1)
+      : callback_count_(0), capture1_(capture1) {
     signal->connect(this, &SigslotTester1::OnSignalCallback);
   }
 
@@ -94,10 +91,8 @@ class SigslotTester1 : public sigslot::has_slots<> {
 template <class A1, class A2, class C1, class C2>
 class SigslotTester2 : public sigslot::has_slots<> {
  public:
-  SigslotTester2(sigslot::signal2<A1, A2>* signal,
-                C1* capture1, C2* capture2)
-      : callback_count_(0),
-      capture1_(capture1), capture2_(capture2) {
+  SigslotTester2(sigslot::signal2<A1, A2>* signal, C1* capture1, C2* capture2)
+      : callback_count_(0), capture1_(capture1), capture2_(capture2) {
     signal->connect(this, &SigslotTester2::OnSignalCallback);
   }
 
@@ -121,9 +116,13 @@ template <class A1, class A2, class A3, class C1, class C2, class C3>
 class SigslotTester3 : public sigslot::has_slots<> {
  public:
   SigslotTester3(sigslot::signal3<A1, A2, A3>* signal,
-                C1* capture1, C2* capture2, C3* capture3)
+                 C1* capture1,
+                 C2* capture2,
+                 C3* capture3)
       : callback_count_(0),
-      capture1_(capture1), capture2_(capture2), capture3_(capture3) {
+        capture1_(capture1),
+        capture2_(capture2),
+        capture3_(capture3) {
     signal->connect(this, &SigslotTester3::OnSignalCallback);
   }
 
@@ -145,15 +144,26 @@ class SigslotTester3 : public sigslot::has_slots<> {
   RTC_DISALLOW_COPY_AND_ASSIGN(SigslotTester3);
 };
 
-template <class A1, class A2, class A3, class A4, class C1, class C2, class C3,
-    class C4>
+template <class A1,
+          class A2,
+          class A3,
+          class A4,
+          class C1,
+          class C2,
+          class C3,
+          class C4>
 class SigslotTester4 : public sigslot::has_slots<> {
  public:
   SigslotTester4(sigslot::signal4<A1, A2, A3, A4>* signal,
-                C1* capture1, C2* capture2, C3* capture3, C4* capture4)
+                 C1* capture1,
+                 C2* capture2,
+                 C3* capture3,
+                 C4* capture4)
       : callback_count_(0),
-      capture1_(capture1), capture2_(capture2), capture3_(capture3),
-          capture4_(capture4) {
+        capture1_(capture1),
+        capture2_(capture2),
+        capture3_(capture3),
+        capture4_(capture4) {
     signal->connect(this, &SigslotTester4::OnSignalCallback);
   }
 
@@ -177,16 +187,30 @@ class SigslotTester4 : public sigslot::has_slots<> {
   RTC_DISALLOW_COPY_AND_ASSIGN(SigslotTester4);
 };
 
-template <class A1, class A2, class A3, class A4, class A5, class C1, class C2,
-    class C3, class C4, class C5>
+template <class A1,
+          class A2,
+          class A3,
+          class A4,
+          class A5,
+          class C1,
+          class C2,
+          class C3,
+          class C4,
+          class C5>
 class SigslotTester5 : public sigslot::has_slots<> {
  public:
   SigslotTester5(sigslot::signal5<A1, A2, A3, A4, A5>* signal,
-                C1* capture1, C2* capture2, C3* capture3, C4* capture4,
-                    C5* capture5)
+                 C1* capture1,
+                 C2* capture2,
+                 C3* capture3,
+                 C4* capture4,
+                 C5* capture5)
       : callback_count_(0),
-      capture1_(capture1), capture2_(capture2), capture3_(capture3),
-          capture4_(capture4), capture5_(capture5) {
+        capture1_(capture1),
+        capture2_(capture2),
+        capture3_(capture3),
+        capture4_(capture4),
+        capture5_(capture5) {
     signal->connect(this, &SigslotTester5::OnSignalCallback);
   }
 

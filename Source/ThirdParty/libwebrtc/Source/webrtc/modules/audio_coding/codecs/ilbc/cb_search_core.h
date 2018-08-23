@@ -19,22 +19,22 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_CB_SEARCH_CORE_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_CB_SEARCH_CORE_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 void WebRtcIlbcfix_CbSearchCore(
-    int32_t *cDot,    /* (i) Cross Correlation */
-    size_t range,    /* (i) Search range */
-    int16_t stage,    /* (i) Stage of this search */
-    int16_t *inverseEnergy,  /* (i) Inversed energy */
-    int16_t *inverseEnergyShift, /* (i) Shifts of inversed energy
+    int32_t* cDot,               /* (i) Cross Correlation */
+    size_t range,                /* (i) Search range */
+    int16_t stage,               /* (i) Stage of this search */
+    int16_t* inverseEnergy,      /* (i) Inversed energy */
+    int16_t* inverseEnergyShift, /* (i) Shifts of inversed energy
                                           with the offset 2*16-29 */
-    int32_t *Crit,    /* (o) The criteria */
-    size_t *bestIndex,   /* (o) Index that corresponds to
-                                   maximum criteria (in this
-                                   vector) */
-    int32_t *bestCrit,   /* (o) Value of critera for the
-                                  chosen index */
-    int16_t *bestCritSh);  /* (o) The domain of the chosen
-                                    criteria */
+    int32_t* Crit,               /* (o) The criteria */
+    size_t* bestIndex,           /* (o) Index that corresponds to
+                                           maximum criteria (in this
+                                           vector) */
+    int32_t* bestCrit, /* (o) Value of critera for the
+                                chosen index */
+    int16_t* bestCritSh); /* (o) The domain of the chosen
+                                   criteria */
 
 #endif

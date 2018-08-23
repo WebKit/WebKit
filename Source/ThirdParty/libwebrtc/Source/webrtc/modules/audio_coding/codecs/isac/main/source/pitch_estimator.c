@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "pitch_estimator.h"
+#include "modules/audio_coding/codecs/isac/main/source/pitch_estimator.h"
 
 #include <math.h>
 #include <memory.h>
@@ -16,6 +16,10 @@
 #ifdef WEBRTC_ANDROID
 #include <stdlib.h>
 #endif
+
+#include "modules/audio_coding/codecs/isac/main/source/filter_functions.h"
+#include "modules/audio_coding/codecs/isac/main/source/pitch_filter.h"
+#include "rtc_base/system/ignore_warnings.h"
 
 static const double kInterpolWin[8] = {-0.00067556028640,  0.02184247643159, -0.12203175715679,  0.60086484101160,
                                        0.60086484101160, -0.12203175715679,  0.02184247643159, -0.00067556028640};
@@ -122,13 +126,56 @@ static void PCorr(const double *in, double *outcorr)
   }
 }
 
+static void WebRtcIsac_AllpassFilterForDec(double* InOut,
+                                           const double* APSectionFactors,
+                                           size_t lengthInOut,
+                                           double* FilterState) {
+  // This performs all-pass filtering--a series of first order all-pass
+  // sections are used to filter the input in a cascade manner.
+  size_t n, j;
+  double temp;
+  for (j = 0; j < ALLPASSSECTIONS; j++) {
+    for (n = 0; n < lengthInOut; n += 2) {
+      temp = InOut[n];  // store input
+      InOut[n] = FilterState[j] + APSectionFactors[j] * temp;
+      FilterState[j] = -APSectionFactors[j] * InOut[n] + temp;
+    }
+  }
+}
 
-void WebRtcIsac_InitializePitch(const double *in,
-                                const double old_lag,
-                                const double old_gain,
-                                PitchAnalysisStruct *State,
-                                double *lags)
-{
+static void WebRtcIsac_DecimateAllpass(
+    const double* in,
+    double* state_in,  // array of size: 2*ALLPASSSECTIONS+1
+    size_t N,          // number of input samples
+    double* out) {     // array of size N/2
+
+  static const double APupper[ALLPASSSECTIONS] = {0.0347, 0.3826};
+  static const double APlower[ALLPASSSECTIONS] = {0.1544, 0.744};
+
+  size_t n;
+  double data_vec[PITCH_FRAME_LEN];
+
+  /* copy input */
+  memcpy(data_vec + 1, in, sizeof(double) * (N - 1));
+
+  data_vec[0] = state_in[2 * ALLPASSSECTIONS];  // the z^(-1) state
+  state_in[2 * ALLPASSSECTIONS] = in[N - 1];
+
+  WebRtcIsac_AllpassFilterForDec(data_vec + 1, APupper, N, state_in);
+  WebRtcIsac_AllpassFilterForDec(data_vec, APlower, N,
+                                 state_in + ALLPASSSECTIONS);
+
+  for (n = 0; n < N / 2; n++)
+    out[n] = data_vec[2 * n] + data_vec[2 * n + 1];
+}
+
+RTC_PUSH_IGNORING_WFRAME_LARGER_THAN()
+
+static void WebRtcIsac_InitializePitch(const double* in,
+                                       const double old_lag,
+                                       const double old_gain,
+                                       PitchAnalysisStruct* State,
+                                       double* lags) {
   double buf_dec[PITCH_CORR_LEN2+PITCH_CORR_STEP2+PITCH_MAX_LAG/2+2];
   double ratio, log_lag, gain_bias;
   double bias;
@@ -449,7 +496,7 @@ void WebRtcIsac_InitializePitch(const double *in,
   }
 }
 
-
+RTC_POP_IGNORING_WFRAME_LARGER_THAN()
 
 /* create weighting matrix by orthogonalizing a basis of polynomials of increasing order
  * t = (0:4)';
@@ -464,6 +511,29 @@ static const double kWeight[5][5] = {
   { 0.01714285714286,   0.05142857142857,  -0.05714285714286,  -0.30857142857143,  0.29714285714286}
 };
 
+/* second order high-pass filter */
+static void WebRtcIsac_Highpass(const double* in,
+                         double* out,
+                         double* state,
+                         size_t N) {
+  /* create high-pass filter ocefficients
+   * z = 0.998 * exp(j*2*pi*35/8000);
+   * p = 0.94 * exp(j*2*pi*140/8000);
+   * HP_b = [1, -2*real(z), abs(z)^2];
+   * HP_a = [1, -2*real(p), abs(p)^2]; */
+  static const double a_coef[2] = { 1.86864659625574, -0.88360000000000};
+  static const double b_coef[2] = {-1.99524591718270,  0.99600400000000};
+
+  size_t k;
+
+  for (k=0; k<N; k++) {
+    *out = *in + state[1];
+    state[1] = state[0] + b_coef[0] * *in + a_coef[0] * *out;
+    state[0] = b_coef[1] * *in++ + a_coef[1] * *out++;
+  }
+}
+
+RTC_PUSH_IGNORING_WFRAME_LARGER_THAN()
 
 void WebRtcIsac_PitchAnalysis(const double *in,               /* PITCH_FRAME_LEN samples */
                               double *out,                    /* PITCH_FRAME_LEN+QLOOKAHEAD samples */
@@ -621,3 +691,5 @@ void WebRtcIsac_PitchAnalysis(const double *in,               /* PITCH_FRAME_LEN
   for (k = 0; k < QLOOKAHEAD; k++)
     State->inbuf[k] = inbuf[k + PITCH_FRAME_LEN];
 }
+
+RTC_POP_IGNORING_WFRAME_LARGER_THAN()

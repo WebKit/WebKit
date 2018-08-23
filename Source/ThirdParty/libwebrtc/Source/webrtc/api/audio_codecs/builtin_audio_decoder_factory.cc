@@ -33,14 +33,17 @@ namespace {
 template <typename T>
 struct NotAdvertised {
   using Config = typename T::Config;
-  static rtc::Optional<Config> SdpToConfig(const SdpAudioFormat& audio_format) {
+  static absl::optional<Config> SdpToConfig(
+      const SdpAudioFormat& audio_format) {
     return T::SdpToConfig(audio_format);
   }
   static void AppendSupportedDecoders(std::vector<AudioCodecSpec>* specs) {
     // Don't advertise support for anything.
   }
-  static std::unique_ptr<AudioDecoder> MakeAudioDecoder(const Config& config) {
-    return T::MakeAudioDecoder(config);
+  static std::unique_ptr<AudioDecoder> MakeAudioDecoder(
+      const Config& config,
+      absl::optional<AudioCodecPairId> codec_pair_id = absl::nullopt) {
+    return T::MakeAudioDecoder(config, codec_pair_id);
   }
 };
 

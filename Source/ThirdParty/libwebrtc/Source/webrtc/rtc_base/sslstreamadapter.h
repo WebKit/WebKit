@@ -22,6 +22,7 @@ namespace rtc {
 
 // Constants for SSL profile.
 const int TLS_NULL_WITH_NULL_NULL = 0;
+const int SSL_CIPHER_SUITE_MAX_VALUE = 0xFFFF;
 
 // Constants for SRTP profiles.
 const int SRTP_INVALID_CRYPTO_SUITE = 0;
@@ -37,6 +38,7 @@ const int SRTP_AEAD_AES_128_GCM = 0x0007;
 #ifndef SRTP_AEAD_AES_256_GCM
 const int SRTP_AEAD_AES_256_GCM = 0x0008;
 #endif
+const int SRTP_CRYPTO_SUITE_MAX_VALUE = 0xFFFF;
 
 // Names of SRTP profiles listed above.
 // 128-bit AES with 80-bit SHA-1 HMAC.
@@ -79,6 +81,12 @@ struct CryptoOptions {
   // Enable GCM crypto suites from RFC 7714 for SRTP. GCM will only be used
   // if both sides enable it.
   bool enable_gcm_crypto_suites = false;
+
+  // If set to true, the (potentially insecure) crypto cipher
+  // SRTP_AES128_CM_SHA1_32 will be included in the list of supported ciphers
+  // during negotiation. It will only be used if both peers support it and no
+  // other ciphers get preferred.
+  bool enable_aes128_sha1_32_crypto_cipher = false;
 
   // If set to true, encrypted RTP header extensions as defined in RFC 6904
   // will be negotiated. They will only be used if both peers support them.
@@ -201,11 +209,7 @@ class SSLStreamAdapter : public StreamAdapterInterface {
       size_t digest_len,
       SSLPeerCertificateDigestError* error = nullptr) = 0;
 
-  // Retrieves the peer's X.509 certificate, if a connection has been
-  // established.
-  virtual std::unique_ptr<SSLCertificate> GetPeerCertificate() const = 0;
-
-  // Retrieves the peer's certificate chain including leaf, if a
+  // Retrieves the peer's certificate chain including leaf certificate, if a
   // connection has been established.
   virtual std::unique_ptr<SSLCertChain> GetPeerSSLCertChain() const = 0;
 

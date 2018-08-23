@@ -19,7 +19,7 @@ CaptureStreamInfo::CaptureStreamInfo(std::unique_ptr<WriteToFileTask> task)
 
 CaptureStreamInfo::~CaptureStreamInfo() = default;
 
-void CaptureStreamInfo::AddInput(const FloatAudioFrame& src) {
+void CaptureStreamInfo::AddInput(const AudioFrameView<const float>& src) {
   RTC_DCHECK(task_);
   auto* stream = task_->GetEvent()->mutable_stream();
 
@@ -30,7 +30,7 @@ void CaptureStreamInfo::AddInput(const FloatAudioFrame& src) {
   }
 }
 
-void CaptureStreamInfo::AddOutput(const FloatAudioFrame& src) {
+void CaptureStreamInfo::AddOutput(const AudioFrameView<const float>& src) {
   RTC_DCHECK(task_);
   auto* stream = task_->GetEvent()->mutable_stream();
 

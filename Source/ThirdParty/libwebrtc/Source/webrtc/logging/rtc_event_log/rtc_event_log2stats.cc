@@ -166,6 +166,10 @@ std::string EventTypeToString(webrtc::rtclog::Event::EventType event_type) {
       return "BWE_PROBE_RESULT";
     case webrtc::rtclog::Event::ALR_STATE_EVENT:
       return "ALR_STATE_EVENT";
+    case webrtc::rtclog::Event::ICE_CANDIDATE_PAIR_CONFIG:
+      return "ICE_CANDIDATE_PAIR_CONFIG";
+    case webrtc::rtclog::Event::ICE_CANDIDATE_PAIR_EVENT:
+      return "ICE_CANDIDATE_PAIR_EVENT";
   }
   RTC_NOTREACHED();
   return "UNKNOWN_EVENT";
@@ -185,8 +189,8 @@ int main(int argc, char* argv[]) {
       " --help for usage.\n"
       "Example usage:\n" +
       program_name + " input.rel\n";
-  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) ||
-      FLAG_help || argc != 2) {
+  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) || FLAG_help ||
+      argc != 2) {
     std::cout << usage;
     if (FLAG_help) {
       rtc::FlagList::Print(nullptr, false);

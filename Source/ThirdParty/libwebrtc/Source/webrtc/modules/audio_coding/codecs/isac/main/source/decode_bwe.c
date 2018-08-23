@@ -8,10 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "structs.h"
-#include "bandwidth_estimator.h"
-#include "entropy_coding.h"
-#include "codec.h"
+#include "modules/audio_coding/codecs/isac/main/source/structs.h"
+#include "modules/audio_coding/codecs/isac/main/source/bandwidth_estimator.h"
+#include "modules/audio_coding/codecs/isac/main/source/entropy_coding.h"
+#include "modules/audio_coding/codecs/isac/main/source/codec.h"
 
 
 int

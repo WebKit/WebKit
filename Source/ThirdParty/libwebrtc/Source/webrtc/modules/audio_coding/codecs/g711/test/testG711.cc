@@ -69,7 +69,6 @@ int main(int argc, char* argv[]) {
     printf("outfile    : Speech output file\n\n");
     printf("outbits    : Output bitstream file [optional]\n\n");
     exit(0);
-
   }
 
   /* Get version and print */
@@ -80,8 +79,8 @@ int main(int argc, char* argv[]) {
   /* Get frame length */
   int framelength_int = atoi(argv[1]);
   if (framelength_int < 0) {
-      printf("  G.722: Invalid framelength %d.\n", framelength_int);
-      exit(1);
+    printf("  G.722: Invalid framelength %d.\n", framelength_int);
+    exit(1);
   }
   framelength = static_cast<size_t>(framelength_int);
 
@@ -112,7 +111,7 @@ int main(int argc, char* argv[]) {
     printf("\nBitfile:  %s\n", bitname);
   }
 
-  starttime = clock() / (double) CLOCKS_PER_SEC_G711; /* Runtime statistics */
+  starttime = clock() / (double)CLOCKS_PER_SEC_G711; /* Runtime statistics */
 
   /* Initialize encoder and decoder */
   framecnt = 0;
@@ -155,11 +154,10 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  runtime = (double)(clock() / (double) CLOCKS_PER_SEC_G711 - starttime);
-  length_file = ((double) framecnt * (double) framelength / 8000);
+  runtime = (double)(clock() / (double)CLOCKS_PER_SEC_G711 - starttime);
+  length_file = ((double)framecnt * (double)framelength / 8000);
   printf("\n\nLength of speech file: %.1f s\n", length_file);
-  printf("Time to run G.711:      %.2f s (%.2f %% of realtime)\n\n",
-         runtime,
+  printf("Time to run G.711:      %.2f s (%.2f %% of realtime)\n\n", runtime,
          (100 * runtime / length_file));
   printf("---------------------END----------------------\n");
 

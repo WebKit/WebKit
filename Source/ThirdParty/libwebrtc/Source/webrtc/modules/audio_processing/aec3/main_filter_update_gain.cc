@@ -22,6 +22,7 @@ namespace webrtc {
 namespace {
 
 constexpr float kHErrorInitial = 10000.f;
+constexpr float kHErrorGainChange = 10000.f;
 constexpr int kPoorExcitationCounterInitial = 1000;
 
 }  // namespace
@@ -29,22 +30,36 @@ constexpr int kPoorExcitationCounterInitial = 1000;
 int MainFilterUpdateGain::instance_count_ = 0;
 
 MainFilterUpdateGain::MainFilterUpdateGain(
-    const EchoCanceller3Config::Filter::MainConfiguration& config)
+    const EchoCanceller3Config::Filter::MainConfiguration& config,
+    size_t config_change_duration_blocks)
     : data_dumper_(
           new ApmDataDumper(rtc::AtomicOps::Increment(&instance_count_))),
-      config_(config),
+      config_change_duration_blocks_(
+          static_cast<int>(config_change_duration_blocks)),
       poor_excitation_counter_(kPoorExcitationCounterInitial) {
+  SetConfig(config, true);
   H_error_.fill(kHErrorInitial);
+  RTC_DCHECK_LT(0, config_change_duration_blocks_);
+  one_by_config_change_duration_blocks_ = 1.f / config_change_duration_blocks_;
 }
 
 MainFilterUpdateGain::~MainFilterUpdateGain() {}
 
 void MainFilterUpdateGain::HandleEchoPathChange(
     const EchoPathVariability& echo_path_variability) {
-  // TODO(peah): Add even-specific behavior.
-  H_error_.fill(kHErrorInitial);
-  poor_excitation_counter_ = kPoorExcitationCounterInitial;
-  call_counter_ = 0;
+  if (echo_path_variability.gain_change) {
+    H_error_.fill(kHErrorGainChange);
+  }
+
+  if (echo_path_variability.delay_change !=
+      EchoPathVariability::DelayAdjustment::kNone) {
+    H_error_.fill(kHErrorInitial);
+  }
+
+  if (!echo_path_variability.gain_change) {
+    poor_excitation_counter_ = kPoorExcitationCounterInitial;
+    call_counter_ = 0;
+  }
 }
 
 void MainFilterUpdateGain::Compute(
@@ -63,8 +78,9 @@ void MainFilterUpdateGain::Compute(
   const size_t size_partitions = filter.SizePartitions();
   auto X2 = render_power;
   const auto& erl = filter.Erl();
-
   ++call_counter_;
+
+  UpdateCurrentConfig();
 
   if (render_signal_analyzer.PoorSignalExcitation()) {
     poor_excitation_counter_ = 0;
@@ -80,7 +96,7 @@ void MainFilterUpdateGain::Compute(
     std::array<float, kFftLengthBy2Plus1> mu;
     // mu = H_error / (0.5* H_error* X2 + n * E2).
     for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
-      mu[k] = X2[k] > config_.noise_gate
+      mu[k] = X2[k] > current_config_.noise_gate
                   ? H_error_[k] / (0.5f * H_error_[k] * X2[k] +
                                    size_partitions * E2_main[k])
                   : 0.f;
@@ -105,17 +121,47 @@ void MainFilterUpdateGain::Compute(
   std::array<float, kFftLengthBy2Plus1> H_error_increase;
   std::transform(E2_shadow.begin(), E2_shadow.end(), E2_main.begin(),
                  H_error_increase.begin(), [&](float a, float b) {
-                   return a >= b ? config_.leakage_converged
-                                 : config_.leakage_diverged;
+                   return a >= b ? current_config_.leakage_converged
+                                 : current_config_.leakage_diverged;
                  });
   std::transform(erl.begin(), erl.end(), H_error_increase.begin(),
                  H_error_increase.begin(), std::multiplies<float>());
   std::transform(H_error_.begin(), H_error_.end(), H_error_increase.begin(),
                  H_error_.begin(), [&](float a, float b) {
-                   return std::max(a + b, config_.error_floor);
+                   return std::max(a + b, current_config_.error_floor);
                  });
 
   data_dumper_->DumpRaw("aec3_main_gain_H_error", H_error_);
+}
+
+void MainFilterUpdateGain::UpdateCurrentConfig() {
+  RTC_DCHECK_GE(config_change_duration_blocks_, config_change_counter_);
+  if (config_change_counter_ > 0) {
+    if (--config_change_counter_ > 0) {
+      auto average = [](float from, float to, float from_weight) {
+        return from * from_weight + to * (1.f - from_weight);
+      };
+
+      float change_factor =
+          config_change_counter_ * one_by_config_change_duration_blocks_;
+
+      current_config_.leakage_converged =
+          average(old_target_config_.leakage_converged,
+                  target_config_.leakage_converged, change_factor);
+      current_config_.leakage_diverged =
+          average(old_target_config_.leakage_diverged,
+                  target_config_.leakage_diverged, change_factor);
+      current_config_.error_floor =
+          average(old_target_config_.error_floor, target_config_.error_floor,
+                  change_factor);
+      current_config_.noise_gate =
+          average(old_target_config_.noise_gate, target_config_.noise_gate,
+                  change_factor);
+    } else {
+      current_config_ = old_target_config_ = target_config_;
+    }
+  }
+  RTC_DCHECK_LE(0, config_change_counter_);
 }
 
 }  // namespace webrtc

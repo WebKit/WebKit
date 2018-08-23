@@ -10,7 +10,17 @@
 
 #include "rtc_base/task_queue.h"
 
-#include <mmsystem.h>
+// clang-format off
+// clang formating would change include order.
+
+// Include winsock2.h before including <windows.h> to maintain consistency with
+// win32.h. To include win32.h directly, it must be broken out into its own
+// build target.
+#include <winsock2.h>
+#include <windows.h>
+#include <sal.h>       // Must come after windows headers.
+#include <mmsystem.h>  // Must come after windows headers.
+// clang-format on
 #include <string.h>
 
 #include <algorithm>
@@ -19,6 +29,7 @@
 
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/criticalsection.h"
 #include "rtc_base/event.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -352,7 +363,7 @@ void TaskQueue::Impl::ThreadMain(void* context) {
 }
 
 void TaskQueue::Impl::ThreadState::RunThreadMain() {
-  HANDLE handles[2] = { *timer_.event_for_wait(), in_queue_ };
+  HANDLE handles[2] = {*timer_.event_for_wait(), in_queue_};
   while (true) {
     // Make sure we do an alertable wait as that's required to allow APCs to run
     // (e.g. required for InitializeQueueThread and stopping the thread in
@@ -366,8 +377,9 @@ void TaskQueue::Impl::ThreadState::RunThreadMain() {
         break;
     }
 
-    if (result == WAIT_OBJECT_0 || (!timer_tasks_.empty() &&
-        ::WaitForSingleObject(*timer_.event_for_wait(), 0) == WAIT_OBJECT_0)) {
+    if (result == WAIT_OBJECT_0 ||
+        (!timer_tasks_.empty() &&
+         ::WaitForSingleObject(*timer_.event_for_wait(), 0) == WAIT_OBJECT_0)) {
       // The multimedia timer was signaled.
       timer_.Cancel();
       RunDueTasks();

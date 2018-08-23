@@ -56,7 +56,7 @@ class ThreadManager {
   // shame to break it.  It is also conceivable on Win32 that we won't even
   // be able to get synchronization privileges, in which case the result
   // will have a null handle.
-  Thread *WrapCurrentThread();
+  Thread* WrapCurrentThread();
   void UnwrapCurrentThread();
 
   bool IsMainThread();
@@ -81,9 +81,9 @@ class ThreadManager {
 
 struct _SendMessage {
   _SendMessage() {}
-  Thread *thread;
+  Thread* thread;
   Message msg;
-  bool *ready;
+  bool* ready;
 };
 
 class Runnable {
@@ -111,6 +111,11 @@ class RTC_LOCKABLE Thread : public MessageQueue {
 
   explicit Thread(SocketServer* ss);
   explicit Thread(std::unique_ptr<SocketServer> ss);
+  // Constructors meant for subclasses; they should call DoInit themselves and
+  // pass false for |do_init|, so that DoInit is called only on the fully
+  // instantiated class, which avoids a vptr data race.
+  Thread(SocketServer* ss, bool do_init);
+  Thread(std::unique_ptr<SocketServer> ss, bool do_init);
 
   // NOTE: ALL SUBCLASSES OF Thread MUST CALL Stop() IN THEIR DESTRUCTORS (or
   // guarantee Stop() is explicitly called before the subclass is destroyed).
@@ -130,6 +135,7 @@ class RTC_LOCKABLE Thread : public MessageQueue {
    public:
     ScopedDisallowBlockingCalls();
     ~ScopedDisallowBlockingCalls();
+
    private:
     Thread* const thread_;
     const bool previous_state_;
@@ -244,7 +250,7 @@ class RTC_LOCKABLE Thread : public MessageQueue {
 #if defined(WEBRTC_WIN)
   static DWORD WINAPI PreRun(LPVOID context);
 #else
-  static void *PreRun(void *pv);
+  static void* PreRun(void* pv);
 #endif
 
   // ThreadManager calls this instead WrapCurrent() because
@@ -273,8 +279,8 @@ class RTC_LOCKABLE Thread : public MessageQueue {
   std::list<_SendMessage> sendlist_;
   std::string name_;
 
-  // TODO(tommi): Add thread checks for proper use of control methods.
-  // Ideally we should be able to just use PlatformThread.
+// TODO(tommi): Add thread checks for proper use of control methods.
+// Ideally we should be able to just use PlatformThread.
 
 #if defined(WEBRTC_POSIX)
   pthread_t thread_ = 0;

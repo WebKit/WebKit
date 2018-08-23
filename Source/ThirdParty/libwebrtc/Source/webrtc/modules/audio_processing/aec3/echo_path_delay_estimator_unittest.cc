@@ -14,9 +14,9 @@
 #include <sstream>
 #include <string>
 
+#include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/render_delay_buffer.h"
-#include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "modules/audio_processing/test/echo_canceller_test_tools.h"
 #include "rtc_base/random.h"
@@ -72,7 +72,7 @@ TEST(EchoPathDelayEstimator, DelayEstimation) {
           delay_samples + 2 * config.delay.api_call_jitter_blocks * 64);
       EchoPathDelayEstimator estimator(&data_dumper, config);
 
-      rtc::Optional<DelayEstimate> estimated_delay_samples;
+      absl::optional<DelayEstimate> estimated_delay_samples;
       for (size_t k = 0; k < (500 + (delay_samples) / kBlockSize); ++k) {
         RandomizeSampleVector(&random_generator, render[0]);
         signal_delay_buffer.Delay(render[0], capture);
@@ -84,22 +84,28 @@ TEST(EchoPathDelayEstimator, DelayEstimation) {
 
         render_delay_buffer->PrepareCaptureProcessing();
 
-        estimated_delay_samples = estimator.EstimateDelay(
+        auto estimate = estimator.EstimateDelay(
             render_delay_buffer->GetDownsampledRenderBuffer(), capture);
+
+        if (estimate) {
+          estimated_delay_samples = estimate;
+        }
       }
 
       if (estimated_delay_samples) {
-        // Due to the internal down-sampling done inside the delay estimator
-        // the estimated delay cannot be expected to be exact to the true delay.
-        EXPECT_NEAR(delay_samples,
-                    estimated_delay_samples->delay -
-                        (config.delay.api_call_jitter_blocks + 1) * 64,
-                    config.delay.down_sampling_factor);
+        // Allow estimated delay to be off by one sample in the down-sampled
+        // domain.
+        size_t delay_ds = delay_samples / down_sampling_factor;
+        size_t estimated_delay_ds =
+            (estimated_delay_samples->delay -
+             (config.delay.api_call_jitter_blocks + 1) * 64) /
+            down_sampling_factor;
+        EXPECT_NEAR(delay_ds, estimated_delay_ds, 1);
       } else {
         ADD_FAILURE();
       }
+    }
   }
-}
 }
 
 // Verifies that the delay estimator does not produce delay estimates for render

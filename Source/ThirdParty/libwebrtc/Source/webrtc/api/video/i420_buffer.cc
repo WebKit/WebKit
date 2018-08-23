@@ -34,8 +34,7 @@ int I420DataSize(int height, int stride_y, int stride_u, int stride_v) {
 }  // namespace
 
 I420Buffer::I420Buffer(int width, int height)
-    : I420Buffer(width, height, width, (width + 1) / 2, (width + 1) / 2) {
-}
+    : I420Buffer(width, height, width, (width + 1) / 2, (width + 1) / 2) {}
 
 I420Buffer::I420Buffer(int width,
                        int height,
@@ -47,9 +46,9 @@ I420Buffer::I420Buffer(int width,
       stride_y_(stride_y),
       stride_u_(stride_u),
       stride_v_(stride_v),
-      data_(static_cast<uint8_t*>(AlignedMalloc(
-          I420DataSize(height, stride_y, stride_u, stride_v),
-          kBufferAlignment))) {
+      data_(static_cast<uint8_t*>(
+          AlignedMalloc(I420DataSize(height, stride_y, stride_u, stride_v),
+                        kBufferAlignment))) {
   RTC_DCHECK_GT(width, 0);
   RTC_DCHECK_GT(height, 0);
   RTC_DCHECK_GE(stride_y, width);
@@ -57,8 +56,7 @@ I420Buffer::I420Buffer(int width,
   RTC_DCHECK_GE(stride_v, (width + 1) / 2);
 }
 
-I420Buffer::~I420Buffer() {
-}
+I420Buffer::~I420Buffer() {}
 
 // static
 rtc::scoped_refptr<I420Buffer> I420Buffer::Create(int width, int height) {
@@ -71,34 +69,34 @@ rtc::scoped_refptr<I420Buffer> I420Buffer::Create(int width,
                                                   int stride_y,
                                                   int stride_u,
                                                   int stride_v) {
-  return new rtc::RefCountedObject<I420Buffer>(
-      width, height, stride_y, stride_u, stride_v);
+  return new rtc::RefCountedObject<I420Buffer>(width, height, stride_y,
+                                               stride_u, stride_v);
 }
 
 // static
 rtc::scoped_refptr<I420Buffer> I420Buffer::Copy(
     const I420BufferInterface& source) {
-  return Copy(source.width(), source.height(),
-              source.DataY(), source.StrideY(),
-              source.DataU(), source.StrideU(),
-              source.DataV(), source.StrideV());
+  return Copy(source.width(), source.height(), source.DataY(), source.StrideY(),
+              source.DataU(), source.StrideU(), source.DataV(),
+              source.StrideV());
 }
 
 // static
-rtc::scoped_refptr<I420Buffer> I420Buffer::Copy(
-      int width, int height,
-      const uint8_t* data_y, int stride_y,
-      const uint8_t* data_u, int stride_u,
-      const uint8_t* data_v, int stride_v) {
+rtc::scoped_refptr<I420Buffer> I420Buffer::Copy(int width,
+                                                int height,
+                                                const uint8_t* data_y,
+                                                int stride_y,
+                                                const uint8_t* data_u,
+                                                int stride_u,
+                                                const uint8_t* data_v,
+                                                int stride_v) {
   // Note: May use different strides than the input data.
   rtc::scoped_refptr<I420Buffer> buffer = Create(width, height);
-  RTC_CHECK_EQ(0, libyuv::I420Copy(data_y, stride_y,
-                                   data_u, stride_u,
-                                   data_v, stride_v,
-                                   buffer->MutableDataY(), buffer->StrideY(),
-                                   buffer->MutableDataU(), buffer->StrideU(),
-                                   buffer->MutableDataV(), buffer->StrideV(),
-                                   width, height));
+  RTC_CHECK_EQ(0, libyuv::I420Copy(data_y, stride_y, data_u, stride_u, data_v,
+                                   stride_v, buffer->MutableDataY(),
+                                   buffer->StrideY(), buffer->MutableDataU(),
+                                   buffer->StrideU(), buffer->MutableDataV(),
+                                   buffer->StrideV(), width, height));
   return buffer;
 }
 
@@ -120,14 +118,13 @@ rtc::scoped_refptr<I420Buffer> I420Buffer::Rotate(
   rtc::scoped_refptr<webrtc::I420Buffer> buffer =
       I420Buffer::Create(rotated_width, rotated_height);
 
-  RTC_CHECK_EQ(0, libyuv::I420Rotate(
-      src.DataY(), src.StrideY(),
-      src.DataU(), src.StrideU(),
-      src.DataV(), src.StrideV(),
-      buffer->MutableDataY(), buffer->StrideY(), buffer->MutableDataU(),
-      buffer->StrideU(), buffer->MutableDataV(), buffer->StrideV(),
-      src.width(), src.height(),
-      static_cast<libyuv::RotationMode>(rotation)));
+  RTC_CHECK_EQ(0,
+               libyuv::I420Rotate(
+                   src.DataY(), src.StrideY(), src.DataU(), src.StrideU(),
+                   src.DataV(), src.StrideV(), buffer->MutableDataY(),
+                   buffer->StrideY(), buffer->MutableDataU(), buffer->StrideU(),
+                   buffer->MutableDataV(), buffer->StrideV(), src.width(),
+                   src.height(), static_cast<libyuv::RotationMode>(rotation)));
 
   return buffer;
 }
@@ -179,9 +176,9 @@ uint8_t* I420Buffer::MutableDataV() {
 void I420Buffer::SetBlack(I420Buffer* buffer) {
   RTC_CHECK(libyuv::I420Rect(buffer->MutableDataY(), buffer->StrideY(),
                              buffer->MutableDataU(), buffer->StrideU(),
-                             buffer->MutableDataV(), buffer->StrideV(),
-                             0, 0, buffer->width(), buffer->height(),
-                             0, 128, 128) == 0);
+                             buffer->MutableDataV(), buffer->StrideV(), 0, 0,
+                             buffer->width(), buffer->height(), 0, 128,
+                             128) == 0);
 }
 
 void I420Buffer::CropAndScaleFrom(const I420BufferInterface& src,
@@ -202,20 +199,16 @@ void I420Buffer::CropAndScaleFrom(const I420BufferInterface& src,
   offset_x = uv_offset_x * 2;
   offset_y = uv_offset_y * 2;
 
-  const uint8_t* y_plane =
-      src.DataY() + src.StrideY() * offset_y + offset_x;
+  const uint8_t* y_plane = src.DataY() + src.StrideY() * offset_y + offset_x;
   const uint8_t* u_plane =
       src.DataU() + src.StrideU() * uv_offset_y + uv_offset_x;
   const uint8_t* v_plane =
       src.DataV() + src.StrideV() * uv_offset_y + uv_offset_x;
-  int res = libyuv::I420Scale(y_plane, src.StrideY(),
-                              u_plane, src.StrideU(),
-                              v_plane, src.StrideV(),
-                              crop_width, crop_height,
-                              MutableDataY(), StrideY(),
-                              MutableDataU(), StrideU(),
-                              MutableDataV(), StrideV(),
-                              width(), height(), libyuv::kFilterBox);
+  int res =
+      libyuv::I420Scale(y_plane, src.StrideY(), u_plane, src.StrideU(), v_plane,
+                        src.StrideV(), crop_width, crop_height, MutableDataY(),
+                        StrideY(), MutableDataU(), StrideU(), MutableDataV(),
+                        StrideV(), width(), height(), libyuv::kFilterBox);
 
   RTC_DCHECK_EQ(res, 0);
 }
@@ -226,10 +219,8 @@ void I420Buffer::CropAndScaleFrom(const I420BufferInterface& src) {
   const int crop_height =
       std::min(src.height(), height() * src.width() / width());
 
-  CropAndScaleFrom(
-      src,
-      (src.width() - crop_width) / 2, (src.height() - crop_height) / 2,
-      crop_width, crop_height);
+  CropAndScaleFrom(src, (src.width() - crop_width) / 2,
+                   (src.height() - crop_height) / 2, crop_width, crop_height);
 }
 
 void I420Buffer::ScaleFrom(const I420BufferInterface& src) {

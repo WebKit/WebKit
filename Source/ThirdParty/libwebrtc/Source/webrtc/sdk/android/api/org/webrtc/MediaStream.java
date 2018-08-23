@@ -30,7 +30,7 @@ public class MediaStream {
   }
 
   public boolean addTrack(AudioTrack track) {
-    if (addAudioTrackToNativeStream(nativeStream, track.nativeTrack)) {
+    if (nativeAddAudioTrackToNativeStream(nativeStream, track.nativeTrack)) {
       audioTracks.add(track);
       return true;
     }
@@ -38,7 +38,7 @@ public class MediaStream {
   }
 
   public boolean addTrack(VideoTrack track) {
-    if (addVideoTrackToNativeStream(nativeStream, track.nativeTrack)) {
+    if (nativeAddVideoTrackToNativeStream(nativeStream, track.nativeTrack)) {
       videoTracks.add(track);
       return true;
     }
@@ -49,7 +49,7 @@ public class MediaStream {
   // is called. If video track need to be preserved after MediaStream is destroyed it
   // should be added to MediaStream using addPreservedTrack() call.
   public boolean addPreservedTrack(VideoTrack track) {
-    if (addVideoTrackToNativeStream(nativeStream, track.nativeTrack)) {
+    if (nativeAddVideoTrackToNativeStream(nativeStream, track.nativeTrack)) {
       preservedVideoTracks.add(track);
       return true;
     }
@@ -58,13 +58,13 @@ public class MediaStream {
 
   public boolean removeTrack(AudioTrack track) {
     audioTracks.remove(track);
-    return removeNativeAudioTrack(nativeStream, track.nativeTrack);
+    return nativeRemoveAudioTrack(nativeStream, track.nativeTrack);
   }
 
   public boolean removeTrack(VideoTrack track) {
     videoTracks.remove(track);
     preservedVideoTracks.remove(track);
-    return removeNativeVideoTrack(nativeStream, track.nativeTrack);
+    return nativeRemoveVideoTrack(nativeStream, track.nativeTrack);
   }
 
   @CalledByNative
@@ -84,16 +84,16 @@ public class MediaStream {
     while (!preservedVideoTracks.isEmpty()) {
       removeTrack(preservedVideoTracks.get(0 /* index */));
     }
-    free(nativeStream);
+    JniCommon.nativeReleaseRef(nativeStream);
   }
 
-  public String label() {
-    return getNativeLabel(nativeStream);
+  public String getId() {
+    return nativeGetId(nativeStream);
   }
 
   @Override
   public String toString() {
-    return "[" + label() + ":A=" + audioTracks.size() + ":V=" + videoTracks.size() + "]";
+    return "[" + getId() + ":A=" + audioTracks.size() + ":V=" + videoTracks.size() + "]";
   }
 
   @CalledByNative
@@ -130,17 +130,11 @@ public class MediaStream {
     Logging.e(TAG, "Couldn't not find track");
   }
 
-  private static native boolean addAudioTrackToNativeStream(
-      long nativeStream, long nativeAudioTrack);
-
-  private static native boolean addVideoTrackToNativeStream(
-      long nativeStream, long nativeVideoTrack);
-
-  private static native boolean removeNativeAudioTrack(long nativeStream, long nativeAudioTrack);
-
-  private static native boolean removeNativeVideoTrack(long nativeStream, long nativeVideoTrack);
-
-  private static native String getNativeLabel(long nativeStream);
-
-  private static native void free(long nativeStream);
+  private static native boolean nativeAddAudioTrackToNativeStream(
+      long stream, long nativeAudioTrack);
+  private static native boolean nativeAddVideoTrackToNativeStream(
+      long stream, long nativeVideoTrack);
+  private static native boolean nativeRemoveAudioTrack(long stream, long nativeAudioTrack);
+  private static native boolean nativeRemoveVideoTrack(long stream, long nativeVideoTrack);
+  private static native String nativeGetId(long stream);
 }

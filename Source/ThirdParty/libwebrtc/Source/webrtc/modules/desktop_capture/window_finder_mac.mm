@@ -14,10 +14,10 @@
 
 #include <utility>
 
-#include "modules/desktop_capture/mac/window_list_utils.h"
+#include "absl/memory/memory.h"
 #include "modules/desktop_capture/mac/desktop_configuration.h"
 #include "modules/desktop_capture/mac/desktop_configuration_monitor.h"
-#include "rtc_base/ptr_util.h"
+#include "modules/desktop_capture/mac/window_list_utils.h"
 
 namespace webrtc {
 
@@ -28,35 +28,24 @@ WindowFinderMac::~WindowFinderMac() = default;
 
 WindowId WindowFinderMac::GetWindowUnderPoint(DesktopVector point) {
   WindowId id = kNullWindowId;
-  MacDesktopConfiguration configuration_holder;
-  MacDesktopConfiguration* configuration = nullptr;
-  if (configuration_monitor_) {
-    configuration_monitor_->Lock();
-    configuration_holder = configuration_monitor_->desktop_configuration();
-    configuration_monitor_->Unlock();
-    configuration = &configuration_holder;
-  }
-  GetWindowList([&id, point, configuration](CFDictionaryRef window) {
-                  DesktopRect bounds;
-                  if (configuration) {
-                    bounds = GetWindowBounds(*configuration, window);
-                  } else {
-                    bounds = GetWindowBounds(window);
-                  }
-                  if (bounds.Contains(point)) {
-                    id = GetWindowId(window);
-                    return false;
-                  }
-                  return true;
-                },
-                true);
+  GetWindowList(
+      [&id, point](CFDictionaryRef window) {
+        DesktopRect bounds;
+        bounds = GetWindowBounds(window);
+        if (bounds.Contains(point)) {
+          id = GetWindowId(window);
+          return false;
+        }
+        return true;
+      },
+      true);
   return id;
 }
 
 // static
 std::unique_ptr<WindowFinder> WindowFinder::Create(
     const WindowFinder::Options& options) {
-  return rtc::MakeUnique<WindowFinderMac>(options.configuration_monitor);
+  return absl::make_unique<WindowFinderMac>(options.configuration_monitor);
 }
 
 }  // namespace webrtc

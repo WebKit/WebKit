@@ -286,7 +286,7 @@ bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<IntConstraint> 
             badConstraint = frameRateConstraint->name();
         return false;
     }
-
+    
     return true;
 }
 
@@ -754,7 +754,7 @@ bool RealtimeMediaSource::supportsConstraint(const MediaConstraint& constraint) 
         // Unknown (or unsupported) constraints should be ignored.
         break;
     }
-
+    
     return false;
 }
 
@@ -765,7 +765,7 @@ bool RealtimeMediaSource::supportsConstraints(const MediaConstraints& constraint
     FlattenedConstraint candidates;
     if (!selectSettings(constraints, candidates, invalidConstraint, SelectType::ForSupportsConstraints))
         return false;
-
+    
     return true;
 }
 

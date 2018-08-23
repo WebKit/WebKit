@@ -10,16 +10,45 @@
 
 package org.webrtc;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import javax.annotation.Nullable;
+
 public class SoftwareVideoDecoderFactory implements VideoDecoderFactory {
+  @Deprecated
+  @Nullable
   @Override
   public VideoDecoder createDecoder(String codecType) {
-    if (codecType.equalsIgnoreCase("VP8")) {
+    return createDecoder(new VideoCodecInfo(codecType, new HashMap<>()));
+  }
+
+  @Nullable
+  @Override
+  public VideoDecoder createDecoder(VideoCodecInfo codecType) {
+    if (codecType.getName().equalsIgnoreCase("VP8")) {
       return new VP8Decoder();
     }
-    if (codecType.equalsIgnoreCase("VP9") && VP9Decoder.isSupported()) {
+    if (codecType.getName().equalsIgnoreCase("VP9") && VP9Decoder.nativeIsSupported()) {
       return new VP9Decoder();
     }
 
     return null;
+  }
+
+  @Override
+  public VideoCodecInfo[] getSupportedCodecs() {
+    return supportedCodecs();
+  }
+
+  static VideoCodecInfo[] supportedCodecs() {
+    List<VideoCodecInfo> codecs = new ArrayList<VideoCodecInfo>();
+
+    codecs.add(new VideoCodecInfo("VP8", new HashMap<>()));
+    if (VP9Decoder.nativeIsSupported()) {
+      codecs.add(new VideoCodecInfo("VP9", new HashMap<>()));
+    }
+
+    return codecs.toArray(new VideoCodecInfo[codecs.size()]);
   }
 }

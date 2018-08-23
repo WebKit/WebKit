@@ -35,10 +35,10 @@ import java.util.concurrent.TimeUnit;
 public class TCPChannelClientTest {
   private static final int PORT = 8888;
   /**
-   * How long we wait before trying to connect to the server. Chosen quite arbitrarily and
-   * could be made smaller if need be.
+   * How long we wait before trying to connect to the server. Note: was
+   * previously only 10, which was too short (tests were flaky).
    */
-  private static final int SERVER_WAIT = 10;
+  private static final int SERVER_WAIT = 100;
   private static final int CONNECT_TIMEOUT = 100;
   private static final int SEND_TIMEOUT = 100;
   private static final int DISCONNECT_TIMEOUT = 100;

@@ -15,7 +15,6 @@
 #include "api/array_view.h"
 #include "common_audio/wav_file.h"
 #include "rtc_base/checks.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace test {
@@ -37,17 +36,11 @@ class WavReaderAdaptor final : public WavReaderInterface {
     return wav_reader_.ReadSamples(samples.size(), samples.begin());
   }
 
-  int SampleRate() const override {
-    return wav_reader_.sample_rate();
-  }
+  int SampleRate() const override { return wav_reader_.sample_rate(); }
 
-  size_t NumChannels() const override {
-    return wav_reader_.num_channels();
-  }
+  size_t NumChannels() const override { return wav_reader_.num_channels(); }
 
-  size_t NumSamples() const override {
-    return wav_reader_.num_samples();
-  }
+  size_t NumSamples() const override { return wav_reader_.num_samples(); }
 
  private:
   WavReader wav_reader_;

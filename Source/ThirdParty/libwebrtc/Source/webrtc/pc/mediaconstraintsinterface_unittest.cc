@@ -28,13 +28,7 @@ bool Matches(const PeerConnectionInterface::RTCConfiguration& a,
          a.screencast_min_bitrate == b.screencast_min_bitrate &&
          a.combined_audio_video_bwe == b.combined_audio_video_bwe &&
          a.enable_dtls_srtp == b.enable_dtls_srtp &&
-         a.media_config.enable_dscp == b.media_config.enable_dscp &&
-         a.media_config.video.enable_cpu_overuse_detection ==
-             b.media_config.video.enable_cpu_overuse_detection &&
-         a.media_config.video.disable_prerenderer_smoothing ==
-             b.media_config.video.disable_prerenderer_smoothing &&
-         a.media_config.video.suspend_below_min_bitrate ==
-             b.media_config.video.suspend_below_min_bitrate;
+         a.media_config == b.media_config;
 }
 
 TEST(MediaConstraintsInterface, CopyConstraintsIntoRtcConfiguration) {

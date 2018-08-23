@@ -63,8 +63,6 @@ TEST(VP8EncoderSimulcastProxy, ChoosesCorrectImplementation) {
       "SimulcastEncoderAdapter (Fake, Fake, Fake)";
   VideoCodec codec_settings;
   webrtc::test::CodecSettings(kVideoCodecVP8, &codec_settings);
-  TemporalLayersFactory tl_factory;
-  codec_settings.VP8()->tl_factory = &tl_factory;
   codec_settings.simulcastStream[0] = {
       test::kTestWidth, test::kTestHeight, 2, 2000, 1000, 1000, 56};
   codec_settings.simulcastStream[1] = {
@@ -85,7 +83,8 @@ TEST(VP8EncoderSimulcastProxy, ChoosesCorrectImplementation) {
       .Times(1)
       .WillOnce(Return(mock_encoder));
 
-  VP8EncoderSimulcastProxy simulcast_enabled_proxy(&simulcast_factory);
+  VP8EncoderSimulcastProxy simulcast_enabled_proxy(&simulcast_factory,
+                                                   SdpVideoFormat("VP8"));
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
             simulcast_enabled_proxy.InitEncode(&codec_settings, 4, 1200));
   EXPECT_EQ(kImplementationName, simulcast_enabled_proxy.ImplementationName());
@@ -124,7 +123,8 @@ TEST(VP8EncoderSimulcastProxy, ChoosesCorrectImplementation) {
       .WillOnce(Return(mock_encoder3))
       .WillOnce(Return(mock_encoder4));
 
-  VP8EncoderSimulcastProxy simulcast_disabled_proxy(&nonsimulcast_factory);
+  VP8EncoderSimulcastProxy simulcast_disabled_proxy(&nonsimulcast_factory,
+                                                    SdpVideoFormat("VP8"));
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
             simulcast_disabled_proxy.InitEncode(&codec_settings, 4, 1200));
   EXPECT_EQ(kSimulcastAdaptedImplementationName,

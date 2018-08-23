@@ -11,10 +11,8 @@
 #ifndef RTC_BASE_WIN32_H_
 #define RTC_BASE_WIN32_H_
 
-#if defined(WEBRTC_WIN)
-
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
+#ifndef WEBRTC_WIN
+#error "Only #include this header in Windows builds"
 #endif
 
 // Make sure we don't get min/max macros
@@ -22,15 +20,20 @@
 #define NOMINMAX
 #endif
 
-#include <winsock2.h>
+// clang-format off
+// clang formating would change include order.
+#include <winsock2.h> // must come first
 #include <windows.h>
+// clang-format on
+
+typedef int socklen_t;
 
 #ifndef SECURITY_MANDATORY_LABEL_AUTHORITY
 // Add defines that we use if we are compiling against older sdks
-#define SECURITY_MANDATORY_MEDIUM_RID               (0x00002000L)
+#define SECURITY_MANDATORY_MEDIUM_RID (0x00002000L)
 #define TokenIntegrityLevel static_cast<TOKEN_INFORMATION_CLASS>(0x19)
 typedef struct _TOKEN_MANDATORY_LABEL {
-    SID_AND_ATTRIBUTES Label;
+  SID_AND_ATTRIBUTES Label;
 } TOKEN_MANDATORY_LABEL, *PTOKEN_MANDATORY_LABEL;
 #endif  // SECURITY_MANDATORY_LABEL_AUTHORITY
 
@@ -38,13 +41,10 @@ typedef struct _TOKEN_MANDATORY_LABEL {
 
 #include <string>
 
-#include "rtc_base/basictypes.h"
-#include "rtc_base/stringutils.h"
-
 namespace rtc {
 
-const char* win32_inet_ntop(int af, const void *src, char* dst, socklen_t size);
-int win32_inet_pton(int af, const char* src, void *dst);
+const char* win32_inet_ntop(int af, const void* src, char* dst, socklen_t size);
+int win32_inet_pton(int af, const char* src, void* dst);
 
 // Convert a Utf8 path representation to a non-length-limited Unicode pathname.
 bool Utf8ToWindowsFilename(const std::string& utf8, std::wstring* filename);
@@ -52,6 +52,7 @@ bool Utf8ToWindowsFilename(const std::string& utf8, std::wstring* filename);
 enum WindowsMajorVersions {
   kWindows2000 = 5,
   kWindowsVista = 6,
+  kWindows10 = 10,
 };
 bool GetOsVersion(int* major, int* minor, int* build);
 
@@ -72,16 +73,20 @@ inline bool IsWindows8OrLater() {
           (major > kWindowsVista || (major == kWindowsVista && minor >= 2)));
 }
 
+inline bool IsWindows10OrLater() {
+  int major;
+  return (GetOsVersion(&major, nullptr, nullptr) && (major >= kWindows10));
+}
+
 // Determine the current integrity level of the process.
 bool GetCurrentProcessIntegrityLevel(int* level);
 
 inline bool IsCurrentProcessLowIntegrity() {
   int level;
   return (GetCurrentProcessIntegrityLevel(&level) &&
-      level < SECURITY_MANDATORY_MEDIUM_RID);
+          level < SECURITY_MANDATORY_MEDIUM_RID);
 }
 
 }  // namespace rtc
 
-#endif  // WEBRTC_WIN
 #endif  // RTC_BASE_WIN32_H_

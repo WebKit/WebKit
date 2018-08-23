@@ -11,10 +11,10 @@
 #ifndef MODULES_AUDIO_DEVICE_ANDROID_AUDIO_MANAGER_H_
 #define MODULES_AUDIO_DEVICE_ANDROID_AUDIO_MANAGER_H_
 
-#include <memory>
-
-#include <jni.h>
 #include <SLES/OpenSLES.h>
+#include <jni.h>
+
+#include <memory>
 
 #include "modules/audio_device/android/audio_common.h"
 #include "modules/audio_device/android/opensles_common.h"
@@ -115,6 +115,9 @@ class AudioManager {
   // OpenSL ES.
   bool IsProAudioSupported() const;
 
+  // Returns true if the device supports AAudio.
+  bool IsAAudioSupported() const;
+
   // Returns the estimated total delay of this device. Unit is in milliseconds.
   // The vaule is set once at construction and never changes after that.
   // Possible values are webrtc::kLowLatencyModeDelayEstimateInMilliseconds and
@@ -136,6 +139,7 @@ class AudioManager {
                                            jboolean low_latency_output,
                                            jboolean low_latency_input,
                                            jboolean pro_audio,
+                                           jboolean a_audio,
                                            jint output_buffer_size,
                                            jint input_buffer_size,
                                            jlong native_audio_manager);
@@ -149,6 +153,7 @@ class AudioManager {
                               jboolean low_latency_output,
                               jboolean low_latency_input,
                               jboolean pro_audio,
+                              jboolean a_audio,
                               jint output_buffer_size,
                               jint input_buffer_size);
 
@@ -199,6 +204,9 @@ class AudioManager {
 
   // True if device supports the low-latency OpenSL ES pro-audio path.
   bool pro_audio_;
+
+  // True if device supports the low-latency AAudio audio path.
+  bool a_audio_;
 
   // The delay estimate can take one of two fixed values depending on if the
   // device supports low-latency output or not.

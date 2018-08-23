@@ -11,9 +11,9 @@
 #ifndef MODULES_DESKTOP_CAPTURE_WIN_DXGI_TEXTURE_STAGING_H_
 #define MODULES_DESKTOP_CAPTURE_WIN_DXGI_TEXTURE_STAGING_H_
 
-#include <wrl/client.h>
 #include <D3D11.h>
 #include <DXGI1_2.h>
+#include <wrl/client.h>
 
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/desktop_region.h"

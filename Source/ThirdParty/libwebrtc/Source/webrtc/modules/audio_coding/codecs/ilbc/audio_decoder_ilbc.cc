@@ -33,10 +33,10 @@ bool AudioDecoderIlbcImpl::HasDecodePlc() const {
 }
 
 int AudioDecoderIlbcImpl::DecodeInternal(const uint8_t* encoded,
-                                     size_t encoded_len,
-                                     int sample_rate_hz,
-                                     int16_t* decoded,
-                                     SpeechType* speech_type) {
+                                         size_t encoded_len,
+                                         int sample_rate_hz,
+                                         int16_t* decoded,
+                                         SpeechType* speech_type) {
   RTC_DCHECK_EQ(sample_rate_hz, 8000);
   int16_t temp_type = 1;  // Default is speech.
   int ret = WebRtcIlbcfix_Decode(dec_state_, encoded, encoded_len, decoded,
@@ -86,10 +86,9 @@ std::vector<AudioDecoder::ParseResult> AudioDecoderIlbcImpl::ParsePayload(
   } else {
     size_t byte_offset;
     uint32_t timestamp_offset;
-    for (byte_offset = 0, timestamp_offset = 0;
-         byte_offset < payload.size();
+    for (byte_offset = 0, timestamp_offset = 0; byte_offset < payload.size();
          byte_offset += bytes_per_frame,
-             timestamp_offset += timestamps_per_frame) {
+        timestamp_offset += timestamps_per_frame) {
       std::unique_ptr<EncodedAudioFrame> frame(new LegacyEncodedAudioFrame(
           this, rtc::Buffer(payload.data() + byte_offset, bytes_per_frame)));
       results.emplace_back(timestamp + timestamp_offset, 0, std::move(frame));

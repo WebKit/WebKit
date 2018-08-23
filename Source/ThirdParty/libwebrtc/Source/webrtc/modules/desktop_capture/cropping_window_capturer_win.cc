@@ -13,33 +13,48 @@
 #include "modules/desktop_capture/win/screen_capture_utils.h"
 #include "modules/desktop_capture/win/window_capture_utils.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/trace_event.h"
 #include "rtc_base/win32.h"
 
 namespace webrtc {
 
 namespace {
 
+const size_t kTitleLength = 256;
+
 // Used to pass input/output data during the EnumWindow call for verifying if
 // the selected window is on top.
 struct TopWindowVerifierContext {
   TopWindowVerifierContext(HWND selected_window,
                            HWND excluded_window,
-                           DesktopRect selected_window_rect)
+                           DesktopRect selected_window_rect,
+                           WindowCaptureHelperWin* window_capture_helper)
       : selected_window(selected_window),
         excluded_window(excluded_window),
         selected_window_rect(selected_window_rect),
+        window_capture_helper(window_capture_helper),
         is_top_window(false) {
     RTC_DCHECK_NE(selected_window, excluded_window);
+
+    GetWindowText(selected_window, selected_window_title, kTitleLength);
+    GetWindowThreadProcessId(selected_window, &selected_window_process_id);
   }
 
   const HWND selected_window;
   const HWND excluded_window;
   const DesktopRect selected_window_rect;
+  WindowCaptureHelperWin* window_capture_helper;
+  WCHAR selected_window_title[kTitleLength];
+  DWORD selected_window_process_id;
   bool is_top_window;
 };
 
 // The function is called during EnumWindow for every window enumerated and is
 // responsible for verifying if the selected window is on top.
+// Return TRUE to continue enumerating if the current window belongs to the
+// selected window or is to be ignored.
+// Return FALSE to stop enumerating if the selected window is found or decided
+// if it's on top most.
 BOOL CALLBACK TopWindowVerifier(HWND hwnd, LPARAM param) {
   TopWindowVerifierContext* context =
       reinterpret_cast<TopWindowVerifierContext*>(param);
@@ -54,8 +69,19 @@ BOOL CALLBACK TopWindowVerifier(HWND hwnd, LPARAM param) {
     return TRUE;
   }
 
-  // Ignore hidden or minimized window.
-  if (IsIconic(hwnd) || !IsWindowVisible(hwnd)) {
+  // Ignore invisible window on current desktop.
+  if (!context->window_capture_helper->IsWindowVisibleOnCurrentDesktop(hwnd)) {
+    return TRUE;
+  }
+
+  // Ignore Chrome notification windows, especially the notification for the
+  // ongoing window sharing.
+  // Notes:
+  // - This only works with notifications from Chrome, not other Apps.
+  // - All notifications from Chrome will be ignored.
+  // - This may cause part or whole of notification window being cropped into
+  // the capturing of the target window if there is overlapping.
+  if (context->window_capture_helper->IsWindowChromeNotification(hwnd)) {
     return TRUE;
   }
 
@@ -71,21 +97,20 @@ BOOL CALLBACK TopWindowVerifier(HWND hwnd, LPARAM param) {
     return TRUE;
   }
 
-  // If |hwnd| has no title and belongs to the same process, assume it's a
-  // tooltip or context menu from the selected window and ignore it.
+  // If |hwnd| has no title or has same title as the selected window (i.e.
+  // Window Media Player consisting of several sibling windows) and belongs to
+  // the same process, assume it's a tooltip or context menu or sibling window
+  // from the selected window and ignore it.
   // TODO(zijiehe): This check cannot cover the case where tooltip or context
   // menu of the child-window is covering the main window. See
   // https://bugs.chromium.org/p/webrtc/issues/detail?id=8062 for details.
-  const size_t kTitleLength = 32;
   WCHAR window_title[kTitleLength];
   GetWindowText(hwnd, window_title, kTitleLength);
-  if (wcsnlen_s(window_title, kTitleLength) == 0) {
+  if (wcsnlen_s(window_title, kTitleLength) == 0 ||
+      wcscmp(window_title, context->selected_window_title) == 0) {
     DWORD enumerated_window_process_id;
-    DWORD selected_window_process_id;
     GetWindowThreadProcessId(hwnd, &enumerated_window_process_id);
-    GetWindowThreadProcessId(context->selected_window,
-                             &selected_window_process_id);
-    if (selected_window_process_id == enumerated_window_process_id) {
+    if (context->selected_window_process_id == enumerated_window_process_id) {
       return TRUE;
     }
   }
@@ -128,8 +153,7 @@ BOOL CALLBACK TopWindowVerifier(HWND hwnd, LPARAM param) {
 
 class CroppingWindowCapturerWin : public CroppingWindowCapturer {
  public:
-  CroppingWindowCapturerWin(
-      const DesktopCaptureOptions& options)
+  CroppingWindowCapturerWin(const DesktopCaptureOptions& options)
       : CroppingWindowCapturer(options) {}
 
  private:
@@ -140,17 +164,17 @@ class CroppingWindowCapturerWin : public CroppingWindowCapturer {
   // rectangular, or the rect from GetWindowRect if the region is not set.
   DesktopRect window_region_rect_;
 
-  AeroChecker aero_checker_;
+  WindowCaptureHelperWin window_capture_helper_;
 };
 
 bool CroppingWindowCapturerWin::ShouldUseScreenCapturer() {
-  if (!rtc::IsWindows8OrLater() && aero_checker_.IsAeroEnabled()) {
+  if (!rtc::IsWindows8OrLater() && window_capture_helper_.IsAeroEnabled()) {
     return false;
   }
 
   const HWND selected = reinterpret_cast<HWND>(selected_window());
-  // Check if the window is hidden or minimized.
-  if (IsIconic(selected) || !IsWindowVisible(selected)) {
+  // Check if the window is visible on current desktop.
+  if (!window_capture_helper_.IsWindowVisibleOnCurrentDesktop(selected)) {
     return false;
   }
 
@@ -197,8 +221,8 @@ bool CroppingWindowCapturerWin::ShouldUseScreenCapturer() {
   if (region_type == SIMPLEREGION) {
     // The |region_rect| returned from GetRgnBox() is always in window
     // coordinate.
-    region_rect.Translate(
-        window_region_rect_.left(), window_region_rect_.top());
+    region_rect.Translate(window_region_rect_.left(),
+                          window_region_rect_.top());
     // MSDN: The window region determines the area *within* the window where the
     // system permits drawing.
     // https://msdn.microsoft.com/en-us/library/windows/desktop/dd144950(v=vs.85).aspx.
@@ -223,8 +247,9 @@ bool CroppingWindowCapturerWin::ShouldUseScreenCapturer() {
   // windows, context menus, and |excluded_window_|.
   // |content_rect| is preferred, see the comments in TopWindowVerifier()
   // function.
-  TopWindowVerifierContext context(
-      selected, reinterpret_cast<HWND>(excluded_window()), content_rect);
+  TopWindowVerifierContext context(selected,
+                                   reinterpret_cast<HWND>(excluded_window()),
+                                   content_rect, &window_capture_helper_);
   const LPARAM enum_param = reinterpret_cast<LPARAM>(&context);
   EnumWindows(&TopWindowVerifier, enum_param);
   if (!context.is_top_window) {
@@ -240,6 +265,8 @@ bool CroppingWindowCapturerWin::ShouldUseScreenCapturer() {
 }
 
 DesktopRect CroppingWindowCapturerWin::GetWindowRectInVirtualScreen() {
+  TRACE_EVENT0("webrtc",
+               "CroppingWindowCapturerWin::GetWindowRectInVirtualScreen");
   DesktopRect window_rect;
   HWND hwnd = reinterpret_cast<HWND>(selected_window());
   if (!GetCroppedWindowRect(hwnd, &window_rect, /* original_rect */ nullptr)) {

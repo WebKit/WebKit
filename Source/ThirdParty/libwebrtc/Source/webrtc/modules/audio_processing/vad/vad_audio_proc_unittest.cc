@@ -20,7 +20,6 @@
 #include <string>
 
 #include "modules/audio_processing/vad/common.h"
-#include "modules/include/module_common_types.h"
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
 

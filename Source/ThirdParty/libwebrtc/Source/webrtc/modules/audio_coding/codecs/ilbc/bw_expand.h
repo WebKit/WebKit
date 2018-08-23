@@ -19,18 +19,18 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_BW_EXPAND_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_BW_EXPAND_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  lpc bandwidth expansion
  *---------------------------------------------------------------*/
 
 void WebRtcIlbcfix_BwExpand(
-    int16_t *out, /* (o) the bandwidth expanded lpc coefficients */
-    int16_t *in,  /* (i) the lpc coefficients before bandwidth
-                                   expansion */
-    int16_t *coef, /* (i) the bandwidth expansion factor Q15 */
+    int16_t* out,  /* (o) the bandwidth expanded lpc coefficients */
+    int16_t* in,   /* (i) the lpc coefficients before bandwidth
+                                    expansion */
+    int16_t* coef, /* (i) the bandwidth expansion factor Q15 */
     int16_t length /* (i) the length of lpc coefficient vectors */
-                            );
+    );
 
 #endif

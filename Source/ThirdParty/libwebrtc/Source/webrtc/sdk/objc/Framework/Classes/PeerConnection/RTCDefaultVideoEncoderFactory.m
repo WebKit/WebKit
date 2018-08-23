@@ -23,7 +23,7 @@
 
 + (NSArray<RTCVideoCodecInfo *> *)supportedCodecs {
   NSDictionary<NSString *, NSString *> *constrainedHighParams = @{
-    @"profile-level-id" : kRTCLevel31ConstrainedHigh,
+    @"profile-level-id" : kRTCMaxSupportedH264ProfileLevelConstrainedHigh,
     @"level-asymmetry-allowed" : @"1",
     @"packetization-mode" : @"1",
   };
@@ -32,7 +32,7 @@
                                    parameters:constrainedHighParams];
 
   NSDictionary<NSString *, NSString *> *constrainedBaselineParams = @{
-    @"profile-level-id" : kRTCLevel31ConstrainedBaseline,
+    @"profile-level-id" : kRTCMaxSupportedH264ProfileLevelConstrainedBaseline,
     @"level-asymmetry-allowed" : @"1",
     @"packetization-mode" : @"1",
   };
@@ -46,13 +46,14 @@
   RTCVideoCodecInfo *vp9Info = [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name];
 #endif
 
-  return @[ constrainedHighInfo,
-            constrainedBaselineInfo,
-            vp8Info,
+  return @[
+    constrainedHighInfo,
+    constrainedBaselineInfo,
+    vp8Info,
 #if !defined(RTC_DISABLE_VP9)
-            vp9Info
+    vp9Info,
 #endif
-            ];
+  ];
 }
 
 - (id<RTCVideoEncoder>)createEncoder:(RTCVideoCodecInfo *)info {

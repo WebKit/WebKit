@@ -11,7 +11,6 @@
 #define MODULES_RTP_RTCP_INCLUDE_RTP_HEADER_PARSER_H_
 
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 

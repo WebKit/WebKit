@@ -36,8 +36,7 @@ class RtpFileReader {
   enum FileFormat { kPcap, kRtpDump, kLengthPacketInterleaved };
 
   virtual ~RtpFileReader() {}
-  static RtpFileReader* Create(FileFormat format,
-                               const std::string& filename);
+  static RtpFileReader* Create(FileFormat format, const std::string& filename);
   static RtpFileReader* Create(FileFormat format,
                                const std::string& filename,
                                const std::set<uint32_t>& ssrc_filter);

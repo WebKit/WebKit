@@ -20,6 +20,13 @@ namespace webrtc {
 RtpPacketReceived::RtpPacketReceived() = default;
 RtpPacketReceived::RtpPacketReceived(const ExtensionManager* extensions)
     : RtpPacket(extensions) {}
+RtpPacketReceived::RtpPacketReceived(const RtpPacketReceived& packet) = default;
+RtpPacketReceived::RtpPacketReceived(RtpPacketReceived&& packet) = default;
+
+RtpPacketReceived& RtpPacketReceived::operator=(
+    const RtpPacketReceived& packet) = default;
+RtpPacketReceived& RtpPacketReceived::operator=(RtpPacketReceived&& packet) =
+    default;
 
 RtpPacketReceived::~RtpPacketReceived() {}
 

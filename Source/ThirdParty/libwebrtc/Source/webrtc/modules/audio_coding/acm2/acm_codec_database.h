@@ -18,7 +18,6 @@
 
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/acm2/rent_a_codec.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -31,7 +30,7 @@ class ACMCodecDB {
   //                 build.
   // kMaxNumPacketSize - Maximum number of allowed packet sizes for one codec.
   // These might need to be increased if adding a new codec to the database
-  static const int kMaxNumCodecs =  50;
+  static const int kMaxNumCodecs = 50;
   static const int kMaxNumPacketSize = 6;
 
   // Codec specific settings

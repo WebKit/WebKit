@@ -122,8 +122,8 @@ TEST(Url, SkipsUser) {
 TEST(HttpResponseData, parseLeaderHttp1_0) {
   static const char kResponseString[] = "HTTP/1.0 200 OK";
   HttpResponseData response;
-  EXPECT_EQ(HE_NONE, response.parseLeader(kResponseString,
-                                          sizeof(kResponseString) - 1));
+  EXPECT_EQ(HE_NONE,
+            response.parseLeader(kResponseString, sizeof(kResponseString) - 1));
   EXPECT_EQ(HVER_1_0, response.version);
   EXPECT_EQ(200U, response.scode);
 }
@@ -131,8 +131,8 @@ TEST(HttpResponseData, parseLeaderHttp1_0) {
 TEST(HttpResponseData, parseLeaderHttp1_1) {
   static const char kResponseString[] = "HTTP/1.1 200 OK";
   HttpResponseData response;
-  EXPECT_EQ(HE_NONE, response.parseLeader(kResponseString,
-                                          sizeof(kResponseString) - 1));
+  EXPECT_EQ(HE_NONE,
+            response.parseLeader(kResponseString, sizeof(kResponseString) - 1));
   EXPECT_EQ(HVER_1_1, response.version);
   EXPECT_EQ(200U, response.scode);
 }
@@ -140,8 +140,8 @@ TEST(HttpResponseData, parseLeaderHttp1_1) {
 TEST(HttpResponseData, parseLeaderHttpUnknown) {
   static const char kResponseString[] = "HTTP 200 OK";
   HttpResponseData response;
-  EXPECT_EQ(HE_NONE, response.parseLeader(kResponseString,
-                                          sizeof(kResponseString) - 1));
+  EXPECT_EQ(HE_NONE,
+            response.parseLeader(kResponseString, sizeof(kResponseString) - 1));
   EXPECT_EQ(HVER_UNKNOWN, response.version);
   EXPECT_EQ(200U, response.scode);
 }
@@ -149,8 +149,8 @@ TEST(HttpResponseData, parseLeaderHttpUnknown) {
 TEST(HttpResponseData, parseLeaderHttpFailure) {
   static const char kResponseString[] = "HTTP/1.1 503 Service Unavailable";
   HttpResponseData response;
-  EXPECT_EQ(HE_NONE, response.parseLeader(kResponseString,
-                                          sizeof(kResponseString) - 1));
+  EXPECT_EQ(HE_NONE,
+            response.parseLeader(kResponseString, sizeof(kResponseString) - 1));
   EXPECT_EQ(HVER_1_1, response.version);
   EXPECT_EQ(503U, response.scode);
 }
@@ -158,8 +158,8 @@ TEST(HttpResponseData, parseLeaderHttpFailure) {
 TEST(HttpResponseData, parseLeaderHttpInvalid) {
   static const char kResponseString[] = "Durrrrr, what's HTTP?";
   HttpResponseData response;
-  EXPECT_EQ(HE_PROTOCOL, response.parseLeader(kResponseString,
-                                              sizeof(kResponseString) - 1));
+  EXPECT_EQ(HE_PROTOCOL,
+            response.parseLeader(kResponseString, sizeof(kResponseString) - 1));
 }
 
-} // namespace rtc
+}  // namespace rtc

@@ -15,7 +15,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "rtc_base/basictypes.h"
+
 #include "rtc_base/checks.h"
 #include "rtc_base/stream.h"
 #include "rtc_base/stringutils.h"
@@ -31,52 +31,24 @@ class SocketAddress;
 
 enum HttpCode {
   HC_OK = 200,
-  HC_NON_AUTHORITATIVE = 203,
-  HC_NO_CONTENT = 204,
-  HC_PARTIAL_CONTENT = 206,
-
-  HC_MULTIPLE_CHOICES = 300,
-  HC_MOVED_PERMANENTLY = 301,
-  HC_FOUND = 302,
-  HC_SEE_OTHER = 303,
-  HC_NOT_MODIFIED = 304,
-  HC_MOVED_TEMPORARILY = 307,
-
-  HC_BAD_REQUEST = 400,
-  HC_UNAUTHORIZED = 401,
-  HC_FORBIDDEN = 403,
-  HC_NOT_FOUND = 404,
-  HC_PROXY_AUTHENTICATION_REQUIRED = 407,
-  HC_GONE = 410,
-
   HC_INTERNAL_SERVER_ERROR = 500,
-  HC_NOT_IMPLEMENTED = 501,
-  HC_SERVICE_UNAVAILABLE = 503,
 };
 
-enum HttpVersion {
-  HVER_1_0, HVER_1_1, HVER_UNKNOWN,
-  HVER_LAST = HVER_UNKNOWN
-};
-
-enum HttpVerb {
-  HV_GET, HV_POST, HV_PUT, HV_DELETE, HV_CONNECT, HV_HEAD,
-  HV_LAST = HV_HEAD
-};
+enum HttpVersion { HVER_1_0, HVER_1_1, HVER_UNKNOWN, HVER_LAST = HVER_UNKNOWN };
 
 enum HttpError {
   HE_NONE,
-  HE_PROTOCOL,            // Received non-valid HTTP data
-  HE_DISCONNECTED,        // Connection closed unexpectedly
-  HE_OVERFLOW,            // Received too much data for internal buffers
-  HE_CONNECT_FAILED,      // The socket failed to connect.
-  HE_SOCKET_ERROR,        // An error occurred on a connected socket
-  HE_SHUTDOWN,            // Http object is being destroyed
-  HE_OPERATION_CANCELLED, // Connection aborted locally
-  HE_AUTH,                // Proxy Authentication Required
-  HE_CERTIFICATE_EXPIRED, // During SSL negotiation
-  HE_STREAM,              // Problem reading or writing to the document
-  HE_CACHE,               // Problem reading from cache
+  HE_PROTOCOL,             // Received non-valid HTTP data
+  HE_DISCONNECTED,         // Connection closed unexpectedly
+  HE_OVERFLOW,             // Received too much data for internal buffers
+  HE_CONNECT_FAILED,       // The socket failed to connect.
+  HE_SOCKET_ERROR,         // An error occurred on a connected socket
+  HE_SHUTDOWN,             // Http object is being destroyed
+  HE_OPERATION_CANCELLED,  // Connection aborted locally
+  HE_AUTH,                 // Proxy Authentication Required
+  HE_CERTIFICATE_EXPIRED,  // During SSL negotiation
+  HE_STREAM,               // Problem reading or writing to the document
+  HE_CACHE,                // Problem reading from cache
   HE_DEFAULT
 };
 
@@ -119,37 +91,12 @@ const uint16_t HTTP_SECURE_PORT = 443;
 // Utility Functions
 //////////////////////////////////////////////////////////////////////
 
-inline HttpError mkerr(HttpError err, HttpError def_err = HE_DEFAULT) {
-  return (err != HE_NONE) ? err : def_err;
-}
-
 const char* ToString(HttpVersion version);
 bool FromString(HttpVersion& version, const std::string& str);
-
-const char* ToString(HttpVerb verb);
-bool FromString(HttpVerb& verb, const std::string& str);
 
 const char* ToString(HttpHeader header);
 bool FromString(HttpHeader& header, const std::string& str);
 
-inline bool HttpCodeIsInformational(uint32_t code) {
-  return ((code / 100) == 1);
-}
-inline bool HttpCodeIsSuccessful(uint32_t code) {
-  return ((code / 100) == 2);
-}
-inline bool HttpCodeIsRedirection(uint32_t code) {
-  return ((code / 100) == 3);
-}
-inline bool HttpCodeIsClientError(uint32_t code) {
-  return ((code / 100) == 4);
-}
-inline bool HttpCodeIsServerError(uint32_t code) {
-  return ((code / 100) == 5);
-}
-
-bool HttpCodeHasBody(uint32_t code);
-bool HttpCodeIsCacheable(uint32_t code);
 bool HttpHeaderIsEndToEnd(HttpHeader header);
 bool HttpHeaderIsCollapsible(HttpHeader header);
 
@@ -158,7 +105,8 @@ bool HttpShouldKeepAlive(const HttpData& data);
 
 typedef std::pair<std::string, std::string> HttpAttribute;
 typedef std::vector<HttpAttribute> HttpAttributeList;
-void HttpParseAttributes(const char * data, size_t len,
+void HttpParseAttributes(const char* data,
+                         size_t len,
                          HttpAttributeList& attributes);
 bool HttpHasAttribute(const HttpAttributeList& attributes,
                       const std::string& name,
@@ -192,9 +140,9 @@ std::string quote(const std::string& str);
 // Url
 //////////////////////////////////////////////////////////////////////
 
-template<class CTYPE>
+template <class CTYPE>
 class Url {
-public:
+ public:
   typedef typename Traits<CTYPE>::string string;
 
   // TODO: Implement Encode/Decode
@@ -218,25 +166,29 @@ public:
     query_.clear();
   }
 
-  void set_url(const string& val) {
-    do_set_url(val.c_str(), val.size());
-  }
+  void set_url(const string& val) { do_set_url(val.c_str(), val.size()); }
   string url() const {
-    string val; do_get_url(&val); return val;
+    string val;
+    do_get_url(&val);
+    return val;
   }
 
   void set_address(const string& val) {
     do_set_address(val.c_str(), val.size());
   }
   string address() const {
-    string val; do_get_address(&val); return val;
+    string val;
+    do_get_address(&val);
+    return val;
   }
 
   void set_full_path(const string& val) {
     do_set_full_path(val.c_str(), val.size());
   }
   string full_path() const {
-    string val; do_get_full_path(&val); return val;
+    string val;
+    do_get_full_path(&val);
+    return val;
   }
 
   void set_host(const string& val) { host_ = val; }
@@ -266,7 +218,7 @@ public:
 
   bool get_attribute(const string& name, string* value) const;
 
-private:
+ private:
   void do_set_url(const CTYPE* val, size_t len);
   void do_set_address(const CTYPE* val, size_t len);
   void do_set_full_path(const CTYPE* val, size_t len);
@@ -295,13 +247,16 @@ struct HttpData {
   HttpData();
 
   enum HeaderCombine { HC_YES, HC_NO, HC_AUTO, HC_REPLACE, HC_NEW };
-  void changeHeader(const std::string& name, const std::string& value,
+  void changeHeader(const std::string& name,
+                    const std::string& value,
                     HeaderCombine combine);
-  inline void addHeader(const std::string& name, const std::string& value,
+  inline void addHeader(const std::string& name,
+                        const std::string& value,
                         bool append = true) {
     changeHeader(name, value, append ? HC_AUTO : HC_NO);
   }
-  inline void setHeader(const std::string& name, const std::string& value,
+  inline void setHeader(const std::string& name,
+                        const std::string& value,
                         bool overwrite = true) {
     changeHeader(name, value, overwrite ? HC_REPLACE : HC_NEW);
   }
@@ -313,18 +268,10 @@ struct HttpData {
   // keep in mind, this may not do what you want in the face of multiple headers
   bool hasHeader(const std::string& name, std::string* value) const;
 
-  inline const_iterator begin() const {
-    return headers_.begin();
-  }
-  inline const_iterator end() const {
-    return headers_.end();
-  }
-  inline iterator begin() {
-    return headers_.begin();
-  }
-  inline iterator end() {
-    return headers_.end();
-  }
+  inline const_iterator begin() const { return headers_.begin(); }
+  inline const_iterator end() const { return headers_.end(); }
+  inline iterator begin() { return headers_.begin(); }
+  inline iterator end() { return headers_.end(); }
   inline const_iterator begin(const std::string& name) const {
     return headers_.lower_bound(name);
   }
@@ -339,21 +286,22 @@ struct HttpData {
   }
 
   // Convenience methods using HttpHeader
-  inline void changeHeader(HttpHeader header, const std::string& value,
+  inline void changeHeader(HttpHeader header,
+                           const std::string& value,
                            HeaderCombine combine) {
     changeHeader(ToString(header), value, combine);
   }
-  inline void addHeader(HttpHeader header, const std::string& value,
+  inline void addHeader(HttpHeader header,
+                        const std::string& value,
                         bool append = true) {
     addHeader(ToString(header), value, append);
   }
-  inline void setHeader(HttpHeader header, const std::string& value,
+  inline void setHeader(HttpHeader header,
+                        const std::string& value,
                         bool overwrite = true) {
     setHeader(ToString(header), value, overwrite);
   }
-  inline void clearHeader(HttpHeader header) {
-    clearHeader(ToString(header));
-  }
+  inline void clearHeader(HttpHeader header) { clearHeader(ToString(header)); }
   inline bool hasHeader(HttpHeader header, std::string* value) const {
     return hasHeader(ToString(header), value);
   }
@@ -376,23 +324,20 @@ struct HttpData {
   virtual size_t formatLeader(char* buffer, size_t size) const = 0;
   virtual HttpError parseLeader(const char* line, size_t len) = 0;
 
-protected:
- virtual ~HttpData();
+ protected:
+  virtual ~HttpData();
   void clear(bool release_document);
-  void copy(const HttpData& src);
 
-private:
+ private:
   HeaderMap headers_;
 };
 
 struct HttpRequestData : public HttpData {
-  HttpVerb verb;
   std::string path;
 
-  HttpRequestData() : verb(HV_GET) { }
+  HttpRequestData() {}
 
   void clear(bool release_document);
-  void copy(const HttpRequestData& src);
 
   size_t formatLeader(char* buffer, size_t size) const override;
   HttpError parseLeader(const char* line, size_t len) override;
@@ -405,17 +350,11 @@ struct HttpResponseData : public HttpData {
   uint32_t scode;
   std::string message;
 
-  HttpResponseData() : scode(HC_INTERNAL_SERVER_ERROR) { }
+  HttpResponseData() : scode(HC_INTERNAL_SERVER_ERROR) {}
   void clear(bool release_document);
-  void copy(const HttpResponseData& src);
 
   // Convenience methods
   void set_success(uint32_t scode = HC_OK);
-  void set_success(const std::string& content_type,
-                   StreamInterface* document,
-                   uint32_t scode = HC_OK);
-  void set_redirect(const std::string& location,
-                    uint32_t scode = HC_MOVED_TEMPORARILY);
   void set_error(uint32_t scode);
 
   size_t formatLeader(char* buffer, size_t size) const override;
@@ -433,8 +372,8 @@ struct HttpTransaction {
 
 struct HttpAuthContext {
   std::string auth_method;
-  HttpAuthContext(const std::string& auth) : auth_method(auth) { }
-  virtual ~HttpAuthContext() { }
+  HttpAuthContext(const std::string& auth) : auth_method(auth) {}
+  virtual ~HttpAuthContext() {}
 };
 
 enum HttpAuthResult { HAR_RESPONSE, HAR_IGNORE, HAR_CREDENTIALS, HAR_ERROR };
@@ -442,15 +381,20 @@ enum HttpAuthResult { HAR_RESPONSE, HAR_IGNORE, HAR_CREDENTIALS, HAR_ERROR };
 // 'context' is used by this function to record information between calls.
 // Start by passing a null pointer, then pass the same pointer each additional
 // call.  When the authentication attempt is finished, delete the context.
-HttpAuthResult HttpAuthenticate(
-  const char * challenge, size_t len,
-  const SocketAddress& server,
-  const std::string& method, const std::string& uri,
-  const std::string& username, const CryptString& password,
-  HttpAuthContext *& context, std::string& response, std::string& auth_method);
+// TODO(bugs.webrtc.org/8905): Change "response" to "ZeroOnFreeBuffer".
+HttpAuthResult HttpAuthenticate(const char* challenge,
+                                size_t len,
+                                const SocketAddress& server,
+                                const std::string& method,
+                                const std::string& uri,
+                                const std::string& username,
+                                const CryptString& password,
+                                HttpAuthContext*& context,
+                                std::string& response,
+                                std::string& auth_method);
 
 //////////////////////////////////////////////////////////////////////
 
-} // namespace rtc
+}  // namespace rtc
 
-#endif // RTC_BASE_HTTPCOMMON_H_
+#endif  // RTC_BASE_HTTPCOMMON_H_

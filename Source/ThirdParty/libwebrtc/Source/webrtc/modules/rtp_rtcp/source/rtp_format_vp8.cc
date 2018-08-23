@@ -109,9 +109,8 @@ int ParseVP8Extension(RTPVideoHeaderVP8* vp8,
   }
 
   if (has_tid || has_key_idx) {
-    if (ParseVP8TIDAndKeyIdx(
-            vp8, &data, &data_length, &parsed_bytes, has_tid, has_key_idx) !=
-        0) {
+    if (ParseVP8TIDAndKeyIdx(vp8, &data, &data_length, &parsed_bytes, has_tid,
+                             has_key_idx) != 0) {
       return -1;
     }
   }
@@ -130,8 +129,8 @@ int ParseVP8FrameSize(RtpDepacketizer::ParsedPayload* parsed_payload,
     // in the beginning of the partition.
     return -1;
   }
-  parsed_payload->type.Video.width = ((data[7] << 8) + data[6]) & 0x3FFF;
-  parsed_payload->type.Video.height = ((data[9] << 8) + data[8]) & 0x3FFF;
+  parsed_payload->video_header().width = ((data[7] << 8) + data[6]) & 0x3FFF;
+  parsed_payload->video_header().height = ((data[9] << 8) + data[8]) & 0x3FFF;
   return 0;
 }
 
@@ -171,8 +170,7 @@ RtpPacketizerVp8::RtpPacketizerVp8(const RTPVideoHeaderVP8& hdr_info,
   RTC_DCHECK(ValidateHeader(hdr_info));
 }
 
-RtpPacketizerVp8::~RtpPacketizerVp8() {
-}
+RtpPacketizerVp8::~RtpPacketizerVp8() {}
 
 size_t RtpPacketizerVp8::SetPayloadData(
     const uint8_t* payload_data,
@@ -252,8 +250,8 @@ void RtpPacketizerVp8::GeneratePacketsSplitPayloadBalanced(size_t payload_len,
     if (num_packets_left == 2 && current_packet_bytes == remaining_data) {
       --current_packet_bytes;
     }
-    QueuePacket(payload_len - remaining_data,
-                current_packet_bytes, remaining_data == payload_len);
+    QueuePacket(payload_len - remaining_data, current_packet_bytes,
+                remaining_data == payload_len);
     remaining_data -= current_packet_bytes;
     --num_packets_left;
   }
@@ -302,8 +300,7 @@ int RtpPacketizerVp8::WriteHeaderAndPayload(const InfoStruct& packet_info,
     return -1;
 
   memcpy(&buffer[vp8_fixed_payload_descriptor_bytes_ + extension_length],
-         &payload_data_[packet_info.payload_start_pos],
-         packet_info.size);
+         &payload_data_[packet_info.payload_start_pos], packet_info.size);
 
   // Return total length of written data.
   return packet_info.size + vp8_fixed_payload_descriptor_bytes_ +
@@ -318,20 +315,20 @@ int RtpPacketizerVp8::WriteExtensionFields(uint8_t* buffer,
     *x_field = 0;
     extension_length = 1;  // One octet for the X field.
     if (PictureIdPresent()) {
-      if (WritePictureIDFields(
-              x_field, buffer, buffer_length, &extension_length) < 0) {
+      if (WritePictureIDFields(x_field, buffer, buffer_length,
+                               &extension_length) < 0) {
         return -1;
       }
     }
     if (TL0PicIdxFieldPresent()) {
-      if (WriteTl0PicIdxFields(
-              x_field, buffer, buffer_length, &extension_length) < 0) {
+      if (WriteTl0PicIdxFields(x_field, buffer, buffer_length,
+                               &extension_length) < 0) {
         return -1;
       }
     }
     if (TIDFieldPresent() || KeyIdxFieldPresent()) {
-      if (WriteTIDAndKeyIdxFields(
-              x_field, buffer, buffer_length, &extension_length) < 0) {
+      if (WriteTIDAndKeyIdxFields(x_field, buffer, buffer_length,
+                                  &extension_length) < 0) {
         return -1;
       }
     }
@@ -483,22 +480,22 @@ bool RtpDepacketizerVp8::Parse(ParsedPayload* parsed_payload,
   bool beginning_of_partition = (*payload_data & 0x10) ? true : false;  // S bit
   int partition_id = (*payload_data & 0x0F);  // PartID field
 
-  parsed_payload->type.Video.width = 0;
-  parsed_payload->type.Video.height = 0;
-  parsed_payload->type.Video.is_first_packet_in_frame =
+  parsed_payload->video_header().width = 0;
+  parsed_payload->video_header().height = 0;
+  parsed_payload->video_header().is_first_packet_in_frame =
       beginning_of_partition && (partition_id == 0);
-  parsed_payload->type.Video.simulcastIdx = 0;
-  parsed_payload->type.Video.codec = kRtpVideoVp8;
-  parsed_payload->type.Video.codecHeader.VP8.nonReference =
+  parsed_payload->video_header().simulcastIdx = 0;
+  parsed_payload->video_header().codec = kVideoCodecVP8;
+  parsed_payload->video_header().vp8().nonReference =
       (*payload_data & 0x20) ? true : false;  // N bit
-  parsed_payload->type.Video.codecHeader.VP8.partitionId = partition_id;
-  parsed_payload->type.Video.codecHeader.VP8.beginningOfPartition =
+  parsed_payload->video_header().vp8().partitionId = partition_id;
+  parsed_payload->video_header().vp8().beginningOfPartition =
       beginning_of_partition;
-  parsed_payload->type.Video.codecHeader.VP8.pictureId = kNoPictureId;
-  parsed_payload->type.Video.codecHeader.VP8.tl0PicIdx = kNoTl0PicIdx;
-  parsed_payload->type.Video.codecHeader.VP8.temporalIdx = kNoTemporalIdx;
-  parsed_payload->type.Video.codecHeader.VP8.layerSync = false;
-  parsed_payload->type.Video.codecHeader.VP8.keyIdx = kNoKeyIdx;
+  parsed_payload->video_header().vp8().pictureId = kNoPictureId;
+  parsed_payload->video_header().vp8().tl0PicIdx = kNoTl0PicIdx;
+  parsed_payload->video_header().vp8().temporalIdx = kNoTemporalIdx;
+  parsed_payload->video_header().vp8().layerSync = false;
+  parsed_payload->video_header().vp8().keyIdx = kNoKeyIdx;
 
   if (partition_id > 8) {
     // Weak check for corrupt payload_data: PartID MUST NOT be larger than 8.
@@ -515,8 +512,7 @@ bool RtpDepacketizerVp8::Parse(ParsedPayload* parsed_payload,
 
   if (extension) {
     const int parsed_bytes =
-        ParseVP8Extension(&parsed_payload->type.Video.codecHeader.VP8,
-                          payload_data,
+        ParseVP8Extension(&parsed_payload->video_header().vp8(), payload_data,
                           payload_data_length);
     if (parsed_bytes < 0)
       return false;

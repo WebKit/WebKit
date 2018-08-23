@@ -69,8 +69,7 @@ void VideoToolboxVideoEncoderFactory::setH264HardwareEncoderAllowed(bool allowed
 }
 
 static inline SdpVideoFormat CreateH264Format(H264::Profile profile, H264::Level level) {
-    const rtc::Optional<std::string> profile_string =
-    H264::ProfileLevelIdToString(H264::ProfileLevelId(profile, level));
+    const absl::optional<std::string> profile_string = H264::ProfileLevelIdToString(H264::ProfileLevelId(profile, level));
     RTC_CHECK(profile_string);
     return SdpVideoFormat(cricket::kH264CodecName,
                           {{cricket::kH264FmtpProfileLevelId, *profile_string},

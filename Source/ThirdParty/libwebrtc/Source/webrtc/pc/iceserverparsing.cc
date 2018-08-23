@@ -231,6 +231,7 @@ static RTCErrorType ParseIceServerUrl(
       if (username.empty() || server.password.empty()) {
         // The WebRTC spec requires throwing an InvalidAccessError when username
         // or credential are ommitted; this is the native equivalent.
+        RTC_LOG(LS_ERROR) << "TURN URL without username, or password empty";
         return RTCErrorType::INVALID_PARAMETER;
       }
       // If the hostname field is not empty, then the server address must be

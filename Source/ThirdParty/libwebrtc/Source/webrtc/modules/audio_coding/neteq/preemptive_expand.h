@@ -16,7 +16,6 @@
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "modules/audio_coding/neteq/time_stretch.h"
 #include "rtc_base/constructormagic.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -35,15 +34,14 @@ class PreemptiveExpand : public TimeStretch {
                    size_t overlap_samples)
       : TimeStretch(sample_rate_hz, num_channels, background_noise),
         old_data_length_per_channel_(0),
-        overlap_samples_(overlap_samples) {
-  }
+        overlap_samples_(overlap_samples) {}
 
   // This method performs the actual PreemptiveExpand operation. The samples are
   // read from |input|, of length |input_length| elements, and are written to
   // |output|. The number of samples added through time-stretching is
   // is provided in the output |length_change_samples|. The method returns
   // the outcome of the operation as an enumerator value.
-  ReturnCodes Process(const int16_t *pw16_decoded,
+  ReturnCodes Process(const int16_t* pw16_decoded,
                       size_t len,
                       size_t old_data_len,
                       AudioMultiVector* output,
@@ -77,11 +75,10 @@ struct PreemptiveExpandFactory {
   PreemptiveExpandFactory() {}
   virtual ~PreemptiveExpandFactory() {}
 
-  virtual PreemptiveExpand* Create(
-      int sample_rate_hz,
-      size_t num_channels,
-      const BackgroundNoise& background_noise,
-      size_t overlap_samples) const;
+  virtual PreemptiveExpand* Create(int sample_rate_hz,
+                                   size_t num_channels,
+                                   const BackgroundNoise& background_noise,
+                                   size_t overlap_samples) const;
 };
 
 }  // namespace webrtc

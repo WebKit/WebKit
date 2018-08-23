@@ -13,7 +13,7 @@ package org.webrtc;
 import java.util.HashMap;
 import java.util.Map;
 
-// Java-side of androidmetrics_jni.cc.
+// Java-side of androidmetrics.cc
 //
 // Rtc histograms can be queried through the API, getAndReset().
 // The returned map holds the name of a histogram and its samples.
@@ -28,7 +28,6 @@ import java.util.Map;
 // Most histograms are not updated frequently (e.g. most video metrics are an
 // average over the call and recorded when a stream is removed).
 // The metrics can for example be retrieved when a peer connection is closed.
-
 public class Metrics {
   private static final String TAG = "Metrics";
 
@@ -69,14 +68,14 @@ public class Metrics {
   // Enables gathering of metrics (which can be fetched with getAndReset()).
   // Must be called before PeerConnectionFactory is created.
   public static void enable() {
-    enableNative();
+    nativeEnable();
   }
 
   // Gets and clears native histograms.
   public static Metrics getAndReset() {
-    return getAndResetNative();
+    return nativeGetAndReset();
   }
 
-  private static native void enableNative();
-  private static native Metrics getAndResetNative();
+  private static native void nativeEnable();
+  private static native Metrics nativeGetAndReset();
 }

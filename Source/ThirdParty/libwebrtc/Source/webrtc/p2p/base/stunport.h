@@ -42,9 +42,11 @@ class UDPPort : public Port {
                          const std::string& username,
                          const std::string& password,
                          const std::string& origin,
-                         bool emit_local_for_anyaddress) {
+                         bool emit_local_for_anyaddress,
+                         absl::optional<int> stun_keepalive_interval) {
     UDPPort* port = new UDPPort(thread, factory, network, socket, username,
                                 password, origin, emit_local_for_anyaddress);
+    port->set_stun_keepalive_delay(stun_keepalive_interval);
     if (!port->Init()) {
       delete port;
       port = NULL;
@@ -60,10 +62,12 @@ class UDPPort : public Port {
                          const std::string& username,
                          const std::string& password,
                          const std::string& origin,
-                         bool emit_local_for_anyaddress) {
+                         bool emit_local_for_anyaddress,
+                         absl::optional<int> stun_keepalive_interval) {
     UDPPort* port =
         new UDPPort(thread, factory, network, min_port, max_port, username,
                     password, origin, emit_local_for_anyaddress);
+    port->set_stun_keepalive_delay(stun_keepalive_interval);
     if (!port->Init()) {
       delete port;
       port = NULL;
@@ -101,9 +105,9 @@ class UDPPort : public Port {
   bool SupportsProtocol(const std::string& protocol) const override;
   ProtocolType GetProtocol() const override;
 
-  void set_stun_keepalive_delay(int delay) {
-    stun_keepalive_delay_ = delay;
-  }
+  void GetStunStats(absl::optional<StunStats>* stats) override;
+
+  void set_stun_keepalive_delay(const absl::optional<int>& delay);
   int stun_keepalive_delay() const {
     return stun_keepalive_delay_;
   }
@@ -208,6 +212,7 @@ class UDPPort : public Port {
 
   // Below methods handles binding request responses.
   void OnStunBindingRequestSucceeded(
+      int rtt_ms,
       const rtc::SocketAddress& stun_server_addr,
       const rtc::SocketAddress& stun_reflected_addr);
   void OnStunBindingOrResolveRequestFailed(
@@ -242,6 +247,8 @@ class UDPPort : public Port {
   int stun_keepalive_delay_;
   int stun_keepalive_lifetime_ = INFINITE_LIFETIME;
 
+  StunStats stats_;
+
   // This is true by default and false when
   // PORTALLOCATOR_DISABLE_DEFAULT_LOCAL_CANDIDATE is specified.
   bool emit_local_for_anyaddress_;
@@ -259,7 +266,8 @@ class StunPort : public UDPPort {
                           const std::string& username,
                           const std::string& password,
                           const ServerAddresses& servers,
-                          const std::string& origin);
+                          const std::string& origin,
+                          absl::optional<int> stun_keepalive_interval);
 
   void PrepareAddress() override;
 

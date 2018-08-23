@@ -34,8 +34,8 @@ TEST(TimeStretch, CreateAndDestroy) {
   const int kOverlapSamples = 5 * kSampleRate / 8000;
   BackgroundNoise bgn(kNumChannels);
   Accelerate accelerate(kSampleRate, kNumChannels, bgn);
-  PreemptiveExpand preemptive_expand(
-      kSampleRate, kNumChannels, bgn, kOverlapSamples);
+  PreemptiveExpand preemptive_expand(kSampleRate, kNumChannels, bgn,
+                                     kOverlapSamples);
 }
 
 TEST(TimeStretch, CreateUsingFactory) {

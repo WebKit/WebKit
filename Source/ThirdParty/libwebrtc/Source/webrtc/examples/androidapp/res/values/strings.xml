@@ -125,6 +125,11 @@
     <string name="pref_aecdump_dlg">Enable diagnostic audio recordings.</string>
     <string name="pref_aecdump_default">false</string>
 
+    <string name="pref_enable_save_input_audio_to_file_key">enable_key</string>
+    <string name="pref_enable_save_input_audio_to_file_title">Save input audio to file.</string>
+    <string name="pref_enable_save_input_audio_to_file_dlg">Save input audio to file.</string>
+    <string name="pref_enable_save_input_audio_to_file_default">false</string>
+
     <string name="pref_opensles_key">opensles_preference</string>
     <string name="pref_opensles_title">Use OpenSL ES for audio playback.</string>
     <string name="pref_opensles_dlg">Use OpenSL ES for audio playback.</string>
@@ -147,10 +152,6 @@
     <string name="pref_disable_built_in_ns_dlg">Disable hardware NS.</string>
     <string name="pref_disable_built_in_ns_default">false</string>
     <string name="pref_built_in_ns_not_available">Hardware NS is not available</string>
-
-    <string name="pref_enable_level_control_key">enable_level_control_preference</string>
-    <string name="pref_enable_level_control_title">Enable level control.</string>
-    <string name="pref_enable_level_control_default">false</string>
 
     <string name="pref_disable_webrtc_agc_and_hpf_key">disable_webrtc_agc_and_hpf_preference</string>
     <string name="pref_disable_webrtc_agc_and_hpf_title">Disable WebRTC AGC and HPF.</string>
@@ -213,4 +214,12 @@
     <string name="pref_tracing_title">Debug performance tracing.</string>
     <string name="pref_tracing_dlg">Debug performance tracing.</string>
     <string name="pref_tracing_default" translatable="false">false</string>
+
+    <string name="pref_enable_rtceventlog_key">enable_rtceventlog_key</string>
+    <string name="pref_enable_rtceventlog_title">Enable RtcEventLog.</string>
+    <string name="pref_enable_rtceventlog_default">false</string>
+
+    <string name="pref_use_legacy_audio_device_key">use_legacy_audio_device_key</string>
+    <string name="pref_use_legacy_audio_device_title">Use legacy audio device.</string>
+    <string name="pref_use_legacy_audio_device_default">false</string>
 </resources>

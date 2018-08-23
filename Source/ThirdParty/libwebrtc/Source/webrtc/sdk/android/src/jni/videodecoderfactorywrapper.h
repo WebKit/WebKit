@@ -23,15 +23,16 @@ namespace jni {
 // JNI and wraps the decoder inside VideoDecoderWrapper.
 class VideoDecoderFactoryWrapper : public VideoDecoderFactory {
  public:
-  VideoDecoderFactoryWrapper(JNIEnv* jni, jobject decoder_factory);
+  VideoDecoderFactoryWrapper(JNIEnv* jni,
+                             const JavaRef<jobject>& decoder_factory);
+  ~VideoDecoderFactoryWrapper() override;
 
   std::vector<SdpVideoFormat> GetSupportedFormats() const override;
   std::unique_ptr<VideoDecoder> CreateVideoDecoder(
       const SdpVideoFormat& format) override;
 
  private:
-  const ScopedGlobalRef<jobject> decoder_factory_;
-  jmethodID create_decoder_method_;
+  const ScopedJavaGlobalRef<jobject> decoder_factory_;
 };
 
 }  // namespace jni

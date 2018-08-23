@@ -11,16 +11,18 @@
 /*
  * pitch_gain_tables.h
  *
- * This file contains tables for the pitch filter side-info in the entropy coder.
+ * This file contains tables for the pitch filter side-info in the entropy
+ * coder.
  *
  */
 
 #ifndef MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_PITCH_GAIN_TABLES_H_
 #define MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_PITCH_GAIN_TABLES_H_
 
-#include "typedefs.h"  // NOLINT(build/include)
+#include <stdint.h>
 
-/********************* Pitch Filter Gain Coefficient Tables ************************/
+/********************* Pitch Filter Gain Coefficient Tables
+ * ************************/
 /* cdf for quantized pitch filter gains */
 extern const uint16_t WebRtcIsacfix_kPitchGainCdf[255];
 

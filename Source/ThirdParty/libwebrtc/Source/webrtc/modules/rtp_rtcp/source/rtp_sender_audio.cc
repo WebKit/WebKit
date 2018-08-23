@@ -26,8 +26,7 @@
 namespace webrtc {
 
 RTPSenderAudio::RTPSenderAudio(Clock* clock, RTPSender* rtp_sender)
-    : clock_(clock),
-      rtp_sender_(rtp_sender) {}
+    : clock_(clock), rtp_sender_(rtp_sender) {}
 
 RTPSenderAudio::~RTPSenderAudio() {}
 
@@ -190,7 +189,8 @@ bool RTPSenderAudio::SendAudio(FrameType frame_type,
         dtmf_duration_samples -= 0xffff;
         dtmf_length_samples_ -= 0xffff;
 
-        return SendTelephoneEventPacket(ended, dtmf_timestamp_,
+        return SendTelephoneEventPacket(
+            ended, dtmf_timestamp_,
             static_cast<uint16_t>(dtmf_duration_samples), false);
       } else {
         if (!SendTelephoneEventPacket(ended, dtmf_timestamp_,
@@ -321,9 +321,6 @@ bool RTPSenderAudio::SendTelephoneEventPacket(bool ended,
     dtmfbuffer[1] = E | R | volume;
     ByteWriter<uint16_t>::WriteBigEndian(dtmfbuffer + 2, duration);
 
-    TRACE_EVENT_INSTANT2(
-        TRACE_DISABLED_BY_DEFAULT("webrtc_rtp"), "Audio::SendTelephoneEvent",
-        "timestamp", packet->Timestamp(), "seqnum", packet->SequenceNumber());
     result = rtp_sender_->SendToNetwork(std::move(packet), kAllowRetransmission,
                                         RtpPacketSender::kHighPriority);
     send_count--;

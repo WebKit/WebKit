@@ -17,7 +17,6 @@
 
 #include "modules/desktop_capture/desktop_frame.h"
 #include "rtc_base/constructormagic.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -48,4 +47,3 @@ class DesktopFrameWin : public DesktopFrame {
 }  // namespace webrtc
 
 #endif  // MODULES_DESKTOP_CAPTURE_DESKTOP_FRAME_WIN_H_
-

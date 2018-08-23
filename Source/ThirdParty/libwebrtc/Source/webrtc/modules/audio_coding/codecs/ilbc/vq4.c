@@ -16,8 +16,8 @@
 
 ******************************************************************/
 
-#include "vq4.h"
-#include "constants.h"
+#include "modules/audio_coding/codecs/ilbc/vq4.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
 
 /*----------------------------------------------------------------*
  *  vector quantization

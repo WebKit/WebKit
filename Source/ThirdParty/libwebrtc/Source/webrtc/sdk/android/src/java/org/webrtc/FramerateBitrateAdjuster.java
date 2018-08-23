@@ -25,6 +25,11 @@ class FramerateBitrateAdjuster extends BaseBitrateAdjuster {
     }
     super.setTargets(targetBitrateBps, targetFps);
 
-    this.targetBitrateBps *= INITIAL_FPS / this.targetFps;
+    this.targetBitrateBps = this.targetBitrateBps * INITIAL_FPS / this.targetFps;
+  }
+
+  @Override
+  public int getCodecConfigFramerate() {
+    return INITIAL_FPS;
   }
 }

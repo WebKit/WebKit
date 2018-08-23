@@ -30,8 +30,6 @@ NSString * const kRTCMediaConstraintsMinFrameRate =
     @(webrtc::MediaConstraintsInterface::kMinFrameRate);
 NSString * const kRTCMediaConstraintsMaxFrameRate =
     @(webrtc::MediaConstraintsInterface::kMaxFrameRate);
-NSString * const kRTCMediaConstraintsLevelControl =
-    @(webrtc::MediaConstraintsInterface::kLevelControl);
 NSString * const kRTCMediaConstraintsAudioNetworkAdaptorConfig =
     @(webrtc::MediaConstraintsInterface::kAudioNetworkAdaptorConfig);
 

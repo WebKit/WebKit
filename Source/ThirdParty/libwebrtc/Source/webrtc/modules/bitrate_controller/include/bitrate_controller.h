@@ -17,7 +17,7 @@
 
 #include <map>
 
-#include "modules/congestion_controller/delay_based_bwe.h"
+#include "modules/congestion_controller/goog_cc/delay_based_bwe.h"
 #include "modules/include/module.h"
 #include "modules/pacing/paced_sender.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
@@ -45,7 +45,7 @@ class BitrateObserver {
                                 int64_t target_set_time,
                                 uint64_t congestion_window) {}
   virtual void OnBytesAcked(size_t bytes) {}
-  virtual size_t pacer_queue_size_in_bytes() { return 0; }
+  virtual size_t pacer_queue_size_in_bytes();
   virtual ~BitrateObserver() {}
 };
 
@@ -67,7 +67,7 @@ class BitrateController : public Module, public RtcpBandwidthObserver {
   static BitrateController* CreateBitrateController(const Clock* clock,
                                                     RtcEventLog* event_log);
 
-  virtual ~BitrateController() {}
+  ~BitrateController() override {}
 
   // Deprecated, use raw pointer to BitrateController instance instead.
   // Creates RtcpBandwidthObserver caller responsible to delete.

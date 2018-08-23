@@ -23,11 +23,7 @@
 
 namespace webrtc {
 
-enum StereoMonoMode {
-  kNotSet,
-  kMono,
-  kStereo
-};
+enum StereoMonoMode { kNotSet, kMono, kStereo };
 
 class TestPackStereo : public AudioPacketizationCallback {
  public:
@@ -72,11 +68,17 @@ class TestStereo : public ACMTest {
   // The default value of '-1' indicates that the registration is based only on
   // codec name and a sampling frequncy matching is not required. This is useful
   // for codecs which support several sampling frequency.
-  void RegisterSendCodec(char side, char* codec_name, int32_t samp_freq_hz,
-                         int rate, int pack_size, int channels,
+  void RegisterSendCodec(char side,
+                         char* codec_name,
+                         int32_t samp_freq_hz,
+                         int rate,
+                         int pack_size,
+                         int channels,
                          int payload_type);
 
-  void Run(TestPackStereo* channel, int in_channels, int out_channels,
+  void Run(TestPackStereo* channel,
+           int in_channels,
+           int out_channels,
            int percent_loss = 0);
   void OpenOutFile(int16_t test_number);
   void DisplaySendReceiveCodec();

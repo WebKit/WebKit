@@ -14,6 +14,7 @@
 
 #include "modules/audio_processing/test/protobuf_utils.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 namespace test {
@@ -62,8 +63,10 @@ bool VerifyFloatBitExactness(const webrtc::audioproc::Stream& msg,
 
 }  // namespace
 
-AecDumpBasedSimulator::AecDumpBasedSimulator(const SimulationSettings& settings)
-    : AudioProcessingSimulator(settings) {}
+AecDumpBasedSimulator::AecDumpBasedSimulator(
+    const SimulationSettings& settings,
+    std::unique_ptr<AudioProcessingBuilder> ap_builder)
+    : AudioProcessingSimulator(settings, std::move(ap_builder)) {}
 
 AecDumpBasedSimulator::~AecDumpBasedSimulator() = default;
 
@@ -130,14 +133,16 @@ void AecDumpBasedSimulator::PrepareProcessStreamCall(
     }
   }
 
-  if (!settings_.stream_delay) {
-    if (msg.has_delay()) {
+  if (!settings_.use_stream_delay || *settings_.use_stream_delay) {
+    if (!settings_.stream_delay) {
+      if (msg.has_delay()) {
+        RTC_CHECK_EQ(AudioProcessing::kNoError,
+                     ap_->set_stream_delay_ms(msg.delay()));
+      }
+    } else {
       RTC_CHECK_EQ(AudioProcessing::kNoError,
-                   ap_->set_stream_delay_ms(msg.delay()));
+                   ap_->set_stream_delay_ms(*settings_.stream_delay));
     }
-  } else {
-    RTC_CHECK_EQ(AudioProcessing::kNoError,
-                 ap_->set_stream_delay_ms(*settings_.stream_delay));
   }
 
   if (!settings_.stream_drift_samples) {
@@ -462,6 +467,15 @@ void AecDumpBasedSimulator::HandleMessage(
       }
     }
 
+    if (msg.has_pre_amplifier_enabled() || settings_.use_pre_amplifier) {
+      const bool enable = settings_.use_pre_amplifier
+                              ? *settings_.use_pre_amplifier
+                              : msg.pre_amplifier_enabled();
+      apm_config.pre_amplifier.enabled = enable;
+      apm_config.pre_amplifier.fixed_gain_factor =
+          settings_.pre_amplifier_gain_factor;
+    }
+
     if (settings_.use_verbose_logging && msg.has_experiments_description() &&
         !msg.experiments_description().empty()) {
       std::cout << " experiments not included by default in the simulation: "
@@ -471,10 +485,6 @@ void AecDumpBasedSimulator::HandleMessage(
     if (settings_.use_refined_adaptive_filter) {
       config.Set<RefinedAdaptiveFilter>(
           new RefinedAdaptiveFilter(*settings_.use_refined_adaptive_filter));
-    }
-
-    if (settings_.use_lc) {
-      apm_config.level_controller.enabled = *settings_.use_lc;
     }
 
     if (settings_.use_ed) {

@@ -17,18 +17,62 @@ if (is_android) {
 
 group("logging") {
   deps = [
-    ":rtc_event_log_impl",
+    ":rtc_event_audio",
+    ":rtc_event_bwe",
+    ":rtc_event_log_impl_base",
+    ":rtc_event_log_impl_encoder",
+    ":rtc_event_log_impl_output",
+    ":rtc_event_pacing",
+    ":rtc_event_rtp_rtcp",
+    ":rtc_event_video",
   ]
-  if (rtc_enable_protobuf) {
-    deps += [ ":rtc_event_log_parser" ]
-  }
 }
 
 rtc_source_set("rtc_event_log_api") {
   sources = [
+    "rtc_event_log/encoder/rtc_event_log_encoder.h",
     "rtc_event_log/events/rtc_event.h",
+    "rtc_event_log/rtc_event_log.cc",
+    "rtc_event_log/rtc_event_log.h",
+    "rtc_event_log/rtc_event_log_factory_interface.h",
+  ]
+
+  deps = [
+    "../api:libjingle_logging_api",
+    "../rtc_base:ptr_util",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base:rtc_task_queue",
+  ]
+}
+
+rtc_source_set("rtc_stream_config") {
+  sources = [
+    "rtc_event_log/rtc_stream_config.cc",
+    "rtc_event_log/rtc_stream_config.h",
+  ]
+
+  deps = [
+    ":rtc_event_log_api",
+    "..:webrtc_common",
+    "../api:libjingle_peerconnection_api",
+  ]
+}
+
+rtc_source_set("rtc_event_pacing") {
+  sources = [
     "rtc_event_log/events/rtc_event_alr_state.cc",
     "rtc_event_log/events/rtc_event_alr_state.h",
+  ]
+
+  deps = [
+    ":rtc_event_log_api",
+    "../rtc_base:ptr_util",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("rtc_event_audio") {
+  sources = [
     "rtc_event_log/events/rtc_event_audio_network_adaptation.cc",
     "rtc_event_log/events/rtc_event_audio_network_adaptation.h",
     "rtc_event_log/events/rtc_event_audio_playout.cc",
@@ -37,6 +81,19 @@ rtc_source_set("rtc_event_log_api") {
     "rtc_event_log/events/rtc_event_audio_receive_stream_config.h",
     "rtc_event_log/events/rtc_event_audio_send_stream_config.cc",
     "rtc_event_log/events/rtc_event_audio_send_stream_config.h",
+  ]
+
+  deps = [
+    ":rtc_event_log_api",
+    ":rtc_stream_config",
+    "../modules/audio_coding:audio_network_adaptor_config",
+    "../rtc_base:ptr_util",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("rtc_event_bwe") {
+  sources = [
     "rtc_event_log/events/rtc_event_bwe_update_delay_based.cc",
     "rtc_event_log/events/rtc_event_bwe_update_delay_based.h",
     "rtc_event_log/events/rtc_event_bwe_update_loss_based.cc",
@@ -47,6 +104,18 @@ rtc_source_set("rtc_event_log_api") {
     "rtc_event_log/events/rtc_event_probe_result_failure.h",
     "rtc_event_log/events/rtc_event_probe_result_success.cc",
     "rtc_event_log/events/rtc_event_probe_result_success.h",
+  ]
+
+  deps = [
+    ":rtc_event_log_api",
+    "../modules/remote_bitrate_estimator:remote_bitrate_estimator",
+    "../rtc_base:ptr_util",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("rtc_event_rtp_rtcp") {
+  sources = [
     "rtc_event_log/events/rtc_event_rtcp_packet_incoming.cc",
     "rtc_event_log/events/rtc_event_rtcp_packet_incoming.h",
     "rtc_event_log/events/rtc_event_rtcp_packet_outgoing.cc",
@@ -55,77 +124,124 @@ rtc_source_set("rtc_event_log_api") {
     "rtc_event_log/events/rtc_event_rtp_packet_incoming.h",
     "rtc_event_log/events/rtc_event_rtp_packet_outgoing.cc",
     "rtc_event_log/events/rtc_event_rtp_packet_outgoing.h",
+  ]
+
+  deps = [
+    ":rtc_event_log_api",
+    "../api:array_view",
+    "../modules/rtp_rtcp:rtp_rtcp_format",
+    "../rtc_base:ptr_util",
+    "../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("rtc_event_video") {
+  sources = [
     "rtc_event_log/events/rtc_event_video_receive_stream_config.cc",
     "rtc_event_log/events/rtc_event_video_receive_stream_config.h",
     "rtc_event_log/events/rtc_event_video_send_stream_config.cc",
     "rtc_event_log/events/rtc_event_video_send_stream_config.h",
-    "rtc_event_log/output/rtc_event_log_output_file.cc",
-    "rtc_event_log/output/rtc_event_log_output_file.h",
-    "rtc_event_log/rtc_event_log.h",
-    "rtc_event_log/rtc_event_log_factory_interface.h",
-    "rtc_event_log/rtc_stream_config.cc",
-    "rtc_event_log/rtc_stream_config.h",
   ]
 
   deps = [
-    "..:webrtc_common",
-    "../:typedefs",
-    "../api:array_view",
-    "../api:libjingle_logging_api",
-    "../api:libjingle_peerconnection_api",
-    "../call:video_stream_api",
-    "../modules/audio_coding:audio_network_adaptor_config",
-    "../modules/remote_bitrate_estimator:remote_bitrate_estimator",
-    "../modules/rtp_rtcp:rtp_rtcp_format",
-    "../rtc_base:checks",
-    "../rtc_base:rtc_base_approved",
-    "../system_wrappers",
+    ":rtc_event_log_api",
+    ":rtc_stream_config",
+    "../rtc_base:ptr_util",
+    "//third_party/abseil-cpp/absl/memory",
   ]
-
-  # TODO(eladalon): Remove this.
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
 }
 
-rtc_static_library("rtc_event_log_impl") {
+rtc_static_library("rtc_event_log_impl_encoder") {
   visibility = [ "*" ]
   sources = [
-    "rtc_event_log/encoder/rtc_event_log_encoder.h",
     "rtc_event_log/encoder/rtc_event_log_encoder_legacy.cc",
     "rtc_event_log/encoder/rtc_event_log_encoder_legacy.h",
-    "rtc_event_log/rtc_event_log.cc",
-    "rtc_event_log/rtc_event_log_factory.cc",
-    "rtc_event_log/rtc_event_log_factory.h",
   ]
 
   defines = []
 
   deps = [
+    ":ice_log",
+    ":rtc_event_audio",
+    ":rtc_event_bwe",
     ":rtc_event_log_api",
-    "..:webrtc_common",
+    ":rtc_event_log_impl_output",
+    ":rtc_event_pacing",
+    ":rtc_event_rtp_rtcp",
+    ":rtc_event_video",
+    ":rtc_stream_config",
     "../modules/audio_coding:audio_network_adaptor",
     "../modules/remote_bitrate_estimator:remote_bitrate_estimator",
     "../modules/rtp_rtcp:rtp_rtcp_format",
     "../rtc_base:checks",
-    "../rtc_base:protobuf_utils",
     "../rtc_base:rtc_base_approved",
-    "../rtc_base:rtc_task_queue",
-    "../rtc_base:sequenced_task_checker",
-    "../system_wrappers",
   ]
 
   if (rtc_enable_protobuf) {
     defines += [ "ENABLE_RTC_EVENT_LOG" ]
     deps += [ ":rtc_event_log_proto" ]
   }
+}
 
-  # TODO(eladalon): Remove this.
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+rtc_source_set("rtc_event_log_impl_output") {
+  sources = [
+    "rtc_event_log/output/rtc_event_log_output_file.cc",
+    "rtc_event_log/output/rtc_event_log_output_file.h",
+  ]
+
+  deps = [
+    ":rtc_event_log_api",
+    "../api:libjingle_logging_api",
+    "../rtc_base:checks",
+    "../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_static_library("rtc_event_log_impl_base") {
+  visibility = [ "*" ]
+  sources = [
+    "rtc_event_log/rtc_event_log_factory.cc",
+    "rtc_event_log/rtc_event_log_factory.h",
+    "rtc_event_log/rtc_event_log_impl.cc",
+  ]
+
+  defines = []
+
+  deps = [
+    ":ice_log",
+    ":rtc_event_log_api",
+    ":rtc_event_log_impl_encoder",
+    ":rtc_event_log_impl_output",
+    "../rtc_base:checks",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base:rtc_task_queue",
+    "../rtc_base:safe_minmax",
+    "../rtc_base:sequenced_task_checker",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+
+  if (rtc_enable_protobuf) {
+    defines += [ "ENABLE_RTC_EVENT_LOG" ]
+    deps += [ ":rtc_event_log_proto" ]
   }
+}
+
+rtc_source_set("fake_rtc_event_log") {
+  testonly = true
+  sources = [
+    "rtc_event_log/fake_rtc_event_log.cc",
+    "rtc_event_log/fake_rtc_event_log.h",
+    "rtc_event_log/fake_rtc_event_log_factory.cc",
+    "rtc_event_log/fake_rtc_event_log_factory.h",
+  ]
+
+  deps = [
+    ":ice_log",
+    ":rtc_event_log_api",
+    "../rtc_base:checks",
+    "../rtc_base:rtc_base",
+  ]
 }
 
 if (rtc_enable_protobuf) {
@@ -144,16 +260,23 @@ if (rtc_enable_protobuf) {
   }
 
   rtc_static_library("rtc_event_log_parser") {
+    visibility = [ "*" ]
     sources = [
       "rtc_event_log/rtc_event_log_parser.cc",
       "rtc_event_log/rtc_event_log_parser.h",
+      "rtc_event_log/rtc_event_log_parser_new.cc",
+      "rtc_event_log/rtc_event_log_parser_new.h",
     ]
 
     deps = [
+      ":ice_log",
+      ":rtc_event_bwe",
       ":rtc_event_log2_proto",
       ":rtc_event_log_api",
       ":rtc_event_log_proto",
+      ":rtc_stream_config",
       "..:webrtc_common",
+      "../api:libjingle_peerconnection_api",
       "../call:video_stream_api",
       "../modules/audio_coding:audio_network_adaptor",
       "../modules/remote_bitrate_estimator:remote_bitrate_estimator",
@@ -162,7 +285,7 @@ if (rtc_enable_protobuf) {
       "../rtc_base:checks",
       "../rtc_base:protobuf_utils",
       "../rtc_base:rtc_base_approved",
-      "../system_wrappers",
+      "//third_party/abseil-cpp/absl/memory",
     ]
 
     if (!build_with_chromium && is_clang) {
@@ -176,9 +299,6 @@ if (rtc_enable_protobuf) {
       testonly = true
       assert(rtc_enable_protobuf)
       defines = [ "ENABLE_RTC_EVENT_LOG" ]
-      if (rtc_use_memcheck) {
-        defines += [ "WEBRTC_USE_MEMCHECK" ]
-      }
       sources = [
         "rtc_event_log/encoder/rtc_event_log_encoder_unittest.cc",
         "rtc_event_log/output/rtc_event_log_output_file_unittest.cc",
@@ -187,10 +307,19 @@ if (rtc_enable_protobuf) {
         "rtc_event_log/rtc_event_log_unittest_helper.h",
       ]
       deps = [
+        ":ice_log",
+        ":rtc_event_audio",
+        ":rtc_event_bwe",
         ":rtc_event_log_api",
-        ":rtc_event_log_impl",
+        ":rtc_event_log_impl_base",
+        ":rtc_event_log_impl_encoder",
+        ":rtc_event_log_impl_output",
         ":rtc_event_log_parser",
         ":rtc_event_log_proto",
+        ":rtc_event_pacing",
+        ":rtc_event_rtp_rtcp",
+        ":rtc_event_video",
+        ":rtc_stream_config",
         "../api:libjingle_peerconnection_api",
         "../call",
         "../call:call_interfaces",
@@ -200,16 +329,17 @@ if (rtc_enable_protobuf) {
         "../rtc_base:checks",
         "../rtc_base:rtc_base_approved",
         "../rtc_base:rtc_base_tests_utils",
-        "../system_wrappers:metrics_default",
+        "../test:fileutils",
         "../test:test_support",
-        "//testing/gmock",
         "//testing/gtest",
+        "//third_party/abseil-cpp/absl/memory",
       ]
       if (!build_with_chromium && is_clang) {
         # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
         suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
       }
     }
+
     rtc_test("rtc_event_log2rtp_dump") {
       testonly = true
       sources = [
@@ -217,7 +347,6 @@ if (rtc_enable_protobuf) {
       ]
       deps = [
         ":rtc_event_log_api",
-        ":rtc_event_log_impl",
         ":rtc_event_log_parser",
         "../modules/rtp_rtcp",
         "../modules/rtp_rtcp:rtp_rtcp_format",
@@ -243,7 +372,6 @@ if (rtc_enable_protobuf) {
       ]
       deps = [
         ":rtc_event_log_api",
-        ":rtc_event_log_impl",
         ":rtc_event_log_parser",
         "../:webrtc_common",
         "../call:video_stream_api",
@@ -251,6 +379,7 @@ if (rtc_enable_protobuf) {
         "../rtc_base:checks",
         "../rtc_base:protobuf_utils",
         "../rtc_base:rtc_base_approved",
+        "../rtc_base:stringutils",
 
         # TODO(kwiberg): Remove this dependency.
         "../api/audio_codecs:audio_codecs_api",
@@ -271,28 +400,42 @@ if (rtc_enable_protobuf) {
       ]
       deps = [
         ":rtc_event_log_api",
-        ":rtc_event_log_impl",
         ":rtc_event_log_proto",
         "../rtc_base:checks",
         "../rtc_base:rtc_base_approved",
       ]
-      if (!build_with_chromium && is_clang) {
-        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-        suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-      }
     }
   }
+}
+
+rtc_source_set("ice_log") {
+  sources = [
+    "rtc_event_log/events/rtc_event_ice_candidate_pair.cc",
+    "rtc_event_log/events/rtc_event_ice_candidate_pair.h",
+    "rtc_event_log/events/rtc_event_ice_candidate_pair_config.cc",
+    "rtc_event_log/events/rtc_event_ice_candidate_pair_config.h",
+    "rtc_event_log/icelogger.cc",
+    "rtc_event_log/icelogger.h",
+  ]
+
+  deps = [
+    ":rtc_event_log_api",
+    "../api:libjingle_logging_api",
+    "../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
 }
 
 if (rtc_include_tests) {
   rtc_source_set("mocks") {
     testonly = true
     sources = [
+      "rtc_event_log/mock/mock_rtc_event_log.cc",
       "rtc_event_log/mock/mock_rtc_event_log.h",
     ]
     deps = [
       ":rtc_event_log_api",
-      "../../test:test_support",
+      "../test:test_support",
     ]
   }
 }

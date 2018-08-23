@@ -48,7 +48,7 @@ class AudioRecordJni {
   class JavaAudioRecord {
    public:
     JavaAudioRecord(NativeRegistration* native_registration,
-                   std::unique_ptr<GlobalRef> audio_track);
+                    std::unique_ptr<GlobalRef> audio_track);
     ~JavaAudioRecord();
 
     int InitRecording(int sample_rate, size_t channels);
@@ -91,8 +91,10 @@ class AudioRecordJni {
   // is also stored in |direct_buffer_capacity_in_bytes_|.
   // This method will be called by the WebRtcAudioRecord constructor, i.e.,
   // on the same thread that this object is created on.
-  static void JNICALL CacheDirectBufferAddress(
-    JNIEnv* env, jobject obj, jobject byte_buffer, jlong nativeAudioRecord);
+  static void JNICALL CacheDirectBufferAddress(JNIEnv* env,
+                                               jobject obj,
+                                               jobject byte_buffer,
+                                               jlong nativeAudioRecord);
   void OnCacheDirectBufferAddress(JNIEnv* env, jobject byte_buffer);
 
   // Called periodically by the Java based WebRtcAudioRecord object when
@@ -101,8 +103,10 @@ class AudioRecordJni {
   // now time to send these to the consumer.
   // This method is called on a high-priority thread from Java. The name of
   // the thread is 'AudioRecordThread'.
-  static void JNICALL DataIsRecorded(
-    JNIEnv* env, jobject obj, jint length, jlong nativeAudioRecord);
+  static void JNICALL DataIsRecorded(JNIEnv* env,
+                                     jobject obj,
+                                     jint length,
+                                     jlong nativeAudioRecord);
   void OnDataIsRecorded(int length);
 
   // Stores thread ID in constructor.

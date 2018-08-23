@@ -9,7 +9,7 @@
  */
 
 #include "modules/video_coding/session_info.h"
-
+#include "modules/video_coding/jitter_buffer_common.h"
 #include "modules/video_coding/packet.h"
 #include "rtc_base/logging.h"
 
@@ -24,8 +24,7 @@ uint16_t BufferToUWord16(const uint8_t* dataBuffer) {
 }  // namespace
 
 VCMSessionInfo::VCMSessionInfo()
-    : session_nack_(false),
-      complete_(false),
+    : complete_(false),
       decodable_(false),
       frame_type_(kVideoFrameDelta),
       packets_(),
@@ -33,6 +32,8 @@ VCMSessionInfo::VCMSessionInfo()
       empty_seq_num_high_(-1),
       first_packet_seq_num_(-1),
       last_packet_seq_num_(-1) {}
+
+VCMSessionInfo::~VCMSessionInfo() {}
 
 void VCMSessionInfo::UpdateDataPointers(const uint8_t* old_base_ptr,
                                         const uint8_t* new_base_ptr) {
@@ -60,10 +61,12 @@ int VCMSessionInfo::HighSequenceNumber() const {
 int VCMSessionInfo::PictureId() const {
   if (packets_.empty())
     return kNoPictureId;
-  if (packets_.front().video_header.codec == kRtpVideoVp8) {
-    return packets_.front().video_header.codecHeader.VP8.pictureId;
-  } else if (packets_.front().video_header.codec == kRtpVideoVp9) {
-    return packets_.front().video_header.codecHeader.VP9.picture_id;
+  if (packets_.front().video_header.codec == kVideoCodecVP8) {
+    return packets_.front().video_header.vp8().pictureId;
+  } else if (packets_.front().video_header.codec == kVideoCodecVP9) {
+    return absl::get<RTPVideoHeaderVP9>(
+               packets_.front().video_header.video_type_header)
+        .picture_id;
   } else {
     return kNoPictureId;
   }
@@ -72,10 +75,12 @@ int VCMSessionInfo::PictureId() const {
 int VCMSessionInfo::TemporalId() const {
   if (packets_.empty())
     return kNoTemporalIdx;
-  if (packets_.front().video_header.codec == kRtpVideoVp8) {
-    return packets_.front().video_header.codecHeader.VP8.temporalIdx;
-  } else if (packets_.front().video_header.codec == kRtpVideoVp9) {
-    return packets_.front().video_header.codecHeader.VP9.temporal_idx;
+  if (packets_.front().video_header.codec == kVideoCodecVP8) {
+    return packets_.front().video_header.vp8().temporalIdx;
+  } else if (packets_.front().video_header.codec == kVideoCodecVP9) {
+    return absl::get<RTPVideoHeaderVP9>(
+               packets_.front().video_header.video_type_header)
+        .temporal_idx;
   } else {
     return kNoTemporalIdx;
   }
@@ -84,10 +89,12 @@ int VCMSessionInfo::TemporalId() const {
 bool VCMSessionInfo::LayerSync() const {
   if (packets_.empty())
     return false;
-  if (packets_.front().video_header.codec == kRtpVideoVp8) {
-    return packets_.front().video_header.codecHeader.VP8.layerSync;
-  } else if (packets_.front().video_header.codec == kRtpVideoVp9) {
-    return packets_.front().video_header.codecHeader.VP9.temporal_up_switch;
+  if (packets_.front().video_header.codec == kVideoCodecVP8) {
+    return packets_.front().video_header.vp8().layerSync;
+  } else if (packets_.front().video_header.codec == kVideoCodecVP9) {
+    return absl::get<RTPVideoHeaderVP9>(
+               packets_.front().video_header.video_type_header)
+        .temporal_up_switch;
   } else {
     return false;
   }
@@ -96,53 +103,50 @@ bool VCMSessionInfo::LayerSync() const {
 int VCMSessionInfo::Tl0PicId() const {
   if (packets_.empty())
     return kNoTl0PicIdx;
-  if (packets_.front().video_header.codec == kRtpVideoVp8) {
-    return packets_.front().video_header.codecHeader.VP8.tl0PicIdx;
-  } else if (packets_.front().video_header.codec == kRtpVideoVp9) {
-    return packets_.front().video_header.codecHeader.VP9.tl0_pic_idx;
+  if (packets_.front().video_header.codec == kVideoCodecVP8) {
+    return packets_.front().video_header.vp8().tl0PicIdx;
+  } else if (packets_.front().video_header.codec == kVideoCodecVP9) {
+    return absl::get<RTPVideoHeaderVP9>(
+               packets_.front().video_header.video_type_header)
+        .tl0_pic_idx;
   } else {
     return kNoTl0PicIdx;
   }
 }
 
-bool VCMSessionInfo::NonReference() const {
-  if (packets_.empty() || packets_.front().video_header.codec != kRtpVideoVp8)
-    return false;
-  return packets_.front().video_header.codecHeader.VP8.nonReference;
-}
-
 std::vector<NaluInfo> VCMSessionInfo::GetNaluInfos() const {
-  if (packets_.empty() || packets_.front().video_header.codec != kRtpVideoH264)
+  if (packets_.empty() ||
+      packets_.front().video_header.codec != kVideoCodecH264)
     return std::vector<NaluInfo>();
   std::vector<NaluInfo> nalu_infos;
   for (const VCMPacket& packet : packets_) {
-    for (size_t i = 0; i < packet.video_header.codecHeader.H264.nalus_length;
-         ++i) {
-      nalu_infos.push_back(packet.video_header.codecHeader.H264.nalus[i]);
+    const auto& h264 =
+        absl::get<RTPVideoHeaderH264>(packet.video_header.video_type_header);
+    for (size_t i = 0; i < h264.nalus_length; ++i) {
+      nalu_infos.push_back(h264.nalus[i]);
     }
   }
   return nalu_infos;
 }
 
 void VCMSessionInfo::SetGofInfo(const GofInfoVP9& gof_info, size_t idx) {
-  if (packets_.empty() || packets_.front().video_header.codec != kRtpVideoVp9 ||
-      packets_.front().video_header.codecHeader.VP9.flexible_mode) {
+  if (packets_.empty())
     return;
-  }
-  packets_.front().video_header.codecHeader.VP9.temporal_idx =
-      gof_info.temporal_idx[idx];
-  packets_.front().video_header.codecHeader.VP9.temporal_up_switch =
-      gof_info.temporal_up_switch[idx];
-  packets_.front().video_header.codecHeader.VP9.num_ref_pics =
-      gof_info.num_ref_pics[idx];
+
+  auto* vp9_header = absl::get_if<RTPVideoHeaderVP9>(
+      &packets_.front().video_header.video_type_header);
+  if (!vp9_header || vp9_header->flexible_mode)
+    return;
+
+  vp9_header->temporal_idx = gof_info.temporal_idx[idx];
+  vp9_header->temporal_up_switch = gof_info.temporal_up_switch[idx];
+  vp9_header->num_ref_pics = gof_info.num_ref_pics[idx];
   for (uint8_t i = 0; i < gof_info.num_ref_pics[idx]; ++i) {
-    packets_.front().video_header.codecHeader.VP9.pid_diff[i] =
-        gof_info.pid_diff[idx][i];
+    vp9_header->pid_diff[i] = gof_info.pid_diff[idx][i];
   }
 }
 
 void VCMSessionInfo::Reset() {
-  session_nack_ = false;
   complete_ = false;
   decodable_ = false;
   frame_type_ = kVideoFrameDelta;
@@ -185,8 +189,9 @@ size_t VCMSessionInfo::InsertBuffer(uint8_t* frame_buffer,
   // header supplied by the H264 depacketizer.
   const size_t kH264NALHeaderLengthInBytes = 1;
   const size_t kLengthFieldLength = 2;
-  if (packet.video_header.codec == kRtpVideoH264 &&
-      packet.video_header.codecHeader.H264.packetization_type == kH264StapA) {
+  const auto* h264 =
+      absl::get_if<RTPVideoHeaderH264>(&packet.video_header.video_type_header);
+  if (h264 && h264->packetization_type == kH264StapA) {
     size_t required_length = 0;
     const uint8_t* nalu_ptr = packet_buffer + kH264NALHeaderLengthInBytes;
     while (nalu_ptr < packet_buffer + packet.sizeBytes) {
@@ -342,7 +347,7 @@ size_t VCMSessionInfo::DeletePacketData(PacketIterator start,
 VCMSessionInfo::PacketIterator VCMSessionInfo::FindNextPartitionBeginning(
     PacketIterator it) const {
   while (it != packets_.end()) {
-    if ((*it).video_header.codecHeader.VP8.beginningOfPartition) {
+    if ((*it).video_header.vp8().beginningOfPartition) {
       return it;
     }
     ++it;
@@ -354,10 +359,10 @@ VCMSessionInfo::PacketIterator VCMSessionInfo::FindPartitionEnd(
     PacketIterator it) const {
   assert((*it).codec == kVideoCodecVP8);
   PacketIterator prev_it = it;
-  const int partition_id = (*it).video_header.codecHeader.VP8.partitionId;
+  const int partition_id = (*it).video_header.vp8().partitionId;
   while (it != packets_.end()) {
-    bool beginning = (*it).video_header.codecHeader.VP8.beginningOfPartition;
-    int current_partition_id = (*it).video_header.codecHeader.VP8.partitionId;
+    bool beginning = (*it).video_header.vp8().beginningOfPartition;
+    int current_partition_id = (*it).video_header.vp8().partitionId;
     bool packet_loss_found = (!beginning && !InSequence(it, prev_it));
     if (packet_loss_found ||
         (beginning && current_partition_id != partition_id)) {
@@ -407,22 +412,12 @@ size_t VCMSessionInfo::MakeDecodable() {
   return return_length;
 }
 
-void VCMSessionInfo::SetNotDecodableIfIncomplete() {
-  // We don't need to check for completeness first because the two are
-  // orthogonal. If complete_ is true, decodable_ is irrelevant.
-  decodable_ = false;
-}
-
 bool VCMSessionInfo::HaveFirstPacket() const {
   return !packets_.empty() && (first_packet_seq_num_ != -1);
 }
 
 bool VCMSessionInfo::HaveLastPacket() const {
   return !packets_.empty() && (last_packet_seq_num_ != -1);
-}
-
-bool VCMSessionInfo::session_nack() const {
-  return session_nack_;
 }
 
 int VCMSessionInfo::InsertPacket(const VCMPacket& packet,

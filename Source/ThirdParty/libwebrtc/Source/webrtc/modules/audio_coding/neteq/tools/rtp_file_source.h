@@ -39,7 +39,7 @@ class RtpFileSource : public PacketSource {
   static bool ValidRtpDump(const std::string& file_name);
   static bool ValidPcap(const std::string& file_name);
 
-  virtual ~RtpFileSource();
+  ~RtpFileSource() override;
 
   // Registers an RTP header extension and binds it to |id|.
   virtual bool RegisterRtpHeaderExtension(RTPExtensionType type, uint8_t id);

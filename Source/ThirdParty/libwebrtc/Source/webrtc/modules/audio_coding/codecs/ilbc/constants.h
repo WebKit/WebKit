@@ -19,8 +19,7 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_CONSTANTS_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_CONSTANTS_H_
 
-#include "defines.h"
-#include "typedefs.h"  // NOLINT(build/include)
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /* high pass filters */
 
@@ -79,7 +78,8 @@ extern const int16_t WebRtcIlbcfix_kAlpha[];
 
 /* enhancer definitions */
 
-extern const int16_t WebRtcIlbcfix_kEnhPolyPhaser[ENH_UPS0][ENH_FLO_MULT2_PLUS1];
+extern const int16_t WebRtcIlbcfix_kEnhPolyPhaser[ENH_UPS0]
+                                                 [ENH_FLO_MULT2_PLUS1];
 extern const int16_t WebRtcIlbcfix_kEnhWt[];
 extern const size_t WebRtcIlbcfix_kEnhPlocs[];
 

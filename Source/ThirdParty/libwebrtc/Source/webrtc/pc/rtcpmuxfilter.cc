@@ -14,8 +14,7 @@
 
 namespace cricket {
 
-RtcpMuxFilter::RtcpMuxFilter() : state_(ST_INIT), offer_enable_(false) {
-}
+RtcpMuxFilter::RtcpMuxFilter() : state_(ST_INIT), offer_enable_(false) {}
 
 bool RtcpMuxFilter::IsFullyActive() const {
   return state_ == ST_ACTIVE;

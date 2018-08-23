@@ -9,6 +9,9 @@
 # This file is inspired to [1].
 # [1] - https://cs.chromium.org/chromium/src/PRESUBMIT_test_mocks.py
 
+import os.path
+import re
+
 
 class MockInputApi(object):
   """Mock class for the InputApi class.
@@ -20,10 +23,22 @@ class MockInputApi(object):
   def __init__(self):
     self.change = MockChange([], [])
     self.files = []
+    self.presubmit_local_path = os.path.dirname(__file__)
 
   def AffectedSourceFiles(self, file_filter=None):
+    return self.AffectedFiles(file_filter=file_filter)
+
+  def AffectedFiles(self, file_filter=None, include_deletes=False):
     # pylint: disable=unused-argument
     return self.files
+
+  @classmethod
+  def FilterSourceFile(cls, affected_file, white_list=(), black_list=()):
+    # pylint: disable=unused-argument
+    return True
+
+  def PresubmitLocalPath(self):
+    return self.presubmit_local_path
 
   def ReadFile(self, affected_file, mode='rU'):
     filename = affected_file.AbsoluteLocalPath()
@@ -64,12 +79,19 @@ class MockChange(object):
   current change.
   """
 
-  def __init__(self, changed_files, bugs_from_description):
+  def __init__(self, changed_files, bugs_from_description, tags=None):
     self._changed_files = changed_files
     self._bugs_from_description = bugs_from_description
+    self.tags = dict() if not tags else tags
 
   def BugsFromDescription(self):
     return self._bugs_from_description
+
+  def __getattr__(self, attr):
+    """Return tags directly as attributes on the object."""
+    if not re.match(r"^[A-Z_]*$", attr):
+      raise AttributeError(self, attr)
+    return self.tags.get(attr)
 
 
 class MockFile(object):
@@ -79,11 +101,30 @@ class MockFile(object):
   MockInputApi for presubmit unittests.
   """
 
-  def __init__(self, local_path):
+  def __init__(self, local_path, new_contents=None, old_contents=None,
+      action='A'):
+    if new_contents is None:
+      new_contents = ["Data"]
     self._local_path = local_path
+    self._new_contents = new_contents
+    self._changed_contents = [(i + 1, l) for i, l in enumerate(new_contents)]
+    self._action = action
+    self._old_contents = old_contents
+
+  def Action(self):
+    return self._action
+
+  def ChangedContents(self):
+    return self._changed_contents
+
+  def NewContents(self):
+    return self._new_contents
 
   def LocalPath(self):
     return self._local_path
 
   def AbsoluteLocalPath(self):
     return self._local_path
+
+  def OldContents(self):
+    return self._old_contents

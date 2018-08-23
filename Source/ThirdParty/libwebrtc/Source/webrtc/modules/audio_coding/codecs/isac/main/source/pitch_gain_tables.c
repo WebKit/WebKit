@@ -8,9 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "pitch_gain_tables.h"
-
-#include "settings.h"
+#include "modules/audio_coding/codecs/isac/main/source/pitch_gain_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/settings.h"
 
 /* header file for coding tables for the pitch filter side-info in the entropy coder */
 /********************* Pitch Filter Gain Coefficient Tables ************************/

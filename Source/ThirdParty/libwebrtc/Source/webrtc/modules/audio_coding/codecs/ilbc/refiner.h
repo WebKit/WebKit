@@ -19,7 +19,7 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_REFINER_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_REFINER_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  * find segment starting near idata+estSegPos that has highest
@@ -30,14 +30,14 @@
  *---------------------------------------------------------------*/
 
 void WebRtcIlbcfix_Refiner(
-    size_t *updStartPos, /* (o) updated start point (Q-2) */
-    int16_t *idata,   /* (i) original data buffer */
-    size_t idatal,   /* (i) dimension of idata */
+    size_t* updStartPos,   /* (o) updated start point (Q-2) */
+    int16_t* idata,        /* (i) original data buffer */
+    size_t idatal,         /* (i) dimension of idata */
     size_t centerStartPos, /* (i) beginning center segment */
-    size_t estSegPos,  /* (i) estimated beginning other segment (Q-2) */
-    int16_t *surround,  /* (i/o) The contribution from this sequence
-                                 summed with earlier contributions */
-    int16_t gain    /* (i) Gain to use for this sequence */
-                           );
+    size_t estSegPos,      /* (i) estimated beginning other segment (Q-2) */
+    int16_t* surround,     /* (i/o) The contribution from this sequence
+                                    summed with earlier contributions */
+    int16_t gain           /* (i) Gain to use for this sequence */
+    );
 
 #endif

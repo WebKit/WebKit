@@ -28,7 +28,7 @@ void SetDefaultSettings(VideoCodec* codec_settings) {
   // If frame dropping is false, we get a warning that bitrate can't
   // be controlled for RC_QUALITY_MODE; RC_BITRATE_MODE and RC_TIMESTAMP_MODE
   codec_settings->H264()->frameDroppingOn = true;
-  codec_settings->targetBitrate = 2000;
+  codec_settings->startBitrate = 2000;
   codec_settings->maxBitrate = 4000;
 }
 

@@ -11,16 +11,14 @@
 #ifndef RTC_BASE_TASK_QUEUE_H_
 #define RTC_BASE_TASK_QUEUE_H_
 
-#include <list>
 #include <memory>
-#include <queue>
 #include <type_traits>
 #include <utility>
 
+#include "absl/memory/memory.h"
 #include "rtc_base/constructormagic.h"
-#include "rtc_base/criticalsection.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace rtc {
 
@@ -81,13 +79,14 @@ class ClosureTaskWithCleanup : public ClosureTask<Closure> {
 // based parameters.
 template <class Closure>
 static std::unique_ptr<QueuedTask> NewClosure(Closure&& closure) {
-  return rtc::MakeUnique<ClosureTask<Closure>>(std::forward<Closure>(closure));
+  return absl::make_unique<ClosureTask<Closure>>(
+      std::forward<Closure>(closure));
 }
 
 template <class Closure, class Cleanup>
 static std::unique_ptr<QueuedTask> NewClosure(Closure&& closure,
                                               Cleanup&& cleanup) {
-  return rtc::MakeUnique<ClosureTaskWithCleanup<Closure, Cleanup>>(
+  return absl::make_unique<ClosureTaskWithCleanup<Closure, Cleanup>>(
       std::forward<Closure>(closure), std::forward<Cleanup>(cleanup));
 }
 

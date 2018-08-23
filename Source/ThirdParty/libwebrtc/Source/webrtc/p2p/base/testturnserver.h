@@ -21,6 +21,7 @@
 #include "rtc_base/ssladapter.h"
 #include "rtc_base/sslidentity.h"
 #include "rtc_base/thread.h"
+#include "rtc_base/thread_checker.h"
 
 namespace cricket {
 
@@ -31,8 +32,7 @@ class TestTurnRedirector : public TurnRedirectInterface {
  public:
   explicit TestTurnRedirector(const std::vector<rtc::SocketAddress>& addresses)
       : alternate_server_addresses_(addresses),
-        iter_(alternate_server_addresses_.begin()) {
-  }
+        iter_(alternate_server_addresses_.begin()) {}
 
   virtual bool ShouldRedirect(const rtc::SocketAddress&,
                               rtc::SocketAddress* out) {
@@ -53,9 +53,11 @@ class TestTurnServer : public TurnAuthInterface {
   TestTurnServer(rtc::Thread* thread,
                  const rtc::SocketAddress& int_addr,
                  const rtc::SocketAddress& udp_ext_addr,
-                 ProtocolType int_protocol = PROTO_UDP)
+                 ProtocolType int_protocol = PROTO_UDP,
+                 bool ignore_bad_cert = true,
+                 const std::string& common_name = "test turn server")
       : server_(thread), thread_(thread) {
-    AddInternalSocket(int_addr, int_protocol);
+    AddInternalSocket(int_addr, int_protocol, ignore_bad_cert, common_name);
     server_.SetExternalSocketFactory(new rtc::BasicPacketSocketFactory(thread),
                                      udp_ext_addr);
     server_.set_realm(kTestRealm);
@@ -63,22 +65,33 @@ class TestTurnServer : public TurnAuthInterface {
     server_.set_auth_hook(this);
   }
 
+  ~TestTurnServer() { RTC_DCHECK(thread_checker_.CalledOnValidThread()); }
+
   void set_enable_otu_nonce(bool enable) {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
     server_.set_enable_otu_nonce(enable);
   }
 
-  TurnServer* server() { return &server_; }
+  TurnServer* server() {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
+    return &server_;
+  }
 
   void set_redirect_hook(TurnRedirectInterface* redirect_hook) {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
     server_.set_redirect_hook(redirect_hook);
   }
 
   void set_enable_permission_checks(bool enable) {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
     server_.set_enable_permission_checks(enable);
   }
 
   void AddInternalSocket(const rtc::SocketAddress& int_addr,
-                         ProtocolType proto) {
+                         ProtocolType proto,
+                         bool ignore_bad_cert = true,
+                         const std::string& common_name = "test turn server") {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
     if (proto == cricket::PROTO_UDP) {
       server_.AddInternalSocket(
           rtc::AsyncUDPSocket::Create(thread_->socketserver(), int_addr),
@@ -87,7 +100,7 @@ class TestTurnServer : public TurnAuthInterface {
       // For TCP we need to create a server socket which can listen for incoming
       // new connections.
       rtc::AsyncSocket* socket =
-          thread_->socketserver()->CreateAsyncSocket(SOCK_STREAM);
+          thread_->socketserver()->CreateAsyncSocket(AF_INET, SOCK_STREAM);
       if (proto == cricket::PROTO_TLS) {
         // For TLS, wrap the TCP socket with an SSL adapter. The adapter must
         // be configured with a self-signed certificate for testing.
@@ -96,8 +109,8 @@ class TestTurnServer : public TurnAuthInterface {
         rtc::SSLAdapter* adapter = rtc::SSLAdapter::Create(socket);
         adapter->SetRole(rtc::SSL_SERVER);
         adapter->SetIdentity(
-            rtc::SSLIdentity::Generate("test turn server", rtc::KeyParams()));
-        adapter->SetIgnoreBadCert(true);
+            rtc::SSLIdentity::Generate(common_name, rtc::KeyParams()));
+        adapter->SetIgnoreBadCert(ignore_bad_cert);
         socket = adapter;
       }
       socket->Bind(int_addr);
@@ -111,9 +124,10 @@ class TestTurnServer : public TurnAuthInterface {
   // Finds the first allocation in the server allocation map with a source
   // ip and port matching the socket address provided.
   TurnServerAllocation* FindAllocation(const rtc::SocketAddress& src) {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
     const TurnServer::AllocationMap& map = server_.allocations();
     for (TurnServer::AllocationMap::const_iterator it = map.begin();
-        it != map.end(); ++it) {
+         it != map.end(); ++it) {
       if (src == it->first.src()) {
         return it->second.get();
       }
@@ -124,13 +138,16 @@ class TestTurnServer : public TurnAuthInterface {
  private:
   // For this test server, succeed if the password is the same as the username.
   // Obviously, do not use this in a production environment.
-  virtual bool GetKey(const std::string& username, const std::string& realm,
+  virtual bool GetKey(const std::string& username,
+                      const std::string& realm,
                       std::string* key) {
+    RTC_DCHECK(thread_checker_.CalledOnValidThread());
     return ComputeStunCredentialHash(username, realm, username, key);
   }
 
   TurnServer server_;
   rtc::Thread* thread_;
+  rtc::ThreadChecker thread_checker_;
 };
 
 }  // namespace cricket

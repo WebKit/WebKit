@@ -52,6 +52,3 @@ TEST(CallStatisticsTest, AllCalls) {
 }  // namespace acm2
 
 }  // namespace webrtc
-
-
-

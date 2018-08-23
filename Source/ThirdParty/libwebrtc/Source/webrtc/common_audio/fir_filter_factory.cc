@@ -12,6 +12,7 @@
 
 #include "common_audio/fir_filter_c.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/system/arch.h"
 #include "system_wrappers/include/cpu_features_wrapper.h"
 
 #if defined(WEBRTC_HAS_NEON)

@@ -16,12 +16,11 @@
 #include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/include/module_common_types.h"
 #include "rtc_base/criticalsection.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
-#define MAX_NUM_PAYLOADS   50
-#define MAX_NUM_FRAMESIZES  6
+#define MAX_NUM_PAYLOADS 50
+#define MAX_NUM_FRAMESIZES 6
 
 // TODO(turajs): Write constructor for this structure.
 struct ACMTestFrameSizeStats {
@@ -45,7 +44,6 @@ struct ACMTestPayloadStats {
 
 class Channel : public AudioPacketizationCallback {
  public:
-
   Channel(int16_t chID = -1);
   ~Channel() override;
 
@@ -56,7 +54,7 @@ class Channel : public AudioPacketizationCallback {
                    size_t payloadSize,
                    const RTPFragmentationHeader* fragmentation) override;
 
-  void RegisterReceiverACM(AudioCodingModule *acm);
+  void RegisterReceiverACM(AudioCodingModule* acm);
 
   void ResetStats();
 
@@ -68,9 +66,7 @@ class Channel : public AudioPacketizationCallback {
 
   void PrintStats(CodecInst& codecInst);
 
-  void SetIsStereo(bool isStereo) {
-    _isStereo = isStereo;
-  }
+  void SetIsStereo(bool isStereo) { _isStereo = isStereo; }
 
   uint32_t LastInTimestamp();
 

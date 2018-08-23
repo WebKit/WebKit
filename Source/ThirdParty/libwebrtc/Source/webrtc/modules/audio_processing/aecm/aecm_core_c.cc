@@ -26,32 +26,28 @@ extern "C" {
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/sanitizer.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 // Square root of Hanning window in Q14.
 static const ALIGN8_BEG int16_t WebRtcAecm_kSqrtHanning[] ALIGN8_END = {
-  0, 399, 798, 1196, 1594, 1990, 2386, 2780, 3172,
-  3562, 3951, 4337, 4720, 5101, 5478, 5853, 6224,
-  6591, 6954, 7313, 7668, 8019, 8364, 8705, 9040,
-  9370, 9695, 10013, 10326, 10633, 10933, 11227, 11514,
-  11795, 12068, 12335, 12594, 12845, 13089, 13325, 13553,
-  13773, 13985, 14189, 14384, 14571, 14749, 14918, 15079,
-  15231, 15373, 15506, 15631, 15746, 15851, 15947, 16034,
-  16111, 16179, 16237, 16286, 16325, 16354, 16373, 16384
-};
+    0,     399,   798,   1196,  1594,  1990,  2386,  2780,  3172,  3562,  3951,
+    4337,  4720,  5101,  5478,  5853,  6224,  6591,  6954,  7313,  7668,  8019,
+    8364,  8705,  9040,  9370,  9695,  10013, 10326, 10633, 10933, 11227, 11514,
+    11795, 12068, 12335, 12594, 12845, 13089, 13325, 13553, 13773, 13985, 14189,
+    14384, 14571, 14749, 14918, 15079, 15231, 15373, 15506, 15631, 15746, 15851,
+    15947, 16034, 16111, 16179, 16237, 16286, 16325, 16354, 16373, 16384};
 
 #ifdef AECM_WITH_ABS_APPROX
-//Q15 alpha = 0.99439986968132  const Factor for magnitude approximation
+// Q15 alpha = 0.99439986968132  const Factor for magnitude approximation
 static const uint16_t kAlpha1 = 32584;
-//Q15 beta = 0.12967166976970   const Factor for magnitude approximation
+// Q15 beta = 0.12967166976970   const Factor for magnitude approximation
 static const uint16_t kBeta1 = 4249;
-//Q15 alpha = 0.94234827210087  const Factor for magnitude approximation
+// Q15 alpha = 0.94234827210087  const Factor for magnitude approximation
 static const uint16_t kAlpha2 = 30879;
-//Q15 beta = 0.33787806009150   const Factor for magnitude approximation
+// Q15 beta = 0.33787806009150   const Factor for magnitude approximation
 static const uint16_t kBeta2 = 11072;
-//Q15 alpha = 0.82247698684306  const Factor for magnitude approximation
+// Q15 alpha = 0.82247698684306  const Factor for magnitude approximation
 static const uint16_t kAlpha3 = 26951;
-//Q15 beta = 0.57762063060713   const Factor for magnitude approximation
+// Q15 beta = 0.57762063060713   const Factor for magnitude approximation
 static const uint16_t kBeta3 = 18927;
 #endif
 
@@ -77,8 +73,8 @@ static void WindowAndFFT(AecmCore* aecm,
     int16_t scaled_time_signal = time_signal[i] * (1 << time_signal_scaling);
     fft[i] = (int16_t)((scaled_time_signal * WebRtcAecm_kSqrtHanning[i]) >> 14);
     scaled_time_signal = time_signal[i + PART_LEN] * (1 << time_signal_scaling);
-    fft[PART_LEN + i] = (int16_t)((
-        scaled_time_signal * WebRtcAecm_kSqrtHanning[PART_LEN - i]) >> 14);
+    fft[PART_LEN + i] = (int16_t)(
+        (scaled_time_signal * WebRtcAecm_kSqrtHanning[PART_LEN - i]) >> 14);
   }
 
   // Do forward FFT, then take only the first PART_LEN complex samples,
@@ -115,32 +111,27 @@ static void InverseFFTAndWindow(AecmCore* aecm,
   outCFFT = WebRtcSpl_RealInverseFFT(aecm->real_fft, fft, ifft_out);
   for (i = 0; i < PART_LEN; i++) {
     ifft_out[i] = (int16_t)WEBRTC_SPL_MUL_16_16_RSFT_WITH_ROUND(
-                    ifft_out[i], WebRtcAecm_kSqrtHanning[i], 14);
+        ifft_out[i], WebRtcAecm_kSqrtHanning[i], 14);
     tmp32no1 = WEBRTC_SPL_SHIFT_W32((int32_t)ifft_out[i],
-                                     outCFFT - aecm->dfaCleanQDomain);
+                                    outCFFT - aecm->dfaCleanQDomain);
     output[i] = (int16_t)WEBRTC_SPL_SAT(WEBRTC_SPL_WORD16_MAX,
                                         tmp32no1 + aecm->outBuf[i],
                                         WEBRTC_SPL_WORD16_MIN);
 
-    tmp32no1 = (ifft_out[PART_LEN + i] *
-        WebRtcAecm_kSqrtHanning[PART_LEN - i]) >> 14;
-    tmp32no1 = WEBRTC_SPL_SHIFT_W32(tmp32no1,
-                                    outCFFT - aecm->dfaCleanQDomain);
-    aecm->outBuf[i] = (int16_t)WEBRTC_SPL_SAT(WEBRTC_SPL_WORD16_MAX,
-                                                tmp32no1,
-                                                WEBRTC_SPL_WORD16_MIN);
+    tmp32no1 =
+        (ifft_out[PART_LEN + i] * WebRtcAecm_kSqrtHanning[PART_LEN - i]) >> 14;
+    tmp32no1 = WEBRTC_SPL_SHIFT_W32(tmp32no1, outCFFT - aecm->dfaCleanQDomain);
+    aecm->outBuf[i] = (int16_t)WEBRTC_SPL_SAT(WEBRTC_SPL_WORD16_MAX, tmp32no1,
+                                              WEBRTC_SPL_WORD16_MIN);
   }
 
   // Copy the current block to the old position
   // (aecm->outBuf is shifted elsewhere)
   memcpy(aecm->xBuf, aecm->xBuf + PART_LEN, sizeof(int16_t) * PART_LEN);
-  memcpy(aecm->dBufNoisy,
-         aecm->dBufNoisy + PART_LEN,
+  memcpy(aecm->dBufNoisy, aecm->dBufNoisy + PART_LEN,
          sizeof(int16_t) * PART_LEN);
-  if (nearendClean != NULL)
-  {
-    memcpy(aecm->dBufClean,
-           aecm->dBufClean + PART_LEN,
+  if (nearendClean != NULL) {
+    memcpy(aecm->dBufClean, aecm->dBufClean + PART_LEN,
            sizeof(int16_t) * PART_LEN);
   }
 }
@@ -171,7 +162,7 @@ static int TimeToFrequencyDomain(AecmCore* aecm,
 
   // In fft_buf, +16 for 32-byte alignment.
   int16_t fft_buf[PART_LEN4 + 16];
-  int16_t *fft = (int16_t *) (((uintptr_t) fft_buf + 31) & ~31);
+  int16_t* fft = (int16_t*)(((uintptr_t)fft_buf + 31) & ~31);
 
   int16_t tmp16no1;
 #ifndef WEBRTC_ARCH_ARM_V7
@@ -196,54 +187,43 @@ static int TimeToFrequencyDomain(AecmCore* aecm,
   freq_signal[0].imag = 0;
   freq_signal[PART_LEN].imag = 0;
   freq_signal_abs[0] = (uint16_t)WEBRTC_SPL_ABS_W16(freq_signal[0].real);
-  freq_signal_abs[PART_LEN] = (uint16_t)WEBRTC_SPL_ABS_W16(
-                                freq_signal[PART_LEN].real);
-  (*freq_signal_sum_abs) = (uint32_t)(freq_signal_abs[0]) +
-                           (uint32_t)(freq_signal_abs[PART_LEN]);
+  freq_signal_abs[PART_LEN] =
+      (uint16_t)WEBRTC_SPL_ABS_W16(freq_signal[PART_LEN].real);
+  (*freq_signal_sum_abs) =
+      (uint32_t)(freq_signal_abs[0]) + (uint32_t)(freq_signal_abs[PART_LEN]);
 
-  for (i = 1; i < PART_LEN; i++)
-  {
-    if (freq_signal[i].real == 0)
-    {
+  for (i = 1; i < PART_LEN; i++) {
+    if (freq_signal[i].real == 0) {
       freq_signal_abs[i] = (uint16_t)WEBRTC_SPL_ABS_W16(freq_signal[i].imag);
-    }
-    else if (freq_signal[i].imag == 0)
-    {
+    } else if (freq_signal[i].imag == 0) {
       freq_signal_abs[i] = (uint16_t)WEBRTC_SPL_ABS_W16(freq_signal[i].real);
-    }
-    else
-    {
-      // Approximation for magnitude of complex fft output
-      // magn = sqrt(real^2 + imag^2)
-      // magn ~= alpha * max(|imag|,|real|) + beta * min(|imag|,|real|)
-      //
-      // The parameters alpha and beta are stored in Q15
+    } else {
+// Approximation for magnitude of complex fft output
+// magn = sqrt(real^2 + imag^2)
+// magn ~= alpha * max(|imag|,|real|) + beta * min(|imag|,|real|)
+//
+// The parameters alpha and beta are stored in Q15
 
 #ifdef AECM_WITH_ABS_APPROX
       tmp16no1 = WEBRTC_SPL_ABS_W16(freq_signal[i].real);
       tmp16no2 = WEBRTC_SPL_ABS_W16(freq_signal[i].imag);
 
-      if(tmp16no1 > tmp16no2)
-      {
+      if (tmp16no1 > tmp16no2) {
         max_value = tmp16no1;
         min_value = tmp16no2;
-      } else
-      {
+      } else {
         max_value = tmp16no2;
         min_value = tmp16no1;
       }
 
       // Magnitude in Q(-6)
-      if ((max_value >> 2) > min_value)
-      {
+      if ((max_value >> 2) > min_value) {
         alpha = kAlpha1;
         beta = kBeta1;
-      } else if ((max_value >> 1) > min_value)
-      {
+      } else if ((max_value >> 1) > min_value) {
         alpha = kAlpha2;
         beta = kBeta2;
-      } else
-      {
+      } else {
         alpha = kAlpha3;
         beta = kBeta3;
       }
@@ -253,24 +233,21 @@ static int TimeToFrequencyDomain(AecmCore* aecm,
 #else
 #ifdef WEBRTC_ARCH_ARM_V7
       __asm __volatile(
-        "smulbb %[tmp32no1], %[real], %[real]\n\t"
-        "smlabb %[tmp32no2], %[imag], %[imag], %[tmp32no1]\n\t"
-        :[tmp32no1]"+&r"(tmp32no1),
-         [tmp32no2]"=r"(tmp32no2)
-        :[real]"r"(freq_signal[i].real),
-         [imag]"r"(freq_signal[i].imag)
-      );
+          "smulbb %[tmp32no1], %[real], %[real]\n\t"
+          "smlabb %[tmp32no2], %[imag], %[imag], %[tmp32no1]\n\t"
+          : [tmp32no1] "+&r"(tmp32no1), [tmp32no2] "=r"(tmp32no2)
+          : [real] "r"(freq_signal[i].real), [imag] "r"(freq_signal[i].imag));
 #else
       tmp16no1 = WEBRTC_SPL_ABS_W16(freq_signal[i].real);
       tmp16no2 = WEBRTC_SPL_ABS_W16(freq_signal[i].imag);
       tmp32no1 = tmp16no1 * tmp16no1;
       tmp32no2 = tmp16no2 * tmp16no2;
       tmp32no2 = WebRtcSpl_AddSatW32(tmp32no1, tmp32no2);
-#endif // WEBRTC_ARCH_ARM_V7
+#endif  // WEBRTC_ARCH_ARM_V7
       tmp32no1 = WebRtcSpl_SqrtFloor(tmp32no2);
 
       freq_signal_abs[i] = (uint16_t)tmp32no1;
-#endif // AECM_WITH_ABS_APPROX
+#endif  // AECM_WITH_ABS_APPROX
     }
     (*freq_signal_sum_abs) += (uint32_t)freq_signal_abs[i];
   }
@@ -279,11 +256,11 @@ static int TimeToFrequencyDomain(AecmCore* aecm,
 }
 
 int RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/8200
-WebRtcAecm_ProcessBlock(AecmCore* aecm,
-                        const int16_t* farend,
-                        const int16_t* nearendNoisy,
-                        const int16_t* nearendClean,
-                        int16_t* output) {
+    WebRtcAecm_ProcessBlock(AecmCore* aecm,
+                            const int16_t* farend,
+                            const int16_t* nearendNoisy,
+                            const int16_t* nearendClean,
+                            int16_t* output) {
   int i;
 
   uint32_t xfaSum;
@@ -302,13 +279,13 @@ WebRtcAecm_ProcessBlock(AecmCore* aecm,
 
   // 32 byte aligned buffers (with +8 or +16).
   // TODO(kma): define fft with ComplexInt16.
-  int16_t fft_buf[PART_LEN4 + 2 + 16]; // +2 to make a loop safe.
+  int16_t fft_buf[PART_LEN4 + 2 + 16];  // +2 to make a loop safe.
   int32_t echoEst32_buf[PART_LEN1 + 8];
   int32_t dfw_buf[PART_LEN2 + 8];
   int32_t efw_buf[PART_LEN2 + 8];
 
-  int16_t* fft = (int16_t*) (((uintptr_t) fft_buf + 31) & ~ 31);
-  int32_t* echoEst32 = (int32_t*) (((uintptr_t) echoEst32_buf + 31) & ~ 31);
+  int16_t* fft = (int16_t*)(((uintptr_t)fft_buf + 31) & ~31);
+  int32_t* echoEst32 = (int32_t*)(((uintptr_t)echoEst32_buf + 31) & ~31);
   ComplexInt16* dfw = (ComplexInt16*)(((uintptr_t)dfw_buf + 31) & ~31);
   ComplexInt16* efw = (ComplexInt16*)(((uintptr_t)efw_buf + 31) & ~31);
 
@@ -334,53 +311,37 @@ WebRtcAecm_ProcessBlock(AecmCore* aecm,
   // (1) another CONV_LEN blocks
   // (2) the rest
 
-  if (aecm->startupState < 2)
-  {
-    aecm->startupState = (aecm->totCount >= CONV_LEN) +
-                         (aecm->totCount >= CONV_LEN2);
+  if (aecm->startupState < 2) {
+    aecm->startupState =
+        (aecm->totCount >= CONV_LEN) + (aecm->totCount >= CONV_LEN2);
   }
   // END: Determine startup state
 
   // Buffer near and far end signals
   memcpy(aecm->xBuf + PART_LEN, farend, sizeof(int16_t) * PART_LEN);
   memcpy(aecm->dBufNoisy + PART_LEN, nearendNoisy, sizeof(int16_t) * PART_LEN);
-  if (nearendClean != NULL)
-  {
-    memcpy(aecm->dBufClean + PART_LEN,
-           nearendClean,
+  if (nearendClean != NULL) {
+    memcpy(aecm->dBufClean + PART_LEN, nearendClean,
            sizeof(int16_t) * PART_LEN);
   }
 
   // Transform far end signal from time domain to frequency domain.
-  far_q = TimeToFrequencyDomain(aecm,
-                                aecm->xBuf,
-                                dfw,
-                                xfa,
-                                &xfaSum);
+  far_q = TimeToFrequencyDomain(aecm, aecm->xBuf, dfw, xfa, &xfaSum);
 
   // Transform noisy near end signal from time domain to frequency domain.
-  zerosDBufNoisy = TimeToFrequencyDomain(aecm,
-                                         aecm->dBufNoisy,
-                                         dfw,
-                                         dfaNoisy,
-                                         &dfaNoisySum);
+  zerosDBufNoisy =
+      TimeToFrequencyDomain(aecm, aecm->dBufNoisy, dfw, dfaNoisy, &dfaNoisySum);
   aecm->dfaNoisyQDomainOld = aecm->dfaNoisyQDomain;
   aecm->dfaNoisyQDomain = (int16_t)zerosDBufNoisy;
 
-
-  if (nearendClean == NULL)
-  {
+  if (nearendClean == NULL) {
     ptrDfaClean = dfaNoisy;
     aecm->dfaCleanQDomainOld = aecm->dfaNoisyQDomainOld;
     aecm->dfaCleanQDomain = aecm->dfaNoisyQDomain;
     dfaCleanSum = dfaNoisySum;
-  } else
-  {
+  } else {
     // Transform clean near end signal from time domain to frequency domain.
-    zerosDBufClean = TimeToFrequencyDomain(aecm,
-                                           aecm->dBufClean,
-                                           dfw,
-                                           dfaClean,
+    zerosDBufClean = TimeToFrequencyDomain(aecm, aecm->dBufClean, dfw, dfaClean,
                                            &dfaCleanSum);
     aecm->dfaCleanQDomainOld = aecm->dfaCleanQDomain;
     aecm->dfaCleanQDomain = (int16_t)zerosDBufClean;
@@ -389,46 +350,34 @@ WebRtcAecm_ProcessBlock(AecmCore* aecm,
   // Get the delay
   // Save far-end history and estimate delay
   WebRtcAecm_UpdateFarHistory(aecm, xfa, far_q);
-  if (WebRtc_AddFarSpectrumFix(aecm->delay_estimator_farend,
-                               xfa,
-                               PART_LEN1,
+  if (WebRtc_AddFarSpectrumFix(aecm->delay_estimator_farend, xfa, PART_LEN1,
                                far_q) == -1) {
     return -1;
   }
-  delay = WebRtc_DelayEstimatorProcessFix(aecm->delay_estimator,
-                                          dfaNoisy,
-                                          PART_LEN1,
-                                          zerosDBufNoisy);
-  if (delay == -1)
-  {
+  delay = WebRtc_DelayEstimatorProcessFix(aecm->delay_estimator, dfaNoisy,
+                                          PART_LEN1, zerosDBufNoisy);
+  if (delay == -1) {
     return -1;
-  }
-  else if (delay == -2)
-  {
+  } else if (delay == -2) {
     // If the delay is unknown, we assume zero.
     // NOTE: this will have to be adjusted if we ever add lookahead.
     delay = 0;
   }
 
-  if (aecm->fixedDelay >= 0)
-  {
+  if (aecm->fixedDelay >= 0) {
     // Use fixed delay
     delay = aecm->fixedDelay;
   }
 
   // Get aligned far end spectrum
   far_spectrum_ptr = WebRtcAecm_AlignedFarend(aecm, &far_q, delay);
-  zerosXBuf = (int16_t) far_q;
-  if (far_spectrum_ptr == NULL)
-  {
+  zerosXBuf = (int16_t)far_q;
+  if (far_spectrum_ptr == NULL) {
     return -1;
   }
 
   // Calculate log(energy) and update energy threshold levels
-  WebRtcAecm_CalcEnergies(aecm,
-                          far_spectrum_ptr,
-                          zerosXBuf,
-                          dfaNoisySum,
+  WebRtcAecm_CalcEnergies(aecm, far_spectrum_ptr, zerosXBuf, dfaNoisySum,
                           echoEst32);
 
   // Calculate stepsize
@@ -440,18 +389,12 @@ WebRtcAecm_ProcessBlock(AecmCore* aecm,
   // This is the channel estimation algorithm.
   // It is base on NLMS but has a variable step length,
   // which was calculated above.
-  WebRtcAecm_UpdateChannel(aecm,
-                           far_spectrum_ptr,
-                           zerosXBuf,
-                           dfaNoisy,
-                           mu,
+  WebRtcAecm_UpdateChannel(aecm, far_spectrum_ptr, zerosXBuf, dfaNoisy, mu,
                            echoEst32);
   supGain = WebRtcAecm_CalcSuppressionGain(aecm);
 
-
   // Calculate Wiener filter hnl[]
-  for (i = 0; i < PART_LEN1; i++)
-  {
+  for (i = 0; i < PART_LEN1; i++) {
     // Far end signal through channel estimate in Q8
     // How much can we shift right to preserve resolution
     tmp32no1 = echoEst32[i] - aecm->echoFilt[i];
@@ -460,28 +403,24 @@ WebRtcAecm_ProcessBlock(AecmCore* aecm,
 
     zeros32 = WebRtcSpl_NormW32(aecm->echoFilt[i]) + 1;
     zeros16 = WebRtcSpl_NormW16(supGain) + 1;
-    if (zeros32 + zeros16 > 16)
-    {
+    if (zeros32 + zeros16 > 16) {
       // Multiplication is safe
       // Result in
       // Q(RESOLUTION_CHANNEL+RESOLUTION_SUPGAIN+
       //   aecm->xfaQDomainBuf[diff])
-      echoEst32Gained = WEBRTC_SPL_UMUL_32_16((uint32_t)aecm->echoFilt[i],
-                                              (uint16_t)supGain);
+      echoEst32Gained =
+          WEBRTC_SPL_UMUL_32_16((uint32_t)aecm->echoFilt[i], (uint16_t)supGain);
       resolutionDiff = 14 - RESOLUTION_CHANNEL16 - RESOLUTION_SUPGAIN;
       resolutionDiff += (aecm->dfaCleanQDomain - zerosXBuf);
-    } else
-    {
+    } else {
       tmp16no1 = 17 - zeros32 - zeros16;
-      resolutionDiff = 14 + tmp16no1 - RESOLUTION_CHANNEL16 -
-                       RESOLUTION_SUPGAIN;
+      resolutionDiff =
+          14 + tmp16no1 - RESOLUTION_CHANNEL16 - RESOLUTION_SUPGAIN;
       resolutionDiff += (aecm->dfaCleanQDomain - zerosXBuf);
-      if (zeros32 > tmp16no1)
-      {
+      if (zeros32 > tmp16no1) {
         echoEst32Gained = WEBRTC_SPL_UMUL_32_16((uint32_t)aecm->echoFilt[i],
                                                 supGain >> tmp16no1);
-      } else
-      {
+      } else {
         // Result in Q-(RESOLUTION_CHANNEL+RESOLUTION_SUPGAIN-16)
         echoEst32Gained = (aecm->echoFilt[i] >> tmp16no1) * supGain;
       }
@@ -491,13 +430,13 @@ WebRtcAecm_ProcessBlock(AecmCore* aecm,
     RTC_DCHECK_GE(zeros16, 0);  // |zeros16| is a norm, hence non-negative.
     dfa_clean_q_domain_diff = aecm->dfaCleanQDomain - aecm->dfaCleanQDomainOld;
     if (zeros16 < dfa_clean_q_domain_diff && aecm->nearFilt[i]) {
-      tmp16no1 = aecm->nearFilt[i] << zeros16;
+      tmp16no1 = aecm->nearFilt[i] * (1 << zeros16);
       qDomainDiff = zeros16 - dfa_clean_q_domain_diff;
       tmp16no2 = ptrDfaClean[i] >> -qDomainDiff;
     } else {
       tmp16no1 = dfa_clean_q_domain_diff < 0
-          ? aecm->nearFilt[i] >> -dfa_clean_q_domain_diff
-          : aecm->nearFilt[i] << dfa_clean_q_domain_diff;
+                     ? aecm->nearFilt[i] >> -dfa_clean_q_domain_diff
+                     : aecm->nearFilt[i] * (1 << dfa_clean_q_domain_diff);
       qDomainDiff = 0;
       tmp16no2 = ptrDfaClean[i];
     }
@@ -508,130 +447,105 @@ WebRtcAecm_ProcessBlock(AecmCore* aecm,
     if ((tmp16no2) & (-qDomainDiff > zeros16)) {
       aecm->nearFilt[i] = WEBRTC_SPL_WORD16_MAX;
     } else {
-      aecm->nearFilt[i] = qDomainDiff < 0 ? tmp16no2 << -qDomainDiff
+      aecm->nearFilt[i] = qDomainDiff < 0 ? tmp16no2 * (1 << -qDomainDiff)
                                           : tmp16no2 >> qDomainDiff;
     }
 
     // Wiener filter coefficients, resulting hnl in Q14
-    if (echoEst32Gained == 0)
-    {
+    if (echoEst32Gained == 0) {
       hnl[i] = ONE_Q14;
-    } else if (aecm->nearFilt[i] == 0)
-    {
+    } else if (aecm->nearFilt[i] == 0) {
       hnl[i] = 0;
-    } else
-    {
+    } else {
       // Multiply the suppression gain
       // Rounding
       echoEst32Gained += (uint32_t)(aecm->nearFilt[i] >> 1);
-      tmpU32 = WebRtcSpl_DivU32U16(echoEst32Gained,
-                                   (uint16_t)aecm->nearFilt[i]);
+      tmpU32 =
+          WebRtcSpl_DivU32U16(echoEst32Gained, (uint16_t)aecm->nearFilt[i]);
 
       // Current resolution is
       // Q-(RESOLUTION_CHANNEL+RESOLUTION_SUPGAIN- max(0,17-zeros16- zeros32))
       // Make sure we are in Q14
       tmp32no1 = (int32_t)WEBRTC_SPL_SHIFT_W32(tmpU32, resolutionDiff);
-      if (tmp32no1 > ONE_Q14)
-      {
+      if (tmp32no1 > ONE_Q14) {
         hnl[i] = 0;
-      } else if (tmp32no1 < 0)
-      {
+      } else if (tmp32no1 < 0) {
         hnl[i] = ONE_Q14;
-      } else
-      {
+      } else {
         // 1-echoEst/dfa
         hnl[i] = ONE_Q14 - (int16_t)tmp32no1;
-        if (hnl[i] < 0)
-        {
+        if (hnl[i] < 0) {
           hnl[i] = 0;
         }
       }
     }
-    if (hnl[i])
-    {
+    if (hnl[i]) {
       numPosCoef++;
     }
   }
   // Only in wideband. Prevent the gain in upper band from being larger than
   // in lower band.
-  if (aecm->mult == 2)
-  {
+  if (aecm->mult == 2) {
     // TODO(bjornv): Investigate if the scaling of hnl[i] below can cause
     //               speech distortion in double-talk.
-    for (i = 0; i < PART_LEN1; i++)
-    {
+    for (i = 0; i < PART_LEN1; i++) {
       hnl[i] = (int16_t)((hnl[i] * hnl[i]) >> 14);
     }
 
-    for (i = kMinPrefBand; i <= kMaxPrefBand; i++)
-    {
+    for (i = kMinPrefBand; i <= kMaxPrefBand; i++) {
       avgHnl32 += (int32_t)hnl[i];
     }
     RTC_DCHECK_GT(kMaxPrefBand - kMinPrefBand + 1, 0);
     avgHnl32 /= (kMaxPrefBand - kMinPrefBand + 1);
 
-    for (i = kMaxPrefBand; i < PART_LEN1; i++)
-    {
-      if (hnl[i] > (int16_t)avgHnl32)
-      {
+    for (i = kMaxPrefBand; i < PART_LEN1; i++) {
+      if (hnl[i] > (int16_t)avgHnl32) {
         hnl[i] = (int16_t)avgHnl32;
       }
     }
   }
 
   // Calculate NLP gain, result is in Q14
-  if (aecm->nlpFlag)
-  {
-    for (i = 0; i < PART_LEN1; i++)
-    {
+  if (aecm->nlpFlag) {
+    for (i = 0; i < PART_LEN1; i++) {
       // Truncate values close to zero and one.
-      if (hnl[i] > NLP_COMP_HIGH)
-      {
+      if (hnl[i] > NLP_COMP_HIGH) {
         hnl[i] = ONE_Q14;
-      } else if (hnl[i] < NLP_COMP_LOW)
-      {
+      } else if (hnl[i] < NLP_COMP_LOW) {
         hnl[i] = 0;
       }
 
       // Remove outliers
-      if (numPosCoef < 3)
-      {
+      if (numPosCoef < 3) {
         nlpGain = 0;
-      } else
-      {
+      } else {
         nlpGain = ONE_Q14;
       }
 
       // NLP
-      if ((hnl[i] == ONE_Q14) && (nlpGain == ONE_Q14))
-      {
+      if ((hnl[i] == ONE_Q14) && (nlpGain == ONE_Q14)) {
         hnl[i] = ONE_Q14;
-      } else
-      {
+      } else {
         hnl[i] = (int16_t)((hnl[i] * nlpGain) >> 14);
       }
 
       // multiply with Wiener coefficients
-      efw[i].real = (int16_t)(WEBRTC_SPL_MUL_16_16_RSFT_WITH_ROUND(dfw[i].real,
-                                                                   hnl[i], 14));
-      efw[i].imag = (int16_t)(WEBRTC_SPL_MUL_16_16_RSFT_WITH_ROUND(dfw[i].imag,
-                                                                   hnl[i], 14));
+      efw[i].real = (int16_t)(
+          WEBRTC_SPL_MUL_16_16_RSFT_WITH_ROUND(dfw[i].real, hnl[i], 14));
+      efw[i].imag = (int16_t)(
+          WEBRTC_SPL_MUL_16_16_RSFT_WITH_ROUND(dfw[i].imag, hnl[i], 14));
     }
-  }
-  else
-  {
+  } else {
     // multiply with Wiener coefficients
-    for (i = 0; i < PART_LEN1; i++)
-    {
-      efw[i].real = (int16_t)(WEBRTC_SPL_MUL_16_16_RSFT_WITH_ROUND(dfw[i].real,
-                                                                   hnl[i], 14));
-      efw[i].imag = (int16_t)(WEBRTC_SPL_MUL_16_16_RSFT_WITH_ROUND(dfw[i].imag,
-                                                                   hnl[i], 14));
+    for (i = 0; i < PART_LEN1; i++) {
+      efw[i].real = (int16_t)(
+          WEBRTC_SPL_MUL_16_16_RSFT_WITH_ROUND(dfw[i].real, hnl[i], 14));
+      efw[i].imag = (int16_t)(
+          WEBRTC_SPL_MUL_16_16_RSFT_WITH_ROUND(dfw[i].imag, hnl[i], 14));
     }
   }
 
-  if (aecm->cngMode == AecmTrue)
-  {
+  if (aecm->cngMode == AecmTrue) {
     ComfortNoise(aecm, ptrDfaClean, efw, hnl);
   }
 
@@ -660,83 +574,66 @@ static void ComfortNoise(AecmCore* aecm,
   RTC_DCHECK_GE(shiftFromNearToNoise, 0);
   RTC_DCHECK_LT(shiftFromNearToNoise, 16);
 
-  if (aecm->noiseEstCtr < 100)
-  {
+  if (aecm->noiseEstCtr < 100) {
     // Track the minimum more quickly initially.
     aecm->noiseEstCtr++;
     minTrackShift = 6;
-  } else
-  {
+  } else {
     minTrackShift = 9;
   }
 
   // Estimate noise power.
-  for (i = 0; i < PART_LEN1; i++)
-  {
+  for (i = 0; i < PART_LEN1; i++) {
     // Shift to the noise domain.
     tmp32 = (int32_t)dfa[i];
     outLShift32 = tmp32 << shiftFromNearToNoise;
 
-    if (outLShift32 < aecm->noiseEst[i])
-    {
+    if (outLShift32 < aecm->noiseEst[i]) {
       // Reset "too low" counter
       aecm->noiseEstTooLowCtr[i] = 0;
       // Track the minimum.
-      if (aecm->noiseEst[i] < (1 << minTrackShift))
-      {
+      if (aecm->noiseEst[i] < (1 << minTrackShift)) {
         // For small values, decrease noiseEst[i] every
         // |kNoiseEstIncCount| block. The regular approach below can not
         // go further down due to truncation.
         aecm->noiseEstTooHighCtr[i]++;
-        if (aecm->noiseEstTooHighCtr[i] >= kNoiseEstIncCount)
-        {
+        if (aecm->noiseEstTooHighCtr[i] >= kNoiseEstIncCount) {
           aecm->noiseEst[i]--;
-          aecm->noiseEstTooHighCtr[i] = 0; // Reset the counter
+          aecm->noiseEstTooHighCtr[i] = 0;  // Reset the counter
         }
+      } else {
+        aecm->noiseEst[i] -=
+            ((aecm->noiseEst[i] - outLShift32) >> minTrackShift);
       }
-      else
-      {
-        aecm->noiseEst[i] -= ((aecm->noiseEst[i] - outLShift32)
-                              >> minTrackShift);
-      }
-    } else
-    {
+    } else {
       // Reset "too high" counter
       aecm->noiseEstTooHighCtr[i] = 0;
       // Ramp slowly upwards until we hit the minimum again.
-      if ((aecm->noiseEst[i] >> 19) > 0)
-      {
+      if ((aecm->noiseEst[i] >> 19) > 0) {
         // Avoid overflow.
         // Multiplication with 2049 will cause wrap around. Scale
         // down first and then multiply
         aecm->noiseEst[i] >>= 11;
         aecm->noiseEst[i] *= 2049;
-      }
-      else if ((aecm->noiseEst[i] >> 11) > 0)
-      {
+      } else if ((aecm->noiseEst[i] >> 11) > 0) {
         // Large enough for relative increase
         aecm->noiseEst[i] *= 2049;
         aecm->noiseEst[i] >>= 11;
-      }
-      else
-      {
+      } else {
         // Make incremental increases based on size every
         // |kNoiseEstIncCount| block
         aecm->noiseEstTooLowCtr[i]++;
-        if (aecm->noiseEstTooLowCtr[i] >= kNoiseEstIncCount)
-        {
+        if (aecm->noiseEstTooLowCtr[i] >= kNoiseEstIncCount) {
           aecm->noiseEst[i] += (aecm->noiseEst[i] >> 9) + 1;
-          aecm->noiseEstTooLowCtr[i] = 0; // Reset counter
+          aecm->noiseEstTooLowCtr[i] = 0;  // Reset counter
         }
       }
     }
   }
 
-  for (i = 0; i < PART_LEN1; i++)
-  {
+  for (i = 0; i < PART_LEN1; i++) {
     tmp32 = aecm->noiseEst[i] >> shiftFromNearToNoise;
-    if (tmp32 > 32767)
-    {
+    if (tmp32 > 32767) {
       tmp32 = 32767;
       aecm->noiseEst[i] = tmp32 << shiftFromNearToNoise;
     }
@@ -750,23 +647,21 @@ static void ComfortNoise(AecmCore* aecm,
   WebRtcSpl_RandUArray(randW16, PART_LEN, &aecm->seed);
 
   // Generate noise according to estimated energy.
-  uReal[0] = 0; // Reject LF noise.
+  uReal[0] = 0;  // Reject LF noise.
   uImag[0] = 0;
-  for (i = 1; i < PART_LEN1; i++)
-  {
+  for (i = 1; i < PART_LEN1; i++) {
     // Get a random index for the cos and sin tables over [0 359].
     tmp16 = (int16_t)((359 * randW16[i - 1]) >> 15);
 
     // Tables are in Q13.
-    uReal[i] = (int16_t)((noiseRShift16[i] * WebRtcAecm_kCosTable[tmp16]) >>
-        13);
-    uImag[i] = (int16_t)((-noiseRShift16[i] * WebRtcAecm_kSinTable[tmp16]) >>
-        13);
+    uReal[i] =
+        (int16_t)((noiseRShift16[i] * WebRtcAecm_kCosTable[tmp16]) >> 13);
+    uImag[i] =
+        (int16_t)((-noiseRShift16[i] * WebRtcAecm_kSinTable[tmp16]) >> 13);
   }
   uImag[PART_LEN] = 0;
 
-  for (i = 0; i < PART_LEN1; i++)
-  {
+  for (i = 0; i < PART_LEN1; i++) {
     out[i].real = WebRtcSpl_AddSatW16(out[i].real, uReal[i]);
     out[i].imag = WebRtcSpl_AddSatW16(out[i].imag, uImag[i]);
   }

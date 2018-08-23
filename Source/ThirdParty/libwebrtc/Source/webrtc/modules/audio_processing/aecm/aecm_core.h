@@ -18,7 +18,6 @@ extern "C" {
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 }
 #include "modules/audio_processing/aecm/aecm_defines.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 #ifdef _MSC_VER  // visual c++
 #define ALIGN8_BEG __declspec(align(8))
@@ -29,109 +28,109 @@ extern "C" {
 #endif
 
 typedef struct {
-    int16_t real;
-    int16_t imag;
+  int16_t real;
+  int16_t imag;
 } ComplexInt16;
 
 typedef struct {
-    int farBufWritePos;
-    int farBufReadPos;
-    int knownDelay;
-    int lastKnownDelay;
-    int firstVAD;  // Parameter to control poorly initialized channels
+  int farBufWritePos;
+  int farBufReadPos;
+  int knownDelay;
+  int lastKnownDelay;
+  int firstVAD;  // Parameter to control poorly initialized channels
 
-    RingBuffer* farFrameBuf;
-    RingBuffer* nearNoisyFrameBuf;
-    RingBuffer* nearCleanFrameBuf;
-    RingBuffer* outFrameBuf;
+  RingBuffer* farFrameBuf;
+  RingBuffer* nearNoisyFrameBuf;
+  RingBuffer* nearCleanFrameBuf;
+  RingBuffer* outFrameBuf;
 
-    int16_t farBuf[FAR_BUF_LEN];
+  int16_t farBuf[FAR_BUF_LEN];
 
-    int16_t mult;
-    uint32_t seed;
+  int16_t mult;
+  uint32_t seed;
 
-    // Delay estimation variables
-    void* delay_estimator_farend;
-    void* delay_estimator;
-    uint16_t currentDelay;
-    // Far end history variables
-    // TODO(bjornv): Replace |far_history| with ring_buffer.
-    uint16_t far_history[PART_LEN1 * MAX_DELAY];
-    int far_history_pos;
-    int far_q_domains[MAX_DELAY];
+  // Delay estimation variables
+  void* delay_estimator_farend;
+  void* delay_estimator;
+  uint16_t currentDelay;
+  // Far end history variables
+  // TODO(bjornv): Replace |far_history| with ring_buffer.
+  uint16_t far_history[PART_LEN1 * MAX_DELAY];
+  int far_history_pos;
+  int far_q_domains[MAX_DELAY];
 
-    int16_t nlpFlag;
-    int16_t fixedDelay;
+  int16_t nlpFlag;
+  int16_t fixedDelay;
 
-    uint32_t totCount;
+  uint32_t totCount;
 
-    int16_t dfaCleanQDomain;
-    int16_t dfaCleanQDomainOld;
-    int16_t dfaNoisyQDomain;
-    int16_t dfaNoisyQDomainOld;
+  int16_t dfaCleanQDomain;
+  int16_t dfaCleanQDomainOld;
+  int16_t dfaNoisyQDomain;
+  int16_t dfaNoisyQDomainOld;
 
-    int16_t nearLogEnergy[MAX_BUF_LEN];
-    int16_t farLogEnergy;
-    int16_t echoAdaptLogEnergy[MAX_BUF_LEN];
-    int16_t echoStoredLogEnergy[MAX_BUF_LEN];
+  int16_t nearLogEnergy[MAX_BUF_LEN];
+  int16_t farLogEnergy;
+  int16_t echoAdaptLogEnergy[MAX_BUF_LEN];
+  int16_t echoStoredLogEnergy[MAX_BUF_LEN];
 
-    // The extra 16 or 32 bytes in the following buffers are for alignment based
-    // Neon code.
-    // It's designed this way since the current GCC compiler can't align a
-    // buffer in 16 or 32 byte boundaries properly.
-    int16_t channelStored_buf[PART_LEN1 + 8];
-    int16_t channelAdapt16_buf[PART_LEN1 + 8];
-    int32_t channelAdapt32_buf[PART_LEN1 + 8];
-    int16_t xBuf_buf[PART_LEN2 + 16];  // farend
-    int16_t dBufClean_buf[PART_LEN2 + 16];  // nearend
-    int16_t dBufNoisy_buf[PART_LEN2 + 16];  // nearend
-    int16_t outBuf_buf[PART_LEN + 8];
+  // The extra 16 or 32 bytes in the following buffers are for alignment based
+  // Neon code.
+  // It's designed this way since the current GCC compiler can't align a
+  // buffer in 16 or 32 byte boundaries properly.
+  int16_t channelStored_buf[PART_LEN1 + 8];
+  int16_t channelAdapt16_buf[PART_LEN1 + 8];
+  int32_t channelAdapt32_buf[PART_LEN1 + 8];
+  int16_t xBuf_buf[PART_LEN2 + 16];       // farend
+  int16_t dBufClean_buf[PART_LEN2 + 16];  // nearend
+  int16_t dBufNoisy_buf[PART_LEN2 + 16];  // nearend
+  int16_t outBuf_buf[PART_LEN + 8];
 
-    // Pointers to the above buffers
-    int16_t *channelStored;
-    int16_t *channelAdapt16;
-    int32_t *channelAdapt32;
-    int16_t *xBuf;
-    int16_t *dBufClean;
-    int16_t *dBufNoisy;
-    int16_t *outBuf;
+  // Pointers to the above buffers
+  int16_t* channelStored;
+  int16_t* channelAdapt16;
+  int32_t* channelAdapt32;
+  int16_t* xBuf;
+  int16_t* dBufClean;
+  int16_t* dBufNoisy;
+  int16_t* outBuf;
 
-    int32_t echoFilt[PART_LEN1];
-    int16_t nearFilt[PART_LEN1];
-    int32_t noiseEst[PART_LEN1];
-    int           noiseEstTooLowCtr[PART_LEN1];
-    int           noiseEstTooHighCtr[PART_LEN1];
-    int16_t noiseEstCtr;
-    int16_t cngMode;
+  int32_t echoFilt[PART_LEN1];
+  int16_t nearFilt[PART_LEN1];
+  int32_t noiseEst[PART_LEN1];
+  int noiseEstTooLowCtr[PART_LEN1];
+  int noiseEstTooHighCtr[PART_LEN1];
+  int16_t noiseEstCtr;
+  int16_t cngMode;
 
-    int32_t mseAdaptOld;
-    int32_t mseStoredOld;
-    int32_t mseThreshold;
+  int32_t mseAdaptOld;
+  int32_t mseStoredOld;
+  int32_t mseThreshold;
 
-    int16_t farEnergyMin;
-    int16_t farEnergyMax;
-    int16_t farEnergyMaxMin;
-    int16_t farEnergyVAD;
-    int16_t farEnergyMSE;
-    int currentVADValue;
-    int16_t vadUpdateCount;
+  int16_t farEnergyMin;
+  int16_t farEnergyMax;
+  int16_t farEnergyMaxMin;
+  int16_t farEnergyVAD;
+  int16_t farEnergyMSE;
+  int currentVADValue;
+  int16_t vadUpdateCount;
 
-    int16_t startupState;
-    int16_t mseChannelCount;
-    int16_t supGain;
-    int16_t supGainOld;
+  int16_t startupState;
+  int16_t mseChannelCount;
+  int16_t supGain;
+  int16_t supGainOld;
 
-    int16_t supGainErrParamA;
-    int16_t supGainErrParamD;
-    int16_t supGainErrParamDiffAB;
-    int16_t supGainErrParamDiffBD;
+  int16_t supGainErrParamA;
+  int16_t supGainErrParamD;
+  int16_t supGainErrParamDiffAB;
+  int16_t supGainErrParamDiffBD;
 
-    struct RealFFT* real_fft;
+  struct RealFFT* real_fft;
 
 #ifdef AEC_DEBUG
-    FILE *farFile;
-    FILE *nearFile;
-    FILE *outFile;
+  FILE* farFile;
+  FILE* nearFile;
+  FILE* outFile;
 #endif
 } AecmCore;
 

@@ -10,5 +10,5 @@
 
 #import "ARDRoomServerClient.h"
 
-@interface ARDAppEngineClient : NSObject <ARDRoomServerClient>
+@interface ARDAppEngineClient : NSObject<ARDRoomServerClient>
 @end

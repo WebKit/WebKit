@@ -18,7 +18,6 @@ NS_ASSUME_NONNULL_BEGIN
  * adapter adapts calls made to that interface to the RTCVideoRenderer supplied
  * during construction.
  */
-__attribute__((objc_runtime_name("WK_RTCVideoRendererAdapter")))
 @interface RTCVideoRendererAdapter : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;

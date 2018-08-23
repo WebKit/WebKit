@@ -13,11 +13,11 @@
 #include <memory>
 #include <vector>
 
+#include "absl/memory/memory.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/numerics/safe_minmax.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/string_to_number.h"
 
 namespace webrtc {
@@ -38,11 +38,11 @@ int GetIlbcBitrate(int ptime) {
 }
 }  // namespace
 
-rtc::Optional<AudioEncoderIlbcConfig> AudioEncoderIlbc::SdpToConfig(
+absl::optional<AudioEncoderIlbcConfig> AudioEncoderIlbc::SdpToConfig(
     const SdpAudioFormat& format) {
   if (STR_CASE_CMP(format.name.c_str(), "ILBC") != 0 ||
       format.clockrate_hz != 8000 || format.num_channels != 1) {
-    return rtc::nullopt;
+    return absl::nullopt;
   }
 
   AudioEncoderIlbcConfig config;
@@ -54,8 +54,8 @@ rtc::Optional<AudioEncoderIlbcConfig> AudioEncoderIlbc::SdpToConfig(
       config.frame_size_ms = rtc::SafeClamp<int>(whole_packets * 10, 20, 60);
     }
   }
-  return config.IsOk() ? rtc::Optional<AudioEncoderIlbcConfig>(config)
-                       : rtc::nullopt;
+  return config.IsOk() ? absl::optional<AudioEncoderIlbcConfig>(config)
+                       : absl::nullopt;
 }
 
 void AudioEncoderIlbc::AppendSupportedEncoders(
@@ -73,9 +73,10 @@ AudioCodecInfo AudioEncoderIlbc::QueryAudioEncoder(
 
 std::unique_ptr<AudioEncoder> AudioEncoderIlbc::MakeAudioEncoder(
     const AudioEncoderIlbcConfig& config,
-    int payload_type) {
+    int payload_type,
+    absl::optional<AudioCodecPairId> /*codec_pair_id*/) {
   RTC_DCHECK(config.IsOk());
-  return rtc::MakeUnique<AudioEncoderIlbcImpl>(config, payload_type);
+  return absl::make_unique<AudioEncoderIlbcImpl>(config, payload_type);
 }
 
 }  // namespace webrtc

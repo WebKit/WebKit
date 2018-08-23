@@ -11,8 +11,8 @@
 #ifndef RTC_BASE_BITBUFFER_H_
 #define RTC_BASE_BITBUFFER_H_
 
-#include <stdint.h>  // For integer types.
 #include <stddef.h>  // For size_t.
+#include <stdint.h>  // For integer types.
 
 #include "rtc_base/constructormagic.h"
 

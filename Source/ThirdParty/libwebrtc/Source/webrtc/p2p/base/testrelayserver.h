@@ -15,8 +15,8 @@
 
 #include "p2p/base/relayserver.h"
 #include "rtc_base/asynctcpsocket.h"
-#include "rtc_base/sigslot.h"
 #include "rtc_base/socketadapters.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
 
 namespace cricket {
@@ -32,19 +32,17 @@ class TestRelayServer : public sigslot::has_slots<> {
                   const rtc::SocketAddress& ssl_int_addr,
                   const rtc::SocketAddress& ssl_ext_addr)
       : server_(thread) {
-    server_.AddInternalSocket(rtc::AsyncUDPSocket::Create(
-        thread->socketserver(), udp_int_addr));
-    server_.AddExternalSocket(rtc::AsyncUDPSocket::Create(
-        thread->socketserver(), udp_ext_addr));
+    server_.AddInternalSocket(
+        rtc::AsyncUDPSocket::Create(thread->socketserver(), udp_int_addr));
+    server_.AddExternalSocket(
+        rtc::AsyncUDPSocket::Create(thread->socketserver(), udp_ext_addr));
 
     tcp_int_socket_.reset(CreateListenSocket(thread, tcp_int_addr));
     tcp_ext_socket_.reset(CreateListenSocket(thread, tcp_ext_addr));
     ssl_int_socket_.reset(CreateListenSocket(thread, ssl_int_addr));
     ssl_ext_socket_.reset(CreateListenSocket(thread, ssl_ext_addr));
   }
-  int GetConnectionCount() const {
-    return server_.GetConnectionCount();
-  }
+  int GetConnectionCount() const { return server_.GetConnectionCount(); }
   rtc::SocketAddressPair GetConnection(int connection) const {
     return server_.GetConnection(connection);
   }
@@ -54,7 +52,7 @@ class TestRelayServer : public sigslot::has_slots<> {
 
  private:
   rtc::AsyncSocket* CreateListenSocket(rtc::Thread* thread,
-      const rtc::SocketAddress& addr) {
+                                       const rtc::SocketAddress& addr) {
     rtc::AsyncSocket* socket =
         thread->socketserver()->CreateAsyncSocket(addr.family(), SOCK_STREAM);
     socket->Bind(addr);
@@ -63,22 +61,22 @@ class TestRelayServer : public sigslot::has_slots<> {
     return socket;
   }
   void OnAccept(rtc::AsyncSocket* socket) {
-    bool external = (socket == tcp_ext_socket_.get() ||
-                     socket == ssl_ext_socket_.get());
-    bool ssl = (socket == ssl_int_socket_.get() ||
-                socket == ssl_ext_socket_.get());
+    bool external =
+        (socket == tcp_ext_socket_.get() || socket == ssl_ext_socket_.get());
+    bool ssl =
+        (socket == ssl_int_socket_.get() || socket == ssl_ext_socket_.get());
     rtc::AsyncSocket* raw_socket = socket->Accept(NULL);
     if (raw_socket) {
       rtc::AsyncTCPSocket* packet_socket = new rtc::AsyncTCPSocket(
-          (!ssl) ? raw_socket :
-          new rtc::AsyncSSLServerSocket(raw_socket), false);
+          (!ssl) ? raw_socket : new rtc::AsyncSSLServerSocket(raw_socket),
+          false);
       if (!external) {
         packet_socket->SignalClose.connect(this,
-            &TestRelayServer::OnInternalClose);
+                                           &TestRelayServer::OnInternalClose);
         server_.AddInternalSocket(packet_socket);
       } else {
         packet_socket->SignalClose.connect(this,
-            &TestRelayServer::OnExternalClose);
+                                           &TestRelayServer::OnExternalClose);
         server_.AddExternalSocket(packet_socket);
       }
     }

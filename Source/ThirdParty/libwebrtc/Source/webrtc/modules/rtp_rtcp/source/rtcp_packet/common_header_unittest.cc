@@ -42,9 +42,8 @@ TEST(RtcpCommonHeaderTest, Version) {
 }
 
 TEST(RtcpCommonHeaderTest, PacketSize) {
-  uint8_t buffer[] = {0x80, 0x00, 0x00, 0x02,
-                      0x00, 0x00, 0x00, 0x00,
-                      0x00, 0x00, 0x00, 0x00};
+  uint8_t buffer[] = {0x80, 0x00, 0x00, 0x02, 0x00, 0x00,
+                      0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
   CommonHeader header;
   EXPECT_FALSE(header.Parse(buffer, sizeof(buffer) - 1));
   EXPECT_TRUE(header.Parse(buffer, sizeof(buffer)));
@@ -55,9 +54,8 @@ TEST(RtcpCommonHeaderTest, PacketSize) {
 
 TEST(RtcpCommonHeaderTest, PaddingAndPayloadSize) {
   // Set v = 2, p = 1, but leave fmt, pt as 0.
-  uint8_t buffer[] = {0xa0, 0x00, 0x00, 0x00,
-                      0x00, 0x00, 0x00, 0x00,
-                      0x00, 0x00, 0x00, 0x00};
+  uint8_t buffer[] = {0xa0, 0x00, 0x00, 0x00, 0x00, 0x00,
+                      0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
   CommonHeader header;
   // Padding bit set, but no byte for padding (can't specify padding length).
   EXPECT_FALSE(header.Parse(buffer, 4));

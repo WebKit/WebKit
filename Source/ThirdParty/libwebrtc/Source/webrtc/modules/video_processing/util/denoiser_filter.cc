@@ -13,6 +13,7 @@
 #include "modules/video_processing/util/denoiser_filter_neon.h"
 #include "modules/video_processing/util/denoiser_filter_sse2.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/system/arch.h"
 #include "system_wrappers/include/cpu_features_wrapper.h"
 
 namespace webrtc {

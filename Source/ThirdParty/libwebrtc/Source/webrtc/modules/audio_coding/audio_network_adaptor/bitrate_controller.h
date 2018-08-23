@@ -43,8 +43,8 @@ class BitrateController final : public Controller {
   const Config config_;
   int bitrate_bps_;
   int frame_length_ms_;
-  rtc::Optional<int> target_audio_bitrate_bps_;
-  rtc::Optional<size_t> overhead_bytes_per_packet_;
+  absl::optional<int> target_audio_bitrate_bps_;
+  absl::optional<size_t> overhead_bytes_per_packet_;
   RTC_DISALLOW_COPY_AND_ASSIGN(BitrateController);
 };
 

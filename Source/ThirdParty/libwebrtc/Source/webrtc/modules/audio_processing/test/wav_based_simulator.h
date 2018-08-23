@@ -23,7 +23,8 @@ namespace test {
 // Used to perform an audio processing simulation from wav files.
 class WavBasedSimulator final : public AudioProcessingSimulator {
  public:
-  explicit WavBasedSimulator(const SimulationSettings& settings);
+  WavBasedSimulator(const SimulationSettings& settings,
+                    std::unique_ptr<AudioProcessingBuilder> ap_builder);
   ~WavBasedSimulator() override;
 
   // Processes the WAV input.

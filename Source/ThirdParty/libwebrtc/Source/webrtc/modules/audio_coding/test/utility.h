@@ -17,48 +17,48 @@
 namespace webrtc {
 
 //-----------------------------
-#define CHECK_ERROR(f)                                                         \
-  do {                                                                         \
-    EXPECT_GE(f, 0) << "Error Calling API";                                    \
-  } while(0)
+#define CHECK_ERROR(f)                      \
+  do {                                      \
+    EXPECT_GE(f, 0) << "Error Calling API"; \
+  } while (0)
 
 //-----------------------------
-#define CHECK_PROTECTED(f)                                                     \
-  do {                                                                         \
-    if (f >= 0) {                                                              \
-      ADD_FAILURE() << "Error Calling API";                                    \
-    } else {                                                                   \
-      printf("An expected error is caught.\n");                                \
-    }                                                                          \
-  } while(0)
+#define CHECK_PROTECTED(f)                      \
+  do {                                          \
+    if (f >= 0) {                               \
+      ADD_FAILURE() << "Error Calling API";     \
+    } else {                                    \
+      printf("An expected error is caught.\n"); \
+    }                                           \
+  } while (0)
 
 //----------------------------
-#define CHECK_ERROR_MT(f)                                                      \
-  do {                                                                         \
-    if (f < 0) {                                                               \
-      fprintf(stderr, "Error Calling API in file %s at line %d \n",            \
-              __FILE__, __LINE__);                                             \
-    }                                                                          \
-  } while(0)
+#define CHECK_ERROR_MT(f)                                                     \
+  do {                                                                        \
+    if (f < 0) {                                                              \
+      fprintf(stderr, "Error Calling API in file %s at line %d \n", __FILE__, \
+              __LINE__);                                                      \
+    }                                                                         \
+  } while (0)
 
 //----------------------------
-#define CHECK_PROTECTED_MT(f)                                                  \
-  do {                                                                         \
-    if (f >= 0) {                                                              \
-      fprintf(stderr, "Error Calling API in file %s at line %d \n",            \
-              __FILE__, __LINE__);                                             \
-    } else {                                                                   \
-      printf("An expected error is caught.\n");                                \
-    }                                                                          \
-  } while(0)
+#define CHECK_PROTECTED_MT(f)                                                 \
+  do {                                                                        \
+    if (f >= 0) {                                                             \
+      fprintf(stderr, "Error Calling API in file %s at line %d \n", __FILE__, \
+              __LINE__);                                                      \
+    } else {                                                                  \
+      printf("An expected error is caught.\n");                               \
+    }                                                                         \
+  } while (0)
 
-#define DELETE_POINTER(p)                                                      \
-  do {                                                                         \
-    if (p != NULL) {                                                           \
-      delete p;                                                                \
-      p = NULL;                                                                \
-    }                                                                          \
-  } while(0)
+#define DELETE_POINTER(p) \
+  do {                    \
+    if (p != NULL) {      \
+      delete p;           \
+      p = NULL;           \
+    }                     \
+  } while (0)
 
 class ACMTestTimer {
  public:
@@ -71,7 +71,9 @@ class ACMTestTimer {
   void Tick100ms();
   void Tick1sec();
   void CurrentTimeHMS(char* currTime);
-  void CurrentTime(unsigned long& h, unsigned char& m, unsigned char& s,
+  void CurrentTime(unsigned long& h,
+                   unsigned char& m,
+                   unsigned char& s,
                    unsigned short& ms);
 
  private:

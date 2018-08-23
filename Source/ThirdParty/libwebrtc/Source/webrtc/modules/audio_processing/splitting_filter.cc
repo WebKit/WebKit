@@ -63,8 +63,7 @@ void SplittingFilter::TwoBandsAnalysis(const IFChannelBuffer* data,
                                        IFChannelBuffer* bands) {
   RTC_DCHECK_EQ(two_bands_states_.size(), data->num_channels());
   for (size_t i = 0; i < two_bands_states_.size(); ++i) {
-    WebRtcSpl_AnalysisQMF(data->ibuf_const()->channels()[i],
-                          data->num_frames(),
+    WebRtcSpl_AnalysisQMF(data->ibuf_const()->channels()[i], data->num_frames(),
                           bands->ibuf()->channels(0)[i],
                           bands->ibuf()->channels(1)[i],
                           two_bands_states_[i].analysis_state1,
@@ -76,12 +75,11 @@ void SplittingFilter::TwoBandsSynthesis(const IFChannelBuffer* bands,
                                         IFChannelBuffer* data) {
   RTC_DCHECK_LE(data->num_channels(), two_bands_states_.size());
   for (size_t i = 0; i < data->num_channels(); ++i) {
-    WebRtcSpl_SynthesisQMF(bands->ibuf_const()->channels(0)[i],
-                           bands->ibuf_const()->channels(1)[i],
-                           bands->num_frames_per_band(),
-                           data->ibuf()->channels()[i],
-                           two_bands_states_[i].synthesis_state1,
-                           two_bands_states_[i].synthesis_state2);
+    WebRtcSpl_SynthesisQMF(
+        bands->ibuf_const()->channels(0)[i],
+        bands->ibuf_const()->channels(1)[i], bands->num_frames_per_band(),
+        data->ibuf()->channels()[i], two_bands_states_[i].synthesis_state1,
+        two_bands_states_[i].synthesis_state2);
   }
 }
 

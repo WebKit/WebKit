@@ -15,35 +15,20 @@ import("../webrtc.gni")
 rtc_static_library("system_wrappers") {
   visibility = [ "*" ]
   sources = [
-    "include/aligned_array.h",
-    "include/aligned_malloc.h",
     "include/clock.h",
     "include/cpu_info.h",
     "include/event_wrapper.h",
-    "include/file_wrapper.h",
     "include/ntp_time.h",
     "include/rtp_to_ntp_estimator.h",
-    "include/rw_lock_wrapper.h",
     "include/sleep.h",
-    "include/timestamp_extrapolator.h",
-    "source/aligned_malloc.cc",
     "source/clock.cc",
     "source/cpu_features.cc",
     "source/cpu_info.cc",
     "source/event.cc",
-    "source/event_timer_posix.cc",
-    "source/event_timer_posix.h",
     "source/event_timer_win.cc",
     "source/event_timer_win.h",
-    "source/file_impl.cc",
     "source/rtp_to_ntp_estimator.cc",
-    "source/rw_lock.cc",
-    "source/rw_lock_posix.cc",
-    "source/rw_lock_posix.h",
-    "source/rw_lock_win.cc",
-    "source/rw_lock_win.h",
     "source/sleep.cc",
-    "source/timestamp_extrapolator.cc",
   ]
 
   defines = []
@@ -54,11 +39,19 @@ rtc_static_library("system_wrappers") {
     ":metrics_api",
     ":runtime_enabled_features_api",
     "..:webrtc_common",
-    "../:typedefs",
-    "../api:optional",
     "../modules:module_api_public",
     "../rtc_base:checks",
+    "../rtc_base/synchronization:rw_lock_wrapper",
+    "../rtc_base/system:arch",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
+
+  if (is_posix || is_fuchsia) {
+    sources += [
+      "source/event_timer_posix.cc",
+      "source/event_timer_posix.h",
+    ]
+  }
 
   if (is_android) {
     defines += [ "WEBRTC_THREAD_RR" ]
@@ -90,22 +83,12 @@ rtc_static_library("system_wrappers") {
     defines += [ "WEBRTC_THREAD_RR" ]
   }
 
-  # TODO(jschuh): Bug 1348: fix this warning.
-  configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
-
   if (is_win) {
     libs += [ "winmm.lib" ]
-
-    cflags = [ "/wd4334" ]  # Ignore warning on shift operator promotion.
 
     # Windows needs ../rtc_base:rtc_base due to include of
     # webrtc/rtc_base/win32.h in source/clock.cc.
     deps += [ "../rtc_base:rtc_base" ]
-  }
-
-  if (is_win && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
   }
 
   deps += [
@@ -120,13 +103,6 @@ rtc_source_set("cpu_features_api") {
   ]
   deps = [
     "..:webrtc_common",
-    "../:typedefs",
-  ]
-}
-
-rtc_source_set("asm_defines") {
-  sources = [
-    "include/asm_defines.h",
   ]
 }
 
@@ -137,6 +113,7 @@ rtc_source_set("field_trial_api") {
 }
 
 rtc_source_set("runtime_enabled_features_api") {
+  visibility = [ "*" ]
   sources = [
     "include/runtime_enabled_features.h",
   ]
@@ -166,6 +143,7 @@ rtc_source_set("field_trial_default") {
 }
 
 rtc_source_set("runtime_enabled_features_default") {
+  visibility = [ "*" ]
   sources = [
     "source/runtime_enabled_features_default.cc",
   ]
@@ -215,6 +193,7 @@ if (is_linux) {
     ]
     deps = [
       ":cpu_features_api",
+      "../rtc_base/system:arch",
     ]
   }
 }
@@ -223,20 +202,15 @@ if (rtc_include_tests) {
   rtc_test("system_wrappers_unittests") {
     testonly = true
     sources = [
-      "source/aligned_array_unittest.cc",
-      "source/aligned_malloc_unittest.cc",
       "source/clock_unittest.cc",
-      "source/event_timer_posix_unittest.cc",
       "source/metrics_default_unittest.cc",
       "source/metrics_unittest.cc",
       "source/ntp_time_unittest.cc",
       "source/rtp_to_ntp_estimator_unittest.cc",
     ]
-    configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
 
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    if (is_posix || is_fuchsia) {
+      sources += [ "source/event_timer_posix_unittest.cc" ]
     }
 
     deps = [
@@ -244,7 +218,6 @@ if (rtc_include_tests) {
       ":metrics_default",
       ":system_wrappers",
       "..:webrtc_common",
-      "../:typedefs",
       "../rtc_base:rtc_base_approved",
       "../test:test_main",
       "//testing/gtest",

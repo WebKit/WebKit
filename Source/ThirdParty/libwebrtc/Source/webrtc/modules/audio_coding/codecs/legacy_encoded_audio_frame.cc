@@ -27,7 +27,7 @@ size_t LegacyEncodedAudioFrame::Duration() const {
   return (ret < 0) ? 0 : static_cast<size_t>(ret);
 }
 
-rtc::Optional<AudioDecoder::EncodedAudioFrame::DecodeResult>
+absl::optional<AudioDecoder::EncodedAudioFrame::DecodeResult>
 LegacyEncodedAudioFrame::Decode(rtc::ArrayView<int16_t> decoded) const {
   AudioDecoder::SpeechType speech_type = AudioDecoder::kSpeech;
   const int ret = decoder_->Decode(
@@ -35,7 +35,7 @@ LegacyEncodedAudioFrame::Decode(rtc::ArrayView<int16_t> decoded) const {
       decoded.size() * sizeof(int16_t), decoded.data(), &speech_type);
 
   if (ret < 0)
-    return rtc::nullopt;
+    return absl::nullopt;
 
   return DecodeResult{static_cast<size_t>(ret), speech_type};
 }
@@ -68,10 +68,9 @@ std::vector<AudioDecoder::ParseResult> LegacyEncodedAudioFrame::SplitBySamples(
         split_size_bytes * timestamps_per_ms / bytes_per_ms);
     size_t byte_offset;
     uint32_t timestamp_offset;
-    for (byte_offset = 0, timestamp_offset = 0;
-         byte_offset < payload.size();
+    for (byte_offset = 0, timestamp_offset = 0; byte_offset < payload.size();
          byte_offset += split_size_bytes,
-             timestamp_offset += timestamps_per_chunk) {
+        timestamp_offset += timestamps_per_chunk) {
       split_size_bytes =
           std::min(split_size_bytes, payload.size() - byte_offset);
       rtc::Buffer new_payload(payload.data() + byte_offset, split_size_bytes);

@@ -19,7 +19,7 @@ namespace webrtc {
 
 class RTCStatsCollectorCallback : public virtual rtc::RefCountInterface {
  public:
-  virtual ~RTCStatsCollectorCallback() {}
+  ~RTCStatsCollectorCallback() override = default;
 
   virtual void OnStatsDelivered(
       const rtc::scoped_refptr<const RTCStatsReport>& report) = 0;

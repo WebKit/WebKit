@@ -14,6 +14,7 @@ message Init {
   optional int32 output_sample_rate = 7;
   optional int32 reverse_output_sample_rate = 8;
   optional int32 num_reverse_output_channels = 9;
+  optional int64 timestamp_ms = 10;
 }
 
 // May contain interleaved or deinterleaved data, but don't store both formats.
@@ -72,8 +73,11 @@ message Config {
   // Semicolon-separated string containing experimental feature
   // descriptions.
   optional string experiments_description = 17;
-  // Intelligibility Enhancer
+  // Intelligibility Enhancer.
   optional bool intelligibility_enhancer_enabled = 18;
+  // Pre amplifier.
+  optional bool pre_amplifier_enabled = 19;
+  optional float pre_amplifier_fixed_gain_factor = 20;
 }
 
 message Event {

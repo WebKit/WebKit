@@ -21,7 +21,9 @@
 #include "api/mediastreaminterface.h"
 #include "api/mediatypes.h"
 #include "api/proxy.h"
+#include "api/rtcerror.h"
 #include "api/rtpparameters.h"
+#include "rtc_base/deprecation.h"
 #include "rtc_base/refcount.h"
 #include "rtc_base/scoped_ref_ptr.h"
 
@@ -36,7 +38,7 @@ class RtpSenderInterface : public rtc::RefCountInterface {
 
   // Returns primary SSRC used by this sender for sending media.
   // Returns 0 if not yet determined.
-  // TODO(deadbeef): Change to rtc::Optional.
+  // TODO(deadbeef): Change to absl::optional.
   // TODO(deadbeef): Remove? With GetParameters this should be redundant.
   virtual uint32_t ssrc() const = 0;
 
@@ -47,45 +49,39 @@ class RtpSenderInterface : public rtc::RefCountInterface {
   // to uniquely identify a receiver until we implement Unified Plan SDP.
   virtual std::string id() const = 0;
 
-  // Returns a list of streams associated with this sender's track. Although we
-  // only support one track per stream, in theory the API allows for multiple.
+  // Returns a list of media stream ids associated with this sender's track.
+  // These are signalled in the SDP so that the remote side can associate
+  // tracks.
   virtual std::vector<std::string> stream_ids() const = 0;
 
-  virtual RtpParameters GetParameters() const = 0;
+  virtual RtpParameters GetParameters() = 0;
   // Note that only a subset of the parameters can currently be changed. See
   // rtpparameters.h
-  virtual bool SetParameters(const RtpParameters& parameters) = 0;
+  // The encodings are in increasing quality order for simulcast.
+  virtual RTCError SetParameters(const RtpParameters& parameters) = 0;
 
   // Returns null for a video sender.
   virtual rtc::scoped_refptr<DtmfSenderInterface> GetDtmfSender() const = 0;
 
-  // Returns an ID that changes every time SetTrack() is called, but
-  // otherwise remains constant. Used to generate IDs for stats.
-  // The special value zero means that no track is attached.
-  // TODO(hta): Remove default implementation when callers have updated,
-  // or move function to an internal interface.
-  virtual int AttachmentId() const { return 0; }
-
  protected:
-  virtual ~RtpSenderInterface() {}
+  ~RtpSenderInterface() override = default;
 };
 
 // Define proxy for RtpSenderInterface.
 // TODO(deadbeef): Move this to .cc file and out of api/. What threads methods
 // are called on is an implementation detail.
 BEGIN_SIGNALING_PROXY_MAP(RtpSender)
-  PROXY_SIGNALING_THREAD_DESTRUCTOR()
-  PROXY_METHOD1(bool, SetTrack, MediaStreamTrackInterface*)
-  PROXY_CONSTMETHOD0(rtc::scoped_refptr<MediaStreamTrackInterface>, track)
-  PROXY_CONSTMETHOD0(uint32_t, ssrc)
-  PROXY_CONSTMETHOD0(cricket::MediaType, media_type)
-  PROXY_CONSTMETHOD0(std::string, id)
-  PROXY_CONSTMETHOD0(std::vector<std::string>, stream_ids)
-  PROXY_CONSTMETHOD0(RtpParameters, GetParameters);
-  PROXY_METHOD1(bool, SetParameters, const RtpParameters&)
-  PROXY_CONSTMETHOD0(rtc::scoped_refptr<DtmfSenderInterface>, GetDtmfSender);
-  PROXY_CONSTMETHOD0(int, AttachmentId);
-  END_PROXY_MAP()
+PROXY_SIGNALING_THREAD_DESTRUCTOR()
+PROXY_METHOD1(bool, SetTrack, MediaStreamTrackInterface*)
+PROXY_CONSTMETHOD0(rtc::scoped_refptr<MediaStreamTrackInterface>, track)
+PROXY_CONSTMETHOD0(uint32_t, ssrc)
+PROXY_CONSTMETHOD0(cricket::MediaType, media_type)
+PROXY_CONSTMETHOD0(std::string, id)
+PROXY_CONSTMETHOD0(std::vector<std::string>, stream_ids)
+PROXY_METHOD0(RtpParameters, GetParameters);
+PROXY_METHOD1(RTCError, SetParameters, const RtpParameters&)
+PROXY_CONSTMETHOD0(rtc::scoped_refptr<DtmfSenderInterface>, GetDtmfSender);
+END_PROXY_MAP()
 
 }  // namespace webrtc
 

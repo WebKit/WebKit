@@ -12,11 +12,11 @@
 #define API_AUDIO_CODECS_AUDIO_FORMAT_H_
 
 #include <map>
-#include <ostream>
 #include <string>
 #include <utility>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
@@ -61,7 +61,6 @@ struct SdpAudioFormat {
 };
 
 void swap(SdpAudioFormat& a, SdpAudioFormat& b);
-std::ostream& operator<<(std::ostream& os, const SdpAudioFormat& saf);
 
 // Information about how an audio format is treated by the codec implementation.
 // Contains basic information, such as sample rate and number of channels, which
@@ -120,8 +119,6 @@ struct AudioCodecInfo {
                                            // network conditions.
 };
 
-std::ostream& operator<<(std::ostream& os, const AudioCodecInfo& aci);
-
 // AudioCodecSpec ties an audio format to specific information about the codec
 // and its implementation.
 struct AudioCodecSpec {
@@ -134,8 +131,6 @@ struct AudioCodecSpec {
   SdpAudioFormat format;
   AudioCodecInfo info;
 };
-
-std::ostream& operator<<(std::ostream& os, const AudioCodecSpec& acs);
 
 }  // namespace webrtc
 

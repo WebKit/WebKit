@@ -55,8 +55,8 @@ class FecControllerRplrBased final : public Controller {
 
   const Config config_;
   bool fec_enabled_;
-  rtc::Optional<int> uplink_bandwidth_bps_;
-  rtc::Optional<float> uplink_recoverable_packet_loss_;
+  absl::optional<int> uplink_bandwidth_bps_;
+  absl::optional<float> uplink_recoverable_packet_loss_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(FecControllerRplrBased);
 };

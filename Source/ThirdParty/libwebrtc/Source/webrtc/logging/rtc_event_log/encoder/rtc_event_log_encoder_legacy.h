@@ -32,6 +32,8 @@ class RtcEventAudioReceiveStreamConfig;
 class RtcEventAudioSendStreamConfig;
 class RtcEventBweUpdateDelayBased;
 class RtcEventBweUpdateLossBased;
+class RtcEventIceCandidatePairConfig;
+class RtcEventIceCandidatePair;
 class RtcEventLoggingStarted;
 class RtcEventLoggingStopped;
 class RtcEventProbeClusterCreated;
@@ -50,8 +52,6 @@ class RtcEventLogEncoderLegacy final : public RtcEventLogEncoder {
  public:
   ~RtcEventLogEncoderLegacy() override = default;
 
-  std::string Encode(const RtcEvent& event) override;
-
   std::string EncodeLogStart(int64_t timestamp_us) override;
   std::string EncodeLogEnd(int64_t timestamp_us) override;
 
@@ -60,6 +60,7 @@ class RtcEventLogEncoderLegacy final : public RtcEventLogEncoder {
       std::deque<std::unique_ptr<RtcEvent>>::const_iterator end) override;
 
  private:
+  std::string Encode(const RtcEvent& event);
   // Encoding entry-point for the various RtcEvent subclasses.
   std::string EncodeAlrState(const RtcEventAlrState& event);
   std::string EncodeAudioNetworkAdaptation(
@@ -72,6 +73,10 @@ class RtcEventLogEncoderLegacy final : public RtcEventLogEncoder {
   std::string EncodeBweUpdateDelayBased(
       const RtcEventBweUpdateDelayBased& event);
   std::string EncodeBweUpdateLossBased(const RtcEventBweUpdateLossBased& event);
+  std::string EncodeIceCandidatePairConfig(
+      const RtcEventIceCandidatePairConfig& event);
+  std::string EncodeIceCandidatePairEvent(
+      const RtcEventIceCandidatePair& event);
   std::string EncodeProbeClusterCreated(
       const RtcEventProbeClusterCreated& event);
   std::string EncodeProbeResultFailure(const RtcEventProbeResultFailure& event);

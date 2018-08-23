@@ -21,7 +21,7 @@ namespace bwe {
 class TcpBweReceiver : public BweReceiver {
  public:
   explicit TcpBweReceiver(int flow_id);
-  virtual ~TcpBweReceiver();
+  ~TcpBweReceiver() override;
 
   void ReceivePacket(int64_t arrival_time_ms,
                      const MediaPacket& media_packet) override;

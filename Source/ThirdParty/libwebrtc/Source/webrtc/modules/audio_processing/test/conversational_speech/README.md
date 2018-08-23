@@ -36,7 +36,9 @@ A a4 0
 
 The first column indicates the speaker name, the second contains the audio track
 file names, and the third the offsets (in milliseconds) used to concatenate the
-chunks.
+chunks. An optional fourth column contains positive or negative integral gains
+in dB that will be applied to the tracks. It's possible to specify the gain for
+some turns but not for others. If the gain is left out, no gain is applied.
 
 Assume that all the audio tracks in the example above are 1000 ms long.
 The tool will then generate two tracks (A and B) that look like this:

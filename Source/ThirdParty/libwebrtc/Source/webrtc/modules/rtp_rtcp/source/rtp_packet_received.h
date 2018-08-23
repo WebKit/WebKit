@@ -22,6 +22,11 @@ class RtpPacketReceived : public RtpPacket {
  public:
   RtpPacketReceived();
   explicit RtpPacketReceived(const ExtensionManager* extensions);
+  RtpPacketReceived(const RtpPacketReceived& packet);
+  RtpPacketReceived(RtpPacketReceived&& packet);
+
+  RtpPacketReceived& operator=(const RtpPacketReceived& packet);
+  RtpPacketReceived& operator=(RtpPacketReceived&& packet);
 
   ~RtpPacketReceived();
 

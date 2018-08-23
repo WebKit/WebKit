@@ -16,7 +16,6 @@ rtc_static_library("remote_bitrate_estimator") {
     "bwe_defines.cc",
     "include/bwe_defines.h",
     "include/remote_bitrate_estimator.h",
-    "include/send_time_history.h",
     "inter_arrival.cc",
     "inter_arrival.h",
     "overuse_detector.cc",
@@ -29,7 +28,6 @@ rtc_static_library("remote_bitrate_estimator") {
     "remote_bitrate_estimator_single_stream.h",
     "remote_estimator_proxy.cc",
     "remote_estimator_proxy.h",
-    "send_time_history.cc",
     "test/bwe_test_logging.h",
   ]
 
@@ -40,22 +38,17 @@ rtc_static_library("remote_bitrate_estimator") {
     defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=0" ]
   }
 
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
-
   deps = [
     "../..:webrtc_common",
-    "../../:typedefs",
-    "../../api:optional",
     "../../modules:module_api",
     "../../modules/rtp_rtcp:rtp_rtcp_format",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:safe_minmax",
     "../../system_wrappers",
     "../../system_wrappers:field_trial_api",
     "../../system_wrappers:metrics_api",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
@@ -72,10 +65,6 @@ if (!build_with_chromium) {
       "../../test:rtp_test_utils",
       "../rtp_rtcp",
     ]
-    if (is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
   }
 }
 
@@ -102,6 +91,7 @@ if (rtc_include_tests) {
       "test/estimators/congestion_window.h",
       "test/estimators/max_bandwidth_filter.cc",
       "test/estimators/max_bandwidth_filter.h",
+      "test/estimators/min_rtt_filter.cc",
       "test/estimators/min_rtt_filter.h",
       "test/estimators/nada.cc",
       "test/estimators/nada.h",
@@ -113,6 +103,7 @@ if (rtc_include_tests) {
       "test/estimators/tcp.h",
       "test/metric_recorder.cc",
       "test/metric_recorder.h",
+      "test/packet.cc",
       "test/packet.h",
       "test/packet_receiver.cc",
       "test/packet_receiver.h",
@@ -126,46 +117,38 @@ if (rtc_include_tests) {
       defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=0" ]
     }
 
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-
-    if (is_win) {
-      cflags = [
-        # TODO(kjellander): Bug 261: fix this warning.
-        "/wd4373",  # virtual function override.
-      ]
-    }
-
     deps = [
       ":remote_bitrate_estimator",
       "..:module_api",
       "../..:webrtc_common",
-      "../../:typedefs",
-      "../../api:optional",
       "../../logging:mocks",
       "../../rtc_base:checks",
       "../../rtc_base:gtest_prod",
       "../../rtc_base:rtc_base",
       "../../rtc_base:rtc_base_approved",
       "../../rtc_base:rtc_numerics",
+      "../../rtc_base:safe_minmax",
       "../../rtc_base/experiments:alr_experiment",
+      "../../rtc_base/system:fallthrough",
+      "../../rtc_base/system:unused",
       "../../system_wrappers",
       "../../system_wrappers:field_trial_api",
+      "../../test:fileutils",
       "../../test:perf_test",
       "../../test:test_support",
-      "../../voice_engine",
       "../bitrate_controller",
       "../congestion_controller",
-      "../congestion_controller:delay_based_bwe",
-      "../congestion_controller:estimators",
+      "../congestion_controller:transport_feedback",
+      "../congestion_controller/goog_cc:delay_based_bwe",
+      "../congestion_controller/goog_cc:estimators",
+      "../congestion_controller/rtp:transport_feedback",
       "../pacing",
       "../rtp_rtcp",
       "../rtp_rtcp:rtp_rtcp_format",
       "../video_coding:video_coding_utility",
-      "//testing/gmock",
       "//testing/gtest",
+      "//third_party/abseil-cpp/absl/memory",
+      "//third_party/abseil-cpp/absl/types:optional",
     ]
   }
 
@@ -180,6 +163,7 @@ if (rtc_include_tests) {
       ":remote_bitrate_estimator",
       "../../rtc_base:rtc_base_approved",
       "../../test:field_trial",
+      "../../test:fileutils",
       "../../test:test_support",
     ]
     if (!build_with_chromium && is_clang) {
@@ -200,7 +184,6 @@ if (rtc_include_tests) {
       "remote_bitrate_estimator_unittest_helper.cc",
       "remote_bitrate_estimator_unittest_helper.h",
       "remote_estimator_proxy_unittest.cc",
-      "send_time_history_unittest.cc",
       "test/bwe_test_framework_unittest.cc",
       "test/bwe_unittest.cc",
       "test/estimators/congestion_window_unittest.cc",
@@ -218,17 +201,11 @@ if (rtc_include_tests) {
       "../../rtc_base:rtc_base_approved",
       "../../system_wrappers",
       "../../test:field_trial",
+      "../../test:fileutils",
       "../../test:test_support",
       "../pacing:pacing",
       "../rtp_rtcp:rtp_rtcp_format",
-      "//testing/gmock",
     ]
-    if (is_win) {
-      cflags = [
-        # TODO(kjellander): bugs.webrtc.org/261: Fix this warning.
-        "/wd4373",  # virtual function override.
-      ]
-    }
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
@@ -246,8 +223,8 @@ if (rtc_include_tests) {
       ":remote_bitrate_estimator",
       "../..:webrtc_common",
       "../../rtc_base:rtc_base_approved",
+      "../../test:fileutils",
       "../../test:test_main",
-      "//testing/gmock",
       "//testing/gtest",
     ]
     data = [
@@ -259,13 +236,6 @@ if (rtc_include_tests) {
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-
-    if (is_win) {
-      cflags = [
-        # TODO(kjellander): bugs.webrtc.org/261: Fix this warning.
-        "/wd4373",  # virtual function override.
-      ]
     }
   }
 }

@@ -16,7 +16,6 @@
 #include <vector>
 
 #include "rtc_base/asyncinvoker.h"
-#include "rtc_base/basictypes.h"
 #include "rtc_base/bytebuffer.h"
 #include "rtc_base/callback.h"
 #include "rtc_base/constructormagic.h"
@@ -25,7 +24,6 @@
 #include "rtc_base/socketaddress.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_checker.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace rtc {
 class AsyncPacketSocket;

@@ -15,86 +15,22 @@
 #include <string>
 #include <utility>
 
-#include "rtc_base/base64.h"
+#include "absl/memory/memory.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/opensslidentity.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/sslfingerprint.h"
+#include "rtc_base/third_party/base64/base64.h"
 
 namespace rtc {
+
+//////////////////////////////////////////////////////////////////////
+// KeyParams
+//////////////////////////////////////////////////////////////////////
 
 const char kPemTypeCertificate[] = "CERTIFICATE";
 const char kPemTypeRsaPrivateKey[] = "RSA PRIVATE KEY";
 const char kPemTypeEcPrivateKey[] = "EC PRIVATE KEY";
-
-SSLCertificateStats::SSLCertificateStats(
-    std::string&& fingerprint,
-    std::string&& fingerprint_algorithm,
-    std::string&& base64_certificate,
-    std::unique_ptr<SSLCertificateStats>&& issuer)
-    : fingerprint(std::move(fingerprint)),
-      fingerprint_algorithm(std::move(fingerprint_algorithm)),
-      base64_certificate(std::move(base64_certificate)),
-      issuer(std::move(issuer)) {
-}
-
-SSLCertificateStats::~SSLCertificateStats() {
-}
-
-std::unique_ptr<SSLCertificateStats> SSLCertificate::GetStats() const {
-  // We have a certificate and optionally a chain of certificates. This forms a
-  // linked list, starting with |this|, then the first element of |chain| and
-  // ending with the last element of |chain|. The "issuer" of a certificate is
-  // the next certificate in the chain. Stats are produced for each certificate
-  // in the list. Here, the "issuer" is the issuer's stats.
-  std::unique_ptr<SSLCertChain> chain = GetChain();
-  std::unique_ptr<SSLCertificateStats> issuer;
-  if (chain) {
-    // The loop runs in reverse so that the |issuer| is known before the
-    // |cert|'s stats.
-    for (ptrdiff_t i = chain->GetSize() - 1; i >= 0; --i) {
-      const SSLCertificate* cert = &chain->Get(i);
-      issuer = cert->GetStats(std::move(issuer));
-    }
-  }
-  return GetStats(std::move(issuer));
-}
-
-std::unique_ptr<SSLCertificate> SSLCertificate::GetUniqueReference() const {
-  return WrapUnique(GetReference());
-}
-
-std::unique_ptr<SSLCertificateStats> SSLCertificate::GetStats(
-    std::unique_ptr<SSLCertificateStats> issuer) const {
-  // TODO(bemasc): Move this computation to a helper class that caches these
-  // values to reduce CPU use in |StatsCollector::GetStats|. This will require
-  // adding a fast |SSLCertificate::Equals| to detect certificate changes.
-  std::string digest_algorithm;
-  if (!GetSignatureDigestAlgorithm(&digest_algorithm))
-    return nullptr;
-
-  // |SSLFingerprint::Create| can fail if the algorithm returned by
-  // |SSLCertificate::GetSignatureDigestAlgorithm| is not supported by the
-  // implementation of |SSLCertificate::ComputeDigest|. This currently happens
-  // with MD5- and SHA-224-signed certificates when linked to libNSS.
-  std::unique_ptr<SSLFingerprint> ssl_fingerprint(
-      SSLFingerprint::Create(digest_algorithm, this));
-  if (!ssl_fingerprint)
-    return nullptr;
-  std::string fingerprint = ssl_fingerprint->GetRfc4572Fingerprint();
-
-  Buffer der_buffer;
-  ToDER(&der_buffer);
-  std::string der_base64;
-  Base64::EncodeFromArray(der_buffer.data(), der_buffer.size(), &der_base64);
-
-  return std::unique_ptr<SSLCertificateStats>(new SSLCertificateStats(
-      std::move(fingerprint),
-      std::move(digest_algorithm),
-      std::move(der_base64),
-      std::move(issuer)));
-}
 
 KeyParams::KeyParams(KeyType key_type) {
   if (key_type == KT_ECDSA) {
@@ -149,6 +85,10 @@ KeyType IntKeyTypeFamilyToKeyType(int key_type_family) {
   return static_cast<KeyType>(key_type_family);
 }
 
+//////////////////////////////////////////////////////////////////////
+// SSLIdentity
+//////////////////////////////////////////////////////////////////////
+
 bool SSLIdentity::PemToDer(const std::string& pem_type,
                            const std::string& pem_string,
                            std::string* der) {
@@ -168,9 +108,8 @@ bool SSLIdentity::PemToDer(const std::string& pem_type,
 
   std::string inner = pem_string.substr(body + 1, trailer - (body + 1));
 
-  *der = Base64::Decode(inner, Base64::DO_PARSE_WHITE |
-                        Base64::DO_PAD_ANY |
-                        Base64::DO_TERM_BUFFER);
+  *der = Base64::Decode(inner, Base64::DO_PARSE_WHITE | Base64::DO_PAD_ANY |
+                                   Base64::DO_TERM_BUFFER);
   return true;
 }
 
@@ -197,40 +136,6 @@ std::string SSLIdentity::DerToPem(const std::string& pem_type,
   result << "-----END " << pem_type << "-----\n";
 
   return result.str();
-}
-
-SSLCertChain::SSLCertChain(std::vector<std::unique_ptr<SSLCertificate>> certs)
-    : certs_(std::move(certs)) {}
-
-SSLCertChain::SSLCertChain(const std::vector<SSLCertificate*>& certs) {
-  RTC_DCHECK(!certs.empty());
-  certs_.resize(certs.size());
-  std::transform(
-      certs.begin(), certs.end(), certs_.begin(),
-      [](const SSLCertificate* cert) -> std::unique_ptr<SSLCertificate> {
-        return cert->GetUniqueReference();
-      });
-}
-
-SSLCertChain::SSLCertChain(const SSLCertificate* cert) {
-  certs_.push_back(cert->GetUniqueReference());
-}
-
-SSLCertChain::~SSLCertChain() {}
-
-SSLCertChain* SSLCertChain::Copy() const {
-  std::vector<std::unique_ptr<SSLCertificate>> new_certs(certs_.size());
-  std::transform(certs_.begin(), certs_.end(), new_certs.begin(),
-                 [](const std::unique_ptr<SSLCertificate>& cert)
-                     -> std::unique_ptr<SSLCertificate> {
-                   return cert->GetUniqueReference();
-                 });
-  return new SSLCertChain(std::move(new_certs));
-}
-
-// static
-SSLCertificate* SSLCertificate::FromPEMString(const std::string& pem_string) {
-  return OpenSSLCertificate::FromPEMString(pem_string);
 }
 
 // static
@@ -279,6 +184,10 @@ bool operator==(const SSLIdentity& a, const SSLIdentity& b) {
 bool operator!=(const SSLIdentity& a, const SSLIdentity& b) {
   return !(a == b);
 }
+
+//////////////////////////////////////////////////////////////////////
+// Helper Functions
+//////////////////////////////////////////////////////////////////////
 
 // Read |n| bytes from ASN1 number string at *|pp| and return the numeric value.
 // Update *|pp| and *|np| to reflect number of read bytes.

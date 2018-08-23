@@ -16,7 +16,7 @@
  */
 
 
-#include "fft.h"
+#include "modules/audio_coding/codecs/isac/fix/source/fft.h"
 
 static const int16_t kSortTabFft[240] = {
   0, 60, 120, 180, 20, 80, 140, 200, 40, 100, 160, 220,

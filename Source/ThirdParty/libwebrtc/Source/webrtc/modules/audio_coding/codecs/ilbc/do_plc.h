@@ -19,7 +19,7 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_DO_PLC_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_DO_PLC_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  Packet loss concealment routine. Conceals a residual signal
@@ -27,15 +27,15 @@
  *---------------------------------------------------------------*/
 
 void WebRtcIlbcfix_DoThePlc(
-    int16_t *PLCresidual,  /* (o) concealed residual */
-    int16_t *PLClpc,    /* (o) concealed LP parameters */
-    int16_t PLI,     /* (i) packet loss indicator
-                                                           0 - no PL, 1 = PL */
-    int16_t *decresidual,  /* (i) decoded residual */
-    int16_t *lpc,    /* (i) decoded LPC (only used for no PL) */
-    size_t inlag,    /* (i) pitch lag */
-    IlbcDecoder *iLBCdec_inst
+    int16_t* PLCresidual, /* (o) concealed residual */
+    int16_t* PLClpc,      /* (o) concealed LP parameters */
+    int16_t PLI,          /* (i) packet loss indicator
+                                                                0 - no PL, 1 = PL */
+    int16_t* decresidual, /* (i) decoded residual */
+    int16_t* lpc,         /* (i) decoded LPC (only used for no PL) */
+    size_t inlag,         /* (i) pitch lag */
+    IlbcDecoder* iLBCdec_inst
     /* (i/o) decoder instance */
-                            );
+    );
 
 #endif

@@ -17,30 +17,25 @@ static const unsigned int kIPv4AddrSize = 4;
 static const unsigned int kIPv6AddrSize = 16;
 static const unsigned int kIPv4RFC1918Addr = 0xC0A80701;
 static const unsigned int kIPv4PublicAddr = 0x01020304;
-static const in6_addr kIPv6LinkLocalAddr = {{{0xfe, 0x80, 0x00, 0x00,
-                                              0x00, 0x00, 0x00, 0x00,
-                                              0xbe, 0x30, 0x5b, 0xff,
-                                              0xfe, 0xe5, 0x00, 0xc3}}};
-static const in6_addr kIPv6PublicAddr = {{{0x24, 0x01, 0xfa, 0x00,
-                                           0x00, 0x04, 0x10, 0x00,
-                                           0xbe, 0x30, 0x5b, 0xff,
-                                           0xfe, 0xe5, 0x00, 0xc3}}};
-static const in6_addr kIPv6PublicAddr2 = {{{0x24, 0x01, 0x00, 0x00,
-                                            0x00, 0x00, 0x10, 0x00,
-                                            0xbe, 0x30, 0x5b, 0xff,
-                                            0xfe, 0xe5, 0x00, 0xc3}}};
-static const in6_addr kIPv4MappedAnyAddr = {{{0x00, 0x00, 0x00, 0x00,
-                                              0x00, 0x00, 0x00, 0x00,
-                                              0x00, 0x00, 0xff, 0xff,
-                                              0x00, 0x00, 0x00, 0x00}}};
-static const in6_addr kIPv4MappedRFC1918Addr = {{{0x00, 0x00, 0x00, 0x00,
-                                                  0x00, 0x00, 0x00, 0x00,
-                                                  0x00, 0x00, 0xff, 0xff,
-                                                  0xc0, 0xa8, 0x07, 0x01}}};
-static const in6_addr kIPv4MappedPublicAddr = {{{0x00, 0x00, 0x00, 0x00,
-                                                 0x00, 0x00, 0x00, 0x00,
-                                                 0x00, 0x00, 0xff, 0xff,
-                                                 0x01, 0x02, 0x03, 0x04}}};
+static const unsigned int kIPv4LinkLocalAddr = 0xA9FE10C1;  // 169.254.16.193
+static const in6_addr kIPv6LinkLocalAddr = {
+    {{0xfe, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xbe, 0x30, 0x5b, 0xff,
+      0xfe, 0xe5, 0x00, 0xc3}}};
+static const in6_addr kIPv6PublicAddr = {
+    {{0x24, 0x01, 0xfa, 0x00, 0x00, 0x04, 0x10, 0x00, 0xbe, 0x30, 0x5b, 0xff,
+      0xfe, 0xe5, 0x00, 0xc3}}};
+static const in6_addr kIPv6PublicAddr2 = {
+    {{0x24, 0x01, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0xbe, 0x30, 0x5b, 0xff,
+      0xfe, 0xe5, 0x00, 0xc3}}};
+static const in6_addr kIPv4MappedAnyAddr = {
+    {{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff,
+      0x00, 0x00, 0x00, 0x00}}};
+static const in6_addr kIPv4MappedRFC1918Addr = {
+    {{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff,
+      0xc0, 0xa8, 0x07, 0x01}}};
+static const in6_addr kIPv4MappedPublicAddr = {
+    {{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff,
+      0x01, 0x02, 0x03, 0x04}}};
 
 static const std::string kIPv4AnyAddrString = "0.0.0.0";
 static const std::string kIPv4LoopbackAddrString = "127.0.0.1";
@@ -79,10 +74,8 @@ static const std::string kIPv6BrokenString2 =
     "2401:fa00:4:1000:be30:5bff:fee5:c3:1";
 static const std::string kIPv6BrokenString3 =
     "[2401:fa00:4:1000:be30:5bff:fee5:c3]:1";
-static const std::string kIPv6BrokenString4 =
-    "2401::4::be30";
-static const std::string kIPv6BrokenString5 =
-    "2401:::4:fee5:be30";
+static const std::string kIPv6BrokenString4 = "2401::4::be30";
+static const std::string kIPv6BrokenString5 = "2401:::4:fee5:be30";
 static const std::string kIPv6BrokenString6 =
     "2401f:fa00:4:1000:be30:5bff:fee5:c3";
 static const std::string kIPv6BrokenString7 =
@@ -91,24 +84,18 @@ static const std::string kIPv6BrokenString8 =
     "2401:fa000:4:1000:be30:5bff:fee5:c3";
 static const std::string kIPv6BrokenString9 =
     "2401:fal0:4:1000:be30:5bff:fee5:c3";
-static const std::string kIPv6BrokenString10 =
-    "::ffff:192.168.7.";
-static const std::string kIPv6BrokenString11 =
-    "::ffff:192.168.7.1.1.1";
-static const std::string kIPv6BrokenString12 =
-    "::fffe:192.168.7.1";
-static const std::string kIPv6BrokenString13 =
-    "::ffff:192.168.7.ff";
+static const std::string kIPv6BrokenString10 = "::ffff:192.168.7.";
+static const std::string kIPv6BrokenString11 = "::ffff:192.168.7.1.1.1";
+static const std::string kIPv6BrokenString12 = "::fffe:192.168.7.1";
+static const std::string kIPv6BrokenString13 = "::ffff:192.168.7.ff";
 static const std::string kIPv6BrokenString14 =
     "0x2401:fa00:4:1000:be30:5bff:fee5:c3";
 
-bool AreEqual(const IPAddress& addr,
-              const IPAddress& addr2) {
+bool AreEqual(const IPAddress& addr, const IPAddress& addr2) {
   if ((IPIsAny(addr) != IPIsAny(addr2)) ||
       (IPIsLoopback(addr) != IPIsLoopback(addr2)) ||
       (IPIsPrivate(addr) != IPIsPrivate(addr2)) ||
-      (HashIP(addr) != HashIP(addr2)) ||
-      (addr.Size() != addr2.Size()) ||
+      (HashIP(addr) != HashIP(addr2)) || (addr.Size() != addr2.Size()) ||
       (addr.family() != addr2.family()) ||
       (addr.ToString() != addr2.ToString())) {
     return false;
@@ -129,7 +116,7 @@ bool AreEqual(const IPAddress& addr,
 }
 
 bool BrokenIPStringFails(const std::string& broken) {
-  IPAddress addr(0);   // Intentionally make it v4.
+  IPAddress addr(0);  // Intentionally make it v4.
   if (IPFromString(kIPv4BrokenString1, &addr)) {
     return false;
   }
@@ -139,7 +126,7 @@ bool BrokenIPStringFails(const std::string& broken) {
 bool CheckMaskCount(const std::string& mask, int expected_length) {
   IPAddress addr;
   return IPFromString(mask, &addr) &&
-      (expected_length == CountIPMaskBits(addr));
+         (expected_length == CountIPMaskBits(addr));
 }
 
 bool TryInvalidMaskCount(const std::string& mask) {
@@ -153,7 +140,8 @@ bool TryInvalidMaskCount(const std::string& mask) {
   return true;
 }
 
-bool CheckTruncateIP(const std::string& initial, int truncate_length,
+bool CheckTruncateIP(const std::string& initial,
+                     int truncate_length,
                      const std::string& expected_result) {
   IPAddress addr, expected;
   IPFromString(initial, &addr);
@@ -287,39 +275,39 @@ TEST(IPAddressTest, TestCopyCtor) {
   IPAddress addr(v4addr);
   IPAddress addr2(addr);
 
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 
   addr = IPAddress(INADDR_ANY);
   addr2 = IPAddress(addr);
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 
   addr = IPAddress(INADDR_LOOPBACK);
   addr2 = IPAddress(addr);
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 
   addr = IPAddress(kIPv4PublicAddr);
   addr2 = IPAddress(addr);
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 
   addr = IPAddress(kIPv4RFC1918Addr);
   addr2 = IPAddress(addr);
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 
   addr = IPAddress(in6addr_any);
   addr2 = IPAddress(addr);
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 
   addr = IPAddress(in6addr_loopback);
   addr2 = IPAddress(addr);
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 
   addr = IPAddress(kIPv6LinkLocalAddr);
   addr2 = IPAddress(addr);
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 
   addr = IPAddress(kIPv6PublicAddr);
   addr2 = IPAddress(addr);
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 }
 
 TEST(IPAddressTest, TestEquality) {
@@ -389,14 +377,14 @@ TEST(IPAddressTest, TestEquality) {
 TEST(IPAddressTest, TestComparison) {
   // Defined in 'ascending' order.
   // v6 > v4, and intra-family sorting is purely numerical
-  IPAddress addr0;  // AF_UNSPEC
-  IPAddress addr1(INADDR_ANY);  // 0.0.0.0
-  IPAddress addr2(kIPv4PublicAddr);  // 1.2.3.4
-  IPAddress addr3(INADDR_LOOPBACK);  // 127.0.0.1
-  IPAddress addr4(kIPv4RFC1918Addr);  // 192.168.7.1.
-  IPAddress addr5(in6addr_any);  // ::
-  IPAddress addr6(in6addr_loopback);  // ::1
-  IPAddress addr7(kIPv6PublicAddr);  // 2401....
+  IPAddress addr0;                      // AF_UNSPEC
+  IPAddress addr1(INADDR_ANY);          // 0.0.0.0
+  IPAddress addr2(kIPv4PublicAddr);     // 1.2.3.4
+  IPAddress addr3(INADDR_LOOPBACK);     // 127.0.0.1
+  IPAddress addr4(kIPv4RFC1918Addr);    // 192.168.7.1.
+  IPAddress addr5(in6addr_any);         // ::
+  IPAddress addr6(in6addr_loopback);    // ::1
+  IPAddress addr7(kIPv6PublicAddr);     // 2401....
   IPAddress addr8(kIPv6LinkLocalAddr);  // fe80....
 
   EXPECT_TRUE(addr0 < addr1);
@@ -445,46 +433,46 @@ TEST(IPAddressTest, TestFromString) {
 
   EXPECT_TRUE(IPFromString(kIPv4AnyAddrString, &addr));
   EXPECT_EQ(addr.ToString(), kIPv4AnyAddrString);
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 
   addr2 = IPAddress(INADDR_LOOPBACK);
   EXPECT_TRUE(IPFromString(kIPv4LoopbackAddrString, &addr));
   EXPECT_EQ(addr.ToString(), kIPv4LoopbackAddrString);
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 
   addr2 = IPAddress(kIPv4RFC1918Addr);
   EXPECT_TRUE(IPFromString(kIPv4RFC1918AddrString, &addr));
   EXPECT_EQ(addr.ToString(), kIPv4RFC1918AddrString);
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 
   addr2 = IPAddress(kIPv4PublicAddr);
   EXPECT_TRUE(IPFromString(kIPv4PublicAddrString, &addr));
   EXPECT_EQ(addr.ToString(), kIPv4PublicAddrString);
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 
   addr2 = IPAddress(in6addr_any);
   EXPECT_TRUE(IPFromString(kIPv6AnyAddrString, &addr));
   EXPECT_EQ(addr.ToString(), kIPv6AnyAddrString);
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 
   addr2 = IPAddress(in6addr_loopback);
   EXPECT_TRUE(IPFromString(kIPv6LoopbackAddrString, &addr));
   EXPECT_EQ(addr.ToString(), kIPv6LoopbackAddrString);
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 
   addr2 = IPAddress(kIPv6LinkLocalAddr);
   EXPECT_TRUE(IPFromString(kIPv6LinkLocalAddrString, &addr));
   EXPECT_EQ(addr.ToString(), kIPv6LinkLocalAddrString);
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 
   addr2 = IPAddress(kIPv6PublicAddr);
   EXPECT_TRUE(IPFromString(kIPv6PublicAddrString, &addr));
   EXPECT_EQ(addr.ToString(), kIPv6PublicAddrString);
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 
   addr2 = IPAddress(kIPv4MappedRFC1918Addr);
   EXPECT_TRUE(IPFromString(kIPv4MappedV4StyleAddrString, &addr));
-  EXPECT_PRED2(AreEqual, addr, addr2);
+  EXPECT_TRUE(AreEqual(addr, addr2));
 
   // Broken cases, should set addr to AF_UNSPEC.
   EXPECT_PRED1(BrokenIPStringFails, kIPv4BrokenString1);
@@ -579,6 +567,28 @@ TEST(IPAddressTest, TestIsLoopback) {
   // 127.0.0.1.
   EXPECT_TRUE(IPIsLoopback(IPAddress(0x7f010203)));
   EXPECT_TRUE(IPIsLoopback(IPAddress(in6addr_loopback)));
+}
+
+TEST(IPAddressTest, TestIsLinkLocal) {
+  // "any" addresses
+  EXPECT_FALSE(IPIsLinkLocal(IPAddress(INADDR_ANY)));
+  EXPECT_FALSE(IPIsLinkLocal(IPAddress(in6addr_any)));
+  // loopback addresses
+  EXPECT_FALSE(IPIsLinkLocal(IPAddress(INADDR_LOOPBACK)));
+  EXPECT_FALSE(IPIsLinkLocal(IPAddress(in6addr_loopback)));
+  // public addresses
+  EXPECT_FALSE(IPIsLinkLocal(IPAddress(kIPv4PublicAddr)));
+  EXPECT_FALSE(IPIsLinkLocal(IPAddress(kIPv6PublicAddr)));
+  // private network addresses
+  EXPECT_FALSE(IPIsLinkLocal(IPAddress(kIPv4RFC1918Addr)));
+  // mapped addresses
+  EXPECT_FALSE(IPIsLinkLocal(IPAddress(kIPv4MappedAnyAddr)));
+  EXPECT_FALSE(IPIsLinkLocal(IPAddress(kIPv4MappedPublicAddr)));
+  EXPECT_FALSE(IPIsLinkLocal(IPAddress(kIPv4MappedRFC1918Addr)));
+
+  // link-local network addresses
+  EXPECT_TRUE(IPIsLinkLocal(IPAddress(kIPv4LinkLocalAddr)));
+  EXPECT_TRUE(IPIsLinkLocal(IPAddress(kIPv6LinkLocalAddr)));
 }
 
 // Verify that IPIsAny catches all cases of "any" address.
@@ -918,8 +928,7 @@ TEST(IPAddressTest, TestToSensitiveString) {
 
 TEST(IPAddressTest, TestInterfaceAddress) {
   in6_addr addr;
-  InterfaceAddress addr1(kIPv6PublicAddr,
-                         IPV6_ADDRESS_FLAG_TEMPORARY);
+  InterfaceAddress addr1(kIPv6PublicAddr, IPV6_ADDRESS_FLAG_TEMPORARY);
   EXPECT_EQ(addr1.ipv6_flags(), IPV6_ADDRESS_FLAG_TEMPORARY);
   EXPECT_EQ(addr1.family(), AF_INET6);
 
@@ -938,18 +947,16 @@ TEST(IPAddressTest, TestInterfaceAddress) {
   addr = addr3.ipv6_address();
   EXPECT_TRUE(IN6_ARE_ADDR_EQUAL(&addr, &kIPv6PublicAddr));
 
-  InterfaceAddress addr4(kIPv6PublicAddr,
-                         IPV6_ADDRESS_FLAG_DEPRECATED);
+  InterfaceAddress addr4(kIPv6PublicAddr, IPV6_ADDRESS_FLAG_DEPRECATED);
   EXPECT_NE(addr1, addr4);
 
   // When you compare them as IPAddress, since operator==
   // is not virtual, it'll be equal.
-  IPAddress *paddr1 = &addr1;
-  IPAddress *paddr4 = &addr4;
+  IPAddress* paddr1 = &addr1;
+  IPAddress* paddr4 = &addr4;
   EXPECT_EQ(*paddr1, *paddr4);
 
-  InterfaceAddress addr5(kIPv6LinkLocalAddr,
-                         IPV6_ADDRESS_FLAG_TEMPORARY);
+  InterfaceAddress addr5(kIPv6LinkLocalAddr, IPV6_ADDRESS_FLAG_TEMPORARY);
   EXPECT_NE(addr1, addr5);
 }
 

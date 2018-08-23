@@ -36,7 +36,7 @@ class PacketReceiver : public PacketProcessor {
                  bool plot_delay,
                  bool plot_bwe,
                  MetricRecorder* metric_recorder);
-  ~PacketReceiver();
+  ~PacketReceiver() override;
 
   // Implements PacketProcessor.
   void RunFor(int64_t time_ms, Packets* in_out) override;

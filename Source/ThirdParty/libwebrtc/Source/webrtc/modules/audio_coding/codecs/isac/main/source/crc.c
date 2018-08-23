@@ -8,9 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "crc.h"
 #include <stdlib.h>
-#include "signal_processing_library.h"
+
+#include "modules/audio_coding/codecs/isac/main/source/crc.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
 
 #define POLYNOMIAL 0x04c11db7L
 

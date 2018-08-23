@@ -16,7 +16,7 @@
 
 ******************************************************************/
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  * Construct the polynomials F1(z) and F2(z) from the LSP

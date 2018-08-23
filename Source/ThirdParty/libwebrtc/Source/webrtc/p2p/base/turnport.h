@@ -22,6 +22,7 @@
 #include "p2p/client/basicportallocator.h"
 #include "rtc_base/asyncinvoker.h"
 #include "rtc_base/asyncpacketsocket.h"
+#include "rtc_base/sslcertificate.h"
 
 namespace rtc {
 class AsyncResolver;
@@ -67,24 +68,26 @@ class TurnPort : public Port {
 
   // Create a TURN port that will use a new socket, bound to |network| and
   // using a port in the range between |min_port| and |max_port|.
-  static TurnPort* Create(rtc::Thread* thread,
-                          rtc::PacketSocketFactory* factory,
-                          rtc::Network* network,
-                          uint16_t min_port,
-                          uint16_t max_port,
-                          const std::string& username,  // ice username.
-                          const std::string& password,  // ice password.
-                          const ProtocolAddress& server_address,
-                          const RelayCredentials& credentials,
-                          int server_priority,
-                          const std::string& origin,
-                          const std::vector<std::string>& tls_alpn_protocols,
-                          const std::vector<std::string>& tls_elliptic_curves,
-                          webrtc::TurnCustomizer* customizer) {
+  static TurnPort* Create(
+      rtc::Thread* thread,
+      rtc::PacketSocketFactory* factory,
+      rtc::Network* network,
+      uint16_t min_port,
+      uint16_t max_port,
+      const std::string& username,  // ice username.
+      const std::string& password,  // ice password.
+      const ProtocolAddress& server_address,
+      const RelayCredentials& credentials,
+      int server_priority,
+      const std::string& origin,
+      const std::vector<std::string>& tls_alpn_protocols,
+      const std::vector<std::string>& tls_elliptic_curves,
+      webrtc::TurnCustomizer* customizer,
+      rtc::SSLCertificateVerifier* tls_cert_verifier = nullptr) {
     return new TurnPort(thread, factory, network, min_port, max_port, username,
                         password, server_address, credentials, server_priority,
                         origin, tls_alpn_protocols, tls_elliptic_curves,
-                        customizer);
+                        customizer, tls_cert_verifier);
   }
 
   ~TurnPort() override;
@@ -106,6 +109,10 @@ class TurnPort : public Port {
 
   virtual std::vector<std::string> GetTlsAlpnProtocols() const;
   virtual std::vector<std::string> GetTlsEllipticCurves() const;
+
+  // Release a TURN allocation by sending a refresh with lifetime 0.
+  // Sets state to STATE_RECEIVEONLY.
+  void Release();
 
   void PrepareAddress() override;
   Connection* CreateConnection(const Candidate& c,
@@ -161,6 +168,11 @@ class TurnPort : public Port {
                    const rtc::SocketAddress&,
                    const rtc::SocketAddress&> SignalResolvedServerAddress;
 
+  // Signal when TurnPort is closed,
+  // e.g remote socket closed (TCP)
+  //  or receiveing a REFRESH response with lifetime 0.
+  sigslot::signal1<TurnPort*> SignalTurnPortClosed;
+
   // All public methods/signals below are for testing only.
   sigslot::signal2<TurnPort*, int> SignalTurnRefreshResult;
   sigslot::signal3<TurnPort*, const rtc::SocketAddress&, int>
@@ -205,7 +217,8 @@ class TurnPort : public Port {
            const std::string& origin,
            const std::vector<std::string>& tls_alpn_protocols,
            const std::vector<std::string>& tls_elliptic_curves,
-           webrtc::TurnCustomizer* customizer);
+           webrtc::TurnCustomizer* customizer,
+           rtc::SSLCertificateVerifier* tls_cert_verifier = nullptr);
 
   // NOTE: This method needs to be accessible for StacPort
   // return true if entry was created (i.e channel_number consumed).
@@ -217,7 +230,8 @@ class TurnPort : public Port {
     MSG_ALLOCATE_ERROR = MSG_FIRST_AVAILABLE,
     MSG_ALLOCATE_MISMATCH,
     MSG_TRY_ALTERNATE_SERVER,
-    MSG_REFRESH_ERROR
+    MSG_REFRESH_ERROR,
+    MSG_ALLOCATION_RELEASED
   };
 
   typedef std::list<TurnEntry*> EntryList;
@@ -260,7 +274,7 @@ class TurnPort : public Port {
       const rtc::SocketAddress& remote_addr,
       ProtocolType proto, const rtc::PacketTime& packet_time);
 
-  bool ScheduleRefresh(int lifetime);
+  bool ScheduleRefresh(uint32_t lifetime);
   void SendRequest(StunRequest* request, int delay);
   int Send(const void* data, size_t size,
            const rtc::PacketOptions& options);
@@ -293,6 +307,7 @@ class TurnPort : public Port {
   TlsCertPolicy tls_cert_policy_ = TlsCertPolicy::TLS_CERT_POLICY_SECURE;
   std::vector<std::string> tls_alpn_protocols_;
   std::vector<std::string> tls_elliptic_curves_;
+  rtc::SSLCertificateVerifier* tls_cert_verifier_;
   RelayCredentials credentials_;
   AttemptedServerSet attempted_server_addresses_;
 
@@ -319,7 +334,8 @@ class TurnPort : public Port {
 
   rtc::AsyncInvoker invoker_;
 
-  // Optional TurnCustomizer that can modify outgoing messages.
+  // Optional TurnCustomizer that can modify outgoing messages. Once set, this
+  // must outlive the TurnPort's lifetime.
   webrtc::TurnCustomizer *turn_customizer_ = nullptr;
 
   friend class TurnEntry;

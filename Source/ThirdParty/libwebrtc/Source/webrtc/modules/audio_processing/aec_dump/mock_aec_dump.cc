@@ -15,5 +15,5 @@ namespace test {
 
 MockAecDump::MockAecDump() = default;
 MockAecDump::~MockAecDump() = default;
-}
-}
+}  // namespace test
+}  // namespace webrtc

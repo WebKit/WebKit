@@ -16,17 +16,15 @@
  *
  */
 
-#include "encode_lpc_swb.h"
-
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "lpc_gain_swb_tables.h"
-#include "lpc_shape_swb12_tables.h"
-#include "lpc_shape_swb16_tables.h"
-#include "settings.h"
-#include "typedefs.h"  // NOLINT(build/include)
+#include "modules/audio_coding/codecs/isac/main/source/encode_lpc_swb.h"
+#include "modules/audio_coding/codecs/isac/main/source/lpc_gain_swb_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/lpc_shape_swb12_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/lpc_shape_swb16_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/settings.h"
 
 /******************************************************************************
  * WebRtcIsac_RemoveLarMean()

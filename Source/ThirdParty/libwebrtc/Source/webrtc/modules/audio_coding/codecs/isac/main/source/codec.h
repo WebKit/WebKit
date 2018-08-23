@@ -19,15 +19,19 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_CODEC_H_
 #define MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_CODEC_H_
 
-#include "structs.h"
+#include <stddef.h>
 
+#include "modules/audio_coding/codecs/isac/main/source/structs.h"
+#include "modules/third_party/fft/fft.h"
 
 void WebRtcIsac_ResetBitstream(Bitstr* bit_stream);
 
-int WebRtcIsac_EstimateBandwidth(BwEstimatorstr* bwest_str, Bitstr* streamdata,
+int WebRtcIsac_EstimateBandwidth(BwEstimatorstr* bwest_str,
+                                 Bitstr* streamdata,
                                  size_t packet_size,
                                  uint16_t rtp_seq_number,
-                                 uint32_t send_ts, uint32_t arr_ts,
+                                 uint32_t send_ts,
+                                 uint32_t arr_ts,
                                  enum IsacSamplingRate encoderSampRate,
                                  enum IsacSamplingRate decoderSampRate);
 
@@ -37,7 +41,8 @@ int WebRtcIsac_DecodeLb(const TransformTables* transform_tables,
                         int16_t* current_framesamples,
                         int16_t isRCUPayload);
 
-int WebRtcIsac_DecodeRcuLb(float* signal_out, ISACLBDecStruct* ISACdec_obj,
+int WebRtcIsac_DecodeRcuLb(float* signal_out,
+                           ISACLBDecStruct* ISACdec_obj,
                            int16_t* current_framesamples);
 
 int WebRtcIsac_EncodeLb(const TransformTables* transform_tables,
@@ -47,15 +52,20 @@ int WebRtcIsac_EncodeLb(const TransformTables* transform_tables,
                         int16_t bottleneckIndex);
 
 int WebRtcIsac_EncodeStoredDataLb(const IsacSaveEncoderData* ISACSavedEnc_obj,
-                                  Bitstr* ISACBitStr_obj, int BWnumber,
+                                  Bitstr* ISACBitStr_obj,
+                                  int BWnumber,
                                   float scale);
 
 int WebRtcIsac_EncodeStoredDataUb(
-    const ISACUBSaveEncDataStruct* ISACSavedEnc_obj, Bitstr* bitStream,
-    int32_t jitterInfo, float scale, enum ISACBandwidth bandwidth);
+    const ISACUBSaveEncDataStruct* ISACSavedEnc_obj,
+    Bitstr* bitStream,
+    int32_t jitterInfo,
+    float scale,
+    enum ISACBandwidth bandwidth);
 
 int16_t WebRtcIsac_GetRedPayloadUb(
-    const ISACUBSaveEncDataStruct* ISACSavedEncObj, Bitstr* bitStreamObj,
+    const ISACUBSaveEncDataStruct* ISACSavedEncObj,
+    Bitstr* bitStreamObj,
     enum ISACBandwidth bandwidth);
 
 /******************************************************************************
@@ -80,7 +90,6 @@ int16_t WebRtcIsac_RateAllocation(int32_t inRateBitPerSec,
                                   double* rateLBBitPerSec,
                                   double* rateUBBitPerSec,
                                   enum ISACBandwidth* bandwidthKHz);
-
 
 /******************************************************************************
  * WebRtcIsac_DecodeUb16()
@@ -166,14 +175,7 @@ int WebRtcIsac_EncodeUb12(const TransformTables* transform_tables,
 
 void WebRtcIsac_InitMasking(MaskFiltstr* maskdata);
 
-void WebRtcIsac_InitPreFilterbank(PreFiltBankstr* prefiltdata);
-
 void WebRtcIsac_InitPostFilterbank(PostFiltBankstr* postfiltdata);
-
-void WebRtcIsac_InitPitchFilter(PitchFiltstr* pitchfiltdata);
-
-void WebRtcIsac_InitPitchAnalysis(PitchAnalysisStruct* State);
-
 
 /**************************** transform functions ****************************/
 
@@ -193,41 +195,29 @@ void WebRtcIsac_Spec2time(const TransformTables* tables,
                           double* outre2,
                           FFTstr* fftstr_obj);
 
-/******************************* filter functions ****************************/
-
-void WebRtcIsac_AllPoleFilter(double* InOut, double* Coef, size_t lengthInOut,
-                              int orderCoef);
-
-void WebRtcIsac_AllZeroFilter(double* In, double* Coef, size_t lengthInOut,
-                              int orderCoef, double* Out);
-
-void WebRtcIsac_ZeroPoleFilter(double* In, double* ZeroCoef, double* PoleCoef,
-                               size_t lengthInOut, int orderCoef, double* Out);
-
-
 /***************************** filterbank functions **************************/
 
-void WebRtcIsac_SplitAndFilterFloat(float* in, float* LP, float* HP,
-                                    double* LP_la, double* HP_la,
-                                    PreFiltBankstr* prefiltdata);
-
-
-void WebRtcIsac_FilterAndCombineFloat(float* InLP, float* InHP, float* Out,
+void WebRtcIsac_FilterAndCombineFloat(float* InLP,
+                                      float* InHP,
+                                      float* Out,
                                       PostFiltBankstr* postfiltdata);
-
 
 /************************* normalized lattice filters ************************/
 
-void WebRtcIsac_NormLatticeFilterMa(int orderCoef, float* stateF, float* stateG,
-                                    float* lat_in, double* filtcoeflo,
+void WebRtcIsac_NormLatticeFilterMa(int orderCoef,
+                                    float* stateF,
+                                    float* stateG,
+                                    float* lat_in,
+                                    double* filtcoeflo,
                                     double* lat_out);
 
-void WebRtcIsac_NormLatticeFilterAr(int orderCoef, float* stateF, float* stateG,
-                                    double* lat_in, double* lo_filt_coef,
+void WebRtcIsac_NormLatticeFilterAr(int orderCoef,
+                                    float* stateF,
+                                    float* stateG,
+                                    double* lat_in,
+                                    double* lo_filt_coef,
                                     float* lat_out);
 
 void WebRtcIsac_Dir2Lat(double* a, int orderCoef, float* sth, float* cth);
-
-void WebRtcIsac_AutoCorr(double* r, const double* x, size_t N, size_t order);
 
 #endif /* MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_CODEC_H_ */

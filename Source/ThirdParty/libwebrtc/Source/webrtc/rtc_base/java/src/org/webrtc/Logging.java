@@ -15,26 +15,51 @@ import java.io.StringWriter;
 import java.util.EnumSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.Nullable;
+import org.webrtc.Loggable;
 
 /**
- * Java wrapper for WebRTC logging. Logging defaults to java.util.logging.Logger, but will switch to
- * native logging (rtc::LogMessage) if one of the following static functions are called from the
- * app:
+ * Java wrapper for WebRTC logging. Logging defaults to java.util.logging.Logger, but a custom
+ * logger implementing the Loggable interface can be injected along with a Severity. All subsequent
+ * log messages will then be redirected to the injected Loggable, except those with a severity lower
+ * than the specified severity, which will be discarded.
+ *
+ * It is also possible to switch to native logging (rtc::LogMessage) if one of the following static
+ * functions are called from the app:
  * - Logging.enableLogThreads
  * - Logging.enableLogTimeStamps
  * - Logging.enableLogToDebugOutput
  *
- * Using these APIs requires that the native library is loaded, using
- * PeerConnectionFactory.initialize.
+ * The priority goes:
+ * 1. Injected loggable
+ * 2. Native logging
+ * 3. Fallback logging.
+ * Only one method will be used at a time.
+ *
+ * Injecting a Loggable or using any of the enable... methods requires that the native library is
+ * loaded, using PeerConnectionFactory.initialize.
  */
 public class Logging {
   private static final Logger fallbackLogger = createFallbackLogger();
   private static volatile boolean loggingEnabled;
+  @Nullable private static Loggable loggable;
+  private static Severity loggableSeverity;
 
   private static Logger createFallbackLogger() {
     final Logger fallbackLogger = Logger.getLogger("org.webrtc.Logging");
     fallbackLogger.setLevel(Level.ALL);
     return fallbackLogger;
+  }
+
+  static void injectLoggable(Loggable injectedLoggable, Severity severity) {
+    if (injectedLoggable != null) {
+      loggable = injectedLoggable;
+      loggableSeverity = severity;
+    }
+  }
+
+  static void deleteInjectedLoggable() {
+    loggable = null;
   }
 
   // TODO(solenberg): Remove once dependent projects updated.
@@ -83,11 +108,29 @@ public class Logging {
   // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
   @SuppressWarnings("NoSynchronizedMethodCheck")
   public static synchronized void enableLogToDebugOutput(Severity severity) {
+    if (loggable != null) {
+      throw new IllegalStateException(
+          "Logging to native debug output not supported while Loggable is injected. "
+          + "Delete the Loggable before calling this method.");
+    }
     nativeEnableLogToDebugOutput(severity.ordinal());
     loggingEnabled = true;
   }
 
   public static void log(Severity severity, String tag, String message) {
+    if (tag == null || message == null) {
+      throw new IllegalArgumentException("Logging tag or message may not be null.");
+    }
+    if (loggable != null) {
+      // Filter log messages below loggableSeverity.
+      if (severity.ordinal() < loggableSeverity.ordinal()) {
+        return;
+      }
+      loggable.onLogMessage(message, severity, tag);
+      return;
+    }
+
+    // Try native logging if no loggable is injected.
     if (loggingEnabled) {
       nativeLog(severity.ordinal(), tag, message);
       return;

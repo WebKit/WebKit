@@ -13,9 +13,8 @@
 
 #include <memory>
 
+#include "rtc_base/synchronization/rw_lock_wrapper.h"
 #include "system_wrappers/include/ntp_time.h"
-#include "system_wrappers/include/rw_lock_wrapper.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 

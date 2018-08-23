@@ -31,6 +31,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Nullable;
 
 /**
  * Simple CPU monitor.  The caller creates a CpuMonitor object which can then
@@ -91,6 +92,7 @@ class CpuMonitor {
   // CPU frequency in percentage from maximum.
   private final MovingAverage frequencyScale;
 
+  @Nullable
   private ScheduledExecutorService executor;
   private long lastStatLogTimeMs;
   private long[] cpuFreqMax;
@@ -101,6 +103,7 @@ class CpuMonitor {
   private String[] maxPath;
   private String[] curPath;
   private double[] curFreqScales;
+  @Nullable
   private ProcStat lastProcStat;
 
   private static class ProcStat {
@@ -484,7 +487,8 @@ class CpuMonitor {
    * Read the current utilization of all CPUs using the cumulative first line
    * of /proc/stat.
    */
-  private ProcStat readProcStat() {
+  @SuppressWarnings("StringSplitter")
+  private @Nullable ProcStat readProcStat() {
     long userTime = 0;
     long systemTime = 0;
     long idleTime = 0;

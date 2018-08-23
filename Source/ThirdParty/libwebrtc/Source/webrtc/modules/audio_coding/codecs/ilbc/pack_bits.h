@@ -19,16 +19,16 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_PACK_BITS_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_PACK_BITS_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  unpacking of bits from bitstream, i.e., vector of bytes
  *---------------------------------------------------------------*/
 
-void WebRtcIlbcfix_PackBits( 
-    uint16_t *bitstream,   /* (o) The packetized bitstream */
-    iLBC_bits *enc_bits,  /* (i) Encoded bits */
-    int16_t mode     /* (i) Codec mode (20 or 30) */
-                             );
+void WebRtcIlbcfix_PackBits(
+    uint16_t* bitstream, /* (o) The packetized bitstream */
+    iLBC_bits* enc_bits, /* (i) Encoded bits */
+    int16_t mode         /* (i) Codec mode (20 or 30) */
+    );
 
 #endif

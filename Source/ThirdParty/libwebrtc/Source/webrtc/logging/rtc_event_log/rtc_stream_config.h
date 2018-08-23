@@ -23,9 +23,11 @@ namespace rtclog {
 
 struct StreamConfig {
   StreamConfig();
+  StreamConfig(const StreamConfig& other);
   ~StreamConfig();
 
   bool operator==(const StreamConfig& other) const;
+  bool operator!=(const StreamConfig& other) const;
 
   uint32_t local_ssrc = 0;
   uint32_t remote_ssrc = 0;

@@ -16,12 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RTCIntervalRange ()
 
-@property(nonatomic, readonly)
-    std::unique_ptr<rtc::IntervalRange> nativeIntervalRange;
+@property(nonatomic, readonly) std::unique_ptr<rtc::IntervalRange> nativeIntervalRange;
 
 - (instancetype)initWithNativeIntervalRange:(const rtc::IntervalRange &)config;
 
 @end
 
 NS_ASSUME_NONNULL_END
-

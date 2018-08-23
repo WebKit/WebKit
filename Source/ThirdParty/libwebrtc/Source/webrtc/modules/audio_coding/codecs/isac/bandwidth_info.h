@@ -11,7 +11,7 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ISAC_BANDWIDTH_INFO_H_
 #define MODULES_AUDIO_CODING_CODECS_ISAC_BANDWIDTH_INFO_H_
 
-#include "typedefs.h"  // NOLINT(build/include)
+#include <stdint.h>
 
 typedef struct {
   int in_use;

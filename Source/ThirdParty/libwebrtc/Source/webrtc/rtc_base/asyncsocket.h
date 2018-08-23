@@ -11,8 +11,8 @@
 #ifndef RTC_BASE_ASYNCSOCKET_H_
 #define RTC_BASE_ASYNCSOCKET_H_
 
-#include "rtc_base/sigslot.h"
 #include "rtc_base/socket.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace rtc {
 
@@ -31,11 +31,10 @@ class AsyncSocket : public Socket {
   // For example SignalReadEvent::connect will be called in AsyncUDPSocket ctor
   // but at the same time the SocketDispatcher maybe signaling the read event.
   // ready to read
-  sigslot::signal1<AsyncSocket*,
-                   sigslot::multi_threaded_local> SignalReadEvent;
+  sigslot::signal1<AsyncSocket*, sigslot::multi_threaded_local> SignalReadEvent;
   // ready to write
-  sigslot::signal1<AsyncSocket*,
-                   sigslot::multi_threaded_local> SignalWriteEvent;
+  sigslot::signal1<AsyncSocket*, sigslot::multi_threaded_local>
+      SignalWriteEvent;
   sigslot::signal1<AsyncSocket*> SignalConnectEvent;     // connected
   sigslot::signal2<AsyncSocket*, int> SignalCloseEvent;  // closed
 };

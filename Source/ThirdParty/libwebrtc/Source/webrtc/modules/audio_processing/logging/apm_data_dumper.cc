@@ -10,8 +10,7 @@
 
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 
-#include <sstream>
-
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/stringutils.h"
 
 // Check to verify that the define is properly set.
@@ -29,7 +28,8 @@ std::string FormFileName(const char* name,
                          int instance_index,
                          int reinit_index,
                          const std::string& suffix) {
-  std::stringstream ss;
+  char buf[1024];
+  rtc::SimpleStringBuilder ss(buf);
   ss << name << "_" << instance_index << "-" << reinit_index << suffix;
   return ss.str();
 }

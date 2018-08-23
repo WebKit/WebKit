@@ -13,8 +13,8 @@
 #include <memory>
 #include <utility>
 
+#include "absl/memory/memory.h"
 #include "rtc_base/constructormagic.h"
-#include "rtc_base/ptr_util.h"
 
 namespace webrtc {
 

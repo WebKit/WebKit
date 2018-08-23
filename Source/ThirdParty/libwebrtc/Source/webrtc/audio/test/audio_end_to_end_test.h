@@ -24,7 +24,7 @@ class AudioEndToEndTest : public test::EndToEndTest {
   AudioEndToEndTest();
 
  protected:
-  test::FakeAudioDevice* send_audio_device() { return send_audio_device_; }
+  TestAudioDeviceModule* send_audio_device() { return send_audio_device_; }
   const AudioSendStream* send_stream() const { return send_stream_; }
   const AudioReceiveStream* receive_stream() const { return receive_stream_; }
 
@@ -34,12 +34,12 @@ class AudioEndToEndTest : public test::EndToEndTest {
   size_t GetNumAudioStreams() const override;
   size_t GetNumFlexfecStreams() const override;
 
-  std::unique_ptr<test::FakeAudioDevice::Capturer> CreateCapturer() override;
-  std::unique_ptr<test::FakeAudioDevice::Renderer> CreateRenderer() override;
+  std::unique_ptr<TestAudioDeviceModule::Capturer> CreateCapturer() override;
+  std::unique_ptr<TestAudioDeviceModule::Renderer> CreateRenderer() override;
 
   void OnFakeAudioDevicesCreated(
-      test::FakeAudioDevice* send_audio_device,
-      test::FakeAudioDevice* recv_audio_device) override;
+      TestAudioDeviceModule* send_audio_device,
+      TestAudioDeviceModule* recv_audio_device) override;
 
   test::PacketTransport* CreateSendTransport(
       SingleThreadedTaskQueueForTesting* task_queue,
@@ -57,7 +57,7 @@ class AudioEndToEndTest : public test::EndToEndTest {
   void PerformTest() override;
 
  private:
-  test::FakeAudioDevice* send_audio_device_ = nullptr;
+  TestAudioDeviceModule* send_audio_device_ = nullptr;
   AudioSendStream* send_stream_ = nullptr;
   AudioReceiveStream* receive_stream_ = nullptr;
 };

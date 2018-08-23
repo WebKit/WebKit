@@ -31,8 +31,7 @@ StreamSynchronization::StreamSynchronization(int video_stream_id,
     : video_stream_id_(video_stream_id),
       audio_stream_id_(audio_stream_id),
       base_target_delay_ms_(0),
-      avg_diff_ms_(0) {
-}
+      avg_diff_ms_(0) {}
 
 bool StreamSynchronization::ComputeRelativeDelay(
     const Measurements& audio_measurement,
@@ -53,7 +52,8 @@ bool StreamSynchronization::ComputeRelativeDelay(
     return false;
   }
   // Positive diff means that video_measurement is behind audio_measurement.
-  *relative_delay_ms = video_measurement.latest_receive_time_ms -
+  *relative_delay_ms =
+      video_measurement.latest_receive_time_ms -
       audio_measurement.latest_receive_time_ms -
       (video_last_capture_time_ms - audio_last_capture_time_ms);
   if (*relative_delay_ms > kMaxDeltaDelayMs ||
@@ -75,11 +75,11 @@ bool StreamSynchronization::ComputeDelays(int relative_delay_ms,
                       << " for stream " << audio_stream_id_;
   // Calculate the difference between the lowest possible video delay and
   // the current audio delay.
-  int current_diff_ms = current_video_delay_ms - current_audio_delay_ms +
-      relative_delay_ms;
+  int current_diff_ms =
+      current_video_delay_ms - current_audio_delay_ms + relative_delay_ms;
 
-  avg_diff_ms_ = ((kFilterLength - 1) * avg_diff_ms_ +
-      current_diff_ms) / kFilterLength;
+  avg_diff_ms_ =
+      ((kFilterLength - 1) * avg_diff_ms_ + current_diff_ms) / kFilterLength;
   if (abs(avg_diff_ms_) < kMinDeltaMs) {
     // Don't adjust if the diff is within our margin.
     return false;
@@ -124,8 +124,8 @@ bool StreamSynchronization::ComputeDelays(int relative_delay_ms,
   }
 
   // Make sure that video is never below our target.
-  channel_delay_.extra_video_delay_ms = std::max(
-      channel_delay_.extra_video_delay_ms, base_target_delay_ms_);
+  channel_delay_.extra_video_delay_ms =
+      std::max(channel_delay_.extra_video_delay_ms, base_target_delay_ms_);
 
   int new_video_delay_ms;
   if (channel_delay_.extra_video_delay_ms > base_target_delay_ms_) {
@@ -137,8 +137,8 @@ bool StreamSynchronization::ComputeDelays(int relative_delay_ms,
   }
 
   // Make sure that we don't go below the extra video delay.
-  new_video_delay_ms = std::max(
-      new_video_delay_ms, channel_delay_.extra_video_delay_ms);
+  new_video_delay_ms =
+      std::max(new_video_delay_ms, channel_delay_.extra_video_delay_ms);
 
   // Verify we don't go above the maximum allowed video delay.
   new_video_delay_ms =
@@ -154,8 +154,8 @@ bool StreamSynchronization::ComputeDelays(int relative_delay_ms,
   }
 
   // Make sure that we don't go below the extra audio delay.
-  new_audio_delay_ms = std::max(
-      new_audio_delay_ms, channel_delay_.extra_audio_delay_ms);
+  new_audio_delay_ms =
+      std::max(new_audio_delay_ms, channel_delay_.extra_audio_delay_ms);
 
   // Verify we don't go above the maximum allowed audio delay.
   new_audio_delay_ms =
@@ -181,13 +181,11 @@ void StreamSynchronization::SetTargetBufferingDelay(int target_delay_ms) {
   // Initial extra delay for audio (accounting for existing extra delay).
   channel_delay_.extra_audio_delay_ms +=
       target_delay_ms - base_target_delay_ms_;
-  channel_delay_.last_audio_delay_ms +=
-      target_delay_ms - base_target_delay_ms_;
+  channel_delay_.last_audio_delay_ms += target_delay_ms - base_target_delay_ms_;
 
   // The video delay is compared to the last value (and how much we can update
   // is limited by that as well).
-  channel_delay_.last_video_delay_ms +=
-      target_delay_ms - base_target_delay_ms_;
+  channel_delay_.last_video_delay_ms += target_delay_ms - base_target_delay_ms_;
 
   channel_delay_.extra_video_delay_ms +=
       target_delay_ms - base_target_delay_ms_;

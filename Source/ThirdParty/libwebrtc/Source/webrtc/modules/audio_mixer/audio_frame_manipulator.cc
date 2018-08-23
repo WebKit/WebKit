@@ -10,7 +10,6 @@
 
 #include "modules/audio_mixer/audio_frame_manipulator.h"
 #include "audio/utility/audio_frame_operations.h"
-#include "modules/include/module_common_types.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -22,7 +21,8 @@ uint32_t AudioMixerCalculateEnergy(const AudioFrame& audio_frame) {
 
   uint32_t energy = 0;
   const int16_t* frame_data = audio_frame.data();
-  for (size_t position = 0; position < audio_frame.samples_per_channel_;
+  for (size_t position = 0;
+       position < audio_frame.samples_per_channel_ * audio_frame.num_channels_;
        position++) {
     // TODO(aleloi): This can overflow. Convert to floats.
     energy += frame_data[position] * frame_data[position];

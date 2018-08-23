@@ -9,6 +9,7 @@
  */
 
 #include <algorithm>
+#include <array>
 #include <string>
 #include <utility>
 #include <vector>
@@ -178,6 +179,38 @@ TEST(ArrayViewTest, TestCopyAssignmentFixed) {
   EXPECT_EQ(arr, wv.data());
   // ArrayView<char> v;
   // v = z;  // Compile error, because can't drop const.
+}
+
+TEST(ArrayViewTest, TestStdArray) {
+  constexpr size_t size = 5;
+  std::array<float, size> arr{};
+  // Fixed size view.
+  rtc::ArrayView<float, size> arr_view_fixed(arr);
+  EXPECT_EQ(arr.data(), arr_view_fixed.data());
+  static_assert(size == arr_view_fixed.size(), "");
+  // Variable size view.
+  rtc::ArrayView<float> arr_view(arr);
+  EXPECT_EQ(arr.data(), arr_view.data());
+  EXPECT_EQ(size, arr_view.size());
+}
+
+TEST(ArrayViewTest, TestConstStdArray) {
+  constexpr size_t size = 5;
+
+  constexpr std::array<float, size> constexpr_arr{};
+  rtc::ArrayView<const float, size> constexpr_arr_view(constexpr_arr);
+  EXPECT_EQ(constexpr_arr.data(), constexpr_arr_view.data());
+  static_assert(constexpr_arr.size() == constexpr_arr_view.size(), "");
+
+  const std::array<float, size> const_arr{};
+  rtc::ArrayView<const float, size> const_arr_view(const_arr);
+  EXPECT_EQ(const_arr.data(), const_arr_view.data());
+  static_assert(const_arr.size() == const_arr_view.size(), "");
+
+  std::array<float, size> non_const_arr{};
+  rtc::ArrayView<const float, size> non_const_arr_view(non_const_arr);
+  EXPECT_EQ(non_const_arr.data(), non_const_arr_view.data());
+  static_assert(non_const_arr.size() == non_const_arr_view.size(), "");
 }
 
 TEST(ArrayViewTest, TestStdVector) {

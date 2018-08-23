@@ -17,7 +17,7 @@
  */
 
 
-#include "arith_routines.h"
+#include "modules/audio_coding/codecs/isac/main/source/arith_routines.h"
 
 
 

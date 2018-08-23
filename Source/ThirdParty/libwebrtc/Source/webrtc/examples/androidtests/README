@@ -4,7 +4,7 @@ Example of building & using the app:
 
 - Build Android AppRTCMobile and AppRTCMobile unit test:
 cd <path/to/webrtc>/src
-ninja -C out/Debug AppRTCMobileTest
+ninja -C out/Debug AppRTCMobile_test_apk
 
 - Install AppRTCMobile and AppRTCMobileTest:
 adb install -r out/Debug/apks/AppRTCMobile.apk

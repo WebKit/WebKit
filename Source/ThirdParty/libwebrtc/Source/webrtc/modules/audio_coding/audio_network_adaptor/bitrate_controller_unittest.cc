@@ -20,8 +20,8 @@ namespace {
 
 void UpdateNetworkMetrics(
     BitrateController* controller,
-    const rtc::Optional<int>& target_audio_bitrate_bps,
-    const rtc::Optional<size_t>& overhead_bytes_per_packet) {
+    const absl::optional<int>& target_audio_bitrate_bps,
+    const absl::optional<size_t>& overhead_bytes_per_packet) {
   // UpdateNetworkMetrics can accept multiple network metric updates at once.
   // However, currently, the most used case is to update one metric at a time.
   // To reflect this fact, we separate the calls.
@@ -38,7 +38,7 @@ void UpdateNetworkMetrics(
 }
 
 void CheckDecision(BitrateController* controller,
-                   const rtc::Optional<int>& frame_length_ms,
+                   const absl::optional<int>& frame_length_ms,
                    int expected_bitrate_bps) {
   AudioEncoderRuntimeConfig config;
   config.frame_length_ms = frame_length_ms;
@@ -58,7 +58,7 @@ TEST(AnaBitrateControllerTest, OutputInitValueWhenTargetBitrateUnknown) {
   constexpr size_t kOverheadBytesPerPacket = 64;
   BitrateController controller(BitrateController::Config(
       kInitialBitrateBps, kInitialFrameLengthMs, 0, 0));
-  UpdateNetworkMetrics(&controller, rtc::nullopt, kOverheadBytesPerPacket);
+  UpdateNetworkMetrics(&controller, absl::nullopt, kOverheadBytesPerPacket);
   CheckDecision(&controller, kInitialFrameLengthMs * 2, kInitialBitrateBps);
 }
 
@@ -68,7 +68,7 @@ TEST(AnaBitrateControllerTest, OutputInitValueWhenOverheadUnknown) {
   constexpr int kTargetBitrateBps = 48000;
   BitrateController controller(BitrateController::Config(
       kInitialBitrateBps, kInitialFrameLengthMs, 0, 0));
-  UpdateNetworkMetrics(&controller, kTargetBitrateBps, rtc::nullopt);
+  UpdateNetworkMetrics(&controller, kTargetBitrateBps, absl::nullopt);
   CheckDecision(&controller, kInitialFrameLengthMs * 2, kInitialBitrateBps);
 }
 
@@ -80,9 +80,9 @@ TEST(AnaBitrateControllerTest, ChangeBitrateOnTargetBitrateChanged) {
       BitrateController::Config(32000, kInitialFrameLengthMs, 0, 0));
   constexpr int kTargetBitrateBps = 48000;
   constexpr size_t kOverheadBytesPerPacket = 64;
-  constexpr int kBitrateBps =
-      kTargetBitrateBps -
-      kOverheadBytesPerPacket * 8 * 1000 / kInitialFrameLengthMs;
+  constexpr int kBitrateBps = kTargetBitrateBps - kOverheadBytesPerPacket * 8 *
+                                                      1000 /
+                                                      kInitialFrameLengthMs;
   // Frame length unchanged, bitrate changes in accordance with
   // |metrics.target_audio_bitrate_bps| and |metrics.overhead_bytes_per_packet|.
   UpdateNetworkMetrics(&controller, kTargetBitrateBps, kOverheadBytesPerPacket);
@@ -104,9 +104,9 @@ TEST(AnaBitrateControllerTest, UpdateMultipleNetworkMetricsAtOnce) {
       BitrateController::Config(32000, kInitialFrameLengthMs, 0, 0));
   constexpr int kTargetBitrateBps = 48000;
   constexpr size_t kOverheadBytesPerPacket = 64;
-  constexpr int kBitrateBps =
-      kTargetBitrateBps -
-      kOverheadBytesPerPacket * 8 * 1000 / kInitialFrameLengthMs;
+  constexpr int kBitrateBps = kTargetBitrateBps - kOverheadBytesPerPacket * 8 *
+                                                      1000 /
+                                                      kInitialFrameLengthMs;
   Controller::NetworkMetrics network_metrics;
   network_metrics.target_audio_bitrate_bps = kTargetBitrateBps;
   network_metrics.overhead_bytes_per_packet = kOverheadBytesPerPacket;
@@ -122,11 +122,11 @@ TEST(AnaBitrateControllerTest, TreatUnknownFrameLengthAsFrameLengthUnchanged) {
       BitrateController::Config(32000, kInitialFrameLengthMs, 0, 0));
   constexpr int kTargetBitrateBps = 48000;
   constexpr size_t kOverheadBytesPerPacket = 64;
-  constexpr int kBitrateBps =
-      kTargetBitrateBps -
-      kOverheadBytesPerPacket * 8 * 1000 / kInitialFrameLengthMs;
+  constexpr int kBitrateBps = kTargetBitrateBps - kOverheadBytesPerPacket * 8 *
+                                                      1000 /
+                                                      kInitialFrameLengthMs;
   UpdateNetworkMetrics(&controller, kTargetBitrateBps, kOverheadBytesPerPacket);
-  CheckDecision(&controller, rtc::nullopt, kBitrateBps);
+  CheckDecision(&controller, absl::nullopt, kBitrateBps);
 }
 
 TEST(AnaBitrateControllerTest, IncreaseBitrateOnFrameLengthIncreased) {
@@ -138,11 +138,11 @@ TEST(AnaBitrateControllerTest, IncreaseBitrateOnFrameLengthIncreased) {
 
   constexpr int kTargetBitrateBps = 48000;
   constexpr size_t kOverheadBytesPerPacket = 64;
-  constexpr int kBitrateBps =
-      kTargetBitrateBps -
-      kOverheadBytesPerPacket * 8 * 1000 / kInitialFrameLengthMs;
+  constexpr int kBitrateBps = kTargetBitrateBps - kOverheadBytesPerPacket * 8 *
+                                                      1000 /
+                                                      kInitialFrameLengthMs;
   UpdateNetworkMetrics(&controller, kTargetBitrateBps, kOverheadBytesPerPacket);
-  CheckDecision(&controller, rtc::nullopt, kBitrateBps);
+  CheckDecision(&controller, absl::nullopt, kBitrateBps);
 
   constexpr int kFrameLengthMs = 60;
   constexpr size_t kPacketOverheadRateDiff =
@@ -162,11 +162,11 @@ TEST(AnaBitrateControllerTest, DecreaseBitrateOnFrameLengthDecreased) {
 
   constexpr int kTargetBitrateBps = 48000;
   constexpr size_t kOverheadBytesPerPacket = 64;
-  constexpr int kBitrateBps =
-      kTargetBitrateBps -
-      kOverheadBytesPerPacket * 8 * 1000 / kInitialFrameLengthMs;
+  constexpr int kBitrateBps = kTargetBitrateBps - kOverheadBytesPerPacket * 8 *
+                                                      1000 /
+                                                      kInitialFrameLengthMs;
   UpdateNetworkMetrics(&controller, kTargetBitrateBps, kOverheadBytesPerPacket);
-  CheckDecision(&controller, rtc::nullopt, kBitrateBps);
+  CheckDecision(&controller, absl::nullopt, kBitrateBps);
 
   constexpr int kFrameLengthMs = 20;
   constexpr size_t kPacketOverheadRateDiff =
@@ -213,9 +213,9 @@ TEST(AnaBitrateControllerTest, CheckBehaviorOnChangingCondition) {
 
   // Next: change frame length.
   frame_length_ms = 60;
-  current_bitrate += rtc::checked_cast<int>(
-      overhead_bytes_per_packet * 8 * 1000 / 20 -
-      overhead_bytes_per_packet * 8 * 1000 / 60);
+  current_bitrate +=
+      rtc::checked_cast<int>(overhead_bytes_per_packet * 8 * 1000 / 20 -
+                             overhead_bytes_per_packet * 8 * 1000 / 60);
   UpdateNetworkMetrics(&controller, overall_bitrate, overhead_bytes_per_packet);
   CheckDecision(&controller, frame_length_ms, current_bitrate);
 
@@ -227,9 +227,9 @@ TEST(AnaBitrateControllerTest, CheckBehaviorOnChangingCondition) {
 
   // Next: change frame length.
   frame_length_ms = 20;
-  current_bitrate -= rtc::checked_cast<int>(
-      overhead_bytes_per_packet * 8 * 1000 / 20 -
-      overhead_bytes_per_packet * 8 * 1000 / 60);
+  current_bitrate -=
+      rtc::checked_cast<int>(overhead_bytes_per_packet * 8 * 1000 / 20 -
+                             overhead_bytes_per_packet * 8 * 1000 / 60);
   UpdateNetworkMetrics(&controller, overall_bitrate, overhead_bytes_per_packet);
   CheckDecision(&controller, frame_length_ms, current_bitrate);
 
@@ -237,9 +237,9 @@ TEST(AnaBitrateControllerTest, CheckBehaviorOnChangingCondition) {
   overall_bitrate -= 100;
   current_bitrate -= 100;
   frame_length_ms = 60;
-  current_bitrate += rtc::checked_cast<int>(
-      overhead_bytes_per_packet * 8 * 1000 / 20 -
-      overhead_bytes_per_packet * 8 * 1000 / 60);
+  current_bitrate +=
+      rtc::checked_cast<int>(overhead_bytes_per_packet * 8 * 1000 / 20 -
+                             overhead_bytes_per_packet * 8 * 1000 / 60);
 
   UpdateNetworkMetrics(&controller, overall_bitrate, overhead_bytes_per_packet);
   CheckDecision(&controller, frame_length_ms, current_bitrate);

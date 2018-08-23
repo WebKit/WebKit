@@ -17,7 +17,6 @@
 #include "api/array_view.h"
 #include "modules/audio_processing/test/conversational_speech/wavreader_interface.h"
 #include "test/gmock.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace test {

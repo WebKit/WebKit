@@ -21,7 +21,6 @@
 
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/thread_checker.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -80,4 +79,3 @@ class SharedMemoryFactory {
 }  // namespace webrtc
 
 #endif  // MODULES_DESKTOP_CAPTURE_SHARED_MEMORY_H_
-

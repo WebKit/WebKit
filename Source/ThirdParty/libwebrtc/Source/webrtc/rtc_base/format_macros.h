@@ -24,8 +24,6 @@
 //   printf("xyz: %" PRIuS, size);
 // The "u" in the macro corresponds to %u, and S is for "size".
 
-#include "typedefs.h"  // NOLINT(build/include)
-
 #if defined(WEBRTC_POSIX)
 
 #if (defined(_INTTYPES_H) || defined(_INTTYPES_H_)) && !defined(PRId64)
@@ -38,6 +36,8 @@
 #endif
 
 #include <inttypes.h>
+
+#include "rtc_base/system/arch.h"
 
 #if !defined(PRIuS)
 #define PRIuS "zu"

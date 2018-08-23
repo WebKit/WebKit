@@ -45,6 +45,69 @@ extern const char CONNECTIONROLE_PASSIVE_STR[];
 extern const char CONNECTIONROLE_ACTPASS_STR[];
 extern const char CONNECTIONROLE_HOLDCONN_STR[];
 
+// Constants for time intervals are in milliseconds unless otherwise stated.
+//
+// Most of the following constants are the default values of IceConfig
+// paramters. See IceConfig for detailed definition.
+//
+// Default value of IceConfig.receiving_timeout.
+extern const int RECEIVING_TIMEOUT;
+// Default value IceConfig.ice_check_min_interval.
+extern const int MIN_CHECK_RECEIVING_INTERVAL;
+// The next two ping intervals are at the ICE transport level.
+//
+// STRONG_PING_INTERVAL is applied when the selected connection is both
+// writable and receiving.
+//
+// Default value of IceConfig.ice_check_interval_strong_connectivity.
+extern const int STRONG_PING_INTERVAL;
+// WEAK_PING_INTERVAL is applied when the selected connection is either
+// not writable or not receiving.
+//
+// Defaul value of IceConfig.ice_check_interval_weak_connectivity.
+extern const int WEAK_PING_INTERVAL;
+// The next two ping intervals are at the candidate pair level.
+//
+// Writable candidate pairs are pinged at a slower rate once they are stabilized
+// and the channel is strongly connected.
+extern const int STRONG_AND_STABLE_WRITABLE_CONNECTION_PING_INTERVAL;
+// Writable candidate pairs are pinged at a faster rate while the connections
+// are stabilizing or the channel is weak.
+extern const int WEAK_OR_STABILIZING_WRITABLE_CONNECTION_PING_INTERVAL;
+// Default value of IceConfig.backup_connection_ping_interval
+extern const int BACKUP_CONNECTION_PING_INTERVAL;
+// Defualt value of IceConfig.receiving_switching_delay.
+extern const int RECEIVING_SWITCHING_DELAY;
+// Default value of IceConfig.regather_on_failed_networks_interval.
+extern const int REGATHER_ON_FAILED_NETWORKS_INTERVAL;
+// Default vaule of IceConfig.ice_unwritable_timeout.
+extern const int CONNECTION_WRITE_CONNECT_TIMEOUT;
+// Default vaule of IceConfig.ice_unwritable_min_checks.
+extern const uint32_t CONNECTION_WRITE_CONNECT_FAILURES;
+// Default value of IceConfig.stun_keepalive_interval;
+extern const int STUN_KEEPALIVE_INTERVAL;
+
+// The following constants are used at the candidate pair level to determine the
+// state of a candidate pair.
+//
+// The timeout duration when a connection does not receive anything.
+extern const int WEAK_CONNECTION_RECEIVE_TIMEOUT;
+// A connection will be declared dead if it has not received anything for this
+// long.
+extern const int DEAD_CONNECTION_RECEIVE_TIMEOUT;
+// The length of time we wait before timing out writability on a connection.
+extern const int CONNECTION_WRITE_TIMEOUT;
+// This is the length of time that we wait for a ping response to come back.
+extern const int CONNECTION_RESPONSE_TIMEOUT;
+// The minimum time we will wait before destroying a connection after creating
+// it.
+extern const int MIN_CONNECTION_LIFETIME;
+// TODO(qingsi): Rename all constants to kConstant style.
+//
+// The maximum time in milliseconds we will wait before signaling any address
+// ports and candidates gathered from these ports, if the candidate allocation
+// is not done yet.
+extern const int kMaxWaitMsBeforeSignalingAnyAddressPortsAndCandidates;
 }  // namespace cricket
 
 #endif  // P2P_BASE_P2PCONSTANTS_H_

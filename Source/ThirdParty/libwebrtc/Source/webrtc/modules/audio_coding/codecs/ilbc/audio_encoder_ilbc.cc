@@ -89,7 +89,6 @@ AudioEncoder::EncodedInfo AudioEncoderIlbcImpl::EncodeImpl(
     uint32_t rtp_timestamp,
     rtc::ArrayView<const int16_t> audio,
     rtc::Buffer* encoded) {
-
   // Save timestamp if starting a new packet.
   if (num_10ms_frames_buffered_ == 0)
     first_timestamp_in_buffer_ = rtp_timestamp;
@@ -107,19 +106,15 @@ AudioEncoder::EncodedInfo AudioEncoderIlbcImpl::EncodeImpl(
   // Encode buffered input.
   RTC_DCHECK_EQ(num_10ms_frames_buffered_, num_10ms_frames_per_packet_);
   num_10ms_frames_buffered_ = 0;
-  size_t encoded_bytes =
-      encoded->AppendData(
-          RequiredOutputSizeBytes(),
-          [&] (rtc::ArrayView<uint8_t> encoded) {
-            const int r = WebRtcIlbcfix_Encode(
-                encoder_,
-                input_buffer_,
-                kSampleRateHz / 100 * num_10ms_frames_per_packet_,
-                encoded.data());
-            RTC_CHECK_GE(r, 0);
+  size_t encoded_bytes = encoded->AppendData(
+      RequiredOutputSizeBytes(), [&](rtc::ArrayView<uint8_t> encoded) {
+        const int r = WebRtcIlbcfix_Encode(
+            encoder_, input_buffer_,
+            kSampleRateHz / 100 * num_10ms_frames_per_packet_, encoded.data());
+        RTC_CHECK_GE(r, 0);
 
-            return static_cast<size_t>(r);
-          });
+        return static_cast<size_t>(r);
+      });
 
   RTC_DCHECK_EQ(encoded_bytes, RequiredOutputSizeBytes());
 
@@ -135,20 +130,24 @@ void AudioEncoderIlbcImpl::Reset() {
   if (encoder_)
     RTC_CHECK_EQ(0, WebRtcIlbcfix_EncoderFree(encoder_));
   RTC_CHECK_EQ(0, WebRtcIlbcfix_EncoderCreate(&encoder_));
-  const int encoder_frame_size_ms = frame_size_ms_ > 30
-                                        ? frame_size_ms_ / 2
-                                        : frame_size_ms_;
+  const int encoder_frame_size_ms =
+      frame_size_ms_ > 30 ? frame_size_ms_ / 2 : frame_size_ms_;
   RTC_CHECK_EQ(0, WebRtcIlbcfix_EncoderInit(encoder_, encoder_frame_size_ms));
   num_10ms_frames_buffered_ = 0;
 }
 
 size_t AudioEncoderIlbcImpl::RequiredOutputSizeBytes() const {
   switch (num_10ms_frames_per_packet_) {
-    case 2:   return 38;
-    case 3:   return 50;
-    case 4:   return 2 * 38;
-    case 6:   return 2 * 50;
-    default:  RTC_FATAL();
+    case 2:
+      return 38;
+    case 3:
+      return 50;
+    case 4:
+      return 2 * 38;
+    case 6:
+      return 2 * 50;
+    default:
+      RTC_FATAL();
   }
 }
 

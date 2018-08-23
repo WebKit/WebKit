@@ -12,8 +12,8 @@
 #include <utility>
 
 #include "modules/desktop_capture/blank_detector_desktop_capturer_wrapper.h"
-#include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
+#include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/fallback_desktop_capturer_wrapper.h"
 #include "modules/desktop_capture/rgba_color.h"
 #include "modules/desktop_capture/win/screen_capturer_win_directx.h"
@@ -25,8 +25,7 @@ namespace webrtc {
 namespace {
 
 std::unique_ptr<DesktopCapturer> CreateScreenCapturerWinDirectx() {
-  std::unique_ptr<DesktopCapturer> capturer(
-      new ScreenCapturerWinDirectx());
+  std::unique_ptr<DesktopCapturer> capturer(new ScreenCapturerWinDirectx());
   capturer.reset(new BlankDetectorDesktopCapturerWrapper(
       std::move(capturer), RgbaColor(0, 0, 0, 0)));
   return capturer;

@@ -8,7 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-
 /*
  * A wrapper for resampling a numerous amount of sampling combinations.
  */
@@ -37,8 +36,7 @@ Resampler::Resampler()
       my_mode_(kResamplerMode1To1),
       num_channels_(0),
       slave_left_(nullptr),
-      slave_right_(nullptr) {
-}
+      slave_right_(nullptr) {}
 
 Resampler::Resampler(int inFreq, int outFreq, size_t num_channels)
     : Resampler() {
@@ -73,9 +71,9 @@ int Resampler::ResetIfNeeded(int inFreq, int outFreq, size_t num_channels) {
   int tmpInFreq_kHz = inFreq / 1000;
   int tmpOutFreq_kHz = outFreq / 1000;
 
-  if ((tmpInFreq_kHz != my_in_frequency_khz_)
-      || (tmpOutFreq_kHz != my_out_frequency_khz_)
-      || (num_channels != num_channels_)) {
+  if ((tmpInFreq_kHz != my_in_frequency_khz_) ||
+      (tmpOutFreq_kHz != my_out_frequency_khz_) ||
+      (num_channels != num_channels_)) {
     return Reset(inFreq, outFreq, num_channels);
   } else {
     return 0;
@@ -191,7 +189,7 @@ int Resampler::Reset(int inFreq, int outFreq, size_t num_channels) {
       // 2:6
       state1_ = malloc(sizeof(WebRtcSpl_State16khzTo48khz));
       WebRtcSpl_ResetResample16khzTo48khz(
-        static_cast<WebRtcSpl_State16khzTo48khz*>(state1_));
+          static_cast<WebRtcSpl_State16khzTo48khz*>(state1_));
       // 6:3
       state2_ = malloc(8 * sizeof(int32_t));
       memset(state2_, 0, 8 * sizeof(int32_t));
@@ -395,8 +393,11 @@ int Resampler::ComputeResamplerMode(int in_freq_hz,
 }
 
 // Synchronous resampling, all output samples are written to samplesOut
-int Resampler::Push(const int16_t * samplesIn, size_t lengthIn,
-                    int16_t* samplesOut, size_t maxLen, size_t& outLen) {
+int Resampler::Push(const int16_t* samplesIn,
+                    size_t lengthIn,
+                    int16_t* samplesOut,
+                    size_t maxLen,
+                    size_t& outLen) {
   if (num_channels_ == 2) {
     // Split up the signal and call the slave object for each channel
     int16_t* left =
@@ -575,7 +576,7 @@ int Resampler::Push(const int16_t * samplesIn, size_t lengthIn,
       if ((lengthIn % 160) != 0) {
         return -1;
       }
-      tmp = static_cast<int16_t*> (malloc(sizeof(int16_t) * lengthIn * 3));
+      tmp = static_cast<int16_t*>(malloc(sizeof(int16_t) * lengthIn * 3));
       tmp_mem = static_cast<int32_t*>(malloc(336 * sizeof(int32_t)));
       for (size_t i = 0; i < lengthIn; i += 160) {
         WebRtcSpl_Resample16khzTo48khz(
@@ -827,7 +828,7 @@ int Resampler::Push(const int16_t * samplesIn, size_t lengthIn,
         return -1;
       }
       // 3:6
-      tmp = static_cast<int16_t*> (malloc(sizeof(int16_t) * lengthIn * 2));
+      tmp = static_cast<int16_t*>(malloc(sizeof(int16_t) * lengthIn * 2));
       WebRtcSpl_UpsampleBy2(samplesIn, lengthIn, tmp,
                             static_cast<int32_t*>(state1_));
       lengthIn *= 2;
@@ -858,8 +859,8 @@ int Resampler::Push(const int16_t * samplesIn, size_t lengthIn,
         return -1;
       }
       tmp_mem = static_cast<int32_t*>(malloc(126 * sizeof(int32_t)));
-      tmp = static_cast<int16_t*>(
-          malloc((lengthIn * 4) / 11 * sizeof(int16_t)));
+      tmp =
+          static_cast<int16_t*>(malloc((lengthIn * 4) / 11 * sizeof(int16_t)));
 
       for (size_t i = 0; i < lengthIn; i += 220) {
         WebRtcSpl_Resample22khzTo8khz(

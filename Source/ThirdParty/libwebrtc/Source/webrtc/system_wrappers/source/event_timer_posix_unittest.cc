@@ -35,7 +35,7 @@ class EventTimerPosixTest : public testing::Test, public EventTimerPosix {
         main_event_(false, true),
         process_thread_id_(0),
         process_thread_(nullptr) {}
-  virtual ~EventTimerPosixTest() {}
+  ~EventTimerPosixTest() override {}
 
   rtc::PlatformThread* CreateThread() override {
     EXPECT_TRUE(process_thread_ == nullptr);

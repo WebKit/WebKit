@@ -18,15 +18,12 @@
 
 using std::min;
 
-class FakeAdmTest : public testing::Test,
-                    public webrtc::AudioTransport {
+class FakeAdmTest : public testing::Test, public webrtc::AudioTransport {
  protected:
   static const int kMsInSecond = 1000;
 
   FakeAdmTest()
-      : push_iterations_(0),
-        pull_iterations_(0),
-        rec_buffer_bytes_(0) {
+      : push_iterations_(0), pull_iterations_(0), rec_buffer_bytes_(0) {
     memset(rec_buffer_, 0, sizeof(rec_buffer_));
   }
 
@@ -50,8 +47,9 @@ class FakeAdmTest : public testing::Test,
     rtc::CritScope cs(&crit_);
     rec_buffer_bytes_ = nSamples * nBytesPerSample;
     if ((rec_buffer_bytes_ == 0) ||
-        (rec_buffer_bytes_ > FakeAudioCaptureModule::kNumberSamples *
-         FakeAudioCaptureModule::kNumberBytesPerSample)) {
+        (rec_buffer_bytes_ >
+         FakeAudioCaptureModule::kNumberSamples *
+             FakeAudioCaptureModule::kNumberBytesPerSample)) {
       ADD_FAILURE();
       return -1;
     }
@@ -60,13 +58,6 @@ class FakeAdmTest : public testing::Test,
     newMicLevel = currentMicLevel;
     return 0;
   }
-
-  void PushCaptureData(int voe_channel,
-                       const void* audio_data,
-                       int bits_per_sample,
-                       int sample_rate,
-                       size_t number_of_channels,
-                       size_t number_of_frames) override {}
 
   void PullRenderData(int bits_per_sample,
                       int sample_rate,
@@ -88,9 +79,10 @@ class FakeAdmTest : public testing::Test,
     rtc::CritScope cs(&crit_);
     ++pull_iterations_;
     const size_t audio_buffer_size = nSamples * nBytesPerSample;
-    const size_t bytes_out = RecordedDataReceived() ?
-        CopyFromRecBuffer(audioSamples, audio_buffer_size):
-        GenerateZeroBuffer(audioSamples, audio_buffer_size);
+    const size_t bytes_out =
+        RecordedDataReceived()
+            ? CopyFromRecBuffer(audioSamples, audio_buffer_size)
+            : GenerateZeroBuffer(audioSamples, audio_buffer_size);
     nSamplesOut = bytes_out / nBytesPerSample;
     *elapsed_time_ms = 0;
     *ntp_time_ms = 0;
@@ -109,9 +101,7 @@ class FakeAdmTest : public testing::Test,
   rtc::scoped_refptr<FakeAudioCaptureModule> fake_audio_capture_module_;
 
  private:
-  bool RecordedDataReceived() const {
-    return rec_buffer_bytes_ != 0;
-  }
+  bool RecordedDataReceived() const { return rec_buffer_bytes_ != 0; }
   size_t GenerateZeroBuffer(void* audio_buffer, size_t audio_buffer_size) {
     memset(audio_buffer, 0, audio_buffer_size);
     return audio_buffer_size;
@@ -137,9 +127,8 @@ TEST_F(FakeAdmTest, PlayoutTest) {
   EXPECT_EQ(0, fake_audio_capture_module_->RegisterAudioCallback(this));
 
   bool stereo_available = false;
-  EXPECT_EQ(0,
-            fake_audio_capture_module_->StereoPlayoutIsAvailable(
-                &stereo_available));
+  EXPECT_EQ(0, fake_audio_capture_module_->StereoPlayoutIsAvailable(
+                   &stereo_available));
   EXPECT_TRUE(stereo_available);
 
   EXPECT_NE(0, fake_audio_capture_module_->StartPlayout());
@@ -170,7 +159,7 @@ TEST_F(FakeAdmTest, RecordTest) {
 
   bool stereo_available = false;
   EXPECT_EQ(0, fake_audio_capture_module_->StereoRecordingIsAvailable(
-      &stereo_available));
+                   &stereo_available));
   EXPECT_FALSE(stereo_available);
 
   EXPECT_NE(0, fake_audio_capture_module_->StartRecording());

@@ -11,11 +11,11 @@
 #ifndef SYSTEM_WRAPPERS_INCLUDE_CPU_FEATURES_WRAPPER_H_
 #define SYSTEM_WRAPPERS_INCLUDE_CPU_FEATURES_WRAPPER_H_
 
+#include <stdint.h>
+
 #if defined(__cplusplus) || defined(c_plusplus)
 extern "C" {
 #endif
-
-#include "typedefs.h"  // NOLINT(build/include)
 
 // List of features in x86.
 typedef enum { kSSE2, kSSE3 } CPUFeature;

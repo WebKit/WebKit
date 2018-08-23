@@ -23,9 +23,10 @@ class FakeWebRtcVcmFactory : public cricket::WebRtcVcmFactoryInterface {
  public:
   virtual rtc::scoped_refptr<webrtc::VideoCaptureModule> Create(
       const char* device_id) {
-    if (!device_info.GetDeviceById(device_id)) return NULL;
+    if (!device_info.GetDeviceById(device_id))
+      return NULL;
     rtc::scoped_refptr<FakeWebRtcVideoCaptureModule> module(
-        new rtc::RefCountedObject<FakeWebRtcVideoCaptureModule>(this));
+        new rtc::RefCountedObject<FakeWebRtcVideoCaptureModule>());
     modules.push_back(module);
     return module;
   }
@@ -34,16 +35,8 @@ class FakeWebRtcVcmFactory : public cricket::WebRtcVcmFactoryInterface {
   }
   virtual void DestroyDeviceInfo(webrtc::VideoCaptureModule::DeviceInfo* info) {
   }
-  void OnDestroyed(webrtc::VideoCaptureModule* module) {
-    std::remove(modules.begin(), modules.end(), module);
-  }
   FakeWebRtcDeviceInfo device_info;
   std::vector<rtc::scoped_refptr<FakeWebRtcVideoCaptureModule>> modules;
 };
-
-FakeWebRtcVideoCaptureModule::~FakeWebRtcVideoCaptureModule() {
-  if (factory_)
-    factory_->OnDestroyed(this);
-}
 
 #endif  // MEDIA_ENGINE_FAKEWEBRTCVCMFACTORY_H_

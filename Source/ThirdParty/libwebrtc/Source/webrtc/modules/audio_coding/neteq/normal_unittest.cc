@@ -39,7 +39,7 @@ int ExpandProcess120ms(AudioMultiVector* output) {
   return 0;
 }
 
-} // namespace
+}  // namespace
 
 TEST(Normal, CreateAndDestroy) {
   MockDecoderDatabase db;
@@ -68,16 +68,10 @@ TEST(Normal, AvoidDivideByZero) {
   Normal normal(fs, &db, bgn, &expand);
 
   int16_t input[1000] = {0};
-  std::unique_ptr<int16_t[]> mute_factor_array(new int16_t[channels]);
-  for (size_t i = 0; i < channels; ++i) {
-    mute_factor_array[i] = 16384;
-  }
   AudioMultiVector output(channels);
 
   // Zero input length.
-  EXPECT_EQ(
-      0,
-      normal.Process(input, 0, kModeExpand, mute_factor_array.get(), &output));
+  EXPECT_EQ(0, normal.Process(input, 0, kModeExpand, &output));
   EXPECT_EQ(0u, output.Size());
 
   // Try to make energy_length >> scaling = 0;
@@ -90,11 +84,7 @@ TEST(Normal, AvoidDivideByZero) {
   // and using this as a denominator would lead to problems.
   int input_size_samples = 63;
   EXPECT_EQ(input_size_samples,
-            normal.Process(input,
-                           input_size_samples,
-                           kModeExpand,
-                           mute_factor_array.get(),
-                           &output));
+            normal.Process(input, input_size_samples, kModeExpand, &output));
 
   EXPECT_CALL(db, Die());      // Called when |db| goes out of scope.
   EXPECT_CALL(expand, Die());  // Called when |expand| goes out of scope.
@@ -114,18 +104,11 @@ TEST(Normal, InputLengthAndChannelsDoNotMatch) {
   Normal normal(fs, &db, bgn, &expand);
 
   int16_t input[1000] = {0};
-  std::unique_ptr<int16_t[]> mute_factor_array(new int16_t[channels]);
-  for (size_t i = 0; i < channels; ++i) {
-    mute_factor_array[i] = 16384;
-  }
   AudioMultiVector output(channels);
 
   // Let the number of samples be one sample less than 80 samples per channel.
   size_t input_len = 80 * channels - 1;
-  EXPECT_EQ(
-      0,
-      normal.Process(
-          input, input_len, kModeExpand, mute_factor_array.get(), &output));
+  EXPECT_EQ(0, normal.Process(input, input_len, kModeExpand, &output));
   EXPECT_EQ(0u, output.Size());
 
   EXPECT_CALL(db, Die());      // Called when |db| goes out of scope.
@@ -147,23 +130,13 @@ TEST(Normal, LastModeExpand120msPacket) {
   Normal normal(kFs, &db, bgn, &expand);
 
   int16_t input[kPacketsizeBytes] = {0};
-
-  std::unique_ptr<int16_t[]> mute_factor_array(new int16_t[kChannels]);
-  for (size_t i = 0; i < kChannels; ++i) {
-    mute_factor_array[i] = 16384;
-  }
-
   AudioMultiVector output(kChannels);
 
   EXPECT_CALL(expand, SetParametersForNormalAfterExpand());
   EXPECT_CALL(expand, Process(_)).WillOnce(Invoke(ExpandProcess120ms));
   EXPECT_CALL(expand, Reset());
   EXPECT_EQ(static_cast<int>(kPacketsizeBytes),
-            normal.Process(input,
-                           kPacketsizeBytes,
-                           kModeExpand,
-                           mute_factor_array.get(),
-                           &output));
+            normal.Process(input, kPacketsizeBytes, kModeExpand, &output));
 
   EXPECT_EQ(kPacketsizeBytes, output.Size());
 

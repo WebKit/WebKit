@@ -19,10 +19,6 @@ const SharedMemory::Handle SharedMemory::kInvalidHandle = -1;
 #endif
 
 SharedMemory::SharedMemory(void* data, size_t size, Handle handle, int id)
-  : data_(data),
-    size_(size),
-    handle_(handle),
-    id_(id) {
-}
+    : data_(data), size_(size), handle_(handle), id_(id) {}
 
 }  // namespace webrtc

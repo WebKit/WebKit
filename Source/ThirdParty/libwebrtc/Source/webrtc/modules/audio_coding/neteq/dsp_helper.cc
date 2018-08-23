@@ -21,41 +21,29 @@ namespace webrtc {
 
 // Table of constants used in method DspHelper::ParabolicFit().
 const int16_t DspHelper::kParabolaCoefficients[17][3] = {
-    { 120, 32, 64 },
-    { 140, 44, 75 },
-    { 150, 50, 80 },
-    { 160, 57, 85 },
-    { 180, 72, 96 },
-    { 200, 89, 107 },
-    { 210, 98, 112 },
-    { 220, 108, 117 },
-    { 240, 128, 128 },
-    { 260, 150, 139 },
-    { 270, 162, 144 },
-    { 280, 174, 149 },
-    { 300, 200, 160 },
-    { 320, 228, 171 },
-    { 330, 242, 176 },
-    { 340, 257, 181 },
-    { 360, 288, 192 } };
+    {120, 32, 64},   {140, 44, 75},   {150, 50, 80},   {160, 57, 85},
+    {180, 72, 96},   {200, 89, 107},  {210, 98, 112},  {220, 108, 117},
+    {240, 128, 128}, {260, 150, 139}, {270, 162, 144}, {280, 174, 149},
+    {300, 200, 160}, {320, 228, 171}, {330, 242, 176}, {340, 257, 181},
+    {360, 288, 192}};
 
 // Filter coefficients used when downsampling from the indicated sample rates
 // (8, 16, 32, 48 kHz) to 4 kHz. Coefficients are in Q12. The corresponding Q0
 // values are provided in the comments before each array.
 
 // Q0 values: {0.3, 0.4, 0.3}.
-const int16_t DspHelper::kDownsample8kHzTbl[3] = { 1229, 1638, 1229 };
+const int16_t DspHelper::kDownsample8kHzTbl[3] = {1229, 1638, 1229};
 
 // Q0 values: {0.15, 0.2, 0.3, 0.2, 0.15}.
-const int16_t DspHelper::kDownsample16kHzTbl[5] = { 614, 819, 1229, 819, 614 };
+const int16_t DspHelper::kDownsample16kHzTbl[5] = {614, 819, 1229, 819, 614};
 
 // Q0 values: {0.1425, 0.1251, 0.1525, 0.1628, 0.1525, 0.1251, 0.1425}.
-const int16_t DspHelper::kDownsample32kHzTbl[7] = {
-    584, 512, 625, 667, 625, 512, 584 };
+const int16_t DspHelper::kDownsample32kHzTbl[7] = {584, 512, 625, 667,
+                                                   625, 512, 584};
 
 // Q0 values: {0.2487, 0.0952, 0.1042, 0.1074, 0.1042, 0.0952, 0.2487}.
-const int16_t DspHelper::kDownsample48kHzTbl[7] = {
-    1019, 390, 427, 440, 427, 390, 1019 };
+const int16_t DspHelper::kDownsample48kHzTbl[7] = {1019, 390, 427, 440,
+                                                   427,  390, 1019};
 
 int DspHelper::RampSignal(const int16_t* input,
                           size_t length,
@@ -115,9 +103,12 @@ int DspHelper::RampSignal(AudioMultiVector* signal,
   return end_factor;
 }
 
-void DspHelper::PeakDetection(int16_t* data, size_t data_length,
-                              size_t num_peaks, int fs_mult,
-                              size_t* peak_index, int16_t* peak_value) {
+void DspHelper::PeakDetection(int16_t* data,
+                              size_t data_length,
+                              size_t num_peaks,
+                              int fs_mult,
+                              size_t* peak_index,
+                              int16_t* peak_value) {
   size_t min_index = 0;
   size_t max_index = 0;
 
@@ -163,8 +154,10 @@ void DspHelper::PeakDetection(int16_t* data, size_t data_length,
   }
 }
 
-void DspHelper::ParabolicFit(int16_t* signal_points, int fs_mult,
-                             size_t* peak_index, int16_t* peak_value) {
+void DspHelper::ParabolicFit(int16_t* signal_points,
+                             int fs_mult,
+                             size_t* peak_index,
+                             int16_t* peak_value) {
   uint16_t fit_index[13];
   if (fs_mult == 1) {
     fit_index[0] = 0;
@@ -204,23 +197,26 @@ void DspHelper::ParabolicFit(int16_t* signal_points, int fs_mult,
 
   //  num = -3 * signal_points[0] + 4 * signal_points[1] - signal_points[2];
   //  den =      signal_points[0] - 2 * signal_points[1] + signal_points[2];
-  int32_t num = (signal_points[0] * -3) + (signal_points[1] * 4)
-      - signal_points[2];
+  int32_t num =
+      (signal_points[0] * -3) + (signal_points[1] * 4) - signal_points[2];
   int32_t den = signal_points[0] + (signal_points[1] * -2) + signal_points[2];
   int32_t temp = num * 120;
   int flag = 1;
-  int16_t stp = kParabolaCoefficients[fit_index[fs_mult]][0]
-      - kParabolaCoefficients[fit_index[fs_mult - 1]][0];
-  int16_t strt = (kParabolaCoefficients[fit_index[fs_mult]][0]
-      + kParabolaCoefficients[fit_index[fs_mult - 1]][0]) / 2;
+  int16_t stp = kParabolaCoefficients[fit_index[fs_mult]][0] -
+                kParabolaCoefficients[fit_index[fs_mult - 1]][0];
+  int16_t strt = (kParabolaCoefficients[fit_index[fs_mult]][0] +
+                  kParabolaCoefficients[fit_index[fs_mult - 1]][0]) /
+                 2;
   int16_t lmt;
   if (temp < -den * strt) {
     lmt = strt - stp;
     while (flag) {
       if ((flag == fs_mult) || (temp > -den * lmt)) {
-        *peak_value = (den * kParabolaCoefficients[fit_index[fs_mult - flag]][1]
-            + num * kParabolaCoefficients[fit_index[fs_mult - flag]][2]
-            + signal_points[0] * 256) / 256;
+        *peak_value =
+            (den * kParabolaCoefficients[fit_index[fs_mult - flag]][1] +
+             num * kParabolaCoefficients[fit_index[fs_mult - flag]][2] +
+             signal_points[0] * 256) /
+            256;
         *peak_index = *peak_index * 2 * fs_mult - flag;
         flag = 0;
       } else {
@@ -233,9 +229,9 @@ void DspHelper::ParabolicFit(int16_t* signal_points, int fs_mult,
     while (flag) {
       if ((flag == fs_mult) || (temp < -den * lmt)) {
         int32_t temp_term_1 =
-            den * kParabolaCoefficients[fit_index[fs_mult+flag]][1];
+            den * kParabolaCoefficients[fit_index[fs_mult + flag]][1];
         int32_t temp_term_2 =
-            num * kParabolaCoefficients[fit_index[fs_mult+flag]][2];
+            num * kParabolaCoefficients[fit_index[fs_mult + flag]][2];
         int32_t temp_term_3 = signal_points[0] * 256;
         *peak_value = (temp_term_1 + temp_term_2 + temp_term_3) / 256;
         *peak_index = *peak_index * 2 * fs_mult + flag;
@@ -251,8 +247,10 @@ void DspHelper::ParabolicFit(int16_t* signal_points, int fs_mult,
   }
 }
 
-size_t DspHelper::MinDistortion(const int16_t* signal, size_t min_lag,
-                                size_t max_lag, size_t length,
+size_t DspHelper::MinDistortion(const int16_t* signal,
+                                size_t min_lag,
+                                size_t max_lag,
+                                size_t length,
                                 int32_t* distortion_value) {
   size_t best_index = 0;
   int32_t min_distortion = WEBRTC_SPL_WORD32_MAX;
@@ -273,9 +271,12 @@ size_t DspHelper::MinDistortion(const int16_t* signal, size_t min_lag,
   return best_index;
 }
 
-void DspHelper::CrossFade(const int16_t* input1, const int16_t* input2,
-                          size_t length, int16_t* mix_factor,
-                          int16_t factor_decrement, int16_t* output) {
+void DspHelper::CrossFade(const int16_t* input1,
+                          const int16_t* input2,
+                          size_t length,
+                          int16_t* mix_factor,
+                          int16_t factor_decrement,
+                          int16_t* output) {
   int16_t factor = *mix_factor;
   int16_t complement_factor = 16384 - factor;
   for (size_t i = 0; i < length; i++) {
@@ -287,8 +288,10 @@ void DspHelper::CrossFade(const int16_t* input1, const int16_t* input2,
   *mix_factor = factor;
 }
 
-void DspHelper::UnmuteSignal(const int16_t* input, size_t length,
-                             int16_t* factor, int increment,
+void DspHelper::UnmuteSignal(const int16_t* input,
+                             size_t length,
+                             int16_t* factor,
+                             int increment,
                              int16_t* output) {
   uint16_t factor_16b = *factor;
   int32_t factor_32b = (static_cast<int32_t>(factor_16b) << 6) + 32;
@@ -308,17 +311,20 @@ void DspHelper::MuteSignal(int16_t* signal, int mute_slope, size_t length) {
   }
 }
 
-int DspHelper::DownsampleTo4kHz(const int16_t* input, size_t input_length,
-                                size_t output_length, int input_rate_hz,
-                                bool compensate_delay, int16_t* output) {
+int DspHelper::DownsampleTo4kHz(const int16_t* input,
+                                size_t input_length,
+                                size_t output_length,
+                                int input_rate_hz,
+                                bool compensate_delay,
+                                int16_t* output) {
   // Set filter parameters depending on input frequency.
   // NOTE: The phase delay values are wrong compared to the true phase delay
   // of the filters. However, the error is preserved (through the +1 term) for
   // consistency.
   const int16_t* filter_coefficients;  // Filter coefficients.
-  size_t filter_length;  // Number of coefficients.
-  size_t filter_delay;  // Phase delay in samples.
-  int16_t factor;  // Conversion rate (inFsHz / 8000).
+  size_t filter_length;                // Number of coefficients.
+  size_t filter_delay;                 // Phase delay in samples.
+  int16_t factor;                      // Conversion rate (inFsHz / 8000).
   switch (input_rate_hz) {
     case 8000: {
       filter_length = 3;

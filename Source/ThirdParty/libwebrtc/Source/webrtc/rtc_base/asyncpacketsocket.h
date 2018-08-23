@@ -13,8 +13,8 @@
 
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/dscp.h"
-#include "rtc_base/sigslot.h"
 #include "rtc_base/socket.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/timeutils.h"
 
 namespace rtc {
@@ -24,23 +24,30 @@ namespace rtc {
 // after changing the value.
 struct PacketTimeUpdateParams {
   PacketTimeUpdateParams();
+  PacketTimeUpdateParams(const PacketTimeUpdateParams& other);
   ~PacketTimeUpdateParams();
 
-  int rtp_sendtime_extension_id;    // extension header id present in packet.
-  std::vector<char> srtp_auth_key;  // Authentication key.
-  int srtp_auth_tag_len;            // Authentication tag length.
-  int64_t srtp_packet_index;        // Required for Rtp Packet authentication.
+  int rtp_sendtime_extension_id = -1;  // extension header id present in packet.
+  std::vector<char> srtp_auth_key;     // Authentication key.
+  int srtp_auth_tag_len = -1;          // Authentication tag length.
+  int64_t srtp_packet_index = -1;  // Required for Rtp Packet authentication.
 };
 
 // This structure holds meta information for the packet which is about to send
 // over network.
 struct PacketOptions {
-  PacketOptions() : dscp(DSCP_NO_CHANGE), packet_id(-1) {}
-  explicit PacketOptions(DiffServCodePoint dscp) : dscp(dscp), packet_id(-1) {}
+  PacketOptions();
+  explicit PacketOptions(DiffServCodePoint dscp);
+  PacketOptions(const PacketOptions& other);
+  ~PacketOptions();
 
-  DiffServCodePoint dscp;
-  int packet_id;  // 16 bits, -1 represents "not set".
+  DiffServCodePoint dscp = DSCP_NO_CHANGE;
+  // When used with RTP packets (for example, webrtc::PacketOptions), the value
+  // should be 16 bits. A value of -1 represents "not set".
+  int64_t packet_id = -1;
   PacketTimeUpdateParams packet_time_params;
+  // PacketInfo is passed to SentPacket when signaling this packet is sent.
+  PacketInfo info_signaled_after_sent;
 };
 
 // This structure will have the information about when packet is actually
@@ -50,7 +57,7 @@ struct PacketTime {
   PacketTime(int64_t timestamp, int64_t not_before)
       : timestamp(timestamp), not_before(not_before) {}
 
-  int64_t timestamp;   // Receive time after socket delivers the data.
+  int64_t timestamp;  // Receive time after socket delivers the data.
 
   // Earliest possible time the data could have arrived, indicating the
   // potential error in the |timestamp| value, in case the system, is busy. For
@@ -86,8 +93,10 @@ class AsyncPacketSocket : public sigslot::has_slots<> {
   virtual SocketAddress GetRemoteAddress() const = 0;
 
   // Send a packet.
-  virtual int Send(const void *pv, size_t cb, const PacketOptions& options) = 0;
-  virtual int SendTo(const void *pv, size_t cb, const SocketAddress& addr,
+  virtual int Send(const void* pv, size_t cb, const PacketOptions& options) = 0;
+  virtual int SendTo(const void* pv,
+                     size_t cb,
+                     const SocketAddress& addr,
                      const PacketOptions& options) = 0;
 
   // Close the socket.
@@ -107,9 +116,12 @@ class AsyncPacketSocket : public sigslot::has_slots<> {
 
   // Emitted each time a packet is read. Used only for UDP and
   // connected TCP sockets.
-  sigslot::signal5<AsyncPacketSocket*, const char*, size_t,
+  sigslot::signal5<AsyncPacketSocket*,
+                   const char*,
+                   size_t,
                    const SocketAddress&,
-                   const PacketTime&> SignalReadPacket;
+                   const PacketTime&>
+      SignalReadPacket;
 
   // Emitted each time a packet is sent.
   sigslot::signal2<AsyncPacketSocket*, const SentPacket&> SignalSentPacket;
@@ -137,6 +149,11 @@ class AsyncPacketSocket : public sigslot::has_slots<> {
  private:
   RTC_DISALLOW_COPY_AND_ASSIGN(AsyncPacketSocket);
 };
+
+void CopySocketInformationToPacketInfo(size_t packet_size_bytes,
+                                       const AsyncPacketSocket& socket_from,
+                                       bool is_connectionless,
+                                       rtc::PacketInfo* info);
 
 }  // namespace rtc
 

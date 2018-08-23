@@ -16,7 +16,7 @@
 #include <limits>
 #include <utility>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
 #include "media/base/mediaconstants.h"
 #include "media/base/videocommon.h"
 #include "rtc_base/arraysize.h"
@@ -194,8 +194,8 @@ bool VideoAdapter::AdaptFrameResolution(int in_width,
   }
 
   // Calculate how the input should be cropped.
-  if (!requested_format_ ||
-      requested_format_->width == 0 || requested_format_->height == 0) {
+  if (!requested_format_ || requested_format_->width == 0 ||
+      requested_format_->height == 0) {
     *cropped_width = in_width;
     *cropped_height = in_height;
   } else {
@@ -236,8 +236,8 @@ bool VideoAdapter::AdaptFrameResolution(int in_width,
   if (scale.numerator != scale.denominator)
     ++frames_scaled_;
 
-  if (previous_width_ && (previous_width_ != *out_width ||
-                          previous_height_ != *out_height)) {
+  if (previous_width_ &&
+      (previous_width_ != *out_width || previous_height_ != *out_height)) {
     ++adaption_changes_;
     RTC_LOG(LS_INFO) << "Frame size changed: scaled " << frames_scaled_
                      << " / out " << frames_out_ << " / in " << frames_in_
@@ -255,14 +255,15 @@ bool VideoAdapter::AdaptFrameResolution(int in_width,
   return true;
 }
 
-void VideoAdapter::OnOutputFormatRequest(const VideoFormat& format) {
+void VideoAdapter::OnOutputFormatRequest(
+    const absl::optional<VideoFormat>& format) {
   rtc::CritScope cs(&critical_section_);
   requested_format_ = format;
-  next_frame_timestamp_ns_ = rtc::nullopt;
+  next_frame_timestamp_ns_ = absl::nullopt;
 }
 
 void VideoAdapter::OnResolutionFramerateRequest(
-    const rtc::Optional<int>& target_pixel_count,
+    const absl::optional<int>& target_pixel_count,
     int max_pixel_count,
     int max_framerate_fps) {
   rtc::CritScope cs(&critical_section_);

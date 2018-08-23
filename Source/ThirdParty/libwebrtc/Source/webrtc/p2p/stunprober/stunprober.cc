@@ -258,8 +258,7 @@ StunProber::StunProber(rtc::PacketSocketFactory* socket_factory,
     : interval_ms_(0),
       socket_factory_(socket_factory),
       thread_(thread),
-      networks_(networks) {
-}
+      networks_(networks) {}
 
 StunProber::~StunProber() {
   for (auto* req : requesters_) {

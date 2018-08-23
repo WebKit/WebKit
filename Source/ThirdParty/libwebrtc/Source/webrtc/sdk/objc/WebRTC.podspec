@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.license      = { :type => "BSD", :file => "LICENSE" }
   s.author    = "Google Inc."
 
-  s.platform     = :ios, "8.0"
+  s.platform     = :ios, "9.0"
 
   s.public_header_files = "WebRTC.framework/Headers/**/*.h"
   s.vendored_frameworks = "WebRTC.framework"

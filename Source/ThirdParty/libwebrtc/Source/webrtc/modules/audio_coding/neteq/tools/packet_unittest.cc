@@ -28,7 +28,7 @@ void MakeRtpHeader(int payload_type,
   rtp_data[0] = 0x80;
   rtp_data[1] = static_cast<uint8_t>(payload_type);
   rtp_data[2] = (seq_number >> 8) & 0xFF;
-  rtp_data[3] = (seq_number) & 0xFF;
+  rtp_data[3] = (seq_number)&0xFF;
   rtp_data[4] = timestamp >> 24;
   rtp_data[5] = (timestamp >> 16) & 0xFF;
   rtp_data[6] = (timestamp >> 8) & 0xFF;
@@ -47,8 +47,8 @@ TEST(TestPacket, RegularPacket) {
   const uint16_t kSequenceNumber = 4711;
   const uint32_t kTimestamp = 47114711;
   const uint32_t kSsrc = 0x12345678;
-  MakeRtpHeader(
-      kPayloadType, kSequenceNumber, kTimestamp, kSsrc, packet_memory);
+  MakeRtpHeader(kPayloadType, kSequenceNumber, kTimestamp, kSsrc,
+                packet_memory);
   const double kPacketTime = 1.0;
   // Hand over ownership of |packet_memory| to |packet|.
   Packet packet(packet_memory, kPacketLengthBytes, kPacketTime);
@@ -75,13 +75,11 @@ TEST(TestPacket, DummyPacket) {
   const uint16_t kSequenceNumber = 4711;
   const uint32_t kTimestamp = 47114711;
   const uint32_t kSsrc = 0x12345678;
-  MakeRtpHeader(
-      kPayloadType, kSequenceNumber, kTimestamp, kSsrc, packet_memory);
+  MakeRtpHeader(kPayloadType, kSequenceNumber, kTimestamp, kSsrc,
+                packet_memory);
   const double kPacketTime = 1.0;
   // Hand over ownership of |packet_memory| to |packet|.
-  Packet packet(packet_memory,
-                kPacketLengthBytes,
-                kVirtualPacketLengthBytes,
+  Packet packet(packet_memory, kPacketLengthBytes, kVirtualPacketLengthBytes,
                 kPacketTime);
   ASSERT_TRUE(packet.valid_header());
   EXPECT_EQ(kPayloadType, packet.header().payloadType);
@@ -140,8 +138,8 @@ TEST(TestPacket, RED) {
   const uint16_t kSequenceNumber = 4711;
   const uint32_t kTimestamp = 47114711;
   const uint32_t kSsrc = 0x12345678;
-  MakeRtpHeader(
-      kRedPayloadType, kSequenceNumber, kTimestamp, kSsrc, packet_memory);
+  MakeRtpHeader(kRedPayloadType, kSequenceNumber, kTimestamp, kSsrc,
+                packet_memory);
   // Create four RED headers.
   // Payload types are just the same as the block index the offset is 100 times
   // the block index.
@@ -154,8 +152,8 @@ TEST(TestPacket, RED) {
     uint32_t timestamp_offset = 100 * i;
     int block_length = 10 * i;
     bool last_block = (i == kRedBlocks - 1) ? true : false;
-    payload_ptr += MakeRedHeader(
-        payload_type, timestamp_offset, block_length, last_block, payload_ptr);
+    payload_ptr += MakeRedHeader(payload_type, timestamp_offset, block_length,
+                                 last_block, payload_ptr);
   }
   const double kPacketTime = 1.0;
   // Hand over ownership of |packet_memory| to |packet|.
@@ -178,8 +176,7 @@ TEST(TestPacket, RED) {
   EXPECT_EQ(kRedBlocks, static_cast<int>(red_headers.size()));
   int block_index = 0;
   for (std::list<RTPHeader*>::reverse_iterator it = red_headers.rbegin();
-       it != red_headers.rend();
-       ++it) {
+       it != red_headers.rend(); ++it) {
     // Reading list from the back, since the extraction puts the main payload
     // (which is the last one on wire) first.
     RTPHeader* red_block = *it;

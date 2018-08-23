@@ -46,7 +46,7 @@ TEST(CircularBufferTests, OverflowTest) {
 
 TEST(CircularBufferTests, ReadFromEmpty) {
   CircularBuffer test_buffer(3);
-  EXPECT_EQ(rtc::nullopt, test_buffer.Pop());
+  EXPECT_EQ(absl::nullopt, test_buffer.Pop());
 }
 
 }  // namespace webrtc

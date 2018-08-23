@@ -41,12 +41,13 @@ if (rtc_enable_protobuf) {
     deps = [
       ":network_tester_config_proto",
       ":network_tester_packet_proto",
-      "../../api:optional",
       "../../p2p",
+      "../../rtc_base:checks",
       "../../rtc_base:protobuf_utils",
       "../../rtc_base:rtc_base_approved",
       "../../rtc_base:rtc_task_queue",
       "../../rtc_base:sequenced_task_checker",
+      "//third_party/abseil-cpp/absl/types:optional",
     ]
 
     if (!build_with_chromium && is_clang) {
@@ -80,6 +81,7 @@ if (rtc_enable_protobuf) {
     deps = [
       ":network_tester",
       "../../rtc_base:rtc_base_tests_utils",
+      "../../test:fileutils",
       "../../test:test_support",
       "//testing/gtest",
     ]
@@ -88,10 +90,7 @@ if (rtc_enable_protobuf) {
       deps += [ ":network_tester_unittests_bundle_data" ]
     }
 
-    defines = [
-      "GTEST_RELATIVE_PATH",
-      "WEBRTC_NETWORK_TESTER_TEST_ENABLED",
-    ]
+    defines = [ "WEBRTC_NETWORK_TESTER_TEST_ENABLED" ]
 
     data = network_tester_unittests_resources
 
@@ -127,7 +126,6 @@ if (is_android) {
       ":NetworkTesterMobile_javalib",
       ":NetworkTesterMobile_resources",
       "../../rtc_base:base_java",
-      "//base:base_java",
     ]
 
     shared_libraries = [ "../../rtc_tools/network_tester:network_tester_so" ]
@@ -135,7 +133,7 @@ if (is_android) {
 
   android_library("NetworkTesterMobile_javalib") {
     testonly = true
-    android_manifest = "androidapp/AndroidManifest.xml"
+    android_manifest_for_lint = "androidapp/AndroidManifest.xml"
 
     java_files = [
       "androidapp/src/com/google/media/networktester/MainActivity.java",

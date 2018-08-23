@@ -21,8 +21,8 @@ BuildInfo::BuildInfo()
 
 std::string BuildInfo::GetStringFromJava(const char* name) {
   jmethodID id = j_build_info_.GetStaticMethodId(name, "()Ljava/lang/String;");
-  jstring j_string = static_cast<jstring>(
-      j_build_info_.CallStaticObjectMethod(id));
+  jstring j_string =
+      static_cast<jstring>(j_build_info_.CallStaticObjectMethod(id));
   return j_environment_->JavaToStdString(j_string);
 }
 

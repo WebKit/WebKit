@@ -11,9 +11,8 @@
 #ifndef MODULES_AUDIO_PROCESSING_VAD_POLE_ZERO_FILTER_H_
 #define MODULES_AUDIO_PROCESSING_VAD_POLE_ZERO_FILTER_H_
 
-#include <cstddef>
-
-#include "typedefs.h"  // NOLINT(build/include)
+#include <stddef.h>
+#include <stdint.h>
 
 namespace webrtc {
 

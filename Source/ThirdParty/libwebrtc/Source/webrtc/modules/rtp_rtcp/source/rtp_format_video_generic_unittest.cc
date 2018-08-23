@@ -63,8 +63,8 @@ TEST(RtpPacketizerVideoGeneric, AllPacketsMayBeEqualAndRespectMaxPayloadSize) {
   const size_t kMaxPayloadLen = 6;
   const size_t kLastPacketReductionLen = 2;
   const size_t kPayloadSize = 13;
-  RtpPacketizerGeneric packetizer(kVideoFrameKey, kMaxPayloadLen,
-                                  kLastPacketReductionLen);
+  RtpPacketizerGeneric packetizer(RTPVideoHeader(), kVideoFrameKey,
+                                  kMaxPayloadLen, kLastPacketReductionLen);
   size_t num_packets =
       packetizer.SetPayloadData(kTestPayload, kPayloadSize, nullptr);
   std::vector<size_t> payload_sizes = NextPacketFillPayloadSizes(&packetizer);
@@ -78,8 +78,8 @@ TEST(RtpPacketizerVideoGeneric,
   const size_t kMaxPayloadLen = 6;
   const size_t kLastPacketReductionLen = 2;
   const size_t kPayloadSize = 13;
-  RtpPacketizerGeneric packetizer(kVideoFrameKey, kMaxPayloadLen,
-                                  kLastPacketReductionLen);
+  RtpPacketizerGeneric packetizer(RTPVideoHeader(), kVideoFrameKey,
+                                  kMaxPayloadLen, kLastPacketReductionLen);
   size_t num_packets =
       packetizer.SetPayloadData(kTestPayload, kPayloadSize, nullptr);
   std::vector<size_t> payload_sizes = NextPacketFillPayloadSizes(&packetizer);
@@ -93,8 +93,8 @@ TEST(RtpPacketizerVideoGeneric,
   const size_t kMaxPayloadLen = 6;
   const size_t kLastPacketReductionLen = 2;
   const size_t kPayloadSize = 13;
-  RtpPacketizerGeneric packetizer(kVideoFrameKey, kMaxPayloadLen,
-                                  kLastPacketReductionLen);
+  RtpPacketizerGeneric packetizer(RTPVideoHeader(), kVideoFrameKey,
+                                  kMaxPayloadLen, kLastPacketReductionLen);
   size_t num_packets =
       packetizer.SetPayloadData(kTestPayload, kPayloadSize, nullptr);
   std::vector<size_t> payload_sizes = NextPacketFillPayloadSizes(&packetizer);
@@ -114,8 +114,8 @@ TEST(RtpPacketizerVideoGeneric,
   // generic header lengh for each packet minus last packet reduction).
   // 4 packets is enough for kPayloadSize.
   const size_t kMinNumPackets = 4;
-  RtpPacketizerGeneric packetizer(kVideoFrameKey, kMaxPayloadLen,
-                                  kLastPacketReductionLen);
+  RtpPacketizerGeneric packetizer(RTPVideoHeader(), kVideoFrameKey,
+                                  kMaxPayloadLen, kLastPacketReductionLen);
   size_t num_packets =
       packetizer.SetPayloadData(kTestPayload, kPayloadSize, nullptr);
   std::vector<size_t> payload_sizes = NextPacketFillPayloadSizes(&packetizer);
@@ -128,8 +128,8 @@ TEST(RtpPacketizerVideoGeneric, SomePacketsAreSmaller_RespectsMaxPayloadSize) {
   const size_t kMaxPayloadLen = 8;
   const size_t kLastPacketReductionLen = 5;
   const size_t kPayloadSize = 28;
-  RtpPacketizerGeneric packetizer(kVideoFrameKey, kMaxPayloadLen,
-                                  kLastPacketReductionLen);
+  RtpPacketizerGeneric packetizer(RTPVideoHeader(), kVideoFrameKey,
+                                  kMaxPayloadLen, kLastPacketReductionLen);
   size_t num_packets =
       packetizer.SetPayloadData(kTestPayload, kPayloadSize, nullptr);
   std::vector<size_t> payload_sizes = NextPacketFillPayloadSizes(&packetizer);
@@ -143,8 +143,8 @@ TEST(RtpPacketizerVideoGeneric,
   const size_t kMaxPayloadLen = 8;
   const size_t kLastPacketReductionLen = 5;
   const size_t kPayloadSize = 28;
-  RtpPacketizerGeneric packetizer(kVideoFrameKey, kMaxPayloadLen,
-                                  kLastPacketReductionLen);
+  RtpPacketizerGeneric packetizer(RTPVideoHeader(), kVideoFrameKey,
+                                  kMaxPayloadLen, kLastPacketReductionLen);
   size_t num_packets =
       packetizer.SetPayloadData(kTestPayload, kPayloadSize, nullptr);
   std::vector<size_t> payload_sizes = NextPacketFillPayloadSizes(&packetizer);
@@ -158,8 +158,8 @@ TEST(RtpPacketizerVideoGeneric,
   const size_t kMaxPayloadLen = 8;
   const size_t kLastPacketReductionLen = 5;
   const size_t kPayloadSize = 28;
-  RtpPacketizerGeneric packetizer(kVideoFrameKey, kMaxPayloadLen,
-                                  kLastPacketReductionLen);
+  RtpPacketizerGeneric packetizer(RTPVideoHeader(), kVideoFrameKey,
+                                  kMaxPayloadLen, kLastPacketReductionLen);
   size_t num_packets =
       packetizer.SetPayloadData(kTestPayload, kPayloadSize, nullptr);
   std::vector<size_t> payload_sizes = NextPacketFillPayloadSizes(&packetizer);
@@ -179,14 +179,94 @@ TEST(RtpPacketizerVideoGeneric,
   // generic header lengh for each packet minus last packet reduction).
   // 5 packets is enough for kPayloadSize.
   const size_t kMinNumPackets = 5;
-  RtpPacketizerGeneric packetizer(kVideoFrameKey, kMaxPayloadLen,
-                                  kLastPacketReductionLen);
+  RtpPacketizerGeneric packetizer(RTPVideoHeader(), kVideoFrameKey,
+                                  kMaxPayloadLen, kLastPacketReductionLen);
   size_t num_packets =
       packetizer.SetPayloadData(kTestPayload, kPayloadSize, nullptr);
   std::vector<size_t> payload_sizes = NextPacketFillPayloadSizes(&packetizer);
   EXPECT_THAT(payload_sizes, SizeIs(num_packets));
 
   EXPECT_EQ(num_packets, kMinNumPackets);
+}
+
+TEST(RtpPacketizerVideoGeneric, HasFrameIdWritesExtendedHeader) {
+  const size_t kMaxPayloadLen = 6;
+  const size_t kLastPacketReductionLen = 2;
+  const size_t kPayloadSize = 13;
+
+  RTPVideoHeader rtp_video_header;
+  rtp_video_header.frame_id = 37;
+  RtpPacketizerGeneric packetizer(rtp_video_header, kVideoFrameKey,
+                                  kMaxPayloadLen, kLastPacketReductionLen);
+  packetizer.SetPayloadData(kTestPayload, kPayloadSize, nullptr);
+
+  RtpPacketToSend packet(nullptr);
+  packetizer.NextPacket(&packet);
+
+  rtc::ArrayView<const uint8_t> payload = packet.payload();
+  EXPECT_TRUE(payload[0] & 0x04);  // Extended header bit is set.
+  // Frame id is 37.
+  EXPECT_EQ(0u, payload[1]);
+  EXPECT_EQ(37u, payload[2]);
+}
+
+TEST(RtpPacketizerVideoGeneric, FrameIdOver15bitsWrapsAround) {
+  const size_t kMaxPayloadLen = 6;
+  const size_t kLastPacketReductionLen = 2;
+  const size_t kPayloadSize = 13;
+
+  RTPVideoHeader rtp_video_header;
+  rtp_video_header.frame_id = 0x8137;
+  RtpPacketizerGeneric packetizer(rtp_video_header, kVideoFrameKey,
+                                  kMaxPayloadLen, kLastPacketReductionLen);
+  packetizer.SetPayloadData(kTestPayload, kPayloadSize, nullptr);
+
+  RtpPacketToSend packet(nullptr);
+  packetizer.NextPacket(&packet);
+
+  rtc::ArrayView<const uint8_t> payload = packet.payload();
+  EXPECT_TRUE(payload[0] & 0x04);  // Extended header bit is set.
+  // Frame id is 0x137.
+  EXPECT_EQ(0x01u, payload[1]);
+  EXPECT_EQ(0x37u, payload[2]);
+}
+
+TEST(RtpPacketizerVideoGeneric, NoFrameIdDoesNotWriteExtendedHeader) {
+  const size_t kMaxPayloadLen = 6;
+  const size_t kLastPacketReductionLen = 2;
+  const size_t kPayloadSize = 13;
+
+  RtpPacketizerGeneric packetizer(RTPVideoHeader(), kVideoFrameKey,
+                                  kMaxPayloadLen, kLastPacketReductionLen);
+  packetizer.SetPayloadData(kTestPayload, kPayloadSize, nullptr);
+
+  RtpPacketToSend packet(nullptr);
+  packetizer.NextPacket(&packet);
+
+  rtc::ArrayView<const uint8_t> payload = packet.payload();
+  EXPECT_FALSE(payload[0] & 0x04);
+}
+
+TEST(RtpDepacketizerVideoGeneric, NonExtendedHeaderNoFrameId) {
+  const size_t kPayloadLen = 1;
+  uint8_t payload[kPayloadLen] = {0x01};
+
+  RtpDepacketizerGeneric depacketizer;
+  RtpDepacketizer::ParsedPayload parsed_payload;
+  depacketizer.Parse(&parsed_payload, payload, kPayloadLen);
+
+  EXPECT_EQ(kNoPictureId, parsed_payload.video_header().frame_id);
+}
+
+TEST(RtpDepacketizerVideoGeneric, ExtendedHeaderParsesFrameId) {
+  const size_t kPayloadLen = 3;
+  uint8_t payload[kPayloadLen] = {0x05, 0x13, 0x37};
+
+  RtpDepacketizerGeneric depacketizer;
+  RtpDepacketizer::ParsedPayload parsed_payload;
+  depacketizer.Parse(&parsed_payload, payload, kPayloadLen);
+
+  EXPECT_EQ(0x1337, parsed_payload.video_header().frame_id);
 }
 
 }  // namespace webrtc

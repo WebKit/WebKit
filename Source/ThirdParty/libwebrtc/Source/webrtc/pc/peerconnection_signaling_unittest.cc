@@ -16,16 +16,18 @@
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/peerconnectionproxy.h"
+#include "api/video_codecs/builtin_video_decoder_factory.h"
+#include "api/video_codecs/builtin_video_encoder_factory.h"
 #include "pc/peerconnection.h"
 #include "pc/peerconnectionwrapper.h"
 #include "pc/sdputils.h"
 #ifdef WEBRTC_ANDROID
 #include "pc/test/androidtestinitializer.h"
 #endif
+#include "absl/memory/memory.h"
 #include "pc/test/fakeaudiocapturemodule.h"
 #include "pc/test/fakertccertificategenerator.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/stringutils.h"
 #include "rtc_base/virtualsocketserver.h"
 #include "test/gmock.h"
@@ -55,19 +57,23 @@ class PeerConnectionWrapperForSignalingTest : public PeerConnectionWrapper {
   }
 };
 
-class PeerConnectionSignalingTest : public ::testing::Test {
+class PeerConnectionSignalingBaseTest : public ::testing::Test {
  protected:
   typedef std::unique_ptr<PeerConnectionWrapperForSignalingTest> WrapperPtr;
 
-  PeerConnectionSignalingTest()
-      : vss_(new rtc::VirtualSocketServer()), main_(vss_.get()) {
+  explicit PeerConnectionSignalingBaseTest(SdpSemantics sdp_semantics)
+      : vss_(new rtc::VirtualSocketServer()),
+        main_(vss_.get()),
+        sdp_semantics_(sdp_semantics) {
 #ifdef WEBRTC_ANDROID
     InitializeAndroidObjects();
 #endif
     pc_factory_ = CreatePeerConnectionFactory(
         rtc::Thread::Current(), rtc::Thread::Current(), rtc::Thread::Current(),
-        FakeAudioCaptureModule::Create(), CreateBuiltinAudioEncoderFactory(),
-        CreateBuiltinAudioDecoderFactory(), nullptr, nullptr);
+        rtc::scoped_refptr<AudioDeviceModule>(FakeAudioCaptureModule::Create()),
+        CreateBuiltinAudioEncoderFactory(), CreateBuiltinAudioDecoderFactory(),
+        CreateBuiltinVideoEncoderFactory(), CreateBuiltinVideoDecoderFactory(),
+        nullptr /* audio_mixer */, nullptr /* audio_processing */);
   }
 
   WrapperPtr CreatePeerConnection() {
@@ -75,14 +81,16 @@ class PeerConnectionSignalingTest : public ::testing::Test {
   }
 
   WrapperPtr CreatePeerConnection(const RTCConfiguration& config) {
-    auto observer = rtc::MakeUnique<MockPeerConnectionObserver>();
-    auto pc = pc_factory_->CreatePeerConnection(config, nullptr, nullptr,
-                                                observer.get());
+    auto observer = absl::make_unique<MockPeerConnectionObserver>();
+    RTCConfiguration modified_config = config;
+    modified_config.sdp_semantics = sdp_semantics_;
+    auto pc = pc_factory_->CreatePeerConnection(modified_config, nullptr,
+                                                nullptr, observer.get());
     if (!pc) {
       return nullptr;
     }
 
-    return rtc::MakeUnique<PeerConnectionWrapperForSignalingTest>(
+    return absl::make_unique<PeerConnectionWrapperForSignalingTest>(
         pc_factory_, pc, std::move(observer));
   }
 
@@ -102,16 +110,24 @@ class PeerConnectionSignalingTest : public ::testing::Test {
   std::unique_ptr<rtc::VirtualSocketServer> vss_;
   rtc::AutoSocketServerThread main_;
   rtc::scoped_refptr<PeerConnectionFactoryInterface> pc_factory_;
+  const SdpSemantics sdp_semantics_;
 };
 
-TEST_F(PeerConnectionSignalingTest, SetLocalOfferTwiceWorks) {
+class PeerConnectionSignalingTest
+    : public PeerConnectionSignalingBaseTest,
+      public ::testing::WithParamInterface<SdpSemantics> {
+ protected:
+  PeerConnectionSignalingTest() : PeerConnectionSignalingBaseTest(GetParam()) {}
+};
+
+TEST_P(PeerConnectionSignalingTest, SetLocalOfferTwiceWorks) {
   auto caller = CreatePeerConnection();
 
   EXPECT_TRUE(caller->SetLocalDescription(caller->CreateOffer()));
   EXPECT_TRUE(caller->SetLocalDescription(caller->CreateOffer()));
 }
 
-TEST_F(PeerConnectionSignalingTest, SetRemoteOfferTwiceWorks) {
+TEST_P(PeerConnectionSignalingTest, SetRemoteOfferTwiceWorks) {
   auto caller = CreatePeerConnection();
   auto callee = CreatePeerConnection();
 
@@ -119,14 +135,14 @@ TEST_F(PeerConnectionSignalingTest, SetRemoteOfferTwiceWorks) {
   EXPECT_TRUE(callee->SetRemoteDescription(caller->CreateOffer()));
 }
 
-TEST_F(PeerConnectionSignalingTest, FailToSetNullLocalDescription) {
+TEST_P(PeerConnectionSignalingTest, FailToSetNullLocalDescription) {
   auto caller = CreatePeerConnection();
   std::string error;
   ASSERT_FALSE(caller->SetLocalDescription(nullptr, &error));
   EXPECT_EQ("SessionDescription is NULL.", error);
 }
 
-TEST_F(PeerConnectionSignalingTest, FailToSetNullRemoteDescription) {
+TEST_P(PeerConnectionSignalingTest, FailToSetNullRemoteDescription) {
   auto caller = CreatePeerConnection();
   std::string error;
   ASSERT_FALSE(caller->SetRemoteDescription(nullptr, &error));
@@ -142,14 +158,24 @@ TEST_F(PeerConnectionSignalingTest, FailToSetNullRemoteDescription) {
 // state the PeerConnection was created in before it was closed.
 
 class PeerConnectionSignalingStateTest
-    : public PeerConnectionSignalingTest,
-      public ::testing::WithParamInterface<std::tuple<SignalingState, bool>> {
+    : public PeerConnectionSignalingBaseTest,
+      public ::testing::WithParamInterface<
+          std::tuple<SdpSemantics, SignalingState, bool>> {
  protected:
+  PeerConnectionSignalingStateTest()
+      : PeerConnectionSignalingBaseTest(std::get<0>(GetParam())),
+        state_under_test_(std::make_tuple(std::get<1>(GetParam()),
+                                          std::get<2>(GetParam()))) {}
+
   RTCConfiguration GetConfig() {
     RTCConfiguration config;
     config.certificates.push_back(
         FakeRTCCertificateGenerator::GenerateCertificate());
     return config;
+  }
+
+  WrapperPtr CreatePeerConnectionUnderTest() {
+    return CreatePeerConnectionInState(state_under_test_);
   }
 
   WrapperPtr CreatePeerConnectionInState(SignalingState state) {
@@ -207,23 +233,12 @@ class PeerConnectionSignalingStateTest
 
     return wrapper;
   }
+
+  std::tuple<SignalingState, bool> state_under_test_;
 };
 
-::testing::AssertionResult AssertStartsWith(const char* str_expr,
-                                            const char* prefix_expr,
-                                            const std::string& str,
-                                            const std::string& prefix) {
-  if (rtc::starts_with(str.c_str(), prefix.c_str())) {
-    return ::testing::AssertionSuccess();
-  } else {
-    return ::testing::AssertionFailure()
-           << str_expr << "\nwhich is\n\"" << str << "\"\ndoes not start with\n"
-           << prefix_expr << "\nwhich is\n\"" << prefix << "\"";
-  }
-}
-
 TEST_P(PeerConnectionSignalingStateTest, CreateOffer) {
-  auto wrapper = CreatePeerConnectionInState(GetParam());
+  auto wrapper = CreatePeerConnectionUnderTest();
   if (wrapper->signaling_state() != SignalingState::kClosed) {
     EXPECT_TRUE(wrapper->CreateOffer());
   } else {
@@ -235,30 +250,21 @@ TEST_P(PeerConnectionSignalingStateTest, CreateOffer) {
 }
 
 TEST_P(PeerConnectionSignalingStateTest, CreateAnswer) {
-  auto wrapper = CreatePeerConnectionInState(GetParam());
+  auto wrapper = CreatePeerConnectionUnderTest();
   if (wrapper->signaling_state() == SignalingState::kHaveLocalPrAnswer ||
       wrapper->signaling_state() == SignalingState::kHaveRemoteOffer) {
     EXPECT_TRUE(wrapper->CreateAnswer());
   } else {
     std::string error;
     ASSERT_FALSE(wrapper->CreateAnswer(RTCOfferAnswerOptions(), &error));
-    if (wrapper->signaling_state() == SignalingState::kClosed) {
-      EXPECT_PRED_FORMAT2(AssertStartsWith, error,
-                          "CreateAnswer called when PeerConnection is closed.");
-    } else if (wrapper->signaling_state() ==
-               SignalingState::kHaveRemotePrAnswer) {
-      EXPECT_PRED_FORMAT2(AssertStartsWith, error,
-                          "CreateAnswer called without remote offer.");
-    } else {
-      EXPECT_PRED_FORMAT2(
-          AssertStartsWith, error,
-          "CreateAnswer can't be called before SetRemoteDescription.");
-    }
+    EXPECT_EQ(error,
+              "PeerConnection cannot create an answer in a state other than "
+              "have-remote-offer or have-local-pranswer.");
   }
 }
 
 TEST_P(PeerConnectionSignalingStateTest, SetLocalOffer) {
-  auto wrapper = CreatePeerConnectionInState(GetParam());
+  auto wrapper = CreatePeerConnectionUnderTest();
   if (wrapper->signaling_state() == SignalingState::kStable ||
       wrapper->signaling_state() == SignalingState::kHaveLocalOffer) {
     // Need to call CreateOffer on the PeerConnection under test, otherwise when
@@ -286,7 +292,7 @@ TEST_P(PeerConnectionSignalingStateTest, SetLocalPrAnswer) {
   auto pranswer =
       CloneSessionDescription(wrapper_for_pranswer->pc()->local_description());
 
-  auto wrapper = CreatePeerConnectionInState(GetParam());
+  auto wrapper = CreatePeerConnectionUnderTest();
   if (wrapper->signaling_state() == SignalingState::kHaveLocalPrAnswer ||
       wrapper->signaling_state() == SignalingState::kHaveRemoteOffer) {
     EXPECT_TRUE(wrapper->SetLocalDescription(std::move(pranswer)));
@@ -304,7 +310,7 @@ TEST_P(PeerConnectionSignalingStateTest, SetLocalAnswer) {
       CreatePeerConnectionInState(SignalingState::kHaveRemoteOffer);
   auto answer = wrapper_for_answer->CreateAnswer();
 
-  auto wrapper = CreatePeerConnectionInState(GetParam());
+  auto wrapper = CreatePeerConnectionUnderTest();
   if (wrapper->signaling_state() == SignalingState::kHaveLocalPrAnswer ||
       wrapper->signaling_state() == SignalingState::kHaveRemoteOffer) {
     EXPECT_TRUE(wrapper->SetLocalDescription(std::move(answer)));
@@ -323,7 +329,7 @@ TEST_P(PeerConnectionSignalingStateTest, SetRemoteOffer) {
   auto offer =
       CloneSessionDescription(wrapper_for_offer->pc()->remote_description());
 
-  auto wrapper = CreatePeerConnectionInState(GetParam());
+  auto wrapper = CreatePeerConnectionUnderTest();
   if (wrapper->signaling_state() == SignalingState::kStable ||
       wrapper->signaling_state() == SignalingState::kHaveRemoteOffer) {
     EXPECT_TRUE(wrapper->SetRemoteDescription(std::move(offer)));
@@ -342,7 +348,7 @@ TEST_P(PeerConnectionSignalingStateTest, SetRemotePrAnswer) {
   auto pranswer =
       CloneSessionDescription(wrapper_for_pranswer->pc()->remote_description());
 
-  auto wrapper = CreatePeerConnectionInState(GetParam());
+  auto wrapper = CreatePeerConnectionUnderTest();
   if (wrapper->signaling_state() == SignalingState::kHaveLocalOffer ||
       wrapper->signaling_state() == SignalingState::kHaveRemotePrAnswer) {
     EXPECT_TRUE(wrapper->SetRemoteDescription(std::move(pranswer)));
@@ -360,7 +366,7 @@ TEST_P(PeerConnectionSignalingStateTest, SetRemoteAnswer) {
       CreatePeerConnectionInState(SignalingState::kHaveRemoteOffer);
   auto answer = wrapper_for_answer->CreateAnswer();
 
-  auto wrapper = CreatePeerConnectionInState(GetParam());
+  auto wrapper = CreatePeerConnectionUnderTest();
   if (wrapper->signaling_state() == SignalingState::kHaveLocalOffer ||
       wrapper->signaling_state() == SignalingState::kHaveRemotePrAnswer) {
     EXPECT_TRUE(wrapper->SetRemoteDescription(std::move(answer)));
@@ -375,46 +381,35 @@ TEST_P(PeerConnectionSignalingStateTest, SetRemoteAnswer) {
 
 INSTANTIATE_TEST_CASE_P(PeerConnectionSignalingTest,
                         PeerConnectionSignalingStateTest,
-                        Combine(Values(SignalingState::kStable,
+                        Combine(Values(SdpSemantics::kPlanB,
+                                       SdpSemantics::kUnifiedPlan),
+                                Values(SignalingState::kStable,
                                        SignalingState::kHaveLocalOffer,
                                        SignalingState::kHaveLocalPrAnswer,
                                        SignalingState::kHaveRemoteOffer,
                                        SignalingState::kHaveRemotePrAnswer),
                                 Bool()));
 
-TEST_F(PeerConnectionSignalingTest,
-       CreateAnswerSucceedsIfStableAndRemoteDescriptionIsOffer) {
+// Test that CreateAnswer fails if a round of offer/answer has been done and
+// the PeerConnection is in the stable state.
+TEST_P(PeerConnectionSignalingTest, CreateAnswerFailsIfStable) {
   auto caller = CreatePeerConnection();
   auto callee = CreatePeerConnection();
 
-  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
-  ASSERT_TRUE(
-      caller->SetRemoteDescription(callee->CreateAnswerAndSetAsLocal()));
-
-  ASSERT_EQ(SignalingState::kStable, callee->signaling_state());
-  EXPECT_TRUE(callee->CreateAnswer());
-}
-
-TEST_F(PeerConnectionSignalingTest,
-       CreateAnswerFailsIfStableButRemoteDescriptionIsAnswer) {
-  auto caller = CreatePeerConnection();
-  auto callee = CreatePeerConnection();
-
-  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
-  ASSERT_TRUE(
-      caller->SetRemoteDescription(callee->CreateAnswerAndSetAsLocal()));
+  ASSERT_TRUE(caller->ExchangeOfferAnswerWith(callee.get()));
 
   ASSERT_EQ(SignalingState::kStable, caller->signaling_state());
-  std::string error;
-  ASSERT_FALSE(caller->CreateAnswer(RTCOfferAnswerOptions(), &error));
-  EXPECT_EQ("CreateAnswer called without remote offer.", error);
+  EXPECT_FALSE(caller->CreateAnswer());
+
+  ASSERT_EQ(SignalingState::kStable, callee->signaling_state());
+  EXPECT_FALSE(callee->CreateAnswer());
 }
 
 // According to https://tools.ietf.org/html/rfc3264#section-8, the session id
 // stays the same but the version must be incremented if a later, different
 // session description is generated. These two tests verify that is the case for
 // both offers and answers.
-TEST_F(PeerConnectionSignalingTest,
+TEST_P(PeerConnectionSignalingTest,
        SessionVersionIncrementedInSubsequentDifferentOffer) {
   auto caller = CreatePeerConnection();
   auto callee = CreatePeerConnection();
@@ -435,14 +430,14 @@ TEST_F(PeerConnectionSignalingTest,
   EXPECT_LT(rtc::FromString<uint64_t>(original_version),
             rtc::FromString<uint64_t>(later_offer->session_version()));
 }
-TEST_F(PeerConnectionSignalingTest,
+TEST_P(PeerConnectionSignalingTest,
        SessionVersionIncrementedInSubsequentDifferentAnswer) {
   auto caller = CreatePeerConnection();
   auto callee = CreatePeerConnection();
 
   ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
 
-  auto original_answer = callee->CreateAnswerAndSetAsLocal();
+  auto original_answer = callee->CreateAnswer();
   const std::string original_id = original_answer->session_id();
   const std::string original_version = original_answer->session_version();
 
@@ -456,7 +451,7 @@ TEST_F(PeerConnectionSignalingTest,
             rtc::FromString<uint64_t>(later_answer->session_version()));
 }
 
-TEST_F(PeerConnectionSignalingTest, InitiatorFlagSetOnCallerAndNotOnCallee) {
+TEST_P(PeerConnectionSignalingTest, InitiatorFlagSetOnCallerAndNotOnCallee) {
   auto caller = CreatePeerConnectionWithAudioVideo();
   auto callee = CreatePeerConnectionWithAudioVideo();
 
@@ -479,7 +474,7 @@ TEST_F(PeerConnectionSignalingTest, InitiatorFlagSetOnCallerAndNotOnCallee) {
 // PeerConnection and make sure we get success/failure callbacks for all of the
 // requests.
 // Background: crbug.com/507307
-TEST_F(PeerConnectionSignalingTest, CreateOffersAndShutdown) {
+TEST_P(PeerConnectionSignalingTest, CreateOffersAndShutdown) {
   auto caller = CreatePeerConnection();
 
   RTCOfferAnswerOptions options;
@@ -503,5 +498,10 @@ TEST_F(PeerConnectionSignalingTest, CreateOffersAndShutdown) {
     EXPECT_TRUE(observer->called());
   }
 }
+
+INSTANTIATE_TEST_CASE_P(PeerConnectionSignalingTest,
+                        PeerConnectionSignalingTest,
+                        Values(SdpSemantics::kPlanB,
+                               SdpSemantics::kUnifiedPlan));
 
 }  // namespace webrtc

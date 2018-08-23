@@ -37,7 +37,7 @@
     [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecH264Name],
     [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp8Name],
 #if !defined(RTC_DISABLE_VP9)
-    [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name]
+    [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name],
 #endif
   ];
 }

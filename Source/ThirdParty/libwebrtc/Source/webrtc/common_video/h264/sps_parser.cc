@@ -18,7 +18,7 @@
 #include "rtc_base/logging.h"
 
 namespace {
-typedef rtc::Optional<webrtc::SpsParser::SpsState> OptionalSps;
+typedef absl::optional<webrtc::SpsParser::SpsState> OptionalSps;
 
 #define RETURN_EMPTY_ON_FAIL(x) \
   if (!(x)) {                   \
@@ -31,19 +31,23 @@ constexpr int kScaldingDeltaMax = 127;
 
 namespace webrtc {
 
+SpsParser::SpsState::SpsState() = default;
+SpsParser::SpsState::SpsState(const SpsState&) = default;
+SpsParser::SpsState::~SpsState() = default;
+
 // General note: this is based off the 02/2014 version of the H.264 standard.
 // You can find it on this page:
 // http://www.itu.int/rec/T-REC-H.264
 
 // Unpack RBSP and parse SPS state from the supplied buffer.
-rtc::Optional<SpsParser::SpsState> SpsParser::ParseSps(const uint8_t* data,
-                                                       size_t length) {
+absl::optional<SpsParser::SpsState> SpsParser::ParseSps(const uint8_t* data,
+                                                        size_t length) {
   std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(data, length);
   rtc::BitBuffer bit_buffer(unpacked_buffer.data(), unpacked_buffer.size());
   return ParseSpsUpToVui(&bit_buffer);
 }
 
-rtc::Optional<SpsParser::SpsState> SpsParser::ParseSpsUpToVui(
+absl::optional<SpsParser::SpsState> SpsParser::ParseSpsUpToVui(
     rtc::BitBuffer* buffer) {
   // Now, we need to use a bit buffer to parse through the actual AVC SPS
   // format. See Section 7.3.2.1.1 ("Sequence parameter set data syntax") of the

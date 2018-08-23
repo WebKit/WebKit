@@ -90,7 +90,7 @@ void ResidualEchoDetector::AnalyzeCaptureAudio(
   }
 
   // Get the next render value.
-  const rtc::Optional<float> buffered_render_power = render_buffer_.Pop();
+  const absl::optional<float> buffered_render_power = render_buffer_.Pop();
   if (!buffered_render_power) {
     // This can happen in a few cases: at the start of a call, due to a glitch
     // or due to clock drift. The excess capture value will be ignored.
@@ -142,8 +142,9 @@ void ResidualEchoDetector::AnalyzeCaptureAudio(
       }
       RTC_DCHECK_LT(read_index, render_power_.size());
       RTC_LOG_F(LS_ERROR) << "Echo detector internal state: {"
-                          << "Echo likelihood: " << echo_likelihood_
-                          << ", Best Delay: " << best_delay << ", Covariance: "
+                             "Echo likelihood: "
+                          << echo_likelihood_ << ", Best Delay: " << best_delay
+                          << ", Covariance: "
                           << covariances_[best_delay].covariance()
                           << ", Last capture power: " << capture_power
                           << ", Capture mean: " << capture_mean
@@ -177,8 +178,10 @@ void ResidualEchoDetector::AnalyzeCaptureAudio(
                               : 0;
 }
 
-void ResidualEchoDetector::Initialize(int /*sample_rate_hz*/,
-                                      int /*num_channels*/) {
+void ResidualEchoDetector::Initialize(int /*capture_sample_rate_hz*/,
+                                      int /*num_capture_channels*/,
+                                      int /*render_sample_rate_hz*/,
+                                      int /*num_render_channels*/) {
   render_buffer_.Clear();
   std::fill(render_power_.begin(), render_power_.end(), 0.f);
   std::fill(render_power_mean_.begin(), render_power_mean_.end(), 0.f);

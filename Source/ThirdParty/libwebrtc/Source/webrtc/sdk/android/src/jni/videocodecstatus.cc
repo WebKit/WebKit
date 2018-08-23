@@ -15,8 +15,9 @@
 namespace webrtc {
 namespace jni {
 
-int32_t JavaToNativeVideoCodecStatus(JNIEnv* env,
-                                     jobject j_video_codec_status) {
+int32_t JavaToNativeVideoCodecStatus(
+    JNIEnv* env,
+    const JavaRef<jobject>& j_video_codec_status) {
   return Java_VideoCodecStatus_getNumber(env, j_video_codec_status);
 }
 

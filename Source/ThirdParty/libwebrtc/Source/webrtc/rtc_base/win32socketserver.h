@@ -75,17 +75,17 @@ class Win32Socket : public AsyncSocket {
   SOCKET socket_;
   int error_;
   ConnState state_;
-  SocketAddress addr_;         // address that we connected to (see DoConnect)
+  SocketAddress addr_;  // address that we connected to (see DoConnect)
   uint32_t connect_time_;
   bool closing_;
   int close_error_;
 
   class EventSink;
   friend class EventSink;
-  EventSink * sink_;
+  EventSink* sink_;
 
   struct DnsLookup;
-  DnsLookup * dns_;
+  DnsLookup* dns_;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -97,15 +97,10 @@ class Win32SocketServer : public SocketServer {
   Win32SocketServer();
   ~Win32SocketServer() override;
 
-  void set_modeless_dialog(HWND hdlg) {
-    hdlg_ = hdlg;
-  }
+  void set_modeless_dialog(HWND hdlg) { hdlg_ = hdlg; }
 
   // SocketServer Interface
-  Socket* CreateSocket(int type) override;
   Socket* CreateSocket(int family, int type) override;
-
-  AsyncSocket* CreateAsyncSocket(int type) override;
   AsyncSocket* CreateAsyncSocket(int family, int type) override;
 
   void SetMessageQueue(MessageQueue* queue) override;
@@ -120,13 +115,14 @@ class Win32SocketServer : public SocketServer {
   class MessageWindow : public Win32Window {
    public:
     explicit MessageWindow(Win32SocketServer* ss) : ss_(ss) {}
+
    private:
     bool OnMessage(UINT msg, WPARAM wp, LPARAM lp, LRESULT& result) override;
     Win32SocketServer* ss_;
   };
 
   static const TCHAR kWindowName[];
-  MessageQueue *message_queue_;
+  MessageQueue* message_queue_;
   MessageWindow wnd_;
   CriticalSection cs_;
   bool posted_;

@@ -10,8 +10,6 @@
 
 package org.webrtc;
 
-import org.webrtc.CameraEnumerationAndroid.CaptureFormat;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Rect;
@@ -24,11 +22,12 @@ import android.os.Build;
 import android.os.SystemClock;
 import android.util.AndroidException;
 import android.util.Range;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
+import org.webrtc.CameraEnumerationAndroid.CaptureFormat;
 
 @TargetApi(21)
 public class Camera2Enumerator implements CameraEnumerator {
@@ -41,7 +40,7 @@ public class Camera2Enumerator implements CameraEnumerator {
       new HashMap<String, List<CaptureFormat>>();
 
   final Context context;
-  final CameraManager cameraManager;
+  @Nullable final CameraManager cameraManager;
 
   public Camera2Enumerator(Context context) {
     this.context = context;
@@ -90,7 +89,7 @@ public class Camera2Enumerator implements CameraEnumerator {
     return new Camera2Capturer(context, deviceName, eventsHandler);
   }
 
-  private CameraCharacteristics getCameraCharacteristics(String deviceName) {
+  private @Nullable CameraCharacteristics getCameraCharacteristics(String deviceName) {
     try {
       return cameraManager.getCameraCharacteristics(deviceName);
       // On Android OS pre 4.4.2, a class will not load because of VerifyError if it contains a

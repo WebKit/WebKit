@@ -10,6 +10,7 @@
 
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 
+#include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor_extension.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
@@ -40,6 +41,7 @@ constexpr ExtensionInfo kExtensions[] = {
     CreateExtensionInfo<RtpStreamId>(),
     CreateExtensionInfo<RepairedRtpStreamId>(),
     CreateExtensionInfo<RtpMid>(),
+    CreateExtensionInfo<RtpGenericFrameDescriptorExtension>(),
 };
 
 // Because of kRtpExtensionNone, NumberOfExtension is 1 bigger than the actual

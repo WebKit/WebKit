@@ -11,8 +11,8 @@
 #ifndef RTC_BASE_ASYNCRESOLVERINTERFACE_H_
 #define RTC_BASE_ASYNCRESOLVERINTERFACE_H_
 
-#include "rtc_base/sigslot.h"
 #include "rtc_base/socketaddress.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace rtc {
 

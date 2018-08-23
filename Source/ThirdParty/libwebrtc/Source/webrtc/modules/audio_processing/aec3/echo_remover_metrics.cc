@@ -67,7 +67,7 @@ void EchoRemoverMetrics::Update(
     aec3::UpdateDbMetric(aec_state.Erl(), &erl_);
     erl_time_domain_.UpdateInstant(aec_state.ErlTimeDomain());
     aec3::UpdateDbMetric(aec_state.Erle(), &erle_);
-    erle_time_domain_.UpdateInstant(aec_state.ErleTimeDomain());
+    erle_time_domain_.UpdateInstant(aec_state.ErleTimeDomainLog2());
     aec3::UpdateDbMetric(comfort_noise_spectrum, &comfort_noise_);
     aec3::UpdateDbMetric(suppressor_gain, &suppressor_gain_);
     active_render_count_ += (aec_state.ActiveRender() ? 1 : 0);
@@ -237,7 +237,7 @@ void EchoRemoverMetrics::Update(
             static_cast<int>(
                 active_render_count_ > kMetricsCollectionBlocksBy2 ? 1 : 0));
         RTC_HISTOGRAM_COUNTS_LINEAR("WebRTC.Audio.EchoCanceller.FilterDelay",
-                                    aec_state.FilterDelay(), 0, 30, 31);
+                                    aec_state.FilterDelayBlocks(), 0, 30, 31);
         RTC_HISTOGRAM_BOOLEAN("WebRTC.Audio.EchoCanceller.CaptureSaturation",
                               static_cast<int>(saturated_capture_ ? 1 : 0));
         break;

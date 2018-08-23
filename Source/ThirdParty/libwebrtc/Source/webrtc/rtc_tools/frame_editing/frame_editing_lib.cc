@@ -16,19 +16,22 @@
 
 #include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "rtc_tools/frame_editing/frame_editing_lib.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
-int EditFrames(const std::string& in_path, int width, int height,
-               int first_frame_to_process, int interval,
-               int last_frame_to_process, const std::string& out_path) {
+int EditFrames(const std::string& in_path,
+               int width,
+               int height,
+               int first_frame_to_process,
+               int interval,
+               int last_frame_to_process,
+               const std::string& out_path) {
   if (last_frame_to_process < first_frame_to_process) {
     fprintf(stderr, "The set of frames to cut is empty! (l < f)\n");
     return -10;
   }
 
-  FILE* in_fid = fopen(in_path.c_str() , "rb");
+  FILE* in_fid = fopen(in_path.c_str(), "rb");
   if (!in_fid) {
     fprintf(stderr, "Could not read input file: %s.\n", in_path.c_str());
     return -11;
@@ -51,8 +54,8 @@ int EditFrames(const std::string& in_path, int width, int height,
   int num_frames_read_between = 0;
   size_t num_bytes_read;
 
-  while ((num_bytes_read = fread(temp_buffer.get(), 1, frame_length, in_fid))
-      == frame_length) {
+  while ((num_bytes_read = fread(temp_buffer.get(), 1, frame_length, in_fid)) ==
+         frame_length) {
     num_frames_read++;
     if ((num_frames_read < first_frame_to_process) ||
         (last_frame_to_process < num_frames_read)) {

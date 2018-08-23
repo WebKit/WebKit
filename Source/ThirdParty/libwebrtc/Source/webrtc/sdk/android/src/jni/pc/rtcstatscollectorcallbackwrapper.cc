@@ -18,26 +18,28 @@
 #include "sdk/android/generated_peerconnection_jni/jni/RTCStatsCollectorCallback_jni.h"
 #include "sdk/android/generated_peerconnection_jni/jni/RTCStatsReport_jni.h"
 #include "sdk/android/generated_peerconnection_jni/jni/RTCStats_jni.h"
-#include "sdk/android/src/jni/classreferenceholder.h"
+#include "sdk/android/native_api/jni/java_types.h"
 
 namespace webrtc {
 namespace jni {
 
 namespace {
 
-jobject NativeToJavaBigInteger(JNIEnv* env, uint64_t u) {
+ScopedJavaLocalRef<jobject> NativeToJavaBigInteger(JNIEnv* env, uint64_t u) {
   return JNI_BigInteger::Java_BigInteger_ConstructorJMBI_JLS(
       env, NativeToJavaString(env, rtc::ToString(u)));
 }
 
-jobjectArray NativeToJavaBigIntegerArray(
+ScopedJavaLocalRef<jobjectArray> NativeToJavaBigIntegerArray(
     JNIEnv* env,
     const std::vector<uint64_t>& container) {
   return NativeToJavaObjectArray(
       env, container, java_math_BigInteger_clazz(env), &NativeToJavaBigInteger);
 }
 
-jobject MemberToJava(JNIEnv* env, const RTCStatsMemberInterface& member) {
+ScopedJavaLocalRef<jobject> MemberToJava(
+    JNIEnv* env,
+    const RTCStatsMemberInterface& member) {
   switch (member.type()) {
     case RTCStatsMemberInterface::kBool:
       return NativeToJavaBoolean(env, *member.cast_to<RTCStatsMember<bool>>());
@@ -97,71 +99,45 @@ jobject MemberToJava(JNIEnv* env, const RTCStatsMemberInterface& member) {
   return nullptr;
 }
 
+ScopedJavaLocalRef<jobject> NativeToJavaRtcStats(JNIEnv* env,
+                                                 const RTCStats& stats) {
+  JavaMapBuilder builder(env);
+  for (auto* const member : stats.Members()) {
+    if (!member->is_defined())
+      continue;
+    builder.put(NativeToJavaString(env, member->name()),
+                MemberToJava(env, *member));
+  }
+  return Java_RTCStats_create(
+      env, stats.timestamp_us(), NativeToJavaString(env, stats.type()),
+      NativeToJavaString(env, stats.id()), builder.GetJavaMap());
+}
+
+ScopedJavaLocalRef<jobject> NativeToJavaRtcStatsReport(
+    JNIEnv* env,
+    const rtc::scoped_refptr<const RTCStatsReport>& report) {
+  ScopedJavaLocalRef<jobject> j_stats_map =
+      NativeToJavaMap(env, *report, [](JNIEnv* env, const RTCStats& stats) {
+        return std::make_pair(NativeToJavaString(env, stats.id()),
+                              NativeToJavaRtcStats(env, stats));
+      });
+  return Java_RTCStatsReport_create(env, report->timestamp_us(), j_stats_map);
+}
+
 }  // namespace
 
 RTCStatsCollectorCallbackWrapper::RTCStatsCollectorCallbackWrapper(
     JNIEnv* jni,
-    jobject j_callback)
-    : j_callback_global_(jni, j_callback),
-      j_linked_hash_map_class_(FindClass(jni, "java/util/LinkedHashMap")),
-      j_linked_hash_map_ctor_(
-          GetMethodID(jni, j_linked_hash_map_class_, "<init>", "()V")),
-      j_linked_hash_map_put_(GetMethodID(
-          jni,
-          j_linked_hash_map_class_,
-          "put",
-          "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")) {}
+    const JavaRef<jobject>& j_callback)
+    : j_callback_global_(jni, j_callback) {}
+
+RTCStatsCollectorCallbackWrapper::~RTCStatsCollectorCallbackWrapper() = default;
 
 void RTCStatsCollectorCallbackWrapper::OnStatsDelivered(
     const rtc::scoped_refptr<const RTCStatsReport>& report) {
   JNIEnv* jni = AttachCurrentThreadIfNeeded();
-  ScopedLocalRefFrame local_ref_frame(jni);
-  jobject j_report = ReportToJava(jni, report);
-  Java_RTCStatsCollectorCallback_onStatsDelivered(jni, *j_callback_global_,
-                                                  j_report);
-}
-
-jobject RTCStatsCollectorCallbackWrapper::ReportToJava(
-    JNIEnv* jni,
-    const rtc::scoped_refptr<const RTCStatsReport>& report) {
-  jobject j_stats_map =
-      jni->NewObject(j_linked_hash_map_class_, j_linked_hash_map_ctor_);
-  CHECK_EXCEPTION(jni) << "error during NewObject";
-  for (const RTCStats& stats : *report) {
-    // Create a local reference frame for each RTCStats, since there is a
-    // maximum number of references that can be created in one frame.
-    ScopedLocalRefFrame local_ref_frame(jni);
-    jstring j_id = NativeToJavaString(jni, stats.id());
-    jobject j_stats = StatsToJava(jni, stats);
-    jni->CallObjectMethod(j_stats_map, j_linked_hash_map_put_, j_id, j_stats);
-    CHECK_EXCEPTION(jni) << "error during CallObjectMethod";
-  }
-  jobject j_report =
-      Java_RTCStatsReport_create(jni, report->timestamp_us(), j_stats_map);
-  return j_report;
-}
-
-jobject RTCStatsCollectorCallbackWrapper::StatsToJava(JNIEnv* jni,
-                                                      const RTCStats& stats) {
-  jstring j_type = NativeToJavaString(jni, stats.type());
-  jstring j_id = NativeToJavaString(jni, stats.id());
-  jobject j_members =
-      jni->NewObject(j_linked_hash_map_class_, j_linked_hash_map_ctor_);
-  for (const RTCStatsMemberInterface* member : stats.Members()) {
-    if (!member->is_defined()) {
-      continue;
-    }
-    // Create a local reference frame for each member as well.
-    ScopedLocalRefFrame local_ref_frame(jni);
-    jstring j_name = NativeToJavaString(jni, member->name());
-    jobject j_member = MemberToJava(jni, *member);
-    jni->CallObjectMethod(j_members, j_linked_hash_map_put_, j_name, j_member);
-    CHECK_EXCEPTION(jni) << "error during CallObjectMethod";
-  }
-  jobject j_stats =
-      Java_RTCStats_create(jni, stats.timestamp_us(), j_type, j_id, j_members);
-  CHECK_EXCEPTION(jni) << "error during NewObject";
-  return j_stats;
+  Java_RTCStatsCollectorCallback_onStatsDelivered(
+      jni, j_callback_global_, NativeToJavaRtcStatsReport(jni, report));
 }
 
 }  // namespace jni

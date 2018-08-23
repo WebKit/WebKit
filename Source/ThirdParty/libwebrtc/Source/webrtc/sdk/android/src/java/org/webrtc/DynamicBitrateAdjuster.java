@@ -86,10 +86,13 @@ class DynamicBitrateAdjuster extends BaseBitrateAdjuster {
     timeSinceLastAdjustmentMs = 0;
   }
 
+  private double getBitrateAdjustmentScale() {
+    return Math.pow(BITRATE_ADJUSTMENT_MAX_SCALE,
+        (double) bitrateAdjustmentScaleExp / BITRATE_ADJUSTMENT_STEPS);
+  }
+
   @Override
   public int getAdjustedBitrateBps() {
-    return (int) (targetBitrateBps
-        * Math.pow(BITRATE_ADJUSTMENT_MAX_SCALE,
-              (double) bitrateAdjustmentScaleExp / BITRATE_ADJUSTMENT_STEPS));
+    return (int) (targetBitrateBps * getBitrateAdjustmentScale());
   }
 }

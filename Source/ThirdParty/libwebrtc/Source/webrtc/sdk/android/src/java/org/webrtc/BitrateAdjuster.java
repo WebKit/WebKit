@@ -26,6 +26,6 @@ interface BitrateAdjuster {
   /** Gets the current bitrate. */
   int getAdjustedBitrateBps();
 
-  /** Gets the current framerate. */
-  int getAdjustedFramerate();
+  /** Gets the framerate for initial codec configuration. */
+  int getCodecConfigFramerate();
 }

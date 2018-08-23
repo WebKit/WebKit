@@ -11,7 +11,7 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_PERFORMANCE_TEST_H_
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_PERFORMANCE_TEST_H_
 
-#include "typedefs.h"  // NOLINT(build/include)
+#include <stdint.h>
 
 namespace webrtc {
 namespace test {

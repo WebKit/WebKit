@@ -13,34 +13,35 @@ group("rtc_tools") {
   # This target shall build all targets in tools/.
   testonly = true
 
-  public_deps = [
+  deps = [
     ":command_line_parser",
     ":frame_analyzer",
     ":video_quality_analysis",
   ]
   if (!build_with_chromium) {
-    public_deps += [
+    deps += [
       ":frame_editor",
       ":psnr_ssim_analyzer",
       ":rgba_to_i420_converter",
     ]
     if (rtc_include_internal_audio_device) {
-      public_deps += [ ":force_mic_volume_max" ]
+      deps += [ ":force_mic_volume_max" ]
     }
     if (rtc_enable_protobuf) {
-      public_deps += [ ":chart_proto" ]
+      deps += [ ":chart_proto" ]
     }
   }
 
   if (rtc_include_tests) {
-    public_deps += [
+    deps += [
       ":activity_metric",
       ":tools_unittests",
     ]
     if (rtc_enable_protobuf) {
-      public_deps += [
+      deps += [
         ":event_log_visualizer",
         ":rtp_analyzer",
+        ":unpack_aecdump",
         "network_tester",
       ]
     }
@@ -63,13 +64,15 @@ rtc_static_library("video_quality_analysis") {
     "frame_analyzer/video_quality_analysis.cc",
     "frame_analyzer/video_quality_analysis.h",
   ]
-
-  public_deps = [
+  deps = [
     "../common_video",
+    "../test:perf_test",
+    "//third_party/libyuv",
   ]
 }
 
 rtc_executable("frame_analyzer") {
+  visibility = [ "*" ]
   sources = [
     "frame_analyzer/frame_analyzer.cc",
   ]
@@ -77,6 +80,7 @@ rtc_executable("frame_analyzer") {
   deps = [
     ":command_line_parser",
     ":video_quality_analysis",
+    "../test:perf_test",
     "//build/win:default_exe_manifest",
   ]
 }
@@ -120,6 +124,7 @@ if (!build_with_chromium) {
   }
 
   rtc_executable("rgba_to_i420_converter") {
+    visibility = [ "*" ]
     sources = [
       "converter/converter.cc",
       "converter/converter.h",
@@ -130,6 +135,7 @@ if (!build_with_chromium) {
       ":command_line_parser",
       "../common_video",
       "//build/win:default_exe_manifest",
+      "//third_party/libyuv",
     ]
   }
 
@@ -138,14 +144,6 @@ if (!build_with_chromium) {
       "frame_editing/frame_editing_lib.cc",
       "frame_editing/frame_editing_lib.h",
     ]
-
-    # TODO(jschuh): Bug 1348: fix this warning.
-    configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
-
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
 
     deps = [
       "..:webrtc_common",
@@ -172,13 +170,9 @@ if (!build_with_chromium) {
         "force_mic_volume_max/force_mic_volume_max.cc",
       ]
 
-      if (!build_with_chromium && is_clang) {
-        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-        suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-      }
-
       deps = [
         "../modules/audio_device",
+        "../modules/audio_device:audio_device_impl",
         "../system_wrappers:system_wrappers_default",
         "//build/win:default_exe_manifest",
       ]
@@ -194,6 +188,8 @@ if (!build_with_chromium) {
     }
 
     rtc_static_library("event_log_visualizer_utils") {
+      visibility = [ "*" ]
+      allow_poison = [ "audio_codecs" ]  # TODO(bugs.webrtc.org/8396): Remove.
       sources = [
         "event_log_visualizer/analyzer.cc",
         "event_log_visualizer/analyzer.h",
@@ -203,6 +199,7 @@ if (!build_with_chromium) {
         "event_log_visualizer/plot_protobuf.h",
         "event_log_visualizer/plot_python.cc",
         "event_log_visualizer/plot_python.h",
+        "event_log_visualizer/triage_notifications.h",
       ]
       if (!build_with_chromium && is_clang) {
         # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
@@ -210,27 +207,33 @@ if (!build_with_chromium) {
       }
       defines = [ "ENABLE_RTC_EVENT_LOG" ]
       deps = [
+        ":chart_proto",
+        "../:webrtc_common",
         "../call:call_interfaces",
         "../call:video_stream_api",
-        "../logging:rtc_event_log_impl",
+        "../logging:rtc_event_log_api",
+        "../logging:rtc_event_log_impl_base",
         "../logging:rtc_event_log_parser",
+        "../logging:rtc_stream_config",
         "../modules:module_api",
         "../modules/audio_coding:ana_debug_dump_proto",
+        "../modules/audio_coding:audio_network_adaptor",
         "../modules/audio_coding:neteq_tools",
+        "../modules/rtp_rtcp:rtp_rtcp_format",
+        "../rtc_base:checks",
         "../rtc_base:rtc_base_approved",
         "../rtc_base:rtc_numerics",
+        "../rtc_base:stringutils",
 
         # TODO(kwiberg): Remove this dependency.
         "../api/audio_codecs:audio_codecs_api",
         "../modules/congestion_controller",
+        "../modules/congestion_controller/goog_cc:delay_based_bwe",
+        "../modules/congestion_controller/goog_cc:estimators",
         "../modules/pacing",
         "../modules/rtp_rtcp",
         "../system_wrappers:system_wrappers_default",
-        "//build/config:exe_and_shlib_deps",
-      ]
-      public_deps = [
-        ":chart_proto",
-        "../logging:rtc_event_log_parser",
+        "//third_party/abseil-cpp/absl/memory",
       ]
     }
   }
@@ -252,8 +255,12 @@ if (rtc_include_tests) {
       defines = [ "ENABLE_RTC_EVENT_LOG" ]
       deps = [
         ":event_log_visualizer_utils",
+        "../logging:rtc_event_log_parser",
+        "../rtc_base:protobuf_utils",
         "../rtc_base:rtc_base_approved",
+        "../system_wrappers:field_trial_default",
         "../test:field_trial",
+        "../test:fileutils",
         "../test:test_support",
       ]
     }
@@ -265,15 +272,12 @@ if (rtc_include_tests) {
       "agc/activity_metric.cc",
     ]
 
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-
     deps = [
-      "../modules:module_api",
-      "../modules/audio_processing",
+      "../api/audio:audio_frame_api",
+      "../modules/audio_processing/agc:level_estimation",
+      "../modules/audio_processing/vad",
       "../rtc_base:rtc_base_approved",
+      "../rtc_base:safe_minmax",
       "../system_wrappers:metrics_default",
       "../test:test_support",
       "//build/win:default_exe_manifest",
@@ -308,9 +312,6 @@ if (rtc_include_tests) {
       "simple_command_line_parser_unittest.cc",
     ]
 
-    # TODO(jschuh): Bug 1348: fix this warning.
-    configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
-
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
@@ -321,9 +322,13 @@ if (rtc_include_tests) {
       ":frame_editing_lib",
       ":reference_less_video_analysis_lib",
       ":video_quality_analysis",
+      "../common_video:common_video",
       "../rtc_base",
+      "../rtc_base:checks",
+      "../test:fileutils",
       "../test:test_main",
       "//testing/gtest",
+      "//third_party/abseil-cpp/absl/memory",
     ]
 
     if (rtc_enable_protobuf) {
@@ -354,6 +359,27 @@ if (rtc_include_tests) {
       deps = [
         "../logging:rtc_event_log_proto",
       ]
-    }
+    }  # rtp_analyzer
+
+    rtc_executable("unpack_aecdump") {
+      visibility = [ "*" ]
+      testonly = true
+      sources = [
+        "unpack_aecdump/unpack.cc",
+      ]
+
+      deps = [
+        "..:webrtc_common",
+        "../common_audio",
+        "../modules/audio_processing",
+        "../modules/audio_processing:audioproc_debug_proto",
+        "../modules/audio_processing:audioproc_debug_proto",
+        "../modules/audio_processing:audioproc_protobuf_utils",
+        "../modules/audio_processing:audioproc_test_utils",
+        "../rtc_base:protobuf_utils",
+        "../rtc_base:rtc_base_approved",
+        "../system_wrappers:system_wrappers_default",
+      ]
+    }  # unpack_aecdump
   }
 }

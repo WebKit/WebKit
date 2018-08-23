@@ -16,7 +16,6 @@
 #define COMMON_AUDIO_VAD_VAD_FILTERBANK_H_
 
 #include "common_audio/vad/vad_core.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 // Takes |data_length| samples of |data_in| and calculates the logarithm of the
 // energy of each of the |kNumChannels| = 6 frequency bands used by the VAD:
@@ -38,7 +37,9 @@
 // - features     [o]   : 10 * log10(energy in each frequency band), Q4.
 // - returns            : Total energy of the signal (NOTE! This value is not
 //                        exact. It is only used in a comparison.)
-int16_t WebRtcVad_CalculateFeatures(VadInstT* self, const int16_t* data_in,
-                                    size_t data_length, int16_t* features);
+int16_t WebRtcVad_CalculateFeatures(VadInstT* self,
+                                    const int16_t* data_in,
+                                    size_t data_length,
+                                    int16_t* features);
 
 #endif  // COMMON_AUDIO_VAD_VAD_FILTERBANK_H_

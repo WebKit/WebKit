@@ -10,9 +10,9 @@
 
 #include "modules/desktop_capture/win/dxgi_texture_mapping.h"
 
-#include <comdef.h>
 #include <DXGI.h>
 #include <DXGI1_2.h>
+#include <comdef.h>
 
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"

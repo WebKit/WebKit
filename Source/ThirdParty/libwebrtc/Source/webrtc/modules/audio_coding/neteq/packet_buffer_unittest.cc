@@ -175,21 +175,22 @@ TEST(PacketBuffer, InsertPacketList) {
 
   MockDecoderDatabase decoder_database;
   auto factory = CreateBuiltinAudioDecoderFactory();
-  const DecoderDatabase::DecoderInfo info(NetEqDecoder::kDecoderPCMu, factory);
+  const DecoderDatabase::DecoderInfo info(NetEqDecoder::kDecoderPCMu,
+                                          absl::nullopt, factory);
   EXPECT_CALL(decoder_database, GetDecoderInfo(0))
       .WillRepeatedly(Return(&info));
 
   StrictMock<MockStatisticsCalculator> mock_stats;
 
-  rtc::Optional<uint8_t> current_pt;
-  rtc::Optional<uint8_t> current_cng_pt;
+  absl::optional<uint8_t> current_pt;
+  absl::optional<uint8_t> current_cng_pt;
   EXPECT_EQ(PacketBuffer::kOK,
             buffer.InsertPacketList(&list, decoder_database, &current_pt,
                                     &current_cng_pt, &mock_stats));
   EXPECT_TRUE(list.empty());  // The PacketBuffer should have depleted the list.
   EXPECT_EQ(10u, buffer.NumPacketsInBuffer());
   EXPECT_EQ(0, current_pt);      // Current payload type changed to 0.
-  EXPECT_EQ(rtc::nullopt, current_cng_pt);  // CNG payload type not changed.
+  EXPECT_EQ(absl::nullopt, current_cng_pt);  // CNG payload type not changed.
 
   buffer.Flush();  // Clean up.
 
@@ -219,24 +220,26 @@ TEST(PacketBuffer, InsertPacketListChangePayloadType) {
 
   MockDecoderDatabase decoder_database;
   auto factory = CreateBuiltinAudioDecoderFactory();
-  const DecoderDatabase::DecoderInfo info0(NetEqDecoder::kDecoderPCMu, factory);
+  const DecoderDatabase::DecoderInfo info0(NetEqDecoder::kDecoderPCMu,
+                                           absl::nullopt, factory);
   EXPECT_CALL(decoder_database, GetDecoderInfo(0))
       .WillRepeatedly(Return(&info0));
-  const DecoderDatabase::DecoderInfo info1(NetEqDecoder::kDecoderPCMa, factory);
+  const DecoderDatabase::DecoderInfo info1(NetEqDecoder::kDecoderPCMa,
+                                           absl::nullopt, factory);
   EXPECT_CALL(decoder_database, GetDecoderInfo(1))
       .WillRepeatedly(Return(&info1));
 
   StrictMock<MockStatisticsCalculator> mock_stats;
 
-  rtc::Optional<uint8_t> current_pt;
-  rtc::Optional<uint8_t> current_cng_pt;
+  absl::optional<uint8_t> current_pt;
+  absl::optional<uint8_t> current_cng_pt;
   EXPECT_EQ(PacketBuffer::kFlushed,
             buffer.InsertPacketList(&list, decoder_database, &current_pt,
                                     &current_cng_pt, &mock_stats));
   EXPECT_TRUE(list.empty());  // The PacketBuffer should have depleted the list.
   EXPECT_EQ(1u, buffer.NumPacketsInBuffer());  // Only the last packet.
   EXPECT_EQ(1, current_pt);      // Current payload type changed to 1.
-  EXPECT_EQ(rtc::nullopt, current_cng_pt);  // CNG payload type not changed.
+  EXPECT_EQ(absl::nullopt, current_cng_pt);  // CNG payload type not changed.
 
   buffer.Flush();  // Clean up.
 
@@ -310,7 +313,7 @@ TEST(PacketBuffer, ExtractOrderRedundancy) {
   EXPECT_EQ(kExpectPacketsInBuffer, buffer.NumPacketsInBuffer());
 
   for (size_t i = 0; i < kExpectPacketsInBuffer; ++i) {
-    const rtc::Optional<Packet> packet = buffer.GetNextPacket();
+    const absl::optional<Packet> packet = buffer.GetNextPacket();
     EXPECT_EQ(packet, expect_order[i]);  // Compare contents.
   }
   EXPECT_TRUE(buffer.Empty());
@@ -404,11 +407,12 @@ TEST(PacketBuffer, Reordering) {
 
   MockDecoderDatabase decoder_database;
   auto factory = CreateBuiltinAudioDecoderFactory();
-  const DecoderDatabase::DecoderInfo info(NetEqDecoder::kDecoderPCMu, factory);
+  const DecoderDatabase::DecoderInfo info(NetEqDecoder::kDecoderPCMu,
+                                          absl::nullopt, factory);
   EXPECT_CALL(decoder_database, GetDecoderInfo(0))
       .WillRepeatedly(Return(&info));
-  rtc::Optional<uint8_t> current_pt;
-  rtc::Optional<uint8_t> current_cng_pt;
+  absl::optional<uint8_t> current_pt;
+  absl::optional<uint8_t> current_cng_pt;
 
   StrictMock<MockStatisticsCalculator> mock_stats;
 
@@ -420,7 +424,7 @@ TEST(PacketBuffer, Reordering) {
   // Extract them and make sure that come out in the right order.
   uint32_t current_ts = start_ts;
   for (int i = 0; i < 10; ++i) {
-    const rtc::Optional<Packet> packet = buffer.GetNextPacket();
+    const absl::optional<Packet> packet = buffer.GetNextPacket();
     ASSERT_TRUE(packet);
     EXPECT_EQ(current_ts, packet->timestamp);
     current_ts += ts_increment;
@@ -444,11 +448,11 @@ TEST(PacketBuffer, CngFirstThenSpeechWithNewSampleRate) {
   MockDecoderDatabase decoder_database;
   auto factory = CreateBuiltinAudioDecoderFactory();
   const DecoderDatabase::DecoderInfo info_cng(NetEqDecoder::kDecoderCNGnb,
-                                              factory);
+                                              absl::nullopt, factory);
   EXPECT_CALL(decoder_database, GetDecoderInfo(kCngPt))
       .WillRepeatedly(Return(&info_cng));
   const DecoderDatabase::DecoderInfo info_speech(NetEqDecoder::kDecoderPCM16Bwb,
-                                                 factory);
+                                                 absl::nullopt, factory);
   EXPECT_CALL(decoder_database, GetDecoderInfo(kSpeechPt))
       .WillRepeatedly(Return(&info_speech));
 
@@ -456,8 +460,8 @@ TEST(PacketBuffer, CngFirstThenSpeechWithNewSampleRate) {
   PacketGenerator gen(0, 0, kCngPt, 10);
   PacketList list;
   list.push_back(gen.NextPacket(kPayloadLen));
-  rtc::Optional<uint8_t> current_pt;
-  rtc::Optional<uint8_t> current_cng_pt;
+  absl::optional<uint8_t> current_pt;
+  absl::optional<uint8_t> current_cng_pt;
 
   StrictMock<MockStatisticsCalculator> mock_stats;
 
@@ -468,7 +472,7 @@ TEST(PacketBuffer, CngFirstThenSpeechWithNewSampleRate) {
   EXPECT_EQ(1u, buffer.NumPacketsInBuffer());
   ASSERT_TRUE(buffer.PeekNextPacket());
   EXPECT_EQ(kCngPt, buffer.PeekNextPacket()->payload_type);
-  EXPECT_EQ(current_pt, rtc::nullopt);  // Current payload type not set.
+  EXPECT_EQ(current_pt, absl::nullopt);  // Current payload type not set.
   EXPECT_EQ(kCngPt, current_cng_pt);  // CNG payload type set.
 
   // Insert second packet, which is wide-band speech.
@@ -488,7 +492,7 @@ TEST(PacketBuffer, CngFirstThenSpeechWithNewSampleRate) {
   EXPECT_EQ(kSpeechPt, buffer.PeekNextPacket()->payload_type);
 
   EXPECT_EQ(kSpeechPt, current_pt);  // Current payload type set.
-  EXPECT_EQ(rtc::nullopt, current_cng_pt);  // CNG payload type reset.
+  EXPECT_EQ(absl::nullopt, current_cng_pt);  // CNG payload type reset.
 
   buffer.Flush();                        // Clean up.
   EXPECT_CALL(decoder_database, Die());  // Called when object is deleted.
@@ -545,11 +549,12 @@ TEST(PacketBuffer, Failures) {
   list.push_back(gen.NextPacket(payload_len));  // Valid packet.
   MockDecoderDatabase decoder_database;
   auto factory = CreateBuiltinAudioDecoderFactory();
-  const DecoderDatabase::DecoderInfo info(NetEqDecoder::kDecoderPCMu, factory);
+  const DecoderDatabase::DecoderInfo info(NetEqDecoder::kDecoderPCMu,
+                                          absl::nullopt, factory);
   EXPECT_CALL(decoder_database, GetDecoderInfo(0))
       .WillRepeatedly(Return(&info));
-  rtc::Optional<uint8_t> current_pt;
-  rtc::Optional<uint8_t> current_cng_pt;
+  absl::optional<uint8_t> current_pt;
+  absl::optional<uint8_t> current_cng_pt;
   EXPECT_EQ(PacketBuffer::kInvalidPacket,
             buffer->InsertPacketList(&list, decoder_database, &current_pt,
                                      &current_cng_pt, &mock_stats));

@@ -11,9 +11,10 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_SUBTRACTOR_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_SUBTRACTOR_H_
 
-#include <array>
 #include <algorithm>
+#include <array>
 #include <vector>
+#include "math.h"
 
 #include "modules/audio_processing/aec3/adaptive_fir_filter.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
@@ -53,33 +54,69 @@ class Subtractor {
   // Returns the block-wise frequency response for the main adaptive filter.
   const std::vector<std::array<float, kFftLengthBy2Plus1>>&
   FilterFrequencyResponse() const {
-    return main_filter_converged_ || (!shadow_filter_converged_)
-               ? main_filter_.FilterFrequencyResponse()
-               : shadow_filter_.FilterFrequencyResponse();
+    return main_filter_.FilterFrequencyResponse();
   }
 
   // Returns the estimate of the impulse response for the main adaptive filter.
   const std::vector<float>& FilterImpulseResponse() const {
-    return main_filter_converged_ || (!shadow_filter_converged_)
-               ? main_filter_.FilterImpulseResponse()
-               : shadow_filter_.FilterImpulseResponse();
+    return main_filter_.FilterImpulseResponse();
   }
 
-  bool ConvergedFilter() const {
-    return main_filter_converged_ || shadow_filter_converged_;
+  void DumpFilters() {
+    main_filter_.DumpFilter("aec3_subtractor_H_main", "aec3_subtractor_h_main");
+    shadow_filter_.DumpFilter("aec3_subtractor_H_shadow",
+                              "aec3_subtractor_h_shadow");
   }
 
  private:
+  class FilterMisadjustmentEstimator {
+   public:
+    FilterMisadjustmentEstimator() = default;
+    ~FilterMisadjustmentEstimator() = default;
+    // Update the misadjustment estimator.
+    void Update(const SubtractorOutput& output);
+    // GetMisadjustment() Returns a recommended scale for the filter so the
+    // prediction error energy gets closer to the energy that is seen at the
+    // microphone input.
+    float GetMisadjustment() const {
+      RTC_DCHECK_GT(inv_misadjustment_, 0.0f);
+      // It is not aiming to adjust all the estimated mismatch. Instead,
+      // it adjusts half of that estimated mismatch.
+      return 2.f / sqrtf(inv_misadjustment_);
+    }
+    // Returns true if the prediciton error energy is significantly larger
+    // than the microphone signal energy and, therefore, an adjustment is
+    // recommended.
+    bool IsAdjustmentNeeded() const { return inv_misadjustment_ > 10.f; }
+    void Reset();
+    void Dump(ApmDataDumper* data_dumper) const;
+
+   private:
+    const int n_blocks_ = 4;
+    int n_blocks_acum_ = 0;
+    float e2_acum_ = 0.f;
+    float y2_acum_ = 0.f;
+    float inv_misadjustment_ = 0.f;
+    int overhang_ = 0.f;
+  };
+
   const Aec3Fft fft_;
   ApmDataDumper* data_dumper_;
   const Aec3Optimization optimization_;
   const EchoCanceller3Config config_;
+  const bool adaptation_during_saturation_;
+  const bool enable_misadjustment_estimator_;
+  const bool enable_agc_gain_change_response_;
+  const bool enable_shadow_filter_jumpstart_;
+  const bool enable_shadow_filter_boosted_jumpstart_;
+  const bool enable_early_shadow_filter_jumpstart_;
+
   AdaptiveFirFilter main_filter_;
   AdaptiveFirFilter shadow_filter_;
   MainFilterUpdateGain G_main_;
   ShadowFilterUpdateGain G_shadow_;
-  bool main_filter_converged_ = false;
-  bool shadow_filter_converged_ = false;
+  FilterMisadjustmentEstimator filter_misadjustment_estimator_;
+  size_t poor_shadow_filter_counter_ = 0;
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(Subtractor);
 };
 

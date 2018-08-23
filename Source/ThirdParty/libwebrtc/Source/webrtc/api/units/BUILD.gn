@@ -1,0 +1,78 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_source_set("data_rate") {
+  sources = [
+    "data_rate.cc",
+    "data_rate.h",
+  ]
+
+  deps = [
+    ":data_size",
+    ":time_delta",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_source_set("data_size") {
+  sources = [
+    "data_size.cc",
+    "data_size.h",
+  ]
+
+  deps = [
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+  ]
+}
+rtc_source_set("time_delta") {
+  sources = [
+    "time_delta.cc",
+    "time_delta.h",
+  ]
+
+  deps = [
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_source_set("timestamp") {
+  sources = [
+    "timestamp.cc",
+    "timestamp.h",
+  ]
+
+  deps = [
+    ":time_delta",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("units_unittests") {
+    testonly = true
+    sources = [
+      "data_rate_unittest.cc",
+      "data_size_unittest.cc",
+      "time_delta_unittest.cc",
+      "timestamp_unittest.cc",
+    ]
+    deps = [
+      ":data_rate",
+      ":data_size",
+      ":time_delta",
+      ":timestamp",
+      "../../test:test_support",
+    ]
+  }
+}

@@ -11,7 +11,6 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_H_
 #define MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_H_
 
-#include "rtc_base/basictypes.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/function_view.h"
 

@@ -32,24 +32,23 @@ using webrtc::VideoCaptureCapability;
 using webrtc::VideoCaptureFactory;
 using webrtc::VideoCaptureModule;
 
-
-#define WAIT_(ex, timeout, res) \
-  do { \
-    res = (ex); \
-    int64_t start = rtc::TimeMillis(); \
+#define WAIT_(ex, timeout, res)                           \
+  do {                                                    \
+    res = (ex);                                           \
+    int64_t start = rtc::TimeMillis();                    \
     while (!res && rtc::TimeMillis() < start + timeout) { \
-      SleepMs(5); \
-      res = (ex); \
-    } \
+      SleepMs(5);                                         \
+      res = (ex);                                         \
+    }                                                     \
   } while (0)
 
 #define EXPECT_TRUE_WAIT(ex, timeout) \
-  do { \
-    bool res; \
-    WAIT_(ex, timeout, res); \
-    if (!res) EXPECT_TRUE(ex); \
+  do {                                \
+    bool res;                         \
+    WAIT_(ex, timeout, res);          \
+    if (!res)                         \
+      EXPECT_TRUE(ex);                \
   } while (0)
-
 
 static const int kTimeOut = 5000;
 static const int kTestHeight = 288;
@@ -59,8 +58,8 @@ static const int kTestFramerate = 30;
 class TestVideoCaptureCallback
     : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
  public:
-  TestVideoCaptureCallback() :
-        last_render_time_ms_(0),
+  TestVideoCaptureCallback()
+      : last_render_time_ms_(0),
         incoming_frames_(0),
         timing_warnings_(0),
         rotate_frame_(webrtc::kVideoRotation_0) {}
@@ -85,16 +84,15 @@ class TestVideoCaptureCallback
     EXPECT_EQ(rotate_frame_, videoFrame.rotation());
 #endif
     // RenderTimstamp should be the time now.
-    EXPECT_TRUE(
-        videoFrame.render_time_ms() >= rtc::TimeMillis()-30 &&
-        videoFrame.render_time_ms() <= rtc::TimeMillis());
+    EXPECT_TRUE(videoFrame.render_time_ms() >= rtc::TimeMillis() - 30 &&
+                videoFrame.render_time_ms() <= rtc::TimeMillis());
 
     if ((videoFrame.render_time_ms() >
-            last_render_time_ms_ + (1000 * 1.1) / capability_.maxFPS &&
-            last_render_time_ms_ > 0) ||
+             last_render_time_ms_ + (1000 * 1.1) / capability_.maxFPS &&
+         last_render_time_ms_ > 0) ||
         (videoFrame.render_time_ms() <
-            last_render_time_ms_ + (1000 * 0.9) / capability_.maxFPS &&
-            last_render_time_ms_ > 0)) {
+             last_render_time_ms_ + (1000 * 0.9) / capability_.maxFPS &&
+         last_render_time_ms_ > 0)) {
       timing_warnings_++;
     }
 
@@ -105,7 +103,7 @@ class TestVideoCaptureCallback
 
   void SetExpectedCapability(VideoCaptureCapability capability) {
     rtc::CritScope cs(&capture_cs_);
-    capability_= capability;
+    capability_ = capability;
     incoming_frames_ = 0;
     last_render_time_ms_ = 0;
   }
@@ -161,8 +159,8 @@ class VideoCaptureTest : public testing::Test {
     char device_name[256];
     char unique_name[256];
 
-    EXPECT_EQ(0, device_info_->GetDeviceName(
-        device, device_name, 256, unique_name, 256));
+    EXPECT_EQ(0, device_info_->GetDeviceName(device, device_name, 256,
+                                             unique_name, 256));
 
     rtc::scoped_refptr<VideoCaptureModule> module(
         VideoCaptureFactory::Create(unique_name));
@@ -251,8 +249,8 @@ TEST_F(VideoCaptureTest, MAYBE_Capabilities) {
       OpenVideoCaptureDevice(0, &capture_observer));
   ASSERT_TRUE(module.get() != NULL);
 
-  int number_of_capabilities = device_info_->NumberOfCapabilities(
-      module->CurrentDeviceName());
+  int number_of_capabilities =
+      device_info_->NumberOfCapabilities(module->CurrentDeviceName());
   EXPECT_GT(number_of_capabilities, 0);
   // Key is <width>x<height>, value is vector of maxFPS values at that
   // resolution.
@@ -293,8 +291,7 @@ TEST_F(VideoCaptureTest, MAYBE_Capabilities) {
   EXPECT_GT(frame_rates_by_resolution.size(), 1U);
   for (FrameRatesByResolution::const_iterator it =
            frame_rates_by_resolution.begin();
-       it != frame_rates_by_resolution.end();
-       ++it) {
+       it != frame_rates_by_resolution.end(); ++it) {
     EXPECT_GT(it->second.size(), 1U) << it->first;
   }
 #endif  // WEBRTC_ANDROID
@@ -327,7 +324,6 @@ TEST_F(VideoCaptureTest, DISABLED_TestTwoCameras) {
   rtc::scoped_refptr<VideoCaptureModule> module2(
       OpenVideoCaptureDevice(1, &capture_observer2));
   ASSERT_TRUE(module1.get() != NULL);
-
 
   VideoCaptureCapability capability2;
 #ifndef WEBRTC_MAC
@@ -370,16 +366,15 @@ class VideoCaptureExternalTest : public testing::Test {
            buffer->ChromaHeight() * buffer->StrideU());
     memset(buffer->MutableDataV(), 127,
            buffer->ChromaHeight() * buffer->StrideV());
-    test_frame_.reset(
-        new webrtc::VideoFrame(buffer, 0, 0, webrtc::kVideoRotation_0));
+    test_frame_.reset(new webrtc::VideoFrame(buffer, webrtc::kVideoRotation_0,
+                                             0 /* timestamp_us */));
 
     SleepMs(1);  // Wait 1ms so that two tests can't have the same timestamp.
 
     capture_module_->RegisterCaptureDataCallback(&capture_callback_);
   }
 
-  void TearDown() {
-  }
+  void TearDown() {}
 
   webrtc::VideoCaptureExternal* capture_input_interface_;
   rtc::scoped_refptr<VideoCaptureModule> capture_module_;
@@ -393,8 +388,9 @@ TEST_F(VideoCaptureExternalTest, TestExternalCapture) {
       webrtc::VideoType::kI420, test_frame_->width(), test_frame_->height());
   std::unique_ptr<uint8_t[]> test_buffer(new uint8_t[length]);
   webrtc::ExtractBuffer(*test_frame_, length, test_buffer.get());
-  EXPECT_EQ(0, capture_input_interface_->IncomingFrame(test_buffer.get(),
-      length, capture_callback_.capability(), 0));
+  EXPECT_EQ(0,
+            capture_input_interface_->IncomingFrame(
+                test_buffer.get(), length, capture_callback_.capability(), 0));
   EXPECT_TRUE(capture_callback_.CompareLastFrame(*test_frame_));
 }
 
@@ -404,18 +400,22 @@ TEST_F(VideoCaptureExternalTest, Rotation) {
       webrtc::VideoType::kI420, test_frame_->width(), test_frame_->height());
   std::unique_ptr<uint8_t[]> test_buffer(new uint8_t[length]);
   webrtc::ExtractBuffer(*test_frame_, length, test_buffer.get());
-  EXPECT_EQ(0, capture_input_interface_->IncomingFrame(test_buffer.get(),
-    length, capture_callback_.capability(), 0));
+  EXPECT_EQ(0,
+            capture_input_interface_->IncomingFrame(
+                test_buffer.get(), length, capture_callback_.capability(), 0));
   EXPECT_EQ(0, capture_module_->SetCaptureRotation(webrtc::kVideoRotation_90));
   capture_callback_.SetExpectedCaptureRotation(webrtc::kVideoRotation_90);
-  EXPECT_EQ(0, capture_input_interface_->IncomingFrame(test_buffer.get(),
-    length, capture_callback_.capability(), 0));
+  EXPECT_EQ(0,
+            capture_input_interface_->IncomingFrame(
+                test_buffer.get(), length, capture_callback_.capability(), 0));
   EXPECT_EQ(0, capture_module_->SetCaptureRotation(webrtc::kVideoRotation_180));
   capture_callback_.SetExpectedCaptureRotation(webrtc::kVideoRotation_180);
-  EXPECT_EQ(0, capture_input_interface_->IncomingFrame(test_buffer.get(),
-    length, capture_callback_.capability(), 0));
+  EXPECT_EQ(0,
+            capture_input_interface_->IncomingFrame(
+                test_buffer.get(), length, capture_callback_.capability(), 0));
   EXPECT_EQ(0, capture_module_->SetCaptureRotation(webrtc::kVideoRotation_270));
   capture_callback_.SetExpectedCaptureRotation(webrtc::kVideoRotation_270);
-  EXPECT_EQ(0, capture_input_interface_->IncomingFrame(test_buffer.get(),
-    length, capture_callback_.capability(), 0));
+  EXPECT_EQ(0,
+            capture_input_interface_->IncomingFrame(
+                test_buffer.get(), length, capture_callback_.capability(), 0));
 }

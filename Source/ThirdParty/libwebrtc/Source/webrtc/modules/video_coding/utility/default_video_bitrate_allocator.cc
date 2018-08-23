@@ -20,11 +20,11 @@ DefaultVideoBitrateAllocator::DefaultVideoBitrateAllocator(
 
 DefaultVideoBitrateAllocator::~DefaultVideoBitrateAllocator() {}
 
-BitrateAllocation DefaultVideoBitrateAllocator::GetAllocation(
+VideoBitrateAllocation DefaultVideoBitrateAllocator::GetAllocation(
     uint32_t total_bitrate_bps,
     uint32_t framerate) {
-  BitrateAllocation allocation;
-  if (total_bitrate_bps == 0)
+  VideoBitrateAllocation allocation;
+  if (total_bitrate_bps == 0 || !codec_.active)
     return allocation;
 
   if (total_bitrate_bps < codec_.minBitrate * 1000) {
@@ -36,11 +36,6 @@ BitrateAllocation DefaultVideoBitrateAllocator::GetAllocation(
     allocation.SetBitrate(0, 0, total_bitrate_bps);
   }
   return allocation;
-}
-
-uint32_t DefaultVideoBitrateAllocator::GetPreferredBitrateBps(
-    uint32_t framerate) {
-  return GetAllocation(codec_.maxBitrate * 1000, framerate).get_sum_bps();
 }
 
 }  // namespace webrtc

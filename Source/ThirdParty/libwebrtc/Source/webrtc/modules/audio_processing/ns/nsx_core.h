@@ -17,101 +17,99 @@
 
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "modules/audio_processing/ns/nsx_defines.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 typedef struct NoiseSuppressionFixedC_ {
-  uint32_t                fs;
+  uint32_t fs;
 
-  const int16_t*          window;
-  int16_t                 analysisBuffer[ANAL_BLOCKL_MAX];
-  int16_t                 synthesisBuffer[ANAL_BLOCKL_MAX];
-  uint16_t                noiseSupFilter[HALF_ANAL_BLOCKL];
-  uint16_t                overdrive; /* Q8 */
-  uint16_t                denoiseBound; /* Q14 */
-  const int16_t*          factor2Table;
-  int16_t                 noiseEstLogQuantile[SIMULT* HALF_ANAL_BLOCKL];
-  int16_t                 noiseEstDensity[SIMULT* HALF_ANAL_BLOCKL];
-  int16_t                 noiseEstCounter[SIMULT];
-  int16_t                 noiseEstQuantile[HALF_ANAL_BLOCKL];
+  const int16_t* window;
+  int16_t analysisBuffer[ANAL_BLOCKL_MAX];
+  int16_t synthesisBuffer[ANAL_BLOCKL_MAX];
+  uint16_t noiseSupFilter[HALF_ANAL_BLOCKL];
+  uint16_t overdrive;    /* Q8 */
+  uint16_t denoiseBound; /* Q14 */
+  const int16_t* factor2Table;
+  int16_t noiseEstLogQuantile[SIMULT * HALF_ANAL_BLOCKL];
+  int16_t noiseEstDensity[SIMULT * HALF_ANAL_BLOCKL];
+  int16_t noiseEstCounter[SIMULT];
+  int16_t noiseEstQuantile[HALF_ANAL_BLOCKL];
 
-  size_t                  anaLen;
-  size_t                  anaLen2;
-  size_t                  magnLen;
-  int                     aggrMode;
-  int                     stages;
-  int                     initFlag;
-  int                     gainMap;
+  size_t anaLen;
+  size_t anaLen2;
+  size_t magnLen;
+  int aggrMode;
+  int stages;
+  int initFlag;
+  int gainMap;
 
-  int32_t                 maxLrt;
-  int32_t                 minLrt;
+  int32_t maxLrt;
+  int32_t minLrt;
   // Log LRT factor with time-smoothing in Q8.
-  int32_t                 logLrtTimeAvgW32[HALF_ANAL_BLOCKL];
-  int32_t                 featureLogLrt;
-  int32_t                 thresholdLogLrt;
-  int16_t                 weightLogLrt;
+  int32_t logLrtTimeAvgW32[HALF_ANAL_BLOCKL];
+  int32_t featureLogLrt;
+  int32_t thresholdLogLrt;
+  int16_t weightLogLrt;
 
-  uint32_t                featureSpecDiff;
-  uint32_t                thresholdSpecDiff;
-  int16_t                 weightSpecDiff;
+  uint32_t featureSpecDiff;
+  uint32_t thresholdSpecDiff;
+  int16_t weightSpecDiff;
 
-  uint32_t                featureSpecFlat;
-  uint32_t                thresholdSpecFlat;
-  int16_t                 weightSpecFlat;
+  uint32_t featureSpecFlat;
+  uint32_t thresholdSpecFlat;
+  int16_t weightSpecFlat;
 
   // Conservative estimate of noise spectrum.
-  int32_t                 avgMagnPause[HALF_ANAL_BLOCKL];
-  uint32_t                magnEnergy;
-  uint32_t                sumMagn;
-  uint32_t                curAvgMagnEnergy;
-  uint32_t                timeAvgMagnEnergy;
-  uint32_t                timeAvgMagnEnergyTmp;
+  int32_t avgMagnPause[HALF_ANAL_BLOCKL];
+  uint32_t magnEnergy;
+  uint32_t sumMagn;
+  uint32_t curAvgMagnEnergy;
+  uint32_t timeAvgMagnEnergy;
+  uint32_t timeAvgMagnEnergyTmp;
 
-  uint32_t                whiteNoiseLevel;  // Initial noise estimate.
+  uint32_t whiteNoiseLevel;  // Initial noise estimate.
   // Initial magnitude spectrum estimate.
-  uint32_t                initMagnEst[HALF_ANAL_BLOCKL];
+  uint32_t initMagnEst[HALF_ANAL_BLOCKL];
   // Pink noise parameters:
-  int32_t                 pinkNoiseNumerator;  // Numerator.
-  int32_t                 pinkNoiseExp;  // Power of freq.
-  int                     minNorm;  // Smallest normalization factor.
-  int                     zeroInputSignal;  // Zero input signal flag.
+  int32_t pinkNoiseNumerator;  // Numerator.
+  int32_t pinkNoiseExp;        // Power of freq.
+  int minNorm;                 // Smallest normalization factor.
+  int zeroInputSignal;         // Zero input signal flag.
 
   // Noise spectrum from previous frame.
-  uint32_t                prevNoiseU32[HALF_ANAL_BLOCKL];
+  uint32_t prevNoiseU32[HALF_ANAL_BLOCKL];
   // Magnitude spectrum from previous frame.
-  uint16_t                prevMagnU16[HALF_ANAL_BLOCKL];
+  uint16_t prevMagnU16[HALF_ANAL_BLOCKL];
   // Prior speech/noise probability in Q14.
-  int16_t                 priorNonSpeechProb;
+  int16_t priorNonSpeechProb;
 
-  int                     blockIndex;  // Frame index counter.
+  int blockIndex;  // Frame index counter.
   // Parameter for updating or estimating thresholds/weights for prior model.
-  int                     modelUpdate;
-  int                     cntThresUpdate;
+  int modelUpdate;
+  int cntThresUpdate;
 
   // Histograms for parameter estimation.
-  int16_t                 histLrt[HIST_PAR_EST];
-  int16_t                 histSpecFlat[HIST_PAR_EST];
-  int16_t                 histSpecDiff[HIST_PAR_EST];
+  int16_t histLrt[HIST_PAR_EST];
+  int16_t histSpecFlat[HIST_PAR_EST];
+  int16_t histSpecDiff[HIST_PAR_EST];
 
   // Quantities for high band estimate.
-  int16_t                 dataBufHBFX[NUM_HIGH_BANDS_MAX][ANAL_BLOCKL_MAX];
+  int16_t dataBufHBFX[NUM_HIGH_BANDS_MAX][ANAL_BLOCKL_MAX];
 
-  int                     qNoise;
-  int                     prevQNoise;
-  int                     prevQMagn;
-  size_t                  blockLen10ms;
+  int qNoise;
+  int prevQNoise;
+  int prevQMagn;
+  size_t blockLen10ms;
 
-  int16_t                 real[ANAL_BLOCKL_MAX];
-  int16_t                 imag[ANAL_BLOCKL_MAX];
-  int32_t                 energyIn;
-  int                     scaleEnergyIn;
-  int                     normData;
+  int16_t real[ANAL_BLOCKL_MAX];
+  int16_t imag[ANAL_BLOCKL_MAX];
+  int32_t energyIn;
+  int scaleEnergyIn;
+  int normData;
 
   struct RealFFT* real_fft;
 } NoiseSuppressionFixedC;
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /****************************************************************************

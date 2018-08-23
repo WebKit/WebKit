@@ -30,7 +30,7 @@ class RtpPacketizerH264 : public RtpPacketizer {
                     size_t last_packet_reduction_len,
                     H264PacketizationMode packetization_mode);
 
-  virtual ~RtpPacketizerH264();
+  ~RtpPacketizerH264() override;
 
   size_t SetPayloadData(const uint8_t* payload_data,
                         size_t payload_size,
@@ -49,6 +49,7 @@ class RtpPacketizerH264 : public RtpPacketizer {
   struct Fragment {
     Fragment(const uint8_t* buffer, size_t length);
     explicit Fragment(const Fragment& fragment);
+    ~Fragment();
     const uint8_t* buffer = nullptr;
     size_t length = 0;
     std::unique_ptr<rtc::Buffer> tmp_buffer;
@@ -79,10 +80,10 @@ class RtpPacketizerH264 : public RtpPacketizer {
     uint8_t header;
   };
 
-  void GeneratePackets();
+  bool GeneratePackets();
   void PacketizeFuA(size_t fragment_index);
   size_t PacketizeStapA(size_t fragment_index);
-  void PacketizeSingleNalu(size_t fragment_index);
+  bool PacketizeSingleNalu(size_t fragment_index);
   void NextAggregatePacket(RtpPacketToSend* rtp_packet, bool last);
   void NextFragmentPacket(RtpPacketToSend* rtp_packet);
 
@@ -100,7 +101,7 @@ class RtpPacketizerH264 : public RtpPacketizer {
 class RtpDepacketizerH264 : public RtpDepacketizer {
  public:
   RtpDepacketizerH264();
-  virtual ~RtpDepacketizerH264();
+  ~RtpDepacketizerH264() override;
 
   bool Parse(ParsedPayload* parsed_payload,
              const uint8_t* payload_data,

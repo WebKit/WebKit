@@ -22,6 +22,6 @@ enum {
   kSampleRate48kHz = 48000
 };
 
-} // namespace ts
-} // namespace webrtc
+}  // namespace ts
+}  // namespace webrtc
 #endif  // MODULES_AUDIO_PROCESSING_TRANSIENT_COMMON_H_

@@ -31,7 +31,7 @@ class TransportAdapter : public Transport {
   void Disable();
 
  private:
-  Transport *transport_;
+  Transport* transport_;
   std::atomic<bool> enabled_;
 };
 }  // namespace internal

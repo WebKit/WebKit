@@ -42,7 +42,7 @@ class RTCCertificateGenerationTask : public RefCountInterface,
       Thread* signaling_thread,
       Thread* worker_thread,
       const KeyParams& key_params,
-      const Optional<uint64_t>& expires_ms,
+      const absl::optional<uint64_t>& expires_ms,
       const scoped_refptr<RTCCertificateGeneratorCallback>& callback)
       : signaling_thread_(signaling_thread),
         worker_thread_(worker_thread),
@@ -94,7 +94,7 @@ class RTCCertificateGenerationTask : public RefCountInterface,
   Thread* const signaling_thread_;
   Thread* const worker_thread_;
   const KeyParams key_params_;
-  const Optional<uint64_t> expires_ms_;
+  const absl::optional<uint64_t> expires_ms_;
   const scoped_refptr<RTCCertificateGeneratorCallback> callback_;
   scoped_refptr<RTCCertificate> certificate_;
 };
@@ -102,10 +102,9 @@ class RTCCertificateGenerationTask : public RefCountInterface,
 }  // namespace
 
 // static
-scoped_refptr<RTCCertificate>
-RTCCertificateGenerator::GenerateCertificate(
+scoped_refptr<RTCCertificate> RTCCertificateGenerator::GenerateCertificate(
     const KeyParams& key_params,
-    const Optional<uint64_t>& expires_ms) {
+    const absl::optional<uint64_t>& expires_ms) {
   if (!key_params.IsValid())
     return nullptr;
   SSLIdentity* identity;
@@ -122,8 +121,8 @@ RTCCertificateGenerator::GenerateCertificate(
     // |SSLIdentity::Generate| should stop relying on |time_t|.
     // See bugs.webrtc.org/5720.
     time_t cert_lifetime_s = static_cast<time_t>(expires_s);
-    identity = SSLIdentity::GenerateWithExpiration(
-        kIdentityName, key_params, cert_lifetime_s);
+    identity = SSLIdentity::GenerateWithExpiration(kIdentityName, key_params,
+                                                   cert_lifetime_s);
   }
   if (!identity)
     return nullptr;
@@ -131,17 +130,16 @@ RTCCertificateGenerator::GenerateCertificate(
   return RTCCertificate::Create(std::move(identity_sptr));
 }
 
-RTCCertificateGenerator::RTCCertificateGenerator(
-    Thread* signaling_thread, Thread* worker_thread)
-    : signaling_thread_(signaling_thread),
-      worker_thread_(worker_thread) {
+RTCCertificateGenerator::RTCCertificateGenerator(Thread* signaling_thread,
+                                                 Thread* worker_thread)
+    : signaling_thread_(signaling_thread), worker_thread_(worker_thread) {
   RTC_DCHECK(signaling_thread_);
   RTC_DCHECK(worker_thread_);
 }
 
 void RTCCertificateGenerator::GenerateCertificateAsync(
     const KeyParams& key_params,
-    const Optional<uint64_t>& expires_ms,
+    const absl::optional<uint64_t>& expires_ms,
     const scoped_refptr<RTCCertificateGeneratorCallback>& callback) {
   RTC_DCHECK(signaling_thread_->IsCurrent());
   RTC_DCHECK(callback);

@@ -11,11 +11,20 @@
 #import <Metal/Metal.h>
 #import "RTCMTLRenderer.h"
 
+#define MTL_STRINGIFY(s) @ #s
+
 NS_ASSUME_NONNULL_BEGIN
 @interface RTCMTLRenderer (Private)
 - (nullable id<MTLDevice>)currentMetalDevice;
 - (NSString *)shaderSource;
 - (BOOL)setupTexturesForFrame:(nonnull RTCVideoFrame *)frame;
 - (void)uploadTexturesToRenderEncoder:(id<MTLRenderCommandEncoder>)renderEncoder;
+- (void)getWidth:(nonnull int *)width
+          height:(nonnull int *)height
+       cropWidth:(nonnull int *)cropWidth
+      cropHeight:(nonnull int *)cropHeight
+           cropX:(nonnull int *)cropX
+           cropY:(nonnull int *)cropY
+         ofFrame:(nonnull RTCVideoFrame *)frame;
 @end
 NS_ASSUME_NONNULL_END

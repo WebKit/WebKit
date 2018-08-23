@@ -19,13 +19,13 @@
 
 #define RETURN_EMPTY_ON_FAIL(x) \
   if (!(x)) {                   \
-    return rtc::nullopt;        \
+    return absl::nullopt;       \
   }
 
 namespace {
 const int kMaxPicInitQpDeltaValue = 25;
 const int kMinPicInitQpDeltaValue = -26;
-}
+}  // namespace
 
 namespace webrtc {
 
@@ -33,8 +33,8 @@ namespace webrtc {
 // You can find it on this page:
 // http://www.itu.int/rec/T-REC-H.264
 
-rtc::Optional<PpsParser::PpsState> PpsParser::ParsePps(const uint8_t* data,
-                                                       size_t length) {
+absl::optional<PpsParser::PpsState> PpsParser::ParsePps(const uint8_t* data,
+                                                        size_t length) {
   // First, parse out rbsp, which is basically the source buffer minus emulation
   // bytes (the last byte of a 0x00 0x00 0x03 sequence). RBSP is defined in
   // section 7.3.1 of the H.264 standard.
@@ -57,26 +57,26 @@ bool PpsParser::ParsePpsIds(const uint8_t* data,
   return ParsePpsIdsInternal(&bit_buffer, pps_id, sps_id);
 }
 
-rtc::Optional<uint32_t> PpsParser::ParsePpsIdFromSlice(const uint8_t* data,
-                                                       size_t length) {
+absl::optional<uint32_t> PpsParser::ParsePpsIdFromSlice(const uint8_t* data,
+                                                        size_t length) {
   std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(data, length);
   rtc::BitBuffer slice_reader(unpacked_buffer.data(), unpacked_buffer.size());
 
   uint32_t golomb_tmp;
   // first_mb_in_slice: ue(v)
   if (!slice_reader.ReadExponentialGolomb(&golomb_tmp))
-    return rtc::nullopt;
+    return absl::nullopt;
   // slice_type: ue(v)
   if (!slice_reader.ReadExponentialGolomb(&golomb_tmp))
-    return rtc::nullopt;
+    return absl::nullopt;
   // pic_parameter_set_id: ue(v)
   uint32_t slice_pps_id;
   if (!slice_reader.ReadExponentialGolomb(&slice_pps_id))
-    return rtc::nullopt;
+    return absl::nullopt;
   return slice_pps_id;
 }
 
-rtc::Optional<PpsParser::PpsState> PpsParser::ParseInternal(
+absl::optional<PpsParser::PpsState> PpsParser::ParseInternal(
     rtc::BitBuffer* bit_buffer) {
   PpsState pps;
 

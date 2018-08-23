@@ -43,6 +43,7 @@ std::string ProduceDebugText(int sample_rate_hz, int delay) {
 
 // Verifies the basic API call sequence
 TEST(EchoRemover, BasicApiCalls) {
+  absl::optional<DelayEstimate> delay_estimate;
   for (auto rate : {8000, 16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     std::unique_ptr<EchoRemover> remover(
@@ -64,7 +65,8 @@ TEST(EchoRemover, BasicApiCalls) {
       render_buffer->PrepareCaptureProcessing();
 
       remover->ProcessCapture(echo_path_variability, k % 2 == 0 ? true : false,
-                              render_buffer->GetRenderBuffer(), &capture);
+                              delay_estimate, render_buffer->GetRenderBuffer(),
+                              &capture);
     }
   }
 }
@@ -82,6 +84,7 @@ TEST(EchoRemover, DISABLED_WrongSampleRate) {
 
 // Verifies the check for the capture block size.
 TEST(EchoRemover, WrongCaptureBlockSize) {
+  absl::optional<DelayEstimate> delay_estimate;
   for (auto rate : {8000, 16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     std::unique_ptr<EchoRemover> remover(
@@ -93,7 +96,7 @@ TEST(EchoRemover, WrongCaptureBlockSize) {
     EchoPathVariability echo_path_variability(
         false, EchoPathVariability::DelayAdjustment::kNone, false);
     EXPECT_DEATH(
-        remover->ProcessCapture(echo_path_variability, false,
+        remover->ProcessCapture(echo_path_variability, false, delay_estimate,
                                 render_buffer->GetRenderBuffer(), &capture),
         "");
   }
@@ -103,6 +106,7 @@ TEST(EchoRemover, WrongCaptureBlockSize) {
 // TODO(peah): Re-enable the test once the issue with memory leaks during DEATH
 // tests on test bots has been fixed.c
 TEST(EchoRemover, DISABLED_WrongCaptureNumBands) {
+  absl::optional<DelayEstimate> delay_estimate;
   for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     std::unique_ptr<EchoRemover> remover(
@@ -115,7 +119,7 @@ TEST(EchoRemover, DISABLED_WrongCaptureNumBands) {
     EchoPathVariability echo_path_variability(
         false, EchoPathVariability::DelayAdjustment::kNone, false);
     EXPECT_DEATH(
-        remover->ProcessCapture(echo_path_variability, false,
+        remover->ProcessCapture(echo_path_variability, false, delay_estimate,
                                 render_buffer->GetRenderBuffer(), &capture),
         "");
   }
@@ -123,6 +127,7 @@ TEST(EchoRemover, DISABLED_WrongCaptureNumBands) {
 
 // Verifies the check for non-null capture block.
 TEST(EchoRemover, NullCapture) {
+  absl::optional<DelayEstimate> delay_estimate;
   std::unique_ptr<EchoRemover> remover(
       EchoRemover::Create(EchoCanceller3Config(), 8000));
   std::unique_ptr<RenderDelayBuffer> render_buffer(
@@ -130,7 +135,7 @@ TEST(EchoRemover, NullCapture) {
   EchoPathVariability echo_path_variability(
       false, EchoPathVariability::DelayAdjustment::kNone, false);
   EXPECT_DEATH(
-      remover->ProcessCapture(echo_path_variability, false,
+      remover->ProcessCapture(echo_path_variability, false, delay_estimate,
                               render_buffer->GetRenderBuffer(), nullptr),
       "");
 }
@@ -142,6 +147,7 @@ TEST(EchoRemover, NullCapture) {
 TEST(EchoRemover, BasicEchoRemoval) {
   constexpr int kNumBlocksToProcess = 500;
   Random random_generator(42U);
+  absl::optional<DelayEstimate> delay_estimate;
   for (auto rate : {8000, 16000, 32000, 48000}) {
     std::vector<std::vector<float>> x(NumBandsForRate(rate),
                                       std::vector<float>(kBlockSize, 0.f));
@@ -187,7 +193,7 @@ TEST(EchoRemover, BasicEchoRemoval) {
         render_buffer->Insert(x);
         render_buffer->PrepareCaptureProcessing();
 
-        remover->ProcessCapture(echo_path_variability, false,
+        remover->ProcessCapture(echo_path_variability, false, delay_estimate,
                                 render_buffer->GetRenderBuffer(), &y);
 
         if (k > kNumBlocksToProcess / 2) {

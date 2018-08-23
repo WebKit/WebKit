@@ -39,7 +39,7 @@ int TaskQueuePriorityToGCD(Priority priority) {
       return DISPATCH_QUEUE_PRIORITY_LOW;
   }
 }
-}
+}  // namespace
 
 using internal::GetQueuePtrTls;
 using internal::AutoSetCurrentQueuePtr;

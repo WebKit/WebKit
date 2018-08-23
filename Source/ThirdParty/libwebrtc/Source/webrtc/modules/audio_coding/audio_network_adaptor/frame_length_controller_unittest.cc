@@ -78,9 +78,9 @@ CreateChangeCriteriaFor20ms60msAnd120ms() {
 
 void UpdateNetworkMetrics(
     FrameLengthController* controller,
-    const rtc::Optional<int>& uplink_bandwidth_bps,
-    const rtc::Optional<float>& uplink_packet_loss_fraction,
-    const rtc::Optional<size_t>& overhead_bytes_per_packet) {
+    const absl::optional<int>& uplink_bandwidth_bps,
+    const absl::optional<float>& uplink_packet_loss_fraction,
+    const absl::optional<size_t>& overhead_bytes_per_packet) {
   // UpdateNetworkMetrics can accept multiple network metric updates at once.
   // However, currently, the most used case is to update one metric at a time.
   // To reflect this fact, we separate the calls.
@@ -114,14 +114,14 @@ TEST(FrameLengthControllerTest, DecreaseTo20MsOnHighUplinkBandwidth) {
   auto controller =
       CreateController(CreateChangeCriteriaFor20msAnd60ms(), {20, 60}, 60);
   UpdateNetworkMetrics(controller.get(), kFl60msTo20msBandwidthBps,
-                       rtc::nullopt, kOverheadBytesPerPacket);
+                       absl::nullopt, kOverheadBytesPerPacket);
   CheckDecision(controller.get(), 20);
 }
 
 TEST(FrameLengthControllerTest, DecreaseTo20MsOnHighUplinkPacketLossFraction) {
   auto controller =
       CreateController(CreateChangeCriteriaFor20msAnd60ms(), {20, 60}, 60);
-  UpdateNetworkMetrics(controller.get(), rtc::nullopt,
+  UpdateNetworkMetrics(controller.get(), absl::nullopt,
                        kFlDecreasingPacketLossFraction,
                        kOverheadBytesPerPacket);
   CheckDecision(controller.get(), 20);
@@ -252,16 +252,12 @@ TEST(FrameLengthControllerTest, From120MsTo20MsOnHighUplinkBandwidth) {
   auto controller = CreateController(CreateChangeCriteriaFor20ms60msAnd120ms(),
                                      {20, 60, 120}, 120);
   // It takes two steps for frame length to go from 120ms to 20ms.
-  UpdateNetworkMetrics(controller.get(),
-                       kFl60msTo20msBandwidthBps,
-                       rtc::nullopt,
-                       kOverheadBytesPerPacket);
+  UpdateNetworkMetrics(controller.get(), kFl60msTo20msBandwidthBps,
+                       absl::nullopt, kOverheadBytesPerPacket);
   CheckDecision(controller.get(), 60);
 
-  UpdateNetworkMetrics(controller.get(),
-                       kFl60msTo20msBandwidthBps,
-                       rtc::nullopt,
-                       kOverheadBytesPerPacket);
+  UpdateNetworkMetrics(controller.get(), kFl60msTo20msBandwidthBps,
+                       absl::nullopt, kOverheadBytesPerPacket);
   CheckDecision(controller.get(), 20);
 }
 
@@ -269,12 +265,12 @@ TEST(FrameLengthControllerTest, From120MsTo20MsOnHighUplinkPacketLossFraction) {
   auto controller = CreateController(CreateChangeCriteriaFor20ms60msAnd120ms(),
                                      {20, 60, 120}, 120);
   // It takes two steps for frame length to go from 120ms to 20ms.
-  UpdateNetworkMetrics(controller.get(), rtc::nullopt,
+  UpdateNetworkMetrics(controller.get(), absl::nullopt,
                        kFlDecreasingPacketLossFraction,
                        kOverheadBytesPerPacket);
   CheckDecision(controller.get(), 60);
 
-  UpdateNetworkMetrics(controller.get(), rtc::nullopt,
+  UpdateNetworkMetrics(controller.get(), absl::nullopt,
                        kFlDecreasingPacketLossFraction,
                        kOverheadBytesPerPacket);
   CheckDecision(controller.get(), 20);

@@ -21,5 +21,24 @@ VideoFrame FakeNativeBuffer::CreateFrame(int width,
   return VideoFrame(new rtc::RefCountedObject<FakeNativeBuffer>(width, height),
                     timestamp, render_time_ms, rotation);
 }
+
+VideoFrameBuffer::Type FakeNativeBuffer::type() const {
+  return Type::kNative;
+}
+
+int FakeNativeBuffer::width() const {
+  return width_;
+}
+
+int FakeNativeBuffer::height() const {
+  return height_;
+}
+
+rtc::scoped_refptr<I420BufferInterface> FakeNativeBuffer::ToI420() {
+  rtc::scoped_refptr<I420Buffer> buffer = I420Buffer::Create(width_, height_);
+  I420Buffer::SetBlack(buffer);
+  return buffer;
+}
+
 }  // namespace test
 }  // namespace webrtc

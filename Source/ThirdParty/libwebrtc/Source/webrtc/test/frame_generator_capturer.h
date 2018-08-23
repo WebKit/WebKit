@@ -16,12 +16,10 @@
 #include "api/video/video_frame.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/task_queue.h"
+#include "test/frame_generator.h"
 #include "test/video_capturer.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
-
-class EventTimerWrapper;
 
 namespace test {
 
@@ -40,16 +38,15 @@ class FrameGeneratorCapturer : public VideoCapturer {
     virtual ~SinkWantsObserver() {}
   };
 
-  static FrameGeneratorCapturer* Create(int width,
-                                        int height,
-                                        int target_fps,
-                                        Clock* clock);
-
-  static FrameGeneratorCapturer* Create(int width,
-                                        int height,
-                                        int num_squares,
-                                        int target_fps,
-                                        Clock* clock);
+  // |type| has the default value OutputType::I420. |num_squares| has the
+  // default value 10.
+  static FrameGeneratorCapturer* Create(
+      int width,
+      int height,
+      absl::optional<FrameGenerator::OutputType> type,
+      absl::optional<int> num_squares,
+      int target_fps,
+      Clock* clock);
 
   static FrameGeneratorCapturer* CreateFromYuvFile(const std::string& file_name,
                                                    size_t width,
@@ -100,7 +97,7 @@ class FrameGeneratorCapturer : public VideoCapturer {
   std::unique_ptr<FrameGenerator> frame_generator_;
 
   int target_fps_ RTC_GUARDED_BY(&lock_);
-  rtc::Optional<int> wanted_fps_ RTC_GUARDED_BY(&lock_);
+  absl::optional<int> wanted_fps_ RTC_GUARDED_BY(&lock_);
   VideoRotation fake_rotation_ = kVideoRotation_0;
 
   int64_t first_frame_capture_time_;

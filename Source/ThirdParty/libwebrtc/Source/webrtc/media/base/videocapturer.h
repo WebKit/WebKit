@@ -20,13 +20,13 @@
 #include <string>
 #include <vector>
 
-#include "api/videosourceinterface.h"
+#include "api/video/video_source_interface.h"
 #include "media/base/videoadapter.h"
 #include "media/base/videobroadcaster.h"
 #include "media/base/videocommon.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/criticalsection.h"
-#include "rtc_base/sigslot.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread_checker.h"
 #include "rtc_base/timestampaligner.h"
 
@@ -38,12 +38,12 @@ namespace cricket {
 
 // Current state of the capturer.
 enum CaptureState {
-  CS_STOPPED,    // The capturer has been stopped or hasn't started yet.
-  CS_STARTING,   // The capturer is in the process of starting. Note, it may
-                 // still fail to start.
-  CS_RUNNING,    // The capturer has been started successfully and is now
-                 // capturing.
-  CS_FAILED,     // The capturer failed to start.
+  CS_STOPPED,   // The capturer has been stopped or hasn't started yet.
+  CS_STARTING,  // The capturer is in the process of starting. Note, it may
+                // still fail to start.
+  CS_RUNNING,   // The capturer has been started successfully and is now
+                // capturing.
+  CS_FAILED,    // The capturer failed to start.
 };
 
 // VideoCapturer is an abstract class that defines the interfaces for video
@@ -77,7 +77,7 @@ class VideoCapturer : public sigslot::has_slots<>,
  public:
   VideoCapturer();
 
-  virtual ~VideoCapturer() {}
+  ~VideoCapturer() override;
 
   // Gets the id of the underlying device, which is available after the capturer
   // is initialized. Can be used to determine if two capturers reference the
@@ -126,19 +126,15 @@ class VideoCapturer : public sigslot::has_slots<>,
   // Note that the width and height of the captured frames may differ from the
   // capture format. For example, the capture format is HD but the captured
   // frames may be smaller than HD.
-  const VideoFormat* GetCaptureFormat() const {
-    return capture_format_.get();
-  }
+  const VideoFormat* GetCaptureFormat() const { return capture_format_.get(); }
 
   // Stop the video capturer.
   virtual void Stop() = 0;
   // Check if the video capturer is running.
   virtual bool IsRunning() = 0;
-  CaptureState capture_state() const {
-    return capture_state_;
-  }
+  CaptureState capture_state() const { return capture_state_; }
 
-  virtual bool apply_rotation() { return apply_rotation_; }
+  virtual bool apply_rotation();
 
   // Returns true if the capturer is screencasting. This can be used to
   // implement screencast specific behavior.
@@ -154,9 +150,7 @@ class VideoCapturer : public sigslot::has_slots<>,
   void set_enable_camera_list(bool enable_camera_list) {
     enable_camera_list_ = enable_camera_list;
   }
-  bool enable_camera_list() {
-    return enable_camera_list_;
-  }
+  bool enable_camera_list() { return enable_camera_list_; }
 
   // Signal all capture state changes that are not a direct result of calling
   // Start().
@@ -227,9 +221,7 @@ class VideoCapturer : public sigslot::has_slots<>,
   virtual bool GetPreferredFourccs(std::vector<uint32_t>* fourccs) = 0;
 
   // mutators to set private attributes
-  void SetId(const std::string& id) {
-    id_ = id;
-  }
+  void SetId(const std::string& id) { id_ = id; }
 
   void SetCaptureFormat(const VideoFormat* format) {
     capture_format_.reset(format ? new VideoFormat(*format) : NULL);

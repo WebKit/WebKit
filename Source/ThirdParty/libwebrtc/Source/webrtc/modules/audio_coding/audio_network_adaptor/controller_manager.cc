@@ -296,9 +296,9 @@ std::unique_ptr<ControllerManager> ControllerManagerImpl::Create(
   }
 
   if (scoring_points.size() == 0) {
-    return std::unique_ptr<ControllerManagerImpl>(new ControllerManagerImpl(
-        ControllerManagerImpl::Config(0, 0), std::move(controllers),
-        scoring_points));
+    return std::unique_ptr<ControllerManagerImpl>(
+        new ControllerManagerImpl(ControllerManagerImpl::Config(0, 0),
+                                  std::move(controllers), scoring_points));
   } else {
     RTC_CHECK(controller_manager_config.has_min_reordering_time_ms());
     RTC_CHECK(controller_manager_config.has_min_reordering_squared_distance());
@@ -327,7 +327,7 @@ ControllerManagerImpl::ControllerManagerImpl(
     const std::map<const Controller*, std::pair<int, float>>& scoring_points)
     : config_(config),
       controllers_(std::move(controllers)),
-      last_reordering_time_ms_(rtc::nullopt),
+      last_reordering_time_ms_(absl::nullopt),
       last_scoring_point_(0, 0.0) {
   for (auto& controller : controllers_)
     default_sorted_controllers_.push_back(controller.get());

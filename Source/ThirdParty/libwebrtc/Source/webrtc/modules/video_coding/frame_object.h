@@ -11,58 +11,17 @@
 #ifndef MODULES_VIDEO_CODING_FRAME_OBJECT_H_
 #define MODULES_VIDEO_CODING_FRAME_OBJECT_H_
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
+#include "api/video/encoded_frame.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/include/module_common_types.h"
-#include "modules/video_coding/encoded_frame.h"
 
 namespace webrtc {
 namespace video_coding {
 
-class FrameObject : public webrtc::VCMEncodedFrame {
- public:
-  static const uint8_t kMaxFrameReferences = 5;
-
-  FrameObject();
-  virtual ~FrameObject() {}
-
-  virtual bool GetBitstream(uint8_t* destination) const = 0;
-
-  // The capture timestamp of this frame.
-  virtual uint32_t Timestamp() const = 0;
-
-  // When this frame was received.
-  virtual int64_t ReceivedTime() const = 0;
-
-  // When this frame should be rendered.
-  virtual int64_t RenderTime() const = 0;
-
-  // This information is currently needed by the timing calculation class.
-  // TODO(philipel): Remove this function when a new timing class has
-  //                 been implemented.
-  virtual bool delayed_by_retransmission() const { return 0; }
-
-  size_t size() const { return _length; }
-
-  bool is_keyframe() const { return num_references == 0; }
-
-  // The tuple (|picture_id|, |spatial_layer|) uniquely identifies a frame
-  // object. For codec types that don't necessarily have picture ids they
-  // have to be constructed from the header data relevant to that codec.
-  int64_t picture_id;
-  uint8_t spatial_layer;
-  uint32_t timestamp;
-
-  // TODO(philipel): Add simple modify/access functions to prevent adding too
-  // many |references|.
-  size_t num_references;
-  int64_t references[kMaxFrameReferences];
-  bool inter_layer_predicted;
-};
-
 class PacketBuffer;
 
-class RtpFrameObject : public FrameObject {
+class RtpFrameObject : public EncodedFrame {
  public:
   RtpFrameObject(PacketBuffer* packet_buffer,
                  uint16_t first_seq_num,
@@ -82,7 +41,7 @@ class RtpFrameObject : public FrameObject {
   int64_t ReceivedTime() const override;
   int64_t RenderTime() const override;
   bool delayed_by_retransmission() const override;
-  rtc::Optional<RTPVideoTypeHeader> GetCodecHeader() const;
+  absl::optional<RTPVideoTypeHeader> GetCodecHeader() const;
 
  private:
   rtc::scoped_refptr<PacketBuffer> packet_buffer_;

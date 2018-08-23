@@ -21,7 +21,8 @@ namespace rtc {
 // Packs the given socketaddress into the buffer in buf, in the quasi-STUN
 // format that the natserver uses.
 // Returns 0 if an invalid address is passed.
-size_t PackAddressForNAT(char* buf, size_t buf_size,
+size_t PackAddressForNAT(char* buf,
+                         size_t buf_size,
                          const SocketAddress& remote_addr) {
   const IPAddress& ip = remote_addr.ipaddr();
   int family = ip.family();
@@ -46,7 +47,8 @@ size_t PackAddressForNAT(char* buf, size_t buf_size,
 // Decodes the remote address from a packet that has been encoded with the nat's
 // quasi-STUN format. Returns the length of the address (i.e., the offset into
 // data where the original packet starts).
-size_t UnpackAddressFromNAT(const char* buf, size_t buf_size,
+size_t UnpackAddressFromNAT(const char* buf,
+                            size_t buf_size,
                             SocketAddress* remote_addr) {
   RTC_DCHECK(buf_size >= 8);
   RTC_DCHECK(buf[0] == 0);
@@ -65,7 +67,6 @@ size_t UnpackAddressFromNAT(const char* buf, size_t buf_size,
   }
   return 0U;
 }
-
 
 // NATSocket
 class NATSocket : public AsyncSocket, public sigslot::has_slots<> {
@@ -138,9 +139,8 @@ class NATSocket : public AsyncSocket, public sigslot::has_slots<> {
     }
     // This array will be too large for IPv4 packets, but only by 12 bytes.
     std::unique_ptr<char[]> buf(new char[size + kNATEncodedIPv6AddressSize]);
-    size_t addrlength = PackAddressForNAT(buf.get(),
-                                          size + kNATEncodedIPv6AddressSize,
-                                          addr);
+    size_t addrlength =
+        PackAddressForNAT(buf.get(), size + kNATEncodedIPv6AddressSize, addr);
     size_t encoded_size = size + addrlength;
     memcpy(buf.get() + addrlength, data, size);
     int result = socket_->SendTo(buf.get(), encoded_size, server_addr_);
@@ -331,28 +331,23 @@ class NATSocket : public AsyncSocket, public sigslot::has_slots<> {
 NATSocketFactory::NATSocketFactory(SocketFactory* factory,
                                    const SocketAddress& nat_udp_addr,
                                    const SocketAddress& nat_tcp_addr)
-    : factory_(factory), nat_udp_addr_(nat_udp_addr),
-      nat_tcp_addr_(nat_tcp_addr) {
-}
-
-Socket* NATSocketFactory::CreateSocket(int type) {
-  return CreateSocket(AF_INET, type);
-}
+    : factory_(factory),
+      nat_udp_addr_(nat_udp_addr),
+      nat_tcp_addr_(nat_tcp_addr) {}
 
 Socket* NATSocketFactory::CreateSocket(int family, int type) {
   return new NATSocket(this, family, type);
-}
-
-AsyncSocket* NATSocketFactory::CreateAsyncSocket(int type) {
-  return CreateAsyncSocket(AF_INET, type);
 }
 
 AsyncSocket* NATSocketFactory::CreateAsyncSocket(int family, int type) {
   return new NATSocket(this, family, type);
 }
 
-AsyncSocket* NATSocketFactory::CreateInternalSocket(int family, int type,
-    const SocketAddress& local_addr, SocketAddress* nat_addr) {
+AsyncSocket* NATSocketFactory::CreateInternalSocket(
+    int family,
+    int type,
+    const SocketAddress& local_addr,
+    SocketAddress* nat_addr) {
   if (type == SOCK_STREAM) {
     *nat_addr = nat_tcp_addr_;
   } else {
@@ -371,7 +366,9 @@ NATSocketServer::Translator* NATSocketServer::GetTranslator(
 }
 
 NATSocketServer::Translator* NATSocketServer::AddTranslator(
-    const SocketAddress& ext_ip, const SocketAddress& int_ip, NATType type) {
+    const SocketAddress& ext_ip,
+    const SocketAddress& int_ip,
+    NATType type) {
   // Fail if a translator already exists with this extternal address.
   if (nats_.Get(ext_ip))
     return nullptr;
@@ -379,21 +376,12 @@ NATSocketServer::Translator* NATSocketServer::AddTranslator(
   return nats_.Add(ext_ip, new Translator(this, type, int_ip, server_, ext_ip));
 }
 
-void NATSocketServer::RemoveTranslator(
-    const SocketAddress& ext_ip) {
+void NATSocketServer::RemoveTranslator(const SocketAddress& ext_ip) {
   nats_.Remove(ext_ip);
-}
-
-Socket* NATSocketServer::CreateSocket(int type) {
-  return CreateSocket(AF_INET, type);
 }
 
 Socket* NATSocketServer::CreateSocket(int family, int type) {
   return new NATSocket(this, family, type);
-}
-
-AsyncSocket* NATSocketServer::CreateAsyncSocket(int type) {
-  return CreateAsyncSocket(AF_INET, type);
 }
 
 AsyncSocket* NATSocketServer::CreateAsyncSocket(int family, int type) {
@@ -413,14 +401,17 @@ void NATSocketServer::WakeUp() {
   server_->WakeUp();
 }
 
-AsyncSocket* NATSocketServer::CreateInternalSocket(int family, int type,
-    const SocketAddress& local_addr, SocketAddress* nat_addr) {
+AsyncSocket* NATSocketServer::CreateInternalSocket(
+    int family,
+    int type,
+    const SocketAddress& local_addr,
+    SocketAddress* nat_addr) {
   AsyncSocket* socket = nullptr;
   Translator* nat = nats_.FindClient(local_addr);
   if (nat) {
     socket = nat->internal_factory()->CreateAsyncSocket(family, type);
-    *nat_addr = (type == SOCK_STREAM) ?
-        nat->internal_tcp_address() : nat->internal_udp_address();
+    *nat_addr = (type == SOCK_STREAM) ? nat->internal_tcp_address()
+                                      : nat->internal_udp_address();
   } else {
     socket = server_->CreateAsyncSocket(family, type);
   }
@@ -428,9 +419,11 @@ AsyncSocket* NATSocketServer::CreateInternalSocket(int family, int type,
 }
 
 // NATSocketServer::Translator
-NATSocketServer::Translator::Translator(
-    NATSocketServer* server, NATType type, const SocketAddress& int_ip,
-    SocketFactory* ext_factory, const SocketAddress& ext_ip)
+NATSocketServer::Translator::Translator(NATSocketServer* server,
+                                        NATType type,
+                                        const SocketAddress& int_ip,
+                                        SocketFactory* ext_factory,
+                                        const SocketAddress& ext_ip)
     : server_(server) {
   // Create a new private network, and a NATServer running on the private
   // network that bridges to the external network. Also tell the private
@@ -450,7 +443,9 @@ NATSocketServer::Translator* NATSocketServer::Translator::GetTranslator(
 }
 
 NATSocketServer::Translator* NATSocketServer::Translator::AddTranslator(
-    const SocketAddress& ext_ip, const SocketAddress& int_ip, NATType type) {
+    const SocketAddress& ext_ip,
+    const SocketAddress& int_ip,
+    NATType type) {
   // Fail if a translator already exists with this extternal address.
   if (nats_.Get(ext_ip))
     return nullptr;
@@ -465,8 +460,7 @@ void NATSocketServer::Translator::RemoveTranslator(
   RemoveClient(ext_ip);
 }
 
-bool NATSocketServer::Translator::AddClient(
-    const SocketAddress& int_ip) {
+bool NATSocketServer::Translator::AddClient(const SocketAddress& int_ip) {
   // Fail if a client already exists with this internal address.
   if (clients_.find(int_ip) != clients_.end())
     return false;
@@ -475,8 +469,7 @@ bool NATSocketServer::Translator::AddClient(
   return true;
 }
 
-void NATSocketServer::Translator::RemoveClient(
-    const SocketAddress& int_ip) {
+void NATSocketServer::Translator::RemoveClient(const SocketAddress& int_ip) {
   std::set<SocketAddress>::iterator it = clients_.find(int_ip);
   if (it != clients_.end()) {
     clients_.erase(it);
@@ -486,8 +479,8 @@ void NATSocketServer::Translator::RemoveClient(
 NATSocketServer::Translator* NATSocketServer::Translator::FindClient(
     const SocketAddress& int_ip) {
   // See if we have the requested IP, or any of our children do.
-  return (clients_.find(int_ip) != clients_.end()) ?
-      this : nats_.FindClient(int_ip);
+  return (clients_.find(int_ip) != clients_.end()) ? this
+                                                   : nats_.FindClient(int_ip);
 }
 
 // NATSocketServer::TranslatorMap
@@ -504,13 +497,13 @@ NATSocketServer::Translator* NATSocketServer::TranslatorMap::Get(
 }
 
 NATSocketServer::Translator* NATSocketServer::TranslatorMap::Add(
-    const SocketAddress& ext_ip, Translator* nat) {
+    const SocketAddress& ext_ip,
+    Translator* nat) {
   (*this)[ext_ip] = nat;
   return nat;
 }
 
-void NATSocketServer::TranslatorMap::Remove(
-    const SocketAddress& ext_ip) {
+void NATSocketServer::TranslatorMap::Remove(const SocketAddress& ext_ip) {
   TranslatorMap::iterator it = find(ext_ip);
   if (it != end()) {
     delete it->second;

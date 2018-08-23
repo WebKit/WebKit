@@ -27,7 +27,7 @@ const int64_t kUpdateIntervalMs = 500;
 
 std::string GetWindowTitle(CGWindowID id) {
   CFArrayRef window_id_array =
-      CFArrayCreate(NULL, reinterpret_cast<const void **>(&id), 1, NULL);
+      CFArrayCreate(NULL, reinterpret_cast<const void**>(&id), 1, NULL);
   CFArrayRef window_array =
       CGWindowListCreateDescriptionFromArray(window_id_array);
   std::string title;
@@ -35,7 +35,7 @@ std::string GetWindowTitle(CGWindowID id) {
   if (window_array && CFArrayGetCount(window_array)) {
     CFDictionaryRef window = reinterpret_cast<CFDictionaryRef>(
         CFArrayGetValueAtIndex(window_array, 0));
-    CFStringRef title_ref =  reinterpret_cast<CFStringRef>(
+    CFStringRef title_ref = reinterpret_cast<CFStringRef>(
         CFDictionaryGetValue(window, kCGWindowName));
 
     if (title_ref)
@@ -49,7 +49,7 @@ std::string GetWindowTitle(CGWindowID id) {
 
 int GetWindowOwnerPid(CGWindowID id) {
   CFArrayRef window_id_array =
-      CFArrayCreate(NULL, reinterpret_cast<const void **>(&id), 1, NULL);
+      CFArrayCreate(NULL, reinterpret_cast<const void**>(&id), 1, NULL);
   CFArrayRef window_array =
       CGWindowListCreateDescriptionFromArray(window_id_array);
   int pid = 0;
@@ -57,7 +57,7 @@ int GetWindowOwnerPid(CGWindowID id) {
   if (window_array && CFArrayGetCount(window_array)) {
     CFDictionaryRef window = reinterpret_cast<CFDictionaryRef>(
         CFArrayGetValueAtIndex(window_array, 0));
-    CFNumberRef pid_ref =  reinterpret_cast<CFNumberRef>(
+    CFNumberRef pid_ref = reinterpret_cast<CFNumberRef>(
         CFDictionaryGetValue(window, kCGWindowOwnerPID));
 
     if (pid_ref)
@@ -97,7 +97,7 @@ CGWindowID FindFullScreenWindowWithSamePidAndTitle(CGWindowID id) {
         CFDictionaryGetValue(window, kCGWindowName));
     CFNumberRef window_id_ref = reinterpret_cast<CFNumberRef>(
         CFDictionaryGetValue(window, kCGWindowNumber));
-    CFNumberRef window_pid_ref =  reinterpret_cast<CFNumberRef>(
+    CFNumberRef window_pid_ref = reinterpret_cast<CFNumberRef>(
         CFDictionaryGetValue(window, kCGWindowOwnerPID));
 
     if (!window_title_ref || !window_id_ref || !window_pid_ref)
@@ -170,8 +170,8 @@ CGWindowID FullScreenChromeWindowDetector::FindFullScreenWindow(
 void FullScreenChromeWindowDetector::UpdateWindowListIfNeeded(
     CGWindowID original_window) {
   if (IsChromeWindow(original_window) &&
-      (rtc::TimeNanos() - last_update_time_ns_) / rtc::kNumNanosecsPerMillisec
-          > kUpdateIntervalMs) {
+      (rtc::TimeNanos() - last_update_time_ns_) / rtc::kNumNanosecsPerMillisec >
+          kUpdateIntervalMs) {
     previous_window_list_.clear();
     previous_window_list_.swap(current_window_list_);
 

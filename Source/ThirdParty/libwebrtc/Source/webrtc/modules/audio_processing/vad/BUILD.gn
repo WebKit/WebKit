@@ -1,0 +1,69 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+rtc_static_library("vad") {
+  visibility = [
+    "../*",
+    "../../../rtc_tools:*",
+  ]
+  sources = [
+    "common.h",
+    "gmm.cc",
+    "gmm.h",
+    "noise_gmm_tables.h",
+    "pitch_based_vad.cc",
+    "pitch_based_vad.h",
+    "pitch_internal.cc",
+    "pitch_internal.h",
+    "pole_zero_filter.cc",
+    "pole_zero_filter.h",
+    "standalone_vad.cc",
+    "standalone_vad.h",
+    "vad_audio_proc.cc",
+    "vad_audio_proc.h",
+    "vad_audio_proc_internal.h",
+    "vad_circular_buffer.cc",
+    "vad_circular_buffer.h",
+    "voice_activity_detector.cc",
+    "voice_activity_detector.h",
+    "voice_gmm_tables.h",
+  ]
+  deps = [
+    "../../../audio/utility:audio_frame_operations",
+    "../../../common_audio",
+    "../../../common_audio:common_audio_c",
+    "../../../common_audio/third_party/fft4g:fft4g",
+    "../../../rtc_base:checks",
+    "../../audio_coding:isac_vad",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_static_library("vad_unittests") {
+    testonly = true
+    sources = [
+      "gmm_unittest.cc",
+      "pitch_based_vad_unittest.cc",
+      "pitch_internal_unittest.cc",
+      "pole_zero_filter_unittest.cc",
+      "standalone_vad_unittest.cc",
+      "vad_audio_proc_unittest.cc",
+      "vad_circular_buffer_unittest.cc",
+      "voice_activity_detector_unittest.cc",
+    ]
+    deps = [
+      ":vad",
+      "../../../common_audio",
+      "../../../test:fileutils",
+      "../../../test:test_support",
+      "//testing/gmock",
+      "//testing/gtest",
+    ]
+  }
+}

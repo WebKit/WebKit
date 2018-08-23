@@ -9,6 +9,7 @@
  */
 
 #include "modules/audio_device/mac/audio_mixer_manager_mac.h"
+#include "rtc_base/system/arch.h"
 
 #include <unistd.h>  // getpid()
 

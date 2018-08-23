@@ -32,8 +32,10 @@ class TransportDescriptionFactoryTest : public testing::Test {
             new rtc::FakeSSLIdentity("User2")))) {}
 
   void CheckDesc(const TransportDescription* desc,
-                 const std::string& opt, const std::string& ice_ufrag,
-                 const std::string& ice_pwd, const std::string& dtls_alg) {
+                 const std::string& opt,
+                 const std::string& ice_ufrag,
+                 const std::string& ice_pwd,
+                 const std::string& dtls_alg) {
     ASSERT_TRUE(desc != NULL);
     EXPECT_EQ(!opt.empty(), desc->HasOption(opt));
     if (ice_ufrag.empty() && ice_pwd.empty()) {
@@ -160,8 +162,8 @@ TEST_F(TransportDescriptionFactoryTest, TestOfferDtls) {
   f1_.set_secure(cricket::SEC_ENABLED);
   f1_.set_certificate(cert1_);
   std::string digest_alg;
-  ASSERT_TRUE(cert1_->ssl_certificate().GetSignatureDigestAlgorithm(
-      &digest_alg));
+  ASSERT_TRUE(
+      cert1_->ssl_certificate().GetSignatureDigestAlgorithm(&digest_alg));
   std::unique_ptr<TransportDescription> desc(
       f1_.CreateOffer(TransportOptions(), NULL));
   CheckDesc(desc.get(), "", "", "", digest_alg);
@@ -185,15 +187,14 @@ TEST_F(TransportDescriptionFactoryTest, TestOfferDtlsReofferDtls) {
   f1_.set_secure(cricket::SEC_ENABLED);
   f1_.set_certificate(cert1_);
   std::string digest_alg;
-  ASSERT_TRUE(cert1_->ssl_certificate().GetSignatureDigestAlgorithm(
-      &digest_alg));
+  ASSERT_TRUE(
+      cert1_->ssl_certificate().GetSignatureDigestAlgorithm(&digest_alg));
   std::unique_ptr<TransportDescription> old_desc(
       f1_.CreateOffer(TransportOptions(), NULL));
   ASSERT_TRUE(old_desc.get() != NULL);
   std::unique_ptr<TransportDescription> desc(
       f1_.CreateOffer(TransportOptions(), old_desc.get()));
-  CheckDesc(desc.get(), "",
-            old_desc->ice_ufrag, old_desc->ice_pwd, digest_alg);
+  CheckDesc(desc.get(), "", old_desc->ice_ufrag, old_desc->ice_pwd, digest_alg);
 }
 
 TEST_F(TransportDescriptionFactoryTest, TestAnswerDefault) {
@@ -218,8 +219,7 @@ TEST_F(TransportDescriptionFactoryTest, TestReanswer) {
   std::unique_ptr<TransportDescription> desc(
       f2_.CreateAnswer(offer.get(), TransportOptions(), true, old_desc.get()));
   ASSERT_TRUE(desc.get() != NULL);
-  CheckDesc(desc.get(), "",
-            old_desc->ice_ufrag, old_desc->ice_pwd, "");
+  CheckDesc(desc.get(), "", old_desc->ice_ufrag, old_desc->ice_pwd, "");
 }
 
 // Test that we handle answering an offer with DTLS with no DTLS.
@@ -261,8 +261,8 @@ TEST_F(TransportDescriptionFactoryTest, TestAnswerDtlsToDtls) {
   // f2_ produces the answer that is being checked in this test, so the
   // answer must contain fingerprint lines with cert2_'s digest algorithm.
   std::string digest_alg2;
-  ASSERT_TRUE(cert2_->ssl_certificate().GetSignatureDigestAlgorithm(
-      &digest_alg2));
+  ASSERT_TRUE(
+      cert2_->ssl_certificate().GetSignatureDigestAlgorithm(&digest_alg2));
 
   std::unique_ptr<TransportDescription> offer(
       f1_.CreateOffer(TransportOptions(), NULL));

@@ -16,10 +16,10 @@
 
 ******************************************************************/
 
-#include "defines.h"
-#include "constants.h"
-#include "get_sync_seq.h"
-#include "smooth.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
+#include "modules/audio_coding/codecs/ilbc/get_sync_seq.h"
+#include "modules/audio_coding/codecs/ilbc/smooth.h"
 
 /*----------------------------------------------------------------*
  * perform enhancement on idata+centerStartPos through

@@ -38,8 +38,8 @@ bool RtpDemuxer::AddSink(const RtpDemuxerCriteria& criteria,
                          RtpPacketSinkInterface* sink) {
   RTC_DCHECK(!criteria.payload_types.empty() || !criteria.ssrcs.empty() ||
              !criteria.mid.empty() || !criteria.rsid.empty());
-  RTC_DCHECK(criteria.mid.empty() || Mid::IsLegalName(criteria.mid));
-  RTC_DCHECK(criteria.rsid.empty() || StreamId::IsLegalName(criteria.rsid));
+  RTC_DCHECK(criteria.mid.empty() || Mid::IsLegalMidName(criteria.mid));
+  RTC_DCHECK(criteria.rsid.empty() || StreamId::IsLegalRsidName(criteria.rsid));
   RTC_DCHECK(sink);
 
   // We return false instead of DCHECKing for logical conflicts with the new
@@ -168,7 +168,7 @@ RtpPacketSinkInterface* RtpDemuxer::ResolveSink(
   // RSID and RRID are routed to the same sinks. If an RSID is specified on a
   // repair packet, it should be ignored and the RRID should be used.
   std::string packet_mid, packet_rsid;
-  bool has_mid = packet.GetExtension<RtpMid>(&packet_mid);
+  bool has_mid = use_mid_ && packet.GetExtension<RtpMid>(&packet_mid);
   bool has_rsid = packet.GetExtension<RepairedRtpStreamId>(&packet_rsid);
   if (!has_rsid) {
     has_rsid = packet.GetExtension<RtpStreamId>(&packet_rsid);

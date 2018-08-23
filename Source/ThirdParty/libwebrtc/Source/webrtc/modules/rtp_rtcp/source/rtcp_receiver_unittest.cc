@@ -11,8 +11,10 @@
 #include <memory>
 
 #include "api/array_view.h"
+#include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_bitrate_allocator.h"
 #include "common_types.h"  // NOLINT(build/include)
-#include "common_video/include/video_bitrate_allocator.h"
+#include "modules/rtp_rtcp/mocks/mock_rtcp_bandwidth_observer.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/app.h"
@@ -80,13 +82,6 @@ class MockTransportFeedbackObserver : public TransportFeedbackObserver {
   MOCK_CONST_METHOD0(GetTransportFeedbackVector, std::vector<PacketFeedback>());
 };
 
-class MockRtcpBandwidthObserver : public RtcpBandwidthObserver {
- public:
-  MOCK_METHOD1(OnReceivedEstimatedBitrate, void(uint32_t));
-  MOCK_METHOD3(OnReceivedRtcpReceiverReport,
-               void(const ReportBlockList&, int64_t, int64_t));
-};
-
 class MockModuleRtpRtcp : public RTCPReceiver::ModuleRtpRtcp {
  public:
   MOCK_METHOD1(SetTmmbn, void(std::vector<rtcp::TmmbItem>));
@@ -99,7 +94,7 @@ class MockVideoBitrateAllocationObserver
     : public VideoBitrateAllocationObserver {
  public:
   MOCK_METHOD1(OnBitrateAllocationUpdated,
-               void(const BitrateAllocation& allocation));
+               void(const VideoBitrateAllocation& allocation));
 };
 
 // SSRC of remote peer, that sends rtcp packet to the rtcp receiver under test.
@@ -264,6 +259,33 @@ TEST_F(RtcpReceiverTest, InjectSrPacketCalculatesNegativeRTTAsOne) {
   EXPECT_EQ(1, rtt_ms);
 }
 
+TEST_F(
+    RtcpReceiverTest,
+    TwoReportBlocksWithLastOneWithoutLastSrCalculatesRttForBandwidthObserver) {
+  const int64_t kRttMs = 120;
+  const uint32_t kDelayNtp = 123000;
+  const int64_t kDelayMs = CompactNtpRttToMs(kDelayNtp);
+
+  uint32_t sent_ntp = CompactNtp(system_clock_.CurrentNtpTime());
+  system_clock_.AdvanceTimeMilliseconds(kRttMs + kDelayMs);
+
+  rtcp::SenderReport sr;
+  sr.SetSenderSsrc(kSenderSsrc);
+  rtcp::ReportBlock block;
+  block.SetMediaSsrc(kReceiverMainSsrc);
+  block.SetLastSr(sent_ntp);
+  block.SetDelayLastSr(kDelayNtp);
+  sr.AddReportBlock(block);
+  block.SetMediaSsrc(kReceiverExtraSsrc);
+  block.SetLastSr(0);
+  sr.AddReportBlock(block);
+
+  EXPECT_CALL(rtp_rtcp_impl_, OnReceivedRtcpReportBlocks(SizeIs(2)));
+  EXPECT_CALL(bandwidth_observer_,
+              OnReceivedRtcpReceiverReport(SizeIs(2), kRttMs, _));
+  InjectRtcpPacket(sr);
+}
+
 TEST_F(RtcpReceiverTest, InjectRrPacket) {
   int64_t now = system_clock_.TimeInMilliseconds();
   rtcp::ReceiverReport rr;
@@ -419,7 +441,7 @@ TEST_F(RtcpReceiverTest, InjectRrPacketWithTwoReportBlocks) {
 TEST_F(RtcpReceiverTest, InjectRrPacketsFromTwoRemoteSsrcs) {
   const uint32_t kSenderSsrc2 = 0x20304;
   const uint16_t kSequenceNumbers[] = {10, 12423};
-  const uint32_t kCumLost[] = {13, 555};
+  const int32_t kCumLost[] = {13, 555};
   const uint8_t kFracLost[] = {20, 11};
 
   rtcp::ReportBlock rb1;
@@ -599,6 +621,21 @@ TEST_F(RtcpReceiverTest, InjectByePacket_RemovesReportBlocks) {
   EXPECT_EQ(2u, received_blocks.size());
 }
 
+TEST_F(RtcpReceiverTest, InjectByePacketRemovesReferenceTimeInfo) {
+  rtcp::ExtendedReports xr;
+  xr.SetSenderSsrc(kSenderSsrc);
+  rtcp::Rrtr rrtr;
+  rrtr.SetNtp(NtpTime(0x10203, 0x40506));
+  xr.SetRrtr(rrtr);
+  InjectRtcpPacket(xr);
+
+  rtcp::Bye bye;
+  bye.SetSenderSsrc(kSenderSsrc);
+  InjectRtcpPacket(bye);
+
+  EXPECT_THAT(rtcp_receiver_.ConsumeReceivedXrReferenceTimeInfo(), IsEmpty());
+}
+
 TEST_F(RtcpReceiverTest, InjectPliPacket) {
   rtcp::Pli pli;
   pli.SetMediaSsrc(kReceiverMainSsrc);
@@ -685,19 +722,17 @@ TEST_F(RtcpReceiverTest, InjectExtendedReportsReceiverReferenceTimePacket) {
   xr.SetSenderSsrc(kSenderSsrc);
   xr.SetRrtr(rrtr);
 
-  ReceiveTimeInfo rrtime;
-  EXPECT_FALSE(rtcp_receiver_.LastReceivedXrReferenceTimeInfo(&rrtime));
+  std::vector<rtcp::ReceiveTimeInfo> last_xr_rtis =
+      rtcp_receiver_.ConsumeReceivedXrReferenceTimeInfo();
+  EXPECT_THAT(last_xr_rtis, IsEmpty());
 
   InjectRtcpPacket(xr);
 
-  EXPECT_TRUE(rtcp_receiver_.LastReceivedXrReferenceTimeInfo(&rrtime));
-  EXPECT_EQ(rrtime.ssrc, kSenderSsrc);
-  EXPECT_EQ(rrtime.last_rr, CompactNtp(kNtp));
-  EXPECT_EQ(0U, rrtime.delay_since_last_rr);
-
-  system_clock_.AdvanceTimeMilliseconds(1500);
-  EXPECT_TRUE(rtcp_receiver_.LastReceivedXrReferenceTimeInfo(&rrtime));
-  EXPECT_NEAR(1500, CompactNtpRttToMs(rrtime.delay_since_last_rr), 1);
+  last_xr_rtis = rtcp_receiver_.ConsumeReceivedXrReferenceTimeInfo();
+  ASSERT_THAT(last_xr_rtis, SizeIs(1));
+  EXPECT_EQ(kSenderSsrc, last_xr_rtis[0].ssrc);
+  EXPECT_EQ(CompactNtp(kNtp), last_xr_rtis[0].last_rr);
+  EXPECT_EQ(0U, last_xr_rtis[0].delay_since_last_rr);
 }
 
 TEST_F(RtcpReceiverTest, ExtendedReportsDlrrPacketNotToUsIgnored) {
@@ -767,8 +802,9 @@ TEST_F(RtcpReceiverTest, InjectExtendedReportsPacketWithMultipleReportBlocks) {
 
   InjectRtcpPacket(xr);
 
-  ReceiveTimeInfo rrtime;
-  EXPECT_TRUE(rtcp_receiver_.LastReceivedXrReferenceTimeInfo(&rrtime));
+  std::vector<rtcp::ReceiveTimeInfo> last_xr_rtis =
+      rtcp_receiver_.ConsumeReceivedXrReferenceTimeInfo();
+  EXPECT_THAT(last_xr_rtis, SizeIs(1));
   int64_t rtt_ms = 0;
   EXPECT_TRUE(rtcp_receiver_.GetAndResetXrRrRtt(&rtt_ms));
 }
@@ -792,8 +828,9 @@ TEST_F(RtcpReceiverTest, InjectExtendedReportsPacketWithUnknownReportBlock) {
   InjectRtcpPacket(packet);
 
   // Validate Rrtr was received and processed.
-  ReceiveTimeInfo rrtime;
-  EXPECT_TRUE(rtcp_receiver_.LastReceivedXrReferenceTimeInfo(&rrtime));
+  std::vector<rtcp::ReceiveTimeInfo> last_xr_rtis =
+      rtcp_receiver_.ConsumeReceivedXrReferenceTimeInfo();
+  EXPECT_THAT(last_xr_rtis, SizeIs(1));
   // Validate Dlrr report wasn't processed.
   int64_t rtt_ms = 0;
   EXPECT_FALSE(rtcp_receiver_.GetAndResetXrRrRtt(&rtt_ms));
@@ -848,12 +885,11 @@ TEST_F(RtcpReceiverTest, XrDlrrCalculatesNegativeRttAsOne) {
   EXPECT_EQ(1, rtt_ms);
 }
 
-TEST_F(RtcpReceiverTest, LastReceivedXrReferenceTimeInfoInitiallyFalse) {
-  ReceiveTimeInfo info;
-  EXPECT_FALSE(rtcp_receiver_.LastReceivedXrReferenceTimeInfo(&info));
+TEST_F(RtcpReceiverTest, ConsumeReceivedXrReferenceTimeInfoInitiallyEmpty) {
+  EXPECT_THAT(rtcp_receiver_.ConsumeReceivedXrReferenceTimeInfo(), IsEmpty());
 }
 
-TEST_F(RtcpReceiverTest, GetLastReceivedExtendedReportsReferenceTimeInfo) {
+TEST_F(RtcpReceiverTest, ConsumeReceivedXrReferenceTimeInfo) {
   const NtpTime kNtp(0x10203, 0x40506);
   const uint32_t kNtpMid = CompactNtp(kNtp);
 
@@ -865,15 +901,69 @@ TEST_F(RtcpReceiverTest, GetLastReceivedExtendedReportsReferenceTimeInfo) {
 
   InjectRtcpPacket(xr);
 
-  ReceiveTimeInfo info;
-  EXPECT_TRUE(rtcp_receiver_.LastReceivedXrReferenceTimeInfo(&info));
-  EXPECT_EQ(kSenderSsrc, info.ssrc);
-  EXPECT_EQ(kNtpMid, info.last_rr);
-  EXPECT_EQ(0U, info.delay_since_last_rr);
-
   system_clock_.AdvanceTimeMilliseconds(1000);
-  EXPECT_TRUE(rtcp_receiver_.LastReceivedXrReferenceTimeInfo(&info));
-  EXPECT_EQ(65536U, info.delay_since_last_rr);
+
+  std::vector<rtcp::ReceiveTimeInfo> last_xr_rtis =
+      rtcp_receiver_.ConsumeReceivedXrReferenceTimeInfo();
+  ASSERT_THAT(last_xr_rtis, SizeIs(1));
+  EXPECT_EQ(kSenderSsrc, last_xr_rtis[0].ssrc);
+  EXPECT_EQ(kNtpMid, last_xr_rtis[0].last_rr);
+  EXPECT_EQ(65536U, last_xr_rtis[0].delay_since_last_rr);
+}
+
+TEST_F(RtcpReceiverTest,
+       ReceivedRrtrFromSameSsrcUpdatesReceivedReferenceTimeInfo) {
+  const NtpTime kNtp1(0x10203, 0x40506);
+  const NtpTime kNtp2(0x11223, 0x44556);
+  const int64_t kDelayMs = 2000;
+
+  rtcp::ExtendedReports xr;
+  xr.SetSenderSsrc(kSenderSsrc);
+  rtcp::Rrtr rrtr1;
+  rrtr1.SetNtp(kNtp1);
+  xr.SetRrtr(rrtr1);
+  InjectRtcpPacket(xr);
+  system_clock_.AdvanceTimeMilliseconds(kDelayMs);
+  rtcp::Rrtr rrtr2;
+  rrtr2.SetNtp(kNtp2);
+  xr.SetRrtr(rrtr2);
+  InjectRtcpPacket(xr);
+  system_clock_.AdvanceTimeMilliseconds(kDelayMs);
+
+  std::vector<rtcp::ReceiveTimeInfo> last_xr_rtis =
+      rtcp_receiver_.ConsumeReceivedXrReferenceTimeInfo();
+  ASSERT_THAT(last_xr_rtis, SizeIs(1));
+  EXPECT_EQ(kSenderSsrc, last_xr_rtis[0].ssrc);
+  EXPECT_EQ(CompactNtp(kNtp2), last_xr_rtis[0].last_rr);
+  EXPECT_EQ(kDelayMs * 65536 / 1000, last_xr_rtis[0].delay_since_last_rr);
+}
+
+TEST_F(RtcpReceiverTest, StoresLastReceivedRrtrPerSsrc) {
+  const size_t kNumBufferedReports = 1;
+  const size_t kNumReports =
+      rtcp::ExtendedReports::kMaxNumberOfDlrrItems + kNumBufferedReports;
+  for (size_t i = 0; i < kNumReports; ++i) {
+    rtcp::ExtendedReports xr;
+    xr.SetSenderSsrc(i * 100);
+    rtcp::Rrtr rrtr;
+    rrtr.SetNtp(NtpTime(i * 200, i * 300));
+    xr.SetRrtr(rrtr);
+    InjectRtcpPacket(xr);
+    system_clock_.AdvanceTimeMilliseconds(1000);
+  }
+
+  std::vector<rtcp::ReceiveTimeInfo> last_xr_rtis =
+      rtcp_receiver_.ConsumeReceivedXrReferenceTimeInfo();
+  ASSERT_THAT(last_xr_rtis,
+              SizeIs(rtcp::ExtendedReports::kMaxNumberOfDlrrItems));
+  for (size_t i = 0; i < rtcp::ExtendedReports::kMaxNumberOfDlrrItems; ++i) {
+    EXPECT_EQ(i * 100, last_xr_rtis[i].ssrc);
+    EXPECT_EQ(CompactNtp(NtpTime(i * 200, i * 300)), last_xr_rtis[i].last_rr);
+    EXPECT_EQ(65536U * (kNumReports - i), last_xr_rtis[i].delay_since_last_rr);
+  }
+
+  last_xr_rtis = rtcp_receiver_.ConsumeReceivedXrReferenceTimeInfo();
+  ASSERT_THAT(last_xr_rtis, SizeIs(kNumBufferedReports));
 }
 
 TEST_F(RtcpReceiverTest, ReceiveReportTimeout) {
@@ -1145,8 +1235,8 @@ TEST_F(RtcpReceiverTest, HandlesInvalidTransportFeedback) {
 
   // Modify the TransportFeedback packet so that it is invalid.
   const size_t kStatusCountOffset = 14;
-  ByteWriter<uint16_t>::WriteBigEndian(
-      &built_packet.data()[kStatusCountOffset], 42);
+  ByteWriter<uint16_t>::WriteBigEndian(&built_packet.data()[kStatusCountOffset],
+                                       42);
 
   // Stress no transport feedback is expected.
   EXPECT_CALL(transport_feedback_observer_, OnTransportFeedback(_)).Times(0);
@@ -1229,7 +1319,7 @@ TEST_F(RtcpReceiverTest, ForceSenderReport) {
 }
 
 TEST_F(RtcpReceiverTest, ReceivesTargetBitrate) {
-  BitrateAllocation expected_allocation;
+  VideoBitrateAllocation expected_allocation;
   expected_allocation.SetBitrate(0, 0, 10000);
   expected_allocation.SetBitrate(0, 1, 20000);
   expected_allocation.SetBitrate(1, 0, 40000);
@@ -1259,7 +1349,7 @@ TEST_F(RtcpReceiverTest, ReceivesTargetBitrate) {
 }
 
 TEST_F(RtcpReceiverTest, HandlesIncorrectTargetBitrate) {
-  BitrateAllocation expected_allocation;
+  VideoBitrateAllocation expected_allocation;
   expected_allocation.SetBitrate(0, 0, 10000);
 
   rtcp::TargetBitrate bitrate;

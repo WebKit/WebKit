@@ -17,19 +17,19 @@
  */
 
 
-#include "entropy_coding.h"
-#include "settings.h"
-#include "arith_routines.h"
-#include "signal_processing_library.h"
-#include "spectrum_ar_model_tables.h"
-#include "lpc_tables.h"
-#include "pitch_gain_tables.h"
-#include "pitch_lag_tables.h"
-#include "encode_lpc_swb.h"
-#include "lpc_shape_swb12_tables.h"
-#include "lpc_shape_swb16_tables.h"
-#include "lpc_gain_swb_tables.h"
-#include "os_specific_inline.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "modules/audio_coding/codecs/isac/main/source/entropy_coding.h"
+#include "modules/audio_coding/codecs/isac/main/source/settings.h"
+#include "modules/audio_coding/codecs/isac/main/source/arith_routines.h"
+#include "modules/audio_coding/codecs/isac/main/source/spectrum_ar_model_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/lpc_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/pitch_gain_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/pitch_lag_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/encode_lpc_swb.h"
+#include "modules/audio_coding/codecs/isac/main/source/lpc_shape_swb12_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/lpc_shape_swb16_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/lpc_gain_swb_tables.h"
+#include "modules/audio_coding/codecs/isac/main/source/os_specific_inline.h"
 
 #include <math.h>
 #include <string.h>

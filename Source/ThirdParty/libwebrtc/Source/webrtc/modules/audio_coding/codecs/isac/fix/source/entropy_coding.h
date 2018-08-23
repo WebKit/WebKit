@@ -19,94 +19,82 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_ENTROPY_CODING_H_
 #define MODULES_AUDIO_CODING_CODECS_ISAC_FIX_SOURCE_ENTROPY_CODING_H_
 
-#include "structs.h"
+#include "modules/audio_coding/codecs/isac/fix/source/structs.h"
 
 /* decode complex spectrum (return number of bytes in stream) */
-int WebRtcIsacfix_DecodeSpec(Bitstr_dec  *streamdata,
-                             int16_t *frQ7,
-                             int16_t *fiQ7,
+int WebRtcIsacfix_DecodeSpec(Bitstr_dec* streamdata,
+                             int16_t* frQ7,
+                             int16_t* fiQ7,
                              int16_t AvgPitchGain_Q12);
 
 /* encode complex spectrum */
-int WebRtcIsacfix_EncodeSpec(const int16_t *fr,
-                             const int16_t *fi,
-                             Bitstr_enc *streamdata,
+int WebRtcIsacfix_EncodeSpec(const int16_t* fr,
+                             const int16_t* fi,
+                             Bitstr_enc* streamdata,
                              int16_t AvgPitchGain_Q12);
 
-
 /* decode & dequantize LPC Coef */
-int WebRtcIsacfix_DecodeLpcCoef(Bitstr_dec  *streamdata,
-                                int32_t *LPCCoefQ17,
-                                int32_t *gain_lo_hiQ17,
-                                int16_t *outmodel);
+int WebRtcIsacfix_DecodeLpcCoef(Bitstr_dec* streamdata,
+                                int32_t* LPCCoefQ17,
+                                int32_t* gain_lo_hiQ17,
+                                int16_t* outmodel);
 
-int WebRtcIsacfix_DecodeLpc(int32_t *gain_lo_hiQ17,
-                            int16_t *LPCCoef_loQ15,
-                            int16_t *LPCCoef_hiQ15,
-                            Bitstr_dec  *streamdata,
-                            int16_t *outmodel);
+int WebRtcIsacfix_DecodeLpc(int32_t* gain_lo_hiQ17,
+                            int16_t* LPCCoef_loQ15,
+                            int16_t* LPCCoef_hiQ15,
+                            Bitstr_dec* streamdata,
+                            int16_t* outmodel);
 
 /* quantize & code LPC Coef */
-int WebRtcIsacfix_EncodeLpc(int32_t *gain_lo_hiQ17,
-                            int16_t *LPCCoef_loQ15,
-                            int16_t *LPCCoef_hiQ15,
-                            int16_t *model,
-                            int32_t *sizeQ11,
-                            Bitstr_enc *streamdata,
+int WebRtcIsacfix_EncodeLpc(int32_t* gain_lo_hiQ17,
+                            int16_t* LPCCoef_loQ15,
+                            int16_t* LPCCoef_hiQ15,
+                            int16_t* model,
+                            int32_t* sizeQ11,
+                            Bitstr_enc* streamdata,
                             IsacSaveEncoderData* encData,
-                            transcode_obj *transcodeParam);
+                            transcode_obj* transcodeParam);
 
-int WebRtcIsacfix_EstCodeLpcGain(int32_t *gain_lo_hiQ17,
-                                 Bitstr_enc *streamdata,
+int WebRtcIsacfix_EstCodeLpcGain(int32_t* gain_lo_hiQ17,
+                                 Bitstr_enc* streamdata,
                                  IsacSaveEncoderData* encData);
 /* decode & dequantize RC */
-int WebRtcIsacfix_DecodeRcCoef(Bitstr_dec *streamdata,
-                               int16_t *RCQ15);
+int WebRtcIsacfix_DecodeRcCoef(Bitstr_dec* streamdata, int16_t* RCQ15);
 
 /* quantize & code RC */
-int WebRtcIsacfix_EncodeRcCoef(int16_t *RCQ15,
-                               Bitstr_enc *streamdata);
+int WebRtcIsacfix_EncodeRcCoef(int16_t* RCQ15, Bitstr_enc* streamdata);
 
 /* decode & dequantize squared Gain */
-int WebRtcIsacfix_DecodeGain2(Bitstr_dec *streamdata,
-                              int32_t *Gain2);
+int WebRtcIsacfix_DecodeGain2(Bitstr_dec* streamdata, int32_t* Gain2);
 
 /* quantize & code squared Gain (input is squared gain) */
-int WebRtcIsacfix_EncodeGain2(int32_t *gain2,
-                              Bitstr_enc *streamdata);
+int WebRtcIsacfix_EncodeGain2(int32_t* gain2, Bitstr_enc* streamdata);
 
-int WebRtcIsacfix_EncodePitchGain(int16_t *PitchGains_Q12,
-                                  Bitstr_enc *streamdata,
+int WebRtcIsacfix_EncodePitchGain(int16_t* PitchGains_Q12,
+                                  Bitstr_enc* streamdata,
                                   IsacSaveEncoderData* encData);
 
-int WebRtcIsacfix_EncodePitchLag(int16_t *PitchLagQ7,
-                                 int16_t *PitchGain_Q12,
-                                 Bitstr_enc *streamdata,
+int WebRtcIsacfix_EncodePitchLag(int16_t* PitchLagQ7,
+                                 int16_t* PitchGain_Q12,
+                                 Bitstr_enc* streamdata,
                                  IsacSaveEncoderData* encData);
 
-int WebRtcIsacfix_DecodePitchGain(Bitstr_dec *streamdata,
-                                  int16_t *PitchGain_Q12);
+int WebRtcIsacfix_DecodePitchGain(Bitstr_dec* streamdata,
+                                  int16_t* PitchGain_Q12);
 
-int WebRtcIsacfix_DecodePitchLag(Bitstr_dec *streamdata,
-                                 int16_t *PitchGain_Q12,
-                                 int16_t *PitchLagQ7);
+int WebRtcIsacfix_DecodePitchLag(Bitstr_dec* streamdata,
+                                 int16_t* PitchGain_Q12,
+                                 int16_t* PitchLagQ7);
 
-int WebRtcIsacfix_DecodeFrameLen(Bitstr_dec *streamdata,
-                                 size_t *framelength);
+int WebRtcIsacfix_DecodeFrameLen(Bitstr_dec* streamdata, size_t* framelength);
 
+int WebRtcIsacfix_EncodeFrameLen(int16_t framelength, Bitstr_enc* streamdata);
 
-int WebRtcIsacfix_EncodeFrameLen(int16_t framelength,
-                                 Bitstr_enc *streamdata);
+int WebRtcIsacfix_DecodeSendBandwidth(Bitstr_dec* streamdata, int16_t* BWno);
 
-int WebRtcIsacfix_DecodeSendBandwidth(Bitstr_dec *streamdata,
-                                      int16_t *BWno);
+int WebRtcIsacfix_EncodeReceiveBandwidth(int16_t* BWno, Bitstr_enc* streamdata);
 
-
-int WebRtcIsacfix_EncodeReceiveBandwidth(int16_t *BWno,
-                                         Bitstr_enc *streamdata);
-
-void WebRtcIsacfix_TranscodeLpcCoef(int32_t *tmpcoeffs_gQ6,
-                                    int16_t *index_gQQ);
+void WebRtcIsacfix_TranscodeLpcCoef(int32_t* tmpcoeffs_gQ6, int16_t* index_gQQ);
 
 // Pointer functions for LPC transforms.
 

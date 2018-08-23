@@ -15,27 +15,11 @@
 
 #include "api/rtpreceiverinterface.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
 class RTPPayloadRegistry;
 class VideoCodec;
-
-class TelephoneEventHandler {
- public:
-  virtual ~TelephoneEventHandler() {}
-
-  // The following three methods implement the TelephoneEventHandler interface.
-  // Forward DTMFs to decoder for playout.
-  virtual void SetTelephoneEventForwardToDecoder(bool forward_to_decoder) = 0;
-
-  // Is forwarding of outband telephone events turned on/off?
-  virtual bool TelephoneEventForwardToDecoder() const = 0;
-
-  // Is TelephoneEvent configured with payload type payload_type
-  virtual bool TelephoneEventPayloadType(const int8_t payload_type) const = 0;
-};
 
 class RtpReceiver {
  public:
@@ -43,20 +27,15 @@ class RtpReceiver {
   static RtpReceiver* CreateVideoReceiver(
       Clock* clock,
       RtpData* incoming_payload_callback,
-      RtpFeedback* incoming_messages_callback,
       RTPPayloadRegistry* rtp_payload_registry);
 
   // Creates an audio-enabled RTP receiver.
   static RtpReceiver* CreateAudioReceiver(
       Clock* clock,
       RtpData* incoming_payload_callback,
-      RtpFeedback* incoming_messages_callback,
       RTPPayloadRegistry* rtp_payload_registry);
 
   virtual ~RtpReceiver() {}
-
-  // Returns a TelephoneEventHandler if available.
-  virtual TelephoneEventHandler* GetTelephoneEventHandler() = 0;
 
   // Registers a receive payload in the payload registry and notifies the media
   // receiver strategy.
@@ -99,12 +78,6 @@ class RtpReceiver {
 
   // Returns the remote SSRC of the currently received RTP stream.
   virtual uint32_t SSRC() const = 0;
-
-  // Returns the current remote CSRCs.
-  virtual int32_t CSRCs(uint32_t array_of_csrc[kRtpCsrcSize]) const = 0;
-
-  // Returns the current energy of the RTP stream received.
-  virtual int32_t Energy(uint8_t array_of_energy[kRtpCsrcSize]) const = 0;
 
   virtual std::vector<RtpSource> GetSources() const = 0;
 };

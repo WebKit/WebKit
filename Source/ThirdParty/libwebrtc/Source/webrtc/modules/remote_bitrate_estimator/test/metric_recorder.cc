@@ -15,7 +15,7 @@
 #include <algorithm>
 
 #include "modules/remote_bitrate_estimator/test/packet_sender.h"
-#include "typedefs.h"  // NOLINT(build/include)
+#include "rtc_base/system/unused.h"
 
 namespace webrtc {
 namespace testing {
@@ -27,13 +27,14 @@ template <typename T>
 double NormLp(T sum, size_t size, double p) {
   return pow(sum / size, 1.0 / p);
 }
-}
+}  // namespace
 
 const double kP = 1.0;  // Used for Norm Lp.
 
 LinkShare::LinkShare(ChokeFilter* choke_filter)
-    : choke_filter_(choke_filter), running_flows_(choke_filter->flow_ids()) {
-}
+    : choke_filter_(choke_filter), running_flows_(choke_filter->flow_ids()) {}
+
+LinkShare::~LinkShare() = default;
 
 void LinkShare::PauseFlow(int flow_id) {
   running_flows_.erase(flow_id);
@@ -78,6 +79,8 @@ MetricRecorder::MetricRecorder(const std::string algorithm_name,
   if (packet_sender != nullptr)
     packet_sender->set_metric_recorder(this);
 }
+
+MetricRecorder::~MetricRecorder() = default;
 
 void MetricRecorder::SetPlotInformation(
     const std::vector<std::string>& prefixes,
@@ -288,10 +291,10 @@ void MetricRecorder::PlotThroughputHistogram(
       average_bitrate_kbps + pos_error + extra_error, "estimate_error",
       optimal_bitrate_per_flow_kbps, optimum_title, flow_id_);
 
-  BWE_TEST_LOGGING_LOG1("RESULTS >>> " + bwe_name + " Channel utilization : ",
-                        "%lf %%",
-                        100.0 * static_cast<double>(average_bitrate_kbps) /
-                            optimal_bitrate_per_flow_kbps);
+  BWE_TEST_LOGGING_LOG1(
+      "RESULTS >>> " + bwe_name + " Channel utilization : ", "%lf %%",
+      100.0 * static_cast<double>(average_bitrate_kbps) /
+          optimal_bitrate_per_flow_kbps);
 
   RTC_UNUSED(pos_error);
   RTC_UNUSED(neg_error);

@@ -14,9 +14,9 @@
 #include <memory>
 #include <vector>
 
-#include "modules/audio_processing/transient/transient_detector.h"
 #include "modules/audio_processing/transient/file_utils.h"
-#include "system_wrappers/include/file_wrapper.h"
+#include "modules/audio_processing/transient/transient_detector.h"
+#include "rtc_base/system/file_wrapper.h"
 
 using webrtc::FileWrapper;
 using webrtc::TransientDetector;
@@ -73,9 +73,7 @@ int main(int argc, char* argv[]) {
 
   // Read first buffer from the PCM test file.
   size_t file_samples_read = ReadInt16FromFileToFloatBuffer(
-      pcm_file.get(),
-      audio_buffer_length,
-      audio_buffer.get());
+      pcm_file.get(), audio_buffer_length, audio_buffer.get());
   for (int time = 0; file_samples_read > 0; time += chunk_size_ms) {
     // Pad the rest of the buffer with zeros.
     for (size_t i = file_samples_read; i < audio_buffer_length; ++i) {
@@ -92,14 +90,12 @@ int main(int argc, char* argv[]) {
     send_times.push_back(value);
 
     // Read next buffer from the PCM test file.
-    file_samples_read = ReadInt16FromFileToFloatBuffer(pcm_file.get(),
-                                                       audio_buffer_length,
-                                                       audio_buffer.get());
+    file_samples_read = ReadInt16FromFileToFloatBuffer(
+        pcm_file.get(), audio_buffer_length, audio_buffer.get());
   }
 
-  size_t floats_written = WriteFloatBufferToFile(dat_file.get(),
-                                                 send_times.size(),
-                                                 &send_times[0]);
+  size_t floats_written =
+      WriteFloatBufferToFile(dat_file.get(), send_times.size(), &send_times[0]);
 
   if (floats_written == 0) {
     printf("\nThe send times could not be written to DAT file\n\n");

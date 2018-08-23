@@ -24,13 +24,17 @@
  */
 
 #include "WebKitUtilities.h"
+
 #include "Common/RTCUIApplicationStatusObserver.h"
-#include "VideoToolbox/objc_video_decoder_factory.h"
-#include "VideoToolbox/objc_video_encoder_factory.h"
 #import "WebRTC/RTCVideoCodecH264.h"
+
 #include "api/video/video_frame.h"
-#include <webrtc/sdk/objc/Framework/Classes/Video/objc_frame_buffer.h>
-#include <webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrameBuffer.h>
+#include "webrtc/sdk/objc/Framework/Native/src/objc_frame_buffer.h"
+#include "webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrame.h"
+#include "webrtc/sdk/objc/Framework/Headers/WebRTC/RTCVideoFrameBuffer.h"
+#include "webrtc/sdk/objc/Framework/Native/api/video_decoder_factory.h"
+#include "webrtc/sdk/objc/Framework/Native/api/video_encoder_factory.h"
+
 
 #if !defined(WEBRTC_IOS)
 __attribute__((objc_runtime_name("WK_RTCUIApplicationStatusObserver")))
@@ -99,12 +103,12 @@ std::unique_ptr<webrtc::VideoEncoderFactory> createVideoToolboxEncoderFactory()
         webrtc::VPModuleInitialize();
     });
 #endif
-    return std::make_unique<webrtc::ObjCVideoEncoderFactory>([[RTCVideoEncoderFactoryH264 alloc] init]);
+    return ObjCToNativeVideoEncoderFactory([[RTCVideoEncoderFactoryH264 alloc] init]);
 }
 
 std::unique_ptr<webrtc::VideoDecoderFactory> createVideoToolboxDecoderFactory()
 {
-    return std::make_unique<webrtc::ObjCVideoDecoderFactory>([[RTCVideoDecoderFactoryH264 alloc] init]);
+    return ObjCToNativeVideoDecoderFactory([[RTCVideoDecoderFactoryH264 alloc] init]);
 }
 
 static bool h264HardwareEncoderAllowed = true;
@@ -120,17 +124,21 @@ bool isH264HardwareEncoderAllowed()
 
 rtc::scoped_refptr<webrtc::VideoFrameBuffer> pixelBufferToFrame(CVPixelBufferRef pixelBuffer)
 {
-    RTCCVPixelBuffer *frameBuffer = [[RTCCVPixelBuffer alloc] initWithPixelBuffer: pixelBuffer];
-    return new rtc::RefCountedObject<webrtc::ObjCFrameBuffer>(frameBuffer);
+    RTCCVPixelBuffer *frameBuffer = [[RTCCVPixelBuffer alloc] initWithPixelBuffer:pixelBuffer];
+    return new rtc::RefCountedObject<ObjCFrameBuffer>(frameBuffer);
 }
 
 CVPixelBufferRef pixelBufferFromFrame(const VideoFrame& frame)
 {
-    auto buffer = frame.video_frame_buffer();
-    auto frameBuffer = static_cast<webrtc::ObjCFrameBuffer&>(*buffer).wrapped_frame_buffer();
-    if ([frameBuffer isKindOfClass: [RTCCVPixelBuffer class]])
-        return [(RTCCVPixelBuffer *)frameBuffer pixelBuffer];
-    return nullptr;
+    if (frame.video_frame_buffer()->type() != VideoFrameBuffer::Type::kNative)
+        return nullptr;
+
+    auto *frameBuffer = static_cast<ObjCFrameBuffer*>(frame.video_frame_buffer().get())->wrapped_frame_buffer();
+    if (![frameBuffer isKindOfClass:[RTCCVPixelBuffer class]])
+        return nullptr;
+
+    auto *rtcPixelBuffer = (RTCCVPixelBuffer *)frameBuffer;
+    return rtcPixelBuffer.pixelBuffer;
 }
 
 }

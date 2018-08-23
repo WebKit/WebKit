@@ -90,9 +90,8 @@ size_t AudioEncoderIsacT<T>::NumChannels() const {
 template <typename T>
 size_t AudioEncoderIsacT<T>::Num10MsFramesInNextPacket() const {
   const int samples_in_next_packet = T::GetNewFrameLen(isac_state_);
-  return static_cast<size_t>(
-      rtc::CheckedDivExact(samples_in_next_packet,
-                           rtc::CheckedDivExact(SampleRateHz(), 100)));
+  return static_cast<size_t>(rtc::CheckedDivExact(
+      samples_in_next_packet, rtc::CheckedDivExact(SampleRateHz(), 100)));
 }
 
 template <typename T>
@@ -123,8 +122,7 @@ AudioEncoder::EncodedInfo AudioEncoderIsacT<T>::EncodeImpl(
   }
 
   size_t encoded_bytes = encoded->AppendData(
-      kSufficientEncodeBufferSizeBytes,
-      [&] (rtc::ArrayView<uint8_t> encoded) {
+      kSufficientEncodeBufferSizeBytes, [&](rtc::ArrayView<uint8_t> encoded) {
         int r = T::Encode(isac_state_, audio.data(), encoded.data());
 
         RTC_CHECK_GE(r, 0) << "Encode failed (error code "

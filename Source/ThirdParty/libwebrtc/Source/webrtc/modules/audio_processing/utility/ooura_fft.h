@@ -11,7 +11,7 @@
 #ifndef MODULES_AUDIO_PROCESSING_UTILITY_OOURA_FFT_H_
 #define MODULES_AUDIO_PROCESSING_UTILITY_OOURA_FFT_H_
 
-#include "typedefs.h"  // NOLINT(build/include)
+#include "rtc_base/system/arch.h"
 
 namespace webrtc {
 

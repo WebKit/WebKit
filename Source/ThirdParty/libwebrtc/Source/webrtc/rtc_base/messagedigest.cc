@@ -14,15 +14,14 @@
 
 #include <string.h>
 
-#include "rtc_base/basictypes.h"
 #include "rtc_base/openssldigest.h"
 #include "rtc_base/stringencode.h"
 
 namespace rtc {
 
 // From RFC 4572.
-const char DIGEST_MD5[]     = "md5";
-const char DIGEST_SHA_1[]   = "sha-1";
+const char DIGEST_MD5[] = "md5";
+const char DIGEST_SHA_1[] = "sha-1";
 const char DIGEST_SHA_224[] = "sha-224";
 const char DIGEST_SHA_256[] = "sha-256";
 const char DIGEST_SHA_384[] = "sha-384";
@@ -45,35 +44,39 @@ bool IsFips180DigestAlgorithm(const std::string& alg) {
   // consideration) MUST use one of the FIPS 180 algorithms (SHA-1,
   // SHA-224, SHA-256, SHA-384, or SHA-512) as their signature algorithm,
   // and thus also MUST use it to calculate certificate fingerprints."
-  return alg == DIGEST_SHA_1 ||
-         alg == DIGEST_SHA_224 ||
-         alg == DIGEST_SHA_256 ||
-         alg == DIGEST_SHA_384 ||
+  return alg == DIGEST_SHA_1 || alg == DIGEST_SHA_224 ||
+         alg == DIGEST_SHA_256 || alg == DIGEST_SHA_384 ||
          alg == DIGEST_SHA_512;
 }
 
-size_t ComputeDigest(MessageDigest* digest, const void* input, size_t in_len,
-                     void* output, size_t out_len) {
+size_t ComputeDigest(MessageDigest* digest,
+                     const void* input,
+                     size_t in_len,
+                     void* output,
+                     size_t out_len) {
   digest->Update(input, in_len);
   return digest->Finish(output, out_len);
 }
 
-size_t ComputeDigest(const std::string& alg, const void* input, size_t in_len,
-                     void* output, size_t out_len) {
+size_t ComputeDigest(const std::string& alg,
+                     const void* input,
+                     size_t in_len,
+                     void* output,
+                     size_t out_len) {
   std::unique_ptr<MessageDigest> digest(MessageDigestFactory::Create(alg));
-  return (digest) ?
-      ComputeDigest(digest.get(), input, in_len, output, out_len) :
-      0;
+  return (digest) ? ComputeDigest(digest.get(), input, in_len, output, out_len)
+                  : 0;
 }
 
 std::string ComputeDigest(MessageDigest* digest, const std::string& input) {
   std::unique_ptr<char[]> output(new char[digest->Size()]);
-  ComputeDigest(digest, input.data(), input.size(),
-                output.get(), digest->Size());
+  ComputeDigest(digest, input.data(), input.size(), output.get(),
+                digest->Size());
   return hex_encode(output.get(), digest->Size());
 }
 
-bool ComputeDigest(const std::string& alg, const std::string& input,
+bool ComputeDigest(const std::string& alg,
+                   const std::string& input,
                    std::string* output) {
   std::unique_ptr<MessageDigest> digest(MessageDigestFactory::Create(alg));
   if (!digest) {
@@ -91,9 +94,12 @@ std::string ComputeDigest(const std::string& alg, const std::string& input) {
 
 // Compute a RFC 2104 HMAC: H(K XOR opad, H(K XOR ipad, text))
 size_t ComputeHmac(MessageDigest* digest,
-                   const void* key, size_t key_len,
-                   const void* input, size_t in_len,
-                   void* output, size_t out_len) {
+                   const void* key,
+                   size_t key_len,
+                   const void* input,
+                   size_t in_len,
+                   void* output,
+                   size_t out_len) {
   // We only handle algorithms with a 64-byte blocksize.
   // TODO: Add BlockSize() method to MessageDigest.
   size_t block_len = kBlockSize;
@@ -128,27 +134,34 @@ size_t ComputeHmac(MessageDigest* digest,
   return digest->Finish(output, out_len);
 }
 
-size_t ComputeHmac(const std::string& alg, const void* key, size_t key_len,
-                   const void* input, size_t in_len,
-                   void* output, size_t out_len) {
+size_t ComputeHmac(const std::string& alg,
+                   const void* key,
+                   size_t key_len,
+                   const void* input,
+                   size_t in_len,
+                   void* output,
+                   size_t out_len) {
   std::unique_ptr<MessageDigest> digest(MessageDigestFactory::Create(alg));
   if (!digest) {
     return 0;
   }
-  return ComputeHmac(digest.get(), key, key_len,
-                     input, in_len, output, out_len);
+  return ComputeHmac(digest.get(), key, key_len, input, in_len, output,
+                     out_len);
 }
 
-std::string ComputeHmac(MessageDigest* digest, const std::string& key,
+std::string ComputeHmac(MessageDigest* digest,
+                        const std::string& key,
                         const std::string& input) {
   std::unique_ptr<char[]> output(new char[digest->Size()]);
-  ComputeHmac(digest, key.data(), key.size(),
-              input.data(), input.size(), output.get(), digest->Size());
+  ComputeHmac(digest, key.data(), key.size(), input.data(), input.size(),
+              output.get(), digest->Size());
   return hex_encode(output.get(), digest->Size());
 }
 
-bool ComputeHmac(const std::string& alg, const std::string& key,
-                 const std::string& input, std::string* output) {
+bool ComputeHmac(const std::string& alg,
+                 const std::string& key,
+                 const std::string& input,
+                 std::string* output) {
   std::unique_ptr<MessageDigest> digest(MessageDigestFactory::Create(alg));
   if (!digest) {
     return false;
@@ -157,7 +170,8 @@ bool ComputeHmac(const std::string& alg, const std::string& key,
   return true;
 }
 
-std::string ComputeHmac(const std::string& alg, const std::string& key,
+std::string ComputeHmac(const std::string& alg,
+                        const std::string& key,
                         const std::string& input) {
   std::string output;
   ComputeHmac(alg, key, input, &output);

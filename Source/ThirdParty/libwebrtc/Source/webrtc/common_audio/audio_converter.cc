@@ -26,12 +26,16 @@ namespace webrtc {
 
 class CopyConverter : public AudioConverter {
  public:
-  CopyConverter(size_t src_channels, size_t src_frames, size_t dst_channels,
+  CopyConverter(size_t src_channels,
+                size_t src_frames,
+                size_t dst_channels,
                 size_t dst_frames)
       : AudioConverter(src_channels, src_frames, dst_channels, dst_frames) {}
-  ~CopyConverter() override {};
+  ~CopyConverter() override{};
 
-  void Convert(const float* const* src, size_t src_size, float* const* dst,
+  void Convert(const float* const* src,
+               size_t src_size,
+               float* const* dst,
                size_t dst_capacity) override {
     CheckSizes(src_size, dst_capacity);
     if (src != dst) {
@@ -43,12 +47,16 @@ class CopyConverter : public AudioConverter {
 
 class UpmixConverter : public AudioConverter {
  public:
-  UpmixConverter(size_t src_channels, size_t src_frames, size_t dst_channels,
+  UpmixConverter(size_t src_channels,
+                 size_t src_frames,
+                 size_t dst_channels,
                  size_t dst_frames)
       : AudioConverter(src_channels, src_frames, dst_channels, dst_frames) {}
-  ~UpmixConverter() override {};
+  ~UpmixConverter() override{};
 
-  void Convert(const float* const* src, size_t src_size, float* const* dst,
+  void Convert(const float* const* src,
+               size_t src_size,
+               float* const* dst,
                size_t dst_capacity) override {
     CheckSizes(src_size, dst_capacity);
     for (size_t i = 0; i < dst_frames(); ++i) {
@@ -61,13 +69,16 @@ class UpmixConverter : public AudioConverter {
 
 class DownmixConverter : public AudioConverter {
  public:
-  DownmixConverter(size_t src_channels, size_t src_frames, size_t dst_channels,
+  DownmixConverter(size_t src_channels,
+                   size_t src_frames,
+                   size_t dst_channels,
                    size_t dst_frames)
-      : AudioConverter(src_channels, src_frames, dst_channels, dst_frames) {
-  }
-  ~DownmixConverter() override {};
+      : AudioConverter(src_channels, src_frames, dst_channels, dst_frames) {}
+  ~DownmixConverter() override{};
 
-  void Convert(const float* const* src, size_t src_size, float* const* dst,
+  void Convert(const float* const* src,
+               size_t src_size,
+               float* const* dst,
                size_t dst_capacity) override {
     CheckSizes(src_size, dst_capacity);
     float* dst_mono = dst[0];
@@ -82,7 +93,9 @@ class DownmixConverter : public AudioConverter {
 
 class ResampleConverter : public AudioConverter {
  public:
-  ResampleConverter(size_t src_channels, size_t src_frames, size_t dst_channels,
+  ResampleConverter(size_t src_channels,
+                    size_t src_frames,
+                    size_t dst_channels,
                     size_t dst_frames)
       : AudioConverter(src_channels, src_frames, dst_channels, dst_frames) {
     resamplers_.reserve(src_channels);
@@ -90,9 +103,11 @@ class ResampleConverter : public AudioConverter {
       resamplers_.push_back(std::unique_ptr<PushSincResampler>(
           new PushSincResampler(src_frames, dst_frames)));
   }
-  ~ResampleConverter() override {};
+  ~ResampleConverter() override{};
 
-  void Convert(const float* const* src, size_t src_size, float* const* dst,
+  void Convert(const float* const* src,
+               size_t src_size,
+               float* const* dst,
                size_t dst_capacity) override {
     CheckSizes(src_size, dst_capacity);
     for (size_t i = 0; i < resamplers_.size(); ++i)
@@ -108,7 +123,7 @@ class ResampleConverter : public AudioConverter {
 class CompositionConverter : public AudioConverter {
  public:
   explicit CompositionConverter(
-    std::vector<std::unique_ptr<AudioConverter>> converters)
+      std::vector<std::unique_ptr<AudioConverter>> converters)
       : converters_(std::move(converters)) {
     RTC_CHECK_GE(converters_.size(), 2);
     // We need an intermediate buffer after every converter.
@@ -117,19 +132,19 @@ class CompositionConverter : public AudioConverter {
           std::unique_ptr<ChannelBuffer<float>>(new ChannelBuffer<float>(
               (*it)->dst_frames(), (*it)->dst_channels())));
   }
-  ~CompositionConverter() override {};
+  ~CompositionConverter() override{};
 
-  void Convert(const float* const* src, size_t src_size, float* const* dst,
+  void Convert(const float* const* src,
+               size_t src_size,
+               float* const* dst,
                size_t dst_capacity) override {
     converters_.front()->Convert(src, src_size, buffers_.front()->channels(),
                                  buffers_.front()->size());
     for (size_t i = 2; i < converters_.size(); ++i) {
       auto& src_buffer = buffers_[i - 2];
       auto& dst_buffer = buffers_[i - 1];
-      converters_[i]->Convert(src_buffer->channels(),
-                              src_buffer->size(),
-                              dst_buffer->channels(),
-                              dst_buffer->size());
+      converters_[i]->Convert(src_buffer->channels(), src_buffer->size(),
+                              dst_buffer->channels(), dst_buffer->size());
     }
     converters_.back()->Convert(buffers_.back()->channels(),
                                 buffers_.back()->size(), dst, dst_capacity);
@@ -175,8 +190,8 @@ std::unique_ptr<AudioConverter> AudioConverter::Create(size_t src_channels,
     sp.reset(new ResampleConverter(src_channels, src_frames, dst_channels,
                                    dst_frames));
   } else {
-    sp.reset(new CopyConverter(src_channels, src_frames, dst_channels,
-                               dst_frames));
+    sp.reset(
+        new CopyConverter(src_channels, src_frames, dst_channels, dst_frames));
   }
 
   return sp;
@@ -184,13 +199,12 @@ std::unique_ptr<AudioConverter> AudioConverter::Create(size_t src_channels,
 
 // For CompositionConverter.
 AudioConverter::AudioConverter()
-    : src_channels_(0),
-      src_frames_(0),
-      dst_channels_(0),
-      dst_frames_(0) {}
+    : src_channels_(0), src_frames_(0), dst_channels_(0), dst_frames_(0) {}
 
-AudioConverter::AudioConverter(size_t src_channels, size_t src_frames,
-                               size_t dst_channels, size_t dst_frames)
+AudioConverter::AudioConverter(size_t src_channels,
+                               size_t src_frames,
+                               size_t dst_channels,
+                               size_t dst_frames)
     : src_channels_(src_channels),
       src_frames_(src_frames),
       dst_channels_(dst_channels),

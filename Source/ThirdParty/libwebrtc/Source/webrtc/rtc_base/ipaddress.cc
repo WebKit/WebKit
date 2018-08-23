@@ -9,9 +9,9 @@
  */
 
 #if defined(WEBRTC_POSIX)
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 #ifdef OPENBSD
 #include <netinet/in_systm.h>
 #endif
@@ -31,19 +31,25 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/nethelpers.h"
 #include "rtc_base/stringutils.h"
+
+#if defined(WEBRTC_WIN)
 #include "rtc_base/win32.h"
+#endif  // WEBRTC_WIN
 
 namespace rtc {
 
 // Prefixes used for categorizing IPv6 addresses.
-static const in6_addr kV4MappedPrefix = {{{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                           0xFF, 0xFF, 0}}};
+static const in6_addr kV4MappedPrefix = {
+    {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0}}};
 static const in6_addr k6To4Prefix = {{{0x20, 0x02, 0}}};
 static const in6_addr kTeredoPrefix = {{{0x20, 0x01, 0x00, 0x00}}};
 static const in6_addr kV4CompatibilityPrefix = {{{0}}};
 static const in6_addr k6BonePrefix = {{{0x3f, 0xfe, 0}}};
+static const in6_addr kPrivateNetworkPrefix = {{{0xFD}}};
 
-static bool IsPrivateV4(uint32_t ip);
+static bool IPIsHelper(const IPAddress& ip,
+                       const in6_addr& tomatch,
+                       int length);
 static in_addr ExtractMappedAddress(const in6_addr& addr);
 
 uint32_t IPAddress::v4AddressAsHostOrderInteger() const {
@@ -68,8 +74,7 @@ size_t IPAddress::Size() const {
   return 0;
 }
 
-
-bool IPAddress::operator==(const IPAddress &other) const {
+bool IPAddress::operator==(const IPAddress& other) const {
   if (family_ != other.family_) {
     return false;
   }
@@ -82,15 +87,15 @@ bool IPAddress::operator==(const IPAddress &other) const {
   return family_ == AF_UNSPEC;
 }
 
-bool IPAddress::operator!=(const IPAddress &other) const {
+bool IPAddress::operator!=(const IPAddress& other) const {
   return !((*this) == other);
 }
 
-bool IPAddress::operator >(const IPAddress &other) const {
+bool IPAddress::operator>(const IPAddress& other) const {
   return (*this) != other && !((*this) < other);
 }
 
-bool IPAddress::operator <(const IPAddress &other) const {
+bool IPAddress::operator<(const IPAddress& other) const {
   // IPv4 is 'less than' IPv6
   if (family_ != other.family_) {
     if (family_ == AF_UNSPEC) {
@@ -105,7 +110,7 @@ bool IPAddress::operator <(const IPAddress &other) const {
   switch (family_) {
     case AF_INET: {
       return NetworkToHost32(u_.ip4.s_addr) <
-          NetworkToHost32(other.u_.ip4.s_addr);
+             NetworkToHost32(other.u_.ip4.s_addr);
     }
     case AF_INET6: {
       return memcmp(&u_.ip6.s6_addr, &other.u_.ip6.s6_addr, 16) < 0;
@@ -113,11 +118,6 @@ bool IPAddress::operator <(const IPAddress &other) const {
   }
   // Catches AF_UNSPEC and invalid addresses.
   return false;
-}
-
-std::ostream& operator<<(std::ostream& os, const IPAddress& ip) {
-  os << ip.ToString();
-  return os;
 }
 
 in6_addr IPAddress::ipv6_address() const {
@@ -195,37 +195,52 @@ IPAddress IPAddress::AsIPv6Address() const {
   return IPAddress(v6addr);
 }
 
-bool InterfaceAddress::operator==(const InterfaceAddress &other) const {
+bool InterfaceAddress::operator==(const InterfaceAddress& other) const {
   return ipv6_flags_ == other.ipv6_flags() &&
-    static_cast<const IPAddress&>(*this) == other;
+         static_cast<const IPAddress&>(*this) == other;
 }
 
-bool InterfaceAddress::operator!=(const InterfaceAddress &other) const {
+bool InterfaceAddress::operator!=(const InterfaceAddress& other) const {
   return !((*this) == other);
 }
 
 const InterfaceAddress& InterfaceAddress::operator=(
-  const InterfaceAddress& other) {
+    const InterfaceAddress& other) {
   ipv6_flags_ = other.ipv6_flags_;
   static_cast<IPAddress&>(*this) = other;
   return *this;
 }
 
-std::ostream& operator<<(std::ostream& os, const InterfaceAddress& ip) {
-  os << static_cast<const IPAddress&>(ip);
+std::string InterfaceAddress::ToString() const {
+  std::string result = IPAddress::ToString();
 
-  if (ip.family() == AF_INET6)
-    os << "|flags:0x" << std::hex << ip.ipv6_flags();
+  if (family() == AF_INET6)
+    result += "|flags:0x" + rtc::ToHex(ipv6_flags());
 
-  return os;
+  return result;
 }
 
-bool IsPrivateV4(uint32_t ip_in_host_order) {
-  return ((ip_in_host_order >> 24) == 127) ||
-      ((ip_in_host_order >> 24) == 10) ||
-      ((ip_in_host_order >> 20) == ((172 << 4) | 1)) ||
-      ((ip_in_host_order >> 16) == ((192 << 8) | 168)) ||
-      ((ip_in_host_order >> 16) == ((169 << 8) | 254));
+static bool IPIsPrivateNetworkV4(const IPAddress& ip) {
+  uint32_t ip_in_host_order = ip.v4AddressAsHostOrderInteger();
+  return ((ip_in_host_order >> 24) == 10) ||
+         ((ip_in_host_order >> 20) == ((172 << 4) | 1)) ||
+         ((ip_in_host_order >> 16) == ((192 << 8) | 168));
+}
+
+static bool IPIsPrivateNetworkV6(const IPAddress& ip) {
+  return IPIsHelper(ip, kPrivateNetworkPrefix, 8);
+}
+
+bool IPIsPrivateNetwork(const IPAddress& ip) {
+  switch (ip.family()) {
+    case AF_INET: {
+      return IPIsPrivateNetworkV4(ip);
+    }
+    case AF_INET6: {
+      return IPIsPrivateNetworkV6(ip);
+    }
+  }
+  return false;
 }
 
 in_addr ExtractMappedAddress(const in6_addr& in6) {
@@ -268,8 +283,7 @@ bool IPFromString(const std::string& str, IPAddress* out) {
   return true;
 }
 
-bool IPFromString(const std::string& str, int flags,
-                  InterfaceAddress* out) {
+bool IPFromString(const std::string& str, int flags, InterfaceAddress* out) {
   IPAddress ip;
   if (!IPFromString(str, &ip)) {
     return false;
@@ -291,28 +305,29 @@ bool IPIsAny(const IPAddress& ip) {
   return false;
 }
 
+static bool IPIsLoopbackV4(const IPAddress& ip) {
+  uint32_t ip_in_host_order = ip.v4AddressAsHostOrderInteger();
+  return ((ip_in_host_order >> 24) == 127);
+}
+
+static bool IPIsLoopbackV6(const IPAddress& ip) {
+  return ip == IPAddress(in6addr_loopback);
+}
+
 bool IPIsLoopback(const IPAddress& ip) {
   switch (ip.family()) {
     case AF_INET: {
-      return (ip.v4AddressAsHostOrderInteger() >> 24) == 127;
+      return IPIsLoopbackV4(ip);
     }
     case AF_INET6: {
-      return ip == IPAddress(in6addr_loopback);
+      return IPIsLoopbackV6(ip);
     }
   }
   return false;
 }
 
 bool IPIsPrivate(const IPAddress& ip) {
-  switch (ip.family()) {
-    case AF_INET: {
-      return IsPrivateV4(ip.v4AddressAsHostOrderInteger());
-    }
-    case AF_INET6: {
-      return IPIsLinkLocal(ip) || IPIsLoopback(ip);
-    }
-  }
-  return false;
+  return IPIsLinkLocal(ip) || IPIsLoopback(ip) || IPIsPrivateNetwork(ip);
 }
 
 bool IPIsUnspec(const IPAddress& ip) {
@@ -400,9 +415,7 @@ int CountIPMaskBits(IPAddress mask) {
       bits = (i * 32);
       break;
     }
-    default: {
-      return 0;
-    }
+    default: { return 0; }
   }
   if (word_to_count == 0) {
     return bits;
@@ -415,12 +428,18 @@ int CountIPMaskBits(IPAddress mask) {
   // This could also be written word_to_count &= -word_to_count, but
   // MSVC emits warning C4146 when negating an unsigned number.
   word_to_count &= ~word_to_count + 1;  // Isolate lowest set bit.
-  if (word_to_count) zeroes--;
-  if (word_to_count & 0x0000FFFF) zeroes -= 16;
-  if (word_to_count & 0x00FF00FF) zeroes -= 8;
-  if (word_to_count & 0x0F0F0F0F) zeroes -= 4;
-  if (word_to_count & 0x33333333) zeroes -= 2;
-  if (word_to_count & 0x55555555) zeroes -= 1;
+  if (word_to_count)
+    zeroes--;
+  if (word_to_count & 0x0000FFFF)
+    zeroes -= 16;
+  if (word_to_count & 0x00FF00FF)
+    zeroes -= 8;
+  if (word_to_count & 0x0F0F0F0F)
+    zeroes -= 4;
+  if (word_to_count & 0x33333333)
+    zeroes -= 2;
+  if (word_to_count & 0x55555555)
+    zeroes -= 1;
 
   return bits + (32 - zeroes);
 }
@@ -440,10 +459,27 @@ bool IPIs6To4(const IPAddress& ip) {
   return IPIsHelper(ip, k6To4Prefix, 16);
 }
 
-bool IPIsLinkLocal(const IPAddress& ip) {
+static bool IPIsLinkLocalV4(const IPAddress& ip) {
+  uint32_t ip_in_host_order = ip.v4AddressAsHostOrderInteger();
+  return ((ip_in_host_order >> 16) == ((169 << 8) | 254));
+}
+
+static bool IPIsLinkLocalV6(const IPAddress& ip) {
   // Can't use the helper because the prefix is 10 bits.
   in6_addr addr = ip.ipv6_address();
-  return addr.s6_addr[0] == 0xFE && addr.s6_addr[1] == 0x80;
+  return (addr.s6_addr[0] == 0xFE) && ((addr.s6_addr[1] & 0xC0) == 0x80);
+}
+
+bool IPIsLinkLocal(const IPAddress& ip) {
+  switch (ip.family()) {
+    case AF_INET: {
+      return IPIsLinkLocalV4(ip);
+    }
+    case AF_INET6: {
+      return IPIsLinkLocalV6(ip);
+    }
+  }
+  return false;
 }
 
 // According to http://www.ietf.org/rfc/rfc2373.txt, Appendix A, page 19.  An

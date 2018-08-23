@@ -14,7 +14,7 @@
 
 namespace webrtc {
 
-rtc::Optional<AudioEncoderOpusConfig> AudioEncoderOpus::SdpToConfig(
+absl::optional<AudioEncoderOpusConfig> AudioEncoderOpus::SdpToConfig(
     const SdpAudioFormat& format) {
   return AudioEncoderOpusImpl::SdpToConfig(format);
 }
@@ -31,7 +31,8 @@ AudioCodecInfo AudioEncoderOpus::QueryAudioEncoder(
 
 std::unique_ptr<AudioEncoder> AudioEncoderOpus::MakeAudioEncoder(
     const AudioEncoderOpusConfig& config,
-    int payload_type) {
+    int payload_type,
+    absl::optional<AudioCodecPairId> /*codec_pair_id*/) {
   return AudioEncoderOpusImpl::MakeAudioEncoder(config, payload_type);
 }
 

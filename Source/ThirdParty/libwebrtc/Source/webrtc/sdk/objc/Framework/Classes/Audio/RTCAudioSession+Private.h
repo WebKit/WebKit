@@ -77,14 +77,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSError *)configurationErrorWithDescription:(NSString *)description;
 
 // Properties and methods for tests.
-@property(nonatomic, readonly)
-    std::vector<__weak id<RTCAudioSessionDelegate> > delegates;
+@property(nonatomic, readonly) std::vector<__weak id<RTCAudioSessionDelegate> > delegates;
 
 - (void)notifyDidBeginInterruption;
-- (void)notifyDidEndInterruptionWithShouldResumeSession:
-    (BOOL)shouldResumeSession;
+- (void)notifyDidEndInterruptionWithShouldResumeSession:(BOOL)shouldResumeSession;
 - (void)notifyDidChangeRouteWithReason:(AVAudioSessionRouteChangeReason)reason
-    previousRoute:(AVAudioSessionRouteDescription *)previousRoute;
+                         previousRoute:(AVAudioSessionRouteDescription *)previousRoute;
 - (void)notifyMediaServicesWereLost;
 - (void)notifyMediaServicesWereReset;
 - (void)notifyDidChangeCanPlayOrRecord:(BOOL)canPlayOrRecord;

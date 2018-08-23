@@ -18,7 +18,7 @@ namespace ios {
 
 bool CheckAndLogError(BOOL success, NSError* error);
 
-NSString *NSStringFromStdString(const std::string& stdString);
+NSString* NSStringFromStdString(const std::string& stdString);
 std::string StdStringFromNSString(NSString* nsString);
 
 // Return thread ID as a string.

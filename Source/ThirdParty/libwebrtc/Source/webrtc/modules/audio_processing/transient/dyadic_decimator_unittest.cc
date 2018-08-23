@@ -19,7 +19,7 @@ static const size_t kOddBufferLength = 5;
 static const size_t kOutBufferLength = 3;
 
 int16_t const test_buffer_even_len[] = {0, 1, 2, 3, 4, 5};
-int16_t const test_buffer_odd_len[]  = {0, 1, 2, 3, 4};
+int16_t const test_buffer_odd_len[] = {0, 1, 2, 3, 4};
 int16_t test_buffer_out[kOutBufferLength];
 
 TEST(DyadicDecimatorTest, GetOutLengthToDyadicDecimate) {
@@ -29,30 +29,23 @@ TEST(DyadicDecimatorTest, GetOutLengthToDyadicDecimate) {
   EXPECT_EQ(2u, GetOutLengthToDyadicDecimate(5, true));
 }
 
-
 TEST(DyadicDecimatorTest, DyadicDecimateErrorValues) {
   size_t out_samples = 0;
 
-  out_samples = DyadicDecimate(static_cast<int16_t*>(NULL),
-                               kEvenBufferLength,
+  out_samples = DyadicDecimate(static_cast<int16_t*>(NULL), kEvenBufferLength,
                                false,  // Even sequence.
-                               test_buffer_out,
-                               kOutBufferLength);
+                               test_buffer_out, kOutBufferLength);
   EXPECT_EQ(0u, out_samples);
 
-  out_samples = DyadicDecimate(test_buffer_even_len,
-                               kEvenBufferLength,
+  out_samples = DyadicDecimate(test_buffer_even_len, kEvenBufferLength,
                                false,  // Even sequence.
-                               static_cast<int16_t*>(NULL),
-                               kOutBufferLength);
+                               static_cast<int16_t*>(NULL), kOutBufferLength);
   EXPECT_EQ(0u, out_samples);
 
   // Less than required |out_length|.
-  out_samples = DyadicDecimate(test_buffer_even_len,
-                               kEvenBufferLength,
+  out_samples = DyadicDecimate(test_buffer_even_len, kEvenBufferLength,
                                false,  // Even sequence.
-                               test_buffer_out,
-                               2);
+                               test_buffer_out, 2);
   EXPECT_EQ(0u, out_samples);
 }
 
@@ -60,11 +53,9 @@ TEST(DyadicDecimatorTest, DyadicDecimateEvenLengthEvenSequence) {
   size_t expected_out_samples =
       GetOutLengthToDyadicDecimate(kEvenBufferLength, false);
 
-  size_t out_samples = DyadicDecimate(test_buffer_even_len,
-                                      kEvenBufferLength,
+  size_t out_samples = DyadicDecimate(test_buffer_even_len, kEvenBufferLength,
                                       false,  // Even sequence.
-                                      test_buffer_out,
-                                      kOutBufferLength);
+                                      test_buffer_out, kOutBufferLength);
 
   EXPECT_EQ(expected_out_samples, out_samples);
 
@@ -77,11 +68,9 @@ TEST(DyadicDecimatorTest, DyadicDecimateEvenLengthOddSequence) {
   size_t expected_out_samples =
       GetOutLengthToDyadicDecimate(kEvenBufferLength, true);
 
-  size_t out_samples = DyadicDecimate(test_buffer_even_len,
-                                      kEvenBufferLength,
+  size_t out_samples = DyadicDecimate(test_buffer_even_len, kEvenBufferLength,
                                       true,  // Odd sequence.
-                                      test_buffer_out,
-                                      kOutBufferLength);
+                                      test_buffer_out, kOutBufferLength);
 
   EXPECT_EQ(expected_out_samples, out_samples);
 
@@ -94,11 +83,9 @@ TEST(DyadicDecimatorTest, DyadicDecimateOddLengthEvenSequence) {
   size_t expected_out_samples =
       GetOutLengthToDyadicDecimate(kOddBufferLength, false);
 
-  size_t out_samples = DyadicDecimate(test_buffer_odd_len,
-                                      kOddBufferLength,
+  size_t out_samples = DyadicDecimate(test_buffer_odd_len, kOddBufferLength,
                                       false,  // Even sequence.
-                                      test_buffer_out,
-                                      kOutBufferLength);
+                                      test_buffer_out, kOutBufferLength);
 
   EXPECT_EQ(expected_out_samples, out_samples);
 
@@ -111,11 +98,9 @@ TEST(DyadicDecimatorTest, DyadicDecimateOddLengthOddSequence) {
   size_t expected_out_samples =
       GetOutLengthToDyadicDecimate(kOddBufferLength, true);
 
-  size_t out_samples = DyadicDecimate(test_buffer_odd_len,
-                                      kOddBufferLength,
+  size_t out_samples = DyadicDecimate(test_buffer_odd_len, kOddBufferLength,
                                       true,  // Odd sequence.
-                                      test_buffer_out,
-                                      kOutBufferLength);
+                                      test_buffer_out, kOutBufferLength);
 
   EXPECT_EQ(expected_out_samples, out_samples);
 

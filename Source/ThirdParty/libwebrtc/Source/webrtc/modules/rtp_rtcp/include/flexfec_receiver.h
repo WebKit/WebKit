@@ -16,7 +16,6 @@
 #include "modules/rtp_rtcp/include/ulpfec_receiver.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
-#include "rtc_base/basictypes.h"
 #include "rtc_base/sequenced_task_checker.h"
 #include "system_wrappers/include/clock.h"
 

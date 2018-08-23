@@ -12,11 +12,11 @@
 #include <string>
 #include <utility>
 
+#include "absl/memory/memory.h"
 #include "p2p/base/relayserver.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/socketaddress.h"
 #include "rtc_base/ssladapter.h"
 #include "rtc_base/testclient.h"
@@ -59,10 +59,10 @@ class RelayServerTest : public testing::Test {
     server_->AddExternalSocket(
         rtc::AsyncUDPSocket::Create(ss_.get(), server_ext_addr));
 
-    client1_.reset(new rtc::TestClient(
-        WrapUnique(rtc::AsyncUDPSocket::Create(ss_.get(), client1_addr))));
-    client2_.reset(new rtc::TestClient(
-        WrapUnique(rtc::AsyncUDPSocket::Create(ss_.get(), client2_addr))));
+    client1_.reset(new rtc::TestClient(absl::WrapUnique(
+        rtc::AsyncUDPSocket::Create(ss_.get(), client1_addr))));
+    client2_.reset(new rtc::TestClient(absl::WrapUnique(
+        rtc::AsyncUDPSocket::Create(ss_.get(), client2_addr))));
   }
 
   void Allocate() {
@@ -95,30 +95,20 @@ class RelayServerTest : public testing::Test {
   void SendRaw2(const char* data, int len) {
     return Send(client2_.get(), data, len, server_ext_addr);
   }
-  void Send(rtc::TestClient* client, const char* data,
-            int len, const SocketAddress& addr) {
+  void Send(rtc::TestClient* client,
+            const char* data,
+            int len,
+            const SocketAddress& addr) {
     client->SendTo(data, len, addr);
   }
 
-  bool Receive1Fails() {
-    return client1_.get()->CheckNoPacket();
-  }
-  bool Receive2Fails() {
-    return client2_.get()->CheckNoPacket();
-  }
+  bool Receive1Fails() { return client1_.get()->CheckNoPacket(); }
+  bool Receive2Fails() { return client2_.get()->CheckNoPacket(); }
 
-  StunMessage* Receive1() {
-    return Receive(client1_.get());
-  }
-  StunMessage* Receive2() {
-    return Receive(client2_.get());
-  }
-  std::string ReceiveRaw1() {
-    return ReceiveRaw(client1_.get());
-  }
-  std::string ReceiveRaw2() {
-    return ReceiveRaw(client2_.get());
-  }
+  StunMessage* Receive1() { return Receive(client1_.get()); }
+  StunMessage* Receive2() { return Receive(client2_.get()); }
+  std::string ReceiveRaw1() { return ReceiveRaw(client1_.get()); }
+  std::string ReceiveRaw2() { return ReceiveRaw(client2_.get()); }
   StunMessage* Receive(rtc::TestClient* client) {
     StunMessage* msg = NULL;
     std::unique_ptr<rtc::TestClient::Packet> packet =
@@ -144,8 +134,7 @@ class RelayServerTest : public testing::Test {
   static StunMessage* CreateStunMessage(int type) {
     StunMessage* msg = new RelayMessage();
     msg->SetType(type);
-    msg->SetTransactionID(
-        rtc::CreateRandomString(kStunTransactionIdLength));
+    msg->SetTransactionID(rtc::CreateRandomString(kStunTransactionIdLength));
     return msg;
   }
   static void AddMagicCookieAttr(StunMessage* msg) {
@@ -275,8 +264,7 @@ TEST_F(RelayServerTest, TestReallocate) {
   EXPECT_EQ(server_ext_addr.port(), mapped_addr->port());
   EXPECT_EQ(server_ext_addr.ipaddr(), mapped_addr->ipaddr());
 
-  const StunUInt32Attribute* lifetime_attr =
-      res->GetUInt32(STUN_ATTR_LIFETIME);
+  const StunUInt32Attribute* lifetime_attr = res->GetUInt32(STUN_ATTR_LIFETIME);
   ASSERT_TRUE(lifetime_attr != NULL);
   EXPECT_EQ(LIFETIME, lifetime_attr->value());
 }
@@ -296,8 +284,7 @@ TEST_F(RelayServerTest, TestRemoteBind) {
   ASSERT_TRUE(res);
   EXPECT_EQ(STUN_DATA_INDICATION, res->type());
 
-  const StunByteStringAttribute* recv_data =
-      res->GetByteString(STUN_ATTR_DATA);
+  const StunByteStringAttribute* recv_data = res->GetByteString(STUN_ATTR_DATA);
   ASSERT_TRUE(recv_data != NULL);
 
   rtc::ByteBufferReader buf(recv_data->bytes(), recv_data->length());

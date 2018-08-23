@@ -133,7 +133,7 @@ static_assert(IsIntlike<int>::value, "");
 static_assert(!IsIntlike<float>::value, "");
 static_assert(!IsIntlike<S>::value, "");
 
-}  // test_enum_intlike
+}  // namespace test_enum_intlike
 
 }  // namespace rtc
 

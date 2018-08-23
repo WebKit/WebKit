@@ -97,13 +97,6 @@ public class SurfaceEglRenderer extends EglRenderer implements SurfaceHolder.Cal
     super.pauseVideo();
   }
 
-  // VideoRenderer.Callbacks interface.
-  @Override
-  public void renderFrame(VideoRenderer.I420Frame frame) {
-    updateFrameDimensionsAndReportEvents(frame);
-    super.renderFrame(frame);
-  }
-
   // VideoSink interface.
   @Override
   public void onFrame(VideoFrame frame) {
@@ -130,33 +123,6 @@ public class SurfaceEglRenderer extends EglRenderer implements SurfaceHolder.Cal
   public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
     ThreadUtils.checkIsOnMainThread();
     logD("surfaceChanged: format: " + format + " size: " + width + "x" + height);
-  }
-
-  // Update frame dimensions and report any changes to |rendererEvents|.
-  private void updateFrameDimensionsAndReportEvents(VideoRenderer.I420Frame frame) {
-    synchronized (layoutLock) {
-      if (isRenderingPaused) {
-        return;
-      }
-      if (!isFirstFrameRendered) {
-        isFirstFrameRendered = true;
-        logD("Reporting first rendered frame.");
-        if (rendererEvents != null) {
-          rendererEvents.onFirstFrameRendered();
-        }
-      }
-      if (rotatedFrameWidth != frame.rotatedWidth() || rotatedFrameHeight != frame.rotatedHeight()
-          || frameRotation != frame.rotationDegree) {
-        logD("Reporting frame resolution changed to " + frame.width + "x" + frame.height
-            + " with rotation " + frame.rotationDegree);
-        if (rendererEvents != null) {
-          rendererEvents.onFrameResolutionChanged(frame.width, frame.height, frame.rotationDegree);
-        }
-        rotatedFrameWidth = frame.rotatedWidth();
-        rotatedFrameHeight = frame.rotatedHeight();
-        frameRotation = frame.rotationDegree;
-      }
-    }
   }
 
   // Update frame dimensions and report any changes to |rendererEvents|.

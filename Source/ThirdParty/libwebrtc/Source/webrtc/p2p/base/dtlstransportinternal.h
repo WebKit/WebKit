@@ -59,9 +59,9 @@ class DtlsTransportInternal : public rtc::PacketTransportInternal {
 
   virtual bool IsDtlsActive() const = 0;
 
-  virtual bool GetSslRole(rtc::SSLRole* role) const = 0;
+  virtual bool GetDtlsRole(rtc::SSLRole* role) const = 0;
 
-  virtual bool SetSslRole(rtc::SSLRole role) = 0;
+  virtual bool SetDtlsRole(rtc::SSLRole role) = 0;
 
   // Finds out which DTLS-SRTP cipher was negotiated.
   // TODO(zhihuang): Remove this once all dependencies implement this.
@@ -78,9 +78,8 @@ class DtlsTransportInternal : public rtc::PacketTransportInternal {
   virtual bool SetLocalCertificate(
       const rtc::scoped_refptr<rtc::RTCCertificate>& certificate) = 0;
 
-  // Gets a copy of the remote side's SSL certificate.
-  virtual std::unique_ptr<rtc::SSLCertificate> GetRemoteSSLCertificate()
-      const = 0;
+  // Gets a copy of the remote side's SSL certificate chain.
+  virtual std::unique_ptr<rtc::SSLCertChain> GetRemoteSSLCertChain() const = 0;
 
   // Allows key material to be extracted for external encryption.
   virtual bool ExportKeyingMaterial(const std::string& label,
@@ -94,6 +93,8 @@ class DtlsTransportInternal : public rtc::PacketTransportInternal {
   virtual bool SetRemoteFingerprint(const std::string& digest_alg,
                                     const uint8_t* digest,
                                     size_t digest_len) = 0;
+
+  virtual bool SetSslMaxProtocolVersion(rtc::SSLProtocolVersion version) = 0;
 
   // Expose the underneath IceTransport.
   virtual IceTransportInternal* ice_transport() = 0;

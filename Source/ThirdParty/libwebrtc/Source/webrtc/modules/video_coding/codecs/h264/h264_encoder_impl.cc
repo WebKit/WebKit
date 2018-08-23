@@ -20,16 +20,24 @@
 #include "third_party/openh264/src/codec/api/svc/codec_ver.h"
 
 #include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "modules/video_coding/utility/simulcast_rate_allocator.h"
+#include "modules/video_coding/utility/simulcast_utility.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/timeutils.h"
 #include "system_wrappers/include/metrics.h"
+#include "third_party/libyuv/include/libyuv/convert.h"
+#include "third_party/libyuv/include/libyuv/scale.h"
 
 namespace webrtc {
 
 namespace {
 
 const bool kOpenH264EncoderDetailedLogging = false;
+
+// QP scaling thresholds.
+static const int kLowH264QpThreshold = 24;
+static const int kHighH264QpThreshold = 37;
 
 // Used by histograms. Values of entries should not be changed.
 enum H264EncoderImplEvent {
@@ -41,17 +49,17 @@ enum H264EncoderImplEvent {
 int NumberOfThreads(int width, int height, int number_of_cores) {
   // TODO(hbos): In Chromium, multiple threads do not work with sandbox on Mac,
   // see crbug.com/583348. Until further investigated, only use one thread.
-//  if (width * height >= 1920 * 1080 && number_of_cores > 8) {
-//    return 8;  // 8 threads for 1080p on high perf machines.
-//  } else if (width * height > 1280 * 960 && number_of_cores >= 6) {
-//    return 3;  // 3 threads for 1080p.
-//  } else if (width * height > 640 * 480 && number_of_cores >= 3) {
-//    return 2;  // 2 threads for qHD/HD.
-//  } else {
-//    return 1;  // 1 thread for VGA or less.
-//  }
-// TODO(sprang): Also check sSliceArgument.uiSliceNum om GetEncoderPrams(),
-//               before enabling multithreading here.
+  //  if (width * height >= 1920 * 1080 && number_of_cores > 8) {
+  //    return 8;  // 8 threads for 1080p on high perf machines.
+  //  } else if (width * height > 1280 * 960 && number_of_cores >= 6) {
+  //    return 3;  // 3 threads for 1080p.
+  //  } else if (width * height > 640 * 480 && number_of_cores >= 3) {
+  //    return 2;  // 2 threads for qHD/HD.
+  //  } else {
+  //    return 1;  // 1 thread for VGA or less.
+  //  }
+  // TODO(sprang): Also check sSliceArgument.uiSliceNum om GetEncoderPrams(),
+  //               before enabling multithreading here.
   return 1;
 }
 
@@ -135,10 +143,10 @@ static void RtpFragmentize(EncodedImage* encoded_image,
       // Because the sum of all layer lengths, |required_size|, fits in a
       // |size_t|, we know that any indices in-between will not overflow.
       RTC_DCHECK_GE(layerInfo.pNalLengthInByte[nal], 4);
-      RTC_DCHECK_EQ(layerInfo.pBsBuf[layer_len+0], start_code[0]);
-      RTC_DCHECK_EQ(layerInfo.pBsBuf[layer_len+1], start_code[1]);
-      RTC_DCHECK_EQ(layerInfo.pBsBuf[layer_len+2], start_code[2]);
-      RTC_DCHECK_EQ(layerInfo.pBsBuf[layer_len+3], start_code[3]);
+      RTC_DCHECK_EQ(layerInfo.pBsBuf[layer_len + 0], start_code[0]);
+      RTC_DCHECK_EQ(layerInfo.pBsBuf[layer_len + 1], start_code[1]);
+      RTC_DCHECK_EQ(layerInfo.pBsBuf[layer_len + 2], start_code[2]);
+      RTC_DCHECK_EQ(layerInfo.pBsBuf[layer_len + 3], start_code[3]);
       frag_header->fragmentationOffset[frag] =
           encoded_image->_length + layer_len + sizeof(start_code);
       frag_header->fragmentationLength[frag] =
@@ -146,24 +154,14 @@ static void RtpFragmentize(EncodedImage* encoded_image,
       layer_len += layerInfo.pNalLengthInByte[nal];
     }
     // Copy the entire layer's data (including start codes).
-    memcpy(encoded_image->_buffer + encoded_image->_length,
-           layerInfo.pBsBuf,
+    memcpy(encoded_image->_buffer + encoded_image->_length, layerInfo.pBsBuf,
            layer_len);
     encoded_image->_length += layer_len;
   }
 }
 
 H264EncoderImpl::H264EncoderImpl(const cricket::VideoCodec& codec)
-    : openh264_encoder_(nullptr),
-      width_(0),
-      height_(0),
-      max_frame_rate_(0.0f),
-      target_bps_(0),
-      max_bps_(0),
-      mode_(kRealtimeVideo),
-      frame_dropping_on_(false),
-      key_frame_interval_(0),
-      packetization_mode_(H264PacketizationMode::SingleNalUnit),
+    : packetization_mode_(H264PacketizationMode::SingleNalUnit),
       max_payload_size_(0),
       number_of_cores_(0),
       encoded_image_callback_(nullptr),
@@ -176,26 +174,30 @@ H264EncoderImpl::H264EncoderImpl(const cricket::VideoCodec& codec)
       packetization_mode_string == "1") {
     packetization_mode_ = H264PacketizationMode::NonInterleaved;
   }
+  downscaled_buffers_.reserve(kMaxSimulcastStreams - 1);
+  encoded_images_.reserve(kMaxSimulcastStreams);
+  encoded_image_buffers_.reserve(kMaxSimulcastStreams);
+  encoders_.reserve(kMaxSimulcastStreams);
+  configurations_.reserve(kMaxSimulcastStreams);
 }
 
 H264EncoderImpl::~H264EncoderImpl() {
   Release();
 }
 
-int32_t H264EncoderImpl::InitEncode(const VideoCodec* codec_settings,
+int32_t H264EncoderImpl::InitEncode(const VideoCodec* inst,
                                     int32_t number_of_cores,
                                     size_t max_payload_size) {
   ReportInit();
-  if (!codec_settings ||
-      codec_settings->codecType != kVideoCodecH264) {
+  if (!inst || inst->codecType != kVideoCodecH264) {
     ReportError();
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
   }
-  if (codec_settings->maxFramerate == 0) {
+  if (inst->maxFramerate == 0) {
     ReportError();
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
   }
-  if (codec_settings->width < 1 || codec_settings->height < 1) {
+  if (inst->width < 1 || inst->height < 1) {
     ReportError();
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
   }
@@ -205,75 +207,128 @@ int32_t H264EncoderImpl::InitEncode(const VideoCodec* codec_settings,
     ReportError();
     return release_ret;
   }
-  RTC_DCHECK(!openh264_encoder_);
 
-  // Create encoder.
-  if (WelsCreateSVCEncoder(&openh264_encoder_) != 0) {
-    // Failed to create encoder.
-    RTC_LOG(LS_ERROR) << "Failed to create OpenH264 encoder";
-    RTC_DCHECK(!openh264_encoder_);
-    ReportError();
-    return WEBRTC_VIDEO_CODEC_ERROR;
+  int number_of_streams = SimulcastUtility::NumberOfSimulcastStreams(*inst);
+  bool doing_simulcast = (number_of_streams > 1);
+
+  if (doing_simulcast && (!SimulcastUtility::ValidSimulcastResolutions(
+                              *inst, number_of_streams) ||
+                          !SimulcastUtility::ValidSimulcastTemporalLayers(
+                              *inst, number_of_streams))) {
+    return WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED;
   }
-  RTC_DCHECK(openh264_encoder_);
-  if (kOpenH264EncoderDetailedLogging) {
-    int trace_level = WELS_LOG_DETAIL;
-    openh264_encoder_->SetOption(ENCODER_OPTION_TRACE_LEVEL,
-                                 &trace_level);
-  }
-  // else WELS_LOG_DEFAULT is used by default.
+  downscaled_buffers_.resize(number_of_streams - 1);
+  encoded_images_.resize(number_of_streams);
+  encoded_image_buffers_.resize(number_of_streams);
+  encoders_.resize(number_of_streams);
+  pictures_.resize(number_of_streams);
+  configurations_.resize(number_of_streams);
 
   number_of_cores_ = number_of_cores;
-  // Set internal settings from codec_settings
-  width_ = codec_settings->width;
-  height_ = codec_settings->height;
-  max_frame_rate_ = static_cast<float>(codec_settings->maxFramerate);
-  mode_ = codec_settings->mode;
-  frame_dropping_on_ = codec_settings->H264().frameDroppingOn;
-  key_frame_interval_ = codec_settings->H264().keyFrameInterval;
   max_payload_size_ = max_payload_size;
+  codec_ = *inst;
 
-  // Codec_settings uses kbits/second; encoder uses bits/second.
-  max_bps_ = codec_settings->maxBitrate * 1000;
-  if (codec_settings->targetBitrate == 0)
-    target_bps_ = codec_settings->startBitrate * 1000;
-  else
-    target_bps_ = codec_settings->targetBitrate * 1000;
-
-  SEncParamExt encoder_params = CreateEncoderParams();
-
-  // Initialize.
-  if (openh264_encoder_->InitializeExt(&encoder_params) != 0) {
-    RTC_LOG(LS_ERROR) << "Failed to initialize OpenH264 encoder";
-    Release();
-    ReportError();
-    return WEBRTC_VIDEO_CODEC_ERROR;
+  // Code expects simulcastStream resolutions to be correct, make sure they are
+  // filled even when there are no simulcast layers.
+  if (codec_.numberOfSimulcastStreams == 0) {
+    codec_.simulcastStream[0].width = codec_.width;
+    codec_.simulcastStream[0].height = codec_.height;
   }
-  // TODO(pbos): Base init params on these values before submitting.
-  int video_format = EVideoFormatType::videoFormatI420;
-  openh264_encoder_->SetOption(ENCODER_OPTION_DATAFORMAT,
-                               &video_format);
 
-  // Initialize encoded image. Default buffer size: size of unencoded data.
-  encoded_image_._size = CalcBufferSize(VideoType::kI420, codec_settings->width,
-                                        codec_settings->height);
-  encoded_image_._buffer = new uint8_t[encoded_image_._size];
-  encoded_image_buffer_.reset(encoded_image_._buffer);
-  encoded_image_._completeFrame = true;
-  encoded_image_._encodedWidth = 0;
-  encoded_image_._encodedHeight = 0;
-  encoded_image_._length = 0;
-  return WEBRTC_VIDEO_CODEC_OK;
+  for (int i = 0, idx = number_of_streams - 1; i < number_of_streams;
+       ++i, --idx) {
+    // Temporal layers still not supported.
+    if (inst->simulcastStream[i].numberOfTemporalLayers > 1) {
+      Release();
+      return WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED;
+    }
+    ISVCEncoder* openh264_encoder;
+    // Create encoder.
+    if (WelsCreateSVCEncoder(&openh264_encoder) != 0) {
+      // Failed to create encoder.
+      RTC_LOG(LS_ERROR) << "Failed to create OpenH264 encoder";
+      RTC_DCHECK(!openh264_encoder);
+      Release();
+      ReportError();
+      return WEBRTC_VIDEO_CODEC_ERROR;
+    }
+    RTC_DCHECK(openh264_encoder);
+    if (kOpenH264EncoderDetailedLogging) {
+      int trace_level = WELS_LOG_DETAIL;
+      openh264_encoder->SetOption(ENCODER_OPTION_TRACE_LEVEL, &trace_level);
+    }
+    // else WELS_LOG_DEFAULT is used by default.
+
+    // Store h264 encoder.
+    encoders_[i] = openh264_encoder;
+
+    // Set internal settings from codec_settings
+    configurations_[i].simulcast_idx = idx;
+    configurations_[i].sending = false;
+    configurations_[i].width = codec_.simulcastStream[idx].width;
+    configurations_[i].height = codec_.simulcastStream[idx].height;
+    configurations_[i].max_frame_rate = static_cast<float>(codec_.maxFramerate);
+    configurations_[i].frame_dropping_on = codec_.H264()->frameDroppingOn;
+    configurations_[i].key_frame_interval = codec_.H264()->keyFrameInterval;
+
+    // Create downscaled image buffers.
+    if (i > 0) {
+      downscaled_buffers_[i - 1] = I420Buffer::Create(
+          configurations_[i].width, configurations_[i].height,
+          configurations_[i].width, configurations_[i].width / 2,
+          configurations_[i].width / 2);
+    }
+
+    // Codec_settings uses kbits/second; encoder uses bits/second.
+    configurations_[i].max_bps = codec_.maxBitrate * 1000;
+    configurations_[i].target_bps = codec_.startBitrate * 1000;
+
+    // Create encoder parameters based on the layer configuration.
+    SEncParamExt encoder_params = CreateEncoderParams(i);
+
+    // Initialize.
+    if (openh264_encoder->InitializeExt(&encoder_params) != 0) {
+      RTC_LOG(LS_ERROR) << "Failed to initialize OpenH264 encoder";
+      Release();
+      ReportError();
+      return WEBRTC_VIDEO_CODEC_ERROR;
+    }
+    // TODO(pbos): Base init params on these values before submitting.
+    int video_format = EVideoFormatType::videoFormatI420;
+    openh264_encoder->SetOption(ENCODER_OPTION_DATAFORMAT, &video_format);
+
+    // Initialize encoded image. Default buffer size: size of unencoded data.
+    encoded_images_[i]._size =
+        CalcBufferSize(VideoType::kI420, codec_.simulcastStream[idx].width,
+                       codec_.simulcastStream[idx].height);
+    encoded_images_[i]._buffer = new uint8_t[encoded_images_[i]._size];
+    encoded_image_buffers_[i].reset(encoded_images_[i]._buffer);
+    encoded_images_[i]._completeFrame = true;
+    encoded_images_[i]._encodedWidth = codec_.simulcastStream[idx].width;
+    encoded_images_[i]._encodedHeight = codec_.simulcastStream[idx].height;
+    encoded_images_[i]._length = 0;
+  }
+
+  SimulcastRateAllocator init_allocator(codec_);
+  BitrateAllocation allocation = init_allocator.GetAllocation(
+      codec_.startBitrate * 1000, codec_.maxFramerate);
+  return SetRateAllocation(allocation, codec_.maxFramerate);
 }
 
 int32_t H264EncoderImpl::Release() {
-  if (openh264_encoder_) {
-    RTC_CHECK_EQ(0, openh264_encoder_->Uninitialize());
-    WelsDestroySVCEncoder(openh264_encoder_);
-    openh264_encoder_ = nullptr;
+  while (!encoders_.empty()) {
+    ISVCEncoder* openh264_encoder = encoders_.back();
+    if (openh264_encoder) {
+      RTC_CHECK_EQ(0, openh264_encoder->Uninitialize());
+      WelsDestroySVCEncoder(openh264_encoder);
+    }
+    encoders_.pop_back();
   }
-  encoded_image_._buffer = nullptr;
-  encoded_image_buffer_.reset();
+  downscaled_buffers_.clear();
+  configurations_.clear();
+  encoded_images_.clear();
+  encoded_image_buffers_.clear();
+  pictures_.clear();
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
@@ -284,28 +339,59 @@ int32_t H264EncoderImpl::RegisterEncodeCompleteCallback(
 }
 
 int32_t H264EncoderImpl::SetRateAllocation(
-    const BitrateAllocation& bitrate_allocation,
-    uint32_t framerate) {
-  if (bitrate_allocation.get_sum_bps() <= 0 || framerate <= 0)
+    const BitrateAllocation& bitrate,
+    uint32_t new_framerate) {
+  if (encoders_.empty())
+    return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
+
+  if (new_framerate < 1)
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
 
-  target_bps_ = bitrate_allocation.get_sum_bps();
-  max_frame_rate_ = static_cast<float>(framerate);
+  if (bitrate.get_sum_bps() == 0) {
+    // Encoder paused, turn off all encoding.
+    for (size_t i = 0; i < configurations_.size(); ++i)
+      configurations_[i].SetStreamState(false);
+    return WEBRTC_VIDEO_CODEC_OK;
+  }
 
-  SBitrateInfo target_bitrate;
-  memset(&target_bitrate, 0, sizeof(SBitrateInfo));
-  target_bitrate.iLayer = SPATIAL_LAYER_ALL,
-  target_bitrate.iBitrate = target_bps_;
-  openh264_encoder_->SetOption(ENCODER_OPTION_BITRATE,
-                               &target_bitrate);
-  openh264_encoder_->SetOption(ENCODER_OPTION_FRAME_RATE, &max_frame_rate_);
+  // At this point, bitrate allocation should already match codec settings.
+  if (codec_.maxBitrate > 0)
+    RTC_DCHECK_LE(bitrate.get_sum_kbps(), codec_.maxBitrate);
+  RTC_DCHECK_GE(bitrate.get_sum_kbps(), codec_.minBitrate);
+  if (codec_.numberOfSimulcastStreams > 0)
+    RTC_DCHECK_GE(bitrate.get_sum_kbps(), codec_.simulcastStream[0].minBitrate);
+
+  codec_.maxFramerate = new_framerate;
+
+  size_t stream_idx = encoders_.size() - 1;
+  for (size_t i = 0; i < encoders_.size(); ++i, --stream_idx) {
+    // Update layer config.
+    configurations_[i].target_bps = bitrate.GetSpatialLayerSum(stream_idx);
+    configurations_[i].max_frame_rate = static_cast<float>(new_framerate);
+
+    if (configurations_[i].target_bps) {
+      configurations_[i].SetStreamState(true);
+
+      // Update h264 encoder.
+      SBitrateInfo target_bitrate;
+      memset(&target_bitrate, 0, sizeof(SBitrateInfo));
+      target_bitrate.iLayer = SPATIAL_LAYER_ALL,
+      target_bitrate.iBitrate = configurations_[i].target_bps;
+      encoders_[i]->SetOption(ENCODER_OPTION_BITRATE, &target_bitrate);
+      encoders_[i]->SetOption(ENCODER_OPTION_FRAME_RATE,
+                              &configurations_[i].max_frame_rate);
+    } else {
+      configurations_[i].SetStreamState(false);
+    }
+  }
+
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
 int32_t H264EncoderImpl::Encode(const VideoFrame& input_frame,
                                 const CodecSpecificInfo* codec_specific_info,
                                 const std::vector<FrameType>* frame_types) {
-  if (!IsInitialized()) {
+  if (encoders_.empty()) {
     ReportError();
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
   }
@@ -317,83 +403,134 @@ int32_t H264EncoderImpl::Encode(const VideoFrame& input_frame,
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
   }
 
-  bool force_key_frame = false;
-  if (frame_types != nullptr) {
-    // We only support a single stream.
-    RTC_DCHECK_EQ(frame_types->size(), 1);
-    // Skip frame?
-    if ((*frame_types)[0] == kEmptyFrame) {
-      return WEBRTC_VIDEO_CODEC_OK;
-    }
-    // Force key frame?
-    force_key_frame = (*frame_types)[0] == kVideoFrameKey;
-  }
-  if (force_key_frame) {
-    // API doc says ForceIntraFrame(false) does nothing, but calling this
-    // function forces a key frame regardless of the |bIDR| argument's value.
-    // (If every frame is a key frame we get lag/delays.)
-    openh264_encoder_->ForceIntraFrame(true);
-  }
   rtc::scoped_refptr<const I420BufferInterface> frame_buffer =
       input_frame.video_frame_buffer()->ToI420();
-  // EncodeFrame input.
-  SSourcePicture picture;
-  memset(&picture, 0, sizeof(SSourcePicture));
-  picture.iPicWidth = frame_buffer->width();
-  picture.iPicHeight = frame_buffer->height();
-  picture.iColorFormat = EVideoFormatType::videoFormatI420;
-  picture.uiTimeStamp = input_frame.ntp_time_ms();
-  picture.iStride[0] = frame_buffer->StrideY();
-  picture.iStride[1] = frame_buffer->StrideU();
-  picture.iStride[2] = frame_buffer->StrideV();
-  picture.pData[0] = const_cast<uint8_t*>(frame_buffer->DataY());
-  picture.pData[1] = const_cast<uint8_t*>(frame_buffer->DataU());
-  picture.pData[2] = const_cast<uint8_t*>(frame_buffer->DataV());
 
-  // EncodeFrame output.
-  SFrameBSInfo info;
-  memset(&info, 0, sizeof(SFrameBSInfo));
-
-  // Encode!
-  int enc_ret = openh264_encoder_->EncodeFrame(&picture, &info);
-  if (enc_ret != 0) {
-    RTC_LOG(LS_ERROR) << "OpenH264 frame encoding failed, EncodeFrame returned "
-                      << enc_ret << ".";
-    ReportError();
-    return WEBRTC_VIDEO_CODEC_ERROR;
+  bool send_key_frame = false;
+  for (size_t i = 0; i < configurations_.size(); ++i) {
+    if (configurations_[i].key_frame_request && configurations_[i].sending) {
+      send_key_frame = true;
+      break;
+    }
+  }
+  if (!send_key_frame && frame_types) {
+    for (size_t i = 0; i < frame_types->size() && i < configurations_.size();
+         ++i) {
+      if ((*frame_types)[i] == kVideoFrameKey && configurations_[i].sending) {
+        send_key_frame = true;
+        break;
+      }
+    }
   }
 
-  encoded_image_._encodedWidth = frame_buffer->width();
-  encoded_image_._encodedHeight = frame_buffer->height();
-  encoded_image_._timeStamp = input_frame.timestamp();
-  encoded_image_.ntp_time_ms_ = input_frame.ntp_time_ms();
-  encoded_image_.capture_time_ms_ = input_frame.render_time_ms();
-  encoded_image_.rotation_ = input_frame.rotation();
-  encoded_image_.content_type_ = (mode_ == kScreensharing)
-                                     ? VideoContentType::SCREENSHARE
-                                     : VideoContentType::UNSPECIFIED;
-  encoded_image_.timing_.flags = TimingFrameFlags::kInvalid;
-  encoded_image_._frameType = ConvertToVideoFrameType(info.eFrameType);
+  RTC_DCHECK_EQ(configurations_[0].width, frame_buffer->width());
+  RTC_DCHECK_EQ(configurations_[0].height, frame_buffer->height());
 
-  // Split encoded image up into fragments. This also updates |encoded_image_|.
-  RTPFragmentationHeader frag_header;
-  RtpFragmentize(&encoded_image_, &encoded_image_buffer_, *frame_buffer, &info,
-                 &frag_header);
+  // Encode image for each layer.
+  for (size_t i = 0; i < encoders_.size(); ++i) {
+    // EncodeFrame input.
+    pictures_[i] = {0};
+    pictures_[i].iPicWidth = configurations_[i].width;
+    pictures_[i].iPicHeight = configurations_[i].height;
+    pictures_[i].iColorFormat = EVideoFormatType::videoFormatI420;
+    pictures_[i].uiTimeStamp = input_frame.ntp_time_ms();
+    // Downscale images on second and ongoing layers.
+    if (i == 0) {
+      pictures_[i].iStride[0] = frame_buffer->StrideY();
+      pictures_[i].iStride[1] = frame_buffer->StrideU();
+      pictures_[i].iStride[2] = frame_buffer->StrideV();
+      pictures_[i].pData[0] = const_cast<uint8_t*>(frame_buffer->DataY());
+      pictures_[i].pData[1] = const_cast<uint8_t*>(frame_buffer->DataU());
+      pictures_[i].pData[2] = const_cast<uint8_t*>(frame_buffer->DataV());
+    } else {
+      pictures_[i].iStride[0] = downscaled_buffers_[i - 1]->StrideY();
+      pictures_[i].iStride[1] = downscaled_buffers_[i - 1]->StrideU();
+      pictures_[i].iStride[2] = downscaled_buffers_[i - 1]->StrideV();
+      pictures_[i].pData[0] =
+          const_cast<uint8_t*>(downscaled_buffers_[i - 1]->DataY());
+      pictures_[i].pData[1] =
+          const_cast<uint8_t*>(downscaled_buffers_[i - 1]->DataU());
+      pictures_[i].pData[2] =
+          const_cast<uint8_t*>(downscaled_buffers_[i - 1]->DataV());
+      // Scale the image down a number of times by downsampling factor.
+      libyuv::I420Scale(pictures_[i - 1].pData[0], pictures_[i - 1].iStride[0],
+                        pictures_[i - 1].pData[1], pictures_[i - 1].iStride[1],
+                        pictures_[i - 1].pData[2], pictures_[i - 1].iStride[2],
+                        configurations_[i - 1].width,
+                        configurations_[i - 1].height, pictures_[i].pData[0],
+                        pictures_[i].iStride[0], pictures_[i].pData[1],
+                        pictures_[i].iStride[1], pictures_[i].pData[2],
+                        pictures_[i].iStride[2], configurations_[i].width,
+                        configurations_[i].height, libyuv::kFilterBilinear);
+    }
 
-  // Encoder can skip frames to save bandwidth in which case
-  // |encoded_image_._length| == 0.
-  if (encoded_image_._length > 0) {
-    // Parse QP.
-    h264_bitstream_parser_.ParseBitstream(encoded_image_._buffer,
-                                          encoded_image_._length);
-    h264_bitstream_parser_.GetLastSliceQp(&encoded_image_.qp_);
+    if (!configurations_[i].sending) {
+      continue;
+    }
+    if (frame_types != nullptr) {
+      // Skip frame?
+      if ((*frame_types)[i] == kEmptyFrame) {
+        continue;
+      }
+    }
+    if (send_key_frame) {
+      // API doc says ForceIntraFrame(false) does nothing, but calling this
+      // function forces a key frame regardless of the |bIDR| argument's value.
+      // (If every frame is a key frame we get lag/delays.)
+      encoders_[i]->ForceIntraFrame(true);
+      configurations_[i].key_frame_request = false;
+    }
+    // EncodeFrame output.
+    SFrameBSInfo info;
+    memset(&info, 0, sizeof(SFrameBSInfo));
 
-    // Deliver encoded image.
-    CodecSpecificInfo codec_specific;
-    codec_specific.codecType = kVideoCodecH264;
-    codec_specific.codecSpecific.H264.packetization_mode = packetization_mode_;
-    encoded_image_callback_->OnEncodedImage(encoded_image_, &codec_specific,
-                                            &frag_header);
+    // Encode!
+    int enc_ret = encoders_[i]->EncodeFrame(&pictures_[i], &info);
+    if (enc_ret != 0) {
+      RTC_LOG(LS_ERROR)
+          << "OpenH264 frame encoding failed, EncodeFrame returned " << enc_ret
+          << ".";
+      ReportError();
+      return WEBRTC_VIDEO_CODEC_ERROR;
+    }
+
+    encoded_images_[i]._encodedWidth = configurations_[i].width;
+    encoded_images_[i]._encodedHeight = configurations_[i].height;
+    encoded_images_[i]._timeStamp = input_frame.timestamp();
+    encoded_images_[i].ntp_time_ms_ = input_frame.ntp_time_ms();
+    encoded_images_[i].capture_time_ms_ = input_frame.render_time_ms();
+    encoded_images_[i].rotation_ = input_frame.rotation();
+    encoded_images_[i].content_type_ =
+            (codec_.mode == VideoCodecMode::kScreensharing)
+            ? VideoContentType::SCREENSHARE
+            : VideoContentType::UNSPECIFIED;
+    encoded_images_[i].timing_.flags = VideoSendTiming::kInvalid;
+    encoded_images_[i]._frameType = ConvertToVideoFrameType(info.eFrameType);
+
+    // Split encoded image up into fragments. This also updates
+    // |encoded_image_|.
+    RTPFragmentationHeader frag_header;
+    RtpFragmentize(&encoded_images_[i], &encoded_image_buffers_[i],
+                   *frame_buffer, &info, &frag_header);
+
+    // Encoder can skip frames to save bandwidth in which case
+    // |encoded_images_[i]._length| == 0.
+    if (encoded_images_[i]._length > 0) {
+      // Parse QP.
+      h264_bitstream_parser_.ParseBitstream(encoded_images_[i]._buffer,
+                                            encoded_images_[i]._length);
+      h264_bitstream_parser_.GetLastSliceQp(&encoded_images_[i].qp_);
+
+      // Deliver encoded image.
+      CodecSpecificInfo codec_specific;
+      codec_specific.codecType = kVideoCodecH264;
+      codec_specific.codecSpecific.H264.packetization_mode =
+          packetization_mode_;
+      codec_specific.codecSpecific.H264.simulcast_idx =
+          configurations_[i].simulcast_idx;
+      encoded_image_callback_->OnEncodedImage(encoded_images_[i],
+                                              &codec_specific, &frag_header);
+    }
   }
   return WEBRTC_VIDEO_CODEC_OK;
 }
@@ -402,40 +539,35 @@ const char* H264EncoderImpl::ImplementationName() const {
   return "OpenH264";
 }
 
-bool H264EncoderImpl::IsInitialized() const {
-  return openh264_encoder_ != nullptr;
-}
-
 // Initialization parameters.
 // There are two ways to initialize. There is SEncParamBase (cleared with
 // memset(&p, 0, sizeof(SEncParamBase)) used in Initialize, and SEncParamExt
 // which is a superset of SEncParamBase (cleared with GetDefaultParams) used
 // in InitializeExt.
-SEncParamExt H264EncoderImpl::CreateEncoderParams() const {
-  RTC_DCHECK(openh264_encoder_);
+SEncParamExt H264EncoderImpl::CreateEncoderParams(size_t i) const {
   SEncParamExt encoder_params;
-  openh264_encoder_->GetDefaultParams(&encoder_params);
-  if (mode_ == kRealtimeVideo) {
+  encoders_[i]->GetDefaultParams(&encoder_params);
+  if (codec_.mode == VideoCodecMode::kRealtimeVideo) {
     encoder_params.iUsageType = CAMERA_VIDEO_REAL_TIME;
-  } else if (mode_ == kScreensharing) {
+  } else if (codec_.mode == VideoCodecMode::kScreensharing) {
     encoder_params.iUsageType = SCREEN_CONTENT_REAL_TIME;
   } else {
     RTC_NOTREACHED();
   }
-  encoder_params.iPicWidth = width_;
-  encoder_params.iPicHeight = height_;
-  encoder_params.iTargetBitrate = target_bps_;
-  encoder_params.iMaxBitrate = max_bps_;
+  encoder_params.iPicWidth = configurations_[i].width;
+  encoder_params.iPicHeight = configurations_[i].height;
+  encoder_params.iTargetBitrate = configurations_[i].target_bps;
+  encoder_params.iMaxBitrate = configurations_[i].max_bps;
   // Rate Control mode
   encoder_params.iRCMode = RC_BITRATE_MODE;
-  encoder_params.fMaxFrameRate = max_frame_rate_;
+  encoder_params.fMaxFrameRate = configurations_[i].max_frame_rate;
 
   // The following parameters are extension parameters (they're in SEncParamExt,
   // not in SEncParamBase).
-  encoder_params.bEnableFrameSkip = frame_dropping_on_;
+  encoder_params.bEnableFrameSkip = configurations_[i].frame_dropping_on;
   // |uiIntraPeriod|    - multiple of GOP size
   // |keyFrameInterval| - number of frames
-  encoder_params.uiIntraPeriod = key_frame_interval_;
+  encoder_params.uiIntraPeriod = configurations_[i].key_frame_interval;
   encoder_params.uiMaxNalSize = 0;
   // Threading model: use auto.
   //  0: auto (dynamic imp. internal encoder)
@@ -461,6 +593,8 @@ SEncParamExt H264EncoderImpl::CreateEncoderParams() const {
           SM_SIZELIMITED_SLICE;
       encoder_params.sSpatialLayers[0].sSliceArgument.uiSliceSizeConstraint =
           static_cast<unsigned int>(max_payload_size_);
+      RTC_LOG(INFO) << "Encoder is configured with NALU constraint: "
+                    << max_payload_size_ << " bytes";
       break;
     case H264PacketizationMode::NonInterleaved:
       // When uiSliceMode = SM_FIXEDSLCNUM_SLICE, uiSliceNum = 0 means auto
@@ -479,8 +613,7 @@ void H264EncoderImpl::ReportInit() {
   if (has_reported_init_)
     return;
   RTC_HISTOGRAM_ENUMERATION("WebRTC.Video.H264EncoderImpl.Event",
-                            kH264EncoderEventInit,
-                            kH264EncoderEventMax);
+                            kH264EncoderEventInit, kH264EncoderEventMax);
   has_reported_init_ = true;
 }
 
@@ -488,22 +621,26 @@ void H264EncoderImpl::ReportError() {
   if (has_reported_error_)
     return;
   RTC_HISTOGRAM_ENUMERATION("WebRTC.Video.H264EncoderImpl.Event",
-                            kH264EncoderEventError,
-                            kH264EncoderEventMax);
+                            kH264EncoderEventError, kH264EncoderEventMax);
   has_reported_error_ = true;
 }
 
-int32_t H264EncoderImpl::SetChannelParameters(
-    uint32_t packet_loss, int64_t rtt) {
-  return WEBRTC_VIDEO_CODEC_OK;
-}
-
-int32_t H264EncoderImpl::SetPeriodicKeyFrames(bool enable) {
+int32_t H264EncoderImpl::SetChannelParameters(uint32_t packet_loss,
+                                              int64_t rtt) {
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
 VideoEncoder::ScalingSettings H264EncoderImpl::GetScalingSettings() const {
-  return VideoEncoder::ScalingSettings(true);
+  return VideoEncoder::ScalingSettings(kLowH264QpThreshold,
+                                       kHighH264QpThreshold);
+}
+
+void H264EncoderImpl::LayerConfig::SetStreamState(bool send_stream) {
+  if (send_stream && !sending) {
+    // Need a key frame if we have not sent this stream before.
+    key_frame_request = true;
+  }
+  sending = send_stream;
 }
 
 }  // namespace webrtc

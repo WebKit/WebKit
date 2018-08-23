@@ -80,7 +80,6 @@ int64_t TimeMicros();
 // Returns the current time in nanoseconds.
 int64_t TimeNanos();
 
-
 // Returns a future timestamp, 'elapsed' milliseconds from now.
 int64_t TimeAfter(int64_t elapsed);
 
@@ -127,6 +126,10 @@ int64_t TmToSeconds(const std::tm& tm);
 // measuring time intervals and timeouts.
 int64_t TimeUTCMicros();
 
+// Return the number of milliseconds since January 1, 1970, UTC.
+// See above.
+int64_t TimeUTCMillis();
+
 // Interval of time from the range [min, max] inclusive.
 class IntervalRange {
  public:
@@ -147,6 +150,8 @@ class IntervalRange {
   bool operator==(const IntervalRange& o) const {
     return min_ == o.min_ && max_ == o.max_;
   }
+
+  bool operator!=(const IntervalRange& o) const { return !operator==(o); }
 
  private:
   int min_;

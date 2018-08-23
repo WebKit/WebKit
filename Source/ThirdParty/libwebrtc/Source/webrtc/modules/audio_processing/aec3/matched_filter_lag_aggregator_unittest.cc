@@ -6,7 +6,7 @@
  *  tree. An additional intellectual property rights grant can be found
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
-  */
+ */
 
 #include "modules/audio_processing/aec3/matched_filter_lag_aggregator.h"
 
@@ -22,7 +22,7 @@
 namespace webrtc {
 namespace {
 
-constexpr size_t kNumLagsBeforeDetection = 25;
+constexpr size_t kNumLagsBeforeDetection = 26;
 
 }  // namespace
 
@@ -37,10 +37,10 @@ TEST(MatchedFilterLagAggregator, MostAccurateLagChosen) {
   lag_estimates[1] = MatchedFilter::LagEstimate(0.5f, true, kLag2, true);
 
   for (size_t k = 0; k < kNumLagsBeforeDetection; ++k) {
-    EXPECT_TRUE(aggregator.Aggregate(lag_estimates));
+    aggregator.Aggregate(lag_estimates);
   }
 
-  rtc::Optional<DelayEstimate> aggregated_lag =
+  absl::optional<DelayEstimate> aggregated_lag =
       aggregator.Aggregate(lag_estimates);
   EXPECT_TRUE(aggregated_lag);
   EXPECT_EQ(kLag1, aggregated_lag->delay);
@@ -68,7 +68,7 @@ TEST(MatchedFilterLagAggregator,
   std::vector<MatchedFilter::LagEstimate> lag_estimates(1);
   MatchedFilterLagAggregator aggregator(&data_dumper, 100);
 
-  rtc::Optional<DelayEstimate> aggregated_lag;
+  absl::optional<DelayEstimate> aggregated_lag;
   for (size_t k = 0; k < kNumLagsBeforeDetection; ++k) {
     lag_estimates[0] = MatchedFilter::LagEstimate(1.f, true, 10, true);
     aggregated_lag = aggregator.Aggregate(lag_estimates);
@@ -98,7 +98,7 @@ TEST(MatchedFilterLagAggregator,
   MatchedFilterLagAggregator aggregator(&data_dumper, kLag);
   for (size_t k = 0; k < kNumLagsBeforeDetection * 10; ++k) {
     lag_estimates[0] = MatchedFilter::LagEstimate(1.f, true, kLag, false);
-    rtc::Optional<DelayEstimate> aggregated_lag =
+    absl::optional<DelayEstimate> aggregated_lag =
         aggregator.Aggregate(lag_estimates);
     EXPECT_FALSE(aggregated_lag);
     EXPECT_EQ(kLag, aggregated_lag->delay);
@@ -114,7 +114,7 @@ TEST(MatchedFilterLagAggregator, DISABLED_PersistentAggregatedLag) {
   ApmDataDumper data_dumper(0);
   std::vector<MatchedFilter::LagEstimate> lag_estimates(1);
   MatchedFilterLagAggregator aggregator(&data_dumper, std::max(kLag1, kLag2));
-  rtc::Optional<DelayEstimate> aggregated_lag;
+  absl::optional<DelayEstimate> aggregated_lag;
   for (size_t k = 0; k < kNumLagsBeforeDetection; ++k) {
     lag_estimates[0] = MatchedFilter::LagEstimate(1.f, true, kLag1, true);
     aggregated_lag = aggregator.Aggregate(lag_estimates);

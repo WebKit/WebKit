@@ -18,14 +18,13 @@
 #include "modules/rtp_rtcp/include/ulpfec_receiver.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "rtc_base/criticalsection.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
 class UlpfecReceiverImpl : public UlpfecReceiver {
  public:
   explicit UlpfecReceiverImpl(uint32_t ssrc, RecoveredPacketReceiver* callback);
-  virtual ~UlpfecReceiverImpl();
+  ~UlpfecReceiverImpl() override;
 
   int32_t AddReceivedRedPacket(const RTPHeader& rtp_header,
                                const uint8_t* incoming_rtp_packet,

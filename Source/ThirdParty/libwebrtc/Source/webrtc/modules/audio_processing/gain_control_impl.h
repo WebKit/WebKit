@@ -86,8 +86,8 @@ class GainControlImpl : public GainControl {
 
   std::vector<std::unique_ptr<GainController>> gain_controllers_;
 
-  rtc::Optional<size_t> num_proc_channels_ RTC_GUARDED_BY(crit_capture_);
-  rtc::Optional<int> sample_rate_hz_ RTC_GUARDED_BY(crit_capture_);
+  absl::optional<size_t> num_proc_channels_ RTC_GUARDED_BY(crit_capture_);
+  absl::optional<int> sample_rate_hz_ RTC_GUARDED_BY(crit_capture_);
 
   static int instance_counter_;
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(GainControlImpl);

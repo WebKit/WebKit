@@ -12,11 +12,11 @@
 #define RTC_TOOLS_FRAME_ANALYZER_VIDEO_QUALITY_ANALYSIS_H_
 
 #include <string>
-#include <vector>
 #include <utility>
+#include <vector>
 
-#include "libyuv/compare.h"  // NOLINT
-#include "libyuv/convert.h"  // NOLINT
+#include "third_party/libyuv/include/libyuv/compare.h"
+#include "third_party/libyuv/include/libyuv/convert.h"
 
 namespace webrtc {
 namespace test {
@@ -37,9 +37,14 @@ struct ResultsContainer {
   ~ResultsContainer();
 
   std::vector<AnalysisResult> frames;
+  int max_repeated_frames;
+  int max_skipped_frames;
+  int total_skipped_frames;
+  int decode_errors_ref;
+  int decode_errors_test;
 };
 
-enum VideoAnalysisMetricsType {kPSNR, kSSIM};
+enum VideoAnalysisMetricsType { kPSNR, kSSIM };
 
 // A function to run the PSNR and SSIM analysis on the test file. The test file
 // comprises the frames that were captured during the quality measurement test.
@@ -80,7 +85,8 @@ double CalculateMetrics(VideoAnalysisMetricsType video_metrics_type,
 void PrintAnalysisResults(const std::string& label, ResultsContainer* results);
 
 // Similar to the above, but will print to the specified file handle.
-void PrintAnalysisResults(FILE* output, const std::string& label,
+void PrintAnalysisResults(FILE* output,
+                          const std::string& label,
                           ResultsContainer* results);
 
 // The barcode number that means that the barcode could not be decoded.
@@ -102,15 +108,9 @@ std::vector<std::pair<int, int> > CalculateFrameClusters(
 
 // Calculates max repeated and skipped frames and prints them to stdout in a
 // format that is compatible with Chromium performance numbers.
-void PrintMaxRepeatedAndSkippedFrames(const std::string& label,
-                                      const std::string& stats_file_ref_name,
-                                      const std::string& stats_file_test_name);
-
-// Similar to the above, but will print to the specified file handle.
-void PrintMaxRepeatedAndSkippedFrames(FILE* output,
-                                      const std::string& label,
-                                      const std::string& stats_file_ref_name,
-                                      const std::string& stats_file_test_name);
+void GetMaxRepeatedAndSkippedFrames(const std::string& stats_file_ref_name,
+                                    const std::string& stats_file_test_name,
+                                    ResultsContainer* results);
 
 // Gets the next line from an open stats file.
 bool GetNextStatsLine(FILE* stats_file, char* line);

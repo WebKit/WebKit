@@ -18,13 +18,11 @@
 
 namespace rtc {
 
-class FakeSSLCertificate : public rtc::SSLCertificate {
+class FakeSSLCertificate : public SSLCertificate {
  public:
   // SHA-1 is the default digest algorithm because it is available in all build
   // configurations used for unit testing.
-  explicit FakeSSLCertificate(const std::string& data);
-
-  explicit FakeSSLCertificate(const std::vector<std::string>& certs);
+  explicit FakeSSLCertificate(const std::string& pem_string);
 
   FakeSSLCertificate(const FakeSSLCertificate&);
   ~FakeSSLCertificate() override;
@@ -39,32 +37,33 @@ class FakeSSLCertificate : public rtc::SSLCertificate {
                      unsigned char* digest,
                      size_t size,
                      size_t* length) const override;
-  std::unique_ptr<SSLCertChain> GetChain() const override;
 
   void SetCertificateExpirationTime(int64_t expiration_time);
 
   void set_digest_algorithm(const std::string& algorithm);
 
  private:
-  static std::unique_ptr<SSLCertificate> DupCert(FakeSSLCertificate cert) {
-    return cert.GetUniqueReference();
-  }
-  static void DeleteCert(SSLCertificate* cert) { delete cert; }
-  std::string data_;
-  std::vector<FakeSSLCertificate> certs_;
+  std::string pem_string_;
   std::string digest_algorithm_;
   // Expiration time in seconds relative to epoch, 1970-01-01T00:00:00Z (UTC).
   int64_t expiration_time_;
 };
 
-class FakeSSLIdentity : public rtc::SSLIdentity {
+class FakeSSLIdentity : public SSLIdentity {
  public:
-  explicit FakeSSLIdentity(const std::string& data);
+  explicit FakeSSLIdentity(const std::string& pem_string);
+  // For a certificate chain.
+  explicit FakeSSLIdentity(const std::vector<std::string>& pem_strings);
   explicit FakeSSLIdentity(const FakeSSLCertificate& cert);
+
+  explicit FakeSSLIdentity(const FakeSSLIdentity& o);
+
+  ~FakeSSLIdentity() override;
 
   // SSLIdentity implementation.
   FakeSSLIdentity* GetReference() const override;
-  const FakeSSLCertificate& certificate() const override;
+  const SSLCertificate& certificate() const override;
+  const SSLCertChain& cert_chain() const override;
   // Not implemented.
   std::string PrivateKeyToPEMString() const override;
   // Not implemented.
@@ -73,7 +72,7 @@ class FakeSSLIdentity : public rtc::SSLIdentity {
   virtual bool operator==(const SSLIdentity& other) const;
 
  private:
-  FakeSSLCertificate cert_;
+  std::unique_ptr<SSLCertChain> cert_chain_;
 };
 
 }  // namespace rtc

@@ -75,7 +75,7 @@ class AudioNetworkAdaptorImpl final : public AudioNetworkAdaptor {
 
   Controller::NetworkMetrics last_metrics_;
 
-  rtc::Optional<AudioEncoderRuntimeConfig> prev_config_;
+  absl::optional<AudioEncoderRuntimeConfig> prev_config_;
 
   ANAStats stats_;
 

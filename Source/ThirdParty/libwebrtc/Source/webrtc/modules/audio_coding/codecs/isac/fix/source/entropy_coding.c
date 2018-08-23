@@ -18,14 +18,14 @@
 
 #include <stddef.h>
 
-#include "arith_routins.h"
-#include "spectrum_ar_model_tables.h"
-#include "pitch_gain_tables.h"
-#include "pitch_lag_tables.h"
-#include "entropy_coding.h"
-#include "lpc_tables.h"
-#include "settings.h"
-#include "signal_processing_library.h"
+#include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "modules/audio_coding/codecs/isac/fix/source/arith_routins.h"
+#include "modules/audio_coding/codecs/isac/fix/source/entropy_coding.h"
+#include "modules/audio_coding/codecs/isac/fix/source/lpc_tables.h"
+#include "modules/audio_coding/codecs/isac/fix/source/pitch_gain_tables.h"
+#include "modules/audio_coding/codecs/isac/fix/source/pitch_lag_tables.h"
+#include "modules/audio_coding/codecs/isac/fix/source/settings.h"
+#include "modules/audio_coding/codecs/isac/fix/source/spectrum_ar_model_tables.h"
 #include "rtc_base/sanitizer.h"
 
 /*

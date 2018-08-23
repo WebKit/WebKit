@@ -35,8 +35,6 @@ const char kDefaultRtcpCname[] = "DefaultRtcpCname";
 // Options for an RtpSender contained with an media description/"m=" section.
 struct SenderOptions {
   std::string track_id;
-  // TODO(steveanton): As part of work towards Unified Plan, this has been
-  // changed to be a vector. But for now this can only have exactly one.
   std::vector<std::string> stream_ids;
   int num_sim_layers;
 };
@@ -94,6 +92,7 @@ struct MediaSessionOptions {
   bool vad_enabled = true;  // When disabled, removes all CN codecs from SDP.
   bool rtcp_mux_enabled = true;
   bool bundle_enabled = false;
+  bool is_unified_plan = false;
   std::string rtcp_cname = kDefaultRtcpCname;
   rtc::CryptoOptions crypto_options;
   // List of media description options in the same order that the media
@@ -125,16 +124,28 @@ class MediaSessionDescriptionFactory {
   void set_audio_rtp_header_extensions(const RtpHeaderExtensions& extensions) {
     audio_rtp_extensions_ = extensions;
   }
-  const RtpHeaderExtensions& audio_rtp_header_extensions() const {
-    return audio_rtp_extensions_;
+  RtpHeaderExtensions audio_rtp_header_extensions(bool unified_plan) const {
+    RtpHeaderExtensions extensions = audio_rtp_extensions_;
+    // If we are Unified Plan, also offer the MID header extension.
+    if (unified_plan) {
+      extensions.push_back(webrtc::RtpExtension(
+          webrtc::RtpExtension::kMidUri, webrtc::RtpExtension::kMidDefaultId));
+    }
+    return extensions;
   }
   const VideoCodecs& video_codecs() const { return video_codecs_; }
   void set_video_codecs(const VideoCodecs& codecs) { video_codecs_ = codecs; }
   void set_video_rtp_header_extensions(const RtpHeaderExtensions& extensions) {
     video_rtp_extensions_ = extensions;
   }
-  const RtpHeaderExtensions& video_rtp_header_extensions() const {
-    return video_rtp_extensions_;
+  RtpHeaderExtensions video_rtp_header_extensions(bool unified_plan) const {
+    RtpHeaderExtensions extensions = video_rtp_extensions_;
+    // If we are Unified Plan, also offer the MID header extension.
+    if (unified_plan) {
+      extensions.push_back(webrtc::RtpExtension(
+          webrtc::RtpExtension::kMidUri, webrtc::RtpExtension::kMidDefaultId));
+    }
+    return extensions;
   }
   const DataCodecs& data_codecs() const { return data_codecs_; }
   void set_data_codecs(const DataCodecs& codecs) { data_codecs_ = codecs; }
@@ -168,14 +179,14 @@ class MediaSessionDescriptionFactory {
                           AudioCodecs* audio_codecs,
                           VideoCodecs* video_codecs,
                           DataCodecs* data_codecs) const;
-  void GetRtpHdrExtsToOffer(const SessionDescription* current_description,
+  void GetRtpHdrExtsToOffer(const MediaSessionOptions& session_options,
+                            const SessionDescription* current_description,
                             RtpHeaderExtensions* audio_extensions,
                             RtpHeaderExtensions* video_extensions) const;
-  bool AddTransportOffer(
-      const std::string& content_name,
-      const TransportOptions& transport_options,
-      const SessionDescription* current_desc,
-      SessionDescription* offer) const;
+  bool AddTransportOffer(const std::string& content_name,
+                         const TransportOptions& transport_options,
+                         const SessionDescription* current_desc,
+                         SessionDescription* offer) const;
 
   TransportDescription* CreateTransportAnswer(
       const std::string& content_name,
@@ -184,10 +195,9 @@ class MediaSessionDescriptionFactory {
       const SessionDescription* current_desc,
       bool require_transport_attributes) const;
 
-  bool AddTransportAnswer(
-      const std::string& content_name,
-      const TransportDescription& transport_desc,
-      SessionDescription* answer_desc) const;
+  bool AddTransportAnswer(const std::string& content_name,
+                          const TransportDescription& transport_desc,
+                          SessionDescription* answer_desc) const;
 
   // Helpers for adding media contents to the SessionDescription. Returns true
   // it succeeds or the media content is not needed, or false if there is any
@@ -287,6 +297,8 @@ const ContentInfo* GetFirstMediaContent(const ContentInfos& contents,
 const ContentInfo* GetFirstAudioContent(const ContentInfos& contents);
 const ContentInfo* GetFirstVideoContent(const ContentInfos& contents);
 const ContentInfo* GetFirstDataContent(const ContentInfos& contents);
+const ContentInfo* GetFirstMediaContent(const SessionDescription* sdesc,
+                                        MediaType media_type);
 const ContentInfo* GetFirstAudioContent(const SessionDescription* sdesc);
 const ContentInfo* GetFirstVideoContent(const SessionDescription* sdesc);
 const ContentInfo* GetFirstDataContent(const SessionDescription* sdesc);
@@ -302,6 +314,8 @@ ContentInfo* GetFirstMediaContent(ContentInfos* contents, MediaType media_type);
 ContentInfo* GetFirstAudioContent(ContentInfos* contents);
 ContentInfo* GetFirstVideoContent(ContentInfos* contents);
 ContentInfo* GetFirstDataContent(ContentInfos* contents);
+ContentInfo* GetFirstMediaContent(SessionDescription* sdesc,
+                                  MediaType media_type);
 ContentInfo* GetFirstAudioContent(SessionDescription* sdesc);
 ContentInfo* GetFirstVideoContent(SessionDescription* sdesc);
 ContentInfo* GetFirstDataContent(SessionDescription* sdesc);

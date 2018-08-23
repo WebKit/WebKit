@@ -16,8 +16,8 @@
 #include "rtc_base/gunit.h"
 #include "rtc_base/nullsocketserver.h"
 #include "rtc_base/physicalsocketserver.h"
-#include "rtc_base/sigslot.h"
 #include "rtc_base/socketaddress.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
 
 #if defined(WEBRTC_WIN)
@@ -51,8 +51,10 @@ struct TestMessage : public MessageData {
 // Receives on a socket and sends by posting messages.
 class SocketClient : public TestGenerator, public sigslot::has_slots<> {
  public:
-  SocketClient(AsyncSocket* socket, const SocketAddress& addr,
-               Thread* post_thread, MessageHandler* phandler)
+  SocketClient(AsyncSocket* socket,
+               const SocketAddress& addr,
+               Thread* post_thread,
+               MessageHandler* phandler)
       : socket_(AsyncUDPSocket::Create(socket, addr)),
         post_thread_(post_thread),
         post_handler_(phandler) {
@@ -63,7 +65,9 @@ class SocketClient : public TestGenerator, public sigslot::has_slots<> {
 
   SocketAddress address() const { return socket_->GetLocalAddress(); }
 
-  void OnPacket(AsyncPacketSocket* socket, const char* buf, size_t size,
+  void OnPacket(AsyncPacketSocket* socket,
+                const char* buf,
+                size_t size,
                 const SocketAddress& remote_addr,
                 const PacketTime& packet_time) {
     EXPECT_EQ(size, sizeof(uint32_t));
@@ -83,9 +87,7 @@ class SocketClient : public TestGenerator, public sigslot::has_slots<> {
 // Receives messages and sends on a socket.
 class MessageClient : public MessageHandler, public TestGenerator {
  public:
-  MessageClient(Thread* pth, Socket* socket)
-      : socket_(socket) {
-  }
+  MessageClient(Thread* pth, Socket* socket) : socket_(socket) {}
 
   ~MessageClient() override { delete socket_; }
 
@@ -107,14 +109,9 @@ class CustomThread : public rtc::Thread {
   ~CustomThread() override { Stop(); }
   bool Start() { return false; }
 
-  bool WrapCurrent() {
-    return Thread::WrapCurrent();
-  }
-  void UnwrapCurrent() {
-    Thread::UnwrapCurrent();
-  }
+  bool WrapCurrent() { return Thread::WrapCurrent(); }
+  void UnwrapCurrent() { Thread::UnwrapCurrent(); }
 };
-
 
 // A thread that does nothing when it runs and signals an event
 // when it is destroyed.
@@ -176,7 +173,11 @@ struct FunctorA {
 class FunctorB {
  public:
   explicit FunctorB(AtomicBool* flag) : flag_(flag) {}
-  void operator()() { if (flag_) *flag_ = true; }
+  void operator()() {
+    if (flag_)
+      *flag_ = true;
+  }
+
  private:
   AtomicBool* flag_;
 };
@@ -185,6 +186,20 @@ struct FunctorC {
     Thread::Current()->ProcessMessages(50);
     return 24;
   }
+};
+struct FunctorD {
+ public:
+  explicit FunctorD(AtomicBool* flag) : flag_(flag) {}
+  FunctorD(FunctorD&&) = default;
+  FunctorD& operator=(FunctorD&&) = default;
+  void operator()() {
+    if (flag_)
+      *flag_ = true;
+  }
+
+ private:
+  AtomicBool* flag_;
+  RTC_DISALLOW_COPY_AND_ASSIGN(FunctorD);
 };
 
 // See: https://code.google.com/p/webrtc/issues/detail?id=2409
@@ -421,9 +436,7 @@ class AsyncInvokeTest : public testing::Test {
 
  protected:
   enum { kWaitTimeout = 1000 };
-  AsyncInvokeTest()
-      : int_value_(0),
-        expected_thread_(nullptr) {}
+  AsyncInvokeTest() : int_value_(0), expected_thread_(nullptr) {}
 
   int int_value_;
   Thread* expected_thread_;
@@ -437,6 +450,18 @@ TEST_F(AsyncInvokeTest, FireAndForget) {
   // Try calling functor.
   AtomicBool called;
   invoker.AsyncInvoke<void>(RTC_FROM_HERE, thread.get(), FunctorB(&called));
+  EXPECT_TRUE_WAIT(called.get(), kWaitTimeout);
+  thread->Stop();
+}
+
+TEST_F(AsyncInvokeTest, NonCopyableFunctor) {
+  AsyncInvoker invoker;
+  // Create and start the thread.
+  auto thread = Thread::CreateWithSocketServer();
+  thread->Start();
+  // Try calling functor.
+  AtomicBool called;
+  invoker.AsyncInvoke<void>(RTC_FROM_HERE, thread.get(), FunctorD(&called));
   EXPECT_TRUE_WAIT(called.get(), kWaitTimeout);
   thread->Stop();
 }
@@ -558,9 +583,7 @@ class GuardedAsyncInvokeTest : public testing::Test {
 
  protected:
   const static int kWaitTimeout = 1000;
-  GuardedAsyncInvokeTest()
-      : int_value_(0),
-        expected_thread_(nullptr) {}
+  GuardedAsyncInvokeTest() : int_value_(0), expected_thread_(nullptr) {}
 
   int int_value_;
   Thread* expected_thread_;
@@ -599,6 +622,14 @@ TEST_F(GuardedAsyncInvokeTest, FireAndForget) {
   // Try calling functor.
   AtomicBool called;
   EXPECT_TRUE(invoker.AsyncInvoke<void>(RTC_FROM_HERE, FunctorB(&called)));
+  EXPECT_TRUE_WAIT(called.get(), kWaitTimeout);
+}
+
+TEST_F(GuardedAsyncInvokeTest, NonCopyableFunctor) {
+  GuardedAsyncInvoker invoker;
+  // Try calling functor.
+  AtomicBool called;
+  EXPECT_TRUE(invoker.AsyncInvoke<void>(RTC_FROM_HERE, FunctorD(&called)));
   EXPECT_TRUE_WAIT(called.get(), kWaitTimeout);
 }
 

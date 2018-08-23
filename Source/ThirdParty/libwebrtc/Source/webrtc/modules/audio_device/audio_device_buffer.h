@@ -17,8 +17,6 @@
 #include "rtc_base/task_queue.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/thread_checker.h"
-#include "system_wrappers/include/file_wrapper.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -104,11 +102,12 @@ class AudioDeviceBuffer {
 
   int32_t SetTypingStatus(bool typing_status);
 
-  // Called on iOS where the native audio layer can be interrupted by other
-  // audio applications. This method can then be used to reset internal
-  // states and detach thread checkers to allow for a new audio session where
-  // native callbacks may come from a new set of I/O threads.
-  void NativeAudioInterrupted();
+  // Called on iOS and Android where the native audio layer can be interrupted
+  // by other audio applications. These methods can then be used to reset
+  // internal states and detach thread checkers to allow for new audio sessions
+  // where native callbacks may come from a new set of I/O threads.
+  void NativeAudioPlayoutInterrupted();
+  void NativeAudioRecordingInterrupted();
 
  private:
   // Starts/stops periodic logging of audio stats.
@@ -182,46 +181,46 @@ class AudioDeviceBuffer {
   // Keeps track of if playout/recording are active or not. A combination
   // of these states are used to determine when to start and stop the timer.
   // Only used on the creating thread and not used to control any media flow.
-  bool playing_ RTC_ACCESS_ON(main_thread_checker_);
-  bool recording_ RTC_ACCESS_ON(main_thread_checker_);
+  bool playing_ RTC_GUARDED_BY(main_thread_checker_);
+  bool recording_ RTC_GUARDED_BY(main_thread_checker_);
 
   // Buffer used for audio samples to be played out. Size can be changed
   // dynamically. The 16-bit samples are interleaved, hence the size is
   // proportional to the number of channels.
-  rtc::BufferT<int16_t> play_buffer_ RTC_ACCESS_ON(playout_thread_checker_);
+  rtc::BufferT<int16_t> play_buffer_ RTC_GUARDED_BY(playout_thread_checker_);
 
   // Byte buffer used for recorded audio samples. Size can be changed
   // dynamically.
-  rtc::BufferT<int16_t> rec_buffer_ RTC_ACCESS_ON(recording_thread_checker_);
+  rtc::BufferT<int16_t> rec_buffer_ RTC_GUARDED_BY(recording_thread_checker_);
 
   // Contains true of a key-press has been detected.
-  bool typing_status_ RTC_ACCESS_ON(recording_thread_checker_);
+  bool typing_status_ RTC_GUARDED_BY(recording_thread_checker_);
 
   // Delay values used by the AEC.
-  int play_delay_ms_ RTC_ACCESS_ON(recording_thread_checker_);
-  int rec_delay_ms_ RTC_ACCESS_ON(recording_thread_checker_);
+  int play_delay_ms_ RTC_GUARDED_BY(recording_thread_checker_);
+  int rec_delay_ms_ RTC_GUARDED_BY(recording_thread_checker_);
 
   // Counts number of times LogStats() has been called.
-  size_t num_stat_reports_ RTC_ACCESS_ON(task_queue_);
+  size_t num_stat_reports_ RTC_GUARDED_BY(task_queue_);
 
   // Time stamp of last timer task (drives logging).
-  int64_t last_timer_task_time_ RTC_ACCESS_ON(task_queue_);
+  int64_t last_timer_task_time_ RTC_GUARDED_BY(task_queue_);
 
   // Counts number of audio callbacks modulo 50 to create a signal when
   // a new storage of audio stats shall be done.
-  int16_t rec_stat_count_ RTC_ACCESS_ON(recording_thread_checker_);
-  int16_t play_stat_count_ RTC_ACCESS_ON(playout_thread_checker_);
+  int16_t rec_stat_count_ RTC_GUARDED_BY(recording_thread_checker_);
+  int16_t play_stat_count_ RTC_GUARDED_BY(playout_thread_checker_);
 
   // Time stamps of when playout and recording starts.
-  int64_t play_start_time_ RTC_ACCESS_ON(main_thread_checker_);
-  int64_t rec_start_time_ RTC_ACCESS_ON(main_thread_checker_);
+  int64_t play_start_time_ RTC_GUARDED_BY(main_thread_checker_);
+  int64_t rec_start_time_ RTC_GUARDED_BY(main_thread_checker_);
 
   // Contains counters for playout and recording statistics.
   Stats stats_ RTC_GUARDED_BY(lock_);
 
   // Stores current stats at each timer task. Used to calculate differences
   // between two successive timer events.
-  Stats last_stats_ RTC_ACCESS_ON(task_queue_);
+  Stats last_stats_ RTC_GUARDED_BY(task_queue_);
 
   // Set to true at construction and modified to false as soon as one audio-
   // level estimate larger than zero is detected.
@@ -231,12 +230,12 @@ class AudioDeviceBuffer {
   // StartPeriodicLogging() and set to false by StopPeriodicLogging().
   // Setting this member to false prevents (possiby invalid) log messages from
   // being printed in the LogStats() task.
-  bool log_stats_ RTC_ACCESS_ON(task_queue_);
+  bool log_stats_ RTC_GUARDED_BY(task_queue_);
 
 // Should *never* be defined in production builds. Only used for testing.
 // When defined, the output signal will be replaced by a sinus tone at 440Hz.
 #ifdef AUDIO_DEVICE_PLAYS_SINUS_TONE
-  double phase_ RTC_ACCESS_ON(playout_thread_checker_);
+  double phase_ RTC_GUARDED_BY(playout_thread_checker_);
 #endif
 };
 

@@ -20,18 +20,17 @@ static const size_t kDataLength = 5;
 static const float kTolerance = 0.0001f;
 
 static const size_t kParentDataLength = kDataLength * 2;
-static const float kParentData[kParentDataLength] =
-    {1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f};
+static const float kParentData[kParentDataLength] = {1.f, 2.f, 3.f, 4.f, 5.f,
+                                                     6.f, 7.f, 8.f, 9.f, 10.f};
 
 static const float kCoefficients[] = {0.2f, -0.3f, 0.5f, -0.7f, 0.11f};
-static const size_t kCoefficientsLength = sizeof(kCoefficients) /
-                                       sizeof(kCoefficients[0]);
+static const size_t kCoefficientsLength =
+    sizeof(kCoefficients) / sizeof(kCoefficients[0]);
 
 TEST(WPDNodeTest, Accessors) {
   WPDNode node(kDataLength, kCoefficients, kCoefficientsLength);
   EXPECT_EQ(0, node.set_data(kParentData, kDataLength));
-  EXPECT_EQ(0, memcmp(node.data(),
-                      kParentData,
+  EXPECT_EQ(0, memcmp(node.data(), kParentData,
                       kDataLength * sizeof(node.data()[0])));
 }
 

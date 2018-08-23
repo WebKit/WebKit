@@ -10,9 +10,9 @@
 
 #include "test/vcm_capturer.h"
 
+#include "call/video_send_stream.h"
 #include "modules/video_capture/video_capture_factory.h"
 #include "rtc_base/logging.h"
-#include "call/video_send_stream.h"
 namespace webrtc {
 namespace test {
 
@@ -68,7 +68,6 @@ VcmCapturer* VcmCapturer::Create(size_t width,
   return vcm_capturer.release();
 }
 
-
 void VcmCapturer::Start() {
   rtc::CritScope lock(&crit_);
   started_ = true;
@@ -103,16 +102,18 @@ void VcmCapturer::Destroy() {
   vcm_ = nullptr;
 }
 
-VcmCapturer::~VcmCapturer() { Destroy(); }
+VcmCapturer::~VcmCapturer() {
+  Destroy();
+}
 
 void VcmCapturer::OnFrame(const VideoFrame& frame) {
   rtc::CritScope lock(&crit_);
   if (started_ && sink_) {
-    rtc::Optional<VideoFrame> out_frame = AdaptFrame(frame);
+    absl::optional<VideoFrame> out_frame = AdaptFrame(frame);
     if (out_frame)
       sink_->OnFrame(*out_frame);
   }
 }
 
-}  // test
-}  // webrtc
+}  // namespace test
+}  // namespace webrtc

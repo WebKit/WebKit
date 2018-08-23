@@ -37,7 +37,7 @@ using rtc::sprintfn;
 static const char kPeerIdHeader[] = "Pragma: ";
 
 static const char* kRequestPaths[] = {
-  "/wait", "/sign_out", "/message",
+    "/wait", "/sign_out", "/message",
 };
 
 enum RequestPathIndex {
@@ -55,8 +55,10 @@ const size_t kMaxNameLength = 512;
 int ChannelMember::s_member_id_ = 0;
 
 ChannelMember::ChannelMember(DataSocket* socket)
-  : waiting_socket_(NULL), id_(++s_member_id_),
-    connected_(true), timestamp_(time(NULL)) {
+    : waiting_socket_(NULL),
+      id_(++s_member_id_),
+      connected_(true),
+      timestamp_(time(NULL)) {
   assert(socket);
   assert(socket->method() == DataSocket::GET);
   assert(socket->PathEquals("/sign_in"));
@@ -69,8 +71,7 @@ ChannelMember::ChannelMember(DataSocket* socket)
   std::replace(name_.begin(), name_.end(), ',', '_');
 }
 
-ChannelMember::~ChannelMember() {
-}
+ChannelMember::~ChannelMember() {}
 
 bool ChannelMember::is_wait_request(DataSocket* ds) const {
   return ds && ds->PathEquals(kRequestPaths[kWait]);
@@ -87,8 +88,7 @@ std::string ChannelMember::GetPeerIdHeader() const {
 
 bool ChannelMember::NotifyOfOtherMember(const ChannelMember& other) {
   assert(&other != this);
-  QueueResponse("200 OK", "text/plain", GetPeerIdHeader(),
-                other.GetEntry());
+  QueueResponse("200 OK", "text/plain", GetPeerIdHeader(), other.GetEntry());
   return true;
 }
 
@@ -110,11 +110,9 @@ void ChannelMember::ForwardRequestToPeer(DataSocket* ds, ChannelMember* peer) {
   std::string extra_headers(GetPeerIdHeader());
 
   if (peer == this) {
-    ds->Send("200 OK", true, ds->content_type(), extra_headers,
-             ds->data());
+    ds->Send("200 OK", true, ds->content_type(), extra_headers, ds->data());
   } else {
-    printf("Client %s sending to %s\n",
-        name_.c_str(), peer->name().c_str());
+    printf("Client %s sending to %s\n", name_.c_str(), peer->name().c_str());
     peer->QueueResponse("200 OK", ds->content_type(), extra_headers,
                         ds->data());
     ds->Send("200 OK", true, "text/plain", "", "");
@@ -135,8 +133,8 @@ void ChannelMember::QueueResponse(const std::string& status,
   if (waiting_socket_) {
     assert(queue_.size() == 0);
     assert(waiting_socket_->method() == DataSocket::GET);
-    bool ok = waiting_socket_->Send(status, true, content_type, extra_headers,
-                                    data);
+    bool ok =
+        waiting_socket_->Send(status, true, content_type, extra_headers, data);
     if (!ok) {
       printf("Failed to deliver data to waiting socket\n");
     }
@@ -251,7 +249,7 @@ bool PeerChannel::AddMember(DataSocket* ds) {
   members_.push_back(new_guy);
 
   printf("New member added (total=%s): %s\n",
-      size_t2str(members_.size()).c_str(), new_guy->name().c_str());
+         size_t2str(members_.size()).c_str(), new_guy->name().c_str());
 
   // Let the newly connected peer know about other members of the channel.
   std::string content_type;

@@ -13,7 +13,7 @@
 #include <string>
 
 #include "rtc_base/gunit.h"
-#include "rtc_base/sigslot.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace rtc {
 

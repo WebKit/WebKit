@@ -18,7 +18,6 @@
 
 #include "modules/audio_processing/agc/loudness_histogram.h"
 #include "modules/audio_processing/agc/utility.h"
-#include "modules/include/module_common_types.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -48,7 +47,7 @@ float Agc::AnalyzePreproc(const int16_t* audio, size_t length) {
   return 1.0f * num_clipped / length;
 }
 
-int Agc::Process(const int16_t* audio, size_t length, int sample_rate_hz) {
+void Agc::Process(const int16_t* audio, size_t length, int sample_rate_hz) {
   vad_.ProcessChunk(audio, length, sample_rate_hz);
   const std::vector<double>& rms = vad_.chunkwise_rms();
   const std::vector<double>& probabilities =
@@ -57,7 +56,6 @@ int Agc::Process(const int16_t* audio, size_t length, int sample_rate_hz) {
   for (size_t i = 0; i < rms.size(); ++i) {
     histogram_->Update(rms[i], probabilities[i]);
   }
-  return 0;
 }
 
 bool Agc::GetRmsErrorDb(int* error) {

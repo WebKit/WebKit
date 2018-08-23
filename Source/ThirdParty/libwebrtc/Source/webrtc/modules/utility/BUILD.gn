@@ -11,7 +11,6 @@ import("../../webrtc.gni")
 rtc_static_library("utility") {
   visibility = [ "*" ]
   sources = [
-    "include/audio_frame_operations.h",
     "include/helpers_android.h",
     "include/jvm_android.h",
     "include/process_thread.h",
@@ -21,11 +20,6 @@ rtc_static_library("utility") {
     "source/process_thread_impl.h",
   ]
 
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
-
   if (is_ios) {
     libs = [ "AVFoundation.framework" ]
   }
@@ -33,14 +27,12 @@ rtc_static_library("utility") {
   deps = [
     "..:module_api",
     "../..:webrtc_common",
-    "../../:typedefs",
-    "../../audio/utility:audio_frame_operations",
     "../../common_audio",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:rtc_task_queue",
+    "../../rtc_base/system:arch",
     "../../system_wrappers",
-    "../media_file",
   ]
 }
 
@@ -70,7 +62,6 @@ if (rtc_include_tests) {
       "../../rtc_base:rtc_base_approved",
       "../../rtc_base:rtc_task_queue",
       "../../test:test_support",
-      "//testing/gmock",
     ]
   }
 }

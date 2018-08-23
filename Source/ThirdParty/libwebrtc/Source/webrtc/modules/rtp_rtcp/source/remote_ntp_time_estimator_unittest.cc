@@ -1,12 +1,12 @@
 /*
-*  Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
-*
-*  Use of this source code is governed by a BSD-style license
-*  that can be found in the LICENSE file in the root of the source
-*  tree. An additional intellectual property rights grant can be found
-*  in the file PATENTS.  All contributing project authors may
-*  be found in the AUTHORS file in the root of the source tree.
-*/
+ *  Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
 
 #include "modules/rtp_rtcp/include/remote_ntp_time_estimator.h"
 #include "common_types.h"  // NOLINT(build/include)
@@ -32,7 +32,7 @@ class RemoteNtpTimeEstimatorTest : public ::testing::Test {
       : local_clock_(kLocalClockInitialTimeMs * 1000),
         remote_clock_(kRemoteClockInitialTimeMs * 1000),
         estimator_(new RemoteNtpTimeEstimator(&local_clock_)) {}
-  ~RemoteNtpTimeEstimatorTest() {}
+  ~RemoteNtpTimeEstimatorTest() override = default;
 
   void AdvanceTimeMilliseconds(int64_t ms) {
     local_clock_.AdvanceTimeMilliseconds(ms);
@@ -63,8 +63,11 @@ class RemoteNtpTimeEstimatorTest : public ::testing::Test {
     ReceiveRtcpSr(kTestRtt, rtcp_timestamp, ntp.seconds(), ntp.fractions());
   }
 
-  void UpdateRtcpTimestamp(int64_t rtt, uint32_t ntp_secs, uint32_t ntp_frac,
-                           uint32_t rtp_timestamp, bool expected_result) {
+  void UpdateRtcpTimestamp(int64_t rtt,
+                           uint32_t ntp_secs,
+                           uint32_t ntp_frac,
+                           uint32_t rtp_timestamp,
+                           bool expected_result) {
     EXPECT_EQ(expected_result, estimator_->UpdateRtcpTimestamp(
                                    rtt, ntp_secs, ntp_frac, rtp_timestamp));
   }

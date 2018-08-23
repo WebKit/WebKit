@@ -19,18 +19,18 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.view.Surface;
 import java.nio.ByteBuffer;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Nullable;
 
 /**
- * Implements org.webrtc.VideoRenderer.Callbacks by displaying the video stream on an EGL Surface.
- * This class is intended to be used as a helper class for rendering on SurfaceViews and
- * TextureViews.
+ * Implements VideoSink by displaying the video stream on an EGL Surface. This class is intended to
+ * be used as a helper class for rendering on SurfaceViews and TextureViews.
  */
-public class EglRenderer implements VideoRenderer.Callbacks, VideoSink {
+public class EglRenderer implements VideoSink {
   private static final String TAG = "EglRenderer";
   private static final long LOG_INTERVAL_SEC = 4;
 
@@ -84,7 +84,7 @@ public class EglRenderer implements VideoRenderer.Callbacks, VideoSink {
   // |renderThreadHandler| is a handler for communicating with |renderThread|, and is synchronized
   // on |handlerLock|.
   private final Object handlerLock = new Object();
-  private Handler renderThreadHandler;
+  @Nullable private Handler renderThreadHandler;
 
   private final ArrayList<FrameListenerAndParams> frameListeners = new ArrayList<>();
 
@@ -98,14 +98,14 @@ public class EglRenderer implements VideoRenderer.Callbacks, VideoSink {
 
   // EGL and GL resources for drawing YUV/OES textures. After initilization, these are only accessed
   // from the render thread.
-  private EglBase eglBase;
+  @Nullable private EglBase eglBase;
   private final VideoFrameDrawer frameDrawer = new VideoFrameDrawer();
-  private RendererCommon.GlDrawer drawer;
+  @Nullable private RendererCommon.GlDrawer drawer;
   private final Matrix drawMatrix = new Matrix();
 
   // Pending frame to render. Serves as a queue with size 1. Synchronized on |frameLock|.
   private final Object frameLock = new Object();
-  private VideoFrame pendingFrame;
+  @Nullable private VideoFrame pendingFrame;
 
   // These variables are synchronized on |layoutLock|.
   private final Object layoutLock = new Object();
@@ -130,7 +130,8 @@ public class EglRenderer implements VideoRenderer.Callbacks, VideoSink {
   private long renderSwapBufferTimeNs;
 
   // Used for bitmap capturing.
-  private GlTextureFrameBuffer bitmapTextureFramebuffer;
+  private final GlTextureFrameBuffer bitmapTextureFramebuffer =
+      new GlTextureFrameBuffer(GLES20.GL_RGBA);
 
   private final Runnable logStatisticsRunnable = new Runnable() {
     @Override
@@ -162,7 +163,7 @@ public class EglRenderer implements VideoRenderer.Callbacks, VideoSink {
    * |drawer|. It is allowed to call init() to reinitialize the renderer after a previous
    * init()/release() cycle.
    */
-  public void init(final EglBase.Context sharedContext, final int[] configAttributes,
+  public void init(@Nullable final EglBase.Context sharedContext, final int[] configAttributes,
       RendererCommon.GlDrawer drawer) {
     synchronized (handlerLock) {
       if (renderThreadHandler != null) {
@@ -232,10 +233,7 @@ public class EglRenderer implements VideoRenderer.Callbacks, VideoSink {
           drawer = null;
         }
         frameDrawer.release();
-        if (bitmapTextureFramebuffer != null) {
-          bitmapTextureFramebuffer.release();
-          bitmapTextureFramebuffer = null;
-        }
+        bitmapTextureFramebuffer.release();
         if (eglBase != null) {
           logD("eglBase detach and release.");
           eglBase.detachCurrent();
@@ -385,7 +383,7 @@ public class EglRenderer implements VideoRenderer.Callbacks, VideoSink {
    *                          FPS reduction.
    */
   public void addFrameListener(final FrameListener listener, final float scale,
-      final RendererCommon.GlDrawer drawerParam, final boolean applyFpsReduction) {
+      @Nullable final RendererCommon.GlDrawer drawerParam, final boolean applyFpsReduction) {
     postToRenderThread(() -> {
       final RendererCommon.GlDrawer listenerDrawer = drawerParam == null ? drawer : drawerParam;
       frameListeners.add(
@@ -420,14 +418,6 @@ public class EglRenderer implements VideoRenderer.Callbacks, VideoSink {
       });
     }
     ThreadUtils.awaitUninterruptibly(latch);
-  }
-
-  // VideoRenderer.Callbacks interface.
-  @Override
-  public void renderFrame(VideoRenderer.I420Frame frame) {
-    VideoFrame videoFrame = frame.toVideoFrame();
-    onFrame(videoFrame);
-    videoFrame.release();
   }
 
   // VideoSink interface.
@@ -636,9 +626,6 @@ public class EglRenderer implements VideoRenderer.Callbacks, VideoSink {
         continue;
       }
 
-      if (bitmapTextureFramebuffer == null) {
-        bitmapTextureFramebuffer = new GlTextureFrameBuffer(GLES20.GL_RGBA);
-      }
       bitmapTextureFramebuffer.setSize(scaledWidth, scaledHeight);
 
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, bitmapTextureFramebuffer.getFrameBufferId());
@@ -669,6 +656,7 @@ public class EglRenderer implements VideoRenderer.Callbacks, VideoSink {
   }
 
   private void logStatistics() {
+    final DecimalFormat fpsFormat = new DecimalFormat("#.0");
     final long currentTimeNs = System.nanoTime();
     synchronized (statisticsLock) {
       final long elapsedTimeNs = currentTimeNs - statisticsStartTimeNs;
@@ -680,7 +668,7 @@ public class EglRenderer implements VideoRenderer.Callbacks, VideoSink {
           + " Frames received: " + framesReceived + "."
           + " Dropped: " + framesDropped + "."
           + " Rendered: " + framesRendered + "."
-          + " Render fps: " + String.format(Locale.US, "%.1f", renderFps) + "."
+          + " Render fps: " + fpsFormat.format(renderFps) + "."
           + " Average render time: " + averageTimeAsString(renderTimeNs, framesRendered) + "."
           + " Average swapBuffer time: "
           + averageTimeAsString(renderSwapBufferTimeNs, framesRendered) + ".");

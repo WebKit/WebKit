@@ -10,11 +10,12 @@
 #include "media/engine/internalencoderfactory.h"
 #include "media/engine/simulcast_encoder_adapter.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
+#include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/numerics/sequence_number_util.h"
 #include "test/call_test.h"
-#include "test/field_trial.h"
+#include "test/function_video_encoder_factory.h"
 
 namespace webrtc {
 namespace {
@@ -28,25 +29,11 @@ const int kEncoderBitrateBps = 300000;
 const uint32_t kPictureIdWraparound = (1 << 15);
 const size_t kNumTemporalLayers[] = {1, 2, 3};
 
-const char kVp8ForcedFallbackEncoderEnabled[] =
-    "WebRTC-VP8-Forced-Fallback-Encoder-v2/Enabled/";
-
-RtpVideoCodecTypes PayloadNameToRtpVideoCodecType(
-    const std::string& payload_name) {
-  if (payload_name == "VP8") {
-    return kRtpVideoVp8;
-  } else if (payload_name == "VP9") {
-    return kRtpVideoVp9;
-  } else {
-    RTC_NOTREACHED();
-    return kRtpVideoNone;
-  }
-}
 }  // namespace
 
 class PictureIdObserver : public test::RtpRtcpObserver {
  public:
-  explicit PictureIdObserver(RtpVideoCodecTypes codec_type)
+  explicit PictureIdObserver(VideoCodecType codec_type)
       : test::RtpRtcpObserver(test::CallTest::kDefaultTimeoutMs),
         codec_type_(codec_type),
         max_expected_picture_id_gap_(0),
@@ -109,22 +96,19 @@ class PictureIdObserver : public test::RtpRtcpObserver {
         &parsed_payload, &packet[header.headerLength], payload_length));
 
     switch (codec_type_) {
-      case kRtpVideoVp8:
-        parsed->picture_id =
-            parsed_payload.type.Video.codecHeader.VP8.pictureId;
-        parsed->tl0_pic_idx =
-            parsed_payload.type.Video.codecHeader.VP8.tl0PicIdx;
-        parsed->temporal_idx =
-            parsed_payload.type.Video.codecHeader.VP8.temporalIdx;
+      case kVideoCodecVP8:
+        parsed->picture_id = parsed_payload.video_header().vp8().pictureId;
+        parsed->tl0_pic_idx = parsed_payload.video_header().vp8().tl0PicIdx;
+        parsed->temporal_idx = parsed_payload.video_header().vp8().temporalIdx;
         break;
-      case kRtpVideoVp9:
-        parsed->picture_id =
-            parsed_payload.type.Video.codecHeader.VP9.picture_id;
-        parsed->tl0_pic_idx =
-            parsed_payload.type.Video.codecHeader.VP9.tl0_pic_idx;
-        parsed->temporal_idx =
-            parsed_payload.type.Video.codecHeader.VP9.temporal_idx;
+      case kVideoCodecVP9: {
+        const auto& vp9_header = absl::get<RTPVideoHeaderVP9>(
+            parsed_payload.video_header().video_type_header);
+        parsed->picture_id = vp9_header.picture_id;
+        parsed->tl0_pic_idx = vp9_header.tl0_pic_idx;
+        parsed->temporal_idx = vp9_header.temporal_idx;
         break;
+      }
       default:
         RTC_NOTREACHED();
         break;
@@ -214,7 +198,7 @@ class PictureIdObserver : public test::RtpRtcpObserver {
   }
 
   rtc::CriticalSection crit_;
-  const RtpVideoCodecTypes codec_type_;
+  const VideoCodecType codec_type_;
   std::map<uint32_t, ParsedPacket> last_observed_packet_ RTC_GUARDED_BY(crit_);
   std::map<uint32_t, size_t> num_packets_sent_ RTC_GUARDED_BY(crit_);
   int max_expected_picture_id_gap_ RTC_GUARDED_BY(crit_);
@@ -224,17 +208,11 @@ class PictureIdObserver : public test::RtpRtcpObserver {
 };
 
 class PictureIdTest : public test::CallTest,
-                      public ::testing::WithParamInterface<
-                          ::testing::tuple<std::string, size_t>> {
+                      public ::testing::WithParamInterface<size_t> {
  public:
-  PictureIdTest()
-      : scoped_field_trial_(::testing::get<0>(GetParam())),
-        num_temporal_layers_(::testing::get<1>(GetParam())) {}
+  PictureIdTest() : num_temporal_layers_(GetParam()) {}
 
   virtual ~PictureIdTest() {
-    EXPECT_EQ(nullptr, video_send_stream_);
-    EXPECT_TRUE(video_receive_streams_.empty());
-
     task_queue_.SendTask([this]() {
       send_transport_.reset();
       receive_transport_.reset();
@@ -242,23 +220,21 @@ class PictureIdTest : public test::CallTest,
     });
   }
 
-  void SetupEncoder(VideoEncoder* encoder, const std::string& payload_name);
+  void SetupEncoder(VideoEncoderFactory* encoder_factory,
+                    const std::string& payload_name);
   void TestPictureIdContinuousAfterReconfigure(
       const std::vector<int>& ssrc_counts);
   void TestPictureIdIncreaseAfterRecreateStreams(
       const std::vector<int>& ssrc_counts);
 
  private:
-  test::ScopedFieldTrials scoped_field_trial_;
   const size_t num_temporal_layers_;
   std::unique_ptr<PictureIdObserver> observer_;
 };
 
-INSTANTIATE_TEST_CASE_P(
-    TestWithForcedFallbackEncoderEnabled,
-    PictureIdTest,
-    ::testing::Combine(::testing::Values(kVp8ForcedFallbackEncoderEnabled, ""),
-                       ::testing::ValuesIn(kNumTemporalLayers)));
+INSTANTIATE_TEST_CASE_P(TemporalLayers,
+                        PictureIdTest,
+                        ::testing::ValuesIn(kNumTemporalLayers));
 
 // Use a special stream factory to ensure that all simulcast streams are being
 // sent.
@@ -278,15 +254,15 @@ class VideoStreamFactory
 
     // Use the same total bitrates when sending a single stream to avoid
     // lowering the bitrate estimate and requiring a subsequent rampup.
-    const int encoder_stream_bps = kEncoderBitrateBps / rtc::checked_cast<int>(
-        encoder_config.number_of_streams);
+    const int encoder_stream_bps =
+        kEncoderBitrateBps /
+        rtc::checked_cast<int>(encoder_config.number_of_streams);
 
     for (size_t i = 0; i < encoder_config.number_of_streams; ++i) {
       streams[i].min_bitrate_bps = encoder_stream_bps;
       streams[i].target_bitrate_bps = encoder_stream_bps;
       streams[i].max_bitrate_bps = encoder_stream_bps;
-      streams[i].temporal_layer_thresholds_bps.resize(num_of_temporal_layers_ -
-                                                      1);
+      streams[i].num_temporal_layers = num_of_temporal_layers_;
       // test::CreateVideoStreams does not return frame sizes for the lower
       // streams that are accepted by VP8Impl::InitEncode.
       // TODO(brandtr): Fix the problem in test::CreateVideoStreams, rather
@@ -303,14 +279,13 @@ class VideoStreamFactory
   const size_t num_of_temporal_layers_;
 };
 
-void PictureIdTest::SetupEncoder(VideoEncoder* encoder,
+void PictureIdTest::SetupEncoder(VideoEncoderFactory* encoder_factory,
                                  const std::string& payload_name) {
   observer_.reset(
-      new PictureIdObserver(PayloadNameToRtpVideoCodecType(payload_name)));
+      new PictureIdObserver(PayloadStringToCodecType(payload_name)));
 
-  task_queue_.SendTask([this, &encoder, payload_name]() {
-    Call::Config config(event_log_.get());
-    CreateCalls(config, config);
+  task_queue_.SendTask([this, encoder_factory, payload_name]() {
+    CreateCalls();
 
     send_transport_.reset(new test::PacketTransport(
         &task_queue_, sender_call_.get(), observer_.get(),
@@ -318,11 +293,13 @@ void PictureIdTest::SetupEncoder(VideoEncoder* encoder,
         FakeNetworkPipe::Config()));
 
     CreateSendConfig(kNumSimulcastStreams, 0, 0, send_transport_.get());
-    video_send_config_.encoder_settings.encoder = encoder;
-    video_send_config_.encoder_settings.payload_name = payload_name;
-    video_encoder_config_.video_stream_factory =
+    GetVideoSendConfig()->encoder_settings.encoder_factory = encoder_factory;
+    GetVideoSendConfig()->rtp.payload_name = payload_name;
+    GetVideoEncoderConfig()->codec_type =
+        PayloadStringToCodecType(payload_name);
+    GetVideoEncoderConfig()->video_stream_factory =
         new rtc::RefCountedObject<VideoStreamFactory>(num_temporal_layers_);
-    video_encoder_config_.number_of_streams = 1;
+    GetVideoEncoderConfig()->number_of_streams = 1;
   });
 }
 
@@ -342,12 +319,13 @@ void PictureIdTest::TestPictureIdContinuousAfterReconfigure(
   // Expect continuously increasing picture id, equivalent to no gaps.
   observer_->SetMaxExpectedPictureIdGap(0);
   for (int ssrc_count : ssrc_counts) {
-    video_encoder_config_.number_of_streams = ssrc_count;
+    GetVideoEncoderConfig()->number_of_streams = ssrc_count;
     observer_->SetExpectedSsrcs(ssrc_count);
     observer_->ResetObservedSsrcs();
     // Make sure the picture_id sequence is continuous on reinit and recreate.
     task_queue_.SendTask([this]() {
-      video_send_stream_->ReconfigureVideoEncoder(video_encoder_config_.Copy());
+      GetVideoSendStream()->ReconfigureVideoEncoder(
+          GetVideoEncoderConfig()->Copy());
     });
     EXPECT_TRUE(observer_->Wait()) << "Timed out waiting for packets.";
   }
@@ -377,15 +355,14 @@ void PictureIdTest::TestPictureIdIncreaseAfterRecreateStreams(
   for (int ssrc_count : ssrc_counts) {
     task_queue_.SendTask([this, &ssrc_count]() {
       frame_generator_capturer_->Stop();
-      sender_call_->DestroyVideoSendStream(video_send_stream_);
+      DestroyVideoSendStreams();
 
-      video_encoder_config_.number_of_streams = ssrc_count;
+      GetVideoEncoderConfig()->number_of_streams = ssrc_count;
       observer_->SetExpectedSsrcs(ssrc_count);
       observer_->ResetObservedSsrcs();
 
-      video_send_stream_ = sender_call_->CreateVideoSendStream(
-          video_send_config_.Copy(), video_encoder_config_.Copy());
-      video_send_stream_->Start();
+      CreateVideoSendStreams();
+      GetVideoSendStream()->Start();
       CreateFrameGeneratorCapturer(kFrameRate, kFrameMaxWidth, kFrameMaxHeight);
       frame_generator_capturer_->Start();
     });
@@ -400,60 +377,67 @@ void PictureIdTest::TestPictureIdIncreaseAfterRecreateStreams(
 }
 
 TEST_P(PictureIdTest, ContinuousAfterReconfigureVp8) {
-  std::unique_ptr<VideoEncoder> encoder(VP8Encoder::Create());
-  SetupEncoder(encoder.get(), "VP8");
+  test::FunctionVideoEncoderFactory encoder_factory(
+      []() { return VP8Encoder::Create(); });
+  SetupEncoder(&encoder_factory, "VP8");
   TestPictureIdContinuousAfterReconfigure({1, 3, 3, 1, 1});
 }
 
 TEST_P(PictureIdTest, IncreasingAfterRecreateStreamVp8) {
-  std::unique_ptr<VideoEncoder> encoder(VP8Encoder::Create());
-  SetupEncoder(encoder.get(), "VP8");
+  test::FunctionVideoEncoderFactory encoder_factory(
+      []() { return VP8Encoder::Create(); });
+  SetupEncoder(&encoder_factory, "VP8");
   TestPictureIdIncreaseAfterRecreateStreams({1, 3, 3, 1, 1});
 }
 
 TEST_P(PictureIdTest, ContinuousAfterStreamCountChangeVp8) {
-  std::unique_ptr<VideoEncoder> encoder(VP8Encoder::Create());
+  test::FunctionVideoEncoderFactory encoder_factory(
+      []() { return VP8Encoder::Create(); });
   // Make sure that the picture id is not reset if the stream count goes
   // down and then up.
-  SetupEncoder(encoder.get(), "VP8");
+  SetupEncoder(&encoder_factory, "VP8");
   TestPictureIdContinuousAfterReconfigure({3, 1, 3});
 }
 
 TEST_P(PictureIdTest, ContinuousAfterReconfigureSimulcastEncoderAdapter) {
   InternalEncoderFactory internal_encoder_factory;
-  SimulcastEncoderAdapter simulcast_encoder_adapter(&internal_encoder_factory);
-  SetupEncoder(&simulcast_encoder_adapter, "VP8");
+  test::FunctionVideoEncoderFactory encoder_factory(
+      [&internal_encoder_factory]() {
+        return absl::make_unique<SimulcastEncoderAdapter>(
+            &internal_encoder_factory, SdpVideoFormat("VP8"));
+      });
+  SetupEncoder(&encoder_factory, "VP8");
   TestPictureIdContinuousAfterReconfigure({1, 3, 3, 1, 1});
 }
 
 TEST_P(PictureIdTest, IncreasingAfterRecreateStreamSimulcastEncoderAdapter) {
   InternalEncoderFactory internal_encoder_factory;
-  SimulcastEncoderAdapter simulcast_encoder_adapter(&internal_encoder_factory);
-  SetupEncoder(&simulcast_encoder_adapter, "VP8");
+  test::FunctionVideoEncoderFactory encoder_factory(
+      [&internal_encoder_factory]() {
+        return absl::make_unique<SimulcastEncoderAdapter>(
+            &internal_encoder_factory, SdpVideoFormat("VP8"));
+      });
+  SetupEncoder(&encoder_factory, "VP8");
   TestPictureIdIncreaseAfterRecreateStreams({1, 3, 3, 1, 1});
 }
 
-// When using the simulcast encoder adapter, the picture id is randomly set
-// when the ssrc count is reduced and then increased. This means that we are
-// not spec compliant in that particular case.
 TEST_P(PictureIdTest, ContinuousAfterStreamCountChangeSimulcastEncoderAdapter) {
-  // If forced fallback is enabled, the picture id is set in the PayloadRouter
-  // and the sequence should be continuous.
-  if (::testing::get<0>(GetParam()) == kVp8ForcedFallbackEncoderEnabled &&
-      ::testing::get<1>(GetParam()) == 1) {  // No temporal layers.
-    InternalEncoderFactory internal_encoder_factory;
-    SimulcastEncoderAdapter simulcast_encoder_adapter(
-        &internal_encoder_factory);
-    // Make sure that the picture id is not reset if the stream count goes
-    // down and then up.
-    SetupEncoder(&simulcast_encoder_adapter, "VP8");
-    TestPictureIdContinuousAfterReconfigure({3, 1, 3});
-  }
+  InternalEncoderFactory internal_encoder_factory;
+  test::FunctionVideoEncoderFactory encoder_factory(
+      [&internal_encoder_factory]() {
+        return absl::make_unique<SimulcastEncoderAdapter>(
+            &internal_encoder_factory, SdpVideoFormat("VP8"));
+      });
+  // Make sure that the picture id is not reset if the stream count goes
+  // down and then up.
+  SetupEncoder(&encoder_factory, "VP8");
+  TestPictureIdContinuousAfterReconfigure({3, 1, 3});
 }
 
 TEST_P(PictureIdTest, IncreasingAfterRecreateStreamVp9) {
-  std::unique_ptr<VideoEncoder> encoder(VP9Encoder::Create());
-  SetupEncoder(encoder.get(), "VP9");
+  test::FunctionVideoEncoderFactory encoder_factory(
+      []() { return VP9Encoder::Create(); });
+  SetupEncoder(&encoder_factory, "VP9");
   TestPictureIdIncreaseAfterRecreateStreams({1, 1});
 }
 

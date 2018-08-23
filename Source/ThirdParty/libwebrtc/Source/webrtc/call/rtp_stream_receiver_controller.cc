@@ -10,8 +10,8 @@
 
 #include "call/rtp_stream_receiver_controller.h"
 
+#include "absl/memory/memory.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/ptr_util.h"
 
 namespace webrtc {
 
@@ -35,14 +35,18 @@ RtpStreamReceiverController::Receiver::~Receiver() {
   controller_->RemoveSink(sink_);
 }
 
-RtpStreamReceiverController::RtpStreamReceiverController() = default;
+RtpStreamReceiverController::RtpStreamReceiverController() {
+  // At this level the demuxer is only configured to demux by SSRC, so don't
+  // worry about MIDs (MIDs are handled by upper layers).
+  demuxer_.set_use_mid(false);
+}
+
 RtpStreamReceiverController::~RtpStreamReceiverController() = default;
 
 std::unique_ptr<RtpStreamReceiverInterface>
-RtpStreamReceiverController::CreateReceiver(
-    uint32_t ssrc,
-    RtpPacketSinkInterface* sink) {
-  return rtc::MakeUnique<Receiver>(this, ssrc, sink);
+RtpStreamReceiverController::CreateReceiver(uint32_t ssrc,
+                                            RtpPacketSinkInterface* sink) {
+  return absl::make_unique<Receiver>(this, ssrc, sink);
 }
 
 bool RtpStreamReceiverController::OnRtpPacket(const RtpPacketReceived& packet) {

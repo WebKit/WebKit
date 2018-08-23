@@ -10,14 +10,13 @@
 
 #include "modules/video_capture/windows/device_info_ds.h"
 
-#include <ios>  // std::hex
-
 #include "modules/video_capture/video_capture_config.h"
 #include "modules/video_capture/windows/help_functions_ds.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/stringutils.h"
 
-#include <Dvdmedia.h>
-#include <Streams.h>
+#include <dvdmedia.h>
+#include <streams.h>
 
 namespace webrtc {
 namespace videocapturemodule {
@@ -75,7 +74,7 @@ DeviceInfoDS::DeviceInfoDS()
       //
       RTC_LOG(LS_INFO) << __FUNCTION__
                        << ": CoInitializeEx(NULL, COINIT_APARTMENTTHREADED)"
-                       << " => RPC_E_CHANGED_MODE, error 0x" << std::hex << hr;
+                       << " => RPC_E_CHANGED_MODE, error 0x" << rtc::ToHex(hr);
     }
   }
 }
@@ -93,7 +92,7 @@ int32_t DeviceInfoDS::Init() {
                                 IID_ICreateDevEnum, (void**)&_dsDevEnum);
   if (hr != NOERROR) {
     RTC_LOG(LS_INFO) << "Failed to create CLSID_SystemDeviceEnum, error 0x"
-                     << std::hex << hr;
+                     << rtc::ToHex(hr);
     return -1;
   }
   return 0;
@@ -132,7 +131,7 @@ int32_t DeviceInfoDS::GetDeviceInfo(uint32_t deviceNumber,
                                                  &_dsMonikerDevEnum, 0);
   if (hr != NOERROR) {
     RTC_LOG(LS_INFO) << "Failed to enumerate CLSID_SystemDeviceEnum, error 0x"
-                     << std::hex << hr << ". No webcam exist?";
+                     << rtc::ToHex(hr) << ". No webcam exist?";
     return 0;
   }
 
@@ -223,7 +222,7 @@ IBaseFilter* DeviceInfoDS::GetDeviceFilter(const char* deviceUniqueIdUTF8,
                                                  &_dsMonikerDevEnum, 0);
   if (hr != NOERROR) {
     RTC_LOG(LS_INFO) << "Failed to enumerate CLSID_SystemDeviceEnum, error 0x"
-                     << std::hex << hr << ". No webcam exist?";
+                     << rtc::ToHex(hr) << ". No webcam exist?";
     return 0;
   }
   _dsMonikerDevEnum->Reset();
@@ -539,13 +538,12 @@ int32_t DeviceInfoDS::CreateCapabilityMap(const char* deviceUniqueIdUTF8)
   return static_cast<int32_t>(_captureCapabilities.size());
 }
 
-/* Constructs a product ID from the Windows DevicePath. on a USB device the
- devicePath contains product id and vendor id. This seems to work for firewire
- as well
- /* Example of device path
- "\\?\usb#vid_0408&pid_2010&mi_00#7&258e7aaf&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global"
- "\\?\avc#sony&dv-vcr&camcorder&dv#65b2d50301460008#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global"
- */
+// Constructs a product ID from the Windows DevicePath. on a USB device the
+// devicePath contains product id and vendor id. This seems to work for firewire
+// as well.
+// Example of device path:
+// "\\?\usb#vid_0408&pid_2010&mi_00#7&258e7aaf&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global"
+// "\\?\avc#sony&dv-vcr&camcorder&dv#65b2d50301460008#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global"
 void DeviceInfoDS::GetProductId(const char* devicePath,
                                 char* productUniqueIdUTF8,
                                 uint32_t productUniqueIdUTF8Length) {

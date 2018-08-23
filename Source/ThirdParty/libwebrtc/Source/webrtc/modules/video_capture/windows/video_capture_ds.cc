@@ -15,7 +15,7 @@
 #include "modules/video_capture/windows/sink_filter_ds.h"
 #include "rtc_base/logging.h"
 
-#include <Dvdmedia.h>  // VIDEOINFOHEADER2
+#include <dvdmedia.h>  // VIDEOINFOHEADER2
 
 namespace webrtc {
 namespace videocapturemodule {

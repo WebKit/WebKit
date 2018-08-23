@@ -17,8 +17,10 @@
 #include "rtc_base/win32socketinit.h"
 #include "rtc_base/win32socketserver.h"
 
-int PASCAL wWinMain(HINSTANCE instance, HINSTANCE prev_instance,
-                    wchar_t* cmd_line, int cmd_show) {
+int PASCAL wWinMain(HINSTANCE instance,
+                    HINSTANCE prev_instance,
+                    wchar_t* cmd_line,
+                    int cmd_show) {
   rtc::EnsureWinsockInit();
   rtc::Win32SocketServer w32_ss;
   rtc::Win32Thread w32_thread(&w32_ss);
@@ -26,7 +28,7 @@ int PASCAL wWinMain(HINSTANCE instance, HINSTANCE prev_instance,
 
   rtc::WindowsCommandLineArguments win_args;
   int argc = win_args.argc();
-  char **argv = win_args.argv();
+  char** argv = win_args.argv();
 
   rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true);
   if (FLAG_help) {
@@ -50,7 +52,7 @@ int PASCAL wWinMain(HINSTANCE instance, HINSTANCE prev_instance,
   rtc::InitializeSSL();
   PeerConnectionClient client;
   rtc::scoped_refptr<Conductor> conductor(
-        new rtc::RefCountedObject<Conductor>(&client, &wnd));
+      new rtc::RefCountedObject<Conductor>(&client, &wnd));
 
   // Main loop.
   MSG msg;

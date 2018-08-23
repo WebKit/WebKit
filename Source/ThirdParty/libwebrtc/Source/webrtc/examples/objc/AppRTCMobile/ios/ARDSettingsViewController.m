@@ -24,7 +24,6 @@ typedef NS_ENUM(int, ARDSettingsSections) {
 typedef NS_ENUM(int, ARDAudioSettingsOptions) {
   ARDAudioSettingsAudioOnly = 0,
   ARDAudioSettingsCreateAecDump,
-  ARDAudioSettingsUseLevelController,
   ARDAudioSettingsUseManualAudioConfig,
 };
 
@@ -92,7 +91,7 @@ typedef NS_ENUM(int, ARDAudioSettingsOptions) {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
   switch (section) {
     case ARDSettingsSectionAudioSettings:
-      return 4;
+      return 3;
     case ARDSettingsSectionVideoResolution:
       return self.videoResolutionArray.count;
     case ARDSettingsSectionVideoCodec:
@@ -319,8 +318,6 @@ updateListSelectionAtIndexPath:(NSIndexPath *)indexPath
       return @"Audio only";
     case ARDAudioSettingsCreateAecDump:
       return @"Create AecDump";
-    case ARDAudioSettingsUseLevelController:
-      return @"Use level controller";
     case ARDAudioSettingsUseManualAudioConfig:
       return @"Use manual audio config";
     default:
@@ -334,8 +331,6 @@ updateListSelectionAtIndexPath:(NSIndexPath *)indexPath
       return [_settingsModel currentAudioOnlySettingFromStore];
     case ARDAudioSettingsCreateAecDump:
       return [_settingsModel currentCreateAecDumpSettingFromStore];
-    case ARDAudioSettingsUseLevelController:
-      return [_settingsModel currentUseLevelControllerSettingFromStore];
     case ARDAudioSettingsUseManualAudioConfig:
       return [_settingsModel currentUseManualAudioConfigSettingFromStore];
     default:
@@ -351,10 +346,6 @@ updateListSelectionAtIndexPath:(NSIndexPath *)indexPath
     }
     case ARDAudioSettingsCreateAecDump: {
       [_settingsModel storeCreateAecDumpSetting:sender.isOn];
-      break;
-    }
-    case ARDAudioSettingsUseLevelController: {
-      [_settingsModel storeUseLevelControllerSetting:sender.isOn];
       break;
     }
     case ARDAudioSettingsUseManualAudioConfig: {

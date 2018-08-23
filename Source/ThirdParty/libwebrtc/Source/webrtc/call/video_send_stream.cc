@@ -9,6 +9,7 @@
  */
 
 #include "call/video_send_stream.h"
+#include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
 
@@ -16,7 +17,8 @@ VideoSendStream::StreamStats::StreamStats() = default;
 VideoSendStream::StreamStats::~StreamStats() = default;
 
 std::string VideoSendStream::StreamStats::ToString() const {
-  std::stringstream ss;
+  char buf[1024];
+  rtc::SimpleStringBuilder ss(buf);
   ss << "width: " << width << ", ";
   ss << "height: " << height << ", ";
   ss << "key: " << frame_counts.key_frames << ", ";
@@ -37,7 +39,8 @@ VideoSendStream::Stats::Stats() = default;
 VideoSendStream::Stats::~Stats() = default;
 
 std::string VideoSendStream::Stats::ToString(int64_t time_ms) const {
-  std::stringstream ss;
+  char buf[1024];
+  rtc::SimpleStringBuilder ss(buf);
   ss << "VideoSendStream stats: " << time_ms << ", {";
   ss << "input_fps: " << input_frame_rate << ", ";
   ss << "encode_fps: " << encode_frame_rate << ", ";
@@ -45,7 +48,6 @@ std::string VideoSendStream::Stats::ToString(int64_t time_ms) const {
   ss << "encode_usage_perc: " << encode_usage_percent << ", ";
   ss << "target_bps: " << target_media_bitrate_bps << ", ";
   ss << "media_bps: " << media_bitrate_bps << ", ";
-  ss << "preferred_media_bitrate_bps: " << preferred_media_bitrate_bps << ", ";
   ss << "suspended: " << (suspended ? "true" : "false") << ", ";
   ss << "bw_adapted: " << (bw_limited_resolution ? "true" : "false");
   ss << '}';
@@ -68,9 +70,12 @@ VideoSendStream::Config& VideoSendStream::Config::operator=(Config&&) = default;
 VideoSendStream::Config::Config::~Config() = default;
 
 std::string VideoSendStream::Config::ToString() const {
-  std::stringstream ss;
-  ss << "{encoder_settings: " << encoder_settings.ToString();
+  char buf[2 * 1024];
+  rtc::SimpleStringBuilder ss(buf);
+  ss << "{encoder_settings: { experiment_cpu_load_estimator: "
+     << (encoder_settings.experiment_cpu_load_estimator ? "on" : "off") << "}}";
   ss << ", rtp: " << rtp.ToString();
+  ss << ", rtcp: " << rtcp.ToString();
   ss << ", pre_encode_callback: "
      << (pre_encode_callback ? "(VideoSinkInterface)" : "nullptr");
   ss << ", post_encode_callback: "
@@ -79,82 +84,6 @@ std::string VideoSendStream::Config::ToString() const {
   ss << ", target_delay_ms: " << target_delay_ms;
   ss << ", suspend_below_min_bitrate: "
      << (suspend_below_min_bitrate ? "on" : "off");
-  ss << '}';
-  return ss.str();
-}
-
-std::string VideoSendStream::Config::EncoderSettings::ToString() const {
-  std::stringstream ss;
-  ss << "{payload_name: " << payload_name;
-  ss << ", payload_type: " << payload_type;
-  ss << ", encoder: " << (encoder ? "(VideoEncoder)" : "nullptr");
-  ss << '}';
-  return ss.str();
-}
-
-VideoSendStream::Config::Rtp::Rtp() = default;
-VideoSendStream::Config::Rtp::Rtp(const Rtp&) = default;
-VideoSendStream::Config::Rtp::~Rtp() = default;
-
-VideoSendStream::Config::Rtp::Flexfec::Flexfec() = default;
-VideoSendStream::Config::Rtp::Flexfec::Flexfec(const Flexfec&) = default;
-VideoSendStream::Config::Rtp::Flexfec::~Flexfec() = default;
-
-std::string VideoSendStream::Config::Rtp::ToString() const {
-  std::stringstream ss;
-  ss << "{ssrcs: [";
-  for (size_t i = 0; i < ssrcs.size(); ++i) {
-    ss << ssrcs[i];
-    if (i != ssrcs.size() - 1)
-      ss << ", ";
-  }
-  ss << ']';
-  ss << ", rtcp_mode: "
-     << (rtcp_mode == RtcpMode::kCompound ? "RtcpMode::kCompound"
-                                          : "RtcpMode::kReducedSize");
-  ss << ", max_packet_size: " << max_packet_size;
-  ss << ", extensions: [";
-  for (size_t i = 0; i < extensions.size(); ++i) {
-    ss << extensions[i].ToString();
-    if (i != extensions.size() - 1)
-      ss << ", ";
-  }
-  ss << ']';
-
-  ss << ", nack: {rtp_history_ms: " << nack.rtp_history_ms << '}';
-  ss << ", ulpfec: " << ulpfec.ToString();
-
-  ss << ", flexfec: {payload_type: " << flexfec.payload_type;
-  ss << ", ssrc: " << flexfec.ssrc;
-  ss << ", protected_media_ssrcs: [";
-  for (size_t i = 0; i < flexfec.protected_media_ssrcs.size(); ++i) {
-    ss << flexfec.protected_media_ssrcs[i];
-    if (i != flexfec.protected_media_ssrcs.size() - 1)
-      ss << ", ";
-  }
-  ss << "]}";
-
-  ss << ", rtx: " << rtx.ToString();
-  ss << ", c_name: " << c_name;
-  ss << '}';
-  return ss.str();
-}
-
-VideoSendStream::Config::Rtp::Rtx::Rtx() = default;
-VideoSendStream::Config::Rtp::Rtx::Rtx(const Rtx&) = default;
-VideoSendStream::Config::Rtp::Rtx::~Rtx() = default;
-
-std::string VideoSendStream::Config::Rtp::Rtx::ToString() const {
-  std::stringstream ss;
-  ss << "{ssrcs: [";
-  for (size_t i = 0; i < ssrcs.size(); ++i) {
-    ss << ssrcs[i];
-    if (i != ssrcs.size() - 1)
-      ss << ", ";
-  }
-  ss << ']';
-
-  ss << ", payload_type: " << payload_type;
   ss << '}';
   return ss.str();
 }

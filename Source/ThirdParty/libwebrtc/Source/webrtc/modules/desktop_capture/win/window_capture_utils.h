@@ -8,7 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <shlobj.h>
 #include <windows.h>
+#include <wrl/client.h>
 
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "rtc_base/constructormagic.h"
@@ -57,19 +59,25 @@ bool GetDcSize(HDC hdc, DesktopSize* size);
 // function returns false if native APIs fail.
 bool IsWindowMaximized(HWND window, bool* result);
 
-typedef HRESULT (WINAPI *DwmIsCompositionEnabledFunc)(BOOL* enabled);
-class AeroChecker {
+typedef HRESULT(WINAPI* DwmIsCompositionEnabledFunc)(BOOL* enabled);
+class WindowCaptureHelperWin {
  public:
-  AeroChecker();
-  ~AeroChecker();
+  WindowCaptureHelperWin();
+  ~WindowCaptureHelperWin();
 
   bool IsAeroEnabled();
+  bool IsWindowChromeNotification(HWND hwnd);
+  bool IsWindowOnCurrentDesktop(HWND hwnd);
+  bool IsWindowVisibleOnCurrentDesktop(HWND hwnd);
 
  private:
   HMODULE dwmapi_library_;
   DwmIsCompositionEnabledFunc func_;
 
-  RTC_DISALLOW_COPY_AND_ASSIGN(AeroChecker);
+  // Only used on Win10+.
+  Microsoft::WRL::ComPtr<IVirtualDesktopManager> virtual_desktop_manager_;
+
+  RTC_DISALLOW_COPY_AND_ASSIGN(WindowCaptureHelperWin);
 };
 
 }  // namespace webrtc

@@ -15,7 +15,6 @@
 #include <vector>
 
 #include "modules/include/module_common_types.h"
-#include "modules/pacing/alr_detector.h"
 #include "modules/pacing/bitrate_prober.h"
 #include "modules/pacing/interval_budget.h"
 #include "modules/utility/include/process_thread.h"
@@ -25,28 +24,6 @@
 #include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
-
-PacketQueue::Packet::Packet(RtpPacketSender::Priority priority,
-                            uint32_t ssrc,
-                            uint16_t seq_number,
-                            int64_t capture_time_ms,
-                            int64_t enqueue_time_ms,
-                            size_t length_in_bytes,
-                            bool retransmission,
-                            uint64_t enqueue_order)
-    : priority(priority),
-      ssrc(ssrc),
-      sequence_number(seq_number),
-      capture_time_ms(capture_time_ms),
-      enqueue_time_ms(enqueue_time_ms),
-      sum_paused_ms(0),
-      bytes(length_in_bytes),
-      retransmission(retransmission),
-      enqueue_order(enqueue_order) {}
-
-PacketQueue::Packet::Packet(const Packet& other) = default;
-
-PacketQueue::Packet::~Packet() {}
 
 PacketQueue::PacketQueue(const Clock* clock)
     : bytes_(0),
@@ -70,17 +47,17 @@ void PacketQueue::Push(const Packet& packet) {
   bytes_ += packet.bytes;
 }
 
-const PacketQueue::Packet& PacketQueue::BeginPop() {
-  const PacketQueue::Packet& packet = *prio_queue_.top();
+const PacketQueueInterface::Packet& PacketQueue::BeginPop() {
+  const Packet& packet = *prio_queue_.top();
   prio_queue_.pop();
   return packet;
 }
 
-void PacketQueue::CancelPop(const PacketQueue::Packet& packet) {
+void PacketQueue::CancelPop(const Packet& packet) {
   prio_queue_.push(&(*packet.this_it));
 }
 
-void PacketQueue::FinalizePop(const PacketQueue::Packet& packet) {
+void PacketQueue::FinalizePop(const Packet& packet) {
   bytes_ -= packet.bytes;
   int64_t packet_queue_time_ms = time_last_updated_ - packet.enqueue_time_ms;
   RTC_DCHECK_LE(packet.sum_paused_ms, packet_queue_time_ms);

@@ -18,7 +18,6 @@
 
 #include "modules/audio_processing/agc/legacy/digital_agc.h"
 #include "modules/audio_processing/agc/legacy/gain_control.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 /* Analog Automatic Gain Control variables:
  * Constant declarations (inner limits inside which no changes are done)

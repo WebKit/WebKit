@@ -61,15 +61,13 @@ static GRefPtr<GRegex> bitrateKBitPerSec;
 class GStreamerVideoEncoder : public webrtc::VideoEncoder {
 public:
     GStreamerVideoEncoder(const webrtc::SdpVideoFormat&)
-        : m_pictureId(0)
-        , m_firstFramePts(GST_CLOCK_TIME_NONE)
+        : m_firstFramePts(GST_CLOCK_TIME_NONE)
         , m_restrictionCaps(adoptGRef(gst_caps_new_empty_simple("video/x-raw")))
         , m_bitrateSetter(nullptr)
     {
     }
     GStreamerVideoEncoder()
-        : m_pictureId(0)
-        , m_firstFramePts(GST_CLOCK_TIME_NONE)
+        : m_firstFramePts(GST_CLOCK_TIME_NONE)
         , m_restrictionCaps(adoptGRef(gst_caps_new_empty_simple("video/x-raw")))
         , m_bitrateSetter(nullptr)
     {
@@ -241,7 +239,6 @@ public:
         PopulateCodecSpecific(&codecSpecifiInfos, buffer);
 
         webrtc::EncodedImageCallback::Result result = m_imageReadyCb->OnEncodedImage(frame, &codecSpecifiInfos, fragmentationInfo);
-        m_pictureId = (m_pictureId + 1) & 0x7FFF;
         if (result.error != webrtc::EncodedImageCallback::Result::OK) {
             GST_ELEMENT_ERROR(m_pipeline.get(), LIBRARY, FAILED, (nullptr),
                 ("Encode callback failed: %d", result.error));
@@ -391,9 +388,6 @@ public:
         m_restrictionCaps = caps;
     }
 
-protected:
-    int16_t m_pictureId;
-
 private:
     static GstFlowReturn newSampleCallbackTramp(GstElement* sink, GStreamerVideoEncoder* enc)
     {
@@ -532,12 +526,10 @@ public:
         codecSpecifiInfos->codec_name = ImplementationName();
         webrtc::CodecSpecificInfoVP8* vp8Info = &(codecSpecifiInfos->codecSpecific.VP8);
         vp8Info->temporalIdx = 0;
-        vp8Info->pictureId = m_pictureId;
 
         vp8Info->simulcastIdx = 0;
         vp8Info->keyIdx = webrtc::kNoKeyIdx;
         vp8Info->nonReference = GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DELTA_UNIT);
-        vp8Info->tl0PicIdx = webrtc::kNoTl0PicIdx;
     }
 };
 

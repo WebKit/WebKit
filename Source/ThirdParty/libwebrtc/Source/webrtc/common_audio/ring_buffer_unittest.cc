@@ -21,9 +21,7 @@
 namespace webrtc {
 
 struct FreeBufferDeleter {
-  inline void operator()(void* ptr) const {
-    WebRtc_FreeBuffer(ptr);
-  }
+  inline void operator()(void* ptr) const { WebRtc_FreeBuffer(ptr); }
 };
 typedef std::unique_ptr<RingBuffer, FreeBufferDeleter> scoped_ring_buffer;
 
@@ -31,7 +29,8 @@ static void AssertElementEq(int expected, int actual) {
   ASSERT_EQ(expected, actual);
 }
 
-static int SetIncrementingData(int* data, int num_elements,
+static int SetIncrementingData(int* data,
+                               int num_elements,
                                int starting_value) {
   for (int i = 0; i < num_elements; i++) {
     data[i] = starting_value++;
@@ -39,7 +38,8 @@ static int SetIncrementingData(int* data, int num_elements,
   return starting_value;
 }
 
-static int CheckIncrementingData(int* data, int num_elements,
+static int CheckIncrementingData(int* data,
+                                 int num_elements,
                                  int starting_value) {
   for (int i = 0; i < num_elements; i++) {
     AssertElementEq(starting_value++, data[i]);
@@ -70,35 +70,33 @@ static void RandomStressTest(int** data_ptr) {
     int read_element = 0;
     for (int j = 0; j < kNumOps; j++) {
       const bool write = rand() % 2 == 0 ? true : false;  // NOLINT
-      const int num_elements = rand() % buffer_size;  // NOLINT
+      const int num_elements = rand() % buffer_size;      // NOLINT
       if (write) {
         const int buffer_available = buffer_size - buffer_consumed;
         ASSERT_EQ(static_cast<size_t>(buffer_available),
                   WebRtc_available_write(buffer.get()));
         const int expected_elements = std::min(num_elements, buffer_available);
         write_element = SetIncrementingData(write_data.get(), expected_elements,
-                                     write_element);
-        ASSERT_EQ(static_cast<size_t>(expected_elements),
-                  WebRtc_WriteBuffer(buffer.get(), write_data.get(),
-                                     num_elements));
-        buffer_consumed = std::min(buffer_consumed + expected_elements,
-                                   buffer_size);
+                                            write_element);
+        ASSERT_EQ(
+            static_cast<size_t>(expected_elements),
+            WebRtc_WriteBuffer(buffer.get(), write_data.get(), num_elements));
+        buffer_consumed =
+            std::min(buffer_consumed + expected_elements, buffer_size);
       } else {
-        const int expected_elements = std::min(num_elements,
-                                               buffer_consumed);
+        const int expected_elements = std::min(num_elements, buffer_consumed);
         ASSERT_EQ(static_cast<size_t>(buffer_consumed),
                   WebRtc_available_read(buffer.get()));
-        ASSERT_EQ(static_cast<size_t>(expected_elements),
-                  WebRtc_ReadBuffer(buffer.get(),
-                                    reinterpret_cast<void**>(data_ptr),
-                                    read_data.get(),
-                                    num_elements));
+        ASSERT_EQ(
+            static_cast<size_t>(expected_elements),
+            WebRtc_ReadBuffer(buffer.get(), reinterpret_cast<void**>(data_ptr),
+                              read_data.get(), num_elements));
         int* check_ptr = read_data.get();
         if (data_ptr) {
           check_ptr = *data_ptr;
         }
-        read_element = CheckIncrementingData(check_ptr, expected_elements,
-                                             read_element);
+        read_element =
+            CheckIncrementingData(check_ptr, expected_elements, read_element);
         buffer_consumed = std::max(buffer_consumed - expected_elements, 0);
       }
     }
@@ -127,8 +125,9 @@ TEST(RingBufferTest, PassingNulltoReadBufferForcesMemcpy) {
   SetIncrementingData(write_data, kDataSize, 0);
   EXPECT_EQ(kDataSize, WebRtc_WriteBuffer(buffer.get(), write_data, kDataSize));
   SetIncrementingData(read_data, kDataSize, kDataSize);
-  EXPECT_EQ(kDataSize, WebRtc_ReadBuffer(buffer.get(),
-      reinterpret_cast<void**>(&data_ptr), read_data, kDataSize));
+  EXPECT_EQ(kDataSize,
+            WebRtc_ReadBuffer(buffer.get(), reinterpret_cast<void**>(&data_ptr),
+                              read_data, kDataSize));
   // Copying was not necessary, so |read_data| has not been updated.
   CheckIncrementingData(data_ptr, kDataSize, 0);
   CheckIncrementingData(read_data, kDataSize, kDataSize);

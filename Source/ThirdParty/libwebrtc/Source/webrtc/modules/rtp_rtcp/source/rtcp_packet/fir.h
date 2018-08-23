@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "modules/rtp_rtcp/source/rtcp_packet/psfb.h"
-#include "rtc_base/basictypes.h"
 
 namespace webrtc {
 namespace rtcp {

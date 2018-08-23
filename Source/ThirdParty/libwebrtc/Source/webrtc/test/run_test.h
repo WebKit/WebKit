@@ -14,7 +14,7 @@ namespace webrtc {
 namespace test {
 
 // Running a test function on a separate thread, if required by the OS.
-void RunTest(void(*test)());
+void RunTest(void (*test)());
 
 }  // namespace test
 }  // namespace webrtc

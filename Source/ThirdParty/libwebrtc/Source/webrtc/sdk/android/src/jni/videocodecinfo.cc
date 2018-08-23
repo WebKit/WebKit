@@ -10,47 +10,27 @@
 
 #include "sdk/android/src/jni/videocodecinfo.h"
 
-#include "sdk/android/src/jni/classreferenceholder.h"
+#include "sdk/android/generated_video_jni/jni/VideoCodecInfo_jni.h"
+#include "sdk/android/native_api/jni/java_types.h"
 #include "sdk/android/src/jni/jni_helpers.h"
 
 namespace webrtc {
 namespace jni {
 
-SdpVideoFormat VideoCodecInfoToSdpVideoFormat(JNIEnv* jni, jobject j_info) {
-  jclass video_codec_info_class = FindClass(jni, "org/webrtc/VideoCodecInfo");
-  jfieldID name_field =
-      GetFieldID(jni, video_codec_info_class, "name", "Ljava/lang/String;");
-  jfieldID params_field =
-      GetFieldID(jni, video_codec_info_class, "params", "Ljava/util/Map;");
-
-  jobject j_params = jni->GetObjectField(j_info, params_field);
-  jstring j_name =
-      static_cast<jstring>(jni->GetObjectField(j_info, name_field));
-
-  return SdpVideoFormat(JavaToStdString(jni, j_name),
-                        JavaToStdMapStrings(jni, j_params));
+SdpVideoFormat VideoCodecInfoToSdpVideoFormat(JNIEnv* jni,
+                                              const JavaRef<jobject>& j_info) {
+  return SdpVideoFormat(
+      JavaToNativeString(jni, Java_VideoCodecInfo_getName(jni, j_info)),
+      JavaToNativeStringMap(jni, Java_VideoCodecInfo_getParams(jni, j_info)));
 }
 
-jobject SdpVideoFormatToVideoCodecInfo(JNIEnv* jni,
-                                       const SdpVideoFormat& format) {
-  jclass hash_map_class = jni->FindClass("java/util/HashMap");
-  jmethodID hash_map_constructor =
-      jni->GetMethodID(hash_map_class, "<init>", "()V");
-  jmethodID put_method = jni->GetMethodID(
-      hash_map_class, "put",
-      "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
-  jclass video_codec_info_class = FindClass(jni, "org/webrtc/VideoCodecInfo");
-  jmethodID video_codec_info_constructor = jni->GetMethodID(
-      video_codec_info_class, "<init>", "(Ljava/lang/String;Ljava/util/Map;)V");
-
-  jobject j_params = jni->NewObject(hash_map_class, hash_map_constructor);
-  for (auto const& param : format.parameters) {
-    jni->CallObjectMethod(j_params, put_method,
-                          NativeToJavaString(jni, param.first),
-                          NativeToJavaString(jni, param.second));
-  }
-  return jni->NewObject(video_codec_info_class, video_codec_info_constructor,
-                        NativeToJavaString(jni, format.name), j_params);
+ScopedJavaLocalRef<jobject> SdpVideoFormatToVideoCodecInfo(
+    JNIEnv* jni,
+    const SdpVideoFormat& format) {
+  ScopedJavaLocalRef<jobject> j_params =
+      NativeToJavaStringMap(jni, format.parameters);
+  return Java_VideoCodecInfo_Constructor(
+      jni, NativeToJavaString(jni, format.name), j_params);
 }
 
 }  // namespace jni

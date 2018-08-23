@@ -14,10 +14,10 @@
 
 @property(nonatomic, assign) ARDJoinResultType result;
 @property(nonatomic, assign) BOOL isInitiator;
-@property(nonatomic, strong) NSString *roomId;
-@property(nonatomic, strong) NSString *clientId;
-@property(nonatomic, strong) NSArray *messages;
-@property(nonatomic, strong) NSURL *webSocketURL;
-@property(nonatomic, strong) NSURL *webSocketRestURL;
+@property(nonatomic, strong) NSString* roomId;
+@property(nonatomic, strong) NSString* clientId;
+@property(nonatomic, strong) NSArray* messages;
+@property(nonatomic, strong) NSURL* webSocketURL;
+@property(nonatomic, strong) NSURL* webSocketRestURL;
 
 @end

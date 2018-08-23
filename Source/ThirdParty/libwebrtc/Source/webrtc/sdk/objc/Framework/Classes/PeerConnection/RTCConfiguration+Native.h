@@ -18,9 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** Optional TurnCustomizer.
  *  With this class one can modify outgoing TURN messages.
- *  The object passed in must remain valid until PeerConnection::Close() is called.
+ *  The object passed in must remain valid until PeerConnection::Close() is
+ * called.
  */
-@property(nonatomic, nullable) webrtc::TurnCustomizer *turnCustomizer;
+@property(nonatomic, nullable) webrtc::TurnCustomizer* turnCustomizer;
 
 @end
 

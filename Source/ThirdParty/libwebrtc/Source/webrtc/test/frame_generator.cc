@@ -15,6 +15,7 @@
 
 #include <memory>
 
+#include "api/video/i010_buffer.h"
 #include "api/video/i420_buffer.h"
 #include "common_video/include/video_frame_buffer.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
@@ -28,12 +29,17 @@ namespace webrtc {
 namespace test {
 namespace {
 
+// Helper method for keeping a reference to passed pointers.
+void KeepBufferRefs(rtc::scoped_refptr<webrtc::VideoFrameBuffer>,
+                    rtc::scoped_refptr<webrtc::VideoFrameBuffer>) {}
+
 // SquareGenerator is a FrameGenerator that draws a given amount of randomly
 // sized and colored squares. Between each new generated frame, the squares
 // are moved slightly towards the lower right corner.
 class SquareGenerator : public FrameGenerator {
  public:
-  SquareGenerator(int width, int height, int num_squares) {
+  SquareGenerator(int width, int height, OutputType type, int num_squares)
+      : type_(type) {
     ChangeResolution(width, height);
     for (int i = 0; i < num_squares; ++i) {
       squares_.emplace_back(new Square(width, height, i + 1));
@@ -48,21 +54,50 @@ class SquareGenerator : public FrameGenerator {
     RTC_CHECK(height_ > 0);
   }
 
-  VideoFrame* NextFrame() override {
-    rtc::CritScope lock(&crit_);
-
-    rtc::scoped_refptr<I420Buffer> buffer(I420Buffer::Create(width_, height_));
-
-    memset(buffer->MutableDataY(), 127, height_ * buffer->StrideY());
+  rtc::scoped_refptr<I420Buffer> CreateI420Buffer(int width, int height) {
+    rtc::scoped_refptr<I420Buffer> buffer(I420Buffer::Create(width, height));
+    memset(buffer->MutableDataY(), 127, height * buffer->StrideY());
     memset(buffer->MutableDataU(), 127,
            buffer->ChromaHeight() * buffer->StrideU());
     memset(buffer->MutableDataV(), 127,
            buffer->ChromaHeight() * buffer->StrideV());
+    return buffer;
+  }
+
+  VideoFrame* NextFrame() override {
+    rtc::CritScope lock(&crit_);
+
+    rtc::scoped_refptr<VideoFrameBuffer> buffer = nullptr;
+    switch (type_) {
+      case OutputType::I420:
+      case OutputType::I010: {
+        buffer = CreateI420Buffer(width_, height_);
+        break;
+      }
+      case OutputType::I420A: {
+        rtc::scoped_refptr<I420Buffer> yuv_buffer =
+            CreateI420Buffer(width_, height_);
+        rtc::scoped_refptr<I420Buffer> axx_buffer =
+            CreateI420Buffer(width_, height_);
+        buffer = WrapI420ABuffer(
+            yuv_buffer->width(), yuv_buffer->height(), yuv_buffer->DataY(),
+            yuv_buffer->StrideY(), yuv_buffer->DataU(), yuv_buffer->StrideU(),
+            yuv_buffer->DataV(), yuv_buffer->StrideV(), axx_buffer->DataY(),
+            axx_buffer->StrideY(),
+            rtc::Bind(&KeepBufferRefs, yuv_buffer, axx_buffer));
+        break;
+      }
+    }
 
     for (const auto& square : squares_)
       square->Draw(buffer);
 
-    frame_.reset(new VideoFrame(buffer, 0, 0, webrtc::kVideoRotation_0));
+    if (type_ == OutputType::I010) {
+      buffer = I010Buffer::Copy(*buffer->ToI420());
+    }
+
+    frame_.reset(
+        new VideoFrame(buffer, webrtc::kVideoRotation_0, 0 /* timestamp_us */));
     return frame_.get();
   }
 
@@ -76,25 +111,41 @@ class SquareGenerator : public FrameGenerator {
           length_(random_generator_.Rand(1, width > 4 ? width / 4 : 1)),
           yuv_y_(random_generator_.Rand(0, 255)),
           yuv_u_(random_generator_.Rand(0, 255)),
-          yuv_v_(random_generator_.Rand(0, 255)) {}
+          yuv_v_(random_generator_.Rand(0, 255)),
+          yuv_a_(random_generator_.Rand(0, 255)) {}
 
-    void Draw(const rtc::scoped_refptr<I420Buffer>& buffer) {
+    void Draw(const rtc::scoped_refptr<VideoFrameBuffer>& frame_buffer) {
+      RTC_DCHECK(frame_buffer->type() == VideoFrameBuffer::Type::kI420 ||
+                 frame_buffer->type() == VideoFrameBuffer::Type::kI420A);
+      rtc::scoped_refptr<I420BufferInterface> buffer = frame_buffer->ToI420();
       x_ = (x_ + random_generator_.Rand(0, 4)) % (buffer->width() - length_);
       y_ = (y_ + random_generator_.Rand(0, 4)) % (buffer->height() - length_);
-        for (int y = y_; y < y_ + length_; ++y) {
-          uint8_t* pos_y =
-              (buffer->MutableDataY() + x_ + y * buffer->StrideY());
-          memset(pos_y, yuv_y_, length_);
-        }
+      for (int y = y_; y < y_ + length_; ++y) {
+        uint8_t* pos_y = (const_cast<uint8_t*>(buffer->DataY()) + x_ +
+                          y * buffer->StrideY());
+        memset(pos_y, yuv_y_, length_);
+      }
 
-        for (int y = y_; y < y_ + length_; y = y + 2) {
-          uint8_t* pos_u =
-              (buffer->MutableDataU() + x_ / 2 + y / 2 * buffer->StrideU());
-          memset(pos_u, yuv_u_, length_ / 2);
-          uint8_t* pos_v =
-              (buffer->MutableDataV() + x_ / 2 + y / 2 * buffer->StrideV());
-          memset(pos_v, yuv_v_, length_ / 2);
-        }
+      for (int y = y_; y < y_ + length_; y = y + 2) {
+        uint8_t* pos_u = (const_cast<uint8_t*>(buffer->DataU()) + x_ / 2 +
+                          y / 2 * buffer->StrideU());
+        memset(pos_u, yuv_u_, length_ / 2);
+        uint8_t* pos_v = (const_cast<uint8_t*>(buffer->DataV()) + x_ / 2 +
+                          y / 2 * buffer->StrideV());
+        memset(pos_v, yuv_v_, length_ / 2);
+      }
+
+      if (frame_buffer->type() == VideoFrameBuffer::Type::kI420)
+        return;
+
+      // Optionally draw on alpha plane if given.
+      const webrtc::I420ABufferInterface* yuva_buffer =
+          frame_buffer->GetI420A();
+      for (int y = y_; y < y_ + length_; ++y) {
+        uint8_t* pos_y = (const_cast<uint8_t*>(yuva_buffer->DataA()) + x_ +
+                          y * yuva_buffer->StrideA());
+        memset(pos_y, yuv_a_, length_);
+      }
     }
 
    private:
@@ -105,9 +156,11 @@ class SquareGenerator : public FrameGenerator {
     const uint8_t yuv_y_;
     const uint8_t yuv_u_;
     const uint8_t yuv_v_;
+    const uint8_t yuv_a_;
   };
 
   rtc::CriticalSection crit_;
+  const OutputType type_;
   int width_ RTC_GUARDED_BY(&crit_);
   int height_ RTC_GUARDED_BY(&crit_);
   std::vector<std::unique_ptr<Square>> squares_ RTC_GUARDED_BY(&crit_);
@@ -146,8 +199,8 @@ class YuvFileGenerator : public FrameGenerator {
     if (++current_display_count_ >= frame_display_count_)
       current_display_count_ = 0;
 
-    temp_frame_.reset(
-        new VideoFrame(last_read_buffer_, 0, 0, webrtc::kVideoRotation_0));
+    temp_frame_.reset(new VideoFrame(
+        last_read_buffer_, webrtc::kVideoRotation_0, 0 /* timestamp_us */));
     return temp_frame_.get();
   }
 
@@ -203,8 +256,8 @@ class SlideGenerator : public FrameGenerator {
     if (++current_display_count_ >= frame_display_count_)
       current_display_count_ = 0;
 
-    frame_.reset(
-        new VideoFrame(buffer_, 0, 0, webrtc::kVideoRotation_0));
+    frame_.reset(new VideoFrame(buffer_, webrtc::kVideoRotation_0,
+                                0 /* timestamp_us */));
     return frame_.get();
   }
 
@@ -336,13 +389,13 @@ class ScrollingImageFrameGenerator : public FrameGenerator {
     int offset_v = (i420_buffer->StrideV() * (pixels_scrolled_y / 2)) +
                    (pixels_scrolled_x / 2);
 
-    current_frame_ = rtc::Optional<webrtc::VideoFrame>(webrtc::VideoFrame(
+    current_frame_ = webrtc::VideoFrame(
         new rtc::RefCountedObject<webrtc::WrappedI420Buffer>(
             target_width_, target_height_, &i420_buffer->DataY()[offset_y],
             i420_buffer->StrideY(), &i420_buffer->DataU()[offset_u],
             i420_buffer->StrideU(), &i420_buffer->DataV()[offset_v],
             i420_buffer->StrideV(), KeepRefUntilDone(i420_buffer)),
-        kVideoRotation_0, 0));
+        kVideoRotation_0, 0);
   }
 
   Clock* const clock_;
@@ -355,7 +408,7 @@ class ScrollingImageFrameGenerator : public FrameGenerator {
 
   size_t current_frame_num_;
   VideoFrame* current_source_frame_;
-  rtc::Optional<VideoFrame> current_frame_;
+  absl::optional<VideoFrame> current_frame_;
   YuvFileGenerator file_generator_;
 };
 
@@ -396,15 +449,12 @@ bool FrameForwarder::has_sinks() const {
 
 std::unique_ptr<FrameGenerator> FrameGenerator::CreateSquareGenerator(
     int width,
-    int height) {
+    int height,
+    absl::optional<OutputType> type,
+    absl::optional<int> num_squares) {
   return std::unique_ptr<FrameGenerator>(
-      new SquareGenerator(width, height, 10));
-}
-
-std::unique_ptr<FrameGenerator>
-FrameGenerator::CreateSquareGenerator(int width, int height, int num_squares) {
-  return std::unique_ptr<FrameGenerator>(
-      new SquareGenerator(width, height, num_squares));
+      new SquareGenerator(width, height, type.value_or(OutputType::I420),
+                          num_squares.value_or(10)));
 }
 
 std::unique_ptr<FrameGenerator> FrameGenerator::CreateSlideGenerator(

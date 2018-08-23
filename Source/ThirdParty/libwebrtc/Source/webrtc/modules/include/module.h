@@ -11,7 +11,7 @@
 #ifndef MODULES_INCLUDE_MODULE_H_
 #define MODULES_INCLUDE_MODULE_H_
 
-#include "typedefs.h"  // NOLINT(build/include)
+#include <stdint.h>
 
 namespace webrtc {
 

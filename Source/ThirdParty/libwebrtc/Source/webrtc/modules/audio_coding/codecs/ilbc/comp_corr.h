@@ -19,21 +19,20 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_COMP_CORR_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_COMP_CORR_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  Compute cross correlation and pitch gain for pitch prediction
  *  of last subframe at given lag.
  *---------------------------------------------------------------*/
 
-void WebRtcIlbcfix_CompCorr(
-    int32_t *corr, /* (o) cross correlation */
-    int32_t *ener, /* (o) energy */
-    int16_t *buffer, /* (i) signal buffer */
-    size_t lag,  /* (i) pitch lag */
-    size_t bLen, /* (i) length of buffer */
-    size_t sRange, /* (i) correlation search length */
-    int16_t scale /* (i) number of rightshifts to use */
+void WebRtcIlbcfix_CompCorr(int32_t* corr,   /* (o) cross correlation */
+                            int32_t* ener,   /* (o) energy */
+                            int16_t* buffer, /* (i) signal buffer */
+                            size_t lag,      /* (i) pitch lag */
+                            size_t bLen,     /* (i) length of buffer */
+                            size_t sRange,   /* (i) correlation search length */
+                            int16_t scale /* (i) number of rightshifts to use */
                             );
 
 #endif

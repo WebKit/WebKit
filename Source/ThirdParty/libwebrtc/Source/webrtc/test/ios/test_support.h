@@ -17,7 +17,10 @@ namespace test {
 // This is necessary as iOS doesn't like processes without a gui
 // running for longer than a few seconds.
 void RunTestsFromIOSApp();
-void InitTestSuite(int (*test_suite)(void), int argc, char* argv[]);
+void InitTestSuite(int (*test_suite)(void),
+                   int argc,
+                   char* argv[],
+                   bool save_chartjson_result);
 
 }  // namespace test
 }  // namespace rtc

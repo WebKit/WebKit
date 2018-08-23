@@ -18,7 +18,7 @@
 
 /* Inverses the in vector in into Q29 domain */
 
-#include "energy_inverse.h"
+#include "modules/audio_coding/codecs/ilbc/energy_inverse.h"
 
 void WebRtcIlbcfix_EnergyInverse(
     int16_t *energy,    /* (i/o) Energy and inverse

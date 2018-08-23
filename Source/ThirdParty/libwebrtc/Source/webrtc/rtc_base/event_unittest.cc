@@ -41,7 +41,7 @@ TEST(EventTest, AutoReset) {
 }
 
 class SignalerThread {
-public:
+ public:
   SignalerThread() : thread_(&ThreadFn, this, "EventPerf") {}
   void Start(Event* writer, Event* reader) {
     writer_ = writer;
@@ -52,9 +52,9 @@ public:
     stop_event_.Set();
     thread_.Stop();
   }
-  static void ThreadFn(void *param) {
+  static void ThreadFn(void* param) {
     auto* me = static_cast<SignalerThread*>(param);
-    while(!me->stop_event_.Wait(0)) {
+    while (!me->stop_event_.Wait(0)) {
       me->writer_->Set();
       me->reader_->Wait(Event::kForever);
     }

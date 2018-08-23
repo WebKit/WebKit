@@ -42,8 +42,7 @@ class BaseLineFileVerify : public BaseLineFileInterface {
   // the baseline file is missing. This is the default when verifying files, but
   // not when updating (i.e. we always write it out if missing).
   BaseLineFileVerify(const std::string& filepath, bool allow_missing_file)
-      : reader_(),
-        fail_to_read_response_(false) {
+      : reader_(), fail_to_read_response_(false) {
     std::unique_ptr<ResourceFileReader> reader;
     reader.reset(ResourceFileReader::Create(filepath, "bin"));
     if (!reader.get()) {
@@ -62,9 +61,9 @@ class BaseLineFileVerify : public BaseLineFileInterface {
       }
     }
   }
-  virtual ~BaseLineFileVerify() {}
+  ~BaseLineFileVerify() override {}
 
-  virtual void Estimate(int64_t time_ms, uint32_t estimate_bps) {
+  void Estimate(int64_t time_ms, uint32_t estimate_bps) override {
     if (reader_.get()) {
       uint32_t read_ms = 0;
       uint32_t read_bps = 0;
@@ -72,13 +71,13 @@ class BaseLineFileVerify : public BaseLineFileInterface {
           reader_->Read(&read_bps) && read_bps == estimate_bps) {
       } else {
         printf("ERROR: Baseline differs starting at: %d ms (%d vs %d)!\n",
-            static_cast<uint32_t>(time_ms), estimate_bps, read_bps);
+               static_cast<uint32_t>(time_ms), estimate_bps, read_bps);
         reader_.reset(NULL);
       }
     }
   }
 
-  virtual bool VerifyOrWrite() {
+  bool VerifyOrWrite() override {
     if (reader_.get()) {
       if (reader_->IsAtEnd()) {
         return true;
@@ -101,21 +100,19 @@ class BaseLineFileUpdate : public BaseLineFileInterface {
  public:
   BaseLineFileUpdate(const std::string& filepath,
                      BaseLineFileInterface* verifier)
-      : verifier_(verifier),
-        output_content_(),
-        filepath_(filepath) {
+      : verifier_(verifier), output_content_(), filepath_(filepath) {
     output_content_.push_back(kMagicMarker);
     output_content_.push_back(kFileVersion1);
   }
-  virtual ~BaseLineFileUpdate() {}
+  ~BaseLineFileUpdate() override {}
 
-  virtual void Estimate(int64_t time_ms, uint32_t estimate_bps) {
+  void Estimate(int64_t time_ms, uint32_t estimate_bps) override {
     verifier_->Estimate(time_ms, estimate_bps);
     output_content_.push_back(static_cast<uint32_t>(time_ms));
     output_content_.push_back(estimate_bps);
   }
 
-  virtual bool VerifyOrWrite() {
+  bool VerifyOrWrite() override {
     if (!verifier_->VerifyOrWrite()) {
       std::string dir_path = webrtc::test::OutputPath() + kResourceSubDir;
       if (!webrtc::test::CreateDir(dir_path)) {
@@ -126,13 +123,13 @@ class BaseLineFileUpdate : public BaseLineFileInterface {
       writer.reset(OutputFileWriter::Create(filepath_, "bin"));
       if (!writer.get()) {
         printf("WARNING: Cannot create output file: %s.bin\n",
-            filepath_.c_str());
+               filepath_.c_str());
         return false;
       }
       printf("NOTE: Writing baseline file for BWE test: %s.bin\n",
              filepath_.c_str());
       for (std::vector<uint32_t>::iterator it = output_content_.begin();
-          it != output_content_.end(); ++it) {
+           it != output_content_.end(); ++it) {
         writer->Write(*it);
       }
       return true;
@@ -150,7 +147,8 @@ class BaseLineFileUpdate : public BaseLineFileInterface {
 };
 
 BaseLineFileInterface* BaseLineFileInterface::Create(
-    const std::string& filename, bool write_output_file) {
+    const std::string& filename,
+    bool write_output_file) {
   std::string filepath = filename;
   std::replace(filepath.begin(), filepath.end(), '/', '_');
   filepath = std::string(kResourceSubDir) + "/" + filepath;

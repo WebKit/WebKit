@@ -24,11 +24,11 @@ class NoopCallback : public webrtc::LappedTransform::Callback {
  public:
   NoopCallback() : block_num_(0) {}
 
-  virtual void ProcessAudioBlock(const complex<float>* const* in_block,
-                                 size_t in_channels,
-                                 size_t frames,
-                                 size_t out_channels,
-                                 complex<float>* const* out_block) {
+  void ProcessAudioBlock(const complex<float>* const* in_block,
+                         size_t in_channels,
+                         size_t frames,
+                         size_t out_channels,
+                         complex<float>* const* out_block) override {
     RTC_CHECK_EQ(in_channels, out_channels);
     for (size_t i = 0; i < out_channels; ++i) {
       memcpy(out_block[i], in_block[i], sizeof(**in_block) * frames);
@@ -36,9 +36,7 @@ class NoopCallback : public webrtc::LappedTransform::Callback {
     ++block_num_;
   }
 
-  size_t block_num() {
-    return block_num_;
-  }
+  size_t block_num() { return block_num_; }
 
  private:
   size_t block_num_;
@@ -48,11 +46,11 @@ class FftCheckerCallback : public webrtc::LappedTransform::Callback {
  public:
   FftCheckerCallback() : block_num_(0) {}
 
-  virtual void ProcessAudioBlock(const complex<float>* const* in_block,
-                                 size_t in_channels,
-                                 size_t frames,
-                                 size_t out_channels,
-                                 complex<float>* const* out_block) {
+  void ProcessAudioBlock(const complex<float>* const* in_block,
+                         size_t in_channels,
+                         size_t frames,
+                         size_t out_channels,
+                         complex<float>* const* out_block) override {
     RTC_CHECK_EQ(in_channels, out_channels);
 
     size_t full_length = (frames - 1) * 2;
@@ -69,9 +67,7 @@ class FftCheckerCallback : public webrtc::LappedTransform::Callback {
     }
   }
 
-  size_t block_num() {
-    return block_num_;
-  }
+  size_t block_num() { return block_num_; }
 
  private:
   size_t block_num_;
@@ -150,8 +146,7 @@ TEST(LappedTransformTest, IdentityProcessor) {
   trans.ProcessChunk(&in_chunk, &out_chunk);
 
   for (size_t i = 0; i < kChunkLength; ++i) {
-    ASSERT_NEAR(out_chunk[i],
-                (i < kBlockLength - kShiftAmount) ? 0.0f : 2.0f,
+    ASSERT_NEAR(out_chunk[i], (i < kBlockLength - kShiftAmount) ? 0.0f : 2.0f,
                 1e-5f);
   }
 
@@ -167,8 +162,8 @@ TEST(LappedTransformTest, Callbacks) {
   float window[kBlockLength];
   std::fill(window, &window[kBlockLength], 1.0f);
 
-  LappedTransform trans(1, 1, kChunkLength, window, kBlockLength,
-                        kBlockLength, &call);
+  LappedTransform trans(1, 1, kChunkLength, window, kBlockLength, kBlockLength,
+                        &call);
   float in_buffer[kChunkLength];
   float* in_chunk = in_buffer;
   float out_buffer[kChunkLength];

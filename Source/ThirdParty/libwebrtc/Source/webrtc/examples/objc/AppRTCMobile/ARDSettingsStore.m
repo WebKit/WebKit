@@ -15,7 +15,6 @@ static NSString *const kVideoCodecKey = @"rtc_video_codec_info_key";
 static NSString *const kBitrateKey = @"rtc_max_bitrate_key";
 static NSString *const kAudioOnlyKey = @"rtc_audio_only_key";
 static NSString *const kCreateAecDumpKey = @"rtc_create_aec_dump_key";
-static NSString *const kUseLevelControllerKey = @"rtc_use_level_controller_key";
 static NSString *const kUseManualAudioConfigKey = @"rtc_use_manual_audio_config_key";
 
 NS_ASSUME_NONNULL_BEGIN
@@ -32,12 +31,10 @@ NS_ASSUME_NONNULL_BEGIN
                               bitrate:(nullable NSNumber *)bitrate
                             audioOnly:(BOOL)audioOnly
                         createAecDump:(BOOL)createAecDump
-                   useLevelController:(BOOL)useLevelController
                  useManualAudioConfig:(BOOL)useManualAudioConfig {
   NSMutableDictionary<NSString *, id> *defaultsDictionary = [@{
     kAudioOnlyKey : @(audioOnly),
     kCreateAecDumpKey : @(createAecDump),
-    kUseLevelControllerKey : @(useLevelController),
     kUseManualAudioConfigKey : @(useManualAudioConfig)
   } mutableCopy];
 
@@ -102,15 +99,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setCreateAecDump:(BOOL)createAecDump {
   [self.storage setBool:createAecDump forKey:kCreateAecDumpKey];
-  [self.storage synchronize];
-}
-
-- (BOOL)useLevelController {
-  return [self.storage boolForKey:kUseLevelControllerKey];
-}
-
-- (void)setUseLevelController:(BOOL)useLevelController {
-  [self.storage setBool:useLevelController forKey:kUseLevelControllerKey];
   [self.storage synchronize];
 }
 

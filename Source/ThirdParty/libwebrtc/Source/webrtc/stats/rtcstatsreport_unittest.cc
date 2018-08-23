@@ -21,42 +21,36 @@ class RTCTestStats1 : public RTCStats {
   WEBRTC_RTCSTATS_DECL();
 
   RTCTestStats1(const std::string& id, int64_t timestamp_us)
-      : RTCStats(id, timestamp_us),
-        integer("integer") {}
+      : RTCStats(id, timestamp_us), integer("integer") {}
 
   RTCStatsMember<int32_t> integer;
 };
 
-WEBRTC_RTCSTATS_IMPL(RTCTestStats1, RTCStats, "test-stats-1",
-    &integer);
+WEBRTC_RTCSTATS_IMPL(RTCTestStats1, RTCStats, "test-stats-1", &integer);
 
 class RTCTestStats2 : public RTCStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 
   RTCTestStats2(const std::string& id, int64_t timestamp_us)
-      : RTCStats(id, timestamp_us),
-        number("number") {}
+      : RTCStats(id, timestamp_us), number("number") {}
 
   RTCStatsMember<double> number;
 };
 
-WEBRTC_RTCSTATS_IMPL(RTCTestStats2, RTCStats, "test-stats-2",
-    &number);
+WEBRTC_RTCSTATS_IMPL(RTCTestStats2, RTCStats, "test-stats-2", &number);
 
 class RTCTestStats3 : public RTCStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 
   RTCTestStats3(const std::string& id, int64_t timestamp_us)
-      : RTCStats(id, timestamp_us),
-        string("string") {}
+      : RTCStats(id, timestamp_us), string("string") {}
 
   RTCStatsMember<std::string> string;
 };
 
-WEBRTC_RTCSTATS_IMPL(RTCTestStats3, RTCStats, "test-stats-3",
-    &string);
+WEBRTC_RTCSTATS_IMPL(RTCTestStats3, RTCStats, "test-stats-3", &string);
 
 TEST(RTCStatsReport, AddAndGetStats) {
   rtc::scoped_refptr<RTCStatsReport> report = RTCStatsReport::Create(1337);
@@ -108,6 +102,19 @@ TEST(RTCStatsReport, StatsOrder) {
     ++i;
   }
   EXPECT_EQ(i, static_cast<int64_t>(7));
+}
+
+TEST(RTCStatsReport, Take) {
+  rtc::scoped_refptr<RTCStatsReport> report = RTCStatsReport::Create(0);
+  report->AddStats(std::unique_ptr<RTCStats>(new RTCTestStats1("A", 1)));
+  report->AddStats(std::unique_ptr<RTCStats>(new RTCTestStats1("B", 2)));
+  EXPECT_TRUE(report->Get("A"));
+  EXPECT_EQ(report->size(), 2u);
+  auto a = report->Take("A");
+  EXPECT_TRUE(a);
+  EXPECT_EQ(report->size(), 1u);
+  EXPECT_FALSE(report->Get("A"));
+  EXPECT_FALSE(report->Take("A"));
 }
 
 TEST(RTCStatsReport, TakeMembersFrom) {

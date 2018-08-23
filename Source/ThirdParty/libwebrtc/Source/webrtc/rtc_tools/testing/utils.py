@@ -118,3 +118,7 @@ def GetPlatform():
   if sys.platform.startswith('darwin'):
     return 'mac'
   raise Exception("Can't run on platform %s." % sys.platform)
+
+
+def GetExecutableExtension():
+  return '.exe' if GetPlatform() == 'win' else ''

@@ -11,4 +11,4 @@
 // TODO(deadbeef): Remove this file when clients are updated to new include
 // path.
 
-#include "sdk/android/src/jni/pc/androidnetworkmonitor_jni.h"
+#include "sdk/android/src/jni/pc/androidnetworkmonitor.h"

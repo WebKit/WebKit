@@ -10,9 +10,14 @@
 
 #include "logging/rtc_event_log/events/rtc_event_audio_playout.h"
 
+#include "absl/memory/memory.h"
+
 namespace webrtc {
 
 RtcEventAudioPlayout::RtcEventAudioPlayout(uint32_t ssrc) : ssrc_(ssrc) {}
+
+RtcEventAudioPlayout::RtcEventAudioPlayout(const RtcEventAudioPlayout& other)
+    : RtcEvent(other.timestamp_us_), ssrc_(other.ssrc_) {}
 
 RtcEvent::Type RtcEventAudioPlayout::GetType() const {
   return RtcEvent::Type::AudioPlayout;
@@ -20,6 +25,10 @@ RtcEvent::Type RtcEventAudioPlayout::GetType() const {
 
 bool RtcEventAudioPlayout::IsConfigEvent() const {
   return false;
+}
+
+std::unique_ptr<RtcEvent> RtcEventAudioPlayout::Copy() const {
+  return absl::WrapUnique<RtcEvent>(new RtcEventAudioPlayout(*this));
 }
 
 }  // namespace webrtc

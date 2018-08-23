@@ -9,14 +9,13 @@
  */
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
-#pragma warning(disable:4786)
+#pragma warning(disable : 4786)
 #endif
 
-#include <time.h>
 #include <errno.h>
+#include <time.h>
 
 #if defined(WEBRTC_WIN)
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -33,20 +32,23 @@
 #include "rtc_base/socketadapters.h"
 #include "rtc_base/stringencode.h"
 #include "rtc_base/stringutils.h"
+#include "rtc_base/zero_memory.h"
 
 namespace rtc {
 
 BufferedReadAdapter::BufferedReadAdapter(AsyncSocket* socket, size_t size)
-    : AsyncSocketAdapter(socket), buffer_size_(size),
-      data_len_(0), buffering_(false) {
+    : AsyncSocketAdapter(socket),
+      buffer_size_(size),
+      data_len_(0),
+      buffering_(false) {
   buffer_ = new char[buffer_size_];
 }
 
 BufferedReadAdapter::~BufferedReadAdapter() {
-  delete [] buffer_;
+  delete[] buffer_;
 }
 
-int BufferedReadAdapter::Send(const void *pv, size_t cb) {
+int BufferedReadAdapter::Send(const void* pv, size_t cb) {
   if (buffering_) {
     // TODO: Spoof error better; Signal Writeable
     socket_->SetError(EWOULDBLOCK);
@@ -70,7 +72,7 @@ int BufferedReadAdapter::Recv(void* pv, size_t cb, int64_t* timestamp) {
     if (data_len_ > 0) {
       memmove(buffer_, buffer_ + read, data_len_);
     }
-    pv = static_cast<char *>(pv) + read;
+    pv = static_cast<char*>(pv) + read;
     cb -= read;
   }
 
@@ -95,7 +97,7 @@ void BufferedReadAdapter::BufferInput(bool on) {
   buffering_ = on;
 }
 
-void BufferedReadAdapter::OnReadEvent(AsyncSocket * socket) {
+void BufferedReadAdapter::OnReadEvent(AsyncSocket* socket) {
   RTC_DCHECK(socket == socket_);
 
   if (!buffering_) {
@@ -104,7 +106,7 @@ void BufferedReadAdapter::OnReadEvent(AsyncSocket * socket) {
   }
 
   if (data_len_ >= buffer_size_) {
-    RTC_LOG(INFO) << "Input buffer overflow";
+    RTC_LOG(LS_ERROR) << "Input buffer overflow";
     RTC_NOTREACHED();
     data_len_ = 0;
   }
@@ -124,8 +126,7 @@ void BufferedReadAdapter::OnReadEvent(AsyncSocket * socket) {
 
 AsyncProxyServerSocket::AsyncProxyServerSocket(AsyncSocket* socket,
                                                size_t buffer_size)
-    : BufferedReadAdapter(socket, buffer_size) {
-}
+    : BufferedReadAdapter(socket, buffer_size) {}
 
 AsyncProxyServerSocket::~AsyncProxyServerSocket() = default;
 
@@ -172,8 +173,7 @@ static const uint8_t kSslServerHello[] = {
 };
 
 AsyncSSLSocket::AsyncSSLSocket(AsyncSocket* socket)
-    : BufferedReadAdapter(socket, 1024) {
-}
+    : BufferedReadAdapter(socket, 1024) {}
 
 int AsyncSSLSocket::Connect(const SocketAddress& addr) {
   // Begin buffering before we connect, so that there isn't a race condition
@@ -182,7 +182,7 @@ int AsyncSSLSocket::Connect(const SocketAddress& addr) {
   return BufferedReadAdapter::Connect(addr);
 }
 
-void AsyncSSLSocket::OnConnectEvent(AsyncSocket * socket) {
+void AsyncSSLSocket::OnConnectEvent(AsyncSocket* socket) {
   RTC_DCHECK(socket == socket_);
   // TODO: we could buffer output too...
   const int res = DirectSend(kSslClientHello, sizeof(kSslClientHello));
@@ -214,7 +214,7 @@ void AsyncSSLSocket::ProcessInput(char* data, size_t* len) {
 }
 
 AsyncSSLServerSocket::AsyncSSLServerSocket(AsyncSocket* socket)
-     : BufferedReadAdapter(socket, 1024) {
+    : BufferedReadAdapter(socket, 1024) {
   BufferInput(true);
 }
 
@@ -249,10 +249,14 @@ AsyncHttpsProxySocket::AsyncHttpsProxySocket(AsyncSocket* socket,
                                              const SocketAddress& proxy,
                                              const std::string& username,
                                              const CryptString& password)
-  : BufferedReadAdapter(socket, 1024), proxy_(proxy), agent_(user_agent),
-    user_(username), pass_(password), force_connect_(false), state_(PS_ERROR),
-    context_(0) {
-}
+    : BufferedReadAdapter(socket, 1024),
+      proxy_(proxy),
+      agent_(user_agent),
+      user_(username),
+      pass_(password),
+      force_connect_(false),
+      state_(PS_ERROR),
+      context_(0) {}
 
 AsyncHttpsProxySocket::~AsyncHttpsProxySocket() {
   delete context_;
@@ -295,7 +299,7 @@ Socket::ConnState AsyncHttpsProxySocket::GetState() const {
   }
 }
 
-void AsyncHttpsProxySocket::OnConnectEvent(AsyncSocket * socket) {
+void AsyncHttpsProxySocket::OnConnectEvent(AsyncSocket* socket) {
   RTC_LOG(LS_VERBOSE) << "AsyncHttpsProxySocket::OnConnectEvent";
   if (!ShouldIssueConnect()) {
     state_ = PS_TUNNEL;
@@ -305,7 +309,7 @@ void AsyncHttpsProxySocket::OnConnectEvent(AsyncSocket * socket) {
   SendRequest();
 }
 
-void AsyncHttpsProxySocket::OnCloseEvent(AsyncSocket * socket, int err) {
+void AsyncHttpsProxySocket::OnCloseEvent(AsyncSocket* socket, int err) {
   RTC_LOG(LS_VERBOSE) << "AsyncHttpsProxySocket::OnCloseEvent(" << err << ")";
   if ((state_ == PS_WAIT_CLOSE) && (err == 0)) {
     state_ = PS_ERROR;
@@ -383,7 +387,7 @@ void AsyncHttpsProxySocket::SendRequest() {
   RTC_LOG(LS_VERBOSE) << "AsyncHttpsProxySocket >> " << str;
 }
 
-void AsyncHttpsProxySocket::ProcessLine(char * data, size_t len) {
+void AsyncHttpsProxySocket::ProcessLine(char* data, size_t len) {
   RTC_LOG(LS_VERBOSE) << "AsyncHttpsProxySocket << " << data;
 
   if (len == 0) {
@@ -404,15 +408,18 @@ void AsyncHttpsProxySocket::ProcessLine(char * data, size_t len) {
       if (!unknown_mechanisms_.empty() && !report) {
         report = true;
         std::string msg(
-          "Unable to connect to the Google Talk service due to an incompatibility "
-          "with your proxy.\r\nPlease help us resolve this issue by submitting the "
-          "following information to us using our technical issue submission form "
-          "at:\r\n\r\n"
-          "http://www.google.com/support/talk/bin/request.py\r\n\r\n"
-          "We apologize for the inconvenience.\r\n\r\n"
-          "Information to submit to Google: "
-          );
-        //std::string msg("Please report the following information to foo@bar.com:\r\nUnknown methods: ");
+            "Unable to connect to the Google Talk service due to an "
+            "incompatibility "
+            "with your proxy.\r\nPlease help us resolve this issue by "
+            "submitting the "
+            "following information to us using our technical issue submission "
+            "form "
+            "at:\r\n\r\n"
+            "http://www.google.com/support/talk/bin/request.py\r\n\r\n"
+            "We apologize for the inconvenience.\r\n\r\n"
+            "Information to submit to Google: ");
+        // std::string msg("Please report the following information to
+        // foo@bar.com:\r\nUnknown methods: ");
         msg.append(unknown_mechanisms_);
 #if defined(WEBRTC_WIN)
         MessageBoxA(0, msg.c_str(), "Oops!", MB_OK);
@@ -433,50 +440,49 @@ void AsyncHttpsProxySocket::ProcessLine(char * data, size_t len) {
       return;
     }
     switch (code) {
-    case 200:
-      // connection good!
-      state_ = PS_TUNNEL_HEADERS;
-      return;
+      case 200:
+        // connection good!
+        state_ = PS_TUNNEL_HEADERS;
+        return;
 #if defined(HTTP_STATUS_PROXY_AUTH_REQ) && (HTTP_STATUS_PROXY_AUTH_REQ != 407)
 #error Wrong code for HTTP_STATUS_PROXY_AUTH_REQ
 #endif
-    case 407:  // HTTP_STATUS_PROXY_AUTH_REQ
-      state_ = PS_AUTHENTICATE;
-      return;
-    default:
-      defer_error_ = 0;
-      state_ = PS_ERROR_HEADERS;
-      return;
+      case 407:  // HTTP_STATUS_PROXY_AUTH_REQ
+        state_ = PS_AUTHENTICATE;
+        return;
+      default:
+        defer_error_ = 0;
+        state_ = PS_ERROR_HEADERS;
+        return;
     }
-  } else if ((state_ == PS_AUTHENTICATE)
-             && (_strnicmp(data, "Proxy-Authenticate:", 19) == 0)) {
+  } else if ((state_ == PS_AUTHENTICATE) &&
+             (_strnicmp(data, "Proxy-Authenticate:", 19) == 0)) {
     std::string response, auth_method;
-    switch (HttpAuthenticate(data + 19, len - 19,
-                             proxy_, "CONNECT", "/",
-                             user_, pass_, context_, response, auth_method)) {
-    case HAR_IGNORE:
-      RTC_LOG(LS_VERBOSE) << "Ignoring Proxy-Authenticate: " << auth_method;
-      if (!unknown_mechanisms_.empty())
-        unknown_mechanisms_.append(", ");
-      unknown_mechanisms_.append(auth_method);
-      break;
-    case HAR_RESPONSE:
-      headers_ = "Proxy-Authorization: ";
-      headers_.append(response);
-      headers_.append("\r\n");
-      state_ = PS_SKIP_HEADERS;
-      unknown_mechanisms_.clear();
-      break;
-    case HAR_CREDENTIALS:
-      defer_error_ = SOCKET_EACCES;
-      state_ = PS_ERROR_HEADERS;
-      unknown_mechanisms_.clear();
-      break;
-    case HAR_ERROR:
-      defer_error_ = 0;
-      state_ = PS_ERROR_HEADERS;
-      unknown_mechanisms_.clear();
-      break;
+    switch (HttpAuthenticate(data + 19, len - 19, proxy_, "CONNECT", "/", user_,
+                             pass_, context_, response, auth_method)) {
+      case HAR_IGNORE:
+        RTC_LOG(LS_VERBOSE) << "Ignoring Proxy-Authenticate: " << auth_method;
+        if (!unknown_mechanisms_.empty())
+          unknown_mechanisms_.append(", ");
+        unknown_mechanisms_.append(auth_method);
+        break;
+      case HAR_RESPONSE:
+        headers_ = "Proxy-Authorization: ";
+        headers_.append(response);
+        headers_.append("\r\n");
+        state_ = PS_SKIP_HEADERS;
+        unknown_mechanisms_.clear();
+        break;
+      case HAR_CREDENTIALS:
+        defer_error_ = SOCKET_EACCES;
+        state_ = PS_ERROR_HEADERS;
+        unknown_mechanisms_.clear();
+        break;
+      case HAR_ERROR:
+        defer_error_ = 0;
+        state_ = PS_ERROR_HEADERS;
+        unknown_mechanisms_.clear();
+        break;
     }
   } else if (_strnicmp(data, "Content-Length:", 15) == 0) {
     content_length_ = strtoul(data + 15, 0, 0);
@@ -515,9 +521,11 @@ AsyncSocksProxySocket::AsyncSocksProxySocket(AsyncSocket* socket,
                                              const SocketAddress& proxy,
                                              const std::string& username,
                                              const CryptString& password)
-    : BufferedReadAdapter(socket, 1024), state_(SS_ERROR), proxy_(proxy),
-      user_(username), pass_(password) {
-}
+    : BufferedReadAdapter(socket, 1024),
+      state_(SS_ERROR),
+      proxy_(proxy),
+      user_(username),
+      pass_(password) {}
 
 AsyncSocksProxySocket::~AsyncSocksProxySocket() = default;
 
@@ -562,8 +570,7 @@ void AsyncSocksProxySocket::ProcessInput(char* data, size_t* len) {
 
   if (state_ == SS_HELLO) {
     uint8_t ver, method;
-    if (!response.ReadUInt8(&ver) ||
-        !response.ReadUInt8(&method))
+    if (!response.ReadUInt8(&ver) || !response.ReadUInt8(&method))
       return;
 
     if (ver != 5) {
@@ -581,8 +588,7 @@ void AsyncSocksProxySocket::ProcessInput(char* data, size_t* len) {
     }
   } else if (state_ == SS_AUTH) {
     uint8_t ver, status;
-    if (!response.ReadUInt8(&ver) ||
-        !response.ReadUInt8(&status))
+    if (!response.ReadUInt8(&ver) || !response.ReadUInt8(&status))
       return;
 
     if ((ver != 1) || (status != 0)) {
@@ -593,10 +599,8 @@ void AsyncSocksProxySocket::ProcessInput(char* data, size_t* len) {
     SendConnect();
   } else if (state_ == SS_CONNECT) {
     uint8_t ver, rep, rsv, atyp;
-    if (!response.ReadUInt8(&ver) ||
-        !response.ReadUInt8(&rep) ||
-        !response.ReadUInt8(&rsv) ||
-        !response.ReadUInt8(&atyp))
+    if (!response.ReadUInt8(&ver) || !response.ReadUInt8(&rep) ||
+        !response.ReadUInt8(&rsv) || !response.ReadUInt8(&atyp))
       return;
 
     if ((ver != 5) || (rep != 0)) {
@@ -607,22 +611,19 @@ void AsyncSocksProxySocket::ProcessInput(char* data, size_t* len) {
     uint16_t port;
     if (atyp == 1) {
       uint32_t addr;
-      if (!response.ReadUInt32(&addr) ||
-          !response.ReadUInt16(&port))
+      if (!response.ReadUInt32(&addr) || !response.ReadUInt16(&port))
         return;
       RTC_LOG(LS_VERBOSE) << "Bound on " << addr << ":" << port;
     } else if (atyp == 3) {
       uint8_t len;
       std::string addr;
-      if (!response.ReadUInt8(&len) ||
-          !response.ReadString(&addr, len) ||
+      if (!response.ReadUInt8(&len) || !response.ReadString(&addr, len) ||
           !response.ReadUInt16(&port))
         return;
       RTC_LOG(LS_VERBOSE) << "Bound on " << addr << ":" << port;
     } else if (atyp == 4) {
       std::string addr;
-      if (!response.ReadString(&addr, 16) ||
-          !response.ReadUInt16(&port))
+      if (!response.ReadString(&addr, 16) || !response.ReadUInt16(&port))
         return;
       RTC_LOG(LS_VERBOSE) << "Bound on <IPV6>:" << port;
     } else {
@@ -651,7 +652,7 @@ void AsyncSocksProxySocket::ProcessInput(char* data, size_t* len) {
 
 void AsyncSocksProxySocket::SendHello() {
   ByteBufferWriter request;
-  request.WriteUInt8(5);    // Socks Version
+  request.WriteUInt8(5);  // Socks Version
   if (user_.empty()) {
     request.WriteUInt8(1);  // Authentication Mechanisms
     request.WriteUInt8(0);  // No authentication
@@ -665,31 +666,31 @@ void AsyncSocksProxySocket::SendHello() {
 }
 
 void AsyncSocksProxySocket::SendAuth() {
-  ByteBufferWriter request;
-  request.WriteUInt8(1);           // Negotiation Version
+  ByteBufferWriterT<ZeroOnFreeBuffer<char>> request;
+  request.WriteUInt8(1);  // Negotiation Version
   request.WriteUInt8(static_cast<uint8_t>(user_.size()));
-  request.WriteString(user_);      // Username
+  request.WriteString(user_);  // Username
   request.WriteUInt8(static_cast<uint8_t>(pass_.GetLength()));
   size_t len = pass_.GetLength() + 1;
-  char * sensitive = new char[len];
+  char* sensitive = new char[len];
   pass_.CopyTo(sensitive, true);
-  request.WriteString(sensitive);  // Password
-  memset(sensitive, 0, len);
-  delete [] sensitive;
+  request.WriteBytes(sensitive, pass_.GetLength());  // Password
+  ExplicitZeroMemory(sensitive, len);
+  delete[] sensitive;
   DirectSend(request.Data(), request.Length());
   state_ = SS_AUTH;
 }
 
 void AsyncSocksProxySocket::SendConnect() {
   ByteBufferWriter request;
-  request.WriteUInt8(5);              // Socks Version
-  request.WriteUInt8(1);              // CONNECT
-  request.WriteUInt8(0);              // Reserved
+  request.WriteUInt8(5);  // Socks Version
+  request.WriteUInt8(1);  // CONNECT
+  request.WriteUInt8(0);  // Reserved
   if (dest_.IsUnresolvedIP()) {
     std::string hostname = dest_.hostname();
-    request.WriteUInt8(3);            // DOMAINNAME
+    request.WriteUInt8(3);  // DOMAINNAME
     request.WriteUInt8(static_cast<uint8_t>(hostname.size()));
-    request.WriteString(hostname);    // Destination Hostname
+    request.WriteString(hostname);  // Destination Hostname
   } else {
     request.WriteUInt8(1);            // IPV4
     request.WriteUInt32(dest_.ip());  // Destination IP
@@ -736,8 +737,7 @@ void AsyncSocksProxyServerSocket::DirectSend(const ByteBufferWriter& buf) {
 
 void AsyncSocksProxyServerSocket::HandleHello(ByteBufferReader* request) {
   uint8_t ver, num_methods;
-  if (!request->ReadUInt8(&ver) ||
-      !request->ReadUInt8(&num_methods)) {
+  if (!request->ReadUInt8(&ver) || !request->ReadUInt8(&num_methods)) {
     Error(0);
     return;
   }
@@ -767,7 +767,7 @@ void AsyncSocksProxyServerSocket::HandleHello(ByteBufferReader* request) {
 
 void AsyncSocksProxyServerSocket::SendHelloReply(uint8_t method) {
   ByteBufferWriter response;
-  response.WriteUInt8(5);  // Socks Version
+  response.WriteUInt8(5);       // Socks Version
   response.WriteUInt8(method);  // Auth method
   DirectSend(response);
 }
@@ -775,10 +775,8 @@ void AsyncSocksProxyServerSocket::SendHelloReply(uint8_t method) {
 void AsyncSocksProxyServerSocket::HandleAuth(ByteBufferReader* request) {
   uint8_t ver, user_len, pass_len;
   std::string user, pass;
-  if (!request->ReadUInt8(&ver) ||
-      !request->ReadUInt8(&user_len) ||
-      !request->ReadString(&user, user_len) ||
-      !request->ReadUInt8(&pass_len) ||
+  if (!request->ReadUInt8(&ver) || !request->ReadUInt8(&user_len) ||
+      !request->ReadString(&user, user_len) || !request->ReadUInt8(&pass_len) ||
       !request->ReadString(&pass, pass_len)) {
     Error(0);
     return;
@@ -800,20 +798,16 @@ void AsyncSocksProxyServerSocket::HandleConnect(ByteBufferReader* request) {
   uint8_t ver, command, reserved, addr_type;
   uint32_t ip;
   uint16_t port;
-  if (!request->ReadUInt8(&ver) ||
-      !request->ReadUInt8(&command) ||
-      !request->ReadUInt8(&reserved) ||
-      !request->ReadUInt8(&addr_type) ||
-      !request->ReadUInt32(&ip) ||
-      !request->ReadUInt16(&port)) {
-      Error(0);
-      return;
+  if (!request->ReadUInt8(&ver) || !request->ReadUInt8(&command) ||
+      !request->ReadUInt8(&reserved) || !request->ReadUInt8(&addr_type) ||
+      !request->ReadUInt32(&ip) || !request->ReadUInt16(&port)) {
+    Error(0);
+    return;
   }
 
-  if (ver != 5 || command != 1 ||
-      reserved != 0 || addr_type != 1) {
-      Error(0);
-      return;
+  if (ver != 5 || command != 1 || reserved != 0 || addr_type != 1) {
+    Error(0);
+    return;
   }
 
   SignalConnectRequest(this, SocketAddress(ip, port));
@@ -826,10 +820,10 @@ void AsyncSocksProxyServerSocket::SendConnectResult(int result,
     return;
 
   ByteBufferWriter response;
-  response.WriteUInt8(5);  // Socks version
+  response.WriteUInt8(5);              // Socks version
   response.WriteUInt8((result != 0));  // 0x01 is generic error
-  response.WriteUInt8(0);  // reserved
-  response.WriteUInt8(1);  // IPv4 address
+  response.WriteUInt8(0);              // reserved
+  response.WriteUInt8(1);              // IPv4 address
   response.WriteUInt32(addr.ip());
   response.WriteUInt16(addr.port());
   DirectSend(response);

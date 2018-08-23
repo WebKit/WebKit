@@ -16,7 +16,6 @@
 
 #include "api/array_view.h"
 #include "modules/audio_processing/test/test_utils.h"
-#include "modules/include/module_common_types.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/event.h"
 #include "rtc_base/platform_thread.h"
@@ -147,8 +146,7 @@ struct TestConfig {
 
       // Create test config for the first processing API function set.
       test_configs.push_back(test_config);
-      test_config.render_api_function =
-          RenderApiImpl::AnalyzeReverseStreamImpl;
+      test_config.render_api_function = RenderApiImpl::AnalyzeReverseStreamImpl;
       test_config.capture_api_function = CaptureApiImpl::ProcessStreamImpl3;
       test_configs.push_back(test_config);
     }
@@ -483,8 +481,7 @@ void PopulateAudioFrame(AudioFrame* frame,
     for (size_t k = 0; k < frame->samples_per_channel_; k++) {
       // Store random 16 bit number between -(amplitude+1) and
       // amplitude.
-      frame_data[k * ch] =
-          rand_gen->RandInt(2 * amplitude + 1) - amplitude - 1;
+      frame_data[k * ch] = rand_gen->RandInt(2 * amplitude + 1) - amplitude - 1;
     }
   }
 }

@@ -11,7 +11,7 @@
 #ifndef SYSTEM_WRAPPERS_INCLUDE_CPU_INFO_H_
 #define SYSTEM_WRAPPERS_INCLUDE_CPU_INFO_H_
 
-#include "typedefs.h"  // NOLINT(build/include)
+#include <stdint.h>
 
 namespace webrtc {
 

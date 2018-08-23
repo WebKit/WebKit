@@ -13,16 +13,19 @@
 #include "rtc_base/checks.h"
 
 @implementation RTCMediaSource {
+  RTCPeerConnectionFactory *_factory;
   RTCMediaSourceType _type;
 }
 
 @synthesize nativeMediaSource = _nativeMediaSource;
 
-- (instancetype)initWithNativeMediaSource:
-   (rtc::scoped_refptr<webrtc::MediaSourceInterface>)nativeMediaSource
-                                     type:(RTCMediaSourceType)type {
+- (instancetype)initWithFactory:(RTCPeerConnectionFactory *)factory
+              nativeMediaSource:(rtc::scoped_refptr<webrtc::MediaSourceInterface>)nativeMediaSource
+                           type:(RTCMediaSourceType)type {
+  RTC_DCHECK(factory);
   RTC_DCHECK(nativeMediaSource);
   if (self = [super init]) {
+    _factory = factory;
     _nativeMediaSource = nativeMediaSource;
     _type = type;
   }

@@ -14,9 +14,9 @@
 #include <numeric>
 
 #include "rtc_base/random.h"
+#include "rtc_base/system/arch.h"
 #include "system_wrappers/include/cpu_features_wrapper.h"
 #include "test/gtest.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace aec3 {

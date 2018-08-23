@@ -15,7 +15,6 @@
 
 #include "rtc_base/checks.h"
 #include "sdk/objc/Framework/Classes/Common/helpers.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace test {

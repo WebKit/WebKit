@@ -16,7 +16,7 @@
 #include <memory>
 #include <utility>
 
-#include "modules/video_coding/frame_object.h"
+#include "api/video/encoded_frame.h"
 #include "modules/video_coding/include/video_coding_defines.h"
 #include "modules/video_coding/inter_frame_delay.h"
 #include "rtc_base/constructormagic.h"
@@ -47,7 +47,8 @@ class FrameBuffer {
 
   // Insert a frame into the frame buffer. Returns the picture id
   // of the last continuous frame or -1 if there is no continuous frame.
-  int64_t InsertFrame(std::unique_ptr<FrameObject> frame);
+  // TODO(philipel): Return a VideoLayerFrameId and not only the picture id.
+  int64_t InsertFrame(std::unique_ptr<EncodedFrame> frame);
 
   // Get the next frame for decoding. Will return at latest after
   // |max_wait_time_ms|.
@@ -57,7 +58,7 @@ class FrameBuffer {
   //    kTimeout.
   //  - If the FrameBuffer is stopped then it will return kStopped.
   ReturnReason NextFrame(int64_t max_wait_time_ms,
-                         std::unique_ptr<FrameObject>* frame_out,
+                         std::unique_ptr<EncodedFrame>* frame_out,
                          bool keyframe_required = false);
 
   // Tells the FrameBuffer which protection mode that is in use. Affects
@@ -78,24 +79,11 @@ class FrameBuffer {
   void UpdateRtt(int64_t rtt_ms);
 
  private:
-  struct FrameKey {
-    FrameKey() : picture_id(-1), spatial_layer(0) {}
-    FrameKey(int64_t picture_id, uint8_t spatial_layer)
-        : picture_id(picture_id), spatial_layer(spatial_layer) {}
-
-    bool operator<(const FrameKey& rhs) const {
-      if (picture_id == rhs.picture_id)
-        return spatial_layer < rhs.spatial_layer;
-      return picture_id < rhs.picture_id;
-    }
-
-    bool operator<=(const FrameKey& rhs) const { return !(rhs < *this); }
-
-    int64_t picture_id;
-    uint8_t spatial_layer;
-  };
-
   struct FrameInfo {
+    FrameInfo();
+    FrameInfo(FrameInfo&&);
+    ~FrameInfo();
+
     // The maximum number of frames that can depend on this frame.
     static constexpr size_t kMaxNumDependentFrames = 8;
 
@@ -103,7 +91,7 @@ class FrameBuffer {
     // on this frame.
     // TODO(philipel): Add simple modify/access functions to prevent adding too
     // many |dependent_frames|.
-    FrameKey dependent_frames[kMaxNumDependentFrames];
+    VideoLayerFrameId dependent_frames[kMaxNumDependentFrames];
     size_t num_dependent_frames = 0;
 
     // A frame is continiuous if it has all its referenced/indirectly
@@ -120,18 +108,18 @@ class FrameBuffer {
     // If this frame is continuous or not.
     bool continuous = false;
 
-    // The actual FrameObject.
-    std::unique_ptr<FrameObject> frame;
+    // The actual EncodedFrame.
+    std::unique_ptr<EncodedFrame> frame;
   };
 
-  using FrameMap = std::map<FrameKey, FrameInfo>;
+  using FrameMap = std::map<VideoLayerFrameId, FrameInfo>;
 
   // Check that the references of |frame| are valid.
-  bool ValidReferences(const FrameObject& frame) const;
+  bool ValidReferences(const EncodedFrame& frame) const;
 
   // Updates the minimal and maximal playout delays
   // depending on the frame.
-  void UpdatePlayoutDelays(const FrameObject& frame)
+  void UpdatePlayoutDelays(const EncodedFrame& frame)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Update all directly dependent and indirectly dependent frames and mark
@@ -151,7 +139,7 @@ class FrameBuffer {
   // Update the corresponding FrameInfo of |frame| and all FrameInfos that
   // |frame| references.
   // Return false if |frame| will never be decodable, true otherwise.
-  bool UpdateFrameInfoWithIncomingFrame(const FrameObject& frame,
+  bool UpdateFrameInfoWithIncomingFrame(const EncodedFrame& frame,
                                         FrameMap::iterator info)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
@@ -161,7 +149,7 @@ class FrameBuffer {
 
   void ClearFramesAndHistory() RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
-  bool HasBadRenderTiming(const FrameObject& frame, int64_t now_ms)
+  bool HasBadRenderTiming(const EncodedFrame& frame, int64_t now_ms)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   FrameMap frames_ RTC_GUARDED_BY(crit_);

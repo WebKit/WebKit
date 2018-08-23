@@ -14,7 +14,7 @@
 #include "p2p/base/relayserver.h"
 #include "rtc_base/thread.h"
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   if (argc != 3) {
     std::cerr << "usage: relayserver internal-address external-address"
               << std::endl;
@@ -33,21 +33,21 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  rtc::Thread *pthMain = rtc::Thread::Current();
+  rtc::Thread* pthMain = rtc::Thread::Current();
 
   std::unique_ptr<rtc::AsyncUDPSocket> int_socket(
       rtc::AsyncUDPSocket::Create(pthMain->socketserver(), int_addr));
   if (!int_socket) {
-    std::cerr << "Failed to create a UDP socket bound at"
-              << int_addr.ToString() << std::endl;
+    std::cerr << "Failed to create a UDP socket bound at" << int_addr.ToString()
+              << std::endl;
     return 1;
   }
 
   std::unique_ptr<rtc::AsyncUDPSocket> ext_socket(
       rtc::AsyncUDPSocket::Create(pthMain->socketserver(), ext_addr));
   if (!ext_socket) {
-    std::cerr << "Failed to create a UDP socket bound at"
-              << ext_addr.ToString() << std::endl;
+    std::cerr << "Failed to create a UDP socket bound at" << ext_addr.ToString()
+              << std::endl;
     return 1;
   }
 

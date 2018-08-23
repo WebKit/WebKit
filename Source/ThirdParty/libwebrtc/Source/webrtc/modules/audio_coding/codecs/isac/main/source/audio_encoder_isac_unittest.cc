@@ -29,7 +29,11 @@ void TestGoodConfig(const AudioEncoderIsacFloatImpl::Config& config) {
 // Wrap subroutine calls that test things in this, so that the error messages
 // will be accompanied by stack traces that make it possible to tell which
 // subroutine invocation caused the failure.
-#define S(x) do { SCOPED_TRACE(#x); x; } while (0)
+#define S(x)          \
+  do {                \
+    SCOPED_TRACE(#x); \
+    x;                \
+  } while (0)
 
 }  // namespace
 

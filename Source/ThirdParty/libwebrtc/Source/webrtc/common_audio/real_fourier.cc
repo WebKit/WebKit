@@ -11,7 +11,6 @@
 #include "common_audio/real_fourier.h"
 
 #include "common_audio/real_fourier_ooura.h"
-#include "common_audio/real_fourier_openmax.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "rtc_base/checks.h"
 
@@ -22,11 +21,7 @@ using std::complex;
 const size_t RealFourier::kFftBufferAlignment = 32;
 
 std::unique_ptr<RealFourier> RealFourier::Create(int fft_order) {
-#if defined(RTC_USE_OPENMAX_DL)
-  return std::unique_ptr<RealFourier>(new RealFourierOpenmax(fft_order));
-#else
   return std::unique_ptr<RealFourier>(new RealFourierOoura(fft_order));
-#endif
 }
 
 int RealFourier::FftOrder(size_t length) {
@@ -36,7 +31,7 @@ int RealFourier::FftOrder(size_t length) {
 
 size_t RealFourier::FftLength(int order) {
   RTC_CHECK_GE(order, 0);
-  return static_cast<size_t>(1 << order);
+  return size_t{1} << order;
 }
 
 size_t RealFourier::ComplexLength(int order) {
@@ -54,4 +49,3 @@ RealFourier::fft_cplx_scoper RealFourier::AllocCplxBuffer(int count) {
 }
 
 }  // namespace webrtc
-

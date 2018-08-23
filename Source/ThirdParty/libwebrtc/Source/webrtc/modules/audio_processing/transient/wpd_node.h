@@ -13,8 +13,6 @@
 
 #include <memory>
 
-#include "typedefs.h"  // NOLINT(build/include)
-
 namespace webrtc {
 
 class FIRFilter;

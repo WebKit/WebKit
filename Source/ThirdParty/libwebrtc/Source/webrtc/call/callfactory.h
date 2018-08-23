@@ -11,14 +11,14 @@
 #ifndef CALL_CALLFACTORY_H_
 #define CALL_CALLFACTORY_H_
 
-#include "call/callfactoryinterface.h"
+#include "api/call/callfactoryinterface.h"
 
 namespace webrtc {
 
 class CallFactory : public CallFactoryInterface {
   ~CallFactory() override {}
 
-  Call* CreateCall(const Call::Config& config) override;
+  Call* CreateCall(const CallConfig& config) override;
 };
 
 }  // namespace webrtc

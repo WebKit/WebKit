@@ -22,7 +22,7 @@ CommandLineParser::CommandLineParser() {}
 CommandLineParser::~CommandLineParser() {}
 
 void CommandLineParser::Init(int argc, char** argv) {
-  args_ = std::vector<std::string> (argv + 1, argv + argc);
+  args_ = std::vector<std::string>(argv + 1, argv + argc);
 }
 
 bool CommandLineParser::IsStandaloneFlag(std::string flag) {

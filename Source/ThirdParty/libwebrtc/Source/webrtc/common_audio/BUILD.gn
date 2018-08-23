@@ -6,18 +6,9 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("//build/config/arm.gni")
 import("../webrtc.gni")
 
 visibility = [ ":*" ]
-
-config("common_audio_config") {
-  include_dirs = [
-    "resampler/include",
-    "signal_processing/include",
-    "vad/include",
-  ]
-}
 
 rtc_static_library("common_audio") {
   visibility += [ "*" ]
@@ -60,45 +51,25 @@ rtc_static_library("common_audio") {
   ]
 
   deps = [
+    ":common_audio_c",
     ":sinc_resampler",
     "..:webrtc_common",
-    "../:typedefs",
-    "../api:optional",
     "../rtc_base:checks",
     "../rtc_base:gtest_prod",
     "../rtc_base:rtc_base_approved",
+    "../rtc_base/memory:aligned_array",
+    "../rtc_base/memory:aligned_malloc",
+    "../rtc_base/system:arch",
     "../system_wrappers",
     "../system_wrappers:cpu_features_api",
-  ]
-  public_deps = [
-    ":common_audio_c",
+    "third_party/fft4g:fft4g",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 
   defines = []
-  if (rtc_use_openmax_dl) {
-    sources += [
-      "real_fourier_openmax.cc",
-      "real_fourier_openmax.h",
-    ]
-    defines += [ "RTC_USE_OPENMAX_DL" ]
-    if (rtc_build_openmax_dl) {
-      deps += [ "//third_party/openmax_dl/dl" ]
-    }
-  }
 
   if (rtc_build_with_neon) {
     deps += [ ":common_audio_neon" ]
-  }
-
-  if (is_win) {
-    cflags = [ "/wd4334" ]  # Ignore warning on shift operator promotion.
-  }
-
-  public_configs = [ ":common_audio_config" ]
-
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
   }
 
   if (current_cpu == "x86" || current_cpu == "x64") {
@@ -121,24 +92,22 @@ rtc_source_set("mock_common_audio") {
 
 rtc_source_set("common_audio_c_arm_asm") {
   sources = []
+  deps = []
   if (current_cpu == "arm") {
-    sources += [
-      "signal_processing/complex_bit_reverse_arm.S",
-      "signal_processing/spl_sqrt_floor_arm.S",
-    ]
+    sources += [ "signal_processing/complex_bit_reverse_arm.S" ]
 
     if (arm_version >= 7) {
       sources += [ "signal_processing/filter_ar_fast_q12_armv7.S" ]
     } else {
       sources += [ "signal_processing/filter_ar_fast_q12.c" ]
     }
+    deps += [ "../rtc_base/system:asm_defines" ]
   }
 }
 
 rtc_source_set("common_audio_c") {
+  visibility += webrtc_default_visibility
   sources = [
-    "fft4g.c",
-    "fft4g.h",
     "ring_buffer.c",
     "ring_buffer.h",
     "signal_processing/auto_corr_to_refl_coef.c",
@@ -198,7 +167,6 @@ rtc_source_set("common_audio_c") {
       "signal_processing/include/spl_inl_mips.h",
       "signal_processing/min_max_operations_mips.c",
       "signal_processing/resample_by_2_mips.c",
-      "signal_processing/spl_sqrt_floor_mips.c",
     ]
     if (mips_dsp_rev > 0) {
       sources += [ "signal_processing/vector_scaling_operations_mips.c" ]
@@ -211,26 +179,22 @@ rtc_source_set("common_audio_c") {
     sources += [
       "signal_processing/complex_bit_reverse.c",
       "signal_processing/filter_ar_fast_q12.c",
-      "signal_processing/spl_sqrt_floor.c",
     ]
   }
 
-  if (is_win) {
-    cflags = [ "/wd4334" ]  # Ignore warning on shift operator promotion.
-  }
-
-  public_configs = [ ":common_audio_config" ]
   deps = [
     ":common_audio_c_arm_asm",
     ":common_audio_cc",
     "..:webrtc_common",
-    "../:typedefs",
     "../rtc_base:checks",
     "../rtc_base:compile_assert_c",
     "../rtc_base:rtc_base_approved",
     "../rtc_base:sanitizer",
+    "../rtc_base/system:arch",
     "../system_wrappers",
     "../system_wrappers:cpu_features_api",
+    "third_party/fft4g:fft4g",
+    "third_party/spl_sqrt_floor",
   ]
 }
 
@@ -240,10 +204,8 @@ rtc_source_set("common_audio_cc") {
     "signal_processing/dot_product_with_scale.h",
   ]
 
-  public_configs = [ ":common_audio_config" ]
   deps = [
     "..:webrtc_common",
-    "../:typedefs",
     "../rtc_base:rtc_base_approved",
     "../system_wrappers",
   ]
@@ -255,9 +217,10 @@ rtc_source_set("sinc_resampler") {
   ]
   deps = [
     "..:webrtc_common",
-    "../:typedefs",
     "../rtc_base:gtest_prod",
     "../rtc_base:rtc_base_approved",
+    "../rtc_base/memory:aligned_malloc",
+    "../rtc_base/system:arch",
     "../system_wrappers",
   ]
 }
@@ -281,6 +244,7 @@ rtc_source_set("fir_filter_factory") {
     ":fir_filter",
     "../rtc_base:checks",
     "../rtc_base:rtc_base_approved",
+    "../rtc_base/system:arch",
     "../system_wrappers:cpu_features_api",
   ]
   if (current_cpu == "x86" || current_cpu == "x64") {
@@ -299,20 +263,16 @@ if (current_cpu == "x86" || current_cpu == "x64") {
       "resampler/sinc_resampler_sse.cc",
     ]
 
-    if (is_posix) {
+    if (is_posix || is_fuchsia) {
       cflags = [ "-msse2" ]
     }
 
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
     deps = [
       ":fir_filter",
       ":sinc_resampler",
       "../rtc_base:checks",
       "../rtc_base:rtc_base_approved",
-      "../system_wrappers",
+      "../rtc_base/memory:aligned_malloc",
     ]
   }
 }
@@ -326,9 +286,7 @@ if (rtc_build_with_neon) {
     ]
 
     if (current_cpu != "arm64") {
-      # Enable compilation for the NEON instruction set. This is needed
-      # since //build/config/arm.gni only enables NEON for iOS, not Android.
-      # This provides the same functionality as webrtc/build/arm_neon.gypi.
+      # Enable compilation for the NEON instruction set.
       suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
       cflags = [ "-mfpu=neon" ]
     }
@@ -342,25 +300,18 @@ if (rtc_build_with_neon) {
       ]
     }
 
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-
     deps = [
+      ":common_audio_neon_c",
       ":fir_filter",
       ":sinc_resampler",
       "../rtc_base:checks",
       "../rtc_base:rtc_base_approved",
-      "../system_wrappers",
-    ]
-
-    public_deps = [
-      ":common_audio_neon_c",
+      "../rtc_base/memory:aligned_malloc",
     ]
   }
 
   rtc_source_set("common_audio_neon_c") {
+    visibility += webrtc_default_visibility
     sources = [
       "signal_processing/cross_correlation_neon.c",
       "signal_processing/downsample_fast_neon.c",
@@ -368,9 +319,7 @@ if (rtc_build_with_neon) {
     ]
 
     if (current_cpu != "arm64") {
-      # Enable compilation for the NEON instruction set. This is needed
-      # since //build/config/arm.gni only enables NEON for iOS, not Android.
-      # This provides the same functionality as webrtc/build/arm_neon.gypi.
+      # Enable compilation for the NEON instruction set.
       suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
       cflags = [ "-mfpu=neon" ]
     }
@@ -384,14 +333,11 @@ if (rtc_build_with_neon) {
       ]
     }
 
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
     deps = [
       ":common_audio_c",
       "../rtc_base:checks",
       "../rtc_base:rtc_base_approved",
+      "../rtc_base/system:arch",
     ]
   }
 }
@@ -436,28 +382,20 @@ if (rtc_include_tests) {
       sources += [ "resampler/sinc_resampler_unittest.cc" ]
     }
 
-    if (rtc_use_openmax_dl) {
-      defines = [ "RTC_USE_OPENMAX_DL" ]
-    }
-
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-
     deps = [
       ":common_audio",
+      ":common_audio_c",
       ":fir_filter",
       ":fir_filter_factory",
       ":sinc_resampler",
       "..:webrtc_common",
-      "../:typedefs",
       "../rtc_base:checks",
       "../rtc_base:rtc_base_approved",
       "../rtc_base:rtc_base_tests_utils",
+      "../rtc_base/system:arch",
       "../system_wrappers:cpu_features_api",
+      "../test:fileutils",
       "../test:test_main",
-      "//testing/gmock",
       "//testing/gtest",
     ]
 

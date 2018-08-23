@@ -12,7 +12,8 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_REPORT_BLOCK_H_
 #define MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_REPORT_BLOCK_H_
 
-#include "rtc_base/basictypes.h"
+#include <stddef.h>
+#include <stdint.h>
 
 namespace webrtc {
 namespace rtcp {

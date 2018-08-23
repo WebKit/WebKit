@@ -8,8 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <sstream>
-
 #include "p2p/base/packetlossestimator.h"
 
 #include "rtc_base/checks.h"
@@ -104,25 +102,6 @@ bool PacketLossEstimator::Forget(const PacketInfo& packet_info,
 
 std::size_t PacketLossEstimator::tracked_packet_count_for_testing() const {
   return tracked_packets_.size();
-}
-
-std::string PacketLossEstimator::TrackedPacketsStringForTesting(
-    std::size_t max) const {
-  std::ostringstream oss;
-
-  size_t count = 0;
-  for (const auto& p : tracked_packets_) {
-    const auto& id = p.first;
-    const auto& packet_info = p.second;
-    oss << "{ " << id << ", " << packet_info.sent_time << "}, ";
-    count += 1;
-    if (count == max) {
-      oss << "...";
-      break;
-    }
-  }
-
-  return oss.str();
 }
 
 }  // namespace cricket

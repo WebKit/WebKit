@@ -12,17 +12,17 @@
 
 #include <utility>
 
+#include "absl/memory/memory.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/timeutils.h"
 
 namespace webrtc {
 
 RtcpTransceiver::RtcpTransceiver(const RtcpTransceiverConfig& config)
     : task_queue_(config.task_queue),
-      rtcp_transceiver_(rtc::MakeUnique<RtcpTransceiverImpl>(config)),
+      rtcp_transceiver_(absl::make_unique<RtcpTransceiverImpl>(config)),
       ptr_factory_(rtcp_transceiver_.get()),
       // Creating first weak ptr can be done on any thread, but is not
       // thread-safe, thus do it at construction. Creating second (e.g. making a
@@ -71,6 +71,14 @@ void RtcpTransceiver::RemoveMediaReceiverRtcpObserver(
       ptr->RemoveMediaReceiverRtcpObserver(remote_ssrc, observer);
   };
   task_queue_->PostTaskAndReply(std::move(remove), std::move(on_removed));
+}
+
+void RtcpTransceiver::SetReadyToSend(bool ready) {
+  rtc::WeakPtr<RtcpTransceiverImpl> ptr = ptr_;
+  task_queue_->PostTask([ptr, ready] {
+    if (ptr)
+      ptr->SetReadyToSend(ready);
+  });
 }
 
 void RtcpTransceiver::ReceivePacket(rtc::CopyOnWriteBuffer packet) {

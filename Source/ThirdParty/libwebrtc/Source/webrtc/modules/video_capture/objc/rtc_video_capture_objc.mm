@@ -59,7 +59,7 @@ using namespace webrtc::videocapturemodule;
     AVCaptureVideoDataOutput* captureOutput = [[AVCaptureVideoDataOutput alloc] init];
     NSString* key = (NSString*)kCVPixelBufferPixelFormatTypeKey;
 
-    NSNumber* val = [NSNumber numberWithUnsignedInt:kCVPixelFormatType_420YpCbCr8BiPlanarFullRange];
+    NSNumber* val = [NSNumber numberWithUnsignedInt:kCVPixelFormatType_422YpCbCr8];
     NSDictionary* videoSettings = [NSDictionary dictionaryWithObject:val forKey:key];
     captureOutput.videoSettings = videoSettings;
 
@@ -319,21 +319,16 @@ using namespace webrtc::videocapturemodule;
     return;
   }
 
-  const int kYPlaneIndex = 0;
-  const int kUVPlaneIndex = 1;
-
-  uint8_t* baseAddress = (uint8_t*)CVPixelBufferGetBaseAddressOfPlane(videoFrame, kYPlaneIndex);
-  size_t yPlaneBytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(videoFrame, kYPlaneIndex);
-  size_t yPlaneHeight = CVPixelBufferGetHeightOfPlane(videoFrame, kYPlaneIndex);
-  size_t uvPlaneBytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(videoFrame, kUVPlaneIndex);
-  size_t uvPlaneHeight = CVPixelBufferGetHeightOfPlane(videoFrame, kUVPlaneIndex);
-  size_t frameSize = yPlaneBytesPerRow * yPlaneHeight + uvPlaneBytesPerRow * uvPlaneHeight;
+  uint8_t* baseAddress = (uint8_t*)CVPixelBufferGetBaseAddress(videoFrame);
+  const size_t width = CVPixelBufferGetWidth(videoFrame);
+  const size_t height = CVPixelBufferGetHeight(videoFrame);
+  const size_t frameSize = width * height * 2;
 
   VideoCaptureCapability tempCaptureCapability;
-  tempCaptureCapability.width = CVPixelBufferGetWidth(videoFrame);
-  tempCaptureCapability.height = CVPixelBufferGetHeight(videoFrame);
+  tempCaptureCapability.width = width;
+  tempCaptureCapability.height = height;
   tempCaptureCapability.maxFPS = _capability.maxFPS;
-  tempCaptureCapability.videoType = VideoType::kNV12;
+  tempCaptureCapability.videoType = VideoType::kUYVY;
 
   _owner->IncomingFrame(baseAddress, frameSize, tempCaptureCapability, 0);
 

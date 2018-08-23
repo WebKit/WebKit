@@ -14,11 +14,7 @@
 #include "rtc_base/fakeclock.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/thread.h"
-#if defined(GTEST_RELATIVE_PATH)
 #include "test/gtest.h"
-#else
-#include "testing/base/public/gunit.h"
-#endif
 
 // Wait until "ex" is true, or "timeout" expires.
 #define WAIT(ex, timeout)                                       \
@@ -101,23 +97,23 @@
 // Wait until "ex" is true, or "timeout" expires, using fake clock where
 // messages are processed every millisecond.
 // TODO(pthatcher): Allow tests to control how many milliseconds to advance.
-#define SIMULATED_WAIT(ex, timeout, clock)                    \
-  for (int64_t start = rtc::TimeMillis();                     \
-       !(ex) && rtc::TimeMillis() < start + (timeout);) {     \
-    (clock).AdvanceTime(rtc::TimeDelta::FromMilliseconds(1)); \
+#define SIMULATED_WAIT(ex, timeout, clock)                \
+  for (int64_t start = rtc::TimeMillis();                 \
+       !(ex) && rtc::TimeMillis() < start + (timeout);) { \
+    (clock).AdvanceTime(webrtc::TimeDelta::ms(1));        \
   }
 
 // This returns the result of the test in res, so that we don't re-evaluate
 // the expression in the XXXX_WAIT macros below, since that causes problems
 // when the expression is only true the first time you check it.
-#define SIMULATED_WAIT_(ex, timeout, res, clock)                \
-  do {                                                          \
-    int64_t start = rtc::TimeMillis();                          \
-    res = (ex);                                                 \
-    while (!res && rtc::TimeMillis() < start + (timeout)) {     \
-      (clock).AdvanceTime(rtc::TimeDelta::FromMilliseconds(1)); \
-      res = (ex);                                               \
-    }                                                           \
+#define SIMULATED_WAIT_(ex, timeout, res, clock)            \
+  do {                                                      \
+    int64_t start = rtc::TimeMillis();                      \
+    res = (ex);                                             \
+    while (!res && rtc::TimeMillis() < start + (timeout)) { \
+      (clock).AdvanceTime(webrtc::TimeDelta::ms(1));        \
+      res = (ex);                                           \
+    }                                                       \
   } while (0)
 
 // The typical EXPECT_XXXX, but done until true or a timeout with a fake clock.
@@ -156,5 +152,17 @@
       goto GTEST_CONCAT_TOKEN_(gunit_label_, __LINE__);  \
   } else                                                 \
     GTEST_CONCAT_TOKEN_(gunit_label_, __LINE__) : ASSERT_EQ(v1, v2)
+
+// Usage: EXPECT_PRED_FORMAT2(AssertStartsWith, str, "prefix");
+testing::AssertionResult AssertStartsWith(const char* str_expr,
+                                          const char* prefix_expr,
+                                          const std::string& str,
+                                          const std::string& prefix);
+
+// Usage: EXPECT_PRED_FORMAT2(AssertStringContains, str, "substring");
+testing::AssertionResult AssertStringContains(const char* str_expr,
+                                              const char* substr_expr,
+                                              const std::string& str,
+                                              const std::string& substr);
 
 #endif  // RTC_BASE_GUNIT_H_

@@ -37,8 +37,10 @@ class AudioConverter {
   // capacity of |dst_capacity|. Both point to a series of buffers containing
   // the samples for each channel. The sizes must correspond to the format
   // passed to Create().
-  virtual void Convert(const float* const* src, size_t src_size,
-                       float* const* dst, size_t dst_capacity) = 0;
+  virtual void Convert(const float* const* src,
+                       size_t src_size,
+                       float* const* dst,
+                       size_t dst_capacity) = 0;
 
   size_t src_channels() const { return src_channels_; }
   size_t src_frames() const { return src_frames_; }
@@ -47,7 +49,9 @@ class AudioConverter {
 
  protected:
   AudioConverter();
-  AudioConverter(size_t src_channels, size_t src_frames, size_t dst_channels,
+  AudioConverter(size_t src_channels,
+                 size_t src_frames,
+                 size_t dst_channels,
                  size_t dst_frames);
 
   // Helper to RTC_CHECK that inputs are correctly sized.

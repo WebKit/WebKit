@@ -13,6 +13,8 @@
 
 #include "modules/rtp_rtcp/include/receive_statistics.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <map>
 #include <vector>
@@ -29,19 +31,17 @@ class StreamStatisticianImpl : public StreamStatistician {
                          Clock* clock,
                          RtcpStatisticsCallback* rtcp_callback,
                          StreamDataCountersCallback* rtp_callback);
-  virtual ~StreamStatisticianImpl() {}
+  ~StreamStatisticianImpl() override;
 
-  // |reset| here and in next method restarts calculation of fraction_lost stat.
-  bool GetStatistics(RtcpStatistics* statistics, bool reset) override;
+  bool GetStatistics(RtcpStatistics* statistics,
+                     bool update_fraction_lost) override;
   bool GetActiveStatisticsAndReset(RtcpStatistics* statistics);
   void GetDataCounters(size_t* bytes_received,
                        uint32_t* packets_received) const override;
   void GetReceiveStreamDataCounters(
       StreamDataCounters* data_counters) const override;
   uint32_t BitrateReceived() const override;
-  bool IsRetransmitOfOldPacket(const RTPHeader& header,
-                               int64_t min_rtt) const override;
-  bool IsPacketInOrder(uint16_t sequence_number) const override;
+  bool IsRetransmitOfOldPacket(const RTPHeader& header) const override;
 
   void IncomingPacket(const RTPHeader& rtp_header,
                       size_t packet_length,
@@ -50,13 +50,15 @@ class StreamStatisticianImpl : public StreamStatistician {
   void SetMaxReorderingThreshold(int max_reordering_threshold);
 
  private:
-  bool InOrderPacketInternal(uint16_t sequence_number) const;
-  RtcpStatistics CalculateRtcpStatistics()
+  bool InOrderPacketInternal(uint16_t sequence_number) const
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(stream_lock_);
+  RtcpStatistics CalculateRtcpStatistics(bool update_fraction_lost)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(stream_lock_);
   void UpdateJitter(const RTPHeader& header, NtpTime receive_time);
   StreamDataCounters UpdateCounters(const RTPHeader& rtp_header,
                                     size_t packet_length,
-                                    bool retransmitted);
+                                    bool retransmitted)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(stream_lock_);
 
   const uint32_t ssrc_;
   Clock* const clock_;
@@ -66,7 +68,6 @@ class StreamStatisticianImpl : public StreamStatistician {
 
   // Stats on received RTP packets.
   uint32_t jitter_q4_;
-  uint32_t cumulative_loss_;
 
   int64_t last_receive_time_ms_;
   NtpTime last_receive_time_ntp_;
@@ -77,13 +78,12 @@ class StreamStatisticianImpl : public StreamStatistician {
 
   // Current counter values.
   size_t received_packet_overhead_;
-  StreamDataCounters receive_counters_;
+  StreamDataCounters receive_counters_ RTC_GUARDED_BY(stream_lock_);
 
-  // Counter values when we sent the last report.
-  uint32_t last_report_inorder_packets_;
-  uint32_t last_report_old_packets_;
-  uint16_t last_report_seq_max_;
-  RtcpStatistics last_reported_statistics_;
+  // Used to calculate fraction_lost between reports.
+  uint32_t last_report_received_packets_ = 0;
+  uint32_t last_report_extended_seq_max_ = 0;
+  uint8_t last_fraction_lost_ = 0;
 
   // stream_lock_ shouldn't be held when calling callbacks.
   RtcpStatisticsCallback* const rtcp_callback_;
@@ -96,7 +96,7 @@ class ReceiveStatisticsImpl : public ReceiveStatistics,
  public:
   explicit ReceiveStatisticsImpl(Clock* clock);
 
-  ~ReceiveStatisticsImpl();
+  ~ReceiveStatisticsImpl() override;
 
   // Implement ReceiveStatisticsProvider.
   std::vector<rtcp::ReportBlock> RtcpReportBlocks(size_t max_blocks) override;

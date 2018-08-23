@@ -18,9 +18,9 @@
  *
  */
 
-#include "bandwidth_estimator.h"
+#include "modules/audio_coding/codecs/isac/fix/source/bandwidth_estimator.h"
 
-#include "settings.h"
+#include "modules/audio_coding/codecs/isac/fix/source/settings.h"
 #include "rtc_base/checks.h"
 
 /* array of quantization levels for bottle neck info; Matlab code: */

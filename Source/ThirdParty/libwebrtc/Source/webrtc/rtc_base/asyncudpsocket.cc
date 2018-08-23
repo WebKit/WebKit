@@ -16,9 +16,8 @@ namespace rtc {
 
 static const int BUF_SIZE = 64 * 1024;
 
-AsyncUDPSocket* AsyncUDPSocket::Create(
-    AsyncSocket* socket,
-    const SocketAddress& bind_address) {
+AsyncUDPSocket* AsyncUDPSocket::Create(AsyncSocket* socket,
+                                       const SocketAddress& bind_address) {
   std::unique_ptr<AsyncSocket> owned_socket(socket);
   if (socket->Bind(bind_address) < 0) {
     RTC_LOG(LS_ERROR) << "Bind() failed with error " << socket->GetError();
@@ -36,8 +35,7 @@ AsyncUDPSocket* AsyncUDPSocket::Create(SocketFactory* factory,
   return Create(socket, bind_address);
 }
 
-AsyncUDPSocket::AsyncUDPSocket(AsyncSocket* socket)
-    : socket_(socket) {
+AsyncUDPSocket::AsyncUDPSocket(AsyncSocket* socket) : socket_(socket) {
   size_ = BUF_SIZE;
   buf_ = new char[size_];
 
@@ -47,7 +45,7 @@ AsyncUDPSocket::AsyncUDPSocket(AsyncSocket* socket)
 }
 
 AsyncUDPSocket::~AsyncUDPSocket() {
-  delete [] buf_;
+  delete[] buf_;
 }
 
 SocketAddress AsyncUDPSocket::GetLocalAddress() const {
@@ -58,18 +56,25 @@ SocketAddress AsyncUDPSocket::GetRemoteAddress() const {
   return socket_->GetRemoteAddress();
 }
 
-int AsyncUDPSocket::Send(const void *pv, size_t cb,
+int AsyncUDPSocket::Send(const void* pv,
+                         size_t cb,
                          const rtc::PacketOptions& options) {
-  rtc::SentPacket sent_packet(options.packet_id, rtc::TimeMillis());
+  rtc::SentPacket sent_packet(options.packet_id, rtc::TimeMillis(),
+                              options.info_signaled_after_sent);
+  CopySocketInformationToPacketInfo(cb, *this, false, &sent_packet.info);
   int ret = socket_->Send(pv, cb);
   SignalSentPacket(this, sent_packet);
   return ret;
 }
 
-int AsyncUDPSocket::SendTo(const void *pv, size_t cb,
+int AsyncUDPSocket::SendTo(const void* pv,
+                           size_t cb,
                            const SocketAddress& addr,
                            const rtc::PacketOptions& options) {
-  rtc::SentPacket sent_packet(options.packet_id, rtc::TimeMillis());
+  rtc::SentPacket sent_packet(options.packet_id, rtc::TimeMillis(),
+                              options.info_signaled_after_sent);
+  CopySocketInformationToPacketInfo(cb, *this, true, &sent_packet.info);
+  sent_packet.info.remote_socket_address = addr;
   int ret = socket_->SendTo(pv, cb, addr);
   SignalSentPacket(this, sent_packet);
   return ret;
@@ -112,8 +117,7 @@ void AsyncUDPSocket::OnReadEvent(AsyncSocket* socket) {
     // TODO: Do something better like forwarding the error to the user.
     SocketAddress local_addr = socket_->GetLocalAddress();
     RTC_LOG(LS_INFO) << "AsyncUDPSocket[" << local_addr.ToSensitiveString()
-                     << "] "
-                     << "receive failed with error " << socket_->GetError();
+                     << "] receive failed with error " << socket_->GetError();
     return;
   }
 

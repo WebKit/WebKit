@@ -10,6 +10,7 @@
 
 package org.webrtc;
 
+import javax.annotation.Nullable;
 import org.webrtc.EncodedImage;
 
 /**
@@ -93,14 +94,41 @@ public interface VideoEncoder {
   /** Settings for WebRTC quality based scaling. */
   public class ScalingSettings {
     public final boolean on;
-    public final Integer low;
-    public final Integer high;
+    @Nullable public final Integer low;
+    @Nullable public final Integer high;
 
+    /**
+     * Settings to disable quality based scaling.
+     */
+    public static final ScalingSettings OFF = new ScalingSettings();
+
+    /**
+     * Creates settings to enable quality based scaling.
+     *
+     * @param low Average QP at which to scale up the resolution.
+     * @param high Average QP at which to scale down the resolution.
+     */
+    public ScalingSettings(int low, int high) {
+      this.on = true;
+      this.low = low;
+      this.high = high;
+    }
+
+    private ScalingSettings() {
+      this.on = false;
+      this.low = null;
+      this.high = null;
+    }
+
+    // TODO(bugs.webrtc.org/8830): Below constructors are deprecated.
+    // Default thresholds are going away, so thresholds have to be set
+    // when scaling is on.
     /**
      * Creates quality based scaling setting.
      *
      * @param on True if quality scaling is turned on.
      */
+    @Deprecated
     public ScalingSettings(boolean on) {
       this.on = on;
       this.low = null;
@@ -114,16 +142,55 @@ public interface VideoEncoder {
      * @param low Average QP at which to scale up the resolution.
      * @param high Average QP at which to scale down the resolution.
      */
+    @Deprecated
     public ScalingSettings(boolean on, int low, int high) {
       this.on = on;
       this.low = low;
       this.high = high;
     }
+
+    @Override
+    public String toString() {
+      return on ? "[ " + low + ", " + high + " ]" : "OFF";
+    }
   }
 
   public interface Callback {
-    /** Call to return an encoded frame. */
+    /**
+     * Call to return an encoded frame. It is safe to assume the byte buffer held by |frame| is not
+     * accessed after the call to this method returns.
+     */
     void onEncodedFrame(EncodedImage frame, CodecSpecificInfo info);
+  }
+
+  /**
+   * The encoder implementation backing this interface is either 1) a Java
+   * encoder (e.g., an Android platform encoder), or alternatively 2) a native
+   * encoder (e.g., a software encoder or a C++ encoder adapter).
+   *
+   * For case 1), createNativeVideoEncoder() should return zero.
+   * In this case, we expect the native library to call the encoder through
+   * JNI using the Java interface declared below.
+   *
+   * For case 2), createNativeVideoEncoder() should return a non-zero value.
+   * In this case, we expect the native library to treat the returned value as
+   * a raw pointer of type webrtc::VideoEncoder* (ownership is transferred to
+   * the caller). The native library should then directly call the
+   * webrtc::VideoEncoder interface without going through JNI. All calls to
+   * the Java interface methods declared below should thus throw an
+   * UnsupportedOperationException.
+   */
+  @CalledByNative
+  default long createNativeVideoEncoder() {
+    return 0;
+  }
+
+  /**
+   * Returns true if the encoder is backed by hardware.
+   */
+  @CalledByNative
+  default boolean isHardwareEncoder() {
+    return true;
   }
 
   /**

@@ -19,15 +19,17 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_LPC_SHAPE_SWB16_TABLES_H_
 #define MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_LPC_SHAPE_SWB16_TABLES_H_
 
-#include "settings.h"
-#include "typedefs.h"  // NOLINT(build/include)
+#include <stdint.h>
+
+#include "modules/audio_coding/codecs/isac/main/source/settings.h"
 
 extern const double WebRtcIsac_kMeanLarUb16[UB_LPC_ORDER];
 
-extern const double WebRtcIsac_kIintraVecDecorrMatUb16[UB_LPC_ORDER][UB_LPC_ORDER];
+extern const double WebRtcIsac_kIintraVecDecorrMatUb16[UB_LPC_ORDER]
+                                                      [UB_LPC_ORDER];
 
-extern const double WebRtcIsac_kInterVecDecorrMatUb16
-[UB16_LPC_VEC_PER_FRAME][UB16_LPC_VEC_PER_FRAME];
+extern const double WebRtcIsac_kInterVecDecorrMatUb16[UB16_LPC_VEC_PER_FRAME]
+                                                     [UB16_LPC_VEC_PER_FRAME];
 
 extern const uint16_t WebRtcIsac_kLpcShapeCdfVec01Ub16[14];
 
@@ -61,18 +63,19 @@ extern const uint16_t WebRtcIsac_kLpcShapeCdfVec01Ub165[34];
 
 extern const uint16_t WebRtcIsac_kLpcShapeCdfVec01Ub166[71];
 
-extern const uint16_t* WebRtcIsac_kLpcShapeCdfMatUb16
-[UB_LPC_ORDER * UB16_LPC_VEC_PER_FRAME];
+extern const uint16_t*
+    WebRtcIsac_kLpcShapeCdfMatUb16[UB_LPC_ORDER * UB16_LPC_VEC_PER_FRAME];
 
-extern const double WebRtcIsac_kLpcShapeLeftRecPointUb16
-[UB_LPC_ORDER * UB16_LPC_VEC_PER_FRAME];
+extern const double
+    WebRtcIsac_kLpcShapeLeftRecPointUb16[UB_LPC_ORDER * UB16_LPC_VEC_PER_FRAME];
 
-extern const int16_t WebRtcIsac_kLpcShapeNumRecPointUb16
-[UB_LPC_ORDER * UB16_LPC_VEC_PER_FRAME];
+extern const int16_t
+    WebRtcIsac_kLpcShapeNumRecPointUb16[UB_LPC_ORDER * UB16_LPC_VEC_PER_FRAME];
 
-extern const uint16_t WebRtcIsac_kLpcShapeEntropySearchUb16
-[UB_LPC_ORDER * UB16_LPC_VEC_PER_FRAME];
+extern const uint16_t
+    WebRtcIsac_kLpcShapeEntropySearchUb16[UB_LPC_ORDER *
+                                          UB16_LPC_VEC_PER_FRAME];
 
 extern const double WebRtcIsac_kLpcShapeQStepSizeUb16;
 
-#endif // MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_LPC_SHAPE_SWB16_TABLES_H_
+#endif  // MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_LPC_SHAPE_SWB16_TABLES_H_

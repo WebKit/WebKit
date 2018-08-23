@@ -8,17 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-
 /*
- * This header file includes the VAD API calls. Specific function calls are given below.
+ * This header file includes the VAD API calls. Specific function calls are
+ * given below.
  */
 
 #ifndef COMMON_AUDIO_VAD_INCLUDE_WEBRTC_VAD_H_  // NOLINT
 #define COMMON_AUDIO_VAD_INCLUDE_WEBRTC_VAD_H_
 
 #include <stddef.h>
-
-#include "typedefs.h"  // NOLINT(build/include)
+#include <stdint.h>
 
 typedef struct WebRtcVadInst VadInst;
 
@@ -67,7 +66,9 @@ int WebRtcVad_set_mode(VadInst* handle, int mode);
 // returns              : 1 - (Active Voice),
 //                        0 - (Non-active Voice),
 //                       -1 - (Error)
-int WebRtcVad_Process(VadInst* handle, int fs, const int16_t* audio_frame,
+int WebRtcVad_Process(VadInst* handle,
+                      int fs,
+                      const int16_t* audio_frame,
                       size_t frame_length);
 
 // Checks for valid combinations of |rate| and |frame_length|. We support 10,

@@ -14,7 +14,7 @@
 #include <fstream>
 #include <string>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
 #include "rtc_base/constructormagic.h"
 
 #include "rtc_base/ignore_wundef.h"
@@ -40,7 +40,7 @@ class ConfigReader {
   explicit ConfigReader(const std::string& config_file_path);
   ~ConfigReader();
 
-  rtc::Optional<Config> GetNextConfig();
+  absl::optional<Config> GetNextConfig();
 
  private:
   NetworkTesterAllConfigs proto_all_configs_;

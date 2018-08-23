@@ -18,12 +18,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RTCEAGLVideoView;
+
 RTC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCEAGLVideoViewDelegate")))
-@protocol RTCEAGLVideoViewDelegate
-
-- (void)videoView:(RTCEAGLVideoView *)videoView didChangeVideoSize:(CGSize)size;
-
+@protocol RTCEAGLVideoViewDelegate <RTCVideoViewDelegate>
 @end
 
 /**
@@ -31,10 +28,10 @@ __attribute__((objc_runtime_name("WK_RTCEAGLVideoViewDelegate")))
  * bounds using OpenGLES 2.0 or OpenGLES 3.0.
  */
 RTC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCEAGLVideoView")))
+NS_EXTENSION_UNAVAILABLE_IOS("Rendering not available in app extensions.")
 @interface RTCEAGLVideoView : UIView <RTCVideoRenderer>
 
-@property(nonatomic, weak) id<RTCEAGLVideoViewDelegate> delegate;
+@property(nonatomic, weak) id<RTCVideoViewDelegate> delegate;
 
 - (instancetype)initWithFrame:(CGRect)frame
                        shader:(id<RTCVideoViewShading>)shader NS_DESIGNATED_INITIALIZER;

@@ -215,20 +215,6 @@ class OrtcFactoryInterface {
     return CreateAudioSource(cricket::AudioOptions());
   }
 
-  // Creates a video source object wrapping and taking ownership of |capturer|.
-  //
-  // |constraints| can be used for selection of resolution and frame rate, and
-  // may be null if no constraints are desired.
-  virtual rtc::scoped_refptr<VideoTrackSourceInterface> CreateVideoSource(
-      std::unique_ptr<cricket::VideoCapturer> capturer,
-      const MediaConstraintsInterface* constraints) = 0;
-
-  // Version of the above method that omits |constraints|.
-  rtc::scoped_refptr<VideoTrackSourceInterface> CreateVideoSource(
-      std::unique_ptr<cricket::VideoCapturer> capturer) {
-    return CreateVideoSource(std::move(capturer), nullptr);
-  }
-
   // Creates a new local video track wrapping |source|. The same |source| can
   // be used in several tracks.
   virtual rtc::scoped_refptr<VideoTrackInterface> CreateVideoTrack(

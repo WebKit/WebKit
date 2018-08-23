@@ -1,0 +1,117 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+config("bwe_test_logging") {
+  if (rtc_enable_bwe_test_logging) {
+    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=1" ]
+  } else {
+    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=0" ]
+  }
+}
+
+rtc_static_library("congestion_controller") {
+  visibility = [ "*" ]
+  configs += [ ":bwe_test_logging" ]
+  sources = [
+    "include/send_side_congestion_controller.h",
+    "pacer_controller.cc",
+    "pacer_controller.h",
+    "send_side_congestion_controller.cc",
+  ]
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+
+  deps = [
+    ":transport_feedback",
+    "../:congestion_controller",
+    "../..:module_api",
+    "../../..:webrtc_common",
+    "../../../api/transport:network_control",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rate_limiter",
+    "../../../rtc_base:rtc_task_queue_api",
+    "../../../rtc_base:safe_minmax",
+    "../../../rtc_base:sequenced_task_checker",
+    "../../../rtc_base/experiments:congestion_controller_experiment",
+    "../../../system_wrappers",
+    "../../../system_wrappers:field_trial_api",
+    "../../../system_wrappers:metrics_api",
+    "../../../system_wrappers:runtime_enabled_features_api",
+    "../../pacing",
+    "../../remote_bitrate_estimator",
+    "../../rtp_rtcp:rtp_rtcp_format",
+    "../goog_cc",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+
+  if (!build_with_mozilla) {
+    deps += [ "../../../rtc_base:rtc_base" ]
+  }
+}
+
+rtc_static_library("transport_feedback") {
+  visibility = [ "*" ]
+  sources = [
+    "send_time_history.cc",
+    "send_time_history.h",
+    "transport_feedback_adapter.cc",
+    "transport_feedback_adapter.h",
+  ]
+
+  deps = [
+    "../..:module_api",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../system_wrappers",
+    "../../rtp_rtcp:rtp_rtcp_format",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("congestion_controller_unittests") {
+    testonly = true
+
+    sources = [
+      "congestion_controller_unittests_helper.cc",
+      "congestion_controller_unittests_helper.h",
+      "send_side_congestion_controller_unittest.cc",
+      "send_time_history_unittest.cc",
+      "transport_feedback_adapter_unittest.cc",
+    ]
+    deps = [
+      ":congestion_controller",
+      ":transport_feedback",
+      "../:congestion_controller",
+      "../:mock_congestion_controller",
+      "../../../api/transport:network_control",
+      "../../../logging:mocks",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:rtc_base",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../rtc_base:rtc_base_tests_utils",
+      "../../../system_wrappers",
+      "../../../test:field_trial",
+      "../../../test:test_support",
+      "../../bitrate_controller:mocks",
+      "../../pacing:mock_paced_sender",
+      "../../pacing:pacing",
+      "../../remote_bitrate_estimator:remote_bitrate_estimator",
+      "../../rtp_rtcp:rtp_rtcp_format",
+      "//testing/gmock",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+}

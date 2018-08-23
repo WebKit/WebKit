@@ -12,7 +12,6 @@
 #define RTC_BASE_ONETIMEEVENT_H_
 
 #include "rtc_base/criticalsection.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 // Provides a simple way to perform an operation (such as logging) one

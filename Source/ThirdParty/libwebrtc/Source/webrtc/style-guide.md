@@ -20,6 +20,40 @@ both.
 [chr-style]: https://chromium.googlesource.com/chromium/src/+/HEAD/styleguide/c++/c++.md
 [goog-style]: https://google.github.io/styleguide/cppguide.html
 
+### C++ version
+
+WebRTC is written in C++11, but with some restrictions:
+
+* We only allow the subset of C++11 (language and library) in the
+  “allowed” section of [this Chromium page][chromium-cpp11].
+* We only allow the subset of C++11 that is also valid C++14;
+  otherwise, users would not be able to compile WebRTC in C++14 mode.
+
+[chromium-cpp11]: https://chromium-cpp.appspot.com/
+
+### <a name="h-cc-pairs"></a>`.h` and `.cc` files come in pairs
+
+`.h` and `.cc` files should come in pairs, with the same name (except
+for the file type suffix), in the same directory, in the same build
+target.
+
+* If a declaration in `path/to/foo.h` has a definition in some `.cc`
+  file, it should be in `path/to/foo.cc`.
+* If a definition in `path/to/foo.cc` file has a declaration in some
+  `.h` file, it should be in `path/to/foo.h`.
+* Omit the `.cc` file if it would have been empty, but still list the
+  `.h` file in a build target.
+* Omit the `.h` file if it would have been empty. (This can happen
+  with unit test `.cc` files, and with `.cc` files that define
+  `main`.)
+
+This makes the source code easier to navigate and organize, and
+precludes some questionable build system practices such as having
+build targets that don’t pull in definitions for everything they
+declare.
+
+[Examples and exceptions](style-guide/h-cc-pairs.md).
+
 ### ArrayView
 
 When passing an array of values to a function, use `rtc::ArrayView`
@@ -34,7 +68,7 @@ instead of                          | use
 `const T* ptr, size_t num_elements` | `ArrayView<const T>`
 `T* ptr, size_t num_elements`       | `ArrayView<T>`
 
-See [the source](webrtc/api/array_view.h) for more detailed docs.
+See [the source](api/array_view.h) for more detailed docs.
 
 ### sigslot
 
@@ -74,6 +108,26 @@ implements the signal. It may:
   ```
   sigslot::signal<int>& SignalFoo() { return bar_.SignalFoo(); }
   ```
+
+### std::bind
+
+Don’t use `std::bind`—there are pitfalls, and lambdas are almost as
+succinct and already familiar to modern C++ programmers.
+
+### std::function
+
+`std::function` is allowed, but remember that it’s not the right tool
+for every occasion. Prefer to use interfaces when that makes sense,
+and consider `rtc::FunctionView` for cases where the callee will not
+save the function object.
+
+### Forward declarations
+
+WebRTC follows the [Google][goog-forward-declarations] C++ style guide
+with respect to forward declarations. In summary: avoid using forward
+declarations where possible; just `#include` the headers you need.
+
+[goog-forward-declarations]: https://google.github.io/styleguide/cppguide.html#Forward_Declarations
 
 ## **C**
 

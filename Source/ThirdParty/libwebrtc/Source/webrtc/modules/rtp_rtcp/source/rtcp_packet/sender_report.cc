@@ -21,6 +21,7 @@ namespace webrtc {
 namespace rtcp {
 constexpr uint8_t SenderReport::kPacketType;
 constexpr size_t SenderReport::kMaxNumberOfReportBlocks;
+constexpr size_t SenderReport::kSenderBaseLength;
 //    Sender report (SR) (RFC 3550).
 //     0                   1                   2                   3
 //     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -46,6 +47,10 @@ SenderReport::SenderReport()
       sender_packet_count_(0),
       sender_octet_count_(0) {}
 
+SenderReport::SenderReport(const SenderReport&) = default;
+SenderReport::SenderReport(SenderReport&&) = default;
+SenderReport& SenderReport::operator=(const SenderReport&) = default;
+SenderReport& SenderReport::operator=(SenderReport&&) = default;
 SenderReport::~SenderReport() = default;
 
 bool SenderReport::Parse(const CommonHeader& packet) {

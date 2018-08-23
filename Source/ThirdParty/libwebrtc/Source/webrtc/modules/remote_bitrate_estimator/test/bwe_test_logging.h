@@ -132,57 +132,56 @@
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/criticalsection.h"
 
-#define BWE_TEST_LOGGING_GLOBAL_CONTEXT(name) \
-    do { \
-      webrtc::testing::bwe::Logging::GetInstance()->SetGlobalContext(name); \
-    } while (0)
+#define BWE_TEST_LOGGING_GLOBAL_CONTEXT(name)                             \
+  do {                                                                    \
+    webrtc::testing::bwe::Logging::GetInstance()->SetGlobalContext(name); \
+  } while (0)
 
-#define BWE_TEST_LOGGING_GLOBAL_ENABLE(enabled) \
-    do { \
-      webrtc::testing::bwe::Logging::GetInstance()->SetGlobalEnable(enabled); \
-    } while (0)
+#define BWE_TEST_LOGGING_GLOBAL_ENABLE(enabled)                             \
+  do {                                                                      \
+    webrtc::testing::bwe::Logging::GetInstance()->SetGlobalEnable(enabled); \
+  } while (0)
 
-#define __BWE_TEST_LOGGING_CONTEXT_NAME(ctx, line) ctx ## line
+#define __BWE_TEST_LOGGING_CONTEXT_NAME(ctx, line) ctx##line
 #define __BWE_TEST_LOGGING_CONTEXT_DECLARE(ctx, line, name, time, enabled) \
-    webrtc::testing::bwe::Logging::Context \
-        __BWE_TEST_LOGGING_CONTEXT_NAME(ctx, line)(name, time, enabled)
+  webrtc::testing::bwe::Logging::Context __BWE_TEST_LOGGING_CONTEXT_NAME(  \
+      ctx, line)(name, time, enabled)
 
 #define BWE_TEST_LOGGING_CONTEXT(name) \
-    __BWE_TEST_LOGGING_CONTEXT_DECLARE(__bwe_log_, __LINE__, name, -1, true)
-#define BWE_TEST_LOGGING_ENABLE(enabled) \
-    __BWE_TEST_LOGGING_CONTEXT_DECLARE(__bwe_log_, __LINE__, "", -1, \
-                                       static_cast<bool>(enabled))
-#define BWE_TEST_LOGGING_TIME(time) \
-    __BWE_TEST_LOGGING_CONTEXT_DECLARE(__bwe_log_, __LINE__, "", \
-                                       static_cast<int64_t>(time), true)
+  __BWE_TEST_LOGGING_CONTEXT_DECLARE(__bwe_log_, __LINE__, name, -1, true)
+#define BWE_TEST_LOGGING_ENABLE(enabled)                           \
+  __BWE_TEST_LOGGING_CONTEXT_DECLARE(__bwe_log_, __LINE__, "", -1, \
+                                     static_cast<bool>(enabled))
+#define BWE_TEST_LOGGING_TIME(time)                            \
+  __BWE_TEST_LOGGING_CONTEXT_DECLARE(__bwe_log_, __LINE__, "", \
+                                     static_cast<int64_t>(time), true)
 
-#define BWE_TEST_LOGGING_LOG1(name, format, _1) \
-    do { \
-      BWE_TEST_LOGGING_CONTEXT(name); \
-      webrtc::testing::bwe::Logging::GetInstance()->Log(format, _1); \
-    } while (0)
-#define BWE_TEST_LOGGING_LOG2(name, format, _1, _2) \
-    do { \
-      BWE_TEST_LOGGING_CONTEXT(name); \
-      webrtc::testing::bwe::Logging::GetInstance()->Log(format, _1, _2); \
-    } while (0)
-#define BWE_TEST_LOGGING_LOG3(name, format, _1, _2, _3) \
-    do { \
-      BWE_TEST_LOGGING_CONTEXT(name); \
-      webrtc::testing::bwe::Logging::GetInstance()->Log(format, _1, _2, _3); \
-    } while (0)
-#define BWE_TEST_LOGGING_LOG4(name, format, _1, _2, _3, _4) \
-    do { \
-      BWE_TEST_LOGGING_CONTEXT(name); \
-      webrtc::testing::bwe::Logging::GetInstance()->Log(format, _1, _2, _3, \
-                                                        _4); \
-    } while (0)
-#define BWE_TEST_LOGGING_LOG5(name, format, _1, _2, _3, _4, _5) \
-    do {\
-      BWE_TEST_LOGGING_CONTEXT(name); \
-      webrtc::testing::bwe::Logging::GetInstance()->Log(format, _1, _2, _3, \
-                                                        _4, _5); \
-    } while (0)
+#define BWE_TEST_LOGGING_LOG1(name, format, _1)                    \
+  do {                                                             \
+    BWE_TEST_LOGGING_CONTEXT(name);                                \
+    webrtc::testing::bwe::Logging::GetInstance()->Log(format, _1); \
+  } while (0)
+#define BWE_TEST_LOGGING_LOG2(name, format, _1, _2)                    \
+  do {                                                                 \
+    BWE_TEST_LOGGING_CONTEXT(name);                                    \
+    webrtc::testing::bwe::Logging::GetInstance()->Log(format, _1, _2); \
+  } while (0)
+#define BWE_TEST_LOGGING_LOG3(name, format, _1, _2, _3)                    \
+  do {                                                                     \
+    BWE_TEST_LOGGING_CONTEXT(name);                                        \
+    webrtc::testing::bwe::Logging::GetInstance()->Log(format, _1, _2, _3); \
+  } while (0)
+#define BWE_TEST_LOGGING_LOG4(name, format, _1, _2, _3, _4)                    \
+  do {                                                                         \
+    BWE_TEST_LOGGING_CONTEXT(name);                                            \
+    webrtc::testing::bwe::Logging::GetInstance()->Log(format, _1, _2, _3, _4); \
+  } while (0)
+#define BWE_TEST_LOGGING_LOG5(name, format, _1, _2, _3, _4, _5)               \
+  do {                                                                        \
+    BWE_TEST_LOGGING_CONTEXT(name);                                           \
+    webrtc::testing::bwe::Logging::GetInstance()->Log(format, _1, _2, _3, _4, \
+                                                      _5);                    \
+  } while (0)
 
 #define BWE_TEST_LOGGING_PLOT(figure, name, time, value)                     \
   do {                                                                       \
@@ -266,6 +265,7 @@ class Logging {
     Context(const std::string& name, int64_t timestamp_ms, bool enabled);
     Context(const char* name, int64_t timestamp_ms, bool enabled);
     ~Context();
+
    private:
     RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(Context);
   };
@@ -281,7 +281,8 @@ class Logging {
   // Note: Implicit |this| argument counts as the first argument.
   __attribute__((__format__(__printf__, 2, 3)))
 #endif
-  void Log(const char format[], ...);
+  void
+  Log(const char format[], ...);
   void Plot(int figure, const std::string& name, double value);
   void Plot(int figure,
             const std::string& name,
@@ -331,13 +332,17 @@ class Logging {
     bool enabled;
   };
   struct ThreadState {
+    ThreadState();
+    ~ThreadState();
     State global_state;
     std::stack<State> stack;
   };
   typedef std::map<uint32_t, ThreadState> ThreadMap;
 
   Logging();
-  void PushState(const std::string& append_to_tag, int64_t timestamp_ms,
+  ~Logging();
+  void PushState(const std::string& append_to_tag,
+                 int64_t timestamp_ms,
                  bool enabled);
   void PopState();
 

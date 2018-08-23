@@ -78,7 +78,7 @@ void decompressionOutputCallback(void *decoderRef,
 
 - (instancetype)init {
   if (self = [super init]) {
-#if defined(WEBRTC_IOS)
+#if defined(WEBRTC_IOS) && !defined(RTC_APPRTCMOBILE_BROADCAST_EXTENSION)
     [RTCUIApplicationStatusObserver prepareForUse];
     _error = noErr;
 #endif
@@ -92,16 +92,19 @@ void decompressionOutputCallback(void *decoderRef,
   [self setVideoFormat:nullptr];
 }
 
+- (NSInteger)startDecodeWithNumberOfCores:(int)numberOfCores {
+  return WEBRTC_VIDEO_CODEC_OK;
+}
+
 - (NSInteger)startDecodeWithSettings:(RTCVideoEncoderSettings *)settings
                        numberOfCores:(int)numberOfCores {
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
 - (NSInteger)decode:(RTCEncodedImage *)inputImage
-          missingFrames:(BOOL)missingFrames
-    fragmentationHeader:(RTCRtpFragmentationHeader *)fragmentationHeader
-      codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info
-           renderTimeMs:(int64_t)renderTimeMs {
+        missingFrames:(BOOL)missingFrames
+    codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info
+         renderTimeMs:(int64_t)renderTimeMs {
   RTC_DCHECK(inputImage.buffer);
 
   if (_error != noErr) {
@@ -110,7 +113,7 @@ void decompressionOutputCallback(void *decoderRef,
     return WEBRTC_VIDEO_CODEC_ERROR;
   }
 
-#if defined(WEBRTC_IOS)
+#if defined(WEBRTC_IOS) && !defined(RTC_APPRTCMOBILE_BROADCAST_EXTENSION)
   if (![[RTCUIApplicationStatusObserver sharedInstance] isApplicationActive]) {
     // Ignore all decode requests when app isn't active. In this state, the
     // hardware decoder has been invalidated by the OS.
@@ -120,21 +123,17 @@ void decompressionOutputCallback(void *decoderRef,
     return WEBRTC_VIDEO_CODEC_NO_OUTPUT;
   }
 #endif
-  if (webrtc::H264AnnexBBufferHasVideoFormatDescription((uint8_t *)inputImage.buffer.bytes,
-                                                        inputImage.buffer.length)) {
-    rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> inputFormat =
-        rtc::ScopedCF(webrtc::CreateVideoFormatDescription((uint8_t *)inputImage.buffer.bytes,
-                                                           inputImage.buffer.length));
-    if (inputFormat) {
-      // Check if the video format has changed, and reinitialize decoder if
-      // needed.
-      if (!CMFormatDescriptionEqual(inputFormat.get(), _videoFormat)) {
-        [self setVideoFormat:inputFormat.get()];
-
-        int resetDecompressionSessionError = [self resetDecompressionSession];
-        if (resetDecompressionSessionError != WEBRTC_VIDEO_CODEC_OK) {
-          return resetDecompressionSessionError;
-        }
+  rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> inputFormat =
+      rtc::ScopedCF(webrtc::CreateVideoFormatDescription((uint8_t *)inputImage.buffer.bytes,
+                                                         inputImage.buffer.length));
+  if (inputFormat) {
+    // Check if the video format has changed, and reinitialize decoder if
+    // needed.
+    if (!CMFormatDescriptionEqual(inputFormat.get(), _videoFormat)) {
+      [self setVideoFormat:inputFormat.get()];
+      int resetDecompressionSessionError = [self resetDecompressionSession];
+      if (resetDecompressionSessionError != WEBRTC_VIDEO_CODEC_OK) {
+        return resetDecompressionSessionError;
       }
     }
   }
@@ -236,12 +235,13 @@ void decompressionOutputCallback(void *decoderRef,
     pixelFormat = nullptr;
   }
   VTDecompressionOutputCallbackRecord record = {
-      decompressionOutputCallback, nullptr,
+      decompressionOutputCallback, (__bridge void *)self,
   };
   OSStatus status = VTDecompressionSessionCreate(
       nullptr, _videoFormat, nullptr, attributes, &record, &_decompressionSession);
   CFRelease(attributes);
   if (status != noErr) {
+    RTC_LOG(LS_ERROR) << "Failed to create decompression session: " << status;
     [self destroyDecompressionSession];
     return WEBRTC_VIDEO_CODEC_ERROR;
   }
@@ -260,7 +260,13 @@ void decompressionOutputCallback(void *decoderRef,
 - (void)destroyDecompressionSession {
   if (_decompressionSession) {
 #if defined(WEBRTC_IOS)
+#if !defined(WEBRTC_WEBKIT_BUILD)
+    if ([UIDevice isIOS11OrLater]) {
+      VTDecompressionSessionWaitForAsynchronousFrames(_decompressionSession);
+    }
+#else
     VTDecompressionSessionWaitForAsynchronousFrames(_decompressionSession);
+#endif
 #endif
     VTDecompressionSessionInvalidate(_decompressionSession);
     CFRelease(_decompressionSession);

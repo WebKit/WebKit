@@ -47,9 +47,7 @@ class WPDTree {
   ~WPDTree();
 
   // Returns the number of nodes at any given level.
-  static int NumberOfNodesAtLevel(int level) {
-    return 1 << level;
-  }
+  static int NumberOfNodesAtLevel(int level) { return 1 << level; }
 
   // Returns a pointer to the node at the given level and index(of that level).
   // Level goes from 0 to levels().

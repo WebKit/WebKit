@@ -12,6 +12,7 @@
 
 #include "modules/audio_processing/test/test_utils.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/system/arch.h"
 
 namespace webrtc {
 
@@ -91,9 +92,9 @@ void WriteFloatData(const float* const* data,
   }
   // TODO(aluebs): Use ScaleToInt16Range() from audio_util
   for (size_t i = 0; i < length; ++i) {
-    buffer[i] = buffer[i] > 0 ?
-                buffer[i] * std::numeric_limits<int16_t>::max() :
-                -buffer[i] * std::numeric_limits<int16_t>::min();
+    buffer[i] = buffer[i] > 0
+                    ? buffer[i] * std::numeric_limits<int16_t>::max()
+                    : -buffer[i] * std::numeric_limits<int16_t>::min();
   }
   if (wav_file) {
     wav_file->WriteSamples(buffer.get(), length);
@@ -113,11 +114,10 @@ size_t SamplesFromRate(int rate) {
   return static_cast<size_t>(AudioProcessing::kChunkSizeMs * rate / 1000);
 }
 
-void SetFrameSampleRate(AudioFrame* frame,
-                        int sample_rate_hz) {
+void SetFrameSampleRate(AudioFrame* frame, int sample_rate_hz) {
   frame->sample_rate_hz_ = sample_rate_hz;
-  frame->samples_per_channel_ = AudioProcessing::kChunkSizeMs *
-      sample_rate_hz / 1000;
+  frame->samples_per_channel_ =
+      AudioProcessing::kChunkSizeMs * sample_rate_hz / 1000;
 }
 
 AudioProcessing::ChannelLayout LayoutFromChannels(size_t num_channels) {
@@ -130,29 +130,6 @@ AudioProcessing::ChannelLayout LayoutFromChannels(size_t num_channels) {
       RTC_CHECK(false);
       return AudioProcessing::kMono;
   }
-}
-
-std::vector<Point> ParseArrayGeometry(const std::string& mic_positions) {
-  const std::vector<float> values = ParseList<float>(mic_positions);
-  const size_t num_mics =
-      rtc::CheckedDivExact(values.size(), static_cast<size_t>(3));
-  RTC_CHECK_GT(num_mics, 0) << "mic_positions is not large enough.";
-
-  std::vector<Point> result;
-  result.reserve(num_mics);
-  for (size_t i = 0; i < values.size(); i += 3) {
-    result.push_back(Point(values[i + 0], values[i + 1], values[i + 2]));
-  }
-
-  return result;
-}
-
-std::vector<Point> ParseArrayGeometry(const std::string& mic_positions,
-                                      size_t num_mics) {
-  std::vector<Point> result = ParseArrayGeometry(mic_positions);
-  RTC_CHECK_EQ(result.size(), num_mics)
-      << "Could not parse mic_positions or incorrect number of points.";
-  return result;
 }
 
 }  // namespace webrtc

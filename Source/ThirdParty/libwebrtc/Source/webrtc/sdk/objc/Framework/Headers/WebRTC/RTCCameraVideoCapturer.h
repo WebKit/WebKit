@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
+#import <Foundation/Foundation.h>
 
 #import <WebRTC/RTCMacros.h>
 #import <WebRTC/RTCVideoCapturer.h>
@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 RTC_EXPORT
 // Camera capture that implements RTCVideoCapturer. Delivers frames to a RTCVideoCapturerDelegate
 // (usually RTCVideoSource).
-__attribute__((objc_runtime_name("WK_RTCCameraVideoCapturer")))
+NS_EXTENSION_UNAVAILABLE_IOS("Camera not available in app extensions.")
 @interface RTCCameraVideoCapturer : RTCVideoCapturer
 
 // Capture session that is used for capturing. Valid from initialization to dealloc.
@@ -42,7 +42,7 @@ __attribute__((objc_runtime_name("WK_RTCCameraVideoCapturer")))
                            fps:(NSInteger)fps
              completionHandler:(nullable void (^)(NSError *))completionHandler;
 // Stops the capture session asynchronously and notifies callback on completion.
-- (void)stopCaptureWithCompletionHandler:(nullable void (^)())completionHandler;
+- (void)stopCaptureWithCompletionHandler:(nullable void (^)(void))completionHandler;
 
 // Starts the capture session asynchronously.
 - (void)startCaptureWithDevice:(AVCaptureDevice *)device

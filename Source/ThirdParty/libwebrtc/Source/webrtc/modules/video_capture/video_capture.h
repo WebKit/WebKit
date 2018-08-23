@@ -12,13 +12,13 @@
 #define MODULES_VIDEO_CAPTURE_VIDEO_CAPTURE_H_
 
 #include "api/video/video_rotation.h"
-#include "api/videosinkinterface.h"
+#include "api/video/video_sink_interface.h"
 #include "modules/include/module.h"
 #include "modules/video_capture/video_capture_defines.h"
 
 namespace webrtc {
 
-class VideoCaptureModule: public rtc::RefCountInterface {
+class VideoCaptureModule : public rtc::RefCountInterface {
  public:
   // Interface for receiving information about available camera devices.
   class DeviceInfo {
@@ -32,25 +32,21 @@ class VideoCaptureModule: public rtc::RefCountInterface {
     //                      Otherwise same as deviceNameUTF8.
     // productUniqueIdUTF8 - Unique product id if it exist.
     //                       Null terminated otherwise.
-    virtual int32_t GetDeviceName(
-        uint32_t deviceNumber,
-        char* deviceNameUTF8,
-        uint32_t deviceNameLength,
-        char* deviceUniqueIdUTF8,
-        uint32_t deviceUniqueIdUTF8Length,
-        char* productUniqueIdUTF8 = 0,
-        uint32_t productUniqueIdUTF8Length = 0) = 0;
-
+    virtual int32_t GetDeviceName(uint32_t deviceNumber,
+                                  char* deviceNameUTF8,
+                                  uint32_t deviceNameLength,
+                                  char* deviceUniqueIdUTF8,
+                                  uint32_t deviceUniqueIdUTF8Length,
+                                  char* productUniqueIdUTF8 = 0,
+                                  uint32_t productUniqueIdUTF8Length = 0) = 0;
 
     // Returns the number of capabilities this device.
-    virtual int32_t NumberOfCapabilities(
-        const char* deviceUniqueIdUTF8) = 0;
+    virtual int32_t NumberOfCapabilities(const char* deviceUniqueIdUTF8) = 0;
 
     // Gets the capabilities of the named device.
-    virtual int32_t GetCapability(
-        const char* deviceUniqueIdUTF8,
-        const uint32_t deviceCapabilityNumber,
-        VideoCaptureCapability& capability) = 0;
+    virtual int32_t GetCapability(const char* deviceUniqueIdUTF8,
+                                  const uint32_t deviceCapabilityNumber,
+                                  VideoCaptureCapability& capability) = 0;
 
     // Gets clockwise angle the captured frames should be rotated in order
     // to be displayed correctly on a normally rotated display.
@@ -65,7 +61,7 @@ class VideoCaptureModule: public rtc::RefCountInterface {
         const VideoCaptureCapability& requested,
         VideoCaptureCapability& resulting) = 0;
 
-     // Display OS /capture device specific settings dialog
+    // Display OS /capture device specific settings dialog
     virtual int32_t DisplayCaptureSettingsDialogBox(
         const char* deviceUniqueIdUTF8,
         const char* dialogTitleUTF8,
@@ -78,14 +74,13 @@ class VideoCaptureModule: public rtc::RefCountInterface {
 
   //   Register capture data callback
   virtual void RegisterCaptureDataCallback(
-      rtc::VideoSinkInterface<VideoFrame> *dataCallback) = 0;
+      rtc::VideoSinkInterface<VideoFrame>* dataCallback) = 0;
 
   //  Remove capture data callback
   virtual void DeRegisterCaptureDataCallback() = 0;
 
   // Start capture device
-  virtual int32_t StartCapture(
-      const VideoCaptureCapability& capability) = 0;
+  virtual int32_t StartCapture(const VideoCaptureCapability& capability) = 0;
 
   virtual int32_t StopCapture() = 0;
 
@@ -113,8 +108,8 @@ class VideoCaptureModule: public rtc::RefCountInterface {
   // Return whether the rotation is applied or left pending.
   virtual bool GetApplyRotation() = 0;
 
-protected:
-  virtual ~VideoCaptureModule() {};
+ protected:
+  virtual ~VideoCaptureModule(){};
 };
 
 }  // namespace webrtc

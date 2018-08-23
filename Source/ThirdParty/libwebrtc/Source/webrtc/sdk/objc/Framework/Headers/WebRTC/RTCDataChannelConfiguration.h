@@ -46,7 +46,7 @@ __attribute__((objc_runtime_name("WK_RTCDataChannelConfiguration")))
 @property(nonatomic, assign) int channelId;
 
 /** Set by the application and opaque to the WebRTC implementation. */
-@property(nonatomic) NSString *protocol;
+@property(nonatomic) NSString* protocol;
 
 @end
 

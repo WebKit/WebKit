@@ -1,0 +1,114 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_source_set("block_mean_calculator") {
+  sources = [
+    "block_mean_calculator.cc",
+    "block_mean_calculator.h",
+  ]
+  deps = [
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_source_set("legacy_delay_estimator") {
+  sources = [
+    "delay_estimator.cc",
+    "delay_estimator.h",
+    "delay_estimator_internal.h",
+    "delay_estimator_wrapper.cc",
+    "delay_estimator_wrapper.h",
+  ]
+  deps = [
+    "../../../rtc_base:checks",
+  ]
+}
+
+rtc_source_set("ooura_fft") {
+  sources = [
+    "ooura_fft.cc",
+    "ooura_fft.h",
+    "ooura_fft_tables_common.h",
+  ]
+  deps = [
+    "../../../rtc_base/system:arch",
+    "../../../system_wrappers:cpu_features_api",
+  ]
+  cflags = []
+
+  if (current_cpu == "x86" || current_cpu == "x64") {
+    sources += [
+      "ooura_fft_sse2.cc",
+      "ooura_fft_tables_neon_sse2.h",
+    ]
+    if (is_posix || is_fuchsia) {
+      cflags += [ "-msse2" ]
+    }
+  }
+
+  if (rtc_build_with_neon) {
+    sources += [
+      "ooura_fft_neon.cc",
+      "ooura_fft_tables_neon_sse2.h",
+    ]
+
+    deps += [ "../../../common_audio" ]
+
+    if (current_cpu != "arm64") {
+      # Enable compilation for the NEON instruction set.
+      suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+      cflags += [ "-mfpu=neon" ]
+    }
+
+    # Disable LTO on NEON targets due to compiler bug.
+    # TODO(fdegans): Enable this. See crbug.com/408997.
+    if (rtc_use_lto) {
+      cflags -= [
+        "-flto",
+        "-ffat-lto-objects",
+      ]
+    }
+  }
+
+  if (current_cpu == "mipsel" && mips_float_abi == "hard") {
+    sources += [ "ooura_fft_mips.cc" ]
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("block_mean_calculator_unittest") {
+    testonly = true
+
+    sources = [
+      "block_mean_calculator_unittest.cc",
+    ]
+    deps = [
+      ":block_mean_calculator",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../test:test_support",
+      "//testing/gtest",
+    ]
+  }
+
+  rtc_source_set("legacy_delay_estimator_unittest") {
+    testonly = true
+
+    sources = [
+      "delay_estimator_unittest.cc",
+    ]
+    deps = [
+      ":legacy_delay_estimator",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../test:test_support",
+      "//testing/gtest",
+    ]
+  }
+}

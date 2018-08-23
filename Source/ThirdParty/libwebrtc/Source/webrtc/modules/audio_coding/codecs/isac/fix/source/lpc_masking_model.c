@@ -18,9 +18,10 @@
 #include "lpc_masking_model.h"
 
 #include <limits.h>  /* For LLONG_MAX and LLONG_MIN. */
-#include "codec.h"
-#include "entropy_coding.h"
-#include "settings.h"
+
+#include "modules/audio_coding/codecs/isac/fix/source/codec.h"
+#include "modules/audio_coding/codecs/isac/fix/source/entropy_coding.h"
+#include "modules/audio_coding/codecs/isac/fix/source/settings.h"
 
 /* The conversion is implemented by the step-down algorithm */
 void WebRtcSpl_AToK_JSK(

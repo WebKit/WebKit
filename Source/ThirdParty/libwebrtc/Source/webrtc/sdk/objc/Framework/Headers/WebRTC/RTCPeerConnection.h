@@ -22,12 +22,16 @@
 @class RTCPeerConnectionFactory;
 @class RTCRtpReceiver;
 @class RTCRtpSender;
+@class RTCRtpTransceiver;
+@class RTCRtpTransceiverInit;
 @class RTCSessionDescription;
 @class RTCLegacyStatsReport;
 
+typedef NS_ENUM(NSInteger, RTCRtpMediaType);
+
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString * const kRTCPeerConnectionErrorDomain;
+extern NSString *const kRTCPeerConnectionErrorDomain;
 extern int const kRTCSessionDescriptionErrorCode;
 
 /** Represents the signaling state of the peer connection. */
@@ -69,7 +73,6 @@ typedef NS_ENUM(NSInteger, RTCStatsOutputLevel) {
 @class RTCPeerConnection;
 
 RTC_EXPORT
-__attribute__((objc_runtime_name("WK_RTCPeerConnectionDelegate")))
 @protocol RTCPeerConnectionDelegate <NSObject>
 
 /** Called when the SignalingState changed. */
@@ -77,12 +80,12 @@ __attribute__((objc_runtime_name("WK_RTCPeerConnectionDelegate")))
     didChangeSignalingState:(RTCSignalingState)stateChanged;
 
 /** Called when media is received on a new stream from remote peer. */
-- (void)peerConnection:(RTCPeerConnection *)peerConnection
-          didAddStream:(RTCMediaStream *)stream;
+- (void)peerConnection:(RTCPeerConnection *)peerConnection didAddStream:(RTCMediaStream *)stream;
 
-/** Called when a remote peer closes a stream. */
-- (void)peerConnection:(RTCPeerConnection *)peerConnection
-       didRemoveStream:(RTCMediaStream *)stream;
+/** Called when a remote peer closes a stream.
+ *  This is not called when RTCSdpSemanticsUnifiedPlan is specified.
+ */
+- (void)peerConnection:(RTCPeerConnection *)peerConnection didRemoveStream:(RTCMediaStream *)stream;
 
 /** Called when negotiation is needed, for example ICE has restarted. */
 - (void)peerConnectionShouldNegotiate:(RTCPeerConnection *)peerConnection;
@@ -107,6 +110,20 @@ __attribute__((objc_runtime_name("WK_RTCPeerConnectionDelegate")))
 - (void)peerConnection:(RTCPeerConnection *)peerConnection
     didOpenDataChannel:(RTCDataChannel *)dataChannel;
 
+/** Called when signaling indicates a transceiver will be receiving media from
+ *  the remote endpoint.
+ *  This is only called with RTCSdpSemanticsUnifiedPlan specified.
+ */
+@optional
+- (void)peerConnection:(RTCPeerConnection *)peerConnection
+    didStartReceivingOnTransceiver:(RTCRtpTransceiver *)transceiver;
+
+/** Called when a receiver and its track are created. */
+@optional
+- (void)peerConnection:(RTCPeerConnection *)peerConnection
+        didAddReceiver:(RTCRtpReceiver *)rtpReceiver
+               streams:(NSArray<RTCMediaStream *> *)mediaStreams;
+
 @end
 
 RTC_EXPORT
@@ -117,11 +134,12 @@ __attribute__((objc_runtime_name("WK_RTCPeerConnection")))
  *  streams being added or removed.
  */
 @property(nonatomic, weak, nullable) id<RTCPeerConnectionDelegate> delegate;
+/** This property is not available with RTCSdpSemanticsUnifiedPlan. Please use
+ *  |senders| instead.
+ */
 @property(nonatomic, readonly) NSArray<RTCMediaStream *> *localStreams;
-@property(nonatomic, readonly, nullable)
-    RTCSessionDescription *localDescription;
-@property(nonatomic, readonly, nullable)
-    RTCSessionDescription *remoteDescription;
+@property(nonatomic, readonly, nullable) RTCSessionDescription *localDescription;
+@property(nonatomic, readonly, nullable) RTCSessionDescription *remoteDescription;
 @property(nonatomic, readonly) RTCSignalingState signalingState;
 @property(nonatomic, readonly) RTCIceConnectionState iceConnectionState;
 @property(nonatomic, readonly) RTCIceGatheringState iceGatheringState;
@@ -138,6 +156,14 @@ __attribute__((objc_runtime_name("WK_RTCPeerConnection")))
  *  Use isEqual: instead of == to compare RTCRtpReceiver instances.
  */
 @property(nonatomic, readonly) NSArray<RTCRtpReceiver *> *receivers;
+
+/** Gets all RTCRtpTransceivers associated with this peer connection.
+ *  Note: reading this property returns different instances of
+ *  RTCRtpTransceiver. Use isEqual: instead of == to compare RTCRtpTransceiver
+ *  instances.
+ *  This is only available with RTCSdpSemanticsUnifiedPlan specified.
+ */
+@property(nonatomic, readonly) NSArray<RTCRtpTransceiver *> *transceivers;
 
 - (instancetype)init NS_UNAVAILABLE;
 
@@ -158,33 +184,86 @@ __attribute__((objc_runtime_name("WK_RTCPeerConnection")))
 /** Remove a group of remote candidates from the ICE Agent. */
 - (void)removeIceCandidates:(NSArray<RTCIceCandidate *> *)candidates;
 
-/** Add a new media stream to be sent on this peer connection. */
+/** Add a new media stream to be sent on this peer connection.
+ *  This method is not supported with RTCSdpSemanticsUnifiedPlan. Please use
+ *  addTrack instead.
+ */
 - (void)addStream:(RTCMediaStream *)stream;
 
-/** Remove the given media stream from this peer connection. */
+/** Remove the given media stream from this peer connection.
+ *  This method is not supported with RTCSdpSemanticsUnifiedPlan. Please use
+ *  removeTrack instead.
+ */
 - (void)removeStream:(RTCMediaStream *)stream;
+
+/** Add a new media stream track to be sent on this peer connection, and return
+ *  the newly created RTCRtpSender. The RTCRtpSender will be associated with
+ *  the streams specified in the |streamIds| list.
+ *
+ *  Errors: If an error occurs, returns nil. An error can occur if:
+ *  - A sender already exists for the track.
+ *  - The peer connection is closed.
+ */
+- (RTCRtpSender *)addTrack:(RTCMediaStreamTrack *)track streamIds:(NSArray<NSString *> *)streamIds;
+
+/** With PlanB semantics, removes an RTCRtpSender from this peer connection.
+ *
+ *  With UnifiedPlan semantics, sets sender's track to null and removes the
+ *  send component from the associated RTCRtpTransceiver's direction.
+ *
+ *  Returns YES on success.
+ */
+- (BOOL)removeTrack:(RTCRtpSender *)sender;
+
+/** addTransceiver creates a new RTCRtpTransceiver and adds it to the set of
+ *  transceivers. Adding a transceiver will cause future calls to CreateOffer
+ *  to add a media description for the corresponding transceiver.
+ *
+ *  The initial value of |mid| in the returned transceiver is nil. Setting a
+ *  new session description may change it to a non-nil value.
+ *
+ *  https://w3c.github.io/webrtc-pc/#dom-rtcpeerconnection-addtransceiver
+ *
+ *  Optionally, an RtpTransceiverInit structure can be specified to configure
+ *  the transceiver from construction. If not specified, the transceiver will
+ *  default to having a direction of kSendRecv and not be part of any streams.
+ *
+ *  These methods are only available when Unified Plan is enabled (see
+ *  RTCConfiguration).
+ */
+
+/** Adds a transceiver with a sender set to transmit the given track. The kind
+ *  of the transceiver (and sender/receiver) will be derived from the kind of
+ *  the track.
+ */
+- (RTCRtpTransceiver *)addTransceiverWithTrack:(RTCMediaStreamTrack *)track;
+- (RTCRtpTransceiver *)addTransceiverWithTrack:(RTCMediaStreamTrack *)track
+                                          init:(RTCRtpTransceiverInit *)init;
+
+/** Adds a transceiver with the given kind. Can either be RTCRtpMediaTypeAudio
+ *  or RTCRtpMediaTypeVideo.
+ */
+- (RTCRtpTransceiver *)addTransceiverOfType:(RTCRtpMediaType)mediaType;
+- (RTCRtpTransceiver *)addTransceiverOfType:(RTCRtpMediaType)mediaType
+                                       init:(RTCRtpTransceiverInit *)init;
 
 /** Generate an SDP offer. */
 - (void)offerForConstraints:(RTCMediaConstraints *)constraints
-          completionHandler:(nullable void (^)
-    (RTCSessionDescription * _Nullable sdp,
-     NSError * _Nullable error))completionHandler;
+          completionHandler:(nullable void (^)(RTCSessionDescription *_Nullable sdp,
+                                               NSError *_Nullable error))completionHandler;
 
 /** Generate an SDP answer. */
 - (void)answerForConstraints:(RTCMediaConstraints *)constraints
-           completionHandler:(nullable void (^)
-    (RTCSessionDescription * _Nullable sdp,
-     NSError * _Nullable error))completionHandler;
+           completionHandler:(nullable void (^)(RTCSessionDescription *_Nullable sdp,
+                                                NSError *_Nullable error))completionHandler;
 
 /** Apply the supplied RTCSessionDescription as the local description. */
 - (void)setLocalDescription:(RTCSessionDescription *)sdp
-          completionHandler:
-    (nullable void (^)(NSError * _Nullable error))completionHandler;
+          completionHandler:(nullable void (^)(NSError *_Nullable error))completionHandler;
 
 /** Apply the supplied RTCSessionDescription as the remote description. */
 - (void)setRemoteDescription:(RTCSessionDescription *)sdp
-           completionHandler:
-    (nullable void (^)(NSError * _Nullable error))completionHandler;
+           completionHandler:(nullable void (^)(NSError *_Nullable error))completionHandler;
 
 /** Limits the bandwidth allocated for all RTP streams sent by this
  *  PeerConnection. Nil parameters will be unchanged. Setting
@@ -196,21 +275,24 @@ __attribute__((objc_runtime_name("WK_RTCPeerConnection")))
               maxBitrateBps:(nullable NSNumber *)maxBitrateBps;
 
 /** Start or stop recording an Rtc EventLog. */
-- (BOOL)startRtcEventLogWithFilePath:(NSString *)filePath
-                      maxSizeInBytes:(int64_t)maxSizeInBytes;
+- (BOOL)startRtcEventLogWithFilePath:(NSString *)filePath maxSizeInBytes:(int64_t)maxSizeInBytes;
 - (void)stopRtcEventLog;
 
 @end
 
+__attribute__((objc_runtime_name("WK_RTCPeerConnection")))
 @interface RTCPeerConnection (Media)
 
 /** Create an RTCRtpSender with the specified kind and media stream ID.
  *  See RTCMediaStreamTrack.h for available kinds.
+ *  This method is not supported with RTCSdpSemanticsUnifiedPlan. Please use
+ *  addTransceiver instead.
  */
 - (RTCRtpSender *)senderWithKind:(NSString *)kind streamId:(NSString *)streamId;
 
 @end
 
+__attribute__((objc_runtime_name("WK_RTCPeerConnection")))
 @interface RTCPeerConnection (DataChannel)
 
 /** Create a new data channel with the given label and configuration. */
@@ -219,16 +301,15 @@ __attribute__((objc_runtime_name("WK_RTCPeerConnection")))
 
 @end
 
+__attribute__((objc_runtime_name("WK_RTCPeerConnection")))
 @interface RTCPeerConnection (Stats)
 
 /** Gather stats for the given RTCMediaStreamTrack. If |mediaStreamTrack| is nil
  *  statistics are gathered for all tracks.
  */
-- (void)statsForTrack:
-    (nullable RTCMediaStreamTrack *)mediaStreamTrack
+- (void)statsForTrack:(nullable RTCMediaStreamTrack *)mediaStreamTrack
      statsOutputLevel:(RTCStatsOutputLevel)statsOutputLevel
-    completionHandler:
-    (nullable void (^)(NSArray<RTCLegacyStatsReport *> *stats))completionHandler;
+    completionHandler:(nullable void (^)(NSArray<RTCLegacyStatsReport *> *stats))completionHandler;
 
 @end
 

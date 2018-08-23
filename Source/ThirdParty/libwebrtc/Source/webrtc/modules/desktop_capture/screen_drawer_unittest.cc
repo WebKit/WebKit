@@ -10,15 +10,15 @@
 
 #include "modules/desktop_capture/screen_drawer.h"
 
-#include <atomic>
 #include <stdint.h>
+#include <atomic>
 
+#include "absl/memory/memory.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/function_view.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/random.h"
 #include "rtc_base/platform_thread.h"
-#include "rtc_base/ptr_util.h"
+#include "rtc_base/random.h"
 #include "rtc_base/timeutils.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/gtest.h"
@@ -45,9 +45,7 @@ void TestScreenDrawerLock(
     Task(std::atomic<bool>* created,
          const std::atomic<bool>& ready,
          rtc::FunctionView<std::unique_ptr<ScreenDrawerLock>()> ctor)
-        : created_(created),
-          ready_(ready),
-          ctor_(ctor) {}
+        : created_(created), ready_(ready), ctor_(ctor) {}
 
     ~Task() = default;
 
@@ -85,7 +83,8 @@ void TestScreenDrawerLock(
 
   // Wait for the first lock in Task::RunTask() to be created.
   // TODO(zijiehe): Find a better solution to wait for the creation of the first
-  // lock. See https://chromium-review.googlesource.com/c/607688/13/webrtc/modules/desktop_capture/screen_drawer_unittest.cc
+  // lock. See
+  // https://chromium-review.googlesource.com/c/607688/13/webrtc/modules/desktop_capture/screen_drawer_unittest.cc
   while (!created.load()) {
     SleepMs(1);
   }
@@ -149,12 +148,10 @@ TEST(ScreenDrawerTest, TwoScreenDrawerLocks) {
   ScreenDrawerLockPosix::Unlink(semaphore_name);
 
   TestScreenDrawerLock([semaphore_name]() {
-    return rtc::MakeUnique<ScreenDrawerLockPosix>(semaphore_name);
+    return absl::make_unique<ScreenDrawerLockPosix>(semaphore_name);
   });
 #elif defined(WEBRTC_WIN)
-  TestScreenDrawerLock([]() {
-    return ScreenDrawerLock::Create();
-  });
+  TestScreenDrawerLock([]() { return ScreenDrawerLock::Create(); });
 #endif
 }
 

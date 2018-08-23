@@ -15,25 +15,15 @@
 #include <queue>
 #include <string>
 
-#include "api/peerconnectioninterface.h"
 #include "p2p/base/transportdescriptionfactory.h"
 #include "pc/mediasession.h"
+#include "pc/peerconnectioninternal.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/messagehandler.h"
 #include "rtc_base/rtccertificate.h"
 #include "rtc_base/rtccertificategenerator.h"
 
-namespace cricket {
-class ChannelManager;
-class TransportDescriptionFactory;
-}  // namespace cricket
-
 namespace webrtc {
-class CreateSessionDescriptionObserver;
-class MediaConstraintsInterface;
-class PeerConnection;
-class SessionDescriptionInterface;
-class WebRtcSession;
 
 // DTLS certificate request callback class.
 class WebRtcCertificateGeneratorCallback
@@ -56,13 +46,10 @@ struct CreateSessionDescriptionRequest {
     kAnswer,
   };
 
-  CreateSessionDescriptionRequest(
-      Type type,
-      CreateSessionDescriptionObserver* observer,
-      const cricket::MediaSessionOptions& options)
-      : type(type),
-        observer(observer),
-        options(options) {}
+  CreateSessionDescriptionRequest(Type type,
+                                  CreateSessionDescriptionObserver* observer,
+                                  const cricket::MediaSessionOptions& options)
+      : type(type), observer(observer), options(options) {}
 
   Type type;
   rtc::scoped_refptr<CreateSessionDescriptionObserver> observer;
@@ -84,7 +71,7 @@ class WebRtcSessionDescriptionFactory : public rtc::MessageHandler,
   WebRtcSessionDescriptionFactory(
       rtc::Thread* signaling_thread,
       cricket::ChannelManager* channel_manager,
-      PeerConnection* pc,
+      PeerConnectionInternal* pc,
       const std::string& session_id,
       std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator,
       const rtc::scoped_refptr<rtc::RTCCertificate>& certificate);
@@ -152,7 +139,7 @@ class WebRtcSessionDescriptionFactory : public rtc::MessageHandler,
   const std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator_;
   // TODO(jiayl): remove the dependency on peer connection once bug 2264 is
   // fixed.
-  PeerConnection* const pc_;
+  PeerConnectionInternal* const pc_;
   const std::string session_id_;
   CertificateRequestState certificate_request_state_;
 

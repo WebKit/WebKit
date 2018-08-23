@@ -16,9 +16,9 @@
 
 ******************************************************************/
 
-#include "defines.h"
-#include "constants.h"
-#include "chebyshev.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
+#include "modules/audio_coding/codecs/ilbc/chebyshev.h"
 
 /*----------------------------------------------------------------*
  * conversion from lpc coefficients to lsp coefficients

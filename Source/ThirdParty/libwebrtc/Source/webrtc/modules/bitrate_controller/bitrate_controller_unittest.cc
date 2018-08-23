@@ -26,28 +26,29 @@ using webrtc::BitrateObserver;
 using webrtc::PacedSender;
 using webrtc::RtcpBandwidthObserver;
 
-uint8_t WeightedLoss(int num_packets1, uint8_t fraction_loss1,
-                     int num_packets2, uint8_t fraction_loss2) {
-  int weighted_sum = num_packets1 * fraction_loss1 +
-      num_packets2 * fraction_loss2;
+uint8_t WeightedLoss(int num_packets1,
+                     uint8_t fraction_loss1,
+                     int num_packets2,
+                     uint8_t fraction_loss2) {
+  int weighted_sum =
+      num_packets1 * fraction_loss1 + num_packets2 * fraction_loss2;
   int total_num_packets = num_packets1 + num_packets2;
   return (weighted_sum + total_num_packets / 2) / total_num_packets;
 }
 
 webrtc::RTCPReportBlock CreateReportBlock(
-    uint32_t remote_ssrc, uint32_t source_ssrc,
-    uint8_t fraction_lost, uint32_t extended_high_sequence_number) {
+    uint32_t remote_ssrc,
+    uint32_t source_ssrc,
+    uint8_t fraction_lost,
+    uint32_t extended_high_sequence_number) {
   return webrtc::RTCPReportBlock(remote_ssrc, source_ssrc, fraction_lost, 0,
                                  extended_high_sequence_number, 0, 0, 0);
 }
 
-class TestBitrateObserver: public BitrateObserver {
+class TestBitrateObserver : public BitrateObserver {
  public:
   TestBitrateObserver()
-      : last_bitrate_(0),
-        last_fraction_loss_(0),
-        last_rtt_(0) {
-  }
+      : last_bitrate_(0), last_fraction_loss_(0), last_rtt_(0) {}
 
   virtual void OnNetworkChanged(uint32_t bitrate,
                                 uint8_t fraction_loss,
@@ -76,8 +77,7 @@ class BitrateControllerTest : public ::testing::Test {
     bandwidth_observer_ = controller_.get();
   }
 
-  virtual void TearDown() {
-  }
+  virtual void TearDown() {}
 
   const int kMinBitrateBps = 100000;
   const int kStartBitrateBps = 200000;
@@ -197,8 +197,8 @@ TEST_F(BitrateControllerTest, OneBitrateObserverTwoRtcpObservers) {
 
   RtcpBandwidthObserver* second_bandwidth_observer = controller_.get();
   report_blocks = {CreateReportBlock(kSenderSsrc2, kMediaSsrc2, 0, 21)};
-  second_bandwidth_observer->OnReceivedRtcpReceiverReport(
-      report_blocks, 100, time_ms);
+  second_bandwidth_observer->OnReceivedRtcpReceiverReport(report_blocks, 100,
+                                                          time_ms);
 
   // Test start bitrate.
   EXPECT_EQ(200000, bitrate_observer_.last_bitrate_);
@@ -212,8 +212,8 @@ TEST_F(BitrateControllerTest, OneBitrateObserverTwoRtcpObservers) {
   time_ms += 500;
 
   report_blocks = {CreateReportBlock(kSenderSsrc2, kMediaSsrc2, 0, 21)};
-  second_bandwidth_observer->OnReceivedRtcpReceiverReport(
-      report_blocks, 100, time_ms);
+  second_bandwidth_observer->OnReceivedRtcpReceiverReport(report_blocks, 100,
+                                                          time_ms);
   EXPECT_EQ(217000, bitrate_observer_.last_bitrate_);
   EXPECT_EQ(0, bitrate_observer_.last_fraction_loss_);
   EXPECT_EQ(100, bitrate_observer_.last_rtt_);
@@ -221,8 +221,8 @@ TEST_F(BitrateControllerTest, OneBitrateObserverTwoRtcpObservers) {
 
   // Extra report should not change estimate.
   report_blocks = {CreateReportBlock(kSenderSsrc2, kMediaSsrc2, 0, 31)};
-  second_bandwidth_observer->OnReceivedRtcpReceiverReport(
-      report_blocks, 100, time_ms);
+  second_bandwidth_observer->OnReceivedRtcpReceiverReport(report_blocks, 100,
+                                                          time_ms);
   EXPECT_EQ(217000, bitrate_observer_.last_bitrate_);
   time_ms += 500;
 
@@ -232,34 +232,34 @@ TEST_F(BitrateControllerTest, OneBitrateObserverTwoRtcpObservers) {
 
   // Second report should not change estimate.
   report_blocks = {CreateReportBlock(kSenderSsrc2, kMediaSsrc2, 0, 41)};
-  second_bandwidth_observer->OnReceivedRtcpReceiverReport(
-      report_blocks, 100, time_ms);
+  second_bandwidth_observer->OnReceivedRtcpReceiverReport(report_blocks, 100,
+                                                          time_ms);
   EXPECT_EQ(235360, bitrate_observer_.last_bitrate_);
   time_ms += 1000;
 
   // Reports from only one bandwidth observer is ok.
   report_blocks = {CreateReportBlock(kSenderSsrc2, kMediaSsrc2, 0, 61)};
-  second_bandwidth_observer->OnReceivedRtcpReceiverReport(
-      report_blocks, 50, time_ms);
+  second_bandwidth_observer->OnReceivedRtcpReceiverReport(report_blocks, 50,
+                                                          time_ms);
   EXPECT_EQ(255189, bitrate_observer_.last_bitrate_);
   time_ms += 1000;
 
   report_blocks = {CreateReportBlock(kSenderSsrc2, kMediaSsrc2, 0, 81)};
-  second_bandwidth_observer->OnReceivedRtcpReceiverReport(
-      report_blocks, 50, time_ms);
+  second_bandwidth_observer->OnReceivedRtcpReceiverReport(report_blocks, 50,
+                                                          time_ms);
   EXPECT_EQ(276604, bitrate_observer_.last_bitrate_);
   time_ms += 1000;
 
   report_blocks = {CreateReportBlock(kSenderSsrc2, kMediaSsrc2, 0, 121)};
-  second_bandwidth_observer->OnReceivedRtcpReceiverReport(
-      report_blocks, 50, time_ms);
+  second_bandwidth_observer->OnReceivedRtcpReceiverReport(report_blocks, 50,
+                                                          time_ms);
   EXPECT_EQ(299732, bitrate_observer_.last_bitrate_);
   time_ms += 1000;
 
   // Reach max cap.
   report_blocks = {CreateReportBlock(kSenderSsrc2, kMediaSsrc2, 0, 141)};
-  second_bandwidth_observer->OnReceivedRtcpReceiverReport(
-      report_blocks, 50, time_ms);
+  second_bandwidth_observer->OnReceivedRtcpReceiverReport(report_blocks, 50,
+                                                          time_ms);
   EXPECT_EQ(300000, bitrate_observer_.last_bitrate_);
 
   // Test that a low REMB trigger immediately.
@@ -340,11 +340,11 @@ TEST_F(BitrateControllerTest, OneBitrateObserverMultipleReportBlocks) {
   report_blocks.clear();
 
   // All packets lost on stream with few packets, no back-off.
-  report_blocks.push_back(CreateReportBlock(1, 2, 1, sequence_number[0]));
+  report_blocks.push_back(CreateReportBlock(1, 2, 0, sequence_number[0]));
   report_blocks.push_back(CreateReportBlock(1, 3, 255, sequence_number[1]));
   bandwidth_observer_->OnReceivedRtcpReceiverReport(report_blocks, 50, time_ms);
   EXPECT_EQ(bitrate_observer_.last_bitrate_, last_bitrate);
-  EXPECT_EQ(WeightedLoss(20, 1, 1, 255), bitrate_observer_.last_fraction_loss_);
+  EXPECT_EQ(WeightedLoss(20, 0, 1, 255), bitrate_observer_.last_fraction_loss_);
   EXPECT_EQ(50, bitrate_observer_.last_rtt_);
   last_bitrate = bitrate_observer_.last_bitrate_;
   sequence_number[0] += 20;

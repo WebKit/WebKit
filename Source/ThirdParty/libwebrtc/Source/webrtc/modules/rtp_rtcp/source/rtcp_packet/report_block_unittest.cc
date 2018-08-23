@@ -91,5 +91,20 @@ TEST(RtcpPacketReportBlockTest, ValidateCumulativeLost) {
   EXPECT_EQ(0u, rb.cumulative_lost());
 }
 
+TEST(RtcpPacketReportBlockTest, ParseNegativeCumulativeLost) {
+  // CumulativeLost is a signed 24-bit integer.
+  const int32_t kNegativeCumulativeLost = -123;
+  ReportBlock rb;
+  EXPECT_TRUE(rb.SetCumulativeLost(kNegativeCumulativeLost));
+
+  uint8_t buffer[kBufferLength];
+  rb.Create(buffer);
+
+  ReportBlock parsed;
+  EXPECT_TRUE(parsed.Parse(buffer, kBufferLength));
+
+  EXPECT_EQ(kNegativeCumulativeLost, parsed.cumulative_lost_signed());
+}
+
 }  // namespace
 }  // namespace webrtc

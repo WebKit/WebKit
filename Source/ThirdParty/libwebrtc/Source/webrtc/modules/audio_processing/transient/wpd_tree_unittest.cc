@@ -16,7 +16,7 @@
 
 #include "modules/audio_processing/transient/daubechies_8_wavelet_coeffs.h"
 #include "modules/audio_processing/transient/file_utils.h"
-#include "system_wrappers/include/file_wrapper.h"
+#include "rtc_base/system/file_wrapper.h"
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
 
@@ -30,13 +30,10 @@ TEST(WPDTreeTest, Construction) {
   float test_buffer[kTestBufferSize];
   memset(test_buffer, 0.f, kTestBufferSize * sizeof(*test_buffer));
   float test_coefficients[] = {1.f, 2.f, 3.f, 4.f, 5.f};
-  const size_t kTestCoefficientsLength = sizeof(test_coefficients) /
-      sizeof(test_coefficients[0]);
-  WPDTree tree(kTestBufferSize,
-               test_coefficients,
-               test_coefficients,
-               kTestCoefficientsLength,
-               kLevels);
+  const size_t kTestCoefficientsLength =
+      sizeof(test_coefficients) / sizeof(test_coefficients[0]);
+  WPDTree tree(kTestBufferSize, test_coefficients, test_coefficients,
+               kTestCoefficientsLength, kLevels);
   ASSERT_EQ(kExpectedNumberOfNodes, tree.num_nodes());
   // Checks for NodeAt(level, index).
   int nodes_at_level = 0;
@@ -79,10 +76,8 @@ TEST(WPDTreeTest, CorrectnessBasedOnMatlabFiles) {
   const int kLeaves = 1 << kLevels;
   const size_t kLeavesSamples = kTestBufferSize >> kLevels;
   // Create tree with Discrete Meyer Wavelet Coefficients.
-  WPDTree tree(kTestBufferSize,
-               kDaubechies8HighPassCoefficients,
-               kDaubechies8LowPassCoefficients,
-               kDaubechies8CoefficientsLength,
+  WPDTree tree(kTestBufferSize, kDaubechies8HighPassCoefficients,
+               kDaubechies8LowPassCoefficients, kDaubechies8CoefficientsLength,
                kLevels);
   // Allocate and open all matlab and out files.
   std::unique_ptr<FileWrapper> matlab_files_data[kLeaves];
@@ -134,9 +129,8 @@ TEST(WPDTreeTest, CorrectnessBasedOnMatlabFiles) {
   size_t frames_read = 0;
 
   // Read first buffer from the PCM test file.
-  size_t file_samples_read = ReadInt16FromFileToFloatBuffer(test_file.get(),
-                                                            kTestBufferSize,
-                                                            test_buffer);
+  size_t file_samples_read = ReadInt16FromFileToFloatBuffer(
+      test_file.get(), kTestBufferSize, test_buffer);
   while (file_samples_read > 0 && frames_read < kMaxFramesToTest) {
     ++frames_read;
 
@@ -152,10 +146,8 @@ TEST(WPDTreeTest, CorrectnessBasedOnMatlabFiles) {
     // Compare results with data from the matlab test files.
     for (int i = 0; i < kLeaves; ++i) {
       // Compare data values
-      size_t matlab_samples_read =
-          ReadDoubleBufferFromFile(matlab_files_data[i].get(),
-                                   kLeavesSamples,
-                                   matlab_buffer);
+      size_t matlab_samples_read = ReadDoubleBufferFromFile(
+          matlab_files_data[i].get(), kLeavesSamples, matlab_buffer);
 
       ASSERT_EQ(kLeavesSamples, matlab_samples_read)
           << "Matlab test files are malformed.\n"
@@ -170,15 +162,13 @@ TEST(WPDTreeTest, CorrectnessBasedOnMatlabFiles) {
       }
 
       // Write results to out files.
-      WriteFloatBufferToFile(out_files_data[i].get(),
-                             kLeavesSamples,
+      WriteFloatBufferToFile(out_files_data[i].get(), kLeavesSamples,
                              node_data);
     }
 
     // Read next buffer from the PCM test file.
-    file_samples_read = ReadInt16FromFileToFloatBuffer(test_file.get(),
-                                                       kTestBufferSize,
-                                                       test_buffer);
+    file_samples_read = ReadInt16FromFileToFloatBuffer(
+        test_file.get(), kTestBufferSize, test_buffer);
   }
 
   // Close all matlab and out files.

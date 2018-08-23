@@ -33,7 +33,7 @@ bool H264CMSampleBufferToAnnexBBuffer(
     CMSampleBufferRef avcc_sample_buffer,
     bool is_keyframe,
     rtc::Buffer* annexb_buffer,
-    std::unique_ptr<RTPFragmentationHeader> *out_header);
+    std::unique_ptr<RTPFragmentationHeader>* out_header);
 
 // Converts a buffer received from RTP into a sample buffer suitable for the
 // VideoToolbox decoder. The RTP buffer is in annex b format whereas the sample
@@ -46,11 +46,6 @@ bool H264AnnexBBufferToCMSampleBuffer(const uint8_t* annexb_buffer,
                                       CMVideoFormatDescriptionRef video_format,
                                       CMSampleBufferRef* out_sample_buffer);
 
-// Returns true if the type of the first NALU in the supplied Annex B buffer is
-// the SPS type.
-bool H264AnnexBBufferHasVideoFormatDescription(const uint8_t* annexb_buffer,
-                                               size_t annexb_buffer_size);
-
 // Returns a video format description created from the sps/pps information in
 // the Annex B buffer. If there is no such information, nullptr is returned.
 // The caller is responsible for releasing the description.
@@ -62,7 +57,7 @@ CMVideoFormatDescriptionRef CreateVideoFormatDescription(
 class AnnexBBufferReader final {
  public:
   AnnexBBufferReader(const uint8_t* annexb_buffer, size_t length);
-  ~AnnexBBufferReader() {}
+  ~AnnexBBufferReader();
   AnnexBBufferReader(const AnnexBBufferReader& other) = delete;
   void operator=(const AnnexBBufferReader& other) = delete;
 
@@ -73,6 +68,15 @@ class AnnexBBufferReader final {
   // Returns the number of unread NALU bytes, including the size of the header.
   // If the buffer has no remaining NALUs this will return zero.
   size_t BytesRemaining() const;
+
+  // Reset the reader to start reading from the first NALU
+  void SeekToStart();
+
+  // Seek to the next position that holds a NALU of the desired type,
+  // or the end if no such NALU is found.
+  // Return true if a NALU of the desired type is found, false if we
+  // reached the end instead
+  bool SeekToNextNaluOfType(H264::NaluType type);
 
  private:
   // Returns the the next offset that contains NALU data.

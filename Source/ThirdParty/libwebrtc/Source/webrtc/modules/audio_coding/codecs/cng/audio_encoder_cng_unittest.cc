@@ -30,7 +30,7 @@ namespace {
 static const size_t kMaxNumSamples = 48 * 10 * 2;  // 10 ms @ 48 kHz stereo.
 static const size_t kMockReturnEncodedBytes = 17;
 static const int kCngPayloadType = 18;
-}
+}  // namespace
 
 class AudioEncoderCngTest : public ::testing::Test {
  protected:
@@ -43,7 +43,6 @@ class AudioEncoderCngTest : public ::testing::Test {
         sample_rate_hz_(8000) {
     memset(audio_, 0, kMaxNumSamples * 2);
     EXPECT_CALL(*mock_encoder_, NumChannels()).WillRepeatedly(Return(1));
-    EXPECT_CALL(*mock_encoder_, Die()).Times(1);
   }
 
   void TearDown() override {
@@ -95,8 +94,7 @@ class AudioEncoderCngTest : public ::testing::Test {
     InSequence s;
     AudioEncoder::EncodedInfo info;
     for (size_t j = 0; j < num_calls - 1; ++j) {
-      EXPECT_CALL(*mock_encoder_, EncodeImpl(_, _, _))
-          .WillOnce(Return(info));
+      EXPECT_CALL(*mock_encoder_, EncodeImpl(_, _, _)).WillOnce(Return(info));
     }
     info.encoded_bytes = kMockReturnEncodedBytes;
     EXPECT_CALL(*mock_encoder_, EncodeImpl(_, _, _))
@@ -156,12 +154,14 @@ class AudioEncoderCngTest : public ::testing::Test {
     EXPECT_CALL(
         *mock_vad_,
         VoiceActivity(_, expected_first_block_size_ms * sample_rate_hz_ / 1000,
-                      sample_rate_hz_)).WillOnce(Return(Vad::kPassive));
+                      sample_rate_hz_))
+        .WillOnce(Return(Vad::kPassive));
     if (expected_second_block_size_ms > 0) {
       EXPECT_CALL(*mock_vad_,
                   VoiceActivity(
                       _, expected_second_block_size_ms * sample_rate_hz_ / 1000,
-                      sample_rate_hz_)).WillOnce(Return(Vad::kPassive));
+                      sample_rate_hz_))
+          .WillOnce(Return(Vad::kPassive));
     }
 
     // With this call to Encode(), |mock_vad_| should be called according to the
@@ -221,8 +221,8 @@ TEST_F(AudioEncoderCngTest, CheckFrameSizePropagation) {
 TEST_F(AudioEncoderCngTest, CheckTargetAudioBitratePropagation) {
   CreateCng(MakeCngConfig());
   EXPECT_CALL(*mock_encoder_,
-              OnReceivedUplinkBandwidth(4711, rtc::Optional<int64_t>()));
-  cng_->OnReceivedUplinkBandwidth(4711, rtc::nullopt);
+              OnReceivedUplinkBandwidth(4711, absl::optional<int64_t>()));
+  cng_->OnReceivedUplinkBandwidth(4711, absl::nullopt);
 }
 
 TEST_F(AudioEncoderCngTest, CheckPacketLossFractionPropagation) {
@@ -430,9 +430,7 @@ class AudioEncoderCngDeathTest : public AudioEncoderCngTest {
   // Override AudioEncoderCngTest::TearDown, since that one expects a call to
   // the destructor of |mock_vad_|. In this case, that object is already
   // deleted.
-  void TearDown() override {
-    cng_.reset();
-  }
+  void TearDown() override { cng_.reset(); }
 
   AudioEncoderCng::Config MakeCngConfig() {
     // Don't provide a Vad mock object, since it would leak when the test dies.

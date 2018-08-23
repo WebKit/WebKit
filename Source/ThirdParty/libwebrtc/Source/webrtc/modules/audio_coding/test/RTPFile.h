@@ -15,38 +15,46 @@
 #include <queue>
 
 #include "modules/audio_coding/include/audio_coding_module.h"
-#include "modules/include/module_common_types.h"
-#include "system_wrappers/include/rw_lock_wrapper.h"
-#include "typedefs.h"  // NOLINT(build/include)
+#include "rtc_base/synchronization/rw_lock_wrapper.h"
 
 namespace webrtc {
 
 class RTPStream {
  public:
-  virtual ~RTPStream() {
-  }
+  virtual ~RTPStream() {}
 
-  virtual void Write(const uint8_t payloadType, const uint32_t timeStamp,
-                     const int16_t seqNo, const uint8_t* payloadData,
-                     const size_t payloadSize, uint32_t frequency) = 0;
+  virtual void Write(const uint8_t payloadType,
+                     const uint32_t timeStamp,
+                     const int16_t seqNo,
+                     const uint8_t* payloadData,
+                     const size_t payloadSize,
+                     uint32_t frequency) = 0;
 
   // Returns the packet's payload size. Zero should be treated as an
   // end-of-stream (in the case that EndOfFile() is true) or an error.
-  virtual size_t Read(WebRtcRTPHeader* rtpInfo, uint8_t* payloadData,
-                      size_t payloadSize, uint32_t* offset) = 0;
+  virtual size_t Read(WebRtcRTPHeader* rtpInfo,
+                      uint8_t* payloadData,
+                      size_t payloadSize,
+                      uint32_t* offset) = 0;
   virtual bool EndOfFile() const = 0;
 
  protected:
-  void MakeRTPheader(uint8_t* rtpHeader, uint8_t payloadType, int16_t seqNo,
-                     uint32_t timeStamp, uint32_t ssrc);
+  void MakeRTPheader(uint8_t* rtpHeader,
+                     uint8_t payloadType,
+                     int16_t seqNo,
+                     uint32_t timeStamp,
+                     uint32_t ssrc);
 
   void ParseRTPHeader(WebRtcRTPHeader* rtpInfo, const uint8_t* rtpHeader);
 };
 
 class RTPPacket {
  public:
-  RTPPacket(uint8_t payloadType, uint32_t timeStamp, int16_t seqNo,
-            const uint8_t* payloadData, size_t payloadSize,
+  RTPPacket(uint8_t payloadType,
+            uint32_t timeStamp,
+            int16_t seqNo,
+            const uint8_t* payloadData,
+            size_t payloadSize,
             uint32_t frequency);
 
   ~RTPPacket();
@@ -81,20 +89,16 @@ class RTPBuffer : public RTPStream {
 
  private:
   RWLockWrapper* _queueRWLock;
-  std::queue<RTPPacket *> _rtpQueue;
+  std::queue<RTPPacket*> _rtpQueue;
 };
 
 class RTPFile : public RTPStream {
  public:
-  ~RTPFile() {
-  }
+  ~RTPFile() {}
 
-  RTPFile()
-      : _rtpFile(NULL),
-        _rtpEOF(false) {
-  }
+  RTPFile() : _rtpFile(NULL), _rtpEOF(false) {}
 
-  void Open(const char *outFilename, const char *mode);
+  void Open(const char* outFilename, const char* mode);
 
   void Close();
 

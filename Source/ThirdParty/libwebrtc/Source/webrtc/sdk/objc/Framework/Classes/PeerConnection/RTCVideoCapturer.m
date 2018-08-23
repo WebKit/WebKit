@@ -15,7 +15,6 @@
 @synthesize delegate = _delegate;
 
 - (instancetype)initWithDelegate:(id<RTCVideoCapturerDelegate>)delegate {
-  NSAssert(delegate != nil, @"delegate cannot be nil");
   if (self = [super init]) {
     _delegate = delegate;
   }

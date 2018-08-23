@@ -105,12 +105,12 @@ TEST(BandwidthAdaptationTest, BandwidthAdaptationTest) {
   test::ScopedFieldTrials override_field_trials(
       "WebRTC-AdjustOpusBandwidth/Enabled/");
 
-  constexpr float kMaxNarrowbandRatio = 0.003f;
+  constexpr float kMaxNarrowbandRatio = 0.0035f;
   constexpr float kMinWidebandRatio = 0.03f;
 
   // Create encoder.
   AudioEncoderOpusConfig enc_config;
-  enc_config.bitrate_bps = rtc::Optional<int>(7999);
+  enc_config.bitrate_bps = absl::optional<int>(7999);
   enc_config.num_channels = kNumChannels;
   constexpr int payload_type = 17;
   auto encoder = AudioEncoderOpus::MakeAudioEncoder(enc_config, payload_type);

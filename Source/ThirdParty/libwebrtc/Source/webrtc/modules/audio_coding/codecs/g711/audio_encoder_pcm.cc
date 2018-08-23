@@ -42,8 +42,8 @@ AudioEncoderPcm::AudioEncoderPcm(const Config& config, int sample_rate_hz)
       payload_type_(config.payload_type),
       num_10ms_frames_per_packet_(
           static_cast<size_t>(config.frame_size_ms / 10)),
-      full_frame_samples_(
-          config.num_channels * config.frame_size_ms * sample_rate_hz / 1000),
+      full_frame_samples_(config.num_channels * config.frame_size_ms *
+                          sample_rate_hz / 1000),
       first_timestamp_in_buffer_(0) {
   RTC_CHECK_GT(sample_rate_hz, 0) << "Sample rate must be larger than 0 Hz";
   RTC_CHECK_EQ(config.frame_size_ms % 10, 0)
@@ -70,8 +70,8 @@ size_t AudioEncoderPcm::Max10MsFramesInAPacket() const {
 }
 
 int AudioEncoderPcm::GetTargetBitrate() const {
-  return static_cast<int>(
-      8 * BytesPerSample() * SampleRateHz() * NumChannels());
+  return static_cast<int>(8 * BytesPerSample() * SampleRateHz() *
+                          NumChannels());
 }
 
 AudioEncoder::EncodedInfo AudioEncoderPcm::EncodeImpl(
@@ -89,13 +89,12 @@ AudioEncoder::EncodedInfo AudioEncoderPcm::EncodeImpl(
   EncodedInfo info;
   info.encoded_timestamp = first_timestamp_in_buffer_;
   info.payload_type = payload_type_;
-  info.encoded_bytes =
-      encoded->AppendData(full_frame_samples_ * BytesPerSample(),
-                          [&] (rtc::ArrayView<uint8_t> encoded) {
-                            return EncodeCall(&speech_buffer_[0],
-                                              full_frame_samples_,
-                                              encoded.data());
-                          });
+  info.encoded_bytes = encoded->AppendData(
+      full_frame_samples_ * BytesPerSample(),
+      [&](rtc::ArrayView<uint8_t> encoded) {
+        return EncodeCall(&speech_buffer_[0], full_frame_samples_,
+                          encoded.data());
+      });
   speech_buffer_.clear();
   info.encoder_type = GetCodecType();
   return info;

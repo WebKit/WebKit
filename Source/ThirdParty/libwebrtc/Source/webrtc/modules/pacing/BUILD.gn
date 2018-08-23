@@ -10,44 +10,54 @@ import("../../webrtc.gni")
 
 rtc_static_library("pacing") {
   sources = [
-    "alr_detector.cc",
-    "alr_detector.h",
     "bitrate_prober.cc",
     "bitrate_prober.h",
-    "interval_budget.cc",
-    "interval_budget.h",
     "paced_sender.cc",
     "paced_sender.h",
     "pacer.h",
     "packet_queue.cc",
     "packet_queue.h",
-    "packet_queue2.cc",
-    "packet_queue2.h",
+    "packet_queue_interface.cc",
+    "packet_queue_interface.h",
     "packet_router.cc",
     "packet_router.h",
+    "round_robin_packet_queue.cc",
+    "round_robin_packet_queue.h",
   ]
 
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
-
   deps = [
+    ":interval_budget",
     "..:module_api",
-    "../../:typedefs",
     "../../:webrtc_common",
-    "../../api:optional",
+    "../../logging:rtc_event_bwe",
     "../../logging:rtc_event_log_api",
+    "../../logging:rtc_event_pacing",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base/experiments:alr_experiment",
     "../../system_wrappers",
     "../../system_wrappers:field_trial_api",
     "../../system_wrappers:runtime_enabled_features_api",
+    "../congestion_controller/goog_cc:alr_detector",
     "../remote_bitrate_estimator",
     "../rtp_rtcp",
     "../rtp_rtcp:rtp_rtcp_format",
     "../utility",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("interval_budget") {
+  sources = [
+    "interval_budget.cc",
+    "interval_budget.h",
+  ]
+
+  deps = [
+    "../../:webrtc_common",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
   ]
 }
 
@@ -56,13 +66,13 @@ if (rtc_include_tests) {
     testonly = true
 
     sources = [
-      "alr_detector_unittest.cc",
       "bitrate_prober_unittest.cc",
       "interval_budget_unittest.cc",
       "paced_sender_unittest.cc",
       "packet_router_unittest.cc",
     ]
     deps = [
+      ":interval_budget",
       ":pacing",
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
@@ -76,15 +86,7 @@ if (rtc_include_tests) {
       "../rtp_rtcp",
       "../rtp_rtcp:mock_rtp_rtcp",
       "../rtp_rtcp:rtp_rtcp_format",
-      "//testing/gmock",
     ]
-
-    # TODO(jschuh): bugs.webrtc.org/1348: fix this warning.
-    configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
   }
 
   rtc_source_set("mock_paced_sender") {

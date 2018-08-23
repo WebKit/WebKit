@@ -14,11 +14,10 @@
 #include <memory>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "api/array_view.h"
-#include "api/optional.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/constructormagic.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -48,13 +47,16 @@ class AudioDecoder {
     // If no duration can be ascertained, returns zero.
     virtual size_t Duration() const = 0;
 
+    // Returns true if this packet contains DTX.
+    virtual bool IsDtxPacket() const;
+
     // Decodes this frame of audio and writes the result in |decoded|.
     // |decoded| must be large enough to store as many samples as indicated by a
-    // call to Duration() . On success, returns an rtc::Optional containing the
+    // call to Duration() . On success, returns an absl::optional containing the
     // total number of samples across all channels, as well as whether the
     // decoder produced comfort noise or speech. On failure, returns an empty
-    // rtc::Optional. Decode may be called at most once per frame object.
-    virtual rtc::Optional<DecodeResult> Decode(
+    // absl::optional. Decode may be called at most once per frame object.
+    virtual absl::optional<DecodeResult> Decode(
         rtc::ArrayView<int16_t> decoded) const = 0;
   };
 

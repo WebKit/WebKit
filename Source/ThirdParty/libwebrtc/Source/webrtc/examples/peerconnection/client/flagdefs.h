@@ -20,13 +20,19 @@ extern const uint16_t kDefaultServerPort;  // From defaults.[h|cc]
 // for each platform.
 
 DEFINE_bool(help, false, "Prints this message");
-DEFINE_bool(autoconnect, false, "Connect to the server without user "
-                                "intervention.");
+DEFINE_bool(autoconnect,
+            false,
+            "Connect to the server without user "
+            "intervention.");
 DEFINE_string(server, "localhost", "The server to connect to.");
-DEFINE_int(port, kDefaultServerPort,
+DEFINE_int(port,
+           kDefaultServerPort,
            "The port on which the server is listening.");
-DEFINE_bool(autocall, false, "Call the first available other client on "
-  "the server without user intervention.  Note: this flag should only be set "
-  "to true on one of the two clients.");
+DEFINE_bool(
+    autocall,
+    false,
+    "Call the first available other client on "
+    "the server without user intervention.  Note: this flag should only be set "
+    "to true on one of the two clients.");
 
 #endif  // EXAMPLES_PEERCONNECTION_CLIENT_FLAGDEFS_H_

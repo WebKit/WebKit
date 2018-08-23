@@ -18,16 +18,31 @@
 #include <limits>
 
 #include "modules/include/module_common_types.h"
-#include "modules/video_coding/codecs/vp8/include/vp8_common_types.h"
-#include "modules/video_coding/include/video_coding_defines.h"
 #include "modules/video_coding/fec_rate_table.h"
+#include "modules/video_coding/include/video_coding_defines.h"
 #include "modules/video_coding/nack_fec_tables.h"
+#include "modules/video_coding/utility/simulcast_rate_allocator.h"
+#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 // Max value of loss rates in off-line model
 static const int kPacketLossMax = 129;
 
 namespace media_optimization {
+
+VCMProtectionParameters::VCMProtectionParameters()
+    : rtt(0),
+      lossPr(0.0f),
+      bitRate(0.0f),
+      packetsPerFrame(0.0f),
+      packetsPerFrameKey(0.0f),
+      frameRate(0.0f),
+      keyFrameSize(0.0f),
+      fecRateDelta(0),
+      fecRateKey(0),
+      codecWidth(0),
+      codecHeight(0),
+      numLayers(1) {}
 
 VCMProtectionMethod::VCMProtectionMethod()
     : _effectivePacketLoss(0),
@@ -39,6 +54,34 @@ VCMProtectionMethod::VCMProtectionMethod()
       _type(kNone) {}
 
 VCMProtectionMethod::~VCMProtectionMethod() {}
+
+enum VCMProtectionMethodEnum VCMProtectionMethod::Type() const {
+  return _type;
+}
+
+uint8_t VCMProtectionMethod::RequiredPacketLossER() {
+  return _effectivePacketLoss;
+}
+
+uint8_t VCMProtectionMethod::RequiredProtectionFactorK() {
+  return _protectionFactorK;
+}
+
+uint8_t VCMProtectionMethod::RequiredProtectionFactorD() {
+  return _protectionFactorD;
+}
+
+bool VCMProtectionMethod::RequiredUepProtectionK() {
+  return _useUepProtectionK;
+}
+
+bool VCMProtectionMethod::RequiredUepProtectionD() {
+  return _useUepProtectionD;
+}
+
+int VCMProtectionMethod::MaxFramesFec() const {
+  return 1;
+}
 
 VCMNackFecMethod::VCMNackFecMethod(int64_t lowRttNackThresholdMs,
                                    int64_t highRttNackThresholdMs)
@@ -85,8 +128,8 @@ bool VCMNackFecMethod::ProtectionFactor(
 
     // Adjust FEC with NACK on (for delta frame only)
     // table depends on RTT relative to rttMax (NACK Threshold)
-    _protectionFactorD = static_cast<uint8_t>(
-        adjustRtt * static_cast<float>(_protectionFactorD));
+    _protectionFactorD = rtc::saturated_cast<uint8_t>(
+        adjustRtt * rtc::saturated_cast<float>(_protectionFactorD));
     // update FEC rates after applying adjustment
     VCMFecMethod::UpdateProtectionFactorD(_protectionFactorD);
   }
@@ -108,10 +151,10 @@ int VCMNackFecMethod::ComputeMaxFramesFec(
   // RTP module based on the actual number of packets and the protection factor.
   float base_layer_framerate =
       parameters->frameRate /
-      static_cast<float>(1 << (parameters->numLayers - 1));
+      rtc::saturated_cast<float>(1 << (parameters->numLayers - 1));
   int max_frames_fec = std::max(
-      static_cast<int>(2.0f * base_layer_framerate * parameters->rtt / 1000.0f +
-                       0.5f),
+      rtc::saturated_cast<int>(
+          2.0f * base_layer_framerate * parameters->rtt / 1000.0f + 0.5f),
       1);
   // |kUpperLimitFramesFec| is the upper limit on how many frames we
   // allow any FEC to be based on.
@@ -226,9 +269,9 @@ uint8_t VCMFecMethod::BoostCodeRateKey(uint8_t packetFrameDelta,
 }
 
 uint8_t VCMFecMethod::ConvertFECRate(uint8_t codeRateRTP) const {
-  return static_cast<uint8_t>(VCM_MIN(
-      255,
-      (0.5 + 255.0 * codeRateRTP / static_cast<float>(255 - codeRateRTP))));
+  return rtc::saturated_cast<uint8_t>(
+      VCM_MIN(255, (0.5 + 255.0 * codeRateRTP /
+                              rtc::saturated_cast<float>(255 - codeRateRTP))));
 }
 
 // Update FEC with protectionFactorD
@@ -245,7 +288,7 @@ bool VCMFecMethod::ProtectionFactor(const VCMProtectionParameters* parameters) {
   // FEC PROTECTION SETTINGS: varies with packet loss and bitrate
 
   // No protection if (filtered) packetLoss is 0
-  uint8_t packetLoss = static_cast<uint8_t>(255 * parameters->lossPr);
+  uint8_t packetLoss = rtc::saturated_cast<uint8_t>(255 * parameters->lossPr);
   if (packetLoss == 0) {
     _protectionFactorK = 0;
     _protectionFactorD = 0;
@@ -256,7 +299,7 @@ bool VCMFecMethod::ProtectionFactor(const VCMProtectionParameters* parameters) {
   // first partition size, thresholds, table pars, spatial resoln fac.
 
   // First partition protection: ~ 20%
-  uint8_t firstPartitionProt = static_cast<uint8_t>(255 * 0.20);
+  uint8_t firstPartitionProt = rtc::saturated_cast<uint8_t>(255 * 0.20);
 
   // Minimum protection level needed to generate one FEC packet for one
   // source packet/frame (in RTP sender)
@@ -272,9 +315,9 @@ bool VCMFecMethod::ProtectionFactor(const VCMProtectionParameters* parameters) {
   const uint8_t ratePar2 = 49;
 
   // Spatial resolution size, relative to a reference size.
-  float spatialSizeToRef =
-      static_cast<float>(parameters->codecWidth * parameters->codecHeight) /
-      (static_cast<float>(704 * 576));
+  float spatialSizeToRef = rtc::saturated_cast<float>(parameters->codecWidth *
+                                                      parameters->codecHeight) /
+                           (rtc::saturated_cast<float>(704 * 576));
   // resolnFac: This parameter will generally increase/decrease the FEC rate
   // (for fixed bitRate and packetLoss) based on system size.
   // Use a smaller exponent (< 1) to control/soften system size effect.
@@ -283,11 +326,9 @@ bool VCMFecMethod::ProtectionFactor(const VCMProtectionParameters* parameters) {
   const int bitRatePerFrame = BitsPerFrame(parameters);
 
   // Average number of packets per frame (source and fec):
-  const uint8_t avgTotPackets = static_cast<uint8_t>(
-      std::min(static_cast<float>(std::numeric_limits<uint8_t>::max()),
-               1.5f +
-                   static_cast<float>(bitRatePerFrame) * 1000.0f /
-                       static_cast<float>(8.0 * _maxPayloadSize)));
+  const uint8_t avgTotPackets = rtc::saturated_cast<uint8_t>(
+      1.5f + rtc::saturated_cast<float>(bitRatePerFrame) * 1000.0f /
+                 rtc::saturated_cast<float>(8.0 * _maxPayloadSize));
 
   // FEC rate parameters: for P and I frame
   uint8_t codeRateDelta = 0;
@@ -297,8 +338,8 @@ bool VCMFecMethod::ProtectionFactor(const VCMProtectionParameters* parameters) {
   // The range on the rate index corresponds to rates (bps)
   // from ~200k to ~8000k, for 30fps
   const uint16_t effRateFecTable =
-      static_cast<uint16_t>(resolnFac * bitRatePerFrame);
-  uint8_t rateIndexTable = static_cast<uint8_t>(
+      rtc::saturated_cast<uint16_t>(resolnFac * bitRatePerFrame);
+  uint8_t rateIndexTable = rtc::saturated_cast<uint8_t>(
       VCM_MAX(VCM_MIN((effRateFecTable - ratePar1) / ratePar1, ratePar2), 0));
 
   // Restrict packet loss range to 50:
@@ -331,12 +372,12 @@ bool VCMFecMethod::ProtectionFactor(const VCMProtectionParameters* parameters) {
   // The boost factor may depend on several factors: ratio of packet
   // number of I to P frames, how much protection placed on P frames, etc.
   const uint8_t packetFrameDelta =
-      static_cast<uint8_t>(0.5 + parameters->packetsPerFrame);
+      rtc::saturated_cast<uint8_t>(0.5 + parameters->packetsPerFrame);
   const uint8_t packetFrameKey =
-      static_cast<uint8_t>(0.5 + parameters->packetsPerFrameKey);
+      rtc::saturated_cast<uint8_t>(0.5 + parameters->packetsPerFrameKey);
   const uint8_t boostKey = BoostCodeRateKey(packetFrameDelta, packetFrameKey);
 
-  rateIndexTable = static_cast<uint8_t>(VCM_MAX(
+  rateIndexTable = rtc::saturated_cast<uint8_t>(VCM_MAX(
       VCM_MIN(1 + (boostKey * effRateFecTable - ratePar1) / ratePar1, ratePar2),
       0));
   uint16_t indexTableKey = rateIndexTable * kPacketLossMax + packetLoss;
@@ -357,7 +398,7 @@ bool VCMFecMethod::ProtectionFactor(const VCMProtectionParameters* parameters) {
 
   // Make sure I frame protection is at least larger than P frame protection,
   // and at least as high as filtered packet loss.
-  codeRateKey = static_cast<uint8_t>(
+  codeRateKey = rtc::saturated_cast<uint8_t>(
       VCM_MAX(packetLoss, VCM_MAX(boostKeyProt, codeRateKey)));
 
   // Check limit on amount of protection for I frame: 50% is max.
@@ -377,12 +418,14 @@ bool VCMFecMethod::ProtectionFactor(const VCMProtectionParameters* parameters) {
   // The correction factor (_corrFecCost) attempts to corrects this, at least
   // for cases of low rates (small #packets) and low protection levels.
 
-  float numPacketsFl = 1.0f + (static_cast<float>(bitRatePerFrame) * 1000.0 /
-                                   static_cast<float>(8.0 * _maxPayloadSize) +
-                               0.5);
+  float numPacketsFl =
+      1.0f + (rtc::saturated_cast<float>(bitRatePerFrame) * 1000.0 /
+                  rtc::saturated_cast<float>(8.0 * _maxPayloadSize) +
+              0.5);
 
   const float estNumFecGen =
-      0.5f + static_cast<float>(_protectionFactorD * numPacketsFl / 255.0f);
+      0.5f +
+      rtc::saturated_cast<float>(_protectionFactorD * numPacketsFl / 255.0f);
 
   // We reduce cost factor (which will reduce overhead for FEC and
   // hybrid method) and not the protectionFactor.
@@ -402,7 +445,8 @@ int VCMFecMethod::BitsPerFrame(const VCMProtectionParameters* parameters) {
   // When temporal layers are available FEC will only be applied on the base
   // layer.
   const float bitRateRatio =
-      kVp8LayerRateAlloction[parameters->numLayers - 1][0];
+      webrtc::SimulcastRateAllocator::GetTemporalRateAllocation(
+          parameters->numLayers, 0);
   float frameRateRatio = powf(1 / 2.0, parameters->numLayers - 1);
   float bitRate = parameters->bitRate * bitRateRatio;
   float frameRate = parameters->frameRate * frameRateRatio;
@@ -413,7 +457,7 @@ int VCMFecMethod::BitsPerFrame(const VCMProtectionParameters* parameters) {
   if (frameRate < 1.0f)
     frameRate = 1.0f;
   // Average bits per frame (units of kbits)
-  return static_cast<int>(adjustmentFactor * bitRate / frameRate);
+  return rtc::saturated_cast<int>(adjustmentFactor * bitRate / frameRate);
 }
 
 bool VCMFecMethod::EffectivePacketLoss(
@@ -555,8 +599,8 @@ uint8_t VCMLossProtectionLogic::FilteredLoss(int64_t nowMs,
   UpdateMaxLossHistory(lossPr255, nowMs);
 
   // Update the recursive average filter.
-  _lossPr255.Apply(static_cast<float>(nowMs - _lastPrUpdateT),
-                   static_cast<float>(lossPr255));
+  _lossPr255.Apply(rtc::saturated_cast<float>(nowMs - _lastPrUpdateT),
+                   rtc::saturated_cast<float>(lossPr255));
   _lastPrUpdateT = nowMs;
 
   // Filtered loss: default is received loss (no filtering).
@@ -566,7 +610,7 @@ uint8_t VCMLossProtectionLogic::FilteredLoss(int64_t nowMs,
     case kNoFilter:
       break;
     case kAvgFilter:
-      filtered_loss = static_cast<uint8_t>(_lossPr255.filtered() + 0.5);
+      filtered_loss = rtc::saturated_cast<uint8_t>(_lossPr255.filtered() + 0.5);
       break;
     case kMaxFilter:
       filtered_loss = MaxFilteredLossPr(nowMs);
@@ -577,7 +621,7 @@ uint8_t VCMLossProtectionLogic::FilteredLoss(int64_t nowMs,
 }
 
 void VCMLossProtectionLogic::UpdateFilteredLossPr(uint8_t packetLossEnc) {
-  _lossPr = static_cast<float>(packetLossEnc) / 255.0;
+  _lossPr = rtc::saturated_cast<float>(packetLossEnc) / 255.0;
 }
 
 void VCMLossProtectionLogic::UpdateBitRate(float bitRate) {
@@ -586,15 +630,16 @@ void VCMLossProtectionLogic::UpdateBitRate(float bitRate) {
 
 void VCMLossProtectionLogic::UpdatePacketsPerFrame(float nPackets,
                                                    int64_t nowMs) {
-  _packetsPerFrame.Apply(static_cast<float>(nowMs - _lastPacketPerFrameUpdateT),
-                         nPackets);
+  _packetsPerFrame.Apply(
+      rtc::saturated_cast<float>(nowMs - _lastPacketPerFrameUpdateT), nPackets);
   _lastPacketPerFrameUpdateT = nowMs;
 }
 
 void VCMLossProtectionLogic::UpdatePacketsPerFrameKey(float nPackets,
                                                       int64_t nowMs) {
   _packetsPerFrameKey.Apply(
-      static_cast<float>(nowMs - _lastPacketPerFrameUpdateTKey), nPackets);
+      rtc::saturated_cast<float>(nowMs - _lastPacketPerFrameUpdateTKey),
+      nPackets);
   _lastPacketPerFrameUpdateTKey = nowMs;
 }
 

@@ -19,18 +19,17 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_MY_CORR_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_MY_CORR_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  * compute cross correlation between sequences
  *---------------------------------------------------------------*/
 
-void WebRtcIlbcfix_MyCorr(
-    int32_t* corr,  /* (o) correlation of seq1 and seq2 */
-    const int16_t* seq1,  /* (i) first sequence */
-    size_t dim1,  /* (i) dimension first seq1 */
-    const int16_t* seq2, /* (i) second sequence */
-    size_t dim2   /* (i) dimension seq2 */
+void WebRtcIlbcfix_MyCorr(int32_t* corr, /* (o) correlation of seq1 and seq2 */
+                          const int16_t* seq1, /* (i) first sequence */
+                          size_t dim1,         /* (i) dimension first seq1 */
+                          const int16_t* seq2, /* (i) second sequence */
+                          size_t dim2          /* (i) dimension seq2 */
                           );
 
 #endif

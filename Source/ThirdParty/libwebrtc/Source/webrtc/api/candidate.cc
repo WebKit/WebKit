@@ -73,8 +73,9 @@ std::string Candidate::ToStringInternal(bool sensitive) const {
       sensitive ? address_.ToSensitiveString() : address_.ToString();
   ost << "Cand[" << transport_name_ << ":" << foundation_ << ":" << component_
       << ":" << protocol_ << ":" << priority_ << ":" << address << ":" << type_
-      << ":" << related_address_ << ":" << username_ << ":" << password_ << ":"
-      << network_id_ << ":" << network_cost_ << ":" << generation_ << "]";
+      << ":" << related_address_.ToString() << ":" << username_ << ":"
+      << password_ << ":" << network_id_ << ":" << network_cost_ << ":"
+      << generation_ << "]";
   return ost.str();
 }
 

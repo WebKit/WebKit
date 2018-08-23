@@ -11,6 +11,7 @@ import("../../webrtc.gni")
 rtc_static_library("bitrate_controller") {
   visibility = [ "*" ]
   sources = [
+    "bitrate_controller.cc",
     "bitrate_controller_impl.cc",
     "bitrate_controller_impl.h",
     "include/bitrate_controller.h",
@@ -23,10 +24,6 @@ rtc_static_library("bitrate_controller") {
   } else {
     defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=0" ]
   }
-
-  # TODO(jschuh): Bug 1348: fix this warning.
-  configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
-
   if (!build_with_chromium && is_clang) {
     # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
     suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
@@ -34,17 +31,19 @@ rtc_static_library("bitrate_controller") {
 
   deps = [
     "..:module_api",
+    "../../logging:rtc_event_bwe",
     "../../logging:rtc_event_log_api",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
     "../../system_wrappers",
     "../../system_wrappers:field_trial_api",
     "../../system_wrappers:metrics_api",
-    "../congestion_controller:delay_based_bwe",
+    "../congestion_controller/goog_cc:delay_based_bwe",
     "../pacing",
     "../remote_bitrate_estimator:remote_bitrate_estimator",
     "../rtp_rtcp",
     "../rtp_rtcp:rtp_rtcp_format",
+    "//third_party/abseil-cpp/absl/memory",
   ]
 }
 
@@ -70,12 +69,12 @@ if (rtc_include_tests) {
     deps = [
       ":bitrate_controller",
       "../../logging:mocks",
+      "../../logging:rtc_event_bwe",
       "../../logging:rtc_event_log_api",
       "../../test:field_trial",
       "../../test:test_support",
       "../pacing:mock_paced_sender",
       "../remote_bitrate_estimator:remote_bitrate_estimator",
-      "//testing/gmock",
     ]
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).

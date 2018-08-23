@@ -10,18 +10,17 @@
 
 #include "modules/audio_processing/vad/standalone_vad.h"
 
+#include <string.h>
+
 #include "audio/utility/audio_frame_operations.h"
-#include "modules/include/module_common_types.h"
 #include "rtc_base/checks.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
 static const int kDefaultStandaloneVadMode = 3;
 
 StandaloneVad::StandaloneVad(VadInst* vad)
-    : vad_(vad), buffer_(), index_(0), mode_(kDefaultStandaloneVadMode) {
-}
+    : vad_(vad), buffer_(), index_(0), mode_(kDefaultStandaloneVadMode) {}
 
 StandaloneVad::~StandaloneVad() {
   WebRtcVad_Free(vad_);

@@ -42,8 +42,7 @@ StatisticsCalculator::PeriodicUmaLogger::PeriodicUmaLogger(
     : uma_name_(uma_name),
       report_interval_ms_(report_interval_ms),
       max_value_(max_value),
-      timer_(0) {
-}
+      timer_(0) {}
 
 StatisticsCalculator::PeriodicUmaLogger::~PeriodicUmaLogger() = default;
 
@@ -66,8 +65,7 @@ StatisticsCalculator::PeriodicUmaCount::PeriodicUmaCount(
     const std::string& uma_name,
     int report_interval_ms,
     int max_value)
-    : PeriodicUmaLogger(uma_name, report_interval_ms, max_value) {
-}
+    : PeriodicUmaLogger(uma_name, report_interval_ms, max_value) {}
 
 StatisticsCalculator::PeriodicUmaCount::~PeriodicUmaCount() {
   // Log the count for the current (incomplete) interval.
@@ -90,8 +88,7 @@ StatisticsCalculator::PeriodicUmaAverage::PeriodicUmaAverage(
     const std::string& uma_name,
     int report_interval_ms,
     int max_value)
-    : PeriodicUmaLogger(uma_name, report_interval_ms, max_value) {
-}
+    : PeriodicUmaLogger(uma_name, report_interval_ms, max_value) {}
 
 StatisticsCalculator::PeriodicUmaAverage::~PeriodicUmaAverage() {
   // Log the average for the current (incomplete) interval.
@@ -153,34 +150,38 @@ void StatisticsCalculator::ResetMcu() {
 void StatisticsCalculator::ExpandedVoiceSamples(size_t num_samples,
                                                 bool is_new_concealment_event) {
   expanded_speech_samples_ += num_samples;
-  ConcealedSamplesCorrection(rtc::dchecked_cast<int>(num_samples));
+  ConcealedSamplesCorrection(rtc::dchecked_cast<int>(num_samples), true);
   lifetime_stats_.concealment_events += is_new_concealment_event;
 }
 
 void StatisticsCalculator::ExpandedNoiseSamples(size_t num_samples,
                                                 bool is_new_concealment_event) {
   expanded_noise_samples_ += num_samples;
-  ConcealedSamplesCorrection(rtc::dchecked_cast<int>(num_samples));
+  ConcealedSamplesCorrection(rtc::dchecked_cast<int>(num_samples), false);
   lifetime_stats_.concealment_events += is_new_concealment_event;
 }
 
 void StatisticsCalculator::ExpandedVoiceSamplesCorrection(int num_samples) {
   expanded_speech_samples_ =
       AddIntToSizeTWithLowerCap(num_samples, expanded_speech_samples_);
-  ConcealedSamplesCorrection(num_samples);
+  ConcealedSamplesCorrection(num_samples, true);
 }
 
 void StatisticsCalculator::ExpandedNoiseSamplesCorrection(int num_samples) {
   expanded_noise_samples_ =
       AddIntToSizeTWithLowerCap(num_samples, expanded_noise_samples_);
-  ConcealedSamplesCorrection(num_samples);
+  ConcealedSamplesCorrection(num_samples, false);
 }
 
-void StatisticsCalculator::ConcealedSamplesCorrection(int num_samples) {
+void StatisticsCalculator::ConcealedSamplesCorrection(int num_samples,
+                                                      bool is_voice) {
   if (num_samples < 0) {
     // Store negative correction to subtract from future positive additions.
     // See also the function comment in the header file.
     concealed_samples_correction_ -= num_samples;
+    if (is_voice) {
+      voice_concealed_samples_correction_ -= num_samples;
+    }
     return;
   }
 
@@ -188,6 +189,13 @@ void StatisticsCalculator::ConcealedSamplesCorrection(int num_samples) {
       std::min(static_cast<size_t>(num_samples), concealed_samples_correction_);
   concealed_samples_correction_ -= canceled_out;
   lifetime_stats_.concealed_samples += num_samples - canceled_out;
+
+  if (is_voice) {
+    const size_t voice_canceled_out = std::min(
+        static_cast<size_t>(num_samples), voice_concealed_samples_correction_);
+    voice_concealed_samples_correction_ -= voice_canceled_out;
+    lifetime_stats_.voice_concealed_samples += num_samples - voice_canceled_out;
+  }
 }
 
 void StatisticsCalculator::PreemptiveExpandedSamples(size_t num_samples) {
@@ -255,11 +263,10 @@ void StatisticsCalculator::StoreWaitingTime(int waiting_time_ms) {
   waiting_times_.push_back(waiting_time_ms);
 }
 
-void StatisticsCalculator::GetNetworkStatistics(
-    int fs_hz,
-    size_t num_samples_in_buffers,
-    size_t samples_per_packet,
-    NetEqNetworkStatistics *stats) {
+void StatisticsCalculator::GetNetworkStatistics(int fs_hz,
+                                                size_t num_samples_in_buffers,
+                                                size_t samples_per_packet,
+                                                NetEqNetworkStatistics* stats) {
   RTC_DCHECK_GT(fs_hz, 0);
   RTC_DCHECK(stats);
 
@@ -280,20 +287,18 @@ void StatisticsCalculator::GetNetworkStatistics(
       CalculateQ14Ratio(expanded_speech_samples_ + expanded_noise_samples_,
                         timestamps_since_last_report_);
 
-  stats->speech_expand_rate =
-      CalculateQ14Ratio(expanded_speech_samples_,
-                        timestamps_since_last_report_);
+  stats->speech_expand_rate = CalculateQ14Ratio(expanded_speech_samples_,
+                                                timestamps_since_last_report_);
 
-  stats->secondary_decoded_rate =
-      CalculateQ14Ratio(secondary_decoded_samples_,
-                        timestamps_since_last_report_);
+  stats->secondary_decoded_rate = CalculateQ14Ratio(
+      secondary_decoded_samples_, timestamps_since_last_report_);
 
   const size_t discarded_secondary_samples =
       discarded_secondary_packets_ * samples_per_packet;
-  stats->secondary_discarded_rate = CalculateQ14Ratio(
-      discarded_secondary_samples,
-      static_cast<uint32_t>(discarded_secondary_samples +
-        secondary_decoded_samples_));
+  stats->secondary_discarded_rate =
+      CalculateQ14Ratio(discarded_secondary_samples,
+                        static_cast<uint32_t>(discarded_secondary_samples +
+                                              secondary_decoded_samples_));
 
   if (waiting_times_.size() == 0) {
     stats->mean_waiting_time_ms = -1;

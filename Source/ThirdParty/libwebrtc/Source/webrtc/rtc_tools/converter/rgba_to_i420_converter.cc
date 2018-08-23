@@ -26,24 +26,27 @@
  * --output_file=<output_yuv_file> --width=<width_of_input_frames>
  * --height=<height_of_input_frames>
  */
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
   std::string program_name = argv[0];
-  std::string usage = "Converts RGBA raw image files to I420 frames for YUV.\n"
-    "Example usage:\n" + program_name +
-    " --frames_dir=. --output_file=output.yuv --width=320 --height=240\n"
-    "IMPORTANT: If you pass the --delete_frames command line parameter, the "
-    "tool will delete the input frames after conversion.\n"
-    "Command line flags:\n"
-    "  - width(int): Width in pixels of the frames in the input file."
-    " Default: -1\n"
-    "  - height(int): Height in pixels of the frames in the input file."
-    " Default: -1\n"
-    "  - frames_dir(string): The path to the directory where the frames reside."
-    " Default: .\n"
-    "  - output_file(string): The output file to which frames are written."
-    " Default: output.yuv\n"
-    "  - delete_frames(bool): Whether or not to delete the input frames after"
-    " the conversion. Default: false.\n";
+  std::string usage =
+      "Converts RGBA raw image files to I420 frames for YUV.\n"
+      "Example usage:\n" +
+      program_name +
+      " --frames_dir=. --output_file=output.yuv --width=320 --height=240\n"
+      "IMPORTANT: If you pass the --delete_frames command line parameter, the "
+      "tool will delete the input frames after conversion.\n"
+      "Command line flags:\n"
+      "  - width(int): Width in pixels of the frames in the input file."
+      " Default: -1\n"
+      "  - height(int): Height in pixels of the frames in the input file."
+      " Default: -1\n"
+      "  - frames_dir(string): The path to the directory where the frames "
+      "reside."
+      " Default: .\n"
+      "  - output_file(string): The output file to which frames are written."
+      " Default: output.yuv\n"
+      "  - delete_frames(bool): Whether or not to delete the input frames after"
+      " the conversion. Default: false.\n";
 
   webrtc::test::CommandLineParser parser;
 
@@ -76,9 +79,8 @@ int main(int argc, char** argv) {
   bool del_frames = (parser.GetFlag("delete_frames") == "true") ? true : false;
 
   webrtc::test::Converter converter(width, height);
-  bool success = converter.ConvertRGBAToI420Video(parser.GetFlag("frames_dir"),
-                                                  parser.GetFlag("output_file"),
-                                                  del_frames);
+  bool success = converter.ConvertRGBAToI420Video(
+      parser.GetFlag("frames_dir"), parser.GetFlag("output_file"), del_frames);
 
   if (success) {
     fprintf(stdout, "Successful conversion of RGBA frames to YUV video!\n");

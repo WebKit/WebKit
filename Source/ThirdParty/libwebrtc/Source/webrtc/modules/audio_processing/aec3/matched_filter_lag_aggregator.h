@@ -13,7 +13,7 @@
 
 #include <vector>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
 #include "modules/audio_processing/aec3/delay_estimate.h"
 #include "modules/audio_processing/aec3/matched_filter.h"
 #include "rtc_base/constructormagic.h"
@@ -33,7 +33,7 @@ class MatchedFilterLagAggregator {
   void Reset();
 
   // Aggregates the provided lag estimates.
-  rtc::Optional<DelayEstimate> Aggregate(
+  absl::optional<DelayEstimate> Aggregate(
       rtc::ArrayView<const MatchedFilter::LagEstimate> lag_estimates);
 
  private:

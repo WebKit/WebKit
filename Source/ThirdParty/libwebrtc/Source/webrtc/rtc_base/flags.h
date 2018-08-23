@@ -8,7 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-
 // Originally comes from shared/commandlineflags/flags.h
 
 // Flags are defined and declared using DEFINE_xxx and DECLARE_xxx macros,
@@ -65,23 +64,26 @@ union FlagValue {
   const char* s;
 };
 
-
 // Each flag can be accessed programmatically via a Flag object.
 class Flag {
  public:
   enum Type { BOOL, INT, FLOAT, STRING };
 
   // Internal use only.
-  Flag(const char* file, const char* name, const char* comment,
-       Type type, void* variable, FlagValue default_);
+  Flag(const char* file,
+       const char* name,
+       const char* comment,
+       Type type,
+       void* variable,
+       FlagValue default_);
 
   // General flag information
-  const char* file() const  { return file_; }
-  const char* name() const  { return name_; }
-  const char* comment() const  { return comment_; }
+  const char* file() const { return file_; }
+  const char* name() const { return name_; }
+  const char* comment() const { return comment_; }
 
   // Flag type
-  Type type() const  { return type_; }
+  Type type() const { return type_; }
 
   // Flag variables
   bool* bool_variable() const {
@@ -129,7 +131,7 @@ class Flag {
   void SetToDefault();
 
   // Iteration support
-  Flag* next() const  { return next_; }
+  Flag* next() const { return next_; }
 
   // Prints flag information. The current flag value is only printed
   // if print_current_value is set.
@@ -149,28 +151,19 @@ class Flag {
   friend class FlagList;  // accesses next_
 };
 
+// Internal use only.
+#define DEFINE_FLAG(type, c_type, name, default, comment)                   \
+  /* define and initialize the flag */                                      \
+  c_type FLAG_##name = (default);                                           \
+  /* register the flag */                                                   \
+  static rtc::Flag Flag_##name(__FILE__, #name, (comment), rtc::Flag::type, \
+                               &FLAG_##name,                                \
+                               rtc::FlagValue::New_##type(default))
 
 // Internal use only.
-
-#define DEFINE_FLAG(type, c_type, name, default, comment)    \
-  static std::pair<std::reference_wrapper<c_type>, std::reference_wrapper<rtc::Flag>> name() { \
-    /* define and initialize the flag */                     \
-    static c_type FLAG_##name = (default);                   \
-    /* register the flag */                                  \
-    static rtc::Flag Flag_##name(__FILE__, #name, (comment), \
-      rtc::Flag::type, &FLAG_##name,                         \
-      rtc::FlagValue::New_##type(default));                  \
-    return std::make_pair<std::reference_wrapper<c_type>, std::reference_wrapper<rtc::Flag>>(FLAG_##name, Flag_##name); \
-  }                       \
-  c_type& FLAG_##name() { \
-    return name().first;  \
-  }
-
-// Internal use only.
-#define DECLARE_FLAG(c_type, name)              \
-  /* declare the flag getter */                 \
-  c_type& FLAG_##name();
-
+#define DECLARE_FLAG(c_type, name) \
+  /* declare the external flag */  \
+  extern c_type FLAG_##name
 
 // Use the following macros to define a new flag:
 #define DEFINE_bool(name, default, comment) \
@@ -182,13 +175,11 @@ class Flag {
 #define DEFINE_string(name, default, comment) \
   DEFINE_FLAG(STRING, const char*, name, default, comment)
 
-
 // Use the following macros to declare a flag defined elsewhere:
-#define DECLARE_bool(name)  DECLARE_FLAG(bool, name)
-#define DECLARE_int(name)  DECLARE_FLAG(int, name)
-#define DECLARE_float(name)  DECLARE_FLAG(double, name)
-#define DECLARE_string(name)  DECLARE_FLAG(const char*, name)
-
+#define DECLARE_bool(name) DECLARE_FLAG(bool, name)
+#define DECLARE_int(name) DECLARE_FLAG(int, name)
+#define DECLARE_float(name) DECLARE_FLAG(double, name)
+#define DECLARE_string(name) DECLARE_FLAG(const char*, name)
 
 // The global list of all flags.
 class FlagList {
@@ -196,7 +187,7 @@ class FlagList {
   FlagList();
 
   // The null-terminated list of all flags. Traverse with Flag::next().
-  static Flag* list()  { return list_; }
+  static Flag* list() { return list_; }
 
   // If file != nullptr, prints information for all flags defined in file;
   // otherwise prints information for all flags in all files. The current flag
@@ -211,8 +202,10 @@ class FlagList {
   // if the arg started with "-no" or "--no". The buffer may be used to NUL-
   // terminate the name, it must be large enough to hold any possible name.
   static void SplitArgument(const char* arg,
-                            char* buffer, int buffer_size,
-                            const char** name, const char** value,
+                            char* buffer,
+                            int buffer_size,
+                            const char** name,
+                            const char** value,
                             bool* is_bool);
 
   // Set the flag values by parsing the command line. If remove_flags
@@ -259,10 +252,11 @@ class WindowsCommandLineArguments {
   ~WindowsCommandLineArguments();
 
   int argc() { return argc_; }
-  char **argv() { return argv_; }
+  char** argv() { return argv_; }
+
  private:
   int argc_;
-  char **argv_;
+  char** argv_;
 
  private:
   RTC_DISALLOW_COPY_AND_ASSIGN(WindowsCommandLineArguments);

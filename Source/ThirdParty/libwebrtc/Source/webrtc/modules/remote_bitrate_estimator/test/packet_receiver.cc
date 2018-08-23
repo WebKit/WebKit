@@ -68,11 +68,9 @@ PacketReceiver::PacketReceiver(PacketProcessorListener* listener,
                      bwe_type,
                      plot_delay,
                      plot_bwe,
-                     nullptr) {
-}
+                     nullptr) {}
 
-PacketReceiver::~PacketReceiver() {
-}
+PacketReceiver::~PacketReceiver() {}
 
 void PacketReceiver::RunFor(int64_t time_ms, Packets* in_out) {
   Packets feedback;

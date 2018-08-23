@@ -10,8 +10,8 @@
 
 #include "video/encoder_rtcp_feedback.h"
 
+#include "api/video/video_stream_encoder_interface.h"
 #include "rtc_base/checks.h"
-#include "video/video_stream_encoder.h"
 
 static const int kMinKeyFrameRequestIntervalMs = 300;
 
@@ -19,7 +19,7 @@ namespace webrtc {
 
 EncoderRtcpFeedback::EncoderRtcpFeedback(Clock* clock,
                                          const std::vector<uint32_t>& ssrcs,
-                                         VideoStreamEncoder* encoder)
+                                         VideoStreamEncoderInterface* encoder)
     : clock_(clock),
       ssrcs_(ssrcs),
       video_stream_encoder_(encoder),
@@ -60,7 +60,8 @@ void EncoderRtcpFeedback::OnReceivedIntraFrameRequest(uint32_t ssrc) {
     time_last_intra_request_ms_[index] = now_ms;
   }
 
-  video_stream_encoder_->OnReceivedIntraFrameRequest(index);
+  // Always produce key frame for all streams.
+  video_stream_encoder_->SendKeyFrame();
 }
 
 }  // namespace webrtc

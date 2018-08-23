@@ -23,7 +23,6 @@
 // refreshes, which should be 30fps. We wrap the display link in order to avoid
 // a retain cycle since CADisplayLink takes a strong reference onto its target.
 // The timer is paused by default.
-__attribute__((objc_runtime_name("WK_RTCDisplayLinkTimer")))
 @interface RTCDisplayLinkTimer : NSObject
 
 @property(nonatomic) BOOL isPaused;
@@ -46,8 +45,11 @@ __attribute__((objc_runtime_name("WK_RTCDisplayLinkTimer")))
         [CADisplayLink displayLinkWithTarget:self
                                     selector:@selector(displayLinkDidFire:)];
     _displayLink.paused = YES;
-    // Set to half of screen refresh, which should be 30fps.
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_10_0
+    _displayLink.preferredFramesPerSecond = 30;
+#else
     [_displayLink setFrameInterval:2];
+#endif
     [_displayLink addToRunLoop:[NSRunLoop currentRunLoop]
                        forMode:NSRunLoopCommonModes];
   }
@@ -104,7 +106,9 @@ __attribute__((objc_runtime_name("WK_RTCDisplayLinkTimer")))
   id<RTCVideoViewShading> _shader;
   RTCNV12TextureCache *_nv12TextureCache;
   RTCI420TextureCache *_i420TextureCache;
-  RTCVideoFrame *_lastDrawnFrame;
+  // As timestamps should be unique between frames, will store last
+  // drawn frame timestamp instead of the whole frame to reduce memory usage.
+  int64_t _lastDrawnFrameTimeStampNs;
 }
 
 @synthesize delegate = _delegate;
@@ -230,7 +234,7 @@ __attribute__((objc_runtime_name("WK_RTCDisplayLinkTimer")))
   // The renderer will draw the frame to the framebuffer corresponding to the
   // one used by |view|.
   RTCVideoFrame *frame = self.videoFrame;
-  if (!frame || frame == _lastDrawnFrame) {
+  if (!frame || frame.timeStampNs == _lastDrawnFrameTimeStampNs) {
     return;
   }
   [self ensureGLContext];
@@ -247,6 +251,8 @@ __attribute__((objc_runtime_name("WK_RTCDisplayLinkTimer")))
                                       yPlane:_nv12TextureCache.yTexture
                                      uvPlane:_nv12TextureCache.uvTexture];
       [_nv12TextureCache releaseTextures];
+
+      _lastDrawnFrameTimeStampNs = self.videoFrame.timeStampNs;
     }
   } else {
     if (!_i420TextureCache) {
@@ -259,6 +265,8 @@ __attribute__((objc_runtime_name("WK_RTCDisplayLinkTimer")))
                                     yPlane:_i420TextureCache.yTexture
                                     uPlane:_i420TextureCache.uTexture
                                     vPlane:_i420TextureCache.vTexture];
+
+    _lastDrawnFrameTimeStampNs = self.videoFrame.timeStampNs;
   }
 }
 
@@ -282,7 +290,7 @@ __attribute__((objc_runtime_name("WK_RTCDisplayLinkTimer")))
 - (void)displayLinkTimerDidFire {
   // Don't render unless video frame have changed or the view content
   // has explicitly been marked dirty.
-  if (!_isDirty && _lastDrawnFrame == self.videoFrame) {
+  if (!_isDirty && _lastDrawnFrameTimeStampNs == self.videoFrame.timeStampNs) {
     return;
   }
 

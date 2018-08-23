@@ -18,6 +18,9 @@ namespace webrtc {
 
 class MockTransport : public Transport {
  public:
+  MockTransport();
+  ~MockTransport();
+
   MOCK_METHOD3(SendRtp,
                bool(const uint8_t* data,
                     size_t len,

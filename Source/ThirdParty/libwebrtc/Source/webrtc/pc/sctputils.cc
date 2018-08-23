@@ -88,7 +88,7 @@ bool ParseDataChannelOpenMessage(const rtc::CopyOnWriteBuffer& payload,
     RTC_LOG(LS_WARNING) << "Could not read OPEN message protocol length.";
     return false;
   }
-  if (!buffer.ReadString(label, (size_t) label_length)) {
+  if (!buffer.ReadString(label, (size_t)label_length)) {
     RTC_LOG(LS_WARNING) << "Could not read OPEN message label";
     return false;
   }
@@ -165,9 +165,9 @@ bool WriteDataChannelOpenMessage(const std::string& label,
     }
   }
 
-  rtc::ByteBufferWriter buffer(
-      NULL, 20 + label.length() + config.protocol.length(),
-      rtc::ByteBuffer::ORDER_NETWORK);
+  rtc::ByteBufferWriter buffer(NULL,
+                               20 + label.length() + config.protocol.length(),
+                               rtc::ByteBuffer::ORDER_NETWORK);
   // TODO(tommi): Add error handling and check resulting length.
   buffer.WriteUInt8(DATA_CHANNEL_OPEN_MESSAGE_TYPE);
   buffer.WriteUInt8(channel_type);

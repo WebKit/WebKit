@@ -33,7 +33,9 @@ class RemoteNtpTimeEstimator {
 
   // Updates the estimator with round trip time |rtt|, NTP seconds |ntp_secs|,
   // NTP fraction |ntp_frac| and RTP timestamp |rtcp_timestamp|.
-  bool UpdateRtcpTimestamp(int64_t rtt, uint32_t ntp_secs, uint32_t ntp_frac,
+  bool UpdateRtcpTimestamp(int64_t rtt,
+                           uint32_t ntp_secs,
+                           uint32_t ntp_frac,
                            uint32_t rtp_timestamp);
 
   // Estimates the NTP timestamp in local timebase from |rtp_timestamp|.

@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "api/video/video_frame.h"
-#include "api/videosourceinterface.h"
+#include "api/video/video_source_interface.h"
 #include "rtc_base/thread_checker.h"
 
 namespace rtc {
@@ -23,6 +23,7 @@ namespace rtc {
 class VideoSourceBase : public VideoSourceInterface<webrtc::VideoFrame> {
  public:
   VideoSourceBase();
+  ~VideoSourceBase() override;
   void AddOrUpdateSink(VideoSinkInterface<webrtc::VideoFrame>* sink,
                        const VideoSinkWants& wants) override;
   void RemoveSink(VideoSinkInterface<webrtc::VideoFrame>* sink) override;

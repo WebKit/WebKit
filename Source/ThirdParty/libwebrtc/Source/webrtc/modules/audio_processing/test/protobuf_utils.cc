@@ -9,13 +9,13 @@
  */
 
 #include "modules/audio_processing/test/protobuf_utils.h"
-#include "typedefs.h"  // NOLINT(build/include)
+#include "rtc_base/system/arch.h"
 
 namespace webrtc {
 
 size_t ReadMessageBytesFromFile(FILE* file, std::unique_ptr<uint8_t[]>* bytes) {
-  // The "wire format" for the size is little-endian. Assume we're running on
-  // a little-endian machine.
+// The "wire format" for the size is little-endian. Assume we're running on
+// a little-endian machine.
 #ifndef WEBRTC_ARCH_LITTLE_ENDIAN
 #error "Need to convert messsage from little-endian."
 #endif

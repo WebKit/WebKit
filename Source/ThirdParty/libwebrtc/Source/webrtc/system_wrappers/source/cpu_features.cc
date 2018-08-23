@@ -10,13 +10,13 @@
 
 // Parts of this file derived from Chromium's base/cpu.cc.
 
+#include "rtc_base/system/arch.h"
 #include "system_wrappers/include/cpu_features_wrapper.h"
 
 #if defined(WEBRTC_ARCH_X86_FAMILY) && defined(_MSC_VER)
 #include <intrin.h>
 #endif
 
-#include "typedefs.h"  // NOLINT(build/include)
 
 // No CPU feature is available => straight C path.
 int GetCPUInfoNoASM(CPUFeature feature) {

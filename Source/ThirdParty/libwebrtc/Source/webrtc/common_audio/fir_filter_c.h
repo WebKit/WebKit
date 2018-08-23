@@ -20,8 +20,7 @@ namespace webrtc {
 
 class FIRFilterC : public FIRFilter {
  public:
-  FIRFilterC(const float* coefficients,
-             size_t coefficients_length);
+  FIRFilterC(const float* coefficients, size_t coefficients_length);
   ~FIRFilterC() override;
 
   void Filter(const float* in, size_t length, float* out) override;

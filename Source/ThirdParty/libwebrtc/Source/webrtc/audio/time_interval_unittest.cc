@@ -9,8 +9,8 @@
  */
 
 #include "audio/time_interval.h"
+#include "api/units/time_delta.h"
 #include "rtc_base/fakeclock.h"
-#include "rtc_base/timedelta.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -19,7 +19,7 @@ TEST(TimeIntervalTest, TimeInMs) {
   rtc::ScopedFakeClock fake_clock;
   TimeInterval interval;
   interval.Extend();
-  fake_clock.AdvanceTime(rtc::TimeDelta::FromMilliseconds(100));
+  fake_clock.AdvanceTime(TimeDelta::ms(100));
   interval.Extend();
   EXPECT_EQ(interval.Length(), 100);
 }

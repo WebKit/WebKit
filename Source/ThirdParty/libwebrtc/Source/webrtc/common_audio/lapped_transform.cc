@@ -29,20 +29,17 @@ void LappedTransform::BlockThunk::ProcessBlock(const float* const* input,
   RTC_CHECK_EQ(parent_->block_length_, num_frames);
 
   for (size_t i = 0; i < num_input_channels; ++i) {
-    memcpy(parent_->real_buf_.Row(i), input[i],
-           num_frames * sizeof(*input[0]));
+    memcpy(parent_->real_buf_.Row(i), input[i], num_frames * sizeof(*input[0]));
     parent_->fft_->Forward(parent_->real_buf_.Row(i),
                            parent_->cplx_pre_.Row(i));
   }
 
-  size_t block_length = RealFourier::ComplexLength(
-      RealFourier::FftOrder(num_frames));
+  size_t block_length =
+      RealFourier::ComplexLength(RealFourier::FftOrder(num_frames));
   RTC_CHECK_EQ(parent_->cplx_length_, block_length);
-  parent_->block_processor_->ProcessAudioBlock(parent_->cplx_pre_.Array(),
-                                               num_input_channels,
-                                               parent_->cplx_length_,
-                                               num_output_channels,
-                                               parent_->cplx_post_.Array());
+  parent_->block_processor_->ProcessAudioBlock(
+      parent_->cplx_pre_.Array(), num_input_channels, parent_->cplx_length_,
+      num_output_channels, parent_->cplx_post_.Array());
 
   for (size_t i = 0; i < num_output_channels; ++i) {
     parent_->fft_->Inverse(parent_->cplx_post_.Row(i),

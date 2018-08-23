@@ -15,6 +15,7 @@
 #include <string.h>
 
 #include "api/audio_codecs/audio_encoder.h"
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "modules/audio_coding/neteq/tools/packet.h"
@@ -28,7 +29,12 @@ AcmSendTestOldApi::AcmSendTestOldApi(InputAudioFile* audio_source,
                                      int source_rate_hz,
                                      int test_duration_ms)
     : clock_(0),
-      acm_(webrtc::AudioCodingModule::Create(&clock_)),
+      acm_(webrtc::AudioCodingModule::Create([this] {
+        AudioCodingModule::Config config;
+        config.clock = &clock_;
+        config.decoder_factory = CreateBuiltinAudioDecoderFactory();
+        return config;
+      }())),
       audio_source_(audio_source),
       source_rate_hz_(source_rate_hz),
       input_block_size_samples_(
@@ -89,10 +95,9 @@ std::unique_ptr<Packet> AcmSendTestOldApi::NextPacket() {
     RTC_CHECK(audio_source_->Read(input_block_size_samples_,
                                   input_frame_.mutable_data()));
     if (input_frame_.num_channels_ > 1) {
-      InputAudioFile::DuplicateInterleaved(input_frame_.data(),
-                                           input_block_size_samples_,
-                                           input_frame_.num_channels_,
-                                           input_frame_.mutable_data());
+      InputAudioFile::DuplicateInterleaved(
+          input_frame_.data(), input_block_size_samples_,
+          input_frame_.num_channels_, input_frame_.mutable_data());
     }
     data_to_send_ = false;
     RTC_CHECK_GE(acm_->Add10MsData(input_frame_), 0);
@@ -132,7 +137,7 @@ std::unique_ptr<Packet> AcmSendTestOldApi::CreatePacket() {
   packet_memory[0] = 0x80;
   packet_memory[1] = static_cast<uint8_t>(payload_type_);
   packet_memory[2] = (sequence_number_ >> 8) & 0xFF;
-  packet_memory[3] = (sequence_number_) & 0xFF;
+  packet_memory[3] = (sequence_number_)&0xFF;
   packet_memory[4] = (timestamp_ >> 24) & 0xFF;
   packet_memory[5] = (timestamp_ >> 16) & 0xFF;
   packet_memory[6] = (timestamp_ >> 8) & 0xFF;
@@ -146,8 +151,7 @@ std::unique_ptr<Packet> AcmSendTestOldApi::CreatePacket() {
   ++sequence_number_;
 
   // Copy the payload data.
-  memcpy(packet_memory + kRtpHeaderSize,
-         &last_payload_vec_[0],
+  memcpy(packet_memory + kRtpHeaderSize, &last_payload_vec_[0],
          last_payload_vec_.size());
   std::unique_ptr<Packet> packet(
       new Packet(packet_memory, allocated_bytes, clock_.TimeInMilliseconds()));

@@ -46,6 +46,8 @@ NetEqTest::NetEqTest(const NetEq::Config& config,
   RegisterExternalDecoders(ext_codecs);
 }
 
+NetEqTest::~NetEqTest() = default;
+
 int64_t NetEqTest::Run() {
   const int64_t start_time_ms = *input_->NextEventTime();
   int64_t time_now_ms = start_time_ms;
@@ -109,6 +111,42 @@ NetEqNetworkStatistics NetEqTest::SimulationStats() {
   NetEqNetworkStatistics stats;
   RTC_CHECK_EQ(neteq_->NetworkStatistics(&stats), 0);
   return stats;
+}
+
+NetEqLifetimeStatistics NetEqTest::LifetimeStats() const {
+  return neteq_->GetLifetimeStatistics();
+}
+
+NetEqTest::DecoderMap NetEqTest::StandardDecoderMap() {
+  DecoderMap codecs = {
+    {0, std::make_pair(NetEqDecoder::kDecoderPCMu, "pcmu")},
+    {8, std::make_pair(NetEqDecoder::kDecoderPCMa, "pcma")},
+#ifdef WEBRTC_CODEC_ILBC
+    {102, std::make_pair(NetEqDecoder::kDecoderILBC, "ilbc")},
+#endif
+    {103, std::make_pair(NetEqDecoder::kDecoderISAC, "isac")},
+#if !defined(WEBRTC_ANDROID)
+    {104, std::make_pair(NetEqDecoder::kDecoderISACswb, "isac-swb")},
+#endif
+#ifdef WEBRTC_CODEC_OPUS
+    {111, std::make_pair(NetEqDecoder::kDecoderOpus, "opus")},
+#endif
+    {93, std::make_pair(NetEqDecoder::kDecoderPCM16B, "pcm16-nb")},
+    {94, std::make_pair(NetEqDecoder::kDecoderPCM16Bwb, "pcm16-wb")},
+    {95, std::make_pair(NetEqDecoder::kDecoderPCM16Bswb32kHz, "pcm16-swb32")},
+    {96, std::make_pair(NetEqDecoder::kDecoderPCM16Bswb48kHz, "pcm16-swb48")},
+    {9, std::make_pair(NetEqDecoder::kDecoderG722, "g722")},
+    {106, std::make_pair(NetEqDecoder::kDecoderAVT, "avt")},
+    {114, std::make_pair(NetEqDecoder::kDecoderAVT16kHz, "avt-16")},
+    {115, std::make_pair(NetEqDecoder::kDecoderAVT32kHz, "avt-32")},
+    {116, std::make_pair(NetEqDecoder::kDecoderAVT48kHz, "avt-48")},
+    {117, std::make_pair(NetEqDecoder::kDecoderRED, "red")},
+    {13, std::make_pair(NetEqDecoder::kDecoderCNGnb, "cng-nb")},
+    {98, std::make_pair(NetEqDecoder::kDecoderCNGwb, "cng-wb")},
+    {99, std::make_pair(NetEqDecoder::kDecoderCNGswb32kHz, "cng-swb32")},
+    {100, std::make_pair(NetEqDecoder::kDecoderCNGswb48kHz, "cng-swb48")}
+  };
+  return codecs;
 }
 
 void NetEqTest::RegisterDecoders(const DecoderMap& codecs) {

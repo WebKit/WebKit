@@ -52,8 +52,8 @@ bool GetIntFromJson(const Json::Value& in, int* out) {
     char* end_ptr;
     errno = 0;
     val = strtol(c_str, &end_ptr, 10);  // NOLINT
-    ret = (end_ptr != c_str && *end_ptr == '\0' && !errno &&
-           val >= INT_MIN && val <= INT_MAX);
+    ret = (end_ptr != c_str && *end_ptr == '\0' && !errno && val >= INT_MIN &&
+           val <= INT_MAX);
     *out = val;
   }
   return ret;
@@ -72,8 +72,7 @@ bool GetUIntFromJson(const Json::Value& in, unsigned int* out) {
     char* end_ptr;
     errno = 0;
     val = strtoul(c_str, &end_ptr, 10);  // NOLINT
-    ret = (end_ptr != c_str && *end_ptr == '\0' && !errno &&
-           val <= UINT_MAX);
+    ret = (end_ptr != c_str && *end_ptr == '\0' && !errno && val <= UINT_MAX);
     *out = val;
   }
   return ret;
@@ -120,10 +119,10 @@ bool GetDoubleFromJson(const Json::Value& in, double* out) {
 }
 
 namespace {
-template<typename T>
+template <typename T>
 bool JsonArrayToVector(const Json::Value& value,
                        bool (*getter)(const Json::Value& in, T* out),
-                       std::vector<T> *vec) {
+                       std::vector<T>* vec) {
   vec->clear();
   if (!value.isArray()) {
     return false;
@@ -151,8 +150,7 @@ bool JsonArrayToValueVector(const Json::Value& in,
   return JsonArrayToVector(in, GetValueFromJson, out);
 }
 
-bool JsonArrayToIntVector(const Json::Value& in,
-                          std::vector<int>* out) {
+bool JsonArrayToIntVector(const Json::Value& in, std::vector<int>* out) {
   return JsonArrayToVector(in, GetIntFromJson, out);
 }
 
@@ -166,18 +164,16 @@ bool JsonArrayToStringVector(const Json::Value& in,
   return JsonArrayToVector(in, GetStringFromJson, out);
 }
 
-bool JsonArrayToBoolVector(const Json::Value& in,
-                           std::vector<bool>* out) {
+bool JsonArrayToBoolVector(const Json::Value& in, std::vector<bool>* out) {
   return JsonArrayToVector(in, GetBoolFromJson, out);
 }
 
-bool JsonArrayToDoubleVector(const Json::Value& in,
-                             std::vector<double>* out) {
+bool JsonArrayToDoubleVector(const Json::Value& in, std::vector<double>* out) {
   return JsonArrayToVector(in, GetDoubleFromJson, out);
 }
 
 namespace {
-template<typename T>
+template <typename T>
 Json::Value VectorToJsonArray(const std::vector<T>& vec) {
   Json::Value result(Json::arrayValue);
   for (size_t i = 0; i < vec.size(); ++i) {
@@ -211,8 +207,7 @@ Json::Value DoubleVectorToJsonArray(const std::vector<double>& in) {
   return VectorToJsonArray(in);
 }
 
-bool GetValueFromJsonArray(const Json::Value& in, size_t n,
-                           Json::Value* out) {
+bool GetValueFromJsonArray(const Json::Value& in, size_t n, Json::Value* out) {
   if (!in.isArray() || !in.isValidIndex(static_cast<int>(n))) {
     return false;
   }
@@ -221,37 +216,33 @@ bool GetValueFromJsonArray(const Json::Value& in, size_t n,
   return true;
 }
 
-bool GetIntFromJsonArray(const Json::Value& in, size_t n,
-                         int* out) {
+bool GetIntFromJsonArray(const Json::Value& in, size_t n, int* out) {
   Json::Value x;
   return GetValueFromJsonArray(in, n, &x) && GetIntFromJson(x, out);
 }
 
-bool GetUIntFromJsonArray(const Json::Value& in, size_t n,
-                          unsigned int* out)  {
+bool GetUIntFromJsonArray(const Json::Value& in, size_t n, unsigned int* out) {
   Json::Value x;
   return GetValueFromJsonArray(in, n, &x) && GetUIntFromJson(x, out);
 }
 
-bool GetStringFromJsonArray(const Json::Value& in, size_t n,
-                            std::string* out) {
+bool GetStringFromJsonArray(const Json::Value& in, size_t n, std::string* out) {
   Json::Value x;
   return GetValueFromJsonArray(in, n, &x) && GetStringFromJson(x, out);
 }
 
-bool GetBoolFromJsonArray(const Json::Value& in, size_t n,
-                          bool* out) {
+bool GetBoolFromJsonArray(const Json::Value& in, size_t n, bool* out) {
   Json::Value x;
   return GetValueFromJsonArray(in, n, &x) && GetBoolFromJson(x, out);
 }
 
-bool GetDoubleFromJsonArray(const Json::Value& in, size_t n,
-                            double* out) {
+bool GetDoubleFromJsonArray(const Json::Value& in, size_t n, double* out) {
   Json::Value x;
   return GetValueFromJsonArray(in, n, &x) && GetDoubleFromJson(x, out);
 }
 
-bool GetValueFromJsonObject(const Json::Value& in, const std::string& k,
+bool GetValueFromJsonObject(const Json::Value& in,
+                            const std::string& k,
                             Json::Value* out) {
   if (!in.isObject() || !in.isMember(k)) {
     return false;
@@ -261,31 +252,36 @@ bool GetValueFromJsonObject(const Json::Value& in, const std::string& k,
   return true;
 }
 
-bool GetIntFromJsonObject(const Json::Value& in, const std::string& k,
+bool GetIntFromJsonObject(const Json::Value& in,
+                          const std::string& k,
                           int* out) {
   Json::Value x;
   return GetValueFromJsonObject(in, k, &x) && GetIntFromJson(x, out);
 }
 
-bool GetUIntFromJsonObject(const Json::Value& in, const std::string& k,
-                           unsigned int* out)  {
+bool GetUIntFromJsonObject(const Json::Value& in,
+                           const std::string& k,
+                           unsigned int* out) {
   Json::Value x;
   return GetValueFromJsonObject(in, k, &x) && GetUIntFromJson(x, out);
 }
 
-bool GetStringFromJsonObject(const Json::Value& in, const std::string& k,
-                             std::string* out)  {
+bool GetStringFromJsonObject(const Json::Value& in,
+                             const std::string& k,
+                             std::string* out) {
   Json::Value x;
   return GetValueFromJsonObject(in, k, &x) && GetStringFromJson(x, out);
 }
 
-bool GetBoolFromJsonObject(const Json::Value& in, const std::string& k,
+bool GetBoolFromJsonObject(const Json::Value& in,
+                           const std::string& k,
                            bool* out) {
   Json::Value x;
   return GetValueFromJsonObject(in, k, &x) && GetBoolFromJson(x, out);
 }
 
-bool GetDoubleFromJsonObject(const Json::Value& in, const std::string& k,
+bool GetDoubleFromJsonObject(const Json::Value& in,
+                             const std::string& k,
                              double* out) {
   Json::Value x;
   return GetValueFromJsonObject(in, k, &x) && GetDoubleFromJson(x, out);

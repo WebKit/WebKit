@@ -45,27 +45,24 @@ typedef void (*AddTraceEventPtr)(char phase,
 //
 // This method must be called before any WebRTC methods. Functions
 // provided should be thread-safe.
-void SetupEventTracer(
-    GetCategoryEnabledPtr get_category_enabled_ptr,
-    AddTraceEventPtr add_trace_event_ptr);
+void SetupEventTracer(GetCategoryEnabledPtr get_category_enabled_ptr,
+                      AddTraceEventPtr add_trace_event_ptr);
 
 // This class defines interface for the event tracing system to call
 // internally. Do not call these methods directly.
 class EventTracer {
  public:
-  static const unsigned char* GetCategoryEnabled(
-      const char* name);
+  static const unsigned char* GetCategoryEnabled(const char* name);
 
-  static void AddTraceEvent(
-      char phase,
-      const unsigned char* category_enabled,
-      const char* name,
-      unsigned long long id,
-      int num_args,
-      const char** arg_names,
-      const unsigned char* arg_types,
-      const unsigned long long* arg_values,
-      unsigned char flags);
+  static void AddTraceEvent(char phase,
+                            const unsigned char* category_enabled,
+                            const char* name,
+                            unsigned long long id,
+                            int num_args,
+                            const char** arg_names,
+                            const unsigned char* arg_types,
+                            const unsigned long long* arg_values,
+                            unsigned char flags);
 };
 
 }  // namespace webrtc

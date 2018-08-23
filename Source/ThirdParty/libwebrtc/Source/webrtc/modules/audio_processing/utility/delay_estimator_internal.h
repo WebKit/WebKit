@@ -14,7 +14,6 @@
 #define MODULES_AUDIO_PROCESSING_UTILITY_DELAY_ESTIMATOR_INTERNAL_H_
 
 #include "modules/audio_processing/utility/delay_estimator.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 typedef union {
   float float_;

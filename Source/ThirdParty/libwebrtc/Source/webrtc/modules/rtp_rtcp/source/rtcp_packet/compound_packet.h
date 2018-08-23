@@ -15,7 +15,6 @@
 #include <vector>
 
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
-#include "rtc_base/basictypes.h"
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {

@@ -12,19 +12,19 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <string.h>
 
-#include "common_audio/fft4g.h"
+#include "common_audio/third_party/fft4g/fft4g.h"
 #include "modules/audio_processing/vad/pitch_internal.h"
 #include "modules/audio_processing/vad/pole_zero_filter.h"
 #include "modules/audio_processing/vad/vad_audio_proc_internal.h"
 #include "rtc_base/checks.h"
 extern "C" {
-#include "modules/audio_coding/codecs/isac/main/source/codec.h"
-#include "modules/audio_coding/codecs/isac/main/source/lpc_analysis.h"
+#include "modules/audio_coding/codecs/isac/main/source/filter_functions.h"
+#include "modules/audio_coding/codecs/isac/main/source/isac_vad.h"
 #include "modules/audio_coding/codecs/isac/main/source/pitch_estimator.h"
 #include "modules/audio_coding/codecs/isac/main/source/structs.h"
 }
-#include "modules/include/module_common_types.h"
 
 namespace webrtc {
 
@@ -67,8 +67,7 @@ VadAudioProc::VadAudioProc()
   WebRtcIsac_InitPitchAnalysis(pitch_analysis_handle_.get());
 }
 
-VadAudioProc::~VadAudioProc() {
-}
+VadAudioProc::~VadAudioProc() {}
 
 void VadAudioProc::ResetBuffer() {
   memcpy(audio_buffer_, &audio_buffer_[kNumSamplesToProcess],

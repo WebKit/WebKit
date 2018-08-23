@@ -15,8 +15,8 @@
 #include <utility>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "api/cryptoparams.h"
-#include "api/optional.h"
 
 namespace webrtc {
 
@@ -31,7 +31,7 @@ class MediaDescription {
   // The mid(media stream identification) is used for identifying media streams
   // within a session description.
   // https://tools.ietf.org/html/rfc5888#section-6
-  rtc::Optional<std::string> mid() const { return mid_; }
+  absl::optional<std::string> mid() const { return mid_; }
   void set_mid(std::string mid) { mid_.emplace(std::move(mid)); }
 
   // Security keys and parameters for this media stream. Can be used to
@@ -43,7 +43,7 @@ class MediaDescription {
   }
 
  private:
-  rtc::Optional<std::string> mid_;
+  absl::optional<std::string> mid_;
 
   std::vector<cricket::CryptoParams> sdes_params_;
 };

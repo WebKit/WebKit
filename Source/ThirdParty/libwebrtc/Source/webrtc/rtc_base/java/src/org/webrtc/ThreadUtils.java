@@ -16,13 +16,14 @@ import android.os.SystemClock;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Nullable;
 
 public class ThreadUtils {
   /**
    * Utility class to be used for checking that a method is called on the correct thread.
    */
   public static class ThreadChecker {
-    private Thread thread = Thread.currentThread();
+    @Nullable private Thread thread = Thread.currentThread();
 
     public void checkIsOnValidThread() {
       if (thread == null) {
@@ -141,17 +142,6 @@ public class ThreadUtils {
       Thread.currentThread().interrupt();
     }
     return result;
-  }
-
-  // TODO(sakal): This method is broken. It should be removed: crbug.com/webrtc/8456
-  @SuppressWarnings("WaitNotInLoop")
-  public static void waitUninterruptibly(final Object object) {
-    executeUninterruptibly(new BlockingOperation() {
-      @Override
-      public void run() throws InterruptedException {
-        object.wait();
-      }
-    });
   }
 
   /**

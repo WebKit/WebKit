@@ -30,17 +30,16 @@ int32_t Channel::SendData(FrameType frameType,
 
   rtpInfo.header.markerBit = false;
   rtpInfo.header.ssrc = 0;
-  rtpInfo.header.sequenceNumber = (external_sequence_number_ < 0) ?
-      _seqNo++ : static_cast<uint16_t>(external_sequence_number_);
+  rtpInfo.header.sequenceNumber =
+      (external_sequence_number_ < 0)
+          ? _seqNo++
+          : static_cast<uint16_t>(external_sequence_number_);
   rtpInfo.header.payloadType = payloadType;
-  rtpInfo.header.timestamp = (external_send_timestamp_ < 0) ? timeStamp :
-      static_cast<uint32_t>(external_send_timestamp_);
+  rtpInfo.header.timestamp =
+      (external_send_timestamp_ < 0)
+          ? timeStamp
+          : static_cast<uint32_t>(external_send_timestamp_);
 
-  if (frameType == kAudioFrameCN) {
-    rtpInfo.type.Audio.isCNG = true;
-  } else {
-    rtpInfo.type.Audio.isCNG = false;
-  }
   if (frameType == kEmptyFrame) {
     // When frame is empty, we should not transmit it. The frame size of the
     // next non-empty frame will be based on the previous frame size.
@@ -48,7 +47,6 @@ int32_t Channel::SendData(FrameType frameType,
     return 0;
   }
 
-  rtpInfo.type.Audio.channel = 1;
   // Treat fragmentation separately
   if (fragmentation != NULL) {
     // If silence for too long, send only new data.
@@ -57,7 +55,7 @@ int32_t Channel::SendData(FrameType frameType,
       // only 0x80 if we have multiple blocks
       _payloadData[0] = 0x80 + fragmentation->fragmentationPlType[1];
       size_t REDheader = (fragmentation->fragmentationTimeDiff[1] << 10) +
-          fragmentation->fragmentationLength[1];
+                         fragmentation->fragmentationLength[1];
       _payloadData[1] = uint8_t((REDheader >> 16) & 0x000000FF);
       _payloadData[2] = uint8_t((REDheader >> 8) & 0x000000FF);
       _payloadData[3] = uint8_t(REDheader & 0x000000FF);
@@ -85,18 +83,16 @@ int32_t Channel::SendData(FrameType frameType,
       if (_leftChannel) {
         memcpy(&_rtpInfo, &rtpInfo, sizeof(WebRtcRTPHeader));
         _leftChannel = false;
-        rtpInfo.type.Audio.channel = 1;
       } else {
         memcpy(&rtpInfo, &_rtpInfo, sizeof(WebRtcRTPHeader));
         _leftChannel = true;
-        rtpInfo.type.Audio.channel = 2;
       }
     }
   }
 
   _channelCritSect.Enter();
   if (_saveBitStream) {
-    //fwrite(payloadData, sizeof(uint8_t), payloadSize, _bitStreamFile);
+    // fwrite(payloadData, sizeof(uint8_t), payloadSize, _bitStreamFile);
   }
 
   if (!_isStereo) {
@@ -128,8 +124,8 @@ int32_t Channel::SendData(FrameType frameType,
 // TODO(turajs): rewite this method.
 void Channel::CalcStatistics(WebRtcRTPHeader& rtpInfo, size_t payloadSize) {
   int n;
-  if ((rtpInfo.header.payloadType != _lastPayloadType)
-      && (_lastPayloadType != -1)) {
+  if ((rtpInfo.header.payloadType != _lastPayloadType) &&
+      (_lastPayloadType != -1)) {
     // payload-type is changed.
     // we have to terminate the calculations on the previous payload type
     // we ignore the last packet in that payload type just to make things
@@ -156,14 +152,15 @@ void Channel::CalcStatistics(WebRtcRTPHeader& rtpInfo, size_t payloadSize) {
   if (!newPayload) {
     if (!currentPayloadStr->newPacket) {
       if (!_useLastFrameSize) {
-        _lastFrameSizeSample = (uint32_t) ((uint32_t) rtpInfo.header.timestamp -
-            (uint32_t) currentPayloadStr->lastTimestamp);
+        _lastFrameSizeSample =
+            (uint32_t)((uint32_t)rtpInfo.header.timestamp -
+                       (uint32_t)currentPayloadStr->lastTimestamp);
       }
       assert(_lastFrameSizeSample > 0);
       int k = 0;
       for (; k < MAX_NUM_FRAMESIZES; ++k) {
         if ((currentPayloadStr->frameSizeStats[k].frameSizeSample ==
-            _lastFrameSizeSample) ||
+             _lastFrameSizeSample) ||
             (currentPayloadStr->frameSizeStats[k].frameSizeSample == 0)) {
           break;
         }
@@ -174,9 +171,9 @@ void Channel::CalcStatistics(WebRtcRTPHeader& rtpInfo, size_t payloadSize) {
                _lastPayloadType, _lastFrameSizeSample);
         return;
       }
-      ACMTestFrameSizeStats* currentFrameSizeStats = &(currentPayloadStr
-          ->frameSizeStats[k]);
-      currentFrameSizeStats->frameSizeSample = (int16_t) _lastFrameSizeSample;
+      ACMTestFrameSizeStats* currentFrameSizeStats =
+          &(currentPayloadStr->frameSizeStats[k]);
+      currentFrameSizeStats->frameSizeSample = (int16_t)_lastFrameSizeSample;
 
       // increment the number of encoded samples.
       currentFrameSizeStats->totalEncodedSamples += _lastFrameSizeSample;
@@ -185,15 +182,15 @@ void Channel::CalcStatistics(WebRtcRTPHeader& rtpInfo, size_t payloadSize) {
       // increment the total number of bytes (this is based on
       // the previous payload we don't know the frame-size of
       // the current payload.
-      currentFrameSizeStats->totalPayloadLenByte += currentPayloadStr
-          ->lastPayloadLenByte;
+      currentFrameSizeStats->totalPayloadLenByte +=
+          currentPayloadStr->lastPayloadLenByte;
       // store the maximum payload-size (this is based on
       // the previous payload we don't know the frame-size of
       // the current payload.
-      if (currentFrameSizeStats->maxPayloadLen
-          < currentPayloadStr->lastPayloadLenByte) {
-        currentFrameSizeStats->maxPayloadLen = currentPayloadStr
-            ->lastPayloadLenByte;
+      if (currentFrameSizeStats->maxPayloadLen <
+          currentPayloadStr->lastPayloadLenByte) {
+        currentFrameSizeStats->maxPayloadLen =
+            currentPayloadStr->lastPayloadLenByte;
       }
       // store the current values for the next time
       currentPayloadStr->lastTimestamp = rtpInfo.header.timestamp;
@@ -203,8 +200,8 @@ void Channel::CalcStatistics(WebRtcRTPHeader& rtpInfo, size_t payloadSize) {
       currentPayloadStr->lastPayloadLenByte = payloadSize;
       currentPayloadStr->lastTimestamp = rtpInfo.header.timestamp;
       currentPayloadStr->payloadType = rtpInfo.header.payloadType;
-      memset(currentPayloadStr->frameSizeStats, 0, MAX_NUM_FRAMESIZES *
-             sizeof(ACMTestFrameSizeStats));
+      memset(currentPayloadStr->frameSizeStats, 0,
+             MAX_NUM_FRAMESIZES * sizeof(ACMTestFrameSizeStats));
     }
   } else {
     n = 0;
@@ -216,8 +213,8 @@ void Channel::CalcStatistics(WebRtcRTPHeader& rtpInfo, size_t payloadSize) {
     _payloadStats[n].lastPayloadLenByte = payloadSize;
     _payloadStats[n].lastTimestamp = rtpInfo.header.timestamp;
     _payloadStats[n].payloadType = rtpInfo.header.payloadType;
-    memset(_payloadStats[n].frameSizeStats, 0, MAX_NUM_FRAMESIZES *
-           sizeof(ACMTestFrameSizeStats));
+    memset(_payloadStats[n].frameSizeStats, 0,
+           MAX_NUM_FRAMESIZES * sizeof(ACMTestFrameSizeStats));
   }
 }
 
@@ -262,8 +259,7 @@ Channel::Channel(int16_t chID)
   }
 }
 
-Channel::~Channel() {
-}
+Channel::~Channel() {}
 
 void Channel::RegisterReceiverACM(AudioCodingModule* acm) {
   _receiverACM = acm;
@@ -311,13 +307,13 @@ int16_t Channel::Stats(CodecInst& codecInst,
       _channelCritSect.Leave();
       return 0;
     }
-    payloadStats.frameSizeStats[n].usageLenSec = (double) payloadStats
-        .frameSizeStats[n].totalEncodedSamples / (double) codecInst.plfreq;
+    payloadStats.frameSizeStats[n].usageLenSec =
+        (double)payloadStats.frameSizeStats[n].totalEncodedSamples /
+        (double)codecInst.plfreq;
 
     payloadStats.frameSizeStats[n].rateBitPerSec =
-        payloadStats.frameSizeStats[n].totalPayloadLenByte * 8
-            / payloadStats.frameSizeStats[n].usageLenSec;
-
+        payloadStats.frameSizeStats[n].totalPayloadLenByte * 8 /
+        payloadStats.frameSizeStats[n].usageLenSec;
   }
   _channelCritSect.Leave();
   return 0;
@@ -353,14 +349,14 @@ void Channel::Stats(uint8_t* payloadType, uint32_t* payloadLenByte) {
     if (_payloadStats[k].payloadType == -1) {
       break;
     }
-    payloadType[k] = (uint8_t) _payloadStats[k].payloadType;
+    payloadType[k] = (uint8_t)_payloadStats[k].payloadType;
     payloadLenByte[k] = 0;
     for (n = 0; n < MAX_NUM_FRAMESIZES; n++) {
       if (_payloadStats[k].frameSizeStats[n].frameSizeSample == 0) {
         break;
       }
-      payloadLenByte[k] += (uint16_t) _payloadStats[k].frameSizeStats[n]
-          .totalPayloadLenByte;
+      payloadLenByte[k] +=
+          (uint16_t)_payloadStats[k].frameSizeStats[n].totalPayloadLenByte;
     }
   }
 
@@ -387,18 +383,15 @@ void Channel::PrintStats(CodecInst& codecInst) {
            payloadStats.frameSizeStats[k].rateBitPerSec);
     printf("Maximum Payload-Size.......... %" PRIuS " Bytes\n",
            payloadStats.frameSizeStats[k].maxPayloadLen);
-    printf(
-        "Maximum Instantaneous Rate.... %.0f bits/sec\n",
-        ((double) payloadStats.frameSizeStats[k].maxPayloadLen * 8.0
-            * (double) codecInst.plfreq)
-            / (double) payloadStats.frameSizeStats[k].frameSizeSample);
+    printf("Maximum Instantaneous Rate.... %.0f bits/sec\n",
+           ((double)payloadStats.frameSizeStats[k].maxPayloadLen * 8.0 *
+            (double)codecInst.plfreq) /
+               (double)payloadStats.frameSizeStats[k].frameSizeSample);
     printf("Number of Packets............. %u\n",
-           (unsigned int) payloadStats.frameSizeStats[k].numPackets);
+           (unsigned int)payloadStats.frameSizeStats[k].numPackets);
     printf("Duration...................... %0.3f sec\n\n",
            payloadStats.frameSizeStats[k].usageLenSec);
-
   }
-
 }
 
 uint32_t Channel::LastInTimestamp() {
@@ -413,7 +406,7 @@ double Channel::BitRate() {
   double rate;
   uint64_t currTime = rtc::TimeMillis();
   _channelCritSect.Enter();
-  rate = ((double) _totalBytes * 8.0) / (double) (currTime - _beginTime);
+  rate = ((double)_totalBytes * 8.0) / (double)(currTime - _beginTime);
   _channelCritSect.Leave();
   return rate;
 }

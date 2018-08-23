@@ -18,18 +18,17 @@
  *
  */
 
-
-#include "codec.h"
-#include "entropy_coding.h"
-#include "pitch_estimator.h"
-#include "bandwidth_estimator.h"
-#include "structs.h"
-#include "settings.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "modules/audio_coding/codecs/isac/main/source/codec.h"
+#include "modules/audio_coding/codecs/isac/main/source/entropy_coding.h"
+#include "modules/audio_coding/codecs/isac/main/source/pitch_estimator.h"
+#include "modules/audio_coding/codecs/isac/main/source/bandwidth_estimator.h"
+#include "modules/audio_coding/codecs/isac/main/source/structs.h"
+#include "modules/audio_coding/codecs/isac/main/source/settings.h"
+#include "modules/audio_coding/codecs/isac/main/source/pitch_filter.h"
 
 /*
  * function to decode the bitstream

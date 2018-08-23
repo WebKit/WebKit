@@ -29,26 +29,24 @@ class FeedbackParam {
  public:
   FeedbackParam() = default;
   FeedbackParam(const std::string& id, const std::string& param)
-      : id_(id),
-        param_(param) {
-  }
+      : id_(id), param_(param) {}
   explicit FeedbackParam(const std::string& id)
-      : id_(id),
-        param_(kParamValueEmpty) {
-  }
+      : id_(id), param_(kParamValueEmpty) {}
+
   bool operator==(const FeedbackParam& other) const;
 
   const std::string& id() const { return id_; }
   const std::string& param() const { return param_; }
 
  private:
-  std::string id_;  // e.g. "nack", "ccm"
+  std::string id_;     // e.g. "nack", "ccm"
   std::string param_;  // e.g. "", "rpsi", "fir"
 };
 
 class FeedbackParams {
  public:
   FeedbackParams();
+  ~FeedbackParams();
   bool operator==(const FeedbackParams& other) const;
 
   bool Has(const FeedbackParam& param) const;
@@ -57,6 +55,7 @@ class FeedbackParams {
   void Intersect(const FeedbackParams& from);
 
   const std::vector<FeedbackParam>& params() const { return params_; }
+
  private:
   bool HasDuplicateEntries() const;
 
@@ -100,9 +99,7 @@ struct Codec {
 
   bool operator==(const Codec& c) const;
 
-  bool operator!=(const Codec& c) const {
-    return !(*this == c);
-  }
+  bool operator!=(const Codec& c) const { return !(*this == c); }
 
  protected:
   // A Codec can't be created without a subclass.
@@ -142,32 +139,8 @@ struct AudioCodec : public Codec {
 
   bool operator==(const AudioCodec& c) const;
 
-  bool operator!=(const AudioCodec& c) const {
-    return !(*this == c);
-  }
+  bool operator!=(const AudioCodec& c) const { return !(*this == c); }
 };
-
-inline std::ostream& operator<<(std::ostream& os, const AudioCodec& ac) {
-  os << "{id: " << ac.id;
-  os << ", name: " << ac.name;
-  os << ", clockrate: " << ac.clockrate;
-  os << ", bitrate: " << ac.bitrate;
-  os << ", channels: " << ac.channels;
-  os << ", params: {";
-  const char* sep = "";
-  for (const auto& kv : ac.params) {
-    os << sep << kv.first << ": " << kv.second;
-    sep = ", ";
-  }
-  os << "}, feedback_params: {";
-  sep = "";
-  for (const FeedbackParam& fp : ac.feedback_params.params()) {
-    os << sep << fp.id() << ": " << fp.param();
-    sep = ", ";
-  }
-  os << "}}";
-  return os;
-}
 
 struct VideoCodec : public Codec {
   // Creates a codec with the given parameters.
@@ -195,9 +168,7 @@ struct VideoCodec : public Codec {
 
   bool operator==(const VideoCodec& c) const;
 
-  bool operator!=(const VideoCodec& c) const {
-    return !(*this == c);
-  }
+  bool operator!=(const VideoCodec& c) const { return !(*this == c); }
 
   static VideoCodec CreateRtxCodec(int rtx_payload_type,
                                    int associated_payload_type);
@@ -248,6 +219,7 @@ bool CodecNamesEq(const std::string& name1, const std::string& name2);
 bool CodecNamesEq(const char* name1, const char* name2);
 bool HasNack(const Codec& codec);
 bool HasRemb(const Codec& codec);
+bool HasRrtr(const Codec& codec);
 bool HasTransportCc(const Codec& codec);
 // Returns the first codec in |supported_codecs| that matches |codec|, or
 // nullptr if no codec matches.

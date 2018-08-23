@@ -10,10 +10,12 @@
 
 #include "modules/audio_processing/aec3/adaptive_fir_filter.h"
 
+// Defines WEBRTC_ARCH_X86_FAMILY, used below.
+#include "rtc_base/system/arch.h"
+
 #if defined(WEBRTC_HAS_NEON)
 #include <arm_neon.h>
 #endif
-#include "typedefs.h"  // NOLINT(build/include)
 #if defined(WEBRTC_ARCH_X86_FAMILY)
 #include <emmintrin.h>
 #endif
@@ -416,16 +418,27 @@ void ApplyFilter_SSE2(const RenderBuffer& render_buffer,
 }  // namespace aec3
 
 AdaptiveFirFilter::AdaptiveFirFilter(size_t max_size_partitions,
+                                     size_t initial_size_partitions,
+                                     size_t size_change_duration_blocks,
                                      Aec3Optimization optimization,
                                      ApmDataDumper* data_dumper)
     : data_dumper_(data_dumper),
       fft_(),
       optimization_(optimization),
       max_size_partitions_(max_size_partitions),
+      size_change_duration_blocks_(
+          static_cast<int>(size_change_duration_blocks)),
+      current_size_partitions_(initial_size_partitions),
+      target_size_partitions_(initial_size_partitions),
+      old_target_size_partitions_(initial_size_partitions),
       H_(max_size_partitions_),
       H2_(max_size_partitions_, std::array<float, kFftLengthBy2Plus1>()),
       h_(GetTimeDomainLength(max_size_partitions_), 0.f) {
   RTC_DCHECK(data_dumper_);
+  RTC_DCHECK_GE(max_size_partitions, initial_size_partitions);
+
+  RTC_DCHECK_LT(0, size_change_duration_blocks_);
+  one_by_size_change_duration_blocks_ = 1.f / size_change_duration_blocks_;
 
   for (auto& H_j : H_) {
     H_j.Clear();
@@ -434,6 +447,7 @@ AdaptiveFirFilter::AdaptiveFirFilter(size_t max_size_partitions,
     H2_k.fill(0.f);
   }
   erl_.fill(0.f);
+  SetSizePartitions(current_size_partitions_, true);
 }
 
 AdaptiveFirFilter::~AdaptiveFirFilter() = default;
@@ -460,30 +474,64 @@ void AdaptiveFirFilter::HandleEchoPathChange() {
   erl_.fill(0.f);
 }
 
-void AdaptiveFirFilter::SetSizePartitions(size_t size) {
+void AdaptiveFirFilter::SetSizePartitions(size_t size, bool immediate_effect) {
   RTC_DCHECK_EQ(max_size_partitions_, H_.capacity());
   RTC_DCHECK_EQ(max_size_partitions_, H2_.capacity());
   RTC_DCHECK_EQ(GetTimeDomainLength(max_size_partitions_), h_.capacity());
   RTC_DCHECK_EQ(H_.size(), H2_.size());
   RTC_DCHECK_EQ(h_.size(), GetTimeDomainLength(H_.size()));
+  RTC_DCHECK_LE(size, max_size_partitions_);
 
-  if (size > max_size_partitions_) {
-    RTC_LOG(LS_ERROR) << "Too large adaptive filter size specificed: " << size;
-    size = max_size_partitions_;
+  target_size_partitions_ = std::min(max_size_partitions_, size);
+  if (immediate_effect) {
+    current_size_partitions_ = old_target_size_partitions_ =
+        target_size_partitions_;
+    ResetFilterBuffersToCurrentSize();
+    size_change_counter_ = 0;
+  } else {
+    size_change_counter_ = size_change_duration_blocks_;
   }
+}
 
-  if (size < H_.size()) {
-    for (size_t k = size; k < H_.size(); ++k) {
+void AdaptiveFirFilter::ResetFilterBuffersToCurrentSize() {
+  if (current_size_partitions_ < H_.size()) {
+    for (size_t k = current_size_partitions_; k < H_.size(); ++k) {
       H_[k].Clear();
       H2_[k].fill(0.f);
     }
-
-    std::fill(h_.begin() + GetTimeDomainLength(size), h_.end(), 0.f);
+    std::fill(h_.begin() + GetTimeDomainLength(current_size_partitions_),
+              h_.end(), 0.f);
   }
 
-  H_.resize(size);
-  H2_.resize(size);
-  h_.resize(GetTimeDomainLength(size));
+  H_.resize(current_size_partitions_);
+  H2_.resize(current_size_partitions_);
+  h_.resize(GetTimeDomainLength(current_size_partitions_));
+  RTC_DCHECK_LT(0, current_size_partitions_);
+  partition_to_constrain_ =
+      std::min(partition_to_constrain_, current_size_partitions_ - 1);
+}
+
+void AdaptiveFirFilter::UpdateSize() {
+  RTC_DCHECK_GE(size_change_duration_blocks_, size_change_counter_);
+  if (size_change_counter_ > 0) {
+    --size_change_counter_;
+
+    auto average = [](float from, float to, float from_weight) {
+      return from * from_weight + to * (1.f - from_weight);
+    };
+
+    float change_factor =
+        size_change_counter_ * one_by_size_change_duration_blocks_;
+
+    current_size_partitions_ = average(old_target_size_partitions_,
+                                       target_size_partitions_, change_factor);
+
+    ResetFilterBuffersToCurrentSize();
+  } else {
+    current_size_partitions_ = old_target_size_partitions_ =
+        target_size_partitions_;
+  }
+  RTC_DCHECK_LE(0, size_change_counter_);
 }
 
 void AdaptiveFirFilter::Filter(const RenderBuffer& render_buffer,
@@ -507,6 +555,9 @@ void AdaptiveFirFilter::Filter(const RenderBuffer& render_buffer,
 
 void AdaptiveFirFilter::Adapt(const RenderBuffer& render_buffer,
                               const FftData& G) {
+  // Update the filter size if needed.
+  UpdateSize();
+
   // Adapt the filter.
   switch (optimization_) {
 #if defined(WEBRTC_ARCH_X86_FAMILY)
@@ -565,6 +616,29 @@ void AdaptiveFirFilter::Constrain() {
   partition_to_constrain_ = partition_to_constrain_ < (H_.size() - 1)
                                 ? partition_to_constrain_ + 1
                                 : 0;
+}
+
+void AdaptiveFirFilter::ScaleFilter(float factor) {
+  for (auto& H : H_) {
+    for (auto& re : H.re) {
+      re *= factor;
+    }
+    for (auto& im : H.im) {
+      im *= factor;
+    }
+  }
+  for (auto& h : h_) {
+    h *= factor;
+  }
+}
+
+// Set the filter coefficients.
+void AdaptiveFirFilter::SetFilter(const std::vector<FftData>& H) {
+  const size_t num_partitions = std::min(H_.size(), H.size());
+  for (size_t k = 0; k < num_partitions; ++k) {
+    std::copy(H[k].re.begin(), H[k].re.end(), H_[k].re.begin());
+    std::copy(H[k].im.begin(), H[k].im.end(), H_[k].im.begin());
+  }
 }
 
 }  // namespace webrtc

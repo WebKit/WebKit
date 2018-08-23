@@ -17,7 +17,6 @@
 #include "api/audio_codecs/audio_decoder.h"
 #include "modules/audio_coding/neteq/tick_timer.h"
 #include "rtc_base/buffer.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 

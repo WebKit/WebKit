@@ -18,25 +18,28 @@
 
 #include <string.h>
 
-#include "defines.h"
-#include "lpc_encode.h"
-#include "frame_classify.h"
-#include "state_search.h"
-#include "state_construct.h"
-#include "constants.h"
-#include "cb_search.h"
-#include "cb_construct.h"
-#include "index_conv_enc.h"
-#include "pack_bits.h"
-#include "hp_input.h"
+// Defines WEBRTC_ARCH_BIG_ENDIAN, used below.
+#include "rtc_base/system/arch.h"
+
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/lpc_encode.h"
+#include "modules/audio_coding/codecs/ilbc/frame_classify.h"
+#include "modules/audio_coding/codecs/ilbc/state_search.h"
+#include "modules/audio_coding/codecs/ilbc/state_construct.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
+#include "modules/audio_coding/codecs/ilbc/cb_search.h"
+#include "modules/audio_coding/codecs/ilbc/cb_construct.h"
+#include "modules/audio_coding/codecs/ilbc/index_conv_enc.h"
+#include "modules/audio_coding/codecs/ilbc/pack_bits.h"
+#include "modules/audio_coding/codecs/ilbc/hp_input.h"
 #include "rtc_base/checks.h"
 
 #ifdef SPLIT_10MS
-#include "unpack_bits.h"
-#include "index_conv_dec.h"
+#include "modules/audio_coding/codecs/ilbc/unpack_bits.h"
+#include "modules/audio_coding/codecs/ilbc/index_conv_dec.h"
 #endif
 #ifndef WEBRTC_ARCH_BIG_ENDIAN
-#include "swap_bytes.h"
+#include "modules/audio_coding/codecs/ilbc/swap_bytes.h"
 #endif
 
 /*----------------------------------------------------------------*

@@ -19,7 +19,7 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_GAIN_DEQUANT_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_GAIN_DEQUANT_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  decoder for quantized gains in the gain-shape coding of
@@ -30,7 +30,7 @@ int16_t WebRtcIlbcfix_GainDequant(
     /* (o) quantized gain value (Q14) */
     int16_t index, /* (i) quantization index */
     int16_t maxIn, /* (i) maximum of unquantized gain (Q14) */
-    int16_t stage /* (i) The stage of the search */
-                                         );
+    int16_t stage  /* (i) The stage of the search */
+    );
 
 #endif

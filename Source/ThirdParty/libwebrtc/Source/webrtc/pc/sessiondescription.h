@@ -363,6 +363,15 @@ const ContentInfo* FindContentInfoByName(const ContentInfos& contents,
 const ContentInfo* FindContentInfoByType(const ContentInfos& contents,
                                          const std::string& type);
 
+// Determines how the MSID will be signaled in the SDP. These can be used as
+// flags to indicate both or none.
+enum MsidSignaling {
+  // Signal MSID with one a=msid line in the media section.
+  kMsidSignalingMediaSection = 0x1,
+  // Signal MSID with a=ssrc: msid lines in the media section.
+  kMsidSignalingSsrcAttribute = 0x2
+};
+
 // Describes a collection of contents, each with its own name and
 // type.  Analogous to a <jingle> or <session> stanza.  Assumes that
 // contents are unique be name, but doesn't enforce that.
@@ -439,6 +448,13 @@ class SessionDescription {
   void set_msid_supported(bool supported) { msid_supported_ = supported; }
   bool msid_supported() const { return msid_supported_; }
 
+  // Determines how the MSIDs were/will be signaled. Flag value composed of
+  // MsidSignaling bits (see enum above).
+  void set_msid_signaling(int msid_signaling) {
+    msid_signaling_ = msid_signaling;
+  }
+  int msid_signaling() const { return msid_signaling_; }
+
  private:
   SessionDescription(const SessionDescription&);
 
@@ -446,6 +462,9 @@ class SessionDescription {
   TransportInfos transport_infos_;
   ContentGroups content_groups_;
   bool msid_supported_ = true;
+  // Default to what Plan B would do.
+  // TODO(bugs.webrtc.org/8530): Change default to kMsidSignalingMediaSection.
+  int msid_signaling_ = kMsidSignalingSsrcAttribute;
 };
 
 // Indicates whether a session description was sent by the local client or

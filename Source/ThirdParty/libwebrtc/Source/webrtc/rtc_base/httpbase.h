@@ -8,7 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-
 #ifndef RTC_BASE_HTTPBASE_H_
 #define RTC_BASE_HTTPBASE_H_
 
@@ -26,39 +25,51 @@ class StreamInterface;
 ///////////////////////////////////////////////////////////////////////////////
 
 class HttpParser {
-public:
+ public:
   enum ProcessResult { PR_CONTINUE, PR_BLOCK, PR_COMPLETE };
   HttpParser();
   virtual ~HttpParser();
 
   void reset();
-  ProcessResult Process(const char* buffer, size_t len, size_t* processed,
+  ProcessResult Process(const char* buffer,
+                        size_t len,
+                        size_t* processed,
                         HttpError* error);
   bool is_valid_end_of_input() const;
   void complete(HttpError err);
 
   size_t GetDataRemaining() const { return data_size_; }
 
-protected:
+ protected:
   ProcessResult ProcessLine(const char* line, size_t len, HttpError* error);
 
   // HttpParser Interface
-  virtual ProcessResult ProcessLeader(const char* line, size_t len,
+  virtual ProcessResult ProcessLeader(const char* line,
+                                      size_t len,
                                       HttpError* error) = 0;
-  virtual ProcessResult ProcessHeader(const char* name, size_t nlen,
-                                      const char* value, size_t vlen,
+  virtual ProcessResult ProcessHeader(const char* name,
+                                      size_t nlen,
+                                      const char* value,
+                                      size_t vlen,
                                       HttpError* error) = 0;
-  virtual ProcessResult ProcessHeaderComplete(bool chunked, size_t& data_size,
+  virtual ProcessResult ProcessHeaderComplete(bool chunked,
+                                              size_t& data_size,
                                               HttpError* error) = 0;
-  virtual ProcessResult ProcessData(const char* data, size_t len, size_t& read,
+  virtual ProcessResult ProcessData(const char* data,
+                                    size_t len,
+                                    size_t& read,
                                     HttpError* error) = 0;
   virtual void OnComplete(HttpError err) = 0;
 
-private:
+ private:
   enum State {
-    ST_LEADER, ST_HEADERS,
-    ST_CHUNKSIZE, ST_CHUNKTERM, ST_TRAILERS,
-    ST_DATA, ST_COMPLETE
+    ST_LEADER,
+    ST_HEADERS,
+    ST_CHUNKSIZE,
+    ST_CHUNKTERM,
+    ST_TRAILERS,
+    ST_DATA,
+    ST_COMPLETE
   } state_;
   bool chunked_;
   size_t data_size_;
@@ -71,7 +82,7 @@ private:
 enum HttpMode { HM_NONE, HM_CONNECT, HM_RECV, HM_SEND };
 
 class IHttpNotify {
-public:
+ public:
   virtual ~IHttpNotify() {}
   virtual HttpError onHttpHeaderComplete(bool chunked, size_t& data_size) = 0;
   virtual void onHttpComplete(HttpMode mode, HttpError err) = 0;
@@ -88,11 +99,8 @@ public:
 // stream interface drives I/O via calls to Read().
 ///////////////////////////////////////////////////////////////////////////////
 
-class HttpBase
-: private HttpParser,
-  public sigslot::has_slots<>
-{
-public:
+class HttpBase : private HttpParser, public sigslot::has_slots<> {
+ public:
   HttpBase();
   ~HttpBase() override;
 
@@ -111,12 +119,7 @@ public:
   void set_ignore_data(bool ignore) { ignore_data_ = ignore; }
   bool ignore_data() const { return ignore_data_; }
 
-  // Obtaining this stream puts HttpBase into stream mode until the stream
-  // is closed.  HttpBase can only expose one open stream interface at a time.
-  // Further calls will return null.
-  StreamInterface* GetDocumentStream();
-
-protected:
+ protected:
   // Do cleanup when the http stream closes (error may be 0 for a clean
   // shutdown), and return the error code to signal.
   HttpError HandleStreamClose(int error);
@@ -162,7 +165,7 @@ protected:
                             HttpError* error) override;
   void OnComplete(HttpError err) override;
 
-private:
+ private:
   class DocumentStream;
   friend class DocumentStream;
 
@@ -172,7 +175,6 @@ private:
   HttpData* data_;
   IHttpNotify* notify_;
   StreamInterface* http_stream_;
-  DocumentStream* doc_stream_;
   char buffer_[kBufferSize];
   size_t len_;
 
@@ -182,6 +184,6 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-} // namespace rtc
+}  // namespace rtc
 
-#endif // RTC_BASE_HTTPBASE_H_
+#endif  // RTC_BASE_HTTPBASE_H_

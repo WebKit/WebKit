@@ -30,7 +30,6 @@ TEST(RtpPayloadRegistryTest,
   const uint8_t payload_type = 97;
   VideoCodec video_codec;
   video_codec.codecType = kVideoCodecVP8;
-  strncpy(video_codec.plName, "VP8", RTP_PAYLOAD_NAME_SIZE);
   video_codec.plType = payload_type;
 
   EXPECT_EQ(0, rtp_payload_registry.RegisterReceivePayload(video_codec));
@@ -42,7 +41,7 @@ TEST(RtpPayloadRegistryTest,
   // We should get back the corresponding payload that we registered.
   EXPECT_STREQ("VP8", retrieved_payload->name);
   EXPECT_TRUE(retrieved_payload->typeSpecific.is_video());
-  EXPECT_EQ(kRtpVideoVp8,
+  EXPECT_EQ(kVideoCodecVP8,
             retrieved_payload->typeSpecific.video_payload().videoCodecType);
 
   // Now forget about it and verify it's gone.
@@ -74,23 +73,6 @@ TEST(RtpPayloadRegistryTest,
   // Now forget about it and verify it's gone.
   EXPECT_EQ(0, rtp_payload_registry.DeRegisterReceivePayload(payload_type));
   EXPECT_FALSE(rtp_payload_registry.PayloadTypeToPayload(payload_type));
-}
-
-TEST(RtpPayloadRegistryTest, AudioRedWorkProperly) {
-  RTPPayloadRegistry rtp_payload_registry;
-  bool new_payload_created = false;
-  const SdpAudioFormat red_format("red", 8000, 1);
-
-  EXPECT_EQ(0, rtp_payload_registry.RegisterReceivePayload(
-                   127, red_format, &new_payload_created));
-  EXPECT_TRUE(new_payload_created);
-
-  EXPECT_EQ(127, rtp_payload_registry.red_payload_type());
-
-  const auto retrieved_payload = rtp_payload_registry.PayloadTypeToPayload(127);
-  EXPECT_TRUE(retrieved_payload);
-  EXPECT_TRUE(retrieved_payload->typeSpecific.is_audio());
-  EXPECT_EQ(red_format, retrieved_payload->typeSpecific.audio_payload().format);
 }
 
 TEST(RtpPayloadRegistryTest,
@@ -165,28 +147,6 @@ TEST(RtpPayloadRegistryTest,
       << "Not compatible; both payloads should be kept.";
   EXPECT_TRUE(rtp_payload_registry.PayloadTypeToPayload(payload_type + 1))
       << "Not compatible; both payloads should be kept.";
-}
-
-TEST(RtpPayloadRegistryTest,
-     LastReceivedCodecTypesAreResetWhenRegisteringNewPayloadTypes) {
-  RTPPayloadRegistry rtp_payload_registry;
-  rtp_payload_registry.set_last_received_payload_type(17);
-  EXPECT_EQ(17, rtp_payload_registry.last_received_payload_type());
-
-  bool media_type_unchanged = rtp_payload_registry.ReportMediaPayloadType(18);
-  EXPECT_FALSE(media_type_unchanged);
-  media_type_unchanged = rtp_payload_registry.ReportMediaPayloadType(18);
-  EXPECT_TRUE(media_type_unchanged);
-
-  bool ignored;
-  constexpr int payload_type = 34;
-  const SdpAudioFormat audio_format("name", 44000, 1);
-  EXPECT_EQ(0, rtp_payload_registry.RegisterReceivePayload(
-                   payload_type, audio_format, &ignored));
-
-  EXPECT_EQ(-1, rtp_payload_registry.last_received_payload_type());
-  media_type_unchanged = rtp_payload_registry.ReportMediaPayloadType(18);
-  EXPECT_FALSE(media_type_unchanged);
 }
 
 class ParameterizedRtpPayloadRegistryTest

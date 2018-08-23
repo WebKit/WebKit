@@ -26,19 +26,19 @@ class SinusoidalLinearChirpSource : public SincResamplerCallback {
  public:
   // |delay_samples| can be used to insert a fractional sample delay into the
   // source.  It will produce zeros until non-negative time is reached.
-  SinusoidalLinearChirpSource(int sample_rate, size_t samples,
-                              double max_frequency, double delay_samples);
+  SinusoidalLinearChirpSource(int sample_rate,
+                              size_t samples,
+                              double max_frequency,
+                              double delay_samples);
 
-  virtual ~SinusoidalLinearChirpSource() {}
+  ~SinusoidalLinearChirpSource() override {}
 
   void Run(size_t frames, float* destination) override;
 
   double Frequency(size_t position);
 
  private:
-  enum {
-    kMinFrequency = 5
-  };
+  enum { kMinFrequency = 5 };
 
   int sample_rate_;
   size_t total_samples_;

@@ -18,7 +18,6 @@
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/flags.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace test {

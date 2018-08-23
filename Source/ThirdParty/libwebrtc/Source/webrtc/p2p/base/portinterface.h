@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "api/candidate.h"
 #include "p2p/base/transportdescription.h"
 #include "rtc_base/asyncpacketsocket.h"
@@ -22,12 +23,13 @@
 namespace rtc {
 class Network;
 struct PacketOptions;
-}
+}  // namespace rtc
 
 namespace cricket {
 class Connection;
 class IceMessage;
 class StunMessage;
+class StunStats;
 
 enum ProtocolType {
   PROTO_UDP,
@@ -66,13 +68,12 @@ class PortInterface {
   virtual void PrepareAddress() = 0;
 
   // Returns the connection to the given address or NULL if none exists.
-  virtual Connection* GetConnection(
-      const rtc::SocketAddress& remote_addr) = 0;
+  virtual Connection* GetConnection(const rtc::SocketAddress& remote_addr) = 0;
 
   // Creates a new connection to the given address.
   enum CandidateOrigin { ORIGIN_THIS_PORT, ORIGIN_OTHER_PORT, ORIGIN_MESSAGE };
-  virtual Connection* CreateConnection(
-      const Candidate& remote_candidate, CandidateOrigin origin) = 0;
+  virtual Connection* CreateConnection(const Candidate& remote_candidate,
+                                       CandidateOrigin origin) = 0;
 
   // Functions on the underlying socket(s).
   virtual int SetOption(rtc::Socket::Option opt, int value) = 0;
@@ -85,25 +86,32 @@ class PortInterface {
 
   // Sends the given packet to the given address, provided that the address is
   // that of a connection or an address that has sent to us already.
-  virtual int SendTo(const void* data, size_t size,
+  virtual int SendTo(const void* data,
+                     size_t size,
                      const rtc::SocketAddress& addr,
-                     const rtc::PacketOptions& options, bool payload) = 0;
+                     const rtc::PacketOptions& options,
+                     bool payload) = 0;
 
   // Indicates that we received a successful STUN binding request from an
   // address that doesn't correspond to any current connection.  To turn this
   // into a real connection, call CreateConnection.
-  sigslot::signal6<PortInterface*, const rtc::SocketAddress&,
-                   ProtocolType, IceMessage*, const std::string&,
-                   bool> SignalUnknownAddress;
+  sigslot::signal6<PortInterface*,
+                   const rtc::SocketAddress&,
+                   ProtocolType,
+                   IceMessage*,
+                   const std::string&,
+                   bool>
+      SignalUnknownAddress;
 
   // Sends a response message (normal or error) to the given request.  One of
   // these methods should be called as a response to SignalUnknownAddress.
   // NOTE: You MUST call CreateConnection BEFORE SendBindingResponse.
   virtual void SendBindingResponse(StunMessage* request,
                                    const rtc::SocketAddress& addr) = 0;
-  virtual void SendBindingErrorResponse(
-      StunMessage* request, const rtc::SocketAddress& addr,
-      int error_code, const std::string& reason) = 0;
+  virtual void SendBindingErrorResponse(StunMessage* request,
+                                        const rtc::SocketAddress& addr,
+                                        int error_code,
+                                        const std::string& reason) = 0;
 
   // Signaled when this port decides to delete itself because it no longer has
   // any usefulness.
@@ -117,13 +125,16 @@ class PortInterface {
   // through their respective connection and instead delivers every packet
   // through this port.
   virtual void EnablePortPackets() = 0;
-  sigslot::signal4<PortInterface*, const char*, size_t,
-                   const rtc::SocketAddress&> SignalReadPacket;
+  sigslot::
+      signal4<PortInterface*, const char*, size_t, const rtc::SocketAddress&>
+          SignalReadPacket;
 
   // Emitted each time a packet is sent on this port.
   sigslot::signal1<const rtc::SentPacket&> SignalSentPacket;
 
   virtual std::string ToString() const = 0;
+
+  virtual void GetStunStats(absl::optional<StunStats>* stats) = 0;
 
  protected:
   PortInterface();

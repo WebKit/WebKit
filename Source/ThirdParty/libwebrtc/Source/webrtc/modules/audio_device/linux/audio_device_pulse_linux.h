@@ -19,7 +19,10 @@
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/thread_checker.h"
 
+#if defined(WEBRTC_USE_X11)
 #include <X11/Xlib.h>
+#endif
+
 #include <pulse/pulseaudio.h>
 
 // We define this flag if it's missing from our headers, because we want to be
@@ -85,253 +88,254 @@ const uint32_t WEBRTC_PA_MSECS_PER_SEC = 1000;
 // Init _configuredLatencyRec/Play to this value to disable latency requirements
 const int32_t WEBRTC_PA_NO_LATENCY_REQUIREMENTS = -1;
 
-// Set this const to 1 to account for peeked and used data in latency calculation
+// Set this const to 1 to account for peeked and used data in latency
+// calculation
 const uint32_t WEBRTC_PA_CAPTURE_BUFFER_LATENCY_ADJUSTMENT = 0;
 
-namespace webrtc
-{
+namespace webrtc {
 class EventWrapper;
 
-class AudioDeviceLinuxPulse: public AudioDeviceGeneric
-{
-public:
-    AudioDeviceLinuxPulse();
-    virtual ~AudioDeviceLinuxPulse();
+class AudioDeviceLinuxPulse : public AudioDeviceGeneric {
+ public:
+  AudioDeviceLinuxPulse();
+  virtual ~AudioDeviceLinuxPulse();
 
-    // Retrieve the currently utilized audio layer
-    int32_t ActiveAudioLayer(
-        AudioDeviceModule::AudioLayer& audioLayer) const override;
+  // Retrieve the currently utilized audio layer
+  int32_t ActiveAudioLayer(
+      AudioDeviceModule::AudioLayer& audioLayer) const override;
 
-    // Main initializaton and termination
-    InitStatus Init() override;
-    int32_t Terminate() override;
-    bool Initialized() const override;
+  // Main initializaton and termination
+  InitStatus Init() override;
+  int32_t Terminate() override;
+  bool Initialized() const override;
 
-    // Device enumeration
-    int16_t PlayoutDevices() override;
-    int16_t RecordingDevices() override;
-    int32_t PlayoutDeviceName(uint16_t index,
+  // Device enumeration
+  int16_t PlayoutDevices() override;
+  int16_t RecordingDevices() override;
+  int32_t PlayoutDeviceName(uint16_t index,
+                            char name[kAdmMaxDeviceNameSize],
+                            char guid[kAdmMaxGuidSize]) override;
+  int32_t RecordingDeviceName(uint16_t index,
                               char name[kAdmMaxDeviceNameSize],
                               char guid[kAdmMaxGuidSize]) override;
-    int32_t RecordingDeviceName(uint16_t index,
-                                char name[kAdmMaxDeviceNameSize],
-                                char guid[kAdmMaxGuidSize]) override;
 
-    // Device selection
-    int32_t SetPlayoutDevice(uint16_t index) override;
-    int32_t SetPlayoutDevice(
-        AudioDeviceModule::WindowsDeviceType device) override;
-    int32_t SetRecordingDevice(uint16_t index) override;
-    int32_t SetRecordingDevice(
-        AudioDeviceModule::WindowsDeviceType device) override;
+  // Device selection
+  int32_t SetPlayoutDevice(uint16_t index) override;
+  int32_t SetPlayoutDevice(
+      AudioDeviceModule::WindowsDeviceType device) override;
+  int32_t SetRecordingDevice(uint16_t index) override;
+  int32_t SetRecordingDevice(
+      AudioDeviceModule::WindowsDeviceType device) override;
 
-    // Audio transport initialization
-    int32_t PlayoutIsAvailable(bool& available) override;
-    int32_t InitPlayout() override;
-    bool PlayoutIsInitialized() const override;
-    int32_t RecordingIsAvailable(bool& available) override;
-    int32_t InitRecording() override;
-    bool RecordingIsInitialized() const override;
+  // Audio transport initialization
+  int32_t PlayoutIsAvailable(bool& available) override;
+  int32_t InitPlayout() override;
+  bool PlayoutIsInitialized() const override;
+  int32_t RecordingIsAvailable(bool& available) override;
+  int32_t InitRecording() override;
+  bool RecordingIsInitialized() const override;
 
-    // Audio transport control
-    int32_t StartPlayout() override;
-    int32_t StopPlayout() override;
-    bool Playing() const override;
-    int32_t StartRecording() override;
-    int32_t StopRecording() override;
-    bool Recording() const override;
+  // Audio transport control
+  int32_t StartPlayout() override;
+  int32_t StopPlayout() override;
+  bool Playing() const override;
+  int32_t StartRecording() override;
+  int32_t StopRecording() override;
+  bool Recording() const override;
 
-    // Audio mixer initialization
-    int32_t InitSpeaker() override;
-    bool SpeakerIsInitialized() const override;
-    int32_t InitMicrophone() override;
-    bool MicrophoneIsInitialized() const override;
+  // Audio mixer initialization
+  int32_t InitSpeaker() override;
+  bool SpeakerIsInitialized() const override;
+  int32_t InitMicrophone() override;
+  bool MicrophoneIsInitialized() const override;
 
-    // Speaker volume controls
-    int32_t SpeakerVolumeIsAvailable(bool& available) override;
-    int32_t SetSpeakerVolume(uint32_t volume) override;
-    int32_t SpeakerVolume(uint32_t& volume) const override;
-    int32_t MaxSpeakerVolume(uint32_t& maxVolume) const override;
-    int32_t MinSpeakerVolume(uint32_t& minVolume) const override;
+  // Speaker volume controls
+  int32_t SpeakerVolumeIsAvailable(bool& available) override;
+  int32_t SetSpeakerVolume(uint32_t volume) override;
+  int32_t SpeakerVolume(uint32_t& volume) const override;
+  int32_t MaxSpeakerVolume(uint32_t& maxVolume) const override;
+  int32_t MinSpeakerVolume(uint32_t& minVolume) const override;
 
-    // Microphone volume controls
-    int32_t MicrophoneVolumeIsAvailable(bool& available) override;
-    int32_t SetMicrophoneVolume(uint32_t volume) override;
-    int32_t MicrophoneVolume(uint32_t& volume) const override;
-    int32_t MaxMicrophoneVolume(uint32_t& maxVolume) const override;
-    int32_t MinMicrophoneVolume(uint32_t& minVolume) const override;
+  // Microphone volume controls
+  int32_t MicrophoneVolumeIsAvailable(bool& available) override;
+  int32_t SetMicrophoneVolume(uint32_t volume) override;
+  int32_t MicrophoneVolume(uint32_t& volume) const override;
+  int32_t MaxMicrophoneVolume(uint32_t& maxVolume) const override;
+  int32_t MinMicrophoneVolume(uint32_t& minVolume) const override;
 
-    // Speaker mute control
-    int32_t SpeakerMuteIsAvailable(bool& available) override;
-    int32_t SetSpeakerMute(bool enable) override;
-    int32_t SpeakerMute(bool& enabled) const override;
+  // Speaker mute control
+  int32_t SpeakerMuteIsAvailable(bool& available) override;
+  int32_t SetSpeakerMute(bool enable) override;
+  int32_t SpeakerMute(bool& enabled) const override;
 
-    // Microphone mute control
-    int32_t MicrophoneMuteIsAvailable(bool& available) override;
-    int32_t SetMicrophoneMute(bool enable) override;
-    int32_t MicrophoneMute(bool& enabled) const override;
+  // Microphone mute control
+  int32_t MicrophoneMuteIsAvailable(bool& available) override;
+  int32_t SetMicrophoneMute(bool enable) override;
+  int32_t MicrophoneMute(bool& enabled) const override;
 
-    // Stereo support
-    int32_t StereoPlayoutIsAvailable(bool& available) override;
-    int32_t SetStereoPlayout(bool enable) override;
-    int32_t StereoPlayout(bool& enabled) const override;
-    int32_t StereoRecordingIsAvailable(bool& available) override;
-    int32_t SetStereoRecording(bool enable) override;
-    int32_t StereoRecording(bool& enabled) const override;
+  // Stereo support
+  int32_t StereoPlayoutIsAvailable(bool& available) override;
+  int32_t SetStereoPlayout(bool enable) override;
+  int32_t StereoPlayout(bool& enabled) const override;
+  int32_t StereoRecordingIsAvailable(bool& available) override;
+  int32_t SetStereoRecording(bool enable) override;
+  int32_t StereoRecording(bool& enabled) const override;
 
-    // Delay information and control
-    int32_t PlayoutDelay(uint16_t& delayMS) const override;
+  // Delay information and control
+  int32_t PlayoutDelay(uint16_t& delayMS) const override;
 
-   void AttachAudioBuffer(AudioDeviceBuffer* audioBuffer) override;
+  void AttachAudioBuffer(AudioDeviceBuffer* audioBuffer) override;
 
-private:
- void Lock() RTC_EXCLUSIVE_LOCK_FUNCTION(_critSect) { _critSect.Enter(); }
- void UnLock() RTC_UNLOCK_FUNCTION(_critSect) { _critSect.Leave(); }
- void WaitForOperationCompletion(pa_operation* paOperation) const;
- void WaitForSuccess(pa_operation* paOperation) const;
+ private:
+  void Lock() RTC_EXCLUSIVE_LOCK_FUNCTION(_critSect) { _critSect.Enter(); }
+  void UnLock() RTC_UNLOCK_FUNCTION(_critSect) { _critSect.Leave(); }
+  void WaitForOperationCompletion(pa_operation* paOperation) const;
+  void WaitForSuccess(pa_operation* paOperation) const;
 
- bool KeyPressed() const;
+  bool KeyPressed() const;
 
- static void PaContextStateCallback(pa_context* c, void* pThis);
- static void PaSinkInfoCallback(pa_context* c,
-                                const pa_sink_info* i,
-                                int eol,
-                                void* pThis);
- static void PaSourceInfoCallback(pa_context* c,
-                                  const pa_source_info* i,
-                                  int eol,
-                                  void* pThis);
- static void PaServerInfoCallback(pa_context* c,
-                                  const pa_server_info* i,
-                                  void* pThis);
- static void PaStreamStateCallback(pa_stream* p, void* pThis);
- void PaContextStateCallbackHandler(pa_context* c);
- void PaSinkInfoCallbackHandler(const pa_sink_info* i, int eol);
- void PaSourceInfoCallbackHandler(const pa_source_info* i, int eol);
- void PaServerInfoCallbackHandler(const pa_server_info* i);
- void PaStreamStateCallbackHandler(pa_stream* p);
-
- void EnableWriteCallback();
- void DisableWriteCallback();
- static void PaStreamWriteCallback(pa_stream* unused,
-                                   size_t buffer_space,
+  static void PaContextStateCallback(pa_context* c, void* pThis);
+  static void PaSinkInfoCallback(pa_context* c,
+                                 const pa_sink_info* i,
+                                 int eol,
+                                 void* pThis);
+  static void PaSourceInfoCallback(pa_context* c,
+                                   const pa_source_info* i,
+                                   int eol,
                                    void* pThis);
- void PaStreamWriteCallbackHandler(size_t buffer_space);
- static void PaStreamUnderflowCallback(pa_stream* unused, void* pThis);
- void PaStreamUnderflowCallbackHandler();
- void EnableReadCallback();
- void DisableReadCallback();
- static void PaStreamReadCallback(pa_stream* unused1,
-                                  size_t unused2,
-                                  void* pThis);
- void PaStreamReadCallbackHandler();
- static void PaStreamOverflowCallback(pa_stream* unused, void* pThis);
- void PaStreamOverflowCallbackHandler();
- int32_t LatencyUsecs(pa_stream* stream);
- int32_t ReadRecordedData(const void* bufferData, size_t bufferSize);
- int32_t ProcessRecordedData(int8_t* bufferData,
-                             uint32_t bufferSizeInSamples,
-                             uint32_t recDelay);
+  static void PaServerInfoCallback(pa_context* c,
+                                   const pa_server_info* i,
+                                   void* pThis);
+  static void PaStreamStateCallback(pa_stream* p, void* pThis);
+  void PaContextStateCallbackHandler(pa_context* c);
+  void PaSinkInfoCallbackHandler(const pa_sink_info* i, int eol);
+  void PaSourceInfoCallbackHandler(const pa_source_info* i, int eol);
+  void PaServerInfoCallbackHandler(const pa_server_info* i);
+  void PaStreamStateCallbackHandler(pa_stream* p);
 
- int32_t CheckPulseAudioVersion();
- int32_t InitSamplingFrequency();
- int32_t GetDefaultDeviceInfo(bool recDevice, char* name, uint16_t& index);
- int32_t InitPulseAudio();
- int32_t TerminatePulseAudio();
+  void EnableWriteCallback();
+  void DisableWriteCallback();
+  static void PaStreamWriteCallback(pa_stream* unused,
+                                    size_t buffer_space,
+                                    void* pThis);
+  void PaStreamWriteCallbackHandler(size_t buffer_space);
+  static void PaStreamUnderflowCallback(pa_stream* unused, void* pThis);
+  void PaStreamUnderflowCallbackHandler();
+  void EnableReadCallback();
+  void DisableReadCallback();
+  static void PaStreamReadCallback(pa_stream* unused1,
+                                   size_t unused2,
+                                   void* pThis);
+  void PaStreamReadCallbackHandler();
+  static void PaStreamOverflowCallback(pa_stream* unused, void* pThis);
+  void PaStreamOverflowCallbackHandler();
+  int32_t LatencyUsecs(pa_stream* stream);
+  int32_t ReadRecordedData(const void* bufferData, size_t bufferSize);
+  int32_t ProcessRecordedData(int8_t* bufferData,
+                              uint32_t bufferSizeInSamples,
+                              uint32_t recDelay);
 
- void PaLock();
- void PaUnLock();
+  int32_t CheckPulseAudioVersion();
+  int32_t InitSamplingFrequency();
+  int32_t GetDefaultDeviceInfo(bool recDevice, char* name, uint16_t& index);
+  int32_t InitPulseAudio();
+  int32_t TerminatePulseAudio();
 
- static bool RecThreadFunc(void*);
- static bool PlayThreadFunc(void*);
- bool RecThreadProcess();
- bool PlayThreadProcess();
+  void PaLock();
+  void PaUnLock();
 
- AudioDeviceBuffer* _ptrAudioBuffer;
+  static bool RecThreadFunc(void*);
+  static bool PlayThreadFunc(void*);
+  bool RecThreadProcess();
+  bool PlayThreadProcess();
 
- rtc::CriticalSection _critSect;
- EventWrapper& _timeEventRec;
- EventWrapper& _timeEventPlay;
- EventWrapper& _recStartEvent;
- EventWrapper& _playStartEvent;
+  AudioDeviceBuffer* _ptrAudioBuffer;
 
- // TODO(pbos): Remove unique_ptr and use directly without resetting.
- std::unique_ptr<rtc::PlatformThread> _ptrThreadPlay;
- std::unique_ptr<rtc::PlatformThread> _ptrThreadRec;
+  rtc::CriticalSection _critSect;
+  EventWrapper& _timeEventRec;
+  EventWrapper& _timeEventPlay;
+  EventWrapper& _recStartEvent;
+  EventWrapper& _playStartEvent;
 
- AudioMixerManagerLinuxPulse _mixerManager;
+  // TODO(pbos): Remove unique_ptr and use directly without resetting.
+  std::unique_ptr<rtc::PlatformThread> _ptrThreadPlay;
+  std::unique_ptr<rtc::PlatformThread> _ptrThreadRec;
 
- uint16_t _inputDeviceIndex;
- uint16_t _outputDeviceIndex;
- bool _inputDeviceIsSpecified;
- bool _outputDeviceIsSpecified;
+  AudioMixerManagerLinuxPulse _mixerManager;
 
- int sample_rate_hz_;
- uint8_t _recChannels;
- uint8_t _playChannels;
+  uint16_t _inputDeviceIndex;
+  uint16_t _outputDeviceIndex;
+  bool _inputDeviceIsSpecified;
+  bool _outputDeviceIsSpecified;
 
- // Stores thread ID in constructor.
- // We can then use ThreadChecker::CalledOnValidThread() to ensure that
- // other methods are called from the same thread.
- // Currently only does RTC_DCHECK(thread_checker_.CalledOnValidThread()).
- rtc::ThreadChecker thread_checker_;
+  int sample_rate_hz_;
+  uint8_t _recChannels;
+  uint8_t _playChannels;
 
- bool _initialized;
- bool _recording;
- bool _playing;
- bool _recIsInitialized;
- bool _playIsInitialized;
- bool _startRec;
- bool _stopRec;
- bool _startPlay;
- bool _stopPlay;
- bool update_speaker_volume_at_startup_;
+  // Stores thread ID in constructor.
+  // We can then use ThreadChecker::CalledOnValidThread() to ensure that
+  // other methods are called from the same thread.
+  // Currently only does RTC_DCHECK(thread_checker_.CalledOnValidThread()).
+  rtc::ThreadChecker thread_checker_;
 
- uint32_t _sndCardPlayDelay;
- uint32_t _sndCardRecDelay;
+  bool _initialized;
+  bool _recording;
+  bool _playing;
+  bool _recIsInitialized;
+  bool _playIsInitialized;
+  bool _startRec;
+  bool _stopRec;
+  bool _startPlay;
+  bool _stopPlay;
+  bool update_speaker_volume_at_startup_;
 
- int32_t _writeErrors;
+  uint32_t _sndCardPlayDelay;
+  uint32_t _sndCardRecDelay;
 
- uint16_t _deviceIndex;
- int16_t _numPlayDevices;
- int16_t _numRecDevices;
- char* _playDeviceName;
- char* _recDeviceName;
- char* _playDisplayDeviceName;
- char* _recDisplayDeviceName;
- char _paServerVersion[32];
+  int32_t _writeErrors;
 
- int8_t* _playBuffer;
- size_t _playbackBufferSize;
- size_t _playbackBufferUnused;
- size_t _tempBufferSpace;
- int8_t* _recBuffer;
- size_t _recordBufferSize;
- size_t _recordBufferUsed;
- const void* _tempSampleData;
- size_t _tempSampleDataSize;
- int32_t _configuredLatencyPlay;
- int32_t _configuredLatencyRec;
+  uint16_t _deviceIndex;
+  int16_t _numPlayDevices;
+  int16_t _numRecDevices;
+  char* _playDeviceName;
+  char* _recDeviceName;
+  char* _playDisplayDeviceName;
+  char* _recDisplayDeviceName;
+  char _paServerVersion[32];
 
- // PulseAudio
- uint16_t _paDeviceIndex;
- bool _paStateChanged;
+  int8_t* _playBuffer;
+  size_t _playbackBufferSize;
+  size_t _playbackBufferUnused;
+  size_t _tempBufferSpace;
+  int8_t* _recBuffer;
+  size_t _recordBufferSize;
+  size_t _recordBufferUsed;
+  const void* _tempSampleData;
+  size_t _tempSampleDataSize;
+  int32_t _configuredLatencyPlay;
+  int32_t _configuredLatencyRec;
 
- pa_threaded_mainloop* _paMainloop;
- pa_mainloop_api* _paMainloopApi;
- pa_context* _paContext;
+  // PulseAudio
+  uint16_t _paDeviceIndex;
+  bool _paStateChanged;
 
- pa_stream* _recStream;
- pa_stream* _playStream;
- uint32_t _recStreamFlags;
- uint32_t _playStreamFlags;
- pa_buffer_attr _playBufferAttr;
- pa_buffer_attr _recBufferAttr;
+  pa_threaded_mainloop* _paMainloop;
+  pa_mainloop_api* _paMainloopApi;
+  pa_context* _paContext;
 
- char _oldKeyState[32];
- Display* _XDisplay;
+  pa_stream* _recStream;
+  pa_stream* _playStream;
+  uint32_t _recStreamFlags;
+  uint32_t _playStreamFlags;
+  pa_buffer_attr _playBufferAttr;
+  pa_buffer_attr _recBufferAttr;
+
+  char _oldKeyState[32];
+#if defined(WEBRTC_USE_X11)
+  Display* _XDisplay;
+#endif
 };
 
-}
+}  // namespace webrtc
 
 #endif  // MODULES_AUDIO_DEVICE_MAIN_SOURCE_LINUX_AUDIO_DEVICE_PULSE_LINUX_H_

@@ -105,7 +105,7 @@ def _ConfigurationAndScores(data_frame, params,
       else:
         result['params'][param] = config_json['-' + param]
 
-    current_param_combination = param_combination( # pylint: disable=star-args
+    current_param_combination = param_combination(
         **config_optimize_params)
     results[current_param_combination].append(result)
   return results

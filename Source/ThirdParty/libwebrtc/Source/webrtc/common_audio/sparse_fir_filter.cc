@@ -34,8 +34,8 @@ void SparseFIRFilter::Filter(const float* in, size_t length, float* out) {
   for (size_t i = 0; i < length; ++i) {
     out[i] = 0.f;
     size_t j;
-    for (j = 0; i >= j * sparsity_ + offset_ &&
-                j < nonzero_coeffs_.size(); ++j) {
+    for (j = 0; i >= j * sparsity_ + offset_ && j < nonzero_coeffs_.size();
+         ++j) {
       out[i] += in[i - j * sparsity_ - offset_] * nonzero_coeffs_[j];
     }
     for (; j < nonzero_coeffs_.size(); ++j) {
@@ -47,12 +47,10 @@ void SparseFIRFilter::Filter(const float* in, size_t length, float* out) {
   // Update current state.
   if (state_.size() > 0u) {
     if (length >= state_.size()) {
-      std::memcpy(&state_[0],
-                  &in[length - state_.size()],
+      std::memcpy(&state_[0], &in[length - state_.size()],
                   state_.size() * sizeof(*in));
     } else {
-      std::memmove(&state_[0],
-                   &state_[length],
+      std::memmove(&state_[0], &state_[length],
                    (state_.size() - length) * sizeof(state_[0]));
       std::memcpy(&state_[state_.size() - length], in, length * sizeof(*in));
     }

@@ -25,7 +25,8 @@ namespace {
 // caused the compiler to generate code that threw off the linker.
 // TODO(tommi): Re-enable when we've figured out what the problem is.
 // http://crbug.com/615050
-void CheckValidInitParams(int src_sample_rate_hz, int dst_sample_rate_hz,
+void CheckValidInitParams(int src_sample_rate_hz,
+                          int dst_sample_rate_hz,
                           size_t num_channels) {
 // The below checks are temporarily disabled on WEBRTC_WIN due to problems
 // with clang debug builds.
@@ -57,14 +58,10 @@ void CheckExpectedBufferSizes(size_t src_length,
 
 template <typename T>
 PushResampler<T>::PushResampler()
-    : src_sample_rate_hz_(0),
-      dst_sample_rate_hz_(0),
-      num_channels_(0) {
-}
+    : src_sample_rate_hz_(0), dst_sample_rate_hz_(0), num_channels_(0) {}
 
 template <typename T>
-PushResampler<T>::~PushResampler() {
-}
+PushResampler<T>::~PushResampler() {}
 
 template <typename T>
 int PushResampler<T>::InitializeIfNeeded(int src_sample_rate_hz,
@@ -92,22 +89,24 @@ int PushResampler<T>::InitializeIfNeeded(int src_sample_rate_hz,
       static_cast<size_t>(src_sample_rate_hz / 100);
   const size_t dst_size_10ms_mono =
       static_cast<size_t>(dst_sample_rate_hz / 100);
-  sinc_resampler_.reset(new PushSincResampler(src_size_10ms_mono,
-                                              dst_size_10ms_mono));
+  sinc_resampler_.reset(
+      new PushSincResampler(src_size_10ms_mono, dst_size_10ms_mono));
   if (num_channels_ == 2) {
     src_left_.reset(new T[src_size_10ms_mono]);
     src_right_.reset(new T[src_size_10ms_mono]);
     dst_left_.reset(new T[dst_size_10ms_mono]);
     dst_right_.reset(new T[dst_size_10ms_mono]);
-    sinc_resampler_right_.reset(new PushSincResampler(src_size_10ms_mono,
-                                                      dst_size_10ms_mono));
+    sinc_resampler_right_.reset(
+        new PushSincResampler(src_size_10ms_mono, dst_size_10ms_mono));
   }
 
   return 0;
 }
 
 template <typename T>
-int PushResampler<T>::Resample(const T* src, size_t src_length, T* dst,
+int PushResampler<T>::Resample(const T* src,
+                               size_t src_length,
+                               T* dst,
                                size_t dst_capacity) {
   CheckExpectedBufferSizes(src_length, dst_capacity, num_channels_,
                            src_sample_rate_hz_, dst_sample_rate_hz_);
@@ -124,9 +123,8 @@ int PushResampler<T>::Resample(const T* src, size_t src_length, T* dst,
     T* deinterleaved[] = {src_left_.get(), src_right_.get()};
     Deinterleave(src, src_length_mono, num_channels_, deinterleaved);
 
-    size_t dst_length_mono =
-        sinc_resampler_->Resample(src_left_.get(), src_length_mono,
-                                  dst_left_.get(), dst_capacity_mono);
+    size_t dst_length_mono = sinc_resampler_->Resample(
+        src_left_.get(), src_length_mono, dst_left_.get(), dst_capacity_mono);
     sinc_resampler_right_->Resample(src_right_.get(), src_length_mono,
                                     dst_right_.get(), dst_capacity_mono);
 

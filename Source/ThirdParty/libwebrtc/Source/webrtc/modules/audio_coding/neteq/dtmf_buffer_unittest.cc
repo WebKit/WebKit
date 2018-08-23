@@ -31,11 +31,11 @@ static int sample_rate_hz = 8000;
 
 static uint32_t MakeDtmfPayload(int event, bool end, int volume, int duration) {
   uint32_t payload = 0;
-//  0                   1                   2                   3
-//  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-// |     event     |E|R| volume    |          duration             |
-// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  //  0                   1                   2                   3
+  //  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+  // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  // |     event     |E|R| volume    |          duration             |
+  // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
   payload |= (event & 0x00FF) << 24;
   payload |= (end ? 0x00800000 : 0x00000000);
   payload |= (volume & 0x003F) << 16;
@@ -44,13 +44,10 @@ static uint32_t MakeDtmfPayload(int event, bool end, int volume, int duration) {
   return payload;
 }
 
-static bool EqualEvents(const DtmfEvent& a,
-                        const DtmfEvent& b) {
-  return (a.duration == b.duration
-      && a.end_bit == b.end_bit
-      && a.event_no == b.event_no
-      && a.timestamp == b.timestamp
-      && a.volume == b.volume);
+static bool EqualEvents(const DtmfEvent& a, const DtmfEvent& b) {
+  return (a.duration == b.duration && a.end_bit == b.end_bit &&
+          a.event_no == b.event_no && a.timestamp == b.timestamp &&
+          a.volume == b.volume);
 }
 
 TEST(DtmfBuffer, CreateAndDestroy) {
@@ -68,9 +65,8 @@ TEST(DtmfBuffer, ParseEvent) {
   uint32_t payload = MakeDtmfPayload(event_no, end_bit, volume, duration);
   uint8_t* payload_ptr = reinterpret_cast<uint8_t*>(&payload);
   DtmfEvent event;
-  EXPECT_EQ(DtmfBuffer::kOK,
-            DtmfBuffer::ParseEvent(timestamp, payload_ptr, sizeof(payload),
-                                   &event));
+  EXPECT_EQ(DtmfBuffer::kOK, DtmfBuffer::ParseEvent(timestamp, payload_ptr,
+                                                    sizeof(payload), &event));
   EXPECT_EQ(duration, event.duration);
   EXPECT_EQ(end_bit, event.end_bit);
   EXPECT_EQ(event_no, event.event_no);
@@ -107,7 +103,7 @@ TEST(DtmfBuffer, SimpleInsertAndGet) {
   EXPECT_TRUE(EqualEvents(event, out_event));
   EXPECT_EQ(1u, buffer.Length());
   EXPECT_FALSE(buffer.Empty());
-  // Give a "current" timestamp after the event has ended.
+// Give a "current" timestamp after the event has ended.
 #ifdef LEGACY_BITEXACT
   EXPECT_TRUE(buffer.GetEvent(timestamp + duration + 10, &out_event));
 #endif
@@ -171,17 +167,17 @@ TEST(DtmfBuffer, OverlappingEvents) {
   // Expect to get the long event.
   EXPECT_TRUE(buffer.GetEvent(timestamp, &out_event));
   EXPECT_TRUE(EqualEvents(long_event, out_event));
-  // Expect no more events.
+// Expect no more events.
 #ifdef LEGACY_BITEXACT
-  EXPECT_TRUE(buffer.GetEvent(timestamp + long_event.duration + 10,
-                              &out_event));
+  EXPECT_TRUE(
+      buffer.GetEvent(timestamp + long_event.duration + 10, &out_event));
   EXPECT_TRUE(EqualEvents(long_event, out_event));
-  EXPECT_TRUE(buffer.GetEvent(timestamp + long_event.duration + 10,
-                              &out_event));
+  EXPECT_TRUE(
+      buffer.GetEvent(timestamp + long_event.duration + 10, &out_event));
   EXPECT_TRUE(EqualEvents(short_event, out_event));
 #else
-  EXPECT_FALSE(buffer.GetEvent(timestamp + long_event.duration + 10,
-                               &out_event));
+  EXPECT_FALSE(
+      buffer.GetEvent(timestamp + long_event.duration + 10, &out_event));
 #endif
   EXPECT_TRUE(buffer.Empty());
 }

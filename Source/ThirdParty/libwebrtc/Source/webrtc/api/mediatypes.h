@@ -13,13 +13,12 @@
 
 #include <string>
 
+// The cricket and webrtc have separate definitions for what a media type is.
+// They're not compatible. Watch out for this.
+
 namespace cricket {
 
-enum MediaType {
-  MEDIA_TYPE_AUDIO,
-  MEDIA_TYPE_VIDEO,
-  MEDIA_TYPE_DATA
-};
+enum MediaType { MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO, MEDIA_TYPE_DATA };
 
 std::string MediaTypeToString(MediaType type);
 // Aborts on invalid string. Only expected to be used on strings that are
@@ -27,5 +26,11 @@ std::string MediaTypeToString(MediaType type);
 MediaType MediaTypeFromString(const std::string& type_str);
 
 }  // namespace cricket
+
+namespace webrtc {
+
+enum class MediaType { ANY, AUDIO, VIDEO, DATA };
+
+}  // namespace webrtc
 
 #endif  // API_MEDIATYPES_H_

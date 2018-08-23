@@ -185,6 +185,7 @@ TEST_F(RtpTransportControllerTest,
   auto video_sender_result = ortc_factory_->CreateRtpSender(
       cricket::MEDIA_TYPE_VIDEO, rtp_transport2.get());
   EXPECT_TRUE(video_sender_result.ok());
+
   auto video_receiver_result = ortc_factory_->CreateRtpReceiver(
       cricket::MEDIA_TYPE_VIDEO, rtp_transport1.get());
   EXPECT_EQ(RTCErrorType::UNSUPPORTED_OPERATION,

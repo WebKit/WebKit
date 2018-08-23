@@ -49,7 +49,6 @@ class H264DecoderImpl : public H264Decoder {
   // |missing_frames|, |fragmentation| and |render_time_ms| are ignored.
   int32_t Decode(const EncodedImage& input_image,
                  bool /*missing_frames*/,
-                 const RTPFragmentationHeader* /*fragmentation*/,
                  const CodecSpecificInfo* codec_specific_info = nullptr,
                  int64_t render_time_ms = -1) override;
 
@@ -59,8 +58,9 @@ class H264DecoderImpl : public H264Decoder {
   // Called by FFmpeg when it needs a frame buffer to store decoded frames in.
   // The |VideoFrame| returned by FFmpeg at |Decode| originate from here. Their
   // buffers are reference counted and freed by FFmpeg using |AVFreeBuffer2|.
-  static int AVGetBuffer2(
-      AVCodecContext* context, AVFrame* av_frame, int flags);
+  static int AVGetBuffer2(AVCodecContext* context,
+                          AVFrame* av_frame,
+                          int flags);
   // Called by FFmpeg when it is done with a video frame, see |AVGetBuffer2|.
   static void AVFreeBuffer2(void* opaque, uint8_t* data);
 

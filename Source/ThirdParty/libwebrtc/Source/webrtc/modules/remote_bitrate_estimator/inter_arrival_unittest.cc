@@ -36,18 +36,15 @@ class InterArrivalTest : public ::testing::Test {
     inter_arrival_.reset(
         new InterArrival(kTimestampGroupLengthUs / 1000, 1.0, true));
     inter_arrival_rtp_.reset(new InterArrival(
-        MakeRtpTimestamp(kTimestampGroupLengthUs),
-        kRtpTimestampToMs,
-        true));
+        MakeRtpTimestamp(kTimestampGroupLengthUs), kRtpTimestampToMs, true));
     inter_arrival_ast_.reset(new InterArrival(
-        MakeAbsSendTime(kTimestampGroupLengthUs),
-        kAstToMs,
-        true));
+        MakeAbsSendTime(kTimestampGroupLengthUs), kAstToMs, true));
   }
 
   // Test that neither inter_arrival instance complete the timestamp group from
   // the given data.
-  void ExpectFalse(int64_t timestamp_us, int64_t arrival_time_ms,
+  void ExpectFalse(int64_t timestamp_us,
+                   int64_t arrival_time_ms,
                    size_t packet_size) {
     InternalExpectFalse(inter_arrival_rtp_.get(),
                         MakeRtpTimestamp(timestamp_us), arrival_time_ms,
@@ -60,8 +57,10 @@ class InterArrivalTest : public ::testing::Test {
   // the given data and that all returned deltas are as expected (except
   // timestamp delta, which is rounded from us to different ranges and must
   // match within an interval, given in |timestamp_near].
-  void ExpectTrue(int64_t timestamp_us, int64_t arrival_time_ms,
-                  size_t packet_size, int64_t expected_timestamp_delta_us,
+  void ExpectTrue(int64_t timestamp_us,
+                  int64_t arrival_time_ms,
+                  size_t packet_size,
+                  int64_t expected_timestamp_delta_us,
                   int64_t expected_arrival_time_delta_ms,
                   int expected_packet_size_delta,
                   uint32_t timestamp_near) {
@@ -77,7 +76,8 @@ class InterArrivalTest : public ::testing::Test {
                        expected_packet_size_delta, timestamp_near << 8);
   }
 
-  void WrapTestHelper(int64_t wrap_start_us, uint32_t timestamp_near,
+  void WrapTestHelper(int64_t wrap_start_us,
+                      uint32_t timestamp_near,
                       bool unorderly_within_group) {
     // Step through the range of a 32 bit int, 1/4 at a time to not cause
     // packets close to wraparound to be judged as out of order.
@@ -92,21 +92,21 @@ class InterArrivalTest : public ::testing::Test {
 
     // G3
     arrival_time += kBurstThresholdMs + 1;
-    ExpectTrue(wrap_start_us / 2, arrival_time, 1,
-               wrap_start_us / 4, 6, 0,   // Delta G2-G1
+    ExpectTrue(wrap_start_us / 2, arrival_time, 1, wrap_start_us / 4, 6,
+               0,  // Delta G2-G1
                0);
 
     // G4
     arrival_time += kBurstThresholdMs + 1;
     int64_t g4_arrival_time = arrival_time;
     ExpectTrue(wrap_start_us / 2 + wrap_start_us / 4, arrival_time, 1,
-               wrap_start_us / 4, 6, 0,   // Delta G3-G2
+               wrap_start_us / 4, 6, 0,  // Delta G3-G2
                timestamp_near);
 
     // G5
     arrival_time += kBurstThresholdMs + 1;
-    ExpectTrue(wrap_start_us, arrival_time, 2,
-               wrap_start_us / 4, 6, 0,   // Delta G4-G3
+    ExpectTrue(wrap_start_us, arrival_time, 2, wrap_start_us / 4, 6,
+               0,  // Delta G4-G3
                timestamp_near);
     for (int i = 0; i < 10; ++i) {
       // Slowly step across the wrap point.
@@ -141,12 +141,10 @@ class InterArrivalTest : public ::testing::Test {
 
     // G7
     arrival_time += kBurstThresholdMs + 1;
-    ExpectTrue(wrap_start_us + 2 * kTriggerNewGroupUs,
-               arrival_time, 100,
+    ExpectTrue(wrap_start_us + 2 * kTriggerNewGroupUs, arrival_time, 100,
                // Delta G6-G5
                kTriggerNewGroupUs - 9 * kMinStep,
-               g6_arrival_time - g5_arrival_time,
-               10 - (2 + 10),
+               g6_arrival_time - g5_arrival_time, 10 - (2 + 10),
                timestamp_near);
   }
 
@@ -158,13 +156,16 @@ class InterArrivalTest : public ::testing::Test {
   }
 
   static uint32_t MakeAbsSendTime(int64_t us) {
-    uint32_t absolute_send_time = static_cast<uint32_t>(
-        ((static_cast<uint64_t>(us) << 18) + 500000) / 1000000) & 0x00FFFFFFul;
+    uint32_t absolute_send_time =
+        static_cast<uint32_t>(((static_cast<uint64_t>(us) << 18) + 500000) /
+                              1000000) &
+        0x00FFFFFFul;
     return absolute_send_time << 8;
   }
 
   static void InternalExpectFalse(InterArrival* inter_arrival,
-                                  uint32_t timestamp, int64_t arrival_time_ms,
+                                  uint32_t timestamp,
+                                  int64_t arrival_time_ms,
                                   size_t packet_size) {
     uint32_t dummy_timestamp = 101;
     int64_t dummy_arrival_time_ms = 303;
@@ -179,7 +180,8 @@ class InterArrivalTest : public ::testing::Test {
   }
 
   static void InternalExpectTrue(InterArrival* inter_arrival,
-                                 uint32_t timestamp, int64_t arrival_time_ms,
+                                 uint32_t timestamp,
+                                 int64_t arrival_time_ms,
                                  size_t packet_size,
                                  uint32_t expected_timestamp_delta,
                                  int64_t expected_arrival_time_delta_ms,
@@ -222,8 +224,7 @@ TEST_F(InterArrivalTest, FirstGroup) {
   arrival_time += kBurstThresholdMs + 1;
   ExpectTrue(2 * kTriggerNewGroupUs, arrival_time, 1,
              // Delta G2-G1
-             kTriggerNewGroupUs, g2_arrival_time - g1_arrival_time, 1,
-             0);
+             kTriggerNewGroupUs, g2_arrival_time - g1_arrival_time, 1, 0);
 }
 
 TEST_F(InterArrivalTest, SecondGroup) {
@@ -242,16 +243,14 @@ TEST_F(InterArrivalTest, SecondGroup) {
   int64_t g3_arrival_time = arrival_time;
   ExpectTrue(2 * kTriggerNewGroupUs, arrival_time, 1,
              // Delta G2-G1
-             kTriggerNewGroupUs, g2_arrival_time - g1_arrival_time, 1,
-             0);
+             kTriggerNewGroupUs, g2_arrival_time - g1_arrival_time, 1, 0);
 
   // G4
   // First packet of 4th group yields deltas between group 2 and 3.
   arrival_time += kBurstThresholdMs + 1;
   ExpectTrue(3 * kTriggerNewGroupUs, arrival_time, 2,
              // Delta G3-G2
-             kTriggerNewGroupUs, g3_arrival_time - g2_arrival_time, -1,
-             0);
+             kTriggerNewGroupUs, g3_arrival_time - g2_arrival_time, -1, 0);
 }
 
 TEST_F(InterArrivalTest, AccumulatedGroup) {
@@ -275,9 +274,9 @@ TEST_F(InterArrivalTest, AccumulatedGroup) {
 
   // G3
   arrival_time = 500;
-  ExpectTrue(2 * kTriggerNewGroupUs, arrival_time, 100,
-             g2_timestamp, g2_arrival_time - g1_arrival_time,
-             (2 + 10) - 1,   // Delta G2-G1
+  ExpectTrue(2 * kTriggerNewGroupUs, arrival_time, 100, g2_timestamp,
+             g2_arrival_time - g1_arrival_time,
+             (2 + 10) - 1,  // Delta G2-G1
              0);
 }
 
@@ -311,8 +310,7 @@ TEST_F(InterArrivalTest, OutOfOrderPacket) {
   ExpectTrue(timestamp, arrival_time, 100,
              // Delta G2-G1
              g2_timestamp - g1_timestamp, g2_arrival_time - g1_arrival_time,
-             (2 + 10) - 1,
-             0);
+             (2 + 10) - 1, 0);
 }
 
 TEST_F(InterArrivalTest, OutOfOrderWithinGroup) {
@@ -347,10 +345,8 @@ TEST_F(InterArrivalTest, OutOfOrderWithinGroup) {
   // G3
   timestamp = 2 * kTriggerNewGroupUs;
   arrival_time = 500;
-  ExpectTrue(timestamp, arrival_time, 100,
-             g2_timestamp - g1_timestamp, g2_arrival_time - g1_arrival_time,
-             (2 + 10) - 1,
-             0);
+  ExpectTrue(timestamp, arrival_time, 100, g2_timestamp - g1_timestamp,
+             g2_arrival_time - g1_arrival_time, (2 + 10) - 1, 0);
 }
 
 TEST_F(InterArrivalTest, TwoBursts) {
@@ -373,12 +369,11 @@ TEST_F(InterArrivalTest, TwoBursts) {
   // G3
   timestamp += 30000;
   arrival_time += kBurstThresholdMs + 1;
-  ExpectTrue(timestamp, arrival_time, 100,
-             g2_timestamp, g2_arrival_time - g1_arrival_time,
+  ExpectTrue(timestamp, arrival_time, 100, g2_timestamp,
+             g2_arrival_time - g1_arrival_time,
              10 - 1,  // Delta G2-G1
              0);
 }
-
 
 TEST_F(InterArrivalTest, NoBursts) {
   // G1

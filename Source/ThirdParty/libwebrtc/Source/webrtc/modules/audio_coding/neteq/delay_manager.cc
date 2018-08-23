@@ -155,8 +155,9 @@ void DelayManager::UpdateCumulativeSums(int packet_len_ms,
       (packet_iat_stopwatch_->ElapsedMs() << 8) / packet_len_ms;
   // Calculate cumulative sum IAT with sequence number compensation. The sum
   // is zero if there is no clock-drift.
-  iat_cumulative_sum_ += (iat_packets_q8 -
-      (static_cast<int>(sequence_number - last_seq_no_) << 8));
+  iat_cumulative_sum_ +=
+      (iat_packets_q8 -
+       (static_cast<int>(sequence_number - last_seq_no_) << 8));
   // Subtract drift term.
   iat_cumulative_sum_ -= kCumulativeSumDrift;
   // Ensure not negative.
@@ -189,8 +190,8 @@ void DelayManager::UpdateHistogram(size_t iat_packets) {
   assert(iat_packets < iat_vector_.size());
   int vector_sum = 0;  // Sum up the vector elements as they are processed.
   // Multiply each element in |iat_vector_| with |iat_factor_|.
-  for (IATVector::iterator it = iat_vector_.begin();
-      it != iat_vector_.end(); ++it) {
+  for (IATVector::iterator it = iat_vector_.begin(); it != iat_vector_.end();
+       ++it) {
     *it = (static_cast<int64_t>(*it) * iat_factor_) >> 15;
     vector_sum += *it;
   }
@@ -236,7 +237,7 @@ void DelayManager::LimitTargetLevel() {
   least_required_delay_ms_ = (target_level_ * packet_len_ms_) >> 8;
 
   if (packet_len_ms_ > 0 && minimum_delay_ms_ > 0) {
-    int minimum_delay_packet_q8 =  (minimum_delay_ms_ << 8) / packet_len_ms_;
+    int minimum_delay_packet_q8 = (minimum_delay_ms_ << 8) / packet_len_ms_;
     target_level_ = std::max(target_level_, minimum_delay_packet_q8);
   }
 
@@ -269,8 +270,8 @@ int DelayManager::CalculateTargetLevel(int iat_packets) {
   // (in Q30) by definition, and since the solution is often a low value for
   // |iat_index|, it is more efficient to start with |sum| = 1 and subtract
   // elements from the start of the histogram.
-  size_t index = 0;  // Start from the beginning of |iat_vector_|.
-  int sum = 1 << 30;  // Assign to 1 in Q30.
+  size_t index = 0;           // Start from the beginning of |iat_vector_|.
+  int sum = 1 << 30;          // Assign to 1 in Q30.
   sum -= iat_vector_[index];  // Ensure that target level is >= 1.
 
   do {
@@ -313,13 +314,12 @@ int DelayManager::SetPacketAudioLength(int length_ms) {
   return 0;
 }
 
-
 void DelayManager::Reset() {
   packet_len_ms_ = 0;  // Packet size unknown.
   streaming_mode_ = false;
   peak_detector_.Reset();
   ResetHistogram();  // Resets target levels too.
-  iat_factor_ = 0;  // Adapt the histogram faster for the first few packets.
+  iat_factor_ = 0;   // Adapt the histogram faster for the first few packets.
   packet_iat_stopwatch_ = tick_timer_->GetNewStopwatch();
   max_iat_stopwatch_ = tick_timer_->GetNewStopwatch();
   iat_cumulative_sum_ = 0;
@@ -471,8 +471,12 @@ int DelayManager::least_required_delay_ms() const {
   return least_required_delay_ms_;
 }
 
-int DelayManager::base_target_level() const { return base_target_level_; }
-void DelayManager::set_streaming_mode(bool value) { streaming_mode_ = value; }
+int DelayManager::base_target_level() const {
+  return base_target_level_;
+}
+void DelayManager::set_streaming_mode(bool value) {
+  streaming_mode_ = value;
+}
 int DelayManager::last_pack_cng_or_dtmf() const {
   return last_pack_cng_or_dtmf_;
 }

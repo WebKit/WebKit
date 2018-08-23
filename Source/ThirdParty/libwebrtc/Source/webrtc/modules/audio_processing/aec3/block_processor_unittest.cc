@@ -35,15 +35,17 @@ using testing::_;
 
 // Verifies that the basic BlockProcessor functionality works and that the API
 // methods are callable.
-void RunBasicSetupAndApiCallTest(int sample_rate_hz) {
+void RunBasicSetupAndApiCallTest(int sample_rate_hz, int num_iterations) {
   std::unique_ptr<BlockProcessor> block_processor(
       BlockProcessor::Create(EchoCanceller3Config(), sample_rate_hz));
   std::vector<std::vector<float>> block(NumBandsForRate(sample_rate_hz),
-                                        std::vector<float>(kBlockSize, 0.f));
+                                        std::vector<float>(kBlockSize, 1000.f));
 
-  block_processor->BufferRender(block);
-  block_processor->ProcessCapture(false, false, &block);
-  block_processor->UpdateEchoLeakageStatus(false);
+  for (int k = 0; k < num_iterations; ++k) {
+    block_processor->BufferRender(block);
+    block_processor->ProcessCapture(false, false, &block);
+    block_processor->UpdateEchoLeakageStatus(false);
+  }
 }
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
@@ -164,9 +166,9 @@ TEST(BlockProcessor, DISABLED_SubmoduleIntegration) {
     EXPECT_CALL(*render_delay_buffer_mock, Delay())
         .Times(kNumBlocks)
         .WillRepeatedly(Return(0));
-    EXPECT_CALL(*render_delay_controller_mock, GetDelay(_, _))
+    EXPECT_CALL(*render_delay_controller_mock, GetDelay(_, _, _, _))
         .Times(kNumBlocks);
-    EXPECT_CALL(*echo_remover_mock, ProcessCapture(_, _, _, _))
+    EXPECT_CALL(*echo_remover_mock, ProcessCapture(_, _, _, _, _))
         .Times(kNumBlocks);
     EXPECT_CALL(*echo_remover_mock, UpdateEchoLeakageStatus(_))
         .Times(kNumBlocks);
@@ -193,8 +195,12 @@ TEST(BlockProcessor, DISABLED_SubmoduleIntegration) {
 TEST(BlockProcessor, BasicSetupAndApiCalls) {
   for (auto rate : {8000, 16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
-    RunBasicSetupAndApiCallTest(rate);
+    RunBasicSetupAndApiCallTest(rate, 1);
   }
+}
+
+TEST(BlockProcessor, TestLongerCall) {
+  RunBasicSetupAndApiCallTest(16000, 20 * kNumBlocksPerSecond);
 }
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)

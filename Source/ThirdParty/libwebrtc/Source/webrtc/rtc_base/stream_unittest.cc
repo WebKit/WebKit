@@ -19,7 +19,7 @@ namespace rtc {
 
 class TestStream : public StreamInterface {
  public:
-  TestStream() : pos_(0) { }
+  TestStream() : pos_(0) {}
 
   StreamState GetState() const override { return SS_OPEN; }
 
@@ -53,7 +53,8 @@ class TestStream : public StreamInterface {
   }
 
   bool GetPosition(size_t* position) const override {
-    if (position) *position = pos_;
+    if (position)
+      *position = pos_;
     return true;
   }
 
@@ -65,8 +66,7 @@ class TestStream : public StreamInterface {
   size_t pos_;
 };
 
-bool VerifyTestBuffer(unsigned char* buffer, size_t len,
-                      unsigned char value) {
+bool VerifyTestBuffer(unsigned char* buffer, size_t len, unsigned char value) {
   bool passed = true;
   for (size_t i = 0; i < len; ++i) {
     if (buffer[i] != value++) {
@@ -81,7 +81,7 @@ bool VerifyTestBuffer(unsigned char* buffer, size_t len,
 
 void SeekTest(StreamInterface* stream, const unsigned char value) {
   size_t bytes;
-  unsigned char buffer[13] = { 0 };
+  unsigned char buffer[13] = {0};
   const size_t kBufSize = sizeof(buffer);
 
   EXPECT_EQ(stream->Read(buffer, kBufSize, &bytes, nullptr), SR_SUCCESS);
@@ -176,15 +176,15 @@ TEST(FifoBufferTest, TestAll) {
   EXPECT_EQ(SR_SUCCESS, stream->Write(in, kSize / 2, &bytes, nullptr));
   EXPECT_EQ(kSize / 2, bytes);
   EXPECT_EQ(SR_SUCCESS, stream->Read(out, kSize / 4, &bytes, nullptr));
-  EXPECT_EQ(kSize / 4 , bytes);
+  EXPECT_EQ(kSize / 4, bytes);
   EXPECT_EQ(0, memcmp(in + kSize / 2, out, kSize / 4));
   EXPECT_EQ(SR_SUCCESS, stream->Write(in, kSize / 2, &bytes, nullptr));
   EXPECT_EQ(kSize / 2, bytes);
   EXPECT_EQ(SR_SUCCESS, stream->Read(out, kSize / 2, &bytes, nullptr));
-  EXPECT_EQ(kSize / 2 , bytes);
+  EXPECT_EQ(kSize / 2, bytes);
   EXPECT_EQ(0, memcmp(in, out, kSize / 2));
   EXPECT_EQ(SR_SUCCESS, stream->Read(out, kSize / 2, &bytes, nullptr));
-  EXPECT_EQ(kSize / 2 , bytes);
+  EXPECT_EQ(kSize / 2, bytes);
   EXPECT_EQ(0, memcmp(in, out, kSize / 2));
 
   // Use GetWriteBuffer to reset the read_position for the next tests

@@ -122,49 +122,4 @@ TEST_F(SrtpTransportTest, SetSrtpSendAndReceiveKeyDifferentCipherSuite) {
   EXPECT_TRUE(receiver_result.ok());
 }
 
-class SrtpTransportTestWithMediaType
-    : public SrtpTransportTest,
-      public ::testing::WithParamInterface<cricket::MediaType> {};
-
-// Tests that the senders cannot be created before setting the keys.
-TEST_P(SrtpTransportTestWithMediaType, CreateSenderBeforeSettingKeys) {
-  auto sender_result =
-      ortc_factory_->CreateRtpSender(GetParam(), srtp_transport_.get());
-  EXPECT_EQ(RTCErrorType::UNSUPPORTED_PARAMETER, sender_result.error().type());
-  EXPECT_TRUE(srtp_transport_->SetSrtpSendKey(kTestSha1CryptoParams1).ok());
-  sender_result =
-      ortc_factory_->CreateRtpSender(GetParam(), srtp_transport_.get());
-  EXPECT_EQ(RTCErrorType::UNSUPPORTED_PARAMETER, sender_result.error().type());
-  EXPECT_TRUE(srtp_transport_->SetSrtpReceiveKey(kTestSha1CryptoParams2).ok());
-  // Ensure that after the keys are set, a sender can be created, despite the
-  // previous errors.
-  sender_result =
-      ortc_factory_->CreateRtpSender(GetParam(), srtp_transport_.get());
-  EXPECT_TRUE(sender_result.ok());
-}
-
-// Tests that the receivers cannot be created before setting the keys.
-TEST_P(SrtpTransportTestWithMediaType, CreateReceiverBeforeSettingKeys) {
-  auto receiver_result =
-      ortc_factory_->CreateRtpReceiver(GetParam(), srtp_transport_.get());
-  EXPECT_EQ(RTCErrorType::UNSUPPORTED_PARAMETER,
-            receiver_result.error().type());
-  EXPECT_TRUE(srtp_transport_->SetSrtpSendKey(kTestSha1CryptoParams1).ok());
-  receiver_result =
-      ortc_factory_->CreateRtpReceiver(GetParam(), srtp_transport_.get());
-  EXPECT_EQ(RTCErrorType::UNSUPPORTED_PARAMETER,
-            receiver_result.error().type());
-  EXPECT_TRUE(srtp_transport_->SetSrtpReceiveKey(kTestSha1CryptoParams2).ok());
-  // Ensure that after the keys are set, a receiver can be created, despite the
-  // previous errors.
-  receiver_result =
-      ortc_factory_->CreateRtpReceiver(GetParam(), srtp_transport_.get());
-  EXPECT_TRUE(receiver_result.ok());
-}
-
-INSTANTIATE_TEST_CASE_P(SenderCreatationTest,
-                        SrtpTransportTestWithMediaType,
-                        ::testing::Values(cricket::MEDIA_TYPE_AUDIO,
-                                          cricket::MEDIA_TYPE_VIDEO));
-
 }  // namespace webrtc

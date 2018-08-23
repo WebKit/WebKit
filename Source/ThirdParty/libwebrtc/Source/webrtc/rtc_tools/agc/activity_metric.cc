@@ -8,7 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,6 +15,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "api/audio/audio_frame.h"
 #include "modules/audio_processing/agc/agc.h"
 #include "modules/audio_processing/agc/loudness_histogram.h"
 #include "modules/audio_processing/agc/utility.h"
@@ -23,7 +23,6 @@
 #include "modules/audio_processing/vad/pitch_based_vad.h"
 #include "modules/audio_processing/vad/standalone_vad.h"
 #include "modules/audio_processing/vad/vad_audio_proc.h"
-#include "modules/include/module_common_types.h"
 #include "rtc_base/flags.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "test/gtest.h"
@@ -32,21 +31,30 @@ static const int kAgcAnalWindowSamples = 100;
 static const float kDefaultActivityThreshold = 0.3f;
 
 DEFINE_bool(standalone_vad, true, "enable stand-alone VAD");
-DEFINE_string(true_vad, "", "name of a file containing true VAD in 'int'"
+DEFINE_string(true_vad,
+              "",
+              "name of a file containing true VAD in 'int'"
               " format");
-DEFINE_string(video_vad, "", "name of a file containing video VAD (activity"
+DEFINE_string(video_vad,
+              "",
+              "name of a file containing video VAD (activity"
               " probabilities) in double format. One activity per 10ms is"
               " required. If no file is given the video information is not"
               " incorporated. Negative activity is interpreted as video is"
               " not adapted and the statistics are not computed during"
               " the learning phase. Note that the negative video activities"
               " are ONLY allowed at the beginning.");
-DEFINE_string(result, "", "name of a file to write the results. The results"
+DEFINE_string(result,
+              "",
+              "name of a file to write the results. The results"
               " will be appended to the end of the file. This is optional.");
-DEFINE_string(audio_content, "", "name of a file where audio content is written"
+DEFINE_string(audio_content,
+              "",
+              "name of a file where audio content is written"
               " to, in double format.");
-DEFINE_float(activity_threshold, kDefaultActivityThreshold,
-              "Activity threshold");
+DEFINE_float(activity_threshold,
+             kDefaultActivityThreshold,
+             "Activity threshold");
 DEFINE_bool(help, false, "prints this message");
 
 namespace webrtc {
@@ -61,8 +69,8 @@ namespace webrtc {
 static void DitherSilence(AudioFrame* frame) {
   ASSERT_EQ(1u, frame->num_channels_);
   const double kRmsSilence = 5;
-  const double sum_squared_silence = kRmsSilence * kRmsSilence *
-      frame->samples_per_channel_;
+  const double sum_squared_silence =
+      kRmsSilence * kRmsSilence * frame->samples_per_channel_;
   double sum_squared = 0;
   int16_t* frame_data = frame->mutable_data();
   for (size_t n = 0; n < frame->samples_per_channel_; n++)
@@ -97,21 +105,18 @@ class AgcStat {
     audio_content_fid_ = audio_content_fid;
   }
 
-  int AddAudio(const AudioFrame& frame, double p_video,
-               int* combined_vad) {
+  int AddAudio(const AudioFrame& frame, double p_video, int* combined_vad) {
     if (frame.num_channels_ != 1 ||
-        frame.samples_per_channel_ !=
-            kSampleRateHz / 100 ||
-            frame.sample_rate_hz_ != kSampleRateHz)
+        frame.samples_per_channel_ != kSampleRateHz / 100 ||
+        frame.sample_rate_hz_ != kSampleRateHz)
       return -1;
     video_vad_[video_index_++] = p_video;
     AudioFeatures features;
     const int16_t* frame_data = frame.data();
-    audio_processing_->ExtractFeatures(
-        frame_data, frame.samples_per_channel_, &features);
+    audio_processing_->ExtractFeatures(frame_data, frame.samples_per_channel_,
+                                       &features);
     if (FLAG_standalone_vad) {
-      standalone_vad_->AddAudio(frame_data,
-                                frame.samples_per_channel_);
+      standalone_vad_->AddAudio(frame_data, frame.samples_per_channel_);
     }
     if (features.num_frames > 0) {
       double p[kMaxNumFrames] = {0.5, 0.5, 0.5, 0.5};
@@ -145,9 +150,7 @@ class AgcStat {
     return static_cast<int>(features.num_frames);
   }
 
-  void Reset() {
-    audio_content_->Reset();
-  }
+  void Reset() { audio_content_->Reset(); }
 
   void SetActivityThreshold(double activity_threshold) {
     activity_threshold_ = activity_threshold;
@@ -165,7 +168,6 @@ class AgcStat {
   FILE* audio_content_fid_;
 };
 
-
 void void_main(int argc, char* argv[]) {
   webrtc::AgcStat agc_stat;
 
@@ -178,10 +180,10 @@ void void_main(int argc, char* argv[]) {
 
   FILE* true_vad_fid = NULL;
   ASSERT_GT(strlen(FLAG_true_vad), 0u) << "Specify the file containing true "
-      "VADs using --true_vad flag.";
+                                          "VADs using --true_vad flag.";
   true_vad_fid = fopen(FLAG_true_vad, "rb");
-  ASSERT_TRUE(true_vad_fid != NULL) << "Cannot open the active list " <<
-      FLAG_true_vad;
+  ASSERT_TRUE(true_vad_fid != NULL)
+      << "Cannot open the active list " << FLAG_true_vad;
 
   FILE* results_fid = NULL;
   if (strlen(FLAG_result) > 0) {
@@ -199,11 +201,12 @@ void void_main(int argc, char* argv[]) {
     }
     // Open in append mode.
     results_fid = fopen(FLAG_result, "a");
-    ASSERT_TRUE(results_fid != NULL) << "Cannot open the file, " <<
-              FLAG_result << ", to write the results.";
+    ASSERT_TRUE(results_fid != NULL)
+        << "Cannot open the file, " << FLAG_result << ", to write the results.";
     // Write the header if required.
     if (write_header) {
-      fprintf(results_fid, "%% Total Active,  Misdetection,  "
+      fprintf(results_fid,
+              "%% Total Active,  Misdetection,  "
               "Total inactive,  False Positive,  On-sets,  Missed segments,  "
               "Average response\n");
     }
@@ -212,8 +215,9 @@ void void_main(int argc, char* argv[]) {
   FILE* video_vad_fid = NULL;
   if (strlen(FLAG_video_vad) > 0) {
     video_vad_fid = fopen(FLAG_video_vad, "rb");
-    ASSERT_TRUE(video_vad_fid != NULL) <<  "Cannot open the file, " <<
-              FLAG_video_vad << " to read video-based VAD decisions.\n";
+    ASSERT_TRUE(video_vad_fid != NULL)
+        << "Cannot open the file, " << FLAG_video_vad
+        << " to read video-based VAD decisions.\n";
   }
 
   // AgsStat will be the owner of this file and will close it at its
@@ -221,8 +225,9 @@ void void_main(int argc, char* argv[]) {
   FILE* audio_content_fid = NULL;
   if (strlen(FLAG_audio_content) > 0) {
     audio_content_fid = fopen(FLAG_audio_content, "wb");
-    ASSERT_TRUE(audio_content_fid != NULL) << "Cannot open file, " <<
-              FLAG_audio_content << " to write audio-content.\n";
+    ASSERT_TRUE(audio_content_fid != NULL)
+        << "Cannot open file, " << FLAG_audio_content
+        << " to write audio-content.\n";
     agc_stat.set_audio_content_file(audio_content_fid);
   }
 
@@ -230,8 +235,8 @@ void void_main(int argc, char* argv[]) {
   frame.num_channels_ = 1;
   frame.sample_rate_hz_ = 16000;
   frame.samples_per_channel_ = frame.sample_rate_hz_ / 100;
-  const size_t kSamplesToRead = frame.num_channels_ *
-      frame.samples_per_channel_;
+  const size_t kSamplesToRead =
+      frame.num_channels_ * frame.samples_per_channel_;
 
   agc_stat.SetActivityThreshold(FLAG_activity_threshold);
 
@@ -260,16 +265,17 @@ void void_main(int argc, char* argv[]) {
                         true_vad_fid))
         << "Size mismatch between True-VAD and the PCM file.\n";
     if (video_vad_fid != NULL) {
-      ASSERT_EQ(1u, fread(&p_video, sizeof(p_video), 1, video_vad_fid)) <<
-          "Not enough video-based VAD probabilities.";
+      ASSERT_EQ(1u, fread(&p_video, sizeof(p_video), 1, video_vad_fid))
+          << "Not enough video-based VAD probabilities.";
     }
 
     // Negative video activity indicates that the video-based VAD is not yet
     // adapted. Disregards the learning phase in statistics.
     if (p_video < 0) {
       if (video_adapted) {
-        fprintf(stderr, "Negative video probabilities ONLY allowed at the "
-            "beginning of the sequence, not in the middle.\n");
+        fprintf(stderr,
+                "Negative video probabilities ONLY allowed at the "
+                "beginning of the sequence, not in the middle.\n");
         exit(1);
       }
       continue;
@@ -337,23 +343,15 @@ void void_main(int argc, char* argv[]) {
 
   if (results_fid != NULL) {
     fprintf(results_fid, "%4d  %4d  %4d  %4d  %4d  %4d  %4.0f %4.0f\n",
-            total_active,
-            total_missed_detection,
-            total_passive,
-            total_false_positive,
-            num_onsets,
-            num_not_adapted,
+            total_active, total_missed_detection, total_passive,
+            total_false_positive, num_onsets, num_not_adapted,
             static_cast<float>(onset_adaptation) / (num_onsets + 1e-12),
             static_cast<float>(total_false_positive_duration) /
-            (total_passive + 1e-12));
+                (total_passive + 1e-12));
   }
-  fprintf(stdout, "%4d %4d %4d %4d %4d %4d %4.0f %4.0f\n",
-          total_active,
-          total_missed_detection,
-          total_passive,
-          total_false_positive,
-          num_onsets,
-          num_not_adapted,
+  fprintf(stdout, "%4d %4d %4d %4d %4d %4d %4.0f %4.0f\n", total_active,
+          total_missed_detection, total_passive, total_false_positive,
+          num_onsets, num_not_adapted,
           static_cast<float>(onset_adaptation) / (num_onsets + 1e-12),
           static_cast<float>(total_false_positive_duration) /
               (total_passive + 1e-12));
@@ -373,16 +371,18 @@ void void_main(int argc, char* argv[]) {
 int main(int argc, char* argv[]) {
   if (argc == 1) {
     // Print usage information.
-    std::cout <<
-      "\nCompute the number of misdetected and false-positive frames. Not\n"
-      " that for each frame of audio (10 ms) there should be one true\n"
-      " activity. If any video-based activity is given, there should also be\n"
-      " one probability per frame.\n"
-      "Run with --help for more details on available flags.\n"
-      "\nUsage:\n\n"
-      "activity_metric input_pcm [options]\n"
-      "where 'input_pcm' is the input audio sampled at 16 kHz in 16 bits "
-      "format.\n\n";
+    std::cout
+        << "\nCompute the number of misdetected and false-positive frames. "
+           "Not\n"
+           " that for each frame of audio (10 ms) there should be one true\n"
+           " activity. If any video-based activity is given, there should also "
+           "be\n"
+           " one probability per frame.\n"
+           "Run with --help for more details on available flags.\n"
+           "\nUsage:\n\n"
+           "activity_metric input_pcm [options]\n"
+           "where 'input_pcm' is the input audio sampled at 16 kHz in 16 bits "
+           "format.\n\n";
     return 0;
   }
   rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true);

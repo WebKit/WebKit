@@ -9,7 +9,7 @@
  */
 
 #include "common_video/include/bitrate_adjuster.h"
-#include "system_wrappers/include/clock.h"
+#include "rtc_base/fakeclock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -17,8 +17,7 @@ namespace webrtc {
 class BitrateAdjusterTest : public ::testing::Test {
  public:
   BitrateAdjusterTest()
-      : clock_(0),
-        adjuster_(&clock_, kMinAdjustedBitratePct, kMaxAdjustedBitratePct) {}
+      : adjuster_(kMinAdjustedBitratePct, kMaxAdjustedBitratePct) {}
 
   // Simulate an output bitrate for one update cycle of BitrateAdjuster.
   void SimulateBitrateBps(uint32_t bitrate_bps) {
@@ -33,7 +32,7 @@ class BitrateAdjusterTest : public ::testing::Test {
     const size_t frame_size_bytes =
         (bitrate_bps * frame_interval_ms) / (8 * 1000);
     for (size_t i = 0; i < update_frame_interval; ++i) {
-      clock_.AdvanceTimeMilliseconds(frame_interval_ms);
+      clock_.AdvanceTime(webrtc::TimeDelta::ms(frame_interval_ms));
       adjuster_.Update(frame_size_bytes);
     }
   }
@@ -63,7 +62,7 @@ class BitrateAdjusterTest : public ::testing::Test {
  protected:
   static const float kMinAdjustedBitratePct;
   static const float kMaxAdjustedBitratePct;
-  SimulatedClock clock_;
+  rtc::ScopedFakeClock clock_;
   BitrateAdjuster adjuster_;
 };
 

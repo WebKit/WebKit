@@ -28,16 +28,12 @@ class FakeNativeBuffer : public VideoFrameBuffer {
 
   FakeNativeBuffer(int width, int height) : width_(width), height_(height) {}
 
-  Type type() const override { return Type::kNative; }
-  int width() const override { return width_; }
-  int height() const override { return height_; }
+  Type type() const override;
+  int width() const override;
+  int height() const override;
 
  private:
-  rtc::scoped_refptr<I420BufferInterface> ToI420() override {
-    rtc::scoped_refptr<I420Buffer> buffer = I420Buffer::Create(width_, height_);
-    I420Buffer::SetBlack(buffer);
-    return buffer;
-  }
+  rtc::scoped_refptr<I420BufferInterface> ToI420() override;
 
   const int width_;
   const int height_;

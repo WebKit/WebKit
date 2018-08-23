@@ -13,11 +13,9 @@
 
 namespace rtc {
 
-AsyncSocket::AsyncSocket() {
-}
+AsyncSocket::AsyncSocket() {}
 
-AsyncSocket::~AsyncSocket() {
-}
+AsyncSocket::~AsyncSocket() {}
 
 AsyncSocketAdapter::AsyncSocketAdapter(AsyncSocket* socket) : socket_(nullptr) {
   Attach(socket);

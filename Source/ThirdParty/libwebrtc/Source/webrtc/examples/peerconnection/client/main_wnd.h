@@ -20,7 +20,9 @@
 #include "examples/peerconnection/client/peer_connection_client.h"
 #include "media/base/mediachannel.h"
 #include "media/base/videocommon.h"
+#if defined(WEBRTC_WIN)
 #include "rtc_base/win32.h"
+#endif  // WEBRTC_WIN
 
 class MainWndCallback {
  public:
@@ -30,6 +32,7 @@ class MainWndCallback {
   virtual void DisconnectFromCurrentPeer() = 0;
   virtual void UIThreadCallback(int msg_id, void* data) = 0;
   virtual void Close() = 0;
+
  protected:
   virtual ~MainWndCallback() {}
 };
@@ -48,7 +51,8 @@ class MainWindow {
   virtual void RegisterObserver(MainWndCallback* callback) = 0;
 
   virtual bool IsWindow() = 0;
-  virtual void MessageBox(const char* caption, const char* text,
+  virtual void MessageBox(const char* caption,
+                          const char* text,
                           bool is_error) = 0;
 
   virtual UI current_ui() = 0;
@@ -88,8 +92,7 @@ class MainWnd : public MainWindow {
   virtual void SwitchToConnectUI();
   virtual void SwitchToPeerList(const Peers& peers);
   virtual void SwitchToStreamingUI();
-  virtual void MessageBox(const char* caption, const char* text,
-                          bool is_error);
+  virtual void MessageBox(const char* caption, const char* text, bool is_error);
   virtual UI current_ui() { return ui_; }
 
   virtual void StartLocalRenderer(webrtc::VideoTrackInterface* local_video);
@@ -103,17 +106,15 @@ class MainWnd : public MainWindow {
 
   class VideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
    public:
-    VideoRenderer(HWND wnd, int width, int height,
+    VideoRenderer(HWND wnd,
+                  int width,
+                  int height,
                   webrtc::VideoTrackInterface* track_to_render);
     virtual ~VideoRenderer();
 
-    void Lock() {
-      ::EnterCriticalSection(&buffer_lock_);
-    }
+    void Lock() { ::EnterCriticalSection(&buffer_lock_); }
 
-    void Unlock() {
-      ::LeaveCriticalSection(&buffer_lock_);
-    }
+    void Unlock() { ::LeaveCriticalSection(&buffer_lock_); }
 
     // VideoSinkInterface implementation
     void OnFrame(const webrtc::VideoFrame& frame) override;
@@ -143,6 +144,7 @@ class MainWnd : public MainWindow {
    public:
     explicit AutoLock(T* obj) : obj_(obj) { obj_->Lock(); }
     ~AutoLock() { obj_->Unlock(); }
+
    protected:
     T* obj_;
   };
@@ -166,8 +168,11 @@ class MainWnd : public MainWindow {
   static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
   static bool RegisterWindowClass();
 
-  void CreateChildWindow(HWND* wnd, ChildWindowID id, const wchar_t* class_name,
-                         DWORD control_style, DWORD ex_style);
+  void CreateChildWindow(HWND* wnd,
+                         ChildWindowID id,
+                         const wchar_t* class_name,
+                         DWORD control_style,
+                         DWORD ex_style);
   void CreateChildWindows();
 
   void LayoutConnectUI(bool show);

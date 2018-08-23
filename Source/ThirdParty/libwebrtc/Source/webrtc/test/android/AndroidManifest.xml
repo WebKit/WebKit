@@ -26,7 +26,7 @@ be found in the AUTHORS file in the root of the source tree.
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application android:label="NativeTests"
-            android:name="org.chromium.base.BaseChromiumApplication">
+            android:name="org.chromium.native_test.NativeTestApplication">
         <uses-library android:name="android.test.runner"/>
         <activity android:name=".RTCNativeUnitTestActivity"
                 android:label="NativeTest"

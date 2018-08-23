@@ -15,7 +15,6 @@
 #include "modules/rtp_rtcp/source/rtp_receiver_strategy.h"
 #include "modules/rtp_rtcp/source/rtp_utility.h"
 #include "rtc_base/onetimeevent.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -23,29 +22,13 @@ class RTPReceiverVideo : public RTPReceiverStrategy {
  public:
   explicit RTPReceiverVideo(RtpData* data_callback);
 
-  virtual ~RTPReceiverVideo();
+  ~RTPReceiverVideo() override;
 
   int32_t ParseRtpPacket(WebRtcRTPHeader* rtp_header,
                          const PayloadUnion& specific_payload,
-                         bool is_red,
                          const uint8_t* packet,
                          size_t packet_length,
                          int64_t timestamp) override;
-
-  TelephoneEventHandler* GetTelephoneEventHandler() override { return NULL; }
-
-  RTPAliveType ProcessDeadOrAlive(uint16_t last_payload_length) const override;
-
-  bool ShouldReportCsrcChanges(uint8_t payload_type) const override;
-
-  int32_t OnNewPayloadTypeCreated(int payload_type,
-                                  const SdpAudioFormat& audio_format) override;
-
-  int32_t InvokeOnInitializeDecoder(
-      RtpFeedback* callback,
-      int8_t payload_type,
-      const char payload_name[RTP_PAYLOAD_NAME_SIZE],
-      const PayloadUnion& specific_payload) const override;
 
   void SetPacketOverHead(uint16_t packet_over_head);
 

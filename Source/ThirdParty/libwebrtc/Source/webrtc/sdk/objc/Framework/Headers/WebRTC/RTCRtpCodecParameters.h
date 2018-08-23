@@ -14,22 +14,22 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-RTC_EXTERN const NSString * const kRTCRtxCodecName;
-RTC_EXTERN const NSString * const kRTCRedCodecName;
-RTC_EXTERN const NSString * const kRTCUlpfecCodecName;
-RTC_EXTERN const NSString * const kRTCFlexfecCodecName;
-RTC_EXTERN const NSString * const kRTCOpusCodecName;
-RTC_EXTERN const NSString * const kRTCIsacCodecName;
-RTC_EXTERN const NSString * const kRTCL16CodecName;
-RTC_EXTERN const NSString * const kRTCG722CodecName;
-RTC_EXTERN const NSString * const kRTCIlbcCodecName;
-RTC_EXTERN const NSString * const kRTCPcmuCodecName;
-RTC_EXTERN const NSString * const kRTCPcmaCodecName;
-RTC_EXTERN const NSString * const kRTCDtmfCodecName;
-RTC_EXTERN const NSString * const kRTCComfortNoiseCodecName;
-RTC_EXTERN const NSString * const kRTCVp8CodecName;
-RTC_EXTERN const NSString * const kRTCVp9CodecName;
-RTC_EXTERN const NSString * const kRTCH264CodecName;
+RTC_EXTERN const NSString *const kRTCRtxCodecName;
+RTC_EXTERN const NSString *const kRTCRedCodecName;
+RTC_EXTERN const NSString *const kRTCUlpfecCodecName;
+RTC_EXTERN const NSString *const kRTCFlexfecCodecName;
+RTC_EXTERN const NSString *const kRTCOpusCodecName;
+RTC_EXTERN const NSString *const kRTCIsacCodecName;
+RTC_EXTERN const NSString *const kRTCL16CodecName;
+RTC_EXTERN const NSString *const kRTCG722CodecName;
+RTC_EXTERN const NSString *const kRTCIlbcCodecName;
+RTC_EXTERN const NSString *const kRTCPcmuCodecName;
+RTC_EXTERN const NSString *const kRTCPcmaCodecName;
+RTC_EXTERN const NSString *const kRTCDtmfCodecName;
+RTC_EXTERN const NSString *const kRTCComfortNoiseCodecName;
+RTC_EXTERN const NSString *const kRTCVp8CodecName;
+RTC_EXTERN const NSString *const kRTCVp9CodecName;
+RTC_EXTERN const NSString *const kRTCH264CodecName;
 
 /** Defined in http://w3c.github.io/webrtc-pc/#idl-def-RTCRtpCodecParameters */
 RTC_EXPORT
@@ -63,6 +63,9 @@ __attribute__((objc_runtime_name("WK_RTCRtpCodecParameters")))
  * Set to null for video codecs.
  **/
 @property(nonatomic, readonly, nullable) NSNumber *numChannels;
+
+/** The "format specific parameters" field from the "a=fmtp" line in the SDP */
+@property(nonatomic, readonly, nonnull) NSDictionary *parameters;
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 

@@ -18,8 +18,8 @@ namespace {
 
 class ByteIoTest : public ::testing::Test {
  protected:
-  ByteIoTest() {}
-  virtual ~ByteIoTest() {}
+  ByteIoTest() = default;
+  ~ByteIoTest() override = default;
 
   enum { kAlignments = sizeof(uint64_t) - 1 };
 
@@ -127,10 +127,10 @@ class ByteIoTest : public ::testing::Test {
 };
 
 TEST_F(ByteIoTest, Test16UBitBigEndian) {
-  TestRead<uint16_t, ByteReader<uint16_t>::ReadBigEndian,
-      sizeof(uint16_t)>(true);
-  TestWrite<uint16_t, ByteWriter<uint16_t>::WriteBigEndian,
-    sizeof(uint16_t)>(true);
+  TestRead<uint16_t, ByteReader<uint16_t>::ReadBigEndian, sizeof(uint16_t)>(
+      true);
+  TestWrite<uint16_t, ByteWriter<uint16_t>::WriteBigEndian, sizeof(uint16_t)>(
+      true);
 }
 
 TEST_F(ByteIoTest, Test24UBitBigEndian) {
@@ -139,24 +139,23 @@ TEST_F(ByteIoTest, Test24UBitBigEndian) {
 }
 
 TEST_F(ByteIoTest, Test32UBitBigEndian) {
-  TestRead<uint32_t, ByteReader<uint32_t>::ReadBigEndian,
-      sizeof(uint32_t)>(true);
-  TestWrite<uint32_t, ByteWriter<uint32_t>::WriteBigEndian,
-      sizeof(uint32_t)>(true);
+  TestRead<uint32_t, ByteReader<uint32_t>::ReadBigEndian, sizeof(uint32_t)>(
+      true);
+  TestWrite<uint32_t, ByteWriter<uint32_t>::WriteBigEndian, sizeof(uint32_t)>(
+      true);
 }
 
 TEST_F(ByteIoTest, Test64UBitBigEndian) {
-  TestRead<uint64_t, ByteReader<uint64_t>::ReadBigEndian,
-      sizeof(uint64_t)>(true);
-  TestWrite<uint64_t, ByteWriter<uint64_t>::WriteBigEndian,
-      sizeof(uint64_t)>(true);
+  TestRead<uint64_t, ByteReader<uint64_t>::ReadBigEndian, sizeof(uint64_t)>(
+      true);
+  TestWrite<uint64_t, ByteWriter<uint64_t>::WriteBigEndian, sizeof(uint64_t)>(
+      true);
 }
 
 TEST_F(ByteIoTest, Test16SBitBigEndian) {
-  TestRead<int16_t, ByteReader<int16_t>::ReadBigEndian,
-      sizeof(int16_t)>(true);
-  TestWrite<int16_t, ByteWriter<int16_t>::WriteBigEndian,
-      sizeof(int16_t)>(true);
+  TestRead<int16_t, ByteReader<int16_t>::ReadBigEndian, sizeof(int16_t)>(true);
+  TestWrite<int16_t, ByteWriter<int16_t>::WriteBigEndian, sizeof(int16_t)>(
+      true);
 }
 
 TEST_F(ByteIoTest, Test24SBitBigEndian) {
@@ -165,24 +164,22 @@ TEST_F(ByteIoTest, Test24SBitBigEndian) {
 }
 
 TEST_F(ByteIoTest, Test32SBitBigEndian) {
-  TestRead<int32_t, ByteReader<int32_t>::ReadBigEndian,
-      sizeof(int32_t)>(true);
-  TestWrite<int32_t, ByteWriter<int32_t>::WriteBigEndian,
-      sizeof(int32_t)>(true);
+  TestRead<int32_t, ByteReader<int32_t>::ReadBigEndian, sizeof(int32_t)>(true);
+  TestWrite<int32_t, ByteWriter<int32_t>::WriteBigEndian, sizeof(int32_t)>(
+      true);
 }
 
 TEST_F(ByteIoTest, Test64SBitBigEndian) {
-  TestRead<int64_t, ByteReader<int64_t>::ReadBigEndian,
-      sizeof(int64_t)>(true);
-  TestWrite<int64_t, ByteWriter<int64_t>::WriteBigEndian,
-      sizeof(int64_t)>(true);
+  TestRead<int64_t, ByteReader<int64_t>::ReadBigEndian, sizeof(int64_t)>(true);
+  TestWrite<int64_t, ByteWriter<int64_t>::WriteBigEndian, sizeof(int64_t)>(
+      true);
 }
 
 TEST_F(ByteIoTest, Test16UBitLittleEndian) {
-  TestRead<uint16_t, ByteReader<uint16_t>::ReadLittleEndian,
-      sizeof(uint16_t)>(false);
+  TestRead<uint16_t, ByteReader<uint16_t>::ReadLittleEndian, sizeof(uint16_t)>(
+      false);
   TestWrite<uint16_t, ByteWriter<uint16_t>::WriteLittleEndian,
-      sizeof(uint16_t)>(false);
+            sizeof(uint16_t)>(false);
 }
 
 TEST_F(ByteIoTest, Test24UBitLittleEndian) {
@@ -191,24 +188,24 @@ TEST_F(ByteIoTest, Test24UBitLittleEndian) {
 }
 
 TEST_F(ByteIoTest, Test32UBitLittleEndian) {
-  TestRead<uint32_t, ByteReader<uint32_t>::ReadLittleEndian,
-      sizeof(uint32_t)>(false);
+  TestRead<uint32_t, ByteReader<uint32_t>::ReadLittleEndian, sizeof(uint32_t)>(
+      false);
   TestWrite<uint32_t, ByteWriter<uint32_t>::WriteLittleEndian,
-      sizeof(uint32_t)>(false);
+            sizeof(uint32_t)>(false);
 }
 
 TEST_F(ByteIoTest, Test64UBitLittleEndian) {
-  TestRead<uint64_t, ByteReader<uint64_t>::ReadLittleEndian,
-      sizeof(uint64_t)>(false);
+  TestRead<uint64_t, ByteReader<uint64_t>::ReadLittleEndian, sizeof(uint64_t)>(
+      false);
   TestWrite<uint64_t, ByteWriter<uint64_t>::WriteLittleEndian,
-      sizeof(uint64_t)>(false);
+            sizeof(uint64_t)>(false);
 }
 
 TEST_F(ByteIoTest, Test16SBitLittleEndian) {
-  TestRead<int16_t, ByteReader<int16_t>::ReadLittleEndian,
-      sizeof(int16_t)>(false);
-  TestWrite<int16_t, ByteWriter<int16_t>::WriteLittleEndian,
-      sizeof(int16_t)>(false);
+  TestRead<int16_t, ByteReader<int16_t>::ReadLittleEndian, sizeof(int16_t)>(
+      false);
+  TestWrite<int16_t, ByteWriter<int16_t>::WriteLittleEndian, sizeof(int16_t)>(
+      false);
 }
 
 TEST_F(ByteIoTest, Test24SBitLittleEndian) {
@@ -217,17 +214,17 @@ TEST_F(ByteIoTest, Test24SBitLittleEndian) {
 }
 
 TEST_F(ByteIoTest, Test32SBitLittleEndian) {
-  TestRead<int32_t, ByteReader<int32_t>::ReadLittleEndian,
-      sizeof(int32_t)>(false);
-  TestWrite<int32_t, ByteWriter<int32_t>::WriteLittleEndian,
-      sizeof(int32_t)>(false);
+  TestRead<int32_t, ByteReader<int32_t>::ReadLittleEndian, sizeof(int32_t)>(
+      false);
+  TestWrite<int32_t, ByteWriter<int32_t>::WriteLittleEndian, sizeof(int32_t)>(
+      false);
 }
 
 TEST_F(ByteIoTest, Test64SBitLittleEndian) {
-  TestRead<int64_t, ByteReader<int64_t>::ReadLittleEndian,
-      sizeof(int64_t)>(false);
-  TestWrite<int64_t, ByteWriter<int64_t>::WriteLittleEndian,
-      sizeof(int64_t)>(false);
+  TestRead<int64_t, ByteReader<int64_t>::ReadLittleEndian, sizeof(int64_t)>(
+      false);
+  TestWrite<int64_t, ByteWriter<int64_t>::WriteLittleEndian, sizeof(int64_t)>(
+      false);
 }
 
 // Sets up a fixed byte array and converts N bytes from the array into a

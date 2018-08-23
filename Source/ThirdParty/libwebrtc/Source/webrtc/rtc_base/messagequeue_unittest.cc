@@ -25,7 +25,7 @@
 
 using namespace rtc;
 
-class MessageQueueTest: public testing::Test, public MessageQueue {
+class MessageQueueTest : public testing::Test, public MessageQueue {
  public:
   MessageQueueTest() : MessageQueue(SocketServer::CreateDefault(), true) {}
   bool IsLocked_Worker() {
@@ -47,7 +47,7 @@ class MessageQueueTest: public testing::Test, public MessageQueue {
 
 struct DeletedLockChecker {
   DeletedLockChecker(MessageQueueTest* test, bool* was_locked, bool* deleted)
-      : test(test), was_locked(was_locked), deleted(deleted) { }
+      : test(test), was_locked(was_locked), deleted(deleted) {}
   ~DeletedLockChecker() {
     *deleted = true;
     *was_locked = test->IsLocked();
@@ -68,7 +68,7 @@ static void DelayedPostsWithIdenticalTimesAreProcessedInFifoOrder(
   q->PostAt(RTC_FROM_HERE, now - 1, nullptr, 2);
 
   Message msg;
-  for (size_t i=0; i<5; ++i) {
+  for (size_t i = 0; i < 5; ++i) {
     memset(&msg, 0, sizeof(msg));
     EXPECT_TRUE(q->Get(&msg, 0));
     EXPECT_EQ(i, msg.message_id);
@@ -100,7 +100,7 @@ TEST_F(MessageQueueTest, DisposeNotLocked) {
 
 class DeletedMessageHandler : public MessageHandler {
  public:
-  explicit DeletedMessageHandler(bool* deleted) : deleted_(deleted) { }
+  explicit DeletedMessageHandler(bool* deleted) : deleted_(deleted) {}
   ~DeletedMessageHandler() override { *deleted_ = true; }
   void OnMessage(Message* msg) override {}
 
@@ -110,7 +110,7 @@ class DeletedMessageHandler : public MessageHandler {
 
 TEST_F(MessageQueueTest, DiposeHandlerWithPostedMessagePending) {
   bool deleted = false;
-  DeletedMessageHandler *handler = new DeletedMessageHandler(&deleted);
+  DeletedMessageHandler* handler = new DeletedMessageHandler(&deleted);
   // First, post a dispose.
   Dispose(handler);
   // Now, post a message, which should *not* be returned by Get().
@@ -122,11 +122,14 @@ TEST_F(MessageQueueTest, DiposeHandlerWithPostedMessagePending) {
 
 struct UnwrapMainThreadScope {
   UnwrapMainThreadScope() : rewrap_(Thread::Current() != nullptr) {
-    if (rewrap_) ThreadManager::Instance()->UnwrapCurrentThread();
+    if (rewrap_)
+      ThreadManager::Instance()->UnwrapCurrentThread();
   }
   ~UnwrapMainThreadScope() {
-    if (rewrap_) ThreadManager::Instance()->WrapCurrentThread();
+    if (rewrap_)
+      ThreadManager::Instance()->WrapCurrentThread();
   }
+
  private:
   bool rewrap_;
 };
@@ -218,9 +221,7 @@ TEST(MessageQueueManager, ProcessAllMessageQueuesWithClearedQueue) {
   MessageQueueManager::ProcessAllMessageQueues();
 }
 
-class RefCountedHandler
-  : public MessageHandler,
-    public rtc::RefCountInterface {
+class RefCountedHandler : public MessageHandler, public rtc::RefCountInterface {
  public:
   void OnMessage(Message* msg) override {}
 };

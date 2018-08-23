@@ -11,10 +11,9 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_SYNC_BUFFER_H_
 #define MODULES_AUDIO_CODING_NETEQ_SYNC_BUFFER_H_
 
+#include "api/audio/audio_frame.h"
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
-#include "modules/include/module_common_types.h"
 #include "rtc_base/constructormagic.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -92,7 +91,7 @@ class SyncBuffer : public AudioMultiVector {
  private:
   size_t next_index_;
   uint32_t end_timestamp_;  // The timestamp of the last sample in the buffer.
-  size_t dtmf_index_;  // Index to the first non-DTMF sample in the buffer.
+  size_t dtmf_index_;       // Index to the first non-DTMF sample in the buffer.
 
   RTC_DISALLOW_COPY_AND_ASSIGN(SyncBuffer);
 };

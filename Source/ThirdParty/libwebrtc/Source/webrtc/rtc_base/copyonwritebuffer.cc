@@ -17,12 +17,13 @@ CopyOnWriteBuffer::CopyOnWriteBuffer() {
 }
 
 CopyOnWriteBuffer::CopyOnWriteBuffer(const CopyOnWriteBuffer& buf)
-    : buffer_(buf.buffer_) {
-}
+    : buffer_(buf.buffer_) {}
 
 CopyOnWriteBuffer::CopyOnWriteBuffer(CopyOnWriteBuffer&& buf)
-    : buffer_(std::move(buf.buffer_)) {
-}
+    : buffer_(std::move(buf.buffer_)) {}
+
+CopyOnWriteBuffer::CopyOnWriteBuffer(const std::string& s)
+    : CopyOnWriteBuffer(s.data(), s.length()) {}
 
 CopyOnWriteBuffer::CopyOnWriteBuffer(size_t size)
     : buffer_(size > 0 ? new RefCountedObject<Buffer>(size) : nullptr) {
@@ -31,8 +32,8 @@ CopyOnWriteBuffer::CopyOnWriteBuffer(size_t size)
 
 CopyOnWriteBuffer::CopyOnWriteBuffer(size_t size, size_t capacity)
     : buffer_(size > 0 || capacity > 0
-          ? new RefCountedObject<Buffer>(size, capacity)
-          : nullptr) {
+                  ? new RefCountedObject<Buffer>(size, capacity)
+                  : nullptr) {
   RTC_DCHECK(IsConsistent());
 }
 
@@ -43,8 +44,8 @@ bool CopyOnWriteBuffer::operator==(const CopyOnWriteBuffer& buf) const {
   RTC_DCHECK(IsConsistent());
   RTC_DCHECK(buf.IsConsistent());
   return buffer_.get() == buf.buffer_.get() ||
-      (buffer_.get() && buf.buffer_.get() &&
-      *buffer_.get() == *buf.buffer_.get());
+         (buffer_.get() && buf.buffer_.get() &&
+          *buffer_.get() == *buf.buffer_.get());
 }
 
 void CopyOnWriteBuffer::SetSize(size_t size) {
@@ -59,10 +60,9 @@ void CopyOnWriteBuffer::SetSize(size_t size) {
 
   // Clone data if referenced.
   if (!buffer_->HasOneRef()) {
-    buffer_ = new RefCountedObject<Buffer>(
-        buffer_->data(),
-        std::min(buffer_->size(), size),
-        std::max(buffer_->capacity(), size));
+    buffer_ = new RefCountedObject<Buffer>(buffer_->data(),
+                                           std::min(buffer_->size(), size),
+                                           std::max(buffer_->capacity(), size));
   }
   buffer_->SetSize(size);
   RTC_DCHECK(IsConsistent());
@@ -103,10 +103,8 @@ void CopyOnWriteBuffer::CloneDataIfReferenced(size_t new_capacity) {
   }
 
   buffer_ = new RefCountedObject<Buffer>(buffer_->data(), buffer_->size(),
-      new_capacity);
+                                         new_capacity);
   RTC_DCHECK(IsConsistent());
 }
-
-
 
 }  // namespace rtc

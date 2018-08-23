@@ -18,15 +18,17 @@
 #endif
 
 #if defined(WEBRTC_WIN)
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
+// clang-format off
+// clang formatting would put <windows.h> last,
+// which leads to compilation failure.
 #include <windows.h>
 #include <mmsystem.h>
 #include <sys/timeb.h>
+// clang-format on
 #endif
 
 #include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/timeutils.h"
 
 namespace rtc {
@@ -55,7 +57,13 @@ int64_t SystemTimeNanos() {
     }
   }
   // Use timebase to convert absolute time tick units into nanoseconds.
-  ticks = mach_absolute_time() * timebase.numer / timebase.denom;
+  const auto mul = [](uint64_t a, uint32_t b) -> int64_t {
+    RTC_DCHECK_NE(b, 0);
+    RTC_DCHECK_LE(a, std::numeric_limits<int64_t>::max() / b)
+        << "The multiplication " << a << " * " << b << " overflows";
+    return rtc::dchecked_cast<int64_t>(a * b);
+  };
+  ticks = mul(mach_absolute_time(), timebase.numer) / timebase.denom;
 #elif defined(WEBRTC_POSIX)
   struct timespec ts;
   // TODO(deadbeef): Do we need to handle the case when CLOCK_MONOTONIC is not
@@ -157,8 +165,8 @@ int64_t TmToSeconds(const std::tm& tm) {
   int min = tm.tm_min;
   int sec = tm.tm_sec;
 
-  bool expiry_in_leap_year = (year % 4 == 0 &&
-                              (year % 100 != 0 || year % 400 == 0));
+  bool expiry_in_leap_year =
+      (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
 
   if (year < 1970)
     return -1;
@@ -181,16 +189,21 @@ int64_t TmToSeconds(const std::tm& tm) {
 
   // We will have added one day too much above if expiration is during a leap
   // year, and expiration is in January or February.
-  if (expiry_in_leap_year && month <= 2 - 1) // |month| is zero based.
+  if (expiry_in_leap_year && month <= 2 - 1)  // |month| is zero based.
     day -= 1;
 
   // Combine all variables into seconds from 1970-01-01 00:00 (except |month|
   // which was accumulated into |day| above).
-  return (((static_cast<int64_t>
-            (year - 1970) * 365 + day) * 24 + hour) * 60 + min) * 60 + sec;
+  return (((static_cast<int64_t>(year - 1970) * 365 + day) * 24 + hour) * 60 +
+          min) *
+             60 +
+         sec;
 }
 
 int64_t TimeUTCMicros() {
+  if (g_clock) {
+    return g_clock->TimeNanos() / kNumNanosecsPerMicrosec;
+  }
 #if defined(WEBRTC_POSIX)
   struct timeval time;
   gettimeofday(&time, nullptr);
@@ -207,4 +220,8 @@ int64_t TimeUTCMicros() {
 #endif
 }
 
-} // namespace rtc
+int64_t TimeUTCMillis() {
+  return TimeUTCMicros() / kNumMicrosecsPerMillisec;
+}
+
+}  // namespace rtc

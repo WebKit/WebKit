@@ -4,5 +4,4 @@ Harness Error (TIMEOUT), message = null
 TIMEOUT Can set up a basic WebRTC call with no data. Test timed out
 iceConnectionState info
 
-First: checking
-Second: new
+

@@ -10,7 +10,10 @@
 
 #include "pc/rtptransport.h"
 
+#include <utility>
+
 #include "media/base/rtputils.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "p2p/base/p2pconstants.h"
 #include "p2p/base/packettransportinterface.h"
 #include "rtc_base/checks.h"
@@ -36,7 +39,7 @@ void RtpTransport::SetRtpPacketTransport(
     rtp_packet_transport_->SignalWritableState.disconnect(this);
     rtp_packet_transport_->SignalSentPacket.disconnect(this);
     // Reset the network route of the old transport.
-    SignalNetworkRouteChanged(rtc::Optional<rtc::NetworkRoute>());
+    SignalNetworkRouteChanged(absl::optional<rtc::NetworkRoute>());
   }
   if (new_packet_transport) {
     new_packet_transport->SignalReadyToSend.connect(
@@ -44,7 +47,7 @@ void RtpTransport::SetRtpPacketTransport(
     new_packet_transport->SignalReadPacket.connect(this,
                                                    &RtpTransport::OnReadPacket);
     new_packet_transport->SignalNetworkRouteChanged.connect(
-        this, &RtpTransport::OnNetworkRouteChange);
+        this, &RtpTransport::OnNetworkRouteChanged);
     new_packet_transport->SignalWritableState.connect(
         this, &RtpTransport::OnWritableState);
     new_packet_transport->SignalSentPacket.connect(this,
@@ -72,7 +75,7 @@ void RtpTransport::SetRtcpPacketTransport(
     rtcp_packet_transport_->SignalWritableState.disconnect(this);
     rtcp_packet_transport_->SignalSentPacket.disconnect(this);
     // Reset the network route of the old transport.
-    SignalNetworkRouteChanged(rtc::Optional<rtc::NetworkRoute>());
+    SignalNetworkRouteChanged(absl::optional<rtc::NetworkRoute>());
   }
   if (new_packet_transport) {
     new_packet_transport->SignalReadyToSend.connect(
@@ -80,7 +83,7 @@ void RtpTransport::SetRtcpPacketTransport(
     new_packet_transport->SignalReadPacket.connect(this,
                                                    &RtpTransport::OnReadPacket);
     new_packet_transport->SignalNetworkRouteChanged.connect(
-        this, &RtpTransport::OnNetworkRouteChange);
+        this, &RtpTransport::OnNetworkRouteChanged);
     new_packet_transport->SignalWritableState.connect(
         this, &RtpTransport::OnWritableState);
     new_packet_transport->SignalSentPacket.connect(this,
@@ -134,24 +137,27 @@ bool RtpTransport::SendPacket(bool rtcp,
   return true;
 }
 
-bool RtpTransport::HandlesPacket(const uint8_t* data, size_t len) {
-  return bundle_filter_.DemuxPacket(data, len);
+void RtpTransport::UpdateRtpHeaderExtensionMap(
+    const cricket::RtpHeaderExtensions& header_extensions) {
+  header_extension_map_ = RtpHeaderExtensionMap(header_extensions);
 }
 
-bool RtpTransport::HandlesPayloadType(int payload_type) const {
-  return bundle_filter_.FindPayloadType(payload_type);
+bool RtpTransport::RegisterRtpDemuxerSink(const RtpDemuxerCriteria& criteria,
+                                          RtpPacketSinkInterface* sink) {
+  rtp_demuxer_.RemoveSink(sink);
+  if (!rtp_demuxer_.AddSink(criteria, sink)) {
+    RTC_LOG(LS_ERROR) << "Failed to register the sink for RTP demuxer.";
+    return false;
+  }
+  return true;
 }
 
-void RtpTransport::AddHandledPayloadType(int payload_type) {
-  bundle_filter_.AddPayloadType(payload_type);
-}
-
-PacketTransportInterface* RtpTransport::GetRtpPacketTransport() const {
-  return rtp_packet_transport_;
-}
-
-PacketTransportInterface* RtpTransport::GetRtcpPacketTransport() const {
-  return rtcp_packet_transport_;
+bool RtpTransport::UnregisterRtpDemuxerSink(RtpPacketSinkInterface* sink) {
+  if (!rtp_demuxer_.RemoveSink(sink)) {
+    RTC_LOG(LS_ERROR) << "Failed to unregister the sink for RTP demuxer.";
+    return false;
+  }
+  return true;
 }
 
 RTCError RtpTransport::SetParameters(const RtpTransportParameters& parameters) {
@@ -180,11 +186,26 @@ RtpTransportParameters RtpTransport::GetParameters() const {
   return parameters_;
 }
 
+void RtpTransport::DemuxPacket(rtc::CopyOnWriteBuffer* packet,
+                               const rtc::PacketTime& time) {
+  webrtc::RtpPacketReceived parsed_packet(&header_extension_map_);
+  if (!parsed_packet.Parse(std::move(*packet))) {
+    RTC_LOG(LS_ERROR)
+        << "Failed to parse the incoming RTP packet before demuxing. Drop it.";
+    return;
+  }
+
+  if (time.timestamp != -1) {
+    parsed_packet.set_arrival_time_ms((time.timestamp + 500) / 1000);
+  }
+  rtp_demuxer_.OnRtpPacket(parsed_packet);
+}
+
 RtpTransportAdapter* RtpTransport::GetInternal() {
   return nullptr;
 }
 
-bool RtpTransport::IsRtpTransportWritable() {
+bool RtpTransport::IsTransportWritable() {
   auto rtcp_packet_transport =
       rtcp_mux_enabled_ ? nullptr : rtcp_packet_transport_;
   return rtp_packet_transport_ && rtp_packet_transport_->writable() &&
@@ -195,8 +216,8 @@ void RtpTransport::OnReadyToSend(rtc::PacketTransportInternal* transport) {
   SetReadyToSend(transport == rtcp_packet_transport_, true);
 }
 
-void RtpTransport::OnNetworkRouteChange(
-    rtc::Optional<rtc::NetworkRoute> network_route) {
+void RtpTransport::OnNetworkRouteChanged(
+    absl::optional<rtc::NetworkRoute> network_route) {
   SignalNetworkRouteChanged(network_route);
 }
 
@@ -204,7 +225,7 @@ void RtpTransport::OnWritableState(
     rtc::PacketTransportInternal* packet_transport) {
   RTC_DCHECK(packet_transport == rtp_packet_transport_ ||
              packet_transport == rtcp_packet_transport_);
-  SignalWritableState(IsRtpTransportWritable());
+  SignalWritableState(IsTransportWritable());
 }
 
 void RtpTransport::OnSentPacket(rtc::PacketTransportInternal* packet_transport,
@@ -212,6 +233,49 @@ void RtpTransport::OnSentPacket(rtc::PacketTransportInternal* packet_transport,
   RTC_DCHECK(packet_transport == rtp_packet_transport_ ||
              packet_transport == rtcp_packet_transport_);
   SignalSentPacket(sent_packet);
+}
+
+void RtpTransport::OnRtpPacketReceived(rtc::CopyOnWriteBuffer* packet,
+                                       const rtc::PacketTime& packet_time) {
+  DemuxPacket(packet, packet_time);
+}
+
+void RtpTransport::OnRtcpPacketReceived(rtc::CopyOnWriteBuffer* packet,
+                                        const rtc::PacketTime& packet_time) {
+  SignalRtcpPacketReceived(packet, packet_time);
+}
+
+void RtpTransport::OnReadPacket(rtc::PacketTransportInternal* transport,
+                                const char* data,
+                                size_t len,
+                                const rtc::PacketTime& packet_time,
+                                int flags) {
+  TRACE_EVENT0("webrtc", "RtpTransport::OnReadPacket");
+
+  // When using RTCP multiplexing we might get RTCP packets on the RTP
+  // transport. We check the RTP payload type to determine if it is RTCP.
+  bool rtcp =
+      transport == rtcp_packet_transport() || cricket::IsRtcpPacket(data, len);
+
+  // Filter out the packet that is neither RTP nor RTCP.
+  if (!rtcp && !cricket::IsRtpPacket(data, len)) {
+    return;
+  }
+
+  rtc::CopyOnWriteBuffer packet(data, len);
+  // Protect ourselves against crazy data.
+  if (!cricket::IsValidRtpRtcpPacketSize(rtcp, packet.size())) {
+    RTC_LOG(LS_ERROR) << "Dropping incoming "
+                      << cricket::RtpRtcpStringLiteral(rtcp)
+                      << " packet: wrong size=" << packet.size();
+    return;
+  }
+
+  if (rtcp) {
+    OnRtcpPacketReceived(&packet, packet_time);
+  } else {
+    OnRtpPacketReceived(&packet, packet_time);
+  }
 }
 
 void RtpTransport::SetReadyToSend(bool rtcp, bool ready) {
@@ -231,53 +295,6 @@ void RtpTransport::MaybeSignalReadyToSend() {
     ready_to_send_ = ready_to_send;
     SignalReadyToSend(ready_to_send);
   }
-}
-
-// Check the RTP payload type.  If 63 < payload type < 96, it's RTCP.
-// For additional details, see http://tools.ietf.org/html/rfc5761.
-bool IsRtcp(const char* data, int len) {
-  if (len < 2) {
-    return false;
-  }
-  char pt = data[1] & 0x7F;
-  return (63 < pt) && (pt < 96);
-}
-
-void RtpTransport::OnReadPacket(rtc::PacketTransportInternal* transport,
-                                const char* data,
-                                size_t len,
-                                const rtc::PacketTime& packet_time,
-                                int flags) {
-  TRACE_EVENT0("webrtc", "RtpTransport::OnReadPacket");
-
-  // When using RTCP multiplexing we might get RTCP packets on the RTP
-  // transport. We check the RTP payload type to determine if it is RTCP.
-  bool rtcp = transport == rtcp_packet_transport() ||
-              IsRtcp(data, static_cast<int>(len));
-  rtc::CopyOnWriteBuffer packet(data, len);
-
-  if (!WantsPacket(rtcp, &packet)) {
-    return;
-  }
-  // This mutates |packet| if it is protected.
-  SignalPacketReceived(rtcp, &packet, packet_time);
-}
-
-bool RtpTransport::WantsPacket(bool rtcp,
-                               const rtc::CopyOnWriteBuffer* packet) {
-  // Protect ourselves against crazy data.
-  if (!packet || !cricket::IsValidRtpRtcpPacketSize(rtcp, packet->size())) {
-    RTC_LOG(LS_ERROR) << "Dropping incoming "
-                      << cricket::RtpRtcpStringLiteral(rtcp)
-                      << " packet: wrong size=" << packet->size();
-    return false;
-  }
-  if (rtcp) {
-    // Permit all (seemingly valid) RTCP packets.
-    return true;
-  }
-  // Check whether we handle this payload.
-  return HandlesPacket(packet->data(), packet->size());
 }
 
 }  // namespace webrtc

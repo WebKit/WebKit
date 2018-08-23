@@ -18,8 +18,14 @@
 namespace webrtc {
 
 ShadowFilterUpdateGain::ShadowFilterUpdateGain(
-    const EchoCanceller3Config::Filter::ShadowConfiguration& config)
-    : config_(config) {}
+    const EchoCanceller3Config::Filter::ShadowConfiguration& config,
+    size_t config_change_duration_blocks)
+    : config_change_duration_blocks_(
+          static_cast<int>(config_change_duration_blocks)) {
+  SetConfig(config, true);
+  RTC_DCHECK_LT(0, config_change_duration_blocks_);
+  one_by_config_change_duration_blocks_ = 1.f / config_change_duration_blocks_;
+}
 
 void ShadowFilterUpdateGain::HandleEchoPathChange() {
   // TODO(peah): Check whether this counter should instead be initialized to a
@@ -38,6 +44,8 @@ void ShadowFilterUpdateGain::Compute(
   RTC_DCHECK(G);
   ++call_counter_;
 
+  UpdateCurrentConfig();
+
   if (render_signal_analyzer.PoorSignalExcitation()) {
     poor_signal_excitation_counter_ = 0;
   }
@@ -54,7 +62,7 @@ void ShadowFilterUpdateGain::Compute(
   std::array<float, kFftLengthBy2Plus1> mu;
   auto X2 = render_power;
   std::transform(X2.begin(), X2.end(), mu.begin(), [&](float a) {
-    return a > config_.noise_gate ? config_.rate / a : 0.f;
+    return a > current_config_.noise_gate ? current_config_.rate / a : 0.f;
   });
 
   // Avoid updating the filter close to narrow bands in the render signals.
@@ -65,6 +73,29 @@ void ShadowFilterUpdateGain::Compute(
                  std::multiplies<float>());
   std::transform(mu.begin(), mu.end(), E_shadow.im.begin(), G->im.begin(),
                  std::multiplies<float>());
+}
+
+void ShadowFilterUpdateGain::UpdateCurrentConfig() {
+  RTC_DCHECK_GE(config_change_duration_blocks_, config_change_counter_);
+  if (config_change_counter_ > 0) {
+    if (--config_change_counter_ > 0) {
+      auto average = [](float from, float to, float from_weight) {
+        return from * from_weight + to * (1.f - from_weight);
+      };
+
+      float change_factor =
+          config_change_counter_ * one_by_config_change_duration_blocks_;
+
+      current_config_.rate =
+          average(old_target_config_.rate, target_config_.rate, change_factor);
+      current_config_.noise_gate =
+          average(old_target_config_.noise_gate, target_config_.noise_gate,
+                  change_factor);
+    } else {
+      current_config_ = old_target_config_ = target_config_;
+    }
+  }
+  RTC_DCHECK_LE(0, config_change_counter_);
 }
 
 }  // namespace webrtc

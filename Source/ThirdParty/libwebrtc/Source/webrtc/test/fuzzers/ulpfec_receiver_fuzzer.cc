@@ -10,11 +10,10 @@
 
 #include <algorithm>
 
-#include "modules/rtp_rtcp/include/ulpfec_receiver.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/include/ulpfec_receiver.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
-#include "rtc_base/basictypes.h"
 
 namespace webrtc {
 
@@ -68,8 +67,8 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
     RTPHeader parsed_header;
     if (parsed_packet.Parse(packet.get(), packet_length)) {
       parsed_packet.GetHeader(&parsed_header);
-      receiver->AddReceivedRedPacket(parsed_header, packet.get(),
-                                     packet_length, 0);
+      receiver->AddReceivedRedPacket(parsed_header, packet.get(), packet_length,
+                                     0);
     }
   }
 

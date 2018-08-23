@@ -27,4 +27,3 @@ std::unique_ptr<DesktopFrame> CreateCroppedDesktopFrame(
 }  // namespace webrtc
 
 #endif  // MODULES_DESKTOP_CAPTURE_CROPPED_DESKTOP_FRAME_H_
-

@@ -16,10 +16,12 @@ namespace conversational_speech {
 
 using testing::Return;
 
-MockWavReader::MockWavReader(
-    int sample_rate, size_t num_channels, size_t num_samples)
-      : sample_rate_(sample_rate), num_channels_(num_channels),
-          num_samples_(num_samples) {
+MockWavReader::MockWavReader(int sample_rate,
+                             size_t num_channels,
+                             size_t num_samples)
+    : sample_rate_(sample_rate),
+      num_channels_(num_channels),
+      num_samples_(num_samples) {
   ON_CALL(*this, SampleRate()).WillByDefault(Return(sample_rate_));
   ON_CALL(*this, NumChannels()).WillByDefault(Return(num_channels_));
   ON_CALL(*this, NumSamples()).WillByDefault(Return(num_samples_));

@@ -43,10 +43,10 @@ class VideoQualityAnalysisTest : public ::testing::Test {
 
 TEST_F(VideoQualityAnalysisTest, MatchExtractedY4mFrame) {
   std::string video_file =
-         webrtc::test::ResourcePath("reference_less_video_test_file", "y4m");
+      webrtc::test::ResourcePath("reference_less_video_test_file", "y4m");
 
   std::string extracted_frame_from_video_file =
-         webrtc::test::ResourcePath("video_quality_analysis_frame", "txt");
+      webrtc::test::ResourcePath("video_quality_analysis_frame", "txt");
 
   int frame_height = 720, frame_width = 1280;
   int frame_number = 2;
@@ -57,8 +57,7 @@ TEST_F(VideoQualityAnalysisTest, MatchExtractedY4mFrame) {
   FILE* input_file = fopen(extracted_frame_from_video_file.c_str(), "rb");
   fread(expected_frame, 1, size, input_file);
 
-  ExtractFrameFromY4mFile(video_file.c_str(),
-                          frame_width, frame_height,
+  ExtractFrameFromY4mFile(video_file.c_str(), frame_width, frame_height,
                           frame_number, result_frame);
 
   EXPECT_EQ(*expected_frame, *result_frame);
@@ -86,24 +85,24 @@ TEST_F(VideoQualityAnalysisTest, PrintAnalysisResultsThreeFrames) {
   PrintAnalysisResults(logfile_, "ThreeFrames", &result);
 }
 
-TEST_F(VideoQualityAnalysisTest, PrintMaxRepeatedAndSkippedFramesInvalidFile) {
+TEST_F(VideoQualityAnalysisTest, GetMaxRepeatedAndSkippedFramesInvalidFile) {
+  ResultsContainer result;
   remove(stats_filename_.c_str());
-  PrintMaxRepeatedAndSkippedFrames(logfile_, "NonExistingStatsFile",
-                                   stats_filename_ref_, stats_filename_);
+  GetMaxRepeatedAndSkippedFrames(stats_filename_ref_, stats_filename_, &result);
 }
 
-TEST_F(VideoQualityAnalysisTest,
-       PrintMaxRepeatedAndSkippedFramesEmptyStatsFile) {
+TEST_F(VideoQualityAnalysisTest, GetMaxRepeatedAndSkippedFramesEmptyStatsFile) {
+  ResultsContainer result;
   std::ofstream stats_file;
   stats_file.open(stats_filename_ref_.c_str());
   stats_file.close();
   stats_file.open(stats_filename_.c_str());
   stats_file.close();
-  PrintMaxRepeatedAndSkippedFrames(logfile_, "EmptyStatsFile",
-                                   stats_filename_ref_, stats_filename_);
+  GetMaxRepeatedAndSkippedFrames(stats_filename_ref_, stats_filename_, &result);
 }
 
-TEST_F(VideoQualityAnalysisTest, PrintMaxRepeatedAndSkippedFramesNormalFile) {
+TEST_F(VideoQualityAnalysisTest, GetMaxRepeatedAndSkippedFramesNormalFile) {
+  ResultsContainer result;
   std::ofstream stats_file;
 
   stats_file.open(stats_filename_ref_.c_str());
@@ -123,8 +122,7 @@ TEST_F(VideoQualityAnalysisTest, PrintMaxRepeatedAndSkippedFramesNormalFile) {
   stats_file << "frame_0004 0106\n";
   stats_file.close();
 
-  PrintMaxRepeatedAndSkippedFrames(logfile_, "NormalStatsFile",
-                                   stats_filename_ref_, stats_filename_);
+  GetMaxRepeatedAndSkippedFrames(stats_filename_ref_, stats_filename_, &result);
 }
 
 namespace {
@@ -143,6 +141,7 @@ void VerifyLogOutput(const std::string& log_filename,
 
 TEST_F(VideoQualityAnalysisTest,
        PrintMaxRepeatedAndSkippedFramesSkippedFrames) {
+  ResultsContainer result;
   std::ofstream stats_file;
 
   std::string log_filename =
@@ -171,21 +170,22 @@ TEST_F(VideoQualityAnalysisTest,
   stats_file << "frame_0006 0112\n";
   stats_file.close();
 
-  PrintMaxRepeatedAndSkippedFrames(logfile, "NormalStatsFile",
-                                   stats_filename_ref_, stats_filename_);
+  GetMaxRepeatedAndSkippedFrames(stats_filename_ref_, stats_filename_, &result);
+  PrintAnalysisResults(logfile, "NormalStatsFile", &result);
   ASSERT_EQ(0, fclose(logfile));
 
   std::vector<std::string> expected_out = {
-      "RESULT Max_repeated: NormalStatsFile= 2",
-      "RESULT Max_skipped: NormalStatsFile= 2",
-      "RESULT Total_skipped: NormalStatsFile= 3",
-      "RESULT Decode_errors_reference: NormalStatsFile= 0",
-      "RESULT Decode_errors_test: NormalStatsFile= 0"};
+      "RESULT Max_repeated: NormalStatsFile= 2 ",
+      "RESULT Max_skipped: NormalStatsFile= 2 ",
+      "RESULT Total_skipped: NormalStatsFile= 3 ",
+      "RESULT Decode_errors_reference: NormalStatsFile= 0 ",
+      "RESULT Decode_errors_test: NormalStatsFile= 0 "};
   VerifyLogOutput(log_filename, expected_out);
 }
 
 TEST_F(VideoQualityAnalysisTest,
        PrintMaxRepeatedAndSkippedFramesDecodeErrorInTest) {
+  ResultsContainer result;
   std::ofstream stats_file;
 
   std::string log_filename =
@@ -214,16 +214,16 @@ TEST_F(VideoQualityAnalysisTest,
   stats_file << "frame_0006 0110\n";
   stats_file.close();
 
-  PrintMaxRepeatedAndSkippedFrames(logfile, "NormalStatsFile",
-                                   stats_filename_ref_, stats_filename_);
+  GetMaxRepeatedAndSkippedFrames(stats_filename_ref_, stats_filename_, &result);
+  PrintAnalysisResults(logfile, "NormalStatsFile", &result);
   ASSERT_EQ(0, fclose(logfile));
 
   std::vector<std::string> expected_out = {
-      "RESULT Max_repeated: NormalStatsFile= 1",
-      "RESULT Max_skipped: NormalStatsFile= 0",
-      "RESULT Total_skipped: NormalStatsFile= 0",
-      "RESULT Decode_errors_reference: NormalStatsFile= 0",
-      "RESULT Decode_errors_test: NormalStatsFile= 3"};
+      "RESULT Max_repeated: NormalStatsFile= 1 ",
+      "RESULT Max_skipped: NormalStatsFile= 0 ",
+      "RESULT Total_skipped: NormalStatsFile= 0 ",
+      "RESULT Decode_errors_reference: NormalStatsFile= 0 ",
+      "RESULT Decode_errors_test: NormalStatsFile= 3 "};
   VerifyLogOutput(log_filename, expected_out);
 }
 

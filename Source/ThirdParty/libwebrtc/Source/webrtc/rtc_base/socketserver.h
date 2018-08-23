@@ -35,7 +35,7 @@ class SocketServer : public SocketFactory {
   // When the socket server is installed into a Thread, this function is
   // called to allow the socket server to use the thread's message queue for
   // any messaging that it might need to perform.
-  virtual void SetMessageQueue(MessageQueue*) {}
+  virtual void SetMessageQueue(MessageQueue* queue) {}
 
   // Sleeps until:
   //  1) cms milliseconds have elapsed (unless cms == kForever)

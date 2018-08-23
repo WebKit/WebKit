@@ -23,7 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
  * C++ APIs.
  */
 @property(nonatomic, readonly)
-    rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> nativeFactory;
+    rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>
+        nativeFactory;
 
 @end
 

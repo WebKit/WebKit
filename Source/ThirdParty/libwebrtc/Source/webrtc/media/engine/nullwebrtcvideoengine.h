@@ -22,7 +22,6 @@ class Call;
 
 }  // namespace webrtc
 
-
 namespace cricket {
 
 class VideoMediaChannel;

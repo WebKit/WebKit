@@ -12,8 +12,9 @@
 #define SDK_ANDROID_SRC_JNI_ENCODEDIMAGE_H_
 
 #include <jni.h>
-
 #include "common_types.h"  // NOLINT(build/include)
+
+#include "sdk/android/native_api/jni/scoped_java_ref.h"
 
 namespace webrtc {
 
@@ -21,9 +22,11 @@ class EncodedImage;
 
 namespace jni {
 
-jobject NativeToJavaFrameType(JNIEnv* env, FrameType frame_type);
-jobject NativeToJavaEncodedImage(JNIEnv* jni, const EncodedImage& image);
-jobjectArray NativeToJavaFrameTypeArray(
+ScopedJavaLocalRef<jobject> NativeToJavaFrameType(JNIEnv* env,
+                                                  FrameType frame_type);
+ScopedJavaLocalRef<jobject> NativeToJavaEncodedImage(JNIEnv* jni,
+                                                     const EncodedImage& image);
+ScopedJavaLocalRef<jobjectArray> NativeToJavaFrameTypeArray(
     JNIEnv* env,
     const std::vector<FrameType>& frame_types);
 

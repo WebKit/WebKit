@@ -15,12 +15,11 @@
 #include <utility>
 #include <vector>
 
+#include "absl/memory/memory.h"
 #include "api/jsep.h"
 #include "api/jsepsessiondescription.h"
 #include "api/mediaconstraintsinterface.h"
-#include "pc/peerconnection.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/sslidentity.h"
 
 using cricket::MediaSessionOptions;
@@ -68,12 +67,12 @@ enum {
 
 struct CreateSessionDescriptionMsg : public rtc::MessageData {
   explicit CreateSessionDescriptionMsg(
-      webrtc::CreateSessionDescriptionObserver* observer)
-      : observer(observer) {
-  }
+      webrtc::CreateSessionDescriptionObserver* observer,
+      RTCError error_in)
+      : observer(observer), error(std::move(error_in)) {}
 
   rtc::scoped_refptr<webrtc::CreateSessionDescriptionObserver> observer;
-  std::string error;
+  RTCError error;
   std::unique_ptr<webrtc::SessionDescriptionInterface> description;
 };
 }  // namespace
@@ -122,7 +121,7 @@ void WebRtcSessionDescriptionFactory::CopyCandidatesFromSessionDescription(
 WebRtcSessionDescriptionFactory::WebRtcSessionDescriptionFactory(
     rtc::Thread* signaling_thread,
     cricket::ChannelManager* channel_manager,
-    PeerConnection* pc,
+    PeerConnectionInternal* pc,
     const std::string& session_id,
     std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator,
     const rtc::scoped_refptr<rtc::RTCCertificate>& certificate)
@@ -171,12 +170,12 @@ WebRtcSessionDescriptionFactory::WebRtcSessionDescriptionFactory(
 
     rtc::KeyParams key_params = rtc::KeyParams();
     RTC_LOG(LS_VERBOSE)
-        << "DTLS-SRTP enabled; sending DTLS identity request (key "
-        << "type: " << key_params.type() << ").";
+        << "DTLS-SRTP enabled; sending DTLS identity request (key type: "
+        << key_params.type() << ").";
 
     // Request certificate. This happens asynchronously, so that the caller gets
     // a chance to connect to |SignalCertificateReady|.
-    cert_generator_->GenerateCertificateAsync(key_params, rtc::nullopt,
+    cert_generator_->GenerateCertificateAsync(key_params, absl::nullopt,
                                               callback);
   }
 }
@@ -298,7 +297,7 @@ void WebRtcSessionDescriptionFactory::OnMessage(rtc::Message* msg) {
     case MSG_CREATE_SESSIONDESCRIPTION_FAILED: {
       CreateSessionDescriptionMsg* param =
           static_cast<CreateSessionDescriptionMsg*>(msg->pdata);
-      param->observer->OnFailure(param->error);
+      param->observer->OnFailure(std::move(param->error));
       delete param;
       break;
     }
@@ -344,7 +343,7 @@ void WebRtcSessionDescriptionFactory::InternalCreateOffer(
   // is created regardless if it's identical to the previous one or not.
   // The |session_version_| is a uint64_t, the wrap around should not happen.
   RTC_DCHECK(session_version_ + 1 > session_version_);
-  auto offer = rtc::MakeUnique<JsepSessionDescription>(SdpType::kOffer);
+  auto offer = absl::make_unique<JsepSessionDescription>(SdpType::kOffer);
   if (!offer->Initialize(desc, session_id_,
                          rtc::ToString(session_version_++))) {
     PostCreateSessionDescriptionFailed(request.observer,
@@ -397,7 +396,7 @@ void WebRtcSessionDescriptionFactory::InternalCreateAnswer(
   // Get a new version number by increasing the |session_version_answer_|.
   // The |session_version_| is a uint64_t, the wrap around should not happen.
   RTC_DCHECK(session_version_ + 1 > session_version_);
-  auto answer = rtc::MakeUnique<JsepSessionDescription>(SdpType::kAnswer);
+  auto answer = absl::make_unique<JsepSessionDescription>(SdpType::kAnswer);
   if (!answer->Initialize(desc, session_id_,
                           rtc::ToString(session_version_++))) {
     PostCreateSessionDescriptionFailed(request.observer,
@@ -424,17 +423,21 @@ void WebRtcSessionDescriptionFactory::FailPendingRequests(
   while (!create_session_description_requests_.empty()) {
     const CreateSessionDescriptionRequest& request =
         create_session_description_requests_.front();
-    PostCreateSessionDescriptionFailed(request.observer,
-        ((request.type == CreateSessionDescriptionRequest::kOffer) ?
-            "CreateOffer" : "CreateAnswer") + reason);
+    PostCreateSessionDescriptionFailed(
+        request.observer,
+        ((request.type == CreateSessionDescriptionRequest::kOffer)
+             ? "CreateOffer"
+             : "CreateAnswer") +
+            reason);
     create_session_description_requests_.pop();
   }
 }
 
 void WebRtcSessionDescriptionFactory::PostCreateSessionDescriptionFailed(
-    CreateSessionDescriptionObserver* observer, const std::string& error) {
-  CreateSessionDescriptionMsg* msg = new CreateSessionDescriptionMsg(observer);
-  msg->error = error;
+    CreateSessionDescriptionObserver* observer,
+    const std::string& error) {
+  CreateSessionDescriptionMsg* msg = new CreateSessionDescriptionMsg(
+      observer, RTCError(RTCErrorType::INTERNAL_ERROR, std::string(error)));
   signaling_thread_->Post(RTC_FROM_HERE, this,
                           MSG_CREATE_SESSIONDESCRIPTION_FAILED, msg);
   RTC_LOG(LS_ERROR) << "Create SDP failed: " << error;
@@ -443,7 +446,8 @@ void WebRtcSessionDescriptionFactory::PostCreateSessionDescriptionFailed(
 void WebRtcSessionDescriptionFactory::PostCreateSessionDescriptionSucceeded(
     CreateSessionDescriptionObserver* observer,
     std::unique_ptr<SessionDescriptionInterface> description) {
-  CreateSessionDescriptionMsg* msg = new CreateSessionDescriptionMsg(observer);
+  CreateSessionDescriptionMsg* msg =
+      new CreateSessionDescriptionMsg(observer, RTCError::OK());
   msg->description = std::move(description);
   signaling_thread_->Post(RTC_FROM_HERE, this,
                           MSG_CREATE_SESSIONDESCRIPTION_SUCCESS, msg);

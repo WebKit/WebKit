@@ -36,7 +36,6 @@
 #include "test/testsupport/frame_writer.h"
 #include "test/video_capturer.h"
 #include "test/video_renderer.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace {
 
@@ -107,8 +106,8 @@ static int RedPayloadTypeRtx() {
 
 // Flag for SSRC.
 const std::string& DefaultSsrc() {
-  static const std::string ssrc = std::to_string(
-      test::CallTest::kVideoSendSsrcs[0]);
+  static const std::string ssrc =
+      std::to_string(test::CallTest::kVideoSendSsrcs[0]);
   return ssrc;
 }
 DEFINE_string(ssrc, DefaultSsrc().c_str(), "Incoming SSRC");
@@ -117,8 +116,8 @@ static uint32_t Ssrc() {
 }
 
 const std::string& DefaultSsrcRtx() {
-  static const std::string ssrc_rtx = std::to_string(
-      test::CallTest::kSendRtxSsrcs[0]);
+  static const std::string ssrc_rtx =
+      std::to_string(test::CallTest::kSendRtxSsrcs[0]);
   return ssrc_rtx;
 }
 DEFINE_string(ssrc_rtx, DefaultSsrcRtx().c_str(), "Incoming RTX SSRC");
@@ -128,7 +127,9 @@ static uint32_t SsrcRtx() {
 
 // Flag for abs-send-time id.
 DEFINE_int(abs_send_time_id, -1, "RTP extension ID for abs-send-time");
-static int AbsSendTimeId() { return static_cast<int>(FLAG_abs_send_time_id); }
+static int AbsSendTimeId() {
+  return static_cast<int>(FLAG_abs_send_time_id);
+}
 
 // Flag for transmission-offset id.
 DEFINE_int(transmission_offset_id,
@@ -157,7 +158,9 @@ static std::string DecoderBitstreamFilename() {
 
 // Flag for video codec.
 DEFINE_string(codec, "VP8", "Video codec");
-static std::string Codec() { return static_cast<std::string>(FLAG_codec); }
+static std::string Codec() {
+  return static_cast<std::string>(FLAG_codec);
+}
 
 DEFINE_bool(help, false, "Print this message.");
 }  // namespace flags
@@ -197,7 +200,7 @@ class FileRenderPassthrough : public rtc::VideoSinkInterface<VideoFrame> {
   size_t count_;
 };
 
-class DecoderBitstreamFileWriter : public EncodedFrameObserver {
+class DecoderBitstreamFileWriter : public test::FakeDecoder {
  public:
   explicit DecoderBitstreamFileWriter(const char* filename)
       : file_(fopen(filename, "wb")) {
@@ -205,8 +208,16 @@ class DecoderBitstreamFileWriter : public EncodedFrameObserver {
   }
   ~DecoderBitstreamFileWriter() { fclose(file_); }
 
-  virtual void EncodedFrameCallback(const EncodedFrame& encoded_frame) {
-    fwrite(encoded_frame.data_, 1, encoded_frame.length_, file_);
+  int32_t Decode(const EncodedImage& encoded_frame,
+                      bool /* missing_frames */,
+                      const CodecSpecificInfo* /* codec_specific_info */,
+                      int64_t /* render_time_ms */) override {
+    if (fwrite(encoded_frame._buffer, 1, encoded_frame._length, file_)
+        < encoded_frame._length) {
+      RTC_LOG_ERR(LS_ERROR) << "fwrite of encoded frame failed.";
+      return WEBRTC_VIDEO_CODEC_ERROR;
+    }
+    return WEBRTC_VIDEO_CODEC_OK;
   }
 
  private:
@@ -247,22 +258,15 @@ void RtpReplay() {
   }
   receive_config.renderer = &file_passthrough;
 
-  VideoSendStream::Config::EncoderSettings encoder_settings;
-  encoder_settings.payload_name = flags::Codec();
-  encoder_settings.payload_type = flags::MediaPayloadType();
   VideoReceiveStream::Decoder decoder;
-  std::unique_ptr<DecoderBitstreamFileWriter> bitstream_writer;
+  decoder =
+      test::CreateMatchingDecoder(flags::MediaPayloadType(), flags::Codec());
   if (!flags::DecoderBitstreamFilename().empty()) {
-    bitstream_writer.reset(new DecoderBitstreamFileWriter(
-        flags::DecoderBitstreamFilename().c_str()));
-    receive_config.pre_decode_callback = bitstream_writer.get();
-  }
-  decoder = test::CreateMatchingDecoder(encoder_settings);
-  if (!flags::DecoderBitstreamFilename().empty()) {
-    // Replace with a null decoder if we're writing the bitstream to a file
+    // Replace decoder with file writer if we're writing the bitstream to a file
     // instead.
     delete decoder.decoder;
-    decoder.decoder = new test::FakeNullDecoder();
+    decoder.decoder = new DecoderBitstreamFileWriter(
+        flags::DecoderBitstreamFilename().c_str());
   }
   receive_config.decoders.push_back(decoder);
 
@@ -309,7 +313,8 @@ void RtpReplay() {
     ++num_packets;
     switch (call->Receiver()->DeliverPacket(
         webrtc::MediaType::VIDEO,
-        rtc::CopyOnWriteBuffer(packet.data, packet.length), PacketTime())) {
+        rtc::CopyOnWriteBuffer(packet.data, packet.length),
+        /* packet_time_us */ -1)) {
       case PacketReceiver::DELIVERY_OK:
         break;
       case PacketReceiver::DELIVERY_UNKNOWN_SSRC: {
@@ -336,10 +341,9 @@ void RtpReplay() {
   fprintf(stderr, "num_packets: %d\n", num_packets);
 
   for (std::map<uint32_t, int>::const_iterator it = unknown_packets.begin();
-       it != unknown_packets.end();
-       ++it) {
-    fprintf(
-        stderr, "Packets for unknown ssrc '%u': %d\n", it->first, it->second);
+       it != unknown_packets.end(); ++it) {
+    fprintf(stderr, "Packets for unknown ssrc '%u': %d\n", it->first,
+            it->second);
   }
 
   call->DestroyVideoReceiveStream(receive_stream);
@@ -368,8 +372,8 @@ int main(int argc, char* argv[]) {
   RTC_CHECK(ValidateSsrc(webrtc::flags::FLAG_ssrc));
   RTC_CHECK(ValidateSsrc(webrtc::flags::FLAG_ssrc_rtx));
   RTC_CHECK(ValidateRtpHeaderExtensionId(webrtc::flags::FLAG_abs_send_time_id));
-  RTC_CHECK(ValidateRtpHeaderExtensionId(
-      webrtc::flags::FLAG_transmission_offset_id));
+  RTC_CHECK(
+      ValidateRtpHeaderExtensionId(webrtc::flags::FLAG_transmission_offset_id));
   RTC_CHECK(ValidateInputFilenameNotEmpty(webrtc::flags::FLAG_input_file));
 
   webrtc::test::RunTest(webrtc::RtpReplay);

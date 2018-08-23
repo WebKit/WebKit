@@ -16,10 +16,10 @@
 
 ******************************************************************/
 
-#include "defines.h"
-#include "constants.h"
-#include "refiner.h"
-#include "nearest_neighbor.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
+#include "modules/audio_coding/codecs/ilbc/refiner.h"
+#include "modules/audio_coding/codecs/ilbc/nearest_neighbor.h"
 
 /*----------------------------------------------------------------*
  * get the pitch-synchronous sample sequence

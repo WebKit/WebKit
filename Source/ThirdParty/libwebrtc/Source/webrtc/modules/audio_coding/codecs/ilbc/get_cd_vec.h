@@ -20,8 +20,11 @@
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_GET_CD_VEC_H_
 
 #include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "rtc_base/system/unused.h"
 
 // Returns true on success, false on failure. In case of failure, the decoder
 // state may be corrupted and needs resetting.

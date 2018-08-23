@@ -33,7 +33,14 @@
 #include "Logging.h"
 #include "MediaSampleAVFObjC.h"
 #include <pal/cf/CoreMediaSoftLink.h>
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+
 #include <webrtc/sdk/WebKit/WebKitUtilities.h>
+
+#pragma clang diagnostic pop
+
 #include <wtf/cf/TypeCastsCF.h>
 
 #include "CoreVideoSoftLink.h"

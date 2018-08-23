@@ -14,7 +14,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-__attribute__((objc_runtime_name("WK_RTCDtmfSender")))
 @interface RTCDtmfSender : NSObject <RTCDtmfSender>
 
 @property(nonatomic, readonly) rtc::scoped_refptr<webrtc::DtmfSenderInterface> nativeDtmfSender;

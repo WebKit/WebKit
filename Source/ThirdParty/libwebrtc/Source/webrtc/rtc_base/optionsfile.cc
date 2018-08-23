@@ -18,8 +18,7 @@
 
 namespace rtc {
 
-OptionsFile::OptionsFile(const std::string &path) : path_(path) {
-}
+OptionsFile::OptionsFile(const std::string& path) : path_(path) {}
 
 OptionsFile::~OptionsFile() = default;
 
@@ -75,8 +74,8 @@ bool OptionsFile::Save() {
   int error;
   for (OptionsMap::const_iterator i = options_.begin(); i != options_.end();
        ++i) {
-    res = stream.WriteAll(i->first.c_str(), i->first.length(), &written,
-        &error);
+    res =
+        stream.WriteAll(i->first.c_str(), i->first.length(), &written, &error);
     if (res != SR_SUCCESS) {
       break;
     }
@@ -85,7 +84,7 @@ bool OptionsFile::Save() {
       break;
     }
     res = stream.WriteAll(i->second.c_str(), i->second.length(), &written,
-        &error);
+                          &error);
     if (res != SR_SUCCESS) {
       break;
     }
@@ -102,7 +101,7 @@ bool OptionsFile::Save() {
   }
 }
 
-bool OptionsFile::IsLegalName(const std::string &name) {
+bool OptionsFile::IsLegalName(const std::string& name) {
   for (size_t pos = 0; pos < name.length(); ++pos) {
     if (name[pos] == '\n' || name[pos] == '\\' || name[pos] == '=') {
       // Illegal character.
@@ -113,7 +112,7 @@ bool OptionsFile::IsLegalName(const std::string &name) {
   return true;
 }
 
-bool OptionsFile::IsLegalValue(const std::string &value) {
+bool OptionsFile::IsLegalValue(const std::string& value) {
   for (size_t pos = 0; pos < value.length(); ++pos) {
     if (value[pos] == '\n' || value[pos] == '\\') {
       // Illegal character.
@@ -125,7 +124,7 @@ bool OptionsFile::IsLegalValue(const std::string &value) {
 }
 
 bool OptionsFile::GetStringValue(const std::string& option,
-                                 std::string *out_val) const {
+                                 std::string* out_val) const {
   RTC_LOG(LS_VERBOSE) << "OptionsFile::GetStringValue " << option;
   if (!IsLegalName(option)) {
     return false;
@@ -138,8 +137,7 @@ bool OptionsFile::GetStringValue(const std::string& option,
   return true;
 }
 
-bool OptionsFile::GetIntValue(const std::string& option,
-                              int *out_val) const {
+bool OptionsFile::GetIntValue(const std::string& option, int* out_val) const {
   RTC_LOG(LS_VERBOSE) << "OptionsFile::GetIntValue " << option;
   if (!IsLegalName(option)) {
     return false;
@@ -162,13 +160,13 @@ bool OptionsFile::SetStringValue(const std::string& option,
   return true;
 }
 
-bool OptionsFile::SetIntValue(const std::string& option,
-                              int value) {
+bool OptionsFile::SetIntValue(const std::string& option, int value) {
   RTC_LOG(LS_VERBOSE) << "OptionsFile::SetIntValue " << option << ":" << value;
   if (!IsLegalName(option)) {
     return false;
   }
-  return ToString(value, &options_[option]);
+  options_[option] = ToString(value);
+  return true;
 }
 
 bool OptionsFile::RemoveValue(const std::string& option) {

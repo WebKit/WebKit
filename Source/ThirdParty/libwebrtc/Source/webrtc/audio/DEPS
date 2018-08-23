@@ -5,14 +5,15 @@ include_rules = [
   "+modules/audio_coding",
   "+modules/audio_device",
   "+modules/audio_mixer",
+  "+modules/audio_processing",
   "+modules/audio_processing/include",
   "+modules/bitrate_controller",
   "+modules/congestion_controller",
   "+modules/pacing",
   "+modules/remote_bitrate_estimator",
   "+modules/rtp_rtcp",
+  "+modules/utility",
   "+system_wrappers",
-  "+voice_engine",
 ]
 
 specific_include_rules = {

@@ -14,34 +14,36 @@
 #include <limits>
 
 #ifdef WIN32
-#   include <Winsock2.h>
+#include <Winsock2.h>
 #else
-#   include <arpa/inet.h>
+#include <arpa/inet.h>
 #endif
 
-#include "audio_coding_module.h"
-#include "system_wrappers/include/rw_lock_wrapper.h"
+#include "modules/include/module_common_types.h"
 // TODO(tlegrand): Consider removing usage of gtest.
 #include "test/gtest.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
 void RTPStream::ParseRTPHeader(WebRtcRTPHeader* rtpInfo,
                                const uint8_t* rtpHeader) {
   rtpInfo->header.payloadType = rtpHeader[1];
-  rtpInfo->header.sequenceNumber = (static_cast<uint16_t>(rtpHeader[2]) << 8) |
-      rtpHeader[3];
+  rtpInfo->header.sequenceNumber =
+      (static_cast<uint16_t>(rtpHeader[2]) << 8) | rtpHeader[3];
   rtpInfo->header.timestamp = (static_cast<uint32_t>(rtpHeader[4]) << 24) |
-      (static_cast<uint32_t>(rtpHeader[5]) << 16) |
-      (static_cast<uint32_t>(rtpHeader[6]) << 8) | rtpHeader[7];
+                              (static_cast<uint32_t>(rtpHeader[5]) << 16) |
+                              (static_cast<uint32_t>(rtpHeader[6]) << 8) |
+                              rtpHeader[7];
   rtpInfo->header.ssrc = (static_cast<uint32_t>(rtpHeader[8]) << 24) |
-      (static_cast<uint32_t>(rtpHeader[9]) << 16) |
-      (static_cast<uint32_t>(rtpHeader[10]) << 8) | rtpHeader[11];
+                         (static_cast<uint32_t>(rtpHeader[9]) << 16) |
+                         (static_cast<uint32_t>(rtpHeader[10]) << 8) |
+                         rtpHeader[11];
 }
 
-void RTPStream::MakeRTPheader(uint8_t* rtpHeader, uint8_t payloadType,
-                              int16_t seqNo, uint32_t timeStamp,
+void RTPStream::MakeRTPheader(uint8_t* rtpHeader,
+                              uint8_t payloadType,
+                              int16_t seqNo,
+                              uint32_t timeStamp,
                               uint32_t ssrc) {
   rtpHeader[0] = 0x80;
   rtpHeader[1] = payloadType;
@@ -57,8 +59,11 @@ void RTPStream::MakeRTPheader(uint8_t* rtpHeader, uint8_t payloadType,
   rtpHeader[11] = ssrc & 0xFF;
 }
 
-RTPPacket::RTPPacket(uint8_t payloadType, uint32_t timeStamp, int16_t seqNo,
-                     const uint8_t* payloadData, size_t payloadSize,
+RTPPacket::RTPPacket(uint8_t payloadType,
+                     uint32_t timeStamp,
+                     int16_t seqNo,
+                     const uint8_t* payloadData,
+                     size_t payloadSize,
                      uint32_t frequency)
     : payloadType(payloadType),
       timeStamp(timeStamp),
@@ -83,20 +88,25 @@ RTPBuffer::~RTPBuffer() {
   delete _queueRWLock;
 }
 
-void RTPBuffer::Write(const uint8_t payloadType, const uint32_t timeStamp,
-                      const int16_t seqNo, const uint8_t* payloadData,
-                      const size_t payloadSize, uint32_t frequency) {
-  RTPPacket *packet = new RTPPacket(payloadType, timeStamp, seqNo, payloadData,
+void RTPBuffer::Write(const uint8_t payloadType,
+                      const uint32_t timeStamp,
+                      const int16_t seqNo,
+                      const uint8_t* payloadData,
+                      const size_t payloadSize,
+                      uint32_t frequency) {
+  RTPPacket* packet = new RTPPacket(payloadType, timeStamp, seqNo, payloadData,
                                     payloadSize, frequency);
   _queueRWLock->AcquireLockExclusive();
   _rtpQueue.push(packet);
   _queueRWLock->ReleaseLockExclusive();
 }
 
-size_t RTPBuffer::Read(WebRtcRTPHeader* rtpInfo, uint8_t* payloadData,
-                       size_t payloadSize, uint32_t* offset) {
+size_t RTPBuffer::Read(WebRtcRTPHeader* rtpInfo,
+                       uint8_t* payloadData,
+                       size_t payloadSize,
+                       uint32_t* offset) {
   _queueRWLock->AcquireLockShared();
-  RTPPacket *packet = _rtpQueue.front();
+  RTPPacket* packet = _rtpQueue.front();
   _rtpQueue.pop();
   _queueRWLock->ReleaseLockShared();
   rtpInfo->header.markerBit = 1;
@@ -121,7 +131,7 @@ bool RTPBuffer::EndOfFile() const {
   return eof;
 }
 
-void RTPFile::Open(const char *filename, const char *mode) {
+void RTPFile::Open(const char* filename, const char* mode) {
   if ((_rtpFile = fopen(filename, mode)) == NULL) {
     printf("Cannot write file %s.\n", filename);
     ADD_FAILURE() << "Unable to write file";
@@ -166,9 +176,12 @@ void RTPFile::ReadHeader() {
   padding = ntohs(padding);
 }
 
-void RTPFile::Write(const uint8_t payloadType, const uint32_t timeStamp,
-                    const int16_t seqNo, const uint8_t* payloadData,
-                    const size_t payloadSize, uint32_t frequency) {
+void RTPFile::Write(const uint8_t payloadType,
+                    const uint32_t timeStamp,
+                    const int16_t seqNo,
+                    const uint8_t* payloadData,
+                    const size_t payloadSize,
+                    uint32_t frequency) {
   /* write RTP packet to file */
   uint8_t rtpHeader[12];
   MakeRTPheader(rtpHeader, payloadType, seqNo, timeStamp, 0);
@@ -186,8 +199,10 @@ void RTPFile::Write(const uint8_t payloadType, const uint32_t timeStamp,
   EXPECT_EQ(payloadSize, fwrite(payloadData, 1, payloadSize, _rtpFile));
 }
 
-size_t RTPFile::Read(WebRtcRTPHeader* rtpInfo, uint8_t* payloadData,
-                     size_t payloadSize, uint32_t* offset) {
+size_t RTPFile::Read(WebRtcRTPHeader* rtpInfo,
+                     uint8_t* payloadData,
+                     size_t payloadSize,
+                     uint32_t* offset) {
   uint16_t lengthBytes;
   uint16_t plen;
   uint8_t rtpHeader[12];
@@ -206,8 +221,6 @@ size_t RTPFile::Read(WebRtcRTPHeader* rtpInfo, uint8_t* payloadData,
 
   EXPECT_EQ(1u, fread(rtpHeader, 12, 1, _rtpFile));
   ParseRTPHeader(rtpInfo, rtpHeader);
-  rtpInfo->type.Audio.isCNG = false;
-  rtpInfo->type.Audio.channel = 1;
   EXPECT_EQ(lengthBytes, plen + 8);
 
   if (plen == 0) {

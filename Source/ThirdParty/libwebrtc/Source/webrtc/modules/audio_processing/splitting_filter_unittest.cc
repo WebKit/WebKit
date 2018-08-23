@@ -39,8 +39,7 @@ TEST(SplittingFilterTest, SplitsIntoThreeBandsAndReconstructs) {
   static const int kFrequenciesHz[kNumBands] = {1000, 12000, 18000};
   static const float kAmplitude = 8192.f;
   static const size_t kChunks = 8;
-  SplittingFilter splitting_filter(kChannels,
-                                   kNumBands,
+  SplittingFilter splitting_filter(kChannels, kNumBands,
                                    kSamplesPer48kHzChannel);
   IFChannelBuffer in_data(kSamplesPer48kHzChannel, kChannels, kNumBands);
   IFChannelBuffer bands(kSamplesPer48kHzChannel, kChannels, kNumBands);
@@ -48,8 +47,7 @@ TEST(SplittingFilterTest, SplitsIntoThreeBandsAndReconstructs) {
   for (size_t i = 0; i < kChunks; ++i) {
     // Input signal generation.
     bool is_present[kNumBands];
-    memset(in_data.fbuf()->channels()[0],
-           0,
+    memset(in_data.fbuf()->channels()[0], 0,
            kSamplesPer48kHzChannel * sizeof(in_data.fbuf()->channels()[0][0]));
     for (size_t j = 0; j < kNumBands; ++j) {
       is_present[j] = i & (static_cast<size_t>(1) << j);
@@ -57,7 +55,7 @@ TEST(SplittingFilterTest, SplitsIntoThreeBandsAndReconstructs) {
       for (size_t k = 0; k < kSamplesPer48kHzChannel; ++k) {
         in_data.fbuf()->channels()[0][k] +=
             amplitude * sin(2.f * M_PI * kFrequenciesHz[j] *
-                (i * kSamplesPer48kHzChannel + k) / kSampleRateHz);
+                            (i * kSamplesPer48kHzChannel + k) / kSampleRateHz);
       }
     }
     // Three band splitting filter.

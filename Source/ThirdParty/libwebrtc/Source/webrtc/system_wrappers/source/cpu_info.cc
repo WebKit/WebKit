@@ -12,10 +12,6 @@
 
 #if defined(WEBRTC_WIN)
 #include <windows.h>
-#include <winsock2.h>
-#ifndef EXCLUDE_D3D9
-#include <d3d9.h>
-#endif
 #elif defined(WEBRTC_LINUX)
 #include <unistd.h>
 #endif

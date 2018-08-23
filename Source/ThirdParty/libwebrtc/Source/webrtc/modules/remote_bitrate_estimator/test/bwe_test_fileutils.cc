@@ -80,8 +80,8 @@ bool OutputFileWriter::Write(uint32_t value) {
 
 OutputFileWriter* OutputFileWriter::Create(const std::string& filename,
                                            const std::string& extension) {
-  std::string filepath = webrtc::test::OutputPath() + filename + "." +
-      extension;
+  std::string filepath =
+      webrtc::test::OutputPath() + filename + "." + extension;
   FILE* file = fopen(filepath.c_str(), "wb");
   if (file == NULL) {
     BWE_TEST_LOGGING_CONTEXT("OutputFileWriter");

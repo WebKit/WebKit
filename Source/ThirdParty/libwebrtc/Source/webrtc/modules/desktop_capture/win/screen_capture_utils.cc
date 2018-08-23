@@ -17,6 +17,7 @@
 
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/stringutils.h"
 #include "rtc_base/win32.h"
 
 namespace webrtc {
@@ -94,15 +95,14 @@ DesktopRect GetScreenRect(DesktopCapturer::SourceId screen,
   DEVMODE device_mode;
   device_mode.dmSize = sizeof(device_mode);
   device_mode.dmDriverExtra = 0;
-  result = EnumDisplaySettingsEx(
-      device.DeviceName, ENUM_CURRENT_SETTINGS, &device_mode, 0);
+  result = EnumDisplaySettingsEx(device.DeviceName, ENUM_CURRENT_SETTINGS,
+                                 &device_mode, 0);
   if (!result)
     return DesktopRect();
 
-  return DesktopRect::MakeXYWH(device_mode.dmPosition.x,
-                               device_mode.dmPosition.y,
-                               device_mode.dmPelsWidth,
-                               device_mode.dmPelsHeight);
+  return DesktopRect::MakeXYWH(
+      device_mode.dmPosition.x, device_mode.dmPosition.y,
+      device_mode.dmPelsWidth, device_mode.dmPelsHeight);
 }
 
 }  // namespace webrtc

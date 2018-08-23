@@ -20,7 +20,7 @@
 // local/remote ports.
 class FakeSctpTransport : public cricket::SctpTransportInternal {
  public:
-  void SetTransportChannel(rtc::PacketTransportInternal* channel) override {}
+  void SetDtlsTransport(rtc::PacketTransportInternal* transport) override {}
   bool Start(int local_port, int remote_port) override {
     local_port_.emplace(local_port);
     remote_port_.emplace(remote_port);
@@ -40,8 +40,8 @@ class FakeSctpTransport : public cricket::SctpTransportInternal {
   int remote_port() const { return *remote_port_; }
 
  private:
-  rtc::Optional<int> local_port_;
-  rtc::Optional<int> remote_port_;
+  absl::optional<int> local_port_;
+  absl::optional<int> remote_port_;
 };
 
 class FakeSctpTransportFactory : public cricket::SctpTransportInternalFactory {

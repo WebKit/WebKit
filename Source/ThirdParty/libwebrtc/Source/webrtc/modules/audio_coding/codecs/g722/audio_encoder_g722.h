@@ -46,8 +46,8 @@ class AudioEncoderG722Impl final : public AudioEncoder {
   // The encoder state for one channel.
   struct EncoderState {
     G722EncInst* encoder;
-    std::unique_ptr<int16_t[]> speech_buffer;   // Queued up for encoding.
-    rtc::Buffer encoded_buffer;                 // Already encoded.
+    std::unique_ptr<int16_t[]> speech_buffer;  // Queued up for encoding.
+    rtc::Buffer encoded_buffer;                // Already encoded.
     EncoderState();
     ~EncoderState();
   };

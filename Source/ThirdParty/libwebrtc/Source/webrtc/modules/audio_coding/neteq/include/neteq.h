@@ -16,14 +16,14 @@
 #include <string>
 #include <vector>
 
+#include "absl/types/optional.h"
+#include "api/audio_codecs/audio_codec_pair_id.h"
 #include "api/audio_codecs/audio_decoder.h"
-#include "api/optional.h"
 #include "api/rtp_headers.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/neteq/neteq_decoder_enum.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/scoped_ref_ptr.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -32,25 +32,25 @@ class AudioFrame;
 class AudioDecoderFactory;
 
 struct NetEqNetworkStatistics {
-  uint16_t current_buffer_size_ms;  // Current jitter buffer size in ms.
+  uint16_t current_buffer_size_ms;    // Current jitter buffer size in ms.
   uint16_t preferred_buffer_size_ms;  // Target buffer size in ms.
-  uint16_t jitter_peaks_found;  // 1 if adding extra delay due to peaky
-                                // jitter; 0 otherwise.
-  uint16_t packet_loss_rate;  // Loss rate (network + late) in Q14.
-  uint16_t expand_rate;  // Fraction (of original stream) of synthesized
-                         // audio inserted through expansion (in Q14).
+  uint16_t jitter_peaks_found;        // 1 if adding extra delay due to peaky
+                                      // jitter; 0 otherwise.
+  uint16_t packet_loss_rate;          // Loss rate (network + late) in Q14.
+  uint16_t expand_rate;         // Fraction (of original stream) of synthesized
+                                // audio inserted through expansion (in Q14).
   uint16_t speech_expand_rate;  // Fraction (of original stream) of synthesized
                                 // speech inserted through expansion (in Q14).
-  uint16_t preemptive_rate;  // Fraction of data inserted through pre-emptive
-                             // expansion (in Q14).
-  uint16_t accelerate_rate;  // Fraction of data removed through acceleration
-                             // (in Q14).
-  uint16_t secondary_decoded_rate;  // Fraction of data coming from FEC/RED
-                                    // decoding (in Q14).
+  uint16_t preemptive_rate;     // Fraction of data inserted through pre-emptive
+                                // expansion (in Q14).
+  uint16_t accelerate_rate;     // Fraction of data removed through acceleration
+                                // (in Q14).
+  uint16_t secondary_decoded_rate;    // Fraction of data coming from FEC/RED
+                                      // decoding (in Q14).
   uint16_t secondary_discarded_rate;  // Fraction of discarded FEC/RED data (in
                                       // Q14).
-  int32_t clockdrift_ppm;  // Average clock-drift in parts-per-million
-                           // (positive or negative).
+  int32_t clockdrift_ppm;     // Average clock-drift in parts-per-million
+                              // (positive or negative).
   size_t added_zero_samples;  // Number of zero samples added in "off" mode.
   // Statistics for packet waiting times, i.e., the time between a packet
   // arrives until it is decoded.
@@ -69,52 +69,34 @@ struct NetEqLifetimeStatistics {
   uint64_t concealed_samples = 0;
   uint64_t concealment_events = 0;
   uint64_t jitter_buffer_delay_ms = 0;
-};
-
-enum NetEqPlayoutMode {
-  kPlayoutOn,
-  kPlayoutOff,
-  kPlayoutFax,
-  kPlayoutStreaming
+  // Below stat is not part of the spec.
+  uint64_t voice_concealed_samples = 0;
 };
 
 // This is the interface class for NetEq.
 class NetEq {
  public:
-  enum BackgroundNoiseMode {
-    kBgnOn,    // Default behavior with eternal noise.
-    kBgnFade,  // Noise fades to zero after some time.
-    kBgnOff    // Background noise is always zero.
-  };
-
   struct Config {
-    Config()
-        : sample_rate_hz(16000),
-          enable_post_decode_vad(false),
-          max_packets_in_buffer(50),
-          // |max_delay_ms| has the same effect as calling SetMaximumDelay().
-          max_delay_ms(2000),
-          background_noise_mode(kBgnOff),
-          playout_mode(kPlayoutOn),
-          enable_fast_accelerate(false) {}
+    Config();
+    Config(const Config&);
+    Config(Config&&);
+    ~Config();
+    Config& operator=(const Config&);
+    Config& operator=(Config&&);
 
     std::string ToString() const;
 
-    int sample_rate_hz;  // Initial value. Will change with input data.
-    bool enable_post_decode_vad;
-    size_t max_packets_in_buffer;
-    int max_delay_ms;
-    BackgroundNoiseMode background_noise_mode;
-    NetEqPlayoutMode playout_mode;
-    bool enable_fast_accelerate;
+    int sample_rate_hz = 16000;  // Initial value. Will change with input data.
+    bool enable_post_decode_vad = false;
+    size_t max_packets_in_buffer = 50;
+    int max_delay_ms = 2000;
+    bool enable_fast_accelerate = false;
     bool enable_muted_state = false;
+    absl::optional<AudioCodecPairId> codec_pair_id;
+    bool for_test_no_time_stretching = false;  // Use only for testing.
   };
 
-  enum ReturnCodes {
-    kOK = 0,
-    kFail = -1,
-    kNotImplemented = -2
-  };
+  enum ReturnCodes { kOK = 0, kFail = -1, kNotImplemented = -2 };
 
   // Creates a new NetEq object, with parameters set in |config|. The |config|
   // object will only have to be valid for the duration of the call to this
@@ -219,16 +201,6 @@ class NetEq {
   // The packet buffer part of the delay is not updated during DTX/CNG periods.
   virtual int FilteredCurrentDelayMs() const = 0;
 
-  // Sets the playout mode to |mode|.
-  // Deprecated. Set the mode in the Config struct passed to the constructor.
-  // TODO(henrik.lundin) Delete.
-  virtual void SetPlayoutMode(NetEqPlayoutMode mode) = 0;
-
-  // Returns the current playout mode.
-  // Deprecated.
-  // TODO(henrik.lundin) Delete.
-  virtual NetEqPlayoutMode PlayoutMode() const = 0;
-
   // Writes the current network statistics to |stats|. The statistics are reset
   // after the call.
   virtual int NetworkStatistics(NetEqNetworkStatistics* stats) = 0;
@@ -253,7 +225,7 @@ class NetEq {
 
   // Returns the RTP timestamp for the last sample delivered by GetAudio().
   // The return value will be empty if no valid timestamp is available.
-  virtual rtc::Optional<uint32_t> GetPlayoutTimestamp() const = 0;
+  virtual absl::optional<uint32_t> GetPlayoutTimestamp() const = 0;
 
   // Returns the sample rate in Hz of the audio produced in the last GetAudio
   // call. If GetAudio has not been called yet, the configured sample rate
@@ -262,11 +234,11 @@ class NetEq {
 
   // Returns info about the decoder for the given payload type, or an empty
   // value if we have no decoder for that payload type.
-  virtual rtc::Optional<CodecInst> GetDecoder(int payload_type) const = 0;
+  virtual absl::optional<CodecInst> GetDecoder(int payload_type) const = 0;
 
   // Returns the decoder format for the given payload type. Returns empty if no
   // such payload type was registered.
-  virtual rtc::Optional<SdpAudioFormat> GetDecoderFormat(
+  virtual absl::optional<SdpAudioFormat> GetDecoderFormat(
       int payload_type) const = 0;
 
   // Not implemented.

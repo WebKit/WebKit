@@ -14,6 +14,8 @@
 #ifndef MODULES_VIDEO_CODING_CODECS_VP9_INCLUDE_VP9_GLOBALS_H_
 #define MODULES_VIDEO_CODING_CODECS_VP9_INCLUDE_VP9_GLOBALS_H_
 
+#include <assert.h>
+
 #include "modules/video_coding/codecs/interface/common_constants.h"
 
 namespace webrtc {
@@ -26,6 +28,9 @@ const uint8_t kNumVp9Buffers = 8;
 const size_t kMaxVp9RefPics = 3;
 const size_t kMaxVp9FramesInGof = 0xFF;  // 8 bits
 const size_t kMaxVp9NumberOfSpatialLayers = 8;
+
+const size_t kMinVp9SpatialLayerWidth = 320;
+const size_t kMinVp9SpatialLayerHeight = 180;
 
 enum TemporalStructureMode {
   kTemporalStructureMode1,  // 1 temporal layer structure - i.e., IPPP...
@@ -74,10 +79,9 @@ struct GofInfoVP9 {
         pid_diff[2][0] = 2;
 
         temporal_idx[3] = 2;
-        temporal_up_switch[3] = false;
-        num_ref_pics[3] = 2;
+        temporal_up_switch[3] = true;
+        num_ref_pics[3] = 1;
         pid_diff[3][0] = 1;
-        pid_diff[3][1] = 2;
         break;
       case kTemporalStructureMode4:
         num_frames_in_gof = 8;
@@ -157,6 +161,7 @@ struct RTPVideoHeaderVP9 {
     beginning_of_frame = false;
     end_of_frame = false;
     ss_data_available = false;
+    non_ref_for_inter_layer_pred = false;
     picture_id = kNoPictureId;
     max_picture_id = kMaxTwoBytePictureId;
     tl0_pic_idx = kNoTl0PicIdx;
@@ -167,6 +172,7 @@ struct RTPVideoHeaderVP9 {
     gof_idx = kNoGofIdx;
     num_ref_pics = 0;
     num_spatial_layers = 1;
+    end_of_picture = true;
   }
 
   bool inter_pic_predicted;  // This layer frame is dependent on previously
@@ -175,10 +181,12 @@ struct RTPVideoHeaderVP9 {
   bool beginning_of_frame;   // True if this packet is the first in a VP9 layer
                              // frame.
   bool end_of_frame;  // True if this packet is the last in a VP9 layer frame.
-  bool ss_data_available;   // True if SS data is available in this payload
-                            // descriptor.
-  int16_t picture_id;       // PictureID index, 15 bits;
-                            // kNoPictureId if PictureID does not exist.
+  bool ss_data_available;  // True if SS data is available in this payload
+                           // descriptor.
+  bool non_ref_for_inter_layer_pred;  // True for frame which is not used as
+                                      // reference for inter-layer prediction.
+  int16_t picture_id;                 // PictureID index, 15 bits;
+                       // kNoPictureId if PictureID does not exist.
   int16_t max_picture_id;   // Maximum picture ID index; either 0x7F or 0x7FFF;
   int16_t tl0_pic_idx;      // TL0PIC_IDX, 8 bits;
                             // kNoTl0PicIdx means no value provided.
@@ -203,6 +211,8 @@ struct RTPVideoHeaderVP9 {
   uint16_t width[kMaxVp9NumberOfSpatialLayers];
   uint16_t height[kMaxVp9NumberOfSpatialLayers];
   GofInfoVP9 gof;
+
+  bool end_of_picture;  // This frame is the last frame in picture.
 };
 
 }  // namespace webrtc

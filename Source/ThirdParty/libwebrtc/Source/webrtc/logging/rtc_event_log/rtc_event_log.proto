@@ -41,6 +41,8 @@ message Event {
     BWE_PROBE_CLUSTER_CREATED_EVENT = 17;
     BWE_PROBE_RESULT_EVENT = 18;
     ALR_STATE_EVENT = 19;
+    ICE_CANDIDATE_PAIR_CONFIG = 20;
+    ICE_CANDIDATE_PAIR_EVENT = 21;
   }
 
   // required - Indicates the type of this event
@@ -85,6 +87,12 @@ message Event {
 
     // required if type == ALR_STATE_EVENT
     AlrState alr_state = 19;
+
+    // required if type == ICE_CANDIDATE_PAIR_CONFIG
+    IceCandidatePairConfig ice_candidate_pair_config = 20;
+
+    // required if type == ICE_CANDIDATE_PAIR_EVENT
+    IceCandidatePairEvent ice_candidate_pair_event = 21;
   }
 }
 
@@ -101,7 +109,7 @@ message RtpPacket {
   optional bytes header = 4;
 
   // optional - The probe cluster id.
-  optional uint32 probe_cluster_id = 5;
+  optional int32 probe_cluster_id = 5;
 
   // Do not add code to log user payload data without a privacy review!
 }
@@ -289,10 +297,10 @@ message AudioNetworkAdaptation {
 
 message BweProbeCluster {
   // required - The id of this probe cluster.
-  optional uint32 id = 1;
+  optional int32 id = 1;
 
   // required - The bitrate in bps that this probe cluster is meant to probe.
-  optional uint64 bitrate_bps = 2;
+  optional int32 bitrate_bps = 2;
 
   // required - The minimum number of packets used to probe the given bitrate.
   optional uint32 min_packets = 3;
@@ -303,7 +311,7 @@ message BweProbeCluster {
 
 message BweProbeResult {
   // required - The id of this probe cluster.
-  optional uint32 id = 1;
+  optional int32 id = 1;
 
   enum ResultType {
     SUCCESS = 0;
@@ -316,10 +324,92 @@ message BweProbeResult {
   optional ResultType result = 2;
 
   // optional - but required if result == SUCCESS. The resulting bitrate in bps.
-  optional uint64 bitrate_bps = 3;
+  optional int32 bitrate_bps = 3;
 }
 
 message AlrState {
   // required - If we are in ALR or not.
   optional bool in_alr = 1;
+}
+
+message IceCandidatePairConfig {
+  enum IceCandidatePairConfigType {
+    ADDED = 0;
+    UPDATED = 1;
+    DESTROYED = 2;
+    SELECTED = 3;
+  }
+
+  enum IceCandidateType {
+    LOCAL = 0;
+    STUN = 1;
+    PRFLX = 2;
+    RELAY = 3;
+    UNKNOWN_CANDIDATE_TYPE = 4;
+  }
+
+  enum Protocol {
+    UDP = 0;
+    TCP = 1;
+    SSLTCP = 2;
+    TLS = 3;
+    UNKNOWN_PROTOCOL = 4;
+  }
+
+  enum AddressFamily {
+    IPV4 = 0;
+    IPV6 = 1;
+    UNKNOWN_ADDRESS_FAMILY = 2;
+  }
+
+  enum NetworkType {
+    ETHERNET = 0;
+    LOOPBACK = 1;
+    WIFI = 2;
+    VPN = 3;
+    CELLULAR = 4;
+    UNKNOWN_NETWORK_TYPE = 5;
+  }
+
+  // required
+  optional IceCandidatePairConfigType config_type = 1;
+
+  // required
+  optional uint32 candidate_pair_id = 2;
+
+  // required
+  optional IceCandidateType local_candidate_type = 3;
+
+  // required
+  optional Protocol local_relay_protocol = 4;
+
+  // required
+  optional NetworkType local_network_type = 5;
+
+  // required
+  optional AddressFamily local_address_family = 6;
+
+  // required
+  optional IceCandidateType remote_candidate_type = 7;
+
+  // required
+  optional AddressFamily remote_address_family = 8;
+
+  // required
+  optional Protocol candidate_pair_protocol = 9;
+}
+
+message IceCandidatePairEvent {
+  enum IceCandidatePairEventType {
+    CHECK_SENT = 0;
+    CHECK_RECEIVED = 1;
+    CHECK_RESPONSE_SENT = 2;
+    CHECK_RESPONSE_RECEIVED = 3;
+  }
+
+  // required
+  optional IceCandidatePairEventType event_type = 1;
+
+  // required
+  optional uint32 candidate_pair_id = 2;
 }

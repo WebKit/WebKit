@@ -11,8 +11,8 @@
 #ifndef RTC_BASE_RATETRACKER_H_
 #define RTC_BASE_RATETRACKER_H_
 
+#include <stdint.h>
 #include <stdlib.h>
-#include "rtc_base/basictypes.h"
 
 namespace rtc {
 

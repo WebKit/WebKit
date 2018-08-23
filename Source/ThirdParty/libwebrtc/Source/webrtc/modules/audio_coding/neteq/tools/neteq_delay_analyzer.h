@@ -16,10 +16,9 @@
 #include <string>
 #include <vector>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace test {
@@ -37,11 +36,11 @@ class NetEqDelayAnalyzer : public test::NetEqPostInsertPacket,
                      bool muted,
                      NetEq* neteq) override;
 
-  void CreateGraphs(std::vector<float>* send_times_s,
-                    std::vector<float>* arrival_delay_ms,
-                    std::vector<float>* corrected_arrival_delay_ms,
-                    std::vector<rtc::Optional<float>>* playout_delay_ms,
-                    std::vector<rtc::Optional<float>>* target_delay_ms) const;
+  using Delays = std::vector<std::pair<int64_t, float>>;
+  void CreateGraphs(Delays* arrival_delay_ms,
+                    Delays* corrected_arrival_delay_ms,
+                    Delays* playout_delay_ms,
+                    Delays* target_delay_ms) const;
 
   // Creates a matlab script with file name script_name. When executed in
   // Matlab, the script will generate graphs with the same timing information
@@ -55,12 +54,12 @@ class NetEqDelayAnalyzer : public test::NetEqPostInsertPacket,
 
  private:
   struct TimingData {
-    explicit TimingData(double at) : arrival_time_ms(at) {}
-    double arrival_time_ms;
-    rtc::Optional<int64_t> decode_get_audio_count;
-    rtc::Optional<int64_t> sync_delay_ms;
-    rtc::Optional<int> target_delay_ms;
-    rtc::Optional<int> current_delay_ms;
+    explicit TimingData(int64_t at) : arrival_time_ms(at) {}
+    int64_t arrival_time_ms;
+    absl::optional<int64_t> decode_get_audio_count;
+    absl::optional<int64_t> sync_delay_ms;
+    absl::optional<int> target_delay_ms;
+    absl::optional<int> current_delay_ms;
   };
   std::map<uint32_t, TimingData> data_;
   std::vector<int64_t> get_audio_time_ms_;

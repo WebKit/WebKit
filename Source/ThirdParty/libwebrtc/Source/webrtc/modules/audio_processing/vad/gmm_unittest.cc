@@ -37,10 +37,10 @@ TEST(GmmTest, EvaluateGmm) {
   voice_gmm.covar_inverse = &kVoiceGmmCovarInverse[0][0][0];
 
   // Test vectors. These are the mean of the GMM means.
-  const double kXVoice[kVoiceGmmDim] = {
-      -1.35893162459863, 602.862491970368, 178.022069191324};
-  const double kXNoise[kNoiseGmmDim] = {
-      -2.33443722724409, 2827.97828765184, 141.114178166812};
+  const double kXVoice[kVoiceGmmDim] = {-1.35893162459863, 602.862491970368,
+                                        178.022069191324};
+  const double kXNoise[kNoiseGmmDim] = {-2.33443722724409, 2827.97828765184,
+                                        141.114178166812};
 
   // Expected pdf values. These values are computed in MATLAB using EvalGmm.m
   const double kPdfNoise = 1.88904409403101e-07;

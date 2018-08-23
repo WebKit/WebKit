@@ -11,15 +11,15 @@
 package org.webrtc;
 
 import android.graphics.SurfaceTexture;
+import javax.annotation.Nullable;
 import android.view.Surface;
-
 import javax.microedition.khronos.egl.EGL10;
 
 /**
  * Holds EGL state and utility methods for handling an egl 1.0 EGLContext, an EGLDisplay,
  * and an EGLSurface.
  */
-public abstract class EglBase {
+public interface EglBase {
   // EGL wrapper for an actual EGLContext.
   public interface Context { long getNativeEglContext(); }
 
@@ -85,7 +85,7 @@ public abstract class EglBase {
    * If |sharedContext| is null, a root context is created. This function will try to create an EGL
    * 1.4 context if possible, and an EGL 1.0 context otherwise.
    */
-  public static EglBase create(Context sharedContext, int[] configAttributes) {
+  public static EglBase create(@Nullable Context sharedContext, int[] configAttributes) {
     return (EglBase14.isEGL14Supported()
                && (sharedContext == null || sharedContext instanceof EglBase14.Context))
         ? new EglBase14((EglBase14.Context) sharedContext, configAttributes)
@@ -140,34 +140,34 @@ public abstract class EglBase {
     return new EglBase14(new EglBase14.Context(sharedContext), configAttributes);
   }
 
-  public abstract void createSurface(Surface surface);
+  void createSurface(Surface surface);
 
   // Create EGLSurface from the Android SurfaceTexture.
-  public abstract void createSurface(SurfaceTexture surfaceTexture);
+  void createSurface(SurfaceTexture surfaceTexture);
 
   // Create dummy 1x1 pixel buffer surface so the context can be made current.
-  public abstract void createDummyPbufferSurface();
+  void createDummyPbufferSurface();
 
-  public abstract void createPbufferSurface(int width, int height);
+  void createPbufferSurface(int width, int height);
 
-  public abstract Context getEglBaseContext();
+  Context getEglBaseContext();
 
-  public abstract boolean hasSurface();
+  boolean hasSurface();
 
-  public abstract int surfaceWidth();
+  int surfaceWidth();
 
-  public abstract int surfaceHeight();
+  int surfaceHeight();
 
-  public abstract void releaseSurface();
+  void releaseSurface();
 
-  public abstract void release();
+  void release();
 
-  public abstract void makeCurrent();
+  void makeCurrent();
 
   // Detach the current EGL context, so that it can be made current on another thread.
-  public abstract void detachCurrent();
+  void detachCurrent();
 
-  public abstract void swapBuffers();
+  void swapBuffers();
 
-  public abstract void swapBuffers(long presentationTimeStampNs);
+  void swapBuffers(long presentationTimeStampNs);
 }

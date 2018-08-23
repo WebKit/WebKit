@@ -42,7 +42,7 @@
 #include <memory>
 #include <vector>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
 #include "common_audio/wav_file.h"
 #include "modules/audio_processing/test/conversational_speech/config.h"
 #include "modules/audio_processing/test/conversational_speech/mock_wavreader_factory.h"
@@ -51,7 +51,6 @@
 #include "modules/audio_processing/test/conversational_speech/timing.h"
 #include "modules/audio_processing/test/conversational_speech/wavreader_factory.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/pathutils.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
@@ -72,12 +71,8 @@ const char* const timing_filepath = "/path/to/timing_file.txt";
 const char* const output_path = "/path/to/output_dir";
 
 const std::vector<Turn> expected_timing = {
-    {"A", "a1", 0},
-    {"B", "b1", 0},
-    {"A", "a2", 100},
-    {"B", "b2", -200},
-    {"A", "a3", 0},
-    {"A", "a3", 0},
+    {"A", "a1", 0, 0},    {"B", "b1", 0, 0}, {"A", "a2", 100, 0},
+    {"B", "b2", -200, 0}, {"A", "a3", 0, 0}, {"A", "a3", 0, 0},
 };
 const std::size_t kNumberOfTurns = expected_timing.size();
 
@@ -129,18 +124,18 @@ struct SineAudioTrackParams {
 std::string CreateTemporarySineAudioTracks(
     const std::map<std::string, SineAudioTrackParams>& sine_tracks_params) {
   // Create temporary directory.
-  rtc::Pathname temp_directory(OutputPath());
-  temp_directory.AppendFolder("TempConversationalSpeechAudioTracks");
-  CreateDir(temp_directory.pathname());
+  std::string temp_directory =
+      OutputPath() + "TempConversationalSpeechAudioTracks";
+  CreateDir(temp_directory);
 
   // Create sine tracks.
   for (const auto& it : sine_tracks_params) {
-    const rtc::Pathname temp_filepath(temp_directory.pathname(), it.first);
+    const std::string temp_filepath = JoinFilename(temp_directory, it.first);
     CreateSineWavFile(
-        temp_filepath.pathname(), it.second.params, it.second.frequency);
+        temp_filepath, it.second.params, it.second.frequency);
   }
 
-  return temp_directory.pathname();
+  return temp_directory;
 }
 
 void CheckAudioTrackParams(const WavReaderFactory& wav_reader_factory,
@@ -154,7 +149,7 @@ void CheckAudioTrackParams(const WavReaderFactory& wav_reader_factory,
 
 void DeleteFolderAndContents(const std::string& dir) {
   if (!DirExists(dir)) { return; }
-  rtc::Optional<std::vector<std::string>> dir_content = ReadDirectory(dir);
+  absl::optional<std::vector<std::string>> dir_content = ReadDirectory(dir);
   EXPECT_TRUE(dir_content);
   for (const auto& path : *dir_content) {
     if (DirExists(path)) {
@@ -192,7 +187,7 @@ TEST(ConversationalSpeechTest, TimingSaveLoad) {
 
   // Create a std::vector<Turn> instance by loading from file.
   std::vector<Turn> actual_timing = LoadTiming(temporary_filepath);
-  std::remove(temporary_filepath.c_str());
+  RemoveFile(temporary_filepath);
 
   // Check size.
   EXPECT_EQ(expected_timing.size(), actual_timing.size());
@@ -223,8 +218,7 @@ TEST(ConversationalSpeechTest, MultiEndCallCreate) {
 
 TEST(ConversationalSpeechTest, MultiEndCallSetupDifferentSampleRates) {
   const std::vector<Turn> timing = {
-      {"A", "sr8000", 0},
-      {"B", "sr16000", 0},
+      {"A", "sr8000", 0, 0}, {"B", "sr16000", 0, 0},
   };
   auto mock_wavreader_factory = CreateMockWavReaderFactory();
 
@@ -238,8 +232,7 @@ TEST(ConversationalSpeechTest, MultiEndCallSetupDifferentSampleRates) {
 
 TEST(ConversationalSpeechTest, MultiEndCallSetupMultipleChannels) {
   const std::vector<Turn> timing = {
-      {"A", "sr16000_stereo", 0},
-      {"B", "sr16000_stereo", 0},
+      {"A", "sr16000_stereo", 0, 0}, {"B", "sr16000_stereo", 0, 0},
   };
   auto mock_wavreader_factory = CreateMockWavReaderFactory();
 
@@ -254,8 +247,7 @@ TEST(ConversationalSpeechTest, MultiEndCallSetupMultipleChannels) {
 TEST(ConversationalSpeechTest,
        MultiEndCallSetupDifferentSampleRatesAndMultipleNumChannels) {
   const std::vector<Turn> timing = {
-      {"A", "sr8000", 0},
-      {"B", "sr16000_stereo", 0},
+      {"A", "sr8000", 0, 0}, {"B", "sr16000_stereo", 0, 0},
   };
   auto mock_wavreader_factory = CreateMockWavReaderFactory();
 
@@ -269,8 +261,7 @@ TEST(ConversationalSpeechTest,
 
 TEST(ConversationalSpeechTest, MultiEndCallSetupFirstOffsetNegative) {
   const std::vector<Turn> timing = {
-      {"A", "t500", -100},
-      {"B", "t500", 0},
+      {"A", "t500", -100, 0}, {"B", "t500", 0, 0},
   };
   auto mock_wavreader_factory = CreateMockWavReaderFactory();
 
@@ -288,8 +279,7 @@ TEST(ConversationalSpeechTest, MultiEndCallSetupSimple) {
   // B .....1****
   constexpr std::size_t expected_duration = kDefaultSampleRate;
   const std::vector<Turn> timing = {
-      {"A", "t500", 0},
-      {"B", "t500", 0},
+      {"A", "t500", 0, 0}, {"B", "t500", 0, 0},
   };
   auto mock_wavreader_factory = CreateMockWavReaderFactory();
 
@@ -313,8 +303,7 @@ TEST(ConversationalSpeechTest, MultiEndCallSetupPause) {
   // B .......1****
   constexpr std::size_t expected_duration = kDefaultSampleRate * 1.2;
   const std::vector<Turn> timing = {
-      {"A", "t500", 0},
-      {"B", "t500", 200},
+      {"A", "t500", 0, 0}, {"B", "t500", 200, 0},
   };
   auto mock_wavreader_factory = CreateMockWavReaderFactory();
 
@@ -338,8 +327,7 @@ TEST(ConversationalSpeechTest, MultiEndCallSetupCrossTalk) {
   // B ....1****
   constexpr std::size_t expected_duration = kDefaultSampleRate * 0.9;
   const std::vector<Turn> timing = {
-      {"A", "t500", 0},
-      {"B", "t500", -100},
+      {"A", "t500", 0, 0}, {"B", "t500", -100, 0},
   };
   auto mock_wavreader_factory = CreateMockWavReaderFactory();
 
@@ -362,8 +350,7 @@ TEST(ConversationalSpeechTest, MultiEndCallSetupInvalidOrder) {
   // A ..0****
   // B .1****.  The n-th turn cannot start before the (n-1)-th one.
   const std::vector<Turn> timing = {
-      {"A", "t500", 200},
-      {"B", "t500", -600},
+      {"A", "t500", 200, 0}, {"B", "t500", -600, 0},
   };
   auto mock_wavreader_factory = CreateMockWavReaderFactory();
 
@@ -381,9 +368,7 @@ TEST(ConversationalSpeechTest, MultiEndCallSetupCrossTalkThree) {
   // B ...1*********
   constexpr std::size_t expected_duration = kDefaultSampleRate * 1.3;
   const std::vector<Turn> timing = {
-      {"A", "t500", 0},
-      {"B", "t1000", -200},
-      {"A", "t500", -800},
+      {"A", "t500", 0, 0}, {"B", "t1000", -200, 0}, {"A", "t500", -800, 0},
   };
   auto mock_wavreader_factory = CreateMockWavReaderFactory();
 
@@ -408,9 +393,7 @@ TEST(ConversationalSpeechTest, MultiEndCallSetupSelfCrossTalkNearInvalid) {
   // B ......2****
   //      ^  Turn #1 overlaps with #0 which is from the same speaker.
   const std::vector<Turn> timing = {
-      {"A", "t500", 0},
-      {"A", "t500", -200},
-      {"B", "t500", -200},
+      {"A", "t500", 0, 0}, {"A", "t500", -200, 0}, {"B", "t500", -200, 0},
   };
   auto mock_wavreader_factory = CreateMockWavReaderFactory();
 
@@ -430,10 +413,10 @@ TEST(ConversationalSpeechTest, MultiEndCallSetupSelfCrossTalkFarInvalid) {
   // A ......3**.
   //         ^  Turn #3 overlaps with #0 which is from the same speaker.
   const std::vector<Turn> timing = {
-      {"A", "t1000", 0},
-      {"B", "t300", -1000},
-      {"C", "t300", 0},
-      {"A", "t300", 0},
+      {"A", "t1000", 0, 0},
+      {"B", "t300", -1000, 0},
+      {"C", "t300", 0, 0},
+      {"A", "t300", 0, 0},
   };
   auto mock_wavreader_factory = CreateMockWavReaderFactory();
 
@@ -452,9 +435,7 @@ TEST(ConversationalSpeechTest, MultiEndCallSetupCrossTalkMiddleValid) {
   // C .......2****
   constexpr std::size_t expected_duration = kDefaultSampleRate * 1.2;
   const std::vector<Turn> timing = {
-      {"A", "t1000", 0},
-      {"B", "t500", -800},
-      {"C", "t500", 0},
+      {"A", "t1000", 0, 0}, {"B", "t500", -800, 0}, {"C", "t500", 0, 0},
   };
   auto mock_wavreader_factory = CreateMockWavReaderFactory();
 
@@ -480,9 +461,7 @@ TEST(ConversationalSpeechTest, MultiEndCallSetupCrossTalkMiddleInvalid) {
   //       ^  Turn #2 overlaps both with #0 and #1 (cross-talk with 3+ speakers
   //          not permitted).
   const std::vector<Turn> timing = {
-      {"A", "t1000", 0},
-      {"B", "t500", -800},
-      {"C", "t500", -300},
+      {"A", "t1000", 0, 0}, {"B", "t500", -800, 0}, {"C", "t500", -300, 0},
   };
   auto mock_wavreader_factory = CreateMockWavReaderFactory();
 
@@ -501,9 +480,7 @@ TEST(ConversationalSpeechTest, MultiEndCallSetupCrossTalkMiddleAndPause) {
   // C .......3****
   constexpr std::size_t expected_duration = kDefaultSampleRate * 1.2;
   const std::vector<Turn> timing = {
-      {"A", "t1000", 0},
-      {"B", "t500", -900},
-      {"C", "t500", 100},
+      {"A", "t1000", 0, 0}, {"B", "t500", -900, 0}, {"C", "t500", 100, 0},
   };
   auto mock_wavreader_factory = CreateMockWavReaderFactory();
 
@@ -526,8 +503,7 @@ TEST(ConversationalSpeechTest, MultiEndCallSetupCrossTalkFullOverlapValid) {
   // A 0****
   // B 1****
   const std::vector<Turn> timing = {
-      {"A", "t500", 0},
-      {"B", "t500", -500},
+      {"A", "t500", 0, 0}, {"B", "t500", -500, 0},
   };
   auto mock_wavreader_factory = CreateMockWavReaderFactory();
 
@@ -551,13 +527,9 @@ TEST(ConversationalSpeechTest, MultiEndCallSetupLongSequence) {
   // C ......2**.......6**..
   constexpr std::size_t expected_duration = kDefaultSampleRate * 1.9;
   const std::vector<Turn> timing = {
-      {"A", "t500", 0},
-      {"B", "t500", 0},
-      {"C", "t300", -400},
-      {"A", "t500", 0},
-      {"B", "t300", -100},
-      {"A", "t300", -100},
-      {"C", "t300", -200},
+      {"A", "t500", 0, 0},    {"B", "t500", 0, 0},    {"C", "t300", -400, 0},
+      {"A", "t500", 0, 0},    {"B", "t300", -100, 0}, {"A", "t300", -100, 0},
+      {"C", "t300", -200, 0},
   };
   auto mock_wavreader_factory = std::unique_ptr<MockWavReaderFactory>(
       new MockWavReaderFactory(kDefaultMockWavReaderFactoryParams,
@@ -585,13 +557,9 @@ TEST(ConversationalSpeechTest, MultiEndCallSetupLongSequenceInvalid) {
   //                 ^ Turns #4, #5 and #6 overlapping (cross-talk with 3+
   //                   speakers not permitted).
   const std::vector<Turn> timing = {
-      {"A", "t500", 0},
-      {"B", "t500", 0},
-      {"C", "t300", -400},
-      {"A", "t500", 0},
-      {"B", "t300", -100},
-      {"A", "t300", -200},
-      {"C", "t300", -200},
+      {"A", "t500", 0, 0},    {"B", "t500", 0, 0},    {"C", "t300", -400, 0},
+      {"A", "t500", 0, 0},    {"B", "t300", -100, 0}, {"A", "t300", -200, 0},
+      {"C", "t300", -200, 0},
   };
   auto mock_wavreader_factory = std::unique_ptr<MockWavReaderFactory>(
       new MockWavReaderFactory(kDefaultMockWavReaderFactoryParams,
@@ -611,24 +579,24 @@ TEST(ConversationalSpeechTest, MultiEndCallWavReaderAdaptorSine) {
   const int sample_rates[] = {8000, 11025, 16000, 22050, 32000, 44100, 48000};
 
   for (int sample_rate : sample_rates) {
-    const rtc::Pathname temp_filename(
-        OutputPath(), "TempSineWavFile_" + std::to_string(sample_rate)
-            + ".wav");
+    const std::string temp_filename =
+        OutputPath() + "TempSineWavFile_" +
+        std::to_string(sample_rate) + ".wav";
 
     // Write wav file.
     const std::size_t num_samples = duration_seconds * sample_rate;
     MockWavReaderFactory::Params params = {sample_rate, 1u, num_samples};
-    CreateSineWavFile(temp_filename.pathname(), params);
+    CreateSineWavFile(temp_filename, params);
 
     // Load wav file and check if params match.
     WavReaderFactory wav_reader_factory;
     MockWavReaderFactory::Params expeted_params = {
         sample_rate, 1u, num_samples};
     CheckAudioTrackParams(
-        wav_reader_factory, temp_filename.pathname(), expeted_params);
+        wav_reader_factory, temp_filename, expeted_params);
 
     // Clean up.
-    remove(temp_filename.pathname().c_str());
+    RemoveFile(temp_filename);
   }
 }
 
@@ -637,10 +605,10 @@ TEST(ConversationalSpeechTest, DISABLED_MultiEndCallSimulator) {
   // A 0*********...........2*********.....
   // B ...........1*********.....3*********
   const std::vector<Turn> expected_timing = {
-      {"A", "t5000_440.wav", 0},
-      {"B", "t5000_880.wav", 500},
-      {"A", "t5000_440.wav", 0},
-      {"B", "t5000_880.wav", -2500},
+      {"A", "t5000_440.wav", 0, 0},
+      {"B", "t5000_880.wav", 500, 0},
+      {"A", "t5000_440.wav", 0, 0},
+      {"B", "t5000_880.wav", -2500, 0},
   };
   const std::size_t expected_duration_seconds = 18;
 
@@ -660,12 +628,11 @@ TEST(ConversationalSpeechTest, DISABLED_MultiEndCallSimulator) {
       expected_timing, audiotracks_path, std::move(wavreader_factory));
 
   // Simulate the call.
-  rtc::Pathname output_path(audiotracks_path);
-  output_path.AppendFolder("output");
-  CreateDir(output_path.pathname());
-  RTC_LOG(LS_VERBOSE) << "simulator output path: " << output_path.pathname();
+  std::string output_path = JoinFilename(audiotracks_path, "output");
+  CreateDir(output_path);
+  RTC_LOG(LS_VERBOSE) << "simulator output path: " << output_path;
   auto generated_audiotrak_pairs = conversational_speech::Simulate(
-      multiend_call, output_path.pathname());
+      multiend_call, output_path);
   EXPECT_EQ(2u, generated_audiotrak_pairs->size());
 
   // Check the output.

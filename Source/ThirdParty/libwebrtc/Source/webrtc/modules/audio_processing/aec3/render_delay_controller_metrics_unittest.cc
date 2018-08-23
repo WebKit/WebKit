@@ -9,7 +9,7 @@
  */
 
 #include "modules/audio_processing/aec3/render_delay_controller_metrics.h"
-#include "api/optional.h"
+#include "absl/types/optional.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 
 #include "test/gtest.h"
@@ -22,10 +22,10 @@ TEST(RenderDelayControllerMetrics, NormalUsage) {
 
   for (int j = 0; j < 3; ++j) {
     for (int k = 0; k < kMetricsReportingIntervalBlocks - 1; ++k) {
-      metrics.Update(rtc::nullopt, 0);
+      metrics.Update(absl::nullopt, 0, absl::nullopt);
       EXPECT_FALSE(metrics.MetricsReported());
     }
-    metrics.Update(rtc::nullopt, 0);
+    metrics.Update(absl::nullopt, 0, absl::nullopt);
     EXPECT_TRUE(metrics.MetricsReported());
   }
 }

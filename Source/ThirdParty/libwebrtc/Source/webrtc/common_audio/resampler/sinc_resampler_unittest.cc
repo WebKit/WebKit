@@ -23,6 +23,7 @@
 #include "common_audio/resampler/sinc_resampler.h"
 #include "common_audio/resampler/sinusoidal_linear_chirp_source.h"
 #include "rtc_base/stringize_macros.h"
+#include "rtc_base/system/arch.h"
 #include "rtc_base/timeutils.h"
 #include "system_wrappers/include/cpu_features_wrapper.h"
 #include "test/gmock.h"
@@ -67,14 +68,14 @@ TEST(SincResamplerTest, ChunkedResample) {
   std::unique_ptr<float[]> resampled_destination(new float[max_chunk_size]);
 
   // Verify requesting ChunkSize() frames causes a single callback.
-  EXPECT_CALL(mock_source, Run(_, _))
-      .Times(1).WillOnce(ClearBuffer());
+  EXPECT_CALL(mock_source, Run(_, _)).Times(1).WillOnce(ClearBuffer());
   resampler.Resample(resampler.ChunkSize(), resampled_destination.get());
 
   // Verify requesting kChunks * ChunkSize() frames causes kChunks callbacks.
   testing::Mock::VerifyAndClear(&mock_source);
   EXPECT_CALL(mock_source, Run(_, _))
-      .Times(kChunks).WillRepeatedly(ClearBuffer());
+      .Times(kChunks)
+      .WillRepeatedly(ClearBuffer());
   resampler.Resample(max_chunk_size, resampled_destination.get());
 }
 
@@ -87,16 +88,14 @@ TEST(SincResamplerTest, Flush) {
       new float[resampler.ChunkSize()]);
 
   // Fill the resampler with junk data.
-  EXPECT_CALL(mock_source, Run(_, _))
-      .Times(1).WillOnce(FillBuffer());
+  EXPECT_CALL(mock_source, Run(_, _)).Times(1).WillOnce(FillBuffer());
   resampler.Resample(resampler.ChunkSize() / 2, resampled_destination.get());
   ASSERT_NE(resampled_destination[0], 0);
 
   // Flush and request more data, which should all be zeros now.
   resampler.Flush();
   testing::Mock::VerifyAndClear(&mock_source);
-  EXPECT_CALL(mock_source, Run(_, _))
-      .Times(1).WillOnce(ClearBuffer());
+  EXPECT_CALL(mock_source, Run(_, _)).Times(1).WillOnce(ClearBuffer());
   resampler.Resample(resampler.ChunkSize() / 2, resampled_destination.get());
   for (size_t i = 0; i < resampler.ChunkSize() / 2; ++i)
     ASSERT_FLOAT_EQ(resampled_destination[i], 0);
@@ -115,7 +114,6 @@ TEST(SincResamplerTest, DISABLED_SetRatioBench) {
       (rtc::TimeNanos() - start) / rtc::kNumNanosecsPerMicrosec;
   printf("SetRatio() took %.2fms.\n", total_time_c_us / 1000);
 }
-
 
 // Define platform independent function name for Convolve* tests.
 #if defined(WEBRTC_ARCH_X86_FAMILY)
@@ -232,8 +230,7 @@ TEST(SincResamplerTest, ConvolveBenchmark) {
 #undef CONVOLVE_FUNC
 
 typedef std::tuple<int, int, double, double> SincResamplerTestData;
-class SincResamplerTest
-    : public testing::TestWithParam<SincResamplerTestData> {
+class SincResamplerTest : public testing::TestWithParam<SincResamplerTestData> {
  public:
   SincResamplerTest()
       : input_rate_(std::get<0>(GetParam())),
@@ -263,8 +260,8 @@ TEST_P(SincResamplerTest, Resample) {
   const double input_nyquist_freq = 0.5 * input_rate_;
 
   // Source for data to be resampled.
-  SinusoidalLinearChirpSource resampler_source(
-      input_rate_, input_samples, input_nyquist_freq, 0);
+  SinusoidalLinearChirpSource resampler_source(input_rate_, input_samples,
+                                               input_nyquist_freq, 0);
 
   const double io_ratio = input_rate_ / static_cast<double>(output_rate_);
   SincResampler resampler(io_ratio, SincResampler::kDefaultRequestSize,
@@ -291,8 +288,8 @@ TEST_P(SincResamplerTest, Resample) {
   resampler.Resample(output_samples, resampled_destination.get());
 
   // Generate pure signal.
-  SinusoidalLinearChirpSource pure_source(
-      output_rate_, output_samples, input_nyquist_freq, 0);
+  SinusoidalLinearChirpSource pure_source(output_rate_, output_samples,
+                                          input_nyquist_freq, 0);
   pure_source.Run(output_samples, pure_destination.get());
 
   // Range of the Nyquist frequency (0.5 * min(input rate, output_rate)) which
@@ -324,8 +321,8 @@ TEST_P(SincResamplerTest, Resample) {
 
   double rms_error = sqrt(sum_of_squares / output_samples);
 
-  // Convert each error to dbFS.
-  #define DBFS(x) 20 * log10(x)
+// Convert each error to dbFS.
+#define DBFS(x) 20 * log10(x)
   rms_error = DBFS(rms_error);
   low_freq_max_error = DBFS(low_freq_max_error);
   high_freq_max_error = DBFS(high_freq_max_error);

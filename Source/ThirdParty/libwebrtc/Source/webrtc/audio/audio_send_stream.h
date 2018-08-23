@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "audio/time_interval.h"
+#include "audio/transport_feedback_packet_loss_tracker.h"
 #include "call/audio_send_stream.h"
 #include "call/audio_state.h"
 #include "call/bitrate_allocator.h"
@@ -22,7 +23,6 @@
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/race_checker.h"
 #include "rtc_base/thread_checker.h"
-#include "voice_engine/transport_feedback_packet_loss_tracker.h"
 
 namespace webrtc {
 class RtcEventLog;
@@ -49,7 +49,7 @@ class AudioSendStream final : public webrtc::AudioSendStream,
                   BitrateAllocator* bitrate_allocator,
                   RtcEventLog* event_log,
                   RtcpRttStats* rtcp_rtt_stats,
-                  const rtc::Optional<RtpState>& suspended_rtp_state,
+                  const absl::optional<RtpState>& suspended_rtp_state,
                   TimeInterval* overall_call_lifetime);
   // For unit tests, which need to supply a mock channel proxy.
   AudioSendStream(const webrtc::AudioSendStream::Config& config,
@@ -59,7 +59,7 @@ class AudioSendStream final : public webrtc::AudioSendStream,
                   BitrateAllocator* bitrate_allocator,
                   RtcEventLog* event_log,
                   RtcpRttStats* rtcp_rtt_stats,
-                  const rtc::Optional<RtpState>& suspended_rtp_state,
+                  const absl::optional<RtpState>& suspended_rtp_state,
                   TimeInterval* overall_call_lifetime,
                   std::unique_ptr<voe::ChannelProxy> channel_proxy);
   ~AudioSendStream() override;
@@ -70,7 +70,9 @@ class AudioSendStream final : public webrtc::AudioSendStream,
   void Start() override;
   void Stop() override;
   void SendAudioData(std::unique_ptr<AudioFrame> audio_frame) override;
-  bool SendTelephoneEvent(int payload_type, int payload_frequency, int event,
+  bool SendTelephoneEvent(int payload_type,
+                          int payload_frequency,
+                          int event,
                           int duration_ms) override;
   void SetMuted(bool muted) override;
   webrtc::AudioSendStream::Stats GetStats() const override;
@@ -119,7 +121,8 @@ class AudioSendStream final : public webrtc::AudioSendStream,
 
   void ConfigureBitrateObserver(int min_bitrate_bps,
                                 int max_bitrate_bps,
-                                double bitrate_priority);
+                                double bitrate_priority,
+                                bool has_packet_feedback);
   void RemoveBitrateObserver();
 
   void RegisterCngPayloadType(int payload_type, int clockrate_hz);
@@ -145,7 +148,7 @@ class AudioSendStream final : public webrtc::AudioSendStream,
       RTC_GUARDED_BY(&packet_loss_tracker_cs_);
 
   RtpRtcp* rtp_rtcp_module_;
-  rtc::Optional<RtpState> const suspended_rtp_state_;
+  absl::optional<RtpState> const suspended_rtp_state_;
 
   std::unique_ptr<TimedTransport> timed_send_transport_adapter_;
   TimeInterval active_lifetime_;
@@ -157,6 +160,7 @@ class AudioSendStream final : public webrtc::AudioSendStream,
   struct ExtensionIds {
     int audio_level = 0;
     int transport_sequence_number = 0;
+    int mid = 0;
   };
   static ExtensionIds FindExtensionIds(
       const std::vector<RtpExtension>& extensions);

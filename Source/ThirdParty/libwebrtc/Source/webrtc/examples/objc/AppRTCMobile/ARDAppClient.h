@@ -23,6 +23,7 @@ typedef NS_ENUM(NSInteger, ARDAppClientState) {
 
 @class ARDAppClient;
 @class ARDSettingsModel;
+@class ARDExternalSampleCapturer;
 @class RTCMediaConstraints;
 @class RTCCameraVideoCapturer;
 @class RTCFileVideoCapturer;
@@ -31,30 +32,28 @@ typedef NS_ENUM(NSInteger, ARDAppClientState) {
 // main queue.
 @protocol ARDAppClientDelegate <NSObject>
 
-- (void)appClient:(ARDAppClient *)client
-    didChangeState:(ARDAppClientState)state;
+- (void)appClient:(ARDAppClient *)client didChangeState:(ARDAppClientState)state;
 
-- (void)appClient:(ARDAppClient *)client
-    didChangeConnectionState:(RTCIceConnectionState)state;
+- (void)appClient:(ARDAppClient *)client didChangeConnectionState:(RTCIceConnectionState)state;
 
 - (void)appClient:(ARDAppClient *)client
     didCreateLocalCapturer:(RTCCameraVideoCapturer *)localCapturer;
 
-- (void)appClient:(ARDAppClient *)client
-    didReceiveLocalVideoTrack:(RTCVideoTrack *)localVideoTrack;
+- (void)appClient:(ARDAppClient *)client didReceiveLocalVideoTrack:(RTCVideoTrack *)localVideoTrack;
 
 - (void)appClient:(ARDAppClient *)client
     didReceiveRemoteVideoTrack:(RTCVideoTrack *)remoteVideoTrack;
 
-- (void)appClient:(ARDAppClient *)client
-         didError:(NSError *)error;
+- (void)appClient:(ARDAppClient *)client didError:(NSError *)error;
 
-- (void)appClient:(ARDAppClient *)client
-      didGetStats:(NSArray *)stats;
+- (void)appClient:(ARDAppClient *)client didGetStats:(NSArray *)stats;
 
 @optional
 - (void)appClient:(ARDAppClient *)client
-didCreateLocalFileCapturer:(RTCFileVideoCapturer *)fileCapturer;
+    didCreateLocalFileCapturer:(RTCFileVideoCapturer *)fileCapturer;
+
+- (void)appClient:(ARDAppClient *)client
+    didCreateLocalExternalSampleCapturer:(ARDExternalSampleCapturer *)externalSampleCapturer;
 
 @end
 
@@ -67,6 +66,8 @@ didCreateLocalFileCapturer:(RTCFileVideoCapturer *)fileCapturer;
 @property(nonatomic, assign) BOOL shouldGetStats;
 @property(nonatomic, readonly) ARDAppClientState state;
 @property(nonatomic, weak) id<ARDAppClientDelegate> delegate;
+@property(nonatomic, assign, getter=isBroadcast) BOOL broadcast;
+
 // Convenience constructor since all expected use cases will need a delegate
 // in order to receive remote tracks.
 - (instancetype)initWithDelegate:(id<ARDAppClientDelegate>)delegate;

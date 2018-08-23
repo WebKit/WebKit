@@ -34,8 +34,7 @@ bool DesktopFrameDataEquals(const DesktopFrame& left,
   const uint8_t* left_array = left.data();
   const uint8_t* right_array = right.data();
   for (int i = 0; i < left.size().height(); i++) {
-    if (memcmp(left_array,
-               right_array,
+    if (memcmp(left_array, right_array,
                DesktopFrame::kBytesPerPixel * left.size().width()) != 0) {
       return false;
     }

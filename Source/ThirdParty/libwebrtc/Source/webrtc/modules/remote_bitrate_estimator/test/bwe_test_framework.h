@@ -34,7 +34,6 @@
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/random.h"
 #include "system_wrappers/include/clock.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -47,14 +46,9 @@ class DelayCapHelper;
 
 class RateCounter {
  public:
-  explicit RateCounter(int64_t window_size_ms)
-      : window_size_us_(1000 * window_size_ms),
-        recently_received_packets_(0),
-        recently_received_bytes_(0),
-        last_accumulated_us_(0),
-        window_() {}
-
-  RateCounter() : RateCounter(1000) {}
+  explicit RateCounter(int64_t window_size_ms);
+  RateCounter();
+  ~RateCounter();
 
   void UpdateRates(int64_t send_time_us, uint32_t payload_size);
 
@@ -75,7 +69,7 @@ class RateCounter {
 };
 
 typedef std::set<int> FlowIds;
-const FlowIds CreateFlowIds(const int *flow_ids_array, size_t num_flow_ids);
+const FlowIds CreateFlowIds(const int* flow_ids_array, size_t num_flow_ids);
 const FlowIds CreateFlowIdRange(int initial_value, int last_value);
 
 template <typename T>
@@ -85,7 +79,8 @@ bool DereferencingComparator(const T* const& a, const T* const& b) {
   return *a < *b;
 }
 
-template<typename T> class Stats {
+template <typename T>
+class Stats {
  public:
   Stats()
       : data_(),
@@ -95,12 +90,9 @@ template<typename T> class Stats {
         mean_(0),
         variance_(0),
         min_(0),
-        max_(0) {
-  }
+        max_(0) {}
 
-  void Push(T data_point) {
-    data_.push_back(data_point);
-  }
+  void Push(T data_point) { data_.push_back(data_point); }
 
   T GetMean() {
     if (last_mean_count_ != data_.size()) {
@@ -125,9 +117,7 @@ template<typename T> class Stats {
     }
     return variance_;
   }
-  T GetStdDev() {
-    return sqrt(static_cast<double>(GetVariance()));
-  }
+  T GetStdDev() { return sqrt(static_cast<double>(GetVariance())); }
   T GetMin() {
     RefreshMinMax();
     return min_;
@@ -139,14 +129,14 @@ template<typename T> class Stats {
 
   std::string AsString() {
     std::stringstream ss;
-    ss << (GetMean() >= 0 ? GetMean() : -1) << ", " <<
-        (GetStdDev() >= 0 ? GetStdDev() : -1);
+    ss << (GetMean() >= 0 ? GetMean() : -1) << ", "
+       << (GetStdDev() >= 0 ? GetStdDev() : -1);
     return ss.str();
   }
 
   void Log(const std::string& units) {
-    BWE_TEST_LOGGING_LOG5("", "%f %s\t+/-%f\t[%f,%f]",
-        GetMean(), units.c_str(), GetStdDev(), GetMin(), GetMax());
+    BWE_TEST_LOGGING_LOG5("", "%f %s\t+/-%f\t[%f,%f]", GetMean(), units.c_str(),
+                          GetStdDev(), GetMin(), GetMax());
   }
 
  private:
@@ -240,12 +230,12 @@ class RateCounterFilter : public PacketProcessor {
                     const char* name,
                     int64_t start_plotting_time_ms,
                     const std::string& algorithm_name);
-  virtual ~RateCounterFilter();
+  ~RateCounterFilter() override;
 
   void LogStats();
   Stats<double> GetBitrateStats() const;
-  virtual void Plot(int64_t timestamp_ms);
-  virtual void RunFor(int64_t time_ms, Packets* in_out);
+  void Plot(int64_t timestamp_ms) override;
+  void RunFor(int64_t time_ms, Packets* in_out) override;
 
  private:
   Stats<double> packets_per_second_stats_;
@@ -263,10 +253,10 @@ class LossFilter : public PacketProcessor {
  public:
   LossFilter(PacketProcessorListener* listener, int flow_id);
   LossFilter(PacketProcessorListener* listener, const FlowIds& flow_ids);
-  virtual ~LossFilter() {}
+  ~LossFilter() override {}
 
   void SetLoss(float loss_percent);
-  virtual void RunFor(int64_t time_ms, Packets* in_out);
+  void RunFor(int64_t time_ms, Packets* in_out) override;
 
  private:
   Random random_;
@@ -279,10 +269,10 @@ class DelayFilter : public PacketProcessor {
  public:
   DelayFilter(PacketProcessorListener* listener, int flow_id);
   DelayFilter(PacketProcessorListener* listener, const FlowIds& flow_ids);
-  virtual ~DelayFilter() {}
+  ~DelayFilter() override {}
 
   void SetOneWayDelayMs(int64_t one_way_delay_ms);
-  virtual void RunFor(int64_t time_ms, Packets* in_out);
+  void RunFor(int64_t time_ms, Packets* in_out) override;
 
  private:
   int64_t one_way_delay_us_;
@@ -295,10 +285,10 @@ class JitterFilter : public PacketProcessor {
  public:
   JitterFilter(PacketProcessorListener* listener, int flow_id);
   JitterFilter(PacketProcessorListener* listener, const FlowIds& flow_ids);
-  virtual ~JitterFilter() {}
+  ~JitterFilter() override {}
 
   void SetMaxJitter(int64_t stddev_jitter_ms);
-  virtual void RunFor(int64_t time_ms, Packets* in_out);
+  void RunFor(int64_t time_ms, Packets* in_out) override;
   void set_reorderdering(bool reordering) { reordering_ = reordering; }
   int64_t MeanUs();
 
@@ -316,10 +306,10 @@ class ReorderFilter : public PacketProcessor {
  public:
   ReorderFilter(PacketProcessorListener* listener, int flow_id);
   ReorderFilter(PacketProcessorListener* listener, const FlowIds& flow_ids);
-  virtual ~ReorderFilter() {}
+  ~ReorderFilter() override {}
 
   void SetReorder(float reorder_percent);
-  virtual void RunFor(int64_t time_ms, Packets* in_out);
+  void RunFor(int64_t time_ms, Packets* in_out) override;
 
  private:
   Random random_;
@@ -333,14 +323,14 @@ class ChokeFilter : public PacketProcessor {
  public:
   ChokeFilter(PacketProcessorListener* listener, int flow_id);
   ChokeFilter(PacketProcessorListener* listener, const FlowIds& flow_ids);
-  virtual ~ChokeFilter();
+  ~ChokeFilter() override;
 
   void set_capacity_kbps(uint32_t kbps);
   void set_max_delay_ms(int64_t max_queueing_delay_ms);
 
   uint32_t capacity_kbps();
 
-  virtual void RunFor(int64_t time_ms, Packets* in_out);
+  void RunFor(int64_t time_ms, Packets* in_out) override;
 
   Stats<double> GetDelayStats() const;
 
@@ -360,14 +350,14 @@ class TraceBasedDeliveryFilter : public PacketProcessor {
   TraceBasedDeliveryFilter(PacketProcessorListener* listener,
                            int flow_id,
                            const char* name);
-  virtual ~TraceBasedDeliveryFilter();
+  ~TraceBasedDeliveryFilter() override;
 
   // The file should contain nanosecond timestamps corresponding to the time
   // when the network can accept another packet. The timestamps should be
   // separated by new lines, e.g., "100000000\n125000000\n321000000\n..."
   bool Init(const std::string& filename);
-  virtual void Plot(int64_t timestamp_ms);
-  virtual void RunFor(int64_t time_ms, Packets* in_out);
+  void Plot(int64_t timestamp_ms) override;
+  void RunFor(int64_t time_ms, Packets* in_out) override;
 
   void set_max_delay_ms(int64_t max_delay_ms);
   Stats<double> GetDelayStats() const;
@@ -401,7 +391,7 @@ class VideoSource {
 
   virtual void RunFor(int64_t time_ms, Packets* in_out);
 
-  virtual int flow_id() const { return flow_id_; }
+  int flow_id() const;
   virtual void SetBitrateBps(int bitrate_bps) {}
   uint32_t bits_per_second() const { return bits_per_second_; }
   uint32_t max_payload_size_bytes() const { return kMaxPayloadSizeBytes; }
@@ -436,7 +426,7 @@ class AdaptiveVideoSource : public VideoSource {
                       uint32_t kbps,
                       uint32_t ssrc,
                       int64_t first_frame_offset_ms);
-  virtual ~AdaptiveVideoSource() {}
+  ~AdaptiveVideoSource() override {}
 
   void SetBitrateBps(int bitrate_bps) override;
 
@@ -452,7 +442,7 @@ class PeriodicKeyFrameSource : public AdaptiveVideoSource {
                          uint32_t ssrc,
                          int64_t first_frame_offset_ms,
                          int key_frame_interval);
-  virtual ~PeriodicKeyFrameSource() {}
+  ~PeriodicKeyFrameSource() override {}
 
  protected:
   uint32_t NextFrameSize() override;

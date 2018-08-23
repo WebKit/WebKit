@@ -44,14 +44,6 @@ class MockAudioTransport : public AudioTransport {
                        int64_t* elapsed_time_ms,
                        int64_t* ntp_time_ms));
 
-  MOCK_METHOD6(PushCaptureData,
-               void(int voe_channel,
-                    const void* audio_data,
-                    int bits_per_sample,
-                    int sample_rate,
-                    size_t number_of_channels,
-                    size_t number_of_frames));
-
   MOCK_METHOD7(PullRenderData,
                void(int bits_per_sample,
                     int sample_rate,

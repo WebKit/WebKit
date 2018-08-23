@@ -27,8 +27,6 @@ static const int64_t kMaxDistance = ~(static_cast<int64_t>(1) << 63);
 #ifdef WEBRTC_LINUX
 static const int kYU12Penalty = 16;  // Needs to be higher than MJPG index.
 #endif
-static const char* kSimulcastScreenshareFieldTrialName =
-    "WebRTC-SimulcastScreenshare";
 
 }  // namespace
 
@@ -39,6 +37,8 @@ VideoCapturer::VideoCapturer() : apply_rotation_(false) {
   thread_checker_.DetachFromThread();
   Construct();
 }
+
+VideoCapturer::~VideoCapturer() {}
 
 void VideoCapturer::Construct() {
   enable_camera_list_ = false;
@@ -63,6 +63,10 @@ bool VideoCapturer::StartCapturing(const VideoFormat& capture_format) {
     SetCaptureState(result);
   }
   return true;
+}
+
+bool VideoCapturer::apply_rotation() {
+  return apply_rotation_;
 }
 
 void VideoCapturer::SetSupportedFormats(
@@ -178,10 +182,7 @@ bool VideoCapturer::AdaptFrame(int width,
     return false;
   }
 
-  bool simulcast_screenshare_enabled =
-      webrtc::field_trial::IsEnabled(kSimulcastScreenshareFieldTrialName);
-  if (enable_video_adapter_ &&
-      (!IsScreencast() || simulcast_screenshare_enabled)) {
+  if (enable_video_adapter_) {
     if (!video_adapter_.AdaptFrameResolution(
             width, height, camera_time_us * rtc::kNumNanosecsPerMicrosec,
             crop_width, crop_height, out_width, out_height)) {
@@ -319,9 +320,10 @@ int64_t VideoCapturer::GetFormatDistance(const VideoFormat& desired,
   // Require camera fps to be at least 96% of what is requested, or higher,
   // if resolution differs. 96% allows for slight variations in fps. e.g. 29.97
   if (delta_fps < 0) {
-    float min_desirable_fps = delta_w ?
-    VideoFormat::IntervalToFpsFloat(desired.interval) * 28.f / 30.f :
-    VideoFormat::IntervalToFpsFloat(desired.interval) * 23.f / 30.f;
+    float min_desirable_fps =
+        delta_w
+            ? VideoFormat::IntervalToFpsFloat(desired.interval) * 28.f / 30.f
+            : VideoFormat::IntervalToFpsFloat(desired.interval) * 23.f / 30.f;
     delta_fps = -delta_fps;
     if (supported_fps < min_desirable_fps) {
       distance |= static_cast<int64_t>(1) << 62;

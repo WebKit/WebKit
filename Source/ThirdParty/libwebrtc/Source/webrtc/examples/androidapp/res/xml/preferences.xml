@@ -124,6 +124,12 @@
             android:defaultValue="@string/pref_aecdump_default" />
 
         <CheckBoxPreference
+            android:key="@string/pref_enable_save_input_audio_to_file_key"
+            android:title="@string/pref_enable_save_input_audio_to_file_title"
+            android:dialogTitle="@string/pref_enable_save_input_audio_to_file_dlg"
+            android:defaultValue="@string/pref_enable_save_input_audio_to_file_default" />
+
+        <CheckBoxPreference
             android:key="@string/pref_opensles_key"
             android:title="@string/pref_opensles_title"
             android:dialogTitle="@string/pref_opensles_dlg"
@@ -148,11 +154,6 @@
             android:defaultValue="@string/pref_disable_built_in_ns_default" />
 
         <CheckBoxPreference
-            android:key="@string/pref_enable_level_control_key"
-            android:title="@string/pref_enable_level_control_title"
-            android:defaultValue="@string/pref_enable_level_control_default" />
-
-        <CheckBoxPreference
             android:key="@string/pref_disable_webrtc_agc_and_hpf_key"
             android:title="@string/pref_disable_webrtc_agc_and_hpf_title"
             android:defaultValue="@string/pref_disable_webrtc_agc_default" />
@@ -164,6 +165,11 @@
             android:dialogTitle="@string/pref_speakerphone_dlg"
             android:entries="@array/speakerphone"
             android:entryValues="@array/speakerphoneValues" />
+
+        <CheckBoxPreference
+            android:key="@string/pref_use_legacy_audio_device_key"
+            android:title="@string/pref_use_legacy_audio_device_title"
+            android:defaultValue="@string/pref_use_legacy_audio_device_default" />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -229,13 +235,18 @@
             android:key="@string/pref_displayhud_key"
             android:title="@string/pref_displayhud_title"
             android:dialogTitle="@string/pref_displayhud_dlg"
-           android:defaultValue="@string/pref_displayhud_default" />
+            android:defaultValue="@string/pref_displayhud_default" />
 
         <CheckBoxPreference
             android:key="@string/pref_tracing_key"
             android:title="@string/pref_tracing_title"
             android:dialogTitle="@string/pref_tracing_dlg"
-           android:defaultValue="@string/pref_tracing_default" />
+            android:defaultValue="@string/pref_tracing_default" />
+
+        <CheckBoxPreference
+            android:key="@string/pref_enable_rtceventlog_key"
+            android:title="@string/pref_enable_rtceventlog_title"
+            android:defaultValue="@string/pref_enable_rtceventlog_default"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -27,19 +27,21 @@
 #include "modules/audio_coding/test/utility.h"
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
 #define MAX_FILE_NAME_LENGTH_BYTE 500
 
 TwoWayCommunication::TwoWayCommunication(int testMode)
-    : _acmA(AudioCodingModule::Create()),
-      _acmRefA(AudioCodingModule::Create()),
+    : _acmA(AudioCodingModule::Create(
+          AudioCodingModule::Config(CreateBuiltinAudioDecoderFactory()))),
+      _acmRefA(AudioCodingModule::Create(
+          AudioCodingModule::Config(CreateBuiltinAudioDecoderFactory()))),
       _testMode(testMode) {
   AudioCodingModule::Config config;
-  // The clicks will be more obvious in FAX mode. TODO(henrik.lundin) Really?
-  config.neteq_config.playout_mode = kPlayoutFax;
+  // The clicks will be more obvious if time-stretching is not allowed.
+  // TODO(henrik.lundin) Really?
+  config.neteq_config.for_test_no_time_stretching = true;
   config.decoder_factory = CreateBuiltinAudioDecoderFactory();
   _acmB.reset(AudioCodingModule::Create(config));
   _acmRefB.reset(AudioCodingModule::Create(config));
@@ -58,9 +60,9 @@ TwoWayCommunication::~TwoWayCommunication() {
   _outFileRefB.Close();
 }
 
-void TwoWayCommunication::ChooseCodec(uint8_t* codecID_A,
-                                      uint8_t* codecID_B) {
-  std::unique_ptr<AudioCodingModule> tmpACM(AudioCodingModule::Create());
+void TwoWayCommunication::ChooseCodec(uint8_t* codecID_A, uint8_t* codecID_B) {
+  std::unique_ptr<AudioCodingModule> tmpACM(AudioCodingModule::Create(
+      AudioCodingModule::Config(CreateBuiltinAudioDecoderFactory())));
   uint8_t noCodec = tmpACM->NumberOfCodecs();
   CodecInst codecInst;
   printf("List of Supported Codecs\n");
@@ -72,11 +74,11 @@ void TwoWayCommunication::ChooseCodec(uint8_t* codecID_A,
   printf("\nChoose a send codec for side A [0]: ");
   char myStr[15] = "";
   EXPECT_TRUE(fgets(myStr, 10, stdin) != NULL);
-  *codecID_A = (uint8_t) atoi(myStr);
+  *codecID_A = (uint8_t)atoi(myStr);
 
   printf("\nChoose a send codec for side B [0]: ");
   EXPECT_TRUE(fgets(myStr, 10, stdin) != NULL);
-  *codecID_B = (uint8_t) atoi(myStr);
+  *codecID_B = (uint8_t)atoi(myStr);
 
   printf("\n");
 }
@@ -115,8 +117,8 @@ void TwoWayCommunication::SetUp() {
   uint16_t frequencyHz;
 
   //--- Input A
-  std::string in_file_name = webrtc::test::ResourcePath(
-      "audio_coding/testfile32kHz", "pcm");
+  std::string in_file_name =
+      webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm");
   frequencyHz = 32000;
   printf("Enter input file at side A [%s]: ", in_file_name.c_str());
   PCMFile::ChooseFile(&in_file_name, 499, &frequencyHz);
@@ -131,8 +133,8 @@ void TwoWayCommunication::SetUp() {
   _outFileRefA.Open(ref_file_name, frequencyHz, "wb");
 
   //--- Input B
-  in_file_name = webrtc::test::ResourcePath("audio_coding/testfile32kHz",
-                                            "pcm");
+  in_file_name =
+      webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm");
   frequencyHz = 32000;
   printf("\n\nEnter input file at side B [%s]: ", in_file_name.c_str());
   PCMFile::ChooseFile(&in_file_name, 499, &frequencyHz);
@@ -197,8 +199,8 @@ void TwoWayCommunication::SetUpAutotest() {
   uint16_t frequencyHz;
 
   //--- Input A and B
-  std::string in_file_name = webrtc::test::ResourcePath(
-      "audio_coding/testfile32kHz", "pcm");
+  std::string in_file_name =
+      webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm");
   frequencyHz = 16000;
   _inFileA.Open(in_file_name, frequencyHz, "rb");
   _inFileB.Open(in_file_name, frequencyHz, "rb");
@@ -207,16 +209,16 @@ void TwoWayCommunication::SetUpAutotest() {
   std::string output_file_a = webrtc::test::OutputPath() + "outAutotestA.pcm";
   frequencyHz = 16000;
   _outFileA.Open(output_file_a, frequencyHz, "wb");
-  std::string output_ref_file_a = webrtc::test::OutputPath()
-      + "ref_outAutotestA.pcm";
+  std::string output_ref_file_a =
+      webrtc::test::OutputPath() + "ref_outAutotestA.pcm";
   _outFileRefA.Open(output_ref_file_a, frequencyHz, "wb");
 
   //--- Output B
   std::string output_file_b = webrtc::test::OutputPath() + "outAutotestB.pcm";
   frequencyHz = 16000;
   _outFileB.Open(output_file_b, frequencyHz, "wb");
-  std::string output_ref_file_b = webrtc::test::OutputPath()
-      + "ref_outAutotestB.pcm";
+  std::string output_ref_file_b =
+      webrtc::test::OutputPath() + "ref_outAutotestB.pcm";
   _outFileRefB.Open(output_ref_file_b, frequencyHz, "wb");
 
   //--- Set A-to-B channel

@@ -18,14 +18,13 @@
 #include "media/base/videocapturer.h"
 #include "media/base/videocommon.h"
 #include "rtc_base/arraysize.h"
-#include "rtc_base/basictypes.h"
-#include "rtc_base/sigslot.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace rtc {
 class ByteBufferReader;
 class ByteBufferWriter;
 class StreamInterface;
-}
+}  // namespace rtc
 
 namespace webrtc {
 class VideoFrame;
@@ -38,7 +37,8 @@ namespace cricket {
 // Returns size of ARGB image.
 #define ARGB_SIZE(w, h) (w * h * 4)
 
-template <class T> inline std::vector<T> MakeVector(const T a[], size_t s) {
+template <class T>
+inline std::vector<T> MakeVector(const T a[], size_t s) {
   return std::vector<T>(a, a + s);
 }
 #define MAKE_VECTOR(a) cricket::MakeVector(a, arraysize(a))

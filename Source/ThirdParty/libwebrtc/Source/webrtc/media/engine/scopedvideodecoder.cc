@@ -30,7 +30,6 @@ class ScopedVideoDecoder : public webrtc::VideoDecoder {
   int32_t Release() override;
   int32_t Decode(const webrtc::EncodedImage& input_image,
                  bool missing_frames,
-                 const webrtc::RTPFragmentationHeader* fragmentation,
                  const webrtc::CodecSpecificInfo* codec_specific_info,
                  int64_t render_time_ms) override;
   bool PrefersLateDecoding() const override;
@@ -64,11 +63,10 @@ int32_t ScopedVideoDecoder::Release() {
 int32_t ScopedVideoDecoder::Decode(
     const webrtc::EncodedImage& input_image,
     bool missing_frames,
-    const webrtc::RTPFragmentationHeader* fragmentation,
     const webrtc::CodecSpecificInfo* codec_specific_info,
     int64_t render_time_ms) {
-  return decoder_->Decode(input_image, missing_frames, fragmentation,
-                          codec_specific_info, render_time_ms);
+  return decoder_->Decode(input_image, missing_frames, codec_specific_info,
+                          render_time_ms);
 }
 
 bool ScopedVideoDecoder::PrefersLateDecoding() const {

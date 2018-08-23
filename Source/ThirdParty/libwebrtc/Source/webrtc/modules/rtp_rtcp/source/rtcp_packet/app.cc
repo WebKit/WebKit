@@ -64,9 +64,9 @@ void App::SetSubType(uint8_t subtype) {
 void App::SetData(const uint8_t* data, size_t data_length) {
   RTC_DCHECK(data);
   RTC_DCHECK_EQ(data_length % 4, 0) << "Data must be 32 bits aligned.";
-  RTC_DCHECK_LE(data_length, kMaxDataSize) << "App data size " << data_length
-                                           << " exceed maximum of "
-                                           << kMaxDataSize << " bytes.";
+  RTC_DCHECK_LE(data_length, kMaxDataSize)
+      << "App data size " << data_length << " exceed maximum of "
+      << kMaxDataSize << " bytes.";
   data_.SetData(data, data_length);
 }
 

@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 #include <memory>
 #include <vector>
 
@@ -52,8 +52,7 @@ float ComputeSNR(const ChannelBuffer<float>& ref,
 
   // Search within one sample of the expected delay.
   for (size_t delay = std::max(expected_delay, static_cast<size_t>(1)) - 1;
-       delay <= std::min(expected_delay + 1, ref.num_frames());
-       ++delay) {
+       delay <= std::min(expected_delay + 1, ref.num_frames()); ++delay) {
     float mse = 0;
     float variance = 0;
     float mean = 0;
@@ -92,8 +91,8 @@ void RunAudioConverterTest(size_t src_channels,
                            int dst_sample_rate_hz) {
   const float kSrcLeft = 0.0002f;
   const float kSrcRight = 0.0001f;
-  const float resampling_factor = (1.f * src_sample_rate_hz) /
-      dst_sample_rate_hz;
+  const float resampling_factor =
+      (1.f * src_sample_rate_hz) / dst_sample_rate_hz;
   const float dst_left = resampling_factor * kSrcLeft;
   const float dst_right = resampling_factor * kSrcRight;
   const float dst_mono = (dst_left + dst_right) / 2;
@@ -124,13 +123,15 @@ void RunAudioConverterTest(size_t src_channels,
   ScopedBuffer ref_buffer = CreateBuffer(ref_data, dst_frames);
 
   // The sinc resampler has a known delay, which we compute here.
-  const size_t delay_frames = src_sample_rate_hz == dst_sample_rate_hz ? 0 :
-      static_cast<size_t>(
-          PushSincResampler::AlgorithmicDelaySeconds(src_sample_rate_hz) *
-          dst_sample_rate_hz);
+  const size_t delay_frames =
+      src_sample_rate_hz == dst_sample_rate_hz
+          ? 0
+          : static_cast<size_t>(
+                PushSincResampler::AlgorithmicDelaySeconds(src_sample_rate_hz) *
+                dst_sample_rate_hz);
   // SNR reported on the same line later.
-  printf("(%" PRIuS ", %d Hz) -> (%" PRIuS ", %d Hz) ",
-         src_channels, src_sample_rate_hz, dst_channels, dst_sample_rate_hz);
+  printf("(%" PRIuS ", %d Hz) -> (%" PRIuS ", %d Hz) ", src_channels,
+         src_sample_rate_hz, dst_channels, dst_sample_rate_hz);
 
   std::unique_ptr<AudioConverter> converter = AudioConverter::Create(
       src_channels, src_frames, dst_channels, dst_frames);

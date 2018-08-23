@@ -29,24 +29,18 @@ rtc_static_library("rtc_pc_base") {
   visibility = [ "*" ]
   defines = []
   sources = [
-    "audiomonitor.cc",
-    "audiomonitor.h",
-    "bundlefilter.cc",
-    "bundlefilter.h",
     "channel.cc",
     "channel.h",
     "channelmanager.cc",
     "channelmanager.h",
-    "currentspeakermonitor.cc",
-    "currentspeakermonitor.h",
     "dtlssrtptransport.cc",
     "dtlssrtptransport.h",
     "externalhmac.cc",
     "externalhmac.h",
     "jseptransport.cc",
     "jseptransport.h",
-    "mediamonitor.cc",
-    "mediamonitor.h",
+    "jseptransportcontroller.cc",
+    "jseptransportcontroller.h",
     "mediasession.cc",
     "mediasession.h",
     "rtcpmuxfilter.cc",
@@ -65,26 +59,35 @@ rtc_static_library("rtc_pc_base") {
     "srtpsession.h",
     "srtptransport.cc",
     "srtptransport.h",
-    "transportcontroller.cc",
-    "transportcontroller.h",
-    "voicechannel.h",
+    "transportstats.cc",
+    "transportstats.h",
   ]
 
   deps = [
     "..:webrtc_common",
+    "../api:array_view",
     "../api:call_api",
     "../api:libjingle_peerconnection_api",
-    "../api:optional",
     "../api:ortc_api",
+    "../api/video:video_frame",
+    "../call:rtp_interfaces",
+    "../call:rtp_receiver",
     "../common_video:common_video",
+    "../logging:rtc_event_log_api",
     "../media:rtc_data",
     "../media:rtc_h264_profile_id",
     "../media:rtc_media_base",
+    "../modules/rtp_rtcp:rtp_rtcp_format",
     "../p2p:rtc_p2p",
     "../rtc_base:checks",
     "../rtc_base:rtc_base",
     "../rtc_base:rtc_task_queue",
     "../rtc_base:stringutils",
+    "../rtc_base/third_party/base64",
+    "../rtc_base/third_party/sigslot",
+    "../system_wrappers:metrics_api",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 
   if (rtc_build_libsrtp) {
@@ -101,19 +104,14 @@ rtc_static_library("rtc_pc_base") {
 
 rtc_source_set("rtc_pc") {
   visibility = [ "*" ]
+  allow_poison = [
+    "audio_codecs",  # TODO(bugs.webrtc.org/8396): Remove.
+    "software_video_codecs",  # TODO(bugs.webrtc.org/7925): Remove.
+  ]
   deps = [
     ":rtc_pc_base",
     "../media:rtc_audio_video",
   ]
-}
-
-config("libjingle_peerconnection_warnings_config") {
-  # GN orders flags on a target before flags from configs. The default config
-  # adds these flags so to cancel them out they need to come from a config and
-  # cannot be on the target directly.
-  if (!is_win && !is_clang) {
-    cflags = [ "-Wno-maybe-uninitialized" ]  # Only exists for GCC.
-  }
 }
 
 rtc_static_library("peerconnection") {
@@ -141,10 +139,15 @@ rtc_static_library("peerconnection") {
     "peerconnection.h",
     "peerconnectionfactory.cc",
     "peerconnectionfactory.h",
+    "peerconnectioninternal.h",
     "remoteaudiosource.cc",
     "remoteaudiosource.h",
     "rtcstatscollector.cc",
     "rtcstatscollector.h",
+    "rtcstatstraversal.cc",
+    "rtcstatstraversal.h",
+    "rtpparametersconversion.cc",
+    "rtpparametersconversion.h",
     "rtpreceiver.cc",
     "rtpreceiver.h",
     "rtpsender.cc",
@@ -172,8 +175,6 @@ rtc_static_library("peerconnection") {
     "webrtcsessiondescriptionfactory.h",
   ]
 
-  configs += [ ":libjingle_peerconnection_warnings_config" ]
-
   if (!build_with_chromium && is_clang) {
     # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
     suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
@@ -183,24 +184,33 @@ rtc_static_library("peerconnection") {
     ":rtc_pc_base",
     "..:webrtc_common",
     "../api:call_api",
+    "../api:fec_controller_api",
     "../api:libjingle_peerconnection_api",
-    "../api:optional",
-    "../api:peerconnection_and_implicit_call_api",
     "../api:rtc_stats_api",
+    "../api/video:video_frame",
     "../api/video_codecs:video_codecs_api",
     "../call:call_interfaces",
     "../common_video:common_video",
+    "../logging:ice_log",
     "../logging:rtc_event_log_api",
+    "../logging:rtc_event_log_impl_output",
     "../media:rtc_data",
     "../media:rtc_media_base",
+    "../modules/congestion_controller/bbr",
     "../p2p:rtc_p2p",
     "../rtc_base:checks",
     "../rtc_base:rtc_base",
     "../rtc_base:rtc_base_approved",
     "../rtc_base:stringutils",
+    "../rtc_base/experiments:congestion_controller_experiment",
+    "../rtc_base/third_party/base64",
+    "../rtc_base/third_party/sigslot",
     "../stats",
     "../system_wrappers",
     "../system_wrappers:field_trial_api",
+    "../system_wrappers:metrics_api",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
@@ -216,14 +226,15 @@ rtc_static_library("create_pc_factory") {
   ]
 
   deps = [
-    "../api:audio_mixer_api",
+    "../api:callfactory_api",
     "../api:libjingle_peerconnection_api",
-    "../api:peerconnection_and_implicit_call_api",
+    "../api/audio:audio_mixer_api",
     "../api/audio_codecs:audio_codecs_api",
     "../api/video_codecs:video_codecs_api",
     "../call",
     "../call:call_interfaces",
     "../logging:rtc_event_log_api",
+    "../logging:rtc_event_log_impl_base",
     "../media:rtc_audio_video",
     "../media:rtc_media_base",
     "../modules/audio_device:audio_device",
@@ -231,8 +242,6 @@ rtc_static_library("create_pc_factory") {
     "../rtc_base:rtc_base",
     "../rtc_base:rtc_base_approved",
   ]
-
-  configs += [ ":libjingle_peerconnection_warnings_config" ]
 
   if (!build_with_chromium && is_clang) {
     # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
@@ -242,6 +251,10 @@ rtc_static_library("create_pc_factory") {
 
 rtc_source_set("libjingle_peerconnection") {
   visibility = [ "*" ]
+  allow_poison = [
+    "audio_codecs",  # TODO(bugs.webrtc.org/8396): Remove.
+    "software_video_codecs",  # TODO(bugs.webrtc.org/7925): Remove.
+  ]
   deps = [
     ":create_pc_factory",
     ":peerconnection",
@@ -250,25 +263,15 @@ rtc_source_set("libjingle_peerconnection") {
 }
 
 if (rtc_include_tests) {
-  config("rtc_pc_unittests_config") {
-    # GN orders flags on a target before flags from configs. The default config
-    # adds -Wall, and this flag have to be after -Wall -- so they need to
-    # come from a config and can't be on the target directly.
-    if (!is_win && !is_clang) {
-      cflags = [ "-Wno-maybe-uninitialized" ]  # Only exists for GCC.
-    }
-  }
-
   rtc_test("rtc_pc_unittests") {
     testonly = true
 
     sources = [
-      "bundlefilter_unittest.cc",
       "channel_unittest.cc",
       "channelmanager_unittest.cc",
-      "currentspeakermonitor_unittest.cc",
       "dtlssrtptransport_unittest.cc",
       "jseptransport_unittest.cc",
+      "jseptransportcontroller_unittest.cc",
       "mediasession_unittest.cc",
       "rtcpmuxfilter_unittest.cc",
       "rtptransport_unittest.cc",
@@ -277,12 +280,9 @@ if (rtc_include_tests) {
       "srtpsession_unittest.cc",
       "srtptestutil.h",
       "srtptransport_unittest.cc",
-      "transportcontroller_unittest.cc",
     ]
 
     include_dirs = [ "//third_party/libsrtp/srtp" ]
-
-    configs += [ ":rtc_pc_unittests_config" ]
 
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
@@ -300,9 +300,11 @@ if (rtc_include_tests) {
       ":rtc_pc_base",
       "../api:array_view",
       "../api:libjingle_peerconnection_api",
+      "../call:rtp_interfaces",
       "../logging:rtc_event_log_api",
       "../media:rtc_media_base",
       "../media:rtc_media_tests_utils",
+      "../modules/rtp_rtcp:rtp_rtcp_format",
       "../p2p:p2p_test_utils",
       "../p2p:rtc_p2p",
       "../rtc_base:checks",
@@ -310,9 +312,11 @@ if (rtc_include_tests) {
       "../rtc_base:rtc_base_approved",
       "../rtc_base:rtc_base_tests_main",
       "../rtc_base:rtc_base_tests_utils",
+      "../rtc_base/third_party/sigslot",
       "../system_wrappers:metrics_default",
       "../system_wrappers:runtime_enabled_features_default",
       "../test:test_support",
+      "//third_party/abseil-cpp/absl/memory",
     ]
 
     if (rtc_build_libsrtp) {
@@ -324,20 +328,58 @@ if (rtc_include_tests) {
     }
   }
 
+  rtc_source_set("peerconnection_perf_tests") {
+    testonly = true
+    sources = [
+      "peerconnection_rampup_tests.cc",
+      "peerconnectionwrapper.cc",
+      "peerconnectionwrapper.h",
+    ]
+    deps = [
+      ":pc_test_utils",
+      "../api:libjingle_peerconnection_api",
+      "../api:libjingle_peerconnection_test_api",
+      "../api:rtc_stats_api",
+      "../api/audio_codecs:builtin_audio_decoder_factory",
+      "../api/audio_codecs:builtin_audio_encoder_factory",
+      "../api/video_codecs:builtin_video_decoder_factory",
+      "../api/video_codecs:builtin_video_encoder_factory",
+      "../media:rtc_media_tests_utils",
+      "../p2p:p2p_test_utils",
+      "../p2p:rtc_p2p",
+      "../pc:peerconnection",
+      "../rtc_base:rtc_base",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base:rtc_base_tests_utils",
+      "../test:perf_test",
+      "../test:test_support",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+
   rtc_source_set("pc_test_utils") {
     testonly = true
     sources = [
       "test/fakeaudiocapturemodule.cc",
       "test/fakeaudiocapturemodule.h",
       "test/fakedatachannelprovider.h",
-      "test/fakeperiodicvideocapturer.h",
+      "test/fakepeerconnectionbase.h",
+      "test/fakepeerconnectionforstats.h",
+      "test/fakeperiodicvideosource.h",
+      "test/fakeperiodicvideotracksource.h",
       "test/fakertccertificategenerator.h",
       "test/fakesctptransport.h",
-      "test/faketransportcontroller.h",
       "test/fakevideotrackrenderer.h",
       "test/fakevideotracksource.h",
+      "test/framegeneratorcapturervideotracksource.h",
       "test/mock_datachannel.h",
       "test/mock_peerconnection.h",
+      "test/mock_rtpreceiverinternal.h",
+      "test/mock_rtpsenderinternal.h",
       "test/mockpeerconnectionobservers.h",
       "test/peerconnectiontestwrapper.cc",
       "test/peerconnectiontestwrapper.h",
@@ -352,8 +394,10 @@ if (rtc_include_tests) {
       "..:webrtc_common",
       "../api:libjingle_peerconnection_api",
       "../api:libjingle_peerconnection_test_api",
-      "../api:peerconnection_and_implicit_call_api",
       "../api:rtc_stats_api",
+      "../api/video:video_frame",
+      "../api/video_codecs:builtin_video_decoder_factory",
+      "../api/video_codecs:builtin_video_encoder_factory",
       "../call:call_interfaces",
       "../logging:rtc_event_log_api",
       "../media:rtc_data",
@@ -361,37 +405,22 @@ if (rtc_include_tests) {
       "../media:rtc_media_base",
       "../media:rtc_media_tests_utils",
       "../modules/audio_device:audio_device",
+      "../modules/audio_processing:audio_processing",
       "../p2p:p2p_test_utils",
       "../rtc_base:checks",
       "../rtc_base:rtc_base",
       "../rtc_base:rtc_base_approved",
       "../rtc_base:rtc_base_tests_utils",
+      "../rtc_base:rtc_task_queue",
+      "../rtc_base/third_party/sigslot",
       "../test:test_support",
-      "//testing/gmock",
+      "../test:video_test_common",
+      "//third_party/abseil-cpp/absl/memory",
     ]
 
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-  }
-
-  config("peerconnection_unittests_config") {
-    # The warnings below are enabled by default. Since GN orders compiler flags
-    # for a target before flags from configs, the only way to disable such
-    # warnings is by having them in a separate config, loaded from the target.
-    # TODO(kjellander): Make the code compile without disabling these flags.
-    # See https://bugs.webrtc.org/3307.
-    if (is_clang && is_win) {
-      cflags = [
-        # See https://bugs.chromium.org/p/webrtc/issues/detail?id=6267
-        # for -Wno-sign-compare
-        "-Wno-sign-compare",
-      ]
-    }
-
-    if (!is_win) {
-      cflags = [ "-Wno-sign-compare" ]
     }
   }
 
@@ -408,6 +437,7 @@ if (rtc_include_tests) {
       "peerconnection_bundle_unittest.cc",
       "peerconnection_crypto_unittest.cc",
       "peerconnection_datachannel_unittest.cc",
+      "peerconnection_histogram_unittest.cc",
       "peerconnection_ice_unittest.cc",
       "peerconnection_integrationtest.cc",
       "peerconnection_jsep_unittest.cc",
@@ -422,7 +452,9 @@ if (rtc_include_tests) {
       "proxy_unittest.cc",
       "rtcstats_integrationtest.cc",
       "rtcstatscollector_unittest.cc",
+      "rtcstatstraversal_unittest.cc",
       "rtpmediautils_unittest.cc",
+      "rtpparametersconversion_unittest.cc",
       "rtpsenderreceiver_unittest.cc",
       "sctputils_unittest.cc",
       "statscollector_unittest.cc",
@@ -438,21 +470,9 @@ if (rtc_include_tests) {
       defines = [ "HAVE_SCTP" ]
     }
 
-    configs += [ ":peerconnection_unittests_config" ]
-
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-
-    # TODO(jschuh): Bug 1348: fix this warning.
-    configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
-
-    if (is_win) {
-      cflags = [
-        "/wd4245",  # conversion from int to size_t, signed/unsigned mismatch.
-        "/wd4389",  # signed/unsigned mismatch.
-      ]
     }
 
     deps = [
@@ -460,9 +480,13 @@ if (rtc_include_tests) {
       ":rtc_pc_base",
       "../api:libjingle_peerconnection_api",
       "../api:mock_rtp",
-      "../api:peerconnection_and_implicit_call_api",
+      "../api/units:time_delta",
+      "../logging:fake_rtc_event_log",
       "../rtc_base:checks",
       "../rtc_base:stringutils",
+      "../rtc_base/third_party/base64",
+      "../test:fileutils",
+      "//third_party/abseil-cpp/absl/memory",
     ]
     if (is_android) {
       deps += [ ":android_black_magic" ]
@@ -472,18 +496,21 @@ if (rtc_include_tests) {
       ":libjingle_peerconnection",
       ":pc_test_utils",
       "..:webrtc_common",
-      "../api:fakemetricsobserver",
+      "../api:callfactory_api",
       "../api:libjingle_peerconnection_test_api",
-      "../api:optional",
       "../api:rtc_stats_api",
       "../api/audio_codecs:audio_codecs_api",
       "../api/audio_codecs:builtin_audio_decoder_factory",
       "../api/audio_codecs:builtin_audio_encoder_factory",
       "../api/audio_codecs/L16:audio_decoder_L16",
       "../api/audio_codecs/L16:audio_encoder_L16",
+      "../api/video_codecs:builtin_video_decoder_factory",
+      "../api/video_codecs:builtin_video_encoder_factory",
+      "../api/video_codecs:video_codecs_api",
       "../call:call_interfaces",
       "../logging:rtc_event_log_api",
-      "../logging:rtc_event_log_impl",
+      "../logging:rtc_event_log_impl_base",
+      "../logging:rtc_event_log_impl_output",
       "../media:rtc_audio_video",
       "../media:rtc_data",  # TODO(phoglund): AFAIK only used for one sctp constant.
       "../media:rtc_media_base",
@@ -497,10 +524,13 @@ if (rtc_include_tests) {
       "../rtc_base:rtc_base_approved",
       "../rtc_base:rtc_base_tests_main",
       "../rtc_base:rtc_base_tests_utils",
+      "../rtc_base:rtc_task_queue",
+      "../rtc_base:safe_conversions",
       "../system_wrappers:metrics_default",
       "../system_wrappers:runtime_enabled_features_default",
       "../test:audio_codec_mocks",
       "../test:test_support",
+      "//third_party/abseil-cpp/absl/types:optional",
     ]
 
     if (is_android) {

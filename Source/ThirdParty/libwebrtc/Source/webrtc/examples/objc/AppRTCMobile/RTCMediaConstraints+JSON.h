@@ -12,8 +12,6 @@
 
 @interface RTCMediaConstraints (JSON)
 
-+ (RTCMediaConstraints *)constraintsFromJSONDictionary:
-    (NSDictionary *)dictionary;
++ (RTCMediaConstraints *)constraintsFromJSONDictionary:(NSDictionary *)dictionary;
 
 @end
-

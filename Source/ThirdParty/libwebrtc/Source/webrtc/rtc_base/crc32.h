@@ -11,9 +11,10 @@
 #ifndef RTC_BASE_CRC32_H_
 #define RTC_BASE_CRC32_H_
 
-#include <string>
+#include <stddef.h>
+#include <stdint.h>
 
-#include "rtc_base/basictypes.h"
+#include <string>
 
 namespace rtc {
 

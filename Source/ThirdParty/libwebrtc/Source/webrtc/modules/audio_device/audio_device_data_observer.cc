@@ -71,6 +71,11 @@ class ADMWrapper : public AudioDeviceModule, public AudioTransport {
                            int64_t* elapsed_time_ms,
                            int64_t* ntp_time_ms) override {
     int32_t res = 0;
+    // Set out parameters to safe values to be sure not to return corrupted
+    // data.
+    nSamplesOut = 0;
+    *elapsed_time_ms = -1;
+    *ntp_time_ms = -1;
     // Request data from audio transport.
     if (audio_transport_) {
       res = audio_transport_->NeedMorePlayData(
@@ -85,15 +90,6 @@ class ADMWrapper : public AudioDeviceModule, public AudioTransport {
     }
 
     return res;
-  }
-
-  void PushCaptureData(int voe_channel,
-                       const void* audio_data,
-                       int bits_per_sample,
-                       int sample_rate,
-                       size_t number_of_channels,
-                       size_t number_of_frames) override {
-    RTC_NOTREACHED();
   }
 
   void PullRenderData(int bits_per_sample,

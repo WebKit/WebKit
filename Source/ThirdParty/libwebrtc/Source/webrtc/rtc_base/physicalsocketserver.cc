@@ -10,7 +10,7 @@
 #include "rtc_base/physicalsocketserver.h"
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
-#pragma warning(disable:4786)
+#pragma warning(disable : 4786)
 #endif
 
 #ifdef MEMORY_SANITIZER
@@ -18,21 +18,20 @@
 #endif
 
 #if defined(WEBRTC_POSIX)
-#include <string.h>
 #include <fcntl.h>
+#include <string.h>
 #if defined(WEBRTC_USE_EPOLL)
 // "poll" will be used to wait for the signal dispatcher.
 #include <poll.h>
 #endif
-#include <sys/ioctl.h>
-#include <sys/time.h>
-#include <sys/select.h>
-#include <unistd.h>
 #include <signal.h>
+#include <sys/ioctl.h>
+#include <sys/select.h>
+#include <sys/time.h>
+#include <unistd.h>
 #endif
 
 #if defined(WEBRTC_WIN)
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -45,7 +44,6 @@
 #include <map>
 
 #include "rtc_base/arraysize.h"
-#include "rtc_base/basictypes.h"
 #include "rtc_base/byteorder.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -64,7 +62,7 @@
 
 #if defined(WEBRTC_POSIX)
 #include <netinet/tcp.h>  // for TCP_NODELAY
-#define IP_MTU 14 // Until this is integrated from linux/in.h to netinet/in.h
+#define IP_MTU 14  // Until this is integrated from linux/in.h to netinet/in.h
 typedef void* SockOptArg;
 
 #endif  // WEBRTC_POSIX
@@ -113,40 +111,12 @@ std::unique_ptr<SocketServer> SocketServer::CreateDefault() {
 #endif
 }
 
-#if defined(WEBRTC_WIN)
-// Standard MTUs, from RFC 1191
-const uint16_t PACKET_MAXIMUMS[] = {
-    65535,  // Theoretical maximum, Hyperchannel
-    32000,  // Nothing
-    17914,  // 16Mb IBM Token Ring
-    8166,   // IEEE 802.4
-    // 4464,   // IEEE 802.5 (4Mb max)
-    4352,   // FDDI
-    // 2048,   // Wideband Network
-    2002,   // IEEE 802.5 (4Mb recommended)
-    // 1536,   // Expermental Ethernet Networks
-    // 1500,   // Ethernet, Point-to-Point (default)
-    1492,   // IEEE 802.3
-    1006,   // SLIP, ARPANET
-    // 576,    // X.25 Networks
-    // 544,    // DEC IP Portal
-    // 512,    // NETBIOS
-    508,    // IEEE 802/Source-Rt Bridge, ARCNET
-    296,    // Point-to-Point (low delay)
-    68,     // Official minimum
-    0,      // End of list marker
-};
-
-static const int IP_HEADER_SIZE = 20u;
-static const int IPV6_HEADER_SIZE = 40u;
-static const int ICMP_HEADER_SIZE = 8u;
-static const int ICMP_PING_TIMEOUT_MILLIS = 10000u;
-#endif
-
 PhysicalSocket::PhysicalSocket(PhysicalSocketServer* ss, SOCKET s)
-  : ss_(ss), s_(s), error_(0),
-    state_((s == INVALID_SOCKET) ? CS_CLOSED : CS_CONNECTED),
-    resolver_(nullptr) {
+    : ss_(ss),
+      s_(s),
+      error_(0),
+      state_((s == INVALID_SOCKET) ? CS_CLOSED : CS_CONNECTED),
+      resolver_(nullptr) {
 #if defined(WEBRTC_WIN)
   // EnsureWinsockInit() ensures that winsock is initialized. The default
   // version of this function doesn't do anything because winsock is
@@ -281,8 +251,7 @@ int PhysicalSocket::Connect(const SocketAddress& addr) {
 }
 
 int PhysicalSocket::DoConnect(const SocketAddress& connect_addr) {
-  if ((s_ == INVALID_SOCKET) &&
-      !Create(connect_addr.family(), SOCK_STREAM)) {
+  if ((s_ == INVALID_SOCKET) && !Create(connect_addr.family(), SOCK_STREAM)) {
     return SOCKET_ERROR;
   }
   sockaddr_storage addr_storage;
@@ -347,8 +316,8 @@ int PhysicalSocket::SetOption(Option opt, int value) {
 }
 
 int PhysicalSocket::Send(const void* pv, size_t cb) {
-  int sent = DoSend(s_, reinterpret_cast<const char *>(pv),
-      static_cast<int>(cb),
+  int sent = DoSend(
+      s_, reinterpret_cast<const char*>(pv), static_cast<int>(cb),
 #if defined(WEBRTC_LINUX) && !defined(WEBRTC_ANDROID)
       // Suppress SIGPIPE. Without this, attempting to send on a socket whose
       // other end is closed will result in a SIGPIPE signal being raised to
@@ -376,15 +345,15 @@ int PhysicalSocket::SendTo(const void* buffer,
                            const SocketAddress& addr) {
   sockaddr_storage saddr;
   size_t len = addr.ToSockAddrStorage(&saddr);
-  int sent = DoSendTo(
-      s_, static_cast<const char *>(buffer), static_cast<int>(length),
+  int sent =
+      DoSendTo(s_, static_cast<const char*>(buffer), static_cast<int>(length),
 #if defined(WEBRTC_LINUX) && !defined(WEBRTC_ANDROID)
-      // Suppress SIGPIPE. See above for explanation.
-      MSG_NOSIGNAL,
+               // Suppress SIGPIPE. See above for explanation.
+               MSG_NOSIGNAL,
 #else
-      0,
+               0,
 #endif
-      reinterpret_cast<sockaddr*>(&saddr), static_cast<int>(len));
+               reinterpret_cast<sockaddr*>(&saddr), static_cast<int>(len));
   UpdateLastError();
   MaybeRemapSendError();
   // We have seen minidumps where this may be false.
@@ -397,8 +366,8 @@ int PhysicalSocket::SendTo(const void* buffer,
 }
 
 int PhysicalSocket::Recv(void* buffer, size_t length, int64_t* timestamp) {
-  int received = ::recv(s_, static_cast<char*>(buffer),
-                        static_cast<int>(length), 0);
+  int received =
+      ::recv(s_, static_cast<char*>(buffer), static_cast<int>(length), 0);
   if ((received == 0) && (length != 0)) {
     // Note: on graceful shutdown, recv can return 0.  In this case, we
     // pretend it is blocking, and then signal close, so that simplifying
@@ -601,20 +570,24 @@ int PhysicalSocket::TranslateOption(Option opt, int* slevel, int* sopt) {
   return 0;
 }
 
-SocketDispatcher::SocketDispatcher(PhysicalSocketServer *ss)
+SocketDispatcher::SocketDispatcher(PhysicalSocketServer* ss)
 #if defined(WEBRTC_WIN)
-  : PhysicalSocket(ss), id_(0), signal_close_(false)
+    : PhysicalSocket(ss),
+      id_(0),
+      signal_close_(false)
 #else
-  : PhysicalSocket(ss)
+    : PhysicalSocket(ss)
 #endif
 {
 }
 
-SocketDispatcher::SocketDispatcher(SOCKET s, PhysicalSocketServer *ss)
+SocketDispatcher::SocketDispatcher(SOCKET s, PhysicalSocketServer* ss)
 #if defined(WEBRTC_WIN)
-  : PhysicalSocket(ss, s), id_(0), signal_close_(false)
+    : PhysicalSocket(ss, s),
+      id_(0),
+      signal_close_(false)
 #else
-  : PhysicalSocket(ss, s)
+    : PhysicalSocket(ss, s)
 #endif
 {
 }
@@ -625,7 +598,7 @@ SocketDispatcher::~SocketDispatcher() {
 
 bool SocketDispatcher::Initialize() {
   RTC_DCHECK(s_ != INVALID_SOCKET);
-  // Must be a non-blocking
+// Must be a non-blocking
 #if defined(WEBRTC_WIN)
   u_long argp = 1;
   ioctlsocket(s_, FIONBIO, &argp);
@@ -658,7 +631,9 @@ bool SocketDispatcher::Create(int family, int type) {
     return false;
 
 #if defined(WEBRTC_WIN)
-  do { id_ = ++next_id_; } while (id_ == 0);
+  do {
+    id_ = ++next_id_;
+  } while (id_ == 0);
 #endif
   return true;
 }
@@ -742,7 +717,7 @@ bool SocketDispatcher::IsDescriptorClosed() {
   }
 }
 
-#endif // WEBRTC_POSIX
+#endif  // WEBRTC_POSIX
 
 uint32_t SocketDispatcher::GetRequestedEvents() {
   return enabled_events();
@@ -753,7 +728,7 @@ void SocketDispatcher::OnPreEvent(uint32_t ff) {
     state_ = CS_CONNECTED;
 
 #if defined(WEBRTC_WIN)
-  // We set CS_CLOSED from CheckSignalClose.
+// We set CS_CLOSED from CheckSignalClose.
 #elif defined(WEBRTC_POSIX)
   if ((ff & DE_CLOSE) != 0)
     state_ = CS_CLOSED;
@@ -833,7 +808,7 @@ void SocketDispatcher::OnEvent(uint32_t ff, int err) {
 #endif
 }
 
-#endif // WEBRTC_POSIX
+#endif  // WEBRTC_POSIX
 
 #if defined(WEBRTC_USE_EPOLL)
 
@@ -946,7 +921,7 @@ class EventDispatcher : public Dispatcher {
   bool IsDescriptorClosed() override { return false; }
 
  private:
-  PhysicalSocketServer *ss_;
+  PhysicalSocketServer* ss_;
   int afd_[2];
   bool fSignaled_;
   CriticalSection crit_;
@@ -968,8 +943,8 @@ class PosixSignalHandler {
   // sort of user-defined void * parameter, so they can't access anything that
   // isn't global.)
   static PosixSignalHandler* Instance() {
-    RTC_DEFINE_STATIC_LOCAL(PosixSignalHandler, instance, ());
-    return &instance;
+    static PosixSignalHandler* const instance = new PosixSignalHandler();
+    return instance;
   }
 
   // Returns true if the given signal number is set.
@@ -991,9 +966,7 @@ class PosixSignalHandler {
   }
 
   // Returns the file descriptor to monitor for signal events.
-  int GetDescriptor() const {
-    return afd_[0];
-  }
+  int GetDescriptor() const { return afd_[0]; }
 
   // This is called directly from our real signal handler, so it must be
   // signal-handler-safe. That means it cannot assume anything about the
@@ -1030,8 +1003,7 @@ class PosixSignalHandler {
     if (fcntl(afd_[1], F_SETFL, O_NONBLOCK) < 0) {
       RTC_LOG_ERR(LS_WARNING) << "fcntl #2 failed";
     }
-    memset(const_cast<void *>(static_cast<volatile void *>(received_signal_)),
-           0,
+    memset(const_cast<void*>(static_cast<volatile void*>(received_signal_)), 0,
            sizeof(received_signal_));
   }
 
@@ -1069,13 +1041,11 @@ class PosixSignalHandler {
 
 class PosixSignalDispatcher : public Dispatcher {
  public:
-  PosixSignalDispatcher(PhysicalSocketServer *owner) : owner_(owner) {
+  PosixSignalDispatcher(PhysicalSocketServer* owner) : owner_(owner) {
     owner_->Add(this);
   }
 
-  ~PosixSignalDispatcher() override {
-    owner_->Remove(this);
-  }
+  ~PosixSignalDispatcher() override { owner_->Remove(this); }
 
   uint32_t GetRequestedEvents() override { return DE_READ; }
 
@@ -1120,23 +1090,19 @@ class PosixSignalDispatcher : public Dispatcher {
     handlers_[signum] = handler;
   }
 
-  void ClearHandler(int signum) {
-    handlers_.erase(signum);
-  }
+  void ClearHandler(int signum) { handlers_.erase(signum); }
 
-  bool HasHandlers() {
-    return !handlers_.empty();
-  }
+  bool HasHandlers() { return !handlers_.empty(); }
 
  private:
   typedef std::map<int, void (*)(int)> HandlerMap;
 
   HandlerMap handlers_;
   // Our owner.
-  PhysicalSocketServer *owner_;
+  PhysicalSocketServer* owner_;
 };
 
-#endif // WEBRTC_POSIX
+#endif  // WEBRTC_POSIX
 
 #if defined(WEBRTC_WIN)
 static uint32_t FlagsToEvents(uint32_t events) {
@@ -1154,7 +1120,7 @@ static uint32_t FlagsToEvents(uint32_t events) {
 
 class EventDispatcher : public Dispatcher {
  public:
-  EventDispatcher(PhysicalSocketServer *ss) : ss_(ss) {
+  EventDispatcher(PhysicalSocketServer* ss) : ss_(ss) {
     hev_ = WSACreateEvent();
     if (hev_) {
       ss_->Add(this);
@@ -1195,10 +1161,8 @@ class EventDispatcher : public Dispatcher {
 // Sets the value of a boolean value to false when signaled.
 class Signaler : public EventDispatcher {
  public:
-  Signaler(PhysicalSocketServer* ss, bool* pf)
-      : EventDispatcher(ss), pf_(pf) {
-  }
-  ~Signaler() override { }
+  Signaler(PhysicalSocketServer* ss, bool* pf) : EventDispatcher(ss), pf_(pf) {}
+  ~Signaler() override {}
 
   void OnEvent(uint32_t ff, int err) override {
     if (pf_)
@@ -1206,11 +1170,10 @@ class Signaler : public EventDispatcher {
   }
 
  private:
-  bool *pf_;
+  bool* pf_;
 };
 
-PhysicalSocketServer::PhysicalSocketServer()
-    : fWait_(false) {
+PhysicalSocketServer::PhysicalSocketServer() : fWait_(false) {
 #if defined(WEBRTC_USE_EPOLL)
   // Since Linux 2.6.8, the size argument is ignored, but must be greater than
   // zero. Before that the size served as hint to the kernel for the amount of
@@ -1248,10 +1211,6 @@ void PhysicalSocketServer::WakeUp() {
   signal_wakeup_->Signal();
 }
 
-Socket* PhysicalSocketServer::CreateSocket(int type) {
-  return CreateSocket(AF_INET, type);
-}
-
 Socket* PhysicalSocketServer::CreateSocket(int family, int type) {
   PhysicalSocket* socket = new PhysicalSocket(this);
   if (socket->Create(family, type)) {
@@ -1260,10 +1219,6 @@ Socket* PhysicalSocketServer::CreateSocket(int family, int type) {
     delete socket;
     return nullptr;
   }
-}
-
-AsyncSocket* PhysicalSocketServer::CreateAsyncSocket(int type) {
-  return CreateAsyncSocket(AF_INET, type);
 }
 
 AsyncSocket* PhysicalSocketServer::CreateAsyncSocket(int family, int type) {
@@ -1286,7 +1241,7 @@ AsyncSocket* PhysicalSocketServer::WrapSocket(SOCKET s) {
   }
 }
 
-void PhysicalSocketServer::Add(Dispatcher *pdispatcher) {
+void PhysicalSocketServer::Add(Dispatcher* pdispatcher) {
   CritScope cs(&crit_);
   if (processing_dispatchers_) {
     // A dispatcher is being added while a "Wait" call is processing the
@@ -1305,7 +1260,7 @@ void PhysicalSocketServer::Add(Dispatcher *pdispatcher) {
 #endif  // WEBRTC_USE_EPOLL
 }
 
-void PhysicalSocketServer::Remove(Dispatcher *pdispatcher) {
+void PhysicalSocketServer::Remove(Dispatcher* pdispatcher) {
   CritScope cs(&crit_);
   if (processing_dispatchers_) {
     // A dispatcher is being removed while a "Wait" call is processing the
@@ -1459,9 +1414,9 @@ bool PhysicalSocketServer::WaitSelect(int cmsWait, bool process_io) {
   FD_ZERO(&fdsRead);
   fd_set fdsWrite;
   FD_ZERO(&fdsWrite);
-  // Explicitly unpoison these FDs on MemorySanitizer which doesn't handle the
-  // inline assembly in FD_ZERO.
-  // http://crbug.com/344505
+// Explicitly unpoison these FDs on MemorySanitizer which doesn't handle the
+// inline assembly in FD_ZERO.
+// http://crbug.com/344505
 #ifdef MEMORY_SANITIZER
   __msan_unpoison(&fdsRead, sizeof(fdsRead));
   __msan_unpoison(&fdsWrite, sizeof(fdsWrite));
@@ -1548,9 +1503,8 @@ bool PhysicalSocketServer::WaitSelect(int cmsWait, bool process_io) {
       ptvWait->tv_usec = 0;
       struct timeval tvT;
       gettimeofday(&tvT, nullptr);
-      if ((tvStop.tv_sec > tvT.tv_sec)
-          || ((tvStop.tv_sec == tvT.tv_sec)
-              && (tvStop.tv_usec > tvT.tv_usec))) {
+      if ((tvStop.tv_sec > tvT.tv_sec) ||
+          ((tvStop.tv_sec == tvT.tv_sec) && (tvStop.tv_usec > tvT.tv_usec))) {
         ptvWait->tv_sec = tvStop.tv_sec - tvT.tv_sec;
         ptvWait->tv_usec = tvStop.tv_usec - tvT.tv_usec;
         if (ptvWait->tv_usec < 0) {
@@ -1840,7 +1794,7 @@ bool PhysicalSocketServer::Wait(int cmsWait, bool process_io) {
   fWait_ = true;
   while (fWait_) {
     std::vector<WSAEVENT> events;
-    std::vector<Dispatcher *> event_owners;
+    std::vector<Dispatcher*> event_owners;
 
     events.push_back(socket_ev_);
 
@@ -1859,8 +1813,7 @@ bool PhysicalSocketServer::Wait(int cmsWait, bool process_io) {
         if (disp->CheckSignalClose()) {
           // We just signalled close, don't poll this socket
         } else if (s != INVALID_SOCKET) {
-          WSAEventSelect(s,
-                         events[0],
+          WSAEventSelect(s, events[0],
                          FlagsToEvents(disp->GetRequestedEvents()));
         } else {
           events.push_back(disp->GetWSAEvent());
@@ -1884,11 +1837,9 @@ bool PhysicalSocketServer::Wait(int cmsWait, bool process_io) {
     }
 
     // Wait for one of the events to signal
-    DWORD dw = WSAWaitForMultipleEvents(static_cast<DWORD>(events.size()),
-                                        &events[0],
-                                        false,
-                                        static_cast<DWORD>(cmsNext),
-                                        false);
+    DWORD dw =
+        WSAWaitForMultipleEvents(static_cast<DWORD>(events.size()), &events[0],
+                                 false, static_cast<DWORD>(cmsNext), false);
 
     if (dw == WSA_WAIT_FAILED) {
       // Failed?
@@ -1904,7 +1855,7 @@ bool PhysicalSocketServer::Wait(int cmsWait, bool process_io) {
       CritScope cr(&crit_);
       int index = dw - WSA_WAIT_EVENT_0;
       if (index > 0) {
-        --index; // The first event is the socket event
+        --index;  // The first event is the socket event
         Dispatcher* disp = event_owners[index];
         // The dispatcher could have been removed while waiting for events.
         if (dispatchers_.find(disp) != dispatchers_.end()) {
@@ -1995,7 +1946,7 @@ bool PhysicalSocketServer::Wait(int cmsWait, bool process_io) {
       break;
     cmsElapsed = TimeSince(msStart);
     if ((cmsWait != kForever) && (cmsElapsed >= cmsWait)) {
-       break;
+      break;
     }
   }
 

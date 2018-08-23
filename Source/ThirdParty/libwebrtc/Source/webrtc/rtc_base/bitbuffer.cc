@@ -200,8 +200,8 @@ bool BitBuffer::ReadSignedExponentialGolomb(int32_t* val) {
   return true;
 }
 
-void BitBuffer::GetCurrentOffset(
-    size_t* out_byte_offset, size_t* out_bit_offset) {
+void BitBuffer::GetCurrentOffset(size_t* out_byte_offset,
+                                 size_t* out_bit_offset) {
   RTC_CHECK(out_byte_offset != nullptr);
   RTC_CHECK(out_bit_offset != nullptr);
   *out_byte_offset = byte_offset_;
@@ -219,8 +219,7 @@ bool BitBuffer::Seek(size_t byte_offset, size_t bit_offset) {
 }
 
 BitBufferWriter::BitBufferWriter(uint8_t* bytes, size_t byte_count)
-    : BitBuffer(bytes, byte_count), writable_bytes_(bytes) {
-}
+    : BitBuffer(bytes, byte_count), writable_bytes_(bytes) {}
 
 bool BitBufferWriter::WriteUInt8(uint8_t val) {
   return WriteBits(val, sizeof(uint8_t) * 8);
@@ -251,8 +250,8 @@ bool BitBufferWriter::WriteBits(uint64_t val, size_t bit_count) {
   size_t remaining_bits_in_current_byte = 8 - bit_offset_;
   size_t bits_in_first_byte =
       std::min(bit_count, remaining_bits_in_current_byte);
-  *bytes = WritePartialByte(
-      HighestByte(val), bits_in_first_byte, *bytes, bit_offset_);
+  *bytes = WritePartialByte(HighestByte(val), bits_in_first_byte, *bytes,
+                            bit_offset_);
   if (bit_count <= remaining_bits_in_current_byte) {
     // Nothing left to write, so quit early.
     return ConsumeBits(total_bits);

@@ -29,8 +29,9 @@ class AsyncTCPSocketBase : public AsyncPacketSocket {
   ~AsyncTCPSocketBase() override;
 
   // Pure virtual methods to send and recv data.
-  int Send(const void *pv, size_t cb,
-                   const rtc::PacketOptions& options) override = 0;
+  int Send(const void* pv,
+           size_t cb,
+           const rtc::PacketOptions& options) override = 0;
   virtual void ProcessInput(char* data, size_t* len) = 0;
   // Signals incoming connection.
   virtual void HandleIncomingConnection(AsyncSocket* socket) = 0;

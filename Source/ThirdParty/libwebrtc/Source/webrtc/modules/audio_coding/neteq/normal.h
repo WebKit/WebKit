@@ -20,7 +20,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/numerics/safe_conversions.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -53,11 +52,10 @@ class Normal {
   // result is written to |output|. The number of channels allocated in
   // |output| defines the number of channels that will be used when
   // de-interleaving |input|. |last_mode| contains the mode used in the previous
-  // GetAudio call (i.e., not the current one), and |external_mute_factor| is
-  // a pointer to the mute factor in the NetEqImpl class.
-  int Process(const int16_t* input, size_t length,
+  // GetAudio call (i.e., not the current one).
+  int Process(const int16_t* input,
+              size_t length,
               Modes last_mode,
-              int16_t* external_mute_factor_array,
               AudioMultiVector* output);
 
  private:

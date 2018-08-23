@@ -13,8 +13,6 @@
 
 #include <memory>
 
-#include "typedefs.h"  // NOLINT(build/include)
-
 #if defined(WEBRTC_WIN)
 // Due to a bug in the std::unique_ptr implementation that ships with MSVS,
 // we need the full definition of QueuedTask, on Windows.
@@ -74,4 +72,4 @@ class ProcessThread {
 
 }  // namespace webrtc
 
-#endif // MODULES_UTILITY_INCLUDE_PROCESS_THREAD_H_
+#endif  // MODULES_UTILITY_INCLUDE_PROCESS_THREAD_H_

@@ -17,7 +17,8 @@
 
 namespace webrtc {
 
-float SincResampler::Convolve_NEON(const float* input_ptr, const float* k1,
+float SincResampler::Convolve_NEON(const float* input_ptr,
+                                   const float* k1,
                                    const float* k2,
                                    double kernel_interpolation_factor) {
   float32x4_t m_input;
@@ -25,7 +26,7 @@ float SincResampler::Convolve_NEON(const float* input_ptr, const float* k1,
   float32x4_t m_sums2 = vmovq_n_f32(0);
 
   const float* upper = input_ptr + kKernelSize;
-  for (; input_ptr < upper; ) {
+  for (; input_ptr < upper;) {
     m_input = vld1q_f32(input_ptr);
     input_ptr += 4;
     m_sums1 = vmlaq_f32(m_sums1, m_input, vld1q_f32(k1));

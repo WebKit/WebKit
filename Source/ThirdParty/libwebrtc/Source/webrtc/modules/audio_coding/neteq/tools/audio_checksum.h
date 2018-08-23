@@ -19,7 +19,7 @@
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/messagedigest.h"
 #include "rtc_base/stringencode.h"
-#include "typedefs.h"  // NOLINT(build/include)
+#include "rtc_base/system/arch.h"
 
 namespace webrtc {
 namespace test {

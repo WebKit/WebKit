@@ -14,13 +14,16 @@
 #include <jni.h>
 
 #include "api/video_codecs/sdp_video_format.h"
+#include "sdk/android/src/jni/jni_helpers.h"
 
 namespace webrtc {
 namespace jni {
 
-SdpVideoFormat VideoCodecInfoToSdpVideoFormat(JNIEnv* jni, jobject info);
-jobject SdpVideoFormatToVideoCodecInfo(JNIEnv* jni,
-                                       const SdpVideoFormat& format);
+SdpVideoFormat VideoCodecInfoToSdpVideoFormat(JNIEnv* jni,
+                                              const JavaRef<jobject>& info);
+ScopedJavaLocalRef<jobject> SdpVideoFormatToVideoCodecInfo(
+    JNIEnv* jni,
+    const SdpVideoFormat& format);
 
 }  // namespace jni
 }  // namespace webrtc

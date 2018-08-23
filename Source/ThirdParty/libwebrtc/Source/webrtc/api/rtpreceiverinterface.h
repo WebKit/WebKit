@@ -34,19 +34,16 @@ enum class RtpSourceType {
 class RtpSource {
  public:
   RtpSource() = delete;
-  RtpSource(int64_t timestamp_ms, uint32_t source_id, RtpSourceType source_type)
-      : timestamp_ms_(timestamp_ms),
-        source_id_(source_id),
-        source_type_(source_type) {}
-
+  RtpSource(int64_t timestamp_ms,
+            uint32_t source_id,
+            RtpSourceType source_type);
   RtpSource(int64_t timestamp_ms,
             uint32_t source_id,
             RtpSourceType source_type,
-            uint8_t audio_level)
-      : timestamp_ms_(timestamp_ms),
-        source_id_(source_id),
-        source_type_(source_type),
-        audio_level_(audio_level) {}
+            uint8_t audio_level);
+  RtpSource(const RtpSource&);
+  RtpSource& operator=(const RtpSource&);
+  ~RtpSource();
 
   int64_t timestamp_ms() const { return timestamp_ms_; }
   void update_timestamp_ms(int64_t timestamp_ms) {
@@ -60,8 +57,8 @@ class RtpSource {
   // The source can be either a contributing source or a synchronization source.
   RtpSourceType source_type() const { return source_type_; }
 
-  rtc::Optional<uint8_t> audio_level() const { return audio_level_; }
-  void set_audio_level(const rtc::Optional<uint8_t>& level) {
+  absl::optional<uint8_t> audio_level() const { return audio_level_; }
+  void set_audio_level(const absl::optional<uint8_t>& level) {
     audio_level_ = level;
   }
 
@@ -74,7 +71,7 @@ class RtpSource {
   int64_t timestamp_ms_;
   uint32_t source_id_;
   RtpSourceType source_type_;
-  rtc::Optional<uint8_t> audio_level_;
+  absl::optional<uint8_t> audio_level_;
 };
 
 class RtpReceiverObserverInterface {
@@ -96,12 +93,13 @@ class RtpReceiverInterface : public rtc::RefCountInterface {
   virtual rtc::scoped_refptr<MediaStreamTrackInterface> track() const = 0;
   // The list of streams that |track| is associated with. This is the same as
   // the [[AssociatedRemoteMediaStreams]] internal slot in the spec.
-  // https://w3c.github.io/webrtc-pc/#dfn-x%5B%5Bassociatedremotemediastreams%5D%5D
+  // https://w3c.github.io/webrtc-pc/#dfn-associatedremotemediastreams
   // TODO(hbos): Make pure virtual as soon as Chromium's mock implements this.
-  virtual std::vector<rtc::scoped_refptr<MediaStreamInterface>> streams()
-      const {
-    return std::vector<rtc::scoped_refptr<MediaStreamInterface>>();
-  }
+  // TODO(https://crbug.com/webrtc/9480): Remove streams() in favor of
+  // stream_ids() as soon as downstream projects are no longer dependent on
+  // stream objects.
+  virtual std::vector<std::string> stream_ids() const;
+  virtual std::vector<rtc::scoped_refptr<MediaStreamInterface>> streams() const;
 
   // Audio or video receiver?
   virtual cricket::MediaType media_type() const = 0;
@@ -124,37 +122,27 @@ class RtpReceiverInterface : public rtc::RefCountInterface {
   // TODO(zhihuang): Remove the default implementation once the subclasses
   // implement this. Currently, the only relevant subclass is the
   // content::FakeRtpReceiver in Chromium.
-  virtual std::vector<RtpSource> GetSources() const {
-    return std::vector<RtpSource>();
-  }
-  // TODO(hta): Remove default implementation or move function to
-  // an internal interface. content::FakeRtpReceiver in Chromium needs this.
-
-  // Returns an ID that changes if the attached track changes, but
-  // otherwise remains constant. Used to generate IDs for stats.
-  // The special value zero means that no track is attached.
-  virtual int AttachmentId() const { return 0; }
+  virtual std::vector<RtpSource> GetSources() const;
 
  protected:
-  virtual ~RtpReceiverInterface() {}
+  ~RtpReceiverInterface() override = default;
 };
 
 // Define proxy for RtpReceiverInterface.
 // TODO(deadbeef): Move this to .cc file and out of api/. What threads methods
 // are called on is an implementation detail.
 BEGIN_SIGNALING_PROXY_MAP(RtpReceiver)
-  PROXY_SIGNALING_THREAD_DESTRUCTOR()
-  PROXY_CONSTMETHOD0(rtc::scoped_refptr<MediaStreamTrackInterface>, track)
-  PROXY_CONSTMETHOD0(std::vector<rtc::scoped_refptr<MediaStreamInterface>>,
-                     streams)
-  PROXY_CONSTMETHOD0(cricket::MediaType, media_type)
-  PROXY_CONSTMETHOD0(std::string, id)
-  PROXY_CONSTMETHOD0(RtpParameters, GetParameters);
-  PROXY_METHOD1(bool, SetParameters, const RtpParameters&)
-  PROXY_METHOD1(void, SetObserver, RtpReceiverObserverInterface*);
-  PROXY_CONSTMETHOD0(std::vector<RtpSource>, GetSources);
-  PROXY_CONSTMETHOD0(int, AttachmentId);
-  END_PROXY_MAP()
+PROXY_SIGNALING_THREAD_DESTRUCTOR()
+PROXY_CONSTMETHOD0(rtc::scoped_refptr<MediaStreamTrackInterface>, track)
+PROXY_CONSTMETHOD0(std::vector<rtc::scoped_refptr<MediaStreamInterface>>,
+                   streams)
+PROXY_CONSTMETHOD0(cricket::MediaType, media_type)
+PROXY_CONSTMETHOD0(std::string, id)
+PROXY_CONSTMETHOD0(RtpParameters, GetParameters);
+PROXY_METHOD1(bool, SetParameters, const RtpParameters&)
+PROXY_METHOD1(void, SetObserver, RtpReceiverObserverInterface*);
+PROXY_CONSTMETHOD0(std::vector<RtpSource>, GetSources);
+END_PROXY_MAP()
 
 }  // namespace webrtc
 

@@ -20,15 +20,6 @@
 
 namespace rtc {
 
-PlatformThreadId CurrentThreadId();
-PlatformThreadRef CurrentThreadRef();
-
-// Compares two thread identifiers for equality.
-bool IsThreadRefEqual(const PlatformThreadRef& a, const PlatformThreadRef& b);
-
-// Sets the current thread name.
-void SetCurrentThreadName(const char* name);
-
 // Callback function that the spawned thread will enter once spawned.
 // A return value of false is interpreted as that the function has no
 // more work to do and that the thread can be released.

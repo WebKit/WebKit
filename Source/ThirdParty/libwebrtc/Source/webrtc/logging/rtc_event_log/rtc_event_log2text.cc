@@ -13,13 +13,11 @@
 #include <iomanip>  // setfill, setw
 #include <iostream>
 #include <map>
-#include <sstream>
 #include <string>
 #include <utility>  // pair
 
-#include "call/video_config.h"
 #include "common_types.h"  // NOLINT(build/include)
-#include "logging/rtc_event_log/rtc_event_log_parser.h"
+#include "logging/rtc_event_log/rtc_event_log_parser_new.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/bye.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
@@ -40,6 +38,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/flags.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/strings/string_builder.h"
 
 namespace {
 
@@ -60,6 +59,7 @@ DEFINE_bool(rtcp, true, "Use --nortcp to exclude RTCP packets.");
 DEFINE_bool(playout, true, "Use --noplayout to exclude audio playout events.");
 DEFINE_bool(ana, true, "Use --noana to exclude ANA events.");
 DEFINE_bool(probe, true, "Use --noprobe to exclude probe events.");
+DEFINE_bool(ice, true, "Use --noice to exclude ICE events.");
 
 DEFINE_bool(print_full_packets,
             false,
@@ -72,7 +72,7 @@ DEFINE_string(ssrc,
               "starting with 0x).");
 DEFINE_bool(help, false, "Prints this message.");
 
-using MediaType = webrtc::ParsedRtcEventLog::MediaType;
+using MediaType = webrtc::ParsedRtcEventLogNew::MediaType;
 
 static uint32_t filtered_ssrc = 0;
 
@@ -164,7 +164,7 @@ webrtc::RtpHeaderExtensionMap GetDefaultHeaderExtensionMap() {
   return default_map;
 }
 
-void PrintSenderReport(const webrtc::ParsedRtcEventLog& parsed_stream,
+void PrintSenderReport(const webrtc::ParsedRtcEventLogNew& parsed_stream,
                        const webrtc::rtcp::CommonHeader& rtcp_block,
                        uint64_t log_timestamp,
                        webrtc::PacketDirection direction) {
@@ -181,7 +181,7 @@ void PrintSenderReport(const webrtc::ParsedRtcEventLog& parsed_stream,
             << "\ttimestamp=" << sr.rtp_timestamp() << std::endl;
 }
 
-void PrintReceiverReport(const webrtc::ParsedRtcEventLog& parsed_stream,
+void PrintReceiverReport(const webrtc::ParsedRtcEventLogNew& parsed_stream,
                          const webrtc::rtcp::CommonHeader& rtcp_block,
                          uint64_t log_timestamp,
                          webrtc::PacketDirection direction) {
@@ -197,7 +197,7 @@ void PrintReceiverReport(const webrtc::ParsedRtcEventLog& parsed_stream,
             << "\tssrc=" << rr.sender_ssrc() << std::endl;
 }
 
-void PrintXr(const webrtc::ParsedRtcEventLog& parsed_stream,
+void PrintXr(const webrtc::ParsedRtcEventLogNew& parsed_stream,
              const webrtc::rtcp::CommonHeader& rtcp_block,
              uint64_t log_timestamp,
              webrtc::PacketDirection direction) {
@@ -222,7 +222,7 @@ void PrintSdes(const webrtc::rtcp::CommonHeader& rtcp_block,
   RTC_NOTREACHED() << "SDES should have been redacted when writing the log";
 }
 
-void PrintBye(const webrtc::ParsedRtcEventLog& parsed_stream,
+void PrintBye(const webrtc::ParsedRtcEventLogNew& parsed_stream,
               const webrtc::rtcp::CommonHeader& rtcp_block,
               uint64_t log_timestamp,
               webrtc::PacketDirection direction) {
@@ -238,7 +238,7 @@ void PrintBye(const webrtc::ParsedRtcEventLog& parsed_stream,
             << "\tssrc=" << bye.sender_ssrc() << std::endl;
 }
 
-void PrintRtpFeedback(const webrtc::ParsedRtcEventLog& parsed_stream,
+void PrintRtpFeedback(const webrtc::ParsedRtcEventLogNew& parsed_stream,
                       const webrtc::rtcp::CommonHeader& rtcp_block,
                       uint64_t log_timestamp,
                       webrtc::PacketDirection direction) {
@@ -318,7 +318,7 @@ void PrintRtpFeedback(const webrtc::ParsedRtcEventLog& parsed_stream,
   }
 }
 
-void PrintPsFeedback(const webrtc::ParsedRtcEventLog& parsed_stream,
+void PrintPsFeedback(const webrtc::ParsedRtcEventLogNew& parsed_stream,
                      const webrtc::rtcp::CommonHeader& rtcp_block,
                      uint64_t log_timestamp,
                      webrtc::PacketDirection direction) {
@@ -369,30 +369,53 @@ void PrintPsFeedback(const webrtc::ParsedRtcEventLog& parsed_stream,
   }
 }
 
+enum class InputSource {
+  STDIN,
+  FILE,
+};
+
+void PrintUsageGuide(const std::string& program_name) {
+  std::cout
+      << "Tool for printing packet information from an RtcEventLog as text.\n"
+      << "* Run " + program_name + " --help for usage.\n"
+      << "* Example usage for parsing a file:\n"
+      << "  " << program_name + " input.rel\n"
+      << "* Example usage for parsing the stdin:\n"
+      << "  " << program_name + "\n";
+}
+
+// TODO(eladalon): Return a stream or file descriptor instead.
+InputSource ParseCommandLineFlags(int argc, char* argv[]) {
+  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) != 0) {
+    PrintUsageGuide(argv[0]);
+    exit(-1);
+  }
+
+  if (FLAG_help) {
+    PrintUsageGuide(argv[0]);
+    std::cout << std::endl;
+    rtc::FlagList::Print(nullptr, false);
+    exit(0);
+  }
+
+  switch (argc) {
+    case 1:
+      return InputSource::STDIN;
+    case 2:
+      return InputSource::FILE;
+    default:
+      PrintUsageGuide(argv[0]);
+      exit(-1);
+  }
+}
+
 }  // namespace
 
 // This utility will print basic information about each packet to stdout.
 // Note that parser will assert if the protobuf event is missing some required
 // fields and we attempt to access them. We don't handle this at the moment.
 int main(int argc, char* argv[]) {
-  std::string program_name = argv[0];
-  std::string usage =
-      "Tool for printing packet information from an RtcEventLog as text.\n"
-      "Run " +
-      program_name +
-      " --help for usage.\n"
-      "Example usage:\n" +
-      program_name + " input.rel\n";
-  if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true) ||
-      FLAG_help || argc != 2) {
-    std::cout << usage;
-    if (FLAG_help) {
-      rtc::FlagList::Print(nullptr, false);
-      return 0;
-    }
-    return 1;
-  }
-  std::string input_file = argv[1];
+  InputSource input_source = ParseCommandLineFlags(argc, argv);
 
   if (strlen(FLAG_ssrc) > 0)
     RTC_CHECK(ParseSsrc(FLAG_ssrc)) << "Flag verification has failed.";
@@ -400,16 +423,30 @@ int main(int argc, char* argv[]) {
   webrtc::RtpHeaderExtensionMap default_map = GetDefaultHeaderExtensionMap();
   bool default_map_used = false;
 
-  webrtc::ParsedRtcEventLog parsed_stream;
-  if (!parsed_stream.ParseFile(input_file)) {
-    std::cerr << "Error while parsing input file: " << input_file << std::endl;
-    return -1;
+  webrtc::ParsedRtcEventLogNew parsed_stream;
+
+  switch (input_source) {
+    case InputSource::STDIN: {
+      if (!parsed_stream.ParseStream(std::cin)) {
+        std::cerr << "Error while parsing input stream." << std::endl;
+        return -1;
+      }
+      break;
+    }
+    case InputSource::FILE: {
+      if (!parsed_stream.ParseFile(argv[1])) {
+        std::cerr << "Error while parsing input file: " << argv[1] << std::endl;
+        return -1;
+      }
+      break;
+    }
+    default: { RTC_NOTREACHED() << "Unsupported input source."; }
   }
 
   for (size_t i = 0; i < parsed_stream.GetNumberOfEvents(); i++) {
     bool event_recognized = false;
     switch (parsed_stream.GetEventType(i)) {
-      case webrtc::ParsedRtcEventLog::UNKNOWN_EVENT: {
+      case webrtc::ParsedRtcEventLogNew::EventType::UNKNOWN_EVENT: {
         if (FLAG_unknown) {
           std::cout << parsed_stream.GetTimestamp(i) << "\tUNKNOWN_EVENT"
                     << std::endl;
@@ -418,7 +455,7 @@ int main(int argc, char* argv[]) {
         break;
       }
 
-      case webrtc::ParsedRtcEventLog::LOG_START: {
+      case webrtc::ParsedRtcEventLogNew::EventType::LOG_START: {
         if (FLAG_startstop) {
           std::cout << parsed_stream.GetTimestamp(i) << "\tLOG_START"
                     << std::endl;
@@ -427,7 +464,7 @@ int main(int argc, char* argv[]) {
         break;
       }
 
-      case webrtc::ParsedRtcEventLog::LOG_END: {
+      case webrtc::ParsedRtcEventLogNew::EventType::LOG_END: {
         if (FLAG_startstop) {
           std::cout << parsed_stream.GetTimestamp(i) << "\tLOG_END"
                     << std::endl;
@@ -436,13 +473,13 @@ int main(int argc, char* argv[]) {
         break;
       }
 
-      case webrtc::ParsedRtcEventLog::RTP_EVENT: {
+      case webrtc::ParsedRtcEventLogNew::EventType::RTP_EVENT: {
         if (FLAG_rtp) {
           size_t header_length;
           size_t total_length;
           uint8_t header[IP_PACKET_SIZE];
           webrtc::PacketDirection direction;
-          webrtc::RtpHeaderExtensionMap* extension_map =
+          const webrtc::RtpHeaderExtensionMap* extension_map =
               parsed_stream.GetRtpHeader(i, &direction, header, &header_length,
                                          &total_length, nullptr);
 
@@ -492,8 +529,8 @@ int main(int argc, char* argv[]) {
                       << parsed_header.extension.transmissionTimeOffset;
           }
           if (parsed_header.extension.hasAudioLevel) {
-            std::cout << "\tAudioLevel=" <<
-                static_cast<int>(parsed_header.extension.audioLevel);
+            std::cout << "\tAudioLevel="
+                      << static_cast<int>(parsed_header.extension.audioLevel);
           }
           std::cout << std::endl;
           if (FLAG_print_full_packets) {
@@ -513,7 +550,7 @@ int main(int argc, char* argv[]) {
         break;
       }
 
-      case webrtc::ParsedRtcEventLog::RTCP_EVENT: {
+      case webrtc::ParsedRtcEventLogNew::EventType::RTCP_EVENT: {
         if (FLAG_rtcp) {
           size_t length;
           uint8_t packet[IP_PACKET_SIZE];
@@ -580,37 +617,34 @@ int main(int argc, char* argv[]) {
         break;
       }
 
-      case webrtc::ParsedRtcEventLog::AUDIO_PLAYOUT_EVENT: {
+      case webrtc::ParsedRtcEventLogNew::EventType::AUDIO_PLAYOUT_EVENT: {
         if (FLAG_playout) {
-          uint32_t ssrc;
-          parsed_stream.GetAudioPlayout(i, &ssrc);
-          std::cout << parsed_stream.GetTimestamp(i) << "\tAUDIO_PLAYOUT"
-                    << "\tssrc=" << ssrc << std::endl;
+          auto audio_playout = parsed_stream.GetAudioPlayout(i);
+          std::cout << audio_playout.log_time_us() << "\tAUDIO_PLAYOUT"
+                    << "\tssrc=" << audio_playout.ssrc << std::endl;
         }
         event_recognized = true;
         break;
       }
 
-      case webrtc::ParsedRtcEventLog::LOSS_BASED_BWE_UPDATE: {
+      case webrtc::ParsedRtcEventLogNew::EventType::LOSS_BASED_BWE_UPDATE: {
         if (FLAG_bwe) {
-          int32_t bitrate_bps;
-          uint8_t fraction_loss;
-          int32_t total_packets;
-          parsed_stream.GetLossBasedBweUpdate(i, &bitrate_bps, &fraction_loss,
-                                              &total_packets);
-          std::cout << parsed_stream.GetTimestamp(i) << "\tBWE(LOSS_BASED)"
-                    << "\tbitrate_bps=" << bitrate_bps << "\tfraction_loss="
-                    << static_cast<unsigned>(fraction_loss)
-                    << "\ttotal_packets=" << total_packets << std::endl;
+          auto bwe_update = parsed_stream.GetLossBasedBweUpdate(i);
+          std::cout << bwe_update.log_time_us() << "\tBWE(LOSS_BASED)"
+                    << "\tbitrate_bps=" << bwe_update.bitrate_bps
+                    << "\tfraction_lost="
+                    << static_cast<unsigned>(bwe_update.fraction_lost)
+                    << "\texpected_packets=" << bwe_update.expected_packets
+                    << std::endl;
         }
         event_recognized = true;
         break;
       }
 
-      case webrtc::ParsedRtcEventLog::DELAY_BASED_BWE_UPDATE: {
+      case webrtc::ParsedRtcEventLogNew::EventType::DELAY_BASED_BWE_UPDATE: {
         if (FLAG_bwe) {
           auto bwe_update = parsed_stream.GetDelayBasedBweUpdate(i);
-          std::cout << parsed_stream.GetTimestamp(i) << "\tBWE(DELAY_BASED)"
+          std::cout << bwe_update.log_time_us() << "\tBWE(DELAY_BASED)"
                     << "\tbitrate_bps=" << bwe_update.bitrate_bps
                     << "\tdetector_state="
                     << static_cast<int>(bwe_update.detector_state) << std::endl;
@@ -619,7 +653,8 @@ int main(int argc, char* argv[]) {
         break;
       }
 
-      case webrtc::ParsedRtcEventLog::VIDEO_RECEIVER_CONFIG_EVENT: {
+      case webrtc::ParsedRtcEventLogNew::EventType::
+          VIDEO_RECEIVER_CONFIG_EVENT: {
         if (FLAG_config && FLAG_video && FLAG_incoming) {
           webrtc::rtclog::StreamConfig config =
               parsed_stream.GetVideoReceiveConfig(i);
@@ -644,7 +679,7 @@ int main(int argc, char* argv[]) {
         break;
       }
 
-      case webrtc::ParsedRtcEventLog::VIDEO_SENDER_CONFIG_EVENT: {
+      case webrtc::ParsedRtcEventLogNew::EventType::VIDEO_SENDER_CONFIG_EVENT: {
         if (FLAG_config && FLAG_video && FLAG_outgoing) {
           std::vector<webrtc::rtclog::StreamConfig> configs =
               parsed_stream.GetVideoSendConfig(i);
@@ -671,7 +706,8 @@ int main(int argc, char* argv[]) {
         break;
       }
 
-      case webrtc::ParsedRtcEventLog::AUDIO_RECEIVER_CONFIG_EVENT: {
+      case webrtc::ParsedRtcEventLogNew::EventType::
+          AUDIO_RECEIVER_CONFIG_EVENT: {
         if (FLAG_config && FLAG_audio && FLAG_incoming) {
           webrtc::rtclog::StreamConfig config =
               parsed_stream.GetAudioReceiveConfig(i);
@@ -696,7 +732,7 @@ int main(int argc, char* argv[]) {
         break;
       }
 
-      case webrtc::ParsedRtcEventLog::AUDIO_SENDER_CONFIG_EVENT: {
+      case webrtc::ParsedRtcEventLogNew::EventType::AUDIO_SENDER_CONFIG_EVENT: {
         if (FLAG_config && FLAG_audio && FLAG_outgoing) {
           webrtc::rtclog::StreamConfig config =
               parsed_stream.GetAudioSendConfig(i);
@@ -720,41 +756,43 @@ int main(int argc, char* argv[]) {
         break;
       }
 
-      case webrtc::ParsedRtcEventLog::AUDIO_NETWORK_ADAPTATION_EVENT: {
+      case webrtc::ParsedRtcEventLogNew::EventType::
+          AUDIO_NETWORK_ADAPTATION_EVENT: {
         if (FLAG_ana) {
-          webrtc::AudioEncoderRuntimeConfig ana_config;
-          parsed_stream.GetAudioNetworkAdaptation(i, &ana_config);
-          std::stringstream ss;
-          ss << parsed_stream.GetTimestamp(i) << "\tANA_UPDATE";
-          if (ana_config.bitrate_bps) {
-            ss << "\tbitrate_bps=" << *ana_config.bitrate_bps;
+          auto ana_event = parsed_stream.GetAudioNetworkAdaptation(i);
+          char buffer[300];
+          rtc::SimpleStringBuilder builder(buffer);
+          builder << parsed_stream.GetTimestamp(i) << "\tANA_UPDATE";
+          if (ana_event.config.bitrate_bps) {
+            builder << "\tbitrate_bps=" << *ana_event.config.bitrate_bps;
           }
-          if (ana_config.frame_length_ms) {
-            ss << "\tframe_length_ms=" << *ana_config.frame_length_ms;
+          if (ana_event.config.frame_length_ms) {
+            builder << "\tframe_length_ms="
+                    << *ana_event.config.frame_length_ms;
           }
-          if (ana_config.uplink_packet_loss_fraction) {
-            ss << "\tuplink_packet_loss_fraction="
-               << *ana_config.uplink_packet_loss_fraction;
+          if (ana_event.config.uplink_packet_loss_fraction) {
+            builder << "\tuplink_packet_loss_fraction="
+                    << *ana_event.config.uplink_packet_loss_fraction;
           }
-          if (ana_config.enable_fec) {
-            ss << "\tenable_fec=" << *ana_config.enable_fec;
+          if (ana_event.config.enable_fec) {
+            builder << "\tenable_fec=" << *ana_event.config.enable_fec;
           }
-          if (ana_config.enable_dtx) {
-            ss << "\tenable_dtx=" << *ana_config.enable_dtx;
+          if (ana_event.config.enable_dtx) {
+            builder << "\tenable_dtx=" << *ana_event.config.enable_dtx;
           }
-          if (ana_config.num_channels) {
-            ss << "\tnum_channels=" << *ana_config.num_channels;
+          if (ana_event.config.num_channels) {
+            builder << "\tnum_channels=" << *ana_event.config.num_channels;
           }
-          std::cout << ss.str() << std::endl;
+          std::cout << builder.str() << std::endl;
         }
         event_recognized = true;
         break;
       }
 
-      case webrtc::ParsedRtcEventLog::BWE_PROBE_CLUSTER_CREATED_EVENT: {
+      case webrtc::ParsedRtcEventLogNew::EventType::
+          BWE_PROBE_CLUSTER_CREATED_EVENT: {
         if (FLAG_probe) {
-          webrtc::ParsedRtcEventLog::BweProbeClusterCreatedEvent probe_event =
-              parsed_stream.GetBweProbeClusterCreated(i);
+          auto probe_event = parsed_stream.GetBweProbeClusterCreated(i);
           std::cout << parsed_stream.GetTimestamp(i) << "\tPROBE_CREATED("
                     << probe_event.id << ")"
                     << "\tbitrate_bps=" << probe_event.bitrate_bps
@@ -765,33 +803,66 @@ int main(int argc, char* argv[]) {
         break;
       }
 
-      case webrtc::ParsedRtcEventLog::BWE_PROBE_RESULT_EVENT: {
+      case webrtc::ParsedRtcEventLogNew::EventType::BWE_PROBE_FAILURE_EVENT: {
         if (FLAG_probe) {
-          webrtc::ParsedRtcEventLog::BweProbeResultEvent probe_result =
-              parsed_stream.GetBweProbeResult(i);
-          if (probe_result.failure_reason) {
-            std::cout << parsed_stream.GetTimestamp(i) << "\tPROBE_SUCCESS("
-                      << probe_result.id << ")"
-                      << "\tfailure_reason="
-                      << static_cast<int>(*probe_result.failure_reason)
-                      << std::endl;
-          } else {
-            std::cout << parsed_stream.GetTimestamp(i) << "\tPROBE_SUCCESS("
-                      << probe_result.id << ")"
-                      << "\tbitrate_bps=" << *probe_result.bitrate_bps
-                      << std::endl;
-          }
+          webrtc::LoggedBweProbeFailureEvent probe_result =
+              parsed_stream.GetBweProbeFailure(i);
+          std::cout << parsed_stream.GetTimestamp(i) << "\tPROBE_FAILURE("
+                    << probe_result.id << ")"
+                    << "\tfailure_reason="
+                    << static_cast<int>(probe_result.failure_reason)
+                    << std::endl;
         }
         event_recognized = true;
         break;
       }
 
-      case webrtc::ParsedRtcEventLog::ALR_STATE_EVENT: {
+      case webrtc::ParsedRtcEventLogNew::EventType::BWE_PROBE_SUCCESS_EVENT: {
+        if (FLAG_probe) {
+          webrtc::LoggedBweProbeSuccessEvent probe_result =
+              parsed_stream.GetBweProbeSuccess(i);
+          std::cout << parsed_stream.GetTimestamp(i) << "\tPROBE_SUCCESS("
+                    << probe_result.id << ")"
+                    << "\tbitrate_bps=" << probe_result.bitrate_bps
+                    << std::endl;
+        }
+        event_recognized = true;
+        break;
+      }
+
+      case webrtc::ParsedRtcEventLogNew::EventType::ALR_STATE_EVENT: {
         if (FLAG_bwe) {
-          webrtc::ParsedRtcEventLog::AlrStateEvent alr_state =
-              parsed_stream.GetAlrState(i);
+          webrtc::LoggedAlrStateEvent alr_state = parsed_stream.GetAlrState(i);
           std::cout << parsed_stream.GetTimestamp(i) << "\tALR_STATE"
                     << "\tin_alr=" << alr_state.in_alr << std::endl;
+        }
+        event_recognized = true;
+        break;
+      }
+
+      case webrtc::ParsedRtcEventLogNew::EventType::ICE_CANDIDATE_PAIR_CONFIG: {
+        if (FLAG_ice) {
+          webrtc::LoggedIceCandidatePairConfig ice_cp_config =
+              parsed_stream.GetIceCandidatePairConfig(i);
+          // TODO(qingsi): convert the numeric representation of states to text
+          std::cout << parsed_stream.GetTimestamp(i)
+                    << "\tICE_CANDIDATE_PAIR_CONFIG"
+                    << "\ttype=" << static_cast<int>(ice_cp_config.type)
+                    << std::endl;
+        }
+        event_recognized = true;
+        break;
+      }
+
+      case webrtc::ParsedRtcEventLogNew::EventType::ICE_CANDIDATE_PAIR_EVENT: {
+        if (FLAG_ice) {
+          webrtc::LoggedIceCandidatePairEvent ice_cp_event =
+              parsed_stream.GetIceCandidatePairEvent(i);
+          // TODO(qingsi): convert the numeric representation of states to text
+          std::cout << parsed_stream.GetTimestamp(i)
+                    << "\tICE_CANDIDATE_PAIR_EVENT"
+                    << "\ttype=" << static_cast<int>(ice_cp_event.type)
+                    << std::endl;
         }
         event_recognized = true;
         break;
@@ -799,8 +870,9 @@ int main(int argc, char* argv[]) {
     }
 
     if (!event_recognized) {
-      std::cout << "Unrecognized event (" << parsed_stream.GetEventType(i)
-                << ")" << std::endl;
+      std::cout << "Unrecognized event ("
+                << static_cast<int>(parsed_stream.GetEventType(i)) << ")"
+                << std::endl;
     }
   }
   return 0;

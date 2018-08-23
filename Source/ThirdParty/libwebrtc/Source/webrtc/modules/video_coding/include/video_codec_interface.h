@@ -19,7 +19,6 @@
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/include/module_common_types.h"
 #include "modules/video_coding/include/video_error_codes.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -28,24 +27,21 @@ class RTPFragmentationHeader;  // forward declaration
 // Note: if any pointers are added to this struct, it must be fitted
 // with a copy-constructor. See below.
 struct CodecSpecificInfoVP8 {
-  int16_t pictureId;  // Negative value to skip pictureId.
   bool nonReference;
   uint8_t simulcastIdx;
   uint8_t temporalIdx;
   bool layerSync;
-  int tl0PicIdx;  // Negative value to skip tl0PicIdx.
   int8_t keyIdx;  // Negative value to skip keyIdx.
 };
 
 struct CodecSpecificInfoVP9 {
-  int16_t picture_id;  // Negative value to skip pictureId.
-
-  bool inter_pic_predicted;  // This layer frame is dependent on previously
-                             // coded frame(s).
+  bool first_frame_in_picture;  // First frame, increment picture_id.
+  bool inter_pic_predicted;     // This layer frame is dependent on previously
+                                // coded frame(s).
   bool flexible_mode;
   bool ss_data_available;
+  bool non_ref_for_inter_layer_pred;
 
-  int tl0_pic_idx;  // Negative value to skip tl0PicIdx.
   uint8_t temporal_idx;
   uint8_t spatial_idx;
   bool temporal_up_switch;
@@ -63,6 +59,8 @@ struct CodecSpecificInfoVP9 {
   // Frame reference data.
   uint8_t num_ref_pics;
   uint8_t p_diff[kMaxVp9RefPics];
+
+  bool end_of_picture;
 };
 
 struct CodecSpecificInfoGeneric {
@@ -71,11 +69,7 @@ struct CodecSpecificInfoGeneric {
 
 struct CodecSpecificInfoH264 {
   H264PacketizationMode packetization_mode;
-};
-
-struct CodecSpecificInfoStereo {
-  VideoCodecType associated_codec_type;
-  StereoIndices indices;
+  uint8_t simulcast_idx;
 };
 
 union CodecSpecificInfoUnion {
@@ -83,14 +77,15 @@ union CodecSpecificInfoUnion {
   CodecSpecificInfoVP8 VP8;
   CodecSpecificInfoVP9 VP9;
   CodecSpecificInfoH264 H264;
-  CodecSpecificInfoStereo stereo;
 };
 
 // Note: if any pointers are added to this struct or its sub-structs, it
 // must be fitted with a copy-constructor. This is because it is copied
 // in the copy-constructor of VCMEncodedFrame.
 struct CodecSpecificInfo {
-  CodecSpecificInfo() : codecType(kVideoCodecUnknown), codec_name(nullptr) {}
+  CodecSpecificInfo() : codecType(kVideoCodecGeneric), codec_name(nullptr) {
+    memset(&codecSpecific, 0, sizeof(codecSpecific));
+  }
   VideoCodecType codecType;
   const char* codec_name;
   CodecSpecificInfoUnion codecSpecific;

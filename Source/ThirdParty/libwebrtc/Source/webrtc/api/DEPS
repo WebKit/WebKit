@@ -4,22 +4,12 @@ include_rules = [
   "+media",
   "+p2p",
   "+pc",
+  "+logging/rtc_event_log/rtc_event_log_factory_interface.h",
+  "+modules/audio_processing/include",
+  "+system_wrappers/include",
 ]
 
 specific_include_rules = {
-  "peerconnection_jni\.cc": [
-    "+voice_engine",
-  ],
-
-  # TODO(ossu): Remove this exception when {builtin_,}audio_encoder_factory.h
-  # has moved to api/.
-  "peerconnectioninterface\.h": [
-    "+call/callfactoryinterface.h",
-    "+logging/rtc_event_log/rtc_event_log_factory_interface.h",
-    "+modules/audio_coding/codecs/audio_encoder_factory.h",
-    "+modules/audio_coding/codecs/builtin_audio_encoder_factory.h",
-  ],
-
   # Needed because AudioEncoderOpus is in the wrong place for
   # backwards compatibilty reasons. See
   # https://bugs.chromium.org/p/webrtc/issues/detail?id=7847
@@ -33,14 +23,7 @@ specific_include_rules = {
   # since no one #includes them.
   ".*\.cc": [
     "+modules/audio_coding",
-  ],
-
-  ".*i420_buffer\.h": [
-    "+system_wrappers/include/aligned_malloc.h",
-  ],
-
-  # Needed to use the APM statistics.
-  "mediastreaminterface.h": [
-    "+modules/audio_processing/include/audio_processing_statistics.h",
+    "+modules/audio_processing",
+    "+modules/video_coding",
   ],
 }

@@ -45,6 +45,16 @@ const I444BufferInterface* VideoFrameBuffer::GetI444() const {
   return static_cast<const I444BufferInterface*>(this);
 }
 
+I010BufferInterface* VideoFrameBuffer::GetI010() {
+  RTC_CHECK(type() == Type::kI010);
+  return static_cast<I010BufferInterface*>(this);
+}
+
+const I010BufferInterface* VideoFrameBuffer::GetI010() const {
+  RTC_CHECK(type() == Type::kI010);
+  return static_cast<const I010BufferInterface*>(this);
+}
+
 VideoFrameBuffer::Type I420BufferInterface::type() const {
   return Type::kI420;
 }
@@ -75,6 +85,18 @@ int I444BufferInterface::ChromaWidth() const {
 
 int I444BufferInterface::ChromaHeight() const {
   return height();
+}
+
+VideoFrameBuffer::Type I010BufferInterface::type() const {
+  return Type::kI010;
+}
+
+int I010BufferInterface::ChromaWidth() const {
+  return (width() + 1) / 2;
+}
+
+int I010BufferInterface::ChromaHeight() const {
+  return (height() + 1) / 2;
 }
 
 }  // namespace webrtc

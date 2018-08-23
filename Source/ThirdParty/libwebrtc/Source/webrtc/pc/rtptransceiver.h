@@ -68,8 +68,6 @@ class RtpTransceiver final
           receiver);
   ~RtpTransceiver() override;
 
-  cricket::MediaType media_type() const { return media_type_; }
-
   // Returns the Voice/VideoChannel set for this transceiver. May be null if
   // the transceiver is not in the currently set local/remote description.
   cricket::BaseChannel* channel() const { return channel_; }
@@ -121,15 +119,15 @@ class RtpTransceiver final
   // when setting a local offer we need a way to remember which transceiver was
   // used to create which media section in the offer. Storing the mline index
   // in CreateOffer is specified in JSEP to allow us to do that.
-  rtc::Optional<size_t> mline_index() const { return mline_index_; }
-  void set_mline_index(rtc::Optional<size_t> mline_index) {
+  absl::optional<size_t> mline_index() const { return mline_index_; }
+  void set_mline_index(absl::optional<size_t> mline_index) {
     mline_index_ = mline_index;
   }
 
   // Sets the MID for this transceiver. If the MID is not null, then the
   // transceiver is considered "associated" with the media section that has the
   // same MID.
-  void set_mid(const rtc::Optional<std::string>& mid) { mid_ = mid; }
+  void set_mid(const absl::optional<std::string>& mid) { mid_ = mid; }
 
   // Sets the intended direction for this transceiver. Intended to be used
   // internally over SetDirection since this does not trigger a negotiation
@@ -142,6 +140,11 @@ class RtpTransceiver final
   // answer exchange. The current direction is null before an answer with this
   // transceiver has been set.
   void set_current_direction(RtpTransceiverDirection direction);
+
+  // Sets the fired direction for this transceiver. The fired direction is null
+  // until SetRemoteDescription is called or an answer is set (either local or
+  // remote).
+  void set_fired_direction(RtpTransceiverDirection direction);
 
   // According to JSEP rules for SetRemoteDescription, RtpTransceivers can be
   // reused only if they were added by AddTrack.
@@ -156,14 +159,20 @@ class RtpTransceiver final
     return has_ever_been_used_to_send_;
   }
 
+  // Fired when the RtpTransceiver state changes such that negotiation is now
+  // needed (e.g., in response to a direction change).
+  sigslot::signal0<> SignalNegotiationNeeded;
+
   // RtpTransceiverInterface implementation.
-  rtc::Optional<std::string> mid() const override;
+  cricket::MediaType media_type() const override;
+  absl::optional<std::string> mid() const override;
   rtc::scoped_refptr<RtpSenderInterface> sender() const override;
   rtc::scoped_refptr<RtpReceiverInterface> receiver() const override;
   bool stopped() const override;
   RtpTransceiverDirection direction() const override;
   void SetDirection(RtpTransceiverDirection new_direction) override;
-  rtc::Optional<RtpTransceiverDirection> current_direction() const override;
+  absl::optional<RtpTransceiverDirection> current_direction() const override;
+  absl::optional<RtpTransceiverDirection> fired_direction() const override;
   void Stop() override;
   void SetCodecPreferences(rtc::ArrayView<RtpCodecCapability> codecs) override;
 
@@ -180,9 +189,10 @@ class RtpTransceiver final
 
   bool stopped_ = false;
   RtpTransceiverDirection direction_ = RtpTransceiverDirection::kInactive;
-  rtc::Optional<RtpTransceiverDirection> current_direction_;
-  rtc::Optional<std::string> mid_;
-  rtc::Optional<size_t> mline_index_;
+  absl::optional<RtpTransceiverDirection> current_direction_;
+  absl::optional<RtpTransceiverDirection> fired_direction_;
+  absl::optional<std::string> mid_;
+  absl::optional<size_t> mline_index_;
   bool created_by_addtrack_ = false;
   bool has_ever_been_used_to_send_ = false;
 
@@ -191,13 +201,15 @@ class RtpTransceiver final
 
 BEGIN_SIGNALING_PROXY_MAP(RtpTransceiver)
 PROXY_SIGNALING_THREAD_DESTRUCTOR()
-PROXY_CONSTMETHOD0(rtc::Optional<std::string>, mid);
+PROXY_CONSTMETHOD0(cricket::MediaType, media_type);
+PROXY_CONSTMETHOD0(absl::optional<std::string>, mid);
 PROXY_CONSTMETHOD0(rtc::scoped_refptr<RtpSenderInterface>, sender);
 PROXY_CONSTMETHOD0(rtc::scoped_refptr<RtpReceiverInterface>, receiver);
 PROXY_CONSTMETHOD0(bool, stopped);
 PROXY_CONSTMETHOD0(RtpTransceiverDirection, direction);
 PROXY_METHOD1(void, SetDirection, RtpTransceiverDirection);
-PROXY_CONSTMETHOD0(rtc::Optional<RtpTransceiverDirection>, current_direction);
+PROXY_CONSTMETHOD0(absl::optional<RtpTransceiverDirection>, current_direction);
+PROXY_CONSTMETHOD0(absl::optional<RtpTransceiverDirection>, fired_direction);
 PROXY_METHOD0(void, Stop);
 PROXY_METHOD1(void, SetCodecPreferences, rtc::ArrayView<RtpCodecCapability>);
 END_PROXY_MAP();

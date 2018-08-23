@@ -27,7 +27,6 @@
 #include "modules/include/module_common_types.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
 #include "rtc_base/constructormagic.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -37,7 +36,7 @@ class RtpPacketizerVp9 : public RtpPacketizer {
                    size_t max_payload_length,
                    size_t last_packet_reduction_len);
 
-  virtual ~RtpPacketizerVp9();
+  ~RtpPacketizerVp9() override;
 
   std::string ToString() override;
 
@@ -87,10 +86,9 @@ class RtpPacketizerVp9 : public RtpPacketizer {
   RTC_DISALLOW_COPY_AND_ASSIGN(RtpPacketizerVp9);
 };
 
-
 class RtpDepacketizerVp9 : public RtpDepacketizer {
  public:
-  virtual ~RtpDepacketizerVp9() {}
+  ~RtpDepacketizerVp9() override = default;
 
   bool Parse(ParsedPayload* parsed_payload,
              const uint8_t* payload,

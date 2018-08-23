@@ -12,6 +12,7 @@
 
 #include "modules/desktop_capture/mac/desktop_configuration.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/trace_event.h"
 #include "system_wrappers/include/event_wrapper.h"
 
 namespace webrtc {
@@ -42,7 +43,7 @@ DesktopConfigurationMonitor::~DesktopConfigurationMonitor() {
 
 void DesktopConfigurationMonitor::Lock() {
   if (!display_configuration_capture_event_->Wait(
-              kDisplayConfigurationEventTimeoutMs)) {
+          kDisplayConfigurationEventTimeoutMs)) {
     RTC_LOG_F(LS_ERROR) << "Event wait timed out.";
     abort();
   }
@@ -56,7 +57,7 @@ void DesktopConfigurationMonitor::Unlock() {
 void DesktopConfigurationMonitor::DisplaysReconfiguredCallback(
     CGDirectDisplayID display,
     CGDisplayChangeSummaryFlags flags,
-    void *user_parameter) {
+    void* user_parameter) {
   DesktopConfigurationMonitor* monitor =
       reinterpret_cast<DesktopConfigurationMonitor*>(user_parameter);
   monitor->DisplaysReconfigured(display, flags);
@@ -65,6 +66,11 @@ void DesktopConfigurationMonitor::DisplaysReconfiguredCallback(
 void DesktopConfigurationMonitor::DisplaysReconfigured(
     CGDirectDisplayID display,
     CGDisplayChangeSummaryFlags flags) {
+  TRACE_EVENT0("webrtc", "DesktopConfigurationMonitor::DisplaysReconfigured");
+  RTC_LOG(LS_INFO) << "DisplaysReconfigured: "
+                   << "DisplayID " << display << "; ChangeSummaryFlags "
+                   << flags;
+
   if (flags & kCGDisplayBeginConfigurationFlag) {
     if (reconfiguring_displays_.empty()) {
       // If this is the first display to start reconfiguring then wait on

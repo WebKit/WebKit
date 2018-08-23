@@ -63,14 +63,13 @@ class FrameEditingTest : public ::testing::Test {
       if (!feof(ref_video_fid)) {
         EXPECT_EQ(kFrameSize, num_bytes_read_);
       }
-      num_bytes_read_ = fread(test_buffer->get(), 1, kFrameSize,
-                              test_video_fid);
+      num_bytes_read_ =
+          fread(test_buffer->get(), 1, kFrameSize, test_video_fid);
       if (!feof(test_video_fid)) {
         EXPECT_EQ(kFrameSize, num_bytes_read_);
       }
       if (!feof(test_video_fid) && !feof(test_video_fid)) {
-        EXPECT_EQ(0, memcmp(ref_buffer->get(), test_buffer->get(),
-                            kFrameSize));
+        EXPECT_EQ(0, memcmp(ref_buffer->get(), test_buffer->get(), kFrameSize));
       }
     }
     // There should not be anything left in either stream.
@@ -91,26 +90,26 @@ TEST_F(FrameEditingTest, ValidInPath) {
   const int kInterval = -1;
   const int kLastFrameToProcess = 240;
 
-  int result = EditFrames(reference_video_, kWidth, kHeight,
-                          kFirstFrameToProcess, kInterval, kLastFrameToProcess,
-                          test_video_);
+  int result =
+      EditFrames(reference_video_, kWidth, kHeight, kFirstFrameToProcess,
+                 kInterval, kLastFrameToProcess, test_video_);
   EXPECT_EQ(0, result);
 
   for (int i = 1; i < kFirstFrameToProcess; ++i) {
-    num_bytes_read_ = fread(original_buffer_.get(), 1, kFrameSize,
-                            original_fid_);
+    num_bytes_read_ =
+        fread(original_buffer_.get(), 1, kFrameSize, original_fid_);
     EXPECT_EQ(kFrameSize, num_bytes_read_);
 
     num_bytes_read_ = fread(edited_buffer_.get(), 1, kFrameSize, edited_fid_);
     EXPECT_EQ(kFrameSize, num_bytes_read_);
 
-    EXPECT_EQ(0, memcmp(original_buffer_.get(), edited_buffer_.get(),
-                        kFrameSize));
+    EXPECT_EQ(0,
+              memcmp(original_buffer_.get(), edited_buffer_.get(), kFrameSize));
   }
   // Do not compare the frames that have been cut.
   for (int i = kFirstFrameToProcess; i <= kLastFrameToProcess; ++i) {
-    num_bytes_read_ = fread(original_buffer_.get(), 1, kFrameSize,
-                            original_fid_);
+    num_bytes_read_ =
+        fread(original_buffer_.get(), 1, kFrameSize, original_fid_);
     EXPECT_EQ(kFrameSize, num_bytes_read_);
   }
   CompareToTheEnd(edited_fid_, original_fid_, &original_buffer_,
@@ -122,9 +121,9 @@ TEST_F(FrameEditingTest, EmptySetToCut) {
   const int kInterval = -1;
   const int kLastFrameToProcess = 1;
 
-  int result = EditFrames(reference_video_, kWidth, kHeight,
-                          kFirstFrameToProcess, kInterval, kLastFrameToProcess,
-                          test_video_);
+  int result =
+      EditFrames(reference_video_, kWidth, kHeight, kFirstFrameToProcess,
+                 kInterval, kLastFrameToProcess, test_video_);
   EXPECT_EQ(-10, result);
 }
 
@@ -145,9 +144,9 @@ TEST_F(FrameEditingTest, DeletingEverySecondFrame) {
   const int kInterval = -2;
   const int kLastFrameToProcess = 10000;
   // Set kLastFrameToProcess to a large value so that all frame are processed.
-  int result = EditFrames(reference_video_, kWidth, kHeight,
-                          kFirstFrameToProcess, kInterval, kLastFrameToProcess,
-                          test_video_);
+  int result =
+      EditFrames(reference_video_, kWidth, kHeight, kFirstFrameToProcess,
+                 kInterval, kLastFrameToProcess, test_video_);
   EXPECT_EQ(0, result);
 
   while (!feof(original_fid_) && !feof(edited_fid_)) {
@@ -162,14 +161,13 @@ TEST_F(FrameEditingTest, DeletingEverySecondFrame) {
     // every second frame.
     // num_frames_read_ - 1 because we have deleted frame number 2, 4 , 6 etc.
     if ((num_frames_read_ - 1) % kInterval == -1) {
-      num_bytes_read_ = fread(edited_buffer_.get(), 1, kFrameSize,
-                              edited_fid_);
+      num_bytes_read_ = fread(edited_buffer_.get(), 1, kFrameSize, edited_fid_);
       if (!feof(edited_fid_)) {
         EXPECT_EQ(kFrameSize, num_bytes_read_);
       }
       if (!feof(original_fid_) && !feof(edited_fid_)) {
-        EXPECT_EQ(0, memcmp(original_buffer_.get(),
-                            edited_buffer_.get(), kFrameSize));
+        EXPECT_EQ(0, memcmp(original_buffer_.get(), edited_buffer_.get(),
+                            kFrameSize));
       }
     }
   }
@@ -180,33 +178,32 @@ TEST_F(FrameEditingTest, RepeatFrames) {
   const int kInterval = 2;
   const int kLastFrameToProcess = 240;
 
-  int result = EditFrames(reference_video_, kWidth, kHeight,
-                          kFirstFrameToProcess, kInterval, kLastFrameToProcess,
-                          test_video_);
+  int result =
+      EditFrames(reference_video_, kWidth, kHeight, kFirstFrameToProcess,
+                 kInterval, kLastFrameToProcess, test_video_);
   EXPECT_EQ(0, result);
 
   for (int i = 1; i < kFirstFrameToProcess; ++i) {
-    num_bytes_read_ = fread(original_buffer_.get(), 1, kFrameSize,
-                            original_fid_);
+    num_bytes_read_ =
+        fread(original_buffer_.get(), 1, kFrameSize, original_fid_);
     EXPECT_EQ(kFrameSize, num_bytes_read_);
 
     num_bytes_read_ = fread(edited_buffer_.get(), 1, kFrameSize, edited_fid_);
     EXPECT_EQ(kFrameSize, num_bytes_read_);
 
-    EXPECT_EQ(0, memcmp(original_buffer_.get(), edited_buffer_.get(),
-                        kFrameSize));
+    EXPECT_EQ(0,
+              memcmp(original_buffer_.get(), edited_buffer_.get(), kFrameSize));
   }
   // Do not compare the frames that have been repeated.
   for (int i = kFirstFrameToProcess; i <= kLastFrameToProcess; ++i) {
-    num_bytes_read_ = fread(original_buffer_.get(), 1, kFrameSize,
-                            original_fid_);
+    num_bytes_read_ =
+        fread(original_buffer_.get(), 1, kFrameSize, original_fid_);
     EXPECT_EQ(kFrameSize, num_bytes_read_);
     for (int i = 1; i <= kInterval; ++i) {
-      num_bytes_read_ = fread(edited_buffer_.get(), 1, kFrameSize,
-                              edited_fid_);
+      num_bytes_read_ = fread(edited_buffer_.get(), 1, kFrameSize, edited_fid_);
       EXPECT_EQ(kFrameSize, num_bytes_read_);
-      EXPECT_EQ(0, memcmp(original_buffer_.get(), edited_buffer_.get(),
-                          kFrameSize));
+      EXPECT_EQ(
+          0, memcmp(original_buffer_.get(), edited_buffer_.get(), kFrameSize));
     }
   }
   CompareToTheEnd(edited_fid_, original_fid_, &original_buffer_,

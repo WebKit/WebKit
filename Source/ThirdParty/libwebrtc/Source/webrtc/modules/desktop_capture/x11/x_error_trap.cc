@@ -37,11 +37,10 @@ int XServerErrorHandler(Display* display, XErrorEvent* error_event) {
 }  // namespace
 
 XErrorTrap::XErrorTrap(Display* display)
-    : original_error_handler_(NULL),
-      enabled_(true) {
+    : original_error_handler_(NULL), enabled_(true) {
 #if defined(TOOLKIT_GTK)
   gdk_error_trap_push();
-#else  // !defined(TOOLKIT_GTK)
+#else   // !defined(TOOLKIT_GTK)
   assert(!g_xserver_error_trap_enabled);
   original_error_handler_ = XSetErrorHandler(&XServerErrorHandler);
   g_xserver_error_trap_enabled = true;
@@ -53,7 +52,7 @@ int XErrorTrap::GetLastErrorAndDisable() {
   enabled_ = false;
 #if defined(TOOLKIT_GTK)
   return gdk_error_trap_push();
-#else  // !defined(TOOLKIT_GTK)
+#else   // !defined(TOOLKIT_GTK)
   assert(g_xserver_error_trap_enabled);
   XSetErrorHandler(original_error_handler_);
   g_xserver_error_trap_enabled = false;

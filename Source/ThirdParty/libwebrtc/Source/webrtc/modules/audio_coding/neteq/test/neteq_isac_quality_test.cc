@@ -30,8 +30,11 @@ class NetEqIsacQualityTest : public NetEqQualityTest {
   NetEqIsacQualityTest();
   void SetUp() override;
   void TearDown() override;
-  int EncodeBlock(int16_t* in_data, size_t block_size_samples,
-                  rtc::Buffer* payload, size_t max_bytes) override;
+  int EncodeBlock(int16_t* in_data,
+                  size_t block_size_samples,
+                  rtc::Buffer* payload,
+                  size_t max_bytes) override;
+
  private:
   ISACFIX_MainStruct* isac_encoder_;
   int bit_rate_kbps_;
@@ -44,10 +47,10 @@ NetEqIsacQualityTest::NetEqIsacQualityTest()
                        NetEqDecoder::kDecoderISAC),
       isac_encoder_(NULL),
       bit_rate_kbps_(FLAG_bit_rate_kbps) {
-    // Flag validation
-    RTC_CHECK(FLAG_bit_rate_kbps >= 10 && FLAG_bit_rate_kbps <= 32)
-        << "Invalid bit rate, should be between 10 and 32 kbps.";
-  }
+  // Flag validation
+  RTC_CHECK(FLAG_bit_rate_kbps >= 10 && FLAG_bit_rate_kbps <= 32)
+      << "Invalid bit rate, should be between 10 and 32 kbps.";
+}
 
 void NetEqIsacQualityTest::SetUp() {
   ASSERT_EQ(1u, channels_) << "iSAC supports only mono audio.";
@@ -69,7 +72,8 @@ void NetEqIsacQualityTest::TearDown() {
 
 int NetEqIsacQualityTest::EncodeBlock(int16_t* in_data,
                                       size_t block_size_samples,
-                                      rtc::Buffer* payload, size_t max_bytes) {
+                                      rtc::Buffer* payload,
+                                      size_t max_bytes) {
   // ISAC takes 10 ms for every call.
   const int subblocks = kIsacBlockDurationMs / 10;
   const int subblock_length = 10 * kIsacInputSamplingKhz;
@@ -80,11 +84,11 @@ int NetEqIsacQualityTest::EncodeBlock(int16_t* in_data,
     // The Isac encoder does not perform encoding (and returns 0) until it
     // receives a sequence of sub-blocks that amount to the frame duration.
     EXPECT_EQ(0, value);
-    payload->AppendData(max_bytes, [&] (rtc::ArrayView<uint8_t> payload) {
-        value = WebRtcIsacfix_Encode(isac_encoder_, &in_data[pointer],
-                                     payload.data());
-        return (value >= 0) ? static_cast<size_t>(value) : 0;
-      });
+    payload->AppendData(max_bytes, [&](rtc::ArrayView<uint8_t> payload) {
+      value = WebRtcIsacfix_Encode(isac_encoder_, &in_data[pointer],
+                                   payload.data());
+      return (value >= 0) ? static_cast<size_t>(value) : 0;
+    });
   }
   EXPECT_GT(value, 0);
   return value;

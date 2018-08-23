@@ -35,8 +35,8 @@ void Calc16ByteAlignedStride(int width, int* stride_y, int* stride_uv) {
 class TestLibYuv : public ::testing::Test {
  protected:
   TestLibYuv();
-  virtual void SetUp();
-  virtual void TearDown();
+  void SetUp() override;
+  void TearDown() override;
 
   FILE* source_file_;
   std::unique_ptr<VideoFrame> orig_frame_;
@@ -57,11 +57,11 @@ TestLibYuv::TestLibYuv()
       frame_length_(CalcBufferSize(VideoType::kI420, 352, 288)) {}
 
 void TestLibYuv::SetUp() {
-  const std::string input_file_name = webrtc::test::ResourcePath("foreman_cif",
-                                                                 "yuv");
-  source_file_  = fopen(input_file_name.c_str(), "rb");
-  ASSERT_TRUE(source_file_ != NULL) << "Cannot read file: "<<
-                                       input_file_name << "\n";
+  const std::string input_file_name =
+      webrtc::test::ResourcePath("foreman_cif", "yuv");
+  source_file_ = fopen(input_file_name.c_str(), "rb");
+  ASSERT_TRUE(source_file_ != NULL)
+      << "Cannot read file: " << input_file_name << "\n";
 
   rtc::scoped_refptr<I420BufferInterface> buffer(
       test::ReadI420Buffer(width_, height_, source_file_));
@@ -83,9 +83,9 @@ TEST_F(TestLibYuv, ConvertSanityTest) {
 TEST_F(TestLibYuv, ConvertTest) {
   // Reading YUV frame - testing on the first frame of the foreman sequence
   int j = 0;
-  std::string output_file_name = webrtc::test::OutputPath() +
-                                 "LibYuvTest_conversion.yuv";
-  FILE*  output_file = fopen(output_file_name.c_str(), "wb");
+  std::string output_file_name =
+      webrtc::test::OutputPath() + "LibYuvTest_conversion.yuv";
+  FILE* output_file = fopen(output_file_name.c_str(), "wb");
   ASSERT_TRUE(output_file != NULL);
 
   double psnr = 0.0;
@@ -249,9 +249,9 @@ TEST_F(TestLibYuv, ConvertTest) {
 
 TEST_F(TestLibYuv, ConvertAlignedFrame) {
   // Reading YUV frame - testing on the first frame of the foreman sequence
-  std::string output_file_name = webrtc::test::OutputPath() +
-                                 "LibYuvTest_conversion.yuv";
-  FILE*  output_file = fopen(output_file_name.c_str(), "wb");
+  std::string output_file_name =
+      webrtc::test::OutputPath() + "LibYuvTest_conversion.yuv";
+  FILE* output_file = fopen(output_file_name.c_str(), "wb");
   ASSERT_TRUE(output_file != NULL);
 
   double psnr = 0.0;
@@ -290,33 +290,24 @@ static uint8_t Average(int a, int b, int c, int d) {
 }
 
 TEST_F(TestLibYuv, NV12Scale2x2to2x2) {
-  const std::vector<uint8_t> src_y = {0, 1,
-                                      2, 3};
+  const std::vector<uint8_t> src_y = {0, 1, 2, 3};
   const std::vector<uint8_t> src_uv = {0, 1};
   std::vector<uint8_t> dst_y(4);
   std::vector<uint8_t> dst_uv(2);
 
   uint8_t* tmp_buffer = nullptr;
 
-  NV12Scale(tmp_buffer,
-            src_y.data(), 2,
-            src_uv.data(), 2,
-            2, 2,
-            dst_y.data(), 2,
-            dst_uv.data(), 2,
-            2, 2);
+  NV12Scale(tmp_buffer, src_y.data(), 2, src_uv.data(), 2, 2, 2, dst_y.data(),
+            2, dst_uv.data(), 2, 2, 2);
 
   EXPECT_THAT(dst_y, ::testing::ContainerEq(src_y));
   EXPECT_THAT(dst_uv, ::testing::ContainerEq(src_uv));
 }
 
 TEST_F(TestLibYuv, NV12Scale4x4to2x2) {
-  const uint8_t src_y[] = { 0,  1,  2,  3,
-                            4,  5,  6,  7,
-                            8,  9, 10, 11,
-                           12, 13, 14, 15};
-  const uint8_t src_uv[] = {0, 1, 2, 3,
-                            4, 5, 6, 7};
+  const uint8_t src_y[] = {0, 1, 2,  3,  4,  5,  6,  7,
+                           8, 9, 10, 11, 12, 13, 14, 15};
+  const uint8_t src_uv[] = {0, 1, 2, 3, 4, 5, 6, 7};
   std::vector<uint8_t> dst_y(4);
   std::vector<uint8_t> dst_uv(2);
 
@@ -329,13 +320,8 @@ TEST_F(TestLibYuv, NV12Scale4x4to2x2) {
                     dst_chroma_width * dst_chroma_height * 2);
   tmp_buffer.shrink_to_fit();
 
-  NV12Scale(tmp_buffer.data(),
-            src_y, 4,
-            src_uv, 4,
-            4, 4,
-            dst_y.data(), 2,
-            dst_uv.data(), 2,
-            2, 2);
+  NV12Scale(tmp_buffer.data(), src_y, 4, src_uv, 4, 4, 4, dst_y.data(), 2,
+            dst_uv.data(), 2, 2, 2);
 
   EXPECT_THAT(dst_y, ::testing::ElementsAre(
                          Average(0, 1, 4, 5), Average(2, 3, 6, 7),

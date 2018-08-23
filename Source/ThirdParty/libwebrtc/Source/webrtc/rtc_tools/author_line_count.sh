@@ -16,7 +16,7 @@ git log "$@" --pretty=format:%ae --shortstat \
   | gawk '
 /^[^ ]/ {
   /* Some author "email addresses" have a trailing @svn-id, strip that out. */
-  author = gensub(/^([^@]*@[^@]*).*/, "\\1", "", $1);
+  author = gensub(/^([^@]*@[^@]*).*/, "\\1", "g", $1);
 }
 /^ .*insertion/ { total[author] += $1 }
 /^ .*deletion/ { total[author] -= $1 }

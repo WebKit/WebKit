@@ -13,7 +13,7 @@
 
 #include <map>
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/acm2/rent_a_codec.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
@@ -43,7 +43,7 @@ class CodecManager final {
     return send_codec_inst_ ? &*send_codec_inst_ : nullptr;
   }
 
-  void UnsetCodecInst() { send_codec_inst_ = rtc::nullopt; }
+  void UnsetCodecInst() { send_codec_inst_ = absl::nullopt; }
 
   const RentACodec::StackParameters* GetStackParams() const {
     return &codec_stack_params_;
@@ -63,7 +63,7 @@ class CodecManager final {
 
  private:
   rtc::ThreadChecker thread_checker_;
-  rtc::Optional<CodecInst> send_codec_inst_;
+  absl::optional<CodecInst> send_codec_inst_;
   RentACodec::StackParameters codec_stack_params_;
   bool recreate_encoder_ = true;  // Need to recreate encoder?
 

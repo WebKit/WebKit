@@ -19,6 +19,9 @@ import android.media.MediaCodecInfo;
 import android.media.MediaCodecInfo.CodecCapabilities;
 import android.media.MediaCodecList;
 import android.os.Build;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Nullable;
 
 /** Factory for Android hardware VideoDecoders. */
 @SuppressWarnings("deprecation") // API level 16 requires use of deprecated methods.
@@ -26,7 +29,6 @@ public class HardwareVideoDecoderFactory implements VideoDecoderFactory {
   private static final String TAG = "HardwareVideoDecoderFactory";
 
   private final EglBase.Context sharedContext;
-  private final boolean fallbackToSoftware;
 
   /** Creates a HardwareVideoDecoderFactory that does not use surface textures. */
   @Deprecated // Not removed yet to avoid breaking callers.
@@ -39,38 +41,49 @@ public class HardwareVideoDecoderFactory implements VideoDecoderFactory {
    * shared context.  The context may be null.  If it is null, then surface support is disabled.
    */
   public HardwareVideoDecoderFactory(EglBase.Context sharedContext) {
-    this(sharedContext, true /* fallbackToSoftware */);
-  }
-
-  HardwareVideoDecoderFactory(EglBase.Context sharedContext, boolean fallbackToSoftware) {
     this.sharedContext = sharedContext;
-    this.fallbackToSoftware = fallbackToSoftware;
   }
 
+  @Nullable
   @Override
-  public VideoDecoder createDecoder(String codecType) {
-    VideoCodecType type = VideoCodecType.valueOf(codecType);
+  public VideoDecoder createDecoder(VideoCodecInfo codecType) {
+    VideoCodecType type = VideoCodecType.valueOf(codecType.getName());
     MediaCodecInfo info = findCodecForType(type);
 
     if (info == null) {
-      // No hardware support for this type.
-      // TODO(andersc): This is for backwards compatibility. Remove when clients have migrated to
-      // new DefaultVideoEncoderFactory.
-      if (fallbackToSoftware) {
-        SoftwareVideoDecoderFactory softwareVideoDecoderFactory = new SoftwareVideoDecoderFactory();
-        return softwareVideoDecoderFactory.createDecoder(codecType);
-      } else {
-        return null;
-      }
+      return null;
     }
 
     CodecCapabilities capabilities = info.getCapabilitiesForType(type.mimeType());
-    return new HardwareVideoDecoder(info.getName(), type,
+    return new HardwareVideoDecoder(new MediaCodecWrapperFactoryImpl(), info.getName(), type,
         MediaCodecUtils.selectColorFormat(MediaCodecUtils.DECODER_COLOR_FORMATS, capabilities),
         sharedContext);
   }
 
-  private MediaCodecInfo findCodecForType(VideoCodecType type) {
+  @Override
+  public VideoCodecInfo[] getSupportedCodecs() {
+    List<VideoCodecInfo> supportedCodecInfos = new ArrayList<VideoCodecInfo>();
+    // Generate a list of supported codecs in order of preference:
+    // VP8, VP9, H264 (high profile), and H264 (baseline profile).
+    for (VideoCodecType type :
+        new VideoCodecType[] {VideoCodecType.VP8, VideoCodecType.VP9, VideoCodecType.H264}) {
+      MediaCodecInfo codec = findCodecForType(type);
+      if (codec != null) {
+        String name = type.name();
+        if (type == VideoCodecType.H264 && isH264HighProfileSupported(codec)) {
+          supportedCodecInfos.add(new VideoCodecInfo(
+              name, MediaCodecUtils.getCodecProperties(type, /* highProfile= */ true)));
+        }
+
+        supportedCodecInfos.add(new VideoCodecInfo(
+            name, MediaCodecUtils.getCodecProperties(type, /* highProfile= */ false)));
+      }
+    }
+
+    return supportedCodecInfos.toArray(new VideoCodecInfo[supportedCodecInfos.size()]);
+  }
+
+  private @Nullable MediaCodecInfo findCodecForType(VideoCodecType type) {
     // HW decoding is not supported on builds before KITKAT.
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
       return null;
@@ -126,5 +139,18 @@ public class HardwareVideoDecoderFactory implements VideoDecoderFactory {
       default:
         return false;
     }
+  }
+
+  private boolean isH264HighProfileSupported(MediaCodecInfo info) {
+    String name = info.getName();
+    // Support H.264 HP decoding on QCOM chips for Android L and above.
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && name.startsWith(QCOM_PREFIX)) {
+      return true;
+    }
+    // Support H.264 HP decoding on Exynos chips for Android M and above.
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && name.startsWith(EXYNOS_PREFIX)) {
+      return true;
+    }
+    return false;
   }
 }

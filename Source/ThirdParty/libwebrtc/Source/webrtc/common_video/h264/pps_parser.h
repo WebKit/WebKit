@@ -11,7 +11,7 @@
 #ifndef COMMON_VIDEO_H264_PPS_PARSER_H_
 #define COMMON_VIDEO_H264_PPS_PARSER_H_
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
 
 namespace rtc {
 class BitBuffer;
@@ -38,20 +38,20 @@ class PpsParser {
   };
 
   // Unpack RBSP and parse PPS state from the supplied buffer.
-  static rtc::Optional<PpsState> ParsePps(const uint8_t* data, size_t length);
+  static absl::optional<PpsState> ParsePps(const uint8_t* data, size_t length);
 
   static bool ParsePpsIds(const uint8_t* data,
                           size_t length,
                           uint32_t* pps_id,
                           uint32_t* sps_id);
 
-  static rtc::Optional<uint32_t> ParsePpsIdFromSlice(const uint8_t* data,
-                                                     size_t length);
+  static absl::optional<uint32_t> ParsePpsIdFromSlice(const uint8_t* data,
+                                                      size_t length);
 
  protected:
   // Parse the PPS state, for a bit buffer where RBSP decoding has already been
   // performed.
-  static rtc::Optional<PpsState> ParseInternal(rtc::BitBuffer* bit_buffer);
+  static absl::optional<PpsState> ParseInternal(rtc::BitBuffer* bit_buffer);
   static bool ParsePpsIdsInternal(rtc::BitBuffer* bit_buffer,
                                   uint32_t* pps_id,
                                   uint32_t* sps_id);

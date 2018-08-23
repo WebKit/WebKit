@@ -79,8 +79,8 @@ TEST(ByteBufferTest, TestBufferLength) {
 }
 
 TEST(ByteBufferTest, TestReadWriteBuffer) {
-  ByteBufferWriter::ByteOrder orders[2] = { ByteBufferWriter::ORDER_HOST,
-                                            ByteBufferWriter::ORDER_NETWORK };
+  ByteBufferWriter::ByteOrder orders[2] = {ByteBufferWriter::ORDER_HOST,
+                                           ByteBufferWriter::ORDER_NETWORK};
   for (size_t i = 0; i < arraysize(orders); i++) {
     ByteBufferWriter buffer(orders[i]);
     EXPECT_EQ(orders[i], buffer.Order());

@@ -8,7 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-
 #include "modules/rtp_rtcp/source/rtp_format_vp8_test_helper.h"
 
 #include "test/gtest.h"
@@ -32,12 +31,13 @@ RtpFormatVp8TestHelper::RtpFormatVp8TestHelper(const RTPVideoHeaderVP8* hdr)
 
 RtpFormatVp8TestHelper::~RtpFormatVp8TestHelper() {
   delete fragmentation_;
-  delete [] payload_data_;
+  delete[] payload_data_;
 }
 
 bool RtpFormatVp8TestHelper::Init(const size_t* partition_sizes,
                                   size_t num_partitions) {
-  if (inited_) return false;
+  if (inited_)
+    return false;
   fragmentation_ = new RTPFragmentationHeader;
   fragmentation_->VerifyAndAllocateFragmentationHeader(num_partitions);
   payload_size_ = 0;
@@ -95,7 +95,7 @@ void RtpFormatVp8TestHelper::GetAllPacketsAndCheck(
 // First octet tests.
 #define EXPECT_BIT_EQ(x, n, a) EXPECT_EQ((((x) >> (n)) & 0x1), a)
 
-#define EXPECT_RSV_ZERO(x) EXPECT_EQ(((x) & 0xE0), 0)
+#define EXPECT_RSV_ZERO(x) EXPECT_EQ(((x)&0xE0), 0)
 
 #define EXPECT_BIT_X_EQ(x, a) EXPECT_BIT_EQ(x, 7, a)
 
@@ -103,7 +103,7 @@ void RtpFormatVp8TestHelper::GetAllPacketsAndCheck(
 
 #define EXPECT_BIT_S_EQ(x, a) EXPECT_BIT_EQ(x, 4, a)
 
-#define EXPECT_PART_ID_EQ(x, a) EXPECT_EQ(((x) & 0x0F), a)
+#define EXPECT_PART_ID_EQ(x, a) EXPECT_EQ(((x)&0x0F), a)
 
 // Extension fields tests
 #define EXPECT_BIT_I_EQ(x, a) EXPECT_BIT_EQ(x, 7, a)
@@ -114,11 +114,11 @@ void RtpFormatVp8TestHelper::GetAllPacketsAndCheck(
 
 #define EXPECT_BIT_K_EQ(x, a) EXPECT_BIT_EQ(x, 4, a)
 
-#define EXPECT_TID_EQ(x, a) EXPECT_EQ((((x) & 0xC0) >> 6), a)
+#define EXPECT_TID_EQ(x, a) EXPECT_EQ((((x)&0xC0) >> 6), a)
 
 #define EXPECT_BIT_Y_EQ(x, a) EXPECT_BIT_EQ(x, 5, a)
 
-#define EXPECT_KEYIDX_EQ(x, a) EXPECT_EQ(((x) & 0x1F), a)
+#define EXPECT_KEYIDX_EQ(x, a) EXPECT_EQ(((x)&0x1F), a)
 
 void RtpFormatVp8TestHelper::CheckHeader(bool frag_start) {
   payload_start_ = 1;
@@ -127,8 +127,7 @@ void RtpFormatVp8TestHelper::CheckHeader(bool frag_start) {
 
   if (hdr_info_->pictureId != kNoPictureId ||
       hdr_info_->temporalIdx != kNoTemporalIdx ||
-      hdr_info_->tl0PicIdx != kNoTl0PicIdx ||
-      hdr_info_->keyIdx != kNoKeyIdx) {
+      hdr_info_->tl0PicIdx != kNoTl0PicIdx || hdr_info_->keyIdx != kNoKeyIdx) {
     EXPECT_BIT_X_EQ(buffer[0], 1);
     ++payload_start_;
     CheckPictureID();

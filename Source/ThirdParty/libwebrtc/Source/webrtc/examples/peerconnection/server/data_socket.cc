@@ -29,7 +29,7 @@ const char DataSocket::kCrossOriginAllowHeaders[] =
     "Access-Control-Allow-Credentials: true\r\n"
     "Access-Control-Allow-Methods: POST, GET, OPTIONS\r\n"
     "Access-Control-Allow-Headers: Content-Type, "
-        "Content-Length, Connection, Cache-Control\r\n"
+    "Content-Length, Connection, Cache-Control\r\n"
     "Access-Control-Expose-Headers: Content-Length, X-Peer-Id\r\n";
 
 #if defined(WIN32)
@@ -116,10 +116,11 @@ bool DataSocket::OnDataAvailable(bool* close_socket) {
 
 bool DataSocket::Send(const std::string& data) const {
   return send(socket_, data.data(), static_cast<int>(data.length()), 0) !=
-      SOCKET_ERROR;
+         SOCKET_ERROR;
 }
 
-bool DataSocket::Send(const std::string& status, bool connection_close,
+bool DataSocket::Send(const std::string& status,
+                      bool connection_close,
                       const std::string& content_type,
                       const std::string& extra_headers,
                       const std::string& data) const {
@@ -127,8 +128,9 @@ bool DataSocket::Send(const std::string& status, bool connection_close,
   assert(!status.empty());
   std::string buffer("HTTP/1.1 " + status + "\r\n");
 
-  buffer += "Server: PeerConnectionTestServer/0.1\r\n"
-            "Cache-Control: no-cache\r\n";
+  buffer +=
+      "Server: PeerConnectionTestServer/0.1\r\n"
+      "Cache-Control: no-cache\r\n";
 
   if (connection_close)
     buffer += "Connection: close\r\n";
@@ -136,8 +138,8 @@ bool DataSocket::Send(const std::string& status, bool connection_close,
   if (!content_type.empty())
     buffer += "Content-Type: " + content_type + "\r\n";
 
-  buffer += "Content-Length: " + int2str(static_cast<int>(data.size())) +
-            "\r\n";
+  buffer +=
+      "Content-Length: " + int2str(static_cast<int>(data.size())) + "\r\n";
 
   if (!extra_headers.empty()) {
     buffer += extra_headers;
@@ -190,9 +192,7 @@ bool DataSocket::ParseMethodAndPath(const char* begin, size_t len) {
     size_t method_name_len;
     RequestMethod id;
   } supported_methods[] = {
-    { "GET", 3, GET },
-    { "POST", 4, POST },
-    { "OPTIONS", 7, OPTIONS },
+      {"GET", 3, GET}, {"POST", 4, POST}, {"OPTIONS", 7, OPTIONS},
   };
 
   const char* path = NULL;
@@ -231,15 +231,15 @@ bool DataSocket::ParseContentLengthAndType(const char* headers, size_t length) {
       static const char kContentLength[] = "Content-Length:";
       static const char kContentType[] = "Content-Type:";
       if ((headers + ARRAYSIZE(kContentLength)) < end &&
-          strncmp(headers, kContentLength,
-                  ARRAYSIZE(kContentLength) - 1) == 0) {
+          strncmp(headers, kContentLength, ARRAYSIZE(kContentLength) - 1) ==
+              0) {
         headers += ARRAYSIZE(kContentLength) - 1;
         while (headers[0] == ' ')
           ++headers;
         content_length_ = atoi(headers);
       } else if ((headers + ARRAYSIZE(kContentType)) < end &&
-                 strncmp(headers, kContentType,
-                         ARRAYSIZE(kContentType) - 1) == 0) {
+                 strncmp(headers, kContentType, ARRAYSIZE(kContentType) - 1) ==
+                     0) {
         headers += ARRAYSIZE(kContentType) - 1;
         while (headers[0] == ' ')
           ++headers;
@@ -267,13 +267,13 @@ bool ListeningSocket::Listen(unsigned short port) {
   assert(valid());
   int enabled = 1;
   setsockopt(socket_, SOL_SOCKET, SO_REUSEADDR,
-      reinterpret_cast<const char*>(&enabled), sizeof(enabled));
+             reinterpret_cast<const char*>(&enabled), sizeof(enabled));
   struct sockaddr_in addr = {0};
   addr.sin_family = AF_INET;
   addr.sin_addr.s_addr = htonl(INADDR_ANY);
   addr.sin_port = htons(port);
-  if (bind(socket_, reinterpret_cast<const sockaddr*>(&addr),
-           sizeof(addr)) == SOCKET_ERROR) {
+  if (bind(socket_, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr)) ==
+      SOCKET_ERROR) {
     printf("bind failed\n");
     return false;
   }

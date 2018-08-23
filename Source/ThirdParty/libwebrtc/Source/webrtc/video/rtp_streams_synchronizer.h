@@ -25,10 +25,6 @@ namespace webrtc {
 
 class Syncable;
 
-namespace vcm {
-class VideoReceiver;
-}  // namespace vcm
-
 class RtpStreamsSynchronizer : public Module {
  public:
   explicit RtpStreamsSynchronizer(Syncable* syncable_video);
@@ -58,7 +54,7 @@ class RtpStreamsSynchronizer : public Module {
   StreamSynchronization::Measurements video_measurement_ RTC_GUARDED_BY(crit_);
 
   rtc::ThreadChecker process_thread_checker_;
-  int64_t last_sync_time_ RTC_ACCESS_ON(&process_thread_checker_);
+  int64_t last_sync_time_ RTC_GUARDED_BY(&process_thread_checker_);
 };
 
 }  // namespace webrtc

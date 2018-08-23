@@ -21,19 +21,22 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/location.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/strings/string_builder.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
 std::string FlexfecReceiveStream::Stats::ToString(int64_t time_ms) const {
-  std::stringstream ss;
+  char buf[1024];
+  rtc::SimpleStringBuilder ss(buf);
   ss << "FlexfecReceiveStream stats: " << time_ms
      << ", {flexfec_bitrate_bps: " << flexfec_bitrate_bps << "}";
   return ss.str();
 }
 
 std::string FlexfecReceiveStream::Config::ToString() const {
-  std::stringstream ss;
+  char buf[1024];
+  rtc::SimpleStringBuilder ss(buf);
   ss << "{payload_type: " << payload_type;
   ss << ", remote_ssrc: " << remote_ssrc;
   ss << ", local_ssrc: " << local_ssrc;

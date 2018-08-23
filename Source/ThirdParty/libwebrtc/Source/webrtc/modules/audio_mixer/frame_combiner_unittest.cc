@@ -23,6 +23,14 @@
 namespace webrtc {
 
 namespace {
+using LimiterType = FrameCombiner::LimiterType;
+struct FrameCombinerConfig {
+  bool use_limiter;
+  int sample_rate_hz;
+  int number_of_channels;
+  float wave_frequency;
+};
+
 std::string ProduceDebugText(int sample_rate_hz,
                              int number_of_channels,
                              int number_of_sources) {
@@ -33,17 +41,12 @@ std::string ProduceDebugText(int sample_rate_hz,
   return ss.str();
 }
 
-std::string ProduceDebugText(int sample_rate_hz,
-                             int number_of_channels,
-                             int number_of_sources,
-                             bool limiter_active,
-                             float wave_frequency) {
+std::string ProduceDebugText(const FrameCombinerConfig& config) {
   std::ostringstream ss;
-  ss << "Sample rate: " << sample_rate_hz << " ,";
-  ss << "number of channels: " << number_of_channels << " ,";
-  ss << "number of sources: " << number_of_sources << " ,";
-  ss << "limiter active: " << (limiter_active ? "true" : "false") << " ,";
-  ss << "wave frequency: " << wave_frequency << " ,";
+  ss << "Sample rate: " << config.sample_rate_hz << " ,";
+  ss << "number of channels: " << config.number_of_channels << " ,";
+  ss << "limiter active: " << (config.use_limiter ? "on" : "off") << " ,";
+  ss << "wave frequency: " << config.wave_frequency << " ,";
   return ss.str();
 }
 
@@ -60,9 +63,10 @@ void SetUpFrames(int sample_rate_hz, int number_of_channels) {
 }
 }  // namespace
 
+// The limiter requires sample rate divisible by 2000.
 TEST(FrameCombiner, BasicApiCallsLimiter) {
   FrameCombiner combiner(true);
-  for (const int rate : {8000, 16000, 32000, 48000}) {
+  for (const int rate : {8000, 18000, 34000, 48000}) {
     for (const int number_of_channels : {1, 2}) {
       const std::vector<AudioFrame*> all_frames = {&frame1, &frame2};
       SetUpFrames(rate, number_of_channels);
@@ -79,9 +83,8 @@ TEST(FrameCombiner, BasicApiCallsLimiter) {
   }
 }
 
-// No APM limiter means no AudioProcessing::NativeRate restriction
-// on rate. The rate has to be divisible by 100 since we use
-// 10 ms frames, though.
+// With no limiter, the rate has to be divisible by 100 since we use
+// 10 ms frames.
 TEST(FrameCombiner, BasicApiCallsNoLimiter) {
   FrameCombiner combiner(false);
   for (const int rate : {8000, 10000, 11000, 32000, 44100}) {
@@ -150,56 +153,60 @@ TEST(FrameCombiner, CombiningOneFrameShouldNotChangeFrame) {
 }
 
 // Send a sine wave through the FrameCombiner, and check that the
-// difference between input and output varies smoothly. This is to
-// catch issues like chromium:695993.
+// difference between input and output varies smoothly. Also check
+// that it is inside reasonable bounds. This is to catch issues like
+// chromium:695993 and chromium:816875.
 TEST(FrameCombiner, GainCurveIsSmoothForAlternatingNumberOfStreams) {
-  // Test doesn't work with rates requiring a band split, because it
-  // introduces a small delay measured in single samples, and this
-  // test cannot handle it.
-  //
-  // TODO(aleloi): Add more rates when APM limiter doesn't use band
-  // split.
-  for (const bool use_limiter : {true, false}) {
-    for (const int rate : {8000, 16000}) {
-      constexpr int number_of_channels = 2;
-      for (const float wave_frequency : {50, 400, 3200}) {
-        SCOPED_TRACE(ProduceDebugText(rate, number_of_channels, 1, use_limiter,
-                                      wave_frequency));
+  // Rates are divisible by 2000 when limiter is active.
+  std::vector<FrameCombinerConfig> configs = {
+      {false, 30100, 2, 50.f},  {false, 16500, 1, 3200.f},
+      {true, 8000, 1, 3200.f},  {true, 16000, 1, 50.f},
+      {true, 18000, 2, 3200.f}, {true, 10000, 2, 50.f},
+  };
 
-        FrameCombiner combiner(use_limiter);
+  for (const auto& config : configs) {
+    SCOPED_TRACE(ProduceDebugText(config));
 
-        constexpr int16_t wave_amplitude = 30000;
-        SineWaveGenerator wave_generator(wave_frequency, wave_amplitude);
+    FrameCombiner combiner(config.use_limiter);
 
-        GainChangeCalculator change_calculator;
-        float cumulative_change = 0.f;
+    constexpr int16_t wave_amplitude = 30000;
+    SineWaveGenerator wave_generator(config.wave_frequency, wave_amplitude);
 
-        constexpr size_t iterations = 100;
+    GainChangeCalculator change_calculator;
+    float cumulative_change = 0.f;
 
-        for (size_t i = 0; i < iterations; ++i) {
-          SetUpFrames(rate, number_of_channels);
-          wave_generator.GenerateNextFrame(&frame1);
-          AudioFrameOperations::Mute(&frame2);
+    constexpr size_t iterations = 100;
 
-          std::vector<AudioFrame*> frames_to_combine = {&frame1};
-          if (i % 2 == 0) {
-            frames_to_combine.push_back(&frame2);
-          }
-          const size_t number_of_samples =
-              frame1.samples_per_channel_ * number_of_channels;
+    for (size_t i = 0; i < iterations; ++i) {
+      SetUpFrames(config.sample_rate_hz, config.number_of_channels);
+      wave_generator.GenerateNextFrame(&frame1);
+      AudioFrameOperations::Mute(&frame2);
 
-          // Ensures limiter is on if 'use_limiter'.
-          constexpr size_t number_of_streams = 2;
-          combiner.Combine(frames_to_combine, number_of_channels, rate,
-                           number_of_streams, &audio_frame_for_mixing);
-          cumulative_change += change_calculator.CalculateGainChange(
-              rtc::ArrayView<const int16_t>(frame1.data(), number_of_samples),
-              rtc::ArrayView<const int16_t>(audio_frame_for_mixing.data(),
-                                            number_of_samples));
-        }
-        RTC_DCHECK_LT(cumulative_change, 10);
+      std::vector<AudioFrame*> frames_to_combine = {&frame1};
+      if (i % 2 == 0) {
+        frames_to_combine.push_back(&frame2);
       }
+      const size_t number_of_samples =
+          frame1.samples_per_channel_ * config.number_of_channels;
+
+      // Ensures limiter is on if 'use_limiter'.
+      constexpr size_t number_of_streams = 2;
+      combiner.Combine(frames_to_combine, config.number_of_channels,
+                       config.sample_rate_hz, number_of_streams,
+                       &audio_frame_for_mixing);
+      cumulative_change += change_calculator.CalculateGainChange(
+          rtc::ArrayView<const int16_t>(frame1.data(), number_of_samples),
+          rtc::ArrayView<const int16_t>(audio_frame_for_mixing.data(),
+                                        number_of_samples));
     }
+
+    // Check that the gain doesn't vary too much.
+    EXPECT_LT(cumulative_change, 10);
+
+    // Check that the latest gain is within reasonable bounds. It
+    // should be slightly less that 1.
+    EXPECT_LT(0.9f, change_calculator.LatestGain());
+    EXPECT_LT(change_calculator.LatestGain(), 1.01f);
   }
 }
 }  // namespace webrtc

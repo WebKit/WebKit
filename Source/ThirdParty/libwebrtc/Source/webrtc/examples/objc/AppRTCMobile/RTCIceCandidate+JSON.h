@@ -13,8 +13,7 @@
 @interface RTCIceCandidate (JSON)
 
 + (RTCIceCandidate *)candidateFromJSONDictionary:(NSDictionary *)dictionary;
-+ (NSArray<RTCIceCandidate *> *)candidatesFromJSONDictionary:
-    (NSDictionary *)dictionary;
++ (NSArray<RTCIceCandidate *> *)candidatesFromJSONDictionary:(NSDictionary *)dictionary;
 + (NSData *)JSONDataForIceCandidates:(NSArray<RTCIceCandidate *> *)candidates
                             withType:(NSString *)typeValue;
 - (NSData *)JSONData;

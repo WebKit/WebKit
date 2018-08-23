@@ -34,8 +34,7 @@ AudioCodecSpeedTest::AudioCodecSpeedTest(int block_duration_ms,
       encoded_bytes_(0),
       encoding_time_ms_(0.0),
       decoding_time_ms_(0.0),
-      out_file_(NULL) {
-}
+      out_file_(NULL) {}
 
 void AudioCodecSpeedTest::SetUp() {
   channels_ = get<0>(GetParam());
@@ -52,8 +51,8 @@ void AudioCodecSpeedTest::SetUp() {
   rewind(fp);
 
   // Allocate memory to contain the whole file.
-  in_data_.reset(new int16_t[loop_length_samples_ +
-      input_length_sample_ * channels_]);
+  in_data_.reset(
+      new int16_t[loop_length_samples_ + input_length_sample_ * channels_]);
 
   data_pointer_ = 0;
 
@@ -111,11 +110,11 @@ void AudioCodecSpeedTest::EncodeDecode(size_t audio_duration_sec) {
     time_ms = DecodeABlock(&bit_stream_[0], encoded_bytes_, &out_data_[0]);
     decoding_time_ms_ += time_ms;
     if (save_out_data_) {
-      fwrite(&out_data_[0], sizeof(int16_t),
-             output_length_sample_ * channels_, out_file_);
+      fwrite(&out_data_[0], sizeof(int16_t), output_length_sample_ * channels_,
+             out_file_);
     }
     data_pointer_ = (data_pointer_ + input_length_sample_ * channels_) %
-        loop_length_samples_;
+                    loop_length_samples_;
     time_now_ms += block_duration_ms_;
   }
 

@@ -26,13 +26,16 @@ class MockAudioDecoderFactory : public AudioDecoderFactory {
  public:
   MOCK_METHOD0(GetSupportedDecoders, std::vector<AudioCodecSpec>());
   MOCK_METHOD1(IsSupportedDecoder, bool(const SdpAudioFormat&));
-  std::unique_ptr<AudioDecoder> MakeAudioDecoder(const SdpAudioFormat& format) {
+  std::unique_ptr<AudioDecoder> MakeAudioDecoder(
+      const SdpAudioFormat& format,
+      absl::optional<AudioCodecPairId> codec_pair_id) {
     std::unique_ptr<AudioDecoder> return_value;
-    MakeAudioDecoderMock(format, &return_value);
+    MakeAudioDecoderMock(format, codec_pair_id, &return_value);
     return return_value;
   }
-  MOCK_METHOD2(MakeAudioDecoderMock,
+  MOCK_METHOD3(MakeAudioDecoderMock,
                void(const SdpAudioFormat& format,
+                    absl::optional<AudioCodecPairId> codec_pair_id,
                     std::unique_ptr<AudioDecoder>* return_value));
 
   // Creates a MockAudioDecoderFactory with no formats and that may not be
@@ -51,7 +54,7 @@ class MockAudioDecoderFactory : public AudioDecoderFactory {
     EXPECT_CALL(*factory.get(), GetSupportedDecoders()).Times(AnyNumber());
     ON_CALL(*factory, IsSupportedDecoder(_)).WillByDefault(Return(false));
     EXPECT_CALL(*factory, IsSupportedDecoder(_)).Times(AnyNumber());
-    EXPECT_CALL(*factory.get(), MakeAudioDecoderMock(_, _)).Times(0);
+    EXPECT_CALL(*factory.get(), MakeAudioDecoderMock(_, _, _)).Times(0);
     return factory;
   }
 
@@ -72,9 +75,10 @@ class MockAudioDecoderFactory : public AudioDecoderFactory {
     EXPECT_CALL(*factory.get(), GetSupportedDecoders()).Times(AnyNumber());
     ON_CALL(*factory, IsSupportedDecoder(_)).WillByDefault(Return(false));
     EXPECT_CALL(*factory, IsSupportedDecoder(_)).Times(AnyNumber());
-    ON_CALL(*factory.get(), MakeAudioDecoderMock(_, _))
-        .WillByDefault(SetArgPointee<1>(nullptr));
-    EXPECT_CALL(*factory.get(), MakeAudioDecoderMock(_, _)).Times(AnyNumber());
+    ON_CALL(*factory.get(), MakeAudioDecoderMock(_, _, _))
+        .WillByDefault(SetArgPointee<2>(nullptr));
+    EXPECT_CALL(*factory.get(), MakeAudioDecoderMock(_, _, _))
+        .Times(AnyNumber());
     return factory;
   }
 };

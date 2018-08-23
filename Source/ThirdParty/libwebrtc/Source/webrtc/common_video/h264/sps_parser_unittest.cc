@@ -110,9 +110,9 @@ void GenerateFakeSps(uint16_t width,
 class H264SpsParserTest : public ::testing::Test {
  public:
   H264SpsParserTest() {}
-  virtual ~H264SpsParserTest() {}
+  ~H264SpsParserTest() override {}
 
-  rtc::Optional<SpsParser::SpsState> sps_;
+  absl::optional<SpsParser::SpsState> sps_;
 };
 
 TEST_F(H264SpsParserTest, TestSampleSPSHdLandscape) {

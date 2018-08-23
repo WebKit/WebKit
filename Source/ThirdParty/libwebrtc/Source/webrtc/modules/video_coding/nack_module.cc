@@ -55,16 +55,13 @@ NackModule::NackModule(Clock* clock,
   RTC_DCHECK(keyframe_request_sender_);
 }
 
-int NackModule::OnReceivedPacket(const VCMPacket& packet) {
+int NackModule::OnReceivedPacket(uint16_t seq_num, bool is_keyframe) {
   rtc::CritScope lock(&crit_);
-  uint16_t seq_num = packet.seqNum;
   // TODO(philipel): When the packet includes information whether it is
   //                 retransmitted or not, use that value instead. For
   //                 now set it to true, which will cause the reordering
   //                 statistics to never be updated.
   bool is_retransmitted = true;
-  bool is_keyframe =
-      packet.is_first_packet_in_frame && packet.frameType == kVideoFrameKey;
 
   if (!initialized_) {
     newest_seq_num_ = seq_num;
@@ -109,6 +106,12 @@ int NackModule::OnReceivedPacket(const VCMPacket& packet) {
     nack_sender_->SendNack(nack_batch);
 
   return 0;
+}
+
+int NackModule::OnReceivedPacket(const VCMPacket& packet) {
+  return OnReceivedPacket(
+      packet.seqNum,
+      packet.is_first_packet_in_frame && packet.frameType == kVideoFrameKey);
 }
 
 void NackModule::ClearUpTo(uint16_t seq_num) {

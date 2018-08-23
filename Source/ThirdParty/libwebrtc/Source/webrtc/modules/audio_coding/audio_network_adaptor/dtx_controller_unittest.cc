@@ -30,7 +30,7 @@ std::unique_ptr<DtxController> CreateController(int initial_dtx_enabled) {
 }
 
 void CheckDecision(DtxController* controller,
-                   const rtc::Optional<int>& uplink_bandwidth_bps,
+                   const absl::optional<int>& uplink_bandwidth_bps,
                    bool expected_dtx_enabled) {
   if (uplink_bandwidth_bps) {
     Controller::NetworkMetrics network_metrics;
@@ -47,7 +47,7 @@ void CheckDecision(DtxController* controller,
 TEST(DtxControllerTest, OutputInitValueWhenUplinkBandwidthUnknown) {
   constexpr bool kInitialDtxEnabled = true;
   auto controller = CreateController(kInitialDtxEnabled);
-  CheckDecision(controller.get(), rtc::nullopt, kInitialDtxEnabled);
+  CheckDecision(controller.get(), absl::nullopt, kInitialDtxEnabled);
 }
 
 TEST(DtxControllerTest, TurnOnDtxForLowUplinkBandwidth) {

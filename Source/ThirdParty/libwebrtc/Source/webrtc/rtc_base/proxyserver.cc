@@ -18,12 +18,14 @@
 namespace rtc {
 
 // ProxyServer
-ProxyServer::ProxyServer(
-    SocketFactory* int_factory, const SocketAddress& int_addr,
-    SocketFactory* ext_factory, const SocketAddress& ext_ip)
-    : ext_factory_(ext_factory), ext_ip_(ext_ip.ipaddr(), 0),  // strip off port
-      server_socket_(int_factory->CreateAsyncSocket(int_addr.family(),
-                                                    SOCK_STREAM)) {
+ProxyServer::ProxyServer(SocketFactory* int_factory,
+                         const SocketAddress& int_addr,
+                         SocketFactory* ext_factory,
+                         const SocketAddress& ext_ip)
+    : ext_factory_(ext_factory),
+      ext_ip_(ext_ip.ipaddr(), 0),  // strip off port
+      server_socket_(
+          int_factory->CreateAsyncSocket(int_addr.family(), SOCK_STREAM)) {
   RTC_DCHECK(server_socket_.get() != nullptr);
   RTC_DCHECK(int_addr.family() == AF_INET || int_addr.family() == AF_INET6);
   server_socket_->Bind(int_addr);
@@ -32,8 +34,8 @@ ProxyServer::ProxyServer(
 }
 
 ProxyServer::~ProxyServer() {
-  for (BindingList::iterator it = bindings_.begin();
-       it != bindings_.end(); ++it) {
+  for (BindingList::iterator it = bindings_.begin(); it != bindings_.end();
+       ++it) {
     delete (*it);
   }
 }
@@ -47,8 +49,8 @@ void ProxyServer::OnAcceptEvent(AsyncSocket* socket) {
   RTC_DCHECK_EQ(socket, server_socket_.get());
   AsyncSocket* int_socket = socket->Accept(nullptr);
   AsyncProxyServerSocket* wrapped_socket = WrapSocket(int_socket);
-  AsyncSocket* ext_socket = ext_factory_->CreateAsyncSocket(ext_ip_.family(),
-                                                            SOCK_STREAM);
+  AsyncSocket* ext_socket =
+      ext_factory_->CreateAsyncSocket(ext_ip_.family(), SOCK_STREAM);
   if (ext_socket) {
     ext_socket->Bind(ext_ip_);
     bindings_.push_back(new ProxyBinding(wrapped_socket, ext_socket));
@@ -68,8 +70,11 @@ void ProxyServer::OnBindingDestroyed(ProxyBinding* binding) {
 // ProxyBinding
 ProxyBinding::ProxyBinding(AsyncProxyServerSocket* int_socket,
                            AsyncSocket* ext_socket)
-    : int_socket_(int_socket), ext_socket_(ext_socket), connected_(false),
-      out_buffer_(kBufferSize), in_buffer_(kBufferSize) {
+    : int_socket_(int_socket),
+      ext_socket_(ext_socket),
+      connected_(false),
+      out_buffer_(kBufferSize),
+      in_buffer_(kBufferSize) {
   int_socket_->SignalConnectRequest.connect(this,
                                             &ProxyBinding::OnConnectRequest);
   int_socket_->SignalReadEvent.connect(this, &ProxyBinding::OnInternalRead);
@@ -85,7 +90,7 @@ ProxyBinding::ProxyBinding(AsyncProxyServerSocket* int_socket,
 ProxyBinding::~ProxyBinding() = default;
 
 void ProxyBinding::OnConnectRequest(AsyncProxyServerSocket* socket,
-                                   const SocketAddress& addr) {
+                                    const SocketAddress& addr) {
   RTC_DCHECK(!connected_);
   RTC_DCHECK(ext_socket_);
   ext_socket_->Connect(addr);

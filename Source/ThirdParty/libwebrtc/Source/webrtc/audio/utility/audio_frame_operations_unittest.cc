@@ -9,7 +9,6 @@
  */
 
 #include "audio/utility/audio_frame_operations.h"
-#include "modules/include/module_common_types.h"
 #include "rtc_base/checks.h"
 #include "test/gtest.h"
 
@@ -51,27 +50,29 @@ void SetFrameData(int16_t left, int16_t right, AudioFrame* frame) {
 
 void SetFrameData(int16_t data, AudioFrame* frame) {
   int16_t* frame_data = frame->mutable_data();
-  for (size_t i = 0;
-       i < frame->samples_per_channel_ * frame->num_channels_; i++) {
+  for (size_t i = 0; i < frame->samples_per_channel_ * frame->num_channels_;
+       i++) {
     frame_data[i] = data;
   }
 }
 
 void VerifyFramesAreEqual(const AudioFrame& frame1, const AudioFrame& frame2) {
   EXPECT_EQ(frame1.num_channels_, frame2.num_channels_);
-  EXPECT_EQ(frame1.samples_per_channel_,
-            frame2.samples_per_channel_);
+  EXPECT_EQ(frame1.samples_per_channel_, frame2.samples_per_channel_);
   const int16_t* frame1_data = frame1.data();
   const int16_t* frame2_data = frame2.data();
   for (size_t i = 0; i < frame1.samples_per_channel_ * frame1.num_channels_;
-      i++) {
+       i++) {
     EXPECT_EQ(frame1_data[i], frame2_data[i]);
   }
   EXPECT_EQ(frame1.muted(), frame2.muted());
 }
 
-void InitFrame(AudioFrame* frame, size_t channels, size_t samples_per_channel,
-               int16_t left_data, int16_t right_data) {
+void InitFrame(AudioFrame* frame,
+               size_t channels,
+               size_t samples_per_channel,
+               int16_t left_data,
+               int16_t right_data) {
   RTC_DCHECK(frame);
   RTC_DCHECK_GE(2, channels);
   RTC_DCHECK_GE(AudioFrame::kMaxDataSizeSamples,
@@ -91,7 +92,9 @@ int16_t GetChannelData(const AudioFrame& frame, size_t channel, size_t index) {
   return frame.data()[index * frame.num_channels_ + channel];
 }
 
-void VerifyFrameDataBounds(const AudioFrame& frame, size_t channel, int16_t max,
+void VerifyFrameDataBounds(const AudioFrame& frame,
+                           size_t channel,
+                           int16_t max,
                            int16_t min) {
   for (size_t i = 0; i < frame.samples_per_channel_; ++i) {
     int16_t s = GetChannelData(frame, channel, i);

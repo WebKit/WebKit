@@ -69,7 +69,7 @@ class AudioEncoderCng final : public AudioEncoder {
       float uplink_recoverable_packet_loss_fraction) override;
   void OnReceivedUplinkBandwidth(
       int target_audio_bitrate_bps,
-      rtc::Optional<int64_t> bwe_period_ms) override;
+      absl::optional<int64_t> bwe_period_ms) override;
 
  private:
   EncodedInfo EncodePassive(size_t frames_to_encode,

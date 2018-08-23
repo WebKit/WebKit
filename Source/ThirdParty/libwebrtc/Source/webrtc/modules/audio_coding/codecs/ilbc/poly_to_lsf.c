@@ -16,10 +16,10 @@
 
 ******************************************************************/
 
-#include "defines.h"
-#include "constants.h"
-#include "poly_to_lsp.h"
-#include "lsp_to_lsf.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
+#include "modules/audio_coding/codecs/ilbc/poly_to_lsp.h"
+#include "modules/audio_coding/codecs/ilbc/lsp_to_lsf.h"
 
 void WebRtcIlbcfix_Poly2Lsf(
     int16_t *lsf,   /* (o) lsf coefficients (Q13) */

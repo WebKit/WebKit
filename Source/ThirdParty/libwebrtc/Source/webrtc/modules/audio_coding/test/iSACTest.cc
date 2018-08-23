@@ -23,6 +23,7 @@
 #include <time.h>
 #endif
 
+#include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "modules/audio_coding/codecs/audio_format_conversion.h"
 #include "modules/audio_coding/test/utility.h"
 #include "system_wrappers/include/event_wrapper.h"
@@ -40,11 +41,11 @@ void SetISACConfigDefault(ACMTestISACConfig& isacConfig) {
   return;
 }
 
-int16_t SetISAConfig(ACMTestISACConfig& isacConfig, AudioCodingModule* acm,
+int16_t SetISAConfig(ACMTestISACConfig& isacConfig,
+                     AudioCodingModule* acm,
                      int testMode) {
-
-  if ((isacConfig.currentRateBitPerSec != 0)
-      || (isacConfig.currentFrameSizeMsec != 0)) {
+  if ((isacConfig.currentRateBitPerSec != 0) ||
+      (isacConfig.currentFrameSizeMsec != 0)) {
     auto sendCodec = acm->SendCodec();
     EXPECT_TRUE(sendCodec);
     if (isacConfig.currentRateBitPerSec < 0) {
@@ -56,8 +57,8 @@ int16_t SetISAConfig(ACMTestISACConfig& isacConfig, AudioCodingModule* acm,
         sendCodec->rate = isacConfig.currentRateBitPerSec;
       }
       if (isacConfig.currentFrameSizeMsec != 0) {
-        sendCodec->pacsize = isacConfig.currentFrameSizeMsec
-            * (sendCodec->plfreq / 1000);
+        sendCodec->pacsize =
+            isacConfig.currentFrameSizeMsec * (sendCodec->plfreq / 1000);
       }
       EXPECT_EQ(0, acm->RegisterSendCodec(*sendCodec));
     }
@@ -67,8 +68,10 @@ int16_t SetISAConfig(ACMTestISACConfig& isacConfig, AudioCodingModule* acm,
 }
 
 ISACTest::ISACTest(int testMode)
-    : _acmA(AudioCodingModule::Create()),
-      _acmB(AudioCodingModule::Create()),
+    : _acmA(AudioCodingModule::Create(
+          AudioCodingModule::Config(CreateBuiltinAudioDecoderFactory()))),
+      _acmB(AudioCodingModule::Create(
+          AudioCodingModule::Config(CreateBuiltinAudioDecoderFactory()))),
       _testMode(testMode) {}
 
 ISACTest::~ISACTest() {}
@@ -78,15 +81,15 @@ void ISACTest::Setup() {
   CodecInst codecParam;
 
   for (codecCntr = 0; codecCntr < AudioCodingModule::NumberOfCodecs();
-      codecCntr++) {
+       codecCntr++) {
     EXPECT_EQ(0, AudioCodingModule::Codec(codecCntr, &codecParam));
-    if (!STR_CASE_CMP(codecParam.plname, "ISAC")
-        && codecParam.plfreq == 16000) {
+    if (!STR_CASE_CMP(codecParam.plname, "ISAC") &&
+        codecParam.plfreq == 16000) {
       memcpy(&_paramISAC16kHz, &codecParam, sizeof(CodecInst));
       _idISAC16kHz = codecCntr;
     }
-    if (!STR_CASE_CMP(codecParam.plname, "ISAC")
-        && codecParam.plfreq == 32000) {
+    if (!STR_CASE_CMP(codecParam.plname, "ISAC") &&
+        codecParam.plfreq == 32000) {
       memcpy(&_paramISAC32kHz, &codecParam, sizeof(CodecInst));
       _idISAC32kHz = codecCntr;
     }
@@ -112,8 +115,8 @@ void ISACTest::Setup() {
   EXPECT_EQ(0, _acmB->RegisterTransportCallback(_channel_B2A.get()));
   _channel_B2A->RegisterReceiverACM(_acmA.get());
 
-  file_name_swb_ = webrtc::test::ResourcePath("audio_coding/testfile32kHz",
-                                              "pcm");
+  file_name_swb_ =
+      webrtc::test::ResourcePath("audio_coding/testfile32kHz", "pcm");
 
   EXPECT_EQ(0, _acmB->RegisterSendCodec(_paramISAC16kHz));
   EXPECT_EQ(0, _acmA->RegisterSendCodec(_paramISAC32kHz));
@@ -210,7 +213,8 @@ void ISACTest::Run10ms() {
   _outFileB.Write10MsData(audioFrame);
 }
 
-void ISACTest::EncodeDecode(int testNr, ACMTestISACConfig& wbISACConfig,
+void ISACTest::EncodeDecode(int testNr,
+                            ACMTestISACConfig& wbISACConfig,
                             ACMTestISACConfig& swbISACConfig) {
   // Files in Side A and B
   _inFileA.Open(file_name_swb_, 32000, "rb", true);
@@ -238,8 +242,8 @@ void ISACTest::EncodeDecode(int testNr, ACMTestISACConfig& wbISACConfig,
   SetISAConfig(wbISACConfig, _acmB.get(), _testMode);
 
   bool adaptiveMode = false;
-  if ((swbISACConfig.currentRateBitPerSec == -1)
-      || (wbISACConfig.currentRateBitPerSec == -1)) {
+  if ((swbISACConfig.currentRateBitPerSec == -1) ||
+      (wbISACConfig.currentRateBitPerSec == -1)) {
     adaptiveMode = true;
   }
   _myTimer.Reset();

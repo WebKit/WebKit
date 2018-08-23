@@ -45,9 +45,7 @@ bool GetWindowRect(::Display* display,
 // Creates a DesktopRect from |attributes|.
 template <typename T>
 DesktopRect DesktopRectFromXAttributes(const T& attributes) {
-  return DesktopRect::MakeXYWH(attributes.x,
-                               attributes.y,
-                               attributes.width,
+  return DesktopRect::MakeXYWH(attributes.x, attributes.y, attributes.width,
                                attributes.height);
 }
 

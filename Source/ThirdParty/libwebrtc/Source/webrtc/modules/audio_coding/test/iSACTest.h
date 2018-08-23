@@ -23,7 +23,7 @@
 #include "modules/audio_coding/test/utility.h"
 
 #define MAX_FILE_NAME_LENGTH_BYTE 500
-#define NO_OF_CLIENTS             15
+#define NO_OF_CLIENTS 15
 
 namespace webrtc {
 
@@ -42,12 +42,14 @@ class ISACTest : public ACMTest {
   ~ISACTest();
 
   void Perform();
+
  private:
   void Setup();
 
   void Run10ms();
 
-  void EncodeDecode(int testNr, ACMTestISACConfig& wbISACConfig,
+  void EncodeDecode(int testNr,
+                    ACMTestISACConfig& wbISACConfig,
                     ACMTestISACConfig& swbISACConfig);
 
   void SwitchingSamplingRate(int testNr, int maxSampRateChange);

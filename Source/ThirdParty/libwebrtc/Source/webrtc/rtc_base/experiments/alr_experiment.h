@@ -11,7 +11,7 @@
 #ifndef RTC_BASE_EXPERIMENTS_ALR_EXPERIMENT_H_
 #define RTC_BASE_EXPERIMENTS_ALR_EXPERIMENT_H_
 
-#include "api/optional.h"
+#include "absl/types/optional.h"
 
 namespace webrtc {
 struct AlrExperimentSettings {
@@ -28,7 +28,7 @@ struct AlrExperimentSettings {
 
   static const char kScreenshareProbingBweExperimentName[];
   static const char kStrictPacingAndProbingExperimentName[];
-  static rtc::Optional<AlrExperimentSettings> CreateFromFieldTrial(
+  static absl::optional<AlrExperimentSettings> CreateFromFieldTrial(
       const char* experiment_name);
   static bool MaxOneFieldTrialEnabled();
 

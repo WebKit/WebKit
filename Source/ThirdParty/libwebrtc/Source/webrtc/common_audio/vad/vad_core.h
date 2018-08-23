@@ -8,7 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-
 /*
  * This header file includes the descriptions of the core VAD calls.
  */
@@ -17,39 +16,38 @@
 #define COMMON_AUDIO_VAD_VAD_CORE_H_
 
 #include "common_audio/signal_processing/include/signal_processing_library.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
-enum { kNumChannels = 6 };  // Number of frequency bands (named channels).
+enum { kNumChannels = 6 };   // Number of frequency bands (named channels).
 enum { kNumGaussians = 2 };  // Number of Gaussians per channel in the GMM.
 enum { kTableSize = kNumChannels * kNumGaussians };
 enum { kMinEnergy = 10 };  // Minimum energy required to trigger audio signal.
 
 typedef struct VadInstT_ {
-    int vad;
-    int32_t downsampling_filter_states[4];
-    WebRtcSpl_State48khzTo8khz state_48_to_8;
-    int16_t noise_means[kTableSize];
-    int16_t speech_means[kTableSize];
-    int16_t noise_stds[kTableSize];
-    int16_t speech_stds[kTableSize];
-    // TODO(bjornv): Change to |frame_count|.
-    int32_t frame_counter;
-    int16_t over_hang;  // Over Hang
-    int16_t num_of_speech;
-    // TODO(bjornv): Change to |age_vector|.
-    int16_t index_vector[16 * kNumChannels];
-    int16_t low_value_vector[16 * kNumChannels];
-    // TODO(bjornv): Change to |median|.
-    int16_t mean_value[kNumChannels];
-    int16_t upper_state[5];
-    int16_t lower_state[5];
-    int16_t hp_filter_state[4];
-    int16_t over_hang_max_1[3];
-    int16_t over_hang_max_2[3];
-    int16_t individual[3];
-    int16_t total[3];
+  int vad;
+  int32_t downsampling_filter_states[4];
+  WebRtcSpl_State48khzTo8khz state_48_to_8;
+  int16_t noise_means[kTableSize];
+  int16_t speech_means[kTableSize];
+  int16_t noise_stds[kTableSize];
+  int16_t speech_stds[kTableSize];
+  // TODO(bjornv): Change to |frame_count|.
+  int32_t frame_counter;
+  int16_t over_hang;  // Over Hang
+  int16_t num_of_speech;
+  // TODO(bjornv): Change to |age_vector|.
+  int16_t index_vector[16 * kNumChannels];
+  int16_t low_value_vector[16 * kNumChannels];
+  // TODO(bjornv): Change to |median|.
+  int16_t mean_value[kNumChannels];
+  int16_t upper_state[5];
+  int16_t lower_state[5];
+  int16_t hp_filter_state[4];
+  int16_t over_hang_max_1[3];
+  int16_t over_hang_max_2[3];
+  int16_t individual[3];
+  int16_t total[3];
 
-    int init_flag;
+  int init_flag;
 } VadInstT;
 
 // Initializes the core VAD component. The default aggressiveness mode is
@@ -100,13 +98,17 @@ int WebRtcVad_set_mode_core(VadInstT* self, int mode);
  *                        0 - No active speech
  *                        1-6 - Active speech
  */
-int WebRtcVad_CalcVad48khz(VadInstT* inst, const int16_t* speech_frame,
+int WebRtcVad_CalcVad48khz(VadInstT* inst,
+                           const int16_t* speech_frame,
                            size_t frame_length);
-int WebRtcVad_CalcVad32khz(VadInstT* inst, const int16_t* speech_frame,
+int WebRtcVad_CalcVad32khz(VadInstT* inst,
+                           const int16_t* speech_frame,
                            size_t frame_length);
-int WebRtcVad_CalcVad16khz(VadInstT* inst, const int16_t* speech_frame,
+int WebRtcVad_CalcVad16khz(VadInstT* inst,
+                           const int16_t* speech_frame,
                            size_t frame_length);
-int WebRtcVad_CalcVad8khz(VadInstT* inst, const int16_t* speech_frame,
+int WebRtcVad_CalcVad8khz(VadInstT* inst,
+                          const int16_t* speech_frame,
                           size_t frame_length);
 
 #endif  // COMMON_AUDIO_VAD_VAD_CORE_H_

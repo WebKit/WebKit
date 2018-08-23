@@ -17,8 +17,8 @@
 
 namespace webrtc {
 
-class AudioRingBufferTest :
-    public ::testing::TestWithParam< ::testing::tuple<int, int, int, int> > {
+class AudioRingBufferTest
+    : public ::testing::TestWithParam< ::testing::tuple<int, int, int, int> > {
 };
 
 void ReadAndWriteTest(const ChannelBuffer<float>& input,
@@ -72,10 +72,8 @@ TEST_P(AudioRingBufferTest, ReadDataMatchesWrittenData) {
       input.channels()[i][j] = (i + 1) * (j + 1);
 
   ChannelBuffer<float> output(kFrames, static_cast<int>(num_channels));
-  ReadAndWriteTest(input,
-                   ::testing::get<0>(GetParam()),
-                   ::testing::get<1>(GetParam()),
-                   ::testing::get<2>(GetParam()),
+  ReadAndWriteTest(input, ::testing::get<0>(GetParam()),
+                   ::testing::get<1>(GetParam()), ::testing::get<2>(GetParam()),
                    &output);
 
   // Verify the read data matches the input.
@@ -85,7 +83,8 @@ TEST_P(AudioRingBufferTest, ReadDataMatchesWrittenData) {
 }
 
 INSTANTIATE_TEST_CASE_P(
-    AudioRingBufferTest, AudioRingBufferTest,
+    AudioRingBufferTest,
+    AudioRingBufferTest,
     ::testing::Combine(::testing::Values(10, 20, 42),  // num_write_chunk_frames
                        ::testing::Values(1, 10, 17),   // num_read_chunk_frames
                        ::testing::Values(100, 256),    // buffer_frames

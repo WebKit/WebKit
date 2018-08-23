@@ -72,13 +72,13 @@ bool CopyRemainingBits(rtc::BitBuffer* source,
 SpsVuiRewriter::ParseResult SpsVuiRewriter::ParseAndRewriteSps(
     const uint8_t* buffer,
     size_t length,
-    rtc::Optional<SpsParser::SpsState>* sps,
+    absl::optional<SpsParser::SpsState>* sps,
     rtc::Buffer* destination) {
   // Create temporary RBSP decoded buffer of the payload (exlcuding the
   // leading nalu type header byte (the SpsParser uses only the payload).
   std::vector<uint8_t> rbsp_buffer = H264::ParseRbsp(buffer, length);
   rtc::BitBuffer source_buffer(rbsp_buffer.data(), rbsp_buffer.size());
-  rtc::Optional<SpsParser::SpsState> sps_state =
+  absl::optional<SpsParser::SpsState> sps_state =
       SpsParser::ParseSpsUpToVui(&source_buffer);
   if (!sps_state)
     return ParseResult::kFailure;

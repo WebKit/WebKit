@@ -1,5 +1,16 @@
 2018-08-23  Youenn Fablet  <youenn@apple.com>
 
+        Update libwebrtc up to 984f1a80c0
+        https://bugs.webkit.org/show_bug.cgi?id=188745
+        <rdar://problem/43539177>
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-expected.txt:
+        * web-platform-tests/webrtc/no-media-call-expected.txt:
+
+2018-08-23  Youenn Fablet  <youenn@apple.com>
+
         Use "wpt serve" to launch WPT server
         https://bugs.webkit.org/show_bug.cgi?id=188848
 

@@ -13,7 +13,6 @@
 #define MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_PSFB_H_
 
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
-#include "rtc_base/basictypes.h"
 
 namespace webrtc {
 namespace rtcp {

@@ -8,7 +8,10 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <cmath>
+
 #include "modules/audio_processing/aec3/erle_estimator.h"
+#include "api/array_view.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -16,60 +19,122 @@ namespace webrtc {
 namespace {
 
 constexpr int kLowFrequencyLimit = kFftLengthBy2 / 2;
+constexpr float kMaxErleLf = 8.f;
+constexpr float kMaxErleHf = 1.5f;
+constexpr float kMinErle = 1.0f;
+constexpr float kTrueErle = 10.f;
+constexpr float kTrueErleOnsets = 1.0f;
 
-void VerifyErle(const std::array<float, kFftLengthBy2Plus1>& erle,
-                float erle_time_domain,
-                float reference_lf,
-                float reference_hf) {
+void VerifyErleBands(rtc::ArrayView<const float> erle,
+                     float reference_lf,
+                     float reference_hf) {
   std::for_each(
       erle.begin(), erle.begin() + kLowFrequencyLimit,
       [reference_lf](float a) { EXPECT_NEAR(reference_lf, a, 0.001); });
   std::for_each(
       erle.begin() + kLowFrequencyLimit, erle.end(),
       [reference_hf](float a) { EXPECT_NEAR(reference_hf, a, 0.001); });
-  EXPECT_NEAR(reference_lf, erle_time_domain, 0.001);
+}
+
+void VerifyErle(rtc::ArrayView<const float> erle,
+                float erle_time_domain,
+                float reference_lf,
+                float reference_hf) {
+  VerifyErleBands(erle, reference_lf, reference_hf);
+  EXPECT_NEAR(reference_lf, erle_time_domain, 0.5);
+}
+
+void FormFarendFrame(std::array<float, kFftLengthBy2Plus1>* X2,
+                     std::array<float, kFftLengthBy2Plus1>* E2,
+                     std::array<float, kFftLengthBy2Plus1>* Y2,
+                     float erle) {
+  X2->fill(500 * 1000.f * 1000.f);
+  E2->fill(1000.f * 1000.f);
+  Y2->fill(erle * (*E2)[0]);
+}
+
+void FormNearendFrame(std::array<float, kFftLengthBy2Plus1>* X2,
+                      std::array<float, kFftLengthBy2Plus1>* E2,
+                      std::array<float, kFftLengthBy2Plus1>* Y2) {
+  X2->fill(0.f);
+  Y2->fill(500.f * 1000.f * 1000.f);
+  E2->fill((*Y2)[0]);
 }
 
 }  // namespace
 
-// Verifies that the correct ERLE estimates are achieved.
-TEST(ErleEstimator, Estimates) {
+TEST(ErleEstimator, VerifyErleIncreaseAndHold) {
   std::array<float, kFftLengthBy2Plus1> X2;
   std::array<float, kFftLengthBy2Plus1> E2;
   std::array<float, kFftLengthBy2Plus1> Y2;
 
-  ErleEstimator estimator(1.f, 8.f, 1.5f);
+  ErleEstimator estimator(kMinErle, kMaxErleLf, kMaxErleHf);
 
-  // Verifies that the ERLE estimate is properley increased to higher values.
-  X2.fill(500 * 1000.f * 1000.f);
-  E2.fill(1000.f * 1000.f);
-  Y2.fill(10 * E2[0]);
+  // Verifies that the ERLE estimate is properly increased to higher values.
+  FormFarendFrame(&X2, &E2, &Y2, kTrueErle);
+
   for (size_t k = 0; k < 200; ++k) {
-    estimator.Update(X2, Y2, E2);
+    estimator.Update(X2, Y2, E2, true);
   }
-  VerifyErle(estimator.Erle(), estimator.ErleTimeDomain(), 8.f, 1.5f);
+  VerifyErle(estimator.Erle(), std::pow(2.f, estimator.ErleTimeDomainLog2()),
+             kMaxErleLf, kMaxErleHf);
 
-  // Verifies that the ERLE is not immediately decreased when the ERLE in the
-  // data decreases.
-  Y2.fill(0.1f * E2[0]);
-  for (size_t k = 0; k < 98; ++k) {
-    estimator.Update(X2, Y2, E2);
+  FormNearendFrame(&X2, &E2, &Y2);
+  // Verifies that the ERLE is not immediately decreased during nearend
+  // activity.
+  for (size_t k = 0; k < 50; ++k) {
+    estimator.Update(X2, Y2, E2, true);
   }
-  VerifyErle(estimator.Erle(), estimator.ErleTimeDomain(), 8.f, 1.5f);
+  VerifyErle(estimator.Erle(), std::pow(2.f, estimator.ErleTimeDomainLog2()),
+             kMaxErleLf, kMaxErleHf);
+}
 
-  // Verifies that the minimum ERLE is eventually achieved.
-  for (size_t k = 0; k < 1000; ++k) {
-    estimator.Update(X2, Y2, E2);
+TEST(ErleEstimator, VerifyErleTrackingOnOnsets) {
+  std::array<float, kFftLengthBy2Plus1> X2;
+  std::array<float, kFftLengthBy2Plus1> E2;
+  std::array<float, kFftLengthBy2Plus1> Y2;
+
+  ErleEstimator estimator(kMinErle, kMaxErleLf, kMaxErleHf);
+
+  for (size_t burst = 0; burst < 20; ++burst) {
+    FormFarendFrame(&X2, &E2, &Y2, kTrueErleOnsets);
+    for (size_t k = 0; k < 10; ++k) {
+      estimator.Update(X2, Y2, E2, true);
+    }
+    FormFarendFrame(&X2, &E2, &Y2, kTrueErle);
+    for (size_t k = 0; k < 200; ++k) {
+      estimator.Update(X2, Y2, E2, true);
+    }
+    FormNearendFrame(&X2, &E2, &Y2);
+    for (size_t k = 0; k < 300; ++k) {
+      estimator.Update(X2, Y2, E2, true);
+    }
   }
-  VerifyErle(estimator.Erle(), estimator.ErleTimeDomain(), 1.f, 1.f);
+  VerifyErleBands(estimator.ErleOnsets(), kMinErle, kMinErle);
+  FormNearendFrame(&X2, &E2, &Y2);
+  for (size_t k = 0; k < 1000; k++) {
+    estimator.Update(X2, Y2, E2, true);
+  }
+  // Verifies that during ne activity, Erle converges to the Erle for onsets.
+  VerifyErle(estimator.Erle(), std::pow(2.f, estimator.ErleTimeDomainLog2()),
+             kMinErle, kMinErle);
+}
+
+TEST(ErleEstimator, VerifyNoErleUpdateDuringLowActivity) {
+  std::array<float, kFftLengthBy2Plus1> X2;
+  std::array<float, kFftLengthBy2Plus1> E2;
+  std::array<float, kFftLengthBy2Plus1> Y2;
+  ErleEstimator estimator(kMinErle, kMaxErleLf, kMaxErleHf);
 
   // Verifies that the ERLE estimate is is not updated for low-level render
   // signals.
   X2.fill(1000.f * 1000.f);
   Y2.fill(10 * E2[0]);
   for (size_t k = 0; k < 200; ++k) {
-    estimator.Update(X2, Y2, E2);
+    estimator.Update(X2, Y2, E2, true);
   }
-  VerifyErle(estimator.Erle(), estimator.ErleTimeDomain(), 1.f, 1.f);
+  VerifyErle(estimator.Erle(), std::pow(2.f, estimator.ErleTimeDomainLog2()),
+             kMinErle, kMinErle);
 }
+
 }  // namespace webrtc

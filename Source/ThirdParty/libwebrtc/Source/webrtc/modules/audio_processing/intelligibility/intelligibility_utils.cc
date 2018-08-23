@@ -37,11 +37,11 @@ float UpdateFactor(float target, float current, float limit) {
 
 }  // namespace
 
-template<typename T>
+template <typename T>
 PowerEstimator<T>::PowerEstimator(size_t num_freqs, float decay)
     : power_(num_freqs, 0.f), decay_(decay) {}
 
-template<typename T>
+template <typename T>
 void PowerEstimator<T>::Step(const T* data) {
   for (size_t i = 0; i < power_.size(); ++i) {
     power_[i] = decay_ * power_[i] +

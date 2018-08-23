@@ -18,31 +18,31 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_LPC_TABLES_H_
 #define MODULES_AUDIO_CODING_CODECS_ISAC_MAIN_SOURCE_LPC_TABLES_H_
 
-#include "structs.h"
+#include "modules/audio_coding/codecs/isac/main/source/structs.h"
 
-#include "settings.h"
+#include "modules/audio_coding/codecs/isac/main/source/settings.h"
 
-#define KLT_STEPSIZE         1.00000000
-#define KLT_NUM_AVG_GAIN     0
-#define KLT_NUM_AVG_SHAPE    0
-#define KLT_NUM_MODELS  3
-#define LPC_GAIN_SCALE     4.000f
-#define LPC_LOBAND_SCALE   2.100f
-#define LPC_LOBAND_ORDER   ORDERLO
-#define LPC_HIBAND_SCALE   0.450f
-#define LPC_HIBAND_ORDER   ORDERHI
-#define LPC_GAIN_ORDER     2
+#define KLT_STEPSIZE 1.00000000
+#define KLT_NUM_AVG_GAIN 0
+#define KLT_NUM_AVG_SHAPE 0
+#define KLT_NUM_MODELS 3
+#define LPC_GAIN_SCALE 4.000f
+#define LPC_LOBAND_SCALE 2.100f
+#define LPC_LOBAND_ORDER ORDERLO
+#define LPC_HIBAND_SCALE 0.450f
+#define LPC_HIBAND_ORDER ORDERHI
+#define LPC_GAIN_ORDER 2
 
-#define LPC_SHAPE_ORDER    (LPC_LOBAND_ORDER + LPC_HIBAND_ORDER)
+#define LPC_SHAPE_ORDER (LPC_LOBAND_ORDER + LPC_HIBAND_ORDER)
 
-#define KLT_ORDER_GAIN     (LPC_GAIN_ORDER * SUBFRAMES)
-#define KLT_ORDER_SHAPE    (LPC_SHAPE_ORDER * SUBFRAMES)
+#define KLT_ORDER_GAIN (LPC_GAIN_ORDER * SUBFRAMES)
+#define KLT_ORDER_SHAPE (LPC_SHAPE_ORDER * SUBFRAMES)
 
 /* cdf array for model indicator */
-extern const uint16_t WebRtcIsac_kQKltModelCdf[KLT_NUM_MODELS+1];
+extern const uint16_t WebRtcIsac_kQKltModelCdf[KLT_NUM_MODELS + 1];
 
 /* pointer to cdf array for model indicator */
-extern const uint16_t *WebRtcIsac_kQKltModelCdfPtr[1];
+extern const uint16_t* WebRtcIsac_kQKltModelCdfPtr[1];
 
 /* initial cdf index for decoder of model indicator */
 extern const uint16_t WebRtcIsac_kQKltModelInitIndex[1];
@@ -78,9 +78,9 @@ extern const uint16_t WebRtcIsac_kQKltCdfGain[404];
 extern const uint16_t WebRtcIsac_kQKltCdfShape[686];
 
 /* pointers to cdf tables for quantizer indices */
-extern const uint16_t *WebRtcIsac_kQKltCdfPtrGain[12];
+extern const uint16_t* WebRtcIsac_kQKltCdfPtrGain[12];
 
-extern const uint16_t *WebRtcIsac_kQKltCdfPtrShape[108];
+extern const uint16_t* WebRtcIsac_kQKltCdfPtrShape[108];
 
 /* left KLT transforms */
 extern const double WebRtcIsac_kKltT1Gain[4];

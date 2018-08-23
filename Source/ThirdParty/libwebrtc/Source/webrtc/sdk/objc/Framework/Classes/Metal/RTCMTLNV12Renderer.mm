@@ -18,11 +18,12 @@
 #import "WebRTC/RTCVideoFrameBuffer.h"
 
 #import "RTCMTLRenderer+Private.h"
-
-#define MTL_STRINGIFY(s) @ #s
+#include "rtc_base/checks.h"
 
 static NSString *const shaderSource = MTL_STRINGIFY(
-    using namespace metal; typedef struct {
+    using namespace metal;
+
+    typedef struct {
       packed_float2 position;
       packed_float2 texcoord;
     } Vertex;
@@ -66,26 +67,47 @@ static NSString *const shaderSource = MTL_STRINGIFY(
 
 - (BOOL)addRenderingDestination:(__kindof MTKView *)view {
   if ([super addRenderingDestination:view]) {
-    [self initializeTextureCache];
-    return YES;
+    return [self initializeTextureCache];
   }
   return NO;
 }
 
-- (void)initializeTextureCache {
+- (BOOL)initializeTextureCache {
   CVReturn status = CVMetalTextureCacheCreate(kCFAllocatorDefault, nil, [self currentMetalDevice],
                                               nil, &_textureCache);
   if (status != kCVReturnSuccess) {
     RTCLogError(@"Metal: Failed to initialize metal texture cache. Return status is %d", status);
+    return NO;
   }
+
+  return YES;
 }
 
 - (NSString *)shaderSource {
   return shaderSource;
 }
 
+- (void)getWidth:(nonnull int *)width
+          height:(nonnull int *)height
+       cropWidth:(nonnull int *)cropWidth
+      cropHeight:(nonnull int *)cropHeight
+           cropX:(nonnull int *)cropX
+           cropY:(nonnull int *)cropY
+         ofFrame:(nonnull RTCVideoFrame *)frame {
+  RTCCVPixelBuffer *pixelBuffer = (RTCCVPixelBuffer *)frame.buffer;
+  *width = CVPixelBufferGetWidth(pixelBuffer.pixelBuffer);
+  *height = CVPixelBufferGetHeight(pixelBuffer.pixelBuffer);
+  *cropWidth = pixelBuffer.cropWidth;
+  *cropHeight = pixelBuffer.cropHeight;
+  *cropX = pixelBuffer.cropX;
+  *cropY = pixelBuffer.cropY;
+}
+
 - (BOOL)setupTexturesForFrame:(nonnull RTCVideoFrame *)frame {
-  [super setupTexturesForFrame:frame];
+  RTC_DCHECK([frame.buffer isKindOfClass:[RTCCVPixelBuffer class]]);
+  if (![super setupTexturesForFrame:frame]) {
+    return NO;
+  }
   CVPixelBufferRef pixelBuffer = ((RTCCVPixelBuffer *)frame.buffer).pixelBuffer;
 
   id<MTLTexture> lumaTexture = nil;

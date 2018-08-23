@@ -18,11 +18,8 @@ namespace cricket {
 
 bool StringToConnectionRole(const std::string& role_str, ConnectionRole* role) {
   const char* const roles[] = {
-      CONNECTIONROLE_ACTIVE_STR,
-      CONNECTIONROLE_PASSIVE_STR,
-      CONNECTIONROLE_ACTPASS_STR,
-      CONNECTIONROLE_HOLDCONN_STR
-  };
+      CONNECTIONROLE_ACTIVE_STR, CONNECTIONROLE_PASSIVE_STR,
+      CONNECTIONROLE_ACTPASS_STR, CONNECTIONROLE_HOLDCONN_STR};
 
   for (size_t i = 0; i < arraysize(roles); ++i) {
     if (_stricmp(roles[i], role_str.c_str()) == 0) {

@@ -13,6 +13,7 @@
 
 #include <array>
 
+#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/fft_data.h"
 
@@ -20,24 +21,27 @@ namespace webrtc {
 
 // Stores the values being returned from the echo subtractor.
 struct SubtractorOutput {
+  SubtractorOutput();
+  ~SubtractorOutput();
+
   std::array<float, kBlockSize> s_main;
+  std::array<float, kBlockSize> s_shadow;
   std::array<float, kBlockSize> e_main;
   std::array<float, kBlockSize> e_shadow;
   FftData E_main;
-  FftData E_main_nonwindowed;
   std::array<float, kFftLengthBy2Plus1> E2_main;
-  std::array<float, kFftLengthBy2Plus1> E2_main_nonwindowed;
   std::array<float, kFftLengthBy2Plus1> E2_shadow;
+  float s2_main = 0.f;
+  float s2_shadow = 0.f;
+  float e2_main = 0.f;
+  float e2_shadow = 0.f;
+  float y2 = 0.f;
 
-  void Reset() {
-    s_main.fill(0.f);
-    e_main.fill(0.f);
-    e_shadow.fill(0.f);
-    E_main.re.fill(0.f);
-    E_main.im.fill(0.f);
-    E2_main.fill(0.f);
-    E2_shadow.fill(0.f);
-  }
+  // Reset the struct content.
+  void Reset();
+
+  // Updates the powers of the signals.
+  void UpdatePowers(rtc::ArrayView<const float> y);
 };
 
 }  // namespace webrtc

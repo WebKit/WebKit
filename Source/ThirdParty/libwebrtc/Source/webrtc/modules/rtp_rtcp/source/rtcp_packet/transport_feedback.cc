@@ -11,6 +11,7 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "modules/include/module_common_types.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
@@ -73,53 +74,6 @@ constexpr int64_t kTimeWrapPeriodUs = (1ll << 24) * kBaseScaleFactor;
 constexpr uint8_t TransportFeedback::kFeedbackMessageType;
 constexpr size_t TransportFeedback::kMaxReportedPackets;
 
-// Keep delta_sizes that can be encoded into single chunk if it is last chunk.
-class TransportFeedback::LastChunk {
- public:
-  using DeltaSize = TransportFeedback::DeltaSize;
-
-  LastChunk();
-
-  bool Empty() const;
-  void Clear();
-  // Return if delta sizes still can be encoded into single chunk with added
-  // |delta_size|.
-  bool CanAdd(DeltaSize delta_size) const;
-  // Add |delta_size|, assumes |CanAdd(delta_size)|,
-  void Add(DeltaSize delta_size);
-
-  // Encode chunk as large as possible removing encoded delta sizes.
-  // Assume CanAdd() == false for some valid delta_size.
-  uint16_t Emit();
-  // Encode all stored delta_sizes into single chunk, pad with 0s if needed.
-  uint16_t EncodeLast() const;
-
-  // Decode up to |max_size| delta sizes from |chunk|.
-  void Decode(uint16_t chunk, size_t max_size);
-  // Appends content of the Lastchunk to |deltas|.
-  void AppendTo(std::vector<DeltaSize>* deltas) const;
-
- private:
-  static constexpr size_t kMaxRunLengthCapacity = 0x1fff;
-  static constexpr size_t kMaxOneBitCapacity = 14;
-  static constexpr size_t kMaxTwoBitCapacity = 7;
-  static constexpr size_t kMaxVectorCapacity = kMaxOneBitCapacity;
-  static constexpr DeltaSize kLarge = 2;
-
-  uint16_t EncodeOneBit() const;
-  void DecodeOneBit(uint16_t chunk, size_t max_size);
-
-  uint16_t EncodeTwoBit(size_t size) const;
-  void DecodeTwoBit(uint16_t chunk, size_t max_size);
-
-  uint16_t EncodeRunLength() const;
-  void DecodeRunLength(uint16_t chunk, size_t max_size);
-
-  DeltaSize delta_sizes_[kMaxVectorCapacity];
-  size_t size_;
-  bool all_same_;
-  bool has_large_delta_;
-};
 constexpr size_t TransportFeedback::LastChunk::kMaxRunLengthCapacity;
 constexpr size_t TransportFeedback::LastChunk::kMaxOneBitCapacity;
 constexpr size_t TransportFeedback::LastChunk::kMaxTwoBitCapacity;
@@ -312,8 +266,22 @@ TransportFeedback::TransportFeedback()
       base_time_ticks_(0),
       feedback_seq_(0),
       last_timestamp_us_(0),
-      last_chunk_(new LastChunk()),
       size_bytes_(kTransportFeedbackHeaderSizeBytes) {}
+
+TransportFeedback::TransportFeedback(const TransportFeedback&) = default;
+
+TransportFeedback::TransportFeedback(TransportFeedback&& other)
+    : base_seq_no_(other.base_seq_no_),
+      num_seq_no_(other.num_seq_no_),
+      base_time_ticks_(other.base_time_ticks_),
+      feedback_seq_(other.feedback_seq_),
+      last_timestamp_us_(other.last_timestamp_us_),
+      packets_(std::move(other.packets_)),
+      encoded_chunks_(std::move(other.encoded_chunks_)),
+      last_chunk_(other.last_chunk_),
+      size_bytes_(other.size_bytes_) {
+  other.Clear();
+}
 
 TransportFeedback::~TransportFeedback() {}
 
@@ -422,8 +390,8 @@ bool TransportFeedback::Parse(const CommonHeader& packet) {
     uint16_t chunk = ByteReader<uint16_t>::ReadBigEndian(&payload[index]);
     index += kChunkSizeBytes;
     encoded_chunks_.push_back(chunk);
-    last_chunk_->Decode(chunk, status_count - delta_sizes.size());
-    last_chunk_->AppendTo(&delta_sizes);
+    last_chunk_.Decode(chunk, status_count - delta_sizes.size());
+    last_chunk_.AppendTo(&delta_sizes);
   }
   // Last chunk is stored in the |last_chunk_|.
   encoded_chunks_.pop_back();
@@ -492,8 +460,8 @@ bool TransportFeedback::IsConsistent() const {
     chunk_decoder.AppendTo(&delta_sizes);
     packet_size += kChunkSizeBytes;
   }
-  if (!last_chunk_->Empty()) {
-    last_chunk_->AppendTo(&delta_sizes);
+  if (!last_chunk_.Empty()) {
+    last_chunk_.AppendTo(&delta_sizes);
     packet_size += kChunkSizeBytes;
   }
   if (num_seq_no_ != delta_sizes.size()) {
@@ -586,8 +554,8 @@ bool TransportFeedback::Create(uint8_t* packet,
     ByteWriter<uint16_t>::WriteBigEndian(&packet[*position], chunk);
     *position += 2;
   }
-  if (!last_chunk_->Empty()) {
-    uint16_t chunk = last_chunk_->EncodeLast();
+  if (!last_chunk_.Empty()) {
+    uint16_t chunk = last_chunk_.EncodeLast();
     ByteWriter<uint16_t>::WriteBigEndian(&packet[*position], chunk);
     *position += 2;
   }
@@ -614,29 +582,29 @@ void TransportFeedback::Clear() {
   last_timestamp_us_ = GetBaseTimeUs();
   packets_.clear();
   encoded_chunks_.clear();
-  last_chunk_->Clear();
+  last_chunk_.Clear();
   size_bytes_ = kTransportFeedbackHeaderSizeBytes;
 }
 
 bool TransportFeedback::AddDeltaSize(DeltaSize delta_size) {
   if (num_seq_no_ == kMaxReportedPackets)
     return false;
-  size_t add_chunk_size = last_chunk_->Empty() ? kChunkSizeBytes : 0;
+  size_t add_chunk_size = last_chunk_.Empty() ? kChunkSizeBytes : 0;
   if (size_bytes_ + delta_size + add_chunk_size > kMaxSizeBytes)
     return false;
 
-  if (last_chunk_->CanAdd(delta_size)) {
+  if (last_chunk_.CanAdd(delta_size)) {
     size_bytes_ += add_chunk_size;
-    last_chunk_->Add(delta_size);
+    last_chunk_.Add(delta_size);
     ++num_seq_no_;
     return true;
   }
   if (size_bytes_ + delta_size + kChunkSizeBytes > kMaxSizeBytes)
     return false;
 
-  encoded_chunks_.push_back(last_chunk_->Emit());
+  encoded_chunks_.push_back(last_chunk_.Emit());
   size_bytes_ += kChunkSizeBytes;
-  last_chunk_->Add(delta_size);
+  last_chunk_.Add(delta_size);
   ++num_seq_no_;
   return true;
 }

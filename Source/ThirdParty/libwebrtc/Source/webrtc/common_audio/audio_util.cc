@@ -10,8 +10,6 @@
 
 #include "common_audio/include/audio_util.h"
 
-#include "typedefs.h"  // NOLINT(build/include)
-
 namespace webrtc {
 
 void FloatToS16(const float* src, size_t size, int16_t* dest) {

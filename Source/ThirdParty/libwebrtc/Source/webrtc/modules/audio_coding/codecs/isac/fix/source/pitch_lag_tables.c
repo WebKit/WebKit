@@ -15,8 +15,8 @@
  *
  */
 
-#include "settings.h"
-#include "pitch_lag_tables.h"
+#include "modules/audio_coding/codecs/isac/fix/source/settings.h"
+#include "modules/audio_coding/codecs/isac/fix/source/pitch_lag_tables.h"
 
 
 /********************* Pitch Filter Gain Coefficient Tables ************************/

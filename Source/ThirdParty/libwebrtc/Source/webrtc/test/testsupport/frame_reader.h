@@ -16,7 +16,6 @@
 #include <string>
 
 #include "rtc_base/scoped_ref_ptr.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 class I420Buffer;

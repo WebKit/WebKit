@@ -19,7 +19,7 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_CREATE_AUGMENTED_VEC_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_CREATE_AUGMENTED_VEC_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  Recreate a specific codebook vector from the augmented part.
@@ -27,8 +27,8 @@
  *----------------------------------------------------------------*/
 
 void WebRtcIlbcfix_CreateAugmentedVec(
-    size_t index,          /* (i) Index for the augmented vector to be
-                              created */
+    size_t index, /* (i) Index for the augmented vector to be
+                     created */
     const int16_t* buffer, /* (i) Pointer to the end of the codebook memory
                               that is used for creation of the augmented
                               codebook */

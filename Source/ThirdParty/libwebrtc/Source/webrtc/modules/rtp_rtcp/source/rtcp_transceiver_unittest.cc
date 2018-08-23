@@ -12,10 +12,10 @@
 
 #include <memory>
 
+#include "absl/memory/memory.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "rtc_base/event.h"
-#include "rtc_base/ptr_util.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
@@ -77,7 +77,7 @@ TEST(RtcpTransceiverTest, SendsRtcpOnTaskQueueWhenCreatedOnTaskQueue) {
 
   std::unique_ptr<RtcpTransceiver> rtcp_transceiver;
   queue.PostTask([&] {
-    rtcp_transceiver = rtc::MakeUnique<RtcpTransceiver>(config);
+    rtcp_transceiver = absl::make_unique<RtcpTransceiver>(config);
     rtcp_transceiver->SendCompoundPacket();
   });
   WaitPostedTasks(&queue);
@@ -89,7 +89,7 @@ TEST(RtcpTransceiverTest, CanBeDestoryedOnTaskQueue) {
   RtcpTransceiverConfig config;
   config.outgoing_transport = &outgoing_transport;
   config.task_queue = &queue;
-  auto rtcp_transceiver = rtc::MakeUnique<RtcpTransceiver>(config);
+  auto rtcp_transceiver = absl::make_unique<RtcpTransceiver>(config);
 
   queue.PostTask([&] { rtcp_transceiver.reset(); });
   WaitPostedTasks(&queue);
@@ -116,7 +116,7 @@ TEST(RtcpTransceiverTest, DoesntPostToRtcpObserverAfterCallToRemove) {
   RtcpTransceiver rtcp_transceiver(config);
   rtc::Event observer_deleted(false, false);
 
-  auto observer = rtc::MakeUnique<MockMediaReceiverRtcpObserver>();
+  auto observer = absl::make_unique<MockMediaReceiverRtcpObserver>();
   EXPECT_CALL(*observer, OnSenderReport(kRemoteSsrc, _, 1));
   EXPECT_CALL(*observer, OnSenderReport(kRemoteSsrc, _, 2)).Times(0);
 
@@ -142,7 +142,7 @@ TEST(RtcpTransceiverTest, RemoveMediaReceiverRtcpObserverIsNonBlocking) {
   config.outgoing_transport = &null_transport;
   config.task_queue = &queue;
   RtcpTransceiver rtcp_transceiver(config);
-  auto observer = rtc::MakeUnique<MockMediaReceiverRtcpObserver>();
+  auto observer = absl::make_unique<MockMediaReceiverRtcpObserver>();
   rtcp_transceiver.AddMediaReceiverRtcpObserver(kRemoteSsrc, observer.get());
 
   rtc::Event queue_blocker(false, false);
@@ -199,7 +199,7 @@ TEST(RtcpTransceiverTest, DoesntSendPacketsAfterDestruction) {
 
   EXPECT_CALL(outgoing_transport, SendRtcp(_, _)).Times(0);
 
-  auto rtcp_transceiver = rtc::MakeUnique<RtcpTransceiver>(config);
+  auto rtcp_transceiver = absl::make_unique<RtcpTransceiver>(config);
   rtc::Event pause(false, false);
   queue.PostTask([&] {
     pause.Wait(rtc::Event::kForever);

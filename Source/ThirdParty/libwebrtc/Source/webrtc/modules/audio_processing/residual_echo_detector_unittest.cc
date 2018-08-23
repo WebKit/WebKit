@@ -11,13 +11,15 @@
 #include <vector>
 
 #include "modules/audio_processing/residual_echo_detector.h"
+#include "rtc_base/refcountedobject.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
 TEST(ResidualEchoDetectorTests, Echo) {
-  ResidualEchoDetector echo_detector;
-  echo_detector.SetReliabilityForTest(1.0f);
+  rtc::scoped_refptr<ResidualEchoDetector> echo_detector =
+      new rtc::RefCountedObject<ResidualEchoDetector>();
+  echo_detector->SetReliabilityForTest(1.0f);
   std::vector<float> ones(160, 1.f);
   std::vector<float> zeros(160, 0.f);
 
@@ -26,24 +28,25 @@ TEST(ResidualEchoDetectorTests, Echo) {
   // frame interval.
   for (int i = 0; i < 1000; i++) {
     if (i % 20 == 0) {
-      echo_detector.AnalyzeRenderAudio(ones);
-      echo_detector.AnalyzeCaptureAudio(zeros);
+      echo_detector->AnalyzeRenderAudio(ones);
+      echo_detector->AnalyzeCaptureAudio(zeros);
     } else if (i % 20 == 10) {
-      echo_detector.AnalyzeRenderAudio(zeros);
-      echo_detector.AnalyzeCaptureAudio(ones);
+      echo_detector->AnalyzeRenderAudio(zeros);
+      echo_detector->AnalyzeCaptureAudio(ones);
     } else {
-      echo_detector.AnalyzeRenderAudio(zeros);
-      echo_detector.AnalyzeCaptureAudio(zeros);
+      echo_detector->AnalyzeRenderAudio(zeros);
+      echo_detector->AnalyzeCaptureAudio(zeros);
     }
   }
   // We expect to detect echo with near certain likelihood.
-  auto ed_metrics = echo_detector.GetMetrics();
+  auto ed_metrics = echo_detector->GetMetrics();
   EXPECT_NEAR(1.f, ed_metrics.echo_likelihood, 0.01f);
 }
 
 TEST(ResidualEchoDetectorTests, NoEcho) {
-  ResidualEchoDetector echo_detector;
-  echo_detector.SetReliabilityForTest(1.0f);
+  rtc::scoped_refptr<ResidualEchoDetector> echo_detector =
+      new rtc::RefCountedObject<ResidualEchoDetector>();
+  echo_detector->SetReliabilityForTest(1.0f);
   std::vector<float> ones(160, 1.f);
   std::vector<float> zeros(160, 0.f);
 
@@ -51,20 +54,21 @@ TEST(ResidualEchoDetectorTests, NoEcho) {
   // detected.
   for (int i = 0; i < 1000; i++) {
     if (i % 20 == 0) {
-      echo_detector.AnalyzeRenderAudio(ones);
+      echo_detector->AnalyzeRenderAudio(ones);
     } else {
-      echo_detector.AnalyzeRenderAudio(zeros);
+      echo_detector->AnalyzeRenderAudio(zeros);
     }
-    echo_detector.AnalyzeCaptureAudio(zeros);
+    echo_detector->AnalyzeCaptureAudio(zeros);
   }
   // We expect to not detect any echo.
-  auto ed_metrics = echo_detector.GetMetrics();
+  auto ed_metrics = echo_detector->GetMetrics();
   EXPECT_NEAR(0.f, ed_metrics.echo_likelihood, 0.01f);
 }
 
 TEST(ResidualEchoDetectorTests, EchoWithRenderClockDrift) {
-  ResidualEchoDetector echo_detector;
-  echo_detector.SetReliabilityForTest(1.0f);
+  rtc::scoped_refptr<ResidualEchoDetector> echo_detector =
+      new rtc::RefCountedObject<ResidualEchoDetector>();
+  echo_detector->SetReliabilityForTest(1.0f);
   std::vector<float> ones(160, 1.f);
   std::vector<float> zeros(160, 0.f);
 
@@ -74,18 +78,18 @@ TEST(ResidualEchoDetectorTests, EchoWithRenderClockDrift) {
   // the render side producing data slightly faster.
   for (int i = 0; i < 1000; i++) {
     if (i % 20 == 0) {
-      echo_detector.AnalyzeRenderAudio(ones);
-      echo_detector.AnalyzeCaptureAudio(zeros);
+      echo_detector->AnalyzeRenderAudio(ones);
+      echo_detector->AnalyzeCaptureAudio(zeros);
     } else if (i % 20 == 10) {
-      echo_detector.AnalyzeRenderAudio(zeros);
-      echo_detector.AnalyzeCaptureAudio(ones);
+      echo_detector->AnalyzeRenderAudio(zeros);
+      echo_detector->AnalyzeCaptureAudio(ones);
     } else {
-      echo_detector.AnalyzeRenderAudio(zeros);
-      echo_detector.AnalyzeCaptureAudio(zeros);
+      echo_detector->AnalyzeRenderAudio(zeros);
+      echo_detector->AnalyzeCaptureAudio(zeros);
     }
     if (i % 100 == 0) {
       // This is causing the simulated clock drift.
-      echo_detector.AnalyzeRenderAudio(zeros);
+      echo_detector->AnalyzeRenderAudio(zeros);
     }
   }
   // We expect to detect echo with high likelihood. Clock drift is harder to
@@ -94,13 +98,14 @@ TEST(ResidualEchoDetectorTests, EchoWithRenderClockDrift) {
   // A growing buffer can be caused by jitter or clock drift and it's not
   // possible to make this decision right away. For this reason we only expect
   // an echo likelihood of 75% in this test.
-  auto ed_metrics = echo_detector.GetMetrics();
+  auto ed_metrics = echo_detector->GetMetrics();
   EXPECT_GT(ed_metrics.echo_likelihood, 0.75f);
 }
 
 TEST(ResidualEchoDetectorTests, EchoWithCaptureClockDrift) {
-  ResidualEchoDetector echo_detector;
-  echo_detector.SetReliabilityForTest(1.0f);
+  rtc::scoped_refptr<ResidualEchoDetector> echo_detector =
+      new rtc::RefCountedObject<ResidualEchoDetector>();
+  echo_detector->SetReliabilityForTest(1.0f);
   std::vector<float> ones(160, 1.f);
   std::vector<float> zeros(160, 0.f);
 
@@ -110,22 +115,22 @@ TEST(ResidualEchoDetectorTests, EchoWithCaptureClockDrift) {
   // the capture side producing data slightly faster.
   for (int i = 0; i < 1000; i++) {
     if (i % 20 == 0) {
-      echo_detector.AnalyzeRenderAudio(ones);
-      echo_detector.AnalyzeCaptureAudio(zeros);
+      echo_detector->AnalyzeRenderAudio(ones);
+      echo_detector->AnalyzeCaptureAudio(zeros);
     } else if (i % 20 == 10) {
-      echo_detector.AnalyzeRenderAudio(zeros);
-      echo_detector.AnalyzeCaptureAudio(ones);
+      echo_detector->AnalyzeRenderAudio(zeros);
+      echo_detector->AnalyzeCaptureAudio(ones);
     } else {
-      echo_detector.AnalyzeRenderAudio(zeros);
-      echo_detector.AnalyzeCaptureAudio(zeros);
+      echo_detector->AnalyzeRenderAudio(zeros);
+      echo_detector->AnalyzeCaptureAudio(zeros);
     }
     if (i % 100 == 0) {
       // This is causing the simulated clock drift.
-      echo_detector.AnalyzeCaptureAudio(zeros);
+      echo_detector->AnalyzeCaptureAudio(zeros);
     }
   }
   // We expect to detect echo with near certain likelihood.
-  auto ed_metrics = echo_detector.GetMetrics();
+  auto ed_metrics = echo_detector->GetMetrics();
   EXPECT_NEAR(1.f, ed_metrics.echo_likelihood, 0.01f);
 }
 

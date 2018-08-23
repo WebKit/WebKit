@@ -17,35 +17,25 @@
 namespace rtc {
 
 const char* const kHttpResponse =
-  "HTTP/1.1 200\r\n"
-  "Connection: Keep-Alive\r\n"
-  "Content-Type: text/plain\r\n"
-  "Proxy-Authorization: 42\r\n"
-  "Transfer-Encoding: chunked\r\n"
-  "\r\n"
-  "00000008\r\n"
-  "Goodbye!\r\n"
-  "0\r\n\r\n";
+    "HTTP/1.1 200\r\n"
+    "Connection: Keep-Alive\r\n"
+    "Content-Type: text/plain\r\n"
+    "Proxy-Authorization: 42\r\n"
+    "Transfer-Encoding: chunked\r\n"
+    "\r\n"
+    "00000008\r\n"
+    "Goodbye!\r\n"
+    "0\r\n\r\n";
 
 const char* const kHttpEmptyResponse =
-  "HTTP/1.1 200\r\n"
-  "Connection: Keep-Alive\r\n"
-  "Content-Length: 0\r\n"
-  "Proxy-Authorization: 42\r\n"
-  "\r\n";
-
-const char* const kHttpResponsePrefix =
-  "HTTP/1.1 200\r\n"
-  "Connection: Keep-Alive\r\n"
-  "Content-Type: text/plain\r\n"
-  "Proxy-Authorization: 42\r\n"
-  "Transfer-Encoding: chunked\r\n"
-  "\r\n"
-  "8\r\n"
-  "Goodbye!\r\n";
+    "HTTP/1.1 200\r\n"
+    "Connection: Keep-Alive\r\n"
+    "Content-Length: 0\r\n"
+    "Proxy-Authorization: 42\r\n"
+    "\r\n";
 
 class HttpBaseTest : public testing::Test, public IHttpNotify {
-public:
+ public:
   enum EventType { E_HEADER_COMPLETE, E_COMPLETE, E_CLOSED };
   struct Event {
     EventType event;
@@ -54,7 +44,7 @@ public:
     HttpMode mode;
     HttpError err;
   };
-  HttpBaseTest() : mem(nullptr), obtain_stream(false), http_stream(nullptr) {}
+  HttpBaseTest() : mem(nullptr), http_stream(nullptr) {}
 
   void TearDown() override {
     delete http_stream;
@@ -64,21 +54,18 @@ public:
 
   HttpError onHttpHeaderComplete(bool chunked, size_t& data_size) override {
     RTC_LOG_F(LS_VERBOSE) << "chunked: " << chunked << " size: " << data_size;
-    Event e = { E_HEADER_COMPLETE, chunked, data_size, HM_NONE, HE_NONE};
+    Event e = {E_HEADER_COMPLETE, chunked, data_size, HM_NONE, HE_NONE};
     events.push_back(e);
-    if (obtain_stream) {
-      ObtainDocumentStream();
-    }
     return HE_NONE;
   }
   void onHttpComplete(HttpMode mode, HttpError err) override {
     RTC_LOG_F(LS_VERBOSE) << "mode: " << mode << " err: " << err;
-    Event e = { E_COMPLETE, false, 0, mode, err };
+    Event e = {E_COMPLETE, false, 0, mode, err};
     events.push_back(e);
   }
   void onHttpClosed(HttpError err) override {
     RTC_LOG_F(LS_VERBOSE) << "err: " << err;
-    Event e = { E_CLOSED, false, 0, HM_NONE, err };
+    Event e = {E_CLOSED, false, 0, HM_NONE, err};
     events.push_back(e);
   }
 
@@ -88,7 +75,6 @@ public:
   void VerifyDocumentContents(const char* expected_data,
                               size_t expected_length = SIZE_UNKNOWN);
 
-  void ObtainDocumentStream();
   void VerifyDocumentStreamIsOpening();
   void VerifyDocumentStreamOpenEvent();
   void ReadDocumentStreamData(const char* expected_data);
@@ -108,8 +94,7 @@ public:
   webrtc::testing::StreamSource src;
   std::vector<Event> events;
 
-  // Document stream, and stream events
-  bool obtain_stream;
+  // Stream events
   StreamInterface* http_stream;
   webrtc::testing::StreamSink sink;
 };
@@ -184,15 +169,6 @@ void HttpBaseTest::VerifyDocumentContents(const char* expected_data,
   RTC_LOG_F(LS_VERBOSE) << "Exit";
 }
 
-void HttpBaseTest::ObtainDocumentStream() {
-  RTC_LOG_F(LS_VERBOSE) << "Enter";
-  EXPECT_FALSE(http_stream);
-  http_stream = base.GetDocumentStream();
-  ASSERT_TRUE(nullptr != http_stream);
-  sink.Monitor(http_stream);
-  RTC_LOG_F(LS_VERBOSE) << "Exit";
-}
-
 void HttpBaseTest::VerifyDocumentStreamIsOpening() {
   RTC_LOG_F(LS_VERBOSE) << "Enter";
   ASSERT_TRUE(nullptr != http_stream);
@@ -200,7 +176,7 @@ void HttpBaseTest::VerifyDocumentStreamIsOpening() {
   EXPECT_EQ(SS_OPENING, http_stream->GetState());
 
   size_t read = 0;
-  char buffer[5] = { 0 };
+  char buffer[5] = {0};
   EXPECT_EQ(SR_BLOCK,
             http_stream->Read(buffer, sizeof(buffer), &read, nullptr));
   RTC_LOG_F(LS_VERBOSE) << "Exit";
@@ -230,7 +206,7 @@ void HttpBaseTest::ReadDocumentStreamData(const char* expected_data) {
   const size_t expected_length = strlen(expected_data);
   while (verified_length < expected_length) {
     size_t read = 0;
-    char buffer[5] = { 0 };
+    char buffer[5] = {0};
     size_t amt_to_read =
         std::min(expected_length - verified_length, sizeof(buffer));
     EXPECT_EQ(SR_SUCCESS,
@@ -247,7 +223,7 @@ void HttpBaseTest::VerifyDocumentStreamIsEOS() {
 
   ASSERT_TRUE(nullptr != http_stream);
   size_t read = 0;
-  char buffer[5] = { 0 };
+  char buffer[5] = {0};
   EXPECT_EQ(SR_EOS, http_stream->Read(buffer, sizeof(buffer), &read, nullptr));
   EXPECT_EQ(SS_CLOSED, http_stream->GetState());
 
@@ -379,147 +355,4 @@ TEST_F(HttpBaseTest, SupportsReceiveViaDocumentPush) {
   VerifyDocumentContents("Goodbye!");
 }
 
-TEST_F(HttpBaseTest, SupportsReceiveViaStreamPull) {
-  // Switch to pull mode
-  ObtainDocumentStream();
-  VerifyDocumentStreamIsOpening();
-
-  // Queue response document
-  SetupSource(kHttpResponse);
-  VerifyDocumentStreamIsOpening();
-
-  // Begin receive
-  base.recv(&data);
-
-  // Pull document data
-  VerifyDocumentStreamOpenEvent();
-  ReadDocumentStreamData("Goodbye!");
-  VerifyDocumentStreamIsEOS();
-
-  // Document completed successfully
-  VerifyHeaderComplete(2, false);
-  VerifyTransferComplete(HM_RECV, HE_NONE);
-  VerifyDocumentContents("");
-}
-
-TEST_F(HttpBaseTest, DISABLED_AllowsCloseStreamBeforeDocumentIsComplete) {
-
-  // TODO: Remove extra logging once test failure is understood
-  LoggingSeverity old_sev = rtc::LogMessage::GetLogToDebug();
-  rtc::LogMessage::LogToDebug(LS_VERBOSE);
-
-
-  // Switch to pull mode
-  ObtainDocumentStream();
-  VerifyDocumentStreamIsOpening();
-
-  // Queue response document
-  SetupSource(kHttpResponse);
-  VerifyDocumentStreamIsOpening();
-
-  // Begin receive
-  base.recv(&data);
-
-  // Pull some of the data
-  VerifyDocumentStreamOpenEvent();
-  ReadDocumentStreamData("Goodb");
-
-  // We've seen the header by now
-  VerifyHeaderComplete(1, false);
-
-  // Close the pull stream, this will transition back to push I/O.
-  http_stream->Close();
-  Thread::Current()->ProcessMessages(0);
-
-  // Remainder of document completed successfully
-  VerifyTransferComplete(HM_RECV, HE_NONE);
-  VerifyDocumentContents("ye!");
-
-  rtc::LogMessage::LogToDebug(old_sev);
-}
-
-TEST_F(HttpBaseTest, AllowsGetDocumentStreamInResponseToHttpHeader) {
-  // Queue response document
-  SetupSource(kHttpResponse);
-
-  // Switch to pull mode in response to header arrival
-  obtain_stream = true;
-
-  // Begin receive
-  base.recv(&data);
-
-  // We've already seen the header, but not data has arrived
-  VerifyHeaderComplete(1, false);
-  VerifyDocumentContents("");
-
-  // Pull the document data
-  ReadDocumentStreamData("Goodbye!");
-  VerifyDocumentStreamIsEOS();
-
-  // Document completed successfully
-  VerifyTransferComplete(HM_RECV, HE_NONE);
-  VerifyDocumentContents("");
-}
-
-TEST_F(HttpBaseTest, AllowsGetDocumentStreamWithEmptyDocumentBody) {
-  // Queue empty response document
-  SetupSource(kHttpEmptyResponse);
-
-  // Switch to pull mode in response to header arrival
-  obtain_stream = true;
-
-  // Begin receive
-  base.recv(&data);
-
-  // We've already seen the header, but not data has arrived
-  VerifyHeaderComplete(1, true);
-  VerifyDocumentContents("");
-
-  // The document is still open, until we attempt to read
-  ASSERT_TRUE(nullptr != http_stream);
-  EXPECT_EQ(SS_OPEN, http_stream->GetState());
-
-  // Attempt to read data, and discover EOS
-  VerifyDocumentStreamIsEOS();
-
-  // Document completed successfully
-  VerifyTransferComplete(HM_RECV, HE_NONE);
-  VerifyDocumentContents("");
-}
-
-TEST_F(HttpBaseTest, SignalsDocumentStreamCloseOnUnexpectedClose) {
-  // Switch to pull mode
-  ObtainDocumentStream();
-  VerifyDocumentStreamIsOpening();
-
-  // Queue response document
-  SetupSource(kHttpResponsePrefix);
-  VerifyDocumentStreamIsOpening();
-
-  // Begin receive
-  base.recv(&data);
-
-  // Pull document data
-  VerifyDocumentStreamOpenEvent();
-  ReadDocumentStreamData("Goodbye!");
-
-  // Simulate unexpected close
-  src.SetState(SS_CLOSED);
-
-  // Observe error event on document stream
-  EXPECT_EQ(webrtc::testing::SSE_ERROR, sink.Events(http_stream));
-
-  // Future reads give an error
-  int error = 0;
-  char buffer[5] = { 0 };
-  EXPECT_EQ(SR_ERROR,
-            http_stream->Read(buffer, sizeof(buffer), nullptr, &error));
-  EXPECT_EQ(HE_DISCONNECTED, error);
-
-  // Document completed with error
-  VerifyHeaderComplete(2, false);
-  VerifyTransferComplete(HM_RECV, HE_DISCONNECTED);
-  VerifyDocumentContents("");
-}
-
-} // namespace rtc
+}  // namespace rtc

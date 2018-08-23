@@ -20,6 +20,10 @@
 #include "media/base/mediaconstants.h"
 #include "media/base/mediaengine.h"
 
+namespace rtc {
+class DataRateLimiter;
+}
+
 namespace cricket {
 
 struct DataCodec;
@@ -30,9 +34,7 @@ class RtpDataEngine : public DataEngineInterface {
 
   virtual DataMediaChannel* CreateChannel(const MediaConfig& config);
 
-  virtual const std::vector<DataCodec>& data_codecs() {
-    return data_codecs_;
-  }
+  virtual const std::vector<DataCodec>& data_codecs() { return data_codecs_; }
 
  private:
   std::vector<DataCodec> data_codecs_;
@@ -84,10 +86,9 @@ class RtpDataMediaChannel : public DataMediaChannel {
   virtual void OnRtcpReceived(rtc::CopyOnWriteBuffer* packet,
                               const rtc::PacketTime& packet_time) {}
   virtual void OnReadyToSend(bool ready) {}
-  virtual bool SendData(
-    const SendDataParams& params,
-    const rtc::CopyOnWriteBuffer& payload,
-    SendDataResult* result);
+  virtual bool SendData(const SendDataParams& params,
+                        const rtc::CopyOnWriteBuffer& payload,
+                        SendDataResult* result);
   virtual rtc::DiffServCodePoint PreferredDscp() const;
 
  private:
@@ -103,7 +104,7 @@ class RtpDataMediaChannel : public DataMediaChannel {
   std::vector<StreamParams> send_streams_;
   std::vector<StreamParams> recv_streams_;
   std::map<uint32_t, RtpClock*> rtp_clock_by_send_ssrc_;
-  std::unique_ptr<rtc::RateLimiter> send_limiter_;
+  std::unique_ptr<rtc::DataRateLimiter> send_limiter_;
 };
 
 }  // namespace cricket

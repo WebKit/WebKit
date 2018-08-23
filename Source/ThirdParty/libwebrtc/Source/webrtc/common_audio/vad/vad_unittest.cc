@@ -17,7 +17,6 @@
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "test/gtest.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 VadTest::VadTest() {}
 
@@ -60,7 +59,7 @@ TEST_F(VadTest, ApiTest) {
   // combinations.
 
   VadInst* handle = WebRtcVad_Create();
-  int16_t zeros[kMaxFrameLength] = { 0 };
+  int16_t zeros[kMaxFrameLength] = {0};
 
   // Construct a speech signal that will trigger the VAD in all modes. It is
   // known that (i * i) will wrap around, but that doesn't matter in this case.
@@ -87,12 +86,10 @@ TEST_F(VadTest, ApiTest) {
 
   // WebRtcVad_set_mode() invalid modes tests. Tries smallest supported value
   // minus one and largest supported value plus one.
-  EXPECT_EQ(-1, WebRtcVad_set_mode(handle,
-                                   WebRtcSpl_MinValueW32(kModes,
-                                                         kModesSize) - 1));
-  EXPECT_EQ(-1, WebRtcVad_set_mode(handle,
-                                   WebRtcSpl_MaxValueW32(kModes,
-                                                         kModesSize) + 1));
+  EXPECT_EQ(-1, WebRtcVad_set_mode(
+                    handle, WebRtcSpl_MinValueW32(kModes, kModesSize) - 1));
+  EXPECT_EQ(-1, WebRtcVad_set_mode(
+                    handle, WebRtcSpl_MaxValueW32(kModes, kModesSize) + 1));
 
   // WebRtcVad_Process() tests
   // nullptr as speech pointer
@@ -109,14 +106,10 @@ TEST_F(VadTest, ApiTest) {
     for (size_t i = 0; i < kRatesSize; i++) {
       for (size_t j = 0; j < kFrameLengthsSize; j++) {
         if (ValidRatesAndFrameLengths(kRates[i], kFrameLengths[j])) {
-          EXPECT_EQ(1, WebRtcVad_Process(handle,
-                                         kRates[i],
-                                         speech,
+          EXPECT_EQ(1, WebRtcVad_Process(handle, kRates[i], speech,
                                          kFrameLengths[j]));
         } else {
-          EXPECT_EQ(-1, WebRtcVad_Process(handle,
-                                          kRates[i],
-                                          speech,
+          EXPECT_EQ(-1, WebRtcVad_Process(handle, kRates[i], speech,
                                           kFrameLengths[j]));
         }
       }
@@ -130,22 +123,20 @@ TEST_F(VadTest, ValidRatesFrameLengths) {
   // This test verifies valid and invalid rate/frame_length combinations. We
   // loop through some sampling rates and frame lengths from negative values to
   // values larger than possible.
-  const int kRates[] = {
-    -8000, -4000, 0, 4000, 8000, 8001, 15999, 16000, 32000, 48000, 48001, 96000
-  };
+  const int kRates[] = {-8000, -4000, 0,     4000,  8000,  8001,
+                        15999, 16000, 32000, 48000, 48001, 96000};
 
-  const size_t kFrameLengths[] = {
-    0, 80, 81, 159, 160, 240, 320, 480, 640, 960, 1440, 2000
-  };
+  const size_t kFrameLengths[] = {0,   80,  81,  159, 160,  240,
+                                  320, 480, 640, 960, 1440, 2000};
 
   for (size_t i = 0; i < arraysize(kRates); i++) {
     for (size_t j = 0; j < arraysize(kFrameLengths); j++) {
       if (ValidRatesAndFrameLengths(kRates[i], kFrameLengths[j])) {
-        EXPECT_EQ(0, WebRtcVad_ValidRateAndFrameLength(kRates[i],
-                                                       kFrameLengths[j]));
+        EXPECT_EQ(
+            0, WebRtcVad_ValidRateAndFrameLength(kRates[i], kFrameLengths[j]));
       } else {
-        EXPECT_EQ(-1, WebRtcVad_ValidRateAndFrameLength(kRates[i],
-                                                        kFrameLengths[j]));
+        EXPECT_EQ(
+            -1, WebRtcVad_ValidRateAndFrameLength(kRates[i], kFrameLengths[j]));
       }
     }
   }

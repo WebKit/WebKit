@@ -74,17 +74,17 @@ bool ConvertToMouseShapeAndCompare(unsigned left, unsigned right) {
 }  // namespace
 
 TEST(MouseCursorTest, MatchCursors) {
-  EXPECT_TRUE(ConvertToMouseShapeAndCompare(IDD_CURSOR1_24BPP,
-                                            IDD_CURSOR1_32BPP));
+  EXPECT_TRUE(
+      ConvertToMouseShapeAndCompare(IDD_CURSOR1_24BPP, IDD_CURSOR1_32BPP));
 
-  EXPECT_TRUE(ConvertToMouseShapeAndCompare(IDD_CURSOR1_8BPP,
-                                            IDD_CURSOR1_32BPP));
+  EXPECT_TRUE(
+      ConvertToMouseShapeAndCompare(IDD_CURSOR1_8BPP, IDD_CURSOR1_32BPP));
 
-  EXPECT_TRUE(ConvertToMouseShapeAndCompare(IDD_CURSOR2_1BPP,
-                                            IDD_CURSOR2_32BPP));
+  EXPECT_TRUE(
+      ConvertToMouseShapeAndCompare(IDD_CURSOR2_1BPP, IDD_CURSOR2_32BPP));
 
-  EXPECT_TRUE(ConvertToMouseShapeAndCompare(IDD_CURSOR3_4BPP,
-                                            IDD_CURSOR3_32BPP));
+  EXPECT_TRUE(
+      ConvertToMouseShapeAndCompare(IDD_CURSOR3_4BPP, IDD_CURSOR3_32BPP));
 }
 
 }  // namespace webrtc

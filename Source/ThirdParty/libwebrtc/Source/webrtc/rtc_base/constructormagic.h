@@ -12,8 +12,7 @@
 #define RTC_BASE_CONSTRUCTORMAGIC_H_
 
 // Put this in the declarations for a class to be unassignable.
-#define RTC_DISALLOW_ASSIGN(TypeName) \
-  void operator=(const TypeName&) = delete
+#define RTC_DISALLOW_ASSIGN(TypeName) void operator=(const TypeName&) = delete
 
 // A macro to disallow the copy constructor and operator= functions. This should
 // be used in the declarations for a class.

@@ -14,11 +14,10 @@
 #include <vector>
 
 #include "modules/include/module_common_types.h"
-#include "modules/video_coding/include/video_coding.h"
 #include "modules/video_coding/encoded_frame.h"
+#include "modules/video_coding/include/video_coding.h"
 #include "modules/video_coding/jitter_buffer_common.h"
 #include "modules/video_coding/session_info.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
@@ -26,8 +25,6 @@ class VCMFrameBuffer : public VCMEncodedFrame {
  public:
   VCMFrameBuffer();
   virtual ~VCMFrameBuffer();
-
-  VCMFrameBuffer(const VCMFrameBuffer& rhs);
 
   virtual void Reset();
 
@@ -39,17 +36,11 @@ class VCMFrameBuffer : public VCMEncodedFrame {
   // State
   // Get current state of frame
   VCMFrameBufferStateEnum GetState() const;
-  // Get current state and timestamp of frame
-  VCMFrameBufferStateEnum GetState(uint32_t& timeStamp) const;
   void PrepareForDecode(bool continuous);
 
-  bool IsRetransmitted() const;
   bool IsSessionComplete() const;
   bool HaveFirstPacket() const;
-  bool HaveLastPacket() const;
   int NumPackets() const;
-  // Makes sure the session contain a decodable stream.
-  void MakeSessionDecodable();
 
   // Sequence numbers
   // Get lowest packet sequence number in frame
@@ -61,7 +52,6 @@ class VCMFrameBuffer : public VCMEncodedFrame {
   int TemporalId() const;
   bool LayerSync() const;
   int Tl0PicId() const;
-  bool NonReference() const;
 
   std::vector<NaluInfo> GetNaluInfos() const;
 
@@ -77,10 +67,6 @@ class VCMFrameBuffer : public VCMEncodedFrame {
   int64_t LatestPacketTimeMs() const;
 
   webrtc::FrameType FrameType() const;
-  void SetPreviousFrameLoss();
-
-  // The number of packets discarded because the decoder can't make use of them.
-  int NotDecodablePackets() const;
 
  private:
   void SetState(VCMFrameBufferStateEnum state);  // Set state of frame

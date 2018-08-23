@@ -14,6 +14,7 @@
 
 #include <math.h>
 
+#include "common_audio/include/audio_util.h"
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "test/gtest.h"
 
@@ -79,12 +80,11 @@ class DtmfToneGeneratorTest : public ::testing::Test {
         EXPECT_EQ(kNumSamples, tone_gen_.Generate(kNumSamples, &signal));
         for (int n = 0; n < kNumSamples; ++n) {
           double attenuation_factor =
-              pow(10, -static_cast<double>(attenuation) / 20);
+              DbToRatio(-static_cast<float>(attenuation));
           // Verify that the attenuation is correct.
           for (int channel = 0; channel < channels; ++channel) {
             EXPECT_NEAR(attenuation_factor * ref_signal[channel][n],
-                        signal[channel][n],
-                        2);
+                        signal[channel][n], 2);
           }
         }
 

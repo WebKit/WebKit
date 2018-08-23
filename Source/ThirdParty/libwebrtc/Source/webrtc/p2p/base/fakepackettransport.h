@@ -88,10 +88,10 @@ class FakePacketTransport : public PacketTransportInternal {
 
   const CopyOnWriteBuffer* last_sent_packet() { return &last_sent_packet_; }
 
-  Optional<NetworkRoute> network_route() const override {
+  absl::optional<NetworkRoute> network_route() const override {
     return network_route_;
   }
-  void SetNetworkRoute(Optional<NetworkRoute> network_route) {
+  void SetNetworkRoute(absl::optional<NetworkRoute> network_route) {
     network_route_ = network_route;
   }
 
@@ -132,7 +132,7 @@ class FakePacketTransport : public PacketTransportInternal {
   bool writable_ = false;
   bool receiving_ = false;
 
-  Optional<NetworkRoute> network_route_;
+  absl::optional<NetworkRoute> network_route_;
 };
 
 }  // namespace rtc

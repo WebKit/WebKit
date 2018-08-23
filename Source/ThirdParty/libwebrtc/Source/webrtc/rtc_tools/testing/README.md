@@ -17,8 +17,14 @@ Updating prebuilt_apprtc.zip:
     - `ln -s "$(pwd)/src/collider" src/src`
     - `GOPATH="$(pwd)/src" go get -d collidermain`
     - `rm src/src`
-- Remove unneeded files:
-    - `rm -rf .git node_modules browsers`
+- Install additional components:
+    - `python temp/google-cloud-sdk/bin/dev_appserver.py out/app_engine`
+        - Stop it and run the suggestion: `./temp/google-cloud-sdk/bin/gcloud
+          components install app-engine-python-extras`
+- Remove largest unneeded files:
+    - `rm -rf .git node_modules browsers
+      temp/google-cloud-sdk/.install/.{backup,download}
+      temp/google-cloud-sdk/platform/google_appengine/lib/django-*`
 - `zip -r prebuilt_apprtc.zip apprtc/`
 - `mv prebuilt_apprtc.zip webrtc/src/rtc_tools/testing/prebuilt_apprtc.zip`
 

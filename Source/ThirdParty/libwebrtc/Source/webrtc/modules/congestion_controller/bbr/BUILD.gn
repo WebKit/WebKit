@@ -1,0 +1,160 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_static_library("bbr") {
+  sources = [
+    "bbr_factory.cc",
+    "bbr_factory.h",
+  ]
+  deps = [
+    ":bbr_controller",
+    "../../../api/transport:network_control",
+    "../../../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("bbr_controller") {
+  visibility = [ ":*" ]
+  sources = [
+    "bbr_network_controller.cc",
+    "bbr_network_controller.h",
+  ]
+  deps = [
+    ":bandwidth_sampler",
+    ":loss_rate_filter",
+    ":rtt_stats",
+    ":windowed_filter",
+    "../../../api/transport:network_control",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base/experiments:field_trial_parser",
+    "../../../rtc_base/system:fallthrough",
+    "../../../system_wrappers:field_trial_api",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("bandwidth_sampler") {
+  visibility = [ ":*" ]
+  sources = [
+    "bandwidth_sampler.cc",
+    "bandwidth_sampler.h",
+  ]
+  deps = [
+    ":packet_number_indexed_queue",
+    "../../../api/units:data_rate",
+    "../../../api/units:data_size",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("data_transfer_tracker") {
+  visibility = [ ":*" ]
+  sources = [
+    "data_transfer_tracker.cc",
+    "data_transfer_tracker.h",
+  ]
+  deps = [
+    "../../../api/units:data_size",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_source_set("packet_number_indexed_queue") {
+  visibility = [ ":*" ]
+  sources = [
+    "packet_number_indexed_queue.h",
+  ]
+  deps = [
+    "../../../rtc_base:checks",
+  ]
+}
+
+rtc_source_set("loss_rate_filter") {
+  visibility = [ ":*" ]
+  sources = [
+    "loss_rate_filter.cc",
+    "loss_rate_filter.h",
+  ]
+  deps = [
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+rtc_source_set("rtt_stats") {
+  visibility = [ ":*" ]
+  sources = [
+    "rtt_stats.cc",
+    "rtt_stats.h",
+  ]
+  deps = [
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../rtc_base:rtc_base_approved",
+  ]
+}
+rtc_source_set("windowed_filter") {
+  visibility = [ ":*" ]
+  sources = [
+    "windowed_filter.h",
+  ]
+}
+if (rtc_include_tests) {
+  rtc_source_set("test_bbr_printer") {
+    testonly = true
+    sources = [
+      "test/bbr_printer.cc",
+      "test/bbr_printer.h",
+    ]
+    deps = [
+      ":bbr",
+      ":bbr_controller",
+      "..:test_controller_printer",
+    ]
+  }
+  rtc_source_set("bbr_unittests") {
+    testonly = true
+    sources = [
+      "bandwidth_sampler_unittest.cc",
+      "bbr_network_controller_unittest.cc",
+      "data_transfer_tracker_unittest.cc",
+      "loss_rate_filter_unittest.cc",
+      "packet_number_indexed_queue_unittest.cc",
+      "rtt_stats_unittest.cc",
+      "windowed_filter_unittest.cc",
+    ]
+    deps = [
+      ":bandwidth_sampler",
+      ":bbr",
+      ":bbr_controller",
+      ":data_transfer_tracker",
+      ":loss_rate_filter",
+      ":packet_number_indexed_queue",
+      ":rtt_stats",
+      ":windowed_filter",
+      "../../../api/transport:network_control_test",
+      "../../../api/units:data_rate",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../test:test_support",
+    ]
+    if (!build_with_chromium && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+}

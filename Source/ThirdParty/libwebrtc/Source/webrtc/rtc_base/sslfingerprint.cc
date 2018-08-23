@@ -20,8 +20,8 @@
 
 namespace rtc {
 
-SSLFingerprint* SSLFingerprint::Create(
-    const std::string& algorithm, const rtc::SSLIdentity* identity) {
+SSLFingerprint* SSLFingerprint::Create(const std::string& algorithm,
+                                       const rtc::SSLIdentity* identity) {
   if (!identity) {
     return nullptr;
   }
@@ -29,12 +29,12 @@ SSLFingerprint* SSLFingerprint::Create(
   return Create(algorithm, &(identity->certificate()));
 }
 
-SSLFingerprint* SSLFingerprint::Create(
-    const std::string& algorithm, const rtc::SSLCertificate* cert) {
+SSLFingerprint* SSLFingerprint::Create(const std::string& algorithm,
+                                       const rtc::SSLCertificate* cert) {
   uint8_t digest_val[64];
   size_t digest_len;
-  bool ret = cert->ComputeDigest(
-      algorithm, digest_val, sizeof(digest_val), &digest_len);
+  bool ret = cert->ComputeDigest(algorithm, digest_val, sizeof(digest_val),
+                                 &digest_len);
   if (!ret) {
     return nullptr;
   }
@@ -43,7 +43,8 @@ SSLFingerprint* SSLFingerprint::Create(
 }
 
 SSLFingerprint* SSLFingerprint::CreateFromRfc4572(
-    const std::string& algorithm, const std::string& fingerprint) {
+    const std::string& algorithm,
+    const std::string& fingerprint) {
   if (algorithm.empty() || !rtc::IsFips180DigestAlgorithm(algorithm))
     return nullptr;
 
@@ -52,10 +53,8 @@ SSLFingerprint* SSLFingerprint::CreateFromRfc4572(
 
   size_t value_len;
   char value[rtc::MessageDigest::kMaxSize];
-  value_len = rtc::hex_decode_with_delimiter(value, sizeof(value),
-                                                   fingerprint.c_str(),
-                                                   fingerprint.length(),
-                                                   ':');
+  value_len = rtc::hex_decode_with_delimiter(
+      value, sizeof(value), fingerprint.c_str(), fingerprint.length(), ':');
   if (!value_len)
     return nullptr;
 
@@ -91,15 +90,14 @@ SSLFingerprint::SSLFingerprint(const SSLFingerprint& from)
     : algorithm(from.algorithm), digest(from.digest) {}
 
 bool SSLFingerprint::operator==(const SSLFingerprint& other) const {
-  return algorithm == other.algorithm &&
-         digest == other.digest;
+  return algorithm == other.algorithm && digest == other.digest;
 }
 
 std::string SSLFingerprint::GetRfc4572Fingerprint() const {
   std::string fingerprint =
       rtc::hex_encode_with_delimiter(digest.data<char>(), digest.size(), ':');
-  std::transform(fingerprint.begin(), fingerprint.end(),
-                 fingerprint.begin(), ::toupper);
+  std::transform(fingerprint.begin(), fingerprint.end(), fingerprint.begin(),
+                 ::toupper);
   return fingerprint;
 }
 

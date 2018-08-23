@@ -17,6 +17,7 @@
 
 #include "rtc_tools/frame_analyzer/video_quality_analysis.h"
 #include "rtc_tools/simple_command_line_parser.h"
+#include "test/testsupport/perf_test.h"
 
 /*
  * A command line tool running PSNR and SSIM on a reference video and a test
@@ -39,7 +40,7 @@
  * --stats_file=<name_of_file> --width=<frame_width>
  * --height=<frame_height>
  */
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
   std::string program_name = argv[0];
   std::string usage =
       "Compares the output video with the initially sent video."
@@ -62,7 +63,10 @@ int main(int argc, char** argv) {
       "  - reference_file(string): The reference YUV file to compare against."
       " Default: ref.yuv\n"
       "  - test_file(string): The test YUV file to run the analysis for."
-      " Default: test_file.yuv\n";
+      " Default: test_file.yuv\n"
+      "  - chartjson_result_file: Where to store perf result in chartjson"
+      " format. If not present, no perf result will be stored."
+      " Default: None\n";
 
   webrtc::test::CommandLineParser parser;
 
@@ -77,6 +81,7 @@ int main(int argc, char** argv) {
   parser.SetFlag("stats_file_test", "stats_test.txt");
   parser.SetFlag("reference_file", "ref.yuv");
   parser.SetFlag("test_file", "test.yuv");
+  parser.SetFlag("chartjson_result_file", "");
   parser.SetFlag("help", "false");
 
   parser.ProcessFlags();
@@ -101,10 +106,16 @@ int main(int argc, char** argv) {
                             parser.GetFlag("stats_file_ref").c_str(),
                             parser.GetFlag("stats_file_test").c_str(), width,
                             height, &results);
+  webrtc::test::GetMaxRepeatedAndSkippedFrames(
+      parser.GetFlag("stats_file_ref"), parser.GetFlag("stats_file_test"),
+      &results);
 
-  std::string label = parser.GetFlag("label");
-  webrtc::test::PrintAnalysisResults(label, &results);
-  webrtc::test::PrintMaxRepeatedAndSkippedFrames(
-      label, parser.GetFlag("stats_file_ref"),
-      parser.GetFlag("stats_file_test"));
+  webrtc::test::PrintAnalysisResults(parser.GetFlag("label"), &results);
+
+  std::string chartjson_result_file = parser.GetFlag("chartjson_result_file");
+  if (!chartjson_result_file.empty()) {
+    webrtc::test::WritePerfResults(chartjson_result_file);
+  }
+
+  return 0;
 }

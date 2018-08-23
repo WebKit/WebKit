@@ -14,8 +14,8 @@
 namespace webrtc {
 
 DxgiAdapterContext::DxgiAdapterContext() = default;
-DxgiAdapterContext::DxgiAdapterContext(
-    const DxgiAdapterContext& context) = default;
+DxgiAdapterContext::DxgiAdapterContext(const DxgiAdapterContext& context) =
+    default;
 DxgiAdapterContext::~DxgiAdapterContext() = default;
 
 DxgiFrameContext::DxgiFrameContext() = default;

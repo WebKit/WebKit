@@ -12,9 +12,9 @@
 #include "rtc_base/numerics/safe_conversions.h"
 
 #if defined(WEBRTC_POSIX)
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 #if defined(OPENBSD)
 #include <netinet/in_systm.h>
 #endif
@@ -26,12 +26,11 @@
 #include <unistd.h>
 #endif
 
-#include <sstream>
-
 #include "rtc_base/byteorder.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/nethelpers.h"
+#include "rtc_base/strings/string_builder.h"
 
 #if defined(WEBRTC_WIN)
 #include "rtc_base/win32.h"
@@ -161,21 +160,21 @@ std::string SocketAddress::HostAsSensitiveURIString() const {
 }
 
 std::string SocketAddress::PortAsString() const {
-  std::ostringstream ost;
-  ost << port_;
-  return ost.str();
+  return std::to_string(port_);
 }
 
 std::string SocketAddress::ToString() const {
-  std::ostringstream ost;
-  ost << *this;
-  return ost.str();
+  char buf[1024];
+  rtc::SimpleStringBuilder sb(buf);
+  sb << HostAsURIString() << ":" << port();
+  return sb.str();
 }
 
 std::string SocketAddress::ToSensitiveString() const {
-  std::ostringstream ost;
-  ost << HostAsSensitiveURIString() << ":" << port();
-  return ost.str();
+  char buf[1024];
+  rtc::SimpleStringBuilder sb(buf);
+  sb << HostAsSensitiveURIString() << ":" << port();
+  return sb.str();
 }
 
 bool SocketAddress::FromString(const std::string& str) {
@@ -200,18 +199,13 @@ bool SocketAddress::FromString(const std::string& str) {
   return true;
 }
 
-std::ostream& operator<<(std::ostream& os, const SocketAddress& addr) {
-  os << addr.HostAsURIString() << ":" << addr.port();
-  return os;
-}
-
 bool SocketAddress::IsAnyIP() const {
   return IPIsAny(ip_);
 }
 
 bool SocketAddress::IsLoopbackIP() const {
-  return IPIsLoopback(ip_) || (IPIsAny(ip_) &&
-                               0 == strcmp(hostname_.c_str(), "localhost"));
+  return IPIsLoopback(ip_) ||
+         (IPIsAny(ip_) && 0 == strcmp(hostname_.c_str(), "localhost"));
 }
 
 bool SocketAddress::IsPrivateIP() const {
@@ -240,7 +234,7 @@ bool SocketAddress::operator<(const SocketAddress& addr) const {
 
 bool SocketAddress::EqualIPs(const SocketAddress& addr) const {
   return (ip_ == addr.ip_) &&
-      ((!IPIsAny(ip_) && !IPIsUnspec(ip_)) || (hostname_ == addr.hostname_));
+         ((!IPIsAny(ip_) && !IPIsUnspec(ip_)) || (hostname_ == addr.hostname_));
 }
 
 bool SocketAddress::EqualPorts(const SocketAddress& addr) const {
@@ -299,7 +293,7 @@ static size_t ToSockAddrStorageHelper(sockaddr_storage* addr,
   return 0;
 }
 
-size_t SocketAddress::ToDualStackSockAddrStorage(sockaddr_storage *addr) const {
+size_t SocketAddress::ToDualStackSockAddrStorage(sockaddr_storage* addr) const {
   return ToSockAddrStorageHelper(addr, ip_.AsIPv6Address(), port_, scope_id_);
 }
 

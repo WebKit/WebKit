@@ -10,6 +10,7 @@
 
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_delay_based.h"
 
+#include "absl/memory/memory.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 
 namespace webrtc {
@@ -19,6 +20,12 @@ RtcEventBweUpdateDelayBased::RtcEventBweUpdateDelayBased(
     BandwidthUsage detector_state)
     : bitrate_bps_(bitrate_bps), detector_state_(detector_state) {}
 
+RtcEventBweUpdateDelayBased::RtcEventBweUpdateDelayBased(
+    const RtcEventBweUpdateDelayBased& other)
+    : RtcEvent(other.timestamp_us_),
+      bitrate_bps_(other.bitrate_bps_),
+      detector_state_(other.detector_state_) {}
+
 RtcEventBweUpdateDelayBased::~RtcEventBweUpdateDelayBased() = default;
 
 RtcEvent::Type RtcEventBweUpdateDelayBased::GetType() const {
@@ -27,6 +34,10 @@ RtcEvent::Type RtcEventBweUpdateDelayBased::GetType() const {
 
 bool RtcEventBweUpdateDelayBased::IsConfigEvent() const {
   return false;
+}
+
+std::unique_ptr<RtcEvent> RtcEventBweUpdateDelayBased::Copy() const {
+  return absl::WrapUnique<RtcEvent>(new RtcEventBweUpdateDelayBased(*this));
 }
 
 }  // namespace webrtc

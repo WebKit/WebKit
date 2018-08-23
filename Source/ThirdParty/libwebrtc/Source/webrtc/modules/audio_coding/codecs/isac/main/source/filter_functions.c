@@ -13,16 +13,14 @@
 #ifdef WEBRTC_ANDROID
 #include <stdlib.h>
 #endif
-#include "pitch_estimator.h"
-#include "lpc_analysis.h"
-#include "codec.h"
 
+#include "modules/audio_coding/codecs/isac/main/source/pitch_estimator.h"
+#include "modules/audio_coding/codecs/isac/main/source/isac_vad.h"
 
-
-void WebRtcIsac_AllPoleFilter(double* InOut,
-                              double* Coef,
-                              size_t lengthInOut,
-                              int orderCoef) {
+static void WebRtcIsac_AllPoleFilter(double* InOut,
+                                     double* Coef,
+                                     size_t lengthInOut,
+                                     int orderCoef) {
   /* the state of filter is assumed to be in InOut[-1] to InOut[-orderCoef] */
   double scal;
   double sum;
@@ -55,12 +53,11 @@ void WebRtcIsac_AllPoleFilter(double* InOut,
   }
 }
 
-
-void WebRtcIsac_AllZeroFilter(double* In,
-                              double* Coef,
-                              size_t lengthInOut,
-                              int orderCoef,
-                              double* Out) {
+static void WebRtcIsac_AllZeroFilter(double* In,
+                                     double* Coef,
+                                     size_t lengthInOut,
+                                     int orderCoef,
+                                     double* Out) {
   /* the state of filter is assumed to be in In[-1] to In[-orderCoef] */
 
   size_t n;
@@ -80,13 +77,12 @@ void WebRtcIsac_AllZeroFilter(double* In,
   }
 }
 
-
-void WebRtcIsac_ZeroPoleFilter(double* In,
-                               double* ZeroCoef,
-                               double* PoleCoef,
-                               size_t lengthInOut,
-                               int orderCoef,
-                               double* Out) {
+static void WebRtcIsac_ZeroPoleFilter(double* In,
+                                      double* ZeroCoef,
+                                      double* PoleCoef,
+                                      size_t lengthInOut,
+                                      int orderCoef,
+                                      double* Out) {
   /* the state of the zero section is assumed to be in In[-1] to In[-orderCoef] */
   /* the state of the pole section is assumed to be in Out[-1] to Out[-orderCoef] */
 
@@ -115,8 +111,10 @@ void WebRtcIsac_AutoCorr(double* r, const double* x, size_t N, size_t order) {
 
 }
 
-
-void WebRtcIsac_BwExpand(double* out, double* in, double coef, size_t length) {
+static void WebRtcIsac_BwExpand(double* out,
+                                double* in,
+                                double coef,
+                                size_t length) {
   size_t i;
   double  chirp;
 
@@ -194,70 +192,4 @@ void WebRtcIsac_WeightingFilter(const double* in,
   /* Export output data */
   memcpy(weiout, weoutbuf+PITCH_WLPCORDER, sizeof(double) * PITCH_FRAME_LEN);
   memcpy(whiout, whoutbuf+PITCH_WLPCORDER, sizeof(double) * PITCH_FRAME_LEN);
-}
-
-
-static const double APupper[ALLPASSSECTIONS] = {0.0347, 0.3826};
-static const double APlower[ALLPASSSECTIONS] = {0.1544, 0.744};
-
-
-void WebRtcIsac_AllpassFilterForDec(double* InOut,
-                                    const double* APSectionFactors,
-                                    size_t lengthInOut,
-                                    double* FilterState) {
-  //This performs all-pass filtering--a series of first order all-pass sections are used
-  //to filter the input in a cascade manner.
-  size_t n,j;
-  double temp;
-  for (j=0; j<ALLPASSSECTIONS; j++){
-    for (n=0;n<lengthInOut;n+=2){
-      temp = InOut[n]; //store input
-      InOut[n] = FilterState[j] + APSectionFactors[j]*temp;
-      FilterState[j] = -APSectionFactors[j]*InOut[n] + temp;
-    }
-  }
-}
-
-void WebRtcIsac_DecimateAllpass(const double* in,
-                                double* state_in,
-                                size_t N,
-                                double* out) {
-  size_t n;
-  double data_vec[PITCH_FRAME_LEN];
-
-  /* copy input */
-  memcpy(data_vec+1, in, sizeof(double) * (N-1));
-
-  data_vec[0] = state_in[2*ALLPASSSECTIONS];   //the z^(-1) state
-  state_in[2*ALLPASSSECTIONS] = in[N-1];
-
-  WebRtcIsac_AllpassFilterForDec(data_vec+1, APupper, N, state_in);
-  WebRtcIsac_AllpassFilterForDec(data_vec, APlower, N, state_in+ALLPASSSECTIONS);
-
-  for (n=0;n<N/2;n++)
-    out[n] = data_vec[2*n] + data_vec[2*n+1];
-
-}
-
-
-/* create high-pass filter ocefficients
- * z = 0.998 * exp(j*2*pi*35/8000);
- * p = 0.94 * exp(j*2*pi*140/8000);
- * HP_b = [1, -2*real(z), abs(z)^2];
- * HP_a = [1, -2*real(p), abs(p)^2]; */
-static const double a_coef[2] = { 1.86864659625574, -0.88360000000000};
-static const double b_coef[2] = {-1.99524591718270,  0.99600400000000};
-
-/* second order high-pass filter */
-void WebRtcIsac_Highpass(const double* in,
-                         double* out,
-                         double* state,
-                         size_t N) {
-  size_t k;
-
-  for (k=0; k<N; k++) {
-    *out = *in + state[1];
-    state[1] = state[0] + b_coef[0] * *in + a_coef[0] * *out;
-    state[0] = b_coef[1] * *in++ + a_coef[1] * *out++;
-  }
 }

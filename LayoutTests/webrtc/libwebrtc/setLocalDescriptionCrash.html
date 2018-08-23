@@ -10,7 +10,7 @@
         <script>
 function badifyAnswer(answer)
 {
-    return {type: answer.type, sdp: answer.sdp.replace("BUNDLE video", "BUNDLE")};
+    return {type: answer.type, sdp: answer.sdp.replace("v=0", "v")};
 }
 
 promise_test((test) => {
@@ -29,9 +29,9 @@ promise_test((test) => {
         badAnswer = badifyAnswer(answer);
         return pc2.setLocalDescription(badAnswer);
     }).then(assert_unreached, (e) => {
-        assert_equals(e.message, "Failed to set local answer sdp: Failed to enable BUNDLE.");
+        assert_equals(e.message, "Expect line: v=");
         return pc2.setLocalDescription(badAnswer).then(assert_unreached, (e) => {
-            assert_equals(e.message, "Failed to set local answer sdp: no pending remote description.");
+            assert_equals(e.message, "Expect line: v=");
         });
     });
 }, "Testing calling twice setLocalDescription with a bad SDP");

@@ -16,13 +16,16 @@
 
 // Parse the file header to extract height, width and fps
 // for a given video file.
-void get_height_width_fps(int *height, int *width, int *fps,
+void get_height_width_fps(int* height,
+                          int* width,
+                          int* fps,
                           const std::string& video_file);
 
 // Returns true if the frame is frozen based on psnr and ssim freezing
 // threshold values.
 bool frozen_frame(std::vector<double> psnr_per_frame,
-                     std::vector<double> ssim_per_frame, size_t frame);
+                  std::vector<double> ssim_per_frame,
+                  size_t frame);
 
 // Returns the vector of identical cluster of frames that are frozen
 // and appears continuously.

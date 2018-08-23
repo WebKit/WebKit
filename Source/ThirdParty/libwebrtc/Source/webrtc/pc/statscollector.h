@@ -15,6 +15,7 @@
 #define PC_STATSCOLLECTOR_H_
 
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -22,10 +23,9 @@
 #include "api/mediastreaminterface.h"
 #include "api/peerconnectioninterface.h"
 #include "api/statstypes.h"
+#include "pc/peerconnectioninternal.h"
 
 namespace webrtc {
-
-class PeerConnection;
 
 // Conversion function to convert candidate type string to the corresponding one
 // from  enum RTCStatsIceCandidateType.
@@ -43,7 +43,7 @@ class StatsCollector {
  public:
   // The caller is responsible for ensuring that the pc outlives the
   // StatsCollector instance.
-  explicit StatsCollector(PeerConnection* pc);
+  explicit StatsCollector(PeerConnectionInternal* pc);
   virtual ~StatsCollector();
 
   // Adds a MediaStream with tracks that can be used as a |selector| in a call
@@ -69,8 +69,7 @@ class StatsCollector {
   // of filling in |reports|.  As is, there's a requirement that the caller
   // uses |reports| immediately without allowing any async activity on
   // the thread (message handling etc) and then discard the results.
-  void GetStats(MediaStreamTrackInterface* track,
-                StatsReports* reports);
+  void GetStats(MediaStreamTrackInterface* track, StatsReports* reports);
 
   // Prepare a local or remote SSRC report for the given ssrc. Used internally
   // in the ExtractStatsFromList template.
@@ -97,25 +96,26 @@ class StatsCollector {
 
   // Helper method for creating IceCandidate report. |is_local| indicates
   // whether this candidate is local or remote.
-  StatsReport* AddCandidateReport(const cricket::Candidate& candidate,
-                                  bool local);
+  StatsReport* AddCandidateReport(
+      const cricket::CandidateStats& candidate_stats,
+      bool local);
 
   // Adds a report for this certificate and every certificate in its chain, and
-  // returns the leaf certificate's report (|cert|'s report).
-  StatsReport* AddCertificateReports(const rtc::SSLCertificate* cert);
+  // returns the leaf certificate's report (|cert_stats|'s report).
+  StatsReport* AddCertificateReports(
+      std::unique_ptr<rtc::SSLCertificateStats> cert_stats);
 
   StatsReport* AddConnectionInfoReport(const std::string& content_name,
-      int component, int connection_id,
-      const StatsReport::Id& channel_report_id,
-      const cricket::ConnectionInfo& info);
+                                       int component,
+                                       int connection_id,
+                                       const StatsReport::Id& channel_report_id,
+                                       const cricket::ConnectionInfo& info);
 
   void ExtractDataInfo();
   void ExtractSessionInfo();
   void ExtractBweInfo();
-  void ExtractVoiceInfo();
-  void ExtractVideoInfo(PeerConnectionInterface::StatsOutputLevel level);
+  void ExtractMediaInfo();
   void ExtractSenderInfo();
-  void BuildSsrcToTransportId();
   webrtc::StatsReport* GetReport(const StatsReport::StatsType& type,
                                  const std::string& id,
                                  StatsReport::Direction direction);
@@ -139,7 +139,7 @@ class StatsCollector {
   StatsCollection reports_;
   TrackIdMap track_ids_;
   // Raw pointer to the peer connection the statistics are gathered from.
-  PeerConnection* const pc_;
+  PeerConnectionInternal* const pc_;
   double stats_gathering_started_;
 
   // TODO(tommi): We appear to be holding on to raw pointers to reference

@@ -62,6 +62,8 @@ def _ParseArgs():
                     help='Width of the YUV file\'s frames. Default: %default')
   parser.add_option('--yuv_frame_height', type='int', default=480,
                     help='Height of the YUV file\'s frames. Default: %default')
+  parser.add_option('--chartjson_result_file', type='str', default=None,
+                    help='Where to store perf results in chartjson format.')
   options, _ = parser.parse_args()
 
   if options.stats_file:
@@ -161,6 +163,8 @@ def main():
     '--width=%d' % options.yuv_frame_width,
     '--height=%d' % options.yuv_frame_height,
   ]
+  if options.chartjson_result_file:
+    cmd.append('--chartjson_result_file=%s' % options.chartjson_result_file)
   frame_analyzer = subprocess.Popen(cmd, stdin=_DevNull(),
                                     stdout=sys.stdout, stderr=sys.stderr)
   frame_analyzer.wait()

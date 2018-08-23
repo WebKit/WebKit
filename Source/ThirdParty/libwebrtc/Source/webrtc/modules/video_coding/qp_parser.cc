@@ -17,13 +17,11 @@
 namespace webrtc {
 
 bool QpParser::GetQp(const VCMEncodedFrame& frame, int* qp) {
-    switch (frame.CodecSpecific()->codecType) {
-#if !RTC_DISABLE_VP8
+  switch (frame.CodecSpecific()->codecType) {
     case kVideoCodecVP8:
       // QP range: [0, 127].
       return vp8::GetQp(frame.Buffer(), frame.Length(), qp);
-#endif
-#if !RTC_DISABLE_VP9
+#if !defined(RTC_DISABLE_VP9)
     case kVideoCodecVP9:
       // QP range: [0, 255].
       return vp9::GetQp(frame.Buffer(), frame.Length(), qp);

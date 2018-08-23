@@ -39,8 +39,8 @@ ArrayDesktopFrame::~ArrayDesktopFrame() = default;
 TEST(DesktopFrameRotationTest, CopyRect3x4) {
   // A DesktopFrame of 4-pixel width by 3-pixel height.
   static uint32_t frame_pixels[] = {
-      0, 1,  2,  3,  //
-      4, 5,  6,  7,  //
+      0, 1, 2,  3,   //
+      4, 5, 6,  7,   //
       8, 9, 10, 11,  //
   };
   ArrayDesktopFrame frame(DesktopSize(4, 3), frame_pixels);
@@ -55,8 +55,8 @@ TEST(DesktopFrameRotationTest, CopyRect3x4) {
   // After Rotating clock-wise 90 degree
   {
     static uint32_t expected_pixels[] = {
-         8, 4, 0,  //
-         9, 5, 1,  //
+        8,  4, 0,  //
+        9,  5, 1,  //
         10, 6, 2,  //
         11, 7, 3,  //
     };
@@ -72,8 +72,8 @@ TEST(DesktopFrameRotationTest, CopyRect3x4) {
   {
     static uint32_t expected_pixels[] = {
         11, 10, 9, 8,  //
-         7,  6, 5, 4,  //
-         3,  2, 1, 0,  //
+        7,  6,  5, 4,  //
+        3,  2,  1, 0,  //
     };
     ArrayDesktopFrame expected(DesktopSize(4, 3), expected_pixels);
 
@@ -88,8 +88,8 @@ TEST(DesktopFrameRotationTest, CopyRect3x4) {
     static uint32_t expected_pixels[] = {
         3, 7, 11,  //
         2, 6, 10,  //
-        1, 5,  9,  //
-        0, 4,  8,  //
+        1, 5, 9,   //
+        0, 4, 8,   //
     };
     ArrayDesktopFrame expected(DesktopSize(3, 4), expected_pixels);
 
@@ -103,8 +103,8 @@ TEST(DesktopFrameRotationTest, CopyRect3x4) {
 TEST(DesktopFrameRotationTest, CopyRect3x5) {
   // A DesktopFrame of 5-pixel width by 3-pixel height.
   static uint32_t frame_pixels[] = {
-       0,  1,  2,  3,  4,  //
-       5,  6,  7,  8,  9,  //
+      0,  1,  2,  3,  4,   //
+      5,  6,  7,  8,  9,   //
       10, 11, 12, 13, 14,  //
   };
   ArrayDesktopFrame frame(DesktopSize(5, 3), frame_pixels);
@@ -135,10 +135,10 @@ TEST(DesktopFrameRotationTest, CopyRect3x5) {
 
   // After Rotating clock-wise 180 degree
   {
-    static uint32_t expected_pixels[] {
+    static uint32_t expected_pixels[]{
         14, 13, 12, 11, 10,  //
-         9,  8,  7,  6,  5,  //
-         4,  3,  2,  1,  0,  //
+        9,  8,  7,  6,  5,   //
+        4,  3,  2,  1,  0,   //
     };
     ArrayDesktopFrame expected(DesktopSize(5, 3), expected_pixels);
 
@@ -169,8 +169,8 @@ TEST(DesktopFrameRotationTest, CopyRect3x5) {
 TEST(DesktopFrameRotationTest, PartialCopyRect3x5) {
   // A DesktopFrame of 5-pixel width by 3-pixel height.
   static uint32_t frame_pixels[] = {
-       0,  1,  2,  3,  4,  //
-       5,  6,  7,  8,  9,  //
+      0,  1,  2,  3,  4,   //
+      5,  6,  7,  8,  9,   //
       10, 11, 12, 13, 14,  //
   };
   ArrayDesktopFrame frame(DesktopSize(5, 3), frame_pixels);
@@ -225,11 +225,11 @@ TEST(DesktopFrameRotationTest, PartialCopyRect3x5) {
 
   {
     static uint32_t expected_pixels[] = {
-         0, 0, 0,  //
+        0,  0, 0,  //
         11, 6, 0,  //
         12, 7, 0,  //
         13, 8, 0,  //
-         0, 0, 0,  //
+        0,  0, 0,  //
     };
     ArrayDesktopFrame expected(DesktopSize(3, 5), expected_pixels);
 
@@ -259,8 +259,8 @@ TEST(DesktopFrameRotationTest, PartialCopyRect3x5) {
   {
     static uint32_t expected_pixels[] = {
         0, 13, 12, 11, 0,  //
-        0,  8,  7,  6, 0,  //
-        0,  0,  0,  0, 0,  //
+        0, 8,  7,  6,  0,  //
+        0, 0,  0,  0,  0,  //
     };
     ArrayDesktopFrame expected(DesktopSize(5, 3), expected_pixels);
 
@@ -310,20 +310,20 @@ TEST(DesktopFrameRotationTest, PartialCopyRect3x5) {
 TEST(DesktopFrameRotationTest, WithOffset) {
   // A DesktopFrame of 4-pixel width by 3-pixel height.
   static uint32_t frame_pixels[] = {
-      0, 1,  2,  3,  //
-      4, 5,  6,  7,  //
+      0, 1, 2,  3,   //
+      4, 5, 6,  7,   //
       8, 9, 10, 11,  //
   };
   ArrayDesktopFrame frame(DesktopSize(4, 3), frame_pixels);
 
   {
     static uint32_t expected_pixels[] = {
-      0, 0, 0,  0,  0, 0, 0, 0,  //
-      0, 0, 1,  2,  3, 0, 0, 0,  //
-      0, 4, 5,  6,  7, 0, 0, 0,  //
-      0, 8, 9, 10, 11, 0, 0, 0,  //
-      0, 0, 0,  0,  0, 0, 0, 0,  //
-      0, 0, 0,  0,  0, 0, 0, 0,  //
+        0, 0, 0, 0,  0,  0, 0, 0,  //
+        0, 0, 1, 2,  3,  0, 0, 0,  //
+        0, 4, 5, 6,  7,  0, 0, 0,  //
+        0, 8, 9, 10, 11, 0, 0, 0,  //
+        0, 0, 0, 0,  0,  0, 0, 0,  //
+        0, 0, 0, 0,  0,  0, 0, 0,  //
     };
     ArrayDesktopFrame expected(DesktopSize(8, 6), expected_pixels);
 
@@ -339,12 +339,12 @@ TEST(DesktopFrameRotationTest, WithOffset) {
 
   {
     static uint32_t expected_pixels[] = {
-      0,  0,  0, 0, 0, 0, 0, 0,  //
-      0, 11, 10, 9, 8, 0, 0, 0,  //
-      0,  7,  6, 5, 4, 0, 0, 0,  //
-      0,  3,  2, 1, 0, 0, 0, 0,  //
-      0,  0,  0, 0, 0, 0, 0, 0,  //
-      0,  0,  0, 0, 0, 0, 0, 0,  //
+        0, 0,  0,  0, 0, 0, 0, 0,  //
+        0, 11, 10, 9, 8, 0, 0, 0,  //
+        0, 7,  6,  5, 4, 0, 0, 0,  //
+        0, 3,  2,  1, 0, 0, 0, 0,  //
+        0, 0,  0,  0, 0, 0, 0, 0,  //
+        0, 0,  0,  0, 0, 0, 0, 0,  //
     };
     ArrayDesktopFrame expected(DesktopSize(8, 6), expected_pixels);
 
@@ -360,14 +360,14 @@ TEST(DesktopFrameRotationTest, WithOffset) {
 
   {
     static uint32_t expected_pixels[] = {
-      0,  0, 0, 0, 0, 0,  //
-      0,  8, 4, 0, 0, 0,  //
-      0,  9, 5, 1, 0, 0,  //
-      0, 10, 6, 2, 0, 0,  //
-      0, 11, 7, 3, 0, 0,  //
-      0,  0, 0, 0, 0, 0,  //
-      0,  0, 0, 0, 0, 0,  //
-      0,  0, 0, 0, 0, 0,  //
+        0, 0,  0, 0, 0, 0,  //
+        0, 8,  4, 0, 0, 0,  //
+        0, 9,  5, 1, 0, 0,  //
+        0, 10, 6, 2, 0, 0,  //
+        0, 11, 7, 3, 0, 0,  //
+        0, 0,  0, 0, 0, 0,  //
+        0, 0,  0, 0, 0, 0,  //
+        0, 0,  0, 0, 0, 0,  //
     };
     ArrayDesktopFrame expected(DesktopSize(6, 8), expected_pixels);
 
@@ -383,14 +383,14 @@ TEST(DesktopFrameRotationTest, WithOffset) {
 
   {
     static uint32_t expected_pixels[] = {
-      0, 0, 0,  0, 0, 0,  //
-      0, 3, 7, 11, 0, 0,  //
-      0, 2, 6, 10, 0, 0,  //
-      0, 1, 5,  9, 0, 0,  //
-      0, 0, 4,  8, 0, 0,  //
-      0, 0, 0,  0, 0, 0,  //
-      0, 0, 0,  0, 0, 0,  //
-      0, 0, 0,  0, 0, 0,  //
+        0, 0, 0, 0,  0, 0,  //
+        0, 3, 7, 11, 0, 0,  //
+        0, 2, 6, 10, 0, 0,  //
+        0, 1, 5, 9,  0, 0,  //
+        0, 0, 4, 8,  0, 0,  //
+        0, 0, 0, 0,  0, 0,  //
+        0, 0, 0, 0,  0, 0,  //
+        0, 0, 0, 0,  0, 0,  //
     };
     ArrayDesktopFrame expected(DesktopSize(6, 8), expected_pixels);
 

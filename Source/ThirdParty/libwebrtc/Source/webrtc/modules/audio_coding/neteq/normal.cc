@@ -27,7 +27,6 @@ namespace webrtc {
 int Normal::Process(const int16_t* input,
                     size_t length,
                     Modes last_mode,
-                    int16_t* external_mute_factor_array,
                     AudioMultiVector* output) {
   if (length == 0) {
     // Nothing to process.
@@ -66,10 +65,8 @@ int Normal::Process(const int16_t* input,
     size_t length_per_channel = length / output->Channels();
     std::unique_ptr<int16_t[]> signal(new int16_t[length_per_channel]);
     for (size_t channel_ix = 0; channel_ix < output->Channels(); ++channel_ix) {
-      // Adjust muting factor (main muting factor times expand muting factor).
-      external_mute_factor_array[channel_ix] = static_cast<int16_t>(
-          (external_mute_factor_array[channel_ix] *
-          expand_->MuteFactor(channel_ix)) >> 14);
+      // Set muting factor to the same as expand muting factor.
+      int16_t mute_factor = expand_->MuteFactor(channel_ix);
 
       (*output)[channel_ix].CopyTo(length_per_channel, 0, signal.get());
 
@@ -79,8 +76,7 @@ int Normal::Process(const int16_t* input,
       // Adjust muting factor if needed (to BGN level).
       size_t energy_length =
           std::min(static_cast<size_t>(fs_mult * 64), length_per_channel);
-      int scaling = 6 + fs_shift
-          - WebRtcSpl_NormW32(decoded_max * decoded_max);
+      int scaling = 6 + fs_shift - WebRtcSpl_NormW32(decoded_max * decoded_max);
       scaling = std::max(scaling, 0);  // |scaling| should always be >= 0.
       int32_t energy = WebRtcSpl_DotProductWithScale(signal.get(), signal.get(),
                                                      energy_length, scaling);
@@ -92,9 +88,8 @@ int Normal::Process(const int16_t* input,
         energy = 0;
       }
 
-      int mute_factor;
-      if ((energy != 0) &&
-          (energy > background_noise_.Energy(channel_ix))) {
+      int local_mute_factor = 16384;  // 1.0 in Q14.
+      if ((energy != 0) && (energy > background_noise_.Energy(channel_ix))) {
         // Normalize new frame energy to 15 bits.
         scaling = WebRtcSpl_NormW32(energy) - 16;
         // We want background_noise_.energy() / energy in Q14.
@@ -103,29 +98,30 @@ int Normal::Process(const int16_t* input,
         int16_t energy_scaled =
             static_cast<int16_t>(WEBRTC_SPL_SHIFT_W32(energy, scaling));
         int32_t ratio = WebRtcSpl_DivW32W16(bgn_energy, energy_scaled);
-        mute_factor = WebRtcSpl_SqrtFloor(ratio << 14);
-      } else {
-        mute_factor = 16384;  // 1.0 in Q14.
+        local_mute_factor =
+            std::min(local_mute_factor, WebRtcSpl_SqrtFloor(ratio << 14));
       }
-      if (mute_factor > external_mute_factor_array[channel_ix]) {
-        external_mute_factor_array[channel_ix] =
-            static_cast<int16_t>(std::min(mute_factor, 16384));
-      }
+      mute_factor = std::max<int16_t>(mute_factor, local_mute_factor);
+      RTC_DCHECK_LE(mute_factor, 16384);
+      RTC_DCHECK_GE(mute_factor, 0);
 
-      // If muted increase by 0.64 for every 20 ms (NB/WB 0.0040/0.0020 in Q14).
-      int increment = 64 / fs_mult;
+      // If muted increase by 0.64 for every 20 ms (NB/WB 0.0040/0.0020 in Q14),
+      // or as fast as it takes to come back to full gain within the frame
+      // length.
+      const int back_to_fullscale_inc =
+          static_cast<int>((16384 - mute_factor) / length_per_channel);
+      const int increment = std::max(64 / fs_mult, back_to_fullscale_inc);
       for (size_t i = 0; i < length_per_channel; i++) {
         // Scale with mute factor.
         RTC_DCHECK_LT(channel_ix, output->Channels());
         RTC_DCHECK_LT(i, output->Size());
-        int32_t scaled_signal = (*output)[channel_ix][i] *
-            external_mute_factor_array[channel_ix];
+        int32_t scaled_signal = (*output)[channel_ix][i] * mute_factor;
         // Shift 14 with proper rounding.
         (*output)[channel_ix][i] =
             static_cast<int16_t>((scaled_signal + 8192) >> 14);
         // Increase mute_factor towards 16384.
-        external_mute_factor_array[channel_ix] = static_cast<int16_t>(std::min(
-            external_mute_factor_array[channel_ix] + increment, 16384));
+        mute_factor =
+            static_cast<int16_t>(std::min(mute_factor + increment, 16384));
       }
 
       // Interpolate the expanded data into the new vector.
@@ -153,8 +149,6 @@ int Normal::Process(const int16_t* input,
     static const size_t kCngLength = 48;
     RTC_DCHECK_LE(8 * fs_mult, kCngLength);
     int16_t cng_output[kCngLength];
-    // Reset mute factor and start up fresh.
-    external_mute_factor_array[0] = 16384;
     ComfortNoiseDecoder* cng_decoder = decoder_database_->GetActiveCngDecoder();
 
     if (cng_decoder) {
@@ -186,28 +180,6 @@ int Normal::Process(const int16_t* input,
     }
     RTC_DCHECK_GT(win_up_Q14,
                   (1 << 14) - 32);  // Worst case rouding is a length of 34
-  } else if (external_mute_factor_array[0] < 16384) {
-    // Previous was neither of Expand, FadeToBGN or RFC3389_CNG, but we are
-    // still ramping up from previous muting.
-    // If muted increase by 0.64 for every 20 ms (NB/WB 0.0040/0.0020 in Q14).
-    int increment = 64 / fs_mult;
-    size_t length_per_channel = length / output->Channels();
-    for (size_t i = 0; i < length_per_channel; i++) {
-      for (size_t channel_ix = 0; channel_ix < output->Channels();
-          ++channel_ix) {
-        // Scale with mute factor.
-        RTC_DCHECK_LT(channel_ix, output->Channels());
-        RTC_DCHECK_LT(i, output->Size());
-        int32_t scaled_signal = (*output)[channel_ix][i] *
-            external_mute_factor_array[channel_ix];
-        // Shift 14 with proper rounding.
-        (*output)[channel_ix][i] =
-            static_cast<int16_t>((scaled_signal + 8192) >> 14);
-        // Increase mute_factor towards 16384.
-        external_mute_factor_array[channel_ix] = static_cast<int16_t>(std::min(
-            16384, external_mute_factor_array[channel_ix] + increment));
-      }
-    }
   }
 
   return static_cast<int>(length);

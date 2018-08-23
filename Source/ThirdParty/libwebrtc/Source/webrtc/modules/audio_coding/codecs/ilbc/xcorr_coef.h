@@ -19,7 +19,7 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_XCORR_COEF_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_XCORR_COEF_H_
 
-#include "defines.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  * cross correlation which finds the optimal lag for the
@@ -27,12 +27,12 @@
  *---------------------------------------------------------------*/
 
 size_t WebRtcIlbcfix_XcorrCoef(
-    int16_t *target,  /* (i) first array */
-    int16_t *regressor, /* (i) second array */
-    size_t subl,  /* (i) dimension arrays */
-    size_t searchLen, /* (i) the search lenght */
-    size_t offset,  /* (i) samples offset between arrays */
-    int16_t step   /* (i) +1 or -1 */
-                            );
+    int16_t* target,    /* (i) first array */
+    int16_t* regressor, /* (i) second array */
+    size_t subl,        /* (i) dimension arrays */
+    size_t searchLen,   /* (i) the search lenght */
+    size_t offset,      /* (i) samples offset between arrays */
+    int16_t step        /* (i) +1 or -1 */
+    );
 
 #endif

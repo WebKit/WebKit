@@ -12,7 +12,9 @@
 #import "WebRTC/RTCVideoRenderer.h"
 
 NS_AVAILABLE_MAC(10.11)
-__attribute__((objc_runtime_name("WK_RTCMTLNSVideoView")))
-@interface RTCMTLNSVideoView : NSView<RTCVideoRenderer>
+@interface RTCMTLNSVideoView : NSView <RTCVideoRenderer>
+
+@property(nonatomic, weak) id<RTCVideoViewDelegate> delegate;
+
 + (BOOL)isMetalAvailable;
 @end

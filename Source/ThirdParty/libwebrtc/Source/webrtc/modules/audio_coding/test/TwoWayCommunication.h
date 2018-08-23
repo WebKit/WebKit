@@ -27,6 +27,7 @@ class TwoWayCommunication : public ACMTest {
   ~TwoWayCommunication();
 
   void Perform();
+
  private:
   void ChooseCodec(uint8_t* codecID_A, uint8_t* codecID_B);
   void SetUp();

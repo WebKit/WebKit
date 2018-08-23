@@ -1,0 +1,126 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_source_set("agc") {
+  sources = [
+    "agc_manager_direct.cc",
+    "agc_manager_direct.h",
+  ]
+  configs += [ "..:apm_debug_dump" ]
+  deps = [
+    ":gain_map",
+    ":level_estimation",
+    "..:apm_logging",
+    "..:gain_control_interface",
+    "../../..:webrtc_common",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:gtest_prod",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:macromagic",
+    "../../../rtc_base:safe_minmax",
+    "../../../system_wrappers:metrics_api",
+    "../agc2:level_estimation_agc",
+    "../vad",
+  ]
+}
+
+rtc_source_set("level_estimation") {
+  sources = [
+    "agc.cc",
+    "agc.h",
+    "loudness_histogram.cc",
+    "loudness_histogram.h",
+    "utility.cc",
+    "utility.h",
+  ]
+  deps = [
+    "../../..:webrtc_common",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:macromagic",
+    "../vad",
+  ]
+}
+
+rtc_source_set("agc_legacy_c") {
+  visibility = [
+    ":*",
+    "..:*",
+  ]  # Only targets in this file and in
+     # audio_processing can depend on
+     # this.
+
+  sources = [
+    "legacy/analog_agc.c",
+    "legacy/analog_agc.h",
+    "legacy/digital_agc.c",
+    "legacy/digital_agc.h",
+    "legacy/gain_control.h",
+  ]
+
+  deps = [
+    "../../..:webrtc_common",
+    "../../../common_audio",
+    "../../../common_audio:common_audio_c",
+    "../../../common_audio/third_party/fft4g",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../system_wrappers:cpu_features_api",
+  ]
+
+  if (rtc_build_with_neon) {
+    if (current_cpu != "arm64") {
+      # Enable compilation for the NEON instruction set.
+      suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+      cflags = [ "-mfpu=neon" ]
+    }
+
+    # Disable LTO on NEON targets due to compiler bug.
+    # TODO(fdegans): Enable this. See crbug.com/408997.
+    if (rtc_use_lto) {
+      cflags -= [
+        "-flto",
+        "-ffat-lto-objects",
+      ]
+    }
+  }
+}
+
+rtc_source_set("gain_map") {
+  sources = [
+    "gain_map_internal.h",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("agc_unittests") {
+    testonly = true
+    sources = [
+      "agc_manager_direct_unittest.cc",
+      "loudness_histogram_unittest.cc",
+      "mock_agc.h",
+    ]
+    configs += [ "..:apm_debug_dump" ]
+
+    if ((!build_with_chromium || is_win) && is_clang) {
+      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+
+    deps = [
+      ":agc",
+      ":level_estimation",
+      "..:mocks",
+      "../../..:webrtc_common",
+      "../../../test:fileutils",
+      "../../../test:test_support",
+      "//testing/gtest",
+    ]
+  }
+}

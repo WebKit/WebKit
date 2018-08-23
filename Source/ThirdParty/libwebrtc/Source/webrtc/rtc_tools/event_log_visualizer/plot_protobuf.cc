@@ -13,7 +13,6 @@
 #include <memory>
 
 namespace webrtc {
-namespace plotting {
 
 ProtobufPlot::ProtobufPlot() {}
 
@@ -70,8 +69,8 @@ void ProtobufPlotCollection::ExportProtobuf(
     // TODO(terelius): Ensure that there is no way to insert plots other than
     // ProtobufPlots in a ProtobufPlotCollection. Needed to safely static_cast
     // here.
-    webrtc::analytics::Chart* protobuf_representation
-        = collection->add_charts();
+    webrtc::analytics::Chart* protobuf_representation =
+        collection->add_charts();
     static_cast<ProtobufPlot*>(plot.get())
         ->ExportProtobuf(protobuf_representation);
   }
@@ -83,5 +82,4 @@ Plot* ProtobufPlotCollection::AppendNewPlot() {
   return plot;
 }
 
-}  // namespace plotting
 }  // namespace webrtc

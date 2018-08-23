@@ -64,7 +64,6 @@ SuppressionFilter::SuppressionFilter(int sample_rate_hz)
       fft_(),
       e_output_old_(NumBandsForRate(sample_rate_hz_)) {
   RTC_DCHECK(ValidFullBandRate(sample_rate_hz_));
-  e_input_old_.fill(0.f);
   std::for_each(e_output_old_.begin(), e_output_old_.end(),
                 [](std::array<float, kFftLengthBy2>& a) { a.fill(0.f); });
 }
@@ -76,22 +75,14 @@ void SuppressionFilter::ApplyGain(
     const FftData& comfort_noise_high_band,
     const std::array<float, kFftLengthBy2Plus1>& suppression_gain,
     float high_bands_gain,
+    const FftData& E_lowest_band,
     std::vector<std::vector<float>>* e) {
   RTC_DCHECK(e);
   RTC_DCHECK_EQ(e->size(), NumBandsForRate(sample_rate_hz_));
   FftData E;
-  std::array<float, kFftLength> e_extended;
-  constexpr float kIfftNormalization = 2.f / kFftLength;
 
   // Analysis filterbank.
-  std::transform(e_input_old_.begin(), e_input_old_.end(),
-                 std::begin(kSqrtHanning), e_extended.begin(),
-                 std::multiplies<float>());
-  std::transform((*e)[0].begin(), (*e)[0].end(),
-                 std::begin(kSqrtHanning) + kFftLengthBy2,
-                 e_extended.begin() + kFftLengthBy2, std::multiplies<float>());
-  std::copy((*e)[0].begin(), (*e)[0].end(), e_input_old_.begin());
-  fft_.Fft(&e_extended, &E);
+  E.Assign(E_lowest_band);
 
   // Apply gain.
   std::transform(suppression_gain.begin(), suppression_gain.end(), E.re.begin(),
@@ -113,6 +104,9 @@ void SuppressionFilter::ApplyGain(
                  E.im.begin(), E.im.begin(), std::plus<float>());
 
   // Synthesis filterbank.
+  std::array<float, kFftLength> e_extended;
+  constexpr float kIfftNormalization = 2.f / kFftLength;
+
   fft_.Ifft(E, &e_extended);
   std::transform(e_output_old_[0].begin(), e_output_old_[0].end(),
                  std::begin(kSqrtHanning) + kFftLengthBy2, (*e)[0].begin(),

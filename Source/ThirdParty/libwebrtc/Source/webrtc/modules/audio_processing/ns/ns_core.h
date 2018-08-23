@@ -78,26 +78,26 @@ typedef struct NoiseSuppressionC_ {
   float wfft[W_LENGTH];
 
   // Parameters for new method: some not needed, will reduce/cleanup later.
-  int32_t blockInd;  // Frame index counter.
+  int32_t blockInd;        // Frame index counter.
   int modelUpdatePars[4];  // Parameters for updating or estimating.
   // Thresholds/weights for prior model.
-  float priorModelPars[7];  // Parameters for prior model.
-  float noise[HALF_ANAL_BLOCKL];  // Noise spectrum from current frame.
+  float priorModelPars[7];            // Parameters for prior model.
+  float noise[HALF_ANAL_BLOCKL];      // Noise spectrum from current frame.
   float noisePrev[HALF_ANAL_BLOCKL];  // Noise spectrum from previous frame.
   // Magnitude spectrum of previous analyze frame.
   float magnPrevAnalyze[HALF_ANAL_BLOCKL];
   // Magnitude spectrum of previous process frame.
   float magnPrevProcess[HALF_ANAL_BLOCKL];
   float logLrtTimeAvg[HALF_ANAL_BLOCKL];  // Log LRT factor with time-smoothing.
-  float priorSpeechProb;  // Prior speech/noise probability.
+  float priorSpeechProb;                  // Prior speech/noise probability.
   float featureData[7];
   // Conservative noise spectrum estimate.
   float magnAvgPause[HALF_ANAL_BLOCKL];
   float signalEnergy;  // Energy of |magn|.
   float sumMagn;
-  float whiteNoiseLevel;  // Initial noise estimate.
+  float whiteNoiseLevel;                // Initial noise estimate.
   float initMagnEst[HALF_ANAL_BLOCKL];  // Initial magnitude spectrum estimate.
-  float pinkNoiseNumerator;  // Pink noise parameter: numerator.
+  float pinkNoiseNumerator;             // Pink noise parameter: numerator.
   float pinkNoiseExp;  // Pink noise parameter: power of frequencies.
   float parametricNoise[HALF_ANAL_BLOCKL];
   // Parameters for feature extraction.
@@ -110,7 +110,6 @@ typedef struct NoiseSuppressionC_ {
   float speechProb[HALF_ANAL_BLOCKL];  // Final speech/noise prob: prior + LRT.
   // Buffering data for HB.
   float dataBufHB[NUM_HIGH_BANDS_MAX][ANAL_BLOCKL_MAX];
-
 } NoiseSuppressionC;
 
 #ifdef __cplusplus

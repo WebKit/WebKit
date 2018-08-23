@@ -10,11 +10,18 @@
 
 #include "logging/rtc_event_log/events/rtc_event_rtcp_packet_incoming.h"
 
+#include "absl/memory/memory.h"
+
 namespace webrtc {
 
 RtcEventRtcpPacketIncoming::RtcEventRtcpPacketIncoming(
     rtc::ArrayView<const uint8_t> packet)
     : packet_(packet.data(), packet.size()) {}
+
+RtcEventRtcpPacketIncoming::RtcEventRtcpPacketIncoming(
+    const RtcEventRtcpPacketIncoming& other)
+    : RtcEvent(other.timestamp_us_),
+      packet_(other.packet_.data(), other.packet_.size()) {}
 
 RtcEventRtcpPacketIncoming::~RtcEventRtcpPacketIncoming() = default;
 
@@ -24,6 +31,10 @@ RtcEvent::Type RtcEventRtcpPacketIncoming::GetType() const {
 
 bool RtcEventRtcpPacketIncoming::IsConfigEvent() const {
   return false;
+}
+
+std::unique_ptr<RtcEvent> RtcEventRtcpPacketIncoming::Copy() const {
+  return absl::WrapUnique<RtcEvent>(new RtcEventRtcpPacketIncoming(*this));
 }
 
 }  // namespace webrtc

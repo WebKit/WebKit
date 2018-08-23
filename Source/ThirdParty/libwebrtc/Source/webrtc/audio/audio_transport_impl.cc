@@ -14,10 +14,10 @@
 #include <memory>
 #include <utility>
 
+#include "audio/remix_resample.h"
 #include "audio/utility/audio_frame_operations.h"
 #include "call/audio_send_stream.h"
 #include "rtc_base/logging.h"
-#include "voice_engine/utility.h"
 
 namespace webrtc {
 
@@ -43,8 +43,7 @@ void InitializeCaptureFrame(int input_sample_rate,
   audio_frame->num_channels_ = std::min(input_num_channels, send_num_channels);
 }
 
-void ProcessCaptureFrame(int analog_level,
-                         uint32_t delay_ms,
+void ProcessCaptureFrame(uint32_t delay_ms,
                          bool key_pressed,
                          bool swap_stereo_channels,
                          AudioProcessing* audio_processing,
@@ -53,13 +52,9 @@ void ProcessCaptureFrame(int analog_level,
   RTC_DCHECK(audio_frame);
   RTC_DCHECK(
       !audio_processing->echo_cancellation()->is_drift_compensation_enabled());
-  GainControl* agc = audio_processing->gain_control();
-  int error = agc->set_stream_analog_level(analog_level);
-  RTC_DCHECK_EQ(0, error) <<
-      "set_stream_analog_level failed: analog_level = " << analog_level;
   audio_processing->set_stream_delay_ms(delay_ms);
   audio_processing->set_stream_key_pressed(key_pressed);
-  error = audio_processing->ProcessStream(audio_frame);
+  int error = audio_processing->ProcessStream(audio_frame);
   RTC_DCHECK_EQ(0, error) << "ProcessStream() error: " << error;
   if (swap_stereo_channels) {
     AudioFrameOperations::SwapStereoChannels(audio_frame);
@@ -87,14 +82,10 @@ int Resample(const AudioFrame& frame,
 }  // namespace
 
 AudioTransportImpl::AudioTransportImpl(AudioMixer* mixer,
-                                       AudioProcessing* audio_processing,
-                                       AudioDeviceModule* audio_device_module)
-    : audio_processing_(audio_processing),
-      audio_device_module_(audio_device_module),
-      mixer_(mixer) {
+                                       AudioProcessing* audio_processing)
+    : audio_processing_(audio_processing), mixer_(mixer) {
   RTC_DCHECK(mixer);
   RTC_DCHECK(audio_processing);
-  RTC_DCHECK(audio_device_module);
 }
 
 AudioTransportImpl::~AudioTransportImpl() {}
@@ -109,7 +100,7 @@ int32_t AudioTransportImpl::RecordedDataIsAvailable(
     const uint32_t sample_rate,
     const uint32_t audio_delay_milliseconds,
     const int32_t /*clock_drift*/,
-    const uint32_t volume,
+    const uint32_t /*volume*/,
     const bool key_pressed,
     uint32_t& /*new_mic_volume*/) {  // NOLINT: to avoid changing APIs
   RTC_DCHECK(audio_data);
@@ -122,35 +113,6 @@ int32_t AudioTransportImpl::RecordedDataIsAvailable(
   RTC_DCHECK_LE(bytes_per_sample * number_of_frames * number_of_channels,
                 AudioFrame::kMaxDataSizeBytes);
 
-  // TODO(solenberg): Remove volume handling since it is now always 0.
-  uint16_t voe_mic_level = 0;
-  {
-    constexpr uint32_t kMaxVolumeLevel = 255;
-    uint32_t max_volume = 0;
-
-    // Check for zero to skip this calculation; the consumer may use this to
-    // indicate no volume is available.
-    if (volume != 0) {
-      // Scale from ADM to VoE level range
-      if (audio_device_module_->MaxMicrophoneVolume(&max_volume) == 0) {
-        if (max_volume != 0) {
-          voe_mic_level = static_cast<uint16_t>(
-              (volume * kMaxVolumeLevel + static_cast<int>(max_volume / 2)) /
-              max_volume);
-        }
-      }
-      // We learned that on certain systems (e.g Linux) the voe_mic_level
-      // can be greater than the maxVolumeLevel therefore
-      // we are going to cap the voe_mic_level to the maxVolumeLevel
-      // and change the maxVolume to volume if it turns out that
-      // the voe_mic_level is indeed greater than the maxVolumeLevel.
-      if (voe_mic_level > kMaxVolumeLevel) {
-        voe_mic_level = kMaxVolumeLevel;
-        max_volume = volume;
-      }
-    }
-  }
-
   int send_sample_rate_hz = 0;
   size_t send_num_channels = 0;
   bool swap_stereo_channels = false;
@@ -162,13 +124,12 @@ int32_t AudioTransportImpl::RecordedDataIsAvailable(
   }
 
   std::unique_ptr<AudioFrame> audio_frame(new AudioFrame());
-  InitializeCaptureFrame(sample_rate, send_sample_rate_hz,
-                         number_of_channels, send_num_channels,
-                         audio_frame.get());
+  InitializeCaptureFrame(sample_rate, send_sample_rate_hz, number_of_channels,
+                         send_num_channels, audio_frame.get());
   voe::RemixAndResample(static_cast<const int16_t*>(audio_data),
                         number_of_frames, number_of_channels, sample_rate,
                         &capture_resampler_, audio_frame.get());
-  ProcessCaptureFrame(voe_mic_level, audio_delay_milliseconds, key_pressed,
+  ProcessCaptureFrame(audio_delay_milliseconds, key_pressed,
                       swap_stereo_channels, audio_processing_,
                       audio_frame.get());
 
@@ -212,13 +173,13 @@ int32_t AudioTransportImpl::RecordedDataIsAvailable(
 // Mix all received streams, feed the result to the AudioProcessing module, then
 // resample the result to the requested output rate.
 int32_t AudioTransportImpl::NeedMorePlayData(const size_t nSamples,
-                                              const size_t nBytesPerSample,
-                                              const size_t nChannels,
-                                              const uint32_t samplesPerSec,
-                                              void* audioSamples,
-                                              size_t& nSamplesOut,
-                                              int64_t* elapsed_time_ms,
-                                              int64_t* ntp_time_ms) {
+                                             const size_t nBytesPerSample,
+                                             const size_t nChannels,
+                                             const uint32_t samplesPerSec,
+                                             void* audioSamples,
+                                             size_t& nSamplesOut,
+                                             int64_t* elapsed_time_ms,
+                                             int64_t* ntp_time_ms) {
   RTC_DCHECK_EQ(sizeof(int16_t) * nChannels, nBytesPerSample);
   RTC_DCHECK_GE(nChannels, 1);
   RTC_DCHECK_LE(nChannels, 2);
@@ -247,12 +208,12 @@ int32_t AudioTransportImpl::NeedMorePlayData(const size_t nSamples,
 // Used by Chromium - same as NeedMorePlayData() but because Chrome has its
 // own APM instance, does not call audio_processing_->ProcessReverseStream().
 void AudioTransportImpl::PullRenderData(int bits_per_sample,
-                                         int sample_rate,
-                                         size_t number_of_channels,
-                                         size_t number_of_frames,
-                                         void* audio_data,
-                                         int64_t* elapsed_time_ms,
-                                         int64_t* ntp_time_ms) {
+                                        int sample_rate,
+                                        size_t number_of_channels,
+                                        size_t number_of_frames,
+                                        void* audio_data,
+                                        int64_t* elapsed_time_ms,
+                                        int64_t* ntp_time_ms) {
   RTC_DCHECK_EQ(bits_per_sample, 16);
   RTC_DCHECK_GE(number_of_channels, 1);
   RTC_DCHECK_LE(number_of_channels, 2);
@@ -274,7 +235,8 @@ void AudioTransportImpl::PullRenderData(int bits_per_sample,
 }
 
 void AudioTransportImpl::UpdateSendingStreams(
-    std::vector<AudioSendStream*> streams, int send_sample_rate_hz,
+    std::vector<AudioSendStream*> streams,
+    int send_sample_rate_hz,
     size_t send_num_channels) {
   rtc::CritScope lock(&capture_lock_);
   sending_streams_ = std::move(streams);

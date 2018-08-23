@@ -31,9 +31,13 @@ namespace webrtc {
 // 1, 2, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 9 and 10.
 // No interpolation is done when up-sampling.
 
-int EditFrames(const std::string& in_path, int width, int height,
-                int first_frame_to_process, int interval,
-                int last_frame_to_process, const std::string& out_path);
+int EditFrames(const std::string& in_path,
+               int width,
+               int height,
+               int first_frame_to_process,
+               int interval,
+               int last_frame_to_process,
+               const std::string& out_path);
 }  // namespace webrtc
 
 #endif  // RTC_TOOLS_FRAME_EDITING_FRAME_EDITING_LIB_H_

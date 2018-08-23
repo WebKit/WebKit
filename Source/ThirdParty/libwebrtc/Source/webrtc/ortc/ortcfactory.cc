@@ -14,9 +14,12 @@
 #include <utility>  // For std::move.
 #include <vector>
 
+#include "absl/memory/memory.h"
 #include "api/mediastreamtrackproxy.h"
 #include "api/proxy.h"
 #include "api/rtcerror.h"
+#include "api/video_codecs/builtin_video_decoder_factory.h"
+#include "api/video_codecs/builtin_video_encoder_factory.h"
 #include "api/videosourceproxy.h"
 #include "logging/rtc_event_log/rtc_event_log.h"
 #include "media/base/mediaconstants.h"
@@ -24,7 +27,6 @@
 #include "modules/audio_processing/include/audio_processing.h"
 #include "ortc/ortcrtpreceiveradapter.h"
 #include "ortc/ortcrtpsenderadapter.h"
-#include "ortc/rtpparametersconversion.h"
 #include "ortc/rtptransportadapter.h"
 #include "ortc/rtptransportcontrolleradapter.h"
 #include "p2p/base/basicpacketsocketfactory.h"
@@ -32,14 +34,13 @@
 #include "pc/audiotrack.h"
 #include "pc/channelmanager.h"
 #include "pc/localaudiosource.h"
-#include "pc/videocapturertracksource.h"
+#include "pc/rtpparametersconversion.h"
 #include "pc/videotrack.h"
 #include "rtc_base/asyncpacketsocket.h"
 #include "rtc_base/bind.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/ptr_util.h"
 
 namespace {
 
@@ -114,10 +115,6 @@ PROXY_WORKER_METHOD3(RTCErrorOr<std::unique_ptr<UdpTransportInterface>>,
 PROXY_METHOD1(rtc::scoped_refptr<AudioSourceInterface>,
               CreateAudioSource,
               const cricket::AudioOptions&)
-PROXY_METHOD2(rtc::scoped_refptr<VideoTrackSourceInterface>,
-              CreateVideoSource,
-              std::unique_ptr<cricket::VideoCapturer>,
-              const MediaConstraintsInterface*)
 PROXY_METHOD2(rtc::scoped_refptr<VideoTrackInterface>,
               CreateVideoTrack,
               const std::string&,
@@ -195,6 +192,7 @@ OrtcFactory::OrtcFactory(
   // The worker thread is created internally because it's an implementation
   // detail, and consumers of the API don't need to really know about it.
   worker_thread_ = rtc::Thread::Create();
+  worker_thread_->SetName("ORTC-worker", this);
   worker_thread_->Start();
 
   if (signaling_thread_) {
@@ -208,6 +206,11 @@ OrtcFactory::OrtcFactory(
       wraps_signaling_thread_ = true;
     }
   }
+
+  if (signaling_thread_->name().empty()) {
+    signaling_thread_->SetName("ORTC-signaling", this);
+  }
+
   if (!network_manager_) {
     owned_network_manager_.reset(new rtc::BasicNetworkManager());
     network_manager_ = owned_network_manager_.get();
@@ -231,7 +234,7 @@ OrtcFactory::CreateRtpTransportController() {
   RTC_DCHECK_RUN_ON(signaling_thread_);
   return RtpTransportControllerAdapter::CreateProxied(
       cricket::MediaConfig(), channel_manager_.get(), null_event_log_.get(),
-      signaling_thread_, worker_thread_.get());
+      signaling_thread_, worker_thread_.get(), network_thread_);
 }
 
 RTCErrorOr<std::unique_ptr<RtpTransportInterface>>
@@ -474,17 +477,6 @@ rtc::scoped_refptr<AudioSourceInterface> OrtcFactory::CreateAudioSource(
       LocalAudioSource::Create(&options));
 }
 
-rtc::scoped_refptr<VideoTrackSourceInterface> OrtcFactory::CreateVideoSource(
-    std::unique_ptr<cricket::VideoCapturer> capturer,
-    const MediaConstraintsInterface* constraints) {
-  RTC_DCHECK_RUN_ON(signaling_thread_);
-  rtc::scoped_refptr<VideoTrackSourceInterface> source(
-      VideoCapturerTrackSource::Create(
-          worker_thread_.get(), std::move(capturer), constraints, false));
-  return VideoTrackSourceProxy::Create(signaling_thread_, worker_thread_.get(),
-                                       source);
-}
-
 rtc::scoped_refptr<VideoTrackInterface> OrtcFactory::CreateVideoTrack(
     const std::string& id,
     VideoTrackSourceInterface* source) {
@@ -541,7 +533,7 @@ RTCError OrtcFactory::Initialize(
   }
 
   channel_manager_.reset(new cricket::ChannelManager(
-      std::move(media_engine), rtc::MakeUnique<cricket::RtpDataEngine>(),
+      std::move(media_engine), absl::make_unique<cricket::RtpDataEngine>(),
       worker_thread_.get(), network_thread_));
   channel_manager_->SetVideoRtxEnabled(true);
   if (!channel_manager_->Init()) {
@@ -561,8 +553,11 @@ OrtcFactory::CreateMediaEngine_w() {
   // AudioDeviceModule will be used.
   return std::unique_ptr<cricket::MediaEngineInterface>(
       cricket::WebRtcMediaEngineFactory::Create(
-          adm_, audio_encoder_factory_, audio_decoder_factory_, nullptr,
-          nullptr, nullptr, webrtc::AudioProcessingBuilder().Create()));
+          rtc::scoped_refptr<webrtc::AudioDeviceModule>(adm_),
+          audio_encoder_factory_, audio_decoder_factory_,
+          webrtc::CreateBuiltinVideoEncoderFactory(),
+          webrtc::CreateBuiltinVideoDecoderFactory(), nullptr,
+          webrtc::AudioProcessingBuilder().Create()));
 }
 
 }  // namespace webrtc

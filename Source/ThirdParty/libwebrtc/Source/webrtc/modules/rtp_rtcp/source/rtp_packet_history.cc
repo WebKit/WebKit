@@ -14,6 +14,7 @@
 #include <limits>
 #include <utility>
 
+#include "absl/memory/memory.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -21,218 +22,269 @@
 
 namespace webrtc {
 namespace {
+// Min packet size for BestFittingPacket() to honor.
 constexpr size_t kMinPacketRequestBytes = 50;
-// Don't overwrite a packet within one second, or three RTTs, after transmission
-// whichever is larger. Instead try to dynamically expand history.
-constexpr int64_t kMinPacketDurationMs = 1000;
-constexpr int kMinPacketDurationRtt = 3;
+
+// Utility function to get the absolute difference in size between the provided
+// target size and the size of packet.
+size_t SizeDiff(const std::unique_ptr<RtpPacketToSend>& packet, size_t size) {
+  size_t packet_size = packet->size();
+  if (packet_size > size) {
+    return packet_size - size;
+  }
+  return size - packet_size;
+}
 }  // namespace
+
 constexpr size_t RtpPacketHistory::kMaxCapacity;
+constexpr int64_t RtpPacketHistory::kMinPacketDurationMs;
+constexpr int RtpPacketHistory::kMinPacketDurationRtt;
+constexpr int RtpPacketHistory::kPacketCullingDelayFactor;
+
+RtpPacketHistory::PacketState::PacketState() = default;
+RtpPacketHistory::PacketState::PacketState(const PacketState&) = default;
+RtpPacketHistory::PacketState::~PacketState() = default;
+
+RtpPacketHistory::StoredPacket::StoredPacket() = default;
+RtpPacketHistory::StoredPacket::StoredPacket(StoredPacket&&) = default;
+RtpPacketHistory::StoredPacket& RtpPacketHistory::StoredPacket::operator=(
+    RtpPacketHistory::StoredPacket&&) = default;
+RtpPacketHistory::StoredPacket::~StoredPacket() = default;
 
 RtpPacketHistory::RtpPacketHistory(Clock* clock)
-    : clock_(clock), store_(false), prev_index_(0), rtt_ms_(-1) {}
+    : clock_(clock),
+      number_to_store_(0),
+      mode_(StorageMode::kDisabled),
+      rtt_ms_(-1) {}
 
 RtpPacketHistory::~RtpPacketHistory() {}
 
-void RtpPacketHistory::SetStorePacketsStatus(bool enable,
-                                             uint16_t number_to_store) {
-  rtc::CritScope cs(&critsect_);
-  if (enable) {
-    if (store_) {
-      RTC_LOG(LS_WARNING)
-          << "Purging packet history in order to re-set status.";
-      Free();
-    }
-    RTC_DCHECK(!store_);
-    Allocate(number_to_store);
-  } else {
-    Free();
-  }
-}
-
-void RtpPacketHistory::Allocate(size_t number_to_store) {
-  RTC_DCHECK_GT(number_to_store, 0);
+void RtpPacketHistory::SetStorePacketsStatus(StorageMode mode,
+                                             size_t number_to_store) {
   RTC_DCHECK_LE(number_to_store, kMaxCapacity);
-  store_ = true;
-  stored_packets_.resize(number_to_store);
-}
-
-void RtpPacketHistory::Free() {
-  if (!store_) {
-    return;
+  rtc::CritScope cs(&lock_);
+  if (mode != StorageMode::kDisabled && mode_ != StorageMode::kDisabled) {
+    RTC_LOG(LS_WARNING) << "Purging packet history in order to re-set status.";
   }
-
-  stored_packets_.clear();
-
-  store_ = false;
-  prev_index_ = 0;
+  Reset();
+  mode_ = mode;
+  number_to_store_ = std::min(kMaxCapacity, number_to_store);
 }
 
-bool RtpPacketHistory::StorePackets() const {
-  rtc::CritScope cs(&critsect_);
-  return store_;
+RtpPacketHistory::StorageMode RtpPacketHistory::GetStorageMode() const {
+  rtc::CritScope cs(&lock_);
+  return mode_;
+}
+
+void RtpPacketHistory::SetRtt(int64_t rtt_ms) {
+  rtc::CritScope cs(&lock_);
+  RTC_DCHECK_GE(rtt_ms, 0);
+  rtt_ms_ = rtt_ms;
 }
 
 void RtpPacketHistory::PutRtpPacket(std::unique_ptr<RtpPacketToSend> packet,
                                     StorageType type,
-                                    bool sent) {
+                                    absl::optional<int64_t> send_time_ms) {
   RTC_DCHECK(packet);
-  rtc::CritScope cs(&critsect_);
-  if (!store_) {
+  rtc::CritScope cs(&lock_);
+  int64_t now_ms = clock_->TimeInMilliseconds();
+  if (mode_ == StorageMode::kDisabled) {
     return;
   }
 
-  int64_t now_ms = clock_->TimeInMilliseconds();
-
-  // If index we're about to overwrite contains a packet that has not
-  // yet been sent (probably pending in paced sender), or if the send time is
-  // less than 3 round trip times ago, expand the buffer to avoid overwriting
-  // valid data.
-  StoredPacket* stored_packet = &stored_packets_[prev_index_];
-  int64_t packet_duration_ms =
-      std::max(kMinPacketDurationRtt * rtt_ms_, kMinPacketDurationMs);
-  if (stored_packet->packet &&
-      (stored_packet->send_time == 0 ||
-       (rtt_ms_ >= 0 &&
-        now_ms - stored_packet->send_time <= packet_duration_ms))) {
-    size_t current_size = stored_packets_.size();
-    if (current_size < kMaxCapacity) {
-      size_t expanded_size = std::max(current_size * 3 / 2, current_size + 1);
-      expanded_size = std::min(expanded_size, kMaxCapacity);
-      Allocate(expanded_size);
-      // Causes discontinuity, but that's OK-ish. FindSeqNum() will still work,
-      // but may be slower - at least until buffer has wrapped around once.
-      prev_index_ = current_size;
-      stored_packet = &stored_packets_[prev_index_];
-    }
-  }
+  CullOldPackets(now_ms);
 
   // Store packet.
-  if (packet->capture_time_ms() <= 0)
-    packet->set_capture_time_ms(now_ms);
-  stored_packet->sequence_number = packet->SequenceNumber();
-  stored_packet->send_time = sent ? now_ms : 0;
-  stored_packet->storage_type = type;
-  stored_packet->has_been_retransmitted = false;
-  stored_packet->packet = std::move(packet);
+  const uint16_t rtp_seq_no = packet->SequenceNumber();
+  StoredPacket& stored_packet = packet_history_[rtp_seq_no];
+  RTC_DCHECK(stored_packet.packet == nullptr);
+  stored_packet.packet = std::move(packet);
 
-  prev_index_ = (prev_index_ + 1) % stored_packets_.size();
-}
-
-bool RtpPacketHistory::HasRtpPacket(uint16_t sequence_number) const {
-  rtc::CritScope cs(&critsect_);
-  if (!store_) {
-    return false;
+  if (stored_packet.packet->capture_time_ms() <= 0) {
+    stored_packet.packet->set_capture_time_ms(now_ms);
   }
+  stored_packet.send_time_ms = send_time_ms;
+  stored_packet.storage_type = type;
+  stored_packet.times_retransmitted = 0;
 
-  int unused_index = 0;
-  return FindSeqNum(sequence_number, &unused_index);
+  if (!start_seqno_) {
+    start_seqno_ = rtp_seq_no;
+  }
 }
 
 std::unique_ptr<RtpPacketToSend> RtpPacketHistory::GetPacketAndSetSendTime(
     uint16_t sequence_number,
-    int64_t min_elapsed_time_ms,
-    bool retransmit) {
-  rtc::CritScope cs(&critsect_);
-  if (!store_) {
+    bool verify_rtt) {
+  rtc::CritScope cs(&lock_);
+  if (mode_ == StorageMode::kDisabled) {
     return nullptr;
   }
 
-  int index = 0;
-  if (!FindSeqNum(sequence_number, &index)) {
-    RTC_LOG(LS_WARNING) << "No match for getting seqNum " << sequence_number;
-    return nullptr;
-  }
-  RTC_DCHECK_EQ(sequence_number,
-                stored_packets_[index].packet->SequenceNumber());
-
-  // Verify elapsed time since last retrieve, but only for retransmissions and
-  // always send packet upon first retransmission request.
-  int64_t now = clock_->TimeInMilliseconds();
-  if (min_elapsed_time_ms > 0 && retransmit &&
-      stored_packets_[index].has_been_retransmitted &&
-      ((now - stored_packets_[index].send_time) < min_elapsed_time_ms)) {
+  int64_t now_ms = clock_->TimeInMilliseconds();
+  StoredPacketIterator rtp_it = packet_history_.find(sequence_number);
+  if (rtp_it == packet_history_.end()) {
     return nullptr;
   }
 
-  if (retransmit) {
-    if (stored_packets_[index].storage_type == kDontRetransmit) {
-      // No bytes copied since this packet shouldn't be retransmitted.
-      return nullptr;
-    }
-    stored_packets_[index].has_been_retransmitted = true;
+  StoredPacket& packet = rtp_it->second;
+  if (verify_rtt && !VerifyRtt(rtp_it->second, now_ms)) {
+    return nullptr;
   }
-  stored_packets_[index].send_time = clock_->TimeInMilliseconds();
-  return GetPacket(index);
+
+  if (packet.send_time_ms) {
+    ++packet.times_retransmitted;
+  }
+
+  // Update send-time and return copy of packet instance.
+  packet.send_time_ms = now_ms;
+
+  if (packet.storage_type == StorageType::kDontRetransmit) {
+    // Non retransmittable packet, so call must come from paced sender.
+    // Remove from history and return actual packet instance.
+    return RemovePacket(rtp_it);
+  }
+  return absl::make_unique<RtpPacketToSend>(*packet.packet);
 }
 
-std::unique_ptr<RtpPacketToSend> RtpPacketHistory::GetPacket(int index) const {
-  const RtpPacketToSend& stored = *stored_packets_[index].packet;
-  return std::unique_ptr<RtpPacketToSend>(new RtpPacketToSend(stored));
+absl::optional<RtpPacketHistory::PacketState> RtpPacketHistory::GetPacketState(
+    uint16_t sequence_number,
+    bool verify_rtt) const {
+  rtc::CritScope cs(&lock_);
+  if (mode_ == StorageMode::kDisabled) {
+    return absl::nullopt;
+  }
+
+  auto rtp_it = packet_history_.find(sequence_number);
+  if (rtp_it == packet_history_.end()) {
+    return absl::nullopt;
+  }
+
+  if (verify_rtt && !VerifyRtt(rtp_it->second, clock_->TimeInMilliseconds())) {
+    return absl::nullopt;
+  }
+
+  return StoredPacketToPacketState(rtp_it->second);
+}
+
+bool RtpPacketHistory::VerifyRtt(const RtpPacketHistory::StoredPacket& packet,
+                                 int64_t now_ms) const {
+  if (packet.send_time_ms) {
+    // Send-time already set, this check must be for a retransmission.
+    if (packet.times_retransmitted > 0 &&
+        now_ms < *packet.send_time_ms + rtt_ms_) {
+      // This packet has already been retransmitted once, and the time since
+      // that even is lower than on RTT. Ignore request as this packet is
+      // likely already in the network pipe.
+      return false;
+    }
+  }
+
+  return true;
 }
 
 std::unique_ptr<RtpPacketToSend> RtpPacketHistory::GetBestFittingPacket(
     size_t packet_length) const {
-  rtc::CritScope cs(&critsect_);
-  if (!store_)
+  // TODO(sprang): Make this smarter, taking retransmit count etc into account.
+  rtc::CritScope cs(&lock_);
+  if (packet_length < kMinPacketRequestBytes || packet_history_.empty()) {
     return nullptr;
-  int index = FindBestFittingPacket(packet_length);
-  if (index < 0)
-    return nullptr;
-  return GetPacket(index);
-}
-
-bool RtpPacketHistory::FindSeqNum(uint16_t sequence_number, int* index) const {
-  if (prev_index_ > 0) {
-    *index = prev_index_ - 1;
-  } else {
-    *index = stored_packets_.size() - 1;  // Wrap.
-  }
-  uint16_t temp_sequence_number = stored_packets_[*index].sequence_number;
-
-  int idx = *index - (temp_sequence_number - sequence_number);
-  if (idx >= 0 && idx < static_cast<int>(stored_packets_.size())) {
-    *index = idx;
-    temp_sequence_number = stored_packets_[*index].sequence_number;
   }
 
-  if (temp_sequence_number != sequence_number) {
-    // We did not found a match, search all.
-    for (uint16_t m = 0; m < stored_packets_.size(); m++) {
-      if (stored_packets_[m].sequence_number == sequence_number) {
-        *index = m;
-        temp_sequence_number = stored_packets_[*index].sequence_number;
+  size_t min_diff = std::numeric_limits<size_t>::max();
+  RtpPacketToSend* best_packet = nullptr;
+  for (auto& it : packet_history_) {
+    size_t diff = SizeDiff(it.second.packet, packet_length);
+    if (!min_diff || diff < min_diff) {
+      min_diff = diff;
+      best_packet = it.second.packet.get();
+      if (diff == 0) {
         break;
       }
     }
   }
-  return temp_sequence_number == sequence_number &&
-         stored_packets_[*index].packet;
+
+  return absl::make_unique<RtpPacketToSend>(*best_packet);
 }
 
-int RtpPacketHistory::FindBestFittingPacket(size_t size) const {
-  if (size < kMinPacketRequestBytes || stored_packets_.empty())
-    return -1;
-  size_t min_diff = std::numeric_limits<size_t>::max();
-  int best_index = -1;  // Returned unchanged if we don't find anything.
-  for (size_t i = 0; i < stored_packets_.size(); ++i) {
-    if (!stored_packets_[i].packet)
+void RtpPacketHistory::Reset() {
+  packet_history_.clear();
+  start_seqno_.reset();
+}
+
+void RtpPacketHistory::CullOldPackets(int64_t now_ms) {
+  int64_t packet_duration_ms =
+      std::max(kMinPacketDurationRtt * rtt_ms_, kMinPacketDurationMs);
+  while (!packet_history_.empty()) {
+    auto stored_packet_it = packet_history_.find(*start_seqno_);
+    RTC_DCHECK(stored_packet_it != packet_history_.end());
+
+    if (packet_history_.size() >= kMaxCapacity) {
+      // We have reached the absolute max capacity, remove one packet
+      // unconditionally.
+      RemovePacket(stored_packet_it);
       continue;
-    size_t stored_size = stored_packets_[i].packet->size();
-    size_t diff =
-        (stored_size > size) ? (stored_size - size) : (size - stored_size);
-    if (diff < min_diff) {
-      min_diff = diff;
-      best_index = static_cast<int>(i);
+    }
+
+    const StoredPacket& stored_packet = stored_packet_it->second;
+    if (!stored_packet.send_time_ms) {
+      // Don't remove packets that have not been sent.
+      return;
+    }
+
+    if (*stored_packet.send_time_ms + packet_duration_ms > now_ms) {
+      // Don't cull packets too early to avoid failed retransmission requests.
+      return;
+    }
+
+    if (packet_history_.size() >= number_to_store_ ||
+        (mode_ == StorageMode::kStoreAndCull &&
+         *stored_packet.send_time_ms +
+                 (packet_duration_ms * kPacketCullingDelayFactor) <=
+             now_ms)) {
+      // Too many packets in history, or this packet has timed out. Remove it
+      // and continue.
+      RemovePacket(stored_packet_it);
+    } else {
+      // No more packets can be removed right now.
+      return;
     }
   }
-  return best_index;
 }
 
-void RtpPacketHistory::SetRtt(int64_t rtt_ms) {
-  rtc::CritScope cs(&critsect_);
-  RTC_DCHECK_GE(rtt_ms, 0);
-  rtt_ms_ = rtt_ms;
+std::unique_ptr<RtpPacketToSend> RtpPacketHistory::RemovePacket(
+    StoredPacketIterator packet_it) {
+  // Move the packet out from the StoredPacket container.
+  std::unique_ptr<RtpPacketToSend> rtp_packet =
+      std::move(packet_it->second.packet);
+  // Erase the packet from the map, and capture iterator to the next one.
+  StoredPacketIterator next_it = packet_history_.erase(packet_it);
+
+  // |next_it| now points to the next element, or to the end. If the end,
+  // check if we can wrap around.
+  if (next_it == packet_history_.end()) {
+    next_it = packet_history_.begin();
+  }
+
+  // Update |start_seq_no| to the new oldest item.
+  if (next_it != packet_history_.end()) {
+    start_seqno_ = next_it->first;
+  } else {
+    start_seqno_.reset();
+  }
+
+  return rtp_packet;
+}
+
+RtpPacketHistory::PacketState RtpPacketHistory::StoredPacketToPacketState(
+    const RtpPacketHistory::StoredPacket& stored_packet) {
+  RtpPacketHistory::PacketState state;
+  state.rtp_sequence_number = stored_packet.packet->SequenceNumber();
+  state.send_time_ms = stored_packet.send_time_ms;
+  state.capture_time_ms = stored_packet.packet->capture_time_ms();
+  state.ssrc = stored_packet.packet->Ssrc();
+  state.payload_size = stored_packet.packet->size();
+  state.times_retransmitted = stored_packet.times_retransmitted;
+  return state;
 }
 
 }  // namespace webrtc

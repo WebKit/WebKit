@@ -8,20 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import "RTCVideoFrame+Private.h"
-
 #import "WebRTC/RTCVideoFrame.h"
+
 #import "WebRTC/RTCVideoFrameBuffer.h"
-
-#include "api/video/video_frame.h"
-#include "rtc_base/timeutils.h"
-
-id<RTCVideoFrameBuffer> nativeToRtcFrameBuffer(
-    const rtc::scoped_refptr<webrtc::VideoFrameBuffer> &buffer) {
-  return buffer->type() == webrtc::VideoFrameBuffer::Type::kNative ?
-      static_cast<webrtc::ObjCFrameBuffer *>(buffer.get())->wrapped_frame_buffer() :
-      [[RTCI420Buffer alloc] initWithFrameBuffer:buffer->ToI420()];
-}
 
 @implementation RTCVideoFrame {
   RTCVideoRotation _rotation;
@@ -90,26 +79,6 @@ id<RTCVideoFrameBuffer> nativeToRtcFrameBuffer(
   }
 
   return self;
-}
-
-- (instancetype)initWithNativeVideoFrame:(const webrtc::VideoFrame &)frame {
-  if (self = [self initWithBuffer:nativeToRtcFrameBuffer(frame.video_frame_buffer())
-                         rotation:RTCVideoRotation(frame.rotation())
-                      timeStampNs:frame.timestamp_us() * rtc::kNumNanosecsPerMicrosec]) {
-    self.timeStamp = frame.timestamp();
-  }
-
-  return self;
-}
-
-- (webrtc::VideoFrame)nativeVideoFrame {
-  rtc::scoped_refptr<webrtc::VideoFrameBuffer> frameBuffer =
-      new rtc::RefCountedObject<webrtc::ObjCFrameBuffer>(self.buffer);
-  webrtc::VideoFrame videoFrame(frameBuffer,
-                                (webrtc::VideoRotation)self.rotation,
-                                self.timeStampNs / rtc::kNumNanosecsPerMicrosec);
-  videoFrame.set_timestamp(self.timeStamp);
-  return videoFrame;
 }
 
 @end

@@ -36,6 +36,7 @@ struct VectorBuffer {
   int OffsetIndex(int index, int offset) const {
     RTC_DCHECK_GE(size, offset);
     RTC_DCHECK_EQ(buffer.size(), static_cast<size_t>(size));
+    RTC_DCHECK_GE(size + index + offset, 0);
     return (size + index + offset) % size;
   }
 

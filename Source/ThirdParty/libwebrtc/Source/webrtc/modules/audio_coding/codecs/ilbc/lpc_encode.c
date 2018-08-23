@@ -16,12 +16,12 @@
 
 ******************************************************************/
 
-#include "defines.h"
-#include "simple_lpc_analysis.h"
-#include "simple_interpolate_lsf.h"
-#include "simple_lsf_quant.h"
-#include "lsf_check.h"
-#include "constants.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/simple_lpc_analysis.h"
+#include "modules/audio_coding/codecs/ilbc/simple_interpolate_lsf.h"
+#include "modules/audio_coding/codecs/ilbc/simple_lsf_quant.h"
+#include "modules/audio_coding/codecs/ilbc/lsf_check.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
 
 /*----------------------------------------------------------------*
  *  lpc encoder

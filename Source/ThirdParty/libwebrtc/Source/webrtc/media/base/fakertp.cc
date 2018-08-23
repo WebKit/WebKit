@@ -13,9 +13,12 @@
 #include "media/base/fakertp.h"
 #include "rtc_base/gunit.h"
 
-void CompareHeaderExtensions(const char* packet1, size_t packet1_size,
-    const char* packet2, size_t packet2_size,
-    const std::vector<int> encrypted_headers, bool expect_equal) {
+void CompareHeaderExtensions(const char* packet1,
+                             size_t packet1_size,
+                             const char* packet2,
+                             size_t packet2_size,
+                             const std::vector<int> encrypted_headers,
+                             bool expect_equal) {
   // Sanity check: packets must be large enough to contain the RTP header and
   // extensions header.
   RTC_CHECK_GE(packet1_size, 12 + 4);
@@ -36,7 +39,7 @@ void CompareHeaderExtensions(const char* packet1, size_t packet1_size,
   RTC_CHECK_GE(packet2_size, 12 + 4 + extension_words * 4);
   while (extension_data1 < extension_end1) {
     uint8_t id = (*extension_data1 & 0xf0) >> 4;
-    uint8_t len = (*extension_data1 & 0x0f) +1;
+    uint8_t len = (*extension_data1 & 0x0f) + 1;
     extension_data1++;
     extension_data2++;
     EXPECT_LE(extension_data1, extension_end1);
@@ -48,8 +51,8 @@ void CompareHeaderExtensions(const char* packet1, size_t packet1_size,
     // The header extension doesn't get encrypted if the id is not in the
     // list of header extensions to encrypt.
     if (expect_equal ||
-        std::find(encrypted_headers.begin(), encrypted_headers.end(), id)
-            == encrypted_headers.end()) {
+        std::find(encrypted_headers.begin(), encrypted_headers.end(), id) ==
+            encrypted_headers.end()) {
       EXPECT_EQ(0, memcmp(extension_data1, extension_data2, len));
     } else {
       EXPECT_NE(0, memcmp(extension_data1, extension_data2, len));

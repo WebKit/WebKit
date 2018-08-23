@@ -28,6 +28,7 @@ class PacketSender;
 class LinkShare {
  public:
   explicit LinkShare(ChokeFilter* choke_filter);
+  ~LinkShare();
 
   void PauseFlow(int flow_id);   // Increases available capacity per flow.
   void ResumeFlow(int flow_id);  // Decreases available capacity per flow.
@@ -67,6 +68,7 @@ class MetricRecorder {
                  int flow_id,
                  PacketSender* packet_sender,
                  LinkShare* link_share);
+  ~MetricRecorder();
 
   void SetPlotInformation(const std::vector<std::string>& prefixes,
                           bool plot_delay,

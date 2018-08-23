@@ -19,9 +19,15 @@ namespace rtc {
 namespace {
 
 void f() {}
-int g() { return 42; }
-int h(int x) { return x * x; }
-void i(int& x) { x *= x; }  // NOLINT: Testing refs
+int g() {
+  return 42;
+}
+int h(int x) {
+  return x * x;
+}
+void i(int& x) {
+  x *= x;
+}  // NOLINT: Testing refs
 
 struct BindTester {
   int a() { return 24; }

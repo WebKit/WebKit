@@ -15,7 +15,6 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
-#include "rtc_base/basictypes.h"
 
 namespace webrtc {
 namespace rtcp {

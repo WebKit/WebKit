@@ -16,11 +16,11 @@
 
 ******************************************************************/
 
-#include "defines.h"
-#include "window32_w32.h"
-#include "bw_expand.h"
-#include "poly_to_lsf.h"
-#include "constants.h"
+#include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/window32_w32.h"
+#include "modules/audio_coding/codecs/ilbc/bw_expand.h"
+#include "modules/audio_coding/codecs/ilbc/poly_to_lsf.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
 
 /*----------------------------------------------------------------*
  *  lpc analysis (subrutine to LPCencode)

@@ -14,6 +14,7 @@
 #include <memory>
 #include <vector>
 
+#include "api/audio/audio_frame.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/audio_coding/neteq/tools/packet_source.h"
 #include "rtc_base/constructormagic.h"

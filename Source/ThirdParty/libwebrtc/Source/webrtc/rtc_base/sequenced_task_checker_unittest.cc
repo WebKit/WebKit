@@ -9,15 +9,34 @@
  */
 
 #include "rtc_base/sequenced_task_checker.h"
+
 #include "rtc_base/checks.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/task_queue.h"
+#include "rtc_base/thread_checker.h"
 #include "test/gtest.h"
 
 namespace rtc {
 
 namespace {
+
+// This class is dead code, but its purpose is to make sure that
+// SequencedTaskChecker is compatible with the RTC_GUARDED_BY and RTC_RUN_ON
+// attributes that are checked at compile-time.
+class CompileTimeTestForGuardedBy {
+ public:
+  int CalledOnSequence() RTC_RUN_ON(sequence_checker_) { return guarded_; }
+
+  void CallMeFromSequence() {
+    RTC_DCHECK_RUN_ON(&sequence_checker_) << "Should be called on sequence";
+  }
+
+ private:
+  int guarded_ RTC_GUARDED_BY(sequence_checker_);
+  rtc::SequencedTaskChecker sequence_checker_;
+};
+
 // Calls SequencedTaskChecker::CalledSequentially on another thread.
 class CallCalledSequentiallyOnThread {
  public:

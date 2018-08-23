@@ -15,43 +15,41 @@
 #include <memory>
 #include <utility>
 
+#include "absl/memory/memory.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/ptr_util.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {
 
-class RemoteAudioSource::Sink : public AudioSinkInterface {
+// This proxy is passed to the underlying media engine to receive audio data as
+// they come in. The data will then be passed back up to the RemoteAudioSource
+// which will fan it out to all the sinks that have been added to it.
+class RemoteAudioSource::AudioDataProxy : public AudioSinkInterface {
  public:
-  explicit Sink(RemoteAudioSource* source) : source_(source) {}
-  ~Sink() override { source_->OnAudioChannelGone(); }
+  explicit AudioDataProxy(RemoteAudioSource* source) : source_(source) {
+    RTC_DCHECK(source);
+  }
+  ~AudioDataProxy() override { source_->OnAudioChannelGone(); }
 
- private:
+  // AudioSinkInterface implementation.
   void OnData(const AudioSinkInterface::Data& audio) override {
-    if (source_)
-      source_->OnData(audio);
+    source_->OnData(audio);
   }
 
+ private:
   const rtc::scoped_refptr<RemoteAudioSource> source_;
-  RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(Sink);
+
+  RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(AudioDataProxy);
 };
 
-rtc::scoped_refptr<RemoteAudioSource> RemoteAudioSource::Create(
-    rtc::Thread* worker_thread,
-    cricket::VoiceMediaChannel* media_channel,
-    uint32_t ssrc) {
-  rtc::scoped_refptr<RemoteAudioSource> ret(
-      new rtc::RefCountedObject<RemoteAudioSource>());
-  ret->Initialize(worker_thread, media_channel, ssrc);
-  return ret;
-}
-
-RemoteAudioSource::RemoteAudioSource()
+RemoteAudioSource::RemoteAudioSource(rtc::Thread* worker_thread)
     : main_thread_(rtc::Thread::Current()),
+      worker_thread_(worker_thread),
       state_(MediaSourceInterface::kLive) {
   RTC_DCHECK(main_thread_);
+  RTC_DCHECK(worker_thread_);
 }
 
 RemoteAudioSource::~RemoteAudioSource() {
@@ -60,17 +58,25 @@ RemoteAudioSource::~RemoteAudioSource() {
   RTC_DCHECK(sinks_.empty());
 }
 
-void RemoteAudioSource::Initialize(rtc::Thread* worker_thread,
-                                   cricket::VoiceMediaChannel* media_channel,
-                                   uint32_t ssrc) {
-  RTC_DCHECK(main_thread_->IsCurrent());
-  // To make sure we always get notified when the channel goes out of scope,
-  // we register for callbacks here and not on demand in AddSink.
-  if (media_channel) {  // May be null in tests.
-    worker_thread->Invoke<void>(RTC_FROM_HERE, [&] {
-      media_channel->SetRawAudioSink(ssrc, rtc::MakeUnique<Sink>(this));
-    });
-  }
+void RemoteAudioSource::Start(cricket::VoiceMediaChannel* media_channel,
+                              uint32_t ssrc) {
+  RTC_DCHECK_RUN_ON(main_thread_);
+  RTC_DCHECK(media_channel);
+  // Register for callbacks immediately before AddSink so that we always get
+  // notified when a channel goes out of scope (signaled when "AudioDataProxy"
+  // is destroyed).
+  worker_thread_->Invoke<void>(RTC_FROM_HERE, [&] {
+    media_channel->SetRawAudioSink(ssrc,
+                                   absl::make_unique<AudioDataProxy>(this));
+  });
+}
+
+void RemoteAudioSource::Stop(cricket::VoiceMediaChannel* media_channel,
+                             uint32_t ssrc) {
+  RTC_DCHECK_RUN_ON(main_thread_);
+  RTC_DCHECK(media_channel);
+  worker_thread_->Invoke<void>(
+      RTC_FROM_HERE, [&] { media_channel->SetRawAudioSink(ssrc, nullptr); });
 }
 
 MediaSourceInterface::SourceState RemoteAudioSource::state() const {
@@ -86,8 +92,9 @@ bool RemoteAudioSource::remote() const {
 void RemoteAudioSource::SetVolume(double volume) {
   RTC_DCHECK_GE(volume, 0);
   RTC_DCHECK_LE(volume, 10);
-  for (auto* observer : audio_observers_)
+  for (auto* observer : audio_observers_) {
     observer->OnSetVolume(volume);
+  }
 }
 
 void RemoteAudioSource::RegisterAudioObserver(AudioObserver* observer) {

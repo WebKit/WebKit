@@ -79,9 +79,6 @@ class VCMReceiver {
   VCMNackMode NackMode() const;
   std::vector<uint16_t> NackList(bool* request_key_frame);
 
-  // Receiver video delay.
-  int SetMinReceiverDelay(int desired_delay_ms);
-
   // Decoding with errors.
   void SetDecodeErrorMode(VCMDecodeErrorMode decode_error_mode);
   VCMDecodeErrorMode DecodeErrorMode() const;

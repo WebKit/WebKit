@@ -14,22 +14,17 @@
 #include <memory>
 #include <vector>
 
+#include "api/audio/audio_frame.h"
 #include "common_audio/channel_buffer.h"
 #include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/splitting_filter.h"
-#include "modules/include/module_common_types.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 
 class PushSincResampler;
 class IFChannelBuffer;
 
-enum Band {
-  kBand0To8kHz = 0,
-  kBand8To16kHz = 1,
-  kBand16To24kHz = 2
-};
+enum Band { kBand0To8kHz = 0, kBand8To16kHz = 1, kBand16To24kHz = 2 };
 
 class AudioBuffer {
  public:
@@ -152,11 +147,11 @@ class AudioBuffer {
   std::unique_ptr<IFChannelBuffer> data_;
   std::unique_ptr<IFChannelBuffer> split_data_;
   std::unique_ptr<SplittingFilter> splitting_filter_;
-  std::unique_ptr<ChannelBuffer<int16_t> > mixed_low_pass_channels_;
-  std::unique_ptr<ChannelBuffer<int16_t> > low_pass_reference_channels_;
+  std::unique_ptr<ChannelBuffer<int16_t>> mixed_low_pass_channels_;
+  std::unique_ptr<ChannelBuffer<int16_t>> low_pass_reference_channels_;
   std::unique_ptr<IFChannelBuffer> input_buffer_;
   std::unique_ptr<IFChannelBuffer> output_buffer_;
-  std::unique_ptr<ChannelBuffer<float> > process_buffer_;
+  std::unique_ptr<ChannelBuffer<float>> process_buffer_;
   std::vector<std::unique_ptr<PushSincResampler>> input_resamplers_;
   std::vector<std::unique_ptr<PushSincResampler>> output_resamplers_;
 };

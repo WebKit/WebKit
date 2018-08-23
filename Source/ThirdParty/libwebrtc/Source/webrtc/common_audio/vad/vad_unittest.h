@@ -14,23 +14,22 @@
 #include <stddef.h>  // size_t
 
 #include "test/gtest.h"
-#include "typedefs.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace test {
 
 // Modes we support
-const int kModes[] = { 0, 1, 2, 3 };
+const int kModes[] = {0, 1, 2, 3};
 const size_t kModesSize = sizeof(kModes) / sizeof(*kModes);
 
 // Rates we support.
-const int kRates[] = { 8000, 12000, 16000, 24000, 32000, 48000 };
+const int kRates[] = {8000, 12000, 16000, 24000, 32000, 48000};
 const size_t kRatesSize = sizeof(kRates) / sizeof(*kRates);
 
 // Frame lengths we support.
 const size_t kMaxFrameLength = 1440;
-const size_t kFrameLengths[] = { 80, 120, 160, 240, 320, 480, 640, 960,
-    kMaxFrameLength };
+const size_t kFrameLengths[] = {
+    80, 120, 160, 240, 320, 480, 640, 960, kMaxFrameLength};
 const size_t kFrameLengthsSize = sizeof(kFrameLengths) / sizeof(*kFrameLengths);
 
 }  // namespace test
@@ -39,8 +38,8 @@ const size_t kFrameLengthsSize = sizeof(kFrameLengths) / sizeof(*kFrameLengths);
 class VadTest : public ::testing::Test {
  protected:
   VadTest();
-  virtual void SetUp();
-  virtual void TearDown();
+  void SetUp() override;
+  void TearDown() override;
 
   // Returns true if the rate and frame length combination is valid.
   bool ValidRatesAndFrameLengths(int rate, size_t frame_length);

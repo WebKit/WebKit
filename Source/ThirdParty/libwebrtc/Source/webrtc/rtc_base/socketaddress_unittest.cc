@@ -18,14 +18,12 @@
 
 namespace rtc {
 
-const in6_addr kTestV6Addr =  { { {0x20, 0x01, 0x0d, 0xb8,
-                                   0x10, 0x20, 0x30, 0x40,
-                                   0x50, 0x60, 0x70, 0x80,
-                                   0x90, 0xA0, 0xB0, 0xC0} } };
-const in6_addr kMappedV4Addr = { { {0x00, 0x00, 0x00, 0x00,
-                                    0x00, 0x00, 0x00, 0x00,
-                                    0x00, 0x00, 0xFF, 0xFF,
-                                    0x01, 0x02, 0x03, 0x04} } };
+const in6_addr kTestV6Addr = {
+    {{0x20, 0x01, 0x0d, 0xb8, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70, 0x80,
+      0x90, 0xA0, 0xB0, 0xC0}}};
+const in6_addr kMappedV4Addr = {
+    {{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF,
+      0x01, 0x02, 0x03, 0x04}}};
 const std::string kTestV6AddrString = "2001:db8:1020:3040:5060:7080:90a0:b0c0";
 const std::string kTestV6AddrAnonymizedString = "2001:db8:1020:x:x:x:x:x";
 const std::string kTestV6AddrFullString =
@@ -240,55 +238,51 @@ TEST(SocketAddressTest, TestToFromSockAddrStorage) {
   EXPECT_FALSE(SocketAddressFromSockAddrStorage(addr_storage, nullptr));
 }
 
-bool AreEqual(const SocketAddress& addr1,
-              const SocketAddress& addr2) {
-  return addr1 == addr2 && addr2 == addr1 &&
-      !(addr1 != addr2) && !(addr2 != addr1);
+bool AreEqual(const SocketAddress& addr1, const SocketAddress& addr2) {
+  return addr1 == addr2 && addr2 == addr1 && !(addr1 != addr2) &&
+         !(addr2 != addr1);
 }
 
-bool AreUnequal(const SocketAddress& addr1,
-                const SocketAddress& addr2) {
-  return !(addr1 == addr2) && !(addr2 == addr1) &&
-      addr1 != addr2 && addr2 != addr1;
+bool AreUnequal(const SocketAddress& addr1, const SocketAddress& addr2) {
+  return !(addr1 == addr2) && !(addr2 == addr1) && addr1 != addr2 &&
+         addr2 != addr1;
 }
 
 TEST(SocketAddressTest, TestEqualityOperators) {
   SocketAddress addr1("1.2.3.4", 5678);
   SocketAddress addr2("1.2.3.4", 5678);
-  EXPECT_PRED2(AreEqual, addr1, addr2);
+  EXPECT_TRUE(AreEqual(addr1, addr2));
 
   addr2 = SocketAddress("0.0.0.1", 5678);
-  EXPECT_PRED2(AreUnequal, addr1, addr2);
+  EXPECT_TRUE(AreUnequal(addr1, addr2));
 
   addr2 = SocketAddress("1.2.3.4", 1234);
-  EXPECT_PRED2(AreUnequal, addr1, addr2);
+  EXPECT_TRUE(AreUnequal(addr1, addr2));
 
   addr2 = SocketAddress(kTestV6AddrString, 5678);
-  EXPECT_PRED2(AreUnequal, addr1, addr2);
+  EXPECT_TRUE(AreUnequal(addr1, addr2));
 
   addr1 = SocketAddress(kTestV6AddrString, 5678);
-  EXPECT_PRED2(AreEqual, addr1, addr2);
+  EXPECT_TRUE(AreEqual(addr1, addr2));
 
   addr2 = SocketAddress(kTestV6AddrString, 1234);
-  EXPECT_PRED2(AreUnequal, addr1, addr2);
+  EXPECT_TRUE(AreUnequal(addr1, addr2));
 
   addr2 = SocketAddress("fe80::1", 5678);
-  EXPECT_PRED2(AreUnequal, addr1, addr2);
+  EXPECT_TRUE(AreUnequal(addr1, addr2));
 
   SocketAddress addr3("a.b.c.d", 1);
   SocketAddress addr4("b.b.c.d", 1);
-  EXPECT_PRED2(AreUnequal, addr3, addr4);
-  EXPECT_PRED2(AreEqual, addr3, addr3);
+  EXPECT_TRUE(AreUnequal(addr3, addr4));
+  EXPECT_TRUE(AreEqual(addr3, addr3));
 
   addr3.SetIP(addr1.ip());
   addr4.SetIP(addr1.ip());
-  EXPECT_PRED2(AreEqual,addr3, addr4);
+  EXPECT_TRUE(AreEqual(addr3, addr4));
 }
 
 bool IsLessThan(const SocketAddress& addr1, const SocketAddress& addr2) {
-  return addr1 < addr2 &&
-      !(addr2 < addr1) &&
-      !(addr1 == addr2);
+  return addr1 < addr2 && !(addr2 < addr1) && !(addr1 == addr2);
 }
 
 TEST(SocketAddressTest, TestComparisonOperator) {
@@ -299,19 +293,19 @@ TEST(SocketAddressTest, TestComparisonOperator) {
   EXPECT_FALSE(addr2 < addr1);
 
   addr2 = SocketAddress("1.2.3.4", 5679);
-  EXPECT_PRED2(IsLessThan, addr1, addr2);
+  EXPECT_TRUE(IsLessThan(addr1, addr2));
 
   addr2 = SocketAddress("2.2.3.4", 49152);
-  EXPECT_PRED2(IsLessThan, addr1, addr2);
+  EXPECT_TRUE(IsLessThan(addr1, addr2));
 
   addr2 = SocketAddress(kTestV6AddrString, 5678);
-  EXPECT_PRED2(IsLessThan, addr1, addr2);
+  EXPECT_TRUE(IsLessThan(addr1, addr2));
 
   addr1 = SocketAddress("fe80::1", 5678);
-  EXPECT_PRED2(IsLessThan, addr2, addr1);
+  EXPECT_TRUE(IsLessThan(addr2, addr1));
 
   addr2 = SocketAddress("fe80::1", 5679);
-  EXPECT_PRED2(IsLessThan, addr1, addr2);
+  EXPECT_TRUE(IsLessThan(addr1, addr2));
 
   addr2 = SocketAddress("fe80::1", 5678);
   EXPECT_FALSE(addr1 < addr2);
@@ -319,7 +313,7 @@ TEST(SocketAddressTest, TestComparisonOperator) {
 
   SocketAddress addr3("a.b.c.d", 1);
   SocketAddress addr4("b.b.c.d", 1);
-  EXPECT_PRED2(IsLessThan, addr3, addr4);
+  EXPECT_TRUE(IsLessThan(addr3, addr4));
 }
 
 TEST(SocketAddressTest, TestToSensitiveString) {

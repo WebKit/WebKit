@@ -21,7 +21,9 @@
 #include <windows.h>
 #endif
 
+#include "api/fec_controller.h"
 #include "api/video/video_frame.h"
+#include "api/video_codecs/video_codec.h"
 #include "modules/include/module.h"
 #include "modules/include/module_common_types.h"
 #include "modules/video_coding/include/video_coding_defines.h"
@@ -31,13 +33,8 @@ namespace webrtc {
 
 class Clock;
 class EncodedImageCallback;
-// TODO(pbos): Remove VCMQMSettingsCallback completely. This might be done by
-// removing the VCM and use VideoSender/VideoReceiver as a public interface
-// directly.
-class VCMQMSettingsCallback;
-class VideoBitrateAllocator;
-class VideoEncoder;
 class VideoDecoder;
+class VideoEncoder;
 struct CodecSpecificInfo;
 
 class EventFactory {
@@ -49,9 +46,9 @@ class EventFactory {
 
 class EventFactoryImpl : public EventFactory {
  public:
-  virtual ~EventFactoryImpl() {}
+  ~EventFactoryImpl() override {}
 
-  virtual EventWrapper* CreateEvent() { return EventWrapper::Create(); }
+  EventWrapper* CreateEvent() override;
 };
 
 // Used to indicate which decode with errors mode should be used.
@@ -75,8 +72,8 @@ class VideoCodingModule : public Module {
   static VideoCodingModule* Create(Clock* clock, EventFactory* event_factory);
 
   /*
-  *   Sender
-  */
+   *   Sender
+   */
 
   // Registers a codec to be used for encoding. Calling this
   // API multiple times overwrites any previously registered codecs.
@@ -113,18 +110,6 @@ class VideoCodingModule : public Module {
                                           uint8_t payloadType,
                                           bool internalSource = false) = 0;
 
-  // API to get currently configured encoder target bitrate in bits/s.
-  //
-  // Return value      : 0,   on success.
-  //                     < 0, on error.
-  virtual int Bitrate(unsigned int* bitrate) const = 0;
-
-  // API to get currently configured encoder target frame rate.
-  //
-  // Return value      : 0,   on success.
-  //                     < 0, on error.
-  virtual int FrameRate(unsigned int* framerate) const = 0;
-
   // Sets the parameters describing the send channel. These parameters are
   // inputs to the
   // Media Optimization inside the VCM and also specifies the target bit rate
@@ -144,27 +129,6 @@ class VideoCodingModule : public Module {
   virtual int32_t SetChannelParameters(uint32_t target_bitrate,
                                        uint8_t lossRate,
                                        int64_t rtt) = 0;
-
-  // Sets the parameters describing the receive channel. These parameters are
-  // inputs to the
-  // Media Optimization inside the VCM.
-  //
-  // Input:
-  //      - rtt                   : Current round-trip time in ms.
-  //                                with the most amount available bandwidth in
-  //                                a conference
-  //                                scenario
-  //
-  // Return value      : VCM_OK, on success.
-  //                     < 0,    on error.
-  virtual int32_t SetReceiveChannelParameters(int64_t rtt) = 0;
-
-  // Deprecated: This method currently does not have any effect.
-  // Register a video protection callback which will be called to deliver
-  // the requested FEC rate and NACK status (on/off).
-  // TODO(perkj): Remove once no projects use it.
-  virtual int32_t RegisterProtectionCallback(
-      VCMProtectionCallback* protection) = 0;
 
   // Enable or disable a video protection method.
   //
@@ -218,8 +182,8 @@ class VideoCodingModule : public Module {
   virtual int32_t EnableFrameDropper(bool enable) = 0;
 
   /*
-  *   Receiver
-  */
+   *   Receiver
+   */
 
   // Register possible receive codecs, can be called multiple times for
   // different codecs.
@@ -243,18 +207,11 @@ class VideoCodingModule : public Module {
                                        int32_t numberOfCores,
                                        bool requireKeyFrame = false) = 0;
 
-  // Register an externally defined decoder/renderer object. Can be a decoder
-  // only or a
-  // decoder coupled with a renderer. Note that RegisterReceiveCodec must be
-  // called to
-  // be used for decoding incoming streams.
+  // Register an external decoder object.
   //
   // Input:
-  //      - externalDecoder        : The external decoder/renderer object.
-  //      - payloadType            : The payload type which this decoder should
-  //      be
-  //                                 registered to.
-  //
+  //      - externalDecoder : Decoder object to be used for decoding frames.
+  //      - payloadType     : The payload type which this decoder is bound to.
   virtual void RegisterExternalDecoder(VideoDecoder* externalDecoder,
                                        uint8_t payloadType) = 0;
 
@@ -272,20 +229,6 @@ class VideoCodingModule : public Module {
   //                     < 0,    on error.
   virtual int32_t RegisterReceiveCallback(
       VCMReceiveCallback* receiveCallback) = 0;
-
-  // Register a receive statistics callback which will be called to deliver
-  // information
-  // about the video stream received by the receiving side of the VCM, for
-  // instance the
-  // average frame rate and bit rate.
-  //
-  // Input:
-  //      - receiveStats  : The callback object to register.
-  //
-  // Return value      : VCM_OK, on success.
-  //                     < 0,    on error.
-  virtual int32_t RegisterReceiveStatisticsCallback(
-      VCMReceiveStatisticsCallback* receiveStats) = 0;
 
   // Register a frame type request callback. This callback will be called when
   // the
@@ -341,35 +284,6 @@ class VideoCodingModule : public Module {
                                  size_t payloadLength,
                                  const WebRtcRTPHeader& rtpInfo) = 0;
 
-  // Minimum playout delay (Used for lip-sync). This is the minimum delay
-  // required
-  // to sync with audio. Not included in  VideoCodingModule::Delay()
-  // Defaults to 0 ms.
-  //
-  // Input:
-  //      - minPlayoutDelayMs   : Additional delay in ms.
-  //
-  // Return value      : VCM_OK, on success.
-  //                     < 0,    on error.
-  virtual int32_t SetMinimumPlayoutDelay(uint32_t minPlayoutDelayMs) = 0;
-
-  // Set the time required by the renderer to render a frame.
-  //
-  // Input:
-  //      - timeMS        : The time in ms required by the renderer to render a
-  //      frame.
-  //
-  // Return value      : VCM_OK, on success.
-  //                     < 0,    on error.
-  virtual int32_t SetRenderDelay(uint32_t timeMS) = 0;
-
-  // The total delay desired by the VCM. Can be less than the minimum
-  // delay set with SetMinimumPlayoutDelay.
-  //
-  // Return value      : Total delay in ms, on success.
-  //                     < 0,               on error.
-  virtual int32_t Delay() const = 0;
-
   // Robustness APIs
 
   // DEPRECATED.
@@ -389,13 +303,6 @@ class VideoCodingModule : public Module {
   virtual int SetReceiverRobustnessMode(ReceiverRobustness robustnessMode,
                                         VCMDecodeErrorMode errorMode) = 0;
 
-  // Set the decode error mode. The mode decides which errors (if any) are
-  // allowed in decodable frames. Note that setting decode_error_mode to
-  // anything other than kWithErrors without enabling nack will cause
-  // long-term freezes (resulting from frequent key frame requests) if
-  // packet loss occurs.
-  virtual void SetDecodeErrorMode(VCMDecodeErrorMode decode_error_mode) = 0;
-
   // Sets the maximum number of sequence numbers that we are allowed to NACK
   // and the oldest sequence number that we will consider to NACK. If a
   // sequence number older than |max_packet_age_to_nack| is missing
@@ -406,14 +313,8 @@ class VideoCodingModule : public Module {
                                int max_packet_age_to_nack,
                                int max_incomplete_time_ms) = 0;
 
-  // Setting a desired delay to the VCM receiver. Video rendering will be
-  // delayed by at least desired_delay_ms.
-  virtual int SetMinReceiverDelay(int desired_delay_ms) = 0;
-
   virtual void RegisterPostEncodeImageCallback(
       EncodedImageCallback* post_encode_callback) = 0;
-  // Releases pending decode calls, permitting faster thread shutdown.
-  virtual void TriggerDecoderShutdown() = 0;
 };
 
 }  // namespace webrtc

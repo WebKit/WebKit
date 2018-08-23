@@ -32,7 +32,7 @@ class LegacyEncodedAudioFrame final : public AudioDecoder::EncodedAudioFrame {
 
   size_t Duration() const override;
 
-  rtc::Optional<DecodeResult> Decode(
+  absl::optional<DecodeResult> Decode(
       rtc::ArrayView<int16_t> decoded) const override;
 
   // For testing:

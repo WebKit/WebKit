@@ -11,10 +11,10 @@
 #include <algorithm>
 
 #include "api/array_view.h"
+#include "audio/transport_feedback_packet_loss_tracker.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
-#include "voice_engine/transport_feedback_packet_loss_tracker.h"
 
 namespace webrtc {
 

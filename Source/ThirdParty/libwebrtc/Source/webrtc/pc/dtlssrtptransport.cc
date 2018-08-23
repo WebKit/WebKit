@@ -24,20 +24,8 @@ static const char kDtlsSrtpExporterLabel[] = "EXTRACTOR-dtls_srtp";
 
 namespace webrtc {
 
-DtlsSrtpTransport::DtlsSrtpTransport(
-    std::unique_ptr<webrtc::SrtpTransport> srtp_transport)
-    : RtpTransportInternalAdapter(srtp_transport.get()) {
-  srtp_transport_ = std::move(srtp_transport);
-  RTC_DCHECK(srtp_transport_);
-  srtp_transport_->SignalPacketReceived.connect(
-      this, &DtlsSrtpTransport::OnPacketReceived);
-  srtp_transport_->SignalReadyToSend.connect(this,
-                                             &DtlsSrtpTransport::OnReadyToSend);
-  srtp_transport_->SignalWritableState.connect(
-      this, &DtlsSrtpTransport::OnWritableState);
-  srtp_transport_->SignalSentPacket.connect(this,
-                                            &DtlsSrtpTransport::OnSentPacket);
-}
+DtlsSrtpTransport::DtlsSrtpTransport(bool rtcp_mux_enabled)
+    : SrtpTransport(rtcp_mux_enabled) {}
 
 void DtlsSrtpTransport::SetDtlsTransports(
     cricket::DtlsTransportInternal* rtp_dtls_transport,
@@ -51,18 +39,23 @@ void DtlsSrtpTransport::SetDtlsTransports(
   // When using DTLS-SRTP, we must reset the SrtpTransport every time the
   // DtlsTransport changes and wait until the DTLS handshake is complete to set
   // the newly negotiated parameters.
-  if (IsActive()) {
-    srtp_transport_->ResetParams();
+  // If |active_reset_srtp_params_| is true, intentionally reset the SRTP
+  // parameter even though the DtlsTransport may not change.
+  if (IsSrtpActive() && (rtp_dtls_transport != rtp_dtls_transport_ ||
+                         active_reset_srtp_params_)) {
+    ResetParams();
   }
 
   const std::string transport_name =
       rtp_dtls_transport ? rtp_dtls_transport->transport_name() : "null";
 
-  // This would only be possible if using BUNDLE but not rtcp-mux, which isn't
-  // allowed according to the BUNDLE spec.
-  RTC_CHECK(!(IsActive()))
-      << "Setting RTCP for DTLS/SRTP after the DTLS is active "
-      << "should never happen.";
+  if (rtcp_dtls_transport && rtcp_dtls_transport != rtcp_dtls_transport_) {
+    // This would only be possible if using BUNDLE but not rtcp-mux, which isn't
+    // allowed according to the BUNDLE spec.
+    RTC_CHECK(!(IsSrtpActive()))
+        << "Setting RTCP for DTLS/SRTP after the DTLS is active "
+           "should never happen.";
+  }
 
   RTC_LOG(LS_INFO) << "Setting RTCP Transport on " << transport_name
                    << " transport " << rtcp_dtls_transport;
@@ -74,13 +67,13 @@ void DtlsSrtpTransport::SetDtlsTransports(
   SetRtpDtlsTransport(rtp_dtls_transport);
   SetRtpPacketTransport(rtp_dtls_transport);
 
-  UpdateWritableStateAndMaybeSetupDtlsSrtp();
+  MaybeSetupDtlsSrtp();
 }
 
 void DtlsSrtpTransport::SetRtcpMuxEnabled(bool enable) {
-  srtp_transport_->SetRtcpMuxEnabled(enable);
+  SrtpTransport::SetRtcpMuxEnabled(enable);
   if (enable) {
-    UpdateWritableStateAndMaybeSetupDtlsSrtp();
+    MaybeSetupDtlsSrtp();
   }
 }
 
@@ -126,10 +119,9 @@ bool DtlsSrtpTransport::IsDtlsConnected() {
 }
 
 bool DtlsSrtpTransport::IsDtlsWritable() {
-  auto rtp_packet_transport = srtp_transport_->rtp_packet_transport();
   auto rtcp_packet_transport =
-      rtcp_mux_enabled() ? nullptr : srtp_transport_->rtcp_packet_transport();
-  return rtp_packet_transport && rtp_packet_transport->writable() &&
+      rtcp_mux_enabled() ? nullptr : rtcp_dtls_transport_;
+  return rtp_dtls_transport_ && rtp_dtls_transport_->writable() &&
          (!rtcp_packet_transport || rtcp_packet_transport->writable());
 }
 
@@ -138,7 +130,7 @@ bool DtlsSrtpTransport::DtlsHandshakeCompleted() {
 }
 
 void DtlsSrtpTransport::MaybeSetupDtlsSrtp() {
-  if (IsActive() || !DtlsHandshakeCompleted()) {
+  if (IsSrtpActive() || !IsDtlsWritable()) {
     return;
   }
 
@@ -163,16 +155,15 @@ void DtlsSrtpTransport::SetupRtpDtlsSrtp() {
   }
 
   int selected_crypto_suite;
-  std::vector<unsigned char> send_key;
-  std::vector<unsigned char> recv_key;
+  rtc::ZeroOnFreeBuffer<unsigned char> send_key;
+  rtc::ZeroOnFreeBuffer<unsigned char> recv_key;
 
   if (!ExtractParams(rtp_dtls_transport_, &selected_crypto_suite, &send_key,
                      &recv_key) ||
-      !srtp_transport_->SetRtpParams(
-          selected_crypto_suite, &send_key[0],
-          static_cast<int>(send_key.size()), send_extension_ids,
-          selected_crypto_suite, &recv_key[0],
-          static_cast<int>(recv_key.size()), recv_extension_ids)) {
+      !SetRtpParams(selected_crypto_suite, &send_key[0],
+                    static_cast<int>(send_key.size()), send_extension_ids,
+                    selected_crypto_suite, &recv_key[0],
+                    static_cast<int>(recv_key.size()), recv_extension_ids)) {
     SignalDtlsSrtpSetupFailure(this, /*rtcp=*/false);
     RTC_LOG(LS_WARNING) << "DTLS-SRTP key installation for RTP failed";
   }
@@ -182,7 +173,7 @@ void DtlsSrtpTransport::SetupRtcpDtlsSrtp() {
   // Return if the DTLS-SRTP is active because the encrypted header extension
   // IDs don't need to be updated for RTCP and the crypto params don't need to
   // be reset.
-  if (IsActive()) {
+  if (IsSrtpActive()) {
     return;
   }
 
@@ -196,15 +187,15 @@ void DtlsSrtpTransport::SetupRtcpDtlsSrtp() {
   }
 
   int selected_crypto_suite;
-  std::vector<unsigned char> rtcp_send_key;
-  std::vector<unsigned char> rtcp_recv_key;
+  rtc::ZeroOnFreeBuffer<unsigned char> rtcp_send_key;
+  rtc::ZeroOnFreeBuffer<unsigned char> rtcp_recv_key;
   if (!ExtractParams(rtcp_dtls_transport_, &selected_crypto_suite,
                      &rtcp_send_key, &rtcp_recv_key) ||
-      !srtp_transport_->SetRtcpParams(
-          selected_crypto_suite, &rtcp_send_key[0],
-          static_cast<int>(rtcp_send_key.size()), send_extension_ids,
-          selected_crypto_suite, &rtcp_recv_key[0],
-          static_cast<int>(rtcp_recv_key.size()), recv_extension_ids)) {
+      !SetRtcpParams(selected_crypto_suite, &rtcp_send_key[0],
+                     static_cast<int>(rtcp_send_key.size()), send_extension_ids,
+                     selected_crypto_suite, &rtcp_recv_key[0],
+                     static_cast<int>(rtcp_recv_key.size()),
+                     recv_extension_ids)) {
     SignalDtlsSrtpSetupFailure(this, /*rtcp=*/true);
     RTC_LOG(LS_WARNING) << "DTLS-SRTP key installation for RTCP failed";
   }
@@ -213,8 +204,8 @@ void DtlsSrtpTransport::SetupRtcpDtlsSrtp() {
 bool DtlsSrtpTransport::ExtractParams(
     cricket::DtlsTransportInternal* dtls_transport,
     int* selected_crypto_suite,
-    std::vector<unsigned char>* send_key,
-    std::vector<unsigned char>* recv_key) {
+    rtc::ZeroOnFreeBuffer<unsigned char>* send_key,
+    rtc::ZeroOnFreeBuffer<unsigned char>* recv_key) {
   if (!dtls_transport || !dtls_transport->IsDtlsActive()) {
     return false;
   }
@@ -237,7 +228,7 @@ bool DtlsSrtpTransport::ExtractParams(
   }
 
   // OK, we're now doing DTLS (RFC 5764)
-  std::vector<unsigned char> dtls_buffer(key_len * 2 + salt_len * 2);
+  rtc::ZeroOnFreeBuffer<unsigned char> dtls_buffer(key_len * 2 + salt_len * 2);
 
   // RFC 5705 exporter using the RFC 5764 parameters
   if (!dtls_transport->ExportKeyingMaterial(kDtlsSrtpExporterLabel, NULL, 0,
@@ -249,8 +240,8 @@ bool DtlsSrtpTransport::ExtractParams(
   }
 
   // Sync up the keys with the DTLS-SRTP interface
-  std::vector<unsigned char> client_write_key(key_len + salt_len);
-  std::vector<unsigned char> server_write_key(key_len + salt_len);
+  rtc::ZeroOnFreeBuffer<unsigned char> client_write_key(key_len + salt_len);
+  rtc::ZeroOnFreeBuffer<unsigned char> server_write_key(key_len + salt_len);
   size_t offset = 0;
   memcpy(&client_write_key[0], &dtls_buffer[offset], key_len);
   offset += key_len;
@@ -261,19 +252,18 @@ bool DtlsSrtpTransport::ExtractParams(
   memcpy(&server_write_key[key_len], &dtls_buffer[offset], salt_len);
 
   rtc::SSLRole role;
-  if (!dtls_transport->GetSslRole(&role)) {
-    RTC_LOG(LS_WARNING) << "GetSslRole failed";
+  if (!dtls_transport->GetDtlsRole(&role)) {
+    RTC_LOG(LS_WARNING) << "Failed to get the DTLS role.";
     return false;
   }
 
   if (role == rtc::SSL_SERVER) {
-    *send_key = server_write_key;
-    *recv_key = client_write_key;
+    *send_key = std::move(server_write_key);
+    *recv_key = std::move(client_write_key);
   } else {
-    *send_key = client_write_key;
-    *recv_key = server_write_key;
+    *send_key = std::move(client_write_key);
+    *recv_key = std::move(server_write_key);
   }
-
   return true;
 }
 
@@ -306,54 +296,22 @@ void DtlsSrtpTransport::SetRtcpDtlsTransport(
   SetDtlsTransport(rtcp_dtls_transport, &rtcp_dtls_transport_);
 }
 
-void DtlsSrtpTransport::UpdateWritableStateAndMaybeSetupDtlsSrtp() {
-  bool writable = IsDtlsWritable();
-  SetWritable(writable);
-  if (writable) {
-    MaybeSetupDtlsSrtp();
-  }
-}
-
-void DtlsSrtpTransport::SetWritable(bool writable) {
-  // Only fire the signal if the writable state changes.
-  if (writable_ != writable) {
-    writable_ = writable;
-    SignalWritableState(writable_);
-  }
-}
-
 void DtlsSrtpTransport::OnDtlsState(cricket::DtlsTransportInternal* transport,
                                     cricket::DtlsTransportState state) {
   RTC_DCHECK(transport == rtp_dtls_transport_ ||
              transport == rtcp_dtls_transport_);
 
   if (state != cricket::DTLS_TRANSPORT_CONNECTED) {
-    srtp_transport_->ResetParams();
+    ResetParams();
     return;
   }
 
   MaybeSetupDtlsSrtp();
 }
 
-void DtlsSrtpTransport::OnWritableState(bool writable) {
-  SetWritable(writable);
-  if (writable) {
-    MaybeSetupDtlsSrtp();
-  }
-}
-
-void DtlsSrtpTransport::OnSentPacket(const rtc::SentPacket& sent_packet) {
-  SignalSentPacket(sent_packet);
-}
-
-void DtlsSrtpTransport::OnPacketReceived(bool rtcp,
-                                         rtc::CopyOnWriteBuffer* packet,
-                                         const rtc::PacketTime& packet_time) {
-  SignalPacketReceived(rtcp, packet, packet_time);
-}
-
-void DtlsSrtpTransport::OnReadyToSend(bool ready) {
-  SignalReadyToSend(ready);
+void DtlsSrtpTransport::OnWritableState(
+    rtc::PacketTransportInternal* packet_transport) {
+  MaybeSetupDtlsSrtp();
 }
 
 }  // namespace webrtc
