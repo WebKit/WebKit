@@ -24,7 +24,6 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include "CoordinatedGraphicsState.h"
-#include "CoordinatedImageBacking.h"
 #include "FloatPoint3D.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerTransform.h"
@@ -50,7 +49,6 @@ class CoordinatedGraphicsLayerClient {
 public:
     virtual bool isFlushingLayerChanges() const = 0;
     virtual FloatRect visibleContentsRect() const = 0;
-    virtual Ref<CoordinatedImageBacking> createImageBackingIfNeeded(Image&) = 0;
     virtual void detachLayer(CoordinatedGraphicsLayer*) = 0;
     virtual void attachLayer(CoordinatedGraphicsLayer*) = 0;
     virtual Nicosia::PaintingEngine& paintingEngine() = 0;
@@ -59,8 +57,7 @@ public:
 };
 
 class WEBCORE_EXPORT CoordinatedGraphicsLayer : public GraphicsLayer
-    , public TiledBackingStoreClient
-    , public CoordinatedImageBacking::Host {
+    , public TiledBackingStoreClient {
 public:
     explicit CoordinatedGraphicsLayer(Type, GraphicsLayerClient&);
     virtual ~CoordinatedGraphicsLayer();
@@ -149,7 +146,6 @@ private:
     void didChangeGeometry();
     void didChangeChildren();
     void didChangeFilters();
-    void didChangeImageBacking();
     void didUpdateTileBuffers();
 
     void resetLayerState();
@@ -157,7 +153,6 @@ private:
     void syncAnimations();
     void syncChildren();
     void syncFilters();
-    void syncImageBacking();
     void computeTransformedVisibleRect();
     void updateContentBuffers();
 
@@ -165,8 +160,6 @@ private:
 
     void notifyFlushRequired();
 
-    // CoordinatedImageBacking::Host
-    bool imageBackingVisible() override;
     bool shouldHaveBackingStore() const;
     bool selfOrAncestorHasActiveTransformAnimation() const;
     bool selfOrAncestorHaveNonAffineTransforms();
@@ -196,7 +189,6 @@ private:
     bool m_shouldSyncLayerState: 1;
     bool m_shouldSyncChildren: 1;
     bool m_shouldSyncFilters: 1;
-    bool m_shouldSyncImageBacking: 1;
     bool m_shouldSyncAnimations: 1;
     bool m_movingVisibleRect : 1;
     bool m_pendingContentsScaleAdjustment : 1;
@@ -217,7 +209,6 @@ private:
 
     RefPtr<Image> m_compositedImage;
     NativeImagePtr m_compositedNativeImagePtr;
-    RefPtr<CoordinatedImageBacking> m_coordinatedImageBacking;
 
     PlatformLayer* m_platformLayer;
     Timer m_animationStartedTimer;

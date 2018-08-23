@@ -93,12 +93,6 @@ void CoordinatedGraphicsLayer::didChangeFilters()
     notifyFlushRequired();
 }
 
-void CoordinatedGraphicsLayer::didChangeImageBacking()
-{
-    m_shouldSyncImageBacking = true;
-    notifyFlushRequired();
-}
-
 void CoordinatedGraphicsLayer::didUpdateTileBuffers()
 {
     if (!isShowingRepaintCounter())
@@ -135,7 +129,6 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(Type layerType, GraphicsLayer
     , m_shouldSyncLayerState(true)
     , m_shouldSyncChildren(true)
     , m_shouldSyncFilters(true)
-    , m_shouldSyncImageBacking(true)
     , m_shouldSyncAnimations(true)
     , m_movingVisibleRect(false)
     , m_pendingContentsScaleAdjustment(false)
@@ -162,7 +155,6 @@ CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer()
         purgeBackingStores();
         m_coordinator->detachLayer(this);
     }
-    ASSERT(!m_coordinatedImageBacking);
     ASSERT(!m_mainBackingStore);
     ASSERT(!m_nicosia.imageBacking);
     ASSERT(!m_nicosia.backingStore);
@@ -544,7 +536,7 @@ void CoordinatedGraphicsLayer::setContentsToImage(Image* image)
     m_compositedNativeImagePtr = nativeImagePtr;
 
     GraphicsLayer::setContentsToImage(image);
-    didChangeImageBacking();
+    notifyFlushRequired();
 }
 
 void CoordinatedGraphicsLayer::setMaskLayer(GraphicsLayer* layer)
@@ -668,32 +660,6 @@ void CoordinatedGraphicsLayer::syncFilters()
     m_layerState.filters = GraphicsLayer::filters();
     m_layerState.filtersChanged = true;
     m_nicosia.delta.filtersChanged = true;
-}
-
-void CoordinatedGraphicsLayer::syncImageBacking()
-{
-    if (!m_shouldSyncImageBacking)
-        return;
-    m_shouldSyncImageBacking = false;
-
-    if (m_compositedNativeImagePtr) {
-        ASSERT(!shouldHaveBackingStore());
-        ASSERT(m_compositedImage);
-
-        bool imageInstanceReplaced = m_coordinatedImageBacking && (m_coordinatedImageBacking->id() != CoordinatedImageBacking::getCoordinatedImageBackingID(*m_compositedImage));
-        if (imageInstanceReplaced)
-            releaseImageBackingIfNeeded();
-
-        if (!m_coordinatedImageBacking) {
-            m_coordinatedImageBacking = m_coordinator->createImageBackingIfNeeded(*m_compositedImage);
-            m_coordinatedImageBacking->addHost(*this);
-            m_layerState.imageID = m_coordinatedImageBacking->id();
-        }
-
-        m_coordinatedImageBacking->markDirty();
-        m_layerState.imageChanged = true;
-    } else
-        releaseImageBackingIfNeeded();
 }
 
 void CoordinatedGraphicsLayer::syncLayerState()
@@ -989,24 +955,6 @@ void CoordinatedGraphicsLayer::resetLayerState()
     m_layerState.tilesToUpdate.clear();
 }
 
-bool CoordinatedGraphicsLayer::imageBackingVisible()
-{
-    ASSERT(m_coordinatedImageBacking);
-    return transformedVisibleRect().intersects(IntRect(contentsRect()));
-}
-
-void CoordinatedGraphicsLayer::releaseImageBackingIfNeeded()
-{
-    if (!m_coordinatedImageBacking)
-        return;
-
-    ASSERT(m_coordinator);
-    m_coordinatedImageBacking->removeHost(*this);
-    m_coordinatedImageBacking = nullptr;
-    m_layerState.imageID = InvalidCoordinatedImageBackingID;
-    m_layerState.imageChanged = true;
-}
-
 void CoordinatedGraphicsLayer::deviceOrPageScaleFactorChanged()
 {
     if (shouldHaveBackingStore())
@@ -1223,8 +1171,6 @@ void CoordinatedGraphicsLayer::purgeBackingStores()
 
         m_nicosia.backingStore = nullptr;
     }
-
-    releaseImageBackingIfNeeded();
 
     didChangeLayerState();
 }

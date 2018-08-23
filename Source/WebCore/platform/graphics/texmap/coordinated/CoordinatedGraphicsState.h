@@ -52,9 +52,6 @@ namespace WebCore {
 typedef uint32_t CoordinatedLayerID;
 enum { InvalidCoordinatedLayerID = 0 };
 
-typedef uint64_t CoordinatedImageBackingID;
-enum { InvalidCoordinatedImageBackingID = 0 };
-
 struct TileUpdateInfo {
     uint32_t tileID;
     IntRect tileRect;
@@ -91,7 +88,6 @@ struct CoordinatedGraphicsLayerState {
             bool debugVisualsChanged: 1;
             bool replicaChanged: 1;
             bool maskChanged: 1;
-            bool imageChanged: 1;
             bool flagsChanged: 1;
             bool animationsChanged: 1;
             bool filtersChanged: 1;
@@ -130,7 +126,6 @@ struct CoordinatedGraphicsLayerState {
         , opacity(0)
         , replica(InvalidCoordinatedLayerID)
         , mask(InvalidCoordinatedLayerID)
-        , imageID(InvalidCoordinatedImageBackingID)
 #if USE(COORDINATED_GRAPHICS_THREADED)
         , platformLayerProxy(0)
 #endif
@@ -154,7 +149,6 @@ struct CoordinatedGraphicsLayerState {
     Vector<uint32_t> tilesToRemove;
     CoordinatedLayerID replica;
     CoordinatedLayerID mask;
-    CoordinatedImageBackingID imageID;
     DebugVisuals debugVisuals;
     RepaintCount repaintCount;
 
@@ -180,11 +174,6 @@ struct CoordinatedGraphicsState {
     Vector<CoordinatedLayerID> layersToCreate;
     Vector<std::pair<CoordinatedLayerID, CoordinatedGraphicsLayerState>> layersToUpdate;
     Vector<CoordinatedLayerID> layersToRemove;
-
-    Vector<CoordinatedImageBackingID> imagesToCreate;
-    Vector<CoordinatedImageBackingID> imagesToRemove;
-    Vector<std::pair<CoordinatedImageBackingID, RefPtr<Nicosia::Buffer>>> imagesToUpdate;
-    Vector<CoordinatedImageBackingID> imagesToClear;
 };
 
 } // namespace WebCore

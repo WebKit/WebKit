@@ -1,3 +1,31 @@
+2018-08-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Remove CoordinatedImageBacking and related functionality
+        https://bugs.webkit.org/show_bug.cgi?id=188847
+
+        Reviewed by Michael Catanzaro.
+
+        Remove the CoordinatedImageBacking class and its intertwining use in the
+        CoordinatedGraphics system.
+
+        Drop the CoordinatedImageBacking object management from the
+        CompositingCoordinator class, along with the
+        CoordinatedImageBacking::Client inheritance. The corresponding image
+        backing state management on the CoordinatedGraphicsState class can be
+        removed accordingly.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::flushPendingLayerChanges):
+        (WebKit::CompositingCoordinator::clearPendingStateChanges):
+        (WebKit::CompositingCoordinator::purgeBackingStores):
+        (WebKit::CompositingCoordinator::createImageBackingIfNeeded): Deleted.
+        (WebKit::CompositingCoordinator::createImageBacking): Deleted.
+        (WebKit::CompositingCoordinator::updateImageBacking): Deleted.
+        (WebKit::CompositingCoordinator::clearImageBackingContents): Deleted.
+        (WebKit::CompositingCoordinator::removeImageBacking): Deleted.
+        (WebKit::CompositingCoordinator::flushPendingImageBackingChanges): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+
 2018-08-22  Sihui Liu  <sihui_liu@apple.com>
 
         Move legacy directory configuration from WebProcessPool to API::WebsiteDataStore

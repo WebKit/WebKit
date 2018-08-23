@@ -31,7 +31,6 @@
 
 #include <WebCore/CoordinatedGraphicsLayer.h>
 #include <WebCore/CoordinatedGraphicsState.h>
-#include <WebCore/CoordinatedImageBacking.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/GraphicsLayerFactory.h>
@@ -52,7 +51,6 @@ namespace WebKit {
 
 class CompositingCoordinator final : public WebCore::GraphicsLayerClient
     , public WebCore::CoordinatedGraphicsLayerClient
-    , public WebCore::CoordinatedImageBacking::Client
     , public WebCore::GraphicsLayerFactory {
     WTF_MAKE_NONCOPYABLE(CompositingCoordinator);
 public:
@@ -95,16 +93,9 @@ private:
     float deviceScaleFactor() const override;
     float pageScaleFactor() const override;
 
-    // CoordinatedImageBacking::Client
-    void createImageBacking(WebCore::CoordinatedImageBackingID) override;
-    void updateImageBacking(WebCore::CoordinatedImageBackingID, RefPtr<Nicosia::Buffer>&&) override;
-    void clearImageBackingContents(WebCore::CoordinatedImageBackingID) override;
-    void removeImageBacking(WebCore::CoordinatedImageBackingID) override;
-
     // CoordinatedGraphicsLayerClient
     bool isFlushingLayerChanges() const override { return m_isFlushingLayerChanges; }
     WebCore::FloatRect visibleContentsRect() const override;
-    Ref<WebCore::CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image&) override;
     void detachLayer(WebCore::CoordinatedGraphicsLayer*) override;
     void attachLayer(WebCore::CoordinatedGraphicsLayer*) override;
     Nicosia::PaintingEngine& paintingEngine() override;
@@ -114,7 +105,6 @@ private:
     std::unique_ptr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
 
     void initializeRootCompositingLayerIfNeeded();
-    void flushPendingImageBackingChanges();
     void clearPendingStateChanges();
 
     void purgeBackingStores();
@@ -135,7 +125,6 @@ private:
     WebCore::CoordinatedGraphicsState m_state;
 
     HashMap<WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;
-    HashMap<WebCore::CoordinatedImageBackingID, RefPtr<WebCore::CoordinatedImageBacking>> m_imageBackings;
 
     std::unique_ptr<Nicosia::PaintingEngine> m_paintingEngine;
 
