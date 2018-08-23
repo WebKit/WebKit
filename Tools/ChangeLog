@@ -1,3 +1,12 @@
+2018-08-23  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Introduce Apple Pay JS v4 on iOS 12 and macOS Mojave
+        https://bugs.webkit.org/show_bug.cgi?id=188829
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2018-08-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WSL] Ternary expressions appear to be unimplemented
