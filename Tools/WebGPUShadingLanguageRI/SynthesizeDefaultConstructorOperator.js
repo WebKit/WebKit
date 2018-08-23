@@ -45,6 +45,12 @@ function synthesizeDefaultConstructorOperator(program)
             types.add(node);
             super.visitElementalType(node);
         }
+
+        visitVectorType(node)
+        {
+            types.add(node);
+            super.visitVectorType(node);
+        }
     }
 
     program.visit(new FindAllTypes());

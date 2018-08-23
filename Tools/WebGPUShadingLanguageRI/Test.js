@@ -2881,7 +2881,7 @@ tests.shaderTypes = function()
             }
             fragment Boo bar(Foo stageIn)
             {
-                return boo();
+                return Boo();
             }
         `),
         (e) => e instanceof WTypeError);
@@ -2904,7 +2904,7 @@ tests.shaderTypes = function()
 
 tests.vectorTypeSyntax = function()
 {
-    const program = doPrep(`
+    let program = doPrep(`
         int foo2()
         {
             int2 x;
@@ -2939,7 +2939,26 @@ tests.vectorTypeSyntax = function()
     checkInt(program, callFunction(program, "foo2", []), 4);
     checkInt(program, callFunction(program, "foo3", []), 5);
     checkInt(program, callFunction(program, "foo4", []), 6);
+    checkBool(program, callFunction(program, "vec2OperatorCast", []), true);
 
+    program = doPrep(`
+        typedef i = int;
+        int foo2()
+        {
+            int2 x;
+            vector<i, 2> z = int2(3, 4);
+            x = z;
+            return x.y;
+        }
+
+        bool vec2OperatorCast()
+        {
+            int2 x = vector<i,2>(1, 2);
+            vector<i, 2> y = int2(1, 2);
+            return x == y && x.x == 1 && x.y == 2 && y.x == 1 && y.y == 2;
+        }`);
+
+    checkInt(program, callFunction(program, "foo2", []), 4);
     checkBool(program, callFunction(program, "vec2OperatorCast", []), true);
 }
 

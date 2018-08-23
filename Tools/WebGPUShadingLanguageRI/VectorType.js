@@ -25,19 +25,14 @@
 "use strict";
 
 class VectorType extends NativeType {
-    constructor(origin, name)
+    constructor(origin, name, typeArguments)
     {
-        super(origin, name);
-        const match = /^([A-z]+)([0-9])$/.exec(name);
-        if (!match)
-            throw new WTypeError(origin.originString, `${name} doesn't match the format for vector type names.'`);
-
-        this._elementType = new TypeRef(origin, match[1]);
-        this._numElementsValue = parseInt(match[2]);
+        super(origin, name, typeArguments);
     }
 
-    get elementType() { return this._elementType; }
-    get numElementsValue() { return this._numElementsValue; }
+    get elementType() { return this.typeArguments[0]; }
+    get numElements() { return this.typeArguments[1]; }
+    get numElementsValue() { return this.numElements.value; }
     get size() { return this.elementType.size * this.numElementsValue; }
 
     unifyImpl(unificationContext, other)
@@ -59,7 +54,7 @@ class VectorType extends NativeType {
 
     toString()
     {
-        return `native typedef ${this.elementType}${this.numElementsValue}`;
+        return `native typedef vector<${this.elementType}, ${this.numElementsValue}>`;
     }
 }
 

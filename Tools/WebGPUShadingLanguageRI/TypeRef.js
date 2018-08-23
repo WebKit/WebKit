@@ -25,7 +25,7 @@
 "use strict";
 
 class TypeRef extends Type {
-    constructor(origin, name, typeArguments = null)
+    constructor(origin, name, typeArguments = [])
     {
         super();
         this._origin = origin;
@@ -38,14 +38,11 @@ class TypeRef extends Type {
     {
         if (type instanceof TypeRef)
             return type;
-        let result = new TypeRef(type.origin, type.name);
-        result.type = type;
-        return result;
-    }
-    
-    static instantiate(type)
-    {
-        let result = new TypeRef(type.origin, type.name);
+        let result;
+        if (type instanceof NativeType)
+            result = new TypeRef(type.origin, type.name, type.typeArguments);
+        else
+            result = new TypeRef(type.orgin, type.name);
         result.type = type;
         return result;
     }
@@ -62,6 +59,39 @@ class TypeRef extends Type {
     set type(newType)
     {
         this._type = newType;
+    }
+
+    resolve(possibleOverloads)
+    {
+        if (!possibleOverloads)
+            throw new WTypeError(this.origin.originString, "Did not find any types named " + this.name);
+
+        let failures = [];
+        let overload = resolveTypeOverloadImpl(possibleOverloads, this.typeArguments);
+
+        if (!overload.type) {
+            failures.push(...overload.failures);
+            let message = "Did not find type named " + this.name + " for type arguments ";
+            message += "(" + this.typeArguments + ")";
+            if (failures.length)
+                message += ", but considered:\n" + failures.join("\n")
+            throw new WTypeError(this.origin.originString, message);
+        }
+
+        for (let i = 0; i < this.typeArguments.length; ++i) {
+            let typeArgument = this.typeArguments[i];
+            let resolvedTypeArgument = overload.type.typeArguments[i];
+            let result = typeArgument.equalsWithCommit(resolvedTypeArgument);
+            if (!result)
+                throw new Error("At " + this.origin.originString + " argument types for Type and TypeRef not equal: argument type = " + typeArgument + ", resolved type argument = " + resolvedTypeArgument);
+            if (resolvedTypeArgument.constructor.name == "GenericLiteral") {
+                result = typeArgument.type.equalsWithCommit(resolvedTypeArgument.type);
+                if (!result)
+                    throw new Error("At " + this.origin.originString + " argument types for Type and TypeRef not equal: argument type = " + typeArgument + ", resolved type argument = " + resolvedTypeArgument);
+            }
+                
+        }
+        this.type = overload.type;
     }
 
     get unifyNode()
@@ -99,7 +129,10 @@ class TypeRef extends Type {
     {
         if (!this.name)
             return this.type.toString();
-        return this.name;
+        let result = this.name;
+        if (this.typeArguments.length > 0)
+            result += "<" + this.typeArguments.map(argument => argument.toString()).join(",") + ">";
+        return result;
     }
 }
 

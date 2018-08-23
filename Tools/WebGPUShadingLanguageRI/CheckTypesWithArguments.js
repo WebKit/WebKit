@@ -24,24 +24,15 @@
  */
 "use strict";
 
-function resolveTypeDefsInTypes(program)
+function checkTypesWithArguments(program)
 {
-    let resolver = new TypeDefResolver();
-    for (let type of program.types.values()) {
-        if (type instanceof Array) {
-            for (let constituentType of type)
-                constituentType.visit(resolver);
-        } else
-            type.visit(resolver);
+    class TypeWithArgumentsChecker extends Visitor {
+        visitTypeRef(node)
+        {
+            if (node.name == "vector" && node.typeArguments.length == 0)
+                throw new Error("Builtin type ${node.name} should always have type arguments.");
+        }
     }
-}
-
-function resolveTypeDefsInFunctions(program)
-{
-    let resolver = new TypeDefResolver();
-    for (let funcs of program.functions.values()) {
-        for (let func of funcs)
-            func.visit(resolver);
-    }
+    program.visit(new TypeWithArgumentsChecker());
 }
 

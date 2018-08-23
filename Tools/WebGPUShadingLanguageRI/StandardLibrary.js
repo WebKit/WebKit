@@ -33,17 +33,70 @@ let standardLibrary = `
 native typedef void;
 native typedef bool;
 native typedef uchar;
+native typedef ushort;
 native typedef uint;
+native typedef char;
+native typedef short;
 native typedef int;
+native typedef half;
 native typedef float;
+native typedef atomic_int;
+native typedef atomic_uint;
 
-// FIXME: Add support for these types to Intrinsics.js
-// native typedef ushort;
-// native typedef char;
-// native typedef short;
-// native typedef half;
-// native typedef atomic_int;
-// native typedef atomic_uint;
+native typedef vector<bool, 2>;
+typedef bool2 = vector<bool, 2>;
+native typedef vector<bool, 3>;
+typedef bool3 = vector<bool, 3>;
+native typedef vector<bool, 4>;
+typedef bool4 = vector<bool, 4>;
+native typedef vector<uchar, 2>;
+typedef uchar2 = vector<uchar, 2>;
+native typedef vector<uchar, 3>;
+typedef uchar3 = vector<uchar, 3>;
+native typedef vector<uchar, 4>;
+typedef uchar4 = vector<uchar, 4>;
+native typedef vector<ushort, 2>;
+typedef ushort2 = vector<ushort, 2>;
+native typedef vector<ushort, 3>;
+typedef ushort3 = vector<ushort, 3>;
+native typedef vector<ushort, 4>;
+typedef ushort4 = vector<ushort, 4>;
+native typedef vector<uint, 2>;
+typedef uint2 = vector<uint, 2>;
+native typedef vector<uint, 3>;
+typedef uint3 = vector<uint, 3>;
+native typedef vector<uint, 4>;
+typedef uint4 = vector<uint, 4>;
+native typedef vector<char, 2>;
+typedef char2 = vector<char, 2>;
+native typedef vector<char, 3>;
+typedef char3 = vector<char, 3>;
+native typedef vector<char, 4>;
+typedef char4 = vector<char, 4>;
+native typedef vector<short, 2>;
+typedef short2 = vector<short, 2>;
+native typedef vector<short, 3>;
+typedef short3 = vector<short, 3>;
+native typedef vector<short, 4>;
+typedef short4 = vector<short, 4>;
+native typedef vector<int, 2>;
+typedef int2 = vector<int, 2>;
+native typedef vector<int, 3>;
+typedef int3 = vector<int, 3>;
+native typedef vector<int, 4>;
+typedef int4 = vector<int, 4>;
+native typedef vector<half, 2>;
+typedef half2 = vector<half, 2>;
+native typedef vector<half, 3>;
+typedef half3 = vector<half, 3>;
+native typedef vector<half, 4>;
+typedef half4 = vector<half, 4>;
+native typedef vector<float, 2>;
+typedef float2 = vector<float, 2>;
+native typedef vector<float, 3>;
+typedef float3 = vector<float, 3>;
+native typedef vector<float, 4>;
+typedef float4 = vector<float, 4>;
 
 native operator int(uint);
 native operator int(uchar);
@@ -147,28 +200,12 @@ bool operator~(bool value)
 {
     return !value;
 }
-
-native typedef uchar2;
-native typedef uchar3;
-native typedef uchar4;
-
-native typedef uint2;
-native typedef uint3;
-native typedef uint4;
-
-native typedef int2;
-native typedef int3;
-native typedef int4;
-
-native typedef float2;
-native typedef float3;
-native typedef float4;
 `;
 
 // FIXME: Once the standard library has been replaced with a new version, this comments should be removed.
 // This list is used to restrict the availability of vector types available in the langauge.
 // Permissible vector element types must appear in this list and in the standard library
-const VectorElementTypes = [ /*"bool",*/ "uchar", /*"char", "ushort", "short",*/ "uint", "int", /* "half", */"float" ];
+const VectorElementTypes = [ "bool", "uchar", "char", "ushort", "short", "uint", "int", "half", "float" ];
 const VectorElementSizes = [ 2, 3, 4 ];
 
 function allVectorTypeNames()

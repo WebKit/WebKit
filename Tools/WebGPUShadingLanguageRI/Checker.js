@@ -41,8 +41,13 @@ class Checker extends Visitor {
             statement.visit(this);
         }
         
-        for (let type of node.types.values())
-            doStatement(type);
+        for (let type of node.types.values()) {
+            if (type instanceof Array) {
+                for (let constituentType of type)
+                    doStatement(constituentType);
+            } else
+                doStatement(type);
+        }
         for (let funcs of node.functions.values()) {
             for (let func of funcs) {
                 this.visitFunc(func);
@@ -247,6 +252,10 @@ class Checker extends Visitor {
     {
         if (!node.type)
             throw new Error("Type reference without a type in checker: " + node + " at " + node.origin);
+        // All the structs will be visited by visitProgram() iterating through each top-level type.
+        // We don't want to recurse here because the contents of structs can refer to themselves (e.g. a linked list),
+        // and this would can an infinite loop.
+        // Typedefs can't refer to themselves because we check that in TypeDefResolver.
         if (!(node.type instanceof StructType))
             node.type.visit(this);
     }

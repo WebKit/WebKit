@@ -97,7 +97,7 @@ class Rewriter {
     
     visitTypeRef(node)
     {
-        let result = new TypeRef(node.origin, node.name);
+        let result = new TypeRef(node.origin, node.name, node.typeArguments.map(argument => argument.visit(this)));
         if (node.type)
             result.type = Node.visit(node.type, this);
         return result;
@@ -382,7 +382,7 @@ class Rewriter {
 
     visitVectorType(node)
     {
-        const vecType = new VectorType(node.origin, node.name);
+        const vecType = new VectorType(node.origin, node.name, node.typeArguments.map(argument => argument.visit(this)));
         vecType._elementType = node.elementType.visit(this);
         return vecType;
     }

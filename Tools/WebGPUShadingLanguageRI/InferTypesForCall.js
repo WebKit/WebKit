@@ -36,12 +36,8 @@ function inferTypesForCall(func, argumentTypes, returnType)
         if (!argumentTypes[i].unify(unificationContext, func.parameters[i].type))
             return {failure: new OverloadResolutionFailure(func, "Argument #" + (i + 1) + " " + (func.parameters[i].name ? "for parameter " + func.parameters[i].name + " " : "") + "does not match (passed " + argumentTypes[i] + ", require " + func.parameters[i].type + ")")};
     }
-    if (returnType && !returnType.unify(unificationContext, func.returnType)) {
-        if (func.returnType.toString() == "vector") {
-            returnType.unify(unificationContext, func.returnType)
-        }
+    if (returnType && !returnType.unify(unificationContext, func.returnType))
         return {failure: new OverloadResolutionFailure(func, "Return type " + func.returnType + " does not match " + returnType)};
-    }
     let verificationResult = unificationContext.verify();
     if (!verificationResult.result)
         return {failure: new OverloadResolutionFailure(func, verificationResult.reason)};
@@ -49,3 +45,21 @@ function inferTypesForCall(func, argumentTypes, returnType)
     return {func, unificationContext};
 }
 
+function inferTypesForTypeArguments(type, typeArguments)
+{
+    if (typeArguments.length != type.typeArguments.length)
+        return {failure: new TypeOverloadResolutionFailure(type, "Wrong number of arguments (passed " + typeArguments.length + ", require " + type.typeArguments.length + ")")};
+    let unificationContext = new UnificationContext();
+
+    for (let i = 0; i < typeArguments.length; ++i) {
+        if (!typeArguments[i])
+            throw new Error("Null type argument at i = " + i);
+        if (!typeArguments[i].unify(unificationContext, type.typeArguments[i]))
+            return {failure: new TypeOverloadResolutionFailure(type, "Argument #" + (i + 1) + " " + (type.typeArguments[i].name ? "for parameter " + type.typeArguments[i].name + " " : "") + "does not match (passed " + typeArguments[i] + ", require " + type.typeArguments[i].type + ")")};
+    }
+    let verificationResult = unificationContext.verify();
+    if (!verificationResult.result)
+        return {failure: new TypeOverloadResolutionFailure(type, verificationResult.reason)};
+
+    return {type, unificationContext};
+}

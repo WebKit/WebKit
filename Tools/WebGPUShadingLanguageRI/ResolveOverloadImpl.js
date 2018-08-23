@@ -100,3 +100,28 @@ function resolveOverloadImpl(functions, argumentTypes, returnType, allowEntryPoi
     
     return {failures: ambiguityList.map(overload => new OverloadResolutionFailure(overload.func, message))};
 }
+
+function resolveTypeOverloadImpl(types, typeArguments)
+{
+    if (!types)
+        throw new Error("Null types; that should have been caught by the caller.");
+
+    let failures = [];
+    let successes = [];
+    for (let type of types) {
+        let overload = inferTypesForTypeArguments(type, typeArguments);
+        if (overload.failure)
+            failures.push(overload.failure);
+        else
+            successes.push(overload);
+    }
+    
+    if (!successes.length)
+        return {failures: failures};
+    
+    if (successes.length == 1)
+        return successes[0];
+    
+    let message = "Ambiguous overload - types mutually applicable";
+    return {failures: successes.map(overload => new TypeOverloadResolutionFailure(overload.type, message))};
+}

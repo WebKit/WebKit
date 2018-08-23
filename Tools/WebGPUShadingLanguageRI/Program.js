@@ -48,19 +48,25 @@ class Program extends Node {
         if (statement instanceof Func) {
             let array = this._functions.get(statement.name);
             if (!array)
-                this._functions.set(statement.name, array = []);
+                this.functions.set(statement.name, array = []);
             array.push(statement);
-        } else if (statement instanceof Type)
-            this._types.set(statement.name, statement);
-        else
+        } else if (statement instanceof Type) {
+            if (statement.isNative && statement.name == "vector") {
+                let array = this.types.get(statement.name);
+                if (!array)
+                    this.types.set(statement.name, array = []);
+                array.push(statement);
+            } else
+                this.types.set(statement.name, statement);
+        } else
             throw new Error("Statement is not a function or type: " + statement);
-        this._topLevelStatements.push(statement);
-        this._globalNameContext.add(statement);
+        this.topLevelStatements.push(statement);
+        this.globalNameContext.add(statement);
     }
     
     toString()
     {
-        if (!this._topLevelStatements.length)
+        if (!this.topLevelStatements.length)
             return "";
         return this._topLevelStatements.join(";") + ";";
     }

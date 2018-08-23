@@ -69,11 +69,33 @@ class NameContext {
             return;
         }
 
+        if (thing.kind == Type) {
+            this._set.add(thing);
+            if (thing.name == "vector") {
+                let array = this._map.get(thing.name);
+                if (!array) {
+                    array = [];
+                    array.kind = Type;
+                    this._map.set(thing.name, array);
+                }
+                if (array.kind != Type)
+                    throw new WTypeError(thing.origin.originString, "Cannot reuse type name for function: " + thing.name);
+                array.push(thing);
+                return;
+            } else {
+                if (this._map.has(thing.name))
+                    throw new WTypeError(thing.origin.originString, "Duplicate name: " + thing.name);
+                this._map.set(thing.name, thing);
+            }
+            return;
+        }
+        
         if (this._map.has(thing.name))
             throw new WTypeError(thing.origin.originString, "Duplicate name: " + thing.name);
 
         this._set.add(thing);
         this._map.set(thing.name, thing);
+
     }
     
     get(kind, name)
@@ -101,6 +123,10 @@ class NameContext {
                 throw new Error("Func thing is not array: " + thing);
             for (let func of thing)
                 yield func;
+            return;
+        } else if (thing.kind === Type && (thing instanceof Array)) {
+            for (let type of thing)
+                yield type;
             return;
         }
         yield thing;
@@ -163,8 +189,8 @@ class NameContext {
     {
         for (let value of this._map.values()) {
             if (value instanceof Array) {
-                for (let func of value)
-                    yield func;
+                for (let thing of value)
+                    yield thing;
                 continue;
             }
             yield value;

@@ -120,12 +120,19 @@ class NameResolver extends Visitor {
     
     visitTypeRef(node)
     {
+        super.visitTypeRef(node);
         let type = node.type;
         if (!type) {
             type = this._nameContext.get(Type, node.name);
             if (!type)
                 throw new WTypeError(node.origin.originString, "Could not find type named " + node.name);
-            node.type = type;
+            if (type instanceof Array) {
+                // Type unification requires the .type value to be set already, so we can eagerly set it now.
+                for (let overload of type)
+                    Node.visit(overload, this);
+                node.resolve(type);
+            } else
+                node.type = type;
         }
     }
     
@@ -207,10 +214,5 @@ class NameResolver extends Visitor {
             throw new WTypeError(node.origin.originString, "Cannot find any possible overloads for " + node);
         
         super.visitCallExpression(node);
-    }
-
-    visitVectorType(node)
-    {
-        node.elementType.visit(this);
     }
 }

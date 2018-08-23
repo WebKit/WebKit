@@ -51,7 +51,7 @@ function synthesizeStructAccessors(program)
             
             function createTypeRef()
             {
-                return TypeRef.instantiate(type);
+                return TypeRef.wrap(type);
             }
             
             let isCast = false;

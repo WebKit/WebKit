@@ -40,7 +40,6 @@ let prepare = (() => {
         }
         
         foldConstexprs(program);
-        removeTypeArguments(program);
 
         let nameResolver = createNameResolver(program);
         resolveNamesInTypes(program, nameResolver);
@@ -54,6 +53,7 @@ let prepare = (() => {
         synthesizeDefaultConstructorOperator(program);
         resolveNamesInFunctions(program, nameResolver);
         resolveTypeDefsInFunctions(program);
+        checkTypesWithArguments(program);
         
         check(program);
         checkLiteralTypes(program);
@@ -66,6 +66,7 @@ let prepare = (() => {
         checkLoops(program);
         checkRecursion(program);
         checkProgramWrapped(program);
+        checkTypesWithArguments(program);
         findHighZombies(program);
         program.visit(new StructLayoutBuilder());
         inline(program);

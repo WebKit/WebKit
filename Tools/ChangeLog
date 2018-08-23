@@ -1,3 +1,134 @@
+2018-08-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Allow native types to have type arguments (like "vector<float, 4>")
+        https://bugs.webkit.org/show_bug.cgi?id=188773
+
+        Reviewed by Filip Pizlo.
+
+        Before this patch, it was impossible to represent "native typedef vector<float, 4>" because NativeTypes couldn't have
+        typeArguments.
+
+        Previously, the way to identify a type was strictly by name, which was represented by a string. Therefore, when something like
+        "vector<int, 3>" was parsed, it would produce a TypeRef with the name "vector" and typeArguments [TypeRef, IntLiteral]. Then,
+        there was a pass to convert the TypeRef to have the name "int3" and no typeArguments. After this transformation, each type could
+        be uniquely identified by name. That name was then matched to the string-only NativeType name.
+
+        This is okay for vectors and matrices, but it is unfortunate for textures (e.g. Texture2D<float4>) because they don't have any
+        natural string-only name. In addition, the canonicalization would have to be made aware of the fact that Texture2D<float4> is
+        the same as Texture2D<vector<float, 4>>. Similarly, an author may wish to typedef float4 to a different name.
+
+        It would be possible to mangle the names of the texture types to something unique, but then we lose information about the inner
+        type. For example, if we did this, Visitor wouldn't recurse into the float4 when encountering Texture2D<float4> because that
+        information would be lost. This could potentially make operations like programWithUnnecessaryThingsRemoved() more difficult to
+        implement in the future.
+
+        So, it would be better to have each type uniquely identified by (name, typeArguments). TypeRef will therefore also have
+        typeArguments which are used to determine which type it is referencing. After this analysis is done to determine what each
+        TypeRef is referencing, subsequent passes shouldn't care about the typeArguments and should only care about the .type field
+        which had been set - this was true even before this patch.
+
+        This means that NameContext has to aggregate types that accept typeArguments into arrays, where each array holds all the Types
+        that have the same name but different typeArguments. Then, when we need to match a TypeRef with a Type, we can ask the
+        NameContext for the appropriate array. This is the same way that function resolution works.
+
+        We can use Node.unify() to determine whether a TypeRef matches a NativeType. Eventually, this will go away, but for now, this is
+        an okay start. This works just about the same way that function overload resolution works. 
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/CallExpression.js:
+        (CallExpression.prototype.resolve):
+        * WebGPUShadingLanguageRI/CheckTypesWithArguments.js: Copied from Tools/WebGPUShadingLanguageRI/ResolveTypeDefs.js. After types
+        have been resolved, there should be no TypeRefs with name "vector" that don't have type arguments. This is just a sanity check.
+        (checkTypesWithArguments.TypeWithArgumentsChecker.prototype.visitTypeRef):
+        (checkTypesWithArguments.TypeWithArgumentsChecker):
+        (checkTypesWithArguments):
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitProgram): Program.types mirrors NameContext: it's a Map that maps strings to types. Because types with
+        typeArguments share names, this has to be updated to map strings to arrays for these types.
+        (Checker.prototype.visitTypeRef):
+        * WebGPUShadingLanguageRI/InferTypesForCall.js:
+        (inferTypesForCall): Don't know why this was here.
+        (inferTypesForTypeArguments): Same as inferTypesForCall, but this one is for matching type arguments.
+        * WebGPUShadingLanguageRI/Intrinsics.js: Adding the types. This patch also adds some scalar types like half, char, etc, but they
+        don't have any functions which accept them. Those will be tested in my next patch which adds math functions for these types. This
+        moves in the direction of matching the standard library in the spec.
+        (Intrinsics.cast):
+        (Intrinsics.bitwiseCast):
+        (Intrinsics.castToHalf):
+        (Intrinsics.):
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/NameContext.js: Aggregate types with typeArguments into arrays.
+        (NameContext.prototype.add):
+        (NameContext.prototype.get let):
+        (NameContext.underlyingThings.prototype.else):
+        (NameContext.prototype.Symbol.iterator):
+        (NameContext):
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype.visitTypeRef): Call TypeRef.resolve().
+        (NameResolver.prototype.visitCallExpression):
+        (NameResolver):
+        (NameResolver.prototype.visitVectorType): Deleted.
+        * WebGPUShadingLanguageRI/NativeType.js: NativeTypes can have type arguments now.
+        (NativeType):
+        (NativeType.prototype.get typeArguments):
+        (NativeType.prototype.toString):
+        (NativeType.create):
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (let.prepare):
+        * WebGPUShadingLanguageRI/Program.js: Update to work with types aggregated into arrays.
+        (Program.prototype.add):
+        (Program.prototype.toString):
+        (Program):
+        * WebGPUShadingLanguageRI/RemoveTypeArguments.js: Removed.
+        * WebGPUShadingLanguageRI/ResolveNames.js: Update to work with types aggregated into arrays.
+        (resolveNamesInTypes):
+        * WebGPUShadingLanguageRI/ResolveOverloadImpl.js: Resolve the type overload for types with typeArguments.
+        * WebGPUShadingLanguageRI/ResolveTypeDefs.js: Update to work with types aggregated into arrays.
+        (resolveTypeDefsInTypes):
+        * WebGPUShadingLanguageRI/Rewriter.js: TypeRefs and Native/Vector types can have typeArguments.
+        (Rewriter.prototype.visitTypeRef):
+        (Rewriter.prototype.visitVectorType):
+        (Rewriter):
+        * WebGPUShadingLanguageRI/SPIRV.html:
+        * WebGPUShadingLanguageRI/StandardLibrary.js: Matches Intrinsics.
+        (bool.operator):
+        * WebGPUShadingLanguageRI/StatementCloner.js: Native types can have typeArguments.
+        (StatementCloner.prototype.visitNativeType):
+        * WebGPUShadingLanguageRI/SynthesizeDefaultConstructorOperator.js: Vector types need constructors too.
+        (synthesizeDefaultConstructorOperator.FindAllTypes.prototype.visitVectorType):
+        (synthesizeDefaultConstructorOperator.FindAllTypes):
+        (synthesizeDefaultConstructorOperator):
+        * WebGPUShadingLanguageRI/SynthesizeStructAccessors.js: No reason to distinguish between wrapping and instantiating a TypeRef.
+        (synthesizeStructAccessors.createTypeRef):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        * WebGPUShadingLanguageRI/TypeOverloadResolutionFailure.js: Copied from Tools/WebGPUShadingLanguageRI/ResolveTypeDefs.js.
+        (TypeOverloadResolutionFailure):
+        (TypeOverloadResolutionFailure.prototype.get type):
+        (TypeOverloadResolutionFailure.prototype.get reason):
+        (TypeOverloadResolutionFailure.prototype.toString):
+        * WebGPUShadingLanguageRI/TypeRef.js:
+        (TypeRef.wrap):
+        (TypeRef.prototype.resolve): Figure out which item in the possibleOverloads array matches this.
+        (TypeRef.prototype.toString):
+        (TypeRef):
+        (TypeRef.instantiate): Deleted.
+        * WebGPUShadingLanguageRI/UnificationContext.js: We need to give literals a chance to assume their preferred type. This
+        adds this facility back into the compiler (it was previously deleted).
+        (UnificationContext.prototype.verify):
+        * WebGPUShadingLanguageRI/VectorType.js: Vector types have type arguments.
+        (VectorType):
+        (VectorType.prototype.get elementType):
+        (VectorType.prototype.get numElements):
+        (VectorType.prototype.get numElementsValue):
+        (VectorType.prototype.toString):
+        * WebGPUShadingLanguageRI/Visitor.js: Iterate over the typeArguments.
+        (Visitor.prototype.visitTypeRef):
+        (Visitor.prototype.visitNativeType):
+        (Visitor.prototype.visitVectorType):
+        (Visitor):
+        * WebGPUShadingLanguageRI/index.html:
+
 2018-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Attachment elements don't appear in drag images on macOS

@@ -92,6 +92,19 @@ class UnificationContext {
     
     verify()
     {
+        // We do a two-phase pre-verification. This gives literals a chance to select a more specific type.
+        let preparations = [];
+        for (let node of this.nodes) {
+            let preparation = node.prepareToVerify(this);
+            if (preparation)
+                preparations.push(preparation);
+        }
+        for (let preparation of preparations) {
+            let result = preparation();
+            if (!result.result)
+                return result;
+        }
+
         for (let typeArgument of this.typeArguments()) {
             let result = typeArgument.verifyAsArgument(this);
             if (!result.result)

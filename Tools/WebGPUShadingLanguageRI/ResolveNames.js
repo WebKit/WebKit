@@ -31,8 +31,13 @@ function createNameResolver(program)
 
 function resolveNamesInTypes(program, nameResolver)
 {
-    for (let type of program.types.values())
-        nameResolver.doStatement(type);
+    for (let type of program.types.values()) {
+        if (type instanceof Array) {
+            for (let constituentType of type)
+                nameResolver.doStatement(constituentType);
+        } else
+            nameResolver.doStatement(type);
+    }
 }
 
 function resolveNamesInFunctions(program, nameResolver)

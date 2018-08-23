@@ -24,24 +24,19 @@
  */
 "use strict";
 
-function resolveTypeDefsInTypes(program)
-{
-    let resolver = new TypeDefResolver();
-    for (let type of program.types.values()) {
-        if (type instanceof Array) {
-            for (let constituentType of type)
-                constituentType.visit(resolver);
-        } else
-            type.visit(resolver);
+class TypeOverloadResolutionFailure {
+    constructor(type, reason)
+    {
+        this._type = type;
+        this._reason = reason;
     }
-}
-
-function resolveTypeDefsInFunctions(program)
-{
-    let resolver = new TypeDefResolver();
-    for (let funcs of program.functions.values()) {
-        for (let func of funcs)
-            func.visit(resolver);
+    
+    get type() { return this._type; }
+    get reason() { return this._reason; }
+    
+    toString()
+    {
+        return this.type.toString() + " did not match because: " + this.reason;
     }
 }
 

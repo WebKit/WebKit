@@ -64,7 +64,6 @@ class CallExpression extends Expression {
                 overload.func = func;
         }
 
-
         if (!overload.func) {
             failures.push(...overload.failures);
             let message = "Did not find function named " + this.name + " for call with ";

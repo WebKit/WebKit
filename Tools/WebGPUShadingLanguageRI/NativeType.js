@@ -25,11 +25,14 @@
 "use strict";
 
 class NativeType extends Type {
-    constructor(origin, name)
+    constructor(origin, name, typeArguments)
     {
+        if (!(typeArguments instanceof Array))
+            throw new Error("type parameters not array: " + typeArguments);
         super();
         this._origin = origin;
         this._name = name;
+        this._typeArguments = typeArguments;
         this._isNumber = false;
         this._isInt = false;
         this._isFloating = false;
@@ -38,6 +41,7 @@ class NativeType extends Type {
     
     get origin() { return this._origin; }
     get name() { return this._name; }
+    get typeArguments() { return this._typeArguments; }
     get isNative() { return true; }
     
     // We let Intrinsics.js set these as it likes.
@@ -52,19 +56,18 @@ class NativeType extends Type {
     
     toString()
     {
-        return `native typedef ${this.name}`;
+        let result = `native typedef ${this.name}`;
+        if (this.typeArguments.length)
+            result += "<" + this.typeArguments.join(",") + ">";
+        return result;
     }
     
     static create(origin, name, typeArguments)
     {
-        // FIXME: For native types like Texture1D this should resolve the type to something concrete by changing the type name.
-        if (typeArguments.length)
-            throw new WTypeError(origin.originString, `${name}<${typeArguments.join(",")}>: Support for native types with type arguments is currently unimplemented.`);
+        if (name == "vector")
+            return new VectorType(origin, name, typeArguments);
 
-        if (allVectorTypeNames().indexOf(name) > -1)
-            return new VectorType(origin, name);
-
-        return new NativeType(origin, name);
+        return new NativeType(origin, name, typeArguments);
     }
 }
 
