@@ -1,3 +1,10 @@
+2018-08-23  youenn fablet  <youennf@gmail.com>
+
+        Remove libwebrtc unneeded .exe file.
+        Unreviewed.
+
+        * Source/webrtc/data/voice_engine/stereo_rtp_files/rtpplay.exe: Removed.
+
 2018-08-23  Youenn Fablet  <youenn@apple.com> and Alejandro G. Castro  <alex@igalia.com>
 
         Update libwebrtc up to 984f1a80c0
