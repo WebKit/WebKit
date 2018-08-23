@@ -38,21 +38,11 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::create()
 
 Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithLegacyOptions()
 {
-    auto configuration = ProcessPoolConfiguration::create();
+    auto configuration = ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration(WebsiteDataStore::legacyDefaultDataStoreConfiguration());
 
     configuration->m_shouldHaveLegacyDataStore = true;
     configuration->m_maximumProcessCount = 1;
     configuration->m_cacheModel = WebKit::CacheModelDocumentViewer;
-
-    configuration->m_applicationCacheDirectory = WebKit::WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory();
-    configuration->m_applicationCacheFlatFileSubdirectoryName = "ApplicationCache";
-    configuration->m_diskCacheDirectory = WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory();
-    configuration->m_mediaCacheDirectory = WebKit::WebProcessPool::legacyPlatformDefaultMediaCacheDirectory();
-    configuration->m_indexedDBDatabaseDirectory = WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory();
-    configuration->m_localStorageDirectory = WebKit::WebProcessPool::legacyPlatformDefaultLocalStorageDirectory();
-    configuration->m_mediaKeysStorageDirectory = WebKit::WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory();
-    configuration->m_webSQLDatabaseDirectory = WebKit::WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory();
-    configuration->m_javaScriptConfigurationDirectory = WebKit::WebProcessPool::legacyPlatformDefaultJavaScriptConfigurationDirectory();
 
     return configuration;
 }
@@ -65,7 +55,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithWebsiteDataSto
     configuration->m_applicationCacheFlatFileSubdirectoryName = legacyConfiguration.applicationCacheFlatFileSubdirectoryName;
     configuration->m_diskCacheDirectory = legacyConfiguration.networkCacheDirectory;
     configuration->m_mediaCacheDirectory = legacyConfiguration.mediaCacheDirectory;
-    configuration->m_indexedDBDatabaseDirectory = WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory();
+    configuration->m_indexedDBDatabaseDirectory = WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory();
     configuration->m_localStorageDirectory = legacyConfiguration.localStorageDirectory;
     configuration->m_mediaKeysStorageDirectory = legacyConfiguration.mediaKeysStorageDirectory;
     configuration->m_resourceLoadStatisticsDirectory = legacyConfiguration.resourceLoadStatisticsDirectory;

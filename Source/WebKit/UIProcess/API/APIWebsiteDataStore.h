@@ -57,17 +57,26 @@ public:
     static String defaultCacheStorageDirectory();
     static String defaultNetworkCacheDirectory();
     static String defaultMediaCacheDirectory();
-
     static String defaultIndexedDBDatabaseDirectory();
     static String defaultServiceWorkerRegistrationDirectory();
     static String defaultLocalStorageDirectory();
     static String defaultMediaKeysStorageDirectory();
     static String defaultWebSQLDatabaseDirectory();
     static String defaultResourceLoadStatisticsDirectory();
-
     static String defaultJavaScriptConfigurationDirectory();
 
     static WebKit::WebsiteDataStore::Configuration defaultDataStoreConfiguration();
+
+    static String legacyDefaultApplicationCacheDirectory();
+    static String legacyDefaultNetworkCacheDirectory();
+    static String legacyDefaultLocalStorageDirectory();
+    static String legacyDefaultIndexedDBDatabaseDirectory();
+    static String legacyDefaultWebSQLDatabaseDirectory();
+    static String legacyDefaultMediaKeysStorageDirectory();
+    static String legacyDefaultMediaCacheDirectory();
+    static String legacyDefaultJavaScriptConfigurationDirectory();
+
+    static WebKit::WebsiteDataStore::Configuration legacyDefaultDataStoreConfiguration();
 
 private:
     enum ShouldCreateDirectory { CreateDirectory, DontCreateDirectory };

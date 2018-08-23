@@ -1,3 +1,85 @@
+2018-08-22  Sihui Liu  <sihui_liu@apple.com>
+
+        Move legacy directory configuration from WebProcessPool to API::WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=188765
+
+        Reviewed by Geoffrey Garen.
+
+        Diretories are parameters of websiteDataStore instead of webProcessPool, so we should move
+        legacy default paths to API::WebsiteDataStore, which already stores default paths for 
+        non-legacy cases.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::createWithLegacyOptions):
+        (API::ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration):
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::legacyDefaultDataStoreConfiguration):
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::legacyDefaultApplicationCacheDirectory):
+        (API::WebsiteDataStore::legacyDefaultNetworkCacheDirectory):
+        (API::WebsiteDataStore::legacyDefaultWebSQLDatabaseDirectory):
+        (API::WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory):
+        (API::WebsiteDataStore::legacyDefaultLocalStorageDirectory):
+        (API::WebsiteDataStore::legacyDefaultMediaCacheDirectory):
+        (API::WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory):
+        (API::WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory):
+        * UIProcess/API/glib/APIWebsiteDataStoreGLib.cpp:
+        (API::WebsiteDataStore::legacyDefaultApplicationCacheDirectory):
+        (API::WebsiteDataStore::legacyDefaultNetworkCacheDirectory):
+        (API::WebsiteDataStore::legacyDefaultWebSQLDatabaseDirectory):
+        (API::WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory):
+        (API::WebsiteDataStore::legacyDefaultLocalStorageDirectory):
+        (API::WebsiteDataStore::legacyDefaultMediaCacheDirectory):
+        (API::WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory):
+        (API::WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory):
+        * UIProcess/API/win/APIWebsiteDataStoreWin.cpp:
+        (API::WebsiteDataStore::legacyDefaultApplicationCacheDirectory):
+        (API::WebsiteDataStore::legacyDefaultNetworkCacheDirectory):
+        (API::WebsiteDataStore::legacyDefaultWebSQLDatabaseDirectory):
+        (API::WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory):
+        (API::WebsiteDataStore::legacyDefaultLocalStorageDirectory):
+        (API::WebsiteDataStore::legacyDefaultMediaCacheDirectory):
+        (API::WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory):
+        (API::WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultLocalStorageDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaCacheDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultJavaScriptConfigurationDirectory): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaCacheDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultLocalStorageDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultJavaScriptConfigurationDirectory): Deleted.
+        * UIProcess/win/WebProcessPoolWin.cpp:
+        (WebKit::WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaCacheDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultLocalStorageDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultJavaScriptConfigurationDirectory): Deleted.
+        * UIProcess/wpe/WebProcessPoolWPE.cpp:
+        (WebKit::WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaCacheDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultLocalStorageDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory): Deleted.
+        (WebKit::WebProcessPool::legacyPlatformDefaultJavaScriptConfigurationDirectory): Deleted.
+
 2018-08-22  John Wilander  <wilander@apple.com>
 
         The Storage Access API prompt should show the eTLD+1s, not the full host names
