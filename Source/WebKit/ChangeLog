@@ -1,3 +1,20 @@
+2018-08-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Assert in NetworkBlobRegistry::unregisterBlobURL after network process had terminated
+        https://bugs.webkit.org/show_bug.cgi?id=188880
+
+        Reviewed by Saam Barati.
+
+        Removed the debug assertion. WebContent process might be asking this network process
+        to unregister a blob registered from another network processs which had since crashed.
+
+        We could keep track of which blob had been registered with which network process
+        in WebContent process and avoid sending IPC to the network process but that's a lot of
+        house-keeping for virtually no benefit other than not hitting this assertion.
+
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        (WebKit::NetworkBlobRegistry::unregisterBlobURL):
+
 2018-08-23  Sihui Liu  <sihui_liu@apple.com>
 
         Remove keys of defaults that are no longer used in webProcessPool

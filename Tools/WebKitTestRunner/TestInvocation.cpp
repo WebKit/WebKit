@@ -735,24 +735,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "TerminateStorageProcess")) {
-        ASSERT(!messageBody);
-        TestController::singleton().terminateStorageProcess();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "TerminateNetworkProcess")) {
-        ASSERT(!messageBody);
-        TestController::singleton().terminateNetworkProcess();
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "TerminateServiceWorkerProcess")) {
-        ASSERT(!messageBody);
-        TestController::singleton().terminateServiceWorkerProcess();
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "RunUIProcessScript")) {
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
         WKRetainPtr<WKStringRef> scriptKey(AdoptWK, WKStringCreateWithUTF8CString("Script"));
@@ -1432,6 +1414,24 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 
     if (WKStringIsEqualToUTF8CString(messageName, "SendDisplayConfigurationChangedMessageForTesting")) {
         TestController::singleton().sendDisplayConfigurationChangedMessageForTesting();
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "TerminateStorageProcess")) {
+        ASSERT(!messageBody);
+        TestController::singleton().terminateStorageProcess();
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "TerminateNetworkProcess")) {
+        ASSERT(!messageBody);
+        TestController::singleton().terminateNetworkProcess();
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "TerminateServiceWorkerProcess")) {
+        ASSERT(!messageBody);
+        TestController::singleton().terminateServiceWorkerProcess();
         return nullptr;
     }
 

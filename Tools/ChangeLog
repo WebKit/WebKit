@@ -1,3 +1,22 @@
+2018-08-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Assert in NetworkBlobRegistry::unregisterBlobURL after network process had terminated
+        https://bugs.webkit.org/show_bug.cgi?id=188880
+
+        Reviewed by Saam Barati.
+
+        Fixed the bug that testRunner's terminateNetworkProcess, terminateServiceWorkerProcess, and terminateStorageProcess
+        were asynchronously terminating respective processes. Do so synchronously so that we can deterministically
+        test WebKit's behavior in layout tests.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::terminateNetworkProcess):
+        (WTR::TestRunner::terminateServiceWorkerProcess):
+        (WTR::TestRunner::terminateStorageProcess):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2018-08-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Allow native types to have type arguments (like "vector<float, 4>")

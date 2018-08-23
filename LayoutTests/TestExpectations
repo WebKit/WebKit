@@ -389,6 +389,9 @@ http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Skip ]
 # Only supported in WebKit2.
 http/wpt/cross-origin-resource-policy/ [ Skip ]
 
+# testRunner.terminateNetworkProcess() only works in WebKit2
+fast/files/blob-network-process-crash.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
