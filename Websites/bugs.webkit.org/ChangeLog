@@ -1,3 +1,19 @@
+2018-08-23  Ross Kirsling  <ross.kirsling@sony.com>
+
+        EWS bubbles are being hidden due to lack of space.
+        https://bugs.webkit.org/show_bug.cgi?id=188607
+
+        Reviewed by Daniel Bates.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+        * js/status-bubble.js: Added.
+        Refactor Review Patch page so that the postMessage to resize EWS iframes may be used on other pages too.
+        
+        * template/en/default/attachment/edit.html.tmpl:
+        * template/en/default/attachment/list.html.tmpl:
+        Resize EWS iframes via postMessage on bug page and attachment details page. 
+
 2018-06-22  Daniel Bates  <dabates@apple.com>
 
         EWS for security bugs

@@ -8,8 +8,11 @@
 
 [% RETURN UNLESS attachments.size || Param("maxattachmentsize") || Param("maxlocalattachment") %]
 
+<script src="[% 'js/status-bubble.js' FILTER mtime %]"></script>
 <script type="text/javascript">
 <!--
+window.addEventListener('message', handleStatusBubbleMessage, false);
+
 function toggle_display(link) {
     var table = document.getElementById("attachment_table");
     var view_all = document.getElementById("view_all");
@@ -153,7 +156,7 @@ function toggle_display(link) {
           [% IF attachment.ispatch %]
           <div class="statusBubble">
             <iframe src="https://webkit-queues.webkit.org/status-bubble/[% attachment.id %]"
-                    style="width: 600px; height: 20px; border: none;" scrolling="no">
+                    style="width: 600px; height: 20px; border: none;" scrolling="no" onload="handleStatusBubbleLoad(this)">
             </iframe>
           </div>
           [% END %]

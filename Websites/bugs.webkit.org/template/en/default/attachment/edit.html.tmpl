@@ -34,6 +34,11 @@
 [% can_edit = attachment.validate_can_edit %]
 [% editable_or_hide = can_edit ? "" : " bz_hidden_option" %]
 
+<script src="[% 'js/status-bubble.js' FILTER mtime %]"></script>
+<script>
+  window.addEventListener('message', handleStatusBubbleMessage, false);
+</script>
+
 <form method="post" action="attachment.cgi" onsubmit="normalizeComments();">
   <input type="hidden" name="id" value="[% attachment.id %]">
   <input type="hidden" name="action" value="update">
@@ -260,7 +265,7 @@
 
         <div class="statusBubble">
           <iframe src="https://webkit-queues.webkit.org/status-bubble/[% attachment.id %]"
-                  style="width: 600px; height: 20px; border: none;" scrolling="no">
+                  style="width: 600px; height: 20px; border: none;" scrolling="no" onload="handleStatusBubbleLoad(this)">
           </iframe>
         </div>
         <br>

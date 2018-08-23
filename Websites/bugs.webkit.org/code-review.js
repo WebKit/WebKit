@@ -535,19 +535,7 @@ var CODE_REVIEW_UNITTEST;
     });
   }
 
-  window.addEventListener('message', function(e) {
-    if (e.origin != 'https://webkit-queues.webkit.org')
-      return;
-
-    if (e.data.height) {
-      $('.statusBubble')[0].style.height = e.data.height;
-      $('.statusBubble')[0].style.width = e.data.width;
-    }
-  }, false);
-
-  function handleStatusBubbleLoad(e) {
-    e.target.contentWindow.postMessage('containerMetrics', 'https://webkit-queues.webkit.org');
-  }
+  window.addEventListener('message', handleStatusBubbleMessage, false);
 
   function fetchHistory() {
     $.get('attachment.cgi?id=' + attachment_id + '&action=edit', function(data) {
@@ -578,13 +566,12 @@ var CODE_REVIEW_UNITTEST;
       var details = $(data);
       addFlagsForAttachment(details);
 
-      statusBubble = document.createElement('iframe');
-      statusBubble.className = 'statusBubble';
+      var statusBubble = document.createElement('iframe');
       statusBubble.src  = 'https://webkit-queues.webkit.org/status-bubble/' + attachment_id;
       statusBubble.scrolling = 'no';
       // Can't append the HTML because we need to set the onload handler before appending the iframe to the DOM.
-      statusBubble.onload = handleStatusBubbleLoad;
-      $('#statusBubbleContainer').append(statusBubble);
+      statusBubble.onload = function () { handleStatusBubbleLoad(this); };
+      $('.statusBubble').append(statusBubble);
 
       $('#toolbar .bugLink').html('<a href="/show_bug.cgi?id=' + bug_id + '" target="_blank">Bug ' + bug_id + '</a>');
     });
@@ -1056,7 +1043,7 @@ var CODE_REVIEW_UNITTEST;
 
   function openOverallComments(e) {
     $('.overallComments textarea').addClass('open');
-    $('#statusBubbleContainer').addClass('wrap');
+    $('.statusBubble').addClass('wrap');
   }
 
   var g_overallCommentsInputTimer;
@@ -1080,7 +1067,7 @@ var CODE_REVIEW_UNITTEST;
           '<textarea placeholder="Overall comments"></textarea>' +
         '</div>' +
         '<div>' +
-          '<span id="statusBubbleContainer"></span>' +
+          '<span class="statusBubble"></span>' +
           '<span class="actions">' +
             '<span class="links"><span class="bugLink"></span></span>' +
             '<span id="flagContainer"></span>' +
