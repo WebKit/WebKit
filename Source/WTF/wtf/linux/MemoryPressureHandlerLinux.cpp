@@ -126,7 +126,7 @@ void MemoryPressureHandler::respondToMemoryPressure(Critical critical, Synchrono
 
 void MemoryPressureHandler::platformReleaseMemory(Critical)
 {
-#ifdef __GLIBC__
+#if HAVE(MALLOC_TRIM)
     malloc_trim(0);
 #endif
 }

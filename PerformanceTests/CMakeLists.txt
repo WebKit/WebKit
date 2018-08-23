@@ -1,4 +1,5 @@
-if (NOT USE_SYSTEM_MALLOC)
+# MallocBench requires malloc_trim for non-Apple platforms
+if (NOT USE_SYSTEM_MALLOC AND (APPLE OR HAVE_MALLOC_TRIM))
     add_subdirectory(MallocBench)
 endif ()
 

@@ -1,3 +1,14 @@
+2018-08-23  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add HAVE_MALLOC_TRIM definition
+        https://bugs.webkit.org/show_bug.cgi?id=188897
+
+        Reviewed by Konstantin Tokarev.
+
+        Add CMake check for malloc_trim.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2018-08-22  Ross Kirsling  <ross.kirsling@sony.com>
 
         [MSVC] Stop disabling /O2 features.

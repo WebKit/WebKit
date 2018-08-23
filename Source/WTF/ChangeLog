@@ -1,5 +1,17 @@
 2018-08-23  Don Olmstead  <don.olmstead@sony.com>
 
+        [CMake] Add HAVE_MALLOC_TRIM definition
+        https://bugs.webkit.org/show_bug.cgi?id=188897
+
+        Reviewed by Konstantin Tokarev.
+
+        Use HAVE(MALLOC_TRIM) check instead of __GLIBC__.
+
+        * wtf/linux/MemoryPressureHandlerLinux.cpp:
+        (WTF::MemoryPressureHandler::platformReleaseMemory):
+
+2018-08-23  Don Olmstead  <don.olmstead@sony.com>
+
         [WTF] Add generic implementation for Memory querying
         https://bugs.webkit.org/show_bug.cgi?id=188867
         <rdar://problem/43630726>

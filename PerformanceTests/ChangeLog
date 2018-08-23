@@ -1,3 +1,15 @@
+2018-08-23  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add HAVE_MALLOC_TRIM definition
+        https://bugs.webkit.org/show_bug.cgi?id=188897
+
+        Reviewed by Konstantin Tokarev.
+
+        MallocBench should only be built on Apple platforms and platforms that
+        have malloc_trim.
+
+        * CMakeLists.txt:
+
 2018-08-13  Jon Lee  <jonlee@apple.com>
 
         Update MotionMark version number
