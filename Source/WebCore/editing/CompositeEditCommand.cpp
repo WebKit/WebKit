@@ -769,12 +769,15 @@ void CompositeEditCommand::replaceTextInNodePreservingMarkers(Text& node, unsign
     auto markers = copyMarkers(markerController.markersInRange(Range::create(document(), &node, offset, &node, offset + count), DocumentMarker::allMarkers()));
     replaceTextInNode(node, offset, count, replacementText);
     RefPtr<Range> newRange = Range::create(document(), &node, offset, &node, offset + replacementText.length());
-    for (const auto& marker : markers)
+    for (const auto& marker : markers) {
 #if PLATFORM(IOS)
-        markerController.addMarker(newRange.get(), marker.type(), marker.description(), marker.alternatives(), marker.metadata());
-#else
+        if (marker.isDictation()) {
+            markerController.addMarker(newRange.get(), marker.type(), marker.description(), marker.alternatives(), marker.metadata());
+            continue;
+        }
+#endif
         markerController.addMarker(newRange.get(), marker.type(), marker.description());
-#endif // PLATFORM(IOS)
+    }
 }
 
 Position CompositeEditCommand::positionOutsideTabSpan(const Position& position)

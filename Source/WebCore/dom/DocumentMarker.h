@@ -127,6 +127,7 @@ public:
     void shiftOffsets(int delta);
 
 #if PLATFORM(IOS)
+    bool isDictation() const;
     const Vector<String>& alternatives() const;
     void setAlternative(const String&, size_t index);
     id metadata() const;
@@ -222,7 +223,12 @@ inline DocumentMarker::DocumentMarker(MarkerType type, unsigned startOffset, uns
     , m_endOffset(endOffset)
     , m_data(DictationAlternativesData { alternatives, metadata })
 {
-    ASSERT(type == DictationPhraseWithAlternatives || type == DictationResult);
+    ASSERT(isDictation());
+}
+
+inline bool DocumentMarker::isDictation() const
+{
+    return m_type == DictationPhraseWithAlternatives || m_type == DictationResult;
 }
 
 inline const Vector<String>& DocumentMarker::alternatives() const

@@ -1,3 +1,25 @@
+2018-08-23  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Test editing/undo/replace-text-in-node-preserving-markers-crash.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=188898
+
+        Reviewed by Simon Fraser.
+
+        Not all document markers may have a dictation metadata on iOS.
+
+        Currently we assume that every marker has dictation alternatives (i.e. DocumentMarker::alternatives()
+        can be called) when deleting a selection preserving document markers on iOS. However, only markers
+        for dictation may have dictation alternatives. For example, document markers for misspelled words do
+        not have dictation metadata by definition. Instead of assuming every marker has dictation alternatives
+        on iOS we need to check the marker type to determine whether it has associated dictation metadata and
+        invoke the appropriate DocumentMarkerController::addMarker() overload.
+
+        * dom/DocumentMarker.h:
+        (WebCore::DocumentMarker::isDictation const): Added.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::replaceTextInNodePreservingMarkers): Only access DocumentMarker::alternatives()
+        and add a dictation marker on iOS if the marker is a dictation marker.
+
 2018-08-23  Mark Lam  <mark.lam@apple.com>
 
         Move vmEntryGlobalObject() to VM from CallFrame.
