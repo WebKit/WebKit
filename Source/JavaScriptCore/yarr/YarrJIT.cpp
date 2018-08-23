@@ -3545,11 +3545,6 @@ public:
         }
 #endif
 
-#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-        if (m_containsNestedSubpatterns)
-            codeBlock.setUsesPaternContextBuffer();
-#endif
-
         // We need to compile before generating code since we set flags based on compilation that
         // are used during generation.
         opCompileBody(m_pattern.m_body);
@@ -3564,6 +3559,11 @@ public:
 
         if (m_disassembler)
             m_disassembler->setStartOfCode(label());
+
+#if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
+        if (m_containsNestedSubpatterns)
+            codeBlock.setUsesPaternContextBuffer();
+#endif
 
         generateEnter();
 
