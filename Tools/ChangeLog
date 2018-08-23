@@ -1,3 +1,18 @@
+2018-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Attachment elements don't appear in drag images on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=188823
+        <rdar://problem/43616378>
+
+        Reviewed by Tim Horton.
+
+        Adjusts a couple of existing tests to additionally verify that the drag image generated when dragging an
+        attachment element in macOS is not completely transparent.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (isCompletelyTransparent):
+        (TestWebKitAPI::TEST):
+
 2018-08-23  Jonathan Bedard  <jbedard@apple.com>
 
         Explain test name matching in run-api-tests help

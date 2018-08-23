@@ -50,6 +50,7 @@ private:
     const char* renderName() const override { return "RenderAttachment"; }
 
     bool shouldDrawSelectionTint() const override { return false; }
+    void paintReplaced(PaintInfo&, const LayoutPoint& offset) final;
 
     void layout() override;
 

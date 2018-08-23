@@ -1,3 +1,45 @@
+2018-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Attachment elements don't appear in drag images on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=188823
+        <rdar://problem/43616378>
+
+        Reviewed by Tim Horton.
+
+        Currently, attachment elements don't show up in the drag image snapshot on macOS. This is because only the
+        "Selection" phase is painted when generating a drag image on macOS, and many replaced renderers (with some
+        exceptions, such as RenderImage) only paint visible content during the "Foreground" phase. To fix this, we
+        override RenderAttachment::paintReplaced to paint the attachment in the case where the Selection phase is being
+        painted.
+
+        Tests:  WKAttachmentTestsMac.DragAttachmentAsFilePromise
+                WKAttachmentTests.MoveAttachmentElementAsIconByDragging
+
+        * rendering/RenderAttachment.cpp:
+        (WebCore::RenderAttachment::paintReplaced):
+        * rendering/RenderAttachment.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::titleTextColorForAttachment):
+        (WebCore::AttachmentLayout::layOutTitle):
+
+        Plumb an AttachmentLayoutStyle (i.e. NonSelected or Selected) to AttachmentLayout, and use this bit when
+        determining the title text color, as well whether to paint backgrounds for the icon and title.
+
+        (WebCore::AttachmentLayout::AttachmentLayout):
+        (WebCore::RenderThemeMac::attachmentIntrinsicSize const):
+        (WebCore::RenderThemeMac::attachmentBaseline const):
+        (WebCore::paintAttachmentIconBackground):
+        (WebCore::paintAttachmentTitleBackground):
+
+        Bail from painting backgrounds if a selected style is used for the attachment.
+
+        (WebCore::RenderThemeMac::paintAttachment):
+
+        Rather than check the RenderAttachment's selection state when determining whether to paint with a non-selected
+        or selected style, only use selected style if the RenderAttachment has a selection _and_ the painting phase is
+        not "Selection". While this sounds extremely counter-intuitive, the "Selection" painting phase refers to
+        painting the selected foreground content _without_ including any part of the selection highlight.
+
 2018-08-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Decouple the incoming floats and floats already placed in the list

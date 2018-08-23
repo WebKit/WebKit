@@ -80,6 +80,18 @@ bool RenderAttachment::shouldDrawBorder() const
     return m_shouldDrawBorder;
 }
 
+void RenderAttachment::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& offset)
+{
+    if (paintInfo.phase != PaintPhase::Selection || !hasVisibleBoxDecorations() || !style().hasAppearance())
+        return;
+
+    auto paintRect = borderBoxRect();
+    paintRect.moveBy(offset);
+
+    ControlStates controlStates;
+    theme().paint(*this, controlStates, paintInfo, paintRect);
+}
+
 } // namespace WebCore
 
 #endif

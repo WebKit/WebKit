@@ -394,6 +394,22 @@ static NSData *testPDFData()
 
 #pragma mark - Platform testing helper functions
 
+#if PLATFORM(MAC)
+
+BOOL isCompletelyTransparent(NSImage *image)
+{
+    auto representation = adoptNS([[NSBitmapImageRep alloc] initWithData:image.TIFFRepresentation]);
+    for (int row = 0; row < image.size.height; ++row) {
+        for (int column = 0; column < image.size.width; ++column) {
+            if ([representation colorAtX:column y:row].alphaComponent)
+                return false;
+        }
+    }
+    return true;
+}
+
+#endif
+
 #if PLATFORM(IOS)
 
 typedef void(^ItemProviderDataLoadHandler)(NSData *, NSError *);
@@ -1112,6 +1128,9 @@ TEST(WKAttachmentTests, MoveAttachmentElementAsIconByDragging)
     [attachment expectRequestedDataToBe:data.get()];
     EXPECT_WK_STREQ("document.pdf", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
     EXPECT_WK_STREQ("application/pdf", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+#if PLATFORM(MAC)
+    EXPECT_FALSE(isCompletelyTransparent([simulator draggingInfo].draggedImage));
+#endif
 
     [webView expectElementTag:@"STRONG" toComeBefore:@"ATTACHMENT"];
     [simulator endDataTransfer];
@@ -1210,6 +1229,7 @@ TEST(WKAttachmentTestsMac, DragAttachmentAsFilePromise)
     NSArray<NSURL *> *urls = [simulator receivePromisedFiles];
     EXPECT_EQ(1U, urls.count);
     EXPECT_TRUE([[NSData dataWithContentsOfURL:urls.firstObject] isEqualToData:testPDFData()]);
+    EXPECT_FALSE(isCompletelyTransparent([simulator draggingInfo].draggedImage));
 }
 
 #endif // PLATFORM(MAC)

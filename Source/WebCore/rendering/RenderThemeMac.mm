@@ -2544,8 +2544,10 @@ const CGFloat attachmentPlaceholderBorderDashLength = 6;
 
 const CGFloat attachmentMargin = 3;
 
+enum class AttachmentLayoutStyle : uint8_t { NonSelected, Selected };
+
 struct AttachmentLayout {
-    explicit AttachmentLayout(const RenderAttachment&);
+    explicit AttachmentLayout(const RenderAttachment&, AttachmentLayoutStyle);
 
     struct LabelLine {
         FloatRect backgroundRect;
@@ -2560,6 +2562,7 @@ struct AttachmentLayout {
     FloatRect attachmentRect;
 
     int baseline;
+    AttachmentLayoutStyle style;
 
     RetainPtr<CTLineRef> subtitleLine;
     FloatRect subtitleTextRect;
@@ -2571,11 +2574,11 @@ private:
     void addTitleLine(CTLineRef, CGFloat& yOffset, Vector<CGPoint> origins, CFIndex lineIndex, const RenderAttachment&);
 };
 
-static Color titleTextColorForAttachment(const RenderAttachment& attachment)
+static Color titleTextColorForAttachment(const RenderAttachment& attachment, AttachmentLayoutStyle style)
 {
     Color result = Color::black;
     
-    if (attachment.selectionState() != RenderObject::SelectionNone) {
+    if (style == AttachmentLayoutStyle::Selected) {
         if (attachment.frame().selection().isFocusedAndActive())
             result = colorFromNSColor([NSColor alternateSelectedControlTextColor]);
         else
@@ -2631,7 +2634,7 @@ void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
 
     NSDictionary *textAttributes = @{
         (__bridge id)kCTFontAttributeName: (__bridge id)font.get(),
-        (__bridge id)kCTForegroundColorAttributeName: (__bridge NSColor *)cachedCGColor(titleTextColorForAttachment(attachment))
+        (__bridge id)kCTForegroundColorAttributeName: (__bridge NSColor *)cachedCGColor(titleTextColorForAttachment(attachment, style))
     };
     RetainPtr<NSAttributedString> attributedTitle = adoptNS([[NSAttributedString alloc] initWithString:title attributes:textAttributes]);
     RetainPtr<CTFramesetterRef> titleFramesetter = adoptCF(CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedTitle.get()));
@@ -2709,7 +2712,8 @@ void AttachmentLayout::layOutSubtitle(const RenderAttachment& attachment)
     subtitleTextRect = FloatRect(xOffset, yOffset, lineBounds.size.width, lineBounds.size.height);
 }
 
-AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment)
+AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment, AttachmentLayoutStyle layoutStyle)
+    : style(layoutStyle)
 {
     layOutTitle(attachment);
     layOutSubtitle(attachment);
@@ -2734,18 +2738,21 @@ AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment)
 
 LayoutSize RenderThemeMac::attachmentIntrinsicSize(const RenderAttachment& attachment) const
 {
-    AttachmentLayout layout(attachment);
+    AttachmentLayout layout(attachment, AttachmentLayoutStyle::NonSelected);
     return LayoutSize(layout.attachmentRect.size());
 }
 
 int RenderThemeMac::attachmentBaseline(const RenderAttachment& attachment) const
 {
-    AttachmentLayout layout(attachment);
+    AttachmentLayout layout(attachment, AttachmentLayoutStyle::NonSelected);
     return layout.baseline;
 }
 
 static void paintAttachmentIconBackground(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {
+    if (layout.style == AttachmentLayoutStyle::NonSelected)
+        return;
+
     // FIXME: Finder has a discontinuous behavior here when you have a background color other than white,
     // where it switches into 'bordered mode' and the border pops in on top of the background.
     bool paintBorder = true;
@@ -2834,6 +2841,9 @@ static void paintAttachmentIconPlaceholder(const RenderAttachment& attachment, G
 
 static void paintAttachmentTitleBackground(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {
+    if (layout.style == AttachmentLayoutStyle::NonSelected)
+        return;
+
     if (layout.lines.isEmpty())
         return;
 
@@ -2932,7 +2942,11 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
 
     const RenderAttachment& attachment = downcast<RenderAttachment>(renderer);
 
-    AttachmentLayout layout(attachment);
+    auto layoutStyle = AttachmentLayoutStyle::NonSelected;
+    if (attachment.selectionState() != RenderObject::SelectionNone && paintInfo.phase != PaintPhase::Selection)
+        layoutStyle = AttachmentLayoutStyle::Selected;
+
+    AttachmentLayout layout(attachment, layoutStyle);
 
     auto& progressString = attachment.attachmentElement().attributeWithoutSynchronization(progressAttr);
     bool validProgress = false;
@@ -2947,18 +2961,15 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
     context.translate(toFloatSize(paintRect.location()));
     context.translate(floorSizeToDevicePixels(LayoutSize((paintRect.width() - attachmentIconBackgroundSize) / 2, 0), renderer.document().deviceScaleFactor()));
 
-    bool useSelectedStyle = attachment.selectionState() != RenderObject::SelectionNone;
     bool usePlaceholder = validProgress && !progress;
 
-    if (useSelectedStyle)
-        paintAttachmentIconBackground(attachment, context, layout);
+    paintAttachmentIconBackground(attachment, context, layout);
     if (usePlaceholder)
         paintAttachmentIconPlaceholder(attachment, context, layout);
     else
         paintAttachmentIcon(attachment, context, layout);
 
-    if (useSelectedStyle)
-        paintAttachmentTitleBackground(attachment, context, layout);
+    paintAttachmentTitleBackground(attachment, context, layout);
     paintAttachmentTitle(attachment, context, layout);
     paintAttachmentSubtitle(attachment, context, layout);
 
