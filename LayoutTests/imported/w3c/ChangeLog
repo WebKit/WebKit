@@ -1,5 +1,17 @@
 2018-08-23  Youenn Fablet  <youenn@apple.com>
 
+        self.isSecureContext undefined in Service Worker
+        https://bugs.webkit.org/show_bug.cgi?id=188842
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/isSecureContext.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/isSecureContext.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/isSecureContext.serviceworker.js: Added.
+        (test):
+
+2018-08-23  Youenn Fablet  <youenn@apple.com>
+
         Update libwebrtc up to 984f1a80c0
         https://bugs.webkit.org/show_bug.cgi?id=188745
         <rdar://problem/43539177>
