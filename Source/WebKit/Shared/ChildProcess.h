@@ -77,6 +77,10 @@ public:
 
     IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
 
+#if PLATFORM(MAC)
+    static bool isSystemWebKit();
+#endif
+
 protected:
     explicit ChildProcess();
     virtual ~ChildProcess();

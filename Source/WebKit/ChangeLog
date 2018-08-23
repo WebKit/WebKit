@@ -1,3 +1,22 @@
+2018-08-22  Antti Koivisto  <antti@apple.com>
+
+        NetworkCache::Storage::lastStableVersion should be a developer-only feature
+        https://bugs.webkit.org/show_bug.cgi?id=188843
+        <rdar://problem/43574100>
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::deleteOldVersions):
+
+        Delete old cache versions unconditionally if we are system WebKit.
+
+        * Shared/ChildProcess.h:
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::isSystemWebKit):
+
+        Find out if WebKit is installed under '/System/'.
+
 2018-08-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Remove CoordinatedImageBacking and related functionality

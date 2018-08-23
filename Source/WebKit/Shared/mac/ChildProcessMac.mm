@@ -732,6 +732,16 @@ void ChildProcess::setQOS(int latencyQOS, int throughputQOS)
     task_policy_set(mach_task_self(), TASK_OVERRIDE_QOS_POLICY, (task_policy_t)&qosinfo, TASK_QOS_POLICY_COUNT);
 }
 
+#if PLATFORM(MAC)
+bool ChildProcess::isSystemWebKit()
+{
+    static bool isSystemWebKit = [] {
+        return [[webKit2Bundle() bundlePath] hasPrefix:@"/System/"];
+    }();
+    return isSystemWebKit;
+}
+#endif
+
 } // namespace WebKit
 
 #endif
