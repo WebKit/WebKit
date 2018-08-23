@@ -1,3 +1,13 @@
+2018-08-23  Jonathan Bedard  <jbedard@apple.com>
+
+        run-api-tests: Add --webkit-only, --webcore-only and --webkit-legacy-only options to run WebKit, WebCore and WebKitLegacy tests 
+        https://bugs.webkit.org/show_bug.cgi?id=188262
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/api_tests/run_api_tests.py:
+        (parse_args):
+
 2018-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Support dragging attachment elements out as files on macOS
