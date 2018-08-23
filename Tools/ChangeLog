@@ -1,3 +1,16 @@
+2018-08-23  Alex Christensen  <achristensen@webkit.org>
+
+        Add new _webViewRequestPointerLock SPI with a completionHandler
+        https://bugs.webkit.org/show_bug.cgi?id=188907
+        <rdar://problem/35871109>
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[PointerLockDelegate _webViewRequestPointerLock:completionHandler:]):
+        (-[PointerLockDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST):
+
 2018-08-23  David Fenton  <david_fenton@apple.com>
 
         Unreviewed, rolling out r235129.

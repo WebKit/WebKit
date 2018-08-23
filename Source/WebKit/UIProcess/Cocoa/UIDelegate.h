@@ -210,6 +210,7 @@ private:
         bool webViewImageOrMediaDocumentSizeChanged : 1;
 #if ENABLE(POINTER_LOCK)
         bool webViewRequestPointerLock : 1;
+        bool webViewDidRequestPointerLockCompletionHandler : 1;
         bool webViewDidLosePointerLock : 1;
 #endif
 #if ENABLE(CONTEXT_MENUS)

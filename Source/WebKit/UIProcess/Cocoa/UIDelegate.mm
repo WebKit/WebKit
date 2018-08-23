@@ -157,6 +157,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 
 #if ENABLE(POINTER_LOCK)
     m_delegateMethods.webViewRequestPointerLock = [delegate respondsToSelector:@selector(_webViewRequestPointerLock:)];
+    m_delegateMethods.webViewDidRequestPointerLockCompletionHandler = [delegate respondsToSelector:@selector(_webViewDidRequestPointerLock:completionHandler:)];
     m_delegateMethods.webViewDidLosePointerLock = [delegate respondsToSelector:@selector(_webViewDidLosePointerLock:)];
 #endif
 #if ENABLE(CONTEXT_MENUS)
@@ -1165,16 +1166,31 @@ NSDictionary *UIDelegate::UIClient::dataDetectionContext()
 
 #if ENABLE(POINTER_LOCK)
 
-void UIDelegate::UIClient::requestPointerLock(WebPageProxy*)
+void UIDelegate::UIClient::requestPointerLock(WebPageProxy* page)
 {
-    if (!m_uiDelegate.m_delegateMethods.webViewRequestPointerLock)
+    if (!m_uiDelegate.m_delegateMethods.webViewRequestPointerLock && !m_uiDelegate.m_delegateMethods.webViewDidRequestPointerLockCompletionHandler)
         return;
 
     auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate)
         return;
 
-    [static_cast<id <WKUIDelegatePrivate>>(delegate) _webViewRequestPointerLock:m_uiDelegate.m_webView];
+    if (m_uiDelegate.m_delegateMethods.webViewRequestPointerLock) {
+        [static_cast<id <WKUIDelegatePrivate>>(delegate) _webViewRequestPointerLock:m_uiDelegate.m_webView];
+        return;
+    }
+
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webViewDidRequestPointerLock:completionHandler:));
+    [static_cast<id <WKUIDelegatePrivate>>(delegate) _webViewDidRequestPointerLock:m_uiDelegate.m_webView completionHandler:BlockPtr<void(BOOL)>::fromCallable([checker = WTFMove(checker), page = makeRefPtr(page)] (BOOL allow) {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+
+        if (allow)
+            page->didAllowPointerLock();
+        else
+            page->didDenyPointerLock();
+    }).get()];
 }
 
 void UIDelegate::UIClient::didLosePointerLock(WebPageProxy*)
