@@ -1,5 +1,32 @@
 2018-08-22  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordGraphics] Drop old-school PlatformLayer management in CoordinatedGraphicsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=188850
+
+        Reviewed by Michael Catanzaro.
+
+        Remove the m_platformLayer member from the CoordinatedGraphicsLayer
+        class as it's been unused since the rework in r235165.
+
+        The CoordinatedGraphicsLayer::syncPlatformLayer() helper method and the
+        related member variable can both be removed as well. On the
+        CoordinatedGraphicsLayerState class, we can remove the obsolete
+        flags and the TextureMapperPlatformLayerProxy member variable that's
+        unused now that such objects are handled through the Nicosia impl class.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::setContentsNeedsDisplay):
+        (WebCore::CoordinatedGraphicsLayer::setContentsToPlatformLayer):
+        (WebCore::CoordinatedGraphicsLayer::updatePlatformLayer):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        (WebCore::CoordinatedGraphicsLayer::syncPlatformLayer): Deleted.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsState.h:
+        (WebCore::CoordinatedGraphicsLayerState::CoordinatedGraphicsLayerState):
+
+2018-08-22  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordGraphics] Remove TiledBackingStoreClient inheritance from CoordinatedGraphicsLayer
         https://bugs.webkit.org/show_bug.cgi?id=188849
 

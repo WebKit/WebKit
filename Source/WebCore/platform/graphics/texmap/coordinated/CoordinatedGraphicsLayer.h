@@ -104,7 +104,7 @@ public:
     void removeAnimation(const String&) override;
     void suspendAnimations(MonotonicTime) override;
     void resumeAnimations() override;
-    bool usesContentsLayer() const override { return m_platformLayer || m_nicosia.contentLayer || m_compositedImage; }
+    bool usesContentsLayer() const override { return m_nicosia.contentLayer || m_compositedImage; }
 
     void syncPendingStateChangesIncludingSubLayers();
     void updateContentBuffersIncludingSubLayers();
@@ -127,7 +127,6 @@ public:
 private:
     bool isCoordinatedGraphicsLayer() const override { return true; }
 
-    void syncPlatformLayer();
     void updatePlatformLayer();
 
     void setDebugBorder(const Color&, float width) override;
@@ -185,7 +184,6 @@ private:
     bool m_pendingContentsScaleAdjustment : 1;
     bool m_pendingVisibleRectAdjustment : 1;
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    bool m_shouldSyncPlatformLayer : 1;
     bool m_shouldUpdatePlatformLayer : 1;
 #endif
 
@@ -199,7 +197,6 @@ private:
     RefPtr<Image> m_compositedImage;
     NativeImagePtr m_compositedNativeImagePtr;
 
-    PlatformLayer* m_platformLayer;
     Timer m_animationStartedTimer;
     TextureMapperAnimations m_animations;
     MonotonicTime m_lastAnimationStartTime;

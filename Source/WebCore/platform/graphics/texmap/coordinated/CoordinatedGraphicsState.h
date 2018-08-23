@@ -43,10 +43,6 @@
 #include "TextureMapperAnimation.h"
 #include "TransformationMatrix.h"
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
-#include "TextureMapperPlatformLayerProxy.h"
-#endif
-
 namespace WebCore {
 
 typedef uint32_t CoordinatedLayerID;
@@ -82,9 +78,6 @@ struct CoordinatedGraphicsLayerState {
             bool filtersChanged: 1;
             bool childrenChanged: 1;
             bool repaintCountChanged : 1;
-            bool platformLayerChanged: 1;
-            bool platformLayerUpdated: 1;
-            bool platformLayerShouldSwapBuffers: 1;
             bool isScrollableChanged: 1;
             bool contentsTilingChanged: 1;
         };
@@ -115,9 +108,6 @@ struct CoordinatedGraphicsLayerState {
         , opacity(0)
         , replica(InvalidCoordinatedLayerID)
         , mask(InvalidCoordinatedLayerID)
-#if USE(COORDINATED_GRAPHICS_THREADED)
-        , platformLayerProxy(0)
-#endif
     {
     }
 
@@ -138,10 +128,6 @@ struct CoordinatedGraphicsLayerState {
     CoordinatedLayerID mask;
     DebugVisuals debugVisuals;
     RepaintCount repaintCount;
-
-#if USE(COORDINATED_GRAPHICS_THREADED)
-    RefPtr<TextureMapperPlatformLayerProxy> platformLayerProxy;
-#endif
 
     bool hasPendingChanges() const
     {

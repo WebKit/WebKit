@@ -135,12 +135,10 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(Type layerType, GraphicsLayer
     , m_pendingContentsScaleAdjustment(false)
     , m_pendingVisibleRectAdjustment(false)
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    , m_shouldSyncPlatformLayer(false)
     , m_shouldUpdatePlatformLayer(false)
 #endif
     , m_coordinator(0)
     , m_compositedNativeImagePtr(0)
-    , m_platformLayer(0)
     , m_animationStartedTimer(*this, &CoordinatedGraphicsLayer::animationStartedTimerFired)
 {
     static CoordinatedLayerID nextLayerID = 1;
@@ -418,14 +416,9 @@ bool GraphicsLayer::supportsContentsTiling()
 
 void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
 {
-#if USE(COORDINATED_GRAPHICS_THREADED)
-#if USE(NICOSIA)
+#if USE(COORDINATED_GRAPHICS_THREADED) && USE(NICOSIA)
     if (m_nicosia.contentLayer)
         m_shouldUpdatePlatformLayer = true;
-#else
-    if (m_platformLayer)
-        m_shouldUpdatePlatformLayer = true;
-#endif
 #endif
 
     notifyFlushRequired();
@@ -434,20 +427,12 @@ void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
 
 void CoordinatedGraphicsLayer::setContentsToPlatformLayer(PlatformLayer* platformLayer, ContentsLayerPurpose)
 {
-#if USE(COORDINATED_GRAPHICS_THREADED)
-#if USE(NICOSIA)
+#if USE(COORDINATED_GRAPHICS_THREADED) && USE(NICOSIA)
     auto* contentLayer = downcast<Nicosia::ContentLayer>(platformLayer);
     if (m_nicosia.contentLayer != contentLayer) {
-        m_shouldSyncPlatformLayer = true;
         m_nicosia.contentLayer = contentLayer;
         m_nicosia.delta.contentLayerChanged = true;
     }
-#else
-    if (m_platformLayer != platformLayer)
-        m_shouldSyncPlatformLayer = true;
-
-    m_platformLayer = platformLayer;
-#endif
     notifyFlushRequired();
 #else
     UNUSED_PARAM(platformLayer);
@@ -726,37 +711,15 @@ void CoordinatedGraphicsLayer::syncAnimations()
     m_nicosia.delta.animationsChanged = true;
 }
 
-void CoordinatedGraphicsLayer::syncPlatformLayer()
-{
-    if (!m_shouldSyncPlatformLayer)
-        return;
-
-    m_shouldSyncPlatformLayer = false;
-#if USE(COORDINATED_GRAPHICS_THREADED)
-#if USE(NICOSIA)
-#else
-    m_layerState.platformLayerChanged = true;
-    if (m_platformLayer)
-        m_layerState.platformLayerProxy = m_platformLayer->proxy();
-#endif
-#endif
-}
-
 void CoordinatedGraphicsLayer::updatePlatformLayer()
 {
     if (!m_shouldUpdatePlatformLayer)
         return;
 
     m_shouldUpdatePlatformLayer = false;
-#if USE(COORDINATED_GRAPHICS_THREADED)
-#if USE(NICOSIA)
+#if USE(COORDINATED_GRAPHICS_THREADED) && USE(NICOSIA)
     if (m_nicosia.contentLayer)
         downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosia.contentLayer->impl()).swapBuffersIfNeeded();
-#else
-    m_layerState.platformLayerUpdated = true;
-    if (m_platformLayer)
-        m_platformLayer->swapBuffersIfNeeded();
-#endif
 #endif
 }
 
@@ -779,7 +742,6 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
     computeTransformedVisibleRect();
     syncChildren();
     syncFilters();
-    syncPlatformLayer();
     updatePlatformLayer();
 
     // Only unset m_movingVisibleRect after we have updated the visible rect after the animation stopped.
