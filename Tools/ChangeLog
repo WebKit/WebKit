@@ -1,3 +1,26 @@
+2018-08-23  Jonathan Bedard  <jbedard@apple.com>
+
+        API tests should output json results
+        https://bugs.webkit.org/show_bug.cgi?id=188869
+        <rdar://problem/43615652>
+
+        Reviewed by Aakash Jain.
+
+        JSON output for API tests is of the form:
+            {
+                "Failed": [{"name": <test name>, "output": <test log>}],
+                "Timedout": [...],
+                "Skipped": [...],
+                "Crashed": [...]
+            }
+        Tests which are successful are not displayed in the json output.
+
+        * Scripts/webkitpy/api_tests/manager.py:
+        (Manager.run): Print test results to provided file as a json dictionary.
+        * Scripts/webkitpy/api_tests/run_api_tests.py:
+        (run): Pass json option.
+        (parse_args): Add --json-output flag.
+
 2018-08-23  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Introduce Apple Pay JS v4 on iOS 12 and macOS Mojave

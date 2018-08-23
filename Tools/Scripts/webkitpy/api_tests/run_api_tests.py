@@ -73,7 +73,7 @@ def run(port, options, args, logging_stream):
         stream = MeteredStream(logging_stream, options.verbose, logger=logger, number_of_columns=port.host.platform.terminal_width(), print_timestamps=options.timestamps)
         manager = Manager(port, options, stream)
 
-        result = manager.run(args)
+        result = manager.run(args, json_output=options.json_output)
         _log.debug("Testing completed, Exit status: %d" % result)
         return result
     finally:
@@ -92,6 +92,8 @@ def parse_args(args):
                              help='Enable verbose printing'),
         optparse.make_option('--timestamps', action='store_true', default=False,
                              help='Print timestamps for each logged line'),
+        optparse.make_option('--json-output', action='store', default=None,
+                             help='Save test results as JSON to file'),
     ]))
 
     option_group_definitions.append(('WebKit Options', [
