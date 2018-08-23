@@ -506,11 +506,11 @@ AnalysisResultsViewer.TestGroupStackingBlock = class {
     startRowIndex() { return this._commitSetIndexRowIndexMap[0].rowIndex; }
     endRowIndex() { return this._commitSetIndexRowIndexMap[this._commitSetIndexRowIndexMap.length - 1].rowIndex; }
 
-    _valuesForCommitSet(testGroup, commitSet)
+    _measurementsForCommitSet(testGroup, commitSet)
     {
         return testGroup.requestsForCommitSet(commitSet).map((request) => {
             return this._analysisResultsView.resultForRequest(request);
-        }).filter((result) => !!result).map((result) => result.value);
+        }).filter((result) => !!result);
     }
 
     _computeTestGroupStatus()
@@ -518,9 +518,9 @@ AnalysisResultsViewer.TestGroupStackingBlock = class {
         if (!this.isComplete())
             return {label: null, title: null, status: null};
         console.assert(this._commitSetIndexRowIndexMap.length <= 2); // FIXME: Support having more root sets.
-        const startValues = this._valuesForCommitSet(this._testGroup, this._commitSetIndexRowIndexMap[0].commitSet);
-        const endValues = this._valuesForCommitSet(this._testGroup, this._commitSetIndexRowIndexMap[1].commitSet);
+        const startValues = this._measurementsForCommitSet(this._testGroup, this._commitSetIndexRowIndexMap[0].commitSet);
+        const endValues = this._measurementsForCommitSet(this._testGroup, this._commitSetIndexRowIndexMap[1].commitSet);
         const result = this._testGroup.compareTestResults(this._analysisResultsView.metric(), startValues, endValues);
-        return {label: result.label, title: result.fullLabel, status: result.status};
+        return {label: result.label, title: result.fullLabelForMean, status: result.status};
     }
 }

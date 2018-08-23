@@ -105,25 +105,25 @@ describe('Statistics', function () {
             assert.almostEqual(delta(values, 0.95), 3.015, 3);
 
             // Following values are computed using Excel Online's STDEV and CONFIDENCE.T
-            assert.almostEqual(delta([1, 2, 3, 4], 0.8), 1.057159);
-            assert.almostEqual(delta([1, 2, 3, 4], 0.9), 1.519090);
-            assert.almostEqual(delta([1, 2, 3, 4], 0.95), 2.054260);
+            assert.almostEqual(delta([1, 2, 3, 4], 0.8), 1.057159, 4);
+            assert.almostEqual(delta([1, 2, 3, 4], 0.9), 1.519090, 4);
+            assert.almostEqual(delta([1, 2, 3, 4], 0.95), 2.054260, 4);
 
-            assert.almostEqual(delta([0.3, 0.06, 0.5], 0.8), 0.2398353);
-            assert.almostEqual(delta([0.3, 0.06, 0.5], 0.9), 0.3713985);
-            assert.almostEqual(delta([0.3, 0.06, 0.5], 0.95), 0.5472625);
+            assert.almostEqual(delta([0.3, 0.06, 0.5], 0.8), 0.2398353, 4);
+            assert.almostEqual(delta([0.3, 0.06, 0.5], 0.9), 0.3713985, 4);
+            assert.almostEqual(delta([0.3, 0.06, 0.5], 0.95), 0.5472625, 4);
 
-            assert.almostEqual(delta([-0.3, 0.06, 0.5], 0.8), 0.4361900);
-            assert.almostEqual(delta([-0.3, 0.06, 0.5], 0.9), 0.6754647);
-            assert.almostEqual(delta([-0.3, 0.06, 0.5], 0.95), 0.9953098);
+            assert.almostEqual(delta([-0.3, 0.06, 0.5], 0.8), 0.4361900, 4);
+            assert.almostEqual(delta([-0.3, 0.06, 0.5], 0.9), 0.6754647, 4);
+            assert.almostEqual(delta([-0.3, 0.06, 0.5], 0.95), 0.9953098, 4);
 
-            assert.almostEqual(delta([123, 107, 109, 104, 111], 0.8), 5.001167);
-            assert.almostEqual(delta([123, 107, 109, 104, 111], 0.9), 6.953874);
-            assert.almostEqual(delta([123, 107, 109, 104, 111], 0.95), 9.056490);
+            assert.almostEqual(delta([123, 107, 109, 104, 111], 0.8), 5.001167, 4);
+            assert.almostEqual(delta([123, 107, 109, 104, 111], 0.9), 6.953874, 4);
+            assert.almostEqual(delta([123, 107, 109, 104, 111], 0.95), 9.056490, 4);
 
-            assert.almostEqual(delta([6785, 7812, 6904, 7503, 6943, 7207, 6812], 0.8), 212.6155);
-            assert.almostEqual(delta([6785, 7812, 6904, 7503, 6943, 7207, 6812], 0.9), 286.9585);
-            assert.almostEqual(delta([6785, 7812, 6904, 7503, 6943, 7207, 6812], 0.95), 361.3469);
+            assert.almostEqual(delta([6785, 7812, 6904, 7503, 6943, 7207, 6812], 0.8), 212.6155, 4);
+            assert.almostEqual(delta([6785, 7812, 6904, 7503, 6943, 7207, 6812], 0.9), 286.9585, 4);
+            assert.almostEqual(delta([6785, 7812, 6904, 7503, 6943, 7207, 6812], 0.95), 361.3469, 4);
 
         });
     });
@@ -233,6 +233,127 @@ describe('Statistics', function () {
 
             assert.almostEqual(Statistics.probabilityRangeForWelchsT(example3.A1, example3.A2).range[0], example3.expectedRange[0]);
             assert.almostEqual(Statistics.probabilityRangeForWelchsT(example3.A1, example3.A2).range[1], example3.expectedRange[1]);
+        });
+    });
+
+    describe('minimumTForOneSidedProbability', () => {
+        it('should not infinite loop when lookup t-value for any degrees of freedom', () => {
+            for(const probability of [0.9, 0.95, 0.975, 0.99]) {
+                for (let degreesOfFreedom = 1; degreesOfFreedom < 100000; degreesOfFreedom += 1)
+                    Statistics.minimumTForOneSidedProbability(probability, degreesOfFreedom);
+            }
+        })
+    });
+
+    describe('probabilityRangeForWelchsTForMultipleSamples', () => {
+        function splitSample(samples) {
+            const mid = samples.length / 2;
+            return splitSampleByIndices(samples, mid);
+        }
+
+        function splitSampleByIndices(samples, ...indices) {
+            const sampleSize = samples.length;
+            const splittedSamples = [];
+            let previousIndex = 0;
+            for (const index of indices) {
+                if (index == previousIndex)
+                    continue;
+                console.assert(index > previousIndex);
+                console.assert(index <= sampleSize);
+                splittedSamples.push(samples.slice(previousIndex, index));
+                previousIndex = index;
+            }
+            if (previousIndex < sampleSize)
+                splittedSamples.push(samples.slice(previousIndex, sampleSize));
+            return splittedSamples.map((values) => ({sum: Statistics.sum(values), squareSum: Statistics.squareSum(values), sampleSize: values.length}));
+        }
+
+        it('should find the t-value of values using Welch\'s t-test', () => {
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSample(example1.A1), splitSample(example1.A2)).t, example1.expectedT, 2);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSample(example2.A1), splitSample(example2.A2)).t, example2.expectedT, 2);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSample(example3.A1), splitSample(example3.A2)).t, example3.expectedT, 2);
+
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example1.A1, 1), splitSampleByIndices(example1.A2, 1)).t, example1.expectedT, 2);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example2.A1, 1), splitSampleByIndices(example2.A2, 1)).t, example2.expectedT, 2);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example3.A1, 1), splitSampleByIndices(example3.A2, 1)).t, example3.expectedT, 2);
+
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example1.A1, 0), splitSampleByIndices(example1.A2, 0)).t, example1.expectedT, 2);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example2.A1, 0), splitSampleByIndices(example2.A2, 0)).t, example2.expectedT, 2);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example3.A1, 0), splitSampleByIndices(example3.A2, 0)).t, example3.expectedT, 2);
+
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example1.A1, 1, 4), splitSampleByIndices(example1.A2, 1, 4)).t, example1.expectedT, 2);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example2.A1, 1, 4), splitSampleByIndices(example2.A2, 1, 4)).t, example2.expectedT, 2);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example3.A1, 1, 4), splitSampleByIndices(example3.A2, 1, 4)).t, example3.expectedT, 2);
+        });
+
+        it('should find the degreees of freedom using Welch–Satterthwaite equation when split evenly', () => {
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSample(example1.A1), splitSample(example1.A2)).degreesOfFreedom,
+                example1.expectedDegreesOfFreedom, 2);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSample(example2.A1), splitSample(example2.A2)).degreesOfFreedom,
+                example2.expectedDegreesOfFreedom, 2);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSample(example3.A1), splitSample(example3.A2)).degreesOfFreedom,
+                example3.expectedDegreesOfFreedom, 2);
+
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example1.A1, 1), splitSampleByIndices(example1.A2, 1)).degreesOfFreedom,
+                example1.expectedDegreesOfFreedom, 2);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example2.A1, 1), splitSampleByIndices(example2.A2, 1)).degreesOfFreedom,
+                example2.expectedDegreesOfFreedom, 2);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example3.A1, 1), splitSampleByIndices(example3.A2, 1)).degreesOfFreedom,
+                example3.expectedDegreesOfFreedom, 2);
+
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example1.A1, 0), splitSampleByIndices(example1.A2, 0)).degreesOfFreedom,
+                example1.expectedDegreesOfFreedom, 2);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example2.A1, 0), splitSampleByIndices(example2.A2, 0)).degreesOfFreedom,
+                example2.expectedDegreesOfFreedom, 2);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example3.A1, 0), splitSampleByIndices(example3.A2, 0)).degreesOfFreedom,
+                example3.expectedDegreesOfFreedom, 2);
+
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example1.A1, 1, 4), splitSampleByIndices(example1.A2, 1, 4)).degreesOfFreedom,
+                example1.expectedDegreesOfFreedom, 2);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example2.A1, 1, 4), splitSampleByIndices(example2.A2, 1, 4)).degreesOfFreedom,
+                example2.expectedDegreesOfFreedom, 2);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example3.A1, 1, 4), splitSampleByIndices(example3.A2, 1, 4)).degreesOfFreedom,
+                example3.expectedDegreesOfFreedom, 2);
+        });
+
+        it('should compute the range of probabilites using the p-value of Welch\'s t-test when split evenly', function () {
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSample(example1.A1), splitSample(example1.A2)).range[0], example1.expectedRange[0]);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSample(example1.A1), splitSample(example1.A2)).range[1], example1.expectedRange[1]);
+
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSample(example2.A1), splitSample(example2.A2)).range[0], example2.expectedRange[0]);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSample(example2.A1), splitSample(example2.A2)).range[1], example2.expectedRange[1]);
+
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSample(example3.A1), splitSample(example3.A2)).range[0], example3.expectedRange[0]);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSample(example3.A1), splitSample(example3.A2)).range[1], example3.expectedRange[1]);
+
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example1.A1, 1), splitSampleByIndices(example1.A2, 1)).range[0], example1.expectedRange[0]);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example1.A1, 1), splitSampleByIndices(example1.A2, 1)).range[1], example1.expectedRange[1]);
+
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example2.A1, 1), splitSampleByIndices(example2.A2, 1)).range[0], example2.expectedRange[0]);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example2.A1, 1), splitSampleByIndices(example2.A2, 1)).range[1], example2.expectedRange[1]);
+
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example3.A1, 1), splitSampleByIndices(example3.A2, 1)).range[0], example3.expectedRange[0]);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example3.A1, 1), splitSampleByIndices(example3.A2, 1)).range[1], example3.expectedRange[1]);
+
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example1.A1, 0), splitSampleByIndices(example1.A2, 0)).range[0], example1.expectedRange[0]);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example1.A1, 0), splitSampleByIndices(example1.A2, 0)).range[1], example1.expectedRange[1]);
+
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example2.A1, 0), splitSampleByIndices(example2.A2, 0)).range[0], example2.expectedRange[0]);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example2.A1, 0), splitSampleByIndices(example2.A2, 0)).range[1], example2.expectedRange[1]);
+
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example3.A1, 0), splitSampleByIndices(example3.A2, 0)).range[0], example3.expectedRange[0]);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example3.A1, 0), splitSampleByIndices(example3.A2, 0)).range[1], example3.expectedRange[1]);
+
+
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example1.A1, 1, 4), splitSampleByIndices(example1.A2, 1, 4)).range[0], example1.expectedRange[0]);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example1.A1, 1, 4), splitSampleByIndices(example1.A2, 1, 4)).range[1], example1.expectedRange[1]);
+
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example2.A1, 1, 4), splitSampleByIndices(example2.A2, 1, 4)).range[0], example2.expectedRange[0]);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example2.A1, 1, 4), splitSampleByIndices(example2.A2, 1, 4)).range[1], example2.expectedRange[1]);
+
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example3.A1, 1, 4), splitSampleByIndices(example3.A2, 1, 4)).range[0], example3.expectedRange[0]);
+            assert.almostEqual(Statistics.probabilityRangeForWelchsTForMultipleSamples(splitSampleByIndices(example3.A1, 1, 4), splitSampleByIndices(example3.A2, 1, 4)).range[1], example3.expectedRange[1]);
+
         });
     });
 

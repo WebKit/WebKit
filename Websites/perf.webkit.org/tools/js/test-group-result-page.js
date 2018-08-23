@@ -23,7 +23,7 @@ class TestGroupResultPage extends MarkupPage {
         return global.RemoteAPI.url(`/v3/#/analysis/task/${analysisTask.id()}`);
     }
 
-    _URLForAnalysisTask(testGroup, analysisResultsView)
+    _resultsForTestGroup(testGroup, analysisResultsView)
     {
         const resultsByCommitSet = new Map;
         let maxValue = -Infinity;
@@ -73,9 +73,24 @@ class TestGroupResultPage extends MarkupPage {
         };
 
         const analysisResultsView = analysisResults.viewForMetric(metric);
-        const {resultsByCommitSet, widthForValue} = this._URLForAnalysisTask(testGroup, analysisResultsView);
+        const {resultsByCommitSet, widthForValue} = this._resultsForTestGroup(testGroup, analysisResultsView);
 
         const tableBodies = [];
+
+        const beforeResults = resultsByCommitSet.get(requestedCommitSets[0]).filter((result) => !!result);
+        const afterResults = resultsByCommitSet.get(requestedCommitSets[1]).filter((result) => !!result);
+        const comparison = testGroup.compareTestResults(metric, beforeResults, afterResults);
+        const changeStyleClassForMean = `${comparison.isStatisticallySignificantForMean ? comparison.changeType : 'insignificant'}-result`;
+        const changeStyleClassForIndividual = `${comparison.isStatisticallySignificantForIndividual ? comparison.changeType : 'insignificant'}-result`;
+        const caption = this.createElement('caption', `${testGroup.test().name()} - ${metric.aggregatorLabel()}`);
+
+        tableBodies.push(this.createElement('tbody', {class: 'comparision-table-body'}, [
+            this.createElement('tr', [this.createElement('td', 'Comparision by Mean'),
+                this.createElement('td', this.createElement('em', {class: changeStyleClassForMean}, comparison.fullLabelForMean))]),
+            this.createElement('tr', [this.createElement('td', 'Comparision by Individual'),
+                this.createElement('td', this.createElement('em', {class: changeStyleClassForIndividual}, comparison.fullLabelForIndividual))])
+        ]));
+
         for (const commitSet of requestedCommitSets) {
             let firstRow = true;
             const tableRows = [];
@@ -92,13 +107,6 @@ class TestGroupResultPage extends MarkupPage {
             }
             tableBodies.push(this.createElement('tbody', tableRows));
         }
-
-        const beforeValues = resultsByCommitSet.get(requestedCommitSets[0]).filter((result) => !!result).map((result) => result.value);
-        const afterValues = resultsByCommitSet.get(requestedCommitSets[1]).filter((result) => !!result).map((result) => result.value);
-        const comparison = testGroup.compareTestResults(metric, beforeValues, afterValues);
-        const changeStyleClass =  `${comparison.isStatisticallySignificant ? comparison.changeType : 'insignificant'}-result`;
-        const caption = this.createElement('caption', [`${testGroup.test().name()} - ${metric.aggregatorLabel()}: `,
-            this.createElement('em', {class: changeStyleClass}, comparison.fullLabel)]);
 
         return this.createElement('table', {class: 'result-table'}, [caption, tableBodies]);
     }
@@ -144,6 +152,7 @@ class TestGroupResultPage extends MarkupPage {
             'em': {
                 'font-weight': 'bold',
                 'font-style': 'normal',
+                'padding-right': '2rem',
             },
             'caption': {
                 'font-size': '1.3rem',
@@ -167,6 +176,9 @@ class TestGroupResultPage extends MarkupPage {
                 'margin-top': '1rem',
                 'text-align': 'center',
                 'border-collapse': 'collapse',
+            },
+            '.comparision-table-body': {
+                'text-align': 'left',
             },
             '.result-cell': {
                 'min-width': '20rem',

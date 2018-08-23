@@ -1,3 +1,43 @@
+2018-08-22  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Show t-test results based on individual measurements to analysis task page.
+        https://bugs.webkit.org/show_bug.cgi?id=188425
+
+        Reviewed by Ryosuke Niwa.
+
+        Added comparison for individual iterations in analysis task page.
+        Added comparison for individual iterations for notification on A/B tests completion.
+        Refactored t-distribution inverse lookup to any degree of freedom with 5 significant figures.
+
+        * public/shared/statistics.js: Refactored t-distribution inverse lookup function and adapted this
+        change to all invocations.
+        (Statistics.new.this.supportedConfidenceIntervalProbabilities):
+        (Statistics.new.this.supportedOneSideTTestProbabilities):
+        (Statistics.new.this.confidenceIntervalDelta):
+        (Statistics.new.sampleMeanAndVarianceForMultipleSamples):
+        (Statistics.new.this.probabilityRangeForWelchsT):
+        (Statistics.new.this.probabilityRangeForWelchsTFromTwoSampleSets):
+        (Statistics.new.this._determinetwoSidedProbabilityBoundaryForWelchsT):
+        (Statistics.new.this.computeWelchsT):
+        (Statistics.new.this._computeWelchsTFromStatistics):
+        (Statistics.new.this.minimumTForOneSidedProbability): Function that does t-distribution inverse lookup.
+        * public/v3/components/analysis-results-viewer.js: Adapted TestGroup.compareTestResults change.
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype._measurementsForCommitSet):
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype._computeTestGroupStatus):
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype._valuesForCommitSet): Deleted.
+        * public/v3/components/test-group-results-viewer.js: Show both comparisions for both individual and mean.
+        (TestGroupResultsViewer.prototype._renderResultsTable):
+        (TestGroupResultsViewer.prototype._buildRowForMetric.):
+        (TestGroupResultsViewer.prototype._buildValueMap):
+        * public/v3/models/test-group.js:
+        (TestGroup.compareTestResults): Added comparison for individual iterations.
+        * tools/js/test-group-result-page.js:
+        (TestGroupResultPage.prototype._constructTableForMetric):
+        (TestGroupResultPage.prototype.get styleTemplate):
+        (TestGroupResultPage):
+        (TestGroupResultPage.prototype._URLForAnalysisTask): Renamed to '_resultsForTestGroup'
+        * unit-tests/statistics-tests.js: Updated and added unit tests.
+
 2018-07-13  Dewei Zhu  <dewei_zhu@apple.com>
 
         CustomConfigurationTestGroupForm should dispatch different arguments based on whether analysis task is created.
