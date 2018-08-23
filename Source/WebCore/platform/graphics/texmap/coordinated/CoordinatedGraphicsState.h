@@ -52,17 +52,6 @@ namespace WebCore {
 typedef uint32_t CoordinatedLayerID;
 enum { InvalidCoordinatedLayerID = 0 };
 
-struct TileUpdateInfo {
-    uint32_t tileID;
-    IntRect tileRect;
-    WebCore::SurfaceUpdateInfo updateInfo;
-};
-
-struct TileCreationInfo {
-    uint32_t tileID;
-    float scale;
-};
-
 struct DebugVisuals {
     Color debugBorderColor;
     float debugBorderWidth { 0 };
@@ -145,14 +134,10 @@ struct CoordinatedGraphicsLayerState {
     FilterOperations filters;
     TextureMapperAnimations animations;
     Vector<uint32_t> children;
-    Vector<TileCreationInfo> tilesToCreate;
-    Vector<uint32_t> tilesToRemove;
     CoordinatedLayerID replica;
     CoordinatedLayerID mask;
     DebugVisuals debugVisuals;
     RepaintCount repaintCount;
-
-    Vector<TileUpdateInfo> tilesToUpdate;
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
     RefPtr<TextureMapperPlatformLayerProxy> platformLayerProxy;
@@ -160,7 +145,7 @@ struct CoordinatedGraphicsLayerState {
 
     bool hasPendingChanges() const
     {
-        return changeMask || tilesToUpdate.size() || tilesToRemove.size() || tilesToCreate.size();
+        return changeMask;
     }
 };
 

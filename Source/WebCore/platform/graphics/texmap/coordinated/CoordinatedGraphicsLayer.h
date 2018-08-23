@@ -32,8 +32,6 @@
 #include "NicosiaBuffer.h"
 #include "NicosiaPlatformLayer.h"
 #include "TextureMapperAnimation.h"
-#include "TiledBackingStore.h"
-#include "TiledBackingStoreClient.h"
 #include "TransformationMatrix.h"
 #include <wtf/text/StringHash.h>
 
@@ -56,8 +54,7 @@ public:
     virtual void syncLayerState(CoordinatedLayerID, CoordinatedGraphicsLayerState&) = 0;
 };
 
-class WEBCORE_EXPORT CoordinatedGraphicsLayer : public GraphicsLayer
-    , public TiledBackingStoreClient {
+class WEBCORE_EXPORT CoordinatedGraphicsLayer : public GraphicsLayer {
 public:
     explicit CoordinatedGraphicsLayer(Type, GraphicsLayerClient&);
     virtual ~CoordinatedGraphicsLayer();
@@ -118,12 +115,6 @@ public:
     CoordinatedLayerID id() const { return m_id; }
 
     IntRect transformedVisibleRect();
-
-    // TiledBackingStoreClient
-    void tiledBackingStoreHasPendingTileCreation() override;
-    void createTile(uint32_t tileID, float) override;
-    void updateTile(uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) override;
-    void removeTile(uint32_t tileID) override;
 
     void setCoordinator(CoordinatedGraphicsLayerClient*);
     void setCoordinatorIncludingSubLayersIfNeeded(CoordinatedGraphicsLayerClient*);
@@ -199,8 +190,6 @@ private:
 #endif
 
     CoordinatedGraphicsLayerClient* m_coordinator;
-    std::unique_ptr<TiledBackingStore> m_mainBackingStore;
-    std::unique_ptr<TiledBackingStore> m_previousBackingStore;
 
     struct {
         bool completeLayer { false };

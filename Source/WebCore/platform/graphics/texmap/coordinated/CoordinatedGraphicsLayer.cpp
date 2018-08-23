@@ -38,6 +38,7 @@
 #include "NicosiaPaintingEngine.h"
 #include "ScrollableArea.h"
 #include "TextureMapperPlatformLayerProxyProvider.h"
+#include "TiledBackingStore.h"
 #ifndef NDEBUG
 #include <wtf/SetForScope.h>
 #endif
@@ -155,7 +156,6 @@ CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer()
         purgeBackingStores();
         m_coordinator->detachLayer(this);
     }
-    ASSERT(!m_mainBackingStore);
     ASSERT(!m_nicosia.imageBacking);
     ASSERT(!m_nicosia.backingStore);
     willBeDestroyed();
@@ -950,9 +950,6 @@ void CoordinatedGraphicsLayer::syncPendingStateChangesIncludingSubLayers()
 void CoordinatedGraphicsLayer::resetLayerState()
 {
     m_layerState.changeMask = 0;
-    m_layerState.tilesToCreate.clear();
-    m_layerState.tilesToRemove.clear();
-    m_layerState.tilesToUpdate.clear();
 }
 
 void CoordinatedGraphicsLayer::deviceOrPageScaleFactorChanged()
@@ -964,12 +961,6 @@ void CoordinatedGraphicsLayer::deviceOrPageScaleFactorChanged()
 float CoordinatedGraphicsLayer::effectiveContentsScale()
 {
     return selfOrAncestorHaveNonAffineTransforms() ? 1 : deviceScaleFactor() * pageScaleFactor();
-}
-
-void CoordinatedGraphicsLayer::tiledBackingStoreHasPendingTileCreation()
-{
-    setNeedsVisibleRectAdjustment();
-    notifyFlushRequired();
 }
 
 static void clampToContentsRectIfRectIsInfinite(FloatRect& rect, const FloatSize& contentsSize)
@@ -998,36 +989,6 @@ IntRect CoordinatedGraphicsLayer::transformedVisibleRect()
     FloatRect rect = m_cachedInverseTransform.clampedBoundsOfProjectedQuad(FloatQuad(m_coordinator->visibleContentsRect()));
     clampToContentsRectIfRectIsInfinite(rect, size());
     return enclosingIntRect(rect);
-}
-
-void CoordinatedGraphicsLayer::createTile(uint32_t tileID, float scaleFactor)
-{
-    ASSERT(m_coordinator);
-    ASSERT(m_coordinator->isFlushingLayerChanges());
-
-    TileCreationInfo creationInfo;
-    creationInfo.tileID = tileID;
-    creationInfo.scale = scaleFactor;
-    m_layerState.tilesToCreate.append(creationInfo);
-}
-
-void CoordinatedGraphicsLayer::updateTile(uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const IntRect& tileRect)
-{
-    ASSERT(m_coordinator);
-    ASSERT(m_coordinator->isFlushingLayerChanges());
-
-    TileUpdateInfo tileUpdateInfo;
-    tileUpdateInfo.tileID = tileID;
-    tileUpdateInfo.tileRect = tileRect;
-    tileUpdateInfo.updateInfo = updateInfo;
-    m_layerState.tilesToUpdate.append(tileUpdateInfo);
-}
-
-void CoordinatedGraphicsLayer::removeTile(uint32_t tileID)
-{
-    ASSERT(m_coordinator);
-    ASSERT(m_coordinator->isFlushingLayerChanges() || m_isPurging);
-    m_layerState.tilesToRemove.append(tileID);
 }
 
 void CoordinatedGraphicsLayer::updateContentBuffersIncludingSubLayers()
@@ -1161,8 +1122,6 @@ void CoordinatedGraphicsLayer::purgeBackingStores()
 #ifndef NDEBUG
     SetForScope<bool> updateModeProtector(m_isPurging, true);
 #endif
-    m_mainBackingStore = nullptr;
-    m_previousBackingStore = nullptr;
     if (m_nicosia.backingStore) {
         auto& layerState = downcast<Nicosia::BackingStoreTextureMapperImpl>(m_nicosia.backingStore->impl()).layerState();
         layerState.isPurging = true;

@@ -1,5 +1,32 @@
 2018-08-22  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordGraphics] Remove TiledBackingStoreClient inheritance from CoordinatedGraphicsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=188849
+
+        Reviewed by Michael Catanzaro.
+
+        Remove the TiledBackingStoreClient inheritance from the
+        CoordinatedGraphicsLayer class since it's not used anymore after changes
+        made in r235165.
+
+        Related TiledBackingStore objects on this class, along with tile state
+        tracking member variables on the CoordinatedGraphicsLayerState class,
+        are also removed.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::resetLayerState):
+        (WebCore::CoordinatedGraphicsLayer::purgeBackingStores):
+        (WebCore::CoordinatedGraphicsLayer::tiledBackingStoreHasPendingTileCreation): Deleted.
+        (WebCore::CoordinatedGraphicsLayer::createTile): Deleted.
+        (WebCore::CoordinatedGraphicsLayer::updateTile): Deleted.
+        (WebCore::CoordinatedGraphicsLayer::removeTile): Deleted.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsState.h:
+        (WebCore::CoordinatedGraphicsLayerState::hasPendingChanges const):
+
+2018-08-22  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordGraphics] Remove CoordinatedImageBacking and related functionality
         https://bugs.webkit.org/show_bug.cgi?id=188847
 
