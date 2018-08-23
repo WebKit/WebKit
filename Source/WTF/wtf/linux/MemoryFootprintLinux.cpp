@@ -26,16 +26,13 @@
 #include "config.h"
 #include "MemoryFootprint.h"
 
-#if OS(LINUX)
 #include "MonotonicTime.h"
 #include <stdio.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringView.h>
-#endif
 
 namespace WTF {
 
-#if OS(LINUX)
 static const Seconds s_memoryFootprintUpdateInterval = 1_s;
 
 template<typename Functor>
@@ -88,11 +85,9 @@ static size_t computeMemoryFootprint()
     fclose(file);
     return totalPrivateDirtyInKB * KB;
 }
-#endif
 
 size_t memoryFootprint()
 {
-#if OS(LINUX)
     static size_t footprint = 0;
     static MonotonicTime previousUpdateTime = { };
     Seconds elapsed = MonotonicTime::now() - previousUpdateTime;
@@ -102,8 +97,6 @@ size_t memoryFootprint()
     }
 
     return footprint;
-#endif
-    return 0;
 }
 
-}
+} // namespace WTF

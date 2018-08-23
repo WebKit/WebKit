@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CurrentProcessMemoryStatus.h"
 
-#if OS(LINUX)
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -73,5 +71,3 @@ void currentProcessMemoryStatus(ProcessMemoryStatus& memoryStatus)
 }
 
 } // namespace WTF
-
-#endif // OS(LINUX)

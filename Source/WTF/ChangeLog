@@ -1,3 +1,39 @@
+2018-08-22  Don Olmstead  <don.olmstead@sony.com>
+
+        [WTF] Add generic implementation for Memory querying
+        https://bugs.webkit.org/show_bug.cgi?id=188867
+
+        Reviewed by Fujii Hironori.
+
+        Moves generic implementation of MemoryPressureHandler from
+        MemoryPressureHandler.cpp into MemoryPressureHandlerGeneric
+        and generic implementation of memoryFootprint from
+        MemoryFootprintLinux.cpp to MemoryFootprintGeneric.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::install): Deleted.
+        (WTF::MemoryPressureHandler::uninstall): Deleted.
+        (WTF::MemoryPressureHandler::respondToMemoryPressure): Deleted.
+        (WTF::MemoryPressureHandler::platformReleaseMemory): Deleted.
+        (WTF::MemoryPressureHandler::ReliefLogger::platformMemoryUsage): Deleted.
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/generic/MemoryFootprintGeneric.cpp: Added.
+        (WTF::memoryFootprint):
+        * wtf/generic/MemoryPressureHandlerGeneric.cpp: Added.
+        (WTF::MemoryPressureHandler::memoryMeasurementTimerFired):
+        (WTF::MemoryPressureHandler::platformReleaseMemory):
+        (WTF::MemoryPressureHandler::install):
+        (WTF::MemoryPressureHandler::uninstall):
+        (WTF::MemoryPressureHandler::holdOff):
+        (WTF::MemoryPressureHandler::respondToMemoryPressure):
+        (WTF::MemoryPressureHandler::ReliefLogger::platformMemoryUsage):
+        * wtf/linux/CurrentProcessMemoryStatus.cpp:
+        * wtf/linux/CurrentProcessMemoryStatus.h:
+        * wtf/linux/MemoryFootprintLinux.cpp:
+        (WTF::computeMemoryFootprint):
+        (WTF::memoryFootprint):
+        * wtf/linux/MemoryPressureHandlerLinux.cpp:
+
 2018-08-21  Antti Koivisto  <antti@apple.com>
 
         Allow creating WeakPtrs to const objects
