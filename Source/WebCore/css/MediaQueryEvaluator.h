@@ -75,7 +75,7 @@ public:
 
 private:
     String m_mediaType;
-    WeakPtr<const Document> m_document;
+    WeakPtr<Document> m_document;
     const RenderStyle* m_style { nullptr };
     bool m_fallbackResult { false };
 };
