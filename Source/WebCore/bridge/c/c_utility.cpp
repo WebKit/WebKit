@@ -96,7 +96,7 @@ void convertValueToNPVariant(ExecState* exec, JSValue value, NPVariant* result)
                 OBJECT_TO_NPVARIANT(obj, *result);
             }
         } else {
-            JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
+            JSGlobalObject* globalObject = vm.vmEntryGlobalObject(exec);
 
             RootObject* rootObject = findRootObject(globalObject);
             if (rootObject) {

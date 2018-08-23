@@ -1,3 +1,33 @@
+2018-08-23  Mark Lam  <mark.lam@apple.com>
+
+        Move vmEntryGlobalObject() to VM from CallFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=188900
+        <rdar://problem/43655753>
+
+        Reviewed by Michael Saboff.
+
+        No new tests needed because this patch does not introduce new functionality.
+
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::create):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::callerGlobalObject):
+        (WebCore::toJSDOMGlobalObject): Deleted.
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::firstDOMWindow):
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::convertValueToNPVariant):
+        * bridge/objc/WebScriptObject.mm:
+        (WebCore::addExceptionToConsole):
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::moveGlobalExceptionToExecState):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::convertValueToObjcObject):
+        * bridge/objc/objc_utility.mm:
+        (JSC::Bindings::convertValueToObjcValue):
+        * testing/Internals.cpp:
+        (WebCore::Internals::cloneArrayBuffer):
+
 2018-08-23  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Introduce Apple Pay JS v4 on iOS 12 and macOS Mojave

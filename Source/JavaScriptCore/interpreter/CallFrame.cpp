@@ -45,6 +45,7 @@ void ExecState::initGlobalExec(ExecState* globalExec, JSCallee* globalCallee)
     globalExec->setReturnPC(0);
     globalExec->setArgumentCountIncludingThis(0);
     globalExec->setCallee(globalCallee);
+    ASSERT(globalExec->isGlobalExec());
 }
 
 bool CallFrame::callSiteBitsAreBytecodeOffset() const
@@ -185,34 +186,6 @@ Register* CallFrame::topOfFrameInternal()
     CodeBlock* codeBlock = this->codeBlock();
     ASSERT(codeBlock);
     return registers() + codeBlock->stackPointerOffset();
-}
-
-JSGlobalObject* CallFrame::vmEntryGlobalObject()
-{
-    RELEASE_ASSERT(callee().isCell());
-    if (callee().asCell()->isObject()) { 
-        if (this == lexicalGlobalObject()->globalExec())
-            return lexicalGlobalObject();
-    }
-    // If we're not an object, we're wasm, and therefore we're executing code and the below is safe.
-
-    // For any ExecState that's not a globalExec, the 
-    // dynamic global object must be set since code is running
-    ASSERT(vm().entryScope);
-    return vm().entryScope->globalObject();
-}
-
-JSGlobalObject* CallFrame::vmEntryGlobalObject(VM& vm)
-{
-    if (callee().isCell() && callee().asCell()->isObject()) {
-        if (this == lexicalGlobalObject()->globalExec())
-            return lexicalGlobalObject();
-    }
-
-    // For any ExecState that's not a globalExec, the 
-    // dynamic global object must be set since code is running
-    ASSERT(vm.entryScope);
-    return vm.entryScope->globalObject();
 }
 
 JSGlobalObject* CallFrame::wasmAwareLexicalGlobalObject(VM& vm)

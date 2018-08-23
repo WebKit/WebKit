@@ -674,8 +674,9 @@ JSContainerConvertor::Task JSContainerConvertor::take()
 static void reportExceptionToInspector(JSGlobalContextRef context, JSC::JSValue exceptionValue)
 {
     JSC::ExecState* exec = toJS(context);
-    JSC::Exception* exception = JSC::Exception::create(exec->vm(), exceptionValue);
-    exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exception);
+    JSC::VM& vm = exec->vm();
+    JSC::Exception* exception = JSC::Exception::create(vm, exceptionValue);
+    vm.vmEntryGlobalObject(exec)->inspectorController().reportAPIException(exec, exception);
 }
 #endif
 

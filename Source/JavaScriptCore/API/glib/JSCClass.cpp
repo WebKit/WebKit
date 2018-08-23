@@ -128,9 +128,11 @@ static JSClassRef wrappedObjectClass(JSC::JSObject* jsObject)
 static GRefPtr<JSCContext> jscContextForObject(JSC::JSObject* jsObject)
 {
     ASSERT(isWrappedObject(jsObject));
-    JSC::ExecState* exec = jsObject->globalObject()->globalExec();
+    JSC::JSGlobalObject* globalObject = jsObject->globalObject();
+    JSC::ExecState* exec = globalObject->globalExec();
     if (jsObject->isGlobalObject()) {
-        if (auto* globalScopeExtension = exec->vmEntryGlobalObject()->globalScopeExtension())
+        JSC::VM& vm = globalObject->vm();
+        if (auto* globalScopeExtension = vm.vmEntryGlobalObject(exec)->globalScopeExtension())
             exec = JSC::JSScope::objectAtScope(globalScopeExtension)->globalObject()->globalExec();
     }
     return jscContextGetOrCreate(toGlobalRef(exec));

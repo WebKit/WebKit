@@ -832,7 +832,7 @@ void VM::throwException(ExecState* exec, Exception* exception)
         CRASH();
     }
 
-    ASSERT(exec == topCallFrame || exec == exec->lexicalGlobalObject()->globalExec() || exec == exec->vmEntryGlobalObject()->globalExec());
+    ASSERT(exec == topCallFrame || exec->isGlobalExec());
 
     interpreter->notifyDebuggerOfExceptionToBeThrown(*this, exec, exception);
 
@@ -1261,6 +1261,17 @@ void VM::clearScratchBuffers()
     auto lock = holdLock(m_scratchBufferLock);
     for (auto* scratchBuffer : m_scratchBuffers)
         scratchBuffer->setActiveLength(0);
+}
+
+JSGlobalObject* VM::vmEntryGlobalObject(const CallFrame* callFrame) const
+{
+    if (callFrame && callFrame->isGlobalExec()) {
+        ASSERT(callFrame->callee().isCell() && callFrame->callee().asCell()->isObject());
+        ASSERT(callFrame == callFrame->lexicalGlobalObject()->globalExec());
+        return callFrame->lexicalGlobalObject();
+    }
+    ASSERT(entryScope);
+    return entryScope->globalObject();
 }
 
 } // namespace JSC
