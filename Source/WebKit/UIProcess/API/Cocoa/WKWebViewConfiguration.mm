@@ -147,6 +147,8 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     BOOL _imageControlsEnabled;
     BOOL _requiresUserActionForEditingControlsManager;
 #endif
+    BOOL _waitsForPaintAfterViewDidMoveToWindow;
+    BOOL _controlledByAutomation;
 
 #if ENABLE(APPLE_PAY)
     BOOL _applePayEnabled;
@@ -157,6 +159,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     BOOL _colorFilterEnabled;
     BOOL _incompleteImageBorderEnabled;
     BOOL _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad;
+    BOOL _drawsBackground;
 
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
 }
@@ -209,6 +212,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     _imageControlsEnabled = NO;
     _requiresUserActionForEditingControlsManager = NO;
 #endif
+    _waitsForPaintAfterViewDidMoveToWindow = YES;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     _allowsAirPlayForMediaPlayback = YES;
@@ -240,6 +244,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     _colorFilterEnabled = NO;
     _incompleteImageBorderEnabled = NO;
     _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad = NO;
+    _drawsBackground = YES;
 
     return self;
 }
@@ -354,6 +359,8 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_attachmentElementEnabled = self->_attachmentElementEnabled;
     configuration->_mediaTypesRequiringUserActionForPlayback = self->_mediaTypesRequiringUserActionForPlayback;
     configuration->_mainContentUserGestureOverrideEnabled = self->_mainContentUserGestureOverrideEnabled;
+    configuration->_waitsForPaintAfterViewDidMoveToWindow = self->_waitsForPaintAfterViewDidMoveToWindow;
+    configuration->_controlledByAutomation = self->_controlledByAutomation;
 
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
@@ -394,6 +401,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_colorFilterEnabled = self->_colorFilterEnabled;
     configuration->_incompleteImageBorderEnabled = self->_incompleteImageBorderEnabled;
     configuration->_shouldDeferAsynchronousScriptsUntilAfterDocumentLoad = self->_shouldDeferAsynchronousScriptsUntilAfterDocumentLoad;
+    configuration->_drawsBackground = self->_drawsBackground;
 
     return configuration;
 }
@@ -773,12 +781,12 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (BOOL)_drawsBackground
 {
-    return _pageConfiguration->drawsBackground();
+    return _drawsBackground;
 }
 
 - (void)_setDrawsBackground:(BOOL)drawsBackground
 {
-    _pageConfiguration->setDrawsBackground(drawsBackground);
+    _drawsBackground = drawsBackground;
 }
 
 - (BOOL)_requiresUserActionForVideoPlayback
@@ -829,22 +837,22 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (BOOL)_waitsForPaintAfterViewDidMoveToWindow
 {
-    return _pageConfiguration->waitsForPaintAfterViewDidMoveToWindow();
+    return _waitsForPaintAfterViewDidMoveToWindow;
 }
 
-- (void)_setWaitsForPaintAfterViewDidMoveToWindow:(BOOL)waitsForPaintAfterViewDidMoveToWindow
+- (void)_setWaitsForPaintAfterViewDidMoveToWindow:(BOOL)shouldSynchronize
 {
-    _pageConfiguration->setWaitsForPaintAfterViewDidMoveToWindow(waitsForPaintAfterViewDidMoveToWindow);
+    _waitsForPaintAfterViewDidMoveToWindow = shouldSynchronize;
 }
 
 - (BOOL)_isControlledByAutomation
 {
-    return _pageConfiguration->isControlledByAutomation();
+    return _controlledByAutomation;
 }
 
 - (void)_setControlledByAutomation:(BOOL)controlledByAutomation
 {
-    _pageConfiguration->setControlledByAutomation(controlledByAutomation);
+    _controlledByAutomation = controlledByAutomation;
 }
 
 - (_WKApplicationManifest *)_applicationManifest
