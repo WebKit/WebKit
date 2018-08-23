@@ -109,8 +109,8 @@ private:
     explicit FocusNavigationScope(TreeScope&);
     explicit FocusNavigationScope(HTMLSlotElement&, SlotKind);
 
-    TreeScope* m_rootTreeScope { nullptr };
-    HTMLSlotElement* m_slotElement { nullptr };
+    RefPtr<ContainerNode> m_treeScopeRootNode;
+    RefPtr<HTMLSlotElement> m_slotElement;
     SlotKind m_slotKind { SlotKind::Assigned };
 };
 
@@ -131,7 +131,7 @@ Node* FocusNavigationScope::lastChildInScope(const Node& node) const
 
 Node* FocusNavigationScope::parentInScope(const Node& node) const
 {
-    if (m_rootTreeScope && &m_rootTreeScope->rootNode() == &node)
+    if (m_treeScopeRootNode == &node)
         return nullptr;
 
     if (UNLIKELY(m_slotElement)) {
@@ -184,8 +184,8 @@ Node* FocusNavigationScope::firstNodeInScope() const
         ASSERT(m_slotKind == SlotKind::Fallback);
         return m_slotElement->firstChild();
     }
-    ASSERT(m_rootTreeScope);
-    return &m_rootTreeScope->rootNode();
+    ASSERT(m_treeScopeRootNode);
+    return m_treeScopeRootNode.get();
 }
 
 Node* FocusNavigationScope::lastNodeInScope() const
@@ -199,8 +199,8 @@ Node* FocusNavigationScope::lastNodeInScope() const
         ASSERT(m_slotKind == SlotKind::Fallback);
         return m_slotElement->lastChild();
     }
-    ASSERT(m_rootTreeScope);
-    return &m_rootTreeScope->rootNode();
+    ASSERT(m_treeScopeRootNode);
+    return m_treeScopeRootNode.get();
 }
 
 Node* FocusNavigationScope::nextInScope(const Node* node) const
@@ -228,7 +228,7 @@ Node* FocusNavigationScope::previousInScope(const Node* node) const
 }
 
 FocusNavigationScope::FocusNavigationScope(TreeScope& treeScope)
-    : m_rootTreeScope(&treeScope)
+    : m_treeScopeRootNode(&treeScope.rootNode())
 {
 }
 
@@ -241,13 +241,12 @@ FocusNavigationScope::FocusNavigationScope(HTMLSlotElement& slotElement, SlotKin
 Element* FocusNavigationScope::owner() const
 {
     if (m_slotElement)
-        return m_slotElement;
+        return m_slotElement.get();
 
-    ASSERT(m_rootTreeScope);
-    ContainerNode& root = m_rootTreeScope->rootNode();
-    if (is<ShadowRoot>(root))
-        return downcast<ShadowRoot>(root).host();
-    if (Frame* frame = root.document().frame())
+    ASSERT(m_treeScopeRootNode);
+    if (is<ShadowRoot>(*m_treeScopeRootNode))
+        return downcast<ShadowRoot>(*m_treeScopeRootNode).host();
+    if (Frame* frame = m_treeScopeRootNode->document().frame())
         return frame->ownerElement();
     return nullptr;
 }
