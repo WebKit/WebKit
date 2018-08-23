@@ -75,13 +75,9 @@ NSString *WebKitMediaCacheDirectoryDefaultsKey = @"WebKitMediaCacheDirectory";
 static NSString *WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification = @"NSApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification";
 #endif
 
-// FIXME: <rdar://problem/9138817> - After this "backwards compatibility" radar is removed, this code should be removed to only return an empty String.
-NSString *WebIconDatabaseDirectoryDefaultsKey = @"WebIconDatabaseDirectoryDefaultsKey";
-
 static NSString * const WebKit2HTTPProxyDefaultsKey = @"WebKit2HTTPProxy";
 static NSString * const WebKit2HTTPSProxyDefaultsKey = @"WebKit2HTTPSProxy";
 
-static NSString * const WebKitNetworkCacheEnabledDefaultsKey = @"WebKitNetworkCacheEnabled";
 static NSString * const WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey = @"WebKitNetworkCacheEfficacyLoggingEnabled";
 
 static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKitSuppressMemoryPressureHandler";
@@ -98,9 +94,6 @@ static NSString * const WebKitRecordReplayCacheLocationDefaultsKey = @"WebKitRec
 
 namespace WebKit {
 
-NSString *SchemeForCustomProtocolRegisteredNotificationName = @"WebKitSchemeForCustomProtocolRegisteredNotification";
-NSString *SchemeForCustomProtocolUnregisteredNotificationName = @"WebKitSchemeForCustomProtocolUnregisteredNotification";
-
 static void registerUserDefaultsIfNeeded()
 {
     static bool didRegister;
@@ -113,7 +106,6 @@ static void registerUserDefaultsIfNeeded()
     [registrationDictionary setObject:@YES forKey:WebKitJSCJITEnabledDefaultsKey];
     [registrationDictionary setObject:@YES forKey:WebKitJSCFTLJITEnabledDefaultsKey];
 
-    [registrationDictionary setObject:@YES forKey:WebKitNetworkCacheEnabledDefaultsKey];
     [registrationDictionary setObject:@NO forKey:WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey];
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:registrationDictionary];
