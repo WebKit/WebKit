@@ -25,7 +25,7 @@
 
 WI.EventBreakpointTreeElement = class EventBreakpointTreeElement extends WI.GeneralTreeElement
 {
-    constructor(breakpoint, className, title)
+    constructor(breakpoint, {className, title, linkifyNode} = {})
     {
         console.assert(breakpoint instanceof WI.EventBreakpoint);
 
@@ -36,7 +36,10 @@ WI.EventBreakpointTreeElement = class EventBreakpointTreeElement extends WI.Gene
         if (!title)
             title = breakpoint.eventName;
 
-        const subtitle = null;
+        let subtitle = null;
+        if (linkifyNode && breakpoint.eventListener)
+            subtitle = WI.linkifyNodeReference(breakpoint.eventListener.node);
+
         super(classNames, title, subtitle, breakpoint);
 
         this._statusImageElement = document.createElement("img");
@@ -78,7 +81,10 @@ WI.EventBreakpointTreeElement = class EventBreakpointTreeElement extends WI.Gene
 
     ondelete()
     {
-        WI.domDebuggerManager.removeEventBreakpoint(this.representedObject);
+        if (this.representedObject.eventListener)
+            WI.domTreeManager.removeBreakpointForEventListener(this.representedObject.eventListener);
+        else
+            WI.domDebuggerManager.removeEventBreakpoint(this.representedObject);
         return true;
     }
 
@@ -97,13 +103,18 @@ WI.EventBreakpointTreeElement = class EventBreakpointTreeElement extends WI.Gene
     populateContextMenu(contextMenu, event)
     {
         let breakpoint = this.representedObject;
-        let label = breakpoint.disabled ? WI.UIString("Enable Breakpoint") : WI.UIString("Disable Breakpoint");
-        contextMenu.appendItem(label, this._toggleBreakpoint.bind(this));
+        if (!breakpoint.eventListener) {
+            let label = breakpoint.disabled ? WI.UIString("Enable Breakpoint") : WI.UIString("Disable Breakpoint");
+            contextMenu.appendItem(label, this._toggleBreakpoint.bind(this));
+        }
 
         if (WI.domDebuggerManager.isBreakpointRemovable(breakpoint)) {
             contextMenu.appendSeparator();
             contextMenu.appendItem(WI.UIString("Delete Breakpoint"), () => {
-                WI.domDebuggerManager.removeEventBreakpoint(breakpoint);
+                if (breakpoint.eventListener)
+                    WI.domTreeManager.removeBreakpointForEventListener(breakpoint.eventListener);
+                else
+                    WI.domDebuggerManager.removeEventBreakpoint(breakpoint);
             });
         }
     }
@@ -129,6 +140,11 @@ WI.EventBreakpointTreeElement = class EventBreakpointTreeElement extends WI.Gene
 
     _toggleBreakpoint()
     {
+        if (this.representedObject.eventListener) {
+            WI.domTreeManager.removeBreakpointForEventListener(this.representedObject.eventListener);
+            return;
+        }
+
         this.representedObject.disabled = !this.representedObject.disabled;
     }
 

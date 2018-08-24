@@ -32,10 +32,12 @@
 #include "config.h"
 #include "InspectorDOMDebuggerAgent.h"
 
+#include "Event.h"
 #include "Frame.h"
 #include "HTMLElement.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
+#include "RegisteredEventListener.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/RegularExpression.h>
@@ -50,8 +52,8 @@ enum DOMBreakpointType {
     DOMBreakpointTypesCount
 };
 
-static const char listenerEventCategoryType[] = "listener:";
-static const char instrumentationEventCategoryType[] = "instrumentation:";
+static const char eventNameCategoryType[] = "event-name:";
+static const char instrumentationCategoryType[] = "instrumentation:";
 
 const uint32_t inheritableDOMBreakpointTypesMask = (1 << SubtreeModified);
 const int domBreakpointDerivedTypeShift = 16;
@@ -126,12 +128,12 @@ void InspectorDOMDebuggerAgent::discardBindings()
 
 void InspectorDOMDebuggerAgent::setEventListenerBreakpoint(ErrorString& error, const String& eventName)
 {
-    setBreakpoint(error, listenerEventCategoryType + eventName);
+    setBreakpoint(error, eventNameCategoryType + eventName);
 }
 
 void InspectorDOMDebuggerAgent::setInstrumentationBreakpoint(ErrorString& error, const String& eventName)
 {
-    setBreakpoint(error, instrumentationEventCategoryType + eventName);
+    setBreakpoint(error, instrumentationCategoryType + eventName);
 }
 
 void InspectorDOMDebuggerAgent::setBreakpoint(ErrorString& error, const String& eventName)
@@ -146,12 +148,12 @@ void InspectorDOMDebuggerAgent::setBreakpoint(ErrorString& error, const String& 
 
 void InspectorDOMDebuggerAgent::removeEventListenerBreakpoint(ErrorString& error, const String& eventName)
 {
-    removeBreakpoint(error, listenerEventCategoryType + eventName);
+    removeBreakpoint(error, eventNameCategoryType + eventName);
 }
 
 void InspectorDOMDebuggerAgent::removeInstrumentationBreakpoint(ErrorString& error, const String& eventName)
 {
-    removeBreakpoint(error, instrumentationEventCategoryType + eventName);
+    removeBreakpoint(error, instrumentationCategoryType + eventName);
 }
 
 void InspectorDOMDebuggerAgent::removeBreakpoint(ErrorString& error, const String& eventName)
@@ -362,11 +364,30 @@ void InspectorDOMDebuggerAgent::updateSubtreeBreakpoints(Node* node, uint32_t ro
         updateSubtreeBreakpoints(child, newRootMask, set);
 }
 
-void InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded(bool isDOMEvent, const String& eventName, bool synchronous)
+void InspectorDOMDebuggerAgent::willHandleEvent(const Event& event, const RegisteredEventListener& registeredEventListener)
 {
-    String fullEventName = (isDOMEvent ? listenerEventCategoryType : instrumentationEventCategoryType) + eventName;
+    bool shouldPause = m_debuggerAgent->pauseOnNextStatementEnabled() || m_eventListenerBreakpoints.contains(eventNameCategoryType + event.type());
 
-    bool shouldPause = m_debuggerAgent->pauseOnNextStatementEnabled() || m_eventListenerBreakpoints.contains(fullEventName);
+    if (!shouldPause && m_domAgent)
+        shouldPause = m_domAgent->hasBreakpointForEventListener(*event.currentTarget(), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
+
+    if (!shouldPause)
+        return;
+
+    Ref<JSON::Object> eventData = JSON::Object::create();
+    eventData->setString("eventName"_s, event.type());
+    if (m_domAgent) {
+        int eventListenerId = m_domAgent->idForEventListener(*event.currentTarget(), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
+        if (eventListenerId)
+            eventData->setInteger("eventListenerId"_s, eventListenerId);
+    }
+
+    m_debuggerAgent->schedulePauseOnNextStatement(Inspector::DebuggerFrontendDispatcher::Reason::EventListener, WTFMove(eventData));
+}
+
+void InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded(const String& eventName, bool synchronous)
+{
+    bool shouldPause = m_debuggerAgent->pauseOnNextStatementEnabled() || m_eventListenerBreakpoints.contains(instrumentationCategoryType + eventName);
     if (!shouldPause)
         return;
 

@@ -125,6 +125,8 @@ public:
     void setNodeValue(ErrorString&, int nodeId, const String& value) override;
     void getEventListenersForNode(ErrorString&, int nodeId, const WTF::String* objectGroup, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>>& listenersArray) override;
     void setEventListenerDisabled(ErrorString&, int eventListenerId, bool disabled) override;
+    void setBreakpointForEventListener(ErrorString&, int eventListenerId) override;
+    void removeBreakpointForEventListener(ErrorString&, int eventListenerId) override;
     void getAccessibilityPropertiesForNode(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::DOM::AccessibilityProperties>& axProperties) override;
     void performSearch(ErrorString&, const String& whitespaceTrimmedQuery, const JSON::Array* nodeIds, String* searchId, int* resultCount) override;
     void getSearchResults(ErrorString&, const String& searchId, int fromIndex, int toIndex, RefPtr<JSON::ArrayOf<int>>&) override;
@@ -213,6 +215,9 @@ public:
     // Methods called from other agents.
     InspectorPageAgent* pageAgent() { return m_pageAgent; }
 
+    bool hasBreakpointForEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
+    int idForEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
+
 private:
     void highlightMousedOverNode();
     void setSearchingForNode(ErrorString&, bool enabled, const JSON::Object* highlightConfig);
@@ -233,7 +238,7 @@ private:
     Ref<JSON::ArrayOf<String>> buildArrayForElementAttributes(Element*);
     Ref<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
     RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForPseudoElements(const Element&, NodeToIdMap* nodesMap);
-    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, int identifier, const AtomicString& eventType, Node*, const String* objectGroupId, bool disabled = false);
+    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, int identifier, const AtomicString& eventType, Node*, const String* objectGroupId, bool disabled, bool hasBreakpoint);
     RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node*);
     void processAccessibilityChildren(RefPtr<AccessibilityObject>&&, RefPtr<JSON::ArrayOf<int>>&&);
     
@@ -278,22 +283,38 @@ private:
     struct InspectorEventListener {
         int identifier { 1 };
         RefPtr<EventTarget> eventTarget;
+        RefPtr<EventListener> eventListener;
         AtomicString eventType;
         bool useCapture { false };
         bool disabled { false };
+        bool hasBreakpoint { false };
 
         InspectorEventListener() { }
 
-        InspectorEventListener(int identifier, EventTarget& eventTarget, const AtomicString& eventType, bool useCapture)
+        InspectorEventListener(int identifier, EventTarget& target, const AtomicString& type, EventListener& listener, bool capture)
             : identifier(identifier)
-            , eventTarget(&eventTarget)
-            , eventType(eventType)
-            , useCapture(useCapture)
+            , eventTarget(&target)
+            , eventListener(&listener)
+            , eventType(type)
+            , useCapture(capture)
         {
+        }
+
+        bool matches(EventTarget& target, const AtomicString& type, EventListener& listener, bool capture)
+        {
+            if (eventTarget.get() != &target)
+                return false;
+            if (eventListener.get() != &listener)
+                return false;
+            if (eventType != type)
+                return false;
+            if (useCapture != capture)
+                return false;
+            return true;
         }
     };
 
-    HashMap<EventListener*, InspectorEventListener> m_eventListenerEntries;
+    HashMap<int, InspectorEventListener> m_eventListenerEntries;
     int m_lastEventListenerId { 1 };
 };
 

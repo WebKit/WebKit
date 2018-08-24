@@ -453,7 +453,7 @@ private:
 
     static InspectorTimelineAgent* retrieveTimelineAgent(const InspectorInstrumentationCookie&);
 
-    static void pauseOnNativeEventIfNeeded(InstrumentingAgents&, bool isDOMEvent, const String& eventName, bool synchronous);
+    static void pauseOnNativeEventIfNeeded(InstrumentingAgents&, const String& eventName, bool synchronous);
 
     WEBCORE_EXPORT static int s_frontendCounter;
 };

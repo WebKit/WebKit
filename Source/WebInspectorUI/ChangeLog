@@ -1,3 +1,46 @@
+2018-08-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: allow breakpoints to be set for specific event listeners
+        https://bugs.webkit.org/show_bug.cgi?id=183138
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Models/EventBreakpoint.js:
+        (WI.EventBreakpoint):
+        (WI.EventBreakpoint.fromPayload): Added.
+        (WI.EventBreakpoint.prototype.get eventListener): Added.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager):
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WI.DOMTreeManager):
+        (WI.DOMTreeManager.prototype.get eventBreakpoints): Added.
+        (WI.DOMTreeManager.prototype._setDocument):
+        (WI.DOMTreeManager.prototype.setEventListenerDisabled):
+        (WI.DOMTreeManager.prototype.setBreakpointForEventListener): Added.
+        (WI.DOMTreeManager.prototype.removeBreakpointForEventListener): Added.
+        (WI.DOMTreeManager.prototype.breakpointForEventListenerId): Added.
+
+        * UserInterface/Controllers/EventBreakpointTreeController.js:
+        (WI.EventBreakpointTreeController):
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype._updatePauseReasonSection):
+
+        * UserInterface/Views/EventListenerSectionGroup.js:
+        (WI.EventListenerSectionGroup):
+        (WI.EventListenerSectionGroup.prototype._createDisabledToggleRow):
+        (WI.EventListenerSectionGroup.prototype._createBreakpointToggleRow): Added.
+
+        * UserInterface/Views/EventBreakpointTreeElement.js:
+        (WI.EventBreakpointTreeElement):
+        (WI.EventBreakpointTreeElement.prototype.ondelete):
+        (WI.EventBreakpointTreeElement.prototype.populateContextMenu):
+        (WI.EventBreakpointTreeElement.prototype._toggleBreakpoint):
+
 2018-08-16  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: support breakpoints for arbitrary event names
