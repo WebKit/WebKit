@@ -1,3 +1,20 @@
+2018-08-21  Daniel Bates  <dabates@apple.com>
+
+        Disallow navigations when page cache updates the current document of the frame
+        https://bugs.webkit.org/show_bug.cgi?id=188422
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a test case that ensures that we do not hit the assertion ASSERT(ownerFrame || m_frame.isMainFrame())
+        in FrameLoader::addExtraFieldsToRequest() when navigating back to a page that loads a nested
+        page, whose URL contains a fragment, via an HTML object element. This assertion fails if
+        navigations are allowed when restoring a page from the page cache.
+
+        This change does not prevent navigations initiated from a pageshow event handler.
+
+        * fast/history/go-back-to-object-subframe-expected.txt: Added.
+        * fast/history/go-back-to-object-subframe.html: Added.
+
 2018-08-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: allow breakpoints to be set for specific event listeners
