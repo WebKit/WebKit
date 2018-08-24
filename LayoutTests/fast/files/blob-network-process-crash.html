@@ -7,7 +7,11 @@ WebKit should not hit a debug assertion in the network process.</p>
 
 if (!window.testRunner)
     document.write('This test requires testRunner and GCController');
-else {
+else
+    runTest();
+
+async function runTest()
+{
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
 
@@ -20,19 +24,28 @@ else {
 
     testRunner.terminateNetworkProcess();
 
-    // FIXME: If we don't store the timer, timer sometimes never fires.
-    window.timer = setTimeout(() => {
-        const newBlob = new Blob(["some text"]);
-        for (let i = 0; i < 100; i++) {
-            for (let j = 0; j < 10; j++)
-                blobs[i][j] = { };
-        }
-        blobs = null;
-        GCController.collect();
-        fetch('blob-network-process-crash.html').then(() => {
-            testRunner.notifyDone();
-        });
-    }, 0);
+    await waitForNetworkProcessToRelaunch();
+    const newBlob = new Blob(["some text"]);
+    for (let i = 0; i < 100; i++) {
+        for (let j = 0; j < 10; j++)
+            blobs[i][j] = { };
+    }
+    blobs = null;
+    GCController.collect();
+
+    await fetch('blob-network-process-crash.html');
+
+    testRunner.notifyDone();
+}
+
+let waitTime = 10;
+function waitForNetworkProcessToRelaunch() {
+    return fetch('blob-network-process-crash.html').catch(() => {
+        return new Promise((resolve, reject) => {
+            waitTime *= 1.2;
+            setTimeout(() => waitForNetworkProcessToRelaunch().then(resolve), waitTime);
+        })
+    });
 }
 
 </script>

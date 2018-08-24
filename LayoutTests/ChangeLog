@@ -1,5 +1,19 @@
 2018-08-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        fast/files/blob-network-process-crash.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=188911
+
+        Reviewed by Saam Barati.
+
+        The flakiness appears to come from the web content process not getting notified of
+        the termination of the network process in time. Wait for the network process to
+        relaunch after terminating one by continuously fetch'ing itself with an increasing
+        time interval until it succeeds.
+
+        * fast/files/blob-network-process-crash.html:
+
+2018-08-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add a flaky failing test expectation to fast/files/blob-network-process-crash.html
         while we investigate the root cause in webkit.org/b/188911.
 
