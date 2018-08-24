@@ -61,7 +61,7 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
         }
     }
 
-    m_curlRequest = createCurlRequest(request, ShouldPreprocess::Yes);
+    m_curlRequest = createCurlRequest(request);
     if (!m_initialCredential.isEmpty())
         m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
     m_curlRequest->start();
@@ -126,11 +126,11 @@ NetworkDataTask::State NetworkDataTaskCurl::state() const
     return m_state;
 }
 
-Ref<CurlRequest> NetworkDataTaskCurl::createCurlRequest(const ResourceRequest& request, ShouldPreprocess shouldPreprocess)
+Ref<CurlRequest> NetworkDataTaskCurl::createCurlRequest(const ResourceRequest& request, RequestStatus status)
 {
     m_currentRequest = request;
 
-    if (shouldPreprocess == ShouldPreprocess::Yes)
+    if (status == RequestStatus::NewRequest)
         appendCookieHeader(m_currentRequest);
 
     // Creates a CurlRequest in suspended state.
@@ -295,7 +295,7 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
         if (m_curlRequest)
             m_curlRequest->cancel();
 
-        m_curlRequest = createCurlRequest(newRequest, ShouldPreprocess::Yes);
+        m_curlRequest = createCurlRequest(newRequest);
         if (didChangeCredential && !m_initialCredential.isEmpty())
             m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
         m_curlRequest->start();
@@ -365,7 +365,7 @@ void NetworkDataTaskCurl::restartWithCredential(const Credential& credential)
     if (m_curlRequest)
         m_curlRequest->cancel();
 
-    m_curlRequest = createCurlRequest(m_currentRequest, ShouldPreprocess::No);
+    m_curlRequest = createCurlRequest(m_currentRequest, RequestStatus::ReusedRequest);
     if (!credential.isEmpty())
         m_curlRequest->setUserPass(credential.user(), credential.password());
     m_curlRequest->start();
