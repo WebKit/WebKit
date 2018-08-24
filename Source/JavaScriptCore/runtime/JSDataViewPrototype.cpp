@@ -39,22 +39,22 @@ namespace JSC {
 
 /* Source for JSDataViewPrototype.lut.h
 @begin dataViewTable
-  getInt8               dataViewProtoFuncGetInt8             DontEnum|Function       1
-  getUint8              dataViewProtoFuncGetUint8            DontEnum|Function       1
-  getInt16              dataViewProtoFuncGetInt16            DontEnum|Function       1
-  getUint16             dataViewProtoFuncGetUint16           DontEnum|Function       1
-  getInt32              dataViewProtoFuncGetInt32            DontEnum|Function       1
-  getUint32             dataViewProtoFuncGetUint32           DontEnum|Function       1
-  getFloat32            dataViewProtoFuncGetFloat32          DontEnum|Function       1
-  getFloat64            dataViewProtoFuncGetFloat64          DontEnum|Function       1
-  setInt8               dataViewProtoFuncSetInt8             DontEnum|Function       2
-  setUint8              dataViewProtoFuncSetUint8            DontEnum|Function       2
-  setInt16              dataViewProtoFuncSetInt16            DontEnum|Function       2
-  setUint16             dataViewProtoFuncSetUint16           DontEnum|Function       2
-  setInt32              dataViewProtoFuncSetInt32            DontEnum|Function       2
-  setUint32             dataViewProtoFuncSetUint32           DontEnum|Function       2
-  setFloat32            dataViewProtoFuncSetFloat32          DontEnum|Function       2
-  setFloat64            dataViewProtoFuncSetFloat64          DontEnum|Function       2
+  getInt8               dataViewProtoFuncGetInt8             DontEnum|Function       1  DataViewGetInt8
+  getUint8              dataViewProtoFuncGetUint8            DontEnum|Function       1  DataViewGetUint8
+  getInt16              dataViewProtoFuncGetInt16            DontEnum|Function       1  DataViewGetInt16
+  getUint16             dataViewProtoFuncGetUint16           DontEnum|Function       1  DataViewGetUint16
+  getInt32              dataViewProtoFuncGetInt32            DontEnum|Function       1  DataViewGetInt32
+  getUint32             dataViewProtoFuncGetUint32           DontEnum|Function       1  DataViewGetUint32
+  getFloat32            dataViewProtoFuncGetFloat32          DontEnum|Function       1  DataViewGetFloat32
+  getFloat64            dataViewProtoFuncGetFloat64          DontEnum|Function       1  DataViewGetFloat64
+  setInt8               dataViewProtoFuncSetInt8             DontEnum|Function       2  DataViewSetInt8
+  setUint8              dataViewProtoFuncSetUint8            DontEnum|Function       2  DataViewSetUint8
+  setInt16              dataViewProtoFuncSetInt16            DontEnum|Function       2  DataViewSetInt16
+  setUint16             dataViewProtoFuncSetUint16           DontEnum|Function       2  DataViewSetUint16
+  setInt32              dataViewProtoFuncSetInt32            DontEnum|Function       2  DataViewSetInt32
+  setUint32             dataViewProtoFuncSetUint32           DontEnum|Function       2  DataViewSetUint32
+  setFloat32            dataViewProtoFuncSetFloat32          DontEnum|Function       2  DataViewSetFloat32
+  setFloat64            dataViewProtoFuncSetFloat64          DontEnum|Function       2  DataViewSetFloat64
   buffer                dataViewProtoGetterBuffer            DontEnum|Accessor       0
   byteLength            dataViewProtoGetterByteLength        DontEnum|Accessor       0
   byteOffset            dataViewProtoGetterByteOffset        DontEnum|Accessor       0

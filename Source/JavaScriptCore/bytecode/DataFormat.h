@@ -38,7 +38,7 @@ namespace JSC {
 enum DataFormat {
     DataFormatNone = 0,
     DataFormatInt32 = 1,
-    DataFormatInt52 = 2, // Int52's are left-shifted by 16 by default.
+    DataFormatInt52 = 2, // Int52's are left-shifted by 12 by default.
     DataFormatStrictInt52 = 3, // "Strict" Int52 means it's not shifted.
     DataFormatDouble = 4,
     DataFormatBoolean = 5,

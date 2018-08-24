@@ -359,6 +359,9 @@ inline CapabilityLevel canCompile(Node* node)
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
     case CreateThis:
+    case DataViewGetInt:
+    case DataViewGetFloat:
+    case DataViewSet:
         // These are OK.
         break;
 
@@ -445,6 +448,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case SetObjectUse:
                 case WeakMapObjectUse:
                 case WeakSetObjectUse:
+                case DataViewObjectUse:
                 case FinalObjectUse:
                 case RegExpObjectUse:
                 case ProxyObjectUse:

@@ -4107,6 +4107,9 @@ void SpeculativeJIT::compile(Node* node)
     case EntrySwitch:
     case CPUIntrinsic:
     case AssertNotEmpty:
+    case DataViewGetInt:
+    case DataViewGetFloat:
+    case DataViewSet:
         DFG_CRASH(m_jit.graph(), node, "unexpected node in DFG backend");
         break;
     }

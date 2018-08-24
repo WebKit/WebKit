@@ -65,6 +65,7 @@ public:
         case SetObjectUse:
         case WeakMapObjectUse:
         case WeakSetObjectUse:
+        case DataViewObjectUse:
         case ObjectOrOtherUse:
         case StringIdentUse:
         case StringUse:
@@ -462,6 +463,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case AtomicsIsLockFree:
     case InitializeEntrypointArguments:
     case MatchStructure:
+    case DataViewGetInt:
+    case DataViewGetFloat:
         return true;
 
     case ArraySlice:
@@ -601,6 +604,9 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
         }
         return true;
     }
+
+    case DataViewSet:
+        return false;
 
     case SetAdd:
     case MapSet:

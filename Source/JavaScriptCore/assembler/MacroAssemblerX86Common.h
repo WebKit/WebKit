@@ -408,6 +408,24 @@ public:
         m_assembler.popcnt_rr(src, dst);
     }
 
+    void byteSwap32(RegisterID dst)
+    {
+        m_assembler.bswapl_r(dst);
+    }
+
+    void byteSwap16(RegisterID dst)
+    {
+        m_assembler.rolw_i8r(8, dst);
+        zeroExtend16To32(dst, dst);
+    }
+
+#if CPU(X86_64)
+    void byteSwap64(RegisterID dst)
+    {
+        m_assembler.bswapq_r(dst);
+    }
+#endif
+
     // Only used for testing purposes.
     void illegalInstruction()
     {

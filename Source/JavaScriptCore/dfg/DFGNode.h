@@ -117,6 +117,19 @@ struct NewArrayBufferData {
 static_assert(sizeof(IndexingType) <= sizeof(unsigned), "");
 static_assert(sizeof(NewArrayBufferData) == sizeof(uint64_t), "");
 
+struct DataViewData {
+    union {
+        struct {
+            uint8_t byteSize;
+            bool isSigned;
+            bool isFloatingPoint; // Used for the DataViewSet node.
+            TriState isLittleEndian;
+        };
+        uint64_t asQuadWord;
+    };
+};
+static_assert(sizeof(DataViewData) == sizeof(uint64_t), "");
+
 struct BranchTarget {
     BranchTarget()
         : block(0)
@@ -1659,6 +1672,8 @@ public:
         case GetDynamicVar:
         case ExtractValueFromWeakMapGet:
         case ToThis:
+        case DataViewGetInt:
+        case DataViewGetFloat:
             return true;
         default:
             return false;
@@ -2141,6 +2156,12 @@ public:
     {
         ASSERT(op() == InitializeEntrypointArguments);
         return m_opInfo.as<unsigned>();
+    }
+
+    DataViewData dataViewData()
+    {
+        ASSERT(op() == DataViewGetInt || op() == DataViewGetFloat || op() == DataViewSet);
+        return bitwise_cast<DataViewData>(m_opInfo.as<uint64_t>());
     }
 
     bool shouldGenerate()
