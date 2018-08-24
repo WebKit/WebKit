@@ -368,6 +368,9 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlagsAfterLayout()
 
 bool RenderLayerCompositor::updateCompositingPolicy()
 {
+    if (!inCompositingMode())
+        return false;
+
     auto currentPolicy = m_compositingPolicy;
     if (page().compositingPolicyOverride()) {
         m_compositingPolicy = page().compositingPolicyOverride().value();
