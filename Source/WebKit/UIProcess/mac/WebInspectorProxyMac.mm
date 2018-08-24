@@ -36,6 +36,7 @@
 #import "WebInspectorUIMessages.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
+#import "_WKInspectorInternal.h"
 #import <WebCore/InspectorFrontendClientLocal.h>
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/SoftLinking.h>
@@ -63,6 +64,13 @@ static const Seconds webViewCloseTimeout { 1_min };
 - (WKInspectorRef)inspectorRef
 {
     return toAPI(_inspectorProxy);
+}
+
+- (_WKInspector *)inspector
+{
+    if (_inspectorProxy)
+        return wrapper(*_inspectorProxy);
+    return nil;
 }
 
 - (instancetype)initWithWebInspectorProxy:(WebKit::WebInspectorProxy*)inspectorProxy
