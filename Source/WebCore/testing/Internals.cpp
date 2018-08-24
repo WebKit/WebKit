@@ -4294,6 +4294,9 @@ Vector<String> Internals::accessKeyModifiers() const
         case PlatformEvent::Modifier::CapsLockKey:
             accessKeyModifierStrings.append("capsLockKey"_s);
             break;
+        case PlatformEvent::Modifier::AltGraphKey:
+            ASSERT_NOT_REACHED(); // AltGraph is only for DOM API.
+            break;
         }
     }
 

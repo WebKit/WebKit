@@ -44,21 +44,12 @@ public:
 
 private:
     SimulatedMouseEvent(const AtomicString& eventType, RefPtr<WindowProxy>&& view, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
-        : MouseEvent(eventType, CanBubble::Yes, IsCancelable::Yes, underlyingEvent ? underlyingEvent->timeStamp() : MonotonicTime::now(), WTFMove(view), 0, { }, { },
-#if ENABLE(POINTER_LOCK)
-            { },
-#endif
-            false, false, false, false, 0, 0, nullptr, 0, 0, nullptr, true)
+        : MouseEvent(eventType, CanBubble::Yes, IsCancelable::Yes, underlyingEvent ? underlyingEvent->timeStamp() : MonotonicTime::now(), WTFMove(view), /* detail */ 0,
+            { }, { }, { }, modifiersFromUnderlyingEvent(underlyingEvent), 0, 0, nullptr, 0, 0, nullptr, IsSimulated::Yes)
     {
         if (source == SimulatedClickSource::Bindings)
             setUntrusted();
 
-        if (UIEventWithKeyState* keyStateEvent = findEventWithKeyState(underlyingEvent.get())) {
-            m_ctrlKey = keyStateEvent->ctrlKey();
-            m_altKey = keyStateEvent->altKey();
-            m_shiftKey = keyStateEvent->shiftKey();
-            m_metaKey = keyStateEvent->metaKey();
-        }
         setUnderlyingEvent(underlyingEvent.get());
 
         if (is<MouseEvent>(this->underlyingEvent())) {
@@ -75,6 +66,13 @@ private:
         }
     }
 
+    static OptionSet<Modifier> modifiersFromUnderlyingEvent(const RefPtr<Event>& underlyingEvent)
+    {
+        UIEventWithKeyState* keyStateEvent = findEventWithKeyState(underlyingEvent.get());
+        if (!keyStateEvent)
+            return { };
+        return keyStateEvent->modifierKeys();
+    }
 };
 
 static void simulateMouseEvent(const AtomicString& eventType, Element& element, Event* underlyingEvent, SimulatedClickSource source)

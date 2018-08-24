@@ -1,3 +1,70 @@
+2018-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Replace booleans for modifier keys in UIEventWithKeyState with OptionSet<Modifier>
+        https://bugs.webkit.org/show_bug.cgi?id=188777
+
+        Reviewed by Simon Fraser.
+
+        Replaced boolean arguments and instance variables for modifier keys (ctrl, alt, shift, and meta keys) in
+        UIEventWithKeyState with OptionSet<Modifier> and isSimulated boolean in MouseRelatedEvent with IsSimulated
+        enum class.
+
+        Also made movementDelta always compiled instead of only when ENABLE(POINTER_LOCK) to simplify the code.
+
+        No new tests since there should be no observable behavioral change.
+
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchMouseEvent):
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        (WebCore::KeyboardEvent::initKeyboardEvent): Call setModifierKeys.
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create):
+        (WebCore::MouseEvent::MouseEvent):
+        (WebCore::MouseEvent::initMouseEvent): Ditto.
+        * dom/MouseEvent.h:
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent): Added a new variant which takes the minimum arguments
+        for gesture & touch events. In those events, detail is always set to 0, movementDelta is always set to 0,0,
+        and they are never simulated.
+        * dom/MouseRelatedEvent.h:
+        (WebCore::MouseRelatedEvent::IsSimulated): Added.
+        * dom/SimulatedClick.cpp:
+        (WebCore::SimulatedMouseEvent::SimulatedMouseEvent): Get OptionSet<Modifier> out of the underlying event
+        instead of manually setting each key state. This code now preserves the state of caps lock and alt-graph
+        keys but this is not observable because we have yet to implement getModifierState on MouseEvent.
+        (WebCore::SimulatedMouseEvent::modifiersFromUnderlyingEvent): Added.
+        * dom/TouchEvent.cpp:
+        (WebCore::TouchEvent::TouchEvent):
+        * dom/TouchEvent.h:
+        * dom/UIEventWithKeyState.h:
+        (WebCore::UIEventWithKeyState::Modifier): Alias to PlatformEvent::Modifier.
+        (WebCore::UIEventWithKeyState::ctrlKey const): Updated to use m_modifiers.
+        (WebCore::UIEventWithKeyState::shiftKey const): Ditto.
+        (WebCore::UIEventWithKeyState::altKey const): Ditto.
+        (WebCore::UIEventWithKeyState::metaKey const): Ditto.
+        (WebCore::UIEventWithKeyState::altGraphKey const): Ditto.
+        (WebCore::UIEventWithKeyState::capsLockKey const): Ditto.
+        (WebCore::UIEventWithKeyState::modifierKeys): Added.
+        (WebCore::UIEventWithKeyState::UIEventWithKeyState): Now takes OptionSet<Modifier>.
+        (WebCore::UIEventWithKeyState::setModifierKeys): Added. Used by init*Event functions in subclasses. Note that
+        these functions preseve the states of alt-graph and caps lock keys to match the existing behaviors in this
+        cleanup patch but they don't match behaviors of Chrome or Firefox.
+        (WebCore::UIEventWithKeyState::modifiersFromInitializer): Added.
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent): Simulated::No corresponds to the last boolean being false.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragEvent):
+        (WebCore::EventHandler::handleTouchEvent):
+        * platform/PlatformEvent.h:
+        (WebCore::PlatformEvent::Modifier): Added AltGraphKey.
+        * platform/mac/PlatformEventFactoryMac.h:
+        (WebCore::modifiersForEvent): Exported to be used in [WebPDFView PDFViewWillClickOnLink:withURL:].
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::modifiersForEvent):
+        * testing/Internals.cpp:
+        (WebCore::Internals::accessKeyModifiers const):
+
 2018-08-21  Daniel Bates  <dabates@apple.com>
 
         Disallow navigations when page cache updates the current document of the frame
