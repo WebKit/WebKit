@@ -31,7 +31,6 @@
 #import "AppKitCompatibilityDeclarations.h"
 #import "SettingsController.h"
 #import <WebKit/WKFrameInfo.h>
-#import <WebKit/WKInspector.h>
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKPage.h>
@@ -43,6 +42,7 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/_WKIconLoadingDelegate.h>
+#import <WebKit/_WKInspector.h>
 #import <WebKit/_WKLinkIconParameters.h>
 #import <WebKit/_WKUserInitiatedAction.h>
 
@@ -209,7 +209,7 @@ static BOOL areEssentiallyEqual(double a, double b)
     else if (action == @selector(toggleEditable:))
         [menuItem setState:self.isEditable ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(showHideWebInspector:))
-        [menuItem setTitle:WKInspectorIsVisible(WKPageGetInspector(_webView._pageRefForTransitionToWKWebView)) ? @"Close Web Inspector" : @"Show Web Inspector"];
+        [menuItem setTitle:_webView._inspector.isVisible ? @"Close Web Inspector" : @"Show Web Inspector"];
     else if (action == @selector(toggleAlwaysShowsHorizontalScroller:))
         menuItem.state = _webView._alwaysShowsHorizontalScroller ? NSControlStateValueOn : NSControlStateValueOff;
     else if (action == @selector(toggleAlwaysShowsVerticalScroller:))
@@ -289,11 +289,11 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 - (IBAction)showHideWebInspector:(id)sender
 {
-    WKInspectorRef inspectorRef = WKPageGetInspector(_webView._pageRefForTransitionToWKWebView);
-    if (WKInspectorIsVisible(inspectorRef))
-        WKInspectorHide(inspectorRef);
+    _WKInspector *inspector = _webView._inspector;
+    if (inspector.isVisible)
+        [inspector hide];
     else
-        WKInspectorShow(inspectorRef);
+        [inspector show];
 }
 
 - (IBAction)toggleAlwaysShowsHorizontalScroller:(id)sender

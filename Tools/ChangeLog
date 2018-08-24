@@ -1,3 +1,15 @@
+2018-08-24  Alex Christensen  <achristensen@webkit.org>
+
+        Introduce _WKInspector
+        https://bugs.webkit.org/show_bug.cgi?id=188923
+        <rdar://problem/34657861>
+
+        Reviewed by Brian Burg.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController validateMenuItem:]):
+        (-[WK2BrowserWindowController showHideWebInspector:]):
+
 2018-08-24  Jonathan Bedard  <jbedard@apple.com>
 
         Fix handling of iOS minor versions in default_baseline_search_path

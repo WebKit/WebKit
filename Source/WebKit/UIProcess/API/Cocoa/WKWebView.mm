@@ -89,6 +89,7 @@
 #import "_WKFullscreenDelegate.h"
 #import "_WKHitTestResultInternal.h"
 #import "_WKInputDelegate.h"
+#import "_WKInspectorInternal.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKSessionStateInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
@@ -6474,6 +6475,13 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 - (void)_setDefersLoadingForTesting:(BOOL)defersLoading
 {
     _page->setDefersLoadingForTesting(defersLoading);
+}
+
+- (_WKInspector *)_inspector
+{
+    if (auto* inspector = _page->inspector())
+        return wrapper(*inspector);
+    return nil;
 }
 
 - (void)_denyNextUserMediaRequest

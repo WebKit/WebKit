@@ -101,6 +101,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @class _WKFrameHandle;
 @class _WKHitTestResult;
 @class _WKIconLoadingDelegate;
+@class _WKInspector;
 @class _WKRemoteObjectRegistry;
 @class _WKSessionState;
 @class _WKThumbnailView;
@@ -467,6 +468,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (BOOL)_beginBackSwipeForTesting;
 - (BOOL)_completeBackSwipeForTesting;
 - (void)_setDefersLoadingForTesting:(BOOL)defersLoading;
+
+@property (nonatomic, readonly) _WKInspector *_inspector WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

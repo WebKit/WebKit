@@ -75,6 +75,7 @@
 #import "_WKFrameHandleInternal.h"
 #import "_WKGeolocationPositionInternal.h"
 #import "_WKHitTestResultInternal.h"
+#import "_WKInspectorInternal.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 #import "_WKUserContentWorldInternal.h"
 #import "_WKUserInitiatedActionInternal.h"
@@ -233,6 +234,10 @@ void* Object::newObject(size_t size, Type type)
         break;
 #endif
 
+    case Type::Inspector:
+        wrapper = [_WKInspector alloc];
+        break;
+        
     case Type::Navigation:
         wrapper = [WKNavigation alloc];
         break;

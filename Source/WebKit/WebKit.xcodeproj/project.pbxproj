@@ -1165,6 +1165,9 @@
 		5C9E56821DF7F1AB00C9EE33 /* WKWebsitePolicies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C9E56801DF7F05500C9EE33 /* WKWebsitePolicies.cpp */; };
 		5C9E56831DF7F1B300C9EE33 /* WKWebsitePolicies.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C9E56811DF7F05500C9EE33 /* WKWebsitePolicies.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CA9854A210BEB640057EB6B /* SafeBrowsingResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CA98549210BEB5A0057EB6B /* SafeBrowsingResult.h */; };
+		5CAFDE452130846300B1F7E1 /* _WKInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CAFDE422130843500B1F7E1 /* _WKInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5CAFDE462130846800B1F7E1 /* _WKInspector.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CAFDE432130843600B1F7E1 /* _WKInspector.mm */; };
+		5CAFDE472130846A00B1F7E1 /* _WKInspectorInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CAFDE442130843600B1F7E1 /* _WKInspectorInternal.h */; };
 		5CB2378B1DF0DE5300117AA3 /* _WKWebsitePolicies.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2378A1DF0DD4300117AA3 /* _WKWebsitePolicies.mm */; };
 		5CB2378C1DF0DE6E00117AA3 /* _WKWebsitePolicies.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB237891DF0DD4300117AA3 /* _WKWebsitePolicies.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CB2378E1DF0E0D300117AA3 /* _WKWebsitePoliciesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB2378D1DF0E0C200117AA3 /* _WKWebsitePoliciesInternal.h */; };
@@ -3651,6 +3654,9 @@
 		5C9E56811DF7F05500C9EE33 /* WKWebsitePolicies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebsitePolicies.h; sourceTree = "<group>"; };
 		5CA98549210BEB5A0057EB6B /* SafeBrowsingResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SafeBrowsingResult.h; sourceTree = "<group>"; };
 		5CA9854B210BEB730057EB6B /* SafeBrowsingResultCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SafeBrowsingResultCocoa.mm; sourceTree = "<group>"; };
+		5CAFDE422130843500B1F7E1 /* _WKInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspector.h; sourceTree = "<group>"; };
+		5CAFDE432130843600B1F7E1 /* _WKInspector.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKInspector.mm; sourceTree = "<group>"; };
+		5CAFDE442130843600B1F7E1 /* _WKInspectorInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorInternal.h; sourceTree = "<group>"; };
 		5CB237891DF0DD4300117AA3 /* _WKWebsitePolicies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebsitePolicies.h; sourceTree = "<group>"; };
 		5CB2378A1DF0DD4300117AA3 /* _WKWebsitePolicies.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebsitePolicies.mm; sourceTree = "<group>"; };
 		5CB2378D1DF0E0C200117AA3 /* _WKWebsitePoliciesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebsitePoliciesInternal.h; sourceTree = "<group>"; };
@@ -6156,6 +6162,9 @@
 				63C32C271E98119000699BD0 /* _WKGeolocationPositionInternal.h */,
 				5143B25E1DDCDFD10014FAC6 /* _WKIconLoadingDelegate.h */,
 				37A64E5418F38E3C00EB30F1 /* _WKInputDelegate.h */,
+				5CAFDE422130843500B1F7E1 /* _WKInspector.h */,
+				5CAFDE432130843600B1F7E1 /* _WKInspector.mm */,
+				5CAFDE442130843600B1F7E1 /* _WKInspectorInternal.h */,
 				2D790A9C1AD7050D00AB90B3 /* _WKLayoutMode.h */,
 				51C0C9791DDD78540032CAD3 /* _WKLinkIconParameters.h */,
 				51C0C97A1DDD78540032CAD3 /* _WKLinkIconParameters.mm */,
@@ -8939,6 +8948,8 @@
 				93A88B3B1BC710D900ABA5C2 /* _WKHitTestResultInternal.h in Headers */,
 				510F59101DDE296900412FF5 /* _WKIconLoadingDelegate.h in Headers */,
 				37A64E5518F38E3C00EB30F1 /* _WKInputDelegate.h in Headers */,
+				5CAFDE452130846300B1F7E1 /* _WKInspector.h in Headers */,
+				5CAFDE472130846A00B1F7E1 /* _WKInspectorInternal.h in Headers */,
 				2D790A9D1AD7050D00AB90B3 /* _WKLayoutMode.h in Headers */,
 				510F59111DDE297000412FF5 /* _WKLinkIconParameters.h in Headers */,
 				A118A9F31908B8EA00F7C92B /* _WKNSFileManagerExtras.h in Headers */,
@@ -10847,6 +10858,7 @@
 				373D122218A473010066D9CC /* _WKFrameHandle.mm in Sources */,
 				63C32C251E9810D900699BD0 /* _WKGeolocationPosition.mm in Sources */,
 				93A88B391BC70F3F00ABA5C2 /* _WKHitTestResult.mm in Sources */,
+				5CAFDE462130846800B1F7E1 /* _WKInspector.mm in Sources */,
 				510F59121DDE297700412FF5 /* _WKLinkIconParameters.mm in Sources */,
 				A118A9F21908B8EA00F7C92B /* _WKNSFileManagerExtras.mm in Sources */,
 				A5C0F0A82000655100536536 /* _WKNSWindowExtras.mm in Sources */,

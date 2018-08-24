@@ -1,3 +1,41 @@
+2018-08-24  Alex Christensen  <achristensen@webkit.org>
+
+        Introduce _WKInspector
+        https://bugs.webkit.org/show_bug.cgi?id=188923
+        <rdar://problem/34657861>
+
+        Reviewed by Brian Burg.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _inspector]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKInspector.h: Added.
+        * UIProcess/API/Cocoa/_WKInspector.mm: Added.
+        (-[_WKInspector webView]):
+        (-[_WKInspector isConnected]):
+        (-[_WKInspector isVisible]):
+        (-[_WKInspector isFront]):
+        (-[_WKInspector isProfilingPage]):
+        (-[_WKInspector isElementSelectionActive]):
+        (-[_WKInspector connect]):
+        (-[_WKInspector show]):
+        (-[_WKInspector hide]):
+        (-[_WKInspector close]):
+        (-[_WKInspector showConsole]):
+        (-[_WKInspector showResources]):
+        (-[_WKInspector showMainResourceForFrame:]):
+        (-[_WKInspector attach]):
+        (-[_WKInspector detach]):
+        (-[_WKInspector showTimelines]):
+        (-[_WKInspector togglePageProfiling]):
+        (-[_WKInspector toggleElementSelection]):
+        (-[_WKInspector printErrorToConsole:]):
+        (-[_WKInspector _apiObject]):
+        * UIProcess/API/Cocoa/_WKInspectorInternal.h: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-08-24  Sihui Liu  <sihui_liu@apple.com>
 
         Don't launch network process in WebCookieManagerProxy::setHTTPCookieAcceptPolicy
