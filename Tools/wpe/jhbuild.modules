@@ -18,7 +18,7 @@
       <dep package="harfbuzz"/>
       <dep package="webkit-gstreamer-testing-dependencies"/>
       <dep package="woff2"/>
-      <dep package="wpebackend"/>
+      <dep package="libwpe"/>
       <dep package="wpebackend-fdo"/>
       <dep package="libgpg-error"/>
       <dep package="libgcrypt"/>
@@ -46,6 +46,8 @@
       href="http://download.savannah.gnu.org/releases/"/>
   <repository type="tarball" name="gnupg.org"
       href="https://www.gnupg.org/ftp/gcrypt/"/>
+  <repository type="tarball" name="wpewebkit"
+      href="https://wpewebkit.org/releases/"/>
 
   <cmake id="brotli">
     <branch repo="github.com" module="google/brotli.git" checkoutdir="brotli" tag="v1.0.1"/>
@@ -165,18 +167,18 @@
             hash="sha1:c6f7b99986f93c9df78653c3e6a3b5043f65145e"/>
   </autotools>
 
-  <cmake id="wpebackend">
-    <branch repo="github.com" module="WebPlatformForEmbedded/WPEBackend.git"
-            tag="45148ff5e802c6cd1d30d3c318ff6bb5bdf2c4aa" />
+  <cmake id="libwpe">
+      <branch repo="wpewebkit" module="libwpe-1.0.0.tar.xz" version="1.0.0"
+              hash="sha256:aff11612123f9ab85a8b9a4bcdfb3a7503eba0a0d2d96f2cdecd30e911091719" />
   </cmake>
 
   <cmake id="wpebackend-fdo">
     <dependencies>
-      <dep package="wpebackend"/>
+      <dep package="libwpe"/>
       <dep package="glib"/>
     </dependencies>
-    <branch repo="github.com" module="Igalia/WPEBackend-fdo.git"
-            tag="fac3fe1ea78b6fc5b6005adfceb93eeb46681485"/>
+    <branch repo="wpewebkit" module="wpebackend-fdo-1.0.0.tar.xz" version="1.0.0"
+            hash="sha256:7a747f87a1ae46d30144369050e3ce348b58986d04e1a139ba75c198fa636729"/>
   </cmake>
 
   <autotools id="libgpg-error" autogen-sh="configure">

@@ -1,3 +1,17 @@
+2018-08-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Update to use libwpe-1.0.0 and WPEBackend-fdo-1.0.0
+        https://bugs.webkit.org/show_bug.cgi?id=188782
+
+        Reviewed by Michael Catanzaro.
+
+        Make the build depend on wpe-0.2, and change the Flatpak and JHBuild development
+        environments to use version 1.0.0 of libwpe and WPEBackend-fdo.
+
+        * flatpak/org.webkit.WPE.yaml: Update to use libwpe and WPEBackend-fdo version 1.0.0 from
+        release tarballs, and removed the (now unneeded) Lua and LuaJIT modules.
+        * wpe/jhbuild.modules: Ditto.
+
 2018-08-20  Bernhard M. Wiedemann  <bwiedemann@suse.de>
 
         [GTK] Sort inspector GResource manifest to ensure reproducible builds

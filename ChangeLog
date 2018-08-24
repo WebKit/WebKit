@@ -1,3 +1,17 @@
+2018-08-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Update to use libwpe-1.0.0 and WPEBackend-fdo-1.0.0
+        https://bugs.webkit.org/show_bug.cgi?id=188782
+
+        Reviewed by Michael Catanzaro.
+
+        Make the build depend on wpe-0.2, and change the Flatpak and JHBuild development
+        environments to use version 1.0.0 of libwpe and WPEBackend-fdo.
+
+        * Source/cmake/FindWPE.cmake: Renamed from Source/cmake/FindWPEBackend.cmake and changed
+        to check for libwpe-0.2.
+        * Source/cmake/OptionsWPE.cmake: Adapt to the rename to FindWPE.cmake.
+
 2018-08-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Adjust CMAKE_MODULE_LINKER_FLAGS for asan
