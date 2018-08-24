@@ -1128,12 +1128,16 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         }
 
         const RegisterID character = regT0;
-        unsigned maxCharactersAtOnce = m_charSize == Char8 ? 4 : 2;
-        unsigned ignoreCaseMask = 0;
-#if CPU(BIG_ENDIAN)
-        int allCharacters = ch << (m_charSize == Char8 ? 24 : 16);
+#if CPU(X86_64) || CPU(ARM64)
+        unsigned maxCharactersAtOnce = m_charSize == Char8 ? 8 : 4;
 #else
-        int allCharacters = ch;
+        unsigned maxCharactersAtOnce = m_charSize == Char8 ? 4 : 2;
+#endif
+        uint64_t ignoreCaseMask = 0;
+#if CPU(BIG_ENDIAN)
+        uint64_t allCharacters = ch << (m_charSize == Char8 ? 24 : 16);
+#else
+        uint64_t allCharacters = ch;
 #endif
         unsigned numberCharacters;
         unsigned startTermPosition = term->inputPosition;
@@ -1142,16 +1146,19 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         // upper & lower case representations are converted to a character class.
         ASSERT(!m_pattern.ignoreCase() || isASCIIAlpha(ch) || isCanonicallyUnique(ch, m_canonicalMode));
 
-        if (m_pattern.ignoreCase() && isASCIIAlpha(ch))
+        if (m_pattern.ignoreCase() && isASCIIAlpha(ch)) {
 #if CPU(BIG_ENDIAN)
             ignoreCaseMask |= 32 << (m_charSize == Char8 ? 24 : 16);
 #else
             ignoreCaseMask |= 32;
 #endif
+        }
 
         for (numberCharacters = 1; numberCharacters < maxCharactersAtOnce && nextOp->m_op == OpTerm; ++numberCharacters, nextOp = &m_ops[opIndex + numberCharacters]) {
             PatternTerm* nextTerm = nextOp->m_term;
-            
+
+            // YarrJIT handles decoded surrogate pair as one character if unicode flag is enabled.
+            // Note that the numberCharacters become 1 while the width of the pattern character becomes 32bit in this case.
             if (nextTerm->type != PatternTerm::TypePatternCharacter
                 || nextTerm->quantityType != QuantifierFixedCount
                 || nextTerm->quantityMaxCount != 1
@@ -1179,49 +1186,129 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
             // upper & lower case representations are converted to a character class.
             ASSERT(!m_pattern.ignoreCase() || isASCIIAlpha(currentCharacter) || isCanonicallyUnique(currentCharacter, m_canonicalMode));
 
-            allCharacters |= (currentCharacter << shiftAmount);
+            allCharacters |= (static_cast<uint64_t>(currentCharacter) << shiftAmount);
 
             if ((m_pattern.ignoreCase()) && (isASCIIAlpha(currentCharacter)))
-                ignoreCaseMask |= 32 << shiftAmount;                    
+                ignoreCaseMask |= 32ULL << shiftAmount;
         }
 
         if (m_charSize == Char8) {
+            auto check1 = [&] (Checked<unsigned> offset, UChar32 characters) {
+                op.m_jumps.append(jumpIfCharNotEquals(characters, offset, character));
+            };
+
+            auto check2 = [&] (Checked<unsigned> offset, uint16_t characters, uint16_t mask) {
+                load16Unaligned(negativeOffsetIndexedAddress(offset, character), character);
+                if (mask)
+                    or32(Imm32(mask), character);
+                op.m_jumps.append(branch32(NotEqual, character, Imm32(characters | mask)));
+            };
+
+            auto check4 = [&] (Checked<unsigned> offset, unsigned characters, unsigned mask) {
+                if (mask) {
+                    load32WithUnalignedHalfWords(negativeOffsetIndexedAddress(offset, character), character);
+                    if (mask)
+                        or32(Imm32(mask), character);
+                    op.m_jumps.append(branch32(NotEqual, character, Imm32(characters | mask)));
+                    return;
+                }
+                op.m_jumps.append(branch32WithUnalignedHalfWords(NotEqual, negativeOffsetIndexedAddress(offset, character), TrustedImm32(characters)));
+            };
+
+#if CPU(X86_64) || CPU(ARM64)
+            auto check8 = [&] (Checked<unsigned> offset, uint64_t characters, uint64_t mask) {
+                load64(negativeOffsetIndexedAddress(offset, character), character);
+                if (mask)
+                    or64(TrustedImm64(mask), character);
+                op.m_jumps.append(branch64(NotEqual, character, TrustedImm64(characters | mask)));
+            };
+#endif
+
             switch (numberCharacters) {
             case 1:
-                op.m_jumps.append(jumpIfCharNotEquals(ch, m_checkedOffset - startTermPosition, character));
+                // Use 32bit width of allCharacters since Yarr counts surrogate pairs as one character with unicode flag.
+                check1(m_checkedOffset - startTermPosition, allCharacters & 0xffffffff);
                 return;
             case 2: {
-                load16Unaligned(negativeOffsetIndexedAddress(m_checkedOffset - startTermPosition, character), character);
-                break;
+                check2(m_checkedOffset - startTermPosition, allCharacters & 0xffff, ignoreCaseMask & 0xffff);
+                return;
             }
             case 3: {
-                load16Unaligned(negativeOffsetIndexedAddress(m_checkedOffset - startTermPosition, character), character);
-                if (ignoreCaseMask)
-                    or32(Imm32(ignoreCaseMask), character);
-                op.m_jumps.append(branch32(NotEqual, character, Imm32((allCharacters & 0xffff) | ignoreCaseMask)));
-                op.m_jumps.append(jumpIfCharNotEquals(allCharacters >> 16, m_checkedOffset - startTermPosition - 2, character));
+                check2(m_checkedOffset - startTermPosition, allCharacters & 0xffff, ignoreCaseMask & 0xffff);
+                check1(m_checkedOffset - startTermPosition - 2, (allCharacters >> 16) & 0xff);
                 return;
             }
             case 4: {
-                load32WithUnalignedHalfWords(negativeOffsetIndexedAddress(m_checkedOffset- startTermPosition, character), character);
-                break;
+                check4(m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
+                return;
             }
+#if CPU(X86_64) || CPU(ARM64)
+            case 5: {
+                check4(m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
+                check1(m_checkedOffset - startTermPosition - 4, (allCharacters >> 32) & 0xff);
+                return;
+            }
+            case 6: {
+                check4(m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
+                check2(m_checkedOffset - startTermPosition - 4, (allCharacters >> 32) & 0xffff, (ignoreCaseMask >> 32) & 0xffff);
+                return;
+            }
+            case 7: {
+                check4(m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
+                check2(m_checkedOffset - startTermPosition - 4, (allCharacters >> 32) & 0xffff, (ignoreCaseMask >> 32) & 0xffff);
+                check1(m_checkedOffset - startTermPosition - 6, (allCharacters >> 48) & 0xff);
+                return;
+            }
+            case 8: {
+                check8(m_checkedOffset - startTermPosition, allCharacters, ignoreCaseMask);
+                return;
+            }
+#endif
             }
         } else {
+            auto check1 = [&] (Checked<unsigned> offset, UChar32 characters) {
+                op.m_jumps.append(jumpIfCharNotEquals(characters, offset, character));
+            };
+
+            auto check2 = [&] (Checked<unsigned> offset, unsigned characters, unsigned mask) {
+                if (mask) {
+                    load32WithUnalignedHalfWords(negativeOffsetIndexedAddress(offset, character), character);
+                    if (mask)
+                        or32(Imm32(mask), character);
+                    op.m_jumps.append(branch32(NotEqual, character, Imm32(characters | mask)));
+                    return;
+                }
+                op.m_jumps.append(branch32WithUnalignedHalfWords(NotEqual, negativeOffsetIndexedAddress(offset, character), TrustedImm32(characters)));
+            };
+
+#if CPU(X86_64) || CPU(ARM64)
+            auto check4 = [&] (Checked<unsigned> offset, uint64_t characters, uint64_t mask) {
+                load64(negativeOffsetIndexedAddress(offset, character), character);
+                if (mask)
+                    or64(TrustedImm64(mask), character);
+                op.m_jumps.append(branch64(NotEqual, character, TrustedImm64(characters | mask)));
+            };
+#endif
+
             switch (numberCharacters) {
             case 1:
-                op.m_jumps.append(jumpIfCharNotEquals(ch, m_checkedOffset - term->inputPosition, character));
+                // Use 32bit width of allCharacters since Yarr counts surrogate pairs as one character with unicode flag.
+                check1(m_checkedOffset - startTermPosition, allCharacters & 0xffffffff);
                 return;
             case 2:
-                load32WithUnalignedHalfWords(negativeOffsetIndexedAddress(m_checkedOffset- term->inputPosition, character), character);
-                break;
+                check2(m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
+                return;
+#if CPU(X86_64) || CPU(ARM64)
+            case 3:
+                check2(m_checkedOffset - startTermPosition, allCharacters & 0xffffffff, ignoreCaseMask & 0xffffffff);
+                check1(m_checkedOffset - startTermPosition - 2, (allCharacters >> 32) & 0xffff);
+                return;
+            case 4:
+                check4(m_checkedOffset - startTermPosition, allCharacters, ignoreCaseMask);
+                return;
+#endif
             }
         }
-
-        if (ignoreCaseMask)
-            or32(Imm32(ignoreCaseMask), character);
-        op.m_jumps.append(branch32(NotEqual, character, Imm32(allCharacters | ignoreCaseMask)));
-        return;
     }
     void backtrackPatternCharacterOnce(size_t opIndex)
     {
@@ -3472,7 +3559,7 @@ public:
             return;
         }
 
-        if (UNLIKELY(Options::dumpDisassembly()))
+        if (UNLIKELY(Options::dumpDisassembly() || Options::dumpRegExpDisassembly()))
             m_disassembler = std::make_unique<YarrDisassembler>(this);
 
         if (m_disassembler)
@@ -3546,14 +3633,14 @@ public:
 
         if (compileMode == MatchOnly) {
             if (m_charSize == Char8)
-                codeBlock.set8BitCodeMatchOnly(FINALIZE_CODE(linkBuffer, YarrMatchOnly8BitPtrTag, "Match-only 8-bit regular expression"));
+                codeBlock.set8BitCodeMatchOnly(FINALIZE_REGEXP_CODE(linkBuffer, YarrMatchOnly8BitPtrTag, "Match-only 8-bit regular expression"));
             else
-                codeBlock.set16BitCodeMatchOnly(FINALIZE_CODE(linkBuffer, YarrMatchOnly16BitPtrTag, "Match-only 16-bit regular expression"));
+                codeBlock.set16BitCodeMatchOnly(FINALIZE_REGEXP_CODE(linkBuffer, YarrMatchOnly16BitPtrTag, "Match-only 16-bit regular expression"));
         } else {
             if (m_charSize == Char8)
-                codeBlock.set8BitCode(FINALIZE_CODE(linkBuffer, Yarr8BitPtrTag, "8-bit regular expression"));
+                codeBlock.set8BitCode(FINALIZE_REGEXP_CODE(linkBuffer, Yarr8BitPtrTag, "8-bit regular expression"));
             else
-                codeBlock.set16BitCode(FINALIZE_CODE(linkBuffer, Yarr16BitPtrTag, "16-bit regular expression"));
+                codeBlock.set16BitCode(FINALIZE_REGEXP_CODE(linkBuffer, Yarr16BitPtrTag, "16-bit regular expression"));
         }
         if (m_failureReason)
             codeBlock.setFallBackWithFailureReason(*m_failureReason);
