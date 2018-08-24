@@ -1,3 +1,14 @@
+2018-08-24  Jonathan Bedard  <jbedard@apple.com>
+
+        Fix handling of iOS minor versions in default_baseline_search_path
+        https://bugs.webkit.org/show_bug.cgi?id=188902
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.default_baseline_search_path): When the major version matches the major version of the CURRENT_VERSION, treat
+        it as a the CURRENT_VERSION.
+
 2018-08-24  Antti Koivisto  <antti@apple.com>
 
         Allow creating WeakPtrs to const objects

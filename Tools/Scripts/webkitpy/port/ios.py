@@ -96,7 +96,7 @@ class IOSPort(DarwinPort):
             wk_string = 'wk2'
 
         versions_to_fallback = []
-        if self.ios_version() == self.CURRENT_VERSION:
+        if self.ios_version().major == self.CURRENT_VERSION.major:
             versions_to_fallback = [self.CURRENT_VERSION]
         elif self.ios_version():
             temp_version = Version(self.ios_version().major)
