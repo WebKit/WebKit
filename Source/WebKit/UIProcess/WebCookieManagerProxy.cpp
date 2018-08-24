@@ -251,6 +251,9 @@ void WebCookieManagerProxy::setHTTPCookieAcceptPolicy(PAL::SessionID, HTTPCookie
     processPool()->setInitialHTTPCookieAcceptPolicy(policy);
 #endif
 
+    if (!processPool()->networkProcess())
+        return;
+
     auto callbackID = m_callbacks.put(WTFMove(callbackFunction), processPool()->ensureNetworkProcess().throttler().backgroundActivityToken());
     processPool()->sendToNetworkingProcess(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy, OptionalCallbackID(callbackID)));
 }
