@@ -220,17 +220,17 @@ tests.ternaryExpression = function() {
             return 3 < 4 ? x : 5;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 767)]), 5);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 2)]), 4);
-    checkInt(program, callFunction(program, "bar", [], [makeInt(program, 2)]), 7);
-    checkInt(program, callFunction(program, "bar", [], [makeInt(program, 8)]), 1);
-    checkInt(program, callFunction(program, "baz", [], [makeInt(program, 8)]), 11);
-    checkInt(program, callFunction(program, "baz", [], [makeInt(program, 9)]), 11);
-    checkInt(program, callFunction(program, "baz", [], [makeInt(program, 10)]), 14);
-    checkInt(program, callFunction(program, "baz", [], [makeInt(program, 11)]), 14);
-    checkInt(program, callFunction(program, "baz", [], [makeInt(program, 12)]), 15);
-    checkInt(program, callFunction(program, "baz", [], [makeInt(program, 13)]), 15);
-    checkInt(program, callFunction(program, "quux", [], [makeInt(program, 14)]), 14);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 767)]), 5);
+    checkInt(program, callFunction(program, "foo", [makeInt(program, 2)]), 4);
+    checkInt(program, callFunction(program, "bar", [makeInt(program, 2)]), 7);
+    checkInt(program, callFunction(program, "bar", [makeInt(program, 8)]), 1);
+    checkInt(program, callFunction(program, "baz", [makeInt(program, 8)]), 11);
+    checkInt(program, callFunction(program, "baz", [makeInt(program, 9)]), 11);
+    checkInt(program, callFunction(program, "baz", [makeInt(program, 10)]), 14);
+    checkInt(program, callFunction(program, "baz", [makeInt(program, 11)]), 14);
+    checkInt(program, callFunction(program, "baz", [makeInt(program, 12)]), 15);
+    checkInt(program, callFunction(program, "baz", [makeInt(program, 13)]), 15);
+    checkInt(program, callFunction(program, "quux", [makeInt(program, 14)]), 14);
     checkFail(
         () => doPrep(`
             int foo()

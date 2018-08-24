@@ -1,3 +1,10 @@
+2018-08-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unreviewed test fix after r235249
+        https://bugs.webkit.org/show_bug.cgi?id=178981
+
+        * WebGPUShadingLanguageRI/Test.js:
+
 2018-08-24  Alex Christensen  <achristensen@webkit.org>
 
         Introduce _WKInspector
