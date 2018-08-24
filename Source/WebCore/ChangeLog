@@ -1,5 +1,20 @@
 2018-08-21  Philippe Normand  <philn@igalia.com>
 
+        [GStreamer] Warn early about incomplete MSE track switching support
+        https://bugs.webkit.org/show_bug.cgi?id=188653
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The proper track switching support shall be fixed at some point by:
+        https://bugs.webkit.org/show_bug.cgi?id=182531.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::updateTracks): Remove redundant test.
+        (WebCore::MediaPlayerPrivateGStreamer::enableTrack): Exit early if
+        this method is called by the MSE player.
+
+2018-08-21  Philippe Normand  <philn@igalia.com>
+
         [GStreamer][MSE] Generic main thread notification support
         https://bugs.webkit.org/show_bug.cgi?id=188647
 
