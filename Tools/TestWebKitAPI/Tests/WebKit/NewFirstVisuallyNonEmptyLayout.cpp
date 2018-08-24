@@ -38,7 +38,7 @@ static bool didFirstVisuallyNonEmptyLayoutAchieved;
 static bool didHitRelevantRepaintedObjectsAreaThresholdAchieved;
 static bool didUnlockAllLayoutMilestones;
 
-static void didLayout(WKPageRef, WKLayoutMilestones type, WKTypeRef, const void *)
+static void didLayout(WKPageRef, WKPageRenderingProgressEvents type, WKTypeRef, const void *)
 {
     switch (type) {
     case kWKDidFirstLayout:
@@ -60,13 +60,13 @@ static void didLayout(WKPageRef, WKLayoutMilestones type, WKTypeRef, const void 
 
 static void setPageLoaderClient(WKPageRef page)
 {
-    WKPageLoaderClientV3 loaderClient;
+    WKPageNavigationClientV3 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
     loaderClient.base.version = 3;
-    loaderClient.didLayout = didLayout;
+    loaderClient.renderingProgressDidChange = didLayout;
 
-    WKPageSetPageLoaderClient(page, &loaderClient.base);
+    WKPageSetPageNavigationClient(page, &loaderClient.base);
 }
 
 // FIXME: This test has been broken since http://trac.webkit.org/changeset/115752 It's failing because
