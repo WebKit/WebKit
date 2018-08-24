@@ -34,6 +34,8 @@ def get_filenames(directory):
             return True
 
     for root, dirs, files in os.walk(directory):
+        dirs.sort()
+        files.sort()
         for file in files:
             filename = os.path.join(root, file)
             base_dir_index = filename.rfind(BASE_DIR)
