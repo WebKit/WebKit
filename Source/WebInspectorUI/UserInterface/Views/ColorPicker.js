@@ -44,32 +44,32 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         let colorInputsContainerElement = document.createElement("div");
         colorInputsContainerElement.classList.add("color-inputs");
 
-        function createColorInput(label, {min: min = 0, max: max = 100, step: step = 1, units} = {}) {
+        let createColorInput = (label, {min, max, step, units} = {}) => {
             let containerElement = colorInputsContainerElement.createChild("div");
 
             containerElement.append(label);
 
             let numberInputElement = containerElement.createChild("input");
             numberInputElement.type = "number";
-            numberInputElement.min = min;
-            numberInputElement.max = max;
-            numberInputElement.step = step;
+            numberInputElement.min = min || 0;
+            numberInputElement.max = max || 100;
+            numberInputElement.step = step || 1;
             numberInputElement.addEventListener("input", this._handleColorInputInput.bind(this));
 
             if (units && units.length)
                 containerElement.append(units);
 
             return {containerElement, numberInputElement};
-        }
+        };
 
         this._colorInputs = new Map([
-            ["R", createColorInput.call(this, "R", {max: 255})],
-            ["G", createColorInput.call(this, "G", {max: 255})],
-            ["B", createColorInput.call(this, "B", {max: 255})],
-            ["H", createColorInput.call(this, "H", {max: 360})],
-            ["S", createColorInput.call(this, "S", {units: "%"})],
-            ["L", createColorInput.call(this, "L", {units: "%"})],
-            ["A", createColorInput.call(this, "A"), {max: 1, step: 0.01}]
+            ["R", createColorInput("R", {max: 255})],
+            ["G", createColorInput("G", {max: 255})],
+            ["B", createColorInput("B", {max: 255})],
+            ["H", createColorInput("H", {max: 360})],
+            ["S", createColorInput("S", {units: "%"})],
+            ["L", createColorInput("L", {units: "%"})],
+            ["A", createColorInput("A", {max: 1, step: 0.01})]
         ]);
 
         this._element = document.createElement("div");
@@ -324,7 +324,11 @@ WI.ColorPicker = class ColorPicker extends WI.Object
             return;
         }
 
-        this.color = WI.Color.fromString(colorString);
+        let newColor = WI.Color.fromString(colorString);
+        if (newColor.toString() === this._color.toString())
+            return;
+
+        this.color = newColor;
         this._color.format = oldFormat;
 
         this.dispatchEventToListeners(WI.ColorPicker.Event.ColorChanged, {color: this._color});
