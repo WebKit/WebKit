@@ -1,5 +1,20 @@
 2018-08-24  Michael Saboff  <msaboff@apple.com>
 
+        YARR: Update UCS canonicalization tables for Unicode 11
+        https://bugs.webkit.org/show_bug.cgi?id=188928
+
+        Reviewed by Mark Lam.
+
+        Generated YarrCanonicalizeUCS2.cpp from YarrCanonicalizeUCS2.js.
+
+        This passes JavaScriptCore and test262 tests.
+
+        * yarr/YarrCanonicalizeUCS2.cpp:
+        * yarr/YarrCanonicalizeUCS2.js:
+        (printHeader):
+
+2018-08-24  Michael Saboff  <msaboff@apple.com>
+
         YARR: JIT RegExps with non-greedy parenthesized sub patterns
         https://bugs.webkit.org/show_bug.cgi?id=180876
 
