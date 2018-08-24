@@ -49,11 +49,6 @@ static void didNavigateWithNavigationData(WKContextRef context, WKPageRef page, 
     didNavigate = true;
 }
 
-static void didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef userData, const void *clientInfo)
-{
-    didSameDocumentNavigation = true;
-}
-
 TEST(WebKit, PrivateBrowsingPushStateNoHistoryCallback)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
@@ -68,13 +63,15 @@ TEST(WebKit, PrivateBrowsingPushStateNoHistoryCallback)
 
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClientV0 pageLoaderClient;
+    WKPageNavigationClientV0 pageLoaderClient;
     memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
 
     pageLoaderClient.base.version = 0;
-    pageLoaderClient.didSameDocumentNavigationForFrame = didSameDocumentNavigationForFrame;
+    pageLoaderClient.didSameDocumentNavigation = [] (WKPageRef, WKNavigationRef, WKSameDocumentNavigationType, WKTypeRef, const void *) {
+        didSameDocumentNavigation = true;
+    };
 
-    WKPageSetPageLoaderClient(webView.page(), &pageLoaderClient.base);
+    WKPageSetPageNavigationClient(webView.page(), &pageLoaderClient.base);
 
     WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
     WKPreferencesSetPrivateBrowsingEnabled(preferences.get(), true);

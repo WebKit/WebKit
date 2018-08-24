@@ -46,7 +46,7 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
     done = true;
 }
 
-static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void*)
+static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void*)
 {
     loadDone = true;
 }
@@ -63,11 +63,11 @@ TEST(WebKit, WKBundleFileHandle)
 
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
     loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    loaderClient.didFinishNavigation = didFinishNavigation;
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("bundle-file", "html")).get());
     Util::run(&loadDone);

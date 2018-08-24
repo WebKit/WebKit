@@ -1,3 +1,82 @@
+2018-08-21  Alex Christensen  <achristensen@webkit.org>
+
+        Transition more API tests from WKPageLoaderClient to WKPageNavigationClient
+        https://bugs.webkit.org/show_bug.cgi?id=188797
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKit/AboutBlankLoad.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/EphemeralSessionPushStateNoHistoryCallback.cpp:
+        (TestWebKitAPI::didSameDocumentNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didSameDocumentNavigationForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/FailedLoad.cpp:
+        (TestWebKitAPI::didFailProvisionalNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFailProvisionalLoadWithErrorForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/FrameMIMETypeHTML.cpp:
+        (TestWebKitAPI::didStartProvisionalNavigation):
+        (TestWebKitAPI::didCommitNavigation):
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didStartProvisionalLoadForFrame): Deleted.
+        (TestWebKitAPI::didCommitLoadForFrame): Deleted.
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/FrameMIMETypePNG.cpp:
+        (TestWebKitAPI::didStartProvisionalNavigation):
+        (TestWebKitAPI::didCommitNavigation):
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didStartProvisionalLoadForFrame): Deleted.
+        (TestWebKitAPI::didCommitLoadForFrame): Deleted.
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/LayoutMilestonesWithAllContentInFrame.cpp:
+        (TestWebKitAPI::renderingProgressDidChange):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didLayout): Deleted.
+        * TestWebKitAPI/Tests/WebKit/NewFirstVisuallyNonEmptyLayoutFrames.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::renderingProgressDidChange):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        (TestWebKitAPI::didLayout): Deleted.
+        * TestWebKitAPI/Tests/WebKit/PageLoadBasic.cpp:
+        (TestWebKitAPI::State::State):
+        (TestWebKitAPI::didStartProvisionalNavigation):
+        (TestWebKitAPI::didCommitNavigation):
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::decidePolicyForNavigationAction):
+        (TestWebKitAPI::decidePolicyForResponse):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didStartProvisionalLoadForFrame): Deleted.
+        (TestWebKitAPI::didCommitLoadForFrame): Deleted.
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        (TestWebKitAPI::decidePolicyForNewWindowAction): Deleted.
+        * TestWebKitAPI/Tests/WebKit/PageLoadDidChangeLocationWithinPageForFrame.cpp:
+        (TestWebKitAPI::didSameDocumentNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        (TestWebKitAPI::didSameDocumentNavigationForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/PrivateBrowsingPushStateNoHistoryCallback.cpp:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didSameDocumentNavigationForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/ReloadPageAfterCrash.cpp:
+        (TestWebKitAPI::didFinishLoad):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/WKBundleFileHandle.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        * TestWebKitAPI/Tests/WebKit/mac/RestoreStateAfterTermination.mm:
+        (TestWebKitAPI::didFinishLoad):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/CommandBackForward.mm:
+        (WebKit2_CommandBackForwardTestWKView::SetUp):
+        (WebKit2_CommandBackForwardTestWKView::didFinishLoadForFrame): Deleted.
+
 2018-08-20  Alex Christensen  <achristensen@webkit.org>
 
         Replace WKPageLoaderClient with WKPageNavigationClient in many API tests

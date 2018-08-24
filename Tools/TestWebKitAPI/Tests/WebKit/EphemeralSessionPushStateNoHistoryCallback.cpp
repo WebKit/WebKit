@@ -44,7 +44,7 @@ static void didNavigateWithNavigationData(WKContextRef context, WKPageRef page, 
     FAIL();
 }
 
-static void didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef userData, const void *clientInfo)
+static void didSameDocumentNavigation(WKPageRef page, WKNavigationRef, WKSameDocumentNavigationType type, WKTypeRef userData, const void *clientInfo)
 {
     testDone = true;
 }
@@ -69,13 +69,13 @@ TEST(WebKit, EphemeralSessionPushStateNoHistoryCallback)
 
     PlatformWebView webView(configuration.get());
 
-    WKPageLoaderClientV0 pageLoaderClient;
+    WKPageNavigationClientV0 pageLoaderClient;
     memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
 
     pageLoaderClient.base.version = 0;
-    pageLoaderClient.didSameDocumentNavigationForFrame = didSameDocumentNavigationForFrame;
+    pageLoaderClient.didSameDocumentNavigation = didSameDocumentNavigation;
 
-    WKPageSetPageLoaderClient(webView.page(), &pageLoaderClient.base);
+    WKPageSetPageNavigationClient(webView.page(), &pageLoaderClient.base);
 
     WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
     WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences.get(), true);
