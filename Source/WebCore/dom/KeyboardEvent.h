@@ -61,7 +61,7 @@ public:
         unsigned which;
     };
 
-    static Ref<KeyboardEvent> create(const AtomicString& type, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<KeyboardEvent> create(const AtomicString& type, const Init&);
 
     virtual ~KeyboardEvent();
     
@@ -101,7 +101,7 @@ public:
 private:
     KeyboardEvent();
     KeyboardEvent(const PlatformKeyboardEvent&, RefPtr<WindowProxy>&&);
-    KeyboardEvent(const AtomicString&, const Init&, IsTrusted);
+    KeyboardEvent(const AtomicString&, const Init&);
 
     std::unique_ptr<PlatformKeyboardEvent> m_underlyingPlatformEvent;
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)

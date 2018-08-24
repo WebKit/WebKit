@@ -57,14 +57,14 @@ Event::Event(IsTrusted isTrusted)
 {
 }
 
-Event::Event(const AtomicString& eventType, CanBubble canBubble, IsCancelable isCancelable)
-    : Event { MonotonicTime::now(), eventType, IsTrusted::Yes, canBubble, isCancelable, IsComposed::No }
+Event::Event(const AtomicString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed)
+    : Event { MonotonicTime::now(), eventType, IsTrusted::Yes, canBubble, isCancelable, isComposed }
 {
     ASSERT(!eventType.isNull());
 }
 
-Event::Event(const AtomicString& eventType, CanBubble canBubble, IsCancelable isCancelable, MonotonicTime timestamp)
-    : Event { timestamp, eventType, IsTrusted::Yes, canBubble, isCancelable, IsComposed::No }
+Event::Event(const AtomicString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp)
+    : Event { timestamp, eventType, IsTrusted::Yes, canBubble, isCancelable, isComposed }
 {
     ASSERT(!eventType.isNull());
 }
@@ -80,9 +80,9 @@ Event::Event(const AtomicString& eventType, const EventInit& initializer, IsTrus
 
 Event::~Event() = default;
 
-Ref<Event> Event::create(const AtomicString& type, CanBubble canBubble, IsCancelable isCancelable)
+Ref<Event> Event::create(const AtomicString& type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed)
 {
-    return adoptRef(*new Event(type, canBubble, isCancelable));
+    return adoptRef(*new Event(type, canBubble, isCancelable, isComposed));
 }
 
 Ref<Event> Event::createForBindings()
@@ -111,27 +111,6 @@ void Event::initEvent(const AtomicString& eventTypeArg, bool canBubbleArg, bool 
     m_cancelable = cancelableArg;
 
     m_underlyingEvent = nullptr;
-}
-
-bool Event::composed() const
-{
-    if (m_composed)
-        return true;
-
-    // http://w3c.github.io/webcomponents/spec/shadow/#scoped-flag
-    if (!isTrusted())
-        return false;
-
-    return m_type == eventNames().inputEvent
-        || m_type == eventNames().textInputEvent
-        || m_type == eventNames().DOMActivateEvent
-        || isCompositionEvent()
-        || isClipboardEvent()
-        || isFocusEvent()
-        || isKeyboardEvent()
-        || isMouseEvent()
-        || isTouchEvent()
-        || isInputEvent();
 }
 
 void Event::setTarget(RefPtr<EventTarget>&& target)

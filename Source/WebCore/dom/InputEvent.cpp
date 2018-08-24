@@ -33,13 +33,13 @@
 
 namespace WebCore {
 
-Ref<InputEvent> InputEvent::create(const AtomicString& eventType, const String& inputType, CanBubble canBubble, IsCancelable cancelable, RefPtr<WindowProxy>&& view, const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
+Ref<InputEvent> InputEvent::create(const AtomicString& eventType, const String& inputType, IsCancelable cancelable, RefPtr<WindowProxy>&& view, const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
 {
-    return adoptRef(*new InputEvent(eventType, inputType, canBubble, cancelable, WTFMove(view), data, WTFMove(dataTransfer), targetRanges, detail));
+    return adoptRef(*new InputEvent(eventType, inputType, cancelable, WTFMove(view), data, WTFMove(dataTransfer), targetRanges, detail));
 }
 
-InputEvent::InputEvent(const AtomicString& eventType, const String& inputType, CanBubble canBubble, IsCancelable cancelable, RefPtr<WindowProxy>&& view, const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
-    : UIEvent(eventType, canBubble, cancelable, WTFMove(view), detail)
+InputEvent::InputEvent(const AtomicString& eventType, const String& inputType, IsCancelable cancelable, RefPtr<WindowProxy>&& view, const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
+    : UIEvent(eventType, CanBubble::Yes, cancelable, IsComposed::Yes, WTFMove(view), detail)
     , m_inputType(inputType)
     , m_data(data)
     , m_dataTransfer(dataTransfer)
@@ -47,8 +47,8 @@ InputEvent::InputEvent(const AtomicString& eventType, const String& inputType, C
 {
 }
 
-InputEvent::InputEvent(const AtomicString& eventType, const Init& initializer, IsTrusted isTrusted)
-    : UIEvent(eventType, initializer, isTrusted)
+InputEvent::InputEvent(const AtomicString& eventType, const Init& initializer)
+    : UIEvent(eventType, initializer)
     , m_inputType(emptyString())
     , m_data(initializer.data)
 {

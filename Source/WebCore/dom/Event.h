@@ -52,7 +52,7 @@ public:
         BUBBLING_PHASE = 3
     };
 
-    WEBCORE_EXPORT static Ref<Event> create(const AtomicString& type, CanBubble, IsCancelable);
+    WEBCORE_EXPORT static Ref<Event> create(const AtomicString& type, CanBubble, IsCancelable, IsComposed = IsComposed::No);
     static Ref<Event> createForBindings();
     static Ref<Event> create(const AtomicString& type, const EventInit&, IsTrusted = IsTrusted::No);
 
@@ -76,7 +76,7 @@ public:
 
     bool bubbles() const { return m_canBubble; }
     bool cancelable() const { return m_cancelable; }
-    WEBCORE_EXPORT bool composed() const;
+    bool composed() const { return m_composed; }
 
     DOMHighResTimeStamp timeStampForBindings(ScriptExecutionContext&) const;
     MonotonicTime timeStamp() const { return m_createTime; }
@@ -142,8 +142,8 @@ public:
 
 protected:
     explicit Event(IsTrusted = IsTrusted::No);
-    Event(const AtomicString& type, CanBubble, IsCancelable);
-    Event(const AtomicString& type, CanBubble, IsCancelable, MonotonicTime timestamp);
+    Event(const AtomicString& type, CanBubble, IsCancelable, IsComposed = IsComposed::No);
+    Event(const AtomicString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp);
     Event(const AtomicString& type, const EventInit&, IsTrusted);
 
     virtual void receivedTarget() { }

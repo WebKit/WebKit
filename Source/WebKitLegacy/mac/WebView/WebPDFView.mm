@@ -1031,8 +1031,9 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
     }
     if (button != noButton) {
         // FIXME: Use createPlatformMouseEvent instead.
-        event = MouseEvent::create(eventNames().clickEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, MonotonicTime::now(), nullptr, [nsEvent clickCount], { }, { }, { },
-            modifiersForEvent(nsEvent), button, [NSEvent pressedMouseButtons], nullptr, WebCore::ForceAtClick, 0, nullptr, MouseEvent::IsSimulated::Yes);
+        event = MouseEvent::create(eventNames().clickEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes,
+            MonotonicTime::now(), nullptr, [nsEvent clickCount], { }, { }, { }, modifiersForEvent(nsEvent),
+            button, [NSEvent pressedMouseButtons], nullptr, WebCore::ForceAtClick, 0, nullptr, MouseEvent::IsSimulated::Yes);
     }
 
     // Call to the frame loader because this is where our security checks are made.

@@ -1,5 +1,90 @@
 2018-08-24  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Pass in IsComposed flag to Event constructors
+        https://bugs.webkit.org/show_bug.cgi?id=188720
+        <rdar://problem/43580387>
+
+        Reviewed by Simon Fraser.
+
+        This patch replaces the logic in Event::isComposed to decide whether an event is composed or not by
+        explicitly passing IsComposed flag to Event constructor. This decouples being composed from whether
+        an event is trusted and of a partciular event type, paving our way to make synthetic click event
+        dispatched by an author script composable in webkit.org/b/170211.
+
+        This patch also removes IsTrusted from the argument list of event constructors and create functions
+        to systematically eliminate the possibility of this patch making an event uncomposed by not setting
+        IsComposed flag.
+
+        No new tests since there should be no behavioral change.
+
+        * dom/ClipboardEvent.cpp:
+        (WebCore::ClipboardEvent::ClipboardEvent): A trusted ClipboardEvent is composed.
+        * dom/ClipboardEvent.h:
+        (WebCore::ClipboardEvent::ClipboardEvent): Removed IsTrusted from the variant which takes Init object
+        to make sure this refactoring is correct.
+        (WebCore::ClipboardEvent::create): Ditto.
+        * dom/CompositionEvent.cpp:
+        (WebCore::CompositionEvent::CompositionEvent): A trusted CompositionEvent is composed.
+        * dom/CompositionEvent.h:
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchMouseEvent): A trusted dblclick event is composed (this is a non-standard
+        event but virtually every mouse event is composed so it makes sense to make this composed).
+        * dom/Event.cpp:
+        (WebCore::Event::Event):
+        (WebCore::Event::create):
+        (WebCore::Event::composed const): Deleted. The trival implementation moved to the header file.
+        * dom/Event.h:
+        (WebCore::Event::composed const):
+        * dom/FocusEvent.cpp:
+        (WebCore::FocusEvent::FocusEvent): A trusted Focus event is composed.
+        * dom/FocusEvent.h:
+        (WebCore::FocusEvent::create): Removed IsTrusted from Init variant for the correctness guarantee.
+        (WebCore::FocusEvent::FocusEvent): Ditto.
+        * dom/InputEvent.cpp:
+        (WebCore::InputEvent::create): Removed IsTrusted from Init variant for the correctness guarantee.
+        (WebCore::InputEvent::InputEvent): A trsuted InputEvent is composed.
+        * dom/InputEvent.h:
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent): A trsuted KeyboardEvent is composed.
+        (WebCore::KeyboardEvent::create): Removed IsTrusted from Init variant for the correctness guarantee.
+        * dom/KeyboardEvent.h:
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create): Removed IsTrusted from Init variant for the correctness guarantee.
+        (WebCore::MouseEvent::MouseEvent): Explicitly take IsComposed flag from subclasses since simulated click
+        does not currently compose.
+        * dom/MouseEvent.h:
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent): A trusted touch event is composed.
+        * dom/MouseRelatedEvent.h:
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchDOMActivateEvent): A trusted DOMActivateEvent event is composed.
+        (WebCore::Node::dispatchInputEvent): A trusted input event is composed.
+        * dom/SimulatedClick.cpp:
+        (SimulatedMouseEvent::SimulatedMouseEvent): A simulated click is composed if it's a trusted event for now.
+        This is the bug to be fixed in webkit.org/b/170211.
+        * dom/TextEvent.cpp:
+        (WebCore::TextEvent::TextEvent): A trsuted textInput event is composed.
+        * dom/UIEvent.cpp:
+        (WebCore::UIEvent::UIEvent): Added IsComposed as an argument to the variant which creates a trusted event,
+        and removed IsTrusted from Init variant for the correctness guarantee.
+        * dom/UIEvent.h:
+        (WebCore::UIEvent::create): Ditto.
+        * dom/UIEventWithKeyState.h:
+        (WebCore::UIEventWithKeyState::UIEventWithKeyState): Ditto.
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent): A trusted Wheel event, which is a subclass of MouseEvent, is composed.
+        (WebCore::WheelEvent::create): Removed IsTrusted from Init variant for the correctness guarantee.
+        * dom/WheelEvent.h:
+        * editing/Editor.cpp:
+        (WebCore::dispatchBeforeInputEvent):
+        (WebCore::dispatchInputEvent):
+        (WebCore::dispatchClipboardEvent): Call the newly added variant which takes DataTransfer directly so that
+        we can remove IsTrusted from the variant which takes Init for the correctness guarantee.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragEvent): A trusted mouse event is composed.
+
+2018-08-24  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add getModifierState to MouseEvent
         https://bugs.webkit.org/show_bug.cgi?id=188913
         <rdar://problem/43668772>

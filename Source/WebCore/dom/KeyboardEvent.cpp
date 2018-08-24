@@ -94,7 +94,7 @@ static inline KeyboardEvent::KeyLocationCode keyLocationCode(const PlatformKeybo
 inline KeyboardEvent::KeyboardEvent() = default;
 
 inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<WindowProxy>&& view)
-    : UIEventWithKeyState(eventTypeForKeyboardEventType(key.type()), CanBubble::Yes, IsCancelable::Yes,
+    : UIEventWithKeyState(eventTypeForKeyboardEventType(key.type()), CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes,
         key.timestamp().approximateMonotonicTime(), view.copyRef(), 0, key.modifiers())
     , m_underlyingPlatformEvent(std::make_unique<PlatformKeyboardEvent>(key))
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
@@ -114,8 +114,8 @@ inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<Win
 {
 }
 
-inline KeyboardEvent::KeyboardEvent(const AtomicString& eventType, const Init& initializer, IsTrusted isTrusted)
-    : UIEventWithKeyState(eventType, initializer, isTrusted)
+inline KeyboardEvent::KeyboardEvent(const AtomicString& eventType, const Init& initializer)
+    : UIEventWithKeyState(eventType, initializer)
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     , m_key(initializer.key)
 #endif
@@ -144,9 +144,9 @@ Ref<KeyboardEvent> KeyboardEvent::createForBindings()
     return adoptRef(*new KeyboardEvent);
 }
 
-Ref<KeyboardEvent> KeyboardEvent::create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+Ref<KeyboardEvent> KeyboardEvent::create(const AtomicString& type, const Init& initializer)
 {
-    return adoptRef(*new KeyboardEvent(type, initializer, isTrusted));
+    return adoptRef(*new KeyboardEvent(type, initializer));
 }
 
 void KeyboardEvent::initKeyboardEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view,

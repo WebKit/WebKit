@@ -72,7 +72,7 @@ TextEvent::TextEvent()
 }
 
 TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, TextEventInputType inputType)
-    : UIEvent(eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, WTFMove(view), 0)
+    : UIEvent(eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
     , m_inputType(inputType)
     , m_data(data)
     , m_shouldSmartReplace(false)
@@ -82,7 +82,7 @@ TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, TextEventIn
 }
 
 TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, RefPtr<DocumentFragment>&& pastingFragment, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
-    : UIEvent(eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, WTFMove(view), 0)
+    : UIEvent(eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
     , m_inputType(TextEventInputPaste)
     , m_data(data)
     , m_pastingFragment(WTFMove(pastingFragment))
@@ -93,7 +93,7 @@ TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, RefPtr<Docu
 }
 
 TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, const Vector<DictationAlternative>& dictationAlternatives)
-    : UIEvent(eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, WTFMove(view), 0)
+    : UIEvent(eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
     , m_inputType(TextEventInputDictation)
     , m_data(data)
     , m_shouldSmartReplace(false)

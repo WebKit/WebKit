@@ -46,9 +46,9 @@ public:
         String data;
     };
 
-    static Ref<CompositionEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<CompositionEvent> create(const AtomicString& type, const Init& initializer)
     {
-        return adoptRef(*new CompositionEvent(type, initializer, isTrusted));
+        return adoptRef(*new CompositionEvent(type, initializer));
     }
 
     virtual ~CompositionEvent();
@@ -62,7 +62,7 @@ public:
 private:
     CompositionEvent();
     CompositionEvent(const AtomicString& type, RefPtr<WindowProxy>&&, const String&);
-    CompositionEvent(const AtomicString& type, const Init&, IsTrusted);
+    CompositionEvent(const AtomicString& type, const Init&);
 
     bool isCompositionEvent() const override;
 

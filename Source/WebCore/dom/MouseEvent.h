@@ -34,19 +34,19 @@ class PlatformMouseEvent;
 
 class MouseEvent : public MouseRelatedEvent {
 public:
-    WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& type, CanBubble, IsCancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
+    WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier>, unsigned short button, unsigned short buttons,
         EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* = nullptr, IsSimulated = IsSimulated::No);
 
     WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& eventType, RefPtr<WindowProxy>&&, const PlatformMouseEvent&, int detail, Node* relatedTarget);
 
-    static Ref<MouseEvent> create(const AtomicString& eventType, CanBubble, IsCancelable, RefPtr<WindowProxy>&&,
-        int detail, int screenX, int screenY, int clientX, int clientY, OptionSet<Modifier>,
-        unsigned short button, unsigned short buttons, unsigned short syntheticClickType, EventTarget* relatedTarget);
+    static Ref<MouseEvent> create(const AtomicString& eventType, CanBubble, IsCancelable, IsComposed, RefPtr<WindowProxy>&&, int detail,
+        int screenX, int screenY, int clientX, int clientY, OptionSet<Modifier>, unsigned short button, unsigned short buttons,
+        unsigned short syntheticClickType, EventTarget* relatedTarget);
 
     static Ref<MouseEvent> createForBindings() { return adoptRef(*new MouseEvent); }
 
-    static Ref<MouseEvent> create(const AtomicString& eventType, const MouseEventInit&, IsTrusted = IsTrusted::No);
+    static Ref<MouseEvent> create(const AtomicString& eventType, const MouseEventInit&);
 
     virtual ~MouseEvent();
 
@@ -76,15 +76,15 @@ public:
     int which() const final;
 
 protected:
-    MouseEvent(const AtomicString& type, CanBubble, IsCancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
+    MouseEvent(const AtomicString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier>, unsigned short button, unsigned short buttons,
         EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer*, IsSimulated);
 
-    MouseEvent(const AtomicString& type, CanBubble, IsCancelable, RefPtr<WindowProxy>&&,
-        int detail, const IntPoint& screenLocation, const IntPoint& clientLocation,
-        OptionSet<Modifier>, unsigned short button, unsigned short buttons, unsigned short syntheticClickType, EventTarget* relatedTarget);
+    MouseEvent(const AtomicString& type, CanBubble, IsCancelable, IsComposed, RefPtr<WindowProxy>&&, int detail,
+        const IntPoint& screenLocation, const IntPoint& clientLocation, OptionSet<Modifier>, unsigned short button, unsigned short buttons,
+        unsigned short syntheticClickType, EventTarget* relatedTarget);
 
-    MouseEvent(const AtomicString& type, const MouseEventInit&, IsTrusted);
+    MouseEvent(const AtomicString& type, const MouseEventInit&);
 
     MouseEvent();
 

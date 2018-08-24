@@ -1,3 +1,15 @@
+2018-08-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Pass in IsComposed flag to Event constructors
+        https://bugs.webkit.org/show_bug.cgi?id=188720
+        <rdar://problem/43580387>
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebPDFViewPlaceholder.mm:
+        (-[WebPDFViewPlaceholder simulateClickOnLinkToURL:]): A trusted click event is composed regardless
+        of whether it's simulated or not.
+
 2018-08-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace booleans for modifier keys in UIEventWithKeyState with OptionSet<Modifier>

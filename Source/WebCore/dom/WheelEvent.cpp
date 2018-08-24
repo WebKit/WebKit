@@ -37,8 +37,8 @@ inline static unsigned determineDeltaMode(const PlatformWheelEvent& event)
 
 inline WheelEvent::WheelEvent() = default;
 
-inline WheelEvent::WheelEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
-    : MouseEvent(type, initializer, isTrusted)
+inline WheelEvent::WheelEvent(const AtomicString& type, const Init& initializer)
+    : MouseEvent(type, initializer)
     , m_wheelDelta(initializer.wheelDeltaX ? initializer.wheelDeltaX : -initializer.deltaX, initializer.wheelDeltaY ? initializer.wheelDeltaY : -initializer.deltaY)
     , m_deltaX(initializer.deltaX ? initializer.deltaX : -initializer.wheelDeltaX)
     , m_deltaY(initializer.deltaY ? initializer.deltaY : -initializer.wheelDeltaY)
@@ -48,7 +48,7 @@ inline WheelEvent::WheelEvent(const AtomicString& type, const Init& initializer,
 }
 
 inline WheelEvent::WheelEvent(const PlatformWheelEvent& event, RefPtr<WindowProxy>&& view)
-    : MouseEvent(eventNames().wheelEvent, CanBubble::Yes, IsCancelable::Yes, event.timestamp().approximateMonotonicTime(), WTFMove(view), 0, event.globalPosition(), event.position() , { }
+    : MouseEvent(eventNames().wheelEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, event.timestamp().approximateMonotonicTime(), WTFMove(view), 0, event.globalPosition(), event.position() , { }
         , event.modifiers(), 0, 0, nullptr, 0, 0, nullptr, IsSimulated::No)
     , m_wheelDelta(event.wheelTicksX() * TickMultiplier, event.wheelTicksY() * TickMultiplier)
     , m_deltaX(-event.deltaX())
@@ -68,9 +68,9 @@ Ref<WheelEvent> WheelEvent::createForBindings()
     return adoptRef(*new WheelEvent);
 }
 
-Ref<WheelEvent> WheelEvent::create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+Ref<WheelEvent> WheelEvent::create(const AtomicString& type, const Init& initializer)
 {
-    return adoptRef(*new WheelEvent(type, initializer, isTrusted));
+    return adoptRef(*new WheelEvent(type, initializer));
 }
 
 void WheelEvent::initWebKitWheelEvent(int rawDeltaX, int rawDeltaY, RefPtr<WindowProxy>&& view, int screenX, int screenY, int pageX, int pageY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)

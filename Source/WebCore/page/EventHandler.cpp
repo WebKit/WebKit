@@ -2214,7 +2214,8 @@ bool EventHandler::dispatchDragEvent(const AtomicString& eventType, Element& dra
 
     view->disableLayerFlushThrottlingTemporarilyForInteraction();
     // FIXME: Use MouseEvent::create which takes PlatformMouseEvent.
-    Ref<MouseEvent> me = MouseEvent::create(eventType, Event::CanBubble::Yes, Event::IsCancelable::Yes, event.timestamp().approximateMonotonicTime(), &m_frame.windowProxy(), 0,
+    Ref<MouseEvent> me = MouseEvent::create(eventType, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes,
+        event.timestamp().approximateMonotonicTime(), &m_frame.windowProxy(), 0,
         event.globalPosition(), event.position(),
 #if ENABLE(POINTER_LOCK)
         event.movementDelta(),

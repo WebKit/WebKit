@@ -33,9 +33,10 @@
 
 namespace WebCore {
 
-MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, CanBubble canBubble, IsCancelable isCancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
+MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
+    MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
     const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier> modifiers, IsSimulated isSimulated)
-    : UIEventWithKeyState(eventType, canBubble, isCancelable, timestamp, WTFMove(view), detail, modifiers)
+    : UIEventWithKeyState(eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, modifiers)
     , m_screenLocation(screenLocation)
 #if ENABLE(POINTER_LOCK)
     , m_movementDelta(movementDelta)
@@ -49,17 +50,19 @@ MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, CanBubble ca
 }
 
 MouseRelatedEvent::MouseRelatedEvent(const AtomicString& type, IsCancelable isCancelable, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, const IntPoint& globalLocation, OptionSet<Modifier> modifiers)
-    : MouseRelatedEvent(type, CanBubble::Yes, isCancelable, timestamp, WTFMove(view), 0, globalLocation, globalLocation /* Converted in init */, { }, modifiers, IsSimulated::No)
+    : MouseRelatedEvent(type, CanBubble::Yes, isCancelable, IsComposed::Yes, timestamp,
+        WTFMove(view), 0, globalLocation, globalLocation /* Converted in init */, { }, modifiers, IsSimulated::No)
 {
 }
 
 MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, const MouseRelatedEventInit& initializer, IsTrusted isTrusted)
-    : UIEventWithKeyState(eventType, initializer, isTrusted)
+    : UIEventWithKeyState(eventType, initializer)
     , m_screenLocation(IntPoint(initializer.screenX, initializer.screenY))
 #if ENABLE(POINTER_LOCK)
     , m_movementDelta(IntPoint(0, 0))
 #endif
 {
+    ASSERT_UNUSED(isTrusted, isTrusted == IsTrusted::No);
     init(false, IntPoint(0, 0));
 }
 

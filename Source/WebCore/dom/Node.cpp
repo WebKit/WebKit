@@ -2349,7 +2349,7 @@ void Node::dispatchDOMActivateEvent(Event& underlyingClickEvent)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     int detail = is<UIEvent>(underlyingClickEvent) ? downcast<UIEvent>(underlyingClickEvent).detail() : 0;
-    auto event = UIEvent::create(eventNames().DOMActivateEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, document().windowProxy(), detail);
+    auto event = UIEvent::create(eventNames().DOMActivateEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes, document().windowProxy(), detail);
     event->setUnderlyingEvent(&underlyingClickEvent);
     dispatchScopedEvent(event);
     if (event->defaultHandled())
@@ -2369,7 +2369,7 @@ bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
 
 void Node::dispatchInputEvent()
 {
-    dispatchScopedEvent(Event::create(eventNames().inputEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+    dispatchScopedEvent(Event::create(eventNames().inputEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::Yes));
 }
 
 void Node::defaultEventHandler(Event& event)
