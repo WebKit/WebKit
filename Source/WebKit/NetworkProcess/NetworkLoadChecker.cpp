@@ -431,3 +431,5 @@ void NetworkLoadChecker::storeRedirectionIfNeeded(const ResourceRequest& request
 }
 
 } // namespace WebKit
+
+#undef RELEASE_LOG_IF_ALLOWED

@@ -21,38 +21,38 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-NetworkProcess/cache/NetworkCacheCodersCocoa.cpp @no-unify
-NetworkProcess/cache/NetworkCacheDataCocoa.mm @no-unify
-NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm @no-unify
+NetworkProcess/cache/NetworkCacheCodersCocoa.cpp
+NetworkProcess/cache/NetworkCacheDataCocoa.mm
+NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm
 
-NetworkProcess/cocoa/NetworkActivityTrackerCocoa.mm @no-unify
-NetworkProcess/cocoa/NetworkDataTaskCocoa.mm @no-unify
-NetworkProcess/cocoa/NetworkProcessCocoa.mm @no-unify
-NetworkProcess/cocoa/NetworkSessionCocoa.mm @no-unify
+NetworkProcess/cocoa/NetworkActivityTrackerCocoa.mm
+NetworkProcess/cocoa/NetworkDataTaskCocoa.mm
+NetworkProcess/cocoa/NetworkProcessCocoa.mm
+NetworkProcess/cocoa/NetworkSessionCocoa.mm
 
-NetworkProcess/Cookies/mac/WebCookieManagerMac.mm @no-unify
+NetworkProcess/Cookies/mac/WebCookieManagerMac.mm
 
-NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm @no-unify
-NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp @no-unify
+NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm
+NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp
 
-NetworkProcess/Downloads/cocoa/DownloadCocoa.mm @no-unify
+NetworkProcess/Downloads/cocoa/DownloadCocoa.mm
 
-NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm @no-unify
+NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm
 
-NetworkProcess/ios/NetworkProcessIOS.mm @no-unify
+NetworkProcess/ios/NetworkProcessIOS.mm
 
-NetworkProcess/mac/NetworkProcessMac.mm @no-unify
-NetworkProcess/mac/RemoteNetworkingContext.mm @no-unify
+NetworkProcess/mac/NetworkProcessMac.mm
+NetworkProcess/mac/RemoteNetworkingContext.mm
 
-NetworkProcess/watchos/NetworkProximityAssertion.mm @no-unify
-NetworkProcess/watchos/NetworkProximityManager.mm @no-unify
+NetworkProcess/watchos/NetworkProximityAssertion.mm
+NetworkProcess/watchos/NetworkProximityManager.mm
 
-NetworkProcess/webrtc/LibWebRTCSocketClient.cpp @no-unify
-NetworkProcess/webrtc/NetworkRTCMonitor.cpp @no-unify
-NetworkProcess/webrtc/NetworkRTCProvider.cpp @no-unify
-NetworkProcess/webrtc/NetworkRTCResolver.cpp @no-unify
-NetworkProcess/webrtc/NetworkRTCResolverCocoa.cpp @no-unify
-NetworkProcess/webrtc/NetworkRTCSocket.cpp @no-unify
+NetworkProcess/webrtc/LibWebRTCSocketClient.cpp
+NetworkProcess/webrtc/NetworkRTCMonitor.cpp
+NetworkProcess/webrtc/NetworkRTCProvider.cpp
+NetworkProcess/webrtc/NetworkRTCResolver.cpp
+NetworkProcess/webrtc/NetworkRTCResolverCocoa.cpp
+NetworkProcess/webrtc/NetworkRTCSocket.cpp
 
 Platform/cf/ModuleCF.cpp
 

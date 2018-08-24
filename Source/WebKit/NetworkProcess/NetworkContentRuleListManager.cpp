@@ -32,9 +32,8 @@
 #include "NetworkProcessProxyMessages.h"
 #include "WebCompiledContentRuleList.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 NetworkContentRuleListManager::NetworkContentRuleListManager() = default;
 NetworkContentRuleListManager::~NetworkContentRuleListManager()

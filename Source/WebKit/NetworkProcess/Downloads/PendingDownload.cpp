@@ -32,9 +32,8 @@
 #include "NetworkProcess.h"
 #include "WebCoreArgumentCoders.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 PendingDownload::PendingDownload(NetworkLoadParameters&& parameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName)
     : m_networkLoad(std::make_unique<NetworkLoad>(*this, WTFMove(parameters), networkSession))

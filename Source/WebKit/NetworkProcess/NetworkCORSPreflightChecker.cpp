@@ -170,3 +170,5 @@ NetworkTransactionInformation NetworkCORSPreflightChecker::takeInformation()
 }
 
 } // Namespace WebKit
+
+#undef RELEASE_LOG_IF_ALLOWED

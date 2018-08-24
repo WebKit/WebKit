@@ -44,14 +44,13 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
-
-using namespace WebCore;
-using namespace WebCore::DOMCacheEngine;
-using namespace WebKit::NetworkCache;
-
 namespace WebKit {
 
 namespace CacheStorage {
+
+using namespace WebCore;
+using namespace WebCore::DOMCacheEngine;
+using namespace NetworkCache;
 
 static inline String computeKeyURL(const URL& url)
 {

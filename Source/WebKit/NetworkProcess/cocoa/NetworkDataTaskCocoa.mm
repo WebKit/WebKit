@@ -50,7 +50,7 @@
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
 @interface NSURLSessionTask (Staging)
-@property (nullable, readwrite, retain) NSURL *_siteForCookies;
+@property (readwrite, retain) NSURL *_siteForCookies;
 @property (readwrite) BOOL _isTopLevelNavigation;
 @end
 #endif

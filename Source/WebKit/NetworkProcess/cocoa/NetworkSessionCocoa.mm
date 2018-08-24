@@ -56,7 +56,7 @@ using namespace WebKit;
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
 @interface NSURLSessionConfiguration (WKStaging)
-@property (nullable, copy) NSSet *_suppressedAutoAddedHTTPHeaders;
+@property (copy) NSSet *_suppressedAutoAddedHTTPHeaders;
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
 // FIXME: Remove this once rdar://problem/40650244 is in a build.
 @property (copy) NSDictionary *_socketStreamProperties;
@@ -143,7 +143,7 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
     return _session->dataTaskForIdentifier(task.taskIdentifier, storedCredentialsPolicy);
 }
 
-- (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(nullable NSError *)error
+- (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(NSError *)error
 {
     ASSERT(!_session);
 }
@@ -298,7 +298,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
     }
 }
 
-- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask willCacheResponse:(NSCachedURLResponse *)proposedResponse completionHandler:(void (^)(NSCachedURLResponse * _Nullable cachedResponse))completionHandler
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask willCacheResponse:(NSCachedURLResponse *)proposedResponse completionHandler:(void (^)(NSCachedURLResponse *cachedResponse))completionHandler
 {
     if (!_session) {
         completionHandler(nil);

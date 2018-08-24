@@ -1,5 +1,52 @@
 2018-08-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Use unified build for NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=185011
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/Cookies/WebCookieManager.cpp:
+        * NetworkProcess/Downloads/Download.cpp:
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        * NetworkProcess/NetworkContentRuleListManager.cpp:
+        * NetworkProcess/NetworkDataTask.cpp:
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        * NetworkProcess/NetworkProcess.cpp:
+        * NetworkProcess/NetworkProcessPlatformStrategies.cpp:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/NetworkSession.cpp:
+        * NetworkProcess/NetworkSocketStream.cpp:
+        * NetworkProcess/PingLoad.cpp:
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        * NetworkProcess/capture/NetworkCaptureEvent.cpp:
+        * NetworkProcess/capture/NetworkCaptureManager.cpp:
+        * NetworkProcess/capture/NetworkCaptureRecorder.cpp:
+        * NetworkProcess/capture/NetworkCaptureReplayer.cpp:
+        * NetworkProcess/capture/NetworkDataTaskReplay.cpp:
+        * NetworkProcess/webrtc/NetworkMDNSRegister.cpp:
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::platformCancelNetworkLoad):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:didBecomeInvalidWithError:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:willCacheResponse:completionHandler:]):
+        Fix the build with unified sources.
+
+        * Sources.txt: Un-@no-unify NetworkProcess/*.
+        * SourcesCocoa.txt: Un-@no-unify NetworkProcess/*.
+
+2018-08-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [CMake] Sync unified build with Cocoa ports
         https://bugs.webkit.org/show_bug.cgi?id=188732
 

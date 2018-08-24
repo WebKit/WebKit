@@ -95,9 +95,8 @@
 #include "NetworkSessionCocoa.h"
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 NetworkProcess& NetworkProcess::singleton()
 {
