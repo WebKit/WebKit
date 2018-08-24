@@ -1,3 +1,10 @@
+2018-08-23  Aditya Keerthi  <akeerthi@apple.com>
+
+        Unreviewed, fix the Windows build after r235245.
+
+        * html/InputMode.cpp:
+        (WebCore::stringForInputMode):
+
 2018-08-23  Saam barati  <sbarati@apple.com>
 
         JSRunLoopTimer may run part of a member function after it's destroyed

@@ -70,6 +70,8 @@ const AtomicString& stringForInputMode(InputMode mode)
     case InputMode::Search:
         return InputModeNames::search();
     }
+
+    return emptyAtom();
 }
 
 namespace InputModeNames {
