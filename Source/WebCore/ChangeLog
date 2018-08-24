@@ -1,3 +1,25 @@
+2018-08-24  Antti Koivisto  <antti@apple.com>
+
+        Allow creating WeakPtrs to const objects
+        https://bugs.webkit.org/show_bug.cgi?id=188785
+
+        Reviewed by Geoff Garen.
+
+        Remove some unneeded const_casts.
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::MediaQueryEvaluator):
+        (WebCore::MediaQueryEvaluator::evaluate const):
+        * css/MediaQueryEvaluator.h:
+        * rendering/FloatingObjects.cpp:
+        (WebCore::ComputeFloatOffsetAdapter::ComputeFloatOffsetAdapter):
+        (WebCore::ComputeFloatOffsetForFloatLayoutAdapter::ComputeFloatOffsetForFloatLayoutAdapter):
+        (WebCore::ComputeFloatOffsetForLineLayoutAdapter::ComputeFloatOffsetForLineLayoutAdapter):
+        (WebCore::FindNextFloatLogicalBottomAdapter::FindNextFloatLogicalBottomAdapter):
+        (WebCore::FloatingObjects::FloatingObjects):
+        * rendering/FloatingObjects.h:
+        (WebCore::FloatingObjects::renderer const):
+
 2018-08-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Move inline methods on CoordinatedGraphicsLayer out-of-line

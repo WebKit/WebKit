@@ -201,12 +201,14 @@ TEST(WTF_WeakPtr, Forget)
 
 class Base {
 public:
+    Base() { }
+
     int foo()
     {
         return 0;
     }
 
-    auto& weakPtrFactory() { return m_weakPtrFactory; }
+    auto& weakPtrFactory() const { return m_weakPtrFactory; }
 
 private:
     WeakPtrFactory<Base> m_weakPtrFactory;
@@ -214,6 +216,8 @@ private:
 
 class Derived : public Base {
 public:
+    Derived() { }
+
     int foo()
     {
         return 1;
@@ -278,6 +282,40 @@ TEST(WTF_WeakPtr, DerivedConstructAndAssign)
     {
         WeakPtr<Derived> derivedWeakPtr = makeWeakPtr(derived);
         WeakPtr<Base> baseWeakPtr;
+        baseWeakPtr = derivedWeakPtr;
+        EXPECT_EQ(baseWeakPtr.get(), &derived);
+        EXPECT_EQ(derivedWeakPtr.get(), &derived);
+    }
+}
+
+TEST(WTF_WeakPtr, DerivedConstructAndAssignConst)
+{
+    const Derived derived;
+    {
+        auto derivedWeakPtr = makeWeakPtr(derived);
+        WeakPtr<const Base> baseWeakPtr { WTFMove(derivedWeakPtr) };
+        EXPECT_EQ(baseWeakPtr.get(), &derived);
+        EXPECT_NULL(derivedWeakPtr.get());
+    }
+
+    {
+        auto derivedWeakPtr = makeWeakPtr(derived);
+        WeakPtr<const Base> baseWeakPtr { derivedWeakPtr };
+        EXPECT_EQ(baseWeakPtr.get(), &derived);
+        EXPECT_EQ(derivedWeakPtr.get(), &derived);
+    }
+
+    {
+        auto derivedWeakPtr = makeWeakPtr(derived);
+        WeakPtr<const Base> baseWeakPtr;
+        baseWeakPtr = WTFMove(derivedWeakPtr);
+        EXPECT_EQ(baseWeakPtr.get(), &derived);
+        EXPECT_NULL(derivedWeakPtr.get());
+    }
+
+    {
+        auto derivedWeakPtr = makeWeakPtr(derived);
+        WeakPtr<const Base> baseWeakPtr;
         baseWeakPtr = derivedWeakPtr;
         EXPECT_EQ(baseWeakPtr.get(), &derived);
         EXPECT_EQ(derivedWeakPtr.get(), &derived);
