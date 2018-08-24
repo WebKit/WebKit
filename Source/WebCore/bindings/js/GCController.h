@@ -51,6 +51,8 @@ public:
 private:
     GCController(); // Use singleton() instead.
 
+    void dumpHeap();
+
     void gcTimerFired();
     Timer m_GCTimer;
 };

@@ -1,3 +1,314 @@
+2018-08-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Add support for dumping GC heap snapshots, and a viewer
+        https://bugs.webkit.org/show_bug.cgi?id=186416
+
+        Reviewed by Joseph Pecoraro.
+
+        Make a way to dump information about the GC heap that is useful for looking for leaked
+        or abandoned objects. This dump is obtained (on Apple platforms) via:
+            notifyutil -p com.apple.WebKit.dumpGCHeap
+        which writes a JSON file to /tmp which can then be loaded into the viewer in Tools/GCHeapInspector.
+
+        This leverages the heap snapshot used by Web Inspector, adding an alternate format for
+        the snapshot JSON that adds additional data about objects and why they are GC roots.
+        
+        The generated bindings code is changed to include the output root reason from isReachableFromOpaqueRoots(),
+        and to implement heapSnapshot() which provides the address of the wrapped object. A new IDL attribute,
+        CustomHeapSnapshot, is used to allow custom heapSnapshot() implementations for classes like JSDocument
+        that need to decorate the heap snapshot cell data with things like the document URL.
+
+        GCController registers a notifyutil callback which gathers the debug heap snapshot, and dumps it
+        to a file in /tmp. The file path is printed out to the system log.
+
+        * bindings/js/DOMGCOutputConstraint.cpp:
+        (WebCore::DOMGCOutputConstraint::executeImpl):
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::GCController):
+        (WebCore::GCController::dumpHeap):
+        * bindings/js/GCController.h:
+        * bindings/js/JSCSSRuleListCustom.cpp:
+        (WebCore::JSCSSRuleListOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackDataWeak::WeakOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSCallbackData.h:
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext2DOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::heapSnapshot):
+        * bindings/js/JSDeprecatedCSSOMValueCustom.cpp:
+        (WebCore::JSDeprecatedCSSOMValueOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::heapSnapshot):
+        * bindings/js/JSMicrotaskCallback.h:
+        (WebCore::JSMicrotaskCallback::call):
+        * bindings/js/JSMutationObserverCustom.cpp:
+        (WebCore::JSMutationObserverOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSNavigatorCustom.cpp:
+        (WebCore::JSNavigator::visitAdditionalChildren):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::isReachableFromDOM):
+        (WebCore::JSNodeOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::JSNodeListOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSOffscreenCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSOffscreenCanvasRenderingContext2DOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSPerformanceObserverCustom.cpp:
+        (WebCore::JSPerformanceObserverOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSPopStateEventCustom.cpp:
+        * bindings/js/JSTextTrackCueCustom.cpp:
+        (WebCore::JSTextTrackCueOwner::isReachableFromOpaqueRoots):
+        * bindings/js/WebCoreTypedArrayController.cpp:
+        (WebCore::WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots):
+        * bindings/js/WebCoreTypedArrayController.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.json:
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        (WebCore::JSInterfaceName::heapSnapshot):
+        (WebCore::JSInterfaceNameOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSInterfaceName.h:
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        (WebCore::JSMapLike::heapSnapshot):
+        (WebCore::JSMapLikeOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSMapLike.h:
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        (WebCore::JSReadOnlyMapLike::heapSnapshot):
+        (WebCore::JSReadOnlyMapLikeOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.h:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::JSTestActiveDOMObject::heapSnapshot):
+        (WebCore::JSTestActiveDOMObjectOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        (WebCore::JSTestCEReactions::heapSnapshot):
+        (WebCore::JSTestCEReactionsOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestCEReactions.h:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        (WebCore::JSTestCEReactionsStringifier::heapSnapshot):
+        (WebCore::JSTestCEReactionsStringifierOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.h:
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        (WebCore::JSTestCallTracer::heapSnapshot):
+        (WebCore::JSTestCallTracerOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestCallTracer.h:
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::JSTestClassWithJSBuiltinConstructor::heapSnapshot):
+        (WebCore::JSTestClassWithJSBuiltinConstructorOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        (WebCore::JSTestCustomConstructorWithNoInterfaceObject::heapSnapshot):
+        (WebCore::JSTestCustomConstructorWithNoInterfaceObjectOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.h:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        (WebCore::JSTestDOMJIT::heapSnapshot):
+        * bindings/scripts/test/JS/JSTestDOMJIT.h:
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        (WebCore::JSTestEnabledBySetting::heapSnapshot):
+        (WebCore::JSTestEnabledBySettingOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructor::heapSnapshot):
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTarget::heapSnapshot):
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::JSTestException::heapSnapshot):
+        (WebCore::JSTestExceptionOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::JSTestGenerateIsReachable::heapSnapshot):
+        (WebCore::JSTestGenerateIsReachableOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.h:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::JSTestGlobalObject::heapSnapshot):
+        (WebCore::JSTestGlobalObjectOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestGlobalObject.h:
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.cpp:
+        (WebCore::JSTestIndexedSetterNoIdentifier::heapSnapshot):
+        (WebCore::JSTestIndexedSetterNoIdentifierOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.h:
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.cpp:
+        (WebCore::JSTestIndexedSetterThrowingException::heapSnapshot):
+        (WebCore::JSTestIndexedSetterThrowingExceptionOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.h:
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        (WebCore::JSTestIndexedSetterWithIdentifier::heapSnapshot):
+        (WebCore::JSTestIndexedSetterWithIdentifierOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.h:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterface::heapSnapshot):
+        (WebCore::JSTestInterfaceOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        (WebCore::JSTestInterfaceLeadingUnderscore::heapSnapshot):
+        (WebCore::JSTestInterfaceLeadingUnderscoreOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.h:
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        (WebCore::JSTestIterable::heapSnapshot):
+        (WebCore::JSTestIterableOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestIterable.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListener::heapSnapshot):
+        (WebCore::JSTestMediaQueryListListenerOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterNoIdentifier::heapSnapshot):
+        (WebCore::JSTestNamedAndIndexedSetterNoIdentifierOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterThrowingException::heapSnapshot):
+        (WebCore::JSTestNamedAndIndexedSetterThrowingExceptionOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.h:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterWithIdentifier::heapSnapshot):
+        (WebCore::JSTestNamedAndIndexedSetterWithIdentifierOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructor::heapSnapshot):
+        (WebCore::JSTestNamedConstructorOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.cpp:
+        (WebCore::JSTestNamedDeleterNoIdentifier::heapSnapshot):
+        (WebCore::JSTestNamedDeleterNoIdentifierOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.cpp:
+        (WebCore::JSTestNamedDeleterThrowingException::heapSnapshot):
+        (WebCore::JSTestNamedDeleterThrowingExceptionOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.h:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        (WebCore::JSTestNamedDeleterWithIdentifier::heapSnapshot):
+        (WebCore::JSTestNamedDeleterWithIdentifierOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp:
+        (WebCore::JSTestNamedDeleterWithIndexedGetter::heapSnapshot):
+        (WebCore::JSTestNamedDeleterWithIndexedGetterOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.h:
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.cpp:
+        (WebCore::JSTestNamedGetterCallWith::heapSnapshot):
+        (WebCore::JSTestNamedGetterCallWithOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.h:
+        * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedGetterNoIdentifier::heapSnapshot):
+        (WebCore::JSTestNamedGetterNoIdentifierOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedGetterWithIdentifier::heapSnapshot):
+        (WebCore::JSTestNamedGetterWithIdentifierOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedSetterNoIdentifier::heapSnapshot):
+        (WebCore::JSTestNamedSetterNoIdentifierOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+        (WebCore::JSTestNamedSetterThrowingException::heapSnapshot):
+        (WebCore::JSTestNamedSetterThrowingExceptionOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedSetterWithIdentifier::heapSnapshot):
+        (WebCore::JSTestNamedSetterWithIdentifierOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        (WebCore::JSTestNamedSetterWithIndexedGetter::heapSnapshot):
+        (WebCore::JSTestNamedSetterWithIndexedGetterOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        (WebCore::JSTestNamedSetterWithIndexedGetterAndSetter::heapSnapshot):
+        (WebCore::JSTestNamedSetterWithIndexedGetterAndSetterOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.cpp:
+        (WebCore::JSTestNamedSetterWithOverrideBuiltins::heapSnapshot):
+        (WebCore::JSTestNamedSetterWithOverrideBuiltinsOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp:
+        (WebCore::JSTestNamedSetterWithUnforgableProperties::heapSnapshot):
+        (WebCore::JSTestNamedSetterWithUnforgablePropertiesOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.cpp:
+        (WebCore::JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::heapSnapshot):
+        (WebCore::JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.h:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNode::heapSnapshot):
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObj::heapSnapshot):
+        (WebCore::JSTestObjOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructors::heapSnapshot):
+        (WebCore::JSTestOverloadedConstructorsOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        (WebCore::JSTestOverloadedConstructorsWithSequence::heapSnapshot):
+        (WebCore::JSTestOverloadedConstructorsWithSequenceOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.h:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        (WebCore::JSTestOverrideBuiltins::heapSnapshot):
+        (WebCore::JSTestOverrideBuiltinsOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.h:
+        * bindings/scripts/test/JS/JSTestPluginInterface.cpp:
+        (WebCore::JSTestPluginInterface::heapSnapshot):
+        (WebCore::JSTestPluginInterfaceOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestPluginInterface.h:
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        (WebCore::JSTestPromiseRejectionEvent::heapSnapshot):
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.h:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        (WebCore::JSTestSerialization::heapSnapshot):
+        (WebCore::JSTestSerializationOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestSerialization.h:
+        * bindings/scripts/test/JS/JSTestSerializationIndirectInheritance.cpp:
+        (WebCore::JSTestSerializationIndirectInheritance::heapSnapshot):
+        * bindings/scripts/test/JS/JSTestSerializationIndirectInheritance.h:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        (WebCore::JSTestSerializationInherit::heapSnapshot):
+        * bindings/scripts/test/JS/JSTestSerializationInherit.h:
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        (WebCore::JSTestSerializationInheritFinal::heapSnapshot):
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterface::heapSnapshot):
+        (WebCore::JSTestSerializedScriptValueInterfaceOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestStringifier.cpp:
+        (WebCore::JSTestStringifier::heapSnapshot):
+        (WebCore::JSTestStringifierOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestStringifier.h:
+        * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.cpp:
+        (WebCore::JSTestStringifierAnonymousOperation::heapSnapshot):
+        (WebCore::JSTestStringifierAnonymousOperationOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.h:
+        * bindings/scripts/test/JS/JSTestStringifierNamedOperation.cpp:
+        (WebCore::JSTestStringifierNamedOperation::heapSnapshot):
+        (WebCore::JSTestStringifierNamedOperationOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestStringifierNamedOperation.h:
+        * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.cpp:
+        (WebCore::JSTestStringifierOperationImplementedAs::heapSnapshot):
+        (WebCore::JSTestStringifierOperationImplementedAsOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.h:
+        * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.cpp:
+        (WebCore::JSTestStringifierOperationNamedToString::heapSnapshot):
+        (WebCore::JSTestStringifierOperationNamedToStringOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.h:
+        * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.cpp:
+        (WebCore::JSTestStringifierReadOnlyAttribute::heapSnapshot):
+        (WebCore::JSTestStringifierReadOnlyAttributeOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.h:
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+        (WebCore::JSTestStringifierReadWriteAttribute::heapSnapshot):
+        (WebCore::JSTestStringifierReadWriteAttributeOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefs::heapSnapshot):
+        (WebCore::JSTestTypedefsOwner::isReachableFromOpaqueRoots):
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * dom/Document.idl:
+        * page/DOMWindow.idl:
+
 2018-08-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         initKeyboardEvent doesn't clear CapsLock state

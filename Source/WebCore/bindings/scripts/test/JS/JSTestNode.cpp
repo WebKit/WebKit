@@ -34,7 +34,9 @@
 #include "JSDOMWrapperCache.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
+#include "URL.h"
 #include <JavaScriptCore/BuiltinNames.h>
+#include <JavaScriptCore/HeapSnapshotBuilder.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ObjectConstructor.h>
 #include <wtf/GetPtr.h>
@@ -410,6 +412,15 @@ static inline EncodedJSValue jsTestNodePrototypeFunctionToJSONBody(ExecState* st
 EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionToJSON(ExecState* state)
 {
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionToJSONBody>(*state, "toJSON");
+}
+
+void JSTestNode::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)
+{
+    auto* thisObject = jsCast<JSTestNode*>(cell);
+    builder.setWrappedObjectForCell(cell, &thisObject->wrapped());
+    if (thisObject->scriptExecutionContext())
+        builder.setLabelForCell(cell, String::format("url %s", thisObject->scriptExecutionContext()->url().string().utf8().data()));
+    Base::heapSnapshot(cell, builder);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

@@ -71,7 +71,7 @@ using namespace JSC;
 
 using namespace HTMLNames;
 
-static inline bool isReachableFromDOM(Node* node, SlotVisitor& visitor)
+static inline bool isReachableFromDOM(Node* node, SlotVisitor& visitor, const char** reason)
 {
     if (!node->isConnected()) {
         if (is<Element>(*node)) {
@@ -83,30 +83,42 @@ static inline bool isReachableFromDOM(Node* node, SlotVisitor& visitor)
             // the element is destroyed, its load event will not fire.
             // FIXME: The DOM should manage this issue without the help of JavaScript wrappers.
             if (is<HTMLImageElement>(element)) {
-                if (downcast<HTMLImageElement>(element).hasPendingActivity())
+                if (downcast<HTMLImageElement>(element).hasPendingActivity()) {
+                    if (UNLIKELY(reason))
+                        *reason = "Image element with pending activity";
                     return true;
+                }
             }
 #if ENABLE(VIDEO)
             else if (is<HTMLAudioElement>(element)) {
-                if (!downcast<HTMLAudioElement>(element).paused())
+                if (!downcast<HTMLAudioElement>(element).paused()) {
+                    if (UNLIKELY(reason))
+                        *reason = "Audio element which is not paused";
                     return true;
+                }
             }
 #endif
         }
 
         // If a node is firing event listeners, its wrapper is observable because
         // its wrapper is responsible for marking those event listeners.
-        if (node->isFiringEventListeners())
+        if (node->isFiringEventListeners()) {
+            if (UNLIKELY(reason))
+                *reason = "Node which is firing event listeners";
             return true;
+        }
     }
+
+    if (UNLIKELY(reason))
+        *reason = "Connected node";
 
     return visitor.containsOpaqueRoot(root(node));
 }
 
-bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor, const char** reason)
 {
     JSNode* jsNode = jsCast<JSNode*>(handle.slot()->asCell());
-    return isReachableFromDOM(&jsNode->wrapped(), visitor);
+    return isReachableFromDOM(&jsNode->wrapped(), visitor, reason);
 }
 
 JSScope* JSNode::pushEventHandlerScope(ExecState* exec, JSScope* node) const

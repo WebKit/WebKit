@@ -37,24 +37,33 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {
-    
-unsigned HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1;
-unsigned HeapSnapshotBuilder::getNextObjectIdentifier() { return nextAvailableObjectIdentifier++; }
+
+static const char* rootTypeToString(SlotVisitor::RootMarkReason);
+
+NodeIdentifier HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1;
+NodeIdentifier HeapSnapshotBuilder::getNextObjectIdentifier() { return nextAvailableObjectIdentifier++; }
 void HeapSnapshotBuilder::resetNextAvailableObjectIdentifier() { HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1; }
 
-HeapSnapshotBuilder::HeapSnapshotBuilder(HeapProfiler& profiler)
+HeapSnapshotBuilder::HeapSnapshotBuilder(HeapProfiler& profiler, SnapshotType type)
     : m_profiler(profiler)
+    , m_snapshotType(type)
 {
 }
 
 HeapSnapshotBuilder::~HeapSnapshotBuilder()
 {
+    if (m_snapshotType == SnapshotType::GCDebuggingSnapshot)
+        m_profiler.clearSnapshots();
 }
 
 void HeapSnapshotBuilder::buildSnapshot()
 {
+    // GCDebuggingSnapshot are always full snapshots, so clear any existing snapshots.
+    if (m_snapshotType == SnapshotType::GCDebuggingSnapshot)
+        m_profiler.clearSnapshots();
+
     PreventCollectionScope preventCollectionScope(m_profiler.vm().heap);
-    
+
     m_snapshot = std::make_unique<HeapSnapshot>(m_profiler.mostRecentSnapshot());
     {
         m_profiler.setActiveSnapshotBuilder(this);
@@ -69,17 +78,18 @@ void HeapSnapshotBuilder::buildSnapshot()
 void HeapSnapshotBuilder::appendNode(JSCell* cell)
 {
     ASSERT(m_profiler.activeSnapshotBuilder() == this);
+    
     ASSERT(Heap::isMarked(cell));
 
-    if (hasExistingNodeForCell(cell))
+    NodeIdentifier identifier;
+    if (previousSnapshotHasNodeForCell(cell, identifier))
         return;
 
     std::lock_guard<Lock> lock(m_buildingNodeMutex);
-
     m_snapshot->appendNode(HeapSnapshotNode(cell, getNextObjectIdentifier()));
 }
 
-void HeapSnapshotBuilder::appendEdge(JSCell* from, JSCell* to)
+void HeapSnapshotBuilder::appendEdge(JSCell* from, JSCell* to, SlotVisitor::RootMarkReason rootMarkReason)
 {
     ASSERT(m_profiler.activeSnapshotBuilder() == this);
     ASSERT(to);
@@ -89,6 +99,15 @@ void HeapSnapshotBuilder::appendEdge(JSCell* from, JSCell* to)
         return;
 
     std::lock_guard<Lock> lock(m_buildingEdgeMutex);
+
+    if (m_snapshotType == SnapshotType::GCDebuggingSnapshot && !from) {
+        if (rootMarkReason == SlotVisitor::RootMarkReason::None && m_snapshotType == SnapshotType::GCDebuggingSnapshot)
+            WTFLogAlways("Cell %p is a root but no root marking reason was supplied", to);
+
+        m_rootData.ensure(to, [] () -> RootData {
+            return { };
+        }).iterator->value.markReason = rootMarkReason;
+    }
 
     m_edges.append(HeapSnapshotEdge(from, to));
 }
@@ -123,22 +142,46 @@ void HeapSnapshotBuilder::appendIndexEdge(JSCell* from, JSCell* to, uint32_t ind
     m_edges.append(HeapSnapshotEdge(from, to, index));
 }
 
-bool HeapSnapshotBuilder::hasExistingNodeForCell(JSCell* cell)
+void HeapSnapshotBuilder::setOpaqueRootReachabilityReasonForCell(JSCell* cell, const char* reason)
+{
+    if (!reason || !*reason || m_snapshotType != SnapshotType::GCDebuggingSnapshot)
+        return;
+
+    m_rootData.ensure(cell, [] () -> RootData {
+        return { };
+    }).iterator->value.reachabilityFromOpaqueRootReasons = reason;
+}
+
+void HeapSnapshotBuilder::setWrappedObjectForCell(JSCell* cell, void* wrappedPtr)
+{
+    m_wrappedObjectPointers.set(cell, wrappedPtr);
+}
+
+bool HeapSnapshotBuilder::previousSnapshotHasNodeForCell(JSCell* cell, NodeIdentifier& identifier)
 {
     if (!m_snapshot->previous())
         return false;
 
-    return !!m_snapshot->previous()->nodeForCell(cell);
-}
+    auto existingNode = m_snapshot->previous()->nodeForCell(cell);
+    if (existingNode) {
+        identifier = existingNode.value().identifier;
+        return true;
+    }
 
+    return false;
+}
 
 // Heap Snapshot JSON Format:
 //
+//  Inspector snapshots:
+//
 //   {
 //      "version": 1.0,
+//      "type": "Inspector",
+//      // [<address>, <labelIndex>, <wrappedEddress>] only present in GCDebuggingSnapshot-type snapshots
 //      "nodes": [
-//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <internal>,
-//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <internal>,
+//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <internal>
+//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <internal>
 //          ...
 //      ],
 //      "nodeClassNames": [
@@ -157,6 +200,40 @@ bool HeapSnapshotBuilder::hasExistingNodeForCell(JSCell* cell)
 //      ]
 //   }
 //
+//  GC heap debugger snapshots:
+//
+//   {
+//      "version": 1.0,
+//      "type": "GCDebugging",
+//      "nodes": [
+//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <internal>, <labelIndex>, <cellEddress>, <wrappedEddress>,
+//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <internal>, <labelIndex>, <cellEddress>, <wrappedEddress>,
+//          ...
+//      ],
+//      "nodeClassNames": [
+//          "string", "Structure", "Object", ...
+//      ],
+//      "edges": [
+//          <fromNodeId>, <toNodeId>, <edgeTypeIndex>, <edgeExtraData>,
+//          <fromNodeId>, <toNodeId>, <edgeTypeIndex>, <edgeExtraData>,
+//          ...
+//      ],
+//      "edgeTypes": [
+//          "Internal", "Property", "Index", "Variable"
+//      ],
+//      "edgeNames": [
+//          "propertyName", "variableName", ...
+//      ],
+//      "roots" : [
+//          <nodeId>, <rootReasonIndex>, <reachabilityReasonIndex>,
+//          <nodeId>, <rootReasonIndex>, <reachabilityReasonIndex>,
+//          ... // <nodeId> may be repeated
+//      ],
+//      "labels" : [
+//          "foo", "bar", ...
+//      ]
+//   }
+//
 // Notes:
 //
 //     <nodeClassNameIndex>
@@ -172,6 +249,9 @@ bool HeapSnapshotBuilder::hasExistingNodeForCell(JSCell* cell)
 //       - for Internal edges this should be ignored (0).
 //       - for Index edges this is the index value.
 //       - for Property or Variable edges this is an index into the "edgeNames" list.
+//
+//      <rootReasonIndex>
+//       - index into the "labels" list.
 
 static uint8_t edgeTypeToNumber(EdgeType type)
 {
@@ -194,9 +274,78 @@ static const char* edgeTypeToString(EdgeType type)
     return "Internal";
 }
 
+static const char* snapshotTypeToString(HeapSnapshotBuilder::SnapshotType type)
+{
+    switch (type) {
+    case HeapSnapshotBuilder::SnapshotType::InspectorSnapshot:
+        return "Inspector";
+    case HeapSnapshotBuilder::SnapshotType::GCDebuggingSnapshot:
+        return "GCDebugging";
+    }
+    ASSERT_NOT_REACHED();
+    return "Inspector";
+}
+
+static const char* rootTypeToString(SlotVisitor::RootMarkReason type)
+{
+    switch (type) {
+    case SlotVisitor::RootMarkReason::None:
+        return "None";
+    case SlotVisitor::RootMarkReason::ConservativeScan:
+        return "Conservative scan";
+    case SlotVisitor::RootMarkReason::StrongReferences:
+        return "Strong references";
+    case SlotVisitor::RootMarkReason::ProtectedValues:
+        return "Protected values";
+    case SlotVisitor::RootMarkReason::MarkListSet:
+        return "Mark list set";
+    case SlotVisitor::RootMarkReason::VMExceptions:
+        return "VM exceptions";
+    case SlotVisitor::RootMarkReason::StrongHandles:
+        return "Strong handles";
+    case SlotVisitor::RootMarkReason::Debugger:
+        return "Debugger";
+    case SlotVisitor::RootMarkReason::JITStubRoutines:
+        return "JIT stub routines";
+    case SlotVisitor::RootMarkReason::WeakSets:
+        return "Weak sets";
+    case SlotVisitor::RootMarkReason::Output:
+        return "Output";
+    case SlotVisitor::RootMarkReason::DFGWorkLists:
+        return "DFG work lists";
+    case SlotVisitor::RootMarkReason::CodeBlocks:
+        return "Code blocks";
+    case SlotVisitor::RootMarkReason::DOMGCOutput:
+        return "DOM GC output";
+    }
+    ASSERT_NOT_REACHED();
+    return "None";
+}
+
 String HeapSnapshotBuilder::json()
 {
     return json([] (const HeapSnapshotNode&) { return true; });
+}
+
+void HeapSnapshotBuilder::setLabelForCell(JSCell* cell, const String& label)
+{
+    m_cellLabels.set(cell, label);
+}
+
+String HeapSnapshotBuilder::descriptionForCell(JSCell *cell) const
+{
+    if (cell->isString())
+        return emptyString(); // FIXME: get part of string.
+
+    VM& vm = m_profiler.vm();
+    Structure* structure = cell->structure(vm);
+
+    if (structure->classInfo()->isSubClassOf(Structure::info())) {
+        Structure* cellAsStructure = jsCast<Structure*>(cell);
+        return cellAsStructure->classInfo()->className;
+    }
+
+    return emptyString();
 }
 
 String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowNodeCallback)
@@ -205,12 +354,17 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
     DeferGCForAWhile deferGC(vm.heap);
 
     // Build a node to identifier map of allowed nodes to use when serializing edges.
-    HashMap<JSCell*, unsigned> allowedNodeIdentifiers;
+    HashMap<JSCell*, NodeIdentifier> allowedNodeIdentifiers;
 
     // Build a list of used class names.
     HashMap<const char*, unsigned> classNameIndexes;
     classNameIndexes.set("<root>", 0);
     unsigned nextClassNameIndex = 1;
+
+    // Build a list of labels (this is just a string table).
+    HashMap<String, unsigned> labelIndexes;
+    labelIndexes.set(emptyString(), 0);
+    unsigned nextLabelIndex = 1;
 
     // Build a list of used edge names.
     HashMap<UniquedStringImpl*, unsigned> edgeNameIndexes;
@@ -231,12 +385,44 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
         unsigned classNameIndex = result.iterator->value;
 
         bool isInternal = false;
+        void* wrappedAddress = 0;
+        unsigned labelIndex = 0;
         if (!node.cell->isString()) {
             Structure* structure = node.cell->structure(vm);
             isInternal = !structure || !structure->globalObject();
+
+            if (m_snapshotType == SnapshotType::GCDebuggingSnapshot) {
+                String nodeLabel;
+                auto it = m_cellLabels.find(node.cell);
+                if (it != m_cellLabels.end())
+                    nodeLabel = it->value;
+
+                if (nodeLabel.isEmpty()) {
+                    if (auto* object = jsDynamicCast<JSObject*>(vm, node.cell)) {
+                        if (auto* function = jsDynamicCast<JSFunction*>(vm, object))
+                            nodeLabel = function->calculatedDisplayName(vm);
+                    }
+                }
+                
+                String description = descriptionForCell(node.cell);
+                if (description.length()) {
+                    if (nodeLabel.length())
+                        nodeLabel.append(' ');
+                    nodeLabel.append(description);
+                }
+
+                if (!nodeLabel.isEmpty() && m_snapshotType == SnapshotType::GCDebuggingSnapshot) {
+                    auto result = labelIndexes.add(nodeLabel, nextLabelIndex);
+                    if (result.isNewEntry)
+                        nextLabelIndex++;
+                    labelIndex = result.iterator->value;
+                }
+                
+                wrappedAddress = m_wrappedObjectPointers.get(node.cell);
+            }
         }
 
-        // <nodeId>, <sizeInBytes>, <className>, <optionalInternalBoolean>
+        // <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <internal>, [<labelIndex>, <cellEddress>, <wrappedEddress>]
         json.append(',');
         json.appendNumber(node.identifier);
         json.append(',');
@@ -245,6 +431,14 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
         json.appendNumber(classNameIndex);
         json.append(',');
         json.append(isInternal ? '1' : '0');
+        if (m_snapshotType == SnapshotType::GCDebuggingSnapshot) {
+            json.append(',');
+            json.appendNumber(labelIndex);
+            json.append(',');
+            json.append(String::format("\"%p\"", node.cell)); // FIXME: Should add StringBuilder::appendAddress(void*).
+            json.append(',');
+            json.append(String::format("\"%p\"", wrappedAddress));
+        }
     };
 
     bool firstEdge = true;
@@ -285,11 +479,21 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
     // version
     json.appendLiteral("\"version\":1");
 
+    // type
+    json.append(',');
+    json.appendLiteral("\"type\":");
+    json.appendQuotedJSONString(snapshotTypeToString(m_snapshotType));
+
     // nodes
     json.append(',');
     json.appendLiteral("\"nodes\":");
     json.append('[');
-    json.appendLiteral("0,0,0,0"); // <root>
+    // <root>
+    if (m_snapshotType == SnapshotType::GCDebuggingSnapshot)
+        json.appendLiteral("0,0,0,0,0,\"0x0\",\"0x0\"");
+    else
+        json.appendLiteral("0,0,0,0");
+
     for (HeapSnapshot* snapshot = m_profiler.mostRecentSnapshot(); snapshot; snapshot = snapshot->previous()) {
         for (auto& node : snapshot->m_nodes)
             appendNodeJSON(node);
@@ -323,8 +527,11 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
             edge.from.identifier = 0;
         else {
             auto fromLookup = allowedNodeIdentifiers.find(edge.from.cell);
-            if (fromLookup == allowedNodeIdentifiers.end())
+            if (fromLookup == allowedNodeIdentifiers.end()) {
+                if (m_snapshotType == SnapshotType::GCDebuggingSnapshot)
+                    WTFLogAlways("Failed to find node for from-edge cell %p", edge.from.cell);
                 return true;
+            }
             edge.from.identifier = fromLookup->value;
         }
 
@@ -332,13 +539,17 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
             edge.to.identifier = 0;
         else {
             auto toLookup = allowedNodeIdentifiers.find(edge.to.cell);
-            if (toLookup == allowedNodeIdentifiers.end())
+            if (toLookup == allowedNodeIdentifiers.end()) {
+                if (m_snapshotType == SnapshotType::GCDebuggingSnapshot)
+                    WTFLogAlways("Failed to find node for to-edge cell %p", edge.to.cell);
                 return true;
+            }
             edge.to.identifier = toLookup->value;
         }
 
         return false;
     });
+
     allowedNodeIdentifiers.clear();
     m_edges.shrinkToFit();
 
@@ -385,6 +596,73 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
     }
     orderedEdgeNames.clear();
     json.append(']');
+
+    if (m_snapshotType == SnapshotType::GCDebuggingSnapshot) {
+        json.append(',');
+        json.appendLiteral("\"roots\":");
+        json.append('[');
+        
+        HeapSnapshot* snapshot = m_profiler.mostRecentSnapshot();
+
+        bool firstNode = true;
+        for (auto it : m_rootData) {
+            auto snapshotNode = snapshot->nodeForCell(it.key);
+            if (!snapshotNode) {
+                WTFLogAlways("Failed to find snapshot node for cell %p", it.key);
+                continue;
+            }
+
+            if (!firstNode)
+                json.append(',');
+
+            firstNode = false;
+            json.appendNumber(snapshotNode.value().identifier);
+            
+            // Maybe we should just always encode the root names.
+            const char* rootName = rootTypeToString(it.value.markReason);
+            auto result = labelIndexes.add(rootName, nextLabelIndex);
+            if (result.isNewEntry)
+                nextLabelIndex++;
+            unsigned labelIndex = result.iterator->value;
+            json.append(',');
+            json.appendNumber(labelIndex);
+
+            unsigned reachabilityReasonIndex = 0;
+            if (it.value.reachabilityFromOpaqueRootReasons) {
+                auto result = labelIndexes.add(it.value.reachabilityFromOpaqueRootReasons, nextLabelIndex);
+                if (result.isNewEntry)
+                    nextLabelIndex++;
+                reachabilityReasonIndex = result.iterator->value;
+            }
+            json.append(',');
+            json.appendNumber(reachabilityReasonIndex);
+        }
+
+        json.append(']');
+    }
+
+    if (m_snapshotType == SnapshotType::GCDebuggingSnapshot) {
+        // internal node descriptions
+        json.append(',');
+        json.appendLiteral("\"labels\":");
+        json.append('[');
+
+        Vector<String> orderedLabels(labelIndexes.size());
+        for (auto& entry : labelIndexes)
+            orderedLabels[entry.value] = entry.key;
+        labelIndexes.clear();
+        bool firstLabel = true;
+        for (auto& label : orderedLabels) {
+            if (!firstLabel)
+                json.append(',');
+
+            firstLabel = false;
+            json.appendQuotedJSONString(label);
+        }
+        orderedLabels.clear();
+
+        json.append(']');
+    }
 
     json.append('}');
     return json.toString();

@@ -534,6 +534,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/HeapFinalizerCallback.h
     heap/HeapInlines.h
     heap/HeapObserver.h
+    heap/HeapSnapshotBuilder.h
     heap/IncrementalSweeper.h
     heap/IsoCellSet.h
     heap/IsoSubspace.h

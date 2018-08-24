@@ -37,7 +37,7 @@ WeakHandleOwner::~WeakHandleOwner()
 {
 }
 
-bool WeakHandleOwner::isReachableFromOpaqueRoots(Handle<Unknown>, void*, SlotVisitor&)
+bool WeakHandleOwner::isReachableFromOpaqueRoots(Handle<Unknown>, void*, SlotVisitor&, const char**)
 {
     return false;
 }

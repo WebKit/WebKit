@@ -45,6 +45,7 @@
 #include "ScheduledAction.h"
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
+#include <JavaScriptCore/HeapSnapshotBuilder.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSMicrotask.h>
 #include <JavaScriptCore/Lookup.h>
@@ -202,7 +203,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* state, Propert
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(*state, thisObject->wrapped(), errorMessage))
         return jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Local>(thisObject, thisObject->wrapped(), *state, propertyName, slot, errorMessage);
 
-    // FIXME: this need more explanation.
+    // FIXME: this needs more explanation.
     // (Particularly, is it correct that this exists here but not in getOwnPropertySlotByIndex?)
     slot.setWatchpointSet(thisObject->m_windowCloseWatchpoints);
 
@@ -326,6 +327,15 @@ bool JSDOMWindow::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned 
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), ThrowSecurityError))
         return false;
     return Base::deletePropertyByIndex(thisObject, exec, propertyName);
+}
+
+void JSDOMWindow::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)
+{
+    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);
+    if (auto* location = thisObject->wrapped().location())
+        builder.setLabelForCell(cell, location->href());
+
+    Base::heapSnapshot(cell, builder);
 }
 
 // https://html.spec.whatwg.org/#crossoriginproperties-(-o-)

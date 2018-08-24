@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "SlotVisitor.h"
 #include <functional>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
@@ -33,9 +34,12 @@
 
 namespace JSC {
 
+class ConservativeRoots;
 class HeapProfiler;
 class HeapSnapshot;
 class JSCell;
+
+typedef unsigned NodeIdentifier;
 
 struct HeapSnapshotNode {
     HeapSnapshotNode(JSCell* cell, unsigned identifier)
@@ -44,7 +48,7 @@ struct HeapSnapshotNode {
     { }
 
     JSCell* cell;
-    unsigned identifier;
+    NodeIdentifier identifier;
 };
 
 enum class EdgeType : uint8_t {
@@ -82,12 +86,12 @@ struct HeapSnapshotEdge {
 
     union {
         JSCell *cell;
-        unsigned identifier;
+        NodeIdentifier identifier;
     } from;
 
     union {
         JSCell *cell;
-        unsigned identifier;
+        NodeIdentifier identifier;
     } to;
 
     union {
@@ -101,33 +105,47 @@ struct HeapSnapshotEdge {
 class JS_EXPORT_PRIVATE HeapSnapshotBuilder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    HeapSnapshotBuilder(HeapProfiler&);
+    enum SnapshotType { InspectorSnapshot, GCDebuggingSnapshot };
+
+    HeapSnapshotBuilder(HeapProfiler&, SnapshotType = SnapshotType::InspectorSnapshot);
     ~HeapSnapshotBuilder();
 
-    static unsigned nextAvailableObjectIdentifier;
-    static unsigned getNextObjectIdentifier();
     static void resetNextAvailableObjectIdentifier();
 
     // Performs a garbage collection that builds a snapshot of all live cells.
     void buildSnapshot();
 
-    // A marked cell.
+    // A root or marked cell.
     void appendNode(JSCell*);
 
     // A reference from one cell to another.
-    void appendEdge(JSCell* from, JSCell* to);
+    void appendEdge(JSCell* from, JSCell* to, SlotVisitor::RootMarkReason);
     void appendPropertyNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* propertyName);
     void appendVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl* variableName);
     void appendIndexEdge(JSCell* from, JSCell* to, uint32_t index);
+
+    void setOpaqueRootReachabilityReasonForCell(JSCell*, const char*);
+    void setWrappedObjectForCell(JSCell*, void*);
+    void setLabelForCell(JSCell*, const String&);
 
     String json();
     String json(Function<bool (const HeapSnapshotNode&)> allowNodeCallback);
 
 private:
+    static NodeIdentifier nextAvailableObjectIdentifier;
+    static NodeIdentifier getNextObjectIdentifier();
+
     // Finalized snapshots are not modified during building. So searching them
     // for an existing node can be done concurrently without a lock.
-    bool hasExistingNodeForCell(JSCell*);
-
+    bool previousSnapshotHasNodeForCell(JSCell*, NodeIdentifier&);
+    
+    String descriptionForCell(JSCell*) const;
+    
+    struct RootData {
+        const char* reachabilityFromOpaqueRootReasons { nullptr };
+        SlotVisitor::RootMarkReason markReason { SlotVisitor::RootMarkReason::None };
+    };
+    
     HeapProfiler& m_profiler;
 
     // SlotVisitors run in parallel.
@@ -135,6 +153,10 @@ private:
     std::unique_ptr<HeapSnapshot> m_snapshot;
     Lock m_buildingEdgeMutex;
     Vector<HeapSnapshotEdge> m_edges;
+    HashMap<JSCell*, RootData> m_rootData;
+    HashMap<JSCell*, void*> m_wrappedObjectPointers;
+    HashMap<JSCell*, String> m_cellLabels;
+    SnapshotType m_snapshotType;
 };
 
 } // namespace JSC

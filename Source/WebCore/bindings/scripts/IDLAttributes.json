@@ -118,6 +118,9 @@
         "CustomGetter": {
             "contextsAllowed": ["attribute"]
         },
+        "CustomHeapSnapshot": {
+            "contextsAllowed": ["interface"]
+        },
         "CustomIndexedSetter": {
             "contextsAllowed": ["interface"]
         },

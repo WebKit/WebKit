@@ -225,7 +225,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
 void SlotVisitor::appendSlow(JSCell* cell, Dependency dependency)
 {
     if (UNLIKELY(m_heapSnapshotBuilder))
-        m_heapSnapshotBuilder->appendEdge(m_currentCell, cell);
+        m_heapSnapshotBuilder->appendEdge(m_currentCell, cell, m_rootMarkReason);
     
     appendHiddenSlowImpl(cell, dependency);
 }

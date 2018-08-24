@@ -1,3 +1,77 @@
+2018-08-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Add support for dumping GC heap snapshots, and a viewer
+        https://bugs.webkit.org/show_bug.cgi?id=186416
+
+        Reviewed by Joseph Pecoraro.
+
+        Make a way to dump information about the GC heap that is useful for looking for leaked
+        or abandoned objects. This dump is obtained (on Apple platforms) via:
+            notifyutil -p com.apple.WebKit.dumpGCHeap
+        which writes a JSON file to /tmp which can then be loaded into the viewer in Tools/GCHeapInspector.
+        
+        This leverages the heap snapshot used by Web Inspector, adding an alternate format for
+        the snapshot JSON that adds additional data about objects and why they are GC roots.
+
+        SlotVisitor maintains a RootMarkReason (via SetRootMarkReasonScope) that allows
+        the HeapSnapshotBuilder to keep track of why a JSCell was treated as a GC root. For
+        objects visited via opaque roots, we record the reason why via a new out param to
+        isReachableFromOpaqueRoots().
+
+        HeapSnapshotBuilder is enhanced to produce GCDebuggingSnapshot JSON output. This contains
+        additional information including the address of the JSCell* and the wrapped object (for
+        JSDOMWrappers), the root reasons, and for some objects like JSDocument a label which can
+        be the document URL.
+
+        GCDebuggingSnapshots are always full snapshots (previous snapshots are not kept around).
+
+        * API/JSAPIWrapperObject.mm:
+        (JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots):
+        * API/JSManagedValue.mm:
+        (JSManagedValueHandleOwner::isReachableFromOpaqueRoots):
+        * API/glib/JSAPIWrapperObjectGLib.cpp:
+        (JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots):
+        * CMakeLists.txt:
+        * heap/ConservativeRoots.h:
+        (JSC::ConservativeRoots::size const):
+        (JSC::ConservativeRoots::size): Deleted.
+        * heap/Heap.cpp:
+        (JSC::Heap::addCoreConstraints):
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::getNextObjectIdentifier):
+        (JSC::HeapSnapshotBuilder::HeapSnapshotBuilder):
+        (JSC::HeapSnapshotBuilder::~HeapSnapshotBuilder):
+        (JSC::HeapSnapshotBuilder::buildSnapshot):
+        (JSC::HeapSnapshotBuilder::appendNode):
+        (JSC::HeapSnapshotBuilder::appendEdge):
+        (JSC::HeapSnapshotBuilder::setOpaqueRootReachabilityReasonForCell):
+        (JSC::HeapSnapshotBuilder::setWrappedObjectForCell):
+        (JSC::HeapSnapshotBuilder::previousSnapshotHasNodeForCell):
+        (JSC::snapshotTypeToString):
+        (JSC::rootTypeToString):
+        (JSC::HeapSnapshotBuilder::setLabelForCell):
+        (JSC::HeapSnapshotBuilder::descriptionForCell const):
+        (JSC::HeapSnapshotBuilder::json):
+        (JSC::HeapSnapshotBuilder::hasExistingNodeForCell): Deleted.
+        * heap/HeapSnapshotBuilder.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendSlow):
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::heapSnapshotBuilder const):
+        (JSC::SlotVisitor::rootMarkReason const):
+        (JSC::SlotVisitor::setRootMarkReason):
+        (JSC::SetRootMarkReasonScope::SetRootMarkReasonScope):
+        (JSC::SetRootMarkReasonScope::~SetRootMarkReasonScope):
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::specializedVisit):
+        * heap/WeakHandleOwner.cpp:
+        (JSC::WeakHandleOwner::isReachableFromOpaqueRoots):
+        * heap/WeakHandleOwner.h:
+        * runtime/SimpleTypedArrayController.cpp:
+        (JSC::SimpleTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots):
+        * runtime/SimpleTypedArrayController.h:
+        * tools/JSDollarVM.cpp:
+
 2018-08-23  Saam barati  <sbarati@apple.com>
 
         JSRunLoopTimer may run part of a member function after it's destroyed

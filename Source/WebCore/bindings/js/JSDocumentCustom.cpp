@@ -26,6 +26,7 @@
 #include "JSXMLDocument.h"
 #include "NodeTraversal.h"
 #include "SVGDocument.h"
+#include <JavaScriptCore/HeapSnapshotBuilder.h>
 
 
 namespace WebCore {
@@ -91,6 +92,13 @@ JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, Document& docume
 void JSDocument::visitAdditionalChildren(SlotVisitor& visitor)
 {
     visitor.addOpaqueRoot(static_cast<ScriptExecutionContext*>(&wrapped()));
+}
+
+void JSDocument::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)
+{
+    Base::heapSnapshot(cell, builder);
+    auto* thisObject = jsCast<JSDocument*>(cell);
+    builder.setLabelForCell(cell, thisObject->wrapped().url().string());
 }
 
 } // namespace WebCore

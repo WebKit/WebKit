@@ -90,8 +90,10 @@ void JSCallbackDataWeak::visitJSFunction(JSC::SlotVisitor& vistor)
     vistor.append(m_callback);
 }
 
-bool JSCallbackDataWeak::WeakOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, SlotVisitor& visitor)
+bool JSCallbackDataWeak::WeakOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, SlotVisitor& visitor, const char** reason)
 {
+    if (UNLIKELY(reason))
+        *reason = "Context is opaque root"; // FIXME: what is the context.
     return visitor.containsOpaqueRoot(context);
 }
 

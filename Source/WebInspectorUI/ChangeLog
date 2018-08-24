@@ -1,3 +1,29 @@
+2018-08-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Add support for dumping GC heap snapshots, and a viewer
+        https://bugs.webkit.org/show_bug.cgi?id=186416
+
+        Reviewed by Joseph Pecoraro.
+
+        Make a way to dump information about the GC heap that is useful for looking for leaked
+        or abandoned objects. This dump is obtained (on Apple platforms) via:
+            notifyutil -p com.apple.WebKit.dumpGCHeap
+        which writes a JSON file to /tmp which can then be loaded into the viewer in Tools/GCHeapInspector.
+
+        This leverages the heap snapshot used by Web Inspector, adding an alternate format for
+        the snapshot JSON that adds additional data about objects and why they are GC roots.
+
+        The generated bindings code is changed to include the output root reason from isReachableFromOpaqueRoots(),
+        and to implement heapSnapshot() which provides the address of the wrapped object. A new IDL attribute,
+        CustomHeapSnapshot, is used to allow custom heapSnapshot() implementations for classes like JSDocument
+        that need to decorate the heap snapshot cell data with things like the document URL.
+
+        GCController registers a notifyutil callback which gathers the debug heap snapshot, and dumps it
+        to a file in /tmp. The file path is printed out to the system log.
+
+        * UserInterface/Workers/HeapSnapshot/HeapSnapshot.js:
+        (HeapSnapshot):
+
 2018-08-23  Brian Burg  <bburg@apple.com>
 
         Web Inspector: fix typos in some compositing reasons

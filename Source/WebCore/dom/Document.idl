@@ -35,6 +35,7 @@ typedef (
     Constructor,
     ConstructorCallWith=Document,
     CustomToJSObject,
+    CustomHeapSnapshot,
     DOMJIT,
     ExportMacro=WEBCORE_EXPORT,
     JSCustomHeader,

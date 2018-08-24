@@ -35,11 +35,15 @@
 namespace WebCore {
 using namespace JSC;
 
-bool JSDeprecatedCSSOMValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+bool JSDeprecatedCSSOMValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor, const char** reason)
 {
     JSDeprecatedCSSOMValue* jsCSSValue = jsCast<JSDeprecatedCSSOMValue*>(handle.slot()->asCell());
     if (!jsCSSValue->hasCustomProperties(*jsCSSValue->vm()))
         return false;
+
+    if (UNLIKELY(reason))
+        *reason = "CSSStyleDeclaration is opaque root";
+
     return visitor.containsOpaqueRoot(root(&jsCSSValue->wrapped().owner()));
 }
 

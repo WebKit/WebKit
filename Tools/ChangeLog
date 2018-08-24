@@ -1,3 +1,20 @@
+2018-08-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Add support for dumping GC heap snapshots, and a viewer
+        https://bugs.webkit.org/show_bug.cgi?id=186416
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a viewer for GC heap snapshots. A snapshot JSON file can be dragged into this
+        page for inspection (or set via the 'filename' URL parameter).
+
+        For now, this page shows all objects, all roots, and the shortest path from a root
+        to all HTMLDocuments and Windows.
+
+        * GCHeapInspector/gc-heap-inspector.html: Added.
+        * GCHeapInspector/heap-analysis/HeapSnapshot.js: Copied from Source/WebInspectorUI/UserInterface/Workers/HeapSnapshot/HeapSnapshot.js.
+        * GCHeapInspector/script/interface.js: Added.
+
 2018-08-23  Alex Christensen  <achristensen@webkit.org>
 
         Add new _webViewRequestPointerLock SPI with a completionHandler

@@ -82,8 +82,9 @@ HeapSnapshot = class HeapSnapshot
         let json = JSON.parse(snapshotDataString);
         snapshotDataString = null;
 
-        let {version, nodes, nodeClassNames, edges, edgeTypes, edgeNames} = json;
+        let {version, type, nodes, nodeClassNames, edges, edgeTypes, edgeNames} = json;
         console.assert(version === 1, "Expect JavaScriptCore Heap Snapshot version 1");
+        console.assert(!type || type === "Inspector", "Expect an Inspector Heap Snapshot");
 
         this._nodes = nodes;
         this._nodeCount = nodes.length / nodeFieldCount;

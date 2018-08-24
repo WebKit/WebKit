@@ -2641,11 +2641,15 @@ void Heap::addCoreConstraints()
             
             TimingScope preConvergenceTimingScope(*this, "Constraint: conservative scan");
             m_objectSpace.prepareForConservativeScan();
+
             ConservativeRoots conservativeRoots(*this);
             SuperSamplerScope superSamplerScope(false);
+
             gatherStackRoots(conservativeRoots);
             gatherJSStackRoots(conservativeRoots);
             gatherScratchBufferRoots(conservativeRoots);
+
+            SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::ConservativeScan);
             slotVisitor.append(conservativeRoots);
             
             lastVersion = m_phaseVersion;
@@ -2655,27 +2659,38 @@ void Heap::addCoreConstraints()
     m_constraintSet->add(
         "Msr", "Misc Small Roots",
         [this] (SlotVisitor& slotVisitor) {
+
 #if JSC_OBJC_API_ENABLED
             scanExternalRememberedSet(*m_vm, slotVisitor);
 #endif
-
-            if (m_vm->smallStrings.needsToBeVisited(*m_collectionScope))
+            if (m_vm->smallStrings.needsToBeVisited(*m_collectionScope)) {
+                SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::StrongReferences);
                 m_vm->smallStrings.visitStrongReferences(slotVisitor);
+            }
             
-            for (auto& pair : m_protectedValues)
-                slotVisitor.appendUnbarriered(pair.key);
+            {
+                SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::ProtectedValues);
+                for (auto& pair : m_protectedValues)
+                    slotVisitor.appendUnbarriered(pair.key);
+            }
             
-            if (m_markListSet && m_markListSet->size())
+            if (m_markListSet && m_markListSet->size()) {
+                SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::ConservativeScan);
                 MarkedArgumentBuffer::markLists(slotVisitor, *m_markListSet);
-            
-            slotVisitor.appendUnbarriered(m_vm->exception());
-            slotVisitor.appendUnbarriered(m_vm->lastException());
+            }
+
+            {
+                SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::VMExceptions);
+                slotVisitor.appendUnbarriered(m_vm->exception());
+                slotVisitor.appendUnbarriered(m_vm->lastException());
+            }
         },
         ConstraintVolatility::GreyedByExecution);
     
     m_constraintSet->add(
         "Sh", "Strong Handles",
         [this] (SlotVisitor& slotVisitor) {
+            SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::StrongHandles);
             m_handleSet.visitStrongHandles(slotVisitor);
         },
         ConstraintVolatility::GreyedByExecution);
@@ -2683,6 +2698,8 @@ void Heap::addCoreConstraints()
     m_constraintSet->add(
         "D", "Debugger",
         [this] (SlotVisitor& slotVisitor) {
+            SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::Debugger);
+
 #if ENABLE(SAMPLING_PROFILER)
             if (SamplingProfiler* samplingProfiler = m_vm->samplingProfiler()) {
                 LockHolder locker(samplingProfiler->getLock());
@@ -2692,7 +2709,7 @@ void Heap::addCoreConstraints()
                     dataLog("Sampling Profiler data:\n", slotVisitor);
             }
 #endif // ENABLE(SAMPLING_PROFILER)
-            
+
             if (m_vm->typeProfiler())
                 m_vm->typeProfilerLog()->visit(slotVisitor);
             
@@ -2703,6 +2720,7 @@ void Heap::addCoreConstraints()
     m_constraintSet->add(
         "Jsr", "JIT Stub Routines",
         [this] (SlotVisitor& slotVisitor) {
+            SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::JITStubRoutines);
             m_jitStubRoutines->traceMarkedStubRoutines(slotVisitor);
         },
         ConstraintVolatility::GreyedByExecution);
@@ -2710,6 +2728,7 @@ void Heap::addCoreConstraints()
     m_constraintSet->add(
         "Ws", "Weak Sets",
         [this] (SlotVisitor& slotVisitor) {
+            SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::WeakSets);
             m_objectSpace.visitWeakSets(slotVisitor);
         },
         ConstraintVolatility::GreyedByMarking);
@@ -2718,8 +2737,9 @@ void Heap::addCoreConstraints()
         "O", "Output",
         [] (SlotVisitor& slotVisitor) {
             VM& vm = slotVisitor.vm();
-            
+
             auto callOutputConstraint = [] (SlotVisitor& slotVisitor, HeapCell* heapCell, HeapCell::Kind) {
+                SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::Output);
                 VM& vm = slotVisitor.vm();
                 JSCell* cell = static_cast<JSCell*>(heapCell);
                 cell->methodTable(vm)->visitOutputConstraints(cell, slotVisitor);
@@ -2739,6 +2759,8 @@ void Heap::addCoreConstraints()
     m_constraintSet->add(
         "Dw", "DFG Worklists",
         [this] (SlotVisitor& slotVisitor) {
+            SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::DFGWorkLists);
+
             for (unsigned i = DFG::numberOfWorklists(); i--;)
                 DFG::existingWorklistForIndex(i).visitWeakReferences(slotVisitor);
             
@@ -2759,6 +2781,7 @@ void Heap::addCoreConstraints()
     m_constraintSet->add(
         "Cb", "CodeBlocks",
         [this] (SlotVisitor& slotVisitor) {
+            SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::CodeBlocks);
             iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(
                 [&] (CodeBlock* codeBlock) {
                     // Visit the CodeBlock as a constraint only if it's black.

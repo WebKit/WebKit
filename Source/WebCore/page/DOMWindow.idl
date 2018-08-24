@@ -33,6 +33,7 @@ typedef USVString CSSOMString;
     CustomGetOwnPropertyNames,
     CustomGetOwnPropertySlot,
     CustomGetPrototype,
+    CustomHeapSnapshot,
     CustomPreventExtensions,
     CustomProxyToJSObject,
     CustomPut,

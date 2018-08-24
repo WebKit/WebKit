@@ -49,6 +49,7 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
+    static void heapSnapshot(JSCell*, JSC::HeapSnapshotBuilder&);
     TestEventConstructor& wrapped() const
     {
         return static_cast<TestEventConstructor&>(Base::wrapped());

@@ -37,6 +37,7 @@
 #include <JavaScriptCore/JSCJSValueInlines.h>
 
 namespace WebCore {
+using namespace JSC;
 
 JSValue JSPopStateEvent::state(ExecState& state) const
 {

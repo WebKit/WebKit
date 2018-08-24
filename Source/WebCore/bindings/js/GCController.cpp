@@ -27,9 +27,14 @@
 #include "GCController.h"
 
 #include "CommonVM.h"
+#include "FileSystem.h"
+#include "JSHTMLDocument.h"
+#include "Location.h"
 #include <JavaScriptCore/Heap.h>
+#include <JavaScriptCore/HeapSnapshotBuilder.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/VM.h>
+#include <pal/Logging.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
@@ -52,6 +57,12 @@ GCController& GCController::singleton()
 GCController::GCController()
     : m_GCTimer(*this, &GCController::gcTimerFired)
 {
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PAL::registerNotifyCallback("com.apple.WebKit.dumpGCHeap", [] {
+            GCController::singleton().dumpHeap();
+        });
+    });
 }
 
 void GCController::garbageCollectSoon()
@@ -125,6 +136,38 @@ void GCController::deleteAllLinkedCode(DeleteAllCodeEffort effort)
 {
     JSLockHolder lock(commonVM());
     commonVM().deleteAllLinkedCode(effort);
+}
+
+void GCController::dumpHeap()
+{
+    FileSystem::PlatformFileHandle fileHandle;
+    String tempFilePath = FileSystem::openTemporaryFile("GCHeap"_s, fileHandle);
+    if (!FileSystem::isHandleValid(fileHandle)) {
+        WTFLogAlways("Dumping GC heap failed to open temporary file");
+        return;
+    }
+
+    VM& vm = commonVM();
+    JSLockHolder lock(vm);
+
+    sanitizeStackForVM(&vm);
+
+    String jsonData;
+    {
+        DeferGCForAWhile deferGC(vm.heap); // Prevent concurrent GC from interfering with the full GC that the snapshot does.
+
+        HeapSnapshotBuilder snapshotBuilder(vm.ensureHeapProfiler(), HeapSnapshotBuilder::SnapshotType::GCDebuggingSnapshot);
+        snapshotBuilder.buildSnapshot();
+
+        jsonData = snapshotBuilder.json();
+    }
+
+    CString utf8String = jsonData.utf8();
+
+    FileSystem::writeToFile(fileHandle, utf8String.data(), utf8String.length());
+    FileSystem::closeFile(fileHandle);
+    
+    WTFLogAlways("Dumped GC heap to %s", tempFilePath.utf8().data());
 }
 
 } // namespace WebCore

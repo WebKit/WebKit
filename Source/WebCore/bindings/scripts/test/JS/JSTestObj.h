@@ -62,6 +62,7 @@ public:
     mutable JSC::WriteBarrier<JSC::Unknown> m_cachedAttribute2;
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
+    static void heapSnapshot(JSCell*, JSC::HeapSnapshotBuilder&);
 
     // Custom attributes
     JSC::JSValue customAttr(JSC::ExecState&) const;
@@ -84,7 +85,7 @@ protected:
 
 class JSTestObjOwner : public JSC::WeakHandleOwner {
 public:
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&, const char**);
     virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
 };
 

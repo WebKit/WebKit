@@ -34,7 +34,8 @@ class SlotVisitor;
 class JS_EXPORT_PRIVATE WeakHandleOwner {
 public:
     virtual ~WeakHandleOwner();
-    virtual bool isReachableFromOpaqueRoots(Handle<Unknown>, void* context, SlotVisitor&);
+    // reason will only be non-null when generating a debug GC heap snapshot.
+    virtual bool isReachableFromOpaqueRoots(Handle<Unknown>, void* context, SlotVisitor&, char const** reason = nullptr);
     virtual void finalize(Handle<Unknown>, void* context);
 };
 

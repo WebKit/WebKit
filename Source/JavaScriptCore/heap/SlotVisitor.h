@@ -57,6 +57,23 @@ class SlotVisitor {
     friend class Heap;
 
 public:
+    enum RootMarkReason {
+        None,
+        ConservativeScan,
+        StrongReferences,
+        ProtectedValues,
+        MarkListSet,
+        VMExceptions,
+        StrongHandles,
+        Debugger,
+        JITStubRoutines,
+        WeakSets,
+        Output,
+        DFGWorkLists,
+        CodeBlocks,
+        DOMGCOutput,
+    };
+
     SlotVisitor(Heap&, CString codeName);
     ~SlotVisitor();
 
@@ -142,7 +159,11 @@ public:
     void dump(PrintStream&) const;
 
     bool isBuildingHeapSnapshot() const { return !!m_heapSnapshotBuilder; }
+    HeapSnapshotBuilder* heapSnapshotBuilder() const { return m_heapSnapshotBuilder; }
     
+    RootMarkReason rootMarkReason() const { return m_rootMarkReason; }
+    void setRootMarkReason(RootMarkReason reason) { m_rootMarkReason = reason; }
+
     HeapVersion markingVersion() const { return m_markingVersion; }
 
     bool mutatorIsStopped() const { return m_mutatorIsStopped; }
@@ -224,6 +245,7 @@ private:
 
     HeapSnapshotBuilder* m_heapSnapshotBuilder { nullptr };
     JSCell* m_currentCell { nullptr };
+    RootMarkReason m_rootMarkReason { RootMarkReason::None };
     bool m_isFirstVisit { false };
     bool m_mutatorIsStopped { false };
     bool m_canOptimizeForStoppedMutator { false };
@@ -260,6 +282,25 @@ public:
     
 private:
     SlotVisitor& m_stack;
+};
+
+class SetRootMarkReasonScope {
+public:
+    SetRootMarkReasonScope(SlotVisitor& visitor, SlotVisitor::RootMarkReason reason)
+        : m_visitor(visitor)
+        , m_previousReason(visitor.rootMarkReason())
+    {
+        m_visitor.setRootMarkReason(reason);
+    }
+
+    ~SetRootMarkReasonScope()
+    {
+        m_visitor.setRootMarkReason(m_previousReason);
+    }
+
+private:
+    SlotVisitor& m_visitor;
+    SlotVisitor::RootMarkReason m_previousReason;
 };
 
 } // namespace JSC
