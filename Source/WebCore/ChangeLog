@@ -1,3 +1,22 @@
+2018-08-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Move inline methods on CoordinatedGraphicsLayer out-of-line
+        https://bugs.webkit.org/show_bug.cgi?id=188916
+
+        Reviewed by Carlos Garcia Campos.
+
+        Style checker produced complaints that CoordinatedGraphicsLayer class is
+        using inline-defined methods despite the WEBCORE_EXPORT macro being used
+        for the whole class. Keep the macro where it is but instead move the
+        method definitions out-of-line.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::isCoordinatedGraphicsLayer const):
+        (WebCore::CoordinatedGraphicsLayer::id const):
+        (WebCore::CoordinatedGraphicsLayer::primaryLayerID const):
+        (WebCore::CoordinatedGraphicsLayer::usesContentsLayer const):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+
 2018-08-24  Antti Koivisto  <antti@apple.com>
 
         Use OptionSet::containsAny and containsAll in some more places

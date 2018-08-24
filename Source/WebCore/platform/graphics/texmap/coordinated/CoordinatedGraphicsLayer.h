@@ -58,7 +58,9 @@ public:
     explicit CoordinatedGraphicsLayer(Type, GraphicsLayerClient&);
     virtual ~CoordinatedGraphicsLayer();
 
-    PlatformLayerID primaryLayerID() const override { return id(); }
+    // FIXME: Merge these two methods.
+    Nicosia::PlatformLayer::LayerID id() const;
+    PlatformLayerID primaryLayerID() const override;
 
     // Reimplementations from GraphicsLayer.h.
     bool setChildren(const Vector<GraphicsLayer*>&) override;
@@ -103,15 +105,13 @@ public:
     void removeAnimation(const String&) override;
     void suspendAnimations(MonotonicTime) override;
     void resumeAnimations() override;
-    bool usesContentsLayer() const override { return m_nicosia.contentLayer || m_compositedImage; }
+    bool usesContentsLayer() const override;
 
     void syncPendingStateChangesIncludingSubLayers();
     void updateContentBuffersIncludingSubLayers();
 
     FloatPoint computePositionRelativeToBase();
     void computePixelAlignment(FloatPoint& position, FloatSize&, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset);
-
-    Nicosia::PlatformLayer::LayerID id() const { return m_id; }
 
     IntRect transformedVisibleRect();
 
@@ -124,7 +124,7 @@ public:
     const RefPtr<Nicosia::CompositionLayer>& compositionLayer() const;
 
 private:
-    bool isCoordinatedGraphicsLayer() const override { return true; }
+    bool isCoordinatedGraphicsLayer() const;
 
     void updatePlatformLayer();
 

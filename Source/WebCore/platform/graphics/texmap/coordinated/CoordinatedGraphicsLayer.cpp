@@ -143,6 +143,21 @@ CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer()
     willBeDestroyed();
 }
 
+bool CoordinatedGraphicsLayer::isCoordinatedGraphicsLayer() const
+{
+    return true;
+}
+
+Nicosia::PlatformLayer::LayerID CoordinatedGraphicsLayer::id() const
+{
+    return m_id;
+}
+
+auto CoordinatedGraphicsLayer::primaryLayerID() const -> PlatformLayerID
+{
+    return id();
+}
+
 bool CoordinatedGraphicsLayer::setChildren(const Vector<GraphicsLayer*>& children)
 {
     bool ok = GraphicsLayer::setChildren(children);
@@ -1164,6 +1179,11 @@ void CoordinatedGraphicsLayer::resumeAnimations()
 void CoordinatedGraphicsLayer::animationStartedTimerFired()
 {
     client().notifyAnimationStarted(this, "", m_lastAnimationStartTime);
+}
+
+bool CoordinatedGraphicsLayer::usesContentsLayer() const
+{
+    return m_nicosia.contentLayer || m_compositedImage;
 }
 
 } // namespace WebCore
