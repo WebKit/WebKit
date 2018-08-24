@@ -1,3 +1,13 @@
+2018-08-21  Alex Christensen  <achristensen@webkit.org>
+
+        Increment NetworkCache::Storage::lastStableVersion after r233742
+        https://bugs.webkit.org/show_bug.cgi?id=188798
+        <rdar://43561761>
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2018-08-21  Daniel Bates  <dabates@apple.com>
 
         Replace TextCheckingTypeMask with OptionSet
