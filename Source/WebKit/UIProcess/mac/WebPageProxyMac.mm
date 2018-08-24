@@ -708,3 +708,6 @@ void WebPageProxy::stopDisplayLink(unsigned observerID)
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)
+
+#undef MESSAGE_CHECK
+#undef MESSAGE_CHECK_URL

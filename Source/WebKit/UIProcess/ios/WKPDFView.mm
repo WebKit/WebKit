@@ -108,7 +108,7 @@
     _data = adoptNS([data copy]);
     _suggestedFilename = adoptNS([filename copy]);
 
-    [PDFHostViewController createHostView:[self, weakSelf = WeakObjCPtr<WKPDFView>(self)](PDFHostViewController * _Nullable hostViewController) {
+    [PDFHostViewController createHostView:[self, weakSelf = WeakObjCPtr<WKPDFView>(self)](PDFHostViewController *hostViewController) {
         ASSERT(isMainThread());
 
         WKPDFView *autoreleasedSelf = weakSelf.getAutoreleased();

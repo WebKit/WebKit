@@ -34,9 +34,8 @@
 #include "WebPopupMenuProxyWin.h"
 #include "WebView.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 PageClientImpl::PageClientImpl(WebView& view)
     : m_view(view)

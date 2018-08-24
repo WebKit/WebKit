@@ -36,9 +36,8 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringView.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static TextCheckerState& mutableState()
 {

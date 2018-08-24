@@ -61,9 +61,8 @@
 #import <wtf/text/WTFString.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void WebPageProxy::platformInitialize()
 {

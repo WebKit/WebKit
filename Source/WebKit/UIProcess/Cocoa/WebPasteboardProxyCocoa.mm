@@ -35,9 +35,8 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/URL.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void WebPasteboardProxy::getPasteboardTypes(const String& pasteboardName, Vector<String>& pasteboardTypes)
 {

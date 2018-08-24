@@ -38,9 +38,8 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Vector<String> PluginInfoStore::pluginsDirectories()
 {

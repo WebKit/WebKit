@@ -33,9 +33,8 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #pragma mark - PlaybackSessionModelContext
 

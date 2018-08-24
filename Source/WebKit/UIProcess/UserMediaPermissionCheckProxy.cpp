@@ -30,9 +30,8 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 UserMediaPermissionCheckProxy::UserMediaPermissionCheckProxy(uint64_t userMediaID, uint64_t frameID, CompletionHandler&& handler, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin)
     : m_userMediaID(userMediaID)

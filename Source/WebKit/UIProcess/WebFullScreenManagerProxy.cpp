@@ -37,9 +37,8 @@
 #include "WebProcessProxy.h"
 #include <WebCore/IntRect.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 WebFullScreenManagerProxy::WebFullScreenManagerProxy(WebPageProxy& page, WebFullScreenManagerProxyClient& client)
     : m_page(page)

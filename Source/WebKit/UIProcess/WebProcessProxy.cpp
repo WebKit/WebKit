@@ -74,12 +74,11 @@
 #include "SecItemShimProxy.h"
 #endif
 
-using namespace WebCore;
-
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromWebProcess(url), connection())
 
 namespace WebKit {
+using namespace WebCore;
 
 static bool isMainThreadOrCheckDisabled()
 {
@@ -1452,3 +1451,6 @@ void WebProcessProxy::releaseBackgroundActivityTokenForFullscreenInput()
 #endif
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
+#undef MESSAGE_CHECK_URL

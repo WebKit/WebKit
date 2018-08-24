@@ -29,9 +29,9 @@
 #include <WebCore/PlatformPasteboard.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebKit {
 using namespace WebCore;
 
-namespace WebKit {
 void WebPasteboardProxy::getPasteboardTypes(Vector<String>& pasteboardTypes)
 {
     PlatformPasteboard().getTypes(pasteboardTypes);

@@ -36,9 +36,8 @@
 #include <WebCore/Cookie.h>
 #include <WebCore/SecurityOriginData.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 const char* WebCookieManagerProxy::supplementName()
 {

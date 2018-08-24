@@ -30,9 +30,8 @@
 #include "WebScriptMessageHandler.h"
 #include <WebCore/URL.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 class ScriptMessageClient final : public WebScriptMessageHandler::Client {
 public:

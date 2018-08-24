@@ -46,11 +46,9 @@
 #import <WebKitAdditions/SystemPreviewTypes.cpp>
 #endif
 
-using namespace WebKit;
-
 @implementation WKWebViewContentProviderRegistry {
     HashMap<String, Class <WKWebViewContentProvider>, ASCIICaseInsensitiveHash> _contentProviderForMIMEType;
-    HashCountedSet<WebPageProxy*> _pages;
+    HashCountedSet<WebKit::WebPageProxy*> _pages;
 }
 
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration
@@ -68,7 +66,7 @@ using namespace WebKit;
 
 #if USE(SYSTEM_PREVIEW) && USE(APPLE_INTERNAL_SDK)
     if (configuration._systemPreviewEnabled) {
-        for (auto& mimeType : getSystemPreviewMIMETypes())
+        for (auto& mimeType : WebKit::getSystemPreviewMIMETypes())
             [self registerProvider:[WKSystemPreviewView class] forMIMEType:mimeType];
     }
 #endif
@@ -76,13 +74,13 @@ using namespace WebKit;
     return self;
 }
 
-- (void)addPage:(WebPageProxy&)page
+- (void)addPage:(WebKit::WebPageProxy&)page
 {
     ASSERT(!_pages.contains(&page));
     _pages.add(&page);
 }
 
-- (void)removePage:(WebPageProxy&)page
+- (void)removePage:(WebKit::WebPageProxy&)page
 {
     ASSERT(_pages.contains(&page));
     _pages.remove(&page);

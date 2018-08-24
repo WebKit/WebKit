@@ -30,9 +30,8 @@
 #include "WebProcessProxy.h"
 #include <wtf/CompletionHandler.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 UIMessagePortChannelProvider& UIMessagePortChannelProvider::singleton()
 {

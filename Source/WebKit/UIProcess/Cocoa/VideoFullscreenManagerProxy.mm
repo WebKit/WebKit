@@ -48,8 +48,6 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #endif
 
-using namespace WebKit;
-
 @interface WKLayerHostView : PlatformView
 @property (nonatomic, assign) uint32_t contextID;
 @end
@@ -84,7 +82,7 @@ using namespace WebKit;
 #if PLATFORM(IOS)
 @interface WKVideoFullScreenViewController : UIViewController
 - (instancetype)initWithAVPlayerViewController:(AVPlayerViewController *)viewController NS_DESIGNATED_INITIALIZER;
-- (instancetype)initWithNibName:(NSString * _Nullable)nibNameOrNil bundle:(NSBundle * _Nullable)nibBundleOrNil NS_UNAVAILABLE;
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil NS_UNAVAILABLE;
 - (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 @end
@@ -123,9 +121,8 @@ using namespace WebKit;
 
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #if PLATFORM(IOS) && !HAVE(AVKIT)
 

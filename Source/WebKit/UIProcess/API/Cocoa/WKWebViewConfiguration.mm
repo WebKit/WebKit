@@ -490,7 +490,7 @@ static NSString *defaultApplicationNameForUserAgent()
     _pageConfiguration->setURLSchemeHandlerForURLScheme(WebKit::WebURLSchemeHandlerCocoa::create(urlSchemeHandler), *canonicalScheme);
 }
 
-- (nullable id <WKURLSchemeHandler>)urlSchemeHandlerForURLScheme:(NSString *)urlScheme
+- (id <WKURLSchemeHandler>)urlSchemeHandlerForURLScheme:(NSString *)urlScheme
 {
     auto canonicalScheme = WebCore::URLParser::maybeCanonicalizeScheme(urlScheme);
     if (!canonicalScheme)

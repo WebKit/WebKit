@@ -56,9 +56,8 @@
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static uint64_t generateCallbackID()
 {
@@ -647,3 +646,6 @@ void NetworkProcessProxy::sendProcessDidTransitionToBackground()
 }
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
+#undef MESSAGE_CHECK_URL

@@ -62,15 +62,12 @@
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_webView->_page->process().connection())
 
-using namespace WebCore;
-using namespace WebKit;
-
 @interface WKEditCommandObjC : NSObject
 {
-    RefPtr<WebEditCommandProxy> m_command;
+    RefPtr<WebKit::WebEditCommandProxy> m_command;
 }
-- (id)initWithWebEditCommandProxy:(Ref<WebEditCommandProxy>&&)command;
-- (WebEditCommandProxy*)command;
+- (id)initWithWebEditCommandProxy:(Ref<WebKit::WebEditCommandProxy>&&)command;
+- (WebKit::WebEditCommandProxy*)command;
 @end
 
 @interface WKEditorUndoTargetObjC : NSObject
@@ -80,7 +77,7 @@ using namespace WebKit;
 
 @implementation WKEditCommandObjC
 
-- (id)initWithWebEditCommandProxy:(Ref<WebEditCommandProxy>&&)command
+- (id)initWithWebEditCommandProxy:(Ref<WebKit::WebEditCommandProxy>&&)command
 {
     self = [super init];
     if (!self)
@@ -90,7 +87,7 @@ using namespace WebKit;
     return self;
 }
 
-- (WebEditCommandProxy *)command
+- (WebKit::WebEditCommandProxy *)command
 {
     return m_command.get();
 }
@@ -114,6 +111,7 @@ using namespace WebKit;
 @end
 
 namespace WebKit {
+using namespace WebCore;
 
 PageClientImpl::PageClientImpl(WKContentView *contentView, WKWebView *webView)
     : PageClientImplCocoa(webView)
@@ -833,3 +831,5 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)
+
+#undef MESSAGE_CHECK

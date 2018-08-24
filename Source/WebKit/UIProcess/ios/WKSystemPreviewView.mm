@@ -45,9 +45,6 @@
 #import <WebKitAdditions/SystemPreviewTypes.cpp>
 #endif
 
-using namespace WebCore;
-using namespace WebKit;
-
 SOFT_LINK_FRAMEWORK(QuickLook);
 SOFT_LINK_CLASS(QuickLook, QLItem);
 

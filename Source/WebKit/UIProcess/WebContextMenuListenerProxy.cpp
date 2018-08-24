@@ -34,9 +34,8 @@
 #include "WebContextMenuItem.h"
 #include "WebContextMenuItemData.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 WebContextMenuListenerProxy::WebContextMenuListenerProxy(WebContextMenuProxy* contextMenuMac)
     : m_contextMenuMac(contextMenuMac)

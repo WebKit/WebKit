@@ -34,7 +34,6 @@
 #include <wtf/DecimalNumber.h>
 
 namespace WebKit {
-
 using namespace WebCore;
 
 static const Seconds loggingInterval { 60_min };

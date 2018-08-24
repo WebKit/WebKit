@@ -33,13 +33,11 @@
 NSString * const KeyboardUIModeDidChangeNotification = @"com.apple.KeyboardUIModeDidChange";
 const CFStringRef AppleKeyboardUIMode = CFSTR("AppleKeyboardUIMode");
 
-using namespace WebKit;
-
 @implementation WKFullKeyboardAccessWatcher
 
 - (void)notifyAllProcessPools
 {
-    for (auto* processPool : WebProcessPool::allProcessPools())
+    for (auto* processPool : WebKit::WebProcessPool::allProcessPools())
         processPool->fullKeyboardAccessModeChanged(fullKeyboardAccessEnabled);
 }
 

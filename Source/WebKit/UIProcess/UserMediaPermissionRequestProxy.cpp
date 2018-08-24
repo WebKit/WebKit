@@ -27,9 +27,8 @@
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/text/StringHash.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, uint64_t mainFrameID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, String&& deviceIDHashSalt, WebCore::MediaStreamRequest&& request)
     : m_manager(&manager)

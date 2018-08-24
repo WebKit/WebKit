@@ -35,8 +35,6 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/RetainPtr.h>
 
-using namespace WebKit;
-
 namespace WebKit {
 
 enum class KeyboardScrollingAnimatorState : uint8_t {
@@ -52,7 +50,7 @@ enum class KeyboardScrollingAnimatorState : uint8_t {
     CFTimeInterval _startTime;
     WebCore::FloatPoint _scrollOffsetPerIncrement;
     RetainPtr<CADisplayLink> _displayLink;
-    KeyboardScrollingAnimatorState _state;
+    WebKit::KeyboardScrollingAnimatorState _state;
 }
 
 - (instancetype)init
@@ -120,21 +118,21 @@ enum class KeyboardScrollingAnimatorState : uint8_t {
         switch (key) {
         case Key::LeftArrow:
         case Key::RightArrow:
-            return ScrollingIncrement::Line;
+            return WebKit::ScrollingIncrement::Line;
         case Key::UpArrow:
         case Key::DownArrow:
             if (altPressed)
-                return ScrollingIncrement::Page;
+                return WebKit::ScrollingIncrement::Page;
             if (cmdPressed)
-                return ScrollingIncrement::Document;
-            return ScrollingIncrement::Line;
+                return WebKit::ScrollingIncrement::Document;
+            return WebKit::ScrollingIncrement::Line;
         case Key::PageUp:
         case Key::PageDown:
         case Key::Space:
-            return ScrollingIncrement::Page;
+            return WebKit::ScrollingIncrement::Page;
         case Key::Other:
             ASSERT_NOT_REACHED();
-            return ScrollingIncrement::Line;
+            return WebKit::ScrollingIncrement::Line;
         };
     }();
 
@@ -169,7 +167,7 @@ enum class KeyboardScrollingAnimatorState : uint8_t {
 
 - (BOOL)beginWithEvent:(::WebEvent *)event
 {
-    if (_state != KeyboardScrollingAnimatorState::WaitingForFirstEvent)
+    if (_state != WebKit::KeyboardScrollingAnimatorState::WaitingForFirstEvent)
         return NO;
     
     if (event.type != WebEventKeyDown)
@@ -179,7 +177,7 @@ enum class KeyboardScrollingAnimatorState : uint8_t {
     if (!offset)
         return NO;
 
-    _state = KeyboardScrollingAnimatorState::WaitingForRepeat;
+    _state = WebKit::KeyboardScrollingAnimatorState::WaitingForRepeat;
     _scrollOffsetPerIncrement = offset.value();
 
     // The first keyboard event that starts scrolling performs its own
@@ -192,7 +190,7 @@ enum class KeyboardScrollingAnimatorState : uint8_t {
 
 - (BOOL)handleKeyEvent:(::WebEvent *)event
 {
-    if (_state == KeyboardScrollingAnimatorState::WaitingForFirstEvent)
+    if (_state == WebKit::KeyboardScrollingAnimatorState::WaitingForFirstEvent)
         return NO;
 
     auto offset = [self _scrollOffsetForEvent:event];
@@ -201,7 +199,7 @@ enum class KeyboardScrollingAnimatorState : uint8_t {
         return NO;
     }
 
-    if (_state == KeyboardScrollingAnimatorState::WaitingForRepeat)
+    if (_state == WebKit::KeyboardScrollingAnimatorState::WaitingForRepeat)
         [self startAnimatedScroll];
 
     return YES;
@@ -211,7 +209,7 @@ enum class KeyboardScrollingAnimatorState : uint8_t {
 {
     ASSERT(!_displayLink);
 
-    _state = KeyboardScrollingAnimatorState::Animating;
+    _state = WebKit::KeyboardScrollingAnimatorState::Animating;
     _startTime = CACurrentMediaTime();
     _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkFired:)];
     [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
@@ -219,7 +217,7 @@ enum class KeyboardScrollingAnimatorState : uint8_t {
 
 - (void)stopAnimatedScroll
 {
-    _state = KeyboardScrollingAnimatorState::WaitingForFirstEvent;
+    _state = WebKit::KeyboardScrollingAnimatorState::WaitingForFirstEvent;
     [_displayLink invalidate];
     _displayLink = nil;
 }

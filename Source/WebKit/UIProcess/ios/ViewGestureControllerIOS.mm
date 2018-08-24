@@ -46,8 +46,6 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/WeakObjCPtr.h>
 
-using namespace WebCore;
-
 @interface WKSwipeTransitionController : NSObject <_UINavigationInteractiveTransitionBaseDelegate>
 - (instancetype)initWithViewGestureController:(WebKit::ViewGestureController*)gestureController gestureRecognizerView:(UIView *)gestureRecognizerView;
 - (void)invalidate;
@@ -203,17 +201,17 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     RetainPtr<UIColor> backgroundColor = [UIColor whiteColor];
     if (ViewSnapshot* snapshot = targetItem->snapshot()) {
         float deviceScaleFactor = m_webPageProxy.deviceScaleFactor();
-        FloatSize swipeLayerSizeInDeviceCoordinates(liveSwipeViewFrame.size);
+        WebCore::FloatSize swipeLayerSizeInDeviceCoordinates(liveSwipeViewFrame.size);
         swipeLayerSizeInDeviceCoordinates.scale(deviceScaleFactor);
         
         BOOL shouldRestoreScrollPosition = targetItem->pageState().mainFrameState.shouldRestoreScrollPosition;
-        IntPoint currentScrollPosition = roundedIntPoint(m_webPageProxy.viewScrollPosition());
+        WebCore::IntPoint currentScrollPosition = WebCore::roundedIntPoint(m_webPageProxy.viewScrollPosition());
 
         if (snapshot->hasImage() && snapshot->size() == swipeLayerSizeInDeviceCoordinates && deviceScaleFactor == snapshot->deviceScaleFactor() && (shouldRestoreScrollPosition || (currentScrollPosition == snapshot->viewScrollPosition())))
             [m_snapshotView layer].contents = snapshot->asLayerContents();
-        Color coreColor = snapshot->backgroundColor();
+        WebCore::Color coreColor = snapshot->backgroundColor();
         if (coreColor.isValid())
-            backgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(coreColor)]);
+            backgroundColor = adoptNS([[UIColor alloc] initWithCGColor:WebCore::cachedCGColor(coreColor)]);
     }
 
     [m_snapshotView setBackgroundColor:backgroundColor.get()];
@@ -371,7 +369,7 @@ void ViewGestureController::removeSwipeSnapshot()
 
     m_swipeTransitionContext = nullptr;
 
-    m_backgroundColorForCurrentSnapshot = Color();
+    m_backgroundColorForCurrentSnapshot = WebCore::Color();
 
     didEndGesture();
 }

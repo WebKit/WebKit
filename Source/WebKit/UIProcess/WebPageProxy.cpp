@@ -229,8 +229,6 @@
 
 #define RELEASE_LOG_IF_ALLOWED(channel, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, __VA_ARGS__)
 
-using namespace WebCore;
-
 // Represents the number of wheel events we can hold in the queue before we start pushing them preemptively.
 static const unsigned wheelEventQueueSizeThreshold = 10;
 
@@ -238,6 +236,7 @@ static const Seconds resetRecentCrashCountDelay = 30_s;
 static unsigned maximumWebProcessRelaunchAttempts = 1;
 
 namespace WebKit {
+using namespace WebCore;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageProxyCounter, ("WebPageProxy"));
 
@@ -7980,3 +7979,8 @@ void WebPageProxy::getIsViewVisible(bool& result)
 }
 
 } // namespace WebKit
+
+#undef MERGE_WHEEL_EVENTS
+#undef MESSAGE_CHECK
+#undef MESSAGE_CHECK_URL
+#undef RELEASE_LOG_IF_ALLOWED

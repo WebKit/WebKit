@@ -1,3 +1,228 @@
+2018-08-23  Tim Horton  <timothy_horton@apple.com>
+
+        Use unified build for UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=185014
+
+        Reviewed by Alex Christensen.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration urlSchemeHandlerForURLScheme:]):
+        * UIProcess/API/glib/IconDatabase.cpp:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        * UIProcess/API/gtk/WebKitColorChooser.cpp:
+        * UIProcess/API/gtk/WebKitPopupMenu.cpp:
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp:
+        * UIProcess/ApplicationStateTracker.mm:
+        * UIProcess/Authentication/mac/WebCredentialMac.mm:
+        * UIProcess/Automation/cocoa/WebAutomationSessionCocoa.mm:
+        * UIProcess/Automation/ios/WebAutomationSessionIOS.mm:
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        * UIProcess/Cocoa/NavigationState.mm:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        * UIProcess/Cocoa/ViewGestureController.cpp:
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm:
+        (-[WKWebViewContentProviderRegistry initWithConfiguration:]):
+        (-[WKWebViewContentProviderRegistry addPage:]):
+        (-[WKWebViewContentProviderRegistry removePage:]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        * UIProcess/Cocoa/WebURLSchemeHandlerCocoa.mm:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKTextTouchBarItemController itemForIdentifier:]):
+        (WebKit::WebViewImpl::performDragOperation):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        * UIProcess/DrawingAreaProxy.cpp:
+        * UIProcess/Gamepad/UIGamepad.cpp:
+        * UIProcess/Gamepad/UIGamepadProvider.cpp:
+        * UIProcess/Gamepad/cocoa/UIGamepadProviderCocoa.mm:
+        * UIProcess/HighPerformanceGraphicsUsageSampler.cpp:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        * UIProcess/PerActivityStateCPUUsageSampler.cpp:
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeScrollingPerformanceData.mm:
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        * UIProcess/RemoteWebInspectorProxy.cpp:
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        * UIProcess/Storage/StorageProcessProxy.cpp:
+        * UIProcess/SuspendedPageProxy.cpp:
+        * UIProcess/TextCheckerCompletion.cpp:
+        * UIProcess/UIMessagePortChannelProvider.cpp:
+        * UIProcess/UserMediaPermissionCheckProxy.cpp:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        * UIProcess/VisitedLinkStore.cpp:
+        * UIProcess/WKInspectorHighlightView.mm:
+        (findIntersectionOnLineBetweenPoints):
+        (quadIntersection):
+        (layerPathWithHole):
+        (layerPath):
+        (-[WKInspectorHighlightView _layoutForNodeHighlight:offset:]):
+        (-[WKInspectorHighlightView _layoutForNodeListHighlight:]):
+        (-[WKInspectorHighlightView _layoutForRectsHighlight:]):
+        (-[WKInspectorHighlightView update:]):
+        * UIProcess/WebBackForwardList.cpp:
+        * UIProcess/WebContextMenuListenerProxy.cpp:
+        * UIProcess/WebCookieManagerProxy.cpp:
+        * UIProcess/WebEditCommandProxy.cpp:
+        * UIProcess/WebFrameProxy.cpp:
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        * UIProcess/WebInspectorProxy.cpp:
+        * UIProcess/WebNavigationState.cpp:
+        * UIProcess/WebOpenPanelResultListenerProxy.cpp:
+        * UIProcess/WebPageInjectedBundleClient.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        * UIProcess/WebURLSchemeHandler.cpp:
+        * UIProcess/WebURLSchemeTask.cpp:
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        * UIProcess/gtk/AcceleratedBackingStoreX11.cpp:
+        * UIProcess/ios/DragDropInteractionState.mm:
+        * UIProcess/ios/InputViewUpdateDeferrer.mm:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (-[WKEditCommandObjC initWithWebEditCommandProxy:]):
+        (-[WKEditCommandObjC command]):
+        * UIProcess/ios/SmartMagnificationController.mm:
+        * UIProcess/ios/TextCheckerIOS.mm:
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (presentationStyleForView):
+        * UIProcess/ios/WKApplicationStateTrackingView.mm:
+        (-[WKApplicationStateTrackingView initWithFrame:webView:]):
+        (-[WKApplicationStateTrackingView _applicationDidEnterBackground]):
+        (-[WKApplicationStateTrackingView _applicationDidFinishSnapshottingAfterEnteringBackground]):
+        (-[WKApplicationStateTrackingView _applicationWillEnterForeground]):
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+        (-[WKGeolocationProviderIOS _startUpdating]):
+        (-[WKGeolocationProviderIOS _stopUpdating]):
+        (-[WKGeolocationProviderIOS _setEnableHighAccuracy:]):
+        (-[WKGeolocationProviderIOS init]):
+        (-[WKGeolocationProviderIOS initWithProcessPool:]):
+        (-[WKGeolocationProviderIOS decidePolicyForGeolocationRequestFromOrigin:frame:completionHandler:view:]):
+        (-[WKGeolocationProviderIOS geolocationAuthorizationGranted]):
+        (-[WKLegacyCoreLocationProvider positionChanged:]):
+        * UIProcess/ios/WKKeyboardScrollingAnimator.mm:
+        (-[WKKeyboardScrollingAnimator _scrollOffsetForEvent:]):
+        (-[WKKeyboardScrollingAnimator beginWithEvent:]):
+        (-[WKKeyboardScrollingAnimator handleKeyEvent:]):
+        (-[WKKeyboardScrollingAnimator startAnimatedScroll]):
+        (-[WKKeyboardScrollingAnimator stopAnimatedScroll]):
+        * UIProcess/ios/WKLegacyPDFView.mm:
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_setContentProviderData:suggestedFilename:]):
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView _systemContentInset]):
+        * UIProcess/ios/WKSystemPreviewView.mm:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        * UIProcess/mac/CorrectionPanel.mm:
+        (correctionIndicatorType):
+        * UIProcess/mac/PageClientImplMac.mm:
+        * UIProcess/mac/RemoteWebInspectorProxyMac.mm:
+        (-[WKRemoteWebInspectorProxyObjCAdapter initWithRemoteWebInspectorProxy:]):
+        * UIProcess/mac/TextCheckerMac.mm:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        * UIProcess/mac/WKFullKeyboardAccessWatcher.mm:
+        (-[WKFullKeyboardAccessWatcher notifyAllProcessPools]):
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (WebKit::WKFullScreenWindowControllerVideoFullscreenModelClient::setInterface):
+        (WebKit::WKFullScreenWindowControllerVideoFullscreenModelClient::interface const):
+        (-[WKFullScreenWindowController initWithWindow:webView:page:]):
+        (-[WKFullScreenWindowController enterFullScreen:]):
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+        (-[WKFullScreenWindowController windowDidEnterFullScreen:]):
+        (-[WKFullScreenWindowController windowDidExitFullScreen:]):
+        (-[WKFullScreenWindowController _manager]):
+        (-[WKFullScreenWindowController _replaceView:with:]):
+        (zoomAnimation):
+        (createMask):
+        (maskAnimation):
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController initWithPage:view:viewImpl:recognizer:]):
+        (-[WKImmediateActionController willDestroyView:]):
+        (-[WKImmediateActionController _clearImmediateActionState]):
+        (-[WKImmediateActionController didPerformImmediateActionHitTest:contentPreventsDefault:userData:]):
+        (-[WKImmediateActionController immediateActionRecognizerWillPrepare:]):
+        (-[WKImmediateActionController immediateActionRecognizerWillBeginAnimation:]):
+        (-[WKImmediateActionController _webHitTestResult]):
+        (-[WKImmediateActionController _defaultAnimationController]):
+        (-[WKImmediateActionController menuItem:maxSizeForPoint:]):
+        (-[WKImmediateActionController _animationControllerForDataDetectedText]):
+        (-[WKImmediateActionController _animationControllerForDataDetectedLink]):
+        (-[WKImmediateActionController _animationControllerForText]):
+        * UIProcess/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController initWithInspectedPage:]):
+        (-[WKInspectorViewController webView]):
+        (-[WKInspectorViewController configuration]):
+        (-[WKInspectorViewController webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:]):
+        (-[WKInspectorViewController webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[WKInspectorViewController inspectorWKWebViewReload:]):
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _expectedPreviewCallbackForRect:]):
+        (pageDidDrawToImage):
+        (-[WKPrintingView _preparePDFDataForPrintingOnSecondaryThread]):
+        (pageDidComputePageRects):
+        (-[WKPrintingView _askPageToComputePageRects]):
+        (-[WKPrintingView _pageForRect:]):
+        (-[WKPrintingView _drawPDFDocument:page:atPoint:]):
+        (-[WKPrintingView _drawPreview:]):
+        (-[WKPrintingView drawRect:]):
+        (-[WKPrintingView rectForPage:]):
+        * UIProcess/mac/WKTextFinderClient.mm:
+        (-[WKTextFinderClient initWithPage:view:]):
+        (-[WKTextFinderClient findMatchesForString:relativeToMatch:findOptions:maxResults:resultCollector:]):
+        (-[WKTextFinderClient getSelectedText:]):
+        (arrayFromRects):
+        (-[WKTextFinderClient didFindStringMatchesWithRects:didWrapAround:]):
+        (-[WKTextFinderClient didGetImageForMatchResult:]):
+        * UIProcess/mac/WKTextInputWindowController.mm:
+        * UIProcess/mac/WKViewLayoutStrategy.mm:
+        (+[WKViewLayoutStrategy layoutStrategyWithPage:view:viewImpl:mode:]):
+        (-[WKViewLayoutStrategy initWithPage:view:viewImpl:mode:]):
+        (-[WKViewViewSizeLayoutStrategy initWithPage:view:viewImpl:mode:]):
+        (-[WKViewFixedSizeLayoutStrategy initWithPage:view:viewImpl:mode:]):
+        (-[WKViewDynamicSizeComputedFromViewScaleLayoutStrategy initWithPage:view:viewImpl:mode:]):
+        (-[WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy initWithPage:view:viewImpl:mode:]):
+        * UIProcess/mac/WebColorPickerMac.mm:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (-[WKMenuTarget forwardContextMenuAction:]):
+        (WebKit::menuItemIdentifier):
+        (WebKit::WebContextMenuProxyMac::createContextMenuItem):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter initWithWebInspectorProxy:]):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        * UIProcess/win/PageClientImpl.cpp:
+        * UIProcess/win/TextCheckerWin.cpp:
+        * UIProcess/win/WebContextMenuProxyWin.cpp:
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        * UIProcess/win/WebView.cpp:
+        * UIProcess/wpe/TextCheckerWPE.cpp:
+        * UIProcess/wpe/WebPasteboardProxyWPE.cpp:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-08-23  Sihui Liu  <sihui_liu@apple.com>
 
         Move legacy directory configuration from WebProcessPool to API::WebsiteDataStore

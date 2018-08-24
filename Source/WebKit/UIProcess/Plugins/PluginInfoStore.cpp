@@ -36,9 +36,8 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/StdLibExtras.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 PluginInfoStore::PluginInfoStore()
     : m_pluginListIsUpToDate(false)

@@ -51,9 +51,8 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 PageClientImpl::PageClientImpl(GtkWidget* viewWidget)
     : m_viewWidget(viewWidget)

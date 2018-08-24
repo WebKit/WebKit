@@ -60,9 +60,8 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static const LPCWSTR kWebKit2WebViewWindowClassName = L"WebKit2WebViewWindowClass";
 

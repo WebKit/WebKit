@@ -49,8 +49,6 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/mac/NSEventSPI.h>
 
-using namespace WebCore;
-
 static const double minMagnification = 1;
 static const double maxMagnification = 3;
 
@@ -86,6 +84,7 @@ static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 @end
 
 namespace WebKit {
+using namespace WebCore;
 
 void ViewGestureController::platformTeardown()
 {

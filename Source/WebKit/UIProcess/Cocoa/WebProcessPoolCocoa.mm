@@ -60,8 +60,6 @@
 #import <QuartzCore/CARemoteLayerServer.h>
 #endif
 
-using namespace WebCore;
-
 NSString *WebServiceWorkerRegistrationDirectoryDefaultsKey = @"WebServiceWorkerRegistrationDirectory";
 NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
 NSString *WebKitJSCJITEnabledDefaultsKey = @"WebKitJSCJITEnabledDefaultsKey";
@@ -89,6 +87,7 @@ static NSString * const WebKitRecordReplayCacheLocationDefaultsKey = @"WebKitRec
 #endif
 
 namespace WebKit {
+using namespace WebCore;
 
 static void registerUserDefaultsIfNeeded()
 {

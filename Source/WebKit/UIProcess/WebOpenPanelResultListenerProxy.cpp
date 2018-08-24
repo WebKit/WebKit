@@ -32,9 +32,8 @@
 #include <WebCore/URL.h>
 #include <wtf/Vector.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 WebOpenPanelResultListenerProxy::WebOpenPanelResultListenerProxy(WebPageProxy* page)
     : m_page(page)

@@ -32,8 +32,7 @@
 #import <pal/spi/mac/HIToolboxSPI.h>
 #import <pal/system/mac/WebPanel.h>
 
-@interface WKTextInputView : NSTextView {
-}
+@interface WKTextInputView : NSTextView
 @end
 
 @implementation WKTextInputView

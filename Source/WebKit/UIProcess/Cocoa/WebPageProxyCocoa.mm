@@ -41,9 +41,8 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/cf/TypeCastsCF.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 #if ENABLE(DATA_DETECTION)
 void WebPageProxy::setDataDetectionResult(const DataDetectionResult& dataDetectionResult)

@@ -32,9 +32,8 @@
 #include <WebCore/HIDGamepadProvider.h>
 #include <WebCore/MockGamepadProvider.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static bool useGameControllerFramework = false;
 

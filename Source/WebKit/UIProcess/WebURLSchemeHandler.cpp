@@ -29,9 +29,8 @@
 #include "WebPageProxy.h"
 #include "WebURLSchemeTask.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static uint64_t generateWebURLSchemeHandlerIdentifier()
 {

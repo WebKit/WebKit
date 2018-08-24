@@ -676,7 +676,7 @@ static const NSUInteger orderedListSegment = 2;
     return [self itemForIdentifier:identifier];
 }
 
-- (nullable NSTouchBarItem *)itemForIdentifier:(NSString *)identifier
+- (NSTouchBarItem *)itemForIdentifier:(NSString *)identifier
 {
     NSTouchBarItem *item = [super itemForIdentifier:identifier];
     BOOL isTextFormatItem = [identifier isEqualToString:NSTouchBarItemIdentifierTextFormat];
@@ -3836,12 +3836,12 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
         Vector<String> *fileNames = new Vector<String>;
         NSURL *dropDestination = [NSURL fileURLWithPath:dropDestinationPath isDirectory:YES];
         String pasteboardName = draggingInfo.draggingPasteboard.name;
-        [draggingInfo enumerateDraggingItemsWithOptions:0 forView:m_view.getAutoreleased() classes:@[[NSFilePromiseReceiver class]] searchOptions:@{ } usingBlock:^(NSDraggingItem * __nonnull draggingItem, NSInteger idx, BOOL * __nonnull stop) {
+        [draggingInfo enumerateDraggingItemsWithOptions:0 forView:m_view.getAutoreleased() classes:@[[NSFilePromiseReceiver class]] searchOptions:@{ } usingBlock:^(NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop) {
             NSFilePromiseReceiver *item = draggingItem.item;
             NSDictionary *options = @{ };
 
             RetainPtr<NSOperationQueue> queue = adoptNS([NSOperationQueue new]);
-            [item receivePromisedFilesAtDestination:dropDestination options:options operationQueue:queue.get() reader:^(NSURL * _Nonnull fileURL, NSError * _Nullable errorOrNil) {
+            [item receivePromisedFilesAtDestination:dropDestination options:options operationQueue:queue.get() reader:^(NSURL *fileURL, NSError *errorOrNil) {
                 if (errorOrNil)
                     return;
 

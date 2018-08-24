@@ -35,9 +35,8 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/WebEvent.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArray *eventsToSend)
 {

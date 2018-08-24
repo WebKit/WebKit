@@ -49,8 +49,6 @@
 #import <pal/spi/mac/NSSharingServiceSPI.h>
 #import <wtf/RetainPtr.h>
 
-using namespace WebCore;
-
 @interface WKUserDataWrapper : NSObject {
     RefPtr<API::Object> _webUserData;
 }
@@ -140,7 +138,7 @@ using namespace WebCore;
         return;
     }
 
-    WebKit::WebContextMenuItemData item(ActionType, static_cast<ContextMenuAction>([sender tag]), [sender title], [sender isEnabled], [sender state] == NSControlStateValueOn);
+    WebKit::WebContextMenuItemData item(WebCore::ActionType, static_cast<WebCore::ContextMenuAction>([sender tag]), [sender title], [sender isEnabled], [sender state] == NSControlStateValueOn);
     if (representedObject) {
         ASSERT([representedObject isKindOfClass:[WKUserDataWrapper class]]);
         item.setUserData([static_cast<WKUserDataWrapper *>(representedObject) userData]);
@@ -152,6 +150,7 @@ using namespace WebCore;
 @end
 
 namespace WebKit {
+using namespace WebCore;
 
 WebContextMenuProxyMac::WebContextMenuProxyMac(NSView* webView, WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
     : WebContextMenuProxy(WTFMove(context), userData)
@@ -342,7 +341,7 @@ RetainPtr<NSMenu> WebContextMenuProxyMac::createContextMenuFromItems(const Vecto
     return menu;
 }
 
-static NSString *menuItemIdentifier(const ContextMenuAction action)
+static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
 {
     switch (action) {
 #if WK_API_ENABLED
@@ -432,8 +431,8 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createContextMenuItem(const WebCon
 #endif
 
     switch (item.type()) {
-    case ActionType:
-    case CheckableActionType: {
+    case WebCore::ActionType:
+    case WebCore::CheckableActionType: {
         auto menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:item.title() action:@selector(forwardContextMenuAction:) keyEquivalent:@""]);
 
         [menuItem setTag:item.action()];
@@ -450,10 +449,10 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createContextMenuItem(const WebCon
         return menuItem;
     }
 
-    case SeparatorType:
+    case WebCore::SeparatorType:
         return [NSMenuItem separatorItem];
 
-    case SubmenuType: {
+    case WebCore::SubmenuType: {
         auto menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:item.title() action:nullptr keyEquivalent:@""]);
         [menuItem setEnabled:item.enabled()];
         [menuItem setSubmenu:createContextMenuFromItems(item.submenu()).get()];

@@ -45,18 +45,16 @@
 #import "WebPageProxy.h"
 #import <wtf/WeakObjCPtr.h>
 
-using namespace WebKit;
-
 @interface WKInspectorViewController () <WKUIDelegate, WKNavigationDelegate, WKInspectorWKWebViewDelegate>
 @end
 
 @implementation WKInspectorViewController {
-    WebPageProxy* _inspectedPage;
+    WebKit::WebPageProxy* _inspectedPage;
     RetainPtr<WKInspectorWKWebView> _webView;
     WeakObjCPtr<id <WKInspectorViewControllerDelegate>> _delegate;
 }
 
-- (instancetype)initWithInspectedPage:(WebKit::WebPageProxy* _Nullable)inspectedPage
+- (instancetype)initWithInspectedPage:(WebKit::WebPageProxy*)inspectedPage
 {
     if (!(self = [super init]))
         return nil;
@@ -88,7 +86,7 @@ using namespace WebKit;
 {
     // Construct lazily so the client can set the delegate before the WebView is created.
     if (!_webView) {
-        NSRect initialFrame = NSMakeRect(0, 0, WebInspectorProxy::initialWindowWidth, WebInspectorProxy::initialWindowHeight);
+        NSRect initialFrame = NSMakeRect(0, 0, WebKit::WebInspectorProxy::initialWindowWidth, WebKit::WebInspectorProxy::initialWindowHeight);
         _webView = adoptNS([[WKInspectorWKWebView alloc] initWithFrame:initialFrame configuration:[self configuration]]);
         [_webView setUIDelegate:self];
         [_webView setNavigationDelegate:self];
@@ -129,8 +127,8 @@ using namespace WebKit;
         }
     }
 
-    [configuration setProcessPool:wrapper(inspectorProcessPool(inspectorLevelForPage(_inspectedPage)))];
-    [configuration _setGroupIdentifier:inspectorPageGroupIdentifierForPage(_inspectedPage)];
+    [configuration setProcessPool:wrapper(WebKit::inspectorProcessPool(WebKit::inspectorLevelForPage(_inspectedPage)))];
+    [configuration _setGroupIdentifier:WebKit::inspectorPageGroupIdentifierForPage(_inspectedPage)];
 
     return configuration.autorelease();
 }
@@ -158,7 +156,7 @@ using namespace WebKit;
     [_webView.get().window setFrame:NSRectFromCGRect(frame) display:YES];
 }
 
-- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> * _Nullable URLs))completionHandler
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> *URLs))completionHandler
 {
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
     openPanel.allowsMultipleSelection = parameters.allowsMultipleSelection;
@@ -219,7 +217,7 @@ using namespace WebKit;
     }
 
     // Allow loading of the main inspector file.
-    if (WebInspectorProxy::isMainOrTestInspectorPage(navigationAction.request.URL)) {
+    if (WebKit::WebInspectorProxy::isMainOrTestInspectorPage(navigationAction.request.URL)) {
         decisionHandler(WKNavigationActionPolicyAllow);
         return;
     }
@@ -239,7 +237,7 @@ using namespace WebKit;
         return;
 
     OptionSet<WebCore::ReloadOption> reloadOptions;
-    if (linkedOnOrAfter(WebKit::SDKVersion::FirstWithExpiredOnlyReloadBehavior))
+    if (WebKit::linkedOnOrAfter(WebKit::SDKVersion::FirstWithExpiredOnlyReloadBehavior))
         reloadOptions |= WebCore::ReloadOption::ExpiredOnly;
 
     _inspectedPage->reload(reloadOptions);

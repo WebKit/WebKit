@@ -31,10 +31,8 @@
 #import <WebCore/DragItem.h>
 #import <WebCore/Image.h>
 
-using namespace WebCore;
-using namespace WebKit;
-
 namespace WebKit {
+using namespace WebCore;
 
 static UIDragItem *dragItemMatchingIdentifier(id <UIDragSession> session, NSInteger identifier)
 {

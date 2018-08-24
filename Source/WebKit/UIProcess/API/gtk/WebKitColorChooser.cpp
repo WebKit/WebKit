@@ -25,9 +25,8 @@
 #include <WebCore/Color.h>
 #include <WebCore/IntRect.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Ref<WebKitColorChooser> WebKitColorChooser::create(WebPageProxy& page, const WebCore::Color& initialColor, const WebCore::IntRect& rect)
 {

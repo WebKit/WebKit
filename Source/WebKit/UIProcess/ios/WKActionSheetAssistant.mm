@@ -61,8 +61,6 @@ SOFT_LINK_PRIVATE_FRAMEWORK(TCC)
 SOFT_LINK(TCC, TCCAccessPreflight, TCCAccessPreflightResult, (CFStringRef service, CFDictionaryRef options), (service, options))
 SOFT_LINK_CONSTANT(TCC, kTCCServicePhotos, CFStringRef)
 
-using namespace WebKit;
-
 #if HAVE(APP_LINKS)
 static bool applicationHasAppLinkEntitlements()
 {
@@ -396,7 +394,7 @@ static const CGFloat presentationElementRectPadding = 15;
     showImageSheetWithAlternateURLBlock(nil, nil);
 }
 
-static WKActionSheetPresentationStyle presentationStyleForView(UIView *view, const InteractionInformationAtPosition& positionInfo, _WKActivatedElementInfo *elementInfo)
+static WKActionSheetPresentationStyle presentationStyleForView(UIView *view, const WebKit::InteractionInformationAtPosition& positionInfo, _WKActivatedElementInfo *elementInfo)
 {
     auto apparentElementRect = [view convertRect:positionInfo.bounds toView:view.window];
     if (CGRectIsEmpty(apparentElementRect))

@@ -44,7 +44,6 @@
 #endif
 
 namespace WebKit {
-
 using namespace WebCore;
 
 constexpr unsigned statisticsModelVersion { 12 };

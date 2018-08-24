@@ -38,10 +38,9 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/MachSendRight.h>
 
+namespace WebKit {
 using namespace IPC;
 using namespace WebCore;
-
-namespace WebKit {
 
 TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy(WebPageProxy& webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeTiledCoreAnimation, webPageProxy)

@@ -38,8 +38,6 @@
 #import <PepperUICore/UIScrollView+PUICAdditionsPrivate.h>
 #endif
 
-using namespace WebKit;
-
 @interface WKScrollViewDelegateForwarder : NSObject <UIScrollViewDelegate>
 
 - (instancetype)initWithInternalDelegate:(WKWebView *)internalDelegate externalDelegate:(id <UIScrollViewDelegate>)externalDelegate;
@@ -350,7 +348,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     // to include keyboard insets in the systemContentInset. We always want
     // keyboard insets applied, even when web content has chosen to disable automatic
     // safe area inset adjustment.
-    if (linkedOnOrAfter(SDKVersion::FirstWhereUIScrollViewDoesNotApplyKeyboardInsetsUnconditionally) && self.contentInsetAdjustmentBehavior == UIScrollViewContentInsetAdjustmentNever)
+    if (linkedOnOrAfter(WebKit::SDKVersion::FirstWhereUIScrollViewDoesNotApplyKeyboardInsetsUnconditionally) && self.contentInsetAdjustmentBehavior == UIScrollViewContentInsetAdjustmentNever)
         systemContentInset.bottom += _keyboardBottomInsetAdjustment;
 
     return systemContentInset;
