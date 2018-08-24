@@ -7,5 +7,5 @@ PASS A synthetic MouseEvent should be scoped by default
 PASS A synthetic MouseEvent with composed=true should not be scoped 
 PASS A synthetic FocusEvent should be scoped by default 
 PASS A synthetic FocusEvent with composed=true should not be scoped 
-FAIL A UA click event should not be scoped assert_equals: expected 3 but got 2
+PASS A UA click event should not be scoped 
 

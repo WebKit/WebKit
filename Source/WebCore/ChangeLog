@@ -1,5 +1,18 @@
 2018-08-24  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Click event from click() is not composed
+        https://bugs.webkit.org/show_bug.cgi?id=170211
+
+        Reviewed by Wenson Hsieh.
+
+        Fixed the bug. All simulated clicks should be composed regardless of whether it's trusted or not.
+        See: https://html.spec.whatwg.org/multipage/interaction.html#dom-click
+             https://html.spec.whatwg.org/multipage/webappapis.html#fire-a-synthetic-mouse-event
+
+        * dom/SimulatedClick.cpp:
+
+2018-08-24  Ryosuke Niwa  <rniwa@webkit.org>
+
         Avoid calling setUntrusted in SimulatedMouseEvent
         https://bugs.webkit.org/show_bug.cgi?id=188929
 
