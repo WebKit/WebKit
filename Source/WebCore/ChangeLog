@@ -1,3 +1,18 @@
+2018-08-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        initKeyboardEvent doesn't clear CapsLock state
+        https://bugs.webkit.org/show_bug.cgi?id=188909
+
+        Reviewed by Wenson Hsieh.
+
+        Fixed the bug by not preserving CapsLock state in setModifierKeys variant which takes boolean
+        for altGraphKey, which is only called by KeyboardEvent::initKeyboardEvent.
+
+        Test: fast/events/init-event-clears-capslock.html
+
+        * dom/UIEventWithKeyState.h:
+        (WebCore::UIEventWithKeyState::setModifierKeys):
+
 2018-08-23  Aditya Keerthi  <akeerthi@apple.com>
 
         Unreviewed, fix the Windows build after r235245.

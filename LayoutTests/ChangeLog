@@ -1,5 +1,18 @@
 2018-08-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        initKeyboardEvent doesn't clear CapsLock state
+        https://bugs.webkit.org/show_bug.cgi?id=188909
+
+        Reviewed by Wenson Hsieh.
+
+        Added a regression test. Note that altGraph is only supported in WebKit
+        so Chrome and Firefox would fail to reset it via initKeyboardEvent.
+
+        * fast/events/init-event-clears-capslock-expected.txt: Added.
+        * fast/events/init-event-clears-capslock.html: Added.
+
+2018-08-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         Store the timer we scheduled in the global object.
         The underlying bug is tracked by https://webkit.org/b/188911.
 

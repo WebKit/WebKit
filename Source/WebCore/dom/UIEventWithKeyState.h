@@ -76,9 +76,6 @@ protected:
             result |= Modifier::MetaKey;
         if (altGraphKey)
             result |= Modifier::AltGraphKey;
-        //  FIXME: Chrome or Firefox don't preserve this state.
-        if (m_modifiers & Modifier::CapsLockKey)
-            result |= Modifier::CapsLockKey;
         m_modifiers = result;
     }
 
