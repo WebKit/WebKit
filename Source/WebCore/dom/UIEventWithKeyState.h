@@ -55,8 +55,8 @@ protected:
     }
 
     UIEventWithKeyState(const AtomicString& type, CanBubble canBubble, IsCancelable cancelable, IsComposed isComposed,
-        MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail, OptionSet<Modifier> modifiers)
-        : UIEvent(type, canBubble, cancelable, isComposed, timestamp, WTFMove(view), detail)
+        MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail, OptionSet<Modifier> modifiers, IsTrusted isTrusted)
+        : UIEvent(type, canBubble, cancelable, isComposed, timestamp, WTFMove(view), detail, isTrusted)
         , m_modifiers(modifiers)
     {
     }

@@ -63,8 +63,8 @@ Event::Event(const AtomicString& eventType, CanBubble canBubble, IsCancelable is
     ASSERT(!eventType.isNull());
 }
 
-Event::Event(const AtomicString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp)
-    : Event { timestamp, eventType, IsTrusted::Yes, canBubble, isCancelable, isComposed }
+Event::Event(const AtomicString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp, IsTrusted isTrusted)
+    : Event { timestamp, eventType, isTrusted, canBubble, isCancelable, isComposed }
 {
     ASSERT(!eventType.isNull());
 }

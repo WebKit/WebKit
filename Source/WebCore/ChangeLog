@@ -1,3 +1,36 @@
+2018-08-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Avoid calling setUntrusted in SimulatedMouseEvent
+        https://bugs.webkit.org/show_bug.cgi?id=188929
+
+        Reviewed by Simon Fraser.
+
+        Added IsTrusted flag to Event constructors instead of creating a trusted event
+        and making it untrusted in the constructor of SimulatedMouseEvent.
+
+        This makes EventTarget::dispatchEventForBindings the only caller of setUntrusted().
+
+        * dom/Event.cpp:
+        (WebCore::Event::Event):
+        * dom/Event.h:
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create):
+        (WebCore::MouseEvent::MouseEvent):
+        * dom/MouseEvent.h:
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        * dom/MouseRelatedEvent.h:
+        * dom/SimulatedClick.cpp:
+        * dom/UIEvent.cpp:
+        (WebCore::UIEvent::UIEvent):
+        * dom/UIEvent.h:
+        * dom/UIEventWithKeyState.h:
+        (WebCore::UIEventWithKeyState::UIEventWithKeyState):
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+
 2018-08-24  Jer Noble  <jer.noble@apple.com>
 
         Using Touch Bar to scrub video on Youtube results in video playback freeze

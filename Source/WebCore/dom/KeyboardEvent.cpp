@@ -95,7 +95,7 @@ inline KeyboardEvent::KeyboardEvent() = default;
 
 inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<WindowProxy>&& view)
     : UIEventWithKeyState(eventTypeForKeyboardEventType(key.type()), CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes,
-        key.timestamp().approximateMonotonicTime(), view.copyRef(), 0, key.modifiers())
+        key.timestamp().approximateMonotonicTime(), view.copyRef(), 0, key.modifiers(), IsTrusted::Yes)
     , m_underlyingPlatformEvent(std::make_unique<PlatformKeyboardEvent>(key))
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     , m_key(key.key())

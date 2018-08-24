@@ -48,8 +48,8 @@ inline WheelEvent::WheelEvent(const AtomicString& type, const Init& initializer)
 }
 
 inline WheelEvent::WheelEvent(const PlatformWheelEvent& event, RefPtr<WindowProxy>&& view)
-    : MouseEvent(eventNames().wheelEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, event.timestamp().approximateMonotonicTime(), WTFMove(view), 0, event.globalPosition(), event.position() , { }
-        , event.modifiers(), 0, 0, nullptr, 0, 0, nullptr, IsSimulated::No)
+    : MouseEvent(eventNames().wheelEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, event.timestamp().approximateMonotonicTime(), WTFMove(view), 0,
+        event.globalPosition(), event.position() , { }, event.modifiers(), 0, 0, nullptr, 0, 0, nullptr, IsSimulated::No, IsTrusted::Yes)
     , m_wheelDelta(event.wheelTicksX() * TickMultiplier, event.wheelTicksY() * TickMultiplier)
     , m_deltaX(-event.deltaX())
     , m_deltaY(-event.deltaY())

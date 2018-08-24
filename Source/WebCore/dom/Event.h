@@ -143,7 +143,7 @@ public:
 protected:
     explicit Event(IsTrusted = IsTrusted::No);
     Event(const AtomicString& type, CanBubble, IsCancelable, IsComposed = IsComposed::No);
-    Event(const AtomicString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp);
+    Event(const AtomicString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, IsTrusted isTrusted = IsTrusted::Yes);
     Event(const AtomicString& type, const EventInit&, IsTrusted);
 
     virtual void receivedTarget() { }

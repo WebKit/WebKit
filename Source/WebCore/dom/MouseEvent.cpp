@@ -62,10 +62,10 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, RefPtr<WindowP
 
 Ref<MouseEvent> MouseEvent::create(const AtomicString& type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
     const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier> modifiers, unsigned short button, unsigned short buttons,
-    EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* dataTransfer, IsSimulated isSimulated)
+    EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* dataTransfer, IsSimulated isSimulated, IsTrusted isTrusted)
 {
     return adoptRef(*new MouseEvent(type, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail,
-        screenLocation, windowLocation, movementDelta, modifiers, button, buttons, relatedTarget, force, syntheticClickType, dataTransfer, isSimulated));
+        screenLocation, windowLocation, movementDelta, modifiers, button, buttons, relatedTarget, force, syntheticClickType, dataTransfer, isSimulated, isTrusted));
 }
 
 Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, RefPtr<WindowProxy>&& view, int detail,
@@ -80,8 +80,8 @@ MouseEvent::MouseEvent() = default;
 MouseEvent::MouseEvent(const AtomicString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
     MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
     const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier> modifiers, unsigned short button, unsigned short buttons,
-    EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* dataTransfer, IsSimulated isSimulated)
-    : MouseRelatedEvent(eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, screenLocation, windowLocation, movementDelta, modifiers, isSimulated)
+    EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* dataTransfer, IsSimulated isSimulated, IsTrusted isTrusted)
+    : MouseRelatedEvent(eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, screenLocation, windowLocation, movementDelta, modifiers, isSimulated, isTrusted)
     , m_button(button == (unsigned short)-1 ? 0 : button)
     , m_buttons(buttons)
     , m_syntheticClickType(button == (unsigned short)-1 ? 0 : syntheticClickType)

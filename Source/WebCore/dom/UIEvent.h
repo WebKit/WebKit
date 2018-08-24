@@ -67,7 +67,7 @@ protected:
     UIEvent();
 
     UIEvent(const AtomicString& type, CanBubble, IsCancelable, IsComposed, RefPtr<WindowProxy>&&, int detail);
-    UIEvent(const AtomicString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail);
+    UIEvent(const AtomicString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail, IsTrusted = IsTrusted::Yes);
     UIEvent(const AtomicString&, const UIEventInit&);
 
 private:

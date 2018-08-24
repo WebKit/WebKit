@@ -36,7 +36,7 @@ class MouseEvent : public MouseRelatedEvent {
 public:
     WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier>, unsigned short button, unsigned short buttons,
-        EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* = nullptr, IsSimulated = IsSimulated::No);
+        EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* = nullptr, IsSimulated = IsSimulated::No, IsTrusted = IsTrusted::Yes);
 
     WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& eventType, RefPtr<WindowProxy>&&, const PlatformMouseEvent&, int detail, Node* relatedTarget);
 
@@ -78,7 +78,7 @@ public:
 protected:
     MouseEvent(const AtomicString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier>, unsigned short button, unsigned short buttons,
-        EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer*, IsSimulated);
+        EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer*, IsSimulated, IsTrusted);
 
     MouseEvent(const AtomicString& type, CanBubble, IsCancelable, IsComposed, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& clientLocation, OptionSet<Modifier>, unsigned short button, unsigned short buttons,

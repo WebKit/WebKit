@@ -39,8 +39,8 @@ UIEvent::UIEvent(const AtomicString& eventType, CanBubble canBubble, IsCancelabl
 {
 }
 
-UIEvent::UIEvent(const AtomicString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&& viewArg, int detailArg)
-    : Event(eventType, canBubble, isCancelable, isComposed, timestamp)
+UIEvent::UIEvent(const AtomicString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&& viewArg, int detailArg, IsTrusted isTrusted)
+    : Event(eventType, canBubble, isCancelable, isComposed, timestamp, isTrusted)
     , m_view(WTFMove(viewArg))
     , m_detail(detailArg)
 {
