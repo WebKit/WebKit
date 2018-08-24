@@ -1,3 +1,14 @@
+2018-08-24  Tim Horton  <timothy_horton@apple.com>
+
+        Improve unified source generator script logging and error messages
+        https://bugs.webkit.org/show_bug.cgi?id=188932
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/generate-unified-source-bundles.rb:
+        Add the ability to explain why you're getting usage() instead of just printing it.
+        Capitalize log messages, and improve the wording in a few places.
+
 2018-08-24  Antti Koivisto  <antti@apple.com>
 
         Allow creating WeakPtrs to const objects
