@@ -66,7 +66,7 @@ static void isMSEEnabledCallback(WKSerializedScriptValueRef serializedResultValu
     JSGlobalContextRelease(scriptContext);
 }
 
-static void didFinishLoadForFrame(WKPageRef page, WKFrameRef, WKTypeRef, const void*)
+static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef, const void*)
 {
     didFinishLoad = true;
 }
@@ -78,13 +78,13 @@ static void isPlayingAudioDidChangeCallback(WKPageRef page, const void*)
 
 static void setUpClients(WKPageRef page)
 {
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
     loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+    loaderClient.didFinishNavigation = didFinishNavigation;
 
-    WKPageSetPageLoaderClient(page, &loaderClient.base);
+    WKPageSetPageNavigationClient(page, &loaderClient.base);
 
     WKPageUIClientV5 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));

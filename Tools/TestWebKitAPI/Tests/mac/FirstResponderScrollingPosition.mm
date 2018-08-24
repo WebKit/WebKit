@@ -36,7 +36,7 @@ namespace TestWebKitAPI {
     
 static bool didFinishLoad;
 
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
+static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*)
 {
     didFinishLoad = true;
 }
@@ -58,11 +58,11 @@ TEST(WebKit, FirstResponderScrollingPosition)
 
     PlatformWebView webView(context.get(), pageGroup.get());
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
     loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    loaderClient.didFinishNavigation = didFinishNavigation;
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
     
     [window.get().contentView addSubview:webView.platformView()];
     [window.get() makeFirstResponder:webView.platformView()];
@@ -83,7 +83,7 @@ TEST(WebKit, FirstResponderScrollingPosition)
     EXPECT_JS_EQ(webView.page(), "window.scrollY", "40");
 
     PlatformWebView newWebView(context.get(), pageGroup.get());
-    WKPageSetPageLoaderClient(newWebView.page(), &loaderClient.base);
+    WKPageSetPageNavigationClient(newWebView.page(), &loaderClient.base);
 
     [window.get().contentView addSubview:newWebView.platformView()];
     [window.get() makeFirstResponder:newWebView.platformView()];

@@ -307,7 +307,7 @@ struct GeolocationTransitionToLowAccuracyStateTracker : GeolocationStateTracker 
     }
 };
 
-static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo)
 {
     *static_cast<bool*>(const_cast<void*>(clientInfo)) = true;
 }
@@ -331,14 +331,14 @@ TEST(WebKit, GeolocationTransitionToLowAccuracy)
 
     bool finishedSecondStep = false;
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
     loaderClient.base.version = 0;
     loaderClient.base.clientInfo = &finishedSecondStep;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+    loaderClient.didFinishNavigation = didFinishNavigation;
 
-    WKPageSetPageLoaderClient(lowAccuracyWebView.page(), &loaderClient.base);
+    WKPageSetPageNavigationClient(lowAccuracyWebView.page(), &loaderClient.base);
 
     WKRetainPtr<WKURLRef> lowAccuracyURL(AdoptWK, Util::createURLForResource("geolocationWatchPosition", "html"));
     WKPageLoadURL(lowAccuracyWebView.page(), lowAccuracyURL.get());

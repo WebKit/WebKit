@@ -78,7 +78,7 @@ static void waitUntilOnLoadIsCompleted(WKPageRef page)
     }
 }
 
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
+static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*)
 {
     receivedLoadedMessage = true;
 }
@@ -165,11 +165,11 @@ TEST(PictureInPicture, WKPageUIClient)
     uiClient.hasVideoInPictureInPictureDidChange = hasVideoInPictureInPictureDidChange;
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
     
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0 , sizeof(loaderClient));
     loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    loaderClient.didFinishNavigation = didFinishNavigation;
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
     
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 100, 100) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
     [window.get() makeKeyAndOrderFront:nil];

@@ -49,7 +49,7 @@ struct WebKit2TextFieldBeginAndEditEditingTest : public ::testing::Test {
         client.didReceiveMessage = true;
     }
 
-    static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void* clientInfo)
+    static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void* clientInfo)
     {
         WebKit2TextFieldBeginAndEditEditingTest& client = *static_cast<WebKit2TextFieldBeginAndEditEditingTest*>(const_cast<void*>(clientInfo));
         client.didFinishLoad = true;
@@ -69,14 +69,14 @@ struct WebKit2TextFieldBeginAndEditEditingTest : public ::testing::Test {
 
     static void setPageLoaderClient(WKPageRef page, const void* clientInfo)
     {
-        WKPageLoaderClientV6 loaderClient;
+        WKPageNavigationClientV0 loaderClient;
         memset(&loaderClient, 0, sizeof(loaderClient));
 
-        loaderClient.base.version = 6;
+        loaderClient.base.version = 0;
         loaderClient.base.clientInfo = clientInfo;
-        loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+        loaderClient.didFinishNavigation = didFinishNavigation;
 
-        WKPageSetPageLoaderClient(page, &loaderClient.base);
+        WKPageSetPageNavigationClient(page, &loaderClient.base);
     }
 
     static void nullJavaScriptCallback(WKSerializedScriptValueRef, WKErrorRef, void*)

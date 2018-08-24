@@ -41,7 +41,7 @@ static bool didFinishLoad;
 static bool didDecideDownloadDestination;
 static WKPageRef expectedOriginatingPage;
 
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
+static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*)
 {
     didFinishLoad = true;
 }
@@ -91,11 +91,11 @@ TEST(WebKit, ContextMenuDownloadHTMLDownloadAttribute)
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("MyGroup").get()));
     PlatformWebView webView(context.get(), pageGroup.get());
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
     loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    loaderClient.didFinishNavigation = didFinishNavigation;
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKPageContextMenuClientV3 contextMenuClient;
     memset(&contextMenuClient, 0, sizeof(contextMenuClient));
@@ -138,11 +138,11 @@ TEST(WebKit, ContextMenuDownloadHTMLDownloadAttributeWithSlashes)
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("MyGroup").get()));
     PlatformWebView webView(context.get(), pageGroup.get());
 
-    WKPageLoaderClientV0 loaderClient;
+    WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
     loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+    loaderClient.didFinishNavigation = didFinishNavigation;
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     WKPageContextMenuClientV3 contextMenuClient;
     memset(&contextMenuClient, 0, sizeof(contextMenuClient));
