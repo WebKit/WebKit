@@ -1,4 +1,17 @@
 ==================
+WebKitGTK+ 2.21.92
+==================
+
+What's new in WebKitGTK+ 2.21.92?
+
+  - Add new API to inject/register user content in isolated worlds.
+  - Add more API to JSCException to handle column number, convert exception to string, get the exception backtrace,
+    create exceptions with a custom error name and report exception message with full details.
+  - Fix excessive CPU usage when getting the process memory footprint.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Polish
+
+==================
 WebKitGTK+ 2.21.91
 ==================
 
