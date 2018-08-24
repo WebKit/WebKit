@@ -1,3 +1,10 @@
+2018-08-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Store the timer we scheduled in the global object.
+        The underlying bug is tracked by https://webkit.org/b/188911.
+
+        * fast/files/blob-network-process-crash.html:
+
 2018-08-23  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Introduce Apple Pay JS v4 on iOS 12 and macOS Mojave

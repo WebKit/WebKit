@@ -20,7 +20,8 @@ else {
 
     testRunner.terminateNetworkProcess();
 
-    setTimeout(() => {
+    // FIXME: If we don't store the timer, timer sometimes never fires.
+    window.timer = setTimeout(() => {
         const newBlob = new Blob(["some text"]);
         for (let i = 0; i < 100; i++) {
             for (let j = 0; j < 10; j++)
