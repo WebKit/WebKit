@@ -1,3 +1,14 @@
+2018-08-24  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKWebView._mainFrame SPI
+        https://bugs.webkit.org/show_bug.cgi?id=188925
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _mainFrame]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2018-08-24  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Match the interface used in NetworkDataTask and ResourceHandle.

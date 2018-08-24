@@ -6484,6 +6484,13 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     return nil;
 }
 
+- (_WKFrameHandle *)_mainFrame
+{
+    if (auto* frame = _page->mainFrame())
+        return wrapper(API::FrameHandle::create(frame->frameID()));
+    return nil;
+}
+
 - (void)_denyNextUserMediaRequest
 {
 #if ENABLE(MEDIA_STREAM)
