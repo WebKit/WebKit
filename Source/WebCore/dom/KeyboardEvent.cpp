@@ -183,24 +183,6 @@ void KeyboardEvent::initKeyboardEvent(const AtomicString& type, bool canBubble, 
 #endif
 }
 
-bool KeyboardEvent::getModifierState(const String& keyIdentifier) const
-{
-    if (keyIdentifier == "Control")
-        return ctrlKey();
-    if (keyIdentifier == "Shift")
-        return shiftKey();
-    if (keyIdentifier == "Alt")
-        return altKey();
-    if (keyIdentifier == "Meta")
-        return metaKey();
-    if (keyIdentifier == "AltGraph")
-        return altGraphKey();
-    if (keyIdentifier == "CapsLock")
-        return capsLockKey();
-    // FIXME: The specification also has Fn, FnLock, Hyper, NumLock, Super, ScrollLock, Symbol, SymbolLock.
-    return false;
-}
-
 int KeyboardEvent::keyCode() const
 {
     if (m_keyCode)

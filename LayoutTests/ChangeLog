@@ -1,3 +1,27 @@
+2018-08-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add getModifierState to MouseEvent
+        https://bugs.webkit.org/show_bug.cgi?id=188913
+        <rdar://problem/43668772>
+
+        Reviewed by Simon Fraser.
+
+        Added two tests for getModifierState: one manually setting modifier key states in MouseEvent's constructor,
+        and another one for dblclick inheriting modifier key states from the click event.
+
+        Also improved the test coverage for KeyboardEvent's getModifierState.
+
+        * fast/events/constructors/keyboard-event-getModifierState-expected.txt:
+        * fast/events/constructors/keyboard-event-getModifierState.html: Added more test cases.
+        * fast/events/constructors/mouse-event-getModifierState-expected.txt: Added.
+        * fast/events/constructors/mouse-event-getModifierState.html: Added.
+        * fast/events/dblclick-event-getModifierState-expected.txt: Added.
+        * fast/events/dblclick-event-getModifierState.html: Added.
+        * fast/events/init-event-clears-capslock-expected.txt:
+        * fast/events/init-event-clears-capslock.html: Added tests for MouseEvent. Note that initMouseEvent doesn't
+        take altGraphKey boolean unlike initKeyboardEvent.
+        * platform/ios/TestExpectations: Skip the dblclick test in iOS since click event isn't supported on iOS.
+
 2018-08-24  Youenn Fablet  <youenn@apple.com>
 
         libwebrtc PeerConnection::AddTrack sometimes fail
