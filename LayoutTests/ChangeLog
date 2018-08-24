@@ -1,5 +1,11 @@
 2018-08-24  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove the flaky test expectation now that the test isn't flaky on bots after r235274.
+
+        * platform/wk2/TestExpectations:
+
+2018-08-24  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add getModifierState to MouseEvent
         https://bugs.webkit.org/show_bug.cgi?id=188913
         <rdar://problem/43668772>
