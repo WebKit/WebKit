@@ -1,3 +1,12 @@
+2018-08-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark media/video-load-preload-metadata.html as flaky on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=128312
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2018-08-24  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Allow $0 totals
