@@ -490,7 +490,7 @@ void webKitMediaSrcLinkStreamToSrcPad(GstPad* sourcePad, Stream* stream)
     gst_element_add_pad(GST_ELEMENT(stream->parent), ghostpad);
 }
 
-void webKitMediaSrcLinkParser(GstPad* sourcePad, GstCaps* caps, Stream* stream)
+void webKitMediaSrcLinkSourcePad(GstPad* sourcePad, GstCaps* caps, Stream* stream)
 {
     ASSERT(caps && stream->parent);
     if (!caps || !stream->parent) {
