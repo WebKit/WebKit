@@ -1,3 +1,13 @@
+2018-08-24  Jer Noble  <jer.noble@apple.com>
+
+        Using Touch Bar to scrub video on Youtube results in video playback freeze
+        https://bugs.webkit.org/show_bug.cgi?id=188926
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-seek-twice-expected.txt: Added.
+        * media/media-source/media-source-seek-twice.html: Added.
+
 2018-08-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the flaky test expectation now that the test isn't flaky on bots after r235274.

@@ -1,3 +1,20 @@
+2018-08-24  Jer Noble  <jer.noble@apple.com>
+
+        Using Touch Bar to scrub video on Youtube results in video playback freeze
+        https://bugs.webkit.org/show_bug.cgi?id=188926
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-seek-twice.html
+
+        When converting from a double-precision float to a MediaTime, a certain amount of precision is lost. If that
+        results in a round-trip between `float in -> MediaTime -> float out` where in != out, we will wait forever for
+        the time jump observer to fire. Break the cycle by comparing m_lastSeekTime to the synchronizerTime only after
+        m_lastSeekTime has been normalized into a rational-time value.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekInternal):
+
 2018-08-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Pass in IsComposed flag to Event constructors

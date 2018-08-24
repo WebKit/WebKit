@@ -415,9 +415,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
     else
         m_lastSeekTime = m_mediaSourcePrivate->fastSeekTimeForMediaTime(pendingSeek->targetTime, pendingSeek->positiveThreshold, pendingSeek->negativeThreshold);
 
-    LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::seekInternal(%p) - seekTime(%s)", this, toString(m_lastSeekTime).utf8().data());
+    if (m_lastSeekTime.hasDoubleValue())
+        m_lastSeekTime = MediaTime::createWithDouble(m_lastSeekTime.toDouble(), MediaTime::DefaultTimeScale);
 
     MediaTime synchronizerTime = PAL::toMediaTime(CMTimebaseGetTime([m_synchronizer timebase]));
+    LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::seekInternal(%p) - seekTime(%s), synchronizerTime(%s)", this, toString(m_lastSeekTime).utf8().data(), toString(synchronizerTime).utf8().data());
+
     bool doesNotRequireSeek = synchronizerTime == m_lastSeekTime;
 
     m_mediaSourcePrivate->willSeek();
