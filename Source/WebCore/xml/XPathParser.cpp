@@ -38,9 +38,6 @@
 
 extern int xpathyyparse(WebCore::XPath::Parser&);
 
-using namespace WebCore;
-using namespace XPath;
-
 #include "XPathGrammar.h"
 
 namespace WebCore {

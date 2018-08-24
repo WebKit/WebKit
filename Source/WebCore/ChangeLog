@@ -1,3 +1,26 @@
+2018-08-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Don't place "using namespace XXX;" in global space for unified source builds
+        https://bugs.webkit.org/show_bug.cgi?id=188739
+
+        Reviewed by Yusuke Suzuki.
+
+        No new tests (No behavior change).
+
+        * html/track/AudioTrackList.cpp:
+        * html/track/TextTrackList.cpp:
+        * html/track/VideoTrackList.cpp:
+        * page/SecurityOriginData.cpp:
+        * page/TextIndicator.cpp:
+        * platform/geoclue/GeolocationProviderGeoclue.cpp:
+        * platform/graphics/gstreamer/ImageGStreamerCairo.cpp:
+        * platform/graphics/win/FullScreenController.cpp:
+        * platform/mediastream/CaptureDeviceManager.cpp:
+        * platform/mock/MediaPlaybackTargetPickerMock.cpp:
+        * svg/animation/SMILTime.cpp:
+        * testing/js/WebCoreTestSupport.cpp:
+        * xml/XPathParser.cpp:
+
 2018-08-21  Philippe Normand  <philn@igalia.com>
 
         [GStreamer] Warn early about incomplete MSE track switching support

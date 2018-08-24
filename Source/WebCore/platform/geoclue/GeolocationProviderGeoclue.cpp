@@ -35,7 +35,7 @@
 const char* gGeoclueBusName = "org.freedesktop.GeoClue2";
 const char* gGeoclueManagerPath = "/org/freedesktop/GeoClue2/Manager";
 
-using namespace WebCore;
+namespace WebCore {
 
 typedef enum {
     GeoclueAccuracyLevelCountry = 1,
@@ -209,5 +209,7 @@ void GeolocationProviderGeoclue::updateClientRequirements()
     GeoclueAccuracyLevel accuracyLevel = m_enableHighAccuracy ? GeoclueAccuracyLevelExact : GeoclueAccuracyLevelCity;
     geoclue_client_set_requested_accuracy_level(m_clientProxy.get(), accuracyLevel);
 }
+
+} // namespace WebCore
 
 #endif // ENABLE(GEOLOCATION)

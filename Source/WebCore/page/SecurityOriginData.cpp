@@ -34,8 +34,6 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
-using namespace WebCore;
-
 namespace WebCore {
 
 String SecurityOriginData::toString() const
