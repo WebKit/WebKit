@@ -1,5 +1,23 @@
 2018-08-21  Philippe Normand  <philn@igalia.com>
 
+        [GStreamer][MSE] Generic main thread notification support
+        https://bugs.webkit.org/show_bug.cgi?id=188647
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Using GstBus for main thread notifications has the side effect of "leaking" the
+        application messages to the media player, leading to CPU cycles wasting.
+
+        No new tests, existing MSE tests cover this change.
+
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        (webkit_media_src_init):
+        (webKitMediaSrcFinalize):
+        (webKitMediaSrcSetMediaPlayerPrivate):
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamerPrivate.h:
+
+2018-08-21  Philippe Normand  <philn@igalia.com>
+
         [GStreamer][MSE] Remove parsers from playback pipeline
         https://bugs.webkit.org/show_bug.cgi?id=188646
 

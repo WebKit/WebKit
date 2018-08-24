@@ -24,14 +24,14 @@
 
 #include "AudioTrackPrivateGStreamer.h"
 #include "GUniquePtrGStreamer.h"
+#include "MainThreadNotifier.h"
 #include "SourceBufferPrivateGStreamer.h"
 #include "VideoTrackPrivateGStreamer.h"
 #include "WebKitMediaSourceGStreamer.h"
 
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
-#include <wtf/Condition.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Forward.h>
 #include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {
@@ -95,6 +95,11 @@ enum OnSeekDataAction {
     MediaSourceSeekToTime
 };
 
+enum WebKitMediaSrcMainThreadNotification {
+    ReadyForMoreSamples = 1 << 0,
+    SeekNeedsData = 1 << 1
+};
+
 struct _WebKitMediaSrcPrivate {
     // Used to coordinate the release of Stream track info.
     Lock streamLock;
@@ -118,9 +123,9 @@ struct _WebKitMediaSrcPrivate {
     int appsrcSeekDataCount;
     int appsrcNeedDataCount;
 
-    GRefPtr<GstBus> bus;
     WebCore::MediaPlayerPrivateGStreamerMSE* mediaPlayerPrivate;
 
+    RefPtr<WebCore::MainThreadNotifier<WebKitMediaSrcMainThreadNotification>> notifier;
     GUniquePtr<GstFlowCombiner> flowCombiner;
 };
 
