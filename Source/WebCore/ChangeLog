@@ -1,3 +1,23 @@
+2018-08-24  Frederic Wang  <fwang@igalia.com>
+
+        Remove ScrollByPrecisePixel granularity
+        https://bugs.webkit.org/show_bug.cgi?id=188915
+
+        Reviewed by Carlos Garcia Campos.
+
+        ScrollByPrecisePixel was introduced in bug 87535 and bug 91020 for Chromium Linux/Windows but
+        it is no longer used.
+
+        No new tests, behavior unchanged.
+
+        * platform/ScrollAnimatorSmooth.cpp:
+        (WebCore::ScrollAnimatorSmooth::scroll): Remove special handling for ScrollByPrecisePixel.
+        * platform/ScrollTypes.h: Remove ScrollByPrecisePixel, it is never used.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::scroll): Remove special handling for ScrollByPrecisePixel.
+        * platform/gtk/ScrollAnimatorGtk.cpp:
+        (WebCore::ScrollAnimatorGtk::scroll): Remove special handling for ScrollByPrecisePixel.
+
 2018-08-24  Antti Koivisto  <antti@apple.com>
 
         Allow creating WeakPtrs to const objects

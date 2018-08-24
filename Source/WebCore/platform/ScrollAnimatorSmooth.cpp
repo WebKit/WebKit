@@ -60,7 +60,7 @@ ScrollAnimatorSmooth::~ScrollAnimatorSmooth() = default;
 
 bool ScrollAnimatorSmooth::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
 {
-    if (!m_scrollableArea.scrollAnimatorEnabled() || granularity == ScrollByPrecisePixel)
+    if (!m_scrollableArea.scrollAnimatorEnabled())
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
 
     return m_animation->scroll(orientation, granularity, step, multiplier);

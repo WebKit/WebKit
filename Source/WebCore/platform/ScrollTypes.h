@@ -108,8 +108,7 @@ enum ScrollGranularity : uint8_t {
     ScrollByLine,
     ScrollByPage,
     ScrollByDocument,
-    ScrollByPixel,
-    ScrollByPrecisePixel
+    ScrollByPixel
 };
 
 enum ScrollElasticity {

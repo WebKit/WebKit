@@ -82,7 +82,7 @@ void ScrollAnimatorGtk::ensureSmoothScrollingAnimation()
 #if ENABLE(SMOOTH_SCROLLING)
 bool ScrollAnimatorGtk::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
 {
-    if (!m_scrollableArea.scrollAnimatorEnabled() || granularity == ScrollByPrecisePixel)
+    if (!m_scrollableArea.scrollAnimatorEnabled())
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
 
     ensureSmoothScrollingAnimation();
