@@ -21,6 +21,8 @@
 #include "WebKitUserContent.h"
 
 #include "WebKitUserContentPrivate.h"
+#include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -34,6 +36,13 @@ using namespace WebCore;
  *
  * Since: 2.6
  */
+
+
+API::UserContentWorld& webkitUserContentWorld(const char* worldName)
+{
+    static NeverDestroyed<HashMap<CString, RefPtr<API::UserContentWorld>>> map;
+    return *map.get().ensure(worldName, [worldName = String::fromUTF8(worldName)] { return API::UserContentWorld::worldWithName(worldName); }).iterator->value;
+}
 
 static inline UserContentInjectedFrames toUserContentInjectedFrames(WebKitUserContentInjectedFrames injectedFrames)
 {
@@ -86,12 +95,12 @@ static inline Vector<String> toStringVector(const char* const* strv)
 }
 
 struct _WebKitUserStyleSheet {
-    _WebKitUserStyleSheet(const gchar* source, WebKitUserContentInjectedFrames injectedFrames, WebKitUserStyleLevel level, const char* const* whitelist, const char* const* blacklist)
+    _WebKitUserStyleSheet(const gchar* source, WebKitUserContentInjectedFrames injectedFrames, WebKitUserStyleLevel level, const char* const* whitelist, const char* const* blacklist, API::UserContentWorld& world)
         : userStyleSheet(adoptRef(new API::UserStyleSheet(UserStyleSheet {
             String::fromUTF8(source), URL { },
             toStringVector(whitelist), toStringVector(blacklist),
             toUserContentInjectedFrames(injectedFrames),
-            toUserStyleLevel(level) }, API::UserContentWorld::normalWorld())))
+            toUserStyleLevel(level) }, world)))
         , referenceCount(1)
     {
     }
@@ -162,7 +171,33 @@ WebKitUserStyleSheet* webkit_user_style_sheet_new(const gchar* source, WebKitUse
 {
     g_return_val_if_fail(source, nullptr);
     WebKitUserStyleSheet* userStyleSheet = static_cast<WebKitUserStyleSheet*>(fastMalloc(sizeof(WebKitUserStyleSheet)));
-    new (userStyleSheet) WebKitUserStyleSheet(source, injectedFrames, level, whitelist, blacklist);
+    new (userStyleSheet) WebKitUserStyleSheet(source, injectedFrames, level, whitelist, blacklist, API::UserContentWorld::normalWorld());
+    return userStyleSheet;
+}
+
+/**
+ * webkit_user_style_sheet_new_for_world:
+ * @source: Source code of the user style sheet.
+ * @injected_frames: A #WebKitUserContentInjectedFrames value
+ * @level: A #WebKitUserStyleLevel
+ * @world_name: the name of a #WebKitScriptWorld
+ * @whitelist: (array zero-terminated=1) (allow-none): A whitelist of URI patterns or %NULL
+ * @blacklist: (array zero-terminated=1) (allow-none): A blacklist of URI patterns or %NULL
+ *
+ * Creates a new user style sheet for script world with name @world_name.
+ * See webkit_user_style_sheet_new() for a full description.
+ *
+ * Returns: A new #WebKitUserStyleSheet
+ *
+ * Since: 2.22
+ */
+WebKitUserStyleSheet* webkit_user_style_sheet_new_for_world(const gchar* source, WebKitUserContentInjectedFrames injectedFrames, WebKitUserStyleLevel level, const char* worldName, const char* const* whitelist, const char* const* blacklist)
+{
+    g_return_val_if_fail(source, nullptr);
+    g_return_val_if_fail(worldName, nullptr);
+
+    WebKitUserStyleSheet* userStyleSheet = static_cast<WebKitUserStyleSheet*>(fastMalloc(sizeof(WebKitUserStyleSheet)));
+    new (userStyleSheet) WebKitUserStyleSheet(source, injectedFrames, level, whitelist, blacklist, webkitUserContentWorld(worldName));
     return userStyleSheet;
 }
 
@@ -172,12 +207,12 @@ API::UserStyleSheet& webkitUserStyleSheetGetUserStyleSheet(WebKitUserStyleSheet*
 }
 
 struct _WebKitUserScript {
-    _WebKitUserScript(const gchar* source, WebKitUserContentInjectedFrames injectedFrames, WebKitUserScriptInjectionTime injectionTime, const gchar* const* whitelist, const gchar* const* blacklist)
+    _WebKitUserScript(const gchar* source, WebKitUserContentInjectedFrames injectedFrames, WebKitUserScriptInjectionTime injectionTime, const gchar* const* whitelist, const gchar* const* blacklist, API::UserContentWorld& world)
         : userScript(adoptRef(new API::UserScript(UserScript {
             String::fromUTF8(source), URL { },
             toStringVector(whitelist), toStringVector(blacklist),
             toUserScriptInjectionTime(injectionTime),
-            toUserContentInjectedFrames(injectedFrames) }, API::UserContentWorld::normalWorld())))
+            toUserContentInjectedFrames(injectedFrames) }, world)))
         , referenceCount(1)
     {
     }
@@ -248,7 +283,33 @@ WebKitUserScript* webkit_user_script_new(const gchar* source, WebKitUserContentI
 {
     g_return_val_if_fail(source, nullptr);
     WebKitUserScript* userScript = static_cast<WebKitUserScript*>(fastMalloc(sizeof(WebKitUserScript)));
-    new (userScript) WebKitUserScript(source, injectedFrames, injectionTime, whitelist, blacklist);
+    new (userScript) WebKitUserScript(source, injectedFrames, injectionTime, whitelist, blacklist, API::UserContentWorld::normalWorld());
+    return userScript;
+}
+
+/**
+ * webkit_user_script_new_for_world:
+ * @source: Source code of the user script.
+ * @injected_frames: A #WebKitUserContentInjectedFrames value
+ * @injection_time: A #WebKitUserScriptInjectionTime value
+ * @world_name: the name of a #WebKitScriptWorld
+ * @whitelist: (array zero-terminated=1) (allow-none): A whitelist of URI patterns or %NULL
+ * @blacklist: (array zero-terminated=1) (allow-none): A blacklist of URI patterns or %NULL
+ *
+ * Creates a new user script for script world with name @world_name.
+ * See webkit_user_script_new() for a full description.
+ *
+ * Returns: A new #WebKitUserScript
+ *
+ * Since: 2.22
+ */
+WebKitUserScript* webkit_user_script_new_for_world(const gchar* source, WebKitUserContentInjectedFrames injectedFrames, WebKitUserScriptInjectionTime injectionTime, const char* worldName, const gchar* const* whitelist, const gchar* const* blacklist)
+{
+    g_return_val_if_fail(source, nullptr);
+    g_return_val_if_fail(worldName, nullptr);
+
+    WebKitUserScript* userScript = static_cast<WebKitUserScript*>(fastMalloc(sizeof(WebKitUserScript)));
+    new (userScript) WebKitUserScript(source, injectedFrames, injectionTime, whitelist, blacklist, webkitUserContentWorld(worldName));
     return userScript;
 }
 

@@ -1,3 +1,23 @@
+2018-08-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add API to inject/register user content in isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=188883
+
+        Reviewed by Michael Catanzaro.
+
+        Add test cases for the new API.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitUserContentManager.cpp:
+        (isStyleSheetInjectedForURLAtPath):
+        (isScriptInjectedForURLAtPath):
+        (testUserContentManagerInjectedStyleSheet):
+        (testUserContentManagerInjectedScript):
+        (UserScriptMessageTest::registerHandler):
+        (UserScriptMessageTest::unregisterHandler):
+        (UserScriptMessageTest::postMessageAndWaitUntilReceived):
+        (testUserContentManagerScriptMessageInWorldReceived):
+        (beforeAll):
+
 2018-08-23  Simon Fraser  <simon.fraser@apple.com>
 
         Add support for dumping GC heap snapshots, and a viewer

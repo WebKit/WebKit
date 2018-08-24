@@ -20,6 +20,7 @@
 #ifndef WebKitUserContentPrivate_h
 #define WebKitUserContentPrivate_h
 
+#include "APIUserContentWorld.h"
 #include "APIUserScript.h"
 #include "APIUserStyleSheet.h"
 #include "WebKitUserContent.h"
@@ -28,5 +29,6 @@
 
 API::UserScript& webkitUserScriptGetUserScript(WebKitUserScript*);
 API::UserStyleSheet& webkitUserStyleSheetGetUserStyleSheet(WebKitUserStyleSheet*);
+API::UserContentWorld& webkitUserContentWorld(const char*);
 
 #endif // WebKitUserContentPrivate_h

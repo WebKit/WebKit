@@ -1,3 +1,33 @@
+2018-08-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add API to inject/register user content in isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=188883
+
+        Reviewed by Michael Catanzaro.
+
+        Add new API to create user scripts/stylesheets for a given script world and to register/unregister user script
+        messages in a given script world.
+
+        * UIProcess/API/glib/WebKitUserContent.cpp:
+        (webkitUserContentWorld):
+        (_WebKitUserStyleSheet::_WebKitUserStyleSheet):
+        (webkit_user_style_sheet_new):
+        (webkit_user_style_sheet_new_for_world):
+        (_WebKitUserScript::_WebKitUserScript):
+        (webkit_user_script_new):
+        (webkit_user_script_new_for_world):
+        * UIProcess/API/glib/WebKitUserContentManager.cpp:
+        (webkit_user_content_manager_register_script_message_handler_in_world):
+        (webkit_user_content_manager_unregister_script_message_handler_in_world):
+        * UIProcess/API/glib/WebKitUserContentPrivate.h:
+        * UIProcess/API/gtk/WebKitUserContent.h:
+        * UIProcess/API/gtk/WebKitUserContentManager.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/WebKitUserContent.h:
+        * UIProcess/API/wpe/WebKitUserContentManager.h:
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::addUserContentWorlds):
+
 2018-08-23  Tim Horton  <timothy_horton@apple.com>
 
         Use unified build for UIProcess

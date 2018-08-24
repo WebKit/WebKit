@@ -69,20 +69,28 @@ typedef enum {
 typedef struct _WebKitUserStyleSheet WebKitUserStyleSheet;
 
 WEBKIT_API GType
-webkit_user_style_sheet_get_type (void);
+webkit_user_style_sheet_get_type      (void);
 
 WEBKIT_API WebKitUserStyleSheet *
-webkit_user_style_sheet_ref      (WebKitUserStyleSheet           *user_style_sheet);
+webkit_user_style_sheet_ref           (WebKitUserStyleSheet           *user_style_sheet);
 
 WEBKIT_API void
-webkit_user_style_sheet_unref    (WebKitUserStyleSheet           *user_style_sheet);
+webkit_user_style_sheet_unref         (WebKitUserStyleSheet           *user_style_sheet);
 
 WEBKIT_API WebKitUserStyleSheet *
-webkit_user_style_sheet_new      (const gchar                    *source,
-                                  WebKitUserContentInjectedFrames injected_frames,
-                                  WebKitUserStyleLevel            level,
-                                  const gchar* const             *whitelist,
-                                  const gchar* const             *blacklist);
+webkit_user_style_sheet_new           (const gchar                    *source,
+                                       WebKitUserContentInjectedFrames injected_frames,
+                                       WebKitUserStyleLevel            level,
+                                       const gchar* const             *whitelist,
+                                       const gchar* const             *blacklist);
+
+WEBKIT_API WebKitUserStyleSheet *
+webkit_user_style_sheet_new_for_world (const gchar                    *source,
+                                       WebKitUserContentInjectedFrames injected_frames,
+                                       WebKitUserStyleLevel            level,
+                                       const gchar                    *world_name,
+                                       const gchar* const             *whitelist,
+                                       const gchar* const             *blacklist);
 
 /**
  * WebKitUserScriptInjectionTime:
@@ -117,6 +125,14 @@ WEBKIT_API WebKitUserScript *
 webkit_user_script_new           (const gchar                    *source,
                                   WebKitUserContentInjectedFrames injected_frames,
                                   WebKitUserScriptInjectionTime   injection_time,
+                                  const gchar* const             *whitelist,
+                                  const gchar* const             *blacklist);
+
+WEBKIT_API WebKitUserScript *
+webkit_user_script_new_for_world (const gchar                    *source,
+                                  WebKitUserContentInjectedFrames injected_frames,
+                                  WebKitUserScriptInjectionTime   injection_time,
+                                  const gchar                    *world_name,
                                   const gchar* const             *whitelist,
                                   const gchar* const             *blacklist);
 
