@@ -452,6 +452,7 @@ list(APPEND WebCore_SOURCES
 
     platform/text/mac/LocaleMac.mm
     platform/text/mac/TextBoundaries.mm
+    platform/text/mac/TextCheckingMac.mm
     platform/text/mac/TextEncodingRegistryMac.mm
 
     rendering/RenderThemeCocoa.mm

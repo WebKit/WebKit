@@ -7282,29 +7282,29 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
     return nil;
 }
 
+constexpr TextCheckingType coreTextCheckingType(NSTextCheckingType type)
+{
+    switch (type) {
+    case NSTextCheckingTypeCorrection:
+        return TextCheckingType::Correction;
+    case NSTextCheckingTypeReplacement:
+        return TextCheckingType::Replacement;
+    case NSTextCheckingTypeSpelling:
+        return TextCheckingType::Spelling;
+    default:
+        return TextCheckingType::None;
+    }
+}
+
 static TextCheckingResult textCheckingResultFromNSTextCheckingResult(NSTextCheckingResult *nsResult)
 {
-    WebCore::TextCheckingResult result;
-
-    switch ([nsResult resultType]) {
-    case NSTextCheckingTypeSpelling:
-        result.type = WebCore::TextCheckingTypeSpelling;
-        break;
-    case NSTextCheckingTypeReplacement:
-        result.type = WebCore::TextCheckingTypeReplacement;
-        break;
-    case NSTextCheckingTypeCorrection:
-        result.type = WebCore::TextCheckingTypeCorrection;
-        break;
-    default:
-        result.type = WebCore::TextCheckingTypeNone;
-    }
-
     NSRange resultRange = nsResult.range;
+
+    TextCheckingResult result;
+    result.type = coreTextCheckingType(nsResult.resultType);
     result.location = resultRange.location;
     result.length = resultRange.length;
     result.replacement = nsResult.replacementString;
-
     return result;
 }
 

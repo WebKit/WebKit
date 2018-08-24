@@ -909,7 +909,7 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
         
         // checkTextOfParagraph is the only spelling/grammar checker implemented in WK1 and WK2
         Vector<TextCheckingResult> results;
-        checkTextOfParagraph(*checker, text, TextCheckingTypeSpelling, results, node->document().frame()->selection().selection());
+        checkTextOfParagraph(*checker, text, TextCheckingType::Spelling, results, node->document().frame()->selection().selection());
         
         size_t size = results.size();
         for (unsigned i = 0; i < size; i++) {

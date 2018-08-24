@@ -1,3 +1,63 @@
+2018-08-21  Daniel Bates  <dabates@apple.com>
+
+        Replace TextCheckingTypeMask with OptionSet
+        https://bugs.webkit.org/show_bug.cgi?id=188678
+
+        Reviewed by Antti Koivisto.
+
+        Replaces TextCheckingTypeMask with an OptionSet to improve type safety and code clarity. Additionally
+        change the values of TextCheckingType such that all the enumerators fit within an uint8_t.
+
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::hasMisspelling const):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXAttributeStringSetSpelling):
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::timerFired):
+        (WebCore::AlternativeTextController::processMarkersOnTextToBeReplacedByResult):
+        * editing/Editor.cpp:
+        (WebCore::Editor::replaceSelectionWithFragment):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::isAutomaticTextReplacementType):
+        (WebCore::Editor::markAndReplaceFor): For now, change a local variable from const to non-const to work
+        around the following MSVC compiler bug: <https://developercommunity.visualstudio.com/content/problem/316713/msvc-cant-compile-webkits-optionsetcontainsany.html>.
+        (WebCore::Editor::markMisspellingsAndBadGrammar):
+        (WebCore::Editor::updateMarkersForWordsAffectedByEditing):
+        (WebCore::Editor::editorUIUpdateTimerFired):
+        (WebCore::Editor::resolveTextCheckingTypeMask):
+        * editing/Editor.h:
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellCheckRequest::SpellCheckRequest):
+        (WebCore::SpellCheckRequest::create):
+        (WebCore::SpellChecker::didCheckSucceed):
+        * editing/SpellChecker.h:
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::findGrammaticalErrors):
+        (WebCore::findMisspellings):
+        (WebCore::TextCheckingHelper::findFirstMisspellingOrBadGrammar):
+        (WebCore::TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange const):
+        (WebCore::checkTextOfParagraph):
+        * editing/TextCheckingHelper.h:
+        * loader/EmptyClients.cpp:
+        * platform/text/TextCheckerClient.h:
+        * platform/text/TextChecking.h: Remove TextCheckingTypeMask. Reorganized the fields of TextCheckingRequestData
+        to coallesce padding and move it to the end of class. Also used default initializer syntax and defaulted (= default)
+        the default constructor of TextCheckingRequestData, removing the need for a user-defined default constructor.
+        (WebCore::TextCheckingRequestData::TextCheckingRequestData):
+        (WebCore::TextCheckingRequestData::text const): Changed return type from String to const String&
+        to avoid unnecessary ref-count churn for callers that do not need to take a shared ownership in
+        this string.
+        (WebCore::TextCheckingRequestData::checkingTypes const): Renamed; formerly named mask.
+        (WebCore::TextCheckingRequestData::mask const): Deleted.
+        * platform/text/mac/TextCheckingMac.mm: Added.
+        (WebCore::nsTextCheckingTypes):
+        * testing/Internals.cpp:
+        (WebCore::Internals::handleAcceptedCandidate):
+
 2018-08-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Don't place "using namespace XXX;" in global space for unified source builds

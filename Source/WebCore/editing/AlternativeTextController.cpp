@@ -284,7 +284,7 @@ void AlternativeTextController::timerFired()
         VisiblePosition p = startOfWord(start, LeftWordIfOnBoundary);
         VisibleSelection adjacentWords = VisibleSelection(p, start);
         auto adjacentWordRange = adjacentWords.toNormalizedRange();
-        m_frame.editor().markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeSpelling | TextCheckingTypeReplacement | TextCheckingTypeShowCorrectionPanel, adjacentWordRange.copyRef(), adjacentWordRange.copyRef(), nullptr);
+        m_frame.editor().markAllMisspellingsAndBadGrammarInRanges({ TextCheckingType::Spelling, TextCheckingType::Replacement, TextCheckingType::ShowCorrectionPanel }, adjacentWordRange.copyRef(), adjacentWordRange.copyRef(), nullptr);
     }
         break;
     case AlternativeTextTypeReversion: {
@@ -540,7 +540,7 @@ bool AlternativeTextController::processMarkersOnTextToBeReplacedByResult(const T
 {
     DocumentMarkerController& markerController = m_frame.document()->markers();
     if (markerController.hasMarkers(rangeWithAlternative, DocumentMarker::Replacement)) {
-        if (result.type == TextCheckingTypeCorrection)
+        if (result.type == TextCheckingType::Correction)
             recordSpellcheckerResponseForModifiedCorrection(rangeWithAlternative, stringToBeReplaced, result.replacement);
         return false;
     }

@@ -1,3 +1,37 @@
+2018-08-21  Daniel Bates  <dabates@apple.com>
+
+        Replace TextCheckingTypeMask with OptionSet
+        https://bugs.webkit.org/show_bug.cgi?id=188678
+
+        Reviewed by Antti Koivisto.
+
+        * Scripts/webkit/messages.py: Add WebCore::TextCheckingType to the special case map so that
+        the generator knows what header has the definition for this type.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<TextCheckingRequestData>::encode):
+        (IPC::ArgumentCoder<TextCheckingRequestData>::decode):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::coreTextCheckingType):
+        (WebKit::textCheckingResultFromNSTextCheckingResult):
+        * UIProcess/TextChecker.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::checkTextOfParagraph):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::TextChecker::requestCheckingOfString):
+        (WebKit::TextChecker::checkTextOfParagraph): Also simplified return expressions.
+        * UIProcess/ios/TextCheckerIOS.mm:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        * UIProcess/win/TextCheckerWin.cpp:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::shouldEraseMarkersAfterChangeSelection const):
+        (WebKit::WebEditorClient::checkTextOfParagraph):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+
 2018-08-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Use unified build for NetworkProcess

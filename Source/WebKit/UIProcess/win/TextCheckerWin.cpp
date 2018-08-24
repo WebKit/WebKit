@@ -129,10 +129,12 @@ void TextChecker::requestCheckingOfString(Ref<TextCheckerCompletion>&&, int32_t)
 }
 
 #if USE(UNIFIED_TEXT_CHECKING)
-Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t, StringView, int32_t, uint64_t, bool)
+
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t, StringView, int32_t, OptionSet<TextCheckingType>, bool)
 {
-    return Vector<TextCheckingResult>();
+    return { };
 }
-#endif // USE(UNIFIED_TEXT_CHECKING)
+
+#endif
 
 } // namespace WebKit
