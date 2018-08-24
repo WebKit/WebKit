@@ -131,7 +131,7 @@ void PerformanceMonitor::activityStateChanged(OptionSet<ActivityState::Flag> old
             m_postBackgroundingMemoryUsageTimer.startOneShot(memoryUsageMeasurementDelay);
     }
 
-    if (newState & ActivityState::IsVisible && newState & ActivityState::WindowIsActive) {
+    if (newState.containsAll({ ActivityState::IsVisible, ActivityState::WindowIsActive })) {
         m_processMayBecomeInactive = false;
         m_processMayBecomeInactiveTimer.stop();
     } else if (!m_processMayBecomeInactive && !m_processMayBecomeInactiveTimer.isActive())

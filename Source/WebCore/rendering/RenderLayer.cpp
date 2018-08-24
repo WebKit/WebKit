@@ -853,7 +853,7 @@ void RenderLayer::updateLayerPositionsAfterScroll(RenderGeometryMap* geometryMap
     if (positionChanged)
         flags |= HasChangedAncestor;
 
-    if (flags & HasChangedAncestor || flags & HasSeenViewportConstrainedAncestor || flags & IsOverflowScroll)
+    if (flags.containsAny({ HasChangedAncestor, HasSeenViewportConstrainedAncestor, IsOverflowScroll }))
         clearClipRects();
 
     if (renderer().style().hasViewportConstrainedPosition())
@@ -862,7 +862,7 @@ void RenderLayer::updateLayerPositionsAfterScroll(RenderGeometryMap* geometryMap
     if (renderer().hasOverflowClip())
         flags |= HasSeenAncestorWithOverflowClip;
     
-    bool shouldComputeRepaintRects = (flags & HasSeenViewportConstrainedAncestor || (flags & IsOverflowScroll && flags & HasSeenAncestorWithOverflowClip)) && isSelfPaintingLayer();
+    bool shouldComputeRepaintRects = (flags.contains(HasSeenViewportConstrainedAncestor) || flags.containsAll({ IsOverflowScroll, HasSeenAncestorWithOverflowClip })) && isSelfPaintingLayer();
     bool isVisuallyEmpty = !isVisuallyNonEmpty();
     bool shouldPushAndPopMappings = geometryMap && ((shouldComputeRepaintRects && !isVisuallyEmpty) || firstChild());
     if (shouldPushAndPopMappings)
@@ -4456,7 +4456,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             paintChildClippingMaskForFragments(layerFragments, context, paintingInfo, paintBehavior, subtreePaintRootForRenderer);
         }
         
-        if ((localPaintFlags & PaintLayerPaintingChildClippingMaskPhase)) {
+        if (localPaintFlags & PaintLayerPaintingChildClippingMaskPhase) {
             // Paint the border radius mask for the fragments.
             paintChildClippingMaskForFragments(layerFragments, context, paintingInfo, paintBehavior, subtreePaintRootForRenderer);
         }
@@ -5771,7 +5771,7 @@ LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, const Layo
         inclusionMode = IncludeCompositedPaginatedLayers;
 
     const RenderLayer* paginationLayer = nullptr;
-    if (flags & UseFragmentBoxesExcludingCompositing || flags & UseFragmentBoxesIncludingCompositing)
+    if (flags.containsAny({ UseFragmentBoxesExcludingCompositing, UseFragmentBoxesIncludingCompositing }))
         paginationLayer = enclosingPaginationLayerInSubtree(ancestorLayer, inclusionMode);
     
     const RenderLayer* childLayer = this;

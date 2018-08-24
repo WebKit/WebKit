@@ -245,7 +245,7 @@ RenderLayerBacking::~RenderLayerBacking()
     updateBackgroundLayer(false);
     updateMaskingLayer(false, false);
     updateScrollingLayers(false);
-    detachFromScrollingCoordinator({Scrolling, ViewportConstrained });
+    detachFromScrollingCoordinator({ Scrolling, ViewportConstrained });
     destroyGraphicsLayers();
 }
 
