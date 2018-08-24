@@ -96,7 +96,7 @@ public:
     RefPtr<RTCSessionDescription> pendingLocalDescription() const;
     RefPtr<RTCSessionDescription> pendingRemoteDescription() const;
 
-    void addTrack(RTCRtpSender&, MediaStreamTrack&, const Vector<String>&);
+    bool addTrack(RTCRtpSender&, MediaStreamTrack&, const Vector<String>&);
     void removeTrack(RTCRtpSender&);
     RTCRtpParameters getRTCRtpSenderParameters(RTCRtpSender&);
 

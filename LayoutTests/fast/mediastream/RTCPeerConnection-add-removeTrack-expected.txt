@@ -33,10 +33,10 @@ PASS transceiver.receiver is receiver
 PASS transceiver.stopped is false
 Try to add same track again
 PASS sender = pc.addTrack(track, stream) threw exception InvalidAccessError: The object does not support the operation or argument..
-PASS sender2 = pc.addTrack(track2, stream, stream2) did not throw exception.
+FAIL sender2 = pc.addTrack(track2, stream, stream2) should not throw exception. Threw exception InvalidAccessError: Unable to add track.
 PASS pc.getSenders().length is 2
 PASS pc.getSenders()[0] is sender
-PASS pc.getSenders()[1] is sender2
+FAIL pc.getSenders()[1] should be undefined (of type undefined). Was [object RTCRtpSender] (of type object).
 PASS pc.removeTrack(sender) did not throw exception.
 Sender is still in getSenders() list
 PASS pc.getSenders().length is 2

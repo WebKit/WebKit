@@ -154,7 +154,9 @@ ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>
         m_transceiverSet->append(WTFMove(transceiver));
     }
 
-    m_backend->notifyAddedTrack(*sender);
+    if (!m_backend->notifyAddedTrack(*sender))
+        return Exception { InvalidAccessError, "Unable to add track"_s };
+
     return Ref<RTCRtpSender> { *sender };
 }
 
@@ -199,7 +201,9 @@ ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransce
     const String& trackKind = track->kind();
 
     auto sender = RTCRtpSender::create(WTFMove(track), Vector<String>(), *this);
-    m_backend->notifyAddedTrack(sender);
+    if (!m_backend->notifyAddedTrack(sender))
+        return Exception { InvalidAccessError, "Unable to add track"_s };
+
     return completeAddTransceiver(WTFMove(sender), init, trackId, trackKind);
 }
 

@@ -193,7 +193,7 @@ void LibWebRTCMediaEndpoint::doSetRemoteDescription(RTCSessionDescription& descr
     startLoggingStats();
 }
 
-void LibWebRTCMediaEndpoint::addTrack(RTCRtpSender& sender, MediaStreamTrack& track, const Vector<String>& mediaStreamIds)
+bool LibWebRTCMediaEndpoint::addTrack(RTCRtpSender& sender, MediaStreamTrack& track, const Vector<String>& mediaStreamIds)
 {
     ASSERT(m_backend);
 
@@ -214,19 +214,24 @@ void LibWebRTCMediaEndpoint::addTrack(RTCRtpSender& sender, MediaStreamTrack& tr
         auto trackSource = RealtimeOutgoingAudioSource::create(track.privateTrack());
         auto audioTrack = m_peerConnectionFactory.CreateAudioTrack(track.id().utf8().data(), trackSource.ptr());
         m_peerConnectionBackend.addAudioSource(WTFMove(trackSource));
-        m_senders.add(&sender, m_backend->AddTrack(audioTrack.get(), WTFMove(ids)).MoveValue());
-        return;
+        auto rtpSender = m_backend->AddTrack(audioTrack.get(), WTFMove(ids));
+        if (rtpSender.ok())
+            m_senders.add(&sender, rtpSender.MoveValue());
+        return rtpSender.ok();
     }
     case RealtimeMediaSource::Type::Video: {
         auto videoSource = RealtimeOutgoingVideoSource::create(track.privateTrack());
         auto videoTrack = m_peerConnectionFactory.CreateVideoTrack(track.id().utf8().data(), videoSource.ptr());
         m_peerConnectionBackend.addVideoSource(WTFMove(videoSource));
-        m_senders.add(&sender, m_backend->AddTrack(videoTrack.get(), WTFMove(ids)).MoveValue());
-        return;
+        auto rtpSender = m_backend->AddTrack(videoTrack.get(), WTFMove(ids));
+        if (rtpSender.ok())
+            m_senders.add(&sender, rtpSender.MoveValue());
+        return rtpSender.ok();
     }
     case RealtimeMediaSource::Type::None:
         ASSERT_NOT_REACHED();
     }
+    return false;
 }
 
 void LibWebRTCMediaEndpoint::removeTrack(RTCRtpSender& sender)

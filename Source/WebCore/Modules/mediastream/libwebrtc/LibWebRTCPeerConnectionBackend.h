@@ -92,7 +92,7 @@ private:
     void removeRemoteStream(MediaStream*);
     void addRemoteStream(Ref<MediaStream>&&);
 
-    void notifyAddedTrack(RTCRtpSender&) final;
+    bool notifyAddedTrack(RTCRtpSender&) final;
     void notifyRemovedTrack(RTCRtpSender&) final;
 
     struct VideoReceiver {

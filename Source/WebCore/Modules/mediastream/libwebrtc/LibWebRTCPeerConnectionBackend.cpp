@@ -349,10 +349,10 @@ RefPtr<RTCSessionDescription> LibWebRTCPeerConnectionBackend::remoteDescription(
     return m_endpoint->remoteDescription();
 }
 
-void LibWebRTCPeerConnectionBackend::notifyAddedTrack(RTCRtpSender& sender)
+bool LibWebRTCPeerConnectionBackend::notifyAddedTrack(RTCRtpSender& sender)
 {
     ASSERT(sender.track());
-    m_endpoint->addTrack(sender, *sender.track(), sender.mediaStreamIds());
+    return m_endpoint->addTrack(sender, *sender.track(), sender.mediaStreamIds());
 }
 
 void LibWebRTCPeerConnectionBackend::notifyRemovedTrack(RTCRtpSender& sender)

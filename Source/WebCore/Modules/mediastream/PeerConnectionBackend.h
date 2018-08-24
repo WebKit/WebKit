@@ -102,7 +102,7 @@ public:
 
     virtual Ref<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) = 0;
     virtual void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) = 0;
-    virtual void notifyAddedTrack(RTCRtpSender&) { }
+    virtual bool notifyAddedTrack(RTCRtpSender&) { return false; }
     virtual void notifyRemovedTrack(RTCRtpSender&) { }
 
     virtual RTCRtpParameters getParameters(RTCRtpSender&) const { return { }; }

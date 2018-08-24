@@ -1,3 +1,27 @@
+2018-08-24  Youenn Fablet  <youenn@apple.com>
+
+        libwebrtc PeerConnection::AddTrack sometimes fail
+        https://bugs.webkit.org/show_bug.cgi?id=188914
+
+        Reviewed by Eric Carlson.
+
+        AddTrack may fail so test the result and if not successful, make JS addTrack to throw an exception.
+        This makes some tests to fail now.
+        These tests should pass again when unified plan will be enabled.
+        Covered by rebased tests.
+
+        * Modules/mediastream/PeerConnectionBackend.h:
+        (WebCore::PeerConnectionBackend::notifyAddedTrack):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::addTrack):
+        (WebCore::RTCPeerConnection::addTransceiver):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::addTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::notifyAddedTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+
 2018-08-24  Adrian Perez de Castro  <aperez@igalia.com>
 
         [FreeType] Do not cast through GLib types in FontCustomPlatformDataFreeType.cpp

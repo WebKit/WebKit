@@ -1,3 +1,12 @@
+2018-08-24  Youenn Fablet  <youenn@apple.com>
+
+        libwebrtc PeerConnection::AddTrack sometimes fail
+        https://bugs.webkit.org/show_bug.cgi?id=188914
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-addTrack.https-expected.txt:
+
 2018-08-23  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Support the inputmode attribute on contenteditable elements

@@ -1,3 +1,12 @@
+2018-08-24  Youenn Fablet  <youenn@apple.com>
+
+        libwebrtc PeerConnection::AddTrack sometimes fail
+        https://bugs.webkit.org/show_bug.cgi?id=188914
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/RTCPeerConnection-add-removeTrack-expected.txt:
+
 2018-08-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/video-load-preload-metadata.html as flaky on iOS
