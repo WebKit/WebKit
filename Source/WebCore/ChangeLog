@@ -1,3 +1,19 @@
+2018-08-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Sync unified build with Cocoa ports
+        https://bugs.webkit.org/show_bug.cgi?id=188732
+
+        Reviewed by Tim Horton.
+
+        For iOS, disambiguate between ::WebEvent declared in PlatformKeyboardEvent.h and
+        WebCore::WebEvent declared in WebEvent.h. It's expected that we'll have to deal with random
+        issues like this when modifying unrelated source files in higher-level projects, since any
+        change to the sources list changes which files get bundled together, and headers from
+        lower-level projects that were not included before may now be included together.
+
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::event const):
+
 2018-08-20  Rob Buis  <rbuis@igalia.com>
 
         Throw an exception if window.open() gets passed a URL that cannot be parsed
