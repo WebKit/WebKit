@@ -229,7 +229,6 @@ private:
         bool webViewDidFailToInitializePlugInWithInfo : 1;
         bool webViewDidBlockInsecurePluginVersionWithInfo : 1;
         bool webViewWillGoToBackForwardListItemInPageCache : 1;
-        bool webViewDecidePolicyForPluginLoadWithCurrentPolicyPluginInfoUnavailabilityDescription : 1;
         bool webViewDecidePolicyForPluginLoadWithCurrentPolicyPluginInfoCompletionHandler : 1;
 #endif
     } m_navigationDelegateMethods;

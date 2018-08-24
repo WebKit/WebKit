@@ -1,3 +1,23 @@
+2018-08-23  Jeff Miller  <jeffm@apple.com>
+
+        Remove -[WKNavigationDelegate _webView:decidePolicyForPluginLoadWithCurrentPolicy:pluginInfo:unavailabilityDescription:]
+        https://bugs.webkit.org/show_bug.cgi?id=188889
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        Remove obsolete method.
+
+        * UIProcess/Cocoa/NavigationState.h:
+        Remove obsolete flag.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        Remove obsolete flag.
+
+        (WebKit::NavigationState::NavigationClient::decidePolicyForPluginLoad):
+        Remove support for obsolete delegate method.
+
 2018-08-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Pass in IsComposed flag to Event constructors
