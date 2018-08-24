@@ -154,8 +154,6 @@ PASS request = new PaymentRequest([validPaymentMethod()], paymentDetails); reque
 SETUP: paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: '', value: '0' } };
 PASS request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show() threw exception RangeError: "" is not a valid currency code..
 
-SETUP: paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: 'USD', value: '0' } };
-PASS request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show() rejected promise  with TypeError: Total amount must be greater than zero..
 
 SETUP: paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: 'USD', value:'-10.00'} };
 PASS request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show() threw exception TypeError: Total currency values cannot be negative..

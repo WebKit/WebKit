@@ -86,8 +86,8 @@ ExceptionOr<void> PaymentRequestValidator::validateTotal(const ApplePaySessionPa
 
     double amount = [NSDecimalNumber decimalNumberWithString:total.amount locale:@{ NSLocaleDecimalSeparator : @"." }].doubleValue;
 
-    if (amount <= 0)
-        return Exception { TypeError, "Total amount must be greater than zero." };
+    if (amount < 0)
+        return Exception { TypeError, "Total amount must not be negative." };
 
     if (amount > 100000000)
         return Exception { TypeError, "Total amount is too big." };

@@ -1,3 +1,18 @@
+2018-08-24  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Allow $0 totals
+        https://bugs.webkit.org/show_bug.cgi?id=185150
+        <rdar://problem/39212331>
+
+        Reviewed by Dan Bernstein.
+
+        Relaxed payment request validation to allow $0 totals. This matches PassKit behavior.
+
+        Updated test cases in http/tests/ssl/applepay/.
+
+        * Modules/applepay/PaymentRequestValidator.mm:
+        (WebCore::PaymentRequestValidator::validateTotal):
+
 2018-08-24  Frederic Wang  <fwang@igalia.com>
 
         Remove ScrollByPrecisePixel granularity

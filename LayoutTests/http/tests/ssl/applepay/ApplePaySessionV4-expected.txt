@@ -10,10 +10,17 @@ PASS ApplePaySession.supportsVersion(1) is true
 PASS ApplePaySession.supportsVersion(2) is true
 PASS ApplePaySession.supportsVersion(3) is true
 PASS ApplePaySession.supportsVersion(4) is true
+
 Testing PaymentRequest (v4)
 
 PASS new ApplePaySession(4, { }) threw exception TypeError: Member ApplePayPaymentRequest.countryCode is required and must be an instance of DOMString.
 PASS new ApplePaySession(4, validRequest()) did not throw exception.
+
+Testing PaymentRequest.total
+
+SETUP: request = validRequest(); request.total = { label: 'label', amount: '0' };
+PASS new ApplePaySession(4, request) did not throw exception.
+
 
 PASS successfullyParsed is true
 
