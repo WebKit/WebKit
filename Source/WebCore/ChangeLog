@@ -1,3 +1,13 @@
+2018-08-27  Alex Christensen  <achristensen@webkit.org>
+
+        Fix IOSMAC build
+        https://bugs.webkit.org/show_bug.cgi?id=188934
+        <rdar://problem/43694979>
+
+        Reviewed by Darin Adler.
+
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+
 2018-08-27  Rob Buis  <rbuis@igalia.com>
 
         XMLHTTPRequest.send for Document should have same Content-Type processing rules as String

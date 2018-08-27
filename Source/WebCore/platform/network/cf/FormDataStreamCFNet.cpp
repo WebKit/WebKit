@@ -42,7 +42,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
 static const SInt32 fnfErr = -43;
 #elif PLATFORM(MAC)
 #include <CoreServices/CoreServices.h>
