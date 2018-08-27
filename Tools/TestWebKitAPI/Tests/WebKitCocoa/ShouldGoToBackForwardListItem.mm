@@ -25,71 +25,51 @@
 
 #include "config.h"
 
-#if WK_HAVE_C_SPI
+#if WK_API_ENABLED
 
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include "Test.h"
-
 #include <WebKit/WKString.h>
+#include <wtf/RetainPtr.h>
+
+static bool finished = false;
+
+@interface BackForwardClient : NSObject <WKNavigationDelegate>
+@end
+
+@implementation BackForwardClient
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    finished = true;
+}
+
+- (void)_webView:(WKWebView *)webView willGoToBackForwardListItem:(WKBackForwardListItem *)item inPageCache:(BOOL)inPageCache
+{
+    finished = true;
+}
+
+@end
 
 namespace TestWebKitAPI {
 
-static bool finished = false;
-static bool receivedProperBackForwardCallbacks = false;
-
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef, const void*)
-{
-    // Only mark finished when the main frame loads
-    if (!WKFrameIsMainFrame(frame))
-        return;
-
-    finished = true;
-}
-
-static void willGoToBackForwardListItem(WKPageRef, WKBackForwardListItemRef, WKTypeRef userData, const void*)
-{
-    if (WKGetTypeID(userData) == WKStringGetTypeID()) {
-        if (WKStringIsEqualToUTF8CString((WKStringRef)userData, "shouldGoToBackForwardListItemCallback called as expected"))
-            receivedProperBackForwardCallbacks = true;
-    }
-
-    finished = true;
-}
-
-static void setPageLoaderClient(WKPageRef page)
-{
-    WKPageLoaderClientV1 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
-
-    loaderClient.base.version = 1;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    loaderClient.willGoToBackForwardListItem = willGoToBackForwardListItem;
-
-    WKPageSetPageLoaderClient(page, &loaderClient.base);
-}
-
 TEST(WebKit, ShouldGoToBackForwardListItem)
 {
-    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("ShouldGoToBackForwardListItemTest"));
-    // Enable the page cache so we can test the WKBundleBackForwardListItemIsInPageCache API
-    WKContextSetCacheModel(context.get(), kWKCacheModelDocumentBrowser);
+    auto delegate = adoptNS([BackForwardClient new]);
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:delegate.get()];
 
-    PlatformWebView webView(context.get());
-    setPageLoaderClient(webView.page());
-
-    WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("simple", "html")).get());
+    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
     Util::run(&finished);
     
     finished = false;
-    WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("simple-iframe", "html")).get());
+    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple-iframe" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
     Util::run(&finished);
 
     finished = false;
-    WKPageGoBack(webView.page());
+    [webView goBack];
     Util::run(&finished);
-    
-    EXPECT_EQ(receivedProperBackForwardCallbacks, true);
 }
 
 } // namespace TestWebKitAPI

@@ -1,3 +1,54 @@
+2018-08-27  Alex Christensen  <achristensen@webkit.org>
+
+        Translate 4 tests using WKPageLoaderClient to ObjC
+        https://bugs.webkit.org/show_bug.cgi?id=188827
+
+        Reviewed by Tim Horton.
+
+        They use processDidBecomeUnresponsive, didChangeBackForwardList, or willGoToBackForwardListItem.
+        Rather than introduce these to WKPageNavigationClient, I just translated the tests to use WKNavigationDelegate, which already have equivalent callbacks.
+        willGoToBackForwardListItem had userData from the InjectedBundle, but nobody was using it so I did not add that to the ObjC SPI, so I don't test that unused
+        bundle functionality any more.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/ResponsivenessTimer.cpp: Removed.
+        * TestWebKitAPI/Tests/WebKit/ResponsivenessTimerDoesntFireEarly.cpp: Removed.
+        * TestWebKitAPI/Tests/WebKit/RestoreSessionStateWithoutNavigation.cpp: Removed.
+        * TestWebKitAPI/Tests/WebKit/ShouldGoToBackForwardListItem.cpp: Removed.
+        * TestWebKitAPI/Tests/WebKit/ShouldGoToBackForwardListItem_Bundle.cpp: Removed.
+        * TestWebKitAPI/Tests/WebKitCocoa/ResponsivenessTimer.mm: Copied from Tools/TestWebKitAPI/Tests/WebKit/ResponsivenessTimer.cpp.
+        (-[ResponsivenessTimerDelegate webView:didFinishNavigation:]):
+        (-[ResponsivenessTimerDelegate _webViewWebProcessDidBecomeUnresponsive:]):
+        (TestWebKitAPI::TEST):
+        (): Deleted.
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        (TestWebKitAPI::processDidBecomeUnresponsive): Deleted.
+        (TestWebKitAPI::setPageLoaderClient): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/ResponsivenessTimerDoesntFireEarly.mm: Copied from Tools/TestWebKitAPI/Tests/WebKit/ResponsivenessTimerDoesntFireEarly.cpp.
+        (-[ResponsivenessDelegate webView:didFinishNavigation:]):
+        (-[ResponsivenessDelegate _webViewWebProcessDidBecomeUnresponsive:]):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle): Deleted.
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        (TestWebKitAPI::processDidBecomeUnresponsive): Deleted.
+        (TestWebKitAPI::setInjectedBundleClient): Deleted.
+        (TestWebKitAPI::setPageLoaderClient): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/RestoreSessionStateWithoutNavigation.mm: Copied from Tools/TestWebKitAPI/Tests/WebKit/RestoreSessionStateWithoutNavigation.cpp.
+        (-[SessionStateDelegate webView:didFinishNavigation:]):
+        (-[SessionStateDelegate _webView:backForwardListItemAdded:removed:]):
+        (TestWebKitAPI::createSessionStateData):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        (TestWebKitAPI::didChangeBackForwardListForPage): Deleted.
+        (TestWebKitAPI::setPageLoaderClient): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/ShouldGoToBackForwardListItem.mm: Copied from Tools/TestWebKitAPI/Tests/WebKit/ShouldGoToBackForwardListItem.cpp.
+        (-[BackForwardClient webView:didFinishNavigation:]):
+        (-[BackForwardClient _webView:willGoToBackForwardListItem:inPageCache:]):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::didFinishLoadForFrame): Deleted.
+        (TestWebKitAPI::willGoToBackForwardListItem): Deleted.
+        (TestWebKitAPI::setPageLoaderClient): Deleted.
+
 2018-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] "video.html" appears at the top level of the TestWebKitAPI Xcode project

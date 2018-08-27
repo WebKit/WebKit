@@ -25,12 +25,12 @@
 
 #include "config.h"
 
-#if WK_HAVE_C_SPI
+#if PLATFORM(MAC) && WK_API_ENABLED
 
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
-
-namespace TestWebKitAPI {
+#include "TestWKWebView.h"
+#include <wtf/RetainPtr.h>
 
 static bool didFinishLoad;
 static bool didBecomeUnresponsive;
@@ -40,16 +40,6 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
 {
     didBrieflyPause = true;
     EXPECT_WK_STREQ("DidBrieflyPause", messageName);
-}
-
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
-{
-    didFinishLoad = true;
-}
-
-static void processDidBecomeUnresponsive(WKPageRef, const void*)
-{
-    didBecomeUnresponsive = true;
 }
 
 static void setInjectedBundleClient(WKContextRef context)
@@ -63,27 +53,37 @@ static void setInjectedBundleClient(WKContextRef context)
     WKContextSetInjectedBundleClient(context, &injectedBundleClient.base);
 }
 
-static void setPageLoaderClient(WKPageRef page)
+@interface ResponsivenessDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation ResponsivenessDelegate
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    WKPageLoaderClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
-
-    loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    loaderClient.processDidBecomeUnresponsive = processDidBecomeUnresponsive;
-
-    WKPageSetPageLoaderClient(page, &loaderClient.base);
+    didFinishLoad = true;
 }
+
+- (void)_webViewWebProcessDidBecomeUnresponsive:(WKWebView *)webView
+{
+    didBecomeUnresponsive = true;
+}
+
+@end
+
+namespace TestWebKitAPI {
 
 TEST(WebKit, ResponsivenessTimerDoesntFireEarly)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("ResponsivenessTimerDoesntFireEarlyTest"));
     setInjectedBundleClient(context.get());
 
-    PlatformWebView webView(context.get());
-    setPageLoaderClient(webView.page());
+    auto delegate = adoptNS([ResponsivenessDelegate new]);
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setProcessPool:(WKProcessPool *)context.get()];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
 
-    WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("simple", "html")).get());
+    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
     Util::run(&didFinishLoad);
 
     WKContextPostMessageToInjectedBundle(context.get(), Util::toWK("BrieflyPause").get(), 0);
@@ -91,7 +91,7 @@ TEST(WebKit, ResponsivenessTimerDoesntFireEarly)
     // Pressing a key on the keyboard should start the responsiveness timer. Since the web process
     // is going to pause before it receives this keypress, it should take a little while to respond
     // (but not so long that the responsiveness timer fires).
-    webView.simulateSpacebarKeyPress();
+    [webView typeCharacter:' '];
 
     Util::run(&didBrieflyPause);
 
