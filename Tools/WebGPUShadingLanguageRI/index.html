@@ -383,7 +383,7 @@ function selectedShadersChanged(fromCompilation = false) {
     }
     if (!found)
         linkError("Could not find the stageIn argument in the fragment shader!");
-    if (func.parameters.length > 1)
+    if (currentFragmentShader.parameters.length > 1)
         linkError("Fragment shaders currently don't know how to have any other arguments other than stageIn.");
 }
 
