@@ -29,10 +29,20 @@
 
 #import <WebKit/_WKRemoteObjectInterface.h>
 
-@protocol RemoteObjectProtocol <NSObject>
+@protocol BaseRemoteObjectProtocol <NSObject>
 
 - (void)sayHello:(NSString *)hello;
+
+@end
+
+@protocol OtherBaseRemoteObjectProtocol <NSObject>
+
 - (void)sayHello:(NSString *)hello completionHandler:(void (^)(NSString *))completionHandler;
+
+@end
+
+@protocol RemoteObjectProtocol <BaseRemoteObjectProtocol, OtherBaseRemoteObjectProtocol>
+
 - (void)selectionAndClickInformationForClickAtPoint:(NSValue *)pointValue completionHandler:(void (^)(NSDictionary *))completionHandler;
 - (void)takeRange:(NSRange)range completionHandler:(void (^)(NSUInteger location, NSUInteger length))completionHandler;
 - (void)takeSize:(CGSize)size completionHandler:(void (^)(CGFloat width, CGFloat height))completionHandler;
@@ -48,4 +58,5 @@ static inline _WKRemoteObjectInterface *remoteObjectInterface()
 
     return interface;
 }
+
 #endif

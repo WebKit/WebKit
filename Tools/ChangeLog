@@ -1,3 +1,13 @@
+2018-08-26  Sam Weinig  <sam@webkit.org>
+
+        Using _WKRemoteObjectInterface with a protocol that inherits from a non-NSObject protocol crashes
+        https://bugs.webkit.org/show_bug.cgi?id=188958
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.h:
+        Update test protocol to have inheritance.
+
 2018-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Dropping and pasting images should insert inline image elements with _WKAttachments

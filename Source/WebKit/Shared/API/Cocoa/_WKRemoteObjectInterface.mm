@@ -162,7 +162,7 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
 static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *protocol)
 {
     unsigned conformingProtocolCount;
-    auto conformingProtocols = protocol_copyProtocolList(interface->_protocol, &conformingProtocolCount);
+    auto conformingProtocols = protocol_copyProtocolList(protocol, &conformingProtocolCount);
 
     for (unsigned i = 0; i < conformingProtocolCount; ++i) {
         auto conformingProtocol = conformingProtocols[i];
