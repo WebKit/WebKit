@@ -56,7 +56,7 @@ public:
 
     const WTF::String& identifier() const { return m_identifier; }
     void setDisplayOptions(WebCore::AttachmentDisplayOptions, Function<void(WebKit::CallbackBase::Error)>&&);
-    void updateAttributes(uint64_t fileSize, const WTF::String& newContentType, const WTF::String& newFilename, Function<void(WebKit::CallbackBase::Error)>&&);
+    void updateAttributes(Function<void(WebKit::CallbackBase::Error)>&&);
 
     void invalidate();
     bool isValid() const { return !!m_webPage; }
@@ -64,6 +64,7 @@ public:
 #if PLATFORM(COCOA)
     NSFileWrapper *fileWrapper() const { return m_fileWrapper.get(); }
     void setFileWrapper(NSFileWrapper *fileWrapper) { m_fileWrapper = fileWrapper; }
+    void setFileWrapperAndUpdateContentType(NSFileWrapper *, NSString *contentType);
     WTF::String utiType() const;
 #endif
     WTF::String mimeType() const;
@@ -77,6 +78,8 @@ public:
 
     InsertionState insertionState() const { return m_insertionState; }
     void setInsertionState(InsertionState state) { m_insertionState = state; }
+
+    std::optional<uint64_t> fileSizeForDisplay() const;
 
 private:
     explicit Attachment(const WTF::String& identifier, WebKit::WebPageProxy&);

@@ -157,17 +157,11 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
         return;
     }
 
-    auto fileSize = [fileWrapper.fileAttributes[NSFileSize] unsignedLongLongValue];
-    if (!fileSize && fileWrapper.regularFile)
-        fileSize = fileWrapper.regularFileContents.length;
-
-    if (!contentType.length) {
-        if (NSString *pathExtension = (fileWrapper.filename.length ? fileWrapper.filename : fileWrapper.preferredFilename).pathExtension)
-            contentType = WebCore::MIMETypeRegistry::getMIMETypeForExtension(pathExtension);
-    }
-
-    _attachment->setFileWrapper(fileWrapper);
-    _attachment->updateAttributes(fileSize, contentType, fileWrapper.preferredFilename, [capturedBlock = makeBlockPtr(completionHandler)] (auto error) {
+    // This file path member is only populated when the attachment is generated upon dropping files. When data is specified via NSFileWrapper
+    // from the SPI client, the corresponding file path of the data is unknown, if it even exists at all.
+    _attachment->setFilePath({ });
+    _attachment->setFileWrapperAndUpdateContentType(fileWrapper, contentType);
+    _attachment->updateAttributes([capturedBlock = makeBlockPtr(completionHandler)] (auto error) {
         if (!capturedBlock)
             return;
 

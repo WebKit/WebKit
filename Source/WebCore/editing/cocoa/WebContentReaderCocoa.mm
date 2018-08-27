@@ -703,9 +703,18 @@ bool WebContentReader::readFilePaths(const Vector<String>& paths)
         for (auto& path : paths) {
             auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
             if (supportsClientSideAttachmentData(frame)) {
-                long long fileSize { 0 };
-                FileSystem::getFileSize(path, fileSize);
-                auto contentType = File::contentTypeForFile(path);
+                String contentType;
+                std::optional<uint64_t> fileSizeForDisplay;
+                if (FileSystem::fileIsDirectory(path, FileSystem::ShouldFollowSymbolicLinks::Yes))
+                    contentType = kUTTypeDirectory;
+                else {
+                    long long fileSize;
+                    FileSystem::getFileSize(path, fileSize);
+                    fileSizeForDisplay = fileSize;
+                    contentType = File::contentTypeForFile(path);
+                    if (contentType.isEmpty())
+                        contentType = kUTTypeData;
+                }
                 frame.editor().registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), contentType, path);
                 if (contentTypeIsSuitableForInlineImageRepresentation(contentType)) {
                     auto image = HTMLImageElement::create(document);
@@ -713,7 +722,7 @@ bool WebContentReader::readFilePaths(const Vector<String>& paths)
                     image->setAttachmentElement(WTFMove(attachment));
                     fragment->appendChild(image);
                 } else {
-                    attachment->updateAttributes(fileSize, contentType, FileSystem::pathGetFileName(path));
+                    attachment->updateAttributes(WTFMove(fileSizeForDisplay), contentType, FileSystem::pathGetFileName(path));
                     fragment->appendChild(attachment);
                 }
             } else {

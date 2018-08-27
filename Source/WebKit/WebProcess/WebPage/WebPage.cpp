@@ -6066,10 +6066,10 @@ void WebPage::storageAccessResponse(bool wasGranted, uint64_t contextId)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void WebPage::insertAttachment(const String& identifier, const AttachmentDisplayOptions& options, uint64_t fileSize, const String& fileName, std::optional<String> contentType, CallbackID callbackID)
+void WebPage::insertAttachment(const String& identifier, const AttachmentDisplayOptions& options, std::optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CallbackID callbackID)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
-    frame.editor().insertAttachment(identifier, options, fileSize, fileName, WTFMove(contentType));
+    frame.editor().insertAttachment(identifier, options, WTFMove(fileSize), fileName, contentType);
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
@@ -6078,11 +6078,11 @@ void WebPage::setAttachmentDisplayOptions(const String&, const AttachmentDisplay
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
-void WebPage::updateAttachmentAttributes(const String& identifier, uint64_t fileSize, std::optional<String> newContentType, std::optional<String> newFilename, CallbackID callbackID)
+void WebPage::updateAttachmentAttributes(const String& identifier, std::optional<uint64_t>&& fileSize, const String& contentType, std::optional<String>&& newFilename, CallbackID callbackID)
 {
     if (auto attachment = attachmentElementWithIdentifier(identifier)) {
         attachment->document().updateLayout();
-        attachment->updateAttributes(fileSize, WTFMove(newContentType), WTFMove(newFilename));
+        attachment->updateAttributes(WTFMove(fileSize), contentType, WTFMove(newFilename));
     }
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }

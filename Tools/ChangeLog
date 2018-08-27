@@ -1,3 +1,51 @@
+2018-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Exception (fileType 'dyn.agq8u' is not a valid UTI) raised when dragging an attachment whose file wrapper is a directory
+        https://bugs.webkit.org/show_bug.cgi?id=188903
+        <rdar://problem/43702993>
+
+        Reviewed by Tim Horton.
+
+        Add two API tests and adjust existing WKAttachment API tests. The new tests exercise the following scenarios, in
+        both iOS and macOS:
+        •       Dropping a folder as an attachment element, and then moving that attachment element in the document by
+                dragging and dropping.
+        •       Using WKWebView SPI to insert a folder and a file with an unknown extension, and then using more
+                _WKAttachment SPI to swap the attachments' backing file wrappers.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (runTestWithTemporaryFolder):
+
+        Add a helper function to run a test with a new folder path, created in the temporary directory and populated
+        with some sample content. This folder is deleted after running the test.
+
+        (simulateFolderDragWithURL):
+
+        Add a helper function to prepare a given DragAndDropSimulator for simulating a dragged folder from a source
+        external to the web view.
+
+        (platformCopyRichTextWithMultipleAttachments):
+        (platformCopyRichTextWithImage):
+        (platformCopyPNG):
+        (TestWebKitAPI::TEST):
+
+        Add new API tests, and adjust existing tests to reflect new -setFileWrapper:…: behavior. Specifically,
+        ChangeAttachmentDataAndFileInformation previously required that changing a _WKAttachment's NSFileWrapper would
+        preserve the previous NSFileWrapper's preferred name if the new file wrapper does not have a preferred name, but
+        this quirk is no longer supported.
+
+        Also add a few bridging casts for the eventual transition of TestWebKitAPI to ARC.
+
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+
+        Add a new hook to clear any external drag information on an existing DragAndDropSimulator. This is convenient
+        when using the same DragAndDropSimulator to perform multiple drags in a single test.
+
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[DragAndDropSimulator clearExternalDragInformation]):
+        * TestWebKitAPI/mac/DragAndDropSimulatorMac.mm:
+        (-[DragAndDropSimulator clearExternalDragInformation]):
+
 2018-08-27  Alex Christensen  <achristensen@webkit.org>
 
         Translate 4 tests using WKPageLoaderClient to ObjC

@@ -568,6 +568,11 @@ static NSArray *dragAndDropEventNames()
     [self _scheduleAdvanceProgress];
 }
 
+- (void)clearExternalDragInformation
+{
+    _externalItemProviders = nil;
+}
+
 - (CGPoint)_currentLocation
 {
     CGFloat distanceX = _endLocation.x - _startLocation.x;

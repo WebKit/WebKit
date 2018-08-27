@@ -7751,21 +7751,17 @@ RefPtr<API::Attachment> WebPageProxy::attachmentForIdentifier(const String& iden
     return m_attachmentIdentifierToAttachmentMap.get(identifier);
 }
 
-void WebPageProxy::insertAttachment(Ref<API::Attachment>&& attachment, const AttachmentDisplayOptions& options, uint64_t fileSize, const String& filename, std::optional<String> contentType, Function<void(CallbackBase::Error)>&& callback)
+void WebPageProxy::insertAttachment(Ref<API::Attachment>&& attachment, const AttachmentDisplayOptions& options, Function<void(CallbackBase::Error)>&& callback)
 {
     if (!isValid()) {
         callback(CallbackBase::Error::OwnerWasInvalidated);
         return;
     }
 
-    if (contentType)
-        attachment->setContentType(*contentType);
-
     auto attachmentIdentifier = attachment->identifier();
-    m_attachmentIdentifierToAttachmentMap.set(attachmentIdentifier, WTFMove(attachment));
-
     auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
-    m_process->send(Messages::WebPage::InsertAttachment(attachmentIdentifier, options, fileSize, filename, contentType, callbackID), m_pageID);
+    m_process->send(Messages::WebPage::InsertAttachment(attachmentIdentifier, options, attachment->fileSizeForDisplay(), attachment->fileName(), attachment->contentType(), callbackID), m_pageID);
+    m_attachmentIdentifierToAttachmentMap.set(attachmentIdentifier, WTFMove(attachment));
 }
 
 void WebPageProxy::setAttachmentDisplayOptions(const String& identifier, AttachmentDisplayOptions options, Function<void(CallbackBase::Error)>&& callback)
@@ -7779,7 +7775,7 @@ void WebPageProxy::setAttachmentDisplayOptions(const String& identifier, Attachm
     m_process->send(Messages::WebPage::SetAttachmentDisplayOptions(identifier, options, callbackID), m_pageID);
 }
 
-void WebPageProxy::updateAttachmentAttributes(const String& identifier, uint64_t fileSize, std::optional<String>&& newContentType, std::optional<String>&& newFilename, Function<void(CallbackBase::Error)>&& callback)
+void WebPageProxy::updateAttachmentAttributes(const API::Attachment& attachment, Function<void(CallbackBase::Error)>&& callback)
 {
     if (!isValid()) {
         callback(CallbackBase::Error::OwnerWasInvalidated);
@@ -7787,7 +7783,9 @@ void WebPageProxy::updateAttachmentAttributes(const String& identifier, uint64_t
     }
 
     auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
-    m_process->send(Messages::WebPage::UpdateAttachmentAttributes(identifier, fileSize, WTFMove(newContentType), WTFMove(newFilename), callbackID), m_pageID);
+    auto name = attachment.fileName();
+    auto optionalName = name.isNull() ? std::nullopt : std::optional<WTF::String> { name };
+    m_process->send(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), WTFMove(optionalName), callbackID), m_pageID);
 }
 
 void WebPageProxy::registerAttachmentIdentifierFromData(const String& identifier, const String& contentType, const String& preferredFileName, const IPC::DataReference& data)

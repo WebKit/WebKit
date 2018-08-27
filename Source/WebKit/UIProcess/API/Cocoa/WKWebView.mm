@@ -4454,18 +4454,8 @@ WEBCORE_COMMAND(yankAndSelect)
     auto identifier = createCanonicalUUIDString();
     auto coreOptions = options ? options.coreDisplayOptions : WebCore::AttachmentDisplayOptions { };
     auto attachment = API::Attachment::create(identifier, *_page);
-    attachment->setFileWrapper(fileWrapper);
-
-    if (!contentType.length) {
-        if (NSString *pathExtension = (fileWrapper.filename.length ? fileWrapper.filename : fileWrapper.preferredFilename).pathExtension)
-            contentType = WebCore::MIMETypeRegistry::getMIMETypeForExtension(pathExtension);
-    }
-
-    auto fileSize = [[[fileWrapper fileAttributes] objectForKey:NSFileSize] unsignedLongLongValue];
-    if (!fileSize && fileWrapper.regularFile)
-        fileSize = fileWrapper.regularFileContents.length;
-
-    _page->insertAttachment(attachment.copyRef(), coreOptions, fileSize, [fileWrapper preferredFilename], contentType.length ? std::optional<String> { contentType } : std::nullopt, [capturedHandler = makeBlockPtr(completionHandler)] (WebKit::CallbackBase::Error error) {
+    attachment->setFileWrapperAndUpdateContentType(fileWrapper, contentType);
+    _page->insertAttachment(attachment.copyRef(), coreOptions, [capturedHandler = makeBlockPtr(completionHandler)] (WebKit::CallbackBase::Error error) {
         if (capturedHandler)
             capturedHandler(error == WebKit::CallbackBase::Error::None);
     });

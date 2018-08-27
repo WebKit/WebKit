@@ -80,6 +80,7 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 // The start location, end location, and locations of additional item requests are all in window coordinates.
 - (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation;
 - (void)endDataTransfer;
+- (void)clearExternalDragInformation;
 @property (nonatomic, readonly) NSArray<_WKAttachment *> *insertedAttachments;
 @property (nonatomic, readonly) NSArray<_WKAttachment *> *removedAttachments;
 @property (nonatomic, readonly) TestWKWebView *webView;

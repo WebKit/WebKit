@@ -3876,11 +3876,11 @@ void Editor::notifyClientOfAttachmentUpdates()
     }
 }
 
-void Editor::insertAttachment(const String& identifier, const AttachmentDisplayOptions&, uint64_t fileSize, const String& fileName, std::optional<String>&& explicitContentType)
+void Editor::insertAttachment(const String& identifier, const AttachmentDisplayOptions&, std::optional<uint64_t>&& fileSize, const String& fileName, const String& contentType)
 {
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document());
     attachment->setUniqueIdentifier(identifier);
-    attachment->updateAttributes(fileSize, WTFMove(explicitContentType), fileName);
+    attachment->updateAttributes(WTFMove(fileSize), contentType, fileName);
 
     auto fragmentToInsert = document().createDocumentFragment();
     fragmentToInsert->appendChild(attachment.get());

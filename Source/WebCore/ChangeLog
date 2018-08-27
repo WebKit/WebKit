@@ -1,3 +1,45 @@
+2018-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Exception (fileType 'dyn.agq8u' is not a valid UTI) raised when dragging an attachment whose file wrapper is a directory
+        https://bugs.webkit.org/show_bug.cgi?id=188903
+        <rdar://problem/43702993>
+
+        Reviewed by Tim Horton.
+
+        Fixes the exception for attachments that are created when dropping files with extensions that don't map to any
+        known UTIs, and when dropping folders. See below for more detail.
+
+        Tests:  WKAttachmentTests.InsertFolderAndFileWithUnknownExtension
+                WKAttachmentTests.DropFolderAsAttachmentAndMoveByDragging
+                WKAttachmentTests.ChangeAttachmentDataAndFileInformation
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertAttachment):
+        * editing/Editor.h:
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::WebContentReader::readFilePaths):
+
+        When creating an attachment by dropping or pasting a file backed by a file path, handle the cases where…
+        (1)     the dropped path is a directory, by setting the UTI to "public.directory". This allows us to show a
+                folder icon for the dropped attachment element on macOS.
+        (2)     the dropped path is a file whose UTI is unknown, by defaulting to "public.data".
+
+        By ensuring that the UTI of a dropped file-backed attachment is set to a concrete type in any case, we avoid an
+        exception when dragging the attachment on macOS, and on iOS, avoid silently failing to drag an attachment.
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::updateAttributes):
+
+        Change this method to take an optional file size (the subtitle attribute will only be set if the file size is
+        not `std::nullopt`). Furthermore, allow callers of this method to clear attributes on the attachment element by
+        passing in `std::nullopt` for any of the three arguments. This allows us to handle the case where an
+        attachment's file wrapper is changed from a regular file to a folder whose total size is currently unknown.
+        Instead of showing "0 bytes", we'll simply refrain from showing a subtitle at all (in the future, this should
+        be improved by implementing a way to estimate the size of the files in the folder, or perhaps show the number of
+        items in the folder as the subtitle).
+
+        * html/HTMLAttachmentElement.h:
+
 2018-08-27  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: provide autocompletion for event breakpoints

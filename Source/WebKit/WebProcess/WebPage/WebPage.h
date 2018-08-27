@@ -1075,9 +1075,9 @@ public:
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void insertAttachment(const String& identifier, const WebCore::AttachmentDisplayOptions&, uint64_t fileSize, const String& fileName, std::optional<String> contentType, CallbackID);
+    void insertAttachment(const String& identifier, const WebCore::AttachmentDisplayOptions&, std::optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CallbackID);
     void setAttachmentDisplayOptions(const String& identifier, const WebCore::AttachmentDisplayOptions&, CallbackID);
-    void updateAttachmentAttributes(const String& identifier, uint64_t fileSize, std::optional<String> newContentType, std::optional<String> newFilename, CallbackID);
+    void updateAttachmentAttributes(const String& identifier, std::optional<uint64_t>&& fileSize, const String& contentType, std::optional<String>&& newFilename, CallbackID);
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)

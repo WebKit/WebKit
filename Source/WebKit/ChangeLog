@@ -1,3 +1,71 @@
+2018-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Exception (fileType 'dyn.agq8u' is not a valid UTI) raised when dragging an attachment whose file wrapper is a directory
+        https://bugs.webkit.org/show_bug.cgi?id=188903
+        <rdar://problem/43702993>
+
+        Reviewed by Tim Horton.
+
+        Fixes the bug by supporting NSFileWrappers of type directory, as well as NSFileWrappers with file that do not
+        map to concrete type identifiers. Among other things, this patch ensures that:
+        -       Inserting a directory file wrapper (or using -setFileWrapper:…: to change an existing _WKAttachment's
+                file wrapper to a directory) does not cause the attachment element to show "0 bytes" as the subtitle.
+        -       In the above scenario, we also won't end up with a missing "type" attribute for the attachment element,
+                as well as a corresponding API::Attachment::contentType() that's an empty string.
+        -       Dropping or pasting attachments backed by paths on disk also doesn't trigger these problems, if the path
+                is a directory or of unknown file type.
+
+        Changes are verified by 2 new API tests.
+
+        * UIProcess/API/APIAttachment.cpp:
+        (API::Attachment::updateAttributes):
+        (API::Attachment::fileSizeForDisplay const):
+        * UIProcess/API/APIAttachment.h:
+        * UIProcess/API/Cocoa/APIAttachmentCocoa.mm:
+        (API::Attachment::setFileWrapperAndUpdateContentType):
+
+        Add a helper that sets the file wrapper to the given NSFileWrapper, and either sets the content type to the
+        given content type if it's specified, or infers it from the file extension of the new NSFileWrapper. Invoked
+        whenever an NSFileWrapper and content type combination is set on an API attachment via WebKit SPI.
+
+        (API::Attachment::fileSizeForDisplay const):
+
+        Returns a file size to be displayed in the attachment element's subtitle. This returns an optional file size,
+        where `std::nullopt` indicates that there should not be a file size shown. For now, this returns `std::nullopt`
+        for directory file wrappers, though in the future, this should be done only in cases where we don't immediately
+        have a size estimate for the file wrapper.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _insertAttachmentWithFileWrapper:contentType:options:completion:]):
+
+        Use API::Attachment::setFileWrapperAndUpdateContentType() instead of trying to come up with a fallback UTI.
+
+        * UIProcess/API/Cocoa/_WKAttachment.mm:
+        (-[_WKAttachment setFileWrapper:contentType:completion:]):
+
+        Use API::Attachment::setFileWrapperAndUpdateContentType() instead of trying to come up with a fallback UTI.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::insertAttachment):
+
+        Remove the separate arguments for file size, content type, and file name, and instead get them from the given
+        API Attachment object.
+
+        (WebKit::WebPageProxy::updateAttachmentAttributes):
+
+        Remove separate arguments for file size, content type and file name and just take an API::Attachment instead.
+        These separate pieces of information can simply be asked from the Attachment itself.
+
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::insertAttachment):
+        (WebKit::WebPage::updateAttachmentAttributes):
+
+        Adjust some interfaces here to allow the displayed file size to be optional.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-08-27  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal builds after r235368

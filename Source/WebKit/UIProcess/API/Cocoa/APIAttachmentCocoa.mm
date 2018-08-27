@@ -74,4 +74,34 @@ WTF::String Attachment::fileName() const
     return [m_fileWrapper preferredFilename];
 }
 
+void Attachment::setFileWrapperAndUpdateContentType(NSFileWrapper *fileWrapper, NSString *contentType)
+{
+    if (!contentType.length) {
+        if (fileWrapper.directory)
+            contentType = (NSString *)kUTTypeDirectory;
+        else if (fileWrapper.regularFile) {
+            if (NSString *pathExtension = (fileWrapper.filename.length ? fileWrapper.filename : fileWrapper.preferredFilename).pathExtension)
+                contentType = WebCore::MIMETypeRegistry::getMIMETypeForExtension(pathExtension);
+            if (!contentType.length)
+                contentType = (NSString *)kUTTypeData;
+        }
+    }
+
+    setContentType(contentType);
+    setFileWrapper(fileWrapper);
+}
+
+std::optional<uint64_t> Attachment::fileSizeForDisplay() const
+{
+    if (![m_fileWrapper isRegularFile]) {
+        // FIXME: We should display a size estimate for directory-type file wrappers.
+        return std::nullopt;
+    }
+
+    if (auto fileSize = [[m_fileWrapper fileAttributes][NSFileSize] unsignedLongLongValue])
+        return fileSize;
+
+    return [m_fileWrapper regularFileContents].length;
+}
+
 } // namespace API

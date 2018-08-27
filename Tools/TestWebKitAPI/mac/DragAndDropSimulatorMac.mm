@@ -358,6 +358,13 @@ static NSImage *defaultExternalDragImage()
     return _externalPromisedFiles.get();
 }
 
+- (void)clearExternalDragInformation
+{
+    _externalPromisedFiles = nil;
+    _externalDragImage = nil;
+    _externalDragPasteboard = nil;
+}
+
 static BOOL getFilePathsAndTypeIdentifiers(NSArray<NSURL *> *fileURLs, NSArray<NSString *> **outFilePaths, NSArray<NSString *> **outTypeIdentifiers)
 {
     NSMutableArray *filePaths = [NSMutableArray arrayWithCapacity:fileURLs.count];
