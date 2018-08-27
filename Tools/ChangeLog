@@ -1,3 +1,15 @@
+2018-08-27  Keith Miller  <keith_miller@apple.com>
+
+        test262-runner -s --test-only should replace test results
+        https://bugs.webkit.org/show_bug.cgi?id=188450
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/test262/Runner.pm:
+        (main):
+        (SetFailureForTest):
+        (UpdateResults):
+
 2018-08-26  Sam Weinig  <sam@webkit.org>
 
         Using _WKRemoteObjectInterface with a protocol that inherits from a non-NSObject protocol crashes

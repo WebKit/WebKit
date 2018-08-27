@@ -443,14 +443,7 @@ sub main {
             $failcount++;
 
             # Record this round of failures
-            if ( $failed{$test->{path}} ) {
-                $failed{$test->{path}}->{$test->{mode}} =  $test->{error};
-            }
-            else {
-                $failed{$test->{path}} = {
-                    $test->{mode} => $test->{error}
-                };
-            }
+            SetFailureForTest(\%failed, $test);
 
             # If an unexpected failure
             if (!$expectedFailure || ($expectedFailure ne $test->{error})) {
@@ -520,6 +513,9 @@ sub main {
     }
 
     if ($saveExpectations) {
+        if (!$runningAllTests) {
+            UpdateResults($expect, \@results, \%failed);
+        }
         DumpFile($expectationsFile, \%failed);
         print "Saved expectation file in: $expectationsFile\n";
     }
@@ -906,6 +902,42 @@ sub getHarness {
     };
 
     return $content || '';
+}
+
+sub SetFailureForTest {
+    my ($failed, $test) = @_;
+
+    if ($failed->{$test->{path}}) {
+        $failed->{$test->{path}}->{$test->{mode}} = $test->{error};
+    }
+    else {
+        $failed->{$test->{path}} = {
+            $test->{mode} => $test->{error}
+        };
+    }
+}
+
+sub UpdateResults {
+    print "Updating results... \n";
+
+    my ($expect, $results, $failed) = @_;
+
+    foreach my $test (@{$results}) {
+        delete $expect->{$test->{path}};
+    }
+
+    foreach my $path (keys($expect)) {
+        foreach my $mode (keys($expect->{$path})) {
+            my $test = {
+                path => $path,
+                mode => $mode,
+                error => $expect->{$path}->{$mode},
+                result => 'FAIL'
+            };
+
+            SetFailureForTest($failed, $test);
+        }
+    }
 }
 
 sub summarizeResults {
