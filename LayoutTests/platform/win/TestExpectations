@@ -4169,3 +4169,5 @@ webkit.org/b/188853 http/tests/security/local-video-source-from-remote.html [ Cr
 webkit.org/b/188853 http/tests/security/contentSecurityPolicy/video-redirect-allowed.html [ Crash Pass ]
 webkit.org/b/188853 http/tests/security/contentSecurityPolicy/video-redirect-allowed2.html [ Crash Pass ]
 webkit.org/b/188853 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Crash Pass Failure ]
+
+webkit.org/b/188948 fast/events/dblclick-event-getModifierState.html [ Failure ]
