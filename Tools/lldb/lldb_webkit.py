@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+# Copyright (C) 2012-2018 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@ def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFHashMap_SummaryProvider -x "^WTF::HashMap<.+>$"')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFHashSet_SummaryProvider -x "^WTF::HashSet<.+>$"')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFMediaTime_SummaryProvider WTF::MediaTime')
+    debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFOptionSet_SummaryProvider -x "^WTF::OptionSet<.+>$"')
 
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreURL_SummaryProvider WebCore::URL')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreColor_SummaryProvider WebCore::Color')
@@ -64,6 +65,7 @@ def __lldb_init_module(debugger, dict):
     # synthetic types (see <https://lldb.llvm.org/varformats.html>)
     debugger.HandleCommand('type synthetic add -x "^WTF::Vector<.+>$" --python-class lldb_webkit.WTFVectorProvider')
     debugger.HandleCommand('type synthetic add -x "^WTF::HashTable<.+>$" --python-class lldb_webkit.WTFHashTableProvider')
+    debugger.HandleCommand('type synthetic add -x "^WTF::OptionSet<.+>$" --python-class lldb_webkit.WTFOptionSetProvider')
 
 
 def WTFString_SummaryProvider(valobj, dict):
@@ -105,6 +107,11 @@ def WTFHashMap_SummaryProvider(valobj, dict):
 def WTFHashSet_SummaryProvider(valobj, dict):
     provider = WTFHashSetProvider(valobj, dict)
     return "{ tableSize = %d, keyCount = %d }" % (provider.tableSize(), provider.keyCount())
+
+
+def WTFOptionSet_SummaryProvider(valobj, dict):
+    provider = WTFOptionSetProvider(valobj, dict)
+    return "{ size = %d }" % provider.size
 
 
 def WTFMediaTime_SummaryProvider(valobj, dict):
@@ -572,6 +579,53 @@ class WebCoreURLProvider:
 
     def to_string(self):
         return WTFStringProvider(self.valobj.GetChildMemberWithName('m_string'), dict).to_string()
+
+
+class WTFOptionSetProvider:
+    def __init__(self, valobj, internal_dict):
+        self.valobj = valobj
+        self.update()
+
+    def has_children(self):
+        return bool(self._elements)
+
+    #  Metadata is stored at indices greater than or equal to the number of elements in the set.
+    def num_children(self):
+        return len(self._elements) + 1
+
+    def get_child_index(self, name):
+        if name == 'm_storage':
+            return self.num_children()
+        try:
+            return int(name.lstrip('[').rstrip(']'))
+        except:
+            return None
+
+    def get_child_at_index(self, index):
+        if index < 0 or not self.valobj.IsValid():
+            return None
+        if index == self.num_children():
+            return self.storage
+        if index < len(self._elements):
+            (name, value) = self._elements[index]
+            return self.valobj.CreateValueFromExpression(name, str(value))
+        return None
+
+    def update(self):
+        self.storage = self.valobj.GetChildMemberWithName('m_storage')
+
+        template_argument_sbType = self.valobj.GetType().GetTemplateArgumentType(0)
+        enumerator_value_to_name_map = {sbTypeEnumMember.GetValueAsUnsigned(): sbTypeEnumMember.GetName() for sbTypeEnumMember in template_argument_sbType.get_enum_members_array()}
+
+        # Iterate from least significant bit to most significant bit.
+        elements = []
+        bitmask = self.storage.GetValueAsUnsigned(0)
+        while bitmask > 0:
+            current = bitmask & -bitmask  # Isolate the rightmost set bit.
+            elements.append((enumerator_value_to_name_map[current], current))  # e.g. ('Spelling', 4)
+            bitmask = bitmask & (bitmask - 1)  # Turn off the rightmost set bit.
+        self._elements = elements
+        self.size = len(elements)
 
 
 class WTFVectorProvider:

@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -43,6 +44,13 @@ static String utf16String(const char16_t (&string)[length])
         builder.append(static_cast<UChar>(c));
     return builder.toString();
 }
+
+enum class ExampleFlags {
+    A = 1 << 0,
+    B = 1 << 1,
+    C = 1 << 2,
+    D = 1 << 3,
+};
 
 static void testSummaryProviders()
 {
@@ -72,6 +80,9 @@ static void testSummaryProviders()
 
     HashMap<unsigned, Vector<int>> hashMapOfVectors;
     hashMapOfVectors.add(1, Vector<int>({2, 3}));
+
+    OptionSet<ExampleFlags> exampleFlagsEmpty;
+    OptionSet<ExampleFlags> exampleFlagsSimple { ExampleFlags::A, ExampleFlags::D, ExampleFlags::C };
 
     breakForTestingSummaryProviders();
 }

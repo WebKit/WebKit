@@ -1,3 +1,33 @@
+2018-08-27  Daniel Bates  <dabates@apple.com>
+
+        lldb-webkit: Pretty-print OptionSet
+        https://bugs.webkit.org/show_bug.cgi?id=188936
+
+        Reviewed by Simon Fraser.
+
+        Add LLDB formatters to pretty-print an OptionSet.
+
+        * lldb/lldbWebKitTester/main.cpp:
+        (testSummaryProviders):
+        * lldb/lldb_webkit.py:
+        (__lldb_init_module):
+        (__lldb_init_module.lldb_webkit):
+        (WTFOptionSet_SummaryProvider):
+        (WTFOptionSetProvider):
+        (WTFOptionSetProvider.__init__):
+        (WTFOptionSetProvider.has_children):
+        (WTFOptionSetProvider.num_children):
+        (WTFOptionSetProvider.get_child_index):
+        (WTFOptionSetProvider.get_child_at_index):
+        (WTFOptionSetProvider.update):
+        * lldb/lldb_webkit_unittest.py:
+        (TestSummaryProviders.serial_test_WTFHashSet_tablesize_and_size):
+        (TestSummaryProviders):
+        (TestSummaryProviders.serial_test_WTFOptionSet_SummaryProvider_empty):
+        (TestSummaryProviders.serial_test_WTFOptionSet_SummaryProvider_simple):
+        (TestSummaryProviders.serial_test_WTFOptionSetProvider_empty):
+        (TestSummaryProviders.serial_test_WTFOptionSetProvider_simple):
+
 2018-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] [WK2] Images copied from Mail message view paste with the wrong file name in compose
