@@ -36,6 +36,7 @@
 #import "LayoutTreeBuilder.h"
 #import "Logging.h"
 #import "RenderObject.h"
+#import "SVGDocument.h"
 #import <pal/Logging.h>
 
 #if PLATFORM(IOS)
@@ -77,7 +78,8 @@ void Page::platformInitialize()
 
             WTFLogAlways("%u live documents:", Document::allDocuments().size());
             for (const auto* document : Document::allDocuments()) {
-                WTFLogAlways("Document %p %s", document, document->url().string().utf8().data());
+                const char* documentType = is<SVGDocument>(document) ? "SVGDocument" : "Document";
+                WTFLogAlways("%s %p %llu (refCount %d, referencingNodeCount %d) %s", documentType, document, document->identifier().toUInt64(), document->refCount(), document->referencingNodeCount(), document->url().string().utf8().data());
             }
         });
     });

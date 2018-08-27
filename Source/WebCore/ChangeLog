@@ -1,3 +1,23 @@
+2018-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve the showAllDocuments logging
+        https://bugs.webkit.org/show_bug.cgi?id=188990
+
+        Reviewed by Tim Horton.
+        
+        Improve the output triggered by "notifyutil -p com.apple.WebKit.showAllDocuments" to denote
+        SVG documents (which often have no URL), and to show the refCount and referencingNodeCount,
+        which helps with leak debugging.
+        
+        Sample output:
+
+        2 live documents:
+        Document 0x1236f1200 3 (refCount 6, referencingNodeCount 580) https://webkit.org/
+        SVGDocument 0x134b60000 13 (refCount 1, referencingNodeCount 197) 
+
+        * page/mac/PageMac.mm:
+        (WebCore::Page::platformInitialize):
+
 2018-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Exception (fileType 'dyn.agq8u' is not a valid UTI) raised when dragging an attachment whose file wrapper is a directory
