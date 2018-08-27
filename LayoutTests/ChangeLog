@@ -1,5 +1,12 @@
 2018-08-26  Andy Estes  <aestes@apple.com>
 
+        Update test expectations for http/tests/ssl/applepay/ApplePayButton.html on macOS High Sierra.
+
+        * platform/mac-highsierra/http/tests/ssl/applepay/ApplePayButton-expected.png: Renamed from LayoutTests/platform/mac-sierra/http/tests/ssl/applepay/ApplePayButton-expected.png.
+        * platform/mac-highsierra/http/tests/ssl/applepay/ApplePayButton-expected.txt: Renamed from LayoutTests/platform/mac-sierra/http/tests/ssl/applepay/ApplePayButton-expected.txt.
+
+2018-08-26  Andy Estes  <aestes@apple.com>
+
         [Apple Pay] PaymentRequest.show() should reject when an unsupported ApplePayRequest version is specified
         https://bugs.webkit.org/show_bug.cgi?id=188954
 
