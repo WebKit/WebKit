@@ -202,7 +202,7 @@ void WKPageLoadDataWithUserData(WKPageRef pageRef, WKDataRef dataRef, WKStringRe
 static String encodingOf(const String& string)
 {
     if (string.isNull() || !string.is8Bit())
-        "utf-16"_s;
+        return "utf-16"_s;
     return "latin1"_s;
 }
 
