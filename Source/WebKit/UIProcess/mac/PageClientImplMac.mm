@@ -827,7 +827,7 @@ void PageClientImpl::didPerformImmediateActionHitTest(const WebHitTestResultData
     m_impl->didPerformImmediateActionHitTest(result, contentPreventsDefault, userData);
 }
 
-void* PageClientImpl::immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult> hitTestResult, uint64_t type, RefPtr<API::Object> userData)
+NSObject *PageClientImpl::immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult> hitTestResult, uint64_t type, RefPtr<API::Object> userData)
 {
     return m_impl->immediateActionAnimationControllerForHitTestResult(hitTestResult.get(), type, userData.get());
 }
@@ -856,12 +856,12 @@ WebCore::WebMediaSessionManager& PageClientImpl::mediaSessionManager()
 
 void PageClientImpl::refView()
 {
-    CFRetain(m_view);
+    CFRetain((__bridge CFTypeRef)m_view);
 }
 
 void PageClientImpl::derefView()
 {
-    CFRelease(m_view);
+    CFRelease((__bridge CFTypeRef)m_view);
 }
 
 void PageClientImpl::startWindowDrag()

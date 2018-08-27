@@ -63,7 +63,7 @@ private:
 };
 
 @implementation WKHTTPCookieStore {
-    HashMap<id<WKHTTPCookieStoreObserver>, std::unique_ptr<WKHTTPCookieStoreObserver>> _observers;
+    HashMap<CFTypeRef, std::unique_ptr<WKHTTPCookieStoreObserver>> _observers;
 }
 
 - (void)dealloc
@@ -105,7 +105,7 @@ private:
 
 - (void)addObserver:(id<WKHTTPCookieStoreObserver>)observer
 {
-    auto result = _observers.add(observer, nullptr);
+    auto result = _observers.add((__bridge CFTypeRef)observer, nullptr);
     if (!result.isNewEntry)
         return;
 
@@ -115,7 +115,7 @@ private:
 
 - (void)removeObserver:(id<WKHTTPCookieStoreObserver>)observer
 {
-    auto result = _observers.take(observer);
+    auto result = _observers.take((__bridge CFTypeRef)observer);
     if (!result)
         return;
 

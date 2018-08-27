@@ -204,9 +204,10 @@ void NetscapePlugin::platformPreInitialize()
         // Patch -[NSException release] to not release the object.
         static dispatch_once_t once;
         dispatch_once(&once, ^{
-            Class exceptionClass = [NSException class];
-            Method exceptionReleaseMethod = class_getInstanceMethod(exceptionClass, @selector(release));
-            class_replaceMethod(exceptionClass, @selector(release), reinterpret_cast<IMP>(NSException_release), method_getTypeEncoding(exceptionReleaseMethod));
+            auto exceptionClass = [NSException class];
+            auto releaseSelector = sel_registerName("release");
+            auto exceptionReleaseMethod = class_getInstanceMethod(exceptionClass, releaseSelector);
+            class_replaceMethod(exceptionClass, releaseSelector, reinterpret_cast<IMP>(NSException_release), method_getTypeEncoding(exceptionReleaseMethod));
         });
     }
 }
@@ -1159,9 +1160,9 @@ void NetscapePlugin::updatePluginLayer()
     // be returned by using NPN_GetValue and pass the WKNVExpectsNonretainedLayer parameter.
     // https://bugs.webkit.org/show_bug.cgi?id=58282 describes the bug where WebKit expects retained layers.
     if (m_pluginReturnsNonretainedLayer)
-        m_pluginLayer = reinterpret_cast<CALayer *>(value);
+        m_pluginLayer = (__bridge CALayer *)value;
     else
-        m_pluginLayer = adoptNS(reinterpret_cast<CALayer *>(value));
+        m_pluginLayer = adoptNS((__bridge CALayer *)value);
 
     if (m_pluginModule->pluginQuirks().contains(PluginQuirks::MakeOpaqueUnlessTransparentSilverlightBackgroundAttributeExists) &&
         !m_isTransparent)

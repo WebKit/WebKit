@@ -328,7 +328,7 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
     }
 
     RefPtr<API::HitTestResult> hitTestResult = [self _webHitTestResult];
-    id customClientAnimationController = (id)(_page->immediateActionAnimationControllerForHitTestResult(hitTestResult, _type, _userData));
+    id customClientAnimationController = _page->immediateActionAnimationControllerForHitTestResult(hitTestResult, _type, _userData);
     if (customClientAnimationController == [NSNull null]) {
         [self _cancelImmediateAction];
         return;

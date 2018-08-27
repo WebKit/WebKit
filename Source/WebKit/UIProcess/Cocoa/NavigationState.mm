@@ -978,11 +978,8 @@ RefPtr<API::Data> NavigationState::NavigationClient::webCryptoMasterKey(WebPageP
     if (!navigationDelegate)
         return nullptr;
 
-    RetainPtr<NSData> data = [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webCryptoMasterKeyForWebView:m_navigationState.m_webView];
-
-    return API::Data::createWithoutCopying((const unsigned char*)[data bytes], [data length], [] (unsigned char*, const void* data) {
-        [(NSData *)data release];
-    }, data.leakRef());
+    NSData *data = [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webCryptoMasterKeyForWebView:m_navigationState.m_webView];
+    return API::Data::createWithoutCopying(data);
 }
 
 RefPtr<API::String> NavigationState::NavigationClient::signedPublicKeyAndChallengeString(WebPageProxy& page, unsigned keySizeIndex, const RefPtr<API::String>& challengeString, const WebCore::URL& url)

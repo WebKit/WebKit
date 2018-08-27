@@ -209,9 +209,9 @@ Boolean _AXSWebAccessibilityEventsEnabled();
 
 #endif
 
-static HashMap<WebKit::WebPageProxy*, WKWebView *>& pageToViewMap()
+static HashMap<WebKit::WebPageProxy*, __unsafe_unretained WKWebView *>& pageToViewMap()
 {
-    static NeverDestroyed<HashMap<WebKit::WebPageProxy*, WKWebView *>> map;
+    static NeverDestroyed<HashMap<WebKit::WebPageProxy*, __unsafe_unretained WKWebView *>> map;
     return map;
 }
 
@@ -3151,10 +3151,11 @@ static int32_t activeOrientation(WKWebView *webView)
 #endif // PLATFORM(IOS)
 
 #if ENABLE(ACCESSIBILITY_EVENTS)
+
 static void accessibilityEventsEnabledChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
     ASSERT(observer);
-    WKWebView* webview = static_cast<WKWebView*>(observer);
+    WKWebView *webview = (__bridge WKWebView *)observer;
     [webview _updateAccessibilityEventsEnabled];
 }
 
@@ -3163,6 +3164,7 @@ static void accessibilityEventsEnabledChangedCallback(CFNotificationCenterRef, v
     if (!isNullFunctionPointer(_AXSWebAccessibilityEventsEnabled))
         _page->updateAccessibilityEventsEnabled(_AXSWebAccessibilityEventsEnabled());
 }
+
 #endif
 
 #pragma mark OS X-specific methods
@@ -4243,7 +4245,7 @@ WEBCORE_COMMAND(yankAndSelect)
 - (NSArray *)_certificateChain
 {
     if (WebKit::WebFrameProxy* mainFrame = _page->mainFrame())
-        return mainFrame->certificateInfo() ? (NSArray *)mainFrame->certificateInfo()->certificateInfo().certificateChain() : nil;
+        return mainFrame->certificateInfo() ? (__bridge NSArray *)mainFrame->certificateInfo()->certificateInfo().certificateChain() : nil;
 
     return nil;
 }
@@ -6619,7 +6621,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     if (!certificateInfo)
         return @[ ];
 
-    return (NSArray *)certificateInfo->certificateInfo().certificateChain() ?: @[ ];
+    return (__bridge NSArray *)certificateInfo->certificateInfo().certificateChain() ?: @[ ];
 }
 
 @end

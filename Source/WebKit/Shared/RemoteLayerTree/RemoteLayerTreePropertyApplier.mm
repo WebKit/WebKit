@@ -263,7 +263,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(CALayer *layer, RemoteLayer
         RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
         for (auto& child : properties.children) {
             ASSERT(relatedLayers.get(child));
-            [children addObject:relatedLayers.get(child)];
+            [children addObject:(__bridge id)relatedLayers.get(child)];
         }
 
         layer.sublayers = children.get();
@@ -274,13 +274,13 @@ void RemoteLayerTreePropertyApplier::applyProperties(CALayer *layer, RemoteLayer
             layer.mask = nullptr;
         else {
 #if PLATFORM(IOS)
-            UIView *maskView = relatedLayers.get(properties.maskLayerID);
+            UIView *maskView = (__bridge UIView *)relatedLayers.get(properties.maskLayerID);
             // FIXME: need to check that the mask view is kept alive.
             ASSERT(!maskView.layer.superlayer);
             if (!maskView.layer.superlayer)
                 layer.mask = maskView.layer;
 #else
-            CALayer *maskLayer = relatedLayers.get(properties.maskLayerID);
+            CALayer *maskLayer = (__bridge CALayer *)relatedLayers.get(properties.maskLayerID);
             ASSERT(!maskLayer.superlayer);
             if (!maskLayer.superlayer)
                 layer.mask = maskLayer;
@@ -300,7 +300,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, RemoteLayerTr
         RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
         for (auto& child : properties.children) {
             ASSERT(relatedLayers.get(child));
-            [children addObject:relatedLayers.get(child)];
+            [children addObject:(__bridge id)relatedLayers.get(child)];
         }
 
         if (properties.customAppearance == GraphicsLayer::CustomAppearance::LightBackdrop || properties.customAppearance == GraphicsLayer::CustomAppearance::DarkBackdrop) {
@@ -324,7 +324,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, RemoteLayerTr
         if (!properties.maskLayerID)
             maskOwnerLayer.mask = nullptr;
         else {
-            UIView *maskView = relatedLayers.get(properties.maskLayerID);
+            UIView *maskView = (__bridge UIView *)relatedLayers.get(properties.maskLayerID);
             // FIXME: need to check that the mask view is kept alive.
             ASSERT(!maskView.layer.superlayer);
             if (!maskView.layer.superlayer)

@@ -56,6 +56,15 @@
 #import <CFNetwork/CFNSURLConnection.h>
 #endif
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+
+// FIXME: Move to CFNetworkSPI.h?
+@interface NSURLSessionTask ()
+- (void)_setExplicitCookieStorage:(CFHTTPCookieStorageRef)storage;
+@end
+
+#endif
+
 namespace WebKit {
 
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
@@ -85,7 +94,7 @@ static float toNSURLSessionTaskPriority(WebCore::ResourceLoadPriority priority)
     return NSURLSessionTaskPriorityDefault;
 }
 
-void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(NSURLRequest*& nsRequest, bool shouldContentSniff, bool shouldContentEncodingSniff)
+void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(__strong NSURLRequest *& nsRequest, bool shouldContentSniff, bool shouldContentEncodingSniff)
 {
 #if !PLATFORM(MAC)
     UNUSED_PARAM(shouldContentEncodingSniff);
@@ -119,6 +128,7 @@ void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeede
 }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+
 NSHTTPCookieStorage *NetworkDataTaskCocoa::statelessCookieStorage()
 {
     static NeverDestroyed<RetainPtr<NSHTTPCookieStorage>> statelessCookieStorage;
@@ -144,10 +154,11 @@ void NetworkDataTaskCocoa::applyCookieBlockingPolicy(bool shouldBlock)
     if (shouldBlock == m_hasBeenSetToUseStatelessCookieStorage)
         return;
 
-    NSHTTPCookieStorage *storage = shouldBlock ? statelessCookieStorage(): m_session->networkStorageSession().nsCookieStorage();
-    [m_task performSelector:NSSelectorFromString(@"_setExplicitCookieStorage:") withObject:(NSObject*)storage._cookieStorage];
+    NSHTTPCookieStorage *storage = shouldBlock ? statelessCookieStorage() : m_session->networkStorageSession().nsCookieStorage();
+    [m_task _setExplicitCookieStorage:storage._cookieStorage];
     m_hasBeenSetToUseStatelessCookieStorage = shouldBlock;
 }
+
 #endif
 
 bool NetworkDataTaskCocoa::isThirdPartyRequest(const WebCore::ResourceRequest& request)

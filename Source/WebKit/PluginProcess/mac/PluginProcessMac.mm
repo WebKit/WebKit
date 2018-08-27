@@ -453,8 +453,8 @@ static void initializeCocoaOverrides()
                                                        usingBlock:^(NSNotification *notification) { fullscreenWindowTracker().windowHidden([notification object]); }];
 
     // Leak the two observers so that they observe notifications for the lifetime of the process.
-    CFRetain(orderOnScreenObserver);
-    CFRetain(orderOffScreenObserver);
+    CFRetain((__bridge CFTypeRef)orderOnScreenObserver);
+    CFRetain((__bridge CFTypeRef)orderOffScreenObserver);
 }
 
 void PluginProcess::setModalWindowIsShowing(bool modalWindowIsShowing)

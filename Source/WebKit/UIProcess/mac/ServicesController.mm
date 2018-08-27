@@ -97,27 +97,27 @@ void ServicesController::refreshExistingServices(bool refreshImmediately)
     dispatch_after(refreshTime, m_refreshQueue, ^{
         auto serviceLookupGroup = adoptOSObject(dispatch_group_create());
 
-        static NeverDestroyed<NSImage *> image([[NSImage alloc] init]);
+        static NSImage *image { [[NSImage alloc] init] };
         hasCompatibleServicesForItems(serviceLookupGroup.get(), @[ image ], [this] (bool hasServices) {
             m_hasImageServices = hasServices;
         });
 
-        static NeverDestroyed<NSAttributedString *> attributedString([[NSAttributedString alloc] initWithString:@"a"]);
+        static NSAttributedString *attributedString { [[NSAttributedString alloc] initWithString:@"a"] };
         hasCompatibleServicesForItems(serviceLookupGroup.get(), @[ attributedString ], [this] (bool hasServices) {
             m_hasSelectionServices = hasServices;
         });
 
-        static NSAttributedString *attributedStringWithRichContent;
-        if (!attributedStringWithRichContent) {
-            dispatch_sync(dispatch_get_main_queue(), ^ {
+        static NSAttributedString *attributedStringWithRichContent = [] {
+            NSMutableAttributedString *richString;
+            dispatch_sync(dispatch_get_main_queue(), [&richString] {
                 auto attachment = adoptNS([[NSTextAttachment alloc] init]);
-                auto cell = adoptNS([[NSTextAttachmentCell alloc] initImageCell:image.get()]);
+                auto cell = adoptNS([[NSTextAttachmentCell alloc] initImageCell:image]);
                 [attachment setAttachmentCell:cell.get()];
-                NSMutableAttributedString *richString = (NSMutableAttributedString *)[NSMutableAttributedString attributedStringWithAttachment:attachment.get()];
+                richString = [[NSAttributedString attributedStringWithAttachment:attachment.get()] mutableCopy];
                 [richString appendAttributedString:attributedString];
-                attributedStringWithRichContent = [richString retain];
             });
-        }
+            return richString;
+        }();
 
         hasCompatibleServicesForItems(serviceLookupGroup.get(), @[ attributedStringWithRichContent ], [this] (bool hasServices) {
             m_hasRichContentServices = hasServices;

@@ -2050,7 +2050,8 @@ bool WebViewImpl::acceptsFirstMouse(NSEvent *event)
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    [[event retain] autorelease];
+    CFRetain((__bridge CFTypeRef)event);
+    CFAutorelease((__bridge CFTypeRef)event);
 
     if (![m_view hitTest:event.locationInWindow])
         return false;
@@ -2069,7 +2070,8 @@ bool WebViewImpl::shouldDelayWindowOrderingForEvent(NSEvent *event)
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    [[event retain] autorelease];
+    CFRetain((__bridge CFTypeRef)event);
+    CFAutorelease((__bridge CFTypeRef)event);
 
     if (![m_view hitTest:event.locationInWindow])
         return false;
@@ -3319,7 +3321,7 @@ void WebViewImpl::setAllowsLinkPreview(bool allowsLinkPreview)
         [m_view addGestureRecognizer:immediateActionRecognizer];
 }
 
-void* WebViewImpl::immediateActionAnimationControllerForHitTestResult(API::HitTestResult* hitTestResult, uint32_t type, API::Object* userData)
+NSObject *WebViewImpl::immediateActionAnimationControllerForHitTestResult(API::HitTestResult* hitTestResult, uint32_t type, API::Object* userData)
 {
     return [m_view _web_immediateActionAnimationControllerForHitTestResultInternal:hitTestResult withType:type userData:userData];
 }
@@ -4900,7 +4902,8 @@ bool WebViewImpl::performKeyEquivalent(NSEvent *event)
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    [[event retain] autorelease];
+    CFRetain((__bridge CFTypeRef)event);
+    CFAutorelease((__bridge CFTypeRef)event);
 
     // We get Esc key here after processing either Esc or Cmd+period. The former starts as a keyDown, and the latter starts as a key equivalent,
     // but both get transformed to a cancelOperation: command, executing which passes an Esc key event to -performKeyEquivalent:.

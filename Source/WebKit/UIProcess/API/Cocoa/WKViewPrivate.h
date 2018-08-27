@@ -30,6 +30,8 @@
 #import <WebKit/WKView.h>
 #import <WebKit/_WKOverlayScrollbarStyle.h>
 
+@class _WKLinkIconParameters;
+
 @interface WKView (Private)
 
 /* C SPI support. */
@@ -143,6 +145,13 @@
 - (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macosx(10.13.4));
 
 @property (nonatomic, readwrite, setter=_setUseSystemAppearance:) BOOL _useSystemAppearance WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+
+@end
+
+@interface WKView (PrivateForSubclassToDefine)
+
+// This a method that subclasses can define and WKView itself does not define. WKView will call the method if it is present.
+- (void)_shouldLoadIconWithParameters:(_WKLinkIconParameters *)parameters completionHandler:(void (^)(void (^)(NSData *)))completionHandler;
 
 @end
 

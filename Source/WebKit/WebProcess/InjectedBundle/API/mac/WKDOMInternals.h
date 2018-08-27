@@ -89,8 +89,8 @@ private:
 
 // -- Caches --
 
-DOMCache<WebCore::Node*, WKDOMNode *>& WKDOMNodeCache();
-DOMCache<WebCore::Range*, WKDOMRange *>& WKDOMRangeCache();
+DOMCache<WebCore::Node*, __unsafe_unretained WKDOMNode *>& WKDOMNodeCache();
+DOMCache<WebCore::Range*, __unsafe_unretained WKDOMRange *>& WKDOMRangeCache();
 
 // -- Node and classes derived from Node. --
 

@@ -226,12 +226,10 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
         }
 
 #if (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
-        auto data = retainPtr(keyedArchiver.get().encodedData);
+        auto data = keyedArchiver.get().encodedData;
 #endif
 
-        parameters.bundleParameterData = API::Data::createWithoutCopying((const unsigned char*)[data bytes], [data length], [] (unsigned char*, const void* data) {
-            [(NSData *)data release];
-        }, data.leakRef());
+        parameters.bundleParameterData = API::Data::createWithoutCopying(WTFMove(data));
     }
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
 

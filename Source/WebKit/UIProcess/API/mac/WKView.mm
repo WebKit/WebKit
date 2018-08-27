@@ -884,7 +884,7 @@ Some other editing-related methods still unimplemented:
 
         static SEL delegateSelector()
         {
-            return sel_registerName("_shouldLoadIconWithParameters:completionHandler:");
+            return @selector(_shouldLoadIconWithParameters:completionHandler:);
         }
 
     private:
@@ -894,7 +894,7 @@ Some other editing-related methods still unimplemented:
         {
             RetainPtr<_WKLinkIconParameters> parameters = adoptNS([[_WKLinkIconParameters alloc] _initWithLinkIcon:linkIcon]);
 
-            [m_wkView performSelector:delegateSelector() withObject:parameters.get() withObject:BlockPtr<void(IconLoadCompletionHandler)>::fromCallable([completionHandler = WTFMove(completionHandler)](IconLoadCompletionHandler loadCompletionHandler) mutable {
+            [m_wkView _shouldLoadIconWithParameters:parameters.get() completionHandler:BlockPtr<void(IconLoadCompletionHandler)>::fromCallable([completionHandler = WTFMove(completionHandler)](IconLoadCompletionHandler loadCompletionHandler) mutable {
                 ASSERT(RunLoop::isMain());
                 if (loadCompletionHandler) {
                     completionHandler([loadCompletionHandler = BlockPtr<void (NSData *)>(loadCompletionHandler)](API::Data* data, WebKit::CallbackBase::Error error) {

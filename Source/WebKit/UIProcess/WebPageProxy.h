@@ -1204,7 +1204,7 @@ public:
     void immediateActionDidCancel();
     void immediateActionDidComplete();
 
-    void* immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult>, uint64_t, RefPtr<API::Object>);
+    NSObject *immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult>, uint64_t, RefPtr<API::Object>);
 
     void installActivityStateChangeCompletionHandler(WTF::Function<void ()>&&);
 

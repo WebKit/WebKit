@@ -57,7 +57,7 @@ static void didReceiveMessage(WKConnectionRef, WKStringRef messageName, WKTypeRe
     if ([delegate respondsToSelector:@selector(connection:didReceiveMessageWithName:body:)]) {
         RetainPtr<CFStringRef> nsMessageName = adoptCF(WKStringCopyCFString(kCFAllocatorDefault, messageName));
         RetainPtr<id> nsMessageBody = static_cast<ObjCObjectGraph*>(toImpl(messageBody))->rootObject();
-        [delegate connection:connection didReceiveMessageWithName:(NSString *)nsMessageName.get() body:nsMessageBody.get()];
+        [delegate connection:connection didReceiveMessageWithName:(__bridge NSString *)nsMessageName.get() body:nsMessageBody.get()];
     }
 }
 

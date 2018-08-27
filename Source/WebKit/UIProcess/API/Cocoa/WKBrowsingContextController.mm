@@ -83,9 +83,9 @@ NSString * const WKActionCanShowMIMETypeKey = @"WKActionCanShowMIMETypeKey";
     WeakObjCPtr<id <WKBrowsingContextPolicyDelegate>> _policyDelegate;
 }
 
-static HashMap<WebPageProxy*, WKBrowsingContextController *>& browsingContextControllerMap()
+static HashMap<WebPageProxy*, __unsafe_unretained WKBrowsingContextController *>& browsingContextControllerMap()
 {
-    static NeverDestroyed<HashMap<WebPageProxy*, WKBrowsingContextController *>> browsingContextControllerMap;
+    static NeverDestroyed<HashMap<WebPageProxy*, __unsafe_unretained WKBrowsingContextController *>> browsingContextControllerMap;
     return browsingContextControllerMap;
 }
 

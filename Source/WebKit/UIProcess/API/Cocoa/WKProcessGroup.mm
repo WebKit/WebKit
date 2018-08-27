@@ -79,7 +79,7 @@ static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef con
     memset(&connectionClient, 0, sizeof(connectionClient));
 
     connectionClient.base.version = 0;
-    connectionClient.base.clientInfo = processGroup;
+    connectionClient.base.clientInfo = (__bridge CFTypeRef)processGroup;
     connectionClient.didCreateConnection = didCreateConnection;
 
     WKContextSetConnectionClient(contextRef, &connectionClient.base);
@@ -165,7 +165,7 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
     memset(&historyClient, 0, sizeof(historyClient));
 
     historyClient.base.version = 0;
-    historyClient.base.clientInfo = processGroup;
+    historyClient.base.clientInfo = (__bridge CFTypeRef)processGroup;
     historyClient.didNavigateWithNavigationData = didNavigateWithNavigationData;
     historyClient.didPerformClientRedirect = didPerformClientRedirect;
     historyClient.didPerformServerRedirect = didPerformServerRedirect;

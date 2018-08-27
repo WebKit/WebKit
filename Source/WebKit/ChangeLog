@@ -1,3 +1,191 @@
+2018-08-26  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Adapt more WebKit code to be ARC-compatible
+        https://bugs.webkit.org/show_bug.cgi?id=188955
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h: Use __strong for an in/out argument.
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeeded):
+        Use __strong for a in/out argument.
+        (WebKit::NetworkDataTaskCocoa::applyCookieBlockingPolicy): Call a NSURLSessionTask
+        method using an explicit category declaration rather than by using performSelector:
+        since ARC is unable to correctly compile a call when it doesn't know argument and
+        result types.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::initializeCocoaOverrides): Add some __bridge casts.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm: Use HashSet<CFTypeRef> instead of
+        HashSet<Class> since Class ia an ARC-managed type and WTF hash tables can't
+        currently handle those as key types.
+        (-[WKRemoteObjectDecoder decodeValueOfObjCType:at:]): Changed types and added casts
+        to adapt to the above.
+        (decodeObjectFromObjectStream): Ditto.
+        (checkIfClassIsAllowed): Ditto.
+        (decodeInvocationArguments): Ditto.
+        (decodeObject): Ditto.
+        (-[WKRemoteObjectDecoder decodeObjectOfClasses:forKey:]): Ditto.
+        (-[WKRemoteObjectDecoder allowedClasses]): Ditto.
+        * Shared/API/Cocoa/_WKRemoteObjectInterface.mm:
+        (propertyListClasses): Ditto.
+        (initializeMethod): Ditto.
+        (-[_WKRemoteObjectInterface debugDescription]): Ditto.
+        (classesForSelectorArgument): Ditto.
+        (-[_WKRemoteObjectInterface classesForSelector:argumentIndex:ofReply:]): Ditto.
+        (-[_WKRemoteObjectInterface setClasses:forSelector:argumentIndex:ofReply:]): Ditto.
+        (-[_WKRemoteObjectInterface _allowedArgumentClassesForSelector:]): Ditto.
+        (-[_WKRemoteObjectInterface _allowedArgumentClassesForReplyBlockOfSelector:]): Ditto.
+        * Shared/API/Cocoa/_WKRemoteObjectInterfaceInternal.h: Ditto.
+
+        * Shared/API/c/cf/WKStringCF.mm:
+        (WKStringCreateWithCFString): Use CFRetain instead of -[NSObject retain]. Also use
+        a __bridge cast.
+        * Shared/API/c/cf/WKURLCF.mm:
+        (WKURLCreateWithCFURL): Ditto.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::ref): Added a __bridge cast.
+        (API::Object::deref): Ditto.
+        (API::allocateWKObject): Use class_createInstance instead of NSAllocateObject.
+        (API::Object::wrap): Use a __bridge cast.
+        (API::Object::unwrap): Ditto.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.h: Use CFTypeRef for layers
+        or views in the RelatedLayerMap since we don't want the items retained, and can't
+        use __unsafe_uretained because the header is used in non-Objective-C contexts.
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyProperties): Added __bridge casts,
+        needed because of the above change.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (WebKit::browsingContextControllerMap): Use __unsafe_unretained.
+
+        * UIProcess/API/Cocoa/WKConnection.mm:
+        (didReceiveMessage): Use a __bridge cast.
+
+        * UIProcess/API/Cocoa/WKContentRuleListStore.mm:
+        (-[WKContentRuleListStore compileContentRuleListForIdentifier:encodedContentRuleList:completionHandler:]):
+        Use a retain here so we don't have to have a "releasesArgument:" boolean. The cost of a single
+        retain/release pair should be infinitesmal compared to the entire process of compiling.
+        (-[WKContentRuleListStore _compileContentRuleListForIdentifier:encodedContentRuleList:completionHandler:]):
+        Moved the code for the "releases argument" version here since the private method is now the
+        actual method that does the work. The public method now simply calls this private one after
+        doing a retain. The optimization of releasing the argument at the correct moment should be intact.
+
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.mm: Use CFTypeRef for the key to the _observers
+        HashMap since the WTF collections can't yet handle ARC types for keys.
+        (-[WKHTTPCookieStore addObserver:]): Added __bridge cast for compatibility with the above.
+        (-[WKHTTPCookieStore removeObserver:]): Ditto.
+
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (setUpConnectionClient): Added a __bridge cast.
+        (setUpHistoryClient): Ditto.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h: Added a declaration of the
+        -[WKView _shouldLoadIconWithParameters:completionHandler:] method. This peculiar idiom
+        should be removed, but I didn't bother doing that since the entire WKView class is already
+        deprecated and so will eventually be removed.
+
+        * UIProcess/API/Cocoa/WKWebView.mm: Use __unsafe_unretained for the keys in the page to
+        view map.
+        (accessibilityEventsEnabledChangedCallback): Use a __bridge cast.
+        (-[WKWebView _certificateChain]): Ditto.
+        (-[WKWebView certificateChain]): Ditto.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView maybeInstallIconLoadingClient]): Call the method
+        _shouldLoadIconWithParameters:completionHandler: in a normal way rather than using
+        performSelector:withObject:withObject: since ARC is unable to correctly compile a call
+        when it doesn't know argument and result types.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::webCryptoMasterKey): Use the overload
+        of API::Data::createWithoutCopying that knows how to work with an NSData rather than
+        re-implementing it here.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Ditto. Also removed unneeded
+        use of RetainPtr.
+
+        * UIProcess/Cocoa/WebViewImpl.h: Use NSObject * as the result type of
+        immediateActionAnimationControllerForHitTestResult. Our techniques for defining such
+        functions in headers while remaining compatible with non-Objective-C will still work
+        fine given how we use this, and converting to and from void* rather than NSObject *
+        would be difficult to do correctly under ARC.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::acceptsFirstMouse): Use CFRetain/CFAutorelease instead of
+        retain/autorelease.
+        (WebKit::WebViewImpl::shouldDelayWindowOrderingForEvent): Ditto.
+        (WebKit::WebViewImpl::immediateActionAnimationControllerForHitTestResult):
+        Updated return type to NSObject *.
+        (WebKit::WebViewImpl::performKeyEquivalent): Use CFRetain/CFAutorelease.
+
+        * UIProcess/PageClient.h: Use NSObject * as the result type, as above.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree): Use __bridge casts to be compatible
+        with the changes to the RelatedLayerMap types.
+        (WebKit::recursivelyMapIOSurfaceBackingStore): Use __bridge cast.
+
+        * Source/WebKit/UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::immediateActionAnimationControllerForHitTestResult):
+        Use NSObject * as the result type, as above.
+        * Source/WebKit/UIProcess/WebPageProxy.h: Ditto.
+
+        * UIProcess/mac/PageClientImplMac.h: Use NSObject * as the result type, as above.
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::immediateActionAnimationControllerForHitTestResult):
+        Ditto.
+        (WebKit::PageClientImpl::refView): Use __bridge cast.
+        (WebKit::PageClientImpl::derefView): Ditto.
+
+        * UIProcess/mac/ServicesController.mm:
+        (WebKit::ServicesController::refreshExistingServices): Removed unnecessary use
+        of NeverDestroyed for Objective-C object pointers. Simpler and more efficient
+        both with and without ARC.
+
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _updateImmediateActionItem]): Removed unneeded
+        cast now that immediateActionAnimationControllerForHitTestResult has a more
+        accurate return type.
+
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView dealloc]): Use a more direct approach to making sure we do the
+        non-thread-safe actions on the main thread with a call to callOnMainThread.
+        The old solution, WebCoreObjCScheduleDeallocateOnMainThread, may not be possible
+        in an ARC-compatible way, but this one should work fine.
+        (linkDestinationName): Changed to return an NSString * to make sure we get the
+        object lifetimes correct under ARC.
+        (-[WKPrintingView _drawPDFDocument:page:atPoint:]): Added __bridge casts.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.h: Use __unsafe_unretained
+        for the value types in DOM caches.
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm:
+        (WebKit::toWKDOMNode): Updated for the above.
+        (WebKit::toWKDOMRange): Ditto.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformPreInitialize): Rewrote the class_replaceMethod
+        call to sidestep the rules about not using @selector(release) under ARC.
+        (WebKit::NetscapePlugin::updatePluginLayer): Use __bridge casts.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm: Added an include of
+        WebAccessibilityObjectWrapperMac.h, without which this code doesn't compile
+        under ARC.
+
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::changeWordCase): Use a function rather than a selector, since ARC is unable
+        to correctly compile a method call when it doesn't know argument and result types.
+        (WebKit::WebEditorClient::uppercaseWord): Updated to use a function rather than a selector.
+        (WebKit::WebEditorClient::lowercaseWord): Ditto.
+        (WebKit::WebEditorClient::capitalizeWord): Ditto.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm: Added an include of
+        WebAccessibilityObjectWrapperIOS/Mac.h, without which this code doesn't compile
+        under ARC.
+
 2018-08-27  Alex Christensen  <achristensen@webkit.org>
 
         Fix authentication for clients of WKPageLoaderClient after r234941

@@ -63,7 +63,7 @@ void WebEditorClient::setInsertionPasteboard(const String&)
     notImplemented();
 }
 
-static void changeWordCase(WebPage* page, SEL selector)
+static void changeWordCase(WebPage* page, NSString *(*changeCase)(NSString *))
 {
     Frame& frame = page->corePage()->focusController().focusedOrMainFrame();
     if (!frame.editor().canEdit())
@@ -72,22 +72,28 @@ static void changeWordCase(WebPage* page, SEL selector)
     frame.editor().command("selectWord").execute();
 
     NSString *selectedString = frame.displayStringModifiedByEncoding(frame.editor().selectedText());
-    page->replaceSelectionWithText(&frame, [selectedString performSelector:selector]);
+    page->replaceSelectionWithText(&frame, changeCase(selectedString));
 }
 
 void WebEditorClient::uppercaseWord()
 {
-    changeWordCase(m_page, @selector(uppercaseString));
+    changeWordCase(m_page, [] (NSString *string) {
+        return [string uppercaseString];
+    });
 }
 
 void WebEditorClient::lowercaseWord()
 {
-    changeWordCase(m_page, @selector(lowercaseString));
+    changeWordCase(m_page, [] (NSString *string) {
+        return [string lowercaseString];
+    });
 }
 
 void WebEditorClient::capitalizeWord()
 {
-    changeWordCase(m_page, @selector(capitalizedString));
+    changeWordCase(m_page, [] (NSString *string) {
+        return [string capitalizedString];
+    });
 }
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)

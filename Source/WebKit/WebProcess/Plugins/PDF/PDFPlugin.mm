@@ -69,6 +69,7 @@
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
+#import <WebCore/LocalDefaultSystemAppearance.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PDFDocumentImage.h>
@@ -81,14 +82,11 @@
 #import <WebCore/ScrollAnimator.h>
 #import <WebCore/ScrollbarTheme.h>
 #import <WebCore/Settings.h>
+#import <WebCore/WebAccessibilityObjectWrapperMac.h>
 #import <WebCore/WheelEventTestTrigger.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/UUID.h>
-
-#if PLATFORM(MAC)
-#include <WebCore/LocalDefaultSystemAppearance.h>
-#endif
 
 using namespace WebCore;
 

@@ -73,19 +73,22 @@
 #import <stdio.h>
 
 #if PLATFORM(IOS)
+#import "WKAccessibilityWebPageObjectIOS.h"
 #import <UIKit/UIAccessibility.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
+#endif
 
-#if USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK)
 #import <AXRuntime/AXDefines.h>
 #import <AXRuntime/AXNotificationConstants.h>
-#else
+#endif
+
+#if PLATFORM(IOS) && !USE(APPLE_INTERNAL_SDK)
 #define kAXPidStatusChangedNotification 0
 #endif
 
-#endif
-
 #if PLATFORM(MAC)
+#import "WKAccessibilityWebPageObjectMac.h"
 #import <WebCore/GraphicsContext3DManager.h>
 #import <WebCore/ScrollbarThemeMac.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>

@@ -400,11 +400,10 @@ public:
 
 #if PLATFORM(MAC)
     virtual void didPerformImmediateActionHitTest(const WebHitTestResultData&, bool contentPreventsDefault, API::Object*) = 0;
-
-    virtual void* immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult>, uint64_t, RefPtr<API::Object>) = 0;
-
+    virtual NSObject *immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult>, uint64_t, RefPtr<API::Object>) = 0;
     virtual void didHandleAcceptedCandidate() = 0;
 #endif
+
     virtual void didFinishProcessingAllPendingMouseEvents() = 0;
 
     virtual void videoControlsManagerDidChange() { }
