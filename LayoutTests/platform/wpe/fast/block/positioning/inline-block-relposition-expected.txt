@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x47
+  RenderBlock {HTML} at (0,0) size 800x47
+    RenderBody {BODY} at (8,8) size 784x31
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,10) size 100x27
+  RenderButton {BUTTON} at (0,2) size 100x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+    RenderBlock (anonymous) at (8,4) size 84x18
+      RenderText {#text} at (12,0) size 60x17
+        text run at (12,0) width 60: "Click Me"
+layer at (79,32) size 32x18
+  RenderBlock (positioned) {DIV} at (71,22) size 32x18
+    RenderText {#text} at (0,0) size 32x17
+      text run at (0,0) width 32: "Now"

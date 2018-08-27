@@ -346,12 +346,62 @@ webkit.org/b/99036 fast/shadow-dom/pointerlockelement-in-slot.html [ Skip ]
 
 webkit.org/b/153833 fast/shadow-dom/touch-event-ios.html [ Skip ]
 
+Bug(WPE) fast/images/displaced-non-cached-pdf.html [ Skip ]
+Bug(WPE) fast/images/embed-image.html [ Skip ]
+Bug(WPE) fast/images/object-image.html [ Skip ]
+Bug(WPE) fast/images/pdf-as-background.html [ Skip ]
+Bug(WPE) fast/images/pdf-as-image.html [ Skip ]
+Bug(WPE) fast/images/pdf-as-image-landscape.html [ Skip ]
+Bug(WPE) fast/images/pdf-as-image-with-annotations.html [ Skip ]
+Bug(WPE) fast/images/pdf-as-tiled-background.html [ Skip ]
+
 Bug(WPE) fast/replaced/invalid-object-with-fallback.html [ Skip ]
 Bug(WPE) fast/replaced/object-with-embed-url-param.html [ Skip ]
 Bug(WPE) fast/replaced/no-focus-ring-embed.html [ Skip ]
 Bug(WPE) fast/replaced/no-focus-ring-object.html [ Skip ]
 Bug(WPE) fast/replaced/pdf-as-image.html [ Skip ]
 Bug(WPE) fast/replaced/pdf-as-object-and-embed.html [ Skip ]
+
+Bug(WPE) fast/hidpi/pdf-image-scaled.html [ Skip ]
+
+# Loading MP4 as an image is not supported
+webkit.org/b/180370 fast/images/animated-image-mp4.html [ Skip ]
+webkit.org/b/180370 fast/images/animated-image-mp4-crash.html [ Skip ]
+webkit.org/b/180370 http/tests/images/image-supports-video.html [ Skip ]
+
+# Only Mac has implemented DictionaryLookup
+fast/layers/prevent-hit-test-during-layout.html [ Skip ]
+
+# Skip tests requiring UIScriptController::zoomToScale
+webkit.org/b/168050 fast/visual-viewport/resize-event-fired.html [ Skip ]
+webkit.org/b/168050 fast/visual-viewport/rtl-zoomed-rects.html [ Skip ]
+webkit.org/b/168050 fast/visual-viewport/scroll-event-fired.html [ Skip ]
+webkit.org/b/168050 fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html [ Skip ]
+webkit.org/b/168050 fast/visual-viewport/viewport-dimensions-exclude-scrollbars.html [ Skip ]
+webkit.org/b/168050 fast/visual-viewport/viewport-dimensions-iframe.html [ Skip ]
+webkit.org/b/168050 fast/visual-viewport/viewport-dimensions-under-page-zoom.html [ Skip ]
+webkit.org/b/168050 fast/visual-viewport/viewport-dimensions.html [ Skip ]
+webkit.org/b/168050 fast/visual-viewport/zoomed-fixed-header-and-footer.html [ Skip ]
+webkit.org/b/168050 fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html [ Skip ]
+webkit.org/b/168050 fast/visual-viewport/zoomed-fixed.html [ Skip ]
+webkit.org/b/168050 fast/visual-viewport/zoomed-rects.html [ Skip ]
+webkit.org/b/168050 fast/zooming/client-rect-in-fixed-zoomed.html [ Skip ]
+webkit.org/b/168050 fast/zooming/uiscript-zooming.html [ Skip ]
+
+Bug(WPE) fast/fixed-layout [ Skip ]
+
+# ENABLE(DRAGGABLE_REGION) is disabled
+Bug(GTK) fast/css/draggable-region-parser.html [ Failure ]
+
+webkit.org/b/141423 fast/css/font-shorthand-from-longhands.html [ Failure ]
+webkit.org/b/141423 fast/css/font-shorthand-line-height.html [ Failure ]
+webkit.org/b/141423 fast/css/getComputedStyle/computed-style-font.html [ Failure ]
+
+# CSS image-orientation is not yet enabled.
+webkit.org/b/89052 fast/css/image-orientation [ Skip ]
+
+# CSS image-resolution is not yet enabled.
+webkit.org/b/85262 fast/css/image-resolution [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
@@ -374,42 +424,18 @@ Bug(WPE) webaudio/ [ Skip ]
 
 Bug(WPE) fast/attachment [ Skip ]
 Bug(WPE) fast/autoresize [ Skip ]
-Bug(WPE) fast/backgrounds [ Skip ]
-Bug(WPE) fast/block [ Skip ]
-Bug(WPE) fast/body-propagation [ Skip ]
-Bug(WPE) fast/borders [ Skip ]
-Bug(WPE) fast/css [ Skip ]
-Bug(WPE) fast/css3-text [ Skip ]
 Bug(WPE) fast/fast-mobile-scrolling [ Skip ]
 Bug(WPE) fast/files [ Skip ]
-Bug(WPE) fast/filter-image [ Skip ]
-Bug(WPE) fast/fixed-layout [ Skip ]
 Bug(WPE) fast/forms [ Skip ]
-Bug(WPE) fast/frames [ Skip ]
-Bug(WPE) fast/hidpi [ Skip ]
-Bug(WPE) fast/history [ Skip ]
-Bug(WPE) fast/html [ Skip ]
-Bug(WPE) fast/images [ Skip ]
-Bug(WPE) fast/layers [ Skip ]
 Bug(WPE) fast/media [ Skip ]
-Bug(WPE) fast/multicol [ Skip ]
-Bug(WPE) fast/overflow [ Skip ]
-Bug(WPE) fast/picture [ Skip ]
-Bug(WPE) fast/reflections [ Skip ]
 Bug(WPE) fast/repaint [ Skip ]
 Bug(WPE) fast/scrolling [ Skip ]
-Bug(WPE) fast/selectors [ Skip ]
-Bug(WPE) fast/shrink-wrap [ Skip ]
 Bug(WPE) fast/spatial-navigation [ Skip ]
 Bug(WPE) fast/speechsynthesis [ Skip ]
-Bug(WPE) fast/sub-pixel [ Skip ]
-Bug(WPE) fast/table [ Skip ]
 Bug(WPE) fast/text [ Skip ]
 Bug(WPE) fast/text/woff2-totalsfntsize.html [ Pass ]
 Bug(WPE) fast/text/woff2.html [ Pass ]
 Bug(WPE) fast/text-autosizing [ Skip ]
-Bug(WPE) fast/visual-viewport [ Skip ]
-Bug(WPE) fast/zooming [ Skip ]
 
 Bug(WPE) css3/blending [ Skip ]
 Bug(WPE) css3/device-adapt [ Skip ]
@@ -477,6 +503,12 @@ Bug(WPE) fast/dom/DeviceOrientation [ Skip ]
 Bug(WPE) fast/dom/Geolocation [ Skip ]
 
 Bug(WPE) js/navigator-set-geolocation.html [ Skip ]
+Bug(WPE) fast/history/page-cache-geolocation-active-oneshot.html [ Skip ]
+Bug(WPE) fast/history/page-cache-geolocation-active-watcher.html [ Skip ]
+Bug(WPE) fast/history/page-cache-geolocation.html [ Skip ]
+
+Bug(WPE) fast/history/page-cache-notification-non-suspendable.html [ Skip ]
+Bug(WPE) fast/history/page-cache-notification-suspendable.html [ Skip ]
 
 Bug(WPE) fast/dom/HTMLAnchorElement [ Skip ]
 
@@ -705,6 +737,18 @@ imported/w3c/web-platform-tests/WebCryptoAPI [ Pass Slow ]
 imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Timeout ]
 
 webkit.org/b/183902 fast/dom/frame-loading-via-document-write.html [ Timeout ]
+
+webkit.org/b/188962 fast/history/history_reload.html [ Timeout ]
+webkit.org/b/188962 fast/history/window-open.html [ Timeout ]
+
+webkit.org/b/168164 fast/picture/viewport-resize.html [ Timeout ]
+
+webkit.org/b/174459 fast/images/async-image-background-image-repeated.html [ Timeout ]
+webkit.org/b/174459 fast/images/async-image-body-background-image.html [ Timeout ]
+webkit.org/b/174459 fast/images/async-image-multiple-clients-repaint.html [ Timeout ]
+webkit.org/b/174459 fast/images/sprite-sheet-image-draw.html [ Timeout ]
+
+webkit.org/b/142292 fast/images/animated-gif-window-resizing.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 9. TESTS FAILING
@@ -1355,6 +1399,92 @@ webkit.org/b/131347 fast/inline/hidpi-pixel-gap-between-adjacent-selection-inlin
 webkit.org/b/131347 fast/inline/hidpi-select-inline-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/168430 fast/inline/outline-corners-with-offset.html [ ImageOnlyFailure ]
 webkit.org/b/179113 fast/inline/padding-ellipsis-right.html [ ImageOnlyFailure ]
+
+webkit.org/b/188963 fast/frames/flattening/scrolling-in-object.html [ ImageOnlyFailure ]
+
+webkit.org/b/146731 fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/backgrounds/hidpi-bitmap-background-origin-on-subpixel-position.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
+
+webkit.org/b/143469 fast/borders/border-image-fill-no-border.html [ ImageOnlyFailure ]
+webkit.org/b/163971 fast/borders/border-image-space.html [ ImageOnlyFailure ]
+webkit.org/b/141837 fast/borders/border-painting-correctness-dashed.html [ ImageOnlyFailure ]
+webkit.org/b/141837 fast/borders/border-painting-correctness-dotted.html [ ImageOnlyFailure ]
+
+webkit.org/b/131347 fast/borders/hidpi-border-clipping-right-after-move.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/borders/hidpi-border-radius-with-subpixel-margin-not-renderable.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/borders/hidpi-outline-hairline-painting.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/borders/hidpi-rounded-border-on-subpixel-position.html [ ImageOnlyFailure ]
+webkit.org/b/136159 fast/borders/hidpi-border-painting-groove.html [ ImageOnlyFailure ]
+webkit.org/b/136159 fast/borders/hidpi-border-painting-ridge.html [ ImageOnlyFailure ]
+
+webkit.org/b/188964 fast/block/positioning/hittest-on-relative-positioned-children.html [ Failure ]
+
+webkit.org/b/168426 fast/multicol/columns-on-body.html [ ImageOnlyFailure ]
+webkit.org/b/172279 fast/multicol/flexbox-rows.html [ ImageOnlyFailure ]
+webkit.org/b/136109 fast/multicol/mixed-opacity-fixed-test.html [ ImageOnlyFailure ]
+webkit.org/b/169910 fast/multicol/simple-line-layout-line-index-after-strut.html [ ImageOnlyFailure ]
+webkit.org/b/188965 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
+
+webkit.org/b/160249 fast/shrink-wrap/rect-shrink-wrap.html [ ImageOnlyFailure ]
+
+webkit.org/b/168426 fast/html/details-comment-crash.html [ ImageOnlyFailure ]
+
+webkit.org/b/188966 fast/images/image-map-outline-in-positioned-container.html [ ImageOnlyFailure ]
+webkit.org/b/188966 fast/images/image-map-outline-with-paint-root-offset.html [ ImageOnlyFailure ]
+webkit.org/b/188966 fast/images/image-map-outline-with-scale-transform.html [ ImageOnlyFailure ]
+
+webkit.org/b/131347 fast/table/hidpi-collapsed-border-with-odd-pixel-width.html [ ImageOnlyFailure ]
+
+webkit.org/b/176648 fast/selectors/040.html [ ImageOnlyFailure ]
+
+webkit.org/b/188967 fast/selectors/read-only-read-write-input-basics.html [ Failure ]
+
+webkit.org/b/131347 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
+webkit.org/b/131347 fast/layers/hidpi-transform-on-child-content-is-mispositioned.html [ Crash ImageOnlyFailure Pass ]
+
+webkit.org/b/136537 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
+
+webkit.org/b/188968 fast/sub-pixel/file-upload-control-at-fractional-offset.html [ ImageOnlyFailure ]
+webkit.org/b/188969 fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
+
+webkit.org/b/172272 fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Failure ]
+webkit.org/b/172273 fast/visual-viewport/client-rects-relative-to-layout-viewport.html [ Failure ]
+
+webkit.org/b/188970 fast/hidpi/hidpi-3x-device-pixel-ratio.html [ Failure ]
+webkit.org/b/186100 fast/hidpi/filters-turbulence.html [ ImageOnlyFailure ]
+
+webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dashed.html [ ImageOnlyFailure ]
+webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dotted-dashed.html [ ImageOnlyFailure ]
+webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dotted.html [ ImageOnlyFailure ]
+
+webkit.org/b/163981 fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html [ Failure ]
+
+webkit.org/b/139486 fast/css3-text/css3-text-decoration/text-decoration-skip/decoration-skip-crash-fallback-svg.html [ ImageOnlyFailure ]
+webkit.org/b/131501 fast/css3-text/css3-text-decoration/text-decoration-skip/glyph-inside-underline.html [ ImageOnlyFailure ]
+webkit.org/b/124507 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]
+
+webkit.org/b/188971 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ ImageOnlyFailure ]
+webkit.org/b/188971 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-altered.html [ ImageOnlyFailure ]
+webkit.org/b/188971 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-removed.html [ ImageOnlyFailure ]
+
+webkit.org/b/99026 fast/filter-image/filter-image-svg.html [ ImageOnlyFailure ]
+
+webkit.org/b/188972 fast/css/button-height.html [ Failure ]
+webkit.org/b/188973 fast/css/font-systemFontID-parsing.html [ Failure ]
+webkit.org/b/188974 fast/css/unknown-pseudo-element-matching.html [ Failure ]
+webkit.org/b/188975 fast/css/user-drag-none.html [ Failure ]
+
+webkit.org/b/131498 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html [ ImageOnlyFailure ]
+webkit.org/b/168719 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
+webkit.org/b/188976 fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]
+webkit.org/b/188977 fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
+webkit.org/b/188979 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
+webkit.org/b/188980 fast/css/vertical-align-block-elements.html [ ImageOnlyFailure ]
+webkit.org/b/163977 fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnlyFailure ]
+webkit.org/b/163979 fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<

@@ -1,3 +1,27 @@
+2018-08-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Enabling more tests under the fast/ directory.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/backgrounds: Added 28 baselines.
+        * platform/wpe/fast/block: Added 267 baselines.
+        * platform/wpe/fast/body-propagation: Added 65 baselines.
+        * platform/wpe/fast/borders: Added 69 baselines.
+        * platform/wpe/fast/css: Added 193 baselines.
+        * platform/wpe/fast/css3-text: Added 2 baselines.
+        * platform/wpe/fast/frames: Added 27 baselines.
+        * platform/wpe/fast/hidpi: Added 20 baselines.
+        * platform/wpe/fast/html: Added 64 baselines.
+        * platform/wpe/fast/images: Added 14 baselines.
+        * platform/wpe/fast/layers: Added 12 baselines.
+        * platform/wpe/fast/multicol: Added 98 baselines.
+        * platform/wpe/fast/overflow: Added 43 baselines.
+        * platform/wpe/fast/reflections: Added 9 baselines.
+        * platform/wpe/fast/selectors: Added 101 baselines.
+        * platform/wpe/fast/sub-pixel: Added 6 baselines.
+        * platform/wpe/fast/table: Added 162 baselines.
+        * platform/wpe/fast/visual-viewport: Added 1 baseline.
+
 2018-08-26  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Introduce new values for -apple-pay-button-type
