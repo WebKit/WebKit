@@ -223,6 +223,7 @@ static int gcBetweenTests;
 static int allowAnyHTTPSCertificateForAllowedHosts;
 static int showWebView;
 static int printTestCount;
+static int checkForWorldLeaks;
 static BOOL printSeparators;
 static RetainPtr<CFStringRef> persistentUserStyleSheetLocation;
 static std::set<std::string> allowedHosts;
@@ -1120,6 +1121,7 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
         {"allow-any-certificate-for-allowed-hosts", no_argument, &allowAnyHTTPSCertificateForAllowedHosts, YES},
         {"show-webview", no_argument, &showWebView, YES},
         {"print-test-count", no_argument, &printTestCount, YES},
+        {"check-for-world-leaks", no_argument, &checkForWorldLeaks, NO},
         {nullptr, 0, nullptr, 0}
     };
 
@@ -1152,6 +1154,23 @@ static bool useLongRunningServerMode(int argc, const char *argv[])
     return (argc == optind+1 && strcmp(argv[optind], "-") == 0);
 }
 
+static bool handleControlCommand(const char* command)
+{
+    if (!strcmp("#CHECK FOR WORLD LEAKS", command)) {
+        // DumpRenderTree does not support checking for world leaks.
+        WTF::String result("\n");
+        printf("Content-Type: text/plain\n");
+        printf("Content-Length: %u\n", result.length());
+        fwrite(result.utf8().data(), 1, result.length(), stdout);
+        printf("#EOF\n");
+        fprintf(stderr, "#EOF\n");
+        fflush(stdout);
+        fflush(stderr);
+        return true;
+    }
+    return false;
+}
+
 static void runTestingServerLoop()
 {
     // When DumpRenderTree run in server mode, we just wait around for file names
@@ -1164,6 +1183,9 @@ static void runTestingServerLoop()
             *newLineCharacter = '\0';
 
         if (strlen(filenameBuffer) == 0)
+            continue;
+
+        if (handleControlCommand(filenameBuffer))
             continue;
 
         runTest(filenameBuffer);

@@ -48,6 +48,33 @@ class EventSenderProxy;
 struct TestCommand;
 struct TestOptions;
 
+class AsyncTask {
+public:
+    AsyncTask(WTF::Function<void ()>&& task, WTF::Seconds timeout)
+        : m_task(WTFMove(task))
+        , m_timeout(timeout)
+    {
+        ASSERT(!currentTask());
+    }
+
+    // Returns false on timeout.
+    bool run();
+
+    void taskComplete()
+    {
+        m_taskDone = true;
+    }
+
+    static AsyncTask* currentTask();
+
+private:
+    static AsyncTask* m_currentTask;
+
+    WTF::Function<void ()> m_task;
+    WTF::Seconds m_timeout;
+    bool m_taskDone { false };
+};
+
 // FIXME: Rename this TestRunner?
 class TestController {
 public:
@@ -121,8 +148,11 @@ public:
 
     unsigned imageCountInGeneralPasteboard() const;
 
-    bool resetStateToConsistentValues(const TestOptions&);
+    enum class ResetStage { BeforeTest, AfterTest };
+    bool resetStateToConsistentValues(const TestOptions&, ResetStage);
     void resetPreferencesToConsistentValues(const TestOptions&);
+
+    void willDestroyWebView();
 
     void terminateWebContentProcess();
     void reattachPageToWebProcess();
@@ -231,6 +261,11 @@ private:
 
     void runTestingServerLoop();
     bool runTest(const char* pathOrURL);
+    
+    // Returns false if timed out.
+    bool waitForCompletion(const WTF::Function<void ()>&, WTF::Seconds timeout);
+
+    bool handleControlCommand(const char* command);
 
     void platformInitialize();
     void platformDestroy();
@@ -260,6 +295,12 @@ private:
 
     void updateWebViewSizeForTest(const TestInvocation&);
     void updateWindowScaleForTest(PlatformWebView*, const TestInvocation&);
+
+    void updateLiveDocumentsAfterTest();
+    void checkForWorldLeaks();
+
+    void didReceiveLiveDocumentsList(WKArrayRef);
+    void findAndDumpWorldLeaks();
 
     void decidePolicyForGeolocationPermissionRequestIfPossible();
     void decidePolicyForUserMediaPermissionRequestIfPossible();
@@ -431,6 +472,7 @@ private:
     bool m_shouldShowWebView { false };
     
     bool m_shouldShowTouches { false };
+    bool m_checkForWorldLeaks { false };
 
     bool m_allowAnyHTTPSCertificateForAllowedHosts { false };
     
@@ -444,6 +486,18 @@ private:
     std::unique_ptr<EventSenderProxy> m_eventSenderProxy;
 
     WorkQueueManager m_workQueueManager;
+
+    struct AbandonedDocumentInfo {
+        String testURL;
+        String abandonedDocumentURL;
+
+        AbandonedDocumentInfo() = default;
+        AbandonedDocumentInfo(String inTestURL, String inAbandonedDocumentURL)
+            : testURL(inTestURL)
+            , abandonedDocumentURL(inAbandonedDocumentURL)
+        { }
+    };
+    HashMap<uint64_t, AbandonedDocumentInfo> m_abandonedDocumentInfo;
 };
 
 struct TestCommand {

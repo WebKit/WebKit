@@ -140,6 +140,8 @@ public:
     void textFieldDidBeginEditing();
     void textFieldDidEndEditing();
 
+    void reportLiveDocuments(WKBundlePageRef);
+
     void resetUserScriptInjectedCount() { m_userScriptInjectedCount = 0; }
     void increaseUserScriptInjectedCount() { ++m_userScriptInjectedCount; }
     size_t userScriptInjectedCount() const { return m_userScriptInjectedCount; }

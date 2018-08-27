@@ -180,6 +180,21 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
     WKBundlePostMessage(m_bundle, errorMessageName.get(), errorMessageBody.get());
 }
 
+static void postGCTask(void* context)
+{
+    WKBundlePageRef page = reinterpret_cast<WKBundlePageRef>(context);
+    InjectedBundle::singleton().reportLiveDocuments(page);
+    WKRelease(page);
+}
+
+void InjectedBundle::reportLiveDocuments(WKBundlePageRef page)
+{
+    const bool excludeDocumentsInPageGroup = true;
+    auto documentURLs = adoptWK(WKBundleGetLiveDocumentURLs(m_bundle, m_pageGroup, excludeDocumentsInPageGroup));
+    auto ackMessageName = adoptWK(WKStringCreateWithUTF8CString("LiveDocuments"));
+    WKBundlePagePostMessage(page, ackMessageName.get(), documentURLs.get());
+}
+
 void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody)
 {
     if (WKStringIsEqualToUTF8CString(messageName, "BeginTest")) {
@@ -244,7 +259,24 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         TestRunner::removeAllWebNotificationPermissions();
 
         InjectedBundle::page()->resetAfterTest();
+        return;
+    }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "GetLiveDocuments")) {
+        const bool excludeDocumentsInPageGroup = false;
+        auto documentURLs = adoptWK(WKBundleGetLiveDocumentURLs(m_bundle, m_pageGroup, excludeDocumentsInPageGroup));
+        auto ackMessageName = adoptWK(WKStringCreateWithUTF8CString("LiveDocuments"));
+        WKBundlePagePostMessage(page, ackMessageName.get(), documentURLs.get());
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "CheckForWorldLeaks")) {
+        WKBundleClearPageCache(m_bundle);
+        WKBundleClearMemoryCache(m_bundle);
+        WKBundleGarbageCollectJavaScriptObjects(m_bundle);
+
+        WKRetain(page); // Balanced by the release in postGCTask.
+        WKBundlePagePostTask(page, postGCTask, (void*)page);
         return;
     }
 

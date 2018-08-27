@@ -64,6 +64,7 @@
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/RenderLayerCompositor.h>
+#include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/URL.h>
 #include <WebCore/WheelEventTestTrigger.h>
@@ -615,6 +616,25 @@ void WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef pageR
         return;
     
     page->ensureTestTrigger().setTestCallbackAndStartNotificationTimer([=]() {
+        callback(context);
+    });
+}
+
+void WKBundlePagePostTask(WKBundlePageRef pageRef, WKBundlePageTestNotificationCallback callback, void* context)
+{
+    if (!callback)
+        return;
+    
+    WebKit::WebPage* webPage = toImpl(pageRef);
+    WebCore::Page* page = webPage ? webPage->corePage() : nullptr;
+    if (!page)
+        return;
+
+    WebCore::Document* document = page->mainFrame().document();
+    if (!document)
+        return;
+
+    document->postTask([=] (WebCore::ScriptExecutionContext&) {
         callback(context);
     });
 }

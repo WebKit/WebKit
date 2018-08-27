@@ -115,6 +115,22 @@ static WKStringRef copySignedPublicKeyAndChallengeString(WKPageRef, const void*)
     return WKStringCreateWithUTF8CString("MIHFMHEwXDANBgkqhkiG9w0BAQEFAANLADBIAkEAnX0TILJrOMUue%2BPtwBRE6XfV%0AWtKQbsshxk5ZhcUwcwyvcnIq9b82QhJdoACdD34rqfCAIND46fXKQUnb0mvKzQID%0AAQABFhFNb3ppbGxhSXNNeUZyaWVuZDANBgkqhkiG9w0BAQQFAANBAAKv2Eex2n%2FS%0Ar%2F7iJNroWlSzSMtTiQTEB%2BADWHGj9u1xrUrOilq%2Fo2cuQxIfZcNZkYAkWP4DubqW%0Ai0%2F%2FrgBvmco%3D");
 }
 
+AsyncTask* AsyncTask::m_currentTask;
+
+bool AsyncTask::run()
+{
+    m_currentTask = this;
+    m_task();
+    TestController::singleton().runUntil(m_taskDone, m_timeout);
+    m_currentTask = nullptr;
+    return m_taskDone;
+}
+
+AsyncTask* AsyncTask::currentTask()
+{
+    return m_currentTask;
+}
+
 static TestController* controller;
 
 TestController& TestController::singleton()
@@ -384,6 +400,7 @@ void TestController::initialize(int argc, const char* argv[])
     m_allowedHosts = options.allowedHosts;
     m_shouldShowWebView = options.shouldShowWebView;
     m_shouldShowTouches = options.shouldShowTouches;
+    m_checkForWorldLeaks = options.checkForWorldLeaks;
     m_allowAnyHTTPSCertificateForAllowedHosts = options.allowAnyHTTPSCertificateForAllowedHosts;
 
     if (options.printSupportedFeatures) {
@@ -660,6 +677,8 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
         if (m_mainWebView->viewSupportsOptions(options))
             return;
 
+        willDestroyWebView();
+
         WKPageSetPageUIClient(m_mainWebView->page(), nullptr);
         WKPageSetPageNavigationClient(m_mainWebView->page(), nullptr);
         WKPageClose(m_mainWebView->page());
@@ -669,7 +688,7 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
 
     createWebViewWithOptions(options);
 
-    if (!resetStateToConsistentValues(options))
+    if (!resetStateToConsistentValues(options, ResetStage::BeforeTest))
         TestInvocation::dumpWebProcessUnresponsiveness("<unknown> - TestController::run - Failed to reset state to consistent values\n");
 }
 
@@ -783,7 +802,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     platformResetPreferencesToConsistentValues();
 }
 
-bool TestController::resetStateToConsistentValues(const TestOptions& options)
+bool TestController::resetStateToConsistentValues(const TestOptions& options, ResetStage resetStage)
 {
     SetForScope<State> changeState(m_state, Resetting);
     m_beforeUnloadReturnValue = true;
@@ -911,7 +930,68 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options)
     m_doneResetting = false;
     WKPageLoadURL(m_mainWebView->page(), blankURL());
     runUntil(m_doneResetting, m_currentInvocation->shortTimeout());
+    if (!m_doneResetting)
+        return false;
+    
+    if (resetStage == ResetStage::AfterTest && m_checkForWorldLeaks)
+        updateLiveDocumentsAfterTest();
+
     return m_doneResetting;
+}
+
+void TestController::updateLiveDocumentsAfterTest()
+{
+    AsyncTask([]() {
+        // After each test, we update the list of live documents so that we can detect when an abandoned document first showed up.
+        WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("GetLiveDocuments"));
+        WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), nullptr);
+    }, 5_s).run();
+}
+
+void TestController::checkForWorldLeaks()
+{
+    AsyncTask([]() {
+        // This runs at the end of a series of tests. It clears caches, runs a GC and then fetches the list of documents.
+        WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CheckForWorldLeaks"));
+        WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), nullptr);
+    }, 20_s).run();
+}
+
+void TestController::findAndDumpWorldLeaks()
+{
+    checkForWorldLeaks();
+
+    StringBuilder builder;
+    
+    if (m_abandonedDocumentInfo.size()) {
+        for (const auto& it : m_abandonedDocumentInfo) {
+            auto documentURL = it.value.abandonedDocumentURL;
+            if (documentURL.isEmpty())
+                documentURL = "(no url)";
+            builder.append("TEST: ");
+            builder.append(it.value.testURL);
+            builder.append('\n');
+            builder.append("ABANDONED DOCUMENT: ");
+            builder.append(documentURL);
+            builder.append('\n');
+        }
+    } else
+        builder.append("no abandoned documents");
+
+    String result = builder.toString();
+    printf("Content-Type: text/plain\n");
+    printf("Content-Length: %u\n", result.length());
+    fwrite(result.utf8().data(), 1, result.length(), stdout);
+    printf("#EOF\n");
+    fprintf(stderr, "#EOF\n");
+    fflush(stdout);
+    fflush(stderr);
+}
+
+void TestController::willDestroyWebView()
+{
+    // Before we kill the web view, look for abandoned documents before that web process goes away.
+    checkForWorldLeaks();
 }
 
 void TestController::terminateWebContentProcess()
@@ -1238,7 +1318,7 @@ NO_RETURN static void die(const std::string& inputLine)
     exit(1);
 }
 
-TestCommand parseInputLine(const std::string& inputLine)
+static TestCommand parseInputLine(const std::string& inputLine)
 {
     TestCommand result;
     CommandTokenizer tokenizer(inputLine);
@@ -1296,6 +1376,23 @@ bool TestController::runTest(const char* inputLine)
     return true;
 }
 
+bool TestController::waitForCompletion(const WTF::Function<void ()>& function, WTF::Seconds timeout)
+{
+    m_doneResetting = false;
+    function();
+    runUntil(m_doneResetting, timeout);
+    return !m_doneResetting;
+}
+
+bool TestController::handleControlCommand(const char* command)
+{
+    if (!strcmp("#CHECK FOR WORLD LEAKS", command)) {
+        findAndDumpWorldLeaks();
+        return true;
+    }
+    return false;
+}
+
 void TestController::runTestingServerLoop()
 {
     char filenameBuffer[2048];
@@ -1305,6 +1402,9 @@ void TestController::runTestingServerLoop()
             *newLineCharacter = '\0';
 
         if (strlen(filenameBuffer) == 0)
+            continue;
+
+        if (handleControlCommand(filenameBuffer))
             continue;
 
         if (!runTest(filenameBuffer))
@@ -1321,6 +1421,7 @@ void TestController::run()
             if (!runTest(m_paths[i].c_str()))
                 break;
         }
+        findAndDumpWorldLeaks();
     }
 }
 
@@ -1385,8 +1486,51 @@ void TestController::didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef 
     m_eventSenderProxy->keyDown(key, modifiers, location);
 }
 
+void TestController::didReceiveLiveDocumentsList(WKArrayRef liveDocumentList)
+{
+    auto numDocuments = WKArrayGetSize(liveDocumentList);
+
+    HashMap<uint64_t, String> documentInfo;
+    for (size_t i = 0; i < numDocuments; ++i) {
+        WKTypeRef item = WKArrayGetItemAtIndex(liveDocumentList, i);
+        if (item && WKGetTypeID(item) == WKDictionaryGetTypeID()) {
+            WKDictionaryRef liveDocumentItem = static_cast<WKDictionaryRef>(item);
+
+            WKRetainPtr<WKStringRef> idKey(AdoptWK, WKStringCreateWithUTF8CString("id"));
+            WKUInt64Ref documentID = static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(liveDocumentItem, idKey.get()));
+
+            WKRetainPtr<WKStringRef> urlKey(AdoptWK, WKStringCreateWithUTF8CString("url"));
+            WKStringRef documentURL = static_cast<WKStringRef>(WKDictionaryGetItemForKey(liveDocumentItem, urlKey.get()));
+
+            documentInfo.add(WKUInt64GetValue(documentID), toWTFString(documentURL));
+        }
+    }
+
+    if (!documentInfo.size()) {
+        m_abandonedDocumentInfo.clear();
+        return;
+    }
+
+    // Remove any documents which are no longer live.
+    m_abandonedDocumentInfo.removeIf([&](auto& keyAndValue) {
+        return !documentInfo.contains(keyAndValue.key);
+    });
+    
+    // Add newly abandoned documents.
+    String currentTestURL = m_currentInvocation ? toWTFString(adoptWK(WKURLCopyString(m_currentInvocation->url()))) : "no test";
+    for (const auto& it : documentInfo)
+        m_abandonedDocumentInfo.add(it.key, AbandonedDocumentInfo(currentTestURL, it.value));
+}
+
 void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
 {
+    if (WKStringIsEqualToUTF8CString(messageName, "LiveDocuments")) {
+        ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
+        didReceiveLiveDocumentsList(static_cast<WKArrayRef>(messageBody));
+        AsyncTask::currentTask()->taskComplete();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "EventSender")) {
         if (m_state != RunningTest)
             return;

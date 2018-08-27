@@ -1,3 +1,76 @@
+2018-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Teach WebKitTestRunner and DumpRenderTree about detecting world leaks
+        https://bugs.webkit.org/show_bug.cgi?id=188994
+
+        Reviewed by Tim Horton.
+        
+        This patch adds the notion of a "control command" in the protocol between webkitpy and 
+        WebKitTestRunner/DumpRenderTree. A command is simply an input string starting with a #
+        that is checked for before trying to parse the input as test URL. For now, just one
+        commmand is supported, which is "#CHECK FOR WORLD LEAKS".
+        
+        In response to the command, the tool dumps an output block in the usual pseudo-MIME-style,
+        with a trailing "#EOF". Future patches will add support to webkitpy to parse this output.
+        
+        DumpRenderTree stubs out the command, returning an empty block.
+        
+        WebKitTestRunner responds to the command by dumping the list of live documents, if it was
+        run with the --check-for-world-leaks option.
+        
+        When run with --check-for-world-leaks, WebKitTestRunner gets the list of live documents via
+        WKBundleGetLiveDocumentURLs() after every test (this allows it to detect the first test
+        that leaked a document), and keeps them in a map of document identifier to test and live document URL.
+        Then when it receives the "#CHECK FOR WORLD LEAKS" command, it calls into the bundle to
+        clear the page and memory caches, runs a GC, then posts a task (in the Document::postTaks() sense)
+        after which it requests the list of live documents for a final time, excluding any that are loaded
+        in live Frames (thus omitting the about:blank that will be loaded at this point). Documents in this
+        list are therefore leaked (or abandoned).
+        
+        Future patches will hook up webkitpy reporting for leaked documents.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (initializeGlobalsFromCommandLineOptions):
+        (handleControlCommand):
+        (runTestingServerLoop):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (handleControlCommand):
+        (main):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::postGCTask):
+        (WTR::InjectedBundle::reportLiveDocuments):
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/Options.cpp:
+        (WTR::handleOptionCheckForWorldLeaks):
+        (WTR::OptionsHandler::OptionsHandler):
+        * WebKitTestRunner/Options.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::AsyncTask::run):
+        (WTR::AsyncTask::currentTask):
+        (WTR::TestController::initialize):
+        (WTR::TestController::ensureViewSupportsOptionsForTest):
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::updateLiveDocumentsAfterTest):
+        (WTR::TestController::checkForWorldLeaks):
+        (WTR::TestController::findAndDumpWorldLeaks):
+        (WTR::TestController::willDestroyWebView):
+        (WTR::parseInputLine):
+        (WTR::TestController::waitForCompletion):
+        (WTR::TestController::handleControlCommand):
+        (WTR::TestController::runTestingServerLoop):
+        (WTR::TestController::run):
+        (WTR::TestController::didReceiveLiveDocumentsList):
+        (WTR::TestController::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/TestController.h:
+        (WTR::AsyncTask::AsyncTask):
+        (WTR::AsyncTask::taskComplete):
+        (WTR::TestController::AbandonedDocumentInfo::AbandonedDocumentInfo):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+
 2018-08-27  Alex Christensen  <achristensen@webkit.org>
 
         Fix API test after r235398

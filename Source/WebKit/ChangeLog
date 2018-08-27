@@ -1,3 +1,46 @@
+2018-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Teach WebKitTestRunner and DumpRenderTree about detecting world leaks
+        https://bugs.webkit.org/show_bug.cgi?id=188994
+
+        Reviewed by Tim Horton.
+
+        This patch adds the notion of a "control command" in the protocol between webkitpy and 
+        WebKitTestRunner/DumpRenderTree. A command is simply an input string starting with a #
+        that is checked for before trying to parse the input as test URL. For now, just one
+        commmand is supported, which is "#CHECK FOR WORLD LEAKS".
+        
+        In response to the command, the tool dumps an output block in the usual pseudo-MIME-style,
+        with a trailing "#EOF". Future patches will add support to webkitpy to parse this output.
+        
+        DumpRenderTree stubs out the command, returning an empty block.
+        
+        WebKitTestRunner responds to the command by dumping the list of live documents, if it was
+        run with the --check-for-world-leaks option.
+        
+        When run with --check-for-world-leaks, WebKitTestRunner gets the list of live documents via
+        WKBundleGetLiveDocumentURLs() after every test (this allows it to detect the first test
+        that leaked a document), and keeps them in a map of document identifier to test and live document URL.
+        Then when it receives the "#CHECK FOR WORLD LEAKS" command, it calls into the bundle to
+        clear the page and memory caches, runs a GC, then posts a task (in the Document::postTaks() sense)
+        after which it requests the list of live documents for a final time, excluding any that are loaded
+        in live Frames (thus omitting the about:blank that will be loaded at this point). Documents in this
+        list are therefore leaked (or abandoned).
+        
+        Future patches will hook up webkitpy reporting for leaked documents.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleGetLiveDocumentURLs):
+        (WKBundleClearPageCache):
+        (WKBundleClearMemoryCache):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePagePostTask):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::liveDocumentURLs):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2018-08-27  Alex Christensen  <achristensen@webkit.org>
 
         Fix plug-ins after r235398

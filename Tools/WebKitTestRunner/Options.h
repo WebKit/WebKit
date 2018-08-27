@@ -48,6 +48,7 @@ struct Options {
     bool shouldUseRemoteLayerTree { false };
     bool shouldShowWebView { false };
     bool shouldShowTouches { false };
+    bool checkForWorldLeaks { false };
     bool allowAnyHTTPSCertificateForAllowedHosts { false };
     std::vector<std::string> paths;
     std::set<std::string> allowedHosts;

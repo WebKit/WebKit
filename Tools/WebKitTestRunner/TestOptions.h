@@ -60,6 +60,7 @@ struct TestOptions {
     bool enableColorFilter { false };
     bool punchOutWhiteBackgroundsInDarkMode { false };
     bool runSingly { false };
+    bool checkForWorldLeaks { false };
 
     float deviceScaleFactor { 1 };
     Vector<String> overrideLanguages;
@@ -97,7 +98,8 @@ struct TestOptions {
             || enableColorFilter != options.enableColorFilter
             || punchOutWhiteBackgroundsInDarkMode != options.punchOutWhiteBackgroundsInDarkMode
             || jscOptions != options.jscOptions
-            || runSingly != options.runSingly)
+            || runSingly != options.runSingly
+            || checkForWorldLeaks != options.checkForWorldLeaks)
             return false;
 
         return true;

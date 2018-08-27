@@ -68,6 +68,8 @@ WK_EXPORT void WKBundleRemoveAllWebNotificationPermissions(WKBundleRef bundle, W
 WK_EXPORT uint64_t WKBundleGetWebNotificationID(WKBundleRef bundle, JSContextRef context, JSValueRef notification);
 WK_EXPORT WKDataRef WKBundleCreateWKDataFromUInt8Array(WKBundleRef bundle, JSContextRef context, JSValueRef data);
 WK_EXPORT void WKBundleSetAsynchronousSpellCheckingEnabled(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled);
+// Returns array of dictionaries. Dictionary keys are document identifiers, values are document URLs.
+WK_EXPORT WKArrayRef WKBundleGetLiveDocumentURLs(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool excludeDocumentsInPageGroupPages);
 
 // UserContent API
 WK_EXPORT void WKBundleAddUserScript(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld, WKStringRef source, WKURLRef url, WKArrayRef whitelist, WKArrayRef blacklist, _WKUserScriptInjectionTime injectionTime, WKUserContentInjectedFrames injectedFrames);
@@ -95,6 +97,9 @@ WK_EXPORT void WKBundleClearResourceLoadStatistics(WKBundleRef);
 WK_EXPORT void WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef);
 
 WK_EXPORT void WKBundleExtendClassesForParameterCoder(WKBundleRef bundle, WKArrayRef classes);
+
+WK_EXPORT void WKBundleClearPageCache(WKBundleRef bundle);
+WK_EXPORT void WKBundleClearMemoryCache(WKBundleRef bundle);
 
 #ifdef __cplusplus
 }
