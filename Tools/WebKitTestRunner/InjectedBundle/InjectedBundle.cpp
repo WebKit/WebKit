@@ -64,17 +64,6 @@ InjectedBundle& InjectedBundle::singleton()
     return shared;
 }
 
-InjectedBundle::InjectedBundle()
-    : m_bundle(0)
-    , m_topLoadingFrame(0)
-    , m_state(Idle)
-    , m_dumpPixels(false)
-    , m_useWaitToDumpWatchdogTimer(true)
-    , m_useWorkQueue(false)
-    , m_timeout(0)
-{
-}
-
 void InjectedBundle::didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
 {
     static_cast<InjectedBundle*>(const_cast<void*>(clientInfo))->didCreatePage(page);
@@ -205,7 +194,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         m_useWaitToDumpWatchdogTimer = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, useWaitToDumpWatchdogTimerKey.get())));
 
         WKRetainPtr<WKStringRef> timeoutKey(AdoptWK, WKStringCreateWithUTF8CString("Timeout"));
-        m_timeout = (int)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, timeoutKey.get())));
+        m_timeout = Seconds::fromMilliseconds(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, timeoutKey.get()))));
 
         WKRetainPtr<WKStringRef> dumpJSConsoleLogInStdErrKey(AdoptWK, WKStringCreateWithUTF8CString("DumpJSConsoleLogInStdErr"));
         m_dumpJSConsoleLogInStdErr = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, dumpJSConsoleLogInStdErrKey.get())));
@@ -231,7 +220,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
 
         WKRetainPtr<WKStringRef> shouldGCKey(AdoptWK, WKStringCreateWithUTF8CString("ShouldGC"));
         bool shouldGC = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, shouldGCKey.get())));
-
         if (shouldGC)
             WKBundleGarbageCollectJavaScriptObjects(m_bundle);
 
@@ -487,7 +475,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     m_testRunner->setTabKeyCyclesThroughElements(true);
     m_testRunner->clearTestRunnerCallbacks();
 
-    if (m_timeout > 0)
+    if (m_timeout > 0_s)
         m_testRunner->setCustomTimeout(m_timeout);
 
     page()->prepare();

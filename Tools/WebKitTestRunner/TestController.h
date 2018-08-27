@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TestController_h
-#define TestController_h
+#pragma once
 
 #include "GeolocationProviderMock.h"
 #include "WebNotificationProvider.h"
@@ -34,6 +33,7 @@
 #include <string>
 #include <vector>
 #include <wtf/HashMap.h>
+#include <wtf/Seconds.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
@@ -59,8 +59,8 @@ public:
     static const unsigned w3cSVGViewWidth;
     static const unsigned w3cSVGViewHeight;
 
-    static const double defaultShortTimeout;
-    static const double noTimeout;
+    static const WTF::Seconds defaultShortTimeout;
+    static const WTF::Seconds noTimeout;
 
     TestController(int argc, const char* argv[]);
     ~TestController();
@@ -79,7 +79,7 @@ public:
     
     // Runs the run loop until `done` is true or the timeout elapses.
     bool useWaitToDumpWatchdogTimer() { return m_useWaitToDumpWatchdogTimer; }
-    void runUntil(bool& done, double timeoutSeconds);
+    void runUntil(bool& done, WTF::Seconds timeout);
     void notifyDone();
 
     bool shouldShowWebView() const { return m_shouldShowWebView; }
@@ -247,7 +247,7 @@ private:
 #endif
     void platformConfigureViewForTest(const TestInvocation&);
     void platformWillRunTest(const TestInvocation&);
-    void platformRunUntil(bool& done, double timeout);
+    void platformRunUntil(bool& done, WTF::Seconds timeout);
     void platformDidCommitLoadForFrame(WKPageRef, WKFrameRef);
     WKContextRef platformContext();
     WKPreferencesRef platformPreferences();
@@ -291,7 +291,6 @@ private:
     static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef userData, const void*);
     void didFinishNavigation(WKPageRef, WKNavigationRef);
 
-    
     // WKContextDownloadClient
     static void downloadDidStart(WKContextRef, WKDownloadRef, const void*);
     void downloadDidStart(WKContextRef, WKDownloadRef);
@@ -450,12 +449,10 @@ private:
 struct TestCommand {
     std::string pathOrURL;
     std::string absolutePath;
-    bool shouldDumpPixels { false };
     std::string expectedPixelHash;
-    int timeout { 0 };
+    WTF::Seconds timeout;
+    bool shouldDumpPixels { false };
     bool dumpJSConsoleLogInStdErr { false };
 };
 
 } // namespace WTR
-
-#endif // TestController_h

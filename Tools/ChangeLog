@@ -1,3 +1,97 @@
+2018-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert timeout values in WebKitTestRunner to WTF::Seconds
+        https://bugs.webkit.org/show_bug.cgi?id=188987
+
+        Reviewed by Ryosuke Niwa.
+        
+        Replace various 'int' timeout values with WTF::Seconds. The timeout argument
+        comes in as milliseconds, so convert on input. When sending messages to the InjectedBundle
+        using integers, convert to and from milliseconds.
+        
+        Also do some #pragma once, and initializer cleanup.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        (WTR::InjectedBundle::beginTesting):
+        (WTR::InjectedBundle::InjectedBundle): Deleted.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::timeout):
+        (WTR::TestRunner::setCustomTimeout):
+        * WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm:
+        (WTR::TestRunner::invalidateWaitToDumpWatchdogTimer):
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/InjectedBundle/wpe/TestRunnerWPE.cpp:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::parseInputLine):
+        (WTR::TestController::runTest):
+        (WTR::TestController::runUntil):
+        (WTR::TestController::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::shortTimeout const):
+        (WTR::TestInvocation::createTestSettingsDictionary):
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/TestOptions.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformRunUntil):
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::platformRunUntil):
+        * WebKitTestRunner/wpe/TestControllerWPE.cpp:
+        (WTR::TestController::platformRunUntil):
+
+2018-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert timeout values in WebKitTestRunner to WTF::Seconds
+        https://bugs.webkit.org/show_bug.cgi?id=188987
+
+        Reviewed by Ryosuke Niwa.
+        
+        Replace various 'int' timeout values with WTF::Seconds. The timeout argument
+        comes in as milliseconds, so convert on input. When sending messages to the InjectedBundle
+        using integers, convert to and from milliseconds.
+        
+        Also do some #pragma once, and initializer cleanup.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        (WTR::InjectedBundle::beginTesting):
+        (WTR::InjectedBundle::InjectedBundle): Deleted.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::timeout):
+        (WTR::TestRunner::setCustomTimeout):
+        * WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm:
+        (WTR::TestRunner::invalidateWaitToDumpWatchdogTimer):
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/InjectedBundle/wpe/TestRunnerWPE.cpp:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::parseInputLine):
+        (WTR::TestController::runTest):
+        (WTR::TestController::runUntil):
+        (WTR::TestController::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::shortTimeout const):
+        (WTR::TestInvocation::createTestSettingsDictionary):
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/TestOptions.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformRunUntil):
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::platformRunUntil):
+        * WebKitTestRunner/wpe/TestControllerWPE.cpp:
+        (WTR::TestController::platformRunUntil):
+
 2018-08-27  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r234985/r234989) WKPageLoadHTMLString with a 16-bit String has the wrong encoding

@@ -94,9 +94,8 @@ const unsigned TestController::viewHeight = 600;
 const unsigned TestController::w3cSVGViewWidth = 480;
 const unsigned TestController::w3cSVGViewHeight = 360;
 
-const double TestController::defaultShortTimeout = 5.0;
-
-const double TestController::noTimeout = -1;
+const WTF::Seconds TestController::defaultShortTimeout = 5_s;
+const WTF::Seconds TestController::noTimeout = -1_s;
 
 static WKURLRef blankURL()
 {
@@ -129,7 +128,7 @@ TestController::TestController(int argc, const char* argv[])
     initialize(argc, argv);
     controller = this;
     run();
-    controller = 0;
+    controller = nullptr;
 }
 
 TestController::~TestController()
@@ -1252,7 +1251,7 @@ TestCommand parseInputLine(const std::string& inputLine)
         arg = tokenizer.next();
         if (arg == std::string("--timeout")) {
             std::string timeoutToken = tokenizer.next();
-            result.timeout = atoi(timeoutToken.c_str());
+            result.timeout = Seconds::fromMilliseconds(atoi(timeoutToken.c_str()));
         } else if (arg == std::string("-p") || arg == std::string("--pixel-test")) {
             result.shouldDumpPixels = true;
             if (tokenizer.hasNext())
@@ -1283,8 +1282,10 @@ bool TestController::runTest(const char* inputLine)
 
     if (command.shouldDumpPixels || m_shouldDumpPixelsForAllTests)
         m_currentInvocation->setIsPixelTest(command.expectedPixelHash);
-    if (command.timeout > 0)
+
+    if (command.timeout > 0_s)
         m_currentInvocation->setCustomTimeout(command.timeout);
+
     m_currentInvocation->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr || options.dumpJSConsoleLogInStdErr);
 
     platformWillRunTest(*m_currentInvocation);
@@ -1323,7 +1324,7 @@ void TestController::run()
     }
 }
 
-void TestController::runUntil(bool& done, double timeout)
+void TestController::runUntil(bool& done, WTF::Seconds timeout)
 {
     if (m_forceNoTimeout)
         timeout = noTimeout;
@@ -1414,7 +1415,6 @@ void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "KeyDown")) {
             didReceiveKeyDownMessageFromInjectedBundle(messageBodyDictionary, false);
-
             return;
         }
 

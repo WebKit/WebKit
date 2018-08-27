@@ -145,7 +145,7 @@ public:
     size_t userScriptInjectedCount() const { return m_userScriptInjectedCount; }
 
 private:
-    InjectedBundle();
+    InjectedBundle() = default;
     ~InjectedBundle();
 
     static void didCreatePage(WKBundleRef, WKBundlePageRef, const void* clientInfo);
@@ -170,8 +170,8 @@ private:
 
     bool booleanForKey(WKDictionaryRef, const char* key);
 
-    WKBundleRef m_bundle;
-    WKBundlePageGroupRef m_pageGroup;
+    WKBundleRef m_bundle { nullptr };
+    WKBundlePageGroupRef m_pageGroup { nullptr };
     Vector<std::unique_ptr<InjectedBundlePage>> m_pages;
 
 #if HAVE(ACCESSIBILITY)
@@ -182,21 +182,22 @@ private:
     RefPtr<EventSendingController> m_eventSendingController;
     RefPtr<TextInputController> m_textInputController;
 
-    WKBundleFrameRef m_topLoadingFrame;
+    WKBundleFrameRef m_topLoadingFrame { nullptr };
 
     enum State {
         Idle,
         Testing,
         Stopping
     };
-    State m_state;
+    State m_state { Idle };
 
-    bool m_dumpPixels;
-    bool m_useWaitToDumpWatchdogTimer;
-    bool m_useWorkQueue;
-    int m_timeout;
+    bool m_dumpPixels { false };
+    bool m_useWaitToDumpWatchdogTimer { true };
+    bool m_useWorkQueue { false };
     bool m_pixelResultIsPending { false };
     bool m_dumpJSConsoleLogInStdErr { false };
+
+    WTF::Seconds m_timeout;
 
     WKRetainPtr<WKDataRef> m_audioResult;
     WKRetainPtr<WKImageRef> m_pixelResult;

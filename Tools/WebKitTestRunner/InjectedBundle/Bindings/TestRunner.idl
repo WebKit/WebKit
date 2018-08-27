@@ -32,8 +32,8 @@ interface TestRunner {
     void waitForPolicyDelegate();
     void waitUntilDone();
     void notifyDone();
-    double preciseTime();
-    readonly attribute double timeout;
+    double preciseTime(); // seconds since the epoch
+    readonly attribute double timeout; // milliseconds
 
     // Downloads.
     void waitUntilDownloadFinished();

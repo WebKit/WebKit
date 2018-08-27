@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TestOptions_h
-#define TestOptions_h
+#pragma once
 
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -111,5 +110,3 @@ struct TestOptions {
 };
 
 }
-
-#endif // TestOptions_h

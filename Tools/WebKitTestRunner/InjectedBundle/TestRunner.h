@@ -33,6 +33,7 @@
 #include <WebKit/WKRetainPtr.h>
 #include <string>
 #include <wtf/Ref.h>
+#include <wtf/Seconds.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
@@ -71,7 +72,7 @@ public:
     void waitUntilDone();
     void notifyDone();
     double preciseTime();
-    double timeout() { return m_timeout; }
+    double timeout() { return m_timeout.milliseconds(); }
 
     // Other dumping.
     void dumpBackForwardList() { m_shouldDumpBackForwardListsForAllWindows = true; }
@@ -315,7 +316,7 @@ public:
 
     bool callShouldCloseOnWebView();
 
-    void setCustomTimeout(int duration) { m_timeout = duration; }
+    void setCustomTimeout(WTF::Seconds duration) { m_timeout = duration; }
 
     // Work queue.
     void queueBackNavigation(unsigned howFarBackward);
@@ -512,7 +513,7 @@ private:
     bool m_globalFlag;
     bool m_customFullScreenBehavior;
 
-    int m_timeout;
+    WTF::Seconds m_timeout;
 
     double m_databaseDefaultQuota;
     double m_databaseMaxQuota;

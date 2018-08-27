@@ -49,7 +49,7 @@ void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
     if (m_waitToDumpWatchdogTimer.isActive())
         return;
 
-    m_waitToDumpWatchdogTimer.startOneShot(1_ms * m_timeout);
+    m_waitToDumpWatchdogTimer.startOneShot(m_timeout);
 }
 
 JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)

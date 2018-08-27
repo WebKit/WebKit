@@ -196,9 +196,9 @@ WKContextRef TestController::platformAdjustContext(WKContextRef context, WKConte
 #endif
 }
 
-void TestController::platformRunUntil(bool& done, double timeout)
+void TestController::platformRunUntil(bool& done, WTF::Seconds timeout)
 {
-    NSDate *endDate = (timeout > 0) ? [NSDate dateWithTimeIntervalSinceNow:timeout] : [NSDate distantFuture];
+    NSDate *endDate = (timeout > 0_s) ? [NSDate dateWithTimeIntervalSinceNow:timeout.seconds()] : [NSDate distantFuture];
 
     while (!done && [endDate compare:[NSDate date]] == NSOrderedDescending)
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:endDate];

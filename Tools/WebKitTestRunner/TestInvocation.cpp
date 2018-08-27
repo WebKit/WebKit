@@ -101,7 +101,7 @@ void TestInvocation::setIsPixelTest(const std::string& expectedPixelHash)
     m_expectedPixelHash = expectedPixelHash;
 }
 
-double TestInvocation::shortTimeout() const
+WTF::Seconds TestInvocation::shortTimeout() const
 {
     if (!m_timeout) {
         // Running WKTR directly, without webkitpy.
@@ -112,7 +112,7 @@ double TestInvocation::shortTimeout() const
     // but it currently does. There is no way to know what a normal test's timeout is, as webkitpy only passes timeouts
     // for each test individually.
     // But there shouldn't be any observable negative consequences from this.
-    return m_timeout / 1000. / 4;
+    return m_timeout / 4;
 }
 
 bool TestInvocation::shouldLogHistoryClientCallbacks() const
@@ -137,7 +137,7 @@ WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary
     WKDictionarySetItem(beginTestMessageBody.get(), useWaitToDumpWatchdogTimerKey.get(), useWaitToDumpWatchdogTimerValue.get());
 
     WKRetainPtr<WKStringRef> timeoutKey = adoptWK(WKStringCreateWithUTF8CString("Timeout"));
-    WKRetainPtr<WKUInt64Ref> timeoutValue = adoptWK(WKUInt64Create(m_timeout));
+    WKRetainPtr<WKUInt64Ref> timeoutValue = adoptWK(WKUInt64Create(m_timeout.milliseconds()));
     WKDictionarySetItem(beginTestMessageBody.get(), timeoutKey.get(), timeoutValue.get());
 
     WKRetainPtr<WKStringRef> dumpJSConsoleLogInStdErrKey = adoptWK(WKStringCreateWithUTF8CString("DumpJSConsoleLogInStdErr"));

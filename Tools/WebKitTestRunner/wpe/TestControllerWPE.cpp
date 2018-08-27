@@ -58,7 +58,7 @@ void TestController::platformInitializeContext()
 {
 }
 
-void TestController::platformRunUntil(bool& condition, double timeout)
+void TestController::platformRunUntil(bool& condition, WTF::Seconds timeout)
 {
     struct TimeoutTimer {
         TimeoutTimer()
@@ -70,8 +70,8 @@ void TestController::platformRunUntil(bool& condition, double timeout)
     } timeoutTimer;
 
     timeoutTimer.timer.setPriority(G_PRIORITY_DEFAULT_IDLE);
-    if (timeout >= 0)
-        timeoutTimer.timer.startOneShot(Seconds(timeout));
+    if (timeout >= 0_s)
+        timeoutTimer.timer.startOneShot(timeout);
 
     RunLoop::main().run();
 

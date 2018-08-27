@@ -74,13 +74,12 @@ void TestController::platformDestroy()
 {
 }
 
-void TestController::platformRunUntil(bool&, double timeout)
+void TestController::platformRunUntil(bool&, WTF::Seconds timeout)
 {
-    if (timeout > 0) {
+    if (timeout > 0_s) {
         // FIXME: This conversion is now repeated in several places, it should be moved to a common place in WTF and used everywhere.
-        auto timeoutDuration = Seconds { timeout };
         gint64 currentTime = g_get_monotonic_time();
-        gint64 targetTime = currentTime + std::min<gint64>(G_MAXINT64 - currentTime, timeoutDuration.microsecondsAs<int64_t>());
+        gint64 targetTime = currentTime + std::min<gint64>(G_MAXINT64 - currentTime, timeout.microsecondsAs<int64_t>());
         ASSERT(targetTime >= currentTime);
         g_source_set_ready_time(timeoutSource(), targetTime);
     } else
