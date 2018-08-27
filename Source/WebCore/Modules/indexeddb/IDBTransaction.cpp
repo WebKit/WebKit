@@ -800,9 +800,9 @@ Ref<IDBRequest> IDBTransaction::requestOpenCursor(ExecState& state, IDBObjectSto
     ASSERT(&m_database->originThread() == &Thread::current());
 
     if (info.cursorType() == IndexedDB::CursorType::KeyOnly)
-        return doRequestOpenCursor(state, IDBCursor::create(*this, objectStore, info));
+        return doRequestOpenCursor(state, IDBCursor::create(objectStore, info));
 
-    return doRequestOpenCursor(state, IDBCursorWithValue::create(*this, objectStore, info));
+    return doRequestOpenCursor(state, IDBCursorWithValue::create(objectStore, info));
 }
 
 Ref<IDBRequest> IDBTransaction::requestOpenCursor(ExecState& state, IDBIndex& index, const IDBCursorInfo& info)
@@ -811,9 +811,9 @@ Ref<IDBRequest> IDBTransaction::requestOpenCursor(ExecState& state, IDBIndex& in
     ASSERT(&m_database->originThread() == &Thread::current());
 
     if (info.cursorType() == IndexedDB::CursorType::KeyOnly)
-        return doRequestOpenCursor(state, IDBCursor::create(*this, index, info));
+        return doRequestOpenCursor(state, IDBCursor::create(index, info));
 
-    return doRequestOpenCursor(state, IDBCursorWithValue::create(*this, index, info));
+    return doRequestOpenCursor(state, IDBCursorWithValue::create(index, info));
 }
 
 Ref<IDBRequest> IDBTransaction::doRequestOpenCursor(ExecState& state, Ref<IDBCursor>&& cursor)

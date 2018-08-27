@@ -174,13 +174,8 @@ ExceptionOr<DOMException*> IDBRequest::error() const
 void IDBRequest::setSource(IDBCursor& cursor)
 {
     ASSERT(&originThread() == &Thread::current());
-    ASSERT(!m_cursorRequestNotifier);
 
     m_source = Source { &cursor };
-    m_cursorRequestNotifier = std::make_unique<WTF::ScopeExit<WTF::Function<void()>>>([this]() {
-        ASSERT(WTF::holds_alternative<RefPtr<IDBCursor>>(m_source.value()));
-        WTF::get<RefPtr<IDBCursor>>(m_source.value())->decrementOutstandingRequestCount();
-    });
 }
 
 void IDBRequest::setVersionChangeTransaction(IDBTransaction& transaction)
@@ -317,8 +312,6 @@ void IDBRequest::dispatchEvent(Event& event)
         targets = { this, m_transaction.get(), &m_transaction->database() };
 
     m_hasPendingActivity = false;
-
-    m_cursorRequestNotifier = nullptr;
 
     {
         TransactionActivator activator(m_transaction.get());
@@ -474,7 +467,6 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
     ASSERT(m_transaction);
     ASSERT(!m_pendingCursor);
     ASSERT(&cursor == resultCursor());
-    ASSERT(!m_cursorRequestNotifier);
 
     m_pendingCursor = &cursor;
     m_hasPendingActivity = true;
@@ -482,10 +474,6 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
     m_readyState = ReadyState::Pending;
     m_domError = nullptr;
     m_idbError = IDBError { };
-
-    m_cursorRequestNotifier = std::make_unique<WTF::ScopeExit<WTF::Function<void()>>>([this]() {
-        m_pendingCursor->decrementOutstandingRequestCount();
-    });
 }
 
 void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
@@ -501,7 +489,6 @@ void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
             m_result = Result { m_pendingCursor };
     }
 
-    m_cursorRequestNotifier = nullptr;
     m_pendingCursor = nullptr;
 
     completeRequestAndDispatchEvent(resultData);

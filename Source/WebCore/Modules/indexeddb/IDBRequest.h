@@ -173,8 +173,6 @@ private:
 
     RefPtr<IDBCursor> m_pendingCursor;
 
-    std::unique_ptr<WTF::ScopeExit<WTF::Function<void()>>> m_cursorRequestNotifier;
-
     Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
 };
 

@@ -27,7 +27,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "ActiveDOMObject.h"
 #include "ExceptionOr.h"
 #include "IDBCursorDirection.h"
 #include "IDBCursorInfo.h"
@@ -41,10 +40,10 @@ class IDBIndex;
 class IDBObjectStore;
 class IDBTransaction;
 
-class IDBCursor : public ScriptWrappable, public RefCounted<IDBCursor>, public ActiveDOMObject {
+class IDBCursor : public ScriptWrappable, public RefCounted<IDBCursor> {
 public:
-    static Ref<IDBCursor> create(IDBTransaction&, IDBObjectStore&, const IDBCursorInfo&);
-    static Ref<IDBCursor> create(IDBTransaction&, IDBIndex&, const IDBCursorInfo&);
+    static Ref<IDBCursor> create(IDBObjectStore&, const IDBCursorInfo&);
+    static Ref<IDBCursor> create(IDBIndex&, const IDBCursorInfo&);
     
     virtual ~IDBCursor();
 
@@ -74,27 +73,17 @@ public:
 
     virtual bool isKeyCursorWithValue() const { return false; }
 
-    void decrementOutstandingRequestCount();
-
-    bool hasPendingActivity() const final;
-
 protected:
-    IDBCursor(IDBTransaction&, IDBObjectStore&, const IDBCursorInfo&);
-    IDBCursor(IDBTransaction&, IDBIndex&, const IDBCursorInfo&);
+    IDBCursor(IDBObjectStore&, const IDBCursorInfo&);
+    IDBCursor(IDBIndex&, const IDBCursorInfo&);
 
 private:
-    const char* activeDOMObjectName() const final;
-    bool canSuspendForDocumentSuspension() const final;
-
     bool sourcesDeleted() const;
     IDBObjectStore& effectiveObjectStore() const;
     IDBTransaction& transaction() const;
 
     void uncheckedIterateCursor(const IDBKeyData&, unsigned count);
     void uncheckedIterateCursor(const IDBKeyData&, const IDBKeyData&);
-
-    // Cursors are created with an outstanding iteration request.
-    unsigned m_outstandingRequestCount { 1 };
 
     IDBCursorInfo m_info;
     Source m_source;

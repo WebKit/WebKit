@@ -1,3 +1,43 @@
+2018-08-26  Youenn Fablet  <youenn@apple.com>
+
+        IDBCursor does not need to be an ActiveDOMObject
+        https://bugs.webkit.org/show_bug.cgi?id=188937
+
+        Reviewed by Alex Christensen.
+
+        Remove ActiveDOMObject from IDBCursor IDL.
+        Update constructors and call sites accordingly.
+        This allows removing m_outstandingRequestCount and related code in IDBRequest.
+
+        Covered by existing tests.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::create):
+        (WebCore::IDBCursor::IDBCursor):
+        (WebCore::IDBCursor::update):
+        (WebCore::IDBCursor::uncheckedIterateCursor):
+        (WebCore::IDBCursor::deleteFunction):
+        (WebCore::IDBCursor::activeDOMObjectName const): Deleted.
+        (WebCore::IDBCursor::canSuspendForDocumentSuspension const): Deleted.
+        (WebCore::IDBCursor::hasPendingActivity const): Deleted.
+        (WebCore::IDBCursor::decrementOutstandingRequestCount): Deleted.
+        * Modules/indexeddb/IDBCursor.h:
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBCursorWithValue.cpp:
+        (WebCore::IDBCursorWithValue::create):
+        (WebCore::IDBCursorWithValue::IDBCursorWithValue):
+        * Modules/indexeddb/IDBCursorWithValue.h:
+        * Modules/indexeddb/IDBCursorWithValue.idl:
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::setSource):
+        (WebCore::IDBRequest::dispatchEvent):
+        (WebCore::IDBRequest::willIterateCursor):
+        (WebCore::IDBRequest::didOpenOrIterateCursor):
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::requestOpenCursor):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Dropping and pasting images should insert inline image elements with _WKAttachments
