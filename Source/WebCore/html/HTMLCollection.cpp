@@ -108,10 +108,10 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
 }
 
 HTMLCollection::HTMLCollection(ContainerNode& ownerNode, CollectionType type)
-    : m_ownerNode(ownerNode)
-    , m_collectionType(type)
+    : m_collectionType(type)
     , m_invalidationType(invalidationTypeExcludingIdAndNameAttributes(type))
     , m_rootType(rootTypeFromCollectionType(type))
+    , m_ownerNode(ownerNode)
 {
     ASSERT(m_rootType == static_cast<unsigned>(rootTypeFromCollectionType(type)));
     ASSERT(m_invalidationType == static_cast<unsigned>(invalidationTypeExcludingIdAndNameAttributes(type)));
