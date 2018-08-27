@@ -167,6 +167,9 @@ ExceptionOr<void> IDBCursor::advance(unsigned count)
 
 ExceptionOr<void> IDBCursor::continuePrimaryKey(ExecState& state, JSValue keyValue, JSValue primaryKeyValue)
 {
+    if (!m_request)
+        return Exception { InvalidStateError };
+
     if (!transaction().isActive())
         return Exception { TransactionInactiveError, "Failed to execute 'continuePrimaryKey' on 'IDBCursor': The transaction is inactive or finished."_s };
 
@@ -260,6 +263,7 @@ ExceptionOr<void> IDBCursor::continueFunction(const IDBKeyData& key)
 
 void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, unsigned count)
 {
+    ASSERT(m_request);
     ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
 
     m_request->willIterateCursor(*this);
@@ -268,6 +272,7 @@ void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, unsigned count)
 
 void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, const IDBKeyData& primaryKey)
 {
+    ASSERT(m_request);
     ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
 
     m_request->willIterateCursor(*this);
