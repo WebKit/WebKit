@@ -86,7 +86,7 @@ void FloatBox::resetVertically()
     // Take the static position (where the box would go if it wasn't floating) and adjust it with the last float.
     auto top = m_absoluteDisplayBox.rectWithMargin().top();
     if (auto lastFloat = m_floatingState.last())
-        top = std::max(top, lastFloat->displayBox().rectWithMargin().top());
+        top = std::max(top, lastFloat->rectWithMargin().top());
     top += m_absoluteDisplayBox.marginTop();
 
     m_absoluteDisplayBox.setTop(top);

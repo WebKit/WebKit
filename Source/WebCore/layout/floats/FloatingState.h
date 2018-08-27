@@ -28,6 +28,8 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
+#include "LayoutBox.h"
+#include "LayoutContainer.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
@@ -36,8 +38,6 @@ namespace WebCore {
 
 namespace Layout {
 
-class Box;
-class Container;
 class FormattingState;
 class LayoutContext;
 
@@ -62,18 +62,17 @@ public:
     public:
         FloatItem(const Box&, const FloatingState&);
 
-        const Box& layoutBox() const { return *m_layoutBox; }
-        const Container& containingBlock() const { return *m_containingBlock; }
+        bool operator==(const Box& layoutBox) const { return m_layoutBox.get() == &layoutBox; }
 
-        const Display::Box& displayBox() const { return m_absoluteDisplayBox; }
-        const Display::Box& containingBlockDisplayBox() const { return m_containingBlockAbsoluteDisplayBox; }
+        bool isLeftPositioned() const { return m_layoutBox->isLeftFloatingPositioned(); }
+        bool inFormattingContext(const Box&) const;
+
+        Display::Box::Rect rectWithMargin() const { return m_absoluteDisplayBox.rectWithMargin(); }
+        PositionInContextRoot bottom() const { return m_absoluteDisplayBox.bottom(); }
 
     private:
         WeakPtr<Box> m_layoutBox;
-        WeakPtr<Container> m_containingBlock;
-
         Display::Box m_absoluteDisplayBox;
-        Display::Box m_containingBlockAbsoluteDisplayBox;
     };
     using FloatList = Vector<FloatItem>;
     const FloatList& floats() const { return m_floats; }
@@ -94,17 +93,26 @@ private:
 
 inline std::optional<LayoutUnit> FloatingState::leftBottom(const Box& formattingContextRoot) const
 { 
+    ASSERT(formattingContextRoot.establishesFormattingContext());
     return bottom(formattingContextRoot, Clear::Left);
 }
 
 inline std::optional<LayoutUnit> FloatingState::rightBottom(const Box& formattingContextRoot) const
 {
+    ASSERT(formattingContextRoot.establishesFormattingContext());
     return bottom(formattingContextRoot, Clear::Right);
 }
 
 inline std::optional<LayoutUnit> FloatingState::bottom(const Box& formattingContextRoot) const
 {
+    ASSERT(formattingContextRoot.establishesFormattingContext());
     return bottom(formattingContextRoot, Clear::Both);
+}
+
+inline bool FloatingState::FloatItem::inFormattingContext(const Box& formattingContextRoot) const
+{
+    ASSERT(formattingContextRoot.establishesFormattingContext());
+    return &m_layoutBox->formattingContextRoot() == &formattingContextRoot;
 }
 
 }

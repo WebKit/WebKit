@@ -41,9 +41,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingState);
 
 FloatingState::FloatItem::FloatItem(const Box& layoutBox, const FloatingState& floatingState)
     : m_layoutBox(makeWeakPtr(const_cast<Box&>(layoutBox)))
-    , m_containingBlock(makeWeakPtr(const_cast<Container&>(*layoutBox.containingBlock())))
     , m_absoluteDisplayBox(FormattingContext::mapBoxToAncestor(floatingState.layoutContext(), layoutBox, downcast<Container>(floatingState.root())))
-    , m_containingBlockAbsoluteDisplayBox(FormattingContext::mapBoxToAncestor(floatingState.layoutContext(), *m_containingBlock, downcast<Container>(floatingState.root())))
 {
 }
 
@@ -71,7 +69,7 @@ static bool belongsToThisFloatingContext(const Box& layoutBox, const Box& floati
 void FloatingState::remove(const Box& layoutBox)
 {
     for (size_t index = 0; index < m_floats.size(); ++index) {
-        if (&m_floats[index].layoutBox() == &layoutBox) {
+        if (m_floats[index] == layoutBox) {
             m_floats.remove(index);
             return;
         }
@@ -101,14 +99,14 @@ std::optional<LayoutUnit> FloatingState::bottom(const Box& formattingContextRoot
     std::optional<LayoutUnit> bottom;
     for (auto& floatItem : m_floats) {
         // Ignore floats from other formatting contexts when the floating state is inherited.
-        if (&formattingContextRoot != &floatItem.layoutBox().formattingContextRoot())
+        if (!floatItem.inFormattingContext(formattingContextRoot))
             continue;
 
-        if ((type == Clear::Left && !floatItem.layoutBox().isLeftFloatingPositioned())
-            || (type == Clear::Right && !floatItem.layoutBox().isRightFloatingPositioned()))
+        if ((type == Clear::Left && !floatItem.isLeftPositioned())
+            || (type == Clear::Right && floatItem.isLeftPositioned()))
             continue;
 
-        auto floatsBottom = floatItem.displayBox().rectWithMargin().bottom();
+        auto floatsBottom = floatItem.rectWithMargin().bottom();
         if (bottom) {
             bottom = std::max(*bottom, floatsBottom);
             continue;

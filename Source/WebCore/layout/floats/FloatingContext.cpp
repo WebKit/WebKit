@@ -64,8 +64,8 @@ class Iterator;
 class FloatingPair {
 public:
     bool isEmpty() const { return !m_leftIndex && !m_rightIndex; }
-    const Display::Box* left() const;
-    const Display::Box* right() const;
+    const FloatingState::FloatItem* left() const;
+    const FloatingState::FloatItem* right() const;
     bool intersects(const Display::Box::Rect&) const;
     PositionInContextRoot verticalPosition() const { return m_verticalPosition; }
     std::optional<PositionInContextRoot> horiztonalPosition(Float) const;
@@ -254,27 +254,27 @@ FloatingPair::FloatingPair(const FloatingState::FloatList& floats)
 {
 }
 
-const Display::Box* FloatingPair::left() const
+const FloatingState::FloatItem* FloatingPair::left() const
 {
     if (!m_leftIndex)
         return nullptr;
 
-    ASSERT(m_floats[*m_leftIndex].layoutBox().isLeftFloatingPositioned());
-    return &m_floats[*m_leftIndex].displayBox();
+    ASSERT(m_floats[*m_leftIndex].isLeftPositioned());
+    return &m_floats[*m_leftIndex];
 }
 
-const Display::Box* FloatingPair::right() const
+const FloatingState::FloatItem* FloatingPair::right() const
 {
     if (!m_rightIndex)
         return nullptr;
 
-    ASSERT(m_floats[*m_rightIndex].layoutBox().isRightFloatingPositioned());
-    return &m_floats[*m_rightIndex].displayBox();
+    ASSERT(!m_floats[*m_rightIndex].isLeftPositioned());
+    return &m_floats[*m_rightIndex];
 }
 
 bool FloatingPair::intersects(const Display::Box::Rect& candidateRect) const
 {
-    auto intersects = [&](const Display::Box* floating, Float floatingType) {
+    auto intersects = [&](const FloatingState::FloatItem* floating, Float floatingType) {
         if (!floating)
             return false;
 
@@ -348,8 +348,8 @@ inline static std::optional<unsigned> previousFloatingIndex(Float floatingType, 
     RELEASE_ASSERT(currentIndex <= floats.size());
 
     while (currentIndex) {
-        auto& floating = floats[--currentIndex].layoutBox();
-        if ((floatingType == Float::Left && floating.isLeftFloatingPositioned()) || (floatingType == Float::Right && floating.isRightFloatingPositioned()))
+        auto& floating = floats[--currentIndex];
+        if ((floatingType == Float::Left && floating.isLeftPositioned()) || (floatingType == Float::Right && !floating.isLeftPositioned()))
             return currentIndex;
     }
 
@@ -371,7 +371,7 @@ Iterator& Iterator::operator++()
         if (!currentIndex)
             return { };
 
-        auto currentBottom = m_floats[currentIndex].displayBox().rectWithMargin().bottom();
+        auto currentBottom = m_floats[currentIndex].rectWithMargin().bottom();
 
         std::optional<unsigned> index = currentIndex;
         while (true) {
@@ -379,7 +379,7 @@ Iterator& Iterator::operator++()
             if (!index)
                 return { };
 
-            if (m_floats[*index].displayBox().rectWithMargin().bottom() > currentBottom)
+            if (m_floats[*index].rectWithMargin().bottom() > currentBottom)
                 return index;
         }
 
@@ -443,7 +443,7 @@ void Iterator::set(PositionInContextRoot verticalPosition)
             if (!index)
                 return { };
 
-            auto bottom = m_floats[*index].displayBox().rectWithMargin().bottom();
+            auto bottom = m_floats[*index].rectWithMargin().bottom();
             // Is this floating intrusive on this position?
             if (bottom > verticalPosition)
                 return index;
@@ -455,8 +455,8 @@ void Iterator::set(PositionInContextRoot verticalPosition)
     m_current.m_leftIndex = findFloatingBelow(Float::Left);
     m_current.m_rightIndex = findFloatingBelow(Float::Right);
 
-    ASSERT(!m_current.m_leftIndex || (*m_current.m_leftIndex < m_floats.size() && m_floats[*m_current.m_leftIndex].layoutBox().isLeftFloatingPositioned()));
-    ASSERT(!m_current.m_rightIndex || (*m_current.m_rightIndex < m_floats.size() && m_floats[*m_current.m_rightIndex].layoutBox().isRightFloatingPositioned()));
+    ASSERT(!m_current.m_leftIndex || (*m_current.m_leftIndex < m_floats.size() && m_floats[*m_current.m_leftIndex].isLeftPositioned()));
+    ASSERT(!m_current.m_rightIndex || (*m_current.m_rightIndex < m_floats.size() && !m_floats[*m_current.m_rightIndex].isLeftPositioned()));
 }
 
 bool Iterator::operator==(const Iterator& other) const

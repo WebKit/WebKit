@@ -1,3 +1,41 @@
+2018-08-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] Simplify FloatingState::FloatItem class
+        https://bugs.webkit.org/show_bug.cgi?id=188912
+
+        Reviewed by Antti Koivisto.
+
+        Let's remove some redundant code now that FloatingState::FloatItem is not used for incoming floats anymore.
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree const):
+        * layout/floats/FloatBox.cpp:
+        (WebCore::Layout::FloatBox::resetVertically):
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingPair::left const):
+        (WebCore::Layout::FloatingPair::right const):
+        (WebCore::Layout::FloatingPair::intersects const):
+        (WebCore::Layout::previousFloatingIndex):
+        (WebCore::Layout::Iterator::operator++):
+        (WebCore::Layout::Iterator::set):
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::FloatItem::FloatItem):
+        (WebCore::Layout::FloatingState::remove):
+        (WebCore::Layout::FloatingState::bottom const):
+        * layout/floats/FloatingState.h:
+        (WebCore::Layout::FloatingState::FloatItem::operator== const):
+        (WebCore::Layout::FloatingState::FloatItem::isLeftPositioned const):
+        (WebCore::Layout::FloatingState::FloatItem::rectWithMargin const):
+        (WebCore::Layout::FloatingState::FloatItem::bottom const):
+        (WebCore::Layout::FloatingState::leftBottom const):
+        (WebCore::Layout::FloatingState::rightBottom const):
+        (WebCore::Layout::FloatingState::bottom const):
+        (WebCore::Layout::FloatingState::FloatItem::inFormattingContext const):
+        (WebCore::Layout::FloatingState::FloatItem::layoutBox const): Deleted.
+        (WebCore::Layout::FloatingState::FloatItem::containingBlock const): Deleted.
+        (WebCore::Layout::FloatingState::FloatItem::displayBox const): Deleted.
+        (WebCore::Layout::FloatingState::FloatItem::containingBlockDisplayBox const): Deleted.
+
 2018-08-26  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Introduce new values for -apple-pay-button-type
