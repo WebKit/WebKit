@@ -1,3 +1,16 @@
+2018-08-26  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Add a test for rendering Apple Pay buttons
+        https://bugs.webkit.org/show_bug.cgi?id=188947
+
+        Reviewed by Sam Weinig.
+
+        * http/tests/ssl/applepay/ApplePayButton.html: Added.
+        * platform/mac-sierra/http/tests/ssl/applepay/ApplePayButton-expected.png: Added.
+        * platform/mac-sierra/http/tests/ssl/applepay/ApplePayButton-expected.txt: Added.
+        * platform/mac/http/tests/ssl/applepay/ApplePayButton-expected.png: Added.
+        * platform/mac/http/tests/ssl/applepay/ApplePayButton-expected.txt: Added.
+
 2018-08-24  Jer Noble  <jer.noble@apple.com>
 
         Using Touch Bar to scrub video on Youtube results in video playback freeze
