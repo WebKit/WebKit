@@ -329,7 +329,12 @@ class TestResult
         return true;
     }
     
-    isMissing()
+    isMissingAllResults()
+    {
+        return this.info.actual == 'MISSING';
+    }
+    
+    hasMissingResult()
     {
         return this.info.actual.indexOf('MISSING') != -1;
     }
@@ -399,9 +404,19 @@ class TestResult
         return this.isRefTest() && this.info.reftest_type.indexOf('==') != -1;
     }
     
+    isMissingText()
+    {
+        return this.info.is_missing_text;
+    }
+
     isMissingImage()
     {
         return this.info.is_missing_image;
+    }
+
+    isMissingAudio()
+    {
+        return this.info.is_missing_audio;
     }
     
     hasStdErr()
@@ -485,7 +500,7 @@ class TestResults
         if (testResult.isImageFailure())
             this.hasImageFailures = true;
 
-        if (testResult.isMissing()) {
+        if (testResult.isMissingAllResults()) {
             // FIXME: make sure that new-run-webkit-tests spits out an -actual.txt file for tests with MISSING results.
             this.missingResults.push(testResult);
             return;
@@ -1186,7 +1201,7 @@ class FailuresSectionBuilder extends SectionBuilder {
         if (testResult.isAudioFailure())
             this.appendAudioFailureLinks(testResult, resultCell);
             
-        if (testResult.isMissing())
+        if (testResult.hasMissingResult())
             this.appendActualOnlyLinks(testResult, resultCell);
 
         let actualTokens = testResult.info.actual.split(/\s+/);
@@ -1208,7 +1223,7 @@ class FailuresSectionBuilder extends SectionBuilder {
 
         if (this._resultsController.testResults.usesExpectationsFile()) {
             let expectedCell = document.createElement('td');
-            expectedCell.textContent = testResult.isMissing() ? '' : testResult.info.expected;
+            expectedCell.textContent = testResult.hasMissingResult() ? '' : testResult.info.expected;
             row.appendChild(expectedCell);
         }
 
@@ -1235,10 +1250,10 @@ class FailuresSectionBuilder extends SectionBuilder {
     appendActualOnlyLinks(testResult, cell)
     {
         let prefix = Utils.stripExtension(testResult.name);
-        if (testResult.info.is_missing_audio)
+        if (testResult.isMissingAudio())
             cell.innerHTML += TestResultsController.resultLink(prefix, '-actual.wav', 'audio result');
 
-        if (testResult.info.is_missing_text)
+        if (testResult.isMissingText())
             cell.innerHTML += TestResultsController.resultLink(prefix, '-actual.txt', 'result');
     }
 
@@ -1267,7 +1282,7 @@ class FailuresSectionBuilder extends SectionBuilder {
             }
         }
         
-        if (testResult.isMissing() && testResult.isMissingImage())
+        if (testResult.hasMissingResult() && testResult.isMissingImage())
             result += TestResultsController.resultLink(testPrefix, '-actual.png', 'png result');
         
         return result;

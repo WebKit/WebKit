@@ -88,6 +88,16 @@ ADD_RESULTS({
                 }
             }
         },
+        "css1": {
+            "font_properties": {
+                "font_family.html": {
+                    "report": "REGRESSION",
+                    "expected": "PASS",
+                    "actual": "TEXT MISSING",
+                    "is_missing_image": true
+                }
+            }
+        },
         "svg": {
             "batik": {
                 "smallFonts.svg": {

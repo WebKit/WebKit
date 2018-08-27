@@ -1,3 +1,19 @@
+2018-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        [LayoutTests] results.html shows "no expected results" for text diff failures
+        https://bugs.webkit.org/show_bug.cgi?id=188927
+
+        Reviewed by Alexey Proskuryakov.
+        
+        The results.html rewrite confused "is missing all results" with "is missing one type of result",
+        causing tests with a missing image to show as tests with no results.
+        
+        Fix by clarifying the types of "missing".
+
+        * fast/harness/full_results.json:
+        * fast/harness/results-expected.txt:
+        * fast/harness/results.html:
+
 2018-08-27  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Update payment-request web platform tests

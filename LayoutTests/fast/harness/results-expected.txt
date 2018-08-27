@@ -9,9 +9,10 @@ Other crashes (2): flag all
 
 +DumpRenderTree-54888	crash log
 +DumpRenderTree-56804	crash log
-Tests that failed text/pixel/audio diff (2): flag all
+Tests that failed text/pixel/audio diff (3): flag all
 
  test 	results		actual failure	expected failure	history
++css1/font_properties/font_family.html	expected actual diff pretty diff	images	text missing		history
 +http/tests/storageAccess/request-storage-access-top-frame.html	expected actual diff pretty diff		text	pass timeout	history
 +http/wpt/cache-storage/cache-put-keys.https.any.worker.html	expected actual diff pretty diff		text	pass	history
 Tests that had no expected results (probably new) (1): flag all
