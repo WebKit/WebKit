@@ -1,5 +1,24 @@
 2018-08-27  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Make color of spelling dots match UIKit
+        https://bugs.webkit.org/show_bug.cgi?id=188861
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderThemeCocoa.h:
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::RenderThemeCocoa::drawLineForDocumentMarker): Modified to call colorForMarkerLineStyle()
+        for the color to use for the line style.
+        (WebCore::colorForStyle): Deleted.
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::colorForMarkerLineStyle): Added.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::colorForMarkerLineStyle): Added.
+
+2018-08-27  Daniel Bates  <dabates@apple.com>
+
         Spelling dots do not scale with page on iOS; share spelling dot painting code between Mac and iOS
         https://bugs.webkit.org/show_bug.cgi?id=188828
         <rdar://problem/15966403>

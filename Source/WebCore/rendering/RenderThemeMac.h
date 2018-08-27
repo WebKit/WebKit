@@ -181,6 +181,8 @@ private:
 
     Color systemColor(CSSValueID, OptionSet<StyleColor::Options>) const final;
 
+    CGColorRef colorForMarkerLineStyle(DocumentMarkerLineStyle, bool useDarkMode) override;
+
     ColorCache& colorCache(OptionSet<StyleColor::Options>) const final;
 
     void purgeCaches() final;

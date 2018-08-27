@@ -43,6 +43,8 @@ private:
     bool paintApplePayButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 protected:
+    virtual CGColorRef colorForMarkerLineStyle(DocumentMarkerLineStyle, bool useDarkMode) = 0;
+
 #if ENABLE(VIDEO)
     String mediaControlsFormattedStringForDuration(double) override;
 #endif

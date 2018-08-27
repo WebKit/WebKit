@@ -51,29 +51,12 @@ SOFT_LINK_MAY_FAIL(PassKit, PKDrawApplePayButton, void, (CGContextRef context, C
 
 namespace WebCore {
 
-static CGColorRef colorForStyle(DocumentMarkerLineStyle style, bool useDarkMode)
-{
-    switch (style) {
-    // Red
-    case DocumentMarkerLineStyle::Spelling:
-        return cachedCGColor(useDarkMode ? Color { 255, 140, 140, 217 } : Color { 255, 59, 48, 191 });
-    // Blue
-    case DocumentMarkerLineStyle::DictationAlternatives:
-    case DocumentMarkerLineStyle::TextCheckingDictationPhraseWithAlternatives:
-    case DocumentMarkerLineStyle::AutocorrectionReplacement:
-        return cachedCGColor(useDarkMode ? Color { 40, 145, 255, 217 } : Color { 0, 122, 255, 191 });
-    // Green
-    case DocumentMarkerLineStyle::Grammar:
-        return cachedCGColor(useDarkMode ? Color { 50, 215, 75, 217 } : Color { 25, 175, 50, 191 });
-    }
-}
-
 void RenderThemeCocoa::drawLineForDocumentMarker(const RenderText& renderer, GraphicsContext& context, const FloatPoint& origin, float width, DocumentMarkerLineStyle style)
 {
     if (context.paintingDisabled())
         return;
 
-    auto circleColor = colorForStyle(style, renderer.page().useSystemAppearance() && renderer.page().useDarkAppearance());
+    auto circleColor = colorForMarkerLineStyle(style, renderer.page().useSystemAppearance() && renderer.page().useDarkAppearance());
 
     // Center the underline and ensure we only draw entire dots.
     FloatPoint offsetPoint = origin;

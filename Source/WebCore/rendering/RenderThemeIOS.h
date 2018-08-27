@@ -150,6 +150,8 @@ private:
 
     Color systemColor(CSSValueID, OptionSet<StyleColor::Options>) const override;
 
+    CGColorRef colorForMarkerLineStyle(DocumentMarkerLineStyle, bool useDarkMode) override;
+
     String m_legacyMediaControlsScript;
     String m_mediaControlsScript;
     String m_legacyMediaControlsStyleSheet;
