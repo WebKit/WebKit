@@ -1,3 +1,12 @@
+2018-08-27  Rob Buis  <rbuis@igalia.com>
+
+        XMLHTTPRequest.send for Document should have same Content-Type processing rules as String
+        https://bugs.webkit.org/show_bug.cgi?id=188953
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/xhr/setrequestheader-content-type-expected.txt:
+
 2018-08-27  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Implement intersection logic for the explicit root case

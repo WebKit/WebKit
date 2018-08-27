@@ -10,10 +10,10 @@ PASS String request has correct default Content-Type of "text/plain;charset=UTF-
 PASS String request keeps setRequestHeader() Content-Type, with charset adjusted to UTF-8 
 PASS XML Document request respects setRequestHeader("") 
 PASS XML Document request has correct default Content-Type of "application/xml;charset=UTF-8" 
-FAIL XML Document request keeps setRequestHeader() Content-Type, with charset adjusted to UTF-8 assert_equals: expected "content-type: application/xhtml+xml;charset=utf-8" but got "content-type: application/xhtml+xml;charset=ascii"
+PASS XML Document request keeps setRequestHeader() Content-Type, with charset adjusted to UTF-8 
 PASS HTML Document request respects setRequestHeader("") 
 PASS HTML Document request has correct default Content-Type of "text/html;charset=UTF-8" 
-FAIL HTML Document request keeps setRequestHeader() Content-Type, with charset adjusted to UTF-8 assert_equals: expected "content-type: text/html+junk;charset=utf-8" but got "content-type: text/html+junk;charset=ascii"
+PASS HTML Document request keeps setRequestHeader() Content-Type, with charset adjusted to UTF-8 
 PASS Blob request respects setRequestHeader("") to be specified 
 FAIL Blob request with unset type sends no Content-Type without setRequestHeader() call assert_equals: expected "" but got "content-type: "
 PASS Blob request with unset type keeps setRequestHeader() Content-Type and charset 
