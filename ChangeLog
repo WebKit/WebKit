@@ -1,3 +1,14 @@
+2018-08-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Remove stale comment from WebKitFeatures.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=188918
+
+        Reviewed by Fujii Hironori.
+
+        This comment at the top of WebKitFeatures.cmake is no longer accurate because feature defaults are no longer defined in FeatureList.pm (thank goodness!)
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2018-08-23  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Have checks are not getting set inside CMake properly

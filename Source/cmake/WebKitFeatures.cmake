@@ -3,10 +3,6 @@
 # Options*.cmake, but should do so only if there is strong reason to
 # deviate from the defaults of the WebKit project (e.g. if the feature
 # requires platform-specific implementation that does not exist).
-#
-# Most defaults in this file affect end users but not developers.
-# Defaults for development builds are set in FeatureList.pm. Most all
-# features enabled here should also be enabled in FeatureList.pm.
 
 set(_WEBKIT_AVAILABLE_OPTIONS "")
 
