@@ -1,10 +1,7 @@
 // META: script=/common/get-host-info.sub.js
-// META: script=/resources/testharness.js
 
-if (!self.document) {
-    importScripts("/resources/testharness.js");
+if (!self.document)
     importScripts("/common/get-host-info.sub.js");
-}
 
 const host = get_host_info();
 const path = "/fetch/cross-origin-resource-policy/";

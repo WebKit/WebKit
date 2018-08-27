@@ -1,10 +1,7 @@
 import argparse
 import os
 import platform
-import shutil
-import subprocess
 import sys
-import tarfile
 from distutils.spawn import find_executable
 
 wpt_root = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir))
@@ -49,8 +46,6 @@ def create_parser():
                         help="Browser to run tests in")
     parser.add_argument("--yes", "-y", dest="prompt", action="store_false", default=True,
                         help="Don't prompt before installing components")
-    parser.add_argument("--stability", action="store_true",
-                        help="Stability check tests")
     parser.add_argument("--install-browser", action="store_true",
                         help="Install the latest development version of the browser")
     parser._add_container_actions(wptcommandline.create_parser())
@@ -96,16 +91,24 @@ otherwise install OpenSSL and ensure that it's on your $PATH.""")
 
 def check_environ(product):
     if product not in ("firefox", "servo"):
-        config = serve.load_config(os.path.join(wpt_root, "config.default.json"),
-                                   os.path.join(wpt_root, "config.json"))
-        config = serve.normalise_config(config, {})
-        expected_hosts = (set(config["domains"].itervalues()) ^
-                          set(config["not_domains"].itervalues()))
+        config_builder = serve.build_config(os.path.join(wpt_root, "config.json"))
+        # Ovveride the ports to avoid looking for free ports
+        config_builder.ssl = {"type": "none"}
+        config_builder.ports = {"http": [8000]}
+
+        is_windows = platform.uname()[0] == "Windows"
+
+        with config_builder as config:
+            expected_hosts = set(config.domains_set)
+            if is_windows:
+                expected_hosts.update(config.not_domains_set)
+
         missing_hosts = set(expected_hosts)
-        if platform.uname()[0] != "Windows":
-            hosts_path = "/etc/hosts"
-        else:
+        if is_windows:
             hosts_path = "C:\Windows\System32\drivers\etc\hosts"
+        else:
+            hosts_path = "/etc/hosts"
+
         with open(hosts_path, "r") as f:
             for line in f:
                 line = line.split("#", 1)[0].strip()
@@ -114,12 +117,12 @@ def check_environ(product):
                 for host in hosts:
                     missing_hosts.discard(host)
             if missing_hosts:
-                if platform.uname()[0] != "Windows":
+                if is_windows:
                     message = """Missing hosts file configuration. Run
 
-python wpt make-hosts-file >> %s
+python wpt make-hosts-file | Out-File %SystemRoot%\System32\drivers\etc\hosts -Encoding ascii -Append
 
-from a shell with Administrator privileges.""" % hosts_path
+in PowerShell with Administrator privileges.""" % hosts_path
                 else:
                     message = """Missing hosts file configuration. Run
 
@@ -202,9 +205,16 @@ Consider installing certutil via your OS package manager or directly.""")
                 kwargs["test_types"].remove("wdspec")
 
         if kwargs["prefs_root"] is None:
-            print("Downloading gecko prefs")
-            prefs_root = self.browser.install_prefs(self.venv.path)
+            prefs_root = self.browser.install_prefs(kwargs["binary"], self.venv.path)
             kwargs["prefs_root"] = prefs_root
+
+
+class Fennec(BrowserSetup):
+    name = "fennec"
+    browser_cls = browser.Fennec
+
+    def setup_kwargs(self, kwargs):
+        pass
 
 
 class Chrome(BrowserSetup):
@@ -377,6 +387,7 @@ class WebKit(BrowserSetup):
 
 
 product_setup = {
+    "fennec": Fennec,
     "firefox": Firefox,
     "chrome": Chrome,
     "chrome_android": ChromeAndroid,
@@ -425,13 +436,13 @@ def setup_wptrunner(venv, prompt=True, install=False, **kwargs):
 
     venv.install_requirements(os.path.join(wptrunner_path, "requirements.txt"))
 
+    kwargs['browser_version'] = setup_cls.browser.version(kwargs.get("binary"))
     return kwargs
 
 
 def run(venv, **kwargs):
     #Remove arguments that aren't passed to wptrunner
     prompt = kwargs.pop("prompt", True)
-    stability = kwargs.pop("stability", True)
     install_browser = kwargs.pop("install_browser", False)
 
     kwargs = setup_wptrunner(venv,
@@ -439,20 +450,7 @@ def run(venv, **kwargs):
                              install=install_browser,
                              **kwargs)
 
-    if stability:
-        import stability
-        iterations, results, inconsistent = stability.run(venv, logger, **kwargs)
-
-        def log(x):
-            print(x)
-
-        if inconsistent:
-            stability.write_inconsistent(log, inconsistent, iterations)
-        else:
-            log("All tests stable")
-        rv = len(inconsistent) > 0
-    else:
-        rv = run_single(venv, **kwargs) > 0
+    rv = run_single(venv, **kwargs) > 0
 
     return rv
 
@@ -479,7 +477,7 @@ def main():
 
 if __name__ == "__main__":
     import pdb
-    from tools import localpaths
+    from tools import localpaths  # noqa: flake8
     try:
         main()
     except Exception:

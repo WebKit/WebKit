@@ -1,3 +1,17 @@
+2018-08-27  Youenn Fablet  <youenn@apple.com>
+
+        Update WPT tools to 87329a1
+        https://bugs.webkit.org/show_bug.cgi?id=188766
+
+        Reviewed by Ryosuke Niwa.
+
+        * resources/config.json:
+        * web-platform-tests/fetch/cross-origin-resource-policy/fetch.any.js:
+        Fixing test that was including testharness.js twice once explictly and once with WPT test template.
+        * web-platform-tests/infrastructure: Refreshed.
+        * web-platform-tests/infrastructure/testdriver/bless.html: Added.
+        * web-platform-tests/tools: Refreshed
+
 2018-08-27  Rob Buis  <rbuis@igalia.com>
 
         XMLHTTPRequest.send for Document should have same Content-Type processing rules as String

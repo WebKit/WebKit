@@ -10,7 +10,7 @@ from .base import TestUsingServer
 class TestFileHandler(TestUsingServer):
     def test_not_handled(self):
         with self.assertRaises(HTTPError) as cm:
-            resp = self.request("/not_existing")
+            self.request("/not_existing")
 
         self.assertEqual(cm.exception.code, 404)
 
@@ -25,7 +25,7 @@ class TestRewriter(TestUsingServer):
         self.server.router.register(*route)
         resp = self.request("/test/original")
         self.assertEqual(200, resp.getcode())
-        self.assertEqual("/test/rewritten", resp.read())
+        self.assertEqual(b"/test/rewritten", resp.read())
 
 class TestRequestHandler(TestUsingServer):
     def test_exception(self):
@@ -36,7 +36,7 @@ class TestRequestHandler(TestUsingServer):
         route = ("GET", "/test/raises", handler)
         self.server.router.register(*route)
         with self.assertRaises(HTTPError) as cm:
-            resp = self.request("/test/raises")
+            self.request("/test/raises")
 
         self.assertEqual(cm.exception.code, 500)
 

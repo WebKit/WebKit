@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,12 +14,24 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/261.change.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/284.change.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/285.change.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/286.change.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/287.change.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/291.change.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/292.change.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/295.change.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/296.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/178.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/290.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/300.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/311.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/321.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/322.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/323.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/326.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/331.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/332.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/334.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/336.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/339.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/343.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/349.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/356.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/363.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/369.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/370.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/95.change.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/towncrier_template.rst

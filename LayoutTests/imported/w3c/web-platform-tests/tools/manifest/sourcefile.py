@@ -12,7 +12,7 @@ except ImportError:
 import html5lib
 
 from . import XMLParser
-from .item import Stub, ManualTest, WebdriverSpecTest, RefTestNode, RefTest, TestharnessTest, SupportFile, ConformanceCheckerTest, VisualTest
+from .item import Stub, ManualTest, WebdriverSpecTest, RefTestNode, TestharnessTest, SupportFile, ConformanceCheckerTest, VisualTest
 from .utils import rel_path_to_url, ContextManagerBytesIO, cached_property
 
 wd_pattern = "*.py"
@@ -49,10 +49,101 @@ def read_script_metadata(f, regexp):
         yield (m.groups()[0], m.groups()[1])
 
 
+_any_variants = {
+    b"default": {"longhand": {b"window", b"dedicatedworker"}},
+    b"window": {"suffix": ".any.html"},
+    b"serviceworker": {"force_https": True},
+    b"sharedworker": {},
+    b"dedicatedworker": {"suffix": ".any.worker.html"},
+    b"worker": {"longhand": {b"dedicatedworker", b"sharedworker", b"serviceworker"}},
+    b"jsshell": {"suffix": ".any.js"},
+}
+
+
+def get_any_variants(item):
+    """
+    Returns a set of variants (bytestrings) defined by the given keyword.
+    """
+    assert isinstance(item, binary_type), item
+    assert not item.startswith(b"!"), item
+
+    variant = _any_variants.get(item, None)
+    if variant is None:
+        return set()
+
+    return variant.get("longhand", {item})
+
+
+def get_default_any_variants():
+    """
+    Returns a set of variants (bytestrings) that will be used by default.
+    """
+    return set(_any_variants[b"default"]["longhand"])
+
+
+def parse_variants(value):
+    """
+    Returns a set of variants (bytestrings) defined by a comma-separated value.
+    """
+    assert isinstance(value, binary_type), value
+
+    globals = get_default_any_variants()
+
+    for item in value.split(b","):
+        item = item.strip()
+        if item.startswith(b"!"):
+            globals -= get_any_variants(item[1:])
+        else:
+            globals |= get_any_variants(item)
+
+    return globals
+
+
+def global_suffixes(value):
+    """
+    Yields tuples of the relevant filename suffix (a string) and whether the
+    variant is intended to run in a JS shell, for the variants defined by the
+    given comma-separated value.
+    """
+    assert isinstance(value, binary_type), value
+
+    rv = set()
+
+    global_types = parse_variants(value)
+    for global_type in global_types:
+        variant = _any_variants[global_type]
+        suffix = variant.get("suffix", ".any.%s.html" % global_type.decode("utf-8"))
+        rv.add((suffix, global_type == b"jsshell"))
+
+    return rv
+
+
+def global_variant_url(url, suffix):
+    """
+    Returns a url created from the given url and suffix (all strings).
+    """
+    url = url.replace(".any.", ".")
+    # If the url must be loaded over https, ensure that it will have
+    # the form .https.any.js
+    if ".https." in url and suffix.startswith(".https."):
+        url = url.replace(".https.", ".")
+    return replace_end(url, ".js", suffix)
+
+
+def _parse_xml(f):
+    try:
+        # raises ValueError with an unsupported encoding,
+        # ParseError when there's an undefined entity
+        return ElementTree.parse(f)
+    except (ValueError, ElementTree.ParseError):
+        f.seek(0)
+        return ElementTree.parse(f, XMLParser.XMLParser())
+
+
 class SourceFile(object):
-    parsers = {"html":lambda x:html5lib.parse(x, treebuilder="etree"),
-               "xhtml":lambda x:ElementTree.parse(x, XMLParser.XMLParser()),
-               "svg":lambda x:ElementTree.parse(x, XMLParser.XMLParser())}
+    parsers = {"html":lambda x:html5lib.parse(x, treebuilder="etree", useChardet=False),
+               "xhtml":_parse_xml,
+               "svg":_parse_xml}
 
     root_dir_non_test = set(["common"])
 
@@ -64,7 +155,7 @@ class SourceFile(object):
                          ("css", "CSS2", "archive"),
                          ("css", "common")}
 
-    def __init__(self, tests_root, rel_path, url_base, contents=None):
+    def __init__(self, tests_root, rel_path, url_base, hash=None, contents=None):
         """Object representing a file in a source tree.
 
         :param tests_root: Path to the root of the source tree
@@ -95,6 +186,7 @@ class SourceFile(object):
         self.meta_flags = self.name.split(".")[1:]
 
         self.items_cache = None
+        self._hash = hash
 
     def __getstate__(self):
         # Remove computed properties if we pickle this class
@@ -144,8 +236,12 @@ class SourceFile(object):
 
     @cached_property
     def hash(self):
-        with self.open() as f:
-            return hashlib.sha1(f.read()).hexdigest()
+        if not self._hash:
+            with self.open() as f:
+                content = f.read()
+            data = "".join(("blob ", str(len(content)), "\0", content))
+            self._hash = hashlib.sha1(data).hexdigest()
+        return self._hash
 
     def in_non_test_dir(self):
         if self.dir_path == "":
@@ -169,6 +265,7 @@ class SourceFile(object):
         be a non-test file"""
         return (self.is_dir() or
                 self.name_prefix("MANIFEST") or
+                self.filename == "META.yml" or
                 self.filename.startswith(".") or
                 self.type_flag == "support" or
                 self.in_non_test_dir())
@@ -225,8 +322,9 @@ class SourceFile(object):
         # wdspec tests are in subdirectories of /webdriver excluding __init__.py
         # files.
         rel_dir_tree = self.rel_path.split(os.path.sep)
-        return (rel_dir_tree[0] == "webdriver" and
-                len(rel_dir_tree) > 1 and
+        return (((rel_dir_tree[0] == "webdriver" and len(rel_dir_tree) > 1) or
+                 (rel_dir_tree[:2] == ["infrastructure", "webdriver"] and
+                  len(rel_dir_tree) > 2)) and
                 self.filename not in ("__init__.py", "conftest.py") and
                 fnmatch(self.filename, wd_pattern))
 
@@ -369,11 +467,18 @@ class SourceFile(object):
     @cached_property
     def test_variants(self):
         rv = []
-        for element in self.variant_nodes:
-            if "content" in element.attrib:
-                variant = element.attrib["content"]
-                assert variant == "" or variant[0] in ["#", "?"]
-                rv.append(variant)
+        if self.ext == ".js":
+            for (key, value) in self.script_metadata:
+                if key == b"variant":
+                    rv.append(value.decode("utf-8"))
+        else:
+            for element in self.variant_nodes:
+                if "content" in element.attrib:
+                    variant = element.attrib["content"]
+                    rv.append(variant)
+
+        for variant in rv:
+            assert variant == "" or variant[0] in ["#", "?"], variant
 
         if not rv:
             rv = [""]
@@ -471,7 +576,7 @@ class SourceFile(object):
     @cached_property
     def content_is_css_visual(self):
         """Boolean indicating whether the file content represents a
-        CSS WG-style manual test"""
+        CSS WG-style visual test"""
         if self.root is None:
             return None
         return bool(self.ext in {'.xht', '.html', '.xhtml', '.htm', '.xml', '.svg'} and
@@ -509,22 +614,35 @@ class SourceFile(object):
             rv = VisualTest.item_type, [VisualTest(self, self.url)]
 
         elif self.name_is_multi_global:
-            rv = TestharnessTest.item_type, [
-                TestharnessTest(self, replace_end(self.url, ".any.js", ".any.html"),
-                                timeout=self.timeout),
-                TestharnessTest(self, replace_end(self.url, ".any.js", ".any.worker.html"),
-                                timeout=self.timeout),
+            globals = b""
+            for (key, value) in self.script_metadata:
+                if key == b"global":
+                    globals = value
+                    break
+
+            tests = [
+                TestharnessTest(self, global_variant_url(self.url, suffix) + variant, timeout=self.timeout,
+                                jsshell=jsshell)
+                for (suffix, jsshell) in sorted(global_suffixes(globals))
+                for variant in self.test_variants
             ]
+            rv = TestharnessTest.item_type, tests
 
         elif self.name_is_worker:
-            rv = (TestharnessTest.item_type,
-                  [TestharnessTest(self, replace_end(self.url, ".worker.js", ".worker.html"),
-                                   timeout=self.timeout)])
+            test_url = replace_end(self.url, ".worker.js", ".worker.html")
+            tests = [
+                TestharnessTest(self, test_url + variant, timeout=self.timeout)
+                for variant in self.test_variants
+            ]
+            rv = TestharnessTest.item_type, tests
 
         elif self.name_is_window:
-            rv = (TestharnessTest.item_type,
-                  [TestharnessTest(self, replace_end(self.url, ".window.js", ".window.html"),
-                                   timeout=self.timeout)])
+            test_url = replace_end(self.url, ".window.js", ".window.html")
+            tests = [
+                TestharnessTest(self, test_url + variant, timeout=self.timeout)
+                for variant in self.test_variants
+            ]
+            rv = TestharnessTest.item_type, tests
 
         elif self.name_is_webdriver:
             rv = WebdriverSpecTest.item_type, [WebdriverSpecTest(self, self.url,

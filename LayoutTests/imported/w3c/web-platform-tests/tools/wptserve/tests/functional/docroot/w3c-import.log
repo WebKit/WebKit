@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -19,11 +19,21 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/no_main.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub.sub.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_file_hash.sub.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_file_hash_subject.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_file_hash_unrecognized.sub.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_headers.sub.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_headers.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_location.sub.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_params.sub.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_params.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_url_base.sub.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_uuid.sub.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/sub_var.sub.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/test.asis
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/test_h2_data.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/test_h2_headers.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/test_h2_headers_data.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/test_string.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/test_tuple_2.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/tests/functional/docroot/test_tuple_3.py

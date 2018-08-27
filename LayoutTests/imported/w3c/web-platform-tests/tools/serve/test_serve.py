@@ -1,12 +1,77 @@
-from . import serve
+import pickle
+import platform
+import os
 
-def test_make_hosts_file():
-    hosts = serve.make_hosts_file({
-        "domains": {"www": "www.foo.bar.test", "www1": "www1.foo.bar.test"},
-        "not_domains": {"aaa": "aaa.foo.bar.test", "bbb": "bbb.foo.bar.test"}
-    }, "127.1.1.1")
-    lines = hosts.split("\n")
-    assert "127.1.1.1\twww.foo.bar.test" in lines
-    assert "127.1.1.1\twww1.foo.bar.test" in lines
-    assert "0.0.0.0\taaa.foo.bar.test" in lines
-    assert "0.0.0.0\tbbb.foo.bar.test" in lines
+import pytest
+
+import localpaths
+from . import serve
+from .serve import ConfigBuilder
+
+
+@pytest.mark.skipif(platform.uname()[0] == "Windows",
+                    reason="Expected contents are platform-dependent")
+def test_make_hosts_file_nix():
+    with ConfigBuilder(ports={"http": [8000]},
+                       browser_host="foo.bar",
+                       alternate_hosts={"alt": "foo2.bar"},
+                       subdomains={"a", "b"},
+                       not_subdomains={"x, y"}) as c:
+        hosts = serve.make_hosts_file(c, "192.168.42.42")
+        lines = hosts.split("\n")
+        assert set(lines) == {"",
+                              "192.168.42.42\tfoo.bar",
+                              "192.168.42.42\tfoo2.bar",
+                              "192.168.42.42\ta.foo.bar",
+                              "192.168.42.42\ta.foo2.bar",
+                              "192.168.42.42\tb.foo.bar",
+                              "192.168.42.42\tb.foo2.bar"}
+        assert lines[-1] == ""
+
+@pytest.mark.skipif(platform.uname()[0] != "Windows",
+                    reason="Expected contents are platform-dependent")
+def test_make_hosts_file_windows():
+    with ConfigBuilder(ports={"http": [8000]},
+                       browser_host="foo.bar",
+                       alternate_hosts={"alt": "foo2.bar"},
+                       subdomains={"a", "b"},
+                       not_subdomains={"x", "y"}) as c:
+        hosts = serve.make_hosts_file(c, "192.168.42.42")
+        lines = hosts.split("\n")
+        assert set(lines) == {"",
+                              "0.0.0.0\tx.foo.bar",
+                              "0.0.0.0\tx.foo2.bar",
+                              "0.0.0.0\ty.foo.bar",
+                              "0.0.0.0\ty.foo2.bar",
+                              "192.168.42.42\tfoo.bar",
+                              "192.168.42.42\tfoo2.bar",
+                              "192.168.42.42\ta.foo.bar",
+                              "192.168.42.42\ta.foo2.bar",
+                              "192.168.42.42\tb.foo.bar",
+                              "192.168.42.42\tb.foo2.bar"}
+        assert lines[-1] == ""
+
+
+def test_ws_doc_root_default():
+    with ConfigBuilder() as c:
+        assert c.ws_doc_root == os.path.join(localpaths.repo_root, "websockets", "handlers")
+
+
+def test_init_ws_doc_root():
+    with ConfigBuilder(ws_doc_root="/") as c:
+        assert c.doc_root == localpaths.repo_root  # check this hasn't changed
+        assert c.ws_doc_root == "/"
+
+
+def test_set_ws_doc_root():
+    cb = ConfigBuilder()
+    cb.ws_doc_root = "/"
+    with cb as c:
+        assert c.doc_root == localpaths.repo_root  # check this hasn't changed
+        assert c.ws_doc_root == "/"
+
+
+def test_pickle():
+    # Ensure that the config object can be pickled
+    with ConfigBuilder() as c:
+        pickle.dumps(c)

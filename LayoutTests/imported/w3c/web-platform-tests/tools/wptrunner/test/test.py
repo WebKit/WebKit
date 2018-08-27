@@ -1,15 +1,10 @@
 import ConfigParser
 import argparse
-import json
 import os
 import sys
-import tempfile
-import threading
-import time
-from StringIO import StringIO
 
-from mozlog import structuredlog, reader
-from mozlog.handlers import BaseHandler, StreamHandler, StatusHandler
+from mozlog import structuredlog
+from mozlog.handlers import BaseHandler, StreamHandler
 from mozlog.formatters import MachFormatter
 from wptrunner import wptcommandline, wptrunner
 
@@ -73,7 +68,7 @@ def read_config():
     # This only allows one product per whatever for now
     for product in parser.sections():
         if product != "general":
-            dest = rv["products"][product] = {}
+            rv["products"][product] = {}
             for key, value in parser.items(product):
                 rv["products"][product][key] = value
 

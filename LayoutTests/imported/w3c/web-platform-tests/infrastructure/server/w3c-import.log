@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/server/context.any.js
 /LayoutTests/imported/w3c/web-platform-tests/infrastructure/server/order-of-metas.any.js
 /LayoutTests/imported/w3c/web-platform-tests/infrastructure/server/order-of-metas.window.js
 /LayoutTests/imported/w3c/web-platform-tests/infrastructure/server/secure-context.https.any.js

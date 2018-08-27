@@ -1,6 +1,7 @@
-CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: test
-CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: test
-CONSOLE MESSAGE: line 2: ReferenceError: Can't find variable: test
 
-FAIL order of scripts assert_array_equals: value is undefined, expected array
+PASS add_completion_callback exists 
+PASS GLOBAL exists 
+PASS <title> exists 
+PASS <meta name=timeout> exists 
+PASS order of scripts 
 

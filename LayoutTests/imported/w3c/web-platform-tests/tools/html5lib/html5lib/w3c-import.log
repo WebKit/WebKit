@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,11 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/__init__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/constants.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/html5parser.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/ihatexml.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/inputstream.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/sanitizer.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/tokenizer.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/utils.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/__init__.pyc
+/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/constants.pyc
+/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/html5parser.pyc
+/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/ihatexml.pyc
+/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/inputstream.pyc
+/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/tokenizer.pyc
+/LayoutTests/imported/w3c/web-platform-tests/tools/html5lib/html5lib/utils.pyc

@@ -1,4 +1,5 @@
 import os
+import subprocess
 from collections import defaultdict
 
 from wptmanifest.parser import atoms
@@ -8,13 +9,14 @@ enabled_tests = set(["testharness", "reftest", "wdspec"])
 
 
 class Result(object):
-    def __init__(self, status, message, expected=None, extra=None):
+    def __init__(self, status, message, expected=None, extra=None, stack=None):
         if status not in self.statuses:
             raise ValueError("Unrecognised status %s" % status)
         self.status = status
         self.message = message
         self.expected = expected
-        self.extra = extra
+        self.extra = extra if extra is not None else {}
+        self.stack = stack
 
     def __repr__(self):
         return "<%s.%s %s>" % (self.__module__, self.__class__.__name__, self.status)
@@ -36,7 +38,7 @@ class SubtestResult(object):
 
 class TestharnessResult(Result):
     default_expected = "OK"
-    statuses = set(["OK", "ERROR", "TIMEOUT", "EXTERNAL-TIMEOUT", "CRASH"])
+    statuses = set(["OK", "ERROR", "INTERNAL-ERROR", "TIMEOUT", "EXTERNAL-TIMEOUT", "CRASH"])
 
 
 class TestharnessSubtestResult(SubtestResult):
@@ -46,12 +48,13 @@ class TestharnessSubtestResult(SubtestResult):
 
 class ReftestResult(Result):
     default_expected = "PASS"
-    statuses = set(["PASS", "FAIL", "ERROR", "TIMEOUT", "EXTERNAL-TIMEOUT", "CRASH"])
+    statuses = set(["PASS", "FAIL", "ERROR", "INTERNAL-ERROR", "TIMEOUT", "EXTERNAL-TIMEOUT",
+                    "CRASH"])
 
 
 class WdspecResult(Result):
     default_expected = "OK"
-    statuses = set(["OK", "ERROR", "TIMEOUT", "EXTERNAL-TIMEOUT", "CRASH"])
+    statuses = set(["OK", "ERROR", "INTERNAL-ERROR", "TIMEOUT", "EXTERNAL-TIMEOUT", "CRASH"])
 
 
 class WdspecSubtestResult(SubtestResult):
@@ -64,23 +67,28 @@ def get_run_info(metadata_root, product, **kwargs):
 
 
 class RunInfo(dict):
-    def __init__(self, metadata_root, product, debug, extras=None):
+    def __init__(self, metadata_root, product, debug, browser_version=None, extras=None):
         import mozinfo
-
         self._update_mozinfo(metadata_root)
         self.update(mozinfo.info)
+
+        from update.tree import GitTree
+        try:
+            # GitTree.__init__ throws if we are not in a git tree.
+            rev = GitTree(log_error=False).rev
+        except (OSError, subprocess.CalledProcessError):
+            rev = None
+        if rev:
+            self["revision"] = rev
+
         self["product"] = product
         if debug is not None:
             self["debug"] = debug
         elif "debug" not in self:
             # Default to release
             self["debug"] = False
-        if product == "firefox" and "stylo" not in self:
-            self["stylo"] = False
-        if "STYLO_FORCE_ENABLED" in os.environ:
-            self["stylo"] = True
-        if "STYLO_FORCE_DISABLED" in os.environ:
-            self["stylo"] = False
+        if browser_version:
+            self["browser_version"] = browser_version
         if extras is not None:
             self.update(extras)
 
@@ -158,15 +166,14 @@ class Test(object):
             return self._test_metadata
 
     def itermeta(self, subtest=None):
-        for metadata in self._inherit_metadata:
-            yield metadata
-
         if self._test_metadata is not None:
-            yield self._get_metadata()
             if subtest is not None:
                 subtest_meta = self._get_metadata(subtest)
                 if subtest_meta is not None:
                     yield subtest_meta
+            yield self._get_metadata()
+        for metadata in reversed(self._inherit_metadata):
+            yield metadata
 
     def disabled(self, subtest=None):
         for meta in self.itermeta(subtest):
@@ -192,15 +199,40 @@ class Test(object):
         return False
 
     @property
+    def min_assertion_count(self):
+        for meta in self.itermeta(None):
+            count = meta.min_assertion_count
+            if count is not None:
+                return count
+        return 0
+
+    @property
+    def max_assertion_count(self):
+        for meta in self.itermeta(None):
+            count = meta.max_assertion_count
+            if count is not None:
+                return count
+        return 0
+
+    @property
+    def lsan_allowed(self):
+        lsan_allowed = set()
+        for meta in self.itermeta():
+            lsan_allowed |= meta.lsan_allowed
+            if atom_reset in lsan_allowed:
+                lsan_allowed.remove(atom_reset)
+                break
+        return lsan_allowed
+
+    @property
     def tags(self):
         tags = set()
         for meta in self.itermeta():
             meta_tags = meta.tags
+            tags |= meta_tags
             if atom_reset in meta_tags:
-                tags = meta_tags.copy()
                 tags.remove(atom_reset)
-            else:
-                tags |= meta_tags
+                break
 
         tags.add("dir:%s" % self.id.lstrip("/").split("/")[0])
 
@@ -211,11 +243,10 @@ class Test(object):
         prefs = {}
         for meta in self.itermeta():
             meta_prefs = meta.prefs
-            if atom_reset in prefs:
-                prefs = meta_prefs.copy()
+            prefs.update(meta_prefs)
+            if atom_reset in meta_prefs:
                 del prefs[atom_reset]
-            else:
-                prefs.update(meta_prefs)
+                break
         return prefs
 
     def expected(self, subtest=None):
@@ -243,17 +274,23 @@ class TestharnessTest(Test):
     test_type = "testharness"
 
     def __init__(self, tests_root, url, inherit_metadata, test_metadata,
-                 timeout=None, path=None, protocol="http", testdriver=False):
+                 timeout=None, path=None, protocol="http", testdriver=False,
+                 jsshell=False, scripts=None):
         Test.__init__(self, tests_root, url, inherit_metadata, test_metadata, timeout,
                       path, protocol)
 
         self.testdriver = testdriver
+        self.jsshell = jsshell
+        self.scripts = scripts or []
 
     @classmethod
     def from_manifest(cls, manifest_item, inherit_metadata, test_metadata):
         timeout = cls.long_timeout if manifest_item.timeout == "long" else cls.default_timeout
         protocol = "https" if hasattr(manifest_item, "https") and manifest_item.https else "http"
         testdriver = manifest_item.testdriver if hasattr(manifest_item, "testdriver") else False
+        jsshell = manifest_item.jsshell if hasattr(manifest_item, "jsshell") else False
+        script_metadata = manifest_item.source_file.script_metadata or []
+        scripts = [v for (k, v) in script_metadata if k == b"script"]
         return cls(manifest_item.source_file.tests_root,
                    manifest_item.url,
                    inherit_metadata,
@@ -261,7 +298,9 @@ class TestharnessTest(Test):
                    timeout=timeout,
                    path=manifest_item.source_file.path,
                    protocol=protocol,
-                   testdriver=testdriver)
+                   testdriver=testdriver,
+                   jsshell=jsshell,
+                   scripts=scripts)
 
     @property
     def id(self):
@@ -382,7 +421,7 @@ class WdspecTest(Test):
     test_type = "wdspec"
 
     default_timeout = 25
-    long_timeout = 120
+    long_timeout = 180  # 3 minutes
 
 
 manifest_test_cls = {"reftest": ReftestTest,

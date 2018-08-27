@@ -1,9 +1,10 @@
 import os
 import re
 import subprocess
+import tempfile
 
 from .. import vcs
-from ..vcs import bind_to_repo, git, hg
+from ..vcs import git, hg
 
 
 def get_unique_name(existing, initial):
@@ -38,6 +39,9 @@ class NoVCSTree(object):
         return True
 
     def add_new(self, prefix=None):
+        pass
+
+    def add_ignored(self, sync_tree, prefix):
         pass
 
     def create_patch(self, patch_name, message):
@@ -90,6 +94,9 @@ class HgTree(object):
             args = ()
         self.hg("add", *args)
 
+    def add_ignored(self, sync_tree, prefix):
+        pass
+
     def create_patch(self, patch_name, message):
         try:
             self.hg("qinit", log_error=False)
@@ -131,11 +138,11 @@ class HgTree(object):
 class GitTree(object):
     name = "git"
 
-    def __init__(self, root=None):
+    def __init__(self, root=None, log_error=True):
         if root is None:
-            root = git("rev-parse", "--show-toplevel").strip()
+            root = git("rev-parse", "--show-toplevel", log_error=log_error).strip()
         self.root = root
-        self.git = vcs.bind_to_repo(git, self.root)
+        self.git = vcs.bind_to_repo(git, self.root, log_error=log_error)
         self.message = None
         self.commit_cls = Commit
 
@@ -178,10 +185,26 @@ class GitTree(object):
                        add all files under that path.
         """
         if prefix is None:
-            args = ("-a",)
+            args = ["-a"]
         else:
-            args = ("--no-ignore-removal", prefix)
+            args = ["--no-ignore-removal", prefix]
         self.git("add", *args)
+
+    def add_ignored(self, sync_tree, prefix):
+        """Add files to the staging area that are explicitly ignored by git.
+
+        :param prefix: None to include all files or a path prefix to
+                       add all files under that path.
+        """
+        with tempfile.TemporaryFile() as f:
+            sync_tree.git("ls-tree", "-z", "-r", "--name-only", "HEAD", stdout=f)
+            f.seek(0)
+            ignored_files = sync_tree.git("check-ignore", "--no-index", "--stdin", "-z", stdin=f)
+        args = []
+        for entry in ignored_files.split('\0'):
+            args.append(os.path.join(prefix, entry))
+        if args:
+            self.git("add", "--force", *args)
 
     def list_refs(self, ref_filter=None):
         """Get a list of sha1, name tuples for references in a repository.

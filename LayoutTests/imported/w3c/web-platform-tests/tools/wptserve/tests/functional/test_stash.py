@@ -31,13 +31,13 @@ class TestResponseSetCookie(TestUsingServer):
         self.server.router.register(*route)
 
         resp = self.request(route[1], method="POST", body={"id": id, "data": "Sample data"})
-        self.assertEqual(resp.read(), "OK")
+        self.assertEqual(resp.read(), b"OK")
 
         resp = self.request(route[1], query="id=" + id)
-        self.assertEqual(resp.read(), "Sample data")
+        self.assertEqual(resp.read(), b"Sample data")
 
         resp = self.request(route[1], query="id=" + id)
-        self.assertEqual(resp.read(), "NOT FOUND")
+        self.assertEqual(resp.read(), b"NOT FOUND")
 
 
 if __name__ == '__main__':

@@ -1,6 +1,5 @@
-import os
-from six.moves.urllib.parse import urljoin
-from abc import ABCMeta, abstractmethod, abstractproperty
+from six.moves.urllib.parse import urljoin, urlparse
+from abc import ABCMeta, abstractproperty
 
 
 def get_source_file(source_files, tests_root, manifest, path):
@@ -18,8 +17,23 @@ def get_source_file(source_files, tests_root, manifest, path):
     return source_files[path]
 
 
+item_types = {}
+
+
+class ManifestItemMeta(ABCMeta):
+    """Custom metaclass that registers all the subclasses in the
+    item_types dictionary according to the value of their item_type
+    attribute, and otherwise behaves like an ABCMeta."""
+
+    def __new__(cls, name, bases, attrs, **kwargs):
+        rv = ABCMeta.__new__(cls, name, bases, attrs, **kwargs)
+        item_types[rv.item_type] = rv
+
+        return rv
+
+
 class ManifestItem(object):
-    __metaclass__ = ABCMeta
+    __metaclass__ = ManifestItemMeta
 
     item_type = None
 
@@ -33,13 +47,18 @@ class ManifestItem(object):
         pass
 
     @property
+    def meta_flags(self):
+        return set(self.source_file.meta_flags)
+
+    @property
     def path(self):
         """The test path relative to the test_root"""
         return self.source_file.rel_path
 
     @property
     def https(self):
-        return "https" in self.source_file.meta_flags
+        flags = self.meta_flags
+        return ("https" in flags or "serviceworker" in flags)
 
     def key(self):
         """A unique identifier for the test"""
@@ -82,6 +101,10 @@ class URLManifestItem(ManifestItem):
         return self.url
 
     @property
+    def meta_flags(self):
+        return set(urlparse(self.url).path.rsplit("/", 1)[1].split(".")[1:-1])
+
+    @property
     def url(self):
         return urljoin(self.url_base, self._url)
 
@@ -102,10 +125,11 @@ class URLManifestItem(ManifestItem):
 class TestharnessTest(URLManifestItem):
     item_type = "testharness"
 
-    def __init__(self, source_file, url, url_base="/", timeout=None, testdriver=False, manifest=None):
+    def __init__(self, source_file, url, url_base="/", timeout=None, testdriver=False, jsshell=False, manifest=None):
         URLManifestItem.__init__(self, source_file, url, url_base=url_base, manifest=manifest)
         self.timeout = timeout
         self.testdriver = testdriver
+        self.jsshell = jsshell
 
     def meta_key(self):
         return (self.timeout, self.testdriver)
@@ -116,6 +140,8 @@ class TestharnessTest(URLManifestItem):
             rv[-1]["timeout"] = self.timeout
         if self.testdriver:
             rv[-1]["testdriver"] = self.testdriver
+        if self.jsshell:
+            rv[-1]["jsshell"] = True
         return rv
 
     @classmethod
@@ -128,6 +154,7 @@ class TestharnessTest(URLManifestItem):
                    url_base=manifest.url_base,
                    timeout=extras.get("timeout"),
                    testdriver=bool(extras.get("testdriver")),
+                   jsshell=bool(extras.get("jsshell")),
                    manifest=manifest)
 
 

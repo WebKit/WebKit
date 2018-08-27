@@ -259,6 +259,20 @@ class ClickProtocolPart(ProtocolPart):
         :param element: A protocol-specific handle to an element."""
         pass
 
+class SendKeysProtocolPart(ProtocolPart):
+    """Protocol part for performing trusted clicks"""
+    __metaclass__ = ABCMeta
+
+    name = "send_keys"
+
+    @abstractmethod
+    def send_keys(self, element, keys):
+        """Send keys to a specific element.
+
+        :param element: A protocol-specific handle to an element.
+        :param keys: A protocol-specific handle to a string of input keys."""
+        pass
+
 
 class TestDriverProtocolPart(ProtocolPart):
     """Protocol part that implements the basic functionality required for
@@ -275,4 +289,34 @@ class TestDriverProtocolPart(ProtocolPart):
         :param str status: Either "failure" or "success" depending on whether the
                            previous command succeeded.
         :param str message: Additional data to add to the message."""
+        pass
+
+
+class AssertsProtocolPart(ProtocolPart):
+    """ProtocolPart that implements the functionality required to get a count of non-fatal
+    assertions triggered"""
+    __metaclass__ = ABCMeta
+
+    name = "asserts"
+
+    @abstractmethod
+    def get(self):
+        """Get a count of assertions since the last browser start"""
+        pass
+
+
+class CoverageProtocolPart(ProtocolPart):
+    """Protocol part for collecting per-test coverage data."""
+    __metaclass__ = ABCMeta
+
+    name = "coverage"
+
+    @abstractmethod
+    def reset(self):
+        """Reset coverage counters"""
+        pass
+
+    @abstractmethod
+    def dump(self):
+        """Dump coverage counters"""
         pass

@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -74,4 +74,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/announce/release-3.2.4.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/announce/release-3.2.5.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/announce/release-3.3.0.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/announce/release-3.3.1.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/announce/release-3.3.2.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/announce/release-3.4.0.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/announce/release-3.4.1.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/announce/release-3.4.2.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/announce/release-3.5.0.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/announce/release-3.5.1.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/announce/release-3.6.0.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/announce/release-3.6.1.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/announce/release-3.6.2.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/announce/sprint2016.rst

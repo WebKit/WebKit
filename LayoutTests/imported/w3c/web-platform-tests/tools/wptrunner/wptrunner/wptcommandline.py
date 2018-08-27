@@ -1,10 +1,9 @@
 import argparse
-import ast
 import os
 import sys
 from collections import OrderedDict
 from distutils.spawn import find_executable
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import config
 import wpttest
@@ -66,6 +65,10 @@ scheme host and port.""")
 
     parser.add_argument("--no-capture-stdio", action="store_true", default=False,
                         help="Don't capture stdio and write to logging")
+    parser.add_argument("--no-fail-on-unexpected", action="store_false",
+                        default=True,
+                        dest="fail_on_unexpected",
+                        help="Exit with status code 0 when test expectations are violated")
 
     mode_group = parser.add_argument_group("Mode")
     mode_group.add_argument("--list-test-groups", action="store_true",
@@ -77,9 +80,13 @@ scheme host and port.""")
     mode_group.add_argument("--list-tests", action="store_true",
                             default=False,
                             help="List all tests that will run")
-    mode_group.add_argument("--verify", action="store_true",
-                            default=False,
-                            help="Run a stability check on the selected tests")
+    stability_group = mode_group.add_mutually_exclusive_group()
+    stability_group.add_argument("--verify", action="store_true",
+                                 default=False,
+                                 help="Run a stability check on the selected tests")
+    stability_group.add_argument("--stability", action="store_true",
+                                 default=False,
+                                 help=argparse.SUPPRESS)
     mode_group.add_argument("--verify-log-full", action="store_true",
                             default=False,
                             help="Output per-iteration test results when running verify")
@@ -162,7 +169,7 @@ scheme host and port.""")
 
     config_group = parser.add_argument_group("Configuration")
     config_group.add_argument("--binary", action="store",
-                              type=abs_path, help="Binary to run tests against")
+                              type=abs_path, help="Desktop binary to run tests against")
     config_group.add_argument('--binary-arg',
                               default=[], action="append", dest="binary_args",
                               help="Extra argument for the binary")
@@ -171,7 +178,10 @@ scheme host and port.""")
     config_group.add_argument('--webdriver-arg',
                               default=[], action="append", dest="webdriver_args",
                               help="Extra argument for the WebDriver binary")
-
+    config_group.add_argument("--package-name", action="store",
+                              help="Android package name to run tests against")
+    config_group.add_argument("--device-serial", action="store",
+                              help="Running Android instance to connect to, if not emulator-5554")
     config_group.add_argument("--metadata", action="store", type=abs_path, dest="metadata_root",
                               help="Path to root directory containing test metadata"),
     config_group.add_argument("--tests", action="store", type=abs_path, dest="tests_root",
@@ -334,13 +344,15 @@ def set_from_config(kwargs):
             kwargs["test_paths"]["/"] = {}
         kwargs["test_paths"]["/"]["metadata_path"] = kwargs["metadata_root"]
 
-    if kwargs["manifest_path"]:
+    if kwargs.get("manifest_path"):
         if "/" not in kwargs["test_paths"]:
             kwargs["test_paths"]["/"] = {}
         kwargs["test_paths"]["/"]["manifest_path"] = kwargs["manifest_path"]
 
     kwargs["suite_name"] = kwargs["config"].get("web-platform-tests", {}).get("name", "web-platform-tests")
 
+
+    check_paths(kwargs)
 
 def get_test_paths(config):
     # Set up test_paths
@@ -399,8 +411,6 @@ def check_paths(kwargs):
 
 def check_args(kwargs):
     set_from_config(kwargs)
-
-    check_paths(kwargs)
 
     if kwargs["product"] is None:
         kwargs["product"] = "firefox"
@@ -492,8 +502,6 @@ def check_args(kwargs):
 
 def check_args_update(kwargs):
     set_from_config(kwargs)
-
-    check_paths(kwargs)
 
     if kwargs["product"] is None:
         kwargs["product"] = "firefox"

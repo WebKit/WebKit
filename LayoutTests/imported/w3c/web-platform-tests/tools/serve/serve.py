@@ -5,27 +5,31 @@ from __future__ import print_function
 import abc
 import argparse
 import json
+import logging
 import os
-import re
+import platform
 import socket
 import sys
 import threading
 import time
 import traceback
-import urllib2
+from six.moves import urllib
 import uuid
 from collections import defaultdict, OrderedDict
 from multiprocessing import Process, Event
 
 from localpaths import repo_root
+from six.moves import reload_module
 
-import sslutils
-from manifest.sourcefile import read_script_metadata, js_meta_re
+from manifest.sourcefile import read_script_metadata, js_meta_re, parse_variants
 from wptserve import server as wptserve, handlers
 from wptserve import stash
+from wptserve import config
 from wptserve.logger import set_logger
 from wptserve.handlers import filesystem_path, wrap_pipeline
+from wptserve.utils import get_port, HTTPException, http2_compatible
 from mod_pywebsocket import standalone as pywebsocket
+
 
 def replace_end(s, old, new):
     """
@@ -54,9 +58,15 @@ class WrapperHandler(object):
         for header_name, header_value in self.headers:
             response.headers.set(header_name, header_value)
 
+        self.check_exposure(request)
+
         path = self._get_path(request.url_parts.path, True)
+        query = request.url_parts.query
+        if query:
+            query = "?" + query
         meta = "\n".join(self._get_meta(request))
-        response.content = self.wrapper % {"meta": meta, "path": path}
+        script = "\n".join(self._get_script(request))
+        response.content = self.wrapper % {"meta": meta, "script": script, "path": path, "query": query}
         wrap_pipeline(path, request, response)
 
     def _get_path(self, path, resource_path):
@@ -83,18 +93,38 @@ class WrapperHandler(object):
                 path = replace_end(path, src, dest)
         return path
 
-    def _get_meta(self, request):
-        """Get an iterator over strings to inject into the wrapper document
-        based on //META comments in the associated js file.
+    def _get_metadata(self, request):
+        """Get an iterator over script metadata based on // META comments in the
+        associated js file.
 
         :param request: The Request being processed.
         """
         path = self._get_path(filesystem_path(self.base_path, request, self.url_base), False)
         with open(path, "rb") as f:
             for key, value in read_script_metadata(f, js_meta_re):
-                replacement = self._meta_replacement(key, value)
-                if replacement:
-                    yield replacement
+                yield key, value
+
+    def _get_meta(self, request):
+        """Get an iterator over strings to inject into the wrapper document
+        based on // META comments in the associated js file.
+
+        :param request: The Request being processed.
+        """
+        for key, value in self._get_metadata(request):
+            replacement = self._meta_replacement(key, value)
+            if replacement:
+                yield replacement
+
+    def _get_script(self, request):
+        """Get an iterator over strings to inject into the wrapper document
+        based on // META comments in the associated js file.
+
+        :param request: The Request being processed.
+        """
+        for key, value in self._get_metadata(request):
+            replacement = self._script_replacement(key, value)
+            if replacement:
+                yield replacement
 
     @abc.abstractproperty
     def path_replace(self):
@@ -116,20 +146,46 @@ class WrapperHandler(object):
         # a specific metadata key: value pair.
         pass
 
+    @abc.abstractmethod
+    def check_exposure(self, request):
+        # Raise an exception if this handler shouldn't be exposed after all.
+        pass
+
 
 class HtmlWrapperHandler(WrapperHandler):
+    global_type = None
     headers = [('Content-Type', 'text/html')]
+
+    def check_exposure(self, request):
+        if self.global_type:
+            globals = b""
+            for (key, value) in self._get_metadata(request):
+                if key == b"global":
+                    globals = value
+                    break
+
+            if self.global_type not in parse_variants(globals):
+                raise HTTPException(404, "This test cannot be loaded in %s mode" %
+                                    self.global_type)
+
     def _meta_replacement(self, key, value):
         if key == b"timeout":
             if value == b"long":
                 return '<meta name="timeout" content="long">'
+        if key == b"title":
+            value = value.decode('utf-8').replace("&", "&amp;").replace("<", "&lt;")
+            return '<title>%s</title>' % value
+        return None
+
+    def _script_replacement(self, key, value):
         if key == b"script":
-            attribute = value.decode('utf-8').replace('"', "&quot;").replace(">", "&gt;")
+            attribute = value.decode('utf-8').replace("&", "&amp;").replace('"', "&quot;")
             return '<script src="%s"></script>' % attribute
         return None
 
 
 class WorkersHandler(HtmlWrapperHandler):
+    global_type = b"dedicatedworker"
     path_replace = [(".any.worker.html", ".any.js", ".any.worker.js"),
                     (".worker.html", ".worker.js")]
     wrapper = """<!doctype html>
@@ -139,7 +195,7 @@ class WorkersHandler(HtmlWrapperHandler):
 <script src="/resources/testharnessreport.js"></script>
 <div id=log></div>
 <script>
-fetch_tests_from_worker(new Worker("%(path)s"));
+fetch_tests_from_worker(new Worker("%(path)s%(query)s"));
 </script>
 """
 
@@ -151,12 +207,14 @@ class WindowHandler(HtmlWrapperHandler):
 %(meta)s
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
+%(script)s
 <div id=log></div>
 <script src="%(path)s"></script>
 """
 
 
 class AnyHtmlHandler(HtmlWrapperHandler):
+    global_type = b"window"
     path_replace = [(".any.html", ".any.js")]
     wrapper = """<!doctype html>
 <meta charset=utf-8>
@@ -169,8 +227,45 @@ self.GLOBAL = {
 </script>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
+%(script)s
 <div id=log></div>
 <script src="%(path)s"></script>
+"""
+
+
+class SharedWorkersHandler(HtmlWrapperHandler):
+    global_type = b"sharedworker"
+    path_replace = [(".any.sharedworker.html", ".any.js", ".any.worker.js")]
+    wrapper = """<!doctype html>
+<meta charset=utf-8>
+%(meta)s
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id=log></div>
+<script>
+fetch_tests_from_worker(new SharedWorker("%(path)s%(query)s"));
+</script>
+"""
+
+
+class ServiceWorkersHandler(HtmlWrapperHandler):
+    global_type = b"serviceworker"
+    path_replace = [(".any.serviceworker.html", ".any.js", ".any.worker.js")]
+    wrapper = """<!doctype html>
+<meta charset=utf-8>
+%(meta)s
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id=log></div>
+<script>
+(async function() {
+  const scope = 'does/not/exist';
+  let reg = await navigator.serviceWorker.getRegistration(scope);
+  if (reg) await reg.unregister();
+  reg = await navigator.serviceWorker.register("%(path)s%(query)s", {scope});
+  fetch_tests_from_worker(reg.installing);
+})();
+</script>
 """
 
 
@@ -183,28 +278,25 @@ self.GLOBAL = {
   isWorker: function() { return true; },
 };
 importScripts("/resources/testharness.js");
+%(script)s
 importScripts("%(path)s");
 done();
 """
 
     def _meta_replacement(self, key, value):
-        if key == b"timeout":
-            return None
+        return None
+
+    def _script_replacement(self, key, value):
         if key == b"script":
             attribute = value.decode('utf-8').replace("\\", "\\\\").replace('"', '\\"')
             return 'importScripts("%s")' % attribute
+        if key == b"title":
+            value = value.decode('utf-8').replace("\\", "\\\\").replace('"', '\\"')
+            return 'self.META_TITLE = "%s";' % value
         return None
 
 
 rewrites = [("GET", "/resources/WebIDLParser.js", "/resources/webidl2/lib/webidl2.js")]
-
-subdomains = [u"www",
-              u"www1",
-              u"www2",
-              u"天気の良い日",
-              u"élève"]
-
-not_subdomains = [u"nonexistent-origin"]
 
 class RoutesBuilder(object):
     def __init__(self):
@@ -250,6 +342,8 @@ class RoutesBuilder(object):
             ("GET", "*.worker.html", WorkersHandler),
             ("GET", "*.window.html", WindowHandler),
             ("GET", "*.any.html", AnyHtmlHandler),
+            ("GET", "*.any.sharedworker.html", SharedWorkersHandler),
+            ("GET", "*.any.serviceworker.html", ServiceWorkersHandler),
             ("GET", "*.any.worker.js", AnyWorkerHandler),
             ("GET", "*.asis", handlers.AsIsHandler),
             ("*", "*.py", handlers.PythonScriptHandler),
@@ -259,7 +353,7 @@ class RoutesBuilder(object):
         for (method, suffix, handler_cls) in routes:
             self.mountpoint_routes[url_base].append(
                 (method,
-                 b"%s%s" % (str(url_base) if url_base != "/" else "", str(suffix)),
+                 "%s%s" % (url_base if url_base != "/" else "", suffix),
                  handler_cls(base_path=path, url_base=url_base)))
 
     def add_file_mount_point(self, file_url, base_path):
@@ -283,125 +377,24 @@ def build_routes(aliases):
     return builder.get_routes()
 
 
-def setup_logger(level):
-    import logging
-    global logger
-    logger = logging.getLogger("web-platform-tests")
-    logger.setLevel(getattr(logging, level.upper()))
-    set_logger(logger)
-
-
-def open_socket(port):
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    if port != 0:
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    sock.bind(('127.0.0.1', port))
-    sock.listen(5)
-    return sock
-
-def bad_port(port):
-    """
-    Bad port as per https://fetch.spec.whatwg.org/#port-blocking
-    """
-    return port in [
-        1,     # tcpmux
-        7,     # echo
-        9,     # discard
-        11,    # systat
-        13,    # daytime
-        15,    # netstat
-        17,    # qotd
-        19,    # chargen
-        20,    # ftp-data
-        21,    # ftp
-        22,    # ssh
-        23,    # telnet
-        25,    # smtp
-        37,    # time
-        42,    # name
-        43,    # nicname
-        53,    # domain
-        77,    # priv-rjs
-        79,    # finger
-        87,    # ttylink
-        95,    # supdup
-        101,   # hostriame
-        102,   # iso-tsap
-        103,   # gppitnp
-        104,   # acr-nema
-        109,   # pop2
-        110,   # pop3
-        111,   # sunrpc
-        113,   # auth
-        115,   # sftp
-        117,   # uucp-path
-        119,   # nntp
-        123,   # ntp
-        135,   # loc-srv / epmap
-        139,   # netbios
-        143,   # imap2
-        179,   # bgp
-        389,   # ldap
-        465,   # smtp+ssl
-        512,   # print / exec
-        513,   # login
-        514,   # shell
-        515,   # printer
-        526,   # tempo
-        530,   # courier
-        531,   # chat
-        532,   # netnews
-        540,   # uucp
-        556,   # remotefs
-        563,   # nntp+ssl
-        587,   # smtp
-        601,   # syslog-conn
-        636,   # ldap+ssl
-        993,   # imap+ssl
-        995,   # pop3+ssl
-        2049,  # nfs
-        3659,  # apple-sasl
-        4045,  # lockd
-        6000,  # x11
-        6665,  # irc (alternate)
-        6666,  # irc (alternate)
-        6667,  # irc (default)
-        6668,  # irc (alternate)
-        6669,  # irc (alternate)
-    ]
-
-def get_port():
-    port = 0
-    while True:
-        free_socket = open_socket(0)
-        port = free_socket.getsockname()[1]
-        free_socket.close()
-        if not bad_port(port):
-            break
-    logger.debug("Going to use port %s" % port)
-    return port
-
-
 class ServerProc(object):
     def __init__(self):
         self.proc = None
         self.daemon = None
         self.stop = Event()
 
-    def start(self, init_func, host, port, paths, routes, bind_address, config,
-              ssl_config, **kwargs):
+    def start(self, init_func, host, port, paths, routes, bind_address, config, **kwargs):
         self.proc = Process(target=self.create_daemon,
                             args=(init_func, host, port, paths, routes, bind_address,
-                                  config, ssl_config),
+                                  config),
                             kwargs=kwargs)
         self.proc.daemon = True
         self.proc.start()
 
     def create_daemon(self, init_func, host, port, paths, routes, bind_address,
-                      config, ssl_config, **kwargs):
+                      config, **kwargs):
         try:
-            self.daemon = init_func(host, port, paths, routes, bind_address, config,
-                                    ssl_config, **kwargs)
+            self.daemon = init_func(host, port, paths, routes, bind_address, config, **kwargs)
         except socket.error:
             print("Socket error on port %s" % port, file=sys.stderr)
             raise
@@ -433,21 +426,26 @@ class ServerProc(object):
         return self.proc.is_alive()
 
 
-def check_subdomains(host, paths, bind_address, ssl_config, aliases):
+def check_subdomains(config):
+    paths = config.paths
+    bind_address = config.bind_address
+    aliases = config.aliases
+
+    host = config.server_host
     port = get_port()
-    subdomains = get_subdomains(host)
+    logger.debug("Going to use port %d to check subdomains" % port)
 
     wrapper = ServerProc()
-    wrapper.start(start_http_server, host, port, paths, build_routes(aliases), bind_address,
-                  None, ssl_config)
+    wrapper.start(start_http_server, host, port, paths, build_routes(aliases),
+                  bind_address, config)
 
     connected = False
     for i in range(10):
         try:
-            urllib2.urlopen("http://%s:%d/" % (host, port))
+            urllib.request.urlopen("http://%s:%d/" % (host, port))
             connected = True
             break
-        except urllib2.URLError:
+        except urllib.error.URLError:
             time.sleep(1)
 
     if not connected:
@@ -455,11 +453,13 @@ def check_subdomains(host, paths, bind_address, ssl_config, aliases):
                         "You may need to edit /etc/hosts or similar, see README.md." % (host, port))
         sys.exit(1)
 
-    for subdomain, (punycode, host) in subdomains.iteritems():
-        domain = "%s.%s" % (punycode, host)
+    for domain in config.domains_set:
+        if domain == host:
+            continue
+
         try:
-            urllib2.urlopen("http://%s:%d/" % (domain, port))
-        except Exception as e:
+            urllib.request.urlopen("http://%s:%d/" % (domain, port))
+        except Exception:
             logger.critical("Failed probing domain %s. "
                             "You may need to edit /etc/hosts or similar, see README.md." % domain)
             sys.exit(1)
@@ -467,54 +467,54 @@ def check_subdomains(host, paths, bind_address, ssl_config, aliases):
     wrapper.wait()
 
 
-def get_subdomains(host):
-    #This assumes that the tld is ascii-only or already in punycode
-    return {subdomain: (subdomain.encode("idna"), host)
-            for subdomain in subdomains}
-
-
-def get_not_subdomains(host):
-    #This assumes that the tld is ascii-only or already in punycode
-    return {subdomain: (subdomain.encode("idna"), host)
-            for subdomain in not_subdomains}
-
-
 def make_hosts_file(config, host):
     rv = []
 
-    for domain in config["domains"].values():
+    for domain in config.domains_set:
         rv.append("%s\t%s\n" % (host, domain))
 
-    for not_domain in config.get("not_domains", {}).values():
-        rv.append("0.0.0.0\t%s\n" % not_domain)
+    # Windows interpets the IP address 0.0.0.0 as non-existent, making it an
+    # appropriate alias for non-existent hosts. However, UNIX-like systems
+    # interpret the same address to mean any IP address, which is inappropraite
+    # for this context. These systems do not reserve any value for this
+    # purpose, so the inavailability of the domains must be taken for granted.
+    #
+    # https://github.com/web-platform-tests/wpt/issues/10560
+    if platform.uname()[0] == "Windows":
+        for not_domain in config.not_domains_set:
+            rv.append("0.0.0.0\t%s\n" % not_domain)
 
     return "".join(rv)
 
 
-def start_servers(host, ports, paths, routes, bind_address, config, ssl_config,
-                  **kwargs):
+def start_servers(host, ports, paths, routes, bind_address, config, **kwargs):
     servers = defaultdict(list)
-    for scheme, ports in ports.iteritems():
+    for scheme, ports in ports.items():
         assert len(ports) == {"http":2}.get(scheme, 1)
+
+        # TODO Not very ideal, look into removing it in the future
+        # Check that python 2.7.15 is being used for HTTP/2.0
+        if scheme == 'http2' and not http2_compatible():
+            continue
 
         for port in ports:
             if port is None:
                 continue
             init_func = {"http":start_http_server,
                          "https":start_https_server,
+                         "http2":start_http2_server,
                          "ws":start_ws_server,
                          "wss":start_wss_server}[scheme]
 
             server_proc = ServerProc()
             server_proc.start(init_func, host, port, paths, routes, bind_address,
-                              config, ssl_config, **kwargs)
+                              config, **kwargs)
             servers[scheme].append((port, server_proc))
 
     return servers
 
 
-def start_http_server(host, port, paths, routes, bind_address, config, ssl_config,
-                      **kwargs):
+def start_http_server(host, port, paths, routes, bind_address, config, **kwargs):
     return wptserve.WebTestHttpd(host=host,
                                  port=port,
                                  doc_root=paths["doc_root"],
@@ -528,8 +528,7 @@ def start_http_server(host, port, paths, routes, bind_address, config, ssl_confi
                                  latency=kwargs.get("latency"))
 
 
-def start_https_server(host, port, paths, routes, bind_address, config, ssl_config,
-                       **kwargs):
+def start_https_server(host, port, paths, routes, bind_address, config, **kwargs):
     return wptserve.WebTestHttpd(host=host,
                                  port=port,
                                  doc_root=paths["doc_root"],
@@ -538,12 +537,27 @@ def start_https_server(host, port, paths, routes, bind_address, config, ssl_conf
                                  bind_address=bind_address,
                                  config=config,
                                  use_ssl=True,
-                                 key_file=ssl_config["key_path"],
-                                 certificate=ssl_config["cert_path"],
-                                 encrypt_after_connect=ssl_config["encrypt_after_connect"],
+                                 key_file=config.ssl_config["key_path"],
+                                 certificate=config.ssl_config["cert_path"],
+                                 encrypt_after_connect=config.ssl_config["encrypt_after_connect"],
                                  latency=kwargs.get("latency"))
 
 
+def start_http2_server(host, port, paths, routes, bind_address, config, **kwargs):
+    return wptserve.WebTestHttpd(host=host,
+                                 port=port,
+                                 handler_cls=wptserve.Http2WebTestRequestHandler,
+                                 doc_root=paths["doc_root"],
+                                 routes=routes,
+                                 rewrites=rewrites,
+                                 bind_address=bind_address,
+                                 config=config,
+                                 use_ssl=True,
+                                 key_file=config.ssl_config["key_path"],
+                                 certificate=config.ssl_config["cert_path"],
+                                 encrypt_after_connect=config.ssl_config["encrypt_after_connect"],
+                                 latency=kwargs.get("latency"),
+                                 http2=True)
 class WebSocketDaemon(object):
     def __init__(self, host, port, doc_root, handlers_root, log_level, bind_address,
                  ssl_config):
@@ -609,105 +623,41 @@ class WebSocketDaemon(object):
         self.server = None
 
 
-def start_ws_server(host, port, paths, routes, bind_address, config, ssl_config,
-                    **kwargs):
+def start_ws_server(host, port, paths, routes, bind_address, config, **kwargs):
+    # Ensure that when we start this in a new process we don't inherit the
+    # global lock in the logging module
+    reload_module(logging)
     return WebSocketDaemon(host,
                            str(port),
                            repo_root,
-                           paths["ws_doc_root"],
+                           config.paths["ws_doc_root"],
                            "debug",
                            bind_address,
                            ssl_config = None)
 
 
-def start_wss_server(host, port, paths, routes, bind_address, config, ssl_config,
-                     **kwargs):
+def start_wss_server(host, port, paths, routes, bind_address, config, **kwargs):
+    # Ensure that when we start this in a new process we don't inherit the
+    # global lock in the logging module
+    reload_module(logging)
     return WebSocketDaemon(host,
                            str(port),
                            repo_root,
-                           paths["ws_doc_root"],
+                           config.paths["ws_doc_root"],
                            "debug",
                            bind_address,
-                           ssl_config)
+                           config.ssl_config)
 
 
-def get_ports(config, ssl_environment):
-    rv = defaultdict(list)
-    for scheme, ports in config["ports"].iteritems():
-        for i, port in enumerate(ports):
-            if scheme in ["wss", "https"] and not ssl_environment.ssl_enabled:
-                port = None
-            if port == "auto":
-                port = get_port()
-            else:
-                port = port
-            rv[scheme].append(port)
-    return rv
-
-
-
-def normalise_config(config, ports):
-    if "host" in config:
-        logger.warning("host in config is deprecated; use browser_host instead")
-        host = config["host"]
-    else:
-        host = config["browser_host"]
-
-    domains = get_subdomains(host)
-    not_domains = get_not_subdomains(host)
-
-    ports_ = {}
-    for scheme, ports_used in ports.iteritems():
-        ports_[scheme] = ports_used
-
-    for key, value in domains.iteritems():
-        domains[key] = ".".join(value)
-
-    for key, value in not_domains.iteritems():
-        not_domains[key] = ".".join(value)
-
-    domains[""] = host
-
-    if "bind_hostname" in config:
-        logger.warning("bind_hostname in config is deprecated; use bind_address instead")
-        bind_address = config["bind_hostname"]
-    else:
-        bind_address = config["bind_address"]
-
-    # make a (shallow) copy of the config and update that, so that the
-    # normalized config can be used in place of the original one.
-    config_ = config.copy()
-    config_["domains"] = domains
-    config_["not_domains"] = not_domains
-    config_["ports"] = ports_
-    config_["bind_address"] = bind_address
-    if config.get("server_host", None) is None:
-        config_["server_host"] = host
-    return config_
-
-
-def get_paths(config):
-    return {"doc_root": config["doc_root"],
-            "ws_doc_root": config["ws_doc_root"]}
-
-
-def get_ssl_config(config, ssl_environment):
-    external_domains = config["domains"].values()
-    key_path, cert_path = ssl_environment.host_cert_path(external_domains)
-    return {"key_path": key_path,
-            "cert_path": cert_path,
-            "encrypt_after_connect": config["ssl"]["encrypt_after_connect"]}
-
-
-def start(config, ssl_environment, routes, **kwargs):
+def start(config, routes, **kwargs):
     host = config["server_host"]
-    ports = get_ports(config, ssl_environment)
-    paths = get_paths(config)
+    ports = config.ports
+    paths = config.paths
     bind_address = config["bind_address"]
-    ssl_config = get_ssl_config(config, ssl_environment)
 
-    servers = start_servers(host, ports, paths, routes, bind_address, config,
-                            ssl_config, **kwargs)
+    logger.debug("Using ports: %r" % ports)
+
+    servers = start_servers(host, ports, paths, routes, bind_address, config, **kwargs)
 
     return servers
 
@@ -718,70 +668,23 @@ def iter_procs(servers):
             yield server.proc
 
 
-def value_set(config, key):
-    return key in config and config[key] is not None
+def build_config(override_path=None, **kwargs):
+    rv = ConfigBuilder()
 
+    if kwargs.get("h2"):
+        rv._default["ports"]["http2"] = [9000]
 
-def get_value_or_default(config, key, default=None):
-    return config[key] if value_set(config, key) else default
-
-
-def set_computed_defaults(config):
-    if not value_set(config, "doc_root"):
-        config["doc_root"] = repo_root
-
-    if not value_set(config, "ws_doc_root"):
-        root = get_value_or_default(config, "doc_root", default=repo_root)
-        config["ws_doc_root"] = os.path.join(root, "websockets", "handlers")
-
-    if not value_set(config, "aliases"):
-        config["aliases"] = []
-
-
-def merge_json(base_obj, override_obj):
-    rv = {}
-    for key, value in base_obj.iteritems():
-        if key not in override_obj:
-            rv[key] = value
-        else:
-            if isinstance(value, dict):
-                rv[key] = merge_json(value, override_obj[key])
-            else:
-                rv[key] = override_obj[key]
-    return rv
-
-
-def get_ssl_environment(config):
-    implementation_type = config["ssl"]["type"]
-    cls = sslutils.environments[implementation_type]
-    try:
-        kwargs = config["ssl"][implementation_type].copy()
-    except KeyError:
-        raise ValueError("%s is not a vaid ssl type." % implementation_type)
-    return cls(logger, **kwargs)
-
-
-def load_config(default_path, override_path=None, **kwargs):
-    if os.path.exists(default_path):
-        with open(default_path) as f:
-            base_obj = json.load(f)
-    else:
-        raise ValueError("Config path %s does not exist" % default_path)
-
-    if os.path.exists(override_path):
+    if override_path and os.path.exists(override_path):
         with open(override_path) as f:
             override_obj = json.load(f)
-    else:
-        override_obj = {}
-    rv = merge_json(base_obj, override_obj)
+        rv.update(override_obj)
 
     if kwargs.get("config_path"):
         other_path = os.path.abspath(os.path.expanduser(kwargs.get("config_path")))
         if os.path.exists(other_path):
-            base_obj = rv
             with open(other_path) as f:
                 override_obj = json.load(f)
-            rv = merge_json(base_obj, override_obj)
+            rv.update(override_obj)
         else:
             raise ValueError("Config path %s does not exist" % other_path)
 
@@ -794,10 +697,86 @@ def load_config(default_path, override_path=None, **kwargs):
         value = os.path.abspath(os.path.expanduser(value))
         if not os.path.exists(value):
             raise ValueError("%s path %s does not exist" % (title, value))
-        rv[key] = value
+        setattr(rv, key, value)
 
-    set_computed_defaults(rv)
     return rv
+
+_subdomains = {u"www",
+               u"www1",
+               u"www2",
+               u"天気の良い日",
+               u"élève"}
+
+_not_subdomains = {u"nonexistent"}
+
+
+class ConfigBuilder(config.ConfigBuilder):
+    """serve config
+
+    this subclasses wptserve.config.ConfigBuilder to add serve config options"""
+
+    _default = {
+        "browser_host": "web-platform.test",
+        "alternate_hosts": {
+            "alt": "not-web-platform.test"
+        },
+        "doc_root": repo_root,
+        "ws_doc_root": os.path.join(repo_root, "websockets", "handlers"),
+        "server_host": None,
+        "ports": {
+            "http": [8000, "auto"],
+            "https": [8443],
+            "ws": ["auto"],
+            "wss": ["auto"],
+        },
+        "check_subdomains": True,
+        "log_level": "debug",
+        "bind_address": True,
+        "ssl": {
+            "type": "pregenerated",
+            "encrypt_after_connect": False,
+            "openssl": {
+                "openssl_binary": "openssl",
+                "base_path": "_certs",
+                "force_regenerate": False,
+                "base_conf_path": None
+            },
+            "pregenerated": {
+                "host_key_path": os.path.join(repo_root, "tools", "certs", "web-platform.test.key"),
+                "host_cert_path": os.path.join(repo_root, "tools", "certs", "web-platform.test.pem")
+            },
+            "none": {}
+        },
+        "aliases": []
+    }
+
+    computed_properties = ["ws_doc_root"] + config.ConfigBuilder.computed_properties
+
+    def __init__(self, *args, **kwargs):
+        if "subdomains" not in kwargs:
+            kwargs["subdomains"] = _subdomains
+        if "not_subdomains" not in kwargs:
+            kwargs["not_subdomains"] = _not_subdomains
+        super(ConfigBuilder, self).__init__(
+            *args,
+            **kwargs
+        )
+
+    def _get_ws_doc_root(self, data):
+        if data["ws_doc_root"] is not None:
+            return data["ws_doc_root"]
+        else:
+            return os.path.join(data["doc_root"], "websockets", "handlers")
+
+    def ws_doc_root(self, v):
+        self._ws_doc_root = v
+
+    ws_doc_root = property(None, ws_doc_root)
+
+    def _get_paths(self, data):
+        rv = super(ConfigBuilder, self)._get_paths(data)
+        rv["ws_doc_root"] = data["ws_doc_root"]
+        return rv
 
 
 def get_parser():
@@ -810,33 +789,42 @@ def get_parser():
                         help="Path to document root. Overrides config.")
     parser.add_argument("--ws_doc_root", action="store", dest="ws_doc_root",
                         help="Path to WebSockets document root. Overrides config.")
+    parser.add_argument("--alias_file", action="store", dest="alias_file",
+                        help="File with entries for aliases/multiple doc roots. In form of `/ALIAS_NAME/, DOC_ROOT\\n`")
+    parser.add_argument("--h2", action="store_true", dest="h2",
+                        help="Flag for enabling the HTTP/2.0 server")
+    parser.set_defaults(h2=False)
     return parser
 
 
 def run(**kwargs):
-    config = load_config(os.path.join(repo_root, "config.default.json"),
-                         os.path.join(repo_root, "config.json"),
-                         **kwargs)
+    with build_config(os.path.join(repo_root, "config.json"),
+                      **kwargs) as config:
+        global logger
+        logger = config.logger
+        set_logger(logger)
 
-    setup_logger(config["log_level"])
-
-    with get_ssl_environment(config) as ssl_env:
-        ports = get_ports(config, ssl_env)
-        config = normalise_config(config, ports)
-        host = config["browser_host"]
         bind_address = config["bind_address"]
 
+        if kwargs.get("alias_file"):
+            with open(kwargs["alias_file"], 'r') as alias_file:
+                for line in alias_file:
+                    alias, doc_root = [x.strip() for x in line.split(',')]
+                    config["aliases"].append({
+                        'url-path': alias,
+                        'local-dir': doc_root,
+                    })
+
         if config["check_subdomains"]:
-            paths = get_paths(config)
-            ssl_config = get_ssl_config(config, ssl_env)
-            check_subdomains(host, paths, bind_address, ssl_config, config["aliases"])
+            check_subdomains(config)
 
         stash_address = None
         if bind_address:
-            stash_address = (host, get_port())
+            stash_address = (config.server_host, get_port(""))
+            logger.debug("Going to use port %d for stash" % stash_address[1])
 
         with stash.StashServer(stash_address, authkey=str(uuid.uuid4())):
-            servers = start(config, ssl_env, build_routes(config["aliases"]), **kwargs)
+            servers = start(config, build_routes(config["aliases"]), **kwargs)
 
             try:
                 while any(item.is_alive() for item in iter_procs(servers)):
@@ -844,7 +832,6 @@ def run(**kwargs):
                         item.join(1)
             except KeyboardInterrupt:
                 logger.info("Shutting down")
-
 
 def main():
     kwargs = vars(get_parser().parse_args())

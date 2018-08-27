@@ -4,7 +4,7 @@ import logging
 import os
 import sys
 
-from tools import localpaths
+from tools import localpaths  # noqa: flake8
 
 from six import iteritems
 from . import virtualenv
@@ -46,7 +46,7 @@ def parse_args(argv, commands):
     parser.add_argument("--debug", action="store_true", help="Run the debugger in case of an exception")
     subparsers = parser.add_subparsers(dest="command")
     for command, props in iteritems(commands):
-        sub_parser = subparsers.add_parser(command, help=props["help"], add_help=False)
+        subparsers.add_parser(command, help=props["help"], add_help=False)
 
     args, extra = parser.parse_known_args(argv)
 

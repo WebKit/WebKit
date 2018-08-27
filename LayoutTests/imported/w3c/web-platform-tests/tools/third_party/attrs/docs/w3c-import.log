@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -23,8 +23,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/docutils.conf
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/examples.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/extending.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/glossary.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/hashing.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/how-does-it-work.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/index.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/init.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/license.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/overview.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs/why.rst

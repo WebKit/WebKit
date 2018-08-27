@@ -1,3 +1,15 @@
+2018-08-27  Youenn Fablet  <youenn@apple.com>
+
+        Update WPT tools to 87329a1
+        https://bugs.webkit.org/show_bug.cgi?id=188766
+
+        Reviewed by Ryosuke Niwa.
+
+        The test name (.any.serviceworker.html) is clashing with the new WPT server.
+
+        * http/wpt/service-workers/cors-preflight-star.any-serviceworker-expected.txt: Renamed from LayoutTests/http/wpt/service-workers/cors-preflight-star.any.serviceworker-expected.txt.
+        * http/wpt/service-workers/cors-preflight-star.any-serviceworker.html: Renamed from LayoutTests/http/wpt/service-workers/cors-preflight-star.any.serviceworker.html.
+
 2018-08-27  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test fast/events/dblclick-event-getModifierState.html is failing

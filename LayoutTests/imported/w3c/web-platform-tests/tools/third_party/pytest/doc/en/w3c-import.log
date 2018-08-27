@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -23,7 +23,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/cache.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/capture.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/changelog.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/check_sphinx.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/conf.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/conftest.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/contact.rst
@@ -37,7 +36,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/fixture.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/funcarg_compare.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/funcargs.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/genapi.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/getting-started.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/goodpractices.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/historical-notes.rst
@@ -55,6 +53,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/pytest.ini
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/pythonpath.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/recwarn.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/reference.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/requirements.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/skipping.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/talks.rst

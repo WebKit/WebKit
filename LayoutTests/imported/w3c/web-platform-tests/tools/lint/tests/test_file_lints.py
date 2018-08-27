@@ -521,10 +521,13 @@ def test_css_missing_file_manual():
     "foo.any.js",
 ])
 @pytest.mark.parametrize("input,error", [
+    (b"""//META: title=foo\n""", None),
     (b"""//META: timeout=long\n""", None),
     (b"""// META: timeout=long\n""", None),
     (b"""//  META: timeout=long\n""", None),
     (b"""// META: script=foo.js\n""", None),
+    (b"""// META: variant=\n""", None),
+    (b"""// META: variant=?wss\n""", None),
     (b"""# META:\n""", None),
     (b"""\n// META: timeout=long\n""", (2, "STRAY-METADATA")),
     (b""" // META: timeout=long\n""", (1, "INDENTED-METADATA")),
@@ -554,6 +557,39 @@ def test_script_metadata(filename, input, error):
              messages[kind],
              filename,
              line),
+        ]
+    else:
+        assert errors == []
+
+
+@pytest.mark.parametrize("globals,error", [
+    (b"", None),
+    (b"default", None),
+    (b"!default", None),
+    (b"window", None),
+    (b"!window", None),
+    (b"!dedicatedworker", None),
+    (b"window, !window", "BROKEN-GLOBAL-METADATA"),
+    (b"!serviceworker", "BROKEN-GLOBAL-METADATA"),
+    (b"serviceworker, !serviceworker", "BROKEN-GLOBAL-METADATA"),
+    (b"worker, !dedicatedworker", None),
+    (b"worker, !serviceworker", None),
+    (b"!worker", None),
+    (b"foo", "UNKNOWN-GLOBAL-METADATA"),
+    (b"!foo", "UNKNOWN-GLOBAL-METADATA"),
+])
+def test_script_globals_metadata(globals, error):
+    filename = "foo.any.js"
+    input = b"""// META: global=%s\n""" % globals
+    errors = check_file_contents("", filename, six.BytesIO(input))
+    check_errors(errors)
+
+    if error is not None:
+        errors = [(k, f, l) for (k, _, f, l) in errors]
+        assert errors == [
+            (error,
+             filename,
+             1),
         ]
     else:
         assert errors == []

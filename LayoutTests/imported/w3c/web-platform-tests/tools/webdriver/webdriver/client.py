@@ -16,7 +16,6 @@ def command(func):
 
         if session.session_id is None:
             session.start()
-        assert session.session_id is not None
 
         return func(self, *args, **kwargs)
 
@@ -39,7 +38,7 @@ class Timeouts(object):
 
     def _set(self, key, secs):
         body = {key: secs * 1000}
-        timeouts = self.session.send_session_command("POST", "timeouts", body)
+        self.session.send_session_command("POST", "timeouts", body)
         return None
 
     @property
@@ -234,6 +233,8 @@ class Actions(object):
 
 
 class Window(object):
+    identifier = "window-fcc6-11e5-b4f8-330a88ab9d7f"
+
     def __init__(self, session):
         self.session = session
 
@@ -283,6 +284,23 @@ class Window(object):
     @command
     def fullscreen(self):
         return self.session.send_session_command("POST", "window/fullscreen")
+
+    @classmethod
+    def from_json(cls, json, session):
+        uuid = json[Window.identifier]
+        return cls(uuid, session)
+
+
+class Frame(object):
+    identifier = "frame-075b-4da1-b6ba-e579c2d3230a"
+
+    def __init__(self, session):
+        self.session = session
+
+    @classmethod
+    def from_json(cls, json, session):
+        uuid = json[Frame.identifier]
+        return cls(uuid, session)
 
 
 class Find(object):
@@ -352,7 +370,8 @@ class Session(object):
                  extension=None):
         self.transport = transport.HTTPWireProtocol(
             host, port, url_prefix, timeout=timeout)
-        self.capabilities = capabilities
+        self.requested_capabilities = capabilities
+        self.capabilities = None
         self.session_id = None
         self.timeouts = None
         self.window = None
@@ -366,6 +385,9 @@ class Session(object):
         self.find = Find(self)
         self.alert = UserPrompt(self)
         self.actions = Actions(self)
+
+    def __repr__(self):
+        return "<%s %s>" % (self.__class__.__name__, self.session_id or "(disconnected)")
 
     def __eq__(self, other):
         return (self.session_id is not None and isinstance(other, Session) and
@@ -387,8 +409,8 @@ class Session(object):
 
         body = {}
 
-        if self.capabilities is not None:
-            body["capabilities"] = self.capabilities
+        if self.requested_capabilities is not None:
+            body["capabilities"] = self.requested_capabilities
 
         value = self.send_command("POST", "session", body=body)
         self.session_id = value["sessionId"]
@@ -400,13 +422,16 @@ class Session(object):
         return value
 
     def end(self):
+        """Tries to close the active session."""
         if self.session_id is None:
             return
 
-        url = "session/%s" % self.session_id
-        self.send_command("DELETE", url)
-
-        self.session_id = None
+        try:
+            self.send_command("DELETE", "session/%s" % self.session_id)
+        except error.SessionNotCreatedException:
+            pass
+        finally:
+            self.session_id = None
 
     def send_command(self, method, url, body=None):
         """
@@ -432,7 +457,13 @@ class Session(object):
             session=self)
 
         if response.status != 200:
-            raise error.from_response(response)
+            err = error.from_response(response)
+
+            if isinstance(err, error.SessionNotCreatedException):
+                # The driver could have already been deleted the session.
+                self.session_id = None
+
+            raise err
 
         if "value" in response.body:
             value = response.body["value"]
@@ -533,7 +564,12 @@ class Session(object):
 
     @command
     def close(self):
-        return self.send_session_command("DELETE", "window")
+        handles = self.send_session_command("DELETE", "window")
+        if len(handles) == 0:
+            # With no more open top-level browsing contexts, the session is closed.
+            self.session_id = None
+
+        return handles
 
     @property
     @command
@@ -554,17 +590,23 @@ class Session(object):
         return self.send_session_command("GET", url, {})
 
     @command
-    def set_cookie(self, name, value, path=None, domain=None, secure=None, expiry=None):
-        body = {"name": name,
-                "value": value}
-        if path is not None:
-            body["path"] = path
+    def set_cookie(self, name, value, path=None, domain=None,
+            secure=None, expiry=None, http_only=None):
+        body = {
+            "name": name,
+            "value": value,
+        }
+
         if domain is not None:
             body["domain"] = domain
-        if secure is not None:
-            body["secure"] = secure
         if expiry is not None:
             body["expiry"] = expiry
+        if http_only is not None:
+            body["httpOnly"] = http_only
+        if path is not None:
+            body["path"] = path
+        if secure is not None:
+            body["secure"] = secure
         self.send_session_command("POST", "cookie", {"cookie": body})
 
     def delete_cookie(self, name=None):
@@ -625,8 +667,12 @@ class Element(object):
         self.id = id
         self.session = session
 
-        assert id not in self.session._element_cache
+        if id in self.session._element_cache:
+            raise ValueError("Element already in cache: %s" % id)
         self.session._element_cache[self.id] = self
+
+    def __repr__(self):
+        return "<%s %s>" % (self.__class__.__name__, self.id)
 
     def __eq__(self, other):
         return (isinstance(other, Element) and self.id == other.id and
@@ -634,7 +680,6 @@ class Element(object):
 
     @classmethod
     def from_json(cls, json, session):
-        assert Element.identifier in json
         uuid = json[Element.identifier]
         if uuid in session._element_cache:
             return session._element_cache[uuid]
@@ -660,7 +705,7 @@ class Element(object):
 
     @command
     def clear(self):
-        self.send_element_command("POST", self.url("clear"), {})
+        self.send_element_command("POST", "clear", {})
 
     @command
     def send_keys(self, text):
