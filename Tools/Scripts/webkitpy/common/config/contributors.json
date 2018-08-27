@@ -3271,6 +3271,13 @@
       ],
       "status" : "committer"
    },
+   "Justin Fan" : {
+      "emails" : [
+         "justin_fan@apple.com"
+      ],
+      "expertise" : "WebGL, Canvas",
+      "status" : "committer"
+   },
    "Justin Garcia" : {
       "emails" : [
          "justin.garcia@apple.com"

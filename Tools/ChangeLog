@@ -1,3 +1,10 @@
+2018-08-27  Justin Fan  <justin_fan@apple.com>
+
+        Add Justin Fan to list of WebKit contributors
+        https://bugs.webkit.org/show_bug.cgi?id=184431
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         Convert timeout values in WebKitTestRunner to WTF::Seconds
