@@ -56,6 +56,7 @@
 #include "Element.h"
 #include "Event.h"
 #include "EventListener.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "HTMLElement.h"
@@ -827,6 +828,15 @@ void InspectorDOMAgent::setNodeValue(ErrorString& errorString, int nodeId, const
     }
 
     m_domEditor->replaceWholeText(downcast<Text>(*node), value, errorString);
+}
+
+void InspectorDOMAgent::getSupportedEventNames(ErrorString&, RefPtr<JSON::ArrayOf<String>>& eventNames)
+{
+    eventNames = JSON::ArrayOf<String>::create();
+
+#define DOM_EVENT_NAMES_ADD(name) eventNames->addItem(#name);
+    DOM_EVENT_NAMES_FOR_EACH(DOM_EVENT_NAMES_ADD)
+#undef DOM_EVENT_NAMES_ADD
 }
 
 void InspectorDOMAgent::getEventListenersForNode(ErrorString& errorString, int nodeId, const String* objectGroup, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>>& listenersArray)

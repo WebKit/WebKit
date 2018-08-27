@@ -546,6 +546,19 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
         DOMAgent.setInspectedNode(node.id, callback);
     }
 
+    getSupportedEventNames(callback)
+    {
+        if (!DOMAgent.getSupportedEventNames)
+            return Promise.resolve(new Set);
+
+        if (!this._getSupportedEventNamesPromise) {
+            this._getSupportedEventNamesPromise = DOMAgent.getSupportedEventNames()
+            .then(({eventNames}) => new Set(eventNames));
+        }
+
+        return this._getSupportedEventNamesPromise;
+    }
+
     setEventListenerDisabled(eventListener, disabled)
     {
         DOMAgent.setEventListenerDisabled(eventListener.eventListenerId, disabled, (error) => {

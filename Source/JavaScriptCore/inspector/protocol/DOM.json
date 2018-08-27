@@ -256,6 +256,13 @@
             ]
         },
         {
+            "name": "getSupportedEventNames",
+            "description": "Gets the list of builtin DOM event names.",
+            "returns": [
+                { "name": "eventNames", "type": "array", "items": { "type": "string" } }
+            ]
+        },
+        {
             "name": "getEventListenersForNode",
             "description": "Returns event listeners relevant to the node.",
             "parameters": [

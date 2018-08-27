@@ -31,6 +31,9 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.Popover
 
         this._breakpoint = null;
 
+        this._currentCompletions = [];
+        this._suggestionsView = new WI.CompletionSuggestionsView(this, {preventBlur: true});
+
         this._targetElement = null;
         this._preferredEdges = null;
 
@@ -82,10 +85,39 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.Popover
         this._domEventNameInputElement.placeholder = WI.UIString("Example: “%s”").format("click");
         this._domEventNameInputElement.spellcheck = false;
         this._domEventNameInputElement.addEventListener("keydown", (event) => {
-            if (!isEnterKey(event))
-                return;
+            if (isEnterKey(event) || event.key === "Tab") {
+                this._result = WI.InputPopover.Result.Committed;
 
-            this.dismiss();
+                if (this._suggestionsView.visible && this._suggestionsView.selectedIndex < this._currentCompletions.length)
+                    this._domEventNameInputElement.value = this._currentCompletions[this._suggestionsView.selectedIndex];
+
+                this.dismiss();
+            } else if ((event.key === "ArrowUp" || event.key === "ArrowDown") && this._suggestionsView.visible) {
+                event.stop();
+
+                if (event.key === "ArrowDown")
+                    this._suggestionsView.selectNext();
+                else
+                    this._suggestionsView.selectPrevious();
+            }
+        });
+        this._domEventNameInputElement.addEventListener("input", (event) => {
+            WI.domTreeManager.getSupportedEventNames()
+            .then((eventNames) => {
+                this._currentCompletions = [];
+                for (let eventName of eventNames) {
+                    if (eventName.toLowerCase().startsWith(this._domEventNameInputElement.value))
+                        this._currentCompletions.push(eventName);
+                }
+
+                if (!this._currentCompletions.length) {
+                    this._suggestionsView.hide();
+                    return;
+                }
+
+                this._suggestionsView.update(this._currentCompletions);
+                this._showSuggestionsView();
+            });
         });
 
         this.content = contentElement;
@@ -116,6 +148,17 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.Popover
             this._breakpoint = new WI.EventBreakpoint(type, value);
 
         super.dismiss();
+
+        this._suggestionsView.hide();
+    }
+
+    // CompletionSuggestionsView delegate
+
+    completionSuggestionsClickedCompletion(suggestionsView, selectedText)
+    {
+        this._domEventNameInputElement.value = selectedText;
+
+        this.dismiss();
     }
 
     // Private
@@ -131,8 +174,22 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.Popover
 
     _handleTypeSelectChange(event)
     {
-        this._domEventNameInputElement.hidden = this._typeSelectElement.value !== WI.EventBreakpoint.Type.Listener;
+        let listenerTypeSelected = this._typeSelectElement.value === WI.EventBreakpoint.Type.Listener;
+        this._domEventNameInputElement.hidden = !listenerTypeSelected;
 
         this.update();
+
+        if (listenerTypeSelected) {
+            this._domEventNameInputElement.focus();
+
+            if (this._domEventNameInputElement.value)
+                this._showSuggestionsView();
+        } else
+            this._suggestionsView.hide();
     }
+
+     _showSuggestionsView()
+     {
+        this._suggestionsView.show(WI.Rect.rectFromClientRect(this._domEventNameInputElement.getBoundingClientRect()));
+     }
 };
