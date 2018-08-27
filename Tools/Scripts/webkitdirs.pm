@@ -129,6 +129,7 @@ our @EXPORT_OK;
 
 my $architecture;
 my $asanIsEnabled;
+my $ltoMode;
 my $numberOfCPUs;
 my $maxCPULoad;
 my $baseProductDir;
@@ -419,6 +420,18 @@ sub determineASanIsEnabled
         close ASAN;
         chomp $asanConfigurationValue;
         $asanIsEnabled = 1 if $asanConfigurationValue eq "YES";
+    }
+}
+
+sub determineLTOMode
+{
+    return if defined $ltoMode;
+    determineBaseProductDir();
+
+    if (open LTO, "$baseProductDir/LTO") {
+        $ltoMode = <LTO>;
+        close LTO;
+        chomp $ltoMode;
     }
 }
 
@@ -844,6 +857,12 @@ sub asanIsEnabled()
     return $asanIsEnabled;
 }
 
+sub ltoMode()
+{
+    determineLTOMode();
+    return $ltoMode;
+}
+
 sub configurationForVisualStudio()
 {
     determineConfigurationForVisualStudio();
@@ -886,6 +905,7 @@ sub XcodeOptions
     determineConfiguration();
     determineArchitecture();
     determineASanIsEnabled();
+    determineLTOMode();
     determineXcodeSDK();
 
     my @options;
@@ -893,6 +913,7 @@ sub XcodeOptions
     push @options, "-UseSanitizedBuildSystemEnvironment=YES";
     push @options, ("-configuration", $configuration);
     push @options, ("-xcconfig", sourceDir() . "/Tools/asan/asan.xcconfig", "ASAN_IGNORE=" . sourceDir() . "/Tools/asan/webkit-asan-ignore.txt") if $asanIsEnabled;
+    push @options, "WK_LTO_MODE=$ltoMode" if $ltoMode;
     push @options, @baseProductDirOption;
     push @options, "ARCHS=$architecture" if $architecture;
     push @options, "SDKROOT=$xcodeSDK" if $xcodeSDK;

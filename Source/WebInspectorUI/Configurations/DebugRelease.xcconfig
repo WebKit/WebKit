@@ -1,4 +1,5 @@
 #include "Base.xcconfig"
+#include? "../../../LocalOverrides.xcconfig"
 
 ARCHS = $(ARCHS_STANDARD_32_64_BIT);
 
@@ -23,3 +24,5 @@ SDKROOT_YES = macosx.internal;
 
 COMBINE_INSPECTOR_RESOURCES = NO;
 COMBINE_TEST_RESOURCES = YES;
+
+WK_DEFAULT_LTO_MODE = $(WK_USER_LTO_MODE_none);

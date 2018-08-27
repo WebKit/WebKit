@@ -38,6 +38,7 @@ Usage: $programName [options]
   --32-bit                Set the default architecture to 32-bit
   --64-bit                Set the default architecture to 64-bit
   --[no-]asan             Enable or disable clang address sanitizer
+  --lto-mode=<mode>       Set LTO mode: full, thin, or none
   --debug                 Set the default configuration to debug
   --release               Set the default configuration to release
   --reset                 Reset configurations
@@ -47,6 +48,10 @@ my $configuration = passedConfiguration();
 my $architecture = passedArchitecture();
 my $enableASAN = checkForArgumentAndRemoveFromARGV("--asan");
 my $disableASAN = checkForArgumentAndRemoveFromARGV("--no-asan");
+my $ltoMode;
+if (!checkForArgumentAndRemoveFromARGVGettingValue("--lto-mode", \$ltoMode)) {
+    $ltoMode="";
+}
 
 if (!$architecture) {
     # Handle --64-bit explicitly here, as we don't want our other scripts to accept it
@@ -66,10 +71,16 @@ if (checkForArgumentAndRemoveFromARGV("--reset")) {
     unlink "$baseProductDir/Configuration";
     unlink "$baseProductDir/Architecture";
     unlink "$baseProductDir/ASan";
+    unlink "$baseProductDir/LTO";
     exit 0;
 }
 
-if (!$configuration && !$architecture && !$enableASAN && !$disableASAN || ($enableASAN && $disableASAN)) {
+if ((!$configuration && !$architecture && !$enableASAN && !$disableASAN && !$ltoMode) || ($enableASAN && $disableASAN)) {
+    print STDERR $usage;
+    exit 1;
+}
+
+if ($ltoMode && $ltoMode ne "full" && $ltoMode ne "thin" && $ltoMode ne "none") {
     print STDERR $usage;
     exit 1;
 }
@@ -96,4 +107,10 @@ if ($enableASAN) {
     close ASAN;
 } elsif ($disableASAN) {
     unlink "$baseProductDir/ASan";
+}
+
+if ($ltoMode) {
+    open LTO, ">", "$baseProductDir/LTO" or die;
+    print LTO "$ltoMode";
+    close LTO;
 }

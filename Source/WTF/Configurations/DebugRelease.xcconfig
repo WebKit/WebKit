@@ -22,6 +22,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 #include "Base.xcconfig"
+#include? "../../../LocalOverrides.xcconfig"
 
 ARCHS = $(ARCHS_STANDARD_32_64_BIT);
 ONLY_ACTIVE_ARCH = YES;
@@ -40,6 +41,8 @@ DEBUG_INFORMATION_FORMAT = dwarf;
 SDKROOT = $(SDKROOT_$(USE_INTERNAL_SDK));
 SDKROOT_ = macosx;
 SDKROOT_YES = macosx.internal;
+
+WK_DEFAULT_LTO_MODE = $(WK_USER_LTO_MODE_none);
 
 WK_CCACHE_DIR = $(SRCROOT)/../../Tools/ccache;
 #include "../../../Tools/ccache/ccache.xcconfig"

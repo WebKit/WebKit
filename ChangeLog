@@ -1,3 +1,65 @@
+2018-08-27  Keith Rollin  <krollin@apple.com>
+
+        Build system support for LTO
+        https://bugs.webkit.org/show_bug.cgi?id=187785
+        <rdar://problem/42353132>
+
+        Reviewed by Dan Bernstein.
+
+        Add support for building WebKit with LTO (Link Time Optimization) on
+        macOS and iOS. Both variations are supported: "full" (which performs
+        all the optimizations it can regardless of the cost) and "thin" (which
+        sacrifices some optimizations in order to recover build time and
+        memory usage).
+
+        By default, LTO is disabled for Debug and Release builds, but is
+        enabled for Production builds. For Debug and Release builds, LTO is
+        controlled as follows:
+
+        - When using `make` from the command line, include
+          WK_LTO_MODE={none,thin,full}. For example, `make WK_LTO_MODE=full
+          release`. As when specifying debug/release, the LTO configuration
+          information is written to the WebKitBuild directory and is used as
+          the default on the next build if a new setting is not specified.
+
+        - When using `build-webkit`, include --lto-mode={none,thin,full} on
+          the command line. For example, `build-webkit --lto-mode=full ...`.
+
+        - When using Xcode, create a configuration file called
+          LocalOverrides.xcconfig at the root level of your WebKit checkout
+          directory. Include within it a line that says:
+
+            WK_LTO_MODE={none,thin,full}
+
+          For example:
+
+            WK_LTO_MODE=full
+
+        Note that LocalOverrides.xcconfig is included in the .gitignore file,
+        so you won't accidentally check your changes into source control.
+
+        Enabling LTO can greatly increase build times, especially when using
+        "full" LTO with 32GB or RAM or less. Following is a table of full
+        build times for a Release build on a fully decked-out 2017 iMac Pro:
+
+            LTO     macOS      iOS
+            -----  -------   -------
+            None:   9m 11s   14m 11s
+            Thin:  11m 44s   17m 30s
+            Full:  21m 39s   28m 56s
+
+        Incremental times are affected even more greatly. The actual
+        optimization and compilation of LLVM bitcode is moved to the link
+        phase, meaning that the link phase, which previously took only
+        seconds, can now take many minutes. It's for this reason that LTO is
+        not enabled in Debug and Release builds, since incremental builds are
+        an integral part of those configurations. However, using the
+        mechanisms described above, developers can perform optional LTO builds
+        if needed to track down build or runtime issues in that configuration.
+
+        * .gitignore: Include LocalOverrides.xcconfig.
+        * Makefile.shared: Add support for WK_LTO_MODE on the command line.
+
 2018-08-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, bump WPE/GTK version numbers

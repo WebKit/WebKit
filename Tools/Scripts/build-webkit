@@ -72,6 +72,7 @@ my $onlyWebKitProject = 0;
 my $coverageSupport = 0;
 my $shouldRunStaticAnalyzer = 0;
 my $noExperimentalFeatures = 0;
+my $ltoMode = "default";
 my $startTime = time();
 my $archs32bit = 0;
 my $skipLibraryUpdate = 0;
@@ -113,6 +114,7 @@ Usage: $programName [options] [options to pass to build system]
   --simulator                       DEPRECATED alias of --ios-simulator
   --coverage                        Enable code coverage support (Mac only)
   --analyze                         Enable static anaylsis (iOS and Mac only)
+  --lto-mode=<mode>                 Set Link Time Optimization mode (full, thin, or none) (Xcode only)
 
   --gtk                             Build the GTK+ port
   --wpe                             Build the WPE port
@@ -149,6 +151,7 @@ my %options = (
     'coverage' => \$coverageSupport,
     'analyze' => \$shouldRunStaticAnalyzer,
     'no-experimental-features' => \$noExperimentalFeatures,
+    'lto-mode=s' => \$ltoMode,
     'skip-library-update' => \$skipLibraryUpdate,
     'use-ccache!' => \$useCCache,
 );
@@ -331,6 +334,7 @@ if (isAppleWinWebKit() || isWinCairo()) {
         my @local_options = @options;
         push @local_options, XcodeCoverageSupportOptions() if $coverageSupport;
         push @local_options, XcodeStaticAnalyzerOption() if $shouldRunStaticAnalyzer;
+        push @local_options, "WK_LTO_MODE=$ltoMode" if ($ltoMode ne "default");
         my $projectPath = $project =~ /gtest/ ? "xcode/gtest" : $project;
         $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
 

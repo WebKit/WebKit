@@ -22,6 +22,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 #include "Base.xcconfig"
+#include? "../../../LocalOverrides.xcconfig"
 
 ARCHS = $(ARCHS_STANDARD_32_64_BIT);
 
@@ -54,6 +55,8 @@ WK_XPC_SERVICE_SUFFIX[sdk=*simulator*] = .Development;
 WK_LIBRARY_VALIDATION_ENABLED = NO;
 WK_WEBCONTENT_SERVICE_NEEDS_XPC_DOMAIN_EXTENSION_ENTITLEMENT = NO;
 WK_WEBCONTENT_SERVICE_NEEDS_VERSIONED_FRAMEWORK_PATH_LDFLAG[sdk=macosx*] = YES;
+
+WK_DEFAULT_LTO_MODE = $(WK_USER_LTO_MODE_none);
 
 WK_CCACHE_DIR = $(SRCROOT)/../../Tools/ccache;
 #include "../../../Tools/ccache/ccache.xcconfig"

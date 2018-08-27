@@ -1,3 +1,22 @@
+2018-08-27  Keith Rollin  <krollin@apple.com>
+
+        Build system support for LTO
+        https://bugs.webkit.org/show_bug.cgi?id=187785
+        <rdar://problem/42353132>
+
+        Reviewed by Dan Bernstein.
+
+        Add tools/scripts support for controlling LTO builds.
+
+        * Scripts/build-webkit: Add --lto-mode={none,thin,full}.
+        * Scripts/set-webkit-configuration: Add support for saving LTO
+        configuration to WebKitBuild/LTO.
+        * Scripts/webkitdirs.pm: Add support for reading configuration from
+        WebKitBuild/LTO and providing it to xcodebuild.
+        (determineLTOMode):
+        (ltoMode):
+        (XcodeOptions):
+
 2018-08-27  Daniel Bates  <dabates@apple.com>
 
         lldb-webkit: Pretty-print OptionSet
