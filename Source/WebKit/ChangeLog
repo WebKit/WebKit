@@ -1,3 +1,35 @@
+2018-08-27  Alex Christensen  <achristensen@webkit.org>
+
+        Transition WKBrowsingContextController from WKPageLoaderClient to WKPageNavigationClient
+        https://bugs.webkit.org/show_bug.cgi?id=188942
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (didStartProvisionalNavigation):
+        (didReceiveServerRedirectForProvisionalNavigation):
+        (didFailProvisionalNavigation):
+        (didCommitNavigation):
+        (didFinishNavigation):
+        (didFailNavigation):
+        (canAuthenticateAgainstProtectionSpace):
+        (didReceiveAuthenticationChallenge):
+        (setUpPageLoaderClient):
+        (-[WKBrowsingContextController setLoadDelegate:]):
+        (didStartProvisionalLoadForFrame): Deleted.
+        (didReceiveServerRedirectForProvisionalLoadForFrame): Deleted.
+        (didFailProvisionalLoadWithErrorForFrame): Deleted.
+        (didCommitLoadForFrame): Deleted.
+        (didFinishLoadForFrame): Deleted.
+        (didFailLoadWithErrorForFrame): Deleted.
+        (canAuthenticateAgainstProtectionSpaceInFrame): Deleted.
+        (didReceiveAuthenticationChallengeInFrame): Deleted.
+        (didStartProgress): Deleted.
+        (didChangeProgress): Deleted.
+        (didFinishProgress): Deleted.
+        (didChangeBackForwardList): Deleted.
+        * UIProcess/API/Cocoa/WKBrowsingContextLoadDelegate.h:
+
 2018-08-26  Darin Adler  <darin@apple.com>
 
         [Cocoa] Adapt more WebKit code to be ARC-compatible

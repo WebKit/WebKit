@@ -53,11 +53,11 @@
 /* Sent if the commited load fails. */
 - (void)browsingContextController:(WKBrowsingContextController *)sender didFailLoadWithError:(NSError *)error;
 
-- (void)browsingContextControllerDidStartProgress:(WKBrowsingContextController *)sender;
-- (void)browsingContextController:(WKBrowsingContextController *)sender estimatedProgressChangedTo:(double)estimatedProgress;
-- (void)browsingContextControllerDidFinishProgress:(WKBrowsingContextController *)sender;
+- (void)browsingContextControllerDidStartProgress:(WKBrowsingContextController *)sender WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebView.estimatedProgress", macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)browsingContextController:(WKBrowsingContextController *)sender estimatedProgressChangedTo:(double)estimatedProgress WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebView.estimatedProgress", macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)browsingContextControllerDidFinishProgress:(WKBrowsingContextController *)sender WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebView.estimatedProgress", macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-- (void)browsingContextControllerDidChangeBackForwardList:(WKBrowsingContextController *)sender addedItem:(WKBackForwardListItem *)addedItem removedItems:(NSArray *)removedItems;
+- (void)browsingContextControllerDidChangeBackForwardList:(WKBrowsingContextController *)sender addedItem:(WKBackForwardListItem *)addedItem removedItems:(NSArray *)removedItems WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebView.backForwardList", macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 
