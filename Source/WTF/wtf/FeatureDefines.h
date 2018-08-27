@@ -469,10 +469,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_INPUT_TYPE_COLOR 0
 #endif
 
-#if !defined(ENABLE_INPUT_TYPE_COLOR_POPOVER)
-#define ENABLE_INPUT_TYPE_COLOR_POPOVER 0
-#endif
-
 #if !defined(ENABLE_INPUT_TYPE_DATE)
 #define ENABLE_INPUT_TYPE_DATE 0
 #endif

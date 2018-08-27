@@ -4699,13 +4699,7 @@ void WebPageProxy::didChangeContentSize(const IntSize& size)
 #if ENABLE(INPUT_TYPE_COLOR)
 void WebPageProxy::showColorPicker(const WebCore::Color& initialColor, const IntRect& elementRect, Vector<WebCore::Color>&& suggestions)
 {
-#if ENABLE(INPUT_TYPE_COLOR_POPOVER)
-    // A new popover color well needs to be created (and the previous one destroyed) for
-    // each activation of a color element.
-    m_colorPicker = nullptr;
-#endif
-    if (!m_colorPicker)
-        m_colorPicker = m_pageClient.createColorPicker(this, initialColor, elementRect, WTFMove(suggestions));
+    m_colorPicker = m_pageClient.createColorPicker(this, initialColor, elementRect, WTFMove(suggestions));
     m_colorPicker->showColorPicker(initialColor);
 }
 
@@ -7520,7 +7514,7 @@ void WebPageProxy::closeOverlayedViews()
     endDataListSuggestions();
 #endif
 
-#if ENABLE(INPUT_TYPE_COLOR_POPOVER) && ENABLE(INPUT_TYPE_COLOR)
+#if ENABLE(INPUT_TYPE_COLOR)
     endColorPicker();
 #endif
 }

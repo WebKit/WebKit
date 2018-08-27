@@ -1,3 +1,13 @@
+2018-08-27  Aditya Keerthi  <akeerthi@apple.com>
+
+        Consolidate ENABLE_INPUT_TYPE_COLOR and ENABLE_INPUT_TYPE_COLOR_POPOVER
+        https://bugs.webkit.org/show_bug.cgi?id=188931
+
+        Reviewed by Wenson Hsieh.
+
+        * Source/cmake/OptionsMac.cmake: Removed ENABLE_INPUT_TYPE_COLOR_POPOVER.
+        * Source/cmake/WebKitFeatures.cmake: Removed ENABLE_INPUT_TYPE_COLOR_POPOVER.
+
 2018-08-27  Keith Rollin  <krollin@apple.com>
 
         Build system support for LTO

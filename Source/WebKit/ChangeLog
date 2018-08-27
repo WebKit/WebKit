@@ -1,3 +1,23 @@
+2018-08-27  Aditya Keerthi  <akeerthi@apple.com>
+
+        Consolidate ENABLE_INPUT_TYPE_COLOR and ENABLE_INPUT_TYPE_COLOR_POPOVER
+        https://bugs.webkit.org/show_bug.cgi?id=188931
+
+        Reviewed by Wenson Hsieh.
+
+        A popover is the preferred interface for <input type=color> on macOS. The color
+        panel is still accessible through a button on the popover, for fine-grained
+        color selection. We can consolidate the two build flags, so that a popover is
+        always displayed in the ENABLE(INPUT_TYPE_COLOR) build.
+
+        * Configurations/FeatureDefines.xcconfig: Removed ENABLE_INPUT_TYPE_COLOR_POPOVER.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showColorPicker):
+        (WebKit::WebPageProxy::closeOverlayedViews):
+        * UIProcess/mac/WebColorPickerMac.mm:
+        (WebKit::WebColorPickerMac::WebColorPickerMac):
+        (WebKit::WebColorPickerMac::showColorPicker):
+
 2018-08-27  Alex Christensen  <achristensen@webkit.org>
 
         Pass webPageID and webFrameID to NetworkLoad for speculative loads
