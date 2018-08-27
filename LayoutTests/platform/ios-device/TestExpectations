@@ -74,8 +74,8 @@ imported/blink/compositing/child-transform-layer-with-foreground-layer.html [ Im
 imported/blink/fast/canvas/canvas-unbalanced-save.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/IndexedDB/idbcursor-update-exception-order.htm [ Skip ]
-imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-bogus-sync.htm [ Skip ]
-imported/w3c/web-platform-tests/XMLHttpRequest/send-send.htm [ Skip ]
+imported/w3c/web-platform-tests/xhr/send-redirect-bogus-sync.htm [ Skip ]
+imported/w3c/web-platform-tests/xhr/send-send.htm [ Skip ]
 imported/w3c/web-platform-tests/cssom/ttwf-cssom-document-extension.html [ Skip ]
 imported/w3c/web-platform-tests/dom/nodes/Element-childElement-null-xhtml.xhtml [ Skip ]
 imported/w3c/web-platform-tests/dom/nodes/getElementsByClassName-06.htm [ Skip ]

@@ -1,0 +1,102 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/accept-language.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/accept.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-allow-lists.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-allow-with-body.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-auth-basic.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-basic-allow-no-credentials.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-basic-allow-star.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-basic-allow.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-basic-cors-safelisted-request-headers.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-basic-denied.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-basic-options-not-supported.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-basic-preflight-cache-invalidation.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-basic-preflight-cache-timeout.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-basic-preflight-cache.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-basic-put-allow.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-basic-whitelist-response-headers.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-cookie.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-origin-header.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-preflight-denied.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-preflight-request-header-lowercase.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-preflight-request-header-sorted.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-preflight-request-headers-origin.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-preflight-request-invalid-status.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-preflight-request-must-not-contain-cookie.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/access-control-sandboxed-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/authentication.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/base.xml
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/chunked.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/conditional.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/content.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/corsenabled.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/delay.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/echo-headers.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/echo-method.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/empty-div-utf8-html.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/folder.txt
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/form.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/gzip.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/header-content-length.asis
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/header-user-agent.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/headers-basic.asis
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/headers.asis
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/headers.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/image.gif
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/img-utf8-html.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/img.jpg
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/infinite-redirects.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/init.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/inspect-headers.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/invalid-utf8-html.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/last-modified.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/no-custom-header-on-preflight.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/parse-headers.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/pass.txt
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/redirect-cors.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/redirect.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/requri.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/reset-token.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/responseType-document-in-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/responseXML-unavailable-in-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/send-after-setting-document-domain-window-1.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/send-after-setting-document-domain-window-2.htm
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/send-after-setting-document-domain-window-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/shift-jis-html.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/status.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/trickle.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/upload.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/utf16-bom.json
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/utf16.txt
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/well-formed.xml
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/win-1252-html.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/win-1252-xml.py
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/workerxhr-origin-referrer.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/workerxhr-simple.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/xmlhttprequest-event-order.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/xmlhttprequest-timeout-aborted.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/xmlhttprequest-timeout-abortedonmain.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/xmlhttprequest-timeout-overrides.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/xmlhttprequest-timeout-overridesexpires.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/xmlhttprequest-timeout-runner.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/xmlhttprequest-timeout-simple.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/xmlhttprequest-timeout-synconmain.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/xmlhttprequest-timeout-synconworker.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/xmlhttprequest-timeout-twice.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/xmlhttprequest-timeout.js
+/LayoutTests/imported/w3c/web-platform-tests/xhr/resources/zlib.py

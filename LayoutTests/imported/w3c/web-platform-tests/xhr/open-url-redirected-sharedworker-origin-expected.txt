@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 10: ReferenceError: Can't find variable: SharedWorker
+
+FAIL XMLHttpRequest: redirected classic shared worker scripts, origin and referrer ReferenceError: Can't find variable: SharedWorker
+

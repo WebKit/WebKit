@@ -1,5 +1,0 @@
-Blocked access to external URL http://www2.localhost:8800/XMLHttpRequest/resources/corsenabled.py?delay=2&code=200
-CONSOLE MESSAGE: line 40: XMLHttpRequest cannot load http://www2.localhost:8800/XMLHttpRequest/resources/corsenabled.py?delay=2&code=200 due to access control checks.
-
-FAIL XMLHttpRequest: timeout event and cross-origin request assert_true: timeout event should fire expected true got false
-

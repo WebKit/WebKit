@@ -1,5 +1,0 @@
-Blocked access to external URL http://nonexistent-origin.localhost:8800/
-
-PASS http URL 
-PASS data URL 
-

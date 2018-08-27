@@ -1,0 +1,5 @@
+
+PASS XMLHttpRequest: getAllResponseHeaders() 
+PASS XMLHttpRequest: getAllResponseHeaders() 1 
+PASS XMLHttpRequest: getAllResponseHeaders() 2 
+

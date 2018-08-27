@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8801/XMLHttpRequest/resources/img.jpg due to access control checks.
-
-PASS ProgressEvent: security consideration 
-

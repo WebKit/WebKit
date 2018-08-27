@@ -1862,7 +1862,7 @@ webkit.org/b/176757 fast/hidpi/filters-multiple.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/177527 [ Release ] fast/hidpi/filters-blur.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/177530 imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-header-allowed.htm [ Pass Failure ]
+webkit.org/b/177530 imported/w3c/web-platform-tests/xhr/setrequestheader-header-allowed.htm [ Pass Failure ]
 
 webkit.org/b/177940 workers/wasm-hashset.html [ Crash Timeout Pass ]
 
@@ -1955,7 +1955,7 @@ webkit.org/b/186638 compositing/patterns/direct-pattern-compositing-padding.html
 webkit.org/b/186638 fast/mediastream/media-stream-track-source-failure.html [ Failure Timeout Pass ]
 webkit.org/b/186638 editing/selection/select-bidi-run.html [ Timeout Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Failure Pass ]
-webkit.org/b/186638 imported/w3c/web-platform-tests/XMLHttpRequest/send-timeout-events.htm [ Failure Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure Pass ]
 webkit.org/b/186638 fast/selectors/hover-invalidation-descendant-dynamic.html [ Failure Pass ]
@@ -1993,8 +1993,8 @@ webkit.org/b/186750 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_key
 
 webkit.org/b/186847 http/tests/inspector/network/resource-sizes-memory-cache.html [ Pass Failure ]
 
-webkit.org/b/186851 imported/w3c/web-platform-tests/XMLHttpRequest/formdata.htm [ Pass Failure ]
-webkit.org/b/186851 imported/w3c/web-platform-tests/XMLHttpRequest/formdata-blob.htm [ Pass Failure ]
+webkit.org/b/186851 imported/w3c/web-platform-tests/xhr/formdata.htm [ Pass Failure ]
+webkit.org/b/186851 imported/w3c/web-platform-tests/xhr/formdata-blob.htm [ Pass Failure ]
 
 webkit.org/b/187326 fast/selectors/selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
 
@@ -3047,11 +3047,11 @@ webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
 # web-platform-tests XHR tests
-webkit.org/b/179663 imported/w3c/web-platform-tests/XMLHttpRequest/headers-normalize-response.htm [ Failure ]
-webkit.org/b/179662 imported/w3c/web-platform-tests/XMLHttpRequest/status-async.htm [ Failure ]
-webkit.org/b/179662 imported/w3c/web-platform-tests/XMLHttpRequest/status-basic.htm [ Failure ]
-webkit.org/b/179662 imported/w3c/web-platform-tests/XMLHttpRequest/status-error.htm [ Failure ]
-imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm [ Slow ]
+webkit.org/b/179663 imported/w3c/web-platform-tests/xhr/headers-normalize-response.htm [ Failure ]
+webkit.org/b/179662 imported/w3c/web-platform-tests/xhr/status-async.htm [ Failure ]
+webkit.org/b/179662 imported/w3c/web-platform-tests/xhr/status-basic.htm [ Failure ]
+webkit.org/b/179662 imported/w3c/web-platform-tests/xhr/status-error.htm [ Failure ]
+imported/w3c/web-platform-tests/xhr/event-readystatechange-loaded.htm [ Slow ]
 
 webkit.org/b/151267 imported/blink/compositing/squashing/squashing-reflection-disallowed.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/compositing/will-change/stacking-context-creation.html [ ImageOnlyFailure ]
@@ -3450,13 +3450,13 @@ webkit.org/b/185254 http/tests/cache/disk-cache/redirect-chain-limits.html [ Fai
 webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-error.html [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/response-access-on-error.html [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/state-after-network-error.html [ Failure ]
-webkit.org/b/185254 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-infinite.htm [ Failure ]
-webkit.org/b/185254 imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-network-error.htm [ Failure ]
+webkit.org/b/185254 imported/w3c/web-platform-tests/xhr/send-redirect-infinite.htm [ Failure ]
+webkit.org/b/185254 imported/w3c/web-platform-tests/xhr/xmlhttprequest-network-error.htm [ Failure ]
 webkit.org/b/185254 http/tests/cache/network-error-during-revalidation.html [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/XMLHttpRequestException.html [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-sync-requests.html [ Failure ]
-webkit.org/b/185254 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-infinite-sync.htm [ Failure ]
-webkit.org/b/185254 imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-network-error-sync.htm [ Failure ]
+webkit.org/b/185254 imported/w3c/web-platform-tests/xhr/send-redirect-infinite-sync.htm [ Failure ]
+webkit.org/b/185254 imported/w3c/web-platform-tests/xhr/xmlhttprequest-network-error-sync.htm [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/connection-error-sync.html [ Failure ]
 
 webkit.org/b/185548 accessibility/scroll-to-make-visible-iframe-offscreen.html [ Failure ]

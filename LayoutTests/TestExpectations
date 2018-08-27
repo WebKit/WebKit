@@ -260,14 +260,22 @@ imported/w3c/web-platform-tests/workers/SharedWorker_blobUrl.html [ Skip ]
 
 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-redirect.any.worker.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects.htm [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/XMLHttpRequest/access-control-basic-cors-safelisted-request-headers.htm [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/XMLHttpRequest/access-control-basic-get-fail-non-simple.htm [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/XMLHttpRequest/access-control-basic-post-with-non-cors-safelisted-content-type.htm [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/XMLHttpRequest/send-authentication-cors-setrequestheader-no-cred.htm [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/XMLHttpRequest/send-authentication-cors-basic-setrequestheader.htm [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/xhr/access-control-and-redirects.htm [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/xhr/access-control-basic-cors-safelisted-request-headers.htm [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/xhr/access-control-basic-get-fail-non-simple.htm [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/xhr/access-control-basic-post-with-non-cors-safelisted-content-type.htm [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/xhr/send-authentication-basic-cors-not-enabled.htm  [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/xhr/send-authentication-cors-setrequestheader-no-cred.htm [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/xhr/send-authentication-cors-basic-setrequestheader.htm [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/cors/request-headers.htm [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/xhr/event-error-order.sub.html [ DumpJSConsoleLogInStdErr ]
 
+imported/w3c/web-platform-tests/xhr/event-error.sub.html [ Failure ]
+imported/w3c/web-platform-tests/xhr/send-authentication-basic-setrequestheader-existing-session.htm [ Failure ]
+imported/w3c/web-platform-tests/xhr/send-authentication-competing-names-passwords.htm [ Failure ]
+imported/w3c/web-platform-tests/xhr/preserve-ua-header-on-redirect.htm [ Failure ]
+imported/w3c/web-platform-tests/xhr/setrequestheader-case-insensitive.htm [ Failure ]
+imported/w3c/web-platform-tests/xhr/send-network-error-async-events.sub.htm [ Failure ]
 http/tests/security/cross-origin-cached-images-parallel.html [ DumpJSConsoleLogInStdErr ]
 
 # textarea.animate is not supported
@@ -290,19 +298,19 @@ http/tests/inspector/paymentrequest [ Skip ]
 imported/w3c/web-platform-tests/payment-request [ Skip ]
 
 http/tests/xmlhttprequest/redirect-cross-origin-sync-double.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-bogus-sync.htm [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/xhr/send-redirect-bogus-sync.htm [ DumpJSConsoleLogInStdErr ]
 
-imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-default-feature-policy.sub.html [ Skip ]
-webkit.org/b/179607 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-async.htm [ Pass Failure ]
-webkit.org/b/179607 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-async-same-origin.htm [ Pass Failure ]
-webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-preflight-async-header-denied.htm [ Failure ]
-webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-preflight-async-method-denied.htm [ Failure ]
-webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-preflight-async-not-supported.htm [ Failure ]
-webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-preflight-sync-header-denied.htm [ Failure ]
-webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-preflight-sync-method-denied.htm [ Failure ]
-webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-preflight-sync-not-supported.htm [ Failure ]
-webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/send-conditional-cors.htm [ Failure ]
-webkit.org/b/179611 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-document.htm [ Pass Failure ]
+imported/w3c/web-platform-tests/xhr/xmlhttprequest-sync-default-feature-policy.sub.html [ Skip ]
+webkit.org/b/179607 imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async.htm [ Pass Failure ]
+webkit.org/b/179607 imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async-same-origin.htm [ Pass Failure ]
+webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-async-header-denied.htm [ Failure ]
+webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-async-method-denied.htm [ Failure ]
+webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-async-not-supported.htm [ Failure ]
+webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-sync-header-denied.htm [ Failure ]
+webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-sync-method-denied.htm [ Failure ]
+webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-sync-not-supported.htm [ Failure ]
+webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/send-conditional-cors.htm [ Failure ]
+webkit.org/b/179611 imported/w3c/web-platform-tests/xhr/send-entity-body-document.htm [ Pass Failure ]
 webkit.org/b/145566 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-001.html [ ImageOnlyFailure ]
 webkit.org/b/145566 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-002.html [ ImageOnlyFailure ]
 webkit.org/b/145566 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-003.html [ ImageOnlyFailure ]
@@ -688,11 +696,11 @@ webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/without-ports/0
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/without-ports/021.html [ Skip ]
 
 # XMLHttpRequest tests requiring DTR/WTR to allow other URLs than localhost to not be blocked and be reachable (www2.localhost)
-imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-bogus.htm [ Skip ]
-imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-cors.htm [ Skip ]
-imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-non-cors.htm [ Skip ]
+imported/w3c/web-platform-tests/xhr/send-redirect-bogus.htm [ Skip ]
+imported/w3c/web-platform-tests/xhr/send-redirect-to-cors.htm [ Skip ]
+imported/w3c/web-platform-tests/xhr/send-redirect-to-non-cors.htm [ Skip ]
 # Failing assertion with dynamic message
-imported/w3c/web-platform-tests/XMLHttpRequest/responsexml-document-properties.htm [ Failure ]
+imported/w3c/web-platform-tests/xhr/responsexml-document-properties.htm [ Failure ]
 
 imported/w3c/web-platform-tests/fetch/api/basic/block-mime-as-script.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.html [ DumpJSConsoleLogInStdErr ]
@@ -712,7 +720,7 @@ webkit.org/b/171511 http/wpt/resource-timing/rt-revalidate-requests.html [ Pass 
 webkit.org/b/161312 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/document-without-browsing-context.html [ Failure Pass ]
 
 imported/w3c/web-platform-tests/fetch/http-cache/partial.html [ Failure Pass ]
-webkit.org/b/159724 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Failure Pass ]
+webkit.org/b/159724 imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Failure Pass ]
 
 # Flaky tests due to always changing assertion error message
 imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/url-encoded.html [ Failure ]
@@ -1932,7 +1940,7 @@ webkit.org/b/170699 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/ti
 
 webkit.org/b/90724 compositing/iframes/iframe-size-from-zero.html [ Failure Pass ]
 
-webkit.org/b/171031 imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders-cl.htm [ Failure ]
+webkit.org/b/171031 imported/w3c/web-platform-tests/xhr/getallresponseheaders-cl.htm [ Failure ]
 
 webkit.org/b/172961 fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events.html [ Pass Timeout ]
 

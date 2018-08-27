@@ -593,7 +593,7 @@ webkit.org/b/188162 [ Debug ] fast/canvas/webgl/texImage2D-video-flipY-true.html
 # 6. FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/177530 imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-header-allowed.htm [ Pass Failure ]
+webkit.org/b/177530 imported/w3c/web-platform-tests/xhr/setrequestheader-header-allowed.htm [ Pass Failure ]
 
 # Irregularly crashing on the HeadlessViewBackend.
 webkit.org/b/173654 http/tests/appcache/insert-html-element-with-manifest-2.html [ Pass Crash ]
@@ -694,10 +694,10 @@ webkit.org/b/188057 imported/w3c/web-platform-tests/html/dom/interfaces.html [ F
 
 webkit.org/b/180932 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements [ Pass Crash ]
 
-webkit.org/b/179611 imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-document.htm [ Pass Failure ]
-webkit.org/b/179607 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-async.htm [ Pass Failure ]
-webkit.org/b/179607 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-async-same-origin.htm [ Pass Failure ]
-webkit.org/b/159724 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Pass Failure ]
+webkit.org/b/179611 imported/w3c/web-platform-tests/xhr/send-entity-body-document.htm [ Pass Failure ]
+webkit.org/b/179607 imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async.htm [ Pass Failure ]
+webkit.org/b/179607 imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async-same-origin.htm [ Pass Failure ]
+webkit.org/b/159724 imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Pass Failure ]
 
 Bug(WPE) fast/doctypes/xhtml-with-xhtmlmp-doctype.xhtml [ Pass Failure ]
 Bug(WPE) fast/doctypes/xhtml-with-xhtmlmp12-doctype.xhtml [ Pass Failure ]
@@ -969,22 +969,22 @@ webkit.org/b/180648 imported/w3c/web-platform-tests/html/semantics/text-level-se
 webkit.org/b/180648 http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/canblock-serviceworker.https.html [ Failure ]
 
-webkit.org/b/127676 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-bogus.htm [ Skip ]
-webkit.org/b/127676 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-cors.htm [ Skip ]
-webkit.org/b/127676 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-non-cors.htm [ Skip ]
+webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-bogus.htm [ Skip ]
+webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-to-cors.htm [ Skip ]
+webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-to-non-cors.htm [ Skip ]
 
-webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-preflight-async-header-denied.htm [ Failure ]
-webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-preflight-async-method-denied.htm [ Failure ]
-webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-preflight-async-not-supported.htm [ Failure ]
-webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-preflight-sync-header-denied.htm [ Failure ]
-webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-preflight-sync-method-denied.htm [ Failure ]
-webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-preflight-sync-not-supported.htm [ Failure ]
-webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/send-conditional-cors.htm [ Failure ]
-webkit.org/b/179375 imported/w3c/web-platform-tests/XMLHttpRequest/responsexml-document-properties.htm [ Failure ]
-webkit.org/b/171031 imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders-cl.htm [ Failure ]
+webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-async-header-denied.htm [ Failure ]
+webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-async-method-denied.htm [ Failure ]
+webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-async-not-supported.htm [ Failure ]
+webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-sync-header-denied.htm [ Failure ]
+webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-sync-method-denied.htm [ Failure ]
+webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-sync-not-supported.htm [ Failure ]
+webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/send-conditional-cors.htm [ Failure ]
+webkit.org/b/179375 imported/w3c/web-platform-tests/xhr/responsexml-document-properties.htm [ Failure ]
+webkit.org/b/171031 imported/w3c/web-platform-tests/xhr/getallresponseheaders-cl.htm [ Failure ]
 
-webkit.org/b/179663 imported/w3c/web-platform-tests/XMLHttpRequest/headers-normalize-response.htm [ Failure ]
-webkit.org/b/175586 imported/w3c/web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub.htm [ Failure ]
+webkit.org/b/179663 imported/w3c/web-platform-tests/xhr/headers-normalize-response.htm [ Failure ]
+webkit.org/b/175586 imported/w3c/web-platform-tests/xhr/send-network-error-sync-events.sub.htm [ Failure ]
 
 Bug(WPE) fast/css-grid-layout/flex-content-sized-columns-resize.html [ Timeout ]
 Bug(WPE) fast/css-grid-layout/grid-baseline-margins.html [ ImageOnlyFailure ]

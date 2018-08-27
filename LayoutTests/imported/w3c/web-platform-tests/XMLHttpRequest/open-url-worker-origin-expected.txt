@@ -1,6 +1,0 @@
-Blocked access to external URL http://www2.localhost:8800/XMLHttpRequest/resources/inspect-headers.py?filter_name=origin&cors
-
-PASS Referer header 
-FAIL Origin header assert_equals: expected "Origin: http://localhost:8800\n" but got ""
-PASS Request URL test 
-

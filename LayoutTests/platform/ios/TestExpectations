@@ -2362,7 +2362,7 @@ webkit.org/b/152282 legacy-animation-engine/css3/filters/composited-during-trans
 
 webkit.org/b/152935 fast/scrolling/scroll-position-on-reload-rtl.html [ Failure ]
 
-webkit.org/b/153371 imported/w3c/web-platform-tests/XMLHttpRequest/getresponseheader-chunked-trailer.htm [ Pass Failure ]
+webkit.org/b/153371 imported/w3c/web-platform-tests/xhr/getresponseheader-chunked-trailer.htm [ Pass Failure ]
 
 webkit.org/b/169210 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-navigation-samedoc.html [ Failure ]
 
@@ -2379,7 +2379,7 @@ webkit.org/b/153370 imported/w3c/web-platform-tests/html/dom/documents/dom-tree-
 
 webkit.org/b/153311 fast/replaced/preferred-widths.html [ Pass Failure ]
 
-webkit.org/b/153336 imported/w3c/web-platform-tests/XMLHttpRequest/open-url-multi-window-4.htm [ Pass Failure ]
+webkit.org/b/153336 imported/w3c/web-platform-tests/xhr/open-url-multi-window-4.htm [ Pass Failure ]
 
 webkit.org/b/153803 perf/show-hide-table-rows.html [ Pass Failure ]
 
@@ -2631,7 +2631,7 @@ imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/conte
 css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]
 css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
 
-webkit.org/b/161949 imported/w3c/web-platform-tests/XMLHttpRequest/response-method.htm [ Failure ]
+webkit.org/b/161949 imported/w3c/web-platform-tests/xhr/response-method.htm [ Failure ]
 
 webkit.org/b/130972 transitions/3d/interrupted-transition.html [ Pass Timeout ]
 webkit.org/b/130972 legacy-animation-engine/transitions/3d/interrupted-transition.html [ Pass Timeout ]
@@ -2908,7 +2908,7 @@ fast/text/ipa-tone-letters.html [ Failure ]
 # <rdar://problem/33251388> REGRESSION: Multiple imported/w3c/web-platform-tests/ are failing with blobs
 imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type.html [ Failure ]
+imported/w3c/web-platform-tests/xhr/send-blob-with-no-mime-type.html [ Failure ]
 
 # <rdar://problem/33630526> http/tests/websocket/tests/hybi/deflate-frame-parameter.html is failing on iOS 11
 http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]

@@ -368,7 +368,8 @@ webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
 # rdar://problem/26478296
 [ Sierra+ ] svg/hixie/text/003.html [ Failure ]
 
-webkit.org/b/159893 [ Debug ] imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm [ Pass Failure ]
+webkit.org/b/159893 [ Debug ] imported/w3c/web-platform-tests/xhr/event-readystatechange-loaded.htm [ Pass Failure ]
+webkit.org/b/188816 [ Debug ] imported/w3c/web-platform-tests/xhr/event-upload-progress.htm [ Pass Crash ]
 
 webkit.org/b/160101 userscripts/window-onerror-for-isolated-world-3.html [ Pass Failure ]
 
@@ -426,7 +427,7 @@ css3/viewport-percentage-lengths/vh-auto-size.html [ Skip ]
 
 webkit.org/b/170877 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-with-reserved-words.html [ Pass Timeout ]
 
-webkit.org/b/180554 imported/w3c/web-platform-tests/XMLHttpRequest/event-upload-progress-crossorigin.htm [ Skip ]
+webkit.org/b/180554 imported/w3c/web-platform-tests/xhr/event-upload-progress-crossorigin.htm [ Skip ]
 
 webkit.org/b/187372 imported/w3c/web-platform-tests/IndexedDB/interfaces.any.worker.html [ Pass Timeout Slow ]
 
@@ -511,7 +512,7 @@ webkit.org/b/175886 svg/animations/smil-leak-element-instances.svg [ Pass Failur
 
 webkit.org/b/172397 [ Debug ] legacy-animation-engine/animations/needs-layout.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/179775 imported/w3c/web-platform-tests/XMLHttpRequest/firing-events-http-no-content-length.html [ Pass Failure ]
+webkit.org/b/179775 imported/w3c/web-platform-tests/xhr/firing-events-http-no-content-length.html [ Pass Failure ]
 
 webkit.org/b/172044 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html [ Pass Timeout ]
 

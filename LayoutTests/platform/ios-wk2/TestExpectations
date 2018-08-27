@@ -1221,7 +1221,7 @@ webkit.org/b/171638 [ Release ] http/tests/xmlhttprequest/methods.html [ Pass Ti
 
 webkit.org/b/171830 [ Debug ] http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 
-webkit.org/b/169637 imported/w3c/web-platform-tests/XMLHttpRequest/timeout-multiple-fetches.html [ Pass Failure ]
+webkit.org/b/169637 imported/w3c/web-platform-tests/xhr/timeout-multiple-fetches.html [ Pass Failure ]
 
 webkit.org/b/171886 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.html [ Pass Failure ]
 
@@ -1241,7 +1241,7 @@ webkit.org/b/171985 [ Release ] workers/bomb.html [ Pass Timeout ]
 webkit.org/b/175939 [ Debug ] editing/execCommand/forward-delete-read-write-canvas.html [ Skip ]
 
 # <rdar://problem/32826391>
-imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm [ Failure ]
+imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm [ Failure ]
 
 webkit.org/b/176240 http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html [ Pass Failure ]
 
@@ -1267,8 +1267,6 @@ webkit.org/b/181957 [ Release ] http/tests/misc/resource-timing-resolution.html 
 webkit.org/b/181821 fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Pass Failure ]
 
 webkit.org/b/182144 [ Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Skip ]
-
-webkit.org/b/182849 imported/w3c/web-platform-tests/XMLHttpRequest/event-upload-progress-crossorigin.htm [ Pass Failure ]
 
 # This is marked as Pass to see if additional logging can reveal the cause of the flakiness.
 webkit.org/b/183714 [ Debug ] http/tests/storageAccess/grant-storage-access-under-opener.html [ Pass ]

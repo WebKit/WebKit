@@ -1,3 +1,55 @@
+2018-08-27  Youenn Fablet  <youenn@apple.com>
+
+        Update WPT XHR tests to 87329a1
+        https://bugs.webkit.org/show_bug.cgi?id=188816
+
+        Reviewed by Ryosuke Niwa.
+
+        Update expectations according renamed XMLHttpRequest to xhr folder.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-async-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-get-head-async-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-get-head-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/xhr/send-network-error-sync-events.sub-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/xhr/send-redirect-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/xhr/setrequestheader-content-type-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type-expected.txt.
+        * platform/ios-wk1/imported/w3c/web-platform-tests/xhr/send-network-error-sync-events.sub-expected.txt: Renamed from LayoutTests/platform/ios-wk1/imported/w3c/web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub-expected.txt.
+        * platform/ios/imported/w3c/web-platform-tests/xhr/getresponseheader-case-insensitive-expected.txt: Renamed from LayoutTests/platform/ios/imported/w3c/web-platform-tests/XMLHttpRequest/getresponseheader-case-insensitive-expected.txt.
+        * platform/ios/imported/w3c/web-platform-tests/xhr/send-blob-with-no-mime-type-expected.txt: Renamed from LayoutTests/platform/ios/imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type-expected.txt.
+        * platform/ios/imported/w3c/web-platform-tests/xhr/send-entity-body-empty-expected.txt: Renamed from LayoutTests/platform/ios/imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-empty-expected.txt.
+        * platform/ios/imported/w3c/web-platform-tests/xhr/send-entity-body-none-expected.txt: Renamed from LayoutTests/platform/ios/imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-none-expected.txt.
+        * platform/ios/imported/w3c/web-platform-tests/xhr/setrequestheader-content-type-expected.txt: Renamed from LayoutTests/platform/ios/imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type-expected.txt.
+        * platform/mac-sierra/imported/w3c/web-platform-tests/xhr/send-blob-with-no-mime-type-expected.txt: Renamed from LayoutTests/platform/mac-sierra/imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type-expected.txt.
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/xhr/access-control-and-redirects-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-expected.txt.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/xhr/late-upload-events-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/XMLHttpRequest/late-upload-events-expected.txt.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/xhr/send-authentication-basic-cors-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/XMLHttpRequest/send-authentication-basic-cors-expected.txt.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/xhr/send-network-error-async-events.sub-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/XMLHttpRequest/send-network-error-async-events.sub-expected.txt.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/xhr/xmlhttprequest-sync-default-feature-policy.sub-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-default-feature-policy.sub-expected.txt.
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac/imported/w3c/web-platform-tests/xhr/getresponseheader-case-insensitive-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/XMLHttpRequest/getresponseheader-case-insensitive-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/xhr/send-blob-with-no-mime-type-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/xhr/send-entity-body-empty-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-empty-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/xhr/send-entity-body-none-expected.txt: Renamed from LayoutTests/platform/mac/imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-none-expected.txt.
+        * platform/win/imported/w3c/web-platform-tests/xhr/access-control-and-redirects-expected.txt: Renamed from LayoutTests/platform/win/imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-expected.txt.
+        * platform/win/imported/w3c/web-platform-tests/xhr/late-upload-events-expected.txt: Renamed from LayoutTests/platform/win/imported/w3c/web-platform-tests/XMLHttpRequest/late-upload-events-expected.txt.
+        * platform/win/imported/w3c/web-platform-tests/xhr/send-authentication-basic-cors-expected.txt: Renamed from LayoutTests/platform/win/imported/w3c/web-platform-tests/XMLHttpRequest/send-authentication-basic-cors-expected.txt.
+        * platform/win/imported/w3c/web-platform-tests/xhr/send-network-error-async-events.sub-expected.txt: Renamed from LayoutTests/platform/win/imported/w3c/web-platform-tests/XMLHttpRequest/send-network-error-async-events.sub-expected.txt.
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/access-control-basic-cors-safelisted-request-headers-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/access-control-basic-cors-safelisted-request-headers-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/access-control-basic-get-fail-non-simple-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/access-control-basic-get-fail-non-simple-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/access-control-basic-post-with-non-cors-safelisted-content-type-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/access-control-basic-post-with-non-cors-safelisted-content-type-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-async-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-get-head-async-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-get-head-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/send-redirect-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/send-redirect-infinite-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-infinite-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/send-redirect-infinite-sync-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-infinite-sync-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/setrequestheader-content-type-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/xmlhttprequest-network-error-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-network-error-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/xmlhttprequest-network-error-sync-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-network-error-sync-expected.txt.
+
 2018-08-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Enabling more tests under the fast/ directory.

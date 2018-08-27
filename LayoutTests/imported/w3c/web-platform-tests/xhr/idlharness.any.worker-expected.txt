@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 1774: TypeError: null is not an object (evaluating 'this.message_target.removeEventListener')
+CONSOLE MESSAGE: line 5: ReferenceError: Can't find variable: idl_test
+
+FAIL Untitled ReferenceError: Can't find variable: idl_test
+

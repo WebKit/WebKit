@@ -1,5 +1,0 @@
-Blocked access to external URL http://www1.localhost:8800/XMLHttpRequest/resources/nocors/folder.txt
-CONSOLE MESSAGE: line 32: XMLHttpRequest cannot load http://www1.localhost:8800/XMLHttpRequest/resources/nocors/folder.txt due to access control checks.
-
-PASS XMLHttpRequest: getResponseHeader() in error state (failing cross-origin test) 
-

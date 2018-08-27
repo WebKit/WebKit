@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: setRequestHeader() - headers that differ in case 
-

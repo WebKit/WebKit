@@ -1,0 +1,4 @@
+Blocked access to external URL http://nonexistent.localhost:8800/
+
+FAIL XMLHttpRequest: event - error (order of events) assert_equals: expected "upload.loadstart(0,12,true)" but got "upload.loadstart(0,0,false)"
+

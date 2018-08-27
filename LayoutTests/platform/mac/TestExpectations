@@ -1133,9 +1133,9 @@ webkit.org/b/58766 fast/canvas/webgl/gl-teximage.html [ Pass Failure ]
 # Imported Blink tests which have not been investigated.
 imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/150806 imported/w3c/web-platform-tests/XMLHttpRequest/send-timeout-events.htm [ Pass Failure ]
-webkit.org/b/150823 imported/w3c/web-platform-tests/XMLHttpRequest/getresponseheader-chunked-trailer.htm [ Pass Failure ]
-webkit.org/b/159724 [ Debug ] imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Skip ]
+webkit.org/b/150806 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Pass Failure ]
+webkit.org/b/150823 imported/w3c/web-platform-tests/xhr/getresponseheader-chunked-trailer.htm [ Pass Failure ]
+webkit.org/b/159724 [ Debug ] imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Skip ]
 
 webkit.org/b/162668 fast/text/woff2-totalsfntsize.html [ ImageOnlyFailure ]
 
@@ -1204,8 +1204,8 @@ webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Fail
 # <rdar://problem/23500327> storage/websql/alter-to-info-table.html
 [ Sierra+ ] storage/websql/alter-to-info-table.html [ Pass Failure ]
 
-# <rdar://problem/23504749> imported/w3c/web-platform-tests/XMLHttpRequest/response-method.htm failing
-[ Sierra+ ] imported/w3c/web-platform-tests/XMLHttpRequest/response-method.htm [ Pass Failure ]
+# <rdar://problem/23504749> imported/w3c/web-platform-tests/xhr/response-method.htm failing
+[ Sierra+ ] imported/w3c/web-platform-tests/xhr/response-method.htm [ Pass Failure ]
 
 # <rdar://problem/23505582> Fails on iMac10,1 and iMac11,1
 [ Sierra+ ] fast/canvas/canvas-imageSmoothingEnabled-repaint.html [ Pass Failure ]
@@ -1371,7 +1371,7 @@ webkit.org/b/169324 media/track/media-element-enqueue-event-crash.html [ Pass Fa
 
 webkit.org/b/169572 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html [ Pass Failure ]
 
-webkit.org/b/169637 imported/w3c/web-platform-tests/XMLHttpRequest/timeout-multiple-fetches.html [ Pass Failure ]
+webkit.org/b/169637 imported/w3c/web-platform-tests/xhr/timeout-multiple-fetches.html [ Pass Failure ]
 
 # <rdar://problem/19759913>
 http/tests/media/video-served-as-text-with-type.html [ Skip ]
@@ -1585,8 +1585,8 @@ webkit.org/b/172052 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/ti
 # <rdar://problem/32800095> REGRESSION: LayoutTest imported/blink/fast/gradients/gradient-transparency.html is failing
 [ HighSierra+ ] imported/blink/fast/gradients/gradient-transparency.html [ ImageOnlyFailure ]
 
-# <rdar://problem/32826391> LayoutTest imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm is failing on High Sierra
-[ HighSierra+ ] imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm [ Failure ]
+# <rdar://problem/32826391> LayoutTest imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm is failing on High Sierra
+[ HighSierra+ ] imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm [ Failure ]
 
 # <rdar://problem/32864306> Unskip after bots have CTFontCopyPhysicalFont()
 [ HighSierra+ ] fast/text/system-font-japanese-synthetic-italic.html [ Pass ImageOnlyFailure ]

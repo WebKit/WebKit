@@ -1,0 +1,3 @@
+
+PASS XMLHttpRequest: open() attempts to toString its string parameters 
+

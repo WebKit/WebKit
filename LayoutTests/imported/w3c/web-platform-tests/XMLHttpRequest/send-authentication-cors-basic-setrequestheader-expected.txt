@@ -1,4 +1,0 @@
-Blocked access to external URL http://www1.localhost:8800/XMLHttpRequest/resources/auth2/corsenabled.py
-
-FAIL XMLHttpRequest: send() - "Basic" authenticated CORS request using setRequestHeader() (expects to succeed)  A network error occurred.
-
