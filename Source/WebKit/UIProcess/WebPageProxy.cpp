@@ -2193,8 +2193,10 @@ void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, cons
     };
 
 #if PLATFORM(COCOA)
-    if (m_navigationClient)
+    if (m_navigationClient) {
         m_navigationClient->decidePolicyForPluginLoad(*this, static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy), pluginInformation.get(), WTFMove(findPluginCompletion));
+        return;
+    }
 #endif
     findPluginCompletion(pluginLoadPolicy, { });
 }
