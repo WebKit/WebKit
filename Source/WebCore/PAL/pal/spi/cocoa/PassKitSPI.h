@@ -275,6 +275,12 @@ typedef NS_ENUM(NSInteger, PKPaymentButtonType) {
     PKPaymentButtonTypeBuy,
     PKPaymentButtonTypeSetUp,
     PKPaymentButtonTypeInStore,
+    PKPaymentButtonTypeDonate,
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 120000)
+    PKPaymentButtonTypeCheckout,
+    PKPaymentButtonTypeBook,
+    PKPaymentButtonTypeSubscribe,
+#endif
 };
 #endif
 

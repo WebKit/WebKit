@@ -5475,9 +5475,23 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ApplePayButtonType e)
     case ApplePayButtonType::SetUp:
         m_value.valueID = CSSValueSetUp;
         break;
+    case ApplePayButtonType::InStore:
+        m_value.valueID = CSSValueInStore;
+        break;
     case ApplePayButtonType::Donate:
         m_value.valueID = CSSValueDonate;
         break;
+#if ENABLE(APPLE_PAY_SESSION_V4)
+    case ApplePayButtonType::Checkout:
+        m_value.valueID = CSSValueCheckout;
+        break;
+    case ApplePayButtonType::Book:
+        m_value.valueID = CSSValueBook;
+        break;
+    case ApplePayButtonType::Subscribe:
+        m_value.valueID = CSSValueSubscribe;
+        break;
+#endif
 
     default:
         ASSERT_NOT_REACHED();
@@ -5495,8 +5509,18 @@ template<> inline CSSPrimitiveValue::operator ApplePayButtonType() const
         return ApplePayButtonType::Buy;
     case CSSValueSetUp:
         return ApplePayButtonType::SetUp;
+    case CSSValueInStore:
+        return ApplePayButtonType::InStore;
     case CSSValueDonate:
         return ApplePayButtonType::Donate;
+#if ENABLE(APPLE_PAY_SESSION_V4)
+    case CSSValueCheckout:
+        return ApplePayButtonType::Checkout;
+    case CSSValueBook:
+        return ApplePayButtonType::Book;
+    case CSSValueSubscribe:
+        return ApplePayButtonType::Subscribe;
+#endif
     default:
         break;
     }

@@ -1,3 +1,13 @@
+2018-08-26  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Introduce new values for -apple-pay-button-type
+        https://bugs.webkit.org/show_bug.cgi?id=188949
+        <rdar://problem/39992228>
+
+        Reviewed by Anders Carlsson.
+
+        * pal/spi/cocoa/PassKitSPI.h:
+
 2018-08-23  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Introduce Apple Pay JS v4 on iOS 12 and macOS Mojave
