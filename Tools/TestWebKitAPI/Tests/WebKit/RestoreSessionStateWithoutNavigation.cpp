@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED
+#if WK_HAVE_C_SPI
 
 #include "JavaScriptTest.h"
 #include "PlatformUtilities.h"
@@ -33,63 +33,66 @@
 #include "Test.h"
 #include <WebKit/WKPagePrivate.h>
 #include <WebKit/WKSessionStateRef.h>
-#include <WebKit/WKWebViewPrivate.h>
-#include <wtf/RetainPtr.h>
 
-@interface WKWebView ()
-- (WKPageRef)_pageForTesting;
-@end
+namespace TestWebKitAPI {
 
 static bool didFinishLoad;
 static bool didChangeBackForwardList;
-    
-@interface SessionStateDelegate : NSObject <WKNavigationDelegate>
-@end
 
-@implementation SessionStateDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
 {
     didFinishLoad = true;
 }
 
-- (void)_webView:(WKWebView *)webView backForwardListItemAdded:(WKBackForwardListItem *)itemAdded removed:(NSArray<WKBackForwardListItem *> *)itemsRemoved
+static void didChangeBackForwardListForPage(WKPageRef, WKBackForwardListItemRef addedItem, WKArrayRef, const void*)
 {
     didChangeBackForwardList = true;
 }
 
-@end
-
-namespace TestWebKitAPI {
-
-static WKRetainPtr<WKDataRef> createSessionStateData()
+static void setPageLoaderClient(WKPageRef page)
 {
-    auto delegate = adoptNS([SessionStateDelegate new]);
-    auto view = adoptNS([WKWebView new]);
-    [view setNavigationDelegate:delegate.get()];
-    [view loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    WKPageLoaderClientV0 loaderClient;
+    memset(&loaderClient, 0, sizeof(loaderClient));
+
+    loaderClient.base.version = 0;
+    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+    loaderClient.didChangeBackForwardList = didChangeBackForwardListForPage;
+
+    WKPageSetPageLoaderClient(page, &loaderClient.base);
+}
+
+static WKRetainPtr<WKDataRef> createSessionStateData(WKContextRef context)
+{
+    PlatformWebView webView(context);
+    setPageLoaderClient(webView.page());
+
+    WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("simple", "html")).get());
     Util::run(&didFinishLoad);
     didFinishLoad = false;
 
-    NSData *data = [view _sessionStateData];
-    return adoptWK(WKDataCreate(static_cast<const unsigned char*>(data.bytes), data.length));
+    auto sessionState = adoptWK(static_cast<WKSessionStateRef>(WKPageCopySessionState(webView.page(), reinterpret_cast<void*>(1), nullptr)));
+    return adoptWK(WKSessionStateCopyData(sessionState.get()));
 }
 
 TEST(WebKit, RestoreSessionStateWithoutNavigation)
 {
-    auto data = createSessionStateData();
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+
+    PlatformWebView webView(context.get());
+    setPageLoaderClient(webView.page());
+
+    WKRetainPtr<WKDataRef> data = createSessionStateData(context.get());
     EXPECT_NOT_NULL(data);
 
-    auto webView = adoptNS([WKWebView new]);
     auto sessionState = adoptWK(WKSessionStateCreateFromData(data.get()));
-    WKPageRestoreFromSessionStateWithoutNavigation([webView _pageForTesting], sessionState.get());
+    WKPageRestoreFromSessionStateWithoutNavigation(webView.page(), sessionState.get());
 
     Util::run(&didChangeBackForwardList);
 
-    WKRetainPtr<WKURLRef> committedURL = adoptWK(WKPageCopyCommittedURL([webView _pageForTesting]));
+    WKRetainPtr<WKURLRef> committedURL = adoptWK(WKPageCopyCommittedURL(webView.page()));
     EXPECT_NULL(committedURL.get());
 
-    auto backForwardList = WKPageGetBackForwardList([webView _pageForTesting]);
+    auto backForwardList = WKPageGetBackForwardList(webView.page());
     auto currentItem = WKBackForwardListGetCurrentItem(backForwardList);
     auto currentItemURL = adoptWK(WKBackForwardListItemCopyURL(currentItem));
     auto expectedURL = adoptWK(Util::createURLForResource("simple", "html"));

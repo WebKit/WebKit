@@ -25,51 +25,49 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED
+#if WK_HAVE_C_SPI
+
+#include "InjectedBundleTest.h"
 
 #include "PlatformUtilities.h"
-#include "PlatformWebView.h"
-#include "Test.h"
-#include <WebKit/WKString.h>
-#include <wtf/RetainPtr.h>
-
-static bool finished = false;
-
-@interface BackForwardClient : NSObject <WKNavigationDelegate>
-@end
-
-@implementation BackForwardClient
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    finished = true;
-}
-
-- (void)_webView:(WKWebView *)webView willGoToBackForwardListItem:(WKBackForwardListItem *)item inPageCache:(BOOL)inPageCache
-{
-    finished = true;
-}
-
-@end
+#include <WebKit/WKBundlePage.h>
+#include <WebKit/WKBundleBackForwardListItem.h>
 
 namespace TestWebKitAPI {
 
-TEST(WebKit, ShouldGoToBackForwardListItem)
+class ShouldGoToBackForwardListItemTest : public InjectedBundleTest {
+public:
+    ShouldGoToBackForwardListItemTest(const std::string& identifier);
+
+    virtual void didCreatePage(WKBundleRef bundle, WKBundlePageRef page);
+};
+
+static InjectedBundleTest::Register<ShouldGoToBackForwardListItemTest> registrar("ShouldGoToBackForwardListItemTest");
+
+static bool shouldGoToBackForwardListItemCallback(WKBundlePageRef, WKBundleBackForwardListItemRef item, WKTypeRef* userData, const void*)
 {
-    auto delegate = adoptNS([BackForwardClient new]);
-    auto webView = adoptNS([WKWebView new]);
-    [webView setNavigationDelegate:delegate.get()];
+    // The item should be in the page cache
+    if (WKBundleBackForwardListItemIsInPageCache(item))
+        *userData = WKStringCreateWithUTF8CString("shouldGoToBackForwardListItemCallback called as expected");
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
-    Util::run(&finished);
+    return true;
+}
+
+ShouldGoToBackForwardListItemTest::ShouldGoToBackForwardListItemTest(const std::string& identifier)
+    : InjectedBundleTest(identifier)
+{
+}
+
+void ShouldGoToBackForwardListItemTest::didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
+{    
+    WKBundlePageLoaderClientV1 pageLoaderClient;
+    memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
     
-    finished = false;
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple-iframe" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
-    Util::run(&finished);
-
-    finished = false;
-    [webView goBack];
-    Util::run(&finished);
+    pageLoaderClient.base.version = 1;
+    pageLoaderClient.base.clientInfo = this;
+    pageLoaderClient.shouldGoToBackForwardListItem = shouldGoToBackForwardListItemCallback;
+    
+    WKBundlePageSetPageLoaderClient(page, &pageLoaderClient.base);
 }
 
 } // namespace TestWebKitAPI
