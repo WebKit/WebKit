@@ -55,6 +55,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._customIndent = false;
         this._selectable = selectable;
 
+        this._vritualizedCurrentMiddleItem = NaN;
         this._virtualizedScrollContainer = null;
         this._virtualizedTreeItemHeight = NaN;
         this._virtualizedTopSpacer = null;
@@ -659,7 +660,10 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._virtualizedBottomSpacer = document.createElement("div");
 
         this._virtualizedScrollContainer.addEventListener("scroll", (event) => {
-            this.updateVirtualizedElements();
+            let {numberVisible, extraRows, firstItem} = this._calculateVirtualizedValues();
+
+            if (Math.abs(firstItem + (numberVisible / 2) - this._vritualizedCurrentMiddleItem) >= extraRows)
+                this.updateVirtualizedElements();
         });
     }
 
@@ -693,10 +697,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             return {count, shouldReturn};
         }
 
-        let numberVisible = Math.ceil(this._virtualizedScrollContainer.offsetHeight / this._virtualizedTreeItemHeight);
-        let extraRows = Math.max(numberVisible * 5, 50);
-        let firstItem = Math.floor(this._virtualizedScrollContainer.scrollTop / this._virtualizedTreeItemHeight) - extraRows;
-        let lastItem = firstItem + numberVisible + (extraRows * 2);
+        let {numberVisible, extraRows, firstItem, lastItem} = this._calculateVirtualizedValues();
 
         let shouldScroll = false;
         if (focusedTreeElement && focusedTreeElement.revealed(false)) {
@@ -709,7 +710,9 @@ WI.TreeOutline = class TreeOutline extends WI.Object
                 lastItem = index + extraRows;
             }
 
-            shouldScroll = index < firstItem || index > lastItem;
+            // Only scroll if the `focusedTreeElement` is outside the visible items, not including
+            // the added buffer `extraRows`.
+            shouldScroll = (index < firstItem + extraRows) || (index > lastItem - extraRows);
         }
 
         let totalItems = walk(this, ({parent, treeElement, count}) => {
@@ -731,6 +734,8 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
         if (shouldScroll)
             this._virtualizedScrollContainer.scrollTop = (firstItem + extraRows) * this._virtualizedTreeItemHeight;
+
+        this._vritualizedCurrentMiddleItem = firstItem + (numberVisible / 2);
     }
 
     // Protected
@@ -806,6 +811,20 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         WI.TreeOutline._styleElement.textContent = styleText;
 
         document.head.appendChild(WI.TreeOutline._styleElement);
+    }
+
+    _calculateVirtualizedValues()
+    {
+        let numberVisible = Math.ceil(this._virtualizedScrollContainer.offsetHeight / this._virtualizedTreeItemHeight);
+        let extraRows = Math.max(numberVisible * 5, 50);
+        let firstItem = Math.floor(this._virtualizedScrollContainer.scrollTop / this._virtualizedTreeItemHeight) - extraRows;
+        let lastItem = firstItem + numberVisible + (extraRows * 2);
+        return {
+            numberVisible,
+            extraRows,
+            firstItem,
+            lastItem,
+        };
     }
 
     _handleContextmenu(event)
