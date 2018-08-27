@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #import "TextCheckerState.h"
 #import <WebCore/NotImplemented.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringView.h>
 
@@ -54,8 +55,6 @@ static NSString* const WebTextCheckingSuppressInitialCapitalizationKey = @"Suppr
 
 namespace WebKit {
 using namespace WebCore;
-
-TextCheckerState textCheckerState;
 
 static bool shouldAutomaticTextReplacementBeEnabled()
 {
@@ -91,28 +90,25 @@ static bool shouldAutomaticDashSubstitutionBeEnabled()
     return [defaults boolForKey:WebAutomaticDashSubstitutionEnabled];
 }
 
-static void initializeState()
+static TextCheckerState& mutableState()
 {
-    static bool didInitializeState = false;
-
-    if (didInitializeState)
-        return;
-
-    textCheckerState.isContinuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled] && TextChecker::isContinuousSpellCheckingAllowed();
-    textCheckerState.isGrammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
-    textCheckerState.isAutomaticTextReplacementEnabled = shouldAutomaticTextReplacementBeEnabled();
-    textCheckerState.isAutomaticSpellingCorrectionEnabled = shouldAutomaticSpellingCorrectionBeEnabled();
-    textCheckerState.isAutomaticQuoteSubstitutionEnabled = shouldAutomaticQuoteSubstitutionBeEnabled();
-    textCheckerState.isAutomaticDashSubstitutionEnabled = shouldAutomaticDashSubstitutionBeEnabled();
-    textCheckerState.isAutomaticLinkDetectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticLinkDetectionEnabled];
-
-    didInitializeState = true;
+    static NeverDestroyed<TextCheckerState> state = makeNeverDestroyed([] {
+        TextCheckerState initialState;
+        initialState.isContinuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled] && TextChecker::isContinuousSpellCheckingAllowed();
+        initialState.isGrammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
+        initialState.isAutomaticTextReplacementEnabled = shouldAutomaticTextReplacementBeEnabled();
+        initialState.isAutomaticSpellingCorrectionEnabled = shouldAutomaticSpellingCorrectionBeEnabled();
+        initialState.isAutomaticQuoteSubstitutionEnabled = shouldAutomaticQuoteSubstitutionBeEnabled();
+        initialState.isAutomaticDashSubstitutionEnabled = shouldAutomaticDashSubstitutionBeEnabled();
+        initialState.isAutomaticLinkDetectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticLinkDetectionEnabled];
+        return initialState;
+    }());
+    return state;
 }
 
 const TextCheckerState& TextChecker::state()
 {
-    initializeState();
-    return textCheckerState;
+    return mutableState();
 }
     
 static bool testingModeEnabled = false;
@@ -120,13 +116,13 @@ static bool testingModeEnabled = false;
 void TextChecker::setTestingMode(bool enabled)
 {
     if (enabled && !testingModeEnabled) {
-        [[NSUserDefaults standardUserDefaults] setBool:textCheckerState.isContinuousSpellCheckingEnabled forKey:WebContinuousSpellCheckingEnabled];
-        [[NSUserDefaults standardUserDefaults] setBool:textCheckerState.isGrammarCheckingEnabled forKey:WebGrammarCheckingEnabled];
-        [[NSUserDefaults standardUserDefaults] setBool:textCheckerState.isAutomaticSpellingCorrectionEnabled forKey:WebAutomaticSpellingCorrectionEnabled];
-        [[NSUserDefaults standardUserDefaults] setBool:textCheckerState.isAutomaticQuoteSubstitutionEnabled forKey:WebAutomaticQuoteSubstitutionEnabled];
-        [[NSUserDefaults standardUserDefaults] setBool:textCheckerState.isAutomaticDashSubstitutionEnabled forKey:WebAutomaticDashSubstitutionEnabled];
-        [[NSUserDefaults standardUserDefaults] setBool:textCheckerState.isAutomaticLinkDetectionEnabled forKey:WebAutomaticLinkDetectionEnabled];
-        [[NSUserDefaults standardUserDefaults] setBool:textCheckerState.isAutomaticTextReplacementEnabled forKey:WebAutomaticTextReplacementEnabled];
+        [[NSUserDefaults standardUserDefaults] setBool:mutableState().isContinuousSpellCheckingEnabled forKey:WebContinuousSpellCheckingEnabled];
+        [[NSUserDefaults standardUserDefaults] setBool:mutableState().isGrammarCheckingEnabled forKey:WebGrammarCheckingEnabled];
+        [[NSUserDefaults standardUserDefaults] setBool:mutableState().isAutomaticSpellingCorrectionEnabled forKey:WebAutomaticSpellingCorrectionEnabled];
+        [[NSUserDefaults standardUserDefaults] setBool:mutableState().isAutomaticQuoteSubstitutionEnabled forKey:WebAutomaticQuoteSubstitutionEnabled];
+        [[NSUserDefaults standardUserDefaults] setBool:mutableState().isAutomaticDashSubstitutionEnabled forKey:WebAutomaticDashSubstitutionEnabled];
+        [[NSUserDefaults standardUserDefaults] setBool:mutableState().isAutomaticLinkDetectionEnabled forKey:WebAutomaticLinkDetectionEnabled];
+        [[NSUserDefaults standardUserDefaults] setBool:mutableState().isAutomaticTextReplacementEnabled forKey:WebAutomaticTextReplacementEnabled];
         [[NSUserDefaults standardUserDefaults] setBool:isSmartInsertDeleteEnabled() forKey:WebSmartInsertDeleteEnabled];
     }
     testingModeEnabled = enabled;
@@ -157,7 +153,7 @@ void TextChecker::setContinuousSpellCheckingEnabled(bool isContinuousSpellChecki
     if (state().isContinuousSpellCheckingEnabled == isContinuousSpellCheckingEnabled)
         return;
                                                                                       
-    textCheckerState.isContinuousSpellCheckingEnabled = isContinuousSpellCheckingEnabled;
+    mutableState().isContinuousSpellCheckingEnabled = isContinuousSpellCheckingEnabled;
     if (!testingModeEnabled)
         [[NSUserDefaults standardUserDefaults] setBool:isContinuousSpellCheckingEnabled forKey:WebContinuousSpellCheckingEnabled];
 
@@ -169,7 +165,7 @@ void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
     if (state().isGrammarCheckingEnabled == isGrammarCheckingEnabled)
         return;
 
-    textCheckerState.isGrammarCheckingEnabled = isGrammarCheckingEnabled;
+    mutableState().isGrammarCheckingEnabled = isGrammarCheckingEnabled;
     if (!testingModeEnabled)
         [[NSUserDefaults standardUserDefaults] setBool:isGrammarCheckingEnabled forKey:WebGrammarCheckingEnabled];
     [[NSSpellChecker sharedSpellChecker] updatePanels];
@@ -183,7 +179,7 @@ void TextChecker::setAutomaticSpellingCorrectionEnabled(bool isAutomaticSpelling
     if (state().isAutomaticSpellingCorrectionEnabled == isAutomaticSpellingCorrectionEnabled)
         return;
 
-    textCheckerState.isAutomaticSpellingCorrectionEnabled = isAutomaticSpellingCorrectionEnabled;
+    mutableState().isAutomaticSpellingCorrectionEnabled = isAutomaticSpellingCorrectionEnabled;
     if (!testingModeEnabled)
         [[NSUserDefaults standardUserDefaults] setBool:isAutomaticSpellingCorrectionEnabled forKey:WebAutomaticSpellingCorrectionEnabled];
 
@@ -195,7 +191,7 @@ void TextChecker::setAutomaticQuoteSubstitutionEnabled(bool isAutomaticQuoteSubs
     if (state().isAutomaticQuoteSubstitutionEnabled == isAutomaticQuoteSubstitutionEnabled)
         return;
 
-    textCheckerState.isAutomaticQuoteSubstitutionEnabled = isAutomaticQuoteSubstitutionEnabled;
+    mutableState().isAutomaticQuoteSubstitutionEnabled = isAutomaticQuoteSubstitutionEnabled;
     if (!testingModeEnabled)
         [[NSUserDefaults standardUserDefaults] setBool:isAutomaticQuoteSubstitutionEnabled forKey:WebAutomaticQuoteSubstitutionEnabled];
     
@@ -207,7 +203,7 @@ void TextChecker::setAutomaticDashSubstitutionEnabled(bool isAutomaticDashSubsti
     if (state().isAutomaticDashSubstitutionEnabled == isAutomaticDashSubstitutionEnabled)
         return;
 
-    textCheckerState.isAutomaticDashSubstitutionEnabled = isAutomaticDashSubstitutionEnabled;
+    mutableState().isAutomaticDashSubstitutionEnabled = isAutomaticDashSubstitutionEnabled;
     if (!testingModeEnabled)
         [[NSUserDefaults standardUserDefaults] setBool:isAutomaticDashSubstitutionEnabled forKey:WebAutomaticDashSubstitutionEnabled];
 
@@ -219,7 +215,7 @@ void TextChecker::setAutomaticLinkDetectionEnabled(bool isAutomaticLinkDetection
     if (state().isAutomaticLinkDetectionEnabled == isAutomaticLinkDetectionEnabled)
         return;
     
-    textCheckerState.isAutomaticLinkDetectionEnabled = isAutomaticLinkDetectionEnabled;
+    mutableState().isAutomaticLinkDetectionEnabled = isAutomaticLinkDetectionEnabled;
     if (!testingModeEnabled)
         [[NSUserDefaults standardUserDefaults] setBool:isAutomaticLinkDetectionEnabled forKey:WebAutomaticLinkDetectionEnabled];
     
@@ -231,7 +227,7 @@ void TextChecker::setAutomaticTextReplacementEnabled(bool isAutomaticTextReplace
     if (state().isAutomaticTextReplacementEnabled == isAutomaticTextReplacementEnabled)
         return;
     
-    textCheckerState.isAutomaticTextReplacementEnabled = isAutomaticTextReplacementEnabled;
+    mutableState().isAutomaticTextReplacementEnabled = isAutomaticTextReplacementEnabled;
     if (!testingModeEnabled)
         [[NSUserDefaults standardUserDefaults] setBool:isAutomaticTextReplacementEnabled forKey:WebAutomaticTextReplacementEnabled];
 
@@ -266,25 +262,25 @@ void TextChecker::setSmartInsertDeleteEnabled(bool flag)
 
 void TextChecker::didChangeAutomaticTextReplacementEnabled()
 {
-    textCheckerState.isAutomaticTextReplacementEnabled = shouldAutomaticTextReplacementBeEnabled();
+    mutableState().isAutomaticTextReplacementEnabled = shouldAutomaticTextReplacementBeEnabled();
     [[NSSpellChecker sharedSpellChecker] updatePanels];
 }
 
 void TextChecker::didChangeAutomaticSpellingCorrectionEnabled()
 {
-    textCheckerState.isAutomaticSpellingCorrectionEnabled = shouldAutomaticSpellingCorrectionBeEnabled();
+    mutableState().isAutomaticSpellingCorrectionEnabled = shouldAutomaticSpellingCorrectionBeEnabled();
     [[NSSpellChecker sharedSpellChecker] updatePanels];
 }
 
 void TextChecker::didChangeAutomaticQuoteSubstitutionEnabled()
 {
-    textCheckerState.isAutomaticQuoteSubstitutionEnabled = shouldAutomaticQuoteSubstitutionBeEnabled();
+    mutableState().isAutomaticQuoteSubstitutionEnabled = shouldAutomaticQuoteSubstitutionBeEnabled();
     [[NSSpellChecker sharedSpellChecker] updatePanels];
 }
 
 void TextChecker::didChangeAutomaticDashSubstitutionEnabled()
 {
-    textCheckerState.isAutomaticDashSubstitutionEnabled = shouldAutomaticDashSubstitutionBeEnabled();
+    mutableState().isAutomaticDashSubstitutionEnabled = shouldAutomaticDashSubstitutionBeEnabled();
     [[NSSpellChecker sharedSpellChecker] updatePanels];
 }
 
@@ -305,12 +301,12 @@ void TextChecker::toggleSubstitutionsPanelIsShowing()
 
 void TextChecker::continuousSpellCheckingEnabledStateChanged(bool enabled)
 {
-    textCheckerState.isContinuousSpellCheckingEnabled = enabled;
+    mutableState().isContinuousSpellCheckingEnabled = enabled;
 }
 
 void TextChecker::grammarCheckingEnabledStateChanged(bool enabled)
 {
-    textCheckerState.isGrammarCheckingEnabled = enabled;
+    mutableState().isGrammarCheckingEnabled = enabled;
 }
 
 SpellDocumentTag TextChecker::uniqueSpellDocumentTag(WebPageProxy*)
