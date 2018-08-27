@@ -1,3 +1,14 @@
+2018-08-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, bump WPE/GTK version numbers
+
+        We have a pkg-config dependency on 2.21.92 but trunk is stuck on 2.21.5. So bump the version
+        number to 2.23.0. It seems like a good version number to use until the next real release
+        (2.23.1).
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2018-08-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Remove stale comment from WebKitFeatures.cmake
