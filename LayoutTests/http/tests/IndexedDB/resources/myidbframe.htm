@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="support.js"></script>
+
+<script>
+var t = async_test();
+createdb(t).onupgradeneeded = function(e) {
+    e.target.result
+            .createObjectStore("store")
+            .add(new Date(), 1);
+
+    e.target.onsuccess = t.step_func(function(e) {
+        e.target.result
+                .transaction("store")
+                .objectStore("store")
+                .get(1)
+                .onsuccess = t.step_func(function(e)
+        {
+            t.done();
+            parent.done();
+        });
+    });
+};
+</script>
+
+<div id="log"></div>

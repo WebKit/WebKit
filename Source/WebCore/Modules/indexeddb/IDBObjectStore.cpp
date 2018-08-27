@@ -82,7 +82,7 @@ bool IDBObjectStore::canSuspendForDocumentSuspension() const
 
 bool IDBObjectStore::hasPendingActivity() const
 {
-    return !m_transaction.isFinished();
+    return m_transaction.hasPendingActivity();
 }
 
 const String& IDBObjectStore::name() const
