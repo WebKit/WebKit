@@ -1,3 +1,15 @@
+2018-08-27  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Block CoreServices in sandbox.
+        https://bugs.webkit.org/show_bug.cgi?id=189005
+        <rdar://problem/35369091>
+
+        Reviewed by Brent Fulgham.
+
+        The sandbox for the WebContent process should block CoreServices.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         Teach WebKitTestRunner and DumpRenderTree about detecting world leaks
