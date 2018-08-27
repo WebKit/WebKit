@@ -1,3 +1,10 @@
+2018-08-27  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal builds after r235368
+
+        * UIProcess/API/Cocoa/WKBrowsingContextLoadDelegate.h:
+        At least the ios macros need an introductory version.
+
 2018-08-27  Keith Rollin  <krollin@apple.com>
 
         Build system support for LTO
