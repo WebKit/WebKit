@@ -11,34 +11,40 @@
 async function runManualTest({ completeWith: result }, button) {
   button.disabled = true;
   const { response, request } = await getPaymentRequestResponse();
-  promise_test(async () => {
+  promise_test(async t => {
     try {
       // We .complete() as normal, using the passed test value
-      const promise = response.complete(result);
-      assert_true(promise instanceof Promise, "returns a promise");
-      const returnedValue = await promise;
+      const completePromise = response.complete(result);
+      assert_true(completePromise instanceof Promise, "returns a promise");
+      // Immediately calling complete() again yields a rejected promise.
+      const invalidComplete = response.complete(result);
+      await promise_rejects(t, "InvalidStateError", invalidComplete);
+      // but the original promise is unaffected
+      const returnedValue = await completePromise;
       assert_equals(
         returnedValue,
         undefined,
         "Returned value must always be undefined"
       );
       // We now call .complete() again, to force an exception
-      // because [[completeCalled]] is true.
-      try {
-        await response.complete(result);
-        assert_unreached("Expected InvalidStateError to be thrown");
-      } catch (err) {
-        assert_equals(
-          err.code,
-          DOMException.INVALID_STATE_ERR,
-          "Must throw an InvalidStateError"
-        );
-      }
+      // because [[complete]] is true.
+      const afterComplete = response.complete(result);
+      await promise_rejects(t, "InvalidStateError", afterComplete);
       button.innerHTML = `✅  ${button.textContent}`;
     } catch (err) {
       button.innerHTML = `❌  ${button.textContent}`;
       assert_unreached("Unexpected exception: " + err.message);
     }
+    const allPromises = new Set([
+      completePromise,
+      invalidComplete,
+      afterComplete,
+    ]);
+    assert_equals(
+      allPromises.length,
+      3,
+      "Calling complete() multiple times is always a new object."
+    );
   }, button.textContent.trim());
 }
 </script>
@@ -79,6 +85,6 @@ async function runManualTest({ completeWith: result }, button) {
   </li>
 </ol>
 <small>
-  If you find a buggy test, please <a href="https://github.com/w3c/web-platform-tests/issues">file a bug</a>
-  and tag one of the <a href="https://github.com/w3c/web-platform-tests/blob/master/payment-request/OWNERS">owners</a>.
+  If you find a buggy test, please <a href="https://github.com/web-platform-tests/wpt/issues">file a bug</a>
+  and tag one of the <a href="https://github.com/web-platform-tests/wpt/blob/master/payment-request/META.yml">suggested reviewers</a>.
 </small>

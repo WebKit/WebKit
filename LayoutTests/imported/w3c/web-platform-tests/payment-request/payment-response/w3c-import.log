@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -17,9 +17,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/complete-method-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/helpers.js
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/methodName-attribute-manual.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/onpayerdetailchange-attribute.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/onpayerdetailchange-attribute.manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/payerEmail-attribute-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/payerName-attribute-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/payerPhone-attribute-manual.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/rejects_if_not_active-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/requestId-attribute-manual.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/retry-method-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/shippingAddress-attribute-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-response/shippingOption-attribute-manual.https.html

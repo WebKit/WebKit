@@ -1,3 +1,77 @@
+2018-08-27  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Update payment-request web platform tests
+        https://bugs.webkit.org/show_bug.cgi?id=188985
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/payment-request/META.yml: Added.
+        * web-platform-tests/payment-request/OWNERS: Removed.
+        * web-platform-tests/payment-request/PaymentAddress/attributes-and-toJSON-method-manual.https.html:
+        * web-platform-tests/payment-request/PaymentAddress/w3c-import.log:
+        * web-platform-tests/payment-request/PaymentItem/type_member.https-expected.txt: Added.
+        * web-platform-tests/payment-request/PaymentItem/type_member.https.html: Added.
+        * web-platform-tests/payment-request/PaymentItem/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/payment-request/PaymentAddress/w3c-import.log.
+        * web-platform-tests/payment-request/PaymentMethodChangeEvent/methodDetails-attribute.https-expected.txt: Added.
+        * web-platform-tests/payment-request/PaymentMethodChangeEvent/methodDetails-attribute.https.html: Added.
+        * web-platform-tests/payment-request/PaymentMethodChangeEvent/methodName-attribute.https-expected.txt: Added.
+        * web-platform-tests/payment-request/PaymentMethodChangeEvent/methodName-attribute.https.html: Added.
+        * web-platform-tests/payment-request/PaymentMethodChangeEvent/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/payment-request/PaymentAddress/w3c-import.log.
+        * web-platform-tests/payment-request/PaymentValidationErrors/retry-shows-error-member-manual.https.html: Added.
+        * web-platform-tests/payment-request/PaymentValidationErrors/retry-shows-payer-member-manual.https.html: Added.
+        * web-platform-tests/payment-request/PaymentValidationErrors/retry-shows-shippingAddress-member-manual.https.html: Added.
+        * web-platform-tests/payment-request/PaymentValidationErrors/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/payment-request/PaymentAddress/w3c-import.log.
+        * web-platform-tests/payment-request/algorithms-manual.https.html:
+        * web-platform-tests/payment-request/allowpaymentrequest/w3c-import.log:
+        * web-platform-tests/payment-request/change-shipping-option-manual.https.html:
+        * web-platform-tests/payment-request/change-shipping-option-select-last-manual.https.html: Added.
+        * web-platform-tests/payment-request/idlharness.https.window-expected.txt: Added.
+        * web-platform-tests/payment-request/idlharness.https.window.html: Added.
+        * web-platform-tests/payment-request/idlharness.https.window.js: Added.
+        (idlArray.catch):
+        * web-platform-tests/payment-request/interfaces.https-expected.txt: Removed.
+        * web-platform-tests/payment-request/interfaces.https.html: Removed.
+        * web-platform-tests/payment-request/onpaymentmenthodchange-attribute.https-expected.txt: Added.
+        * web-platform-tests/payment-request/onpaymentmenthodchange-attribute.https.html: Added.
+        * web-platform-tests/payment-request/payment-request-abort-method-manual.https-expected.txt: Removed.
+        * web-platform-tests/payment-request/payment-request-abort-method.https-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-request-abort-method.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-abort-method-manual.https.html.
+        * web-platform-tests/payment-request/payment-request-canmakepayment-method.https-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method-manual.https-expected.txt.
+        * web-platform-tests/payment-request/payment-request-canmakepayment-method.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method-manual.https.html.
+        * web-platform-tests/payment-request/payment-request-insecure.http-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-request-insecure.http.html: Added.
+        * web-platform-tests/payment-request/payment-request-not-exposed.https.worker-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-request-not-exposed.https.worker.html: Added.
+        * web-platform-tests/payment-request/payment-request-not-exposed.https.worker.js: Added.
+        (test):
+        * web-platform-tests/payment-request/payment-request-show-method.https.html:
+        * web-platform-tests/payment-request/payment-response/complete-method-manual.https.html:
+        * web-platform-tests/payment-request/payment-response/helpers.js:
+        (async.getPaymentResponse):
+        * web-platform-tests/payment-request/payment-response/methodName-attribute-manual.https.html:
+        * web-platform-tests/payment-request/payment-response/onpayerdetailchange-attribute.https-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-response/onpayerdetailchange-attribute.https.html: Added.
+        * web-platform-tests/payment-request/payment-response/onpayerdetailchange-attribute.manual.https.html: Added.
+        * web-platform-tests/payment-request/payment-response/payerEmail-attribute-manual.https.html:
+        * web-platform-tests/payment-request/payment-response/payerName-attribute-manual.https.html:
+        * web-platform-tests/payment-request/payment-response/payerPhone-attribute-manual.https.html:
+        * web-platform-tests/payment-request/payment-response/rejects_if_not_active-manual.https.html: Added.
+        * web-platform-tests/payment-request/payment-response/requestId-attribute-manual.https.html:
+        * web-platform-tests/payment-request/payment-response/retry-method-manual.https.html: Added.
+        * web-platform-tests/payment-request/payment-response/shippingAddress-attribute-manual.https.html:
+        * web-platform-tests/payment-request/payment-response/shippingOption-attribute-manual.https.html:
+        * web-platform-tests/payment-request/payment-response/w3c-import.log:
+        * web-platform-tests/payment-request/resources/w3c-import.log:
+        * web-platform-tests/payment-request/shipping-address-changed-manual.https.html:
+        * web-platform-tests/payment-request/show-method-optional-promise-rejects-manual.https.html: Added.
+        * web-platform-tests/payment-request/show-method-optional-promise-resolves-manual.https.html: Added.
+        * web-platform-tests/payment-request/show-method-postmessage-iframe.html: Added.
+        * web-platform-tests/payment-request/show-method-postmessage-manual.https.html: Added.
+        * web-platform-tests/payment-request/updateWith-method-pmi-handling-manual.https.html:
+        * web-platform-tests/payment-request/user-abort-algorithm-manual.https.html:
+        * web-platform-tests/payment-request/user-accepts-payment-request-algo-manual.https.html:
+        * web-platform-tests/payment-request/w3c-import.log:
+
 2018-08-27  Youenn Fablet  <youenn@apple.com>
 
         Update WPT tools to 87329a1

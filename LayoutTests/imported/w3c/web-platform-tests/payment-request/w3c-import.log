@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,18 +14,22 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/algorithms-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/change-shipping-option-manual.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/change-shipping-option-select-last-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/historical.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/interfaces.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-abort-method-manual.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method-manual.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/idlharness.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/onpaymentmenthodchange-attribute.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-abort-method.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-constructor-crash.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-constructor.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-ctor-currency-code-checks.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-ctor-pmi-handling.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-id-attribute.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-insecure.http.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-not-exposed.https.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-onshippingaddresschange-attribute.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-onshippingoptionchange-attribute.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-shippingAddress-attribute.https.html
@@ -34,6 +38,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-show-method.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/shipping-address-changed-manual.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/show-method-optional-promise-rejects-manual.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/show-method-optional-promise-resolves-manual.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/show-method-postmessage-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/show-method-postmessage-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/updateWith-method-pmi-handling-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/user-abort-algorithm-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/user-accepts-payment-request-algo-manual.https.html

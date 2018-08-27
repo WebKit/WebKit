@@ -14,5 +14,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/resources/page1.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/resources/page2.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/PaymentMethodChangeEvent/methodDetails-attribute.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/PaymentMethodChangeEvent/methodName-attribute.https.html

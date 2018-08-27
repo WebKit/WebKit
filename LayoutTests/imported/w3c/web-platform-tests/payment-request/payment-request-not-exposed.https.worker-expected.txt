@@ -1,0 +1,3 @@
+
+PASS PaymentRequest constructor must not be exposed in worker global scope 
+
