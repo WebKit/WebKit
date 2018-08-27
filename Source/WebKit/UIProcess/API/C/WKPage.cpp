@@ -1042,6 +1042,42 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
         explicit LoaderClient(const WKPageLoaderClientBase* client)
         {
             initialize(client);
+            
+            // WKPageSetPageLoaderClient is deprecated. Use WKPageSetPageNavigationClient instead.
+            RELEASE_ASSERT(!m_client.didCommitLoadForFrame);
+            RELEASE_ASSERT(!m_client.didFinishDocumentLoadForFrame);
+            RELEASE_ASSERT(!m_client.didSameDocumentNavigationForFrame);
+            RELEASE_ASSERT(!m_client.didReceiveTitleForFrame);
+            RELEASE_ASSERT(!m_client.didFirstLayoutForFrame);
+            RELEASE_ASSERT(!m_client.didRemoveFrameFromHierarchy);
+            RELEASE_ASSERT(!m_client.didDisplayInsecureContentForFrame);
+            RELEASE_ASSERT(!m_client.didRunInsecureContentForFrame);
+            RELEASE_ASSERT(!m_client.canAuthenticateAgainstProtectionSpaceInFrame);
+            RELEASE_ASSERT(!m_client.didReceiveAuthenticationChallengeInFrame);
+            RELEASE_ASSERT(!m_client.didStartProgress);
+            RELEASE_ASSERT(!m_client.didChangeProgress);
+            RELEASE_ASSERT(!m_client.didFinishProgress);
+            RELEASE_ASSERT(!m_client.processDidBecomeUnresponsive);
+            RELEASE_ASSERT(!m_client.processDidBecomeResponsive);
+            RELEASE_ASSERT(!m_client.processDidCrash);
+            RELEASE_ASSERT(!m_client.didChangeBackForwardList);
+            RELEASE_ASSERT(!m_client.shouldGoToBackForwardListItem);
+            RELEASE_ASSERT(!m_client.didFailToInitializePlugin_deprecatedForUseWithV0);
+            RELEASE_ASSERT(!m_client.didDetectXSSForFrame);
+            RELEASE_ASSERT(!m_client.didNewFirstVisuallyNonEmptyLayout_unavailable);
+            RELEASE_ASSERT(!m_client.willGoToBackForwardListItem);
+            RELEASE_ASSERT(!m_client.interactionOccurredWhileProcessUnresponsive);
+            RELEASE_ASSERT(!m_client.pluginDidFail_deprecatedForUseWithV1);
+            RELEASE_ASSERT(!m_client.didReceiveIntentForFrame_unavailable);
+            RELEASE_ASSERT(!m_client.registerIntentServiceForFrame_unavailable);
+            RELEASE_ASSERT(!m_client.pluginLoadPolicy_deprecatedForUseWithV2);
+            RELEASE_ASSERT(!m_client.pluginDidFail);
+            RELEASE_ASSERT(!m_client.pluginLoadPolicy);
+            RELEASE_ASSERT(!m_client.webGLLoadPolicy);
+            RELEASE_ASSERT(!m_client.resolveWebGLLoadPolicy);
+            RELEASE_ASSERT(!m_client.navigationGestureDidBegin);
+            RELEASE_ASSERT(!m_client.navigationGestureWillEnd);
+            RELEASE_ASSERT(!m_client.navigationGestureDidEnd);
         }
 
     private:
@@ -1069,22 +1105,6 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             m_client.didFailProvisionalLoadWithErrorForFrame(toAPI(&page), toAPI(&frame), toAPI(error), toAPI(userData), m_client.base.clientInfo);
         }
 
-        void didCommitLoadForFrame(WebPageProxy& page, WebFrameProxy& frame, API::Navigation*, API::Object* userData) override
-        {
-            if (!m_client.didCommitLoadForFrame)
-                return;
-
-            m_client.didCommitLoadForFrame(toAPI(&page), toAPI(&frame), toAPI(userData), m_client.base.clientInfo);
-        }
-
-        void didFinishDocumentLoadForFrame(WebPageProxy& page, WebFrameProxy& frame, API::Navigation*, API::Object* userData) override
-        {
-            if (!m_client.didFinishDocumentLoadForFrame)
-                return;
-
-            m_client.didFinishDocumentLoadForFrame(toAPI(&page), toAPI(&frame), toAPI(userData), m_client.base.clientInfo);
-        }
-
         void didFinishLoadForFrame(WebPageProxy& page, WebFrameProxy& frame, API::Navigation*, API::Object* userData) override
         {
             if (!m_client.didFinishLoadForFrame)
@@ -1099,30 +1119,6 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
                 return;
 
             m_client.didFailLoadWithErrorForFrame(toAPI(&page), toAPI(&frame), toAPI(error), toAPI(userData), m_client.base.clientInfo);
-        }
-
-        void didSameDocumentNavigationForFrame(WebPageProxy& page, WebFrameProxy& frame, API::Navigation*, SameDocumentNavigationType type, API::Object* userData) override
-        {
-            if (!m_client.didSameDocumentNavigationForFrame)
-                return;
-
-            m_client.didSameDocumentNavigationForFrame(toAPI(&page), toAPI(&frame), toAPI(type), toAPI(userData), m_client.base.clientInfo);
-        }
-
-        void didReceiveTitleForFrame(WebPageProxy& page, const String& title, WebFrameProxy& frame, API::Object* userData) override
-        {
-            if (!m_client.didReceiveTitleForFrame)
-                return;
-
-            m_client.didReceiveTitleForFrame(toAPI(&page), toAPI(title.impl()), toAPI(&frame), toAPI(userData), m_client.base.clientInfo);
-        }
-
-        void didFirstLayoutForFrame(WebPageProxy& page, WebFrameProxy& frame, API::Object* userData) override
-        {
-            if (!m_client.didFirstLayoutForFrame)
-                return;
-
-            m_client.didFirstLayoutForFrame(toAPI(&page), toAPI(&frame), toAPI(userData), m_client.base.clientInfo);
         }
 
         void didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy& page, WebFrameProxy& frame, API::Object* userData) override
@@ -1141,107 +1137,6 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             m_client.didLayout(toAPI(&page), toWKLayoutMilestones(milestones), nullptr, m_client.base.clientInfo);
         }
 
-        void didDisplayInsecureContentForFrame(WebPageProxy& page, WebFrameProxy& frame, API::Object* userData) override
-        {
-            if (!m_client.didDisplayInsecureContentForFrame)
-                return;
-
-            m_client.didDisplayInsecureContentForFrame(toAPI(&page), toAPI(&frame), toAPI(userData), m_client.base.clientInfo);
-        }
-
-        void didRunInsecureContentForFrame(WebPageProxy& page, WebFrameProxy& frame, API::Object* userData) override
-        {
-            if (!m_client.didRunInsecureContentForFrame)
-                return;
-
-            m_client.didRunInsecureContentForFrame(toAPI(&page), toAPI(&frame), toAPI(userData), m_client.base.clientInfo);
-        }
-
-        void didDetectXSSForFrame(WebPageProxy& page, WebFrameProxy& frame, API::Object* userData) override
-        {
-            if (!m_client.didDetectXSSForFrame)
-                return;
-
-            m_client.didDetectXSSForFrame(toAPI(&page), toAPI(&frame), toAPI(userData), m_client.base.clientInfo);
-        }
-
-        void didReceiveAuthenticationChallengeInFrame(WebPageProxy& page, WebFrameProxy& frame, AuthenticationChallengeProxy& authenticationChallenge) override
-        {
-            if (m_client.canAuthenticateAgainstProtectionSpaceInFrame && !m_client.canAuthenticateAgainstProtectionSpaceInFrame(toAPI(&page), toAPI(&frame), toAPI(authenticationChallenge.protectionSpace()), m_client.base.clientInfo))
-                return authenticationChallenge.rejectProtectionSpaceAndContinue();
-            if (!m_client.didReceiveAuthenticationChallengeInFrame)
-                return authenticationChallenge.performDefaultHandling();
-
-            m_client.didReceiveAuthenticationChallengeInFrame(toAPI(&page), toAPI(&frame), toAPI(&authenticationChallenge), m_client.base.clientInfo);
-        }
-
-        void didStartProgress(WebPageProxy& page) override
-        {
-            if (!m_client.didStartProgress)
-                return;
-
-            m_client.didStartProgress(toAPI(&page), m_client.base.clientInfo);
-        }
-
-        void didChangeProgress(WebPageProxy& page) override
-        {
-            if (!m_client.didChangeProgress)
-                return;
-
-            m_client.didChangeProgress(toAPI(&page), m_client.base.clientInfo);
-        }
-
-        void didFinishProgress(WebPageProxy& page) override
-        {
-            if (!m_client.didFinishProgress)
-                return;
-
-            m_client.didFinishProgress(toAPI(&page), m_client.base.clientInfo);
-        }
-
-        void processDidBecomeUnresponsive(WebPageProxy& page) override
-        {
-            if (!m_client.processDidBecomeUnresponsive)
-                return;
-
-            m_client.processDidBecomeUnresponsive(toAPI(&page), m_client.base.clientInfo);
-        }
-
-        void processDidBecomeResponsive(WebPageProxy& page) override
-        {
-            if (!m_client.processDidBecomeResponsive)
-                return;
-
-            m_client.processDidBecomeResponsive(toAPI(&page), m_client.base.clientInfo);
-        }
-
-        bool processDidCrash(WebPageProxy& page) override
-        {
-            if (!m_client.processDidCrash)
-                return false;
-
-            m_client.processDidCrash(toAPI(&page), m_client.base.clientInfo);
-            return true;
-        }
-
-        void didChangeBackForwardList(WebPageProxy& page, WebBackForwardListItem* addedItem, Vector<Ref<WebBackForwardListItem>>&& removedItems) override
-        {
-            if (!m_client.didChangeBackForwardList)
-                return;
-
-            RefPtr<API::Array> removedItemsArray;
-            if (!removedItems.isEmpty()) {
-                Vector<RefPtr<API::Object>> removedItemsVector;
-                removedItemsVector.reserveInitialCapacity(removedItems.size());
-                for (auto& removedItem : removedItems)
-                    removedItemsVector.append(WTFMove(removedItem));
-
-                removedItemsArray = API::Array::create(WTFMove(removedItemsVector));
-            }
-
-            m_client.didChangeBackForwardList(toAPI(&page), toAPI(addedItem), toAPI(removedItemsArray.get()), m_client.base.clientInfo);
-        }
-
         bool shouldKeepCurrentBackForwardListItemInList(WebKit::WebPageProxy& page, WebKit::WebBackForwardListItem& item) override
         {
             if (!m_client.shouldKeepCurrentBackForwardListItemInList)
@@ -1249,95 +1144,6 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
 
             return m_client.shouldKeepCurrentBackForwardListItemInList(toAPI(&page), toAPI(&item), m_client.base.clientInfo);
         }
-
-        void willGoToBackForwardListItem(WebPageProxy& page, WebBackForwardListItem& item, API::Object* userData) override
-        {
-            if (m_client.willGoToBackForwardListItem)
-                m_client.willGoToBackForwardListItem(toAPI(&page), toAPI(&item), toAPI(userData), m_client.base.clientInfo);
-        }
-
-        void navigationGestureDidBegin(WebPageProxy& page) override
-        {
-            if (m_client.navigationGestureDidBegin)
-                m_client.navigationGestureDidBegin(toAPI(&page), m_client.base.clientInfo);
-        }
-
-        void navigationGestureWillEnd(WebPageProxy& page, bool willNavigate, WebBackForwardListItem& item) override
-        {
-            if (m_client.navigationGestureWillEnd)
-                m_client.navigationGestureWillEnd(toAPI(&page), willNavigate, toAPI(&item), m_client.base.clientInfo);
-        }
-
-        void navigationGestureDidEnd(WebPageProxy& page, bool willNavigate, WebBackForwardListItem& item) override
-        {
-            if (m_client.navigationGestureDidEnd)
-                m_client.navigationGestureDidEnd(toAPI(&page), willNavigate, toAPI(&item), m_client.base.clientInfo);
-        }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        void didFailToInitializePlugin(WebPageProxy& page, API::Dictionary& pluginInformation) final
-        {
-            if (m_client.didFailToInitializePlugin_deprecatedForUseWithV0)
-                m_client.didFailToInitializePlugin_deprecatedForUseWithV0(toAPI(&page), toAPI(pluginInformation.get<API::String>(pluginInformationMIMETypeKey())), m_client.base.clientInfo);
-
-            if (m_client.pluginDidFail_deprecatedForUseWithV1)
-                m_client.pluginDidFail_deprecatedForUseWithV1(toAPI(&page), kWKErrorCodeCannotLoadPlugIn, toAPI(pluginInformation.get<API::String>(pluginInformationMIMETypeKey())), 0, 0, m_client.base.clientInfo);
-
-            if (m_client.pluginDidFail)
-                m_client.pluginDidFail(toAPI(&page), kWKErrorCodeCannotLoadPlugIn, toAPI(&pluginInformation), m_client.base.clientInfo);
-        }
-
-        void didBlockInsecurePluginVersion(WebPageProxy& page, API::Dictionary& pluginInformation) override
-        {
-            if (m_client.pluginDidFail_deprecatedForUseWithV1)
-                m_client.pluginDidFail_deprecatedForUseWithV1(toAPI(&page), kWKErrorCodeInsecurePlugInVersion, toAPI(pluginInformation.get<API::String>(pluginInformationMIMETypeKey())), toAPI(pluginInformation.get<API::String>(pluginInformationBundleIdentifierKey())), toAPI(pluginInformation.get<API::String>(pluginInformationBundleVersionKey())), m_client.base.clientInfo);
-
-            if (m_client.pluginDidFail)
-                m_client.pluginDidFail(toAPI(&page), kWKErrorCodeInsecurePlugInVersion, toAPI(&pluginInformation), m_client.base.clientInfo);
-        }
-
-        void pluginLoadPolicy(WebPageProxy& page, PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary& pluginInformation, CompletionHandler<void(WebKit::PluginModuleLoadPolicy, const String&)>&& completionHandler) override
-        {
-            WKStringRef unavailabilityDescriptionOut = 0;
-            PluginModuleLoadPolicy loadPolicy = currentPluginLoadPolicy;
-
-            if (m_client.pluginLoadPolicy_deprecatedForUseWithV2)
-                loadPolicy = toPluginModuleLoadPolicy(m_client.pluginLoadPolicy_deprecatedForUseWithV2(toAPI(&page), toWKPluginLoadPolicy(currentPluginLoadPolicy), toAPI(&pluginInformation), m_client.base.clientInfo));
-            else if (m_client.pluginLoadPolicy)
-                loadPolicy = toPluginModuleLoadPolicy(m_client.pluginLoadPolicy(toAPI(&page), toWKPluginLoadPolicy(currentPluginLoadPolicy), toAPI(&pluginInformation), &unavailabilityDescriptionOut, m_client.base.clientInfo));
-
-            String unavailabilityDescription;
-            if (unavailabilityDescriptionOut) {
-                RefPtr<API::String> webUnavailabilityDescription = adoptRef(toImpl(unavailabilityDescriptionOut));
-                unavailabilityDescription = webUnavailabilityDescription->string();
-            }
-            
-            completionHandler(loadPolicy, unavailabilityDescription);
-        }
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
-
-#if ENABLE(WEBGL)
-        WebCore::WebGLLoadPolicy webGLLoadPolicy(WebPageProxy& page, const String& url) const override
-        {
-            WebCore::WebGLLoadPolicy loadPolicy = WebGLAllowCreation;
-
-            if (m_client.webGLLoadPolicy)
-                loadPolicy = toWebGLLoadPolicy(m_client.webGLLoadPolicy(toAPI(&page), toAPI(url.impl()), m_client.base.clientInfo));
-
-            return loadPolicy;
-        }
-
-        WebCore::WebGLLoadPolicy resolveWebGLLoadPolicy(WebPageProxy& page, const String& url) const override
-        {
-            WebCore::WebGLLoadPolicy loadPolicy = WebGLAllowCreation;
-
-            if (m_client.resolveWebGLLoadPolicy)
-                loadPolicy = toWebGLLoadPolicy(m_client.resolveWebGLLoadPolicy(toAPI(&page), toAPI(url.impl()), m_client.base.clientInfo));
-
-            return loadPolicy;
-        }
-
-#endif // ENABLE(WEBGL)
     };
 
     WebPageProxy* webPageProxy = toImpl(pageRef);

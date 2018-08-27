@@ -1,5 +1,86 @@
 2018-08-27  Alex Christensen  <achristensen@webkit.org>
 
+        Remove most of LoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=188997
+
+        Reviewed by Tim Horton.
+
+        We still have a few clients using basic functionality that are transitioning to WKPageNavigationClient,
+        but most of it can be removed.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::~LoaderClient):
+        (API::LoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        (API::LoaderClient::didFailLoadWithErrorForFrame):
+        (API::LoaderClient::didFirstVisuallyNonEmptyLayoutForFrame):
+        (API::LoaderClient::didReachLayoutMilestone):
+        (API::LoaderClient::shouldKeepCurrentBackForwardListItemInList):
+        (API::LoaderClient::didCommitLoadForFrame): Deleted.
+        (API::LoaderClient::didFinishDocumentLoadForFrame): Deleted.
+        (API::LoaderClient::didSameDocumentNavigationForFrame): Deleted.
+        (API::LoaderClient::didReceiveTitleForFrame): Deleted.
+        (API::LoaderClient::didFirstLayoutForFrame): Deleted.
+        (API::LoaderClient::didDisplayInsecureContentForFrame): Deleted.
+        (API::LoaderClient::didRunInsecureContentForFrame): Deleted.
+        (API::LoaderClient::didDetectXSSForFrame): Deleted.
+        (API::LoaderClient::didReceiveAuthenticationChallengeInFrame): Deleted.
+        (API::LoaderClient::didStartProgress): Deleted.
+        (API::LoaderClient::didChangeProgress): Deleted.
+        (API::LoaderClient::didFinishProgress): Deleted.
+        (API::LoaderClient::processDidBecomeUnresponsive): Deleted.
+        (API::LoaderClient::processDidBecomeResponsive): Deleted.
+        (API::LoaderClient::processDidCrash): Deleted.
+        (API::LoaderClient::didChangeBackForwardList): Deleted.
+        (API::LoaderClient::willGoToBackForwardListItem): Deleted.
+        (API::LoaderClient::didNavigateWithNavigationData): Deleted.
+        (API::LoaderClient::didPerformClientRedirect): Deleted.
+        (API::LoaderClient::didPerformServerRedirect): Deleted.
+        (API::LoaderClient::didUpdateHistoryTitle): Deleted.
+        (API::LoaderClient::navigationGestureDidBegin): Deleted.
+        (API::LoaderClient::navigationGestureWillEnd): Deleted.
+        (API::LoaderClient::navigationGestureDidEnd): Deleted.
+        (API::LoaderClient::pluginLoadPolicy): Deleted.
+        (API::LoaderClient::didFailToInitializePlugin): Deleted.
+        (API::LoaderClient::didBlockInsecurePluginVersion): Deleted.
+        (API::LoaderClient::webGLLoadPolicy const): Deleted.
+        (API::LoaderClient::resolveWebGLLoadPolicy const): Deleted.
+        (API::LoaderClient::didStartLoadForQuickLookDocumentInMainFrame): Deleted.
+        (API::LoaderClient::didFinishLoadForQuickLookDocumentInMainFrame): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeBackForwardList):
+        (WebKit::WebPageProxy::willGoToBackForwardListItem):
+        (WebKit::WebPageProxy::didStartProgress):
+        (WebKit::WebPageProxy::didChangeProgress):
+        (WebKit::WebPageProxy::didFinishProgress):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+        (WebKit::WebPageProxy::didReceiveTitleForFrame):
+        (WebKit::WebPageProxy::didFirstLayoutForFrame):
+        (WebKit::WebPageProxy::didDisplayInsecureContentForFrame):
+        (WebKit::WebPageProxy::didRunInsecureContentForFrame):
+        (WebKit::WebPageProxy::didDetectXSSForFrame):
+        (WebKit::WebPageProxy::didNavigateWithNavigationData):
+        (WebKit::WebPageProxy::didPerformClientRedirect):
+        (WebKit::WebPageProxy::didPerformServerRedirect):
+        (WebKit::WebPageProxy::didUpdateHistoryTitle):
+        (WebKit::WebPageProxy::webGLPolicyForURL):
+        (WebKit::WebPageProxy::resolveWebGLPolicyForURL):
+        (WebKit::WebPageProxy::processDidBecomeUnresponsive):
+        (WebKit::WebPageProxy::processDidBecomeResponsive):
+        (WebKit::WebPageProxy::dispatchProcessDidTerminate):
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallengeProxy):
+        (WebKit::WebPageProxy::navigationGestureDidBegin):
+        (WebKit::WebPageProxy::navigationGestureWillEnd):
+        (WebKit::WebPageProxy::navigationGestureDidEnd):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didStartLoadForQuickLookDocumentInMainFrame):
+        (WebKit::WebPageProxy::didFinishLoadForQuickLookDocumentInMainFrame):
+
+2018-08-27  Alex Christensen  <achristensen@webkit.org>
+
         REGRESSION(r234985/r234989) WKPageLoadHTMLString with a 16-bit String has the wrong encoding
         https://bugs.webkit.org/show_bug.cgi?id=189002
 
