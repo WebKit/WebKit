@@ -1,5 +1,11 @@
 2018-08-27  Alex Christensen  <achristensen@webkit.org>
 
+        Fix GTK build.
+
+        * TestWebKitAPI/CMakeLists.txt:
+
+2018-08-27  Alex Christensen  <achristensen@webkit.org>
+
         Fix iOS build.
 
         * TestWebKitAPI/PlatformWebView.h:

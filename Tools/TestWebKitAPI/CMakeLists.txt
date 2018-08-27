@@ -62,7 +62,6 @@ if (ENABLE_WEBKIT)
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/ReloadPageAfterCrash.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/ResizeWindowAfterCrash.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/RestoreSessionStateContainingFormData.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit/ShouldGoToBackForwardListItem.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/TextFieldDidBeginAndEndEditing.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/UserMedia.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/UserMessage.cpp
@@ -210,7 +209,6 @@ if (ENABLE_WEBKIT)
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/ParentFrame_Bundle.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/ProvisionalURLAfterWillSendRequestCallback_Bundle.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/ResponsivenessTimerDoesntFireEarly_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit/ShouldGoToBackForwardListItem_Bundle.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/TextFieldDidBeginAndEndEditing_Bundle.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/UserMessage_Bundle.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/WillLoad_Bundle.cpp
