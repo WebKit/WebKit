@@ -511,7 +511,7 @@ public:
     void didRemoveAttachmentElement(HTMLAttachmentElement&);
 
 #if PLATFORM(COCOA)
-    void getPasteboardTypesAndDataForAttachment(HTMLAttachmentElement&, Vector<String>& outTypes, Vector<RefPtr<SharedBuffer>>& outData);
+    void getPasteboardTypesAndDataForAttachment(Element&, Vector<String>& outTypes, Vector<RefPtr<SharedBuffer>>& outData);
 #endif
 #endif
 

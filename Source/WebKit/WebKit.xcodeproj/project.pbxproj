@@ -1811,6 +1811,8 @@
 		ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A22F0FF1289FCD90085E74F /* WKBundlePageOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDCA71B7128DDA8C00201B26 /* WKBundlePageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A22F1001289FCD90085E74F /* WKBundlePageOverlay.cpp */; };
 		F409BA181E6E64BC009DA28E /* WKDragDestinationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = F409BA171E6E64B3009DA28E /* WKDragDestinationAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F41056622130699A0092281D /* APIAttachmentCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = F41056602130699A0092281D /* APIAttachmentCocoa.h */; };
+		F41056632130699A0092281D /* APIAttachmentCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = F41056612130699A0092281D /* APIAttachmentCocoa.mm */; };
 		F44291921FA591C9002CC93E /* _WKAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = F44291911FA59107002CC93E /* _WKAttachment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F44291941FA59311002CC93E /* _WKAttachment.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44291931FA59311002CC93E /* _WKAttachment.mm */; };
 		F44291961FA5942A002CC93E /* _WKAttachmentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F44291951FA5942A002CC93E /* _WKAttachmentInternal.h */; };
@@ -4654,6 +4656,8 @@
 		ECBFC1DB1E6A4D66000300C7 /* ExtraPublicSymbolsForTAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtraPublicSymbolsForTAPI.h; sourceTree = "<group>"; };
 		F036978715F4BF0500C3A80E /* WebColorPicker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorPicker.cpp; sourceTree = "<group>"; };
 		F409BA171E6E64B3009DA28E /* WKDragDestinationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDragDestinationAction.h; sourceTree = "<group>"; };
+		F41056602130699A0092281D /* APIAttachmentCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIAttachmentCocoa.h; sourceTree = "<group>"; };
+		F41056612130699A0092281D /* APIAttachmentCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = APIAttachmentCocoa.mm; sourceTree = "<group>"; };
 		F44291911FA59107002CC93E /* _WKAttachment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAttachment.h; sourceTree = "<group>"; };
 		F44291931FA59311002CC93E /* _WKAttachment.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKAttachment.mm; sourceTree = "<group>"; };
 		F44291951FA5942A002CC93E /* _WKAttachmentInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAttachmentInternal.h; sourceTree = "<group>"; };
@@ -6209,6 +6213,8 @@
 				5CB237891DF0DD4300117AA3 /* _WKWebsitePolicies.h */,
 				5CB2378A1DF0DD4300117AA3 /* _WKWebsitePolicies.mm */,
 				5CB2378D1DF0E0C200117AA3 /* _WKWebsitePoliciesInternal.h */,
+				F41056602130699A0092281D /* APIAttachmentCocoa.h */,
+				F41056612130699A0092281D /* APIAttachmentCocoa.mm */,
 				7CEFA9601AC0999300B910FD /* APIContentRuleListStoreCocoa.mm */,
 				FED3C1DA1B447AE800E0EB7F /* APISerializedScriptValueCocoa.mm */,
 				1A3635AB1A3145E500ED6197 /* APIWebsiteDataStoreCocoa.mm */,
@@ -8998,6 +9004,7 @@
 				634842511FB26E7100946E3C /* APIApplicationManifest.h in Headers */,
 				BC64697011DBE603006455B0 /* APIArray.h in Headers */,
 				2E5C770E1FA7D429005932C3 /* APIAttachment.h in Headers */,
+				F41056622130699A0092281D /* APIAttachmentCocoa.h in Headers */,
 				99C81D5D1C21F38B005C4C82 /* APIAutomationClient.h in Headers */,
 				990D28C01C6553F100986977 /* APIAutomationSessionClient.h in Headers */,
 				1A3DD206125E5A2F004515E6 /* APIClient.h in Headers */,
@@ -10881,6 +10888,7 @@
 				2D92A784212B6AB100F493FD /* ActivityAssertion.cpp in Sources */,
 				BC64696F11DBE603006455B0 /* APIArray.cpp in Sources */,
 				2E5C770F1FA7D429005932C3 /* APIAttachment.cpp in Sources */,
+				F41056632130699A0092281D /* APIAttachmentCocoa.mm in Sources */,
 				7C89D2B31A6B068C003A5FDE /* APIContentRuleList.cpp in Sources */,
 				7C3A06A71AAB903E009D74BA /* APIContentRuleListStore.cpp in Sources */,
 				7CEFA9621AC0999300B910FD /* APIContentRuleListStoreCocoa.mm in Sources */,

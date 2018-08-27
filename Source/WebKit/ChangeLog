@@ -1,3 +1,110 @@
+2018-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Dropping and pasting images should insert inline image elements with _WKAttachments
+        https://bugs.webkit.org/show_bug.cgi?id=188933
+        <rdar://problem/43699724>
+
+        Reviewed by Darin Adler.
+
+        Support the ability to drop and paste images as image elements, with attachment elements, only if attachment
+        elements are enabled. See changes below for more detail.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<PromisedAttachmentInfo>::encode):
+        (IPC::ArgumentCoder<PromisedAttachmentInfo>::decode):
+
+        Rename "filename" to "fileName", for consistency with WKContentView and WebViewImpl.
+
+        * UIProcess/API/APIAttachment.cpp:
+        (API::Attachment::mimeType const):
+        (API::Attachment::fileName const):
+        * UIProcess/API/APIAttachment.h:
+
+        Push getters for MIME type, UTI, and the file name down from _WKAttachment to API::Attachment. This allows
+        WKContentView and WebViewImpl to ask an API::Attachment questions about its UTI and file name without
+        additionally creating a wrapper object.
+
+        * UIProcess/API/Cocoa/APIAttachmentCocoa.mm: Added.
+        (API::mimeTypeInferredFromFileExtension):
+        (API::isDeclaredOrDynamicTypeIdentifier):
+        (API::Attachment::mimeType const):
+        (API::Attachment::utiType const):
+        (API::Attachment::fileName const):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
+        Add a private delegate hook to notify the UI delegate when a drop has been performed. This is used by tests to
+        know when a drop with file promises has been processed by the page.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _web_didPerformDragOperation:]):
+        * UIProcess/API/Cocoa/_WKAttachment.mm:
+        (-[_WKAttachmentInfo initWithFileWrapper:filePath:mimeType:utiType:]):
+        (-[_WKAttachmentInfo fileWrapper]):
+        (-[_WKAttachmentInfo contentType]):
+        (-[_WKAttachment info]):
+        (-[_WKAttachmentInfo initWithFileWrapper:filePath:contentType:]): Deleted.
+        (isDeclaredOrDynamicTypeIdentifier): Deleted.
+        (-[_WKAttachmentInfo _typeIdentifierFromPathExtension]): Deleted.
+        (-[_WKAttachmentInfo mimeType]): Deleted.
+        (-[_WKAttachmentInfo utiType]): Deleted.
+
+        Moved to APIAttachmentCocoa.mm.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _web_didPerformDragOperation:]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKPromisedAttachmentContext initWithIdentifier:blobURL:fileName:]):
+
+        Adjust this constructor to take each piece of data separately. This is because, in the case where our
+        PromisedAttachmentInfo contains an attachment identifier, we determine the UTI and file name from the associated
+        file wrapper.
+
+        (-[WKPromisedAttachmentContext fileName]):
+        (WebKit::WebViewImpl::fileNameForFilePromiseProvider):
+        (WebKit::WebViewImpl::didPerformDragOperation):
+        (WebKit::WebViewImpl::startDrag):
+
+        Determine UTI and file name from the attachment element corresponding to the attachment identifier when
+        dragging. This is because the attachment element in the web process shouldn't need to have type and title
+        attributes set when starting a drag if it already has an identifier that maps to attachment data in the UI
+        process. An example of this is in inline images backed by attachments, for which we don't need to bother keeping
+        specifying display attributes, since they are never visible.
+
+        (-[WKPromisedAttachmentContext initWithAttachmentInfo:]): Deleted.
+        (-[WKPromisedAttachmentContext filename]): Deleted.
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::didPerformDragOperation):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didPerformDragOperation):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        Rename DidPerformDataInteractionControllerOperation to DidPerformDragOperation, and make it cross-platform (this
+        was previously only sent on iOS). Add plumbing through PageClient and friends on macOS to notify the UI
+        delegate when a drop is handled by the web process.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didPerformDragOperation):
+        (WebKit::PageClientImpl::didPerformDataInteractionControllerOperation): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didPerformDragOperation:]):
+        (-[WKContentView _prepareToDragPromisedAttachment:]):
+
+        Just like in WebViewImpl::startDrag, infer content type and file name from the API attachment object.
+
+        (-[WKContentView _didPerformDataInteractionControllerOperation:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didPerformDataInteractionControllerOperation): Deleted.
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::didPerformDragOperation):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+
 2018-08-23  Jeff Miller  <jeffm@apple.com>
 
         Remove -[WKNavigationDelegate _webView:decidePolicyForPluginLoadWithCurrentPolicy:pluginInfo:unavailabilityDescription:]

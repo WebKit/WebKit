@@ -81,6 +81,20 @@ void Attachment::invalidate()
 #endif
 }
 
+#if !PLATFORM(COCOA)
+
+WTF::String Attachment::mimeType() const
+{
+    return m_contentType;
+}
+
+WTF::String Attachment::fileName() const
+{
+    return { };
+}
+
+#endif // !PLATFORM(COCOA)
+
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)

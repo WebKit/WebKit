@@ -3459,11 +3459,7 @@ void WebPage::performDragControllerAction(DragControllerAction action, const Web
         m_pendingDropSandboxExtension = nullptr;
 
         m_pendingDropExtensionsForFileUpload.clear();
-#if ENABLE(DATA_INTERACTION)
-        send(Messages::WebPageProxy::DidPerformDataInteractionControllerOperation(handled));
-#else
-        UNUSED_PARAM(handled);
-#endif
+        send(Messages::WebPageProxy::DidPerformDragOperation(handled));
         return;
     }
     }

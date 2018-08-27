@@ -4068,6 +4068,13 @@ WEBCORE_COMMAND(yankAndSelect)
     return WKDragDestinationActionAny & ~WKDragDestinationActionLoad;
 }
 
+- (void)_web_didPerformDragOperation:(BOOL)handled
+{
+    id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)self.UIDelegate;
+    if ([uiDelegate respondsToSelector:@selector(_webView:didPerformDragOperation:)])
+        [uiDelegate _webView:self didPerformDragOperation:handled];
+}
+
 #endif
 
 - (void)_web_dismissContentRelativeChildWindows

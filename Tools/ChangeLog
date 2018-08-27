@@ -1,3 +1,39 @@
+2018-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Dropping and pasting images should insert inline image elements with _WKAttachments
+        https://bugs.webkit.org/show_bug.cgi?id=188933
+        <rdar://problem/43699724>
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existing API tests that involve dropping or pasting image files, and additionally write some new
+        tests. These new tests exercise the following cases:
+        •       Inserting and removing newlines before an inline image with an attachment element does not cause new
+                _WKAttachments to be created and destroyed.
+        •       Pasting an image, cutting it, and then pasting it again propagates an attachment update to the UI
+                process with the original _WKAttachment.
+        •       A pasted attachment in the document can be moved around by dragging, and doing so does not cause us to
+                lose a _WKAttachment.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (-[TestWKWebView expectElementCount:tagName:]):
+        (TestWebKitAPI::TEST):
+
+        Add the new tests described above, and also adjust existing tests to check that images are dropped or pasted
+        as image elements, but still have associated attachment elements whose attachment identifiers (observed via
+        script) match that of the corresponding _WKAttachment's uniqueIdentifier in the UI process.
+
+        * TestWebKitAPI/mac/DragAndDropSimulatorMac.mm:
+        (-[DragAndDropSimulator runFrom:to:]):
+        (-[DragAndDropSimulator continueDragSession]):
+        (-[DragAndDropSimulator performDragInWebView:atLocation:withImage:pasteboard:source:]):
+
+        Teach DragAndDropSimulator on macOS to wait until the drop has been handled by the web process before returning
+        execution to the caller. This ensures that tests which involve dropping promised files as attachments aren't
+        flaky, due to how the promised data is retrieved asynchronously when performing the drop.
+
+        (-[DragAndDropSimulator _webView:didPerformDragOperation:]):
+
 2018-08-26  Lucas Forschler  <lforschler@apple.com>
 
         Open svn.webkit.org for commits.

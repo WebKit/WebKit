@@ -210,6 +210,7 @@ public:
 #else
     virtual void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle&) { }
 #endif
+    virtual void didPerformDragOperation(bool) { }
 #endif // ENABLE(DRAG_SUPPORT)
 
     virtual void setCursor(const WebCore::Cursor&) = 0;
@@ -430,7 +431,6 @@ public:
 #endif
 
 #if ENABLE(DATA_INTERACTION)
-    virtual void didPerformDataInteractionControllerOperation(bool handled) = 0;
     virtual void didHandleStartDataInteractionRequest(bool started) = 0;
     virtual void didHandleAdditionalDragItemsRequest(bool added) = 0;
     virtual void didConcludeEditDataInteraction(std::optional<WebCore::TextIndicatorData>) = 0;

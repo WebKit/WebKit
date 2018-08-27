@@ -1031,6 +1031,11 @@ Some other editing-related methods still unimplemented:
 
 #if ENABLE(DRAG_SUPPORT) && WK_API_ENABLED
 
+- (void)_web_didPerformDragOperation:(BOOL)handled
+{
+    UNUSED_PARAM(handled);
+}
+
 - (WKDragDestinationAction)_web_dragDestinationActionForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     return WKDragDestinationActionAny;

@@ -880,28 +880,28 @@ static const NSUInteger orderedListSegment = 2;
 @interface WKPromisedAttachmentContext : NSObject {
 @private
     RetainPtr<NSURL> _blobURL;
-    RetainPtr<NSString> _filename;
+    RetainPtr<NSString> _fileName;
     RetainPtr<NSString> _attachmentIdentifier;
 }
 
-- (instancetype)initWithAttachmentInfo:(const WebCore::PromisedAttachmentInfo&)info;
+- (instancetype)initWithIdentifier:(NSString *)identifier blobURL:(NSURL *)url fileName:(NSString *)fileName;
 
 @property (nonatomic, readonly) NSURL *blobURL;
-@property (nonatomic, readonly) NSString *filename;
+@property (nonatomic, readonly) NSString *fileName;
 @property (nonatomic, readonly) NSString *attachmentIdentifier;
 
 @end
 
 @implementation WKPromisedAttachmentContext
 
-- (instancetype)initWithAttachmentInfo:(const WebCore::PromisedAttachmentInfo&)info
+- (instancetype)initWithIdentifier:(NSString *)identifier blobURL:(NSURL *)blobURL fileName:(NSString *)fileName
 {
     if (!(self = [super init]))
         return nil;
 
-    _blobURL = info.blobURL;
-    _filename = info.filename;
-    _attachmentIdentifier = info.attachmentIdentifier;
+    _blobURL = blobURL;
+    _fileName = fileName;
+    _attachmentIdentifier = identifier;
     return self;
 }
 
@@ -910,9 +910,9 @@ static const NSUInteger orderedListSegment = 2;
     return _blobURL.get();
 }
 
-- (NSString *)filename
+- (NSString *)fileName
 {
-    return _filename.get();
+    return _fileName.get();
 }
 
 - (NSString *)attachmentIdentifier
@@ -3908,7 +3908,7 @@ NSString *WebViewImpl::fileNameForFilePromiseProvider(NSFilePromiseProvider *pro
     if (![userInfo isKindOfClass:[WKPromisedAttachmentContext class]])
         return nil;
 
-    return [(WKPromisedAttachmentContext *)userInfo filename];
+    return [(WKPromisedAttachmentContext *)userInfo fileName];
 }
 
 static NSError *webKitUnknownError()
@@ -3917,6 +3917,15 @@ static NSError *webKitUnknownError()
     return [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil];
 #else
     return [NSError errorWithDomain:@"WKErrorDomain" code:1 userInfo:nil];
+#endif
+}
+
+void WebViewImpl::didPerformDragOperation(bool handled)
+{
+#if WK_API_ENABLED
+    [m_view _web_didPerformDragOperation:handled];
+#else
+    UNUSED_PARAM(handled);
 #endif
 }
 
@@ -3992,18 +4001,26 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, const ShareableBitmap
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
 #pragma clang diagnostic pop
 
-    if (auto& attachmentInfo = item.promisedAttachmentInfo) {
-        auto provider = adoptNS([[NSFilePromiseProvider alloc] initWithFileType:attachmentInfo.contentType delegate:(id <NSFilePromiseProviderDelegate>)m_view.getAutoreleased()]);
-        [provider setUserInfo:[[[WKPromisedAttachmentContext alloc] initWithAttachmentInfo:attachmentInfo] autorelease]];
+    if (auto& info = item.promisedAttachmentInfo) {
+        NSString *utiType = info.contentType;
+        NSString *fileName = info.fileName;
+        if (auto attachment = m_page->attachmentForIdentifier(info.attachmentIdentifier)) {
+            utiType = attachment->utiType();
+            fileName = attachment->fileName();
+        }
+
+        auto provider = adoptNS([[NSFilePromiseProvider alloc] initWithFileType:utiType delegate:(id <NSFilePromiseProviderDelegate>)m_view.getAutoreleased()]);
+        auto context = adoptNS([[WKPromisedAttachmentContext alloc] initWithIdentifier:info.attachmentIdentifier blobURL:info.blobURL fileName:fileName]);
+        [provider setUserInfo:context.get()];
         auto draggingItem = adoptNS([[NSDraggingItem alloc] initWithPasteboardWriter:provider.get()]);
         [draggingItem setDraggingFrame:NSMakeRect(clientDragLocation.x(), clientDragLocation.y() - size.height(), size.width(), size.height()) contents:dragNSImage.get()];
         [m_view beginDraggingSessionWithItems:@[draggingItem.get()] event:m_lastMouseDownEvent.get() source:(id <NSDraggingSource>)m_view.getAutoreleased()];
 
-        ASSERT(attachmentInfo.additionalTypes.size() == attachmentInfo.additionalData.size());
-        if (attachmentInfo.additionalTypes.size() == attachmentInfo.additionalData.size()) {
-            for (size_t index = 0; index < attachmentInfo.additionalTypes.size(); ++index) {
-                auto nsData = attachmentInfo.additionalData[index]->createNSData();
-                [pasteboard setData:nsData.get() forType:attachmentInfo.additionalTypes[index]];
+        ASSERT(info.additionalTypes.size() == info.additionalData.size());
+        if (info.additionalTypes.size() == info.additionalData.size()) {
+            for (size_t index = 0; index < info.additionalTypes.size(); ++index) {
+                auto nsData = info.additionalData[index]->createNSData();
+                [pasteboard setData:nsData.get() forType:info.additionalTypes[index]];
             }
         }
         m_page->didStartDrag();

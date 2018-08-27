@@ -36,7 +36,7 @@ class URL;
 struct PromisedAttachmentInfo {
     URL blobURL;
     String contentType;
-    String filename;
+    String fileName;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     String attachmentIdentifier;
@@ -47,15 +47,12 @@ struct PromisedAttachmentInfo {
 
     operator bool() const
     {
-        if (contentType.isEmpty())
-            return false;
-
 #if ENABLE(ATTACHMENT_ELEMENT)
         if (!attachmentIdentifier.isEmpty())
             return true;
 #endif
 
-        return !blobURL.isEmpty();
+        return !contentType.isEmpty() && !blobURL.isEmpty();
     }
 };
 

@@ -910,9 +910,6 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 #if ENABLE(VIDEO)
     includeShadowDOM = state.source->isMediaElement();
 #endif
-#if ENABLE(ATTACHMENT_ELEMENT)
-    includeShadowDOM = includeShadowDOM || is<HTMLAttachmentElement>(state.source.get());
-#endif
 #if ENABLE(INPUT_TYPE_COLOR)
     bool isColorControl = is<HTMLInputElement>(state.source) && downcast<HTMLInputElement>(*state.source).isColorControl();
     includeShadowDOM = includeShadowDOM || isColorControl;
@@ -1048,20 +1045,28 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         // We shouldn't be starting a drag for an image that can't provide an extension.
         // This is an early detection for problems encountered later upon drop.
         ASSERT(!image->filenameExtension().isEmpty());
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+        auto attachmentInfo = promisedAttachmentInfo(src, element);
+#else
+        PromisedAttachmentInfo attachmentInfo;
+#endif
+
         if (hasData == HasNonDefaultPasteboardData::No) {
             m_draggingImageURL = imageURL;
             if (element.isContentRichlyEditable())
                 selectElement(element);
-            declareAndWriteDragImage(dataTransfer, element, !linkURL.isEmpty() ? linkURL : imageURL, hitTestResult.altDisplayString());
+            if (!attachmentInfo)
+                declareAndWriteDragImage(dataTransfer, element, !linkURL.isEmpty() ? linkURL : imageURL, hitTestResult.altDisplayString());
         }
 
         m_client.willPerformDragSourceAction(DragSourceActionImage, dragOrigin, dataTransfer);
 
         if (!dragImage)
-            doImageDrag(element, dragOrigin, hitTestResult.imageRect(), src, m_dragOffset, state);
+            doImageDrag(element, dragOrigin, hitTestResult.imageRect(), src, m_dragOffset, state, WTFMove(attachmentInfo));
         else {
             // DHTML defined drag image
-            doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state, { });
+            doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state, WTFMove(attachmentInfo));
         }
 
         return true;
@@ -1200,7 +1205,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     return false;
 }
 
-void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, const IntRect& layoutRect, Frame& frame, IntPoint& dragImageOffset, const DragState& state)
+void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, const IntRect& layoutRect, Frame& frame, IntPoint& dragImageOffset, const DragState& state, PromisedAttachmentInfo&& attachmentInfo)
 {
     IntPoint mouseDownPoint = dragOrigin;
     DragImage dragImage;
@@ -1243,7 +1248,7 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
         return;
 
     dragImageOffset = mouseDownPoint + scaledOrigin;
-    doSystemDrag(WTFMove(dragImage), dragImageOffset, dragOrigin, frame, state, { });
+    doSystemDrag(WTFMove(dragImage), dragImageOffset, dragOrigin, frame, state, WTFMove(attachmentInfo));
 }
 
 void DragController::beginDrag(DragItem dragItem, Frame& frame, const IntPoint& mouseDownPoint, const IntPoint& mouseDraggedPoint, DataTransfer& dataTransfer, DragSourceAction dragSourceAction)
@@ -1367,19 +1372,31 @@ String DragController::platformContentTypeForBlobType(const String& type) const
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-PromisedAttachmentInfo DragController::promisedAttachmentInfo(Frame& frame, HTMLAttachmentElement& attachment)
+PromisedAttachmentInfo DragController::promisedAttachmentInfo(Frame& frame, Element& element)
 {
+    auto* client = frame.editor().client();
+    if (!client || !client->supportsClientSideAttachmentData())
+        return { };
+
+    RefPtr<HTMLAttachmentElement> attachment;
+    if (is<HTMLAttachmentElement>(element))
+        attachment = &downcast<HTMLAttachmentElement>(element);
+    else if (is<HTMLImageElement>(element))
+        attachment = downcast<HTMLImageElement>(element).attachmentElement();
+
+    if (!attachment)
+        return { };
+
     Vector<String> additionalTypes;
     Vector<RefPtr<SharedBuffer>> additionalData;
 #if PLATFORM(COCOA)
-    if (frame.editor().client())
-        frame.editor().getPasteboardTypesAndDataForAttachment(attachment, additionalTypes, additionalData);
+    frame.editor().getPasteboardTypesAndDataForAttachment(element, additionalTypes, additionalData);
 #endif
 
-    if (auto* file = attachment.file())
-        return { file->url(), platformContentTypeForBlobType(file->type()), file->name(), attachment.uniqueIdentifier(), WTFMove(additionalTypes), WTFMove(additionalData) };
+    if (auto* file = attachment->file())
+        return { file->url(), platformContentTypeForBlobType(file->type()), file->name(), { }, WTFMove(additionalTypes), WTFMove(additionalData) };
 
-    return { { }, platformContentTypeForBlobType(attachment.attachmentType()), attachment.attachmentTitle(), attachment.uniqueIdentifier(), WTFMove(additionalTypes), WTFMove(additionalData) };
+    return { { }, { }, { }, attachment->uniqueIdentifier(), WTFMove(additionalTypes), WTFMove(additionalData) };
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)

@@ -321,8 +321,11 @@ messages -> WebPageProxy {
     StartDrag(struct WebKit::WebSelectionData selection, uint64_t dragOperation, WebKit::ShareableBitmap::Handle dragImage)
 #endif
 
+#if ENABLE(DRAG_SUPPORT)
+    DidPerformDragOperation(bool handled)
+#endif
+
 #if ENABLE(DATA_INTERACTION)
-    DidPerformDataInteractionControllerOperation(bool handled)
     DidHandleStartDataInteractionRequest(bool started)
     DidHandleAdditionalDragItemsRequest(bool added)
     DidConcludeEditDataInteraction(std::optional<WebCore::TextIndicatorData> textIndicator)

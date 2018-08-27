@@ -103,6 +103,7 @@ static NSImage *defaultExternalDragImage()
     NSPoint _endLocationInWindow;
     double _progress;
     bool _doneWaitingForDraggingSession;
+    bool _doneWaitingForDrop;
 }
 
 @synthesize currentDragOperation=_currentDragOperation;
@@ -155,6 +156,7 @@ static NSImage *defaultExternalDragImage()
     _insertedAttachments = adoptNS([NSMutableArray new]);
     _removedAttachments = adoptNS([NSMutableArray new]);
     _doneWaitingForDraggingSession = true;
+    _doneWaitingForDrop = true;
     _startLocationInWindow = [self flipAboutXAxisInHostWindow:flippedStartLocation];
     _endLocationInWindow = [self flipAboutXAxisInHostWindow:flippedEndLocation];
     _currentDragOperation = NSDragOperationNone;
@@ -167,6 +169,7 @@ static NSImage *defaultExternalDragImage()
         NSPoint startLocationInView = [_webView convertPoint:_startLocationInWindow fromView:nil];
         NSImage *dragImage = self.externalDragImage ?: defaultExternalDragImage();
         [self performDragInWebView:_webView.get() atLocation:startLocationInView withImage:dragImage pasteboard:pasteboard source:nil];
+        TestWebKitAPI::Util::run(&_doneWaitingForDrop);
         return;
     }
 
@@ -186,6 +189,8 @@ static NSImage *defaultExternalDragImage()
 
     [_webView mouseUpAtPoint:_endLocationInWindow];
     [_webView waitForPendingMouseEvents];
+
+    TestWebKitAPI::Util::run(&_doneWaitingForDrop);
 }
 
 - (void)beginDraggingSessionInWebView:(DragAndDropTestWKWebView *)webView withItems:(NSArray<NSDraggingItem *> *)items source:(id<NSDraggingSource>)source
@@ -238,9 +243,10 @@ static NSImage *defaultExternalDragImage()
     if (_willEndDraggingHandler)
         _willEndDraggingHandler();
 
-    if (_currentDragOperation != NSDragOperationNone && [_webView prepareForDragOperation:_draggingInfo.get()])
+    if (_currentDragOperation != NSDragOperationNone && [_webView prepareForDragOperation:_draggingInfo.get()]) {
+        _doneWaitingForDrop = false;
         [_webView performDragOperation:_draggingInfo.get()];
-    else if (_currentDragOperation == NSDragOperationNone)
+    } else if (_currentDragOperation == NSDragOperationNone)
         [_webView draggingExited:_draggingInfo.get()];
     [_webView waitForNextPresentationUpdate];
     [(id <NSDraggingSource>)_webView.get() draggingSession:_draggingSession.get() endedAtPoint:_endLocationInWindow operation:_currentDragOperation];
@@ -268,9 +274,10 @@ static NSImage *defaultExternalDragImage()
     if (_willEndDraggingHandler)
         _willEndDraggingHandler();
 
-    if (_currentDragOperation != NSDragOperationNone && [_webView prepareForDragOperation:_draggingInfo.get()])
+    if (_currentDragOperation != NSDragOperationNone && [_webView prepareForDragOperation:_draggingInfo.get()]) {
+        _doneWaitingForDrop = false;
         [_webView performDragOperation:_draggingInfo.get()];
-    else if (_currentDragOperation == NSDragOperationNone)
+    } else if (_currentDragOperation == NSDragOperationNone)
         [_webView draggingExited:_draggingInfo.get()];
     [_webView waitForNextPresentationUpdate];
 
@@ -437,6 +444,8 @@ static BOOL getFilePathsAndTypeIdentifiers(NSArray<NSURL *> *fileURLs, NSArray<N
 {
 }
 
+#pragma mark - WKUIDelegatePrivate
+
 - (void)_webView:(WKWebView *)webView didInsertAttachment:(_WKAttachment *)attachment withSource:(NSString *)source
 {
     [_insertedAttachments addObject:attachment];
@@ -445,6 +454,11 @@ static BOOL getFilePathsAndTypeIdentifiers(NSArray<NSURL *> *fileURLs, NSArray<N
 - (void)_webView:(WKWebView *)webView didRemoveAttachment:(_WKAttachment *)attachment
 {
     [_removedAttachments addObject:attachment];
+}
+
+- (void)_webView:(WKWebView *)webView didPerformDragOperation:(BOOL)handled
+{
+    _doneWaitingForDrop = true;
 }
 
 @end

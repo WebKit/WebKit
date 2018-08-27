@@ -64,10 +64,13 @@ public:
 #if PLATFORM(COCOA)
     NSFileWrapper *fileWrapper() const { return m_fileWrapper.get(); }
     void setFileWrapper(NSFileWrapper *fileWrapper) { m_fileWrapper = fileWrapper; }
+    WTF::String utiType() const;
 #endif
+    WTF::String mimeType() const;
 
     const WTF::String& filePath() const { return m_filePath; }
     void setFilePath(const WTF::String& filePath) { m_filePath = filePath; }
+    WTF::String fileName() const;
 
     const WTF::String& contentType() const { return m_contentType; }
     void setContentType(const WTF::String& contentType) { m_contentType = contentType; }

@@ -47,6 +47,7 @@
 #import "HTMLImageElement.h"
 #import "HTMLObjectElement.h"
 #import "LegacyWebArchive.h"
+#import "MIMETypeRegistry.h"
 #import "Page.h"
 #import "PublicURLManager.h"
 #import "RuntimeEnabledFeatures.h"
@@ -207,6 +208,11 @@ static bool shouldReplaceRichContentWithAttachments()
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
+static bool contentTypeIsSuitableForInlineImageRepresentation(const String& contentType)
+{
+    return MIMETypeRegistry::isSupportedImageMIMEType(isDeclaredUTI(contentType) ? MIMETypeFromUTI(contentType) : contentType);
+}
+
 static bool supportsClientSideAttachmentData(const Frame& frame)
 {
     if (auto* client = frame.editor().client())
@@ -224,15 +230,22 @@ static Ref<DocumentFragment> createFragmentForImageAttachment(Frame& frame, Docu
     // FIXME: This fallback image name needs to be a localized string.
     String defaultImageAttachmentName { "image"_s };
 
-    if (supportsClientSideAttachmentData(frame)) {
-        attachment->updateAttributes(buffer->size(), contentType, defaultImageAttachmentName);
-        frame.editor().registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), contentType, defaultImageAttachmentName, WTFMove(buffer));
-    } else
-        attachment->setFile(File::create(Blob::create(buffer.get(), contentType), defaultImageAttachmentName), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
-
     auto fragment = document.createDocumentFragment();
-    fragment->appendChild(attachment);
-
+    if (supportsClientSideAttachmentData(frame)) {
+        frame.editor().registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), contentType, defaultImageAttachmentName, WTFMove(buffer));
+        if (contentTypeIsSuitableForInlineImageRepresentation(contentType)) {
+            auto image = HTMLImageElement::create(document);
+            image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, Blob::create(buffer.get(), contentType)));
+            image->setAttachmentElement(WTFMove(attachment));
+            fragment->appendChild(WTFMove(image));
+        } else {
+            attachment->updateAttributes(buffer->size(), contentType, defaultImageAttachmentName);
+            fragment->appendChild(WTFMove(attachment));
+        }
+    } else {
+        attachment->setFile(File::create(Blob::create(buffer.get(), contentType), defaultImageAttachmentName), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
+        fragment->appendChild(WTFMove(attachment));
+    }
     return fragment;
 #else
     UNUSED_PARAM(blob);
@@ -243,11 +256,11 @@ static Ref<DocumentFragment> createFragmentForImageAttachment(Frame& frame, Docu
 static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fragment, const Vector<Ref<ArchiveResource>>& subresources)
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
-    struct AttachmentReplacementInfo {
+    struct AttachmentInsertionInfo {
         String fileName;
         String contentType;
         Ref<SharedBuffer> data;
-        Ref<Element> elementToReplace;
+        Ref<Element> originalElement;
     };
 
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled());
@@ -263,7 +276,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
     }
 
     Vector<Ref<Element>> elementsToRemove;
-    Vector<AttachmentReplacementInfo> attachmentReplacementInfo;
+    Vector<AttachmentInsertionInfo> attachmentInsertionInfo;
     for (auto& image : descendantsOfType<HTMLImageElement>(fragment)) {
         auto resourceURLString = image.attributeWithoutSynchronization(HTMLNames::srcAttr);
         if (resourceURLString.isEmpty())
@@ -277,7 +290,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
         if (name.isEmpty())
             name = AtomicString("media");
 
-        attachmentReplacementInfo.append({ name, resource->value->mimeType(), resource->value->data(), image });
+        attachmentInsertionInfo.append({ name, resource->value->mimeType(), resource->value->data(), image });
     }
 
     for (auto& object : descendantsOfType<HTMLObjectElement>(fragment)) {
@@ -295,23 +308,30 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
         if (name.isEmpty())
             name = AtomicString("file");
 
-        attachmentReplacementInfo.append({ name, resource->value->mimeType(), resource->value->data(), object });
+        attachmentInsertionInfo.append({ name, resource->value->mimeType(), resource->value->data(), object });
     }
 
-    for (auto& info : attachmentReplacementInfo) {
-        auto elementToReplace = WTFMove(info.elementToReplace);
-        auto parent = makeRefPtr(elementToReplace->parentNode());
+    for (auto& info : attachmentInsertionInfo) {
+        auto originalElement = WTFMove(info.originalElement);
+        auto parent = makeRefPtr(originalElement->parentNode());
         if (!parent)
             continue;
 
         auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, fragment.document());
         if (supportsClientSideAttachmentData(frame)) {
-            attachment->updateAttributes(info.data->size(), info.contentType, info.fileName);
+            if (is<HTMLImageElement>(originalElement.get()) && contentTypeIsSuitableForInlineImageRepresentation(info.contentType)) {
+                auto& image = downcast<HTMLImageElement>(originalElement.get());
+                image.setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(*frame.document(), Blob::create(info.data, info.contentType)));
+                image.setAttachmentElement(WTFMove(attachment));
+            } else {
+                attachment->updateAttributes(info.data->size(), info.contentType, info.fileName);
+                parent->replaceChild(attachment, WTFMove(originalElement));
+            }
             frame.editor().registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), WTFMove(info.contentType), WTFMove(info.fileName), WTFMove(info.data));
-        } else
-            attachment->setFile(File::create(Blob::create(info.data, info.contentType), info.fileName), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
-
-        parent->replaceChild(attachment, elementToReplace);
+        } else {
+            attachment->setFile(File::create(Blob::create(WTFMove(info.data), WTFMove(info.contentType)), WTFMove(info.fileName)), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
+            parent->replaceChild(WTFMove(attachment), WTFMove(originalElement));
+        }
     }
 
     for (auto& elementToRemove : elementsToRemove)
@@ -684,12 +704,20 @@ bool WebContentReader::readFilePaths(const Vector<String>& paths)
                 long long fileSize { 0 };
                 FileSystem::getFileSize(path, fileSize);
                 auto contentType = File::contentTypeForFile(path);
-                attachment->updateAttributes(fileSize, contentType, FileSystem::pathGetFileName(path));
                 frame.editor().registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), contentType, path);
-            } else
+                if (contentTypeIsSuitableForInlineImageRepresentation(contentType)) {
+                    auto image = HTMLImageElement::create(document);
+                    image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, File::create(path)));
+                    image->setAttachmentElement(WTFMove(attachment));
+                    fragment->appendChild(image);
+                } else {
+                    attachment->updateAttributes(fileSize, contentType, FileSystem::pathGetFileName(path));
+                    fragment->appendChild(attachment);
+                }
+            } else {
                 attachment->setFile(File::create(path), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
-
-            fragment->appendChild(attachment);
+                fragment->appendChild(attachment);
+            }
         }
     }
 #endif

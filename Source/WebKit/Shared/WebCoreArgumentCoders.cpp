@@ -2867,7 +2867,7 @@ void ArgumentCoder<PromisedAttachmentInfo>::encode(Encoder& encoder, const Promi
 {
     encoder << info.blobURL;
     encoder << info.contentType;
-    encoder << info.filename;
+    encoder << info.fileName;
 #if ENABLE(ATTACHMENT_ELEMENT)
     encoder << info.attachmentIdentifier;
 #endif
@@ -2882,7 +2882,7 @@ bool ArgumentCoder<PromisedAttachmentInfo>::decode(Decoder& decoder, PromisedAtt
     if (!decoder.decode(info.contentType))
         return false;
 
-    if (!decoder.decode(info.filename))
+    if (!decoder.decode(info.fileName))
         return false;
 
 #if ENABLE(ATTACHMENT_ELEMENT)

@@ -46,7 +46,7 @@ public:
     enum class UpdateDisplayAttributes { No, Yes };
     void setFile(RefPtr<File>&&, UpdateDisplayAttributes = UpdateDisplayAttributes::No);
 
-    String uniqueIdentifier() const { return m_uniqueIdentifier; }
+    const String& uniqueIdentifier() const { return m_uniqueIdentifier; }
     void setUniqueIdentifier(const String& uniqueIdentifier) { m_uniqueIdentifier = uniqueIdentifier; }
 
     WEBCORE_EXPORT void updateAttributes(uint64_t fileSize, std::optional<String>&& newContentType = std::nullopt, std::optional<String>&& newFilename = std::nullopt);

@@ -1870,6 +1870,11 @@ void WebPageProxy::dragEnded(const IntPoint& clientPosition, const IntPoint& glo
     setDragCaretRect({ });
 }
 
+void WebPageProxy::didPerformDragOperation(bool handled)
+{
+    m_pageClient.didPerformDragOperation(handled);
+}
+
 void WebPageProxy::didStartDrag()
 {
     if (isValid())

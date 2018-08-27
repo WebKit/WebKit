@@ -40,7 +40,6 @@ class DragData;
 class Element;
 class Frame;
 class FrameSelection;
-class HTMLAttachmentElement;
 class HTMLInputElement;
 class IntRect;
 class Page;
@@ -115,7 +114,7 @@ struct PromisedAttachmentInfo;
         void mouseMovedIntoDocument(Document*);
         bool shouldUseCachedImageForDragImage(const Image&) const;
 
-        void doImageDrag(Element&, const IntPoint&, const IntRect&, Frame&, IntPoint&, const DragState&);
+        void doImageDrag(Element&, const IntPoint&, const IntRect&, Frame&, IntPoint&, const DragState&, PromisedAttachmentInfo&&);
         void doSystemDrag(DragImage, const IntPoint&, const IntPoint&, Frame&, const DragState&, PromisedAttachmentInfo&&);
 
         void beginDrag(DragItem, Frame&, const IntPoint& mouseDownPoint, const IntPoint& mouseDraggedPoint, DataTransfer&, DragSourceAction);
@@ -135,7 +134,7 @@ struct PromisedAttachmentInfo;
         void declareAndWriteDragImage(DataTransfer&, Element&, const URL&, const String& label);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-        PromisedAttachmentInfo promisedAttachmentInfo(Frame&, HTMLAttachmentElement&);
+        PromisedAttachmentInfo promisedAttachmentInfo(Frame&, Element&);
 #endif
         Page& m_page;
         DragClient& m_client;

@@ -104,6 +104,7 @@ class PageConfiguration;
 
 #if ENABLE(DRAG_SUPPORT) && WK_API_ENABLED
 - (WKDragDestinationAction)_web_dragDestinationActionForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
+- (void)_web_didPerformDragOperation:(BOOL)handled;
 #endif
 
 @optional
@@ -430,6 +431,8 @@ public:
 
     NSString *fileNameForFilePromiseProvider(NSFilePromiseProvider *, NSString *fileType);
     void writeToURLForFilePromiseProvider(NSFilePromiseProvider *, NSURL *, void(^)(NSError *));
+
+    void didPerformDragOperation(bool handled);
 #endif
 
     void startWindowDrag();

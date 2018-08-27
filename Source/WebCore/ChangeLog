@@ -1,3 +1,91 @@
+2018-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Dropping and pasting images should insert inline image elements with _WKAttachments
+        https://bugs.webkit.org/show_bug.cgi?id=188933
+        <rdar://problem/43699724>
+
+        Reviewed by Darin Adler.
+
+        Support the ability to drop and paste images as image elements, with attachment elements, only if attachment
+        elements are enabled. See changes below for more detail.
+
+        Tests:  WKAttachmentTests.CutAndPastePastedImage
+                WKAttachmentTests.MovePastedImageByDragging
+                WKAttachmentTests.RemoveNewlinesBeforePastedImage
+
+        * editing/Editor.h:
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::getPasteboardTypesAndDataForAttachment):
+
+        Adjust this helper to take an Element& rather than an HTMLAttachmentElement&, and address a FIXME by writing the
+        document origin identifier to the pasteboard via custom pasteboard data when dragging an attachment. This allows
+        us to avoid creating extra image and attachment elements when dragging an image backed by an attachment within
+        the same document.
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::contentTypeIsSuitableForInlineImageRepresentation):
+
+        Add a helper to determine whether a content type (UTI or MIME type) should be read as an inline image.
+
+        (WebCore::createFragmentForImageAttachment):
+        (WebCore::replaceRichContentWithAttachments):
+        (WebCore::WebContentReader::readFilePaths):
+
+        Teach codepaths where we currently create attachment elements to instead create image elements if the MIME type,
+        is something suitable for display via an inline image element; add the attachment element under the shadow root
+        of the image element.
+
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::appendCustomAttributes):
+        (WebCore::restoreAttachmentElementsInFragment):
+
+        When dragging or copying an image element, we need to make sure that any attachment element backing the image
+        is preserved in the pasted or dropped fragment. To do this, we use a technique similar to what was done for
+        r180785 and r224593 and write a temporary "webkitattachmentid" attribute to the serialized markup on copy. Upon
+        deserializing the markup back to a fragment, we then create an attachment element with the same identifier under
+        the image.
+
+        (WebCore::createFragmentFromMarkup):
+        * html/HTMLAttachmentElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::setAttachmentElement):
+        (WebCore::HTMLImageElement::attachmentElement const):
+
+        Helper methods to get and set an attachment element under an image element. Setting an image's attachment
+        element puts that attachment element under the shadow root of the image, and also hides the attachment element.
+
+        (WebCore::HTMLImageElement::attachmentIdentifier const):
+
+        Returns the identifier of an attachment element associated with the image element, or null.
+
+        * html/HTMLImageElement.h:
+        * html/HTMLImageElement.idl:
+
+        Add HTMLImageElement.webkitAttachmentIdentifier, a readonly attribute guarded by runtime-enabled attachment
+        element feature.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+
+        In the case of dragging an image, if that image element is backed by an attachment element, don't bother writing
+        the image data to the clipboard; instead, write the attachment data as a promise.
+
+        (WebCore::DragController::doImageDrag):
+
+        Plumb promised attachment information to DragController::doSystemDrag.
+
+        (WebCore::DragController::promisedAttachmentInfo):
+
+        Teach this to handle attachment elements as well as image elements that are backed by attachment elements.
+
+        * page/DragController.h:
+        * platform/PromisedAttachmentInfo.h:
+        (WebCore::PromisedAttachmentInfo::operator bool const):
+
+        A valid PromisedAttachmentInfo no longer requires a contentType to be set; instead, an attachment identifier
+        alone is sufficient, since an up-to-date content type can be requested in the UI process from the API attachment
+        object.
+
 2018-08-26  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] PaymentRequest.show() should reject when an unsupported ApplePayRequest version is specified

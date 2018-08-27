@@ -67,6 +67,7 @@
 #include "PageConfiguration.h"
 #include "Range.h"
 #include "RenderBlock.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "SocketProvider.h"
 #include "StyleProperties.h"
@@ -406,16 +407,21 @@ String StyledMarkupAccumulator::stringValueForRange(const Node& node, const Rang
 void StyledMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const Element& element, Namespaces* namespaces)
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
-    if (!is<HTMLAttachmentElement>(element))
+    if (!RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled())
         return;
     
-    const HTMLAttachmentElement& attachment = downcast<HTMLAttachmentElement>(element);
-    appendAttribute(out, element, { webkitattachmentidAttr, attachment.uniqueIdentifier() }, namespaces);
-    if (auto* file = attachment.file()) {
-        // These attributes are only intended for File deserialization, and are removed from the generated attachment
-        // element after we've deserialized and set its backing File.
-        appendAttribute(out, element, { webkitattachmentpathAttr, file->path() }, namespaces);
-        appendAttribute(out, element, { webkitattachmentbloburlAttr, file->url().string() }, namespaces);
+    if (is<HTMLAttachmentElement>(element)) {
+        auto& attachment = downcast<HTMLAttachmentElement>(element);
+        appendAttribute(out, element, { webkitattachmentidAttr, attachment.uniqueIdentifier() }, namespaces);
+        if (auto* file = attachment.file()) {
+            // These attributes are only intended for File deserialization, and are removed from the generated attachment
+            // element after we've deserialized and set its backing File, in restoreAttachmentElementsInFragment.
+            appendAttribute(out, element, { webkitattachmentpathAttr, file->path() }, namespaces);
+            appendAttribute(out, element, { webkitattachmentbloburlAttr, file->url().string() }, namespaces);
+        }
+    } else if (is<HTMLImageElement>(element)) {
+        if (auto attachment = downcast<HTMLImageElement>(element).attachmentElement())
+            appendAttribute(out, element, { webkitattachmentidAttr, attachment->uniqueIdentifier() }, namespaces);
     }
 #else
     UNUSED_PARAM(out);
@@ -881,15 +887,12 @@ String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Do
     return result;
 }
 
-Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String& markup, const String& baseURL, ParserContentPolicy parserContentPolicy)
+static void restoreAttachmentElementsInFragment(DocumentFragment& fragment)
 {
-    // We use a fake body element here to trick the HTML parser to using the InBody insertion mode.
-    auto fakeBody = HTMLBodyElement::create(document);
-    auto fragment = DocumentFragment::create(document);
-
-    fragment->parseHTML(markup, fakeBody.ptr(), parserContentPolicy);
-
 #if ENABLE(ATTACHMENT_ELEMENT)
+    if (!RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled())
+        return;
+
     // When creating a fragment we must strip the webkit-attachment-path attribute after restoring the File object.
     Vector<Ref<HTMLAttachmentElement>> attachments;
     for (auto& attachment : descendantsOfType<HTMLAttachmentElement>(fragment))
@@ -905,11 +908,39 @@ Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String&
         else if (!blobURL.isEmpty())
             attachment->setFile(File::deserialize({ }, blobURL, attachment->attachmentType(), attachment->attachmentTitle()));
 
+        // Remove temporary attributes that were previously added in StyledMarkupAccumulator::appendCustomAttributes.
         attachment->removeAttribute(webkitattachmentidAttr);
         attachment->removeAttribute(webkitattachmentpathAttr);
         attachment->removeAttribute(webkitattachmentbloburlAttr);
     }
+
+    Vector<Ref<HTMLImageElement>> images;
+    for (auto& image : descendantsOfType<HTMLImageElement>(fragment))
+        images.append(image);
+
+    for (auto& image : images) {
+        auto attachmentIdentifier = image->attributeWithoutSynchronization(webkitattachmentidAttr);
+        if (attachmentIdentifier.isEmpty())
+            continue;
+
+        auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, *fragment.ownerDocument());
+        attachment->setUniqueIdentifier(attachmentIdentifier);
+        image->setAttachmentElement(WTFMove(attachment));
+        image->removeAttribute(webkitattachmentidAttr);
+    }
+#else
+    UNUSED_PARAM(fragment);
 #endif
+}
+
+Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String& markup, const String& baseURL, ParserContentPolicy parserContentPolicy)
+{
+    // We use a fake body element here to trick the HTML parser into using the InBody insertion mode.
+    auto fakeBody = HTMLBodyElement::create(document);
+    auto fragment = DocumentFragment::create(document);
+
+    fragment->parseHTML(markup, fakeBody.ptr(), parserContentPolicy);
+    restoreAttachmentElementsInFragment(fragment);
     if (!baseURL.isEmpty() && baseURL != blankURL() && baseURL != document.baseURL())
         completeURLs(fragment.ptr(), baseURL);
 

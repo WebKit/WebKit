@@ -26,8 +26,10 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "CachedImage.h"
+#include "ElementIterator.h"
 #include "FrameView.h"
 #include "HTMLAnchorElement.h"
+#include "HTMLAttachmentElement.h"
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLParserIdioms.h"
@@ -602,6 +604,35 @@ String HTMLImageElement::crossOrigin() const
 {
     return parseCORSSettingsAttribute(attributeWithoutSynchronization(crossoriginAttr));
 }
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+void HTMLImageElement::setAttachmentElement(Ref<HTMLAttachmentElement>&& attachment)
+{
+    if (auto existingAttachment = attachmentElement())
+        existingAttachment->remove();
+
+    attachment->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);
+    ensureUserAgentShadowRoot().appendChild(WTFMove(attachment));
+}
+
+RefPtr<HTMLAttachmentElement> HTMLImageElement::attachmentElement() const
+{
+    if (auto shadowRoot = userAgentShadowRoot())
+        return childrenOfType<HTMLAttachmentElement>(*shadowRoot).first();
+
+    return nullptr;
+}
+
+const String& HTMLImageElement::attachmentIdentifier() const
+{
+    if (auto attachment = attachmentElement())
+        return attachment->uniqueIdentifier();
+
+    return nullAtom();
+}
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #if ENABLE(SERVICE_CONTROLS)
 void HTMLImageElement::updateImageControls()

@@ -42,6 +42,8 @@
     attribute unsigned long width;
     [Reflect] attribute DOMString decoding;
 
+    [Conditional=ATTACHMENT_ELEMENT, EnabledAtRuntime=AttachmentElement, ImplementedAs=attachmentIdentifier] readonly attribute DOMString webkitAttachmentIdentifier;
+
     // Extensions
     readonly attribute boolean complete;
     [Reflect,URL] attribute USVString lowsrc;

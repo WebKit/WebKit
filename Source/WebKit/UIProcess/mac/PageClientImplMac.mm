@@ -874,6 +874,15 @@ NSWindow *PageClientImpl::platformWindow()
     return m_impl->window();
 }
 
+#if ENABLE(DRAG_SUPPORT)
+
+void PageClientImpl::didPerformDragOperation(bool handled)
+{
+    m_impl->didPerformDragOperation(handled);
+}
+
+#endif
+
 #if WK_API_ENABLED
 NSView *PageClientImpl::inspectorAttachmentView()
 {

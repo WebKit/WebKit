@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class HTMLAttachmentElement;
 class HTMLFormElement;
 class HTMLMapElement;
 
@@ -89,6 +90,12 @@ public:
 
 #if PLATFORM(IOS)
     bool willRespondToMouseClickEvents() override;
+#endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    void setAttachmentElement(Ref<HTMLAttachmentElement>&&);
+    RefPtr<HTMLAttachmentElement> attachmentElement() const;
+    const String& attachmentIdentifier() const;
 #endif
 
     bool hasPendingActivity() const { return m_imageLoader.hasPendingActivity(); }

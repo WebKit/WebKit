@@ -778,9 +778,9 @@ RefPtr<WebDataListSuggestionsDropdown> PageClientImpl::createDataListSuggestions
 #endif
 
 #if ENABLE(DATA_INTERACTION)
-void PageClientImpl::didPerformDataInteractionControllerOperation(bool handled)
+void PageClientImpl::didPerformDragOperation(bool handled)
 {
-    [m_contentView _didPerformDataInteractionControllerOperation:handled];
+    [m_contentView _didPerformDragOperation:handled];
 }
 
 void PageClientImpl::didHandleStartDataInteractionRequest(bool started)

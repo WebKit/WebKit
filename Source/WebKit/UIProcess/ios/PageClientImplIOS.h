@@ -210,7 +210,7 @@ private:
 #endif
 
 #if ENABLE(DATA_INTERACTION)
-    void didPerformDataInteractionControllerOperation(bool handled) override;
+    void didPerformDragOperation(bool handled) override;
     void didHandleStartDataInteractionRequest(bool started) override;
     void didHandleAdditionalDragItemsRequest(bool added) override;
     void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle& image) override;

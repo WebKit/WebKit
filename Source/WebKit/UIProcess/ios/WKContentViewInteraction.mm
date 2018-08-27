@@ -5076,7 +5076,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     }];
 }
 
-- (void)_didPerformDataInteractionControllerOperation:(BOOL)handled
+- (void)_didPerformDragOperation:(BOOL)handled
 {
     RELEASE_LOG(DragAndDrop, "Finished performing drag controller operation (handled: %d)", handled);
     [[WebItemProviderPasteboard sharedInstance] decrementPendingOperationCount];
@@ -5129,10 +5129,17 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
     RELEASE_LOG(DragAndDrop, "Drag session: %p preparing to drag blob: %s with attachment identifier: %s", session.get(), info.blobURL.string().utf8().data(), info.attachmentIdentifier.utf8().data());
 
+    NSString *utiType = info.contentType;
+    NSString *fileName = info.fileName;
+    if (auto attachment = _page->attachmentForIdentifier(info.attachmentIdentifier)) {
+        utiType = attachment->utiType();
+        fileName = attachment->fileName();
+    }
+
     auto registrationList = adoptNS([[WebItemProviderRegistrationInfoList alloc] init]);
     [registrationList setPreferredPresentationStyle:WebPreferredPresentationStyleAttachment];
-    if (!info.filename.isEmpty())
-        [registrationList setSuggestedName:info.filename];
+    if ([fileName length])
+        [registrationList setSuggestedName:fileName];
     if (numberOfAdditionalTypes == info.additionalData.size() && numberOfAdditionalTypes) {
         for (size_t index = 0; index < numberOfAdditionalTypes; ++index) {
             auto nsData = info.additionalData[index]->createNSData();
@@ -5140,7 +5147,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         }
     }
 
-    [registrationList addPromisedType:info.contentType fileCallback:[session = WTFMove(session), weakSelf = WeakObjCPtr<WKContentView>(self), info] (WebItemProviderFileCallback callback) {
+    [registrationList addPromisedType:utiType fileCallback:[session = WTFMove(session), weakSelf = WeakObjCPtr<WKContentView>(self), info] (WebItemProviderFileCallback callback) {
         auto strongSelf = weakSelf.get();
         if (!strongSelf) {
             callback(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorWebViewInvalidated userInfo:nil]);
