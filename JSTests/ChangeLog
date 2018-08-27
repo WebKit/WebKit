@@ -1,3 +1,16 @@
+2018-08-24  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Array.prototype.reverse modifies JSImmutableButterfly
+        https://bugs.webkit.org/show_bug.cgi?id=188794
+
+        Reviewed by Saam Barati.
+
+        * stress/reverse-with-immutable-butterfly.js: Added.
+        (shouldBe):
+        (reverseInt):
+        (reverseDouble):
+        (reverseContiguous):
+
 2018-08-22  Saam barati  <sbarati@apple.com>
 
         Make data-view-access.js run less time to prevent timeouts on 32-bit

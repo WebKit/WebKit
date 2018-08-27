@@ -838,8 +838,7 @@ bool JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, 
         return thisObject->methodTable(vm)->put(thisObject, exec, Identifier::from(exec, propertyName), value, slot);
     }
 
-    if (isCopyOnWrite(thisObject->indexingMode()))
-        thisObject->convertFromCopyOnWrite(vm);
+    thisObject->ensureWritable(vm);
 
     switch (thisObject->indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
@@ -1636,9 +1635,8 @@ ArrayStorage* JSObject::ensureArrayStorageSlow(VM& vm)
     if (structure(vm)->hijacksIndexingHeader())
         return nullptr;
 
-    if (isCopyOnWrite(indexingMode()))
-        convertFromCopyOnWrite(vm);
-    
+    ensureWritable(vm);
+
     switch (indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
         if (UNLIKELY(indexingShouldBeSparse(vm)))
@@ -1673,8 +1671,7 @@ ArrayStorage* JSObject::ensureArrayStorageSlow(VM& vm)
 
 ArrayStorage* JSObject::ensureArrayStorageExistsAndEnterDictionaryIndexingMode(VM& vm)
 {
-    if (isCopyOnWrite(indexingMode()))
-        convertFromCopyOnWrite(vm);
+    ensureWritable(vm);
 
     switch (indexingType()) {
     case ALL_BLANK_INDEXING_TYPES: {
@@ -1707,8 +1704,7 @@ ArrayStorage* JSObject::ensureArrayStorageExistsAndEnterDictionaryIndexingMode(V
 
 void JSObject::switchToSlowPutArrayStorage(VM& vm)
 {
-    if (isCopyOnWrite(indexingMode()))
-        convertFromCopyOnWrite(vm);
+    ensureWritable(vm);
 
     switch (indexingType()) {
     case ArrayClass:
@@ -2544,8 +2540,7 @@ bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, const P
 
     ASSERT(index <= MAX_ARRAY_INDEX);
 
-    if (isCopyOnWrite(indexingMode()))
-        convertFromCopyOnWrite(vm);
+    ensureWritable(vm);
 
     if (!inSparseIndexingMode()) {
         // Fast case: we're putting a regular property to a regular array

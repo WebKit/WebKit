@@ -1,3 +1,20 @@
+2018-08-24  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Array.prototype.reverse modifies JSImmutableButterfly
+        https://bugs.webkit.org/show_bug.cgi?id=188794
+
+        Reviewed by Saam Barati.
+
+        While Array.prototype.reverse modifies the butterfly of the given Array,
+        it does not account JSImmutableButterfly case. So it accidentally modifies
+        the content of JSImmutableButterfly.
+        This patch converts CoW arrays to writable arrays before reversing.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncReverse):
+        * runtime/JSObject.h:
+        (JSC::JSObject::ensureWritable):
+
 2018-08-24  Michael Saboff  <msaboff@apple.com>
 
         YARR: Update UCS canonicalization tables for Unicode 11
