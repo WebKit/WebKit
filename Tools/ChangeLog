@@ -1,3 +1,25 @@
+2018-08-27  Daniel Bates  <dabates@apple.com>
+
+        Partial revert of r235376
+        https://bugs.webkit.org/show_bug.cgi?id=189011
+
+        For now revert the unit tests added in r235376 as the following tests are failing on Apple Sierra
+        Debug and Apple High Sierra Debug bots:
+
+            lldb_webkit_unittest.TestSummaryProviders.serial_test_WTFOptionSetProvider_simple
+            lldb_webkit_unittest.TestSummaryProviders.serial_test_WTFOptionSet_SummaryProvider_simple
+
+        Will investigate offline.
+
+        * lldb/lldbWebKitTester/main.cpp:
+        (testSummaryProviders):
+        * lldb/lldb_webkit_unittest.py:
+        (TestSummaryProviders.serial_test_WTFHashSet_tablesize_and_size):
+        (TestSummaryProviders.serial_test_WTFOptionSet_SummaryProvider_empty): Deleted.
+        (TestSummaryProviders.serial_test_WTFOptionSet_SummaryProvider_simple): Deleted.
+        (TestSummaryProviders.serial_test_WTFOptionSetProvider_empty): Deleted.
+        (TestSummaryProviders.serial_test_WTFOptionSetProvider_simple): Deleted.
+
 2018-08-27  Aditya Keerthi  <akeerthi@apple.com>
 
         Consolidate ENABLE_INPUT_TYPE_COLOR and ENABLE_INPUT_TYPE_COLOR_POPOVER

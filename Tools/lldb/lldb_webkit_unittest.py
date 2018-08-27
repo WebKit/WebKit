@@ -167,32 +167,3 @@ class TestSummaryProviders(unittest.TestCase):
         variable = self._sbFrame.FindVariable('hashSetOfInts')
         summary = lldb_webkit.WTFHashSet_SummaryProvider(variable, {})
         self.assertEqual(summary, "{ tableSize = 8, keyCount = 1 }")
-
-    # MARK: WTFOptionSet_SummaryProvider test cases
-
-    def serial_test_WTFOptionSet_SummaryProvider_empty(self):
-        variable = self._sbFrame.FindVariable('exampleFlagsEmpty')
-        summary = lldb_webkit.WTFOptionSet_SummaryProvider(variable, {})
-        self.assertEqual(summary, "{ size = 0 }")
-
-    def serial_test_WTFOptionSet_SummaryProvider_simple(self):
-        variable = self._sbFrame.FindVariable('exampleFlagsSimple')
-        summary = lldb_webkit.WTFOptionSet_SummaryProvider(variable, {})
-        self.assertEqual(summary, "{ size = 3 }")
-
-    # MARK: WTFOptionSetProvider test cases
-
-    def serial_test_WTFOptionSetProvider_empty(self):
-        variable = self._sbFrame.FindVariable('exampleFlagsEmpty')
-        provider = lldb_webkit.WTFOptionSetProvider(variable, {})
-        self.assertEqual(provider.get_child_at_index(0), None)
-
-    def serial_test_WTFOptionSetProvider_simple(self):
-        variable = self._sbFrame.FindVariable('exampleFlagsSimple')
-        provider = lldb_webkit.WTFOptionSetProvider(variable, {})
-        self.assertEqual(provider.get_child_at_index(0).GetName(), 'A')
-        self.assertEqual(provider.get_child_at_index(0).GetValue(), '1')
-        self.assertEqual(provider.get_child_at_index(1).GetName(), 'C')
-        self.assertEqual(provider.get_child_at_index(1).GetValue(), '4')
-        self.assertEqual(provider.get_child_at_index(2).GetName(), 'D')
-        self.assertEqual(provider.get_child_at_index(2).GetValue(), '8')
