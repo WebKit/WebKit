@@ -1,5 +1,11 @@
 2018-08-27  Alex Christensen  <achristensen@webkit.org>
 
+        Fix iOS build.
+
+        * TestWebKitAPI/PlatformWebView.h:
+
+2018-08-27  Alex Christensen  <achristensen@webkit.org>
+
         Translate 4 tests using WKPageLoaderClient to ObjC
         https://bugs.webkit.org/show_bug.cgi?id=188827
 

@@ -58,6 +58,7 @@ typedef WPEToolingBackends::HeadlessViewBackend *PlatformWindow;
 typedef WKViewRef PlatformWKView;
 typedef HWND PlatformWindow;
 #endif
+typedef uint32_t WKEventModifiers;
 
 namespace TestWebKitAPI {
 
