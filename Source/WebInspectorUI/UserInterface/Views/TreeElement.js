@@ -166,7 +166,10 @@ WI.TreeElement = class TreeElement extends WI.Object
             this._childrenListNode.hidden = this._hidden;
 
         if (this.treeOutline) {
-            this.treeOutline.soon.updateVirtualizedElements(this);
+            let focusedTreeElement = null;
+            if (!this._hidden && this.selected)
+                focusedTreeElement = this;
+            this.treeOutline.soon.updateVirtualizedElements(focusedTreeElement);
 
             this.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementVisibilityDidChange, {element: this});
         }

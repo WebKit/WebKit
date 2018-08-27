@@ -1,3 +1,15 @@
+2018-08-27  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION: virtualized TreeOutline is empty when filtering
+        https://bugs.webkit.org/show_bug.cgi?id=188959
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype.set hidden):
+        Only set `focusedTreeElement` if the `WI.TreeElement` is selected and not hidden. There is
+        no reason to focus a hidden or unselected `WI.TreeElement`.
+
 2018-08-23  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Color picker: can't enter decimal numbers for opacity
