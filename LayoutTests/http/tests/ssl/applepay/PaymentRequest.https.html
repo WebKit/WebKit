@@ -55,6 +55,12 @@ async function go() {
     shouldThrow("new PaymentRequest(null, null)")
     shouldNotThrow("new PaymentRequest([validPaymentMethod()], validPaymentDetails())")
     debug("")
+    
+    debug("Testing ApplePayRequest.version")
+    debug("")
+    await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.version = 0;", "request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show()")
+    await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.version = 1000;", "request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show()")
+    debug("")
 
     debug("Testing ApplePayRequest.countryCode")
     debug("")

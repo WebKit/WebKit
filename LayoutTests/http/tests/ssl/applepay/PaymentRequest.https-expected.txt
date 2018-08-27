@@ -8,6 +8,13 @@ Testing PaymentRequest
 PASS new PaymentRequest(null, null) threw exception TypeError: Value is not a sequence.
 PASS new PaymentRequest([validPaymentMethod()], validPaymentDetails()) did not throw exception.
 
+Testing ApplePayRequest.version
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.version = 0;
+PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with InvalidAccessError: "0" is not a supported version..
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.version = 1000;
+PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with InvalidAccessError: "1000" is not a supported version..
+
 Testing ApplePayRequest.countryCode
 
 SETUP: paymentMethod = validPaymentMethod(); delete paymentMethod.data.countryCode;

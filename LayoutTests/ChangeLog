@@ -1,5 +1,15 @@
 2018-08-26  Andy Estes  <aestes@apple.com>
 
+        [Apple Pay] PaymentRequest.show() should reject when an unsupported ApplePayRequest version is specified
+        https://bugs.webkit.org/show_bug.cgi?id=188954
+
+        Reviewed by Darin Adler.
+
+        * http/tests/ssl/applepay/PaymentRequest.https-expected.txt:
+        * http/tests/ssl/applepay/PaymentRequest.https.html:
+
+2018-08-26  Andy Estes  <aestes@apple.com>
+
         [Apple Pay] Add a test for rendering Apple Pay buttons
         https://bugs.webkit.org/show_bug.cgi?id=188947
 

@@ -1,3 +1,26 @@
+2018-08-26  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] PaymentRequest.show() should reject when an unsupported ApplePayRequest version is specified
+        https://bugs.webkit.org/show_bug.cgi?id=188954
+
+        Reviewed by Darin Adler.
+
+        In Apple Pay JS, calling the ApplePaySession constructor with an unsupported version results
+        in an exception being thrown. We need to do something similar for Payment Request.
+
+        This patch moves the logic for validating the version from ApplePaySession to a common
+        routine in ApplePayRequestBase that both APIs call to convert requests into a common format.
+
+        In Apple Pay JS, an exception will still be thrown when constructing an ApplePaySession. In
+        Payment Request, the promise returned by show() will be rejected.
+
+        Added test cases to http/tests/ssl/applepay/PaymentRequest.https.html.
+
+        * Modules/applepay/ApplePayRequestBase.cpp:
+        (WebCore::convertAndValidate):
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::ApplePaySession::create):
+
 2018-08-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Click event from click() is not composed
