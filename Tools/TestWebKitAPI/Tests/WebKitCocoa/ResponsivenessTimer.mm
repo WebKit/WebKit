@@ -25,64 +25,66 @@
 
 #include "config.h"
 
-#if WK_HAVE_C_SPI
+#if WK_API_ENABLED
 
-#include "PlatformUtilities.h"
-#include "PlatformWebView.h"
-
-namespace TestWebKitAPI {
+#import "PlatformUtilities.h"
+#import "PlatformWebView.h"
+#import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
+#import <wtf/RetainPtr.h>
 
 static bool didFinishLoad { false };
 static bool didBecomeUnresponsive { false };
 
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
+@interface ResponsivenessTimerDelegate : NSObject <WKNavigationDelegate>
+@end
+    
+@implementation ResponsivenessTimerDelegate
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     didFinishLoad = true;
 }
 
-static void processDidBecomeUnresponsive(WKPageRef page, const void*)
+- (void)_webViewWebProcessDidBecomeUnresponsive:(WKWebView *)webView
 {
     didBecomeUnresponsive = true;
 }
 
-static void setPageLoaderClient(WKPageRef page)
-{
-    WKPageLoaderClientV0 loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
+@end
 
-    loaderClient.base.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    loaderClient.processDidBecomeUnresponsive = processDidBecomeUnresponsive;
-
-    WKPageSetPageLoaderClient(page, &loaderClient.base);
-}
+namespace TestWebKitAPI {
 
 TEST(WebKit, ResponsivenessTimerShouldNotFireAfterTearDown)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
-    // The two views need to share the same WebContent process.
-    WKContextSetMaximumNumberOfProcesses(context.get(), 1);
+    auto processPoolConfiguration = adoptNS([_WKProcessPoolConfiguration new]);
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+    [processPool _setMaximumNumberOfProcesses:1];
+    auto delegate = adoptNS([ResponsivenessTimerDelegate new]);
 
-    PlatformWebView webView1(context.get());
-    setPageLoaderClient(webView1.page());
-
-    WKPageLoadURL(webView1.page(), adoptWK(Util::createURLForResource("simple", "html")).get());
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setProcessPool:processPool.get()];
+    auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView1 setNavigationDelegate:delegate.get()];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView1 loadRequest:request];
     Util::run(&didFinishLoad);
 
     EXPECT_FALSE(didBecomeUnresponsive);
 
-    PlatformWebView webView2(context.get());
-    setPageLoaderClient(webView2.page());
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView2 setNavigationDelegate:delegate.get()];
 
     didFinishLoad = false;
-    WKPageLoadURL(webView2.page(), adoptWK(Util::createURLForResource("simple", "html")).get());
+    [webView2 loadRequest:request];
     Util::run(&didFinishLoad);
 
     EXPECT_FALSE(didBecomeUnresponsive);
 
     // Call stopLoading() and close() on the first page in quick succession.
-    WKPageStopLoading(webView1.page());
-    WKPageClose(webView1.page());
+    [webView1 stopLoading];
+    [webView1 _close];
 
     // We need to wait here because it takes 3 seconds for a process to be recognized as unresponsive.
     Util::sleep(4);
