@@ -1,3 +1,33 @@
+2018-08-27  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Implement intersection logic for the explicit root case
+        https://bugs.webkit.org/show_bug.cgi?id=188809
+
+        Reviewed by Simon Fraser.
+
+        Add logic to Document::updateIntersectionObservations to compute the intersection
+        between the target and root elements, for the case where an IntersectionObserver
+        has a root element.
+
+        There are no changes to the scheduling of intersection observations in this patch,
+        so observations are still only computed once for each observer.
+
+        * dom/Document.cpp:
+        (WebCore::computeIntersectionRects):
+        (WebCore::Document::updateIntersectionObservations):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::absoluteToClientRect const):
+        * page/FrameView.h:
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::IntersectionObserver):
+        (WebCore::IntersectionObserver::createTimestamp const):
+        * page/IntersectionObserver.h:
+        * platform/graphics/FloatRect.h:
+        (WebCore::FloatRect::area const):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isContainingBlockAncestorFor const):
+        * rendering/RenderBlock.h:
+
 2018-08-25  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Shrink size of HTMLCollection

@@ -89,6 +89,8 @@ public:
     float width() const { return m_size.width(); }
     float height() const { return m_size.height(); }
 
+    float area() const { return m_size.area(); }
+
     void setX(float x) { m_location.setX(x); }
     void setY(float y) { m_location.setY(y); }
     void setWidth(float width) { m_size.setWidth(width); }

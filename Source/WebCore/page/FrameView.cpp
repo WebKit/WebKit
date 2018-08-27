@@ -4657,6 +4657,11 @@ FloatPoint FrameView::absoluteToDocumentPoint(FloatPoint p, std::optional<float>
     return p.scaled(absoluteToDocumentScaleFactor(effectiveZoom));
 }
 
+FloatRect FrameView::absoluteToClientRect(FloatRect rect, std::optional<float> effectiveZoom) const
+{
+    return documentToClientRect(absoluteToDocumentRect(rect, effectiveZoom));
+}
+
 FloatSize FrameView::documentToClientOffset() const
 {
     FloatSize clientOrigin = -toFloatSize(visibleContentRect().location());

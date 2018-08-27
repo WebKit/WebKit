@@ -34,6 +34,7 @@
 #include "Element.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
+#include "Performance.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -114,6 +115,8 @@ IntersectionObserver::IntersectionObserver(Document& document, Ref<IntersectionO
         observerData.observers.append(makeWeakPtr(this));
     } else if (auto* frame = document.frame())
         m_implicitRootDocument = makeWeakPtr(frame->mainFrame().document());
+
+    std::sort(m_thresholds.begin(), m_thresholds.end());
 }
 
 IntersectionObserver::~IntersectionObserver()
@@ -224,6 +227,22 @@ void IntersectionObserver::rootDestroyed()
         removeAllTargets();
         document.removeIntersectionObserver(*this);
     }
+}
+
+bool IntersectionObserver::createTimestamp(DOMHighResTimeStamp& timestamp) const
+{
+    auto* context = m_callback->scriptExecutionContext();
+    if (!context)
+        return false;
+    ASSERT(context->isDocument());
+    auto& document = downcast<Document>(*context);
+    if (auto* window = document.domWindow()) {
+        if (auto* performance = window->performance()) {
+            timestamp = performance->now();
+            return true;
+        }
+    }
+    return false;
 }
 
 void IntersectionObserver::appendQueuedEntry(Ref<IntersectionObserverEntry>&& entry)

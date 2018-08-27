@@ -1828,6 +1828,15 @@ void RenderBlock::clearPercentHeightDescendantsFrom(RenderBox& parent)
     }
 }
 
+bool RenderBlock::isContainingBlockAncestorFor(RenderObject& renderer) const
+{
+    for (const auto* ancestor = renderer.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+        if (ancestor == this)
+            return true;
+    }
+    return false;
+}
+
 LayoutUnit RenderBlock::textIndentOffset() const
 {
     LayoutUnit cw = 0;

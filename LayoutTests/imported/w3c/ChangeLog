@@ -1,3 +1,20 @@
+2018-08-27  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Implement intersection logic for the explicit root case
+        https://bugs.webkit.org/show_bug.cgi?id=188809
+
+        Reviewed by Simon Fraser.
+
+        Rebaseline tests now that some intersection logic has been implemented.
+
+        * web-platform-tests/intersection-observer/bounding-box-expected.txt:
+        * web-platform-tests/intersection-observer/containing-block-expected.txt:
+        * web-platform-tests/intersection-observer/edge-inclusive-intersection-expected.txt:
+        * web-platform-tests/intersection-observer/isIntersecting-change-events-expected.txt:
+        * web-platform-tests/intersection-observer/remove-element-expected.txt:
+        * web-platform-tests/intersection-observer/same-document-root-expected.txt:
+        * web-platform-tests/intersection-observer/unclipped-root-expected.txt:
+
 2018-08-27  Youenn Fablet  <youenn@apple.com>
 
         Update WPT XHR tests to 87329a1

@@ -1,6 +1,6 @@
 
 PASS IntersectionObserver in a single document with explicit root. 
-FAIL First rAF assert_equals: entries[0].boundingClientRect.left expected 11 but got 0
+PASS First rAF 
 PASS document.scrollingElement.scrollTop = window.innerHeight. 
 FAIL root.scrollTop = 150 with root scrolled into view. assert_equals: entries.length expected 2 but got 1
 FAIL document.scrollingElement.scrollTop = 0. assert_equals: entries.length expected 2 but got 1

@@ -101,6 +101,8 @@ public:
     static void clearPercentHeightDescendantsFrom(RenderBox&);
     static void removePercentHeightDescendantIfNeeded(RenderBox&);
 
+    bool isContainingBlockAncestorFor(RenderObject&) const;
+
     void setHasMarginBeforeQuirk(bool b) { setRenderBlockHasMarginBeforeQuirk(b); }
     void setHasMarginAfterQuirk(bool b) { setRenderBlockHasMarginAfterQuirk(b); }
     void setShouldForceRelayoutChildren(bool b) { setRenderBlockShouldForceRelayoutChildren(b); }

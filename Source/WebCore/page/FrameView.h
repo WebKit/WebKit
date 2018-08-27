@@ -473,6 +473,8 @@ public:
     FloatRect absoluteToDocumentRect(FloatRect, std::optional<float> effectiveZoom = std::nullopt) const;
     FloatPoint absoluteToDocumentPoint(FloatPoint, std::optional<float> effectiveZoom = std::nullopt) const;
 
+    FloatRect absoluteToClientRect(FloatRect, std::optional<float> effectiveZoom = std::nullopt) const;
+
     FloatSize documentToClientOffset() const;
     FloatRect documentToClientRect(FloatRect) const;
     FloatPoint documentToClientPoint(FloatPoint) const;
