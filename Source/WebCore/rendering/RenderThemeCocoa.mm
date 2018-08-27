@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RenderThemeCocoa.h"
+#import "config.h"
+#import "RenderThemeCocoa.h"
+
+#import "GraphicsContextCG.h"
+#import "RenderText.h"
 
 #if ENABLE(APPLE_PAY)
 
-#include "RenderElement.h"
-#include "RenderStyle.h"
-#include "TranslateTransformOperation.h"
-#include <pal/spi/cocoa/PassKitSPI.h>
-#include <wtf/SoftLinking.h>
+#import <pal/spi/cocoa/PassKitSPI.h>
+#import <wtf/SoftLinking.h>
 
 #if PLATFORM(MAC)
 SOFT_LINK_PRIVATE_FRAMEWORK(PassKit);
@@ -45,11 +45,55 @@ SOFT_LINK_MAY_FAIL(PassKit, PKDrawApplePayButton, void, (CGContextRef context, C
 #endif // ENABLE(APPLE_PAY)
 
 #if ENABLE(VIDEO)
-#include "LocalizedStrings.h"
-#include <wtf/BlockObjCExceptions.h>
+#import "LocalizedStrings.h"
+#import <wtf/BlockObjCExceptions.h>
 #endif
 
 namespace WebCore {
+
+static CGColorRef colorForStyle(DocumentMarkerLineStyle style, bool useDarkMode)
+{
+    switch (style) {
+    // Red
+    case DocumentMarkerLineStyle::Spelling:
+        return cachedCGColor(useDarkMode ? Color { 255, 140, 140, 217 } : Color { 255, 59, 48, 191 });
+    // Blue
+    case DocumentMarkerLineStyle::DictationAlternatives:
+    case DocumentMarkerLineStyle::TextCheckingDictationPhraseWithAlternatives:
+    case DocumentMarkerLineStyle::AutocorrectionReplacement:
+        return cachedCGColor(useDarkMode ? Color { 40, 145, 255, 217 } : Color { 0, 122, 255, 191 });
+    // Green
+    case DocumentMarkerLineStyle::Grammar:
+        return cachedCGColor(useDarkMode ? Color { 50, 215, 75, 217 } : Color { 25, 175, 50, 191 });
+    }
+}
+
+void RenderThemeCocoa::drawLineForDocumentMarker(const RenderText& renderer, GraphicsContext& context, const FloatPoint& origin, float width, DocumentMarkerLineStyle style)
+{
+    if (context.paintingDisabled())
+        return;
+
+    auto circleColor = colorForStyle(style, renderer.page().useSystemAppearance() && renderer.page().useDarkAppearance());
+
+    // Center the underline and ensure we only draw entire dots.
+    FloatPoint offsetPoint = origin;
+    float widthMod = fmodf(width, cMisspellingLinePatternWidth);
+    if (cMisspellingLinePatternWidth - widthMod > cMisspellingLinePatternGapWidth) {
+        float gapIncludeWidth = 0;
+        if (width > cMisspellingLinePatternWidth)
+            gapIncludeWidth = cMisspellingLinePatternGapWidth;
+        offsetPoint.move(floor((widthMod + gapIncludeWidth) / 2), 0);
+        width -= widthMod;
+    }
+
+    CGContextRef platformContext = context.platformContext();
+    CGContextStateSaver stateSaver { platformContext };
+    CGContextSetFillColorWithColor(platformContext, circleColor);
+    for (int x = 0; x < width; x += cMisspellingLinePatternWidth)
+        CGContextAddEllipseInRect(platformContext, CGRectMake(offsetPoint.x() + x, offsetPoint.y(), cMisspellingLineThickness, cMisspellingLineThickness));
+    CGContextSetCompositeOperation(platformContext, kCGCompositeSover);
+    CGContextFillPath(platformContext);
+}
 
 #if ENABLE(APPLE_PAY)
 

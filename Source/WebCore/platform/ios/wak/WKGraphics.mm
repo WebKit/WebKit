@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,16 +25,11 @@
 
 #import "config.h"
 #import "WKGraphics.h"
-#import "WKGraphicsInternal.h"
 
 #if PLATFORM(IOS)
 
-#import "FontCascade.h"
-#import "PlatformScreen.h"
 #import "WebCoreThreadInternal.h"
-#import <ImageIO/ImageIO.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
-#import <wtf/StdLibExtras.h>
 
 using namespace WebCore;
 
@@ -56,28 +51,12 @@ static inline void _FillRectsUsingOperation(CGContextRef context, const CGRect* 
     CGContextSetCompositeOperation(context, oldOp);
 }
 
-static inline void _FillRectUsingOperation(CGContextRef context, CGRect rect, CGCompositeOperation op)
-{
-    if (rect.size.width > 0 && rect.size.height > 0) {
-        _FillRectsUsingOperation (context, &rect, 1, op);
-    }
-}
-
 void WKRectFill(CGContextRef context, CGRect aRect)
 {
     if (aRect.size.width > 0 && aRect.size.height > 0) {
         CGContextSaveGState(context);
-        _FillRectUsingOperation(context, aRect, kCGCompositeCopy);
-        CGContextRestoreGState(context);
-    }
-}
-
-void WKRectFillUsingOperation(CGContextRef context, CGRect aRect, WKCompositeOperation compositeOperation)
-{
-    COMPILE_ASSERT(sizeof(WKCompositeOperation) == sizeof(CGCompositeOperation), "WKCompositeOperation must be the same size as CGCompositeOperation.");
-    if (aRect.size.width > 0 && aRect.size.height > 0.0) {
-        CGContextSaveGState(context);
-        _FillRectUsingOperation(context, aRect, static_cast<CGCompositeOperation>(compositeOperation));
+        if (aRect.size.width > 0 && aRect.size.height > 0)
+            _FillRectsUsingOperation(context, &aRect, 1, kCGCompositeCopy);
         CGContextRestoreGState(context);
     }
 }
@@ -92,85 +71,6 @@ CGContextRef WKGetCurrentGraphicsContext(void)
 {
     WebThreadContext* threadContext =  WebThreadCurrentContext();
     return threadContext->currentCGContext;
-}
-
-static NSString *imageResourcePath(const char* imageFile, unsigned scaleFactor)
-{
-    NSString *fileName = scaleFactor == 1 ? [NSString stringWithUTF8String:imageFile] : [NSString stringWithFormat:@"%s@%dx", imageFile, scaleFactor];
-#if PLATFORM(IOS_SIMULATOR)
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebCore"];
-    return [bundle pathForResource:fileName ofType:@"png"];
-#else
-    // Workaround for <rdar://problem/7780665> CFBundleCopyResourceURL takes a long time on iPhone 3G.
-    NSString *imageDirectory = @"/System/Library/PrivateFrameworks/WebCore.framework";
-    return [NSString stringWithFormat:@"%@/%@.png", imageDirectory, fileName];
-#endif
-}
-
-CGImageRef WKGraphicsCreateImageFromBundleWithName(const char *image_file)
-{
-    if (!image_file)
-        return NULL;
-
-    CGImageRef image = nullptr;
-    NSData *imageData = nullptr;
-    for (unsigned scaleFactor = screenScaleFactor(); scaleFactor > 0; --scaleFactor) {
-        imageData = [NSData dataWithContentsOfFile:imageResourcePath(image_file, scaleFactor)];
-        ASSERT(scaleFactor != screenScaleFactor() || imageData);
-        if (imageData)
-            break;
-    }
-    
-    if (imageData) {
-        RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithCFData(reinterpret_cast<CFDataRef>(imageData)));
-        image = CGImageCreateWithPNGDataProvider(dataProvider.get(), nullptr, NO, kCGRenderingIntentDefault);
-    }
-
-    return image;
-}
-
-static void WKDrawPatternBitmap(void *info, CGContextRef c) 
-{
-    CGImageRef image = (CGImageRef)info;
-    CGFloat scale = screenScaleFactor();
-    CGContextDrawImage(c, CGRectMake(0, 0, CGImageGetWidth(image) / scale, CGImageGetHeight(image) / scale), image);    
-}
-
-static void WKReleasePatternBitmap(void *info) 
-{
-    CGImageRelease(reinterpret_cast<CGImageRef>(info));
-}
-
-static const CGPatternCallbacks WKPatternBitmapCallbacks = 
-{
-    0, WKDrawPatternBitmap, WKReleasePatternBitmap
-};
-
-CGPatternRef WKCreatePatternFromCGImage(CGImageRef imageRef)
-{
-    // retain image since it's freed by our callback
-    CGImageRetain(imageRef);
-
-    CGFloat scale = screenScaleFactor();
-    return CGPatternCreate((void*)imageRef, CGRectMake(0, 0, CGImageGetWidth(imageRef) / scale, CGImageGetHeight(imageRef) / scale), CGAffineTransformIdentity, CGImageGetWidth(imageRef) / scale, CGImageGetHeight(imageRef) / scale, kCGPatternTilingConstantSpacing, 1 /*isColored*/, &WKPatternBitmapCallbacks);
-}
-
-void WKSetPattern(CGContextRef context, CGPatternRef pattern, bool fill, bool stroke) 
-{
-    if (pattern == NULL)
-        return;
-
-    CGFloat patternAlpha = 1;
-    CGColorSpaceRef colorspace = CGColorSpaceCreatePattern(NULL);
-    if (fill) {
-        CGContextSetFillColorSpace(context, colorspace);
-        CGContextSetFillPattern(context, pattern, &patternAlpha);
-    }
-    if (stroke) {
-        CGContextSetStrokeColorSpace(context, colorspace);
-        CGContextSetStrokePattern(context, pattern, &patternAlpha);
-    }
-    CGColorSpaceRelease(colorspace);
 }
 
 #endif // PLATFORM(IOS)

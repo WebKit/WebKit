@@ -337,11 +337,6 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray&
     Cairo::drawLinesForText(*platformContext(), point, widths, printing, doubleUnderlines, m_state.strokeColor, m_state.strokeThickness);
 }
 
-void GraphicsContext::updateDocumentMarkerResources()
-{
-    // Unnecessary, since our document markers don't use resources.
-}
-
 void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& origin, float width, DocumentMarkerLineStyle style)
 {
     if (paintingDisabled())

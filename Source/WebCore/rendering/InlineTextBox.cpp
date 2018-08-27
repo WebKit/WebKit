@@ -726,7 +726,7 @@ void InlineTextBox::paintPlatformDocumentMarker(GraphicsContext& context, const 
         underlineOffset = baseline + 2;
     }
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     RenderTheme::singleton().drawLineForDocumentMarker(renderer(), context, FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, lineStyleForMarkedTextType(markedText.type));
 #else
     context.drawLineForDocumentMarker(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, lineStyleForMarkedTextType(markedText.type));

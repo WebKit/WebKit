@@ -319,10 +319,6 @@ void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width,
 {
 }
 
-void GraphicsContext::updateDocumentMarkerResources()
-{
-}
-
 void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float width, DocumentMarkerLineStyle style)
 {
 }

@@ -933,8 +933,6 @@ void Page::setDeviceScaleFactor(float scaleFactor)
     mainFrame().deviceOrPageScaleFactorChanged();
     PageCache::singleton().markPagesForDeviceOrPageScaleChanged(*this);
 
-    GraphicsContext::updateDocumentMarkerResources();
-
     pageOverlayController().didChangeDeviceScaleFactor();
 }
 

@@ -1,3 +1,66 @@
+2018-08-27  Daniel Bates  <dabates@apple.com>
+
+        Spelling dots do not scale with page on iOS; share spelling dot painting code between Mac and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=188828
+        <rdar://problem/15966403>
+
+        Reviewed by Simon Fraser.
+
+        The look of the spelling dots on Mac and iOS are identical up to color. Towards making the
+        spelling dots in WebKit on iOS more closely match the look of the spelling dots in UIKit-
+        apps, standardize on using the same painting code for both Mac and iOS.
+
+        Currently iOS uses bitmaps to render the spelling dots and does not account for user/CSS
+        zooming. As a result, the spelling dots on iOS render with artifacts (e.g. truncated dots).
+        A side benefit of having iOS share the same painting code as Mac is that iOS will now paint
+        the dots programmatically and we avoid both the need to use bitmaps and fix the bugs in
+        the painting of the bitmap dots with respect to zooming.
+
+        * Resources/DictationPhraseWithAlternativesDot.png: Removed.
+        * Resources/DictationPhraseWithAlternativesDot@2x.png: Removed.
+        * Resources/SpellingDot.png: Removed.
+        * Resources/SpellingDot@2x.png: Removed.
+        * Resources/SpellingDot@3x.png: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Page.cpp:
+        (WebCore::Page::setDeviceScaleFactor):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::updateDocumentMarkerResources): Deleted.
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+        (WebCore::GraphicsContext::drawLineForDocumentMarker):
+        (WebCore::findImage): Deleted.
+        (WebCore::createDotPattern): Deleted.
+        (WebCore::GraphicsContext::updateDocumentMarkerResources): Deleted.
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::updateDocumentMarkerResources): Deleted.
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::updateDocumentMarkerResources): Deleted.
+        * platform/ios/wak/WKGraphics.mm:
+        (WKRectFill): Incorporated the logic from _FillRectUsingOperation().
+        (_FillRectUsingOperation): Deleted; moved the logic into WKRectFill() since WKRectFill()
+        is now the only caller of this function.
+        (WKRectFillUsingOperation): Deleted.
+        (imageResourcePath): Deleted.
+        (WKGraphicsCreateImageFromBundleWithName): Deleted.
+        (WKDrawPatternBitmap): Deleted.
+        (WKReleasePatternBitmap): Deleted.
+        (WKSetPattern): Deleted.
+        * platform/ios/wak/WKGraphicsInternal.h: Removed.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintPlatformDocumentMarker):
+        * rendering/RenderThemeCocoa.h: Add headers RenderText.h and GraphicsContextCG.h. Fix some style nits while I am here;
+        substitute #import for #include and remove some unnecessary headers TranslateTransformOperation.h, RenderStyle.h, and
+        RenderElement.h.
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::colorForStyle):
+        (WebCore::RenderThemeCocoa::drawLineForDocumentMarker): Moved from RenderThemeMac. I renamed
+        the local variable ctx to context and fixed a type in a comment while moving this code.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::colorForStyle): Deleted; moved to class RenderThemeCocoa.
+        (WebCore::RenderThemeMac::drawLineForDocumentMarker): Deleted; moved to class RenderThemeCocoa.
+
 2018-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] [WK2] Images copied from Mail message view paste with the wrong file name in compose

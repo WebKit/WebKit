@@ -185,11 +185,6 @@ static const Color& grammarPatternColor() {
     return grammarColor;
 }
 
-void GraphicsContext::updateDocumentMarkerResources()
-{
-    // Unnecessary, since our document markers don't use resources.
-}
-
 void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float width, DocumentMarkerLineStyle style)
 {
     if (paintingDisabled())
