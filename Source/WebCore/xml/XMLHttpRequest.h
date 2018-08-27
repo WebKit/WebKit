@@ -49,13 +49,14 @@ class ThreadableLoader;
 class XMLHttpRequestUpload;
 struct OwnedString;
 
-class XMLHttpRequest final : public RefCounted<XMLHttpRequest>, public XMLHttpRequestEventTarget, private ThreadableLoaderClient, public ActiveDOMObject {
+class XMLHttpRequest final : public ActiveDOMObject, public RefCounted<XMLHttpRequest>, private ThreadableLoaderClient, public XMLHttpRequestEventTarget {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<XMLHttpRequest> create(ScriptExecutionContext&);
     WEBCORE_EXPORT ~XMLHttpRequest();
 
-    enum State {
+    // Keep it in 3bits.
+    enum State : uint8_t {
         UNSENT = 0,
         OPENED = 1,
         HEADERS_RECEIVED = 2,
@@ -83,7 +84,7 @@ public:
     void abort();
     ExceptionOr<void> setRequestHeader(const String& name, const String& value);
     ExceptionOr<void> overrideMimeType(const String& override);
-    bool doneWithoutErrors() const { return !m_error && m_state == DONE; }
+    bool doneWithoutErrors() const { return !m_error && readyState() == DONE; }
     String getAllResponseHeaders() const;
     String getResponseHeader(const String& name) const;
     ExceptionOr<OwnedString> responseText();
@@ -102,7 +103,15 @@ public:
     bool responseCacheIsValid() const { return m_responseCacheIsValid; }
     void didCacheResponse();
 
-    enum class ResponseType { EmptyString, Arraybuffer, Blob, Document, Json, Text };
+    // Keep it in 3bits.
+    enum class ResponseType : uint8_t {
+        EmptyString = 0,
+        Arraybuffer = 1,
+        Blob = 2,
+        Document = 3,
+        Json = 4,
+        Text = 5,
+    };
     ExceptionOr<void> setResponseType(ResponseType);
     ResponseType responseType() const;
 
@@ -178,6 +187,23 @@ private:
     void resumeTimerFired();
     Ref<TextResourceDecoder> createDecoder() const;
 
+    void networkErrorTimerFired();
+
+    unsigned m_async : 1;
+    unsigned m_includeCredentials : 1;
+    unsigned m_sendFlag : 1;
+    unsigned m_createdDocument : 1;
+    unsigned m_error : 1;
+    unsigned m_uploadListenerFlag : 1;
+    unsigned m_uploadComplete : 1;
+    unsigned m_wasAbortedByClient : 1;
+    unsigned m_responseCacheIsValid : 1;
+    unsigned m_dispatchErrorOnResuming : 1;
+    unsigned m_readyState : 3;
+    unsigned m_responseType : 3;
+
+    unsigned m_timeoutMilliseconds { 0 };
+
     std::unique_ptr<XMLHttpRequestUpload> m_upload;
 
     URL m_url;
@@ -185,56 +211,45 @@ private:
     HTTPHeaderMap m_requestHeaders;
     RefPtr<FormData> m_requestEntityBody;
     String m_mimeTypeOverride;
-    bool m_async { true };
-    bool m_includeCredentials { false };
 
     RefPtr<ThreadableLoader> m_loader;
-    State m_state { UNSENT };
-    bool m_sendFlag { false };
+
+    String m_responseEncoding;
 
     ResourceResponse m_response;
-    String m_responseEncoding;
 
     RefPtr<TextResourceDecoder> m_decoder;
 
-    StringBuilder m_responseBuilder;
-    bool m_createdDocument { false };
     RefPtr<Document> m_responseDocument;
 
     RefPtr<SharedBuffer> m_binaryResponseBuilder;
 
-    bool m_error { false };
-
-    bool m_uploadListenerFlag { false };
-    bool m_uploadComplete { false };
-
-    bool m_wasAbortedByClient { false };
+    StringBuilder m_responseBuilder;
 
     // Used for progress event tracking.
     long long m_receivedLength { 0 };
 
-    std::optional<ExceptionCode> m_exceptionCode;
-
     XMLHttpRequestProgressEventThrottle m_progressEventThrottle;
 
-    ResponseType m_responseType { ResponseType::EmptyString };
-    bool m_responseCacheIsValid { false };
     mutable String m_allResponseHeaders;
 
     Timer m_resumeTimer;
-    bool m_dispatchErrorOnResuming { false };
-
     Timer m_networkErrorTimer;
-    void networkErrorTimerFired();
-
-    unsigned m_timeoutMilliseconds { 0 };
-    MonotonicTime m_sendingTime;
     Timer m_timeoutTimer;
+
+    MonotonicTime m_sendingTime;
+
+    std::optional<ExceptionCode> m_exceptionCode;
 };
 
 inline auto XMLHttpRequest::responseType() const -> ResponseType
 {
-    return m_responseType;
+    return static_cast<ResponseType>(m_responseType);
+}
+
+inline auto XMLHttpRequest::readyState() const -> State
+{
+    return static_cast<State>(m_readyState);
 }
 
 } // namespace WebCore

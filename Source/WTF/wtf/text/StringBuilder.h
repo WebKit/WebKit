@@ -40,9 +40,7 @@ class StringBuilder {
 
 public:
     StringBuilder()
-        : m_length(0)
-        , m_is8Bit(true)
-        , m_bufferCharacters8(nullptr)
+        : m_bufferCharacters8(nullptr)
     {
     }
     StringBuilder(StringBuilder&&) = default;
@@ -308,14 +306,14 @@ private:
     ALWAYS_INLINE CharType * getBufferCharacters();
     WTF_EXPORT_PRIVATE void reifyString() const;
 
-    unsigned m_length;
     mutable String m_string;
     RefPtr<StringImpl> m_buffer;
-    bool m_is8Bit;
     union {
         LChar* m_bufferCharacters8;
         UChar* m_bufferCharacters16;
     };
+    unsigned m_length { 0 };
+    bool m_is8Bit { true };
 };
 
 template <>

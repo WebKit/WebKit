@@ -1,3 +1,46 @@
+2018-08-25  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Shrink size of XMLHttpRequest
+        https://bugs.webkit.org/show_bug.cgi?id=188944
+
+        Reviewed by Saam Barati.
+
+        Shrink the size of XMLHttpRequest by packing bits and reordering members.
+        It reduces the size from 1248 to 1176.
+
+        No behavior change.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::responseText):
+        (WebCore::XMLHttpRequest::createResponseBlob):
+        (WebCore::XMLHttpRequest::createResponseArrayBuffer):
+        (WebCore::XMLHttpRequest::setResponseType):
+        (WebCore::XMLHttpRequest::changeState):
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener):
+        (WebCore::XMLHttpRequest::setWithCredentials):
+        (WebCore::XMLHttpRequest::open):
+        (WebCore::XMLHttpRequest::prepareToSend):
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::abort):
+        (WebCore::XMLHttpRequest::overrideMimeType):
+        (WebCore::XMLHttpRequest::setRequestHeader):
+        (WebCore::XMLHttpRequest::getAllResponseHeaders const):
+        (WebCore::XMLHttpRequest::getResponseHeader const):
+        (WebCore::XMLHttpRequest::status const):
+        (WebCore::XMLHttpRequest::statusText const):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        (WebCore::XMLHttpRequest::createDecoder const):
+        (WebCore::XMLHttpRequest::didReceiveData):
+        (WebCore::XMLHttpRequest::didReachTimeout):
+        (WebCore::XMLHttpRequest::readyState const): Deleted.
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::responseType const):
+        (WebCore::XMLHttpRequest::readyState const):
+        * xml/XMLHttpRequestProgressEventThrottle.cpp:
+        (WebCore::XMLHttpRequestProgressEventThrottle::XMLHttpRequestProgressEventThrottle):
+        * xml/XMLHttpRequestProgressEventThrottle.h:
+
 2018-08-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] FloatBox -> FloatAvoider
