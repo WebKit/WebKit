@@ -101,12 +101,6 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef, c
     }
 }
 
-static void willGoToBackForwardListItem(WKPageRef, WKBackForwardListItemRef item, WKTypeRef userData, const void*)
-{
-    if (!itemURLLastComponentIsString(item, "simple.html"))
-        successfulSoFar = false;
-}
-
 static bool shouldKeepCurrentBackForwardListItemInList(WKPageRef page, WKBackForwardListItemRef item, const void*)
 {
     // We make sure the item for "simple2.html" is removed when we navigate to "simple3.html"
@@ -123,7 +117,6 @@ static void setPageLoaderClient(WKPageRef page)
     loaderClient.base.version = 5;
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
     loaderClient.shouldKeepCurrentBackForwardListItemInList = shouldKeepCurrentBackForwardListItemInList;
-    loaderClient.willGoToBackForwardListItem = willGoToBackForwardListItem;
 
     WKPageSetPageLoaderClient(page, &loaderClient.base);
 }
