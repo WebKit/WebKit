@@ -311,6 +311,7 @@ class Intrinsics {
             for (let vectorSize of VectorElementSizes) {
                 this._map.set(`native typedef vector<${vectorType}, ${vectorSize}>`, type => {
                     this[`vector<${vectorType}, ${vectorSize}>`] = type;
+                    type.isPrimitive = true;
                 });
             }
         }

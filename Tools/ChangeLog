@@ -1,3 +1,17 @@
+2018-08-27  Thomas Denney  <tdenney@apple.com>
+
+        Allow new vector types to work with the interactive interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=188988
+
+        Reviewed by Myles C. Maxfield.
+
+        * WebGPUShadingLanguageRI/FlattenedStructOffsetGatherer.js:
+        (FlattenedStructOffsetGatherer.prototype.visitTypeRef): Do not
+        unncessarily visit the type arguments of a TypeRef, as by this point
+        there are none that are relevant.
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics): Treat VectorType as a primitive type.
+
 2018-08-27  Keith Rollin  <krollin@apple.com>
 
         Build system support for LTO

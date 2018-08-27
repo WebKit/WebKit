@@ -59,7 +59,6 @@ class FlattenedStructOffsetGatherer extends Visitor {
     
     visitTypeRef(node)
     {
-        super.visitTypeRef(node);
         Node.visit(node.type, this);
     }
 
