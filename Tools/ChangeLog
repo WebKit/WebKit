@@ -1,3 +1,14 @@
+2018-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] "video.html" appears at the top level of the TestWebKitAPI Xcode project
+        https://bugs.webkit.org/show_bug.cgi?id=188989
+
+        Reviewed by Andy Estes.
+
+        Move this into the Tests/WebKit/Resources group in the project.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
 2018-08-27  Thomas Denney  <tdenney@apple.com>
 
         Avoid an exception in the interactive interpreter

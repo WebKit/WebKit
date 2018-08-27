@@ -30,7 +30,6 @@
 		0799C34B1EBA3301003B7532 /* disableGetUserMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0799C34A1EBA32F4003B7532 /* disableGetUserMedia.html */; };
 		07C046CA1E4262A8007201E7 /* CARingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C046C91E42573E007201E7 /* CARingBuffer.cpp */; };
 		07CD32F62065B5430064A4BE /* AVFoundationPreference.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07CD32F52065B5420064A4BE /* AVFoundationPreference.mm */; };
-		07CD32F82065B72B0064A4BE /* video.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 07CD32F72065B72A0064A4BE /* video.html */; };
 		07CE1CF31F06A7E000BF89F5 /* GetUserMediaNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07CE1CF21F06A7E000BF89F5 /* GetUserMediaNavigation.mm */; };
 		07E1F6A21FFC44FA0096C7EC /* getDisplayMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 07E1F6A11FFC44F90096C7EC /* getDisplayMedia.html */; };
 		07E1F6A31FFC4B760096C7EC /* GetDisplayMedia.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07E1F6A01FFC3A080096C7EC /* GetDisplayMedia.mm */; };
@@ -111,6 +110,7 @@
 		2E7765CF16C4D81100BA2BB1 /* mainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CE16C4D81100BA2BB1 /* mainMac.mm */; };
 		2E9896151D8F093800739892 /* text-and-password-inputs.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E9896141D8F092B00739892 /* text-and-password-inputs.html */; };
 		2EB29D5E1F762DB90023A5F1 /* dump-datatransfer-types.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EB29D5D1F762DA50023A5F1 /* dump-datatransfer-types.html */; };
+		2EBD9D0A2134730D002DA758 /* video.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 07CD32F72065B72A0064A4BE /* video.html */; };
 		2ECFF5551D9B12F800B55394 /* NowPlayingControlsTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2ECFF5541D9B12F800B55394 /* NowPlayingControlsTests.mm */; };
 		2EFF06C31D88621E0004BB30 /* large-video-offscreen.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EFF06C21D8862120004BB30 /* large-video-offscreen.html */; };
 		2EFF06C51D8867760004BB30 /* change-video-source-on-click.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EFF06C41D8867700004BB30 /* change-video-source-on-click.html */; };
@@ -1189,7 +1189,7 @@
 				CD758A6F20572EA00071834A /* video-with-paused-audio-and-playing-muted.html in Copy Resources */,
 				CDC8E4961BC6F10800594FEC /* video-without-audio.html in Copy Resources */,
 				CDC8E4971BC6F10800594FEC /* video-without-audio.mp4 in Copy Resources */,
-				07CD32F82065B72B0064A4BE /* video.html in Copy Resources */,
+				2EBD9D0A2134730D002DA758 /* video.html in Copy Resources */,
 				CD577799211CE0E4001B371E /* web-audio-only.html in Copy Resources */,
 				1C2B81861C89259D00A5529F /* webfont.html in Copy Resources */,
 				51714EB41CF8C78C004723C4 /* WebProcessKillIDBCleanup-1.html in Copy Resources */,
@@ -1215,7 +1215,7 @@
 		0799C34A1EBA32F4003B7532 /* disableGetUserMedia.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = disableGetUserMedia.html; sourceTree = "<group>"; };
 		07C046C91E42573E007201E7 /* CARingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CARingBuffer.cpp; sourceTree = "<group>"; };
 		07CD32F52065B5420064A4BE /* AVFoundationPreference.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationPreference.mm; sourceTree = "<group>"; };
-		07CD32F72065B72A0064A4BE /* video.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = video.html; path = Tests/WebKit/video.html; sourceTree = "<group>"; };
+		07CD32F72065B72A0064A4BE /* video.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = video.html; sourceTree = "<group>"; };
 		07CE1CF21F06A7E000BF89F5 /* GetUserMediaNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetUserMediaNavigation.mm; sourceTree = "<group>"; };
 		07E1F6A01FFC3A080096C7EC /* GetDisplayMedia.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetDisplayMedia.mm; sourceTree = "<group>"; };
 		07E1F6A11FFC44F90096C7EC /* getDisplayMedia.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = getDisplayMedia.html; path = ../WebKit/getDisplayMedia.html; sourceTree = "<group>"; };
@@ -2175,7 +2175,6 @@
 		08FB7794FE84155DC02AAC07 /* TestWebKitAPI */ = {
 			isa = PBXGroup;
 			children = (
-				07CD32F72065B72A0064A4BE /* video.html */,
 				08FB7795FE84155DC02AAC07 /* Source */,
 				BCB9EB66112366D800A137E0 /* Tests */,
 				BC90957D12554CEA00083756 /* Configurations */,
@@ -3131,6 +3130,7 @@
 				C95984F61E36BCD7002C0D45 /* test-without-audio-track.mp4 */,
 				524BBCA019E30C63002F1AF1 /* test.mp4 */,
 				7AE9E5081AE5AE8B00CF874B /* test.pdf */,
+				07CD32F72065B72A0064A4BE /* video.html */,
 				1C2B81841C8924A200A5529F /* webfont.html */,
 			);
 			name = Resources;
