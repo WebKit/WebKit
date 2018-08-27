@@ -32,7 +32,7 @@
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/WebKit.h>
+#import <WebKit/WebArchive.h>
 #import <WebKit/WebKitPrivate.h>
 #import <wtf/RetainPtr.h>
 
@@ -191,6 +191,16 @@ static NSURL *testImageFileURL()
 static NSData *testImageData()
 {
     return [NSData dataWithContentsOfURL:testImageFileURL()];
+}
+
+static NSURL *testGIFFileURL()
+{
+    return [[NSBundle mainBundle] URLForResource:@"apple" withExtension:@"gif" subdirectory:@"TestWebKitAPI.resources"];
+}
+
+static NSData *testGIFData()
+{
+    return [NSData dataWithContentsOfURL:testGIFFileURL()];
 }
 
 static NSURL *testPDFFileURL()
@@ -1200,6 +1210,46 @@ TEST(WKAttachmentTests, MoveAttachmentElementAsIconByDragging)
 
     [webView expectElementTag:@"STRONG" toComeBefore:@"ATTACHMENT"];
     [simulator endDataTransfer];
+}
+
+TEST(WKAttachmentTests, PasteWebArchiveContainingImages)
+{
+    NSData *markupData = [@"<img src='1.png' alt='foo'><div><br></div><img src='2.gif' alt='bar'>" dataUsingEncoding:NSUTF8StringEncoding];
+
+    auto mainResource = adoptNS([[WebResource alloc] initWithData:markupData URL:[NSURL URLWithString:@"foo.html"] MIMEType:@"text/html" textEncodingName:@"utf-8" frameName:nil]);
+    auto pngResource = adoptNS([[WebResource alloc] initWithData:testImageData() URL:[NSURL URLWithString:@"1.png"] MIMEType:@"image/png" textEncodingName:nil frameName:nil]);
+    auto gifResource = adoptNS([[WebResource alloc] initWithData:testGIFData() URL:[NSURL URLWithString:@"2.gif"] MIMEType:@"image/gif" textEncodingName:nil frameName:nil]);
+    auto archive = adoptNS([[WebArchive alloc] initWithMainResource:(__bridge WebResource *)mainResource.get() subresources:@[ (__bridge WebResource *)pngResource.get(), (__bridge WebResource *)gifResource.get() ] subframeArchives:@[ ]]);
+
+#if PLATFORM(MAC)
+    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+    [pasteboard declareTypes:@[WebArchivePboardType] owner:nil];
+    [pasteboard setData:[archive data] forType:WebArchivePboardType];
+#else
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    [pasteboard setData:[archive data] forPasteboardType:WebArchivePboardType];
+#endif
+
+    RetainPtr<_WKAttachment> gifAttachment;
+    RetainPtr<_WKAttachment> pngAttachment;
+    auto webView = webViewForTestingAttachments();
+
+    ObserveAttachmentUpdatesForScope observer((__bridge TestWKWebView *)webView.get());
+    [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+    [webView expectElementCount:2 tagName:@"IMG"];
+
+    for (_WKAttachment *attachment in observer.observer().inserted) {
+        if ([attachment.info.contentType isEqualToString:@"image/png"])
+            pngAttachment = attachment;
+        else if ([attachment.info.contentType isEqualToString:@"image/gif"])
+            gifAttachment = attachment;
+    }
+
+    EXPECT_WK_STREQ("foo", [pngAttachment info].name);
+    EXPECT_WK_STREQ("bar", [gifAttachment info].name);
+    [pngAttachment expectRequestedDataToBe:testImageData()];
+    [gifAttachment expectRequestedDataToBe:testGIFData()];
+    observer.expectAttachmentUpdates(@[ ], @[ (__bridge _WKAttachment *)pngAttachment.get(), (__bridge _WKAttachment *)gifAttachment.get() ]);
 }
 
 #pragma mark - Platform-specific tests

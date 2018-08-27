@@ -286,7 +286,9 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
         if (resource == urlToResourceMap.end())
             continue;
 
-        auto name = URLParser { resourceURLString }.result().lastPathComponent();
+        auto name = image.attributeWithoutSynchronization(HTMLNames::altAttr);
+        if (name.isEmpty())
+            name = URLParser { resourceURLString }.result().lastPathComponent();
         if (name.isEmpty())
             name = AtomicString("media");
 

@@ -1,3 +1,19 @@
+2018-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] [WK2] Images copied from Mail message view paste with the wrong file name in compose
+        https://bugs.webkit.org/show_bug.cgi?id=188957
+        <rdar://problem/43737715>
+
+        Reviewed by Darin Adler.
+
+        Add a new API test to verify that pasting a web archive containing several image elements with alt attributes
+        generates _WKAttachments whose names reflect those alt attributes.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (testGIFFileURL):
+        (testGIFData):
+        (TestWebKitAPI::TEST):
+
 2018-08-27  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r235367.

@@ -1,3 +1,20 @@
+2018-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] [WK2] Images copied from Mail message view paste with the wrong file name in compose
+        https://bugs.webkit.org/show_bug.cgi?id=188957
+        <rdar://problem/43737715>
+
+        Reviewed by Darin Adler.
+
+        Allow the alt attribute of a pasted image element to determine the name of an image attachment, rather than
+        using the source URL's last path component first. This is because in some clients, such as Mail, the source of
+        the image element is some nondescript UUID, and the alt text contains the real name of the image.
+
+        Test: WKAttachmentTests.PasteWebArchiveContainingImages
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::replaceRichContentWithAttachments):
+
 2018-08-27  Alex Christensen  <achristensen@webkit.org>
 
         Fix IOSMAC build
