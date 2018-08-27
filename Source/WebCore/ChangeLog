@@ -1,3 +1,17 @@
+2018-08-26  Christopher Reid  <chris.reid@sony.com>
+
+        [Curl] Implement deleteCookie()
+        https://bugs.webkit.org/show_bug.cgi?id=188908
+
+        Reviewed by Fujii Hironori.
+
+        Support deleting cookies from the web inspector
+
+        Tested from the web inspector.
+
+        * platform/network/curl/CookieJarCurlDatabase.cpp:
+        (WebCore::CookieJarCurlDatabase::deleteCookie const):
+
 2018-08-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Simplify FloatingState::FloatItem class

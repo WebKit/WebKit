@@ -113,9 +113,10 @@ bool CookieJarCurlDatabase::getRawCookies(const NetworkStorageSession& session, 
     return cookieJarDB.searchCookies(firstParty.string(), std::nullopt, std::nullopt, std::nullopt, rawCookies);
 }
 
-void CookieJarCurlDatabase::deleteCookie(const NetworkStorageSession&, const URL&, const String&) const
+void CookieJarCurlDatabase::deleteCookie(const NetworkStorageSession& session, const URL& url, const String& name) const
 {
-    // FIXME: Not yet implemented
+    CookieJarDB& cookieJarDB = session.cookieDatabase();
+    cookieJarDB.deleteCookie(url, name);
 }
 
 void CookieJarCurlDatabase::getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>&) const
