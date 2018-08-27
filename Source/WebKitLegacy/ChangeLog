@@ -1,3 +1,13 @@
+2018-08-26  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] Don’t make unnecessary, broken WebKitPluginAgent symlink when WK_USE_OVERRIDE_FRAMEWORKS_DIR=YES
+        https://bugs.webkit.org/show_bug.cgi?id=188956
+        <rdar://problem/43253221>
+
+        Reviewed by Darin Adler.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj: Updated the Symlink WebKitPluginHost build phase.
+
 2018-08-01  Alex Christensen  <achristensen@webkit.org>
 
         Move all calls to ResourceLoader::start to WebKitLegacy
