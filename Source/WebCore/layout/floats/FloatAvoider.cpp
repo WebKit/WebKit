@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "FloatBox.h"
+#include "FloatAvoider.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
@@ -36,9 +36,9 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(FloatBox);
+WTF_MAKE_ISO_ALLOCATED_IMPL(FloatAvoider);
 
-FloatBox::FloatBox(const Box& layoutBox, const FloatingState& floatingState, const LayoutContext& layoutContext)
+FloatAvoider::FloatAvoider(const Box& layoutBox, const FloatingState& floatingState, const LayoutContext& layoutContext)
     : m_layoutBox(makeWeakPtr(const_cast<Box&>(layoutBox)))
     , m_floatingState(floatingState)
     , m_absoluteDisplayBox(FormattingContext::mapBoxToAncestor(layoutContext, layoutBox, downcast<Container>(floatingState.root())))
@@ -47,18 +47,18 @@ FloatBox::FloatBox(const Box& layoutBox, const FloatingState& floatingState, con
     initializePosition();
 }
 
-void FloatBox::initializePosition()
+void FloatAvoider::initializePosition()
 {
     resetVertically();
     resetHorizontally();
 }
 
-bool FloatBox::isLeftAligned() const
+bool FloatAvoider::isLeftAligned() const
 {
     return m_layoutBox->isLeftFloatingPositioned();
 }
 
-void FloatBox::setLeft(PositionInContextRoot left)
+void FloatAvoider::setLeft(PositionInContextRoot left)
 {
     // Horizontal position is constrained by the containing block's content box.
     // Compute the horizontal position for the new floating by taking both the contining block and the current left/right floats into account.
@@ -74,13 +74,13 @@ void FloatBox::setLeft(PositionInContextRoot left)
     m_absoluteDisplayBox.setLeft(left);
 }
 
-void FloatBox::setTopLeft(PointInContextRoot topLeft)
+void FloatAvoider::setTopLeft(PointInContextRoot topLeft)
 {
     setTop(topLeft.y);
     setLeft(topLeft.x);
 }
 
-void FloatBox::resetVertically()
+void FloatAvoider::resetVertically()
 {
     // Incoming float cannot be placed higher than existing floats (margin box of the last float).
     // Take the static position (where the box would go if it wasn't floating) and adjust it with the last float.
@@ -92,7 +92,7 @@ void FloatBox::resetVertically()
     m_absoluteDisplayBox.setTop(top);
 }
 
-void FloatBox::resetHorizontally()
+void FloatAvoider::resetHorizontally()
 {
     // Align the box with the containing block's content box.
     auto containingBlockContentBoxLeft = m_containingBlockAbsoluteDisplayBox.left() + m_containingBlockAbsoluteDisplayBox.contentBoxLeft();
@@ -104,7 +104,7 @@ void FloatBox::resetHorizontally()
     m_absoluteDisplayBox.setLeft(left);
 }
 
-PointInContainingBlock FloatBox::topLeftInContainingBlock() const
+PointInContainingBlock FloatAvoider::topLeftInContainingBlock() const
 {
     // From formatting root coordinate system back to containing block's.
     if (m_layoutBox->containingBlock() == &m_floatingState.root())

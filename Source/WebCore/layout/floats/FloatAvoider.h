@@ -40,10 +40,10 @@ class Box;
 class FloatingState;
 class LayoutContext;
 
-class FloatBox {
-    WTF_MAKE_ISO_ALLOCATED(FloatBox);
+class FloatAvoider {
+    WTF_MAKE_ISO_ALLOCATED(FloatAvoider);
 public:
-    FloatBox(const Box&, const FloatingState&, const LayoutContext&);
+    FloatAvoider(const Box&, const FloatingState&, const LayoutContext&);
 
     PositionInContextRoot top() const { return m_absoluteDisplayBox.top(); }
     PositionInContextRoot left() const { return m_absoluteDisplayBox.left(); }

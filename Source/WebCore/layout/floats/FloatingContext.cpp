@@ -29,7 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
-#include "FloatBox.h"
+#include "FloatAvoider.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
 #include "LayoutContext.h"
@@ -137,7 +137,7 @@ PointInContainingBlock FloatingContext::positionForFloat(const Box& layoutBox) c
     }
 
     // Find the top most position where the float box fits.
-    FloatBox alignedBox = { layoutBox, m_floatingState, layoutContext() };
+    FloatAvoider alignedBox = { layoutBox, m_floatingState, layoutContext() };
     floatingPosition(alignedBox);
     return alignedBox.topLeftInContainingBlock();
 }
@@ -213,28 +213,28 @@ std::optional<PositionInContainingBlock> FloatingContext::verticalPositionWithCl
     return { };
 }
 
-void FloatingContext::floatingPosition(FloatBox& floatBox) const
+void FloatingContext::floatingPosition(FloatAvoider& floatAvoider) const
 {
     std::optional<PositionInContextRoot> bottomMost;
-    auto initialLeft = floatBox.left();
+    auto initialLeft = floatAvoider.left();
     auto end = Layout::end(m_floatingState);
-    for (auto iterator = begin(m_floatingState, floatBox.rectWithMargin().top()); iterator != end; ++iterator) {
+    for (auto iterator = begin(m_floatingState, floatAvoider.rectWithMargin().top()); iterator != end; ++iterator) {
         ASSERT(!(*iterator).isEmpty());
         auto floats = *iterator;
 
-        floatBox.setTop(floats.verticalPosition() + floatBox.marginTop());
+        floatAvoider.setTop(floats.verticalPosition() + floatAvoider.marginTop());
         // Move the box horizontally so that it either
         // 1. aligns with the current floating pair
         // 2. or with the containing block's content box if there's no float to align with at this vertical position.
-        if (auto horiztonalPosition = floats.horiztonalPosition(floatBox.isLeftAligned() ? Float::Left : Float::Right)) {
-            if (!floatBox.isLeftAligned())
-                horiztonalPosition = *horiztonalPosition - floatBox.rectWithMargin().width();
-            floatBox.setLeft(*horiztonalPosition + floatBox.marginLeft());
+        if (auto horiztonalPosition = floats.horiztonalPosition(floatAvoider.isLeftAligned() ? Float::Left : Float::Right)) {
+            if (!floatAvoider.isLeftAligned())
+                horiztonalPosition = *horiztonalPosition - floatAvoider.rectWithMargin().width();
+            floatAvoider.setLeft(*horiztonalPosition + floatAvoider.marginLeft());
         } else
-            floatBox.resetHorizontally();
+            floatAvoider.resetHorizontally();
 
         // Check if the box fits at this position.
-        if (!floats.intersects(floatBox.rectWithMargin()))
+        if (!floats.intersects(floatAvoider.rectWithMargin()))
             return;
 
         bottomMost = floats.bottom();
@@ -246,7 +246,7 @@ void FloatingContext::floatingPosition(FloatBox& floatBox) const
         return;
 
     // Passed all the floats and still does not fit? Push it below the last float.
-    floatBox.setTopLeft({ initialLeft, *bottomMost + floatBox.marginTop() });
+    floatAvoider.setTopLeft({ initialLeft, *bottomMost + floatAvoider.marginTop() });
 }
 
 FloatingPair::FloatingPair(const FloatingState::FloatList& floats)

@@ -35,7 +35,7 @@ namespace WebCore {
 
 namespace Layout {
 
-class FloatBox;
+class FloatAvoider;
 class Box;
 class Container;
 class FloatingPair;
@@ -56,7 +56,7 @@ public:
 private:
     LayoutContext& layoutContext() const { return m_floatingState.layoutContext(); }
 
-    void floatingPosition(FloatBox&) const;
+    void floatingPosition(FloatAvoider&) const;
 
     FloatingState& m_floatingState;
 };

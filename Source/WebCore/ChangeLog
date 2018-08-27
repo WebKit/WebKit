@@ -1,3 +1,38 @@
+2018-08-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] FloatBox -> FloatAvoider
+        https://bugs.webkit.org/show_bug.cgi?id=188941
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for the float avoidance feature where formatting context root boxes avoid existing floats.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/displaytree/DisplayBox.h:
+        * layout/floats/FloatAvoider.cpp: Renamed from Source/WebCore/layout/floats/FloatBox.cpp.
+        (WebCore::Layout::FloatAvoider::FloatAvoider):
+        (WebCore::Layout::FloatAvoider::initializePosition):
+        (WebCore::Layout::FloatAvoider::isLeftAligned const):
+        (WebCore::Layout::FloatAvoider::setLeft):
+        (WebCore::Layout::FloatAvoider::setTopLeft):
+        (WebCore::Layout::FloatAvoider::resetVertically):
+        (WebCore::Layout::FloatAvoider::resetHorizontally):
+        (WebCore::Layout::FloatAvoider::topLeftInContainingBlock const):
+        * layout/floats/FloatAvoider.h: Renamed from Source/WebCore/layout/floats/FloatBox.h.
+        (WebCore::Layout::FloatAvoider::top const):
+        (WebCore::Layout::FloatAvoider::left const):
+        (WebCore::Layout::FloatAvoider::marginTop const):
+        (WebCore::Layout::FloatAvoider::marginLeft const):
+        (WebCore::Layout::FloatAvoider::marginBottom const):
+        (WebCore::Layout::FloatAvoider::marginRight const):
+        (WebCore::Layout::FloatAvoider::rectWithMargin const):
+        (WebCore::Layout::FloatAvoider::setTop):
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::floatingPosition const):
+        * layout/floats/FloatingContext.h:
+
 2018-08-26  Christopher Reid  <chris.reid@sony.com>
 
         [Curl] Implement deleteCookie()
