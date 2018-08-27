@@ -853,7 +853,7 @@ void NavigationState::NavigationClient::renderingProgressDidChange(WebPageProxy&
 void NavigationState::NavigationClient::didReceiveAuthenticationChallenge(WebPageProxy&, AuthenticationChallengeProxy& authenticationChallenge)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallengeCompletionHandler)
-        return authenticationChallenge.rejectProtectionSpaceAndContinue();
+        return authenticationChallenge.performDefaultHandling();
 
     auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
     if (!navigationDelegate)

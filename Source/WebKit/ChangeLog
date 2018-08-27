@@ -1,3 +1,24 @@
+2018-08-27  Alex Christensen  <achristensen@webkit.org>
+
+        Fix authentication for clients of WKPageLoaderClient after r234941
+        https://bugs.webkit.org/show_bug.cgi?id=188939
+
+        Reviewed by Youenn Fablet.
+
+        I simplified the authentication code path elegantly for clients of WKPageNavigationClient/WKNavigationDelegate,
+        but clients of WKPageLoaderClient that do not implement didReceiveAuthenticationChallengeInFrame would hang.
+        This fixes that.  I've also made the performDefaultHandling (when delegates are not implemented) and rejectProtectionSpaceAndContinue
+        (when canAuthenticationAgainstProtectionSpace returns false) behave correctly.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didReachLayoutMilestone):
+        (API::LoaderClient::canAuthenticateAgainstProtectionSpaceInFrame): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        (WKPageSetPageNavigationClient):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::didReceiveAuthenticationChallenge):
+
 2018-08-26  Sam Weinig  <sam@webkit.org>
 
         Using _WKRemoteObjectInterface with a protocol that inherits from a non-NSObject protocol crashes

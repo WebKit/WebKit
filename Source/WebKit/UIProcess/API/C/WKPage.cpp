@@ -1165,18 +1165,12 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             m_client.didDetectXSSForFrame(toAPI(&page), toAPI(&frame), toAPI(userData), m_client.base.clientInfo);
         }
 
-        bool canAuthenticateAgainstProtectionSpaceInFrame(WebPageProxy& page, WebFrameProxy& frame, WebProtectionSpace* protectionSpace) override
-        {
-            if (!m_client.canAuthenticateAgainstProtectionSpaceInFrame)
-                return false;
-
-            return m_client.canAuthenticateAgainstProtectionSpaceInFrame(toAPI(&page), toAPI(&frame), toAPI(protectionSpace), m_client.base.clientInfo);
-        }
-
         void didReceiveAuthenticationChallengeInFrame(WebPageProxy& page, WebFrameProxy& frame, AuthenticationChallengeProxy& authenticationChallenge) override
         {
+            if (m_client.canAuthenticateAgainstProtectionSpaceInFrame && !m_client.canAuthenticateAgainstProtectionSpaceInFrame(toAPI(&page), toAPI(&frame), toAPI(authenticationChallenge.protectionSpace()), m_client.base.clientInfo))
+                return authenticationChallenge.rejectProtectionSpaceAndContinue();
             if (!m_client.didReceiveAuthenticationChallengeInFrame)
-                return;
+                return authenticationChallenge.performDefaultHandling();
 
             m_client.didReceiveAuthenticationChallengeInFrame(toAPI(&page), toAPI(&frame), toAPI(&authenticationChallenge), m_client.base.clientInfo);
         }
@@ -2310,19 +2304,12 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             m_client.renderingProgressDidChange(toAPI(&page), pageRenderingProgressEvents(milestones), nullptr, m_client.base.clientInfo);
         }
         
-        bool canAuthenticateAgainstProtectionSpace(WebPageProxy& page, WebProtectionSpace* protectionSpace) override
-        {
-            if (!m_client.canAuthenticateAgainstProtectionSpace)
-                return false;
-            return m_client.canAuthenticateAgainstProtectionSpace(toAPI(&page), toAPI(protectionSpace), m_client.base.clientInfo);
-        }
-        
         void didReceiveAuthenticationChallenge(WebPageProxy& page, AuthenticationChallengeProxy& authenticationChallenge) override
         {
             if (m_client.canAuthenticateAgainstProtectionSpace && !m_client.canAuthenticateAgainstProtectionSpace(toAPI(&page), toAPI(authenticationChallenge.protectionSpace()), m_client.base.clientInfo))
                 return authenticationChallenge.rejectProtectionSpaceAndContinue();
             if (!m_client.didReceiveAuthenticationChallenge)
-                return authenticationChallenge.rejectProtectionSpaceAndContinue();
+                return authenticationChallenge.performDefaultHandling();
             m_client.didReceiveAuthenticationChallenge(toAPI(&page), toAPI(&authenticationChallenge), m_client.base.clientInfo);
         }
 
