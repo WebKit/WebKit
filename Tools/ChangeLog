@@ -1,3 +1,13 @@
+2018-08-28  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r235391): [iOS] TestWebKitAPI.WebKit.RestoreSessionStateWithoutNavigation is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=189050
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RestoreSessionStateWithoutNavigation.mm:
+        This test wasn't run on iOS before.  Let's re-introduce the WK_HAVE_C_SPI guard.
+
 2018-08-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] WKAttachmentTests.DropFolderAsAttachmentAndMoveByDragging encounters an exception on iOS simulator
