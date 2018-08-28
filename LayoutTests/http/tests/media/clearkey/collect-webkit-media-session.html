@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+function waitFor(duration)
+{
+    return new Promise((resolve) => setTimeout(resolve, duration));
+}
+
+var resolveCallback, rejectCallback;
+var promise = new Promise((resolve, reject) => {
+    resolveCallback = resolve;
+    rejectCallback = reject;
+});
+
+async function done()
+{
+    try {
+        const frameIdentifier = internals.documentIdentifier(iframe.contentDocument);
+        iframe.src = "non-existent-frame";
+        let counter = 0;
+        while (++counter < 10) {
+            if (!internals.isDocumentAlive(frameIdentifier)) {
+                resolveCallback();
+                return;
+            }
+            if (window.GCController)
+                GCController.collect();
+
+            await waitFor(50);
+        }
+    } finally {
+        rejectCallback("Test failed");
+    }
+}
+
+promise_test((test) => {
+    if (!window.internals)
+        rejectCallback("Test require internals API");
+    return promise;
+}, "Ensure that the frame's document get collected after being stopped while doing some webkit media session calls");
+
+</script>
+<iframe src="resources/mywebkitmediasessionframe.htm" id="iframe"></iframe>

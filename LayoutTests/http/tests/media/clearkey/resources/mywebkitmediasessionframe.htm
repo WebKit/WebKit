@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        var keyId;
+        var session;
+
+        function go()
+        {
+            video.addEventListener('webkitneedkey', needkey, true);
+            video.src = '../../resources/hls/clearkey/prog_index.m3u8';
+        }
+
+        function needkey(event)
+        {
+            if (!video.webkitKeys)
+                video.webkitSetMediaKeys(new WebKitMediaKeys('org.w3c.clearkey'));
+
+            if (!video.webkitKeys) {
+                log('Error: org.w3c.clearkey not supported.');
+                return;
+            }
+
+            session = video.webkitKeys.createSession('application/x-mpegurl', event.initData);
+            parent.done();
+        }
+    </script>
+</head>
+<body onload="go()">
+    <video id="video" controls></video>
+</body>
+</html>

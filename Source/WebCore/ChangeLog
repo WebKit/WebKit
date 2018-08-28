@@ -1,3 +1,21 @@
+2018-08-28  Youenn Fablet  <youenn@apple.com>
+
+        WebKitMediaSession should be GC collectable when its document is being stopped
+        https://bugs.webkit.org/show_bug.cgi?id=189016
+
+        Reviewed by Eric Carlson.
+
+        Make sure WebKitMediaSession is  collectable after its document is stopped.
+        This is done by nullifying m_session when calling close.
+        This way hasPendingActivity() returns false when stop() is called.
+
+        Test: http/tests/media/clearkey/collect-webkit-media-session.html
+
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        (WebCore::WebKitMediaKeySession::WebKitMediaKeySession):
+        (WebCore::WebKitMediaKeySession::close):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.h:
+
 2018-08-28  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver] Fix build after r235424

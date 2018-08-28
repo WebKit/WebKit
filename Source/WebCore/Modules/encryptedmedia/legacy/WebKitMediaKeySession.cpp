@@ -56,6 +56,8 @@ WebKitMediaKeySession::WebKitMediaKeySession(ScriptExecutionContext& context, We
     , m_keyRequestTimer(*this, &WebKitMediaKeySession::keyRequestTimerFired)
     , m_addKeyTimer(*this, &WebKitMediaKeySession::addKeyTimerFired)
 {
+    if (m_session)
+        m_sessionId = m_session->sessionId();
 }
 
 WebKitMediaKeySession::~WebKitMediaKeySession()
@@ -68,18 +70,15 @@ WebKitMediaKeySession::~WebKitMediaKeySession()
 
 void WebKitMediaKeySession::close()
 {
-    if (m_session)
+    if (m_session) {
         m_session->releaseKeys();
+        m_session = nullptr;
+    }
 }
 
 RefPtr<ArrayBuffer> WebKitMediaKeySession::cachedKeyForKeyId(const String& keyId) const
 {
     return m_session ? m_session->cachedKeyForKeyID(keyId) : nullptr;
-}
-
-const String& WebKitMediaKeySession::sessionId() const
-{
-    return m_session->sessionId();
 }
 
 void WebKitMediaKeySession::generateKeyRequest(const String& mimeType, Ref<Uint8Array>&& initData)
