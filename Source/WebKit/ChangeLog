@@ -1,3 +1,15 @@
+2018-08-28  Sihui Liu  <sihui_liu@apple.com>
+
+        Add error information to help debug test failure in WKNavigation.ProcessCrashDuringCallback
+        https://bugs.webkit.org/show_bug.cgi?id=189037
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _getMainResourceDataWithCompletionHandler:]):
+        (-[WKWebView _getWebArchiveDataWithCompletionHandler:]):
+        (-[WKWebView _getContentsAsStringWithCompletionHandler:]):
+
 2018-08-28  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Fix issue that extra cookie is added when redirect happens.

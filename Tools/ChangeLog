@@ -1,3 +1,13 @@
+2018-08-28  Sihui Liu  <sihui_liu@apple.com>
+
+        Add error information to help debug test failure in WKNavigation.ProcessCrashDuringCallback
+        https://bugs.webkit.org/show_bug.cgi?id=189037
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebContentProcessDidTerminate.mm:
+        (TEST):
+
 2018-08-28  David Kilzer  <ddkilzer@apple.com>
 
         Fix incorrect use of `sourceTree = "<group>";` for built products and frameworks in Xcode projects

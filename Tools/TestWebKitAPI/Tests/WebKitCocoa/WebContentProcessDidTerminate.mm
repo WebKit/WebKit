@@ -229,38 +229,44 @@ TEST(WKNavigation, ProcessCrashDuringCallback)
 
     __block WKWebView *view = webView.get();
     [webView _getContentsAsStringWithCompletionHandler:^(NSString *contents, NSError *error) {
-        EXPECT_TRUE(!!error);
+        if (!!error)
+            EXPECT_EQ(WKErrorWebContentProcessTerminated, error.code);
         ++callbackCount;
         if (callbackCount == 6)
             calledAllCallbacks = true;
     }];
     [webView _getContentsAsStringWithCompletionHandler:^(NSString *contents, NSError *error) {
-        EXPECT_TRUE(!!error);
+        if (!!error)
+            EXPECT_EQ(WKErrorWebContentProcessTerminated, error.code);
         ++callbackCount;
         if (callbackCount == 6)
             calledAllCallbacks = true;
     }];
     [webView _getContentsAsStringWithCompletionHandler:^(NSString *contents, NSError *error) {
-        EXPECT_TRUE(!!error);
+        if (!!error)
+            EXPECT_EQ(WKErrorWebContentProcessTerminated, error.code);
         [view _close]; // Calling _close will also invalidate all callbacks.
         ++callbackCount;
         if (callbackCount == 6)
             calledAllCallbacks = true;
     }];
     [webView _getContentsAsStringWithCompletionHandler:^(NSString *contents, NSError *error) {
-        EXPECT_TRUE(!!error);
+        if (!!error)
+            EXPECT_EQ(WKErrorWebContentProcessTerminated, error.code);
         ++callbackCount;
         if (callbackCount == 6)
             calledAllCallbacks = true;
     }];
     [webView _getContentsAsStringWithCompletionHandler:^(NSString *contents, NSError *error) {
-        EXPECT_TRUE(!!error);
+        if (!!error)
+            EXPECT_EQ(WKErrorWebContentProcessTerminated, error.code);
         ++callbackCount;
         if (callbackCount == 6)
             calledAllCallbacks = true;
     }];
     [webView _getContentsAsStringWithCompletionHandler:^(NSString *contents, NSError *error) {
-        EXPECT_TRUE(!!error);
+        if (!!error)
+            EXPECT_EQ(WKErrorWebContentProcessTerminated, error.code);
         ++callbackCount;
         if (callbackCount == 6)
             calledAllCallbacks = true;
