@@ -68,10 +68,10 @@ void PreconnectTask::willSendRedirectedRequest(ResourceRequest&&, ResourceReques
     ASSERT_NOT_REACHED();
 }
 
-auto PreconnectTask::didReceiveResponse(ResourceResponse&&) -> ShouldContinueDidReceiveResponse
+void PreconnectTask::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
     ASSERT_NOT_REACHED();
-    return ShouldContinueDidReceiveResponse::No;
+    completionHandler(PolicyAction::Ignore);
 }
 
 void PreconnectTask::didReceiveBuffer(Ref<SharedBuffer>&&, int reportedEncodedDataLength)

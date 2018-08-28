@@ -113,7 +113,7 @@ void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, ResponseCo
             return;
         }
     }
-    m_client->didReceiveResponseNetworkSession(WTFMove(response), WTFMove(completionHandler));
+    m_client->didReceiveResponse(WTFMove(response), WTFMove(completionHandler));
 }
 
 bool NetworkDataTask::shouldCaptureExtraNetworkLoadMetrics() const

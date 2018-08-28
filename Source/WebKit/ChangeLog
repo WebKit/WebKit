@@ -1,3 +1,52 @@
+2018-08-27  Alex Christensen  <achristensen@webkit.org>
+
+        NetworkLoad::didReceiveResponse should pass its completion handler to its client
+        https://bugs.webkit.org/show_bug.cgi?id=188701
+
+        Reviewed by Michael Catanzaro.
+
+        Right now we have a confusing enum ShouldContinueDidReceiveResponse and a complicated flow
+        that involves many objects and implicitly using NetworkLoad's destructor as part of the
+        loading flow.  This makes the responsibilities of the objects clear.
+
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::didReceiveResponse):
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::didReceiveResponse):
+        (WebKit::NetworkCORSPreflightChecker::didReceiveResponseNetworkSession): Deleted.
+        * NetworkProcess/NetworkCORSPreflightChecker.h:
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::didReceiveResponse):
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::~NetworkLoad):
+        (WebKit::NetworkLoad::convertTaskToDownload):
+        (WebKit::NetworkLoad::didReceiveResponse):
+        (WebKit::NetworkLoad::notifyDidReceiveResponse):
+        (WebKit::NetworkLoad::continueDidReceiveResponse): Deleted.
+        (WebKit::NetworkLoad::didReceiveResponseNetworkSession): Deleted.
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkLoadClient.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::~NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::didFinishWithRedirectResponse):
+        (WebKit::NetworkResourceLoader::continueDidReceiveResponse):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::didReceiveResponse):
+        (WebKit::PingLoad::didReceiveResponseNetworkSession): Deleted.
+        * NetworkProcess/PingLoad.h:
+        * NetworkProcess/PreconnectTask.cpp:
+        (WebKit::PreconnectTask::didReceiveResponse):
+        * NetworkProcess/PreconnectTask.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::didReceiveResponse):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * NetworkProcess/capture/NetworkDataTaskReplay.cpp:
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::didReceiveResponse):
+
 2018-08-27  Keith Rollin  <krollin@apple.com>
 
         Unreviewed build fix -- disable LTO for production builds
