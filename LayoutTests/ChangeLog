@@ -1,3 +1,13 @@
+2018-08-28  Truitt Savell  <tsavell@apple.com>
+
+        Edditing test expectations from webkit.org/b/188985.
+        https://bugs.webkit.org/show_bug.cgi?id=188985
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-08-28  David Fenton  <david_fenton@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-storage-match.https.html is flaky
