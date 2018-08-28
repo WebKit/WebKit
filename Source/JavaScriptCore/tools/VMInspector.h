@@ -70,6 +70,7 @@ public:
     JS_EXPORT_PRIVATE static bool isValidCodeBlock(ExecState*, CodeBlock*);
     JS_EXPORT_PRIVATE static CodeBlock* codeBlockForFrame(CallFrame* topCallFrame, unsigned frameNumber);
     JS_EXPORT_PRIVATE static void dumpCallFrame(CallFrame*, unsigned framesToSkip = 0);
+    JS_EXPORT_PRIVATE static void dumpRegisters(CallFrame*);
     JS_EXPORT_PRIVATE static void dumpStack(CallFrame* topCallFrame, unsigned framesToSkip = 0);
     JS_EXPORT_PRIVATE static void dumpValue(JSValue);
     JS_EXPORT_PRIVATE static void dumpCellMemory(JSCell*);

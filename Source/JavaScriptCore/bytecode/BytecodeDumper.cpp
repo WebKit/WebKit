@@ -614,7 +614,7 @@ void BytecodeDumper<Block>::printCallOp(PrintStream& out, int location, const ty
         }
 #if ENABLE(JIT)
         if (CallLinkInfo* info = statusMap.get(CodeOrigin(location)).callLinkInfo) {
-            if (info->haveLastSeenCallee()) {
+            if (!info->isDirect() && info->haveLastSeenCallee()) {
                 JSObject* object = info->lastSeenCallee();
                 if (auto* function = jsDynamicCast<JSFunction*>(*vm(), object))
                     out.printf(" jit(%p, exec %p)", function, function->executable());

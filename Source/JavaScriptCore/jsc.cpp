@@ -268,9 +268,6 @@ static EncodedJSValue JSC_HOST_CALL functionEdenGC(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionForceGCSlowPaths(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionHeapSize(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionAddressOf(ExecState*);
-#ifndef NDEBUG
-static EncodedJSValue JSC_HOST_CALL functionDumpCallFrame(ExecState*);
-#endif
 static EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionRun(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionRunString(ExecState*);
@@ -489,9 +486,6 @@ protected:
         addFunction(vm, "forceGCSlowPaths", functionForceGCSlowPaths, 0);
         addFunction(vm, "gcHeapSize", functionHeapSize, 0);
         addFunction(vm, "addressOf", functionAddressOf, 1);
-#ifndef NDEBUG
-        addFunction(vm, "dumpCallFrame", functionDumpCallFrame, 0);
-#endif
         addFunction(vm, "version", functionVersion, 1);
         addFunction(vm, "run", functionRun, 1);
         addFunction(vm, "runString", functionRunString, 1);
@@ -1052,18 +1046,6 @@ fail:
 
 EncodedJSValue JSC_HOST_CALL functionPrintStdOut(ExecState* exec) { return printInternal(exec, stdout); }
 EncodedJSValue JSC_HOST_CALL functionPrintStdErr(ExecState* exec) { return printInternal(exec, stderr); }
-
-#ifndef NDEBUG
-EncodedJSValue JSC_HOST_CALL functionDumpCallFrame(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    EntryFrame* topEntryFrame = vm.topEntryFrame;
-    ExecState* callerFrame = exec->callerFrame(topEntryFrame);
-    if (callerFrame)
-        vm.interpreter->dumpCallFrame(callerFrame);
-    return JSValue::encode(jsUndefined());
-}
-#endif
 
 EncodedJSValue JSC_HOST_CALL functionDebug(ExecState* exec)
 {

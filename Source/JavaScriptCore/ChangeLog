@@ -1,3 +1,92 @@
+2018-08-28  Mark Lam  <mark.lam@apple.com>
+
+        Fix bit-rotted Interpreter::dumpRegisters() and move it to the VMInspector.
+        https://bugs.webkit.org/show_bug.cgi?id=189059
+        <rdar://problem/40335354>
+
+        Reviewed by Saam Barati.
+
+        1. Moved Interpreter::dumpRegisters() to VMInspector::dumpRegisters().
+        2. Added $vm.dumpRegisters().
+
+            Usage: $vm.dumpRegisters(N) // dump the registers of the Nth CallFrame.
+            Usage: $vm.dumpRegisters() // dump the registers of the current CallFrame.
+
+           Note: Currently, $vm.dumpRegisters() only dump registers in the physical frame.
+           It will treat inlined frames content as registers in the bounding physical frame.
+
+           Here's an example of such a dump on a DFG frame:
+
+                Register frame: 
+
+                -----------------------------------------------------------------------------
+                            use            |   address  |                value               
+                -----------------------------------------------------------------------------
+                [r 12 arguments[  7]]      | 0x7ffeefbfd330 | 0xa                Undefined
+                [r 11 arguments[  6]]      | 0x7ffeefbfd328 | 0x10bbb3e80        Object: 0x10bbb3e80 with butterfly 0x0 (Structure 0x10bbf20d0:[Object, {}, NonArray, Proto:0x10bbb4000]), StructureID: 76
+                [r 10 arguments[  5]]      | 0x7ffeefbfd320 | 0xa                Undefined
+                [r  9 arguments[  4]]      | 0x7ffeefbfd318 | 0xa                Undefined
+                [r  8 arguments[  3]]      | 0x7ffeefbfd310 | 0xa                Undefined
+                [r  7 arguments[  2]]      | 0x7ffeefbfd308 | 0xffff0000000a5eaa Int32: 679594
+                [r  6 arguments[  1]]      | 0x7ffeefbfd300 | 0x10bbd00f0        Object: 0x10bbd00f0 with butterfly 0x8000f8248 (Structure 0x10bba4700:[Function, {name:100, prototype:101, length:102, Symbol.species:103, isArray:104}, NonArray, Proto:0x10bbd0000, Leaf]), StructureID: 160
+                [r  5           this]      | 0x7ffeefbfd2f8 | 0x10bbe0000        Object: 0x10bbe0000 with butterfly 0x8000d8808 (Structure 0x10bb35340:[global, {parseInt:100, parseFloat:101, Object:102, Function:103, Array:104, RegExp:105, RangeError:106, TypeError:107, PrivateSymbol.Object:108, PrivateSymbol.Array:109, ArrayBuffer:110, String:111, Symbol:112, Number:113, Boolean:114, Error:115, Map:116, Set:117, Promise:118, eval:119, Reflect:121, $vm:122, WebAssembly:123, debug:124, describe:125, describeArray:126, print:127, printErr:128, quit:129, gc:130, fullGC:131, edenGC:132, forceGCSlowPaths:133, gcHeapSize:134, addressOf:135, version:136, run:137, runString:138, load:139, loadString:140, readFile:141, read:142, checkSyntax:143, sleepSeconds:144, jscStack:145, readline:146, preciseTime:147, neverInlineFunction:148, noInline:149, noDFG:150, noFTL:151, numberOfDFGCompiles:153, jscOptions:154, optimizeNextInvocation:155, reoptimizationRetryCount:156, transferArrayBuffer:157, failNextNewCodeBlock:158, OSRExit:159, isFinalTier:160, predictInt32:161, isInt32:162, isPureNaN:163, fiatInt52:164, effectful42:165, makeMasquerader:166, hasCustomProperties:167, createGlobalObject:168, dumpTypesForAllVariables:169, drainMicrotasks:170, getRandomSeed:171, setRandomSeed:172, isRope:173, callerSourceOrigin:174, is32BitPlatform:175, loadModule:176, checkModuleSyntax:177, platformSupportsSamplingProfiler:178, generateHeapSnapshot:179, resetSuperSamplerState:180, ensureArrayStorage:181, startSamplingProfiler:182, samplingProfilerStackTraces:183, maxArguments:184, asyncTestStart:185, asyncTestPassed:186, WebAssemblyMemoryMode:187, console:188, $:189, $262:190, waitForReport:191, heapCapacity:192, flashHeapAccess:193, disableRichSourceInfo:194, mallocInALoop:195, totalCompileTime:196, Proxy:197, uneval:198, WScript:199, failWithMessage:200, triggerAssertFalse:201, isNaN:202, isFinite:203, escape:204, unescape:205, decodeURI:206, decodeURIComponent:207, encodeURI:208, encodeURIComponent:209, EvalError:210, ReferenceError:211, SyntaxError:212, URIError:213, JSON:214, Math:215, Int8Array:216, PrivateSymbol.Int8Array:217, Int16Array:218, PrivateSymbol.Int16Array:219, Int32Array:220, PrivateSymbol.Int32Array:221, Uint8Array:222, PrivateSymbol.Uint8Array:223, Uint8ClampedArray:224, PrivateSymbol.Uint8ClampedArray:225, Uint16Array:226, PrivateSymbol.Uint16Array:227, Uint32Array:228, PrivateSymbol.Uint32Array:229, Float32Array:230, PrivateSymbol.Float32Array:231, Float64Array:232, PrivateSymbol.Float64Array:233, DataView:234, Date:235, WeakMap:236, WeakSet:237, Intl:120, desc:238}, NonArray, Proto:0x10bbb4000, UncacheableDictionary, Leaf]), StructureID: 474
+                -----------------------------------------------------------------------------
+                [ArgumentCount]            | 0x7ffeefbfd2f0 | 7 
+                [ReturnVPC]                | 0x7ffeefbfd2f0 | 164 (line 57)
+                [Callee]                   | 0x7ffeefbfd2e8 | 0x10bb68db0        Object: 0x10bb68db0 with butterfly 0x0 (Structure 0x10bbf1c00:[Function, {}, NonArray, Proto:0x10bbd0000, Shady leaf]), StructureID: 65
+                [CodeBlock]                | 0x7ffeefbfd2e0 | 0x10bb2f8e0        __callRandomFunction#DmVXnv:[0x10bb2f8e0->0x10bbfd1e0, LLIntFunctionCall, 253]
+                [ReturnPC]                 | 0x7ffeefbfd2d8 | 0x10064d14c 
+                [CallerFrame]              | 0x7ffeefbfd2d0 | 0x7ffeefbfd380 
+                -----------------------------------------------------------------------------
+                [r -1  CalleeSaveReg]      | 0x7ffeefbfd2c8 | 0xffff000000000002 Int32: 2
+                [r -2  CalleeSaveReg]      | 0x7ffeefbfd2c0 | 0xffff000000000000 Int32: 0
+                [r -3  CalleeSaveReg]      | 0x7ffeefbfd2b8 | 0x10baf1608        
+                [r -4               ]      | 0x7ffeefbfd2b0 | 0x10bbcc000        Object: 0x10bbcc000 with butterfly 0x0 (Structure 0x10bbf1960:[JSGlobalLexicalEnvironment, {}, NonArray, Leaf]), StructureID: 59
+                [r -5               ]      | 0x7ffeefbfd2a8 | 0x10bbcc000        Object: 0x10bbcc000 with butterfly 0x0 (Structure 0x10bbf1960:[JSGlobalLexicalEnvironment, {}, NonArray, Leaf]), StructureID: 59
+                [r -6               ]      | 0x7ffeefbfd2a0 | 0xa                Undefined
+                -----------------------------------------------------------------------------
+                [r -7]                     | 0x7ffeefbfd298 | 0x10bb6fdc0        String (atomic) (identifier): length, StructureID: 4
+                [r -8]                     | 0x7ffeefbfd290 | 0x10bbb7ec0        Object: 0x10bbb7ec0 with butterfly 0x8000e0008 (Structure 0x10bbf2ae0:[Array, {}, ArrayWithContiguous, Proto:0x10bbc8080]), StructureID: 99
+                [r -9]                     | 0x7ffeefbfd288 | 0x10bbc33f0        Object: 0x10bbc33f0 with butterfly 0x8000fdda8 (Structure 0x10bbf1dc0:[Function, {name:100, length:101}, NonArray, Proto:0x10bbd0000, Leaf]), StructureID: 69
+                [r-10]                     | 0x7ffeefbfd280 | 0xffff000000000004 Int32: 4
+                [r-11]                     | 0x7ffeefbfd278 | 0x10bbb4290        Object: 0x10bbb4290 with butterfly 0x8000e8408 (Structure 0x10bb74850:[DollarVM, {abort:100, crash:101, breakpoint:102, dfgTrue:103, ftlTrue:104, cpuMfence:105, cpuRdtsc:106, cpuCpuid:107, cpuPause:108, cpuClflush:109, llintTrue:110, jitTrue:111, noInline:112, gc:113, edenGC:114, callFrame:115, codeBlockFor:116, codeBlockForFrame:117, dumpSourceFor:118, dumpBytecodeFor:119, dataLog:120, print:121, dumpCallFrame:122, dumpStack:123, dumpRegisters:124, dumpCell:125, indexingMode:126, inlineCapacity:127, value:128, getpid:129, createProxy:130, createRuntimeArray:131, createImpureGetter:132, createCustomGetterObject:133, createDOMJITNodeObject:134, createDOMJITGetterObject:135, createDOMJITGetterComplexObject:136, createDOMJITFunctionObject:137, createDOMJITCheckSubClassObject:138, createDOMJITGetterBaseJSObject:139, createBuiltin:140, getPrivateProperty:141, setImpureGetterDelegate:142, Root:143, Element:144, getElement:145, SimpleObject:146, getHiddenValue:147, setHiddenValue:148, shadowChickenFunctionsOnStack:149, setGlobalConstRedeclarationShouldNotThrow:150, findTypeForExpression:151, returnTypeFor:152, flattenDictionaryObject:153, dumpBasicBlockExecutionRanges:154, hasBasicBlockExecuted:155, basicBlockExecutionCount:156, enableDebuggerModeWhenIdle:158, disableDebuggerModeWhenIdle:159, globalObjectCount:160, globalObjectForObject:161, getGetterSetter:162, loadGetterFromGetterSetter:163, createCustomTestGetterSetter:164, deltaBetweenButterflies:165, totalGCTime:166}, NonArray, Proto:0x10bbb4000, Dictionary, Leaf]), StructureID: 306
+                [r-12]                     | 0x7ffeefbfd270 | 0x100000001        
+                [r-13]                     | 0x7ffeefbfd268 | 0x10bbc33f0        Object: 0x10bbc33f0 with butterfly 0x8000fdda8 (Structure 0x10bbf1dc0:[Function, {name:100, length:101}, NonArray, Proto:0x10bbd0000, Leaf]), StructureID: 69
+                [r-14]                     | 0x7ffeefbfd260 | 0x0                
+                [r-15]                     | 0x7ffeefbfd258 | 0x10064d14c        
+                [r-16]                     | 0x7ffeefbfd250 | 0x7ffeefbfd2d0     
+                [r-17]                     | 0x7ffeefbfd248 | 0x67ec87ee177      INVALID
+                [r-18]                     | 0x7ffeefbfd240 | 0x7ffeefbfd250     
+                -----------------------------------------------------------------------------
+
+        3. Removed dumpCallFrame() from the jsc shell.  We have the following tools that
+           we can use in its place:
+
+            $vm.dumpCallFrame()
+            $vm.dumpBytecodeFor()
+            $vm.dumpRegisters()     // Just added in this patch.
+
+        4. Also fixed a bug in BytecodeDumper: it should only access
+           CallLinkInfo::haveLastSeenCallee() only if CallLinkInfo::isDirect() is false.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::printCallOp):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpCallFrame): Deleted.
+        (JSC::DumpReturnVirtualPCFunctor::DumpReturnVirtualPCFunctor): Deleted.
+        (JSC::DumpReturnVirtualPCFunctor::operator() const): Deleted.
+        (JSC::Interpreter::dumpRegisters): Deleted.
+        * interpreter/Interpreter.h:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionDumpCallFrame): Deleted.
+        * tools/JSDollarVM.cpp:
+        (JSC::functionDumpRegisters):
+        (JSC::JSDollarVM::finishCreation):
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::dumpRegisters):
+        * tools/VMInspector.h:
+
 2018-08-28  Keith Miller  <keith_miller@apple.com>
 
         Add nullablity attributes to JSValue

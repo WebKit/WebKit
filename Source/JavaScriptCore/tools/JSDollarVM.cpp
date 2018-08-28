@@ -1569,6 +1569,36 @@ static EncodedJSValue JSC_HOST_CALL functionDumpStack(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
+// Dumps the current CallFrame.
+// Usage: $vm.dumpRegisters(N) // dump the registers of the Nth CallFrame.
+// Usage: $vm.dumpRegisters() // dump the registers of the current CallFrame.
+// FIXME: Currently, this function dumps the physical frame. We should make
+// it dump the logical frame (i.e. be able to dump inlined frames as well).
+static EncodedJSValue JSC_HOST_CALL functionDumpRegisters(ExecState* exec)
+{
+    unsigned requestedFrameIndex = 1;
+    if (exec->argumentCount() >= 1) {
+        JSValue value = exec->uncheckedArgument(0);
+        if (!value.isUInt32())
+            return JSValue::encode(jsUndefined());
+
+        // We need to inc the frame number because the caller would consider
+        // its own frame as frame 0. Hence, we need discount the frame for this
+        // function.
+        requestedFrameIndex = value.asUInt32() + 1;
+    }
+
+    unsigned frameIndex = 0;
+    exec->iterate([&] (StackVisitor& visitor) {
+        if (frameIndex++ != requestedFrameIndex)
+            return StackVisitor::Continue;
+        VMInspector::dumpRegisters(visitor->callFrame());
+        return StackVisitor::Done;
+    });
+
+    return encodedJSUndefined();
+}
+
 // Dumps the internal memory layout of a JSCell.
 // Usage: $vm.dumpCell(cell)
 static EncodedJSValue JSC_HOST_CALL functionDumpCell(ExecState* exec)
@@ -2108,6 +2138,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "print", functionPrint, 1);
     addFunction(vm, "dumpCallFrame", functionDumpCallFrame, 0);
     addFunction(vm, "dumpStack", functionDumpStack, 0);
+    addFunction(vm, "dumpRegisters", functionDumpRegisters, 1);
 
     addFunction(vm, "dumpCell", functionDumpCell, 1);
 
