@@ -1,3 +1,12 @@
+2018-08-28  Keith Miller  <keith_miller@apple.com>
+
+        Add nullablity attributes to JSValue
+        https://bugs.webkit.org/show_bug.cgi?id=189047
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSValue.h:
+
 2018-08-27  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [WebAssembly] Parse wasm modules in a streaming fashion
