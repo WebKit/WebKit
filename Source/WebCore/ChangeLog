@@ -1,3 +1,17 @@
+2018-08-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Null pointer deref in WidthIterator
+        https://bugs.webkit.org/show_bug.cgi?id=188993
+
+        Reviewed by Brent Fulgham.
+
+        Test: fast/text/rtl-justification.html
+
+        We simply need to guard glyphBuffer like we do in the rest of the function.
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advanceInternal):
+
 2018-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Remove WebCore::AttachmentDisplayOptions and friends

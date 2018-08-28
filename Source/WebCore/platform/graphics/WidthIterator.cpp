@@ -345,7 +345,7 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
         previousCharacter = character;
     }
 
-    if (leftoverJustificationWidth) {
+    if (glyphBuffer && leftoverJustificationWidth) {
         if (m_forTextEmphasis)
             glyphBuffer->add(lastFontData->zeroWidthSpaceGlyph(), lastFontData, leftoverJustificationWidth, m_run.length() - 1);
         else
