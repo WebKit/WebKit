@@ -1,3 +1,22 @@
+2018-08-28  Youenn Fablet  <youenn@apple.com>
+
+        MediaDevices should be collectable as soon as its document is stopped
+        https://bugs.webkit.org/show_bug.cgi?id=189021
+
+        Reviewed by Eric Carlson.
+
+        Introduce ActiveDOMObject::isContextStopped to check whether the context is stopped.
+        Use this check in MediaDevices::hasPendingActivity so that it returns false as soon as active dom objects are stopped.
+
+        Test: http/tests/media/collect-media-devices.https.html
+
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::hasPendingActivity const):
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ActiveDOMObject::hasPendingActivity const):
+        (WebCore::ActiveDOMObject::isContextStopped const):
+        * dom/ActiveDOMObject.h:
+
 2018-08-28  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Fix issue that extra cookie is added when redirect happens.
