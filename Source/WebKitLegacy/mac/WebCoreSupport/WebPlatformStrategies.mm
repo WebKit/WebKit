@@ -234,9 +234,9 @@ RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(in
     return PlatformPasteboard(pasteboardName).readBuffer(index, type);
 }
 
-WebCore::URL WebPlatformStrategies::readURLFromPasteboard(int index, const String& type, const String& pasteboardName, String& title)
+WebCore::URL WebPlatformStrategies::readURLFromPasteboard(int index, const String& pasteboardName, String& title)
 {
-    return PlatformPasteboard(pasteboardName).readURL(index, type, title);
+    return PlatformPasteboard(pasteboardName).readURL(index, title);
 }
 
 String WebPlatformStrategies::readStringFromPasteboard(int index, const String& type, const String& pasteboardName)

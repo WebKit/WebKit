@@ -219,7 +219,7 @@ Pasteboard::ReaderResult Pasteboard::readPasteboardWebContentDataForType(Pastebo
 
     if ([type isEqualToString:(NSString *)kUTTypeURL]) {
         String title;
-        URL url = strategy.readURLFromPasteboard(itemIndex, kUTTypeURL, m_pasteboardName, title);
+        URL url = strategy.readURLFromPasteboard(itemIndex, m_pasteboardName, title);
         if (m_changeCount != changeCount())
             return ReaderResult::PasteboardWasChangedExternally;
         return !url.isNull() && reader.readURL(url, title) ? ReaderResult::ReadType : ReaderResult::DidNotReadType;
@@ -389,7 +389,7 @@ String Pasteboard::readPlatformValueAsString(const String& domType, long changeC
 
     if ([cocoaType isEqualToString:(NSString *)kUTTypeURL]) {
         String title;
-        URL url = strategy.readURLFromPasteboard(0, kUTTypeURL, pasteboardName, title);
+        URL url = strategy.readURLFromPasteboard(0, pasteboardName, title);
         if (!url.isNull())
             cocoaValue = [(NSURL *)url absoluteString];
     } else if ([cocoaType isEqualToString:(NSString *)kUTTypePlainText]) {

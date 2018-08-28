@@ -660,10 +660,10 @@ String PlatformPasteboard::readString(int index, const String& type)
     return String();
 }
 
-URL PlatformPasteboard::readURL(int index, const String& type, String& title)
+URL PlatformPasteboard::readURL(int index, String& title)
 {
     NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
-    RetainPtr<NSArray> pasteboardItem = [m_pasteboard valuesForPasteboardType:type inItemSet:indexSet];
+    RetainPtr<NSArray> pasteboardItem = [m_pasteboard valuesForPasteboardType:(__bridge NSString *)kUTTypeURL inItemSet:indexSet];
 
     if (![pasteboardItem count])
         return { };

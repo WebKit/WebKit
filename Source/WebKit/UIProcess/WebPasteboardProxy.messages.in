@@ -27,7 +27,7 @@ messages -> WebPasteboardProxy {
     WriteImageToPasteboard(struct WebCore::PasteboardImage pasteboardImage, String pasteboardName)
     WriteStringToPasteboard(String pasteboardType, String text, String pasteboardName)
     ReadStringFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (String string)
-    ReadURLFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (String url, String title)
+    ReadURLFromPasteboard(uint64_t index, String pasteboardName) -> (String url, String title)
     ReadBufferFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (WebKit::SharedMemory::Handle handle, uint64_t size)
     GetPasteboardItemsCount(String pasteboardName) -> (uint64_t itemsCount)
     AllPasteboardItemInfo(String pasteboardName) -> (Vector<WebCore::PasteboardItemInfo> allInfo)

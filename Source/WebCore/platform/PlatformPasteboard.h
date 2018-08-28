@@ -93,7 +93,7 @@ public:
     WEBCORE_EXPORT void write(const PasteboardURL&);
     WEBCORE_EXPORT RefPtr<SharedBuffer> readBuffer(int index, const String& pasteboardType);
     WEBCORE_EXPORT String readString(int index, const String& pasteboardType);
-    WEBCORE_EXPORT URL readURL(int index, const String& pasteboardType, String& title);
+    WEBCORE_EXPORT URL readURL(int index, String& title);
     WEBCORE_EXPORT int count();
     WEBCORE_EXPORT int numberOfFiles() const;
 

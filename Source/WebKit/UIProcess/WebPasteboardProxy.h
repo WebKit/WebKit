@@ -75,7 +75,7 @@ private:
     void writeImageToPasteboard(const WebCore::PasteboardImage&, const String& pasteboardName);
     void writeStringToPasteboard(const String& pasteboardType, const String&, const String& pasteboardName);
     void readStringFromPasteboard(uint64_t index, const String& pasteboardType, const String& pasteboardName, WTF::String&);
-    void readURLFromPasteboard(uint64_t index, const String& pasteboardType, const String& pasteboardName, String& url, String& title);
+    void readURLFromPasteboard(uint64_t index, const String& pasteboardName, String& url, String& title);
     void readBufferFromPasteboard(uint64_t index, const String& pasteboardType, const String& pasteboardName, SharedMemory::Handle&, uint64_t& size);
     void getPasteboardItemsCount(const String& pasteboardName, uint64_t& itemsCount);
     void allPasteboardItemInfo(const String& pasteboardName, Vector<WebCore::PasteboardItemInfo>&);
