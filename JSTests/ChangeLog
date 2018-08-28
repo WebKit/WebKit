@@ -1,3 +1,13 @@
+2018-08-27  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception throwing code so that topCallFrame and topEntryFrame stay true to their names.
+        https://bugs.webkit.org/show_bug.cgi?id=188577
+        <rdar://problem/42985684>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-188577.js: Added.
+
 2018-08-24  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Array.prototype.reverse modifies JSImmutableButterfly

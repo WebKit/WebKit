@@ -140,8 +140,8 @@ namespace JSC  {
         void* callerFrameOrEntryFrame() const { return callerFrameAndPC().callerFrame; }
         SUPPRESS_ASAN void* unsafeCallerFrameOrEntryFrame() const { return unsafeCallerFrameAndPC().callerFrame; }
 
-        CallFrame* unsafeCallerFrame(EntryFrame*&);
-        JS_EXPORT_PRIVATE CallFrame* callerFrame(EntryFrame*&);
+        CallFrame* unsafeCallerFrame(EntryFrame*&) const;
+        JS_EXPORT_PRIVATE CallFrame* callerFrame(EntryFrame*&) const;
 
         JS_EXPORT_PRIVATE SourceOrigin callerSourceOrigin();
 
@@ -256,6 +256,10 @@ namespace JSC  {
             return callerFrameAndPC().callerFrame == noCaller() && callerFrameAndPC().pc == nullptr;
         }
 
+        void convertToStackOverflowFrame(VM&);
+        inline bool isStackOverflowFrame() const;
+        inline bool isWasmFrame() const;
+
         void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[CallFrameSlot::argumentCount].payload() = count; }
         void setCallee(JSObject* callee) { static_cast<Register*>(this)[CallFrameSlot::callee] = callee; }
         void setCodeBlock(CodeBlock* codeBlock) { static_cast<Register*>(this)[CallFrameSlot::codeBlock] = codeBlock; }
@@ -268,7 +272,7 @@ namespace JSC  {
         // FIXME: This method is improper. We rely on the fact that we can call it with a null
         // receiver. We should always be using StackVisitor directly.
         // It's only valid to call this from a non-wasm top frame.
-        template <typename Functor> void iterate(const Functor& functor)
+        template <StackVisitor::EmptyEntryFrameAction action = StackVisitor::ContinueIfTopEntryFrameIsEmpty, typename Functor> void iterate(const Functor& functor)
         {
             VM* vm;
             void* rawThis = this;
@@ -277,7 +281,7 @@ namespace JSC  {
                 vm = &this->vm();
             } else
                 vm = nullptr;
-            StackVisitor::visit<Functor>(this, vm, functor);
+            StackVisitor::visit<action, Functor>(this, vm, functor);
         }
 
         void dump(PrintStream&);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,13 +44,18 @@ StackVisitor::StackVisitor(CallFrame* startFrame, VM* vm)
     CallFrame* topFrame;
     if (startFrame) {
         ASSERT(vm);
+        ASSERT(!vm->topCallFrame || reinterpret_cast<void*>(vm->topCallFrame) != vm->topEntryFrame);
+
         m_frame.m_entryFrame = vm->topEntryFrame;
         topFrame = vm->topCallFrame;
-        
-        if (topFrame && static_cast<void*>(m_frame.m_entryFrame) == static_cast<void*>(topFrame)) {
-            topFrame = vmEntryRecord(m_frame.m_entryFrame)->m_prevTopCallFrame;
-            m_frame.m_entryFrame = vmEntryRecord(m_frame.m_entryFrame)->m_prevTopEntryFrame;
+
+        if (topFrame && topFrame->isStackOverflowFrame()) {
+            topFrame = topFrame->callerFrame(m_frame.m_entryFrame);
+            m_topEntryFrameIsEmpty = (m_frame.m_entryFrame != vm->topEntryFrame);
+            if (startFrame == vm->topCallFrame)
+                startFrame = topFrame;
         }
+
     } else {
         m_frame.m_entryFrame = 0;
         topFrame = 0;

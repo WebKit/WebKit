@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,37 +20,25 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CommonSlowPathsExceptions.h"
+#pragma once
 
 #include "CallFrame.h"
-#include "CodeBlock.h"
-#include "FrameTracers.h"
-#include "Interpreter.h"
-#include "JITExceptions.h"
-#include "LLIntCommon.h"
-#include "JSCInlines.h"
 
-#if LLINT_TRACING
-#include "Exception.h"
-#endif
+namespace JSC {
 
-namespace JSC { namespace CommonSlowPaths {
-
-void interpreterThrowInCaller(ExecState* exec, JSObject* error)
+inline bool CallFrame::isStackOverflowFrame() const
 {
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    auto scope = DECLARE_THROW_SCOPE(*vm);
-
-    throwException(exec, scope, error);
-#if LLINT_TRACING
-    if (UNLIKELY(Options::traceLLIntSlowPath()))
-        dataLog("Throwing exception ", JSValue(scope.exception()), ".\n");
-#endif
+    if (callee().isWasm())
+        return false;
+    return jsCallee() == jsCallee()->globalObject()->stackOverflowFrameCallee();
 }
 
-} } // namespace JSC::LLInt
+inline bool CallFrame::isWasmFrame() const
+{
+    return callee().isWasm();
+}
+
+} // namespace JSC

@@ -1,3 +1,103 @@
+2018-08-27  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception throwing code so that topCallFrame and topEntryFrame stay true to their names.
+        https://bugs.webkit.org/show_bug.cgi?id=188577
+        <rdar://problem/42985684>
+
+        Reviewed by Saam Barati.
+
+        1. Introduced CallFrame::convertToStackOverflowFrame() which converts the current
+           (top) CallFrame (which may not have a valid callee) into a StackOverflowFrame.
+
+           The StackOverflowFrame is a sentinel frame that the low level code (exception
+           throwing code, stack visitor, and stack unwinding code) will know to skip
+           over.  The StackOverflowFrame will also have a valid JSCallee so that client
+           code can compute the globalObject or VM from this frame.
+
+           As a result, client code that throws StackOverflowErrors no longer need to
+           compute the caller frame to throw from: it just converts the top frame into
+           a StackOverflowFrame and everything should *Just Work*.
+
+        2. NativeCallFrameTracerWithRestore is now obsolete.
+
+           Instead, client code should always call convertToStackOverflowFrame() on the
+           frame before instantiating a NativeCallFrameTracer with it.
+
+           This means that topCallFrame will always point to the top CallFrame (which
+           may be a StackOverflowFrame), and topEntryFrame will always point to the top
+           EntryFrame.  We'll never temporarily point them to the previous EntryFrame
+           (which we used to do with NativeCallFrameTracerWithRestore).
+
+        3. genericUnwind() and Interpreter::unwind() will now always unwind from the top
+           CallFrame, and will know how to handle a StackOverflowFrame if they see one.
+
+           This obsoletes the UnwindStart flag.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::pauseIfNeeded):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::callerFrame const):
+        (JSC::CallFrame::unsafeCallerFrame const):
+        (JSC::CallFrame::convertToStackOverflowFrame):
+        (JSC::CallFrame::callerFrame): Deleted.
+        (JSC::CallFrame::unsafeCallerFrame): Deleted.
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::iterate):
+        * interpreter/CallFrameInlines.h: Added.
+        (JSC::CallFrame::isStackOverflowFrame const):
+        (JSC::CallFrame::isWasmFrame const):
+        * interpreter/EntryFrame.h: Added.
+        (JSC::EntryFrame::vmEntryRecordOffset):
+        (JSC::EntryFrame::calleeSaveRegistersBufferOffset):
+        * interpreter/FrameTracers.h:
+        (JSC::NativeCallFrameTracerWithRestore::NativeCallFrameTracerWithRestore): Deleted.
+        (JSC::NativeCallFrameTracerWithRestore::~NativeCallFrameTracerWithRestore): Deleted.
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwind):
+        * interpreter/Interpreter.h:
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::StackVisitor):
+        * interpreter/StackVisitor.h:
+        (JSC::StackVisitor::visit):
+        (JSC::StackVisitor::topEntryFrameIsEmpty const):
+        * interpreter/VMEntryRecord.h:
+        (JSC::VMEntryRecord::callee const):
+        (JSC::EntryFrame::vmEntryRecordOffset): Deleted.
+        (JSC::EntryFrame::calleeSaveRegistersBufferOffset): Deleted.
+        * jit/AssemblyHelpers.h:
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITExceptions.h:
+        * jit/JITOperations.cpp:
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CallData.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::throwArityCheckStackOverflowError):
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPathsExceptions.cpp: Removed.
+        * runtime/CommonSlowPathsExceptions.h: Removed.
+        * runtime/Completion.cpp:
+        (JSC::evaluateWithScopeExtension):
+        * runtime/JSGeneratorFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::stackOverflowFrameCallee const):
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+        * runtime/VM.h:
+        * runtime/VMInlines.h:
+        (JSC::VM::topJSCallFrame const):
+
 2018-08-27  Keith Rollin  <krollin@apple.com>
 
         Unreviewed build fix -- disable LTO for production builds

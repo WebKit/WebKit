@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2017 Apple Inc.
+ *  Copyright (C) 2003-2018 Apple Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -126,7 +126,7 @@ JSValue evaluateWithScopeExtension(ExecState* exec, const SourceCode& source, JS
 
     if (scopeExtensionObject) {
         JSScope* ignoredPreviousScope = globalObject->globalScope();
-        globalObject->setGlobalScopeExtension(JSWithScope::create(exec->vm(), globalObject, ignoredPreviousScope, scopeExtensionObject));
+        globalObject->setGlobalScopeExtension(JSWithScope::create(vm, globalObject, ignoredPreviousScope, scopeExtensionObject));
     }
 
     JSValue returnValue = JSC::evaluate(globalObject->globalExec(), source, globalObject, returnedException);

@@ -51,7 +51,6 @@
 #include "SmallStrings.h"
 #include "Strong.h"
 #include "StructureCache.h"
-#include "VMEntryRecord.h"
 #include "VMTraps.h"
 #include "WasmContext.h"
 #include "Watchpoint.h"
@@ -168,6 +167,7 @@ namespace DOMJIT {
 class Signature;
 }
 
+struct EntryFrame;
 struct HashTable;
 struct Instruction;
 struct ValueProfile;
@@ -294,6 +294,8 @@ public:
     static unsigned numberOfIDs() { return s_numberOfIDs.load(); }
     unsigned id() const { return m_id; }
     bool isEntered() const { return !!entryScope; }
+
+    inline CallFrame* topJSCallFrame() const;
 
     // Global object in which execution began.
     JS_EXPORT_PRIVATE JSGlobalObject* vmEntryGlobalObject(const CallFrame*) const;

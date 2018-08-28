@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "CallFrameInlines.h"
+#include "EntryFrame.h"
 #include "ProfilerDatabase.h"
 #include "VM.h"
 #include "Watchdog.h"
@@ -58,6 +60,21 @@ void VM::logEvent(CodeBlock* codeBlock, const char* summary, const Func& func)
         return;
     
     m_perBytecodeProfiler->logEvent(codeBlock, summary, func());
+}
+
+inline CallFrame* VM::topJSCallFrame() const
+{
+    CallFrame* frame = topCallFrame;
+    if (UNLIKELY(!frame))
+        return frame;
+    if (LIKELY(!frame->isWasmFrame() && !frame->isStackOverflowFrame()))
+        return frame;
+    EntryFrame* entryFrame = topEntryFrame;
+    do {
+        frame = frame->callerFrame(entryFrame);
+        ASSERT(!frame || !frame->isStackOverflowFrame());
+    } while (frame && frame->isWasmFrame());
+    return frame;
 }
 
 } // namespace JSC

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -213,7 +213,7 @@ bool CallFrame::isAnyWasmCallee()
     return false;
 }
 
-CallFrame* CallFrame::callerFrame(EntryFrame*& currEntryFrame)
+CallFrame* CallFrame::callerFrame(EntryFrame*& currEntryFrame) const
 {
     if (callerFrameOrEntryFrame() == currEntryFrame) {
         VMEntryRecord* currVMEntryRecord = vmEntryRecord(currEntryFrame);
@@ -223,7 +223,7 @@ CallFrame* CallFrame::callerFrame(EntryFrame*& currEntryFrame)
     return static_cast<CallFrame*>(callerFrameOrEntryFrame());
 }
 
-SUPPRESS_ASAN CallFrame* CallFrame::unsafeCallerFrame(EntryFrame*& currEntryFrame)
+SUPPRESS_ASAN CallFrame* CallFrame::unsafeCallerFrame(EntryFrame*& currEntryFrame) const
 {
     if (unsafeCallerFrameOrEntryFrame() == currEntryFrame) {
         VMEntryRecord* currVMEntryRecord = vmEntryRecord(currEntryFrame);
@@ -335,6 +335,24 @@ const char* CallFrame::describeFrame()
     buffer[bufferSize] = '\0';
     
     return buffer;
+}
+
+void CallFrame::convertToStackOverflowFrame(VM& vm)
+{
+    ASSERT(!isGlobalExec());
+
+    EntryFrame* entryFrame = vm.topEntryFrame;
+    CallFrame* throwOriginFrame = this;
+    do {
+        throwOriginFrame = throwOriginFrame->callerFrame(entryFrame);
+    } while (throwOriginFrame && throwOriginFrame->callee().isWasm());
+
+    JSObject* originCallee = throwOriginFrame ? throwOriginFrame->jsCallee() : vmEntryRecord(vm.topEntryFrame)->callee();
+    JSObject* stackOverflowCallee = originCallee->globalObject()->stackOverflowFrameCallee();
+
+    setCodeBlock(nullptr);
+    setCallee(stackOverflowCallee);
+    setArgumentCountIncludingThis(0);
 }
 
 } // namespace JSC
