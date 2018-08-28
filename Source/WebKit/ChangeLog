@@ -1,3 +1,14 @@
+2018-08-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove references to "APIAttachmentCocoa.h" in WebKit.xcodeproj
+        Follow-up to https://bugs.webkit.org/show_bug.cgi?id=188933
+
+        Rubber-stamped by David Kilzer.
+
+        This header was not removed from the Xcode project file after being deleted.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-08-28  Sihui Liu  <sihui_liu@apple.com>
 
         Add error information to help debug test failure in WKNavigation.ProcessCrashDuringCallback
