@@ -75,13 +75,13 @@ bool ResourceHandle::start()
         return false;
 
     // Only allow the POST and GET methods for non-HTTP requests.
-    const ResourceRequest& request = firstRequest();
+    auto request = firstRequest();
     if (!request.url().protocolIsInHTTPFamily() && request.httpMethod() != "GET" && request.httpMethod() != "POST") {
         scheduleFailure(InvalidURLFailure); // Error must not be reported immediately
         return true;
     }
 
-    d->m_curlRequest = createCurlRequest(d->m_firstRequest);
+    d->m_curlRequest = createCurlRequest(WTFMove(request));
 
     if (auto credential = getCredential(d->m_firstRequest, false))
         d->m_curlRequest->setUserPass(credential->first, credential->second);
@@ -133,7 +133,7 @@ void ResourceHandle::addCacheValidationHeaders(ResourceRequest& request)
     }
 }
 
-Ref<CurlRequest> ResourceHandle::createCurlRequest(ResourceRequest& request, RequestStatus status)
+Ref<CurlRequest> ResourceHandle::createCurlRequest(ResourceRequest&& request, RequestStatus status)
 {
     ASSERT(isMainThread());
 
@@ -373,7 +373,7 @@ void ResourceHandle::restartRequestWithCredential(const String& user, const Stri
     auto previousRequest = d->m_curlRequest->resourceRequest();
     d->m_curlRequest->cancel();
 
-    d->m_curlRequest = createCurlRequest(previousRequest, RequestStatus::ReusedRequest);
+    d->m_curlRequest = createCurlRequest(WTFMove(previousRequest), RequestStatus::ReusedRequest);
     d->m_curlRequest->setUserPass(user, password);
     d->m_curlRequest->start();
 }
@@ -395,7 +395,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
         return;
     }
 
-    handle->d->m_curlRequest = handle->createCurlRequest(localRequest);
+    handle->d->m_curlRequest = handle->createCurlRequest(WTFMove(localRequest));
     handle->d->m_curlRequest->start();
 
     do {
@@ -504,13 +504,14 @@ void ResourceHandle::continueAfterWillSendRequest(ResourceRequest&& request)
         return;
     }
 
-    d->m_curlRequest->cancel();
-    d->m_curlRequest = createCurlRequest(request);
+    auto shouldForwardCredential = protocolHostAndPortAreEqual(request.url(), delegate()->response().url());
+    auto credential = getCredential(request, true);
 
-    if (protocolHostAndPortAreEqual(request.url(), delegate()->response().url())) {
-        if (auto credential = getCredential(request, true))
-            d->m_curlRequest->setUserPass(credential->first, credential->second);
-    }
+    d->m_curlRequest->cancel();
+    d->m_curlRequest = createCurlRequest(WTFMove(request));
+
+    if (shouldForwardCredential && credential)
+        d->m_curlRequest->setUserPass(credential->first, credential->second);
 
     d->m_curlRequest->start();
 }

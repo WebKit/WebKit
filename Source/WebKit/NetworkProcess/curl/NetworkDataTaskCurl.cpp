@@ -61,7 +61,7 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
         }
     }
 
-    m_curlRequest = createCurlRequest(request);
+    m_curlRequest = createCurlRequest(WTFMove(request));
     if (!m_initialCredential.isEmpty())
         m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
     m_curlRequest->start();
@@ -126,16 +126,14 @@ NetworkDataTask::State NetworkDataTaskCurl::state() const
     return m_state;
 }
 
-Ref<CurlRequest> NetworkDataTaskCurl::createCurlRequest(const ResourceRequest& request, RequestStatus status)
+Ref<CurlRequest> NetworkDataTaskCurl::createCurlRequest(ResourceRequest&& request, RequestStatus status)
 {
-    m_currentRequest = request;
-
     if (status == RequestStatus::NewRequest)
-        appendCookieHeader(m_currentRequest);
+        appendCookieHeader(request);
 
     // Creates a CurlRequest in suspended state.
     // Then, NetworkDataTaskCurl::resume() will be called and communication resumes.
-    return CurlRequest::create(m_currentRequest, *this, CurlRequest::ShouldSuspend::Yes);
+    return CurlRequest::create(request, *this, CurlRequest::ShouldSuspend::Yes);
 }
 
 void NetworkDataTaskCurl::curlDidSendData(CurlRequest&, unsigned long long totalBytesSent, unsigned long long totalBytesExpectedToSend)
@@ -248,7 +246,7 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
         return;
     }
 
-    ResourceRequest request = m_currentRequest;
+    ResourceRequest request = m_firstRequest;
     URL redirectedURL = URL(m_response.url(), m_response.httpHeaderField(HTTPHeaderName::Location));
     if (!redirectedURL.hasFragmentIdentifier() && request.url().hasFragmentIdentifier())
         redirectedURL.setFragmentIdentifier(request.url().fragmentIdentifier());
@@ -258,7 +256,7 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
     if (m_shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https"))
         request.clearHTTPReferrer();
 
-    bool isCrossOrigin = !protocolHostAndPortAreEqual(m_currentRequest.url(), request.url());
+    bool isCrossOrigin = !protocolHostAndPortAreEqual(m_firstRequest.url(), request.url());
     if (!equalLettersIgnoringASCIICase(request.httpMethod(), "get")) {
         // Change request method to GET if change was made during a previous redirection or if current redirection says so.
         if (!request.url().protocolIsInHTTPFamily() || shouldRedirectAsGET(request, isCrossOrigin)) {
@@ -300,7 +298,8 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
         if (m_curlRequest)
             m_curlRequest->cancel();
 
-        m_curlRequest = createCurlRequest(newRequest);
+        auto requestCopy = newRequest;
+        m_curlRequest = createCurlRequest(WTFMove(requestCopy));
         if (didChangeCredential && !m_initialCredential.isEmpty())
             m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
         m_curlRequest->start();
@@ -387,12 +386,13 @@ void NetworkDataTaskCurl::tryProxyAuthentication(WebCore::AuthenticationChalleng
 
 void NetworkDataTaskCurl::restartWithCredential(const Credential& credential)
 {
-    if (m_curlRequest)
-        m_curlRequest->cancel();
+    ASSERT(m_curlRequest);
 
-    m_curlRequest = createCurlRequest(m_currentRequest, RequestStatus::ReusedRequest);
-    if (!credential.isEmpty())
-        m_curlRequest->setUserPass(credential.user(), credential.password());
+    auto previousRequest = m_curlRequest->resourceRequest();
+    m_curlRequest->cancel();
+
+    m_curlRequest = createCurlRequest(WTFMove(previousRequest), RequestStatus::ReusedRequest);
+    m_curlRequest->setUserPass(credential.user(), credential.password());
     m_curlRequest->start();
 
     if (m_state != State::Suspended) {

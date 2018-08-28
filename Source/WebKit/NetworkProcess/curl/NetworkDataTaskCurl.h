@@ -62,7 +62,7 @@ private:
     void invalidateAndCancel() override;
     NetworkDataTask::State state() const override;
 
-    Ref<WebCore::CurlRequest> createCurlRequest(const WebCore::ResourceRequest&, RequestStatus = RequestStatus::NewRequest);
+    Ref<WebCore::CurlRequest> createCurlRequest(WebCore::ResourceRequest&&, RequestStatus = RequestStatus::NewRequest);
     void curlDidSendData(WebCore::CurlRequest&, unsigned long long, unsigned long long) override;
     void curlDidReceiveResponse(WebCore::CurlRequest&, const WebCore::CurlResponse&) override;
     void curlDidReceiveBuffer(WebCore::CurlRequest&, Ref<WebCore::SharedBuffer>&&) override;
@@ -81,7 +81,6 @@ private:
 
     State m_state { State::Suspended };
 
-    WebCore::ResourceRequest m_currentRequest;
     RefPtr<WebCore::CurlRequest> m_curlRequest;
     WebCore::ResourceResponse m_response;
     unsigned m_redirectCount { 0 };
