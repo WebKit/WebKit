@@ -169,6 +169,11 @@ void NetworkDataTaskCurl::curlDidReceiveResponse(CurlRequest& request, const Cur
         return;
     }
 
+    if (m_response.isProxyAuthenticationRequired()) {
+        tryProxyAuthentication(AuthenticationChallenge(receivedResponse, 0, m_response));
+        return;
+    }
+
     didReceiveResponse(ResourceResponse(m_response), [this, protectedThis = makeRef(*this)](PolicyAction policyAction) {
         if (m_state == State::Canceling || m_state == State::Completed)
             return;
@@ -357,6 +362,26 @@ void NetworkDataTaskCurl::tryHttpAuthentication(AuthenticationChallenge&& challe
         }
 
         restartWithCredential(credential);
+    });
+}
+
+void NetworkDataTaskCurl::tryProxyAuthentication(WebCore::AuthenticationChallenge&& challenge)
+{
+    m_client->didReceiveChallenge(AuthenticationChallenge(challenge), [this, protectedThis = makeRef(*this), challenge](AuthenticationChallengeDisposition disposition, const Credential& credential) {
+        if (m_state == State::Canceling || m_state == State::Completed)
+            return;
+
+        if (disposition == AuthenticationChallengeDisposition::Cancel) {
+            cancel();
+            m_client->didCompleteWithError(ResourceError::httpError(CURLE_COULDNT_RESOLVE_PROXY, m_response.url()));
+            return;
+        }
+
+        CurlContext::singleton().setProxyUserPass(credential.user(), credential.password());
+        CurlContext::singleton().setDefaultProxyAuthMethod();
+
+        auto requestCredential = m_curlRequest ? Credential(m_curlRequest->user(), m_curlRequest->password(), CredentialPersistenceNone) : Credential();
+        restartWithCredential(requestCredential);
     });
 }
 

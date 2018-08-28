@@ -73,6 +73,7 @@ private:
     void willPerformHTTPRedirection();
 
     void tryHttpAuthentication(WebCore::AuthenticationChallenge&&);
+    void tryProxyAuthentication(WebCore::AuthenticationChallenge&&);
     void restartWithCredential(const WebCore::Credential&);
 
     void appendCookieHeader(WebCore::ResourceRequest&);

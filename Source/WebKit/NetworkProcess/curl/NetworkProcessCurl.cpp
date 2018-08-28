@@ -33,6 +33,8 @@
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/NetworkStorageSession.h>
+#include "WebCookieManager.h"
+#include <WebCore/CurlContext.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceHandle.h>
 #include <wtf/RAMSize.h>
