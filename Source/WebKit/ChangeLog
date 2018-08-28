@@ -1,5 +1,31 @@
 2018-08-28  Aditya Keerthi  <akeerthi@apple.com>
 
+        [Datalist] Pressing enter without a selected option shouldn't change the input
+        https://bugs.webkit.org/show_bug.cgi?id=189010
+
+        Reviewed by Tim Horton.
+
+        Currently, the value of an input field gets cleared if there is no selected
+        datalist suggestion when the enter key is pressed. The correct behavior is to
+        leave the value of the input as-is.
+
+        The incorrect behavior is a consequence of the fact that an empty string is
+        returned by [WKDataListSuggestionsView currentSelectedString] if there is no
+        selection. To fix the behavior, the method now returns an std::optional instead
+        of an empty string. If std::nullopt is returned, we do not make any modification
+        to the value of the input. This ensures that we can still change the value of
+        an input field to an empty string in the case that an empty string is part of
+        the suggestions.
+
+        Augmented test: fast/forms/datalist/datalist-textinput-keydown.html
+
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        (WebKit::WebDataListSuggestionsDropdownMac::selectOption):
+        (-[WKDataListSuggestionCell drawRect:]): Quick fix. The mouseover color was incorrect.
+        (-[WKDataListSuggestionsView currentSelectedString]):
+
+2018-08-28  Aditya Keerthi  <akeerthi@apple.com>
+
         [iOS] Support inputmode=none
         https://bugs.webkit.org/show_bug.cgi?id=188896
 

@@ -5,6 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS input.value is "Apple"
 PASS input.value is "Pear"
+PASS input.value is "Appl"
 PASS successfullyParsed is true
 
 TEST COMPLETE

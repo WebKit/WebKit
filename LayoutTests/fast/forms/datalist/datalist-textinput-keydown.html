@@ -22,7 +22,6 @@ var input = document.getElementById("fruit");
 UIHelper.activateElement(input);
 eventSender.keyDown("downArrow");
 eventSender.keyDown("\r");
-
 shouldBe('input.value', '"Apple"');
 
 input.value = "";
@@ -30,8 +29,13 @@ input.value = "";
 UIHelper.activateElement(input);
 eventSender.keyDown("upArrow");
 eventSender.keyDown("\r");
-
 shouldBe('input.value', '"Pear"');
+
+input.value = "Appl";
+
+UIHelper.activateElement(input);
+eventSender.keyDown("\r");
+shouldBe('input.value', '"Appl"');
 
 </script>
 

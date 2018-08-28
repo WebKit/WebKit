@@ -1,5 +1,18 @@
 2018-08-28  Aditya Keerthi  <akeerthi@apple.com>
 
+        [Datalist] Pressing enter without a selected option shouldn't change the input
+        https://bugs.webkit.org/show_bug.cgi?id=189010
+
+        Reviewed by Tim Horton.
+
+        Augmented test to verify that pressing enter when there is no selected datalist
+        suggestion does not change the value of the input field.
+
+        * fast/forms/datalist/datalist-textinput-keydown-expected.txt:
+        * fast/forms/datalist/datalist-textinput-keydown.html:
+
+2018-08-28  Aditya Keerthi  <akeerthi@apple.com>
+
         [iOS] Support inputmode=none
         https://bugs.webkit.org/show_bug.cgi?id=188896
 
