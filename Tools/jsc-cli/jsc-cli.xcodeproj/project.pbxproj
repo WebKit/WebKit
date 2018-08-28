@@ -57,7 +57,7 @@
        C246591F18902E150029092E /* ReadEvalPrintLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReadEvalPrintLoop.m; sourceTree = "<group>"; };
        C246592118902EA40029092E /* ScriptInputSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptInputSource.h; sourceTree = "<group>"; };
        C246592218902EA40029092E /* ScriptInputSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScriptInputSource.m; sourceTree = "<group>"; };
-       C296621018ADF56000752922 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = ../../WebKitBuild/Debug/JavaScriptCore.framework; sourceTree = "<group>"; };
+       C296621018ADF56000752922 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

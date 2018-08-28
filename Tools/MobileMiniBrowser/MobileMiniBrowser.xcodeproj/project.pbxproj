@@ -82,7 +82,7 @@
 		CD1DAFBB1D709EF200017CF0 /* TabViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabViewController.m; sourceTree = "<group>"; };
 		CD1DAFBC1D709EF200017CF0 /* WebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewController.h; sourceTree = "<group>"; };
 		CD1DAFBD1D709EF200017CF0 /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewController.m; sourceTree = "<group>"; };
-		CD1DAFC11D70E12D00017CF0 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = "../../WebKitBuild/Debug-iphonesimulator/WebKit.framework"; sourceTree = "<group>"; };
+		CD1DAFC11D70E12D00017CF0 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD498B3B1D76348000681FA7 /* MobileMiniBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MobileMiniBrowser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD498B471D7634C700681FA7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CD498B481D7634C700681FA7 /* MobileMiniBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileMiniBrowser.h; sourceTree = "<group>"; };

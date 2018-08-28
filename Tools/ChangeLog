@@ -1,3 +1,21 @@
+2018-08-28  David Kilzer  <ddkilzer@apple.com>
+
+        Fix incorrect use of `sourceTree = "<group>";` for built products and frameworks in Xcode projects
+
+        Found by tidy-Xcode-project-file script (see Bug 188754).
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        (IOKit.framework): Use `sourceTree = "<absolute>";` to match
+        other frameworks in the project.
+        * MobileMiniBrowser/MobileMiniBrowser.xcodeproj/project.pbxproj:
+        (WebKit.framework): Use `sourceTree = BUILT_PRODUCTS_DIR;` for
+        built product instead of relative build directory path.
+        * jsc-cli/jsc-cli.xcodeproj/project.pbxproj:
+        (JavaScriptCore.framework): Ditto.
+        * lldb/lldbWebKitTester/lldbWebKitTester.xcodeproj/project.pbxproj:
+        (libWTF.a): Use `sourceTree = BUILT_PRODUCTS_DIR;` for built
+        product.
+
 2018-08-28  Alex Christensen  <achristensen@webkit.org>
 
         Fix 32-bit Mac build.
