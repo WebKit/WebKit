@@ -1,3 +1,166 @@
+2018-08-27  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [WebAssembly] Parse wasm modules in a streaming fashion
+        https://bugs.webkit.org/show_bug.cgi?id=188943
+
+        Reviewed by Mark Lam.
+
+        This patch adds Wasm::StreamingParser, which parses wasm binary in a streaming fashion.
+        Currently, this StreamingParser is not enabled and integrated. In subsequent patches,
+        we start integrating it into BBQPlan and dropping the old ModuleParser.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * tools/JSDollarVM.cpp:
+        (WTF::WasmStreamingParser::WasmStreamingParser):
+        (WTF::WasmStreamingParser::create):
+        (WTF::WasmStreamingParser::createStructure):
+        (WTF::WasmStreamingParser::streamingParser):
+        (WTF::WasmStreamingParser::finishCreation):
+        (WTF::functionWasmStreamingParserAddBytes):
+        (WTF::functionWasmStreamingParserFinalize):
+        (JSC::functionCreateWasmStreamingParser):
+        (JSC::JSDollarVM::finishCreation):
+        The $vm Wasm::StreamingParser object is introduced for testing purpose. Added new stress test uses
+        this interface to test streaming parser in the JSC shell.
+
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::BBQPlan):
+        (JSC::Wasm::BBQPlan::parseAndValidateModule):
+        (JSC::Wasm::BBQPlan::prepare):
+        (JSC::Wasm::BBQPlan::compileFunctions):
+        (JSC::Wasm::BBQPlan::complete):
+        (JSC::Wasm::BBQPlan::work):
+        * wasm/WasmBBQPlan.h:
+        BBQPlan has m_source, but once ModuleInformation is parsed, it is no longer necessary.
+        In subsequent patches, we will remove this, and stream the data into the BBQPlan.
+
+        * wasm/WasmFormat.h:
+        * wasm/WasmModuleInformation.cpp:
+        (JSC::Wasm::ModuleInformation::ModuleInformation):
+        * wasm/WasmModuleInformation.h:
+        One of the largest change in this patch is that ModuleInformation no longer holds source bytes,
+        since source bytes can be added in a streaming fashion. Instead of holding all the source bytes
+        in ModuleInformation, each function (ModuleInformation::functions, FunctionData) should have
+        Vector<uint8_t> for its data. This data is eventually filled by StreamingParser, and compiling
+        a function with this data can be done concurrently with StreamingParser.
+
+        (JSC::Wasm::ModuleInformation::create):
+        (JSC::Wasm::ModuleInformation::memoryCount const):
+        (JSC::Wasm::ModuleInformation::tableCount const):
+        memoryCount and tableCount should be recorded in ModuleInformation.
+
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parse):
+        (JSC::Wasm::makeI32InitExpr): Deleted.
+        (JSC::Wasm::ModuleParser::parseType): Deleted.
+        (JSC::Wasm::ModuleParser::parseImport): Deleted.
+        (JSC::Wasm::ModuleParser::parseFunction): Deleted.
+        (JSC::Wasm::ModuleParser::parseResizableLimits): Deleted.
+        (JSC::Wasm::ModuleParser::parseTableHelper): Deleted.
+        (JSC::Wasm::ModuleParser::parseTable): Deleted.
+        (JSC::Wasm::ModuleParser::parseMemoryHelper): Deleted.
+        (JSC::Wasm::ModuleParser::parseMemory): Deleted.
+        (JSC::Wasm::ModuleParser::parseGlobal): Deleted.
+        (JSC::Wasm::ModuleParser::parseExport): Deleted.
+        (JSC::Wasm::ModuleParser::parseStart): Deleted.
+        (JSC::Wasm::ModuleParser::parseElement): Deleted.
+        (JSC::Wasm::ModuleParser::parseCode): Deleted.
+        (JSC::Wasm::ModuleParser::parseInitExpr): Deleted.
+        (JSC::Wasm::ModuleParser::parseGlobalType): Deleted.
+        (JSC::Wasm::ModuleParser::parseData): Deleted.
+        (JSC::Wasm::ModuleParser::parseCustom): Deleted.
+        Extract section parsing code out from ModuleParser. We create SectionParser and ModuleParser uses it.
+        SectionParser is also used by StreamingParser.
+
+        * wasm/WasmModuleParser.h:
+        (): Deleted.
+        * wasm/WasmNameSection.h:
+        (JSC::Wasm::NameSection::NameSection):
+        (JSC::Wasm::NameSection::create):
+        (JSC::Wasm::NameSection::setHash):
+        Hash calculation is deferred since all the source is not available in streaming parsing.
+
+        * wasm/WasmNameSectionParser.cpp:
+        (JSC::Wasm::NameSectionParser::parse):
+        * wasm/WasmNameSectionParser.h:
+        Use Ref<NameSection>.
+
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        Wasm::Plan no longer have m_source since data will be eventually filled in a streaming fashion.
+        OMGPlan can get data of the function by using ModuleInformation::functions.
+
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser::source const):
+        (JSC::Wasm::Parser::length const):
+        (JSC::Wasm::Parser::offset const):
+        (JSC::Wasm::Parser::fail const):
+        (JSC::Wasm::makeI32InitExpr):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::Plan):
+        Wasm::Plan should not have all the source apriori. Streamed data will be pumped from the provider.
+
+        * wasm/WasmPlan.h:
+        * wasm/WasmSectionParser.cpp: Copied from Source/JavaScriptCore/wasm/WasmModuleParser.cpp.
+        SectionParser is extracted from ModuleParser. And it is used by both the old (currently working)
+        ModuleParser and the new StreamingParser.
+
+        (JSC::Wasm::SectionParser::parseType):
+        (JSC::Wasm::SectionParser::parseImport):
+        (JSC::Wasm::SectionParser::parseFunction):
+        (JSC::Wasm::SectionParser::parseResizableLimits):
+        (JSC::Wasm::SectionParser::parseTableHelper):
+        (JSC::Wasm::SectionParser::parseTable):
+        (JSC::Wasm::SectionParser::parseMemoryHelper):
+        (JSC::Wasm::SectionParser::parseMemory):
+        (JSC::Wasm::SectionParser::parseGlobal):
+        (JSC::Wasm::SectionParser::parseExport):
+        (JSC::Wasm::SectionParser::parseStart):
+        (JSC::Wasm::SectionParser::parseElement):
+        (JSC::Wasm::SectionParser::parseCode):
+        (JSC::Wasm::SectionParser::parseInitExpr):
+        (JSC::Wasm::SectionParser::parseGlobalType):
+        (JSC::Wasm::SectionParser::parseData):
+        (JSC::Wasm::SectionParser::parseCustom):
+        * wasm/WasmSectionParser.h: Copied from Source/JavaScriptCore/wasm/WasmModuleParser.h.
+        * wasm/WasmStreamingParser.cpp: Added.
+        (JSC::Wasm::parseUInt7):
+        (JSC::Wasm::StreamingParser::fail):
+        (JSC::Wasm::StreamingParser::StreamingParser):
+        (JSC::Wasm::StreamingParser::parseModuleHeader):
+        (JSC::Wasm::StreamingParser::parseSectionID):
+        (JSC::Wasm::StreamingParser::parseSectionSize):
+        (JSC::Wasm::StreamingParser::parseCodeSectionSize):
+        Code section in Wasm binary is specially handled compared with the other sections since it includes
+        a bunch of functions. StreamingParser extracts each function in a streaming fashion and enable
+        streaming validation / compilation of Wasm functions.
+
+        (JSC::Wasm::StreamingParser::parseFunctionSize):
+        (JSC::Wasm::StreamingParser::parseFunctionPayload):
+        (JSC::Wasm::StreamingParser::parseSectionPayload):
+        (JSC::Wasm::StreamingParser::consume):
+        (JSC::Wasm::StreamingParser::consumeVarUInt32):
+        (JSC::Wasm::StreamingParser::addBytes):
+        (JSC::Wasm::StreamingParser::failOnState):
+        (JSC::Wasm::StreamingParser::finalize):
+        * wasm/WasmStreamingParser.h: Added.
+        (JSC::Wasm::StreamingParser::addBytes):
+        (JSC::Wasm::StreamingParser::errorMessage const):
+        This is our new StreamingParser implementation. StreamingParser::consumeXXX functions get data, and
+        StreamingParser::parseXXX functions parse consumed data. The user of StreamingParser calls
+        StreamingParser::addBytes() to pump the bytes stream into the parser. And once all the data is pumped,
+        the user calls StreamingParser::finalize. StreamingParser is a state machine which feeds on the
+        incoming byte stream.
+
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::source const): Deleted.
+        All the source should not be held.
+
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::webAssemblyValidateFunc):
+
 2018-08-27  Mark Lam  <mark.lam@apple.com>
 
         Fix exception throwing code so that topCallFrame and topEntryFrame stay true to their names.

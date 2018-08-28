@@ -52,7 +52,7 @@ const assertMemoryAllZero = memory => {
           .Segment([0xff]).Offset(0).End()
         .End();
     const bin = builder.WebAssembly().get();
-    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, `WebAssembly.Module doesn't parse at byte 15 / 20: 0th Data segment has index 0 which exceeds the number of Memories 0`);
+    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, `WebAssembly.Module doesn't parse at byte 15: 0th Data segment has index 0 which exceeds the number of Memories 0`);
 })();
 
 (function EmptyDataSectionWithoutMemory() {
@@ -62,7 +62,7 @@ const assertMemoryAllZero = memory => {
           .Segment([]).Offset(0).End()
         .End();
     const bin = builder.WebAssembly().get();
-    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, `WebAssembly.Module doesn't parse at byte 15 / 19: 0th Data segment has index 0 which exceeds the number of Memories 0`);
+    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, `WebAssembly.Module doesn't parse at byte 15: 0th Data segment has index 0 which exceeds the number of Memories 0`);
 })();
 
 (function DataSectionBiggerThanMemory() {

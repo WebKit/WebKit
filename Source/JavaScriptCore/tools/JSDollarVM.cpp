@@ -51,6 +51,11 @@
 #include <wtf/ProcessID.h>
 #include <wtf/StringPrintStream.h>
 
+#if ENABLE(WEBASSEMBLY)
+#include "JSWebAssemblyHelpers.h"
+#include "WasmStreamingParser.h"
+#endif
+
 using namespace JSC;
 using namespace WTF;
 
@@ -1093,6 +1098,80 @@ void Element::finishCreation(VM& vm, Root* root)
     m_root->setElement(this);
 }
 
+#if ENABLE(WEBASSEMBLY)
+
+static EncodedJSValue JSC_HOST_CALL functionWasmStreamingParserAddBytes(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionWasmStreamingParserFinalize(ExecState*);
+
+class WasmStreamingParser : public JSDestructibleObject {
+public:
+    WasmStreamingParser(VM& vm, Structure* structure)
+        : Base(vm, structure)
+        , m_info(Wasm::ModuleInformation::create())
+        , m_streamingParser(m_info.get())
+    {
+    }
+
+    using Base = JSDestructibleObject;
+
+    static WasmStreamingParser* create(VM& vm, JSGlobalObject* globalObject)
+    {
+        Structure* structure = createStructure(vm, globalObject, jsNull());
+        WasmStreamingParser* result = new (NotNull, allocateCell<WasmStreamingParser>(vm.heap, sizeof(WasmStreamingParser))) WasmStreamingParser(vm, structure);
+        result->finishCreation(vm);
+        return result;
+    }
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+    Wasm::StreamingParser& streamingParser() { return m_streamingParser; }
+
+    void finishCreation(VM& vm)
+    {
+        Base::finishCreation(vm);
+
+        JSGlobalObject* globalObject = this->globalObject(vm);
+        putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "addBytes"), 0, functionWasmStreamingParserAddBytes, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "finalize"), 0, functionWasmStreamingParserFinalize, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    }
+
+    DECLARE_INFO;
+
+    Ref<Wasm::ModuleInformation> m_info;
+    Wasm::StreamingParser m_streamingParser;
+};
+
+const ClassInfo WasmStreamingParser::s_info = { "WasmStreamingParser", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WasmStreamingParser) };
+
+EncodedJSValue JSC_HOST_CALL functionWasmStreamingParserAddBytes(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(exec->vm());
+    auto* thisObject = jsDynamicCast<WasmStreamingParser*>(vm, exec->thisValue());
+    if (!thisObject) {
+        scope.release();
+        return JSValue::encode(jsBoolean(false));
+    }
+    auto data = getWasmBufferFromValue(exec, exec->argument(0));
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
+    return JSValue::encode(jsNumber(static_cast<int32_t>(thisObject->streamingParser().addBytes(bitwise_cast<const uint8_t*>(data.first), data.second))));
+}
+
+EncodedJSValue JSC_HOST_CALL functionWasmStreamingParserFinalize(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto* thisObject = jsDynamicCast<WasmStreamingParser*>(vm, exec->thisValue());
+    if (!thisObject)
+        return JSValue::encode(jsBoolean(false));
+    return JSValue::encode(jsNumber(static_cast<int32_t>(thisObject->streamingParser().finalize())));
+}
+
+#endif
+
 } // namespace
 
 namespace JSC {
@@ -1640,6 +1719,15 @@ static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITGetterBaseJSObject(ExecS
     return JSValue::encode(result);
 }
 
+#if ENABLE(WEBASSEMBLY)
+static EncodedJSValue JSC_HOST_CALL functionCreateWasmStreamingParser(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    JSLockHolder lock(vm);
+    return JSValue::encode(WasmStreamingParser::create(vm, exec->lexicalGlobalObject()));
+}
+#endif
+
 static EncodedJSValue JSC_HOST_CALL functionSetImpureGetterDelegate(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -2040,6 +2128,9 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "createDOMJITCheckSubClassObject", functionCreateDOMJITCheckSubClassObject, 0);
     addFunction(vm, "createDOMJITGetterBaseJSObject", functionCreateDOMJITGetterBaseJSObject, 0);
     addFunction(vm, "createBuiltin", functionCreateBuiltin, 2);
+#if ENABLE(WEBASSEMBLY)
+    addFunction(vm, "createWasmStreamingParser", functionCreateWasmStreamingParser, 0);
+#endif
     addFunction(vm, "getPrivateProperty", functionGetPrivateProperty, 2);
     addFunction(vm, "setImpureGetterDelegate", functionSetImpureGetterDelegate, 2);
 

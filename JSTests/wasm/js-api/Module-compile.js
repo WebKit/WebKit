@@ -21,7 +21,7 @@ async function testPromiseAPI() {
             await WebAssembly.compile(builder.WebAssembly().get());
         } catch(e) {
             assert.truthy(e instanceof WebAssembly.CompileError);
-            assert.truthy(e.message === "WebAssembly.Module doesn't parse at byte 34 / 43: there can at most be one Memory section for now");
+            assert.truthy(e.message === "WebAssembly.Module doesn't parse at byte 34: there can at most be one Memory section for now");
         }
     }
 

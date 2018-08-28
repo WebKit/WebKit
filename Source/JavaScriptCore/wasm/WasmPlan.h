@@ -54,7 +54,7 @@ public:
     Plan(Context*, Ref<ModuleInformation>, CompletionTask&&);
 
     // Note: This constructor should only be used if you are not actually building a module e.g. validation/function tests
-    JS_EXPORT_PRIVATE Plan(Context*, const uint8_t*, size_t, CompletionTask&&);
+    JS_EXPORT_PRIVATE Plan(Context*, CompletionTask&&);
     virtual JS_EXPORT_PRIVATE ~Plan();
 
     // If you guarantee the ordering here, you can rely on FIFO of the
@@ -90,8 +90,6 @@ protected:
     CreateEmbedderWrapper m_createEmbedderWrapper;
     ThrowWasmException m_throwWasmException { nullptr };
 
-    const uint8_t* m_source;
-    const size_t m_sourceLength;
     String m_errorMessage;
     MemoryMode m_mode { MemoryMode::BoundsChecking };
     Lock m_lock;

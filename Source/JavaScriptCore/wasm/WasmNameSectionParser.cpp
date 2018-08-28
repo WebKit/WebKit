@@ -35,7 +35,7 @@ namespace JSC { namespace Wasm {
 
 auto NameSectionParser::parse() -> Result
 {
-    RefPtr<NameSection> nameSection(adoptRef(*new NameSection(m_info.hash)));
+    Ref<NameSection> nameSection = NameSection::create();
     WASM_PARSER_FAIL_IF(!nameSection->functionNames.tryReserveCapacity(m_info.functionIndexSpaceSize()), "can't allocate enough memory for function names");
     nameSection->functionNames.resize(m_info.functionIndexSpaceSize());
 
@@ -96,7 +96,7 @@ auto NameSectionParser::parse() -> Result
         }
         WASM_PARSER_FAIL_IF(payloadStart + payloadLength != m_offset);
     }
-    return nameSection;
+    return WTFMove(nameSection);
 }
 
 } } // namespace JSC::Wasm

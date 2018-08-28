@@ -15,5 +15,5 @@ import * as assert from '../assert.js';
         .End();
 
     const bin = builder.WebAssembly().get();
-    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 31 / 39: duplicate export: 'foo'");
+    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 31: duplicate export: 'foo'");
 }

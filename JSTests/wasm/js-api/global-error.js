@@ -23,7 +23,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 26 / 59: get_global's index 0 exceeds the number of globals 0 (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 26: get_global's index 0 exceeds the number of globals 0 (evaluating 'new WebAssembly.Module(bin.get())')");
 }
 
 
@@ -52,7 +52,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 32 / 76: Mutable Globals aren't supported (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 32: Mutable Globals aren't supported (evaluating 'new WebAssembly.Module(bin.get())')");
 }
 
 {
@@ -77,7 +77,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 51 / 59: 1th Export isn't immutable, named 'global' (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 51: 1th Export isn't immutable, named 'global' (evaluating 'new WebAssembly.Module(bin.get())')");
 }
 
 {

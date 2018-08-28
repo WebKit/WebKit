@@ -69,21 +69,18 @@ void OMGPlan::work(CompilationEffort)
 {
     ASSERT(m_codeBlock->runnable());
     ASSERT(m_codeBlock.ptr() == m_module->codeBlockFor(mode()));
-    const FunctionLocationInBinary& location = m_moduleInformation->functionLocationInBinary[m_functionIndex];
-    const uint8_t* functionStart = m_moduleInformation->source.data() + location.start;
-    const size_t functionLength = location.end - location.start;
-    ASSERT(functionStart + functionLength <= m_moduleInformation->source.end());
+    const FunctionData& function = m_moduleInformation->functions[m_functionIndex];
 
     const uint32_t functionIndexSpace = m_functionIndex + m_module->moduleInformation().importFunctionCount();
     ASSERT(functionIndexSpace < m_module->moduleInformation().functionIndexSpaceSize());
 
     SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[m_functionIndex];
     const Signature& signature = SignatureInformation::get(signatureIndex);
-    ASSERT(validateFunction(functionStart, functionLength, signature, m_moduleInformation.get()));
+    ASSERT(validateFunction(function.data.data(), function.data.size(), signature, m_moduleInformation.get()));
 
     Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
     CompilationContext context;
-    auto parseAndCompileResult = parseAndCompile(context, functionStart, functionLength, signature, unlinkedCalls, m_moduleInformation.get(), m_mode, CompilationMode::OMGMode, m_functionIndex);
+    auto parseAndCompileResult = parseAndCompile(context, function.data.data(), function.data.size(), signature, unlinkedCalls, m_moduleInformation.get(), m_mode, CompilationMode::OMGMode, m_functionIndex);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         fail(holdLock(m_lock), makeString(parseAndCompileResult.error(), "when trying to tier up ", String::number(m_functionIndex)));

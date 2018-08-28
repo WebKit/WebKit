@@ -67,7 +67,7 @@ for (const c in constructorProperties) {
             assert.throws(() => new WebAssembly[c](invalid), TypeError, `first argument must be an ArrayBufferView or an ArrayBuffer (evaluating 'new WebAssembly[c](invalid)')`);
         for (const buffer of [new ArrayBuffer(), new DataView(new ArrayBuffer()), new Int8Array(), new Uint8Array(), new Uint8ClampedArray(), new Int16Array(), new Uint16Array(), new Int32Array(), new Uint32Array(), new Float32Array(), new Float64Array()])
             // FIXME the following should be WebAssembly.CompileError. https://bugs.webkit.org/show_bug.cgi?id=163768
-            assert.throws(() => new WebAssembly[c](buffer), Error, `WebAssembly.Module doesn't parse at byte 0 / 0: expected a module of at least 8 bytes (evaluating 'new WebAssembly[c](buffer)')`);
+            assert.throws(() => new WebAssembly[c](buffer), Error, `WebAssembly.Module doesn't parse at byte 0: expected a module of at least 8 bytes (evaluating 'new WebAssembly[c](buffer)')`);
         assert.instanceof(new WebAssembly[c](emptyModuleArray), WebAssembly.Module);
         break;
     case "Instance":

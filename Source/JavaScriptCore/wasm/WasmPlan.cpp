@@ -53,8 +53,6 @@ Plan::Plan(Context* context, Ref<ModuleInformation> info, CompletionTask&& task,
     : m_moduleInformation(WTFMove(info))
     , m_createEmbedderWrapper(WTFMove(createEmbedderWrapper))
     , m_throwWasmException(throwWasmException)
-    , m_source(m_moduleInformation->source.data())
-    , m_sourceLength(m_moduleInformation->source.size())
 {
     m_completionTasks.append(std::make_pair(context, WTFMove(task)));
 }
@@ -64,10 +62,8 @@ Plan::Plan(Context* context, Ref<ModuleInformation> info, CompletionTask&& task)
 {
 }
 
-Plan::Plan(Context* context, const uint8_t* source, size_t sourceLength, CompletionTask&& task)
-    : m_moduleInformation(adoptRef(*new ModuleInformation(Vector<uint8_t>())))
-    , m_source(source)
-    , m_sourceLength(sourceLength)
+Plan::Plan(Context* context, CompletionTask&& task)
+    : m_moduleInformation(ModuleInformation::create())
 {
     m_completionTasks.append(std::make_pair(context, WTFMove(task)));
 }

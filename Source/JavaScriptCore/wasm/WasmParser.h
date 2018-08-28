@@ -58,6 +58,10 @@ public:
     typedef Expected<void, ErrorType> PartialResult;
     typedef Expected<SuccessType, ErrorType> Result;
 
+    const uint8_t* source() const { return m_source; }
+    size_t length() const { return m_sourceLength; }
+    size_t offset() const { return m_offset; }
+
 protected:
     Parser(const uint8_t*, size_t);
 
@@ -81,16 +85,13 @@ protected:
     bool WARN_UNUSED_RETURN parseValueType(Type&);
     bool WARN_UNUSED_RETURN parseExternalKind(ExternalKind&);
 
-    const uint8_t* source() const { return m_source; }
-    size_t length() const { return m_sourceLength; }
-
     size_t m_offset = 0;
 
     template <typename ...Args>
     NEVER_INLINE UnexpectedResult WARN_UNUSED_RETURN fail(Args... args) const
     {
         using namespace FailureHelper; // See ADL comment in namespace above.
-        return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, String::number(m_offset), " / "_s, String::number(m_sourceLength), ": "_s, makeString(args)...));
+        return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, String::number(m_offset), ": "_s, makeString(args)...));
     }
 #define WASM_PARSER_FAIL_IF(condition, ...) do { \
     if (UNLIKELY(condition))                     \
@@ -283,6 +284,14 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseExternalKind(ExternalKind& result)
         return false;
     result = static_cast<ExternalKind>(value);
     return true;
+}
+
+ALWAYS_INLINE I32InitExpr makeI32InitExpr(uint8_t opcode, uint32_t bits)
+{
+    RELEASE_ASSERT(opcode == I32Const || opcode == GetGlobal);
+    if (opcode == I32Const)
+        return I32InitExpr::constValue(bits);
+    return I32InitExpr::globalImport(bits);
 }
 
 } } // namespace JSC::Wasm

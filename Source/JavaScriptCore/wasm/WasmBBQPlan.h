@@ -52,11 +52,14 @@ public:
     // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
     BBQPlan(Context*, Ref<ModuleInformation>, AsyncWork, CompletionTask&&, CreateEmbedderWrapper&&, ThrowWasmException);
     JS_EXPORT_PRIVATE BBQPlan(Context*, Vector<uint8_t>&&, AsyncWork, CompletionTask&&, CreateEmbedderWrapper&&, ThrowWasmException);
-    // Note: This constructor should only be used if you are not actually building a module e.g. validation/function tests
-    // FIXME: When we get rid of function tests we should remove AsyncWork from this constructor.
-    JS_EXPORT_PRIVATE BBQPlan(Context*, const uint8_t*, size_t, AsyncWork, CompletionTask&&);
+    BBQPlan(Context*, AsyncWork, CompletionTask&&);
 
-    bool parseAndValidateModule();
+
+    bool parseAndValidateModule()
+    {
+        return parseAndValidateModule(m_source.data(), m_source.size());
+    }
+    bool parseAndValidateModule(const uint8_t*, size_t);
 
     JS_EXPORT_PRIVATE void prepare();
     void compileFunctions(CompilationEffort);
@@ -136,6 +139,7 @@ private:
 
     const char* stateString(State);
     
+    Vector<uint8_t> m_source;
     Bag<CallLinkInfo> m_callLinkInfos;
     Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;
     Vector<std::unique_ptr<InternalFunction>> m_wasmInternalFunctions;

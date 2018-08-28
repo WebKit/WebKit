@@ -28,4 +28,4 @@ const builder1 = (new Builder())
       .Code().End();
 
 const i0 = instantiate(builder0);
-assert.throws(() => instantiate(builder1, { imp: { memory: i0.exports.memory } }), WebAssembly.CompileError, `WebAssembly.Module doesn't parse at byte 35 / 41: there can at most be one Memory section for now`);
+assert.throws(() => instantiate(builder1, { imp: { memory: i0.exports.memory } }), WebAssembly.CompileError, `WebAssembly.Module doesn't parse at byte 35: there can at most be one Memory section for now`);

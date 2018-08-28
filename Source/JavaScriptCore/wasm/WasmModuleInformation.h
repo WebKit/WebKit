@@ -34,11 +34,14 @@
 namespace JSC { namespace Wasm {
 
 struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
-    ModuleInformation() = delete;
+    ModuleInformation();
     ModuleInformation(const ModuleInformation&) = delete;
     ModuleInformation(ModuleInformation&&) = delete;
 
-    ModuleInformation(Vector<uint8_t>&& sourceBytes);
+    static Ref<ModuleInformation> create()
+    {
+        return adoptRef(*new ModuleInformation);
+    }
 
     JS_EXPORT_PRIVATE ~ModuleInformation();
     
@@ -58,8 +61,10 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     uint32_t importFunctionCount() const { return importFunctionSignatureIndices.size(); }
     uint32_t internalFunctionCount() const { return internalFunctionSignatureIndices.size(); }
 
-    const Vector<uint8_t> source;
-    const std::optional<CString> hash;
+    // Currently, our wasm implementation allows only one memory and table.
+    // If we need to remove this limitation, we would have MemoryInformation and TableInformation in the Vectors.
+    uint32_t memoryCount() const { return memory ? 1 : 0; }
+    uint32_t tableCount() const { return tableInformation ? 1 : 0; }
 
     Vector<Import> imports;
     Vector<SignatureIndex> importFunctionSignatureIndices;
@@ -68,7 +73,7 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
 
     MemoryInformation memory;
 
-    Vector<FunctionLocationInBinary> functionLocationInBinary;
+    Vector<FunctionData> functions;
 
     Vector<Export> exports;
     std::optional<uint32_t> startFunctionIndexSpace;
@@ -78,7 +83,7 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     Vector<Global> globals;
     unsigned firstInternalGlobal { 0 };
     Vector<CustomSection> customSections;
-    RefPtr<NameSection> nameSection;
+    Ref<NameSection> nameSection;
 };
 
     

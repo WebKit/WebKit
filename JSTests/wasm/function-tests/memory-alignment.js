@@ -42,7 +42,7 @@ for (const op of WASM.opcodes("memory")) {
         if (alignLog2 <= maxAlignLog2)
             instance();
         else
-            assert.throws(instance, WebAssembly.CompileError, `WebAssembly.Module doesn't parse at byte ${start} / ${end}: byte alignment ${1 << alignLog2} exceeds ${info.type}'s natural alignment ${1 << maxAlignLog2}, in function at index 0`);
+            assert.throws(instance, WebAssembly.CompileError, `WebAssembly.Module doesn't parse at byte ${start}: byte alignment ${1 << alignLog2} exceeds ${info.type}'s natural alignment ${1 << maxAlignLog2}, in function at index 0`);
 
     }
 }

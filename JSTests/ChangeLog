@@ -1,3 +1,42 @@
+2018-08-27  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [WebAssembly] Parse wasm modules in a streaming fashion
+        https://bugs.webkit.org/show_bug.cgi?id=188943
+
+        Reviewed by Mark Lam.
+
+        Wasm parsing error should not report the total byte size since streaming parsing does not
+        want to load all the bytes.
+        Add a simple test wasm/stress/streaming-basic.js for initial streaming parsing implementation.
+
+        * wasm/function-tests/invalid-duplicate-export.js:
+        * wasm/function-tests/memory-alignment.js:
+        (const.op.of.WASM.opcodes):
+        * wasm/function-tests/memory-section-and-import.js:
+        * wasm/function-tests/void-argument-type-should-be-a-validation-error.js:
+        * wasm/js-api/Module-compile.js:
+        (async.testPromiseAPI):
+        * wasm/js-api/element.js:
+        (assert.throws.new.WebAssembly.Module.builder.WebAssembly):
+        (assert.throws):
+        * wasm/js-api/global-error.js:
+        (assert.throws.new.WebAssembly.Module.bin):
+        (assert.throws):
+        * wasm/js-api/table.js:
+        (new.WebAssembly.Module):
+        (assert.throws):
+        (assertBadTableImport):
+        * wasm/js-api/test_Data.js:
+        (DataSectionWithoutMemory):
+        * wasm/js-api/test_Start.js:
+        (InvalidStartFunctionIndex):
+        * wasm/js-api/test_basic_api.js:
+        (const.c.in.constructorProperties.switch):
+        * wasm/js-api/version.js:
+        * wasm/stress/nameSection.wasm: Added.
+        * wasm/stress/streaming-basic.js: Added.
+        (check):
+
 2018-08-27  Mark Lam  <mark.lam@apple.com>
 
         Fix exception throwing code so that topCallFrame and topEntryFrame stay true to their names.

@@ -31,21 +31,10 @@
 #include "WasmNameSection.h"
 #include <wtf/SHA1.h>
 
-namespace {
-CString sha1(const Vector<uint8_t>& input)
-{
-    SHA1 hash;
-    hash.addBytes(input);
-    return hash.computeHexDigest();
-}
-}
-
 namespace JSC { namespace Wasm {
 
-ModuleInformation::ModuleInformation(Vector<uint8_t>&& sourceBytes)
-    : source(WTFMove(sourceBytes))
-    , hash(Options::useEagerWebAssemblyModuleHashing() ? std::make_optional(sha1(source)) : std::nullopt)
-    , nameSection(new NameSection(hash))
+ModuleInformation::ModuleInformation()
+    : nameSection(NameSection::create())
 {
 }
 ModuleInformation::~ModuleInformation() { }

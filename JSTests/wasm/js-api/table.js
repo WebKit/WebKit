@@ -13,7 +13,7 @@ import * as assert from '../assert.js';
         .End()
         .Code()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 34 / 41: Cannot have more than one Table for now");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 34: Cannot have more than one Table for now");
 }
 
 {
@@ -38,7 +38,7 @@ import * as assert from '../assert.js';
         .End()
         .Code()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 17 / 28: Table count of 2 is invalid, at most 1 is allowed for now (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 17: Table count of 2 is invalid, at most 1 is allowed for now (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
 }
 
 {
@@ -54,7 +54,7 @@ import * as assert from '../assert.js';
                 .CallIndirect(0, 0)
             .End()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 4 / 7: call_indirect is only valid when a table is defined or imported, in function at index 0 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 4: call_indirect is only valid when a table is defined or imported, in function at index 0 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
 }
 
 {
@@ -73,7 +73,7 @@ import * as assert from '../assert.js';
                 .CallIndirect(0, 1)
             .End()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 6 / 7: call_indirect's 'reserved' varuint1 must be 0x0, in function at index 0 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 6: call_indirect's 'reserved' varuint1 must be 0x0, in function at index 0 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
 }
 
 {
@@ -86,7 +86,7 @@ import * as assert from '../assert.js';
         .End()
         .Code()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 23 / 26: can't export Table 0 there are 0 Tables");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 23: can't export Table 0 there are 0 Tables");
 }
 
 {
@@ -102,7 +102,7 @@ import * as assert from '../assert.js';
         .End()
         .Code()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 30 / 33: can't export Table 1 there are 1 Tables");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 30: can't export Table 1 there are 1 Tables");
 }
 
 function assertBadTable(tableDescription, message) {
@@ -132,42 +132,42 @@ function assertBadTableImport(tableDescription, message) {
 {
     let badDescriptions = [
         [{initial: 10, element: "i32"},
-         "WebAssembly.Module doesn't parse at byte 18 / 23: Table type should be anyfunc, got -1 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 26 / 34: Table type should be anyfunc, got -1 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 18: Table type should be anyfunc, got -1 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
+         "WebAssembly.Module doesn't parse at byte 26: Table type should be anyfunc, got -1 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
         [{initial: 10, element: "f32"},
-         "WebAssembly.Module doesn't parse at byte 18 / 23: Table type should be anyfunc, got -3 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 26 / 34: Table type should be anyfunc, got -3 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 18: Table type should be anyfunc, got -3 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
+         "WebAssembly.Module doesn't parse at byte 26: Table type should be anyfunc, got -3 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
         [{initial: 10, element: "f64"},
-         "WebAssembly.Module doesn't parse at byte 18 / 23: Table type should be anyfunc, got -4 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 26 / 34: Table type should be anyfunc, got -4 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 18: Table type should be anyfunc, got -4 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
+         "WebAssembly.Module doesn't parse at byte 26: Table type should be anyfunc, got -4 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
         [{initial: 10, element: "i64"},
-         "WebAssembly.Module doesn't parse at byte 18 / 23: Table type should be anyfunc, got -2 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 26 / 34: Table type should be anyfunc, got -2 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 18: Table type should be anyfunc, got -2 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
+         "WebAssembly.Module doesn't parse at byte 26: Table type should be anyfunc, got -2 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
         [{initial: 10, maximum: 20, element: "i32"},
-         "WebAssembly.Module doesn't parse at byte 18 / 24: Table type should be anyfunc, got -1 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 26 / 35: Table type should be anyfunc, got -1 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 18: Table type should be anyfunc, got -1 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
+         "WebAssembly.Module doesn't parse at byte 26: Table type should be anyfunc, got -1 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
         [{initial: 10, maximum: 20, element: "f32"},
-         "WebAssembly.Module doesn't parse at byte 18 / 24: Table type should be anyfunc, got -3 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 26 / 35: Table type should be anyfunc, got -3 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 18: Table type should be anyfunc, got -3 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
+         "WebAssembly.Module doesn't parse at byte 26: Table type should be anyfunc, got -3 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
         [{initial: 10, maximum: 20, element: "f64"},
-         "WebAssembly.Module doesn't parse at byte 18 / 24: Table type should be anyfunc, got -4 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 26 / 35: Table type should be anyfunc, got -4 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 18: Table type should be anyfunc, got -4 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
+         "WebAssembly.Module doesn't parse at byte 26: Table type should be anyfunc, got -4 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
         [{initial: 10, maximum: 20, element: "i64"},
-         "WebAssembly.Module doesn't parse at byte 18 / 24: Table type should be anyfunc, got -2 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 26 / 35: Table type should be anyfunc, got -2 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 18: Table type should be anyfunc, got -2 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
+         "WebAssembly.Module doesn't parse at byte 26: Table type should be anyfunc, got -2 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
 
         [{initial: 10, maximum: 9, element: "anyfunc"},
-         "WebAssembly.Module doesn't parse at byte 21 / 24: resizable limits has a initial page count of 10 which is greater than its maximum 9 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 29 / 35: resizable limits has a initial page count of 10 which is greater than its maximum 9 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 21: resizable limits has a initial page count of 10 which is greater than its maximum 9 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
+         "WebAssembly.Module doesn't parse at byte 29: resizable limits has a initial page count of 10 which is greater than its maximum 9 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
         [{initial: 1, maximum: 0, element: "anyfunc"},
-         "WebAssembly.Module doesn't parse at byte 21 / 24: resizable limits has a initial page count of 1 which is greater than its maximum 0 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 29 / 35: resizable limits has a initial page count of 1 which is greater than its maximum 0 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 21: resizable limits has a initial page count of 1 which is greater than its maximum 0 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
+         "WebAssembly.Module doesn't parse at byte 29: resizable limits has a initial page count of 1 which is greater than its maximum 0 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
         [{initial: 2**32 - 1, maximum: 2**32 - 2, element: "anyfunc"},
-         "WebAssembly.Module doesn't parse at byte 29 / 32: resizable limits has a initial page count of 4294967295 which is greater than its maximum 4294967294 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 37 / 43: resizable limits has a initial page count of 4294967295 which is greater than its maximum 4294967294 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 29: resizable limits has a initial page count of 4294967295 which is greater than its maximum 4294967294 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
+         "WebAssembly.Module doesn't parse at byte 37: resizable limits has a initial page count of 4294967295 which is greater than its maximum 4294967294 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
         [{initial: 2**31, element: "anyfunc"},
-         "WebAssembly.Module doesn't parse at byte 24 / 27: Table's initial page count of 2147483648 is too big, maximum 10000000 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
-         "WebAssembly.Module doesn't parse at byte 32 / 38: Table's initial page count of 2147483648 is too big, maximum 10000000 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
+         "WebAssembly.Module doesn't parse at byte 24: Table's initial page count of 2147483648 is too big, maximum 10000000 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')",
+         "WebAssembly.Module doesn't parse at byte 32: Table's initial page count of 2147483648 is too big, maximum 10000000 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')"],
     ];
 
     for (const d of badDescriptions) {
@@ -186,7 +186,7 @@ function assertBadTableImport(tableDescription, message) {
         .Function().End()
         .Code()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 39 / 48: Cannot have more than one Table for now");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 39: Cannot have more than one Table for now");
 }
 
 

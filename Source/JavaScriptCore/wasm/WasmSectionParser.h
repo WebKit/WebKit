@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Yusuke Suzuki <yusukesuzuki@slowstart.org>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,17 +36,36 @@
 
 namespace JSC { namespace Wasm {
 
-class ModuleParser : public Parser<void> {
+class SectionParser final : public Parser<void> {
 public:
-    ModuleParser(const uint8_t* sourceBuffer, size_t sourceLength, ModuleInformation& info)
-        : Parser(sourceBuffer, sourceLength)
+    SectionParser(const uint8_t* data, size_t size, size_t offsetInSource, ModuleInformation& info)
+        : Parser(data, size)
+        , m_offsetInSource(offsetInSource)
         , m_info(info)
     {
     }
 
-    Result WARN_UNUSED_RETURN parse();
+#define WASM_SECTION_DECLARE_PARSER(NAME, ID, DESCRIPTION) PartialResult WARN_UNUSED_RETURN parse ## NAME();
+    FOR_EACH_KNOWN_WASM_SECTION(WASM_SECTION_DECLARE_PARSER)
+#undef WASM_SECTION_DECLARE_PARSER
+
+    PartialResult WARN_UNUSED_RETURN parseCustom();
 
 private:
+    template <typename ...Args>
+    NEVER_INLINE UnexpectedResult WARN_UNUSED_RETURN fail(Args... args) const
+    {
+        using namespace FailureHelper; // See ADL comment in namespace above.
+        return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, String::number(m_offset + m_offsetInSource), ": "_s, makeString(args)...));
+    }
+
+    PartialResult WARN_UNUSED_RETURN parseGlobalType(Global&);
+    PartialResult WARN_UNUSED_RETURN parseMemoryHelper(bool isImport);
+    PartialResult WARN_UNUSED_RETURN parseTableHelper(bool isImport);
+    PartialResult WARN_UNUSED_RETURN parseResizableLimits(uint32_t& initial, std::optional<uint32_t>& maximum);
+    PartialResult WARN_UNUSED_RETURN parseInitExpr(uint8_t&, uint64_t&, Type& initExprType);
+
+    size_t m_offsetInSource;
     Ref<ModuleInformation> m_info;
 };
 

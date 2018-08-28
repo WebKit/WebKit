@@ -36,15 +36,20 @@
 namespace WTF { namespace LEBDecoder {
 
 template<typename T>
-inline bool WARN_UNUSED_RETURN decodeUInt(const uint8_t* bytes, size_t length, size_t& offset, T& result)
+inline constexpr size_t maxByteLength()
 {
     const size_t numBits = sizeof(T) * CHAR_BIT;
-    const size_t maxByteLength = (numBits - 1) / 7 + 1; // numBits / 7 rounding up.
+    return (numBits - 1) / 7 + 1; // numBits / 7 rounding up.
+}
+
+template<typename T>
+inline bool WARN_UNUSED_RETURN decodeUInt(const uint8_t* bytes, size_t length, size_t& offset, T& result)
+{
     if (length <= offset)
         return false;
     result = 0;
     unsigned shift = 0;
-    size_t last = std::min(maxByteLength, length - offset) - 1;
+    size_t last = std::min(maxByteLength<T>(), length - offset) - 1;
     for (unsigned i = 0; true; ++i) {
         uint8_t byte = bytes[offset++];
         result |= static_cast<T>(byte & 0x7f) << shift;
@@ -61,13 +66,11 @@ inline bool WARN_UNUSED_RETURN decodeUInt(const uint8_t* bytes, size_t length, s
 template<typename T>
 inline bool WARN_UNUSED_RETURN decodeInt(const uint8_t* bytes, size_t length, size_t& offset, T& result)
 {
-    const size_t numBits = sizeof(T) * CHAR_BIT;
-    const size_t maxByteLength = (numBits - 1) / 7 + 1; // numBits / 7 rounding up.
     if (length <= offset)
         return false;
     result = 0;
     unsigned shift = 0;
-    size_t last = std::min(maxByteLength, length - offset) - 1;
+    size_t last = std::min(maxByteLength<T>(), length - offset) - 1;
     uint8_t byte;
     for (unsigned i = 0; true; ++i) {
         byte = bytes[offset++];
@@ -80,6 +83,7 @@ inline bool WARN_UNUSED_RETURN decodeInt(const uint8_t* bytes, size_t length, si
     }
 
     using UnsignedT = typename std::make_unsigned<T>::type;
+    const size_t numBits = sizeof(T) * CHAR_BIT;
     if (shift < numBits && (byte & 0x40))
         result = static_cast<T>(static_cast<UnsignedT>(result) | (static_cast<UnsignedT>(-1) << shift));
     return true;

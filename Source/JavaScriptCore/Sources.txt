@@ -991,7 +991,9 @@ wasm/WasmOMGPlan.cpp
 wasm/WasmOpcodeOrigin.cpp
 wasm/WasmPageCount.cpp
 wasm/WasmPlan.cpp
+wasm/WasmSectionParser.cpp
 wasm/WasmSignature.cpp
+wasm/WasmStreamingParser.cpp
 wasm/WasmTable.cpp
 wasm/WasmTable.h
 wasm/WasmThunks.cpp

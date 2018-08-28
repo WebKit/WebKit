@@ -68,8 +68,6 @@ public:
     JSWebAssemblyCodeBlock* codeBlock(Wasm::MemoryMode mode);
     void setCodeBlock(VM&, Wasm::MemoryMode, JSWebAssemblyCodeBlock*);
 
-    const Vector<uint8_t>& source() const;
-
     JS_EXPORT_PRIVATE Wasm::Module& module();
 
 private:

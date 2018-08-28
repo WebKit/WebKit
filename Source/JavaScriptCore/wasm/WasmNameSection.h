@@ -36,11 +36,20 @@ namespace JSC { namespace Wasm {
 
 struct NameSection : public ThreadSafeRefCounted<NameSection> {
     WTF_MAKE_NONCOPYABLE(NameSection);
-
 public:
-    NameSection(const std::optional<CString> &hash)
-        : moduleHash(hash ? hash->length() : 3)
+    NameSection()
     {
+        setHash(std::nullopt);
+    }
+
+    static Ref<NameSection> create()
+    {
+        return adoptRef(*new NameSection);
+    }
+
+    void setHash(const std::optional<CString> &hash)
+    {
+        moduleHash = Name(hash ? hash->length() : 3);
         if (hash) {
             for (size_t i = 0; i < hash->length(); ++i)
                 moduleHash[i] = static_cast<uint8_t>(*(hash->data() + i));
