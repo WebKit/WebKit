@@ -1,3 +1,16 @@
+2018-08-27  Sihui Liu  <sihui_liu@apple.com>
+
+        [ MacOS iOS ] Layout Test storage/indexeddb/modern/opendatabase-after-storage-crash.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=187648
+        <rdar://problem/42405935>
+
+        Add an early exit so test does not call waitUntilDone after test ends.
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/wk2/TestExpectations:
+        * storage/indexeddb/modern/opendatabase-after-storage-crash.html:
+
 2018-08-27  Youenn Fablet  <youenn@apple.com>
 
         Various IndexDB tests abandon documents

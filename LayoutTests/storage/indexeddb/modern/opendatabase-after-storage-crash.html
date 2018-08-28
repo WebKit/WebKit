@@ -46,10 +46,12 @@ request.onupgradeneeded = function(e) {
 		document.body.innerHTML = "Successfully opened database with version " + versionToOpen + ".";
 		shouldBeEqualToString('sessionStorage[storageKey]', 'Made it');
 
-		if (window.testRunner)
+		if (window.testRunner) {
 			testRunner.notifyDone();
+			return;
+		}
 	}
-	
+
 	sessionStorage.doneFirstLoad = true;
 
 	// Set an error handler on the database connection so once the storage process terminates we know to continue the test
