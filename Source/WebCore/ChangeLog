@@ -1,3 +1,15 @@
+2018-08-28  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Fix build after r235424
+        https://bugs.webkit.org/show_bug.cgi?id=189051
+
+        Rubber-stamped by Simon Fraser.
+
+        Fix unused variable warning by using the variable.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::viewportContentsChanged):
+
 2018-08-28  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Support inputmode=none

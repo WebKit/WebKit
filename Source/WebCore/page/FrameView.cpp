@@ -2004,7 +2004,7 @@ void FrameView::viewportContentsChanged()
 
 #if ENABLE(INTERSECTION_OBSERVER)
     if (auto* document = frame().document())
-        frame().document()->scheduleIntersectionObservationUpdate();
+        document->scheduleIntersectionObservationUpdate();
 #endif
 }
 
