@@ -1,3 +1,14 @@
+2018-08-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Search bar is too narrow in some localizations
+        https://bugs.webkit.org/show_bug.cgi?id=189060
+        <rdar://problem/43006369>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/Toolbar.css:
+        (.toolbar .search-bar):
+
 2018-08-27  Keith Rollin  <krollin@apple.com>
 
         Unreviewed build fix -- disable LTO for production builds

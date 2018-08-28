@@ -118,7 +118,7 @@ body[dir=rtl] .toolbar .control-section {
 
 .toolbar .search-bar {
     width: 100%;
-    min-width: 100px;
+    min-width: 125px;
 }
 
 .toolbar .search-bar > input[type="search"] {
