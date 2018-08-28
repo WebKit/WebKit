@@ -1,3 +1,9 @@
+2018-08-27  Keith Rollin  <krollin@apple.com>
+
+        Unreviewed build fix -- disable LTO for production builds
+
+        * Configurations/Base.xcconfig:
+
 2018-08-27  Andy Estes  <aestes@apple.com>
 
         Teach Web Inspector how to complete keywords for -apple-pay-button-style and -apple-pay-button-type

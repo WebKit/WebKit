@@ -1,5 +1,11 @@
 2018-08-27  Keith Rollin  <krollin@apple.com>
 
+        Unreviewed build fix -- disable LTO for production builds
+
+        * Configurations/Base.xcconfig:
+
+2018-08-27  Keith Rollin  <krollin@apple.com>
+
         Build system support for LTO
         https://bugs.webkit.org/show_bug.cgi?id=187785
         <rdar://problem/42353132>

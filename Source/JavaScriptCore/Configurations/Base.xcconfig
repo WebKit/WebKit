@@ -192,4 +192,4 @@ WK_USER_LTO_MODE_full = NO; // Disable LTO for JavaScript due to <rdar://problem
 WK_USER_LTO_MODE_thin = NO; // Disable LTO for JavaScript due to <rdar://problem/24543547>
 WK_USER_LTO_MODE_none = NO;
 WK_USER_LTO_MODE_ = $(WK_DEFAULT_LTO_MODE);
-WK_DEFAULT_LTO_MODE = $(WK_USER_LTO_MODE_full);
+WK_DEFAULT_LTO_MODE = $(WK_USER_LTO_MODE_none);
