@@ -94,7 +94,6 @@
 #import "_WKSessionStateInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
-#import <WebCore/AttachmentTypes.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/JSDOMBinding.h>
@@ -4442,20 +4441,26 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (_WKAttachment *)_insertAttachmentWithFilename:(NSString *)filename contentType:(NSString *)contentType data:(NSData *)data options:(_WKAttachmentDisplayOptions *)options completion:(void(^)(BOOL success))completionHandler
 {
+    UNUSED_PARAM(options);
     auto fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data]);
     if (filename)
         [fileWrapper setPreferredFilename:filename];
-    return [self _insertAttachmentWithFileWrapper:fileWrapper.get() contentType:contentType options:options completion:completionHandler];
+    return [self _insertAttachmentWithFileWrapper:fileWrapper.get() contentType:contentType completion:completionHandler];
 }
 
 - (_WKAttachment *)_insertAttachmentWithFileWrapper:(NSFileWrapper *)fileWrapper contentType:(NSString *)contentType options:(_WKAttachmentDisplayOptions *)options completion:(void(^)(BOOL success))completionHandler
 {
+    UNUSED_PARAM(options);
+    return [self _insertAttachmentWithFileWrapper:fileWrapper contentType:contentType completion:completionHandler];
+}
+
+- (_WKAttachment *)_insertAttachmentWithFileWrapper:(NSFileWrapper *)fileWrapper contentType:(NSString *)contentType completion:(void(^)(BOOL success))completionHandler
+{
 #if ENABLE(ATTACHMENT_ELEMENT)
     auto identifier = createCanonicalUUIDString();
-    auto coreOptions = options ? options.coreDisplayOptions : WebCore::AttachmentDisplayOptions { };
     auto attachment = API::Attachment::create(identifier, *_page);
     attachment->setFileWrapperAndUpdateContentType(fileWrapper, contentType);
-    _page->insertAttachment(attachment.copyRef(), coreOptions, [capturedHandler = makeBlockPtr(completionHandler)] (WebKit::CallbackBase::Error error) {
+    _page->insertAttachment(attachment.copyRef(), [capturedHandler = makeBlockPtr(completionHandler)] (WebKit::CallbackBase::Error error) {
         if (capturedHandler)
             capturedHandler(error == WebKit::CallbackBase::Error::None);
     });

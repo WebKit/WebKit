@@ -510,8 +510,7 @@ messages -> WebPage LegacyReceiver {
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    InsertAttachment(String identifier, struct WebCore::AttachmentDisplayOptions options, std::optional<uint64_t> fileSize, String fileName, String contentType, WebKit::CallbackID callbackID)
-    SetAttachmentDisplayOptions(String identifier, struct WebCore::AttachmentDisplayOptions options, WebKit::CallbackID callbackID)
+    InsertAttachment(String identifier, std::optional<uint64_t> fileSize, String fileName, String contentType, WebKit::CallbackID callbackID)
     UpdateAttachmentAttributes(String identifier, std::optional<uint64_t> fileSize, String newContentType, std::optional<String> newFilename, WebKit::CallbackID callbackID)
 #endif
 

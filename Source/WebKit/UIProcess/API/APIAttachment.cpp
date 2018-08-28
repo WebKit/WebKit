@@ -28,7 +28,6 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-#include <WebCore/AttachmentTypes.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/text/WTFString.h>
 
@@ -47,14 +46,6 @@ Attachment::Attachment(const WTF::String& identifier, WebKit::WebPageProxy& webP
 
 Attachment::~Attachment()
 {
-}
-
-void Attachment::setDisplayOptions(WebCore::AttachmentDisplayOptions options, Function<void(WebKit::CallbackBase::Error)>&& callback)
-{
-    if (m_webPage)
-        m_webPage->setAttachmentDisplayOptions(m_identifier, options, WTFMove(callback));
-    else
-        callback(WebKit::CallbackBase::Error::OwnerWasInvalidated);
 }
 
 void Attachment::updateAttributes(Function<void(WebKit::CallbackBase::Error)>&& callback)

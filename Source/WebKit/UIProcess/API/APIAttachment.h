@@ -38,7 +38,6 @@ OBJC_CLASS NSFileWrapper;
 
 namespace WebCore {
 class SharedBuffer;
-struct AttachmentDisplayOptions;
 }
 
 namespace WebKit {
@@ -55,7 +54,6 @@ public:
     enum class InsertionState : uint8_t { NotInserted, Inserted };
 
     const WTF::String& identifier() const { return m_identifier; }
-    void setDisplayOptions(WebCore::AttachmentDisplayOptions, Function<void(WebKit::CallbackBase::Error)>&&);
     void updateAttributes(Function<void(WebKit::CallbackBase::Error)>&&);
 
     void invalidate();

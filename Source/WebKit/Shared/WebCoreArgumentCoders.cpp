@@ -28,7 +28,6 @@
 
 #include "DataReference.h"
 #include "ShareableBitmap.h"
-#include <WebCore/AttachmentTypes.h>
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BlobPart.h>
 #include <WebCore/CacheQueryOptions.h>

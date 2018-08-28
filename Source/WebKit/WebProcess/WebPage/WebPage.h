@@ -172,11 +172,8 @@ struct PromisedAttachmentInfo;
 struct TextCheckingResult;
 struct ViewportArguments;
 
-
-
 #if ENABLE(ATTACHMENT_ELEMENT)
 class HTMLAttachmentElement;
-struct AttachmentDisplayOptions;
 #endif
 }
 
@@ -1075,8 +1072,7 @@ public:
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void insertAttachment(const String& identifier, const WebCore::AttachmentDisplayOptions&, std::optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CallbackID);
-    void setAttachmentDisplayOptions(const String& identifier, const WebCore::AttachmentDisplayOptions&, CallbackID);
+    void insertAttachment(const String& identifier, std::optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CallbackID);
     void updateAttachmentAttributes(const String& identifier, std::optional<uint64_t>&& fileSize, const String& contentType, std::optional<String>&& newFilename, CallbackID);
 #endif
 

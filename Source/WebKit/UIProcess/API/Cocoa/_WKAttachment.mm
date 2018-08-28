@@ -31,7 +31,6 @@
 #import "APIAttachment.h"
 #import "WKErrorPrivate.h"
 #import "_WKAttachmentInternal.h"
-#import <WebCore/AttachmentTypes.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/SharedBuffer.h>
 #import <wtf/BlockPtr.h>
@@ -46,12 +45,6 @@ static const NSInteger UnspecifiedAttachmentErrorCode = 1;
 static const NSInteger InvalidAttachmentErrorCode = 2;
 
 @implementation _WKAttachmentDisplayOptions : NSObject
-
-- (WebCore::AttachmentDisplayOptions)coreDisplayOptions
-{
-    return { };
-}
-
 @end
 
 @implementation _WKAttachmentInfo {
@@ -129,25 +122,6 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
 - (void)requestInfo:(void(^)(_WKAttachmentInfo *, NSError *))completionHandler
 {
     completionHandler(self.info, nil);
-}
-
-- (void)setDisplayOptions:(_WKAttachmentDisplayOptions *)options completion:(void(^)(NSError *))completionHandler
-{
-    if (!_attachment->isValid()) {
-        completionHandler([NSError errorWithDomain:WKErrorDomain code:InvalidAttachmentErrorCode userInfo:nil]);
-        return;
-    }
-
-    auto coreOptions = options ? options.coreDisplayOptions : WebCore::AttachmentDisplayOptions { };
-    _attachment->setDisplayOptions(coreOptions, [capturedBlock = makeBlockPtr(completionHandler)] (CallbackBase::Error error) {
-        if (!capturedBlock)
-            return;
-
-        if (error == CallbackBase::Error::None)
-            capturedBlock(nil);
-        else
-            capturedBlock([NSError errorWithDomain:WKErrorDomain code:UnspecifiedAttachmentErrorCode userInfo:nil]);
-    });
 }
 
 - (void)setFileWrapper:(NSFileWrapper *)fileWrapper contentType:(NSString *)contentType completion:(void (^)(NSError *))completionHandler

@@ -261,7 +261,7 @@ static NSData *testPDFData()
 - (_WKAttachment *)synchronouslyInsertAttachmentWithFileWrapper:(NSFileWrapper *)fileWrapper contentType:(NSString *)contentType
 {
     __block bool done = false;
-    RetainPtr<_WKAttachment> attachment = [self _insertAttachmentWithFileWrapper:fileWrapper contentType:contentType options:nil completion:^(BOOL) {
+    RetainPtr<_WKAttachment> attachment = [self _insertAttachmentWithFileWrapper:fileWrapper contentType:contentType completion:^(BOOL) {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -274,7 +274,7 @@ static NSData *testPDFData()
     auto fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data]);
     if (filename)
         [fileWrapper setPreferredFilename:filename];
-    RetainPtr<_WKAttachment> attachment = [self _insertAttachmentWithFileWrapper:fileWrapper.get() contentType:contentType options:nil completion:^(BOOL) {
+    RetainPtr<_WKAttachment> attachment = [self _insertAttachmentWithFileWrapper:fileWrapper.get() contentType:contentType completion:^(BOOL) {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -342,21 +342,6 @@ static NSData *testPDFData()
 @end
 
 @implementation _WKAttachment (AttachmentTesting)
-
-- (void)synchronouslySetDisplayOptions:(_WKAttachmentDisplayOptions *)options error:(NSError **)error
-{
-    __block RetainPtr<NSError> resultError;
-    __block bool done = false;
-    [self setDisplayOptions:options completion:^(NSError *error) {
-        resultError = error;
-        done = true;
-    }];
-
-    TestWebKitAPI::Util::run(&done);
-
-    if (error)
-        *error = resultError.autorelease();
-}
 
 - (void)synchronouslySetFileWrapper:(NSFileWrapper *)fileWrapper newContentType:(NSString *)newContentType error:(NSError **)error
 {

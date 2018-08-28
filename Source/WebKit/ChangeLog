@@ -1,3 +1,46 @@
+2018-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Remove WebCore::AttachmentDisplayOptions and friends
+        https://bugs.webkit.org/show_bug.cgi?id=189004
+
+        Reviewed by Dan Bernstein.
+
+        Removes all usage of WebCore::AttachmentDisplayOptions, and deletes an SPI method that isn't being used by any
+        internal clients. Removal of _WKAttachmentDisplayOptions itself is still blocked on the submission of
+        <rdar://problem/43357281>.
+
+        * Scripts/webkit/messages.py:
+        * Shared/WebCoreArgumentCoders.cpp:
+        * UIProcess/API/APIAttachment.cpp:
+        (API::Attachment::setDisplayOptions): Deleted.
+        * UIProcess/API/APIAttachment.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _insertAttachmentWithFilename:contentType:data:options:completion:]):
+        (-[WKWebView _insertAttachmentWithFileWrapper:contentType:options:completion:]):
+        (-[WKWebView _insertAttachmentWithFileWrapper:contentType:completion:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        Deprecate -_insertAttachmentWithFileWrapper:contentType:options:completion:, in favor of
+        -_insertAttachmentWithFileWrapper:contentType:completion:.
+
+        * UIProcess/API/Cocoa/_WKAttachment.h:
+
+        Remove -setDisplayOptions:completion:, since it is a now a noop, and also isn't used by any internal clients.
+
+        * UIProcess/API/Cocoa/_WKAttachment.mm:
+        (-[_WKAttachmentDisplayOptions coreDisplayOptions]): Deleted.
+        (-[_WKAttachment setDisplayOptions:completion:]): Deleted.
+        * UIProcess/API/Cocoa/_WKAttachmentInternal.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::insertAttachment):
+        (WebKit::WebPageProxy::setAttachmentDisplayOptions): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::insertAttachment):
+        (WebKit::WebPage::setAttachmentDisplayOptions): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-08-27  Alex Christensen  <achristensen@webkit.org>
 
         NetworkLoad::didReceiveResponse should pass its completion handler to its client

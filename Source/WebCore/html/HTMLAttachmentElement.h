@@ -27,7 +27,6 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-#include "AttachmentTypes.h"
 #include "HTMLElement.h"
 
 namespace WebCore {

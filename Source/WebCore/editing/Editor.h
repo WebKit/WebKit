@@ -95,7 +95,6 @@ enum class MailBlockquoteHandling {
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 class HTMLAttachmentElement;
-struct AttachmentDisplayOptions;
 #endif
 
 enum TemporarySelectionOption : uint8_t {
@@ -503,7 +502,7 @@ public:
     bool isGettingDictionaryPopupInfo() const { return m_isGettingDictionaryPopupInfo; }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    WEBCORE_EXPORT void insertAttachment(const String& identifier, const AttachmentDisplayOptions&, std::optional<uint64_t>&& fileSize, const String& fileName, const String& contentType);
+    WEBCORE_EXPORT void insertAttachment(const String& identifier, std::optional<uint64_t>&& fileSize, const String& fileName, const String& contentType);
     void registerAttachmentIdentifier(const String&, const String& /* contentType */, const String& /* preferredFileName */, Ref<SharedBuffer>&&);
     void registerAttachmentIdentifier(const String&, const String& /* contentType */, const String& /* filePath */);
     void cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier);

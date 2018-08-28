@@ -122,7 +122,6 @@
 #include "WebURLSchemeHandler.h"
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteDataStore.h"
-#include <WebCore/AttachmentTypes.h>
 #include <WebCore/BitmapImage.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -7683,7 +7682,7 @@ RefPtr<API::Attachment> WebPageProxy::attachmentForIdentifier(const String& iden
     return m_attachmentIdentifierToAttachmentMap.get(identifier);
 }
 
-void WebPageProxy::insertAttachment(Ref<API::Attachment>&& attachment, const AttachmentDisplayOptions& options, Function<void(CallbackBase::Error)>&& callback)
+void WebPageProxy::insertAttachment(Ref<API::Attachment>&& attachment, Function<void(CallbackBase::Error)>&& callback)
 {
     if (!isValid()) {
         callback(CallbackBase::Error::OwnerWasInvalidated);
@@ -7692,19 +7691,8 @@ void WebPageProxy::insertAttachment(Ref<API::Attachment>&& attachment, const Att
 
     auto attachmentIdentifier = attachment->identifier();
     auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
-    m_process->send(Messages::WebPage::InsertAttachment(attachmentIdentifier, options, attachment->fileSizeForDisplay(), attachment->fileName(), attachment->contentType(), callbackID), m_pageID);
+    m_process->send(Messages::WebPage::InsertAttachment(attachmentIdentifier, attachment->fileSizeForDisplay(), attachment->fileName(), attachment->contentType(), callbackID), m_pageID);
     m_attachmentIdentifierToAttachmentMap.set(attachmentIdentifier, WTFMove(attachment));
-}
-
-void WebPageProxy::setAttachmentDisplayOptions(const String& identifier, AttachmentDisplayOptions options, Function<void(CallbackBase::Error)>&& callback)
-{
-    if (!isValid()) {
-        callback(CallbackBase::Error::OwnerWasInvalidated);
-        return;
-    }
-
-    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
-    m_process->send(Messages::WebPage::SetAttachmentDisplayOptions(identifier, options, callbackID), m_pageID);
 }
 
 void WebPageProxy::updateAttachmentAttributes(const API::Attachment& attachment, Function<void(CallbackBase::Error)>&& callback)
