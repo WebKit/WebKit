@@ -18,7 +18,7 @@ Tests that failed text/pixel/audio diff (3): flag all
 Tests that had no expected results (probably new) (1): flag all
 
 test	results	image results	actual failure	expected failure	history
-+svg/batik/smallFonts.svg			missing		history
+svg/batik/smallFonts.svg			missing		history
 Tests that timed out (1): flag all
 
 +platform/mac/media/audio-session-category-video-paused.html	expected actual diff pretty diff	history

@@ -444,6 +444,8 @@ class TestResults
         this.hasImageFailures = false;
         this.hasTextFailures = false;
 
+        this._testsByName = new Map;
+
         this._forEachTest(this._results.tests, '');
         this._forOtherCrashes(this._results.other_crashes);
     }
@@ -482,9 +484,16 @@ class TestResults
     {
         return this._results.has_wdiff;
     }
+    
+    testWithName(testName)
+    {
+        return this._testsByName.get(testName);
+    }
 
     _processResultForTest(testResult)
     {
+        this._testsByName.set(testResult.name, testResult);
+
         let test = testResult.name;
         if (testResult.hasStdErr())
             this.testsWithStderr.push(testResult);
@@ -589,28 +598,28 @@ class TestResultsController
         }
 
         if (this.testResults.crashTests.length)
-            this.containerElement.appendChild(this.buildOneSection(this.testResults.crashTests, CrashingTestsSectionBuilder));
+            this.containerElement.appendChild(this.buildOneSection(this.testResults.crashTests, 'crash-tests-table'));
 
         if (this.testResults.crashOther.length)
-            this.containerElement.appendChild(this.buildOneSection(this.testResults.crashOther, OtherCrashesSectionBuilder));
+            this.containerElement.appendChild(this.buildOneSection(this.testResults.crashOther, 'other-crash-tests-table'));
 
         if (this.testResults.failingTests.length)
-            this.containerElement.appendChild(this.buildOneSection(this.testResults.failingTests, FailingTestsSectionBuilder));
+            this.containerElement.appendChild(this.buildOneSection(this.testResults.failingTests, 'results-table'));
 
         if (this.testResults.missingResults.length)
-            this.containerElement.appendChild(this.buildOneSection(this.testResults.missingResults, TestsWithMissingResultsSectionBuilder));
+            this.containerElement.appendChild(this.buildOneSection(this.testResults.missingResults, 'missing-table'));
 
         if (this.testResults.timeoutTests.length)
-            this.containerElement.appendChild(this.buildOneSection(this.testResults.timeoutTests, TimedOutTestsSectionBuilder));
+            this.containerElement.appendChild(this.buildOneSection(this.testResults.timeoutTests, 'timeout-tests-table'));
 
         if (this.testResults.testsWithStderr.length)
-            this.containerElement.appendChild(this.buildOneSection(this.testResults.testsWithStderr, TestsWithStdErrSectionBuilder));
+            this.containerElement.appendChild(this.buildOneSection(this.testResults.testsWithStderr, 'stderr-table'));
 
         if (this.testResults.flakyPassTests.length)
-            this.containerElement.appendChild(this.buildOneSection(this.testResults.flakyPassTests, FlakyPassTestsSectionBuilder));
+            this.containerElement.appendChild(this.buildOneSection(this.testResults.flakyPassTests, 'flaky-tests-table'));
 
         if (this.testResults.usesExpectationsFile() && this.testResults.unexpectedPassTests.length)
-            this.containerElement.appendChild(this.buildOneSection(this.testResults.unexpectedPassTests, UnexpectedPassTestsSectionBuilder));
+            this.containerElement.appendChild(this.buildOneSection(this.testResults.unexpectedPassTests, 'passes-table'));
 
         if (this.testResults.hasHttpTests) {
             let httpdAccessLogLink = document.createElement('p');
@@ -624,6 +633,21 @@ class TestResultsController
         }
         
         this.updateTestlistCounts();
+    }
+
+    static sectionBuilderClassForTableID(tableID)
+    {
+        const idToBuilderClassMap = {
+            'crash-tests-table' : CrashingTestsSectionBuilder,
+            'other-crash-tests-table' : OtherCrashesSectionBuilder,
+            'results-table' : FailingTestsSectionBuilder,
+            'missing-table' : TestsWithMissingResultsSectionBuilder,
+            'timeout-tests-table' : TimedOutTestsSectionBuilder,
+            'stderr-table' : TestsWithStdErrSectionBuilder,
+            'flaky-tests-table' : FlakyPassTestsSectionBuilder,
+            'passes-table' : UnexpectedPassTestsSectionBuilder,
+        };
+        return idToBuilderClassMap[tableID];
     }
     
     setupSorting()
@@ -662,11 +686,12 @@ class TestResultsController
             Utils.parentOfType(document.getElementById('unexpected-results'), 'label').style.display = 'none';
     }
 
-    buildOneSection(tests, sectionBuilderClass)
+    buildOneSection(tests, tableID)
     {
         TestResults.sortByName(tests);
         
-        let sectionBuilder = new sectionBuilderClass(tests, this);
+        let sectionBuilderClass = TestResultsController.sectionBuilderClassForTableID(tableID);
+        let sectionBuilder = new sectionBuilderClass(tests, tableID, this);
         return sectionBuilder.build();
     }
 
@@ -789,6 +814,11 @@ class TestResultsController
         return '<a class=test-link onclick="controller.checkServerIsRunning(event)" href="' + this.layoutTestURL(testResult) + '">' + testResult.name + '</a><span class=flag onclick="controller.unflag(this)"> \u2691</span>';
     }
     
+    expandButtonSpan()
+    {
+        return '<span class=expand-button onclick="controller.toggleExpectations(this)"><span class=expand-button-text>+</span></span>';
+    }
+    
     static resultLink(testPrefix, suffix, contents)
     {
         return '<a class=result-link href="' + testPrefix + suffix + '" data-prefix="' + testPrefix + '">' + contents + '</a> ';
@@ -881,26 +911,11 @@ class TestResultsController
             this._updateExpandedState(existingResultsRow, true);
             return;
         }
-    
-        let newRow = document.createElement('tr');
-        newRow.className = 'results-row';
-        let newCell = document.createElement('td');
-        newCell.colSpan = row.querySelectorAll('td').length;
 
-        let resultLinks = row.querySelectorAll('.result-link');
-        let hasTogglingImages = false;
-        for (let link of resultLinks) {
-            let result;
-            if (link.textContent == 'images') {
-                hasTogglingImages = true;
-                result = TestResultsController._togglingImage(link.getAttribute('data-prefix'));
-            } else
-                result = TestResultsController._resultIframe(link.href);
+        let testName = row.getAttribute('data-test-name');
+        let testResult = this.testResults.testWithName(testName);
 
-            Utils.appendHTML(newCell, result);    
-        }
-
-        newRow.appendChild(newCell);
+        let newRow = TestResultsController._buildExpandedRowForTest(testResult, row);
         parentTbody.appendChild(newRow);
 
         this._updateExpandedState(newRow, true);
@@ -982,6 +997,31 @@ class TestResultsController
 
         this.updateTestlistCounts();
         testNavigator.onlyShowUnexpectedFailuresChanged();
+    }
+
+    static _buildExpandedRowForTest(testResult, row)
+    {
+        let newRow = document.createElement('tr');
+        newRow.className = 'results-row';
+        let newCell = document.createElement('td');
+        newCell.colSpan = row.querySelectorAll('td').length;
+
+        // FIXME: migrate more of code to using testResult for building the expanded content.
+        let resultLinks = row.querySelectorAll('.result-link');
+        let hasTogglingImages = false;
+        for (let link of resultLinks) {
+            let result;
+            if (link.textContent == 'images') {
+                hasTogglingImages = true;
+                result = TestResultsController._togglingImage(link.getAttribute('data-prefix'));
+            } else
+                result = TestResultsController._resultIframe(link.href);
+
+            Utils.appendHTML(newCell, result);    
+        }
+
+        newRow.appendChild(newCell);
+        return newRow;
     }
 
     static _resultIframe(src)
@@ -1069,11 +1109,12 @@ class TestResultsController
 
 class SectionBuilder {
     
-    constructor(tests, resultsController)
+    constructor(tests, tableID, resultsController)
     {
         this._tests = tests;
         this._table = null;
         this._resultsController = resultsController;
+        this._tableID = tableID;
     }
 
     build()
@@ -1110,8 +1151,9 @@ class SectionBuilder {
             tbody.classList.add('expected');
         
         let row = document.createElement('tr');
+        row.setAttribute('data-test-name', testResult.name);
         tbody.appendChild(row);
-        
+
         let testNameCell = document.createElement('td');
         this.fillTestCell(testResult, testNameCell);
         row.appendChild(testNameCell);
@@ -1138,7 +1180,13 @@ class SectionBuilder {
     
     fillTestCell(testResult, cell)
     {
-        cell.innerHTML = '<span class=expand-button onclick="controller.toggleExpectations(this)"><span class=expand-button-text>+</span></span>' + this._resultsController.testLink(testResult);
+        let testLink = this.linkifyTestName() ? this._resultsController.testLink(testResult) : testResult.name;
+        if (this.rowsAreExpandable()) {
+            cell.innerHTML = this._resultsController.expandButtonSpan() + testLink;
+            return;
+        }
+
+        cell.innerHTML = testLink;
     }
 
     fillTestResultCell(testResult, cell)
@@ -1152,7 +1200,21 @@ class SectionBuilder {
         return historyCell;
     }
     
-    tableID() { return ''; }
+    tableID()
+    {
+        return this._tableID;
+    }
+    
+    rowsAreExpandable()
+    {
+        return true;
+    }
+    
+    linkifyTestName()
+    {
+        return true;
+    }
+
     sectionTitle() { return ''; }
 };
 
@@ -1185,6 +1247,7 @@ class FailuresSectionBuilder extends SectionBuilder {
             tbody.setAttribute('mismatchreftest', 'true');
 
         let row = document.createElement('tr');
+        row.setAttribute('data-test-name', testResult.name);
         tbody.appendChild(row);
         
         let testNameCell = document.createElement('td');
@@ -1290,22 +1353,23 @@ class FailuresSectionBuilder extends SectionBuilder {
 };
 
 class FailingTestsSectionBuilder extends FailuresSectionBuilder {
-    tableID() { return 'results-table'; }
     sectionTitle() { return 'Tests that failed text/pixel/audio diff'; }
 };
 
 class TestsWithMissingResultsSectionBuilder extends FailuresSectionBuilder {
-    tableID() { return 'missing-table'; }
     sectionTitle() { return 'Tests that had no expected results (probably new)'; }
+
+    rowsAreExpandable()
+    {
+        return false;
+    }
 };
 
 class FlakyPassTestsSectionBuilder extends FailuresSectionBuilder {
-    tableID() { return 'flaky-tests-table'; }
     sectionTitle() { return 'Flaky tests (failed the first run and passed on retry)'; }
 };
 
 class UnexpectedPassTestsSectionBuilder extends SectionBuilder {
-    tableID() { return 'passes-table'; }
     sectionTitle() { return 'Tests expected to fail but passed'; }
 
     addTableHeader()
@@ -1315,20 +1379,18 @@ class UnexpectedPassTestsSectionBuilder extends SectionBuilder {
         this._table.appendChild(header);
     }
     
-    fillTestCell(testResult, cell)
-    {
-        cell.innerHTML = '<a class=test-link onclick="controller.checkServerIsRunning(event)" href="' + this._resultsController.layoutTestURL(testResult) + '">' + testResult.name + '</a><span class=flag onclick="controller.unflag(this)"> \u2691</span>';
-    }
-
     fillTestResultCell(testResult, cell)
     {
         cell.innerHTML = testResult.info.expected;
     }
+
+    rowsAreExpandable()
+    {
+        return false;
+    }
 };
 
-
 class TestsWithStdErrSectionBuilder extends SectionBuilder {
-    tableID() { return 'stderr-table'; }
     sectionTitle() { return 'Tests that had stderr output'; }
     hideWhenShowingUnexpectedResultsOnly() { return false; }
 
@@ -1339,7 +1401,6 @@ class TestsWithStdErrSectionBuilder extends SectionBuilder {
 };
 
 class TimedOutTestsSectionBuilder extends SectionBuilder {
-    tableID() { return 'timeout-tests-table'; }
     sectionTitle() { return 'Tests that timed out'; }
 
     fillTestResultCell(testResult, cell)
@@ -1350,7 +1411,6 @@ class TimedOutTestsSectionBuilder extends SectionBuilder {
 };
 
 class CrashingTestsSectionBuilder extends SectionBuilder {
-    tableID() { return 'crash-tests-table'; }
     sectionTitle() { return 'Tests that crashed'; }
 
     fillTestResultCell(testResult, cell)
@@ -1361,13 +1421,7 @@ class CrashingTestsSectionBuilder extends SectionBuilder {
 };
 
 class OtherCrashesSectionBuilder extends SectionBuilder {
-    tableID() { return 'other-crash-tests-table'; }
     sectionTitle() { return 'Other crashes'; }
-    fillTestCell(testResult, cell)
-    {
-        cell.innerHTML = '<span class=expand-button onclick="controller.toggleExpectations(this)"><span class=expand-button-text>+</span></span>' + testResult.name;
-    }
-
     fillTestResultCell(testResult, cell)
     {
         cell.innerHTML = TestResultsController.resultLink(Utils.stripExtension(testResult.name), '-crash-log.txt', 'crash log');
@@ -1376,6 +1430,11 @@ class OtherCrashesSectionBuilder extends SectionBuilder {
     createHistoryCell(testResult)
     {
         return null;
+    }
+
+    linkifyTestName()
+    {
+        return false;
     }
 };
 
