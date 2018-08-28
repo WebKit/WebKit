@@ -1,3 +1,17 @@
+2018-08-28  Daniel Bates  <dabates@apple.com>
+
+        lldb-webkit: KeyError thrown for OptionSet
+        https://bugs.webkit.org/show_bug.cgi?id=189062
+
+        Reviewed by Simon Fraser.
+
+        For some reason lldb(1) may not retrieve the enumerator names for an enum value
+        when it calls update() on the synthetic children provider. If this occurs then
+        bail out as we cannot compute what enumerators are in the set.
+
+        * lldb/lldb_webkit.py:
+        (WTFOptionSetProvider.update):
+
 2018-08-28  Sihui Liu  <sihui_liu@apple.com>
 
         Add error information to help debug test failure in WKNavigation.ProcessCrashDuringCallback

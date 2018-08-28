@@ -616,6 +616,8 @@ class WTFOptionSetProvider:
 
         template_argument_sbType = self.valobj.GetType().GetTemplateArgumentType(0)
         enumerator_value_to_name_map = {sbTypeEnumMember.GetValueAsUnsigned(): sbTypeEnumMember.GetName() for sbTypeEnumMember in template_argument_sbType.get_enum_members_array()}
+        if not enumerator_value_to_name_map:
+            return
 
         # Iterate from least significant bit to most significant bit.
         elements = []
