@@ -11,6 +11,9 @@ PASS textarea.getAttribute("inputmode") is "foobar"
 PASS textarea.setAttribute("inputmode", "baz"); textarea.inputMode is ""
 
 Valid values:
+PASS textarea.inputMode = "none"; textarea.inputMode is "none"
+PASS textarea.getAttribute("inputmode") is "none"
+PASS textarea.setAttribute("inputmode", "none"); textarea.inputMode is "none"
 PASS textarea.inputMode = "text"; textarea.inputMode is "text"
 PASS textarea.getAttribute("inputmode") is "text"
 PASS textarea.setAttribute("inputmode", "text"); textarea.inputMode is "text"

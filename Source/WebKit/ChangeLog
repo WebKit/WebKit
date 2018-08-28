@@ -1,3 +1,27 @@
+2018-08-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Support inputmode=none
+        https://bugs.webkit.org/show_bug.cgi?id=188896
+
+        Reviewed by Tim Horton.
+
+        inputmode=none is used by content that renders its own keyboard control.
+        Consequently, we should not display the virtual keyboard when a user interacts
+        with an element that has the inputmode attribute set to the "none" value.
+
+        In order to achieve this behavior, we return a UIView with a bounds of CGRectZero
+        as the inputView of the WKContentView when inputmode=none is present. Furthermore,
+        we do not provide an accessory view in this case.
+
+        Updated the logic that zooms and scrolls to a control when it gains focus, as that
+        behavior currently relies on an accessory view being present.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _displayFormNodeInputView]):
+        (-[WKContentView inputView]):
+        (-[WKContentView requiresAccessoryView]):
+        (-[WKContentView textInputTraits]):
+
 2018-08-27  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Enable Proxy Authentication on WebKit.

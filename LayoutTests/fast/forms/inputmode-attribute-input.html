@@ -18,6 +18,9 @@ shouldBe('input.setAttribute("inputmode", "baz"); input.inputMode', '""');
 
 debug('');
 debug('Valid values:');
+shouldBe('input.inputMode = "none"; input.inputMode', '"none"');
+shouldBe('input.getAttribute("inputmode")', '"none"');
+shouldBe('input.setAttribute("inputmode", "none"); input.inputMode', '"none"');
 shouldBe('input.inputMode = "text"; input.inputMode', '"text"');
 shouldBe('input.getAttribute("inputmode")', '"text"');
 shouldBe('input.setAttribute("inputmode", "text"); input.inputMode', '"text"');

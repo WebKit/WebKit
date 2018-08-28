@@ -1305,7 +1305,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         minimumScale:_assistedNodeInformation.minimumScaleFactor
         maximumScale:_assistedNodeInformation.maximumScaleFactorIgnoringAlwaysScalable
         allowScaling:_assistedNodeInformation.allowsUserScalingIgnoringAlwaysScalable && !currentUserInterfaceIdiomIsPad()
-        forceScroll:[self requiresAccessoryView]];
+        forceScroll:(_assistedNodeInformation.inputMode == InputMode::None) ? !currentUserInterfaceIdiomIsPad() : [self requiresAccessoryView]];
 
     _didAccessoryTabInitiateFocus = NO;
     [self _ensureFormAccessoryView];
@@ -1316,6 +1316,9 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 {
     if (!hasAssistedNode(_assistedNodeInformation))
         return nil;
+
+    if (_assistedNodeInformation.inputMode == InputMode::None)
+        return [[UIView new] autorelease];
 
     if (!_inputPeripheral) {
         switch (_assistedNodeInformation.elementType) {
@@ -2054,6 +2057,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 - (BOOL)requiresAccessoryView
 {
     if ([_formInputSession accessoryViewShouldNotShow])
+        return NO;
+
+    if (_assistedNodeInformation.inputMode == InputMode::None)
         return NO;
 
     switch (_assistedNodeInformation.elementType) {
@@ -3584,6 +3590,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 #endif
             [_traits setKeyboardType:UIKeyboardTypeDefault];
         }
+        break;
+    case InputMode::None:
         break;
     case InputMode::Text:
         [_traits setKeyboardType:UIKeyboardTypeDefault];

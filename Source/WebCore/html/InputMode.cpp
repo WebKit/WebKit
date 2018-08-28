@@ -32,6 +32,8 @@ namespace WebCore {
 
 InputMode inputModeForAttributeValue(const AtomicString& value)
 {
+    if (equalIgnoringASCIICase(value, InputModeNames::none()))
+        return InputMode::None;
     if (equalIgnoringASCIICase(value, InputModeNames::text()))
         return InputMode::Text;
     if (equalIgnoringASCIICase(value, InputModeNames::tel()))
@@ -55,6 +57,8 @@ const AtomicString& stringForInputMode(InputMode mode)
     switch (mode) {
     case InputMode::Unspecified:
         return emptyAtom();
+    case InputMode::None:
+        return InputModeNames::none();
     case InputMode::Text:
         return InputModeNames::text();
     case InputMode::Telephone:
@@ -75,6 +79,12 @@ const AtomicString& stringForInputMode(InputMode mode)
 }
 
 namespace InputModeNames {
+
+const AtomicString& none()
+{
+    static NeverDestroyed<AtomicString> mode("none", AtomicString::ConstructFromLiteral);
+    return mode;
+}
 
 const AtomicString& text()
 {

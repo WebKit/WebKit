@@ -18,6 +18,9 @@ shouldBe('textarea.setAttribute("inputmode", "baz"); textarea.inputMode', '""');
 
 debug('');
 debug('Valid values:');
+shouldBe('textarea.inputMode = "none"; textarea.inputMode', '"none"');
+shouldBe('textarea.getAttribute("inputmode")', '"none"');
+shouldBe('textarea.setAttribute("inputmode", "none"); textarea.inputMode', '"none"');
 shouldBe('textarea.inputMode = "text"; textarea.inputMode', '"text"');
 shouldBe('textarea.getAttribute("inputmode")', '"text"');
 shouldBe('textarea.setAttribute("inputmode", "text"); textarea.inputMode', '"text"');

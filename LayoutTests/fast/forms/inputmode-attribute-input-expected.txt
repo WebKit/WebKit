@@ -11,6 +11,9 @@ PASS input.getAttribute("inputmode") is "foobar"
 PASS input.setAttribute("inputmode", "baz"); input.inputMode is ""
 
 Valid values:
+PASS input.inputMode = "none"; input.inputMode is "none"
+PASS input.getAttribute("inputmode") is "none"
+PASS input.setAttribute("inputmode", "none"); input.inputMode is "none"
 PASS input.inputMode = "text"; input.inputMode is "text"
 PASS input.getAttribute("inputmode") is "text"
 PASS input.setAttribute("inputmode", "text"); input.inputMode is "text"

@@ -111,6 +111,25 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static activateFormControl(element)
+    {
+        if (!this.isWebKit2() || !this.isIOS())
+            return this.activateElement(element);
+
+        const x = element.offsetLeft + element.offsetWidth / 2;
+        const y = element.offsetTop + element.offsetHeight / 2;
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    uiController.didStartFormControlInteractionCallback = function() {
+                        uiController.uiScriptComplete("Done");
+                    };
+                    uiController.singleTapAtPoint(${x}, ${y}, function() { });
+                })()`, resolve);
+        });
+    }
+
     static waitForKeyboardToHide()
     {
         return new Promise(resolve => {
@@ -299,5 +318,19 @@ window.UIHelper = class UIHelper {
         const [escapedNewText, escapedOldText] = [newText.replace(/`/g, "\\`"), oldText.replace(/`/g, "\\`")];
         const uiScript = `uiController.applyAutocorrection(\`${escapedNewText}\`, \`${escapedOldText}\`, () => uiController.uiScriptComplete())`;
         return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
+    }
+
+    static inputViewBounds()
+    {
+        if (!this.isWebKit2() || !this.isIOS())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.uiScriptComplete(JSON.stringify(uiController.inputViewBounds));
+            })()`, jsonString => {
+                resolve(JSON.parse(jsonString));
+            });
+        });
     }
 }

@@ -10,6 +10,9 @@ PASS editor.getAttribute("inputmode") is "foobar"
 PASS editor.setAttribute("inputmode", "baz"); editor.inputMode is ""
 
 Valid values:
+PASS editor.inputMode = "none"; editor.inputMode is "none"
+PASS editor.getAttribute("inputmode") is "none"
+PASS editor.setAttribute("inputmode", "none"); editor.inputMode is "none"
 PASS editor.inputMode = "text"; editor.inputMode is "text"
 PASS editor.getAttribute("inputmode") is "text"
 PASS editor.setAttribute("inputmode", "text"); editor.inputMode is "text"

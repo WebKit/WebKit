@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body onload="runTest()">
+<input id="input-keyboard" inputmode="text">
+<input id="input-nokeyboard" inputmode="none">
+<script>
+jsTestIsAsync = true;
+
+async function runTest() {
+    inputWithSystemKeyboard = document.getElementById("input-keyboard");
+    inputWithoutSystemKeyboard = document.getElementById("input-nokeyboard");
+
+    description('This test verifies that the system keyboard is not visible when tapping on an input field with inputmode=none.');
+
+    debug('\nACTIVATE input with inputmode=text');
+    await UIHelper.activateFormControl(inputWithSystemKeyboard);
+    systemKeyboardRect = await UIHelper.inputViewBounds();
+    shouldBe('systemKeyboardRect.height > 0', 'true');
+    await UIHelper.enterText("Text");
+    shouldBe('inputWithSystemKeyboard.value', '"Text"');
+
+    debug('\nACTIVATE input with inputmode=none');
+    await UIHelper.activateFormControl(inputWithoutSystemKeyboard);
+    systemKeyboardRect = await UIHelper.inputViewBounds();
+    shouldBe('systemKeyboardRect.height === 0', 'true');
+
+    debug('\nTEST enter text in input with inputmode=none');
+    await UIHelper.enterText("None");
+    shouldBe('inputWithoutSystemKeyboard.value', '"None"');
+
+    debug('\nTEST selection in input with inputmode=none');
+    inputWithoutSystemKeyboard.setSelectionRange(0, inputWithSystemKeyboard.value.length);
+    selectionRects = await UIHelper.getUISelectionRects();
+    shouldBe('selectionRects.length', '1');
+    shouldBe('selectionRects[0].left', '159');
+    shouldBe('selectionRects[0].top', '261');
+    shouldBe('selectionRects[0].width', '28');
+    shouldBe('selectionRects[0].height', '15');
+
+    debug('');
+    finishJSTest();
+}
+</script>
+</body>
+</html>

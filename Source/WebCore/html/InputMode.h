@@ -31,6 +31,7 @@ namespace WebCore {
 
 enum class InputMode : uint8_t {
     Unspecified,
+    None,
     Text,
     Telephone,
     Url,
@@ -45,6 +46,7 @@ const AtomicString& stringForInputMode(InputMode);
 
 namespace InputModeNames {
 
+const AtomicString& none();
 const AtomicString& text();
 const AtomicString& tel();
 const AtomicString& url();

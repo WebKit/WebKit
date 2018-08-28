@@ -1,0 +1,27 @@
+This test verifies that the system keyboard is not visible when tapping on an input field with inputmode=none.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+ACTIVATE input with inputmode=text
+PASS systemKeyboardRect.height > 0 is true
+PASS inputWithSystemKeyboard.value is "Text"
+
+ACTIVATE input with inputmode=none
+PASS systemKeyboardRect.height === 0 is true
+
+TEST enter text in input with inputmode=none
+PASS inputWithoutSystemKeyboard.value is "None"
+
+TEST selection in input with inputmode=none
+PASS selectionRects.length is 1
+PASS selectionRects[0].left is 159
+PASS selectionRects[0].top is 261
+PASS selectionRects[0].width is 28
+PASS selectionRects[0].height is 15
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 
