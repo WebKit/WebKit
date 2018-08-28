@@ -33,15 +33,15 @@
 #include "RealtimeOutgoingVideoSource.h"
 #include <Timer.h>
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 
 #include <webrtc/api/jsep.h>
 #include <webrtc/api/peerconnectioninterface.h>
 #include <webrtc/pc/peerconnectionfactory.h>
 #include <webrtc/pc/rtcstatscollector.h>
 
-#pragma clang diagnostic pop
+#pragma GCC diagnostic pop
 
 #include <wtf/LoggerHelper.h>
 #include <wtf/ThreadSafeRefCounted.h>

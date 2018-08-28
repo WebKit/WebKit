@@ -1,3 +1,24 @@
+2018-08-28  Alejandro G. Castro  <alex@igalia.com>
+
+        Fix gcc compilation warnings after r235230
+        https://bugs.webkit.org/show_bug.cgi?id=188981
+
+        Reviewed by Eric Carlson.
+
+        Replace the pragma clang with pragma GCC, it is understood by
+        clang and gcc.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * platform/mediastream/RealtimeIncomingAudioSource.h:
+        * platform/mediastream/RealtimeIncomingVideoSource.h:
+        * platform/mediastream/RealtimeOutgoingAudioSource.h:
+        * platform/mediastream/RealtimeOutgoingVideoSource.h:
+        * platform/mediastream/libwebrtc/LibWebRTCAudioModule.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+        * testing/MockLibWebRTCPeerConnection.h:
+
 2018-08-27  Justin Fan  <justin_fan@apple.com>
 
         WebGL 2 conformance: framebuffer-test

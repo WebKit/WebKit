@@ -29,14 +29,14 @@
 
 #include "LibWebRTCMacros.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 
 #include <webrtc/modules/audio_device/include/audio_device.h>
 #include <webrtc/rtc_base/messagehandler.h>
 #include <webrtc/rtc_base/thread.h>
 
-#pragma clang diagnostic pop
+#pragma GCC diagnostic pop
 
 namespace WebCore {
 
