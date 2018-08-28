@@ -641,9 +641,7 @@ void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& 
 void NetworkResourceLoader::didFinishWithRedirectResponse(ResourceResponse&& redirectResponse)
 {
     redirectResponse.setType(ResourceResponse::Type::Opaqueredirect);
-    didReceiveResponse(WTFMove(redirectResponse), [](auto action) {
-        ASSERT_UNUSED(action, action == PolicyAction::Use);
-    });
+    didReceiveResponse(WTFMove(redirectResponse), [] (auto) { });
 
     WebCore::NetworkLoadMetrics networkLoadMetrics;
     networkLoadMetrics.markComplete();
