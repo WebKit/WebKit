@@ -1,5 +1,11 @@
 2018-08-28  Alex Christensen  <achristensen@webkit.org>
 
+        Fix 32-bit Mac build.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RestoreSessionStateWithoutNavigation.mm:
+
+2018-08-28  Alex Christensen  <achristensen@webkit.org>
+
         REGRESSION (r235391): [iOS] TestWebKitAPI.WebKit.RestoreSessionStateWithoutNavigation is timing out
         https://bugs.webkit.org/show_bug.cgi?id=189050
 
