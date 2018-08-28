@@ -1,3 +1,12 @@
+2018-08-28  David Fenton  <david_fenton@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-storage-match.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=187935
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2018-08-28  Truitt Savell  <tsavell@apple.com>
 
         Moving test expectations for webkit.org/b/188985 from mac-wk2 to General test expectations due to failing on iOS.
