@@ -30,6 +30,8 @@
 
 #import <CoreGraphics/CGGeometry.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class JSContext;
 
 /*!
@@ -48,7 +50,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @interface JSValue : NSObject
 
 #if (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED < JSC_MAC_VERSION_TBA) || (defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && __IPHONE_OS_VERSION_MIN_REQUIRED < JSC_IOS_VERSION_TBA)
-typedef NSString * _Nonnull JSValueProperty;
+typedef NSString * JSValueProperty;
 #else
 typedef id _Nullable JSValueProperty;
 #endif
@@ -57,7 +59,7 @@ typedef id _Nullable JSValueProperty;
 @property
 @abstract The JSContext that this value originates from.
 */
-@property (readonly, strong, nonnull) JSContext *context;
+@property (readonly, strong) JSContext *context;
 
 /*!
 @methodgroup Creating JavaScript Values
@@ -69,7 +71,7 @@ typedef id _Nullable JSValueProperty;
 @param value The Objective-C object to be converted.
 @result The new JSValue.
 */
-+ (nonnull JSValue *)valueWithObject:(nullable id)value inContext:(nonnull JSContext *)context;
++ (JSValue *)valueWithObject:(nullable id)value inContext:(JSContext *)context;
 
 /*!
 @method
@@ -77,7 +79,7 @@ typedef id _Nullable JSValueProperty;
 @param context The JSContext in which the resulting JSValue will be created.
 @result The new JSValue representing the equivalent boolean value.
 */
-+ (nonnull JSValue *)valueWithBool:(BOOL)value inContext:(nonnull JSContext *)context;
++ (JSValue *)valueWithBool:(BOOL)value inContext:(JSContext *)context;
 
 /*!
 @method
@@ -85,7 +87,7 @@ typedef id _Nullable JSValueProperty;
 @param context The JSContext in which the resulting JSValue will be created.
 @result The new JSValue representing the equivalent boolean value.
 */
-+ (nonnull JSValue *)valueWithDouble:(double)value inContext:(nonnull JSContext *)context;
++ (JSValue *)valueWithDouble:(double)value inContext:(JSContext *)context;
 
 /*!
 @method
@@ -93,7 +95,7 @@ typedef id _Nullable JSValueProperty;
 @param context The JSContext in which the resulting JSValue will be created.
 @result The new JSValue representing the equivalent boolean value.
 */
-+ (nonnull JSValue *)valueWithInt32:(int32_t)value inContext:(nonnull JSContext *)context;
++ (JSValue *)valueWithInt32:(int32_t)value inContext:(JSContext *)context;
 
 /*!
 @method
@@ -101,7 +103,7 @@ typedef id _Nullable JSValueProperty;
 @param context The JSContext in which the resulting JSValue will be created.
 @result The new JSValue representing the equivalent boolean value.
 */
-+ (nonnull JSValue *)valueWithUInt32:(uint32_t)value inContext:(nonnull JSContext *)context;
++ (JSValue *)valueWithUInt32:(uint32_t)value inContext:(JSContext *)context;
 
 /*!
 @method
@@ -109,7 +111,7 @@ typedef id _Nullable JSValueProperty;
 @param context The JSContext in which the resulting object will be created.
 @result The new JavaScript object.
 */
-+ (nonnull JSValue *)valueWithNewObjectInContext:(nonnull JSContext *)context;
++ (JSValue *)valueWithNewObjectInContext:(JSContext *)context;
 
 /*!
 @method
@@ -117,7 +119,7 @@ typedef id _Nullable JSValueProperty;
 @param context The JSContext in which the resulting array will be created.
 @result The new JavaScript array.
 */
-+ (nonnull JSValue *)valueWithNewArrayInContext:(nonnull JSContext *)context;
++ (JSValue *)valueWithNewArrayInContext:(JSContext *)context;
 
 /*!
 @method
@@ -127,7 +129,7 @@ typedef id _Nullable JSValueProperty;
 @param context The JSContext in which the resulting regular expression object will be created.
 @result The new JavaScript regular expression object.
 */
-+ (nonnull JSValue *)valueWithNewRegularExpressionFromPattern:(nonnull NSString *)pattern flags:(nonnull NSString *)flags inContext:(nonnull JSContext *)context;
++ (JSValue *)valueWithNewRegularExpressionFromPattern:(NSString *)pattern flags:(NSString *)flags inContext:(JSContext *)context;
 
 /*!
 @method
@@ -136,7 +138,7 @@ typedef id _Nullable JSValueProperty;
 @param context The JSContext in which the resulting error object will be created.
 @result The new JavaScript error object.
 */
-+ (nonnull JSValue *)valueWithNewErrorFromMessage:(nonnull NSString *)message inContext:(nonnull JSContext *)context;
++ (JSValue *)valueWithNewErrorFromMessage:(NSString *)message inContext:(JSContext *)context;
 
 /*!
 @method
@@ -144,7 +146,7 @@ typedef id _Nullable JSValueProperty;
 @param context The JSContext to which the resulting JSValue belongs.
 @result The JSValue representing the JavaScript value <code>null</code>.
 */
-+ (nonnull JSValue *)valueWithNullInContext:(nonnull JSContext *)context;
++ (JSValue *)valueWithNullInContext:(JSContext *)context;
 
 /*!
 @method
@@ -152,7 +154,7 @@ typedef id _Nullable JSValueProperty;
 @param context The JSContext to which the resulting JSValue belongs.
 @result The JSValue representing the JavaScript value <code>undefined</code>.
 */
-+ (nonnull JSValue *)valueWithUndefinedInContext:(nonnull JSContext *)context;
++ (JSValue *)valueWithUndefinedInContext:(JSContext *)context;
 
 /*!
  @method
@@ -161,7 +163,7 @@ typedef id _Nullable JSValueProperty;
  @param context The JSContext to which the resulting JSValue belongs.
  @result The JSValue representing a unique JavaScript value with type symbol.
  */
-+ (nonnull JSValue *)valueWithNewSymbolFromDescription:(nonnull NSString *)description inContext:(nonnull JSContext *)context JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
++ (JSValue *)valueWithNewSymbolFromDescription:(NSString *)description inContext:(JSContext *)context JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 /*!
 @methodgroup Converting to Objective-C Types
@@ -225,7 +227,7 @@ typedef id _Nullable JSValueProperty;
  If the result is not of the specified Class then <code>nil</code> will be returned.
 @result An Objective-C object of the specified Class or <code>nil</code>.
 */
-- (nullable id)toObjectOfClass:(nonnull Class)expectedClass;
+- (nullable id)toObjectOfClass:(Class)expectedClass;
 
 /*!
 @method
@@ -328,7 +330,7 @@ typedef id _Nullable JSValueProperty;
  if the property does not exist.
 @discussion Corresponds to the JavaScript operation <code>object[property]</code>. After macOS TBA and iOS TBA, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS TBA and iOS TBA, 'property' was expected to be an NSString *.
 */
-- (nonnull JSValue *)valueForProperty:(JSValueProperty)property;
+- (JSValue *)valueForProperty:(JSValueProperty)property;
 
 /*!
 @method
@@ -368,7 +370,7 @@ typedef id _Nullable JSValueProperty;
 @result The JSValue for the property at the specified index. 
  Returns the JavaScript value <code>undefined</code> if no property exists at that index. 
 */
-- (nonnull JSValue *)valueAtIndex:(NSUInteger)index;
+- (JSValue *)valueAtIndex:(NSUInteger)index;
 
 /*!
 @method
@@ -471,7 +473,7 @@ typedef id _Nullable JSValueProperty;
 @param arguments The arguments to pass to the function.
 @result The return value of the function call. 
 */
-- (nonnull JSValue *)callWithArguments:(nullable NSArray *)arguments;
+- (JSValue *)callWithArguments:(nullable NSArray *)arguments;
 
 /*!
 @method
@@ -480,7 +482,7 @@ typedef id _Nullable JSValueProperty;
 @param arguments The arguments to pass to the constructor.
 @result The return value of the constructor call.
 */
-- (nonnull JSValue *)constructWithArguments:(nullable NSArray *)arguments;
+- (JSValue *)constructWithArguments:(nullable NSArray *)arguments;
 
 /*!
 @method
@@ -492,7 +494,7 @@ typedef id _Nullable JSValueProperty;
 @param arguments The arguments to pass to the method.
 @result The return value of the method call.
 */
-- (nonnull JSValue *)invokeMethod:(nonnull NSString *)method withArguments:(nullable NSArray *)arguments;
+- (JSValue *)invokeMethod:(NSString *)method withArguments:(nullable NSArray *)arguments;
 
 @end
 
@@ -515,7 +517,7 @@ typedef id _Nullable JSValueProperty;
 @result A newly allocated JavaScript object containing properties
  named <code>x</code> and <code>y</code>, with values from the CGPoint.
 */
-+ (nonnull JSValue *)valueWithPoint:(CGPoint)point inContext:(nonnull JSContext *)context;
++ (JSValue *)valueWithPoint:(CGPoint)point inContext:(JSContext *)context;
 
 /*!
 @method
@@ -523,7 +525,7 @@ typedef id _Nullable JSValueProperty;
 @result A newly allocated JavaScript object containing properties
  named <code>location</code> and <code>length</code>, with values from the NSRange.
 */
-+ (nonnull JSValue *)valueWithRange:(NSRange)range inContext:(nonnull JSContext *)context;
++ (JSValue *)valueWithRange:(NSRange)range inContext:(JSContext *)context;
 
 /*!
 @method
@@ -532,7 +534,7 @@ Create a JSValue from a CGRect.
 @result A newly allocated JavaScript object containing properties
  named <code>x</code>, <code>y</code>, <code>width</code>, and <code>height</code>, with values from the CGRect.
 */
-+ (nonnull JSValue *)valueWithRect:(CGRect)rect inContext:(nonnull JSContext *)context;
++ (JSValue *)valueWithRect:(CGRect)rect inContext:(JSContext *)context;
 
 /*!
 @method
@@ -540,7 +542,7 @@ Create a JSValue from a CGRect.
 @result A newly allocated JavaScript object containing properties
  named <code>width</code> and <code>height</code>, with values from the CGSize.
 */
-+ (nonnull JSValue *)valueWithSize:(CGSize)size inContext:(nonnull JSContext *)context;
++ (JSValue *)valueWithSize:(CGSize)size inContext:(JSContext *)context;
 
 /*!
 @method
@@ -601,8 +603,8 @@ Create a JSValue from a CGRect.
 */
 @interface JSValue (SubscriptSupport)
 
-- (nonnull JSValue *)objectForKeyedSubscript:(JSValueProperty)key;
-- (nonnull JSValue *)objectAtIndexedSubscript:(NSUInteger)index;
+- (JSValue *)objectForKeyedSubscript:(JSValueProperty)key;
+- (JSValue *)objectAtIndexedSubscript:(NSUInteger)index;
 - (void)setObject:(nullable id)object forKeyedSubscript:(JSValueProperty)key;
 - (void)setObject:(nullable id)object atIndexedSubscript:(NSUInteger)index;
 
@@ -619,14 +621,14 @@ Create a JSValue from a CGRect.
 @abstract Creates a JSValue, wrapping its C API counterpart.
 @result The Objective-C API equivalent of the specified JSValueRef.
 */
-+ (nonnull JSValue *)valueWithJSValueRef:(nonnull JSValueRef)value inContext:(nonnull JSContext *)context;
++ (JSValue *)valueWithJSValueRef:(JSValueRef)value inContext:(JSContext *)context;
 
 /*!
 @property
 @abstract Returns the C API counterpart wrapped by a JSContext.
 @result The C API equivalent of this JSValue.
 */
-@property (readonly, nonnull) JSValueRef JSValueRef;
+@property (readonly) JSValueRef JSValueRef;
 @end
 
 #ifdef __cplusplus
@@ -665,31 +667,33 @@ extern "C" {
 /*!
 @const 
 */
-JS_EXPORT extern NSString * const _Nonnull JSPropertyDescriptorWritableKey;
+JS_EXPORT extern NSString * const JSPropertyDescriptorWritableKey;
 /*!
 @const 
 */
-JS_EXPORT extern NSString * const _Nonnull JSPropertyDescriptorEnumerableKey;
+JS_EXPORT extern NSString * const JSPropertyDescriptorEnumerableKey;
 /*!
 @const 
 */
-JS_EXPORT extern NSString * const _Nonnull JSPropertyDescriptorConfigurableKey;
+JS_EXPORT extern NSString * const JSPropertyDescriptorConfigurableKey;
 /*!
 @const 
 */
-JS_EXPORT extern NSString * const _Nonnull JSPropertyDescriptorValueKey;
+JS_EXPORT extern NSString * const JSPropertyDescriptorValueKey;
 /*!
 @const 
 */
-JS_EXPORT extern NSString * const _Nonnull JSPropertyDescriptorGetKey;
+JS_EXPORT extern NSString * const JSPropertyDescriptorGetKey;
 /*!
 @const 
 */
-JS_EXPORT extern NSString * const _Nonnull JSPropertyDescriptorSetKey;
+JS_EXPORT extern NSString * const JSPropertyDescriptorSetKey;
 
 #ifdef __cplusplus
 } // extern "C"
 #endif
+
+NS_ASSUME_NONNULL_END
 
 #endif
 
