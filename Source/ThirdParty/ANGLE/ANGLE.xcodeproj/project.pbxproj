@@ -1411,8 +1411,7 @@
 		315EBE251FCF806A00AC7A89 /* smhasher */ = {
 			isa = PBXGroup;
 			children = (
-				315EBE261FCF808C00AC7A89 /* PMurHash.cpp */,
-				315EBE271FCF808C00AC7A89 /* PMurHash.h */,
+				44B8F2972135FBC200A99829 /* src */,
 			);
 			name = smhasher;
 			sourceTree = "<group>";
@@ -1423,6 +1422,15 @@
 				31A331E11EA5EFB800FD2203 /* trace_event.h */,
 			);
 			name = trace_event;
+			sourceTree = "<group>";
+		};
+		44B8F2972135FBC200A99829 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				315EBE261FCF808C00AC7A89 /* PMurHash.cpp */,
+				315EBE271FCF808C00AC7A89 /* PMurHash.h */,
+			);
+			name = src;
 			sourceTree = "<group>";
 		};
 		5C1BAA931DFB60E2002906BB /* EGL */ = {
