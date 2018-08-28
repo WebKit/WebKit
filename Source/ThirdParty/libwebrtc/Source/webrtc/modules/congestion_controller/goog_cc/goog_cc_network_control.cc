@@ -39,7 +39,7 @@ const char kCwndExperiment[] = "WebRTC-CwndExperiment";
 const int64_t kDefaultAcceptedQueueMs = 250;
 
 // From RTCPSender video report interval.
-const TimeDelta kLossUpdateInterval = TimeDelta::ms(1000);
+const int kLossUpdateIntervalMs = 1000;
 
 // Pacing-rate relative to our target send rate.
 // Multiplicative factor that is applied to the target bitrate to calculate
@@ -369,7 +369,7 @@ NetworkControlUpdate GoogCcNetworkController::OnTransportPacketsFeedback(
           packet_feedback.receive_time.IsFinite() ? 0 : 1;
     }
     if (report.feedback_time > next_loss_update_) {
-      next_loss_update_ += kLossUpdateInterval;
+      next_loss_update_ += TimeDelta::ms(kLossUpdateIntervalMs);
       bandwidth_estimation_->UpdatePacketsLost(
           expected_packets_since_last_loss_update_,
           lost_packets_since_last_loss_update_, report.feedback_time.ms());

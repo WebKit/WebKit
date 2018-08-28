@@ -1,3 +1,33 @@
+2018-08-28  Youenn Fablet  <youenn@apple.com>
+
+        Reenable -Wexit-time-destructors -and Wglobal-constructors in libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=189036
+
+        Reviewed by Geoffrey Garen.
+
+        Renable these compilation warnings and introduce rtc::NeverDestroyed as helper.
+
+        * Configurations/Base.xcconfig:
+        * Source/webrtc/modules/audio_processing/agc2/rnn_vad/spectral_features_internal.cc:
+        * Source/webrtc/modules/congestion_controller/bbr/bbr_network_controller.cc:
+        * Source/webrtc/modules/congestion_controller/goog_cc/goog_cc_network_control.cc:
+        * Source/webrtc/pc/peerconnection.cc:
+        * Source/webrtc/rtc_base/flags.h:
+        * Source/webrtc/rtc_base/logging.cc:
+        * Source/webrtc/rtc_base/never_destroyed.h: Added.
+        (rtc::NeverDestroyed::NeverDestroyed):
+        (rtc::NeverDestroyed::operator T&):
+        (rtc::NeverDestroyed::get):
+        (rtc::NeverDestroyed::operator const T& const):
+        (rtc::NeverDestroyed::get const):
+        (rtc::NeverDestroyed::storagePointer const):
+        (rtc::makeNeverDestroyed):
+        * Source/webrtc/rtc_base/virtualsocketserver.cc:
+        * Source/webrtc/sdk/objc/Framework/Classes/PeerConnection/RTCVideoCodec.mm:
+        * Source/webrtc/system_wrappers/source/clock.cc:
+        * Source/webrtc/system_wrappers/source/runtime_enabled_features_default.cc:
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2018-08-27  Keith Rollin  <krollin@apple.com>
 
         Unreviewed build fix -- disable LTO for production builds

@@ -46,6 +46,7 @@
 #include "rtc_base/bind.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/never_destroyed.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/stringencode.h"
 #include "rtc_base/stringutils.h"
@@ -389,9 +390,8 @@ void NoteKeyProtocolAndMedia(KeyExchangeProtocolType protocol_type,
                              cricket::MediaType media_type) {
   RTC_HISTOGRAM_ENUMERATION("WebRTC.PeerConnection.KeyProtocol", protocol_type,
                             kEnumCounterKeyProtocolMax);
-  static const std::map<std::pair<KeyExchangeProtocolType, cricket::MediaType>,
-                        KeyExchangeProtocolMedia>
-      proto_media_counter_map = {
+    auto proto_media_counter_map = rtc::makeNeverDestroyed(std::map<std::pair<KeyExchangeProtocolType, cricket::MediaType>,
+                        KeyExchangeProtocolMedia> {
           {{kEnumCounterKeyProtocolDtls, cricket::MEDIA_TYPE_AUDIO},
            kEnumCounterKeyProtocolMediaTypeDtlsAudio},
           {{kEnumCounterKeyProtocolDtls, cricket::MEDIA_TYPE_VIDEO},
@@ -403,10 +403,10 @@ void NoteKeyProtocolAndMedia(KeyExchangeProtocolType protocol_type,
           {{kEnumCounterKeyProtocolSdes, cricket::MEDIA_TYPE_VIDEO},
            kEnumCounterKeyProtocolMediaTypeSdesVideo},
           {{kEnumCounterKeyProtocolSdes, cricket::MEDIA_TYPE_DATA},
-           kEnumCounterKeyProtocolMediaTypeSdesData}};
+           kEnumCounterKeyProtocolMediaTypeSdesData}});
 
-  auto it = proto_media_counter_map.find({protocol_type, media_type});
-  if (it != proto_media_counter_map.end()) {
+  auto it = proto_media_counter_map.get().find({protocol_type, media_type});
+  if (it != proto_media_counter_map.get().end()) {
     RTC_HISTOGRAM_ENUMERATION("WebRTC.PeerConnection.KeyProtocolByMedia",
                               it->second, kEnumCounterKeyProtocolMediaTypeMax);
   }

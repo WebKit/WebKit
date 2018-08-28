@@ -35,13 +35,13 @@ const double kProbeBWCongestionWindowGain = 2.0f;
 // minus the IP and UDP headers. IPv6 has a 40 byte header, UDP adds an
 // additional 8 bytes.  This is a total overhead of 48 bytes.  Ethernet's
 // max packet size is 1500 bytes,  1500 - 48 = 1452.
-const DataSize kMaxPacketSize = DataSize::bytes(1452);
+const int kMaxPacketSize = 1452;
 
 // Default maximum packet size used in the Linux TCP implementation.
 // Used in QUIC for congestion window computations in bytes.
-const DataSize kDefaultTCPMSS = DataSize::bytes(1460);
+const int kDefaultTCPMSS = 1460;
 // Constants based on TCP defaults.
-const DataSize kMaxSegmentSize = kDefaultTCPMSS;
+const int kMaxSegmentSize = kDefaultTCPMSS;
 
 // The gain used for the slow start, equal to 2/ln(2).
 const double kHighGain = 2.885f;
@@ -90,13 +90,13 @@ BbrNetworkController::BbrControllerConfig::BbrControllerConfig(
                                  TimeDelta::PlusInfinity()),
       initial_congestion_window(
           "initial_cwin",
-          kInitialCongestionWindowPackets * kDefaultTCPMSS),
+          kInitialCongestionWindowPackets * DataSize::bytes(kDefaultTCPMSS)),
       min_congestion_window(
           "min_cwin",
-          kDefaultMinCongestionWindowPackets * kDefaultTCPMSS),
+          kDefaultMinCongestionWindowPackets * DataSize::bytes(kDefaultTCPMSS)),
       max_congestion_window(
           "max_cwin",
-          kDefaultMaxCongestionWindowPackets * kDefaultTCPMSS),
+          kDefaultMaxCongestionWindowPackets * DataSize::bytes(kDefaultTCPMSS)),
       probe_rtt_congestion_window_gain("probe_rtt_cwin_gain", 0.75),
       pacing_rate_as_target("pacing_rate_as_target", false),
       exit_startup_on_loss("exit_startup_on_loss", true),
@@ -725,7 +725,7 @@ void BbrNetworkController::MaybeEnterOrExitProbeRtt(
       // PROBE_RTT.  The CWND during PROBE_RTT is kMinimumCongestionWindow, but
       // we allow an extra packet since QUIC checks CWND before sending a
       // packet.
-      if (msg.data_in_flight < ProbeRttCongestionWindow() + kMaxPacketSize) {
+      if (msg.data_in_flight < ProbeRttCongestionWindow() + DataSize::bytes(kMaxPacketSize)) {
         exit_probe_rtt_at_ = msg.feedback_time + TimeDelta::ms(kProbeRttTimeMs);
         probe_rtt_round_passed_ = false;
       }
@@ -914,7 +914,7 @@ void BbrNetworkController::CalculateRecoveryWindow(DataSize bytes_acked,
   // integer underflow.
   recovery_window_ = recovery_window_ >= bytes_lost
                          ? recovery_window_ - bytes_lost
-                         : kMaxSegmentSize;
+                         : DataSize::bytes(kMaxSegmentSize);
 
   // In CONSERVATION mode, just subtracting losses is sufficient.  In GROWTH,
   // release additional |bytes_acked| to achieve a slow-start-like behavior.

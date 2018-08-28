@@ -52,7 +52,7 @@ GCC_WARN_UNUSED_FUNCTION = YES;
 GCC_WARN_UNUSED_VARIABLE = YES;
 PREBINDING = NO;
 STRIP_INSTALLED_PRODUCT = NO;
-WARNING_CFLAGS = -Wthread-safety;
+WARNING_CFLAGS = -Wexit-time-destructors -Wglobal-constructors -Wthread-safety;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx;
 VALID_ARCHS = $(ARCHS_STANDARD_64_BIT);

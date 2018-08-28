@@ -25,6 +25,7 @@
 #endif  // defined(WEBRTC_POSIX)
 
 #include "rtc_base/criticalsection.h"
+#include "rtc_base/never_destroyed.h"
 #include "rtc_base/synchronization/rw_lock_wrapper.h"
 #include "rtc_base/timeutils.h"
 
@@ -221,8 +222,8 @@ Clock* Clock::GetRealTimeClock() {
   }
   return g_shared_clock;
 #elif defined(WEBRTC_POSIX)
-  static UnixRealTimeClock clock;
-  return &clock;
+  static auto clock = rtc::makeNeverDestroyed(UnixRealTimeClock { });
+  return &clock.get();
 #else   // defined(WEBRTC_POSIX)
   return nullptr;
 #endif  // !defined(WEBRTC_WIN) || defined(WEBRTC_POSIX)

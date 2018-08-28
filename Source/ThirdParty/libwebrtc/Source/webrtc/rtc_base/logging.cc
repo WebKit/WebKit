@@ -32,12 +32,15 @@ static const int kMaxLogLineSize = 1024 - 60;
 #include <algorithm>
 #include <cstdarg>
 #include <iomanip>
+#include <mutex>
 #include <ostream>
+#include <type_traits>
 #include <vector>
 
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/platform_thread_types.h"
+#include "rtc_base/never_destroyed.h"
 #include "rtc_base/stringencode.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/stringutils.h"
@@ -69,13 +72,18 @@ std::ostream& GetNoopStream() {
    public:
     int overflow(int c) override { return c; }
   };
-  static NoopStreamBuf noop_buffer;
-  static std::ostream noop_stream(&noop_buffer);
-  return noop_stream;
+
+  static auto noop_buffer = makeNeverDestroyed(NoopStreamBuf { });
+  static NeverDestroyed<std::ostream> noop_stream { &noop_buffer.get() };
+  return noop_stream.get();
 }
 
-// Global lock for log subsystem, only needed to serialize access to streams_.
-CriticalSection g_log_crit;
+// Global lock for log subsystem, only needed to serialize access to streamList().
+CriticalSection& logCriticalScope() {
+  static auto scope = makeNeverDestroyed<>(CriticalSection { });
+  return scope.get();
+}
+
 }  // namespace
 
 // Inefficient default implementation, override is recommended.
@@ -95,7 +103,15 @@ bool LogMessage::log_to_stderr_ = true;
 // Note: we explicitly do not clean this up, because of the uncertain ordering
 // of destructors at program exit.  Let the person who sets the stream trigger
 // cleanup by setting to null, or let it leak (safe at program exit).
-LogMessage::StreamList LogMessage::streams_ RTC_GUARDED_BY(g_log_crit);
+typedef std::pair<LogSink*, LoggingSeverity> StreamAndSeverity;
+typedef std::list<StreamAndSeverity> StreamList;
+
+// The output streams and their associated severities
+StreamList& streamList()
+    RTC_EXCLUSIVE_LOCKS_REQUIRED(logCriticalScope()) {
+        static auto stream_list = makeNeverDestroyed<>(StreamList { });
+  return stream_list.get();
+}
 
 // Boolean options default to false (0)
 bool LogMessage::thread_, LogMessage::timestamp_;
@@ -109,6 +125,10 @@ LogMessage::LogMessage(const char* file,
                        LogErrorContext err_ctx,
                        int err)
     : severity_(sev), is_noop_(IsNoop(sev)) {
+
+  static std::once_flag callLogCriticalScopeOnce;
+  std::call_once(callLogCriticalScopeOnce,[] { logCriticalScope(); });
+
   // If there's no need to do any work, let's not :)
   if (is_noop_)
     return;
@@ -223,8 +243,8 @@ LogMessage::~LogMessage() {
 #endif
   }
 
-  CritScope cs(&g_log_crit);
-  for (auto& kv : streams_) {
+  CritScope cs(&logCriticalScope());
+  for (auto& kv : streamList()) {
     if (severity_ >= kv.second) {
 #if defined(WEBRTC_ANDROID)
       kv.first->OnLogMessage(str, severity_, tag_);
@@ -278,7 +298,7 @@ void LogMessage::LogTimestamps(bool on) {
 
 void LogMessage::LogToDebug(LoggingSeverity min_sev) {
   g_dbg_sev = min_sev;
-  CritScope cs(&g_log_crit);
+  CritScope cs(&logCriticalScope());
   UpdateMinLogSeverity();
 }
 
@@ -287,9 +307,9 @@ void LogMessage::SetLogToStderr(bool log_to_stderr) {
 }
 
 int LogMessage::GetLogToStream(LogSink* stream) {
-  CritScope cs(&g_log_crit);
+  CritScope cs(&logCriticalScope());
   LoggingSeverity sev = LS_NONE;
-  for (auto& kv : streams_) {
+  for (auto& kv : streamList()) {
     if (!stream || stream == kv.first) {
       sev = std::min(sev, kv.second);
     }
@@ -298,16 +318,16 @@ int LogMessage::GetLogToStream(LogSink* stream) {
 }
 
 void LogMessage::AddLogToStream(LogSink* stream, LoggingSeverity min_sev) {
-  CritScope cs(&g_log_crit);
-  streams_.push_back(std::make_pair(stream, min_sev));
+  CritScope cs(&logCriticalScope());
+  streamList().push_back(std::make_pair(stream, min_sev));
   UpdateMinLogSeverity();
 }
 
 void LogMessage::RemoveLogToStream(LogSink* stream) {
-  CritScope cs(&g_log_crit);
-  for (StreamList::iterator it = streams_.begin(); it != streams_.end(); ++it) {
+  CritScope cs(&logCriticalScope());
+  for (StreamList::iterator it = streamList().begin(); it != streamList().end(); ++it) {
     if (stream == it->first) {
-      streams_.erase(it);
+      streamList().erase(it);
       break;
     }
   }
@@ -366,9 +386,9 @@ void LogMessage::ConfigureLogging(const char* params) {
 }
 
 void LogMessage::UpdateMinLogSeverity()
-    RTC_EXCLUSIVE_LOCKS_REQUIRED(g_log_crit) {
+    RTC_EXCLUSIVE_LOCKS_REQUIRED(logCriticalScope()) {
   LoggingSeverity min_sev = g_dbg_sev;
-  for (const auto& kv : streams_) {
+  for (const auto& kv : streamList()) {
     const LoggingSeverity sev = kv.second;
     min_sev = std::min(min_sev, sev);
   }
@@ -482,8 +502,8 @@ bool LogMessage::IsNoop(LoggingSeverity severity) {
   // TODO(tommi): We're grabbing this lock for every LogMessage instance that
   // is going to be logged. This introduces unnecessary synchronization for
   // a feature that's mostly used for testing.
-  CritScope cs(&g_log_crit);
-  return streams_.size() == 0;
+  CritScope cs(&logCriticalScope());
+  return streamList().size() == 0;
 }
 
 void LogMessage::FinishPrintStream() {

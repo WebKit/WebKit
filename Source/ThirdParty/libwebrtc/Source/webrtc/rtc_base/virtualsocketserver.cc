@@ -1027,9 +1027,8 @@ void VirtualSocketServer::UpdateDelayDistribution() {
   }
 }
 
-static double PI = 4 * atan(1.0);
-
 static double Normal(double x, double mean, double stddev) {
+  static const double PI = 4 * atan(1.0);
   double a = (x - mean) * (x - mean) / (2 * stddev * stddev);
   return exp(-a) / (stddev * sqrt(2 * PI));
 }
