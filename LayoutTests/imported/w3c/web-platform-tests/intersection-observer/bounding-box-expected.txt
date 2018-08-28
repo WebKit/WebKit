@@ -1,5 +1,5 @@
 
 PASS Test that the target's border bounding box is used to calculate intersection. 
 PASS First rAF. 
-FAIL target.style.transform = 'translateY(195px)' assert_equals: entries.length expected 2 but got 1
+PASS target.style.transform = 'translateY(195px)' 
 

@@ -1,3 +1,18 @@
+2018-08-28  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Schedule intersection observation updates
+        https://bugs.webkit.org/show_bug.cgi?id=189007
+
+        Reviewed by Simon Fraser.
+
+        Rebaseline tests that now pass.
+
+        * web-platform-tests/intersection-observer/bounding-box-expected.txt:
+        * web-platform-tests/intersection-observer/containing-block-expected.txt:
+        * web-platform-tests/intersection-observer/remove-element-expected.txt:
+        * web-platform-tests/intersection-observer/same-document-root-expected.txt:
+        * web-platform-tests/intersection-observer/unclipped-root-expected.txt:
+
 2018-08-27  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Update payment-request web platform tests

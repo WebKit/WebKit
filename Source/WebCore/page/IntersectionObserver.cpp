@@ -154,9 +154,7 @@ void IntersectionObserver::observe(Element& target)
     auto* document = trackingDocument();
     if (!hadObservationTargets)
         document->addIntersectionObserver(this);
-    document->postTask([document] (ScriptExecutionContext&) mutable {
-        document->updateIntersectionObservations();
-    });
+    document->scheduleIntersectionObservationUpdate();
 }
 
 void IntersectionObserver::unobserve(Element& target)

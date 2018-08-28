@@ -2001,6 +2001,11 @@ void FrameView::viewportContentsChanged()
         if (auto* renderView = frameView.frame().contentRenderer())
             renderView->updateVisibleViewportRect(visibleRect);
     });
+
+#if ENABLE(INTERSECTION_OBSERVER)
+    if (auto* document = frame().document())
+        frame().document()->scheduleIntersectionObservationUpdate();
+#endif
 }
 
 bool FrameView::fixedElementsLayoutRelativeToFrame() const

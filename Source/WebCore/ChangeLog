@@ -1,3 +1,30 @@
+2018-08-28  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver] Schedule intersection observation updates
+        https://bugs.webkit.org/show_bug.cgi?id=189007
+
+        Reviewed by Simon Fraser.
+
+        Schedule intersection observation updates in the following situations:
+        1) A new observation target is added.
+        2) FrameView::viewportContentsChanged -- this covers changes to layout and
+           to scroll positions for same-document observation. Scheduling for
+           cross-document observation will be handled in a future patch.
+        3) Style is resolved without triggering layout -- this handles updates that
+           were deferred because of a pending style recalculation.
+
+        Tested by existing tests in imported/w3c/web-platform-tests/intersection-observer.
+
+        * dom/Document.cpp:
+        (WebCore::Document::resolveStyle):
+        (WebCore::Document::updateIntersectionObservations):
+        (WebCore::Document::scheduleIntersectionObservationUpdate):
+        * dom/Document.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::viewportContentsChanged):
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::observe):
+
 2018-08-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Remove redundant FloatAvoider functions.
