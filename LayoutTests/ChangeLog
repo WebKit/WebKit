@@ -1,3 +1,15 @@
+2018-08-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Color wells should appear rounded and textured
+        https://bugs.webkit.org/show_bug.cgi?id=189039
+
+        Reviewed by Tim Horton.
+
+        Rebaseline tests to match new color-well appearance.
+
+        * platform/mac/fast/forms/color/input-appearance-color-expected.png:
+        * platform/mac/fast/forms/color/input-appearance-color-expected.txt:
+
 2018-08-28  Youenn Fablet  <youenn@apple.com>
 
         WebKitMediaSession should be GC collectable when its document is being stopped

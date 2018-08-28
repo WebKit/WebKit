@@ -63,7 +63,7 @@ static const CGFloat colorPickerMatrixBorderWidth = 1.0;
 @interface WKColorPopoverMac : NSObject<WKColorPickerUIMac, WKPopoverColorWellDelegate, NSWindowDelegate> {
 @private
     BOOL _lastChangedByUser;
-    WebColorPickerMac *_picker;
+    WebKit::WebColorPickerMac *_picker;
     RetainPtr<WKPopoverColorWell> _popoverWell;
 }
 - (id)initWithFrame:(const WebCore::IntRect &)rect inView:(NSView *)view;

@@ -157,7 +157,7 @@ private:
 
 #if ENABLE(DATALIST_ELEMENT)
     void paintListButtonForInput(const RenderObject&, GraphicsContext&, const FloatRect&);
-    void adjustListButtonStyle(StyleResolver&, RenderStyle&, const Element*) const;
+    void adjustListButtonStyle(StyleResolver&, RenderStyle&, const Element*) const final;
 #endif
 
 #if ENABLE(VIDEO)

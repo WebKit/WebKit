@@ -1,3 +1,24 @@
+2018-08-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Color wells should appear rounded and textured
+        https://bugs.webkit.org/show_bug.cgi?id=189039
+
+        Reviewed by Tim Horton.
+
+        Color wells should have a rounded and textured appearance on macOS. We can use
+        NSBezelStyleTexturedSquare to achieve this appearance.
+
+        Also updated the user-agent stylesheet to match the system appearance.
+
+        Rebaselined existing test: fast/forms/color/input-appearance-color.html
+
+        * css/html.css:
+        (input[type="color"]::-webkit-color-swatch-wrapper):
+        (input[type="color"]::-webkit-color-swatch):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::setUpButtonCell):
+        * rendering/RenderThemeMac.h: Build fix.
+
 2018-08-28  Youenn Fablet  <youenn@apple.com>
 
         WebKitMediaSession should be GC collectable when its document is being stopped

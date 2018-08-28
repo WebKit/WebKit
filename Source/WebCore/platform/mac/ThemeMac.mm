@@ -496,16 +496,20 @@ static void setUpButtonCell(NSButtonCell *cell, ControlPart part, const ControlS
 {
     // Set the control size based off the rectangle we're painting into.
     const std::array<IntSize, 3>& sizes = buttonSizes();
-    if (part == SquareButtonPart
+    switch (part) {
+    case SquareButtonPart:
+        [cell setBezelStyle:NSBezelStyleShadowlessSquare];
+        break;
 #if ENABLE(INPUT_TYPE_COLOR)
-        || part == ColorWellPart
+    case ColorWellPart:
+        [cell setBezelStyle:NSBezelStyleTexturedSquare];
+        break;
 #endif
-        || zoomedSize.height() > buttonSizes()[NSControlSizeRegular].height() * zoomFactor) {
-        // Use the square button
-        if ([cell bezelStyle] != NSBezelStyleShadowlessSquare)
-            [cell setBezelStyle:NSBezelStyleShadowlessSquare];
-    } else if ([cell bezelStyle] != NSBezelStyleRounded)
-        [cell setBezelStyle:NSBezelStyleRounded];
+    default:
+        NSBezelStyle style = (zoomedSize.height() > buttonSizes()[NSControlSizeRegular].height() * zoomFactor) ? NSBezelStyleShadowlessSquare : NSBezelStyleRounded;
+        [cell setBezelStyle:style];
+        break;
+    }
 
     setControlSize(cell, sizes, zoomedSize, zoomFactor);
 
