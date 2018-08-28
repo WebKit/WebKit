@@ -1178,23 +1178,62 @@ std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
     return result;
 }
 
+static bool validateDefaultFramebufferAttachment(GC3Denum& attachment)
+{
+    switch (attachment) {
+    case GraphicsContext3D::BACK:
+        // Because the backbuffer is simulated on all current WebKit ports, we need to change BACK to COLOR_ATTACHMENT0.
+        attachment = GraphicsContext3D::COLOR_ATTACHMENT0;
+        return true;
+    case GraphicsContext3D::DEPTH:
+    case GraphicsContext3D::STENCIL:
+        return true;
+    }
+
+    return false;
+}
+
 WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname)
 {
-    if (isContextLostOrPending() || !validateFramebufferFuncParameters("getFramebufferAttachmentParameter", target, attachment))
+    const char* functionName = "getFramebufferAttachmentParameter";
+    if (isContextLostOrPending() || !validateFramebufferTarget(functionName, target))
         return nullptr;
-    
-    if (!m_framebufferBinding || !m_framebufferBinding->object()) {
-        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "getFramebufferAttachmentParameter", "no framebuffer bound");
-        return nullptr;
+
+    auto targetFramebuffer = (target == GraphicsContext3D::READ_FRAMEBUFFER) ? m_readFramebufferBinding : m_framebufferBinding;
+
+    if (!targetFramebuffer) {
+        // OpenGL ES 3: Default framebuffer is bound.
+        if (!validateDefaultFramebufferAttachment(attachment)) {
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid attachment");
+            return nullptr;
+        }
+        GC3Dint value = 0;
+        m_context->getFramebufferAttachmentParameteriv(target, attachment, pname, &value);
+        return value;
     }
-    
-    auto object = makeRefPtr(m_framebufferBinding->getAttachmentObject(attachment));
+    if (!validateNonDefaultFramebufferAttachment(functionName, attachment))
+        return nullptr;
+
+    auto object = makeRefPtr(targetFramebuffer->getAttachmentObject(attachment));
     if (!object) {
         if (pname == GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
             return static_cast<unsigned>(GraphicsContext3D::NONE);
-        // OpenGL ES 2.0 specifies INVALID_ENUM in this case, while desktop GL specifies INVALID_OPERATION.
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name");
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "invalid parameter name");
         return nullptr;
+    }
+
+    switch (pname) {
+    case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_RED_SIZE:
+    case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_GREEN_SIZE:
+    case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_BLUE_SIZE:
+    case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE:
+    case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE:
+    case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE:
+    case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE: {
+        GC3Dint value = 0;
+        m_context->getFramebufferAttachmentParameteriv(target, attachment, pname, &value);
+        return value;
+    }
     }
     
     if (object->isTexture()) {
@@ -1211,7 +1250,7 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GC3Denum targ
             return value;
         }
         default:
-            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for texture attachment");
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid parameter name for texture attachment");
             return nullptr;
         }
     } else {
@@ -1233,7 +1272,7 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GC3Denum targ
             return static_cast<unsigned>(GraphicsContext3D::LINEAR);
         }
         default:
-            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for renderbuffer attachment");
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid parameter name for renderbuffer attachment");
             return nullptr;
         }
     }
@@ -1241,10 +1280,24 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GC3Denum targ
 
 bool WebGL2RenderingContext::validateFramebufferFuncParameters(const char* functionName, GC3Denum target, GC3Denum attachment)
 {
-    if (target != GraphicsContext3D::FRAMEBUFFER) {
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid target");
-        return false;
+    return validateFramebufferTarget(functionName, target) && validateNonDefaultFramebufferAttachment(functionName, attachment);
+}
+
+bool WebGL2RenderingContext::validateFramebufferTarget(const char* functionName, GC3Denum target)
+{
+    switch (target) {
+    case GraphicsContext3D::FRAMEBUFFER:
+    case GraphicsContext3D::DRAW_FRAMEBUFFER:
+    case GraphicsContext3D::READ_FRAMEBUFFER:
+        return true;
     }
+
+    synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid target");
+    return false;
+}
+
+bool WebGL2RenderingContext::validateNonDefaultFramebufferAttachment(const char* functionName, GC3Denum attachment)
+{
     switch (attachment) {
     case GraphicsContext3D::DEPTH_ATTACHMENT:
     case GraphicsContext3D::STENCIL_ATTACHMENT:
@@ -1253,9 +1306,10 @@ bool WebGL2RenderingContext::validateFramebufferFuncParameters(const char* funct
     default:
         if (attachment >= GraphicsContext3D::COLOR_ATTACHMENT0 && attachment < static_cast<GC3Denum>(GraphicsContext3D::COLOR_ATTACHMENT0 + getMaxColorAttachments()))
             return true;
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid attachment");
-        return false;
     }
+
+    synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid attachment");
+    return false;
 }
 
 GC3Dint WebGL2RenderingContext::getMaxDrawBuffers()
@@ -1763,6 +1817,8 @@ WebGLAny WebGL2RenderingContext::getParameter(GC3Denum pname)
         if (m_framebufferBinding)
             return m_framebufferBinding->getDrawBuffer(pname);
         return m_backDrawBuffer; // emulated backbuffer
+    case GraphicsContext3D::READ_FRAMEBUFFER_BINDING:
+        return m_readFramebufferBinding;
     case GraphicsContext3D::COPY_READ_BUFFER:
     case GraphicsContext3D::COPY_WRITE_BUFFER:
     case GraphicsContext3D::PIXEL_PACK_BUFFER_BINDING:   
@@ -1771,7 +1827,6 @@ WebGLAny WebGL2RenderingContext::getParameter(GC3Denum pname)
     case GraphicsContext3D::SAMPLER_BINDING:
     case GraphicsContext3D::TEXTURE_BINDING_2D_ARRAY:
     case GraphicsContext3D::TEXTURE_BINDING_3D:
-    case GraphicsContext3D::READ_FRAMEBUFFER_BINDING:
     case GraphicsContext3D::TRANSFORM_FEEDBACK_BUFFER_BINDING:
     case GraphicsContext3D::UNIFORM_BUFFER_BINDING:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "parameter name not yet supported");

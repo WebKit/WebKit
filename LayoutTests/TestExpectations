@@ -2068,6 +2068,7 @@ webkit.org/b/186574 media/video-buffering-allowed.html [ Pass Failure ]
 webgl/2.0.0 [ Skip ]
 webgl/2.0.0/conformance2/glsl3 [ Pass ]
 webgl/2.0.0/conformance2/vertex_arrays [ Pass ]
+webgl/2.0.0/conformance2/renderbuffers/framebuffer-test.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-display/run-in/run-in-contains-table-row-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-008.html [ ImageOnlyFailure ]

@@ -497,6 +497,7 @@ protected:
 
     RefPtr<WebGLProgram> m_currentProgram;
     RefPtr<WebGLFramebuffer> m_framebufferBinding;
+    RefPtr<WebGLFramebuffer> m_readFramebufferBinding;
     RefPtr<WebGLRenderbuffer> m_renderbufferBinding;
     struct TextureUnitState {
         RefPtr<WebGLTexture> texture2DBinding;

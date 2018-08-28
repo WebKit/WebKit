@@ -586,7 +586,7 @@ bool WebGLFramebuffer::initializeAttachments(GraphicsContext3D* g3d, const char*
 
 bool WebGLFramebuffer::isBound() const
 {
-    return (context()->m_framebufferBinding.get() == this);
+    return (context()->m_framebufferBinding.get() == this) || (context()->m_readFramebufferBinding.get() == this);
 }
 
 void WebGLFramebuffer::drawBuffers(const Vector<GC3Denum>& bufs)

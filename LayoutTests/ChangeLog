@@ -1,3 +1,14 @@
+2018-08-27  Justin Fan  <justin_fan@apple.com>
+
+        WebGL 2 conformance: framebuffer-test
+        https://bugs.webkit.org/show_bug.cgi?id=188812
+
+        Reviewed by Jon Lee.
+
+        Update WebGL 2 implementation to handle READ_FRAMEBUFFER and default framebuffer conformance.
+
+        * TestExpectations: Unskipping webgl/2.0.0/conformance2/renderbuffers/framebuffer-test.html.
+
 2018-08-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Null pointer deref in WidthIterator

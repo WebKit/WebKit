@@ -744,6 +744,7 @@ void WebGLRenderingContextBase::initializeNewContext()
     m_boundArrayBuffer = nullptr;
     m_currentProgram = nullptr;
     m_framebufferBinding = nullptr;
+    m_readFramebufferBinding = nullptr;
     m_renderbufferBinding = nullptr;
     m_depthMask = true;
     m_stencilEnabled = false;
@@ -873,6 +874,7 @@ WebGLRenderingContextBase::~WebGLRenderingContextBase()
     m_vertexAttrib0Buffer = nullptr;
     m_currentProgram = nullptr;
     m_framebufferBinding = nullptr;
+    m_readFramebufferBinding = nullptr;
     m_renderbufferBinding = nullptr;
 
     for (auto& textureUnit : m_textureUnits) {
@@ -1264,11 +1266,29 @@ void WebGLRenderingContextBase::bindFramebuffer(GC3Denum target, WebGLFramebuffe
         return;
     if (deleted)
         buffer = 0;
-    if (target != GraphicsContext3D::FRAMEBUFFER) {
+
+    bool isWebGL2DrawFramebufferTarget = false;
+#if ENABLE(WEBGL2)
+    isWebGL2DrawFramebufferTarget = isWebGL2() && target == GraphicsContext3D::DRAW_FRAMEBUFFER;
+#endif
+    bool success = false;
+
+    if (target == GraphicsContext3D::FRAMEBUFFER || isWebGL2DrawFramebufferTarget) {
+        m_framebufferBinding = buffer;
+        success = true;
+    }
+#if ENABLE(WEBGL2)
+    if (isWebGL2() && (target == GraphicsContext3D::FRAMEBUFFER || target == GraphicsContext3D::READ_FRAMEBUFFER)) {
+        m_readFramebufferBinding = buffer;
+        success = true;
+    }
+#endif
+
+    if (!success) {
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "bindFramebuffer", "invalid target");
         return;
     }
-    m_framebufferBinding = buffer;
+
     m_context->bindFramebuffer(target, objectOrZero(buffer));
     if (buffer)
         buffer->setHasEverBeenBound();
@@ -1463,13 +1483,22 @@ GC3Denum WebGLRenderingContextBase::checkFramebufferStatus(GC3Denum target)
     if (isContextLostOrPending())
         return GraphicsContext3D::FRAMEBUFFER_UNSUPPORTED;
     if (target != GraphicsContext3D::FRAMEBUFFER) {
-        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "checkFramebufferStatus", "invalid target");
-        return 0;
+#if ENABLE(WEBGL2)
+        if (isWebGL1() || (target != GraphicsContext3D::DRAW_FRAMEBUFFER && target != GraphicsContext3D::READ_FRAMEBUFFER)) {
+#endif
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "checkFramebufferStatus", "invalid target");
+            return 0;
+#if ENABLE(WEBGL2)
+        }
+#endif
     }
-    if (!m_framebufferBinding || !m_framebufferBinding->object())
+
+    auto targetFramebuffer = (target == GraphicsContext3D::READ_FRAMEBUFFER) ? m_readFramebufferBinding : m_framebufferBinding;
+
+    if (!targetFramebuffer || !targetFramebuffer->object())
         return GraphicsContext3D::FRAMEBUFFER_COMPLETE;
     const char* reason = "framebuffer incomplete";
-    GC3Denum result = m_framebufferBinding->checkStatus(&reason);
+    GC3Denum result = targetFramebuffer->checkStatus(&reason);
     if (result != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
         String str = "WebGL: checkFramebufferStatus:" + String(reason);
         printToConsole(MessageLevel::Warning, str);
@@ -1794,9 +1823,20 @@ void WebGLRenderingContextBase::deleteFramebuffer(WebGLFramebuffer* framebuffer)
 {
     if (!deleteObject(framebuffer))
         return;
+#if ENABLE(WEBGL2)
+    if (isWebGL2() && framebuffer == m_readFramebufferBinding) {
+        m_readFramebufferBinding = nullptr;
+        m_context->bindFramebuffer(GraphicsContext3D::READ_FRAMEBUFFER, 0);
+    }
+#endif
     if (framebuffer == m_framebufferBinding) {
         m_framebufferBinding = nullptr;
-        m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
+#if ENABLE(WEBGL2)
+        if (isWebGL2())
+            m_context->bindFramebuffer(GraphicsContext3D::DRAW_FRAMEBUFFER, 0);
+        else
+#endif
+            m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
     }
 }
 
@@ -2361,10 +2401,13 @@ void WebGLRenderingContextBase::framebufferRenderbuffer(GC3Denum target, GC3Denu
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "framebufferRenderbuffer", "no buffer or buffer not from this context");
         return;
     }
+
+    auto targetFramebuffer = (target == GraphicsContext3D::READ_FRAMEBUFFER) ? m_readFramebufferBinding : m_framebufferBinding;
+
     // Don't allow the default framebuffer to be mutated; all current
     // implementations use an FBO internally in place of the default
     // FBO.
-    if (!m_framebufferBinding || !m_framebufferBinding->object()) {
+    if (!targetFramebuffer || !targetFramebuffer->object()) {
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "framebufferRenderbuffer", "no framebuffer bound");
         return;
     }
@@ -2377,7 +2420,7 @@ void WebGLRenderingContextBase::framebufferRenderbuffer(GC3Denum target, GC3Denu
     default:
         m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, bufferObject);
     }
-    m_framebufferBinding->setAttachmentForBoundFramebuffer(attachment, buffer);
+    targetFramebuffer->setAttachmentForBoundFramebuffer(attachment, buffer);
     applyStencilTest();
 }
 
@@ -2385,7 +2428,7 @@ void WebGLRenderingContextBase::framebufferTexture2D(GC3Denum target, GC3Denum a
 {
     if (isContextLostOrPending() || !validateFramebufferFuncParameters("framebufferTexture2D", target, attachment))
         return;
-    if (level) {
+    if (level && isWebGL1()) {
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "framebufferTexture2D", "level not 0");
         return;
     }
@@ -2393,10 +2436,13 @@ void WebGLRenderingContextBase::framebufferTexture2D(GC3Denum target, GC3Denum a
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "framebufferTexture2D", "no texture or texture not from this context");
         return;
     }
+
+    auto targetFramebuffer = (target == GraphicsContext3D::READ_FRAMEBUFFER) ? m_readFramebufferBinding : m_framebufferBinding;
+
     // Don't allow the default framebuffer to be mutated; all current
     // implementations use an FBO internally in place of the default
     // FBO.
-    if (!m_framebufferBinding || !m_framebufferBinding->object()) {
+    if (!targetFramebuffer || !targetFramebuffer->object()) {
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "framebufferTexture2D", "no framebuffer bound");
         return;
     }
@@ -2415,7 +2461,7 @@ void WebGLRenderingContextBase::framebufferTexture2D(GC3Denum target, GC3Denum a
     default:
         m_context->framebufferTexture2D(target, attachment, textarget, textureObject, level);
     }
-    m_framebufferBinding->setAttachmentForBoundFramebuffer(attachment, textarget, texture, level);
+    targetFramebuffer->setAttachmentForBoundFramebuffer(attachment, textarget, texture, level);
     applyStencilTest();
 }
 
