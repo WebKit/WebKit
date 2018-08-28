@@ -1,3 +1,41 @@
+2018-08-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] Remove redundant FloatAvoider functions.
+        https://bugs.webkit.org/show_bug.cgi?id=189035
+
+        Reviewed by Antti Koivisto.
+
+        and move some code from FloatContext to FloatAvoider.
+
+        * layout/floats/FloatAvoider.cpp:
+        (WebCore::Layout::FloatAvoider::initializePosition):
+        (WebCore::Layout::FloatAvoider::rect const):
+        (WebCore::Layout::FloatAvoider::setVerticalConstraint):
+        (WebCore::Layout::FloatAvoider::setHorizontalConstraints):
+        (WebCore::Layout::FloatAvoider::resetHorizontalConstraint):
+        (WebCore::Layout::FloatAvoider::initialVerticalPosition const):
+        (WebCore::Layout::FloatAvoider::initialHorizontalPosition const):
+        (WebCore::Layout::FloatAvoider::rectInContainingBlock const):
+        (WebCore::Layout::FloatAvoider::setLeft): Deleted.
+        (WebCore::Layout::FloatAvoider::setTopLeft): Deleted.
+        (WebCore::Layout::FloatAvoider::resetVertically): Deleted.
+        (WebCore::Layout::FloatAvoider::resetHorizontally): Deleted.
+        (WebCore::Layout::FloatAvoider::topLeftInContainingBlock const): Deleted.
+        * layout/floats/FloatAvoider.h:
+        (WebCore::Layout::FloatAvoider::top const): Deleted.
+        (WebCore::Layout::FloatAvoider::left const): Deleted.
+        (WebCore::Layout::FloatAvoider::marginTop const): Deleted.
+        (WebCore::Layout::FloatAvoider::marginLeft const): Deleted.
+        (WebCore::Layout::FloatAvoider::marginBottom const): Deleted.
+        (WebCore::Layout::FloatAvoider::marginRight const): Deleted.
+        (WebCore::Layout::FloatAvoider::rectWithMargin const): Deleted.
+        (WebCore::Layout::FloatAvoider::setTop): Deleted.
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::floatingPosition const):
+        (WebCore::Layout::FloatingPair::horizontalConstraints const):
+        (WebCore::Layout::FloatingPair::horiztonalPosition const): Deleted.
+
 2018-08-28  Eric Carlson  <eric.carlson@apple.com>
 
         Revert changes to RealtimeMediaSource.cpp made in r235086

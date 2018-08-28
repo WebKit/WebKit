@@ -67,8 +67,8 @@ public:
     const FloatingState::FloatItem* left() const;
     const FloatingState::FloatItem* right() const;
     bool intersects(const Display::Box::Rect&) const;
-    PositionInContextRoot verticalPosition() const { return m_verticalPosition; }
-    std::optional<PositionInContextRoot> horiztonalPosition(Float) const;
+    PositionInContextRoot verticalConstraint() const { return m_verticalPosition; }
+    FloatAvoider::HorizontalConstraints horizontalConstraints() const;
     PositionInContextRoot bottom() const;
     bool operator==(const FloatingPair&) const;
 
@@ -139,7 +139,7 @@ PointInContainingBlock FloatingContext::positionForFloat(const Box& layoutBox) c
     // Find the top most position where the float box fits.
     FloatAvoider alignedBox = { layoutBox, m_floatingState, layoutContext() };
     floatingPosition(alignedBox);
-    return alignedBox.topLeftInContainingBlock();
+    return alignedBox.rectInContainingBlock().topLeft();
 }
 
 std::optional<PositionInContainingBlock> FloatingContext::verticalPositionWithClearance(const Box& layoutBox) const
@@ -216,25 +216,18 @@ std::optional<PositionInContainingBlock> FloatingContext::verticalPositionWithCl
 void FloatingContext::floatingPosition(FloatAvoider& floatAvoider) const
 {
     std::optional<PositionInContextRoot> bottomMost;
-    auto initialLeft = floatAvoider.left();
     auto end = Layout::end(m_floatingState);
-    for (auto iterator = begin(m_floatingState, floatAvoider.rectWithMargin().top()); iterator != end; ++iterator) {
+    for (auto iterator = begin(m_floatingState, floatAvoider.rect().top()); iterator != end; ++iterator) {
         ASSERT(!(*iterator).isEmpty());
         auto floats = *iterator;
 
-        floatAvoider.setTop(floats.verticalPosition() + floatAvoider.marginTop());
         // Move the box horizontally so that it either
         // 1. aligns with the current floating pair
         // 2. or with the containing block's content box if there's no float to align with at this vertical position.
-        if (auto horiztonalPosition = floats.horiztonalPosition(floatAvoider.isLeftAligned() ? Float::Left : Float::Right)) {
-            if (!floatAvoider.isLeftAligned())
-                horiztonalPosition = *horiztonalPosition - floatAvoider.rectWithMargin().width();
-            floatAvoider.setLeft(*horiztonalPosition + floatAvoider.marginLeft());
-        } else
-            floatAvoider.resetHorizontally();
-
+        floatAvoider.setHorizontalConstraints(floats.horizontalConstraints());
+        floatAvoider.setVerticalConstraint(floats.verticalConstraint());
         // Check if the box fits at this position.
-        if (!floats.intersects(floatAvoider.rectWithMargin()))
+        if (!floats.intersects(floatAvoider.rect()))
             return;
 
         bottomMost = floats.bottom();
@@ -246,7 +239,8 @@ void FloatingContext::floatingPosition(FloatAvoider& floatAvoider) const
         return;
 
     // Passed all the floats and still does not fit? Push it below the last float.
-    floatAvoider.setTopLeft({ initialLeft, *bottomMost + floatAvoider.marginTop() });
+    floatAvoider.setVerticalConstraint(*bottomMost);
+    floatAvoider.setHorizontalConstraints({ });
 }
 
 FloatingPair::FloatingPair(const FloatingState::FloatList& floats)
@@ -306,15 +300,18 @@ bool FloatingPair::operator ==(const FloatingPair& other) const
     return m_leftIndex == other.m_leftIndex && m_rightIndex == other.m_rightIndex;
 }
 
-std::optional<PositionInContextRoot> FloatingPair::horiztonalPosition(Float floatType) const
+FloatAvoider::HorizontalConstraints FloatingPair::horizontalConstraints() const
 {
-    if (floatType == Float::Left && left())
-        return left()->rectWithMargin().right();
+    std::optional<PositionInContextRoot> leftEdge;
+    std::optional<PositionInContextRoot> rightEdge;
 
-    if (floatType == Float::Right && right())
-        return right()->rectWithMargin().left();
+    if (left())
+        leftEdge = left()->rectWithMargin().right();
 
-    return { };
+    if (right())
+        rightEdge = right()->rectWithMargin().left();
+
+    return { leftEdge, rightEdge };
 }
 
 PositionInContextRoot FloatingPair::bottom() const

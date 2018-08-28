@@ -45,28 +45,23 @@ class FloatAvoider {
 public:
     FloatAvoider(const Box&, const FloatingState&, const LayoutContext&);
 
-    PositionInContextRoot top() const { return m_absoluteDisplayBox.top(); }
-    PositionInContextRoot left() const { return m_absoluteDisplayBox.left(); }
-    PointInContainingBlock topLeftInContainingBlock() const;
+    Display::Box::Rect rect() const;
+    Display::Box::Rect rectInContainingBlock() const;
 
-    LayoutUnit marginTop() const { return m_absoluteDisplayBox.marginTop(); }
-    LayoutUnit marginLeft() const { return m_absoluteDisplayBox.marginLeft(); }
-    LayoutUnit marginBottom() const { return m_absoluteDisplayBox.marginBottom(); }
-    LayoutUnit marginRight() const { return m_absoluteDisplayBox.marginRight(); }
-
-    Display::Box::Rect rectWithMargin() const { return m_absoluteDisplayBox.rectWithMargin(); }
-
-    void setTop(PositionInContextRoot top) { m_absoluteDisplayBox.setTop(top); }
-    void setLeft(PositionInContextRoot);
-    void setTopLeft(PointInContextRoot);
-
-    void resetHorizontally();
-    void resetVertically();
-
-    bool isLeftAligned() const;
+    struct HorizontalConstraints {
+        std::optional<PositionInContextRoot> left;
+        std::optional<PositionInContextRoot> right;
+    };
+    void setHorizontalConstraints(HorizontalConstraints);
+    void setVerticalConstraint(PositionInContextRoot);
 
 private:
+    bool isLeftAligned() const;
+
     void initializePosition();
+    PositionInContextRoot initialHorizontalPosition() const;
+    PositionInContextRoot initialVerticalPosition() const;
+    void resetHorizontalConstraints();
 
     WeakPtr<Box> m_layoutBox;
     const FloatingState& m_floatingState;
