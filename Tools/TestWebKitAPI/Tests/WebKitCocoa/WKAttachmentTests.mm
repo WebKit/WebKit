@@ -416,8 +416,8 @@ static void simulateFolderDragWithURL(DragAndDropSimulator *simulator, NSURL *fo
     auto folderProvider = adoptNS([[NSItemProvider alloc] init]);
     [folderProvider setSuggestedName:folderURL.lastPathComponent];
     [folderProvider setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
-    [folderProvider registerFileRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeFolder fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[&] (void(^completion)(NSURL *, BOOL, NSError *)) -> NSProgress * {
-        completion(folderURL, NO, nil);
+    [folderProvider registerFileRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeFolder fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[protectedFolderURL = retainPtr(folderURL)] (void(^completion)(NSURL *, BOOL, NSError *)) -> NSProgress * {
+        completion(protectedFolderURL.get(), NO, nil);
         return nil;
     }];
     simulator.externalItemProviders = @[ folderProvider.get() ];
