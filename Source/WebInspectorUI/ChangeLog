@@ -1,3 +1,10 @@
+2018-08-29  David Kilzer  <ddkilzer@apple.com>
+
+        Remove empty directories from from svn.webkit.org repository
+        <https://webkit.org/b/189081>
+
+        * WebInspectorUI.esproj: Removed.
+
 2018-08-28  Devin Rousso  <drousso@apple.com>
 
         console.log() shows (anonymous function) instead of the passed string when a certain format is used

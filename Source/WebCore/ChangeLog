@@ -1,3 +1,10 @@
+2018-08-29  David Kilzer  <ddkilzer@apple.com>
+
+        Remove empty directories from from svn.webkit.org repository
+        <https://webkit.org/b/189081>
+
+        * Modules/proximity: Removed.
+
 2018-08-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Introduce FloatBox, a FloatAvoider subclass.

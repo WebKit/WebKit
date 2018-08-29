@@ -1,3 +1,11 @@
+2018-08-29  David Kilzer  <ddkilzer@apple.com>
+
+        Remove empty directories from from svn.webkit.org repository
+        <https://webkit.org/b/189081>
+
+        * src/angle.xcodeproj: Removed.
+        * src/common/third_party/numerics: Removed.
+
 2018-08-28  David Kilzer  <ddkilzer@apple.com>
 
         Move PMurHash.{cpp,h} into 'src' folder to match path on disk

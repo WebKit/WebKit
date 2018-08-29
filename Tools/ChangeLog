@@ -1,3 +1,11 @@
+2018-08-29  David Kilzer  <ddkilzer@apple.com>
+
+        Remove empty directories from from svn.webkit.org repository
+        <https://webkit.org/b/189081>
+
+        * DumpRenderTree/TestNetscapePlugIn/unix: Removed.
+        * WebKitTestRunner/UIScriptContext: Removed.
+
 2018-08-29  Pablo Saavedra  <psaavedra@igalia.com>
 
         [GTK][WPE] Add JSCOnly Release bot for Linux ARMv7 Thumb2 SoftFP

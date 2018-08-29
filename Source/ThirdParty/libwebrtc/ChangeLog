@@ -1,3 +1,16 @@
+2018-08-29  David Kilzer  <ddkilzer@apple.com>
+
+        Remove empty directories from from svn.webkit.org repository
+        <https://webkit.org/b/189081>
+
+        * Source/webrtc/base: Removed.
+        * Source/webrtc/media/devices: Removed.
+        * Source/webrtc/modules/audio_conference_mixer: Removed.
+        * Source/webrtc/modules/remote_bitrate_estimator/include/mock: Removed.
+        * Source/webrtc/system_wrappers/test: Removed.
+        * Source/webrtc/test/testsupport/mac: Removed.
+        * Source/webrtc/voice_engine: Removed.
+
 2018-08-28  David Kilzer  <ddkilzer@apple.com>
 
         [libwebrtc] Remove references to Source/webrtc/modules/audio_coding/codecs/isac/main/source/fft.h
