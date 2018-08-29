@@ -340,5 +340,12 @@ class Visitor {
         node.elementType.visit(this);
         node.numElements.visit(this);
     }
+
+    visitMatrixType(node)
+    {
+        node.elementType.visit(this);
+        node.numRows.visit(this);
+        node.numColumns.visit(this);
+    }
 }
 

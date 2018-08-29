@@ -46,7 +46,6 @@ let prepare = (() => {
         resolveTypeDefsInTypes(program);
         checkRecursiveTypes(program);
         synthesizeStructAccessors(program);
-        synthesizeOperatorBool(program);
         synthesizeEnumFunctions(program);
         synthesizeArrayOperatorLength(program);
         synthesizeCopyConstructorOperator(program);

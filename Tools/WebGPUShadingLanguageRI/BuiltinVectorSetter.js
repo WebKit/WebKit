@@ -47,7 +47,7 @@ class BuiltinVectorSetter {
     {
         if (!this._functions) {
             this._functions = [];
-        
+
             const elements = [ "x", "y", "z", "w" ];
 
             for (let typeName of VectorElementTypes) {
@@ -62,7 +62,7 @@ class BuiltinVectorSetter {
 
     instantiateImplementation(func)
     {
-        func.implementation = ([base, value], node) => {
+        func.implementation = ([base, value]) => {
             let result = new EPtr(new EBuffer(this.size), 0);
             result.copyFrom(base, this.size);
             result.plus(this.index).copyFrom(value, 1);

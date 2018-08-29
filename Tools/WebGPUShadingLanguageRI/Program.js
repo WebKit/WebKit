@@ -51,7 +51,7 @@ class Program extends Node {
                 this.functions.set(statement.name, array = []);
             array.push(statement);
         } else if (statement instanceof Type) {
-            if (statement.isNative && statement.name == "vector") {
+            if (statement.isNative && statement.typeArguments.length != 0) {
                 let array = this.types.get(statement.name);
                 if (!array)
                     this.types.set(statement.name, array = []);

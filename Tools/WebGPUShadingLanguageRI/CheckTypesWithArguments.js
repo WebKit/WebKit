@@ -29,8 +29,20 @@ function checkTypesWithArguments(program)
     class TypeWithArgumentsChecker extends Visitor {
         visitTypeRef(node)
         {
-            if (node.name == "vector" && node.typeArguments.length == 0)
-                throw new Error("Builtin type ${node.name} should always have type arguments.");
+            if ((node.name == "vector" && node.typeArguments.length != 2)
+                || (node.name == "matrix" && node.typeArguments.length != 3)
+                || (node.name == "Texture1D" && node.typeArguments.length != 1)
+                || (node.name == "RWTexture1D" && node.typeArguments.length != 1)
+                || (node.name == "Texture1DArray" && node.typeArguments.length != 1)
+                || (node.name == "RWTexture1DArray" && node.typeArguments.length != 1)
+                || (node.name == "Texture2D" && node.typeArguments.length != 1)
+                || (node.name == "RWTexture2D" && node.typeArguments.length != 1)
+                || (node.name == "Texture2DArray" && node.typeArguments.length != 1)
+                || (node.name == "RWTexture2DArray" && node.typeArguments.length != 1)
+                || (node.name == "Texture3D" && node.typeArguments.length != 1)
+                || (node.name == "RWTexture3D" && node.typeArguments.length != 1)
+                || (node.name == "TextureCube" && node.typeArguments.length != 1))
+                throw new Error(`Builtin type ${node.name} should always have type arguments.`);
         }
     }
     program.visit(new TypeWithArgumentsChecker());

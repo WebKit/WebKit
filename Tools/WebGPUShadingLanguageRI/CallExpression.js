@@ -52,19 +52,22 @@ class CallExpression extends Expression {
 
     resolve(possibleOverloads, program)
     {
-        if (!possibleOverloads)
-            throw new WTypeError(this.origin.originString, "Did not find any functions named " + this.name);
-
         let failures = [];
-        let overload = resolveOverloadImpl(possibleOverloads, this.argumentTypes, this.returnType);
+        let overload;
+        if (possibleOverloads)
+            overload = resolveOverloadImpl(possibleOverloads, this.argumentTypes, this.returnType);
 
-        if (!overload.func) {
+        if (!overload || !overload.func) {
+            if (!overload)
+                overload = {};
             const func = this._resolveByInstantiation(program);
             if (func)
                 overload.func = func;
         }
 
         if (!overload.func) {
+            if (!overload.failures)
+                overload.failures = [];
             failures.push(...overload.failures);
             let message = "Did not find function named " + this.name + " for call with ";
             message += "argument types (" + this.argumentTypes + ")";

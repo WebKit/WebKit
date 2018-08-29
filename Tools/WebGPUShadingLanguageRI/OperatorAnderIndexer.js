@@ -24,47 +24,31 @@
  */
 "use strict";
 
-class BuiltinVectorIndexSetter {
-    constructor(baseTypeName, size)
+class OperatorAnderIndexer {
+    constructor(baseTypeName, addressSpace)
     {
         this._baseTypeName = baseTypeName;
-        this._size = size;
+        this._addressSpace = addressSpace;
     }
 
+    get addressSpace() { return this._addressSpace; }
     get baseTypeName() { return this._baseTypeName; }
-    get size() { return this._size; }
-    get elementName() { return this._elementName; }
-    get index() { return this._index; }
 
     toString()
     {
-        return `native ${this.baseTypeName}${this.size} operator[]=(${this.baseTypeName}${this.size},uint,${this.baseTypeName})`;
-    }
-
-    static functions()
-    {
-        if (!this._functions) {
-            this._functions = [];
-
-            for (let typeName of VectorElementTypes) {
-                for (let size of VectorElementSizes)
-                    this._functions.push(new BuiltinVectorIndexSetter(typeName, size));
-            }
-        }
-        return this._functions;
+        return `native ${this.baseTypeName}* ${this.addressSpace} operator&[](${this.baseTypeName}[] ${this.addressSpace},uint)`;
     }
 
     instantiateImplementation(func)
     {
-        func.implementation = ([base, index, value], node) => {
-            const indexValue = index.loadValue();
-            if (indexValue >= 0 && indexValue < this.size) {
-                let result = new EPtr(new EBuffer(this.size), 0);
-                result.copyFrom(base, this.size);
-                result.plus(indexValue).copyFrom(value, 1);
-                return result;
-            } else
-                throw new Error(`${indexValue} out of bounds for vector of size ${this.size}`);
+        func.implementation = ([ref, index], node) => {
+            ref = ref.loadValue();
+            if (!ref)
+                throw new WTrapError(node.origin.originString, "Null dereference");
+            index = index.loadValue();
+            if (index > ref.length)
+                throw new WTrapError(node.origin.originString, "Array index " + index + " is out of bounds of " + ref);
+            return EPtr.box(ref.ptr.plus(index * node.argumentTypes[0].elementType.size));
         };
         func.implementationData = this;
     }

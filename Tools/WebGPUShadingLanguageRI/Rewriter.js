@@ -391,5 +391,11 @@ class Rewriter {
         vecType._elementType = node.elementType.visit(this);
         return vecType;
     }
+
+    visitMatrixType(node)
+    {
+        const matType = new MatrixType(node.origin, node.name, node.typeArguments.map(argument => argument.visit(this)));
+        return matType;
+    }
 }
 

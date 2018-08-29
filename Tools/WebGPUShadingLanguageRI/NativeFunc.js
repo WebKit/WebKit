@@ -31,7 +31,6 @@ class NativeFunc extends Func {
         this.isRestricted = false;
         this.implementation = null;
         this._implementationData = null;
-        this.instantiateImplementation = (substitution) => {};
         this.visitImplementationData = (implementationData, visitor) => null;
     }
 

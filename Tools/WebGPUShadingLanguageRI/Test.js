@@ -78,6 +78,11 @@ function makeFloat(program, value)
     return TypedValue.box(program.intrinsics.float, value);
 }
 
+function makeHalf(program, value)
+{
+    return TypedValue.box(program.intrinsics.half, value);
+}
+
 function makeEnum(program, enumName, value)
 {
     let enumType = program.types.get(enumName);
@@ -139,6 +144,14 @@ function checkBool(program, result, expected)
 function checkFloat(program, result, expected)
 {
     if (!result.type.equals(program.intrinsics.float))
+        throw new Error("Wrong result type: " + result.type);
+    if (result.value != expected)
+        throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
+}
+
+function checkHalf(program, result, expected)
+{
+    if (!result.type.equals(program.intrinsics.half))
         throw new Error("Wrong result type: " + result.type);
     if (result.value != expected)
         throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
@@ -2215,41 +2228,6 @@ tests.operatorBool = function()
 
         bool boolFromFloatFalse() { return bool(float(0)); }
         bool boolFromFloatTrue() { return bool(float(1)); }
-
-        bool boolFromInt2False() { return bool(int2(0, 0)); }
-        bool boolFromInt2True1() { return bool(int2(1, 0)); }
-        bool boolFromInt2True2() { return bool(int2(0, 1)); }
-
-        bool boolFromFloat3False() { return bool(float3(0, 0, 0)); }
-        bool boolFromFloat3True1() { return bool(float3(1, 0, 0)); }
-        bool boolFromFloat3True2() { return bool(float3(0, 1, 0)); }
-        bool boolFromFloat3True3() { return bool(float3(0, 0, 1)); }
-
-        bool boolFromUint4False() { return bool(uint4(0, 0, 0, 0)); }
-        bool boolFromUint4True1() { return bool(uint4(1, 0, 0, 0)); }
-        bool boolFromUint4True2() { return bool(uint4(0, 1, 0, 0)); }
-        bool boolFromUint4True3() { return bool(uint4(0, 0, 1, 0)); }
-        bool boolFromUint4True4() { return bool(uint4(0, 0, 0, 1)); }
-
-        struct X { int x; }
-
-        bool boolFromStructFalse()
-        {
-            X x;
-            return bool(x);
-        }
-
-        bool boolFromStructTrue()
-        {
-            X x;
-            x.x = 1;
-            return bool(x);
-        }
-
-        enum Y { A, B }
-
-        bool boolFromEnumFalse() { return bool(Y.A); }
-        bool boolFromEnumTrue() { return bool(Y.B); }
     `);
 
     checkBool(program, callFunction(program, "boolFromUcharFalse", []), false);
@@ -2264,26 +2242,25 @@ tests.operatorBool = function()
     checkBool(program, callFunction(program, "boolFromFloatFalse", []), false);
     checkBool(program, callFunction(program, "boolFromFloatTrue", []), true);
 
-    checkBool(program, callFunction(program, "boolFromInt2False", []), false);
-    checkBool(program, callFunction(program, "boolFromInt2True1", []), true);
-    checkBool(program, callFunction(program, "boolFromInt2True2", []), true);
+    checkFail(
+        () => doPrep(`
+            void foo()
+            {
+                float3 x;
+                bool r = bool(x);
+            }
+        `),
+        e => e instanceof WTypeError);
 
-    checkBool(program, callFunction(program, "boolFromFloat3False", []), false);
-    checkBool(program, callFunction(program, "boolFromFloat3True1", []), true);
-    checkBool(program, callFunction(program, "boolFromFloat3True2", []), true);
-    checkBool(program, callFunction(program, "boolFromFloat3True3", []), true);
-
-    checkBool(program, callFunction(program, "boolFromUint4False", []), false);
-    checkBool(program, callFunction(program, "boolFromUint4True1", []), true);
-    checkBool(program, callFunction(program, "boolFromUint4True2", []), true);
-    checkBool(program, callFunction(program, "boolFromUint4True3", []), true);
-    checkBool(program, callFunction(program, "boolFromUint4True4", []), true);
-
-    checkBool(program, callFunction(program, "boolFromStructFalse", []), false);
-    checkBool(program, callFunction(program, "boolFromStructTrue", []), true);
-
-    checkBool(program, callFunction(program, "boolFromEnumFalse", []), false);
-    checkBool(program, callFunction(program, "boolFromEnumTrue", []), true);
+    checkFail(
+        () => doPrep(`
+            void foo()
+            {
+                float3x3 x;
+                bool r = bool(x);
+            }
+        `),
+        e => e instanceof WTypeError);
 }
 
 tests.boolBitAnd = function()
@@ -3548,6 +3525,7 @@ tests.trap = function()
         e => e instanceof WTrapError);
 }
 
+/*
 tests.swizzle = function()
 {
     let program = doPrep(`
@@ -3572,6 +3550,7 @@ tests.swizzle = function()
     checkFloat(program, callFunction(program, "foo2", []), 6);
     checkFloat(program, callFunction(program, "foo3", []), 4);
 }
+*/
 
 tests.enumWithExplicitIntBase = function()
 {
@@ -5320,6 +5299,133 @@ tests.casts = function()
         }
     `);
     checkInt(program, callFunction(program, "baz", [makeInt(program, 6)]), 14);
+}
+
+tests.pointerToMember = function()
+{
+    checkFail(
+        () => doPrep(`
+            void foo()
+            {
+                float3 x;
+                thread float* y = &x[1];
+            }
+        `),
+        e => e instanceof WTypeError);
+
+    checkFail(
+        () => doPrep(`
+            void foo()
+            {
+                float3x3 x;
+                thread float3* y = &x[1];
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.builtinMatrices = function()
+{
+    let program = doPrep(`
+        float foo()
+        {
+            float2x2 a;
+            a[0][0] = 1;
+            a[0][1] = 2;
+            a[1][0] = 3;
+            a[1][1] = 4;
+            return a[0][0];
+        }
+        float foo2()
+        {
+            float2x3 a;
+            a[0][0] = 1;
+            a[0][1] = 2;
+            a[0][2] = 3;
+            a[1][0] = 4;
+            a[1][1] = 5;
+            a[1][2] = 6;
+            return a[1][2];
+        }
+        float foo3()
+        {
+            float2x2 a;
+            return a[0][0];
+        }
+        bool foo4()
+        {
+            float2x2 a;
+            a[0][0] = 1;
+            a[0][1] = 2;
+            a[1][0] = 3;
+            a[1][1] = 4;
+            float2x2 b;
+            b[0][0] = 5;
+            b[0][1] = 6;
+            b[1][0] = 7;
+            b[1][1] = 8;
+            for (uint i = 0; i < 2; ++i) {
+                for (uint j = 0; j < 2; ++j) {
+                    a[i][j] += 4;
+                }
+            }
+            return a == b;
+        }
+        bool foo5()
+        {
+            float2x2 a;
+            a[0] = float2(1, 2);
+            a[1] = float2(3, 4);
+            float2x2 b;
+            b[0][0] = 1;
+            b[0][1] = 2;
+            b[1][0] = 3;
+            b[1][1] = 4;
+            return a == b;
+        }
+        bool foo6()
+        {
+            float2x2 a;
+            a[0][0] = 1;
+            a[0][1] = 2;
+            a[1][0] = 3;
+            a[1][1] = 4;
+            float2x2 b;
+            b[0][0] = 5;
+            b[0][1] = 10;
+            b[1][0] = 18;
+            b[1][1] = 24;
+            a[0] *= 5;
+            a[1] *= 6;
+            return a == b;
+        }
+        float foo7()
+        {
+            float2x3 a = float2x3(float3(3, 4, 5), float3(6, 7, 8));
+            return a[0][2];
+        }
+    `);
+    checkFloat(program, callFunction(program, "foo", []), 1);
+    checkFloat(program, callFunction(program, "foo2", []), 6);
+    checkFloat(program, callFunction(program, "foo3", []), 0);
+    checkBool(program, callFunction(program, "foo4", []), true);
+    checkBool(program, callFunction(program, "foo5", []), true);
+    checkBool(program, callFunction(program, "foo6", []), true);
+    checkFloat(program, callFunction(program, "foo7", []), 5);
+}
+
+tests.halfSimpleMath = function() {
+    let program = doPrep("half foo(half x, half y) { return x + y; }");
+    checkHalf(program, callFunction(program, "foo", [makeHalf(program, 7), makeHalf(program, 5)]), 12);
+    program = doPrep("half foo(half x, half y) { return x - y; }");
+    checkHalf(program, callFunction(program, "foo", [makeHalf(program, 7), makeHalf(program, 5)]), 2);
+    checkHalf(program, callFunction(program, "foo", [makeHalf(program, 5), makeHalf(program, 7)]), -2);
+    program = doPrep("half foo(half x, half y) { return x * y; }");
+    checkHalf(program, callFunction(program, "foo", [makeHalf(program, 7), makeHalf(program, 5)]), 35);
+    checkHalf(program, callFunction(program, "foo", [makeHalf(program, 7), makeHalf(program, -5)]), -35);
+    program = doPrep("half foo(half x, half y) { return x / y; }");
+    checkHalf(program, callFunction(program, "foo", [makeHalf(program, 7), makeHalf(program, 2)]), 3.5);
+    checkHalf(program, callFunction(program, "foo", [makeHalf(program, 7), makeHalf(program, -2)]), -3.5);
 }
 
 okToTest = true;

@@ -24,23 +24,21 @@
  */
 "use strict";
 
-class BuiltinVectorConstructors {
-    constructor(baseTypeName, parameterSizes)
+class BuiltinMatrixGetter {
+    constructor(baseTypeName, height, width)
     {
         this._baseTypeName = baseTypeName;
-        this._parameterSizes = parameterSizes;
+        this._height = height;
+        this._width = width;
     }
 
     get baseTypeName() { return this._baseTypeName; }
-    get parameterSizes() { return this._parameterSizes; }
-    get outputSize()
-    {
-        return this.parameterSizes.reduce((a, b) => a + b, 0);
-    }
+    get height() { return this._height; }
+    get width() { return this._width; }
 
     toString()
     {
-        return `native operator ${this.baseTypeName}${this.outputSize}(${this.parameterSizes.map(x => x == 1 ? this.baseTypeName : this.baseTypeName + x).join(",")})`;
+        return `native ${this.baseTypeName}${this.width} operator[](${this.baseTypeName}${this.height}x${this.width},uint)`;
     }
 
     static functions()
@@ -48,36 +46,27 @@ class BuiltinVectorConstructors {
         if (!this._functions) {
             this._functions = [];
 
-            for (let typeName of VectorElementTypes) {
-                for (let size of VectorElementSizes) {
-                    for (let paramSizes of this._vectorParameterSizesForMaximumSize(size))
-                        this._functions.push(new BuiltinVectorConstructors(typeName, paramSizes));
+            for (let typeName of ["half", "float"]) {
+                for (let height of [2, 3, 4]) {
+                    for (let width of [2, 3, 4])
+                        this._functions.push(new BuiltinMatrixGetter(typeName, height, width));
                 }
             }
         }
         return this._functions;
     }
 
-    static _vectorParameterSizesForMaximumSize(maxSize)
-    {
-        let variants = [ [ maxSize ] ];
-        for (let splitPoint = 1; splitPoint < maxSize; splitPoint++) {
-            for (let v of BuiltinVectorConstructors._vectorParameterSizesForMaximumSize(maxSize - splitPoint))
-                variants.push([ splitPoint ].concat(v));
-        }
-        return variants;
-    }
-
     instantiateImplementation(func)
     {
-        func.implementation = (args) => {
-            const result = new EPtr(new EBuffer(this.outputSize), 0);
-            let offset = 0;
-            for (let i = 0; i < args.length; i++) {
-                for (let j = 0; j < this.parameterSizes[i]; j++)
-                    result.set(offset++, args[i].get(j));
-            }
-            return result;
+        func.implementation = ([mat, index]) => {
+            const indexValue = index.loadValue();
+            if (indexValue >= 0 && indexValue < this.height) {
+                const result = new EPtr(new EBuffer(this.width), 0);
+                for (let i = 0; i < this.width; i++)
+                    result.set(i, mat.get(indexValue * this.width + i));
+                return result;
+            } else
+                throw new WTrapError("[Builtin matrix getter]", "Out-of-bounds index when indexing into a matrix");
         };
         func.implementationData = this;
     }

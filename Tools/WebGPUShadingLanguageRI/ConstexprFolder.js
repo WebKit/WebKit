@@ -35,9 +35,9 @@ class ConstexprFolder extends Visitor {
         
         if (node.name == "operator-"
             && node.argumentList.length == 1
-            && node.argumentList[0].unifyNode.isConstexpr
-            && node.argumentList[0].unifyNode.negConstexpr) {
-            node.become(node.argumentList[0].unifyNode.negConstexpr(node.origin));
+            && node.argumentList[0].isLiteral
+            && node.argumentList[0].negConstexpr) {
+            node.become(node.argumentList[0].negConstexpr(node.origin));
             return;
         }
     }

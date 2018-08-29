@@ -66,6 +66,8 @@ class NativeType extends Type {
     {
         if (name == "vector")
             return new VectorType(origin, name, typeArguments);
+        if (name == "matrix")
+            return new MatrixType(origin, name, typeArguments);
 
         return new NativeType(origin, name, typeArguments);
     }

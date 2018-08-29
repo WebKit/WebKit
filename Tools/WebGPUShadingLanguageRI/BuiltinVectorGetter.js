@@ -62,7 +62,7 @@ class BuiltinVectorGetter {
 
     instantiateImplementation(func)
     {
-        func.implementation = ([vec], node) => {
+        func.implementation = ([vec]) => {
             return EPtr.box(vec.get(this.index));
         };
         func.implementationData = this;

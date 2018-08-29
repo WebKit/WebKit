@@ -263,6 +263,7 @@ class Checker extends Visitor {
     visitVectorType(node)
     {
         node.elementType.visit(this);
+        node.numElements.visit(this);
 
         let isKnownAllowedVectorElementType = false;
         for (let vectorElementTypeName of VectorElementTypes) {
@@ -277,6 +278,33 @@ class Checker extends Visitor {
 
         if (!isKnownAllowedVectorElementType)
             throw new WTypeError(`${node.elementType} is not a permitted vector element type.`);
+        if (node.numElementsValue != 2 && node.numElementsValue != 3 && node.numElementsValue != 4)
+            throw new WTypeError(`${node.toString()}: ${node.numElementsValue} is not 2, 3, or 4.`);
+    }
+
+    visitMatrixType(node)
+    {
+        node.elementType.visit(this);
+        node.numRows.visit(this);
+        node.numColumns.visit(this);
+
+        let isKnownAllowedVectorElementType = false;
+        for (let elementTypeName of ["half", "float"]) {
+            const elementType = this._program.globalNameContext.get(Type, elementTypeName);
+            if (!elementType)
+                throw new WTypeError(`${elementTypeName} is not a known native type in the standard library or intrinsics.`);
+            if (elementType.equals(node.elementType)) {
+                isKnownAllowedVectorElementType = true;
+                break;
+            }
+        }
+
+        if (!isKnownAllowedVectorElementType)
+            throw new WTypeError(`${node.elementType} is not a permitted vector element type.`);
+        if (node.numRowsValue != 2 && node.numRowsValue != 3 && node.numRowsValue != 4)
+            throw new WTypeError(`${node.toString()}: ${node.numRowsValue} is not 2, 3, or 4.`);
+        if (node.numColumnsValue != 2 && node.numColumnsValue != 3 && node.numColumnsValue != 4)
+            throw new WTypeError(`${node.toString()}: ${node.numColumnsValue} is not 2, 3, or 4.`);
     }
     
     visitArrayType(node)

@@ -24,183 +24,2100 @@
  */
 "use strict";
 
-// NOTE: The next line is line 28, and we rely on this in Prepare.js.
-let standardLibrary = `
-// This is the WSL standard library. Implementations of all of these things are in
-// Intrinsics.js.
-
-// Need to bootstrap void first.
-native typedef void;
-native typedef bool;
-native typedef uchar;
-native typedef ushort;
-native typedef uint;
-native typedef char;
-native typedef short;
-native typedef int;
-native typedef half;
-native typedef float;
-native typedef atomic_int;
-native typedef atomic_uint;
-
-native typedef vector<bool, 2>;
-typedef bool2 = vector<bool, 2>;
-native typedef vector<bool, 3>;
-typedef bool3 = vector<bool, 3>;
-native typedef vector<bool, 4>;
-typedef bool4 = vector<bool, 4>;
-native typedef vector<uchar, 2>;
-typedef uchar2 = vector<uchar, 2>;
-native typedef vector<uchar, 3>;
-typedef uchar3 = vector<uchar, 3>;
-native typedef vector<uchar, 4>;
-typedef uchar4 = vector<uchar, 4>;
-native typedef vector<ushort, 2>;
-typedef ushort2 = vector<ushort, 2>;
-native typedef vector<ushort, 3>;
-typedef ushort3 = vector<ushort, 3>;
-native typedef vector<ushort, 4>;
-typedef ushort4 = vector<ushort, 4>;
-native typedef vector<uint, 2>;
-typedef uint2 = vector<uint, 2>;
-native typedef vector<uint, 3>;
-typedef uint3 = vector<uint, 3>;
-native typedef vector<uint, 4>;
-typedef uint4 = vector<uint, 4>;
-native typedef vector<char, 2>;
-typedef char2 = vector<char, 2>;
-native typedef vector<char, 3>;
-typedef char3 = vector<char, 3>;
-native typedef vector<char, 4>;
-typedef char4 = vector<char, 4>;
-native typedef vector<short, 2>;
-typedef short2 = vector<short, 2>;
-native typedef vector<short, 3>;
-typedef short3 = vector<short, 3>;
-native typedef vector<short, 4>;
-typedef short4 = vector<short, 4>;
-native typedef vector<int, 2>;
-typedef int2 = vector<int, 2>;
-native typedef vector<int, 3>;
-typedef int3 = vector<int, 3>;
-native typedef vector<int, 4>;
-typedef int4 = vector<int, 4>;
-native typedef vector<half, 2>;
-typedef half2 = vector<half, 2>;
-native typedef vector<half, 3>;
-typedef half3 = vector<half, 3>;
-native typedef vector<half, 4>;
-typedef half4 = vector<half, 4>;
-native typedef vector<float, 2>;
-typedef float2 = vector<float, 2>;
-native typedef vector<float, 3>;
-typedef float3 = vector<float, 3>;
-native typedef vector<float, 4>;
-typedef float4 = vector<float, 4>;
-
-native operator int(uint);
-native operator int(uchar);
-native operator int(float);
-native operator uint(int);
-native operator uint(uchar);
-native operator uint(float);
-native operator uchar(int);
-native operator uchar(uint);
-native operator uchar(float);
-native operator float(int);
-native operator float(uint);
-native operator float(uchar);
-
-native int operator+(int, int);
-native uint operator+(uint, uint);
-uchar operator+(uchar a, uchar b) { return uchar(uint(a) + uint(b)); }
-native float operator+(float, float);
-int operator++(int value) { return value + 1; }
-uint operator++(uint value) { return value + 1; }
-uchar operator++(uchar value) { return value + 1; }
-native int operator-(int, int);
-native uint operator-(uint, uint);
-uchar operator-(uchar a, uchar b) { return uchar(uint(a) - uint(b)); }
-native float operator-(float, float);
-int operator--(int value) { return value - 1; }
-uint operator--(uint value) { return value - 1; }
-uchar operator--(uchar value) { return value - 1; }
-native int operator*(int, int);
-native uint operator*(uint, uint);
-uchar operator*(uchar a, uchar b) { return uchar(uint(a) * uint(b)); }
-native float operator*(float, float);
-native int operator/(int, int);
-native uint operator/(uint, uint);
-uchar operator/(uchar a, uchar b) { return uchar(uint(a) / uint(b)); }
-native int operator&(int, int);
-native int operator|(int, int);
-native int operator^(int, int);
-native int operator~(int);
-native int operator<<(int, uint);
-native int operator>>(int, uint);
-native uint operator&(uint, uint);
-native uint operator|(uint, uint);
-native uint operator^(uint, uint);
-native uint operator~(uint);
-native uint operator<<(uint, uint);
-native uint operator>>(uint, uint);
-uchar operator&(uchar a, uchar b) { return uchar(uint(a) & uint(b)); }
-uchar operator|(uchar a, uchar b) { return uchar(uint(a) | uint(b)); }
-uchar operator^(uchar a, uchar b) { return uchar(uint(a) ^ uint(b)); }
-uchar operator~(uchar value) { return uchar(~uint(value)); }
-uchar operator<<(uchar a, uint b) { return uchar(uint(a) << (b & 7)); }
-uchar operator>>(uchar a, uint b) { return uchar(uint(a) >> (b & 7)); }
-native float operator/(float, float);
-native bool operator==(int, int);
-native bool operator==(uint, uint);
-bool operator==(uchar a, uchar b) { return uint(a) == uint(b); }
-native bool operator==(bool, bool);
-native bool operator==(float, float);
-native bool operator<(int, int);
-native bool operator<(uint, uint);
-bool operator<(uchar a, uchar b) { return uint(a) < uint(b); }
-native bool operator<(float, float);
-native bool operator<=(int, int);
-native bool operator<=(uint, uint);
-bool operator<=(uchar a, uchar b) { return uint(a) <= uint(b); }
-native bool operator<=(float, float);
-native bool operator>(int, int);
-native bool operator>(uint, uint);
-bool operator>(uchar a, uchar b) { return uint(a) > uint(b); }
-native bool operator>(float, float);
-native bool operator>=(int, int);
-native bool operator>=(uint, uint);
-bool operator>=(uchar a, uchar b) { return uint(a) >= uint(b); }
-native bool operator>=(float, float);
-
-bool operator&(bool a, bool b)
-{
-    if (a)
-        return b;
-    return false;
-}
-
-bool operator|(bool a, bool b)
-{
-    if (a)
-        return true;
-    if (b)
-        return true;
-    return false;
-}
-
-bool operator^(bool a, bool b)
-{
-    if (a)
-        return !b;
-    return b;
-}
-
-bool operator~(bool value)
-{
-    return !value;
-}
-`;
+let standardLibrary = (function() {
+    let result = "";
+    function print(s)
+    {
+        if (s)
+            result += s;
+        result += "\n";
+    }
+    (function() {
+        print(`// This was autogenerated from Generate_Standard_Library.swift! Do not edit!!`);
+        print();
+        
+        for (var type of [`void`, `bool`, `uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`, `atomic_int`, `atomic_uint`]) {
+            print(`native typedef ${type};`);
+        }
+        for (var type of [`bool`, `uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            for (var size of [2, 3, 4]) {
+                print(`native typedef vector<${type}, ${size}>;`);
+                print(`typedef ${type}${size} = vector<${type}, ${size}>;`);
+            }
+        }
+        print();
+        
+        for (var type of [`half`, `float`]) {
+            for (var i of [2, 3, 4]) {
+                for (var j of [2, 3, 4]) {
+                    print(`native typedef matrix<${type}, ${i}, ${j}>;`);
+                    print(`typedef ${type}${i}x${j} = matrix<${type}, ${i}, ${j}>;`);
+                }
+            }
+        }
+        print(`native typedef sampler;`);
+        for (var type of [`Texture1D`, `RWTexture1D`, `Texture1DArray`, `RWTexture1DArray`, `Texture2D`, `RWTexture2D`, `Texture2DArray`, `RWTexture2DArray`, `Texture3D`, `RWTexture3D`, `TextureCube`]) {
+            for (var typeArgumentBase of [`bool`, `uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+                for (var size of [``, `2`, `3`, `4`]) {
+                    print(`native typedef ${type}<${typeArgumentBase}${size}>;`);
+                }
+            }
+        }
+        for (var type of [`TextureDepth2D`, `RWTextureDepth2D`, `TextureDepth2DArray`, `RWTextureDepth2DArray`, `TextureDepthCube`]) {
+            for (var typeArgument of [`float`, `half`]) {
+                print(`native typedef ${type}<${typeArgument}>;`);
+            }
+        }
+        print();
+        
+        for (var type1 of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            for (var type2 of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+                if (type1 != type2) {
+                    print(`native operator ${type1}(${type2});`);
+                }
+            }
+        }
+        print();
+        
+        for (var type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            print(`operator bool(${type} x) {`);
+            print(`    return x != 0;`);
+            print(`}`);
+        }
+        print();
+        
+        print(`native operator int(atomic_int);`);
+        print(`native operator uint(atomic_uint);`);
+        print();
+        
+        print(`native bool operator==(bool, bool);`);
+        
+        print(`bool operator&(bool a, bool b) {`);
+        print(`    return a && b;`);
+        print(`}`);
+        
+        print(`bool operator|(bool a, bool b) {`);
+        print(`    return a || b;`);
+        print(`}`);
+        
+        print(`bool operator^(bool a, bool b) {`);
+        print(`    if (a)`);
+        print(`        return !b;`);
+        print(`    return b;`);
+        print(`}`);
+        
+        print(`bool operator~(bool value) {`);
+        print(`    return !value;`);
+        print(`}`);
+        
+        for (var type of [`int`, `uint`, `float`]) {
+            print(`native ${type} operator+(${type}, ${type});`);
+            print(`native ${type} operator-(${type}, ${type});`);
+            print(`native ${type} operator*(${type}, ${type});`);
+            print(`native ${type} operator/(${type}, ${type});`);
+            print(`native bool operator==(${type}, ${type});`);
+            print(`native bool operator<(${type}, ${type});`);
+            print(`native bool operator<=(${type}, ${type});`);
+            print(`native bool operator>(${type}, ${type});`);
+            print(`native bool operator>=(${type}, ${type});`);
+        }
+        
+        for (var type of [`int`, `uint`]) {
+            print(`native ${type} operator&(${type}, ${type});`);
+            print(`native ${type} operator|(${type}, ${type});`);
+            print(`native ${type} operator^(${type}, ${type});`);
+            print(`native ${type} operator~(${type});`);
+            print(`native ${type} operator<<(${type}, uint);`);
+            print(`native ${type} operator>>(${type}, uint);`);
+        }
+        
+        for (var type of [`uchar`, `ushort`]) {
+            print(`${type} operator+(${type} a, ${type} b) {`);
+            print(`    return ${type}(uint(a) + uint(b));`);
+            print(`}`);
+            print(`${type} operator-(${type} a, ${type} b) {`);
+            print(`    return ${type}(uint(a) - uint(b));`);
+            print(`}`);
+            print(`${type} operator*(${type} a, ${type} b) {`);
+            print(`    return ${type}(uint(a) * uint(b));`);
+            print(`}`);
+            print(`${type} operator/(${type} a, ${type} b) {`);
+            print(`    return ${type}(uint(a) / uint(b));`);
+            print(`}`);
+            print(`${type} operator&(${type} a, ${type} b) {`);
+            print(`    return ${type}(uint(a) & uint(b));`);
+            print(`}`);
+            print(`${type} operator|(${type} a, ${type} b) {`);
+            print(`    return ${type}(uint(a) | uint(b));`);
+            print(`}`);
+            print(`${type} operator^(${type} a, ${type} b) {`);
+            print(`    return ${type}(uint(a) ^ uint(b));`);
+            print(`}`);
+            print(`${type} operator~(${type} a) {`);
+            print(`    return ${type}(~uint(a));`);
+            print(`}`);
+            print(`bool operator==(${type} a, ${type} b) {`);
+            print(`    return uint(a) == uint(b);`);
+            print(`}`);
+            print(`bool operator<(${type} a, ${type} b) {`);
+            print(`    return uint(a) < uint(b);`);
+            print(`}`);
+            print(`bool operator<=(${type} a, ${type} b) {`);
+            print(`    return uint(a) <= uint(b);`);
+            print(`}`);
+            print(`bool operator>(${type} a, ${type} b) {`);
+            print(`    return uint(a) > uint(b);`);
+            print(`}`);
+            print(`bool operator>=(${type} a, ${type} b) {`);
+            print(`    return uint(a) >= uint(b);`);
+            print(`}`);
+        }
+        print(`uchar operator<<(uchar a, uint b) {`);
+        print(`    return uchar(uint(a) << (b & 255));`);
+        print(`}`);
+        print(`ushort operator<<(ushort a, uint b) {`);
+        print(`    return ushort(uint(a) << (b & 65535));`);
+        print(`}`);
+        print(`uchar operator>>(uchar a, uint b) {`);
+        print(`    return uchar(uint(a) >> (b & 255));`);
+        print(`}`);
+        print(`ushort operator>>(ushort a, uint b) {`);
+        print(`    return ushort(uint(a) >> (b & 65535));`);
+        print(`}`);
+        
+        for (var type of [`char`, `short`]) {
+            print(`${type} operator+(${type} a, ${type} b) {`);
+            print(`    return ${type}(int(a) + int(b));`);
+            print(`}`);
+            print(`${type} operator-(${type} a, ${type} b) {`);
+            print(`    return ${type}(int(a) - int(b));`);
+            print(`}`);
+            print(`${type} operator*(${type} a, ${type} b) {`);
+            print(`    return ${type}(int(a) * int(b));`);
+            print(`}`);
+            print(`${type} operator/(${type} a, ${type} b) {`);
+            print(`    return ${type}(int(a) / int(b));`);
+            print(`}`);
+            print(`${type} operator&(${type} a, ${type} b) {`);
+            print(`    return ${type}(int(a) & int(b));`);
+            print(`}`);
+            print(`${type} operator|(${type} a, ${type} b) {`);
+            print(`    return ${type}(int(a) | int(b));`);
+            print(`}`);
+            print(`${type} operator^(${type} a, ${type} b) {`);
+            print(`    return ${type}(int(a) ^ int(b));`);
+            print(`}`);
+            print(`${type} operator~(${type} a) {`);
+            print(`    return ${type}(~int(a));`);
+            print(`}`);
+            print(`bool operator==(${type} a, ${type} b) {`);
+            print(`    return int(a) == int(b);`);
+            print(`}`);
+            print(`bool operator>(${type} a, ${type} b) {`);
+            print(`    return int(a) > int(b);`);
+            print(`}`);
+            print(`bool operator>=(${type} a, ${type} b) {`);
+            print(`    return int(a) >= int(b);`);
+            print(`}`);
+            print(`bool operator<(${type} a, ${type} b) {`);
+            print(`    return int(a) < int(b);`);
+            print(`}`);
+            print(`bool operator<=(${type} a, ${type} b) {`);
+            print(`    return int(a) <= int(b);`);
+            print(`}`);
+        }
+        print(`char operator<<(char a, uint b) {`);
+        print(`    return char(int(a) << (b & 255));`);
+        print(`}`);
+        print(`short operator<<(short a, uint b) {`);
+        print(`    return short(int(a) << (b & 65535));`);
+        print(`}`);
+        print(`char operator>>(char a, uint b) {`);
+        print(`    return char(int(a) >> (b & 255));`);
+        print(`}`);
+        print(`short operator>>(short a, uint b) {`);
+        print(`    return short(int(a) >> (b & 65535));`);
+        print(`}`);
+        
+        for (var type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            print(`${type} operator++(${type} value) {`);
+            print(`    return value + 1;`);
+            print(`}`);
+            print(`${type} operator--(${type} value) {`);
+            print(`    return value - 1;`);
+            print(`}`);
+        }
+        
+        print(`half operator+(half a, half b) {`);
+        print(`    return half(float(a) + float(b));`);
+        print(`}`);
+        print(`half operator-(half a, half b) {`);
+        print(`    return half(float(a) - float(b));`);
+        print(`}`);
+        print(`half operator*(half a, half b) {`);
+        print(`    return half(float(a) * float(b));`);
+        print(`}`);
+        print(`half operator/(half a, half b) {`);
+        print(`    return half(float(a) / float(b));`);
+        print(`}`);
+        print(`bool operator==(half a, half b) {`);
+        print(`    return float(a) == float(b);`);
+        print(`}`);
+        print(`bool operator<(half a, half b) {`);
+        print(`    return float(a) < float(b);`);
+        print(`}`);
+        print(`bool operator<=(half a, half b) {`);
+        print(`    return float(a) <= float(b);`);
+        print(`}`);
+        print(`bool operator>(half a, half b) {`);
+        print(`    return float(a) < float(b);`);
+        print(`}`);
+        print(`bool operator>=(half a, half b) {`);
+        print(`    return float(a) <= float(b);`);
+        print(`}`);
+        print(`char operator-(char x) {`);
+        print(`    return char(-int(x));`);
+        print(`}`);
+        print(`short operator-(short x) {`);
+        print(`    return short(-int(x));`);
+        print(`}`);
+        print(`half operator-(half x) {`);
+        print(`    return half(-float(x));`);
+        print(`}`);
+        print(`native int operator-(int);`);
+        print(`native float operator-(float);`);
+        print();
+        
+        for (var type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            for (var size of [2, 3, 4]) {
+                print(`${type}${size} operator+(${type}${size} a, ${type}${size} b) {`);
+                print(`    ${type}${size} result;`);
+                for (var m = 0; m < size; ++m) {
+                    print(`    result[${m}] = a[${m}] + b[${m}];`);
+                }
+                print(`    return result;`);
+                print(`}`);
+                print(`${type}${size} operator-(${type}${size} a, ${type}${size} b) {`);
+                print(`    ${type}${size} result;`);
+                for (var m = 0; m < size; ++m) {
+                    print(`    result[${m}] = a[${m}] - b[${m}];`);
+                }
+                print(`    return result;`);
+                print(`}`);
+                print(`${type}${size} operator*(${type}${size} a, ${type}${size} b) {`);
+                print(`    ${type}${size} result;`);
+                for (var m = 0; m < size; ++m) {
+                    print(`    result[${m}] = a[${m}] * b[${m}];`);
+                }
+                print(`    return result;`);
+                print(`}`);
+                print(`${type}${size} operator*(${type}${size} a, ${type} b) {`);
+                print(`    ${type}${size} result;`);
+                for (var m = 0; m < size; ++m) {
+                    print(`    result[${m}] = a[${m}] * b;`);
+                }
+                print(`    return result;`);
+                print(`}`);
+                print(`${type}${size} operator*(${type} a, ${type}${size} b) {`);
+                print(`    ${type}${size} result;`);
+                for (var m = 0; m < size; ++m) {
+                    print(`    result[${m}] = a * b[${m}];`);
+                }
+                print(`    return result;`);
+                print(`}`);
+                print(`${type}${size} operator/(${type}${size} a, ${type}${size} b) {`);
+                print(`    ${type}${size} result;`);
+                for (var m = 0; m < size; ++m) {
+                    print(`    result[${m}] = a[${m}] / b[${m}];`);
+                }
+                print(`    return result;`);
+                print(`}`);
+                print(`${type}${size} operator/(${type}${size} a, ${type} b) {`);
+                print(`    ${type}${size} result;`);
+                for (var m = 0; m < size; ++m) {
+                    print(`    result[${m}] = a[${m}] / b;`);
+                }
+                print(`    return result;`);
+                print(`}`);
+                print(`${type}${size} operator/(${type} a, ${type}${size} b) {`);
+                print(`    ${type}${size} result;`);
+                for (var m = 0; m < size; ++m) {
+                    print(`    result[${m}] = a / b[${m}];`);
+                }
+                print(`    return result;`);
+                print(`}`);
+            }
+        }
+        for (var type of [`char`, `short`, `int`, `half`, `float`]) {
+            for (var size of [2, 3, 4]) {
+                print(`${type}${size} operator-(${type}${size} a) {`);
+                print(`    ${type}${size} result;`);
+                for (var m = 0; m < size; ++m) {
+                    print(`    result[${m}] = -a[${m}];`);
+                }
+                print(`    return result;`);
+                print(`}`);
+            }
+        }
+        for (var type of [`half`, `float`]) {
+            for (var i of [2, 3, 4]) {
+                for (var j of [2, 3, 4]) {
+                    print(`${type}${i}x${j} operator+(${type}${i}x${j} a, ${type}${i}x${j} b) {`);
+                    print(`    ${type}${i}x${j} result;`);
+                    for (var m = 0; m < i; ++m) {
+                        for (var n = 0; n < j; ++n) {
+                            print(`    result[${m}][${n}] = a[${m}][${n}] + b[${m}][${n}];`);
+                        }
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                    print(`${type}${i}x${j} operator-(${type}${i}x${j} a, ${type}${i}x${j} b) {`);
+                    print(`    ${type}${i}x${j} result;`);
+                    for (var m = 0; m < i; ++m) {
+                        for (var n = 0; n < j; ++n) {
+                            print(`    result[${m}][${n}] = a[${m}][${n}] - b[${m}][${n}];`);
+                        }
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                    print(`${type}${i}x${j} operator-(${type}${i}x${j} a) {`);
+                    print(`    ${type}${i}x${j} result;`);
+                    for (var m = 0; m < i; ++m) {
+                        for (var n = 0; n < j; ++n) {
+                            print(`    result[${m}][${n}] = -a[${m}][${n}];`);
+                        }
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                    print(`${type}${i}x${j} operator*(${type}${i}x${j} a, ${type}${i}x${j} b) {`);
+                    print(`    ${type}${i}x${j} result;`);
+                    for (var m = 0; m < i; ++m) {
+                        for (var n = 0; n < j; ++n) {
+                            print(`    result[${m}][${n}] = a[${m}][${n}] * b[${m}][${n}];`);
+                        }
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                    print(`${type}${i}x${j} operator*(${type}${i}x${j} a, ${type} b) {`);
+                    print(`    ${type}${i}x${j} result;`);
+                    for (var m = 0; m < i; ++m) {
+                        for (var n = 0; n < j; ++n) {
+                            print(`    result[${m}][${n}] = a[${m}][${n}] * b;`);
+                        }
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                    print(`${type}${i}x${j} operator*(${type} a, ${type}${i}x${j} b) {`);
+                    print(`    ${type}${i}x${j} result;`);
+                    for (var m = 0; m < i; ++m) {
+                        for (var n = 0; n < j; ++n) {
+                            print(`    result[${m}][${n}] = a * b[${m}][${n}];`);
+                        }
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                    print(`${type}${i}x${j} operator/(${type}${i}x${j} a, ${type}${i}x${j} b) {`);
+                    print(`    ${type}${i}x${j} result;`);
+                    for (var m = 0; m < i; ++m) {
+                        for (var n = 0; n < j; ++n) {
+                            print(`    result[${m}][${n}] = a[${m}][${n}] / b[${m}][${n}];`);
+                        }
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                    print(`${type}${i}x${j} operator/(${type}${i}x${j} a, ${type} b) {`);
+                    print(`    ${type}${i}x${j} result;`);
+                    for (var m = 0; m < i; ++m) {
+                        for (var n = 0; n < j; ++n) {
+                            print(`    result[${m}][${n}] = a[${m}][${n}] / b;`);
+                        }
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                    print(`${type}${i}x${j} operator/(${type} a, ${type}${i}x${j} b) {`);
+                    print(`    ${type}${i}x${j} result;`);
+                    for (var m = 0; m < i; ++m) {
+                        for (var n = 0; n < j; ++n) {
+                            print(`    result[${m}][${n}] = a / b[${m}][${n}];`);
+                        }
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                }
+            }
+        }
+        
+        for (var type of [`bool`, `uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            print(`operator ${type}2(${type} x, ${type} y) {`);
+            print(`    ${type}2 result;`);
+            print(`    result.x = x;`);
+            print(`    result.y = y;`);
+            print(`    return result;`);
+            print(`}`);
+            print(`operator ${type}3(${type} x, ${type} y, ${type} z) {`);
+            print(`    ${type}3 result;`);
+            print(`    result.x = x;`);
+            print(`    result.y = y;`);
+            print(`    result.z = z;`);
+            print(`    return result;`);
+            print(`}`);
+            print(`operator ${type}3(${type}2 x, ${type} y) {`);
+            print(`    ${type}3 result;`);
+            print(`    result.x = x.x;`);
+            print(`    result.y = x.y;`);
+            print(`    result.z = y;`);
+            print(`    return result;`);
+            print(`}`);
+            print(`operator ${type}3(${type} x, ${type}2 y) {`);
+            print(`    ${type}3 result;`);
+            print(`    result.x = x;`);
+            print(`    result.y = y.x;`);
+            print(`    result.z = y.y;`);
+            print(`    return result;`);
+            print(`}`);
+            print(`operator ${type}4(${type} x, ${type} y, ${type} z, ${type} w) {`);
+            print(`    ${type}4 result;`);
+            print(`    result.x = x;`);
+            print(`    result.y = y;`);
+            print(`    result.z = z;`);
+            print(`    result.w = w;`);
+            print(`    return result;`);
+            print(`}`);
+            print(`operator ${type}4(${type}2 x, ${type} y, ${type} z) {`);
+            print(`    ${type}4 result;`);
+            print(`    result.x = x.x;`);
+            print(`    result.y = x.y;`);
+            print(`    result.z = y;`);
+            print(`    result.w = z;`);
+            print(`    return result;`);
+            print(`}`);
+            print(`operator ${type}4(${type} x, ${type}2 y, ${type} z) {`);
+            print(`    ${type}4 result;`);
+            print(`    result.x = x;`);
+            print(`    result.y = y.x;`);
+            print(`    result.z = y.y;`);
+            print(`    result.w = z;`);
+            print(`    return result;`);
+            print(`}`);
+            print(`operator ${type}4(${type} x, ${type} y, ${type}2 z) {`);
+            print(`    ${type}4 result;`);
+            print(`    result.x = x;`);
+            print(`    result.y = y;`);
+            print(`    result.z = z.x;`);
+            print(`    result.w = z.y;`);
+            print(`    return result;`);
+            print(`}`);
+            print(`operator ${type}4(${type}2 x, ${type}2 y) {`);
+            print(`    ${type}4 result;`);
+            print(`    result.x = x.x;`);
+            print(`    result.y = x.y;`);
+            print(`    result.z = y.x;`);
+            print(`    result.w = y.y;`);
+            print(`    return result;`);
+            print(`}`);
+            print(`operator ${type}4(${type}3 x, ${type} y) {`);
+            print(`    ${type}4 result;`);
+            print(`    result.x = x.x;`);
+            print(`    result.y = x.y;`);
+            print(`    result.z = x.z;`);
+            print(`    result.w = y;`);
+            print(`    return result;`);
+            print(`}`);
+            print(`operator ${type}4(${type} x, ${type}3 y) {`);
+            print(`    ${type}4 result;`);
+            print(`    result.x = x;`);
+            print(`    result.y = y.x;`);
+            print(`    result.z = y.y;`);
+            print(`    result.w = y.z;`);
+            print(`    return result;`);
+            print(`}`);
+            print(`uint operator.length(${type}2) {`);
+            print(`    return 2;`);
+            print(`}`);
+            print(`uint operator.length(${type}3) {`);
+            print(`    return 3;`);
+            print(`}`);
+            print(`uint operator.length(${type}4) {`);
+            print(`    return 4;`);
+            print(`}`);
+        }
+        print();
+        
+        for (var type of [`half`, `float`]) {
+            let variables = [`a`, `b`, `c`, `d`];
+            for (var m of [2, 3, 4]) {
+                for (var n of [2, 3, 4]) {
+                    let signature = `operator ${type}${m}x${n}(`;
+                    for (var i = 0; i < m; ++i) {
+                        if (i != 0) {
+                            signature += `, `;
+                        }
+                        signature += `${type}${n} ${variables[i]}`;
+                    }
+                    signature += `) {`;
+                    print(signature);
+                    print(`    ${type}${m}x${n} result;`);
+                    for (var i = 0; i < m; ++i) {
+                        print(`    result[${i}] = ${variables[i]};`);
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                }
+            }
+        }
+        print();
+        
+        for (var type of [`bool`, `uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            print(`bool operator==(${type}2 a, ${type}2 b) {`);
+            print(`    return a.x == b.x && a.y == b.y;`);
+            print(`}`);
+            print(`bool operator==(${type}3 a, ${type}3 b) {`);
+            print(`    return a.x == b.x && a.y == b.y && a.z == b.z;`);
+            print(`}`);
+            print(`bool operator==(${type}4 a, ${type}4 b) {`);
+            print(`    return a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w;`);
+            print(`}`);
+            print(`native ${type} operator.x(${type}2);`);
+            print(`native ${type} operator.y(${type}2);`);
+            print(`native ${type} operator.x(${type}3);`);
+            print(`native ${type} operator.y(${type}3);`);
+            print(`native ${type} operator.z(${type}3);`);
+            print(`native ${type} operator.x(${type}4);`);
+            print(`native ${type} operator.y(${type}4);`);
+            print(`native ${type} operator.z(${type}4);`);
+            print(`native ${type} operator.w(${type}4);`);
+            print(`native ${type}2 operator.x=(${type}2, ${type});`);
+            print(`native ${type}2 operator.y=(${type}2, ${type});`);
+            print(`native ${type}3 operator.x=(${type}3, ${type});`);
+            print(`native ${type}3 operator.y=(${type}3, ${type});`);
+            print(`native ${type}3 operator.z=(${type}3, ${type});`);
+            print(`native ${type}4 operator.x=(${type}4, ${type});`);
+            print(`native ${type}4 operator.y=(${type}4, ${type});`);
+            print(`native ${type}4 operator.z=(${type}4, ${type});`);
+            print(`native ${type}4 operator.w=(${type}4, ${type});`);
+            print(`${type} operator[](${type}2 v, uint index) {`);
+            print(`    switch (index) {`);
+            print(`        case 0:`);
+            print(`            return v.x;`);
+            print(`        case 1:`);
+            print(`            return v.y;`);
+            print(`        default:`);
+            print(`            trap;`);
+            print(`    }`);
+            print(`}`);
+            print(`${type} operator[](${type}3 v, uint index) {`);
+            print(`    switch (index) {`);
+            print(`        case 0:`);
+            print(`            return v.x;`);
+            print(`        case 1:`);
+            print(`            return v.y;`);
+            print(`        case 2:`);
+            print(`            return v.z;`);
+            print(`        default:`);
+            print(`            trap;`);
+            print(`    }`);
+            print(`}`);
+            print(`${type} operator[](${type}4 v, uint index) {`);
+            print(`    switch (index) {`);
+            print(`        case 0:`);
+            print(`            return v.x;`);
+            print(`        case 1:`);
+            print(`            return v.y;`);
+            print(`        case 2:`);
+            print(`            return v.z;`);
+            print(`        case 3:`);
+            print(`            return v.w;`);
+            print(`        default:`);
+            print(`            trap;`);
+            print(`    }`);
+            print(`}`);
+            print(`${type}2 operator[]=(${type}2 v, uint index, ${type} a) {`);
+            print(`    switch (index) {`);
+            print(`        case 0:`);
+            print(`            v.x = a;`);
+            print(`            break;`);
+            print(`        case 1:`);
+            print(`            v.y = a;`);
+            print(`            break;`);
+            print(`        default:`);
+            print(`            trap;`);
+            print(`    }`);
+            print(`    return v;`);
+            print(`}`);
+            print(`${type}3 operator[]=(${type}3 v, uint index, ${type} a) {`);
+            print(`    switch (index) {`);
+            print(`        case 0:`);
+            print(`            v.x = a;`);
+            print(`            break;`);
+            print(`        case 1:`);
+            print(`            v.y = a;`);
+            print(`            break;`);
+            print(`        case 2:`);
+            print(`            v.z = a;`);
+            print(`            break;`);
+            print(`        default:`);
+            print(`            trap;`);
+            print(`    }`);
+            print(`    return v;`);
+            print(`}`);
+            print(`${type}4 operator[]=(${type}4 v, uint index, ${type} a) {`);
+            print(`    switch (index) {`);
+            print(`        case 0:`);
+            print(`            v.x = a;`);
+            print(`            break;`);
+            print(`        case 1:`);
+            print(`            v.y = a;`);
+            print(`            break;`);
+            print(`        case 2:`);
+            print(`            v.z = a;`);
+            print(`            break;`);
+            print(`        case 3:`);
+            print(`            v.w = a;`);
+            print(`            break;`);
+            print(`        default:`);
+            print(`            trap;`);
+            print(`    }`);
+            print(`    return v;`);
+            print(`}`);
+        }
+        print();
+        
+        for (var type of [`half`, `float`]) {
+            for (var m of [2, 3, 4]) {
+                for (var n of [2, 3, 4]) {
+                    print(`native ${type}${n} operator[](${type}${m}x${n}, uint);`);
+                    print(`native ${type}${m}x${n} operator[]=(${type}${m}x${n}, uint, ${type}${n});`);
+                }
+            }
+        }
+        print();
+        
+        for (var type of [`half`, `float`]) {
+            for (var i of [2, 3, 4]) {
+                for (var j of [2, 3, 4]) {
+                    print(`bool operator==(${type}${i}x${j} a, ${type}${i}x${j} b) {`);
+                    print(`    return`);
+                    for (var m = 0; m < i; ++m) {
+                        for (var n = 0; n < j; ++n) {
+                            print(`        a[${m}][${n}] == b[${m}][${n}] &&`);
+                        }
+                    }
+                    print(`    true;`);
+                    print(`}`);
+                }
+            }
+        }
+        
+        function computeSwizzle(components, maxValue, maxLength) {
+            if (components.length == maxLength) {
+                return [components];
+            } else {
+                let result = [];
+                for (var i = 0; i < maxValue; ++i) {
+                    result = result.concat(computeSwizzle(components.concat([i]), maxValue, maxLength));
+                }
+                return result;
+            }
+        }
+        
+        function component(value) {
+            switch (value) {
+                case 0:
+                    return `x`;
+                case 1:
+                    return `y`;
+                case 2:
+                    return `z`;
+                case 3:
+                    return `w`;
+                default:
+                    fatalError();
+            }
+        }
+        
+        function uniqueLength([Int]) {
+            let has0 = false;
+            let has1 = false;
+            let has2 = false;
+            let has3 = false;
+            for (var v of swizzle) {
+                switch (v) {
+                    case 0:
+                        has0 = true;
+                        break;
+                    case 1:
+                        has1 = true;
+                        break;
+                    case 2:
+                        has2 = true;
+                        break;
+                    case 3:
+                        has3 = true;
+                        break;
+                    default:
+                        fatalError();
+                }
+            }
+            let result = 0;
+            if (has0) {
+                result += 1;
+            }
+            if (has1) {
+                result += 1;
+            }
+            if (has2) {
+                result += 1;
+            }
+            if (has3) {
+                result += 1;
+            }
+            return result;
+        }
+        
+        /*
+        for (var type of [`bool`, `uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            for (var size of [2, 3, 4]) {
+                for (var maxValue of [2, 3, 4]) {
+                    for (var swizzle of computeSwizzle([], maxValue, size)) {
+                        let swizzleName = swizzle.map(component).join("");
+                        print(`${type}${size} operator.${swizzleName}(${type}${maxValue} v) {`);
+                        print(`    ${type}${size} result;`);
+                        for (var i = 0; i < size; ++i) {
+                            print(`    result.${component(i)} = v.${component(swizzle[i])};`);
+                        }
+                        print(`    return result;`);
+                        print(`}`);
+                        if (uniqueLength(swizzle) == size) {
+                            print(`${type}${maxValue} operator.${swizzleName}=(${type}${maxValue} v, ${type}${size} c) {`);
+                            print(`    ${type}${maxValue} result = v;`);
+                            for (var i = 0; i < size; ++i) {
+                                print(`    result.${component(swizzle[i])} = c.${component(i)};`);
+                            }
+                            print(`    return result;`);
+                            print(`}`);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // These functions are unary floating-point scalar functions,
+        // which can also be applied to vectors and matrices component-wise.
+        (function() {
+            let nativeFunctions = [`cos`, `sin`, `tan`, `acos`, `asin`, `atan`, `cosh`, `sinh`, `tanh`, `ceil`, `exp`, `floor`, `log`, `round`, `trunc`, `ddx`, `ddy`];
+            let nonNativeFunctions = [`sqrt`, `log2`, `log10`, `frac`, `exp2`, `degrees`, `radians`, `rcp`, `rsqrt`, `saturate`, `ddx_coarse`, `ddx_fine`, `ddy_coarse`, `ddy_fine`, `fwidth`];
+        
+            for (var nativeFunction of nativeFunctions) {
+                print(`native float ${nativeFunction}(float);`);
+                print(`half ${nativeFunction}(half x) {`);
+                print(`    return half(${nativeFunction}(float(x)));`);
+                print(`}`);
+            }
+        
+            for (var type of [`half`, `float`]) {
+                print(`${type} sqrt(${type} x) {`);
+                print(`    return pow(x, 0.5);`);
+                print(`}`);
+                print(`${type} log2(${type} x) {`);
+                print(`    return log(x) / log(${type}(2));`);
+                print(`}`);
+                print(`${type} log10(${type} x) {`);
+                print(`    return log(x) / log(${type}(10));`);
+                print(`}`);
+                print(`${type} frac(${type} x) {`);
+                print(`    return x - floor(x);`);
+                print(`}`);
+                print(`${type} exp2(${type} x) {`);
+                print(`    return exp(x * log(${type}(2)));`);
+                print(`}`);
+                print(`${type} degrees(${type} x) {`);
+                print(`    return x * 180 / 3.14159;`);
+                print(`}`);
+                print(`${type} radians(${type} x) {`);
+                print(`    return x * 3.14159 / 180;`);
+                print(`}`);
+                print(`${type} rcp(${type} x) {`);
+                print(`    return 1 / x;`);
+                print(`}`);
+                print(`${type} rsqrt(${type} x) {`);
+                print(`    return 1 / sqrt(x);`);
+                print(`}`);
+                print(`${type} saturate(${type} x) {`);
+                print(`    return clamp(x, 0, 1);`);
+                print(`}`);
+                print(`${type} ddx_coarse(${type} x) {`);
+                print(`    return ddx(x);`);
+                print(`}`);
+                print(`${type} ddx_fine(${type} x) {`);
+                print(`    return ddx(x);`);
+                print(`}`);
+                print(`${type} ddy_coarse(${type} x) {`);
+                print(`    return ddy(x);`);
+                print(`}`);
+                print(`${type} ddy_fine(${type} x) {`);
+                print(`    return ddy(x);`);
+                print(`}`);
+                print(`${type} fwidth(${type} x) {`);
+                print(`    return abs(ddx(x)) + abs(ddy(x));`);
+                print(`}`);
+        
+                for (var outputFunction of nativeFunctions.concat(nonNativeFunctions)) {
+                    for (var size of [2, 3, 4]) {
+                        print(`${type}${size} ${outputFunction}(${type}${size} x) {`);
+                        print(`    ${type}${size} result;`);
+                        for (var i = 0; i < size; ++i) {
+                            print(`    result[${i}] = ${outputFunction}(x[${i}]);`);
+                        }
+                        print(`    return result;`);
+                        print(`}`);
+                    }
+                    for (var i of [2, 3, 4]) {
+                        for (var j of [2, 3, 4]) {
+                            print(`${type}${i}x${j} ${outputFunction}(${type}${i}x${j} x) {`);
+                            print(`    ${type}${i}x${j} result;`);
+                            for (var m = 0; m < i; ++m) {
+                                for (var n = 0; n < j; ++n) {
+                                    print(`    result[${m}][${n}] = ${outputFunction}(x[${m}][${n}]);`);
+                                }
+                            }
+                            print(`    return result;`);
+                            print(`}`);
+                        }
+                    }
+                }
+                print();
+            }
+        })();
+        
+        // These functions are binary floating-point scalar functions,
+        // which can also be applied to vectors and matrices component-wise.
+        (function() {
+            let nativeFunctions = [`pow`];
+        
+            for (var nativeFunction of nativeFunctions) {
+                print(`native float ${nativeFunction}(float, float);`);
+                print(`half ${nativeFunction}(half x, half y) {`);
+                print(`    return half(${nativeFunction}(float(x), float(y)));`);
+                print(`}`);
+            }
+        
+            for (var type of [`half`, `float`]) {
+                let nonNativeFunctions = [`step`, `ldexp`, `fmod`];
+        
+                print(`${type} step(${type} y, ${type} x) {`);
+                print(`    return x >= y ? 1 : 0;`);
+                print(`}`);
+                print(`${type} ldexp(${type} x, ${type} e) {`);
+                print(`    return x * pow(2, e);`);
+                print(`}`);
+                print(`${type} fmod(${type} x, ${type} y) {`);
+                print(`    uint whole = uint(x / y);`);
+                print(`    ${type} multiple = ${type}(whole) * y;`);
+                print(`    return x - multiple;`);
+                print(`}`);
+        
+                for (var outputFunction of nativeFunctions.concat(nonNativeFunctions)) {
+                    for (var size of [2, 3, 4]) {
+                        print(`${type}${size} ${outputFunction}(${type}${size} x, ${type}${size} y) {`);
+                        print(`    ${type}${size} result;`);
+                        for (var i = 0; i < size; ++i) {
+                            print(`    result[${i}] = ${outputFunction}(x[${i}], y[${i}]);`);
+                        }
+                        print(`    return result;`);
+                        print(`}`);
+                    }
+                    for (var i of [2, 3, 4]) {
+                        for (var j of [2, 3, 4]) {
+                            print(`${type}${i}x${j} ${outputFunction}(${type}${i}x${j} x, ${type}${i}x${j} y) {`);
+                            print(`    ${type}${i}x${j} result;`);
+                            for (var m = 0; m < i; ++m) {
+                                for (var n = 0; n < j; ++n) {
+                                    print(`    result[${m}][${n}] = ${outputFunction}(x[${m}][${n}], y[${m}][${n}]);`);
+                                }
+                            }
+                            print(`    return result;`);
+                            print(`}`);
+                        }
+                    }
+                }
+                print();
+            }
+        })();
+        
+        // These functions are ternary floating-point scalar functions,
+        // which can also be applied to vectors and matrices component-wise.
+        for (var type of [`half`, `float`]) {
+            let nonNativeFunctions = [`smoothstep`, `lerp`, `fma`, `mad`];
+        
+            print(`${type} smoothstep(${type} edge0, ${type} edge1, ${type} x) {`);
+            print(`    ${type} t = clamp((x - edge0) / (edge1 - edge0), 0, 1);`);
+            print(`    return t * t * (3 - 2 * t);`);
+            print(`}`);
+            print(`${type} lerp(${type} x, ${type} y, ${type} s) {`);
+            print(`    return x * (1 - s) + y * s;`);
+            print(`}`);
+            print(`${type} fma(${type} x, ${type} y, ${type} z) {`);
+            print(`    return x * y + z;`);
+            print(`}`);
+            print(`${type} mad(${type} x, ${type} y, ${type} z) {`);
+            print(`    return x * y + z;`);
+            print(`}`);
+        
+            for (var nonNativeFunction of nonNativeFunctions) {
+                for (var size of [2, 3, 4]) {
+                    print(`${type}${size} ${nonNativeFunction}(${type}${size} x, ${type}${size} y, ${type}${size} z) {`);
+                    print(`    ${type}${size} result;`);
+                    for (var i = 0; i < size; ++i) {
+                        print(`    result[${i}] = ${nonNativeFunction}(x[${i}], y[${i}], z[${i}]);`);
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                }
+                for (var i of [2, 3, 4]) {
+                    for (var j of [2, 3, 4]) {
+                        print(`${type}${i}x${j} ${nonNativeFunction}(${type}${i}x${j} x, ${type}${i}x${j} y, ${type}${i}x${j} z) {`);
+                        print(`    ${type}${i}x${j} result;`);
+                        for (var m = 0; m < i; ++m) {
+                            for (var n = 0; n < j; ++n) {
+                                print(`    result[${m}][${n}] = ${nonNativeFunction}(x[${m}][${n}], y[${m}][${n}], z[${m}][${n}]);`);
+                            }
+                        }
+                        print(`    return result;`);
+                        print(`}`);
+                    }
+                }
+            }
+            print();
+        }
+        
+        print(`native bool isnormal(half);`);
+        print(`native bool isnormal(float);`);
+        for (var type of [`half`, `float`]) {
+            for (var size of [2, 3, 4]) {
+                print(`bool${size} isnormal(${type}${size} x) {`);
+                print(`    bool${size} result;`);
+                for (var i = 0; i < size; ++i) {
+                    print(`    result[${i}] = isnormal(x[${i}]);`);
+                }
+                print(`    return result;`);
+                print(`}`);
+            }
+            print();
+        }
+        
+        (function() {
+            let nativeFunctions = [`isfinite`, `isinf`, `isnan`];
+        
+            for (var nativeFunction of nativeFunctions) {
+                print(`native bool ${nativeFunction}(float);`);
+                print(`bool ${nativeFunction}(half x) {`);
+                print(`    return ${nativeFunction}(float(x));`);
+                print(`}`);
+            }
+        
+            for (var type of [`half`, `float`]) {
+                for (var nativeFunction of nativeFunctions) {
+                    for (var size of [2, 3, 4]) {
+                        print(`bool${size} ${nativeFunction}(${type}${size} x) {`);
+                        print(`    bool${size} result;`);
+                        for (var i = 0; i < size; ++i) {
+                            print(`    result[${i}] = ${nativeFunction}(x[${i}]);`);
+                        }
+                        print(`    return result;`);
+                        print(`}`);
+                    }
+                }
+                print();
+            }
+        })()
+        
+        for (var type of [`half`, `float`]) {
+            let nonNativeFunctions = [`isordered`, `isunordered`];
+        
+            print(`bool isordered(${type} x, ${type} y) {`);
+            print(`    return (x == x) && (y == y);`);
+            print(`}`);
+            print(`bool isunordered(${type} x, ${type} y) {`);
+            print(`    return isnan(x) || isnan(y);`);
+            print(`}`);
+        
+            for (var nonNativeFunction of nonNativeFunctions) {
+                for (var size of [2, 3, 4]) {
+                    print(`bool${size} ${nonNativeFunction}(${type}${size} x, ${type}${size} y) {`);
+                    print(`    bool${size} result;`);
+                    for (var i = 0; i < size; ++i) {
+                        print(`    result[${i}] = ${nonNativeFunction}(x[${i}], y[${i}]);`);
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                }
+            }
+            print();
+        }
+        
+        print(`native float atan2(float, float);`);
+        print(`half atan2(half x, half y) {`);
+        print(`    return half(atan2(float(x), float(y)));`);
+        print(`}`);
+        for (var type of [`half`, `float`]) {
+            for (var size of [2, 3, 4]) {
+                print(`${type}${size} atan2(${type}${size} x, ${type}${size} y) {`);
+                print(`    ${type}${size} result;`);
+                for (var i = 0; i < size; ++i) {
+                    print(`    result[${i}] = atan2(x[${i}], y[${i}]);`);
+                }
+                print(`    return result;`);
+                print(`}`);
+            }
+            for (var i of [2, 3, 4]) {
+                for (var j of [2, 3, 4]) {
+                    print(`${type}${i}x${j} atan2(${type}${i}x${j} x, ${type}${i}x${j} y) {`);
+                    print(`    ${type}${i}x${j} result;`);
+                    for (var m = 0; m < i; ++m) {
+                        for (var n = 0; n < j; ++n) {
+                            print(`    result[${m}][${n}] = atan2(x[${m}][${n}], y[${m}][${n}]);`);
+                        }
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                }
+            }
+        }
+        print();
+        
+        for (var type of [`half`, `float`]) {
+            print(`void sincos(${type} x, thread ${type}* y, thread ${type}* z) {`);
+            print(`    *y = sin(x);`);
+            print(`    *z = cos(x);`);
+            print(`}`);
+            for (var size of [2, 3, 4]) {
+                print(`void sincos(${type}${size} x, thread ${type}${size}* y, thread ${type}${size}* z) {`);
+                // Can't take a pointer to a member of a vector.
+                print(`    ${type} sinResult;`);
+                print(`    ${type} cosResult;`);
+                for (var i = 0; i < size; ++i) {
+                    print(`    sincos(x[${i}], &sinResult, &cosResult);`);
+                    print(`    (*y)[${i}] = sinResult;`);
+                    print(`    (*z)[${i}] = cosResult;`);
+                }
+                print(`}`);
+            }
+            for (var i of [2, 3, 4]) {
+                for (var j of [2, 3, 4]) {
+                    print(`void sincos(${type}${i}x${j} x, thread ${type}${i}x${j}* y, thread ${type}${i}x${j}* z) {`);
+                    // Can't take a pointer to a member of a matrix.
+                    print(`    ${type} sinResult;`);
+                    print(`    ${type} cosResult;`);
+                    for (var m = 0; m < i; ++m) {
+                        for (var n = 0; n < j; ++n) {
+                            print(`    sincos(x[${m}][${n}], &sinResult, &cosResult);`);
+                            print(`    (*y)[${m}][${n}] = sinResult;`);
+                            print(`    (*z)[${m}][${n}] = cosResult;`);
+                        }
+                    }
+                    print(`}`);
+                }
+            }
+        }
+        print();
+        
+        for (var binaryFunction of [[`all`, `true`, `&&`], [`any`, `false`, `||`]]) {
+            print(`bool ${binaryFunction[0]}(bool x) {`);
+            print(`    return x;`);
+            print(`}`);
+            for (var size of [2, 3, 4]) {
+                print(`bool ${binaryFunction[0]}(bool${size} x) {`);
+                print(`    bool result = ${binaryFunction[1]};`);
+                for (var i = 0; i < size; ++i) {
+                    print(`    result = result ${binaryFunction[2]} (x[${i}]);`);
+                }
+                print(`    return result;`);
+                print(`}`);
+            }
+            for (var type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+                print(`bool ${binaryFunction[0]}(${type} x) {`);
+                print(`    return x != 0;`);
+                print(`}`);
+                for (var size of [2, 3, 4]) {
+                    print(`bool ${binaryFunction[0]}(${type}${size} x) {`);
+                    print(`    bool result = ${binaryFunction[1]};`);
+                    for (var i = 0; i < size; ++i) {
+                        print(`    result = result ${binaryFunction[2]} (x[${i}] != 0);`);
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                }
+                if (type == `half` || type == `float`) {
+                    for (var i of [2, 3, 4]) {
+                        for (var j of [2, 3, 4]) {
+                            print(`bool ${binaryFunction[0]}(${type}${i}x${j} x) {`);
+                            print(`    bool result = ${binaryFunction[1]};`);
+                            for (var m = 0; m < i; ++m) {
+                                for (var n = 0; n < j; ++n) {
+                                    print(`    result = result ${binaryFunction[2]} (x[${m}][${n}] != 0);`);
+                                }
+                            }
+                            print(`    return result;`);
+                            print(`}`);
+                        }
+                    }
+                }
+            }
+            print();
+        }
+        
+        for (var type of [`uchar`, `ushort`, `uint`]) {
+            print(`${type} abs(${type} x) {`);
+            print(`    return x;`);
+            print(`}`);
+        }
+        for (var type of [`char`, `short`, `int`, `half`, `float`]) {
+            print(`${type} abs(${type} x) {`);
+            print(`    if (x < 0)`);
+            print(`        return -x;`);
+            print(`    return x;`);
+            print(`}`);
+        }
+        for (var type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            for (var size of [2, 3, 4]) {
+                print(`${type}${size} abs(${type}${size} x) {`);
+                print(`    ${type}${size} result;`);
+                for (var i = 0; i < size; ++i) {
+                    print(`    result[${i}] = abs(x[${i}]);`);
+                }
+                print(`    return result;`);
+                print(`}`);
+            }
+            if (type == `half` || type == `float`) {
+                for (var i of [2, 3, 4]) {
+                    for (var j of [2, 3, 4]) {
+                        print(`${type}${i}x${j} abs(${type}${i}x${j} x) {`);
+                        print(`    ${type}${i}x${j} result;`);
+                        for (var m = 0; m < i; ++m) {
+                            for (var n = 0; n < j; ++n) {
+                                print(`    result[${m}][${n}] = abs(x[${m}][${n}]);`);
+                            }
+                        }
+                        print(`    return result;`);
+                        print(`}`);
+                    }
+                }
+            }
+        }
+        print();
+        
+        for (var type of [`uchar`, `ushort`, `uint`]) {
+            print(`${type} sign(${type} x) {`);
+            print(`    return x == 0 ? 0 : 1;`);
+            print(`}`);
+        }
+        for (var type of [`char`, `short`, `int`, `half`, `float`]) {
+            print(`${type} sign(${type} x) {`);
+            print(`    if (x < 0)`);
+            print(`        return -1;`);
+            print(`    if (x == 0)`);
+            print(`        return 0;`);
+            print(`    return 1;`);
+            print(`}`);
+        }
+        for (var type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            for (var size of [2, 3, 4]) {
+                print(`${type}${size} sign(${type}${size} x) {`);
+                print(`    ${type}${size} result;`);
+                for (var i = 0; i < size; ++i) {
+                    print(`    result[${i}] = sign(x[${i}]);`);
+                }
+                print(`    return result;`);
+                print(`}`);
+            }
+            if (type == `half` || type == `float`) {
+                for (var i of [2, 3, 4]) {
+                    for (var j of [2, 3, 4]) {
+                        print(`${type}${i}x${j} sign(${type}${i}x${j} x) {`);
+                        print(`    ${type}${i}x${j} result;`);
+                        for (var m = 0; m < i; ++m) {
+                            for (var n = 0; n < j; ++n) {
+                                print(`    result[${m}][${n}] = sign(x[${m}][${n}]);`);
+                            }
+                        }
+                        print(`    return result;`);
+                        print(`}`);
+                    }
+                }
+            }
+        }
+        print();
+        
+        for (var type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            let nonNativeFunctions = [`min`, `max`];
+        
+            print(`${type} min(${type} x, ${type} y) {`);
+            print(`    return x > y ? y : x;`);
+            print(`}`);
+            print(`${type} max(${type} x, ${type} y) {`);
+            print(`    return x > y ? x : y;`);
+            print(`}`);
+        
+            for (var nonNativeFunction of nonNativeFunctions) {
+                for (var size of [2, 3, 4]) {
+                    print(`${type}${size} ${nonNativeFunction}(${type}${size} x, ${type}${size} y) {`);
+                    print(`    ${type}${size} result;`);
+                    for (var i = 0; i < size; ++i) {
+                        print(`    result[${i}] = ${nonNativeFunction}(x[${i}], y[${i}]);`);
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                }
+                if (type == `half` || type == `float`) {
+                    for (var i of [2, 3, 4]) {
+                        for (var j of [2, 3, 4]) {
+                            print(`${type}${i}x${j} ${nonNativeFunction}(${type}${i}x${j} x, ${type}${i}x${j} y) {`);
+                            print(`    ${type}${i}x${j} result;`);
+                            for (var m = 0; m < i; ++m) {
+                                for (var n = 0; n < j; ++n) {
+                                    print(`    result[${m}][${n}] = ${nonNativeFunction}(x[${m}][${n}], y[${m}][${n}]);`);
+                                }
+                            }
+                            print(`    return result;`);
+                            print(`}`);
+                        }
+                    }
+                }
+            }
+            print();
+        }
+        
+        for (var type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            let nonNativeFunctions = [`clamp`];
+        
+            print(`${type} clamp(${type} x, ${type} lower, ${type} upper) {`);
+            print(`    return max(min(upper, x), lower);`);
+            print(`}`);
+        
+            for (var nonNativeFunction of nonNativeFunctions) {
+                for (var size of [2, 3, 4]) {
+                    print(`${type}${size} ${nonNativeFunction}(${type}${size} x, ${type}${size} y, ${type}${size} z) {`);
+                    print(`    ${type}${size} result;`);
+                    for (var i = 0; i < size; ++i) {
+                        print(`    result[${i}] = ${nonNativeFunction}(x[${i}], y[${i}], z[${i}]);`);
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                }
+                if (type == `half` || type == `float`) {
+                    for (var i of [2, 3, 4]) {
+                        for (var j of [2, 3, 4]) {
+                            print(`${type}${i}x${j} ${nonNativeFunction}(${type}${i}x${j} x, ${type}${i}x${j} y, ${type}${i}x${j} z) {`);
+                            print(`    ${type}${i}x${j} result;`);
+                            for (var m = 0; m < i; ++m) {
+                                for (var n = 0; n < j; ++n) {
+                                    print(`    result[${m}][${n}] = ${nonNativeFunction}(x[${m}][${n}], y[${m}][${n}], z[${m}][${n}]);`);
+                                }
+                            }
+                            print(`    return result;`);
+                            print(`}`);
+                        }
+                    }
+                }
+            }
+            print();
+        }
+        
+        for (var type of [`half`, `float`]) {
+            print(`${type} modf(${type} x, thread ${type}* ip) {`);
+            print(`    uint result = uint(x);`);
+            print(`    *ip = x - ${type}(result);`);
+            print(`    return ${type}(result);`);
+            print(`}`);
+        
+            for (var size of [2, 3, 4]) {
+                print(`${type}${size} modf(${type}${size} x, thread ${type}${size}* y) {`);
+                print(`    ${type}${size} result;`);
+                // Can't take a pointer to a member of a vector.
+                print(`    ${type} buffer;`);
+                for (var i = 0; i < size; ++i) {
+                    print(`    result[${i}] = modf(x[${i}], &buffer);`);
+                    print(`    (*y)[${i}] = buffer;`);
+                }
+                print(`    return result;`);
+                print(`}`);
+            }
+            for (var i of [2, 3, 4]) {
+                for (var j of [2, 3, 4]) {
+                    print(`${type}${i}x${j} modf(${type}${i}x${j} x, thread ${type}${i}x${j}* y) {`);
+                    print(`    ${type}${i}x${j} result;`);
+                    // Can't take a pointer to a member of a matrix.
+                    print(`    ${type} buffer;`);
+                    for (var m = 0; m < i; ++m) {
+                        for (var n = 0; n < j; ++n) {
+                            print(`    result[${m}][${n}] = modf(x[${m}][${n}], &buffer);`);
+                            print(`    (*y)[${m}][${n}] = buffer;`);
+                        }
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                }
+            }
+            print();
+        }
+        
+        print(`uchar count_bits(uchar x) {`);
+        print(`    return uchar(((x | uchar(1 << 0)) == 0 ? 0 : 1) +`);
+        for (var i = 1; i < 7; ++i) {
+            print(`           ((x | uchar(1 << ${i})) == 0 ? 0 : 1) +`);
+        }
+        print(`           ((x | uchar(1 << 7)) == 0 ? 0 : 1));`);
+        print(`}`);
+        print(`uchar count_bits(ushort x) {`);
+        print(`    return uchar(((x | ushort(1 << 0)) == 0 ? 0 : 1) +`);
+        for (var i = 1; i < 15; ++i) {
+            print(`           ((x | ushort(1 << ${i})) == 0 ? 0 : 1) +`);
+        }
+        print(`           ((x | ushort(1 << 15)) == 0 ? 0 : 1));`);
+        print(`}`);
+        print(`uchar count_bits(uint x) {`);
+        print(`    return uchar(((x | uint(1 << 0)) == 0 ? 0 : 1) +`);
+        for (var i = 1; i < 31; ++i) {
+            print(`           ((x | uint(1 << ${i})) == 0 ? 0 : 1) +`);
+        }
+        print(`           ((x | uint(1 << 31)) == 0 ? 0 : 1));`);
+        print(`}`);
+        print(`uchar reversebits(uchar x) {`);
+        print(`    return uchar(((x & uchar(1 << 0)) << 7) |`);
+        for (var i = 1; i < 7; ++i) {
+            let offset = 7 - 2 * i
+            print(`           ((x & uchar(1 << ${i})) ${offset > 0 ? `<<` : `>>`} ${Math.abs(offset)}) |`);
+        }
+        print(`           ((x & uchar(1 << 7)) >> 7));`);
+        print(`}`);
+        print(`ushort reversebits(ushort x) {`);
+        print(`    return ushort(((x & ushort(1 << 0)) << 15) |`);
+        for (var i = 1; i < 15; ++i) {
+            let offset = 15 - 2 * i
+            print(`           ((x & ushort(1 << ${i})) ${offset > 0 ? `<<` : `>>`} ${Math.abs(offset)}) |`);
+        }
+        print(`           ((x & ushort(1 << 15)) >> 15));`);
+        print(`}`);
+        print(`uint reversebits(uint x) {`);
+        print(`    return uint(((x & uint(1 << 0)) << 31) |`);
+        for (var i = 1; i < 31; ++i) {
+            let offset = 31 - 2 * i
+            print(`           ((x & uint(1 << ${i})) ${offset > 0 ? `<<` : `>>`} ${Math.abs(offset)}) |`);
+        }
+        print(`           ((x & uint(1 << 31)) >> 31));`);
+        print(`}`);
+        for (var type of [`uchar`, `ushort`, `uint`]) {
+            for (var size of [2, 3, 4]) {
+                print(`uchar${size} count_bits(${type}${size} x) {`);
+                print(`    uchar${size} result;`);
+                for (var i = 0; i < size; ++i) {
+                    print(`    result[${i}] = count_bits(x[${i}]);`);
+                }
+                print(`    return result;`);
+                print(`}`);
+            }
+        }
+        for (var type of [`uchar`, `ushort`, `uint`]) {
+            for (var size of [2, 3, 4]) {
+                print(`${type}${size} reversebits(${type}${size} x) {`);
+                print(`    ${type}${size} result;`);
+                for (var i = 0; i < size; ++i) {
+                    print(`    result[${i}] = reversebits(x[${i}]);`);
+                }
+                print(`    return result;`);
+                print(`}`);
+            }
+        }
+        print();
+        
+        print(`uint firstbithigh(uchar x) {`);
+        for (var i = 0; i <= 7; ++i) {
+            print(`    if ((x & uchar(1 << ${7 - i})) != 0)`);
+            print(`        return ${i};`);
+        }
+        print(`    return 8;`);
+        print(`}`);
+        print(`uint firstbithigh(ushort x) {`);
+        for (var i = 0; i <= 15; ++i) {
+            print(`    if ((x & ushort(1 << ${15 - i})) != 0)`);
+            print(`        return ${i};`);
+        }
+            print(`    return 16;`);
+        print(`}`);
+        print(`uint firstbithigh(uint x) {`);
+        for (var i = 0; i <= 31; ++i) {
+            print(`    if ((x & uint(1 << ${31 - i})) != 0)`);
+            print(`        return ${i};`);
+        }
+        print(`    return 32;`);
+        print(`}`);
+        print(`uint firstbithigh(char x) {`);
+        print(`    return firstbithigh(uchar(x));`);
+        print(`}`);
+        print(`uint firstbithigh(short x) {`);
+        print(`    return firstbithigh(ushort(x));`);
+        print(`}`);
+        print(`uint firstbithigh(int x) {`);
+        print(`    return firstbithigh(uint(x));`);
+        print(`}`);
+        print(`uint firstbitlow(uchar x) {`);
+        for (var i = 0; i <= 7; ++i) {
+            print(`    if ((x & uchar(1 << ${i})) != 0)`);
+            print(`        return ${7 - i};`);
+        }
+        print(`    return 8;`);
+        print(`}`);
+        print(`uint firstbitlow(ushort x) {`);
+        for (var i = 0; i <= 15; ++i) {
+            print(`    if ((x & ushort(1 << ${i})) != 0)`);
+            print(`        return ${15 - i};`);
+        }
+        print(`    return 16;`);
+        print(`}`);
+        print(`uint firstbitlow(uint x) {`);
+        for (var i = 0; i <= 31; ++i) {
+            print(`    if ((x & uint(1 << ${i})) != 0)`);
+            print(`        return ${31 - i};`);
+        }
+        print(`    return 32;`);
+        print(`}`);
+        print(`uint firstbitlow(char x) {`);
+        print(`    return firstbitlow(uchar(x));`);
+        print(`}`);
+        print(`uint firstbitlow(short x) {`);
+        print(`    return firstbitlow(ushort(x));`);
+        print(`}`);
+        print(`uint firstbitlow(int x) {`);
+        print(`    return firstbitlow(uint(x));`);
+        print(`}`);
+        for (var functionName of [`firstbithigh`, `firstbitlow`]) {
+            for (var type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`]) {
+                for (var size of [2, 3, 4]) {
+                    print(`uint${size} ${functionName}(${type}${size} x) {`);
+                    print(`    uint${size} result;`);
+                    for (var i = 0; i < size; ++i) {
+                        print(`    result[${i}] = ${functionName}(x[${i}]);`);
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                }
+            }
+        }
+        print();
+        
+        // Row-major, so the first index selects which row, and the second index selects which column
+        for (var type of [`half`, `float`]) {
+            print(`${type} determinant(${type} x) {`);
+            print(`    return x;`);
+            print(`}`);
+            print(`${type} determinant(${type}2x2 x) {`);
+            print(`    return x[0][0] * x[1][1] - x[0][1] * x[1][0];`);
+            print(`}`);
+            print(`${type} determinant(${type}3x3 x) {`);
+            print(`    return x[0][0] * x[1][1] * x[2][2] +`);
+            print(`           x[0][1] * x[1][2] * x[2][0] +`);
+            print(`           x[0][2] * x[1][0] * x[2][1] -`);
+            print(`           x[2][0] * x[1][1] * x[0][2] -`);
+            print(`           x[2][1] * x[1][2] * x[0][0] -`);
+            print(`           x[2][2] * x[1][0] * x[0][1];`);
+            print(`}`);
+            print(`${type} determinant(${type}4x4 x) {`);
+            print(`    ${type} result;`);
+            print(`    ${type}3x3 minor;`);
+            print(`    minor[0][0] = x[1][1];`);
+            print(`    minor[0][1] = x[1][2];`);
+            print(`    minor[0][2] = x[1][3];`);
+            print(`    minor[1][0] = x[2][1];`);
+            print(`    minor[1][1] = x[2][2];`);
+            print(`    minor[1][2] = x[2][3];`);
+            print(`    minor[2][0] = x[3][1];`);
+            print(`    minor[2][1] = x[3][2];`);
+            print(`    minor[2][2] = x[3][3];`);
+            print(`    result = result + x[0][0] * determinant(minor);`);
+            print(`    minor[0][0] = x[1][0];`);
+            print(`    minor[0][1] = x[1][2];`);
+            print(`    minor[0][2] = x[1][3];`);
+            print(`    minor[1][0] = x[2][0];`);
+            print(`    minor[1][1] = x[2][2];`);
+            print(`    minor[1][2] = x[2][3];`);
+            print(`    minor[2][0] = x[3][0];`);
+            print(`    minor[2][1] = x[3][2];`);
+            print(`    minor[2][2] = x[3][3];`);
+            print(`    result = result - x[0][1] * determinant(minor);`);
+            print(`    minor[0][0] = x[1][0];`);
+            print(`    minor[0][1] = x[1][1];`);
+            print(`    minor[0][2] = x[1][3];`);
+            print(`    minor[1][0] = x[2][0];`);
+            print(`    minor[1][1] = x[2][1];`);
+            print(`    minor[1][2] = x[2][3];`);
+            print(`    minor[2][0] = x[3][0];`);
+            print(`    minor[2][1] = x[3][1];`);
+            print(`    minor[2][2] = x[3][3];`);
+            print(`    result = result + x[0][2] * determinant(minor);`);
+            print(`    minor[0][0] = x[1][0];`);
+            print(`    minor[0][1] = x[1][1];`);
+            print(`    minor[0][2] = x[1][2];`);
+            print(`    minor[1][0] = x[2][0];`);
+            print(`    minor[1][1] = x[2][1];`);
+            print(`    minor[1][2] = x[2][2];`);
+            print(`    minor[2][0] = x[3][0];`);
+            print(`    minor[2][1] = x[3][1];`);
+            print(`    minor[2][2] = x[3][2];`);
+            print(`    result = result - x[0][3] * determinant(minor);`);
+            print(`    return result;`);
+            print(`}`);
+        }
+        print();
+        
+        for (var type of [`uchar4`, `ushort4`, `uint4`, `char4`, `short4`, `int4`, `half4`, `float4`]) {
+            print(`${type} dst(${type} src0, ${type} src1) {`);
+            print(`    ${type} result;`);
+            print(`    result.x = 1;`);
+            print(`    result.y = src0.y * src1.y;`);
+            print(`    result.z = src0.z;`);
+            print(`    result.w = src1.w;`);
+            print(`    return result;`);
+            print(`}`);
+        }
+        print();
+        
+        for (var type of [`half`, `float`]) {
+            print(`${type} distance(${type} x, ${type} y) {`);
+            print(`    return length(x - y);`);
+            print(`}`);
+            for (var size of [2, 3, 4]) {
+                print(`${type} distance(${type}${size} x, ${type}${size} y) {`);
+                print(`    return length(x - y);`);
+                print(`}`);
+            }
+        }
+        print();
+        
+        for (var type of [`half3`, `float3`]) {
+            print(`${type} cross(${type} u, ${type} v) {`);
+            print(`    ${type} result;`);
+            print(`    result.x = u.y * v.z - u.z * v.y;`);
+            print(`    result.y = u.z * v.x - u.x * v.z;`);
+            print(`    result.z = u.x * v.y - u.y * v.x;`);
+            print(`    return result;`);
+            print(`}`);
+        }
+        print();
+        
+        for (var type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            print(`${type} dot(${type} a, ${type} b) {`);
+            print(`    return a * b;`);
+            print(`}`);
+            for (var size of [2, 3, 4]) {
+                print(`${type} dot(${type}${size} a, ${type}${size} b) {`);
+                print(`    ${type} result = 0;`);
+                for (var i = 0; i < size; ++i) {
+                    print(`    result = result + a[${i}] * b[${i}];`);
+                }
+                print(`    return result;`);
+                print(`}`);
+            }
+        }
+        print();
+        
+        for (var type of [`half`, `float`]) {
+            for (var size of [``, `2`, `3`, `4`]) {
+                print(`${type}${size} faceforward(${type}${size} n, ${type}${size} i, ${type}${size} ng) {`);
+                print(`    return -n * sign(dot(i, ng));`);
+                print(`}`);
+            }
+        }
+        print();
+        
+        for (var type of [`half`, `float`]) {
+            for (var size of [``, `2`, `3`, `4`]) {
+                print(`${type} length(${type}${size} x) {`);
+                print(`    return sqrt(dot(x, x));`);
+                print(`}`);
+            }
+        }
+        print();
+        
+        for (var type of [`half`, `float`]) {
+            print(`${type}4 lit(${type} n_dot_l, ${type} n_dot_h, ${type} m) {`);
+            print(`    ${type} ambient = 1;`);
+            print(`    ${type} diffuse = max(0, n_dot_l);`);
+            print(`    ${type} specular = n_dot_l < 0 || n_dot_h < 0 ? 0 : n_dot_h * m;`);
+            print(`    ${type}4 result;`);
+            print(`    result.x = ambient;`);
+            print(`    result.y = diffuse;`);
+            print(`    result.z = specular;`);
+            print(`    result.w = 1;`);
+            print(`    return result;`);
+            print(`}`);
+        }
+        print();
+        
+        for (var type of [`half`, `float`]) {
+            for (var size of [``, `2`, `3`, `4`]) {
+                print(`${type}${size} normalize(${type}${size} x) {`);
+                print(`    return x / length(x);`);
+                print(`}`);
+            }
+        }
+        print();
+        
+        for (var type of [`half`, `float`]) {
+            for (var size of [``, `2`, `3`, `4`]) {
+                print(`${type}${size} reflect(${type}${size} i, ${type}${size} n) {`);
+                print(`    return i - 2 * n * dot(i, n);`);
+                print(`}`);
+            }
+        }
+        print();
+        
+        // OpenGL ES v3.30 section 8.4
+        for (var type of [`half`, `float`]) {
+            for (var size of [``, `2`, `3`, `4`]) {
+                print(`${type}${size} refract(${type}${size} i, ${type}${size} n, ${type} eta) {`);
+                print(`    ${type}${size} result;`);
+                print(`    ${type} k = 1 - eta * eta * (1 - dot(n, i) * dot(n, i));`);
+                print(`    if (k < 0)`);
+                print(`        return result;`);
+                print(`    return eta * i - (eta * dot(n, i) + sqrt(k)) * n;`);
+                print(`}`);
+            }
+        }
+        print();
+        
+        for (var type of [`half`, `float`]) {
+            print(`${type} transpose(${type} x) {`);
+            print(`    return x;`);
+            print(`}`);
+            for (var i of [2, 3, 4]) {
+                for (var j of [2, 3, 4]) {
+                    print(`${type}${i}x${j} transpose(${type}${j}x${i} x) {`);
+                    print(`    ${type}${i}x${j} result;`);
+                    for (var m = 0; m < i; ++m) {
+                        for (var n = 0; n < j; ++n) {
+                            print(`    result[${m}][${n}] = x[${n}][${m}];`);
+                        }
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                }
+            }
+        }
+        print();
+        
+        for (var resultType of [`int`, `uint`, `float`]) {
+            for (var type of [`int`, `uint`, `float`]) {
+                if (type == resultType) {
+                    print(`${resultType} as${resultType}(${type} x) {`);
+                    print(`    return x;`);
+                    print(`}`);
+                } else  if (resultType == `int` && type == `uint` || resultType == `uint` && type == `int`) {
+                    print(`${resultType} as${resultType}(${type} x) {`);
+                    print(`    return ${resultType}(x);`);
+                    print(`}`);
+                } else {
+                    print(`native ${resultType} as${resultType}(${type});`);
+                }
+                for (var size of [2, 3, 4]) {
+                    if (type == resultType) {
+                        print(`${resultType}${size} as${resultType}(${type}${size} x) {`);
+                        print(`    return x;`);
+                        print(`}`);
+                    } else {
+                        print(`${resultType}${size} as${resultType}(${type}${size} x) {`);
+                        print(`    ${resultType}${size} result;`);
+                        for (var i = 0; i < size; ++i) {
+                            print(`    result[${i}] = as${resultType}(x[${i}]);`);
+                        }
+                        print(`    return result;`);
+                        print(`}`);
+                    }
+                }
+                if (resultType == `float` && type == `float`) {
+                    for (var i of [2, 3, 4]) {
+                        for (var j of [2, 3, 4]) {
+                            if (type == resultType) {
+                                print(`${resultType}${i}x${j} as${resultType}(${type}${i}x${j} x) {`);
+                                print(`    return x;`);
+                                print(`}`);
+                            } else {
+                                print(`${resultType}${i}x${j} as${resultType}(${type}${i}x${j} x) {`);
+                                print(`    ${resultType}${i}x${j} result;`);
+                                for (var m = 0; m < i; ++m) {
+                                    for (var n = 0; n < j; ++n) {
+                                        print(`    result[${m}][${n}] = as${resultType}(x[${m}][${n}]);`);
+                                    }
+                                }
+                                print(`    return result;`);
+                                print(`}`);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        print();
+        
+        print(`native float f16tof32(uint);`);
+        print(`native uint f32tof16(float);`);
+        for (var size of [2, 3, 4]) {
+            print(`float${size} f16tof32(uint${size} x) {`);
+            print(`    float${size} result;`);
+            for (var i = 0; i < size; ++i) {
+                print(`    result[${i}] = f16tof32(x[${i}]);`);
+            }
+            print(`    return result;`);
+            print(`}`);
+            print(`uint${size} f32tof16(float${size} x) {`);
+            print(`    uint${size} result;`);
+            for (var i = 0; i < size; ++i) {
+                print(`    result[${i}] = f32tof16(x[${i}]);`);
+            }
+            print(`    return result;`);
+            print(`}`);
+        }
+        print();
+        
+        print(`native void AllMemoryBarrierWithGroupSync();`);
+        print(`native void DeviceMemoryBarrierWithGroupSync();`);
+        print(`native void GroupMemoryBarrierWithGroupSync();`);
+        print();
+        
+        for (var type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            print(`${type} mul(${type} x, ${type} y) {`);
+            print(`    return x * y;`);
+            print(`}`);
+        }
+        
+        for (var type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            for (var size of [2, 3, 4]) {
+                print(`${type}${size} mul(${type} x, ${type}${size} y) {`);
+                print(`    ${type}${size} result;`);
+                for (var i = 0; i < size; ++i) {
+                    print(`    result[${i}] = x * y[${i}];`);
+                }
+                print(`    return result;`);
+                print(`}`);
+                print(`${type}${size} mul(${type}${size} x, ${type} y) {`);
+                print(`    ${type}${size} result;`);
+                for (var i = 0; i < size; ++i) {
+                    print(`    result[${i}] = x[${i}] * y;`);
+                }
+                print(`    return result;`);
+                print(`}`);
+            }
+        }
+        
+        for (var type of [`half`, `float`]) {
+            for (var i of [2, 3, 4]) {
+                for (var j of [2, 3, 4]) {
+                    print(`${type}${i}x${j} mul(${type} x, ${type}${i}x${j} y) {`);
+                    print(`    ${type}${i}x${j} result;`);
+                    for (var m = 0; m < i; ++m) {
+                        for (var n = 0; n < j; ++n) {
+                            print(`    result[${m}][${n}] = x * y[${m}][${n}];`);
+                        }
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                    print(`${type}${i}x${j} mul(${type}${i}x${j} x, ${type} y) {`);
+                    print(`    ${type}${i}x${j} result;`);
+                    for (var m = 0; m < i; ++m) {
+                        for (var n = 0; n < j; ++n) {
+                            print(`    result[${m}][${n}] = x[${m}][${n}] * y;`);
+                        }
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                }
+            }
+        }
+        
+        for (var type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            for (var size of [2, 3, 4]) {
+                print(`${type} mul(${type}${size} x, ${type}${size} y) {`);
+                print(`    return dot(x, y);`);
+                print(`}`);
+            }
+        }
+        
+        for (var type of [`half`, `float`]) {
+            for (var i of [2, 3, 4]) {
+                for (var j of [2, 3, 4]) {
+                    print(`${type}${j} mul(${type}${i} x, ${type}${i}x${j} y) {`);
+                    print(`    ${type}${j} result;`);
+                    for (var m = 0; m < j; ++m) {
+                        print(`    result[${m}] = 0;`);
+                        for (var n = 0; n < i; ++n) {
+                            print(`    result[${m}] += x[${n}] * y[${n}][${m}];`);
+                        }
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                    print(`${type}${i} mul(${type}${i}x${j} x, ${type}${j} y) {`);
+                    print(`    ${type}${i} result;`);
+                    for (var m = 0; m < i; ++m) {
+                        print(`    result[${m}] = 0;`);
+                        for (var n = 0; n < j; ++n) {
+                            print(`    result[${m}] += x[${m}][${n}] * y[${n}];`);
+                        }
+                    }
+                    print(`    return result;`);
+                    print(`}`);
+                }
+            }
+        }
+        
+        for (var type of [`half`, `float`]) {
+            for (var i of [2, 3, 4]) {
+                for (var j of [2, 3, 4]) {
+                    for (var k of [2, 3, 4]) {
+                        print(`${type}${i}x${k} mul(${type}${i}x${j} x, ${type}${j}x${k} y) {`);
+                        print(`    ${type}${i}x${k} result;`);
+                        for (var p = 0; p < i; ++p) {
+                            for (var r = 0; r < k; ++r) {
+                                print(`    result[${p}][${k}] = 0;`);
+                                for (var q = 0; q < j; ++q) {
+                                    print(`    result[${p}][${k}] += x[${p}][${q}] * y[${q}][${r}];`);
+                                }
+                            }
+                        }
+                        print(`    return result;`);
+                        print(`}`);
+                    }
+                }
+            }
+        }
+        print();
+        
+        for (var type of [`uint`, `int`]) {
+            for (var functionName of [`Add`, `And`, `Exchange`, `Max`, `Min`, `Or`, `Xor`]) {
+                print(`native void Interlocked${functionName}(thread atomic_${type}*, ${type}, thread ${type}*);`);
+            }
+            print(`native void InterlockedCompareExchange(thread atomic_${type}*, ${type}, ${type}, thread ${type}*);`);
+        }
+        print();
+        
+        for (var type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            for (var length of [``, `2`, `3`, `4`]) {
+                print(`native ${type}${length} Sample(Texture1D<${type}${length}>, sampler, float location);`);
+                print(`native ${type}${length} Sample(Texture1D<${type}${length}>, sampler, float location, int offset);`);
+                print(`native ${type}${length} Load(Texture1D<${type}${length}>, int2 location);`);
+                print(`native ${type}${length} Load(Texture1D<${type}${length}>, int2 location, int offset);`);
+                print(`native void GetDimensions(Texture1D<${type}${length}>, uint MipLevel, thread uint* Width, thread uint* NumberOfLevels);`);
+                print();
+                print(`native ${type}${length} Sample(Texture1DArray<${type}${length}>, sampler, float2 location);`);
+                print(`native ${type}${length} Sample(Texture1DArray<${type}${length}>, sampler, float2 location, int offset);`);
+                print(`native ${type}${length} Load(Texture1DArray<${type}${length}>, int3 location);`);
+                print(`native ${type}${length} Load(Texture1DArray<${type}${length}>, int3 location, int offset);`);
+                print(`native void GetDimensions(Texture1DArray<${type}${length}>, uint MipLevel, thread uint* Width, thread uint* Elements, thread uint* NumberOfLevels);`);
+                print();
+                print(`native ${type}${length} Sample(Texture2D<${type}${length}>, sampler, float2 location);`);
+                print(`native ${type}${length} Sample(Texture2D<${type}${length}>, sampler, float2 location, int2 offset);`);
+                print(`native ${type}${length} SampleBias(Texture2D<${type}${length}>, sampler, float2 location, float Bias);`);
+                print(`native ${type}${length} SampleBias(Texture2D<${type}${length}>, sampler, float2 location, float Bias, int2 offset);`);
+                print(`native ${type}${length} SampleGrad(Texture2D<${type}${length}>, sampler, float2 location, float2 DDX, float2 DDY);`);
+                print(`native ${type}${length} SampleGrad(Texture2D<${type}${length}>, sampler, float2 location, float2 DDX, float2 DDY, int2 offset);`);
+                print(`native ${type}${length} SampleLevel(Texture2D<${type}${length}>, sampler, float2 location, float LOD);`);
+                print(`native ${type}${length} SampleLevel(Texture2D<${type}${length}>, sampler, float2 location, float LOD, int2 offset);`);
+                print(`native ${type}4 Gather(Texture2D<${type}${length}>, sampler, float2 location);`);
+                print(`native ${type}4 Gather(Texture2D<${type}${length}>, sampler, float2 location, int2 offset);`);
+                print(`native ${type}4 GatherRed(Texture2D<${type}${length}>, sampler, float2 location);`);
+                print(`native ${type}4 GatherRed(Texture2D<${type}${length}>, sampler, float2 location, int2 offset);`);
+                print(`native ${type}4 GatherGreen(Texture2D<${type}${length}>, sampler, float2 location);`);
+                print(`native ${type}4 GatherGreen(Texture2D<${type}${length}>, sampler, float2 location, int2 offset);`);
+                print(`native ${type}4 GatherBlue(Texture2D<${type}${length}>, sampler, float2 location);`);
+                print(`native ${type}4 GatherBlue(Texture2D<${type}${length}>, sampler, float2 location, int2 offset);`);
+                print(`native ${type}4 GatherAlpha(Texture2D<${type}${length}>, sampler, float2 location);`);
+                print(`native ${type}4 GatherAlpha(Texture2D<${type}${length}>, sampler, float2 location, int2 offset);`);
+                print(`native ${type}${length} Load(Texture2D<${type}${length}>, int3 location);`);
+                print(`native ${type}${length} Load(Texture2D<${type}${length}>, int3 location, int2 offset);`);
+                print(`native void GetDimensions(Texture2D<${type}${length}>, uint MipLevel, thread uint* Width, thread uint* Height, thread uint* NumberOfLevels);`);
+                print();
+                print(`native ${type}${length} Sample(Texture2DArray<${type}${length}>, sampler, float3 location);`);
+                print(`native ${type}${length} Sample(Texture2DArray<${type}${length}>, sampler, float3 location, int2 offset);`);
+                print(`native ${type}${length} SampleBias(Texture2DArray<${type}${length}>, sampler, float3 location, float Bias);`);
+                print(`native ${type}${length} SampleBias(Texture2DArray<${type}${length}>, sampler, float3 location, float Bias, int2 offset);`);
+                print(`native ${type}${length} SampleGrad(Texture2DArray<${type}${length}>, sampler, float3 location, float2 DDX, float2 DDY);`);
+                print(`native ${type}${length} SampleGrad(Texture2DArray<${type}${length}>, sampler, float3 location, float2 DDX, float2 DDY, int2 offset);`);
+                print(`native ${type}${length} SampleLevel(Texture2DArray<${type}${length}>, sampler, float3 location, float LOD);`);
+                print(`native ${type}${length} SampleLevel(Texture2DArray<${type}${length}>, sampler, float3 location, float LOD, int2 offset);`);
+                print(`native ${type}4 Gather(Texture2DArray<${type}${length}>, sampler, float3 location);`);
+                print(`native ${type}4 Gather(Texture2DArray<${type}${length}>, sampler, float3 location, int2 offset);`);
+                print(`native ${type}4 GatherRed(Texture2DArray<${type}${length}>, sampler, float3 location);`);
+                print(`native ${type}4 GatherRed(Texture2DArray<${type}${length}>, sampler, float3 location, int2 offset);`);
+                print(`native ${type}4 GatherGreen(Texture2DArray<${type}${length}>, sampler, float3 location);`);
+                print(`native ${type}4 GatherGreen(Texture2DArray<${type}${length}>, sampler, float3 location, int2 offset);`);
+                print(`native ${type}4 GatherBlue(Texture2DArray<${type}${length}>, sampler, float3 location);`);
+                print(`native ${type}4 GatherBlue(Texture2DArray<${type}${length}>, sampler, float3 location, int2 offset);`);
+                print(`native ${type}4 GatherAlpha(Texture2DArray<${type}${length}>, sampler, float3 location);`);
+                print(`native ${type}4 GatherAlpha(Texture2DArray<${type}${length}>, sampler, float3 location, int2 offset);`);
+                print(`native ${type}${length} Load(Texture2DArray<${type}${length}>, int4 location);`);
+                print(`native ${type}${length} Load(Texture2DArray<${type}${length}>, int4 location, int2 offset);`);
+                print(`native void GetDimensions(Texture2DArray<${type}${length}>, uint MipLevel, thread uint* Width, thread uint* Height, thread uint* Elements, thread uint* NumberOfLevels);`);
+                print();
+                print(`native ${type}${length} Sample(Texture3D<${type}${length}>, sampler, float3 location);`);
+                print(`native ${type}${length} Sample(Texture3D<${type}${length}>, sampler, float3 location, int3 offset);`);
+                print(`native ${type}4 Gather(Texture3D<${type}${length}>, sampler, float3 location);`);
+                print(`native ${type}4 Gather(Texture3D<${type}${length}>, sampler, float3 location, int3 offset);`);
+                print(`native ${type}4 GatherRed(Texture3D<${type}${length}>, sampler, float3 location);`);
+                print(`native ${type}4 GatherRed(Texture3D<${type}${length}>, sampler, float3 location, int3 offset);`);
+                print(`native ${type}4 GatherGreen(Texture3D<${type}${length}>, sampler, float3 location);`);
+                print(`native ${type}4 GatherGreen(Texture3D<${type}${length}>, sampler, float3 location, int3 offset);`);
+                print(`native ${type}4 GatherBlue(Texture3D<${type}${length}>, sampler, float3 location);`);
+                print(`native ${type}4 GatherBlue(Texture3D<${type}${length}>, sampler, float3 location, int3 offset);`);
+                print(`native ${type}4 GatherAlpha(Texture3D<${type}${length}>, sampler, float3 location);`);
+                print(`native ${type}4 GatherAlpha(Texture3D<${type}${length}>, sampler, float3 location, int3 offset);`);
+                print(`native ${type}${length} Load(Texture3D<${type}${length}>, int4 location);`);
+                print(`native ${type}${length} Load(Texture3D<${type}${length}>, int4 location, int3 offset);`);
+                print(`native void GetDimensions(Texture3D<${type}${length}>, uint MipLevel, thread uint* Width, thread uint* Height, thread uint* Depth, thread uint* NumberOfLevels);`);
+                print();
+                print(`native ${type}${length} Sample(TextureCube<${type}${length}>, sampler, float3 location);`);
+                print(`native ${type}${length} SampleBias(TextureCube<${type}${length}>, sampler, float3 location, float Bias);`);
+                print(`native ${type}${length} SampleGrad(TextureCube<${type}${length}>, sampler, float3 location, float3 DDX, float3 DDY);`);
+                print(`native ${type}${length} SampleLevel(TextureCube<${type}${length}>, sampler, float3 location, float LOD);`);
+                print(`native ${type}4 Gather(TextureCube<${type}${length}>, sampler, float3 location);`);
+                print(`native ${type}4 GatherRed(TextureCube<${type}${length}>, sampler, float3 location);`);
+                print(`native ${type}4 GatherGreen(TextureCube<${type}${length}>, sampler, float3 location);`);
+                print(`native ${type}4 GatherBlue(TextureCube<${type}${length}>, sampler, float3 location);`);
+                print(`native ${type}4 GatherAlpha(TextureCube<${type}${length}>, sampler, float3 location);`);
+                print(`native void GetDimensions(TextureCube<${type}${length}>, uint MipLevel, thread uint* Width, thread uint* Height, thread uint* NumberOfLevels);`);
+                print();
+                print(`native void GetDimensions(RWTexture1D<${type}${length}>, thread uint* Width);`);
+                print(`native void GetDimensions(RWTexture1D<${type}${length}>, thread float* Width);`);
+                print(`native ${type}${length} Load(RWTexture1D<${type}${length}>, int location);`);
+                print(`native void Store(RWTexture1D<${type}${length}>, ${type}${length}, uint location);`);
+                print();
+                print(`native void GetDimensions(RWTexture1DArray<${type}${length}>, thread uint* Width, thread uint* Elements);`);
+                print(`native void GetDimensions(RWTexture1DArray<${type}${length}>, thread float* Width, thread uint* Elements);`);
+                print(`native ${type}${length} Load(RWTexture1DArray<${type}${length}>, int2 location);`);
+                print(`native void Store(RWTexture1DArray<${type}${length}>, ${type}${length}, uint2 location);`);
+                print();
+                print(`native void GetDimensions(RWTexture2D<${type}${length}>, thread uint* Width, thread uint* Height);`);
+                print(`native void GetDimensions(RWTexture2D<${type}${length}>, thread float* Width, thread float* Height);`);
+                print(`native ${type}${length} Load(RWTexture2D<${type}${length}>, int2 location);`);
+                print(`native void Store(RWTexture2D<${type}${length}>, ${type}${length}, uint2 location);`);
+                print();
+                print(`native void GetDimensions(RWTexture2DArray<${type}${length}>, thread uint* Width, thread uint* Height, thread uint* Elements);`);
+                print(`native void GetDimensions(RWTexture2DArray<${type}${length}>, thread float* Width, thread float* Height, thread float* Elements);`);
+                print(`native ${type}${length} Load(RWTexture2DArray<${type}${length}>, int3 location);`);
+                print(`native void Store(RWTexture2DArray<${type}${length}>, ${type}${length}, uint3 location);`);
+                print();
+                print(`native void GetDimensions(RWTexture3D<${type}${length}>, thread uint* Width, thread uint* Height, thread uint* Depth);`);
+                print(`native void GetDimensions(RWTexture3D<${type}${length}>, thread float* Width, thread float* Height, thread float* Depth);`);
+                print(`native ${type}${length} Load(RWTexture3D<${type}${length}>, int3 location);`);
+                print(`native void Store(RWTexture3D<${type}${length}>, ${type}${length}, uint3 location);`);
+                print();
+            }
+        }
+        
+        for (var type of [`half`, `float`]) {
+            print(`native ${type} Sample(TextureDepth2D<${type}>, sampler, float2 location);`);
+            print(`native ${type} Sample(TextureDepth2D<${type}>, sampler, float2 location, int2 offset);`);
+            print(`native ${type} SampleCmp(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float CompareValue);`);
+            print(`native ${type} SampleCmp(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float CompareValue, int2 offset);`);
+            print(`native ${type} SampleCmpLevelZero(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float CompareValue);`);
+            print(`native ${type} SampleCmpLevelZero(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float CompareValue, int2 offset);`);
+            print(`native ${type} SampleBias(TextureDepth2D<${type}>, sampler, float2 location, float Bias);`);
+            print(`native ${type} SampleBias(TextureDepth2D<${type}>, sampler, float2 location, float Bias, int2 offset);`);
+            print(`native ${type} SampleGrad(TextureDepth2D<${type}>, sampler, float2 location, float2 DDX, float2 DDY);`);
+            print(`native ${type} SampleGrad(TextureDepth2D<${type}>, sampler, float2 location, float2 DDX, float2 DDY, int2 offset);`);
+            print(`native ${type} SampleLevel(TextureDepth2D<${type}>, sampler, float2 location, float LOD);`);
+            print(`native ${type} SampleLevel(TextureDepth2D<${type}>, sampler, float2 location, float LOD, int2 offset);`);
+            print(`native ${type} Gather(TextureDepth2D<${type}>, sampler, float2 location);`);
+            print(`native ${type} Gather(TextureDepth2D<${type}>, sampler, float2 location, int2 offset);`);
+            print(`native ${type} GatherRed(TextureDepth2D<${type}>, sampler, float2 location);`);
+            print(`native ${type} GatherRed(TextureDepth2D<${type}>, sampler, float2 location, int2 offset);`);
+            print(`native ${type} GatherGreen(TextureDepth2D<${type}>, sampler, float2 location);`);
+            print(`native ${type} GatherGreen(TextureDepth2D<${type}>, sampler, float2 location, int2 offset);`);
+            print(`native ${type} GatherBlue(TextureDepth2D<${type}>, sampler, float2 location);`);
+            print(`native ${type} GatherBlue(TextureDepth2D<${type}>, sampler, float2 location, int2 offset);`);
+            print(`native ${type} GatherAlpha(TextureDepth2D<${type}>, sampler, float2 location);`);
+            print(`native ${type} GatherAlpha(TextureDepth2D<${type}>, sampler, float2 location, int2 offset);`);
+            print(`native ${type} GatherCmp(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value);`);
+            print(`native ${type} GatherCmp(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value, int2 offset);`);
+            print(`native ${type} GatherCmpRed(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value);`);
+            print(`native ${type} GatherCmpRed(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value, int2 offset);`);
+            print(`native ${type} GatherCmpGreen(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value);`);
+            print(`native ${type} GatherCmpGreen(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value, int2 offset);`);
+            print(`native ${type} GatherCmpBlue(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value);`);
+            print(`native ${type} GatherCmpBlue(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value, int2 offset);`);
+            print(`native ${type} GatherCmpAlpha(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value);`);
+            print(`native ${type} GatherCmpAlpha(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value, int2 offset);`);
+            print(`native ${type} Load(TextureDepth2D<${type}>, int3 location);`);
+            print(`native ${type} Load(TextureDepth2D<${type}>, int3 location, int2 offset);`);
+            print(`native void GetDimensions(TextureDepth2D<${type}>, uint MipLevel, thread uint* Width, thread uint* Height, thread uint* NumberOfLevels);`);
+            print();
+            print(`native ${type} Sample(TextureDepth2DArray<${type}>, sampler, float3 location);`);
+            print(`native ${type} Sample(TextureDepth2DArray<${type}>, sampler, float3 location, int2 offset);`);
+            print(`native ${type} SampleCmp(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float CompareValue);`);
+            print(`native ${type} SampleCmp(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float CompareValue, int2 offset);`);
+            print(`native ${type} SampleCmpLevelZero(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float CompareValue);`);
+            print(`native ${type} SampleCmpLevelZero(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float CompareValue, int2 offset);`);
+            print(`native ${type} SampleBias(TextureDepth2DArray<${type}>, sampler, float3 location, float Bias);`);
+            print(`native ${type} SampleBias(TextureDepth2DArray<${type}>, sampler, float3 location, float Bias, int2 offset);`);
+            print(`native ${type} SampleGrad(TextureDepth2DArray<${type}>, sampler, float3 location, float2 DDX, float2 DDY);`);
+            print(`native ${type} SampleGrad(TextureDepth2DArray<${type}>, sampler, float3 location, float2 DDX, float2 DDY, int2 offset);`);
+            print(`native ${type} SampleLevel(TextureDepth2DArray<${type}>, sampler, float3 location, float LOD);`);
+            print(`native ${type} SampleLevel(TextureDepth2DArray<${type}>, sampler, float3 location, float LOD, int2 offset);`);
+            print(`native ${type} Gather(TextureDepth2DArray<${type}>, sampler, float3 location);`);
+            print(`native ${type} Gather(TextureDepth2DArray<${type}>, sampler, float3 location, int2 offset);`);
+            print(`native ${type} GatherRed(TextureDepth2DArray<${type}>, sampler, float3 location);`);
+            print(`native ${type} GatherRed(TextureDepth2DArray<${type}>, sampler, float3 location, int2 offset);`);
+            print(`native ${type} GatherGreen(TextureDepth2DArray<${type}>, sampler, float3 location);`);
+            print(`native ${type} GatherGreen(TextureDepth2DArray<${type}>, sampler, float3 location, int2 offset);`);
+            print(`native ${type} GatherBlue(TextureDepth2DArray<${type}>, sampler, float3 location);`);
+            print(`native ${type} GatherBlue(TextureDepth2DArray<${type}>, sampler, float3 location, int2 offset);`);
+            print(`native ${type} GatherAlpha(TextureDepth2DArray<${type}>, sampler, float3 location);`);
+            print(`native ${type} GatherAlpha(TextureDepth2DArray<${type}>, sampler, float3 location, int2 offset);`);
+            print(`native ${type} GatherCmp(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
+            print(`native ${type} GatherCmp(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value, int2 offset);`);
+            print(`native ${type} GatherCmpRed(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
+            print(`native ${type} GatherCmpRed(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value, int2 offset);`);
+            print(`native ${type} GatherCmpGreen(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
+            print(`native ${type} GatherCmpGreen(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value, int2 offset);`);
+            print(`native ${type} GatherCmpBlue(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
+            print(`native ${type} GatherCmpBlue(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value, int2 offset);`);
+            print(`native ${type} GatherCmpAlpha(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
+            print(`native ${type} GatherCmpAlpha(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value, int2 offset);`);
+            print(`native ${type} Load(TextureDepth2DArray<${type}>, int4 location);`);
+            print(`native ${type} Load(TextureDepth2DArray<${type}>, int4 location, int2 offset);`);
+            print(`native void GetDimensions(TextureDepth2DArray<${type}>, uint MipLevel, thread uint* Width, thread uint* Height, thread uint* Elements, thread uint* NumberOfLevels);`);
+            print();
+            print(`native ${type} Sample(TextureDepthCube<${type}>, sampler, float3 location);`);
+            print(`native ${type} SampleCmp(TextureDepthCube<${type}>, SamplerComparisonState, float3 location, float CompareValue);`);
+            print(`native ${type} SampleCmpLevelZero(TextureDepthCube<${type}>, SamplerComparisonState, float3 location, float CompareValue);`);
+            print(`native ${type} SampleBias(TextureDepthCube<${type}>, sampler, float3 location, float Bias);`);
+            print(`native ${type} SampleGrad(TextureDepthCube<${type}>, sampler, float3 location, float2 DDX, float2 DDY);`);
+            print(`native ${type} SampleLevel(TextureDepthCube<${type}>, sampler, float3 location, float LOD);`);
+            print(`native ${type} Gather(TextureDepthCube<${type}>, sampler, float3 location);`);
+            print(`native ${type} GatherRed(TextureDepthCube<${type}>, sampler, float3 location);`);
+            print(`native ${type} GatherGreen(TextureDepthCube<${type}>, sampler, float3 location);`);
+            print(`native ${type} GatherBlue(TextureDepthCube<${type}>, sampler, float3 location);`);
+            print(`native ${type} GatherAlpha(TextureDepthCube<${type}>, sampler, float3 location);`);
+            print(`native ${type} GatherCmp(TextureDepthCube<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
+            print(`native ${type} GatherCmpRed(TextureDepthCube<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
+            print(`native ${type} GatherCmpGreen(TextureDepthCube<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
+            print(`native ${type} GatherCmpBlue(TextureDepthCube<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
+            print(`native ${type} GatherCmpAlpha(TextureDepthCube<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
+            print(`native ${type} Load(TextureDepthCube<${type}>, int4 location);`);
+            print(`native void GetDimensions(TextureDepthCube<${type}>, uint MipLevel, thread uint* Width, thread uint* Height, thread uint* NumberOfLevels);`);
+            print();
+            print(`native void GetDimensions(RWTextureDepth2D<${type}>, thread uint* Width, thread uint* Height);`);
+            print(`native void GetDimensions(RWTextureDepth2D<${type}>, thread float* Width, thread float* Height);`);
+            print(`native ${type} Load(RWTextureDepth2D<${type}>, int2 location);`);
+            print(`native void Store(RWTextureDepth2D<${type}>, ${type}, uint2 location);`);
+            print();
+            print(`native void GetDimensions(RWTextureDepth2DArray<${type}>, thread uint* Width, thread uint* Height, thread uint* Elements);`);
+            print(`native void GetDimensions(RWTextureDepth2DArray<${type}>, thread float* Width, thread float* Height, thread float* Elements);`);
+            print(`native ${type} Load(RWTextureDepth2DArray<${type}>, int3 location);`);
+            print(`native void Store(RWTextureDepth2DArray<${type}>, ${type}, uint3 location);`);
+            print();
+        }
+        */
+    })();
+    return result;
+})();
 
 // FIXME: Once the standard library has been replaced with a new version, this comments should be removed.
 // This list is used to restrict the availability of vector types available in the langauge.
@@ -217,22 +2134,3 @@ function allVectorTypeNames()
     }
     return names;
 }
-
-// Provides operator&[]
-standardLibrary += OperatorAnderIndexer.functions().join(";\n") + ";\n";
-
-// Native vector types are like structs in the langauge, but they do not have the ander field access.
-// It is not possible to take the address of a vector field.
-standardLibrary += BuiltinVectorGetter.functions().join(";\n") + ";\n";
-standardLibrary += BuiltinVectorSetter.functions().join(";\n") + ";\n";
-standardLibrary += BuiltinVectorIndexGetter.functions().join(";\n") + ";\n";
-standardLibrary += BuiltinVectorIndexSetter.functions().join(";\n") + ";\n";
-
-// FIXME: For native types these could be included as source in the standard library.
-// https://bugs.webkit.org/show_bug.cgi?id=188685
-standardLibrary += OperatorBool.functions().join(";\n") + ";\n";
-standardLibrary += BuiltinVectorEqualityOperator.functions().join(";\n") + ";\n";
-
-// FIXME: These need to be included as source in the standard library.
-standardLibrary += SwizzleOp.functions().join(";\n") + ";\n";
-standardLibrary += BuiltinVectorConstructors.functions().join(";\n") + ";\n";

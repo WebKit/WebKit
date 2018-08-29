@@ -73,5 +73,17 @@ class FlattenedStructOffsetGatherer extends Visitor {
             });
         }
     }
+
+    visitMatrixType(node)
+    {
+        const fieldNames = [ "row0", "row1", "row2", "row3" ];
+        for (let i = 0; i < node.numRowsValue; i++) {
+            this._result.push({
+                name: this._name.join(".") + "." + fieldNames[i],
+                offset: this._offset + i * node.elementType.size * node.numColumnsValue,
+                type: node.elementType.name + node.numColumnsValue.toString()
+            });
+        }
+    }
 }
 

@@ -71,7 +71,7 @@ class NameContext {
 
         if (thing.kind == Type) {
             this._set.add(thing);
-            if (thing.name == "vector") {
+            if (thing.typeArguments && thing.typeArguments.length != 0) {
                 let array = this._map.get(thing.name);
                 if (!array) {
                     array = [];

@@ -148,7 +148,6 @@ class Evaluator extends Visitor {
         if (node.predicate.visit(this).loadValue())
             return node.bodyExpression.visit(this);
         return node.elseExpression.visit(this);
-        
     }
     
     visitVariableRef(node)

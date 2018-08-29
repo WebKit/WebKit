@@ -20,23 +20,25 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 "use strict";
 
-class OperatorAnderIndexer {
-    constructor(baseTypeName, addressSpace)
+class BuiltinMatrixSetter {
+    constructor(baseTypeName, height, width)
     {
         this._baseTypeName = baseTypeName;
-        this._addressSpace = addressSpace;
+        this._height = height;
+        this._width = width;
     }
 
-    get addressSpace() { return this._addressSpace; }
     get baseTypeName() { return this._baseTypeName; }
+    get height() { return this._height; }
+    get width() { return this._width; }
 
     toString()
     {
-        return `native ${this.baseTypeName}* ${this.addressSpace} operator&[](${this.baseTypeName}[] ${this.addressSpace},uint)`;
+        return `native ${this.baseTypeName}${this.height}x${this.width} operator[]=(${this.baseTypeName}${this.height}x${this.width},uint,${this.baseTypeName}${this.width})`;
     }
 
     static functions()
@@ -44,12 +46,11 @@ class OperatorAnderIndexer {
         if (!this._functions) {
             this._functions = [];
 
-            const typeNames = [ "uint", "int", "float", "bool" ].concat(allVectorTypeNames());
-            const addressSpaces = [ "thread", "threadgroup", "device", "constant" ];
-
-            for (let addressSpace of addressSpaces) {
-                for (let typeName of typeNames)
-                    this._functions.push(new OperatorAnderIndexer(typeName, addressSpace));
+            for (let typeName of ["half", "float"]) {
+                for (let height of [2, 3, 4]) {
+                    for (let width of [2, 3, 4])
+                        this._functions.push(new BuiltinMatrixSetter(typeName, height, width));
+                }
             }
         }
         return this._functions;
@@ -57,14 +58,15 @@ class OperatorAnderIndexer {
 
     instantiateImplementation(func)
     {
-        func.implementation = ([ref, index], node) => {
-            ref = ref.loadValue();
-            if (!ref)
-                throw new WTrapError(node.origin.originString, "Null dereference");
-            index = index.loadValue();
-            if (index > ref.length)
-                throw new WTrapError(node.origin.originString, "Array index " + index + " is out of bounds of " + ref);
-            return EPtr.box(ref.ptr.plus(index * node.argumentTypes[0].elementType.size));
+        func.implementation = ([base, index, value]) => {
+            const indexValue = index.loadValue();
+            if (indexValue >= 0 && indexValue < this.height) {
+                let result = new EPtr(new EBuffer(this.width * this.height), 0);
+                result.copyFrom(base, this.width * this.height);
+                result.plus(indexValue * this.width).copyFrom(value, this.width);
+                return result;
+            } else
+                throw new WTrapError("[Builtin matrix setter]", "Out-of-bounds index when indexing into a matrix");
         };
         func.implementationData = this;
     }

@@ -1,3 +1,194 @@
+2018-08-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Add more functions to the standard library
+        https://bugs.webkit.org/show_bug.cgi?id=188873
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds the rest of the standard library to StandardLibrary.js, and updates the compiler to be able to compile it.
+
+        There are a few major pieces:
+        1. Swizzle operators are now implemented in the language, instead of as native functions
+        2. Vector constructors are now implemented in the language, instead of as native functions
+        3. The matrix type is implemented
+        4. Vector operator&[] is illegal, and is removed from the compiler
+        5. Vector index setters & index getters are now implemented in the language, instead of as native functions
+        6. Vector and matrix equality operators are implemented in the language, instead of as native functions
+        7. Casting a scalar to a boolean is implemented in the language, instead of as native functions
+        8. Casting a vector to a boolean is not part of the language, and is removed from the compiler
+        9. Half-precision floating point types are implemented
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/BuiltinMatrixGetter.js: Copied from Tools/WebGPUShadingLanguageRI/BuiltinVectorIndexSetter.js.
+        (BuiltinMatrixGetter):
+        (BuiltinMatrixGetter.prototype.get height):
+        (BuiltinMatrixGetter.prototype.get width):
+        (BuiltinMatrixGetter.prototype.toString):
+        (BuiltinMatrixGetter.functions):
+        (BuiltinMatrixGetter.prototype.instantiateImplementation):
+        * WebGPUShadingLanguageRI/BuiltinMatrixSetter.js: Renamed from Tools/WebGPUShadingLanguageRI/BuiltinVectorIndexSetter.js.
+        (BuiltinMatrixSetter):
+        (BuiltinMatrixSetter.prototype.get height):
+        (BuiltinMatrixSetter.prototype.get width):
+        (BuiltinMatrixSetter.prototype.toString):
+        (BuiltinMatrixSetter.functions):
+        (BuiltinMatrixSetter.prototype.instantiateImplementation):
+        * WebGPUShadingLanguageRI/BuiltinVectorConstructors.js: Removed.
+        * WebGPUShadingLanguageRI/BuiltinVectorEqualityOperator.js: Removed.
+        * WebGPUShadingLanguageRI/BuiltinVectorGetter.js:
+        (BuiltinVectorGetter.prototype.instantiateImplementation):
+        (BuiltinVectorGetter):
+        * WebGPUShadingLanguageRI/BuiltinVectorSetter.js:
+        (BuiltinVectorSetter.functions):
+        (BuiltinVectorSetter.prototype.instantiateImplementation):
+        (BuiltinVectorSetter):
+        * WebGPUShadingLanguageRI/CallExpression.js:
+        (CallExpression.prototype.resolve):
+        * WebGPUShadingLanguageRI/CheckTypesWithArguments.js:
+        (checkTypesWithArguments.TypeWithArgumentsChecker.prototype.visitTypeRef):
+        (checkTypesWithArguments.TypeWithArgumentsChecker):
+        (checkTypesWithArguments):
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitVectorType):
+        (Checker.prototype.visitMatrixType):
+        * WebGPUShadingLanguageRI/ConstexprFolder.js:
+        (ConstexprFolder.prototype.visitCallExpression):
+        (ConstexprFolder):
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitTernaryExpression):
+        * WebGPUShadingLanguageRI/FlattenedStructOffsetGatherer.js:
+        (FlattenedStructOffsetGatherer.prototype.visitMatrixType):
+        (FlattenedStructOffsetGatherer):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics.):
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/MatrixType.js: Renamed from Tools/WebGPUShadingLanguageRI/BuiltinVectorIndexGetter.js.
+        (MatrixType):
+        (MatrixType.prototype.get elementType):
+        (MatrixType.prototype.get numRows):
+        (MatrixType.prototype.get numColumns):
+        (MatrixType.prototype.get numRowsValue):
+        (MatrixType.prototype.get numColumnsValue):
+        (MatrixType.prototype.get size):
+        (MatrixType.prototype.unifyImpl):
+        (MatrixType.prototype.populateDefaultValue):
+        (MatrixType.prototype.toString):
+        * WebGPUShadingLanguageRI/NameContext.js:
+        (NameContext.prototype.add):
+        * WebGPUShadingLanguageRI/NativeType.js:
+        (NativeType.create):
+        (NativeType):
+        * WebGPUShadingLanguageRI/OperatorAnderIndexer.js: Renamed from Tools/WebGPUShadingLanguageRI/OperatorAnderIndex.js.
+        (OperatorAnderIndexer):
+        * WebGPUShadingLanguageRI/OperatorBool.js: Removed.
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (let.prepare):
+        * WebGPUShadingLanguageRI/Program.js:
+        (Program.prototype.add):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitMatrixType):
+        (Rewriter):
+        * WebGPUShadingLanguageRI/SPIRV.html:
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        (operator.bool):
+        (bool.operator):
+        (uchar.operator):
+        (ushort.operator):
+        (char.operator):
+        (short.operator):
+        (uint.operator):
+        (int.operator):
+        (half.operator):
+        (float.operator):
+        (uchar2.operator):
+        (uchar3.operator):
+        (uchar4.operator):
+        (ushort2.operator):
+        (ushort3.operator):
+        (ushort4.operator):
+        (uint2.operator):
+        (uint3.operator):
+        (uint4.operator):
+        (char2.operator):
+        (char3.operator):
+        (char4.operator):
+        (short2.operator):
+        (short3.operator):
+        (short4.operator):
+        (int2.operator):
+        (int3.operator):
+        (int4.operator):
+        (half2.operator):
+        (half3.operator):
+        (half4.operator):
+        (float2.operator):
+        (float3.operator):
+        (float4.operator):
+        (half2x2.operator):
+        (half2x3.operator):
+        (half2x4.operator):
+        (half3x2.operator):
+        (half3x3.operator):
+        (half3x4.operator):
+        (half4x2.operator):
+        (half4x3.operator):
+        (half4x4.operator):
+        (float2x2.operator):
+        (float2x3.operator):
+        (float2x4.operator):
+        (float3x2.operator):
+        (float3x3.operator):
+        (float3x4.operator):
+        (float4x2.operator):
+        (float4x3.operator):
+        (float4x4.operator):
+        (operator.bool2):
+        (operator.bool3):
+        (operator.bool4):
+        (uint.operator.length):
+        (operator.uchar2):
+        (operator.uchar3):
+        (operator.uchar4):
+        (operator.ushort2):
+        (operator.ushort3):
+        (operator.ushort4):
+        (operator.uint2):
+        (operator.uint3):
+        (operator.uint4):
+        (operator.char2):
+        (operator.char3):
+        (operator.char4):
+        (operator.short2):
+        (operator.short3):
+        (operator.short4):
+        (operator.int2):
+        (operator.int3):
+        (operator.int4):
+        (operator.half2):
+        (operator.half3):
+        (operator.half4):
+        (operator.float2):
+        (operator.float3):
+        (operator.float4):
+        (bool2.operator):
+        (bool3.operator):
+        (bool4.operator):
+        (allVectorTypeNames):
+        * WebGPUShadingLanguageRI/SwizzleOp.js: Removed.
+        * WebGPUShadingLanguageRI/SynthesizeDefaultConstructorOperator.js:
+        (synthesizeDefaultConstructorOperator.FindAllTypes.prototype.visitMatrixType):
+        (synthesizeDefaultConstructorOperator.FindAllTypes):
+        (synthesizeDefaultConstructorOperator):
+        * WebGPUShadingLanguageRI/SynthesizeOperatorBool.js: Removed.
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (makeHalf):
+        (checkHalf):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitMatrixType):
+        (Visitor):
+        * WebGPUShadingLanguageRI/index.html:
+
 2018-08-29  Simon Fraser  <simon.fraser@apple.com>
 
         Teach webkitpy how to check leaks and treat leaks as test failures
