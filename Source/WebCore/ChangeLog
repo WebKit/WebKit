@@ -1,3 +1,39 @@
+2018-08-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Changes to slot children should trigger slotchange
+        https://bugs.webkit.org/show_bug.cgi?id=169718
+        <rdar://problem/43317496>
+
+        Reviewed by Darin Adler.
+
+        Fix the bug that slotchange event is not fired when a slot's fallback content is updated now that slotchange event
+        is more formally specified.
+
+        This particular behavior corresponds to step 7.5. of the concept *to insert a node* where it says:
+        "[I]f parent’s root is a shadow root, and parent is a slot whose assigned nodes is the empty list, then run signal
+        a slot change for parent."
+
+        See https://dom.spec.whatwg.org/#concept-node-insert
+
+        Tests: fast/shadow-dom/slotchange-in-fallback.html
+               imported/w3c/web-platform-tests/shadow-dom/slotchange.html 
+
+        * dom/Element.cpp:
+        (WebCore::Element::childrenChanged): Updated the comment.
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::addSlotElementByName): Added an assertion.
+        (WebCore::ShadowRoot::slotFallbackDidChange): Added.
+        * dom/ShadowRoot.h:
+        * dom/SlotAssignment.cpp:
+        (WebCore::SlotAssignment::slotFallbackDidChange): Added. When the assigned nodes is empty, we enqueue a slotchange.
+        Because assignedNodesForSlot invokes assignSlots, this can be O(n) but we don't expect mutating slot's fallback
+        contents and shadow host's children in turn to be a common scenario so this shouldn't be an issue in practice.
+        * dom/SlotAssignment.h:
+        * html/HTMLSlotElement.cpp:
+        (WebCore::HTMLSlotElement::insertedIntoAncestor): Be explicit about auto* being used here.
+        (WebCore::HTMLSlotElement::childrenChanged): Added. Invokes slotFallbackDidChange whenver child node is muated.
+        * html/HTMLSlotElement.h:
+
 2018-08-28  Don Olmstead  <don.olmstead@sony.com>
 
         Check for null renderer in canBeScrolledIntoView

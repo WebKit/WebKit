@@ -51,6 +51,7 @@ public:
 
     void addSlotElementByName(const AtomicString&, HTMLSlotElement&, ShadowRoot&);
     void removeSlotElementByName(const AtomicString&, HTMLSlotElement&, ShadowRoot&);
+    void slotFallbackDidChange(HTMLSlotElement&, ShadowRoot&);
 
     void didChangeSlot(const AtomicString&, ShadowRoot&);
     void enqueueSlotChangeEvent(const AtomicString&, ShadowRoot&);

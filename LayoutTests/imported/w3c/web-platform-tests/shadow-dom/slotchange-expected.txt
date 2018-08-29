@@ -10,8 +10,8 @@ PASS slotchange event: Change slot= attribute to make it assigned.
 TIMEOUT slotchange event: Change slot's name= attribute so that a node is assigned to the slot. Test timed out
 PASS slotchange event: Add a fallback content. 
 PASS slotchange event: Remove a fallback content. 
-TIMEOUT slotchange event: Add a fallback content to nested slots. Test timed out
-TIMEOUT slotchange event: Remove a fallback content from nested slots. Test timed out
+PASS slotchange event: Add a fallback content to nested slots. 
+PASS slotchange event: Remove a fallback content from nested slots. 
 TIMEOUT slotchange event: Insert a slot before an existing slot. Test timed out
 TIMEOUT slotchange event: Remove a preceding slot. Test timed out
 PASS slotchange event: A slot is assigned to another slot. 

@@ -183,6 +183,7 @@ HTMLSlotElement* ShadowRoot::findAssignedSlot(const Node& node)
 
 void ShadowRoot::addSlotElementByName(const AtomicString& name, HTMLSlotElement& slot)
 {
+    ASSERT(&slot.rootNode() == this);
     if (!m_slotAssignment)
         m_slotAssignment = std::make_unique<SlotAssignment>();
 
@@ -192,6 +193,12 @@ void ShadowRoot::addSlotElementByName(const AtomicString& name, HTMLSlotElement&
 void ShadowRoot::removeSlotElementByName(const AtomicString& name, HTMLSlotElement& slot)
 {
     return m_slotAssignment->removeSlotElementByName(name, slot, *this);
+}
+
+void ShadowRoot::slotFallbackDidChange(HTMLSlotElement& slot)
+{
+    ASSERT(&slot.rootNode() == this);
+    return m_slotAssignment->slotFallbackDidChange(slot, *this);
 }
 
 const Vector<Node*>* ShadowRoot::assignedNodesForSlot(const HTMLSlotElement& slot)

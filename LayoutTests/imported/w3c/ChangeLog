@@ -1,3 +1,15 @@
+2018-08-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Changes to slot children should trigger slotchange
+        https://bugs.webkit.org/show_bug.cgi?id=169718
+        <rdar://problem/43317496>
+
+        Reviewed by Darin Adler.
+
+        Rebaselined the test now that relevant test cases pass.
+
+        * web-platform-tests/shadow-dom/slotchange-expected.txt:
+
 2018-08-28  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Support inputmode=none

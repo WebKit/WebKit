@@ -74,6 +74,7 @@ public:
 
     void addSlotElementByName(const AtomicString&, HTMLSlotElement&);
     void removeSlotElementByName(const AtomicString&, HTMLSlotElement&);
+    void slotFallbackDidChange(HTMLSlotElement&);
 
     void didRemoveAllChildrenOfShadowHost();
     void didChangeDefaultSlot();
@@ -107,7 +108,6 @@ private:
     Element* m_host { nullptr };
 
     std::unique_ptr<Style::Scope> m_styleScope;
-
     std::unique_ptr<SlotAssignment> m_slotAssignment;
 };
 

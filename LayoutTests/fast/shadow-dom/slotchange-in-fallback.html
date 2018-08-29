@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Shadow DOM: slotchange event in fallback content</title>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<link rel="help" href="https://dom.spec.whatwg.org/#signaling-slot-change">
+<link rel="help" href="https://dom.spec.whatwg.org/#concept-node-insert">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+function generateTests(...args) {
+    testMutatingSlot('closed', true, ...args);
+    testMutatingSlot('closed', false, ...args);
+    testMutatingSlot('open', true, ...args);
+    testMutatingSlot('open', false, ...args);
+}
+
+function testMutatingSlot(mode, connectedToDocument, shadowContent, slotName, prepareSlot, mutateSlot, description)
+{
+    promise_test(async function () {
+        const host = document.createElement('div');
+        if (connectedToDocument)
+            document.body.appendChild(host);
+        if (shadowContent)
+            host.innerHTML = shadowContent;
+
+        const shadowRoot = host.attachShadow({mode});
+
+        const slot = document.createElement('slot');
+        let eventCount = 0;
+        if (slotName)
+            slot.name = slotName;
+        prepareSlot(slot);
+        slot.addEventListener('slotchange', () => eventCount++);
+
+        shadowRoot.appendChild(slot);
+
+        await Promise.resolve();
+        eventCount = 0;
+
+        mutateSlot(slot);
+        await Promise.resolve();
+        assert_equals(eventCount, shadowContent ? 0 : 1);
+
+        slot.remove();
+    }, description + ` in a ${connectedToDocument ? 'connected' : 'disconnected'} ${mode} mode shadow root`);
+}
+
+generateTests(null, null, () => { }, (slot) => slot.append('some text'),
+    'slotchange event should be fired when appending a text node to a default slot whose assigned nodes is empty');
+generateTests(null, 'foo', () => { },  (slot) => slot.append('some text'),
+    'slotchange event should be fired when appending a text node to a named slot whose assigned nodes is empty');
+generateTests(null, null, () => { }, (slot) => slot.append(document.createTextNode('div')),
+    'slotchange event should be fired when appending a div to a default slot whose assigned nodes is empty');
+generateTests(null, 'foo', () => { }, (slot) => slot.append(document.createTextNode('div')),
+    'slotchange event should be fired when appending a div to a named slot whose assigned nodes is empty');
+
+generateTests(null, null, (slot) => slot.append('hello'), (slot) => slot.firstChild.remove(),
+    'slotchange event should be fired when removing a text node from a default slot whose assigned nodes is empty');
+generateTests(null, 'foo', (slot) => slot.append('hello'), (slot) => slot.firstChild.remove(),
+    'slotchange event should be fired when removing a text node from a named slot whose assigned nodes is empty');
+generateTests(null, 'foo', (slot) => slot.append(document.createElement('div')), (slot) => slot.firstChild.remove(),
+    'slotchange event should be fired when removing a div from a default slot whose assigned nodes is empty');
+generateTests(null, 'foo', (slot) => slot.append(document.createElement('div')), (slot) => slot.firstChild.remove(),
+    'slotchange event should be fired when removing a div from a named slot whose assigned nodes is empty');
+
+generateTests('hello', null, () => { }, (slot) => slot.append('some text'),
+    'slotchange event should not be fired when appending a text node to a default slot whose assigned nodes is not empty');
+generateTests('<div slot="foo"></div>', 'foo', () => { }, (slot) => slot.append('some text'),
+    'slotchange event should not be fired when appending a text node to a named slot whose assigned nodes is not empty');
+generateTests('<div></div>', null, () => { }, (slot) => slot.append(document.createTextNode('div')),
+    'slotchange event should not be fired when appending a div to a default slot whose assigned nodes is not empty');
+generateTests('<div slot="foo"></div>', 'foo', () => { }, (slot) => slot.append(document.createTextNode('div')),
+    'slotchange event should not be fired when appending a div to a named slot whose assigned nodes is not empty');
+
+generateTests('<span></span>', null, (slot) => slot.append('hello'), (slot) => slot.firstChild.remove(),
+    'slotchange event should not be fired when removing a text node from a default slot whose assigned nodes is empty');
+generateTests('<span slot="foo"></span>', 'foo', (slot) => slot.append('hello'), (slot) => slot.firstChild.remove(),
+    'slotchange event should not be fired when removing a text node from a named slot whose assigned nodes is empty');
+generateTests('<span></span>', null, (slot) => slot.append(document.createElement('div')), (slot) => slot.firstChild.remove(),
+    'slotchange event should not be fired when removing a div from a default slot whose assigned nodes is empty');
+generateTests('<span slot="foo"></span>', 'foo', (slot) => slot.append(document.createElement('div')), (slot) => slot.firstChild.remove(),
+    'slotchange event should not be fired when removing a div from a named slot whose assigned nodes is empty');
+
+</script>
+</body>
+</html>

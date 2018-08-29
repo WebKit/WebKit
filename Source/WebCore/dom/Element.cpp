@@ -2178,7 +2178,7 @@ void Element::childrenChanged(const ChildChange& change)
         switch (change.type) {
         case ElementInserted:
         case ElementRemoved:
-            // For elements, we notify shadowRoot in Element::insertedInto and Element::removedFrom.
+            // For elements, we notify shadowRoot in Element::insertedIntoAncestor and Element::removedFromAncestor.
             break;
         case AllChildrenRemoved:
         case AllChildrenReplaced:

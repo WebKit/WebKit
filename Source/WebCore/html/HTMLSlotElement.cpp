@@ -57,7 +57,7 @@ HTMLSlotElement::InsertedIntoAncestorResult HTMLSlotElement::insertedIntoAncesto
     ASSERT_UNUSED(insertionResult, insertionResult == InsertedIntoAncestorResult::Done);
 
     if (insertionType.treeScopeChanged && isInShadowTree()) {
-        if (auto shadowRoot = containingShadowRoot())
+        if (auto* shadowRoot = containingShadowRoot())
             shadowRoot->addSlotElementByName(attributeWithoutSynchronization(nameAttr), *this);
     }
 
@@ -73,6 +73,16 @@ void HTMLSlotElement::removedFromAncestor(RemovalType removalType, ContainerNode
     }
 
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+}
+
+void HTMLSlotElement::childrenChanged(const ChildChange& childChange)
+{
+    HTMLElement::childrenChanged(childChange);
+
+    if (isInShadowTree()) {
+        if (auto* shadowRoot = containingShadowRoot())
+            shadowRoot->slotFallbackDidChange(*this);
+    }
 }
 
 void HTMLSlotElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason reason)

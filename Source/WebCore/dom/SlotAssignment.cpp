@@ -123,6 +123,16 @@ void SlotAssignment::removeSlotElementByName(const AtomicString& name, HTMLSlotE
     ASSERT(slotInfo.element || m_needsToResolveSlotElements);
 }
 
+void SlotAssignment::slotFallbackDidChange(HTMLSlotElement& slotElement, ShadowRoot& shadowRoot)
+{
+    if (shadowRoot.mode() == ShadowRootMode::UserAgent)
+        return;
+
+    bool usesFallbackContent = !assignedNodesForSlot(slotElement, shadowRoot);
+    if (usesFallbackContent)
+        slotElement.enqueueSlotChangeEvent();
+}
+
 void SlotAssignment::didChangeSlot(const AtomicString& slotAttrValue, ShadowRoot& shadowRoot)
 {
     auto& slotName = slotNameFromAttributeValue(slotAttrValue);
