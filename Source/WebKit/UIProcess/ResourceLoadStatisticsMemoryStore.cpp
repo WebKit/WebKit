@@ -244,21 +244,21 @@ void ResourceLoadStatisticsMemoryStore::removeDataRecords(CompletionHandler<void
 
     setDataRecordsBeingRemoved(true);
 
-    RunLoop::main().dispatch([prevalentResourceDomains = crossThreadCopy(prevalentResourceDomains), callback = WTFMove(callback), this, weakThis = makeWeakPtr(*this)] () mutable {
-        WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTFMove(prevalentResourceDomains), m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, [callback = WTFMove(callback), this, weakThis = WTFMove(weakThis), workQueue = m_workQueue.copyRef()](const HashSet<String>& domainsWithDeletedWebsiteData) mutable {
-            workQueue->dispatch([topDomains = crossThreadCopy(domainsWithDeletedWebsiteData), callback = WTFMove(callback), this, weakThis = WTFMove(weakThis)] () mutable {
+    RunLoop::main().dispatch([prevalentResourceDomains = crossThreadCopy(prevalentResourceDomains), callback = WTFMove(callback), weakThis = makeWeakPtr(*this), shouldNotifyPagesWhenDataRecordsWereScanned = m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, workQueue = m_workQueue.copyRef()] () mutable {
+        WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTFMove(prevalentResourceDomains), shouldNotifyPagesWhenDataRecordsWereScanned, [callback = WTFMove(callback), weakThis = WTFMove(weakThis), workQueue = workQueue.copyRef()](const HashSet<String>& domainsWithDeletedWebsiteData) mutable {
+            workQueue->dispatch([topDomains = crossThreadCopy(domainsWithDeletedWebsiteData), callback = WTFMove(callback), weakThis = WTFMove(weakThis)] () mutable {
                 if (!weakThis) {
                     callback();
                     return;
                 }
                 for (auto& prevalentResourceDomain : topDomains) {
-                    auto& statistic = ensureResourceStatisticsForPrimaryDomain(prevalentResourceDomain);
+                    auto& statistic = weakThis->ensureResourceStatisticsForPrimaryDomain(prevalentResourceDomain);
                     ++statistic.dataRecordsRemoved;
                 }
-                setDataRecordsBeingRemoved(false);
+                weakThis->setDataRecordsBeingRemoved(false);
                 callback();
 #if !RELEASE_LOG_DISABLED
-                RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Done removing data records.");
+                RELEASE_LOG_INFO_IF(weakThis->m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Done removing data records.");
 #endif
             });
         });
@@ -506,25 +506,25 @@ void ResourceLoadStatisticsMemoryStore::grandfatherExistingWebsiteData(Completio
 {
     ASSERT(!RunLoop::isMain());
 
-    RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this), callback = WTFMove(callback)] () mutable {
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), callback = WTFMove(callback), shouldNotifyPagesWhenDataRecordsWereScanned = m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, workQueue = m_workQueue.copyRef()] () mutable {
         // FIXME: This method being a static call on WebProcessProxy is wrong.
         // It should be on the data store that this object belongs to.
-        WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(WebResourceLoadStatisticsStore::monitoredDataTypes(), m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, [this, weakThis = WTFMove(weakThis), callback = WTFMove(callback), workQueue = m_workQueue.copyRef()] (HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
-            workQueue->dispatch([this, weakThis = WTFMove(weakThis), topDomains = crossThreadCopy(topPrivatelyControlledDomainsWithWebsiteData), callback = WTFMove(callback)] () mutable {
+        WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(WebResourceLoadStatisticsStore::monitoredDataTypes(), shouldNotifyPagesWhenDataRecordsWereScanned, [weakThis = WTFMove(weakThis), callback = WTFMove(callback), workQueue = workQueue.copyRef()] (HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
+            workQueue->dispatch([weakThis = WTFMove(weakThis), topDomains = crossThreadCopy(topPrivatelyControlledDomainsWithWebsiteData), callback = WTFMove(callback)] () mutable {
                 if (!weakThis) {
                     callback();
                     return;
                 }
 
                 for (auto& topPrivatelyControlledDomain : topDomains) {
-                    auto& statistic = ensureResourceStatisticsForPrimaryDomain(topPrivatelyControlledDomain);
+                    auto& statistic = weakThis->ensureResourceStatisticsForPrimaryDomain(topPrivatelyControlledDomain);
                     statistic.grandfathered = true;
                 }
-                m_endOfGrandfatheringTimestamp = WallTime::now() + m_parameters.grandfatheringTime;
-                if (m_persistentStorage)
-                    m_persistentStorage->scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::Yes);
+                weakThis->m_endOfGrandfatheringTimestamp = WallTime::now() + weakThis->m_parameters.grandfatheringTime;
+                if (weakThis->m_persistentStorage)
+                    weakThis->m_persistentStorage->scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::Yes);
                 callback();
-                logTestingEvent("Grandfathered"_s);
+                weakThis->logTestingEvent("Grandfathered"_s);
             });
         });
     });
@@ -1039,14 +1039,14 @@ void ResourceLoadStatisticsMemoryStore::updateCookieBlocking(CompletionHandler<v
     if (m_debugLoggingEnabled && !domainsToBlock.isEmpty())
             debugLogDomainsInBatches("block", domainsToBlock);
 
-    RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this), store = makeRef(m_store), domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)] () mutable {
-        store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, ShouldClearFirst::No, [this, weakThis = WTFMove(weakThis), store = store.copyRef(), completionHandler = WTFMove(completionHandler)]() mutable {
-            store->statisticsQueue().dispatch([this, weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)]() mutable {
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), store = makeRef(m_store), domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)] () mutable {
+        store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, ShouldClearFirst::No, [weakThis = WTFMove(weakThis), store = store.copyRef(), completionHandler = WTFMove(completionHandler)]() mutable {
+            store->statisticsQueue().dispatch([weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler();
                 if (!weakThis)
                     return;
 #if !RELEASE_LOG_DISABLED
-                RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Done updating cookie blocking.");
+                RELEASE_LOG_INFO_IF(weakThis->m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Done updating cookie blocking.");
 #endif
             });
         });
