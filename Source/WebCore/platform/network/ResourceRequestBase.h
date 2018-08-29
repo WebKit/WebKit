@@ -253,13 +253,18 @@ private:
 bool equalIgnoringHeaderFields(const ResourceRequestBase&, const ResourceRequestBase&);
 
 // FIXME: Find a better place for these functions.
+inline String toRegistrableDomain(const URL& a)
+{
+    return ResourceRequestBase::partitionName(a.host().toString());
+}
+
 inline bool registrableDomainsAreEqual(const URL& a, const URL& b)
 {
-    return ResourceRequestBase::partitionName(a.host().toString()) == ResourceRequestBase::partitionName(b.host().toString());
+    return toRegistrableDomain(a) == toRegistrableDomain(b);
 }
 inline bool registrableDomainsAreEqual(const URL& a, const String& registrableDomain)
 {
-    return ResourceRequestBase::partitionName(a.host().toString()) == registrableDomain;
+    return toRegistrableDomain(a) == registrableDomain;
 }
 
 inline bool operator==(const ResourceRequest& a, const ResourceRequest& b) { return ResourceRequestBase::equal(a, b); }

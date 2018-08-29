@@ -1,3 +1,18 @@
+2018-08-29  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] We should only process-swap when eTLD+1 changes on navigation
+        https://bugs.webkit.org/show_bug.cgi?id=189090
+        <rdar://problem/43799225>
+
+        Reviewed by Geoffrey Garen.
+
+        Add toRegistrableDomain() utility function to get the eTLD+1 (aka "registrable
+        domain") from an URL.
+
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::toRegistrableDomain):
+        (WebCore::registrableDomainsAreEqual):
+
 2018-08-29  Youenn Fablet  <youenn@apple.com>
 
         Add a runtime flag for WebRTC unified plan

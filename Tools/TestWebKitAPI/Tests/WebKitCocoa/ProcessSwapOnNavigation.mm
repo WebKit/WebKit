@@ -250,7 +250,7 @@ window.onpageshow = function(evt) {
 static const char* windowOpenCrossOriginNoOpenerTestBytes = R"PSONRESOURCE(
 <script>
 window.onload = function() {
-    window.open("pson2://host/main2.html", "_blank", "noopener");
+    window.open("pson://www.apple.com/main.html", "_blank", "noopener");
 }
 </script>
 )PSONRESOURCE";
@@ -258,7 +258,7 @@ window.onload = function() {
 static const char* windowOpenCrossOriginWithOpenerTestBytes = R"PSONRESOURCE(
 <script>
 window.onload = function() {
-    window.open("pson2://host/main2.html");
+    window.open("pson://www.apple.com/main.html");
 }
 </script>
 )PSONRESOURCE";
@@ -267,13 +267,9 @@ static const char* windowOpenSameOriginNoOpenerTestBytes = R"PSONRESOURCE(
 <script>
 window.onload = function() {
     if (!opener)
-        window.open("pson1://host/main2.html", "_blank", "noopener");
+        window.open("pson://www.webkit.org/main.html", "_blank", "noopener");
 }
 </script>
-)PSONRESOURCE";
-
-static const char* dummyBytes = R"PSONRESOURCE(
-<body>TEST</body>
 )PSONRESOURCE";
 
 #endif // PLATFORM(MAC)
@@ -287,15 +283,14 @@ TEST(ProcessSwap, Basic)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] init]);
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON1"];
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON2"];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main1.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
@@ -303,7 +298,7 @@ TEST(ProcessSwap, Basic)
 
     auto pid1 = [webView _webProcessIdentifier];
 
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main2.html"]];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main2.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
@@ -311,7 +306,7 @@ TEST(ProcessSwap, Basic)
 
     auto pid2 = [webView _webProcessIdentifier];
 
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson2://host/main2.html"]];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main2.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
@@ -326,6 +321,43 @@ TEST(ProcessSwap, Basic)
     EXPECT_EQ(numberOfDecidePolicyCalls, 3);
 }
 
+TEST(ProcessSwap, NoSwappingForeTLDPlus2)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    processPoolConfiguration.get().maximumPrewarmedProcessCount = 1;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www1.webkit.org/main1.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pid1 = [webView _webProcessIdentifier];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www2.webkit.org/main2.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pid2 = [webView _webProcessIdentifier];
+
+    EXPECT_EQ(pid1, pid2);
+
+    EXPECT_EQ(numberOfDecidePolicyCalls, 2);
+}
+
 TEST(ProcessSwap, Back)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
@@ -334,10 +366,9 @@ TEST(ProcessSwap, Back)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    RetainPtr<PSONScheme> handler1 = adoptNS([[PSONScheme alloc] initWithBytes:testBytes]);
-    RetainPtr<PSONScheme> handler2 = adoptNS([[PSONScheme alloc] init]);
-    [webViewConfiguration setURLSchemeHandler:handler1.get() forURLScheme:@"PSON1"];
-    [webViewConfiguration setURLSchemeHandler:handler2.get() forURLScheme:@"PSON2"];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:testBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     RetainPtr<PSONMessageHandler> messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
     [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
@@ -346,7 +377,7 @@ TEST(ProcessSwap, Back)
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main1.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&receivedMessage);
@@ -356,7 +387,7 @@ TEST(ProcessSwap, Back)
 
     auto pid1 = [webView _webProcessIdentifier];
 
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson2://host/main2.html"]];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
@@ -398,10 +429,9 @@ TEST(ProcessSwap, CrossOriginWindowOpenNoOpener)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    RetainPtr<PSONScheme> handler1 = adoptNS([[PSONScheme alloc] initWithBytes:windowOpenCrossOriginNoOpenerTestBytes]);
-    RetainPtr<PSONScheme> handler2 = adoptNS([[PSONScheme alloc] initWithBytes:dummyBytes]);
-    [webViewConfiguration setURLSchemeHandler:handler1.get() forURLScheme:@"PSON1"];
-    [webViewConfiguration setURLSchemeHandler:handler2.get() forURLScheme:@"PSON2"];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:windowOpenCrossOriginNoOpenerTestBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
@@ -410,7 +440,7 @@ TEST(ProcessSwap, CrossOriginWindowOpenNoOpener)
     [webView setUIDelegate:uiDelegate.get()];
 
     numberOfDecidePolicyCalls = 0;
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main1.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
@@ -440,10 +470,9 @@ TEST(ProcessSwap, CrossOriginWindowOpenWithOpener)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    RetainPtr<PSONScheme> handler1 = adoptNS([[PSONScheme alloc] initWithBytes:windowOpenCrossOriginWithOpenerTestBytes]);
-    RetainPtr<PSONScheme> handler2 = adoptNS([[PSONScheme alloc] initWithBytes:dummyBytes]);
-    [webViewConfiguration setURLSchemeHandler:handler1.get() forURLScheme:@"PSON1"];
-    [webViewConfiguration setURLSchemeHandler:handler2.get() forURLScheme:@"PSON2"];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:windowOpenCrossOriginWithOpenerTestBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
@@ -452,7 +481,7 @@ TEST(ProcessSwap, CrossOriginWindowOpenWithOpener)
     [webView setUIDelegate:uiDelegate.get()];
 
     numberOfDecidePolicyCalls = 0;
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main1.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
@@ -481,8 +510,8 @@ TEST(ProcessSwap, SameOriginWindowOpenNoOpener)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] initWithBytes:windowOpenSameOriginNoOpenerTestBytes]);
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON1"];
+    auto handler = adoptNS([[PSONScheme alloc] initWithBytes:windowOpenSameOriginNoOpenerTestBytes]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
@@ -491,7 +520,7 @@ TEST(ProcessSwap, SameOriginWindowOpenNoOpener)
     [webView setUIDelegate:uiDelegate.get()];
 
     numberOfDecidePolicyCalls = 0;
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main1.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
@@ -522,15 +551,15 @@ TEST(ProcessSwap, ServerRedirectFromNewWebView)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] init]);
-    [handler addRedirectFromURLString:@"pson://host/main1.html" toURLString:@"psonredirected://host/main1.html"];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addRedirectFromURLString:@"pson://www.webkit.org/main.html" toURLString:@"pson://www.apple.com/main.html"];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"pson"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main1.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&serverRedirected);
@@ -556,17 +585,15 @@ TEST(ProcessSwap, ServerRedirect)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    RetainPtr<PSONScheme> handler1 = adoptNS([[PSONScheme alloc] init]);
-    [handler1 addRedirectFromURLString:@"pson://host/main1.html" toURLString:@"psonredirected://host/main1.html"];
-    [webViewConfiguration setURLSchemeHandler:handler1.get() forURLScheme:@"pson"];
-    RetainPtr<PSONScheme> handler2 = adoptNS([[PSONScheme alloc] init]);
-    [webViewConfiguration setURLSchemeHandler:handler2.get() forURLScheme:@"originalload"];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addRedirectFromURLString:@"pson://www.webkit.org/main.html" toURLString:@"pson://www.apple.com/main.html"];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"pson"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"originalload://host/main1.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.google.com/main1.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
@@ -578,7 +605,7 @@ TEST(ProcessSwap, ServerRedirect)
     EXPECT_EQ(1u, seenPIDs.size());
     EXPECT_TRUE(*seenPIDs.begin() == pidAfterFirstLoad);
 
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main1.html"]];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&serverRedirected);
@@ -605,17 +632,17 @@ TEST(ProcessSwap, ServerRedirect2)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    RetainPtr<PSONScheme> handler1 = adoptNS([[PSONScheme alloc] init]);
-    [handler1 addRedirectFromURLString:@"pson://host/main2.html" toURLString:@"psonredirected://host/main1.html"];
+    auto handler1 = adoptNS([[PSONScheme alloc] init]);
+    [handler1 addRedirectFromURLString:@"pson://www.webkit.org/main2.html" toURLString:@"pson://www.apple.com/main.html"];
     [webViewConfiguration setURLSchemeHandler:handler1.get() forURLScheme:@"pson"];
-    RetainPtr<PSONScheme> handler2 = adoptNS([[PSONScheme alloc] init]);
+    auto handler2 = adoptNS([[PSONScheme alloc] init]);
     [webViewConfiguration setURLSchemeHandler:handler2.get() forURLScheme:@"psonredirected"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main1.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
@@ -628,7 +655,7 @@ TEST(ProcessSwap, ServerRedirect2)
     EXPECT_EQ(1u, seenPIDs.size());
     EXPECT_TRUE(*seenPIDs.begin() == pidAfterFirstLoad);
 
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main2.html"]];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main2.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&serverRedirected);
@@ -672,10 +699,9 @@ TEST(ProcessSwap, SessionStorage)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    auto handler1 = adoptNS([[PSONScheme alloc] initWithBytes:sessionStorageTestBytes]);
-    auto handler2 = adoptNS([[PSONScheme alloc] init]);
-    [webViewConfiguration setURLSchemeHandler:handler1.get() forURLScheme:@"PSON1"];
-    [webViewConfiguration setURLSchemeHandler:handler2.get() forURLScheme:@"PSON2"];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:sessionStorageTestBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
     [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
@@ -684,7 +710,7 @@ TEST(ProcessSwap, SessionStorage)
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&receivedMessage);
@@ -694,7 +720,7 @@ TEST(ProcessSwap, SessionStorage)
 
     auto pid1 = [webView _webProcessIdentifier];
 
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson2://host/main.html"]];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
@@ -702,7 +728,7 @@ TEST(ProcessSwap, SessionStorage)
 
     auto pid2 = [webView _webProcessIdentifier];
 
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main.html"]];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&receivedMessage);
@@ -726,12 +752,12 @@ TEST(ProcessSwap, SessionStorage)
 static const char* mainFramesOnlyMainFrame = R"PSONRESOURCE(
 <script>
 function loaded() {
-    setTimeout('window.frames[0].location.href = "pson2://host2/main.html"', 0);
+    setTimeout('window.frames[0].location.href = "pson://www.apple.com/main.html"', 0);
 }
 </script>
 <body onload="loaded();">
 Some text
-<iframe src="pson1://host/iframe.html"></iframe>
+<iframe src="pson://www.webkit.org/iframe.html"></iframe>
 </body>
 )PSONRESOURCE";
 
@@ -755,11 +781,10 @@ TEST(ProcessSwap, MainFramesOnly)
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
     auto handler = adoptNS([[PSONScheme alloc] init]);
-    [handler addMappingFromURLString:@"pson1://host/main.html" toData:mainFramesOnlyMainFrame];
-    [handler addMappingFromURLString:@"pson1://host/iframe" toData:mainFramesOnlySubframe];
-    [handler addMappingFromURLString:@"pson2://host2/main.html" toData:mainFramesOnlySubframe2];
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON1"];
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON2"];
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:mainFramesOnlyMainFrame];
+    [handler addMappingFromURLString:@"pson://www.webkit.org/iframe" toData:mainFramesOnlySubframe];
+    [handler addMappingFromURLString:@"pson://www.apple.com/main.html" toData:mainFramesOnlySubframe2];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
     [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
@@ -768,7 +793,7 @@ TEST(ProcessSwap, MainFramesOnly)
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&receivedMessage);
@@ -792,19 +817,19 @@ TEST(ProcessSwap, OnePreviousProcessRemains)
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host1/main.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host2/main.html"]];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host3/main.html"]];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.google.com/main.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
@@ -835,10 +860,9 @@ TEST(ProcessSwap, PageCache1)
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
     auto handler = adoptNS([[PSONScheme alloc] init]);
-    [handler addMappingFromURLString:@"pson1://host/main.html" toData:pageCache1Bytes];
-    [handler addMappingFromURLString:@"pson2://host/main.html" toData:pageCache1Bytes];
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON1"];
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON2"];
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:pageCache1Bytes];
+    [handler addMappingFromURLString:@"pson://www.apple.com/main.html" toData:pageCache1Bytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
     [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
@@ -847,7 +871,7 @@ TEST(ProcessSwap, PageCache1)
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
 
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&done);
@@ -857,7 +881,7 @@ TEST(ProcessSwap, PageCache1)
 
     EXPECT_EQ(1u, [processPool _webProcessCountIgnoringPrewarmed]);
 
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson2://host/main.html"]];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
 
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&done);
@@ -913,7 +937,7 @@ TEST(ProcessSwap, NumberOfPrewarmedProcesses)
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host1/main.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -922,7 +946,7 @@ TEST(ProcessSwap, NumberOfPrewarmedProcesses)
     EXPECT_EQ(1u, [processPool _webProcessCountIgnoringPrewarmed]);
     EXPECT_EQ(1u, [processPool _prewarmedWebProcessCount]);
 
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host3/main.html"]];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.google.com/main.html"]];
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -957,10 +981,9 @@ TEST(ProcessSwap, PageShowHide)
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
     auto handler = adoptNS([[PSONScheme alloc] init]);
-    [handler addMappingFromURLString:@"pson1://host/main.html" toData:visibilityBytes];
-    [handler addMappingFromURLString:@"pson2://host/main.html" toData:visibilityBytes];
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON1"];
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON2"];
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:visibilityBytes];
+    [handler addMappingFromURLString:@"pson://www.apple.com/main.html" toData:visibilityBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
     [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
@@ -969,7 +992,7 @@ TEST(ProcessSwap, PageShowHide)
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
 
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&receivedMessage);
@@ -977,7 +1000,7 @@ TEST(ProcessSwap, PageShowHide)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson2://host/main.html"]];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
 
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&receivedMessage);
@@ -998,13 +1021,13 @@ TEST(ProcessSwap, PageShowHide)
     done = false;
 
     EXPECT_EQ(7u, [receivedMessages count]);
-    EXPECT_TRUE([receivedMessages.get()[0] isEqualToString:@"pson1://host/main.html - pageshow NOT persisted" ]);
-    EXPECT_TRUE([receivedMessages.get()[1] isEqualToString:@"pson1://host/main.html - pagehide persisted" ]);
-    EXPECT_TRUE([receivedMessages.get()[2] isEqualToString:@"pson2://host/main.html - pageshow NOT persisted" ]);
-    EXPECT_TRUE([receivedMessages.get()[3] isEqualToString:@"pson2://host/main.html - pagehide persisted" ]);
-    EXPECT_TRUE([receivedMessages.get()[4] isEqualToString:@"pson1://host/main.html - pageshow persisted" ]);
-    EXPECT_TRUE([receivedMessages.get()[5] isEqualToString:@"pson1://host/main.html - pagehide persisted" ]);
-    EXPECT_TRUE([receivedMessages.get()[6] isEqualToString:@"pson2://host/main.html - pageshow persisted" ]);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - pageshow NOT persisted", receivedMessages.get()[0]);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - pagehide persisted", receivedMessages.get()[1]);
+    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - pageshow NOT persisted", receivedMessages.get()[2]);
+    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - pagehide persisted", receivedMessages.get()[3]);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - pageshow persisted", receivedMessages.get()[4]);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - pagehide persisted", receivedMessages.get()[5]);
+    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - pageshow persisted", receivedMessages.get()[6]);
 }
 
 // Disabling the page cache explicitly is (for some reason) not available on iOS.
@@ -1032,10 +1055,9 @@ TEST(ProcessSwap, LoadUnload)
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
     auto handler = adoptNS([[PSONScheme alloc] init]);
-    [handler addMappingFromURLString:@"pson1://host/main.html" toData:loadUnloadBytes];
-    [handler addMappingFromURLString:@"pson2://host/main.html" toData:loadUnloadBytes];
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON1"];
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON2"];
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:loadUnloadBytes];
+    [handler addMappingFromURLString:@"pson://www.apple.com/main.html" toData:loadUnloadBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
     [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
@@ -1045,7 +1067,7 @@ TEST(ProcessSwap, LoadUnload)
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
 
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&receivedMessage);
@@ -1053,7 +1075,7 @@ TEST(ProcessSwap, LoadUnload)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson2://host/main.html"]];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
 
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&receivedMessage);
@@ -1074,13 +1096,13 @@ TEST(ProcessSwap, LoadUnload)
     done = false;
 
     EXPECT_EQ(7u, [receivedMessages count]);
-    EXPECT_TRUE([receivedMessages.get()[0] isEqualToString:@"pson1://host/main.html - load" ]);
-    EXPECT_TRUE([receivedMessages.get()[1] isEqualToString:@"pson1://host/main.html - unload" ]);
-    EXPECT_TRUE([receivedMessages.get()[2] isEqualToString:@"pson2://host/main.html - load" ]);
-    EXPECT_TRUE([receivedMessages.get()[3] isEqualToString:@"pson2://host/main.html - unload" ]);
-    EXPECT_TRUE([receivedMessages.get()[4] isEqualToString:@"pson1://host/main.html - load" ]);
-    EXPECT_TRUE([receivedMessages.get()[5] isEqualToString:@"pson1://host/main.html - unload" ]);
-    EXPECT_TRUE([receivedMessages.get()[6] isEqualToString:@"pson2://host/main.html - load" ]);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - load", receivedMessages.get()[0]);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - unload", receivedMessages.get()[1]);
+    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - load", receivedMessages.get()[2]);
+    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - unload", receivedMessages.get()[3]);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - load", receivedMessages.get()[4]);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html - unload", receivedMessages.get()[5]);
+    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - load", receivedMessages.get()[6]);
 }
 
 TEST(ProcessSwap, DisableForInspector)
@@ -1093,15 +1115,14 @@ TEST(ProcessSwap, DisableForInspector)
     [webViewConfiguration setProcessPool:processPool.get()];
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
 
-    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] init]);
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON1"];
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON2"];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main1.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
@@ -1112,7 +1133,7 @@ TEST(ProcessSwap, DisableForInspector)
     // FIXME: use ObjC equivalent for WKInspectorRef when available.
     WKInspectorShow(WKPageGetInspector([webView _pageRefForTransitionToWKWebView]));
 
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson2://host/main2.html"]];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main2.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
@@ -1122,7 +1143,7 @@ TEST(ProcessSwap, DisableForInspector)
 
     WKInspectorClose(WKPageGetInspector([webView _pageRefForTransitionToWKWebView]));
 
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main2.html"]];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main2.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
@@ -1156,7 +1177,7 @@ TEST(ProcessSwap, SameOriginBlobNavigation)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] initWithBytes:sameOriginBlobNavigationTestBytes]);
+    auto handler = adoptNS([[PSONScheme alloc] initWithBytes:sameOriginBlobNavigationTestBytes]);
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -1166,7 +1187,7 @@ TEST(ProcessSwap, SameOriginBlobNavigation)
     [webView setUIDelegate:uiDelegate.get()];
 
     numberOfDecidePolicyCalls = 0;
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main1.html"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -1191,9 +1212,8 @@ TEST(ProcessSwap, CrossOriginBlobNavigation)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] initWithBytes:sameOriginBlobNavigationTestBytes]);
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON1"];
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON2"];
+    auto handler = adoptNS([[PSONScheme alloc] initWithBytes:sameOriginBlobNavigationTestBytes]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
@@ -1202,7 +1222,7 @@ TEST(ProcessSwap, CrossOriginBlobNavigation)
     [webView setUIDelegate:uiDelegate.get()];
 
     numberOfDecidePolicyCalls = 0;
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main1.html"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
     TestWebKitAPI::Util::run(&done);
     done = false;
     auto pid1 = [webView _webProcessIdentifier];
@@ -1216,7 +1236,7 @@ TEST(ProcessSwap, CrossOriginBlobNavigation)
     }];
     TestWebKitAPI::Util::run(&finishedRunningScript);
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson2://host/main1.html"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]]];
     TestWebKitAPI::Util::run(&done);
     done = false;
     auto pid2 = [webView _webProcessIdentifier];
@@ -1251,7 +1271,7 @@ TEST(ProcessSwap, NavigateToAboutBlank)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] initWithBytes:sameOriginBlobNavigationTestBytes]);
+    auto handler = adoptNS([[PSONScheme alloc] initWithBytes:sameOriginBlobNavigationTestBytes]);
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -1261,7 +1281,7 @@ TEST(ProcessSwap, NavigateToAboutBlank)
     [webView setUIDelegate:uiDelegate.get()];
 
     numberOfDecidePolicyCalls = 0;
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main1.html"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
     TestWebKitAPI::Util::run(&done);
     done = false;
     auto pid1 = [webView _webProcessIdentifier];
@@ -1285,7 +1305,7 @@ TEST(ProcessSwap, NavigateToDataURL)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] initWithBytes:sameOriginBlobNavigationTestBytes]);
+    auto handler = adoptNS([[PSONScheme alloc] initWithBytes:sameOriginBlobNavigationTestBytes]);
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -1295,7 +1315,7 @@ TEST(ProcessSwap, NavigateToDataURL)
     [webView setUIDelegate:uiDelegate.get()];
 
     numberOfDecidePolicyCalls = 0;
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main1.html"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
     TestWebKitAPI::Util::run(&done);
     done = false;
     auto pid1 = [webView _webProcessIdentifier];
@@ -1327,7 +1347,7 @@ TEST(ProcessSwap, ProcessReuse)
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host1/main.html"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
@@ -1335,7 +1355,7 @@ TEST(ProcessSwap, ProcessReuse)
 
     auto pid1 = [webView _webProcessIdentifier];
 
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host2/main.html"]];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
@@ -1343,7 +1363,54 @@ TEST(ProcessSwap, ProcessReuse)
 
     auto pid2 = [webView _webProcessIdentifier];
 
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host1/main2.html"]];
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main2.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pid3 = [webView _webProcessIdentifier];
+
+    // Two process swaps have occurred, but we should only have ever seen 2 pids.
+    EXPECT_EQ(2u, seenPIDs.size());
+    EXPECT_NE(pid1, pid2);
+    EXPECT_NE(pid2, pid3);
+    EXPECT_EQ(pid1, pid3);
+}
+
+TEST(ProcessSwap, ProcessReuseeTLDPlus2)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    [processPoolConfiguration setAlwaysKeepAndReuseSwappedProcesses:YES];
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www1.webkit.org/main1.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pid1 = [webView _webProcessIdentifier];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pid2 = [webView _webProcessIdentifier];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www2.webkit.org/main2.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
@@ -1372,7 +1439,7 @@ TEST(ProcessSwap, NavigateToInvalidURL)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] initWithBytes:navigateToInvalidURLTestBytes]);
+    auto handler = adoptNS([[PSONScheme alloc] initWithBytes:navigateToInvalidURLTestBytes]);
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -1382,7 +1449,7 @@ TEST(ProcessSwap, NavigateToInvalidURL)
     [webView setUIDelegate:uiDelegate.get()];
 
     numberOfDecidePolicyCalls = 0;
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main1.html"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
     TestWebKitAPI::Util::run(&done);
     done = false;
     auto pid1 = [webView _webProcessIdentifier];
@@ -1418,7 +1485,7 @@ TEST(ProcessSwap, NavigateToDataURLThenBack)
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
-    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] initWithBytes:navigateToDataURLThenBackBytes]);
+    auto handler = adoptNS([[PSONScheme alloc] initWithBytes:navigateToDataURLThenBackBytes]);
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -1426,7 +1493,7 @@ TEST(ProcessSwap, NavigateToDataURLThenBack)
     [webView setNavigationDelegate:navigationDelegate.get()];
 
     numberOfDecidePolicyCalls = 0;
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main1.html"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
     TestWebKitAPI::Util::run(&done);
     done = false;
     auto pid1 = [webView _webProcessIdentifier];
@@ -1448,7 +1515,7 @@ TEST(ProcessSwap, NavigateToDataURLThenBack)
 TEST(ProcessSwap, APIControlledProcessSwapping)
 {
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] initWithBytes:"Hello World!"]);
+    auto handler = adoptNS([[PSONScheme alloc] initWithBytes:"Hello World!"]);
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -1456,13 +1523,13 @@ TEST(ProcessSwap, APIControlledProcessSwapping)
     [webView setNavigationDelegate:navigationDelegate.get()];
 
     numberOfDecidePolicyCalls = 0;
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/1"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/1"]]];
     TestWebKitAPI::Util::run(&done);
     done = false;
     auto pid1 = [webView _webProcessIdentifier];
 
     // Navigating from the above URL to this URL normally should not process swap.
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/2"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/2"]]];
     TestWebKitAPI::Util::run(&done);
     done = false;
     auto pid2 = [webView _webProcessIdentifier];
@@ -1473,7 +1540,7 @@ TEST(ProcessSwap, APIControlledProcessSwapping)
     // Navigating from the above URL to this URL normally should not process swap,
     // but we'll explicitly ask for a swap.
     navigationDelegate->navigationActionPolicyToUse = _WKNavigationActionPolicyAllowInNewProcess;
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/3"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webit.org/3"]]];
     TestWebKitAPI::Util::run(&done);
     done = false;
     auto pid3 = [webView _webProcessIdentifier];

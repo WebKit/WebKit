@@ -1,3 +1,24 @@
+2018-08-29  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] We should only process-swap when eTLD+1 changes on navigation
+        https://bugs.webkit.org/show_bug.cgi?id=189090
+        <rdar://problem/43799225>
+
+        Reviewed by Geoffrey Garen.
+
+        When navigating cross-origin, only process swap when the eTLD+1 (aka "Registrable
+        domain") changes, instead of considering the full security origin.
+
+        This has performance benefits and is also needed to keep document.domain origin
+        relaxation working.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::addProcessToOriginCacheSet):
+        (WebKit::WebProcessPool::removeProcessFromOriginCacheSet):
+        (WebKit::WebProcessPool::processForNavigation):
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        * UIProcess/WebProcessPool.h:
+
 2018-08-29  Youenn Fablet  <youenn@apple.com>
 
         Add a runtime flag for WebRTC unified plan

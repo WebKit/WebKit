@@ -707,7 +707,7 @@ private:
 #endif
 
     HashMap<WebCore::SecurityOriginData, Vector<SuspendedPageProxy*>> m_suspendedPages;
-    HashMap<WebCore::SecurityOriginData, RefPtr<WebProcessProxy>> m_swappedProcesses;
+    HashMap<String, RefPtr<WebProcessProxy>> m_swappedProcessesPerRegistrableDomain;
 };
 
 template<typename T>

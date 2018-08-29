@@ -2101,12 +2101,12 @@ ServiceWorkerProcessProxy* WebProcessPool::serviceWorkerProcessProxyFromPageID(u
 
 void WebProcessPool::addProcessToOriginCacheSet(WebPageProxy& page)
 {
-    auto origin = SecurityOriginData::fromURL({ ParsedURLString, page.pageLoadState().url() });
-    auto result = m_swappedProcesses.add(origin, &page.process());
+    auto registrableDomain = toRegistrableDomain({ ParsedURLString, page.pageLoadState().url() });
+    auto result = m_swappedProcessesPerRegistrableDomain.add(registrableDomain, &page.process());
     if (!result.isNewEntry)
         result.iterator->value = &page.process();
 
-    LOG(ProcessSwapping, "(ProcessSwapping) Security origin %s just saved a cached process with pid %i", origin.debugString().utf8().data(), page.process().processIdentifier());
+    LOG(ProcessSwapping, "(ProcessSwapping) Registrable domain %s just saved a cached process with pid %i", registrableDomain.utf8().data(), page.process().processIdentifier());
     if (!result.isNewEntry)
         LOG(ProcessSwapping, "(ProcessSwapping) Note: It already had one saved");
 }
@@ -2116,14 +2116,14 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
     LOG(ProcessSwapping, "(ProcessSwapping) Removing process with pid %i from the origin cache set", process.processIdentifier());
 
     // FIXME: This can be very inefficient as the number of remembered origins and processes grows
-    Vector<SecurityOriginData> originsToRemove;
-    for (auto entry : m_swappedProcesses) {
+    Vector<String> registrableDomainsToRemove;
+    for (auto entry : m_swappedProcessesPerRegistrableDomain) {
         if (entry.value == &process)
-            originsToRemove.append(entry.key);
+            registrableDomainsToRemove.append(entry.key);
     }
 
-    for (auto& origin : originsToRemove)
-        m_swappedProcesses.remove(origin);
+    for (auto& registrableDomain : registrableDomainsToRemove)
+        m_swappedProcessesPerRegistrableDomain.remove(registrableDomain);
 }
 
 Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigation& navigation, ShouldProcessSwapIfPossible shouldProcessSwapIfPossible, PolicyAction& action)
@@ -2138,7 +2138,7 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, co
 
         addProcessToOriginCacheSet(page);
 
-        LOG(ProcessSwapping, "(ProcessSwapping) Navigating from %s to %s, keeping around old process. Now holding on to old processes for %u origins.", page.currentURL().utf8().data(), navigation.currentRequest().url().string().utf8().data(), m_swappedProcesses.size());
+        LOG(ProcessSwapping, "(ProcessSwapping) Navigating from %s to %s, keeping around old process. Now holding on to old processes for %u origins.", page.currentURL().utf8().data(), navigation.currentRequest().url().string().utf8().data(), m_swappedProcessesPerRegistrableDomain.size());
     }
 
     return process;
@@ -2195,15 +2195,15 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
             return page.process();
 
         auto url = URL { ParsedURLString, page.pageLoadState().url() };
-        if (!url.isValid() || !targetURL.isValid() || url.isEmpty() || url.isBlankURL() || protocolHostAndPortAreEqual(url, targetURL))
+        if (!url.isValid() || !targetURL.isValid() || url.isEmpty() || url.isBlankURL() || registrableDomainsAreEqual(url, targetURL))
             return page.process();
     }
     
     if (m_configuration->alwaysKeepAndReuseSwappedProcesses()) {
-        auto origin = SecurityOriginData::fromURL(targetURL);
-        LOG(ProcessSwapping, "(ProcessSwapping) Considering re-use of a previously cached process to URL %s", origin.debugString().utf8().data());
+        auto registrableDomain = toRegistrableDomain(targetURL);
+        LOG(ProcessSwapping, "(ProcessSwapping) Considering re-use of a previously cached process for domain %s", registrableDomain.utf8().data());
 
-        if (auto* process = m_swappedProcesses.get(origin)) {
+        if (auto* process = m_swappedProcessesPerRegistrableDomain.get(registrableDomain)) {
             if (&process->websiteDataStore() == &page.websiteDataStore()) {
                 LOG(ProcessSwapping, "(ProcessSwapping) Reusing a previously cached process with pid %i to continue navigation to URL %s", process->processIdentifier(), targetURL.string().utf8().data());
 
