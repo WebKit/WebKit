@@ -792,6 +792,8 @@ auto InlineTextBox::subdivideAndResolveStyle(const Vector<MarkedText>& textsToSu
         return { };
 
     auto markedTexts = subdivide(textsToSubdivide);
+    if (markedTexts.isEmpty())
+        return { };
 
     // Compute frontmost overlapping styled marked texts.
     Vector<StyledMarkedText> frontmostMarkedTexts;

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: Ahem;
+    src: url("../../resources/Ahem.ttf");
+}
+
+body {
+    font: 20px/1 Ahem;
+}
+
+#first {
+    writing-mode: vertical-rl;
+    -webkit-text-combine: horizontal;
+}
+</style>
+<script>
+function runTest()
+{
+    var second = document.getElementById("second");
+    var range = document.caretRangeFromPoint();
+    range.surroundContents(second); // Crash
+}
+</script>
+</head>
+<body onload="runTest()">
+<div id="first">&nbsp;</div>
+<span id="second"></span> <!-- Must be an inline element. -->
+<div id="successMessage">PASS, did not crash.</div>
+</body>
+</html>
