@@ -78,6 +78,7 @@
                     { "name": "jsconly-linux-igalia-bot-2", "platform": "jsc-only" },
                     { "name": "jsconly-linux-igalia-bot-3", "platform": "jsc-only" },
                     { "name": "jsconly-linux-igalia-bot-4", "platform": "jsc-only" },
+                    { "name": "jsconly-linux-igalia-bot-5", "platform": "jsc-only" },
 
                     { "name": "wpe-linux-bot-1", "platform": "wpe" },
                     { "name": "wpe-linux-bot-2", "platform": "wpe" },
@@ -342,6 +343,11 @@
                       "slavenames": ["jsconly-linux-igalia-bot-4"]
                     },
                     {
+                      "name": "JSCOnly Linux ARMv7 Thumb2 SoftFP Release", "type": "BuildAndRemoteJSCTests", "builddir": "jsconly-linux-armv7-thumb2-softfp-release",
+                      "platform": "jsc-only", "configuration": "release", "architectures": ["armv7"],
+                      "slavenames": ["jsconly-linux-igalia-bot-5"]
+                    },
+                    {
                       "name": "JSCOnly Linux MIPS32el Release", "type": "BuildAndRemoteJSCTests", "builddir": "jsconly-linux-mips32el-release",
                       "platform": "jsc-only", "configuration": "release", "architectures": ["mips"],
                       "slavenames": ["jsconly-linux-igalia-bot-1"]
@@ -373,7 +379,9 @@
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
                       "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release (Build)", "GTK Linux 64-bit Debug (Build)", "GTK Linux ARM Release",
                                        "GTK Linux 64-bit Release Debian Stable (Build)", "GTK Linux 64-bit Release Ubuntu LTS (Build)",
-                                       "JSCOnly Linux AArch64 Release", "JSCOnly Linux ARMv7 Thumb2 Release", "JSCOnly Linux ARMv7 Traditional Release",
+                                       "JSCOnly Linux AArch64 Release",
+                                       "JSCOnly Linux ARMv7 Thumb2 Release", "JSCOnly Linux ARMv7 Thumb2 SoftFP Release",
+                                       "JSCOnly Linux ARMv7 Traditional Release",
                                        "JSCOnly Linux MIPS32el Release", "WinCairo 64-bit WKL Release (Build)", "WinCairo 64-bit WKL Debug (Build)",
                                        "WPE Linux 64-bit Release (Build)", "WPE Linux 64-bit Debug (Build)"]
                     },
