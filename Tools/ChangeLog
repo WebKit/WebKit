@@ -1,3 +1,9 @@
+2018-08-29  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed test gardening; NowPlayingTest API tests require High Sierra.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/NowPlaying.mm:
+
 2018-08-29  Youenn Fablet  <youenn@apple.com>
 
         Remove WebRTC legacy API implementation

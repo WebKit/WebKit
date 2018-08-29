@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED && PLATFORM(COCOA) && USE(MEDIAREMOTE)
+#if WK_API_ENABLED && USE(MEDIAREMOTE) && (PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304))
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -271,4 +271,4 @@ TEST_F(NowPlayingTest, VideoElementWithoutAudioPlayWithUserGesture)
     ASSERT_NE(webViewPid(), getNowPlayingClientPid());
 }
 
-#endif // WK_API_ENABLED && PLATFORM(COCOA) && USE(MEDIAREMOTE)
+#endif // WK_API_ENABLED && USE(MEDIAREMOTE) && (PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304))
