@@ -21,7 +21,7 @@
                 testPassed('setLocalDescription succeeded.');
                 check("offer", "local", "", "", '"have-local-offer"');
                 sessionDescription = new RTCSessionDescription({type:"answer", sdp:"remote"});
-                shouldNotThrow('pc.setRemoteDescription(sessionDescription, requestSucceeded5, finishIfFailed);');
+                shouldNotThrow('pc.setRemoteDescription(sessionDescription).then(requestSucceeded5, finishIfFailed);');
             }
 
             function requestSucceeded3()
@@ -31,7 +31,7 @@
                 pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
                 check("", "", "", "", '"stable"');
                 sessionDescription = new RTCSessionDescription({type:"offer", sdp:"local"});
-                shouldNotThrow('pc.setLocalDescription(sessionDescription, requestSucceeded4, finishIfFailed);');
+                shouldNotThrow('pc.setLocalDescription(sessionDescription).then(requestSucceeded4, finishIfFailed);');
             }
 
             function requestSucceeded2()
@@ -39,7 +39,7 @@
                 testPassed('setLocalDescription succeeded.');
                 check("offer", "local", "", "", '"have-local-offer"');
                 sessionDescription = new RTCSessionDescription({type:"pranswer", sdp:"remote"});
-                shouldNotThrow('pc.setRemoteDescription(sessionDescription, requestSucceeded3, finishIfFailed);');
+                shouldNotThrow('pc.setRemoteDescription(sessionDescription).then(requestSucceeded3, finishIfFailed);');
             }
 
             function requestFailed3(reason)
@@ -49,7 +49,7 @@
                 shouldBe('errorReason.name', '"InvalidSessionDescriptionError"');
                 check("offer", "local", "", "", '"have-local-offer"');
                 sessionDescription = new RTCSessionDescription({type:"offer", sdp:"local"});
-                shouldNotThrow('pc.setLocalDescription(sessionDescription, requestSucceeded2, finishIfFailed);');
+                shouldNotThrow('pc.setLocalDescription(sessionDescription).then(requestSucceeded2, finishIfFailed);');
             }
 
             function requestFailed2(reason)
@@ -59,7 +59,7 @@
                 shouldBe('errorReason.name', '"InvalidSessionDescriptionError"');
                 check("offer", "local", "", "", '"have-local-offer"');
                 sessionDescription = new RTCSessionDescription({type:"offer", sdp:"remote"});
-                shouldNotThrow('pc.setRemoteDescription(sessionDescription, finishIfSucceeded, requestFailed3);');
+                shouldNotThrow('pc.setRemoteDescription(sessionDescription).then(finishIfSucceeded, requestFailed3);');
             }
 
             function requestFailed1(reason)
@@ -69,7 +69,7 @@
                 shouldBe('errorReason.name', '"InvalidSessionDescriptionError"');
                 check("offer", "local", "", "", '"have-local-offer"');
                 sessionDescription = new RTCSessionDescription({type:"pranswer", sdp:"local"});
-                shouldNotThrow('pc.setLocalDescription(sessionDescription, finishIfSucceeded, requestFailed2);');
+                shouldNotThrow('pc.setLocalDescription(sessionDescription).then(finishIfSucceeded, requestFailed2);');
             }
 
             function requestSucceeded1()
@@ -77,7 +77,7 @@
                 testPassed('setLocalDescription succeeded.');
                 check("offer", "local", "", "", '"have-local-offer"');
                 sessionDescription = new RTCSessionDescription({type:"answer", sdp:"local"});
-                shouldNotThrow('pc.setLocalDescription(sessionDescription, finishIfSucceeded, requestFailed1);');
+                shouldNotThrow('pc.setLocalDescription(sessionDescription).then(finishIfSucceeded, requestFailed1);');
             }
 
             function finishIfSucceeded()
@@ -112,7 +112,7 @@
             pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
             shouldBe('pc.signalingState', '"stable"');
             var sessionDescription = new RTCSessionDescription({type:"offer", sdp:"local"});
-            shouldNotThrow('pc.setLocalDescription(sessionDescription, requestSucceeded1, finishIfFailed);');
+            shouldNotThrow('pc.setLocalDescription(sessionDescription).then(requestSucceeded1, finishIfFailed);');
 
             window.jsTestIsAsync = true;
             window.successfullyParsed = true;

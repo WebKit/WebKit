@@ -1156,14 +1156,6 @@ IntersectionObserverEnabled:
   category: experimental
   condition: ENABLE(INTERSECTION_OBSERVER)
 
-WebRTCLegacyAPIEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "Enable Legacy WebRTC API"
-  humanReadableDescription: "Enable Legacy WebRTC API"
-  webcoreBinding: RuntimeEnabledFeatures
-  condition: ENABLE(WEB_RTC)
-
 MDNSICECandidatesEnabled:
   type: bool
   defaultValue: false

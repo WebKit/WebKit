@@ -4,31 +4,31 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS pc.signalingState is "stable"
-PASS pc.setLocalDescription(sessionDescription, finishIfSucceeded, requestFailed1); did not throw exception.
+PASS pc.setLocalDescription(sessionDescription).then(finishIfSucceeded, requestFailed1); did not throw exception.
 PASS setLocalDescription failed.
 FAIL errorReason.name should be InvalidSessionDescriptionError. Was InvalidStateError.
 FAIL pc.localDescription should throw an exception. Was null.
 FAIL pc.remoteDescription should throw an exception. Was null.
 PASS pc.signalingState is "stable"
-PASS pc.setLocalDescription(sessionDescription, finishIfSucceeded, requestFailed2); did not throw exception.
+PASS pc.setLocalDescription(sessionDescription).then(finishIfSucceeded, requestFailed2); did not throw exception.
 PASS setLocalDescription failed.
 FAIL errorReason.name should be InvalidSessionDescriptionError. Was InvalidStateError.
 FAIL pc.localDescription should throw an exception. Was null.
 FAIL pc.remoteDescription should throw an exception. Was null.
 PASS pc.signalingState is "stable"
-PASS pc.setRemoteDescription(sessionDescription, finishIfSucceeded, requestFailed3); did not throw exception.
+PASS pc.setRemoteDescription(sessionDescription).then(finishIfSucceeded, requestFailed3); did not throw exception.
 PASS setRemoteDescription failed.
 FAIL errorReason.name should be InvalidSessionDescriptionError. Was InvalidStateError.
 FAIL pc.localDescription should throw an exception. Was null.
 FAIL pc.remoteDescription should throw an exception. Was null.
 PASS pc.signalingState is "stable"
-PASS pc.setRemoteDescription(sessionDescription, finishIfSucceeded, requestFailed4); did not throw exception.
+PASS pc.setRemoteDescription(sessionDescription).then(finishIfSucceeded, requestFailed4); did not throw exception.
 PASS setRemoteDescription failed.
 FAIL errorReason.name should be InvalidSessionDescriptionError. Was InvalidStateError.
 FAIL pc.localDescription should throw an exception. Was null.
 FAIL pc.remoteDescription should throw an exception. Was null.
 PASS pc.signalingState is "stable"
-PASS pc.setLocalDescription(sessionDescription, requestSucceeded1, finishIfFailed); did not throw exception.
+PASS pc.setLocalDescription(sessionDescription).then(requestSucceeded1, finishIfFailed); did not throw exception.
 FAIL setRemoteDescription failed.
 PASS successfullyParsed is true
 

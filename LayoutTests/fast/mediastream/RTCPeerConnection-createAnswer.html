@@ -26,7 +26,7 @@
                 sessionDescription = sd;
                 shouldBe('sessionDescription.type', '"answer"');
 
-                shouldNotThrow('pc.createAnswer(requestSucceeded5, requestFailed1, {requestIdentity:"no"});');
+                shouldNotThrow('pc.createAnswer({requestIdentity:"no"}).then(requestSucceeded5, requestFailed1);');
             }
 
             function requestSucceeded3(sd)
@@ -37,7 +37,7 @@
                 sessionDescription = sd;
                 shouldBe('sessionDescription.type', '"answer"');
 
-                shouldNotThrow('pc.createAnswer(requestSucceeded4, requestFailed1, {requestIdentity:"yes"});');
+                shouldNotThrow('pc.createAnswer({requestIdentity:"yes"}).then(requestSucceeded4, requestFailed1);');
             }
 
             function requestFailed2(reason)
@@ -46,7 +46,7 @@
 
                 errorReason = reason;
                 shouldBe('errorReason.name', '"Invalid createAnswer argument."');
-                shouldNotThrow('pc.createAnswer(requestSucceeded3, requestFailed1, {requestIdentity:"ifconfigured"});');
+                shouldNotThrow('pc.createAnswer({requestIdentity:"ifconfigured"}).then(requestSucceeded3, requestFailed1);');
             }
 
             function requestSucceeded2()
@@ -68,7 +68,7 @@
                 testPassed('createAnswer request succeeded.');
 
                 sessionDescription = new RTCSessionDescription({type:"offer", sdp:"v=0\r\no=- 5667094644266930845 0 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\n"});
-                shouldNotThrow('pc.setRemoteDescription(sessionDescription, setDescriptionSucceeded, setDescriptionFailed);');
+                shouldNotThrow('pc.setRemoteDescription(sessionDescription).then(setDescriptionSucceeded, setDescriptionFailed);');
             }
 
             function setDescriptionFailed(message)
@@ -81,11 +81,11 @@
             function setDescriptionSucceeded()
             {
                 testPassed('setRemoteDescription succeeded.');
-                pc.createAnswer(requestSucceeded2, requestFailed2, {});
+                pc.createAnswer({}).then(requestSucceeded2, requestFailed2);
             }
 
             pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
-            shouldNotThrow('pc.createAnswer(requestSucceeded1, requestFailed1);');
+            shouldNotThrow('pc.createAnswer().then(requestSucceeded1, requestFailed1);');
 
             window.jsTestIsAsync = true;
             window.successfullyParsed = true;

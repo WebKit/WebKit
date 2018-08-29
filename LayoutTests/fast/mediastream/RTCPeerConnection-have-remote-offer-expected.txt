@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS pc.signalingState is "stable"
-PASS pc.setRemoteDescription(sessionDescription, requestSucceeded1, finishIfFailed); did not throw exception.
+PASS pc.setRemoteDescription(sessionDescription).then(requestSucceeded1, finishIfFailed); did not throw exception.
 FAIL setRemoteDescription failed.
 PASS successfullyParsed is true
 

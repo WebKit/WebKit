@@ -8,7 +8,7 @@ Found 1 tests
 Details
 
 Result	Test Name	Message
-Pass	Testing legacy API is not defined when legacy flag is turned off	
+Pass	Testing legacy API is not defined	
 
-PASS Testing legacy API is not defined when legacy flag is turned off 
+PASS Testing legacy API is not defined 
 

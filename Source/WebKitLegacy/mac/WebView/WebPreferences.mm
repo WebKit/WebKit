@@ -662,7 +662,6 @@ public:
 #endif
 #if ENABLE(WEB_RTC)
         [NSNumber numberWithBool:YES], WebKitPeerConnectionEnabledPreferenceKey,
-        [NSNumber numberWithBool:NO], WebKitWebRTCLegacyAPIEnabledPreferenceKey,
 #endif
 #if ENABLE(INTERSECTION_OBSERVER)
         @NO, WebKitIntersectionObserverEnabledPreferenceKey,
@@ -2831,16 +2830,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setPeerConnectionEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitPeerConnectionEnabledPreferenceKey];
-}
-
-- (BOOL)webRTCLegacyAPIEnabled
-{
-    return [self _boolValueForKey:WebKitWebRTCLegacyAPIEnabledPreferenceKey];
-}
-
-- (void)setWebRTCLegacyAPIEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitWebRTCLegacyAPIEnabledPreferenceKey];
 }
 
 - (BOOL)linkPreloadEnabled

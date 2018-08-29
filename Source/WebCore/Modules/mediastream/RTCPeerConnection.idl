@@ -119,17 +119,16 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
 
     // 5.1 RTCPeerConnection extensions
     // RTP Media API extensions
-    [PrivateIdentifier, PublicIdentifier] sequence<RTCRtpSender> getSenders();
+    sequence<RTCRtpSender> getSenders();
     sequence<RTCRtpReceiver> getReceivers();
     sequence<RTCRtpTransceiver> getTransceivers();
 
-    [PrivateIdentifier, PublicIdentifier, MayThrowException] RTCRtpSender addTrack(MediaStreamTrack track, MediaStream... streams);
-    [PrivateIdentifier, PublicIdentifier, MayThrowException] void removeTrack(RTCRtpSender sender);
+    [MayThrowException] RTCRtpSender addTrack(MediaStreamTrack track, MediaStream... streams);
+    [MayThrowException] void removeTrack(RTCRtpSender sender);
 
     [MayThrowException] RTCRtpTransceiver addTransceiver((MediaStreamTrack or DOMString) track, optional RTCRtpTransceiverInit init);
 
     attribute EventHandler ontrack;
-
 
     // 6.1 Peer-to-peer data API
     // FIXME 169644: missing sctp
@@ -145,15 +144,4 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
 
     // 9.6 Identity Provider API
     // FIXME 169644: missing IdP
-
-    // Legacy MediaStream API
-    [JSBuiltin, EnabledAtRuntime=WebRTCLegacyAPI] sequence<MediaStream> getLocalStreams();
-    [PrivateIdentifier, PublicIdentifier, EnabledAtRuntime=WebRTCLegacyAPI] sequence<MediaStream> getRemoteStreams();
-    [JSBuiltin, EnabledAtRuntime=WebRTCLegacyAPI] MediaStream getStreamById(DOMString streamId);
-
-    [JSBuiltin, EnabledAtRuntime=WebRTCLegacyAPI] void addStream(MediaStream stream);
-    [JSBuiltin, EnabledAtRuntime=WebRTCLegacyAPI] void removeStream(MediaStream stream);
-
-    // Legacy event handler (MediaStream-based API)
-    [EnabledAtRuntime=WebRTCLegacyAPI] attribute EventHandler onaddstream;
 };

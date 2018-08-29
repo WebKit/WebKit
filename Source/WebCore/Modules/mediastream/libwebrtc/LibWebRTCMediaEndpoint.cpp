@@ -33,7 +33,6 @@
 #include "LibWebRTCPeerConnectionBackend.h"
 #include "LibWebRTCProvider.h"
 #include "Logging.h"
-#include "MediaStreamEvent.h"
 #include "NotImplemented.h"
 #include "Performance.h"
 #include "PlatformStrategies.h"
@@ -637,22 +636,13 @@ MediaStream& LibWebRTCMediaEndpoint::mediaStreamFromRTCStream(webrtc::MediaStrea
 {
     auto mediaStream = m_streams.ensure(&rtcStream, [&rtcStream, this] {
         auto label = rtcStream.id();
-        auto stream = MediaStream::create(*m_peerConnectionBackend.connection().scriptExecutionContext(), MediaStreamPrivate::create({ }, fromStdString(label)));
-        auto streamPointer = stream.ptr();
-        m_peerConnectionBackend.addRemoteStream(WTFMove(stream));
-        return streamPointer;
+        return MediaStream::create(*m_peerConnectionBackend.connection().scriptExecutionContext(), MediaStreamPrivate::create({ }, fromStdString(label)));
     });
     return *mediaStream.iterator->value;
 }
 
-void LibWebRTCMediaEndpoint::addRemoteStream(webrtc::MediaStreamInterface& rtcStream)
+void LibWebRTCMediaEndpoint::addRemoteStream(webrtc::MediaStreamInterface&)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().webRTCLegacyAPIEnabled())
-        return;
-
-    auto& mediaStream = mediaStreamFromRTCStream(rtcStream);
-    m_peerConnectionBackend.connection().fireEvent(MediaStreamEvent::create(eventNames().addstreamEvent,
-        Event::CanBubble::No, Event::IsCancelable::No, &mediaStream));
 }
 
 class RTCRtpReceiverBackend final : public RTCRtpReceiver::Backend {
@@ -711,9 +701,8 @@ void LibWebRTCMediaEndpoint::addRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiv
 
 void LibWebRTCMediaEndpoint::removeRemoteStream(webrtc::MediaStreamInterface& rtcStream)
 {
-    auto* mediaStream = m_streams.take(&rtcStream);
-    if (mediaStream)
-        m_peerConnectionBackend.removeRemoteStream(mediaStream);
+    bool removed = m_streams.remove(&rtcStream);
+    ASSERT_UNUSED(removed, removed);
 }
 
 void LibWebRTCMediaEndpoint::OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream)

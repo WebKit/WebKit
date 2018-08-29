@@ -88,10 +88,6 @@ private:
     void getStatsSucceeded(const DeferredPromise&, Ref<RTCStatsReport>&&);
     void getStatsFailed(const DeferredPromise&, Exception&&);
 
-    Vector<RefPtr<MediaStream>> getRemoteStreams() const final { return m_remoteStreams; }
-    void removeRemoteStream(MediaStream*);
-    void addRemoteStream(Ref<MediaStream>&&);
-
     bool notifyAddedTrack(RTCRtpSender&) final;
     void notifyRemovedTrack(RTCRtpSender&) final;
 
@@ -113,8 +109,6 @@ private:
     bool m_isLocalDescriptionSet { false };
     bool m_isRemoteDescriptionSet { false };
 
-    // FIXME: Make m_remoteStreams a Vector of Ref.
-    Vector<RefPtr<MediaStream>> m_remoteStreams;
     Vector<std::unique_ptr<webrtc::IceCandidateInterface>> m_pendingCandidates;
     Vector<Ref<RealtimeOutgoingAudioSource>> m_audioSources;
     Vector<Ref<RealtimeOutgoingVideoSource>> m_videoSources;

@@ -8,7 +8,7 @@ This test checks for the presence of the navigator.mediaDevices.enumerateDevices
 PASS Test MediaDevices.enumerateDevices call and result. Types only. 
 PASS Navigator interface: attribute mediaDevices 
 PASS Unscopable handled correctly for mediaDevices property on Navigator 
-PASS Navigator interface: operation getUserMedia(MediaStreamConstraints, NavigatorUserMediaSuccessCallback, NavigatorUserMediaErrorCallback) 
+FAIL Navigator interface: operation getUserMedia(MediaStreamConstraints, NavigatorUserMediaSuccessCallback, NavigatorUserMediaErrorCallback) assert_own_property: interface prototype object missing non-static operation expected property "getUserMedia" missing
 PASS Unscopable handled correctly for getUserMedia(MediaStreamConstraints, NavigatorUserMediaSuccessCallback, NavigatorUserMediaErrorCallback) on Navigator 
 FAIL MediaStream interface: existence and properties of interface object undefined is not an object (evaluating 'this.array
                      .members[this.base]

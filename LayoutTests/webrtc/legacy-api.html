@@ -5,9 +5,6 @@
     </head>
     <body>
         <script>
-if (window.testRunner)
-    testRunner.setWebRTCLegacyAPIEnabled(false);
-
 promise_test(function() {
     var pc1 = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
     var pc2 = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
@@ -26,7 +23,7 @@ promise_test(function() {
     }).then(() => {
         return pc2.createAnswer({ }, assert_unreached, assert_unreached);
     });
-}, "Testing legacy API is not defined when legacy flag is turned off");
+}, "Testing legacy API is not defined");
         </script>
         <script src="../resources/testharnessreport.js"></script>
     </body>

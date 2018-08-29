@@ -19,7 +19,6 @@ imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy [ Skip ]
 # Skip WebRTC for now in WK1
 imported/w3c/web-platform-tests/webrtc [ Skip ]
 webrtc [ Skip ]
-fast/events/constructors/media-stream-event-constructor.html
 
 # Not supported on WK1
 media/no-fullscreen-when-hidden.html [ Skip ]

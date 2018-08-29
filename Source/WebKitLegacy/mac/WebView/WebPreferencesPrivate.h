@@ -183,9 +183,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setPeerConnectionEnabled:(BOOL)flag;
 - (BOOL)peerConnectionEnabled;
 
-- (void)setWebRTCLegacyAPIEnabled:(BOOL)flag;
-- (BOOL)webRTCLegacyAPIEnabled;
-
 #if !TARGET_OS_IPHONE
 // zero means do AutoScale
 - (float)PDFScaleFactor;

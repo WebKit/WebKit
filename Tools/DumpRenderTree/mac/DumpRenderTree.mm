@@ -856,7 +856,6 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setWebGL2Enabled:YES];
     [preferences setWebGPUEnabled:YES];
     // FIXME: AsyncFrameScrollingEnabled
-    [preferences setWebRTCLegacyAPIEnabled:YES];
     [preferences setWebAuthenticationEnabled:NO];
     [preferences setCacheAPIEnabled:NO];
     [preferences setReadableByteStreamAPIEnabled:YES];

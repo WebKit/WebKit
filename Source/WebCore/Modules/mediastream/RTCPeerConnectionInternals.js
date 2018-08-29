@@ -54,7 +54,7 @@ function enqueueOperation(peerConnection, operation)
     });
 }
 
-function objectAndCallbacksOverload(args, functionName, objectInfo, promiseMode, legacyMode)
+function objectAndCallbacksOverload(args, functionName, objectInfo, promiseMode)
 {
     "use strict";
 
@@ -80,53 +80,18 @@ function objectAndCallbacksOverload(args, functionName, objectInfo, promiseMode,
     if (!objectArgOk)
         return @Promise.@reject(new @TypeError(`Argument 1 ('${objectInfo.argName}') to RTCPeerConnection.${functionName} must be an instance of ${objectInfo.argType}`));
 
-    if (!@webRTCLegacyAPIEnabled() || argsCount === 1)
-        return promiseMode(objectArg);
-
-    // More than one argument: Legacy mode
-    if (argsCount < 3)
-        return @Promise.@reject(new @TypeError("Not enough arguments"));
-
-    const successCallback = args[1];
-    const errorCallback = args[2];
-
-    if (typeof successCallback !== "function")
-        return @Promise.@reject(new @TypeError(`Argument 2 ('successCallback') to RTCPeerConnection.${functionName} must be a function`));
-
-    if (typeof errorCallback !== "function")
-        return @Promise.@reject(new @TypeError(`Argument 3 ('errorCallback') to RTCPeerConnection.${functionName} must be a function`));
-
-    return legacyMode(objectArg, successCallback, errorCallback);
+    return promiseMode(objectArg);
 }
 
-function callbacksAndDictionaryOverload(args, functionName, promiseMode, legacyMode)
+function callbacksAndDictionaryOverload(args, functionName, promiseMode)
 {
     "use strict";
 
-    if (!@webRTCLegacyAPIEnabled() || args.length <= 1) {
-        // Zero or one arguments: Promise mode
-        const options = args[0];
-        if (args.length && !@isDictionary(options))
-            return @Promise.@reject(new @TypeError(`Argument 1 ('options') to RTCPeerConnection.${functionName} must be a dictionary`));
+    const options = args[0];
+    if (args.length && !@isDictionary(options))
+        return @Promise.@reject(new @TypeError(`Argument 1 ('options') to RTCPeerConnection.${functionName} must be a dictionary`));
 
-        return promiseMode(options);
-    }
-
-    // More than one argument: Legacy mode
-    const successCallback = args[0];
-    const errorCallback = args[1];
-    const options = args[2];
-
-    if (typeof successCallback !== "function")
-        return @Promise.@reject(new @TypeError(`Argument 1 ('successCallback') to RTCPeerConnection.${functionName} must be a function`));
-
-    if (typeof errorCallback !== "function")
-        return @Promise.@reject(new @TypeError(`Argument 2 ('errorCallback') to RTCPeerConnection.${functionName} must be a function`));
-
-    if (args.length > 2 && !@isDictionary(options))
-        return @Promise.@reject(new @TypeError(`Argument 3 ('options') to RTCPeerConnection.${functionName} must be a dictionary`));
-
-    return legacyMode(successCallback, errorCallback, args[2]);
+    return promiseMode(options);
 }
 
 function isRTCPeerConnection(connection)

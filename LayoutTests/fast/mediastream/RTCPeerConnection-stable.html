@@ -9,13 +9,6 @@
 
             var pc = null;
 
-            // Let's ensure built-ins are shielded from user scripts
-            var thenPromise = Promise.prototype.then;
-            Promise.prototype.then = function() {
-                console.log("Promise.prototype.then is called internally");
-                return thenPromise.apply(this, arguments);
-            }
-
             function requestSucceeded2()
             {
                 testPassed('setRemoteDescription succeeded.');
@@ -30,7 +23,7 @@
                 pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
                 check("", "", "", "", '"stable"');
                 sessionDescription = new RTCSessionDescription({type:"offer", sdp:"remote"});
-                shouldNotThrow('pc.setRemoteDescription(sessionDescription, requestSucceeded2, finishIfFailed);');
+                shouldNotThrow('pc.setRemoteDescription(sessionDescription).then(requestSucceeded2, finishIfFailed);');
             }
 
             function requestFailed4(reason)
@@ -40,7 +33,7 @@
                 shouldBe('errorReason.name', '"InvalidSessionDescriptionError"');
                 check("", "", "", "", '"stable"');
                 sessionDescription = new RTCSessionDescription({type:"offer", sdp:"local"});
-                shouldNotThrow('pc.setLocalDescription(sessionDescription, requestSucceeded1, finishIfFailed);');
+                shouldNotThrow('pc.setLocalDescription(sessionDescription).then(requestSucceeded1, finishIfFailed);');
             }
 
             function requestFailed3(reason)
@@ -50,7 +43,7 @@
                 shouldBe('errorReason.name', '"InvalidSessionDescriptionError"');
                 check("", "", "", "", '"stable"');
                 sessionDescription = new RTCSessionDescription({type:"answer", sdp:"remote"});
-                shouldNotThrow('pc.setRemoteDescription(sessionDescription, finishIfSucceeded, requestFailed4);');
+                shouldNotThrow('pc.setRemoteDescription(sessionDescription).then(finishIfSucceeded, requestFailed4);');
             }
 
             function requestFailed2(reason)
@@ -60,7 +53,7 @@
                 shouldBe('errorReason.name', '"InvalidSessionDescriptionError"');
                 check("", "", "", "", '"stable"');
                 sessionDescription = new RTCSessionDescription({type:"pranswer", sdp:"remote"});
-                shouldNotThrow('pc.setRemoteDescription(sessionDescription, finishIfSucceeded, requestFailed3);');
+                shouldNotThrow('pc.setRemoteDescription(sessionDescription).then(finishIfSucceeded, requestFailed3);');
             }
 
             function requestFailed1(reason)
@@ -70,7 +63,7 @@
                 shouldBe('errorReason.name', '"InvalidSessionDescriptionError"');
                 check("", "", "", "", '"stable"');
                 sessionDescription = new RTCSessionDescription({type:"pranswer", sdp:"local"});
-                shouldNotThrow('pc.setLocalDescription(sessionDescription, finishIfSucceeded, requestFailed2);');
+                shouldNotThrow('pc.setLocalDescription(sessionDescription).then(finishIfSucceeded, requestFailed2);');
             }
 
             function finishIfSucceeded()
@@ -105,7 +98,7 @@
             pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
             shouldBe('pc.signalingState', '"stable"');
             var sessionDescription = new RTCSessionDescription({type:"answer", sdp:"local"});
-            shouldNotThrow('pc.setLocalDescription(sessionDescription, finishIfSucceeded, requestFailed1);');
+            shouldNotThrow('pc.setLocalDescription(sessionDescription).then(finishIfSucceeded, requestFailed1);');
 
             window.jsTestIsAsync = true;
             window.successfullyParsed = true;

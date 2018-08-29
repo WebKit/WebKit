@@ -39,12 +39,12 @@
                 testPassed('requestSucceeded was called.');
 
                 sessionDescription = new RTCSessionDescription({type:"answer", sdp:"local"});
-                shouldNotThrow('pc.setRemoteDescription(sessionDescription, requestSucceeded2, requestFailed2);');
+                shouldNotThrow('pc.setRemoteDescription(sessionDescription).then(requestSucceeded2, requestFailed2);');
             }
 
             pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
             var sessionDescription = new RTCSessionDescription({type:"offer", sdp:"remote"});
-            shouldNotThrow('pc.setRemoteDescription(sessionDescription, requestSucceeded1, requestFailed1);');
+            shouldNotThrow('pc.setRemoteDescription(sessionDescription).then(requestSucceeded1, requestFailed1);');
 
 
             window.jsTestIsAsync = true;

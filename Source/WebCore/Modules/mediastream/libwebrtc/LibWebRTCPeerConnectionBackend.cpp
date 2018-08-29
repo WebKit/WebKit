@@ -201,7 +201,6 @@ void LibWebRTCPeerConnectionBackend::doStop()
     m_audioSources.clear();
     m_videoSources.clear();
     m_statsPromises.clear();
-    m_remoteStreams.clear();
     m_pendingReceivers.clear();
 }
 
@@ -358,18 +357,6 @@ bool LibWebRTCPeerConnectionBackend::notifyAddedTrack(RTCRtpSender& sender)
 void LibWebRTCPeerConnectionBackend::notifyRemovedTrack(RTCRtpSender& sender)
 {
     m_endpoint->removeTrack(sender);
-}
-
-void LibWebRTCPeerConnectionBackend::removeRemoteStream(MediaStream* mediaStream)
-{
-    m_remoteStreams.removeFirstMatching([mediaStream](const auto& item) {
-        return item.get() == mediaStream;
-    });
-}
-
-void LibWebRTCPeerConnectionBackend::addRemoteStream(Ref<MediaStream>&& mediaStream)
-{
-    m_remoteStreams.append(WTFMove(mediaStream));
 }
 
 template<typename Source>

@@ -18,44 +18,37 @@
                 finishJSTest();
             }
 
-            function getUserMedia(dictionary, callback) {
-                try {
-                    navigator.webkitGetUserMedia(dictionary, callback, error);
-                } catch (e) {
-                    testFailed('webkitGetUserMedia threw exception :' + e);
-                    finishJSTest();
-                }
-            }
-
             function error() {
                 testFailed('Stream generation failed.');
                 finishJSTest();
             }
 
-            function gotStream(s) {
+            async function gotStream(s) {
                 testPassed('Got a stream.');
                 stream = s;
 
-                pc.addStream(stream);
+                const sender = pc.addTrack(stream.getVideoTracks()[0], stream);
+                var offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
                 // FIXME: Test getStats error callback: https://webkit.org/b/129860
-                shouldNotThrow('pc.getStats(pc.getLocalStreams()[0].getVideoTracks()[0]).then(statsHandler2, statsError)');
+                pc.getStats(sender.track).then(statsHandler2, statsError);
             }
 
-            function statsHandler2(status)
+            function statsHandler2(r)
             {
+                result = r;
                 testPassed("statsHandler2 was called");
-                result = status.result();
-                shouldBeGreaterThanOrEqual('result.length', '1');
-                local = result[0].local;
+                shouldBeGreaterThanOrEqual('result.size', '1');
+                local = result.get(result.keys().next().value);
                 timestamp = local.timestamp;
                 shouldBeGreaterThanOrEqual('timestamp', 'startTime');
-                shouldBe('local.stat("type")', '"video"');
+                shouldBe('local.type', '"video"');
                 finishJSTest();
             }
 
             var startTime = new Date().getTime();
             shouldNotThrow("pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]})");
-            shouldNotThrow('getUserMedia({audio:true, video:true}, gotStream)');
+            shouldNotThrow('navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(gotStream, error)');
 
             window.jsTestIsAsync = true;
             window.successfullyParsed = true;

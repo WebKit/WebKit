@@ -1,5 +1,19 @@
 2018-08-29  Youenn Fablet  <youenn@apple.com>
 
+        Remove WebRTC legacy API implementation
+        https://bugs.webkit.org/show_bug.cgi?id=189040
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/mediacapture-streams/MediaDevices-IDL-all-expected.txt:
+        * web-platform-tests/mediacapture-streams/MediaDevices-IDL-enumerateDevices-expected.txt:
+        * web-platform-tests/mediacapture-streams/MediaStream-default-feature-policy.https-expected.txt:
+        * web-platform-tests/webrtc/historical-expected.txt:
+        * web-platform-tests/webrtc/no-media-call.html:
+        * web-platform-tests/webrtc/simplecall.https.html:
+
+2018-08-29  Youenn Fablet  <youenn@apple.com>
+
         Add a runtime flag for WebRTC unified plan
         https://bugs.webkit.org/show_bug.cgi?id=189068
 

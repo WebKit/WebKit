@@ -217,7 +217,7 @@ private:
     CreateSessionDescriptionObserver m_createSessionDescriptionObserver;
     SetLocalSessionDescriptionObserver m_setLocalSessionDescriptionObserver;
     SetRemoteSessionDescriptionObserver m_setRemoteSessionDescriptionObserver;
-    HashMap<webrtc::MediaStreamInterface*, MediaStream*> m_streams;
+    HashMap<webrtc::MediaStreamInterface*, RefPtr<MediaStream>> m_streams;
     HashMap<RTCRtpSender*, rtc::scoped_refptr<webrtc::RtpSenderInterface>> m_senders;
 
     bool m_isInitiator { false };

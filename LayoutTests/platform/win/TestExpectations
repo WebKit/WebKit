@@ -850,7 +850,6 @@ webkit.org/b/38376 media/media-document-audio-size.html [ Skip ]
 # Media Stream API is not yet enabled.
 fast/mediastream [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-streams [ Skip ]
-fast/events/constructors/media-stream-event-constructor.html [ Skip ]
 http/tests/media/media-stream [ Skip ]
 
 # needs enhanced eventSender.contextMenu() return value

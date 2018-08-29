@@ -1,5 +1,53 @@
 2018-08-29  Youenn Fablet  <youenn@apple.com>
 
+        Remove WebRTC legacy API implementation
+        https://bugs.webkit.org/show_bug.cgi?id=189040
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations:
+        * fast/events/constructors/media-stream-event-constructor-expected.txt: Removed.
+        * fast/events/constructors/media-stream-event-constructor.html: Removed.
+        * fast/mediastream/RTCPeerConnection-AddRemoveStream-expected.txt: Removed.
+        * fast/mediastream/RTCPeerConnection-AddRemoveStream.html: Removed.
+        * fast/mediastream/RTCPeerConnection-createAnswer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-createAnswer.html:
+        * fast/mediastream/RTCPeerConnection-createOffer-expected.txt: Removed.
+        * fast/mediastream/RTCPeerConnection-createOffer.html: Removed.
+        * fast/mediastream/RTCPeerConnection-dtmf.html: Removed.
+        * fast/mediastream/RTCPeerConnection-events-expected.txt: Removed.
+        * fast/mediastream/RTCPeerConnection-events.html: Removed.
+        * fast/mediastream/RTCPeerConnection-have-local-offer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-have-local-offer.html:
+        * fast/mediastream/RTCPeerConnection-have-local-pranswer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-have-local-pranswer.html:
+        * fast/mediastream/RTCPeerConnection-have-remote-offer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-have-remote-offer.html:
+        * fast/mediastream/RTCPeerConnection-have-remote-pranswer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-have-remote-pranswer.html:
+        * fast/mediastream/RTCPeerConnection-legacy-stream-based-api-expected.txt: Removed.
+        * fast/mediastream/RTCPeerConnection-legacy-stream-based-api.html: Removed.
+        * fast/mediastream/RTCPeerConnection-localDescription-expected.txt:
+        * fast/mediastream/RTCPeerConnection-localDescription.html:
+        * fast/mediastream/RTCPeerConnection-remoteDescription-expected.txt:
+        * fast/mediastream/RTCPeerConnection-remoteDescription.html:
+        * fast/mediastream/RTCPeerConnection-stable-expected.txt:
+        * fast/mediastream/RTCPeerConnection-stable.html:
+        * fast/mediastream/RTCPeerConnection-stats.html:
+        * fast/mediastream/RTCPeerConnection-statsSelector-expected.txt:
+        * fast/mediastream/RTCPeerConnection-statsSelector.html:
+        * fast/mediastream/argument-types-expected.txt: Removed.
+        * fast/mediastream/argument-types.html: Removed.
+        * fast/mediastream/getusermedia-expected.txt: Removed.
+        * fast/mediastream/getusermedia.html: Removed.
+        * fast/mediastream/webkitGetUserMedia-shadowing-then-expected.txt: Removed.
+        * fast/mediastream/webkitGetUserMedia-shadowing-then.html: Removed.
+        * platform/mac/TestExpectations:
+        * webrtc/legacy-api-expected.txt:
+        * webrtc/legacy-api.html:
+
+2018-08-29  Youenn Fablet  <youenn@apple.com>
+
         Add a runtime flag for WebRTC unified plan
         https://bugs.webkit.org/show_bug.cgi?id=189068
 

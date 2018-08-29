@@ -32,14 +32,14 @@
                 shouldBeNonNull('status');
                 result = status.result();
                 shouldBe('result.length', '0');
-                shouldNotThrow('getUserMedia({audio:true, video:true}, gotStream)');
+                shouldNotThrow('getUserMedia({audio:true, video:true}).then(gotStream)');
             }
 
             function gotStream(s) {
                 testPassed('Got a stream.');
                 stream = s;
 
-                pc.addStream(stream);
+                pc.addTrack(stream.getVideoTracks()[0]);
                 // FIXME: Test getStats error callback: https://webkit.org/b/129860
                 shouldNotThrow('pc.getStats().then(statsHandler2, statsError)');
             }

@@ -1,3 +1,61 @@
+2018-08-29  Youenn Fablet  <youenn@apple.com>
+
+        Remove WebRTC legacy API implementation
+        https://bugs.webkit.org/show_bug.cgi?id=189040
+
+        Reviewed by Eric Carlson.
+
+        This API is no longer needed as the runtime flag is off by default.
+        Removing this option allows removing some code and will ease future WebRTC improvements.
+        Covered by existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/mediastream/MediaStreamEvent.cpp: Removed.
+        * Modules/mediastream/MediaStreamEvent.h: Removed.
+        * Modules/mediastream/MediaStreamEvent.idl: Removed.
+        * Modules/mediastream/NavigatorUserMedia.idl: Removed.
+        * Modules/mediastream/NavigatorUserMedia.js: Removed.
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCPeerConnection.js:
+        (initializeRTCPeerConnection):
+        (createOffer):
+        (createAnswer):
+        (setLocalDescription):
+        (setRemoteDescription):
+        (addIceCandidate):
+        (getLocalStreams): Deleted.
+        (getStreamById): Deleted.
+        (addStream): Deleted.
+        (): Deleted.
+        * Modules/mediastream/RTCPeerConnectionInternals.js:
+        (callbacksAndDictionaryOverload):
+        (if): Deleted.
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::mediaStreamFromRTCStream):
+        (WebCore::LibWebRTCMediaEndpoint::addRemoteStream):
+        (WebCore::LibWebRTCMediaEndpoint::removeRemoteStream):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::doStop):
+        (WebCore::LibWebRTCPeerConnectionBackend::removeRemoteStream): Deleted.
+        (WebCore::LibWebRTCPeerConnectionBackend::addRemoteStream): Deleted.
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        (WebCore::isWebRTCLegacyAPIEnabled): Deleted.
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/EventNames.in:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setPeerConnectionEnabled):
+        (WebCore::RuntimeEnabledFeatures::webRTCLegacyAPIEnabled const): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setWebRTCLegacyAPIEnabled): Deleted.
+
 2018-08-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Modernize SlotAssignment

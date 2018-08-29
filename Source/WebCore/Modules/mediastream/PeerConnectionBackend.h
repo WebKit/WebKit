@@ -98,8 +98,6 @@ public:
 
     virtual void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&) = 0;
 
-    virtual Vector<RefPtr<MediaStream>> getRemoteStreams() const = 0;
-
     virtual Ref<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) = 0;
     virtual void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) = 0;
     virtual bool notifyAddedTrack(RTCRtpSender&) { return false; }

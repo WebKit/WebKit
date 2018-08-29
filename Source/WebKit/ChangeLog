@@ -1,3 +1,22 @@
+2018-08-29  Youenn Fablet  <youenn@apple.com>
+
+        Remove WebRTC legacy API implementation
+        https://bugs.webkit.org/show_bug.cgi?id=189040
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetWebRTCLegacyAPIEnabled): Deleted.
+        (WKPreferencesGetWebRTCLegacyAPIEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _webRTCLegacyAPIEnabled]): Deleted.
+        (-[WKPreferences _setWebRTCLegacyAPIEnabled:]): Deleted.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+
 2018-08-29  Chris Dumez  <cdumez@apple.com>
 
         [PSON] We should only process-swap when eTLD+1 changes on navigation

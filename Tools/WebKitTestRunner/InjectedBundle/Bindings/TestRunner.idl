@@ -320,7 +320,6 @@ interface TestRunner {
     // Open panel
     void setOpenPanelFiles(object filesArray);
 
-    void setWebRTCLegacyAPIEnabled(boolean value);
     void setMDNSICECandidatesEnabled(boolean value);
     void setWebRTCUnifiedPlanEnabled(boolean value);
     void setCustomUserAgent(DOMString userAgent);

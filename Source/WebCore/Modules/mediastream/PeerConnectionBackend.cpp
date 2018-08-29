@@ -37,6 +37,7 @@
 #include "EventNames.h"
 #include "JSRTCSessionDescription.h"
 #include "Logging.h"
+#include "Page.h"
 #include "RTCIceCandidate.h"
 #include "RTCPeerConnection.h"
 #include "RTCPeerConnectionIceEvent.h"

@@ -159,7 +159,6 @@ Modules/mediastream/MediaDevices.cpp
 Modules/mediastream/MediaDevicesEnumerationRequest.cpp
 Modules/mediastream/MediaDevicesRequest.cpp
 Modules/mediastream/MediaStream.cpp
-Modules/mediastream/MediaStreamEvent.cpp
 Modules/mediastream/MediaStreamRegistry.cpp
 Modules/mediastream/MediaStreamTrack.cpp
 Modules/mediastream/MediaStreamTrackEvent.cpp
@@ -2758,7 +2757,6 @@ JSMediaSource.cpp
 JSMediaStream.cpp
 JSMediaStreamAudioDestinationNode.cpp
 JSMediaStreamAudioSourceNode.cpp
-JSMediaStreamEvent.cpp
 JSMediaStreamTrack.cpp
 JSMediaStreamTrackEvent.cpp
 JSMediaTrackConstraints.cpp
@@ -2785,7 +2783,6 @@ JSNavigatorMediaCapabilities.cpp
 JSNavigatorMediaDevices.cpp
 JSNavigatorOnLine.cpp
 JSNavigatorServiceWorker.cpp
-JSNavigatorUserMedia.cpp
 JSNavigatorWebDriver.cpp
 JSNavigatorWebVR.cpp
 JSNode.cpp

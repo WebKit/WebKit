@@ -144,7 +144,6 @@ fast/forms/week
 # Media Stream API is not fully supported.
 fast/mediastream/MediaStream-add-ended-tracks.html
 
-fast/mediastream/RTCPeerConnection-dtmf.html [ Skip ]
 fast/mediastream/RTCPeerConnection-ice.html [ Skip ]
 fast/mediastream/RTCPeerConnection-media-setup-callbacks-single-dialog.html [ Skip ]
 fast/mediastream/RTCPeerConnection-stats.html [ Skip ]

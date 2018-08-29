@@ -41,83 +41,8 @@ function initializeRTCPeerConnection(configuration)
 
     this.@initializeWith(configuration);
     @putByIdDirectPrivate(this, "operations", []);
-    @putByIdDirectPrivate(this, "localStreams", []);
 
     return this;
-}
-
-function getLocalStreams()
-{
-    "use strict";
-
-    if (!@isRTCPeerConnection(this))
-        throw @makeThisTypeError("RTCPeerConnection", "getLocalStreams");
-
-    return @getByIdDirectPrivate(this, "localStreams").slice();
-}
-
-function getStreamById(streamIdArg)
-{
-    "use strict";
-
-    if (!@isRTCPeerConnection(this))
-        throw @makeThisTypeError("RTCPeerConnection", "getStreamById");
-
-    if (arguments.length < 1)
-        @throwTypeError("Not enough arguments");
-
-    const streamId = @toString(streamIdArg);
-
-    return @getByIdDirectPrivate(this, "localStreams").find(stream => stream.id === streamId)
-        || this.@getRemoteStreams().find(stream => stream.id === streamId)
-        || null;
-}
-
-function addStream(stream)
-{
-    "use strict";
-
-    if (!@isRTCPeerConnection(this))
-        throw @makeThisTypeError("RTCPeerConnection", "addStream");
-
-    if (arguments.length < 1)
-        @throwTypeError("Not enough arguments");
-
-    if (!(stream instanceof @MediaStream))
-        @throwTypeError("Argument 1 ('stream') to RTCPeerConnection.addStream must be an instance of MediaStream");
-
-    if (@getByIdDirectPrivate(this, "localStreams").find(localStream => localStream.id === stream.id))
-        return;
-
-    @getByIdDirectPrivate(this, "localStreams").@push(stream);
-    stream.@getTracks().forEach(track => this.@addTrack(track, stream));
-}
-
-function removeStream(stream)
-{
-    "use strict";
-
-    if (!@isRTCPeerConnection(this))
-        throw @makeThisTypeError("RTCPeerConnection", "removeStream");
-
-    if (arguments.length < 1)
-        @throwTypeError("Not enough arguments");
-
-    if (!(stream instanceof @MediaStream))
-        @throwTypeError("Argument 1 ('stream') to RTCPeerConnection.removeStream must be an instance of MediaStream");
-
-    const indexOfStreamToRemove = @getByIdDirectPrivate(this, "localStreams").findIndex(localStream => localStream.id === stream.id);
-    if (indexOfStreamToRemove === -1)
-        return;
-
-    const senders = this.@getSenders();
-    @getByIdDirectPrivate(this, "localStreams")[indexOfStreamToRemove].@getTracks().forEach(track => {
-        const senderForTrack = senders.find(sender => sender.track && sender.track.id === track.id);
-        if (senderForTrack)
-            this.@removeTrack(senderForTrack);
-    });
-
-    @getByIdDirectPrivate(this, "localStreams").splice(indexOfStreamToRemove, 1);
 }
 
 function createOffer()
@@ -130,17 +55,9 @@ function createOffer()
     const peerConnection = this;
 
     return @callbacksAndDictionaryOverload(arguments, "createOffer", function (options) {
-        // Promise mode
         return @enqueueOperation(peerConnection, function () {
             return peerConnection.@queuedCreateOffer(options);
         });
-    }, function (successCallback, errorCallback, options) {
-        // Legacy callbacks mode
-        @enqueueOperation(peerConnection, function () {
-            return peerConnection.@queuedCreateOffer(options).@then(successCallback, errorCallback);
-        });
-
-        return @Promise.@resolve(@undefined);
     });
 }
 
@@ -154,17 +71,9 @@ function createAnswer()
     const peerConnection = this;
 
     return @callbacksAndDictionaryOverload(arguments, "createAnswer", function (options) {
-        // Promise mode
         return @enqueueOperation(peerConnection, function () {
             return peerConnection.@queuedCreateAnswer(options);
         });
-    }, function (successCallback, errorCallback, options) {
-        // Legacy callbacks mode
-        @enqueueOperation(peerConnection, function () {
-            return peerConnection.@queuedCreateAnswer(options).@then(successCallback, errorCallback);
-        });
-
-        return @Promise.@resolve(@undefined);
     });
 }
 
@@ -185,17 +94,9 @@ function setLocalDescription()
         "maybeDictionary": "true"
     };
     return @objectAndCallbacksOverload(arguments, "setLocalDescription", objectInfo, function (description) {
-        // Promise mode
         return @enqueueOperation(peerConnection, function () {
             return peerConnection.@queuedSetLocalDescription(description);
         });
-    }, function (description, successCallback, errorCallback) {
-        // Legacy callbacks mode
-        @enqueueOperation(peerConnection, function () {
-            return peerConnection.@queuedSetLocalDescription(description).@then(successCallback, errorCallback);
-        });
-
-        return @Promise.@resolve(@undefined);
     });
 }
 
@@ -216,17 +117,9 @@ function setRemoteDescription()
         "maybeDictionary": "true"
     };
     return @objectAndCallbacksOverload(arguments, "setRemoteDescription", objectInfo, function (description) {
-        // Promise mode
         return @enqueueOperation(peerConnection, function () {
             return peerConnection.@queuedSetRemoteDescription(description);
         });
-    }, function (description, successCallback, errorCallback) {
-        // Legacy callbacks mode
-        @enqueueOperation(peerConnection, function () {
-            return peerConnection.@queuedSetRemoteDescription(description).@then(successCallback, errorCallback);
-        });
-
-        return @Promise.@resolve(@undefined);
     });
 }
 
@@ -250,16 +143,8 @@ function addIceCandidate(candidate)
         "defaultsToNull" : "true"
     };
     return @objectAndCallbacksOverload(arguments, "addIceCandidate", objectInfo, function (candidate) {
-        // Promise mode
         return @enqueueOperation(peerConnection, function () {
             return peerConnection.@queuedAddIceCandidate(candidate);
         });
-    }, function (candidate, successCallback, errorCallback) {
-        // Legacy callbacks mode
-        @enqueueOperation(peerConnection, function () {
-            return peerConnection.@queuedAddIceCandidate(candidate).@then(successCallback, errorCallback);
-        });
-
-        return @Promise.@resolve(@undefined);
     });
 }

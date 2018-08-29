@@ -4,8 +4,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]}) did not throw exception.
-FAIL webkitGetUserMedia threw exception :TypeError: navigator.webkitGetUserMedia is not a function. (In 'navigator.webkitGetUserMedia(dictionary, callback, error)', 'navigator.webkitGetUserMedia' is undefined)
-PASS getUserMedia({audio:true, video:true}, gotStream) did not throw exception.
+PASS navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(gotStream, error) did not throw exception.
+PASS Got a stream.
+PASS statsHandler2 was called
+PASS result.size is >= 1
+PASS timestamp is >= startTime
+FAIL local.type should be video. Was certificate.
 PASS successfullyParsed is true
 
 TEST COMPLETE
