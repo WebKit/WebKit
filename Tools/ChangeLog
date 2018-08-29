@@ -1,3 +1,16 @@
+2018-08-29  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Split Tools/CMakeLists.txt into platform files
+        https://bugs.webkit.org/show_bug.cgi?id=189093
+
+        Reviewed by Michael Catanzaro.
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake: Added.
+        * PlatformMac.cmake: Added.
+        * PlatformWPE.cmake: Added.
+        * PlatformWin.cmake: Added.
+
 2018-08-29  Jer Noble  <jer.noble@apple.com>
 
         Muted elements do not have their Now Playing status updated when unmuted.
