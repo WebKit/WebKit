@@ -494,6 +494,15 @@ PeerConnectionEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEB_RTC)
 
+WebRTCUnifiedPlanEnabled:
+  type: bool
+  defaultValue: true
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  humanReadableName: "WebRTC Unified Plan"
+  humanReadableDescription: "Use WebRTC Unified Plan"
+  category: experimental
+
 UseLegacyTextAlignPositionedElementBehavior:
   type: bool
   defaultValue: false

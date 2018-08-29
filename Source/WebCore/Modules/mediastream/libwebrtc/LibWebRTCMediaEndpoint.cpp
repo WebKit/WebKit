@@ -80,6 +80,9 @@ LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& p
 
 bool LibWebRTCMediaEndpoint::setConfiguration(LibWebRTCProvider& client, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
+    if (RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled())
+        configuration.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
+
     if (!m_backend) {
         m_backend = client.createPeerConnection(*this, WTFMove(configuration));
         return !!m_backend;
@@ -197,12 +200,13 @@ bool LibWebRTCMediaEndpoint::addTrack(RTCRtpSender& sender, MediaStreamTrack& tr
 {
     ASSERT(m_backend);
 
-    String mediaStreamId = mediaStreamIds.isEmpty() ? createCanonicalUUIDString() : mediaStreamIds[0];
-    rtc::scoped_refptr<webrtc::MediaStreamInterface> mediaStream = m_localStreams.get(mediaStreamId);
-    if (!mediaStream) {
-        mediaStream = m_peerConnectionFactory.CreateLocalMediaStream(mediaStreamId.utf8().data());
-        m_backend->AddStream(mediaStream);
-        m_localStreams.add(mediaStreamId, mediaStream);
+    if (!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled()) {
+        String mediaStreamId = mediaStreamIds.isEmpty() ? createCanonicalUUIDString() : mediaStreamIds[0];
+        m_localStreams.ensure(mediaStreamId, [&] {
+            auto mediaStream = m_peerConnectionFactory.CreateLocalMediaStream(mediaStreamId.utf8().data());
+            m_backend->AddStream(mediaStream);
+            return mediaStream;
+        });
     }
 
     std::vector<std::string> ids;
@@ -246,6 +250,7 @@ void LibWebRTCMediaEndpoint::removeTrack(RTCRtpSender& sender)
 
 bool LibWebRTCMediaEndpoint::shouldOfferAllowToReceiveAudio() const
 {
+    ASSERT(!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled());
     for (const auto& transceiver : m_peerConnectionBackend.connection().getTransceivers()) {
         if (transceiver->sender().trackKind() != "audio")
             continue;
@@ -261,6 +266,7 @@ bool LibWebRTCMediaEndpoint::shouldOfferAllowToReceiveAudio() const
 
 bool LibWebRTCMediaEndpoint::shouldOfferAllowToReceiveVideo() const
 {
+    ASSERT(!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled());
     for (const auto& transceiver : m_peerConnectionBackend.connection().getTransceivers()) {
         if (transceiver->sender().trackKind() != "video")
             continue;
@@ -282,11 +288,13 @@ void LibWebRTCMediaEndpoint::doCreateOffer(const RTCOfferOptions& options)
     webrtc::PeerConnectionInterface::RTCOfferAnswerOptions rtcOptions;
     rtcOptions.ice_restart = options.iceRestart;
     rtcOptions.voice_activity_detection = options.voiceActivityDetection;
-    // FIXME: offer_to_receive_audio and offer_to_receive_video are used as libwebrtc does not support transceivers yet.
-    if (shouldOfferAllowToReceiveAudio())
-        rtcOptions.offer_to_receive_audio = webrtc::PeerConnectionInterface::RTCOfferAnswerOptions::kOfferToReceiveMediaTrue;
-    if (shouldOfferAllowToReceiveVideo())
-        rtcOptions.offer_to_receive_video = webrtc::PeerConnectionInterface::RTCOfferAnswerOptions::kOfferToReceiveMediaTrue;
+
+    if (!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled()) {
+        if (shouldOfferAllowToReceiveAudio())
+            rtcOptions.offer_to_receive_audio = webrtc::PeerConnectionInterface::RTCOfferAnswerOptions::kOfferToReceiveMediaTrue;
+        if (shouldOfferAllowToReceiveVideo())
+            rtcOptions.offer_to_receive_video = webrtc::PeerConnectionInterface::RTCOfferAnswerOptions::kOfferToReceiveMediaTrue;
+    }
     m_backend->CreateOffer(&m_createSessionDescriptionObserver, rtcOptions);
 }
 

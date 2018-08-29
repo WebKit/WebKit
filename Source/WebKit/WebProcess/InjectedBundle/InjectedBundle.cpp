@@ -243,6 +243,8 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setWebRTCLegacyAPIEnabled(enabled);
     if (preference == "WebKitMDNSICECandidatesEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setMDNSICECandidatesEnabled(enabled);
+    if (preference == "WebKitWebRTCUnifiedPlanEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setWebRTCUnifiedPlanEnabled(enabled);
 #endif
 
     if (preference == "WebKitIsSecureContextAttributeEnabled") {

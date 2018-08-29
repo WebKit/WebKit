@@ -11,6 +11,8 @@
         <canvas id="canvas" width="640" height="480"></canvas>
         <script src ="routines.js"></script>
         <script>
+if (window.testRunner)
+    testRunner.setWebRTCUnifiedPlanEnabled(false);
 
 promise_test((test) => {
     var pc = new RTCPeerConnection();

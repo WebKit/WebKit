@@ -16,7 +16,7 @@
             var remoteStream;
             return new Promise((resolve, reject) => {
                 createConnections((firstConnection) => {
-                    firstConnection.addTrack(localStream.getAudioTracks()[0]);
+                    firstConnection.addTrack(localStream.getAudioTracks()[0], localStream);
                 }, (secondConnection) => {
                     secondConnection.ontrack = (trackEvent) => {
                         remoteStream = trackEvent.streams[0];

@@ -1,3 +1,25 @@
+2018-08-29  Youenn Fablet  <youenn@apple.com>
+
+        Add a runtime flag for WebRTC unified plan
+        https://bugs.webkit.org/show_bug.cgi?id=189068
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing updated tests.
+        Main change is to call addTrack with a stream parameter so that on the other side, the track will be tied to a stream.
+        Receive-only case in unified plan is not yet supported.
+        This will be supported in follow-up patches.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::setConfiguration): Activate unified plan based on runtime flag.
+        (WebCore::LibWebRTCMediaEndpoint::addTrack): Do not use AddStream in case of unified plan.
+        (WebCore::LibWebRTCMediaEndpoint::shouldOfferAllowToReceiveAudio const):
+        (WebCore::LibWebRTCMediaEndpoint::shouldOfferAllowToReceiveVideo const):
+        (WebCore::LibWebRTCMediaEndpoint::doCreateOffer): Use legacy webrtc option for receive only cases only in plan B case.
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::webRTCUnifiedPlanEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setWebRTCUnifiedPlanEnabled):
+
 2018-08-28  Simon Fraser  <simon.fraser@apple.com>
 
         Fix crash when reflections and backdrop filter are combined

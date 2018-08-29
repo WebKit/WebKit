@@ -322,6 +322,7 @@ interface TestRunner {
 
     void setWebRTCLegacyAPIEnabled(boolean value);
     void setMDNSICECandidatesEnabled(boolean value);
+    void setWebRTCUnifiedPlanEnabled(boolean value);
     void setCustomUserAgent(DOMString userAgent);
 
     void terminateNetworkProcess();

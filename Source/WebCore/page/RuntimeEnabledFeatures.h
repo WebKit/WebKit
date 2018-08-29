@@ -116,6 +116,8 @@ public:
 #endif
 
 #if ENABLE(WEB_RTC)
+    bool webRTCUnifiedPlanEnabled() const { return m_isWebRTCUnifiedPlanEnabled; }
+    void setWebRTCUnifiedPlanEnabled(bool isEnabled) { m_isWebRTCUnifiedPlanEnabled = isEnabled; }
     bool peerConnectionEnabled() const { return m_isPeerConnectionEnabled; }
     void setPeerConnectionEnabled(bool isEnabled) { m_isPeerConnectionEnabled = isEnabled; }
     bool webRTCLegacyAPIEnabled() const { return m_webRTCLegacyAPIEnabled; }
@@ -321,6 +323,7 @@ private:
 #endif
 
 #if ENABLE(WEB_RTC)
+    bool m_isWebRTCUnifiedPlanEnabled { true };
     bool m_isPeerConnectionEnabled { true };
     bool m_webRTCLegacyAPIEnabled { false };
     bool m_mdnsICECandidatesEnabled { false };

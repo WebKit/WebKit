@@ -51,7 +51,7 @@ function testBasicVideoExchangeWithAddTrack(waitForSecondTrack)
         return new Promise((resolve, reject) => {
             createConnections((firstConnection) => {
                 assert_equals(stream.getTracks().length, 2);
-                stream.getTracks().forEach(track => firstConnection.addTrack(track));
+                stream.getTracks().forEach(track => firstConnection.addTrack(track, stream));
             }, (secondConnection) => {
                 var count = 0;
                 secondConnection.ontrack = (trackEvent) => {

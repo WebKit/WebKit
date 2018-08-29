@@ -132,6 +132,7 @@ public:
     void setMediaDevicesEnabled(bool);
     void setWebRTCLegacyAPIEnabled(bool);
     void setMDNSICECandidatesEnabled(bool);
+    void setWebRTCUnifiedPlanEnabled(bool);
     void setCustomUserAgent(JSStringRef);
 
     // Special DOM functions.

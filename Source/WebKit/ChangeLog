@@ -1,3 +1,14 @@
+2018-08-29  Youenn Fablet  <youenn@apple.com>
+
+        Add a runtime flag for WebRTC unified plan
+        https://bugs.webkit.org/show_bug.cgi?id=189068
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferences.yaml:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+
 2018-08-29  Aditya Keerthi  <akeerthi@apple.com>
 
         Followup (r235427): Use the null string instead of std::nullopt when no suggestion is selected
