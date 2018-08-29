@@ -1230,6 +1230,7 @@ layout/blockformatting/BlockMarginCollapse.cpp
 layout/blockformatting/BlockInvalidation.cpp
 layout/displaytree/DisplayBox.cpp
 layout/floats/FloatAvoider.cpp
+layout/floats/FloatBox.cpp
 layout/floats/FloatingContext.cpp
 layout/floats/FloatingState.cpp
 layout/inlineformatting/InlineFormattingContext.cpp

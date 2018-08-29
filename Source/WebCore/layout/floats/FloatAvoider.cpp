@@ -43,68 +43,54 @@ FloatAvoider::FloatAvoider(const Box& layoutBox, const FloatingState& floatingSt
     , m_floatingState(floatingState)
     , m_absoluteDisplayBox(FormattingContext::mapBoxToAncestor(layoutContext, layoutBox, downcast<Container>(floatingState.root())))
     , m_containingBlockAbsoluteDisplayBox(FormattingContext::mapBoxToAncestor(layoutContext, *layoutBox.containingBlock(), downcast<Container>(floatingState.root())))
+    , m_initialVerticalPosition(m_absoluteDisplayBox.top())
 {
-    initializePosition();
-}
-
-void FloatAvoider::initializePosition()
-{
-    m_absoluteDisplayBox.setTopLeft({ initialHorizontalPosition(), initialVerticalPosition() });
-}
-
-bool FloatAvoider::isLeftAligned() const
-{
-    return m_layoutBox->isLeftFloatingPositioned();
-}
-
-Display::Box::Rect FloatAvoider::rect() const
-{
-    return m_absoluteDisplayBox.rectWithMargin();
-}
-
-void FloatAvoider::setVerticalConstraint(PositionInContextRoot verticalConstraint)
-{
-    m_absoluteDisplayBox.setTop(verticalConstraint + m_absoluteDisplayBox.marginTop());
 }
 
 void FloatAvoider::setHorizontalConstraints(HorizontalConstraints horizontalConstraints)
 {
     if ((isLeftAligned() && !horizontalConstraints.left) || (!isLeftAligned() && !horizontalConstraints.right)) {
-        resetHorizontalConstraints();
+        // No constraints? Set horizontal position back to the inital value.
+        m_absoluteDisplayBox.setLeft(initialHorizontalPosition());
         return;
     }
 
-    auto positionCandidate = isLeftAligned() ? *horizontalConstraints.left : *horizontalConstraints.right - rect().width();
-    // Horizontal position is constrained by the containing block's content box.
-    // Compute the horizontal position for the new floating by taking both the contining block and the current left/right floats into account.
-    auto containingBlockContentBoxLeft = m_containingBlockAbsoluteDisplayBox.left() + m_containingBlockAbsoluteDisplayBox.contentBoxLeft();
-    auto containingBlockContentBoxRight = containingBlockContentBoxLeft + m_containingBlockAbsoluteDisplayBox.contentBoxWidth();
+    auto constrainWithContainingBlock = [&](auto left) -> PositionInContextRoot {
+        // Horizontal position is constrained by the containing block's content box.
+        // Compute the horizontal position for the new floating by taking both the contining block and the current left/right floats into account.
+        auto containingBlockContentBoxLeft = m_containingBlockAbsoluteDisplayBox.left() + m_containingBlockAbsoluteDisplayBox.contentBoxLeft();
+        auto containingBlockContentBoxRight = containingBlockContentBoxLeft + m_containingBlockAbsoluteDisplayBox.contentBoxWidth();
+        // Align it with the containing block's left edge first.
+        left = std::max(containingBlockContentBoxLeft + m_absoluteDisplayBox.marginLeft(), left);
+        // Make sure it does not overflow the containing block on the right.
+        auto marginBoxSize = m_absoluteDisplayBox.marginBox().width();
+        left = std::min(left, containingBlockContentBoxRight - marginBoxSize + m_absoluteDisplayBox.marginLeft());
 
-    positionCandidate += m_absoluteDisplayBox.marginLeft();
-    // Align it with the containing block's left edge first.
-    positionCandidate = std::max(containingBlockContentBoxLeft + m_absoluteDisplayBox.marginLeft(), positionCandidate);
-    // Make sure it does not overflow the containing block on the right.
-    auto marginBoxSize = m_absoluteDisplayBox.marginBox().width();
-    positionCandidate = std::min(positionCandidate, containingBlockContentBoxRight - marginBoxSize + m_absoluteDisplayBox.marginLeft());
+        return left;
+    };
 
-    m_absoluteDisplayBox.setLeft(positionCandidate);
+    auto positionCandidate = horizontalPositionCandidate(horizontalConstraints);
+    m_absoluteDisplayBox.setLeft(constrainWithContainingBlock(positionCandidate));
 }
 
-void FloatAvoider::resetHorizontalConstraints()
+void FloatAvoider::setVerticalConstraint(PositionInContextRoot verticalConstraint)
 {
-    m_absoluteDisplayBox.setLeft(initialHorizontalPosition());
+    m_absoluteDisplayBox.setTop(verticalPositionCandidate(verticalConstraint));
 }
 
-PositionInContextRoot FloatAvoider::initialVerticalPosition() const
+PositionInContextRoot FloatAvoider::horizontalPositionCandidate(HorizontalConstraints horizontalConstraints)
 {
-    // Incoming float cannot be placed higher than existing floats (margin box of the last float).
-    // Take the static position (where the box would go if it wasn't floating) and adjust it with the last float.
-    auto top = m_absoluteDisplayBox.rectWithMargin().top();
-    if (auto lastFloat = m_floatingState.last())
-        top = std::max(top, lastFloat->rectWithMargin().top());
-    top += m_absoluteDisplayBox.marginTop();
+    return isLeftAligned() ? *horizontalConstraints.left : *horizontalConstraints.right - rect().width();
+}
 
-    return top;
+PositionInContextRoot FloatAvoider::verticalPositionCandidate(PositionInContextRoot verticalConstraint)
+{
+    return verticalConstraint;
+}
+
+void FloatAvoider::resetPosition()
+{
+    m_absoluteDisplayBox.setTopLeft({ initialHorizontalPosition(), initialVerticalPosition() });
 }
 
 PositionInContextRoot FloatAvoider::initialHorizontalPosition() const
@@ -122,7 +108,7 @@ PositionInContextRoot FloatAvoider::initialHorizontalPosition() const
 Display::Box::Rect FloatAvoider::rectInContainingBlock() const
 {
     // From formatting root coordinate system back to containing block's.
-    if (m_layoutBox->containingBlock() == &m_floatingState.root())
+    if (layoutBox().containingBlock() == &floatingState().root())
         return m_absoluteDisplayBox.rect();
 
     return {

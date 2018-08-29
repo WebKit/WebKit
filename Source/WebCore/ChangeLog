@@ -1,3 +1,46 @@
+2018-08-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] Introduce FloatBox, a FloatAvoider subclass.
+        https://bugs.webkit.org/show_bug.cgi?id=189074
+
+        Reviewed by Antti Koivisto.
+
+        FloatBox is a float avoider and a float positioned box as well.
+        This is in preparation for the float avoidance feature where formatting context root boxes avoid existing floats.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/displaytree/DisplayBox.h:
+        * layout/floats/FloatAvoider.cpp:
+        (WebCore::Layout::FloatAvoider::FloatAvoider):
+        (WebCore::Layout::FloatAvoider::setHorizontalConstraints):
+        (WebCore::Layout::FloatAvoider::setVerticalConstraint):
+        (WebCore::Layout::FloatAvoider::horizontalPositionCandidate):
+        (WebCore::Layout::FloatAvoider::verticalPositionCandidate):
+        (WebCore::Layout::FloatAvoider::resetPosition):
+        (WebCore::Layout::FloatAvoider::rectInContainingBlock const):
+        (WebCore::Layout::FloatAvoider::initializePosition): Deleted.
+        (WebCore::Layout::FloatAvoider::isLeftAligned const): Deleted.
+        (WebCore::Layout::FloatAvoider::rect const): Deleted.
+        (WebCore::Layout::FloatAvoider::resetHorizontalConstraints): Deleted.
+        (WebCore::Layout::FloatAvoider::initialVerticalPosition const): Deleted.
+        * layout/floats/FloatAvoider.h:
+        (WebCore::Layout::FloatAvoider::rect const):
+        (WebCore::Layout::FloatAvoider::isLeftAligned const):
+        (WebCore::Layout::FloatAvoider::initialVerticalPosition const):
+        (WebCore::Layout::FloatAvoider::floatingState const):
+        (WebCore::Layout::FloatAvoider::layoutBox const):
+        (WebCore::Layout::FloatAvoider::displayBox const):
+        * layout/floats/FloatBox.cpp: Copied from Source/WebCore/layout/floats/FloatAvoider.h.
+        (WebCore::Layout::FloatBox::FloatBox):
+        (WebCore::Layout::FloatBox::horizontalPositionCandidate):
+        (WebCore::Layout::FloatBox::verticalPositionCandidate):
+        (WebCore::Layout::FloatBox::initialVerticalPosition const):
+        * layout/floats/FloatBox.h: Copied from Source/WebCore/layout/floats/FloatAvoider.h.
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::floatingPosition const):
+
 2018-08-29  Ali Juma  <ajuma@chromium.org>
 
         [IntersectionObserver]  Implement intersection logic for the same-document implicit root case

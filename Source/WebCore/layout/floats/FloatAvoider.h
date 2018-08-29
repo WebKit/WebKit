@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "DisplayBox.h"
+#include "LayoutBox.h"
 #include "LayoutUnit.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -36,7 +37,6 @@ namespace WebCore {
 
 namespace Layout {
 
-class Box;
 class FloatingState;
 class LayoutContext;
 
@@ -44,8 +44,9 @@ class FloatAvoider {
     WTF_MAKE_ISO_ALLOCATED(FloatAvoider);
 public:
     FloatAvoider(const Box&, const FloatingState&, const LayoutContext&);
+    virtual ~FloatAvoider() = default;
 
-    Display::Box::Rect rect() const;
+    virtual Display::Box::Rect rect() const { return m_absoluteDisplayBox.rect(); }
     Display::Box::Rect rectInContainingBlock() const;
 
     struct HorizontalConstraints {
@@ -55,19 +56,28 @@ public:
     void setHorizontalConstraints(HorizontalConstraints);
     void setVerticalConstraint(PositionInContextRoot);
 
-private:
-    bool isLeftAligned() const;
+    void resetPosition();
 
-    void initializePosition();
-    PositionInContextRoot initialHorizontalPosition() const;
-    PositionInContextRoot initialVerticalPosition() const;
+protected:
+    virtual bool isLeftAligned() const { return layoutBox().style().isLeftToRightDirection(); }
+    virtual PositionInContextRoot initialHorizontalPosition() const;
+    virtual PositionInContextRoot initialVerticalPosition() const { return m_initialVerticalPosition; }
+
     void resetHorizontalConstraints();
 
+    virtual PositionInContextRoot horizontalPositionCandidate(HorizontalConstraints);
+    virtual PositionInContextRoot verticalPositionCandidate(PositionInContextRoot);
+
+    const FloatingState& floatingState() const { return m_floatingState; }
+    const Box& layoutBox() const { return *m_layoutBox; }
+    const Display::Box& displayBox() const { return m_absoluteDisplayBox; }
+
+private:
     WeakPtr<Box> m_layoutBox;
     const FloatingState& m_floatingState;
-
     Display::Box m_absoluteDisplayBox;
     Display::Box m_containingBlockAbsoluteDisplayBox;
+    PositionInContextRoot m_initialVerticalPosition;
 };
 
 }
