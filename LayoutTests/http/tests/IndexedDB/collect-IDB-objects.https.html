@@ -20,7 +20,7 @@ async function done()
         const frameIdentifier = internals.documentIdentifier(iframe.contentDocument);
         iframe.src = "non-existent-frame";
         let counter = 0;
-        while (++counter < 10) {
+        while (++counter < 50) {
             if (!internals.isDocumentAlive(frameIdentifier)) {
                 resolveCallback();
                 return;
