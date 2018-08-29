@@ -1,3 +1,13 @@
+2018-08-28  David Kilzer  <ddkilzer@apple.com>
+
+        [libwebrtc] Remove references to Source/webrtc/modules/audio_coding/codecs/isac/main/source/fft.h
+
+        Found by tidy-Xcode-project-file script (see Bug 188754).
+
+        * libwebrtc.xcodeproj/project.pbxproj:
+        (Source/webrtc/modules/audio_coding/codecs/isac/main/source/fft.h):
+        Remove references to this file since it doesn't exist.
+
 2018-08-28  Youenn Fablet  <youenn@apple.com>
 
         Reenable -Wexit-time-destructors -and Wglobal-constructors in libwebrtc

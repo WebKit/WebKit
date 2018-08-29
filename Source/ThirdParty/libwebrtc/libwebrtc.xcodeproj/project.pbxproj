@@ -2231,7 +2231,6 @@
 		5CDD87B71E43BC0500621E92 /* encode.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD87811E43BC0500621E92 /* encode.c */; };
 		5CDD87B81E43BC0500621E92 /* entropy_coding.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD87821E43BC0500621E92 /* entropy_coding.c */; };
 		5CDD87B91E43BC0500621E92 /* entropy_coding.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD87831E43BC0500621E92 /* entropy_coding.h */; };
-		5CDD87BB1E43BC0500621E92 /* fft.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CDD87851E43BC0500621E92 /* fft.h */; };
 		5CDD87BC1E43BC0500621E92 /* filter_functions.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD87861E43BC0500621E92 /* filter_functions.c */; };
 		5CDD87BF1E43BC0500621E92 /* filterbanks.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD87891E43BC0500621E92 /* filterbanks.c */; };
 		5CDD87C01E43BC0500621E92 /* intialize.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD878A1E43BC0500621E92 /* intialize.c */; };
@@ -5602,7 +5601,6 @@
 		5CDD87811E43BC0500621E92 /* encode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = encode.c; path = source/encode.c; sourceTree = "<group>"; };
 		5CDD87821E43BC0500621E92 /* entropy_coding.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = entropy_coding.c; path = source/entropy_coding.c; sourceTree = "<group>"; };
 		5CDD87831E43BC0500621E92 /* entropy_coding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = entropy_coding.h; path = source/entropy_coding.h; sourceTree = "<group>"; };
-		5CDD87851E43BC0500621E92 /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fft.h; path = source/fft.h; sourceTree = "<group>"; };
 		5CDD87861E43BC0500621E92 /* filter_functions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = filter_functions.c; path = source/filter_functions.c; sourceTree = "<group>"; };
 		5CDD87891E43BC0500621E92 /* filterbanks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = filterbanks.c; path = source/filterbanks.c; sourceTree = "<group>"; };
 		5CDD878A1E43BC0500621E92 /* intialize.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = intialize.c; path = source/intialize.c; sourceTree = "<group>"; };
@@ -10371,7 +10369,6 @@
 				5CDD87801E43BC0500621E92 /* encode_lpc_swb.h */,
 				5CDD87821E43BC0500621E92 /* entropy_coding.c */,
 				5CDD87831E43BC0500621E92 /* entropy_coding.h */,
-				5CDD87851E43BC0500621E92 /* fft.h */,
 				5CDD87861E43BC0500621E92 /* filter_functions.c */,
 				5CDD87891E43BC0500621E92 /* filterbanks.c */,
 				5CDD878A1E43BC0500621E92 /* intialize.c */,
@@ -12095,7 +12092,6 @@
 				41E02C8E212734B900C27CD6 /* fec_rate_table.h in Headers */,
 				5CDD887C1E43BE3C00621E92 /* fec_test_helper.h in Headers */,
 				41F2638921267F4000274F59 /* fft.h in Headers */,
-				5CDD87BB1E43BC0500621E92 /* fft.h in Headers */,
 				41433D221F79B33400387B4D /* fft.h in Headers */,
 				41F2636F21267B3E00274F59 /* fft4g.h in Headers */,
 				41F9BFD32051DDE500ABF0B9 /* fft_buffer.h in Headers */,
