@@ -1,3 +1,23 @@
+2018-08-29  Daniel Bates  <dabates@apple.com>
+
+        lldb-webkit: KeyError thrown for uninitialized OptionSet
+        https://bugs.webkit.org/show_bug.cgi?id=189070
+
+        Reviewed by Simon Fraser.
+
+        Do not compute what enumerators are in an uninitialized OptionSet. A local OptionSet variable
+        is only considered initialized when execution passes over its assignment regardless of whether
+        the variable is in scope.
+
+        The LLDB Python API does not provide a way to determine whether an variable is initialized.
+        So, we use a simple heuristic: when the value of the OptionSet is greater than the value
+        of the bitmask with all enumerators set then we consider the OptionSet to be garbage (i.e.
+        uninitialized memory). When the variable is finally initialized LLDB will notify us to update
+        our state.
+
+        * lldb/lldb_webkit.py:
+        (WTFOptionSetProvider.update):
+
 2018-08-29  Chris Dumez  <cdumez@apple.com>
 
         [PSON] We should only process-swap when eTLD+1 changes on navigation

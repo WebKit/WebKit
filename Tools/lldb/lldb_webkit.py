@@ -612,16 +612,23 @@ class WTFOptionSetProvider:
         return None
 
     def update(self):
-        self.storage = self.valobj.GetChildMemberWithName('m_storage')
+        self.storage = self.valobj.GetChildMemberWithName('m_storage')  # May be uninitialized memory
+        self._elements = []
+        self.size = 0
 
         template_argument_sbType = self.valobj.GetType().GetTemplateArgumentType(0)
         enumerator_value_to_name_map = {sbTypeEnumMember.GetValueAsUnsigned(): sbTypeEnumMember.GetName() for sbTypeEnumMember in template_argument_sbType.get_enum_members_array()}
         if not enumerator_value_to_name_map:
             return
 
+        bitmask_with_all_options_set = sum(enumerator_value_to_name_map)
+        bitmask = self.storage.GetValueAsUnsigned(0)
+        if bitmask > bitmask_with_all_options_set:
+            return  # self.valobj is uninitialized memory
+
+        # self.valobj looks like it contains a valid value.
         # Iterate from least significant bit to most significant bit.
         elements = []
-        bitmask = self.storage.GetValueAsUnsigned(0)
         while bitmask > 0:
             current = bitmask & -bitmask  # Isolate the rightmost set bit.
             elements.append((enumerator_value_to_name_map[current], current))  # e.g. ('Spelling', 4)
