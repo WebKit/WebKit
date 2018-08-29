@@ -80,11 +80,11 @@ WI.StackTrace = class StackTrace
         if (/^[^a-z$_]/i.test(stack[0]))
             return false;
 
+        const reasonablyLongProtocolLength = 10;
         const reasonablyLongLineLength = 500;
         const reasonablyLongNativeMethodLength = 120;
-        const stackTraceLine = `(.{1,${reasonablyLongLineLength}}:\\d+:\\d+|eval code|.{1,${reasonablyLongNativeMethodLength}}@\\[native code\\])`;
-        const stackTrace = new RegExp(`^${stackTraceLine}(\\n${stackTraceLine})*$`, "g");
-
+        const stackTraceLine = `(global code|eval code|module code|\\w+)?([^:]{1,${reasonablyLongProtocolLength}}://[^:]{1,${reasonablyLongLineLength}}:\\d+:\\d+|[^@]{1,${reasonablyLongNativeMethodLength}}@\\[native code\\])`;
+        const stackTrace = new RegExp(`^${stackTraceLine}([\\n\\r]${stackTraceLine})+$`, "g");
         return stackTrace.test(stack);
     }
 

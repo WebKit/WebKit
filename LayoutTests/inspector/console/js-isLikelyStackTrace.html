@@ -95,6 +95,25 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "testFormattedStrings",
+        test(resolve, reject) {
+            const strings = [
+                "video:1:2",
+                "video/mp4:1:2",
+                "video/mp4 : 11:22:33-44:55:66",
+                "http://video:1:2",
+                "http://video/mp4:1:2",
+                "http://video/mp4 : 11:22:33-44:55:66",
+            ];
+            
+            for (let string of strings)
+                InspectorTest.expectThat(!WI.StackTrace.isLikelyStackTrace(string), `"${string}" should not be a stacktrace.`);
+
+            resolve();
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

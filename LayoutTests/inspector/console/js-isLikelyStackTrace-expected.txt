@@ -18,3 +18,11 @@ FAIL: Should be a stacktrace.
     Expected: truthy
     Actual: false
 
+-- Running test case: testFormattedStrings
+PASS: "video:1:2" should not be a stacktrace.
+PASS: "video/mp4:1:2" should not be a stacktrace.
+PASS: "video/mp4 : 11:22:33-44:55:66" should not be a stacktrace.
+PASS: "http://video:1:2" should not be a stacktrace.
+PASS: "http://video/mp4:1:2" should not be a stacktrace.
+PASS: "http://video/mp4 : 11:22:33-44:55:66" should not be a stacktrace.
+

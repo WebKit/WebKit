@@ -1,3 +1,14 @@
+2018-08-28  Devin Rousso  <drousso@apple.com>
+
+        console.log() shows (anonymous function) instead of the passed string when a certain format is used
+        https://bugs.webkit.org/show_bug.cgi?id=188946
+        <rdar://problem/43756428>
+
+        Reviewed by Brian Burg.
+
+        * inspector/console/js-isLikelyStackTrace-expected.txt:
+        * inspector/console/js-isLikelyStackTrace.html:
+
 2018-08-28  Truitt Savell  <tsavell@apple.com>
 
         Edditing test expectations from webkit.org/b/188985.
