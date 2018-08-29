@@ -1,3 +1,26 @@
+2018-08-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Modernize SlotAssignment
+        https://bugs.webkit.org/show_bug.cgi?id=189075
+
+        Reviewed by Antti Koivisto.
+
+        Modernized the code related to SlotAssignment. Namely, use HashMap<>::get instead of HashMap<>::find,
+        and use HashMap<>::ensure instead of HashMap<>::add. Also use WeakPtr to keep track of HTMLSlotElement
+        instead of a raw pointer.
+
+        * dom/SlotAssignment.cpp:
+        (WebCore::SlotAssignment::findAssignedSlot):
+        (WebCore::SlotAssignment::addSlotElementByName):
+        (WebCore::SlotAssignment::removeSlotElementByName):
+        (WebCore::SlotAssignment::didChangeSlot):
+        (WebCore::SlotAssignment::findFirstSlotElement):
+        (WebCore::SlotAssignment::resolveAllSlotElements):
+        (WebCore::SlotAssignment::assignToSlot):
+        * dom/SlotAssignment.h:
+        (WebCore::SlotAssignment::Slot::Slot): Renamed from SlotInfo since "Info" doesn't add any value.
+        * html/HTMLSlotElement.h:
+
 2018-08-29  Chris Dumez  <cdumez@apple.com>
 
         [PSON] We should only process-swap when eTLD+1 changes on navigation

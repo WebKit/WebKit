@@ -30,6 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 
@@ -61,33 +62,29 @@ public:
     virtual void hostChildElementDidChange(const Element&, ShadowRoot&);
 
 private:
-    struct SlotInfo {
+    struct Slot {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        SlotInfo() { }
-        SlotInfo(HTMLSlotElement& slotElement)
-            : element(&slotElement)
-            , elementCount(1)
-        { }
+        Slot() { }
 
         bool hasSlotElements() { return !!elementCount; }
         bool hasDuplicatedSlotElements() { return elementCount > 1; }
         bool shouldResolveSlotElement() { return !element && elementCount; }
 
-        HTMLSlotElement* element { nullptr };
+        WeakPtr<HTMLSlotElement> element;
         unsigned elementCount { 0 };
         Vector<Node*> assignedNodes;
     };
     
     virtual const AtomicString& slotNameForHostChild(const Node&) const;
 
-    HTMLSlotElement* findFirstSlotElement(SlotInfo&, ShadowRoot&);
+    HTMLSlotElement* findFirstSlotElement(Slot&, ShadowRoot&);
     void resolveAllSlotElements(ShadowRoot&);
 
     void assignSlots(ShadowRoot&);
     void assignToSlot(Node& child, const AtomicString& slotName);
 
-    HashMap<AtomicString, std::unique_ptr<SlotInfo>> m_slots;
+    HashMap<AtomicString, std::unique_ptr<Slot>> m_slots;
 
 #ifndef NDEBUG
     HashSet<HTMLSlotElement*> m_slotElementsForConsistencyCheck;
