@@ -1,3 +1,18 @@
+2018-08-29  Thomas Denney  <tdenney@apple.com>
+
+        [WHLSL] Ensure that isLValue is copied by the rewriter
+        https://bugs.webkit.org/show_bug.cgi?id=189083
+
+        The value of isLValue was not propagated when new TernaryExpressions are
+        created in Rewriter.
+
+        Reviewed by Myles C. Maxfield.
+
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitTernaryExpression):
+        * WebGPUShadingLanguageRI/Test.js: Add new test to verify the value is
+        propagated.
+
 2018-08-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Add more functions to the standard library

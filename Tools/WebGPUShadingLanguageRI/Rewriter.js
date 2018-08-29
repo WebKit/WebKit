@@ -167,7 +167,9 @@ class Rewriter {
 
     visitTernaryExpression(node)
     {
-        return new TernaryExpression(node.origin, node.predicate.visit(this), node.bodyExpression.visit(this), node.elseExpression.visit(this));
+        let result = new TernaryExpression(node.origin, node.predicate.visit(this), node.bodyExpression.visit(this), node.elseExpression.visit(this));
+        result.isLValue = node.isLValue;
+        return result;
     }
     
     _handlePropertyAccessExpression(result, node)

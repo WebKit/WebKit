@@ -273,6 +273,29 @@ tests.ternaryExpression = function() {
         (e) => e instanceof WTypeError);
 }
 
+tests.ternaryExpressionIsLValue = function() {
+    function ternaryExpressionIsLValue(node)
+    {
+        let isLValue;
+        class TernaryExpressionVisitor extends Visitor {
+            visitTernaryExpression(node)
+            {
+                isLValue = node.isLValue;
+            }
+        }
+        node.visit(new TernaryExpressionVisitor());
+        return isLValue;
+    }
+
+    let program = doPrep(`int foo() { return 0 < 1 ? 0 : 1; }`);
+    if (ternaryExpressionIsLValue(program))
+        throw new Error(`r-value ternary expression incorrectly parsed as l-value`);
+
+    program = doPrep(`void foo() { int x; int y; (0 < 1 ? x : y) = 1; }`);
+    if (!ternaryExpressionIsLValue(program))
+        throw new Error(`l-value ternary expression incorrectly parsed as r-value`);
+}
+
 tests.literalBool = function() {
     let program = doPrep("bool foo() { return true; }");
     checkBool(program, callFunction(program, "foo", []), true);
