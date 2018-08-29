@@ -427,6 +427,10 @@ css3/viewport-percentage-lengths/vh-auto-size.html [ Skip ]
 
 webkit.org/b/170877 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-with-reserved-words.html [ Pass Timeout ]
 
+webkit.org/b/189091 imported/w3c/web-platform-tests/intersection-observer/bounding-box.html [ Pass Failure ]
+webkit.org/b/189091 imported/w3c/web-platform-tests/intersection-observer/display-none.html [ Pass Failure ]
+webkit.org/b/189091 imported/w3c/web-platform-tests/intersection-observer/containing-block.html [ Pass Failure ]
+
 webkit.org/b/180554 imported/w3c/web-platform-tests/xhr/event-upload-progress-crossorigin.htm [ Skip ]
 
 webkit.org/b/187372 imported/w3c/web-platform-tests/IndexedDB/interfaces.any.worker.html [ Pass Timeout Slow ]
