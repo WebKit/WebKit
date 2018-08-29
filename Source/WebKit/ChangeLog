@@ -1,3 +1,12 @@
+2018-08-28  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Use CMake's FindFreetype
+        https://bugs.webkit.org/show_bug.cgi?id=189071
+
+        Reviewed by Michael Catanzaro.
+
+        * PlatformWPE.cmake:
+
 2018-08-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Work towards: [iOS] Consolidate the implementations of readString, stringForType, and readURL in PlatformPasteboardIOS.mm
