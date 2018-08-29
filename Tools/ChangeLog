@@ -1,3 +1,32 @@
+2018-08-29  Jer Noble  <jer.noble@apple.com>
+
+        Muted elements do not have their Now Playing status updated when unmuted.
+        https://bugs.webkit.org/show_bug.cgi?id=189069
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/NowPlaying.mm: Added.
+        (userInfoHasNowPlayingApplicationPID):
+        (getNowPlayingClient):
+        (getNowPlayingClientPid):
+        (NowPlayingTest::webView):
+        (NowPlayingTest::configuration):
+        (NowPlayingTest::webViewPid):
+        (NowPlayingTest::loadPage):
+        (NowPlayingTest::runScriptWithUserGesture):
+        (NowPlayingTest::runScriptWithoutUserGesture):
+        (NowPlayingTest::executeAndWaitForPlaying):
+        (NowPlayingTest::executeAndWaitForWebViewToBecomeNowPlaying):
+        (NowPlayingTest::observers):
+        (NowPlayingTest::addObserver):
+        (NowPlayingTest::removeObserver):
+        (NowPlayingTest::notificationCallback):
+        (NowPlayingTest::receivedNotification):
+        (NowPlayingTest::performAfterReceivingNotification):
+        (TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/now-playing.html: Added.
+
 2018-08-29  Thomas Denney  <tdenney@apple.com>
 
         [WHLSL] Ensure that isLValue is copied by the rewriter

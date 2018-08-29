@@ -103,6 +103,7 @@ typedef uint32_t MRMediaRemoteCommandHandlerStatus;
 typedef uint32_t MRMediaRemoteError;
 typedef struct _MROrigin *MROriginRef;
 typedef struct _MRMediaRemoteCommandInfo *MRMediaRemoteCommandInfoRef;
+typedef void *MRNowPlayingClientRef;
 typedef void(^MRMediaRemoteAsyncCommandHandlerBlock)(MRMediaRemoteCommand command, CFDictionaryRef options, void(^completion)(CFArrayRef));
 
 WTF_EXTERN_C_BEGIN

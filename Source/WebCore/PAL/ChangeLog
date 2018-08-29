@@ -1,3 +1,12 @@
+2018-08-29  Jer Noble  <jer.noble@apple.com>
+
+        Muted elements do not have their Now Playing status updated when unmuted.
+        https://bugs.webkit.org/show_bug.cgi?id=189069
+
+        Reviewed by Eric Carlson.
+
+        * pal/spi/mac/MediaRemoteSPI.h:
+
 2018-08-27  Keith Rollin  <krollin@apple.com>
 
         Unreviewed build fix -- disable LTO for production builds

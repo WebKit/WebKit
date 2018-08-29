@@ -98,6 +98,7 @@ public:
     virtual void sessionStateChanged(PlatformMediaSession&);
     virtual void sessionDidEndRemoteScrubbing(const PlatformMediaSession&) { };
     virtual void clientCharacteristicsChanged(PlatformMediaSession&) { }
+    virtual void sessionCanProduceAudioChanged(PlatformMediaSession&);
 
 #if PLATFORM(IOS)
     virtual void configureWireLessTargetMonitoring() { }
@@ -110,7 +111,6 @@ public:
     Vector<PlatformMediaSession*> currentSessionsMatching(const WTF::Function<bool(const PlatformMediaSession&)>&);
 
     void sessionIsPlayingToWirelessPlaybackTargetChanged(PlatformMediaSession&);
-    void sessionCanProduceAudioChanged(PlatformMediaSession&);
 
 protected:
     friend class PlatformMediaSession;

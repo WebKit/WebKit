@@ -104,6 +104,12 @@ void MediaSessionManagerMac::clientCharacteristicsChanged(PlatformMediaSession&)
     LOG(Media, "MediaSessionManagerMac::clientCharacteristicsChanged");
     scheduleUpdateNowPlayingInfo();
 }
+    
+void MediaSessionManagerMac::sessionCanProduceAudioChanged(PlatformMediaSession& session)
+{
+    PlatformMediaSessionManager::sessionCanProduceAudioChanged(session);
+    scheduleUpdateNowPlayingInfo();
+}
 
 PlatformMediaSession* MediaSessionManagerMac::nowPlayingEligibleSession()
 {

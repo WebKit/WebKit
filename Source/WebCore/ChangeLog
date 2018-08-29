@@ -1,3 +1,17 @@
+2018-08-29  Jer Noble  <jer.noble@apple.com>
+
+        Muted elements do not have their Now Playing status updated when unmuted.
+        https://bugs.webkit.org/show_bug.cgi?id=189069
+
+        Reviewed by Eric Carlson.
+
+        Schedule an updateNowPlayingInfo() when an element becomes unmuted.
+
+        * platform/audio/PlatformMediaSessionManager.h:
+        * platform/audio/mac/MediaSessionManagerMac.h:
+        * platform/audio/mac/MediaSessionManagerMac.mm:
+        (WebCore::MediaSessionManagerMac::sessionCanProduceAudioChanged):
+
 2018-08-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Use the null string instead of std::nullopt for missing attachment file names and content types
