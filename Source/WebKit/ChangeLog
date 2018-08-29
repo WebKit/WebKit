@@ -1,3 +1,21 @@
+2018-08-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        Followup (r235427): Use the null string instead of std::nullopt when no suggestion is selected
+        https://bugs.webkit.org/show_bug.cgi?id=189095
+
+        Reviewed by Tim Horton.
+
+        Followup to r235427 as per Darin's comment.
+
+        We can avoid unnecessary use of std::optional by taking advantage of the fact that
+        WTF::String already has a null value distinct from the empty value.
+
+        No change in behavior.
+
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        (WebKit::WebDataListSuggestionsDropdownMac::selectOption):
+        (-[WKDataListSuggestionsView currentSelectedString]):
+
 2018-08-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Use the null string instead of std::nullopt for missing attachment file names and content types
