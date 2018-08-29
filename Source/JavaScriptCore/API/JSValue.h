@@ -30,8 +30,6 @@
 
 #import <CoreGraphics/CGGeometry.h>
 
-NS_ASSUME_NONNULL_BEGIN
-
 @class JSContext;
 
 /*!
@@ -50,9 +48,9 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @interface JSValue : NSObject
 
 #if (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED < JSC_MAC_VERSION_TBA) || (defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && __IPHONE_OS_VERSION_MIN_REQUIRED < JSC_IOS_VERSION_TBA)
-typedef NSString * JSValueProperty;
+typedef NSString *JSValueProperty;
 #else
-typedef id _Nullable JSValueProperty;
+typedef id JSValueProperty;
 #endif
 
 /*!
@@ -71,7 +69,7 @@ typedef id _Nullable JSValueProperty;
 @param value The Objective-C object to be converted.
 @result The new JSValue.
 */
-+ (JSValue *)valueWithObject:(nullable id)value inContext:(JSContext *)context;
++ (JSValue *)valueWithObject:(id)value inContext:(JSContext *)context;
 
 /*!
 @method
@@ -218,7 +216,7 @@ typedef id _Nullable JSValueProperty;
  to the conversion rules specified above.
 @result The Objective-C representation of this JSValue.
 */
-- (nullable id)toObject;
+- (id)toObject;
 
 /*!
 @method
@@ -227,7 +225,7 @@ typedef id _Nullable JSValueProperty;
  If the result is not of the specified Class then <code>nil</code> will be returned.
 @result An Objective-C object of the specified Class or <code>nil</code>.
 */
-- (nullable id)toObjectOfClass:(Class)expectedClass;
+- (id)toObjectOfClass:(Class)expectedClass;
 
 /*!
 @method
@@ -273,7 +271,7 @@ typedef id _Nullable JSValueProperty;
  to the rules specified by the JavaScript language.
 @result The NSNumber result of the conversion.
 */
-- (nullable NSNumber *)toNumber;
+- (NSNumber *)toNumber;
 
 /*!
 @method
@@ -282,7 +280,7 @@ typedef id _Nullable JSValueProperty;
  by the JavaScript language.
 @result The NSString containing the result of the conversion.
 */
-- (nullable NSString *)toString;
+- (NSString *)toString;
 
 /*!
 @method
@@ -291,7 +289,7 @@ typedef id _Nullable JSValueProperty;
  since 1970 which is then used to create a new NSDate instance.
 @result The NSDate created using the converted time interval.
 */
-- (nullable NSDate *)toDate;
+- (NSDate *)toDate;
 
 /*!
 @method
@@ -305,7 +303,7 @@ typedef id _Nullable JSValueProperty;
 @result The NSArray containing the recursively converted contents of the 
  converted JavaScript array.
 */
-- (nullable NSArray *)toArray;
+- (NSArray *)toArray;
 
 /*!
 @method
@@ -317,7 +315,7 @@ typedef id _Nullable JSValueProperty;
 @result The NSDictionary containing the recursively converted contents of
  the converted JavaScript object.
 */
-- (nullable NSDictionary *)toDictionary;
+- (NSDictionary *)toDictionary;
 
 /*!
 @methodgroup Accessing Properties
@@ -337,7 +335,7 @@ typedef id _Nullable JSValueProperty;
 @abstract Set a property on a JSValue.
 @discussion Corresponds to the JavaScript operation <code>object[property] = value</code>. After macOS TBA and iOS TBA, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS TBA and iOS TBA, 'property' was expected to be an NSString *.
 */
-- (void)setValue:(nullable id)value forProperty:(JSValueProperty)property;
+- (void)setValue:(id)value forProperty:(JSValueProperty)property;
 
 /*!
 @method
@@ -362,7 +360,7 @@ typedef id _Nullable JSValueProperty;
 @discussion This method may be used to create a data or accessor property on an object.
  This method operates in accordance with the Object.defineProperty method in the JavaScript language. After macOS TBA and iOS TBA, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS TBA and iOS TBA, 'property' was expected to be an NSString *.
 */
-- (void)defineProperty:(JSValueProperty)property descriptor:(nullable id)descriptor;
+- (void)defineProperty:(JSValueProperty)property descriptor:(id)descriptor;
 
 /*!
 @method
@@ -378,7 +376,7 @@ typedef id _Nullable JSValueProperty;
 @discussion For JSValues that are JavaScript arrays, indices greater than 
  UINT_MAX - 1 will not affect the length of the array.
 */
-- (void)setValue:(nullable id)value atIndex:(NSUInteger)index;
+- (void)setValue:(id)value atIndex:(NSUInteger)index;
 
 /*!
 @functiongroup Checking JavaScript Types
@@ -445,13 +443,13 @@ typedef id _Nullable JSValueProperty;
 @method
 @abstract Compare two JSValues using JavaScript's <code>===</code> operator.
 */
-- (BOOL)isEqualToObject:(nullable id)value;
+- (BOOL)isEqualToObject:(id)value;
 
 /*!
 @method
 @abstract Compare two JSValues using JavaScript's <code>==</code> operator.
 */
-- (BOOL)isEqualWithTypeCoercionToObject:(nullable id)value;
+- (BOOL)isEqualWithTypeCoercionToObject:(id)value;
 
 /*!
 @method
@@ -460,7 +458,7 @@ typedef id _Nullable JSValueProperty;
  If an object other than a JSValue is passed, it will first be converted according to
  the aforementioned rules.
 */
-- (BOOL)isInstanceOf:(nullable id)value;
+- (BOOL)isInstanceOf:(id)value;
 
 /*!
 @methodgroup Calling Functions and Constructors
@@ -473,7 +471,7 @@ typedef id _Nullable JSValueProperty;
 @param arguments The arguments to pass to the function.
 @result The return value of the function call. 
 */
-- (JSValue *)callWithArguments:(nullable NSArray *)arguments;
+- (JSValue *)callWithArguments:(NSArray *)arguments;
 
 /*!
 @method
@@ -482,7 +480,7 @@ typedef id _Nullable JSValueProperty;
 @param arguments The arguments to pass to the constructor.
 @result The return value of the constructor call.
 */
-- (JSValue *)constructWithArguments:(nullable NSArray *)arguments;
+- (JSValue *)constructWithArguments:(NSArray *)arguments;
 
 /*!
 @method
@@ -494,7 +492,7 @@ typedef id _Nullable JSValueProperty;
 @param arguments The arguments to pass to the method.
 @result The return value of the method call.
 */
-- (JSValue *)invokeMethod:(NSString *)method withArguments:(nullable NSArray *)arguments;
+- (JSValue *)invokeMethod:(NSString *)method withArguments:(NSArray *)arguments;
 
 @end
 
@@ -605,8 +603,8 @@ Create a JSValue from a CGRect.
 
 - (JSValue *)objectForKeyedSubscript:(JSValueProperty)key;
 - (JSValue *)objectAtIndexedSubscript:(NSUInteger)index;
-- (void)setObject:(nullable id)object forKeyedSubscript:(JSValueProperty)key;
-- (void)setObject:(nullable id)object atIndexedSubscript:(NSUInteger)index;
+- (void)setObject:(id)object forKeyedSubscript:(JSValueProperty)key;
+- (void)setObject:(id)object atIndexedSubscript:(NSUInteger)index;
 
 @end
 
@@ -692,8 +690,6 @@ JS_EXPORT extern NSString * const JSPropertyDescriptorSetKey;
 #ifdef __cplusplus
 } // extern "C"
 #endif
-
-NS_ASSUME_NONNULL_END
 
 #endif
 
