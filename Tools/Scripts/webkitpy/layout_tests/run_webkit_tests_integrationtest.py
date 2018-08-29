@@ -67,6 +67,10 @@ def parse_args(extra_args=None, tests_included=False, new_results=False, print_n
 
     if not '--child-processes' in extra_args:
         args.extend(['--child-processes', 1])
+
+    if not '--world-leaks' in extra_args:
+        args.append('--world-leaks')
+
     args.extend(extra_args)
     if not tests_included:
         # We use the glob to test that globbing works.
@@ -331,6 +335,9 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
     def test_gc_between_tests(self):
         self.assertTrue(passing_run(['--gc-between-tests']))
+
+    def test_check_for_world_leaks(self):
+        self.assertTrue(passing_run(['--world-leaks']))
 
     def test_complex_text(self):
         self.assertTrue(passing_run(['--complex-text']))

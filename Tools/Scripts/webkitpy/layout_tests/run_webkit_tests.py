@@ -290,6 +290,7 @@ def parse_args(args):
         optparse.make_option('--display-server', choices=['xvfb', 'xorg', 'weston', 'wayland'], default='xvfb',
             help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
                  '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.'),
+        optparse.make_option("--world-leaks", action="store_true", default=False, help="Check for world leaks (currently, only documents). Differs from --leaks in that this uses internal instrumentation, rather than external tools."),
     ]))
 
     option_group_definitions.append(("iOS Options", [

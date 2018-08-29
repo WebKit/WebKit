@@ -43,12 +43,14 @@ def get_result(test_name, result_type=test_expectations.PASS, run_time=0):
         failures = [test_failures.FailureAudioMismatch()]
     elif result_type == test_expectations.CRASH:
         failures = [test_failures.FailureCrash()]
+    elif result_type == test_expectations.LEAK:
+        failures = [test_failures.FailureDocumentLeak(['http://localhost:8000/failures/expected/leak.html'])]
     return test_results.TestResult(test_name, failures=failures, test_run_time=run_time)
 
 
 def run_results(port):
     tests = ['passes/text.html', 'failures/expected/timeout.html', 'failures/expected/crash.html', 'failures/expected/hang.html',
-             'failures/expected/audio.html']
+             'failures/expected/audio.html', 'failures/expected/leak.html']
     expectations = test_expectations.TestExpectations(port, tests)
     expectations.parse_all_expectations()
     return test_run_results.TestRunResults(expectations, len(tests))
@@ -63,16 +65,19 @@ def summarized_results(port, expected, passing, flaky, include_passes=False):
         initial_results.add(get_result('failures/expected/audio.html', test_expectations.AUDIO), expected, test_is_slow)
         initial_results.add(get_result('failures/expected/timeout.html', test_expectations.TIMEOUT), expected, test_is_slow)
         initial_results.add(get_result('failures/expected/crash.html', test_expectations.CRASH), expected, test_is_slow)
+        initial_results.add(get_result('failures/expected/leak.html', test_expectations.LEAK), expected, test_is_slow)
     elif passing:
         initial_results.add(get_result('passes/text.html'), expected, test_is_slow)
         initial_results.add(get_result('failures/expected/audio.html'), expected, test_is_slow)
         initial_results.add(get_result('failures/expected/timeout.html'), expected, test_is_slow)
         initial_results.add(get_result('failures/expected/crash.html'), expected, test_is_slow)
+        initial_results.add(get_result('failures/expected/leak.html'), expected, test_is_slow)
     else:
         initial_results.add(get_result('passes/text.html', test_expectations.TIMEOUT), expected, test_is_slow)
         initial_results.add(get_result('failures/expected/audio.html', test_expectations.AUDIO), expected, test_is_slow)
         initial_results.add(get_result('failures/expected/timeout.html', test_expectations.CRASH), expected, test_is_slow)
         initial_results.add(get_result('failures/expected/crash.html', test_expectations.TIMEOUT), expected, test_is_slow)
+        initial_results.add(get_result('failures/expected/leak.html', test_expectations.CRASH), expected, test_is_slow)
 
         # we only list hang.html here, since normally this is WontFix
         initial_results.add(get_result('failures/expected/hang.html', test_expectations.TIMEOUT), expected, test_is_slow)
@@ -82,6 +87,7 @@ def summarized_results(port, expected, passing, flaky, include_passes=False):
         retry_results.add(get_result('passes/text.html'), True, test_is_slow)
         retry_results.add(get_result('failures/expected/timeout.html'), True, test_is_slow)
         retry_results.add(get_result('failures/expected/crash.html'), True, test_is_slow)
+        retry_results.add(get_result('failures/expected/leak.html'), True, test_is_slow)
     else:
         retry_results = None
 

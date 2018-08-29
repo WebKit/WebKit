@@ -43,7 +43,7 @@ _log = logging.getLogger(__name__)
 # FIXME: range() starts with 0 which makes if expectation checks harder
 # as PASS is 0.
 (PASS, FAIL, TEXT, IMAGE, IMAGE_PLUS_TEXT, AUDIO, TIMEOUT, CRASH, SKIP, WONTFIX,
- SLOW, DUMPJSCONSOLELOGINSTDERR, REBASELINE, MISSING, FLAKY, NOW, NONE) = range(17)
+ SLOW, LEAK, DUMPJSCONSOLELOGINSTDERR, REBASELINE, MISSING, FLAKY, NOW, NONE) = range(18)
 
 # FIXME: Perhas these two routines should be part of the Port instead?
 BASELINE_SUFFIX_LIST = ('png', 'wav', 'txt')
@@ -241,9 +241,11 @@ class TestExpectationParser(object):
     # FIXME: Update the original modifiers list and remove this once the old syntax is gone.
     _expectation_tokens = {
         'Crash': 'CRASH',
+        'Leak': 'LEAK',
         'Failure': 'FAIL',
         'ImageOnlyFailure': 'IMAGE',
         'Missing': 'MISSING',
+        'Leak': 'LEAK',
         'Pass': 'PASS',
         'Rebaseline': 'REBASELINE',
         'Skip': 'SKIP',
@@ -794,6 +796,7 @@ class TestExpectations(object):
                     'timeout': TIMEOUT,
                     'crash': CRASH,
                     'missing': MISSING,
+                    'leak': LEAK,
                     'skip': SKIP}
 
     # (aggregated by category, pass/fail/skip, type)
@@ -806,9 +809,10 @@ class TestExpectations(object):
                                 AUDIO: 'audio failures',
                                 CRASH: 'crashes',
                                 TIMEOUT: 'timeouts',
-                                MISSING: 'missing results'}
+                                MISSING: 'missing results',
+                                LEAK: 'leaks'}
 
-    EXPECTATION_ORDER = (PASS, CRASH, TIMEOUT, MISSING, FAIL, IMAGE, SKIP)
+    EXPECTATION_ORDER = (PASS, CRASH, TIMEOUT, MISSING, FAIL, IMAGE, LEAK, SKIP)
 
     BUILD_TYPES = ('debug', 'release')
 

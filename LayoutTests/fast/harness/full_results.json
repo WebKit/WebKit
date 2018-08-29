@@ -11,6 +11,26 @@ ADD_RESULTS({
                         "report": "REGRESSION",
                         "expected": "PASS",
                         "actual": "TEXT"
+                    },
+                    "image-fail-with-leak.html": {
+                        "report": "REGRESSION",
+                        "expected": "PASS",
+                        "actual": "IMAGE LEAK",
+                        "image_diff_percent": 0.26,
+                        "leaks": [{
+                            "document": "http://localhost:8800/WebKit/cache-storage/image-fail-with-leak.html",
+                        }]
+                    },
+                    "leaky-worker.html": {
+                        "report": "REGRESSION",
+                        "expected": "PASS",
+                        "actual": "LEAK",
+                        "has_stderr": true,
+                        "leaks": [{
+                            "document": "http://localhost:8800/WebKit/cache-storage/leaky-worker.html",
+                            }, {
+                            "document": "http://localhost:8800/WebKit/cache-storage/resources/leaky-worker-subframe.html"
+                        }]
                     }
                 }
             },
@@ -69,6 +89,14 @@ ADD_RESULTS({
                     "expected": "IMAGE",
                     "actual": "PASS",
                     "reftest_type": ["!="]
+                },
+                "spelling-leaky-ref.html": {
+                    "expected": "LEAK",
+                    "actual": "LEAK",
+                    "reftest_type": ["!="],
+                    "leaks": [{
+                        "document": "file:///Volumes/Data/slave/highsierra-release-tests-wk2/build/LayoutTests/editing/spelling/spelling-leaky-ref.html"
+                    }]
                 }
             }
         },
@@ -121,20 +149,20 @@ ADD_RESULTS({
         }
     },
     "skipped": 5367,
-    "num_regressions": 2,
+    "num_regressions": 7,
     "other_crashes": {
         "DumpRenderTree-54888": {},
         "DumpRenderTree-56804": {},
     },
     "interrupted": false,
-    "num_missing": 0,
+    "num_missing": 1,
     "layout_tests_dir": "/Volumes/Data/slave/highsierra-release-tests-wk2/build/LayoutTests",
     "version": 4,
     "num_passes": 49387,
     "pixel_tests_enabled": false,
     "date": "05:38PM on August 15, 2018",
     "has_pretty_patch": true,
-    "fixable": 6360,
+    "fixable": 5,
     "num_flaky": 0,
     "uses_expectations_file": true,
     "revision": "234905"

@@ -950,6 +950,9 @@ void TestController::updateLiveDocumentsAfterTest()
 
 void TestController::checkForWorldLeaks()
 {
+    if (!TestController::singleton().mainWebView())
+        return;
+
     AsyncTask([]() {
         // This runs at the end of a series of tests. It clears caches, runs a GC and then fetches the list of documents.
         WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CheckForWorldLeaks"));

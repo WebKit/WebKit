@@ -1,6 +1,7 @@
 Use the i, j, k and l keys to navigate, e, c to expand and collapse, and f to flag
 expand all collapse all options
 Only unexpected results
+Toggle images
 Use newlines in flagged list
 Tests that crashed (1): flag all
 
@@ -9,12 +10,14 @@ Other crashes (2): flag all
 
 +DumpRenderTree-54888	crash log
 +DumpRenderTree-56804	crash log
-Tests that failed text/pixel/audio diff (3): flag all
+Tests that failed text/pixel/audio diff (5): flag all
 
- test 	results		actual failure	expected failure	history
+ test 	results	image results	actual failure	expected failure	history
 +css1/font_properties/font_family.html	expected actual diff pretty diff	images	text missing		history
 +http/tests/storageAccess/request-storage-access-top-frame.html	expected actual diff pretty diff		text	pass timeout	history
 +http/wpt/cache-storage/cache-put-keys.https.any.worker.html	expected actual diff pretty diff		text	pass	history
++http/wpt/cache-storage/image-fail-with-leak.html		images diff (0.26%)	image leak	pass	history
++http/wpt/cache-storage/leaky-worker.html			leak	pass	history
 Tests that had no expected results (probably new) (1): flag all
 
 test	results	image results	actual failure	expected failure	history
@@ -22,9 +25,10 @@ svg/batik/smallFonts.svg			missing		history
 Tests that timed out (1): flag all
 
 +platform/mac/media/audio-session-category-video-paused.html	expected actual diff pretty diff	history
-Tests that had stderr output (2): flag all
+Tests that had stderr output (3): flag all
 
 +http/tests/contentextensions/top-url.html	stderr	history
++http/wpt/cache-storage/leaky-worker.html	stderr	history
 +platform/mac/media/audio-session-category-video-paused.html	stderr	history
 Flaky tests (failed the first run and passed on retry) (1): flag all
 

@@ -1,3 +1,79 @@
+2018-08-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Teach webkitpy how to check leaks and treat leaks as test failures
+        https://bugs.webkit.org/show_bug.cgi?id=189067
+
+        Reviewed by Darin Adler.
+        
+        Add a new "--world-leaks" argument to run-webkit-tests. When enabled, DRT/WTR are launched
+        with a --world-leaks argument (which is renamed in this patch for consistency). This enables the
+        behavior added in r235408, namely that they check for leaked documents after each test, and at
+        the end of one (if --run-singly) or a set of tests run in a single DRT/WTR instance handle the
+        "#CHECK FOR WORLD LEAKS" command to get still-live documents.
+        
+        LayoutTestRunner in webkitpy now has the notion of doing "post-tests work", called via _finished_test_group(),
+        and here it sends the "#CHECK FOR WORLD LEAKS" command to the runner and parses the resulting output block.
+        If this results block includes leaks, we convert an existing TestResult into a LEAK failure
+        in TestRunResults.change_result_to_failure(). Leaks are then added to the ouput JSON for display in results.html
+
+        Unit tests are updated with some leak examples.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (initializeGlobalsFromCommandLineOptions):
+        * Scripts/webkitpy/common/net/resultsjsonparser_unittest.py:
+        (ParsedJSONResultsTest):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner._annotate_results_with_additional_failures):
+        (LayoutTestRunner._handle_finished_test_group):
+        (Worker.handle):
+        (Worker._run_test):
+        (Worker._do_post_tests_work):
+        (Worker._finished_test_group):
+        (Worker._run_test_in_another_thread):
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        (JSONLayoutResultsGenerator):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser):
+        (TestExpectations):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (Base.get_basic_tests):
+        * Scripts/webkitpy/layout_tests/models/test_failures.py:
+        (determine_result_type):
+        (FailureLeak):
+        (FailureLeak.__init__):
+        (FailureLeak.message):
+        (FailureDocumentLeak):
+        (FailureDocumentLeak.__init__):
+        (FailureDocumentLeak.message):
+        * Scripts/webkitpy/layout_tests/models/test_results.py:
+        (TestResult.convert_to_failure):
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (TestRunResults.change_result_to_failure):
+        (_interpret_test_failures):
+        (summarize_results):
+        * Scripts/webkitpy/layout_tests/models/test_run_results_unittest.py:
+        (get_result):
+        (run_results):
+        (summarized_results):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (parse_args):
+        (RunTest.test_check_for_world_leaks):
+        * Scripts/webkitpy/port/driver.py:
+        (DriverPostTestOutput):
+        (DriverPostTestOutput.__init__):
+        (Driver.do_post_tests_work):
+        (Driver._parse_world_leaks_output):
+        (Driver.cmd_line):
+        (DriverProxy.do_post_tests_work):
+        * Scripts/webkitpy/port/test.py:
+        (unit_test_list):
+        * WebKitTestRunner/Options.cpp:
+        (WTR::OptionsHandler::OptionsHandler):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::checkForWorldLeaks):
+
 2018-08-29  David Kilzer  <ddkilzer@apple.com>
 
         Remove empty directories from from svn.webkit.org repository

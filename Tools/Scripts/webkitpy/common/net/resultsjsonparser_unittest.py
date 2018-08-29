@@ -58,7 +58,13 @@ class ParsedJSONResultsTest(unittest.TestCase):
                 },
                 "prototype-strawberry.html": {
                     "expected": "PASS",
-                    "actual": "FAIL PASS"
+                    "actual": "FAIL PASS",
+                    "leaks": {
+                        "documents": [
+                            "file:///Volumes/Data/slave/webkit/build/LayoutTests/fast/dom/prototype-strawberry.html",
+                            "about:blank"
+                        ]
+                    }
                 }
             }
         },
@@ -106,7 +112,13 @@ class ParsedJSONResultsTest(unittest.TestCase):
                 },
                 "prototype-strawberry.html": {
                     "expected": "PASS",
-                    "actual": "FAIL PASS"
+                    "actual": "FAIL PASS",
+                    "leaks": {
+                        "documents": [
+                            "file:///Volumes/Data/slave/webkit/build/LayoutTests/fast/dom/prototype-strawberry.html",
+                            "about:blank"
+                        ]
+                    }
                 }
             }
         },

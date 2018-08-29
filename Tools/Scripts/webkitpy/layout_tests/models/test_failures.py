@@ -59,6 +59,8 @@ def determine_result_type(failure_list):
         return test_expectations.TIMEOUT
     elif FailureEarlyExit in failure_types:
         return test_expectations.SKIP
+    elif FailureDocumentLeak in failure_types:
+        return test_expectations.LEAK
     elif (FailureMissingResult in failure_types or
           FailureMissingImage in failure_types or
           FailureMissingImageHash in failure_types or
@@ -158,6 +160,23 @@ class FailureCrash(TestFailure):
     def write_failure(self, writer, driver_output, expected_driver_output, port):
         crashed_driver_output = expected_driver_output if self.is_reftest else driver_output
         writer.write_crash_log(crashed_driver_output.crash_log)
+
+
+class FailureLeak(TestFailure):
+    def __init__(self):
+        super(FailureLeak, self).__init__()
+
+    def message(self):
+        return "leak"
+
+
+class FailureDocumentLeak(FailureLeak):
+    def __init__(self, leaked_document_urls):
+        super(FailureDocumentLeak, self).__init__()
+        self.leaked_document_urls = leaked_document_urls
+
+    def message(self):
+        return "test leaked document%s %s" % ("s" if len(self.leaked_document_urls) else "", ', '.join(self.leaked_document_urls))
 
 
 class FailureMissingResult(FailureText):

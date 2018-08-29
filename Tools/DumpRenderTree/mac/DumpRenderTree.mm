@@ -1121,7 +1121,7 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
         {"allow-any-certificate-for-allowed-hosts", no_argument, &allowAnyHTTPSCertificateForAllowedHosts, YES},
         {"show-webview", no_argument, &showWebView, YES},
         {"print-test-count", no_argument, &printTestCount, YES},
-        {"check-for-world-leaks", no_argument, &checkForWorldLeaks, NO},
+        {"world-leaks", no_argument, &checkForWorldLeaks, NO},
         {nullptr, 0, nullptr, 0}
     };
 

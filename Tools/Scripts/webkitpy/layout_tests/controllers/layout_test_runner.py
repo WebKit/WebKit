@@ -192,6 +192,16 @@ class LayoutTestRunner(object):
 
         self._interrupt_if_at_failure_limits(run_results)
 
+    def _annotate_results_with_additional_failures(self, run_results, results):
+        for new_result in results:
+            existing_result = run_results.results_by_name.get(new_result.test_name)
+            # When running a chunk (--run-chunk), results_by_name contains all the tests, but (confusingly) all_tests only contains those in the chunk that was run,
+            # and we don't want to modify the results of a test that didn't run. existing_result.test_number is only non-None for tests that ran.
+            if existing_result and existing_result.test_number is not None:
+                was_expected = self._expectations.matches_an_expected_result(new_result.test_name, existing_result.type, self._options.pixel_tests or existing_result.reftest_type)
+                now_expected = self._expectations.matches_an_expected_result(new_result.test_name, new_result.type, self._options.pixel_tests or new_result.reftest_type)
+                run_results.change_result_to_failure(existing_result, new_result, was_expected, now_expected)
+
     def start_servers(self):
         if self._needs_http and not self._did_start_http_server and not self._port.is_http_server_running():
             self._printer.write_update('Starting HTTP server ...')
@@ -232,6 +242,9 @@ class LayoutTestRunner(object):
     def _handle_finished_test(self, worker_name, result, log_messages=[]):
         self._update_summary_with_result(self._current_run_results, result)
 
+    def _handle_finished_test_group(self, worker_name, overlay_results, log_messages=[]):
+        self._annotate_results_with_additional_failures(self._current_run_results, overlay_results)
+
 
 class Worker(object):
     def __init__(self, caller, results_directory, options):
@@ -269,6 +282,8 @@ class Worker(object):
         for test_input in test_inputs:
             self._run_test(test_input, test_list_name)
 
+        self._finished_test_group(test_inputs)
+
     def _update_test_input(self, test_input):
         if test_input.reference_files is None:
             # Lazy initialization.
@@ -301,6 +316,29 @@ class Worker(object):
         self._caller.post('finished_test', result)
 
         self._clean_up_after_test(test_input, result)
+
+    def _do_post_tests_work(self, driver):
+        additional_results = []
+        if not driver:
+            return additional_results
+
+        post_test_output = driver.do_post_tests_work()
+        if post_test_output:
+            for test_name, doc_list in post_test_output.world_leaks_dict.iteritems():
+                additional_results.append(test_results.TestResult(test_name, [test_failures.FailureDocumentLeak(doc_list)]))
+        return additional_results
+
+    def _finished_test_group(self, test_inputs):
+        _log.debug("%s finished test group" % self._name)
+
+        if self._driver and self._driver.has_crashed():
+            self._kill_driver()
+
+        additional_results = []
+        if not self._options.run_singly:
+            additional_results = self._do_post_tests_work(self._driver)
+
+        self._caller.post('finished_test_group', additional_results)
 
     def stop(self):
         _log.debug("%s cleaning up" % self._name)
@@ -396,6 +434,11 @@ class Worker(object):
             # thread's results.
             _log.error('Test thread hung: killing all DumpRenderTrees')
             failures = [test_failures.FailureTimeout()]
+        else:
+            failure_results = self._do_post_tests_work(driver)
+            for failure_result in failure_results:
+                if failure_result.test_name == result.test_name:
+                    result.convert_to_failure(failure_result)
 
         driver.stop()
 

@@ -40,6 +40,11 @@ td:not(:first-of-type) {
 
 th, td {
     padding: 1px 4px;
+    vertical-align: top;
+}
+
+td:nth-child(1) {  
+    min-width: 35em;
 }
 
 th:empty, td:empty {
@@ -49,6 +54,15 @@ th:empty, td:empty {
 th {
     -webkit-user-select: none;
     -moz-user-select: none;
+}
+
+dt > sup {
+    vertical-align:text-top;
+    font-size:75%;
+}
+
+sup > a {
+    text-decoration: none;
 }
 
 .content-container {
@@ -136,6 +150,13 @@ tbody.flagged .flag {
 .result-container iframe, .result-container img {
     border: 0;
     vertical-align: top;
+}
+
+.leaks > table {
+    margin: 4px;
+}
+.leaks > td {
+    padding-left: 20px;
 }
 
 #options {
@@ -367,6 +388,11 @@ class TestResult
     isAudioFailure()
     {
         return this.info.actual.indexOf('AUDIO') != -1;
+    }
+
+    hasLeak()
+    {
+        return this.info.actual.indexOf('LEAK') != -1;
     }
 
     isCrash()
@@ -787,6 +813,17 @@ class TestResultsController
         return basePath;
     }
 
+    convertToLayoutTestBaseRelativeURL(fullURL)
+    {
+        if (fullURL.startsWith('file://')) {
+            let urlPrefix = 'file://' + this.layoutTestsBasePath();
+            if (fullURL.startsWith(urlPrefix))
+                return fullURL.substring(urlPrefix.length);
+        }
+        
+        return fullURL;
+    }
+
     shouldUseTracLinks()
     {
         return !this.testResults.layoutTestsDir() || !location.toString().indexOf('file://') == 0;
@@ -1020,8 +1057,46 @@ class TestResultsController
             Utils.appendHTML(newCell, result);    
         }
 
+        if (testResult.hasLeak())
+            newCell.appendChild(TestResultsController._makeLeaksCell(testResult));
+
         newRow.appendChild(newCell);
+
         return newRow;
+    }
+    
+    static _makeLeaksCell(testResult)
+    {
+        let container = document.createElement('div');
+        container.className = 'result-container leaks';
+        
+        let label = document.createElement('div');
+        label.className = 'label';
+        label.textContent = "Leaks";
+        container.appendChild(label);
+
+        let leaksTable = document.createElement('table');
+        
+        for (let leak of testResult.info.leaks) {
+            let leakRow = document.createElement('tr');
+
+            for (let leakedObjectType in leak) {
+                let th = document.createElement('th');
+                th.textContent = leakedObjectType;
+                let td = document.createElement('td');
+                
+                let url = leak[leakedObjectType]; // FIXME: when we track leaks other than documents, this might not be a URL.
+                td.textContent = controller.convertToLayoutTestBaseRelativeURL(url)
+                
+                leakRow.appendChild(th);
+                leakRow.appendChild(td);
+            }
+            
+            leaksTable.appendChild(leakRow);
+        }
+        
+        container.appendChild(leaksTable);
+        return container;
     }
 
     static _resultIframe(src)

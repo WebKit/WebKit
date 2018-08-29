@@ -68,6 +68,12 @@ class TestResult(object):
     def __hash__(self):
         return self.test_name.__hash__()
 
+    def convert_to_failure(self, failure_result):
+        if self.type is failure_result.type:
+            return
+        self.failures.extend(failure_result.failures)
+        self.type = test_failures.determine_result_type(self.failures)
+
     def has_failure_matching_types(self, *failure_classes):
         for failure in self.failures:
             if type(failure) in failure_classes:

@@ -53,6 +53,7 @@ class Base(unittest.TestCase):
         return ['failures/expected/text.html',
                 'failures/expected/image_checksum.html',
                 'failures/expected/crash.html',
+                'failures/expected/leak.html',
                 'failures/expected/missing_text.html',
                 'failures/expected/image.html',
                 'passes/text.html']
@@ -61,6 +62,7 @@ class Base(unittest.TestCase):
         return """
 Bug(test) failures/expected/text.html [ Failure ]
 Bug(test) failures/expected/crash.html [ WontFix ]
+Bug(test) failures/expected/crash.html [ Leak ]
 Bug(test) failures/expected/missing_image.html [ Rebaseline Missing ]
 Bug(test) failures/expected/image_checksum.html [ WontFix ]
 Bug(test) failures/expected/image.html [ WontFix Mac ]
@@ -89,6 +91,7 @@ class BasicTests(Base):
         self.parse_exp(self.get_basic_expectations())
         self.assert_exp('failures/expected/text.html', FAIL)
         self.assert_exp('failures/expected/image_checksum.html', PASS)
+        self.assert_exp('failures/expected/leak.html', PASS)
         self.assert_exp('passes/text.html', PASS)
         self.assert_exp('failures/expected/image.html', PASS)
 

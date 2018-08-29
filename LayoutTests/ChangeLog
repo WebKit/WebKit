@@ -1,3 +1,17 @@
+2018-08-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Teach webkitpy how to check leaks and treat leaks as test failures
+        https://bugs.webkit.org/show_bug.cgi?id=189067
+
+        Reviewed by Darin Adler.
+        
+        Put some fake leaks in full_results.json, and update results.html to show a table
+        of leaks when results are expanded.
+
+        * fast/harness/full_results.json:
+        * fast/harness/results-expected.txt:
+        * fast/harness/results.html:
+
 2018-08-29  Truitt Savell  <tsavell@apple.com>
 
         Missed adding expctations to ios for webkit.org/b/188985

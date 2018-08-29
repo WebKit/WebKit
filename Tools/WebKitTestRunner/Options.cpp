@@ -135,7 +135,7 @@ OptionsHandler::OptionsHandler(Options& o)
     optionList.append(Option("--allow-any-certificate-for-allowed-hosts", "Allows any HTTPS certificate for an allowed host.", handleOptionAllowAnyHTTPSCertificateForAllowedHosts));
     optionList.append(Option("--show-webview", "Show the WebView during test runs (for debugging)", handleOptionShowWebView));
     optionList.append(Option("--show-touches", "Show the touches during test runs (for debugging)", handleOptionShowTouches));
-    optionList.append(Option("--check-for-world-leaks", "Check for leaks of world objects (currently, documents)", handleOptionCheckForWorldLeaks));
+    optionList.append(Option("--world-leaks", "Check for leaks of world objects (currently, documents)", handleOptionCheckForWorldLeaks));
 
     optionList.append(Option(0, 0, handleOptionUnmatched));
 }
