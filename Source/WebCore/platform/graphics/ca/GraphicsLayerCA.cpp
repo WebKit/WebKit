@@ -2186,15 +2186,15 @@ void GraphicsLayerCA::updateBackdropFiltersRect()
             backdropCloneLayer->setPosition(m_backdropFiltersRect.rect().location());
 
             CloneID cloneID = clone.key;
-            RefPtr<PlatformCALayer> backdropClippingLayerClone = m_layerClones->backdropLayerClones.get(cloneID);
+            RefPtr<PlatformCALayer> backdropClippingLayerClone = m_layerClones->backdropClippingLayerClones.get(cloneID);
 
             bool hadBackdropClippingLayer = backdropClippingLayerClone;
             updateClippingStrategy(*backdropCloneLayer, backdropClippingLayerClone, m_backdropFiltersRect);
 
             if (!backdropClippingLayerClone)
-                m_layerClones->backdropLayerClones.remove(cloneID);
+                m_layerClones->backdropClippingLayerClones.remove(cloneID);
             else if (backdropClippingLayerClone && !hadBackdropClippingLayer)
-                m_layerClones->backdropLayerClones.add(cloneID, backdropClippingLayerClone);
+                m_layerClones->backdropClippingLayerClones.add(cloneID, backdropClippingLayerClone);
         }
     }
 }

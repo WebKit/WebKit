@@ -1,3 +1,20 @@
+2018-08-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix crash when reflections and backdrop filter are combined
+        https://bugs.webkit.org/show_bug.cgi?id=188504
+        rdar://problem/43225590
+
+        Reviewed by Dan Bates.
+        
+        GraphicsLayerCA::updateBackdropFiltersRect() was confused about which hash map to modify
+        when changes to the clipping rect affect whether we make backdrop clipping layers;
+        we need to add/remove from backdropClippingLayerClones, not backdropLayerClones.
+
+        Test: compositing/filters/backdrop-filter-update-rect.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateBackdropFiltersRect):
+
 2018-08-29  Jer Noble  <jer.noble@apple.com>
 
         Muted elements do not have their Now Playing status updated when unmuted.
