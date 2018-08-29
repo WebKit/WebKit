@@ -612,3 +612,5 @@ webkit.org/b/188357 legacy-animation-engine/compositing/layer-creation/animation
 
 # <rdar://problem/42904780>
 [ Mojave+ Release ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker.html [ Failure ]
+
+webkit.org/b/189087 svg/animations/animate-end-attribute-numeric-precision.html [ Pass Failure ]

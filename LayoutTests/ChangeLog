@@ -1,3 +1,13 @@
+2018-08-29  Truitt Savell  <tsavell@apple.com>
+
+        Layout Test svg/animations/animate-end-attribute-numeric-precision.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=189087
+
+        Unreviewed test gardening. 
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2018-08-29  Simon Fraser  <simon.fraser@apple.com>
 
         Teach webkitpy how to check leaks and treat leaks as test failures

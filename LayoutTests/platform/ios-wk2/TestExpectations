@@ -1309,3 +1309,6 @@ webkit.org/b/188985 imported/w3c/web-platform-tests/payment-request/show-method-
 webkit.org/b/188985 imported/w3c/web-platform-tests/payment-request/updateWith-method-pmi-handling-manual.https.html [ Skip ]
 webkit.org/b/188985 imported/w3c/web-platform-tests/payment-request/user-abort-algorithm-manual.https.html [ Skip ]
 webkit.org/b/188985 imported/w3c/web-platform-tests/payment-request/user-accepts-payment-request-algo-manual.https.html [ Skip ]
+
+webkit.org/b/189087 svg/animations/animate-end-attribute-numeric-precision.html [ Pass Failure ]
+
