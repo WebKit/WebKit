@@ -1,5 +1,25 @@
 2018-08-28  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION: CanvasSidebarPanel is empty for imported recordings
+        https://bugs.webkit.org/show_bug.cgi?id=189061
+
+        Reviewed by Brian Burg.
+
+        When recordings are imported, they don't have an associated `WI.Canvas`, meaning that the
+        `WI.Recording` is never added to the canvas' `WI.RecordingCollection`. Previously, the
+        canvas sidebar relied upon the `ItemAdded` event to update the recording `WI.ScopeBar`.
+        Since the imported recording isn't ever added to the collection, this is never fired.
+
+        This patch moves the function call that updates the `WI.ScopeBar` to a more universal path,
+        ensuring that no matter how a `WI.Recording` is set for the sidebar, it will be shown.
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype.set recording):
+        (WI.CanvasSidebarPanel.prototype._recordingAdded):
+        (WI.CanvasSidebarPanel.prototype._updateRecordingScopeBar):
+
+2018-08-28  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Search bar is too narrow in some localizations
         https://bugs.webkit.org/show_bug.cgi?id=189060
         <rdar://problem/43006369>

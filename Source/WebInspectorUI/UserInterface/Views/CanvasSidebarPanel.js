@@ -119,6 +119,8 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
             this._recording.addEventListener(WI.Recording.Event.StartProcessingFrame, this._handleRecordingStartProcessingFrame, this);
         }
 
+        this._updateRecordNavigationItem();
+        this._updateRecordingScopeBar();
         this._recordingChanged();
     }
 
@@ -221,9 +223,6 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
     _recordingAdded(event)
     {
-        this._updateRecordNavigationItem();
-        this._updateRecordingScopeBar();
-
         this.recording = event.data.item;
     }
 
@@ -458,14 +457,15 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
         this._recordingNavigationBar.element.classList.toggle("hidden", !this._canvas);
 
-        let hasRecordings = this._canvas && this._canvas.recordingCollection.size;
+        let hasRecordings = this._recording || (this._canvas && this._canvas.recordingCollection.size);
         this.element.classList.toggle("has-recordings", hasRecordings);
         if (!hasRecordings)
             return;
 
         let scopeBarItems = [];
         let selectedScopeBarItem = null;
-        for (let recording of this._canvas.recordingCollection) {
+
+        let createScopeBarItem = (recording) => {
             let scopeBarItem = new WI.ScopeBarItem(recording.displayName, recording.displayName);
             if (recording === this._recording)
                 selectedScopeBarItem = scopeBarItem;
@@ -473,7 +473,15 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
                 scopeBarItem.selected = false;
             scopeBarItem.__recording = recording;
             scopeBarItems.push(scopeBarItem);
+        };
+
+        if (this._canvas && this._canvas.recordingCollection) {
+            for (let recording of this._canvas.recordingCollection)
+                createScopeBarItem(recording);
         }
+
+        if (this._recording && (!this._canvas || !this._canvas.recordingCollection.has(this._recording)))
+            createScopeBarItem(this._recording);
 
         if (!selectedScopeBarItem) {
             selectedScopeBarItem = scopeBarItems[0];
