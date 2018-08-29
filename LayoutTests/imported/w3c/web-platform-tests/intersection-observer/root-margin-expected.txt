@@ -1,7 +1,7 @@
   
 
 PASS Root margin tests 
-FAIL First rAF. assert_equals: entries[0].boundingClientRect.left expected 972 but got 0
+FAIL First rAF. assert_equals: entries[0].rootBounds.left expected -30 but got 0
 FAIL document.scrollingElement.scrollLeft = 100 assert_equals: entries.length expected 2 but got 1
 FAIL document.scrollingElement.scrollTop = document.documentElement.clientHeight + 200 assert_equals: entries.length expected 2 but got 1
 FAIL document.scrollingElement.scrollTop = document.documentElement.clientHeight + 300 assert_equals: entries.length expected 3 but got 1

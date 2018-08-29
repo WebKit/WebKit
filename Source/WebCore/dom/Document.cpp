@@ -7444,33 +7444,36 @@ RefPtr<IntersectionObserver> Document::removeIntersectionObserver(IntersectionOb
     return observerRef;
 }
 
-static void computeIntersectionRects(IntersectionObserver& observer, Element& target, FloatRect& absTargetRect, FloatRect& absIntersectionRect, FloatRect& absRootBounds)
+static void computeIntersectionRects(FrameView& frameView, IntersectionObserver& observer, Element& target, FloatRect& absTargetRect, FloatRect& absIntersectionRect, FloatRect& absRootBounds)
 {
-    // FIXME: Implement intersection computation for the case of an implicit root.
-    if (!observer.root())
+    // FIXME: Implement intersection computation for the cross-document case.
+    if (observer.trackingDocument() != &target.document())
         return;
-
-    if (observer.root()->document() != target.document())
-        return;
-
-    if (!observer.root()->renderer() || !is<RenderBlock>(observer.root()->renderer()))
-        return;
-
-    RenderBlock* rootRenderer = downcast<RenderBlock>(observer.root()->renderer());
 
     auto* targetRenderer = target.renderer();
     if (!targetRenderer)
         return;
 
-    if (!rootRenderer->isContainingBlockAncestorFor(*targetRenderer))
-        return;
-
     // FIXME: Expand localRootBounds using the observer's rootMargin.
     FloatRect localRootBounds;
-    if (rootRenderer->hasOverflowClip())
-        localRootBounds = rootRenderer->contentBoxRect();
-    else
-        localRootBounds = { FloatPoint(), rootRenderer->size() };
+    RenderBlock* rootRenderer;
+    if (observer.root()) {
+        if (!observer.root()->renderer() || !is<RenderBlock>(observer.root()->renderer()))
+            return;
+
+        rootRenderer = downcast<RenderBlock>(observer.root()->renderer());
+        if (!rootRenderer->isContainingBlockAncestorFor(*targetRenderer))
+            return;
+
+        if (rootRenderer->hasOverflowClip())
+            localRootBounds = rootRenderer->contentBoxRect();
+        else
+            localRootBounds = { FloatPoint(), rootRenderer->size() };
+    } else {
+        ASSERT(frameView.frame().isMainFrame());
+        rootRenderer = frameView.renderView();
+        localRootBounds = frameView.layoutViewportRect();
+    }
 
     LayoutRect localTargetBounds;
     if (is<RenderBox>(*targetRenderer))
@@ -7519,7 +7522,7 @@ void Document::updateIntersectionObservations()
             FloatRect absTargetRect;
             FloatRect absIntersectionRect;
             FloatRect absRootBounds;
-            computeIntersectionRects(*observer, *target, absTargetRect, absIntersectionRect, absRootBounds);
+            computeIntersectionRects(*frameView, *observer, *target, absTargetRect, absIntersectionRect, absRootBounds);
 
             // FIXME: Handle zero-area intersections (e.g., intersections involving zero-area targets).
             bool isIntersecting = absIntersectionRect.area();
@@ -7533,7 +7536,7 @@ void Document::updateIntersectionObservations()
 
             if (!registration.previousThresholdIndex || thresholdIndex != registration.previousThresholdIndex) {
                 FloatRect targetBoundingClientRect = frameView->absoluteToClientRect(absTargetRect);
-                FloatRect clientIntersectionRect = frameView->absoluteToClientRect(absIntersectionRect);
+                FloatRect clientIntersectionRect = isIntersecting ? frameView->absoluteToClientRect(absIntersectionRect) : FloatRect();
 
                 // FIXME: Once cross-document observation is implemented, only report root bounds if the target document and
                 // the root document are similar-origin.

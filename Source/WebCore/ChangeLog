@@ -1,3 +1,19 @@
+2018-08-29  Ali Juma  <ajuma@chromium.org>
+
+        [IntersectionObserver]  Implement intersection logic for the same-document implicit root case
+        https://bugs.webkit.org/show_bug.cgi?id=189055
+
+        Reviewed by Simon Fraser.
+
+        Extend the intersection logic to handle computing the intersection of the target and the
+        viewport, for the case where the target is in the main frame.
+
+        Tested by existing tests in imported/w3c/web-platform-tests/intersection-observer.
+
+        * dom/Document.cpp:
+        (WebCore::computeIntersectionRects):
+        (WebCore::Document::updateIntersectionObservations):
+
 2018-08-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Changes to slot children should trigger slotchange
