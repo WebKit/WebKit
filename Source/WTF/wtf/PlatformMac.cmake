@@ -57,9 +57,10 @@ list(APPEND WTF_SOURCES
     text/cf/StringImplCF.cpp
     text/cf/StringViewCF.cpp
 
+    text/cocoa/StringCocoa.mm
     text/cocoa/StringImplCocoa.mm
     text/cocoa/StringViewCocoa.mm
-    text/cocoa/TextBreakIteratorInternalICUMac.mm
+    text/cocoa/TextBreakIteratorInternalICUCocoa.cpp
 )
 
 list(APPEND WTF_PRIVATE_INCLUDE_DIRECTORIES

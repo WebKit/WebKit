@@ -1,3 +1,22 @@
+2018-08-29  David Kilzer  <ddkilzer@apple.com>
+
+        Rename wtf/text/mac/StringMac.mm to wtf/text/cococa/StringCococa.mm
+        <https://webkit.org/b/189082>
+
+        Reviewed by Sam Weinig.
+
+        Includes a drive-by fix for a webkit-style warning:
+
+            ERROR: Source/WTF/wtf/text/cocoa/StringCocoa.mm:34:  Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.  [readability/comparison_to_zero] [5]
+
+        * WTF.xcodeproj/project.pbxproj: Update for move and rename.
+        * wtf/PlatformMac.cmake: Add missing cocoa/StringCocoa.mm source
+        file.  Drive-by fix for rename of
+        TextBreakIteratorInternalICUMac.mm to
+        TextBreakIteratorInternalICUCocoa.cpp.
+        * wtf/text/cocoa/StringCocoa.mm: Renamed from Source/WTF/wtf/text/mac/StringMac.mm.
+        (WTF::String::String):
+
 2018-08-27  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [WebAssembly] Parse wasm modules in a streaming fashion
