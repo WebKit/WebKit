@@ -6073,11 +6073,11 @@ void WebPage::insertAttachment(const String& identifier, std::optional<uint64_t>
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
-void WebPage::updateAttachmentAttributes(const String& identifier, std::optional<uint64_t>&& fileSize, const String& contentType, std::optional<String>&& newFilename, CallbackID callbackID)
+void WebPage::updateAttachmentAttributes(const String& identifier, std::optional<uint64_t>&& fileSize, const String& contentType, const String& fileName, CallbackID callbackID)
 {
     if (auto attachment = attachmentElementWithIdentifier(identifier)) {
         attachment->document().updateLayout();
-        attachment->updateAttributes(WTFMove(fileSize), contentType, WTFMove(newFilename));
+        attachment->updateAttributes(WTFMove(fileSize), contentType, fileName);
     }
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }

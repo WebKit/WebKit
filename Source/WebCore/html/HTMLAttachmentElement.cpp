@@ -144,15 +144,15 @@ String HTMLAttachmentElement::attachmentPath() const
     return attributeWithoutSynchronization(webkitattachmentpathAttr);
 }
 
-void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSize, std::optional<String>&& newContentType, std::optional<String>&& newFilename)
+void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSize, const String& newContentType, const String& newFilename)
 {
-    if (newFilename)
-        setAttributeWithoutSynchronization(HTMLNames::titleAttr, *newFilename);
+    if (!newFilename.isNull())
+        setAttributeWithoutSynchronization(HTMLNames::titleAttr, newFilename);
     else
         removeAttribute(HTMLNames::titleAttr);
 
-    if (newContentType)
-        setAttributeWithoutSynchronization(HTMLNames::typeAttr, *newContentType);
+    if (!newContentType.isNull())
+        setAttributeWithoutSynchronization(HTMLNames::typeAttr, newContentType);
     else
         removeAttribute(HTMLNames::typeAttr);
 

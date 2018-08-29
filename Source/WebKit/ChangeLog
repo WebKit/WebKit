@@ -1,3 +1,20 @@
+2018-08-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Use the null string instead of std::nullopt for missing attachment file names and content types
+        https://bugs.webkit.org/show_bug.cgi?id=189080
+
+        Reviewed by Tim Horton.
+
+        Replace instances of std::optional<String> with just String instead, and use the null string to represent a
+        missing value instead of std::nullopt. No change in behavior.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateAttachmentAttributes):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateAttachmentAttributes):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-08-28  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use CMake's FindFreetype

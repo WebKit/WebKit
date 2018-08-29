@@ -48,7 +48,7 @@ public:
     const String& uniqueIdentifier() const { return m_uniqueIdentifier; }
     void setUniqueIdentifier(const String& uniqueIdentifier) { m_uniqueIdentifier = uniqueIdentifier; }
 
-    WEBCORE_EXPORT void updateAttributes(std::optional<uint64_t>&& newFileSize = std::nullopt, std::optional<String>&& newContentType = std::nullopt, std::optional<String>&& newFilename = std::nullopt);
+    WEBCORE_EXPORT void updateAttributes(std::optional<uint64_t>&& newFileSize, const String& newContentType, const String& newFilename);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;

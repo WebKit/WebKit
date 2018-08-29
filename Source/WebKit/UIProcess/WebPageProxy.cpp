@@ -7703,9 +7703,7 @@ void WebPageProxy::updateAttachmentAttributes(const API::Attachment& attachment,
     }
 
     auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
-    auto name = attachment.fileName();
-    auto optionalName = name.isNull() ? std::nullopt : std::optional<WTF::String> { name };
-    m_process->send(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), WTFMove(optionalName), callbackID), m_pageID);
+    m_process->send(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), attachment.fileName(), callbackID), m_pageID);
 }
 
 void WebPageProxy::registerAttachmentIdentifierFromData(const String& identifier, const String& contentType, const String& preferredFileName, const IPC::DataReference& data)
