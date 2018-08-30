@@ -56,6 +56,8 @@ public:
     void setHorizontalConstraints(HorizontalConstraints);
     void setVerticalConstraint(PositionInContextRoot);
 
+    bool overflowsContainingBlock() const;
+
     void resetPosition();
 
 protected:

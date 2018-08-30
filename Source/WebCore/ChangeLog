@@ -1,5 +1,23 @@
 2018-08-30  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Floating] Move containing block constraint logic from FloatAvoider to FloatingContext
+        https://bugs.webkit.org/show_bug.cgi?id=189145
+
+        Reviewed by Antti Koivisto.
+
+        When the float avoider is constrained horizontally, simply align it with the left/right edge of its containing block (with the combination of the constraints)
+        and check the overflow as part of the FloatingContext::floatingPosition() logic. It simplifies the constraint logic/helps implementing the non-float avoider
+        case.
+
+        * layout/floats/FloatAvoider.cpp:
+        (WebCore::Layout::FloatAvoider::setHorizontalConstraints):
+        (WebCore::Layout::FloatAvoider::overflowsContainingBlock const):
+        * layout/floats/FloatAvoider.h:
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::floatingPosition const):
+
+2018-08-30  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Floating] Use non-computed horizontal margins when intersecting floats with float avoiders.
         https://bugs.webkit.org/show_bug.cgi?id=189143
 

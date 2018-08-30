@@ -59,13 +59,12 @@ void FloatAvoider::setHorizontalConstraints(HorizontalConstraints horizontalCons
         // Horizontal position is constrained by the containing block's content box.
         // Compute the horizontal position for the new floating by taking both the contining block and the current left/right floats into account.
         auto containingBlockContentBoxLeft = m_containingBlockAbsoluteDisplayBox.left() + m_containingBlockAbsoluteDisplayBox.contentBoxLeft();
-        auto containingBlockContentBoxRight = containingBlockContentBoxLeft + m_containingBlockAbsoluteDisplayBox.contentBoxWidth();
-        // Align it with the containing block's left edge first.
-        left = std::max(containingBlockContentBoxLeft + marginLeft(), left);
-        // Make sure it does not overflow the containing block on the right.
-        left = std::min(left, containingBlockContentBoxRight - marginBoxWidth() + marginLeft());
+        if (isLeftAligned())
+            return std::max(containingBlockContentBoxLeft + marginLeft(), left);
 
-        return left;
+        // Make sure it does not overflow the containing block on the right.
+        auto containingBlockContentBoxRight = containingBlockContentBoxLeft + m_containingBlockAbsoluteDisplayBox.contentBoxWidth();
+        return std::min(left, containingBlockContentBoxRight - marginBoxWidth() + marginLeft());
     };
 
     auto positionCandidate = horizontalPositionCandidate(horizontalConstraints);
@@ -102,6 +101,20 @@ PositionInContextRoot FloatAvoider::initialHorizontalPosition() const
     left += marginLeft();
 
     return left;
+}
+
+bool FloatAvoider::overflowsContainingBlock() const
+{
+    auto containingBlockContentBoxLeft = m_containingBlockAbsoluteDisplayBox.left() + m_containingBlockAbsoluteDisplayBox.contentBoxLeft();
+    auto left = displayBox().left() - marginLeft();
+
+    if (containingBlockContentBoxLeft > left)
+        return true;
+
+    auto containingBlockContentBoxRight = containingBlockContentBoxLeft + m_containingBlockAbsoluteDisplayBox.contentBoxWidth();
+    auto right = displayBox().right() + marginRight();
+
+    return containingBlockContentBoxRight < right;
 }
 
 Display::Box::Rect FloatAvoider::rectInContainingBlock() const
