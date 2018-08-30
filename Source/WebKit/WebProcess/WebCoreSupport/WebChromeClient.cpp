@@ -810,6 +810,11 @@ void WebChromeClient::runOpenPanel(Frame& frame, FileChooser& fileChooser)
     ASSERT(webFrame);
     m_page.send(Messages::WebPageProxy::RunOpenPanel(webFrame->frameID(), SecurityOriginData::fromFrame(&frame), fileChooser.settings()));
 }
+    
+void WebChromeClient::showShareSheet(ShareDataWithParsedURL& shareData, CompletionHandler<void(bool)>&& callback)
+{
+    m_page.showShareSheet(shareData, WTFMove(callback));
+}
 
 void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, FileIconLoader& loader)
 {

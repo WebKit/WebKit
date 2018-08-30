@@ -144,6 +144,8 @@ private:
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, const String&) override;
 
     bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) override;
+    bool showShareSheet(const WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&&) override;
+    
     void disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID) override;
     double minimumZoomScale() const override;
     WebCore::FloatRect documentRect() const override;

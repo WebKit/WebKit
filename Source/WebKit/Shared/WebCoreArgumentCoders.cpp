@@ -71,6 +71,7 @@
 #include <WebCore/ServiceWorkerClientData.h>
 #include <WebCore/ServiceWorkerClientIdentifier.h>
 #include <WebCore/ServiceWorkerData.h>
+#include <WebCore/ShareData.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TimingFunction.h>
@@ -1916,7 +1917,39 @@ bool ArgumentCoder<FileChooserSettings>::decode(Decoder& decoder, FileChooserSet
 
     return true;
 }
+    
+void ArgumentCoder<ShareData>::encode(Encoder& encoder, const ShareData& settings)
+{
+    encoder << settings.title;
+    encoder << settings.text;
+    encoder << settings.url;
+}
 
+bool ArgumentCoder<ShareData>::decode(Decoder& decoder, ShareData& settings)
+{
+    if (!decoder.decode(settings.title))
+        return false;
+    if (!decoder.decode(settings.text))
+        return false;
+    if (!decoder.decode(settings.url))
+        return false;
+    return true;
+}
+    
+void ArgumentCoder<ShareDataWithParsedURL>::encode(Encoder& encoder, const ShareDataWithParsedURL& settings)
+{
+    encoder << settings.shareData;
+    encoder << settings.url;
+}
+
+bool ArgumentCoder<ShareDataWithParsedURL>::decode(Decoder& decoder, ShareDataWithParsedURL& settings)
+{
+    if (!decoder.decode(settings.shareData))
+        return false;
+    if (!decoder.decode(settings.url))
+        return false;
+    return true;
+}
 
 void ArgumentCoder<GrammarDetail>::encode(Encoder& encoder, const GrammarDetail& detail)
 {

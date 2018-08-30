@@ -380,6 +380,7 @@ def headers_for_type(type):
         'WebCore::AutoplayEventFlags': ['<WebCore/AutoplayEvent.h>'],
         'WebCore::ExceptionDetails': ['<WebCore/JSDOMExceptionHandling.h>'],
         'WebCore::FileChooserSettings': ['<WebCore/FileChooser.h>'],
+        'WebCore::ShareDataWithParsedURL': ['<WebCore/ShareData.h>'],
         'WebCore::FrameLoadType': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::GrammarDetail': ['<WebCore/TextCheckerClient.h>'],
         'WebCore::HasInsecureContent': ['<WebCore/FrameLoaderTypes.h>'],

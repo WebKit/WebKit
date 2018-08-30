@@ -157,6 +157,10 @@ void WebChromeClientIOS::runOpenPanel(Frame&, FileChooser& chooser)
     [listener release];
 }
 
+void WebChromeClientIOS::showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&)
+{
+}
+
 #if ENABLE(IOS_TOUCH_EVENTS)
 
 void WebChromeClientIOS::didPreventDefaultForEvent()

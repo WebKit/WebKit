@@ -137,6 +137,7 @@ class EmptyChromeClient : public ChromeClient {
 #endif
 
     void runOpenPanel(Frame&, FileChooser&) final;
+    void showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&) final;
     void loadIconForFiles(const Vector<String>&, FileIconLoader&) final { }
 
     void elementDidFocus(Element&) final { }

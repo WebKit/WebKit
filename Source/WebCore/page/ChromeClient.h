@@ -101,6 +101,7 @@ class MediaPlayerRequestInstallMissingPluginsCallback;
 
 struct DateTimeChooserParameters;
 struct GraphicsDeviceAdapter;
+struct ShareDataWithParsedURL;
 struct ViewportArguments;
 struct WindowFeatures;
 
@@ -282,6 +283,8 @@ public:
 #endif
 
     virtual void runOpenPanel(Frame&, FileChooser&) = 0;
+    virtual void showShareSheet(ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&& callback) { callback(false); }
+    
     // Asynchronous request to load an icon for specified filenames.
     virtual void loadIconForFiles(const Vector<String>&, FileIconLoader&) = 0;
         

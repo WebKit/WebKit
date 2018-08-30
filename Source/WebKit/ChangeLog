@@ -1,3 +1,95 @@
+2018-08-29  Olivia Barnett  <obarnett@apple.com>
+
+        Implement the Web Share API
+        https://bugs.webkit.org/show_bug.cgi?id=171100
+        <rdar://problem/31751734>
+
+        Reviewed by Tim Horton.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        Added NSURL _title property as in the WebCore UIKitSPI.
+
+        * Scripts/webkit/messages.py:
+        ShareDataWithParsedURL special case for header for type.
+        
+        * Shared/ShareSheetCallbackID.h:
+        Added a typedef for a share sheet callback id.       
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ShareData>::encode):
+        (IPC::ArgumentCoder<ShareData>::decode):
+        (IPC::ArgumentCoder<ShareDataWithParsedURL>::encode):
+        (IPC::ArgumentCoder<ShareDataWithParsedURL>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        Added encoding and decoding functionality for new structs.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetWebShareEnabled):
+        (WKPreferencesGetWebShareEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        Added switch for RuntimeEnabledFeature.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Added hook for share sheet testing.
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::showShareSheet):
+        Page client call to invoke share sheet.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showShareSheet):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        Web page proxy handling of call to invoke share sheet.
+        Creates completion handler to send to WKShareSheet.mm
+        Completion handler sends message to WebPage with message id.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::showShareSheet):
+        Page client implementation call to invoke share sheet. 
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _showShareSheet:completionHandler:]):
+        (-[WKContentView shareSheetDidDismiss:]):
+        (-[WKContentView invokeShareSheetWithResolution:resolved):
+        Call to WKShareSheet to invoke the share sheet and callback.
+        Hook for share sheet resolution testing.
+
+        * UIProcess/ios/forms/WKShareSheet.h: Added.
+        * UIProcess/ios/forms/WKShareSheet.mm: Added.
+        (-[WKShareSheet initWithView:]):
+        (-[WKShareSheet presentWithParameters:completionHandler:]):
+        (-[WKShareSheet _dispatchDidDismiss]):
+        (-[WKShareSheet _cancel]):
+        (-[WKShareSheet dismiss]):
+        (-[WKShareSheet _dismissDisplayAnimated:]):
+        (-[WKShareSheet _presentFullscreenViewController:animated:]):
+        (-[WKShareSheet invokeShareSheetWithResolution:resolved:]):
+        Completion handler call and creation of share sheet with parameters.
+        Hook that force resolves the share sheet completion handler for testing. 
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::showShareSheet):
+        Call to page to invoke share sheet.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::nextShareSheetContextId):
+        (WebKit::WebPage::showShareSheet):
+        (WebKit::WebPage::showShareSheetResponse):
+        WebPage calls proxy and saves context id for promise.        
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Callback for completed response.
+
 2018-08-29  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebKit: WTF::Function<void ()>::CallableWrapper<WebKit::ResourceLoadStatisticsMemoryStore::removeDataRecords(WTF::CompletionHandler<void ()>&&)::$_1>::call()

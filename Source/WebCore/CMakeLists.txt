@@ -811,6 +811,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/NavigatorLanguage.idl
     page/NavigatorOnLine.idl
     page/NavigatorServiceWorker.idl
+    page/NavigatorShare.idl
     page/Performance.idl
     page/PerformanceEntry.idl
     page/PerformanceMark.idl
@@ -825,6 +826,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/RemoteDOMWindow.idl
     page/Screen.idl
     page/ScrollToOptions.idl
+    page/ShareData.idl
     page/VisualViewport.idl
     page/WebKitPoint.idl
     page/WindowEventHandlers.idl

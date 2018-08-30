@@ -59,6 +59,7 @@ class PopupOpeningObserver;
 class SearchPopupMenu;
 
 struct DateTimeChooserParameters;
+struct ShareDataWithParsedURL;
 struct ViewportArguments;
 struct WindowFeatures;
     
@@ -159,6 +160,7 @@ public:
 #endif
 
     void runOpenPanel(Frame&, FileChooser&);
+    void showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&);
     void loadIconForFiles(const Vector<String>&, FileIconLoader&);
 
     void dispatchDisabledAdaptationsDidChange(const OptionSet<DisabledAdaptations>&) const;

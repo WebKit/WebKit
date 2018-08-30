@@ -418,12 +418,17 @@ typedef enum {
 @property (readonly) NSString *_hostApplicationBundleIdentifier;
 @end
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+@interface NSURL ()
+@property (nonatomic, copy, setter=_setTitle:) NSString *_title;
+@end
+#endif
+
 @protocol UIViewControllerContextTransitioningEx <UIViewControllerContextTransitioning>
 - (void)__runAlongsideAnimations;
 - (void)_interactivityDidChange:(BOOL)isInteractive;
 @property (nonatomic, assign, setter=_setAllowUserInteraction:, getter=_allowUserInteraction) BOOL _allowUserInteraction;
 @property (nonatomic, assign, setter=_setPercentOffset:) CGFloat _percentOffset;
-@property (nonatomic, retain, setter=_setContainerViews:) NSArray *_containerViews;
 @end
 
 @interface _UIViewControllerTransitionContext : NSObject <UIViewControllerContextTransitioningEx>

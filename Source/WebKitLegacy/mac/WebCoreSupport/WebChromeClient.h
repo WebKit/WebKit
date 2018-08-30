@@ -126,6 +126,8 @@ private:
 #endif
 
     void runOpenPanel(WebCore::Frame&, WebCore::FileChooser&) override;
+    void showShareSheet(WebCore::ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&) override;
+
     void loadIconForFiles(const Vector<String>&, WebCore::FileIconLoader&) final;
     RefPtr<WebCore::Icon> createIconForFiles(const Vector<String>& filenames) override;
 

@@ -776,6 +776,10 @@ void WebChromeClient::runOpenPanel(Frame&, FileChooser& chooser)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+void WebChromeClient::showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&)
+{
+}
+
 void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, FileIconLoader& iconLoader)
 {
     iconLoader.iconLoaded(createIconForFiles(filenames));

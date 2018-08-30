@@ -43,6 +43,7 @@
 #include "ProcessTerminationReason.h"
 #include "ProcessThrottler.h"
 #include "SandboxExtension.h"
+#include "ShareSheetCallbackID.h"
 #include "ShareableBitmap.h"
 #include "SuspendedPageProxy.h"
 #include "SystemPreviewController.h"
@@ -187,6 +188,7 @@ struct FileChooserSettings;
 struct GlobalWindowIdentifier;
 struct MediaStreamRequest;
 struct SecurityOriginData;
+struct ShareData;
 struct TextAlternativeWithRange;
 struct TextCheckingResult;
 struct ViewportAttributes;
@@ -1468,6 +1470,7 @@ private:
     void didChangeViewportProperties(const WebCore::ViewportAttributes&);
     void pageDidScroll();
     void runOpenPanel(uint64_t frameID, const WebCore::SecurityOriginData&, const WebCore::FileChooserSettings&);
+    void showShareSheet(const WebCore::ShareDataWithParsedURL&, ShareSheetCallbackID);
     void printFrame(uint64_t frameID);
     void exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply&&);
     void reachedApplicationCacheOriginQuota(const String& originIdentifier, uint64_t currentQuota, uint64_t totalBytesNeeded, Messages::WebPageProxy::ReachedApplicationCacheOriginQuota::DelayedReply&&);

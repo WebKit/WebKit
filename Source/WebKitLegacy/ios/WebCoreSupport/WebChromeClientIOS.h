@@ -47,6 +47,7 @@ private:
     bool runJavaScriptPrompt(WebCore::Frame&, const WTF::String& message, const WTF::String& defaultValue, WTF::String& result) final;
 
     void runOpenPanel(WebCore::Frame&, WebCore::FileChooser&) final;
+    void showShareSheet(WebCore::ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&) final;
 
 #if ENABLE(TOUCH_EVENTS)
     void didPreventDefaultForEvent() final;

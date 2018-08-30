@@ -637,6 +637,7 @@
 		1CAF34830A6C405200ABE06E /* WebScriptObjectPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAF34800A6C405200ABE06E /* WebScriptObjectPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CCDF5BE1990332400BCEBAD /* SVGToOTFFontConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CCDF5BC1990332400BCEBAD /* SVGToOTFFontConversion.h */; };
 		1CFAE3230A6D6A3F0032593D /* libobjc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CFAE3220A6D6A3F0032593D /* libobjc.dylib */; };
+		1D9F0FC12122029B005D8FD4 /* ShareData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DC55400211BA8C8004B780E /* ShareData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1F36EA9C1E21BA1700621E25 /* WebBackgroundTaskController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F36EA9A1E21BA1700621E25 /* WebBackgroundTaskController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1F3C3BEB135CAF3C00B8C1AC /* MediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F3C3BE9135CAF3C00B8C1AC /* MediaControls.h */; };
 		1F72BF0B187FD45C0009BCB3 /* TileControllerMemoryHandlerIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F72BF09187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6306,6 +6307,9 @@
 		1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebCore.xcconfig; sourceTree = "<group>"; };
 		1CDD45E60BA9C84600F90147 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1CFAE3220A6D6A3F0032593D /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
+		1DC553FD211BA12A004B780E /* NavigatorShare.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorShare.idl; sourceTree = "<group>"; };
+		1DC553FF211BA841004B780E /* ShareData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ShareData.idl; sourceTree = "<group>"; };
+		1DC55400211BA8C8004B780E /* ShareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareData.h; sourceTree = "<group>"; };
 		1F36EA9A1E21BA1700621E25 /* WebBackgroundTaskController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackgroundTaskController.h; sourceTree = "<group>"; };
 		1F36EA9B1E21BA1700621E25 /* WebBackgroundTaskController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebBackgroundTaskController.mm; sourceTree = "<group>"; };
 		1F3C3BE8135CAF3C00B8C1AC /* MediaControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControls.cpp; sourceTree = "<group>"; };
@@ -19278,6 +19282,7 @@
 				7C5BEA3B1E9EE77100CC517B /* NavigatorLanguage.idl */,
 				7C5BEA3C1E9EE77100CC517B /* NavigatorOnLine.idl */,
 				5182C24B1F313AE00059BA7C /* NavigatorServiceWorker.idl */,
+				1DC553FD211BA12A004B780E /* NavigatorShare.idl */,
 				00146288103CD1DE000B20DB /* OriginAccessEntry.cpp */,
 				00146289103CD1DE000B20DB /* OriginAccessEntry.h */,
 				65FEA86809833ADE00BED4AB /* Page.cpp */,
@@ -19368,6 +19373,8 @@
 				7CC6609B1F93057900D500E9 /* SettingsBase.cpp */,
 				7CC660991F93057800D500E9 /* SettingsBase.h */,
 				7C6EFEEA1F946A2E00FFAD41 /* SettingsDefaultValues.h */,
+				1DC55400211BA8C8004B780E /* ShareData.h */,
+				1DC553FF211BA841004B780E /* ShareData.idl */,
 				5C688AA21D38126F000B54FA /* SocketProvider.cpp */,
 				5C7C88D71D0F1F2B009D2F6D /* SocketProvider.h */,
 				626CDE0C1140424C001E5A68 /* SpatialNavigation.cpp */,
@@ -30100,6 +30107,7 @@
 				FD45A95B175D41EE00C21EC8 /* ShapeInterval.h in Headers */,
 				FD45A952175D3F3E00C21EC8 /* ShapeOutsideInfo.h in Headers */,
 				FD1AF1501656F15100C6D4F7 /* ShapeValue.h in Headers */,
+				1D9F0FC12122029B005D8FD4 /* ShareData.h in Headers */,
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
 				834DFAD01F7DAE5D00C2725B /* SharedStringHash.h in Headers */,
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,

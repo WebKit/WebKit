@@ -102,6 +102,8 @@ struct DictionaryPopupInfo;
 struct EventTrackingRegions;
 struct ExceptionDetails;
 struct FileChooserSettings;
+struct ShareData;
+struct ShareDataWithParsedURL;
 struct Length;
 struct GrammarDetail;
 struct MimeClassInfo;
@@ -473,6 +475,16 @@ template<> struct ArgumentCoder<WebCore::DictationAlternative> {
 template<> struct ArgumentCoder<WebCore::FileChooserSettings> {
     static void encode(Encoder&, const WebCore::FileChooserSettings&);
     static bool decode(Decoder&, WebCore::FileChooserSettings&);
+};
+    
+template<> struct ArgumentCoder<WebCore::ShareData> {
+    static void encode(Encoder&, const WebCore::ShareData&);
+    static bool decode(Decoder&, WebCore::ShareData&);
+};
+    
+template<> struct ArgumentCoder<WebCore::ShareDataWithParsedURL> {
+    static void encode(Encoder&, const WebCore::ShareDataWithParsedURL&);
+    static bool decode(Decoder&, WebCore::ShareDataWithParsedURL&);
 };
 
 template<> struct ArgumentCoder<WebCore::GrammarDetail> {

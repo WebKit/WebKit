@@ -1,3 +1,14 @@
+2018-08-29  Olivia Barnett  <obarnett@apple.com>
+
+        Implement the Web Share API
+        https://bugs.webkit.org/show_bug.cgi?id=171100
+        <rdar://problem/31751734>
+
+        Reviewed by Tim Horton.
+
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        Updated expected results.
+
 2018-08-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Layout Test js/error-should-not-strong-reference-global-object.html is flaky on macOS

@@ -1230,7 +1230,7 @@
     {
         "name": "Web Share",
         "status": {
-            "status": "Under Consideration"
+            "status": "In Development"
         },
         "url": "https://github.com/WICG/web-share/blob/master/docs/interface.md",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=171100",

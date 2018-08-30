@@ -187,6 +187,7 @@ private:
 #endif
 
     void runOpenPanel(WebCore::Frame&, WebCore::FileChooser&) final;
+    void showShareSheet(WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&&) final;
     void loadIconForFiles(const Vector<String>&, WebCore::FileIconLoader&) final;
 
 #if !PLATFORM(IOS)

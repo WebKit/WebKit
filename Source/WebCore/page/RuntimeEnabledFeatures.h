@@ -86,6 +86,9 @@ public:
 
     void setCustomPasteboardDataEnabled(bool isEnabled) { m_isCustomPasteboardDataEnabled = isEnabled; }
     bool customPasteboardDataEnabled() const { return m_isCustomPasteboardDataEnabled; }
+    
+    void setWebShareEnabled(bool isEnabled) { m_isWebShareEnabled = isEnabled; }
+    bool webShareEnabled() const { return m_isWebShareEnabled; }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     void setAttachmentElementEnabled(bool areEnabled) { m_isAttachmentElementEnabled = areEnabled; }
@@ -304,6 +307,7 @@ private:
     bool m_isDirectoryUploadEnabled { false };
     bool m_areDataTransferItemsEnabled { false };
     bool m_isCustomPasteboardDataEnabled { false };
+    bool m_isWebShareEnabled { false };
     bool m_inputEventsEnabled { true };
 
 #if ENABLE(ATTACHMENT_ELEMENT)

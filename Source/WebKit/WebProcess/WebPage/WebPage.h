@@ -44,6 +44,7 @@
 #include "OptionalCallbackID.h"
 #include "Plugin.h"
 #include "SandboxExtension.h"
+#include "ShareSheetCallbackID.h"
 #include "SharedMemory.h"
 #include "UserData.h"
 #include "WebBackForwardListProxy.h"
@@ -61,6 +62,7 @@
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/SecurityPolicyViolationEvent.h>
+#include <WebCore/ShareData.h>
 #include <WebCore/UserActivity.h>
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
@@ -1071,6 +1073,9 @@ public:
     void storageAccessResponse(bool wasGranted, uint64_t contextId);
 #endif
 
+    void showShareSheet(WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&& callback);
+    void didCompleteShareSheet(bool wasCompleted, ShareSheetCallbackID contextId);
+    
 #if ENABLE(ATTACHMENT_ELEMENT)
     void insertAttachment(const String& identifier, std::optional<uint64_t>&& fileSize, const String& fileName, const String& contentType, CallbackID);
     void updateAttachmentAttributes(const String& identifier, std::optional<uint64_t>&& fileSize, const String& contentType, const String& fileName, CallbackID);
@@ -1724,7 +1729,8 @@ private:
     HashMap<String, RefPtr<WebURLSchemeHandlerProxy>> m_schemeToURLSchemeHandlerProxyMap;
     HashMap<uint64_t, WebURLSchemeHandlerProxy*> m_identifierToURLSchemeHandlerProxyMap;
 
-    HashMap<uint64_t, WTF::Function<void (bool granted)>> m_storageAccessResponseCallbackMap;
+    HashMap<uint64_t, WTF::Function<void(bool granted)>> m_storageAccessResponseCallbackMap;
+    HashMap<ShareSheetCallbackID, WTF::Function<void(bool completed)>> m_shareSheetResponseCallbackMap;
 
 #if ENABLE(APPLICATION_MANIFEST)
     HashMap<uint64_t, uint64_t> m_applicationManifestFetchCallbackMap;

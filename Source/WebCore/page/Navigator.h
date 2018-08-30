@@ -20,8 +20,10 @@
 #pragma once
 
 #include "DOMWindowProperty.h"
+#include "JSDOMPromiseDeferred.h"
 #include "NavigatorBase.h"
 #include "ScriptWrappable.h"
+#include "ShareData.h"
 #include "Supplementable.h"
 
 namespace WebCore {
@@ -42,6 +44,7 @@ public:
     const String& userAgent() const final;
     void userAgentChanged();
     bool onLine() const final;
+    void share(ScriptExecutionContext&, ShareData, Ref<DeferredPromise>&&);
     
 #if PLATFORM(IOS)
     bool standalone() const;

@@ -77,6 +77,7 @@
 #include "PluginProcessManager.h"
 #include "PrintInfo.h"
 #include "SafeBrowsingResult.h"
+#include "ShareSheetCallbackID.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "UIMessagePortChannelProvider.h"
@@ -145,6 +146,7 @@
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/SSLKeyGenerator.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
+#include <WebCore/ShareData.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/ShouldSkipSafeBrowsingCheck.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
@@ -4585,6 +4587,15 @@ void WebPageProxy::runOpenPanel(uint64_t frameID, const SecurityOriginData& fram
     }
 }
 
+void WebPageProxy::showShareSheet(const ShareDataWithParsedURL& shareData, ShareSheetCallbackID callbackID)
+{
+    CompletionHandler<void(bool)> completionHandler = [this, protectedThis = makeRef(*this), callbackID] (bool access) {
+        m_process->send(Messages::WebPage::DidCompleteShareSheet(access, callbackID), m_pageID);
+    };
+    
+    m_pageClient.showShareSheet(shareData, WTFMove(completionHandler));
+}
+    
 void WebPageProxy::printFrame(uint64_t frameID)
 {
     ASSERT(!m_isPerformingDOMPrintOperation);

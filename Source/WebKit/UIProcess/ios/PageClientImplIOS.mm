@@ -54,6 +54,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PromisedAttachmentInfo.h>
+#import <WebCore/ShareData.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/ValidationBubble.h>
@@ -566,6 +567,12 @@ void PageClientImpl::showPlaybackTargetPicker(bool hasVideo, const IntRect& elem
 bool PageClientImpl::handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, API::OpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener)
 {
     [m_contentView _showRunOpenPanel:parameters resultListener:listener];
+    return true;
+}
+
+bool PageClientImpl::showShareSheet(const ShareDataWithParsedURL& shareData, WTF::CompletionHandler<void(bool)>&& completionHandler)
+{
+    [m_contentView _showShareSheet:shareData completionHandler:WTFMove(completionHandler)];
     return true;
 }
 

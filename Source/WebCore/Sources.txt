@@ -2782,6 +2782,8 @@ JSNavigatorLanguage.cpp
 JSNavigatorMediaCapabilities.cpp
 JSNavigatorMediaDevices.cpp
 JSNavigatorOnLine.cpp
+JSNavigatorShare.cpp
+JSShareData.cpp
 JSNavigatorServiceWorker.cpp
 JSNavigatorWebDriver.cpp
 JSNavigatorWebVR.cpp

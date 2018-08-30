@@ -23,6 +23,7 @@
 #include "config.h"
 #include "Navigator.h"
 
+#include "Chrome.h"
 #include "CookieJar.h"
 #include "DOMMimeTypeArray.h"
 #include "DOMPluginArray.h"
@@ -31,6 +32,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "Geolocation.h"
+#include "JSDOMPromiseDeferred.h"
 #include "LoaderStrategy.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
@@ -40,6 +42,7 @@
 #include "Settings.h"
 #include <wtf/Language.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/WeakPtr.h>
 
 
 namespace WebCore {
@@ -92,6 +95,43 @@ void Navigator::userAgentChanged()
 bool Navigator::onLine() const
 {
     return platformStrategies()->loaderStrategy()->isOnLine();
+}
+
+void Navigator::share(ScriptExecutionContext& context, ShareData data, Ref<DeferredPromise>&& promise)
+{
+    if (!m_frame->page()) {
+        promise->reject(TypeError);
+        return;
+    }
+    
+    if (data.title.isEmpty() && data.url.isEmpty() && data.text.isEmpty()) {
+        promise->reject(TypeError);
+        return;
+    }
+    
+    URL url = context.completeURL(data.url);
+    if (!url.isValid()) {
+        promise->reject(TypeError);
+        return;
+    }
+    
+    if (!UserGestureIndicator::processingUserGesture()) {
+        promise->reject(NotAllowedError);
+        return;
+    }
+    
+    ShareDataWithParsedURL shareData = {
+        data,
+        url,
+    };
+
+    m_frame->page()->chrome().showShareSheet(shareData, [promise = WTFMove(promise)] (bool completed) {
+        if (completed) {
+            promise->resolve();
+            return;
+        }
+        promise->reject(Exception { AbortError, "Abort due to cancellation of share."_s });
+    });
 }
 
 DOMPluginArray& Navigator::plugins()

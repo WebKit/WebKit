@@ -496,6 +496,10 @@ WK_EXPORT bool WKPreferencesGetDataTransferItemsEnabled(WKPreferencesRef);
 // Defaults to false
 WK_EXPORT void WKPreferencesSetCustomPasteboardDataEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetCustomPasteboardDataEnabled(WKPreferencesRef);
+    
+// Defaults to false, true for iOS
+WK_EXPORT void WKPreferencesSetWebShareEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetWebShareEnabled(WKPreferencesRef);
 
 // Defaults to false
 WK_EXPORT void WKPreferencesSetUserTimingEnabled(WKPreferencesRef, bool flag);

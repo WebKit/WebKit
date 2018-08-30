@@ -80,6 +80,7 @@ struct DictionaryPopupInfo;
 struct Highlight;
 struct TextIndicatorData;
 struct ViewportAttributes;
+struct ShareDataWithParsedURL;
 
 template <typename> class RectEdges;
 using FloatBoxExtent = RectEdges<float>;
@@ -201,6 +202,7 @@ public:
     virtual void handleDownloadRequest(DownloadProxy*) = 0;
 
     virtual bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) { return false; }
+    virtual bool showShareSheet(const WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void (bool)>&&) { return false; }
 
     virtual void didChangeContentSize(const WebCore::IntSize&) = 0;
 

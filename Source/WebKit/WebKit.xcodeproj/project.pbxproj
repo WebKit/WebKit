@@ -439,6 +439,9 @@
 		1CA8B946127C882A00576C2B /* WebInspectorProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CA8B944127C882A00576C2B /* WebInspectorProxyMessages.h */; };
 		1CBBE4A019B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CBBE49E19B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp */; };
 		1CBBE4A119B66C53006B7D81 /* WebInspectorUIMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CBBE49F19B66C53006B7D81 /* WebInspectorUIMessages.h */; };
+		1D67B339212E1F6100FAA786 /* ShareSheetCallbackID.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D67B338212E1F6100FAA786 /* ShareSheetCallbackID.h */; };
+		1DB01943211CF002009FB3E8 /* WKShareSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DE0D095211CC21300439B5F /* WKShareSheet.h */; };
+		1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1DBBB061211CC3CB00502ECC /* WKShareSheet.mm */; };
 		1F335BC0185B84F0001A201A /* WKWebProcessPlugInLoadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F335BBF185B84D8001A201A /* WKWebProcessPlugInLoadDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1F604BAA1889FBB800EE0395 /* _WKRenderingProgressEventsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F604BA71889FA7400EE0395 /* _WKRenderingProgressEventsInternal.h */; };
 		1F7506B11859163700EC0FF7 /* WKWebProcessPlugInFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F0181691858DC1500F92884 /* WKWebProcessPlugInFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2643,6 +2646,9 @@
 		1CBBE49E19B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorUIMessageReceiver.cpp; sourceTree = "<group>"; };
 		1CBBE49F19B66C53006B7D81 /* WebInspectorUIMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorUIMessages.h; sourceTree = "<group>"; };
 		1CC417C912C00CCA002BE67B /* TextCheckerCompletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerCompletion.h; sourceTree = "<group>"; };
+		1D67B338212E1F6100FAA786 /* ShareSheetCallbackID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareSheetCallbackID.h; sourceTree = "<group>"; };
+		1DBBB061211CC3CB00502ECC /* WKShareSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKShareSheet.mm; path = ios/forms/WKShareSheet.mm; sourceTree = "<group>"; };
+		1DE0D095211CC21300439B5F /* WKShareSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKShareSheet.h; path = ios/forms/WKShareSheet.h; sourceTree = "<group>"; };
 		1F0181691858DC1500F92884 /* WKWebProcessPlugInFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInFrame.h; sourceTree = "<group>"; };
 		1F01816A1858DC1500F92884 /* WKWebProcessPlugInFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebProcessPlugInFrame.mm; sourceTree = "<group>"; };
 		1F01816B1858DC1500F92884 /* WKWebProcessPlugInFrameInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInFrameInternal.h; sourceTree = "<group>"; };
@@ -5241,6 +5247,7 @@
 				8313F7E71F7DAE0300B944EB /* SharedStringHashTable.h */,
 				83F9644B1FA0F76200C47750 /* SharedStringHashTableReadOnly.cpp */,
 				83F9644C1FA0F76300C47750 /* SharedStringHashTableReadOnly.h */,
+				1D67B338212E1F6100FAA786 /* ShareSheetCallbackID.h */,
 				5272B2881406985D0096A5D0 /* StatisticsData.cpp */,
 				5272B2891406985D0096A5D0 /* StatisticsData.h */,
 				1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */,
@@ -8713,6 +8720,8 @@
 				F4D5F51C206087A10038BBA8 /* WKQuickboardListViewController.mm */,
 				F4F59AD42065A5CA006CAA46 /* WKSelectMenuListViewController.h */,
 				F4F59AD32065A5C9006CAA46 /* WKSelectMenuListViewController.mm */,
+				1DE0D095211CC21300439B5F /* WKShareSheet.h */,
+				1DBBB061211CC3CB00502ECC /* WKShareSheet.mm */,
 				F4D5F519206087A00038BBA8 /* WKTextInputListViewController.h */,
 				F4D5F51A206087A10038BBA8 /* WKTextInputListViewController.mm */,
 				2EB6FBFF203021960017E619 /* WKTimePickerViewController.h */,
@@ -9395,6 +9404,7 @@
 				8313F7EC1F7DAE0800B944EB /* SharedStringHashStore.h in Headers */,
 				8313F7EE1F7DAE0800B944EB /* SharedStringHashTable.h in Headers */,
 				83F9644E1FA0F76E00C47750 /* SharedStringHashTableReadOnly.h in Headers */,
+				1D67B339212E1F6100FAA786 /* ShareSheetCallbackID.h in Headers */,
 				995226D6207D184600F78420 /* SimulatedInputDispatcher.h in Headers */,
 				2DAF06D618BD1A470081CEB1 /* SmartMagnificationController.h in Headers */,
 				2DE6943E18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h in Headers */,
@@ -9933,6 +9943,7 @@
 				BC407604124FF0270068F20A /* WKSerializedScriptValue.h in Headers */,
 				1ADE46B31954EC61000F7985 /* WKSessionStateRef.h in Headers */,
 				BCDDB32B124EC2AB0048D13C /* WKSharedAPICast.h in Headers */,
+				1DB01943211CF002009FB3E8 /* WKShareSheet.h in Headers */,
 				513E462D1AD837560016234A /* WKSharingServicePickerDelegate.h in Headers */,
 				93F549B41E3174B7000E7239 /* WKSnapshotConfiguration.h in Headers */,
 				BC407606124FF0270068F20A /* WKString.h in Headers */,
@@ -11389,6 +11400,8 @@
 				51CD1C5D1B3493AF00142CA5 /* WKSecurityOriginRef.cpp in Sources */,
 				BC407603124FF0270068F20A /* WKSerializedScriptValue.cpp in Sources */,
 				1ADE46B21954EC61000F7985 /* WKSessionStateRef.cpp in Sources */,
+				1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */,
+				513E462E1AD837560016234A /* WKSharingServicePickerDelegate.mm in Sources */,
 				93F549B61E3174DA000E7239 /* WKSnapshotConfiguration.mm in Sources */,
 				BC407605124FF0270068F20A /* WKString.cpp in Sources */,
 				BC407619124FF0370068F20A /* WKStringCF.mm in Sources */,

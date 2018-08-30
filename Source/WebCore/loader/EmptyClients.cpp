@@ -436,6 +436,10 @@ std::unique_ptr<DataListSuggestionPicker> EmptyChromeClient::createDataListSugge
 void EmptyChromeClient::runOpenPanel(Frame&, FileChooser&)
 {
 }
+    
+void EmptyChromeClient::showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&)
+{
+}
 
 PAL::SessionID EmptyFrameLoaderClient::sessionID() const
 {

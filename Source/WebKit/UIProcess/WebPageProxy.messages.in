@@ -76,6 +76,7 @@ messages -> WebPageProxy {
     RunBeforeUnloadConfirmPanel(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, String message) -> (bool shouldClose) Delayed
     PageDidScroll()
     RunOpenPanel(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, struct WebCore::FileChooserSettings parameters)
+    ShowShareSheet(struct WebCore::ShareDataWithParsedURL shareData, uint64_t callbackID)
     PrintFrame(uint64_t frameID) -> ()
     RunModal()
     NotifyScrollerThumbIsVisibleInRect(WebCore::IntRect scrollerThumb)

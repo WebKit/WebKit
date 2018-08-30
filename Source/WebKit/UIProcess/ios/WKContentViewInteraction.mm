@@ -84,6 +84,7 @@
 #import <WebCore/PromisedAttachmentInfo.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Scrollbar.h>
+#import <WebCore/ShareData.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/VisibleSelection.h>
 #import <WebCore/WebCoreNSURLExtras.h>
@@ -777,6 +778,12 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
         [_fileUploadPanel setDelegate:nil];
         [_fileUploadPanel dismiss];
         _fileUploadPanel = nil;
+    }
+    
+    if (_shareSheet) {
+        [_shareSheet setDelegate:nil];
+        [_shareSheet dismiss];
+        _shareSheet = nil;
     }
     
     _inputViewUpdateDeferrer = nullptr;
@@ -4693,12 +4700,32 @@ static bool isAssistableInputType(InputType type)
     [_fileUploadPanel presentWithParameters:parameters resultListener:listener];
 }
 
+- (void)_showShareSheet:(const ShareDataWithParsedURL&)data completionHandler:(CompletionHandler<void(bool)>&&)completionHandler
+{
+    ASSERT(!_shareSheet);
+    if (_shareSheet)
+        return;
+    
+    _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:self]);
+    [_shareSheet setDelegate:self];
+    
+    [_shareSheet presentWithParameters:data completionHandler:WTFMove(completionHandler)];
+}
+
 - (void)fileUploadPanelDidDismiss:(WKFileUploadPanel *)fileUploadPanel
 {
     ASSERT(_fileUploadPanel.get() == fileUploadPanel);
 
     [_fileUploadPanel setDelegate:nil];
     _fileUploadPanel = nil;
+}
+
+- (void)shareSheetDidDismiss:(WKShareSheet *)shareSheet
+{
+    ASSERT(_shareSheet == shareSheet);
+    
+    [_shareSheet setDelegate:nil];
+    _shareSheet = nil;
 }
 
 #pragma mark - UITextInputMultiDocument
@@ -5856,6 +5883,11 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     if ([_presentedFullScreenInputViewController isKindOfClass:[WKTimePickerViewController class]])
         [(WKTimePickerViewController *)_presentedFullScreenInputViewController.get() setHour:hour minute:minute];
 #endif
+}
+
+- (void)invokeShareSheetWithResolution:(BOOL)resolved
+{
+    [_shareSheet invokeShareSheetWithResolution:resolved];
 }
 
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem

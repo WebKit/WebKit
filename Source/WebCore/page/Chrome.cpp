@@ -46,6 +46,7 @@
 #include "RenderObject.h"
 #include "ResourceHandle.h"
 #include "Settings.h"
+#include "ShareData.h"
 #include "StorageNamespace.h"
 #include "WindowFeatures.h"
 #include <JavaScriptCore/VM.h>
@@ -447,6 +448,11 @@ void Chrome::runOpenPanel(Frame& frame, FileChooser& fileChooser)
 {
     notifyPopupOpeningObservers();
     m_client.runOpenPanel(frame, fileChooser);
+}
+
+void Chrome::showShareSheet(ShareDataWithParsedURL& shareData, CompletionHandler<void(bool)>&& callback)
+{
+    m_client.showShareSheet(shareData, WTFMove(callback));
 }
 
 void Chrome::loadIconForFiles(const Vector<String>& filenames, FileIconLoader& loader)

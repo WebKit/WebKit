@@ -1728,6 +1728,16 @@ bool WKPreferencesGetCustomPasteboardDataEnabled(WKPreferencesRef preferencesRef
     return toImpl(preferencesRef)->customPasteboardDataEnabled();
 }
 
+void WKPreferencesSetWebShareEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setWebShareEnabled(flag);
+}
+
+bool WKPreferencesGetWebShareEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->webShareEnabled();
+}
+
 void WKPreferencesSetDownloadAttributeEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setDownloadAttributeEnabled(flag);

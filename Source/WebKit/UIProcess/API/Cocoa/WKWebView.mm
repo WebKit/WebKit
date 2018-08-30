@@ -5933,6 +5933,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [_contentView setTimePickerValueToHour:hour minute:minute];
 }
 
+- (void)_invokeShareSheetWithResolution:(BOOL)resolved
+{
+    [_contentView invokeShareSheetWithResolution:resolved];
+}
+
 - (void)selectFormAccessoryPickerRow:(int)rowIndex
 {
     [_contentView selectFormAccessoryPickerRow:rowIndex];

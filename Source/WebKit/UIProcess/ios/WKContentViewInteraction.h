@@ -38,6 +38,7 @@
 #import "WKFileUploadPanel.h"
 #import "WKFormPeripheral.h"
 #import "WKKeyboardScrollingAnimator.h"
+#import "WKShareSheet.h"
 #import "WKSyntheticClickTapGestureRecognizer.h"
 #import <UIKit/UIView.h>
 #import <WebCore/Color.h>
@@ -62,6 +63,7 @@ class FloatQuad;
 class IntSize;
 class SelectionRect;
 struct PromisedAttachmentInfo;
+struct ShareDataWithParsedURL;
 enum class RouteSharingPolicy;
 }
 
@@ -174,6 +176,7 @@ struct WKAutoCorrectionData {
 #endif
     RetainPtr<WKFormInputSession> _formInputSession;
     RetainPtr<WKFileUploadPanel> _fileUploadPanel;
+    RetainPtr<WKShareSheet> _shareSheet;
     RetainPtr<UIGestureRecognizer> _previewGestureRecognizer;
     RetainPtr<UIGestureRecognizer> _previewSecondaryGestureRecognizer;
     Vector<bool> _focusStateStack;
@@ -262,7 +265,7 @@ struct WKAutoCorrectionData {
 
 @end
 
-@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UITextAutoscrolling, UITextInputMultiDocument, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWebTouchEventsGestureRecognizerDelegate, UIWKInteractionViewProtocol, WKActionSheetAssistantDelegate, WKFileUploadPanelDelegate, WKKeyboardScrollable
+@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UITextAutoscrolling, UITextInputMultiDocument, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWebTouchEventsGestureRecognizerDelegate, UIWKInteractionViewProtocol, WKActionSheetAssistantDelegate, WKFileUploadPanelDelegate, WKShareSheetDelegate, WKKeyboardScrollable
 #if ENABLE(DATA_INTERACTION)
     , UIDragInteractionDelegate, UIDropInteractionDelegate
 #endif
@@ -317,6 +320,7 @@ FOR_EACH_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_overflowScrollingDidEnd;
 - (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const WebCore::IntRect&)elementRect routeSharingPolicy:(WebCore::RouteSharingPolicy)policy routingContextUID:(NSString *)contextUID;
 - (void)_showRunOpenPanel:(API::OpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
+- (void)_showShareSheet:(const WebCore::ShareDataWithParsedURL&)shareData completionHandler:(WTF::CompletionHandler<void(bool)>&&)completionHandler;
 - (void)accessoryDone;
 - (void)_didHandleKeyEvent:(::WebEvent *)event eventWasHandled:(BOOL)eventWasHandled;
 - (Vector<WebKit::OptionItem>&) assistedNodeSelectOptions;
@@ -359,6 +363,7 @@ FOR_EACH_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_simulateTextEntered:(NSString *)text;
 - (void)selectFormAccessoryPickerRow:(NSInteger)rowIndex;
 - (void)setTimePickerValueToHour:(NSInteger)hour minute:(NSInteger)minute;
+- (void)invokeShareSheetWithResolution:(BOOL)resolved;
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem;
 
 @property (nonatomic, readonly) NSString *textContentTypeForTesting;

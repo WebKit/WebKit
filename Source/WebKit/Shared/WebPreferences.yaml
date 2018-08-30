@@ -766,6 +766,13 @@ CustomPasteboardDataEnabled:
   humanReadableDescription: "Enable custom clipboard types and better security model for clipboard API."
   webcoreBinding: RuntimeEnabledFeatures
 
+WebShareEnabled:
+  type: bool
+  defaultValue: DEFAULT_WEB_SHARE_ENABLED
+  humanReadableName: "Web Share"
+  humanReadableDescription: "Enable support for share sheet via Web Share API"
+  webcoreBinding: RuntimeEnabledFeatures
+
 ViewportFitEnabled:
   type: bool
   defaultValue: true

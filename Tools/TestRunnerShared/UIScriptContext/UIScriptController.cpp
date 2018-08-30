@@ -294,6 +294,10 @@ void UIScriptController::setTimePickerValue(long, long)
 {
 }
 
+void UIScriptController::invokeShareSheetWithResolution(bool)
+{
+}
+
 void UIScriptController::selectFormAccessoryPickerRow(long)
 {
 }

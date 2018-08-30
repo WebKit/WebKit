@@ -1,4 +1,5 @@
 CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Not enough arguments
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Not enough arguments
 This tests that the navigator object of a deleted frame is disconnected properly. Accessing fields or methods shouldn't crash the browser. 
  Check Navigator
 navigator.appCodeName is OK
@@ -20,6 +21,8 @@ navigator.productSub is OK
 navigator.requestMediaKeySystemAccess() is OK
 navigator.sendBeacon() threw err TypeError: Not enough arguments
 navigator.serviceWorker is OK
+navigator.share() is OK
+navigator.standalone is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
@@ -43,6 +46,8 @@ navigator.productSub is OK
 navigator.requestMediaKeySystemAccess() is OK
 navigator.sendBeacon() threw err TypeError: Not enough arguments
 navigator.serviceWorker is OK
+navigator.share() is OK
+navigator.standalone is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK

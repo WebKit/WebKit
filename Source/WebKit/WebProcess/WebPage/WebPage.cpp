@@ -61,6 +61,7 @@
 #include "SessionState.h"
 #include "SessionStateConversion.h"
 #include "SessionTracker.h"
+#include "ShareSheetCallbackID.h"
 #include "ShareableBitmap.h"
 #include "UserMediaPermissionRequestManager.h"
 #include "ViewGestureGeometryCollector.h"
@@ -6063,6 +6064,29 @@ void WebPage::storageAccessResponse(bool wasGranted, uint64_t contextId)
     callback(wasGranted);
 }
 #endif
+    
+static ShareSheetCallbackID nextShareSheetCallbackID()
+{
+    static ShareSheetCallbackID nextCallbackID = 0;
+    return ++nextCallbackID;
+}
+    
+void WebPage::showShareSheet(ShareDataWithParsedURL& shareData, WTF::CompletionHandler<void(bool)>&& callback)
+{
+    ShareSheetCallbackID callbackID = nextShareSheetCallbackID();
+    auto addResult = m_shareSheetResponseCallbackMap.add(callbackID, WTFMove(callback));
+    ASSERT(addResult.isNewEntry);
+    if (addResult.iterator->value)
+        send(Messages::WebPageProxy::ShowShareSheet(WTFMove(shareData), callbackID));
+    else
+        callback(false);
+}
+
+void WebPage::didCompleteShareSheet(bool wasGranted, ShareSheetCallbackID callbackID)
+{
+    auto callback = m_shareSheetResponseCallbackMap.take(callbackID);
+    callback(wasGranted);
+}
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 

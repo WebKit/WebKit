@@ -1,3 +1,50 @@
+2018-08-29  Olivia Barnett  <obarnett@apple.com>
+
+        Implement the Web Share API
+        https://bugs.webkit.org/show_bug.cgi?id=171100
+        <rdar://problem/31751734>
+
+        Reviewed by Tim Horton.
+
+        Added one test in fast/events/ios called share.html; adjusted expectations for existing tests.
+
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * features.json:
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyChromeClient::showShareSheet):
+        * loader/EmptyClients.h:
+        Added empty showShareSheet function.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::showShareSheet):
+        * page/Chrome.h:
+        Added call to showShareSheet on client.
+
+        * page/ChromeClient.h:
+        Virtual showShareSheet function.
+
+        * page/Navigator.cpp:
+        (WebCore::Navigator::share):
+        * page/Navigator.h:
+        Share function that returns a promise and invokes the share sheet.
+
+        * page/Navigator.idl:
+        Implements NavigatorShare
+
+        * page/NavigatorShare.idl: Added.
+        Added definition of share function returning a promise.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebShareEnabled):
+        (WebCore::RuntimeEnabledFeatures::webShareEnabled const):
+        Added RuntimeEnabledFeature switch.
+
+        * page/ShareData.h: Added.
+        * page/ShareData.idl: Added.
+        Definition of ShareData struct.
+
 2018-08-29  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r226138): WebCore::subdivide() may return an empty vector; Web process can crash when performing find in Epiphany
