@@ -1,3 +1,11 @@
+2018-08-30  Tim Horton  <timothy_horton@apple.com>
+
+        Try to fix the watchOS and tvOS build
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showShareSheet:completionHandler:]):
+        (-[WKContentView shareSheetDidDismiss:]):
+
 2018-08-30  Justin Michaud  <justin@justinmichaud.com>
 
         [GTK] Touchscreen pinch to zoom should scale the page like other platforms
