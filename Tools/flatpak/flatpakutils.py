@@ -612,9 +612,9 @@ class WebkitFlatpak:
 
         repos = FlatpakRepos()
         self.sdk_repo = repos.add(
-            FlatpakRepo("gnome-nightly",
-                        url="https://sdk.gnome.org/nightly/repo/",
-                        repo_file="https://sdk.gnome.org/gnome-nightly.flatpakrepo"))
+            FlatpakRepo("flathub",
+                        url="https://dl.flathub.org/repo/",
+                        repo_file="https://dl.flathub.org/repo/flathub.flatpakrepo"))
 
         manifest = load_manifest(self.manifest_path)
         if not manifest:

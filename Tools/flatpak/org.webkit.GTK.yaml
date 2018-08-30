@@ -1,8 +1,8 @@
 - name: mesa
   sources:
     - type: archive
-      url: https://mesa.freedesktop.org/archive/mesa-18.0.5.tar.xz
-      sha256: 5187bba8d72aea78f2062d134ec6079a508e8216062dce9ec9048b5eb2c4fc6b
+      url: https://mesa.freedesktop.org/archive/mesa-18.0.3.tar.xz
+      sha256: 099d9667327a76a61741a533f95067d76ea71a656e66b91507b3c0caf1d49e30
   config-opts:
     - --prefix=/app/softGL
     - --disable-dri3
