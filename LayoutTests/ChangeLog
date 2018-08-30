@@ -1,3 +1,13 @@
+2018-08-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Layout Test js/error-should-not-strong-reference-global-object.html is flaky on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=187103
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations: Consolidate expectations.
+
 2018-08-29  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r226138): WebCore::subdivide() may return an empty vector; Web process can crash when performing find in Epiphany

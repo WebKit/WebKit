@@ -1168,7 +1168,7 @@ webkit.org/b/154709 [ Sierra+ ] legacy-animation-engine/fast/text/crash-complex-
 webkit.org/b/155092 js/arraybuffer-wrappers.html [ Pass Timeout ]
 
 webkit.org/b/155140 js/promises-tests/promises-tests-2-3-3.html [ Pass Failure ]
-webkit.org/b/187103 js/error-should-not-strong-reference-global-object.html [ Pass Failure ]
+webkit.org/b/187103 js/error-should-not-strong-reference-global-object.html [ Pass Failure Timeout ]
 
 webkit.org/b/155505 [ Sierra+ ] http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Skip ]
 webkit.org/b/155505 [ Sierra+ ] http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
