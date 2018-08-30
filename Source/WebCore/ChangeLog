@@ -1,3 +1,16 @@
+2018-08-30  Olivia Barnett  <obarnett@apple.com>
+
+        REGRESSION(r235489): fast/dom/navigator-detached-no-crash.html crashes under Navigator::share
+        https://bugs.webkit.org/show_bug.cgi?id=189170
+
+        Reviewed by Tim Horton.
+
+        No new tests; fixing a failing existing test.
+
+        * page/Navigator.cpp:
+        (WebCore::Navigator::share):
+        Added null check for frame.
+
 2018-08-30  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r235516.

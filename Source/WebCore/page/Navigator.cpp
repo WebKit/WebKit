@@ -99,7 +99,7 @@ bool Navigator::onLine() const
 
 void Navigator::share(ScriptExecutionContext& context, ShareData data, Ref<DeferredPromise>&& promise)
 {
-    if (!m_frame->page()) {
+    if (!m_frame || !m_frame->page()) {
         promise->reject(TypeError);
         return;
     }
