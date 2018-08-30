@@ -61,10 +61,9 @@ void FloatAvoider::setHorizontalConstraints(HorizontalConstraints horizontalCons
         auto containingBlockContentBoxLeft = m_containingBlockAbsoluteDisplayBox.left() + m_containingBlockAbsoluteDisplayBox.contentBoxLeft();
         auto containingBlockContentBoxRight = containingBlockContentBoxLeft + m_containingBlockAbsoluteDisplayBox.contentBoxWidth();
         // Align it with the containing block's left edge first.
-        left = std::max(containingBlockContentBoxLeft + m_absoluteDisplayBox.marginLeft(), left);
+        left = std::max(containingBlockContentBoxLeft + marginLeft(), left);
         // Make sure it does not overflow the containing block on the right.
-        auto marginBoxSize = m_absoluteDisplayBox.marginBox().width();
-        left = std::min(left, containingBlockContentBoxRight - marginBoxSize + m_absoluteDisplayBox.marginLeft());
+        left = std::min(left, containingBlockContentBoxRight - marginBoxWidth() + marginLeft());
 
         return left;
     };
@@ -99,8 +98,8 @@ PositionInContextRoot FloatAvoider::initialHorizontalPosition() const
     auto containingBlockContentBoxLeft = m_containingBlockAbsoluteDisplayBox.left() + m_containingBlockAbsoluteDisplayBox.contentBoxLeft();
     auto containingBlockContentBoxRight = containingBlockContentBoxLeft + m_containingBlockAbsoluteDisplayBox.contentBoxWidth();
 
-    auto left = isLeftAligned() ? containingBlockContentBoxLeft : containingBlockContentBoxRight - m_absoluteDisplayBox.marginBox().width();
-    left += m_absoluteDisplayBox.marginLeft();
+    auto left = isLeftAligned() ? containingBlockContentBoxLeft : containingBlockContentBoxRight - marginBoxWidth();
+    left += marginLeft();
 
     return left;
 }

@@ -68,6 +68,13 @@ protected:
     virtual PositionInContextRoot horizontalPositionCandidate(HorizontalConstraints);
     virtual PositionInContextRoot verticalPositionCandidate(PositionInContextRoot);
 
+    LayoutUnit marginTop() const { return displayBox().marginTop(); }
+    LayoutUnit marginBottom() const { return displayBox().marginBottom(); }
+    LayoutUnit marginLeft() const { return displayBox().nonComputedMarginLeft(); }
+    LayoutUnit marginRight() const { return displayBox().nonComputedMarginRight(); }
+
+    LayoutUnit marginBoxWidth() const { return marginLeft() + displayBox().width() + marginRight(); }
+
     const FloatingState& floatingState() const { return m_floatingState; }
     const Box& layoutBox() const { return *m_layoutBox; }
     const Display::Box& displayBox() const { return m_absoluteDisplayBox; }

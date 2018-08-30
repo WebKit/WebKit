@@ -1,5 +1,30 @@
 2018-08-30  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Floating] Use non-computed horizontal margins when intersecting floats with float avoiders.
+        https://bugs.webkit.org/show_bug.cgi?id=189143
+
+        Reviewed by Antti Koivisto.
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree const):
+        * layout/floats/FloatAvoider.cpp:
+        (WebCore::Layout::FloatAvoider::setHorizontalConstraints):
+        (WebCore::Layout::FloatAvoider::initialHorizontalPosition const):
+        * layout/floats/FloatAvoider.h:
+        (WebCore::Layout::FloatAvoider::marginTop const):
+        (WebCore::Layout::FloatAvoider::marginBottom const):
+        (WebCore::Layout::FloatAvoider::marginLeft const):
+        (WebCore::Layout::FloatAvoider::marginRight const):
+        (WebCore::Layout::FloatAvoider::marginBoxWidth const):
+        * layout/floats/FloatBox.cpp:
+        (WebCore::Layout::FloatBox::rect const):
+        (WebCore::Layout::FloatBox::horizontalPositionCandidate):
+        (WebCore::Layout::FloatBox::verticalPositionCandidate):
+        (WebCore::Layout::FloatBox::initialVerticalPosition const):
+        * layout/floats/FloatBox.h:
+
+2018-08-30  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Margins] Add non-computed horizontal margins to DisplayBox
         https://bugs.webkit.org/show_bug.cgi?id=189141
 

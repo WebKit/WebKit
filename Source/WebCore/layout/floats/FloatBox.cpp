@@ -40,27 +40,33 @@ FloatBox::FloatBox(const Box& layoutBox, const FloatingState& floatingState, con
 {
 }
 
+Display::Box::Rect FloatBox::rect() const
+{
+    auto rect = displayBox().rect();
+    return { rect.top() - marginTop(), rect.left() - marginLeft(), marginLeft() + rect.width() + marginRight(), marginTop() + rect.height() + marginBottom() };
+}
+
 PositionInContextRoot FloatBox::horizontalPositionCandidate(HorizontalConstraints horizontalConstraints)
 {
     auto positionCandidate = isLeftAligned() ? *horizontalConstraints.left : *horizontalConstraints.right - rect().width();
-    positionCandidate += displayBox().marginLeft();
+    positionCandidate += marginLeft();
 
     return positionCandidate;
 }
 
 PositionInContextRoot FloatBox::verticalPositionCandidate(PositionInContextRoot verticalConstraint)
 {
-    return verticalConstraint + displayBox().marginTop();
+    return verticalConstraint + marginTop();
 }
 
 PositionInContextRoot FloatBox::initialVerticalPosition() const
 {
     // Incoming float cannot be placed higher than existing floats (margin box of the last float).
     // Take the static position (where the box would go if it wasn't floating) and adjust it with the last float.
-    auto top = FloatAvoider::initialVerticalPosition() - displayBox().marginTop();
+    auto top = FloatAvoider::initialVerticalPosition() - marginTop();
     if (auto lastFloat = floatingState().last())
         top = std::max(top, lastFloat->rectWithMargin().top());
-    top += displayBox().marginTop();
+    top += marginTop();
 
     return top;
 }
