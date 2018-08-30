@@ -1,3 +1,16 @@
+2018-08-30  Sihui Liu  <sihui_liu@apple.com>
+
+        WKNavigation.ProcessCrashDuringCallback is failing on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=189148
+
+        Reviewed by Chris Dumez.
+
+        We should not deference WebView or we may get WKErrorWebViewInvalidated error, because 
+        WebView could be destroyed before Web Process termination is noticed.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebContentProcessDidTerminate.mm:
+        (TEST):
+
 2018-08-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Formatting context roots avoid floats.

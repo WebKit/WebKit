@@ -275,8 +275,6 @@ TEST(WKNavigation, ProcessCrashDuringCallback)
     // Simulate a crash, which should invalidate all pending callbacks.
     [webView _killWebContentProcess];
 
-    webView = nullptr;
-
     TestWebKitAPI::Util::run(&calledAllCallbacks);
     TestWebKitAPI::Util::sleep(0.5);
     EXPECT_EQ(6U, callbackCount);
