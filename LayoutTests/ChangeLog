@@ -1,3 +1,14 @@
+2018-08-30  Youenn Fablet  <youenn@apple.com>
+
+        Remove WebRTC legacy API implementation
+        https://bugs.webkit.org/show_bug.cgi?id=189040
+        <rdar://problem/43861361>
+
+        Unreviewed.
+
+        * platform/ios/TestExpectations: Use default expectations for the folder.
+        This allows skipping imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/setRemoteDescription.html
+
 2018-08-30  Brent Fulgham  <bfulgham@apple.com>
 
         The width of a nullptr TextRun should be zero

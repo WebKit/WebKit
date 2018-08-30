@@ -1060,7 +1060,6 @@ css3/color-filters/color-filter-caret-color.html [ Skip ]
 css3/color-filters/color-filter-ignore-semantic.html [ Skip ]
 
 # Run webrtc tests on iOS 11
-imported/w3c/web-platform-tests/webrtc [ Pass ]
 fast/mediastream/RTCIceCandidate.html [ Pass ]
 fast/mediastream/RTCPeerConnection-add-removeTrack.html [ Pass ]
 fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Pass ]
