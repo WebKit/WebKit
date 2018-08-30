@@ -145,6 +145,11 @@ WKNavigation *WKPageLoadURLRequestReturningNavigation(WKPageRef pageRef, WKURLRe
     auto resourceRequest = toImpl(urlRequestRef)->resourceRequest();
     return wrapper(toImpl(pageRef)->loadRequest(WTFMove(resourceRequest)));
 }
+
+WKNavigation *WKPageLoadFileReturningNavigation(WKPageRef pageRef, WKURLRef fileURL, WKURLRef resourceDirectoryURL)
+{
+    return wrapper(toImpl(pageRef)->loadFile(toWTFString(fileURL), toWTFString(resourceDirectoryURL)));
+}
 #endif
 
 #if PLATFORM(MAC)
