@@ -1745,7 +1745,7 @@ void WebProcess::removeMockMediaDevice(const String& persistentId)
 
 void WebProcess::resetMockMediaDevices()
 {
-    MockRealtimeMediaSource::resetDevices();
+    MockRealtimeMediaSourceCenter::resetDevices();
 }
 #endif
 

@@ -45,7 +45,7 @@ promise_test((test) => {
         testRunner.setUserMediaPermission(true);
 
     var stream;
-    return navigator.mediaDevices.getUserMedia({video: {advanced: [{width:{min:1280}}, {height:{min:720} } ]}}).then((stream) => {
+    return navigator.mediaDevices.getUserMedia({video: {advanced: [{width:{min:640}}, {height:{min:480} } ]}}).then((stream) => {
         return new Promise((resolve, reject) => {
             createConnections((firstConnection) => {
                 var track = stream.getVideoTracks()[0];

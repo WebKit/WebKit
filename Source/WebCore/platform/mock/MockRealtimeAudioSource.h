@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,12 +33,12 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "ImageBuffer.h"
-#include "MockRealtimeMediaSource.h"
+#include "MockMediaDevice.h"
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
 
-class MockRealtimeAudioSource : public MockRealtimeMediaSource {
+class MockRealtimeAudioSource : public RealtimeMediaSource {
 public:
 
     static CaptureSourceOrError create(const String& deviceID, const String& name, const MediaConstraints*);
@@ -55,19 +55,17 @@ protected:
 
     virtual void render(Seconds) { }
 
-    Seconds elapsedTime();
     static Seconds renderInterval() { return 60_ms; }
 
 private:
-
     bool applyVolume(double) override { return true; }
     bool applySampleRate(int) override { return true; }
     bool applySampleSize(int) override { return true; }
     bool applyEchoCancellation(bool) override { return true; }
 
-    void updateSettings(RealtimeMediaSourceSettings&) override;
-    void initializeCapabilities(RealtimeMediaSourceCapabilities&) override;
-    void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints&) override;
+    const RealtimeMediaSourceCapabilities& capabilities() const final;
+    const RealtimeMediaSourceSettings& settings() const final;
+    void settingsDidChange() final;
 
     void tick();
 
@@ -75,11 +73,16 @@ private:
 
     void delaySamples(Seconds) final;
 
+    mutable std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
+    mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;
+    RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
+
     RunLoop::Timer<MockRealtimeAudioSource> m_timer;
     MonotonicTime m_startTime { MonotonicTime::nan() };
     MonotonicTime m_lastRenderTime { MonotonicTime::nan() };
     Seconds m_elapsedTime { 0_s };
     MonotonicTime m_delayUntil;
+    MockMediaDevice m_device;
 };
 
 } // namespace WebCore

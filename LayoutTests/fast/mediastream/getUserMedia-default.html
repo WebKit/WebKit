@@ -46,7 +46,7 @@ promise_test((test) => {
 promise_test((test) => {
     return navigator.mediaDevices.getUserMedia({ audio: true, video: { frameRate: {ideal: 60 } } }).then((stream) => {
         let settings = stream.getVideoTracks()[0].getSettings();
-        assert_equals(settings.frameRate, 60, "frame rate");
+        assert_equals(settings.frameRate, 30, "frame rate");
         assert_equals(settings.width, settings.height == 640 ? 480 : 640, "frame width");
         assert_equals(settings.height, settings.width = 640 ? 480 : 640, "frame height");
     });

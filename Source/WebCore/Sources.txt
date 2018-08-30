@@ -1744,6 +1744,7 @@ platform/mediastream/RealtimeMediaSourceCenter.cpp
 platform/mediastream/RealtimeMediaSourceSettings.cpp
 platform/mediastream/RealtimeOutgoingAudioSource.cpp
 platform/mediastream/RealtimeOutgoingVideoSource.cpp
+platform/mediastream/RealtimeVideoSource.cpp
 
 platform/mediastream/libwebrtc/LibWebRTCProvider.cpp
 
@@ -1752,7 +1753,6 @@ platform/mock/GeolocationClientMock.cpp
 platform/mock/MediaEngineDecodingConfigurationMock.cpp
 platform/mock/MediaEngineEncodingConfigurationMock.cpp
 platform/mock/MockRealtimeAudioSource.cpp
-platform/mock/MockRealtimeMediaSource.cpp
 platform/mock/MockRealtimeMediaSourceCenter.cpp
 platform/mock/MockRealtimeVideoSource.cpp
 platform/mock/RTCDataChannelHandlerMock.cpp

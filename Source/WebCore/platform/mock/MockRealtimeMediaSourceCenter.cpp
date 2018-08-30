@@ -30,12 +30,78 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "CaptureDevice.h"
 #include "Logging.h"
+#include "MediaConstraints.h"
 #include "MockRealtimeAudioSource.h"
 #include "MockRealtimeVideoSource.h"
+#include "NotImplemented.h"
+#include "RealtimeMediaSourceSettings.h"
+#include <math.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
+
+static inline Vector<MockMediaDevice> defaultDevices()
+{
+    return Vector<MockMediaDevice> {
+        MockMediaDevice { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 1"_s, MockMicrophoneProperties { 44100 } },
+        MockMediaDevice { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 2"_s, MockMicrophoneProperties { 48000 } },
+
+        MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 1"_s,
+            MockCameraProperties {
+                30,
+                RealtimeMediaSourceSettings::VideoFacingMode::User,
+                { 30.00, 27.50, 25.00, 22.50, 20.00, 17.50, 15.00, 12.50, 10.00, 7.50, 5.00 },
+                { { 3840, 2160 }, { 1920, 1080 }, { 1280, 720 }, { 960, 540 }, { 640, 480 }, { 352, 288 }, { 320, 240 } },
+                Color::black,
+            } },
+
+        MockMediaDevice { "239c24b3-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 2"_s,
+            MockCameraProperties {
+                15,
+                RealtimeMediaSourceSettings::VideoFacingMode::Environment,
+                { 25.00, 22.50, 20.00, 17.50, 15.00, 12.50, 10.00, 7.50, 5.00 },
+                { { 1280, 720 }, { 960, 540 }, { 640, 480 }, { 352, 288 }, { 320, 240 }, { 160, 120 } },
+                Color::darkGray,
+            } },
+
+        MockMediaDevice { "SCREEN-1"_s, "Mock screen device 1"_s, MockDisplayProperties { 30, Color::lightGray } },
+        MockMediaDevice { "SCREEN-2"_s, "Mock screen device 2"_s, MockDisplayProperties { 10, Color::yellow } }
+    };
+}
+
+static Vector<MockMediaDevice>& devices()
+{
+    static auto devices = makeNeverDestroyed([] {
+        return defaultDevices();
+    }());
+    return devices;
+}
+
+static HashMap<String, MockMediaDevice>& deviceMap()
+{
+    static auto map = makeNeverDestroyed([] {
+        HashMap<String, MockMediaDevice> map;
+        for (auto& device : devices())
+            map.add(device.persistentId, device);
+
+        return map;
+    }());
+    return map;
+}
+
+static inline Vector<CaptureDevice>& deviceListForDevice(const MockMediaDevice& device)
+{
+    if (device.isMicrophone())
+        return MockRealtimeMediaSourceCenter::audioDevices();
+    if (device.isCamera())
+        return MockRealtimeMediaSourceCenter::videoDevices();
+
+    ASSERT(device.isDisplay());
+    return MockRealtimeMediaSourceCenter::displayDevices();
+}
 
 MockRealtimeMediaSourceCenter& MockRealtimeMediaSourceCenter::singleton()
 {
@@ -52,19 +118,129 @@ void MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(bool
     }
 }
 
+static void createCaptureDevice(const MockMediaDevice& device)
+{
+    deviceListForDevice(device).append(MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(device.type(), device.persistentId).value());
+}
+
+void MockRealtimeMediaSourceCenter::resetDevices()
+{
+    setDevices(defaultDevices());
+    RealtimeMediaSourceCenter::singleton().captureDevicesChanged();
+}
+
 void MockRealtimeMediaSourceCenter::setDevices(Vector<MockMediaDevice>&& newMockDevices)
 {
-    MockRealtimeMediaSource::setDevices(WTFMove(newMockDevices));
+    audioDevices().clear();
+    videoDevices().clear();
+    displayDevices().clear();
+
+    auto& mockDevices = devices();
+    mockDevices = WTFMove(newMockDevices);
+
+    auto& map = deviceMap();
+    map.clear();
+
+    for (const auto& device : mockDevices) {
+        map.add(device.persistentId, device);
+        createCaptureDevice(device);
+    }
+    RealtimeMediaSourceCenter::singleton().captureDevicesChanged();
 }
 
 void MockRealtimeMediaSourceCenter::addDevice(const MockMediaDevice& device)
 {
-    MockRealtimeMediaSource::addDevice(device);
+    devices().append(device);
+    deviceMap().set(device.persistentId, device);
+    createCaptureDevice(device);
+    RealtimeMediaSourceCenter::singleton().captureDevicesChanged();
 }
 
 void MockRealtimeMediaSourceCenter::removeDevice(const String& persistentId)
 {
-    MockRealtimeMediaSource::removeDevice(persistentId);
+    auto& map = deviceMap();
+    auto iterator = map.find(persistentId);
+    if (iterator == map.end())
+        return;
+
+    devices().removeFirstMatching([&persistentId](const auto& device) {
+        return device.persistentId == persistentId;
+    });
+
+    deviceListForDevice(iterator->value).removeFirstMatching([&persistentId](const auto& device) {
+        return device.persistentId() == persistentId;
+    });
+
+    map.remove(iterator);
+    RealtimeMediaSourceCenter::singleton().captureDevicesChanged();
+}
+
+std::optional<MockMediaDevice> MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(const String& id)
+{
+    ASSERT(!id.isEmpty());
+
+    auto& map = deviceMap();
+    auto iterator = map.find(id);
+    if (iterator == map.end())
+        return std::nullopt;
+
+    return iterator->value;
+}
+
+std::optional<CaptureDevice> MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id)
+{
+    ASSERT(!id.isEmpty());
+
+    auto& map = deviceMap();
+    auto iterator = map.find(id);
+    if (iterator == map.end() || iterator->value.type() != type)
+        return std::nullopt;
+
+    CaptureDevice device { iterator->value.persistentId, type, iterator->value.label };
+    device.setEnabled(true);
+    return WTFMove(device);
+}
+
+Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::audioDevices()
+{
+    static auto audioDevices = makeNeverDestroyed([] {
+        Vector<CaptureDevice> audioDevices;
+        for (const auto& device : devices()) {
+            if (device.type() == CaptureDevice::DeviceType::Microphone)
+                audioDevices.append(captureDeviceWithPersistentID(CaptureDevice::DeviceType::Microphone, device.persistentId).value());
+        }
+        return audioDevices;
+    }());
+
+    return audioDevices;
+}
+
+Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::videoDevices()
+{
+    static auto videoDevices = makeNeverDestroyed([] {
+        Vector<CaptureDevice> videoDevices;
+        for (const auto& device : devices()) {
+            if (device.type() == CaptureDevice::DeviceType::Camera)
+                videoDevices.append(captureDeviceWithPersistentID(CaptureDevice::DeviceType::Camera, device.persistentId).value());
+        }
+        return videoDevices;
+    }());
+
+    return videoDevices;
+}
+
+Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::displayDevices()
+{
+    static auto displayDevices = makeNeverDestroyed([] {
+        Vector<CaptureDevice> displayDevices;
+        for (const auto& device : devices()) {
+            if (device.type() == CaptureDevice::DeviceType::Screen)
+                displayDevices.append(captureDeviceWithPersistentID(CaptureDevice::DeviceType::Screen, device.persistentId).value());
+        }
+        return displayDevices;
+    }());
+
+    return displayDevices;
 }
 
 } // namespace WebCore

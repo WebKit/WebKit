@@ -12,34 +12,27 @@ PASS video.audioTracks.length is 0
 PASS settings['width'] is 640
 PASS settings['height'] is 480
 
-** Constraint: {"width":{"min":320},"height":{"min":240},"advanced":[{"width":1920,"height":1280}]} - advanced width and height are too big, minimums are less than current, nothing is changed.
+** Constraint: {"width":{"min":320},"height":{"min":240},"advanced":[{"width":1920,"height":1280}]} - advanced width and height are not supported, minimums are less than current, nothing is changed.
 PASS settings['width'] is 640
 PASS settings['height'] is 480
 
-** Constraint: {"width":{"min":640},"height":{"min":480},"advanced":[{"width":1920,"height":1280},{"width":960,"height":720}]} - first width and height in advanced are too big, second is used.
-PASS settings['width'] is 960
-PASS settings['height'] is 720
+** Constraint: {"width":{"min":640},"height":{"min":480},"advanced":[{"width":6000,"height":6000},{"width":1920,"height":1080}]} - first width and height in advanced are too big, second is used.
+PASS settings['width'] is 1920
+PASS settings['height'] is 1080
 
 ** Constraint: {"width":320,"height":240} - reset width and height.
 PASS settings['width'] is 320
 PASS settings['height'] is 240
 
-** Constraint: {"width":{"min":640},"height":{"min":480},"advanced":[{"width":1920,"height":1280}]} - advanced width and height are too big, fall back to required minimums.
+** Constraint: {"width":{"min":640},"height":{"min":480},"advanced":[{"width":7680,"height":4320}]} - advanced width and height are too big, fall back to required minimums.
 PASS settings['width'] is 640
 PASS settings['height'] is 480
 
 ** Constraint: {"width":320,"height":240} - reset width and height.
 PASS settings['width'] is 320
 PASS settings['height'] is 240
-
-** Constraint: {"width":{"min":640},"height":{"min":480},"advanced":[{"width":1920,"height":1280},{"aspectRatio":1.777777}]} - advanced width and height are too big, aspectRatio is used.
-PASS settings['width'] is 640
-PASS settings['height'] is 360
 
 ** Constraint: {"advanced":[{"facingMode":"left"},{"facingMode":"right"},{"facingMode":"environment"},{"facingMode":"user"}]} - no required constraints, advanced constraints are ignored.
-PASS settings['facingMode'] is "user"
-
-** Constraint: {"width":{"min":640},"advanced":[{"facingMode":"left"},{"facingMode":"right"},{"facingMode":"user"}]} - first two advanced facingModes are not supported, third is used.
 PASS settings['facingMode'] is "user"
 
 PASS successfullyParsed is true

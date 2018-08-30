@@ -37,55 +37,39 @@ PASS Promise was rejected
 PASS error.constraint is "frameRate"
 PASS settings['frameRate'] is 30
 
-** Constraint: {"width":{"exact":400}} - the 'exact' constraint can be satisfied.
-PASS settings['width'] is 400
-PASS settings['height'] is 240
+** Constraint: {"width":{"exact":960}} - the 'exact' constraint can be satisfied.
+PASS settings['width'] is 960
+PASS settings['height'] is 540
 
-** Constraint: {"width":{"min":300,"ideal":5000}} - the 'ideal' constraint can't be satisfied but the 'min' can, max should be chosen.
-PASS settings['width'] is 1920
-PASS settings['height'] is 240
+** Constraint: {"width":{"min":300,"ideal":5000}} - the 'ideal' constraint can't be satisfied but the 'min' can, maximum value should be chosen.
+PASS settings['width'] is 3840
+PASS settings['height'] is 2160
 
 ** Constraint: {"width":{"min":320,"ideal":1280},"height":{"min":480,"ideal":720}} - 'ideal' and 'min' constraints can be satisfied, 'ideal' should be chosen.
 PASS settings['width'] is 1280
 PASS settings['height'] is 720
 
-** Constraint: {"width":3000} - ideal width is greater than track capability, should be clamped to the maximum value.
-PASS settings['width'] is 1920
+** Constraint: {"width":5000} - ideal width is greater than track capability, should be clamped to the maximum value.
+PASS settings['width'] is 3840
 
-** Constraint: {"width":160,"height":120,"frameRate":10} - all values are less than track capabilities, should be clamped to the minimum values.
+** Constraint: {"width":160,"height":120,"frameRate":4} - all values are less than track capabilities, should be clamped to the minimum values.
 PASS settings['width'] is 320
 PASS settings['height'] is 240
-PASS settings['frameRate'] is 15
+PASS settings['frameRate'] is 5
 
 ** Constraint: {"frameRate":20} - set frame rate, width and height should remain unchanged
 PASS settings['width'] is 320
 PASS settings['height'] is 240
 PASS settings['frameRate'] is 20
 
-** Constraint: {"facingMode":"environment","height":400} - illegal facing mode value should be ignored, height should change.
+** Constraint: {"facingMode":"xnvironment","height":720} - illegal facing mode value should be ignored, height should change.
 PASS settings['facingMode'] is "user"
-PASS settings['width'] is 320
-PASS settings['height'] is 400
+PASS settings['width'] is 1280
+PASS settings['height'] is 720
 
 ** Constraint: {"WITDH":400,"frameRate":30} - unknown constraint should be ignored, frame rate should change.
-PASS settings['width'] is 320
+PASS settings['width'] is 1280
 PASS settings['frameRate'] is 30
-
-** Constraint: {"aspectRatio":"1.3333"} - aspect ratio should change width and height.
-PASS settings['width'] is 320
-PASS settings['height'] is 240
-
-** Constraint: {"aspectRatio":"1.7778"} - new aspect ratio should again change width and height.
-PASS settings['width'] is 320
-PASS settings['height'] is 180
-
-** Constraint: {"width":1920} - when aspect ratio has been set, changing width should change height.
-PASS settings['width'] is 1920
-PASS settings['height'] is 1080
-
-** Constraint: {"height":576} - when aspect ratio has been set, changing height should change width.
-PASS settings['width'] is 1024
-PASS settings['height'] is 576
 
 PASS successfullyParsed is true
 

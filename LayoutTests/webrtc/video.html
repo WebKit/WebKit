@@ -43,7 +43,7 @@ promise_test((test) => {
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
 
-    return navigator.mediaDevices.getUserMedia({video: {advanced: [{width:{min:1280}}, {height:{min:720} } ]}}).then((stream) => {
+    return navigator.mediaDevices.getUserMedia({video: {advanced: [{width:{min:640}}, {height:{min:480} } ]}}).then((stream) => {
         if (window.internals)
             assert_true(internals.pageMediaState().includes('HasActiveVideoCaptureDevice'), "Unexpected HasActiveVideoCaptureDevice");
         return new Promise((resolve, reject) => {
@@ -66,9 +66,9 @@ promise_test((test) => {
     }).then((stream) => {
         video.srcObject = stream;
         return video.play();
-    }).then(() => {
+    }).then(test.step_func(() => {
         testImage();
-    });
+    }));
 }, "Basic video exchange");
         </script>
     </body>

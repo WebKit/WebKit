@@ -24,7 +24,6 @@
 #if ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
 
 #include "GStreamerVideoCaptureSource.h"
-#include "MockRealtimeMediaSource.h"
 
 namespace WebCore {
 

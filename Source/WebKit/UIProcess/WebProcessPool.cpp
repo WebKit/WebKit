@@ -2280,7 +2280,7 @@ void WebProcessPool::removeMockMediaDevice(const String& persistentId)
 void WebProcessPool::resetMockMediaDevices()
 {
 #if ENABLE(MEDIA_STREAM)
-    MockRealtimeMediaSource::resetDevices();
+    MockRealtimeMediaSourceCenter::resetDevices();
     sendToAllProcesses(Messages::WebProcess::ResetMockMediaDevices { });
 #endif
 }

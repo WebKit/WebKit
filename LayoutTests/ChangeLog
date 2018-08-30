@@ -1,3 +1,25 @@
+2018-08-30  Eric Carlson  <eric.carlson@apple.com>
+
+        Mock video devices should only support discrete sizes
+        https://bugs.webkit.org/show_bug.cgi?id=189000
+        <rdar://problem/43766551>
+
+        Reviewed by Youenn Fablet.
+
+        Updated tests and results now that we have better support for width and height constraints.
+
+        * fast/mediastream/MediaDevices-getUserMedia.html:
+        * fast/mediastream/MediaStreamTrack-getCapabilities-expected.txt:
+        * fast/mediastream/apply-constraints-advanced-expected.txt:
+        * fast/mediastream/apply-constraints-advanced.html:
+        * fast/mediastream/apply-constraints-video-expected.txt:
+        * fast/mediastream/apply-constraints-video.html:
+        * fast/mediastream/getUserMedia-default-expected.txt:
+        * fast/mediastream/getUserMedia-default.html:
+        * imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-getSettings.https-expected.txt:
+        * webrtc/video-interruption.html:
+        * webrtc/video.html:
+
 2018-08-30  Youenn Fablet  <youenn@apple.com>
 
         fast/mediastream/RTCPeerConnection-overloaded-operations.html is flaky after r235484

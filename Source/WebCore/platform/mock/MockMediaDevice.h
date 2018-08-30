@@ -60,7 +60,9 @@ struct MockCameraProperties {
     void encode(Encoder& encoder) const
     {
         encoder << defaultFrameRate;
-        encoder << facingModeCapability;
+        encoder << facingMode;
+        encoder << frameRates;
+        encoder << frameSizes;
     }
 
     template <class Decoder>
@@ -71,16 +73,28 @@ struct MockCameraProperties {
         if (!defaultFrameRate)
             return std::nullopt;
 
-        std::optional<RealtimeMediaSourceSettings::VideoFacingMode> facingModeCapability;
-        decoder >> facingModeCapability;
-        if (!facingModeCapability)
+        std::optional<RealtimeMediaSourceSettings::VideoFacingMode> facingMode;
+        decoder >> facingMode;
+        if (!facingMode)
             return std::nullopt;
 
-        return MockCameraProperties { *defaultFrameRate, *facingModeCapability, Color::black };
+        std::optional<Vector<double>> frameRates;
+        decoder >> frameRates;
+        if (!frameRates)
+            return std::nullopt;
+
+        std::optional<Vector<IntSize>> frameSizes;
+        decoder >> frameSizes;
+        if (!frameSizes)
+            return std::nullopt;
+
+        return MockCameraProperties { *defaultFrameRate, *facingMode, WTFMove(*frameRates), WTFMove(*frameSizes), Color::black };
     }
 
     double defaultFrameRate { 30 };
-    RealtimeMediaSourceSettings::VideoFacingMode facingModeCapability { RealtimeMediaSourceSettings::VideoFacingMode::User };
+    RealtimeMediaSourceSettings::VideoFacingMode facingMode { RealtimeMediaSourceSettings::VideoFacingMode::User };
+    Vector<double> frameRates { 30, 15 };
+    Vector<IntSize> frameSizes { { 640, 480 }, { 352, 288 }, { 320, 240 } };
     Color fillColor { Color::black };
 };
 

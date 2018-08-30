@@ -167,6 +167,7 @@ public:
 
     void setWidth(int);
     void setHeight(int);
+    void setSize(const IntSize&);
     const IntSize& size() const { return m_size; }
     virtual bool applySize(const IntSize&) { return false; }
 

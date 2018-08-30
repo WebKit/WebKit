@@ -2,5 +2,5 @@ When prompted, accept to share your video stream.
 
 
 PASS A device can be opened twice and have the same device ID 
-FAIL A device can be opened twice with different resolutions assert_equals: expected 640 but got 320
+PASS A device can be opened twice with different resolutions 
 

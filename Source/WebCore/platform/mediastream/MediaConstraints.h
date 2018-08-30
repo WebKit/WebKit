@@ -254,6 +254,8 @@ public:
             ASSERT(validForRange(value, capabilityMax));
             if (value > min)
                 min = value;
+            if (value < min)
+                value = min;
 
             // If there is no ideal, don't change if minimum is smaller than current.
             if (!m_ideal && value < current)
@@ -265,6 +267,8 @@ public:
             ASSERT(validForRange(capabilityMin, value));
             if (value < max)
                 max = value;
+            if (value > max)
+                value = max;
         }
 
         if (m_ideal)

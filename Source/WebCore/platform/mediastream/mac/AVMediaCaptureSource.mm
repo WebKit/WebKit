@@ -213,7 +213,6 @@ void AVMediaCaptureSource::initializeSettings()
         m_currentSettings.setSupportedConstraints(supportedConstraints());
 
     m_currentSettings.setDeviceId(id());
-    m_currentSettings.setLabel(name());
     updateSettings(m_currentSettings);
 }
 

@@ -1,3 +1,115 @@
+2018-08-30  Eric Carlson  <eric.carlson@apple.com>
+
+        Mock video devices should only support discrete sizes
+        https://bugs.webkit.org/show_bug.cgi?id=189000
+        <rdar://problem/43766551>
+
+        Reviewed by Youenn Fablet.
+        
+        While many/most video capture devices only support a finite number of discrete width/height
+        pairs, our mock video capture devices supported arbitrary width and height combinations which
+        made it difficult to write realistic tests using them. Change the mock devices to support
+        finite "presets" like those supported by AVFoundation. Create a RealtimeVideoSource base
+        class with support for these presets, so the same code will eventually be used by the mock
+        and real capture devices.
+
+        No new tests, existing tests updated for these changes.
+
+        * Sources.txt: Add RealtimeVideoSource.cpp, remove MockRealtimeMediaSource.cpp.
+
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * platform/mediastream/MediaConstraints.h: Deal with min constraint less than the supported minimum
+        and max larger than the supported maximum when there is no ideal.
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::selectSettings): Use supportsSizeAndFrameRate for widths,
+        heights, and framerates in advanced constraints so a width and height that are supported but
+        in the same preset are filtered out.
+        (WebCore::RealtimeMediaSource::setSize): New.
+        * platform/mediastream/RealtimeMediaSource.h:
+
+        * platform/mediastream/RealtimeMediaSourceSettings.h: Remove an unneeded include.
+
+        * platform/mediastream/RealtimeVideoSource.cpp: Added.
+        (WebCore::RealtimeVideoSource::RealtimeVideoSource):
+        (WebCore::RealtimeVideoSource::~RealtimeVideoSource):
+        (WebCore::RealtimeVideoSource::startProducingData):
+        (WebCore::RealtimeVideoSource::setSupportedFrameRates):
+        (WebCore::RealtimeVideoSource::addSupportedCapabilities const):
+        (WebCore::RealtimeVideoSource::supportsSizeAndFrameRate):
+        (WebCore::RealtimeVideoSource::bestSupportedCaptureSizeForWidthAndHeight):
+        (WebCore::RealtimeVideoSource::applySize):
+        (WebCore::RealtimeVideoSource::applySizeAndFrameRate):
+        (WebCore::RealtimeVideoSource::videoSampleAvailable):
+        (WebCore::RealtimeVideoSource::applyFrameRate):
+        (WebCore::RealtimeVideoSource::supportsFrameRate):
+
+        * platform/mediastream/RealtimeVideoSource.h: Copied from Source/WebCore/platform/mock/MockRealtimeAudioSource.h.
+        (WebCore::RealtimeVideoSource::setSupportedCaptureSizes):
+        (WebCore::RealtimeVideoSource::setDefaultSize):
+        (WebCore::RealtimeVideoSource::observedFrameRate const):
+
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::initializeSettings): Don't set label, it isn't used.
+
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSourceMac::applySize): Call the base class.
+
+        * platform/mock/MockMediaDevice.h:
+        (WebCore::MockCameraProperties::encode const): Add frame rates, sizes, and facing mode.
+        (WebCore::MockCameraProperties::decode): Ditto.
+
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::MockRealtimeAudioSource): No more MockRealtimeMediaSource.
+        (WebCore::MockRealtimeAudioSource::settings const): Clean up.
+        (WebCore::MockRealtimeAudioSource::capabilities const): Ditto.
+        (WebCore::MockRealtimeAudioSource::settingsDidChange): Ditto.
+        (WebCore::MockRealtimeAudioSource::stopProducingData): m_elapsedTime isn't used, delete it.
+        (WebCore::MockRealtimeAudioSource::updateSettings): Deleted.
+        (WebCore::MockRealtimeAudioSource::initializeCapabilities): Deleted.
+        (WebCore::MockRealtimeAudioSource::initializeSupportedConstraints): Deleted.
+        (WebCore::MockRealtimeAudioSource::elapsedTime): Deleted.
+        * platform/mock/MockRealtimeAudioSource.h:
+
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp: Moved all of the mock device management
+        code from MockRealtimeMediaSource.cpp here.
+        (WebCore::defaultDevices):
+        (WebCore::devices):
+        (WebCore::deviceMap):
+        (WebCore::deviceListForDevice):
+        (WebCore::createCaptureDevice):
+        (WebCore::MockRealtimeMediaSourceCenter::resetDevices):
+        (WebCore::MockRealtimeMediaSourceCenter::setDevices):
+        (WebCore::MockRealtimeMediaSourceCenter::addDevice):
+        (WebCore::MockRealtimeMediaSourceCenter::removeDevice):
+        (WebCore::MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID):
+        (WebCore::MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID):
+        (WebCore::MockRealtimeMediaSourceCenter::audioDevices):
+        (WebCore::MockRealtimeMediaSourceCenter::videoDevices):
+        (WebCore::MockRealtimeMediaSourceCenter::displayDevices):
+
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::MockRealtimeVideoSource): Use RealtimeVideoSource, no
+        more MockRealtimeMediaSource.
+        (WebCore::MockRealtimeVideoSource::capabilities const): Ditto, cleanup.
+        (WebCore::MockRealtimeVideoSource::settings const): Ditto.
+        (WebCore::MockRealtimeVideoSource::settingsDidChange): Ditto.
+        (WebCore::MockRealtimeVideoSource::startCaptureTimer): Ditto.
+        (WebCore::MockRealtimeVideoSource::startProducingData): Ditto.
+        (WebCore::MockRealtimeVideoSource::stopProducingData): Ditto.
+        (WebCore::MockRealtimeVideoSource::elapsedTime): Ditto.
+        (WebCore::MockRealtimeVideoSource::applySize): Ditto.
+        (WebCore::MockRealtimeVideoSource::drawText): Render the actual frame rate.
+        (WebCore::MockRealtimeVideoSource::generateFrame): Use m_fillColor.
+        (WebCore::MockRealtimeVideoSource::~MockRealtimeVideoSource): Deleted.
+        (WebCore::MockRealtimeVideoSource::updateSettings): Deleted.
+        (WebCore::MockRealtimeVideoSource::initializeCapabilities): Deleted.
+        (WebCore::MockRealtimeVideoSource::initializeSupportedConstraints): Deleted.
+        (WebCore::MockRealtimeVideoSource::applyFrameRate): Deleted.
+        * platform/mock/MockRealtimeVideoSource.h:
+        (WebCore::MockRealtimeVideoSource::updateSampleBuffer): Deleted.
+
 2018-08-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Block formatting context roots avoid floats.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -151,15 +151,16 @@ void MockRealtimeVideoSourceMac::updateSampleBuffer()
     auto sampleBuffer = CMSampleBufferFromPixelBuffer(pixelBuffer.get());
 
     // We use m_deviceOrientation to emulate sensor orientation
-    videoSampleAvailable(MediaSampleAVFObjC::create(sampleBuffer.get(), m_deviceOrientation));
+    dispatchMediaSampleToObservers(MediaSampleAVFObjC::create(sampleBuffer.get(), m_deviceOrientation));
 }
 
 bool MockRealtimeVideoSourceMac::applySize(const IntSize& newSize)
 {
-    if (size() != newSize)
-        m_bufferPool = nullptr;
+    if (!MockRealtimeVideoSource::applySize(newSize))
+        return false;
 
-    return MockRealtimeVideoSource::applySize(newSize);
+    m_bufferPool = nullptr;
+    return true;
 }
 
 void MockRealtimeVideoSourceMac::orientationChanged(int orientation)

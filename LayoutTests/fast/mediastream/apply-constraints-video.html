@@ -36,13 +36,13 @@
                 },
                 {
                     message: "the 'exact' constraint can be satisfied.",
-                    constraint: { width: { exact: 400 } }, 
-                    expected: { width: 400, height: 240 },
+                    constraint: { width: { exact: 960 } },
+                    expected: { width: 960, height: 540 },
                 },
                 {
-                    message: "the 'ideal' constraint can't be satisfied but the 'min' can, max should be chosen.",
+                    message: "the 'ideal' constraint can't be satisfied but the 'min' can, maximum value should be chosen.",
                     constraint: { width: {min: 300, ideal: 5000} }, 
-                    expected: { width: 1920, height: 240 },
+                    expected: { width: 3840, height: 2160 },
                 },
                 {
                     message: "'ideal' and 'min' constraints can be satisfied, 'ideal' should be chosen.",
@@ -51,13 +51,13 @@
                 },
                 {
                     message: "ideal width is greater than track capability, should be clamped to the maximum value.",
-                    constraint: { width: 3000 }, 
-                    expected: { width: 1920},
+                    constraint: { width: 5000 },
+                    expected: { width: 3840},
                 },
                 {
                     message: "all values are less than track capabilities, should be clamped to the minimum values.",
-                    constraint: { width: 160, height: 120, frameRate: 10 }, 
-                    expected: { width: 320, height: 240, frameRate: 15 },
+                    constraint: { width: 160, height: 120, frameRate: 4 },
+                    expected: { width: 320, height: 240, frameRate: 5 },
                 },
                 {
                     message: "set frame rate, width and height should remain unchanged",
@@ -66,33 +66,13 @@
                 },
                 {
                     message: "illegal facing mode value should be ignored, height should change.",
-                    constraint: { facingMode: "environment", height: 400 }, 
-                    expected: { facingMode: "user", width: 320, height: 400 },
+                    constraint: { facingMode: "xnvironment", height: 720 },
+                    expected: { facingMode: "user", width: 1280, height: 720 },
                 },
                 {
                     message: "unknown constraint should be ignored, frame rate should change.",
                     constraint: { WITDH: 400, frameRate: 30 }, 
-                    expected: { width: 320, frameRate: 30 },
-                },
-                {
-                    message: "aspect ratio should change width and height.",
-                    constraint: { aspectRatio: (4/3).toFixed(4) }, 
-                    expected: { width: 320, height: 240 },
-                },
-                {
-                    message: "new aspect ratio should again change width and height.",
-                    constraint: { aspectRatio: (16/9).toFixed(4) }, 
-                    expected: { width: 320, height: 180 },
-                },
-                {
-                    message: "when aspect ratio has been set, changing width should change height.",
-                    constraint: { width: 1920 }, 
-                    expected: { width: 1920, height: 1080},
-                },
-                {
-                    message: "when aspect ratio has been set, changing height should change width.",
-                    constraint: { height: 576 }, 
-                    expected: { width: 1024, height: 576},
+                    expected: { width: 1280, frameRate: 30 },
                 },
             ];
 

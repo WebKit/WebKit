@@ -651,7 +651,19 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
         double constraintDistance = 0;
         bool supported = false;
 
+        if (advancedConstraint.width() || advancedConstraint.height() || advancedConstraint.frameRate()) {
+            String dummy;
+            if (!supportsSizeAndFrameRate(advancedConstraint.width(), advancedConstraint.height(), advancedConstraint.frameRate(), dummy, constraintDistance))
+                continue;
+
+            supported = true;
+        }
+
         advancedConstraint.forEach([&](const MediaConstraint& constraint) {
+
+            if (constraint.constraintType() == MediaConstraintType::Width || constraint.constraintType() == MediaConstraintType::Height || constraint.constraintType() == MediaConstraintType::FrameRate)
+                return;
+
             distance = fitnessDistance(constraint);
             constraintDistance += distance;
             if (!std::isinf(distance))
@@ -846,6 +858,18 @@ void RealtimeMediaSource::applyConstraints(const MediaConstraints& constraints, 
         successHandler();
     else if (result && failureHandler)
         failureHandler(result.value().first, result.value().second);
+}
+
+void RealtimeMediaSource::setSize(const IntSize& size)
+{
+    if (size == m_size)
+        return;
+
+    if (!applySize(size))
+        return;
+
+    m_size = size;
+    settingsDidChange();
 }
 
 void RealtimeMediaSource::setWidth(int width)

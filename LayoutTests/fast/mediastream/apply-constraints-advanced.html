@@ -12,7 +12,7 @@
                     expected: { width: 640, height: 480 }, 
                 },
                 {
-                    message: "advanced width and height are too big, minimums are less than current, nothing is changed.",
+                    message: "advanced width and height are not supported, minimums are less than current, nothing is changed.",
                     constraint: {
                                     width: { min: 320 },
                                     height: { min: 240 },
@@ -28,11 +28,11 @@
                                     width: { min: 640 },
                                     height: { min: 480 },
                                     advanced: [
-                                        { width: 1920, height: 1280 },
-                                        { width: 960, height: 720 },
+                                        { width: 6000, height: 6000 },
+                                        { width: 1920, height: 1080 },
                                     ]
                                  },
-                    expected: { width: 960, height: 720 }, 
+                    expected: { width: 1920, height: 1080 }, 
                 },
                 {
                     message: "reset width and height.",
@@ -45,7 +45,7 @@
                                     width: { min: 640 },
                                     height: {  min: 480 },
                                     advanced: [
-                                        { width: 1920, height: 1280 },
+                                        { width: 7680, height: 4320 },
                                     ]
                                 },
                     expected: { width: 640, height: 480 }, 
@@ -56,36 +56,12 @@
                     expected: { width: 320, height: 240 }, 
                 },
                 {
-                    message: "advanced width and height are too big, aspectRatio is used.",
-                    constraint: {
-                                    width: { min: 640 },
-                                    height: { min: 480 },
-                                    advanced: [
-                                        { width: 1920, height: 1280 },
-                                        { aspectRatio: 1.777777 }
-                                    ]
-                                },
-                    expected: { width: 640, height: 360 }, 
-                },
-                {
                     message: "no required constraints, advanced constraints are ignored.",
                     constraint: {
                                     advanced: [
                                         { facingMode: "left" },
                                         { facingMode: "right" },
                                         { facingMode: "environment" },
-                                        { facingMode: "user" },
-                                    ]
-                                },
-                    expected: { facingMode: "user" }, 
-                },
-                {
-                    message: "first two advanced facingModes are not supported, third is used.",
-                    constraint: {
-                                    width: { min: 640 },
-                                    advanced: [
-                                        { facingMode: "left" },
-                                        { facingMode: "right" },
                                         { facingMode: "user" },
                                     ]
                                 },
