@@ -75,7 +75,6 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # -----------------------------------------------------------------------------
 
     if (ENABLE_WEBCORE)
-        file(MAKE_DIRECTORY ${DERIVED_SOURCES_PAL_DIR})
         file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBCORE_DIR})
     endif ()
 

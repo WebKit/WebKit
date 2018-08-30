@@ -1,3 +1,16 @@
+2018-08-30  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Replace AVFoundationSupport.py using CMake
+        https://bugs.webkit.org/show_bug.cgi?id=182891
+
+        Reviewed by Per Arne Vollan.
+
+        Remove AVFoundationSupport.py file and its invocation.
+
+        * AVFoundationSupport.py: Removed.
+        * config.h:
+        * pal/PlatformWin.cmake:
+
 2018-08-29  Jer Noble  <jer.noble@apple.com>
 
         Muted elements do not have their Now Playing status updated when unmuted.

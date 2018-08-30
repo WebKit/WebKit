@@ -1,3 +1,14 @@
+2018-08-30  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Replace AVFoundationSupport.py using CMake
+        https://bugs.webkit.org/show_bug.cgi?id=182891
+
+        Reviewed by Per Arne Vollan.
+
+        Rely on CMake values for the added HAVE_* checks.
+
+        * wtf/Platform.h:
+
 2018-08-30  Tim Horton  <timothy_horton@apple.com>
 
         Bundle unified sources more tightly in projects with deep directory structures

@@ -1,3 +1,17 @@
+2018-08-30  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Replace AVFoundationSupport.py using CMake
+        https://bugs.webkit.org/show_bug.cgi?id=182891
+
+        Reviewed by Per Arne Vollan.
+
+        No new tests. No change in behavior.
+
+        Remove refernces to PAL derived sources.
+
+        * PlatformWin.cmake:
+        * config.h:
+
 2018-08-30  Olivia Barnett  <obarnett@apple.com>
 
         REGRESSION(r235489): fast/dom/navigator-detached-no-crash.html crashes under Navigator::share

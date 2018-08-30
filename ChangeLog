@@ -1,3 +1,29 @@
+2018-08-30  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Replace AVFoundationSupport.py using CMake
+        https://bugs.webkit.org/show_bug.cgi?id=182891
+
+        Reviewed by Per Arne Vollan.
+
+        Adds CMake checks for AVFoundation support replacing the functionality
+        of AVFoundationSupport.py.
+
+        CMake is used to detect the symbols expected with the HAVE_* checks for
+        AVFoundation support. This involves creating source files that will be
+        built which verifies the presence of symbols. For Apple frameworks it
+        is customary to include the main framework file which includes the
+        other associated headers.
+
+        The check for HAVE_AVCFPLAYERITEM_CALLBACK_VERSION_2 involves looking
+        for an enumeration which a symbol check cannot detect. Instead a small
+        program is used which will compile and link when the version 2
+        enumeration is present.
+
+        * Source/cmake/OptionsAppleWin.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitCommon.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2018-08-28  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use CMake's FindFreetype

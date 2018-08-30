@@ -366,12 +366,17 @@ macro(WEBKIT_CHECK_HAVE_FUNCTION _variable _function)
 endmacro()
 
 macro(WEBKIT_CHECK_HAVE_SYMBOL _variable _symbol _header)
-    check_symbol_exists(${_symbol} ${_header} ${_variable}_value)
+    check_symbol_exists(${_symbol} "${_header}" ${_variable}_value)
     SET_AND_EXPOSE_TO_BUILD(${_variable} ${${_variable}_value})
 endmacro()
 
 macro(WEBKIT_CHECK_HAVE_STRUCT _variable _struct _member _header)
-    check_struct_has_member(${_struct} ${_member} ${_header} ${_variable}_value)
+    check_struct_has_member(${_struct} ${_member} "${_header}" ${_variable}_value)
+    SET_AND_EXPOSE_TO_BUILD(${_variable} ${${_variable}_value})
+endmacro()
+
+macro(WEBKIT_CHECK_SOURCE_COMPILES _variable _source)
+    check_cxx_source_compiles("${_source}" ${_variable}_value)
     SET_AND_EXPOSE_TO_BUILD(${_variable} ${${_variable}_value})
 endmacro()
 

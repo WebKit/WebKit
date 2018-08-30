@@ -101,9 +101,9 @@ endif ()
 
 if (NOT WEBKIT_LIBRARIES_DIR)
     if (DEFINED ENV{WEBKIT_LIBRARIES})
-        set(WEBKIT_LIBRARIES_DIR "$ENV{WEBKIT_LIBRARIES}")
+        file(TO_CMAKE_PATH "$ENV{WEBKIT_LIBRARIES}" WEBKIT_LIBRARIES_DIR)
     else ()
-        set(WEBKIT_LIBRARIES_DIR "${CMAKE_SOURCE_DIR}/WebKitLibraries/win")
+        file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/WebKitLibraries/win" WEBKIT_LIBRARIES_DIR)
     endif ()
 endif ()
 

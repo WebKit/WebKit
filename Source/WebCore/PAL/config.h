@@ -25,10 +25,6 @@
 
 #include <wtf/Platform.h>
 
-#if PLATFORM(WIN)
-#include <PALHeaderDetection.h>
-#endif
-
 #include <pal/ExportMacros.h>
 
 #ifdef __cplusplus
@@ -44,15 +40,3 @@
 #endif
 
 #include <wtf/DisallowCType.h>
-
-#if PLATFORM(WIN) && USE(CG) && HAVE(AVCF)
-#define USE_AVFOUNDATION 1
-
-#if HAVE(AVCF_LEGIBLE_OUTPUT)
-#define USE_AVFOUNDATION 1
-#define HAVE_AVFOUNDATION_MEDIA_SELECTION_GROUP 1
-#define HAVE_AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT 1
-#define HAVE_MEDIA_ACCESSIBILITY_FRAMEWORK 1
-#endif
-
-#endif

@@ -1,3 +1,15 @@
+2018-08-30  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Replace AVFoundationSupport.py using CMake
+        https://bugs.webkit.org/show_bug.cgi?id=182891
+
+        Reviewed by Per Arne Vollan.
+
+        Remove references to the config.h contained in WebCore as it should
+        not be accessible from outside of WebCore.
+
+        * WebKitPrefix.h:
+
 2018-08-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Augment _WKAttachment SPI to handle NSFileWrappers in addition to NSData
