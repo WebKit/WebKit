@@ -1,3 +1,23 @@
+2018-08-30  Brent Fulgham  <bfulgham@apple.com>
+
+        The width of a nullptr TextRun should be zero
+        https://bugs.webkit.org/show_bug.cgi?id=189154
+        <rdar://problem/43685926>
+
+        Reviewed by Zalan Bujtas.
+
+        If a page has an empty TextRun and attempts to paint it we can crash with a nullptr.
+
+        This patch recognizes that an empty TextRun should always produce a zero width, rather than
+        attempt to compute this value from font data.
+
+        Test: fast/text/null-string-textrun.html
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::widthOfTextRange const): An empty TextRun has zero width.
+        (WebCore::FontCascade::width const): Ditto.
+        (WebCore::FontCascade::codePath const): ASSERT that the TextRun is non-empty.
+
 2018-08-30  Eric Carlson  <eric.carlson@apple.com>
 
         Mock video devices should only support discrete sizes
