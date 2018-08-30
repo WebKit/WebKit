@@ -1,3 +1,15 @@
+2018-08-30  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl][WebKit] Bugfix on redirect.
+        https://bugs.webkit.org/show_bug.cgi?id=189056
+
+        Reviewed by Alex Christensen.
+
+        Forget to call updateFromDelegatePreservingOldProperties in continueWillSendRequest like other ports do.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::continueWillSendRequest):
+
 2018-08-30  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Color picker layout is broken if suggested colors are specified

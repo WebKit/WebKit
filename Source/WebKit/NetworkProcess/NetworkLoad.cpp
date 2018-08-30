@@ -149,7 +149,7 @@ void NetworkLoad::continueWillSendRequest(WebCore::ResourceRequest&& newRequest)
 {
 #if PLATFORM(COCOA)
     m_currentRequest.updateFromDelegatePreservingOldProperties(newRequest.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody));
-#elif USE(SOUP)
+#else
     // FIXME: Implement ResourceRequest::updateFromDelegatePreservingOldProperties. See https://bugs.webkit.org/show_bug.cgi?id=126127.
     m_currentRequest.updateFromDelegatePreservingOldProperties(newRequest);
 #endif
