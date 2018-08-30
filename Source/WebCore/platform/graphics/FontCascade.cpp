@@ -341,9 +341,6 @@ float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned 
     ASSERT(from <= to);
     ASSERT(to <= run.length());
 
-    if (!run.length())
-        return 0;
-
     float offsetBeforeRange = 0;
     float offsetAfterRange = 0;
     float totalWidth = 0;
@@ -388,9 +385,6 @@ float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned 
 
 float FontCascade::width(const TextRun& run, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
-    if (!run.length())
-        return 0;
-
     CodePath codePathToUse = codePath(run);
     if (codePathToUse != Complex) {
         // The complex path is more restrictive about returning fallback fonts than the simple path, so we need an explicit test to make their behaviors match.
@@ -609,8 +603,6 @@ FontCascade::CodePath FontCascade::codePath(const TextRun& run, std::optional<un
 {
     if (s_codePath != Auto)
         return s_codePath;
-
-    ASSERT(run.length());
 
 #if !USE(FREETYPE)
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050

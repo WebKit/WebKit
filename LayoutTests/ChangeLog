@@ -1,3 +1,15 @@
+2018-08-30  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r235516.
+
+        Caused 50 Crashes on Sierra
+
+        Reverted changeset:
+
+        "The width of a nullptr TextRun should be zero"
+        https://bugs.webkit.org/show_bug.cgi?id=189154
+        https://trac.webkit.org/changeset/235516
+
 2018-08-30  Youenn Fablet  <youenn@apple.com>
 
         Remove WebRTC legacy API implementation
