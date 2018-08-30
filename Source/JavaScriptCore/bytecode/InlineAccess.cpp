@@ -198,10 +198,10 @@ ALWAYS_INLINE static GPRReg getScratchRegister(StructureStubInfo& stubInfo)
 {
     ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
     allocator.lock(stubInfo.baseGPR());
-    allocator.lock(static_cast<GPRReg>(stubInfo.patch.valueGPR));
+    allocator.lock(stubInfo.patch.valueGPR);
 #if USE(JSVALUE32_64)
-    allocator.lock(static_cast<GPRReg>(stubInfo.patch.baseTagGPR));
-    allocator.lock(static_cast<GPRReg>(stubInfo.patch.valueTagGPR));
+    allocator.lock(stubInfo.patch.baseTagGPR);
+    allocator.lock(stubInfo.patch.valueTagGPR);
 #endif
     GPRReg scratch = allocator.allocateScratchGPR();
     if (allocator.didReuseRegisters())

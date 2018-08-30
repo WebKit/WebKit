@@ -1,5 +1,27 @@
 2018-08-30  Saam barati  <sbarati@apple.com>
 
+        Switch int8_t to GPRReg in StructureStubInfo because sizeof(GPRReg) == sizeof(int8_t)
+        https://bugs.webkit.org/show_bug.cgi?id=189166
+
+        Reviewed by Mark Lam.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::emitDOMJITGetter):
+        * bytecode/InlineAccess.cpp:
+        (JSC::getScratchRegister):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::valueRegs const):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITByIdGenerator::JITByIdGenerator):
+        (JSC::JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator):
+        (JSC::JITInstanceOfGenerator::JITInstanceOfGenerator):
+
+2018-08-30  Saam barati  <sbarati@apple.com>
+
         InlineAccess should do StringLength
         https://bugs.webkit.org/show_bug.cgi?id=158911
 
