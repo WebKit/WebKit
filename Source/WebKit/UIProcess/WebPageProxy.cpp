@@ -1271,8 +1271,8 @@ void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vecto
 {
     PageClientProtector protector(m_pageClient);
 
-    if (m_navigationClient)
-        m_navigationClient->didChangeBackForwardList(*this, added, removed);
+    if (!m_navigationClient || !m_navigationClient->didChangeBackForwardList(*this, added, removed))
+        m_loaderClient->didChangeBackForwardList(*this, added, WTFMove(removed));
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -3673,9 +3673,11 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
 #endif
 
     m_pageLoadState.commitChanges();
-    if (m_navigationClient && frame->isMainFrame())
-        m_navigationClient->didCommitNavigation(*this, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
-
+    if (m_navigationClient) {
+        if (frame->isMainFrame())
+            m_navigationClient->didCommitNavigation(*this, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
+    } else
+        m_loaderClient->didCommitLoadForFrame(*this, *frame, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (frame->isMainFrame())
         invalidateAllAttachments();
@@ -5922,6 +5924,8 @@ void WebPageProxy::dispatchProcessDidTerminate(ProcessTerminationReason reason)
     bool handledByClient = false;
     if (m_navigationClient)
         handledByClient = m_navigationClient->processDidTerminate(*this, reason);
+    else if (reason != ProcessTerminationReason::RequestedByClient)
+        handledByClient = m_loaderClient->processDidCrash(*this);
 
     if (!handledByClient && shouldReloadAfterProcessTermination(reason))
         tryReloadAfterProcessTermination();

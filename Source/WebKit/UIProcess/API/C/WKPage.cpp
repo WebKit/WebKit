@@ -1044,7 +1044,6 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             initialize(client);
             
             // WKPageSetPageLoaderClient is deprecated. Use WKPageSetPageNavigationClient instead.
-            RELEASE_ASSERT(!m_client.didCommitLoadForFrame);
             RELEASE_ASSERT(!m_client.didFinishDocumentLoadForFrame);
             RELEASE_ASSERT(!m_client.didSameDocumentNavigationForFrame);
             RELEASE_ASSERT(!m_client.didReceiveTitleForFrame);
@@ -1059,8 +1058,6 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             RELEASE_ASSERT(!m_client.didFinishProgress);
             RELEASE_ASSERT(!m_client.processDidBecomeUnresponsive);
             RELEASE_ASSERT(!m_client.processDidBecomeResponsive);
-            RELEASE_ASSERT(!m_client.processDidCrash);
-            RELEASE_ASSERT(!m_client.didChangeBackForwardList);
             RELEASE_ASSERT(!m_client.shouldGoToBackForwardListItem);
             RELEASE_ASSERT(!m_client.didFailToInitializePlugin_deprecatedForUseWithV0);
             RELEASE_ASSERT(!m_client.didDetectXSSForFrame);
@@ -1081,6 +1078,15 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
         }
 
     private:
+        
+        void didCommitLoadForFrame(WebPageProxy& page, WebFrameProxy& frame, API::Navigation*, API::Object* userData) override
+        {
+            if (!m_client.didCommitLoadForFrame)
+                return;
+
+            m_client.didCommitLoadForFrame(toAPI(&page), toAPI(&frame), toAPI(userData), m_client.base.clientInfo);
+        }
+        
         void didStartProvisionalLoadForFrame(WebPageProxy& page, WebFrameProxy& frame, API::Navigation*, API::Object* userData) override
         {
             if (!m_client.didStartProvisionalLoadForFrame)
@@ -1137,6 +1143,33 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             m_client.didLayout(toAPI(&page), toWKLayoutMilestones(milestones), nullptr, m_client.base.clientInfo);
         }
 
+        bool processDidCrash(WebPageProxy& page) override
+        {
+            if (!m_client.processDidCrash)
+                return false;
+
+            m_client.processDidCrash(toAPI(&page), m_client.base.clientInfo);
+            return true;
+        }
+
+        void didChangeBackForwardList(WebPageProxy& page, WebBackForwardListItem* addedItem, Vector<Ref<WebBackForwardListItem>>&& removedItems) override
+        {
+            if (!m_client.didChangeBackForwardList)
+                return;
+
+            RefPtr<API::Array> removedItemsArray;
+            if (!removedItems.isEmpty()) {
+                Vector<RefPtr<API::Object>> removedItemsVector;
+                removedItemsVector.reserveInitialCapacity(removedItems.size());
+                for (auto& removedItem : removedItems)
+                removedItemsVector.append(WTFMove(removedItem));
+
+                removedItemsArray = API::Array::create(WTFMove(removedItemsVector));
+            }
+
+            m_client.didChangeBackForwardList(toAPI(&page), toAPI(addedItem), toAPI(removedItemsArray.get()), m_client.base.clientInfo);
+        }
+        
         bool shouldKeepCurrentBackForwardListItemInList(WebKit::WebPageProxy& page, WebKit::WebBackForwardListItem& item) override
         {
             if (!m_client.shouldKeepCurrentBackForwardListItemInList)

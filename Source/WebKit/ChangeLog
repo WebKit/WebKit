@@ -1,3 +1,21 @@
+2018-08-29  Alex Christensen  <achristensen@webkit.org>
+
+        Revert some of r235398
+        https://bugs.webkit.org/show_bug.cgi?id=189133
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::processDidCrash):
+        (API::LoaderClient::didChangeBackForwardList):
+        (API::LoaderClient::didCommitLoadForFrame):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeBackForwardList):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::dispatchProcessDidTerminate):
+
 2018-08-29  Olivia Barnett  <obarnett@apple.com>
 
         Implement the Web Share API

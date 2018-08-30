@@ -63,6 +63,9 @@ public:
     virtual void didFirstVisuallyNonEmptyLayoutForFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Object*) { }
     virtual void didReachLayoutMilestone(WebKit::WebPageProxy&, WebCore::LayoutMilestones) { }
     virtual bool shouldKeepCurrentBackForwardListItemInList(WebKit::WebPageProxy&, WebKit::WebBackForwardListItem&) { return true; }
+    virtual bool processDidCrash(WebKit::WebPageProxy&) { return false; }
+    virtual void didChangeBackForwardList(WebKit::WebPageProxy&, WebKit::WebBackForwardListItem*, Vector<Ref<WebKit::WebBackForwardListItem>>&&) { }
+    virtual void didCommitLoadForFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Navigation*, API::Object*) { }
 };
 
 } // namespace API
