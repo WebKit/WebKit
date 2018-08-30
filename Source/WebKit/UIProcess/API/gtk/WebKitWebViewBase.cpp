@@ -1116,15 +1116,18 @@ private:
 
     void startZoom(const IntPoint& center, double& initialScale, IntPoint& initialPoint) final
     {
-        auto* page = webkitWebViewBaseGetPage(m_webView);
+        auto* page = m_webView->priv->pageProxy.get();
         ASSERT(page);
-        initialScale = page->pageZoomFactor();
+        initialScale = page->pageScaleFactor();
         page->getCenterForZoomGesture(center, initialPoint);
     }
 
-    void zoom(double scale) final
+    void zoom(double scale, const IntPoint& origin) final
     {
-        m_webView->priv->pageClient->zoom(scale);
+        auto* page = m_webView->priv->pageProxy.get();
+        ASSERT(page);
+
+        page->scalePage(scale, origin);
     }
 
     void longPress(GdkEventTouch* event) final

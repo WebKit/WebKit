@@ -473,14 +473,4 @@ bool PageClientImpl::decidePolicyForInstallMissingMediaPluginsPermissionRequest(
 }
 #endif
 
-void PageClientImpl::zoom(double zoomLevel)
-{
-    if (WEBKIT_IS_WEB_VIEW(m_viewWidget)) {
-        webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(m_viewWidget), zoomLevel);
-        return;
-    }
-
-    webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget))->setPageZoomFactor(zoomLevel);
-}
-
 } // namespace WebKit

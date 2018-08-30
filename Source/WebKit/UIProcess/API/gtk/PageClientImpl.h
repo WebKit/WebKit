@@ -53,8 +53,6 @@ public:
 
     GtkWidget* viewWidget() { return m_viewWidget; }
 
-    void zoom(double);
-
 private:
     // PageClient
     std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() override;

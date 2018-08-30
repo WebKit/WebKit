@@ -203,13 +203,20 @@ void GestureController::ZoomGesture::startZoom()
 
 void GestureController::ZoomGesture::handleZoom()
 {
-    m_client.zoom(m_scale);
+    FloatPoint scaledZoomCenter(m_initialPoint);
+    scaledZoomCenter.scale(m_scale);
+
+    m_client.zoom(m_scale, WebCore::roundedIntPoint(FloatPoint(scaledZoomCenter - m_viewPoint)));
 }
 
 void GestureController::ZoomGesture::scaleChanged(ZoomGesture* zoomGesture, double scale, GtkGesture*)
 {
     zoomGesture->m_scale = zoomGesture->m_initialScale * scale;
+    if (zoomGesture->m_scale < 1.0)
+        zoomGesture->m_scale = 1.0;
+
     zoomGesture->m_viewPoint = zoomGesture->center();
+
     if (zoomGesture->m_idle.isActive())
         return;
 

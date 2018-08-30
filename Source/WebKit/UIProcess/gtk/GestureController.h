@@ -51,7 +51,7 @@ public:
     virtual void swipe(GdkEventTouch*, const WebCore::FloatPoint&) = 0;
 
     virtual void startZoom(const WebCore::IntPoint& center, double& initialScale, WebCore::IntPoint& initialPoint) = 0;
-    virtual void zoom(double) = 0;
+    virtual void zoom(double scale, const WebCore::IntPoint& origin) = 0;
 
     virtual void longPress(GdkEventTouch*) = 0;
 };
