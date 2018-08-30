@@ -1,3 +1,21 @@
+2018-08-30  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Color picker layout is broken if suggested colors are specified
+        https://bugs.webkit.org/show_bug.cgi?id=189117
+
+        Reviewed by Tim Horton.
+
+        NSPopoverColorWell recently changed the size of its swatches. We need to update
+        the width of the swatches we provide to match the width of the other swatches,
+        in order to avoid breaking the layout.
+
+        While such a solution is not a good precedent, we do not have fully-functional SPI
+        to customize the suggested colors. A FIXME has been added for this reason.
+        However, even once we obtain SPI, we will need to find a way to support older
+        clients, making conditional compilation a potential necessity.
+
+        * UIProcess/mac/WebColorPickerMac.mm:
+
 2018-08-30  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Whitelist Network process features for VPN
