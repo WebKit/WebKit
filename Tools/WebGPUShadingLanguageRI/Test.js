@@ -5551,9 +5551,44 @@ tests.matrixMultiplication = function() {
     checkFloat(program, callFunction(program, "foo13", []), 29 * 7 + 43 * 11 + 61 * 13);
 }
 
+tests.DISABLED_arrayIndex = function() {
+    let program = doPrep(`
+        uint innerArrayLength() {
+            int[2][3] array;
+            return array[0].length;
+        }
+        
+        uint outerArrayLength() {
+            int[2][3] array;
+            return array.length;
+        }
+        
+        int arrayIndexing(uint i, uint j) {
+            int[2][3] array;
+            array[0][0] = 1;
+            array[0][1] = 2;
+            array[0][2] = 3;
+            array[1][0] = 4;
+            array[1][1] = 5;
+            array[1][2] = 6;
+            return array[i][j];
+        }
+    `);
+    
+    checkUint(program, callFunction(program, "innerArrayLength", []), 3);
+    checkUint(program, callFunction(program, "outerArrayLength", []), 2);
+    checkInt(program, callFunction(program, "arrayIndexing", [ makeUint(program, 0), makeUint(program, 0) ]), 1);
+    checkInt(program, callFunction(program, "arrayIndexing", [ makeUint(program, 0), makeUint(program, 1) ]), 2);
+    checkInt(program, callFunction(program, "arrayIndexing", [ makeUint(program, 0), makeUint(program, 2) ]), 3);
+    checkInt(program, callFunction(program, "arrayIndexing", [ makeUint(program, 1), makeUint(program, 0) ]), 4);
+    checkInt(program, callFunction(program, "arrayIndexing", [ makeUint(program, 1), makeUint(program, 1) ]), 5);
+    checkInt(program, callFunction(program, "arrayIndexing", [ makeUint(program, 1), makeUint(program, 2) ]), 6);    
+}
+
 okToTest = true;
 
 let testFilter = /.*/; // run everything by default
+let testExclusionFilter = /^DISABLED_/;
 if (this["arguments"]) {
     for (let i = 0; i < arguments.length; i++) {
         switch (arguments[0]) {
@@ -5583,12 +5618,16 @@ function* doTest(testFilter)
     names.sort();
     for (let s of names) {
         if (s.match(testFilter)) {
-            print("TEST: " + s + "...");
-            yield;
-            const testBefore = preciseTime();
-            tests[s]();
-            const testAfter = preciseTime();
-            print(`    OK, took ${Math.round((testAfter - testBefore) * 1000)} ms`);
+            if (s.match(testExclusionFilter)) {
+                print(`Skipping ${s} because it is disabled.`);
+            } else {
+                print("TEST: " + s + "...");
+                yield;
+                const testBefore = preciseTime();
+                tests[s]();
+                const testAfter = preciseTime();
+                print(`    OK, took ${Math.round((testAfter - testBefore) * 1000)} ms`);
+            }
         }
     }
 

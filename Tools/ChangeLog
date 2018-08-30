@@ -1,3 +1,16 @@
+2018-08-30  Thomas Denney  <tdenney@apple.com>
+
+        [WHLSL] Implement tests to verify array indexing order matches our desires
+        https://bugs.webkit.org/show_bug.cgi?id=189099
+
+        Reviewed by Myles C. Maxfield.
+
+        * WebGPUShadingLanguageRI/Test.js: Add new test for array indexing order
+        and the option to explicitly disable tests (this test is disabled by
+        default).
+        * WebGPUShadingLanguageRI/TypeRef.js:
+        (TypeRef.wrap): Fixes  typo.
+
 2018-08-30  Sihui Liu  <sihui_liu@apple.com>
 
         WKNavigation.ProcessCrashDuringCallback is failing on iOS

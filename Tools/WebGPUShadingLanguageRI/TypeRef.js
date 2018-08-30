@@ -42,7 +42,7 @@ class TypeRef extends Type {
         if (type instanceof NativeType)
             result = new TypeRef(type.origin, type.name, type.typeArguments);
         else
-            result = new TypeRef(type.orgin, type.name);
+            result = new TypeRef(type.origin, type.name);
         result.type = type;
         return result;
     }
