@@ -1,3 +1,17 @@
+2018-08-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Whitelist Network process features for VPN
+        https://bugs.webkit.org/show_bug.cgi?id=189023
+        <rdar://problem/43310000>
+
+        Reviewed by Eric Carlson.
+
+        CFNetwork needs access to some VPN preference files to configure networking, and
+        need to be allowed to communicate with the VPN process from the Network Process
+        sandbox.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
 2018-08-30  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [ConnectionUnix] Shrink sizeof AttachmentInfo by reordering members
