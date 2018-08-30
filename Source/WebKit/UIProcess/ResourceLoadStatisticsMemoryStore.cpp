@@ -345,31 +345,22 @@ void ResourceLoadStatisticsMemoryStore::processStatisticsAndDataRecords()
         }
     }
 
-    if (m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned) {
-        removeDataRecords([this, weakThis = makeWeakPtr(*this)] {
-            ASSERT(!RunLoop::isMain());
-            if (!weakThis)
-                return;
+    removeDataRecords([this, weakThis = makeWeakPtr(*this)] {
+        ASSERT(!RunLoop::isMain());
+        if (!weakThis)
+            return;
 
-            pruneStatisticsIfNeeded();
-            if (m_persistentStorage)
-                m_persistentStorage->scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::No);
+        pruneStatisticsIfNeeded();
+        if (m_persistentStorage)
+            m_persistentStorage->scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::No);
 
-            RunLoop::main().dispatch([] {
-                WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed();
-            });
+        if (!m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned)
+            return;
+
+        RunLoop::main().dispatch([] {
+            WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed();
         });
-    } else {
-        removeDataRecords([this, weakThis = makeWeakPtr(*this)] {
-            ASSERT(!RunLoop::isMain());
-            if (!weakThis)
-                return;
-
-            pruneStatisticsIfNeeded();
-            if (m_persistentStorage)
-                m_persistentStorage->scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::No);
-        });
-    }
+    });
 }
 
 void ResourceLoadStatisticsMemoryStore::hasStorageAccess(const String& subFramePrimaryDomain, const String& topFramePrimaryDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&& completionHandler)

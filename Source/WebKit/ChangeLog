@@ -1,3 +1,15 @@
+2018-08-29  Chris Dumez  <cdumez@apple.com>
+
+        Avoid code duplication in ResourceLoadStatisticsMemoryStore::processStatisticsAndDataRecords()
+        https://bugs.webkit.org/show_bug.cgi?id=189130
+
+        Reviewed by Youenn Fablet.
+
+        Move if check inside the lambda instead of outside to avoid code duplication.
+
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::processStatisticsAndDataRecords):
+
 2018-08-29  Alex Christensen  <achristensen@webkit.org>
 
         Revert some of r235398
