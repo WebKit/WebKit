@@ -121,9 +121,9 @@ void PingLoad::didReceiveChallenge(AuthenticationChallenge&&, ChallengeCompletio
     didFinish(ResourceError { String(), 0, currentURL(), "Failed HTTP authentication"_s, ResourceError::Type::AccessControl });
 }
 
-void PingLoad::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
+void PingLoad::didReceiveResponseNetworkSession(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
-    RELEASE_LOG_IF_ALLOWED("didReceiveResponse - httpStatusCode: %d", response.httpStatusCode());
+    RELEASE_LOG_IF_ALLOWED("didReceiveResponseNetworkSession - httpStatusCode: %d", response.httpStatusCode());
     auto weakThis = makeWeakPtr(*this);
     completionHandler(PolicyAction::Ignore);
     if (!weakThis)

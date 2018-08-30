@@ -97,7 +97,7 @@ public:
     bool isSynchronous() const override;
     bool isAllowedToAskUserForCredentials() const override { return m_isAllowedToAskUserForCredentials; }
     void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&) override;
-    void didReceiveResponse(WebCore::ResourceResponse&&, ResponseCompletionHandler&&) override;
+    ShouldContinueDidReceiveResponse didReceiveResponse(WebCore::ResourceResponse&&) override;
     void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override;
     void didFinishLoading(const WebCore::NetworkLoadMetrics&) override;
     void didFailLoading(const WebCore::ResourceError&) override;
@@ -206,7 +206,6 @@ private:
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryWaitingForContinueDidReceiveResponse;
     std::unique_ptr<NetworkLoadChecker> m_networkLoadChecker;
     bool m_shouldRestartLoad { false };
-    ResponseCompletionHandler m_responseCompletionHandler;
 
     std::optional<NetworkActivityTracker> m_networkActivityTracker;
 };

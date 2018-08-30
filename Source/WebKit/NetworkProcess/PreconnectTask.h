@@ -51,7 +51,7 @@ private:
     bool isAllowedToAskUserForCredentials() const final { return false; }
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) final;
     void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse) final;
-    void didReceiveResponse(WebCore::ResourceResponse&&, ResponseCompletionHandler&&) final;
+    ShouldContinueDidReceiveResponse didReceiveResponse(WebCore::ResourceResponse&&) final;
     void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) final;
     void didFinishLoading(const WebCore::NetworkLoadMetrics&) final;
     void didFailLoading(const WebCore::ResourceError&) final;

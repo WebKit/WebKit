@@ -105,9 +105,9 @@ void NetworkCORSPreflightChecker::didReceiveChallenge(WebCore::AuthenticationCha
     NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.pageID, m_parameters.frameID, challenge, WTFMove(completionHandler));
 }
 
-void NetworkCORSPreflightChecker::didReceiveResponse(WebCore::ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
+void NetworkCORSPreflightChecker::didReceiveResponseNetworkSession(WebCore::ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
-    RELEASE_LOG_IF_ALLOWED("didReceiveResponse");
+    RELEASE_LOG_IF_ALLOWED("didReceiveResponseNetworkSession");
 
     if (m_shouldCaptureExtraNetworkLoadMetrics)
         m_loadInformation.response = response;

@@ -43,7 +43,7 @@ class PendingDownload : public NetworkLoadClient, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PendingDownload(NetworkLoadParameters&&, DownloadID, NetworkSession&, const String& suggestedName);
-    PendingDownload(std::unique_ptr<NetworkLoad>&&, ResponseCompletionHandler&&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+    PendingDownload(std::unique_ptr<NetworkLoad>&&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     void continueWillSendRequest(WebCore::ResourceRequest&&);
     void cancel();
@@ -54,7 +54,7 @@ private:
     bool isSynchronous() const override { return false; }
     bool isAllowedToAskUserForCredentials() const final { return m_isAllowedToAskUserForCredentials; }
     void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse) override;
-    void didReceiveResponse(WebCore::ResourceResponse&&, ResponseCompletionHandler&&) override;
+    ShouldContinueDidReceiveResponse didReceiveResponse(WebCore::ResourceResponse&&) override { return ShouldContinueDidReceiveResponse::No; };
     void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override { };
     void didFinishLoading(const WebCore::NetworkLoadMetrics&) override { };
     void didFailLoading(const WebCore::ResourceError&) override;

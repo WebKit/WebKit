@@ -47,7 +47,7 @@ PendingDownload::PendingDownload(NetworkLoadParameters&& parameters, DownloadID 
     send(Messages::DownloadProxy::DidStart(m_networkLoad->currentRequest(), suggestedName));
 }
 
-PendingDownload::PendingDownload(std::unique_ptr<NetworkLoad>&& networkLoad, ResponseCompletionHandler&& completionHandler, DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
+PendingDownload::PendingDownload(std::unique_ptr<NetworkLoad>&& networkLoad, DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
     : m_networkLoad(WTFMove(networkLoad))
 {
     m_isAllowedToAskUserForCredentials = m_networkLoad->isAllowedToAskUserForCredentials();
@@ -55,7 +55,7 @@ PendingDownload::PendingDownload(std::unique_ptr<NetworkLoad>&& networkLoad, Res
     m_networkLoad->setPendingDownloadID(downloadID);
     send(Messages::DownloadProxy::DidStart(request, String()));
 
-    m_networkLoad->convertTaskToDownload(*this, request, response, WTFMove(completionHandler));
+    m_networkLoad->convertTaskToDownload(*this, request, response);
 }
 
 void PendingDownload::willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse)
@@ -83,11 +83,6 @@ void PendingDownload::didFailLoading(const WebCore::ResourceError& error)
 IPC::Connection* PendingDownload::messageSenderConnection()
 {
     return NetworkProcess::singleton().parentProcessConnection();
-}
-
-void PendingDownload::didReceiveResponse(WebCore::ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
-{
-    completionHandler(WebCore::PolicyAction::Download);
 }
 
 uint64_t PendingDownload::messageSenderDestinationID()

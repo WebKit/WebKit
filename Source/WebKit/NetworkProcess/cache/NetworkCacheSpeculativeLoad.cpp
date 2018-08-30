@@ -80,7 +80,7 @@ void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&& request, Resou
     didComplete();
 }
 
-void SpeculativeLoad::didReceiveResponse(ResourceResponse&& receivedResponse, ResponseCompletionHandler&& completionHandler)
+auto SpeculativeLoad::didReceiveResponse(ResourceResponse&& receivedResponse) -> ShouldContinueDidReceiveResponse
 {
     m_response = receivedResponse;
 
@@ -93,7 +93,7 @@ void SpeculativeLoad::didReceiveResponse(ResourceResponse&& receivedResponse, Re
     else
         m_cacheEntry = nullptr;
 
-    completionHandler(PolicyAction::Use);
+    return ShouldContinueDidReceiveResponse::Yes;
 }
 
 void SpeculativeLoad::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)
