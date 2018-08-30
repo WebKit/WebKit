@@ -50,3 +50,7 @@ fast/block/block-only/floating-and-next-previous-inflow-with-margin.html
 fast/block/block-only/floating-left-and-right-with-clearance.html
 fast/block/block-only/float-and-siblings-with-margins.html
 fast/block/block-only/margin-collapse-with-clearance.html
+fast/block/block-only/float-avoider-simple-left.html
+fast/block/block-only/float-avoider-simple-right.html
+fast/block/block-only/float-avoider-multiple-roots.html
+fast/block/block-only/float-avoider-with-margins.html

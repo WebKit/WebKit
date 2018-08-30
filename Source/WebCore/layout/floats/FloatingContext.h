@@ -51,6 +51,7 @@ public:
     FloatingState& floatingState() const { return m_floatingState; }
 
     PointInContainingBlock positionForFloat(const Box&) const;
+    std::optional<PointInContainingBlock> positionForFloatAvoiding(const Box&) const;
     std::optional<PositionInContainingBlock> verticalPositionWithClearance(const Box&) const;
 
 private:

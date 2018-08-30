@@ -1,3 +1,19 @@
+2018-08-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floating] Formatting context roots avoid floats.
+        https://bugs.webkit.org/show_bug.cgi?id=189150
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/block-only/float-avoider-multiple-roots-expected.txt: Added.
+        * fast/block/block-only/float-avoider-multiple-roots.html: Added.
+        * fast/block/block-only/float-avoider-simple-left-expected.txt: Added.
+        * fast/block/block-only/float-avoider-simple-left.html: Added.
+        * fast/block/block-only/float-avoider-simple-right-expected.txt: Added.
+        * fast/block/block-only/float-avoider-simple-right.html: Added.
+        * fast/block/block-only/float-avoider-with-margins-expected.txt: Added.
+        * fast/block/block-only/float-avoider-with-margins.html: Added.
+
 2018-08-29  Aditya Keerthi  <akeerthi@apple.com>
 
         [Datalist] Display prefix-matched suggestions first

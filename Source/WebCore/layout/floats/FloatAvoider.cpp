@@ -45,6 +45,7 @@ FloatAvoider::FloatAvoider(const Box& layoutBox, const FloatingState& floatingSt
     , m_containingBlockAbsoluteDisplayBox(FormattingContext::mapBoxToAncestor(layoutContext, *layoutBox.containingBlock(), downcast<Container>(floatingState.root())))
     , m_initialVerticalPosition(m_absoluteDisplayBox.top())
 {
+    ASSERT(m_layoutBox->establishesBlockFormattingContext());
 }
 
 void FloatAvoider::setHorizontalConstraints(HorizontalConstraints horizontalConstraints)

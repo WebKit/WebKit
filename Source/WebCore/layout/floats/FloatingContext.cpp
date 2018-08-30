@@ -143,6 +143,20 @@ PointInContainingBlock FloatingContext::positionForFloat(const Box& layoutBox) c
     return floatBox.rectInContainingBlock().topLeft();
 }
 
+std::optional<PointInContainingBlock> FloatingContext::positionForFloatAvoiding(const Box& layoutBox) const
+{
+    ASSERT(layoutBox.establishesBlockFormattingContext());
+    ASSERT(!layoutBox.isFloatingPositioned());
+    ASSERT(!layoutBox.hasFloatClear());
+
+    if (m_floatingState.isEmpty())
+        return { };
+
+    FloatAvoider floatAvoider = { layoutBox, m_floatingState, layoutContext() };
+    floatingPosition(floatAvoider);
+    return { floatAvoider.rectInContainingBlock().topLeft() };
+}
+
 std::optional<PositionInContainingBlock> FloatingContext::verticalPositionWithClearance(const Box& layoutBox) const
 {
     ASSERT(layoutBox.hasFloatClear());
