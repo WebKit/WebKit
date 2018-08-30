@@ -1,3 +1,18 @@
+2018-08-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] TestWebKitAPI.PasteImage tests are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=185965
+
+        Reviewed by Andy Estes.
+
+        These tests pass reliably when run locally, but sometimes fail in automation when checking that the image
+        element with its "src" attribute set to a new blob URL has an empty size. It's possible that this is happening
+        because we're checking the size of the image element prior to image load after setting the blob URL; we can fix
+        this by waiting for the "load" event (which is also done in some of the other tests in this file).
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteImage.mm:
+        (TEST):
+
 2018-08-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r235114.

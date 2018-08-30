@@ -67,6 +67,7 @@ TEST(PasteImage, PasteGIFImage)
     EXPECT_WK_STREQ("true", [webView stringByEvaluatingJavaScript:@"dataTransfer.files.includes(gifItem.file).toString()"]);
 
     [webView stringByEvaluatingJavaScript:@"insertFileAsImage(gifItem.file)"];
+    [webView waitForMessage:@"loaded"];
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"url = new URL(imageElement.src); url.protocol"]);
     EXPECT_WK_STREQ("400", [webView stringByEvaluatingJavaScript:@"imageElement.width"]);
 }
@@ -89,6 +90,7 @@ TEST(PasteImage, PasteJPEGImage)
     EXPECT_WK_STREQ("true", [webView stringByEvaluatingJavaScript:@"dataTransfer.files.includes(jpegItem.file).toString()"]);
 
     [webView stringByEvaluatingJavaScript:@"insertFileAsImage(jpegItem.file)"];
+    [webView waitForMessage:@"loaded"];
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"url = new URL(imageElement.src); url.protocol"]);
     EXPECT_WK_STREQ("600", [webView stringByEvaluatingJavaScript:@"imageElement.width"]);
 }
@@ -111,6 +113,7 @@ TEST(PasteImage, PastePNGImage)
     EXPECT_WK_STREQ("true", [webView stringByEvaluatingJavaScript:@"dataTransfer.files.includes(pngItem.file).toString()"]);
 
     [webView stringByEvaluatingJavaScript:@"insertFileAsImage(pngItem.file)"];
+    [webView waitForMessage:@"loaded"];
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"url = new URL(imageElement.src); url.protocol"]);
     EXPECT_WK_STREQ("200", [webView stringByEvaluatingJavaScript:@"imageElement.width"]);
 }
