@@ -53,7 +53,7 @@ static ExceptionOr<Vector<String>> convertAndValidate(unsigned version, const Ve
 ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(unsigned version, ApplePayRequestBase& request, const PaymentCoordinator& paymentCoordinator)
 {
     if (!version || !paymentCoordinator.supportsVersion(version))
-        return Exception { InvalidAccessError, makeString("\"", version, "\" is not a supported version.") };
+        return Exception { InvalidAccessError, makeString('"', version, "\" is not a supported version.") };
 
     ApplePaySessionPaymentRequest result;
     result.setVersion(version);
