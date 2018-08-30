@@ -27,9 +27,11 @@
 
                 shouldNotThrow("result = pc." + functionName + "(emptyFunc, emptyFunc)");
                 shouldBeType("result", "Promise");
+                result.then(() => { }, () => { });
 
                 shouldNotThrow("result = pc." + functionName + "(emptyFunc, emptyFunc, {})");
                 shouldBeType("result", "Promise");
+                result.then(() => { }, () => { });
             }
 
             // Test setLocal/RemoteDescription()

@@ -1,3 +1,14 @@
+2018-08-30  Youenn Fablet  <youenn@apple.com>
+
+        fast/mediastream/RTCPeerConnection-overloaded-operations.html is flaky after r235484
+        https://bugs.webkit.org/show_bug.cgi?id=189155
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/RTCPeerConnection-overloaded-operations.html:
+        createOffer/createAnswer will now reject promises if callbacks are passed as parameters.
+        Make sure that these promises are handled.
+
 2018-08-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floating] Formatting context roots avoid floats.
