@@ -1,3 +1,11 @@
+2018-08-30  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the watchOS and tvOS build
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView invokeShareSheetWithResolution:]):
+
 2018-08-30  Eric Carlson  <eric.carlson@apple.com>
 
         Mock video devices should only support discrete sizes

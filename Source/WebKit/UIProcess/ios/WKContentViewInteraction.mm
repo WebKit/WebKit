@@ -779,13 +779,15 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
         [_fileUploadPanel dismiss];
         _fileUploadPanel = nil;
     }
-    
+
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     if (_shareSheet) {
         [_shareSheet setDelegate:nil];
         [_shareSheet dismiss];
         _shareSheet = nil;
     }
-    
+#endif
+
     _inputViewUpdateDeferrer = nullptr;
     _assistedNodeInformation = { };
     
@@ -5889,7 +5891,9 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (void)invokeShareSheetWithResolution:(BOOL)resolved
 {
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     [_shareSheet invokeShareSheetWithResolution:resolved];
+#endif
 }
 
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem
