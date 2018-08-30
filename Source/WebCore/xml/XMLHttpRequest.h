@@ -199,8 +199,8 @@ private:
     unsigned m_wasAbortedByClient : 1;
     unsigned m_responseCacheIsValid : 1;
     unsigned m_dispatchErrorOnResuming : 1;
-    unsigned m_readyState : 3;
-    unsigned m_responseType : 3;
+    unsigned m_readyState : 3; // State
+    unsigned m_responseType : 3; // ResponseType
 
     unsigned m_timeoutMilliseconds { 0 };
 
