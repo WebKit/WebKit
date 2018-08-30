@@ -26,6 +26,7 @@
 #pragma once
 
 #include "TextCodec.h"
+#include <unicode/utf8.h>
 #include <wtf/text/LChar.h>
 
 namespace WebCore {

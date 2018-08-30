@@ -29,9 +29,10 @@
 #ifndef StringBuffer_h
 #define StringBuffer_h
 
-#include <wtf/Assertions.h>
 #include <limits>
 #include <unicode/utypes.h>
+#include <wtf/Assertions.h>
+#include <wtf/MallocPtr.h>
 
 namespace WTF {
 

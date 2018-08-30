@@ -26,6 +26,7 @@
 #ifndef SoupNetworkSession_h
 #define SoupNetworkSession_h
 
+#include <gio/gio.h>
 #include <glib-object.h>
 #include <pal/SessionID.h>
 #include <wtf/Function.h>

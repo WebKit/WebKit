@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ApplicationCacheResource.h"
 #include "CachedRawResource.h"
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"

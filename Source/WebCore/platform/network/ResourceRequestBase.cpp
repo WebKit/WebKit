@@ -29,6 +29,7 @@
 #include "HTTPHeaderNames.h"
 #include "PublicSuffix.h"
 #include "ResourceRequest.h"
+#include "ResourceResponse.h"
 #include "SecurityPolicy.h"
 #include <wtf/PointerComparison.h>
 

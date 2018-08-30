@@ -1,3 +1,22 @@
+2018-08-30  Tim Horton  <timothy_horton@apple.com>
+
+        Bundle unified sources more tightly in projects with deep directory structures
+        https://bugs.webkit.org/show_bug.cgi?id=189009
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/generate-unified-source-bundles.rb:
+        It turns out our plan to switch unified source bundle every time the directory
+        changes is not a good fit for projects like WebKit2 with many small directories.
+        It leaves many unified source bundles with only a single source file,
+        achieving only ~40% density.
+
+        Instead, switch unified source bundles every time the top-level directory changes.
+        This still achieves the goal of *usually* only rebuilding the one top-level
+        directory you touched, and increases source bundle density wildly, to ~95%.
+
+        * wtf/Platform.h:
+
 2018-08-29  David Kilzer  <ddkilzer@apple.com>
 
         Rename wtf/text/mac/StringMac.mm to wtf/text/cococa/StringCococa.mm

@@ -29,11 +29,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(MAC)
-// Some platforms provide UI for suggesting alternative dictation text.
-#define USE_DICTATION_ALTERNATIVES 1
-#endif
-
 namespace WebCore {
 
 enum ReasonForDismissingAlternativeText {

@@ -42,11 +42,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
 
-#if PLATFORM(IOS) && !PLATFORM(IOSMAC)
-static const SInt32 fnfErr = -43;
-#elif PLATFORM(MAC)
-#include <CoreServices/CoreServices.h>
-#endif
+static const SInt32 fileNotFoundError = -43;
 
 #if PLATFORM(COCOA)
 extern "C" void CFURLRequestSetHTTPRequestBody(CFMutableURLRequestRef mutableHTTPRequest, CFDataRef httpBody);
@@ -241,7 +237,7 @@ static Boolean formOpen(CFReadStreamRef, CFStreamError* error, Boolean* openComp
 #if PLATFORM(WIN)
         ENOENT;
 #else
-        fnfErr;
+        fileNotFoundError;
 #endif
     return opened;
 }

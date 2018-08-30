@@ -61,14 +61,14 @@ platform/UserAgentQuirks.cpp
 
 platform/geoclue/GeolocationProviderGeoclue.cpp
 
-platform/graphics/GLContext.cpp
+platform/graphics/GLContext.cpp @no-unify
 platform/graphics/GraphicsContext3DPrivate.cpp
 
-platform/graphics/cairo/BackingStoreBackendCairoX11.cpp
+platform/graphics/cairo/BackingStoreBackendCairoX11.cpp @no-unify
 
 platform/graphics/egl/GLContextEGL.cpp
 platform/graphics/egl/GLContextEGLWayland.cpp @no-unify
-platform/graphics/egl/GLContextEGLX11.cpp
+platform/graphics/egl/GLContextEGLX11.cpp @no-unify
 
 platform/graphics/glx/GLContextGLX.cpp
 
@@ -82,9 +82,9 @@ platform/graphics/opentype/OpenTypeVerticalData.cpp
 
 platform/graphics/wayland/PlatformDisplayWayland.cpp
 
-platform/graphics/x11/PlatformDisplayX11.cpp
-platform/graphics/x11/XErrorTrapper.cpp
-platform/graphics/x11/XUniqueResource.cpp
+platform/graphics/x11/PlatformDisplayX11.cpp @no-unify
+platform/graphics/x11/XErrorTrapper.cpp @no-unify
+platform/graphics/x11/XUniqueResource.cpp @no-unify
 
 platform/gtk/DragDataGtk.cpp
 platform/gtk/LocalizedStringsGtk.cpp

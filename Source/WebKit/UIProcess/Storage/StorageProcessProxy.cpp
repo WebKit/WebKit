@@ -37,7 +37,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static uint64_t generateCallbackID()
+static uint64_t generateStorageProcessCallbackID()
 {
     static uint64_t callbackID;
 
@@ -105,7 +105,7 @@ void StorageProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<W
 {
     ASSERT(canSendMessage());
 
-    uint64_t callbackID = generateCallbackID();
+    uint64_t callbackID = generateStorageProcessCallbackID();
     m_pendingFetchWebsiteDataCallbacks.add(callbackID, WTFMove(completionHandler));
 
     send(Messages::StorageProcess::FetchWebsiteData(sessionID, dataTypes, callbackID), 0);
@@ -113,7 +113,7 @@ void StorageProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<W
 
 void StorageProcessProxy::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, WallTime modifiedSince, CompletionHandler<void ()>&& completionHandler)
 {
-    auto callbackID = generateCallbackID();
+    auto callbackID = generateStorageProcessCallbackID();
 
     m_pendingDeleteWebsiteDataCallbacks.add(callbackID, WTFMove(completionHandler));
     send(Messages::StorageProcess::DeleteWebsiteData(sessionID, dataTypes, modifiedSince, callbackID), 0);
@@ -123,7 +123,7 @@ void StorageProcessProxy::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, 
 {
     ASSERT(canSendMessage());
 
-    uint64_t callbackID = generateCallbackID();
+    uint64_t callbackID = generateStorageProcessCallbackID();
     m_pendingDeleteWebsiteDataForOriginsCallbacks.add(callbackID, WTFMove(completionHandler));
 
     send(Messages::StorageProcess::DeleteWebsiteDataForOrigins(sessionID, dataTypes, origins, callbackID), 0);

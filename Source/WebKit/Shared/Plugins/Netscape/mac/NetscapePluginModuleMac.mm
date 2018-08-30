@@ -34,9 +34,8 @@
 #import <wtf/MainThread.h>
 #import <wtf/spi/cf/CFBundleSPI.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static bool getPluginArchitecture(CFBundleRef bundle, PluginModuleInfo& plugin)
 {

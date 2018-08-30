@@ -338,6 +338,7 @@ extern NSString *UIColorPboardType;
 #if PLATFORM(MAC)
 extern const char* const WebArchivePboardType;
 extern const char* const WebURLNamePboardType;
+extern const char* const WebURLsWithTitlesPboardType;
 #endif
 
 #if !PLATFORM(GTK)

@@ -33,6 +33,7 @@
 #include "NotImplemented.h"
 #include <CoreAudio/AudioHardware.h>
 #include <wtf/MainThread.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

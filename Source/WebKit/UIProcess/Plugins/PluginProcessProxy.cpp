@@ -48,7 +48,7 @@ static const Seconds snapshottingMinimumLifetime { 30_s };
 static const Seconds shutdownTimeout { 1_min };
 static const Seconds snapshottingShutdownTimeout { 15_s };
 
-static uint64_t generateCallbackID()
+static uint64_t generatePluginProcessCallbackID()
 {
     static uint64_t callbackID;
 
@@ -114,7 +114,7 @@ void PluginProcessProxy::getPluginProcessConnection(Messages::WebProcessProxy::G
 
 void PluginProcessProxy::fetchWebsiteData(CompletionHandler<void (Vector<String>)>&& completionHandler)
 {
-    uint64_t callbackID = generateCallbackID();
+    uint64_t callbackID = generatePluginProcessCallbackID();
     m_pendingFetchWebsiteDataCallbacks.set(callbackID, WTFMove(completionHandler));
 
     if (state() == State::Launching) {
@@ -127,7 +127,7 @@ void PluginProcessProxy::fetchWebsiteData(CompletionHandler<void (Vector<String>
 
 void PluginProcessProxy::deleteWebsiteData(WallTime modifiedSince, CompletionHandler<void ()>&& completionHandler)
 {
-    uint64_t callbackID = generateCallbackID();
+    uint64_t callbackID = generatePluginProcessCallbackID();
     m_pendingDeleteWebsiteDataCallbacks.set(callbackID, WTFMove(completionHandler));
 
     if (state() == State::Launching) {
@@ -140,7 +140,7 @@ void PluginProcessProxy::deleteWebsiteData(WallTime modifiedSince, CompletionHan
 
 void PluginProcessProxy::deleteWebsiteDataForHostNames(const Vector<String>& hostNames, CompletionHandler<void ()>&& completionHandler)
 {
-    uint64_t callbackID = generateCallbackID();
+    uint64_t callbackID = generatePluginProcessCallbackID();
     m_pendingDeleteWebsiteDataForHostNamesCallbacks.set(callbackID, WTFMove(completionHandler));
 
     if (state() == State::Launching) {

@@ -389,7 +389,7 @@ platform/ios/PlatformScreenIOS.mm
 platform/ios/PlatformSpeechSynthesizerIOS.mm @no-unify
 platform/ios/PlaybackSessionInterfaceAVKit.mm @no-unify
 platform/ios/QuickLook.mm
-platform/ios/QuickLookSoftLink.mm
+platform/ios/QuickLookSoftLink.mm @no-unify
 platform/ios/RemoteCommandListenerIOS.mm
 platform/ios/ScrollAnimatorIOS.mm
 platform/ios/ScrollbarThemeIOS.mm
@@ -399,7 +399,7 @@ platform/ios/SSLKeyGeneratorIOS.cpp
 platform/ios/SystemMemoryIOS.cpp
 platform/ios/ThemeIOS.mm @no-unify
 platform/ios/TileControllerMemoryHandlerIOS.cpp
-platform/ios/UserAgentIOS.mm
+platform/ios/UserAgentIOS.mm @no-unify
 platform/ios/ValidationBubbleIOS.mm @no-unify
 platform/ios/VideoFullscreenInterfaceAVKit.mm @no-unify
 platform/ios/WebAVPlayerController.mm

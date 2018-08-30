@@ -28,6 +28,7 @@
 
 #if ENABLE(PAYMENT_REQUEST)
 
+#include "EventNames.h"
 #include "PaymentRequest.h"
 
 namespace WebCore {
