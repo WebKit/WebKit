@@ -1,3 +1,15 @@
+2018-08-30  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [ConnectionUnix] Shrink sizeof AttachmentInfo by reordering members
+        https://bugs.webkit.org/show_bug.cgi?id=189149
+
+        Reviewed by Michael Catanzaro.
+
+        Reorder members to shrink the size of AttachmentInfo so that
+        we can attach more attachments. 
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+
 2018-08-29  Chris Dumez  <cdumez@apple.com>
 
         Avoid code duplication in ResourceLoadStatisticsMemoryStore::processStatisticsAndDataRecords()
