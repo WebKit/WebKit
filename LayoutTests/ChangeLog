@@ -1,3 +1,17 @@
+2018-08-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Datalist] Display prefix-matched suggestions first
+        https://bugs.webkit.org/show_bug.cgi?id=189106
+
+        Reviewed by Tim Horton.
+
+        Added a test to verify that prefix-matched suggestions are shown before other
+        matches.
+
+        * fast/forms/datalist/datalist-textinput-suggestions-order-expected.txt: Added.
+        * fast/forms/datalist/datalist-textinput-suggestions-order.html: Added.
+        * platform/ios/TestExpectations:
+
 2018-08-29  Olivia Barnett  <obarnett@apple.com>
 
         Implement the Web Share API

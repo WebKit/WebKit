@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="fruit" list="fruits" type="text"/>
+<datalist id="fruits">
+    <option>Orange</option>
+    <option>Pear</option>
+    <option>Apple</option>
+</datalist>
+
+<script>
+
+description('Test to verify that prefix-matched values are displayed first');
+
+var input = document.getElementById("fruit");
+
+UIHelper.activateElement(input);
+eventSender.keyDown("downArrow");
+eventSender.keyDown("\r");
+shouldBe('input.value', '"Orange"');
+
+input.value = "a";
+
+UIHelper.activateElement(input);
+eventSender.keyDown("downArrow");
+eventSender.keyDown("\r");
+shouldBe('input.value', '"Apple"');
+
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

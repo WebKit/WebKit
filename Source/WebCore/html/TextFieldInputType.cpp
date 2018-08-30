@@ -799,6 +799,8 @@ void TextFieldInputType::updateAutoFillButton()
 
 void TextFieldInputType::listAttributeTargetChanged()
 {
+    m_cachedSuggestions = std::make_pair(String(), Vector<String>());
+
     if (!m_dataListDropdownIndicator)
         return;
 
@@ -823,9 +825,15 @@ IntRect TextFieldInputType::elementRectInRootViewCoordinates() const
     return element()->document().view()->contentsToRootView(element()->renderer()->absoluteBoundingBoxRect());
 }
 
-Vector<String> TextFieldInputType::suggestions() const
+Vector<String> TextFieldInputType::suggestions()
 {
     Vector<String> suggestions;
+    Vector<String> matchesContainingValue;
+
+    String elementValue = element()->value();
+
+    if (!m_cachedSuggestions.first.isNull() && equalIgnoringASCIICase(m_cachedSuggestions.first, elementValue))
+        return m_cachedSuggestions.second;
 
     if (auto dataList = element()->dataList()) {
         Ref<HTMLCollection> options = dataList->options();
@@ -834,10 +842,17 @@ Vector<String> TextFieldInputType::suggestions() const
                 continue;
 
             String value = sanitizeValue(option->value());
-            if (!suggestions.contains(value) && (element()->value().isEmpty() || value.containsIgnoringASCIICase(element()->value())))
+            if (elementValue.isEmpty())
                 suggestions.append(value);
+            else if (value.startsWithIgnoringASCIICase(elementValue))
+                suggestions.append(value);
+            else if (value.containsIgnoringASCIICase(elementValue))
+                matchesContainingValue.append(value);
         }
     }
+
+    suggestions.appendVector(matchesContainingValue);
+    m_cachedSuggestions = std::make_pair(elementValue, suggestions);
 
     return suggestions;
 }
@@ -849,6 +864,7 @@ void TextFieldInputType::didSelectDataListOption(const String& selectedOption)
 
 void TextFieldInputType::didCloseSuggestions()
 {
+    m_cachedSuggestions = std::make_pair(String(), Vector<String>());
     m_suggestionPicker = nullptr;
     if (element()->renderer())
         element()->renderer()->repaint();

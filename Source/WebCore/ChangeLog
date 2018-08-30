@@ -1,3 +1,33 @@
+2018-08-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Datalist] Display prefix-matched suggestions first
+        https://bugs.webkit.org/show_bug.cgi?id=189106
+
+        Reviewed by Tim Horton.
+
+        In order to increase suggestion relevancy, we should display suggestions that have
+        the same prefix as the input value first. In order to achieve this, we can place
+        the suggestions into two buckets, one that contains prefix-matched values and
+        another that contains only substring-matched values.
+
+        TextFieldInputType::suggestions() can be called up to three times before we
+        display the values. In order to avoid generating the same suggestions multiple
+        times, the most recent values can be stored and reused. We clear the cached values
+        whenever the datalist element is modified or when the suggestions view is hidden.
+
+        Finally, removed logic to de-duplicate the list of suggested values. This behavior
+        is not a part of the specification and leads to unnecessary slowdown when
+        populating the suggestions view.
+
+        Test: fast/forms/datalist/datalist-textinput-suggestions-order.html
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::listAttributeTargetChanged):
+        (WebCore::TextFieldInputType::suggestions):
+        (WebCore::TextFieldInputType::didCloseSuggestions):
+        * html/TextFieldInputType.h:
+        * platform/DataListSuggestionsClient.h:
+
 2018-08-29  Olivia Barnett  <obarnett@apple.com>
 
         Implement the Web Share API

@@ -37,7 +37,7 @@ public:
     virtual ~DataListSuggestionsClient() = default;
 
     virtual IntRect elementRectInRootViewCoordinates() const = 0;
-    virtual Vector<String> suggestions() const = 0;
+    virtual Vector<String> suggestions() = 0;
 
     virtual void didSelectDataListOption(const String&) = 0;
     virtual void didCloseSuggestions() = 0;

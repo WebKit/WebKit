@@ -1,0 +1,11 @@
+Test to verify that prefix-matched values are displayed first
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.value is "Orange"
+PASS input.value is "Apple"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
