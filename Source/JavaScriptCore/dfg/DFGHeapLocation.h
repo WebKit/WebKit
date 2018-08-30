@@ -49,6 +49,7 @@ enum LocationKind {
     HasIndexedPropertyLoc,
     IndexedPropertyDoubleLoc,
     IndexedPropertyDoubleSaneChainLoc,
+    IndexedPropertyInt32Loc,
     IndexedPropertyInt52Loc,
     IndexedPropertyJSLoc,
     IndexedPropertyStorageLoc,
@@ -77,24 +78,25 @@ public:
     HeapLocation(
         LocationKind kind = InvalidLocationKind,
         AbstractHeap heap = AbstractHeap(),
-        Node* base = nullptr, LazyNode index = LazyNode())
+        Node* base = nullptr, LazyNode index = LazyNode(), Node* descriptor = nullptr)
         : m_kind(kind)
         , m_heap(heap)
         , m_base(base)
         , m_index(index)
+        , m_descriptor(descriptor)
     {
         ASSERT((kind == InvalidLocationKind) == !heap);
         ASSERT(!!m_heap || !m_base);
-        ASSERT(m_base || !m_index);
+        ASSERT(m_base || (!m_index && !m_descriptor));
     }
 
-    HeapLocation(LocationKind kind, AbstractHeap heap, Node* base, Node* index)
-        : HeapLocation(kind, heap, base, LazyNode(index))
+    HeapLocation(LocationKind kind, AbstractHeap heap, Node* base, Node* index, Node* descriptor = nullptr)
+        : HeapLocation(kind, heap, base, LazyNode(index), descriptor)
     {
     }
     
-    HeapLocation(LocationKind kind, AbstractHeap heap, Edge base, Edge index = Edge())
-        : HeapLocation(kind, heap, base.node(), index.node())
+    HeapLocation(LocationKind kind, AbstractHeap heap, Edge base, Edge index = Edge(), Edge descriptor = Edge())
+        : HeapLocation(kind, heap, base.node(), index.node(), descriptor.node())
     {
     }
     
@@ -103,6 +105,7 @@ public:
         , m_heap(WTF::HashTableDeletedValue)
         , m_base(nullptr)
         , m_index(nullptr)
+        , m_descriptor(nullptr)
     {
     }
     
@@ -115,7 +118,7 @@ public:
     
     unsigned hash() const
     {
-        return m_kind + m_heap.hash() + m_index.hash() + m_kind;
+        return m_kind + m_heap.hash() + m_index.hash() + static_cast<unsigned>(bitwise_cast<uintptr_t>(m_base)) + static_cast<unsigned>(bitwise_cast<uintptr_t>(m_descriptor));
     }
     
     bool operator==(const HeapLocation& other) const
@@ -123,7 +126,8 @@ public:
         return m_kind == other.m_kind
             && m_heap == other.m_heap
             && m_base == other.m_base
-            && m_index == other.m_index;
+            && m_index == other.m_index
+            && m_descriptor == other.m_descriptor;
     }
     
     bool isHashTableDeletedValue() const
@@ -138,6 +142,7 @@ private:
     AbstractHeap m_heap;
     Node* m_base;
     LazyNode m_index;
+    Node* m_descriptor;
 };
 
 struct HeapLocationHash {
@@ -159,6 +164,8 @@ inline LocationKind indexedPropertyLocForResultType(NodeFlags canonicalResultRep
         return IndexedPropertyDoubleLoc;
     case NodeResultInt52:
         return IndexedPropertyInt52Loc;
+    case NodeResultInt32:
+        return IndexedPropertyInt32Loc;
     case NodeResultJS:
         return IndexedPropertyJSLoc;
     case NodeResultStorage:

@@ -1,3 +1,28 @@
+2018-08-30  Saam barati  <sbarati@apple.com>
+
+        CSE DataViewGet* DFG nodes
+        https://bugs.webkit.org/show_bug.cgi?id=188768
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/dataview-cse.js: Added.
+        (assert):
+        (test):
+        * stress/dataview-get-cse.js: Added.
+        (assert):
+        (test1.foo):
+        (test1):
+        (test2.foo):
+        (test2):
+        (test3.foo):
+        (test3):
+        (test4.foo):
+        (test4):
+        (test5.foo):
+        (test5):
+        (test6.foo):
+        (test6):
+
 2018-08-30  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         output of toString() of Generator is wrong
