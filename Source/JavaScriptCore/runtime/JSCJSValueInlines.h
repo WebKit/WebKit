@@ -649,13 +649,17 @@ ALWAYS_INLINE Identifier JSValue::toPropertyKey(ExecState* exec) const
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (isString())
+    if (isString()) {
+        scope.release();
         return asString(*this)->toIdentifier(exec);
+    }
 
     JSValue primitive = toPrimitive(exec, PreferString);
     RETURN_IF_EXCEPTION(scope, vm.propertyNames->emptyIdentifier);
-    if (primitive.isSymbol())
+    if (primitive.isSymbol()) {
+        scope.release();
         return Identifier::fromUid(asSymbol(primitive)->privateName());
+    }
     scope.release();
     return primitive.toString(exec)->toIdentifier(exec);
 }

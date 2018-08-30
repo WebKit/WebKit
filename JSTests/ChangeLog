@@ -1,3 +1,13 @@
+2018-08-29  Mark Lam  <mark.lam@apple.com>
+
+        Add some missing exception checks in JSRopeString::resolveRopeToAtomicString().
+        https://bugs.webkit.org/show_bug.cgi?id=189132
+        <rdar://problem/42513068>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-189132.js: Added.
+
 2018-08-27  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [WebAssembly] Parse wasm modules in a streaming fashion
