@@ -1876,9 +1876,9 @@ let standardLibrary = (function() {
                         print(`    ${type}${i}x${k} result;`);
                         for (var p = 0; p < i; ++p) {
                             for (var r = 0; r < k; ++r) {
-                                print(`    result[${p}][${k}] = 0;`);
+                                print(`    result[${p}][${r}] = 0;`);
                                 for (var q = 0; q < j; ++q) {
-                                    print(`    result[${p}][${k}] += x[${p}][${q}] * y[${q}][${r}];`);
+                                    print(`    result[${p}][${r}] += x[${p}][${q}] * y[${q}][${r}];`);
                                 }
                             }
                         }

@@ -5451,6 +5451,106 @@ tests.halfSimpleMath = function() {
     checkHalf(program, callFunction(program, "foo", [makeHalf(program, 7), makeHalf(program, -2)]), -3.5);
 }
 
+tests.matrixMultiplication = function() {
+    let program = doPrep(`
+        float2x4 multiply(float2x3 x, float3x4 y) {
+            // Copied and pasted from the standard library
+            float2x4 result;
+            result[0][0] = 0;
+            result[0][0] += x[0][0] * y[0][0];
+            result[0][0] += x[0][1] * y[1][0];
+            result[0][0] += x[0][2] * y[2][0];
+            result[0][1] = 0;
+            result[0][1] += x[0][0] * y[0][1];
+            result[0][1] += x[0][1] * y[1][1];
+            result[0][1] += x[0][2] * y[2][1];
+            result[0][2] = 0;
+            result[0][2] += x[0][0] * y[0][2];
+            result[0][2] += x[0][1] * y[1][2];
+            result[0][2] += x[0][2] * y[2][2];
+            result[0][3] = 0;
+            result[0][3] += x[0][0] * y[0][3];
+            result[0][3] += x[0][1] * y[1][3];
+            result[0][3] += x[0][2] * y[2][3];
+            result[1][0] = 0;
+            result[1][0] += x[1][0] * y[0][0];
+            result[1][0] += x[1][1] * y[1][0];
+            result[1][0] += x[1][2] * y[2][0];
+            result[1][1] = 0;
+            result[1][1] += x[1][0] * y[0][1];
+            result[1][1] += x[1][1] * y[1][1];
+            result[1][1] += x[1][2] * y[2][1];
+            result[1][2] = 0;
+            result[1][2] += x[1][0] * y[0][2];
+            result[1][2] += x[1][1] * y[1][2];
+            result[1][2] += x[1][2] * y[2][2];
+            result[1][3] = 0;
+            result[1][3] += x[1][0] * y[0][3];
+            result[1][3] += x[1][1] * y[1][3];
+            result[1][3] += x[1][2] * y[2][3];
+            return result;
+        }
+        float2x3 matrix1() {
+            float2x3 x;
+            x[0][0] = 2;
+            x[0][1] = 3;
+            x[0][2] = 5;
+            x[1][0] = 7;
+            x[1][1] = 11;
+            x[1][2] = 13;
+            return x;
+        }
+        float3x4 matrix2() {
+            float3x4 y;
+            y[0][0] = 17;
+            y[0][1] = 19;
+            y[0][2] = 23;
+            y[0][3] = 29;
+            y[1][0] = 31;
+            y[1][1] = 37;
+            y[1][2] = 41;
+            y[1][3] = 43;
+            y[2][0] = 47;
+            y[2][1] = 53;
+            y[2][2] = 59;
+            y[2][3] = 61;
+            return y;
+        }
+        float foo00() {
+            return multiply(matrix1(), matrix2())[0][0];
+        }
+        float foo01() {
+            return multiply(matrix1(), matrix2())[0][1];
+        }
+        float foo02() {
+            return multiply(matrix1(), matrix2())[0][2];
+        }
+        float foo03() {
+            return multiply(matrix1(), matrix2())[0][3];
+        }
+        float foo10() {
+            return multiply(matrix1(), matrix2())[1][0];
+        }
+        float foo11() {
+            return multiply(matrix1(), matrix2())[1][1];
+        }
+        float foo12() {
+            return multiply(matrix1(), matrix2())[1][2];
+        }
+        float foo13() {
+            return multiply(matrix1(), matrix2())[1][3];
+        }
+    `);
+    checkFloat(program, callFunction(program, "foo00", []), 17 * 2 + 31 * 3 + 47 * 5);
+    checkFloat(program, callFunction(program, "foo01", []), 19 * 2 + 37 * 3 + 53 * 5);
+    checkFloat(program, callFunction(program, "foo02", []), 23 * 2 + 41 * 3 + 59 * 5);
+    checkFloat(program, callFunction(program, "foo03", []), 29 * 2 + 43 * 3 + 61 * 5);
+    checkFloat(program, callFunction(program, "foo10", []), 17 * 7 + 31 * 11 + 47 * 13);
+    checkFloat(program, callFunction(program, "foo11", []), 19 * 7 + 37 * 11 + 53 * 13);
+    checkFloat(program, callFunction(program, "foo12", []), 23 * 7 + 41 * 11 + 59 * 13);
+    checkFloat(program, callFunction(program, "foo13", []), 29 * 7 + 43 * 11 + 61 * 13);
+}
+
 okToTest = true;
 
 let testFilter = /.*/; // run everything by default

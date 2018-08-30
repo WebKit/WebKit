@@ -316,11 +316,11 @@ class Intrinsics {
             }
         }
 
-        for (let type of ["half", "float"]) {
+        for (let typeName of ["half", "float"]) {
             for (let height = 2; height <= 4; ++height) {
                 for (let width = 2; width <= 4; ++width) {
-                    this._map.set(`native typedef matrix<${type}, ${height}, ${width}>`, type => {
-                        this[`matrix<${type}, ${height}, ${width}>`] = type;
+                    this._map.set(`native typedef matrix<${typeName}, ${height}, ${width}>`, type => {
+                        this[`matrix<${typeName}, ${height}, ${width}>`] = type;
                     });
                 }
             }
