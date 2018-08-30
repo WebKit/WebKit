@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,34 +27,36 @@
 
 #if ENABLE(PAYMENT_REQUEST)
 
-#include "Event.h"
-#include "PaymentRequestUpdateEventInit.h"
+#include "PaymentRequestUpdateEvent.h"
+#include <JavaScriptCore/Strong.h>
+#include <wtf/text/WTFString.h>
+
+namespace JSC {
+class JSObject;
+}
 
 namespace WebCore {
+    
+struct PaymentMethodChangeEventInit;
 
-class DOMPromise;
-class PaymentRequest;
-struct PaymentRequestUpdateEventInit;
-
-class PaymentRequestUpdateEvent : public Event {
+class PaymentMethodChangeEvent final : public PaymentRequestUpdateEvent {
 public:
-    template <typename... Args> static Ref<PaymentRequestUpdateEvent> create(Args&&... args)
+    template<typename... Args> static Ref<PaymentMethodChangeEvent> create(Args&&... args)
     {
-        return adoptRef(*new PaymentRequestUpdateEvent(std::forward<Args>(args)...));
+        return adoptRef(*new PaymentMethodChangeEvent(std::forward<Args>(args)...));
     }
-    ~PaymentRequestUpdateEvent();
-    ExceptionOr<void> updateWith(Ref<DOMPromise>&&);
 
-protected:
-    PaymentRequestUpdateEvent(const AtomicString& type, PaymentRequest&);
-    PaymentRequestUpdateEvent(const AtomicString& type, const PaymentRequestUpdateEventInit&);
+    const String& methodName() const { return m_methodName; }
+    const JSC::Strong<JSC::JSObject>& methodDetails() const { return m_methodDetails; }
 
     // Event
     EventInterface eventInterface() const override;
 
 private:
-    RefPtr<PaymentRequest> m_paymentRequest;
-    bool m_waitForUpdate { false };
+    PaymentMethodChangeEvent(const AtomicString& type, const PaymentMethodChangeEventInit&);
+
+    String m_methodName;
+    JSC::Strong<JSC::JSObject> m_methodDetails;
 };
 
 } // namespace WebCore

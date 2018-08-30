@@ -107,6 +107,7 @@ namespace WebCore {
     macro(OffscreenCanvas) \
     macro(OffscreenCanvasRenderingContext2D) \
     macro(PaymentAddress) \
+    macro(PaymentMethodChangeEvent) \
     macro(PaymentRequest) \
     macro(PaymentRequestUpdateEvent) \
     macro(PaymentResponse) \

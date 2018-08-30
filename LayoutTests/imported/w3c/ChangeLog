@@ -1,3 +1,14 @@
+2018-08-30  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement the PaymentMethodChangeEvent and PaymentMethodChangeEventInit interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=189100
+
+        Reviewed by Daniel Bates.
+
+        * web-platform-tests/payment-request/PaymentMethodChangeEvent/methodDetails-attribute.https-expected.txt:
+        * web-platform-tests/payment-request/PaymentMethodChangeEvent/methodName-attribute.https-expected.txt:
+        * web-platform-tests/payment-request/onpaymentmenthodchange-attribute.https-expected.txt:
+
 2018-08-29  Olivia Barnett  <obarnett@apple.com>
 
         Implement the Web Share API

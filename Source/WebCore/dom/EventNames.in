@@ -50,6 +50,7 @@ AudioProcessingEvent conditional=WEB_AUDIO
 OfflineAudioCompletionEvent conditional=WEB_AUDIO
 MediaStreamTrackEvent conditional=MEDIA_STREAM
 MerchantValidationEvent conditional=PAYMENT_REQUEST
+PaymentMethodChangeEvent conditional=PAYMENT_REQUEST
 PaymentRequestUpdateEvent conditional=PAYMENT_REQUEST
 RTCPeerConnectionIceEvent conditional=WEB_RTC
 RTCDataChannelEvent conditional=WEB_RTC

@@ -2916,6 +2916,10 @@
 		A15D751B1E68F8A300A35FBC /* JSBlobCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = A15D75181E68F83600A35FBC /* JSBlobCallback.h */; };
 		A15E31F41E0CB0B5004B371C /* QuickLook.h in Headers */ = {isa = PBXBuildFile; fileRef = A15E31F11E0CB0AA004B371C /* QuickLook.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A15E6BF11E212A6A0080AF34 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A15E6BF01E212A6A0080AF34 /* Foundation.framework */; };
+		A164A2472134BC7100509156 /* PaymentMethodChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A164A2442134BC7100509156 /* PaymentMethodChangeEvent.h */; };
+		A164A24E2134BDD800509156 /* PaymentMethodChangeEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = A164A24B2134BDD800509156 /* PaymentMethodChangeEventInit.h */; };
+		A164A2552134C1CC00509156 /* JSPaymentMethodChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A164A2512134C1CB00509156 /* JSPaymentMethodChangeEvent.h */; };
+		A164A2562134C1CC00509156 /* JSPaymentMethodChangeEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = A164A2522134C1CB00509156 /* JSPaymentMethodChangeEventInit.h */; };
 		A1763F3F1E205234001D58DE /* WebArchiveDumpSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A1763F3D1E205234001D58DE /* WebArchiveDumpSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1763F411E20586E001D58DE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1763F401E20586E001D58DE /* CFNetwork.framework */; };
 		A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */; };
@@ -4054,8 +4058,8 @@
 		CDE595951BF16DF300A1CBE8 /* CDMSessionAVContentKeySession.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDE595931BF166AD00A1CBE8 /* CDMSessionAVContentKeySession.mm */; };
 		CDE595971BF26E2100A1CBE8 /* CDMSessionMediaSourceAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE595961BF26E2100A1CBE8 /* CDMSessionMediaSourceAVFObjC.h */; };
 		CDE5959D1BF2757100A1CBE8 /* CDMSessionMediaSourceAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDE5959C1BF2757100A1CBE8 /* CDMSessionMediaSourceAVFObjC.mm */; };
-		CDE667A41E4BBF1500E8154A /* WebAudioBufferList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE667A21E4BBF1500E8154A /* WebAudioBufferList.cpp */; };
-		CDE667A51E4BBF1500E8154A /* WebAudioBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE667A31E4BBF1500E8154A /* WebAudioBufferList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDE667A41E4BBF1500E8154A /* cocoa/WebAudioBufferList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE667A21E4BBF1500E8154A /* cocoa/WebAudioBufferList.cpp */; };
+		CDE667A51E4BBF1500E8154A /* cocoa/WebAudioBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE667A31E4BBF1500E8154A /* cocoa/WebAudioBufferList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDE7FC45181904B1002BBB77 /* OrderIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE7FC43181904B1002BBB77 /* OrderIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDE83DB2183C44060031EAA3 /* VideoPlaybackQuality.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE83DB0183C44060031EAA3 /* VideoPlaybackQuality.h */; };
 		CDE8B5EC1A69777300B4B66A /* LegacyCDMPrivateClearKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE8B5EA1A69777300B4B66A /* LegacyCDMPrivateClearKey.cpp */; };
@@ -7066,7 +7070,7 @@
 		339B5B62131DAA3200F48D02 /* CookiesStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookiesStrategy.h; sourceTree = "<group>"; };
 		3662F984047CEDBE5DDDAFAA /* RenderMathMLMenclose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLMenclose.cpp; sourceTree = "<group>"; };
 		37119A7920CCB610002C6DC9 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
-		3717D7E517ECC3A6003C276D /* extract-localizable-strings.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = extract-localizable-strings.pl; path = "Scripts/extract-localizable-strings.pl"; sourceTree = "<group>"; };
+		3717D7E517ECC3A6003C276D /* extract-localizable-strings.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = "extract-localizable-strings.pl"; path = "Scripts/extract-localizable-strings.pl"; sourceTree = "<group>"; };
 		371A67CA11C6C7DB00047B8B /* HyphenationCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HyphenationCF.cpp; sourceTree = "<group>"; };
 		371E65CB13661EDC00BEEDB0 /* PageSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageSerializer.h; sourceTree = "<group>"; };
 		371E65CD13661EED00BEEDB0 /* PageSerializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageSerializer.cpp; sourceTree = "<group>"; };
@@ -10914,6 +10918,15 @@
 		A15E31F11E0CB0AA004B371C /* QuickLook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLook.h; sourceTree = "<group>"; };
 		A15E31F21E0CB0AA004B371C /* QuickLook.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLook.mm; sourceTree = "<group>"; };
 		A15E6BF01E212A6A0080AF34 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		A164A2442134BC7100509156 /* PaymentMethodChangeEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentMethodChangeEvent.h; sourceTree = "<group>"; };
+		A164A2452134BC7100509156 /* PaymentMethodChangeEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PaymentMethodChangeEvent.cpp; sourceTree = "<group>"; };
+		A164A2462134BC7100509156 /* PaymentMethodChangeEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentMethodChangeEvent.idl; sourceTree = "<group>"; };
+		A164A24B2134BDD800509156 /* PaymentMethodChangeEventInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentMethodChangeEventInit.h; sourceTree = "<group>"; };
+		A164A24D2134BDD800509156 /* PaymentMethodChangeEventInit.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentMethodChangeEventInit.idl; sourceTree = "<group>"; };
+		A164A2512134C1CB00509156 /* JSPaymentMethodChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentMethodChangeEvent.h; sourceTree = "<group>"; };
+		A164A2522134C1CB00509156 /* JSPaymentMethodChangeEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentMethodChangeEventInit.h; sourceTree = "<group>"; };
+		A164A2532134C1CB00509156 /* JSPaymentMethodChangeEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentMethodChangeEvent.cpp; sourceTree = "<group>"; };
+		A164A2542134C1CC00509156 /* JSPaymentMethodChangeEventInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentMethodChangeEventInit.cpp; sourceTree = "<group>"; };
 		A1763F3C1E205234001D58DE /* WebArchiveDumpSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebArchiveDumpSupport.mm; sourceTree = "<group>"; };
 		A1763F3D1E205234001D58DE /* WebArchiveDumpSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebArchiveDumpSupport.h; sourceTree = "<group>"; };
 		A1763F401E20586E001D58DE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -13352,8 +13365,8 @@
 		CDE5959C1BF2757100A1CBE8 /* CDMSessionMediaSourceAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CDMSessionMediaSourceAVFObjC.mm; sourceTree = "<group>"; };
 		CDE6560E17CA6E7600526BA7 /* mediaControlsApple.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = mediaControlsApple.js; sourceTree = "<group>"; };
 		CDE667A11E4BBA4D00E8154A /* PlatformAudioData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformAudioData.h; sourceTree = "<group>"; };
-		CDE667A21E4BBF1500E8154A /* WebAudioBufferList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cocoa/WebAudioBufferList.cpp; sourceTree = "<group>"; };
-		CDE667A31E4BBF1500E8154A /* WebAudioBufferList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoa/WebAudioBufferList.h; sourceTree = "<group>"; };
+		CDE667A21E4BBF1500E8154A /* cocoa/WebAudioBufferList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cocoa/WebAudioBufferList.cpp; sourceTree = "<group>"; };
+		CDE667A31E4BBF1500E8154A /* cocoa/WebAudioBufferList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoa/WebAudioBufferList.h; sourceTree = "<group>"; };
 		CDE7FC42181904B1002BBB77 /* OrderIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OrderIterator.cpp; sourceTree = "<group>"; };
 		CDE7FC43181904B1002BBB77 /* OrderIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrderIterator.h; sourceTree = "<group>"; };
 		CDE83DAF183C44060031EAA3 /* VideoPlaybackQuality.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoPlaybackQuality.cpp; sourceTree = "<group>"; };
@@ -21235,6 +21248,10 @@
 				A1F600541F4765040077E83F /* JSPaymentDetailsUpdate.h */,
 				A1CC56621F46146500A4555B /* JSPaymentItem.cpp */,
 				A1CC564F1F46145200A4555B /* JSPaymentItem.h */,
+				A164A2532134C1CB00509156 /* JSPaymentMethodChangeEvent.cpp */,
+				A164A2512134C1CB00509156 /* JSPaymentMethodChangeEvent.h */,
+				A164A2542134C1CC00509156 /* JSPaymentMethodChangeEventInit.cpp */,
+				A164A2522134C1CB00509156 /* JSPaymentMethodChangeEventInit.h */,
 				A1CC564D1F46145100A4555B /* JSPaymentMethodData.cpp */,
 				A1CC564C1F46145000A4555B /* JSPaymentMethodData.h */,
 				A1CC56531F46145600A4555B /* JSPaymentOptions.cpp */,
@@ -21293,6 +21310,11 @@
 				A1DF5AA41F7F64BB0058A477 /* PaymentHandler.h */,
 				A1F76B2E1F44C55A0014C318 /* PaymentItem.h */,
 				A1F76B301F44C55A0014C318 /* PaymentItem.idl */,
+				A164A2452134BC7100509156 /* PaymentMethodChangeEvent.cpp */,
+				A164A2442134BC7100509156 /* PaymentMethodChangeEvent.h */,
+				A164A2462134BC7100509156 /* PaymentMethodChangeEvent.idl */,
+				A164A24B2134BDD800509156 /* PaymentMethodChangeEventInit.h */,
+				A164A24D2134BDD800509156 /* PaymentMethodChangeEventInit.idl */,
 				A1F76B161F44C3900014C318 /* PaymentMethodData.h */,
 				A1F76B181F44C3900014C318 /* PaymentMethodData.idl */,
 				A1F76B281F44C4EF0014C318 /* PaymentOptions.h */,
@@ -24542,10 +24564,10 @@
 		CD669D651D232DF4004D1866 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				CDE667A21E4BBF1500E8154A /* cocoa/WebAudioBufferList.cpp */,
+				CDE667A31E4BBF1500E8154A /* cocoa/WebAudioBufferList.h */,
 				CD669D661D232DFF004D1866 /* MediaSessionManagerCocoa.cpp */,
 				CD227E362113AEFA00D285AF /* MediaSessionManagerCocoa.h */,
-				CDE667A21E4BBF1500E8154A /* WebAudioBufferList.cpp */,
-				CDE667A31E4BBF1500E8154A /* WebAudioBufferList.h */,
 			);
 			name = cocoa;
 			sourceTree = "<group>";
@@ -27255,6 +27277,7 @@
 				FB92DF4B15FED08700994433 /* ClipPathOperation.h in Headers */,
 				580371621A66F00A00BAF519 /* ClipRect.h in Headers */,
 				97AABD1314FA09D5007457AE /* CloseEvent.h in Headers */,
+				CDE667A51E4BBF1500E8154A /* cocoa/WebAudioBufferList.h in Headers */,
 				C0C054CB1118C8E400CE2636 /* CodeGenerator.pm in Headers */,
 				BC5EB5DF0E81B9AB00B25965 /* CollapsedBorderValue.h in Headers */,
 				E425A49A18292B840020CFCF /* CollectionIndexCache.h in Headers */,
@@ -28770,6 +28793,8 @@
 				A1CC56711F46149300A4555B /* JSPaymentDetailsModifier.h in Headers */,
 				A1F6005A1F4765050077E83F /* JSPaymentDetailsUpdate.h in Headers */,
 				A1CC56731F46149800A4555B /* JSPaymentItem.h in Headers */,
+				A164A2552134C1CC00509156 /* JSPaymentMethodChangeEvent.h in Headers */,
+				A164A2562134C1CC00509156 /* JSPaymentMethodChangeEventInit.h in Headers */,
 				A1CC56751F46149D00A4555B /* JSPaymentMethodData.h in Headers */,
 				A1CC56771F4614A200A4555B /* JSPaymentOptions.h in Headers */,
 				A1CC56791F4614A700A4555B /* JSPaymentRequest.h in Headers */,
@@ -29549,6 +29574,8 @@
 				A1F76B311F44C55A0014C318 /* PaymentItem.h in Headers */,
 				1AE96A891D1A0CEB00B86768 /* PaymentMerchantSession.h in Headers */,
 				1A8A643C1D19FC5300D0E00F /* PaymentMethod.h in Headers */,
+				A164A2472134BC7100509156 /* PaymentMethodChangeEvent.h in Headers */,
+				A164A24E2134BDD800509156 /* PaymentMethodChangeEventInit.h in Headers */,
 				A1F76B191F44C3900014C318 /* PaymentMethodData.h in Headers */,
 				A1F76B2B1F44C4EF0014C318 /* PaymentOptions.h in Headers */,
 				A1F76B131F44C2450014C318 /* PaymentRequest.h in Headers */,
@@ -30743,7 +30770,6 @@
 				7132445120109DA500AE7FB2 /* WebAnimationUtilities.h in Headers */,
 				E18536841F4E481400FE091B /* WebArchiveResourceFromNSAttributedString.h in Headers */,
 				E18C35441F71970C00FF632D /* WebArchiveResourceWebResourceHandler.h in Headers */,
-				CDE667A51E4BBF1500E8154A /* WebAudioBufferList.h in Headers */,
 				41B2A6261EF1BF6D002B9D7A /* WebAudioSourceProvider.h in Headers */,
 				07D637401BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.h in Headers */,
 				1F36EA9C1E21BA1700621E25 /* WebBackgroundTaskController.h in Headers */,
@@ -31342,6 +31368,7 @@
 				CDDE02ED18B3ED6D00CF7FF1 /* CDMSessionAVFoundationObjC.mm in Sources */,
 				CDDE02F018B5651300CF7FF1 /* CDMSessionAVStreamSession.mm in Sources */,
 				CDE5959D1BF2757100A1CBE8 /* CDMSessionMediaSourceAVFObjC.mm in Sources */,
+				CDE667A41E4BBF1500E8154A /* cocoa/WebAudioBufferList.cpp in Sources */,
 				A14090FB1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm in Sources */,
 				07AFF4231EFB144900B545B3 /* CoreAudioCaptureSourceIOS.mm in Sources */,
 				46C696CC1E7205FC00597937 /* CPUMonitor.cpp in Sources */,
@@ -32068,7 +32095,6 @@
 				A14832B9187F63D500DA63A6 /* WAKView.mm in Sources */,
 				DE5F861E1FA281FD006DB63A /* WebAccessibilityObjectWrapperBase.mm in Sources */,
 				DE5F861D1FA2815B006DB63A /* WebAccessibilityObjectWrapperMac.mm in Sources */,
-				CDE667A41E4BBF1500E8154A /* WebAudioBufferList.cpp in Sources */,
 				CD7E05221651C28200C1201F /* WebCoreAVFResourceLoader.mm in Sources */,
 				CD225C0B1C46FBF400140761 /* WebCoreNSURLSession.mm in Sources */,
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,

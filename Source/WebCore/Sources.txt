@@ -189,6 +189,7 @@ Modules/notifications/NotificationController.cpp
 Modules/paymentrequest/MerchantValidationEvent.cpp
 Modules/paymentrequest/PaymentAddress.cpp
 Modules/paymentrequest/PaymentHandler.cpp
+Modules/paymentrequest/PaymentMethodChangeEvent.cpp
 Modules/paymentrequest/PaymentRequest.cpp
 Modules/paymentrequest/PaymentRequestUpdateEvent.cpp
 Modules/paymentrequest/PaymentResponse.cpp
@@ -2816,6 +2817,8 @@ JSPaymentDetailsInit.cpp
 JSPaymentDetailsModifier.cpp
 JSPaymentDetailsUpdate.cpp
 JSPaymentItem.cpp
+JSPaymentMethodChangeEvent.cpp
+JSPaymentMethodChangeEventInit.cpp
 JSPaymentMethodData.cpp
 JSPaymentOptions.cpp
 JSPaymentRequest.cpp

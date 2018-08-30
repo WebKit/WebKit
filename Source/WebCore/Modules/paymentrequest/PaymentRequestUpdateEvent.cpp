@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(const AtomicString& type, PaymentRequestUpdateEventInit&& eventInit)
-    : Event { type, WTFMove(eventInit), IsTrusted::No }
+PaymentRequestUpdateEvent::PaymentRequestUpdateEvent(const AtomicString& type, const PaymentRequestUpdateEventInit& eventInit)
+    : Event { type, eventInit, IsTrusted::No }
 {
 }
 

@@ -342,6 +342,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/paymentrequest/PaymentDetailsModifier.idl
     Modules/paymentrequest/PaymentDetailsUpdate.idl
     Modules/paymentrequest/PaymentItem.idl
+    Modules/paymentrequest/PaymentMethodChangeEvent.idl
+    Modules/paymentrequest/PaymentMethodChangeEventInit.idl
     Modules/paymentrequest/PaymentMethodData.idl
     Modules/paymentrequest/PaymentOptions.idl
     Modules/paymentrequest/PaymentRequest.idl

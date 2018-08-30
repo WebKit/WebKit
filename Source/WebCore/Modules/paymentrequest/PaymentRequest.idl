@@ -43,5 +43,6 @@
 
     attribute EventHandler onshippingaddresschange;
     attribute EventHandler onshippingoptionchange;
+    attribute EventHandler onpaymentmethodchange;
     attribute EventHandler onmerchantvalidation;
 };

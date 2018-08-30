@@ -262,6 +262,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/paymentrequest/PaymentDetailsModifier.idl \
     $(WebCore)/Modules/paymentrequest/PaymentDetailsUpdate.idl \
     $(WebCore)/Modules/paymentrequest/PaymentItem.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentMethodChangeEvent.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentMethodChangeEventInit.idl \
     $(WebCore)/Modules/paymentrequest/PaymentMethodData.idl \
     $(WebCore)/Modules/paymentrequest/PaymentOptions.idl \
     $(WebCore)/Modules/paymentrequest/PaymentRequest.idl \

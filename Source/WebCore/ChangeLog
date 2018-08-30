@@ -1,3 +1,39 @@
+2018-08-30  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement the PaymentMethodChangeEvent and PaymentMethodChangeEventInit interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=189100
+
+        Reviewed by Daniel Bates.
+
+        Implement the PaymentMethodChangeEvent interface and PaymentMethodChangeEventInit dictionary
+        defined in the Payment Request API W3C Editor's Draft of 30 August 2018.
+
+        <https://w3c.github.io/payment-request/#paymentmethodchangeevent-interface>
+
+        The "payment method changed" algorithm will be implemented in a follow-up.
+
+        Covered by existing web platform tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/paymentrequest/PaymentMethodChangeEvent.cpp: Added.
+        (WebCore::PaymentMethodChangeEvent::eventInterface const):
+        (WebCore::PaymentMethodChangeEvent::PaymentMethodChangeEvent):
+        * Modules/paymentrequest/PaymentMethodChangeEvent.h: Added.
+        * Modules/paymentrequest/PaymentMethodChangeEvent.idl: Added.
+        * Modules/paymentrequest/PaymentMethodChangeEventInit.h: Added.
+        * Modules/paymentrequest/PaymentMethodChangeEventInit.idl: Added.
+        * Modules/paymentrequest/PaymentRequest.idl:
+        * Modules/paymentrequest/PaymentRequestUpdateEvent.cpp:
+        (WebCore::PaymentRequestUpdateEvent::PaymentRequestUpdateEvent):
+        * Modules/paymentrequest/PaymentRequestUpdateEvent.h:
+        * Modules/paymentrequest/PaymentRequestUpdateEventInit.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/EventNames.h:
+        * dom/EventNames.in:
+
 2018-08-30  Brent Fulgham  <bfulgham@apple.com>
 
         The width of a nullptr TextRun should be zero

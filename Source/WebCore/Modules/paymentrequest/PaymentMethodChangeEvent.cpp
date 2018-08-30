@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "PaymentMethodChangeEvent.h"
 
 #if ENABLE(PAYMENT_REQUEST)
 
-#include "Event.h"
-#include "PaymentRequestUpdateEventInit.h"
+#include "PaymentMethodChangeEventInit.h"
 
 namespace WebCore {
 
-class DOMPromise;
-class PaymentRequest;
-struct PaymentRequestUpdateEventInit;
+EventInterface PaymentMethodChangeEvent::eventInterface() const
+{
+    return PaymentMethodChangeEventInterfaceType;
+}
 
-class PaymentRequestUpdateEvent : public Event {
-public:
-    template <typename... Args> static Ref<PaymentRequestUpdateEvent> create(Args&&... args)
-    {
-        return adoptRef(*new PaymentRequestUpdateEvent(std::forward<Args>(args)...));
-    }
-    ~PaymentRequestUpdateEvent();
-    ExceptionOr<void> updateWith(Ref<DOMPromise>&&);
-
-protected:
-    PaymentRequestUpdateEvent(const AtomicString& type, PaymentRequest&);
-    PaymentRequestUpdateEvent(const AtomicString& type, const PaymentRequestUpdateEventInit&);
-
-    // Event
-    EventInterface eventInterface() const override;
-
-private:
-    RefPtr<PaymentRequest> m_paymentRequest;
-    bool m_waitForUpdate { false };
-};
+PaymentMethodChangeEvent::PaymentMethodChangeEvent(const AtomicString& type, const PaymentMethodChangeEventInit& eventInit)
+    : PaymentRequestUpdateEvent { type, eventInit }
+    , m_methodName { eventInit.methodName }
+    , m_methodDetails { eventInit.methodDetails }
+{
+}
 
 } // namespace WebCore
 

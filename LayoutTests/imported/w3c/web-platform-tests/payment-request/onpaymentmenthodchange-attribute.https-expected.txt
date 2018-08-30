@@ -1,6 +1,6 @@
 
-FAIL Must have a onpaymentmethodchange IDL attribute assert_idl_attribute: property "onpaymentmethodchange" not found in prototype chain
-FAIL onpaymentmethodchange attribute is a generic handler for "paymentmethodchange" assert_true: event did not fire expected true got false
-FAIL onpaymentmethodchange attribute is a handler for PaymentMethodChangeEvent Can't find variable: PaymentMethodChangeEvent
-FAIL onpaymentmethodchange attribute and listeners both work Can't find variable: PaymentMethodChangeEvent
+PASS Must have a onpaymentmethodchange IDL attribute 
+PASS onpaymentmethodchange attribute is a generic handler for "paymentmethodchange" 
+PASS onpaymentmethodchange attribute is a handler for PaymentMethodChangeEvent 
+PASS onpaymentmethodchange attribute and listeners both work 
 
