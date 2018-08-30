@@ -27,6 +27,10 @@
 
 #import "WKContentView.h"
 
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#import "WKShareSheet.h"
+#endif
+
 #import "AssistedNodeInformation.h"
 #import "DragDropInteractionState.h"
 #import "EditorState.h"
@@ -176,7 +180,9 @@ struct WKAutoCorrectionData {
 #endif
     RetainPtr<WKFormInputSession> _formInputSession;
     RetainPtr<WKFileUploadPanel> _fileUploadPanel;
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     RetainPtr<WKShareSheet> _shareSheet;
+#endif
     RetainPtr<UIGestureRecognizer> _previewGestureRecognizer;
     RetainPtr<UIGestureRecognizer> _previewSecondaryGestureRecognizer;
     Vector<bool> _focusStateStack;
@@ -265,7 +271,11 @@ struct WKAutoCorrectionData {
 
 @end
 
-@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UITextAutoscrolling, UITextInputMultiDocument, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWebTouchEventsGestureRecognizerDelegate, UIWKInteractionViewProtocol, WKActionSheetAssistantDelegate, WKFileUploadPanelDelegate, WKShareSheetDelegate, WKKeyboardScrollable
+@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UITextAutoscrolling, UITextInputMultiDocument, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWebTouchEventsGestureRecognizerDelegate, UIWKInteractionViewProtocol, WKActionSheetAssistantDelegate, WKFileUploadPanelDelegate
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+    , WKShareSheetDelegate
+#endif
+    , WKKeyboardScrollable
 #if ENABLE(DATA_INTERACTION)
     , UIDragInteractionDelegate, UIDropInteractionDelegate
 #endif

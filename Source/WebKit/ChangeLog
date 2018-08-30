@@ -1,3 +1,19 @@
+2018-08-30  Olivia Barnett  <obarnett@apple.com>
+
+        Web Share API compatible with AppleTV and WatchOS
+        https://bugs.webkit.org/show_bug.cgi?id=189157
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebPreferencesDefaultValues.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView fileUploadPanelDidDismiss:]):
+        * UIProcess/ios/forms/WKShareSheet.h:
+        * UIProcess/ios/forms/WKShareSheet.mm:
+        (-[WKShareSheet invokeShareSheetWithResolution:]):
+        Added platform checks.
+
 2018-08-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r235413 and r235444.

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 #import <UIKit/UIKit.h>
 #import <WebCore/ShareData.h>
@@ -51,4 +51,4 @@
 - (void)shareSheetDidDismiss:(WKShareSheet *)shareSheet;
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)

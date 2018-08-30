@@ -4700,6 +4700,15 @@ static bool isAssistableInputType(InputType type)
     [_fileUploadPanel presentWithParameters:parameters resultListener:listener];
 }
 
+- (void)fileUploadPanelDidDismiss:(WKFileUploadPanel *)fileUploadPanel
+{
+    ASSERT(_fileUploadPanel.get() == fileUploadPanel);
+    
+    [_fileUploadPanel setDelegate:nil];
+    _fileUploadPanel = nil;
+}
+
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 - (void)_showShareSheet:(const ShareDataWithParsedURL&)data completionHandler:(CompletionHandler<void(bool)>&&)completionHandler
 {
     ASSERT(!_shareSheet);
@@ -4712,14 +4721,6 @@ static bool isAssistableInputType(InputType type)
     [_shareSheet presentWithParameters:data completionHandler:WTFMove(completionHandler)];
 }
 
-- (void)fileUploadPanelDidDismiss:(WKFileUploadPanel *)fileUploadPanel
-{
-    ASSERT(_fileUploadPanel.get() == fileUploadPanel);
-
-    [_fileUploadPanel setDelegate:nil];
-    _fileUploadPanel = nil;
-}
-
 - (void)shareSheetDidDismiss:(WKShareSheet *)shareSheet
 {
     ASSERT(_shareSheet == shareSheet);
@@ -4727,6 +4728,7 @@ static bool isAssistableInputType(InputType type)
     [_shareSheet setDelegate:nil];
     _shareSheet = nil;
 }
+#endif
 
 #pragma mark - UITextInputMultiDocument
 

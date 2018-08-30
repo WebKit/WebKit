@@ -26,8 +26,7 @@
 #import "config.h"
 #import "WKShareSheet.h"
 
-#if PLATFORM(IOS)
-
+#if PLATFORM(IOS) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 #import "UIKitSPI.h"
 #import "WKContentViewInteraction.h"
 #import "WebPageProxy.h"
@@ -127,4 +126,4 @@ using namespace WebKit;
 }
 
 @end
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
