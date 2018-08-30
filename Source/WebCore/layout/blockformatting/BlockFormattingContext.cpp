@@ -261,6 +261,7 @@ void BlockFormattingContext::computeInFlowWidthAndMargin(LayoutContext& layoutCo
     displayBox.setContentBoxWidth(widthAndMargin.width);
     displayBox.moveHorizontally(widthAndMargin.margin.left);
     displayBox.setHorizontalMargin(widthAndMargin.margin);
+    displayBox.setHorizontalNonComputedMargin(widthAndMargin.nonComputedMargin);
 }
 
 FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::instrinsicWidthConstraints(LayoutContext& layoutContext, const Box& layoutBox) const

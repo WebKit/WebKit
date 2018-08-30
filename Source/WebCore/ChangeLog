@@ -1,3 +1,41 @@
+2018-08-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Margins] Add non-computed horizontal margins to DisplayBox
+        https://bugs.webkit.org/show_bug.cgi?id=189141
+
+        Reviewed by Antti Koivisto.
+
+        Inflow block boxes' horizontal margins extend all the way to the left/right edge of their containing block.
+        See https://www.w3.org/TR/CSS22/visudet.html#blockwidth for example
+        "...
+        10.3.3 Block-level, non-replaced elements in normal flow
+        'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width' + 'margin-right' = width of containing block
+        ..."
+
+        In certain cases (float avoiding) we need to know the original (non-extended) horiztonal margin values.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeFloatingWidthAndMargin const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry const):
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::initializeRoot):
+        * layout/LayoutUnits.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeInFlowWidthAndMargin const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::setHasValidHorizontalNonComputedMargin):
+        (WebCore::Display::Box::setHorizontalNonComputedMargin):
+        (WebCore::Display::Box::nonComputedMarginLeft const):
+        (WebCore::Display::Box::nonComputedMarginRight const):
+
 2018-08-30  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Unreviewed, add comments about enum names to bitfields

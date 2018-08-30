@@ -89,6 +89,7 @@ struct Edges {
 struct WidthAndMargin {
     LayoutUnit width;
     HorizontalEdges margin;
+    HorizontalEdges nonComputedMargin;
 };
 
 struct HeightAndMargin {

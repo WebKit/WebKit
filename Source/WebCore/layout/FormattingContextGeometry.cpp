@@ -315,6 +315,8 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
     auto width = computedValueIfNotAuto(style.logicalWidth(), containingBlockWidth);
     auto marginLeft = computedValueIfNotAuto(style.marginLeft(), containingBlockWidth);
     auto marginRight = computedValueIfNotAuto(style.marginRight(), containingBlockWidth);
+    auto nonComputedMarginLeft = marginLeft.value_or(0);
+    auto nonComputedMarginRight = marginRight.value_or(0);
     auto paddingLeft = displayBox.paddingLeft().value_or(0);
     auto paddingRight = displayBox.paddingRight().value_or(0);
     auto borderLeft = displayBox.borderLeft();
@@ -415,7 +417,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
     ASSERT(marginRight);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Width][Margin] -> out-of-flow non-replaced -> left(" << *left << "px) right("  << *right << "px) width(" << *width << "px) margin(" << *marginLeft << "px, "  << *marginRight << "px) layoutBox(" << &layoutBox << ")");
-    return { *left, *right, { *width, { *marginLeft, *marginRight } } };
+    return { *left, *right, { *width, { *marginLeft, *marginRight }, { nonComputedMarginLeft, nonComputedMarginRight } } };
 }
 
 VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox)
@@ -515,6 +517,8 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
     auto right = computedValueIfNotAuto(style.logicalRight(), containingBlockWidth);
     auto marginLeft = computedValueIfNotAuto(style.marginLeft(), containingBlockWidth);
     auto marginRight = computedValueIfNotAuto(style.marginRight(), containingBlockWidth);
+    auto nonComputedMarginLeft = marginLeft.value_or(0);
+    auto nonComputedMarginRight = marginRight.value_or(0);
     auto width = inlineReplacedWidthAndMargin(layoutContext, layoutBox).width;
     auto paddingLeft = displayBox.paddingLeft().value_or(0);
     auto paddingRight = displayBox.paddingRight().value_or(0);
@@ -580,7 +584,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
     ASSERT(marginRight);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Width][Margin] -> out-of-flow replaced -> left(" << *left << "px) right("  << *right << "px) width(" << width << "px) margin(" << *marginLeft << "px, "  << *marginRight << "px) layoutBox(" << &layoutBox << ")");
-    return { *left, *right, { width, { *marginLeft, *marginRight } } };
+    return { *left, *right, { width, { *marginLeft, *marginRight }, { nonComputedMarginLeft, nonComputedMarginRight } } };
 }
 
 HeightAndMargin FormattingContext::Geometry::complicatedCases(LayoutContext& layoutContext, const Box& layoutBox)
@@ -646,7 +650,7 @@ WidthAndMargin FormattingContext::Geometry::floatingNonReplacedWidthAndMargin(La
         width = shrinkToFitWidth(layoutContext, formattingContext, layoutBox);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> floating non-replaced -> width(" << *width << "px) margin(" << margin.left << "px, " << margin.right << "px) -> layoutBox(" << &layoutBox << ")");
-    return WidthAndMargin { *width, margin };
+    return WidthAndMargin { *width, margin, margin };
 }
 
 HeightAndMargin FormattingContext::Geometry::floatingReplacedHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox)
@@ -805,6 +809,8 @@ WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(LayoutC
 
     auto marginLeft = computeMarginLeft();
     auto marginRight = computeMarginRight();
+    auto nonComputedMarginLeft = computedValueIfNotAuto(style.marginLeft(), containingBlockWidth).value_or(0);
+    auto nonComputedMarginRight = computedValueIfNotAuto(style.marginRight(), containingBlockWidth).value_or(0);
     auto width = computedValueIfNotAuto(style.logicalWidth(), containingBlockWidth);
 
     auto heightIsAuto = style.logicalHeight().isAuto();
@@ -834,7 +840,7 @@ WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(LayoutC
     ASSERT(width);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> inflow replaced -> width(" << *width << "px) margin(" << marginLeft << "px, " << marginRight << "px) -> layoutBox(" << &layoutBox << ")");
-    return { *width, { marginLeft, marginRight } };
+    return { *width, { marginLeft, marginRight }, { nonComputedMarginLeft, nonComputedMarginRight } };
 }
 
 Edges FormattingContext::Geometry::computedBorder(LayoutContext&, const Box& layoutBox)

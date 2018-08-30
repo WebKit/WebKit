@@ -189,6 +189,8 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
         auto width = FormattingContext::Geometry::computedValueIfNotAuto(precomputedWidth ? Length { precomputedWidth.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
         auto marginLeft = FormattingContext::Geometry::computedValueIfNotAuto(style.marginLeft(), containingBlockWidth);
         auto marginRight = FormattingContext::Geometry::computedValueIfNotAuto(style.marginRight(), containingBlockWidth);
+        auto nonComputedMarginLeft = marginLeft.value_or(0);
+        auto nonComputedMarginRight = marginRight.value_or(0);
         auto borderLeft = displayBox.borderLeft();
         auto borderRight = displayBox.borderRight();
         auto paddingLeft = displayBox.paddingLeft().value_or(0);
@@ -236,7 +238,7 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
         ASSERT(marginLeft);
         ASSERT(marginRight);
 
-        return WidthAndMargin { *width, { *marginLeft, *marginRight } };
+        return WidthAndMargin { *width, { *marginLeft, *marginRight }, { nonComputedMarginLeft, nonComputedMarginRight } };
     };
 
     auto widthAndMargin = compute();
@@ -264,10 +266,10 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin(La
     // #1
     auto width = FormattingContext::Geometry::inlineReplacedWidthAndMargin(layoutContext, layoutBox).width;
     // #2
-    auto margin = inFlowNonReplacedWidthAndMargin(layoutContext, layoutBox, width).margin;
+    auto nonReplacedWidthAndMargin = inFlowNonReplacedWidthAndMargin(layoutContext, layoutBox, width);
 
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> inflow replaced -> width(" << width << "px) margin(" << margin.left << "px, " << margin.left << "px) -> layoutBox(" << &layoutBox << ")");
-    return { width, margin };
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> inflow replaced -> width(" << width << "px) margin(" << nonReplacedWidthAndMargin.margin.left << "px, " << nonReplacedWidthAndMargin.margin.right << "px) -> layoutBox(" << &layoutBox << ")");
+    return { width, nonReplacedWidthAndMargin.margin, nonReplacedWidthAndMargin.nonComputedMargin };
 }
 
 Position BlockFormattingContext::Geometry::staticPosition(LayoutContext& layoutContext, const Box& layoutBox)
