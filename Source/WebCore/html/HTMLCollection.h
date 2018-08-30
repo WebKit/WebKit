@@ -103,9 +103,9 @@ protected:
 
     mutable Lock m_namedElementCacheAssignmentLock;
 
-    const unsigned m_collectionType : 5;
-    const unsigned m_invalidationType : 4;
-    const unsigned m_rootType : 1;
+    const unsigned m_collectionType : 5; // CollectionType
+    const unsigned m_invalidationType : 4; // NodeListInvalidationType
+    const unsigned m_rootType : 1; // RootType
 
     Ref<ContainerNode> m_ownerNode;
 

@@ -1,3 +1,10 @@
+2018-08-30  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Unreviewed, add comments about enum names to bitfields
+        https://bugs.webkit.org/show_bug.cgi?id=188945
+
+        * html/HTMLCollection.h:
+
 2018-08-29  Andy Estes  <aestes@apple.com>
 
         Addressed additional review feedback after r235342.
