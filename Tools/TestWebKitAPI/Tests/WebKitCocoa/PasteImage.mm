@@ -49,6 +49,28 @@ void writeImageDataToPasteboard(NSString *type, NSData *data)
 }
 #endif
 
+@interface TestWKWebView (PasteImage)
+- (void)waitForMessage:(NSString *)message afterEvaluatingScript:(NSString *)script;
+@end
+
+@implementation TestWKWebView (PasteImage)
+
+- (void)waitForMessage:(NSString *)message afterEvaluatingScript:(NSString *)script
+{
+    __block bool evaluatedScript = false;
+    __block bool receivedMessage = false;
+    [self performAfterReceivingMessage:message action:^{
+        receivedMessage = true;
+    }];
+    [self evaluateJavaScript:script completionHandler:^(id, NSError *) {
+        evaluatedScript = true;
+    }];
+    TestWebKitAPI::Util::run(&evaluatedScript);
+    TestWebKitAPI::Util::run(&receivedMessage);
+}
+
+@end
+
 TEST(PasteImage, PasteGIFImage)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
@@ -66,8 +88,7 @@ TEST(PasteImage, PasteGIFImage)
     EXPECT_WK_STREQ("image.gif", [webView stringByEvaluatingJavaScript:@"gifItem.file.name"]);
     EXPECT_WK_STREQ("true", [webView stringByEvaluatingJavaScript:@"dataTransfer.files.includes(gifItem.file).toString()"]);
 
-    [webView stringByEvaluatingJavaScript:@"insertFileAsImage(gifItem.file)"];
-    [webView waitForMessage:@"loaded"];
+    [webView waitForMessage:@"loaded" afterEvaluatingScript:@"insertFileAsImage(gifItem.file)"];
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"url = new URL(imageElement.src); url.protocol"]);
     EXPECT_WK_STREQ("400", [webView stringByEvaluatingJavaScript:@"imageElement.width"]);
 }
@@ -89,8 +110,7 @@ TEST(PasteImage, PasteJPEGImage)
     EXPECT_WK_STREQ("image.jpeg", [webView stringByEvaluatingJavaScript:@"jpegItem.file.name"]);
     EXPECT_WK_STREQ("true", [webView stringByEvaluatingJavaScript:@"dataTransfer.files.includes(jpegItem.file).toString()"]);
 
-    [webView stringByEvaluatingJavaScript:@"insertFileAsImage(jpegItem.file)"];
-    [webView waitForMessage:@"loaded"];
+    [webView waitForMessage:@"loaded" afterEvaluatingScript:@"insertFileAsImage(jpegItem.file)"];
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"url = new URL(imageElement.src); url.protocol"]);
     EXPECT_WK_STREQ("600", [webView stringByEvaluatingJavaScript:@"imageElement.width"]);
 }
@@ -112,8 +132,7 @@ TEST(PasteImage, PastePNGImage)
     EXPECT_WK_STREQ("image.png", [webView stringByEvaluatingJavaScript:@"pngItem.file.name"]);
     EXPECT_WK_STREQ("true", [webView stringByEvaluatingJavaScript:@"dataTransfer.files.includes(pngItem.file).toString()"]);
 
-    [webView stringByEvaluatingJavaScript:@"insertFileAsImage(pngItem.file)"];
-    [webView waitForMessage:@"loaded"];
+    [webView waitForMessage:@"loaded" afterEvaluatingScript:@"insertFileAsImage(pngItem.file)"];
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"url = new URL(imageElement.src); url.protocol"]);
     EXPECT_WK_STREQ("200", [webView stringByEvaluatingJavaScript:@"imageElement.width"]);
 }

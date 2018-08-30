@@ -1,3 +1,18 @@
+2018-08-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Followup to [iOS] TestWebKitAPI.PasteImage tests are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=185965
+
+        Reviewed by Andy Estes.
+
+        The first attempt to fix these flaky tests on iOS caused timeouts on macOS while waiting for a "loaded" message
+        from the page. To (hopefully) fix this across both platforms, make sure that we first register our script
+        message handlers in the UI process *before* evaluating script that could propagate the script message.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteImage.mm:
+        (-[TestWKWebView waitForMessage:afterEvaluatingScript:]):
+        (TEST):
+
 2018-08-30  Thomas Denney  <tdenney@apple.com>
 
         [WHLSL] Implement tests to verify array indexing order matches our desires
