@@ -450,6 +450,11 @@ public:
         return PatchableJump(branch32(cond, reg, imm));
     }
 
+    PatchableJump patchableBranch8(RelationalCondition cond, Address address, TrustedImm32 imm)
+    {
+        return PatchableJump(branch8(cond, address, imm));
+    }
+
     PatchableJump patchableBranch32(RelationalCondition cond, Address address, TrustedImm32 imm)
     {
         return PatchableJump(branch32(cond, address, imm));

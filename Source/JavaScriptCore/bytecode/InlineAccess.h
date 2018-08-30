@@ -87,7 +87,7 @@ public:
     // FIXME: Make this constexpr when GCC is able to compile std::max() inside a constexpr function.
     // https://bugs.webkit.org/show_bug.cgi?id=159436
     //
-    // This is the maximum between the size for array length access, and the size for regular self access.
+    // This is the maximum between array length, string length, and regular self access sizes.
     ALWAYS_INLINE static size_t sizeForLengthAccess()
     {
 #if CPU(X86_64)
@@ -117,6 +117,7 @@ public:
     static bool generateArrayLength(StructureStubInfo&, JSArray*);
     static void rewireStubAsJump(StructureStubInfo&, CodeLocationLabel<JITStubRoutinePtrTag>);
     static bool generateSelfInAccess(StructureStubInfo&, Structure*);
+    static bool generateStringLength(StructureStubInfo&);
 
     // This is helpful when determining the size of an IC on
     // various platforms. When adding a new type of IC, implement

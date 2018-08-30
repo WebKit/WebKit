@@ -3388,6 +3388,14 @@ public:
         return PatchableJump(result);
     }
 
+    PatchableJump patchableBranch8(RelationalCondition cond, Address left, TrustedImm32 imm)
+    {
+        m_makeJumpPatchable = true;
+        Jump result = branch8(cond, left, imm);
+        m_makeJumpPatchable = false;
+        return PatchableJump(result);
+    }
+
     PatchableJump patchableBranchTest32(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
         m_makeJumpPatchable = true;

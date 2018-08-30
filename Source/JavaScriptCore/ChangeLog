@@ -1,5 +1,47 @@
 2018-08-30  Saam barati  <sbarati@apple.com>
 
+        InlineAccess should do StringLength
+        https://bugs.webkit.org/show_bug.cgi?id=158911
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch extends InlineAccess to support StringLength. This patch also
+        fixes AccessCase::fromStructureStubInfo to support ArrayLength and StringLength.
+        I forgot to implement this for ArrayLength in the initial InlineAccess
+        implementation.  Supporting StringLength is a natural extension of the
+        InlineAccess machinery.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::patchableBranch8):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::patchableBranch8):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::fromStructureStubInfo):
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::printGetByIdCacheStatus):
+        * bytecode/InlineAccess.cpp:
+        (JSC::InlineAccess::dumpCacheSizesAndCrash):
+        (JSC::InlineAccess::generateSelfPropertyAccess):
+        (JSC::getScratchRegister):
+        (JSC::InlineAccess::generateSelfPropertyReplace):
+        (JSC::InlineAccess::generateArrayLength):
+        (JSC::InlineAccess::generateSelfInAccess):
+        (JSC::InlineAccess::generateStringLength):
+        * bytecode/InlineAccess.h:
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::initStringLength):
+        (JSC::StructureStubInfo::deref):
+        (JSC::StructureStubInfo::aboutToDie):
+        (JSC::StructureStubInfo::propagateTransitions):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::baseGPR const):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+
+2018-08-30  Saam barati  <sbarati@apple.com>
+
         CSE DataViewGet* DFG nodes
         https://bugs.webkit.org/show_bug.cgi?id=188768
 

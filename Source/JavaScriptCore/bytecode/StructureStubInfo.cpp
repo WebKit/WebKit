@@ -73,6 +73,11 @@ void StructureStubInfo::initArrayLength()
     cacheType = CacheType::ArrayLength;
 }
 
+void StructureStubInfo::initStringLength()
+{
+    cacheType = CacheType::StringLength;
+}
+
 void StructureStubInfo::initPutByIdReplace(CodeBlock* codeBlock, Structure* baseObjectStructure, PropertyOffset offset)
 {
     cacheType = CacheType::PutByIdReplace;
@@ -102,6 +107,7 @@ void StructureStubInfo::deref()
     case CacheType::PutByIdReplace:
     case CacheType::InByIdSelf:
     case CacheType::ArrayLength:
+    case CacheType::StringLength:
         return;
     }
 
@@ -119,6 +125,7 @@ void StructureStubInfo::aboutToDie()
     case CacheType::PutByIdReplace:
     case CacheType::InByIdSelf:
     case CacheType::ArrayLength:
+    case CacheType::StringLength:
         return;
     }
 
@@ -292,6 +299,7 @@ bool StructureStubInfo::propagateTransitions(SlotVisitor& visitor)
     switch (cacheType) {
     case CacheType::Unset:
     case CacheType::ArrayLength:
+    case CacheType::StringLength:
         return true;
     case CacheType::GetByIdSelf:
     case CacheType::PutByIdReplace:

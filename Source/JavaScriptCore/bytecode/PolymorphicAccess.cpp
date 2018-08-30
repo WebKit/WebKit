@@ -381,7 +381,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     state.stubInfo = &stubInfo;
     state.ident = &ident;
     
-    state.baseGPR = static_cast<GPRReg>(stubInfo.patch.baseGPR);
+    state.baseGPR = stubInfo.baseGPR();
     state.thisGPR = static_cast<GPRReg>(stubInfo.patch.thisGPR);
     state.valueRegs = stubInfo.valueRegs();
 

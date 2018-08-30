@@ -61,7 +61,8 @@ enum class CacheType : int8_t {
     PutByIdReplace,
     InByIdSelf,
     Stub,
-    ArrayLength
+    ArrayLength,
+    StringLength
 };
 
 class StructureStubInfo {
@@ -73,6 +74,7 @@ public:
 
     void initGetByIdSelf(CodeBlock*, Structure* baseObjectStructure, PropertyOffset);
     void initArrayLength();
+    void initStringLength();
     void initPutByIdReplace(CodeBlock*, Structure* baseObjectStructure, PropertyOffset);
     void initInByIdSelf(CodeBlock*, Structure* baseObjectStructure, PropertyOffset);
 
@@ -198,6 +200,11 @@ public:
         int8_t thisTagGPR;
 #endif
     } patch;
+
+    GPRReg baseGPR() const
+    {
+        return static_cast<GPRReg>(patch.baseGPR);
+    }
 
     CodeLocationCall<JSInternalPtrTag> slowPathCallLocation() { return patch.start.callAtOffset<JSInternalPtrTag>(patch.deltaFromStartToSlowPathCallLocation); }
     CodeLocationLabel<JSInternalPtrTag> doneLocation() { return patch.start.labelAtOffset<JSInternalPtrTag>(patch.inlineSize); }

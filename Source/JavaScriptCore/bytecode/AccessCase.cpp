@@ -121,6 +121,12 @@ std::unique_ptr<AccessCase> AccessCase::fromStructureStubInfo(
     case CacheType::InByIdSelf:
         return AccessCase::create(vm, owner, InHit, stubInfo.u.byIdSelf.offset, stubInfo.u.byIdSelf.baseObjectStructure.get());
 
+    case CacheType::ArrayLength:
+        return AccessCase::create(vm, owner, AccessCase::ArrayLength);
+
+    case CacheType::StringLength:
+        return AccessCase::create(vm, owner, AccessCase::StringLength);
+
     default:
         return nullptr;
     }
