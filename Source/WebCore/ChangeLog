@@ -1,3 +1,23 @@
+2018-08-30  Zalan Bujtas  <zalan@apple.com>
+
+        CounterMaps should hold a unique_ptr of CounterMap.
+        https://bugs.webkit.org/show_bug.cgi?id=189174
+        <rdar://problem/43686458>
+
+        Reviewed by Ryosuke Niwa.
+
+        In certain cases calls to CounterMaps might lead to unexpected deletion of the CounterMap object.
+
+        Test: fast/css/counters/crash-when-cloning-body.html
+
+        * rendering/RenderCounter.cpp:
+        (WebCore::makeCounterNode):
+        (WebCore::destroyCounterNodeWithoutMapRemoval):
+        (WebCore::RenderCounter::destroyCounterNodes):
+        (WebCore::RenderCounter::destroyCounterNode):
+        (WebCore::updateCounters):
+        (showCounterRendererTree):
+
 2018-08-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         Speculative build fix for WPE after r235531.
