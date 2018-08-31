@@ -12,7 +12,6 @@ set(WTF_PUBLIC_HEADERS
     Bitmap.h
     BlockObjCExceptions.h
     BlockPtr.h
-    BlockStack.h
     BloomFilter.h
     BooleanLattice.h
     Box.h

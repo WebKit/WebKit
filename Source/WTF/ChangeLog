@@ -1,3 +1,14 @@
+2018-08-31  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r226407): Remove unused BlockStack.h
+        <https://webkit.org/b/189189>
+
+        Reviewed by Yusuke Suzuki.
+
+        * WTF.xcodeproj/project.pbxproj: Remove references to BlockStack.h.
+        * wtf/BlockStack.h: Remove.
+        * wtf/CMakeLists.txt: Remove references to BlockStack.h.
+
 2018-08-30  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Replace AVFoundationSupport.py using CMake
