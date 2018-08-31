@@ -5551,7 +5551,7 @@ tests.matrixMultiplication = function() {
     checkFloat(program, callFunction(program, "foo13", []), 29 * 7 + 43 * 11 + 61 * 13);
 }
 
-tests.DISABLED_arrayIndex = function() {
+tests.arrayIndex = function() {
     let program = doPrep(`
         uint innerArrayLength() {
             int[2][3] array;

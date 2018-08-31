@@ -259,24 +259,33 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             return consume(...addressSpaces).text;
         }
         
-        while (token = tryConsume("*", "[")) {
+        const typeConstructorStack = [ ];
+
+        for (let token; token = tryConsume("*", "[");) {
             if (token.text == "*") {
-                type = new PtrType(token, getAddressSpace(), type);
+                // Likewise, the address space must be parsed before parsing continues.
+                const addressSpace = getAddressSpace();
+                typeConstructorStack.unshift(type => new PtrType(token, addressSpace, type));
                 continue;
             }
-            
+
             if (tryConsume("]")) {
-                type = new ArrayRefType(token, getAddressSpace(), type);
+                const addressSpace = getAddressSpace();
+                typeConstructorStack.unshift(type => new ArrayRefType(token, addressSpace, type));
                 continue;
             }
-            
-            type = new ArrayType(token, type, parseConstexpr());
+
+            const lengthExpr = parseConstexpr();
+            typeConstructorStack.unshift(type => new ArrayType(token, type, lengthExpr));
             consume("]");
         }
-        
+
+        for (let constructor of typeConstructorStack)
+            type = constructor(type);
+
         if (addressSpace && !addressSpaceConsumed)
             lexer.fail("Address space specified for type that does not need address space");
-        
+
         return type;
     }
     

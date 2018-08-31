@@ -1,3 +1,18 @@
+2018-08-30  Thomas Denney  <tdenney@apple.com>
+
+        [WHLSL] Fix array indexing behavior
+        https://bugs.webkit.org/show_bug.cgi?id=189175
+
+        Array, pointer, and array ref types are now parsed and then constructed
+        in reverse so that the declaration order matches the indexing order, as
+        in C/C++.
+
+        Reviewed by Myles C. Maxfield.
+
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseType):
+        * WebGPUShadingLanguageRI/Test.js:
+
 2018-08-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Followup to [iOS] TestWebKitAPI.PasteImage tests are flaky failures
