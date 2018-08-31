@@ -166,16 +166,6 @@ class NameResolver extends Visitor {
         super.visitReturn(node);
     }
     
-    _handlePropertyAccess(node)
-    {
-        node.possibleGetOverloads = this._nameContext.get(Func, node.getFuncName);
-        node.possibleSetOverloads = this._nameContext.get(Func, node.setFuncName);
-        node.possibleAndOverloads = this._nameContext.get(Func, node.andFuncName);
-
-        if (!node.possibleGetOverloads && !node.possibleAndOverloads)
-            throw new WTypeError(node.origin.originString, "Cannot find either " + node.getFuncName + " or " + node.andFuncName);
-    }
-    
     visitDotExpression(node)
     {
         // This could be a reference to an enum. Let's resolve that now.
@@ -190,14 +180,7 @@ class NameResolver extends Visitor {
             }
         }
         
-        this._handlePropertyAccess(node);
         super.visitDotExpression(node);
-    }
-    
-    visitIndexExpression(node)
-    {
-        this._handlePropertyAccess(node);
-        super.visitIndexExpression(node);
     }
     
     visitCallExpression(node)
