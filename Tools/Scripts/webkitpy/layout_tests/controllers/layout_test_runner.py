@@ -182,7 +182,7 @@ class LayoutTestRunner(object):
             exp_str = got_str = 'SKIP'
             expected = True
         else:
-            expected = self._expectations.matches_an_expected_result(result.test_name, result.type, self._options.pixel_tests or result.reftest_type)
+            expected = self._expectations.matches_an_expected_result(result.test_name, result.type, self._options.pixel_tests or result.reftest_type, self._options.world_leaks)
             exp_str = self._expectations.model().get_expectations_string(result.test_name)
             got_str = self._expectations.model().expectation_to_string(result.type)
 
@@ -198,8 +198,8 @@ class LayoutTestRunner(object):
             # When running a chunk (--run-chunk), results_by_name contains all the tests, but (confusingly) all_tests only contains those in the chunk that was run,
             # and we don't want to modify the results of a test that didn't run. existing_result.test_number is only non-None for tests that ran.
             if existing_result and existing_result.test_number is not None:
-                was_expected = self._expectations.matches_an_expected_result(new_result.test_name, existing_result.type, self._options.pixel_tests or existing_result.reftest_type)
-                now_expected = self._expectations.matches_an_expected_result(new_result.test_name, new_result.type, self._options.pixel_tests or new_result.reftest_type)
+                was_expected = self._expectations.matches_an_expected_result(new_result.test_name, existing_result.type, self._options.pixel_tests or existing_result.reftest_type, self._options.world_leaks)
+                now_expected = self._expectations.matches_an_expected_result(new_result.test_name, new_result.type, self._options.pixel_tests or new_result.reftest_type, self._options.world_leaks)
                 run_results.change_result_to_failure(existing_result, new_result, was_expected, now_expected)
 
     def start_servers(self):

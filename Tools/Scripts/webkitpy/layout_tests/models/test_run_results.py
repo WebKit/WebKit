@@ -118,7 +118,7 @@ class TestRunResults(object):
             self.unexpected -= 1
             if had_failures:
                 self.unexpected_failures -= 1
-        else:
+        elif existing_expected and not new_expected:
             # test changed from expected to unexpected
             self.expected -= 1
             self.unexpected_results_by_name[existing_result.test_name] = existing_result

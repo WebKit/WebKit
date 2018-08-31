@@ -1,3 +1,28 @@
+2018-08-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to mark tests as leaks in TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=189088
+
+        Reviewed by Jon Lee.
+        
+        Have webkitpy parse out "Leak" expectations in TestExpectations, and do the right
+        thing if the test run did not use --world-leaks. Add unit tests for leaks combined
+        with various other result combinations.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner._update_summary_with_result):
+        (LayoutTestRunner._annotate_results_with_additional_failures):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser):
+        (TestExpectations): The 'Leak' line was duplicated here, so remove a copy.
+        (TestExpectations.remove_leak_failures):
+        (TestExpectations.matches_an_expected_result):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (Base.get_basic_tests):
+        * Scripts/webkitpy/port/test.py:
+        (TestList.add_reftest):
+        (unit_test_list):
+
 2018-08-31  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add margin box verification back now that Display::Box has non-computed horizontal margin.

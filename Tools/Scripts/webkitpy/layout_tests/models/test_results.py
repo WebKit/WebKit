@@ -68,6 +68,14 @@ class TestResult(object):
     def __hash__(self):
         return self.test_name.__hash__()
 
+    def __str__(self):
+        result = self.test_name
+        if len(self.failures):
+            result += ' failures: ' + ','.join([failure.message() for failure in self.failures])
+        if len(self.reftest_type):
+            result += ' reftest_type: ' + ','.join(self.reftest_type)
+        return result
+
     def convert_to_failure(self, failure_result):
         if self.type is failure_result.type:
             return
