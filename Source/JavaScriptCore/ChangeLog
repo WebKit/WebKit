@@ -1,5 +1,15 @@
 2018-08-31  Mark Lam  <mark.lam@apple.com>
 
+        Gardening: ARMv7 build fix.
+        https://bugs.webkit.org/show_bug.cgi?id=158911
+
+        Not reviewed.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::patchableBranch8):
+
+2018-08-31  Mark Lam  <mark.lam@apple.com>
+
         Fix exception check accounting in JSDataView::defineOwnProperty().
         https://bugs.webkit.org/show_bug.cgi?id=189186
         <rdar://problem/39786049>
