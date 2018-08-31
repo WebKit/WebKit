@@ -1,3 +1,23 @@
+2018-08-31  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add margin box verification back now that Display::Box has non-computed horizontal margin.
+        https://bugs.webkit.org/show_bug.cgi?id=189193
+
+        Reviewed by Antti Koivisto.
+
+        Use the non-computed margin values to verify correctness.
+        This patch also fixes a margin collapsing issue when the inflow box has a float sibling. The float
+        sibling does not prevent collapsing with the parent's top/bottom margin.
+
+        Test: fast/block/block-only/floating-and-next-previous-inflow-with-margin-with-no-border.html
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingBlockBoxInformationIfNeeded):
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree const):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::isMarginTopCollapsedWithParent):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent):
+
 2018-08-31  Antti Koivisto  <antti@apple.com>
 
         Replace OptionSet |= and -= operators with add() and remove() functions

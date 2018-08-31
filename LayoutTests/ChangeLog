@@ -1,3 +1,13 @@
+2018-08-31  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add margin box verification back now that Display::Box has non-computed horizontal margin.
+        https://bugs.webkit.org/show_bug.cgi?id=189193
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/block-only/floating-and-next-previous-inflow-with-margin-with-no-border-expected.txt: Added.
+        * fast/block/block-only/floating-and-next-previous-inflow-with-margin-with-no-border.html: Added.
+
 2018-08-31  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Some tests are failing on ews200 after upgrading iTunes.

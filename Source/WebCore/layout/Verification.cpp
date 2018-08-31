@@ -121,6 +121,18 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         stream.nextLine();
     };
 
+    auto renderBoxLikeMarginBox = [](auto& displayBox) {
+        // Produce a RenderBox matching margin box.
+        auto borderBox = displayBox.borderBox();
+
+        return Display::Box::Rect {
+            borderBox.top() - displayBox.nonCollapsedMarginTop(),
+            borderBox.left() - displayBox.nonComputedMarginLeft(),
+            displayBox.nonComputedMarginLeft() + borderBox.width() + displayBox.nonComputedMarginRight(),
+            displayBox.nonCollapsedMarginTop() + borderBox.height() + displayBox.nonCollapsedMarginBottom()
+        };
+    };
+
     auto* displayBox = context.displayBoxForLayoutBox(layoutBox);
     ASSERT(displayBox);
 
@@ -131,6 +143,11 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
 
     if (frameRect != displayBox->rect()) {
         outputRect("frameBox", renderer.frameRect(), displayBox->rect());
+        return true;
+    }
+
+    if (renderer.marginBoxRect() != renderBoxLikeMarginBox(*displayBox)) {
+        outputRect("marginBox", renderer.marginBoxRect(), renderBoxLikeMarginBox(*displayBox));
         return true;
     }
 
@@ -149,7 +166,6 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         return true;
     }
 
-    // TODO: The RenderBox::marginBox() does not follow the spec and ignores certain constraints. Skip them for now.
     return false;
 }
 
