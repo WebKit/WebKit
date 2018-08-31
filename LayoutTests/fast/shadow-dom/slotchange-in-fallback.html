@@ -19,14 +19,14 @@ function generateTests(...args) {
     testMutatingSlot('open', false, ...args);
 }
 
-function testMutatingSlot(mode, connectedToDocument, shadowContent, slotName, prepareSlot, mutateSlot, description)
+function testMutatingSlot(mode, connectedToDocument, hostContent, slotName, prepareSlot, mutateSlot, description)
 {
     promise_test(async function () {
         const host = document.createElement('div');
         if (connectedToDocument)
             document.body.appendChild(host);
-        if (shadowContent)
-            host.innerHTML = shadowContent;
+        if (hostContent)
+            host.innerHTML = hostContent;
 
         const shadowRoot = host.attachShadow({mode});
 
@@ -44,9 +44,9 @@ function testMutatingSlot(mode, connectedToDocument, shadowContent, slotName, pr
 
         mutateSlot(slot);
         await Promise.resolve();
-        assert_equals(eventCount, shadowContent ? 0 : 1);
+        assert_equals(eventCount, hostContent ? 0 : 1);
 
-        slot.remove();
+        host.remove();
     }, description + ` in a ${connectedToDocument ? 'connected' : 'disconnected'} ${mode} mode shadow root`);
 }
 

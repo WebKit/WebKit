@@ -1,3 +1,25 @@
+2018-08-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        slotchange-event-bubbling.html fails in Chrome & Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=189183
+
+        Reviewed by Chris Dumez.
+
+        slotchange event is supposed to fire when a slot element is inserted and there are assigned nodes.
+
+        Firefox and Chrome implement this behavior and fail this test since the test doesn't let microstask
+        check point run before start mutating the DOM.
+
+        Fixed the test by manually waiting for the current microtask queue to be emptied after constructing
+        the test shadow tree so that slotchange event from the initial tree construction doesn't get merged
+        with slotchange event fired for the actual DOM mutation being tested.
+
+        Also fixed typos in slotchange-in-fallback.html and a bug that we were removing the slot instead
+        of the shadow host at the end of each test case.
+
+        * fast/shadow-dom/slotchange-event-bubbling.html:
+        * fast/shadow-dom/slotchange-in-fallback.html:
+
 2018-08-31  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add margin box verification back now that Display::Box has non-computed horizontal margin.

@@ -75,7 +75,7 @@ test_slotchange_event_bubbles('open', false);
 test_slotchange_event_bubbles('open', true);
 
 function test_single_slotchange_event_for_nested_slots(outerMode, innerMode, connected) {
-    promise_test(() => {
+    promise_test(async () => {
         const outerHost = document.createElement('outer-host');
         if (connected)
             document.body.appendChild(outerHost);
@@ -90,6 +90,8 @@ function test_single_slotchange_event_for_nested_slots(outerMode, innerMode, con
         innerShadow.innerHTML = '<div><slot></slot></div>';
         const innerSlotParent = innerShadow.querySelector('div');
         const innerSlot = innerShadow.querySelector('slot');
+
+        await Promise.resolve();
 
         const observer = create_slotchange_observer();
         observer.observe(outerSlot);
@@ -109,23 +111,23 @@ function test_single_slotchange_event_for_nested_slots(outerMode, innerMode, con
         outerHost.textContent = ' ';
 
         assert_array_equals(observer.takeLog(), [], 'slotchange event must not be fired synchronously');
-        return Promise.resolve().then(() => {
-            const log = observer.takeLog();
+        await Promise.resolve();
 
-            const events = new Set(log.map((entry) => entry.event));
-            assert_equals(events.size, 1, 'Mutating the assigned content of a slot must fire exactly one slotchange event');
+        const log = observer.takeLog();
 
-            assert_slotchange_log(log[0], outerSlot, outerSlot, 'slotchange event must be dispatched at the slot element first');
-            assert_slotchange_log(log[1], innerSlot, outerSlot, 'slotchange event must bubble up from a slot element to its assigned slot');
-            assert_slotchange_log(log[2], innerSlotParent, outerSlot, 'slotchange event must bubble up to the parent node of a slot');
-            assert_slotchange_log(log[3], innerShadow, outerSlot, 'slotchange event must bubble up to the shadow root');
-            assert_slotchange_log(log[4], innerHost, outerSlot,
-                'slotchange event must bubble up to the shadow host if the host is a descendent of the tree in which the event was fired');
-            assert_slotchange_log(log[5], outerHostParent, outerSlot,
-                'slotchange event must bubble up to the parent of an inner shadow host');
-            assert_slotchange_log(log[6], outerShadow, outerSlot, 'slotchange event must bubble up to the shadow root');
-            assert_equals(log.length, 7, 'slotchange must not bubble beyond the shadow root in which the event was fired');
-        });
+        const events = new Set(log.map((entry) => entry.event));
+        assert_equals(events.size, 1, 'Mutating the assigned content of a slot must fire exactly one slotchange event');
+
+        assert_slotchange_log(log[0], outerSlot, outerSlot, 'slotchange event must be dispatched at the slot element first');
+        assert_slotchange_log(log[1], innerSlot, outerSlot, 'slotchange event must bubble up from a slot element to its assigned slot');
+        assert_slotchange_log(log[2], innerSlotParent, outerSlot, 'slotchange event must bubble up to the parent node of a slot');
+        assert_slotchange_log(log[3], innerShadow, outerSlot, 'slotchange event must bubble up to the shadow root');
+        assert_slotchange_log(log[4], innerHost, outerSlot,
+            'slotchange event must bubble up to the shadow host if the host is a descendent of the tree in which the event was fired');
+        assert_slotchange_log(log[5], outerHostParent, outerSlot,
+            'slotchange event must bubble up to the parent of an inner shadow host');
+        assert_slotchange_log(log[6], outerShadow, outerSlot, 'slotchange event must bubble up to the shadow root');
+        assert_equals(log.length, 7, 'slotchange must not bubble beyond the shadow root in which the event was fired');
     }, `A single slotchange event must bubble from a ${connected ? 'connected' : 'disconnected'} ${innerMode}-mode shadow tree to`
         + `a slot in its parent ${outerMode}-mode shadow tree`);
 }
