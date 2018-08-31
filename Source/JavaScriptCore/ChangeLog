@@ -1,5 +1,16 @@
 2018-08-31  Mark Lam  <mark.lam@apple.com>
 
+        Fix exception check accounting in JSDataView::defineOwnProperty().
+        https://bugs.webkit.org/show_bug.cgi?id=189186
+        <rdar://problem/39786049>
+
+        Reviewed by Michael Saboff.
+
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::defineOwnProperty):
+
+2018-08-31  Mark Lam  <mark.lam@apple.com>
+
         Add missing exception check in arrayProtoFuncLastIndexOf().
         https://bugs.webkit.org/show_bug.cgi?id=189184
         <rdar://problem/39785959>
