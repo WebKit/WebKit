@@ -1,3 +1,16 @@
+2018-08-31  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r235565.
+        https://bugs.webkit.org/show_bug.cgi?id=189212
+
+        Broke the WHLSL build (Requested by litherum on #webkit).
+
+        Reverted changeset:
+
+        "[WHLSL] Remove useless code in NameResolver"
+        https://bugs.webkit.org/show_bug.cgi?id=189176
+        https://trac.webkit.org/changeset/235565
+
 2018-08-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Remove useless code in NameResolver
