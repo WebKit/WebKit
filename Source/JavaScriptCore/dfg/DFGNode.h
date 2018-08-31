@@ -757,8 +757,8 @@ public:
 
     void convertToCallDOM(Graph&);
 
-    void convertToRegExpExecNonGlobalOrSticky(FrozenValue* regExp);
-    void convertToRegExpMatchFastGlobal(FrozenValue* regExp);
+    void convertToRegExpExecNonGlobalOrStickyWithoutChecks(FrozenValue* regExp);
+    void convertToRegExpMatchFastGlobalWithoutChecks(FrozenValue* regExp);
 
     void convertToSetRegExpObjectLastIndex()
     {
