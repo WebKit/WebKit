@@ -1,5 +1,11 @@
 2018-08-31  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK Ubuntu LTS build fix after r235543.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+
+2018-08-31  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, fix compilation warning in EME GStreamer backend.
 
         Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:1293:19:
