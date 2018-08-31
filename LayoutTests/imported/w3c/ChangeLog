@@ -1,3 +1,15 @@
+2018-08-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add assignedElements to HTMLSlotElement
+        https://bugs.webkit.org/show_bug.cgi?id=189146
+
+        Reviewed by Darin Adler.
+
+        Rebaselined the tests now that we're passing all test cases.
+
+        * web-platform-tests/shadow-dom/slots-expected.txt:
+        * web-platform-tests/shadow-dom/slots-fallback-expected.txt:
+
 2018-08-30  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Implement the PaymentMethodChangeEvent and PaymentMethodChangeEventInit interfaces
