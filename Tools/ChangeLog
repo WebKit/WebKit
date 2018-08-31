@@ -1,5 +1,17 @@
 2018-08-31  David Kilzer  <ddkilzer@apple.com>
 
+        WebKitLauncher: Move WebKitLauncher.entitlements into Configurations directory
+
+        This makes the Configurations folder in the Xcode project match
+        what's in the Configurations directory on disk.  Found by
+        tidy-Xcode-project-file (see Bug 188754).
+
+        * WebKitLauncher/Configurations/WebKitLauncher.entitlements: Rename from Tools/WebKitLauncher/WebKitLauncher.entitlements.
+        * WebKitLauncher/WebKitLauncher.xcodeproj/project.pbxproj:
+        - Update project for file move.
+
+2018-08-31  David Kilzer  <ddkilzer@apple.com>
+
         WebKitLauncher: Fix build failures
 
         * WebKitLauncher/Configurations/Base.xcconfig:

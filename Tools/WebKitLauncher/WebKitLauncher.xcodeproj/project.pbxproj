@@ -64,7 +64,7 @@
 
 /* Begin PBXFileReference section */
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		1C48994E1BBC547D00213C1C /* WebKitLauncher.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = WebKitLauncher.entitlements; sourceTree = SOURCE_ROOT; };
+		1C48994E1BBC547D00213C1C /* WebKitLauncher.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = WebKitLauncher.entitlements; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5D1067620FE63758002A2868 /* WebKitLauncherURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitLauncherURLProtocol.h; sourceTree = "<group>"; };
 		5D1067630FE63758002A2868 /* WebKitLauncherURLProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebKitLauncherURLProtocol.m; sourceTree = "<group>"; };
