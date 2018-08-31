@@ -783,25 +783,22 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
 
             std::unique_ptr<GstVideoFrameHolder> frameHolder = std::make_unique<GstVideoFrameHolder>(m_sample.get(), texMapFlagFromOrientation(m_videoSourceOrientation), !m_usingFallbackVideoSink);
 
-#if USE(GSTREAMER_GL)
             GLuint textureID = frameHolder->textureID();
+            std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer;
             if (textureID) {
-                std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = std::make_unique<TextureMapperPlatformLayerBuffer>(textureID, frameHolder->size(), frameHolder->flags(), GraphicsContext3D::RGBA);
+                layerBuffer = std::make_unique<TextureMapperPlatformLayerBuffer>(textureID, frameHolder->size(), frameHolder->flags(), GraphicsContext3D::RGBA);
                 layerBuffer->setUnmanagedBufferDataHolder(WTFMove(frameHolder));
-                proxy.pushNextBuffer(WTFMove(layerBuffer));
-            } else
-#endif
-            {
-                std::unique_ptr<TextureMapperPlatformLayerBuffer> buffer = proxy.getAvailableBuffer(frameHolder->size(), GL_DONT_CARE);
-                if (UNLIKELY(!buffer)) {
+            } else {
+                layerBuffer = proxy.getAvailableBuffer(frameHolder->size(), GL_DONT_CARE);
+                if (UNLIKELY(!layerBuffer)) {
                     auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get());
                     texture->reset(frameHolder->size(), frameHolder->hasAlphaChannel() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
-                    buffer = std::make_unique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
+                    layerBuffer = std::make_unique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
                 }
-                frameHolder->updateTexture(buffer->textureGL());
-                buffer->setExtraFlags(texMapFlagFromOrientation(m_videoSourceOrientation) | (frameHolder->hasAlphaChannel() ? TextureMapperGL::ShouldBlend : 0));
-                proxy.pushNextBuffer(WTFMove(buffer));
+                frameHolder->updateTexture(layerBuffer->textureGL());
+                layerBuffer->setExtraFlags(texMapFlagFromOrientation(m_videoSourceOrientation) | (frameHolder->hasAlphaChannel() ? TextureMapperGL::ShouldBlend : 0));
             }
+            proxy.pushNextBuffer(WTFMove(layerBuffer));
         };
 
 #if USE(NICOSIA)
