@@ -91,10 +91,10 @@ public:
     WEBCORE_EXPORT void write(const PasteboardImage&);
     WEBCORE_EXPORT void write(const String& pasteboardType, const String&);
     WEBCORE_EXPORT void write(const PasteboardURL&);
-    WEBCORE_EXPORT RefPtr<SharedBuffer> readBuffer(int index, const String& pasteboardType);
-    WEBCORE_EXPORT String readString(int index, const String& pasteboardType);
-    WEBCORE_EXPORT URL readURL(int index, String& title);
-    WEBCORE_EXPORT int count();
+    WEBCORE_EXPORT RefPtr<SharedBuffer> readBuffer(int index, const String& pasteboardType) const;
+    WEBCORE_EXPORT String readString(int index, const String& pasteboardType) const;
+    WEBCORE_EXPORT URL readURL(int index, String& title) const;
+    WEBCORE_EXPORT int count() const;
     WEBCORE_EXPORT int numberOfFiles() const;
 
     WEBCORE_EXPORT long write(const PasteboardCustomData&);

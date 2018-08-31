@@ -1,3 +1,52 @@
+2018-08-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Consolidate the implementations of readString, stringForType, and readURL in PlatformPasteboardIOS.mm
+        https://bugs.webkit.org/show_bug.cgi?id=189054
+        <rdar://problem/43819779>
+
+        Reviewed by Tim Horton.
+
+        Remove redundant and unnecessary logic for reading from the pasteboard on iOS.
+
+        * platform/PlatformPasteboard.h:
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::stringForType const):
+
+        This currently grabs a string corresponding to the given type from the first item in the pasteboard. Make
+        stringForType instead call readString with pasteboard item index 0.
+
+        (WebCore::PlatformPasteboard::count const):
+        (WebCore::PlatformPasteboard::readBuffer const):
+        (WebCore::PlatformPasteboard::readString const):
+
+        Make readString with "public.url" call readURL.
+
+        (WebCore::PlatformPasteboard::readURL const):
+
+        Remove logic for reading URLs from the pasteboard as property lists deserialized from properly lists. This was
+        added in r223195 due to fix a case "when UIPasteboard serializes NSURL as a plist" when grabbing pasteboard data
+        using -valuesForPasteboardType:inItemSet:. However, this case only arises in non-UI applications (i.e. when
+        UIApplicationInitialize() has not been invoked); this is currently exercised by the test CopyURL.ValidURL, but
+        doesn't really correspond to a real-world use case, since all UI applications where a user would be able to
+        paste in a web view already invoke UIApplicationInitialize().
+
+        Instead of handling the case where the pasteboard contains a property list that has not been coerced to an
+        NSURL, simply remove the code from PlatformPasteboard::readURL and allow UIKit to perform the coercion when
+        running the test.
+
+        (WebCore::PlatformPasteboard::count): Deleted.
+        (WebCore::PlatformPasteboard::readBuffer): Deleted.
+        (WebCore::PlatformPasteboard::readString): Deleted.
+        (WebCore::PlatformPasteboard::readURL): Deleted.
+
+        Mark these functions as `const`.
+
+        * platform/wpe/PlatformPasteboardWPE.cpp:
+        (WebCore::PlatformPasteboard::readString const):
+        (WebCore::PlatformPasteboard::readString): Deleted.
+
+        Mark this function as const.
+
 2018-08-31  Jer Noble  <jer.noble@apple.com>
 
         Compilation error in FormData.cpp: incomplete type 'WebCore::SharedBuffer'

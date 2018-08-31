@@ -202,16 +202,7 @@ static bool pasteboardMayContainFilePaths(id<AbstractPasteboard> pasteboard)
 
 String PlatformPasteboard::stringForType(const String& type) const
 {
-    auto value = retainPtr([m_pasteboard valuesForPasteboardType:type inItemSet:[NSIndexSet indexSetWithIndex:0]].firstObject);
-    String result;
-    if ([value isKindOfClass:[NSURL class]])
-        result = [(NSURL *)value absoluteString];
-
-    else if ([value isKindOfClass:[NSAttributedString class]])
-        result = [(NSAttributedString *)value string];
-
-    else if ([value isKindOfClass:[NSString class]])
-        result = (NSString *)value;
+    auto result = readString(0, type);
 
     if (pasteboardMayContainFilePaths(m_pasteboard.get()) && type == String { kUTTypeURL }) {
         if (!Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(result))
@@ -607,12 +598,12 @@ long PlatformPasteboard::write(const PasteboardCustomData&)
 
 #endif
 
-int PlatformPasteboard::count()
+int PlatformPasteboard::count() const
 {
     return [m_pasteboard numberOfItems];
 }
 
-RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(int index, const String& type)
+RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(int index, const String& type) const
 {
     NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
 
@@ -623,19 +614,18 @@ RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(int index, const String& typ
     return SharedBuffer::create([pasteboardItem.get() objectAtIndex:0]);
 }
 
-String PlatformPasteboard::readString(int index, const String& type)
+String PlatformPasteboard::readString(int index, const String& type) const
 {
-    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
-
-    NSArray *pasteboardValues = [m_pasteboard valuesForPasteboardType:type inItemSet:indexSet];
-    if (!pasteboardValues.count) {
-        NSArray<NSData *> *pasteboardData = [m_pasteboard dataForPasteboardType:type inItemSet:indexSet];
-        if (!pasteboardData.count)
-            return { };
-        pasteboardValues = pasteboardData;
+    if (type == String(kUTTypeURL)) {
+        String title;
+        return readURL(index, title);
     }
 
-    RetainPtr<id> value = [pasteboardValues objectAtIndex:0];
+    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
+    auto value = retainPtr([m_pasteboard valuesForPasteboardType:type inItemSet:indexSet].firstObject ?: [m_pasteboard dataForPasteboardType:type inItemSet:indexSet].firstObject);
+    if (!value)
+        return { };
+
     if ([value isKindOfClass:[NSData class]])
         value = adoptNS([[NSString alloc] initWithData:(NSData *)value.get() encoding:NSUTF8StringEncoding]);
     
@@ -649,45 +639,22 @@ String PlatformPasteboard::readString(int index, const String& type)
             return value.get();
         if ([value isKindOfClass:[NSAttributedString class]])
             return [(NSAttributedString *)value string];
-    } else if (type == String(kUTTypeURL)) {
-        ASSERT([value isKindOfClass:[NSURL class]] || [value isKindOfClass:[NSString class]]);
-        if ([value isKindOfClass:[NSString class]])
-            value = [NSURL URLWithString:value.get()];
-        if ([value isKindOfClass:[NSURL class]] && allowReadingURLAtIndex((NSURL *)value, index))
-            return [(NSURL *)value absoluteString];
     }
 
     return String();
 }
 
-URL PlatformPasteboard::readURL(int index, String& title)
+URL PlatformPasteboard::readURL(int index, String& title) const
 {
-    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
-    RetainPtr<NSArray> pasteboardItem = [m_pasteboard valuesForPasteboardType:(__bridge NSString *)kUTTypeURL inItemSet:indexSet];
-
-    if (![pasteboardItem count])
+    id value = [m_pasteboard valuesForPasteboardType:(__bridge NSString *)kUTTypeURL inItemSet:[NSIndexSet indexSetWithIndex:index]].firstObject;
+    if (!value)
         return { };
 
-    id value = [pasteboardItem objectAtIndex:0];
-    NSURL *url = nil;
-    if ([value isKindOfClass:[NSData class]]) {
-        id plist = [NSPropertyListSerialization propertyListWithData:(NSData *)value options:NSPropertyListImmutable format:NULL error:NULL];
-        if (![plist isKindOfClass:[NSArray class]])
-            return { };
-        NSArray *plistArray = (NSArray *)plist;
-        if (plistArray.count < 2)
-            return { };
-        if (plistArray.count == 2)
-            url = [NSURL URLWithString:plistArray[0]];
-        else // The first string is the relative URL.
-            url = [NSURL URLWithString:plistArray[0] relativeToURL:[NSURL URLWithString:plistArray[1]]];
-    } else {
-        ASSERT([value isKindOfClass:[NSURL class]]);
-        if (![value isKindOfClass:[NSURL class]])
-            return { };
-        url = (NSURL *)value;
-    }
+    ASSERT([value isKindOfClass:[NSURL class]]);
+    if (![value isKindOfClass:[NSURL class]])
+        return { };
 
+    NSURL *url = (NSURL *)value;
     if (!allowReadingURLAtIndex(url, index))
         return { };
 

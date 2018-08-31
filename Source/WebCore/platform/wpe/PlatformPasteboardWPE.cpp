@@ -58,7 +58,7 @@ void PlatformPasteboard::getTypes(Vector<String>& types)
     wpe_pasteboard_string_vector_free(&pasteboardTypes);
 }
 
-String PlatformPasteboard::readString(int, const String& type)
+String PlatformPasteboard::readString(int, const String& type) const
 {
     struct wpe_pasteboard_string string = { nullptr, 0 };
     wpe_pasteboard_get_string(m_pasteboard, type.utf8().data(), &string);
