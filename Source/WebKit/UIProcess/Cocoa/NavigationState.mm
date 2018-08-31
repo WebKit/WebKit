@@ -552,7 +552,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                     return;
                 }
 
-                localListener->use(websitePolicies.get(), actionPolicy == _WKNavigationActionPolicyAllowInNewProcess ? ShouldProcessSwapIfPossible::Yes : ShouldProcessSwapIfPossible::No);
+                localListener->use(websitePolicies.get(), actionPolicy == _WKNavigationActionPolicyAllowInNewProcess ? ProcessSwapRequestedByClient::Yes : ProcessSwapRequestedByClient::No);
             });
         
             break;

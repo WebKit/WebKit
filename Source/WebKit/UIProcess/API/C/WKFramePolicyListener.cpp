@@ -48,27 +48,27 @@ void WKFramePolicyListenerUse(WKFramePolicyListenerRef policyListenerRef)
 
 void WKFramePolicyListenerUseInNewProcess(WKFramePolicyListenerRef policyListenerRef)
 {
-    toImpl(policyListenerRef)->use(nullptr, ShouldProcessSwapIfPossible::Yes);
+    toImpl(policyListenerRef)->use(nullptr, ProcessSwapRequestedByClient::Yes);
 }
 
-static void useWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies, ShouldProcessSwapIfPossible shouldProcessSwapIfPossible)
+static void useWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies, ProcessSwapRequestedByClient processSwapRequestedByClient)
 {
     if (auto* websiteDataStore = toImpl(websitePolicies)->websiteDataStore()) {
         auto sessionID = websiteDataStore->websiteDataStore().sessionID();
         RELEASE_ASSERT_WITH_MESSAGE(sessionID.isEphemeral() || sessionID == PAL::SessionID::defaultSessionID(), "If WebsitePolicies specifies a WebsiteDataStore, the data store's session must be default or non-persistent.");
     }
 
-    toImpl(policyListenerRef)->use(toImpl(websitePolicies), shouldProcessSwapIfPossible);
+    toImpl(policyListenerRef)->use(toImpl(websitePolicies), processSwapRequestedByClient);
 }
 
 void WKFramePolicyListenerUseWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies)
 {
-    useWithPolicies(policyListenerRef, websitePolicies, ShouldProcessSwapIfPossible::No);
+    useWithPolicies(policyListenerRef, websitePolicies, ProcessSwapRequestedByClient::No);
 }
 
 void WKFramePolicyListenerUseInNewProcessWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies)
 {
-    useWithPolicies(policyListenerRef, websitePolicies, ShouldProcessSwapIfPossible::Yes);
+    useWithPolicies(policyListenerRef, websitePolicies, ProcessSwapRequestedByClient::Yes);
 }
 
 void WKFramePolicyListenerDownload(WKFramePolicyListenerRef policyListenerRef)

@@ -258,7 +258,7 @@ struct PrintInfo;
 struct WebPopupItem;
 struct URLSchemeTaskParameters;
 
-enum class ShouldProcessSwapIfPossible;
+enum class ProcessSwapRequestedByClient;
 enum class UndoOrRedo;
 
 #if USE(QUICK_LOOK)
