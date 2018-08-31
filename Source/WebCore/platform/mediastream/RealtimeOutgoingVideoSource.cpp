@@ -32,8 +32,15 @@
 #if USE(LIBWEBRTC)
 
 #include "Logging.h"
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 #include <webrtc/api/video/i420_buffer.h>
 #include <webrtc/common_video/libyuv/include/webrtc_libyuv.h>
+
+#pragma GCC diagnostic pop
+
 #include <wtf/MainThread.h>
 
 namespace WebCore {

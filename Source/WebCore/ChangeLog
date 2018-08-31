@@ -1,3 +1,15 @@
+2018-08-31  Jer Noble  <jer.noble@apple.com>
+
+        Compile error in RealtimeOutgoingVideoSource.cpp; unused parameter in libwebrtc header
+        https://bugs.webkit.org/show_bug.cgi?id=189203
+
+        Reviewed by Youenn Fablet.
+
+        If RealtimeOutgoingVideoSource.cpp is compiled alone (non-unified) or if it is the first file compiled in
+        a unified build, there is no pragma set to ignore unused parameter warnings in place.
+
+        * platform/mediastream/RealtimeOutgoingVideoSource.cpp:
+
 2018-08-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Consolidate the implementations of readString, stringForType, and readURL in PlatformPasteboardIOS.mm
