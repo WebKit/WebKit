@@ -623,7 +623,7 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FormState& formState, Completi
     COMPtr<IPropertyBag> formValuesPropertyBag(AdoptCOM, COMPropertyBag<String>::createInstance(formValuesMap));
 
     COMPtr<WebFrame> sourceFrame(kit(formState.sourceDocument().frame()));
-    if (SUCCEEDED(formDelegate->willSubmitForm(m_webFrame, sourceFrame.get(), formElement.get(), formValuesPropertyBag.get(), setUpPolicyListener([completionHandler = WTFMove(completionHandler)] (PolicyAction) { completionHandler(); }).get())))
+    if (SUCCEEDED(formDelegate->willSubmitForm(m_webFrame, sourceFrame.get(), formElement.get(), formValuesPropertyBag.get(), setUpPolicyListener([completionHandler = WTFMove(completionHandler)] (PolicyAction) mutable { completionHandler(); }).get())))
         return;
 
     // FIXME: Add a sane default implementation
