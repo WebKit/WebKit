@@ -166,7 +166,7 @@ public:
     virtual void dispatchDidCancelClientRedirect() = 0;
     virtual void dispatchWillPerformClientRedirect(const URL&, double interval, WallTime fireDate) = 0;
     virtual void dispatchDidChangeMainDocument() { }
-    virtual void dispatchWillChangeDocument() { }
+    virtual void dispatchWillChangeDocument(const URL&, const URL&) { }
     virtual void dispatchDidNavigateWithinPage() { }
     virtual void dispatchDidChangeLocationWithinPage() = 0;
     virtual void dispatchDidPushStateWithinPage() = 0;

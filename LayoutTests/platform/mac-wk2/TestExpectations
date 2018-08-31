@@ -695,7 +695,8 @@ http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-r
 [ HighSierra+ ] http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-user-gesture.html [ Pass ]
 [ HighSierra+ ] http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-user-interaction.html [ Pass ]
 [ HighSierra+ ] http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html [ Pass ]
-[ HighSierra+ ] http/tests/storageAccess/request-and-grant-access-then-navigate-should-not-have-access.html [ Pass ]
+[ HighSierra+ ] http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html [ Pass ]
+[ HighSierra+ ] http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html [ Pass ]
 [ HighSierra+ ] http/tests/storageAccess/deny-storage-access-under-opener.html [ Pass ]
 [ HighSierra+ ] http/tests/storageAccess/grant-storage-access-under-opener.html [ Pass ]
 

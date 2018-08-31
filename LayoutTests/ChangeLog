@@ -1,3 +1,25 @@
+2018-08-31  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Maintain access through same-site navigations
+        https://bugs.webkit.org/show_bug.cgi?id=188564
+        <rdar://problem/43445160>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame-expected.txt:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame.html:
+            Added both a same-site and a cross-site navigation to the sub frame to test maintained and cleared access.
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access-expected.txt: Copied from LayoutTests/http/tests/storageAccess/request-and-grant-access-then-navigate-should-not-have-access-expected.txt.
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html: Copied from LayoutTests/http/tests/storageAccess/request-and-grant-access-then-navigate-should-not-have-access.html.
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access-expected.txt: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-access-then-navigate-should-not-have-access-expected.txt.
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-access-then-navigate-should-not-have-access.html.
+        * http/tests/storageAccess/resources/get-cookies.php:
+            Support for the new test scenarios.
+        * http/tests/storageAccess/resources/self-navigating-frame-after-granted-access.html:
+            Support for the new test scenarios.
+        * platform/mac-wk2/TestExpectations:
+            Marked the new and the renamed tests as [ Pass ].
+
 2018-08-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         slotchange-event-bubbling.html fails in Chrome & Firefox
