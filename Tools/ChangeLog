@@ -1,5 +1,20 @@
 2018-08-31  David Kilzer  <ddkilzer@apple.com>
 
+        WebKitLauncher: Fix build failures
+
+        * WebKitLauncher/Configurations/Base.xcconfig:
+        (ARCHS): Use $(ARCHS_STANDARD_32_64_BIT).
+        (MACOSX_DEPLOYMENT_TARGET): Update from Snow Leopard to Sierra.
+
+        * WebKitLauncher/WebKitNightlyEnabler.m:
+        (myApplicationWillFinishLaunching):
+        * WebKitLauncher/main.m:
+        (displayErrorAndQuit):
+        (locateSafariBundle):
+        - Use pragma to ignore deprecation warnings.
+
+2018-08-31  David Kilzer  <ddkilzer@apple.com>
+
         MobileMiniBrowser: Move test2s.mp4 into Resources directory
 
         This makes the Resources folder in the Xcode project match

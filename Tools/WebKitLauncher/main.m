@@ -47,7 +47,10 @@ int posix_spawnattr_setflags(posix_spawnattr_t *, short) WEAK_IMPORT;
 static void displayErrorAndQuit(NSString *title, NSString *message)
 {
     NSApplicationLoad();
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSRunCriticalAlertPanel(title, @"%@", @"Quit", nil, nil, message);
+#pragma clang diagnostic pop
     exit(0);
 }
 
@@ -148,7 +151,10 @@ static NSBundle *locateSafariBundle()
     }
 
     CFURLRef safariURL = nil;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     OSStatus err = LSFindApplicationForInfo(kLSUnknownCreator, CFSTR("com.apple.Safari"), nil, nil, &safariURL);
+#pragma clang diagnostic pop
     if (err != noErr)
         displayErrorAndQuit(@"Unable to locate Safari", @"Nightly builds of WebKit require Safari to run.  Please check that it is available and then try again.");
 

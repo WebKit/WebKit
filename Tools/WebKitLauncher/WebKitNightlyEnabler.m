@@ -84,9 +84,12 @@ static void myApplicationWillFinishLaunching(CFNotificationCenterRef center, voi
     [userDefaults synchronize];
 
     if (extensionBundlesWereLoaded)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         NSRunInformationalAlertPanel(@"Safari extensions detected",
                                      @"Safari extensions were detected on your system.  Extensions are incompatible with nightly builds of WebKit, and may cause crashes or incorrect behavior.  Please disable them if you experience such behavior.", @"Continue",
                                      nil, nil);
+#pragma clang diagnostic pop
 
     initializeSparkle();
 }
