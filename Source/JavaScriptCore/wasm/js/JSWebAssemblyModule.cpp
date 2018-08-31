@@ -48,7 +48,9 @@ JSWebAssemblyModule* JSWebAssemblyModule::createStub(VM& vm, ExecState* exec, St
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (!result.has_value()) {
-        throwException(exec, scope, JSWebAssemblyCompileError::create(exec, vm, structure->globalObject()->WebAssemblyCompileErrorStructure(), result.error()));
+        auto* error = JSWebAssemblyCompileError::create(exec, vm, structure->globalObject()->WebAssemblyCompileErrorStructure(), result.error());
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        throwException(exec, scope, error);
         return nullptr;
     }
 
