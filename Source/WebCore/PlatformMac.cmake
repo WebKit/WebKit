@@ -174,6 +174,7 @@ list(APPEND WebCore_SOURCES
     platform/audio/AudioSession.cpp
 
     platform/audio/cocoa/MediaSessionManagerCocoa.cpp
+    platform/audio/cocoa/WebAudioBufferList.cpp
 
     platform/audio/mac/CAAudioStreamDescription.cpp
 

@@ -159,6 +159,7 @@ page/scrolling/mac/ScrollingTreeStickyNode.mm
 platform/audio/AudioSession.cpp
 
 platform/audio/cocoa/MediaSessionManagerCocoa.cpp
+platform/audio/cocoa/WebAudioBufferList.cpp
 
 platform/audio/ios/AudioDestinationIOS.cpp @no-unify
 platform/audio/ios/AudioFileReaderIOS.cpp @no-unify

@@ -1,3 +1,18 @@
+2018-08-31  Youenn Fablet  <youenn@apple.com>
+
+        WebAudioBufferList.cpp/.h is named as cocoa/WebAudioBufferList.cpp/.h
+        https://bugs.webkit.org/show_bug.cgi?id=189160
+
+        Reviewed by Jer Noble.
+
+        Add WebAudioBufferList.cpp to unified build.
+        Update XCode project so that the file names are right.
+        No change of behavior.
+
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-08-31  Chris Dumez  <cdumez@apple.com>
 
         Assertion hit in ~CompletionHandler() from ~WebFrame()
