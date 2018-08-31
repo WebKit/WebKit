@@ -1,3 +1,12 @@
+2018-08-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up TestExpectations so that ./Tools/Scripts/lint-test-expectations
+        succeeds now.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2018-08-31  Chris Dumez  <cdumez@apple.com>
 
         [ WK2 ] http/tests/workers/service/client-*-page-cache.html LayoutTests are flaky

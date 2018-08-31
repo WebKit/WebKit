@@ -381,7 +381,6 @@ webkit.org/b/43458 http/tests/appcache/origin-quota-continued-download-multiple-
 
 # TODO Full Screen support is not yet enabled.
 fullscreen/ [ Skip ]
-legacy-animation-engine/fullscreen/ [ Skip ]
 
 # viewport meta tag support
 fast/viewport/ [ Skip ]
@@ -1952,7 +1951,7 @@ svg/clip-path/mask-objectboundingbox-content-clip.svg [ ImageOnlyFailure ]
 svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
 svg/custom/inline-svg-in-xhtml.xml [ Failure ]
 svg/custom/foreign-object-skew.svg [ Failure ]
-webkit.org/b/140249 fast/css/fontloader-svg-select.svg [ Failure ]
+webkit.org/b/140249 fast/css/fontloader-svg-select.svg [ Crash Failure ]
 webkit.org/b/140770 svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html [ Failure ]
 
 # Tiny image diff. Why!?!?
@@ -3989,11 +3988,10 @@ webkit.org/b/182159 webanimations/opacity-animation-yields-compositing.html [ Fa
 webkit.org/b/182239 js/dom/array-with-double-assign.html [ Failure ]
 webkit.org/b/182239 js/dom/array-with-double-push.html [ Failure ]
 
-webkit.org/b/182626 accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
+webkit.org/b/182626 [ Release ] accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
 
 # The following tests are failing only on ews203.
 webkit.org/b/182694 fast/text/tatechuyoko.html [ Failure ]
-webkit.org/b/182694 fast/css/fontloader-svg-select.svg [ Crash ]
 webkit.org/b/182694 fast/dom/crash-moving-subtree-between-documents.html [ Crash ]
 webkit.org/b/182694 fast/dom/event-handler-attributes.html [ Crash ]
 webkit.org/b/182694 legacy-animation-engine/fast/dom/event-handler-attributes.html [ Crash ]
@@ -4072,8 +4070,6 @@ webkit.org/b/184482 legacy-animation-engine/animations/3d/change-transform-in-en
 webkit.org/b/184482 legacy-animation-engine/compositing/reflections/animation-inside-reflection.html [ Skip ]
 webkit.org/b/184482 legacy-animation-engine/compositing/reflections/nested-reflection-animated.html [ Skip ]
 
-webkit.org/b/184537 fast/forms/file/entries-api/webkitEntries-nonascii-folder-name.html [ Skip ]
-
 webkit.org/b/184649 css3/filters/blur-various-radii.html [ Crash ]
 
 webkit.org/b/184428 http/tests/misc/submit-post-keygen.html [ Skip ]
@@ -4115,7 +4111,7 @@ webkit.org/b/186522 imported/mozilla/css-transitions/test_animation-starttime.ht
 webkit.org/b/186522 imported/mozilla/css-transitions/test_csstransition-transitionproperty.html [ Failure ]
 webkit.org/b/186522 imported/mozilla/css-transitions/test_setting-effect.html [ Failure ]
 
-webkit.org/b/186562 accessibility/accessibility-node-memory-management.html [ Failure ]
+webkit.org/b/186562 [ Release ] accessibility/accessibility-node-memory-management.html [ Failure ]
 webkit.org/b/186562 fast/workers/worker-document-leak.html [ Failure ]
 webkit.org/b/186562 js/dom/line-column-numbers.html [ Failure ]
 webkit.org/b/186562 storage/indexeddb/modern/leak-1.html [ Failure ]

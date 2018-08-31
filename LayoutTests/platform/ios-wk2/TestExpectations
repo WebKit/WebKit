@@ -42,23 +42,6 @@ webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment
 imported/w3c/web-platform-tests/payment-request/payment-request-show-method.https.html [ WontFix ]
 imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html [ WontFix ]
 
- # skip manual payment-request tests
-imported/w3c/web-platform-tests/payment-request/algorithms-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/change-shipping-option-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/payment-response/complete-method-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/payment-response/methodName-attribute-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/payment-response/payerEmail-attribute-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/payment-response/payerName-attribute-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/payment-response/payerPhone-attribute-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/payment-response/requestId-attribute-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/payment-response/shippingAddress-attribute-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/payment-response/shippingOption-attribute-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/PaymentAddress/attributes-and-toJSON-method-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/shipping-address-changed-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/updateWith-method-pmi-handling-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/user-abort-algorithm-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/user-accepts-payment-request-algo-manual.https.html [ Skip ]
-
 webkit.org/b/170713 imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html [ ImageOnlyFailure ]
 
 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Pass ]
