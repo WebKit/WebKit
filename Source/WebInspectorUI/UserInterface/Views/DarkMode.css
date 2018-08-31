@@ -1160,6 +1160,9 @@
     .sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule {
         filter: var(--filter-invert);
     }
+    .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle{
+        color: var(--text-color);
+    }
 
 
     /* CanvasTabContentView.css */

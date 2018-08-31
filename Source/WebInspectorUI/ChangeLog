@@ -1,3 +1,14 @@
+2018-08-31  Jamal Nasser  <xnasser@outlook.com>
+
+        Added a CSS rule to DarkMode.css to fix color on sidebar toggle.
+        <https://webkit.org/b/189139>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DarkMode.css:
+        (@media (prefers-dark-interface)):
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle):
+
 2018-08-29  David Kilzer  <ddkilzer@apple.com>
 
         Remove empty directories from from svn.webkit.org repository
