@@ -1,3 +1,14 @@
+2018-08-31  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, fix compilation warning in EME GStreamer backend.
+
+        Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:1293:19:
+        warning: format ‘%lu’ expects argument of type ‘long unsigned
+        int’, but argument 9 has type ‘unsigned int’ [-Wformat=]
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::initializationDataEncountered):
+
 2018-08-31  Philippe Normand  <philn@igalia.com>
 
         [GStreamer][GL] useless ifdef in pushTextureToCompositor

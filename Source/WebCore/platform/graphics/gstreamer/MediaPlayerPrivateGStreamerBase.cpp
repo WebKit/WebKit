@@ -1287,7 +1287,7 @@ void MediaPlayerPrivateGStreamerBase::initializationDataEncountered(GstEvent* ev
         if (!weakThis)
             return;
 
-        GST_DEBUG("scheduling initializationDataEncountered event for %s with init data size of %" G_GSIZE_FORMAT, eventKeySystemUUID.utf8().data(), initData.sizeInBytes());
+        GST_DEBUG("scheduling initializationDataEncountered event for %s with init data size of %u", eventKeySystemUUID.utf8().data(), initData.sizeInBytes());
         GST_MEMDUMP("init datas", reinterpret_cast<const uint8_t*>(initData.characters8()), initData.sizeInBytes());
         weakThis->m_player->initializationDataEncountered("cenc"_s, ArrayBuffer::create(reinterpret_cast<const uint8_t*>(initData.characters8()), initData.sizeInBytes()));
     });
