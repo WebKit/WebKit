@@ -1,3 +1,40 @@
+2018-08-31  Frederic Wang  <fwang@igalia.com>
+
+        Bug 182053 - [CSSOM View] Implement standard behavior for scrollingElement
+        https://bugs.webkit.org/show_bug.cgi?id=182053
+
+        Reviewed by Simon Fraser.
+
+        This commit introduces a new CSSOMViewScrollingAPIEnabled flag that will be used to implement
+        the standard behavior of DOM scroll* API as specified by the CSSOM View spec (see bug 5991).
+        It changes the behavior of document.scrollingElement so that it follows the spec when the
+        flag is enabled. This will allow to pass the WPT test cssom-view/scrollingElement.html when
+        it becomes the default behavior. WPT tests cssom-view/scrollingElement-quirks-dynamic*.html
+        still fail; comparing with Chromium's code, we might need to propagate the style of <html>
+        and <body> to the viewport element. Behaviors for other scrolling attributes will be changed
+        in follow-up bugs.
+
+        Tests: fast/dom/Document/scrollingElement-quirks-mode.html
+               fast/dom/Document/scrollingElement-standard-mode.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::isBodyPotentiallyScrollable): Helper function to verify whether the body
+        is potentially scrollable, as defined by the CSSOM View spec. It seems that
+        RenderObject::hasOverflowClip() may return incorrect value at this point and we might need
+        to do something similar to Chromium's style propagation to make it work. For now, we just
+        use the computed style. See bug 182292.
+        (WebCore::Document::scrollingElement): When CSSOMViewScrollingAPIEnabled is enabled, we
+        implement the algorithm of the CSSOM View spec.
+        (WebCore::Document::body const): Verify that the root is actually a <html> element or
+        otherwise return null. This is required by the CSSOM View spec and for WPT test
+        scrollingElement.html. It is consistent  with bodyOrFrameset().
+        * dom/Document.h: Add spec references for body() and bodyOrFrameset() and declare
+        isBodyPotentiallyScrollable().
+        * page/Settings.yaml: Add developer option for enabling the CSSOM View behavior.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::isOverflowVisible const): Add helper function to check whether the
+        style implies visible overflow.
+
 2018-08-30  Zalan Bujtas  <zalan@apple.com>
 
         CounterMaps should hold a unique_ptr of CounterMap.

@@ -205,3 +205,6 @@
 #define WebKitVisualViewportAPIEnabledPreferenceKey "WebKitVisualViewportAPIEnabled"
 
 #define WebKitServerTimingEnabledPreferenceKey "WebKitServerTimingEnabled"
+
+#define WebKitCSSOMViewScrollingAPIEnabledPreferenceKey "WebKitCSSOMViewScrollingAPIEnabled"
+

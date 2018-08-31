@@ -554,6 +554,9 @@ visualViewportEnabled:
 visualViewportAPIEnabled:
   initial: false
 
+CSSOMViewScrollingAPIEnabled:
+  initial: false
+
 inputEventsEnabled:
   initial: true
 

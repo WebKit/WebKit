@@ -1,3 +1,22 @@
+2018-08-31  Frederic Wang  <fwang@igalia.com>
+
+        Bug 182053 - [CSSOM View] Implement standard behavior for scrollingElement
+        https://bugs.webkit.org/show_bug.cgi?id=182053
+
+        Reviewed by Simon Fraser.
+
+        Add developer flag to use standard behavior for scrolling* attributes.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::CSSOMViewScrollingAPIEnabled):
+        (WebPreferences::setCSSOMViewScrollingAPIEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2018-08-30  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Replace AVFoundationSupport.py using CMake

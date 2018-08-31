@@ -1,3 +1,20 @@
+2018-08-31  Frederic Wang  <fwang@igalia.com>
+
+        Bug 182053 - [CSSOM View] Implement standard behavior for scrollingElement
+        https://bugs.webkit.org/show_bug.cgi?id=182053
+
+        Reviewed by Simon Fraser.
+
+        Add a test to check that in Quirks mode, the <body> element returned by
+        document.scrollingElement is indeed a child of a <html> root (i.e. in the HTML namespace).
+        Adjust scrollingElement*.html tests so that they are executed with the flag
+        CSSOMViewScrollingAPI enabled and update expectations now that these tests pass.
+
+        * fast/dom/Document/scrollingElement-quirks-mode.html:
+        * fast/dom/Document/scrollingElement-quirks-mode-expected.txt:
+        * fast/dom/Document/scrollingElement-standards-mode.html:
+        * fast/dom/Document/scrollingElement-standards-mode-expected.txt:
+
 2018-08-30  Zalan Bujtas  <zalan@apple.com>
 
         CounterMaps should hold a unique_ptr of CounterMap.

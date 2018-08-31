@@ -1443,10 +1443,46 @@ RefPtr<Range> Document::caretRangeFromPoint(const LayoutPoint& clientPoint)
     return Range::create(*this, node, offset, node, offset);
 }
 
+bool Document::isBodyPotentiallyScrollable(HTMLBodyElement& body)
+{
+    // See https://www.w3.org/TR/cssom-view-1/#potentially-scrollable.
+    // An element is potentially scrollable if all of the following conditions are true:
+    // - The element has an associated CSS layout box.
+    // - The element is not the HTML body element, or it is and the root element's used value of the
+    //   overflow-x or overflow-y properties is not visible.
+    // - The element's used value of the overflow-x or overflow-y properties is not visible.
+    //
+    // FIXME: We should use RenderObject::hasOverflowClip() instead of Element::computedStyle() but
+    // the used values are currently not correctly updated. See https://webkit.org/b/182292.
+    return body.renderer()
+        && documentElement()->computedStyle()
+        && !documentElement()->computedStyle()->isOverflowVisible()
+        && body.computedStyle()
+        && !body.computedStyle()->isOverflowVisible();
+}
+
 Element* Document::scrollingElement()
 {
-    // FIXME: When we fix https://bugs.webkit.org/show_bug.cgi?id=106133, this should be replaced with the full implementation
-    // of Document.scrollingElement() as specified at http://dev.w3.org/csswg/cssom-view/#dom-document-scrollingelement.
+    if (settings().CSSOMViewScrollingAPIEnabled()) {
+        // See https://drafts.csswg.org/cssom-view/#dom-document-scrollingelement.
+        // The scrollingElement attribute, on getting, must run these steps:
+        // 1. If the Document is in quirks mode, follow these substeps:
+        if (inQuirksMode()) {
+            updateLayoutIgnorePendingStylesheets();
+            auto* firstBody = body();
+            // 1. If the HTML body element exists, and it is not potentially scrollable, return the
+            // HTML body element and abort these steps.
+            if (firstBody && !isBodyPotentiallyScrollable(*firstBody))
+                return firstBody;
+
+            // 2. Return null and abort these steps.
+            return nullptr;
+        }
+
+        // 2. If there is a root element, return the root element and abort these steps.
+        // 3. Return null.
+        return documentElement();
+    }
 
     return body();
 }
@@ -2704,7 +2740,7 @@ void Document::implicitOpen()
 HTMLBodyElement* Document::body() const
 {
     auto* element = documentElement();
-    if (!element)
+    if (!is<HTMLHtmlElement>(element))
         return nullptr;
     return childrenOfType<HTMLBodyElement>(*element).first();
 }

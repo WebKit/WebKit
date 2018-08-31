@@ -6,11 +6,12 @@
 </head>
 <body>
 <script>
+if (window.internals)
+    internals.settings.setCSSOMViewScrollingAPIEnabled(true);
 
 description("Tests the behavior of document.scrollingElement in standards mode.");
 
 debug("In standards mode the scrolling element is supposed to be `HTML`");
-debug("INTENTIONAL FAILURE. This can be fixed once https://bugs.webkit.org/show_bug.cgi?id=106133 is fixed.");
 shouldBe("document.scrollingElement", "document.documentElement");
 
 </script>

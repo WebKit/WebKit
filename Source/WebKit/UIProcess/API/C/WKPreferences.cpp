@@ -1978,6 +1978,16 @@ bool WKPreferencesGetAriaReflectionEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->ariaReflectionEnabled();
 }
 
+void WKPreferencesSetCSSOMViewScrollingAPIEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setCSSOMViewScrollingAPIEnabled(flag);
+}
+
+bool WKPreferencesGetCSSOMViewScrollingAPIEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->cssOMViewScrollingAPIEnabled();
+}
+
 void WKPreferencesSetShouldAllowUserInstalledFonts(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setShouldAllowUserInstalledFonts(flag);

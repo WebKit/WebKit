@@ -654,6 +654,7 @@ public:
 #endif
         [NSNumber numberWithBool:NO], WebKitVisualViewportAPIEnabledPreferenceKey,
 
+        [NSNumber numberWithBool:NO], WebKitCSSOMViewScrollingAPIEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitNeedsStorageAccessFromFileURLsQuirkKey,
         [NSNumber numberWithBool:NO], WebKitAllowCrossOriginSubresourcesToAskForCredentialsKey,
 #if ENABLE(MEDIA_STREAM)
@@ -3090,6 +3091,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setVisualViewportAPIEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitVisualViewportAPIEnabledPreferenceKey];
+}
+
+- (BOOL)CSSOMViewScrollingAPIEnabled
+{
+    return [self _boolValueForKey:WebKitCSSOMViewScrollingAPIEnabledPreferenceKey];
+}
+
+- (void)setCSSOMViewScrollingAPIEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitCSSOMViewScrollingAPIEnabledPreferenceKey];
 }
 
 - (BOOL)webAnimationsEnabled

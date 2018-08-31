@@ -5284,6 +5284,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setCrossOriginWindowPolicySupportEnabled(!!enabled);
 
+    hr = prefsPrivate->CSSOMViewScrollingAPIEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings.setCSSOMViewScrollingAPIEnabled(!!enabled);
+
     hr = preferences->privateBrowsingEnabled(&enabled);
     if (FAILED(hr))
         return hr;

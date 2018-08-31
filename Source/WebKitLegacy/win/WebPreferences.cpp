@@ -328,6 +328,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitVisualViewportAPIEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitCSSOMViewScrollingAPIEnabledPreferenceKey), kCFBooleanFalse);
+
     defaultSettings = defaults;
 }
 
@@ -2182,6 +2184,20 @@ HRESULT WebPreferences::visualViewportAPIEnabled(_Out_ BOOL* enabled)
 HRESULT WebPreferences::setVisualViewportAPIEnabled(BOOL enabled)
 {
     setBoolValue(WebKitVisualViewportAPIEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::CSSOMViewScrollingAPIEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitCSSOMViewScrollingAPIEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setCSSOMViewScrollingAPIEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitCSSOMViewScrollingAPIEnabledPreferenceKey, enabled);
     return S_OK;
 }
 

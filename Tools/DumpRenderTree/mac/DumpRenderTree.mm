@@ -869,6 +869,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setServerTimingEnabled:YES];
     [preferences setIntersectionObserverEnabled:YES];
     preferences.sourceBufferChangeTypeEnabled = YES;
+    // FIXME: CSSOMViewScrollingAPIEnabled
 }
 
 // Called before each test.
@@ -921,6 +922,7 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setLoadsSiteIconsIgnoringImageLoadingPreference:NO];
     [preferences setFrameFlattening:WebKitFrameFlatteningDisabled];
     [preferences setAsyncFrameScrollingEnabled:NO];
+    [preferences setCSSOMViewScrollingAPIEnabled:NO];
     [preferences setSpatialNavigationEnabled:NO];
     [preferences setMetaRefreshEnabled:YES];
 
