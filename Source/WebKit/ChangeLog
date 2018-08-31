@@ -1,3 +1,11 @@
+2018-08-30  Tim Horton  <timothy_horton@apple.com>
+
+        One more build fix
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView shareSheetDidDismiss:]):
+        Actually tested this time.
+
 2018-08-30  Chris Dumez  <cdumez@apple.com>
 
         Add WKPageLoadFile SPI variant which returns a navigation object

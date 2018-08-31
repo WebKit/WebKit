@@ -4724,15 +4724,15 @@ static bool isAssistableInputType(InputType type)
 #endif
 }
 
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 - (void)shareSheetDidDismiss:(WKShareSheet *)shareSheet
 {
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     ASSERT(_shareSheet == shareSheet);
     
     [_shareSheet setDelegate:nil];
     _shareSheet = nil;
-#endif
 }
+#endif
 
 #pragma mark - UITextInputMultiDocument
 
