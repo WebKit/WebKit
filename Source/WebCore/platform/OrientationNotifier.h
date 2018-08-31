@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
 class OrientationNotifier {

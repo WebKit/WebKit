@@ -1,3 +1,53 @@
+2018-08-31  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Remove AVMediaCaptureSource
+        https://bugs.webkit.org/show_bug.cgi?id=189159
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, no change in functionality.
+
+        Refactor video capture to get rid of a base class we don't 
+        need any more.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/mac/AVMediaCaptureSource.h: Removed.
+        * platform/mediastream/mac/AVMediaCaptureSource.mm: Removed.
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        (WebCore::AVVideoCaptureSource::session const):
+        (WebCore::AVVideoCaptureSource::device const):
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::globaVideoCaptureSerialQueue):
+        (WebCore::AVVideoCaptureSource::AVVideoCaptureSource):
+        (WebCore::AVVideoCaptureSource::~AVVideoCaptureSource):
+        (WebCore::AVVideoCaptureSource::startProducingData):
+        (WebCore::AVVideoCaptureSource::stopProducingData):
+        (WebCore::AVVideoCaptureSource::beginConfiguration):
+        (WebCore::AVVideoCaptureSource::commitConfiguration):
+        (WebCore::AVVideoCaptureSource::settingsDidChange):
+        (WebCore::AVVideoCaptureSource::settings const):
+        (WebCore::AVVideoCaptureSource::capabilities const):
+        (WebCore::AVVideoCaptureSource::setPreset):
+        (WebCore::AVVideoCaptureSource::setupSession):
+        (WebCore::AVVideoCaptureSource::setupCaptureSession):
+        (WebCore::AVVideoCaptureSource::captureSessionIsRunningDidChange):
+        (WebCore::AVVideoCaptureSource::interrupted const):
+        (WebCore::AVVideoCaptureSource::captureSessionRuntimeError):
+        (WebCore::AVVideoCaptureSource::captureSessionBeginInterruption):
+        (WebCore::AVVideoCaptureSource::captureSessionEndInterruption):
+        (-[WebCoreAVVideoCaptureSourceObserver initWithCallback:]):
+        (-[WebCoreAVVideoCaptureSourceObserver disconnect]):
+        (-[WebCoreAVVideoCaptureSourceObserver addNotificationObservers]):
+        (-[WebCoreAVVideoCaptureSourceObserver removeNotificationObservers]):
+        (-[WebCoreAVVideoCaptureSourceObserver captureOutput:didOutputSampleBuffer:fromConnection:]):
+        (-[WebCoreAVVideoCaptureSourceObserver observeValueForKeyPath:ofObject:change:context:]):
+        (-[WebCoreAVVideoCaptureSourceObserver sessionRuntimeError:]):
+        (-[WebCoreAVVideoCaptureSourceObserver beginSessionInterrupted:]):
+        (-[WebCoreAVVideoCaptureSourceObserver endSessionInterrupted:]):
+        (WebCore::AVVideoCaptureSource::initializeCapabilities): Deleted.
+        (WebCore::AVVideoCaptureSource::initializeSupportedConstraints): Deleted.
+        (WebCore::AVVideoCaptureSource::updateSettings): Deleted.
+
 2018-08-31  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK Ubuntu LTS build fix after r235543.
