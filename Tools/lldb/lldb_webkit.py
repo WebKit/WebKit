@@ -612,7 +612,7 @@ class WTFOptionSetProvider:
         return None
 
     def update(self):
-        self.storage = self.valobj.GetChildMemberWithName('m_storage')  # May be uninitialized memory
+        self.storage = self.valobj.GetChildMemberWithName('m_storage')  # May be an invalid value.
         self._elements = []
         self.size = 0
 
@@ -624,7 +624,7 @@ class WTFOptionSetProvider:
         bitmask_with_all_options_set = sum(enumerator_value_to_name_map)
         bitmask = self.storage.GetValueAsUnsigned(0)
         if bitmask > bitmask_with_all_options_set:
-            return  # self.valobj is uninitialized memory
+            return  # Since this is an invalid value, return so the raw hex form is written out.
 
         # self.valobj looks like it contains a valid value.
         # Iterate from least significant bit to most significant bit.

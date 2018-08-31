@@ -1,3 +1,17 @@
+2018-08-31  Daniel Bates  <dabates@apple.com>
+
+        lldb-webkit: KeyError thrown for OptionSet with invalid value
+        https://bugs.webkit.org/show_bug.cgi?id=189070
+
+        Update comment to explain that we return early and do not compute the set of enumerators in the
+        OptionSet when the underlying value of the set is an invalid value.
+
+        Additionally, update the change log entry for r235482 to reflect the updated title for the bug
+        and to better describe the change that was made.
+
+        * lldb/lldb_webkit.py:
+        (WTFOptionSetProvider.update):
+
 2018-08-31  David Kilzer  <ddkilzer@apple.com>
 
         WebKitLauncher: Move WebKitLauncher.entitlements into Configurations directory
@@ -186,20 +200,20 @@
 
 2018-08-29  Daniel Bates  <dabates@apple.com>
 
-        lldb-webkit: KeyError thrown for uninitialized OptionSet
+        lldb-webkit: KeyError thrown for OptionSet with invalid value
         https://bugs.webkit.org/show_bug.cgi?id=189070
 
         Reviewed by Simon Fraser.
 
-        Do not compute what enumerators are in an uninitialized OptionSet. A local OptionSet variable
-        is only considered initialized when execution passes over its assignment regardless of whether
-        the variable is in scope.
+        Do not compute what enumerators are in an OptionSet with an invalid value. A local OptionSet
+        variable is only considered valid when execution passes over its assignment/constructor.
 
-        The LLDB Python API does not provide a way to determine whether an variable is initialized.
-        So, we use a simple heuristic: when the value of the OptionSet is greater than the value
-        of the bitmask with all enumerators set then we consider the OptionSet to be garbage (i.e.
-        uninitialized memory). When the variable is finally initialized LLDB will notify us to update
-        our state.
+        The LLDB Python API does not provide a way to determine whether a variable has a valid
+        value (SBValue.IsValid() does not seem to check if the actual bit pattern in memory for
+        a variable represents a valid value). So, we use a simple heuristic: when the value of
+        the OptionSet is greater than the value of the bitmask with all enumerators set then we
+        consider the OptionSet to be invalid. When the variable obtains a valid value then LLDB
+        will notify us to update our state.
 
         * lldb/lldb_webkit.py:
         (WTFOptionSetProvider.update):
