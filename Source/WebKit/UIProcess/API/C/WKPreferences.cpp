@@ -1428,6 +1428,15 @@ bool WKPreferencesGetPeerConnectionEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->peerConnectionEnabled();
 }
 
+void WKPreferencesSetWebRTCLegacyAPIEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetWebRTCLegacyAPIEnabled(WKPreferencesRef)
+{
+    return false;
+}
+
 void WKPreferencesSetWebRTCMDNSICECandidatesEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setMDNSICECandidatesEnabled(enabled);

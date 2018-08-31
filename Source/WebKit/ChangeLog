@@ -1,5 +1,24 @@
 2018-08-31  Frederic Wang  <fwang@igalia.com>
 
+        REGRESSION(r235484) _WKPreferencesGetWebRTCLegacyAPIEnabled symbol not found when running Safari with external SDK build
+        https://bugs.webkit.org/show_bug.cgi?id=189188
+
+        Reviewed by Youenn Fablet.
+
+        WebRTCLegacyAPI preference has been removed in r235484. However, the API is still used by
+        Safari when running external SDK builds. Hence we restore some dummy getter/setter for now.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetWebRTCLegacyAPIEnabled): no-op.
+        (WKPreferencesGetWebRTCLegacyAPIEnabled): Always return false.
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _webRTCLegacyAPIEnabled]): Always return false.
+        (-[WKPreferences _setWebRTCLegacyAPIEnabled:]): no-op.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
+2018-08-31  Frederic Wang  <fwang@igalia.com>
+
         Bug 182053 - [CSSOM View] Implement standard behavior for scrollingElement
         https://bugs.webkit.org/show_bug.cgi?id=182053
 
