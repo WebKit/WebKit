@@ -78,8 +78,8 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
     VisibleSelection oldSelection = frame->selection().selection();
     OptionSet<TemporarySelectionOption> temporarySelectionOptions;
 #if PLATFORM(IOS)
-    temporarySelectionOptions |= TemporarySelectionOptionIgnoreSelectionChanges;
-    temporarySelectionOptions |= TemporarySelectionOptionEnableAppearanceUpdates;
+    temporarySelectionOptions.add(TemporarySelectionOptionIgnoreSelectionChanges);
+    temporarySelectionOptions.add(TemporarySelectionOptionEnableAppearanceUpdates);
 #endif
     TemporarySelectionChange selectionChange(*frame, { range }, temporarySelectionOptions);
 

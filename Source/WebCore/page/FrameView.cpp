@@ -140,11 +140,11 @@ static OptionSet<RenderLayer::UpdateLayerPositionsFlag> updateLayerPositionFlags
 {
     auto flags = RenderLayer::updateLayerPositionsDefaultFlags();
     if (didFullRepaint) {
-        flags -= RenderLayer::CheckForRepaint;
-        flags |= RenderLayer::NeedsFullRepaintInBacking;
+        flags.remove(RenderLayer::CheckForRepaint);
+        flags.add(RenderLayer::NeedsFullRepaintInBacking);
     }
     if (isRelayoutingSubtree && layer->enclosingPaginationLayer(RenderLayer::IncludeCompositedPaginatedLayers))
-        flags |= RenderLayer::UpdatePagination;
+        flags.add(RenderLayer::UpdatePagination);
     return flags;
 }
 
@@ -4068,18 +4068,18 @@ void FrameView::willPaintContents(GraphicsContext& context, const IntRect&, Pain
     
     if (FrameView* parentView = parentFrameView()) {
         if (parentView->paintBehavior() & PaintBehavior::FlattenCompositingLayers)
-            m_paintBehavior |= PaintBehavior::FlattenCompositingLayers;
+            m_paintBehavior.add(PaintBehavior::FlattenCompositingLayers);
         
         if (parentView->paintBehavior() & PaintBehavior::Snapshotting)
-            m_paintBehavior |= PaintBehavior::Snapshotting;
+            m_paintBehavior.add(PaintBehavior::Snapshotting);
         
         if (parentView->paintBehavior() & PaintBehavior::TileFirstPaint)
-            m_paintBehavior |= PaintBehavior::TileFirstPaint;
+            m_paintBehavior.add(PaintBehavior::TileFirstPaint);
     }
 
     if (document->printing()) {
-        m_paintBehavior |= PaintBehavior::FlattenCompositingLayers;
-        m_paintBehavior |= PaintBehavior::Snapshotting;
+        m_paintBehavior.add(PaintBehavior::FlattenCompositingLayers);
+        m_paintBehavior.add(PaintBehavior::Snapshotting);
     }
 
     paintingState.isFlatteningPaintOfRootFrame = (m_paintBehavior & PaintBehavior::FlattenCompositingLayers) && !frame().ownerElement();

@@ -47,15 +47,15 @@ PlatformMouseEvent::PlatformMouseEvent(GdkEventButton* event)
     m_modifierFlags = 0;
 
     if (event->state & GDK_SHIFT_MASK)
-        m_modifiers |= PlatformEvent::Modifier::ShiftKey;
+        m_modifiers.add(PlatformEvent::Modifier::ShiftKey);
     if (event->state & GDK_CONTROL_MASK)
-        m_modifiers |= PlatformEvent::Modifier::CtrlKey;
+        m_modifiers.add(PlatformEvent::Modifier::CtrlKey);
     if (event->state & GDK_MOD1_MASK)
-        m_modifiers |= PlatformEvent::Modifier::AltKey;
+        m_modifiers.add(PlatformEvent::Modifier::AltKey);
     if (event->state & GDK_META_MASK)
-        m_modifiers |= PlatformEvent::Modifier::MetaKey;
+        m_modifiers.add(PlatformEvent::Modifier::MetaKey);
     if (PlatformKeyboardEvent::modifiersContainCapsLock(event->state))
-        m_modifiers |= PlatformEvent::Modifier::CapsLockKey;
+        m_modifiers.add(PlatformEvent::Modifier::CapsLockKey);
 
     switch (event->type) {
     case GDK_BUTTON_PRESS:
@@ -96,15 +96,15 @@ PlatformMouseEvent::PlatformMouseEvent(GdkEventMotion* motion)
     m_modifierFlags = 0;
 
     if (motion->state & GDK_SHIFT_MASK)
-        m_modifiers |= PlatformEvent::Modifier::ShiftKey;
+        m_modifiers.add(PlatformEvent::Modifier::ShiftKey);
     if (motion->state & GDK_CONTROL_MASK)
-        m_modifiers |= PlatformEvent::Modifier::CtrlKey;
+        m_modifiers.add(PlatformEvent::Modifier::CtrlKey);
     if (motion->state & GDK_MOD1_MASK)
-        m_modifiers |= PlatformEvent::Modifier::AltKey;
+        m_modifiers.add(PlatformEvent::Modifier::AltKey);
     if (motion->state & GDK_META_MASK)
-        m_modifiers |= PlatformEvent::Modifier::MetaKey;
+        m_modifiers.add(PlatformEvent::Modifier::MetaKey);
     if (PlatformKeyboardEvent::modifiersContainCapsLock(motion->state))
-        m_modifiers |= PlatformEvent::Modifier::CapsLockKey;
+        m_modifiers.add(PlatformEvent::Modifier::CapsLockKey);
 
     switch (motion->type) {
     case GDK_MOTION_NOTIFY:

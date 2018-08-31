@@ -92,13 +92,13 @@ std::unique_ptr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRe
 
     auto paintBehavior = state.paintBehavior;
     if (options & SnapshotOptionsForceBlackText)
-        paintBehavior |= PaintBehavior::ForceBlackText;
+        paintBehavior.add(PaintBehavior::ForceBlackText);
     if (options & SnapshotOptionsPaintSelectionOnly)
-        paintBehavior |= PaintBehavior::SelectionOnly;
+        paintBehavior.add(PaintBehavior::SelectionOnly);
     if (options & SnapshotOptionsPaintSelectionAndBackgroundsOnly)
-        paintBehavior |= PaintBehavior::SelectionAndBackgroundsOnly;
+        paintBehavior.add(PaintBehavior::SelectionAndBackgroundsOnly);
     if (options & SnapshotOptionsPaintEverythingExcludingSelection)
-        paintBehavior |= PaintBehavior::ExcludeSelection;
+        paintBehavior.add(PaintBehavior::ExcludeSelection);
 
     // Other paint behaviors are set by paintContentsForSnapshot.
     frame.view()->setPaintBehavior(paintBehavior);

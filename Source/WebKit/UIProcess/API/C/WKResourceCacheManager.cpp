@@ -40,12 +40,10 @@ WKTypeID WKResourceCacheManagerGetTypeID()
 
 static OptionSet<WebsiteDataType> toWebsiteDataTypes(WKResourceCachesToClear cachesToClear)
 {
-    OptionSet<WebsiteDataType> websiteDataTypes;
-
-    websiteDataTypes |= WebsiteDataType::MemoryCache;
+    OptionSet<WebsiteDataType> websiteDataTypes { WebsiteDataType::MemoryCache };
 
     if (cachesToClear == WKResourceCachesToClearAll)
-        websiteDataTypes |= WebsiteDataType::DiskCache;
+        websiteDataTypes.add(WebsiteDataType::DiskCache);
 
     return websiteDataTypes;
 }

@@ -1643,11 +1643,11 @@ void Page::setIsVisible(bool isVisible)
     auto state = m_activityState;
 
     if (isVisible) {
-        state -= ActivityState::IsVisuallyIdle;
-        state |= { ActivityState::IsVisible, ActivityState::IsVisibleOrOccluded };
+        state.remove(ActivityState::IsVisuallyIdle);
+        state.add({ ActivityState::IsVisible, ActivityState::IsVisibleOrOccluded });
     } else {
-        state |= ActivityState::IsVisuallyIdle;
-        state -= { ActivityState::IsVisible, ActivityState::IsVisibleOrOccluded };
+        state.add(ActivityState::IsVisuallyIdle);
+        state.remove({ ActivityState::IsVisible, ActivityState::IsVisibleOrOccluded });
     }
     setActivityState(state);
 }

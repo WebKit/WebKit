@@ -1,3 +1,15 @@
+2018-08-31  Antti Koivisto  <antti@apple.com>
+
+        Replace OptionSet |= and -= operators with add() and remove() functions
+        https://bugs.webkit.org/show_bug.cgi?id=189169
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _drawRect:contentsOnly:]):
+        * WebView/WebView.mm:
+        (coreOptions):
+
 2018-08-31  Frederic Wang  <fwang@igalia.com>
 
         Bug 182053 - [CSSOM View] Implement standard behavior for scrollingElement

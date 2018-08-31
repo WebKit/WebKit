@@ -7178,9 +7178,9 @@ OptionSet<StyleColor::Options> Document::styleColorOptions() const
 {
     OptionSet<StyleColor::Options> options;
     if (useSystemAppearance())
-        options |= StyleColor::Options::UseSystemAppearance;
+        options.add(StyleColor::Options::UseSystemAppearance);
     if (useDarkAppearance())
-        options |= StyleColor::Options::UseDarkAppearance;
+        options.add(StyleColor::Options::UseDarkAppearance);
     return options;
 }
 

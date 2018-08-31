@@ -666,15 +666,15 @@ OptionSet<PlatformEvent::Modifier> modifiersForEvent(NSEvent *event)
     OptionSet<PlatformEvent::Modifier> modifiers;
 
     if (event.modifierFlags & NSEventModifierFlagShift)
-        modifiers |= PlatformEvent::Modifier::ShiftKey;
+        modifiers.add(PlatformEvent::Modifier::ShiftKey);
     if (event.modifierFlags & NSEventModifierFlagControl)
-        modifiers |= PlatformEvent::Modifier::CtrlKey;
+        modifiers.add(PlatformEvent::Modifier::CtrlKey);
     if (event.modifierFlags & NSEventModifierFlagOption)
-        modifiers |= PlatformEvent::Modifier::AltKey;
+        modifiers.add(PlatformEvent::Modifier::AltKey);
     if (event.modifierFlags & NSEventModifierFlagCommand)
-        modifiers |= PlatformEvent::Modifier::MetaKey;
+        modifiers.add(PlatformEvent::Modifier::MetaKey);
     if (event.modifierFlags & NSEventModifierFlagCapsLock)
-        modifiers |= PlatformEvent::Modifier::CapsLockKey;
+        modifiers.add(PlatformEvent::Modifier::CapsLockKey);
 
     return modifiers;
 }

@@ -1,3 +1,58 @@
+2018-08-31  Antti Koivisto  <antti@apple.com>
+
+        Replace OptionSet |= and -= operators with add() and remove() functions
+        https://bugs.webkit.org/show_bug.cgi?id=189169
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::notePropertiesChanged):
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformMouseEvent::WebKit2PlatformMouseEvent):
+        (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent):
+        (WebKit::WebKit2PlatformKeyboardEvent::WebKit2PlatformKeyboardEvent):
+        (WebKit::WebKit2PlatformTouchEvent::WebKit2PlatformTouchEvent):
+        (WebKit::WebKit2PlatformGestureEvent::WebKit2PlatformGestureEvent):
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::applyToDocumentLoader):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageReload):
+        * UIProcess/API/C/WKResourceCacheManager.cpp:
+        (toWebsiteDataTypes):
+        * UIProcess/API/C/WKWebsitePolicies.cpp:
+        (WKWebsitePoliciesSetAllowedAutoplayQuirks):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView reload]):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordInternal.h:
+        (WebKit::toWebsiteDataTypes):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _fetchDataRecordsOfTypes:withOptions:completionHandler:]):
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies setAllowedAutoplayQuirks:]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::viewDidMoveToWindow):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateActivityState):
+        (WebKit::WebPageProxy::activityStateDidChange):
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        * UIProcess/WebsiteData/WebsiteDataRecord.cpp:
+        (WebKit::WebsiteDataRecord::add):
+        (WebKit::WebsiteDataRecord::addCookieHostName):
+        (WebKit::WebsiteDataRecord::addPluginDataHostName):
+        (WebKit::WebsiteDataRecord::addHSTSCacheHostname):
+        (WebKit::WebsiteDataRecord::addOriginWithCredential):
+        * UIProcess/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController inspectorWKWebViewReload:]):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::imageForRect):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::renderedImage):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::core):
+        (WebKit::FindController::findString):
+
 2018-08-31  Chris Dumez  <cdumez@apple.com>
 
         Rename ShouldProcessSwapIfPossible to ProcessSwapRequestedByClient for clarity

@@ -257,9 +257,9 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomicSt
         const bool shouldFoldCase = true;
         SpaceSplitString relValue(value, shouldFoldCase);
         if (relValue.contains(noReferrer))
-            m_linkRelations |= Relation::NoReferrer;
+            m_linkRelations.add(Relation::NoReferrer);
         if (relValue.contains(noOpener))
-            m_linkRelations |= Relation::NoOpener;
+            m_linkRelations.add(Relation::NoOpener);
         if (m_relList)
             m_relList->associatedAttributeValueChanged(value);
     }

@@ -119,7 +119,7 @@ Color CSSParser::parseSystemColor(const String& string, const CSSParserContext* 
 
     OptionSet<StyleColor::Options> options;
     if (context && context->useSystemAppearance)
-        options |= StyleColor::Options::UseSystemAppearance;
+        options.add(StyleColor::Options::UseSystemAppearance);
     return RenderTheme::singleton().systemColor(id, options);
 }
 

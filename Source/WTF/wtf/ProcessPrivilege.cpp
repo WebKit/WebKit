@@ -57,12 +57,12 @@ bool hasProcessPrivilege(ProcessPrivilege privilege)
 
 void addProcessPrivilege(ProcessPrivilege privilege)
 {
-    processPrivileges() |= privilege;
+    processPrivileges().add(privilege);
 }
 
 void removeProcessPrivilege(ProcessPrivilege privilege)
 {
-    processPrivileges() = processPrivileges() - privilege;
+    processPrivileges().remove(privilege);
 }
 
 } // namespace WTF

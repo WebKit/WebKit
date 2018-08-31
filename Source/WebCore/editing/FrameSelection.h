@@ -133,7 +133,7 @@ public:
     {
         OptionSet<SetSelectionOption> options { CloseTyping, ClearTypingStyle };
         if (userTriggered == UserTriggered)
-            options |= { RevealSelection, FireSelectEvent, IsUserTriggered };
+            options.add({ RevealSelection, FireSelectEvent, IsUserTriggered });
         return options;
     }
 

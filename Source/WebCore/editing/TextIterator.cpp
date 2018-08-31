@@ -2097,7 +2097,7 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
         // Characters in the separator category never really occur at the beginning of a word,
         // so if the target begins with such a character, we just ignore the AtWordStart option.
         if (isSeparator(targetFirstCharacter)) {
-            m_options -= AtWordStarts;
+            m_options.remove(AtWordStarts);
             m_needsMoreContext = false;
         }
     }

@@ -2164,89 +2164,89 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
     auto& renderer = rendererForCompositingTests(layer);
 
     if (requiresCompositingForTransform(renderer))
-        reasons |= CompositingReason::Transform3D;
+        reasons.add(CompositingReason::Transform3D);
 
     if (requiresCompositingForVideo(renderer))
-        reasons |= CompositingReason::Video;
+        reasons.add(CompositingReason::Video);
     else if (requiresCompositingForCanvas(renderer))
-        reasons |= CompositingReason::Canvas;
+        reasons.add(CompositingReason::Canvas);
     else if (requiresCompositingForPlugin(renderer))
-        reasons |= CompositingReason::Plugin;
+        reasons.add(CompositingReason::Plugin);
     else if (requiresCompositingForFrame(renderer))
-        reasons |= CompositingReason::IFrame;
+        reasons.add(CompositingReason::IFrame);
 
     if ((canRender3DTransforms() && renderer.style().backfaceVisibility() == BackfaceVisibility::Hidden))
-        reasons |= CompositingReason::BackfaceVisibilityHidden;
+        reasons.add(CompositingReason::BackfaceVisibilityHidden);
 
     if (clipsCompositingDescendants(*renderer.layer()))
-        reasons |= CompositingReason::ClipsCompositingDescendants;
+        reasons.add(CompositingReason::ClipsCompositingDescendants);
 
     if (requiresCompositingForAnimation(renderer))
-        reasons |= CompositingReason::Animation;
+        reasons.add(CompositingReason::Animation);
 
     if (requiresCompositingForFilters(renderer))
-        reasons |= CompositingReason::Filters;
+        reasons.add(CompositingReason::Filters);
 
     if (requiresCompositingForWillChange(renderer))
-        reasons |= CompositingReason::WillChange;
+        reasons.add(CompositingReason::WillChange);
 
     if (requiresCompositingForPosition(renderer, *renderer.layer()))
-        reasons |= renderer.isFixedPositioned() ? CompositingReason::PositionFixed : CompositingReason::PositionSticky;
+        reasons.add(renderer.isFixedPositioned() ? CompositingReason::PositionFixed : CompositingReason::PositionSticky);
 
 #if PLATFORM(IOS)
     if (requiresCompositingForScrolling(*renderer.layer()))
-        reasons |= CompositingReason::OverflowScrollingTouch;
+        reasons.add(CompositingReason::OverflowScrollingTouch);
 #endif
 
     if (requiresCompositingForOverflowScrolling(*renderer.layer()))
-        reasons |= CompositingReason::OverflowScrollingTouch;
+        reasons.add(CompositingReason::OverflowScrollingTouch);
 
     switch (renderer.layer()->indirectCompositingReason()) {
     case RenderLayer::IndirectCompositingReason::None:
         break;
     case RenderLayer::IndirectCompositingReason::Stacking:
-        reasons |= CompositingReason::Stacking;
+        reasons.add(CompositingReason::Stacking);
         break;
     case RenderLayer::IndirectCompositingReason::Overlap:
-        reasons |= CompositingReason::Overlap;
+        reasons.add(CompositingReason::Overlap);
         break;
     case RenderLayer::IndirectCompositingReason::BackgroundLayer:
-        reasons |= CompositingReason::NegativeZIndexChildren;
+        reasons.add(CompositingReason::NegativeZIndexChildren);
         break;
     case RenderLayer::IndirectCompositingReason::GraphicalEffect:
         if (renderer.hasTransform())
-            reasons |= CompositingReason::TransformWithCompositedDescendants;
+            reasons.add(CompositingReason::TransformWithCompositedDescendants);
 
         if (renderer.isTransparent())
-            reasons |= CompositingReason::OpacityWithCompositedDescendants;
+            reasons.add(CompositingReason::OpacityWithCompositedDescendants);
 
         if (renderer.hasMask())
-            reasons |= CompositingReason::MaskWithCompositedDescendants;
+            reasons.add(CompositingReason::MaskWithCompositedDescendants);
 
         if (renderer.hasReflection())
-            reasons |= CompositingReason::ReflectionWithCompositedDescendants;
+            reasons.add(CompositingReason::ReflectionWithCompositedDescendants);
 
         if (renderer.hasFilter() || renderer.hasBackdropFilter())
-            reasons |= CompositingReason::FilterWithCompositedDescendants;
+            reasons.add(CompositingReason::FilterWithCompositedDescendants);
 
 #if ENABLE(CSS_COMPOSITING)
         if (layer.isolatesCompositedBlending())
-            reasons |= CompositingReason::IsolatesCompositedBlendingDescendants;
+            reasons.add(CompositingReason::IsolatesCompositedBlendingDescendants);
 
         if (layer.hasBlendMode())
-            reasons |= CompositingReason::BlendingWithCompositedDescendants;
+            reasons.add(CompositingReason::BlendingWithCompositedDescendants);
 #endif
         break;
     case RenderLayer::IndirectCompositingReason::Perspective:
-        reasons |= CompositingReason::Perspective;
+        reasons.add(CompositingReason::Perspective);
         break;
     case RenderLayer::IndirectCompositingReason::Preserve3D:
-        reasons |= CompositingReason::Preserve3D;
+        reasons.add(CompositingReason::Preserve3D);
         break;
     }
 
     if (inCompositingMode() && renderer.layer()->isRenderViewLayer())
-        reasons |= CompositingReason::Root;
+        reasons.add(CompositingReason::Root);
 
     return reasons;
 }
@@ -3625,10 +3625,10 @@ void RenderLayerCompositor::updateScrollCoordinatedStatus(RenderLayer& layer, Op
 {
     OptionSet<LayerScrollCoordinationRole> coordinationRoles;
     if (isViewportConstrainedFixedOrStickyLayer(layer))
-        coordinationRoles |= ViewportConstrained;
+        coordinationRoles.add(ViewportConstrained);
 
     if (useCoordinatedScrollingForLayer(layer))
-        coordinationRoles |= Scrolling;
+        coordinationRoles.add(Scrolling);
 
     if (layer.isComposited())
         layer.backing()->setIsScrollCoordinatedWithViewportConstrainedRole(coordinationRoles.contains(ViewportConstrained));

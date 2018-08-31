@@ -3832,11 +3832,11 @@ HRESULT WebView::searchFor(_In_ BSTR str, BOOL forward, BOOL caseFlag, BOOL wrap
 
     FindOptions options;
     if (!caseFlag)
-        options |= CaseInsensitive;
+        options.add(CaseInsensitive);
     if (!forward)
-        options |= Backwards;
+        options.add(Backwards);
     if (wrapFlag)
-        options |= WrapAround;
+        options.add(WrapAround);
     *found = m_page->findString(toString(str), options);
     return S_OK;
 }
@@ -3901,7 +3901,7 @@ HRESULT WebView::markAllMatchesForText(_In_ BSTR str, BOOL caseSensitive, BOOL h
 
     WebCore::FindOptions options;
     if (!caseSensitive)
-        options |= WebCore::CaseInsensitive;
+        options.add(WebCore::CaseInsensitive);
 
     *matches = m_page->markAllMatchesForText(toString(str), options, highlight, limit);
     return S_OK;
@@ -7840,17 +7840,17 @@ HRESULT WebView::findString(_In_ BSTR string, WebFindOptions options, _Deref_opt
     WebCore::FindOptions coreOptions;
 
     if (options & WebFindOptionsCaseInsensitive)
-        coreOptions |= WebCore::CaseInsensitive;
+        coreOptions.add(WebCore::CaseInsensitive);
     if (options & WebFindOptionsAtWordStarts)
-        coreOptions |= WebCore::AtWordStarts;
+        coreOptions.add(WebCore::AtWordStarts);
     if (options & WebFindOptionsTreatMedialCapitalAsWordStart)
-        coreOptions |= WebCore::TreatMedialCapitalAsWordStart;
+        coreOptions.add(WebCore::TreatMedialCapitalAsWordStart);
     if (options & WebFindOptionsBackwards)
-        coreOptions |= WebCore::Backwards;
+        coreOptions.add(WebCore::Backwards);
     if (options & WebFindOptionsWrapAround)
-        coreOptions |= WebCore::WrapAround;
+        coreOptions.add(WebCore::WrapAround);
     if (options & WebFindOptionsStartInSelection)
-        coreOptions |= WebCore::StartInSelection;
+        coreOptions.add(WebCore::StartInSelection);
 
     *found = m_page->findString(toString(string), coreOptions);
     return S_OK;

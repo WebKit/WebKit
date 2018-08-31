@@ -120,7 +120,7 @@ OptionSet<DisabledAdaptations> parseDisabledAdaptations(const String& disabledAd
     for (auto& name : disabledAdaptationsString.split(',')) {
         auto normalizedName = name.stripWhiteSpace().convertToASCIILowercase();
         if (normalizedName == watchAdaptationName())
-            disabledAdaptations |= DisabledAdaptations::Watch;
+            disabledAdaptations.add(DisabledAdaptations::Watch);
     }
     return disabledAdaptations;
 }

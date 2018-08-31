@@ -571,17 +571,17 @@ FindOptions coreOptions(WebFindOptions options)
 {
     FindOptions findOptions;
     if (options & WebFindOptionsCaseInsensitive)
-        findOptions |= CaseInsensitive;
+        findOptions.add(CaseInsensitive);
     if (options & WebFindOptionsAtWordStarts)
-        findOptions |= AtWordStarts;
+        findOptions.add(AtWordStarts);
     if (options & WebFindOptionsTreatMedialCapitalAsWordStart)
-        findOptions |= TreatMedialCapitalAsWordStart;
+        findOptions.add(TreatMedialCapitalAsWordStart);
     if (options & WebFindOptionsBackwards)
-        findOptions |= Backwards;
+        findOptions.add(Backwards);
     if (options & WebFindOptionsWrapAround)
-        findOptions |= WrapAround;
+        findOptions.add(WrapAround);
     if (options & WebFindOptionsStartInSelection)
-        findOptions |= StartInSelection;
+        findOptions.add(StartInSelection);
     return findOptions;
 }
 

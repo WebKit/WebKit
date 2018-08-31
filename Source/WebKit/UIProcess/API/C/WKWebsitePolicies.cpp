@@ -83,13 +83,13 @@ void WKWebsitePoliciesSetAllowedAutoplayQuirks(WKWebsitePoliciesRef websitePolic
 {
     OptionSet<WebsiteAutoplayQuirk> quirks;
     if (allowedQuirks & kWKWebsiteAutoplayQuirkInheritedUserGestures)
-        quirks |= WebsiteAutoplayQuirk::InheritedUserGestures;
+        quirks.add(WebsiteAutoplayQuirk::InheritedUserGestures);
 
     if (allowedQuirks & kWKWebsiteAutoplayQuirkSynthesizedPauseEvents)
-        quirks |= WebsiteAutoplayQuirk::SynthesizedPauseEvents;
+        quirks.add(WebsiteAutoplayQuirk::SynthesizedPauseEvents);
 
     if (allowedQuirks & kWKWebsiteAutoplayQuirkArbitraryUserGestures)
-        quirks |= WebsiteAutoplayQuirk::ArbitraryUserGestures;
+        quirks.add(WebsiteAutoplayQuirk::ArbitraryUserGestures);
 
     toImpl(websitePolicies)->setAllowedAutoplayQuirks(quirks);
 }

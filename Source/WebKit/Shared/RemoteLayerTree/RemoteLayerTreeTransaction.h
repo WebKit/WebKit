@@ -116,7 +116,7 @@ public:
 
         void notePropertiesChanged(OptionSet<LayerChange> changeFlags)
         {
-            changedProperties |= changeFlags;
+            changedProperties.add(changeFlags);
         }
 
         void resetChangedProperties()

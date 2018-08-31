@@ -187,15 +187,15 @@ void FrameSelection::moveWithoutValidationTo(const Position& base, const Positio
     AXTextStateChangeIntent newIntent = intent.type == AXTextStateChangeTypeUnknown ? AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, false }) : intent;
     auto options = defaultSetSelectionOptions();
     if (!shouldSetFocus)
-        options |= DoNotSetFocus;
+        options.add(DoNotSetFocus);
     switch (revealMode) {
     case SelectionRevealMode::DoNotReveal:
         break;
     case SelectionRevealMode::Reveal:
-        options |= RevealSelection;
+        options.add(RevealSelection);
         break;
     case SelectionRevealMode::RevealUpToMainFrame:
-        options |= RevealSelectionUpToMainFrame;
+        options.add(RevealSelectionUpToMainFrame);
         break;
     }
     setSelection(newSelection, options, newIntent);
@@ -1995,7 +1995,7 @@ bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool clo
 
     OptionSet<SetSelectionOption> selectionOptions {  ClearTypingStyle };
     if (closeTyping)
-        selectionOptions |= CloseTyping;
+        selectionOptions.add(CloseTyping);
 
     if (userTriggered == UserTriggered) {
         FrameSelection trialFrameSelection;
@@ -2005,7 +2005,7 @@ bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool clo
         if (!shouldChangeSelection(trialFrameSelection.selection()))
             return false;
 
-        selectionOptions |= IsUserTriggered;
+        selectionOptions.add(IsUserTriggered);
     }
 
     setSelection(newSelection, selectionOptions);

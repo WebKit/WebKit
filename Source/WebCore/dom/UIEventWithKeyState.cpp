@@ -27,17 +27,17 @@ auto UIEventWithKeyState::modifiersFromInitializer(const EventModifierInit& init
 {
     OptionSet<Modifier> result;
     if (initializer.ctrlKey)
-        result |= Modifier::CtrlKey;
+        result.add(Modifier::CtrlKey);
     if (initializer.altKey)
-        result |= Modifier::AltKey;
+        result.add(Modifier::AltKey);
     if (initializer.shiftKey)
-        result |= Modifier::ShiftKey;
+        result.add(Modifier::ShiftKey);
     if (initializer.metaKey)
-        result |= Modifier::MetaKey;
+        result.add(Modifier::MetaKey);
     if (initializer.modifierAltGraph)
-        result |= Modifier::AltGraphKey;
+        result.add(Modifier::AltGraphKey);
     if (initializer.modifierCapsLock)
-        result |= Modifier::CapsLockKey;
+        result.add(Modifier::CapsLockKey);
     return result;
 }
 
@@ -63,15 +63,15 @@ void UIEventWithKeyState::setModifierKeys(bool ctrlKey, bool altKey, bool shiftK
 {
     OptionSet<Modifier> result;
     if (ctrlKey)
-        result |= Modifier::CtrlKey;
+        result.add(Modifier::CtrlKey);
     if (altKey)
-        result |= Modifier::AltKey;
+        result.add(Modifier::AltKey);
     if (shiftKey)
-        result |= Modifier::ShiftKey;
+        result.add(Modifier::ShiftKey);
     if (metaKey)
-        result |= Modifier::MetaKey;
+        result.add(Modifier::MetaKey);
     if (altGraphKey)
-        result |= Modifier::AltGraphKey;
+        result.add(Modifier::AltGraphKey);
     m_modifiers = result;
 }
 

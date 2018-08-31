@@ -114,12 +114,12 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
     OptionSet<NetworkCache::Cache::Option> cacheOptions { NetworkCache::Cache::Option::RegisterNotify };
     if (parameters.shouldEnableNetworkCacheEfficacyLogging)
-        cacheOptions |= NetworkCache::Cache::Option::EfficacyLogging;
+        cacheOptions.add(NetworkCache::Cache::Option::EfficacyLogging);
     if (parameters.shouldUseTestingNetworkSession)
-        cacheOptions |= NetworkCache::Cache::Option::TestingMode;
+        cacheOptions.add(NetworkCache::Cache::Option::TestingMode);
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     if (parameters.shouldEnableNetworkCacheSpeculativeRevalidation)
-        cacheOptions |= NetworkCache::Cache::Option::SpeculativeRevalidation;
+        cacheOptions.add(NetworkCache::Cache::Option::SpeculativeRevalidation);
 #endif
 
     m_cache = NetworkCache::Cache::open(m_diskCacheDirectory, cacheOptions);

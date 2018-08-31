@@ -218,9 +218,9 @@ void SpellChecker::didCheckSucceed(int sequence, const Vector<TextCheckingResult
     if (requestData.sequence() == sequence) {
         OptionSet<DocumentMarker::MarkerType> markerTypes;
         if (requestData.checkingTypes().contains(TextCheckingType::Spelling))
-            markerTypes |= DocumentMarker::Spelling;
+            markerTypes.add(DocumentMarker::Spelling);
         if (requestData.checkingTypes().contains(TextCheckingType::Grammar))
-            markerTypes |= DocumentMarker::Grammar;
+            markerTypes.add(DocumentMarker::Grammar);
         if (!markerTypes.isEmpty())
             m_frame.document()->markers().removeMarkers(&m_processingRequest->checkingRange(), markerTypes);
     }

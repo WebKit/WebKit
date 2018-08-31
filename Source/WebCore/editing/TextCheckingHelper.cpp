@@ -353,7 +353,7 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
                 Vector<TextCheckingResult> results;
                 OptionSet<TextCheckingType> checkingTypes { TextCheckingType::Spelling };
                 if (checkGrammar)
-                    checkingTypes |= TextCheckingType::Grammar;
+                    checkingTypes.add(TextCheckingType::Grammar);
                 VisibleSelection currentSelection;
                 if (Frame* frame = paragraphRange->ownerDocument().frame())
                     currentSelection = frame->selection().selection();
@@ -587,7 +587,7 @@ Vector<String> TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange(bool
     Vector<TextCheckingResult> results;
     OptionSet<TextCheckingType> checkingTypes { TextCheckingType::Spelling };
     if (checkGrammar)
-        checkingTypes |= TextCheckingType::Grammar;
+        checkingTypes.add(TextCheckingType::Grammar);
     VisibleSelection currentSelection;
     if (Frame* frame = m_range->ownerDocument().frame())
         currentSelection = frame->selection().selection();

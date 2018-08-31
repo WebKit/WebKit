@@ -98,13 +98,13 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     const auto& allowedQuirks = websitePolicies.allowedAutoplayQuirks;
     
     if (allowedQuirks.contains(WebsiteAutoplayQuirk::InheritedUserGestures))
-        quirks |= WebCore::AutoplayQuirk::InheritedUserGestures;
+        quirks.add(WebCore::AutoplayQuirk::InheritedUserGestures);
     
     if (allowedQuirks.contains(WebsiteAutoplayQuirk::SynthesizedPauseEvents))
-        quirks |= WebCore::AutoplayQuirk::SynthesizedPauseEvents;
+        quirks.add(WebCore::AutoplayQuirk::SynthesizedPauseEvents);
     
     if (allowedQuirks.contains(WebsiteAutoplayQuirk::ArbitraryUserGestures))
-        quirks |= WebCore::AutoplayQuirk::ArbitraryUserGestures;
+        quirks.add(WebCore::AutoplayQuirk::ArbitraryUserGestures);
 
     documentLoader.setAllowedAutoplayQuirks(quirks);
 

@@ -961,7 +961,7 @@ static void validate(WKWebViewConfiguration *configuration)
 {
     OptionSet<WebCore::ReloadOption> reloadOptions;
     if (linkedOnOrAfter(WebKit::SDKVersion::FirstWithExpiredOnlyReloadBehavior))
-        reloadOptions |= WebCore::ReloadOption::ExpiredOnly;
+        reloadOptions.add(WebCore::ReloadOption::ExpiredOnly);
 
     return wrapper(_page->reload(reloadOptions));
 }

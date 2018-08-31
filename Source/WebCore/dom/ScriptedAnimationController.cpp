@@ -121,7 +121,7 @@ void ScriptedAnimationController::addThrottlingReason(ThrottlingReason reason)
     if (m_throttlingReasons.contains(reason))
         return;
 
-    m_throttlingReasons |= reason;
+    m_throttlingReasons.add(reason);
 
     RELEASE_LOG_IF_ALLOWED("addThrottlingReason(%s) -> %s", throttlingReasonToString(reason), throttlingReasonsToString(m_throttlingReasons).utf8().data());
 
@@ -140,7 +140,7 @@ void ScriptedAnimationController::removeThrottlingReason(ThrottlingReason reason
     if (!m_throttlingReasons.contains(reason))
         return;
 
-    m_throttlingReasons -= reason;
+    m_throttlingReasons.remove(reason);
 
     RELEASE_LOG_IF_ALLOWED("removeThrottlingReason(%s) -> %s", throttlingReasonToString(reason), throttlingReasonsToString(m_throttlingReasons).utf8().data());
 

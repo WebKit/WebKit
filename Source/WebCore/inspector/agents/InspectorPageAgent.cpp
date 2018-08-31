@@ -319,9 +319,9 @@ void InspectorPageAgent::reload(ErrorString&, const bool* optionalReloadFromOrig
 
     OptionSet<ReloadOption> reloadOptions;
     if (reloadFromOrigin)
-        reloadOptions |= ReloadOption::FromOrigin;
+        reloadOptions.add(ReloadOption::FromOrigin);
     if (!revalidateAllResources)
-        reloadOptions |= ReloadOption::ExpiredOnly;
+        reloadOptions.add(ReloadOption::ExpiredOnly);
 
     m_page.mainFrame().loader().reload(reloadOptions);
 }

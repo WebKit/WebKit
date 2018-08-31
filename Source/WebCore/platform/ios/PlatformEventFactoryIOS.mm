@@ -43,15 +43,15 @@ static OptionSet<PlatformEvent::Modifier> modifiersForEvent(WebEvent *event)
     OptionSet<PlatformEvent::Modifier> modifiers;
 
     if (event.modifierFlags & WebEventFlagMaskShift)
-        modifiers |= PlatformEvent::Modifier::ShiftKey;
+        modifiers.add(PlatformEvent::Modifier::ShiftKey);
     if (event.modifierFlags & WebEventFlagMaskControl)
-        modifiers |= PlatformEvent::Modifier::CtrlKey;
+        modifiers.add(PlatformEvent::Modifier::CtrlKey);
     if (event.modifierFlags & WebEventFlagMaskAlternate)
-        modifiers |= PlatformEvent::Modifier::AltKey;
+        modifiers.add(PlatformEvent::Modifier::AltKey);
     if (event.modifierFlags & WebEventFlagMaskCommand)
-        modifiers |= PlatformEvent::Modifier::MetaKey;
+        modifiers.add(PlatformEvent::Modifier::MetaKey);
     if (event.modifierFlags & WebEventFlagMaskAlphaShift)
-        modifiers |= PlatformEvent::Modifier::CapsLockKey;
+        modifiers.add(PlatformEvent::Modifier::CapsLockKey);
 
     return modifiers;
 }

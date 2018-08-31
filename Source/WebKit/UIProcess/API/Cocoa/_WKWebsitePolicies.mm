@@ -64,13 +64,13 @@
     OptionSet<WebKit::WebsiteAutoplayQuirk> quirks;
 
     if (allowedQuirks & _WKWebsiteAutoplayQuirkInheritedUserGestures)
-        quirks |= WebKit::WebsiteAutoplayQuirk::InheritedUserGestures;
+        quirks.add(WebKit::WebsiteAutoplayQuirk::InheritedUserGestures);
 
     if (allowedQuirks & _WKWebsiteAutoplayQuirkSynthesizedPauseEvents)
-        quirks |= WebKit::WebsiteAutoplayQuirk::SynthesizedPauseEvents;
+        quirks.add(WebKit::WebsiteAutoplayQuirk::SynthesizedPauseEvents);
 
     if (allowedQuirks & _WKWebsiteAutoplayQuirkArbitraryUserGestures)
-        quirks |= WebKit::WebsiteAutoplayQuirk::ArbitraryUserGestures;
+        quirks.add(WebKit::WebsiteAutoplayQuirk::ArbitraryUserGestures);
 
     _websitePolicies->setAllowedAutoplayQuirks(quirks);
 }

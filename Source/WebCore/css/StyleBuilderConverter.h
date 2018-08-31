@@ -394,7 +394,7 @@ inline OptionSet<TextDecoration> StyleBuilderConverter::convertTextDecoration(St
     auto result = RenderStyle::initialTextDecoration();
     if (is<CSSValueList>(value)) {
         for (auto& currentValue : downcast<CSSValueList>(value))
-            result |= downcast<CSSPrimitiveValue>(currentValue.get());
+            result.add(downcast<CSSPrimitiveValue>(currentValue.get()));
     }
     return result;
 }
@@ -498,7 +498,7 @@ inline OptionSet<TextEmphasisPosition> StyleBuilderConverter::convertTextEmphasi
 
     OptionSet<TextEmphasisPosition> position;
     for (auto& currentValue : downcast<CSSValueList>(value))
-        position |= valueToEmphasisPosition(downcast<CSSPrimitiveValue>(currentValue.get()));
+        position.add(valueToEmphasisPosition(downcast<CSSPrimitiveValue>(currentValue.get())));
     return position;
 }
 
@@ -645,7 +645,7 @@ inline OptionSet<TextUnderlinePosition> StyleBuilderConverter::convertTextUnderl
 
     OptionSet<TextUnderlinePosition> combinedPosition;
     for (auto& currentValue : downcast<CSSValueList>(value))
-        combinedPosition |= downcast<CSSPrimitiveValue>(currentValue.get());
+        combinedPosition.add(downcast<CSSPrimitiveValue>(currentValue.get()));
     return combinedPosition;
 }
 
@@ -753,7 +753,7 @@ inline OptionSet<TextDecorationSkip> StyleBuilderConverter::convertTextDecoratio
 
     OptionSet<TextDecorationSkip> skip;
     for (auto& currentValue : downcast<CSSValueList>(value))
-        skip |= valueToDecorationSkip(downcast<CSSPrimitiveValue>(currentValue.get()));
+        skip.add(valueToDecorationSkip(downcast<CSSPrimitiveValue>(currentValue.get())));
     return skip;
 }
 
@@ -1504,7 +1504,7 @@ inline OptionSet<SpeakAs> StyleBuilderConverter::convertSpeakAs(StyleResolver&, 
     auto result = RenderStyle::initialSpeakAs();
     if (is<CSSValueList>(value)) {
         for (auto& currentValue : downcast<CSSValueList>(value))
-            result |= downcast<CSSPrimitiveValue>(currentValue.get());
+            result.add(downcast<CSSPrimitiveValue>(currentValue.get()));
     }
     return result;
 }
@@ -1514,7 +1514,7 @@ inline OptionSet<HangingPunctuation> StyleBuilderConverter::convertHangingPunctu
     auto result = RenderStyle::initialHangingPunctuation();
     if (is<CSSValueList>(value)) {
         for (auto& currentValue : downcast<CSSValueList>(value))
-            result |= downcast<CSSPrimitiveValue>(currentValue.get());
+            result.add(downcast<CSSPrimitiveValue>(currentValue.get()));
     }
     return result;
 }

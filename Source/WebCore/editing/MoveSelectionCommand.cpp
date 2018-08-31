@@ -84,7 +84,7 @@ void MoveSelectionCommand::doApply()
     }
     OptionSet<ReplaceSelectionCommand::CommandOption> options { ReplaceSelectionCommand::SelectReplacement, ReplaceSelectionCommand::PreventNesting };
     if (m_smartInsert)
-        options |= ReplaceSelectionCommand::SmartReplace;
+        options.add(ReplaceSelectionCommand::SmartReplace);
 
     {
         auto replaceSelection = ReplaceSelectionCommand::create(document(), WTFMove(m_fragment), options, EditActionInsertFromDrop);

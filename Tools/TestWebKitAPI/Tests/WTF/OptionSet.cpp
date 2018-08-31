@@ -96,16 +96,29 @@ TEST(WTF_OptionSet, Minus)
     EXPECT_TRUE((set - set).isEmpty());
 }
 
-TEST(WTF_OptionSet, MinusEqual)
+TEST(WTF_OptionSet, AddAndRemove)
 {
-    OptionSet<ExampleFlags> set { ExampleFlags::A, ExampleFlags::B, ExampleFlags::C };
+    OptionSet<ExampleFlags> set;
 
-    EXPECT_TRUE(((set -= ExampleFlags::A) == OptionSet<ExampleFlags> { ExampleFlags::B, ExampleFlags::C }));
-    EXPECT_TRUE((set == OptionSet<ExampleFlags> { ExampleFlags::B, ExampleFlags::C }));
-    EXPECT_TRUE(((set -= ExampleFlags::D) == OptionSet<ExampleFlags> { ExampleFlags::B, ExampleFlags::C }));
-    EXPECT_TRUE((set == OptionSet<ExampleFlags> { ExampleFlags::B, ExampleFlags::C }));
-    EXPECT_TRUE((set -= set).isEmpty());
-    EXPECT_TRUE(set.isEmpty());
+    set.add(ExampleFlags::A);
+    EXPECT_TRUE(set.contains(ExampleFlags::A));
+    EXPECT_FALSE(set.contains(ExampleFlags::B));
+    EXPECT_FALSE(set.contains(ExampleFlags::C));
+
+    set.add({ ExampleFlags::B, ExampleFlags::C });
+    EXPECT_TRUE(set.contains(ExampleFlags::A));
+    EXPECT_TRUE(set.contains(ExampleFlags::B));
+    EXPECT_TRUE(set.contains(ExampleFlags::C));
+
+    set.remove(ExampleFlags::B);
+    EXPECT_TRUE(set.contains(ExampleFlags::A));
+    EXPECT_FALSE(set.contains(ExampleFlags::B));
+    EXPECT_TRUE(set.contains(ExampleFlags::C));
+
+    set.remove({ ExampleFlags::A, ExampleFlags::C });
+    EXPECT_FALSE(set.contains(ExampleFlags::A));
+    EXPECT_FALSE(set.contains(ExampleFlags::B));
+    EXPECT_FALSE(set.contains(ExampleFlags::C));
 }
 
 TEST(WTF_OptionSet, ContainsTwoFlags)
@@ -139,15 +152,6 @@ TEST(WTF_OptionSet, ContainsTwoFlags3)
     EXPECT_FALSE(set.contains(ExampleFlags::A));
     EXPECT_FALSE(set.contains(ExampleFlags::B));
     EXPECT_FALSE(set.contains(ExampleFlags::C));
-}
-
-TEST(WTF_OptionSet, OperatorBitwiseOr)
-{
-    OptionSet<ExampleFlags> set = ExampleFlags::A;
-    set |= ExampleFlags::C;
-    EXPECT_TRUE(set.contains(ExampleFlags::A));
-    EXPECT_FALSE(set.contains(ExampleFlags::B));
-    EXPECT_TRUE(set.contains(ExampleFlags::C));
 }
 
 TEST(WTF_OptionSet, EmptyOptionSetToRawValueToOptionSet)
@@ -302,10 +306,10 @@ TEST(WTF_OptionSet, NextItemAfterLargestIn64BitFlagSet)
 TEST(WTF_OptionSet, IterationOrderTheSameRegardlessOfInsertionOrder)
 {
     OptionSet<ExampleFlags> set1 = ExampleFlags::C;
-    set1 |= ExampleFlags::A;
+    set1.add(ExampleFlags::A);
 
     OptionSet<ExampleFlags> set2 = ExampleFlags::A;
-    set2 |= ExampleFlags::C;
+    set2.add(ExampleFlags::C);
 
     OptionSet<ExampleFlags>::iterator it1 = set1.begin();
     OptionSet<ExampleFlags>::iterator it2 = set2.begin();

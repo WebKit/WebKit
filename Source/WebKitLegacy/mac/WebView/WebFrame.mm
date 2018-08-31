@@ -649,16 +649,16 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         // For subframes, we need to inherit the paint behavior from our parent
         if (FrameView* parentView = parentFrame ? parentFrame->view() : nullptr) {
             if (parentView->paintBehavior().contains(PaintBehavior::FlattenCompositingLayers))
-                paintBehavior |= PaintBehavior::FlattenCompositingLayers;
+                paintBehavior.add(PaintBehavior::FlattenCompositingLayers);
             
             if (parentView->paintBehavior().contains(PaintBehavior::Snapshotting))
-                paintBehavior |= PaintBehavior::Snapshotting;
+                paintBehavior.add(PaintBehavior::Snapshotting);
             
             if (parentView->paintBehavior().contains(PaintBehavior::TileFirstPaint))
-                paintBehavior |= PaintBehavior::TileFirstPaint;
+                paintBehavior.add(PaintBehavior::TileFirstPaint);
         }
     } else
-        paintBehavior |= [self _paintBehaviorForDestinationContext:ctx];
+        paintBehavior.add([self _paintBehaviorForDestinationContext:ctx]);
         
     view->setPaintBehavior(paintBehavior);
 

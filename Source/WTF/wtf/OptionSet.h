@@ -111,6 +111,16 @@ public:
         return (*this & optionSet) == optionSet;
     }
 
+    constexpr void add(OptionSet optionSet)
+    {
+        m_storage |= optionSet.m_storage;
+    }
+
+    constexpr void remove(OptionSet optionSet)
+    {
+        m_storage &= ~optionSet.m_storage;
+    }
+
     constexpr friend bool operator==(OptionSet lhs, OptionSet rhs)
     {
         return lhs.m_storage == rhs.m_storage;
@@ -119,18 +129,6 @@ public:
     constexpr friend bool operator!=(OptionSet lhs, OptionSet rhs)
     {
         return lhs.m_storage != rhs.m_storage;
-    }
-
-    friend OptionSet& operator|=(OptionSet& lhs, OptionSet rhs)
-    {
-        lhs.m_storage |= rhs.m_storage;
-        return lhs;
-    }
-
-    friend OptionSet& operator-=(OptionSet& lhs, OptionSet rhs)
-    {
-        lhs.m_storage &= ~rhs.m_storage;
-        return lhs;
     }
 
     constexpr friend OptionSet operator|(OptionSet lhs, OptionSet rhs)

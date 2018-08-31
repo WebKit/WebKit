@@ -151,11 +151,11 @@ public:
     void enforceSandboxFlags(SandboxFlags sandboxFlags) { m_sandboxFlags |= sandboxFlags; }
     void addHashAlgorithmsForInlineScripts(OptionSet<ContentSecurityPolicyHashAlgorithm> hashAlgorithmsForInlineScripts)
     {
-        m_hashAlgorithmsForInlineScripts |= hashAlgorithmsForInlineScripts;
+        m_hashAlgorithmsForInlineScripts.add(hashAlgorithmsForInlineScripts);
     }
     void addHashAlgorithmsForInlineStylesheets(OptionSet<ContentSecurityPolicyHashAlgorithm> hashAlgorithmsForInlineStylesheets)
     {
-        m_hashAlgorithmsForInlineStylesheets |= hashAlgorithmsForInlineStylesheets;
+        m_hashAlgorithmsForInlineStylesheets.add(hashAlgorithmsForInlineStylesheets);
     }
 
     // Used by ContentSecurityPolicySource

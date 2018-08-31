@@ -66,7 +66,10 @@ void UserActionElementSet::setFlags(Element& element, OptionSet<Flag> flags)
 {
     ASSERT(!flags.isEmpty());
 
-    m_elements.add(&element, OptionSet<Flag> { }).iterator->value |= flags;
+    m_elements.ensure(&element, [] {
+        return OptionSet<Flag>();
+    }).iterator->value.add(flags);
+
     element.setUserActionElement(true);
 }
 

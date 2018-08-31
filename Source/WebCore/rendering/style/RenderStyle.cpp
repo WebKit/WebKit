@@ -613,7 +613,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
             if (m_rareNonInheritedData->transform->hasTransform() != other.m_rareNonInheritedData->transform->hasTransform())
                 return true;
             if (*m_rareNonInheritedData->transform != *other.m_rareNonInheritedData->transform) {
-                changedContextSensitiveProperties |= StyleDifferenceContextSensitiveProperty::Transform;
+                changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::Transform);
                 // Don't return; keep looking for another change
             }
         }
@@ -629,7 +629,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
 #endif
 
         if (!arePointingToEqualData(m_rareNonInheritedData->willChange, other.m_rareNonInheritedData->willChange)) {
-            changedContextSensitiveProperties |= StyleDifferenceContextSensitiveProperty::WillChange;
+            changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::WillChange);
             // Don't return; keep looking for another change
         }
     }
@@ -849,7 +849,7 @@ bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle& other, OptionSet
 
     if (position() != PositionType::Static) {
         if (m_visualData->clip != other.m_visualData->clip || m_visualData->hasClip != other.m_visualData->hasClip) {
-            changedContextSensitiveProperties |= StyleDifferenceContextSensitiveProperty::ClipRect;
+            changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::ClipRect);
             return true;
         }
     }
@@ -860,18 +860,18 @@ bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle& other, OptionSet
 #endif
 
     if (m_rareNonInheritedData->opacity != other.m_rareNonInheritedData->opacity) {
-        changedContextSensitiveProperties |= StyleDifferenceContextSensitiveProperty::Opacity;
+        changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::Opacity);
         // Don't return; keep looking for another change.
     }
 
     if (m_rareNonInheritedData->filter != other.m_rareNonInheritedData->filter) {
-        changedContextSensitiveProperties |= StyleDifferenceContextSensitiveProperty::Filter;
+        changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::Filter);
         // Don't return; keep looking for another change.
     }
 
 #if ENABLE(FILTERS_LEVEL_2)
     if (m_rareNonInheritedData->backdropFilter != other.m_rareNonInheritedData->backdropFilter) {
-        changedContextSensitiveProperties |= StyleDifferenceContextSensitiveProperty::Filter;
+        changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::Filter);
         // Don't return; keep looking for another change.
     }
 #endif
@@ -921,7 +921,7 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
 
     // FIXME: this should probably be moved to changeRequiresLayerRepaint().
     if (m_rareNonInheritedData->clipPath != other.m_rareNonInheritedData->clipPath) {
-        changedContextSensitiveProperties |= StyleDifferenceContextSensitiveProperty::ClipPath;
+        changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::ClipPath);
         // Don't return; keep looking for another change.
     }
 

@@ -1221,14 +1221,14 @@ bool DOMWindow::find(const String& string, bool caseSensitive, bool backwards, b
         return false;
 
     // FIXME (13016): Support wholeWord, searchInFrames and showDialog.    
-    FindOptions options;
+    FindOptions options { DoNotTraverseFlatTree };
     if (backwards)
-        options |= Backwards;
+        options.add(Backwards);
     if (!caseSensitive)
-        options |= CaseInsensitive;
+        options.add(CaseInsensitive);
     if (wrap)
-        options |= WrapAround;
-    return m_frame->editor().findString(string, options | DoNotTraverseFlatTree);
+        options.add(WrapAround);
+    return m_frame->editor().findString(string, options);
 }
 
 bool DOMWindow::offscreenBuffering() const

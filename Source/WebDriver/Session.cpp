@@ -1514,8 +1514,7 @@ void Session::elementClick(const String& elementID, Function<void (CommandResult
         return;
     }
 
-    OptionSet<ElementLayoutOption> options = ElementLayoutOption::ScrollIntoViewIfNeeded;
-    options |= ElementLayoutOption::UseViewportCoordinates;
+    OptionSet<ElementLayoutOption> options = { ElementLayoutOption::ScrollIntoViewIfNeeded, ElementLayoutOption::UseViewportCoordinates };
     computeElementLayout(elementID, options, [this, protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](std::optional<Rect>&& rect, std::optional<Point>&& inViewCenter, bool isObscured, RefPtr<JSON::Object>&& error) mutable {
         if (!rect || error) {
             completionHandler(CommandResult::fail(WTFMove(error)));

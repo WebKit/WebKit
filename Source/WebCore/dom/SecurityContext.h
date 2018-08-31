@@ -89,7 +89,7 @@ public:
     };
 
     const OptionSet<MixedContentType>& foundMixedContent() const { return m_mixedContentTypes; }
-    void setFoundMixedContent(MixedContentType type) { m_mixedContentTypes |= type; }
+    void setFoundMixedContent(MixedContentType type) { m_mixedContentTypes.add(type); }
     bool geolocationAccessed() const { return m_geolocationAccessed; }
     void setGeolocationAccessed() { m_geolocationAccessed = true; }
     bool secureCookiesAccessed() const { return m_secureCookiesAccessed; }

@@ -369,7 +369,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
                 frame->selection().setSelection(wordSelection);
             } else {
                 ASSERT(frame->editor().selectedText().length());
-                replaceOptions |= ReplaceSelectionCommand::SelectReplacement;
+                replaceOptions.add(ReplaceSelectionCommand::SelectReplacement);
             }
 
             Document* document = frame->document();

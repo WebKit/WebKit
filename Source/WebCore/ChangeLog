@@ -1,3 +1,119 @@
+2018-08-31  Antti Koivisto  <antti@apple.com>
+
+        Replace OptionSet |= and -= operators with add() and remove() functions
+        https://bugs.webkit.org/show_bug.cgi?id=189169
+
+        Reviewed by Anders Carlsson.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::rangeOfStringClosestToRangeInDirection const):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertTextDecoration):
+        (WebCore::StyleBuilderConverter::convertTextEmphasisPosition):
+        (WebCore::StyleBuilderConverter::convertTextUnderlinePosition):
+        (WebCore::StyleBuilderConverter::convertTextDecorationSkip):
+        (WebCore::StyleBuilderConverter::convertSpeakAs):
+        (WebCore::StyleBuilderConverter::convertHangingPunctuation):
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseSystemColor):
+        * dom/Document.cpp:
+        (WebCore::Document::styleColorOptions const):
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::addMarker):
+        (WebCore::DocumentMarkerController::removeMarkers):
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::addThrottlingReason):
+        (WebCore::ScriptedAnimationController::removeThrottlingReason):
+        * dom/SecurityContext.h:
+        (WebCore::SecurityContext::setFoundMixedContent):
+        * dom/UIEventWithKeyState.cpp:
+        (WebCore::UIEventWithKeyState::modifiersFromInitializer):
+        (WebCore::UIEventWithKeyState::setModifierKeys):
+        * dom/UserActionElementSet.cpp:
+        (WebCore::UserActionElementSet::setFlags):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/Editor.cpp:
+        (WebCore::Editor::replaceSelectionWithFragment):
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::markMisspellingsAndBadGrammar):
+        (WebCore::Editor::resolveTextCheckingTypeMask):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::moveWithoutValidationTo):
+        (WebCore::FrameSelection::setSelectedRange):
+        * editing/FrameSelection.h:
+        (WebCore::FrameSelection::defaultSetSelectionOptions):
+        * editing/MoveSelectionCommand.cpp:
+        (WebCore::MoveSelectionCommand::doApply):
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::didCheckSucceed):
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingHelper::findFirstMisspellingOrBadGrammar):
+        (WebCore::TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange const):
+        * editing/TextIterator.cpp:
+        (WebCore::SearchBuffer::SearchBuffer):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAttribute):
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::reload):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::find const):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+        * page/FrameSnapshotting.cpp:
+        (WebCore::snapshotFrameRectWithClip):
+        * page/FrameView.cpp:
+        (WebCore::updateLayerPositionFlags):
+        (WebCore::FrameView::willPaintContents):
+        * page/Page.cpp:
+        (WebCore::Page::setIsVisible):
+        * page/PerformanceObserver.cpp:
+        (WebCore::PerformanceObserver::observe):
+        * page/TextIndicator.cpp:
+        (WebCore::TextIndicator::createWithRange):
+        * page/WindowFeatures.cpp:
+        (WebCore::parseDisabledAdaptations):
+        * page/csp/ContentSecurityPolicy.h:
+        (WebCore::ContentSecurityPolicy::addHashAlgorithmsForInlineScripts):
+        (WebCore::ContentSecurityPolicy::addHashAlgorithmsForInlineStylesheets):
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::ContentSecurityPolicySourceList::parseHashSource):
+        * platform/PlatformEvent.h:
+        (WebCore::PlatformEvent::PlatformEvent):
+        * platform/ios/PlatformEventFactoryIOS.mm:
+        (WebCore::modifiersForEvent):
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::modifiersForEvent):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::updateLayerPositionsAfterScroll):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::paintLayerContentsAndReflection):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintForegroundForFragments):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::reasonsForCompositing const):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedStatus):
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::collectStylesForRenderer):
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::computeTextPaintStyle):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout const):
+        (WebCore::RenderStyle::changeRequiresLayerRepaint const):
+        (WebCore::RenderStyle::changeRequiresRepaint const):
+        * testing/Internals.cpp:
+        (WebCore::parseFindOptions):
+        (WebCore::Internals::forceReload):
+        (WebCore::Internals::setPageVisibility):
+        (WebCore::Internals::setPageIsFocusedAndActive):
+
 2018-08-31  Aditya Keerthi  <akeerthi@apple.com>
 
         [Datalist][iOS] Add suggestions UI for TextFieldInputTypes

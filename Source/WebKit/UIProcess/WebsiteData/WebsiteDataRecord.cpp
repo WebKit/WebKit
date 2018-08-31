@@ -79,30 +79,27 @@ String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOriginData
 
 void WebsiteDataRecord::add(WebsiteDataType type, const WebCore::SecurityOriginData& origin)
 {
-    types |= type;
-
+    types.add(type);
     origins.add(origin);
 }
 
 void WebsiteDataRecord::addCookieHostName(const String& hostName)
 {
-    types |= WebsiteDataType::Cookies;
-
+    types.add(WebsiteDataType::Cookies);
     cookieHostNames.add(hostName);
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void WebsiteDataRecord::addPluginDataHostName(const String& hostName)
 {
-    types |= WebsiteDataType::PlugInData;
-
+    types.add(WebsiteDataType::PlugInData);
     pluginDataHostNames.add(hostName);
 }
 #endif
 
 void WebsiteDataRecord::addHSTSCacheHostname(const String& hostName)
 {
-    types |= WebsiteDataType::HSTSCache;
+    types.add(WebsiteDataType::HSTSCache);
     HSTSCacheHostNames.add(hostName);
 }
 
@@ -157,8 +154,7 @@ String WebsiteDataRecord::topPrivatelyControlledDomain()
 
 void WebsiteDataRecord::addOriginWithCredential(const String& origin)
 {
-    types |= WebsiteDataType::Credentials;
-
+    types.add(WebsiteDataType::Credentials);
     originsWithCredentials.add(origin);
 }
 

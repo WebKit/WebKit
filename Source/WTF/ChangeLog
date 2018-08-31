@@ -1,3 +1,23 @@
+2018-08-31  Antti Koivisto  <antti@apple.com>
+
+        Replace OptionSet |= and -= operators with add() and remove() functions
+        https://bugs.webkit.org/show_bug.cgi?id=189169
+
+        Reviewed by Anders Carlsson.
+
+        Improve code readability.
+
+        * wtf/OptionSet.h:
+        (WTF::OptionSet::add):
+        (WTF::OptionSet::remove):
+        (WTF::OptionSet::operator==):
+        (WTF::OptionSet::operator!=):
+        (WTF::OptionSet::operator|=): Deleted.
+        (WTF::OptionSet::operator-=): Deleted.
+        * wtf/ProcessPrivilege.cpp:
+        (WTF::addProcessPrivilege):
+        (WTF::removeProcessPrivilege):
+
 2018-08-31  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r226407): Remove unused BlockStack.h

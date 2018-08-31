@@ -383,17 +383,17 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
         auto decorationStyle = style.textDecorationStyle();
 
         if (decorations.contains(TextDecoration::Underline)) {
-            remainingDecorations -= TextDecoration::Underline;
+            remainingDecorations.remove(TextDecoration::Underline);
             result.underlineColor = color;
             result.underlineStyle = decorationStyle;
         }
         if (decorations.contains(TextDecoration::Overline)) {
-            remainingDecorations -= TextDecoration::Overline;
+            remainingDecorations.remove(TextDecoration::Overline);
             result.overlineColor = color;
             result.overlineStyle = decorationStyle;
         }
         if (decorations.contains(TextDecoration::LineThrough)) {
-            remainingDecorations -= TextDecoration::LineThrough;
+            remainingDecorations.remove(TextDecoration::LineThrough);
             result.linethroughColor = color;
             result.linethroughStyle = decorationStyle;
         }

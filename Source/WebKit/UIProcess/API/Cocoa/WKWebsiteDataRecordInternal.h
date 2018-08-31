@@ -85,7 +85,7 @@ static inline OptionSet<WebKit::WebsiteDataType> toWebsiteDataTypes(NSSet *websi
 
     for (NSString *websiteDataType in websiteDataTypes) {
         if (auto dataType = toWebsiteDataType(websiteDataType))
-            result |= *dataType;
+            result.add(*dataType);
     }
 
     return result;

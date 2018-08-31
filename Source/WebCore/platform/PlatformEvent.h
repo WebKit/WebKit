@@ -115,13 +115,13 @@ protected:
         , m_timestamp(timestamp)
     {
         if (shiftKey)
-            m_modifiers |= Modifier::ShiftKey;
+            m_modifiers.add(Modifier::ShiftKey);
         if (ctrlKey)
-            m_modifiers |= Modifier::CtrlKey;
+            m_modifiers.add(Modifier::CtrlKey);
         if (altKey)
-            m_modifiers |= Modifier::AltKey;
+            m_modifiers.add(Modifier::AltKey);
         if (metaKey)
-            m_modifiers |= Modifier::MetaKey;
+            m_modifiers.add(Modifier::MetaKey);
     }
 
     // Explicit protected destructor so that people don't accidentally

@@ -170,9 +170,9 @@ static RefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& painti
 
     auto paintBehavior = frameView->paintBehavior() | PaintBehavior::FlattenCompositingLayers | PaintBehavior::Snapshotting;
     if (options & SnapshotOptionsForceBlackText)
-        paintBehavior |= PaintBehavior::ForceBlackText;
+        paintBehavior.add(PaintBehavior::ForceBlackText);
     if (options & SnapshotOptionsForceWhiteText)
-        paintBehavior |= PaintBehavior::ForceWhiteText;
+        paintBehavior.add(PaintBehavior::ForceWhiteText);
 
     auto oldPaintBehavior = frameView->paintBehavior();
     frameView->setPaintBehavior(paintBehavior);

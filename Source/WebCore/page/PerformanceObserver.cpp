@@ -65,7 +65,7 @@ ExceptionOr<void> PerformanceObserver::observe(Init&& init)
     OptionSet<PerformanceEntry::Type> filter;
     for (const String& entryType : init.entryTypes) {
         if (auto type = PerformanceEntry::parseEntryTypeString(entryType))
-            filter |= *type;
+            filter.add(*type);
     }
 
     if (filter.isEmpty())

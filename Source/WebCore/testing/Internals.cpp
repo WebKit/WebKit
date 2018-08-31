@@ -2242,7 +2242,7 @@ static ExceptionOr<FindOptions> parseFindOptions(const Vector<String>& optionLis
         bool found = false;
         for (auto& flag : flagList) {
             if (flag.name == option) {
-                result |= flag.value;
+                result.add(flag.value);
                 found = true;
                 break;
             }
@@ -3189,7 +3189,7 @@ void Internals::forceReload(bool endToEnd)
 {
     OptionSet<ReloadOption> reloadOptions;
     if (endToEnd)
-        reloadOptions |= ReloadOption::FromOrigin;
+        reloadOptions.add(ReloadOption::FromOrigin);
 
     frame()->loader().reload(reloadOptions);
 }
@@ -4342,9 +4342,9 @@ void Internals::setPageVisibility(bool isVisible)
     auto state = page.activityState();
 
     if (!isVisible)
-        state -= ActivityState::IsVisible;
+        state.remove(ActivityState::IsVisible);
     else
-        state |= ActivityState::IsVisible;
+        state.add(ActivityState::IsVisible);
 
     page.setActivityState(state);
 }
@@ -4358,9 +4358,9 @@ void Internals::setPageIsFocusedAndActive(bool isFocusedAndActive)
     auto state = page.activityState();
 
     if (!isFocusedAndActive)
-        state -= { ActivityState::IsFocused, ActivityState::WindowIsActive };
+        state.remove({ ActivityState::IsFocused, ActivityState::WindowIsActive });
     else
-        state |= { ActivityState::IsFocused, ActivityState::WindowIsActive };
+        state.add({ ActivityState::IsFocused, ActivityState::WindowIsActive });
 
     page.setActivityState(state);
 }

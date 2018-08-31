@@ -775,8 +775,8 @@ void webkit_web_context_clear_cache(WebKitWebContext* context)
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
     OptionSet<WebsiteDataType> websiteDataTypes;
-    websiteDataTypes |= WebsiteDataType::MemoryCache;
-    websiteDataTypes |= WebsiteDataType::DiskCache;
+    websiteDataTypes.add(WebsiteDataType::MemoryCache);
+    websiteDataTypes.add(WebsiteDataType::DiskCache);
     auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get()).websiteDataStore();
     websiteDataStore.removeData(websiteDataTypes, -WallTime::infinity(), [] { });
 }

@@ -358,13 +358,13 @@ RenderThemeScrollbarGadget::RenderThemeScrollbarGadget(const RenderThemeGadget::
     gtk_style_context_get_style(m_context.get(), "has-backward-stepper", &hasBackward, "has-forward-stepper", &hasForward,
         "has-secondary-backward-stepper", &hasSecondaryBackward, "has-secondary-forward-stepper", &hasSecondaryForward, nullptr);
     if (hasBackward)
-        m_steppers |= Steppers::Backward;
+        m_steppers.add(Steppers::Backward);
     if (hasForward)
-        m_steppers |= Steppers::Forward;
+        m_steppers.add(Steppers::Forward);
     if (hasSecondaryBackward)
-        m_steppers |= Steppers::SecondaryBackward;
+        m_steppers.add(Steppers::SecondaryBackward);
     if (hasSecondaryForward)
-        m_steppers |= Steppers::SecondaryForward;
+        m_steppers.add(Steppers::SecondaryForward);
 }
 
 void RenderThemeScrollbarGadget::renderStepper(cairo_t* cr, const FloatRect& paintRect, RenderThemeGadget* stepperGadget, GtkOrientation orientation, Steppers stepper)

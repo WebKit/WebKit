@@ -1446,32 +1446,32 @@ void WebPageProxy::setSuppressVisibilityUpdates(bool flag)
 
 void WebPageProxy::updateActivityState(OptionSet<ActivityState::Flag> flagsToUpdate)
 {
-    m_activityState = m_activityState - flagsToUpdate;
+    m_activityState.remove(flagsToUpdate);
     if (flagsToUpdate & ActivityState::IsFocused && m_pageClient.isViewFocused())
-        m_activityState |= ActivityState::IsFocused;
+        m_activityState.add(ActivityState::IsFocused);
     if (flagsToUpdate & ActivityState::WindowIsActive && m_pageClient.isViewWindowActive())
-        m_activityState |= ActivityState::WindowIsActive;
+        m_activityState.add(ActivityState::WindowIsActive);
     if (flagsToUpdate & ActivityState::IsVisible && m_pageClient.isViewVisible())
-        m_activityState |= ActivityState::IsVisible;
+        m_activityState.add(ActivityState::IsVisible);
     if (flagsToUpdate & ActivityState::IsVisibleOrOccluded && m_pageClient.isViewVisibleOrOccluded())
-        m_activityState |= ActivityState::IsVisibleOrOccluded;
+        m_activityState.add(ActivityState::IsVisibleOrOccluded);
     if (flagsToUpdate & ActivityState::IsInWindow && m_pageClient.isViewInWindow())
-        m_activityState |= ActivityState::IsInWindow;
+        m_activityState.add(ActivityState::IsInWindow);
     if (flagsToUpdate & ActivityState::IsVisuallyIdle && m_pageClient.isVisuallyIdle())
-        m_activityState |= ActivityState::IsVisuallyIdle;
+        m_activityState.add(ActivityState::IsVisuallyIdle);
     if (flagsToUpdate & ActivityState::IsAudible && m_mediaState & MediaProducer::IsPlayingAudio && !(m_mutedState & MediaProducer::AudioIsMuted))
-        m_activityState |= ActivityState::IsAudible;
+        m_activityState.add(ActivityState::IsAudible);
     if (flagsToUpdate & ActivityState::IsLoading && m_pageLoadState.isLoading())
-        m_activityState |= ActivityState::IsLoading;
+        m_activityState.add(ActivityState::IsLoading);
     if (flagsToUpdate & ActivityState::IsCapturingMedia && m_mediaState & (MediaProducer::HasActiveAudioCaptureDevice | MediaProducer::HasActiveVideoCaptureDevice))
-        m_activityState |= ActivityState::IsCapturingMedia;
+        m_activityState.add(ActivityState::IsCapturingMedia);
 }
 
 void WebPageProxy::activityStateDidChange(OptionSet<ActivityState::Flag> mayHaveChanged, bool wantsSynchronousReply, ActivityStateChangeDispatchMode dispatchMode)
 {
     LOG_WITH_STREAM(ActivityState, stream << "WebPageProxy " << pageID() << " activityStateDidChange - mayHaveChanged " << mayHaveChanged);
 
-    m_potentiallyChangedActivityStateFlags |= mayHaveChanged;
+    m_potentiallyChangedActivityStateFlags.add(mayHaveChanged);
     m_activityStateChangeWantsSynchronousReply = m_activityStateChangeWantsSynchronousReply || wantsSynchronousReply;
 
     if (m_suppressVisibilityUpdates && dispatchMode != ActivityStateChangeDispatchMode::Immediate)
@@ -1522,7 +1522,7 @@ void WebPageProxy::dispatchActivityStateChange()
 
     // If the visibility state may have changed, then so may the visually idle & occluded agnostic state.
     if (m_potentiallyChangedActivityStateFlags & ActivityState::IsVisible)
-        m_potentiallyChangedActivityStateFlags |= { ActivityState::IsVisibleOrOccluded, ActivityState::IsVisuallyIdle };
+        m_potentiallyChangedActivityStateFlags.add({ ActivityState::IsVisibleOrOccluded, ActivityState::IsVisuallyIdle });
 
     // Record the prior view state, update the flags that may have changed,
     // and check which flags have actually changed.

@@ -331,7 +331,7 @@ void DocumentMarkerController::addMarker(Node* node, const DocumentMarker& newMa
             downcast<RenderBlockFlow>(*renderer).ensureLineBoxes();
     }
 
-    m_possiblyExistingMarkerTypes |= newMarker.type();
+    m_possiblyExistingMarkerTypes.add(newMarker.type());
 
     std::unique_ptr<MarkerList>& list = m_markers.add(node, nullptr).iterator->value;
 
@@ -587,7 +587,7 @@ void DocumentMarkerController::removeMarkers(OptionSet<DocumentMarker::MarkerTyp
             removeMarkersFromList(iterator, markerTypes);
     }
 
-    m_possiblyExistingMarkerTypes -= markerTypes;
+    m_possiblyExistingMarkerTypes.remove(markerTypes);
 }
 
 void DocumentMarkerController::removeMarkersFromList(MarkerMap::iterator iterator, OptionSet<DocumentMarker::MarkerType> markerTypes)

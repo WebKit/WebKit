@@ -630,25 +630,25 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes type
 {
     OptionSet<WebsiteDataType> returnValue;
     if (types & WEBKIT_WEBSITE_DATA_MEMORY_CACHE)
-        returnValue |= WebsiteDataType::MemoryCache;
+        returnValue.add(WebsiteDataType::MemoryCache);
     if (types & WEBKIT_WEBSITE_DATA_DISK_CACHE)
-        returnValue |= WebsiteDataType::DiskCache;
+        returnValue.add(WebsiteDataType::DiskCache);
     if (types & WEBKIT_WEBSITE_DATA_OFFLINE_APPLICATION_CACHE)
-        returnValue |= WebsiteDataType::OfflineWebApplicationCache;
+        returnValue.add(WebsiteDataType::OfflineWebApplicationCache);
     if (types & WEBKIT_WEBSITE_DATA_SESSION_STORAGE)
-        returnValue |= WebsiteDataType::SessionStorage;
+        returnValue.add(WebsiteDataType::SessionStorage);
     if (types & WEBKIT_WEBSITE_DATA_LOCAL_STORAGE)
-        returnValue |= WebsiteDataType::LocalStorage;
+        returnValue.add(WebsiteDataType::LocalStorage);
     if (types & WEBKIT_WEBSITE_DATA_WEBSQL_DATABASES)
-        returnValue |= WebsiteDataType::WebSQLDatabases;
+        returnValue.add(WebsiteDataType::WebSQLDatabases);
     if (types & WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES)
-        returnValue |= WebsiteDataType::IndexedDBDatabases;
+        returnValue.add(WebsiteDataType::IndexedDBDatabases);
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if (types & WEBKIT_WEBSITE_DATA_PLUGIN_DATA)
-        returnValue |= WebsiteDataType::PlugInData;
+        returnValue.add(WebsiteDataType::PlugInData);
 #endif
     if (types & WEBKIT_WEBSITE_DATA_COOKIES)
-        returnValue |= WebsiteDataType::Cookies;
+        returnValue.add(WebsiteDataType::Cookies);
     return returnValue;
 }
 

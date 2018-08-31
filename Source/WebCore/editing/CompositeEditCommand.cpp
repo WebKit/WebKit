@@ -1494,7 +1494,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     ASSERT(endingSelection().isCaretOrRange());
     OptionSet<ReplaceSelectionCommand::CommandOption> options { ReplaceSelectionCommand::SelectReplacement, ReplaceSelectionCommand::MovingParagraph };
     if (!preserveStyle)
-        options |= ReplaceSelectionCommand::MatchStyle;
+        options.add(ReplaceSelectionCommand::MatchStyle);
     applyCommandToComposite(ReplaceSelectionCommand::create(document(), WTFMove(fragment), options));
 
     frame().editor().markMisspellingsAndBadGrammar(endingSelection());

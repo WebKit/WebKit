@@ -1330,15 +1330,15 @@ static OptionSet<PlatformEvent::Modifier> modifiersForGdkKeyEvent(GdkEventKey* e
 {
     OptionSet<PlatformEvent::Modifier> modifiers;
     if (event->state & GDK_SHIFT_MASK || event->keyval == GDK_3270_BackTab)
-        modifiers |= PlatformEvent::Modifier::ShiftKey;
+        modifiers.add(PlatformEvent::Modifier::ShiftKey);
     if (event->state & GDK_CONTROL_MASK)
-        modifiers |= PlatformEvent::Modifier::CtrlKey;
+        modifiers.add(PlatformEvent::Modifier::CtrlKey);
     if (event->state & GDK_MOD1_MASK)
-        modifiers |= PlatformEvent::Modifier::AltKey;
+        modifiers.add(PlatformEvent::Modifier::AltKey);
     if (event->state & GDK_META_MASK)
-        modifiers |= PlatformEvent::Modifier::MetaKey;
+        modifiers.add(PlatformEvent::Modifier::MetaKey);
     if (event->state & GDK_LOCK_MASK)
-        modifiers |= PlatformEvent::Modifier::CapsLockKey;
+        modifiers.add(PlatformEvent::Modifier::CapsLockKey);
     return modifiers;
 }
 

@@ -56,15 +56,15 @@ WebCore::FindOptions core(FindOptions options)
 {
     WebCore::FindOptions result;
     if (options & FindOptionsCaseInsensitive)
-        result |= WebCore::CaseInsensitive;
+        result.add(WebCore::CaseInsensitive);
     if (options & FindOptionsAtWordStarts)
-        result |= WebCore::AtWordStarts;
+        result.add(WebCore::AtWordStarts);
     if (options & FindOptionsTreatMedialCapitalAsWordStart)
-        result |= WebCore::TreatMedialCapitalAsWordStart;
+        result.add(WebCore::TreatMedialCapitalAsWordStart);
     if (options & FindOptionsBackwards)
-        result |= WebCore::Backwards;
+        result.add(WebCore::Backwards);
     if (options & FindOptionsWrapAround)
-        result |= WebCore::WrapAround;
+        result.add(WebCore::WrapAround);
     return result;
 }
 
@@ -204,7 +204,7 @@ void FindController::findString(const String& string, FindOptions options, unsig
     // we need to avoid sending the non-painted selection change to the UI process
     // so that it does not clear the selection out from under us.
 #if PLATFORM(IOS)
-    coreOptions |= DoNotRevealSelection;
+    coreOptions.add(DoNotRevealSelection);
 #endif
 
     willFindString();

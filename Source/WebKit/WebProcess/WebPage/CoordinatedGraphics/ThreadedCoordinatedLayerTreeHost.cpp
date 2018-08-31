@@ -156,7 +156,7 @@ void ThreadedCoordinatedLayerTreeHost::scrollNonCompositedContents(const IntRect
 
     m_viewportController.didScroll(rect.location());
     if (m_isDiscardable)
-        m_discardableSyncActions |= DiscardableSyncActions::UpdateViewport;
+        m_discardableSyncActions.add(DiscardableSyncActions::UpdateViewport);
     else
         didChangeViewport();
 }
@@ -165,7 +165,7 @@ void ThreadedCoordinatedLayerTreeHost::contentsSizeChanged(const IntSize& newSiz
 {
     m_viewportController.didChangeContentsSize(newSize);
     if (m_isDiscardable)
-        m_discardableSyncActions |= DiscardableSyncActions::UpdateViewport;
+        m_discardableSyncActions.add(DiscardableSyncActions::UpdateViewport);
     else
         didChangeViewport();
 }
@@ -173,7 +173,7 @@ void ThreadedCoordinatedLayerTreeHost::contentsSizeChanged(const IntSize& newSiz
 void ThreadedCoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()
 {
     if (m_isDiscardable) {
-        m_discardableSyncActions |= DiscardableSyncActions::UpdateScale;
+        m_discardableSyncActions.add(DiscardableSyncActions::UpdateScale);
         return;
     }
 
@@ -187,7 +187,7 @@ void ThreadedCoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()
 void ThreadedCoordinatedLayerTreeHost::pageBackgroundTransparencyChanged()
 {
     if (m_isDiscardable) {
-        m_discardableSyncActions |= DiscardableSyncActions::UpdateBackground;
+        m_discardableSyncActions.add(DiscardableSyncActions::UpdateBackground);
         return;
     }
 
@@ -198,7 +198,7 @@ void ThreadedCoordinatedLayerTreeHost::pageBackgroundTransparencyChanged()
 void ThreadedCoordinatedLayerTreeHost::sizeDidChange(const IntSize& size)
 {
     if (m_isDiscardable) {
-        m_discardableSyncActions |= DiscardableSyncActions::UpdateSize;
+        m_discardableSyncActions.add(DiscardableSyncActions::UpdateSize);
         m_viewportController.didChangeViewportSize(size);
         return;
     }
@@ -218,7 +218,7 @@ void ThreadedCoordinatedLayerTreeHost::didChangeViewportAttributes(ViewportAttri
 {
     m_viewportController.didChangeViewportAttributes(WTFMove(attr));
     if (m_isDiscardable)
-        m_discardableSyncActions |= DiscardableSyncActions::UpdateViewport;
+        m_discardableSyncActions.add(DiscardableSyncActions::UpdateViewport);
     else
         didChangeViewport();
 }

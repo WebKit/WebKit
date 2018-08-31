@@ -557,17 +557,17 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, OptionSet
     // Clear the IsCompositingUpdateRoot flag once we've found the first compositing layer in this update.
     bool isUpdateRoot = flags.contains(IsCompositingUpdateRoot);
     if (isComposited())
-        flags -= IsCompositingUpdateRoot;
+        flags.remove(IsCompositingUpdateRoot);
 
     if (renderer().isInFlowRenderFragmentedFlow()) {
         updatePagination();
-        flags |= UpdatePagination;
+        flags.add(UpdatePagination);
     }
 
     if (transform()) {
-        flags |= SeenTransformedLayer;
+        flags.add(SeenTransformedLayer);
         if (!transform()->isAffine())
-            flags |= Seen3DTransformedLayer;
+            flags.add(Seen3DTransformedLayer);
     }
 
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
@@ -576,9 +576,9 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, OptionSet
     if ((flags & UpdateCompositingLayers) && isComposited()) {
         OptionSet<RenderLayerBacking::UpdateAfterLayoutFlags> updateFlags;
         if (flags & NeedsFullRepaintInBacking)
-            updateFlags |= RenderLayerBacking::UpdateAfterLayoutFlags::NeedsFullRepaint;
+            updateFlags.add(RenderLayerBacking::UpdateAfterLayoutFlags::NeedsFullRepaint);
         if (isUpdateRoot)
-            updateFlags |= RenderLayerBacking::UpdateAfterLayoutFlags::IsUpdateRoot;
+            updateFlags.add(RenderLayerBacking::UpdateAfterLayoutFlags::IsUpdateRoot);
         backing()->updateAfterLayout(updateFlags);
     }
         
@@ -851,16 +851,16 @@ void RenderLayer::updateLayerPositionsAfterScroll(RenderGeometryMap* geometryMap
 
     bool positionChanged = updateLayerPosition();
     if (positionChanged)
-        flags |= HasChangedAncestor;
+        flags.add(HasChangedAncestor);
 
     if (flags.containsAny({ HasChangedAncestor, HasSeenViewportConstrainedAncestor, IsOverflowScroll }))
         clearClipRects();
 
     if (renderer().style().hasViewportConstrainedPosition())
-        flags |= HasSeenViewportConstrainedAncestor;
+        flags.add(HasSeenViewportConstrainedAncestor);
 
     if (renderer().hasOverflowClip())
-        flags |= HasSeenAncestorWithOverflowClip;
+        flags.add(HasSeenAncestorWithOverflowClip);
     
     bool shouldComputeRepaintRects = (flags.contains(HasSeenViewportConstrainedAncestor) || flags.containsAll({ IsOverflowScroll, HasSeenAncestorWithOverflowClip })) && isSelfPaintingLayer();
     bool isVisuallyEmpty = !isVisuallyNonEmpty();
@@ -3973,7 +3973,7 @@ void RenderLayer::paintLayer(GraphicsContext& context, const LayerPaintingInfo& 
         // The performingPaintInvalidation() painting pass goes through compositing layers,
         // but we need to ensure that we don't cache clip rects computed with the wrong root in this case.
         if (context.performingPaintInvalidation() || (paintingInfo.paintBehavior & PaintBehavior::FlattenCompositingLayers))
-            paintFlags |= PaintLayerTemporaryClipRects;
+            paintFlags.add(PaintLayerTemporaryClipRects);
         else if (!backing()->paintsIntoWindow()
             && !backing()->paintsIntoCompositedAncestor()
             && !shouldDoSoftwarePaint(this, paintFlags.contains(PaintLayerPaintingReflection))
@@ -4000,7 +4000,7 @@ void RenderLayer::paintLayer(GraphicsContext& context, const LayerPaintingInfo& 
         return;
 
     if (paintsWithTransparency(paintingInfo.paintBehavior))
-        paintFlags |= PaintLayerHaveTransparency;
+        paintFlags.add(PaintLayerHaveTransparency);
 
     // PaintLayerAppliedTransform is used in RenderReplica, to avoid applying the transform twice.
     if (paintsWithTransform(paintingInfo.paintBehavior) && !(paintFlags & PaintLayerAppliedTransform)) {
@@ -4061,7 +4061,7 @@ void RenderLayer::paintLayerContentsAndReflection(GraphicsContext& context, cons
         m_paintingInsideReflection = false;
     }
 
-    localPaintFlags |= paintLayerPaintingCompositingAllPhasesFlags();
+    localPaintFlags.add(paintLayerPaintingCompositingAllPhasesFlags());
     paintLayerContents(context, paintingInfo, localPaintFlags);
 }
 
@@ -4355,21 +4355,21 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
         OptionSet<PaintBehavior> paintBehavior = PaintBehavior::Normal;
         if (localPaintFlags & PaintLayerPaintingSkipRootBackground)
-            paintBehavior |= PaintBehavior::SkipRootBackground;
+            paintBehavior.add(PaintBehavior::SkipRootBackground);
         else if (localPaintFlags & PaintLayerPaintingRootBackgroundOnly)
-            paintBehavior |= PaintBehavior::RootBackgroundOnly;
+            paintBehavior.add(PaintBehavior::RootBackgroundOnly);
 
         if (paintingInfo.paintBehavior & PaintBehavior::FlattenCompositingLayers)
-            paintBehavior |= PaintBehavior::FlattenCompositingLayers;
+            paintBehavior.add(PaintBehavior::FlattenCompositingLayers);
         
         if (paintingInfo.paintBehavior & PaintBehavior::Snapshotting)
-            paintBehavior |= PaintBehavior::Snapshotting;
+            paintBehavior.add(PaintBehavior::Snapshotting);
         
         if ((paintingInfo.paintBehavior & PaintBehavior::TileFirstPaint) && isRenderViewLayer())
-            paintBehavior |= PaintBehavior::TileFirstPaint;
+            paintBehavior.add(PaintBehavior::TileFirstPaint);
 
         if (paintingInfo.paintBehavior & PaintBehavior::ExcludeSelection)
-            paintBehavior |= PaintBehavior::ExcludeSelection;
+            paintBehavior.add(PaintBehavior::ExcludeSelection);
 
         LayoutRect paintDirtyRect = localPaintingInfo.paintDirtyRect;
         if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars) {
@@ -4438,13 +4438,13 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     if (shouldPaintContent && !(selectionOnly || selectionAndBackgroundsOnly)) {
         OptionSet<PaintBehavior> paintBehavior = PaintBehavior::Normal;
         if (paintingInfo.paintBehavior & PaintBehavior::FlattenCompositingLayers)
-            paintBehavior |= PaintBehavior::FlattenCompositingLayers;
+            paintBehavior.add(PaintBehavior::FlattenCompositingLayers);
         
         if (paintingInfo.paintBehavior & PaintBehavior::Snapshotting)
-            paintBehavior |= PaintBehavior::Snapshotting;
+            paintBehavior.add(PaintBehavior::Snapshotting);
         
         if (paintingInfo.paintBehavior & PaintBehavior::TileFirstPaint)
-            paintBehavior |= PaintBehavior::TileFirstPaint;
+            paintBehavior.add(PaintBehavior::TileFirstPaint);
 
         if (shouldPaintMask(paintingInfo.paintBehavior, localPaintFlags)) {
             // Paint the mask for the fragments.
@@ -4770,13 +4770,13 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
         localPaintBehavior = paintBehavior;
 
     if (localPaintingInfo.paintBehavior & PaintBehavior::ExcludeSelection)
-        localPaintBehavior |= PaintBehavior::ExcludeSelection;
+        localPaintBehavior.add(PaintBehavior::ExcludeSelection);
     
     if (localPaintingInfo.paintBehavior & PaintBehavior::Snapshotting)
-        localPaintBehavior |= PaintBehavior::Snapshotting;
+        localPaintBehavior.add(PaintBehavior::Snapshotting);
     
     if (localPaintingInfo.paintBehavior & PaintBehavior::TileFirstPaint)
-        localPaintBehavior |= PaintBehavior::TileFirstPaint;
+        localPaintBehavior.add(PaintBehavior::TileFirstPaint);
 
     // Optimize clipping for the single fragment case.
     bool shouldClip = localPaintingInfo.clipToDirtyRect && layerFragments.size() == 1 && layerFragments[0].shouldPaintContent && !layerFragments[0].foregroundRect.isEmpty();

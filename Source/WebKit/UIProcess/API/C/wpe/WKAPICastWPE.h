@@ -53,9 +53,9 @@ inline OptionSet<WebCore::ActivityState::Flag> toViewStateFlags(WKViewState wkVi
     OptionSet<WebCore::ActivityState::Flag> viewStateFlags;
 
     if (wkViewState & kWKViewStateIsInWindow)
-        viewStateFlags |= WebCore::ActivityState::IsInWindow;
+        viewStateFlags.add(WebCore::ActivityState::IsInWindow);
     if (wkViewState & kWKViewStateIsVisible)
-        viewStateFlags |= WebCore::ActivityState::IsVisible;
+        viewStateFlags.add(WebCore::ActivityState::IsVisible);
 
     return viewStateFlags;
 }

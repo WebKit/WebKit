@@ -270,7 +270,7 @@ void WKPageReload(WKPageRef pageRef)
     OptionSet<WebCore::ReloadOption> reloadOptions;
 #if PLATFORM(COCOA)
     if (linkedOnOrAfter(WebKit::SDKVersion::FirstWithExpiredOnlyReloadBehavior))
-        reloadOptions |= WebCore::ReloadOption::ExpiredOnly;
+        reloadOptions.add(WebCore::ReloadOption::ExpiredOnly);
 #endif
 
     toImpl(pageRef)->reload(reloadOptions);

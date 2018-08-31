@@ -473,7 +473,7 @@ bool ContentSecurityPolicySourceList::parseHashSource(const UChar* begin, const 
     if (digest->value.size() > ContentSecurityPolicyHash::maximumDigestLength)
         return false;
 
-    m_hashAlgorithmsUsed |= digest->algorithm;
+    m_hashAlgorithmsUsed.add(digest->algorithm);
     m_hashes.add(WTFMove(*digest));
     return true;
 }

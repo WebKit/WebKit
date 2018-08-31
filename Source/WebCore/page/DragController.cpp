@@ -619,9 +619,9 @@ bool DragController::concludeEditDrag(const DragData& dragData)
             if (setSelectionToDragCaret(innerFrame.get(), dragCaret, range, point)) {
                 OptionSet<ReplaceSelectionCommand::CommandOption> options { ReplaceSelectionCommand::SelectReplacement, ReplaceSelectionCommand::PreventNesting };
                 if (dragData.canSmartReplace())
-                    options |= ReplaceSelectionCommand::SmartReplace;
+                    options.add(ReplaceSelectionCommand::SmartReplace);
                 if (chosePlainText)
-                    options |= ReplaceSelectionCommand::MatchStyle;
+                    options.add(ReplaceSelectionCommand::MatchStyle);
                 ReplaceSelectionCommand::create(*m_documentUnderMouse, fragment.releaseNonNull(), options, EditActionInsertFromDrop)->apply();
             }
         }

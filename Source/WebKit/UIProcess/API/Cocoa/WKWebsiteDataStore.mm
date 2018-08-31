@@ -223,7 +223,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
     OptionSet<WebKit::WebsiteDataFetchOption> fetchOptions;
     if (options & _WKWebsiteDataStoreFetchOptionComputeSizes)
-        fetchOptions |= WebKit::WebsiteDataFetchOption::ComputeSizes;
+        fetchOptions.add(WebKit::WebsiteDataFetchOption::ComputeSizes);
 
     _websiteDataStore->websiteDataStore().fetchData(WebKit::toWebsiteDataTypes(dataTypes), fetchOptions, [completionHandlerCopy = WTFMove(completionHandlerCopy)](auto websiteDataRecords) {
         Vector<RefPtr<API::Object>> elements;
