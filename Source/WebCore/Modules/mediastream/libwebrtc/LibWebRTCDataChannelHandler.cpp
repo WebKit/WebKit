@@ -27,10 +27,63 @@
 
 #if USE(LIBWEBRTC)
 
+#include "EventNames.h"
 #include "RTCDataChannel.h"
+#include "RTCDataChannelEvent.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
+
+webrtc::DataChannelInit LibWebRTCDataChannelHandler::fromRTCDataChannelInit(const RTCDataChannelInit& options)
+{
+    webrtc::DataChannelInit init;
+    if (options.ordered)
+        init.ordered = *options.ordered;
+    if (options.maxPacketLifeTime)
+        init.maxRetransmitTime = *options.maxPacketLifeTime;
+    if (options.maxRetransmits)
+        init.maxRetransmits = *options.maxRetransmits;
+    init.protocol = options.protocol.utf8().data();
+    if (options.negotiated)
+        init.negotiated = *options.negotiated;
+    if (options.id)
+        init.id = *options.id;
+    return init;
+}
+
+static inline String fromStdString(const std::string& value)
+{
+    return String::fromUTF8(value.data(), value.length());
+}
+
+Ref<RTCDataChannelEvent> LibWebRTCDataChannelHandler::channelEvent(ScriptExecutionContext& context, rtc::scoped_refptr<webrtc::DataChannelInterface>&& dataChannel)
+{
+    auto protocol = dataChannel->protocol();
+    auto label = dataChannel->label();
+
+    RTCDataChannelInit init;
+    init.ordered = dataChannel->ordered();
+    init.maxPacketLifeTime = dataChannel->maxRetransmitTime();
+    init.maxRetransmits = dataChannel->maxRetransmits();
+    init.protocol = fromStdString(protocol);
+    init.negotiated = dataChannel->negotiated();
+    init.id = dataChannel->id();
+
+    bool isOpened = dataChannel->state() == webrtc::DataChannelInterface::kOpen;
+
+    auto handler =  std::make_unique<LibWebRTCDataChannelHandler>(WTFMove(dataChannel));
+    auto channel = RTCDataChannel::create(context, WTFMove(handler), fromStdString(label), WTFMove(init));
+
+    if (isOpened) {
+        callOnMainThread([channel = channel.copyRef()] {
+            // FIXME: We should be able to write channel->didChangeReadyState(...)
+            RTCDataChannelHandlerClient& client = channel.get();
+            client.didChangeReadyState(RTCDataChannelState::Open);
+        });
+    }
+
+    return RTCDataChannelEvent::create(eventNames().datachannelEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(channel));
+}
 
 LibWebRTCDataChannelHandler::~LibWebRTCDataChannelHandler()
 {

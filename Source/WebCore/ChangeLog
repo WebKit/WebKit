@@ -1,5 +1,25 @@
 2018-08-31  Youenn Fablet  <youenn@apple.com>
 
+        Move LibWebRTCMediaEndpoint data channel code to LibWebRTCDataChannelHandler
+        https://bugs.webkit.org/show_bug.cgi?id=189182
+
+        Reviewed by Alejandro G. Castro.
+
+        Moving data channel code outside of LibWebRTCMediaEndpoint.
+        This will allow future development to support unified plan.
+        No change of behavior.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp:
+        (WebCore::LibWebRTCDataChannelHandler::fromRTCDataChannelInit):
+        (WebCore::LibWebRTCDataChannelHandler::channelEvent):
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::createDataChannel):
+        (WebCore::LibWebRTCMediaEndpoint::OnDataChannel):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+
+2018-08-31  Youenn Fablet  <youenn@apple.com>
+
         Move session observers outside LibWebRTCMediaEndpoint
         https://bugs.webkit.org/show_bug.cgi?id=189181
 
