@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,7 +86,6 @@ private:
     void addVideoSource(Ref<RealtimeOutgoingVideoSource>&&);
 
     void getStatsSucceeded(const DeferredPromise&, Ref<RTCStatsReport>&&);
-    void getStatsFailed(const DeferredPromise&, Exception&&);
 
     bool notifyAddedTrack(RTCRtpSender&) final;
     void notifyRemovedTrack(RTCRtpSender&) final;
@@ -112,7 +111,6 @@ private:
     Vector<std::unique_ptr<webrtc::IceCandidateInterface>> m_pendingCandidates;
     Vector<Ref<RealtimeOutgoingAudioSource>> m_audioSources;
     Vector<Ref<RealtimeOutgoingVideoSource>> m_videoSources;
-    HashMap<const DeferredPromise*, Ref<DeferredPromise>> m_statsPromises;
     Vector<Ref<RTCRtpReceiver>> m_pendingReceivers;
 };
 

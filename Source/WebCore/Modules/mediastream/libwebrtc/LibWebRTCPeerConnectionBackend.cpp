@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc.
+ * Copyright (C) 2017-2018 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 
 #include "Document.h"
 #include "IceCandidate.h"
-#include "JSRTCStatsReport.h"
 #include "LibWebRTCDataChannelHandler.h"
 #include "LibWebRTCMediaEndpoint.h"
 #include "MediaEndpointConfiguration.h"
@@ -128,26 +127,7 @@ bool LibWebRTCPeerConnectionBackend::setConfiguration(MediaEndpointConfiguration
 
 void LibWebRTCPeerConnectionBackend::getStats(MediaStreamTrack* track, Ref<DeferredPromise>&& promise)
 {
-    if (m_endpoint->isStopped())
-        return;
-
-    auto& statsPromise = promise.get();
-    m_statsPromises.add(&statsPromise, WTFMove(promise));
-    m_endpoint->getStats(track, statsPromise);
-}
-
-void LibWebRTCPeerConnectionBackend::getStatsSucceeded(const DeferredPromise& promise, Ref<RTCStatsReport>&& report)
-{
-    auto statsPromise = m_statsPromises.take(&promise);
-    ASSERT(statsPromise);
-    statsPromise.value()->resolve<IDLInterface<RTCStatsReport>>(WTFMove(report));
-}
-
-void LibWebRTCPeerConnectionBackend::getStatsFailed(const DeferredPromise& promise, Exception&& exception)
-{
-    auto statsPromise = m_statsPromises.take(&promise);
-    ASSERT(statsPromise);
-    statsPromise.value()->reject(WTFMove(exception));
+    m_endpoint->getStats(track, WTFMove(promise));
 }
 
 void LibWebRTCPeerConnectionBackend::doSetLocalDescription(RTCSessionDescription& description)
@@ -200,7 +180,6 @@ void LibWebRTCPeerConnectionBackend::doStop()
 
     m_audioSources.clear();
     m_videoSources.clear();
-    m_statsPromises.clear();
     m_pendingReceivers.clear();
 }
 

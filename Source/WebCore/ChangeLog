@@ -1,3 +1,40 @@
+2018-08-31  Youenn Fablet  <youenn@apple.com>
+
+        Move stats gathering out of LibWebRTCMediaEndpoint
+        https://bugs.webkit.org/show_bug.cgi?id=189180
+
+        Reviewed by Alejandro G. Castro.
+
+        Move stats gathering in LibWebRTCStatsCollector.
+        Make sure that the lambda given to the collector is always called and destroyed from the main thread.
+        This allows capturing the promise here instead of storing it into the peer connection backend.
+        No change of behavior.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::getStats):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::getStats):
+        (WebCore::LibWebRTCPeerConnectionBackend::doStop):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp: Added.
+        (WebCore::LibWebRTCStatsCollector::LibWebRTCStatsCollector):
+        (WebCore::LibWebRTCStatsCollector::~LibWebRTCStatsCollector):
+        (WebCore::fromStdString):
+        (WebCore::fillRTCStats):
+        (WebCore::fillRTCRTPStreamStats):
+        (WebCore::fillInboundRTPStreamStats):
+        (WebCore::fillOutboundRTPStreamStats):
+        (WebCore::fillRTCMediaStreamTrackStats):
+        (WebCore::fillRTCDataChannelStats):
+        (WebCore::iceCandidatePairState):
+        (WebCore::fillRTCIceCandidatePairStats):
+        (WebCore::fillRTCCertificateStats):
+        (WebCore::LibWebRTCStatsCollector::OnStatsDelivered):
+        * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.h: Added.
+        (WebCore::LibWebRTCStatsCollector::create):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-08-31  Jer Noble  <jer.noble@apple.com>
 
         Compile error in RealtimeOutgoingVideoSource.cpp; unused parameter in libwebrtc header

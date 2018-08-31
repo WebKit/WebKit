@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,7 +83,7 @@ public:
     void doSetRemoteDescription(RTCSessionDescription&);
     void doCreateOffer(const RTCOfferOptions&);
     void doCreateAnswer();
-    void getStats(MediaStreamTrack*, const DeferredPromise&);
+    void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&);
     std::unique_ptr<RTCDataChannelHandler> createDataChannel(const String&, const RTCDataChannelInit&);
     bool addIceCandidate(webrtc::IceCandidateInterface& candidate) { return m_backend->AddIceCandidate(&candidate); }
 
@@ -153,20 +153,6 @@ private:
 
     Seconds statsLogInterval(int64_t) const;
 #endif
-
-    class StatsCollector : public webrtc::RTCStatsCollectorCallback {
-    public:
-        static rtc::scoped_refptr<StatsCollector> create(Ref<LibWebRTCMediaEndpoint>&& endpoint, const DeferredPromise& promise, MediaStreamTrack* track) { return new rtc::RefCountedObject<StatsCollector>(WTFMove(endpoint), promise, track); }
-
-        StatsCollector(Ref<LibWebRTCMediaEndpoint>&&, const DeferredPromise&, MediaStreamTrack*);
-
-    private:
-        void OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>&) final;
-
-        Ref<LibWebRTCMediaEndpoint> m_endpoint;
-        const DeferredPromise& m_promise;
-        String m_id;
-    };
 
     LibWebRTCPeerConnectionBackend& m_peerConnectionBackend;
     webrtc::PeerConnectionFactoryInterface& m_peerConnectionFactory;

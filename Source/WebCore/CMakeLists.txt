@@ -1560,6 +1560,7 @@ if (USE_LIBWEBRTC)
       "${THIRDPARTY_DIR}/libwebrtc/Source/third_party/abseil-cpp")
   list(APPEND WebCore_LIBRARIES webrtc)
   list(APPEND WebCore_SOURCES
+      Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp
       Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp
       Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp
       Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp
