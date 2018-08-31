@@ -39,7 +39,7 @@ public:
     static Ref<WebDataListSuggestionsDropdownMac> create(WebDataListSuggestionsDropdown::Client&, NSView *);
     ~WebDataListSuggestionsDropdownMac();
 
-    void didSelectOption(String&);
+    void didSelectOption(const String&);
 
 private:
     WebDataListSuggestionsDropdownMac(WebDataListSuggestionsDropdown::Client&, NSView *);

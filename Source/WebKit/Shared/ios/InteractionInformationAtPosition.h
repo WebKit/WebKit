@@ -56,6 +56,9 @@ struct InteractionInformationAtPosition {
 #if ENABLE(DATA_DETECTION)
     bool isDataDetectorLink { false };
 #endif
+#if ENABLE(DATALIST_ELEMENT)
+    bool preventTextInteraction { false };
+#endif
     WebCore::FloatPoint adjustedPointForNodeRespondingToClickEvents;
     WebCore::URL url;
     WebCore::URL imageURL;

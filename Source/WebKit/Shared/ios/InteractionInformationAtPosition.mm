@@ -82,6 +82,9 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
         IPC::encode(encoder, reinterpret_cast<CFDataRef>(archiver.get().encodedData));
     }
 #endif
+#if ENABLE(DATALIST_ELEMENT)
+    encoder << preventTextInteraction;
+#endif
 }
 
 bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, InteractionInformationAtPosition& result)
@@ -184,6 +187,11 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
         
         [unarchiver finishDecoding];
     }
+#endif
+
+#if ENABLE(DATALIST_ELEMENT)
+    if (!decoder.decode(result.preventTextInteraction))
+        return false;
 #endif
 
     return true;

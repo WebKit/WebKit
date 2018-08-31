@@ -125,8 +125,11 @@ struct AssistedNodeInformation {
     String placeholder;
     String label;
     String ariaLabel;
-#if ENABLE(INPUT_TYPE_COLOR) && ENABLE(DATALIST_ELEMENT)
+#if ENABLE(DATALIST_ELEMENT)
+    bool hasSuggestions { false };
+#if ENABLE(INPUT_TYPE_COLOR)
     Vector<WebCore::Color> suggestedColors;
+#endif
 #endif
 
     uint64_t assistedNodeIdentifier { 0 };

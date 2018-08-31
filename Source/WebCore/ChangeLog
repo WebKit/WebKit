@@ -1,3 +1,25 @@
+2018-08-31  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Datalist][iOS] Add suggestions UI for TextFieldInputTypes
+        https://bugs.webkit.org/show_bug.cgi?id=186714
+
+        Reviewed by Wenson Hsieh.
+
+        On iOS, the datalist button should appear as a downward triangle. Furthermore, the
+        button should only be displayed if the input has focus and there are suggested
+        values.
+
+        * css/html.css:
+        (input::-webkit-list-button): Draw the triangle using an SVG.
+        * html/DataListSuggestionInformation.h:
+        * html/HTMLInputElement.h:
+        * html/TextFieldInputType.cpp: Added logic to show and hide the datalist button as necessary.
+        (WebCore::TextFieldInputType::handleFocusEvent):
+        (WebCore::TextFieldInputType::handleBlurEvent):
+        (WebCore::TextFieldInputType::didSetValueByUserEdit):
+        (WebCore::TextFieldInputType::listAttributeTargetChanged):
+        (WebCore::TextFieldInputType::displaySuggestions):
+
 2018-08-31  Youenn Fablet  <youenn@apple.com>
 
         Move LibWebRTCMediaEndpoint data channel code to LibWebRTCDataChannelHandler

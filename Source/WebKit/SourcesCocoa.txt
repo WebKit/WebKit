@@ -349,6 +349,7 @@ UIProcess/Gamepad/ios/UIGamepadProviderIOS.mm
 UIProcess/Gamepad/mac/UIGamepadProviderMac.mm
 
 UIProcess/ios/DragDropInteractionState.mm
+UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm
 
 UIProcess/ios/forms/WKAirPlayRoutePicker.mm
 UIProcess/ios/forms/WKDatePickerViewController.mm

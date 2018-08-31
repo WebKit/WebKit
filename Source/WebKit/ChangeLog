@@ -1,3 +1,102 @@
+2018-08-31  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Datalist][iOS] Add suggestions UI for TextFieldInputTypes
+        https://bugs.webkit.org/show_bug.cgi?id=186714
+
+        Reviewed by Wenson Hsieh.
+
+        On iOS, we have less space to display suggestions from a datalist element compared
+        to macOS. Furthermore, iPhones and iPads have different form factors, leading to a
+        different approach on each device. The commonalities of the two implementations
+        can be found in WKDataListSuggestionsControl. This class is subclassed by the
+        device specific implementations.
+
+        On iPhone, we display the suggestions in a UIPickerView. This view is accessible
+        only after tapping on the datalist button element to the side of the input field.
+        This approach was chosen in order to avoid tricking the user into thinking that
+        the values displayed in the picker are the only accepted values.
+        WKDataListSuggestionsPicker is responsible for managing the interface shown on
+        iPhones.
+
+        On iPad, we display the suggestions in a popover, that is visible alongside the
+        keyboard. The suggestions in the popover update as the user types.
+        WKDataListSuggestionsPopover is responsible for managing the interface shown on
+        iPads.
+
+        Both devices display predictive text suggestions, taking the first three values
+        from the filtered suggestions list. In order to prevent other clients from
+        overwriting the suggestions provided by the datalist element, we prevent writing
+        to the predictive text bar if an input with the list attribute is the currently
+        assisted node.
+
+        * Shared/AssistedNodeInformation.cpp:
+        (WebKit::AssistedNodeInformation::encode const):
+        (WebKit::AssistedNodeInformation::decode):
+        * Shared/AssistedNodeInformation.h:
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * SourcesCocoa.txt:
+        * UIProcess/WebDataListSuggestionsDropdownIOS.h: Added.
+        * UIProcess/WebDataListSuggestionsDropdownIOS.mm: Added.
+        (WebKit::WebDataListSuggestionsDropdownIOS::create):
+        (WebKit::WebDataListSuggestionsDropdownIOS::WebDataListSuggestionsDropdownIOS):
+        (WebKit::WebDataListSuggestionsDropdownIOS::show):
+        (WebKit::WebDataListSuggestionsDropdownIOS::handleKeydownWithIdentifier):
+        (WebKit::WebDataListSuggestionsDropdownIOS::close):
+        (WebKit::WebDataListSuggestionsDropdownIOS::didSelectOption):
+        (-[WKDataListSuggestionsControl initWithInformation:inView:]):
+        (-[WKDataListSuggestionsControl updateWithInformation:]):
+        (-[WKDataListSuggestionsControl showSuggestionsDropdown:activationType:]):
+        (-[WKDataListSuggestionsControl didSelectOptionAtIndex:]):
+        (-[WKDataListSuggestionsControl invalidate]):
+        (-[WKDataListSuggestionsControl textSuggestions]):
+        (-[WKDataListSuggestionsControl suggestionsCount]):
+        (-[WKDataListSuggestionsControl suggestionAtIndex:]):
+        (-[WKDataListSuggestionsControl textAlignment]):
+        (-[WKDataListSuggestionsPicker initWithInformation:inView:]):
+        (-[WKDataListSuggestionsPicker updateWithInformation:]):
+        (-[WKDataListSuggestionsPicker showSuggestionsDropdown:activationType:]):
+        (-[WKDataListSuggestionsPicker numberOfComponentsInPickerView:]):
+        (-[WKDataListSuggestionsPicker pickerView:numberOfRowsInComponent:]):
+        (-[WKDataListSuggestionsPicker pickerView:titleForRow:forComponent:]):
+        (-[WKDataListSuggestionsPicker invalidate]):
+        (-[WKDataListSuggestionsPickerView controlView]):
+        (-[WKDataListSuggestionsPickerView controlBeginEditing]):
+        (-[WKDataListSuggestionsPickerView controlEndEditing]):
+        (-[WKDataListSuggestionsPopover initWithInformation:inView:]):
+        (-[WKDataListSuggestionsPopover updateWithInformation:]):
+        (-[WKDataListSuggestionsPopover showSuggestionsDropdown:activationType:]):
+        (-[WKDataListSuggestionsPopover invalidate]):
+        (-[WKDataListSuggestionsPopover didSelectOptionAtIndex:]):
+        (-[WKDataListSuggestionsViewController reloadData]):
+        (-[WKDataListSuggestionsViewController tableView:numberOfRowsInSection:]):
+        (-[WKDataListSuggestionsViewController tableView:cellForRowAtIndexPath:]):
+        (-[WKDataListSuggestionsViewController tableView:didSelectRowAtIndexPath:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::pageDidScroll):
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::createDataListSuggestionsDropdown):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFormInputSession endEditing]):
+        (-[WKFormInputSession setSuggestions:]):
+        (-[WKContentView _formInputSession]):
+        (-[WKContentView resignFirstResponderForWebView]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+        (-[WKContentView accessoryTab:]):
+        (-[WKContentView insertTextSuggestion:]):
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.h:
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        (WebKit::WebDataListSuggestionsDropdownMac::didSelectOption):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCloseSuggestions):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+        (WebKit::WebPage::getAssistedNodeInformation):
+
 2018-08-31  Frederic Wang  <fwang@igalia.com>
 
         REGRESSION(r235484) _WKPreferencesGetWebRTCLegacyAPIEnabled symbol not found when running Safari with external SDK build

@@ -106,7 +106,7 @@ void WebDataListSuggestionsDropdownMac::show(WebCore::DataListSuggestionInformat
     [m_dropdownUI showSuggestionsDropdown:this];
 }
 
-void WebDataListSuggestionsDropdownMac::didSelectOption(String& selectedOption)
+void WebDataListSuggestionsDropdownMac::didSelectOption(const String& selectedOption)
 {
     if (!m_client)
         return;

@@ -25,37 +25,38 @@
 
 #pragma once
 
-#if ENABLE(DATALIST_ELEMENT)
+#if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS)
 
-#include <WebCore/DataListSuggestionPicker.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#import "UIKitSPI.h"
+#import "WebDataListSuggestionsDropdown.h"
+#include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
+
+OBJC_CLASS WKContentView;
+OBJC_CLASS WKDataListSuggestionsControl;
+
+@interface WKDataListTextSuggestion : UITextSuggestion
+@end
 
 namespace WebKit {
 
-class WebDataListSuggestionsDropdown : public RefCounted<WebDataListSuggestionsDropdown> {
+class WebDataListSuggestionsDropdownIOS : public WebDataListSuggestionsDropdown {
 public:
-    class Client {
-    protected:
-        virtual ~Client() { }
+    static Ref<WebDataListSuggestionsDropdownIOS> create(WebDataListSuggestionsDropdown::Client&, WKContentView *);
 
-    public:
-        virtual void didSelectOption(const String&) = 0;
-        virtual void didCloseSuggestions() = 0;
-    };
+    void didSelectOption(const String&);
 
-    virtual ~WebDataListSuggestionsDropdown();
+private:
+    WebDataListSuggestionsDropdownIOS(WebDataListSuggestionsDropdown::Client&, WKContentView *);
 
-    virtual void show(WebCore::DataListSuggestionInformation&&) = 0;
-    virtual void handleKeydownWithIdentifier(const String&) = 0;
-    virtual void close();
+    void show(WebCore::DataListSuggestionInformation&&) final;
+    void handleKeydownWithIdentifier(const String&) final;
+    void close() final;
 
-protected:
-    explicit WebDataListSuggestionsDropdown(Client&);
-
-    Client* m_client;
+    WKContentView *m_contentView;
+    RetainPtr<WKDataListSuggestionsControl> m_suggestionsControl;
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(DATALIST_ELEMENT)
+#endif // ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS)

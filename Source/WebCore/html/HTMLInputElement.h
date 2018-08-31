@@ -151,7 +151,7 @@ public:
     HTMLElement* placeholderElement() const final;
     WEBCORE_EXPORT HTMLElement* autoFillButtonElement() const;
 #if ENABLE(DATALIST_ELEMENT)
-    HTMLElement* dataListButtonElement() const;
+    WEBCORE_EXPORT HTMLElement* dataListButtonElement() const;
 #endif
 
     bool checked() const { return m_isChecked; }

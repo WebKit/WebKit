@@ -48,6 +48,7 @@
 #import "WKWebViewContentProviderRegistry.h"
 #import "WKWebViewInternal.h"
 #import "WebContextMenuProxy.h"
+#import "WebDataListSuggestionsDropdownIOS.h"
 #import "WebEditCommandProxy.h"
 #import "WebProcessProxy.h"
 #import "_WKDownloadInternal.h"
@@ -780,7 +781,7 @@ RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy*, const We
 #if ENABLE(DATALIST_ELEMENT)
 RefPtr<WebDataListSuggestionsDropdown> PageClientImpl::createDataListSuggestionsDropdown(WebPageProxy& page)
 {
-    return nullptr;
+    return WebDataListSuggestionsDropdownIOS::create(page, m_contentView);
 }
 #endif
 

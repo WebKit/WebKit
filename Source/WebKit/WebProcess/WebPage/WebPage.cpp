@@ -3593,7 +3593,8 @@ void WebPage::didSelectDataListOption(const String& selectedOption)
 
 void WebPage::didCloseSuggestions()
 {
-    m_activeDataListSuggestionPicker->didCloseSuggestions();
+    if (m_activeDataListSuggestionPicker)
+        m_activeDataListSuggestionPicker->didCloseSuggestions();
     m_activeDataListSuggestionPicker = nullptr;
 }
 

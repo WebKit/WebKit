@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IntRect.h"
+#include <wtf/Vector.h>
 
 #if ENABLE(DATALIST_ELEMENT)
 namespace WebCore {

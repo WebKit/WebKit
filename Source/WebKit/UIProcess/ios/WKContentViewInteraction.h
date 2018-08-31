@@ -44,6 +44,7 @@
 #import "WKKeyboardScrollingAnimator.h"
 #import "WKShareSheet.h"
 #import "WKSyntheticClickTapGestureRecognizer.h"
+#import "_WKFormInputSession.h"
 #import <UIKit/UIView.h>
 #import <WebCore/Color.h>
 #import <WebCore/FloatQuad.h>
@@ -146,6 +147,16 @@ struct WKAutoCorrectionData {
 };
 
 }
+
+@class WKFocusedElementInfo;
+
+@interface WKFormInputSession : NSObject <_WKFormInputSession>
+
+- (instancetype)initWithContentView:(WKContentView *)view focusedElementInfo:(WKFocusedElementInfo *)elementInfo requiresStrongPasswordAssistance:(BOOL)requiresStrongPasswordAssistance;
+- (void)endEditing;
+- (void)invalidate;
+
+@end
 
 @interface WKContentView () {
     RetainPtr<UIWebTouchEventsGestureRecognizer> _touchEventGestureRecognizer;
@@ -348,6 +359,7 @@ FOR_EACH_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text;
 - (void)_accessibilityStoreSelection;
 - (void)_accessibilityClearSelection;
+- (WKFormInputSession *)_formInputSession;
 
 @property (nonatomic, readonly) WebKit::InteractionInformationAtPosition currentPositionInformation;
 - (void)doAfterPositionInformationUpdate:(void (^)(WebKit::InteractionInformationAtPosition))action forRequest:(WebKit::InteractionInformationRequest)request;

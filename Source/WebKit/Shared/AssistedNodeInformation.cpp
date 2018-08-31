@@ -97,8 +97,11 @@ void AssistedNodeInformation::encode(IPC::Encoder& encoder) const
     encoder << label;
     encoder << ariaLabel;
     encoder << assistedNodeIdentifier;
-#if ENABLE(INPUT_TYPE_COLOR) && ENABLE(DATALIST_ELEMENT)
+#if ENABLE(DATALIST_ELEMENT)
+    encoder << hasSuggestions;
+#if ENABLE(INPUT_TYPE_COLOR)
     encoder << suggestedColors;
+#endif
 #endif
 }
 
@@ -206,9 +209,14 @@ bool AssistedNodeInformation::decode(IPC::Decoder& decoder, AssistedNodeInformat
     if (!decoder.decode(result.assistedNodeIdentifier))
         return false;
 
-#if ENABLE(INPUT_TYPE_COLOR) && ENABLE(DATALIST_ELEMENT)
+#if ENABLE(DATALIST_ELEMENT)
+    if (!decoder.decode(result.hasSuggestions))
+        return false;
+
+#if ENABLE(INPUT_TYPE_COLOR)
     if (!decoder.decode(result.suggestedColors))
         return false;
+#endif
 #endif
 
     return true;

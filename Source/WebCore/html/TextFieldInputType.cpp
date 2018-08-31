@@ -260,8 +260,13 @@ void TextFieldInputType::handleFocusEvent(Node* oldFocusedNode, FocusDirection)
 {
     ASSERT(element());
     ASSERT_UNUSED(oldFocusedNode, oldFocusedNode != element());
-    if (RefPtr<Frame> frame = element()->document().frame())
+    if (RefPtr<Frame> frame = element()->document().frame()) {
         frame->editor().textFieldDidBeginEditing(element());
+#if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS)
+        if (element()->list() && m_dataListDropdownIndicator)
+            m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, suggestions().size() ? CSSValueBlock : CSSValueNone, true);
+#endif
+    }
 }
 
 void TextFieldInputType::handleBlurEvent()
@@ -269,6 +274,10 @@ void TextFieldInputType::handleBlurEvent()
     InputType::handleBlurEvent();
     ASSERT(element());
     element()->endEditing();
+#if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS)
+    if (element()->list() && m_dataListDropdownIndicator)
+        m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);
+#endif
 }
 
 bool TextFieldInputType::shouldSubmitImplicitly(Event& event)
@@ -648,6 +657,10 @@ void TextFieldInputType::didSetValueByUserEdit()
     if (RefPtr<Frame> frame = element()->document().frame())
         frame->editor().textDidChangeInTextField(element());
 #if ENABLE(DATALIST_ELEMENT)
+#if PLATFORM(IOS)
+    if (element()->list() && m_dataListDropdownIndicator)
+        m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, suggestions().size() ? CSSValueBlock : CSSValueNone, true);
+#endif
     if (element()->list())
         displaySuggestions(DataListSuggestionActivationType::TextChanged);
 #endif
@@ -804,7 +817,9 @@ void TextFieldInputType::listAttributeTargetChanged()
     if (!m_dataListDropdownIndicator)
         return;
 
+#if !PLATFORM(IOS)
     m_dataListDropdownIndicator->setInlineStyleProperty(CSSPropertyDisplay, element()->list() ? CSSValueBlock : CSSValueNone, true);
+#endif
 }
 
 HTMLElement* TextFieldInputType::dataListButtonElement() const
@@ -875,7 +890,7 @@ void TextFieldInputType::displaySuggestions(DataListSuggestionActivationType typ
     if (element()->isDisabledFormControl() || !element()->renderer())
         return;
 
-    if (!UserGestureIndicator::processingUserGesture())
+    if (!UserGestureIndicator::processingUserGesture() && type != DataListSuggestionActivationType::TextChanged)
         return;
 
     if (!m_suggestionPicker && suggestions().size() > 0)

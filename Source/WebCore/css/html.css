@@ -626,7 +626,14 @@ input::-webkit-list-button {
     flex: none;
     -webkit-user-select: none;
     width: 16px;
+#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+    content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" stroke="black" fill="black" width="16" height="16"><polygon points="8 11.031, 4.5 4.969, 11.5 4.969"/></svg>');
+    /* Make it easier to hit the button on iOS */
+    padding: 7px;
+    margin: -7px;
+#else
     height: 100%;
+#endif
 }
 #endif
 
