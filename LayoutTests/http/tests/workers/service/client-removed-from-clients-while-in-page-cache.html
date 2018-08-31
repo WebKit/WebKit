@@ -11,17 +11,30 @@ if (window.testRunner) {
   testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 }
 
+let topClientIdentifier = null;
+let windowClientIdentifier = null;
+
 let tries = 0;
+
+function containsBothClients(clientIdentifiers)
+{
+    return clientIdentifiers.includes(topClientIdentifier) && clientIdentifiers.includes(windowClientIdentifier);
+}
+
+function containsOnlyTopClient(clientIdentifiers)
+{
+    return clientIdentifiers.includes(topClientIdentifier) && !clientIdentifiers.includes(windowClientIdentifier);
+}
 
 navigator.serviceWorker.addEventListener("message", function(event) {
   if (step == "BothClientsInitiallyActive") {
-    if (event.data != 2) {
+    if (!containsBothClients(event.data)) {
       if (++tries > 20) {
-          log("FAIL: Wrong initial number of clients: " + event.data);
+          log("FAIL: Wrong initial number of clients");
           finishSWTest();
           return;
       }
-      worker.postMessage("getClientCount");
+      worker.postMessage("getClientIds");
       return;
     }
     log("PASS: service worker has initially 2 clients");
@@ -36,7 +49,7 @@ navigator.serviceWorker.addEventListener("message", function(event) {
 
        setTimeout(function() {
          step = "OnlyOneClientRemainsActive"
-         worker.postMessage("getClientCount");
+         worker.postMessage("getClientIds");
        }, 0);
     });
 
@@ -45,8 +58,8 @@ navigator.serviceWorker.addEventListener("message", function(event) {
   }
 
   if (step == "OnlyOneClientRemainsActive") {
-    if (event.data != 1) {
-      log("FAIL: Wrong number of clients after one client entered page cache: " + event.data);
+    if (!containsOnlyTopClient(event.data)) {
+      log("FAIL: Wrong number of clients after one client entered page cache");
       finishSWTest();
     }
 
@@ -55,12 +68,15 @@ navigator.serviceWorker.addEventListener("message", function(event) {
   }
 });
 
-navigator.serviceWorker.register("resources/getClientCount-worker.js", { }).then(function(registration) {
+navigator.serviceWorker.register("resources/getClientIds-worker.js", { }).then(function(registration) {
+    topClientIdentifier = internals.serviceWorkerClientIdentifier(document);
+
     worker = registration.installing;
     otherWindow = open("other_resources/test.html");
     otherWindow.onload = function() {
+      windowClientIdentifier = internals.serviceWorkerClientIdentifier(otherWindow.document);
       step = "BothClientsInitiallyActive"
-      worker.postMessage("getClientCount");
+      worker.postMessage("getClientIds");
     };
 });
 </script>

@@ -1,3 +1,19 @@
+2018-08-31  Chris Dumez  <cdumez@apple.com>
+
+        [ WK2 ] http/tests/workers/service/client-*-page-cache.html LayoutTests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=183705
+        <rdar://problem/42440606>
+
+        Reviewed by Youenn Fablet.
+
+        Add internals.serviceWorkerClientIdentifier() utility function so that a layout test can get the
+        service worker client identifier of a document.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::serviceWorkerClientIdentifier const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-08-31  John Wilander  <wilander@apple.com>
 
         Storage Access API: Maintain access through same-site navigations

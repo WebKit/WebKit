@@ -3,31 +3,45 @@ function waitFor(duration)
     return new Promise((resolve) => setTimeout(resolve, duration));
 }
 
-function matchAllPromise1()
+function checkClientNotInControlledClients(clientIdentifier)
 {
     return self.clients.matchAll().then((clients) => {
-        return clients.length === 0 ? "PASS" : "FAIL: expected no matched client, got " + clients.length;
+        for (let client of clients) {
+            if (client.id == clientIdentifier)
+                return "FAIL: Client should not have matched";
+        }
+        return "PASS";
     }, (e) => {
-        return "FAIL: matchAll 1 rejected with " + e;
+        return "FAIL: First matchAll() request rejected with " + e;
     });
 }
 
-var matchedClients;
-function matchAllPromise2()
+function checkClientInUncontrolledClients(clientIdentifier)
 {
-    return self.clients.matchAll({ includeUncontrolled : true }).then((c) => {
-        matchedClients = c;
-        return matchedClients.length === 1 ? "PASS" : "FAIL: expected one matched client, got " + matchedClients.length;
+    return self.clients.matchAll({ includeUncontrolled : true }).then((clients) => {
+        for (let client of clients) {
+            if (client.id == clientIdentifier)
+                return "PASS";
+        }
+        return "FAIL: Client should have matched with includeUncontrolled set to true";
     }, (e) => {
-        return "FAIL: matchAll 2 rejected with " + e;
+        return "FAIL: Second matchAll() request rejected with " + e;
     });
 }
 
 async function doTestAfterMessage(event)
 {
     try {
-        if (event.data !== "start") {
+        if (event.data.test !== "checkClientIsUncontrolled") {
             event.source.postMessage("FAIL: received unexpected message from client");
+            return;
+        }
+
+        const clientIdentifier = event.data.identifier;
+
+        let result = await checkClientNotInControlledClients(clientIdentifier);
+        if (result !== "PASS") {
+            event.source.postMessage(result);
             return;
         }
 
@@ -35,26 +49,10 @@ async function doTestAfterMessage(event)
         do {
             if (tries)
                 await waitFor(50);
-            result = await matchAllPromise1();
+            result = await checkClientInUncontrolledClients(clientIdentifier);
         } while (result !== "PASS" && ++tries <= 200);
 
-        if (result !== "PASS") {
-            event.source.postMessage(result);
-            return;
-        }
-
-        tries = 0;
-        do {
-            if (tries)
-                await waitFor(50);
-            result = await matchAllPromise2();
-        } while (result !== "PASS" && ++tries <= 200);
-
-        if (result !== "PASS") {
-            event.source.postMessage(result);
-            return;
-        }
-        event.source.postMessage("PASS");
+        event.source.postMessage(result);
     } catch (e) {
         event.source.postMessage("FAIL: received exception " + e);
     }

@@ -27,6 +27,7 @@ promise_test(async (test) => {
 }, "Setup worker");
 
 promise_test(async (test) => {
+    const serviceWorkerClientIdentifier = internals.serviceWorkerClientIdentifier(document);
     var promise = new Promise((resolve, reject) => {
         navigator.serviceWorker.addEventListener("message", test.step_func((event) => {
             assert_equals(event.data, "PASS");
@@ -34,7 +35,7 @@ promise_test(async (test) => {
         }));
     });
 
-    activeWorker.postMessage("start");
+    activeWorker.postMessage({test: "checkClientIsUncontrolled", identifier: serviceWorkerClientIdentifier });
     await promise;
 }, "Test self.clients.matchAll");
 </script>
