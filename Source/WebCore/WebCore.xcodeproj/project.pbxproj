@@ -7228,6 +7228,7 @@
 		415747441E38699E00E914D8 /* LibWebRTCProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCProvider.h; path = libwebrtc/LibWebRTCProvider.h; sourceTree = "<group>"; };
 		4157EBF81E3AB06800AC9FE9 /* MockLibWebRTCPeerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockLibWebRTCPeerConnection.h; sourceTree = "<group>"; };
 		4157EBF91E3AB06800AC9FE9 /* MockLibWebRTCPeerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockLibWebRTCPeerConnection.cpp; sourceTree = "<group>"; };
+		415A3B732138E264001B4BAA /* LibWebRTCObservers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCObservers.h; path = libwebrtc/LibWebRTCObservers.h; sourceTree = "<group>"; };
 		415CDAF61E6CE0D3004F11EE /* JSMediaStreamTrackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamTrackCustom.cpp; sourceTree = "<group>"; };
 		41614A761DA64236004AD06F /* HTTPHeaderValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPHeaderValues.cpp; sourceTree = "<group>"; };
 		41614A771DA64236004AD06F /* HTTPHeaderValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPHeaderValues.h; sourceTree = "<group>"; };
@@ -16824,6 +16825,7 @@
 				5CDD83401E43253D00621E92 /* LibWebRTCDataChannelHandler.h */,
 				417612AB1E3A993B00C3D81D /* LibWebRTCMediaEndpoint.cpp */,
 				417612AC1E3A993B00C3D81D /* LibWebRTCMediaEndpoint.h */,
+				415A3B732138E264001B4BAA /* LibWebRTCObservers.h */,
 				417612AD1E3A993B00C3D81D /* LibWebRTCPeerConnectionBackend.cpp */,
 				417612AE1E3A993B00C3D81D /* LibWebRTCPeerConnectionBackend.h */,
 			);

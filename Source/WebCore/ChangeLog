@@ -1,3 +1,17 @@
+2018-08-31  Youenn Fablet  <youenn@apple.com>
+
+        Move session observers outside LibWebRTCMediaEndpoint
+        https://bugs.webkit.org/show_bug.cgi?id=189181
+
+        Reviewed by Alejandro G. Castro.
+
+        Move classes of LibWebRTCMediaEndpoint to a separate file.
+        No change of behavior.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCObservers.h: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-08-31  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Remove AVMediaCaptureSource
