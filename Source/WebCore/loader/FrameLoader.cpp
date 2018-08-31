@@ -3337,7 +3337,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         diagnosticLoggingClient.logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageCacheKey(), DiagnosticLoggingKeys::retrievalKey(), DiagnosticLoggingResultFail, ShouldSample::Yes);
     }
 
-    CompletionHandler<void(void)> completionHandler = [this, shouldContinue] {
+    CompletionHandler<void()> completionHandler = [this, shouldContinue] {
         if (!m_provisionalDocumentLoader)
             return;
         
