@@ -139,6 +139,8 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
             RETURN_IF_EXCEPTION(scope, nullptr);
             parameterBuilder.append(viewWithString.view);
         }
+        auto body = args.at(args.size() - 1).toWTFString(exec);
+        RETURN_IF_EXCEPTION(scope, nullptr);
 
         {
             // The spec mandates that the parameters parse as a valid parameter list
@@ -155,8 +157,6 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
 
         builder.append(parameterBuilder);
         builder.appendLiteral(") {\n");
-        auto body = args.at(args.size() - 1).toWTFString(exec);
-        RETURN_IF_EXCEPTION(scope, nullptr);
         checkBody(body);
         RETURN_IF_EXCEPTION(scope, nullptr);
         builder.append(body);

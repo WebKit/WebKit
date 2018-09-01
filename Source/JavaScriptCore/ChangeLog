@@ -1,3 +1,16 @@
+2018-08-24  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Function object should convert params to string before throw a parsing error
+        https://bugs.webkit.org/show_bug.cgi?id=188874
+
+        Reviewed by Darin Adler.
+
+        ToString operation onto the `body` of the Function constructor should be performed
+        before checking syntax correctness of the parameters.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+
 2018-08-31  Mark Lam  <mark.lam@apple.com>
 
         Fix exception check accounting in constructJSWebAssemblyCompileError().
