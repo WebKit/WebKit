@@ -297,6 +297,8 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
         }
     }
     filterData.sourceGraphicBuffer.reset();
+
+    LOG_WITH_STREAM(Filters, stream << "RenderSVGResourceFilter " << this << " postApplyResource done\n");
 }
 
 FloatRect RenderSVGResourceFilter::resourceBoundingBox(const RenderObject& object)

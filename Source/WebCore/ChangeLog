@@ -1,3 +1,20 @@
+2018-09-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Add some more filter logging
+        https://bugs.webkit.org/show_bug.cgi?id=189221
+
+        Reviewed by Anders Carlsson.
+
+        Add logging in FilterEffect::apply() that shows all the filter rects, and logging
+        that brackets the application of a whole filter chain, for both SVG and CSS filters.
+
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::apply):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRendererHelper::applyFilterEffect):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+
 2018-08-31  Youenn Fablet  <youenn@apple.com>
 
         Move stats gathering out of LibWebRTCMediaEndpoint

@@ -35,6 +35,7 @@
 #include "FEDropShadow.h"
 #include "FEGaussianBlur.h"
 #include "FEMerge.h"
+#include "Logging.h"
 #include "RenderLayer.h"
 #include "SVGElement.h"
 #include "SVGFilterBuilder.h"
@@ -458,6 +459,8 @@ void FilterEffectRendererHelper::applyFilterEffect(GraphicsContext& destinationC
     ASSERT(m_renderLayer->filterRenderer());
     ASSERT(m_renderLayer->filterRenderer()->inputContext());
 
+    LOG_WITH_STREAM(Filters, stream << "\nFilterEffectRendererHelper " << this << " applyFilterEffect");
+
     auto& filter = *m_renderLayer->filterRenderer();
     filter.inputContext()->restore();
 
@@ -471,6 +474,8 @@ void FilterEffectRendererHelper::applyFilterEffect(GraphicsContext& destinationC
         destinationContext.drawImageBuffer(*outputBuffer, snapRectToDevicePixels(destRect, m_renderLayer->renderer().document().deviceScaleFactor()));
 
     filter.clearIntermediateResults();
+
+    LOG_WITH_STREAM(Filters, stream << "FilterEffectRendererHelper " << this << " applyFilterEffect done\n");
 }
 
 } // namespace WebCore
