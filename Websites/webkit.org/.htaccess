@@ -106,6 +106,9 @@ Redirect 301 /priority-bugs https://bugs.webkit.org/buglist.cgi?product=WebKit&b
 RewriteRule ^css/(.*)$ /old/css/$1 [NC,L]
 RewriteRule ^images/(.*)$ /old/images/$1 [NC,L]
 
+# Pixar USD support. Change to model/vnd.usdz+zip once WebKit support is in the wild.
+AddType model/vnd.pixar.usd usdz
+
 # BEGIN WordPress
 <IfModule mod_rewrite.c>
 RewriteEngine On

@@ -1,3 +1,16 @@
+2018-08-31  Dean Jackson  <dino@apple.com>
+
+        Add support for USDZ to webkit.org for a sample file
+        https://bugs.webkit.org/show_bug.cgi?id=189217
+
+        Rubber-stamped by Anders Carlsson.
+
+        Use the accepted MIME-type for USDZ files, and provide a
+        simple example file.
+
+        * .htaccess: Serve USD with a MIME-type that we will accept.
+        * demos/ar/heart.usdz: Added.
+
 2018-07-24  Jon Davis  <jond@apple.com>
 
         Disable some vestibular trigger animations when prefers-reduced-motion is active.
