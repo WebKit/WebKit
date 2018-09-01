@@ -1,3 +1,15 @@
+2018-09-01  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Crash using KVO for 'serverTrust' property of WKWebView - "this class is not key value coding-compliant for the key serverTrust"
+        https://bugs.webkit.org/show_bug.cgi?id=189222
+        <rdar://problem/33283179>
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewServerTrustKVC.mm: Added.
+        (TEST):
+
 2018-08-31  Aditya Keerthi  <akeerthi@apple.com>
 
         Unreviewed, add an alternate email for Aditya Keerthi.

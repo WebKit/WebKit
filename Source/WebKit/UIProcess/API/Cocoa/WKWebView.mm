@@ -820,6 +820,13 @@ static void validate(WKWebViewConfiguration *configuration)
     [super dealloc];
 }
 
+- (id)valueForUndefinedKey:(NSString *)key {
+    if ([key isEqualToString:@"serverTrust"])
+        return (__bridge id)[self serverTrust];
+
+    return [super valueForUndefinedKey:key];
+}
+
 - (WKWebViewConfiguration *)configuration
 {
     return [[_configuration copy] autorelease];
