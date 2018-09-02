@@ -30,6 +30,10 @@
 #include <CFNetwork/CFNetwork.h>
 #include <pal/spi/cf/CFNetworkConnectionCacheSPI.h>
 
+// FIXME: Policy about which CFNetwork features to *use* in WebKit does not belong in the SPI header.
+// The SPI header should define which CFNetwork features *exist* in the underlying system, but not
+// policy about what WebKit should do. Accordingly, we should move this somewhere else or rename it
+// to be about CFNetwork capabilities (HAVE) rather than about WebKit policy (USE).
 #if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101302 && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110200) || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 40200) || (PLATFORM(TVOS) && __TV_OS_VERSION_MIN_REQUIRED >= 110200))
 #define USE_CFNETWORK_IGNORE_HSTS 1
 #endif
@@ -91,6 +95,45 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 - (CFURLCacheRef)_CFURLCache;
 @end
 
+@interface NSCachedURLResponse ()
+- (id)_initWithCFCachedURLResponse:(CFCachedURLResponseRef)cachedResponse;
+- (CFCachedURLResponseRef)_CFCachedURLResponse;
+@end
+
+@interface NSHTTPCookie ()
+- (CFHTTPCookieRef)_CFHTTPCookie;
++ (CFArrayRef __nullable)_ns2cfCookies:(NSArray * __nullable)nsCookies CF_RETURNS_RETAINED;
+- (CFHTTPCookieRef __nullable)_GetInternalCFHTTPCookie;
+@property (nullable, readonly, copy) NSString *_storagePartition;
+@end
+
+@interface NSHTTPCookieStorage ()
+- (id)_initWithIdentifier:(NSString *)identifier private:(bool)isPrivate;
+- (void)_getCookiesForURL:(NSURL *)url mainDocumentURL:(NSURL *)mainDocumentURL partition:(NSString *)partition completionHandler:(void (^)(NSArray *))completionHandler;
+- (void)_getCookiesForURL:(NSURL *)url mainDocumentURL:(NSURL *)mainDocumentURL partition:(NSString *)partition policyProperties:(NSDictionary*)props completionHandler:(void (^)(NSArray *))completionHandler;
+- (void)_setCookies:(NSArray *)cookies forURL:(NSURL *)URL mainDocumentURL:(NSURL *)mainDocumentURL policyProperties:(NSDictionary*) props;
+- (void)removeCookiesSinceDate:(NSDate *)date;
+- (id)_initWithCFHTTPCookieStorage:(CFHTTPCookieStorageRef)cfStorage;
+- (CFHTTPCookieStorageRef)_cookieStorage;
+- (void)_saveCookies;
+- (void)_saveCookies:(dispatch_block_t) completionHandler;
+@end
+
+@interface NSURLConnection ()
+- (id)_initWithRequest:(NSURLRequest *)request delegate:(id)delegate usesCache:(BOOL)usesCacheFlag maxContentLength:(long long)maxContentLength startImmediately:(BOOL)startImmediately connectionProperties:(NSDictionary *)connectionProperties;
+@end
+
+@interface NSMutableURLRequest ()
+- (void)setContentDispositionEncodingFallbackArray:(NSArray *)theEncodingFallbackArray;
+- (void)setBoundInterfaceIdentifier:(NSString *)identifier;
+- (void)_setPreventHSTSStorage:(BOOL)preventHSTSStorage;
+- (void)_setIgnoreHSTS:(BOOL)ignoreHSTS;
+@end
+
+@interface NSURLProtocol ()
++ (Class)_protocolClassForRequest:(NSURLRequest *)request;
+@end
+
 @interface NSURLRequest ()
 + (NSArray *)allowsSpecificHTTPSCertificateForHost:(NSString *)host;
 + (void)setAllowsSpecificHTTPSCertificate:(NSArray *)allow forHost:(NSString *)host;
@@ -100,32 +143,15 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 - (id)_initWithCFURLRequest:(CFURLRequestRef)request;
 - (id)_propertyForKey:(NSString *)key;
 - (void)_setProperty:(id)value forKey:(NSString *)key;
-#if USE(CFNETWORK_IGNORE_HSTS)
 - (BOOL)_schemeWasUpgradedDueToDynamicHSTS;
 - (BOOL)_preventHSTSStorage;
 - (BOOL)_ignoreHSTS;
-#endif
-@end
-
-@interface NSMutableURLRequest ()
-- (void)setContentDispositionEncodingFallbackArray:(NSArray *)theEncodingFallbackArray;
-- (void)setBoundInterfaceIdentifier:(NSString *)identifier;
-#if USE(CFNETWORK_IGNORE_HSTS)
-- (void)_setPreventHSTSStorage:(BOOL)preventHSTSStorage;
-- (void)_setIgnoreHSTS:(BOOL)ignoreHSTS;
-#endif
 @end
 
 @interface NSURLResponse ()
 + (NSURLResponse *)_responseWithCFURLResponse:(CFURLResponseRef)response;
 - (CFURLResponseRef)_CFURLResponse;
 - (NSDate *)_lastModifiedDate;
-@end
-
-@interface NSHTTPCookie ()
-- (CFHTTPCookieRef)_CFHTTPCookie;
-+ (CFArrayRef __nullable)_ns2cfCookies:(NSArray * __nullable)nsCookies CF_RETURNS_RETAINED;
-- (CFHTTPCookieRef __nullable)_GetInternalCFHTTPCookie;
 @end
 
 @interface NSURLSessionConfiguration ()
@@ -140,8 +166,16 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
 @property (nullable, copy) NSSet *_suppressedAutoAddedHTTPHeaders;
 #endif
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
-@property (copy) NSDictionary *_socketStreamProperties;
+@end
+
+@interface NSURLSessionTask ()
+- (NSDictionary *)_timingData;
+@property (readwrite, copy) NSString *_pathToDownloadTaskFile;
+@property (copy) NSString *_storagePartitionIdentifier;
+@property (nullable, readwrite, retain) NSURL *_siteForCookies;
+@property (readwrite) BOOL _isTopLevelNavigation;
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+@property (nonatomic, assign) BOOL _preconnect;
 #endif
 @end
 
@@ -155,28 +189,6 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 @property (assign, readonly) int64_t _responseBodyBytesDecoded;
 @end
 #endif
-
-@interface NSHTTPCookie ()
-@property (nullable, readonly, copy) NSString *_storagePartition;
-@end
-
-@interface NSHTTPCookieStorage ()
-- (id)_initWithIdentifier:(NSString *)identifier private:(bool)isPrivate;
-- (void)_getCookiesForURL:(NSURL *)url mainDocumentURL:(NSURL *)mainDocumentURL partition:(NSString *)partition completionHandler:(void (^)(NSArray *))completionHandler;
-- (void)_getCookiesForURL:(NSURL *)url mainDocumentURL:(NSURL *)mainDocumentURL partition:(NSString *)partition policyProperties:(NSDictionary*)props completionHandler:(void (^)(NSArray *))completionHandler;
-- (void)_setCookies:(NSArray *)cookies forURL:(NSURL *)URL mainDocumentURL:(NSURL *)mainDocumentURL policyProperties:(NSDictionary*) props;
-@end
-
-@interface NSURLSessionTask ()
-- (NSDictionary *)_timingData;
-@property (readwrite, copy) NSString *_pathToDownloadTaskFile;
-@property (copy) NSString *_storagePartitionIdentifier;
-@property (nullable, readwrite, retain) NSURL *_siteForCookies;
-@property (readwrite) BOOL _isTopLevelNavigation;
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
-@property (nonatomic, assign) BOOL _preconnect;
-#endif
-@end
 
 extern NSString * const NSURLAuthenticationMethodOAuth;
 
@@ -285,11 +297,6 @@ enum : NSUInteger {
     NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
 };
 
-@interface NSCachedURLResponse ()
--(id)_initWithCFCachedURLResponse:(CFCachedURLResponseRef)cachedResponse;
--(CFCachedURLResponseRef)_CFCachedURLResponse;
-@end
-
 #endif
 
 WTF_EXTERN_C_BEGIN
@@ -314,6 +321,9 @@ WTF_EXTERN_C_END
 
 #if defined(__OBJC__)
 
+// FIXME: Move these declarations the above section under !USE(APPLE_INTERNAL_SDK) when possible so that
+// Apple internal SDK builds use headers instead.
+
 @interface NSHTTPCookie ()
 #if PLATFORM(MAC)
 + (NSArray *)_parsedCookiesWithResponseHeaderFields:(NSDictionary *)headerFields forURL:(NSURL *)aURL;
@@ -321,23 +331,23 @@ WTF_EXTERN_C_END
 + (NSArray *)_cf2nsCookies:(CFArrayRef)cfCookies;
 @end
 
-#if !USE(APPLE_INTERNAL_SDK)
-@interface NSHTTPCookieStorage ()
-- (void)removeCookiesSinceDate:(NSDate *)date;
-- (id)_initWithCFHTTPCookieStorage:(CFHTTPCookieStorageRef)cfStorage;
-- (CFHTTPCookieStorageRef)_cookieStorage;
-- (void)_saveCookies;
-- (void)_saveCookies:(dispatch_block_t) completionHandler;
-@end
-#endif
-
-// FIXME: Move +_setSharedHTTPCookieStorage: into the above section under !USE(APPLE_INTERNAL_SDK) when possible (soon).
 @interface NSHTTPCookieStorage ()
 + (void)_setSharedHTTPCookieStorage:(NSHTTPCookieStorage *)storage;
 @end
 
 @interface NSURLResponse ()
 - (void)_setMIMEType:(NSString *)type;
+@end
+
+@interface NSURLSessionConfiguration ()
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+// FIXME: Remove this once rdar://problem/40650244 is in a build.
+@property (copy) NSDictionary *_socketStreamProperties;
+#endif
+@end
+
+@interface NSURLSessionTask ()
+- (void)_setExplicitCookieStorage:(CFHTTPCookieStorageRef)storage;
 @end
 
 #endif // defined(__OBJC__)

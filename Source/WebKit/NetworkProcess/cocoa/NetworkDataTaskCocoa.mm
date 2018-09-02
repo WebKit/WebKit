@@ -45,24 +45,8 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/text/Base64.h>
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
-@interface NSURLSessionTask (Staging)
-@property (readwrite, retain) NSURL *_siteForCookies;
-@property (readwrite) BOOL _isTopLevelNavigation;
-@end
-#endif
-
 #if HAVE(NW_ACTIVITY)
 #import <CFNetwork/CFNSURLConnection.h>
-#endif
-
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-
-// FIXME: Move to CFNetworkSPI.h?
-@interface NSURLSessionTask ()
-- (void)_setExplicitCookieStorage:(CFHTTPCookieStorageRef)storage;
-@end
-
 #endif
 
 namespace WebKit {

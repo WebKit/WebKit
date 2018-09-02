@@ -29,6 +29,7 @@
 #import "config.h"
 #import "URLParser.h"
 #import "WebCoreNSURLExtras.h"
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/Function.h>
 #import <wtf/HexNumber.h>
 #import <wtf/ObjcRuntimeExtras.h>
@@ -46,11 +47,6 @@
 typedef void (* StringRangeApplierFunction)(NSString *string, NSRange range, void *context);
 
 static uint32_t IDNScriptWhiteList[(USCRIPT_CODE_LIMIT + 31) / 32];
-
-
-@interface NSURLProtocol (WKNSURLProtocolInternal)
-+ (Class)_protocolClassForRequest:(NSURLRequest *)request;
-@end
 
 namespace WebCore {
 

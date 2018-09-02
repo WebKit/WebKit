@@ -1,3 +1,22 @@
+2018-09-01  Darin Adler  <darin@apple.com>
+
+        [CFNetwork] Update CFNetwork SPI use to use CFNetworkSPI.h more consistently
+        https://bugs.webkit.org/show_bug.cgi?id=189072
+        Reviewed by Dan Bernstein.
+
+        * Misc/WebDownload.mm: Removed forward declaration of NSURLConnectionDelegateProxy
+        and declarations for NSURLDownload init methods.
+
+        * Misc/WebDownloadInternal.h: Removed.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm: Removed include of WebDownloadInternal.h.
+        (WebFrameLoaderClient::convertMainResourceLoadToDownload): Ignore
+        "-Wdeprecated-declarations" because the method used here is deprecated.
+
+        * WebView/WebView.mm:
+        (-[WebView _downloadURL:]): Ignore "-Wdeprecated-declarations" because the method
+        used here is deprecated.
+
 2018-08-31  Chris Dumez  <cdumez@apple.com>
 
         Assertion hit in ~CompletionHandler() from ~WebFrame()

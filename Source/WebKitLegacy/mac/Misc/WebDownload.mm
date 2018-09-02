@@ -41,30 +41,10 @@
 
 using namespace WebCore;
 
-@class NSURLConnectionDelegateProxy;
-
-// FIXME: The following are NSURLDownload SPI - it would be nice to not have to override them at 
-// some point in the future
-@interface NSURLDownload (WebDownloadCapability)
-- (id)_initWithLoadingConnection:(NSURLConnection *)connection
-                         request:(NSURLRequest *)request
-                        response:(NSURLResponse *)response
-                        delegate:(id)delegate
-                           proxy:(NSURLConnectionDelegateProxy *)proxy;
-- (id)_initWithRequest:(NSURLRequest *)request
-              delegate:(id)delegate
-             directory:(NSString *)directory;
-
-@end
-
-@interface WebDownloadInternal : NSObject <NSURLDownloadDelegate>
-{
-@public
+@interface WebDownloadInternal : NSObject <NSURLDownloadDelegate> {
     id realDelegate;
 }
-
-- (void)setRealDelegate:(id)rd;
-
+- (void)setRealDelegate:(id)realDelegate;
 @end
 
 @implementation WebDownloadInternal

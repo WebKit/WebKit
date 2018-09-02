@@ -1,3 +1,19 @@
+2018-09-01  Darin Adler  <darin@apple.com>
+
+        [CFNetwork] Update CFNetwork SPI use to use CFNetworkSPI.h more consistently
+        https://bugs.webkit.org/show_bug.cgi?id=189072
+
+        Reviewed by Dan Bernstein.
+
+        * platform/mac/WebCoreNSURLExtras.mm: Include CFNetworkSPI.h and remove a
+        declaration of +[NSURLProtocol _protocolClassForRequest:].
+
+        * platform/network/mac/ResourceHandleMac.mm: Remove a declaration of
+        -[NSURLConnection _initWithRequest:delegate:usesCache:maxContentLength:startImmediately:connectionProperties:].
+        (WebCore::ResourceHandle::createNSURLConnection): Add ignore of
+        "-Wdeprecated-declarations" around use of the above method, since it
+        is deprecated.
+
 2018-09-01  Simon Fraser  <simon.fraser@apple.com>
 
         Add some more filter logging
