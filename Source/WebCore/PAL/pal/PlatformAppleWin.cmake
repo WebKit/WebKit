@@ -29,6 +29,8 @@ list(APPEND PAL_SOURCES
     avfoundation/MediaTimeAVFoundation.cpp
 
     cf/CoreMediaSoftLink.cpp
+
+    crypto/win/CryptoDigestWin.cpp
 )
 
 list(APPEND PAL_PRIVATE_INCLUDE_DIRECTORIES

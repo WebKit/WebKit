@@ -1,6 +1,4 @@
 list(APPEND PAL_SOURCES
-    crypto/win/CryptoDigestWin.cpp
-
     system/ClockGeneric.cpp
 
     system/win/SoundWin.cpp

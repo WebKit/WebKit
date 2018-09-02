@@ -75,6 +75,7 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
     list(APPEND TestWebCoreLib_SOURCES
         ${TESTWEBKITAPI_DIR}/Tests/WebCore/win/BitmapImage.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebCore/CryptoDigest.cpp
     )
 else ()
     list(APPEND test_webcore_LIBRARIES
@@ -124,6 +125,10 @@ add_library(TestWebCoreLib SHARED
 target_link_libraries(TestWebCoreLib ${test_webcore_LIBRARIES})
 set_target_properties(TestWebCoreLib PROPERTIES OUTPUT_NAME "TestWebCoreLib")
 add_dependencies(TestWebCoreLib ${forwarding_headers_dependencies})
+
+if (PAL_LIBRARY_TYPE MATCHES STATIC)
+    target_compile_definitions(TestWebCoreLib PRIVATE -DSTATICALLY_LINKED_WITH_PAL=1)
+endif ()
 
 add_executable(TestWebCore
     ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp

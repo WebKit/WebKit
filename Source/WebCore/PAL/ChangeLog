@@ -1,3 +1,28 @@
+2018-09-01  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [WinCairo] Add CryptoDigestOpenSSL
+        https://bugs.webkit.org/show_bug.cgi?id=188978
+
+        Reviewed by Darin Adler.
+
+        Add a CryptoDigest implementation with OpenSSL/LibreSSL and let the
+        WinCairo port use it.
+
+        * pal/PlatformAppleWin.cmake: Add CryptoDigestWin.cpp to PAL_SOURCES
+        * pal/PlatformWin.cmake: Remove CryptoDigestWin.cpp from PAL_SOURCES
+        * pal/PlatformWinCairo.cmake: Add CryptoDigestOpenSSL to PAL_SOURCES
+        * pal/crypto/openssl/CryptoDigestOpenSSL.cpp: Added.
+        (PAL::toSHA1Context):
+        (PAL::toSHA224Context):
+        (PAL::toSHA256Context):
+        (PAL::toSHA384Context):
+        (PAL::toSHA512Context):
+        (PAL::CryptoDigest::CryptoDigest):
+        (PAL::CryptoDigest::~CryptoDigest):
+        (PAL::CryptoDigest::create):
+        (PAL::CryptoDigest::addBytes):
+        (PAL::CryptoDigest::computeHash):
+
 2018-09-01  Darin Adler  <darin@apple.com>
 
         [CFNetwork] Update CFNetwork SPI use to use CFNetworkSPI.h more consistently
