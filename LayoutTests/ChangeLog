@@ -1,3 +1,13 @@
+2018-09-02  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Implement Object.fromEntries
+        https://bugs.webkit.org/show_bug.cgi?id=188481
+
+        Reviewed by Darin Adler.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2018-08-31  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up TestExpectations so that ./Tools/Scripts/lint-test-expectations

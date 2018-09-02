@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2016 Oleksandr Skachkov <gskachkov@gmail.com>.
  * Copyright (C) 2015 Jordan Harband. All rights reserved.
+ * Copyright (C) 2018 Yusuke Suzuki <yusukesuzuki@slowstart.org>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,4 +39,21 @@ function entries(object)
     }
 
     return properties;
+}
+
+function fromEntries(iterable)
+{
+    "use strict";
+
+    let object = {};
+
+    for (let entry of iterable) {
+        if (!@isObject(entry))
+            @throwTypeError("Object.fromEntries requires the first iterable parameter yields objects");
+        let key = entry[0];
+        let value = entry[1];
+        @putByValDirect(object, key, value);
+    }
+
+    return object;
 }

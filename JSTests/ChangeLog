@@ -1,3 +1,16 @@
+2018-09-02  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Implement Object.fromEntries
+        https://bugs.webkit.org/show_bug.cgi?id=188481
+
+        Reviewed by Darin Adler.
+
+        * stress/object-from-entries.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (shouldBe.JSON.stringify.Object.getOwnPropertyDescriptor):
+        (shouldBe.set get shouldThrow):
+
 2018-08-24  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Function object should convert params to string before throw a parsing error

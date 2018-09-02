@@ -1,3 +1,18 @@
+2018-09-02  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Implement Object.fromEntries
+        https://bugs.webkit.org/show_bug.cgi?id=188481
+
+        Reviewed by Darin Adler.
+
+        Object.fromEntries becomes stage 3[1]. This patch implements it by using builtin JS.
+
+        [1]: https://tc39.github.io/proposal-object-from-entries/
+
+        * builtins/ObjectConstructor.js:
+        (fromEntries):
+        * runtime/ObjectConstructor.cpp:
+
 2018-08-24  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Function object should convert params to string before throw a parsing error
