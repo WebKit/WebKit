@@ -84,9 +84,9 @@ RenderLayer::FilterInfo::~FilterInfo()
     removeReferenceFilterClients();
 }
 
-void RenderLayer::FilterInfo::setRenderer(RefPtr<FilterEffectRenderer>&& renderer)
+void RenderLayer::FilterInfo::setFilter(RefPtr<CSSFilter>&& filter)
 {
-    m_renderer = renderer;
+    m_filter = filter;
 }
 
 void RenderLayer::FilterInfo::notifyFinished(CachedResource&)
@@ -108,14 +108,14 @@ void RenderLayer::FilterInfo::updateReferenceFilterClients(const FilterOperation
             m_externalSVGReferences.append(cachedSVGDocument);
         } else {
             // Reference is internal; add layer as a client so we can trigger filter repaint on SVG attribute change.
-            auto* filter = m_layer.renderer().document().getElementById(referenceOperation.fragment());
-            if (!filter)
+            auto* filterElement = m_layer.renderer().document().getElementById(referenceOperation.fragment());
+            if (!filterElement)
                 continue;
-            auto* renderer = filter->renderer();
+            auto* renderer = filterElement->renderer();
             if (!is<RenderSVGResourceFilter>(renderer))
                 continue;
             downcast<RenderSVGResourceFilter>(*renderer).addClientRenderLayer(&m_layer);
-            m_internalSVGReferences.append(filter);
+            m_internalSVGReferences.append(filterElement);
         }
     }
 }
@@ -124,10 +124,11 @@ void RenderLayer::FilterInfo::removeReferenceFilterClients()
 {
     for (auto& resourceHandle : m_externalSVGReferences)
         resourceHandle->removeClient(*this);
+
     m_externalSVGReferences.clear();
 
-    for (auto& filter : m_internalSVGReferences) {
-        if (auto* renderer = filter->renderer())
+    for (auto& filterElement : m_internalSVGReferences) {
+        if (auto* renderer = filterElement->renderer())
             downcast<RenderSVGResourceContainer>(*renderer).removeClientRenderLayer(&m_layer);
     }
     m_internalSVGReferences.clear();

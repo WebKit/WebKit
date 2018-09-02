@@ -1837,6 +1837,7 @@ rendering/AutoTableLayout.cpp
 rendering/BidiRun.cpp
 rendering/BorderEdge.cpp
 rendering/BreakLines.cpp
+rendering/CSSFilter.cpp
 rendering/ClipRect.cpp
 rendering/CounterNode.cpp
 rendering/EllipsisBox.cpp

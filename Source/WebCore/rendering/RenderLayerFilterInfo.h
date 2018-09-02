@@ -55,8 +55,8 @@ public:
     void expandDirtySourceRect(const LayoutRect& rect) { m_dirtySourceRect.unite(rect); }
     void resetDirtySourceRect() { m_dirtySourceRect = LayoutRect(); }
 
-    FilterEffectRenderer* renderer() const { return m_renderer.get(); }
-    void setRenderer(RefPtr<FilterEffectRenderer>&&);
+    CSSFilter* filter() const { return m_filter.get(); }
+    void setFilter(RefPtr<CSSFilter>&&);
 
     void updateReferenceFilterClients(const FilterOperations&);
     void removeReferenceFilterClients();
@@ -68,7 +68,7 @@ private:
 
     RenderLayer& m_layer;
 
-    RefPtr<FilterEffectRenderer> m_renderer;
+    RefPtr<CSSFilter> m_filter;
     LayoutRect m_dirtySourceRect;
 
     Vector<RefPtr<Element>> m_internalSVGReferences;

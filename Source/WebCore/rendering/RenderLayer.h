@@ -60,9 +60,9 @@ class TextStream;
 
 namespace WebCore {
 
+class CSSFilter;
 class ClipRects;
 class ClipRectsCache;
-class FilterEffectRenderer;
 class FilterEffectRendererHelper;
 class FilterOperations;
 class HitTestRequest;
@@ -679,7 +679,7 @@ public:
 
     bool paintsWithFilters() const;
     bool requiresFullLayerImageForFilters() const;
-    FilterEffectRenderer* filterRenderer() const;
+    CSSFilter* filter() const;
 
 #if !ASSERT_DISABLED
     bool layerListMutationAllowed() const { return m_layerListMutationAllowed; }

@@ -33,6 +33,7 @@
 #include "RenderRuby.h"
 #include "RenderRubyRun.h"
 #include "RenderTextControl.h"
+#include "RenderTreeBuilderMultiColumn.h"
 
 namespace WebCore {
 

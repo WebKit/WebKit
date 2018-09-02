@@ -45,6 +45,7 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "InlineElementBox.h"
+#include "LayoutState.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderFragmentedFlow.h"
@@ -53,6 +54,7 @@
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGImage.h"
+#include "Settings.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 

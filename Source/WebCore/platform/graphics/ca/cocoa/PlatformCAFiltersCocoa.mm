@@ -35,7 +35,7 @@
 
 using namespace WebCore;
 
-// FIXME: Should share these values with FilterEffectRenderer::build() (https://bugs.webkit.org/show_bug.cgi?id=76008).
+// FIXME: Should share these values with CSSFilter::build() (https://bugs.webkit.org/show_bug.cgi?id=76008).
 static const double sepiaFullConstants[3][3] = {
     { 0.393, 0.769, 0.189 },
     { 0.349, 0.686, 0.168 },

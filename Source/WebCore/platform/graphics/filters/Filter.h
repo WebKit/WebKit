@@ -48,6 +48,7 @@ public:
     void setRenderingMode(RenderingMode renderingMode) { m_renderingMode = renderingMode; }
 
     virtual bool isSVGFilter() const { return false; }
+    virtual bool isCSSFilter() const { return false; }
 
     virtual FloatSize scaledByFilterResolution(FloatSize size) const { return size * m_filterResolution; }
     

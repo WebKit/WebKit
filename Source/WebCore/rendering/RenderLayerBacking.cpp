@@ -34,7 +34,6 @@
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "DocumentTimeline.h"
-#include "FilterEffectRenderer.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"

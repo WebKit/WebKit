@@ -1,3 +1,88 @@
+2018-09-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename FilterEffectRenderer to CSSFilter
+        https://bugs.webkit.org/show_bug.cgi?id=189223
+
+        Reviewed by Sam Weinig.
+
+        Filter was subclassed by SVGFilter for SVG, and FilterEffectRenderer for CSS,
+        which was very confusing, especially when the code uses renderer() to get it.
+        
+        Rename FilterEffectRenderer to CSSFilter, and access via filter().
+        
+        Future cleanup will deal with FilterEffectRendererHelper.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::image):
+        * platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm:
+        * platform/graphics/filters/Filter.h:
+        (WebCore::Filter::isCSSFilter const):
+        * rendering/CSSFilter.cpp: Copied from Source/WebCore/rendering/FilterEffectRenderer.cpp.
+        (WebCore::endMatrixRow):
+        (WebCore::lastMatrixRow):
+        (WebCore::CSSFilter::create):
+        (WebCore::CSSFilter::CSSFilter):
+        (WebCore::m_sourceGraphic):
+        (WebCore::CSSFilter::inputContext):
+        (WebCore::CSSFilter::buildReferenceFilter):
+        (WebCore::CSSFilter::build):
+        (WebCore::CSSFilter::updateBackingStoreRect):
+        (WebCore::CSSFilter::allocateBackingStoreIfNeeded):
+        (WebCore::CSSFilter::clearIntermediateResults):
+        (WebCore::CSSFilter::apply):
+        (WebCore::CSSFilter::computeSourceImageRectForDirtyRect):
+        (WebCore::CSSFilter::output const):
+        (WebCore::CSSFilter::setSourceImageRect):
+        (WebCore::CSSFilter::setMaxEffectRects):
+        (WebCore::CSSFilter::outputRect const):
+        * rendering/CSSFilter.h: Copied from Source/WebCore/rendering/FilterEffectRenderer.h.
+        (isType):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRendererHelper::prepareFilterEffect):
+        (WebCore::FilterEffectRendererHelper::filterContext const):
+        (WebCore::FilterEffectRendererHelper::beginFilterEffect):
+        (WebCore::FilterEffectRendererHelper::applyFilterEffect):
+        (WebCore::endMatrixRow): Deleted.
+        (WebCore::lastMatrixRow): Deleted.
+        (WebCore::FilterEffectRenderer::FilterEffectRenderer): Deleted.
+        (WebCore::m_sourceGraphic): Deleted.
+        (WebCore::FilterEffectRenderer::create): Deleted.
+        (WebCore::FilterEffectRenderer::inputContext): Deleted.
+        (WebCore::FilterEffectRenderer::buildReferenceFilter): Deleted.
+        (WebCore::FilterEffectRenderer::build): Deleted.
+        (WebCore::FilterEffectRenderer::updateBackingStoreRect): Deleted.
+        (WebCore::FilterEffectRenderer::allocateBackingStoreIfNeeded): Deleted.
+        (WebCore::FilterEffectRenderer::clearIntermediateResults): Deleted.
+        (WebCore::FilterEffectRenderer::apply): Deleted.
+        (WebCore::FilterEffectRenderer::computeSourceImageRectForDirtyRect): Deleted.
+        (WebCore::FilterEffectRenderer::output const): Deleted.
+        (WebCore::FilterEffectRenderer::setMaxEffectRects): Deleted.
+        (WebCore::FilterEffectRenderer::outputRect const): Deleted.
+        * rendering/FilterEffectRenderer.h:
+        (WebCore::FilterEffectRendererHelper::FilterEffectRendererHelper):
+        (WebCore::FilterEffectRenderer::setSourceImageRect): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        * rendering/RenderFrame.cpp:
+        * rendering/RenderImage.cpp:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::requiresFullLayerImageForFilters const):
+        (WebCore::RenderLayer::filter const):
+        (WebCore::RenderLayer::filterPainter const):
+        (WebCore::RenderLayer::setupFilters):
+        (WebCore::RenderLayer::calculateClipRects const):
+        (WebCore::RenderLayer::filterRenderer const): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        * rendering/RenderLayerFilterInfo.cpp:
+        (WebCore::RenderLayer::FilterInfo::setFilter):
+        (WebCore::RenderLayer::FilterInfo::updateReferenceFilterClients):
+        (WebCore::RenderLayer::FilterInfo::removeReferenceFilterClients):
+        (WebCore::RenderLayer::FilterInfo::setRenderer): Deleted.
+        * rendering/RenderLayerFilterInfo.h:
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+
 2018-09-01  Darin Adler  <darin@apple.com>
 
         [CFNetwork] Update CFNetwork SPI use to use CFNetworkSPI.h more consistently

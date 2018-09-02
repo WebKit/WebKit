@@ -46,6 +46,7 @@
 
 #include "BoxShape.h"
 #include "CSSAnimationController.h"
+#include "CSSFilter.h"
 #include "CSSPropertyNames.h"
 #include "Chrome.h"
 #include "DebugPageOverlays.h"
@@ -461,14 +462,14 @@ bool RenderLayer::requiresFullLayerImageForFilters() const
 {
     if (!paintsWithFilters())
         return false;
-    auto* renderer = filterRenderer();
-    return renderer && renderer->hasFilterThatMovesPixels();
+    auto* cssFilter = filter();
+    return cssFilter && cssFilter->hasFilterThatMovesPixels();
 }
 
-FilterEffectRenderer* RenderLayer::filterRenderer() const
+CSSFilter* RenderLayer::filter() const
 {
     auto* filterInfo = FilterInfo::getIfExists(*this);
-    return filterInfo ? filterInfo->renderer() : nullptr;
+    return filterInfo ? filterInfo->filter() : nullptr;
 }
 
 void RenderLayer::updateLayerPositionsAfterLayout(const RenderLayer* rootLayer, OptionSet<UpdateLayerPositionsFlag> flags)
@@ -4207,7 +4208,7 @@ std::pair<RenderLayer::FilterInfo*, std::unique_ptr<FilterEffectRendererHelper>>
         return { };
 
     auto* info = FilterInfo::getIfExists(*this);
-    if (!info || !info->renderer())
+    if (!info || !info->filter())
         return { };
 
     auto helper = std::make_unique<FilterEffectRendererHelper>(true, context);
@@ -4253,9 +4254,9 @@ std::unique_ptr<FilterEffectRendererHelper> RenderLayer::setupFilters(GraphicsCo
     // If the filter needs the full source image, we need to avoid using the clip rectangles.
     // Otherwise, if for example this layer has overflow:hidden, a drop shadow will not compute correctly.
     // Note that we will still apply the clipping on the final rendering of the filter.
-    paintingInfo.clipToDirtyRect = !filterInfo.renderer()->hasFilterThatMovesPixels();
+    paintingInfo.clipToDirtyRect = !filterInfo.filter()->hasFilterThatMovesPixels();
 
-    paintingInfo.requireSecurityOriginAccessForWidgets = filterInfo.renderer()->hasFilterThatShouldBeRestrictedBySecurityOrigin();
+    paintingInfo.requireSecurityOriginAccessForWidgets = filterInfo.filter()->hasFilterThatShouldBeRestrictedBySecurityOrigin();
 
     return WTFMove(painter.second);
 }
@@ -6882,7 +6883,7 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
         // Don't delete the whole filter info here, because we might use it
         // for loading SVG reference filter files.
         if (FilterInfo* filterInfo = FilterInfo::getIfExists(*this))
-            filterInfo->setRenderer(nullptr);
+            filterInfo->setFilter(nullptr);
 
         // Early-return only if we *don't* have reference filters.
         // For reference filters, we still want the FilterEffect graph built
@@ -6892,23 +6893,23 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
     }
     
     FilterInfo& filterInfo = FilterInfo::get(*this);
-    if (!filterInfo.renderer()) {
-        RefPtr<FilterEffectRenderer> filterRenderer = FilterEffectRenderer::create();
-        filterRenderer->setFilterScale(page().deviceScaleFactor());
-        filterRenderer->setRenderingMode(renderer().settings().acceleratedFiltersEnabled() ? Accelerated : Unaccelerated);
-        filterInfo.setRenderer(WTFMove(filterRenderer));
+    if (!filterInfo.filter()) {
+        auto cssFilter = CSSFilter::create();
+        cssFilter->setFilterScale(page().deviceScaleFactor());
+        cssFilter->setRenderingMode(renderer().settings().acceleratedFiltersEnabled() ? Accelerated : Unaccelerated);
+        filterInfo.setFilter(WTFMove(cssFilter));
         
         // We can optimize away code paths in other places if we know that there are no software filters.
         renderer().view().setHasSoftwareFilters(true);
-    } else if (filterInfo.renderer()->filterScale() != page().deviceScaleFactor()) {
-        filterInfo.renderer()->setFilterScale(page().deviceScaleFactor());
-        filterInfo.renderer()->clearIntermediateResults();
+    } else if (filterInfo.filter()->filterScale() != page().deviceScaleFactor()) {
+        filterInfo.filter()->setFilterScale(page().deviceScaleFactor());
+        filterInfo.filter()->clearIntermediateResults();
     }
 
     // If the filter fails to build, remove it from the layer. It will still attempt to
     // go through regular processing (e.g. compositing), but never apply anything.
-    if (!filterInfo.renderer()->build(renderer(), renderer().style().filter(), FilterProperty))
-        filterInfo.setRenderer(nullptr);
+    if (!filterInfo.filter()->build(renderer(), renderer().style().filter(), FilterConsumer::FilterProperty))
+        filterInfo.setFilter(nullptr);
 }
 
 void RenderLayer::filterNeedsRepaint()

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "CSSFilterImageValue.h"
 
+#include "CSSFilter.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "FilterEffectRenderer.h"
@@ -131,15 +132,15 @@ RefPtr<Image> CSSFilterImageValue::image(RenderElement* renderer, const FloatSiz
     auto imageRect = FloatRect { { }, size };
     texture->context().drawImage(*image, imageRect);
 
-    auto filterRenderer = FilterEffectRenderer::create();
-    filterRenderer->setSourceImage(WTFMove(texture));
-    filterRenderer->setSourceImageRect(imageRect);
-    filterRenderer->setFilterRegion(imageRect);
-    if (!filterRenderer->build(*renderer, m_filterOperations, FilterFunction))
+    auto cssFilter = CSSFilter::create();
+    cssFilter->setSourceImage(WTFMove(texture));
+    cssFilter->setSourceImageRect(imageRect);
+    cssFilter->setFilterRegion(imageRect);
+    if (!cssFilter->build(*renderer, m_filterOperations, FilterConsumer::FilterFunction))
         return &Image::nullImage();
-    filterRenderer->apply();
+    cssFilter->apply();
 
-    return filterRenderer->output()->copyImage();
+    return cssFilter->output()->copyImage();
 }
 
 void CSSFilterImageValue::filterImageChanged(const IntRect&)
