@@ -1,3 +1,14 @@
+2018-09-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] 2.21.91 fails to build with ENABLE_MINIBROWSER
+        https://bugs.webkit.org/show_bug.cgi?id=189006
+
+        Reviewed by Darin Adler.
+
+        The MiniBrowser source code is missing from the tarball. Oops! Add it.
+
+        * wpe/manifest.txt.in:
+
 2018-09-01  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [WinCairo] Add CryptoDigestOpenSSL
