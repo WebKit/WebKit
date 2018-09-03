@@ -1,3 +1,41 @@
+2018-09-03  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement the MerchantValidationEvent constructor
+        https://bugs.webkit.org/show_bug.cgi?id=189235
+
+        Reviewed by Daniel Bates.
+
+        Updated payment-request web platform tests to 0313d9f.
+
+        * resources/TestRepositories:
+        * resources/import-expectations.json:
+        * web-platform-tests/payment-request/MerchantValidationEvent/complete-method-manual.https.html: Added.
+        * web-platform-tests/payment-request/MerchantValidationEvent/constructor.http-expected.txt: Added.
+        * web-platform-tests/payment-request/MerchantValidationEvent/constructor.http.html: Added.
+        * web-platform-tests/payment-request/MerchantValidationEvent/constructor.https-expected.txt: Added.
+        * web-platform-tests/payment-request/MerchantValidationEvent/constructor.https.html: Added.
+        * web-platform-tests/payment-request/MerchantValidationEvent/w3c-import.log: Added.
+        * web-platform-tests/payment-request/PaymentRequestUpdateEvent/constructor.http-expected.txt: Added.
+        * web-platform-tests/payment-request/PaymentRequestUpdateEvent/constructor.http.html: Added.
+        * web-platform-tests/payment-request/PaymentRequestUpdateEvent/constructor.https-expected.txt: Added.
+        * web-platform-tests/payment-request/PaymentRequestUpdateEvent/constructor.https.html: Added.
+        * web-platform-tests/payment-request/PaymentRequestUpdateEvent/updateWith-call-immediate-manual.https.html: Added.
+        * web-platform-tests/payment-request/PaymentRequestUpdateEvent/updateWith-duplicate-shipping-options-manual.https.html: Added.
+        * web-platform-tests/payment-request/PaymentRequestUpdateEvent/updateWith-incremental-update-manual.https.html: Added.
+        * web-platform-tests/payment-request/PaymentRequestUpdateEvent/updateWith-method-abort-update-manual.https.html: Added.
+        * web-platform-tests/payment-request/PaymentRequestUpdateEvent/updateWith-state-checks-manual.https.html: Added.
+        * web-platform-tests/payment-request/PaymentRequestUpdateEvent/updatewith-method.https-expected.txt: Added.
+        * web-platform-tests/payment-request/PaymentRequestUpdateEvent/updatewith-method.https.html: Added.
+        * web-platform-tests/payment-request/PaymentRequestUpdateEvent/w3c-import.log: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/common.sub.js:
+        (window.onmessage.e.t.step):
+        (string_appeared_here.forEach):
+        (window.onmessage): Deleted.
+        * web-platform-tests/payment-request/allowpaymentrequest/echo-PaymentRequest.html:
+        * web-platform-tests/payment-request/onmerchantvalidation-attribute.https-expected.txt: Added.
+        * web-platform-tests/payment-request/onmerchantvalidation-attribute.https.html: Added.
+        * web-platform-tests/payment-request/w3c-import.log:
+
 2018-09-03  Frederic Wang  <fwang@igalia.com>
 
         Remove duplicate directory web-platform-tests/cssom-view

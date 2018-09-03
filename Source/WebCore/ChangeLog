@@ -1,3 +1,36 @@
+2018-09-03  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement the MerchantValidationEvent constructor
+        https://bugs.webkit.org/show_bug.cgi?id=189235
+
+        Reviewed by Daniel Bates.
+
+        Implemented the constructor for MerchantValidationEvent as defined in the Payment Request API W3C Editor's Draft of 30 August 2018.
+
+        Updated the payment-request web platform tests to include MerchantValidationEvent tests.
+
+        Tests: imported/w3c/web-platform-tests/payment-request/MerchantValidationEvent/constructor.http.html
+               imported/w3c/web-platform-tests/payment-request/MerchantValidationEvent/constructor.https.html
+               imported/w3c/web-platform-tests/payment-request/PaymentRequestUpdateEvent/constructor.http.html
+               imported/w3c/web-platform-tests/payment-request/PaymentRequestUpdateEvent/constructor.https.html
+               imported/w3c/web-platform-tests/payment-request/PaymentRequestUpdateEvent/updatewith-method.https.html
+               imported/w3c/web-platform-tests/payment-request/onmerchantvalidation-attribute.https.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/paymentrequest/MerchantValidationEvent.cpp:
+        (WebCore::MerchantValidationEvent::create):
+        (WebCore::MerchantValidationEvent::MerchantValidationEvent):
+        (WebCore::MerchantValidationEvent::complete):
+        * Modules/paymentrequest/MerchantValidationEvent.h:
+        * Modules/paymentrequest/MerchantValidationEvent.idl:
+        * Modules/paymentrequest/MerchantValidationEventInit.h: Added.
+        * Modules/paymentrequest/MerchantValidationEventInit.idl: Added.
+        * Modules/paymentrequest/PaymentRequest.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2018-09-03  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] elements registration clean-ups

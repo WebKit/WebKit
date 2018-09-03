@@ -35,23 +35,26 @@ namespace WebCore {
 class DOMPromise;
 class Document;
 class PaymentRequest;
+struct MerchantValidationEventInit;
 
 class MerchantValidationEvent final : public Event {
 public:
     static Ref<MerchantValidationEvent> create(const AtomicString&, const URL&, PaymentRequest&);
+    static ExceptionOr<Ref<MerchantValidationEvent>> create(Document&, const AtomicString&, MerchantValidationEventInit&&);
 
     const String& validationURL() const { return m_validationURL.string(); }
     ExceptionOr<void> complete(Ref<DOMPromise>&&);
 
 private:
     MerchantValidationEvent(const AtomicString&, const URL&, PaymentRequest&);
+    MerchantValidationEvent(const AtomicString&, URL&&, MerchantValidationEventInit&&);
 
     // Event
     EventInterface eventInterface() const final;
 
     bool m_isCompleted { false };
     URL m_validationURL;
-    Ref<PaymentRequest> m_paymentRequest;
+    RefPtr<PaymentRequest> m_paymentRequest;
 };
 
 } // namespace WebCore

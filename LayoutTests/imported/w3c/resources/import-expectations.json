@@ -273,7 +273,6 @@
     "web-platform-tests/payment-method-basic-card": "skip", 
     "web-platform-tests/payment-method-id": "skip", 
     "web-platform-tests/payment-request": "import", 
-    "web-platform-tests/payment-request/PaymentRequestUpdateEvent": "skip", 
     "web-platform-tests/performance-timeline": "skip", 
     "web-platform-tests/pointerevents": "skip", 
     "web-platform-tests/pointerlock": "skip", 

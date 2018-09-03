@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/change-shipping-option-select-last-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/historical.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/idlharness.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/onmerchantvalidation-attribute.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/onpaymentmenthodchange-attribute.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-abort-method.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method.https.html

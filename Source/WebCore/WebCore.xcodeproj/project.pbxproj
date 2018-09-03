@@ -2923,6 +2923,8 @@
 		A164A24E2134BDD800509156 /* PaymentMethodChangeEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = A164A24B2134BDD800509156 /* PaymentMethodChangeEventInit.h */; };
 		A164A2552134C1CC00509156 /* JSPaymentMethodChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A164A2512134C1CB00509156 /* JSPaymentMethodChangeEvent.h */; };
 		A164A2562134C1CC00509156 /* JSPaymentMethodChangeEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = A164A2522134C1CB00509156 /* JSPaymentMethodChangeEventInit.h */; };
+		A1677DE9213CDFAA00A08C34 /* MerchantValidationEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = A1677DE6213CDFAA00A08C34 /* MerchantValidationEventInit.h */; };
+		A1677DF0213CE0B100A08C34 /* JSMerchantValidationEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = A1677DEE213CE0B000A08C34 /* JSMerchantValidationEventInit.h */; };
 		A1763F3F1E205234001D58DE /* WebArchiveDumpSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A1763F3D1E205234001D58DE /* WebArchiveDumpSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1763F411E20586E001D58DE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1763F401E20586E001D58DE /* CFNetwork.framework */; };
 		A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */; };
@@ -10934,6 +10936,10 @@
 		A164A2522134C1CB00509156 /* JSPaymentMethodChangeEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentMethodChangeEventInit.h; sourceTree = "<group>"; };
 		A164A2532134C1CB00509156 /* JSPaymentMethodChangeEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentMethodChangeEvent.cpp; sourceTree = "<group>"; };
 		A164A2542134C1CC00509156 /* JSPaymentMethodChangeEventInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentMethodChangeEventInit.cpp; sourceTree = "<group>"; };
+		A1677DE6213CDFAA00A08C34 /* MerchantValidationEventInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MerchantValidationEventInit.h; sourceTree = "<group>"; };
+		A1677DE8213CDFAA00A08C34 /* MerchantValidationEventInit.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MerchantValidationEventInit.idl; sourceTree = "<group>"; };
+		A1677DED213CE0AF00A08C34 /* JSMerchantValidationEventInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMerchantValidationEventInit.cpp; sourceTree = "<group>"; };
+		A1677DEE213CE0B000A08C34 /* JSMerchantValidationEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMerchantValidationEventInit.h; sourceTree = "<group>"; };
 		A1763F3C1E205234001D58DE /* WebArchiveDumpSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebArchiveDumpSupport.mm; sourceTree = "<group>"; };
 		A1763F3D1E205234001D58DE /* WebArchiveDumpSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebArchiveDumpSupport.h; sourceTree = "<group>"; };
 		A1763F401E20586E001D58DE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -21236,6 +21242,8 @@
 			children = (
 				A11AE0D01FFD61DE0047348B /* JSMerchantValidationEvent.cpp */,
 				A11AE0D11FFD61DF0047348B /* JSMerchantValidationEvent.h */,
+				A1677DED213CE0AF00A08C34 /* JSMerchantValidationEventInit.cpp */,
+				A1677DEE213CE0B000A08C34 /* JSMerchantValidationEventInit.h */,
 				A1CC565F1F46146100A4555B /* JSPaymentAddress.cpp */,
 				A1CC56651F46146800A4555B /* JSPaymentAddress.h */,
 				A1CC56601F46146200A4555B /* JSPaymentComplete.cpp */,
@@ -21295,6 +21303,8 @@
 				A11AE0CA1FFD60530047348B /* MerchantValidationEvent.cpp */,
 				A11AE0C91FFD60530047348B /* MerchantValidationEvent.h */,
 				A11AE0CB1FFD60530047348B /* MerchantValidationEvent.idl */,
+				A1677DE6213CDFAA00A08C34 /* MerchantValidationEventInit.h */,
+				A1677DE8213CDFAA00A08C34 /* MerchantValidationEventInit.idl */,
 				A1CFE0311F9E71290065C345 /* PaymentAddress.cpp */,
 				A1F76B401F44CF7F0014C318 /* PaymentAddress.h */,
 				A1F76B421F44CF7F0014C318 /* PaymentAddress.idl */,
@@ -28749,6 +28759,7 @@
 				932CC0D51DFFD667004C0F9F /* JSMediaTrackConstraints.h in Headers */,
 				0787C46A1BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.h in Headers */,
 				A11AE0D31FFD61DF0047348B /* JSMerchantValidationEvent.h in Headers */,
+				A1677DF0213CE0B100A08C34 /* JSMerchantValidationEventInit.h in Headers */,
 				E107400E0E77BDC00033AF24 /* JSMessageChannel.h in Headers */,
 				75793EC90D0CE72D007FC0AC /* JSMessageEvent.h in Headers */,
 				E1ADEDDA0E76BD93004A1A5E /* JSMessagePort.h in Headers */,
@@ -29386,6 +29397,7 @@
 				517139061BF64DEC000D5F01 /* MemoryObjectStoreCursor.h in Headers */,
 				413E00791DB0E4F2002341D2 /* MemoryRelease.h in Headers */,
 				A11AE0CC1FFD60530047348B /* MerchantValidationEvent.h in Headers */,
+				A1677DE9213CDFAA00A08C34 /* MerchantValidationEventInit.h in Headers */,
 				93309DFA099E64920056E581 /* MergeIdenticalElementsCommand.h in Headers */,
 				E1ADECCE0E76AD8B004A1A5E /* MessageChannel.h in Headers */,
 				75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */,

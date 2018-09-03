@@ -100,6 +100,7 @@ namespace WebCore {
     macro(MediaSource) \
     macro(MediaStream) \
     macro(MediaStreamTrack) \
+    macro(MerchantValidationEvent) \
     macro(ModernMediaControls) \
     macro(NavigatorCredentials) \
     macro(NavigatorMediaDevices) \

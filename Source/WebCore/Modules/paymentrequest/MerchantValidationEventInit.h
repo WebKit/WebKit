@@ -23,14 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=PAYMENT_REQUEST,
-    Constructor(DOMString type, optional MerchantValidationEventInit eventInitDict),
-    ConstructorCallWith=Document,
-    ConstructorMayThrowException,
-    Exposed=Window,
-    SecureContext,
-] interface MerchantValidationEvent : Event {
-    readonly attribute DOMString validationURL;
-    [MayThrowException] void complete(Promise<any> merchantSessionPromise);
+#pragma once
+
+#if ENABLE(PAYMENT_REQUEST)
+
+#include "EventInit.h"
+
+namespace WebCore {
+
+struct MerchantValidationEventInit final : EventInit {
+    String validationURL;
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(PAYMENT_REQUEST)

@@ -2,7 +2,7 @@
     {
         "name": "web-platform-tests",
         "url": "https://github.com/web-platform-tests/wpt.git",
-        "revision": "94b33b5",
+        "revision": "0313d9f",
         "paths_to_skip": [
             "conformance-checkers",
             "docs",

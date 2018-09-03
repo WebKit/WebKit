@@ -334,6 +334,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/notifications/NotificationPermissionCallback.idl
 
     Modules/paymentrequest/MerchantValidationEvent.idl
+    Modules/paymentrequest/MerchantValidationEventInit.idl
     Modules/paymentrequest/PaymentAddress.idl
     Modules/paymentrequest/PaymentComplete.idl
     Modules/paymentrequest/PaymentCurrencyAmount.idl

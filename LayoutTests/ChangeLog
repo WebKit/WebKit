@@ -1,3 +1,15 @@
+2018-09-03  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement the MerchantValidationEvent constructor
+        https://bugs.webkit.org/show_bug.cgi?id=189235
+
+        Reviewed by Daniel Bates.
+
+        Skipped new manual tests.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-09-03  Frederic Wang  <fwang@free.fr>
 
         Remove duplicate directory web-platform-tests/cssom-view

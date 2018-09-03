@@ -28,6 +28,8 @@
 
 #if ENABLE(PAYMENT_REQUEST)
 
+#include "Document.h"
+#include "MerchantValidationEventInit.h"
 #include "PaymentRequest.h"
 
 namespace WebCore {
@@ -37,11 +39,30 @@ Ref<MerchantValidationEvent> MerchantValidationEvent::create(const AtomicString&
     return adoptRef(*new MerchantValidationEvent(type, validationURL, paymentRequest));
 }
 
+ExceptionOr<Ref<MerchantValidationEvent>> MerchantValidationEvent::create(Document& document, const AtomicString& type, MerchantValidationEventInit&& eventInit)
+{
+    URL validationURL { document.url(), eventInit.validationURL };
+    if (!validationURL.isValid())
+        return Exception { TypeError };
+
+    return adoptRef(*new MerchantValidationEvent(type, WTFMove(validationURL), WTFMove(eventInit)));
+}
+
 MerchantValidationEvent::MerchantValidationEvent(const AtomicString& type, const URL& validationURL, PaymentRequest& paymentRequest)
     : Event { type, Event::CanBubble::No, Event::IsCancelable::No }
     , m_validationURL { validationURL }
-    , m_paymentRequest { paymentRequest }
+    , m_paymentRequest { &paymentRequest }
 {
+    ASSERT(isTrusted());
+    ASSERT(m_validationURL.isValid());
+}
+
+MerchantValidationEvent::MerchantValidationEvent(const AtomicString& type, URL&& validationURL, MerchantValidationEventInit&& eventInit)
+    : Event { type, WTFMove(eventInit), IsTrusted::No }
+    , m_validationURL { WTFMove(validationURL) }
+{
+    ASSERT(!isTrusted());
+    ASSERT(m_validationURL.isValid());
 }
 
 EventInterface MerchantValidationEvent::eventInterface() const
@@ -53,6 +74,8 @@ ExceptionOr<void> MerchantValidationEvent::complete(Ref<DOMPromise>&& merchantSe
 {
     if (!isTrusted())
         return Exception { InvalidStateError };
+
+    ASSERT(m_paymentRequest);
 
     if (m_isCompleted)
         return Exception { InvalidStateError };
