@@ -1,4 +1,14 @@
 ==================
+WebKitGTK+ 2.22.0
+==================
+
+What's new in WebKitGTK+ 2.22.0?
+
+  - Add warn_unused_result attribute to some JavaScriptCore GLib APIs.
+  - Make pinch to zoom scale the page without changing the layout.
+  - Fix the build in mips64.
+
+==================
 WebKitGTK+ 2.21.92
 ==================
 

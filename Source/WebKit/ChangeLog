@@ -1,3 +1,9 @@
+2018-09-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.22.0 release.
+
+        * gtk/NEWS: Add release notes for 2.22.0.
+
 2018-08-30  Justin Michaud  <justin@justinmichaud.com>
 
         [GTK] Touchscreen pinch to zoom should scale the page like other platforms
