@@ -1087,7 +1087,9 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child
         // https://drafts.csswg.org/css-flexbox/#intrinsic-sizes before that
         // produces reasonable results. Tracking bug: https://crbug.com/581553
         // css-flexbox section 4.5
-        LayoutUnit contentSize = computeMainAxisExtentForChild(child, MinSize, Length(MinContent)).value();
+        // FIXME: If the min value is expected to be valid here, we need to come up with a non optional version of computeMainAxisExtentForChild and
+        // ensure it's valid through the virtual calls of computeIntrinsicLogicalContentHeightUsing.
+        LayoutUnit contentSize = computeMainAxisExtentForChild(child, MinSize, Length(MinContent)).value_or(0);
         ASSERT(contentSize >= 0);
         if (child.hasAspectRatio() && child.intrinsicSize().height() > 0)
             contentSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, contentSize);
@@ -1095,7 +1097,7 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child
         
         Length mainSize = isHorizontalFlow() ? child.style().width() : child.style().height();
         if (mainAxisLengthIsDefinite(child, mainSize)) {
-            LayoutUnit resolvedMainSize = computeMainAxisExtentForChild(child, MainOrPreferredSize, mainSize).value();
+            LayoutUnit resolvedMainSize = computeMainAxisExtentForChild(child, MainOrPreferredSize, mainSize).value_or(0);
             ASSERT(resolvedMainSize >= 0);
             LayoutUnit specifiedSize = std::min(resolvedMainSize, maxExtent.value_or(resolvedMainSize));
             return std::max(childSize, std::min(specifiedSize, contentSize));
