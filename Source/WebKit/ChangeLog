@@ -1,3 +1,23 @@
+2018-08-30  Justin Michaud  <justin@justinmichaud.com>
+
+        [GTK] Touchscreen pinch to zoom should scale the page like other platforms
+        https://bugs.webkit.org/show_bug.cgi?id=188746
+
+        Changes the pinch-to-zoom gesture to magnify/scale the page, rather than zooming in. Also resets this magnification when the zoom level is changed.
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_set_zoom_level):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::zoom): Deleted.
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        * UIProcess/gtk/GestureController.cpp:
+        (WebKit::GestureController::ZoomGesture::handleZoom):
+        (WebKit::GestureController::ZoomGesture::scaleChanged):
+        * UIProcess/gtk/GestureController.h:
+
 2018-08-30  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [ConnectionUnix] Shrink sizeof AttachmentInfo by reordering members

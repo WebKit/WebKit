@@ -3118,6 +3118,7 @@ void webkit_web_view_set_zoom_level(WebKitWebView* webView, gdouble zoomLevel)
         return;
 
     auto& page = getPage(webView);
+    page.scalePage(1.0, IntPoint()); // Reset page scale when zoom level is changed
     if (webkit_settings_get_zoom_text_only(webView->priv->settings.get()))
         page.setTextZoomFactor(zoomLevel);
     else
