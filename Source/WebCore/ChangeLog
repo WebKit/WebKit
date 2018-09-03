@@ -1,3 +1,28 @@
+2018-09-03  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION: Layout Test http/tests/security/bypassing-cors-checks-for-extension-urls.html is Flaky
+        https://bugs.webkit.org/show_bug.cgi?id=187658
+        <rdar://problem/42306442>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test is flaky as a previous test was setting the isRunningUserScripts state on the Page and it was never reset.
+        This patch moves this state to the topDocument so that it will be reset for every navigation.
+        Covered by existing test being no longer flaky.
+
+        * dom/Document.h:
+        (WebCore::Document::setAsRunningUserScripts):
+        (WebCore::Document::isRunningUserScripts const):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScriptImmediately):
+        * page/Page.h:
+        (WebCore::Page::setAsRunningUserScripts): Deleted.
+        (WebCore::Page::isRunningUserScripts const): Deleted.
+        * testing/Internals.cpp:
+        (WebCore::Internals::setAsRunningUserScripts):
+
 2018-09-03  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Implement the MerchantValidationEvent constructor

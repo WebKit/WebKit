@@ -749,8 +749,8 @@ void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript
         return;
     if (!UserContentURLPattern::matchesPatterns(document->url(), script.whitelist(), script.blacklist()))
         return;
-    if (m_page)
-        m_page->setAsRunningUserScripts();
+
+    document->topDocument().setAsRunningUserScripts();
     loader().client().willInjectUserScript(world);
     m_script->evaluateInWorld(ScriptSourceCode(script.source(), script.url()), world);
 }

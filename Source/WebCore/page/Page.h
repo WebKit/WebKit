@@ -453,9 +453,6 @@ public:
     void setResourceUsageOverlayVisible(bool);
 #endif
 
-    void setAsRunningUserScripts() { m_isRunningUserScripts = true; }
-    bool isRunningUserScripts() const { return m_isRunningUserScripts; }
-
     void setDebugger(JSC::Debugger*);
     JSC::Debugger* debugger() const { return m_debugger; }
 
@@ -908,7 +905,6 @@ private:
     std::optional<ApplicationManifest> m_applicationManifest;
 #endif
 
-    bool m_isRunningUserScripts { false };
     bool m_shouldEnableICECandidateFilteringByDefault { true };
 };
 

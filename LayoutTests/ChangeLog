@@ -1,3 +1,13 @@
+2018-09-03  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION: Layout Test http/tests/security/bypassing-cors-checks-for-extension-urls.html is Flaky
+        https://bugs.webkit.org/show_bug.cgi?id=187658
+        <rdar://problem/42306442>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/mac-wk2/TestExpectations:
+
 2018-09-03  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Implement the MerchantValidationEvent constructor
