@@ -1,8 +1,0 @@
-This case tests the Screen pixelDepth and colorDepth
-
-The test passes if the value is 24
-
-
-FAIL testColorDepth assert_equals: Expected value for colorDepth is 24 expected 24 but got 32
-FAIL testPixelDepth assert_equals: Expected value for pixelDepth is 24 expected 24 but got 32
-

@@ -1,3 +1,0 @@
-
-PASS MouseEvent's x and y must be equal to clientX and clientY. 
-

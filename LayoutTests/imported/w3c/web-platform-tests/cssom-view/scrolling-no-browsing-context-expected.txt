@@ -1,3 +1,0 @@
-
-PASS Element get and set scrollTop, scrollLeft, scroll() and scrollTo() test 
-

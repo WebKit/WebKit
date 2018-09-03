@@ -1,3 +1,20 @@
+2018-09-03  Frederic Wang  <fwang@free.fr>
+
+        Remove duplicate directory web-platform-tests/cssom-view
+        https://bugs.webkit.org/show_bug.cgi?id=189241
+
+        Reviewed by Daniel Bates.
+
+        cssom-view tests were moved into web-platform-tests/css at r232903 but the old
+        directory and expectation were left. This patch finishes the migration.
+
+        * TestExpectations:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/cssom-view/Screen-pixelDepth-Screen-colorDepth001-expected.txt: Removed.
+        * platform/ios-simulator/imported/w3c/web-platform-tests/cssom-view/scrolling-quirks-vs-nonquirks-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/cssom-view/elementFromPoint-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/cssom-view/scrollIntoView-smooth-expected.txt: Removed.
+        * platform/ios/TestExpectations:
+
 2018-09-02  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r191336): RenderFlexibleBox::adjustChildSizeForMinAndMax crashes in std::optional<>::value()

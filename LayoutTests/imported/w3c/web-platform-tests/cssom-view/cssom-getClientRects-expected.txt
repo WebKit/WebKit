@@ -1,3 +1,0 @@
-
-PASS getClientRects on a newly-created Element not yet inserted into the DOM should return an empty DOMRectList 
-

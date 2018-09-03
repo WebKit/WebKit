@@ -1,5 +1,0 @@
-This case tests the MediaQueryList
-
-
-PASS matchMedia 
-

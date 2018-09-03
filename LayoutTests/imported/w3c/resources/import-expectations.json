@@ -81,7 +81,6 @@
     "web-platform-tests/css/resources": "import", 
     "web-platform-tests/css/selectors": "import", 
     "web-platform-tests/css/support": "import", 
-    "web-platform-tests/cssom-view": "import", 
     "web-platform-tests/custom-elements": "import", 
     "web-platform-tests/custom-elements/v0": "skip", 
     "web-platform-tests/dom": "import", 

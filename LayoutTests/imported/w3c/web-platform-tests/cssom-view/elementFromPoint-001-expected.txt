@@ -1,3 +1,0 @@
-
-PASS CSSOM View - 5 - extensions to the Document interface 
-

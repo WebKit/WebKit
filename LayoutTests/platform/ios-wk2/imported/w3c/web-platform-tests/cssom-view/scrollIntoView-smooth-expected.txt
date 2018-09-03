@@ -1,6 +1,0 @@
-
-FAIL Smooth scrollIntoView should scroll the element to the 'nearest' position assert_approx_equals: expected 900 +/- 1 but got 1000
-FAIL Smooth scrollIntoView should scroll the element to the 'start' position assert_approx_equals: expected 1008 +/- 1 but got 708
-FAIL Smooth scrollIntoView should scroll the element to the 'center' position assert_approx_equals: expected 858 +/- 1 but got 708
-FAIL Smooth scrollIntoView should scroll the element to the 'end' position assert_approx_equals: expected 900 +/- 1 but got 1000
-

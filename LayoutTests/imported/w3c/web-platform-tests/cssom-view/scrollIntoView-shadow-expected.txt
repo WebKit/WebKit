@@ -1,3 +1,0 @@
-
-FAIL scrollIntoView should behave correctly if applies to shadow dom elements shadow.createShadowRoot is not a function. (In 'shadow.createShadowRoot()', 'shadow.createShadowRoot' is undefined)
-

@@ -327,10 +327,9 @@ imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.html [ S
 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-small.html [ Skip ]
 imported/w3c/web-platform-tests/css/cssom/interfaces.html [ Pass Timeout ]
-imported/w3c/web-platform-tests/cssom-view/interfaces.html [ Pass Timeout ]
 [ Debug ] imported/w3c/web-platform-tests/css/cssom-view/interfaces.html [ Skip ]
-webkit.org/b/182292 imported/w3c/web-platform-tests/cssom-view/scrollingElement-quirks-dynamic-001.html [ ImageOnlyFailure ]
-webkit.org/b/182292 imported/w3c/web-platform-tests/cssom-view/scrollingElement-quirks-dynamic-002.html [ ImageOnlyFailure ]
+webkit.org/b/182292 imported/w3c/web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-001.html [ ImageOnlyFailure ]
+webkit.org/b/182292 imported/w3c/web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-012.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-015.html [ ImageOnlyFailure ]
@@ -1890,7 +1889,7 @@ fast/table/colspanMinWidth-vertical.html [ Skip ]
 fast/forms/range/range-remove-on-drag.html [ Skip ]
 
 # CSSOM View module
-webkit.org/b/5991 imported/w3c/web-platform-tests/cssom-view/scrollingElement.html [ Skip ]
+webkit.org/b/5991 imported/w3c/web-platform-tests/css/cssom-view/scrollingElement.html [ Skip ]
 
 # FileAPI
 webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html [ ImageOnlyFailure ]
@@ -2127,10 +2126,8 @@ imported/w3c/web-platform-tests/css/css-display/run-in/run-in-run-in-between-007
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-007.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/run-in/run-in-basic-007.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-items/percentage-size-replaced-subitems-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-above-right-002.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/run-in/run-in-contains-abspos-001.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/zero-column-width-layout.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/run-in/run-in-abspos-between-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/run-in/run-in-contains-table-cell-001.xht [ ImageOnlyFailure ]

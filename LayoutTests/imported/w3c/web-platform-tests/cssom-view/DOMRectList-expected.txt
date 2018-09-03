@@ -1,5 +1,0 @@
-x
-
-PASS Element getClientRects() 
-PASS Range getClientRects() 
-
