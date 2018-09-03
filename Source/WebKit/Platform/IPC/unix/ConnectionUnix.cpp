@@ -59,7 +59,7 @@
 namespace IPC {
 
 static const size_t messageMaxSize = 4096;
-static const size_t attachmentMaxAmount = 255;
+static const size_t attachmentMaxAmount = 254;
 
 class AttachmentInfo {
     WTF_MAKE_FAST_ALLOCATED;
@@ -86,9 +86,11 @@ public:
 
 private:
     Attachment::Type m_type { Attachment::Uninitialized };
-    size_t m_size { 0 };
     bool m_isNull { false };
+    size_t m_size { 0 };
 };
+
+static_assert(sizeof(MessageInfo) + sizeof(AttachmentInfo) * attachmentMaxAmount <= messageMaxSize, "messageMaxSize is too small.");
 
 void Connection::platformInitialize(Identifier identifier)
 {
