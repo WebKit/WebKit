@@ -66,6 +66,8 @@ public:
     virtual ~MediaPlayerPrivateGStreamer();
 
     static void registerMediaEngine(MediaEngineRegistrar);
+    static bool isAvailable();
+
     void handleMessage(GstMessage*);
     void handlePluginInstallerResult(GstInstallPluginsReturn);
 
@@ -137,7 +139,6 @@ private:
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
-    static bool isAvailable();
 
     GstElement* createAudioSink() override;
 

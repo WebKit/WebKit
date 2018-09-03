@@ -79,31 +79,11 @@ namespace WebCore {
 
 void MediaPlayerPrivateGStreamerMSE::registerMediaEngine(MediaEngineRegistrar registrar)
 {
+    GST_DEBUG_CATEGORY_INIT(webkit_mse_debug, "webkitmse", 0, "WebKit MSE media player");
     if (isAvailable()) {
         registrar([](MediaPlayer* player) { return std::make_unique<MediaPlayerPrivateGStreamerMSE>(player); },
             getSupportedTypes, supportsType, nullptr, nullptr, nullptr, supportsKeySystem);
     }
-}
-
-bool initializeGStreamerAndRegisterWebKitMSEElement()
-{
-    registerWebKitGStreamerElements();
-
-    GST_DEBUG_CATEGORY_INIT(webkit_mse_debug, "webkitmse", 0, "WebKit MSE media player");
-
-    GRefPtr<GstElementFactory> WebKitMediaSrcFactory = adoptGRef(gst_element_factory_find("webkitmediasrc"));
-    if (UNLIKELY(!WebKitMediaSrcFactory))
-        gst_element_register(nullptr, "webkitmediasrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_MEDIA_SRC);
-    return true;
-}
-
-bool MediaPlayerPrivateGStreamerMSE::isAvailable()
-{
-    if (UNLIKELY(!initializeGStreamerAndRegisterWebKitMSEElement()))
-        return false;
-
-    GRefPtr<GstElementFactory> factory = adoptGRef(gst_element_factory_find("playbin"));
-    return factory;
 }
 
 MediaPlayerPrivateGStreamerMSE::MediaPlayerPrivateGStreamerMSE(MediaPlayer* player)
@@ -137,7 +117,8 @@ void MediaPlayerPrivateGStreamerMSE::load(const String& urlString)
         return;
     }
 
-    if (UNLIKELY(!initializeGStreamerAndRegisterWebKitMSEElement()))
+
+    if (UNLIKELY(!MediaPlayerPrivateGStreamerBase::initializeGStreamerAndRegisterWebKitElements()))
         return;
 
     if (!m_playbackPipeline)
@@ -708,7 +689,7 @@ static HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
 {
     static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cache = []()
     {
-        initializeGStreamerAndRegisterWebKitMSEElement();
+        MediaPlayerPrivateGStreamerBase::initializeGStreamerAndRegisterWebKitElements();
         HashSet<String, ASCIICaseInsensitiveHash> set;
         const char* mimeTypes[] = {
             "video/mp4",

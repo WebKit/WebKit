@@ -93,8 +93,6 @@ private:
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
-    static bool isAvailable();
-
     // FIXME: Reduce code duplication.
     void updateStates() override;
 
