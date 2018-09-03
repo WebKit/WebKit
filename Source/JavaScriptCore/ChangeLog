@@ -1,3 +1,16 @@
+2018-09-03  Mark Lam  <mark.lam@apple.com>
+
+        CallFrame::unsafeCallee() should use an ASAN suppressed Register::asanUnsafePointer().
+        https://bugs.webkit.org/show_bug.cgi?id=189247
+
+        Reviewed by Saam Barati.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::unsafeCallee const):
+        * interpreter/Register.h:
+        (JSC::Register::asanUnsafePointer const):
+        (JSC::Register::unsafePayload const):
+
 2018-09-02  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Implement Object.fromEntries
