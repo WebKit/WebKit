@@ -333,8 +333,10 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/notifications/NotificationPermission.idl
     Modules/notifications/NotificationPermissionCallback.idl
 
+    Modules/paymentrequest/AddressErrors.idl
     Modules/paymentrequest/MerchantValidationEvent.idl
     Modules/paymentrequest/MerchantValidationEventInit.idl
+    Modules/paymentrequest/PayerErrorFields.idl
     Modules/paymentrequest/PaymentAddress.idl
     Modules/paymentrequest/PaymentComplete.idl
     Modules/paymentrequest/PaymentCurrencyAmount.idl
@@ -353,6 +355,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/paymentrequest/PaymentResponse.idl
     Modules/paymentrequest/PaymentShippingOption.idl
     Modules/paymentrequest/PaymentShippingType.idl
+    Modules/paymentrequest/PaymentValidationErrors.idl
 
     Modules/speech/DOMWindowSpeechSynthesis.idl
     Modules/speech/SpeechSynthesis.idl

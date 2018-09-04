@@ -2397,6 +2397,7 @@ JSAbortController.cpp
 JSAbortSignal.cpp
 JSAbstractWorker.cpp
 JSAccessibleSetValueEvent.cpp
+JSAddressErrors.cpp
 JSAesCbcCfbParams.cpp
 JSAesCtrParams.cpp
 JSAesGcmParams.cpp
@@ -2811,6 +2812,7 @@ JSPageTransitionEvent.cpp
 JSPannerNode.cpp
 JSParentNode.cpp
 JSPath2D.cpp
+JSPayerErrorFields.cpp
 JSPaymentAddress.cpp
 JSPaymentComplete.cpp
 JSPaymentCurrencyAmount.cpp
@@ -2829,6 +2831,7 @@ JSPaymentRequestUpdateEventInit.cpp
 JSPaymentResponse.cpp
 JSPaymentShippingOption.cpp
 JSPaymentShippingType.cpp
+JSPaymentValidationErrors.cpp
 JSPbkdf2Params.cpp
 JSPerformance.cpp
 JSPerformanceEntry.cpp

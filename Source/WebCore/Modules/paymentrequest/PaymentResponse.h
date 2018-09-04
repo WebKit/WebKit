@@ -32,9 +32,10 @@
 #include "PaymentComplete.h"
 
 namespace WebCore {
-    
+
 class Document;
 class PaymentRequest;
+struct PaymentValidationErrors;
 
 class PaymentResponse final : public RefCounted<PaymentResponse> {
 public:
@@ -70,6 +71,7 @@ public:
     void setPayerPhone(const String& payerPhone) { m_payerPhone = payerPhone; }
 
     void complete(std::optional<PaymentComplete>&&, DOMPromiseDeferred<void>&&);
+    void retry(PaymentValidationErrors&&, DOMPromiseDeferred<void>&&);
 
 private:
     explicit PaymentResponse(PaymentRequest&);

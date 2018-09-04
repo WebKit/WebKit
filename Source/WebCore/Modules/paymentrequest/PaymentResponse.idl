@@ -40,5 +40,6 @@
     readonly attribute DOMString? payerEmail;
     readonly attribute DOMString? payerPhone;
 
-    Promise<void> complete(optional PaymentComplete result = "unknown");
+    [NewObject] Promise<void> complete(optional PaymentComplete result = "unknown");
+    [NewObject] Promise<void> retry(PaymentValidationErrors errorFields);
 };

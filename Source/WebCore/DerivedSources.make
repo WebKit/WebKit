@@ -253,8 +253,10 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/notifications/Notification.idl \
     $(WebCore)/Modules/notifications/NotificationPermission.idl \
     $(WebCore)/Modules/notifications/NotificationPermissionCallback.idl \
+    $(WebCore)/Modules/paymentrequest/AddressErrors.idl \
     $(WebCore)/Modules/paymentrequest/MerchantValidationEvent.idl \
     $(WebCore)/Modules/paymentrequest/MerchantValidationEventInit.idl \
+    $(WebCore)/Modules/paymentrequest/PayerErrorFields.idl \
     $(WebCore)/Modules/paymentrequest/PaymentAddress.idl \
     $(WebCore)/Modules/paymentrequest/PaymentComplete.idl \
     $(WebCore)/Modules/paymentrequest/PaymentCurrencyAmount.idl \
@@ -273,6 +275,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/paymentrequest/PaymentResponse.idl \
     $(WebCore)/Modules/paymentrequest/PaymentShippingOption.idl \
     $(WebCore)/Modules/paymentrequest/PaymentShippingType.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentValidationErrors.idl \
     $(WebCore)/Modules/plugins/QuickTimePluginReplacement.idl \
     $(WebCore)/Modules/quota/DOMWindowQuota.idl \
     $(WebCore)/Modules/quota/NavigatorStorageQuota.idl \

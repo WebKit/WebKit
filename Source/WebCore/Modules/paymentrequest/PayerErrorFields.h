@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PaymentResponse.h"
+#pragma once
 
 #if ENABLE(PAYMENT_REQUEST)
 
-#include "NotImplemented.h"
-#include "PaymentRequest.h"
-#include <wtf/RunLoop.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-PaymentResponse::PaymentResponse(PaymentRequest& request)
-    : m_request { request }
-{
-}
-
-PaymentResponse::~PaymentResponse() = default;
-
-void PaymentResponse::complete(std::optional<PaymentComplete>&& result, DOMPromiseDeferred<void>&& promise)
-{
-    if (m_completeCalled) {
-        promise.reject(Exception { InvalidStateError });
-        return;
-    }
-
-    m_completeCalled = true;
-    m_request->complete(WTFMove(result));
-    promise.resolve();
-}
-
-void PaymentResponse::retry(PaymentValidationErrors&&, DOMPromiseDeferred<void>&& promise)
-{
-    notImplemented();
-    promise.reject(Exception { NotSupportedError });
-}
+struct PayerErrorFields {
+    String email;
+    String name;
+    String phone;
+};
 
 } // namespace WebCore
 

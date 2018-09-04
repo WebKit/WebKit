@@ -1,5 +1,33 @@
 2018-09-03  Andy Estes  <aestes@apple.com>
 
+        [Payment Request] Add a stub for PaymentResponse.retry
+        https://bugs.webkit.org/show_bug.cgi?id=189253
+
+        Reviewed by Sam Weinig.
+
+        Implemented the AddressErrors, PayerErrorFields, and PaymentValidationErrors dictionaries as
+        defined in the Payment Request API W3C Editor's Draft of 30 August 2018.
+
+        Also added a stub implementation of PaymentResponse.retry. This method will be implemented
+        with tests in a follow-up patch.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/paymentrequest/AddressErrors.h: Added.
+        * Modules/paymentrequest/AddressErrors.idl: Added.
+        * Modules/paymentrequest/PayerErrorFields.h: Added.
+        * Modules/paymentrequest/PayerErrorFields.idl: Added.
+        * Modules/paymentrequest/PaymentResponse.cpp:
+        (WebCore::PaymentResponse::retry):
+        * Modules/paymentrequest/PaymentResponse.h:
+        * Modules/paymentrequest/PaymentResponse.idl:
+        * Modules/paymentrequest/PaymentValidationErrors.h: Added.
+        * Modules/paymentrequest/PaymentValidationErrors.idl: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2018-09-03  Andy Estes  <aestes@apple.com>
+
         [Payment Request] MerchantValidationEvent should be enabled by the PaymentRequest setting
         https://bugs.webkit.org/show_bug.cgi?id=189250
 
