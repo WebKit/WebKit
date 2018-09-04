@@ -64,11 +64,11 @@ public:
     static Position mapCoordinateToAncestor(const LayoutContext&, Position, const Container& containingBlock, const Container& ancestor);
 
 protected:
-    struct LayoutPair {
-        const Box& layoutBox;
-        Display::Box& displayBox;
+    struct BoxPair {
+        const Box& layout;
+        Display::Box& display;
     };
-    using LayoutQueue = Vector<std::unique_ptr<LayoutPair>>;
+    using LayoutQueue = Vector<std::unique_ptr<BoxPair>>;
 
     const Box& root() const { return *m_root; }
 

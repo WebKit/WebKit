@@ -66,7 +66,7 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
     // This is a post-order tree traversal layout.
     // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
     if (auto* firstChild = formattingRoot.firstInFlowOrFloatingChild())
-        layoutQueue.append(std::make_unique<LayoutPair>(LayoutPair {*firstChild, layoutContext.createDisplayBox(*firstChild)}));
+        layoutQueue.append(std::make_unique<BoxPair>(BoxPair {*firstChild, layoutContext.createDisplayBox(*firstChild)}));
     // 1. Go all the way down to the leaf node
     // 2. Compute static position and width as we traverse down
     // 3. As we climb back on the tree, compute height and finialize position
@@ -74,9 +74,9 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
     while (!layoutQueue.isEmpty()) {
         // Traverse down on the descendants and compute width/static position until we find a leaf node.
         while (true) {
-            auto& layoutPair = *layoutQueue.last();
-            auto& layoutBox = layoutPair.layoutBox;
-            auto& displayBox = layoutPair.displayBox;
+            auto& boxPair = *layoutQueue.last();
+            auto& layoutBox = boxPair.layout;
+            auto& displayBox = boxPair.display;
 
             if (layoutBox.establishesFormattingContext()) {
                 layoutFormattingContextRoot(layoutContext, floatingContext, formattingState, layoutBox, displayBox);
@@ -86,7 +86,7 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
                 if (!layoutBox.nextInFlowOrFloatingSibling())
                     break;
                 auto* nextSibling = layoutBox.nextInFlowOrFloatingSibling();
-                layoutQueue.append(std::make_unique<LayoutPair>(LayoutPair {*nextSibling, layoutContext.createDisplayBox(*nextSibling)}));
+                layoutQueue.append(std::make_unique<BoxPair>(BoxPair {*nextSibling, layoutContext.createDisplayBox(*nextSibling)}));
                 continue;
             }
 
@@ -97,15 +97,15 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
                 break;
             auto& firstChild = *downcast<Container>(layoutBox).firstInFlowOrFloatingChild();
-            layoutQueue.append(std::make_unique<LayoutPair>(LayoutPair {firstChild, layoutContext.createDisplayBox(firstChild)}));
+            layoutQueue.append(std::make_unique<BoxPair>(BoxPair {firstChild, layoutContext.createDisplayBox(firstChild)}));
         }
 
         // Climb back on the ancestors and compute height/final position.
         while (!layoutQueue.isEmpty()) {
             // All inflow descendants (if there are any) are laid out by now. Let's compute the box's height.
-            auto layoutPair = layoutQueue.takeLast();
-            auto& layoutBox = layoutPair->layoutBox;
-            auto& displayBox = layoutPair->displayBox;
+            auto boxPair = layoutQueue.takeLast();
+            auto& layoutBox = boxPair->layout;
+            auto& displayBox = boxPair->display;
 
             LOG_WITH_STREAM(FormattingContextLayout, stream << "[Compute] -> [Height][Margin] -> for layoutBox(" << &layoutBox << ")");
             // Formatting root boxes are special-cased and they don't come here.
@@ -120,7 +120,7 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             // Move in-flow positioned children to their final position.
             placeInFlowPositionedChildren(layoutContext, container);
             if (auto* nextSibling = container.nextInFlowOrFloatingSibling()) {
-                layoutQueue.append(std::make_unique<LayoutPair>(LayoutPair {*nextSibling, layoutContext.createDisplayBox(*nextSibling)}));
+                layoutQueue.append(std::make_unique<BoxPair>(BoxPair {*nextSibling, layoutContext.createDisplayBox(*nextSibling)}));
                 break;
             }
         }

@@ -1,3 +1,14 @@
+2018-09-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Rename LayoutPair to BoxPair
+        https://bugs.webkit.org/show_bug.cgi?id=189276
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+
 2018-09-04  Youenn Fablet  <youenn@apple.com>
 
         Disable WebRTC unified plan runtime flag by default
