@@ -76,6 +76,17 @@ InlineTextBox::~InlineTextBox()
     TextPainter::removeGlyphDisplayList(*this);
 }
 
+bool InlineTextBox::hasTextContent() const
+{
+    if (m_len > 1)
+        return true;
+    if (auto* combinedText = this->combinedText()) {
+        ASSERT(m_len == 1);
+        return !combinedText->combinedStringForRendering().isEmpty();
+    }
+    return false;
+}
+
 void InlineTextBox::markDirty(bool dirty)
 {
     if (dirty) {
@@ -437,7 +448,7 @@ static MarkedText createMarkedTextFromSelectionInBox(const InlineTextBox& box)
 void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit /*lineTop*/, LayoutUnit /*lineBottom*/)
 {
     if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible
-        || m_truncation == cFullTruncation || paintInfo.phase == PaintPhase::Outline || !m_len)
+        || m_truncation == cFullTruncation || paintInfo.phase == PaintPhase::Outline || !hasTextContent())
         return;
 
     ASSERT(paintInfo.phase != PaintPhase::SelfOutline && paintInfo.phase != PaintPhase::ChildOutlines);
@@ -792,7 +803,8 @@ auto InlineTextBox::subdivideAndResolveStyle(const Vector<MarkedText>& textsToSu
         return { };
 
     auto markedTexts = subdivide(textsToSubdivide);
-    if (markedTexts.isEmpty())
+    ASSERT(!markedTexts.isEmpty());
+    if (UNLIKELY(markedTexts.isEmpty()))
         return { };
 
     // Compute frontmost overlapping styled marked texts.

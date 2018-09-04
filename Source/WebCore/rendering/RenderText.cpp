@@ -1304,7 +1304,7 @@ std::unique_ptr<InlineTextBox> RenderText::createTextBox()
 
 void RenderText::positionLineBox(InlineTextBox& textBox)
 {
-    if (!textBox.len())
+    if (!textBox.hasTextContent())
         return;
     m_containsReversedText |= !textBox.isLeftToRightDirection();
 }
