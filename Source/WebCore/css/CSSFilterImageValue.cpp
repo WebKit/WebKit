@@ -30,7 +30,6 @@
 #include "CSSFilter.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
-#include "FilterEffectRenderer.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "RenderElement.h"

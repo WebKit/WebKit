@@ -1841,7 +1841,6 @@ rendering/CSSFilter.cpp
 rendering/ClipRect.cpp
 rendering/CounterNode.cpp
 rendering/EllipsisBox.cpp
-rendering/FilterEffectRenderer.cpp
 rendering/FlexibleBoxAlgorithm.cpp
 rendering/FixedTableLayout.cpp
 rendering/FloatingObjects.cpp
@@ -1896,7 +1895,7 @@ rendering/RenderInline.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerCompositor.cpp
-rendering/RenderLayerFilterInfo.cpp
+rendering/RenderLayerFilters.cpp
 rendering/RenderLayerModelObject.cpp
 rendering/RenderLineBoxList.cpp
 rendering/RenderLineBreak.cpp

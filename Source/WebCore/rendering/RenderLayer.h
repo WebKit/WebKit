@@ -63,8 +63,6 @@ namespace WebCore {
 class CSSFilter;
 class ClipRects;
 class ClipRectsCache;
-class FilterEffectRendererHelper;
-class FilterOperations;
 class HitTestRequest;
 class HitTestResult;
 class HitTestingTransformState;
@@ -72,6 +70,7 @@ class RenderFragmentedFlow;
 class RenderGeometryMap;
 class RenderLayerBacking;
 class RenderLayerCompositor;
+class RenderLayerFilters;
 class RenderMarquee;
 class RenderReplica;
 class RenderScrollbarPart;
@@ -125,6 +124,7 @@ class RenderLayer final : public ScrollableArea {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     friend class RenderReplica;
+    friend class RenderLayerFilters;
 
     explicit RenderLayer(RenderLayerModelObject&);
     virtual ~RenderLayer();
@@ -645,7 +645,7 @@ public:
     bool hasNotIsolatedBlendingDescendantsStatusDirty() const { return false; }
 #endif
 
-    bool isComposited() const { return m_backing != 0; }
+    bool isComposited() const { return m_backing != nullptr; }
     bool hasCompositingDescendant() const { return m_hasCompositingDescendant; }
     bool hasCompositedMask() const;
     RenderLayerBacking* backing() const { return m_backing.get(); }
@@ -679,7 +679,6 @@ public:
 
     bool paintsWithFilters() const;
     bool requiresFullLayerImageForFilters() const;
-    CSSFilter* filter() const;
 
 #if !ASSERT_DISABLED
     bool layerListMutationAllowed() const { return m_layerListMutationAllowed; }
@@ -823,11 +822,12 @@ private:
 
     bool setupClipPath(GraphicsContext&, const LayerPaintingInfo&, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
 
-    class FilterInfo;
-    std::pair<FilterInfo*, std::unique_ptr<FilterEffectRendererHelper>> filterPainter(GraphicsContext&, OptionSet<PaintLayerFlag>) const;
-    bool hasFilterThatIsPainting(GraphicsContext&, OptionSet<PaintLayerFlag>) const;
-    std::unique_ptr<FilterEffectRendererHelper> setupFilters(GraphicsContext&, LayerPaintingInfo&, OptionSet<PaintLayerFlag>, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
-    void applyFilters(FilterEffectRendererHelper*, GraphicsContext& originalContext, const LayerPaintingInfo&, const LayerFragments&);
+    void ensureLayerFilters();
+    void clearLayerFilters();
+
+    RenderLayerFilters* filtersForPainting(GraphicsContext&, OptionSet<PaintLayerFlag>) const;
+    GraphicsContext* setupFilters(GraphicsContext& destinationContext, LayerPaintingInfo&, OptionSet<PaintLayerFlag>, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
+    void applyFilters(GraphicsContext& originalContext, const LayerPaintingInfo&, const LayerFragments&);
 
     void paintLayer(GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>);
     void paintLayerContentsAndReflection(GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>);
@@ -955,8 +955,8 @@ private:
     bool paintingInsideReflection() const { return m_paintingInsideReflection; }
     void setPaintingInsideReflection(bool b) { m_paintingInsideReflection = b; }
 
-    void updateOrRemoveFilterClients();
-    void updateOrRemoveFilterEffectRenderer();
+    void updateFiltersAfterStyleChange();
+    void updateFilterPaintingStrategy();
 
 #if ENABLE(CSS_COMPOSITING)
     void updateAncestorChainHasBlendingDescendants();
@@ -1092,8 +1092,6 @@ private:
     bool m_layerListMutationAllowed : 1;
 #endif
 
-    bool m_hasFilterInfo : 1;
-
 #if ENABLE(CSS_COMPOSITING)
     unsigned m_blendMode : 5;
     bool m_hasNotIsolatedCompositedBlendingDescendants : 1;
@@ -1163,6 +1161,7 @@ private:
 
     IntRect m_blockSelectionGapsBounds;
 
+    std::unique_ptr<RenderLayerFilters> m_filters;
     std::unique_ptr<RenderLayerBacking> m_backing;
     
     PaintFrequencyTracker m_paintFrequencyTracker;

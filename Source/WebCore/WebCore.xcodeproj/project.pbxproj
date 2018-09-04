@@ -886,7 +886,6 @@
 		31288E750E3005D6003619AE /* CSSKeyframesRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 31288E710E3005D6003619AE /* CSSKeyframesRule.h */; };
 		3128CA6B147331630074C72A /* NotificationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3128CA6A147331630074C72A /* NotificationController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		312C0C41146DC6CC0016C911 /* Notification.h in Headers */ = {isa = PBXBuildFile; fileRef = 333F704F0FB49CA2008E12A6 /* Notification.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		31313F661443B35F006E2A90 /* FilterEffectRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 31313F641443B35E006E2A90 /* FilterEffectRenderer.h */; };
 		313171561FB079E5008D91FC /* CanvasBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 313171541FB079D1008D91FC /* CanvasBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		313591061E7DDC7300F30630 /* RTCIceConnectionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 313591001E7DDC6000F30630 /* RTCIceConnectionState.h */; };
 		313591071E7DDC7300F30630 /* RTCIceGatheringState.h in Headers */ = {isa = PBXBuildFile; fileRef = 313591011E7DDC6000F30630 /* RTCIceGatheringState.h */; };
@@ -1353,7 +1352,6 @@
 		504AACCE1834455900E3D9BC /* InspectorNodeFinder.h in Headers */ = {isa = PBXBuildFile; fileRef = 504AACCC1834455900E3D9BC /* InspectorNodeFinder.h */; };
 		5081E3E03CFF80C16EF8B48B /* CachedResourceRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5081E3E13D0280C16EF8B48B /* CachedResourceRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		508CCA4F13CF106B003151F3 /* RenderFragmentedFlow.h in Headers */ = {isa = PBXBuildFile; fileRef = 508CCA4D13CF106B003151F3 /* RenderFragmentedFlow.h */; };
-		50D10D9A1545F5760096D288 /* RenderLayerFilterInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D10D981545F5760096D288 /* RenderLayerFilterInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510184690B08602A004A825F /* CachedPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 510184670B08602A004A825F /* CachedPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510192D218B6B9AB007FC7A1 /* ImageControlsRootElementMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 510192D018B6B9AB007FC7A1 /* ImageControlsRootElementMac.h */; };
 		510192D618B6B9B7007FC7A1 /* ImageControlsRootElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 510192D418B6B9B7007FC7A1 /* ImageControlsRootElement.h */; };
@@ -5622,6 +5620,8 @@
 		0F4966A91DB40C4300A274BB /* JSDOMPointReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPointReadOnly.h; sourceTree = "<group>"; };
 		0F53FB81213B1BB800C40D34 /* CSSFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFilter.cpp; sourceTree = "<group>"; };
 		0F53FB83213B1BB800C40D34 /* CSSFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFilter.h; sourceTree = "<group>"; };
+		0F53FB89213B768400C40D34 /* RenderLayerFilters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderLayerFilters.h; sourceTree = "<group>"; };
+		0F53FB8B213B768400C40D34 /* RenderLayerFilters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayerFilters.cpp; sourceTree = "<group>"; };
 		0F54DCE31881051D003EEDBB /* TextAutoSizing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextAutoSizing.cpp; sourceTree = "<group>"; };
 		0F54DCE41881051D003EEDBB /* TextAutoSizing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextAutoSizing.h; sourceTree = "<group>"; };
 		0F54DD051881D5F5003EEDBB /* Touch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Touch.h; sourceTree = "<group>"; };
@@ -6760,8 +6760,6 @@
 		31288E710E3005D6003619AE /* CSSKeyframesRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSKeyframesRule.h; sourceTree = "<group>"; };
 		3128CA67147331520074C72A /* NotificationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NotificationController.cpp; sourceTree = "<group>"; };
 		3128CA6A147331630074C72A /* NotificationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationController.h; sourceTree = "<group>"; };
-		31313F631443B35E006E2A90 /* FilterEffectRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilterEffectRenderer.cpp; sourceTree = "<group>"; };
-		31313F641443B35E006E2A90 /* FilterEffectRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterEffectRenderer.h; sourceTree = "<group>"; };
 		313171541FB079D1008D91FC /* CanvasBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasBase.h; sourceTree = "<group>"; };
 		313171571FB0969E008D91FC /* CanvasBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasBase.cpp; sourceTree = "<group>"; };
 		313591001E7DDC6000F30630 /* RTCIceConnectionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceConnectionState.h; sourceTree = "<group>"; };
@@ -7818,8 +7816,6 @@
 		5081E3E13D0280C16EF8B48B /* CachedResourceRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResourceRequest.h; sourceTree = "<group>"; };
 		508CCA4D13CF106B003151F3 /* RenderFragmentedFlow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderFragmentedFlow.h; sourceTree = "<group>"; };
 		508CCA4E13CF106B003151F3 /* RenderFragmentedFlow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFragmentedFlow.cpp; sourceTree = "<group>"; };
-		50D10D971545F5760096D288 /* RenderLayerFilterInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayerFilterInfo.cpp; sourceTree = "<group>"; };
-		50D10D981545F5760096D288 /* RenderLayerFilterInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLayerFilterInfo.h; sourceTree = "<group>"; };
 		510184670B08602A004A825F /* CachedPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedPage.h; sourceTree = "<group>"; };
 		510184680B08602A004A825F /* CachedPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedPage.cpp; sourceTree = "<group>"; };
 		510192CF18B6B9AB007FC7A1 /* ImageControlsRootElementMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageControlsRootElementMac.cpp; sourceTree = "<group>"; };
@@ -25802,8 +25798,6 @@
 				0F53FB83213B1BB800C40D34 /* CSSFilter.h */,
 				A8CFF6CA0A1561CD000A4234 /* EllipsisBox.cpp */,
 				A8CFF6BD0A156118000A4234 /* EllipsisBox.h */,
-				31313F631443B35E006E2A90 /* FilterEffectRenderer.cpp */,
-				31313F641443B35E006E2A90 /* FilterEffectRenderer.h */,
 				A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */,
 				A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */,
 				94DD79721E54E3A20058FB80 /* FlexibleBoxAlgorithm.cpp */,
@@ -25924,8 +25918,8 @@
 				0F580CFB0F12DE9B0051D689 /* RenderLayerBacking.h */,
 				0F580CFA0F12DE9B0051D689 /* RenderLayerCompositor.cpp */,
 				0F580CF90F12DE9B0051D689 /* RenderLayerCompositor.h */,
-				50D10D971545F5760096D288 /* RenderLayerFilterInfo.cpp */,
-				50D10D981545F5760096D288 /* RenderLayerFilterInfo.h */,
+				0F53FB8B213B768400C40D34 /* RenderLayerFilters.cpp */,
+				0F53FB89213B768400C40D34 /* RenderLayerFilters.h */,
 				3C244FE5A375AC633F88BE6F /* RenderLayerModelObject.cpp */,
 				3C244FE4A375AC633F88BE6F /* RenderLayerModelObject.h */,
 				BC33FB1A0F30EE85002CDD7C /* RenderLineBoxList.cpp */,
@@ -27921,7 +27915,6 @@
 				712BE4831FE865DD002031CC /* FillMode.h in Headers */,
 				845E72F80FD261EE00A87D79 /* Filter.h in Headers */,
 				08C9251A0FCC7C4A00480DEC /* FilterEffect.h in Headers */,
-				31313F661443B35F006E2A90 /* FilterEffectRenderer.h in Headers */,
 				49ECEB6E1499790D00CDD3A4 /* FilterOperation.h in Headers */,
 				49ECEB701499790D00CDD3A4 /* FilterOperations.h in Headers */,
 				372C00D9129619F8005C9575 /* FindOptions.h in Headers */,
@@ -29864,7 +29857,6 @@
 				BCEA487A097D93020094C9E4 /* RenderLayer.h in Headers */,
 				0F580CFF0F12DE9B0051D689 /* RenderLayerBacking.h in Headers */,
 				0F580CFD0F12DE9B0051D689 /* RenderLayerCompositor.h in Headers */,
-				50D10D9A1545F5760096D288 /* RenderLayerFilterInfo.h in Headers */,
 				3C244FEAA375AC633F88BE6F /* RenderLayerModelObject.h in Headers */,
 				0BE030A20F3112FB003C1A46 /* RenderLineBoxList.h in Headers */,
 				BCEA4864097D93020094C9E4 /* RenderLineBreak.h in Headers */,

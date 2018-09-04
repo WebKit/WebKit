@@ -43,9 +43,8 @@ enum class FilterConsumer { FilterProperty, FilterFunction };
 
 class CSSFilter final : public Filter {
     WTF_MAKE_FAST_ALLOCATED;
+    friend class RenderLayerFilters;
 public:
-    friend class FilterEffectRendererHelper;
-
     static Ref<CSSFilter> create();
 
     void setSourceImageRect(const FloatRect&);

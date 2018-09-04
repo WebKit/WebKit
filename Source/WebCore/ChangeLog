@@ -1,3 +1,55 @@
+2018-09-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Simplify RenderLayer filter code
+        https://bugs.webkit.org/show_bug.cgi?id=189248
+
+        Reviewed by Dean Jackson.
+        
+        Painting filters in RenderLayer involved the confusingly named RenderLayer::FilterInfo,
+        and FilterEffectRenderer/FilterEffectRendererHelper. Reduce confusion by just collapsing
+        these together into RenderLayerFilters. RenderLayerFilters stores a reference to the
+        CSSFilter, and knows how to set it up, and vend a GraphicsContext* for painting the content
+        to be filtered.
+        
+        It's also simpler to just give RenderLayer a member variable for RenderLayerFilters, rather
+        than using a side hash (we can recoup the space in other ways layer).
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFilterImageValue.cpp:
+        * rendering/CSSFilter.h:
+        * rendering/FilterEffectRenderer.cpp: Removed.
+        * rendering/FilterEffectRenderer.h: Removed.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        (WebCore::RenderLayer::paintsWithFilters const):
+        (WebCore::RenderLayer::requiresFullLayerImageForFilters const):
+        (WebCore::RenderLayer::setFilterBackendNeedsRepaintingInRect):
+        (WebCore::RenderLayer::filtersForPainting const):
+        (WebCore::RenderLayer::setupFilters):
+        (WebCore::RenderLayer::applyFilters):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::calculateClipRects const):
+        (WebCore::RenderLayer::filter const): Deleted.
+        (WebCore::RenderLayer::filterPainter const): Deleted.
+        (WebCore::RenderLayer::hasFilterThatIsPainting const): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerFilterInfo.cpp: Removed.
+        * rendering/RenderLayerFilters.cpp: Added.
+        (WebCore::RenderLayerFilters::RenderLayerFilters):
+        (WebCore::RenderLayerFilters::~RenderLayerFilters):
+        (WebCore::RenderLayerFilters::setFilter):
+        (WebCore::RenderLayerFilters::hasFilterThatMovesPixels const):
+        (WebCore::RenderLayerFilters::hasFilterThatShouldBeRestrictedBySecurityOrigin const):
+        (WebCore::RenderLayerFilters::notifyFinished):
+        (WebCore::RenderLayerFilters::updateReferenceFilterClients):
+        (WebCore::RenderLayerFilters::removeReferenceFilterClients):
+        (WebCore::RenderLayerFilters::buildFilter):
+        (WebCore::RenderLayerFilters::beginFilterEffect):
+        (WebCore::RenderLayerFilters::applyFilterEffect):
+        * rendering/RenderLayerFilters.h: Renamed from Source/WebCore/rendering/RenderLayerFilterInfo.h.
+
 2018-09-04  Dean Jackson  <dino@apple.com>
 
         Build fix.

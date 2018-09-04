@@ -38,41 +38,49 @@ namespace WebCore {
 
 class CachedSVGDocument;
 class Element;
+class FilterOperations;
 
-class RenderLayer::FilterInfo final : private CachedSVGDocumentClient {
-#if !COMPILER(MSVC)
+class RenderLayerFilters final : private CachedSVGDocumentClient {
     WTF_MAKE_FAST_ALLOCATED;
-#endif
 public:
-    static FilterInfo& get(RenderLayer&);
-    static FilterInfo* getIfExists(const RenderLayer&);
-    static void remove(RenderLayer&);
-
-    explicit FilterInfo(RenderLayer&);
-    virtual ~FilterInfo();
+    explicit RenderLayerFilters(RenderLayer&);
+    virtual ~RenderLayerFilters();
 
     const LayoutRect& dirtySourceRect() const { return m_dirtySourceRect; }
     void expandDirtySourceRect(const LayoutRect& rect) { m_dirtySourceRect.unite(rect); }
-    void resetDirtySourceRect() { m_dirtySourceRect = LayoutRect(); }
 
     CSSFilter* filter() const { return m_filter.get(); }
     void setFilter(RefPtr<CSSFilter>&&);
+    
+    bool hasFilterThatMovesPixels() const;
+    bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const;
 
     void updateReferenceFilterClients(const FilterOperations&);
     void removeReferenceFilterClients();
 
+    void buildFilter(RenderElement&, float scaleFactor, RenderingMode);
+
+    // Per render
+    LayoutRect repaintRect() const { return m_repaintRect; }
+
+    GraphicsContext* beginFilterEffect(GraphicsContext& destinationContext, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect);
+    void applyFilterEffect(GraphicsContext& destinationContext);
+
 private:
     void notifyFinished(CachedResource&) final;
-
-    static HashMap<const RenderLayer*, std::unique_ptr<FilterInfo>>& map();
+    void resetDirtySourceRect() { m_dirtySourceRect = LayoutRect(); }
 
     RenderLayer& m_layer;
 
-    RefPtr<CSSFilter> m_filter;
-    LayoutRect m_dirtySourceRect;
-
     Vector<RefPtr<Element>> m_internalSVGReferences;
     Vector<CachedResourceHandle<CachedSVGDocument>> m_externalSVGReferences;
+
+    RefPtr<CSSFilter> m_filter;
+    LayoutRect m_dirtySourceRect;
+    
+    // Data used per paint
+    LayoutPoint m_paintOffset;
+    LayoutRect m_repaintRect;
 };
 
 } // namespace WebCore

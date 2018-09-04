@@ -59,7 +59,6 @@
 #include "EventHandler.h"
 #include "FEColorMatrix.h"
 #include "FEMerge.h"
-#include "FilterEffectRenderer.h"
 #include "FloatConversion.h"
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
@@ -96,7 +95,7 @@
 #include "RenderIterator.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
-#include "RenderLayerFilterInfo.h"
+#include "RenderLayerFilters.h"
 #include "RenderMarquee.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderReplica.h"
@@ -312,7 +311,6 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
 #if !ASSERT_DISABLED
     , m_layerListMutationAllowed(true)
 #endif
-    , m_hasFilterInfo(false)
 #if ENABLE(CSS_COMPOSITING)
     , m_blendMode(static_cast<unsigned>(BlendMode::Normal))
     , m_hasNotIsolatedCompositedBlendingDescendants(false)
@@ -370,7 +368,7 @@ RenderLayer::~RenderLayer()
     clearScrollCorner();
     clearResizer();
 
-    FilterInfo::remove(*this);
+    clearLayerFilters();
 
     // Child layers will be deleted by their corresponding render objects, so
     // we don't need to delete them ourselves.
@@ -452,24 +450,15 @@ bool RenderLayer::paintsWithFilters() const
     if (!isComposited())
         return true;
 
-    if (!m_backing || !m_backing->canCompositeFilters())
-        return true;
-
-    return false;
+    return !m_backing->canCompositeFilters();
 }
 
 bool RenderLayer::requiresFullLayerImageForFilters() const 
 {
     if (!paintsWithFilters())
         return false;
-    auto* cssFilter = filter();
-    return cssFilter && cssFilter->hasFilterThatMovesPixels();
-}
 
-CSSFilter* RenderLayer::filter() const
-{
-    auto* filterInfo = FilterInfo::getIfExists(*this);
-    return filterInfo ? filterInfo->filter() : nullptr;
+    return m_filters && m_filters->hasFilterThatMovesPixels();
 }
 
 void RenderLayer::updateLayerPositionsAfterLayout(const RenderLayer* rootLayer, OptionSet<UpdateLayerPositionsFlag> flags)
@@ -1608,16 +1597,19 @@ RenderLayer* RenderLayer::enclosingFilterRepaintLayer() const
     return nullptr;
 }
 
+// FIXME: This neeeds a better name.
 void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect)
 {
+    ASSERT(requiresFullLayerImageForFilters());
+    ASSERT(m_filters);
+
     if (rect.isEmpty())
         return;
     
     LayoutRect rectForRepaint = rect;
     renderer().style().filterOutsets().expandRect(rectForRepaint);
 
-    FilterInfo& filterInfo = FilterInfo::get(*this);
-    filterInfo.expandDirtySourceRect(rectForRepaint);
+    m_filters->expandDirtySourceRect(rectForRepaint);
     
     RenderLayer* parentLayer = enclosingFilterRepaintLayer();
     ASSERT(parentLayer);
@@ -4196,43 +4188,30 @@ bool RenderLayer::setupClipPath(GraphicsContext& context, const LayerPaintingInf
     return false;
 }
 
-std::pair<RenderLayer::FilterInfo*, std::unique_ptr<FilterEffectRendererHelper>> RenderLayer::filterPainter(GraphicsContext& context, OptionSet<PaintLayerFlag> paintFlags) const
+RenderLayerFilters* RenderLayer::filtersForPainting(GraphicsContext& context, OptionSet<PaintLayerFlag> paintFlags) const
 {
     if (context.paintingDisabled())
-        return { };
-
-    if (paintFlags & PaintLayerPaintingOverlayScrollbars)
-        return { };
-
-    if (!paintsWithFilters())
-        return { };
-
-    auto* info = FilterInfo::getIfExists(*this);
-    if (!info || !info->filter())
-        return { };
-
-    auto helper = std::make_unique<FilterEffectRendererHelper>(true, context);
-    if (!helper->haveFilterEffect())
-        return { };
-
-    return { info, WTFMove(helper) };
-}
-
-bool RenderLayer::hasFilterThatIsPainting(GraphicsContext& context, OptionSet<PaintLayerFlag> paintFlags) const
-{
-    return !!filterPainter(context, paintFlags).first;
-}
-
-std::unique_ptr<FilterEffectRendererHelper> RenderLayer::setupFilters(GraphicsContext& context, LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed)
-{
-    auto painter = filterPainter(context, paintFlags);
-    if (!painter.first)
         return nullptr;
 
-    auto& filterInfo = *painter.first;
-    auto& filterPainter = *painter.second;
+    if (paintFlags & PaintLayerPaintingOverlayScrollbars)
+        return nullptr;
 
-    LayoutRect filterRepaintRect = filterInfo.dirtySourceRect();
+    if (!paintsWithFilters())
+        return nullptr;
+
+    if (m_filters && m_filters->filter())
+        return m_filters.get();
+
+    return nullptr;
+}
+
+GraphicsContext* RenderLayer::setupFilters(GraphicsContext& destinationContext, LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed)
+{
+    auto* paintingFilters = filtersForPainting(destinationContext, paintFlags);
+    if (!paintingFilters)
+        return nullptr;
+
+    LayoutRect filterRepaintRect = paintingFilters->dirtySourceRect();
     filterRepaintRect.move(offsetFromRoot);
 
     if (!rootRelativeBoundsComputed) {
@@ -4240,35 +4219,28 @@ std::unique_ptr<FilterEffectRendererHelper> RenderLayer::setupFilters(GraphicsCo
         rootRelativeBoundsComputed = true;
     }
 
-    if (!filterPainter.prepareFilterEffect(*this, enclosingIntRect(rootRelativeBounds), enclosingIntRect(paintingInfo.paintDirtyRect), enclosingIntRect(filterRepaintRect)))
+    GraphicsContext* filterContext = paintingFilters->beginFilterEffect(destinationContext, enclosingIntRect(rootRelativeBounds), enclosingIntRect(paintingInfo.paintDirtyRect), enclosingIntRect(filterRepaintRect));
+    if (!filterContext)
         return nullptr;
 
-    // Now we know for sure that the source image will be updated, so we can revert our tracking repaint rect back to zero.
-    filterInfo.resetDirtySourceRect();
-
-    if (!filterPainter.beginFilterEffect())
-        return nullptr;
-
-    paintingInfo.paintDirtyRect = filterPainter.repaintRect();
+    paintingInfo.paintDirtyRect = paintingFilters->repaintRect();
 
     // If the filter needs the full source image, we need to avoid using the clip rectangles.
     // Otherwise, if for example this layer has overflow:hidden, a drop shadow will not compute correctly.
     // Note that we will still apply the clipping on the final rendering of the filter.
-    paintingInfo.clipToDirtyRect = !filterInfo.filter()->hasFilterThatMovesPixels();
+    paintingInfo.clipToDirtyRect = !paintingFilters->hasFilterThatMovesPixels();
 
-    paintingInfo.requireSecurityOriginAccessForWidgets = filterInfo.filter()->hasFilterThatShouldBeRestrictedBySecurityOrigin();
+    paintingInfo.requireSecurityOriginAccessForWidgets = paintingFilters->hasFilterThatShouldBeRestrictedBySecurityOrigin();
 
-    return WTFMove(painter.second);
+    return filterContext;
 }
 
-void RenderLayer::applyFilters(FilterEffectRendererHelper* filterPainter, GraphicsContext& originalContext, const LayerPaintingInfo& paintingInfo, const LayerFragments& layerFragments)
+void RenderLayer::applyFilters(GraphicsContext& originalContext, const LayerPaintingInfo& paintingInfo, const LayerFragments& layerFragments)
 {
-    ASSERT(filterPainter->hasStartedFilterEffect());
-
     // FIXME: Handle more than one fragment.
     ClipRect backgroundRect = layerFragments.isEmpty() ? ClipRect() : layerFragments[0].backgroundRect;
     clipToRect(originalContext, paintingInfo, backgroundRect);
-    filterPainter->applyFilterEffect(originalContext);
+    m_filters->applyFilterEffect(originalContext);
     restoreClip(originalContext, paintingInfo, backgroundRect);
 }
 
@@ -4318,7 +4290,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
     // Apply clip-path to context.
     LayoutSize columnAwareOffsetFromRoot = offsetFromRoot;
-    if (renderer().enclosingFragmentedFlow() && (renderer().hasClipPath() || hasFilterThatIsPainting(context, paintFlags)))
+    if (renderer().enclosingFragmentedFlow() && (renderer().hasClipPath() || filtersForPainting(context, paintFlags)))
         columnAwareOffsetFromRoot = toLayoutSize(convertToLayerCoords(paintingInfo.rootLayer, LayoutPoint(), AdjustForColumns));
 
     bool hasClipPath = false;
@@ -4335,9 +4307,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
     { // Scope for filter-related state changes.
         LayerPaintingInfo localPaintingInfo(paintingInfo);
-        std::unique_ptr<FilterEffectRendererHelper> filterPainter = setupFilters(context, localPaintingInfo, paintFlags, columnAwareOffsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
-
-        GraphicsContext* filterContext = filterPainter ? filterPainter->filterContext() : nullptr;
+        GraphicsContext* filterContext = setupFilters(context, localPaintingInfo, paintFlags, columnAwareOffsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
         if (filterContext && haveTransparency) {
             // If we have a filter and transparency, we have to eagerly start a transparency layer here, rather than risk a child layer lazily starts one with the wrong context.
             beginTransparencyLayers(context, localPaintingInfo, paintingInfo.paintDirtyRect);
@@ -4431,8 +4401,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
                 (isPaintingOverflowContents) ? IgnoreOverflowClip : RespectOverflowClip, offsetFromRoot);
             updatePaintingInfoForFragments(layerFragments, paintingInfo, localPaintFlags, shouldPaintContent, offsetFromRoot);
 
-            applyFilters(filterPainter.get(), context, paintingInfo, layerFragments);
-            filterPainter = nullptr;
+            applyFilters(context, paintingInfo, layerFragments);
         }
     }
     
@@ -5966,7 +5935,7 @@ RenderLayerBacking* RenderLayer::ensureBacking()
         m_backing = std::make_unique<RenderLayerBacking>(*this);
         compositor().layerBecameComposited(*this);
 
-        updateOrRemoveFilterEffectRenderer();
+        updateFilterPaintingStrategy();
     }
     return m_backing.get();
 }
@@ -5978,7 +5947,7 @@ void RenderLayer::clearBacking(bool layerBeingDestroyed)
     m_backing = nullptr;
 
     if (!layerBeingDestroyed)
-        updateOrRemoveFilterEffectRenderer();
+        updateFilterPaintingStrategy();
 }
 
 bool RenderLayer::hasCompositedMask() const
@@ -6688,13 +6657,13 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode();
 #endif
-    updateOrRemoveFilterClients();
+    updateFiltersAfterStyleChange();
 
     updateNeedsCompositedScrolling();
 
     compositor().layerStyleChanged(diff, *this, oldStyle);
 
-    updateOrRemoveFilterEffectRenderer();
+    updateFilterPaintingStrategy();
 
 #if PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)
     if (diff == StyleDifference::RecompositeLayer || diff >= StyleDifference::LayoutPositionedMovementOnly)
@@ -6860,30 +6829,45 @@ RenderStyle RenderLayer::createReflectionStyle()
     return newStyle;
 }
 
-void RenderLayer::updateOrRemoveFilterClients()
+void RenderLayer::ensureLayerFilters()
 {
-    if (!hasFilter()) {
-        FilterInfo::remove(*this);
+    if (m_filters)
         return;
-    }
-    // Add the filter as a client to this renderer, unless we are a RenderLayer accommodating
-    // an SVG. In that case it takes care of its own resource management for filters.
-    if (renderer().style().filter().hasReferenceFilter() && !renderer().isSVGRoot())
-        FilterInfo::get(*this).updateReferenceFilterClients(renderer().style().filter());
-    else if (FilterInfo* filterInfo = FilterInfo::getIfExists(*this))
-        filterInfo->removeReferenceFilterClients();
+    
+    m_filters = std::make_unique<RenderLayerFilters>(*this);
 }
 
-void RenderLayer::updateOrRemoveFilterEffectRenderer()
+void RenderLayer::clearLayerFilters()
 {
-    // FilterEffectRenderer is only used to render the filters in software mode,
-    // so we always need to run updateOrRemoveFilterEffectRenderer after the composited
+    m_filters = nullptr;
+}
+
+void RenderLayer::updateFiltersAfterStyleChange()
+{
+    if (!hasFilter()) {
+        clearLayerFilters();
+        return;
+    }
+
+    // Add the filter as a client to this renderer, unless we are a RenderLayer accommodating
+    // an SVG. In that case it takes care of its own resource management for filters.
+    if (renderer().style().filter().hasReferenceFilter() && !renderer().isSVGRoot()) {
+        ensureLayerFilters();
+        m_filters->updateReferenceFilterClients(renderer().style().filter());
+    } else if (m_filters)
+        m_filters->removeReferenceFilterClients();
+}
+
+void RenderLayer::updateFilterPaintingStrategy()
+{
+    // RenderLayerFilters is only used to render the filters in software mode,
+    // so we always need to run updateFilterPaintingStrategy() after the composited
     // mode might have changed for this layer.
     if (!paintsWithFilters()) {
         // Don't delete the whole filter info here, because we might use it
         // for loading SVG reference filter files.
-        if (FilterInfo* filterInfo = FilterInfo::getIfExists(*this))
-            filterInfo->setFilter(nullptr);
+        if (m_filters)
+            m_filters->setFilter(nullptr);
 
         // Early-return only if we *don't* have reference filters.
         // For reference filters, we still want the FilterEffect graph built
@@ -6892,24 +6876,8 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
             return;
     }
     
-    FilterInfo& filterInfo = FilterInfo::get(*this);
-    if (!filterInfo.filter()) {
-        auto cssFilter = CSSFilter::create();
-        cssFilter->setFilterScale(page().deviceScaleFactor());
-        cssFilter->setRenderingMode(renderer().settings().acceleratedFiltersEnabled() ? Accelerated : Unaccelerated);
-        filterInfo.setFilter(WTFMove(cssFilter));
-        
-        // We can optimize away code paths in other places if we know that there are no software filters.
-        renderer().view().setHasSoftwareFilters(true);
-    } else if (filterInfo.filter()->filterScale() != page().deviceScaleFactor()) {
-        filterInfo.filter()->setFilterScale(page().deviceScaleFactor());
-        filterInfo.filter()->clearIntermediateResults();
-    }
-
-    // If the filter fails to build, remove it from the layer. It will still attempt to
-    // go through regular processing (e.g. compositing), but never apply anything.
-    if (!filterInfo.filter()->build(renderer(), renderer().style().filter(), FilterConsumer::FilterProperty))
-        filterInfo.setFilter(nullptr);
+    ensureLayerFilters();
+    m_filters->buildFilter(renderer(), page().deviceScaleFactor(), renderer().settings().acceleratedFiltersEnabled() ? Accelerated : Unaccelerated);
 }
 
 void RenderLayer::filterNeedsRepaint()
