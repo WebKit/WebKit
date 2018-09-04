@@ -926,7 +926,7 @@ sub UpdateResults {
         delete $expect->{$test->{path}};
     }
 
-    foreach my $path (keys($expect)) {
+    foreach my $path (keys(%{$expect})) {
         foreach my $mode (keys($expect->{$path})) {
             my $test = {
                 path => $path,

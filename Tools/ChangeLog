@@ -1,3 +1,13 @@
+2018-09-04  Keith Miller  <keith_miller@apple.com>
+
+        Perl doesn't like calling keys on a reference
+        https://bugs.webkit.org/show_bug.cgi?id=189261
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/test262/Runner.pm:
+        (UpdateResults):
+
 2018-09-04  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r234081): TestWebKitAPI.VideoControlsManager.VideoControlsManagerAudioElementFollowingUserInteraction is a flaky timeout
