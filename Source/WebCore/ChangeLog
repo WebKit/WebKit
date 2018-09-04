@@ -1,3 +1,16 @@
+2018-09-04  Youenn Fablet  <youenn@apple.com>
+
+        Disable WebRTC unified plan runtime flag by default
+        https://bugs.webkit.org/show_bug.cgi?id=189264
+
+        Reviewed by Jer Noble.
+
+        Covered by existing tests.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        Activate unified plan for testing.
+
 2018-09-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Merge computeInFlowWidth(Height)AndMargin and computeFloatingWidth(Height)AndMargin.
