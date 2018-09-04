@@ -1,5 +1,15 @@
 2018-09-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Unreviewed follow-up to r235635
+        https://bugs.webkit.org/show_bug.cgi?id=188940
+
+        Use "let" variables instead of "var" variables.
+
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        (let.standardLibrary):
+
+2018-09-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WHLSL] Implement texture types
         https://bugs.webkit.org/show_bug.cgi?id=188940
 
