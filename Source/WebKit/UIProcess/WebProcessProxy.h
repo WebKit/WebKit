@@ -97,12 +97,12 @@ public:
     typedef HashMap<uint64_t, WebPageProxy*> WebPageProxyMap;
     typedef HashMap<uint64_t, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
 
-    enum class IsInPrewarmedPool {
+    enum class IsPrewarmed {
         No,
         Yes
     };
 
-    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore&, IsInPrewarmedPool);
+    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore&, IsPrewarmed);
     ~WebProcessProxy();
 
     WebConnection* webConnection() const { return m_webConnection.get(); }
@@ -218,7 +218,7 @@ public:
     void releaseBackgroundActivityTokenForFullscreenInput();
 #endif
 
-    bool isInPrewarmedPool() const { return m_isInPrewarmedPool; }
+    bool isPrewarmed() const { return m_isPrewarmed; }
     void markIsNoLongerInPrewarmedPool();
 
 #if PLATFORM(COCOA)
@@ -232,7 +232,7 @@ public:
 
 protected:
     static uint64_t generatePageID();
-    WebProcessProxy(WebProcessPool&, WebsiteDataStore&, IsInPrewarmedPool);
+    WebProcessProxy(WebProcessPool&, WebsiteDataStore&, IsPrewarmed);
 
     // ChildProcessProxy
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
@@ -392,7 +392,7 @@ private:
     HashMap<uint64_t, CompletionHandler<void(WebCore::MessagePortChannelProvider::HasActivity)>> m_localPortActivityCompletionHandlers;
 
     bool m_hasCommittedAnyProvisionalLoads { false };
-    bool m_isInPrewarmedPool;
+    bool m_isPrewarmed;
 
 #if PLATFORM(WATCHOS)
     ProcessThrottler::BackgroundActivityToken m_backgroundActivityTokenForFullscreenFormControls;

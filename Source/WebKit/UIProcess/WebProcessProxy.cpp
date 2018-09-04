@@ -116,18 +116,18 @@ static WebProcessProxy::WebPageProxyMap& globalPageMap()
     return pageMap;
 }
 
-Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore& websiteDataStore, IsInPrewarmedPool isInPrewarmedPool)
+Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore& websiteDataStore, IsPrewarmed isPrewarmed)
 {
-    auto proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isInPrewarmedPool));
+    auto proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed));
     proxy->connect();
     return proxy;
 }
 
-WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore& websiteDataStore, IsInPrewarmedPool isInPrewarmedPool)
+WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore& websiteDataStore, IsPrewarmed isPrewarmed)
     : ChildProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_responsivenessTimer(*this)
     , m_backgroundResponsivenessTimer(*this)
-    , m_processPool(processPool, isInPrewarmedPool == IsInPrewarmedPool::Yes ? IsWeak::Yes : IsWeak::No)
+    , m_processPool(processPool, isPrewarmed == IsPrewarmed::Yes ? IsWeak::Yes : IsWeak::No)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
     , m_numberOfTimesSuddenTerminationWasDisabled(0)
     , m_throttler(*this, processPool.shouldTakeUIBackgroundAssertion())
@@ -137,7 +137,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore& 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     , m_userMediaCaptureManagerProxy(std::make_unique<UserMediaCaptureManagerProxy>(*this))
 #endif
-    , m_isInPrewarmedPool(isInPrewarmedPool == IsInPrewarmedPool::Yes)
+    , m_isPrewarmed(isPrewarmed == IsPrewarmed::Yes)
 {
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
 
@@ -447,9 +447,9 @@ void WebProcessProxy::suspendedPageWasDestroyed(SuspendedPageProxy& suspendedPag
 
 void WebProcessProxy::markIsNoLongerInPrewarmedPool()
 {
-    ASSERT(m_isInPrewarmedPool);
+    ASSERT(m_isPrewarmed);
 
-    m_isInPrewarmedPool = false;
+    m_isPrewarmed = false;
     RELEASE_ASSERT(m_processPool);
     m_processPool.setIsWeak(IsWeak::No);
 }

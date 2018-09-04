@@ -89,7 +89,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
 
     copy->m_shouldHaveLegacyDataStore = this->m_shouldHaveLegacyDataStore;
     copy->m_maximumProcessCount = this->m_maximumProcessCount;
-    copy->m_maximumPrewarmedProcessCount = this->m_maximumPrewarmedProcessCount;
     copy->m_cacheModel = this->m_cacheModel;
     copy->m_diskCacheDirectory = this->m_diskCacheDirectory;
     copy->m_diskCacheSpeculativeValidationEnabled = this->m_diskCacheSpeculativeValidationEnabled;
@@ -123,6 +122,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_processSwapsOnNavigation = this->m_processSwapsOnNavigation;
     copy->m_alwaysKeepAndReuseSwappedProcesses = this->m_alwaysKeepAndReuseSwappedProcesses;
     copy->m_processSwapsOnWindowOpenWithOpener = this->m_processSwapsOnWindowOpenWithOpener;
+    copy->m_isAutomaticProcessWarmingEnabled = this->m_isAutomaticProcessWarmingEnabled;
 #if ENABLE(PROXIMITY_NETWORKING)
     copy->m_wirelessContextIdentifier = this->m_wirelessContextIdentifier;
 #endif

@@ -207,11 +207,6 @@ static WKProcessPool *sharedProcessPool;
     _processPool->setMaximumNumberOfProcesses(value);
 }
 
-- (void)_setMaximumNumberOfPrewarmedProcesses:(NSUInteger)value
-{
-    _processPool->setMaximumNumberOfPrewarmedProcesses(value);
-}
-
 - (void)_setCanHandleHTTPSServerTrustEvaluation:(BOOL)value
 {
     _processPool->setCanHandleHTTPSServerTrustEvaluation(value);
@@ -403,7 +398,7 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 
 - (void)_warmInitialProcess
 {
-    _processPool->warmInitialProcess();
+    _processPool->prewarmProcess();
 }
 
 - (void)_automationCapabilitiesDidChange
@@ -484,19 +479,18 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->setShouldMakeNextNetworkProcessLaunchFailForTesting(true);
 }
 
-- (size_t)_prewarmedWebProcessCount
+- (BOOL)_hasPrewarmedWebProcess
 {
-    size_t result = 0;
     for (auto& process : _processPool->processes()) {
-        if (process->isInPrewarmedPool())
-            ++result;
+        if (process->isPrewarmed())
+            return YES;
     }
-    return result;
+    return NO;
 }
 
 - (size_t)_webProcessCountIgnoringPrewarmed
 {
-    return [self _webProcessCount] - [self _prewarmedWebProcessCount];
+    return [self _webProcessCount] - ([self _hasPrewarmedWebProcess] ? 1 : 0);
 }
 
 - (size_t)_webPageContentProcessCount

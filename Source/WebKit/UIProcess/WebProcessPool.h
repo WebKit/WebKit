@@ -156,9 +156,6 @@ public:
     void setMaximumNumberOfProcesses(unsigned); // Can only be called when there are no processes running.
     unsigned maximumNumberOfProcesses() const { return !m_configuration->maximumProcessCount() ? UINT_MAX : m_configuration->maximumProcessCount(); }
 
-    void setMaximumNumberOfPrewarmedProcesses(unsigned); // Can only be called when there are no processes running.
-    unsigned maximumNumberOfPrewarmedProcesses() const { return m_configuration->maximumPrewarmedProcessCount(); }
-
     void setCustomWebContentServiceBundleIdentifier(const String&);
     const String& customWebContentServiceBundleIdentifier() { return m_configuration->customWebContentServiceBundleIdentifier(); }
 
@@ -297,7 +294,7 @@ public:
     void allowSpecificHTTPSCertificateForHost(const WebCertificateInfo*, const String& host);
 
     WebProcessProxy& createNewWebProcessRespectingProcessCountLimit(WebsiteDataStore&); // Will return an existing one if limit is met.
-    void warmInitialProcess();
+    void prewarmProcess();
 
     bool shouldTerminate(WebProcessProxy*);
 
@@ -474,7 +471,7 @@ private:
 
     RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&);
 
-    WebProcessProxy& createNewWebProcess(WebsiteDataStore&, WebProcessProxy::IsInPrewarmedPool = WebProcessProxy::IsInPrewarmedPool::No);
+    WebProcessProxy& createNewWebProcess(WebsiteDataStore&, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
     void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore&);
 
     void requestWebContentStatistics(StatisticsRequest*);
@@ -537,7 +534,7 @@ private:
     IPC::MessageReceiverMap m_messageReceiverMap;
 
     Vector<RefPtr<WebProcessProxy>> m_processes;
-    unsigned m_prewarmedProcessCount { 0 };
+    WebProcessProxy* m_prewarmedProcess { nullptr };
 
     WebProcessProxy* m_processWithPageCache { nullptr };
 #if ENABLE(SERVICE_WORKER)
@@ -771,7 +768,7 @@ void WebProcessPool::sendToOneProcess(T&& message)
     }
 
     if (!messageSent) {
-        warmInitialProcess();
+        prewarmProcess();
         RefPtr<WebProcessProxy> process = m_processes.last();
         if (process->canSendMessage())
             process->send(std::forward<T>(message), 0);

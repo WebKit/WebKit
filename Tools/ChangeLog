@@ -1,3 +1,19 @@
+2018-09-04  Chris Dumez  <cdumez@apple.com>
+
+        Add process pool configuration flag to turn on automatic process pre-warming
+        https://bugs.webkit.org/show_bug.cgi?id=189263
+        <rdar://problem/44101941>
+
+        Reviewed by Antti Koivisto.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessPreWarming.mm: Renamed from Tools/TestWebKitAPI/Tests/WebKitCocoa/InitialWarmedProcessUsed.mm.
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/SetMaximumPrewarmedProcessCount.mm: Removed.
+
 2018-09-04  Keith Miller  <keith_miller@apple.com>
 
         Perl doesn't like calling keys on a reference

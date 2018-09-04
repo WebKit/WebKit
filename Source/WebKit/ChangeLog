@@ -1,3 +1,51 @@
+2018-09-04  Chris Dumez  <cdumez@apple.com>
+
+        Add process pool configuration flag to turn on automatic process pre-warming
+        https://bugs.webkit.org/show_bug.cgi?id=189263
+        <rdar://problem/44101941>
+
+        Reviewed by Antti Koivisto.
+
+        Add process pool configuration flag to turn on automatic process pre-warming and disassociate
+        it from the warmInitialProcess() SPI.
+
+        For now, turning on "process swap on navigation" via experimental features also turns on
+        automatic process pre-warming.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetPrewarmsProcessesAutomatically):
+        (WKContextWarmInitialProcess):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _warmInitialProcess]):
+        (-[WKProcessPool _hasPrewarmedWebProcess]):
+        (-[WKProcessPool _webProcessCountIgnoringPrewarmed]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration setPrewarmsProcessesAutomatically:]):
+        (-[_WKProcessPoolConfiguration prewarmsProcessesAutomatically]):
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::ServiceWorkerProcessProxy::ServiceWorkerProcessProxy):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setMaximumNumberOfProcesses):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::tryTakePrewarmedProcess):
+        (WebKit::WebProcessPool::prewarmProcess):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::didReachGoodTimeToPrewarm):
+        * UIProcess/WebProcessPool.h:
+        (WebKit::WebProcessPool::sendToOneProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::create):
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::m_isInPrewarmedPool):
+        * UIProcess/WebProcessProxy.h:
+
 2018-09-03  Dean Jackson  <dino@apple.com>
 
         Move SystemPreview code from WebKitAdditions to WebKit

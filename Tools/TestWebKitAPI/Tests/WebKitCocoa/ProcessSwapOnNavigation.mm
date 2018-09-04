@@ -278,7 +278,7 @@ TEST(ProcessSwap, Basic)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     processPoolConfiguration.get().processSwapsOnNavigation = YES;
-    processPoolConfiguration.get().maximumPrewarmedProcessCount = 1;
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -325,7 +325,7 @@ TEST(ProcessSwap, NoSwappingForeTLDPlus2)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     processPoolConfiguration.get().processSwapsOnNavigation = YES;
-    processPoolConfiguration.get().maximumPrewarmedProcessCount = 1;
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -925,7 +925,7 @@ TEST(ProcessSwap, NumberOfPrewarmedProcesses)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     [processPoolConfiguration setProcessSwapsOnNavigation:YES];
-    [processPoolConfiguration setMaximumPrewarmedProcessCount:1];
+    [processPoolConfiguration setPrewarmsProcessesAutomatically:YES];
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -944,7 +944,7 @@ TEST(ProcessSwap, NumberOfPrewarmedProcesses)
 
     EXPECT_EQ(2u, [processPool _webProcessCount]);
     EXPECT_EQ(1u, [processPool _webProcessCountIgnoringPrewarmed]);
-    EXPECT_EQ(1u, [processPool _prewarmedWebProcessCount]);
+    EXPECT_TRUE([processPool _hasPrewarmedWebProcess]);
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.google.com/main.html"]];
     [webView loadRequest:request];
@@ -953,7 +953,7 @@ TEST(ProcessSwap, NumberOfPrewarmedProcesses)
 
     EXPECT_EQ(3u, [processPool _webProcessCount]);
     EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmed]);
-    EXPECT_EQ(1u, [processPool _prewarmedWebProcessCount]);
+    EXPECT_TRUE([processPool _hasPrewarmedWebProcess]);
 }
 
 static const char* visibilityBytes = R"PSONRESOURCE(

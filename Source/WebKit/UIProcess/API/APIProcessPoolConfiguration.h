@@ -53,8 +53,8 @@ public:
     unsigned maximumProcessCount() const { return m_maximumProcessCount; }
     void setMaximumProcessCount(unsigned maximumProcessCount) { m_maximumProcessCount = maximumProcessCount; }
 
-    unsigned maximumPrewarmedProcessCount() const { return m_maximumPrewarmedProcessCount; }
-    void setMaximumPrewarmedProcessCount(unsigned maximumPrewarmedProcessCount) { m_maximumPrewarmedProcessCount = maximumPrewarmedProcessCount; }
+    bool isAutomaticProcessWarmingEnabled() const { return m_isAutomaticProcessWarmingEnabled; }
+    void setIsAutomaticProcessWarmingEnabled(bool value) { m_isAutomaticProcessWarmingEnabled = value; }
 
     bool diskCacheSpeculativeValidationEnabled() const { return m_diskCacheSpeculativeValidationEnabled; }
     void setDiskCacheSpeculativeValidationEnabled(bool enabled) { m_diskCacheSpeculativeValidationEnabled = enabled; }
@@ -167,7 +167,6 @@ private:
     bool m_shouldHaveLegacyDataStore { false };
 
     unsigned m_maximumProcessCount { 0 };
-    unsigned m_maximumPrewarmedProcessCount { 0 };
     bool m_diskCacheSpeculativeValidationEnabled { false };
     WebKit::CacheModel m_cacheModel { WebKit::CacheModelPrimaryWebBrowser };
     int64_t m_diskCacheSizeOverride { -1 };
@@ -199,6 +198,7 @@ private:
     bool m_processSwapsOnNavigation { false };
     bool m_alwaysKeepAndReuseSwappedProcesses { false };
     bool m_processSwapsOnWindowOpenWithOpener { false };
+    bool m_isAutomaticProcessWarmingEnabled { false };
     WTF::String m_customWebContentServiceBundleIdentifier;
 
 #if PLATFORM(IOS)

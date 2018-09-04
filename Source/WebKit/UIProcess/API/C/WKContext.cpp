@@ -402,9 +402,9 @@ void WKContextSetCanHandleHTTPSServerTrustEvaluation(WKContextRef contextRef, bo
     toImpl(contextRef)->setCanHandleHTTPSServerTrustEvaluation(value);
 }
 
-void WKContextSetMaximumNumberOfPrewarmedProcesses(WKContextRef contextRef, unsigned value)
+void WKContextSetPrewarmsProcessesAutomatically(WKContextRef contextRef, bool value)
 {
-    toImpl(contextRef)->setMaximumNumberOfPrewarmedProcesses(value);
+    toImpl(contextRef)->configuration().setIsAutomaticProcessWarmingEnabled(value);
 }
 
 void WKContextSetCustomWebContentServiceBundleIdentifier(WKContextRef contextRef, WKStringRef name)
@@ -515,7 +515,7 @@ void WKContextSetHTTPPipeliningEnabled(WKContextRef contextRef, bool enabled)
 
 void WKContextWarmInitialProcess(WKContextRef contextRef)
 {
-    toImpl(contextRef)->warmInitialProcess();
+    toImpl(contextRef)->prewarmProcess();
 }
 
 void WKContextGetStatistics(WKContextRef contextRef, void* context, WKContextGetStatisticsFunction callback)
