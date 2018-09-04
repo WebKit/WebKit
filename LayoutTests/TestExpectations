@@ -399,6 +399,11 @@ http/wpt/cross-origin-resource-policy/ [ Skip ]
 # testRunner.terminateNetworkProcess() only works in WebKit2
 fast/files/blob-network-process-crash.html [ Skip ]
 
+# This test is currently only relevant on mac-wk2
+fast/canvas/webgl/context-update-on-display-configuration.html [ Skip ]
+
+fast/misc/valid-primary-screen-displayID.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -2235,6 +2240,3 @@ webkit.org/b/187762 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-b
 webkit.org/b/187269 [ Debug ] imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_abort.html [ Skip ]
 
 webkit.org/b/185308 legacy-animation-engine/animations/combo-transform-translate+scale.html [ Pass Failure ]
-
-# This test is currently only relevant on mac-wk2
-fast/canvas/webgl/context-update-on-display-configuration.html [ Skip ]

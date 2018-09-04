@@ -1,3 +1,17 @@
+2018-09-04  Per Arne Vollan  <pvollan@apple.com>
+
+        Add test for fix in https://bugs.webkit.org/show_bug.cgi?id=187922
+        https://bugs.webkit.org/show_bug.cgi?id=187925
+
+        Reviewed by Simon Fraser.
+
+        This will test that the function primaryScreenDisplayID() returns a valid display ID.
+
+        * TestExpectations:
+        * fast/misc/valid-primary-screen-displayID-expected.txt: Added.
+        * fast/misc/valid-primary-screen-displayID.html: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2018-09-04  Daniel Bates  <dabates@apple.com>
 
         Remove redundant inline text boxes for empty combined text

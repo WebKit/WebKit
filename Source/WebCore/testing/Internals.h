@@ -735,6 +735,8 @@ public:
 
     void notifyResourceLoadObserver();
 
+    unsigned long primaryScreenDisplayID();
+        
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

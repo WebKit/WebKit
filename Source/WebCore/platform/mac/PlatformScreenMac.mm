@@ -102,7 +102,7 @@ static ScreenProperties& screenProperties()
     return screenProperties;
 }
 
-static PlatformDisplayID& primaryScreenDisplayID()
+PlatformDisplayID primaryScreenDisplayID()
 {
     return screenProperties().primaryDisplayID;
 }

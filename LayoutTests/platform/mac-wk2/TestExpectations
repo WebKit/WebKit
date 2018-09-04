@@ -53,6 +53,10 @@ applicationmanifest/ [ Pass ]
 
 webkit.org/b/187183 http/tests/security/pasteboard-file-url.html [ Pass ]
 
+[ Mojave+ ] fast/canvas/webgl/context-update-on-display-configuration.html [ Pass ]
+
+fast/misc/valid-primary-screen-displayID.html [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -832,8 +836,6 @@ webkit.org/b/184937 transitions/opacity-transition-zindex.html [ Skip ]
 webkit.org/b/186362 [ Release ] http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction.html [ Skip ]
 
 webkit.org/b/186425 [ Debug ] inspector/console/webcore-logging.html [ Pass Failure ]
-
-[ Mojave+ ] fast/canvas/webgl/context-update-on-display-configuration.html [ Pass ]
 
 # skip manual payment-request tests
 imported/w3c/web-platform-tests/payment-request/MerchantValidationEvent/complete-method-manual.https.html [ Skip ]

@@ -120,6 +120,7 @@
 #include "PageOverlay.h"
 #include "PathUtilities.h"
 #include "PlatformMediaSessionManager.h"
+#include "PlatformScreen.h"
 #include "PlatformStrategies.h"
 #include "PluginData.h"
 #include "PrintContext.h"
@@ -4718,6 +4719,15 @@ size_t Internals::pluginCount()
 void Internals::notifyResourceLoadObserver()
 {
     ResourceLoadObserver::shared().notifyObserver();
+}
+
+unsigned long Internals::primaryScreenDisplayID()
+{
+#if PLATFORM(MAC)
+    return WebCore::primaryScreenDisplayID();
+#else
+    return 0;
+#endif
 }
 
 } // namespace WebCore

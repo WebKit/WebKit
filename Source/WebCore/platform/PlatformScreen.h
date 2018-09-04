@@ -99,6 +99,8 @@ NSPoint flipScreenPoint(const NSPoint&, NSScreen *);
 WEBCORE_EXPORT ScreenProperties collectScreenProperties();
 WEBCORE_EXPORT void setScreenProperties(const ScreenProperties&);
 
+WEBCORE_EXPORT PlatformDisplayID primaryScreenDisplayID();
+
 uint32_t primaryOpenGLDisplayMask();
 uint32_t displayMaskForDisplay(PlatformDisplayID);
 
