@@ -178,10 +178,9 @@ void ImageLoader::updateFromElement()
         options.contentSecurityPolicyImposition = element().isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
         options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
 
-        CachedResourceRequest request(ResourceRequest(document.completeURL(sourceURI(attr))), options);
+        auto crossOriginAttribute = element().attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
+        auto request = createPotentialAccessControlRequest(document.completeURL(sourceURI(attr)), document, crossOriginAttribute, WTFMove(options));
         request.setInitiator(element());
-
-        request.setAsPotentiallyCrossOrigin(element().attributeWithoutSynchronization(HTMLNames::crossoriginAttr), document);
 
         if (m_loadManually) {
             bool autoLoadOtherImages = document.cachedResourceLoader().autoLoadImages();

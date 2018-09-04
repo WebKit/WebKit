@@ -27,6 +27,7 @@
 #include "HTMLResourcePreloader.h"
 
 #include "CachedResourceLoader.h"
+#include "CrossOriginAccessControl.h"
 #include "Document.h"
 
 #include "MediaQueryEvaluator.h"
@@ -53,14 +54,13 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
     if (skipContentSecurityPolicyCheck)
         options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
 
-    CachedResourceRequest request { completeURL(document), options };
-    request.setInitiator(m_initiator);
     String crossOriginMode = m_crossOriginMode;
     if (m_moduleScript == ModuleScript::Yes) {
         if (crossOriginMode.isNull())
             crossOriginMode = "omit"_s;
     }
-    request.setAsPotentiallyCrossOrigin(crossOriginMode, document);
+    auto request = createPotentialAccessControlRequest(completeURL(document), document, crossOriginMode, WTFMove(options));
+    request.setInitiator(m_initiator);
     return request;
 }
 

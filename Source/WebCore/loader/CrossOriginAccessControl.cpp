@@ -27,6 +27,7 @@
 #include "config.h"
 #include "CrossOriginAccessControl.h"
 
+#include "CachedResourceRequest.h"
 #include "CrossOriginPreflightResultCache.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
@@ -115,6 +116,15 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
     }
 
     return preflightRequest;
+}
+
+CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& request, Document& document, const String& crossOriginAttribute, ResourceLoaderOptions&& options)
+{
+    // FIXME: This does not match the algorithm "create a potential-CORS request":
+    // <https://html.spec.whatwg.org/multipage/urls-and-fetching.html#create-a-potential-cors-request> (31 August 2018).
+    auto cachedRequest = CachedResourceRequest { WTFMove(request), WTFMove(options) };
+    cachedRequest.deprecatedSetAsPotentiallyCrossOrigin(crossOriginAttribute, document);
+    return cachedRequest;
 }
 
 bool isValidCrossOriginRedirectionURL(const URL& redirectURL)

@@ -1,5 +1,46 @@
 2018-09-04  Daniel Bates  <dabates@apple.com>
 
+        Add helper function to create a potential CORS request
+        https://bugs.webkit.org/show_bug.cgi?id=189251
+
+        Reviewed by Andy Estes.
+
+        Add a new function, createPotentialAccessControlRequest, that we will use to implement the algorithm Create a potential-
+        CORS request from the HTML standard: <https://html.spec.whatwg.org/multipage/urls-and-fetching.html#create-a-potential-cors-request> (31 August 2018).
+        This function replaces CachedResourceRequest::setAsPotentiallyCrossOrigin() and is the first step towards separating
+        the concepts of CORS settings states and module script credentials mode as well as implementing the aforementioned
+        algorithm. Rename CachedResourceRequest::setAsPotentiallyCrossOrigin() to deprecatedSetAsPotentiallyCrossOrigin()
+        and switch existing callers to use createPotentialAccessControlRequest(). For now, createPotentialAccessControlRequest()
+        is implemented in terms of deprecatedSetAsPotentiallyCrossOrigin().
+
+        No functionality changed. So, no new tests.
+
+        * bindings/js/CachedScriptFetcher.cpp:
+        (WebCore::CachedScriptFetcher::requestScriptWithCache const): Write in terms of WebCore::createPotentialAccessControlRequest().
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process): Ditto.
+        * html/parser/HTMLResourcePreloader.cpp:
+        (WebCore::PreloadRequest::resourceRequest): Ditto.
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::createPotentialAccessControlRequest): For now, implemented in terms of CachedResourceRequest::deprecatedSetAsPotentiallyCrossOrigin().
+        * loader/CrossOriginAccessControl.h:
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement): Write in terms of WebCore::createPotentialAccessControlRequest().
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::preloadIfNeeded): Ditto.
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::requestResource): Ditto. Also renamed local variable cacheRequest to cachedRequest.
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::load): Write in terms of WebCore::createPotentialAccessControlRequest(). Also change local variable
+        document from a pointer to a reference since this function asserts that the script execution context is a non-null Document.
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::deprecatedSetAsPotentiallyCrossOrigin): Renamed; formerly named setAsPotentiallyCrossOrigin.
+        (WebCore::CachedResourceRequest::setAsPotentiallyCrossOrigin): Deleted.
+        * loader/cache/CachedResourceRequest.h:
+        (WebCore::CachedResourceRequest::setPriority): Added.
+
+2018-09-04  Daniel Bates  <dabates@apple.com>
+
         Remove redundant inline text boxes for empty combined text
         https://bugs.webkit.org/show_bug.cgi?id=189119
 

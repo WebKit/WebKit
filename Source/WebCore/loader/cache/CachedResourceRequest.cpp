@@ -85,7 +85,7 @@ const AtomicString& CachedResourceRequest::initiatorName() const
     return defaultName;
 }
 
-void CachedResourceRequest::setAsPotentiallyCrossOrigin(const String& mode, Document& document)
+void CachedResourceRequest::deprecatedSetAsPotentiallyCrossOrigin(const String& mode, Document& document)
 {
     ASSERT(m_options.mode == FetchOptions::Mode::NoCors);
 

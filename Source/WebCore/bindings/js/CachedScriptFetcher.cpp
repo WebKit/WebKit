@@ -29,6 +29,7 @@
 #include "CachedResourceLoader.h"
 #include "CachedScript.h"
 #include "ContentSecurityPolicy.h"
+#include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "Settings.h"
 
@@ -56,14 +57,11 @@ CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(D
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
     options.integrity = WTFMove(integrity);
 
-    CachedResourceRequest request(ResourceRequest(sourceURL), options);
-    request.setAsPotentiallyCrossOrigin(crossOriginMode, document);
+    auto request = createPotentialAccessControlRequest(sourceURL, document, crossOriginMode, WTFMove(options));
     request.upgradeInsecureRequestIfNeeded(document);
-
     request.setCharset(m_charset);
     if (!m_initiatorName.isNull())
         request.setInitiator(m_initiatorName);
-
     return document.cachedResourceLoader().requestScript(WTFMove(request)).value_or(nullptr);
 }
 

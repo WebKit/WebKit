@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+class CachedResourceRequest;
+class Document;
 class HTTPHeaderMap;
 class ResourceError;
 class ResourceRequest;
@@ -40,13 +42,17 @@ class ResourceResponse;
 class SecurityOrigin;
 class URL;
 
+struct ResourceLoaderOptions;
+
 WEBCORE_EXPORT bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&);
 bool isOnAccessControlSimpleRequestMethodWhitelist(const String&);
 
 void updateRequestReferrer(ResourceRequest&, ReferrerPolicy, const String&);
     
 WEBCORE_EXPORT void updateRequestForAccessControl(ResourceRequest&, SecurityOrigin&, StoredCredentialsPolicy);
+
 WEBCORE_EXPORT ResourceRequest createAccessControlPreflightRequest(const ResourceRequest&, SecurityOrigin&, const String&);
+CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&&, Document&, const String& crossOriginAttribute, ResourceLoaderOptions&&);
 
 bool isValidCrossOriginRedirectionURL(const URL&);
 

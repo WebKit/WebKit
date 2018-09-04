@@ -90,12 +90,11 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
         DefersLoadingPolicy::AllowDefersLoading,
         cachingPolicy };
     loaderOptions.destination = m_mediaElement && !m_mediaElement->isVideo() ? FetchOptions::Destination::Audio : FetchOptions::Destination::Video;
-    CachedResourceRequest cacheRequest { WTFMove(request), WTFMove(loaderOptions) };
-    cacheRequest.setAsPotentiallyCrossOrigin(m_crossOriginMode, *m_document);
+    auto cachedRequest = createPotentialAccessControlRequest(WTFMove(request), *m_document, m_crossOriginMode, WTFMove(loaderOptions));
     if (m_mediaElement)
-        cacheRequest.setInitiator(*m_mediaElement.get());
+        cachedRequest.setInitiator(*m_mediaElement.get());
 
-    auto resource = m_document->cachedResourceLoader().requestMedia(WTFMove(cacheRequest)).value_or(nullptr);
+    auto resource = m_document->cachedResourceLoader().requestMedia(WTFMove(cachedRequest)).value_or(nullptr);
     if (!resource)
         return nullptr;
 

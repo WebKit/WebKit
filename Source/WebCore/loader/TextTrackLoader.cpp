@@ -147,20 +147,16 @@ bool TextTrackLoader::load(const URL& url, const String& crossOriginMode, bool i
     cancelLoad();
 
     ASSERT(is<Document>(m_scriptExecutionContext));
-    Document* document = downcast<Document>(m_scriptExecutionContext);
+    Document& document = downcast<Document>(*m_scriptExecutionContext);
 
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.contentSecurityPolicyImposition = isInitiatingElementInUserAgentShadowTree ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 
-    CachedResourceRequest cueRequest(ResourceRequest(document->completeURL(url)), options);
-    cueRequest.setAsPotentiallyCrossOrigin(crossOriginMode, *document);
-
-    m_resource = document->cachedResourceLoader().requestTextTrack(WTFMove(cueRequest)).value_or(nullptr);
+    auto cueRequest = createPotentialAccessControlRequest(document.completeURL(url), document, crossOriginMode, WTFMove(options));
+    m_resource = document.cachedResourceLoader().requestTextTrack(WTFMove(cueRequest)).value_or(nullptr);
     if (!m_resource)
         return false;
-
     m_resource->addClient(*this);
-
     return true;
 }
 
