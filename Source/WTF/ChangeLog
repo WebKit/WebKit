@@ -1,3 +1,15 @@
+2018-09-04  Michael Saboff  <msaboff@apple.com>
+
+        YARR: JIT RegExps with back references
+        https://bugs.webkit.org/show_bug.cgi?id=180874
+
+        Reviewed by Filip Pizlo.
+
+        Added ENABLE_YARR_JIT_BACKREFERENCES to enable RegExp JIT'ing of back references
+        for 64 bit platforms only.
+
+        * wtf/Platform.h:
+
 2018-08-31  Antti Koivisto  <antti@apple.com>
 
         Replace OptionSet |= and -= operators with add() and remove() functions

@@ -100,6 +100,23 @@ public:
         load8(dest, dest);
     }
 
+    void load16(ExtendedAddress address, RegisterID dest)
+    {
+        TrustedImmPtr addr(reinterpret_cast<void*>(address.offset));
+        MacroAssemblerX86Common::move(addr, scratchRegister());
+        MacroAssemblerX86Common::load16(BaseIndex(scratchRegister(), address.base, TimesTwo), dest);
+    }
+
+    void load16(BaseIndex address, RegisterID dest)
+    {
+        MacroAssemblerX86Common::load16(address, dest);
+    }
+
+    void load16(Address address, RegisterID dest)
+    {
+        MacroAssemblerX86Common::load16(address, dest);
+    }
+
     void load32(const void* address, RegisterID dest)
     {
         if (dest == X86Registers::eax)

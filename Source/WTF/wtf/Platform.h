@@ -973,8 +973,9 @@
 
 #if ENABLE(YARR_JIT)
 #if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
-/* Enable JIT'ing Regular Expressions that have nested parenthesis. */
+/* Enable JIT'ing Regular Expressions that have nested parenthesis and back references. */
 #define ENABLE_YARR_JIT_ALL_PARENS_EXPRESSIONS 1
+#define ENABLE_YARR_JIT_BACKREFERENCES 1
 #endif
 #endif
 

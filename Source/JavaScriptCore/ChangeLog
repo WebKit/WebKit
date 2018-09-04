@@ -1,3 +1,52 @@
+2018-09-04  Michael Saboff  <msaboff@apple.com>
+
+        YARR: JIT RegExps with back references
+        https://bugs.webkit.org/show_bug.cgi?id=180874
+
+        Reviewed by Filip Pizlo.
+
+        Implemented JIT'ed back references for all counted types.  The only type of back references
+        not handled in the JIT are 16bit matches that ignore case.  Such support would require the
+        canonicalization that is currently handled in the Yarr interpreter via a C funtion call.
+        The back reference processing for surrogate pairs is implemented by individually comparing
+        each surrogate ala memcmp.
+
+        Added a generated canonicalization table for the LChar (8bit) domain to process case
+        ignored back references.
+
+        Added macro assembler load16(ExtendedAddress) for indexed access to the canonicalization table.
+
+        Added a new JIT failure reason for forward references as the check to JIT expressions with
+        forward references we're handled synonimously those containing back references.
+
+        This change is only enabled for 64 bit platforms.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::load16):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::load16):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        * yarr/YarrCanonicalize.h:
+        * yarr/YarrCanonicalizeUCS2.cpp:
+        * yarr/YarrCanonicalizeUCS2.js:
+        (set characters.hex.set string_appeared_here):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::checkNotEnoughInput):
+        (JSC::Yarr::YarrGenerator::readCharacterDontDecodeSurrogates):
+        (JSC::Yarr::YarrGenerator::matchBackreference):
+        (JSC::Yarr::YarrGenerator::generateBackReference):
+        (JSC::Yarr::YarrGenerator::backtrackBackReference):
+        (JSC::Yarr::YarrGenerator::generateTerm):
+        (JSC::Yarr::YarrGenerator::backtrackTerm):
+        (JSC::Yarr::YarrGenerator::compile):
+        (JSC::Yarr::dumpCompileFailure):
+        * yarr/YarrJIT.h:
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::BackTrackInfoBackReference::beginIndex):
+        (JSC::Yarr::BackTrackInfoBackReference::matchAmountIndex):
+
 2018-09-04  Mark Lam  <mark.lam@apple.com>
 
         Make the jsc shell print, printErr, and debug functions more robust.

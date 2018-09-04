@@ -555,8 +555,8 @@ private:
         uintptr_t begin; // Not really needed for greedy quantifiers.
         uintptr_t matchAmount; // Not really needed for fixed quantifiers.
 
-        unsigned beginIndex() { return offsetof(BackTrackInfoBackReference, begin) / sizeof(uintptr_t); }
-        unsigned matchAmountIndex() { return offsetof(BackTrackInfoBackReference, matchAmount) / sizeof(uintptr_t); }
+        static unsigned beginIndex() { return offsetof(BackTrackInfoBackReference, begin) / sizeof(uintptr_t); }
+        static unsigned matchAmountIndex() { return offsetof(BackTrackInfoBackReference, matchAmount) / sizeof(uintptr_t); }
     };
 
     struct BackTrackInfoAlternative {

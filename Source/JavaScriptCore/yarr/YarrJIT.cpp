@@ -464,6 +464,12 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         return branch32(BelowOrEqual, index, length);
     }
 
+    Jump checkNotEnoughInput(RegisterID additionalAmount)
+    {
+        add32(index, additionalAmount);
+        return branch32(Above, additionalAmount, length);
+    }
+
     Jump checkInput()
     {
         return branch32(BelowOrEqual, index, length);
@@ -546,6 +552,16 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
     }
 #endif
 
+    void readCharacterDontDecodeSurrogates(Checked<unsigned> negativeCharacterOffset, RegisterID resultReg, RegisterID indexReg = index)
+    {
+        BaseIndex address = negativeOffsetIndexedAddress(negativeCharacterOffset, resultReg, indexReg);
+        
+        if (m_charSize == Char8)
+            load8(address, resultReg);
+        else
+            load16Unaligned(address, resultReg);
+    }
+    
     void readCharacter(Checked<unsigned> negativeCharacterOffset, RegisterID resultReg, RegisterID indexReg = index)
     {
         BaseIndex address = negativeOffsetIndexedAddress(negativeCharacterOffset, resultReg, indexReg);
@@ -1105,6 +1121,228 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
     {
         backtrackTermDefault(opIndex);
     }
+
+#if ENABLE(YARR_JIT_BACKREFERENCES)
+    void matchBackreference(size_t opIndex, JumpList& characterMatchFails, RegisterID character, RegisterID patternIndex, RegisterID patternCharacter)
+    {
+        YarrOp& op = m_ops[opIndex];
+        PatternTerm* term = op.m_term;
+        unsigned subpatternId = term->backReferenceSubpatternId;
+
+        Label loop(this);
+
+            readCharacterDontDecodeSurrogates(0, patternCharacter, patternIndex);
+            readCharacterDontDecodeSurrogates(m_checkedOffset - term->inputPosition, character);
+        
+        if (!m_pattern.ignoreCase())
+            characterMatchFails.append(branch32(NotEqual, character, patternCharacter));
+        else {
+            Jump charactersMatch = branch32(Equal, character, patternCharacter);
+            ExtendedAddress characterTableEntry(character, reinterpret_cast<intptr_t>(&canonicalTableLChar));
+            load16(characterTableEntry, character);
+            ExtendedAddress patternTableEntry(patternCharacter, reinterpret_cast<intptr_t>(&canonicalTableLChar));
+            load16(patternTableEntry, patternCharacter);
+            characterMatchFails.append(branch32(NotEqual, character, patternCharacter));
+            charactersMatch.link(this);
+        }
+
+        
+        add32(TrustedImm32(1), index);
+        add32(TrustedImm32(1), patternIndex);
+        
+        branch32(NotEqual, patternIndex, Address(output, ((subpatternId << 1) + 1) * sizeof(int))).linkTo(loop, this);
+    }
+
+    void generateBackReference(size_t opIndex)
+    {
+        YarrOp& op = m_ops[opIndex];
+        PatternTerm* term = op.m_term;
+
+        if (m_pattern.ignoreCase() && m_charSize != Char8) {
+            m_failureReason = JITFailureReason::BackReference;
+            return;
+        }
+
+        unsigned subpatternId = term->backReferenceSubpatternId;
+        unsigned parenthesesFrameLocation = term->frameLocation;
+
+        const RegisterID characterOrTemp = regT0;
+        const RegisterID patternIndex = regT1;
+        const RegisterID patternTemp = regT2;
+
+        storeToFrame(index, parenthesesFrameLocation + BackTrackInfoBackReference::beginIndex());
+        if (term->quantityType != QuantifierFixedCount || term->quantityMaxCount != 1)
+            storeToFrame(TrustedImm32(0), parenthesesFrameLocation + BackTrackInfoBackReference::matchAmountIndex());
+
+        JumpList matches;
+
+        if (term->quantityType != QuantifierNonGreedy) {
+            load32(Address(output, (subpatternId << 1) * sizeof(int)), patternIndex);
+            load32(Address(output, ((subpatternId << 1) + 1) * sizeof(int)), patternTemp);
+
+            // An empty match is successful without consuming characters
+            if (term->quantityType != QuantifierFixedCount || term->quantityMaxCount != 1) {
+                matches.append(branch32(Equal, TrustedImm32(-1), patternIndex));
+                matches.append(branch32(Equal, patternIndex, patternTemp));
+            } else {
+                Jump zeroLengthMatch = branch32(Equal, TrustedImm32(-1), patternIndex);
+                Jump tryNonZeroMatch = branch32(NotEqual, patternIndex, patternTemp);
+                zeroLengthMatch.link(this);
+                storeToFrame(TrustedImm32(1), parenthesesFrameLocation + BackTrackInfoBackReference::matchAmountIndex());
+                matches.append(jump());
+                tryNonZeroMatch.link(this);
+            }
+        }
+
+        switch (term->quantityType) {
+        case QuantifierFixedCount: {
+            Label outerLoop(this);
+
+            // PatternTemp should contain pattern end index at this point
+            sub32(patternIndex, patternTemp);
+            if (m_checkedOffset - term->inputPosition)
+                sub32(Imm32((m_checkedOffset - term->inputPosition).unsafeGet()), patternTemp);
+            op.m_jumps.append(checkNotEnoughInput(patternTemp));
+
+            matchBackreference(opIndex, op.m_jumps, characterOrTemp, patternIndex, patternTemp);
+
+            if (term->quantityMaxCount != 1) {
+                loadFromFrame(parenthesesFrameLocation + BackTrackInfoBackReference::matchAmountIndex(), characterOrTemp);
+                add32(TrustedImm32(1), characterOrTemp);
+                storeToFrame(characterOrTemp, parenthesesFrameLocation + BackTrackInfoBackReference::matchAmountIndex());
+                matches.append(branch32(Equal, Imm32(term->quantityMaxCount.unsafeGet()), characterOrTemp));
+                load32(Address(output, (subpatternId << 1) * sizeof(int)), patternIndex);
+                load32(Address(output, ((subpatternId << 1) + 1) * sizeof(int)), patternTemp);
+                jump(outerLoop);
+            }
+            matches.link(this);
+            break;
+        }
+
+        case QuantifierGreedy: {
+            JumpList incompleteMatches;
+
+            Label outerLoop(this);
+
+            // PatternTemp should contain pattern end index at this point
+            sub32(patternIndex, patternTemp);
+            if (m_checkedOffset - term->inputPosition)
+                sub32(Imm32((m_checkedOffset - term->inputPosition).unsafeGet()), patternTemp);
+            matches.append(checkNotEnoughInput(patternTemp));
+
+            matchBackreference(opIndex, incompleteMatches, characterOrTemp, patternIndex, patternTemp);
+
+            loadFromFrame(parenthesesFrameLocation + BackTrackInfoBackReference::matchAmountIndex(), characterOrTemp);
+            add32(TrustedImm32(1), characterOrTemp);
+            storeToFrame(characterOrTemp, parenthesesFrameLocation + BackTrackInfoBackReference::matchAmountIndex());
+            if (term->quantityMaxCount != quantifyInfinite)
+                matches.append(branch32(Equal, Imm32(term->quantityMaxCount.unsafeGet()), characterOrTemp));
+            load32(Address(output, (subpatternId << 1) * sizeof(int)), patternIndex);
+            load32(Address(output, ((subpatternId << 1) + 1) * sizeof(int)), patternTemp);
+
+            // Store current index in frame for restoring after a partial match
+            storeToFrame(index, parenthesesFrameLocation + BackTrackInfoBackReference::beginIndex());
+            jump(outerLoop);
+
+            incompleteMatches.link(this);
+            loadFromFrame(parenthesesFrameLocation + BackTrackInfoBackReference::beginIndex(), index);
+
+            matches.link(this);
+            op.m_reentry = label();
+            break;
+        }
+
+        case QuantifierNonGreedy: {
+            JumpList incompleteMatches;
+
+            matches.append(jump());
+
+            op.m_reentry = label();
+
+            load32(Address(output, (subpatternId << 1) * sizeof(int)), patternIndex);
+            load32(Address(output, ((subpatternId << 1) + 1) * sizeof(int)), patternTemp);
+
+            // An empty match is successful without consuming characters
+            Jump zeroLengthMatch = branch32(Equal, TrustedImm32(-1), patternIndex);
+            Jump tryNonZeroMatch = branch32(NotEqual, patternIndex, patternTemp);
+            zeroLengthMatch.link(this);
+            storeToFrame(TrustedImm32(1), parenthesesFrameLocation + BackTrackInfoBackReference::matchAmountIndex());
+            matches.append(jump());
+            tryNonZeroMatch.link(this);
+
+            // Check if we have input remaining to match
+            sub32(patternIndex, patternTemp);
+            if (m_checkedOffset - term->inputPosition)
+                sub32(Imm32((m_checkedOffset - term->inputPosition).unsafeGet()), patternTemp);
+            matches.append(checkNotEnoughInput(patternTemp));
+
+            storeToFrame(index, parenthesesFrameLocation + BackTrackInfoBackReference::beginIndex());
+
+            matchBackreference(opIndex, incompleteMatches, characterOrTemp, patternIndex, patternTemp);
+
+            matches.append(jump());
+
+            incompleteMatches.link(this);
+            loadFromFrame(parenthesesFrameLocation + BackTrackInfoBackReference::beginIndex(), index);
+
+            matches.link(this);
+            break;
+        }
+        }
+    }
+    void backtrackBackReference(size_t opIndex)
+    {
+        YarrOp& op = m_ops[opIndex];
+        PatternTerm* term = op.m_term;
+
+        unsigned subpatternId = term->backReferenceSubpatternId;
+
+        m_backtrackingState.link(this);
+        op.m_jumps.link(this);
+
+        JumpList failures;
+
+        unsigned parenthesesFrameLocation = term->frameLocation;
+        switch (term->quantityType) {
+        case QuantifierFixedCount:
+            loadFromFrame(parenthesesFrameLocation + BackTrackInfoBackReference::beginIndex(), index);
+            break;
+
+        case QuantifierGreedy: {
+            const RegisterID matchAmount = regT0;
+            const RegisterID patternStartIndex = regT1;
+            const RegisterID patternEndIndexOrLen = regT2;
+
+            loadFromFrame(parenthesesFrameLocation + BackTrackInfoBackReference::matchAmountIndex(), matchAmount);
+            failures.append(branchTest32(Zero, matchAmount));
+
+            load32(Address(output, (subpatternId << 1) * sizeof(int)), patternStartIndex);
+            load32(Address(output, ((subpatternId << 1) + 1) * sizeof(int)), patternEndIndexOrLen);
+            sub32(patternStartIndex, patternEndIndexOrLen);
+            sub32(patternEndIndexOrLen, index);
+
+            sub32(TrustedImm32(1), matchAmount);
+            storeToFrame(matchAmount, parenthesesFrameLocation + BackTrackInfoBackReference::matchAmountIndex());
+            jump(op.m_reentry);
+            break;
+        }
+
+        case QuantifierNonGreedy: {
+            const RegisterID matchAmount = regT0;
+
+            loadFromFrame(parenthesesFrameLocation + BackTrackInfoBackReference::matchAmountIndex(), matchAmount);
+            if (term->quantityMaxCount != quantifyInfinite)
+                failures.append(branch32(AboveOrEqual, Imm32(term->quantityMaxCount.unsafeGet()), matchAmount));
+            add32(TrustedImm32(1), matchAmount);
+            storeToFrame(matchAmount, parenthesesFrameLocation + BackTrackInfoBackReference::matchAmountIndex());
+            jump(op.m_reentry);
+            break;
+        }
+        }
+        failures.link(this);
+        m_backtrackingState.fallthrough();
+    }
+#endif
 
     void generatePatternCharacterOnce(size_t opIndex)
     {
@@ -1854,13 +2092,19 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
             break;
 
         case PatternTerm::TypeForwardReference:
+            m_failureReason = JITFailureReason::ForwardReference;
             break;
 
         case PatternTerm::TypeParenthesesSubpattern:
         case PatternTerm::TypeParentheticalAssertion:
             RELEASE_ASSERT_NOT_REACHED();
+
         case PatternTerm::TypeBackReference:
+#if ENABLE(YARR_JIT_BACKREFERENCES)
+            generateBackReference(opIndex);
+#else
             m_failureReason = JITFailureReason::BackReference;
+#endif
             break;
         case PatternTerm::TypeDotStarEnclosure:
             generateDotStarEnclosure(opIndex);
@@ -1920,18 +2164,23 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
             break;
 
         case PatternTerm::TypeForwardReference:
+            m_failureReason = JITFailureReason::ForwardReference;
             break;
 
         case PatternTerm::TypeParenthesesSubpattern:
         case PatternTerm::TypeParentheticalAssertion:
             RELEASE_ASSERT_NOT_REACHED();
 
-        case PatternTerm::TypeDotStarEnclosure:
-            backtrackDotStarEnclosure(opIndex);
+        case PatternTerm::TypeBackReference:
+#if ENABLE(YARR_JIT_BACKREFERENCES)
+            backtrackBackReference(opIndex);
+#else
+            m_failureReason = JITFailureReason::BackReference;
+#endif
             break;
 
-        case PatternTerm::TypeBackReference:
-            m_failureReason = JITFailureReason::BackReference;
+        case PatternTerm::TypeDotStarEnclosure:
+            backtrackDotStarEnclosure(opIndex);
             break;
         }
     }
@@ -3566,6 +3815,15 @@ public:
         }
 #endif
 
+        if (m_pattern.m_containsBackreferences
+#if ENABLE(YARR_JIT_BACKREFERENCES)
+            && (compileMode == MatchOnly || (m_pattern.ignoreCase() && m_charSize != Char8))
+#endif
+            ) {
+                codeBlock.setFallBackWithFailureReason(JITFailureReason::BackReference);
+                return;
+        }
+
         // We need to compile before generating code since we set flags based on compilation that
         // are used during generation.
         opCompileBody(m_pattern.m_body);
@@ -3713,6 +3971,11 @@ public:
                 out.print("Assert EOL");
                 break;
 
+            case PatternTerm::TypeBackReference:
+                out.printf("BackReference pattern #%u", term->backReferenceSubpatternId);
+                term->dumpQuantifier(out);
+                break;
+
             case PatternTerm::TypePatternCharacter:
                 out.print("TypePatternCharacter ");
                 dumpUChar32(out, term->patternCharacter);
@@ -3739,7 +4002,9 @@ public:
                 break;
 
             case PatternTerm::TypeForwardReference:
-            case PatternTerm::TypeBackReference:
+                out.print("TypeForwardReference <not handled>");
+                break;
+
             case PatternTerm::TypeParenthesesSubpattern:
             case PatternTerm::TypeParentheticalAssertion:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -3853,7 +4118,7 @@ public:
             return(0);
 
         case OpParentheticalAssertionEnd:
-            out.print("OpParentheticalAssertionEnd%s\n", term->invert() ? " inverted" : "");
+            out.printf("OpParentheticalAssertionEnd%s\n", term->invert() ? " inverted" : "");
             return(0);
 
         case OpMatchFailed:
@@ -3917,7 +4182,10 @@ static void dumpCompileFailure(JITFailureReason failure)
         dataLog("Can't JIT a pattern decoding surrogate pairs\n");
         break;
     case JITFailureReason::BackReference:
-        dataLog("Can't JIT a pattern containing back references\n");
+        dataLog("Can't JIT some patterns containing back references\n");
+        break;
+    case JITFailureReason::ForwardReference:
+        dataLog("Can't JIT a pattern containing forward references\n");
         break;
     case JITFailureReason::VariableCountedParenthesisWithNonZeroMinimum:
         dataLog("Can't JIT a pattern containing a variable counted parenthesis with a non-zero minimum\n");

@@ -52,6 +52,7 @@ namespace Yarr {
 enum class JITFailureReason : uint8_t {
     DecodeSurrogatePair,
     BackReference,
+    ForwardReference,
     VariableCountedParenthesisWithNonZeroMinimum,
     ParenthesizedSubpattern,
     FixedCountParenthesizedSubpattern,

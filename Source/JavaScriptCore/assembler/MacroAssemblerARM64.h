@@ -1218,7 +1218,15 @@ public:
         m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, Assembler::UXTX, address.scale);
         m_assembler.ldrh(dest, address.base, memoryTempRegister);
     }
-    
+
+    void load16(ExtendedAddress address, RegisterID dest)
+    {
+        moveToCachedReg(TrustedImmPtr(reinterpret_cast<void*>(address.offset)), cachedMemoryTempRegister());
+        m_assembler.ldrh(dest, memoryTempRegister, address.base, Assembler::UXTX, 1);
+        if (dest == memoryTempRegister)
+            cachedMemoryTempRegister().invalidate();
+    }
+
     void load16Unaligned(ImplicitAddress address, RegisterID dest)
     {
         load16(address, dest);
