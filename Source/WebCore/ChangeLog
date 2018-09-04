@@ -1,3 +1,9 @@
+2018-09-04  Dean Jackson  <dino@apple.com>
+
+        Build fix.
+
+        * testing/Internals.cpp:
+
 2018-09-03  Dean Jackson  <dino@apple.com>
 
         Move SystemPreview code from WebKitAdditions to WebKit

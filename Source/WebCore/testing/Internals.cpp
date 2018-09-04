@@ -271,10 +271,6 @@
 #include "MockCredentialsMessenger.h"
 #endif
 
-#if USE(SYSTEM_PREVIEW) && USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/SystemPreviewDetection.cpp>
-#endif
-
 using JSC::CallData;
 using JSC::CallType;
 using JSC::CodeBlock;
