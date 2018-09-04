@@ -94,6 +94,133 @@ function makeEnum(program, enumName, value)
     return TypedValue.box(enumType, enumMember.value.unifyNode.valueForSelectedType);
 }
 
+function makeSampler(program, options)
+{
+    // enum WebGPUAddressMode {
+    //     "clampToEdge",
+    //     "repeat",
+    //     "mirrorRepeat",
+    //     "clampToBorderColor"
+    // }
+    //
+    // enum WebGPUFilterMode {
+    //     "nearest",
+    //     "linear"
+    // }
+    //
+    // enum WebGPUCompareFunction {
+    //     "never",
+    //     "less",
+    //     "equal",
+    //     "lessEqual",
+    //     "greater",
+    //     "notEqual",
+    //     "greaterEqual",
+    //     "always"
+    // }
+    //
+    // enum WebGPUBorderColor {
+    //     "transparentBlack",
+    //     "opaqueBlack",
+    //     "opaqueWhite"
+    // }
+    //
+    // dictionary WebGPUSamplerDescriptor {
+    //     WebGPUddressMode rAddressMode = "clampToEdge";
+    //     WebGPUddressMode sAddressMode = "clampToEdge";
+    //     WebGPUddressMode tAddressMode = "clampToEdge";
+    //     WebGPUFilterModeEnum magFilter = "nearest";
+    //     WebGPUFilterModeEnum minFilter = "nearest";
+    //     WebGPUFilterModeEnum mipmapFilter = "nearest";
+    //     float lodMinClamp = 0;
+    //     float lodMaxClamp = Number.MAX_VALUE;
+    //     unsigned long maxAnisotropy = 1;
+    //     WebGPUCompareFunction compareFunction = "never";
+    //     WebGPUBorderColor borderColor = "transparentBlack";
+    // };
+    return TypedValue.box(program.intrinsics.sampler, new Sampler(options));
+}
+
+function make1DTexture(program, mipmaps, elementType)
+{
+    return TypedValue.box(program.intrinsics[`Texture1D<${elementType}>`], new Texture1D(elementType, mipmaps));
+}
+
+function make1DTextureArray(program, array, elementType)
+{
+    return TypedValue.box(program.intrinsics[`Texture1DArray<${elementType}>`], new Texture1DArray(elementType, array));
+}
+
+function make2DTexture(program, mipmaps, elementType)
+{
+    return TypedValue.box(program.intrinsics[`Texture2D<${elementType}>`], new Texture2D(elementType, mipmaps));
+}
+
+function make2DTextureArray(program, array, elementType)
+{
+    return TypedValue.box(program.intrinsics[`Texture2DArray<${elementType}>`], new Texture2DArray(elementType, array));
+}
+
+function make3DTexture(program, mipmaps, elementType)
+{
+    return TypedValue.box(program.intrinsics[`Texture3D<${elementType}>`], new Texture3D(elementType, mipmaps));
+}
+
+function makeTextureCube(program, array, elementType)
+{
+    return TypedValue.box(program.intrinsics[`TextureCube<${elementType}>`], new TextureCube(elementType, array));
+}
+
+function makeRW1DTexture(program, elements, elementType)
+{
+    return TypedValue.box(program.intrinsics[`RWTexture1D<${elementType}>`], new Texture1DRW(elementType, elements));
+}
+
+function makeRW1DTextureArray(program, array, elementType)
+{
+    return TypedValue.box(program.intrinsics[`RWTexture1DArray<${elementType}>`], new Texture1DArrayRW(elementType, array));
+}
+
+function makeRW2DTexture(program, rows, elementType)
+{
+    return TypedValue.box(program.intrinsics[`RWTexture2D<${elementType}>`], new Texture2DRW(elementType, rows));
+}
+
+function makeRW2DTextureArray(program, array, elementType)
+{
+    return TypedValue.box(program.intrinsics[`RWTexture2DArray<${elementType}>`], new Texture2DArrayRW(elementType, array));
+}
+
+function makeRW3DTexture(program, depthSlices, elementType)
+{
+    return TypedValue.box(program.intrinsics[`RWTexture3D<${elementType}>`], new Texture3DRW(elementType, depthSlices));
+}
+
+function make2DDepthTexture(program, mipmaps, elementType)
+{
+    return TypedValue.box(program.intrinsics[`TextureDepth2D<${elementType}>`], new TextureDepth2D(elementType, mipmaps));
+}
+
+function make2DDepthTextureArray(program, array, elementType)
+{
+    return TypedValue.box(program.intrinsics[`TextureDepth2DArray<${elementType}>`], new TextureDepth2DArray(elementType, array));
+}
+
+function makeDepthTextureCube(program, array, elementType)
+{
+    return TypedValue.box(program.intrinsics[`TextureDepthCube<${elementType}>`], new TextureDepthCube(elementType, array));
+}
+
+function makeRW2DDepthTexture(program, rows, elementType)
+{
+    return TypedValue.box(program.intrinsics[`RWTextureDepth2D<${elementType}>`], new TextureDepth2DRW(elementType, rows));
+}
+
+function makeRW2DDepthTextureArray(program, array, elementType)
+{
+    return TypedValue.box(program.intrinsics[`RWTextureDepth2DArray<${elementType}>`], new TextureDepth2DArrayRW(elementType, array));
+}
+
 function checkNumber(program, result, expected)
 {
     if (!result.type.unifyNode.isNumber)
@@ -155,6 +282,14 @@ function checkHalf(program, result, expected)
         throw new Error("Wrong result type: " + result.type);
     if (result.value != expected)
         throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
+}
+
+function checkFloat4(program, result, expected)
+{
+    if (!result.type.equals(program.intrinsics["vector<float, 4>"]))
+        throw new Error("Wrong result type: " + result.type);
+    if (result.ePtr.get(0) != expected[0] || result.ePtr.get(1) != expected[1] || result.ePtr.get(2) != expected[2] || result.ePtr.get(3) != expected[3])
+        throw new Error("Wrong result: [" + result.ePtr.get(0) + ", " + result.ePtr.get(1) + ", " + result.ePtr.get(2) + ", " + result.ePtr.get(3) + "] (expected [" + expected[0] + ", " + expected[1] + ", " + expected[2] + ", " + expected[3] + "])");
 }
 
 function checkLexerToken(result, expectedIndex, expectedKind, expectedText)
@@ -1275,7 +1410,7 @@ tests.break = function()
                 break;
             }
             return x;
-            
+
         }
     `);
     checkInt(program, callFunction(program, "foo", [makeInt(program, 1)]), 7);
@@ -1370,7 +1505,7 @@ tests.continue = function()
             {
                 continue;
                 return x;
-                
+
             }
         `),
         (e) => e instanceof WTypeError);
@@ -2784,28 +2919,28 @@ tests.booleanShortcircuiting = function()
             *ptr = value; 
             return retValue; 
         }
-        
+
         int andTrue()
         {
             int x;
             bool y = set(&x, 1, true) && set(&x, 2, false);
             return x; 
         }
-        
+
         int andFalse()
         {
             int x;
             bool y = set(&x, 1, false) && set(&x, 2, false);
             return x; 
         }
-        
+
         int orTrue()
         {
             int x;
             bool y = set(&x, 1, true) || set(&x, 2, false);
             return x; 
         }
-        
+
         int orFalse()
         {
             int x;
@@ -5557,12 +5692,12 @@ tests.arrayIndex = function() {
             int[2][3] array;
             return array[0].length;
         }
-        
+
         uint outerArrayLength() {
             int[2][3] array;
             return array.length;
         }
-        
+
         int arrayIndexing(uint i, uint j) {
             int[2][3] array;
             array[0][0] = 1;
@@ -5574,7 +5709,7 @@ tests.arrayIndex = function() {
             return array[i][j];
         }
     `);
-    
+
     checkUint(program, callFunction(program, "innerArrayLength", []), 3);
     checkUint(program, callFunction(program, "outerArrayLength", []), 2);
     checkInt(program, callFunction(program, "arrayIndexing", [ makeUint(program, 0), makeUint(program, 0) ]), 1);
@@ -5582,7 +5717,1913 @@ tests.arrayIndex = function() {
     checkInt(program, callFunction(program, "arrayIndexing", [ makeUint(program, 0), makeUint(program, 2) ]), 3);
     checkInt(program, callFunction(program, "arrayIndexing", [ makeUint(program, 1), makeUint(program, 0) ]), 4);
     checkInt(program, callFunction(program, "arrayIndexing", [ makeUint(program, 1), makeUint(program, 1) ]), 5);
-    checkInt(program, callFunction(program, "arrayIndexing", [ makeUint(program, 1), makeUint(program, 2) ]), 6);    
+    checkInt(program, callFunction(program, "arrayIndexing", [ makeUint(program, 1), makeUint(program, 2) ]), 6);
+}
+
+function createTexturesForTesting(program)
+{
+    let texture1D = make1DTexture(program, [[1, 7, 14, 79], [13, 16], [15]], "float");
+    let texture1DArray = make1DTextureArray(program, [[[1, 7, 14, 79], [13, 16], [15]], [[16, 17, 18, 19], [20, 21], [22]]], "float");
+    let texture2D = make2DTexture(program, [
+        [[1, 2, 3, 4, 5, 6, 7, 8],
+        [9, 10, 11, 12, 13, 14, 15, 16],
+        [17, 18, 19, 20, 21, 22, 23, 24],
+        [25, 26, 27, 28, 29, 30, 31, 32]],
+        [[33, 34, 35, 36],
+        [37, 38, 39, 40]],
+        [[41, 42]]
+    ], "float");
+    let texture2DArray = make2DTextureArray(program, [[
+        [[1, 2, 3, 4, 5, 6, 7, 8],
+        [9, 10, 11, 12, 13, 14, 15, 16],
+        [17, 18, 19, 20, 21, 22, 23, 24],
+        [25, 26, 27, 28, 29, 30, 31, 32]],
+        [[33, 34, 35, 36],
+        [37, 38, 39, 40]],
+        [[41, 42]]
+    ], [
+        [[43, 44, 45, 46, 47, 48, 49, 50],
+        [51, 52, 53, 54, 55, 56, 57, 58],
+        [59, 60, 61, 62, 63, 64, 65, 66],
+        [67, 68, 69, 70, 71, 72, 73, 74]],
+        [[75, 76, 77, 78],
+        [79, 80, 81, 82]],
+        [[83, 84]]
+    ]], "float");
+    let texture3D = make3DTexture(program, [
+        [[[1, 2, 3, 4, 5, 6, 7, 8],
+        [9, 10, 11, 12, 13, 14, 15, 16],
+        [17, 18, 19, 20, 21, 22, 23, 24],
+        [25, 26, 27, 28, 29, 30, 31, 32]],
+        [[33, 34, 35, 36, 37, 38, 39, 40],
+        [41, 42, 43, 44, 45, 46, 47, 48],
+        [49, 50, 51, 52, 53, 54, 55, 56],
+        [57, 58, 59, 60, 61, 62, 63, 64]]],
+        [[[65, 66, 67, 68],
+        [69, 70, 71, 72]]]
+    ], "float");
+    let textureCube = makeTextureCube(program, [[
+        [[1, 2],
+        [3, 4],
+        [5, 6],
+        [7, 8]],
+        [[9],
+        [10]],
+    ], [
+        [[11, 12],
+        [13, 14],
+        [15, 16],
+        [17, 18]],
+        [[19],
+        [20]],
+    ], [
+        [[21, 22],
+        [23, 24],
+        [25, 26],
+        [27, 28]],
+        [[29],
+        [30]],
+    ], [
+        [[31, 32],
+        [33, 34],
+        [35, 36],
+        [37, 38]],
+        [[39],
+        [40]],
+    ], [
+        [[41, 42],
+        [43, 44],
+        [45, 46],
+        [47, 48]],
+        [[49],
+        [50]],
+    ], [
+        [[51, 52],
+        [53, 54],
+        [55, 56],
+        [57, 58]],
+        [[59],
+        [60]],
+    ]], "float");
+    let rwTexture1D = makeRW1DTexture(program, [1, 2, 3, 4, 5, 6, 7, 8], "float");
+    let rwTexture1DArray = makeRW1DTextureArray(program, [[1, 2, 3, 4, 5, 6, 7, 8], [9, 10, 11, 12, 13, 14, 15, 16], [17, 18, 19, 20, 21, 22, 23, 24]], "float");
+    let rwTexture2D = makeRW2DTexture(program, [
+        [1, 2, 3, 4, 5, 6, 7, 8],
+        [9, 10, 11, 12, 13, 14, 15, 16],
+        [17, 18, 19, 20, 21, 22, 23, 24],
+        [25, 26, 27, 28, 29, 30, 31, 32]], "float");
+    let rwTexture2DArray = makeRW2DTextureArray(program, [
+        [[1, 2, 3, 4, 5, 6, 7, 8],
+        [9, 10, 11, 12, 13, 14, 15, 16],
+        [17, 18, 19, 20, 21, 22, 23, 24],
+        [25, 26, 27, 28, 29, 30, 31, 32]],
+        [[33, 34, 35, 36, 37, 38, 39, 40],
+        [41, 42, 43, 44, 45, 46, 47, 48],
+        [49, 50, 51, 52, 53, 54, 55, 56],
+        [57, 58, 59, 60, 61, 62, 63, 64]]], "float");
+    let rwTexture3D = makeRW3DTexture(program, [
+        [[1, 2, 3, 4, 5, 6, 7, 8],
+        [9, 10, 11, 12, 13, 14, 15, 16],
+        [17, 18, 19, 20, 21, 22, 23, 24],
+        [25, 26, 27, 28, 29, 30, 31, 32]],
+        [[33, 34, 35, 36, 37, 38, 39, 40],
+        [41, 42, 43, 44, 45, 46, 47, 48],
+        [49, 50, 51, 52, 53, 54, 55, 56],
+        [57, 58, 59, 60, 61, 62, 63, 64]]], "float");
+    let textureDepth2D = make2DDepthTexture(program, [
+        [[1, 2, 3, 4, 5, 6, 7, 8],
+        [9, 10, 11, 12, 13, 14, 15, 16],
+        [17, 18, 19, 20, 21, 22, 23, 24],
+        [25, 26, 27, 28, 29, 30, 31, 32]],
+        [[33, 34, 35, 36],
+        [37, 38, 39, 40]],
+        [[41, 42]]
+    ], "float");
+    let textureDepth2DArray = make2DDepthTextureArray(program, [[
+        [[1, 2, 3, 4, 5, 6, 7, 8],
+        [9, 10, 11, 12, 13, 14, 15, 16],
+        [17, 18, 19, 20, 21, 22, 23, 24],
+        [25, 26, 27, 28, 29, 30, 31, 32]],
+        [[33, 34, 35, 36],
+        [37, 38, 39, 40]],
+        [[41, 42]]
+    ], [
+        [[43, 44, 45, 46, 47, 48, 49, 50],
+        [51, 52, 53, 54, 55, 56, 57, 58],
+        [59, 60, 61, 62, 63, 64, 65, 66],
+        [67, 68, 69, 70, 71, 72, 73, 74]],
+        [[75, 76, 77, 78],
+        [79, 80, 81, 82]],
+        [[83, 84]]
+    ]], "float");
+    let textureDepthCube = makeDepthTextureCube(program, [[
+        [[1, 2],
+        [3, 4],
+        [5, 6],
+        [7, 8]],
+        [[9],
+        [10]],
+    ], [
+        [[11, 12],
+        [13, 14],
+        [15, 16],
+        [17, 18]],
+        [[19],
+        [20]],
+    ], [
+        [[21, 22],
+        [23, 24],
+        [25, 26],
+        [27, 28]],
+        [[29],
+        [30]],
+    ], [
+        [[31, 32],
+        [33, 34],
+        [35, 36],
+        [37, 38]],
+        [[39],
+        [40]],
+    ], [
+        [[41, 42],
+        [43, 44],
+        [45, 46],
+        [47, 48]],
+        [[49],
+        [50]],
+    ], [
+        [[51, 52],
+        [53, 54],
+        [55, 56],
+        [57, 58]],
+        [[59],
+        [60]],
+    ]], "float");
+    let rwTextureDepth2D = makeRW2DDepthTexture(program, [
+        [1, 2, 3, 4, 5, 6, 7, 8],
+        [9, 10, 11, 12, 13, 14, 15, 16],
+        [17, 18, 19, 20, 21, 22, 23, 24],
+        [25, 26, 27, 28, 29, 30, 31, 32]], "float");
+    let rwTextureDepth2DArray = makeRW2DDepthTextureArray(program, [
+        [[1, 2, 3, 4, 5, 6, 7, 8],
+        [9, 10, 11, 12, 13, 14, 15, 16],
+        [17, 18, 19, 20, 21, 22, 23, 24],
+        [25, 26, 27, 28, 29, 30, 31, 32]],
+        [[33, 34, 35, 36, 37, 38, 39, 40],
+        [41, 42, 43, 44, 45, 46, 47, 48],
+        [49, 50, 51, 52, 53, 54, 55, 56],
+        [57, 58, 59, 60, 61, 62, 63, 64]]], "float");
+    return [texture1D, texture1DArray, texture2D, texture2DArray, texture3D, textureCube, rwTexture1D, rwTexture1DArray, rwTexture2D, rwTexture2DArray, rwTexture3D, textureDepth2D, textureDepth2DArray, textureDepthCube, rwTextureDepth2D, rwTextureDepth2DArray];
+}
+
+tests.textureDimensions = function() {
+    let program = doPrep(`
+        uint foo1(Texture1D<float> texture) {
+            uint width;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &numberOfLevels);
+            return width;
+        }
+        uint foo2(Texture1D<float> texture) {
+            uint width;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &numberOfLevels);
+            return numberOfLevels;
+        }
+        uint foo3(Texture1DArray<float> texture) {
+            uint width;
+            uint elements;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &elements, &numberOfLevels);
+            return width;
+        }
+        uint foo4(Texture1DArray<float> texture) {
+            uint width;
+            uint elements;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &elements, &numberOfLevels);
+            return elements;
+        }
+        uint foo5(Texture1DArray<float> texture) {
+            uint width;
+            uint elements;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &elements, &numberOfLevels);
+            return numberOfLevels;
+        }
+        uint foo6(Texture2D<float> texture) {
+            uint width;
+            uint height;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &numberOfLevels);
+            return width;
+        }
+        uint foo7(Texture2D<float> texture) {
+            uint width;
+            uint height;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &numberOfLevels);
+            return height;
+        }
+        uint foo8(Texture2D<float> texture) {
+            uint width;
+            uint height;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &numberOfLevels);
+            return numberOfLevels;
+        }
+        uint foo9(Texture2DArray<float> texture) {
+            uint width;
+            uint height;
+            uint elements;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &elements, &numberOfLevels);
+            return width;
+        }
+        uint foo10(Texture2DArray<float> texture) {
+            uint width;
+            uint height;
+            uint elements;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &elements, &numberOfLevels);
+            return height;
+        }
+        uint foo11(Texture2DArray<float> texture) {
+            uint width;
+            uint height;
+            uint elements;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &elements, &numberOfLevels);
+            return elements;
+        }
+        uint foo12(Texture2DArray<float> texture) {
+            uint width;
+            uint height;
+            uint elements;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &elements, &numberOfLevels);
+            return numberOfLevels;
+        }
+        uint foo13(Texture3D<float> texture) {
+            uint width;
+            uint height;
+            uint depth;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &depth, &numberOfLevels);
+            return width;
+        }
+        uint foo14(Texture3D<float> texture) {
+            uint width;
+            uint height;
+            uint depth;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &depth, &numberOfLevels);
+            return height;
+        }
+        uint foo15(Texture3D<float> texture) {
+            uint width;
+            uint height;
+            uint depth;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &depth, &numberOfLevels);
+            return depth;
+        }
+        uint foo16(Texture3D<float> texture) {
+            uint width;
+            uint height;
+            uint depth;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &depth, &numberOfLevels);
+            return numberOfLevels;
+        }
+        uint foo17(TextureCube<float> texture) {
+            uint width;
+            uint height;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &numberOfLevels);
+            return width;
+        }
+        uint foo18(TextureCube<float> texture) {
+            uint width;
+            uint height;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &numberOfLevels);
+            return height;
+        }
+        uint foo19(TextureCube<float> texture) {
+            uint width;
+            uint height;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &numberOfLevels);
+            return numberOfLevels;
+        }
+        uint foo20(RWTexture1D<float> texture) {
+            uint width;
+            GetDimensions(texture, &width);
+            return width;
+        }
+        uint foo21(RWTexture1DArray<float> texture) {
+            uint width;
+            uint elements;
+            GetDimensions(texture, &width, &elements);
+            return width;
+        }
+        uint foo22(RWTexture1DArray<float> texture) {
+            uint width;
+            uint elements;
+            GetDimensions(texture, &width, &elements);
+            return elements;
+        }
+        uint foo23(RWTexture2D<float> texture) {
+            uint width;
+            uint height;
+            GetDimensions(texture, &width, &height);
+            return width;
+        }
+        uint foo24(RWTexture2D<float> texture) {
+            uint width;
+            uint height;
+            GetDimensions(texture, &width, &height);
+            return height;
+        }
+        uint foo25(RWTexture2DArray<float> texture) {
+            uint width;
+            uint height;
+            uint elements;
+            GetDimensions(texture, &width, &height, &elements);
+            return width;
+        }
+        uint foo26(RWTexture2DArray<float> texture) {
+            uint width;
+            uint height;
+            uint elements;
+            GetDimensions(texture, &width, &height, &elements);
+            return height;
+        }
+        uint foo27(RWTexture2DArray<float> texture) {
+            uint width;
+            uint height;
+            uint elements;
+            GetDimensions(texture, &width, &height, &elements);
+            return elements;
+        }
+        uint foo28(RWTexture3D<float> texture) {
+            uint width;
+            uint height;
+            uint depth;
+            GetDimensions(texture, &width, &height, &depth);
+            return width;
+        }
+        uint foo29(RWTexture3D<float> texture) {
+            uint width;
+            uint height;
+            uint depth;
+            GetDimensions(texture, &width, &height, &depth);
+            return height;
+        }
+        uint foo30(RWTexture3D<float> texture) {
+            uint width;
+            uint height;
+            uint depth;
+            GetDimensions(texture, &width, &height, &depth);
+            return depth;
+        }
+        uint foo31(TextureDepth2D<float> texture) {
+            uint width;
+            uint height;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &numberOfLevels);
+            return width;
+        }
+        uint foo32(TextureDepth2D<float> texture) {
+            uint width;
+            uint height;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &numberOfLevels);
+            return height;
+        }
+        uint foo33(TextureDepth2D<float> texture) {
+            uint width;
+            uint height;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &numberOfLevels);
+            return numberOfLevels;
+        }
+        uint foo34(TextureDepth2DArray<float> texture) {
+            uint width;
+            uint height;
+            uint elements;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &elements, &numberOfLevels);
+            return width;
+        }
+        uint foo35(TextureDepth2DArray<float> texture) {
+            uint width;
+            uint height;
+            uint elements;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &elements, &numberOfLevels);
+            return height;
+        }
+        uint foo36(TextureDepth2DArray<float> texture) {
+            uint width;
+            uint height;
+            uint elements;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &elements, &numberOfLevels);
+            return elements;
+        }
+        uint foo37(TextureDepth2DArray<float> texture) {
+            uint width;
+            uint height;
+            uint elements;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &elements, &numberOfLevels);
+            return numberOfLevels;
+        }
+        uint foo38(TextureDepthCube<float> texture) {
+            uint width;
+            uint height;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &numberOfLevels);
+            return width;
+        }
+        uint foo39(TextureDepthCube<float> texture) {
+            uint width;
+            uint height;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &numberOfLevels);
+            return height;
+        }
+        uint foo40(TextureDepthCube<float> texture) {
+            uint width;
+            uint height;
+            uint numberOfLevels;
+            GetDimensions(texture, 0, &width, &height, &numberOfLevels);
+            return numberOfLevels;
+        }
+        uint foo41(RWTextureDepth2D<float> texture) {
+            uint width;
+            uint height;
+            GetDimensions(texture, &width, &height);
+            return width;
+        }
+        uint foo42(RWTextureDepth2D<float> texture) {
+            uint width;
+            uint height;
+            GetDimensions(texture, &width, &height);
+            return height;
+        }
+        uint foo43(RWTextureDepth2DArray<float> texture) {
+            uint width;
+            uint height;
+            uint elements;
+            GetDimensions(texture, &width, &height, &elements);
+            return width;
+        }
+        uint foo44(RWTextureDepth2DArray<float> texture) {
+            uint width;
+            uint height;
+            uint elements;
+            GetDimensions(texture, &width, &height, &elements);
+            return height;
+        }
+        uint foo45(RWTextureDepth2DArray<float> texture) {
+            uint width;
+            uint height;
+            uint elements;
+            GetDimensions(texture, &width, &height, &elements);
+            return elements;
+        }
+    `);
+    let [texture1D, texture1DArray, texture2D, texture2DArray, texture3D, textureCube, rwTexture1D, rwTexture1DArray, rwTexture2D, rwTexture2DArray, rwTexture3D, textureDepth2D, textureDepth2DArray, textureDepthCube, rwTextureDepth2D, rwTextureDepth2DArray] = createTexturesForTesting(program);
+    checkUint(program, callFunction(program, "foo1", [texture1D]), 4);
+    checkUint(program, callFunction(program, "foo2", [texture1D]), 3);
+    checkUint(program, callFunction(program, "foo3", [texture1DArray]), 4);
+    checkUint(program, callFunction(program, "foo4", [texture1DArray]), 2);
+    checkUint(program, callFunction(program, "foo5", [texture1DArray]), 3);
+    checkUint(program, callFunction(program, "foo6", [texture2D]), 8);
+    checkUint(program, callFunction(program, "foo7", [texture2D]), 4);
+    checkUint(program, callFunction(program, "foo8", [texture2D]), 3);
+    checkUint(program, callFunction(program, "foo9", [texture2DArray]), 8);
+    checkUint(program, callFunction(program, "foo10", [texture2DArray]), 4);
+    checkUint(program, callFunction(program, "foo11", [texture2DArray]), 2);
+    checkUint(program, callFunction(program, "foo12", [texture2DArray]), 3);
+    checkUint(program, callFunction(program, "foo13", [texture3D]), 8);
+    checkUint(program, callFunction(program, "foo14", [texture3D]), 4);
+    checkUint(program, callFunction(program, "foo15", [texture3D]), 2);
+    checkUint(program, callFunction(program, "foo16", [texture3D]), 2);
+    checkUint(program, callFunction(program, "foo17", [textureCube]), 2);
+    checkUint(program, callFunction(program, "foo18", [textureCube]), 4);
+    checkUint(program, callFunction(program, "foo19", [textureCube]), 2);
+    checkUint(program, callFunction(program, "foo20", [rwTexture1D]), 8);
+    checkUint(program, callFunction(program, "foo21", [rwTexture1DArray]), 8);
+    checkUint(program, callFunction(program, "foo22", [rwTexture1DArray]), 3);
+    checkUint(program, callFunction(program, "foo23", [rwTexture2D]), 8);
+    checkUint(program, callFunction(program, "foo24", [rwTexture2D]), 4);
+    checkUint(program, callFunction(program, "foo25", [rwTexture2DArray]), 8);
+    checkUint(program, callFunction(program, "foo26", [rwTexture2DArray]), 4);
+    checkUint(program, callFunction(program, "foo27", [rwTexture2DArray]), 2);
+    checkUint(program, callFunction(program, "foo28", [rwTexture3D]), 8);
+    checkUint(program, callFunction(program, "foo29", [rwTexture3D]), 4);
+    checkUint(program, callFunction(program, "foo30", [rwTexture3D]), 2);
+    checkUint(program, callFunction(program, "foo31", [textureDepth2D]), 8);
+    checkUint(program, callFunction(program, "foo32", [textureDepth2D]), 4);
+    checkUint(program, callFunction(program, "foo33", [textureDepth2D]), 3);
+    checkUint(program, callFunction(program, "foo34", [textureDepth2DArray]), 8);
+    checkUint(program, callFunction(program, "foo35", [textureDepth2DArray]), 4);
+    checkUint(program, callFunction(program, "foo36", [textureDepth2DArray]), 2);
+    checkUint(program, callFunction(program, "foo37", [textureDepth2DArray]), 3);
+    checkUint(program, callFunction(program, "foo38", [textureDepthCube]), 2);
+    checkUint(program, callFunction(program, "foo39", [textureDepthCube]), 4);
+    checkUint(program, callFunction(program, "foo40", [textureDepthCube]), 2);
+    checkUint(program, callFunction(program, "foo41", [rwTextureDepth2D]), 8);
+    checkUint(program, callFunction(program, "foo42", [rwTextureDepth2D]), 4);
+    checkUint(program, callFunction(program, "foo43", [rwTextureDepth2DArray]), 8);
+    checkUint(program, callFunction(program, "foo44", [rwTextureDepth2DArray]), 4);
+    checkUint(program, callFunction(program, "foo45", [rwTextureDepth2DArray]), 2);
+}
+
+tests.textureLoad = function() {
+    let program = doPrep(`
+        float foo1(Texture1D<float> texture, int location, int mipmap) {
+            return Load(texture, int2(location, mipmap));
+        }
+        float foo2(Texture1D<float> texture, int location, int mipmap, int offset) {
+            return Load(texture, int2(location, mipmap), offset);
+        }
+        float foo3(Texture1DArray<float> texture, int location, int mipmap, int layer) {
+            return Load(texture, int3(location, mipmap, layer));
+        }
+        float foo4(Texture1DArray<float> texture, int location, int mipmap, int layer, int offset) {
+            return Load(texture, int3(location, mipmap, layer), offset);
+        }
+        float foo5(Texture2D<float> texture, int x, int y, int mipmap) {
+            return Load(texture, int3(x, y, mipmap));
+        }
+        float foo6(Texture2D<float> texture, int x, int y, int mipmap, int offsetX, int offsetY) {
+            return Load(texture, int3(x, y, mipmap), int2(offsetX, offsetY));
+        }
+        float foo7(Texture2DArray<float> texture, int x, int y, int mipmap, int layer) {
+            return Load(texture, int4(x, y, mipmap, layer));
+        }
+        float foo8(Texture2DArray<float> texture, int x, int y, int mipmap, int layer, int offsetX, int offsetY) {
+            return Load(texture, int4(x, y, mipmap, layer), int2(offsetX, offsetY));
+        }
+        float foo9(Texture3D<float> texture, int x, int y, int z, int mipmap) {
+            return Load(texture, int4(x, y, z, mipmap));
+        }
+        float foo10(Texture3D<float> texture, int x, int y, int z, int mipmap, int offsetX, int offsetY, int offsetZ) {
+            return Load(texture, int4(x, y, z, mipmap), int3(offsetX, offsetY, offsetZ));
+        }
+        float foo11(RWTexture1D<float> texture, int location) {
+            return Load(texture, location);
+        }
+        float foo12(RWTexture1DArray<float> texture, int location, int layer) {
+            return Load(texture, int2(location, layer));
+        }
+        float foo13(RWTexture2D<float> texture, int x, int y) {
+            return Load(texture, int2(x, y));
+        }
+        float foo14(RWTexture2DArray<float> texture, int x, int y, int layer) {
+            return Load(texture, int3(x, y, layer));
+        }
+        float foo15(RWTexture3D<float> texture, int x, int y, int z) {
+            return Load(texture, int3(x, y, z));
+        }
+        float foo16(TextureDepth2D<float> texture, int x, int y, int mipmap) {
+            return Load(texture, int3(x, y, mipmap));
+        }
+        float foo17(TextureDepth2D<float> texture, int x, int y, int mipmap, int offsetX, int offsetY) {
+            return Load(texture, int3(x, y, mipmap), int2(offsetX, offsetY));
+        }
+        float foo18(TextureDepth2DArray<float> texture, int x, int y, int mipmap, int layer) {
+            return Load(texture, int4(x, y, mipmap, layer));
+        }
+        float foo19(TextureDepth2DArray<float> texture, int x, int y, int mipmap, int layer, int offsetX, int offsetY) {
+            return Load(texture, int4(x, y, mipmap, layer), int2(offsetX, offsetY));
+        }
+        float foo20(RWTextureDepth2D<float> texture, int x, int y) {
+            return Load(texture, int2(x, y));
+        }
+        float foo21(RWTextureDepth2DArray<float> texture, int x, int y, int layer) {
+            return Load(texture, int3(x, y, layer));
+        }
+    `);
+    let [texture1D, texture1DArray, texture2D, texture2DArray, texture3D, textureCube, rwTexture1D, rwTexture1DArray, rwTexture2D, rwTexture2DArray, rwTexture3D, textureDepth2D, textureDepth2DArray, textureDepthCube, rwTextureDepth2D, rwTextureDepth2DArray] = createTexturesForTesting(program);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeInt(program, 0), makeInt(program, 0)]), 1);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeInt(program, 1), makeInt(program, 0)]), 7);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeInt(program, 0), makeInt(program, 1)]), 13);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeInt(program, 1), makeInt(program, 1)]), 16);
+    checkFloat(program, callFunction(program, "foo2", [texture1D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 7);
+    checkFloat(program, callFunction(program, "foo2", [texture1D, makeInt(program, 1), makeInt(program, 0), makeInt(program, -1)]), 1);
+    checkFloat(program, callFunction(program, "foo2", [texture1D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 16);
+    checkFloat(program, callFunction(program, "foo2", [texture1D, makeInt(program, 1), makeInt(program, 1), makeInt(program, -1)]), 13);
+    checkFloat(program, callFunction(program, "foo3", [texture1DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0)]), 1);
+    checkFloat(program, callFunction(program, "foo3", [texture1DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 7);
+    checkFloat(program, callFunction(program, "foo3", [texture1DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 13);
+    checkFloat(program, callFunction(program, "foo3", [texture1DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 16);
+    checkFloat(program, callFunction(program, "foo3", [texture1DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 16);
+    checkFloat(program, callFunction(program, "foo3", [texture1DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1)]), 17);
+    checkFloat(program, callFunction(program, "foo3", [texture1DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 20);
+    checkFloat(program, callFunction(program, "foo3", [texture1DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 21);
+    checkFloat(program, callFunction(program, "foo4", [texture1DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 7);
+    checkFloat(program, callFunction(program, "foo4", [texture1DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, -1)]), 1);
+    checkFloat(program, callFunction(program, "foo4", [texture1DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1)]), 16);
+    checkFloat(program, callFunction(program, "foo4", [texture1DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, -1)]), 13);
+    checkFloat(program, callFunction(program, "foo4", [texture1DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 17);
+    checkFloat(program, callFunction(program, "foo4", [texture1DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, -1)]), 16);
+    checkFloat(program, callFunction(program, "foo4", [texture1DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 21);
+    checkFloat(program, callFunction(program, "foo4", [texture1DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, -1)]), 20);
+    checkFloat(program, callFunction(program, "foo5", [texture2D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0)]), 1);
+    checkFloat(program, callFunction(program, "foo5", [texture2D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 2);
+    checkFloat(program, callFunction(program, "foo5", [texture2D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 9);
+    checkFloat(program, callFunction(program, "foo5", [texture2D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 10);
+    checkFloat(program, callFunction(program, "foo5", [texture2D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 33);
+    checkFloat(program, callFunction(program, "foo5", [texture2D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1)]), 34);
+    checkFloat(program, callFunction(program, "foo5", [texture2D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 37);
+    checkFloat(program, callFunction(program, "foo5", [texture2D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 38);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 2);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 10);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, -1), makeInt(program, 0)]), 1);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, -1), makeInt(program, 1)]), 9);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 10);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 18);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, -1), makeInt(program, 0)]), 9);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, -1), makeInt(program, 1)]), 17);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 34);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 38);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, -1), makeInt(program, 0)]), 33);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, -1), makeInt(program, 1)]), 37);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 38);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, -1)]), 34);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, -1), makeInt(program, 0)]), 37);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, -1), makeInt(program, -1)]), 33);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0)]), 1);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0)]), 2);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 9);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 10);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 33);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 34);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 37);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 38);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 43);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 44);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1)]), 51);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1)]), 52);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 75);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 76);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 79);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 80);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 2);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 10);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 3);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 11);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 10);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 18);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 11);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 19);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 34);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 38);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 35);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 39);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 38);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, -1)]), 34);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 39);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, -1)]), 35);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 44);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 52);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 45);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 53);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 52);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 60);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 53);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 61);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 76);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 80);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 77);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 81);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 80);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, -1)]), 76);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 81);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, -1)]), 77);
+    checkFloat(program, callFunction(program, "foo9", [texture3D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0)]), 1);
+    checkFloat(program, callFunction(program, "foo9", [texture3D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0)]), 2);
+    checkFloat(program, callFunction(program, "foo9", [texture3D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 9);
+    checkFloat(program, callFunction(program, "foo9", [texture3D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 10);
+    checkFloat(program, callFunction(program, "foo9", [texture3D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 33);
+    checkFloat(program, callFunction(program, "foo9", [texture3D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 34);
+    checkFloat(program, callFunction(program, "foo9", [texture3D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 41);
+    checkFloat(program, callFunction(program, "foo9", [texture3D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 42);
+    checkFloat(program, callFunction(program, "foo9", [texture3D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 65);
+    checkFloat(program, callFunction(program, "foo9", [texture3D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 66);
+    checkFloat(program, callFunction(program, "foo9", [texture3D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1)]), 69);
+    checkFloat(program, callFunction(program, "foo9", [texture3D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1)]), 70);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 2);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 9);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 33);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 3);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 10);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 34);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 10);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 17);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 41);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 11);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 18);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 42);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 34);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 41);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, -1)]), 1);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 35);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 42);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, -1)]), 2);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 42);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 49);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, -1)]), 9);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 43);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 50);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, -1)]), 10);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 66);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 69);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 67);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 70);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 70);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, -1), makeInt(program, 0)]), 65);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 71);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, -1), makeInt(program, 0)]), 66);
+    checkFloat(program, callFunction(program, "foo11", [rwTexture1D, makeInt(program, 0)]), 1);
+    checkFloat(program, callFunction(program, "foo11", [rwTexture1D, makeInt(program, 1)]), 2);
+    checkFloat(program, callFunction(program, "foo11", [rwTexture1D, makeInt(program, 2)]), 3);
+    checkFloat(program, callFunction(program, "foo11", [rwTexture1D, makeInt(program, 3)]), 4);
+    checkFloat(program, callFunction(program, "foo11", [rwTexture1D, makeInt(program, 4)]), 5);
+    checkFloat(program, callFunction(program, "foo11", [rwTexture1D, makeInt(program, 5)]), 6);
+    checkFloat(program, callFunction(program, "foo11", [rwTexture1D, makeInt(program, 6)]), 7);
+    checkFloat(program, callFunction(program, "foo11", [rwTexture1D, makeInt(program, 7)]), 8);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 0), makeInt(program, 0)]), 1);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 1), makeInt(program, 0)]), 2);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 2), makeInt(program, 0)]), 3);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 3), makeInt(program, 0)]), 4);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 4), makeInt(program, 0)]), 5);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 5), makeInt(program, 0)]), 6);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 6), makeInt(program, 0)]), 7);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 7), makeInt(program, 0)]), 8);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 0), makeInt(program, 1)]), 9);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 1), makeInt(program, 1)]), 10);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 2), makeInt(program, 1)]), 11);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 3), makeInt(program, 1)]), 12);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 4), makeInt(program, 1)]), 13);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 5), makeInt(program, 1)]), 14);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 6), makeInt(program, 1)]), 15);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 7), makeInt(program, 1)]), 16);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 0), makeInt(program, 2)]), 17);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 1), makeInt(program, 2)]), 18);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 2), makeInt(program, 2)]), 19);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 3), makeInt(program, 2)]), 20);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 4), makeInt(program, 2)]), 21);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 5), makeInt(program, 2)]), 22);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 6), makeInt(program, 2)]), 23);
+    checkFloat(program, callFunction(program, "foo12", [rwTexture1DArray, makeInt(program, 7), makeInt(program, 2)]), 24);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 0), makeInt(program, 0)]), 1);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 1), makeInt(program, 0)]), 2);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 2), makeInt(program, 0)]), 3);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 3), makeInt(program, 0)]), 4);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 4), makeInt(program, 0)]), 5);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 5), makeInt(program, 0)]), 6);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 6), makeInt(program, 0)]), 7);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 7), makeInt(program, 0)]), 8);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 0), makeInt(program, 1)]), 9);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 1), makeInt(program, 1)]), 10);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 2), makeInt(program, 1)]), 11);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 3), makeInt(program, 1)]), 12);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 4), makeInt(program, 1)]), 13);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 5), makeInt(program, 1)]), 14);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 6), makeInt(program, 1)]), 15);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 7), makeInt(program, 1)]), 16);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 0), makeInt(program, 2)]), 17);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 1), makeInt(program, 2)]), 18);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 2), makeInt(program, 2)]), 19);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 3), makeInt(program, 2)]), 20);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 4), makeInt(program, 2)]), 21);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 5), makeInt(program, 2)]), 22);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 6), makeInt(program, 2)]), 23);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 7), makeInt(program, 2)]), 24);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 0), makeInt(program, 3)]), 25);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 1), makeInt(program, 3)]), 26);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 2), makeInt(program, 3)]), 27);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 3), makeInt(program, 3)]), 28);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 4), makeInt(program, 3)]), 29);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 5), makeInt(program, 3)]), 30);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 6), makeInt(program, 3)]), 31);
+    checkFloat(program, callFunction(program, "foo13", [rwTexture2D, makeInt(program, 7), makeInt(program, 3)]), 32);
+    checkFloat(program, callFunction(program, "foo14", [rwTexture2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0)]), 1);
+    checkFloat(program, callFunction(program, "foo14", [rwTexture2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 2);
+    checkFloat(program, callFunction(program, "foo14", [rwTexture2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 9);
+    checkFloat(program, callFunction(program, "foo14", [rwTexture2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 10);
+    checkFloat(program, callFunction(program, "foo14", [rwTexture2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 33);
+    checkFloat(program, callFunction(program, "foo14", [rwTexture2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1)]), 34);
+    checkFloat(program, callFunction(program, "foo14", [rwTexture2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 41);
+    checkFloat(program, callFunction(program, "foo14", [rwTexture2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 42);
+    checkFloat(program, callFunction(program, "foo15", [rwTexture3D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0)]), 1);
+    checkFloat(program, callFunction(program, "foo15", [rwTexture3D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 2);
+    checkFloat(program, callFunction(program, "foo15", [rwTexture3D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 9);
+    checkFloat(program, callFunction(program, "foo15", [rwTexture3D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 10);
+    checkFloat(program, callFunction(program, "foo15", [rwTexture3D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 33);
+    checkFloat(program, callFunction(program, "foo15", [rwTexture3D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1)]), 34);
+    checkFloat(program, callFunction(program, "foo15", [rwTexture3D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 41);
+    checkFloat(program, callFunction(program, "foo15", [rwTexture3D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 42);
+    checkFloat(program, callFunction(program, "foo16", [textureDepth2D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0)]), 1);
+    checkFloat(program, callFunction(program, "foo16", [textureDepth2D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 2);
+    checkFloat(program, callFunction(program, "foo16", [textureDepth2D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 9);
+    checkFloat(program, callFunction(program, "foo16", [textureDepth2D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 10);
+    checkFloat(program, callFunction(program, "foo16", [textureDepth2D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 33);
+    checkFloat(program, callFunction(program, "foo16", [textureDepth2D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1)]), 34);
+    checkFloat(program, callFunction(program, "foo16", [textureDepth2D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 37);
+    checkFloat(program, callFunction(program, "foo16", [textureDepth2D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 38);
+    checkFloat(program, callFunction(program, "foo17", [textureDepth2D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 2);
+    checkFloat(program, callFunction(program, "foo17", [textureDepth2D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 10);
+    checkFloat(program, callFunction(program, "foo17", [textureDepth2D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, -1), makeInt(program, 0)]), 1);
+    checkFloat(program, callFunction(program, "foo17", [textureDepth2D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, -1), makeInt(program, 1)]), 9);
+    checkFloat(program, callFunction(program, "foo17", [textureDepth2D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 10);
+    checkFloat(program, callFunction(program, "foo17", [textureDepth2D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 18);
+    checkFloat(program, callFunction(program, "foo17", [textureDepth2D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, -1), makeInt(program, 0)]), 9);
+    checkFloat(program, callFunction(program, "foo17", [textureDepth2D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, -1), makeInt(program, 1)]), 17);
+    checkFloat(program, callFunction(program, "foo17", [textureDepth2D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 34);
+    checkFloat(program, callFunction(program, "foo17", [textureDepth2D, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 38);
+    checkFloat(program, callFunction(program, "foo17", [textureDepth2D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, -1), makeInt(program, 0)]), 33);
+    checkFloat(program, callFunction(program, "foo17", [textureDepth2D, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, -1), makeInt(program, 1)]), 37);
+    checkFloat(program, callFunction(program, "foo17", [textureDepth2D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 38);
+    checkFloat(program, callFunction(program, "foo17", [textureDepth2D, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, -1)]), 34);
+    checkFloat(program, callFunction(program, "foo17", [textureDepth2D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, -1), makeInt(program, 0)]), 37);
+    checkFloat(program, callFunction(program, "foo17", [textureDepth2D, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, -1), makeInt(program, -1)]), 33);
+    checkFloat(program, callFunction(program, "foo18", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0)]), 1);
+    checkFloat(program, callFunction(program, "foo18", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0)]), 2);
+    checkFloat(program, callFunction(program, "foo18", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 9);
+    checkFloat(program, callFunction(program, "foo18", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 10);
+    checkFloat(program, callFunction(program, "foo18", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 33);
+    checkFloat(program, callFunction(program, "foo18", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 34);
+    checkFloat(program, callFunction(program, "foo18", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 37);
+    checkFloat(program, callFunction(program, "foo18", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 38);
+    checkFloat(program, callFunction(program, "foo18", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 43);
+    checkFloat(program, callFunction(program, "foo18", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 44);
+    checkFloat(program, callFunction(program, "foo18", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1)]), 51);
+    checkFloat(program, callFunction(program, "foo18", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1)]), 52);
+    checkFloat(program, callFunction(program, "foo18", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 75);
+    checkFloat(program, callFunction(program, "foo18", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 76);
+    checkFloat(program, callFunction(program, "foo18", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 79);
+    checkFloat(program, callFunction(program, "foo18", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 80);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 2);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 10);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 3);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 11);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 10);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 18);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 11);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 19);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 34);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 38);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 35);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 39);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 38);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, -1)]), 34);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 39);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, -1)]), 35);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 44);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 52);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 45);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 53);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 52);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 60);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 53);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 61);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 76);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 80);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 77);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 81);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 80);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, -1)]), 76);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 81);
+    checkFloat(program, callFunction(program, "foo19", [textureDepth2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, 1), makeInt(program, -1)]), 77);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 0), makeInt(program, 0)]), 1);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 1), makeInt(program, 0)]), 2);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 2), makeInt(program, 0)]), 3);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 3), makeInt(program, 0)]), 4);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 4), makeInt(program, 0)]), 5);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 5), makeInt(program, 0)]), 6);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 6), makeInt(program, 0)]), 7);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 7), makeInt(program, 0)]), 8);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 0), makeInt(program, 1)]), 9);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 1), makeInt(program, 1)]), 10);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 2), makeInt(program, 1)]), 11);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 3), makeInt(program, 1)]), 12);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 4), makeInt(program, 1)]), 13);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 5), makeInt(program, 1)]), 14);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 6), makeInt(program, 1)]), 15);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 7), makeInt(program, 1)]), 16);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 0), makeInt(program, 2)]), 17);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 1), makeInt(program, 2)]), 18);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 2), makeInt(program, 2)]), 19);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 3), makeInt(program, 2)]), 20);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 4), makeInt(program, 2)]), 21);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 5), makeInt(program, 2)]), 22);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 6), makeInt(program, 2)]), 23);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 7), makeInt(program, 2)]), 24);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 0), makeInt(program, 3)]), 25);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 1), makeInt(program, 3)]), 26);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 2), makeInt(program, 3)]), 27);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 3), makeInt(program, 3)]), 28);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 4), makeInt(program, 3)]), 29);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 5), makeInt(program, 3)]), 30);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 6), makeInt(program, 3)]), 31);
+    checkFloat(program, callFunction(program, "foo20", [rwTextureDepth2D, makeInt(program, 7), makeInt(program, 3)]), 32);
+    checkFloat(program, callFunction(program, "foo21", [rwTextureDepth2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 0)]), 1);
+    checkFloat(program, callFunction(program, "foo21", [rwTextureDepth2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), 2);
+    checkFloat(program, callFunction(program, "foo21", [rwTextureDepth2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), 9);
+    checkFloat(program, callFunction(program, "foo21", [rwTextureDepth2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 0)]), 10);
+    checkFloat(program, callFunction(program, "foo21", [rwTextureDepth2DArray, makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), 33);
+    checkFloat(program, callFunction(program, "foo21", [rwTextureDepth2DArray, makeInt(program, 1), makeInt(program, 0), makeInt(program, 1)]), 34);
+    checkFloat(program, callFunction(program, "foo21", [rwTextureDepth2DArray, makeInt(program, 0), makeInt(program, 1), makeInt(program, 1)]), 41);
+    checkFloat(program, callFunction(program, "foo21", [rwTextureDepth2DArray, makeInt(program, 1), makeInt(program, 1), makeInt(program, 1)]), 42);
+}
+
+tests.textureStore = function() {
+    let program = doPrep(`
+        float foo1(RWTexture1D<float> texture, uint location, float value) {
+            Store(texture, value, location);
+            return Load(texture, int(location));
+        }
+        float foo2(RWTexture1DArray<float> texture, uint location, uint layer, float value) {
+            Store(texture, value, uint2(location, layer));
+            return Load(texture, int2(int(location), int(layer)));
+        }
+        float foo3(RWTexture2D<float> texture, uint x, uint y, float value) {
+            Store(texture, value, uint2(x, y));
+            return Load(texture, int2(int(x), int(y)));
+        }
+        float foo4(RWTexture2DArray<float> texture, uint x, uint y, uint layer, float value) {
+            Store(texture, value, uint3(x, y, layer));
+            return Load(texture, int3(int(x), int(y), int(layer)));
+        }
+        float foo5(RWTexture3D<float> texture, uint x, uint y, uint z, float value) {
+            Store(texture, value, uint3(x, y, z));
+            return Load(texture, int3(int(x), int(y), int(z)));
+        }
+        float foo6(RWTextureDepth2D<float> texture, uint x, uint y, float value) {
+            Store(texture, value, uint2(x, y));
+            return Load(texture, int2(int(x), int(y)));
+        }
+        float foo7(RWTextureDepth2DArray<float> texture, uint x, uint y, uint layer, float value) {
+            Store(texture, value, uint3(x, y, layer));
+            return Load(texture, int3(int(x), int(y), int(layer)));
+        }
+    `);
+    let [texture1D, texture1DArray, texture2D, texture2DArray, texture3D, textureCube, rwTexture1D, rwTexture1DArray, rwTexture2D, rwTexture2DArray, rwTexture3D, textureDepth2D, textureDepth2DArray, textureDepthCube, rwTextureDepth2D, rwTextureDepth2DArray] = createTexturesForTesting(program);
+    checkFloat(program, callFunction(program, "foo1", [rwTexture1D, makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo1", [rwTexture1D, makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo1", [rwTexture1D, makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo1", [rwTexture1D, makeUint(program, 3), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo1", [rwTexture1D, makeUint(program, 4), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo1", [rwTexture1D, makeUint(program, 5), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo1", [rwTexture1D, makeUint(program, 6), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo1", [rwTexture1D, makeUint(program, 7), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 0), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 1), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 2), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 3), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 4), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 5), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 6), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 7), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 0), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 1), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 2), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 3), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 4), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 5), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 6), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 7), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 0), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 1), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 2), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 3), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 4), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 5), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 6), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo2", [rwTexture1DArray, makeUint(program, 7), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 0), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 1), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 2), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 3), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 4), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 5), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 6), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 7), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 0), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 1), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 2), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 3), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 4), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 5), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 6), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 7), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 0), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 1), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 2), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 3), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 4), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 5), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 6), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 7), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 0), makeUint(program, 3), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 1), makeUint(program, 3), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 2), makeUint(program, 3), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 3), makeUint(program, 3), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 4), makeUint(program, 3), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 5), makeUint(program, 3), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 6), makeUint(program, 3), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo3", [rwTexture2D, makeUint(program, 7), makeUint(program, 3), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo4", [rwTexture2DArray, makeUint(program, 0), makeUint(program, 0), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo4", [rwTexture2DArray, makeUint(program, 1), makeUint(program, 0), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo4", [rwTexture2DArray, makeUint(program, 0), makeUint(program, 1), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo4", [rwTexture2DArray, makeUint(program, 1), makeUint(program, 1), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo4", [rwTexture2DArray, makeUint(program, 0), makeUint(program, 0), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo4", [rwTexture2DArray, makeUint(program, 1), makeUint(program, 0), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo4", [rwTexture2DArray, makeUint(program, 0), makeUint(program, 1), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo4", [rwTexture2DArray, makeUint(program, 1), makeUint(program, 1), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo5", [rwTexture3D, makeUint(program, 0), makeUint(program, 0), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo5", [rwTexture3D, makeUint(program, 1), makeUint(program, 0), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo5", [rwTexture3D, makeUint(program, 0), makeUint(program, 1), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo5", [rwTexture3D, makeUint(program, 1), makeUint(program, 1), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo5", [rwTexture3D, makeUint(program, 0), makeUint(program, 0), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo5", [rwTexture3D, makeUint(program, 1), makeUint(program, 0), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo5", [rwTexture3D, makeUint(program, 0), makeUint(program, 1), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo5", [rwTexture3D, makeUint(program, 1), makeUint(program, 1), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 0), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 1), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 2), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 3), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 4), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 5), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 6), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 7), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 0), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 1), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 2), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 3), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 4), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 5), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 6), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 7), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 0), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 1), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 2), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 3), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 4), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 5), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 6), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 7), makeUint(program, 2), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 0), makeUint(program, 3), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 1), makeUint(program, 3), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 2), makeUint(program, 3), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 3), makeUint(program, 3), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 4), makeUint(program, 3), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 5), makeUint(program, 3), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 6), makeUint(program, 3), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo6", [rwTextureDepth2D, makeUint(program, 7), makeUint(program, 3), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo7", [rwTextureDepth2DArray, makeUint(program, 0), makeUint(program, 0), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo7", [rwTextureDepth2DArray, makeUint(program, 1), makeUint(program, 0), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo7", [rwTextureDepth2DArray, makeUint(program, 0), makeUint(program, 1), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo7", [rwTextureDepth2DArray, makeUint(program, 1), makeUint(program, 1), makeUint(program, 0), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo7", [rwTextureDepth2DArray, makeUint(program, 0), makeUint(program, 0), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo7", [rwTextureDepth2DArray, makeUint(program, 1), makeUint(program, 0), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo7", [rwTextureDepth2DArray, makeUint(program, 0), makeUint(program, 1), makeUint(program, 1), makeFloat(program, 999)]), 999);
+    checkFloat(program, callFunction(program, "foo7", [rwTextureDepth2DArray, makeUint(program, 1), makeUint(program, 1), makeUint(program, 1), makeFloat(program, 999)]), 999);
+}
+
+tests.textureSample = function() {
+    let program = doPrep(`
+        float foo1(Texture1D<float> texture, sampler s, float location) {
+            return Sample(texture, s, location);
+        }
+        float foo2(Texture1D<float> texture, sampler s, float location, int offset) {
+            return Sample(texture, s, location, offset);
+        }
+        float foo3(Texture1DArray<float> texture, sampler s, float x, float layer) {
+            return Sample(texture, s, float2(x, layer));
+        }
+        float foo4(Texture1DArray<float> texture, sampler s, float x, float layer, int offset) {
+            return Sample(texture, s, float2(x, layer), offset);
+        }
+        float foo5(Texture2D<float> texture, sampler s, float x, float y) {
+            return Sample(texture, s, float2(x, y));
+        }
+        float foo6(Texture2D<float> texture, sampler s, float x, float y, int offsetX, int offsetY) {
+            return Sample(texture, s, float2(x, y), int2(offsetX, offsetY));
+        }
+        float foo7(Texture2DArray<float> texture, sampler s, float x, float y, float layer) {
+            return Sample(texture, s, float3(x, y, layer));
+        }
+        float foo8(Texture2DArray<float> texture, sampler s, float x, float y, float layer, int offsetX, int offsetY) {
+            return Sample(texture, s, float3(x, y, layer), int2(offsetX, offsetY));
+        }
+        float foo9(Texture3D<float> texture, sampler s, float x, float y, float z) {
+            return Sample(texture, s, float3(x, y, z));
+        }
+        float foo10(Texture3D<float> texture, sampler s, float x, float y, float z, int offsetX, int offsetY, int offsetZ) {
+            return Sample(texture, s, float3(x, y, z), int3(offsetX, offsetY, offsetZ));
+        }
+        float foo11(TextureCube<float> texture, sampler s, float x, float y, float z) {
+            return Sample(texture, s, float3(x, y, z));
+        }
+        float foo12(Texture2D<float> texture, sampler s, float x, float y, float Bias) {
+            return SampleBias(texture, s, float2(x, y), Bias);
+        }
+        float foo13(Texture2D<float> texture, sampler s, float x, float y, float Bias, int offsetX, int offsetY) {
+            return SampleBias(texture, s, float2(x, y), Bias, int2(offsetX, offsetY));
+        }
+        float foo14(Texture2D<float> texture, sampler s, float x, float y, float ddx0, float ddx1, float ddy0, float ddy1) {
+            return SampleGrad(texture, s, float2(x, y), float2(ddx0, ddx1), float2(ddy0, ddy1));
+        }
+        float foo15(Texture2D<float> texture, sampler s, float x, float y, float ddx0, float ddx1, float ddy0, float ddy1, int offsetX, int offsetY) {
+            return SampleGrad(texture, s, float2(x, y), float2(ddx0, ddx1), float2(ddy0, ddy1), int2(offsetX, offsetY));
+        }
+        float foo16(Texture2D<float> texture, sampler s, float x, float y, float LOD) {
+            return SampleLevel(texture, s, float2(x, y), LOD);
+        }
+        float foo17(Texture2D<float> texture, sampler s, float x, float y, float LOD, int offsetX, int offsetY) {
+            return SampleLevel(texture, s, float2(x, y), LOD, int2(offsetX, offsetY));
+        }
+        float foo18(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float Bias) {
+            return SampleBias(texture, s, float3(x, y, layer), Bias);
+        }
+        float foo19(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float Bias, int offsetX, int offsetY) {
+            return SampleBias(texture, s, float3(x, y, layer), Bias, int2(offsetX, offsetY));
+        }
+        float foo20(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float ddx0, float ddx1, float ddy0, float ddy1) {
+            return SampleGrad(texture, s, float3(x, y, layer), float2(ddx0, ddx1), float2(ddy0, ddy1));
+        }
+        float foo21(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float ddx0, float ddx1, float ddy0, float ddy1, int offsetX, int offsetY) {
+            return SampleGrad(texture, s, float3(x, y, layer), float2(ddx0, ddx1), float2(ddy0, ddy1), int2(offsetX, offsetY));
+        }
+        float foo22(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float LOD) {
+            return SampleLevel(texture, s, float3(x, y, layer), LOD);
+        }
+        float foo23(Texture2DArray<float> texture, sampler s, float x, float y, float layer, float LOD, int offsetX, int offsetY) {
+            return SampleLevel(texture, s, float3(x, y, layer), LOD, int2(offsetX, offsetY));
+        }
+        int foo24(Texture1D<int4> texture, sampler s, float location) {
+            return Sample(texture, s, location).x;
+        }
+        int foo25(Texture1D<int4> texture, sampler s, float location) {
+            return Sample(texture, s, location).y;
+        }
+        int foo26(Texture1D<int4> texture, sampler s, float location) {
+            return Sample(texture, s, location).z;
+        }
+        int foo27(Texture1D<int4> texture, sampler s, float location) {
+            return Sample(texture, s, location).w;
+        }
+        float foo28(TextureDepth2D<float> texture, sampler s, float x, float y) {
+            return Sample(texture, s, float2(x, y));
+        }
+        float foo29(TextureDepth2D<float> texture, sampler s, float x, float y, int offsetX, int offsetY) {
+            return Sample(texture, s, float2(x, y), int2(offsetX, offsetY));
+        }
+        float foo30(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer) {
+            return Sample(texture, s, float3(x, y, layer));
+        }
+        float foo31(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, int offsetX, int offsetY) {
+            return Sample(texture, s, float3(x, y, layer), int2(offsetX, offsetY));
+        }
+        float foo32(TextureDepthCube<float> texture, sampler s, float x, float y, float z) {
+            return Sample(texture, s, float3(x, y, z));
+        }
+        float foo33(TextureDepth2D<float> texture, sampler s, float x, float y, float Bias) {
+            return SampleBias(texture, s, float2(x, y), Bias);
+        }
+        float foo34(TextureDepth2D<float> texture, sampler s, float x, float y, float Bias, int offsetX, int offsetY) {
+            return SampleBias(texture, s, float2(x, y), Bias, int2(offsetX, offsetY));
+        }
+        float foo35(TextureDepth2D<float> texture, sampler s, float x, float y, float ddx0, float ddx1, float ddy0, float ddy1) {
+            return SampleGrad(texture, s, float2(x, y), float2(ddx0, ddx1), float2(ddy0, ddy1));
+        }
+        float foo36(TextureDepth2D<float> texture, sampler s, float x, float y, float ddx0, float ddx1, float ddy0, float ddy1, int offsetX, int offsetY) {
+            return SampleGrad(texture, s, float2(x, y), float2(ddx0, ddx1), float2(ddy0, ddy1), int2(offsetX, offsetY));
+        }
+        float foo37(TextureDepth2D<float> texture, sampler s, float x, float y, float LOD) {
+            return SampleLevel(texture, s, float2(x, y), LOD);
+        }
+        float foo38(TextureDepth2D<float> texture, sampler s, float x, float y, float LOD, int offsetX, int offsetY) {
+            return SampleLevel(texture, s, float2(x, y), LOD, int2(offsetX, offsetY));
+        }
+        float foo39(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float Bias) {
+            return SampleBias(texture, s, float3(x, y, layer), Bias);
+        }
+        float foo40(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float Bias, int offsetX, int offsetY) {
+            return SampleBias(texture, s, float3(x, y, layer), Bias, int2(offsetX, offsetY));
+        }
+        float foo41(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float ddx0, float ddx1, float ddy0, float ddy1) {
+            return SampleGrad(texture, s, float3(x, y, layer), float2(ddx0, ddx1), float2(ddy0, ddy1));
+        }
+        float foo42(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float ddx0, float ddx1, float ddy0, float ddy1, int offsetX, int offsetY) {
+            return SampleGrad(texture, s, float3(x, y, layer), float2(ddx0, ddx1), float2(ddy0, ddy1), int2(offsetX, offsetY));
+        }
+        float foo43(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float LOD) {
+            return SampleLevel(texture, s, float3(x, y, layer), LOD);
+        }
+        float foo44(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float LOD, int offsetX, int offsetY) {
+            return SampleLevel(texture, s, float3(x, y, layer), LOD, int2(offsetX, offsetY));
+        }
+        float foo45(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue) {
+            return SampleCmp(texture, s, float2(x, y), compareValue);
+        }
+        float foo46(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue, int offsetX, int offsetY) {
+            return SampleCmp(texture, s, float2(x, y), compareValue, int2(offsetX, offsetY));
+        }
+        float foo47(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue) {
+            return SampleCmp(texture, s, float3(x, y, layer), compareValue);
+        }
+        float foo48(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue, int offsetX, int offsetY) {
+            return SampleCmp(texture, s, float3(x, y, layer), compareValue, int2(offsetX, offsetY));
+        }
+        float foo49(TextureCube<float> texture, sampler s, float x, float y, float z, float bias) {
+            return SampleBias(texture, s, float3(x, y, z), bias);
+        }
+        float foo50(TextureCube<float> texture, sampler s, float x, float y, float z, float ddx0, float ddx1, float ddx2, float ddy0, float ddy1, float ddy2) {
+            return SampleGrad(texture, s, float3(x, y, z), float3(ddx0, ddx1, ddx2), float3(ddy0, ddy1, ddy2));
+        }
+        float foo51(TextureCube<float> texture, sampler s, float x, float y, float z, float lod) {
+            return SampleLevel(texture, s, float3(x, y, z), lod);
+        }
+        float foo52(TextureDepthCube<float> texture, sampler s, float x, float y, float z, float bias) {
+            return SampleBias(texture, s, float3(x, y, z), bias);
+        }
+        float foo53(TextureDepthCube<float> texture, sampler s, float x, float y, float z, float ddx0, float ddx1, float ddx2, float ddy0, float ddy1, float ddy2) {
+            return SampleGrad(texture, s, float3(x, y, z), float3(ddx0, ddx1, ddx2), float3(ddy0, ddy1, ddy2));
+        }
+        float foo54(TextureDepthCube<float> texture, sampler s, float x, float y, float z, float lod) {
+            return SampleLevel(texture, s, float3(x, y, z), lod);
+        }
+        float foo55(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue) {
+            return SampleCmpLevelZero(texture, s, float2(x, y), compareValue);
+        }
+        float foo56(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue, int offsetX, int offsetY) {
+            return SampleCmpLevelZero(texture, s, float2(x, y), compareValue, int2(offsetX, offsetY));
+        }
+        float foo57(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue) {
+            return SampleCmpLevelZero(texture, s, float3(x, y, layer), compareValue);
+        }
+        float foo58(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue, int offsetX, int offsetY) {
+            return SampleCmpLevelZero(texture, s, float3(x, y, layer), compareValue, int2(offsetX, offsetY));
+        }
+        float foo59(TextureDepthCube<float> texture, sampler s, float x, float y, float z, float compareValue) {
+            return SampleCmp(texture, s, float3(x, y, z), compareValue);
+        }
+        float foo60(TextureDepthCube<float> texture, sampler s, float x, float y, float z, float compareValue) {
+            return SampleCmpLevelZero(texture, s, float3(x, y, z), compareValue);
+        }
+    `);
+    let [texture1D, texture1DArray, texture2D, texture2DArray, texture3D, textureCube, rwTexture1D, rwTexture1DArray, rwTexture2D, rwTexture2DArray, rwTexture3D, textureDepth2D, textureDepth2DArray, textureDepthCube, rwTextureDepth2D, rwTextureDepth2DArray] = createTexturesForTesting(program);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {}), makeFloat(program, 0.375)]), 7);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {}), makeFloat(program, 0.4375)]), 7);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {}), makeFloat(program, 0.5625)]), 14);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {}), makeFloat(program, 0.625)]), 14);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.375)]), 7);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.4375)]), (3 * 7 + 1 * 14) / 4);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5)]), (7 + 14) / 2);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5625)]), (1 * 7 + 3 * 14) / 4);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.625)]), 14);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "clampToBorderColor"}), makeFloat(program, 0.375)]), 7);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "clampToBorderColor"}), makeFloat(program, 0.4375)]), (3 * 7 + 1 * 14) / 4);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "clampToBorderColor"}), makeFloat(program, 0.5)]), (7 + 14) / 2);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "clampToBorderColor"}), makeFloat(program, 0.5625)]), (1 * 7 + 3 * 14) / 4);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "clampToBorderColor"}), makeFloat(program, 0.625)]), 14);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "repeat"}), makeFloat(program, 1 + 0.375)]), 7);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "repeat"}), makeFloat(program, 1 + 0.4375)]), (3 * 7 + 1 * 14) / 4);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "repeat"}), makeFloat(program, 1 + 0.5)]), (7 + 14) / 2);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "repeat"}), makeFloat(program, 1 + 0.5625)]), (1 * 7 + 3 * 14) / 4);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "repeat"}), makeFloat(program, 1 + 0.625)]), 14);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "repeat"}), makeFloat(program, 2 + 0.375)]), 7);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "repeat"}), makeFloat(program, 2 + 0.4375)]), (3 * 7 + 1 * 14) / 4);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "repeat"}), makeFloat(program, 2 + 0.5)]), (7 + 14) / 2);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "repeat"}), makeFloat(program, 2 + 0.5625)]), (1 * 7 + 3 * 14) / 4);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "repeat"}), makeFloat(program, 2 + 0.625)]), 14);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "mirrorRepeat"}), makeFloat(program, 1 + 0.625)]), 7);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "mirrorRepeat"}), makeFloat(program, 1 + 0.5625)]), (3 * 7 + 1 * 14) / 4);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "mirrorRepeat"}), makeFloat(program, 1 + 0.5)]), (7 + 14) / 2);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "mirrorRepeat"}), makeFloat(program, 1 + 0.4375)]), (1 * 7 + 3 * 14) / 4);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "mirrorRepeat"}), makeFloat(program, 1 + 0.375)]), 14);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "mirrorRepeat"}), makeFloat(program, 2 + 0.375)]), 7);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "mirrorRepeat"}), makeFloat(program, 2 + 0.4375)]), (3 * 7 + 1 * 14) / 4);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "mirrorRepeat"}), makeFloat(program, 2 + 0.5)]), (7 + 14) / 2);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "mirrorRepeat"}), makeFloat(program, 2 + 0.5625)]), (1 * 7 + 3 * 14) / 4);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "mirrorRepeat"}), makeFloat(program, 2 + 0.625)]), 14);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, -0.375)]), 1);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 1.375)]), 79);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "clampToBorderColor"}), makeFloat(program, -0.375)]), 0);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "clampToBorderColor"}), makeFloat(program, 1.375)]), 0);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "clampToBorderColor", borderColor: "opaqueBlack"}), makeFloat(program, -0.375)]), 0);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "clampToBorderColor", borderColor: "opaqueBlack"}), makeFloat(program, 1.375)]), 0);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "clampToBorderColor", borderColor: "opaqueWhite"}), makeFloat(program, -0.375)]), 1);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "clampToBorderColor", borderColor: "opaqueWhite"}), makeFloat(program, 1.375)]), 1);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {magFilter: "linear", rAddressMode: "clampToBorderColor", borderColor: "opaqueWhite"}), makeFloat(program, 1)]), (79 + 1) / 2);
+    checkFloat(program, callFunction(program, "foo1", [texture1D, makeSampler(program, {minFilter: "linear", lodMinClamp: 1}), makeFloat(program, 0.5)]), (13 + 16) / 2);
+    checkFloat(program, callFunction(program, "foo2", [texture1D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeInt(program, 1)]), (14 + 79) / 2);
+    checkFloat(program, callFunction(program, "foo3", [texture1DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0)]), (7 + 14) / 2);
+    checkFloat(program, callFunction(program, "foo3", [texture1DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 1)]), (17 + 18) / 2);
+    checkFloat(program, callFunction(program, "foo4", [texture1DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 1)]), (14 + 79) / 2);
+    checkFloat(program, callFunction(program, "foo4", [texture1DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 1), makeInt(program, 1)]), (18 + 19) / 2);
+    checkFloat(program, callFunction(program, "foo5", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo5", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 10 / 16), makeFloat(program, 0.5)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo5", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 6 / 8)]), (20 + 21 + 28 + 29) / 4);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo6", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 1)]), (20 + 21 + 28 + 29) / 4);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo7", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 1)]), (20 + 21 + 28 + 29) / 4);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo8", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeInt(program, 0), makeInt(program, 1)]), (62 + 63 + 70 + 71) / 4);
+    checkFloat(program, callFunction(program, "foo9", [texture3D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.5)]), (12 + 13 + 20 + 21 + 44 + 45 + 52 + 53) / 8);
+    checkFloat(program, callFunction(program, "foo9", [texture3D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 10 / 16), makeFloat(program, 0.5), makeFloat(program, 0.5)]), (13 + 14 + 21 + 22 + 45 + 46 + 53 + 54) / 8);
+    checkFloat(program, callFunction(program, "foo9", [texture3D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 6 / 8), makeFloat(program, 0.5)]), (20 + 21 + 28 + 29 + 52 + 53 + 60 + 61) / 8);
+    checkFloat(program, callFunction(program, "foo9", [texture3D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 5 / 8)]), (12 + 13 + 20 + 21 + (44 + 45 + 52 + 53) * 3) / 16);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0), makeInt(program, 0)]), (13 + 14 + 21 + 22 + 45 + 46 + 53 + 54) / 8);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 1), makeInt(program, 0)]), (20 + 21 + 28 + 29 + 52 + 53 + 60 + 61) / 8);
+    checkFloat(program, callFunction(program, "foo10", [texture3D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.25), makeInt(program, 0), makeInt(program, 0), makeInt(program, 1)]), (44 + 45 + 52 + 53) / 4);
+    checkFloat(program, callFunction(program, "foo11", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0)]), (3 + 4 + 5 + 6) / 4);
+    checkFloat(program, callFunction(program, "foo11", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0)]), (13 + 14 + 15 + 16) / 4);
+    checkFloat(program, callFunction(program, "foo11", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0)]), (23 + 24 + 25 + 26) / 4);
+    checkFloat(program, callFunction(program, "foo11", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0)]), (33 + 34 + 35 + 36) / 4);
+    checkFloat(program, callFunction(program, "foo11", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1)]), (43 + 44 + 45 + 46) / 4);
+    checkFloat(program, callFunction(program, "foo11", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -1)]), (53 + 54 + 55 + 56) / 4);
+    // Unfortunately, we can't actually test the "Bias" argument, because it is supposed to be applied
+    // to the unclamped LOD, which for us is -Infinity (because our derivatives are all 0)
+    checkFloat(program, callFunction(program, "foo12", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo12", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 10 / 16), makeFloat(program, 0.5), makeFloat(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo12", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 6 / 8), makeFloat(program, 0)]), (20 + 21 + 28 + 29) / 4);
+    checkFloat(program, callFunction(program, "foo13", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo13", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 1)]), (20 + 21 + 28 + 29) / 4);
+    checkFloat(program, callFunction(program, "foo14", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo14", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo14", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height)]), (34 + 35 + 38 + 39) / 4);
+    checkFloat(program, callFunction(program, "foo14", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo14", [texture2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo15", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo15", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo15", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo15", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (35 + 36 + 39 + 40) / 4);
+    checkFloat(program, callFunction(program, "foo15", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo15", [texture2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((13 + 14 + 21 + 22) / 4) + ((35 + 36 + 39 + 40) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo16", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo16", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1)]), (34 + 35 + 38 + 39) / 4);
+    checkFloat(program, callFunction(program, "foo16", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.5)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo16", [texture2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.5)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo17", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo17", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeInt(program, 0), makeInt(program, 0)]), (34 + 35 + 38 + 39) / 4);
+    checkFloat(program, callFunction(program, "foo17", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo17", [texture2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 0)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo17", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo17", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeInt(program, 1), makeInt(program, 0)]), (35 + 36 + 39 + 40) / 4);
+    checkFloat(program, callFunction(program, "foo17", [texture2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo17", [texture2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0)]), (((13 + 14 + 21 + 22) / 4) + ((35 + 36 + 39 + 40) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo18", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo18", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 10 / 16), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo18", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 6 / 8), makeFloat(program, 0), makeFloat(program, 0)]), (20 + 21 + 28 + 29) / 4);
+    checkFloat(program, callFunction(program, "foo18", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo18", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 10 / 16), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo18", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 6 / 8), makeFloat(program, 1), makeFloat(program, 0)]), (62 + 63 + 70 + 71) / 4);
+    checkFloat(program, callFunction(program, "foo19", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo19", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 1)]), (20 + 21 + 28 + 29) / 4);
+    checkFloat(program, callFunction(program, "foo19", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo19", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 1)]), (62 + 63 + 70 + 71) / 4);
+    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height)]), (34 + 35 + 38 + 39) / 4);
+    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height)]), (76 + 77 + 80 + 81) / 4);
+    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo20", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((54 + 55 + 62 + 63) / 4) + ((76 + 77 + 80 + 81) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (35 + 36 + 39 + 40) / 4);
+    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((13 + 14 + 21 + 22) / 4) + ((35 + 36 + 39 + 40) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (77 + 78 + 81 + 82) / 4);
+    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo21", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((55 + 56 + 63 + 64) / 4) + ((77 + 78 + 81 + 82) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo22", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo22", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 1)]), (34 + 35 + 38 + 39) / 4);
+    checkFloat(program, callFunction(program, "foo22", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0.5)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo22", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0.5)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo22", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo22", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 1)]), (76 + 77 + 80 + 81) / 4);
+    checkFloat(program, callFunction(program, "foo22", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0.5)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo22", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0.5)]), (((54 + 55 + 62 + 63) / 4) + ((76 + 77 + 80 + 81) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo23", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo23", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 1), makeInt(program, 0), makeInt(program, 0)]), (34 + 35 + 38 + 39) / 4);
+    checkFloat(program, callFunction(program, "foo23", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo23", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 0)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo23", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo23", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 1), makeInt(program, 1), makeInt(program, 0)]), (35 + 36 + 39 + 40) / 4);
+    checkFloat(program, callFunction(program, "foo23", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo23", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0)]), (((13 + 14 + 21 + 22) / 4) + ((35 + 36 + 39 + 40) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo23", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo23", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 1), makeInt(program, 0), makeInt(program, 0)]), (76 + 77 + 80 + 81) / 4);
+    checkFloat(program, callFunction(program, "foo23", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 0)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo23", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 0)]), (((54 + 55 + 62 + 63) / 4) + ((76 + 77 + 80 + 81) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo23", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo23", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 1), makeInt(program, 1), makeInt(program, 0)]), (77 + 78 + 81 + 82) / 4);
+    checkFloat(program, callFunction(program, "foo23", [texture2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo23", [texture2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0)]), (((55 + 56 + 63 + 64) / 4) + ((77 + 78 + 81 + 82) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo16", [texture2D, makeSampler(program, {minFilter: "linear", lodMinClamp: 1, lodMaxClamp: 1}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 2)]), (34 + 35 + 38 + 39) / 4);
+    checkFloat(program, callFunction(program, "foo16", [texture2D, makeSampler(program, {minFilter: "linear", lodMinClamp: 1, lodMaxClamp: 1}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0)]), (34 + 35 + 38 + 39) / 4);
+    checkFloat(program, callFunction(program, "foo14", [texture2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height)]), (34 + 35 + 38 + 39) / 4);
+    checkFloat(program, callFunction(program, "foo14", [texture2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear", maxAnisotropy: 2}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 4 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (4/3) / texture2D.ePtr.loadValue().height)]), (34 + 35 + 38 + 39) / 4);
+    let texture1DInt4 = make1DTexture(program, [[[1, 2, 3, 4], [100, 200, 300, 400], [101, 202, 301, 401], [13, 14, 15, 16]], [[17, 18, 19, 20], [21, 22, 23, 24]], [[25, 26, 27, 28]]], "int4");
+    checkInt(program, callFunction(program, "foo24", [texture1DInt4, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5)]), 100);
+    checkInt(program, callFunction(program, "foo25", [texture1DInt4, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5)]), 201);
+    checkInt(program, callFunction(program, "foo26", [texture1DInt4, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5)]), 300);
+    checkInt(program, callFunction(program, "foo27", [texture1DInt4, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5)]), 400);
+    checkFloat(program, callFunction(program, "foo28", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo28", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 10 / 16), makeFloat(program, 0.5)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo28", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 6 / 8)]), (20 + 21 + 28 + 29) / 4);
+    checkFloat(program, callFunction(program, "foo29", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo29", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 1)]), (20 + 21 + 28 + 29) / 4);
+    checkFloat(program, callFunction(program, "foo30", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo30", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo31", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo31", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 1)]), (20 + 21 + 28 + 29) / 4);
+    checkFloat(program, callFunction(program, "foo31", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo31", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeInt(program, 0), makeInt(program, 1)]), (62 + 63 + 70 + 71) / 4);
+    checkFloat(program, callFunction(program, "foo32", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0)]), (3 + 4 + 5 + 6) / 4);
+    checkFloat(program, callFunction(program, "foo32", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0)]), (13 + 14 + 15 + 16) / 4);
+    checkFloat(program, callFunction(program, "foo32", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0)]), (23 + 24 + 25 + 26) / 4);
+    checkFloat(program, callFunction(program, "foo32", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0)]), (33 + 34 + 35 + 36) / 4);
+    checkFloat(program, callFunction(program, "foo32", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1)]), (43 + 44 + 45 + 46) / 4);
+    checkFloat(program, callFunction(program, "foo32", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -1)]), (53 + 54 + 55 + 56) / 4);
+    checkFloat(program, callFunction(program, "foo28", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo28", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 10 / 16), makeFloat(program, 0.5)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo28", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 6 / 8)]), (20 + 21 + 28 + 29) / 4);
+    checkFloat(program, callFunction(program, "foo29", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo29", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 1)]), (20 + 21 + 28 + 29) / 4);
+    checkFloat(program, callFunction(program, "foo30", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo30", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo31", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo31", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 1)]), (20 + 21 + 28 + 29) / 4);
+    checkFloat(program, callFunction(program, "foo31", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo31", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeInt(program, 0), makeInt(program, 1)]), (62 + 63 + 70 + 71) / 4);
+    checkFloat(program, callFunction(program, "foo33", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo33", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 10 / 16), makeFloat(program, 0.5), makeFloat(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo33", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 6 / 8), makeFloat(program, 0)]), (20 + 21 + 28 + 29) / 4);
+    checkFloat(program, callFunction(program, "foo34", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo34", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 1)]), (20 + 21 + 28 + 29) / 4);
+    checkFloat(program, callFunction(program, "foo35", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo35", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo35", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height)]), (34 + 35 + 38 + 39) / 4);
+    checkFloat(program, callFunction(program, "foo35", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo35", [textureDepth2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo36", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo36", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo36", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo36", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (35 + 36 + 39 + 40) / 4);
+    checkFloat(program, callFunction(program, "foo36", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo36", [textureDepth2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((13 + 14 + 21 + 22) / 4) + ((35 + 36 + 39 + 40) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo37", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo37", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1)]), (34 + 35 + 38 + 39) / 4);
+    checkFloat(program, callFunction(program, "foo37", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.5)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo37", [textureDepth2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.5)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo38", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo38", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeInt(program, 0), makeInt(program, 0)]), (34 + 35 + 38 + 39) / 4);
+    checkFloat(program, callFunction(program, "foo38", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo38", [textureDepth2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 0)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo38", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo38", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeInt(program, 1), makeInt(program, 0)]), (35 + 36 + 39 + 40) / 4);
+    checkFloat(program, callFunction(program, "foo38", [textureDepth2D, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo38", [textureDepth2D, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0)]), (((13 + 14 + 21 + 22) / 4) + ((35 + 36 + 39 + 40) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo39", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo39", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 10 / 16), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo39", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 6 / 8), makeFloat(program, 0), makeFloat(program, 0)]), (20 + 21 + 28 + 29) / 4);
+    checkFloat(program, callFunction(program, "foo39", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo39", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 10 / 16), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo39", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 6 / 8), makeFloat(program, 1), makeFloat(program, 0)]), (62 + 63 + 70 + 71) / 4);
+    checkFloat(program, callFunction(program, "foo40", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo40", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 1)]), (20 + 21 + 28 + 29) / 4);
+    checkFloat(program, callFunction(program, "foo40", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo40", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 1)]), (62 + 63 + 70 + 71) / 4);
+    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height)]), (34 + 35 + 38 + 39) / 4);
+    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height)]), (76 + 77 + 80 + 81) / 4);
+    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo41", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height)]), (((54 + 55 + 62 + 63) / 4) + ((76 + 77 + 80 + 81) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (35 + 36 + 39 + 40) / 4);
+    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((13 + 14 + 21 + 22) / 4) + ((35 + 36 + 39 + 40) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 1 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 2 / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 2 / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (77 + 78 + 81 + 82) / 4);
+    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.25) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo42", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, Math.pow(2, 0.5) / texture2D.ePtr.loadValue().height), makeInt(program, 1), makeInt(program, 0)]), (((55 + 56 + 63 + 64) / 4) + ((77 + 78 + 81 + 82) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo43", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo43", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 1)]), (34 + 35 + 38 + 39) / 4);
+    checkFloat(program, callFunction(program, "foo43", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0.5)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo43", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0.5)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo43", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo43", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 1)]), (76 + 77 + 80 + 81) / 4);
+    checkFloat(program, callFunction(program, "foo43", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0.5)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo43", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0.5)]), (((54 + 55 + 62 + 63) / 4) + ((76 + 77 + 80 + 81) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo44", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo44", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 1), makeInt(program, 0), makeInt(program, 0)]), (34 + 35 + 38 + 39) / 4);
+    checkFloat(program, callFunction(program, "foo44", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 0)]), (12 + 13 + 20 + 21) / 4);
+    checkFloat(program, callFunction(program, "foo44", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 0)]), (((12 + 13 + 20 + 21) / 4) + ((34 + 35 + 38 + 39) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo44", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo44", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 1), makeInt(program, 1), makeInt(program, 0)]), (35 + 36 + 39 + 40) / 4);
+    checkFloat(program, callFunction(program, "foo44", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0)]), (13 + 14 + 21 + 22) / 4);
+    checkFloat(program, callFunction(program, "foo44", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0)]), (((13 + 14 + 21 + 22) / 4) + ((35 + 36 + 39 + 40) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo44", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 0)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo44", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 1), makeInt(program, 0), makeInt(program, 0)]), (76 + 77 + 80 + 81) / 4);
+    checkFloat(program, callFunction(program, "foo44", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 0)]), (54 + 55 + 62 + 63) / 4);
+    checkFloat(program, callFunction(program, "foo44", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 0)]), (((54 + 55 + 62 + 63) / 4) + ((76 + 77 + 80 + 81) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo44", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo44", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 1), makeInt(program, 1), makeInt(program, 0)]), (77 + 78 + 81 + 82) / 4);
+    checkFloat(program, callFunction(program, "foo44", [textureDepth2DArray, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0)]), (55 + 56 + 63 + 64) / 4);
+    checkFloat(program, callFunction(program, "foo44", [textureDepth2DArray, makeSampler(program, {minFilter: "linear", mipmapFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0)]), (((55 + 56 + 63 + 64) / 4) + ((77 + 78 + 81 + 82) / 4)) / 2);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "never"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 11)]), 0);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "never"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 17)]), 0);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "never"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 23)]), 0);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "less"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 11)]), 1);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "less"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 17)]), 0);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "less"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 23)]), 0);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "equal"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 11)]), 0);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "equal"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 17)]), 1);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "equal"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 23)]), 0);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "lessEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 11)]), 1);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "lessEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 17)]), 1);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "lessEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 23)]), 0);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "greater"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 11)]), 0);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "greater"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 17)]), 0);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "greater"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 23)]), 1);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "notEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 11)]), 1);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "notEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 17)]), 0);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "notEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 23)]), 1);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "greaterEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 11)]), 0);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "greaterEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 17)]), 1);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "greaterEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 23)]), 1);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "always"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 11)]), 1);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "always"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 17)]), 1);
+    checkFloat(program, callFunction(program, "foo45", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "always"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 23)]), 1);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "never"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 11)]), 0);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "never"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 17)]), 0);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "never"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 23)]), 0);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "less"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 11)]), 1);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "less"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 17)]), 0);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "less"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 23)]), 0);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "equal"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 11)]), 0);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "equal"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 17)]), 1);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "equal"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 23)]), 0);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "lessEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 11)]), 1);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "lessEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 17)]), 1);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "lessEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 23)]), 0);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "greater"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 11)]), 0);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "greater"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 17)]), 0);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "greater"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 23)]), 1);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "notEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 11)]), 1);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "notEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 17)]), 0);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "notEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 23)]), 1);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "greaterEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 11)]), 0);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "greaterEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 17)]), 1);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "greaterEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 23)]), 1);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "always"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 11)]), 1);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "always"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 17)]), 1);
+    checkFloat(program, callFunction(program, "foo47", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "always"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 23)]), 1);
+    checkFloat(program, callFunction(program, "foo49", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (3 + 4 + 5 + 6) / 4);
+    checkFloat(program, callFunction(program, "foo49", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (13 + 14 + 15 + 16) / 4);
+    checkFloat(program, callFunction(program, "foo49", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0)]), (23 + 24 + 25 + 26) / 4);
+    checkFloat(program, callFunction(program, "foo49", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0)]), (33 + 34 + 35 + 36) / 4);
+    checkFloat(program, callFunction(program, "foo49", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0)]), (43 + 44 + 45 + 46) / 4);
+    checkFloat(program, callFunction(program, "foo49", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0)]), (53 + 54 + 55 + 56) / 4);
+    checkFloat(program, callFunction(program, "foo50", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (3 + 4 + 5 + 6) / 4);
+    checkFloat(program, callFunction(program, "foo50", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (13 + 14 + 15 + 16) / 4);
+    checkFloat(program, callFunction(program, "foo50", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (23 + 24 + 25 + 26) / 4);
+    checkFloat(program, callFunction(program, "foo50", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (33 + 34 + 35 + 36) / 4);
+    checkFloat(program, callFunction(program, "foo50", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (43 + 44 + 45 + 46) / 4);
+    checkFloat(program, callFunction(program, "foo50", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (53 + 54 + 55 + 56) / 4);
+    checkFloat(program, callFunction(program, "foo50", [textureCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -4 / textureCube.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, -4 / textureCube.ePtr.loadValue().height), makeFloat(program, 0)]), (9 + 10) / 2);
+    checkFloat(program, callFunction(program, "foo50", [textureCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0, 0, 4 / textureCube.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, -4 / textureCube.ePtr.loadValue().height), makeFloat(program, 0)]), (19 + 20) / 2);
+    checkFloat(program, callFunction(program, "foo50", [textureCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 4 / textureCube.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 4 / textureCube.ePtr.loadValue().height)]), (29 + 30) / 2);
+    checkFloat(program, callFunction(program, "foo50", [textureCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 4 / textureCube.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -4 / textureCube.ePtr.loadValue().height)]), (39 + 40) / 2);
+    checkFloat(program, callFunction(program, "foo50", [textureCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 4 / textureCube.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -4 / textureCube.ePtr.loadValue().height), makeFloat(program, 0)]), (49 + 50) / 2);
+    checkFloat(program, callFunction(program, "foo50", [textureCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, -4 / textureCube.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -4 / textureCube.ePtr.loadValue().height), makeFloat(program, 0)]), (59 + 60) / 2);
+    checkFloat(program, callFunction(program, "foo51", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (3 + 4 + 5 + 6) / 4);
+    checkFloat(program, callFunction(program, "foo51", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (13 + 14 + 15 + 16) / 4);
+    checkFloat(program, callFunction(program, "foo51", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0)]), (23 + 24 + 25 + 26) / 4);
+    checkFloat(program, callFunction(program, "foo51", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0)]), (33 + 34 + 35 + 36) / 4);
+    checkFloat(program, callFunction(program, "foo51", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0)]), (43 + 44 + 45 + 46) / 4);
+    checkFloat(program, callFunction(program, "foo51", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0)]), (53 + 54 + 55 + 56) / 4);
+    checkFloat(program, callFunction(program, "foo51", [textureCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1)]), (9 + 10) / 2);
+    checkFloat(program, callFunction(program, "foo51", [textureCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1)]), (19 + 20) / 2);
+    checkFloat(program, callFunction(program, "foo51", [textureCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 1)]), (29 + 30) / 2);
+    checkFloat(program, callFunction(program, "foo51", [textureCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 1)]), (39 + 40) / 2);
+    checkFloat(program, callFunction(program, "foo51", [textureCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 1)]), (49 + 50) / 2);
+    checkFloat(program, callFunction(program, "foo51", [textureCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 1)]), (59 + 60) / 2);
+    checkFloat(program, callFunction(program, "foo52", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (3 + 4 + 5 + 6) / 4);
+    checkFloat(program, callFunction(program, "foo52", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (13 + 14 + 15 + 16) / 4);
+    checkFloat(program, callFunction(program, "foo52", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0)]), (23 + 24 + 25 + 26) / 4);
+    checkFloat(program, callFunction(program, "foo52", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0)]), (33 + 34 + 35 + 36) / 4);
+    checkFloat(program, callFunction(program, "foo52", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0)]), (43 + 44 + 45 + 46) / 4);
+    checkFloat(program, callFunction(program, "foo52", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0)]), (53 + 54 + 55 + 56) / 4);
+    checkFloat(program, callFunction(program, "foo53", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (3 + 4 + 5 + 6) / 4);
+    checkFloat(program, callFunction(program, "foo53", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (13 + 14 + 15 + 16) / 4);
+    checkFloat(program, callFunction(program, "foo53", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (23 + 24 + 25 + 26) / 4);
+    checkFloat(program, callFunction(program, "foo53", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (33 + 34 + 35 + 36) / 4);
+    checkFloat(program, callFunction(program, "foo53", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (43 + 44 + 45 + 46) / 4);
+    checkFloat(program, callFunction(program, "foo53", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (53 + 54 + 55 + 56) / 4);
+    checkFloat(program, callFunction(program, "foo53", [textureDepthCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -4 / textureCube.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, -4 / textureCube.ePtr.loadValue().height), makeFloat(program, 0)]), (9 + 10) / 2);
+    checkFloat(program, callFunction(program, "foo53", [textureDepthCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0, 0, 4 / textureDepthCube.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, -4 / textureDepthCube.ePtr.loadValue().height), makeFloat(program, 0)]), (19 + 20) / 2);
+    checkFloat(program, callFunction(program, "foo53", [textureDepthCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 4 / textureDepthCube.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 4 / textureDepthCube.ePtr.loadValue().height)]), (29 + 30) / 2);
+    checkFloat(program, callFunction(program, "foo53", [textureDepthCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 4 / textureDepthCube.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -4 / textureDepthCube.ePtr.loadValue().height)]), (39 + 40) / 2);
+    checkFloat(program, callFunction(program, "foo53", [textureDepthCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 4 / textureDepthCube.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -4 / textureDepthCube.ePtr.loadValue().height), makeFloat(program, 0)]), (49 + 50) / 2);
+    checkFloat(program, callFunction(program, "foo53", [textureDepthCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, -4 / textureDepthCube.ePtr.loadValue().width), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -4 / textureDepthCube.ePtr.loadValue().height), makeFloat(program, 0)]), (59 + 60) / 2);
+    checkFloat(program, callFunction(program, "foo54", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (3 + 4 + 5 + 6) / 4);
+    checkFloat(program, callFunction(program, "foo54", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 0)]), (13 + 14 + 15 + 16) / 4);
+    checkFloat(program, callFunction(program, "foo54", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0)]), (23 + 24 + 25 + 26) / 4);
+    checkFloat(program, callFunction(program, "foo54", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0)]), (33 + 34 + 35 + 36) / 4);
+    checkFloat(program, callFunction(program, "foo54", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0)]), (43 + 44 + 45 + 46) / 4);
+    checkFloat(program, callFunction(program, "foo54", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0)]), (53 + 54 + 55 + 56) / 4);
+    checkFloat(program, callFunction(program, "foo54", [textureDepthCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1)]), (9 + 10) / 2);
+    checkFloat(program, callFunction(program, "foo54", [textureDepthCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1)]), (19 + 20) / 2);
+    checkFloat(program, callFunction(program, "foo54", [textureDepthCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 1)]), (29 + 30) / 2);
+    checkFloat(program, callFunction(program, "foo54", [textureDepthCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 1)]), (39 + 40) / 2);
+    checkFloat(program, callFunction(program, "foo54", [textureDepthCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 1)]), (49 + 50) / 2);
+    checkFloat(program, callFunction(program, "foo54", [textureDepthCube, makeSampler(program, {minFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 1)]), (59 + 60) / 2);
+
+    
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "never"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 11)]), 0);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "never"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 17)]), 0);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "never"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 23)]), 0);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "less"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 11)]), 1);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "less"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 17)]), 0);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "less"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 23)]), 0);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "equal"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 11)]), 0);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "equal"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 17)]), 1);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "equal"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 23)]), 0);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "lessEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 11)]), 1);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "lessEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 17)]), 1);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "lessEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 23)]), 0);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "greater"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 11)]), 0);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "greater"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 17)]), 0);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "greater"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 23)]), 1);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "notEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 11)]), 1);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "notEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 17)]), 0);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "notEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 23)]), 1);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "greaterEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 11)]), 0);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "greaterEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 17)]), 1);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "greaterEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 23)]), 1);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "always"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 11)]), 1);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "always"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 17)]), 1);
+    checkFloat(program, callFunction(program, "foo55", [make2DDepthTexture(program, [[[17]]], "float"), makeSampler(program, {compareFunction: "always"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 23)]), 1);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "never"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 11)]), 0);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "never"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 17)]), 0);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "never"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 23)]), 0);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "less"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 11)]), 1);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "less"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 17)]), 0);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "less"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 23)]), 0);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "equal"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 11)]), 0);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "equal"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 17)]), 1);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "equal"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 23)]), 0);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "lessEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 11)]), 1);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "lessEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 17)]), 1);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "lessEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 23)]), 0);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "greater"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 11)]), 0);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "greater"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 17)]), 0);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "greater"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 23)]), 1);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "notEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 11)]), 1);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "notEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 17)]), 0);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "notEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 23)]), 1);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "greaterEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 11)]), 0);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "greaterEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 17)]), 1);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "greaterEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 23)]), 1);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "always"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 11)]), 1);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "always"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 17)]), 1);
+    checkFloat(program, callFunction(program, "foo57", [make2DDepthTextureArray(program, [[[[17]]]], "float"), makeSampler(program, {compareFunction: "always"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeFloat(program, 23)]), 1);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "never"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 - 1)]), 0);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "never"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4)]), 0);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "never"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 + 1)]), 0);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "less"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 - 1)]), 1);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "less"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4)]), 0);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "less"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 + 1)]), 0);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "equal"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 - 1)]), 0);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "equal"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4)]), 1);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "equal"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 + 1)]), 0);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "lessEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 - 1)]), 1);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "lessEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4)]), 1);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "lessEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 + 1)]), 0);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "greater"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 - 1)]), 0);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "greater"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4)]), 0);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "greater"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 + 1)]), 1);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "notEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 - 1)]), 1);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "notEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4)]), 0);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "notEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 + 1)]), 1);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "greaterEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 - 1)]), 0);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "greaterEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4)]), 1);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "greaterEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 + 1)]), 1);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "always"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 - 1)]), 1);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "always"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4)]), 1);
+    checkFloat(program, callFunction(program, "foo59", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "always"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 + 1)]), 1);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "never"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 - 1)]), 0);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "never"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4)]), 0);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "never"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 + 1)]), 0);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "less"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 - 1)]), 1);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "less"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4)]), 0);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "less"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 + 1)]), 0);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "equal"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 - 1)]), 0);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "equal"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4)]), 1);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "equal"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 + 1)]), 0);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "lessEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 - 1)]), 1);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "lessEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4)]), 1);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "lessEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 + 1)]), 0);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "greater"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 - 1)]), 0);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "greater"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4)]), 0);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "greater"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 + 1)]), 1);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "notEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 - 1)]), 1);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "notEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4)]), 0);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "notEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 + 1)]), 1);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "greaterEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 - 1)]), 0);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "greaterEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4)]), 1);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "greaterEqual"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 + 1)]), 1);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "always"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 - 1)]), 1);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "always"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4)]), 1);
+    checkFloat(program, callFunction(program, "foo60", [textureDepthCube, makeSampler(program, {magFilter: "linear", compareFunction: "always"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, (3 + 4 + 5 + 6) / 4 + 1)]), 1);
+}
+
+tests.textureGather = function() {
+    let program = doPrep(`
+        float4 foo1(Texture2D<float> texture, sampler s, float x, float y) {
+            return Gather(texture, s, float2(x, y));
+        }
+        float4 foo2(Texture2D<float> texture, sampler s, float x, float y, int offsetX, int offsetY) {
+            return Gather(texture, s, float2(x, y), int2(offsetX, offsetY));
+        }
+        float4 foo3(Texture2DArray<float> texture, sampler s, float x, float y, float layer) {
+            return Gather(texture, s, float3(x, y, layer));
+        }
+        float4 foo4(Texture2DArray<float> texture, sampler s, float x, float y, float layer, int offsetX, int offsetY) {
+            return Gather(texture, s, float3(x, y, layer), int2(offsetX, offsetY));
+        }
+        float4 foo5(TextureCube<float> texture, sampler s, float x, float y, float z) {
+            return Gather(texture, s, float3(x, y, z));
+        }
+        float4 foo6(TextureDepth2D<float> texture, sampler s, float x, float y) {
+            return Gather(texture, s, float2(x, y));
+        }
+        float4 foo7(TextureDepth2D<float> texture, sampler s, float x, float y, int offsetX, int offsetY) {
+            return Gather(texture, s, float2(x, y), int2(offsetX, offsetY));
+        }
+        float4 foo8(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer) {
+            return Gather(texture, s, float3(x, y, layer));
+        }
+        float4 foo9(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, int offsetX, int offsetY) {
+            return Gather(texture, s, float3(x, y, layer), int2(offsetX, offsetY));
+        }
+        float4 foo10(TextureDepthCube<float> texture, sampler s, float x, float y, float z) {
+            return Gather(texture, s, float3(x, y, z));
+        }
+        float4 foo11(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue) {
+            return GatherCmp(texture, s, float2(x, y), compareValue);
+        }
+        float4 foo12(TextureDepth2D<float> texture, sampler s, float x, float y, float compareValue, int offsetX, int offsetY) {
+            return GatherCmp(texture, s, float2(x, y), compareValue, int2(offsetX, offsetY));
+        }
+        float4 foo13(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue) {
+            return GatherCmp(texture, s, float3(x, y, layer), compareValue);
+        }
+        float4 foo14(TextureDepth2DArray<float> texture, sampler s, float x, float y, float layer, float compareValue, int offsetX, int offsetY) {
+            return GatherCmp(texture, s, float3(x, y, layer), compareValue, int2(offsetX, offsetY));
+        }
+    `);
+    let [texture1D, texture1DArray, texture2D, texture2DArray, texture3D, textureCube, rwTexture1D, rwTexture1DArray, rwTexture2D, rwTexture2DArray, rwTexture3D, textureDepth2D, textureDepth2DArray, textureDepthCube, rwTextureDepth2D, rwTextureDepth2DArray] = createTexturesForTesting(program);
+    checkFloat4(program, callFunction(program, "foo1", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5)]), [20, 21, 13, 12]);
+    checkFloat4(program, callFunction(program, "foo1", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 10 / 16), makeFloat(program, 0.5)]), [21, 22, 14, 13]);
+    checkFloat4(program, callFunction(program, "foo1", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 6 / 8)]), [28, 29, 21, 20]);
+    checkFloat4(program, callFunction(program, "foo2", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0)]), [21, 22, 14, 13]);
+    checkFloat4(program, callFunction(program, "foo2", [texture2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 1)]), [28, 29, 21, 20]);
+    checkFloat4(program, callFunction(program, "foo3", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0)]), [20, 21, 13, 12]);
+    checkFloat4(program, callFunction(program, "foo3", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1)]), [62, 63, 55, 54]);
+    checkFloat4(program, callFunction(program, "foo4", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), [21, 22, 14, 13]);
+    checkFloat4(program, callFunction(program, "foo4", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 1)]), [28, 29, 21, 20]);
+    checkFloat4(program, callFunction(program, "foo4", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeInt(program, 1), makeInt(program, 0)]), [63, 64, 56, 55]);
+    checkFloat4(program, callFunction(program, "foo4", [texture2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeInt(program, 0), makeInt(program, 1)]), [70, 71, 63, 62]);
+    checkFloat4(program, callFunction(program, "foo5", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0)]), [5, 6, 4, 3]);
+    checkFloat4(program, callFunction(program, "foo5", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0)]), [15, 16, 14, 13]);
+    checkFloat4(program, callFunction(program, "foo5", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0)]), [25, 26, 24, 23]);
+    checkFloat4(program, callFunction(program, "foo5", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0)]), [35, 36, 34, 33]);
+    checkFloat4(program, callFunction(program, "foo5", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1)]), [45, 46, 44, 43]);
+    checkFloat4(program, callFunction(program, "foo5", [textureCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -1)]), [55, 56, 54, 53]);
+    checkFloat4(program, callFunction(program, "foo6", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5)]), [20, 21, 13, 12]);
+    checkFloat4(program, callFunction(program, "foo6", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 10 / 16), makeFloat(program, 0.5)]), [21, 22, 14, 13]);
+    checkFloat4(program, callFunction(program, "foo6", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 6 / 8)]), [28, 29, 21, 20]);
+    checkFloat4(program, callFunction(program, "foo7", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 1), makeInt(program, 0)]), [21, 22, 14, 13]);
+    checkFloat4(program, callFunction(program, "foo7", [textureDepth2D, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeInt(program, 0), makeInt(program, 1)]), [28, 29, 21, 20]);
+    checkFloat4(program, callFunction(program, "foo8", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0)]), [20, 21, 13, 12]);
+    checkFloat4(program, callFunction(program, "foo8", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1)]), [62, 63, 55, 54]);
+    checkFloat4(program, callFunction(program, "foo9", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 1), makeInt(program, 0)]), [21, 22, 14, 13]);
+    checkFloat4(program, callFunction(program, "foo9", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 0), makeInt(program, 0), makeInt(program, 1)]), [28, 29, 21, 20]);
+    checkFloat4(program, callFunction(program, "foo9", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeInt(program, 1), makeInt(program, 0)]), [63, 64, 56, 55]);
+    checkFloat4(program, callFunction(program, "foo9", [textureDepth2DArray, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeInt(program, 0), makeInt(program, 1)]), [70, 71, 63, 62]);
+    checkFloat4(program, callFunction(program, "foo10", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 1), makeFloat(program, 0), makeFloat(program, 0)]), [5, 6, 4, 3]);
+    checkFloat4(program, callFunction(program, "foo10", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, -1), makeFloat(program, 0), makeFloat(program, 0)]), [15, 16, 14, 13]);
+    checkFloat4(program, callFunction(program, "foo10", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 1), makeFloat(program, 0)]), [25, 26, 24, 23]);
+    checkFloat4(program, callFunction(program, "foo10", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, -1), makeFloat(program, 0)]), [35, 36, 34, 33]);
+    checkFloat4(program, callFunction(program, "foo10", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, 1)]), [45, 46, 44, 43]);
+    checkFloat4(program, callFunction(program, "foo10", [textureDepthCube, makeSampler(program, {magFilter: "linear"}), makeFloat(program, 0), makeFloat(program, 0), makeFloat(program, -1)]), [55, 56, 54, 53]);
+    checkFloat4(program, callFunction(program, "foo11", [textureDepth2D, makeSampler(program, {magFilter: "linear", compareFunction: "never"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 13)]), [0, 0, 0, 0]);
+    checkFloat4(program, callFunction(program, "foo11", [textureDepth2D, makeSampler(program, {magFilter: "linear", compareFunction: "less"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 13)]), [1, 1, 0, 0]);
+    checkFloat4(program, callFunction(program, "foo11", [textureDepth2D, makeSampler(program, {magFilter: "linear", compareFunction: "equal"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 13)]), [0, 0, 1, 0]);
+    checkFloat4(program, callFunction(program, "foo11", [textureDepth2D, makeSampler(program, {magFilter: "linear", compareFunction: "lessEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 13)]), [1, 1, 1, 0]);
+    checkFloat4(program, callFunction(program, "foo11", [textureDepth2D, makeSampler(program, {magFilter: "linear", compareFunction: "greater"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 13)]), [0, 0, 0, 1]);
+    checkFloat4(program, callFunction(program, "foo11", [textureDepth2D, makeSampler(program, {magFilter: "linear", compareFunction: "notEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 13)]), [1, 1, 0, 1]);
+    checkFloat4(program, callFunction(program, "foo11", [textureDepth2D, makeSampler(program, {magFilter: "linear", compareFunction: "greaterEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 13)]), [0, 0, 1, 1]);
+    checkFloat4(program, callFunction(program, "foo11", [textureDepth2D, makeSampler(program, {magFilter: "linear", compareFunction: "always"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 13)]), [1, 1, 1, 1]);
+    checkFloat4(program, callFunction(program, "foo12", [textureDepth2D, makeSampler(program, {magFilter: "linear", compareFunction: "never"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 14), makeInt(program, 1), makeInt(program, 0)]), [0, 0, 0, 0]);
+    checkFloat4(program, callFunction(program, "foo12", [textureDepth2D, makeSampler(program, {magFilter: "linear", compareFunction: "less"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 14), makeInt(program, 1), makeInt(program, 0)]), [1, 1, 0, 0]);
+    checkFloat4(program, callFunction(program, "foo12", [textureDepth2D, makeSampler(program, {magFilter: "linear", compareFunction: "equal"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 14), makeInt(program, 1), makeInt(program, 0)]), [0, 0, 1, 0]);
+    checkFloat4(program, callFunction(program, "foo12", [textureDepth2D, makeSampler(program, {magFilter: "linear", compareFunction: "lessEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 14), makeInt(program, 1), makeInt(program, 0)]), [1, 1, 1, 0]);
+    checkFloat4(program, callFunction(program, "foo12", [textureDepth2D, makeSampler(program, {magFilter: "linear", compareFunction: "greater"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 14), makeInt(program, 1), makeInt(program, 0)]), [0, 0, 0, 1]);
+    checkFloat4(program, callFunction(program, "foo12", [textureDepth2D, makeSampler(program, {magFilter: "linear", compareFunction: "notEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 14), makeInt(program, 1), makeInt(program, 0)]), [1, 1, 0, 1]);
+    checkFloat4(program, callFunction(program, "foo12", [textureDepth2D, makeSampler(program, {magFilter: "linear", compareFunction: "greaterEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 14), makeInt(program, 1), makeInt(program, 0)]), [0, 0, 1, 1]);
+    checkFloat4(program, callFunction(program, "foo12", [textureDepth2D, makeSampler(program, {magFilter: "linear", compareFunction: "always"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 14), makeInt(program, 1), makeInt(program, 0)]), [1, 1, 1, 1]);
+    checkFloat4(program, callFunction(program, "foo13", [textureDepth2DArray, makeSampler(program, {magFilter: "linear", compareFunction: "never"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 55)]), [0, 0, 0, 0]);
+    checkFloat4(program, callFunction(program, "foo13", [textureDepth2DArray, makeSampler(program, {magFilter: "linear", compareFunction: "less"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 55)]), [1, 1, 0, 0]);
+    checkFloat4(program, callFunction(program, "foo13", [textureDepth2DArray, makeSampler(program, {magFilter: "linear", compareFunction: "equal"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 55)]), [0, 0, 1, 0]);
+    checkFloat4(program, callFunction(program, "foo13", [textureDepth2DArray, makeSampler(program, {magFilter: "linear", compareFunction: "lessEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 55)]), [1, 1, 1, 0]);
+    checkFloat4(program, callFunction(program, "foo13", [textureDepth2DArray, makeSampler(program, {magFilter: "linear", compareFunction: "greater"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 55)]), [0, 0, 0, 1]);
+    checkFloat4(program, callFunction(program, "foo13", [textureDepth2DArray, makeSampler(program, {magFilter: "linear", compareFunction: "notEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 55)]), [1, 1, 0, 1]);
+    checkFloat4(program, callFunction(program, "foo13", [textureDepth2DArray, makeSampler(program, {magFilter: "linear", compareFunction: "greaterEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 55)]), [0, 0, 1, 1]);
+    checkFloat4(program, callFunction(program, "foo13", [textureDepth2DArray, makeSampler(program, {magFilter: "linear", compareFunction: "always"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 55)]), [1, 1, 1, 1]);
+    checkFloat4(program, callFunction(program, "foo14", [textureDepth2DArray, makeSampler(program, {magFilter: "linear", compareFunction: "never"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 56), makeInt(program, 1), makeInt(program, 0)]), [0, 0, 0, 0]);
+    checkFloat4(program, callFunction(program, "foo14", [textureDepth2DArray, makeSampler(program, {magFilter: "linear", compareFunction: "less"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 56), makeInt(program, 1), makeInt(program, 0)]), [1, 1, 0, 0]);
+    checkFloat4(program, callFunction(program, "foo14", [textureDepth2DArray, makeSampler(program, {magFilter: "linear", compareFunction: "equal"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 56), makeInt(program, 1), makeInt(program, 0)]), [0, 0, 1, 0]);
+    checkFloat4(program, callFunction(program, "foo14", [textureDepth2DArray, makeSampler(program, {magFilter: "linear", compareFunction: "lessEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 56), makeInt(program, 1), makeInt(program, 0)]), [1, 1, 1, 0]);
+    checkFloat4(program, callFunction(program, "foo14", [textureDepth2DArray, makeSampler(program, {magFilter: "linear", compareFunction: "greater"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 56), makeInt(program, 1), makeInt(program, 0)]), [0, 0, 0, 1]);
+    checkFloat4(program, callFunction(program, "foo14", [textureDepth2DArray, makeSampler(program, {magFilter: "linear", compareFunction: "notEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 56), makeInt(program, 1), makeInt(program, 0)]), [1, 1, 0, 1]);
+    checkFloat4(program, callFunction(program, "foo14", [textureDepth2DArray, makeSampler(program, {magFilter: "linear", compareFunction: "greaterEqual"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 56), makeInt(program, 1), makeInt(program, 0)]), [0, 0, 1, 1]);
+    checkFloat4(program, callFunction(program, "foo14", [textureDepth2DArray, makeSampler(program, {magFilter: "linear", compareFunction: "always"}), makeFloat(program, 0.5), makeFloat(program, 0.5), makeFloat(program, 1), makeFloat(program, 56), makeInt(program, 1), makeInt(program, 0)]), [1, 1, 1, 1]);
+    // FIXME: Gather other components
 }
 
 okToTest = true;
@@ -5606,7 +7647,7 @@ function* doTest(testFilter)
     if (!okToTest)
         throw new Error("Test setup is incomplete.");
     let before = preciseTime();
-    
+
     print("Compiling standard library...");
     yield;
     prepare();
@@ -5632,7 +7673,7 @@ function* doTest(testFilter)
     }
 
     let after = preciseTime();
-    
+
     print("Success!");
     print("That took " + (after - before) * 1000 + " ms.");
 }
@@ -5641,4 +7682,5 @@ if (!this.window) {
     Error.stackTraceLimit = Infinity;
     for (let _ of doTest(testFilter)) { }
 }
+
 

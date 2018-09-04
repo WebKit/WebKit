@@ -1,3 +1,186 @@
+2018-09-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Implement texture types
+        https://bugs.webkit.org/show_bug.cgi?id=188940
+
+        Rubber-stamped by Dean Jackson.
+
+        Implement the texture types and operations. This includes Sample(), Load(), Store(), Gather(), and GetDimensions().
+        These functions were implemented according to section 15 of the Vulkan 1.1.83 spec, which lists each operation
+        and how to compute its results.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/Casts.js: Moved from Intrinsics. The texture operations need to cast too, so these are
+        moved into a common location.
+        (cast):
+        (bitwiseCast):
+        (castToUchar):
+        (castToUshort):
+        (castToUint):
+        (castToChar):
+        (castToShort):
+        (castToInt):
+        (castToHalf):
+        (castToFloat):
+        * WebGPUShadingLanguageRI/Intrinsics.js: Use Casts.js and call into TextureOperations.js.
+        (Intrinsics.):
+        (Intrinsics.checkFalse):
+        (Intrinsics.boxVector):
+        (Intrinsics.unboxVector):
+        (Intrinsics):
+        (Intrinsics.cast): Deleted.
+        (Intrinsics.bitwiseCast): Deleted.
+        (Intrinsics.castToHalf): Deleted.
+        * WebGPUShadingLanguageRI/SPIRV.html:
+        * WebGPUShadingLanguageRI/Sampler.js: Added. Represent the Sampler type. 
+        (Sampler):
+        (Sampler.prototype.get rAddressMode):
+        (Sampler.prototype.get sAddressMode):
+        (Sampler.prototype.get tAddressMode):
+        (Sampler.prototype.get minFilter):
+        (Sampler.prototype.get magFilter):
+        (Sampler.prototype.get mipmapFilter):
+        (Sampler.prototype.get lodMinClamp):
+        (Sampler.prototype.get lodMaxClamp):
+        (Sampler.prototype.get maxAnisotropy):
+        (Sampler.prototype.get compareFunction):
+        (Sampler.prototype.get borderColor):
+        (Sampler.prototype.calculateBorderColor.computeValues):
+        (Sampler.prototype.calculateBorderColor):
+        * WebGPUShadingLanguageRI/StandardLibrary.js: Update the standard library. Some of the functions were
+        either missing or wrong.
+        (let.standardLibrary):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js: Test many, many combinations of the texture operations.
+        (makeSampler):
+        (make1DTexture):
+        (make1DTextureArray):
+        (make2DTexture):
+        (make2DTextureArray):
+        (make3DTexture):
+        (makeTextureCube):
+        (makeRW1DTexture):
+        (makeRW1DTextureArray):
+        (makeRW2DTexture):
+        (makeRW2DTextureArray):
+        (makeRW3DTexture):
+        (make2DDepthTexture):
+        (make2DDepthTextureArray):
+        (makeDepthTextureCube):
+        (makeRW2DDepthTexture):
+        (makeRW2DDepthTextureArray):
+        (checkFloat4):
+        * WebGPUShadingLanguageRI/Texture.js: Added. Represents each of the texture types.
+        (Texture):
+        (Texture.prototype.get dimension):
+        (Texture.prototype.get width):
+        (Texture.prototype.get height):
+        (Texture.prototype.get depth):
+        (Texture.prototype.get levelCount):
+        (Texture.prototype.get layerCount):
+        (Texture.prototype.get innerType):
+        (Texture.prototype.get data):
+        (Texture.prototype.elementChecked):
+        (Texture.prototype.setElementChecked):
+        (Texture1D):
+        (Texture1D.prototype.widthAtLevel):
+        (Texture1D.prototype.heightAtLevel):
+        (Texture1D.prototype.depthAtLevel):
+        (Texture1D.prototype.element):
+        (Texture1D.prototype.setElement):
+        (Texture1DArray):
+        (Texture1DArray.prototype.widthAtLevel):
+        (Texture1DArray.prototype.heightAtLevel):
+        (Texture1DArray.prototype.depthAtLevel):
+        (Texture1DArray.prototype.element):
+        (Texture1DArray.prototype.setElement):
+        (Texture2D):
+        (Texture2D.prototype.widthAtLevel):
+        (Texture2D.prototype.heightAtLevel):
+        (Texture2D.prototype.depthAtLevel):
+        (Texture2D.prototype.element):
+        (Texture2D.prototype.setElement):
+        (Texture2DArray):
+        (Texture2DArray.prototype.widthAtLevel):
+        (Texture2DArray.prototype.heightAtLevel):
+        (Texture2DArray.prototype.depthAtLevel):
+        (Texture2DArray.prototype.element):
+        (Texture2DArray.prototype.setElement):
+        (Texture3D):
+        (Texture3D.prototype.widthAtLevel):
+        (Texture3D.prototype.heightAtLevel):
+        (Texture3D.prototype.depthAtLevel):
+        (Texture3D.prototype.element):
+        (Texture3D.prototype.setElement):
+        (TextureCube):
+        (TextureCube.prototype.widthAtLevel):
+        (TextureCube.prototype.heightAtLevel):
+        (TextureCube.prototype.depthAtLevel):
+        (TextureCube.prototype.element):
+        (TextureCube.prototype.setElement):
+        (Texture1DRW):
+        (Texture1DRW.prototype.widthAtLevel):
+        (Texture1DRW.prototype.heightAtLevel):
+        (Texture1DRW.prototype.depthAtLevel):
+        (Texture1DRW.prototype.element):
+        (Texture1DRW.prototype.setElement):
+        (Texture1DArrayRW):
+        (Texture1DArrayRW.prototype.widthAtLevel):
+        (Texture1DArrayRW.prototype.heightAtLevel):
+        (Texture1DArrayRW.prototype.depthAtLevel):
+        (Texture1DArrayRW.prototype.element):
+        (Texture1DArrayRW.prototype.setElement):
+        (Texture2DRW):
+        (Texture2DRW.prototype.widthAtLevel):
+        (Texture2DRW.prototype.heightAtLevel):
+        (Texture2DRW.prototype.depthAtLevel):
+        (Texture2DRW.prototype.element):
+        (Texture2DRW.prototype.setElement):
+        (Texture2DArrayRW):
+        (Texture2DArrayRW.prototype.widthAtLevel):
+        (Texture2DArrayRW.prototype.heightAtLevel):
+        (Texture2DArrayRW.prototype.depthAtLevel):
+        (Texture2DArrayRW.prototype.element):
+        (Texture2DArrayRW.prototype.setElement):
+        (let.TextureDepth2DArrayRW.Texture2DArrayRW.Texture3DRW):
+        (let.TextureDepth2DArrayRW.Texture2DArrayRW.Texture3DRW.prototype.widthAtLevel):
+        (let.TextureDepth2DArrayRW.Texture2DArrayRW.Texture3DRW.prototype.heightAtLevel):
+        (let.TextureDepth2DArrayRW.Texture2DArrayRW.Texture3DRW.prototype.depthAtLevel):
+        (let.TextureDepth2DArrayRW.Texture2DArrayRW.Texture3DRW.prototype.element):
+        (let.TextureDepth2DArrayRW.Texture2DArrayRW.Texture3DRW.prototype.setElement):
+        * WebGPUShadingLanguageRI/TextureOperations.js: Added. This implements the texture operations
+        as described in section 15 of the Vulkan 1.1.83 spec.
+        (depthCompareOperation):
+        (conversionToRGBA):
+        (projectionOperation):
+        (cubeMapFaceSelection):
+        (cubeMapCoordinateTransformation):
+        (cubeMapDerivativeTransformation):
+        (scaleFactorOperation):
+        (levelOfDetailOperation):
+        (nearest):
+        (imageLevelSelection):
+        (strqaToUVWATransformation):
+        (rne):
+        (uvwaToIJKLNTransformationAndArrayLayerSelection):
+        (integerTexelCoordinateOperations):
+        (mirror):
+        (transform):
+        (wrappingOperation):
+        (calculateLambda):
+        (shouldBeBorder):
+        (accessColor):
+        (computeTau):
+        (reduce):
+        (texelGathering):
+        (computeColorFromLevel):
+        (texelFiltering):
+        (castToInnerTypeForGather):
+        (gatherTexture):
+        (castToInnerType):
+        (sampleTexture):
+        * WebGPUShadingLanguageRI/index.html:
+
 2018-09-04  Alexey Proskuryakov  <ap@apple.com>
 
         Removing an accidentally committed debugging print.

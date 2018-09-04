@@ -57,7 +57,7 @@ let standardLibrary = (function() {
         }
         print(`native typedef sampler;`);
         for (var type of [`Texture1D`, `RWTexture1D`, `Texture1DArray`, `RWTexture1DArray`, `Texture2D`, `RWTexture2D`, `Texture2DArray`, `RWTexture2DArray`, `Texture3D`, `RWTexture3D`, `TextureCube`]) {
-            for (var typeArgumentBase of [`bool`, `uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
+            for (var typeArgumentBase of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
                 for (var size of [``, `2`, `3`, `4`]) {
                     print(`native typedef ${type}<${typeArgumentBase}${size}>;`);
                 }
@@ -1897,7 +1897,8 @@ let standardLibrary = (function() {
             print(`native void InterlockedCompareExchange(thread atomic_${type}*, ${type}, ${type}, thread ${type}*);`);
         }
         print();
-        
+        */
+
         for (var type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
             for (var length of [``, `2`, `3`, `4`]) {
                 print(`native ${type}${length} Sample(Texture1D<${type}${length}>, sampler, float location);`);
@@ -1924,12 +1925,18 @@ let standardLibrary = (function() {
                 print(`native ${type}4 Gather(Texture2D<${type}${length}>, sampler, float2 location, int2 offset);`);
                 print(`native ${type}4 GatherRed(Texture2D<${type}${length}>, sampler, float2 location);`);
                 print(`native ${type}4 GatherRed(Texture2D<${type}${length}>, sampler, float2 location, int2 offset);`);
-                print(`native ${type}4 GatherGreen(Texture2D<${type}${length}>, sampler, float2 location);`);
-                print(`native ${type}4 GatherGreen(Texture2D<${type}${length}>, sampler, float2 location, int2 offset);`);
-                print(`native ${type}4 GatherBlue(Texture2D<${type}${length}>, sampler, float2 location);`);
-                print(`native ${type}4 GatherBlue(Texture2D<${type}${length}>, sampler, float2 location, int2 offset);`);
-                print(`native ${type}4 GatherAlpha(Texture2D<${type}${length}>, sampler, float2 location);`);
-                print(`native ${type}4 GatherAlpha(Texture2D<${type}${length}>, sampler, float2 location, int2 offset);`);
+                if (length == "2" || length == "3" || length == "4") {
+                    print(`native ${type}4 GatherGreen(Texture2D<${type}${length}>, sampler, float2 location);`);
+                    print(`native ${type}4 GatherGreen(Texture2D<${type}${length}>, sampler, float2 location, int2 offset);`);
+                    if (length == "3" || length == "4") {
+                        print(`native ${type}4 GatherBlue(Texture2D<${type}${length}>, sampler, float2 location);`);
+                        print(`native ${type}4 GatherBlue(Texture2D<${type}${length}>, sampler, float2 location, int2 offset);`);
+                        if (length == "4") {
+                            print(`native ${type}4 GatherAlpha(Texture2D<${type}${length}>, sampler, float2 location);`);
+                            print(`native ${type}4 GatherAlpha(Texture2D<${type}${length}>, sampler, float2 location, int2 offset);`);
+                        }
+                    }
+                }
                 print(`native ${type}${length} Load(Texture2D<${type}${length}>, int3 location);`);
                 print(`native ${type}${length} Load(Texture2D<${type}${length}>, int3 location, int2 offset);`);
                 print(`native void GetDimensions(Texture2D<${type}${length}>, uint MipLevel, thread uint* Width, thread uint* Height, thread uint* NumberOfLevels);`);
@@ -1946,28 +1953,24 @@ let standardLibrary = (function() {
                 print(`native ${type}4 Gather(Texture2DArray<${type}${length}>, sampler, float3 location, int2 offset);`);
                 print(`native ${type}4 GatherRed(Texture2DArray<${type}${length}>, sampler, float3 location);`);
                 print(`native ${type}4 GatherRed(Texture2DArray<${type}${length}>, sampler, float3 location, int2 offset);`);
-                print(`native ${type}4 GatherGreen(Texture2DArray<${type}${length}>, sampler, float3 location);`);
-                print(`native ${type}4 GatherGreen(Texture2DArray<${type}${length}>, sampler, float3 location, int2 offset);`);
-                print(`native ${type}4 GatherBlue(Texture2DArray<${type}${length}>, sampler, float3 location);`);
-                print(`native ${type}4 GatherBlue(Texture2DArray<${type}${length}>, sampler, float3 location, int2 offset);`);
-                print(`native ${type}4 GatherAlpha(Texture2DArray<${type}${length}>, sampler, float3 location);`);
-                print(`native ${type}4 GatherAlpha(Texture2DArray<${type}${length}>, sampler, float3 location, int2 offset);`);
+                if (length == "2" || length == "3" || length == "4") {
+                    print(`native ${type}4 GatherGreen(Texture2DArray<${type}${length}>, sampler, float3 location);`);
+                    print(`native ${type}4 GatherGreen(Texture2DArray<${type}${length}>, sampler, float3 location, int2 offset);`);
+                    if (length == "3" || length == "4") {
+                        print(`native ${type}4 GatherBlue(Texture2DArray<${type}${length}>, sampler, float3 location);`);
+                        print(`native ${type}4 GatherBlue(Texture2DArray<${type}${length}>, sampler, float3 location, int2 offset);`);
+                        if (length == "4") {
+                            print(`native ${type}4 GatherAlpha(Texture2DArray<${type}${length}>, sampler, float3 location);`);
+                            print(`native ${type}4 GatherAlpha(Texture2DArray<${type}${length}>, sampler, float3 location, int2 offset);`);
+                        }
+                    }
+                }
                 print(`native ${type}${length} Load(Texture2DArray<${type}${length}>, int4 location);`);
                 print(`native ${type}${length} Load(Texture2DArray<${type}${length}>, int4 location, int2 offset);`);
                 print(`native void GetDimensions(Texture2DArray<${type}${length}>, uint MipLevel, thread uint* Width, thread uint* Height, thread uint* Elements, thread uint* NumberOfLevels);`);
                 print();
                 print(`native ${type}${length} Sample(Texture3D<${type}${length}>, sampler, float3 location);`);
                 print(`native ${type}${length} Sample(Texture3D<${type}${length}>, sampler, float3 location, int3 offset);`);
-                print(`native ${type}4 Gather(Texture3D<${type}${length}>, sampler, float3 location);`);
-                print(`native ${type}4 Gather(Texture3D<${type}${length}>, sampler, float3 location, int3 offset);`);
-                print(`native ${type}4 GatherRed(Texture3D<${type}${length}>, sampler, float3 location);`);
-                print(`native ${type}4 GatherRed(Texture3D<${type}${length}>, sampler, float3 location, int3 offset);`);
-                print(`native ${type}4 GatherGreen(Texture3D<${type}${length}>, sampler, float3 location);`);
-                print(`native ${type}4 GatherGreen(Texture3D<${type}${length}>, sampler, float3 location, int3 offset);`);
-                print(`native ${type}4 GatherBlue(Texture3D<${type}${length}>, sampler, float3 location);`);
-                print(`native ${type}4 GatherBlue(Texture3D<${type}${length}>, sampler, float3 location, int3 offset);`);
-                print(`native ${type}4 GatherAlpha(Texture3D<${type}${length}>, sampler, float3 location);`);
-                print(`native ${type}4 GatherAlpha(Texture3D<${type}${length}>, sampler, float3 location, int3 offset);`);
                 print(`native ${type}${length} Load(Texture3D<${type}${length}>, int4 location);`);
                 print(`native ${type}${length} Load(Texture3D<${type}${length}>, int4 location, int3 offset);`);
                 print(`native void GetDimensions(Texture3D<${type}${length}>, uint MipLevel, thread uint* Width, thread uint* Height, thread uint* Depth, thread uint* NumberOfLevels);`);
@@ -1978,9 +1981,14 @@ let standardLibrary = (function() {
                 print(`native ${type}${length} SampleLevel(TextureCube<${type}${length}>, sampler, float3 location, float LOD);`);
                 print(`native ${type}4 Gather(TextureCube<${type}${length}>, sampler, float3 location);`);
                 print(`native ${type}4 GatherRed(TextureCube<${type}${length}>, sampler, float3 location);`);
-                print(`native ${type}4 GatherGreen(TextureCube<${type}${length}>, sampler, float3 location);`);
-                print(`native ${type}4 GatherBlue(TextureCube<${type}${length}>, sampler, float3 location);`);
-                print(`native ${type}4 GatherAlpha(TextureCube<${type}${length}>, sampler, float3 location);`);
+                if (length == "2" || length == "3" || length == "4") {
+                    print(`native ${type}4 GatherGreen(TextureCube<${type}${length}>, sampler, float3 location);`);
+                    if (length == "3" || length == "4") {
+                        print(`native ${type}4 GatherBlue(TextureCube<${type}${length}>, sampler, float3 location);`);
+                        if (length == "4")
+                            print(`native ${type}4 GatherAlpha(TextureCube<${type}${length}>, sampler, float3 location);`);
+                    }
+                }
                 print(`native void GetDimensions(TextureCube<${type}${length}>, uint MipLevel, thread uint* Width, thread uint* Height, thread uint* NumberOfLevels);`);
                 print();
                 print(`native void GetDimensions(RWTexture1D<${type}${length}>, thread uint* Width);`);
@@ -2010,97 +2018,66 @@ let standardLibrary = (function() {
                 print();
             }
         }
-        
+
         for (var type of [`half`, `float`]) {
             print(`native ${type} Sample(TextureDepth2D<${type}>, sampler, float2 location);`);
             print(`native ${type} Sample(TextureDepth2D<${type}>, sampler, float2 location, int2 offset);`);
-            print(`native ${type} SampleCmp(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float CompareValue);`);
-            print(`native ${type} SampleCmp(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float CompareValue, int2 offset);`);
-            print(`native ${type} SampleCmpLevelZero(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float CompareValue);`);
-            print(`native ${type} SampleCmpLevelZero(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float CompareValue, int2 offset);`);
+            print(`native ${type} SampleCmp(TextureDepth2D<${type}>, sampler, float2 location, ${type} CompareValue);`);
+            print(`native ${type} SampleCmp(TextureDepth2D<${type}>, sampler, float2 location, ${type} CompareValue, int2 offset);`);
+            print(`native ${type} SampleCmpLevelZero(TextureDepth2D<${type}>, sampler, float2 location, ${type} CompareValue);`);
+            print(`native ${type} SampleCmpLevelZero(TextureDepth2D<${type}>, sampler, float2 location, ${type} CompareValue, int2 offset);`);
             print(`native ${type} SampleBias(TextureDepth2D<${type}>, sampler, float2 location, float Bias);`);
             print(`native ${type} SampleBias(TextureDepth2D<${type}>, sampler, float2 location, float Bias, int2 offset);`);
             print(`native ${type} SampleGrad(TextureDepth2D<${type}>, sampler, float2 location, float2 DDX, float2 DDY);`);
             print(`native ${type} SampleGrad(TextureDepth2D<${type}>, sampler, float2 location, float2 DDX, float2 DDY, int2 offset);`);
             print(`native ${type} SampleLevel(TextureDepth2D<${type}>, sampler, float2 location, float LOD);`);
             print(`native ${type} SampleLevel(TextureDepth2D<${type}>, sampler, float2 location, float LOD, int2 offset);`);
-            print(`native ${type} Gather(TextureDepth2D<${type}>, sampler, float2 location);`);
-            print(`native ${type} Gather(TextureDepth2D<${type}>, sampler, float2 location, int2 offset);`);
-            print(`native ${type} GatherRed(TextureDepth2D<${type}>, sampler, float2 location);`);
-            print(`native ${type} GatherRed(TextureDepth2D<${type}>, sampler, float2 location, int2 offset);`);
-            print(`native ${type} GatherGreen(TextureDepth2D<${type}>, sampler, float2 location);`);
-            print(`native ${type} GatherGreen(TextureDepth2D<${type}>, sampler, float2 location, int2 offset);`);
-            print(`native ${type} GatherBlue(TextureDepth2D<${type}>, sampler, float2 location);`);
-            print(`native ${type} GatherBlue(TextureDepth2D<${type}>, sampler, float2 location, int2 offset);`);
-            print(`native ${type} GatherAlpha(TextureDepth2D<${type}>, sampler, float2 location);`);
-            print(`native ${type} GatherAlpha(TextureDepth2D<${type}>, sampler, float2 location, int2 offset);`);
-            print(`native ${type} GatherCmp(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value);`);
-            print(`native ${type} GatherCmp(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value, int2 offset);`);
-            print(`native ${type} GatherCmpRed(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value);`);
-            print(`native ${type} GatherCmpRed(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value, int2 offset);`);
-            print(`native ${type} GatherCmpGreen(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value);`);
-            print(`native ${type} GatherCmpGreen(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value, int2 offset);`);
-            print(`native ${type} GatherCmpBlue(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value);`);
-            print(`native ${type} GatherCmpBlue(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value, int2 offset);`);
-            print(`native ${type} GatherCmpAlpha(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value);`);
-            print(`native ${type} GatherCmpAlpha(TextureDepth2D<${type}>, SamplerComparisonState, float2 location, float compare_value, int2 offset);`);
+            print(`native ${type}4 Gather(TextureDepth2D<${type}>, sampler, float2 location);`);
+            print(`native ${type}4 Gather(TextureDepth2D<${type}>, sampler, float2 location, int2 offset);`);
+            print(`native ${type}4 GatherRed(TextureDepth2D<${type}>, sampler, float2 location);`);
+            print(`native ${type}4 GatherRed(TextureDepth2D<${type}>, sampler, float2 location, int2 offset);`);
+            print(`native ${type}4 GatherCmp(TextureDepth2D<${type}>, sampler, float2 location, float compare_value);`);
+            print(`native ${type}4 GatherCmp(TextureDepth2D<${type}>, sampler, float2 location, float compare_value, int2 offset);`);
+            print(`native ${type}4 GatherCmpRed(TextureDepth2D<${type}>, sampler, float2 location, float compare_value);`);
+            print(`native ${type}4 GatherCmpRed(TextureDepth2D<${type}>, sampler, float2 location, float compare_value, int2 offset);`);
             print(`native ${type} Load(TextureDepth2D<${type}>, int3 location);`);
             print(`native ${type} Load(TextureDepth2D<${type}>, int3 location, int2 offset);`);
             print(`native void GetDimensions(TextureDepth2D<${type}>, uint MipLevel, thread uint* Width, thread uint* Height, thread uint* NumberOfLevels);`);
             print();
             print(`native ${type} Sample(TextureDepth2DArray<${type}>, sampler, float3 location);`);
             print(`native ${type} Sample(TextureDepth2DArray<${type}>, sampler, float3 location, int2 offset);`);
-            print(`native ${type} SampleCmp(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float CompareValue);`);
-            print(`native ${type} SampleCmp(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float CompareValue, int2 offset);`);
-            print(`native ${type} SampleCmpLevelZero(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float CompareValue);`);
-            print(`native ${type} SampleCmpLevelZero(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float CompareValue, int2 offset);`);
+            print(`native ${type} SampleCmp(TextureDepth2DArray<${type}>, sampler, float3 location, ${type} CompareValue);`);
+            print(`native ${type} SampleCmp(TextureDepth2DArray<${type}>, sampler, float3 location, ${type} CompareValue, int2 offset);`);
+            print(`native ${type} SampleCmpLevelZero(TextureDepth2DArray<${type}>, sampler, float3 location, ${type} CompareValue);`);
+            print(`native ${type} SampleCmpLevelZero(TextureDepth2DArray<${type}>, sampler, float3 location, ${type} CompareValue, int2 offset);`);
             print(`native ${type} SampleBias(TextureDepth2DArray<${type}>, sampler, float3 location, float Bias);`);
             print(`native ${type} SampleBias(TextureDepth2DArray<${type}>, sampler, float3 location, float Bias, int2 offset);`);
             print(`native ${type} SampleGrad(TextureDepth2DArray<${type}>, sampler, float3 location, float2 DDX, float2 DDY);`);
             print(`native ${type} SampleGrad(TextureDepth2DArray<${type}>, sampler, float3 location, float2 DDX, float2 DDY, int2 offset);`);
             print(`native ${type} SampleLevel(TextureDepth2DArray<${type}>, sampler, float3 location, float LOD);`);
             print(`native ${type} SampleLevel(TextureDepth2DArray<${type}>, sampler, float3 location, float LOD, int2 offset);`);
-            print(`native ${type} Gather(TextureDepth2DArray<${type}>, sampler, float3 location);`);
-            print(`native ${type} Gather(TextureDepth2DArray<${type}>, sampler, float3 location, int2 offset);`);
-            print(`native ${type} GatherRed(TextureDepth2DArray<${type}>, sampler, float3 location);`);
-            print(`native ${type} GatherRed(TextureDepth2DArray<${type}>, sampler, float3 location, int2 offset);`);
-            print(`native ${type} GatherGreen(TextureDepth2DArray<${type}>, sampler, float3 location);`);
-            print(`native ${type} GatherGreen(TextureDepth2DArray<${type}>, sampler, float3 location, int2 offset);`);
-            print(`native ${type} GatherBlue(TextureDepth2DArray<${type}>, sampler, float3 location);`);
-            print(`native ${type} GatherBlue(TextureDepth2DArray<${type}>, sampler, float3 location, int2 offset);`);
-            print(`native ${type} GatherAlpha(TextureDepth2DArray<${type}>, sampler, float3 location);`);
-            print(`native ${type} GatherAlpha(TextureDepth2DArray<${type}>, sampler, float3 location, int2 offset);`);
-            print(`native ${type} GatherCmp(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
-            print(`native ${type} GatherCmp(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value, int2 offset);`);
-            print(`native ${type} GatherCmpRed(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
-            print(`native ${type} GatherCmpRed(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value, int2 offset);`);
-            print(`native ${type} GatherCmpGreen(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
-            print(`native ${type} GatherCmpGreen(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value, int2 offset);`);
-            print(`native ${type} GatherCmpBlue(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
-            print(`native ${type} GatherCmpBlue(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value, int2 offset);`);
-            print(`native ${type} GatherCmpAlpha(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
-            print(`native ${type} GatherCmpAlpha(TextureDepth2DArray<${type}>, SamplerComparisonState, float3 location, float compare_value, int2 offset);`);
+            print(`native ${type}4 Gather(TextureDepth2DArray<${type}>, sampler, float3 location);`);
+            print(`native ${type}4 Gather(TextureDepth2DArray<${type}>, sampler, float3 location, int2 offset);`);
+            print(`native ${type}4 GatherRed(TextureDepth2DArray<${type}>, sampler, float3 location);`);
+            print(`native ${type}4 GatherRed(TextureDepth2DArray<${type}>, sampler, float3 location, int2 offset);`);
+            print(`native ${type}4 GatherCmp(TextureDepth2DArray<${type}>, sampler, float3 location, float compare_value);`);
+            print(`native ${type}4 GatherCmp(TextureDepth2DArray<${type}>, sampler, float3 location, float compare_value, int2 offset);`);
+            print(`native ${type}4 GatherCmpRed(TextureDepth2DArray<${type}>, sampler, float3 location, float compare_value);`);
+            print(`native ${type}4 GatherCmpRed(TextureDepth2DArray<${type}>, sampler, float3 location, float compare_value, int2 offset);`);
             print(`native ${type} Load(TextureDepth2DArray<${type}>, int4 location);`);
             print(`native ${type} Load(TextureDepth2DArray<${type}>, int4 location, int2 offset);`);
             print(`native void GetDimensions(TextureDepth2DArray<${type}>, uint MipLevel, thread uint* Width, thread uint* Height, thread uint* Elements, thread uint* NumberOfLevels);`);
             print();
             print(`native ${type} Sample(TextureDepthCube<${type}>, sampler, float3 location);`);
-            print(`native ${type} SampleCmp(TextureDepthCube<${type}>, SamplerComparisonState, float3 location, float CompareValue);`);
-            print(`native ${type} SampleCmpLevelZero(TextureDepthCube<${type}>, SamplerComparisonState, float3 location, float CompareValue);`);
+            print(`native ${type} SampleCmp(TextureDepthCube<${type}>, sampler, float3 location, ${type} CompareValue);`);
+            print(`native ${type} SampleCmpLevelZero(TextureDepthCube<${type}>, sampler, float3 location, ${type} CompareValue);`);
             print(`native ${type} SampleBias(TextureDepthCube<${type}>, sampler, float3 location, float Bias);`);
-            print(`native ${type} SampleGrad(TextureDepthCube<${type}>, sampler, float3 location, float2 DDX, float2 DDY);`);
+            print(`native ${type} SampleGrad(TextureDepthCube<${type}>, sampler, float3 location, float3 DDX, float3 DDY);`);
             print(`native ${type} SampleLevel(TextureDepthCube<${type}>, sampler, float3 location, float LOD);`);
-            print(`native ${type} Gather(TextureDepthCube<${type}>, sampler, float3 location);`);
-            print(`native ${type} GatherRed(TextureDepthCube<${type}>, sampler, float3 location);`);
-            print(`native ${type} GatherGreen(TextureDepthCube<${type}>, sampler, float3 location);`);
-            print(`native ${type} GatherBlue(TextureDepthCube<${type}>, sampler, float3 location);`);
-            print(`native ${type} GatherAlpha(TextureDepthCube<${type}>, sampler, float3 location);`);
-            print(`native ${type} GatherCmp(TextureDepthCube<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
-            print(`native ${type} GatherCmpRed(TextureDepthCube<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
-            print(`native ${type} GatherCmpGreen(TextureDepthCube<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
-            print(`native ${type} GatherCmpBlue(TextureDepthCube<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
-            print(`native ${type} GatherCmpAlpha(TextureDepthCube<${type}>, SamplerComparisonState, float3 location, float compare_value);`);
-            print(`native ${type} Load(TextureDepthCube<${type}>, int4 location);`);
+            print(`native ${type}4 Gather(TextureDepthCube<${type}>, sampler, float3 location);`);
+            print(`native ${type}4 GatherRed(TextureDepthCube<${type}>, sampler, float3 location);`);
+            print(`native ${type}4 GatherCmp(TextureDepthCube<${type}>, sampler, float3 location, float compare_value);`);
+            print(`native ${type}4 GatherCmpRed(TextureDepthCube<${type}>, sampler, float3 location, float compare_value);`);
             print(`native void GetDimensions(TextureDepthCube<${type}>, uint MipLevel, thread uint* Width, thread uint* Height, thread uint* NumberOfLevels);`);
             print();
             print(`native void GetDimensions(RWTextureDepth2D<${type}>, thread uint* Width, thread uint* Height);`);
@@ -2114,7 +2091,6 @@ let standardLibrary = (function() {
             print(`native void Store(RWTextureDepth2DArray<${type}>, ${type}, uint3 location);`);
             print();
         }
-        */
     })();
     return result;
 })();

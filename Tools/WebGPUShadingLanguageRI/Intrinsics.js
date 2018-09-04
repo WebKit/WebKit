@@ -48,61 +48,6 @@ class Intrinsics {
             return true;
         }
 
-        function cast(typedArrayConstructor, number)
-        {
-            var array = new typedArrayConstructor(1);
-            array[0] = number;
-            return array[0];
-        }
-
-        function bitwiseCast(typedArrayConstructor1, typedArrayConstructor2, value)
-        {
-            let typedArray1 = new typedArrayConstructor1(1);
-            let typedArray2 = new typedArrayConstructor2(typedArray1.buffer);
-            typedArray1[0] = value;
-            return typedArray2[0];
-        }
-
-        function castToHalf(number)
-        {
-            // FIXME: Make this math obey IEEE 754.
-            if (Number.isNaN(number))
-               return number
-            if (number > 65504)
-                return Number.POSITIVE_INFINITY;
-            if (number < -65504)
-                return Number.NEGATIVE_INFINITY;
-            if (number > 0 && number < Math.pow(2, -24))
-                return 0;
-            if (number < 0 && number > -Math.pow(2, -24))
-                return -0;
-            let doubleArray = new Float64Array(1);
-            let uintArray = new Uint8Array(doubleArray.buffer);
-            doubleArray[0] = number;
-            let sign = uintArray[7] & 0x80;
-            let exponent = ((uintArray[7] & 0x7f) << 4) | ((uintArray[6] & 0xf0) >>> 4);
-            let significand = ((uintArray[6] & 0x0f) << 6) | ((uintArray[5] & 0xfc) >>> 2);
-
-            if ((exponent - 1023) < -14) {
-                exponent = 0;
-                significand = (Math.abs(number) * Math.pow(2, 24)) >>> 0;
-                let value = Math.pow(2, -14) * significand / 1024;
-                if (sign != 0)
-                    value *= -1;
-                return value;
-            }
-
-            doubleArray[0] = 0;
-
-            uintArray[7] |= sign;
-            uintArray[7] |= (exponent >>> 4);
-            uintArray[6] |= ((exponent << 4) & 0xf0);
-            uintArray[6] |= (significand >>> 6);
-            uintArray[5] |= ((significand << 2) & 0xfc);
-
-            return doubleArray[0];
-        }
-
         this._map.set(
             "native typedef void",
             type => {
@@ -128,15 +73,15 @@ class Intrinsics {
                 type.isInt = true;
                 type.isNumber = true;
                 type.isSigned = false;
-                type.canRepresent = value => isBitwiseEquivalent(value & 0xff, value);
+                type.canRepresent = value => isBitwiseEquivalent(castToUchar(value), value);
                 type.size = 1;
                 type.defaultValue = 0;
-                type.createLiteral = (origin, value) => IntLiteral.withType(origin, value & 0xff, type);
-                type.successorValue = value => (value + 1) & 0xff;
+                type.createLiteral = (origin, value) => IntLiteral.withType(origin, castToUchar(value), type);
+                type.successorValue = value => castToUchar(value + 1);
                 type.valuesEqual = (a, b) => a === b;
                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
-                type.formatValueFromIntLiteral = value => value & 0xff;
-                type.formatValueFromUintLiteral = value => value & 0xff;
+                type.formatValueFromIntLiteral = value => castToUchar(value);
+                type.formatValueFromUintLiteral = value => castToUchar(value);
                 type.allValues = function*() {
                     for (let i = 0; i <= 0xff; ++i)
                         yield {value: i, name: i};
@@ -152,15 +97,15 @@ class Intrinsics {
                  type.isInt = true;
                  type.isNumber = true;
                  type.isSigned = false;
-                 type.canRepresent = value => isBitwiseEquivalent(value & 0xffff, value);
+                 type.canRepresent = value => isBitwiseEquivalent(castToUshort(value), value);
                  type.size = 1;
                  type.defaultValue = 0;
-                 type.createLiteral = (origin, value) => IntLiteral.withType(origin, value & 0xffff, type);
-                 type.successorValue = value => (value + 1) & 0xffff;
+                 type.createLiteral = (origin, value) => IntLiteral.withType(origin, castToUshort(value), type);
+                 type.successorValue = value => castToUshort(value + 1);
                  type.valuesEqual = (a, b) => a === b;
                  type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
-                 type.formatValueFromIntLiteral = value => value & 0xffff;
-                 type.formatValueFromUintLiteral = value => value & 0xffff;
+                 type.formatValueFromIntLiteral = value => castToUshort(value);
+                 type.formatValueFromUintLiteral = value => castToUshort(value);
                  type.allValues = function*() {
                      for (let i = 0; i <= 0xffff; ++i)
                          yield {value: i, name: i};
@@ -175,15 +120,15 @@ class Intrinsics {
                  type.isInt = true;
                  type.isNumber = true;
                  type.isSigned = false;
-                 type.canRepresent = value => isBitwiseEquivalent(value >>> 0, value);
+                 type.canRepresent = value => isBitwiseEquivalent(castToUint(value), value);
                  type.size = 1;
                  type.defaultValue = 0;
-                 type.createLiteral = (origin, value) => IntLiteral.withType(origin, value >>> 0, type);
-                 type.successorValue = value => (value + 1) >>> 0;
+                 type.createLiteral = (origin, value) => IntLiteral.withType(origin, castToUint(value), type);
+                 type.successorValue = value => castToUint(value + 1);
                  type.valuesEqual = (a, b) => a === b;
                  type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
-                 type.formatValueFromIntLiteral = value => value >>> 0;
-                 type.formatValueFromUintLiteral = value => value >>> 0;
+                 type.formatValueFromIntLiteral = value => castToUint(value);
+                 type.formatValueFromUintLiteral = value => castToUint(value);
                  type.allValues = function*() {
                      for (let i = 0; i <= 0xffffffff; ++i)
                          yield {value: i, name: i};
@@ -198,18 +143,18 @@ class Intrinsics {
                  type.isInt = true;
                  type.isNumber = true;
                  type.isSigned = true;
-                 type.canRepresent = value => isBitwiseEquivalent(cast(Int8Array, value), value);
+                 type.canRepresent = value => isBitwiseEquivalent(castToChar(value), value);
                  type.size = 1;
                  type.defaultValue = 0;
-                 type.createLiteral = (origin, value) => IntLiteral.withType(origin, cast(Int8Array, value), type);
-                 type.successorValue = value => cast(Int8Array, value + 1);
+                 type.createLiteral = (origin, value) => IntLiteral.withType(origin, castToChar(value), type);
+                 type.successorValue = value => castToChar(value + 1);
                  type.valuesEqual = (a, b) => a === b;
                  type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
-                 type.formatValueFromIntLiteral = value => cast(Int8Array, value);
-                 type.formatValueFromUintLiteral = value => cast(Int8Array, value);
+                 type.formatValueFromIntLiteral = value => castToChar(value);
+                 type.formatValueFromUintLiteral = value => castToChar(value);
                  type.allValues = function*() {
                      for (let i = 0; i <= 0xff; ++i) {
-                         let value = cast(Int8Array, i);
+                         let value = castToChar(i);
                          yield {value: value, name: value};
                      }
                  };
@@ -223,18 +168,18 @@ class Intrinsics {
                  type.isInt = true;
                  type.isNumber = true;
                  type.isSigned = true;
-                 type.canRepresent = value => isBitwiseEquivalent(cast(Int16Array, value), value);
+                 type.canRepresent = value => isBitwiseEquivalent(castToShort(value), value);
                  type.size = 1;
                  type.defaultValue = 0;
-                 type.createLiteral = (origin, value) => IntLiteral.withType(origin, cast(Int16Array, value), type);
-                 type.successorValue = value => cast(Int16Array, value + 1);
+                 type.createLiteral = (origin, value) => IntLiteral.withType(origin, castToShort(value), type);
+                 type.successorValue = value => castToShort(value + 1);
                  type.valuesEqual = (a, b) => a === b;
                  type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
-                 type.formatValueFromIntLiteral = value => cast(Int16Array, value);
-                 type.formatValueFromUintLiteral = value => cast(Int16Array, value);
+                 type.formatValueFromIntLiteral = value => castToShort(value);
+                 type.formatValueFromUintLiteral = value => castToShort(value);
                  type.allValues = function*() {
                      for (let i = 0; i <= 0xffff; ++i) {
-                         let value = cast(Int16Array, i);
+                         let value = castToShort(i);
                          yield {value: value, name: value};
                      }
                  };
@@ -248,18 +193,18 @@ class Intrinsics {
                  type.isInt = true;
                  type.isNumber = true;
                  type.isSigned = true;
-                 type.canRepresent = value => isBitwiseEquivalent(value | 0, value);
+                 type.canRepresent = value => isBitwiseEquivalent(castToInt(value), value);
                  type.size = 1;
                  type.defaultValue = 0;
-                 type.createLiteral = (origin, value) => IntLiteral.withType(origin, value | 0, type);
-                 type.successorValue = value => (value + 1) | 0;
+                 type.createLiteral = (origin, value) => IntLiteral.withType(origin, castToInt(value), type);
+                 type.successorValue = value => castToInt(value + 1);
                  type.valuesEqual = (a, b) => a === b;
                  type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
-                 type.formatValueFromIntLiteral = value => value | 0;
-                 type.formatValueFromUintLiteral = value => value | 0;
+                 type.formatValueFromIntLiteral = value => castToInt(value);
+                 type.formatValueFromUintLiteral = value => castToInt(value);
                  type.allValues = function*() {
                      for (let i = 0; i <= 0xffffffff; ++i) {
-                         let value = i | 0;
+                         let value = castToInt(i);
                          yield {value: value, name: value};
                      }
                  };
@@ -292,7 +237,7 @@ class Intrinsics {
                  type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
                  type.formatValueFromIntLiteral = value => value;
                  type.formatValueFromUintLiteral = value => value;
-                 type.formatValueFromFloatLiteral = value => Math.fround(value);
+                 type.formatValueFromFloatLiteral = value => castToFloat(value);
              });
 
         this._map.set(
@@ -330,7 +275,8 @@ class Intrinsics {
             "native typedef sampler",
             type => {
                 this.sampler = type;
-                // FIXME: Figure out what to put here.
+                type.size = 1;
+                type.populateDefaultValue = (buffer, offset) => buffer.set(offset, {});
             });
 
         for (let textureType of ["Texture1D", "RWTexture1D", "Texture1DArray", "RWTexture1DArray", "Texture2D", "RWTexture2D", "Texture2DArray", "RWTexture2DArray", "Texture3D", "RWTexture3D", "TextureCube"]) {
@@ -339,12 +285,16 @@ class Intrinsics {
                     `native typedef ${textureType}<${typeArgument}>`,
                     type => {
                         this[`${textureType}<${typeArgument}>`] = type;
+                        type.size = 1;
+                        type.populateDefaultValue = (buffer, offset) => buffer.set(offset, {});
                     });
                 for (let i = 2; i <= 4; ++i) {
                     this._map.set(
                         `native typedef ${textureType}<${typeArgument}${i}>`,
                         type => {
                             this[`${textureType}<${typeArgument}${i}>`] = type;
+                            type.size = 1;
+                            type.populateDefaultValue = (buffer, offset) => buffer.set(offset, {});
                         });
                 }
             }
@@ -356,6 +306,8 @@ class Intrinsics {
                     `native typedef ${textureType}<${typeArgument}>`,
                     type => {
                         this[`${textureType}<${typeArgument}>`] = type;
+                        type.size = 1;
+                        type.populateDefaultValue = (buffer, offset) => buffer.set(offset, {});
                     });
             }
         }
@@ -364,7 +316,7 @@ class Intrinsics {
             this._map.set(
                 `native operator uchar(${primitiveType})`,
                 func => {
-                    func.implementation = ([value]) => EPtr.box(value.loadValue() & 0xff);
+                    func.implementation = ([value]) => EPtr.box(castToUchar(value.loadValue()));
                 });
         }
 
@@ -372,7 +324,7 @@ class Intrinsics {
             this._map.set(
                 `native operator ushort(${primitiveType})`,
                 func => {
-                    func.implementation = ([value]) => EPtr.box(value.loadValue() & 0xffff);
+                    func.implementation = ([value]) => EPtr.box(castToUshort(value.loadValue()));
                 });
         }
 
@@ -380,7 +332,7 @@ class Intrinsics {
             this._map.set(
                 `native operator uint(${primitiveType})`,
                 func => {
-                    func.implementation = ([value]) => EPtr.box(value.loadValue() >>> 0);
+                    func.implementation = ([value]) => EPtr.box(castToUint(value.loadValue()));
                 });
         }
 
@@ -388,7 +340,7 @@ class Intrinsics {
             this._map.set(
                 `native operator char(${primitiveType})`,
                 func => {
-                    func.implementation = ([value]) => EPtr.box(cast(Int8Array, value.loadValue()));
+                    func.implementation = ([value]) => EPtr.box(castToChar(value.loadValue()));
                 });
         }
 
@@ -396,7 +348,7 @@ class Intrinsics {
             this._map.set(
                 `native operator short(${primitiveType})`,
                 func => {
-                    func.implementation = ([value]) => EPtr.box(cast(Int16Array, value.loadValue()));
+                    func.implementation = ([value]) => EPtr.box(castToShort(value.loadValue()));
                 });
         }
 
@@ -420,7 +372,7 @@ class Intrinsics {
             this._map.set(
                 `native operator float(${primitiveType})`,
                 func => {
-                    func.implementation = ([value]) => EPtr.box(Math.fround(value.loadValue()));
+                    func.implementation = ([value]) => EPtr.box(castToFloat(value.loadValue()));
                 });
         }
 
@@ -484,292 +436,292 @@ class Intrinsics {
             "native int operator-(int)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box((-value.loadValue()) | 0);
+                    EPtr.box(castToInt(-value.loadValue()));
             });
 
         this._map.set(
             "native float operator-(float)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box(Math.fround(-value.loadValue()));
+                    EPtr.box(castToFloat(-value.loadValue()));
             });
 
         this._map.set(
             "native int operator+(int,int)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() + right.loadValue()) | 0);
+                    EPtr.box(castToInt(left.loadValue() + right.loadValue()));
             });
 
         this._map.set(
             "native int operator-(int,int)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() - right.loadValue()) | 0);
+                    EPtr.box(castToInt(left.loadValue() - right.loadValue()));
             });
 
         this._map.set(
             "native int operator*(int,int)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() * right.loadValue()) | 0);
+                    EPtr.box(castToInt(left.loadValue() * right.loadValue()));
             });
 
         this._map.set(
             "native int operator/(int,int)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() / right.loadValue()) | 0);
+                    EPtr.box(castToInt(left.loadValue() / right.loadValue()));
             });
 
         this._map.set(
             "native uint operator+(uint,uint)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() + right.loadValue()) >>> 0);
+                    EPtr.box(castToUint(left.loadValue() + right.loadValue()));
             });
 
         this._map.set(
             "native uint operator-(uint,uint)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() - right.loadValue()) >>> 0);
+                    EPtr.box(castToUint(left.loadValue() - right.loadValue()));
             });
 
         this._map.set(
             "native uint operator*(uint,uint)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() * right.loadValue()) >>> 0);
+                    EPtr.box(castToUint(left.loadValue() * right.loadValue()));
             });
 
         this._map.set(
             "native uint operator/(uint,uint)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() / right.loadValue()) >>> 0);
+                    EPtr.box(castToUint(left.loadValue() / right.loadValue()));
             });
 
         this._map.set(
             "native float operator+(float,float)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box(Math.fround(left.loadValue() + right.loadValue()));
+                    EPtr.box(castToFloat(left.loadValue() + right.loadValue()));
             });
 
         this._map.set(
             "native float operator-(float,float)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box(Math.fround(left.loadValue() - right.loadValue()));
+                    EPtr.box(castToFloat(left.loadValue() - right.loadValue()));
             });
 
         this._map.set(
             "native float operator*(float,float)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box(Math.fround(left.loadValue() * right.loadValue()));
+                    EPtr.box(castToFloat(left.loadValue() * right.loadValue()));
             });
 
         this._map.set(
             "native float operator/(float,float)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box(Math.fround(left.loadValue() / right.loadValue()));
+                    EPtr.box(castToFloat(left.loadValue() / right.loadValue()));
             });
 
         this._map.set(
             "native int operator&(int,int)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() & right.loadValue()) | 0);
+                    EPtr.box(castToInt(left.loadValue() & right.loadValue()));
             });
 
         this._map.set(
             "native int operator|(int,int)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() | right.loadValue()) | 0);
+                    EPtr.box(castToInt(left.loadValue() | right.loadValue()));
             });
 
         this._map.set(
             "native int operator^(int,int)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() ^ right.loadValue()) | 0);
+                    EPtr.box(castToInt(left.loadValue() ^ right.loadValue()));
             });
 
         this._map.set(
             "native int operator~(int)",
             func => {
-                func.implementation = ([value]) => EPtr.box((~value.loadValue()) | 0);
+                func.implementation = ([value]) => EPtr.box(castToInt(~value.loadValue()));
             });
 
         this._map.set(
             "native int operator<<(int,uint)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() << right.loadValue()) | 0);
+                    EPtr.box(castToInt(left.loadValue() << right.loadValue()));
             });
 
         this._map.set(
             "native int operator>>(int,uint)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() >> right.loadValue()) | 0);
+                    EPtr.box(castToInt(left.loadValue() >> right.loadValue()));
             });
 
         this._map.set(
             "native uint operator&(uint,uint)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() & right.loadValue()) >>> 0);
+                    EPtr.box(castToUint(left.loadValue() & right.loadValue()));
             });
 
         this._map.set(
             "native uint operator|(uint,uint)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() | right.loadValue()) >>> 0);
+                    EPtr.box(castToUint(left.loadValue() | right.loadValue()));
             });
 
         this._map.set(
             "native uint operator^(uint,uint)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() ^ right.loadValue()) >>> 0);
+                    EPtr.box(castToUint(left.loadValue() ^ right.loadValue()));
             });
 
         this._map.set(
             "native uint operator~(uint)",
             func => {
-                func.implementation = ([value]) => EPtr.box((~value.loadValue()) >>> 0);
+                func.implementation = ([value]) => EPtr.box(castToUint(~value.loadValue()));
             });
 
         this._map.set(
             "native uint operator<<(uint,uint)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() << right.loadValue()) >>> 0);
+                    EPtr.box(castToUint(left.loadValue() << right.loadValue()));
             });
 
         this._map.set(
             "native uint operator>>(uint,uint)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box((left.loadValue() >>> right.loadValue()) >>> 0);
+                    EPtr.box(castToUint(left.loadValue() >>> right.loadValue()));
             });
 
         this._map.set(
             "native float cos(float)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box(Math.fround(Math.cos(value.loadValue())));
+                    EPtr.box(castToFloat(Math.cos(value.loadValue())));
             });
 
         this._map.set(
             "native float sin(float)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box(Math.fround(Math.sin(value.loadValue())));
+                    EPtr.box(castToFloat(Math.sin(value.loadValue())));
             });
 
         this._map.set(
             "native float tan(float)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box(Math.fround(Math.tan(value.loadValue())));
+                    EPtr.box(castToFloat(Math.tan(value.loadValue())));
             });
 
         this._map.set(
             "native float acos(float)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box(Math.fround(Math.acos(value.loadValue())));
+                    EPtr.box(castToFloat(Math.acos(value.loadValue())));
             });
 
         this._map.set(
             "native float asin(float)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box(Math.fround(Math.asin(value.loadValue())));
+                    EPtr.box(castToFloat(Math.asin(value.loadValue())));
             });
 
         this._map.set(
             "native float atan(float)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box(Math.fround(Math.atan(value.loadValue())));
+                    EPtr.box(castToFloat(Math.atan(value.loadValue())));
             });
 
         this._map.set(
             "native float cosh(float)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box(Math.fround(Math.cosh(value.loadValue())));
+                    EPtr.box(castToFloat(Math.cosh(value.loadValue())));
             });
 
         this._map.set(
             "native float sinh(float)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box(Math.fround(Math.sinh(value.loadValue())));
+                    EPtr.box(castToFloat(Math.sinh(value.loadValue())));
             });
 
         this._map.set(
             "native float tanh(float)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box(Math.fround(Math.tanh(value.loadValue())));
+                    EPtr.box(castToFloat(Math.tanh(value.loadValue())));
             });
 
         this._map.set(
             "native float ceil(float)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box(Math.fround(Math.ceil(value.loadValue())));
+                    EPtr.box(castToFloat(Math.ceil(value.loadValue())));
             });
 
         this._map.set(
             "native float exp(float)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box(Math.fround(Math.exp(value.loadValue())));
+                    EPtr.box(castToFloat(Math.exp(value.loadValue())));
             });
 
         this._map.set(
             "native float floor(float)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box(Math.fround(Math.floor(value.loadValue())));
+                    EPtr.box(castToFloat(Math.floor(value.loadValue())));
             });
 
         this._map.set(
             "native float log(float)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box(Math.fround(Math.log(value.loadValue())));
+                    EPtr.box(castToFloat(Math.log(value.loadValue())));
             });
 
         this._map.set(
             "native float round(float)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box(Math.fround(Math.round(value.loadValue())));
+                    EPtr.box(castToFloat(Math.round(value.loadValue())));
             });
 
         this._map.set(
             "native float sqrt(float)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box(Math.fround(Math.sqrt(value.loadValue())));
+                    EPtr.box(castToFloat(Math.sqrt(value.loadValue())));
             });
 
         this._map.set(
             "native float trunc(float)",
             func => {
                 func.implementation = ([value]) =>
-                    EPtr.box(Math.fround(Math.trunc(value.loadValue())));
+                    EPtr.box(castToFloat(Math.trunc(value.loadValue())));
             });
 
         this._map.set(
@@ -788,7 +740,7 @@ class Intrinsics {
             "native float pow(float,float)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box(Math.fround(Math.pow(left.loadValue(), right.loadValue())));
+                    EPtr.box(castToFloat(Math.pow(left.loadValue(), right.loadValue())));
             });
 
         this._map.set(
@@ -832,7 +784,7 @@ class Intrinsics {
             "native float atan2(float,float)",
             func => {
                 func.implementation = ([left, right]) =>
-                    EPtr.box(Math.fround(Math.atan2(left.loadValue(), right.loadValue())));
+                    EPtr.box(castToFloat(Math.atan2(left.loadValue(), right.loadValue())));
             });
 
         this._map.set(
@@ -914,6 +866,1395 @@ class Intrinsics {
 
         for (let setter of BuiltinMatrixSetter.functions())
             this._map.set(setter.toString(), func => setter.instantiateImplementation(func));
+
+        function checkUndefined(origin, explanation, value)
+        {
+            if (value == undefined)
+                throw new WTrapError("[Load]", "Texture read out of bounds");
+            return value;
+        }
+
+        function checkFalse(origin, explanation, value)
+        {
+            if (value == false)
+                throw new WTrapError("[Store]", "Texture store out of bounds");
+        }
+
+        function boxVector(a)
+        {
+            if (a instanceof Array) {
+                let result = new EPtr(new EBuffer(a.length), 0);
+                for (let i = 0; i < a.length; ++i)
+                    result.set(i, a[i]);
+                return result;
+            } else
+                return EPtr.box(a);
+        }
+
+        function unboxVector(a, length)
+        {
+            if (length != "") {
+                length = Number.parseInt(length);
+                let result = [];
+                for (let i = 0; i < length; ++i)
+                    result.push(a.get(i));
+                return result;
+            } else
+                return a.loadValue();
+        }
+
+        for (let type of ["uchar", "ushort", "uint", "char", "short", "int", "half", "float"]) {
+            for (var lengthVariable of [``, `2`, `3`, `4`]) {
+                let length = lengthVariable;
+                this._map.set(
+                    `native ${type}${length} Sample(Texture1D<${type}${length}>,sampler,float location)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location]) {
+                            let locationArray = [location.loadValue(), 0, 0, 1, 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Sample(Texture1D<${type}${length}>,sampler,float location,int offset)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, offset]) {
+                            let locationArray = [location.loadValue(), 0, 0, 1, 0];
+                            let deltaArray = [offset.loadValue(), 0, 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Load(Texture1D<${type}${length}>,int2 location)`,
+                    func => {
+                        func.implementation = function ([texture, location]) {
+                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(1), 0, 0, location.get(0))));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Load(Texture1D<${type}${length}>,int2 location,int offset)`,
+                    func => {
+                        func.implementation = function ([texture, location, offset]) {
+                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(1), 0, 0, location.get(0) + offset.loadValue())));
+                        }
+                    });
+                this._map.set(
+                    `native void GetDimensions(Texture1D<${type}${length}>,uint MipLevel,uint* thread Width,uint* thread NumberOfLevels)`,
+                    func => {
+                        func.implementation = function([texture, miplevel, width, numberOfLevels]) {
+                            let tex = texture.loadValue();
+                            let mipID = miplevel.loadValue();
+                            if (mipID >= tex.levelCount)
+                                throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
+                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                        }
+                    });
+
+                 this._map.set(
+                    `native ${type}${length} Sample(Texture1DArray<${type}${length}>,sampler,float2 location)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location]) {
+                            let locationArray = [location.get(0), 0, 0, 1, location.get(1)];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Sample(Texture1DArray<${type}${length}>,sampler,float2 location,int offset)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, offset]) {
+                            let locationArray = [location.get(0), 0, 0, 1, location.get(1)];
+                            let deltaArray = [offset.loadValue(), 0, 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Load(Texture1DArray<${type}${length}>,int3 location)`,
+                    func => {
+                        func.implementation = function ([texture, location]) {
+                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(2), location.get(1), 0, 0, location.get(0))));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Load(Texture1DArray<${type}${length}>,int3 location,int offset)`,
+                    func => {
+                        func.implementation = function ([texture, location, offset]) {
+                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(2), location.get(1), 0, 0, location.get(0) + offset.loadValue())));
+                        }
+                    });
+                this._map.set(
+                    `native void GetDimensions(Texture1DArray<${type}${length}>,uint MipLevel,uint* thread Width,uint* thread Elements,uint* thread NumberOfLevels)`,
+                    func => {
+                        func.implementation = function([texture, miplevel, width, elements, numberOfLevels]) {
+                            let tex = texture.loadValue();
+                            let mipID = miplevel.loadValue();
+                            if (mipID >= tex.levelCount)
+                                throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
+                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                        }
+                    });
+
+                 this._map.set(
+                    `native ${type}${length} Sample(Texture2D<${type}${length}>,sampler,float2 location)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Sample(Texture2D<${type}${length}>,sampler,float2 location,int2 offset)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, offset]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                            let deltaArray = [offset.get(0), offset.get(1), 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} SampleBias(Texture2D<${type}${length}>,sampler,float2 location,float Bias)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, bias]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, bias.loadValue(), undefined, undefined, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} SampleBias(Texture2D<${type}${length}>,sampler,float2 location,float Bias,int2 offset)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, bias, offset]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                            let deltaArray = [offset.get(0), offset.get(1), 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, bias.loadValue(), undefined, undefined, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} SampleGrad(Texture2D<${type}${length}>,sampler,float2 location,float2 DDX,float2 DDY)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, ddx, ddy]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                            let ddxArray = [ddx.get(0), ddx.get(1), 0];
+                            let ddyArray = [ddy.get(0), ddy.get(1), 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, ddxArray, ddyArray, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} SampleGrad(Texture2D<${type}${length}>,sampler,float2 location,float2 DDX,float2 DDY,int2 offset)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, ddx, ddy, offset]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                            let ddxArray = [ddx.get(0), ddx.get(1), 0];
+                            let ddyArray = [ddy.get(0), ddy.get(1), 0];
+                            let deltaArray = [offset.get(0), offset.get(1), 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, ddxArray, ddyArray, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} SampleLevel(Texture2D<${type}${length}>,sampler,float2 location,float LOD)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, lod]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, lod.loadValue(), undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} SampleLevel(Texture2D<${type}${length}>,sampler,float2 location,float LOD,int2 offset)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, lod, offset]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                            let deltaArray = [offset.get(0), offset.get(1), 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, lod.loadValue(), undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}4 Gather(Texture2D<${type}${length}>,sampler,float2 location)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                            return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 0));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}4 Gather(Texture2D<${type}${length}>,sampler,float2 location,int2 offset)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, offset]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                            let deltaArray = [offset.get(0), offset.get(1), 0];
+                            return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined, 0));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}4 GatherRed(Texture2D<${type}${length}>,sampler,float2 location)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                            return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 0));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}4 GatherRed(Texture2D<${type}${length}>,sampler,float2 location,int2 offset)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, offset]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                            let deltaArray = [offset.get(0), offset.get(1), 0];
+                            return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined, 0));
+                        }
+                    });
+                if (length == "2" || length == "3" || length == "4") {
+                    this._map.set(
+                        `native ${type}4 GatherGreen(Texture2D<${type}${length}>,sampler,float2 location)`,
+                        func => {
+                            func.implementation = function([texture, sampler, location]) {
+                                let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                                return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 1));
+                            }
+                        });
+                    this._map.set(
+                        `native ${type}4 GatherGreen(Texture2D<${type}${length}>,sampler,float2 location,int2 offset)`,
+                        func => {
+                            func.implementation = function([texture, sampler, location, offset]) {
+                                let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                                let deltaArray = [offset.get(0), offset.get(1), 0];
+                                return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined, 1));
+                            }
+                        });
+                    if (length == "3" || length == "4") {
+                        this._map.set(
+                            `native ${type}4 GatherBlue(Texture2D<${type}${length}>,sampler,float2 location)`,
+                            func => {
+                                func.implementation = function([texture, sampler, location]) {
+                                    let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                                    return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 2));
+                                }
+                            });
+                        this._map.set(
+                            `native ${type}4 GatherBlue(Texture2D<${type}${length}>,sampler,float2 location,int2 offset)`,
+                            func => {
+                                func.implementation = function([texture, sampler, location, offset]) {
+                                    let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                                    let deltaArray = [offset.get(0), offset.get(1), 0];
+                                    return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined, 2));
+                                }
+                            });
+                        if (length == "4") {
+                            this._map.set(
+                                `native ${type}4 GatherAlpha(Texture2D<${type}${length}>,sampler,float2 location)`,
+                                func => {
+                                    func.implementation = function([texture, sampler, location]) {
+                                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 3));
+                                    }
+                                });
+                            this._map.set(
+                                `native ${type}4 GatherAlpha(Texture2D<${type}${length}>,sampler,float2 location,int2 offset)`,
+                                func => {
+                                    func.implementation = function([texture, sampler, location, offset]) {
+                                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined, 3));
+                                    }
+                                });
+                        }
+                    }
+                }
+                this._map.set(
+                    `native ${type}${length} Load(Texture2D<${type}${length}>,int3 location)`,
+                    func => {
+                        func.implementation = function ([texture, location]) {
+                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(2), 0, location.get(1), location.get(0))));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Load(Texture2D<${type}${length}>,int3 location,int2 offset)`,
+                    func => {
+                        func.implementation = function ([texture, location, offset]) {
+                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(2), 0, location.get(1) + offset.get(1), location.get(0) + offset.get(0))));
+                        }
+                    });
+                this._map.set(
+                    `native void GetDimensions(Texture2D<${type}${length}>,uint MipLevel,uint* thread Width,uint* thread Height,uint* thread NumberOfLevels)`,
+                    func => {
+                        func.implementation = function([texture, miplevel, width, height, numberOfLevels]) {
+                            let tex = texture.loadValue();
+                            let mipID = miplevel.loadValue();
+                            if (mipID >= tex.levelCount)
+                                throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
+                            height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                        }
+                    });
+
+                 this._map.set(
+                    `native ${type}${length} Sample(Texture2DArray<${type}${length}>,sampler,float3 location)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Sample(Texture2DArray<${type}${length}>,sampler,float3 location,int2 offset)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, offset]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                            let deltaArray = [offset.get(0), offset.get(1), 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} SampleBias(Texture2DArray<${type}${length}>,sampler,float3 location,float Bias)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, bias]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, bias.loadValue(), undefined, undefined, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} SampleBias(Texture2DArray<${type}${length}>,sampler,float3 location,float Bias,int2 offset)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, bias, offset]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                            let deltaArray = [offset.get(0), offset.get(1), 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, bias.loadValue(), undefined, undefined, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} SampleGrad(Texture2DArray<${type}${length}>,sampler,float3 location,float2 DDX,float2 DDY)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, ddx, ddy]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                            let ddxArray = [ddx.get(0), ddx.get(1), 0];
+                            let ddyArray = [ddy.get(0), ddy.get(1), 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, ddxArray, ddyArray, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} SampleGrad(Texture2DArray<${type}${length}>,sampler,float3 location,float2 DDX,float2 DDY,int2 offset)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, ddx, ddy, offset]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                            let ddxArray = [ddx.get(0), ddx.get(1), 0];
+                            let ddyArray = [ddy.get(0), ddy.get(1), 0];
+                            let deltaArray = [offset.get(0), offset.get(1), 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, ddxArray, ddyArray, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} SampleLevel(Texture2DArray<${type}${length}>,sampler,float3 location,float LOD)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, lod]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, lod.loadValue(), undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} SampleLevel(Texture2DArray<${type}${length}>,sampler,float3 location,float LOD,int2 offset)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, lod, offset]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                            let deltaArray = [offset.get(0), offset.get(1), 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, lod.loadValue(), undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}4 Gather(Texture2DArray<${type}${length}>,sampler,float3 location)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                            return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 0));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}4 Gather(Texture2DArray<${type}${length}>,sampler,float3 location,int2 offset)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, offset]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                            let deltaArray = [offset.get(0), offset.get(1), 0];
+                            return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined, 0));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}4 GatherRed(Texture2DArray<${type}${length}>,sampler,float3 location)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                            return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 0));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}4 GatherRed(Texture2DArray<${type}${length}>,sampler,float3 location,int2 offset)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, offset]) {
+                            let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                            let deltaArray = [offset.get(0), offset.get(1), 0];
+                            return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined, 0));
+                        }
+                    });
+                if (length == "2" || length == "3" || length == "4") {
+                    this._map.set(
+                        `native ${type}4 GatherGreen(Texture2DArray<${type}${length}>,sampler,float3 location)`,
+                        func => {
+                            func.implementation = function([texture, sampler, location]) {
+                                let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                                return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 1));
+                            }
+                        });
+                    this._map.set(
+                        `native ${type}4 GatherGreen(Texture2DArray<${type}${length}>,sampler,float3 location,int2 offset)`,
+                        func => {
+                            func.implementation = function([texture, sampler, location, offset]) {
+                                let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                                let deltaArray = [offset.get(0), offset.get(1), 0];
+                                return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined, 1));
+                            }
+                        });
+                    if (length == "3" || length == "4") {
+                        this._map.set(
+                            `native ${type}4 GatherBlue(Texture2DArray<${type}${length}>,sampler,float3 location)`,
+                            func => {
+                                func.implementation = function([texture, sampler, location]) {
+                                    let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                                    return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 2));
+                                }
+                            });
+                        this._map.set(
+                            `native ${type}4 GatherBlue(Texture2DArray<${type}${length}>,sampler,float3 location,int2 offset)`,
+                            func => {
+                                func.implementation = function([texture, sampler, location, offset]) {
+                                    let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                                    let deltaArray = [offset.get(0), offset.get(1), 0];
+                                    return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined, 2));
+                                }
+                            });
+                        if (length == "4") {
+                            this._map.set(
+                                `native ${type}4 GatherAlpha(Texture2DArray<${type}${length}>,sampler,float3 location)`,
+                                func => {
+                                    func.implementation = function([texture, sampler, location]) {
+                                    let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                                    return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 3));
+                                    }
+                                });
+                            this._map.set(
+                                `native ${type}4 GatherAlpha(Texture2DArray<${type}${length}>,sampler,float3 location,int2 offset)`,
+                                func => {
+                                    func.implementation = function([texture, sampler, location, offset]) {
+                                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined, 4));
+                                    }
+                                });
+                        }
+                    }
+                }
+                this._map.set(
+                    `native ${type}${length} Load(Texture2DArray<${type}${length}>,int4 location)`,
+                    func => {
+                        func.implementation = function ([texture, location]) {
+                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(3), location.get(2), 0, location.get(1), location.get(0))));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Load(Texture2DArray<${type}${length}>,int4 location,int2 offset)`,
+                    func => {
+                        func.implementation = function ([texture, location, offset]) {
+                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(3), location.get(2), 0, location.get(1) + offset.get(1), location.get(0) + offset.get(0))));
+                        }
+                    });
+                this._map.set(
+                    `native void GetDimensions(Texture2DArray<${type}${length}>,uint MipLevel,uint* thread Width,uint* thread Height,uint* thread Elements,uint* thread NumberOfLevels)`,
+                    func => {
+                        func.implementation = function([texture, miplevel, width, height, elements, numberOfLevels]) {
+                            let tex = texture.loadValue();
+                            let mipID = miplevel.loadValue();
+                            if (mipID >= tex.levelCount)
+                                throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
+                            height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                        }
+                    });
+
+                 this._map.set(
+                    `native ${type}${length} Sample(Texture3D<${type}${length}>,sampler,float3 location)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location]) {
+                            let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Sample(Texture3D<${type}${length}>,sampler,float3 location,int3 offset)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, offset]) {
+                            let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                            let deltaArray = [offset.get(0), offset.get(1), offset.get(2)];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Load(Texture3D<${type}${length}>,int4 location)`,
+                    func => {
+                        func.implementation = function ([texture, location]) {
+                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(3), location.get(2), location.get(1), location.get(0))));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Load(Texture3D<${type}${length}>,int4 location,int3 offset)`,
+                    func => {
+                        func.implementation = function ([texture, location, offset]) {
+                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(3), location.get(2) + offset.get(2), location.get(1) + offset.get(1), location.get(0) + offset.get(0))));
+                        }
+                    });
+                this._map.set(
+                    `native void GetDimensions(Texture3D<${type}${length}>,uint MipLevel,uint* thread Width,uint* thread Height,uint* thread Depth,uint* thread NumberOfLevels)`,
+                    func => {
+                        func.implementation = function([texture, miplevel, width, height, depth, numberOfLevels]) {
+                            let tex = texture.loadValue();
+                            let mipID = miplevel.loadValue();
+                            if (mipID >= tex.levelCount)
+                                throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
+                            depth.loadValue().copyFrom(EPtr.box(tex.depthAtLevel(mipID)), 1);
+                            height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                        }
+                    });
+
+                 this._map.set(
+                    `native ${type}${length} Sample(TextureCube<${type}${length}>,sampler,float3 location)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location]) {
+                            let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} SampleBias(TextureCube<${type}${length}>,sampler,float3 location,float Bias)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, bias]) {
+                            let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, bias.loadValue(), undefined, undefined, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} SampleGrad(TextureCube<${type}${length}>,sampler,float3 location,float3 DDX,float3 DDY)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, ddx, ddy]) {
+                            let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                            let ddxArray = [ddx.get(0), ddx.get(1), ddx.get(2)];
+                            let ddyArray = [ddy.get(0), ddy.get(1), ddy.get(2)];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, ddxArray, ddyArray, undefined, undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} SampleLevel(TextureCube<${type}${length}>,sampler,float3 location,float LOD)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location, lod]) {
+                            let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                            return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, lod.loadValue(), undefined));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}4 Gather(TextureCube<${type}${length}>,sampler,float3 location)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location]) {
+                            let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                            return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 0));
+                        }
+                    });
+                this._map.set(
+                    `native ${type}4 GatherRed(TextureCube<${type}${length}>,sampler,float3 location)`,
+                    func => {
+                        func.implementation = function([texture, sampler, location]) {
+                            let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                            return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 0));
+                        }
+                    });
+                if (length == "2" || length == "3" || length == "4") {
+                    this._map.set(
+                        `native ${type}4 GatherGreen(TextureCube<${type}${length}>,sampler,float3 location)`,
+                        func => {
+                            func.implementation = function([texture, sampler, location]) {
+                                let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                                return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 1));
+                            }
+                        });
+                    if (length == "3" || length == "4") {
+                        this._map.set(
+                            `native ${type}4 GatherBlue(TextureCube<${type}${length}>,sampler,float3 location)`,
+                            func => {
+                                func.implementation = function([texture, sampler, location]) {
+                                    let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                                    return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 2));
+                                }
+                            });
+                        if (length == "4") {
+                            this._map.set(
+                                `native ${type}4 GatherAlpha(TextureCube<${type}${length}>,sampler,float3 location)`,
+                                func => {
+                                    func.implementation = function([texture, sampler, location]) {
+                                        let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 3));
+                                    }
+                                });
+                        }
+                    }
+                }
+                this._map.set(
+                    `native void GetDimensions(TextureCube<${type}${length}>,uint MipLevel,uint* thread Width,uint* thread Height,uint* thread NumberOfLevels)`,
+                    func => {
+                        func.implementation = function([texture, miplevel, width, height, numberOfLevels]) {
+                            let tex = texture.loadValue();
+                            let mipID = miplevel.loadValue();
+                            if (tex.layerCount != 6)
+                                throw new Error("Cube texture doesn't have 6 faces");
+                            if (mipID >= tex.levelCount)
+                                throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
+                            height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                            width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                            numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                        }
+                    });
+
+                 this._map.set(
+                    `native void GetDimensions(RWTexture1D<${type}${length}>,uint* thread Width)`,
+                    func => {
+                        func.implementation = function([texture, width]) {
+                            width.loadValue().copyFrom(EPtr.box(texture.loadValue().width), 1);
+                        }
+                    });
+                this._map.set(
+                    `native void GetDimensions(RWTexture1D<${type}${length}>,float* thread Width)`,
+                    func => {
+                        func.implementation = function([texture, width]) {
+                            width.loadValue().copyFrom(EPtr.box(texture.loadValue().width), 1);
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Load(RWTexture1D<${type}${length}>,int location)`,
+                    func => {
+                        func.implementation = function ([texture, location]) {
+                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, 0, 0, 0, location.loadValue())));
+                        }
+                    });
+                this._map.set(
+                    `native void Store(RWTexture1D<${type}${length}>,${type}${length},uint location)`,
+                    func => {
+                        func.implementation = function ([texture, value, location]) {
+                            checkFalse("[Store]", "Texture write out of bounds", texture.loadValue().setElementChecked(0, 0, 0, 0, location.loadValue(), unboxVector(value, length)));
+                        }
+                    });
+
+                 this._map.set(
+                    `native void GetDimensions(RWTexture1DArray<${type}${length}>,uint* thread Width,uint* thread Elements)`,
+                    func => {
+                        func.implementation = function([texture, width, elements]) {
+                            let tex = texture.loadValue();
+                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                        }
+                    });
+                this._map.set(
+                    `native void GetDimensions(RWTexture1DArray<${type}${length}>,float* thread Width,uint* thread Elements)`,
+                    func => {
+                        func.implementation = function([texture, width, elements]) {
+                            let tex = texture.loadValue();
+                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Load(RWTexture1DArray<${type}${length}>,int2 location)`,
+                    func => {
+                        func.implementation = function ([texture, location]) {
+                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(1), 0, 0, 0, location.get(0))));
+                        }
+                    });
+                this._map.set(
+                    `native void Store(RWTexture1DArray<${type}${length}>,${type}${length},uint2 location)`,
+                    func => {
+                        func.implementation = function ([texture, value, location]) {
+                            checkFalse("[Store]", "Texture write out of bounds", texture.loadValue().setElementChecked(location.get(1), 0, 0, 0, location.get(0), unboxVector(value, length)));
+                        }
+                    });
+
+                 this._map.set(
+                    `native void GetDimensions(RWTexture2D<${type}${length}>,uint* thread Width,uint* thread Height)`,
+                    func => {
+                        func.implementation = function([texture, width, height]) {
+                            let tex = texture.loadValue();
+                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                        }
+                    });
+                this._map.set(
+                    `native void GetDimensions(RWTexture2D<${type}${length}>,float* thread Width,float* thread Height)`,
+                    func => {
+                        func.implementation = function([texture, width, height]) {
+                            let tex = texture.loadValue();
+                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Load(RWTexture2D<${type}${length}>,int2 location)`,
+                    func => {
+                        func.implementation = function ([texture, location]) {
+                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, 0, 0, location.get(1), location.get(0))));
+                        }
+                    });
+                this._map.set(
+                    `native void Store(RWTexture2D<${type}${length}>,${type}${length},uint2 location)`,
+                    func => {
+                        func.implementation = function ([texture, value, location]) {
+                            checkFalse("[Store]", "Texture write out of bounds", texture.loadValue().setElementChecked(0, 0, 0, location.get(1), location.get(0), unboxVector(value, length)));
+                        }
+                    });
+
+                 this._map.set(
+                    `native void GetDimensions(RWTexture2DArray<${type}${length}>,uint* thread Width,uint* thread Height,uint* thread Elements)`,
+                    func => {
+                        func.implementation = function([texture, width, height, elements]) {
+                            let tex = texture.loadValue();
+                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                        }
+                    });
+                this._map.set(
+                    `native void GetDimensions(RWTexture2DArray<${type}${length}>,float* thread Width,float* thread Height,float* thread Elements)`,
+                    func => {
+                        func.implementation = function([texture, width, height, elements]) {
+                            let tex = texture.loadValue();
+                            elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Load(RWTexture2DArray<${type}${length}>,int3 location)`,
+                    func => {
+                        func.implementation = function ([texture, location]) {
+                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(2), 0, 0, location.get(1), location.get(0))));
+                        }
+                    });
+                this._map.set(
+                    `native void Store(RWTexture2DArray<${type}${length}>,${type}${length},uint3 location)`,
+                    func => {
+                        func.implementation = function ([texture, value, location]) {
+                            checkFalse("[Store]", "Texture write out of bounds", texture.loadValue().setElementChecked(location.get(2), 0, 0, location.get(1), location.get(0), unboxVector(value, length)));
+                        }
+                    });
+
+                 this._map.set(
+                    `native void GetDimensions(RWTexture3D<${type}${length}>,uint* thread Width,uint* thread Height,uint* thread Depth)`,
+                    func => {
+                        func.implementation = function([texture, width, height, depth]) {
+                            let tex = texture.loadValue();
+                            depth.loadValue().copyFrom(EPtr.box(tex.depth), 1);
+                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                        }
+                    });
+                this._map.set(
+                    `native void GetDimensions(RWTexture3D<${type}${length}>,float* thread Width,float* thread Height,float* thread Depth)`,
+                    func => {
+                        func.implementation = function([texture, width, height, depth]) {
+                            let tex = texture.loadValue();
+                            depth.loadValue().copyFrom(EPtr.box(tex.depth), 1);
+                            height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                            width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                        }
+                    });
+                this._map.set(
+                    `native ${type}${length} Load(RWTexture3D<${type}${length}>,int3 location)`,
+                    func => {
+                        func.implementation = function ([texture, location]) {
+                            return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, 0, location.get(2), location.get(1), location.get(0))));
+                        }
+                    });
+                this._map.set(
+                    `native void Store(RWTexture3D<${type}${length}>,${type}${length},uint3 location)`,
+                    func => {
+                        func.implementation = function ([texture, value, location]) {
+                            checkFalse("[Store]", "Texture write out of bounds", texture.loadValue().setElementChecked(0, 0, location.get(2), location.get(1), location.get(0), unboxVector(value, length)));
+                        }
+                    });
+            }
+        }
+
+        for (let type of ["half", "float"]) {
+            this._map.set(
+                `native ${type} Sample(TextureDepth2D<${type}>,sampler,float2 location)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type} Sample(TextureDepth2D<${type}>,sampler,float2 location,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleCmp(TextureDepth2D<${type}>,sampler,float2 location,${type} CompareValue)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, compareValue.loadValue()));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleCmp(TextureDepth2D<${type}>,sampler,float2 location,${type} CompareValue,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, compareValue.loadValue()));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleCmpLevelZero(TextureDepth2D<${type}>,sampler,float2 location,${type} CompareValue)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, 0, compareValue.loadValue()));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleCmpLevelZero(TextureDepth2D<${type}>,sampler,float2 location,${type} CompareValue,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, 0, compareValue.loadValue()));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleBias(TextureDepth2D<${type}>,sampler,float2 location,float Bias)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, bias]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, bias.loadValue(), undefined, undefined, undefined, undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleBias(TextureDepth2D<${type}>,sampler,float2 location,float Bias,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, bias, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, bias.loadValue(), undefined, undefined, undefined, undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleGrad(TextureDepth2D<${type}>,sampler,float2 location,float2 DDX,float2 DDY)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, ddx, ddy]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        let ddxArray = [ddx.get(0), ddx.get(1), 0];
+                        let ddyArray = [ddy.get(0), ddy.get(1), 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, ddxArray, ddyArray, undefined, undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleGrad(TextureDepth2D<${type}>,sampler,float2 location,float2 DDX,float2 DDY,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, ddx, ddy, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        let ddxArray = [ddx.get(0), ddx.get(1), 0];
+                        let ddyArray = [ddy.get(0), ddy.get(1), 0];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, ddxArray, ddyArray, undefined, undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleLevel(TextureDepth2D<${type}>,sampler,float2 location,float LOD)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, lod]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, lod.loadValue(), undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleLevel(TextureDepth2D<${type}>,sampler,float2 location,float LOD,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, lod, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, lod.loadValue(), undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 Gather(TextureDepth2D<${type}>,sampler,float2 location)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 0));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 Gather(TextureDepth2D<${type}>,sampler,float2 location,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined, 0));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 GatherRed(TextureDepth2D<${type}>,sampler,float2 location)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 0));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 GatherRed(TextureDepth2D<${type}>,sampler,float2 location,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined, 0));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 GatherCmp(TextureDepth2D<${type}>,sampler,float2 location,float compare_value)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, compareValue.loadValue(), 0));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 GatherCmp(TextureDepth2D<${type}>,sampler,float2 location,float compare_value,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, compareValue.loadValue(), 0));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 GatherCmpRed(TextureDepth2D<${type}>,sampler,float2 location,float compare_value)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, compareValue.loadValue(), 0));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 GatherCmpRed(TextureDepth2D<${type}>,sampler,float2 location,float compare_value,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, 0];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, compareValue.loadValue(), 0));
+                    }
+                });
+            this._map.set(
+                `native ${type} Load(TextureDepth2D<${type}>,int3 location)`,
+                func => {
+                    func.implementation = function ([texture, location]) {
+                        return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(2), 0, location.get(1), location.get(0))));
+                    }
+                });
+            this._map.set(
+                `native ${type} Load(TextureDepth2D<${type}>,int3 location,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, location, offset]) {
+                        return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, location.get(2), 0, location.get(1) + offset.get(1), location.get(0) + offset.get(0))));
+                    }
+                });
+            this._map.set(
+                `native void GetDimensions(TextureDepth2D<${type}>,uint MipLevel,uint* thread Width,uint* thread Height,uint* thread NumberOfLevels)`,
+                func => {
+                    func.implementation = function ([texture, miplevel, width, height, numberOfLevels]) {
+                        let tex = texture.loadValue();
+                        let mipID = miplevel.loadValue();
+                        if (mipID >= tex.levelCount)
+                            throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
+                        height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                        width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                        numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                    }
+                });
+            this._map.set(
+                `native ${type} Sample(TextureDepth2DArray<${type}>,sampler,float3 location)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type} Sample(TextureDepth2DArray<${type}>,sampler,float3 location,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleCmp(TextureDepth2DArray<${type}>,sampler,float3 location,${type} CompareValue)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, compareValue.loadValue()));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleCmp(TextureDepth2DArray<${type}>,sampler,float3 location,${type} CompareValue,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, compareValue.loadValue()));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleCmpLevelZero(TextureDepth2DArray<${type}>,sampler,float3 location,${type} CompareValue)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, 0, compareValue.loadValue()));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleCmpLevelZero(TextureDepth2DArray<${type}>,sampler,float3 location,${type} CompareValue,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, 0, compareValue.loadValue()));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleBias(TextureDepth2DArray<${type}>,sampler,float3 location,float Bias)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, bias]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, bias.loadValue(), undefined, undefined, undefined, undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleBias(TextureDepth2DArray<${type}>,sampler,float3 location,float Bias,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, bias, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, bias.loadValue(), undefined, undefined, undefined, undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleGrad(TextureDepth2DArray<${type}>,sampler,float3 location,float2 DDX,float2 DDY)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, ddx, ddy]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        let ddxArray = [ddx.get(0), ddx.get(1), 0];
+                        let ddyArray = [ddy.get(0), ddy.get(1), 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, ddxArray, ddyArray, undefined, undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleGrad(TextureDepth2DArray<${type}>,sampler,float3 location,float2 DDX,float2 DDY,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, ddx, ddy, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        let ddxArray = [ddx.get(0), ddx.get(1), 0];
+                        let ddyArray = [ddy.get(0), ddy.get(1), 0];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, ddxArray, ddyArray, undefined, undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleLevel(TextureDepth2DArray<${type}>,sampler,float3 location,float LOD)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, lod]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, lod.loadValue(), undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleLevel(TextureDepth2DArray<${type}>,sampler,float3 location,float LOD,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, lod, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, lod.loadValue(), undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 Gather(TextureDepth2DArray<${type}>,sampler,float3 location)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 0));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 Gather(TextureDepth2DArray<${type}>,sampler,float3 location,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined, 0));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 GatherRed(TextureDepth2DArray<${type}>,sampler,float3 location)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 0));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 GatherRed(TextureDepth2DArray<${type}>,sampler,float3 location,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, undefined, 0));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 GatherCmp(TextureDepth2DArray<${type}>,sampler,float3 location,float compare_value)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, compareValue.loadValue(), 0));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 GatherCmp(TextureDepth2DArray<${type}>,sampler,float3 location,float compare_value,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, compareValue.loadValue(), 0));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 GatherCmpRed(TextureDepth2DArray<${type}>,sampler,float3 location,float compare_value)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, compareValue.loadValue(), 0));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 GatherCmpRed(TextureDepth2DArray<${type}>,sampler,float3 location,float compare_value,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue, offset]) {
+                        let locationArray = [location.get(0), location.get(1), 0, 1, location.get(2)];
+                        let deltaArray = [offset.get(0), offset.get(1), 0];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, deltaArray, undefined, undefined, undefined, undefined, compareValue.loadValue(), 0));
+                    }
+                });
+            this._map.set(
+                `native ${type} Load(TextureDepth2DArray<${type}>,int4 location)`,
+                func => {
+                    func.implementation = function ([texture, location]) {
+                        return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(3), location.get(2), 0, location.get(1), location.get(0))));
+                    }
+                });
+            this._map.set(
+                `native ${type} Load(TextureDepth2DArray<${type}>,int4 location,int2 offset)`,
+                func => {
+                    func.implementation = function ([texture, location, offset]) {
+                        return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(3), location.get(2), 0, location.get(1) + offset.get(1), location.get(0) + offset.get(0))));
+                    }
+                });
+            this._map.set(
+                `native void GetDimensions(TextureDepth2DArray<${type}>,uint MipLevel,uint* thread Width,uint* thread Height,uint* thread Elements,uint* thread NumberOfLevels)`,
+                func => {
+                    func.implementation = function ([texture, miplevel, width, height, elements, numberOfLevels]) {
+                        let tex = texture.loadValue();
+                        let mipID = miplevel.loadValue();
+                        if (mipID >= tex.levelCount)
+                            throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
+                        height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                        width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                        elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                        numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                    }
+                });
+            this._map.set(
+                `native ${type} Sample(TextureDepthCube<${type}>,sampler,float3 location)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location]) {
+                        let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleCmp(TextureDepthCube<${type}>,sampler,float3 location,${type} CompareValue)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue]) {
+                        let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, compareValue.loadValue()));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleCmpLevelZero(TextureDepthCube<${type}>,sampler,float3 location,${type} CompareValue)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue]) {
+                        let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, 0, compareValue.loadValue()));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleBias(TextureDepthCube<${type}>,sampler,float3 location,float Bias)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, bias]) {
+                        let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, bias.loadValue(), undefined, undefined, undefined, undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleGrad(TextureDepthCube<${type}>,sampler,float3 location,float3 DDX,float3 DDY)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, ddx, ddy]) {
+                        let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                        let ddxArray = [ddx.get(0), ddx.get(1), ddx.get(2)];
+                        let ddyArray = [ddy.get(0), ddy.get(1), ddy.get(2)];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, ddxArray, ddyArray, undefined, undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type} SampleLevel(TextureDepthCube<${type}>,sampler,float3 location,float LOD)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, lod]) {
+                        let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                        return boxVector(sampleTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, lod.loadValue(), undefined));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 Gather(TextureDepthCube<${type}>,sampler,float3 location)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location]) {
+                        let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 0));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 GatherRed(TextureDepthCube<${type}>,sampler,float3 location)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location]) {
+                        let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, undefined, 0));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 GatherCmp(TextureDepthCube<${type}>,sampler,float3 location,float compare_value)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue]) {
+                        let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, compareValue.loadValue(), 0));
+                    }
+                });
+            this._map.set(
+                `native ${type}4 GatherCmpRed(TextureDepthCube<${type}>,sampler,float3 location,float compare_value)`,
+                func => {
+                    func.implementation = function ([texture, sampler, location, compareValue]) {
+                        let locationArray = [location.get(0), location.get(1), location.get(2), 1, 0];
+                        return boxVector(gatherTexture(texture.loadValue(), sampler.loadValue(), locationArray, undefined, undefined, undefined, undefined, undefined, compareValue.loadValue(), 0));
+                    }
+                });
+            this._map.set(
+                `native void GetDimensions(TextureDepthCube<${type}>,uint MipLevel,uint* thread Width,uint* thread Height,uint* thread NumberOfLevels)`,
+                func => {
+                    func.implementation = function ([texture, miplevel, width, height, numberOfLevels]) {
+                        let tex = texture.loadValue();
+                        let mipID = miplevel.loadValue();
+                        if (tex.layerCount != 6)
+                            throw new Error("Cube texture doesn't have 6 faces");
+                        if (mipID >= tex.levelCount)
+                            throw new WTrapError("[GetDimensions]", "Reading from nonexistant mip level of texture");
+                        height.loadValue().copyFrom(EPtr.box(tex.heightAtLevel(mipID)), 1);
+                        width.loadValue().copyFrom(EPtr.box(tex.widthAtLevel(mipID)), 1);
+                        numberOfLevels.loadValue().copyFrom(EPtr.box(tex.levelCount), 1);
+                    }
+                });
+            this._map.set(
+                `native void GetDimensions(RWTextureDepth2D<${type}>,uint* thread Width,uint* thread Height)`,
+                func => {
+                    func.implementation = function ([texture, width, height]) {
+                        let tex = texture.loadValue();
+                        height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                        width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                    }
+                });
+            this._map.set(
+                `native void GetDimensions(RWTextureDepth2D<${type}>,float* thread Width,float* thread Height)`,
+                func => {
+                    func.implementation = function ([texture, width, height]) {
+                        let tex = texture.loadValue();
+                        height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                        width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                    }
+                });
+            this._map.set(
+                `native ${type} Load(RWTextureDepth2D<${type}>,int2 location)`,
+                func => {
+                    func.implementation = function ([texture, location]) {
+                        return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(0, 0, 0, location.get(1), location.get(0))));
+                    }
+                });
+            this._map.set(
+                `native void Store(RWTextureDepth2D<${type}>,${type},uint2 location)`,
+                func => {
+                    func.implementation = function ([texture, value, location]) {
+                        checkFalse("[Store]", "Texture write out of bounds", texture.loadValue().setElementChecked(0, 0, 0, location.get(1), location.get(0), unboxVector(value, "")));
+                    }
+                });
+            this._map.set(
+                `native void GetDimensions(RWTextureDepth2DArray<${type}>,uint* thread Width,uint* thread Height,uint* thread Elements)`,
+                func => {
+                    func.implementation = function ([texture, width, height, elements]) {
+                        let tex = texture.loadValue();
+                        elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                        height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                        width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                    }
+                });
+            this._map.set(
+                `native void GetDimensions(RWTextureDepth2DArray<${type}>,float* thread Width,float* thread Height,float* thread Elements)`,
+                func => {
+                    func.implementation = function ([texture, width, height, elements]) {
+                        let tex = texture.loadValue();
+                        elements.loadValue().copyFrom(EPtr.box(tex.layerCount), 1);
+                        height.loadValue().copyFrom(EPtr.box(tex.height), 1);
+                        width.loadValue().copyFrom(EPtr.box(tex.width), 1);
+                    }
+                });
+            this._map.set(
+                `native ${type} Load(RWTextureDepth2DArray<${type}>,int3 location)`,
+                func => {
+                    func.implementation = function ([texture, location]) {
+                        return boxVector(checkUndefined("[Load]", "Texture read out of bounds", texture.loadValue().elementChecked(location.get(2), 0, 0, location.get(1), location.get(0))));
+                    }
+                });
+            this._map.set(
+                `native void Store(RWTextureDepth2DArray<${type}>,${type},uint3 location)`,
+                func => {
+                    func.implementation = function ([texture, value, location]) {
+                        checkFalse("[Store]", "Texture write out of bounds", texture.loadValue().setElementChecked(location.get(2), 0, 0, location.get(1), location.get(0), unboxVector(value, "")));
+                    }
+                });
+        }
     }
 
     add(thing)
