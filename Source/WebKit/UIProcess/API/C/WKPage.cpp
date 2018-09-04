@@ -1043,6 +1043,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
         {
             initialize(client);
             
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED > 101400
             // WKPageSetPageLoaderClient is deprecated. Use WKPageSetPageNavigationClient instead.
             RELEASE_ASSERT(!m_client.didFinishDocumentLoadForFrame);
             RELEASE_ASSERT(!m_client.didSameDocumentNavigationForFrame);
@@ -1075,6 +1076,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             RELEASE_ASSERT(!m_client.navigationGestureDidBegin);
             RELEASE_ASSERT(!m_client.navigationGestureWillEnd);
             RELEASE_ASSERT(!m_client.navigationGestureDidEnd);
+#endif
         }
 
     private:

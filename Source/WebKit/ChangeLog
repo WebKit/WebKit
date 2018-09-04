@@ -1,3 +1,18 @@
+2018-09-04  Frederic Wang  <fwang@igalia.com>
+
+        Bug 189190 - REGRESSION(r235398) ASSERTION failure !m_client.didFinishDocumentLoadForFrame
+        https://bugs.webkit.org/show_bug.cgi?id=189190
+
+        Reviewed by Alex Christensen.
+
+        Assertions to prevent use of the deprecated WKPageSetPageLoaderClient class are hit when
+        running system Safari with the current macOS/iOS releases, making impossible to launch it.
+        This patch conditionally skips these assertions so that they are only verified for
+        macOS > 10.14 or other platforms.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient): Only assert on future OS releases.
+
 2018-09-04  Alex Christensen  <achristensen@webkit.org>
 
         Clean up WebGL policy getting code path
