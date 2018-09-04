@@ -134,7 +134,7 @@ class InlineMediaControls extends MediaControls
         this._topLeftControlsBarContainer.children = this._topLeftContainerButtons();
         this._topLeftControlsBarContainer.layout();
         this.topLeftControlsBar.width = this._topLeftControlsBarContainer.width;
-        this.topLeftControlsBar.visible = this._topLeftControlsBarContainer.children.length > 0;
+        this.topLeftControlsBar.visible = this._topLeftControlsBarContainer.children.some(button => button.visible);
 
         // Compute the visible size for the controls bar.
         this.bottomControlsBar.width = this._shouldUseAudioLayout ? this.width : (this.width - 2 * InsideMargin);

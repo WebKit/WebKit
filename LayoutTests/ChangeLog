@@ -1,3 +1,16 @@
+2018-09-04  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Disabling both fullscreen and picture-in-picture shows an empty top left container
+        https://bugs.webkit.org/show_bug.cgi?id=189259
+        <rdar://problem/42026625>
+
+        Reviewed by Dean Jackson.
+
+        Adding a new test that checks that the top left container is hidden when both the fullscreen and picture-in-picture buttons are disabled.
+
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-disabled-fullscreen-and-pip-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-disabled-fullscreen-and-pip.html: Added.
+
 2018-09-04  Per Arne Vollan  <pvollan@apple.com>
 
         Add test for fix in https://bugs.webkit.org/show_bug.cgi?id=187922
