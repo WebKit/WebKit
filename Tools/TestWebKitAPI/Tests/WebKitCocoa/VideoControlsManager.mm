@@ -333,7 +333,6 @@ TEST(VideoControlsManager, VideoControlsManagerAudioElementFollowingUserInteract
 
     [webView loadTestPageNamed:@"play-audio-on-click"];
     [webView waitForPageToLoadWithAutoplayingVideos:0];
-    [webView mouseDownAtPoint:NSMakePoint(200, 200) simulatePressure:YES];
 
     [webView performAfterReceivingMessage:@"playing-first" action:^ {
         [webView evaluateJavaScript:@"seekToEnd()" completionHandler:nil];
@@ -343,6 +342,9 @@ TEST(VideoControlsManager, VideoControlsManagerAudioElementFollowingUserInteract
     [webView performAfterReceivingMessage:@"playing-second" action:^ {
         secondAudioPlaying = true;
     }];
+
+    [webView mouseDownAtPoint:NSMakePoint(200, 200) simulatePressure:YES];
+
     TestWebKitAPI::Util::run(&secondAudioPlaying);
     while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
         if ([webView _hasActiveVideoForControlsManager] && [[webView controlledElementID] isEqualToString:@"second"])

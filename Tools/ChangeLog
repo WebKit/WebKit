@@ -1,3 +1,16 @@
+2018-09-04  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r234081): TestWebKitAPI.VideoControlsManager.VideoControlsManagerAudioElementFollowingUserInteraction is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=187972
+        <rdar://problem/42667737>
+
+        Reviewed by Darin Adler.
+
+        Ensure that listeners are added in time to catch messages broadcast at them.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/VideoControlsManager.mm:
+        (TestWebKitAPI::TEST):
+
 2018-09-04  Ross Kirsling  <ross.kirsling@sony.com>
 
         Update googletest
