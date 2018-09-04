@@ -53,6 +53,13 @@
 // FIXME: Remove the defined(__OBJC__)-guard once we fix <rdar://problem/19033610>.
 #if defined(__OBJC__) && PLATFORM(COCOA)
 #import <CFNetwork/CFNSURLConnection.h>
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101302
+@interface NSURLSessionConfiguration ()
+@property (nullable, copy) NSSet *_suppressedAutoAddedHTTPHeaders;
+@end
+#endif
+
 #endif
 
 #else // !PLATFORM(WIN) && !USE(APPLE_INTERNAL_SDK)

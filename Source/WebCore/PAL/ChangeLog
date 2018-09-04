@@ -1,3 +1,9 @@
+2018-09-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, attempt to fix an internal build after r235585.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
 2018-09-01  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [WinCairo] Add CryptoDigestOpenSSL
