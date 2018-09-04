@@ -128,7 +128,6 @@ sub runLeaks($$)
     # that recognize it, but there is no certain way to tell in advance (the version of the
     # tool is not always tied to OS version, and --help doesn't document the option in some
     # of the tool versions where it's supported and needed).
-    print STDERR "Starting leaks\n";
     my @leaksOutput = `/usr/bin/leaks \"$target\" --list`;
 
     # FIXME: Remove the fallback once macOS Mojave is the oldest supported version.
