@@ -76,6 +76,7 @@ private:
     RefPtr<WebCore::SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName) override;
     void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName) override;
     String stringForType(const String& pasteboardType, const String& pasteboardName) override;
+    Vector<String> allStringsForType(const String& pasteboardType, const String& pasteboardName) override;
     long changeCount(const String& pasteboardName) override;
     String uniqueName() override;
     WebCore::Color color(const String& pasteboardName) override;

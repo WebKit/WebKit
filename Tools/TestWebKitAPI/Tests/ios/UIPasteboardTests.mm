@@ -267,6 +267,22 @@ TEST(UIPasteboardTests, DataTransferGetDataCannotReadArbitraryPlatformTypes)
     });
 }
 
+TEST(UIPasteboardTests, DataTransferURIListContainsMultipleURLs)
+{
+    auto webView = setUpWebViewForPasteboardTests(@"DataTransfer");
+
+    NSURL *firstURL = [NSURL URLWithString:@"https://www.apple.com/"];
+    NSURL *secondURL = [NSURL URLWithString:@"https://webkit.org/"];
+    [UIPasteboard generalPasteboard].URLs = @[ firstURL, secondURL ];
+
+    [webView paste:nil];
+
+    EXPECT_WK_STREQ("text/uri-list, text/plain", [webView stringByEvaluatingJavaScript:@"types.textContent"]);
+    EXPECT_WK_STREQ("(STRING, text/uri-list), (STRING, text/plain)", [webView stringByEvaluatingJavaScript:@"items.textContent"]);
+    EXPECT_WK_STREQ("https://www.apple.com/\nhttps://webkit.org/", [webView stringByEvaluatingJavaScript:@"urlData.textContent"]);
+    EXPECT_WK_STREQ("https://www.apple.com/", [webView stringByEvaluatingJavaScript:@"textData.textContent"]);
+}
+
 #endif // __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300
 
 } // namespace TestWebKitAPI

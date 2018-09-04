@@ -255,6 +255,50 @@ TEST(PasteMixedContent, PasteURLWrittenToPasteboardUsingWriteObjects)
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('a').textContent"], urlToCopy);
 }
 
+TEST(PasteMixedContent, PasteOneOrMoreURLs)
+{
+    NSURL *appleURL = [NSURL URLWithString:@"https://www.apple.com/"];
+    NSURL *webKitURL = [NSURL URLWithString:@"https://webkit.org/"];
+
+    auto webView = setUpWebView();
+    auto runTest = [webView] (NSString *description, NSString *expectedURLString, Function<void(NSPasteboard *)>&& writeURLsToPasteboard) {
+        NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+
+        [pasteboard clearContents];
+        writeURLsToPasteboard(pasteboard);
+        [webView stringByEvaluatingJavaScript:@"reset(); document.body.focus()"];
+        [webView paste:nil];
+
+        EXPECT_WK_STREQ(expectedURLString, [webView stringByEvaluatingJavaScript:@"urlData.textContent"]);
+        EXPECT_WK_STREQ("(STRING, text/uri-list)", [webView stringByEvaluatingJavaScript:@"items.textContent"]);
+        EXPECT_WK_STREQ("text/uri-list", [webView stringByEvaluatingJavaScript:@"types.textContent"]);
+    };
+
+    runTest(@"Write multiple URLs.", @"https://www.apple.com/\nhttps://webkit.org/", ^(NSPasteboard *pasteboard) {
+        [pasteboard writeObjects:@[appleURL, webKitURL]];
+    });
+
+    runTest(@"Declare legacy URL and write URL to pasteboard.", @"https://www.apple.com/", ^(NSPasteboard *pasteboard) {
+        [pasteboard declareTypes:@[NSURLPboardType] owner:nil];
+        [appleURL writeToPasteboard:pasteboard];
+    });
+
+    runTest(@"Declare legacy URL and set a URL string.", @"https://www.apple.com/", ^(NSPasteboard *pasteboard) {
+        [pasteboard declareTypes:@[NSURLPboardType] owner:nil];
+        [pasteboard setString:appleURL.absoluteString forType:NSURLPboardType];
+    });
+
+    runTest(@"Declare legacy URL and set a property list.", @"https://www.apple.com/", ^(NSPasteboard *pasteboard) {
+        [pasteboard declareTypes:@[NSURLPboardType] owner:nil];
+        [pasteboard setPropertyList:@[@"/", @"https://www.apple.com"] forType:NSURLPboardType];
+    });
+
+    runTest(@"Declare URL UTI and set a URL string.", @"https://www.apple.com/", ^(NSPasteboard *pasteboard) {
+        [pasteboard declareTypes:@[(__bridge NSString *)kUTTypeURL] owner:nil];
+        [pasteboard setString:appleURL.absoluteString forType:(__bridge NSString *)kUTTypeURL];
+    });
+}
+
 #endif // PLATFORM(MAC)
 
 TEST(PasteMixedContent, CopyAndPasteWithCustomPasteboardDataOnly)

@@ -207,6 +207,13 @@ String WebPlatformStrategies::stringForType(const String& pasteboardType, const 
     return value;
 }
 
+Vector<String> WebPlatformStrategies::allStringsForType(const String& pasteboardType, const String& pasteboardName)
+{
+    Vector<String> values;
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardStringsForType(pasteboardName, pasteboardType), Messages::WebPasteboardProxy::GetPasteboardStringsForType::Reply(values), 0);
+    return values;
+}
+
 long WebPlatformStrategies::changeCount(const WTF::String &pasteboardName)
 {
     uint64_t changeCount { 0 };

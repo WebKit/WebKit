@@ -123,6 +123,11 @@ void WebPlatformStrategies::getPathnamesForType(Vector<String>& pathnames, const
     PlatformPasteboard(pasteboardName).getPathnamesForType(pathnames, pasteboardType);
 }
 
+Vector<String> WebPlatformStrategies::allStringsForType(const String& pasteboardType, const String& pasteboardName)
+{
+    return PlatformPasteboard(pasteboardName).allStringsForType(pasteboardType);
+}
+
 String WebPlatformStrategies::stringForType(const String& pasteboardType, const String& pasteboardName)
 {
     return PlatformPasteboard(pasteboardName).stringForType(pasteboardType);

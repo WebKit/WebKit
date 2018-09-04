@@ -73,6 +73,7 @@ public:
     WEBCORE_EXPORT RefPtr<SharedBuffer> bufferForType(const String& pasteboardType);
     WEBCORE_EXPORT void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType) const;
     WEBCORE_EXPORT String stringForType(const String& pasteboardType) const;
+    WEBCORE_EXPORT Vector<String> allStringsForType(const String& pasteboardType) const;
     WEBCORE_EXPORT long changeCount() const;
     WEBCORE_EXPORT Color color();
     WEBCORE_EXPORT URL url();

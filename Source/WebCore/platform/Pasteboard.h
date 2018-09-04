@@ -204,6 +204,7 @@ public:
     virtual WEBCORE_EXPORT String readOrigin();
     virtual WEBCORE_EXPORT String readString(const String& type);
     virtual WEBCORE_EXPORT String readStringInCustomData(const String& type);
+    virtual WEBCORE_EXPORT Vector<String> readAllStrings(const String& type);
 
     virtual WEBCORE_EXPORT void writeString(const String& type, const String& data);
     virtual WEBCORE_EXPORT void clear();
@@ -298,7 +299,7 @@ private:
 
 #if PLATFORM(COCOA)
     Vector<String> readFilePaths();
-    String readPlatformValueAsString(const String& domType, long changeCount, const String& pasteboardName);
+    Vector<String> readPlatformValuesAsStrings(const String& domType, long changeCount, const String& pasteboardName);
     static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType);
     String readStringForPlatformType(const String&);
     Vector<String> readTypesWithSecurityCheck();

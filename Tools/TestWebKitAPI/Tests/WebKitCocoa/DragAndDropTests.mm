@@ -43,6 +43,37 @@ TEST(DragAndDropTests, DragImageLocationForLinkInSubframe)
 #endif
 }
 
+TEST(DragAndDropTests, ExposeMultipleURLsInDataTransfer)
+{
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"DataTransfer"];
+
+    NSString *stringData = @"Hello world";
+    NSURL *firstURL = [NSURL URLWithString:@"https://webkit.org/"];
+    NSURL *secondURL = [NSURL URLWithString:@"https://apple.com/"];
+
+#if PLATFORM(MAC)
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
+    [pasteboard writeObjects:@[ stringData, firstURL, secondURL ]];
+    [simulator setExternalDragPasteboard:pasteboard];
+#else
+    auto stringItem = adoptNS([[NSItemProvider alloc] initWithObject:stringData]);
+    auto firstURLItem = adoptNS([[NSItemProvider alloc] initWithObject:firstURL]);
+    auto secondURLItem = adoptNS([[NSItemProvider alloc] initWithObject:secondURL]);
+    for (NSItemProvider *item in @[ stringItem.get(), firstURLItem.get(), secondURLItem.get() ])
+        item.preferredPresentationStyle = UIPreferredPresentationStyleInline;
+    [simulator setExternalItemProviders:@[ stringItem.get(), firstURLItem.get(), secondURLItem.get() ]];
+#endif
+
+    [simulator runFrom:CGPointMake(0, 0) to:CGPointMake(100, 100)];
+
+    EXPECT_WK_STREQ("text/plain, text/uri-list", [webView stringByEvaluatingJavaScript:@"types.textContent"]);
+    EXPECT_WK_STREQ("(STRING, text/plain), (STRING, text/uri-list)", [webView stringByEvaluatingJavaScript:@"items.textContent"]);
+    EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"textData.textContent"]);
+    EXPECT_WK_STREQ("https://webkit.org/\nhttps://apple.com/", [webView stringByEvaluatingJavaScript:@"urlData.textContent"]);
+}
+
 #if ENABLE(INPUT_TYPE_COLOR)
 
 TEST(DragAndDropTests, ColorInputToColorInput)

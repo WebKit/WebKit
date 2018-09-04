@@ -116,6 +116,68 @@ String PlatformPasteboard::stringForType(const String& pasteboardType) const
     return [m_pasteboard stringForType:pasteboardType];
 }
 
+static Vector<String> urlStringsFromPasteboard(NSPasteboard *pasteboard)
+{
+    NSArray<NSPasteboardItem *> *items = pasteboard.pasteboardItems;
+    Vector<String> urlStrings;
+    urlStrings.reserveInitialCapacity(items.count);
+    if (items.count > 1) {
+        for (NSPasteboardItem *item in items) {
+            if (id propertyList = [item propertyListForType:(__bridge NSString *)kUTTypeURL]) {
+                if (auto urlFromItem = adoptNS([[NSURL alloc] initWithPasteboardPropertyList:propertyList ofType:(__bridge NSString *)kUTTypeURL]))
+                    urlStrings.uncheckedAppend([urlFromItem absoluteString]);
+            }
+        }
+    } else if (NSURL *urlFromPasteboard = [NSURL URLFromPasteboard:pasteboard])
+        urlStrings.uncheckedAppend(urlFromPasteboard.absoluteString);
+    else if (NSString *urlStringFromPasteboard = [pasteboard stringForType:legacyURLPasteboardType()])
+        urlStrings.uncheckedAppend(urlStringFromPasteboard);
+
+    bool mayContainFiles = pasteboardMayContainFilePaths(pasteboard);
+    urlStrings.removeAllMatching([&] (auto& urlString) {
+        return urlString.isEmpty() || (mayContainFiles && !Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(urlString));
+    });
+
+    return urlStrings;
+}
+
+static String typeIdentifierForPasteboardType(const String& pasteboardType)
+{
+    if (UTTypeIsDeclared(pasteboardType.createCFString().get()))
+        return pasteboardType;
+
+    if (pasteboardType == String(legacyStringPasteboardType()))
+        return kUTTypeUTF8PlainText;
+
+    if (pasteboardType == String(legacyHTMLPasteboardType()))
+        return kUTTypeHTML;
+
+    if (pasteboardType == String(legacyURLPasteboardType()))
+        return kUTTypeURL;
+
+    return { };
+}
+
+Vector<String> PlatformPasteboard::allStringsForType(const String& pasteboardType) const
+{
+    auto typeIdentifier = typeIdentifierForPasteboardType(pasteboardType);
+    if (typeIdentifier == String(kUTTypeURL))
+        return urlStringsFromPasteboard(m_pasteboard.get());
+
+    NSArray<NSPasteboardItem *> *items = [m_pasteboard pasteboardItems];
+    Vector<String> strings;
+    strings.reserveInitialCapacity(items.count);
+    if (items.count > 1 && !typeIdentifier.isNull()) {
+        for (NSPasteboardItem *item in items) {
+            if (NSString *stringFromItem = [item stringForType:typeIdentifier])
+                strings.append(stringFromItem);
+        }
+    } else if (NSString *stringFromPasteboard = [m_pasteboard stringForType:pasteboardType])
+        strings.append(stringFromPasteboard);
+
+    return strings;
+}
+
 static const char* safeTypeForDOMToReadAndWriteForPlatformType(const String& platformType)
 {
     if (platformType == String(legacyStringPasteboardType()) || platformType == String(NSPasteboardTypeString))

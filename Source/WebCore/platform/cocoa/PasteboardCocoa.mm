@@ -259,9 +259,15 @@ void Pasteboard::read(PasteboardFileReader& reader)
     }
 }
 
+Vector<String> Pasteboard::readAllStrings(const String& type)
+{
+    return readPlatformValuesAsStrings(type, m_changeCount, m_pasteboardName);
+}
+
 String Pasteboard::readString(const String& type)
 {
-    return readPlatformValueAsString(type, m_changeCount, m_pasteboardName);
+    auto values = readPlatformValuesAsStrings(type, m_changeCount, m_pasteboardName);
+    return values.isEmpty() ? String() : values.first();
 }
 
 String Pasteboard::readStringInCustomData(const String& type)

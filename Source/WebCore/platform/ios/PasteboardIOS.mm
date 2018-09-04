@@ -373,38 +373,28 @@ void Pasteboard::clear()
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(String(), String(), m_pasteboardName);
 }
 
-String Pasteboard::readPlatformValueAsString(const String& domType, long changeCount, const String& pasteboardName)
+Vector<String> Pasteboard::readPlatformValuesAsStrings(const String& domType, long changeCount, const String& pasteboardName)
 {
-    PasteboardStrategy& strategy = *platformStrategies()->pasteboardStrategy();
-
-    int numberOfItems = strategy.getPasteboardItemsCount(pasteboardName);
-
-    if (!numberOfItems)
-        return String();
+    auto& strategy = *platformStrategies()->pasteboardStrategy();
 
     // Grab the value off the pasteboard corresponding to the cocoaType.
-    RetainPtr<NSString> cocoaType = cocoaTypeFromHTMLClipboardType(domType);
+    auto cocoaType = cocoaTypeFromHTMLClipboardType(domType);
+    if (!cocoaType)
+        return { };
 
-    NSString *cocoaValue = nil;
-
-    if ([cocoaType isEqualToString:(NSString *)kUTTypeURL]) {
-        String title;
-        URL url = strategy.readURLFromPasteboard(0, pasteboardName, title);
-        if (!url.isNull())
-            cocoaValue = [(NSURL *)url absoluteString];
-    } else if ([cocoaType isEqualToString:(NSString *)kUTTypePlainText]) {
-        String value = strategy.readStringFromPasteboard(0, kUTTypePlainText, pasteboardName);
-        if (!value.isNull())
-            cocoaValue = [(NSString *)value precomposedStringWithCanonicalMapping];
-    } else if (cocoaType)
-        cocoaValue = (NSString *)strategy.readStringFromPasteboard(0, cocoaType.get(), pasteboardName);
+    auto values = strategy.allStringsForType(cocoaType.get(), pasteboardName);
+    if ([cocoaType isEqualToString:(__bridge NSString *)kUTTypePlainText]) {
+        values = values.map([&] (auto& value) -> String {
+            return [value precomposedStringWithCanonicalMapping];
+        });
+    }
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (cocoaValue && changeCount == changeCountForPasteboard(pasteboardName))
-        return cocoaValue;
+    if (changeCount != changeCountForPasteboard(pasteboardName))
+        return { };
 
-    return String();
+    return values;
 }
 
 void Pasteboard::addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType)

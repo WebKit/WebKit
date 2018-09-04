@@ -29,6 +29,7 @@
 #include "WebKitTestRunnerPasteboard.h"
 
 #include <objc/runtime.h>
+#include <wtf/RetainPtr.h>
 
 @interface LocalPasteboard : NSPasteboard
 {
@@ -195,6 +196,14 @@ static NSMutableDictionary *localPasteboards;
 - (BOOL)setString:(NSString *)string forType:(NSString *)dataType
 {
     return [self setData:[string dataUsingEncoding:NSUTF8StringEncoding] forType:dataType];
+}
+
+- (NSArray<NSPasteboardItem *> *)pasteboardItems
+{
+    auto item = adoptNS([[NSPasteboardItem alloc] init]);
+    for (NSString *type in dataByType)
+        [item setData:dataByType[type] forType:type];
+    return @[ item.get() ];
 }
 
 @end

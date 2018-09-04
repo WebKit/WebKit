@@ -603,6 +603,19 @@ int PlatformPasteboard::count() const
     return [m_pasteboard numberOfItems];
 }
 
+Vector<String> PlatformPasteboard::allStringsForType(const String& type) const
+{
+    auto numberOfItems = count();
+    Vector<String> strings;
+    strings.reserveInitialCapacity(numberOfItems);
+    for (int index = 0; index < numberOfItems; ++index) {
+        String value = readString(index, type);
+        if (!value.isEmpty())
+            strings.uncheckedAppend(WTFMove(value));
+    }
+    return strings;
+}
+
 RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(int index, const String& type) const
 {
     NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
@@ -618,7 +631,7 @@ String PlatformPasteboard::readString(int index, const String& type) const
 {
     if (type == String(kUTTypeURL)) {
         String title;
-        return readURL(index, title);
+        return [(NSURL *)readURL(index, title) absoluteString];
     }
 
     NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];

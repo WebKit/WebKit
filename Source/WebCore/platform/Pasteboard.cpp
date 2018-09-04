@@ -85,4 +85,17 @@ PasteboardCustomData PasteboardCustomData::fromSharedBuffer(const SharedBuffer& 
     return result;
 }
 
+#if !PLATFORM(COCOA)
+
+Vector<String> Pasteboard::readAllStrings(const String& type)
+{
+    auto result = readString(type);
+    if (result.isEmpty())
+        return { };
+
+    return { result };
+}
+
+#endif
+
 };

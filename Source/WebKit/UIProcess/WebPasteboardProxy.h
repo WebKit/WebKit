@@ -87,6 +87,7 @@ private:
     void getPasteboardTypes(const String& pasteboardName, Vector<String>& pasteboardTypes);
     void getPasteboardPathnamesForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, Vector<String>& pathnames, SandboxExtension::HandleArray&);
     void getPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, String&);
+    void getPasteboardStringsForType(const String& pasteboardName, const String& pasteboardType, Vector<String>&);
     void getPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, SharedMemory::Handle&, uint64_t& size);
     void pasteboardCopy(const String& fromPasteboard, const String& toPasteboard, uint64_t& newChangeCount);
     void getPasteboardChangeCount(const String& pasteboardName, uint64_t& changeCount);

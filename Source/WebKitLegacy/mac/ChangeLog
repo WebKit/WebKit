@@ -1,3 +1,18 @@
+2018-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Populate "text/uri-list" with multiple URLs when the pasteboard contains multiple URLs
+        https://bugs.webkit.org/show_bug.cgi?id=188890
+        <rdar://problem/43648605>
+
+        Reviewed by Tim Horton.
+
+        Add some plumbing through pasteboard classes to support `Pasteboard::readAllStrings`. See WebCore ChangeLog for
+        more detail.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::allStringsForType):
+
 2018-09-01  Darin Adler  <darin@apple.com>
 
         [CFNetwork] Update CFNetwork SPI use to use CFNetworkSPI.h more consistently

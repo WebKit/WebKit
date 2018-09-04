@@ -237,6 +237,17 @@ static RetainPtr<CFStringRef> toUTI(NSString *type)
     return YES;
 }
 
+- (NSArray<NSPasteboardItem *> *)pasteboardItems
+{
+    auto item = adoptNS([[NSPasteboardItem alloc] init]);
+    for (auto typeAndData : _data) {
+        NSData *data = (__bridge NSData *)typeAndData.value.get();
+        NSString *type = (__bridge NSString *)typeAndData.key.get();
+        [item setData:data forType:type];
+    }
+    return @[ item.get() ];
+}
+
 @end
 
 #endif // PLATFORM(MAC)

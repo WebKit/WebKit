@@ -1,3 +1,22 @@
+2018-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Populate "text/uri-list" with multiple URLs when the pasteboard contains multiple URLs
+        https://bugs.webkit.org/show_bug.cgi?id=188890
+        <rdar://problem/43648605>
+
+        Reviewed by Tim Horton.
+
+        Add some plumbing through pasteboard classes to support `Pasteboard::readAllStrings`. See WebCore ChangeLog for
+        more detail.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::getPasteboardStringsForType):
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::allStringsForType):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2018-09-04  Youenn Fablet  <youenn@apple.com>
 
         Disable WebRTC unified plan runtime flag by default

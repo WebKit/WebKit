@@ -488,22 +488,26 @@ void Pasteboard::clear(const String& type)
     m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(emptyString(), cocoaType, m_pasteboardName);
 }
 
-String Pasteboard::readPlatformValueAsString(const String& domType, long changeCount, const String& pasteboardName)
+Vector<String> Pasteboard::readPlatformValuesAsStrings(const String& domType, long changeCount, const String& pasteboardName)
 {
-    const String& cocoaType = cocoaTypeFromHTMLClipboardType(domType);
-    String cocoaValue;
+    auto& strategy = *platformStrategies()->pasteboardStrategy();
+    auto cocoaType = cocoaTypeFromHTMLClipboardType(domType);
+    if (cocoaType.isEmpty())
+        return { };
 
-    if (cocoaType == String(legacyStringPasteboardType()))
-        cocoaValue = [platformStrategies()->pasteboardStrategy()->stringForType(cocoaType, pasteboardName) precomposedStringWithCanonicalMapping];
-    else if (!cocoaType.isEmpty())
-        cocoaValue = platformStrategies()->pasteboardStrategy()->stringForType(cocoaType, pasteboardName);
+    auto values = strategy.allStringsForType(cocoaType, pasteboardName);
+    if (cocoaType == String(legacyStringPasteboardType())) {
+        values = values.map([&] (auto& value) -> String {
+            return [value precomposedStringWithCanonicalMapping];
+        });
+    }
 
     // Enforce changeCount ourselves for security.  We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (!cocoaValue.isEmpty() && changeCount == platformStrategies()->pasteboardStrategy()->changeCount(pasteboardName))
-        return cocoaValue;
+    if (changeCount != platformStrategies()->pasteboardStrategy()->changeCount(pasteboardName))
+        return { };
 
-    return String();
+    return values;
 }
 
 static String utiTypeFromCocoaType(const String& type)

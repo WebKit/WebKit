@@ -1,3 +1,40 @@
+2018-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Populate "text/uri-list" with multiple URLs when the pasteboard contains multiple URLs
+        https://bugs.webkit.org/show_bug.cgi?id=188890
+        <rdar://problem/43648605>
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.mm:
+        (-[LocalPasteboard pasteboardItems]):
+
+        Implement this method to avoid crashing when running layout tests that access the pasteboard.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+
+        Add a test to verify that on macOS and iOS, multiple URLs dropped onto the page are accessible via
+        "text/uri-list".
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteMixedContent.mm:
+
+        Add a test that exercises 5 different ways to write one or more URLs to the pasteboard on macOS; in all cases,
+        the URLs written to the pasteboard should be exposed to the page via "text/uri-list". In all of these different
+        cases, the results of using `-[NSPasteboardItem stringForType:]`, `-[NSURL URLFromPasteboard:]` and
+        `-[NSPasteboard stringForType:]` will yield different results, so the purpose of this API test is to ensure that
+        our logic for grabbing a list of URLs from the pasteboard on macOS is robust enough to handle all of these
+        different behaviors.
+
+        * TestWebKitAPI/Tests/ios/UIPasteboardTests.mm:
+
+        Add a test to verify that on iOS, using `-[UIPasteboard setURLs:]` to write to multiple URLs to the pasteboard
+        and then pasting results in "text/uri-list" exposing a list of all the URLs written to the pasteboard.
+
+        * WebKitTestRunner/mac/WebKitTestRunnerPasteboard.mm:
+        (-[LocalPasteboard pasteboardItems]):
+
+        Implement this method to avoid crashing when running layout tests that access the pasteboard.
+
 2018-09-04  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION(r235408): GTK bots exiting early

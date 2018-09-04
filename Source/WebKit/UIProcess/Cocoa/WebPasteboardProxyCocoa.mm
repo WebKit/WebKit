@@ -70,6 +70,11 @@ void WebPasteboardProxy::getPasteboardStringForType(const String& pasteboardName
     string = PlatformPasteboard(pasteboardName).stringForType(pasteboardType);
 }
 
+void WebPasteboardProxy::getPasteboardStringsForType(const String& pasteboardName, const String& pasteboardType, Vector<String>& strings)
+{
+    strings = PlatformPasteboard(pasteboardName).allStringsForType(pasteboardType);
+}
+
 void WebPasteboardProxy::getPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, SharedMemory::Handle& handle, uint64_t& size)
 {
     RefPtr<SharedBuffer> buffer = PlatformPasteboard(pasteboardName).bufferForType(pasteboardType);

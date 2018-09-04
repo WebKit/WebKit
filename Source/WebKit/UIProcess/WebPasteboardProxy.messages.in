@@ -45,6 +45,7 @@ messages -> WebPasteboardProxy {
     GetPasteboardTypes(String pasteboardName) -> (Vector<String> types)
     GetPasteboardPathnamesForType(String pasteboardName, String pasteboardType) -> (Vector<String> pathnames, WebKit::SandboxExtension::HandleArray sandboxExtensions) WantsConnection
     GetPasteboardStringForType(String pasteboardName, String pasteboardType) -> (String string)
+    GetPasteboardStringsForType(String pasteboardName, String pasteboardType) -> (Vector<String> strings)
     GetPasteboardBufferForType(String pasteboardName, String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size)
     PasteboardCopy(String fromPasteboard, String toPasteboard) -> (uint64_t changeCount)
     GetPasteboardChangeCount(String pasteboardName) -> (uint64_t changeCount)

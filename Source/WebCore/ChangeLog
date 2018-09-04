@@ -1,3 +1,109 @@
+2018-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Populate "text/uri-list" with multiple URLs when the pasteboard contains multiple URLs
+        https://bugs.webkit.org/show_bug.cgi?id=188890
+        <rdar://problem/43648605>
+
+        Reviewed by Tim Horton.
+
+        Adds support for exposing a newline separated list of URLs via DataTransfer's "text/uri-list" type when pasting
+        or dropping multiple items on the pasteboard that can be represented as URLs. Currently on iOS, only the URL of
+        the first item (if present) is exposed, and on macOS, only the first out of all the URLs in the pasteboard is
+        exposed.
+
+        To fix this, we introduce `Pasteboard::readAllStrings`, which reads a list of pasteboard strings collected from
+        all available items on the platform pasteboard. Currently, this is only used to provide a list of URL strings
+        when fetching data for the "text/uri-list" type when calling `DataTransfer.getData()` and
+        `DataTransferItem.getAsString()`.
+
+        Tests:  DragAndDropTests.ExposeMultipleURLsInDataTransfer
+                UIPasteboardTests.DataTransferURIListContainsMultipleURLs
+                PasteMixedContent.PasteOneOrMoreURLs
+
+        * dom/DataTransfer.cpp:
+        (WebCore::readURLsFromPasteboardAsString):
+
+        Add a helper method that reads all URL strings from the pasteboard (for the MIME type "text/uri-list", which
+        corresponds to NSURLPboardType and "public.url" on macOS and iOS, respectively) and returns a single string
+        containing all non-empty URLs joined by newline characters. Also takes a filtering block which may be used to
+        reject URLs from being included in "text/uri-list" output.
+
+        (WebCore::DataTransfer::getDataForItem const):
+        (WebCore::DataTransfer::readStringFromPasteboard const):
+
+        Insteading of reading a single string from the pasteboard for "text/uri-list", call the above helper function to
+        read all URL strings in the pasteboard. If there are files present in the pasteboard, we also filter out URLs
+        whose schemes are not in the set of schemes that are safe to expose to the page (i.e. http(s), blob, and data).
+
+        * platform/Pasteboard.cpp:
+        (WebCore::Pasteboard::readAllStrings):
+
+        Add a default non-Cocoa implementation of readAllStrings() that returns a vector, which may contain the result
+        of readString().
+
+        * platform/Pasteboard.h:
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+
+        Add plumbing to grab a list of strings from the pasteboard for a given type.
+
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::Pasteboard::readAllStrings):
+        (WebCore::Pasteboard::readString):
+
+        Implement these two methods in terms of `readPlatformValuesAsStrings`. `readAllStrings` returns the full list of
+        results, while `readString` only returns the first result.
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::readPlatformValuesAsStrings):
+        (WebCore::Pasteboard::readPlatformValueAsString): Deleted.
+
+        Refactor this Cocoa helper function to return a list of pasteboard string values for the given type, rather than
+        a single string.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::allStringsForType const):
+
+        Grab a string for each item (represented by an NSItemProvider) in the pasteboard that has data for the given
+        type identifier.
+
+        (WebCore::PlatformPasteboard::readString const):
+
+        Return the absolute string of the NSURL, instead of WebCore::URL::string(). This is needed to handle the case
+        where the NSURL is constructed from absolute and relative parts using a Plist. While -absoluteString gets us the
+        full URL string, URL::string() only returns the relative portion.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::readPlatformValuesAsStrings):
+        (WebCore::Pasteboard::readPlatformValueAsString): Deleted.
+
+        Also refactor this to retrieve a list of pasteboard strings, rather than a single result.
+
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::typeIdentifierForPasteboardType):
+        (WebCore::PlatformPasteboard::allStringsForType const):
+
+        Add an implementation for `allStringsForType` on macOS. Unlike iOS, it's much trickier to get this right since
+        we need to maintain compatibility with legacy "NS*Pboard" types, and `NSPasteboardItem` can only provide data
+        for `NSPasteboardType`s (i.e. UTIs), so there's no way to just iterate through each pasteboard item and ask it
+        for data that matches the given type, if the types are not UTIs. However, in the case where we have multiple
+        items, the client must have used NSPasteboardWriting-conformant objects and/or NSPasteboardItem itself to write
+        data to the pasteboard. Since NSPasteboardWriting-conformant objects register modern pasteboard types when
+        writing to the pasteboard, we can simply iterate over these pasteboard items and ask for property lists using
+        type identifiers instead of having to worry about legacy pasteboard types. Furthermore, in the case where there
+        is only a single item in the pasteboard and we do need to handle legacy pasteboard types, using `-[NSPasteboard
+        stringForType:]` in the same way we do currently should yield the correct result.
+
+        As such, in the case where there is a single pasteboard item, we use `-[NSPasteboard stringForType:]` with the
+        original legacy type, and in the case where there are multiple items on the pasteboard, we iterate over each of
+        the pasteboard items and call `-[NSPasteboardItem propertyListForType:]` with the modern pasteboard type
+        corresponding to the given legacy pasteboard type.
+
+        The different corner cases in this logic are tested by the new API test, PasteMixedContent.PasteOneOrMoreURLs,
+        which exercises several different ways of writing one or more URLs to the pasteboard on macOS, which each result
+        in different legacy and modern pasteboard types being written to the pasteboard; our implementation of
+        `PlatformPasteboard::allStringsForType` on macOS handles all cases correctly.
+
 2018-09-04  Simon Fraser  <simon.fraser@apple.com>
 
         CSS reference filter that references a tiled feTurbulence is blank

@@ -47,6 +47,7 @@
 #include "WebContentReader.h"
 #include "WebCorePasteboardFileReader.h"
 #include "markup.h"
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -142,6 +143,19 @@ void DataTransfer::clearData(const String& type)
         m_itemList->didClearStringData(normalizedType);
 }
 
+static String readURLsFromPasteboardAsString(Pasteboard& pasteboard, Function<bool(const String&)>&& shouldIncludeURL)
+{
+    StringBuilder urlList;
+    for (auto urlString : pasteboard.readAllStrings("text/uri-list"_s)) {
+        if (!shouldIncludeURL(urlString))
+            continue;
+        if (!urlList.isEmpty())
+            urlList.append(newlineCharacter);
+        urlList.append(urlString);
+    }
+    return urlList.toString();
+}
+
 String DataTransfer::getDataForItem(Document& document, const String& type) const
 {
     if (!canReadData())
@@ -150,9 +164,9 @@ String DataTransfer::getDataForItem(Document& document, const String& type) cons
     auto lowercaseType = stripLeadingAndTrailingHTMLSpaces(type).convertToASCIILowercase();
     if (shouldSuppressGetAndSetDataToAvoidExposingFilePaths()) {
         if (lowercaseType == "text/uri-list") {
-            auto urlString = m_pasteboard->readString(lowercaseType);
-            if (Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(urlString))
-                return urlString;
+            return readURLsFromPasteboardAsString(*m_pasteboard, [] (auto& urlString) {
+                return Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(urlString);
+            });
         }
 
         if (lowercaseType == "text/html" && RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
@@ -190,6 +204,12 @@ String DataTransfer::readStringFromPasteboard(Document& document, const String& 
         WebContentMarkupReader reader { *document.frame() };
         m_pasteboard->read(reader, policy);
         return reader.markup;
+    }
+
+    if (!is<StaticPasteboard>(*m_pasteboard) && lowercaseType == "text/uri-list") {
+        return readURLsFromPasteboardAsString(*m_pasteboard, [] (auto&) {
+            return true;
+        });
     }
 
     return m_pasteboard->readString(lowercaseType);
