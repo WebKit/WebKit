@@ -50,6 +50,7 @@ class RTCIceCandidate;
 class RTCPeerConnection;
 class RTCRtpReceiver;
 class RTCRtpSender;
+class RTCRtpTransceiver;
 class RTCSessionDescription;
 class RTCStatsReport;
 
@@ -57,6 +58,7 @@ struct MediaEndpointConfiguration;
 struct RTCAnswerOptions;
 struct RTCDataChannelInit;
 struct RTCOfferOptions;
+struct RTCRtpTransceiverInit;
 
 namespace PeerConnection {
 using SessionDescriptionPromise = DOMPromiseDeferred<IDLDictionary<RTCSessionDescription::Init>>;
@@ -99,11 +101,11 @@ public:
     virtual void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&) = 0;
 
     virtual Ref<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) = 0;
-    virtual void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) = 0;
-    virtual bool notifyAddedTrack(RTCRtpSender&) { return false; }
+    virtual ExceptionOr<Ref<RTCRtpSender>> addTrack(RTCRtpSender*, MediaStreamTrack&, const Vector<String>&);
     virtual void notifyRemovedTrack(RTCRtpSender&) { }
 
-    virtual RTCRtpParameters getParameters(RTCRtpSender&) const { return { }; }
+    virtual ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(const String&, const RTCRtpTransceiverInit&);
+    virtual ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&);
 
     void markAsNeedingNegotiation();
     bool isNegotiationNeeded() const { return m_negotiationNeeded; };

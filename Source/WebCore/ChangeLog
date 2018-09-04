@@ -1,3 +1,71 @@
+2018-09-04  Youenn Fablet  <youenn@apple.com>
+
+        Introduce LibWebRTC backends for sender and receiver
+        https://bugs.webkit.org/show_bug.cgi?id=189171
+
+        Reviewed by Alejandro G. Castro.
+
+        Rename RTCRtpSender::Backend to RTCRtpSenderBackend, ditto for RTCRtpReceiver::Backend.
+        Make RTCRtpSender/RTCRtpReceiver own their backend.
+        This will allow the backends to own a libwebrtc sender/receiver ref counted object
+        and might allow us to cleanly separate code from unified plan vs plan B.
+
+        Update code so that libwebrtc code specific code is now creating senders and receivers.
+        This moves code from RTCPeerConnection down to LibWebRTCPeerConnectionBackend, in particular for
+        addTrack and addTransceiver methods.
+
+        Moved some code from LibWebRTCMediaEndpoint to LibWebRTCUtils to ease readability.
+
+        A future patch will allow to tie the libwebrtc sender/receiver to WebKit DOM sender/receiver.
+
+        Covered by existing tests.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::addTrack):
+        (WebCore::PeerConnectionBackend::addTransceiver):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::addTrack):
+        (WebCore::RTCPeerConnection::addTransceiver):
+        (WebCore::RTCPeerConnection::enqueueReplaceTrackTask):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCRtpReceiver.cpp:
+        (WebCore::RTCRtpReceiver::RTCRtpReceiver):
+        * Modules/mediastream/RTCRtpReceiver.h:
+        (WebCore::RTCRtpReceiver::create):
+        (WebCore::RTCRtpReceiver::setBackend):
+        * Modules/mediastream/RTCRtpReceiverBackend.h: Added.
+        (WebCore::RTCRtpReceiverBackend::getParameters):
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::create):
+        (WebCore::RTCRtpSender::RTCRtpSender):
+        * Modules/mediastream/RTCRtpSender.h:
+        * Modules/mediastream/RTCRtpSenderBackend.h: Added.
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::addRemoteTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::videoReceiver):
+        (WebCore::LibWebRTCPeerConnectionBackend::audioReceiver):
+        (WebCore::LibWebRTCPeerConnectionBackend::addTrack):
+        (WebCore::LibWebRTCPeerConnectionBackend::addTransceiver):
+        (WebCore::LibWebRTCPeerConnectionBackend::completeAddTransceiver):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp: Added.
+        (WebCore::LibWebRTCRtpReceiverBackend::getParameters):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.h: Added.
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp: Added.
+        (WebCore::LibWebRTCRtpSenderBackend::replaceTrack):
+        (WebCore::LibWebRTCRtpSenderBackend::getParameters const):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.h: Added.
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp: Added.
+        (WebCore::fillEncodingParameters):
+        (WebCore::fillHeaderExtensionParameters):
+        (WebCore::fillCodecParameters):
+        (WebCore::fillRtpParameters):
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.h: Added.
+        (WebCore::fromStdString):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-09-04  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Disabling both fullscreen and picture-in-picture shows an empty top left container

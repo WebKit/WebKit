@@ -530,6 +530,21 @@ void PeerConnectionBackend::markAsNeedingNegotiation()
         m_peerConnection.scheduleNegotiationNeededEvent();
 }
 
+ExceptionOr<Ref<RTCRtpSender>> PeerConnectionBackend::addTrack(RTCRtpSender*, MediaStreamTrack&, const Vector<String>&)
+{
+    return Exception { NotSupportedError, "Not implemented"_s };
+}
+
+ExceptionOr<Ref<RTCRtpTransceiver>> PeerConnectionBackend::addTransceiver(const String&, const RTCRtpTransceiverInit&)
+{
+    return Exception { NotSupportedError, "Not implemented"_s };
+}
+
+ExceptionOr<Ref<RTCRtpTransceiver>> PeerConnectionBackend::addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&)
+{
+    return Exception { NotSupportedError, "Not implemented"_s };
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& PeerConnectionBackend::logChannel() const
 {

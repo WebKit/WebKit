@@ -128,7 +128,7 @@ ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>
     for (auto& transceiver : m_transceiverSet->list()) {
         auto& existingSender = transceiver->sender();
         if (existingSender.trackKind() == track->kind() && existingSender.trackId().isNull() && !transceiver->hasSendingDirection()) {
-            existingSender.setTrack(WTFMove(track));
+            existingSender.setTrack(track.copyRef());
             existingSender.setMediaStreamIds(WTFMove(mediaStreamIds));
             transceiver->enableSendingDirection();
             sender = &existingSender;
@@ -137,27 +137,7 @@ ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>
         }
     }
 
-    if (!sender) {
-        String transceiverMid = RTCRtpTransceiver::getNextMid();
-        const String& trackKind = track->kind();
-        String trackId = createCanonicalUUIDString();
-
-        auto newSender = RTCRtpSender::create(WTFMove(track), WTFMove(mediaStreamIds), *this);
-        auto receiver = m_backend->createReceiver(transceiverMid, trackKind, trackId);
-        auto transceiver = RTCRtpTransceiver::create(WTFMove(newSender), WTFMove(receiver));
-
-        // This transceiver is not yet associated with an m-line (null mid), but we need a
-        // provisional mid if the transceiver is used to create an offer.
-        transceiver->setProvisionalMid(transceiverMid);
-
-        sender = &transceiver->sender();
-        m_transceiverSet->append(WTFMove(transceiver));
-    }
-
-    if (!m_backend->notifyAddedTrack(*sender))
-        return Exception { InvalidAccessError, "Unable to add track"_s };
-
-    return Ref<RTCRtpSender> { *sender };
+    return m_backend->addTrack(sender, track.get(), mediaStreamIds);
 }
 
 ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)
@@ -192,31 +172,11 @@ ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransce
         if (kind != "audio" && kind != "video")
             return Exception { TypeError };
 
-        auto sender = RTCRtpSender::create(String(kind), Vector<String>(), *this);
-        return completeAddTransceiver(WTFMove(sender), init, createCanonicalUUIDString(), kind);
+        return m_backend->addTransceiver(kind, init);
     }
 
-    Ref<MediaStreamTrack> track = WTF::get<RefPtr<MediaStreamTrack>>(withTrack).releaseNonNull();
-    const String& trackId = track->id();
-    const String& trackKind = track->kind();
-
-    auto sender = RTCRtpSender::create(WTFMove(track), Vector<String>(), *this);
-    if (!m_backend->notifyAddedTrack(sender))
-        return Exception { InvalidAccessError, "Unable to add track"_s };
-
-    return completeAddTransceiver(WTFMove(sender), init, trackId, trackKind);
-}
-
-Ref<RTCRtpTransceiver> RTCPeerConnection::completeAddTransceiver(Ref<RTCRtpSender>&& sender, const RTCRtpTransceiverInit& init, const String& trackId, const String& trackKind)
-{
-    String transceiverMid = RTCRtpTransceiver::getNextMid();
-    auto transceiver = RTCRtpTransceiver::create(WTFMove(sender), m_backend->createReceiver(transceiverMid, trackKind, trackId));
-
-    transceiver->setProvisionalMid(transceiverMid);
-    transceiver->setDirection(init.direction);
-
-    m_transceiverSet->append(transceiver.copyRef());
-    return transceiver;
+    auto track = WTF::get<RefPtr<MediaStreamTrack>>(withTrack).releaseNonNull();
+    return m_backend->addTransceiver(WTFMove(track), init);
 }
 
 void RTCPeerConnection::queuedCreateOffer(RTCOfferOptions&& options, SessionDescriptionPromise&& promise)
@@ -586,26 +546,9 @@ void RTCPeerConnection::enqueueReplaceTrackTask(RTCRtpSender& sender, RefPtr<Med
         bool hasTrack = protectedSender->track();
         protectedSender->setTrack(withTrack.releaseNonNull());
         if (!hasTrack)
-            protectedThis->m_backend->notifyAddedTrack(protectedSender.get());
+            protectedThis->m_backend->addTrack(protectedSender.ptr(), *protectedSender->track(), { });
         promise.resolve();
     });
-}
-
-void RTCPeerConnection::replaceTrack(RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& withTrack, DOMPromiseDeferred<void>&& promise)
-{
-    INFO_LOG(LOGIDENTIFIER);
-
-    if (!sender.track() && withTrack) {
-        enqueueReplaceTrackTask(sender, withTrack.releaseNonNull(), WTFMove(promise));
-        return;
-    }
-
-    m_backend->replaceTrack(sender, WTFMove(withTrack), WTFMove(promise));
-}
-
-RTCRtpParameters RTCPeerConnection::getParameters(RTCRtpSender& sender) const
-{
-    return m_backend->getParameters(sender);
 }
 
 void RTCPeerConnection::dispatchEvent(Event& event)

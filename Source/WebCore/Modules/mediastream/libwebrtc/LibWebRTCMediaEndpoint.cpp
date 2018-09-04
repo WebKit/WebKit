@@ -32,7 +32,10 @@
 #include "LibWebRTCDataChannelHandler.h"
 #include "LibWebRTCPeerConnectionBackend.h"
 #include "LibWebRTCProvider.h"
+#include "LibWebRTCRtpReceiverBackend.h"
+#include "LibWebRTCRtpSenderBackend.h"
 #include "LibWebRTCStatsCollector.h"
+#include "LibWebRTCUtils.h"
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "Performance.h"
@@ -56,11 +59,6 @@
 #include <wtf/MainThread.h>
 
 namespace WebCore {
-
-static inline String fromStdString(const std::string& value)
-{
-    return String::fromUTF8(value.data(), value.length());
-}
 
 LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& peerConnection, LibWebRTCProvider& client)
     : m_peerConnectionBackend(peerConnection)
@@ -366,16 +364,6 @@ void LibWebRTCMediaEndpoint::addRemoteStream(webrtc::MediaStreamInterface&)
 {
 }
 
-class RTCRtpReceiverBackend final : public RTCRtpReceiver::Backend {
-public:
-    explicit RTCRtpReceiverBackend(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&& rtcReceiver) : m_rtcReceiver(WTFMove(rtcReceiver)) { }
-private:
-    RTCRtpParameters getParameters() final;
-
-    rtc::scoped_refptr<webrtc::RtpReceiverInterface> m_rtcReceiver;
-};
-
-
 void LibWebRTCMediaEndpoint::addRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&& rtcReceiver, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>& rtcStreams)
 {
     ASSERT(rtcReceiver);
@@ -405,7 +393,7 @@ void LibWebRTCMediaEndpoint::addRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiv
     }
     }
 
-    receiver->setBackend(std::make_unique<RTCRtpReceiverBackend>(WTFMove(rtcReceiver)));
+    receiver->setBackend(std::make_unique<LibWebRTCRtpReceiverBackend>(WTFMove(rtcReceiver)));
     
     auto* track = receiver->track();
     ASSERT(track);
@@ -624,94 +612,6 @@ void LibWebRTCMediaEndpoint::setRemoteSessionDescriptionFailed(const std::string
             return;
         protectedThis->m_peerConnectionBackend.setRemoteDescriptionFailed(Exception { OperationError, WTFMove(error) });
     });
-}
-
-static inline RTCRtpParameters::EncodingParameters fillEncodingParameters(const webrtc::RtpEncodingParameters& rtcParameters)
-{
-    RTCRtpParameters::EncodingParameters parameters;
-
-    if (rtcParameters.ssrc)
-        parameters.ssrc = *rtcParameters.ssrc;
-    if (rtcParameters.rtx && rtcParameters.rtx->ssrc)
-        parameters.rtx.ssrc = *rtcParameters.rtx->ssrc;
-    if (rtcParameters.fec && rtcParameters.fec->ssrc)
-        parameters.fec.ssrc = *rtcParameters.fec->ssrc;
-    if (rtcParameters.dtx) {
-        switch (*rtcParameters.dtx) {
-        case webrtc::DtxStatus::DISABLED:
-            parameters.dtx = RTCRtpParameters::DtxStatus::Disabled;
-            break;
-        case webrtc::DtxStatus::ENABLED:
-            parameters.dtx = RTCRtpParameters::DtxStatus::Enabled;
-        }
-    }
-    parameters.active = rtcParameters.active;
-    if (rtcParameters.max_bitrate_bps)
-        parameters.maxBitrate = *rtcParameters.max_bitrate_bps;
-    if (rtcParameters.max_framerate)
-        parameters.maxFramerate = *rtcParameters.max_framerate;
-    parameters.rid = fromStdString(rtcParameters.rid);
-    if (rtcParameters.scale_resolution_down_by)
-        parameters.scaleResolutionDownBy = *rtcParameters.scale_resolution_down_by;
-
-    return parameters;
-}
-
-static inline RTCRtpParameters::HeaderExtensionParameters fillHeaderExtensionParameters(const webrtc::RtpHeaderExtensionParameters& rtcParameters)
-{
-    RTCRtpParameters::HeaderExtensionParameters parameters;
-
-    parameters.uri = fromStdString(rtcParameters.uri);
-    parameters.id = rtcParameters.id;
-
-    return parameters;
-}
-
-static inline RTCRtpParameters::CodecParameters fillCodecParameters(const webrtc::RtpCodecParameters& rtcParameters)
-{
-    RTCRtpParameters::CodecParameters parameters;
-
-    parameters.payloadType = rtcParameters.payload_type;
-    parameters.mimeType = fromStdString(rtcParameters.mime_type());
-    if (rtcParameters.clock_rate)
-        parameters.clockRate = *rtcParameters.clock_rate;
-    if (rtcParameters.num_channels)
-        parameters.channels = *rtcParameters.num_channels;
-
-    return parameters;
-}
-
-static RTCRtpParameters fillRtpParameters(const webrtc::RtpParameters rtcParameters)
-{
-    RTCRtpParameters parameters;
-
-    parameters.transactionId = fromStdString(rtcParameters.transaction_id);
-    for (auto& rtcEncoding : rtcParameters.encodings)
-        parameters.encodings.append(fillEncodingParameters(rtcEncoding));
-    for (auto& extension : rtcParameters.header_extensions)
-        parameters.headerExtensions.append(fillHeaderExtensionParameters(extension));
-    for (auto& codec : rtcParameters.codecs)
-        parameters.codecs.append(fillCodecParameters(codec));
-
-    switch (rtcParameters.degradation_preference) {
-    // FIXME: Support DegradationPreference::DISABLED.
-    case webrtc::DegradationPreference::DISABLED:
-    case webrtc::DegradationPreference::MAINTAIN_FRAMERATE:
-        parameters.degradationPreference = RTCRtpParameters::DegradationPreference::MaintainFramerate;
-        break;
-    case webrtc::DegradationPreference::MAINTAIN_RESOLUTION:
-        parameters.degradationPreference = RTCRtpParameters::DegradationPreference::MaintainResolution;
-        break;
-    case webrtc::DegradationPreference::BALANCED:
-        parameters.degradationPreference = RTCRtpParameters::DegradationPreference::Balanced;
-        break;
-    };
-    return parameters;
-}
-
-RTCRtpParameters RTCRtpReceiverBackend::getParameters()
-{
-    return fillRtpParameters(m_rtcReceiver->GetParameters());
 }
 
 RTCRtpParameters LibWebRTCMediaEndpoint::getRTCRtpSenderParameters(RTCRtpSender& sender)

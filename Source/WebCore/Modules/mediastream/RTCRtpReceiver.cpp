@@ -37,9 +37,9 @@
 
 namespace WebCore {
 
-RTCRtpReceiver::RTCRtpReceiver(Ref<MediaStreamTrack>&& track, Backend* backend)
+RTCRtpReceiver::RTCRtpReceiver(Ref<MediaStreamTrack>&& track, std::unique_ptr<RTCRtpReceiverBackend>&& backend)
     : RTCRtpSenderReceiverBase(WTFMove(track))
-    , m_backend(backend)
+    , m_backend(WTFMove(backend))
 {
 }
 

@@ -1568,6 +1568,9 @@ if (USE_LIBWEBRTC)
       Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp
       Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp
       Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp
+      Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp
+      Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp
+      Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp
       )
 endif ()
 
