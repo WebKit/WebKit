@@ -1,3 +1,13 @@
+2018-09-04  Simon Fraser  <simon.fraser@apple.com>
+
+        CSS reference filter that references a tiled feTurbulence is blank
+        https://bugs.webkit.org/show_bug.cgi?id=188950
+
+        Reviewed by Dean Jackson.
+
+        * css3/filters/reference-filter-set-filter-regions-expected.html: Added.
+        * css3/filters/reference-filter-set-filter-regions.html: Added.
+
 2018-09-04  Rob Buis  <rbuis@igalia.com>
 
         Adjust XMLHttpRequest username/password precedence rules

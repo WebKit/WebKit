@@ -340,6 +340,19 @@ void CSSFilter::allocateBackingStoreIfNeeded(const GraphicsContext& targetContex
     m_graphicsBufferAttached = true;
 }
 
+void CSSFilter::determineFilterPrimitiveSubregion()
+{
+    auto& lastEffect = m_effects.last().get();
+    lastEffect.determineFilterPrimitiveSubregion();
+    FloatRect subRegion = lastEffect.maxEffectRect();
+    // At least one FilterEffect has a too big image size, recalculate the effect sizes with new scale factors.
+    FloatSize scale;
+    if (ImageBuffer::sizeNeedsClamping(subRegion.size(), scale)) {
+        setFilterResolution(scale);
+        lastEffect.determineFilterPrimitiveSubregion();
+    }
+}
+
 void CSSFilter::clearIntermediateResults()
 {
     m_sourceGraphic->clearResult();

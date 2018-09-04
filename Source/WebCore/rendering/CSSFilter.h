@@ -59,6 +59,8 @@ public:
     bool hasFilterThatMovesPixels() const { return m_hasFilterThatMovesPixels; }
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const { return m_hasFilterThatShouldBeRestrictedBySecurityOrigin; }
 
+    void determineFilterPrimitiveSubregion();
+
 private:
     CSSFilter();
     virtual ~CSSFilter();
@@ -66,7 +68,9 @@ private:
     bool isCSSFilter() const final { return true; }
 
     FloatRect sourceImageRect() const final { return m_sourceDrawingRegion; }
+
     FloatRect filterRegion() const final { return m_filterRegion; }
+    FloatRect filterRegionInUserSpace() const final { return m_filterRegion; }
 
     RefPtr<FilterEffect> buildReferenceFilter(RenderElement&, FilterEffect& previousEffect, ReferenceFilterOperation&);
 

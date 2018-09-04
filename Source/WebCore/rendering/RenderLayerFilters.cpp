@@ -155,6 +155,8 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(GraphicsContext& destinat
     m_paintOffset = filterSourceRect.location();
     resetDirtySourceRect();
 
+    filter.determineFilterPrimitiveSubregion();
+
     filter.allocateBackingStoreIfNeeded(destinationContext);
     auto* sourceGraphicsContext = filter.inputContext();
     if (!sourceGraphicsContext || filter.filterRegion().isEmpty() || ImageBuffer::sizeNeedsClamping(filter.filterRegion().size()))

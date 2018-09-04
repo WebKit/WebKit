@@ -43,9 +43,6 @@ public:
 
     const char* renderName() const override { return "RenderSVGResourceFilterPrimitive"; }
 
-    // They depend on the RenderObject argument of RenderSVGResourceFilter::applyResource.
-    static FloatRect determineFilterPrimitiveSubregion(FilterEffect&);
-
     inline void primitiveAttributeChanged(const QualifiedName& attribute)
     {
         RenderObject* filter = parent();

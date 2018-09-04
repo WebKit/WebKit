@@ -87,6 +87,9 @@ public:
 
     FloatRect drawingRegionOfInputImage(const IntRect&) const;
     IntRect requestedRegionOfInputImageData(const IntRect&) const;
+    
+    // Recurses on inputs.
+    FloatRect determineFilterPrimitiveSubregion();
 
     // Solid black image with different alpha values.
     bool isAlphaImage() const { return m_alphaImage; }

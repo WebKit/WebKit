@@ -1,3 +1,35 @@
+2018-09-04  Simon Fraser  <simon.fraser@apple.com>
+
+        CSS reference filter that references a tiled feTurbulence is blank
+        https://bugs.webkit.org/show_bug.cgi?id=188950
+
+        Reviewed by Dean Jackson.
+        
+        We need to run the code that was in RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion()
+        for CSS reference filters, to set up the various rects in the filter effects.
+        
+        Do this by moving the code to FilterEffect::determineFilterPrimitiveSubregion(), which makes sense
+        because it recurses on the FilterEffect input chain. To make it CSS/SVGFilter agnostic, we move filterRegionInUserSpace()
+        to the Filter base class (for CSSFilter, it just returns m_filterRegion).
+
+        Test: css3/filters/reference-filter-set-filter-regions.html
+
+        * platform/graphics/filters/Filter.h:
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::determineFilterPrimitiveSubregion):
+        * platform/graphics/filters/FilterEffect.h:
+        * rendering/CSSFilter.cpp:
+        (WebCore::CSSFilter::determineFilterPrimitiveSubregion):
+        * rendering/CSSFilter.h:
+        * rendering/RenderLayerFilters.cpp:
+        (WebCore::RenderLayerFilters::beginFilterEffect):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        * rendering/svg/RenderSVGResourceFilterPrimitive.cpp:
+        (WebCore::RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion): Deleted.
+        * rendering/svg/RenderSVGResourceFilterPrimitive.h:
+        * svg/graphics/filters/SVGFilter.h:
+
 2018-09-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Rename LayoutPair to BoxPair

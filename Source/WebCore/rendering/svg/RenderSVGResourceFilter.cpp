@@ -178,13 +178,13 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
 
     LOG_WITH_STREAM(Filters, stream << "RenderSVGResourceFilter::applyResource\n" << *filterData->builder->lastEffect());
 
-    RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(*lastEffect);
+    lastEffect->determineFilterPrimitiveSubregion();
     FloatRect subRegion = lastEffect->maxEffectRect();
     // At least one FilterEffect has a too big image size,
     // recalculate the effect sizes with new scale factors.
     if (ImageBuffer::sizeNeedsClamping(subRegion.size(), scale)) {
         filterData->filter->setFilterResolution(scale);
-        RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(*lastEffect);
+        lastEffect->determineFilterPrimitiveSubregion();
     }
 
     // If the drawingRegion is empty, we have something like <g filter=".."/>.
