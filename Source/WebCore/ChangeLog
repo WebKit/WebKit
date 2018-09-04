@@ -1,3 +1,21 @@
+2018-09-04  Zan Dobersek  <zdobersek@igalia.com> and Ms2ger  <Ms2ger@igalia.com>
+
+        Implement support for passing ImageBitmap to texImage2D/texSubImage2D
+        https://bugs.webkit.org/show_bug.cgi?id=187584
+
+        Reviewed by Dean Jackson.
+
+        Test: fast/canvas/webgl/gl-teximage-imagebitmap.html
+
+        * html/canvas/WebGL2RenderingContext.h: Update union type definition.
+        * html/canvas/WebGL2RenderingContext.idl: Update union type definition.
+        * html/canvas/WebGLRenderingContext.idl: Update union type definition.
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::texSubImage2D): implement.
+        (WebCore::WebGLRenderingContextBase::texImage2D): implement.
+        * html/canvas/WebGLRenderingContextBase.h: Update union type definition; add to TexFuncValidationSourceType.
+        * html/canvas/WebGLRenderingContextBase.idl: Remove unused union type definition.
+
 2018-09-04  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [EME] Add the WebM initData support in ClearKey CDM

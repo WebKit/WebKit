@@ -27,11 +27,10 @@ typedef unsigned long GLenum;
 typedef long GLint;
 typedef long GLsizei;
 
-// FIXME: Should allow ImageBitmap too.
 #ifdef ENABLE_VIDEO
-typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement) TexImageSource;
+typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement) TexImageSource;
 #else
-typedef (ImageData or HTMLImageElement or HTMLCanvasElement) TexImageSource;
+typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement) TexImageSource;
 #endif
 
 [
