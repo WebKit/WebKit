@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2018 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 Bjoern Graf (bjoern.graf@gmail.com)
  *
  *  This library is free software; you can redistribute it and/or
@@ -1014,6 +1014,27 @@ JSObject* GlobalObject::moduleLoaderCreateImportMetaProperties(JSGlobalObject* g
     return metaProperties;
 }
 
+static CString cStringFromViewWithString(ExecState* exec, ThrowScope& scope, StringViewWithUnderlyingString& viewWithString)
+{
+    Expected<CString, UTF8ConversionError> expectedString = viewWithString.view.tryGetUtf8();
+    if (expectedString)
+        return expectedString.value();
+    switch (expectedString.error()) {
+    case UTF8ConversionError::OutOfMemory:
+        throwOutOfMemoryError(exec, scope);
+        break;
+    case UTF8ConversionError::IllegalSource:
+        scope.throwException(exec, createError(exec, "Illegal source encountered during UTF8 conversion"));
+        break;
+    case UTF8ConversionError::SourceExhausted:
+        scope.throwException(exec, createError(exec, "Source exhausted during UTF8 conversion"));
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    return { };
+}
+
 static EncodedJSValue printInternal(ExecState* exec, FILE* out)
 {
     VM& vm = exec->vm();
@@ -1034,7 +1055,9 @@ static EncodedJSValue printInternal(ExecState* exec, FILE* out)
 
         auto viewWithString = exec->uncheckedArgument(i).toString(exec)->viewWithUnderlyingString(exec);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        if (fprintf(out, "%s", viewWithString.view.utf8().data()) < 0)
+        auto string = cStringFromViewWithString(exec, scope, viewWithString);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        if (fprintf(out, "%s", string.data()) < 0)
             goto fail;
     }
 
@@ -1053,7 +1076,9 @@ EncodedJSValue JSC_HOST_CALL functionDebug(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto viewWithString = exec->argument(0).toString(exec)->viewWithUnderlyingString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    fprintf(stderr, "--> %s\n", viewWithString.view.utf8().data());
+    auto string = cStringFromViewWithString(exec, scope, viewWithString);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    fprintf(stderr, "--> %s\n", string.data());
     return JSValue::encode(jsUndefined());
 }
 
