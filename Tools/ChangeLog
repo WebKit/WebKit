@@ -1,3 +1,30 @@
+2018-09-04  Alexey Proskuryakov  <ap@apple.com>
+
+        run-leaks should run leaks with --list (on Mojave)
+        https://bugs.webkit.org/show_bug.cgi?id=187716
+        <rdar://problem/42261676>
+
+        Reviewed by Lucas Forschler.
+
+        Also enabled dumping memgraphs. We'll be pruning these aggressively, as they take
+        significant space.
+
+        * Scripts/run-leaks:
+        (main): Added an option to store memgraphs.
+        (runLeaks): As there is no way to test whether the new format is supported in advance,
+        we have to try with --list first, and retry if that fails. Also, made leaks operate
+        on a memgraph file if we are saving it anyway.
+
+        * Scripts/webkitpy/port/leakdetector.py:
+        (LeakDetector._leaks_args): Pass --memgraph-file to run-leaks.
+        (LeakDetector.leaks_file_name): Removed an incorrect comment.
+        (LeakDetector.memgraph_file_name): Added.
+        (LeakDetector.check_for_leaks): Changed how arguments are passed to _leaks_args.
+        It is a bit ugly that leaks path ends up being computed twice, but this is the least
+        ugly approach that I could find.
+
+        * Scripts/webkitpy/port/leakdetector_unittest.py: Updated for _leaks_args changes.
+
 2018-09-04  Chris Dumez  <cdumez@apple.com>
 
         Add process pool configuration flag to turn on automatic process pre-warming

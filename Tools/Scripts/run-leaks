@@ -34,7 +34,7 @@ use warnings;
 use File::Basename;
 use Getopt::Long;
 
-sub runLeaks($);
+sub runLeaks($$);
 sub parseLeaksOutput(\@);
 sub removeMatchingRecords(\@$\@);
 sub reportError($);
@@ -47,17 +47,20 @@ sub main()
         "  --exclude-callstack regexp   Exclude leaks whose call stacks match the regular expression 'regexp'.\n" .
         "  --exclude-type regexp        Exclude leaks whose data types match the regular expression 'regexp'.\n" .
         "  --output-file path           Store result in a file. If not specified, standard output is used.\n" .
+        "  --memgraph-file path         Store memgraph in a file.\n" .
         "  --help                       Show this help message.\n";
 
     my @callStacksToExclude = ();
     my @typesToExclude = ();
     my $outputPath;
+    my $memgraphPath;
     my $help = 0;
 
     my $getOptionsResult = GetOptions(
         'exclude-callstack:s' => \@callStacksToExclude,
         'exclude-type:s' => \@typesToExclude,
         'output-file:s' => \$outputPath,
+        'memgraph-file:s' => \$memgraphPath,
         'help' => \$help
     );
     my $pidOrExecutableName = $ARGV[0];
@@ -74,7 +77,7 @@ sub main()
     }
 
     # Run leaks tool.
-    my $leaksOutput = runLeaks($pidOrExecutableName);
+    my $leaksOutput = runLeaks($pidOrExecutableName, $memgraphPath);
     if (!$leaksOutput) {
         return 1;
     }
@@ -112,16 +115,28 @@ sub main()
 exit(main());
 
 # Returns the output of the leaks tool in list form.
-sub runLeaks($)
+sub runLeaks($$)
 {
-    my ($pidOrExecutableName) = @_;
-    
-    my @leaksOutput = `leaks $pidOrExecutableName`;
-    if (!@leaksOutput) {
-        reportError("Error running leaks tool.");
-        return;
+    my ($target, $memgraphPath) = @_;
+
+    if (defined $memgraphPath) {
+        `/usr/bin/leaks \"$target\" --outputGraph=\"$memgraphPath\"`;
+        $target = $memgraphPath;
     }
-    
+
+    # To get a result we can parse, we need to pass --list to all versions of the leaks tool
+    # that recognize it, but there is no certain way to tell in advance (the version of the
+    # tool is not always tied to OS version, and --help doesn't document the option in some
+    # of the tool versions where it's supported and needed).
+    print STDERR "Starting leaks\n";
+    my @leaksOutput = `/usr/bin/leaks \"$target\" --list`;
+
+    # FIXME: Remove the fallback once macOS Mojave is the oldest supported version.
+    my $leaksExitCode = $? >> 8;
+    if ($leaksExitCode > 1) {
+        @leaksOutput = `/usr/bin/leaks \"$target\"`;
+    }
+
     return \@leaksOutput;
 }
 
