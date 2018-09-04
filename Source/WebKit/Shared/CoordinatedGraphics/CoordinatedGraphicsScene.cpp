@@ -259,9 +259,9 @@ void CoordinatedGraphicsScene::updateSceneState()
     m_nicosia.scene->accessState(
         [this, &layersByBacking](Nicosia::Scene::State& state)
         {
-            // Bail if the scene didn't change.
-            if (state.id == m_nicosia.state.id)
-                return;
+            // FIXME: try to minimize the amount of work in case the Scene::State object
+            // didn't change (i.e. no layer flush was done), but don't forget to properly
+            // gather and update proxy objects for content layers.
 
             // Handle the root layer, adding it to the TextureMapperLayer tree
             // on the first update. No such change is expected later.

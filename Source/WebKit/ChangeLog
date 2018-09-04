@@ -1,3 +1,18 @@
+2018-09-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r235165): [GStreamer] Major video performance regression
+        https://bugs.webkit.org/show_bug.cgi?id=189224
+
+        Reviewed by Michael Catanzaro.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::updateSceneState): Drop the early
+        return used when the scene state wasn't updated through a layer flush,
+        and instead always run through layer changes and backings. This way we
+        won't miss proxy objects that need swapping even if none of the layer
+        states were changed. Reducing the amount of work done here when scene
+        hasn't been updated might be possible, but it's not a huge bottleneck.
+
 2018-09-01  Darin Adler  <darin@apple.com>
 
         [CFNetwork] Update CFNetwork SPI use to use CFNetworkSPI.h more consistently
