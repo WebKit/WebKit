@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#
 # Copyright 2006, Google Inc.
 # All rights reserved.
 #
@@ -29,20 +27,21 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Unit test utilities for Google C++ Testing Framework."""
-
-__author__ = 'wan@google.com (Zhanyong Wan)'
-
-import atexit
-import os
-import shutil
-import sys
-import tempfile
-import unittest
-_test_module = unittest
-
+"""Unit test utilities for Google C++ Testing and Mocking Framework."""
 # Suppresses the 'Import not at the top of the file' lint complaint.
 # pylint: disable-msg=C6204
+
+import os
+import sys
+
+IS_WINDOWS = os.name == 'nt'
+IS_CYGWIN = os.name == 'posix' and 'CYGWIN' in os.uname()[0]
+
+import atexit
+import shutil
+import tempfile
+import unittest as _test_module
+
 try:
   import subprocess
   _SUBPROCESS_MODULE_AVAILABLE = True
@@ -53,18 +52,30 @@ except:
 
 GTEST_OUTPUT_VAR_NAME = 'GTEST_OUTPUT'
 
-IS_WINDOWS = os.name == 'nt'
-IS_CYGWIN = os.name == 'posix' and 'CYGWIN' in os.uname()[0]
+# The environment variable for specifying the path to the premature-exit file.
+PREMATURE_EXIT_FILE_ENV_VAR = 'TEST_PREMATURE_EXIT_FILE'
+
+environ = os.environ.copy()
+
+
+def SetEnvVar(env_var, value):
+  """Sets/unsets an environment variable to a given value."""
+
+  if value is not None:
+    environ[env_var] = value
+  elif env_var in environ:
+    del environ[env_var]
+
 
 # Here we expose a class from a particular module, depending on the
 # environment. The comment suppresses the 'Invalid variable name' lint
 # complaint.
-TestCase = _test_module.TestCase  # pylint: disable-msg=C6409
+TestCase = _test_module.TestCase  # pylint: disable=C6409
 
 # Initially maps a flag to its default value. After
 # _ParseAndStripGTestFlags() is called, maps a flag to its actual value.
-_flag_map = {'gtest_source_dir': os.path.dirname(sys.argv[0]),
-             'gtest_build_dir': os.path.dirname(sys.argv[0])}
+_flag_map = {'source_dir': os.path.dirname(sys.argv[0]),
+             'build_dir': os.path.dirname(sys.argv[0])}
 _gtest_flags_are_parsed = False
 
 
@@ -73,7 +84,7 @@ def _ParseAndStripGTestFlags(argv):
 
   # Suppresses the lint complaint about a global variable since we need it
   # here to maintain module-wide state.
-  global _gtest_flags_are_parsed  # pylint: disable-msg=W0603
+  global _gtest_flags_are_parsed  # pylint: disable=W0603
   if _gtest_flags_are_parsed:
     return
 
@@ -111,13 +122,13 @@ def GetFlag(flag):
 def GetSourceDir():
   """Returns the absolute path of the directory where the .py files are."""
 
-  return os.path.abspath(GetFlag('gtest_source_dir'))
+  return os.path.abspath(GetFlag('source_dir'))
 
 
 def GetBuildDir():
   """Returns the absolute path of the directory where the test binaries are."""
 
-  return os.path.abspath(GetFlag('gtest_build_dir'))
+  return os.path.abspath(GetFlag('build_dir'))
 
 
 _temp_dir = None
@@ -130,8 +141,6 @@ atexit.register(_RemoveTempDir)
 
 
 def GetTempDir():
-  """Returns a directory for temporary files."""
-
   global _temp_dir
   if not _temp_dir:
     _temp_dir = tempfile.mkdtemp()
@@ -160,13 +169,9 @@ def GetTestExecutablePath(executable_name, build_dir=None):
 
   if not os.path.exists(path):
     message = (
-        'Unable to find the test binary. Please make sure to provide path\n'
-        'to the binary via the --gtest_build_dir flag or the GTEST_BUILD_DIR\n'
-        'environment variable. For convenient use, invoke this script via\n'
-        'mk_test.py.\n'
-        # TODO(vladl@google.com): change mk_test.py to test.py after renaming
-        # the file.
-        'Please run mk_test.py -h for help.')
+        'Unable to find the test binary "%s". Please make sure to provide\n'
+        'a path to the binary via the --build_dir flag or the BUILD_DIR\n'
+        'environment variable.' % path)
     print >> sys.stderr, message
     sys.exit(1)
 
@@ -234,7 +239,7 @@ class Subprocess:
       p = subprocess.Popen(command,
                            stdout=subprocess.PIPE, stderr=stderr,
                            cwd=working_dir, universal_newlines=True, env=env)
-      # communicate returns a tuple with the file obect for the child's
+      # communicate returns a tuple with the file object for the child's
       # output.
       self.output = p.communicate()[0]
       self._return_code = p.returncode
@@ -245,7 +250,7 @@ class Subprocess:
         # Changes made by os.environ.clear are not inheritable by child
         # processes until Python 2.6. To produce inheritable changes we have
         # to delete environment items with the del statement.
-        for key in dest:
+        for key in dest.keys():
           del dest[key]
         dest.update(src)
 
@@ -301,7 +306,7 @@ def Main():
   _ParseAndStripGTestFlags(sys.argv)
   # The tested binaries should not be writing XML output files unless the
   # script explicitly instructs them to.
-  # TODO(vladl@google.com): Move this into Subprocess when we implement
+  # FIXME: Move this into Subprocess when we implement
   # passing environment into it as a parameter.
   if GTEST_OUTPUT_VAR_NAME in os.environ:
     del os.environ[GTEST_OUTPUT_VAR_NAME]

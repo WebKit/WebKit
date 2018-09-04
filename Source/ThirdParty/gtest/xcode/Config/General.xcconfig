@@ -18,7 +18,7 @@ GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 
 ARCHS = $(ARCHS_STANDARD_32_64_BIT);
 
-HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include "$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders" ../ ../include/
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include ../ ../include/
 
 // Zerolink prevents link warnings so turn it off
 ZERO_LINK = NO
@@ -58,8 +58,6 @@ ALWAYS_SEARCH_USER_PATHS = NO
 
 // Turn on position dependent code for most cases (overridden where appropriate)
 GCC_DYNAMIC_NO_PIC = YES
-
-GCC_PREPROCESSOR_DEFINITIONS = $(GCC_PREPROCESSOR_DEFINITIONS) GTEST_HAS_TR1_TUPLE=0 GTEST_HAS_RTTI=0;
 
 CLANG_CXX_LIBRARY = libc++;
 

@@ -26,8 +26,7 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-// Author: vladl@google.com (Vlad Losev)
+
 
 // This sample shows how to test code relying on some global flag variables.
 // Combine() helps with generating all possible combinations of such flags,
@@ -36,8 +35,8 @@
 // Use class definitions to test from this header.
 #include "prime_tables.h"
 
-#include <gtest/gtest.h>
-
+#include "gtest/gtest.h"
+namespace {
 #if GTEST_HAS_COMBINE
 
 // Suppose we want to introduce a new, improved implementation of PrimeTable
@@ -90,7 +89,7 @@ using ::testing::Combine;
 // PreCalculatedPrimeTable disabled. We do this by defining fixture which will
 // accept different combinations of parameters for instantiating a
 // HybridPrimeTable instance.
-class PrimeTableTest : public TestWithParam< ::std::tr1::tuple<bool, int> > {
+class PrimeTableTest : public TestWithParam< ::testing::tuple<bool, int> > {
  protected:
   virtual void SetUp() {
     // This can be written as
@@ -101,8 +100,8 @@ class PrimeTableTest : public TestWithParam< ::std::tr1::tuple<bool, int> > {
     //
     // once the Google C++ Style Guide allows use of ::std::tr1::tie.
     //
-    bool force_on_the_fly = ::std::tr1::get<0>(GetParam());
-    int max_precalculated = ::std::tr1::get<1>(GetParam());
+    bool force_on_the_fly = ::testing::get<0>(GetParam());
+    int max_precalculated = ::testing::get<1>(GetParam());
     table_ = new HybridPrimeTable(force_on_the_fly, max_precalculated);
   }
   virtual void TearDown() {
@@ -171,3 +170,4 @@ INSTANTIATE_TEST_CASE_P(MeaningfulTestParameters,
 TEST(DummyTest, CombineIsNotSupportedOnThisPlatform) {}
 
 #endif  // GTEST_HAS_COMBINE
+}  // namespace

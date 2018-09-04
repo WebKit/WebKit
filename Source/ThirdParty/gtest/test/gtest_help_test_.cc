@@ -26,13 +26,12 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-// Author: wan@google.com (Zhanyong Wan)
+
 
 // This program is meant to be run by gtest_help_test.py.  Do not run
 // it directly.
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
 // When a help flag is specified, this program should skip the tests
 // and exit with 0; otherwise the following test will be executed,

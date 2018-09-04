@@ -26,23 +26,16 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-// Author: wan@google.com (Zhanyong Wan)
+
 
 // Tests that SCOPED_TRACE() and various Google Test assertions can be
 // used in a large number of threads concurrently.
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
-#include <iostream>
 #include <vector>
 
-// We must define this macro in order to #include
-// gtest-internal-inl.h.  This is how Google Test prevents a user from
-// accidentally depending on its internal implementation.
-#define GTEST_IMPLEMENTATION_ 1
 #include "src/gtest-internal-inl.h"
-#undef GTEST_IMPLEMENTATION_
 
 #if GTEST_IS_THREADSAFE
 
@@ -50,7 +43,6 @@ namespace testing {
 namespace {
 
 using internal::Notification;
-using internal::String;
 using internal::TestPropertyKeyIs;
 using internal::ThreadWithParam;
 using internal::scoped_ptr;
@@ -62,13 +54,13 @@ using internal::scoped_ptr;
 // How many threads to create?
 const int kThreadCount = 50;
 
-String IdToKey(int id, const char* suffix) {
+std::string IdToKey(int id, const char* suffix) {
   Message key;
   key << "key_" << id << "_" << suffix;
   return key.GetString();
 }
 
-String IdToString(int id) {
+std::string IdToString(int id) {
   Message id_message;
   id_message << id;
   return id_message.GetString();

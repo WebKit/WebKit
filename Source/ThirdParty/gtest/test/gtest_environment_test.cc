@@ -26,14 +26,14 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-// Author: wan@google.com (Zhanyong Wan)
+
 //
 // Tests using global test environments.
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
+#include "src/gtest-internal-inl.h"
 
 namespace testing {
 GTEST_DECLARE_string_(filter);
@@ -92,6 +92,7 @@ class MyEnvironment : public testing::Environment {
 
   // Was TearDown() run?
   bool tear_down_was_run() const { return tear_down_was_run_; }
+
  private:
   FailureType failure_in_set_up_;
   bool set_up_was_run_;
@@ -111,7 +112,7 @@ TEST(FooTest, Bar) {
 void Check(bool condition, const char* msg) {
   if (!condition) {
     printf("FAILED: %s\n", msg);
-    abort();
+    testing::internal::posix::Abort();
   }
 }
 
@@ -123,6 +124,7 @@ int RunAllTests(MyEnvironment* env, FailureType failure) {
   env->Reset();
   env->set_failure_in_set_up(failure);
   test_was_run = false;
+  testing::internal::GetUnitTestImpl()->ClearAdHocTestResult();
   return RUN_ALL_TESTS();
 }
 

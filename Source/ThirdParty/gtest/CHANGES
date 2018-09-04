@@ -1,3 +1,62 @@
+Changes for 1.7.0:
+
+* New feature: death tests are supported on OpenBSD and in iOS
+  simulator now.
+* New feature: Google Test now implements a protocol to allow
+  a test runner to detect that a test program has exited
+  prematurely and report it as a failure (before it would be
+  falsely reported as a success if the exit code is 0).
+* New feature: Test::RecordProperty() can now be used outside of the
+  lifespan of a test method, in which case it will be attributed to
+  the current test case or the test program in the XML report.
+* New feature (potentially breaking): --gtest_list_tests now prints
+  the type parameters and value parameters for each test.
+* Improvement: char pointers and char arrays are now escaped properly
+  in failure messages.
+* Improvement: failure summary in XML reports now includes file and
+  line information.
+* Improvement: the <testsuites> XML element now has a timestamp attribute.
+* Improvement: When --gtest_filter is specified, XML report now doesn't
+  contain information about tests that are filtered out.
+* Fixed the bug where long --gtest_filter flag values are truncated in
+  death tests.
+* Potentially breaking change: RUN_ALL_TESTS() is now implemented as a
+  function instead of a macro in order to work better with Clang.
+* Compatibility fixes with C++ 11 and various platforms.
+* Bug/warning fixes.
+
+Changes for 1.6.0:
+
+* New feature: ADD_FAILURE_AT() for reporting a test failure at the
+  given source location -- useful for writing testing utilities.
+* New feature: the universal value printer is moved from Google Mock
+  to Google Test.
+* New feature: type parameters and value parameters are reported in
+  the XML report now.
+* A gtest_disable_pthreads CMake option.
+* Colored output works in GNU Screen sessions now.
+* Parameters of value-parameterized tests are now printed in the
+  textual output.
+* Failures from ad hoc test assertions run before RUN_ALL_TESTS() are
+  now correctly reported.
+* Arguments of ASSERT_XY and EXPECT_XY no longer need to support << to
+  ostream.
+* More complete handling of exceptions.
+* GTEST_ASSERT_XY can be used instead of ASSERT_XY in case the latter
+  name is already used by another library.
+* --gtest_catch_exceptions is now true by default, allowing a test
+  program to continue after an exception is thrown.
+* Value-parameterized test fixtures can now derive from Test and
+  WithParamInterface<T> separately, easing conversion of legacy tests.
+* Death test messages are clearly marked to make them more
+  distinguishable from other messages.
+* Compatibility fixes for Android, Google Native Client, MinGW, HP UX,
+  PowerPC, Lucid autotools, libCStd, Sun C++, Borland C++ Builder (Code Gear),
+  IBM XL C++ (Visual Age C++), and C++0x.
+* Bug fixes and implementation clean-ups.
+* Potentially incompatible changes: disables the harmful 'make install'
+  command in autotools.
+
 Changes for 1.5.0:
 
  * New feature: assertions can be safely called in multiple threads

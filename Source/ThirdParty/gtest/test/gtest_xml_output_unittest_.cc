@@ -27,8 +27,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-// Author: eefacm@gmail.com (Sean Mcafee)
-
 // Unit test for Google Test XML output.
 //
 // A user can specify XML output in a Google Test program to run via
@@ -38,13 +36,16 @@
 // This program will be invoked from a Python unit test.  Don't run it
 // directly.
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
 using ::testing::InitGoogleTest;
 using ::testing::TestEventListeners;
+using ::testing::TestWithParam;
 using ::testing::UnitTest;
+using ::testing::Test;
+using ::testing::Values;
 
-class SuccessfulTest : public testing::Test {
+class SuccessfulTest : public Test {
 };
 
 TEST_F(SuccessfulTest, Succeeds) {
@@ -52,14 +53,14 @@ TEST_F(SuccessfulTest, Succeeds) {
   ASSERT_EQ(1, 1);
 }
 
-class FailedTest : public testing::Test {
+class FailedTest : public Test {
 };
 
 TEST_F(FailedTest, Fails) {
   ASSERT_EQ(1, 2);
 }
 
-class DisabledTest : public testing::Test {
+class DisabledTest : public Test {
 };
 
 TEST_F(DisabledTest, DISABLED_test_not_run) {
@@ -91,7 +92,10 @@ TEST(InvalidCharactersTest, InvalidCharactersInMessage) {
   FAIL() << "Invalid characters in brackets [\x1\x2]";
 }
 
-class PropertyRecordingTest : public testing::Test {
+class PropertyRecordingTest : public Test {
+ public:
+  static void SetUpTestCase() { RecordProperty("SetUpTestCase", "yes"); }
+  static void TearDownTestCase() { RecordProperty("TearDownTestCase", "aye"); }
 };
 
 TEST_F(PropertyRecordingTest, OneProperty) {
@@ -117,12 +121,12 @@ TEST(NoFixtureTest, RecordProperty) {
   RecordProperty("key", "1");
 }
 
-void ExternalUtilityThatCallsRecordProperty(const char* key, int value) {
+void ExternalUtilityThatCallsRecordProperty(const std::string& key, int value) {
   testing::Test::RecordProperty(key, value);
 }
 
-void ExternalUtilityThatCallsRecordProperty(const char* key,
-                                            const char* value) {
+void ExternalUtilityThatCallsRecordProperty(const std::string& key,
+                                            const std::string& value) {
   testing::Test::RecordProperty(key, value);
 }
 
@@ -134,6 +138,35 @@ TEST(NoFixtureTest, ExternalUtilityThatCallsRecordStringValuedProperty) {
   ExternalUtilityThatCallsRecordProperty("key_for_utility_string", "1");
 }
 
+// Verifies that the test parameter value is output in the 'value_param'
+// XML attribute for value-parameterized tests.
+class ValueParamTest : public TestWithParam<int> {};
+TEST_P(ValueParamTest, HasValueParamAttribute) {}
+TEST_P(ValueParamTest, AnotherTestThatHasValueParamAttribute) {}
+INSTANTIATE_TEST_CASE_P(Single, ValueParamTest, Values(33, 42));
+
+#if GTEST_HAS_TYPED_TEST
+// Verifies that the type parameter name is output in the 'type_param'
+// XML attribute for typed tests.
+template <typename T> class TypedTest : public Test {};
+typedef testing::Types<int, long> TypedTestTypes;
+TYPED_TEST_CASE(TypedTest, TypedTestTypes);
+TYPED_TEST(TypedTest, HasTypeParamAttribute) {}
+#endif
+
+#if GTEST_HAS_TYPED_TEST_P
+// Verifies that the type parameter name is output in the 'type_param'
+// XML attribute for type-parameterized tests.
+template <typename T> class TypeParameterizedTestCase : public Test {};
+TYPED_TEST_CASE_P(TypeParameterizedTestCase);
+TYPED_TEST_P(TypeParameterizedTestCase, HasTypeParamAttribute) {}
+REGISTER_TYPED_TEST_CASE_P(TypeParameterizedTestCase, HasTypeParamAttribute);
+typedef testing::Types<int, long> TypeParameterizedTestCaseTypes;
+INSTANTIATE_TYPED_TEST_CASE_P(Single,
+                              TypeParameterizedTestCase,
+                              TypeParameterizedTestCaseTypes);
+#endif
+
 int main(int argc, char** argv) {
   InitGoogleTest(&argc, argv);
 
@@ -141,5 +174,6 @@ int main(int argc, char** argv) {
     TestEventListeners& listeners = UnitTest::GetInstance()->listeners();
     delete listeners.Release(listeners.default_xml_generator());
   }
+  testing::Test::RecordProperty("ad_hoc_property", "42");
   return RUN_ALL_TESTS();
 }

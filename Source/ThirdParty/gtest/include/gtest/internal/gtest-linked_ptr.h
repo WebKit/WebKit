@@ -27,8 +27,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Authors: Dan Egnor (egnor@google.com)
-//
 // A "smart" pointer type with reference tracking.  Every pointer to a
 // particular object is kept on a circular linked list.  When the last pointer
 // to an object is destroyed or reassigned, the object is deleted.
@@ -62,8 +60,10 @@
 //       raw pointer (e.g. via get()) concurrently, and
 //     - it's safe to write to two linked_ptrs that point to the same
 //       shared object concurrently.
-// TODO(wan@google.com): rename this to safe_linked_ptr to avoid
+// FIXME: rename this to safe_linked_ptr to avoid
 // confusion with normal linked_ptr.
+
+// GOOGLETEST_CM0001 DO NOT DELETE
 
 #ifndef GTEST_INCLUDE_GTEST_INTERNAL_GTEST_LINKED_PTR_H_
 #define GTEST_INCLUDE_GTEST_INTERNAL_GTEST_LINKED_PTR_H_
@@ -71,7 +71,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include <gtest/internal/gtest-port.h>
+#include "gtest/internal/gtest-port.h"
 
 namespace testing {
 namespace internal {
@@ -105,25 +105,35 @@ class linked_ptr_internal {
   // framework.
 
   // Join an existing circle.
-  // L < g_linked_ptr_mutex
-  void join(linked_ptr_internal const* ptr) {
+  void join(linked_ptr_internal const* ptr)
+      GTEST_LOCK_EXCLUDED_(g_linked_ptr_mutex) {
     MutexLock lock(&g_linked_ptr_mutex);
 
     linked_ptr_internal const* p = ptr;
-    while (p->next_ != ptr) p = p->next_;
+    while (p->next_ != ptr) {
+      assert(p->next_ != this &&
+             "Trying to join() a linked ring we are already in. "
+             "Is GMock thread safety enabled?");
+      p = p->next_;
+    }
     p->next_ = this;
     next_ = ptr;
   }
 
   // Leave whatever circle we're part of.  Returns true if we were the
   // last member of the circle.  Once this is done, you can join() another.
-  // L < g_linked_ptr_mutex
-  bool depart() {
+  bool depart()
+      GTEST_LOCK_EXCLUDED_(g_linked_ptr_mutex) {
     MutexLock lock(&g_linked_ptr_mutex);
 
     if (next_ == this) return true;
     linked_ptr_internal const* p = next_;
-    while (p->next_ != this) p = p->next_;
+    while (p->next_ != this) {
+      assert(p->next_ != next_ &&
+             "Trying to depart() a linked ring we are not in. "
+             "Is GMock thread safety enabled?");
+      p = p->next_;
+    }
     p->next_ = next_;
     return false;
   }
@@ -172,15 +182,6 @@ class linked_ptr {
   T* get() const { return value_; }
   T* operator->() const { return value_; }
   T& operator*() const { return *value_; }
-  // Release ownership of the pointed object and returns it.
-  // Sole ownership by this linked_ptr object is required.
-  T* release() {
-    bool last = link_.depart();
-    assert(last);
-    T* v = value_;
-    value_ = NULL;
-    return v;
-  }
 
   bool operator==(T* p) const { return value_ == p; }
   bool operator!=(T* p) const { return value_ != p; }

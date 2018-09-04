@@ -26,10 +26,9 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 //
-// Author: wan@google.com (Zhanyong Wan)
-//
-// The Google C++ Testing Framework (Google Test)
+// The Google C++ Testing and Mocking Framework (Google Test)
 //
 // This header file defines the Message class.
 //
@@ -43,13 +42,21 @@
 // to CHANGE WITHOUT NOTICE.  Therefore DO NOT DEPEND ON IT in a user
 // program!
 
+// GOOGLETEST_CM0001 DO NOT DELETE
+
 #ifndef GTEST_INCLUDE_GTEST_GTEST_MESSAGE_H_
 #define GTEST_INCLUDE_GTEST_GTEST_MESSAGE_H_
 
 #include <limits>
 
-#include <gtest/internal/gtest-string.h>
-#include <gtest/internal/gtest-internal.h>
+#include "gtest/internal/gtest-port.h"
+
+GTEST_DISABLE_MSC_WARNINGS_PUSH_(4251 \
+/* class A needs to have dll-interface to be used by clients of class B */)
+
+// Ensures that there is at least one operator<< in the global namespace.
+// See Message& operator<<(...) below for why.
+void operator<<(const testing::internal::Secret&, int);
 
 namespace testing {
 
@@ -58,7 +65,7 @@ namespace testing {
 // Typical usage:
 //
 //   1. You stream a bunch of values to a Message object.
-//      It will remember the text in a StrStream.
+//      It will remember the text in a stringstream.
 //   2. Then you stream the Message object to an ostream.
 //      This causes the text in the Message to be streamed
 //      to the ostream.
@@ -74,7 +81,7 @@ namespace testing {
 // Message is not intended to be inherited from.  In particular, its
 // destructor is not virtual.
 //
-// Note that StrStream behaves differently in gcc and in MSVC.  You
+// Note that stringstream behaves differently in gcc and in MSVC.  You
 // can stream a NULL char pointer to it in the former, but not in the
 // latter (it causes an access violation if you do).  The Message
 // class hides this difference by treating a NULL char pointer as
@@ -87,27 +94,18 @@ class GTEST_API_ Message {
 
  public:
   // Constructs an empty Message.
-  // We allocate the StrStream separately because it otherwise each use of
-  // ASSERT/EXPECT in a procedure adds over 200 bytes to the procedure's
-  // stack frame leading to huge stack frames in some cases; gcc does not reuse
-  // the stack space.
-  Message() : ss_(new internal::StrStream) {
-    // By default, we want there to be enough precision when printing
-    // a double to a Message.
-    *ss_ << std::setprecision(std::numeric_limits<double>::digits10 + 2);
-  }
+  Message();
 
   // Copy constructor.
-  Message(const Message& msg) : ss_(new internal::StrStream) {  // NOLINT
+  Message(const Message& msg) : ss_(new ::std::stringstream) {  // NOLINT
     *ss_ << msg.GetString();
   }
 
   // Constructs a Message from a C-string.
-  explicit Message(const char* str) : ss_(new internal::StrStream) {
+  explicit Message(const char* str) : ss_(new ::std::stringstream) {
     *ss_ << str;
   }
 
-  ~Message() { delete ss_; }
 #if GTEST_OS_SYMBIAN
   // Streams a value (either a pointer or not) to this object.
   template <typename T>
@@ -119,7 +117,22 @@ class GTEST_API_ Message {
   // Streams a non-pointer value to this object.
   template <typename T>
   inline Message& operator <<(const T& val) {
-    ::GTestStreamToHelper(ss_, val);
+    // Some libraries overload << for STL containers.  These
+    // overloads are defined in the global namespace instead of ::std.
+    //
+    // C++'s symbol lookup rule (i.e. Koenig lookup) says that these
+    // overloads are visible in either the std namespace or the global
+    // namespace, but not other namespaces, including the testing
+    // namespace which Google Test's Message class is in.
+    //
+    // To allow STL containers (and other types that has a << operator
+    // defined in the global namespace) to be used in Google Test
+    // assertions, testing::Message must access the custom << operator
+    // from the global namespace.  With this using declaration,
+    // overloads of << defined in the global namespace and those
+    // visible via Koenig lookup are both exposed in this function.
+    using ::operator <<;
+    *ss_ << val;
     return *this;
   }
 
@@ -141,7 +154,7 @@ class GTEST_API_ Message {
     if (pointer == NULL) {
       *ss_ << "(null)";
     } else {
-      ::GTestStreamToHelper(ss_, pointer);
+      *ss_ << pointer;
     }
     return *this;
   }
@@ -165,12 +178,8 @@ class GTEST_API_ Message {
 
   // These two overloads allow streaming a wide C string to a Message
   // using the UTF-8 encoding.
-  Message& operator <<(const wchar_t* wide_c_str) {
-    return *this << internal::String::ShowWideCString(wide_c_str);
-  }
-  Message& operator <<(wchar_t* wide_c_str) {
-    return *this << internal::String::ShowWideCString(wide_c_str);
-  }
+  Message& operator <<(const wchar_t* wide_c_str);
+  Message& operator <<(wchar_t* wide_c_str);
 
 #if GTEST_HAS_STD_WSTRING
   // Converts the given wide string to a narrow string using the UTF-8
@@ -184,13 +193,11 @@ class GTEST_API_ Message {
   Message& operator <<(const ::wstring& wstr);
 #endif  // GTEST_HAS_GLOBAL_WSTRING
 
-  // Gets the text streamed to this object so far as a String.
+  // Gets the text streamed to this object so far as an std::string.
   // Each '\0' character in the buffer is replaced with "\\0".
   //
   // INTERNAL IMPLEMENTATION - DO NOT USE IN A USER PROGRAM.
-  internal::String GetString() const {
-    return internal::StrStreamToString(ss_);
-  }
+  std::string GetString() const;
 
  private:
 #if GTEST_OS_SYMBIAN
@@ -199,21 +206,25 @@ class GTEST_API_ Message {
   // decide between class template specializations for T and T*, so a
   // tr1::type_traits-like is_pointer works, and we can overload on that.
   template <typename T>
-  inline void StreamHelper(internal::true_type /*dummy*/, T* pointer) {
+  inline void StreamHelper(internal::true_type /*is_pointer*/, T* pointer) {
     if (pointer == NULL) {
       *ss_ << "(null)";
     } else {
-      ::GTestStreamToHelper(ss_, pointer);
+      *ss_ << pointer;
     }
   }
   template <typename T>
-  inline void StreamHelper(internal::false_type /*dummy*/, const T& value) {
-    ::GTestStreamToHelper(ss_, value);
+  inline void StreamHelper(internal::false_type /*is_pointer*/,
+                           const T& value) {
+    // See the comments in Message& operator <<(const T&) above for why
+    // we need this using statement.
+    using ::operator <<;
+    *ss_ << value;
   }
 #endif  // GTEST_OS_SYMBIAN
 
   // We'll hold the text streamed to this object here.
-  internal::StrStream* const ss_;
+  const internal::scoped_ptr< ::std::stringstream> ss_;
 
   // We declare (but don't implement) this to prevent the compiler
   // from implementing the assignment operator.
@@ -225,6 +236,20 @@ inline std::ostream& operator <<(std::ostream& os, const Message& sb) {
   return os << sb.GetString();
 }
 
+namespace internal {
+
+// Converts a streamable value to an std::string.  A NULL pointer is
+// converted to "(null)".  When the input value is a ::string,
+// ::std::string, ::wstring, or ::std::wstring object, each NUL
+// character in it is replaced with "\\0".
+template <typename T>
+std::string StreamableToString(const T& streamable) {
+  return (Message() << streamable).GetString();
+}
+
+}  // namespace internal
 }  // namespace testing
+
+GTEST_DISABLE_MSC_WARNINGS_POP_()  //  4251
 
 #endif  // GTEST_INCLUDE_GTEST_GTEST_MESSAGE_H_
