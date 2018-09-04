@@ -1,3 +1,13 @@
+2018-09-04  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix failing tests following r235615 (https://bugs.webkit.org/show_bug.cgi?id=187925)
+
+        An inline text box that does not have combined text and contains a single character
+        should be considered as having text content.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::hasTextContent const):
+
 2018-09-04  Per Arne Vollan  <pvollan@apple.com>
 
         Add test for fix in https://bugs.webkit.org/show_bug.cgi?id=187922

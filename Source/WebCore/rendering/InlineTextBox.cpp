@@ -84,7 +84,7 @@ bool InlineTextBox::hasTextContent() const
         ASSERT(m_len == 1);
         return !combinedText->combinedStringForRendering().isEmpty();
     }
-    return false;
+    return m_len;
 }
 
 void InlineTextBox::markDirty(bool dirty)
