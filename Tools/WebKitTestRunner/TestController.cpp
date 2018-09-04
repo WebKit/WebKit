@@ -933,7 +933,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     if (!m_doneResetting)
         return false;
     
-    if (resetStage == ResetStage::AfterTest && m_checkForWorldLeaks)
+    if (resetStage == ResetStage::AfterTest)
         updateLiveDocumentsAfterTest();
 
     return m_doneResetting;
@@ -941,6 +941,9 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
 void TestController::updateLiveDocumentsAfterTest()
 {
+    if (!m_checkForWorldLeaks)
+        return;
+
     AsyncTask([]() {
         // After each test, we update the list of live documents so that we can detect when an abandoned document first showed up.
         WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("GetLiveDocuments"));
@@ -950,7 +953,7 @@ void TestController::updateLiveDocumentsAfterTest()
 
 void TestController::checkForWorldLeaks()
 {
-    if (!TestController::singleton().mainWebView())
+    if (!m_checkForWorldLeaks || !TestController::singleton().mainWebView())
         return;
 
     AsyncTask([]() {
@@ -962,6 +965,9 @@ void TestController::checkForWorldLeaks()
 
 void TestController::findAndDumpWorldLeaks()
 {
+    if (!m_checkForWorldLeaks)
+        return;
+
     checkForWorldLeaks();
 
     StringBuilder builder;
@@ -1390,6 +1396,10 @@ bool TestController::waitForCompletion(const WTF::Function<void ()>& function, W
 bool TestController::handleControlCommand(const char* command)
 {
     if (!strcmp("#CHECK FOR WORLD LEAKS", command)) {
+        if (!m_checkForWorldLeaks) {
+            WTFLogAlways("WebKitTestRunner asked to check for world leaks, but was not run with --world-leaks");
+            return true;
+        }
         findAndDumpWorldLeaks();
         return true;
     }
@@ -1424,7 +1434,8 @@ void TestController::run()
             if (!runTest(m_paths[i].c_str()))
                 break;
         }
-        findAndDumpWorldLeaks();
+        if (m_checkForWorldLeaks)
+            findAndDumpWorldLeaks();
     }
 }
 
