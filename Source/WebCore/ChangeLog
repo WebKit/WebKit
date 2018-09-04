@@ -1,3 +1,23 @@
+2018-09-04  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] PaymentResponse should have an onpayerdetailchange event handler
+        https://bugs.webkit.org/show_bug.cgi?id=189249
+
+        Reviewed by Alex Christensen.
+
+        Implemented the onpayerdetailchange event handler as defined in the Payment Request API W3C Editor's Draft of 30 August 2018.
+
+        The "payer detail changed" algorithm will be implemented in a follow-up patch.
+
+        Covered by existing web platform tests.
+
+        * Modules/paymentrequest/PaymentResponse.cpp:
+        (WebCore::PaymentResponse::scriptExecutionContext const):
+        * Modules/paymentrequest/PaymentResponse.h:
+        * Modules/paymentrequest/PaymentResponse.idl:
+        * dom/EventNames.h:
+        * dom/EventTargetFactory.in:
+
 2018-09-04  Youenn Fablet  <youenn@apple.com>
 
         Introduce LibWebRTC backends for sender and receiver

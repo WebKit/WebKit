@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(PAYMENT_REQUEST)
 
+#include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PaymentAddress.h"
 #include "PaymentComplete.h"
@@ -37,7 +38,7 @@ class Document;
 class PaymentRequest;
 struct PaymentValidationErrors;
 
-class PaymentResponse final : public RefCounted<PaymentResponse> {
+class PaymentResponse final : public RefCounted<PaymentResponse>, public EventTargetWithInlineData {
 public:
     static Ref<PaymentResponse> create(PaymentRequest& request)
     {
@@ -73,8 +74,17 @@ public:
     void complete(std::optional<PaymentComplete>&&, DOMPromiseDeferred<void>&&);
     void retry(PaymentValidationErrors&&, DOMPromiseDeferred<void>&&);
 
+    using RefCounted<PaymentResponse>::ref;
+    using RefCounted<PaymentResponse>::deref;
+
 private:
     explicit PaymentResponse(PaymentRequest&);
+
+    // EventTarget
+    EventTargetInterface eventTargetInterface() const final { return PaymentResponseEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final;
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
 
     Ref<PaymentRequest> m_request;
     String m_requestId;

@@ -189,6 +189,7 @@ namespace WebCore {
     macro(pageshow) \
     macro(paste) \
     macro(pause) \
+    macro(payerdetailchange) \
     macro(paymentauthorized) \
     macro(paymentmethodchange) \
     macro(paymentmethodselected) \
