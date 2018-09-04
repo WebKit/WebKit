@@ -389,11 +389,10 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
 ExceptionOr<void> XMLHttpRequest::open(const String& method, const String& url, bool async, const String& user, const String& password)
 {
     URL urlWithCredentials = scriptExecutionContext()->completeURL(url);
-    if (!user.isNull()) {
+    if (!user.isNull())
         urlWithCredentials.setUser(user);
-        if (!password.isNull())
-            urlWithCredentials.setPass(password);
-    }
+    if (!password.isNull())
+        urlWithCredentials.setPass(password);
 
     return open(method, urlWithCredentials, async);
 }

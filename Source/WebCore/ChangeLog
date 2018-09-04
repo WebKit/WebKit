@@ -1,3 +1,23 @@
+2018-09-04  Rob Buis  <rbuis@igalia.com>
+
+        Adjust XMLHttpRequest username/password precedence rules
+        https://bugs.webkit.org/show_bug.cgi?id=184910
+
+        Reviewed by Chris Dumez.
+
+        Steps 9.1 and 9.2 in the XMLHTTPRequest::open [1] algorithm
+        specify that non null user or non null password ought
+        to be set on the URL, so implement this.
+
+        Behavior matches Firefox and Chrome.
+
+        [1] https://xhr.spec.whatwg.org/#dom-xmlhttprequest-open
+
+        Test: xhr/send-authentication-competing-names-passwords.htm
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open):
+
 2018-09-04  Simon Fraser  <simon.fraser@apple.com>
 
         Simplify RenderLayer filter code

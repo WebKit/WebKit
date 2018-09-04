@@ -1,3 +1,15 @@
+2018-09-04  Rob Buis  <rbuis@igalia.com>
+
+        Adjust XMLHttpRequest username/password precedence rules
+        https://bugs.webkit.org/show_bug.cgi?id=184910
+
+        Reviewed by Chris Dumez.
+
+        Adjust test because now we do set password on the url in
+        open(), even if the username is null.
+
+        * http/tests/xmlhttprequest/basic-auth.html:
+
 2018-09-03  Dean Jackson  <dino@apple.com>
 
         Move SystemPreview code from WebKitAdditions to WebKit

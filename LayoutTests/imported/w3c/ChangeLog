@@ -1,3 +1,14 @@
+2018-09-04  Rob Buis  <rbuis@igalia.com>
+
+        Adjust XMLHttpRequest username/password precedence rules
+        https://bugs.webkit.org/show_bug.cgi?id=184910
+
+        Reviewed by Chris Dumez.
+
+        Update test result.
+
+        * web-platform-tests/xhr/send-authentication-competing-names-passwords-expected.txt:
+
 2018-09-04  Andy Estes  <aestes@apple.com>
 
         [Payment Request] PaymentResponse should have an onpayerdetailchange event handler
