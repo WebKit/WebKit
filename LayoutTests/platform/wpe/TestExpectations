@@ -332,6 +332,9 @@ imported/w3c/web-platform-tests/encrypted-media/drm-mp4-waiting-for-a-key.https.
 imported/w3c/web-platform-tests/encrypted-media/drm-not-callable-after-createsession.https.html [ Skip ]
 imported/w3c/web-platform-tests/encrypted-media/drm-temporary-license-type.https.html [ Skip ]
 
+# Encrypted WebM is not supported yet.
+webkit.org/b/189196 media/encrypted-media/clearKey/clearKey-encrypted-webm-event-mse.html [ Skip ]
+
 # This port doesn't support detecting slow unload handlers.
 Bug(GTK) fast/dom/Window/slow-unload-handler.html [ WontFix Timeout Failure ]
 Bug(GTK) fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix Timeout Failure ]

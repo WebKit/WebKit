@@ -1325,6 +1325,7 @@ media/encrypted-media/mock-MediaKeySession-update.html [ Skip ]
 
 webkit.org/b/180430 media/encrypted-media/clearKey/clearKey-encrypted-cenc-event.html [ Skip ]
 webkit.org/b/180430 media/encrypted-media/clearKey/clearKey-encrypted-cenc-event-mse.html [ Skip ]
+webkit.org/b/189196 media/encrypted-media/clearKey/clearKey-encrypted-webm-event-mse.html [ Skip ]
 webkit.org/b/180928 media/encrypted-media/clearKey/clearKey-message-cenc-event.html [ Skip ]
 webkit.org/b/180928 media/encrypted-media/clearKey/clearKey-message-cenc-event-mse.html [ Skip ]
 webkit.org/b/181594 media/encrypted-media/clearKey/clearKey-cenc-audio-playback-mse.html [ Skip ]

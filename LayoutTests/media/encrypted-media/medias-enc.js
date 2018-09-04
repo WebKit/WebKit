@@ -23,5 +23,11 @@ const streamMedias = {
                                             path         : "../../content/encrypted/VideoClearKeyCenc.mp4",
                                             keys         : {    "d0d1d2d3d4d5d6d7d8d9dadbdcdddedf" : "c0c1c2c3c4c5c6c7c8c9cacbcccdcecf" }
                                        }
+                          },
+    "simpleClearKeyWebMMSE": { video : {    initDataType : "webm",
+                                            mimeType     : 'video/webm; codecs="vp9"',
+                                            segments     : [ "../../content/encrypted/VideoClearKeyWebM.webm" ],
+                                            keys         : {    "30313233343536373839303132333435" : "4d24cb6b0de1abe880e4d5983df03c93" }
+                                       }
                           }
                    };

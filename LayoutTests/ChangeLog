@@ -1,3 +1,24 @@
+2018-09-04  Yacine Bandou  <yacine.bandou@softathome.com>
+
+        [EME] Add layout test for InitData and InitDataType in WebM encrypted event
+        https://bugs.webkit.org/show_bug.cgi?id=189196
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This commit adds a new layoutTest in order to test the reception of the encrypted WebM
+        event with an expected initData and initDataType fields.
+
+        * media/content/encrypted/VideoClearKeyWebM.webm: Added.
+            This is a simple encrypted video.
+            It has been encrypted with webm_crypt see https://github.com/webmproject/webm-tools.
+            #webm_crypt  -i VideoWebM.webm -audio false -video true -video_options base_file=bear.key,content_id="0123456789012345" -o VideoClearKeyWebM.webm
+        * media/encrypted-media/clearKey/clearKey-encrypted-webm-event-mse-expected.txt: Added.
+        * media/encrypted-media/clearKey/clearKey-encrypted-webm-event-mse.html: Added.
+        * media/encrypted-media/medias-enc.js:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2018-09-03  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Remove PaymentAddress.languageCode
