@@ -59,9 +59,8 @@ private:
     void computeFloatingPosition(LayoutContext&, FloatingContext&, const Box&, Display::Box&) const;
     void computePositionToAvoidFloats(LayoutContext&, FloatingContext&, const Box&, Display::Box&) const;
     void computeVerticalPositionForFloatClear(LayoutContext&, const FloatingContext&, const Box&, Display::Box&) const;
+
     void computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const override;
-    void computeInFlowWidthAndMargin(LayoutContext&, const Box&, Display::Box&) const;
-    void computeInFlowHeightAndMargin(LayoutContext&, const Box&, Display::Box&) const;
     void computeEstimatedMarginTop(LayoutContext&, const Box&, Display::Box&) const;
     void computeEstimatedMarginTopForAncestors(LayoutContext&, const Box&) const;
 

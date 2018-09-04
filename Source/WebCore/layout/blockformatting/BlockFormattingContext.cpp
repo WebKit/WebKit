@@ -244,46 +244,45 @@ void BlockFormattingContext::computeInFlowPositionedPosition(LayoutContext& layo
 
 void BlockFormattingContext::computeWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
+    WidthAndMargin widthAndMargin;
+
     if (layoutBox.isInFlow())
-        return computeInFlowWidthAndMargin(layoutContext, layoutBox, displayBox);
+        widthAndMargin = Geometry::inFlowWidthAndMargin(layoutContext, layoutBox);
+    else if (layoutBox.isFloatingPositioned())
+        widthAndMargin = FormattingContext::Geometry::floatingWidthAndMargin(layoutContext, *this, layoutBox);
+    else
+        ASSERT_NOT_REACHED();
 
-    if (layoutBox.isFloatingPositioned())
-        return computeFloatingWidthAndMargin(layoutContext, layoutBox, displayBox);
-
-    ASSERT_NOT_REACHED();
-}
-
-void BlockFormattingContext::computeHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
-{
-    if (layoutBox.isInFlow())
-        return computeInFlowHeightAndMargin(layoutContext, layoutBox, displayBox);
-
-    if (layoutBox.isFloatingPositioned())
-        return computeFloatingHeightAndMargin(layoutContext, layoutBox, displayBox);
-
-    ASSERT_NOT_REACHED();
-}
-
-void BlockFormattingContext::computeInFlowHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
-{
-    auto heightAndMargin = Geometry::inFlowHeightAndMargin(layoutContext, layoutBox);
-    displayBox.setContentBoxHeight(heightAndMargin.height);
-    auto marginValue = heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin);
-    displayBox.setVerticalMargin(marginValue);
-    displayBox.setVerticalNonCollapsedMargin(heightAndMargin.margin);
-
-    // This box has already been moved by the estimated vertical margin. No need to move it again.
-    if (!displayBox.estimatedMarginTop())
-        displayBox.moveVertically(marginValue.top);
-}
-
-void BlockFormattingContext::computeInFlowWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
-{
-    auto widthAndMargin = Geometry::inFlowWidthAndMargin(layoutContext, layoutBox);
     displayBox.setContentBoxWidth(widthAndMargin.width);
     displayBox.moveHorizontally(widthAndMargin.margin.left);
     displayBox.setHorizontalMargin(widthAndMargin.margin);
     displayBox.setHorizontalNonComputedMargin(widthAndMargin.nonComputedMargin);
+}
+
+void BlockFormattingContext::computeHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+{
+    HeightAndMargin heightAndMargin;
+    std::optional<LayoutUnit> marginTopOffset;
+
+    if (layoutBox.isInFlow()) {
+        heightAndMargin = Geometry::inFlowHeightAndMargin(layoutContext, layoutBox);
+
+        // If this box has already been moved by the estimated vertical margin, no need to move it again.
+        if (!displayBox.estimatedMarginTop())
+            marginTopOffset = heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin).top;
+    } else if (layoutBox.isFloatingPositioned()) {
+        heightAndMargin = FormattingContext::Geometry::floatingHeightAndMargin(layoutContext, layoutBox);
+        ASSERT(!heightAndMargin.collapsedMargin);
+
+        marginTopOffset = heightAndMargin.margin.top;
+    } else
+        ASSERT_NOT_REACHED();
+
+    displayBox.setContentBoxHeight(heightAndMargin.height);
+    displayBox.setVerticalNonCollapsedMargin(heightAndMargin.margin);
+    displayBox.setVerticalMargin(heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin));
+    if (marginTopOffset)
+        displayBox.moveVertically(*marginTopOffset);
 }
 
 FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::instrinsicWidthConstraints(LayoutContext& layoutContext, const Box& layoutBox) const

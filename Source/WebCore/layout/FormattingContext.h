@@ -75,9 +75,6 @@ protected:
     virtual void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const = 0;
     virtual void computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const = 0;
 
-    void computeFloatingHeightAndMargin(LayoutContext&, const Box&, Display::Box&) const;
-    void computeFloatingWidthAndMargin(LayoutContext&, const Box&, Display::Box&) const;
-
     void computeBorderAndPadding(LayoutContext&, const Box&, Display::Box&) const;
 
     void placeInFlowPositionedChildren(LayoutContext&, const Container&) const;

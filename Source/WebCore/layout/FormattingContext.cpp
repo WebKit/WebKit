@@ -51,25 +51,6 @@ FormattingContext::~FormattingContext()
 {
 }
 
-void FormattingContext::computeFloatingHeightAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
-{
-    auto heightAndMargin = Geometry::floatingHeightAndMargin(layoutContext, layoutBox);
-    displayBox.setContentBoxHeight(heightAndMargin.height);
-    displayBox.moveVertically(heightAndMargin.margin.top);
-    ASSERT(!heightAndMargin.collapsedMargin);
-    displayBox.setVerticalMargin(heightAndMargin.margin);
-    displayBox.setVerticalNonCollapsedMargin(heightAndMargin.margin);
-}
-
-void FormattingContext::computeFloatingWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
-{
-    auto widthAndMargin = Geometry::floatingWidthAndMargin(layoutContext, *this, layoutBox);
-    displayBox.setContentBoxWidth(widthAndMargin.width);
-    displayBox.moveHorizontally(widthAndMargin.margin.left);
-    displayBox.setHorizontalMargin(widthAndMargin.margin);
-    displayBox.setHorizontalNonComputedMargin(widthAndMargin.nonComputedMargin);
-}
-
 void FormattingContext::computeOutOfFlowHorizontalGeometry(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
     auto horizontalGeometry = Geometry::outOfFlowHorizontalGeometry(layoutContext, *this, layoutBox);

@@ -1,3 +1,23 @@
+2018-09-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Merge computeInFlowWidth(Height)AndMargin and computeFloatingWidth(Height)AndMargin.
+        https://bugs.webkit.org/show_bug.cgi?id=189271
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for adding min/max-widht(height).
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeFloatingHeightAndMargin const): Deleted.
+        (WebCore::Layout::FormattingContext::computeFloatingWidthAndMargin const): Deleted.
+        * layout/FormattingContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::computeInFlowHeightAndMargin const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeInFlowWidthAndMargin const): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+
 2018-09-04  Rob Buis  <rbuis@igalia.com>
 
         Adjust XMLHttpRequest username/password precedence rules
