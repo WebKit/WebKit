@@ -1,3 +1,23 @@
+2018-09-04  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
+        [EME] Add the WebM initData support in ClearKey CDM
+        https://bugs.webkit.org/show_bug.cgi?id=189240
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add the "webm" initDataType support in ClearKey CDM.
+        Read the WebM initData by following the W3C spec https://www.w3.org/TR/eme-initdata-webm/#common-system,
+        and put it in JSON object format like is specified in https://www.w3.org/TR/encrypted-media/#clear-key-request-format.
+
+        Tests: media/encrypted-media/clearKey/clearKey-encrypted-webm-event-mse.html
+               media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::extractKeyIdFromWebMInitData):
+        (WebCore::CDMPrivateClearKey::supportsInitDataType const):
+        (WebCore::CDMPrivateClearKey::supportsInitData const):
+        (WebCore::CDMInstanceClearKey::requestLicense):
+
 2018-09-03  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Remove PaymentAddress.languageCode
