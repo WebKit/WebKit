@@ -471,11 +471,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case CheckTraps:
-        if (Options::usePollingTraps()) {
-            read(InternalState);
-            write(InternalState);
-        } else
-            write(Watchpoint_fire);
+        read(InternalState);
+        write(InternalState);
         return;
 
     case InvalidationPoint:

@@ -1,5 +1,81 @@
 2018-09-03  Mark Lam  <mark.lam@apple.com>
 
+        The watchdog sometimes fails to terminate a script.
+        https://bugs.webkit.org/show_bug.cgi?id=189227
+        <rdar://problem/39932857>
+
+        Reviewed by Saam Barati.
+
+        Consider the following scenario:
+
+        1. We have an infinite loop bytecode sequence as follows:
+
+            [  13] loop_hint
+            [  14] check_traps
+            [  15] jmp               -2(->13)
+
+        2. The VM tiers up from LLInt -> BaselineJIT -> DFG -> FTL.
+
+           Note that op_check_traps is represented as a CheckTraps node in the DFG and FTL.
+           When we're not using pollingTraps (JSC_usePollingTraps is false by default),
+           we emit no code for CheckTraps, but only record an InvalidationPoint there.
+
+        3. The watchdog fires, and invalidates all InvalidationPoints in the FTL CodeBlock.
+
+           InvalidationPoints OSR exits to the next instruction by design.  In this case,
+           that means the VM will resumes executing at the op_jmp, which jumps to the
+           op_loop_hint opcode.  At the loop_hint, the VM discovers that the function is
+           already hot, and attempts to tier up.  It immediately discovers that a replacement
+           CodeBlock is available because we still haven't jettisoned the DFG CodeBlock
+           nor the FTL CodeBlock that was previously compiled for this function.
+
+           Note that jettisoning a CodeBlock necessarily means the VM will invalidate
+           its InvalidationPoints (if the CodeBlock is DFG/FTL).  However, the reverse
+           is not true: merely invalidating the InvalidationPoints does not necessarily
+           mean that the CodeBlock is jettisoned.
+
+           VMTraps::tryInstallTrapBreakpoints() runs from a separate thread.  Hence,
+           it is only safe for it to invalidate a CodeBlock's InvalidationPoints.  It
+           is not safe for the CodeBlock to be jettisoned from another thread.  Instead,
+           the VMTraps mechanism relies on the script thread running to an op_check_traps
+           in the baseline JIT code where it will do the necessary jettisoning of optimized
+           CodeBlocks.
+
+        Since the op_check_traps never get executed, the VM will perpetually tier up in
+        the op_loop_hint, OSR exit to the op_jmp, jump to the op_loop_hint, and repeat.
+        Consequently, the watchdog fails to terminate this script.
+
+        In this patch, we fix this by making the DFG BytecodeParser emit an InvalidationPoint
+        node directly (when the VM is not configured to use polling traps).  This ensures
+        that the check traps invalidation point will OSR exit to the op_check_traps opcode
+        in the baseline JIT.
+
+        In this patch, we also change VMTraps::tryInstallTrapBreakpoints() to use
+        CallFrame::unsafeCodeBlock() instead of CallFrame::codeBlock().  This is because
+        we don't really know if the frame is properly set up.  We're just conservatively
+        probing the stack.  ASAN does not like this probing.  Using unsafeCodeBlock() here
+        will suppress the false positive ASAN complaint.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckTraps):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::tryInstallTrapBreakpoints):
+
+2018-09-03  Mark Lam  <mark.lam@apple.com>
+
         CallFrame::unsafeCallee() should use an ASAN suppressed Register::asanUnsafePointer().
         https://bugs.webkit.org/show_bug.cgi?id=189247
 
