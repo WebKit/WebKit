@@ -35,21 +35,30 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/MIMETypeRegistry.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/ios/SystemPreviewSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/Vector.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/SystemPreviewTypes.cpp>
-#endif
-
 SOFT_LINK_FRAMEWORK(QuickLook);
 SOFT_LINK_CLASS(QuickLook, QLItem);
 
 SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
 SOFT_LINK_CLASS(AssetViewer, ASVThumbnailView);
+
+// FIXME: At the moment we only have one supported UTI, but
+// if we start supporting more types, then we'll need a table.
+static String getUTIForMIMEType(const String& mimeType)
+{
+    static const NeverDestroyed<String> uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, CFSTR("usdz"), nil)).get();
+
+    if (!WebCore::MIMETypeRegistry::isSystemPreviewMIMEType(mimeType))
+        return emptyString();
+
+    return uti;
+}
 
 @interface WKSystemPreviewView () <ASVThumbnailViewDelegate>
 @end
@@ -95,13 +104,7 @@ SOFT_LINK_CLASS(AssetViewer, ASVThumbnailView);
     _data = adoptNS([data copy]);
 
     NSString *contentType;
-#if USE(APPLE_INTERNAL_SDK)
-    contentType = WebKit::getUTIForMIMEType(_mimeType.get());
-#else
-    NSString *extension = [[_suggestedFilename.get() pathExtension] lowercaseString];
-    RetainPtr<CFStringRef> contentTypeCF = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (__bridge CFStringRef)extension, nil));
-    contentType = (NSString *)contentTypeCF.get();
-#endif
+    contentType = getUTIForMIMEType(_mimeType.get());
 
     _item = adoptNS([allocQLItemInstance() initWithDataProvider:self contentType:contentType previewTitle:_suggestedFilename.get()]);
     [_item setUseLoadingTimeout:NO];

@@ -1,3 +1,28 @@
+2018-09-03  Dean Jackson  <dino@apple.com>
+
+        Move SystemPreview code from WebKitAdditions to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=189252
+        <rdar://problem/44080245>
+
+        Reviewed by Wenson Hsieh.
+
+        Move the WebKitAdditions code into WebKit/WebCore.
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        (getUTIForMIMEType): Helper to get the system UTI for USDZ files.
+        (-[_WKPreviewControllerDataSource previewController:previewItemAtIndex:]):
+
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm: Use the new methods
+        in MIMETypeRegistry.
+        (-[WKWebViewContentProviderRegistry initWithConfiguration:]):
+
+        * UIProcess/SystemPreviewController.cpp: Ditto.
+        (WebKit::SystemPreviewController::canPreview const):
+
+        * UIProcess/ios/WKSystemPreviewView.mm:
+        (getUTIForMIMEType): Similar helper to above.
+        (-[WKSystemPreviewView web_setContentProviderData:suggestedFilename:]):
+
 2018-09-04  Frederic Wang  <fwang@igalia.com>
 
         Bug 189190 - REGRESSION(r235398) ASSERTION failure !m_client.didFinishDocumentLoadForFrame

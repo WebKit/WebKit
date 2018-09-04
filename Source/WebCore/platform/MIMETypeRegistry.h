@@ -88,6 +88,10 @@ public:
     static bool isPostScriptMIMEType(const String& mimeType);
     WEBCORE_EXPORT static bool isPDFOrPostScriptMIMEType(const String& mimeType);
 
+#if USE(SYSTEM_PREVIEW)
+    WEBCORE_EXPORT static bool isSystemPreviewMIMEType(const String& mimeType);
+#endif
+
     // Check to see if a MIME type is suitable for being shown inside a page.
     // Returns true if any of isSupportedImageMIMEType(), isSupportedNonImageMIMEType(),
     // isSupportedMediaMIMEType(), isSupportedJavaScriptMIMEType(), isSupportedJSONMIMEType(),
@@ -113,6 +117,10 @@ public:
     WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedMediaMIMETypes();
     WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& getPDFMIMETypes();
     WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& getUnsupportedTextMIMETypes();
+
+#if USE(SYSTEM_PREVIEW)
+    WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& getSystemPreviewMIMETypes();
+#endif
 
     // FIXME: WebKit coding style says we should not have the word "get" in the name of this function.
     // FIXME: Unclear what the concept of a normalized MIME type is; currently it's a platform-specific notion.

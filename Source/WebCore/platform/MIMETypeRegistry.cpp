@@ -64,6 +64,10 @@ static HashSet<String, ASCIICaseInsensitiveHash>* supportedMediaMIMETypes;
 static HashSet<String, ASCIICaseInsensitiveHash>* pdfMIMETypes;
 static HashSet<String, ASCIICaseInsensitiveHash>* unsupportedTextMIMETypes;
 
+#if USE(SYSTEM_PREVIEW)
+static HashSet<String, ASCIICaseInsensitiveHash>* systemPreviewMIMETypes;
+#endif
+
 static void initializeSupportedImageMIMETypes()
 {
     supportedImageResourceMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
@@ -699,6 +703,37 @@ const String& defaultMIMEType()
     static NeverDestroyed<const String> defaultMIMEType(MAKE_STATIC_STRING_IMPL("application/octet-stream"));
     return defaultMIMEType;
 }
+
+#if USE(SYSTEM_PREVIEW)
+static void initializeSystemPreviewMIMETypes()
+{
+    const char* const types[] = {
+        // The official type: https://www.iana.org/assignments/media-types/model/vnd.usdz+zip
+        "model/vnd.usdz+zip",
+        // Unofficial, but supported because we documented them.
+        "model/usd",
+        "model/vnd.pixar.usd"
+    };
+
+    systemPreviewMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
+    for (auto& type : types)
+        systemPreviewMIMETypes->add(type);
+}
+
+const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSystemPreviewMIMETypes()
+{
+    if (!systemPreviewMIMETypes)
+        initializeSystemPreviewMIMETypes();
+    return *systemPreviewMIMETypes;
+}
+
+bool MIMETypeRegistry::isSystemPreviewMIMEType(const String& mimeType)
+{
+    if (mimeType.isEmpty())
+        return false;
+    return getSystemPreviewMIMETypes().contains(mimeType);
+}
+#endif
 
 #if !USE(CURL)
 

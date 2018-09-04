@@ -33,17 +33,26 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <QuickLook/QuickLook.h>
 #import <UIKit/UIViewController.h>
+#import <WebCore/MIMETypeRegistry.h>
 #import <pal/spi/ios/QuickLookSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakObjCPtr.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/SystemPreviewTypes.cpp>
-#endif
-
 SOFT_LINK_FRAMEWORK(QuickLook)
 SOFT_LINK_CLASS(QuickLook, QLPreviewController);
 SOFT_LINK_CLASS(QuickLook, QLItem);
+
+// FIXME: At the moment we only have one supported UTI, but
+// if we start supporting more types, then we'll need a table.
+static String getUTIForMIMEType(const String& mimeType)
+{
+    static const NeverDestroyed<String> uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, CFSTR("usdz"), nil)).get();
+
+    if (!WebCore::MIMETypeRegistry::isSystemPreviewMIMEType(mimeType))
+        return emptyString();
+
+    return uti;
+}
 
 @interface _WKPreviewControllerDataSource : NSObject <QLPreviewControllerDataSource> {
     RetainPtr<NSItemProvider> _itemProvider;
@@ -85,12 +94,10 @@ SOFT_LINK_CLASS(QuickLook, QLItem);
         return _item.get();
 
     _itemProvider = adoptNS([[NSItemProvider alloc] init]);
-    NSString *contentType = @"public.content";
-#if USE(APPLE_INTERNAL_SDK)
     // FIXME: We are launching the preview controller before getting a response from the resource, which
     // means we don't actually know the real MIME type yet. Assume it is one of those that we registered.
-    contentType = WebKit::getUTIForMIMEType(*WebKit::getSystemPreviewMIMETypes().begin());
-#endif
+    NSString *contentType = getUTIForMIMEType(*WebCore::MIMETypeRegistry::getSystemPreviewMIMETypes().begin());
+
     _item = adoptNS([allocQLItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0)]);
     [_item setUseLoadingTimeout:NO];
 

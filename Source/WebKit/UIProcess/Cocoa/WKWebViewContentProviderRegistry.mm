@@ -42,10 +42,6 @@
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
-#if USE(SYSTEM_PREVIEW) && USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/SystemPreviewTypes.cpp>
-#endif
-
 @implementation WKWebViewContentProviderRegistry {
     HashMap<String, Class <WKWebViewContentProvider>, ASCIICaseInsensitiveHash> _contentProviderForMIMEType;
     HashCountedSet<WebKit::WebPageProxy*> _pages;
@@ -64,9 +60,9 @@
         [self registerProvider:[WKLegacyPDFView class] forMIMEType:mimeType];
 #endif
 
-#if USE(SYSTEM_PREVIEW) && USE(APPLE_INTERNAL_SDK)
+#if USE(SYSTEM_PREVIEW)
     if (configuration._systemPreviewEnabled) {
-        for (auto& mimeType : WebKit::getSystemPreviewMIMETypes())
+        for (auto& mimeType : WebCore::MIMETypeRegistry::getSystemPreviewMIMETypes())
             [self registerProvider:[WKSystemPreviewView class] forMIMEType:mimeType];
     }
 #endif

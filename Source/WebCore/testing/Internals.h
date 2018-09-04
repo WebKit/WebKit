@@ -700,7 +700,6 @@ public:
     MockCredentialsMessenger& mockCredentialsMessenger() const;
 #endif
 
-    String systemPreviewRelType();
     bool isSystemPreviewLink(Element&) const;
     bool isSystemPreviewImage(Element&) const;
 

@@ -1,3 +1,35 @@
+2018-09-03  Dean Jackson  <dino@apple.com>
+
+        Move SystemPreview code from WebKitAdditions to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=189252
+        <rdar://problem/44080245>
+
+        Reviewed by Wenson Hsieh.
+
+        Move the WebKitAdditions code into WebKit/WebCore.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::relList const): Look for "ar".
+        (WebCore::HTMLAnchorElement::isSystemPreviewLink const): Ditto.
+
+        * platform/MIMETypeRegistry.cpp: Add a couple of new static methods
+        for System Preview MIME types.
+        (WebCore::initializeSystemPreviewMIMETypes):
+        (WebCore::MIMETypeRegistry::getSystemPreviewMIMETypes):
+        (WebCore::MIMETypeRegistry::isSystemPreviewMIMEType):
+        * platform/MIMETypeRegistry.h:
+
+        * rendering/RenderThemeIOS.mm: Load the ARKit artwork from the framework.
+        (WebCore::arKitBundle):
+        (WebCore::loadARKitPDFPage):
+        (WebCore::systemPreviewLogo):
+        (WebCore::RenderThemeIOS::paintSystemPreviewBadge):
+
+        * testing/Internals.cpp: Remove internal helper.
+        (WebCore::Internals::systemPreviewRelType): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-09-04  Andy Estes  <aestes@apple.com>
 
         [Payment Request] PaymentResponse should have an onpayerdetailchange event handler

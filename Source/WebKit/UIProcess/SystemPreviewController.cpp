@@ -29,10 +29,7 @@
 #if USE(SYSTEM_PREVIEW)
 
 #include "WebPageProxy.h"
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/SystemPreviewTypes.cpp>
-#endif
+#include <WebCore/MIMETypeRegistry.h>
 
 namespace WebKit {
 
@@ -43,12 +40,7 @@ SystemPreviewController::SystemPreviewController(WebPageProxy& webPageProxy)
 
 bool SystemPreviewController::canPreview(const String& mimeType) const
 {
-#if USE(APPLE_INTERNAL_SDK)
-    return canShowSystemPreviewForMIMEType(mimeType);
-#else
-    UNUSED_PARAM(mimeType);
-    return false;
-#endif
+    return WebCore::MIMETypeRegistry::isSystemPreviewMIMEType(mimeType);
 }
 
 }

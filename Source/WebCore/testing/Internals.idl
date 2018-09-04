@@ -648,7 +648,6 @@ enum CompositingPolicy {
     [Conditional=APPLE_PAY] readonly attribute MockPaymentCoordinator mockPaymentCoordinator;
     [Conditional=WEB_AUTHN] readonly attribute MockCredentialsMessenger mockCredentialsMessenger;
 
-    DOMString systemPreviewRelType();
     boolean isSystemPreviewLink(Element element);
     boolean isSystemPreviewImage(Element element);
 

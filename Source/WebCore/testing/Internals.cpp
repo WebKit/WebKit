@@ -4626,15 +4626,6 @@ MockCredentialsMessenger& Internals::mockCredentialsMessenger() const
 }
 #endif
 
-String Internals::systemPreviewRelType()
-{
-#if USE(SYSTEM_PREVIEW) && USE(APPLE_INTERNAL_SDK)
-    return getSystemPreviewRelValue();
-#else
-    return "system-preview"_s;
-#endif
-}
-
 bool Internals::isSystemPreviewLink(Element& element) const
 {
 #if USE(SYSTEM_PREVIEW)

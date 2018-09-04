@@ -53,10 +53,6 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
-#if USE(SYSTEM_PREVIEW) && USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/SystemPreviewDetection.cpp>
-#endif
-
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLAnchorElement);
@@ -314,12 +310,7 @@ DOMTokenList& HTMLAnchorElement::relList() const
     if (!m_relList) {
         m_relList = std::make_unique<DOMTokenList>(const_cast<HTMLAnchorElement&>(*this), HTMLNames::relAttr, [](Document&, StringView token) {
 #if USE(SYSTEM_PREVIEW)
-#if USE(APPLE_INTERNAL_SDK)
-            auto systemPreviewRelValue = getSystemPreviewRelValue();
-#else
-            auto systemPreviewRelValue = "system-preview"_s;
-#endif
-            return equalIgnoringASCIICase(token, "noreferrer") || equalIgnoringASCIICase(token, "noopener") || equalIgnoringASCIICase(token, systemPreviewRelValue);
+            return equalIgnoringASCIICase(token, "noreferrer") || equalIgnoringASCIICase(token, "noopener") || equalIgnoringASCIICase(token, "ar");
 #else
             return equalIgnoringASCIICase(token, "noreferrer") || equalIgnoringASCIICase(token, "noopener");
 #endif
@@ -383,11 +374,7 @@ bool HTMLAnchorElement::isSystemPreviewLink() const
     if (!RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled())
         return false;
 
-#if USE(APPLE_INTERNAL_SDK)
-    auto systemPreviewRelValue = getSystemPreviewRelValue();
-#else
-    auto systemPreviewRelValue = String { "system-preview"_s };
-#endif
+    static NeverDestroyed<AtomicString> systemPreviewRelValue("ar", AtomicString::ConstructFromLiteral);
 
     if (!relList().contains(systemPreviewRelValue))
         return false;
@@ -395,7 +382,7 @@ bool HTMLAnchorElement::isSystemPreviewLink() const
     if (auto* child = firstElementChild()) {
         if (is<HTMLImageElement>(child) || is<HTMLPictureElement>(child)) {
             auto numChildren = childElementCount();
-            // FIXME: Should only be 1.
+            // FIXME: We've documented that it should be the only child, but some early demos have two children.
             return numChildren == 1 || numChildren == 2;
         }
     }
