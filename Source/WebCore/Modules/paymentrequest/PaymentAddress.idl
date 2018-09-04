@@ -38,7 +38,6 @@
     readonly attribute DOMString dependentLocality;
     readonly attribute DOMString postalCode;
     readonly attribute DOMString sortingCode;
-    readonly attribute DOMString languageCode;
     readonly attribute DOMString organization;
     readonly attribute DOMString recipient;
     readonly attribute DOMString phone;

@@ -47,13 +47,12 @@ public:
     const String& dependentLocality() const { return m_dependentLocality; }
     const String& postalCode() const { return m_postalCode; }
     const String& sortingCode() const { return m_sortingCode; }
-    const String& languageCode() const { return m_languageCode; }
     const String& organization() const { return m_organization; }
     const String& recipient() const { return m_recipient; }
     const String& phone() const { return m_phone; }
 
 private:
-    PaymentAddress(const String& country, const Vector<String>& addressLine, const String& region, const String& city, const String& dependentLocality, const String& postalCode, const String& sortingCode, const String& languageCode, const String& organization, const String& recipient, const String& phone);
+    PaymentAddress(const String& country, const Vector<String>& addressLine, const String& region, const String& city, const String& dependentLocality, const String& postalCode, const String& sortingCode, const String& organization, const String& recipient, const String& phone);
 
     String m_country;
     Vector<String> m_addressLine;
@@ -62,7 +61,6 @@ private:
     String m_dependentLocality;
     String m_postalCode;
     String m_sortingCode;
-    String m_languageCode;
     String m_organization;
     String m_recipient;
     String m_phone;

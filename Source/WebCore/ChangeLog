@@ -1,5 +1,28 @@
 2018-09-03  Andy Estes  <aestes@apple.com>
 
+        [Payment Request] Remove PaymentAddress.languageCode
+        https://bugs.webkit.org/show_bug.cgi?id=189254
+
+        Reviewed by Sam Weinig.
+
+        PaymentAddress.languageCode is marked as "at risk" in the latest Payment Request Editor's
+        Draft (30 August 2018). Firefox has already removed it, and Chrome is considering it.
+
+        There is some compatibility risk in removing this attribute, but considering we never
+        populated it with a meaningful value, the risk seems very low. If we learn about
+        compatibility problems, we can address them by evangelising or even reverting this change.
+
+        Updated existing tests.
+
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::convert):
+        * Modules/paymentrequest/PaymentAddress.cpp:
+        (WebCore::PaymentAddress::PaymentAddress):
+        * Modules/paymentrequest/PaymentAddress.h:
+        * Modules/paymentrequest/PaymentAddress.idl:
+
+2018-09-03  Andy Estes  <aestes@apple.com>
+
         [Payment Request] Add a stub for PaymentResponse.retry
         https://bugs.webkit.org/show_bug.cgi?id=189253
 

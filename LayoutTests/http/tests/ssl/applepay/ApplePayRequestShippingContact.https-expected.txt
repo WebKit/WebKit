@@ -26,7 +26,6 @@ PASS paymentResponse.shippingAddress.dependentLocality is expectedSubLocality
 PASS paymentResponse.shippingAddress.postalCode is expectedPostalCode
 PASS paymentResponse.shippingAddress.postalCode is expectedPostalCode
 PASS paymentResponse.shippingAddress.sortingCode is ''
-PASS paymentResponse.shippingAddress.languageCode is ''
 PASS paymentResponse.shippingAddress.organization is ''
 PASS paymentResponse.shippingAddress.recipient is expectedName
 PASS paymentResponse.shippingAddress.phone is expectedPhoneNumber
