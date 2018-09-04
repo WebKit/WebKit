@@ -1131,9 +1131,9 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
         Label loop(this);
 
-            readCharacterDontDecodeSurrogates(0, patternCharacter, patternIndex);
-            readCharacterDontDecodeSurrogates(m_checkedOffset - term->inputPosition, character);
-        
+        readCharacterDontDecodeSurrogates(0, patternCharacter, patternIndex);
+        readCharacterDontDecodeSurrogates(m_checkedOffset - term->inputPosition, character);
+    
         if (!m_pattern.ignoreCase())
             characterMatchFails.append(branch32(NotEqual, character, patternCharacter));
         else {
