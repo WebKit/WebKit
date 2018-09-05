@@ -67,6 +67,7 @@
 #include "ObjCObjectGraph.h"
 #include "PDFPlugin.h"
 #include "UserMediaCaptureManagerProxy.h"
+#include "VersionChecks.h"
 #endif
 
 #if ENABLE(SEC_ITEM_SHIM)
@@ -80,9 +81,20 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static bool isMainThreadOrCheckDisabled()
+{
+#if PLATFORM(IOS)
+    return LIKELY(RunLoop::isMain()) || !linkedOnOrAfter(SDKVersion::FirstWithMainThreadReleaseAssertionInWebPageProxy);
+#elif PLATFORM(MAC)
+    return LIKELY(RunLoop::isMain()) || !linkedOnOrAfter(SDKVersion::FirstWithMainThreadReleaseAssertionInWebPageProxy);
+#else
+    return RunLoop::isMain();
+#endif
+}
+
 static HashMap<ProcessIdentifier, WebProcessProxy*>& allProcesses()
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT(isMainThreadOrCheckDisabled());
     static NeverDestroyed<HashMap<ProcessIdentifier, WebProcessProxy*>> map;
     return map;
 }
@@ -100,7 +112,7 @@ uint64_t WebProcessProxy::generatePageID()
 
 static WebProcessProxy::WebPageProxyMap& globalPageMap()
 {
-    ASSERT(RunLoop::isMain());
+    ASSERT(isMainThreadOrCheckDisabled());
     static NeverDestroyed<WebProcessProxy::WebPageProxyMap> pageMap;
     return pageMap;
 }
@@ -128,7 +140,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore& 
 #endif
     , m_isInPrewarmedPool(isInPrewarmedPool == IsInPrewarmedPool::Yes)
 {
-    RELEASE_ASSERT(RunLoop::isMain());
+    RELEASE_ASSERT(isMainThreadOrCheckDisabled());
 
     auto result = allProcesses().add(coreProcessIdentifier(), this);
     ASSERT_UNUSED(result, result.isNewEntry);
@@ -138,7 +150,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore& 
 
 WebProcessProxy::~WebProcessProxy()
 {
-    RELEASE_ASSERT(RunLoop::isMain());
+    RELEASE_ASSERT(isMainThreadOrCheckDisabled());
     ASSERT(m_pageURLRetainCountMap.isEmpty());
 
     auto result = allProcesses().remove(coreProcessIdentifier());
@@ -210,7 +222,7 @@ void WebProcessProxy::processWillShutDown(IPC::Connection& connection)
 
 void WebProcessProxy::shutDown()
 {
-    RELEASE_ASSERT(RunLoop::isMain());
+    RELEASE_ASSERT(isMainThreadOrCheckDisabled());
 
     shutDownProcess();
 
@@ -251,7 +263,7 @@ WebPageProxy* WebProcessProxy::webPage(uint64_t pageID)
 void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType> dataTypes, Vector<String>&& topPrivatelyControlledDomains, bool shouldNotifyPage, Function<void (const HashSet<String>&)>&& completionHandler)
 {
     // We expect this to be called on the main thread so we get the default website data store.
-    ASSERT(RunLoop::isMain());
+    ASSERT(isMainThreadOrCheckDisabled());
     
     struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(Function<void(HashSet<String>)>&& completionHandler)
@@ -299,7 +311,7 @@ void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPers
         callbackAggregator->addPendingCallback();
         dataStore.removeDataForTopPrivatelyControlledDomains(dataTypes, fetchOptions, topPrivatelyControlledDomains, [callbackAggregator, shouldNotifyPage, page](HashSet<String>&& domainsWithDeletedWebsiteData) {
             // When completing the task, we should be getting called on the main thread.
-            ASSERT(RunLoop::isMain());
+            ASSERT(isMainThreadOrCheckDisabled());
             
             if (shouldNotifyPage)
                 page.value->postMessageToInjectedBundle("WebsiteDataDeletionForTopPrivatelyOwnedDomainsFinished", nullptr);
@@ -313,7 +325,7 @@ void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPers
 void WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, bool shouldNotifyPage, Function<void(HashSet<String>&&)>&& completionHandler)
 {
     // We expect this to be called on the main thread so we get the default website data store.
-    ASSERT(RunLoop::isMain());
+    ASSERT(isMainThreadOrCheckDisabled());
     
     struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(Function<void(HashSet<String>&&)>&& completionHandler)
@@ -361,7 +373,7 @@ void WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(OptionSet<Web
         callbackAggregator->addPendingCallback();
         dataStore.topPrivatelyControlledDomainsWithWebsiteData(dataTypes, { }, [callbackAggregator, shouldNotifyPage, page = makeRef(*page)](HashSet<String>&& domainsWithDataRecords) {
             // When completing the task, we should be getting called on the main thread.
-            ASSERT(RunLoop::isMain());
+            ASSERT(isMainThreadOrCheckDisabled());
             
             if (shouldNotifyPage)
                 page->postMessageToInjectedBundle("WebsiteDataScanForTopPrivatelyControlledDomainsFinished", nullptr);
@@ -756,7 +768,7 @@ bool WebProcessProxy::mayBecomeUnresponsive()
 
 void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
 {
-    RELEASE_ASSERT(RunLoop::isMain());
+    RELEASE_ASSERT(isMainThreadOrCheckDisabled());
 
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
