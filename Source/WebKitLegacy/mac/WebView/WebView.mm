@@ -3125,7 +3125,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     RuntimeEnabledFeatures::sharedFeatures().setMenuItemElementEnabled([preferences menuItemElementEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setAccessibilityObjectModelEnabled([preferences accessibilityObjectModelEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setAriaReflectionEnabled([preferences ariaReflectionEnabled]);
-    RuntimeEnabledFeatures::sharedFeatures().setMediaCapabilitiesEnabled([preferences mediaCapabilitiesEnabled]);
     RuntimeEnabledFeatures::sharedFeatures().setFetchAPIKeepAliveEnabled([preferences fetchAPIKeepAliveEnabled]);
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -3170,6 +3169,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setLargeImageAsyncDecodingEnabled([preferences largeImageAsyncDecodingEnabled]);
     settings.setAnimatedImageAsyncDecodingEnabled([preferences animatedImageAsyncDecodingEnabled]);
+    settings.setMediaCapabilitiesEnabled([preferences mediaCapabilitiesEnabled]);
 
     RuntimeEnabledFeatures::sharedFeatures().setServerTimingEnabled([preferences serverTimingEnabled]);
 }

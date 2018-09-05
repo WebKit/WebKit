@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledAtRuntime=MediaCapabilities,
+    EnabledBySetting=MediaCapabilities,
     ImplementationLacksVTable
 ]
 interface ScreenLuminance {

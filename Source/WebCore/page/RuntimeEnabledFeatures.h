@@ -250,9 +250,6 @@ public:
     void setAriaReflectionEnabled(bool isEnabled) { m_ariaReflectionEnabled = isEnabled; }
     bool ariaReflectionEnabled() const { return m_ariaReflectionEnabled; }
 
-    void setMediaCapabilitiesEnabled(bool isEnabled) { m_mediaCapabilitiesEnabled = isEnabled; }
-    bool mediaCapabilitiesEnabled() const { return m_mediaCapabilitiesEnabled; }
-
     void setResourceLoadStatisticsDebugMode(bool isEnabled) { m_resourceLoadStatisticsDebugMode = isEnabled; }
     bool resourceLoadStatisticsDebugMode() const { return m_resourceLoadStatisticsDebugMode; }
 
@@ -413,7 +410,6 @@ private:
     bool m_webVREnabled { false };
     bool m_accessibilityObjectModelEnabled { false };
     bool m_ariaReflectionEnabled { true };
-    bool m_mediaCapabilitiesEnabled { false };
     bool m_resourceLoadStatisticsDebugMode { false };
     bool m_isRestrictedHTTPResponseAccess { true };
     bool m_crossOriginResourcePolicyEnabled { true };

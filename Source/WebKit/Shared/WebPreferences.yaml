@@ -1047,8 +1047,10 @@ ShouldAllowUserInstalledFonts:
 
 MediaCapabilitiesEnabled:
   type: bool
-  defaultValue: false
-  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  humanReadableName: "Media Capabilities API"
+  humanReadableDescription: "Media Capabilities API"
+  category: experimental
 
 SystemPreviewEnabled:
   type: bool
