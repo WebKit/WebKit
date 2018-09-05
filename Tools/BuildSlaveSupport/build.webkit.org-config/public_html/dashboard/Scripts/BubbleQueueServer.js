@@ -38,7 +38,8 @@ BubbleQueueServer = function()
         "mac-32bit-ews": {platform: Dashboard.Platform.macOSHighSierra, shortName: "mac-32bit", title: "Release\xa032\u2011bit\xa0Build\xa0EWS"},
         "bindings-ews": {platform: Dashboard.Platform.macOSHighSierra, shortName: "bindings", title: "Bindings\xa0EWS"},
         "webkitpy-ews": {platform: Dashboard.Platform.macOSHighSierra, shortName: "webkitpy", title: "Webkitpy\xa0EWS"},
-        "win-ews": {platform: Dashboard.Platform.Windows7, shortName: "win", title: "WebKit1\xa0Release\xa0Build\xa0EWS"}
+        "win-ews": {platform: Dashboard.Platform.Windows7, shortName: "win", title: "WebKit1\xa0Release\xa0Build\xa0EWS"},
+        "wincairo-ews": {platform: Dashboard.Platform.Windows10, shortName: "wincairo", title: "WebKit1\xa0Release\xa0Build\xa0EWS"}
     };
 
     BaseObject.call(this);

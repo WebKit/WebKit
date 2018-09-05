@@ -30,9 +30,8 @@ Dashboard = {
         macOSSierra: { name: "macos-sierra", readableName: "macOS Sierra", order: 8 },
         iOS11Simulator: { name: "ios-simulator-11", readableName: "iOS 11 Simulator", order: 20 },
         iOS11Device: { name: "ios-11", readableName: "iOS 11", order: 25 },
-        Windows8: { name: "windows-8", readableName: "Windows 8", order: 50 },
+        Windows10: { name: "windows-10", readableName: "Windows 10", order: 50 },
         Windows7: { name: "windows-7", readableName: "Windows 7", order: 60 },
-        WindowsXP: { name: "windows-xp", readableName: "Windows XP", order: 70 },
         LinuxWPE: { name : "linux-wpe", readableName: "Linux WPE", order: 90 },
         LinuxGTK: { name : "linux-gtk", readableName: "Linux GTK", order: 91 }
     },

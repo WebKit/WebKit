@@ -192,16 +192,12 @@ table.queue-grid tr.platform.macos-mojave img.logo {
     content: -webkit-image-set(url(../Images/Mojave@2x.png) 2x, url(../Images/Mojave.png) 1x);
 }
 
-table.queue-grid tr.platform.windows-8 img.logo {
-    content: -webkit-image-set(url(../Images/Windows8@2x.png) 2x, url(../Images/Windows8.png) 1x);
+table.queue-grid tr.platform.windows-10 img.logo {
+    content: -webkit-image-set(url(../Images/Windows10@2x.png) 2x, url(../Images/Windows10.png) 1x);
 }
 
 table.queue-grid tr.platform.windows-7 img.logo {
     content: -webkit-image-set(url(../Images/Windows7@2x.png) 2x, url(../Images/Windows7.png) 1x);
-}
-
-table.queue-grid tr.platform.windows-xp img.logo {
-    content: -webkit-image-set(url(../Images/WindowsXP@2x.png) 2x, url(../Images/WindowsXP.png) 1x);
 }
 
 table.queue-grid tr.platform.linux-gtk img.logo {
