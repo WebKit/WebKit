@@ -1,5 +1,16 @@
 2018-09-05  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r235489): WKSharingServicePickerDelegate.mm accidentally added back to Sources in WebKit project
+
+        * WebKit.xcodeproj/project.pbxproj:
+        (WKSharingServicePickerDelegate.mm): Let Xcode have its way with
+        the WebKit project file by removing this file from Sources.
+        It's already included in a UnifedSource file, so it should not
+        have been added back to Sources during merge conflict resolution
+        for r235489.
+
+2018-09-05  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r204222): UIProces/Gamepad/mac is missing in WebKit Xcode project
 
         Found using `tidy-Xcode-project-file --missing` (see Bug

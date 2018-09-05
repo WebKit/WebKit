@@ -11396,7 +11396,6 @@
 				BC407603124FF0270068F20A /* WKSerializedScriptValue.cpp in Sources */,
 				1ADE46B21954EC61000F7985 /* WKSessionStateRef.cpp in Sources */,
 				1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */,
-				513E462E1AD837560016234A /* WKSharingServicePickerDelegate.mm in Sources */,
 				93F549B61E3174DA000E7239 /* WKSnapshotConfiguration.mm in Sources */,
 				BC407605124FF0270068F20A /* WKString.cpp in Sources */,
 				BC407619124FF0370068F20A /* WKStringCF.mm in Sources */,
