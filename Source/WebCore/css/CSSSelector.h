@@ -183,7 +183,6 @@ namespace WebCore {
             PseudoElementScrollbarTrackPiece,
             PseudoElementSelection,
             PseudoElementSlotted,
-            PseudoElementUserAgentCustom,
             PseudoElementWebKitCustom,
 
             // WebKitCustom that appeared in an old prefixed form
@@ -411,8 +410,7 @@ inline bool CSSSelector::isUnknownPseudoElement() const
 inline bool CSSSelector::isCustomPseudoElement() const
 {
     return match() == PseudoElement
-        && (pseudoElementType() == PseudoElementUserAgentCustom
-            || pseudoElementType() == PseudoElementWebKitCustom
+        && (pseudoElementType() == PseudoElementWebKitCustom
             || pseudoElementType() == PseudoElementWebKitCustomLegacyPrefixed);
 }
 

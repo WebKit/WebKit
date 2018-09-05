@@ -1,3 +1,22 @@
+2018-08-29  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Remove PseudoElementUserAgentCustom.
+        https://bugs.webkit.org/show_bug.cgi?id=189089
+
+        Reviewed by Ryosuke Niwa.
+
+        Tests at https://github.com/web-platform-tests/wpt/pull/12743.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::CSSSelector::parsePseudoElementType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::isCustomPseudoElement const):
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addRule):
+        * css/parser/CSSParserSelector.h:
+        (WebCore::CSSParserSelector::needsImplicitShadowCombinatorForMatching const):
+
 2018-09-04  Dean Jackson  <dino@apple.com>
 
         Post review Weinig fix-ups

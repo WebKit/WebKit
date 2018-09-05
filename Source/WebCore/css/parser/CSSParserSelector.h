@@ -117,7 +117,6 @@ inline bool CSSParserSelector::needsImplicitShadowCombinatorForMatching() const
 {
     return match() == CSSSelector::PseudoElement
         && (pseudoElementType() == CSSSelector::PseudoElementWebKitCustom
-            || pseudoElementType() == CSSSelector::PseudoElementUserAgentCustom
 #if ENABLE(VIDEO_TRACK)
             || pseudoElementType() == CSSSelector::PseudoElementCue
 #endif

@@ -242,7 +242,6 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, unsigned selector
             break;
         case CSSSelector::PseudoElement:
             switch (selector->pseudoElementType()) {
-            case CSSSelector::PseudoElementUserAgentCustom:
             case CSSSelector::PseudoElementWebKitCustom:
             case CSSSelector::PseudoElementWebKitCustomLegacyPrefixed:
                 customPseudoElementSelector = selector;
