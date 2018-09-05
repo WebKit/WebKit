@@ -41,6 +41,7 @@ private:
     bool decodeBytes(const String& key, const uint8_t*&, size_t&) override;
     bool decodeBool(const String& key, bool&) override;
     bool decodeUInt32(const String& key, uint32_t&) override;
+    bool decodeUInt64(const String& key, uint64_t&) override;
     bool decodeInt32(const String& key, int32_t&) override;
     bool decodeInt64(const String& key, int64_t&) override;
     bool decodeFloat(const String& key, float&) override;

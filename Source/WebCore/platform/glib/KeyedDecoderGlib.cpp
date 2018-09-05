@@ -93,6 +93,11 @@ bool KeyedDecoderGlib::decodeUInt32(const String& key, uint32_t& result)
     return decodeSimpleValue(key, result, g_variant_get_uint32);
 }
 
+bool KeyedDecoderGlib::decodeUInt64(const String& key, uint64_t& result)
+{
+    return decodeSimpleValue(key, result, g_variant_get_uint64);
+}
+
 bool KeyedDecoderGlib::decodeInt32(const String& key, int32_t& result)
 {
     return decodeSimpleValue(key, result, g_variant_get_int32);

@@ -1,3 +1,30 @@
+2018-09-05  Woodrow Wang  <woodrow_wang@apple.com>
+
+        Add functionality to encode and decode a uint64_t in KeyedCoding
+        https://bugs.webkit.org/show_bug.cgi?id=189216
+
+        Reviewed by Daniel Bates.
+
+        I've added this functionality in order to be able to encode and decode the raw uint64_t 
+        representation of an OptionSet for my patch here <https://bugs.webkit.org/show_bug.cgi?id=187773>. 
+
+        The changes in the KeyedEncoder/KeyedDecoder for Glib were made because they are derived classes
+        of KeyedCoding which contains pure virtual functions that need to be implemented.
+
+        * platform/KeyedCoding.h:
+        * platform/cf/KeyedDecoderCF.cpp:
+        (WebCore::KeyedDecoderCF::decodeUInt64):
+        * platform/cf/KeyedDecoderCF.h:
+        * platform/cf/KeyedEncoderCF.cpp:
+        (WebCore::KeyedEncoderCF::encodeUInt64):
+        * platform/cf/KeyedEncoderCF.h:
+        * platform/glib/KeyedDecoderGlib.cpp:
+        (WebCore::KeyedDecoderGlib::decodeUInt64):
+        * platform/glib/KeyedDecoderGlib.h:
+        * platform/glib/KeyedEncoderGlib.cpp:
+        (WebCore::KeyedEncoderGlib::encodeUInt64):
+        * platform/glib/KeyedEncoderGlib.h:
+
 2018-09-05  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] ASSERT(!m_nicosia.imageBacking) when starting any YouTube video

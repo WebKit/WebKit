@@ -65,6 +65,11 @@ void KeyedEncoderGlib::encodeUInt32(const String& key, uint32_t value)
 {
     g_variant_builder_add(m_variantBuilderStack.last(), "{sv}", key.utf8().data(), g_variant_new_uint32(value));
 }
+    
+void KeyedEncoderGlib::encodeUInt64(const String& key, uint64_t value)
+{
+    g_variant_builder_add(m_variantBuilderStack.last(), "{sv}", key.utf8().data(), g_variant_new_uint64(value));
+}
 
 void KeyedEncoderGlib::encodeInt32(const String& key, int32_t value)
 {

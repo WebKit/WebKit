@@ -81,6 +81,11 @@ bool KeyedDecoderCF::decodeUInt32(const String& key, uint32_t& result)
 {
     return decodeInt32(key, reinterpret_cast<int32_t&>(result));
 }
+    
+bool KeyedDecoderCF::decodeUInt64(const String& key, uint64_t& result)
+{
+    return decodeInt64(key, reinterpret_cast<int64_t&>(result));
+}
 
 bool KeyedDecoderCF::decodeInt32(const String& key, int32_t& result)
 {

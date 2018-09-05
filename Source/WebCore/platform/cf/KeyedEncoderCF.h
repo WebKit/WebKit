@@ -42,6 +42,7 @@ private:
     void encodeBytes(const String& key, const uint8_t*, size_t) final;
     void encodeBool(const String& key, bool) final;
     void encodeUInt32(const String& key, uint32_t) final;
+    void encodeUInt64(const String& key, uint64_t) final;
     void encodeInt32(const String& key, int32_t) final;
     void encodeInt64(const String& key, int64_t) final;
     void encodeFloat(const String& key, float) final;
