@@ -476,6 +476,8 @@ static bool finished;
 }
 @end
 
+// FIXME: on iOS, UI process should be using the same cookie file as the network process for default session.
+#if PLATFORM(MAC)
 TEST(WebKit, WKHTTPCookieStoreWithoutProcessPool)
 {
     RetainPtr<NSHTTPCookie> sessionCookie = [NSHTTPCookie cookieWithProperties:@{
@@ -567,4 +569,5 @@ TEST(WebKit, WKHTTPCookieStoreWithoutProcessPool)
     [webView loadHTMLString:alertCookieHTML baseURL:[NSURL URLWithString:@"http://127.0.0.1"]];
     TestWebKitAPI::Util::run(&finished);
 }
+#endif // PLATFORM(MAC)
 #endif

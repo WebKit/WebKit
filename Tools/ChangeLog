@@ -1,3 +1,53 @@
+2018-09-05  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r234730. rdar://problem/44144081
+
+    REGRESSION (r232083): WKWebView loses first-party cookies on iOS
+    https://bugs.webkit.org/show_bug.cgi?id=188443
+    <rdar://problem/42991584>
+    
+    Patch by Sihui Liu <sihui_liu@apple.com> on 2018-08-09
+    Reviewed by Chris Dumez.
+    
+    Source/WebKit:
+    
+    Revert the change to set sharedCookieStorage for iOS as it is breaking Kayak.
+    
+    * NetworkProcess/NetworkProcess.h:
+    * NetworkProcess/NetworkProcessCreationParameters.cpp:
+    (WebKit::NetworkProcessCreationParameters::encode const):
+    (WebKit::NetworkProcessCreationParameters::decode):
+    * NetworkProcess/NetworkProcessCreationParameters.h:
+    * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+    (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+    * Shared/WebProcessCreationParameters.cpp:
+    (WebKit::WebProcessCreationParameters::encode const):
+    (WebKit::WebProcessCreationParameters::decode):
+    * Shared/WebProcessCreationParameters.h:
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::WebProcessPool::platformInitializeWebProcess):
+    (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+    
+    Tools:
+    
+    Skip WebKit.WKHTTPCookieStoreWithoutProcessPool on iOS.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234730 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-09  Sihui Liu  <sihui_liu@apple.com>
+
+            REGRESSION (r232083): WKWebView loses first-party cookies on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=188443
+            <rdar://problem/42991584>
+
+            Reviewed by Chris Dumez.
+
+            Skip WebKit.WKHTTPCookieStoreWithoutProcessPool on iOS.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+
 2018-08-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r235317. rdar://problem/43646060
