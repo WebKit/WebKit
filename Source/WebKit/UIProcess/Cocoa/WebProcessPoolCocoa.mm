@@ -286,6 +286,7 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 #if PLATFORM(MAC)
     auto screenProperties = WebCore::collectScreenProperties();
     parameters.screenProperties = WTFMove(screenProperties);
+    parameters.useOverlayScrollbars = ([NSScroller preferredScrollerStyle] == NSScrollerStyleOverlay);
 #endif
 }
 
