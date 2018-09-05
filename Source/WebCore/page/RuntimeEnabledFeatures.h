@@ -282,6 +282,9 @@ public:
     void setAttrStyleEnabled(bool isEnabled) { m_attrStyleEnabled = isEnabled; }
     bool attrStyleEnabled() const { return m_attrStyleEnabled; }
 
+    void setWebAPIStatisticsEnabled(bool isEnabled) { m_webAPIStatisticsEnabled = isEnabled; }
+    bool webAPIStatisticsEnabled() const { return m_webAPIStatisticsEnabled; }
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -424,6 +427,8 @@ private:
 #endif
 
     bool m_attrStyleEnabled { false };
+
+    bool m_webAPIStatisticsEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

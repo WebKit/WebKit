@@ -1,3 +1,17 @@
+2018-09-05  Woodrow Wang  <woodrow_wang@apple.com>
+
+        Added runtime feature flag for web API statistics
+        https://bugs.webkit.org/show_bug.cgi?id=189211
+
+        Reviewed by Daniel Bates.
+
+        Added functionality to set the runtime flag with a JavaScript exposed function
+        for testing.
+
+        * Shared/WebPreferences.yaml:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+
 2018-09-05  Jer Noble  <jer.noble@apple.com>
 
         Add MediaCapabilities as an Experimental Feature

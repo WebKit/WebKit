@@ -133,6 +133,7 @@ public:
     void setMDNSICECandidatesEnabled(bool);
     void setWebRTCUnifiedPlanEnabled(bool);
     void setCustomUserAgent(JSStringRef);
+    void setWebAPIStatisticsEnabled(bool);
 
     // Special DOM functions.
     void clearBackForwardList();

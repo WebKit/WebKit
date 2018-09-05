@@ -1333,3 +1333,11 @@ SourceBufferChangeTypeEnabled:
   humanReadableDescription: "Enable Media Source Codec Switching through changeType()"
   category: experimental
   condition: ENABLE(MEDIA_SOURCE)
+
+WebAPIStatisticsEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Web API Statistics"
+  humanReadableDescription: "Enable Web API Statistics"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental

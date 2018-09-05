@@ -1,3 +1,18 @@
+2018-09-05  Woodrow Wang  <woodrow_wang@apple.com>
+
+        Added runtime feature flag for web API statistics
+        https://bugs.webkit.org/show_bug.cgi?id=189211
+
+        Reviewed by Daniel Bates.
+
+        Added functionality to set the runtime flag with a JavaScript exposed function
+        for testing.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setWebAPIStatisticsEnabled):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2018-09-05  Ross Kirsling  <ross.kirsling@sony.com>
 
         Add WinCairo to bot watcher's dashboard.
