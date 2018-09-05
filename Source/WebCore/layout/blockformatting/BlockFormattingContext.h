@@ -50,18 +50,18 @@ public:
     void layout(LayoutContext&, FormattingState&) const override;
 
 private:
-    void layoutFormattingContextRoot(LayoutContext&, FloatingContext&, FormattingState&, const Box&, Display::Box&) const;
+    void layoutFormattingContextRoot(LayoutContext&, FloatingContext&, FormattingState&, const Box&) const;
 
-    void computeWidthAndMargin(LayoutContext&, const Box&, Display::Box&) const;
-    void computeHeightAndMargin(LayoutContext&, const Box&, Display::Box&) const;
+    void computeWidthAndMargin(LayoutContext&, const Box&) const;
+    void computeHeightAndMargin(LayoutContext&, const Box&) const;
 
-    void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const override;
-    void computeFloatingPosition(LayoutContext&, FloatingContext&, const Box&, Display::Box&) const;
-    void computePositionToAvoidFloats(LayoutContext&, FloatingContext&, const Box&, Display::Box&) const;
-    void computeVerticalPositionForFloatClear(LayoutContext&, const FloatingContext&, const Box&, Display::Box&) const;
+    void computeStaticPosition(LayoutContext&, const Box&) const override;
+    void computeFloatingPosition(LayoutContext&, FloatingContext&, const Box&) const;
+    void computePositionToAvoidFloats(LayoutContext&, FloatingContext&, const Box&) const;
+    void computeVerticalPositionForFloatClear(LayoutContext&, const FloatingContext&, const Box&) const;
 
-    void computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const override;
-    void computeEstimatedMarginTop(LayoutContext&, const Box&, Display::Box&) const;
+    void computeInFlowPositionedPosition(LayoutContext&, const Box&) const override;
+    void computeEstimatedMarginTop(LayoutContext&, const Box&) const;
     void computeEstimatedMarginTopForAncestors(LayoutContext&, const Box&) const;
 
     InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutContext&, const Box&) const override;

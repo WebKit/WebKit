@@ -51,18 +51,22 @@ FormattingContext::~FormattingContext()
 {
 }
 
-void FormattingContext::computeOutOfFlowHorizontalGeometry(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+void FormattingContext::computeOutOfFlowHorizontalGeometry(LayoutContext& layoutContext, const Box& layoutBox) const
 {
     auto horizontalGeometry = Geometry::outOfFlowHorizontalGeometry(layoutContext, *this, layoutBox);
+
+    auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
     displayBox.setLeft(horizontalGeometry.left + horizontalGeometry.widthAndMargin.margin.left);
     displayBox.setContentBoxWidth(horizontalGeometry.widthAndMargin.width);
     displayBox.setHorizontalMargin(horizontalGeometry.widthAndMargin.margin);
     displayBox.setHorizontalNonComputedMargin(horizontalGeometry.widthAndMargin.nonComputedMargin);
 }
 
-void FormattingContext::computeOutOfFlowVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+void FormattingContext::computeOutOfFlowVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox) const
 {
     auto verticalGeometry = Geometry::outOfFlowVerticalGeometry(layoutContext, layoutBox);
+
+    auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
     displayBox.setTop(verticalGeometry.top + verticalGeometry.heightAndMargin.margin.top);
     displayBox.setContentBoxHeight(verticalGeometry.heightAndMargin.height);
     ASSERT(!verticalGeometry.heightAndMargin.collapsedMargin);
@@ -70,8 +74,9 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(LayoutContext& layoutCo
     displayBox.setVerticalNonCollapsedMargin(verticalGeometry.heightAndMargin.margin);
 }
 
-void FormattingContext::computeBorderAndPadding(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
+void FormattingContext::computeBorderAndPadding(LayoutContext& layoutContext, const Box& layoutBox) const
 {
+    auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
     displayBox.setBorder(Geometry::computedBorder(layoutContext, layoutBox));
     displayBox.setPadding(Geometry::computedPadding(layoutContext, layoutBox));
 }
@@ -86,7 +91,7 @@ void FormattingContext::placeInFlowPositionedChildren(LayoutContext& layoutConte
     for (auto& layoutBox : childrenOfType<Box>(container)) {
         if (!layoutBox.isInFlowPositioned())
             continue;
-        computeInFlowPositionedPosition(layoutContext, layoutBox, *layoutContext.displayBoxForLayoutBox(layoutBox));
+        computeInFlowPositionedPosition(layoutContext, layoutBox);
     }
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: move in-flow positioned children -> context: " << &layoutContext << " parent: " << &container);
 }
@@ -108,17 +113,17 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext,
 
     for (auto& outOfFlowBox : container.outOfFlowDescendants()) {
         auto& layoutBox = *outOfFlowBox;
-        auto& displayBox = layoutContext.createDisplayBox(layoutBox);
+        layoutContext.createDisplayBox(layoutBox);
 
         ASSERT(layoutBox.establishesFormattingContext());
         auto formattingContext = layoutContext.formattingContext(layoutBox);
 
-        computeBorderAndPadding(layoutContext, layoutBox, displayBox);
-        computeOutOfFlowHorizontalGeometry(layoutContext, layoutBox, displayBox);
+        computeBorderAndPadding(layoutContext, layoutBox);
+        computeOutOfFlowHorizontalGeometry(layoutContext, layoutBox);
 
         formattingContext->layout(layoutContext, layoutContext.establishedFormattingState(layoutBox));
 
-        computeOutOfFlowVerticalGeometry(layoutContext, layoutBox, displayBox);
+        computeOutOfFlowVerticalGeometry(layoutContext, layoutBox);
         layoutOutOfFlowDescendants(layoutContext, layoutBox);
     }
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow descendants -> context: " << &layoutContext << " root: " << &root());

@@ -64,18 +64,14 @@ public:
     static Position mapCoordinateToAncestor(const LayoutContext&, Position, const Container& containingBlock, const Container& ancestor);
 
 protected:
-    struct BoxPair {
-        const Box& layout;
-        Display::Box& display;
-    };
-    using LayoutQueue = Vector<std::unique_ptr<BoxPair>>;
+    using LayoutQueue = Vector<const Box*>;
 
     const Box& root() const { return *m_root; }
 
-    virtual void computeStaticPosition(LayoutContext&, const Box&, Display::Box&) const = 0;
-    virtual void computeInFlowPositionedPosition(LayoutContext&, const Box&, Display::Box&) const = 0;
+    virtual void computeStaticPosition(LayoutContext&, const Box&) const = 0;
+    virtual void computeInFlowPositionedPosition(LayoutContext&, const Box&) const = 0;
 
-    void computeBorderAndPadding(LayoutContext&, const Box&, Display::Box&) const;
+    void computeBorderAndPadding(LayoutContext&, const Box&) const;
 
     void placeInFlowPositionedChildren(LayoutContext&, const Container&) const;
 
@@ -123,8 +119,8 @@ protected:
     };
 
 private:
-    void computeOutOfFlowVerticalGeometry(LayoutContext&, const Box&, Display::Box&) const;
-    void computeOutOfFlowHorizontalGeometry(LayoutContext&, const Box&, Display::Box&) const;
+    void computeOutOfFlowVerticalGeometry(LayoutContext&, const Box&) const;
+    void computeOutOfFlowHorizontalGeometry(LayoutContext&, const Box&) const;
 
     WeakPtr<Box> m_root;
 };
