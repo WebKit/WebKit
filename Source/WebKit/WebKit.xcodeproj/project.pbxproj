@@ -8747,7 +8747,6 @@
 		CD73BA3D131A2A2100EEDED2 /* FullScreen */ = {
 			isa = PBXGroup;
 			children = (
-				CDCA85E4132AD33000E961DF /* mac */,
 				CD73BA37131A29FE00EEDED2 /* WebFullScreenManager.cpp */,
 				CD73BA38131A29FE00EEDED2 /* WebFullScreenManager.h */,
 				CD73BA39131A29FE00EEDED2 /* WebFullScreenManager.messages.in */,
@@ -8768,14 +8767,6 @@
 				3F915C0E1F564DED00183CE9 /* WKFullScreenWindowControllerIOS.mm */,
 			);
 			name = fullscreen;
-			sourceTree = "<group>";
-		};
-		CDCA85E4132AD33000E961DF /* mac */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = mac;
-			path = FullScreen/mac;
 			sourceTree = "<group>";
 		};
 		CE1A0BCA1A48E6C60054EF74 /* spi */ = {

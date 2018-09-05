@@ -1,3 +1,15 @@
+2018-09-05  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r110214): Remove deleted WebProcess/Fullscreen/mac folder from WebKit Xcode project
+
+        Found using `tidy-Xcode-project-file --missing` (see Bug
+        188754). Folder removed via Xcode.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        (WebProcess/Fullscreen/mac): Remove empty folder.  Directory no
+        longer exists.  WebFullScreenManagerMac.{h,mm} files were
+        removed in r110214.
+
 2018-09-05  Woodrow Wang  <woodrow_wang@apple.com>
 
         Added runtime feature flag for web API statistics
