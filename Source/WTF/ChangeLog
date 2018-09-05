@@ -1,3 +1,16 @@
+2018-09-05  Mark Lam  <mark.lam@apple.com>
+
+        Remove unused bad_optional_access implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=189297
+
+        Reviewed by David Kilzer.
+
+        This is a speculative fix for resolving build errors arising from conflicting
+        definitions of bad_optional_access when building WebKit with the latest clang.
+
+        * wtf/Optional.h:
+        (std::bad_optional_access::bad_optional_access): Deleted.
+
 2018-09-04  Michael Saboff  <msaboff@apple.com>
 
         YARR: JIT RegExps with back references
