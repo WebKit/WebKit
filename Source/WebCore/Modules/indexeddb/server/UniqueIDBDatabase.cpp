@@ -273,6 +273,8 @@ void UniqueIDBDatabase::scheduleShutdownForClose()
 {
     ASSERT(isMainThread());
 
+    m_operationAndTransactionTimer.stop();
+
     RELEASE_ASSERT(!m_owningPointerForClose);
     m_owningPointerForClose = m_server.closeAndTakeUniqueIDBDatabase(*this);
 
