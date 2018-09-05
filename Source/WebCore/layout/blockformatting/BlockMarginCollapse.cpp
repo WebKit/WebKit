@@ -144,7 +144,7 @@ static bool isMarginBottomCollapsedThrough(const LayoutContext& layoutContext, c
     return true;
 }
 
-LayoutUnit BlockFormattingContext::MarginCollapse::collapsedMarginTopFromFirstChild(const LayoutContext& layoutContext, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginTopFromFirstChild(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
@@ -164,7 +164,7 @@ LayoutUnit BlockFormattingContext::MarginCollapse::collapsedMarginTopFromFirstCh
     return marginValue(computedNonCollapsedMarginTop(layoutContext, firstInFlowChild), collapsedMarginTopFromFirstChild(layoutContext, firstInFlowChild));
 }
 
-LayoutUnit BlockFormattingContext::MarginCollapse::nonCollapsedMarginTop(const LayoutContext& layoutContext, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginTop(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
@@ -186,21 +186,21 @@ LayoutUnit BlockFormattingContext::MarginCollapse::nonCollapsedMarginTop(const L
     // A collapsed margin is considered adjoining to another margin if any of its component margins is adjoining to that margin.
     return false;
 }*/
-LayoutUnit BlockFormattingContext::MarginCollapse::computedNonCollapsedMarginTop(const LayoutContext& layoutContext, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginTop(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
-    return FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue(layoutContext, layoutBox).top;
+    return computedNonCollapsedVerticalMarginValue(layoutContext, layoutBox).top;
 }
 
-LayoutUnit BlockFormattingContext::MarginCollapse::computedNonCollapsedMarginBottom(const LayoutContext& layoutContext, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginBottom(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
-    return FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue(layoutContext, layoutBox).bottom;
+    return computedNonCollapsedVerticalMarginValue(layoutContext, layoutBox).bottom;
 }
 
-LayoutUnit BlockFormattingContext::MarginCollapse::marginTop(const LayoutContext& layoutContext, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::marginTop(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     if (layoutBox.isAnonymous())
         return 0;
@@ -231,7 +231,7 @@ LayoutUnit BlockFormattingContext::MarginCollapse::marginTop(const LayoutContext
     return marginValue(marginTop, previousSiblingMarginBottom);
 }
 
-LayoutUnit BlockFormattingContext::MarginCollapse::marginBottom(const LayoutContext& layoutContext, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::marginBottom(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     if (layoutBox.isAnonymous())
         return 0;
@@ -256,7 +256,7 @@ LayoutUnit BlockFormattingContext::MarginCollapse::marginBottom(const LayoutCont
     return nonCollapsedMarginBottom(layoutContext, layoutBox);
 }
 
-bool BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent(const LayoutContext& layoutContext, const Box& layoutBox)
+bool BlockFormattingContext::Geometry::MarginCollapse::isMarginBottomCollapsedWithParent(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     // last inflow box to parent.
     // https://www.w3.org/TR/CSS21/box.html#collapsing-margins
@@ -298,12 +298,12 @@ bool BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent(c
     return true;
 }
 
-bool BlockFormattingContext::MarginCollapse::isMarginTopCollapsedWithParentMarginBottom(const Box&)
+bool BlockFormattingContext::Geometry::MarginCollapse::isMarginTopCollapsedWithParentMarginBottom(const Box&)
 {
     return false;
 }
 
-LayoutUnit BlockFormattingContext::MarginCollapse::collapsedMarginBottomFromLastChild(const LayoutContext& layoutContext, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginBottomFromLastChild(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
@@ -324,24 +324,12 @@ LayoutUnit BlockFormattingContext::MarginCollapse::collapsedMarginBottomFromLast
     return marginValue(computedNonCollapsedMarginBottom(layoutContext, lastInFlowChild), collapsedMarginBottomFromLastChild(layoutContext, lastInFlowChild));
 }
 
-LayoutUnit BlockFormattingContext::MarginCollapse::nonCollapsedMarginBottom(const LayoutContext& layoutContext, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginBottom(const LayoutContext& layoutContext, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
     // Non collapsed margin bottom includes collapsed margin from inflow last child.
     return marginValue(computedNonCollapsedMarginBottom(layoutContext, layoutBox), collapsedMarginBottomFromLastChild(layoutContext, layoutBox));
-}
-
-LayoutUnit BlockFormattingContext::MarginCollapse::estimatedMarginTop(const LayoutContext& layoutContext, const Box& layoutBox)
-{
-    ASSERT(layoutBox.isBlockLevelBox());
-    // Can't estimate vertical margins for out of flow boxes (and we shouldn't need to do it for float boxes).
-    ASSERT(layoutBox.isInFlow());
-    // Can't cross block formatting context boundary.
-    ASSERT(!layoutBox.establishesBlockFormattingContext());
-
-    // Let's just use the normal path for now.
-    return marginTop(layoutContext, layoutBox);
 }
 
 }

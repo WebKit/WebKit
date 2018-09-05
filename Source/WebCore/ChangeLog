@@ -1,3 +1,40 @@
+2018-09-05  Zalan Bujtas <zalan@apple.com>
+
+        [LFC][BFC] Move MarginCollapse class under BlockFormattingContext::Geometry
+        https://bugs.webkit.org/show_bug.cgi?id=189296
+
+        Reviewed by Antti Koivisto.
+
+        Margin collapsing is part of geometry after all.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedMarginTop const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::estimatedMarginTop):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginTopFromFirstChild):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginTop):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginTop):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginBottom):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginTop):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginBottom):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::isMarginBottomCollapsedWithParent):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::isMarginTopCollapsedWithParentMarginBottom):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginBottomFromLastChild):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginBottom):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedMarginTopFromFirstChild): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::nonCollapsedMarginTop): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::computedNonCollapsedMarginTop): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::computedNonCollapsedMarginBottom): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginTop): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBottom): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::isMarginBottomCollapsedWithParent): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::isMarginTopCollapsedWithParentMarginBottom): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedMarginBottomFromLastChild): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::nonCollapsedMarginBottom): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::estimatedMarginTop): Deleted.
+
 2018-09-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Make BlockFormattingContext::Geometry a subclass of FormattingContext::Geometry

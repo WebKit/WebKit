@@ -165,7 +165,7 @@ void BlockFormattingContext::computeStaticPosition(LayoutContext& layoutContext,
 
 void BlockFormattingContext::computeEstimatedMarginTop(LayoutContext& layoutContext, const Box& layoutBox, Display::Box& displayBox) const
 {
-    auto estimatedMarginTop = MarginCollapse::estimatedMarginTop(layoutContext, layoutBox);
+    auto estimatedMarginTop = Geometry::estimatedMarginTop(layoutContext, layoutBox);
     displayBox.setEstimatedMarginTop(estimatedMarginTop);
     displayBox.moveVertically(estimatedMarginTop);
 }
