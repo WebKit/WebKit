@@ -270,10 +270,10 @@ void AVVideoCaptureSource::commitConfiguration()
         [m_session commitConfiguration];
 }
 
-void AVVideoCaptureSource::settingsDidChange()
+void AVVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
     m_currentSettings = std::nullopt;
-    RealtimeMediaSource::settingsDidChange();
+    RealtimeMediaSource::settingsDidChange(settings);
 }
 
 const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings() const
@@ -357,17 +357,6 @@ const RealtimeMediaSourceCapabilities& AVVideoCaptureSource::capabilities() cons
     return *m_capabilities;
 }
 
-bool AVVideoCaptureSource::applySize(const IntSize& size)
-{
-    NSString *preset = bestSessionPresetForVideoDimensions(size.width(), size.height());
-    if (!preset || ![session() canSetSessionPreset:preset]) {
-        LOG(Media, "AVVideoCaptureSource::applySize(%p), unable find or set preset for width: %i, height: %i", this, size.width(), size.height());
-        return false;
-    }
-
-    return setPreset(preset);
-}
-
 IntSize AVVideoCaptureSource::sizeForPreset(NSString* preset)
 {
     if (!preset)
@@ -405,14 +394,14 @@ bool AVVideoCaptureSource::setPreset(NSString *preset)
         [m_videoOutput setVideoSettings:settingsDictionary];
 #endif
     } @catch(NSException *exception) {
-        LOG(Media, "AVVideoCaptureSource::applySize(%p), exception thrown configuring device: <%s> %s", this, [[exception name] UTF8String], [[exception reason] UTF8String]);
+        LOG(Media, "AVVideoCaptureSource::setPreset(%p), exception thrown configuring device: <%s> %s", this, [[exception name] UTF8String], [[exception reason] UTF8String]);
         return false;
     }
 
     return true;
 }
 
-bool AVVideoCaptureSource::applyFrameRate(double rate)
+void AVVideoCaptureSource::setFrameRate(double rate)
 {
     using namespace PAL;
     double epsilon = 0.00001;
@@ -425,8 +414,8 @@ bool AVVideoCaptureSource::applyFrameRate(double rate)
     }
 
     if (!bestFrameRateRange || !isFrameRateSupported(rate)) {
-        LOG(Media, "AVVideoCaptureSource::applyFrameRate(%p), frame rate %f not supported by video device", this, rate);
-        return false;
+        LOG(Media, "AVVideoCaptureSource::setFrameRate(%p), frame rate %f not supported by video device", this, rate);
+        return;
     }
 
     NSError *error = nil;
@@ -442,17 +431,17 @@ bool AVVideoCaptureSource::applyFrameRate(double rate)
             [device() unlockForConfiguration];
         }
     } @catch(NSException *exception) {
-        LOG(Media, "AVVideoCaptureSource::applyFrameRate(%p), exception thrown configuring device: <%s> %s", this, [[exception name] UTF8String], [[exception reason] UTF8String]);
-        return false;
+        LOG(Media, "AVVideoCaptureSource::setFrameRate(%p), exception thrown configuring device: <%s> %s", this, [[exception name] UTF8String], [[exception reason] UTF8String]);
+        return;
     }
 
     if (error) {
-        LOG(Media, "AVVideoCaptureSource::applyFrameRate(%p), failed to lock video device for configuration: %s", this, [[error localizedDescription] UTF8String]);
-        return false;
+        LOG(Media, "AVVideoCaptureSource::setFrameRate(%p), failed to lock video device for configuration: %s", this, [[error localizedDescription] UTF8String]);
+        return;
     }
 
-    LOG(Media, "AVVideoCaptureSource::applyFrameRate(%p) - set frame rate range to %f", this, rate);
-    return true;
+    LOG(Media, "AVVideoCaptureSource::setFrameRate(%p) - set frame rate range to %f", this, rate);
+    return;
 }
 
 void AVVideoCaptureSource::applySizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
@@ -461,7 +450,7 @@ void AVVideoCaptureSource::applySizeAndFrameRate(std::optional<int> width, std::
         setPreset(bestSessionPresetForVideoDimensions(WTFMove(width), WTFMove(height)));
 
     if (frameRate)
-        applyFrameRate(frameRate.value());
+        setFrameRate(frameRate.value());
 }
 
 static inline int sensorOrientation(AVCaptureVideoOrientation videoOrientation)
@@ -627,10 +616,15 @@ void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBu
         std::swap(dimensions.width, dimensions.height);
 
     if (dimensions.width != m_width || dimensions.height != m_height) {
+        OptionSet<RealtimeMediaSourceSettings::Flag> changed;
+        if (m_width != dimensions.width)
+            changed.add(RealtimeMediaSourceSettings::Flag::Width);
+        if (m_height != dimensions.height)
+            changed.add(RealtimeMediaSourceSettings::Flag::Height);
+
         m_width = dimensions.width;
         m_height = dimensions.height;
-
-        settingsDidChange();
+        settingsDidChange(changed);
     }
 
     videoSampleAvailable(MediaSampleAVFObjC::create(m_buffer.get(), m_sampleRotation, [connection isVideoMirrored]));

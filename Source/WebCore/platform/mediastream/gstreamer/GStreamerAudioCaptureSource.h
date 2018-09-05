@@ -50,9 +50,8 @@ protected:
     mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;
 
 private:
-    bool applySampleRate(int) final;
     bool isCaptureSource() const final { return true; }
-    bool applyVolume(double) final { return true; }
+    void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
 
     std::unique_ptr<GStreamerAudioCapturer> m_capturer;
 

@@ -192,10 +192,17 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings() const
     return m_currentSettings.value();
 }
 
-void MockRealtimeVideoSource::settingsDidChange()
+void MockRealtimeVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
     m_currentSettings = std::nullopt;
-    RealtimeVideoSource::settingsDidChange();
+    if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height })) {
+        m_baseFontSize = size().height() * .08;
+        m_bipBopFontSize = m_baseFontSize * 2.5;
+        m_statsFontSize = m_baseFontSize * .5;
+        m_imageBuffer = nullptr;
+    }
+
+    RealtimeVideoSource::settingsDidChange(settings);
 }
 
 void MockRealtimeVideoSource::startCaptureTimer()
@@ -223,19 +230,6 @@ Seconds MockRealtimeVideoSource::elapsedTime()
         return m_elapsedTime;
 
     return m_elapsedTime + (MonotonicTime::now() - m_startTime);
-}
-
-bool MockRealtimeVideoSource::applySize(const IntSize& size)
-{
-    if (!RealtimeVideoSource::applySize(size))
-        return false;
-
-    m_baseFontSize = size.height() * .08;
-    m_bipBopFontSize = m_baseFontSize * 2.5;
-    m_statsFontSize = m_baseFontSize * .5;
-    m_imageBuffer = nullptr;
-
-    return true;
 }
 
 void MockRealtimeVideoSource::drawAnimation(GraphicsContext& context)

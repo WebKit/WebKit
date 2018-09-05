@@ -114,10 +114,16 @@ void CanvasCaptureMediaStreamTrack::Source::canvasResized(CanvasBase& canvas)
 {
     ASSERT_UNUSED(canvas, m_canvas == &canvas);
 
+    OptionSet<RealtimeMediaSourceSettings::Flag> changed;
+    if (m_canvas->width() != m_settings.width())
+        changed.add(RealtimeMediaSourceSettings::Flag::Width);
+    if (m_canvas->height() != m_settings.height())
+        changed.add(RealtimeMediaSourceSettings::Flag::Height);
+
     m_settings.setWidth(m_canvas->width());
     m_settings.setHeight(m_canvas->height());
 
-    settingsDidChange();
+    settingsDidChange(changed);
 }
 
 void CanvasCaptureMediaStreamTrack::Source::canvasChanged(CanvasBase& canvas, const FloatRect&)

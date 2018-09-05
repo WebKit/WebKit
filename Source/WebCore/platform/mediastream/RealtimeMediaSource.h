@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -169,35 +169,29 @@ public:
     void setHeight(int);
     void setSize(const IntSize&);
     const IntSize& size() const { return m_size; }
-    virtual bool applySize(const IntSize&) { return false; }
 
     double frameRate() const { return m_frameRate; }
     void setFrameRate(double);
-    virtual bool applyFrameRate(double) { return false; }
 
     double aspectRatio() const { return m_aspectRatio; }
     void setAspectRatio(double);
-    virtual bool applyAspectRatio(double) { return false; }
 
     RealtimeMediaSourceSettings::VideoFacingMode facingMode() const { return m_facingMode; }
     void setFacingMode(RealtimeMediaSourceSettings::VideoFacingMode);
-    virtual bool applyFacingMode(RealtimeMediaSourceSettings::VideoFacingMode) { return false; }
 
     double volume() const { return m_volume; }
     void setVolume(double);
-    virtual bool applyVolume(double) { return false; }
 
     int sampleRate() const { return m_sampleRate; }
     void setSampleRate(int);
-    virtual bool applySampleRate(int) { return false; }
+    virtual std::optional<Vector<int>> discreteSampleRates() const;
 
     int sampleSize() const { return m_sampleSize; }
     void setSampleSize(int);
-    virtual bool applySampleSize(int) { return false; }
+    virtual std::optional<Vector<int>> discreteSampleSizes() const;
 
     bool echoCancellation() const { return m_echoCancellation; }
     void setEchoCancellation(bool);
-    virtual bool applyEchoCancellation(bool) { return false; }
 
     virtual const RealtimeMediaSourceCapabilities& capabilities() const = 0;
     virtual const RealtimeMediaSourceSettings& settings() const = 0;
@@ -210,7 +204,7 @@ public:
     bool supportsConstraints(const MediaConstraints&, String&);
     bool supportsConstraint(const MediaConstraint&) const;
 
-    virtual void settingsDidChange();
+    virtual void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>);
 
     virtual bool isIsolated() const { return false; }
 
@@ -274,8 +268,8 @@ private:
     double m_fitnessScore { std::numeric_limits<double>::infinity() };
     RealtimeMediaSourceSettings::VideoFacingMode m_facingMode { RealtimeMediaSourceSettings::User};
 
-    bool m_echoCancellation { false };
     bool m_pendingSettingsDidChangeNotification { false };
+    bool m_echoCancellation { false };
     bool m_isProducingData { false };
     bool m_interrupted { false };
     bool m_captureDidFailed { false };

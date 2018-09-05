@@ -30,6 +30,7 @@
 
 #include "RealtimeMediaSourceSupportedConstraints.h"
 #include <wtf/EnumTraits.h>
+#include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
@@ -42,6 +43,27 @@ public:
 
     static String facingMode(RealtimeMediaSourceSettings::VideoFacingMode);
     static RealtimeMediaSourceSettings::VideoFacingMode videoFacingModeEnum(const String&);
+
+    enum Flag {
+        Width = 1 << 0,
+        Height = 1 << 1,
+        AspectRatio = 1 << 2,
+        FrameRate = 1 << 3,
+        FacingMode = 1 << 4,
+        Volume = 1 << 5,
+        SampleRate = 1 << 6,
+        SampleSize = 1 << 7,
+        EchoCancellation = 1 << 8,
+        DeviceId = 1 << 9,
+        GroupId = 1 << 10,
+        Label = 1 << 11,
+        DisplaySurface = 1 << 12,
+        LogicalSurface = 1 << 13,
+    };
+
+    static constexpr OptionSet<Flag> allFlags() { return { Width, Height, AspectRatio, FrameRate, FacingMode, Volume, SampleRate, SampleSize, EchoCancellation, DeviceId, GroupId, Label, DisplaySurface, LogicalSurface }; }
+
+    WEBCORE_EXPORT OptionSet<RealtimeMediaSourceSettings::Flag> difference(const RealtimeMediaSourceSettings&) const;
 
     explicit RealtimeMediaSourceSettings() = default;
 

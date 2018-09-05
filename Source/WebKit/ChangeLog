@@ -1,3 +1,14 @@
+2018-09-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Simplify logic when changing RealtimeMediaSource settings
+        https://bugs.webkit.org/show_bug.cgi?id=189284
+        <rdar://problem/44117948>
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::Source::setSettings):
+
 2018-09-04  Frederic Wang  <fwang@igalia.com>
 
         Add basic support for ScrollIntoViewOptions

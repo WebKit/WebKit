@@ -37,7 +37,6 @@ public:
     GstElement* pipeline() { return m_capturer->pipeline(); }
     GStreamerCapturer* capturer() { return m_capturer.get(); }
 
-
 protected:
     GStreamerVideoCaptureSource(const String& deviceID, const String& name, const gchar * source_factory);
     GStreamerVideoCaptureSource(GStreamerCaptureDevice);
@@ -52,9 +51,7 @@ private:
     static GstFlowReturn newSampleCallback(GstElement*, GStreamerVideoCaptureSource*);
 
     bool isCaptureSource() const final { return true; }
-    bool applySize(const IntSize&) final;
-    bool applyFrameRate(double) final;
-    bool applyAspectRatio(double) final { return true; }
+    void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
 
     std::unique_ptr<GStreamerVideoCapturer> m_capturer;
 };

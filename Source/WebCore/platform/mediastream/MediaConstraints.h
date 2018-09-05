@@ -193,6 +193,19 @@ public:
         return static_cast<double>(std::abs(ideal - m_ideal.value())) / std::max(std::abs(ideal), std::abs(m_ideal.value()));
     }
 
+    double fitnessDistance(const Vector<ValueType>& discreteCapabilityValues) const
+    {
+        double minDistance = std::numeric_limits<double>::infinity();
+
+        for (auto& value : discreteCapabilityValues) {
+            auto distance = fitnessDistance(value, value);
+            if (distance < minDistance)
+                minDistance = distance;
+        }
+
+        return minDistance;
+    }
+
     bool validForRange(ValueType rangeMin, ValueType rangeMax) const
     {
         if (isEmpty())
@@ -273,6 +286,46 @@ public:
 
         if (m_ideal)
             value = std::max(min, std::min(max, m_ideal.value()));
+
+        return value;
+    }
+
+    ValueType valueForDiscreteCapabilityValues(ValueType current, const Vector<ValueType>& discreteCapabilityValues) const
+    {
+        ValueType value { 0 };
+        std::optional<ValueType> min;
+        std::optional<ValueType> max;
+
+        if (m_exact) {
+            ASSERT(discreteCapabilityValues.contains(m_exact.value()));
+            return m_exact.value();
+        }
+
+        if (m_min) {
+            auto index = discreteCapabilityValues.findMatching([&](ValueType value) { return m_min.value() >= value; });
+            if (index != notFound) {
+                min = value = discreteCapabilityValues[index];
+
+                // If there is no ideal, don't change if minimum is smaller than current.
+                if (!m_ideal && value < current)
+                    value = current;
+            }
+        }
+
+        if (m_max && m_max.value() >= discreteCapabilityValues[0]) {
+            for (auto& discreteValue : discreteCapabilityValues) {
+                if (m_max.value() <= discreteValue)
+                    max = value = discreteValue;
+            }
+        }
+
+        if (m_ideal && discreteCapabilityValues.contains(m_ideal.value())) {
+            value = m_ideal.value();
+            if (max)
+                value = std::min(max.value(), value);
+            if (min)
+                value = std::max(min.value(), value);
+        }
 
         return value;
     }

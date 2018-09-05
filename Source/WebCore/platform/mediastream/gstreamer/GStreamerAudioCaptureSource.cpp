@@ -172,9 +172,12 @@ const RealtimeMediaSourceCapabilities& GStreamerAudioCaptureSource::capabilities
     return m_capabilities.value();
 }
 
-bool GStreamerAudioCaptureSource::applySampleRate(int sampleRate)
+void GStreamerAudioCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
-    return m_capturer->setSampleRate(sampleRate);
+    if (settings.contains(RealtimeMediaSourceSettings::Flag::SampleRate))
+        m_capturer->setSampleRate(sampleRate());
+
+    RealtimeMediaSource::settingsDidChange(settings);
 }
 
 const RealtimeMediaSourceSettings& GStreamerAudioCaptureSource::settings() const

@@ -1,3 +1,103 @@
+2018-09-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Simplify logic when changing RealtimeMediaSource settings
+        https://bugs.webkit.org/show_bug.cgi?id=189284
+        <rdar://problem/44117948>
+
+        Reviewed by Youenn Fablet.
+
+        Remove all "apply<setting>" methods from RealtimeMediaSource and derived classes, and
+        add a bitfield to settingsDidChange so classes can do setting-specific setup and
+        configuration by overriding settingsDidChange.
+
+        No new tests, no functionality changed.
+
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::canvasResized):
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.h:
+        * platform/mediastream/MediaConstraints.h:
+        (WebCore::NumericConstraint::fitnessDistance const):
+        (WebCore::NumericConstraint::valueForDiscreteCapabilityValues const):
+        * platform/mediastream/RealtimeIncomingVideoSource.h:
+        (): Deleted.
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::RealtimeMediaSource):
+        (WebCore::RealtimeMediaSource::settingsDidChange):
+        (WebCore::RealtimeMediaSource::fitnessDistance):
+        (WebCore::applyNumericConstraint):
+        (WebCore::RealtimeMediaSource::applyConstraint):
+        (WebCore::RealtimeMediaSource::applyConstraints):
+        (WebCore::RealtimeMediaSource::setSize):
+        (WebCore::RealtimeMediaSource::setWidth):
+        (WebCore::RealtimeMediaSource::setHeight):
+        (WebCore::RealtimeMediaSource::setFrameRate):
+        (WebCore::RealtimeMediaSource::setAspectRatio):
+        (WebCore::RealtimeMediaSource::setFacingMode):
+        (WebCore::RealtimeMediaSource::setVolume):
+        (WebCore::RealtimeMediaSource::setSampleRate):
+        (WebCore::RealtimeMediaSource::setSampleSize):
+        (WebCore::RealtimeMediaSource::setEchoCancellation):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeMediaSourceSettings.cpp:
+        (WebCore::RealtimeMediaSourceSettings::diff const):
+        * platform/mediastream/RealtimeMediaSourceSettings.h:
+        (WebCore::RealtimeMediaSourceSettings::allFlags):
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        (WebCore::RealtimeVideoSource::applySize): Deleted.
+        (WebCore::RealtimeVideoSource::applyFrameRate): Deleted.
+        * platform/mediastream/RealtimeVideoSource.h:
+        * platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp:
+        (WebCore::GStreamerAudioCaptureSource::settingsDidChange):
+        (WebCore::GStreamerAudioCaptureSource::applySampleRate): Deleted.
+        * platform/mediastream/gstreamer/GStreamerAudioCaptureSource.h:
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        (WebCore::GStreamerVideoCaptureSource::settingsDidChange):
+        (WebCore::GStreamerVideoCaptureSource::applySize): Deleted.
+        (WebCore::GStreamerVideoCaptureSource::applyFrameRate): Deleted.
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::settingsDidChange):
+        (WebCore::AVVideoCaptureSource::setPreset):
+        (WebCore::AVVideoCaptureSource::setFrameRate):
+        (WebCore::AVVideoCaptureSource::applySizeAndFrameRate):
+        (WebCore::AVVideoCaptureSource::processNewFrame):
+        (WebCore::AVVideoCaptureSource::applySize): Deleted.
+        (WebCore::AVVideoCaptureSource::applyFrameRate): Deleted.
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::settingsDidChange):
+        (WebCore::CoreAudioCaptureSource::applySampleRate): Deleted.
+        (WebCore::CoreAudioCaptureSource::applyEchoCancellation): Deleted.
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp:
+        (WebCore::DisplayCaptureSourceCocoa::settingsDidChange):
+        (WebCore::DisplayCaptureSourceCocoa::startProducingData):
+        (WebCore::DisplayCaptureSourceCocoa::applySize): Deleted.
+        (WebCore::DisplayCaptureSourceCocoa::applyFrameRate): Deleted.
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.h:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm:
+        (WebCore::MockRealtimeAudioSourceMac::settingsDidChange):
+        (WebCore::MockRealtimeAudioSourceMac::applySampleRate): Deleted.
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSourceMac::settingsDidChange):
+        (WebCore::MockRealtimeVideoSourceMac::applySize): Deleted.
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        (WebCore::RealtimeIncomingVideoSourceCocoa::processNewSample):
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.h:
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.mm:
+        (WebCore::ScreenDisplayCaptureSourceMac::settingsDidChange):
+        (WebCore::ScreenDisplayCaptureSourceMac::applySize): Deleted.
+        (WebCore::ScreenDisplayCaptureSourceMac::applyFrameRate): Deleted.
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::settingsDidChange):
+        * platform/mock/MockRealtimeAudioSource.h:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::settingsDidChange):
+        (WebCore::MockRealtimeVideoSource::applySize): Deleted.
+        * platform/mock/MockRealtimeVideoSource.h:
+
 2018-09-05  Zalan Bujtas <zalan@apple.com>
 
         [LFC][BFC] Move MarginCollapse class under BlockFormattingContext::Geometry

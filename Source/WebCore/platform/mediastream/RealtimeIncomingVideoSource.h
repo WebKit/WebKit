@@ -71,8 +71,6 @@ private:
     const RealtimeMediaSourceCapabilities& capabilities() const final;
     const RealtimeMediaSourceSettings& settings() const final;
 
-    bool applySize(const IntSize&) final { return true; }
-
     rtc::scoped_refptr<webrtc::VideoTrackInterface> m_videoTrack;
 };
 

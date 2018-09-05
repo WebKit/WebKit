@@ -56,7 +56,7 @@ private:
 
     PlatformLayer* platformLayer() const;
     void updateSampleBuffer() final;
-    bool applySize(const IntSize&) final;
+    void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
 
     void orientationChanged(int orientation) final;
     void monitorOrientation(OrientationNotifier&) final;

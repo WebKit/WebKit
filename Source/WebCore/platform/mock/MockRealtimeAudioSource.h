@@ -54,18 +54,13 @@ protected:
     void stopProducingData() final;
 
     virtual void render(Seconds) { }
+    void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) override;
 
     static Seconds renderInterval() { return 60_ms; }
 
 private:
-    bool applyVolume(double) override { return true; }
-    bool applySampleRate(int) override { return true; }
-    bool applySampleSize(int) override { return true; }
-    bool applyEchoCancellation(bool) override { return true; }
-
     const RealtimeMediaSourceCapabilities& capabilities() const final;
     const RealtimeMediaSourceSettings& settings() const final;
-    void settingsDidChange() final;
 
     void tick();
 

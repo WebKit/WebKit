@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,10 +98,17 @@ const RealtimeMediaSourceSettings& DisplayCaptureSourceCocoa::settings() const
     return m_currentSettings.value();
 }
 
-void DisplayCaptureSourceCocoa::settingsDidChange()
+void DisplayCaptureSourceCocoa::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
+    if (settings.contains(RealtimeMediaSourceSettings::Flag::FrameRate) && m_timer.isActive())
+        m_timer.startRepeating(1_s / frameRate());
+
+    if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height }))
+        m_bufferAttributes = nullptr;
+
     m_currentSettings = std::nullopt;
-    RealtimeMediaSource::settingsDidChange();
+
+    RealtimeMediaSource::settingsDidChange(settings);
 }
 
 void DisplayCaptureSourceCocoa::startProducingData()
@@ -111,7 +118,7 @@ void DisplayCaptureSourceCocoa::startProducingData()
 #endif
 
     m_startTime = MonotonicTime::now();
-    m_timer.startRepeating(1_ms * lround(1000 / frameRate()));
+    m_timer.startRepeating(1_s / frameRate());
 }
 
 void DisplayCaptureSourceCocoa::stopProducingData()
@@ -127,23 +134,6 @@ Seconds DisplayCaptureSourceCocoa::elapsedTime()
         return m_elapsedTime;
 
     return m_elapsedTime + (MonotonicTime::now() - m_startTime);
-}
-
-bool DisplayCaptureSourceCocoa::applySize(const IntSize& newSize)
-{
-    if (size() == newSize)
-        return true;
-
-    m_bufferAttributes = nullptr;
-    return true;
-}
-
-bool DisplayCaptureSourceCocoa::applyFrameRate(double rate)
-{
-    if (m_timer.isActive())
-        m_timer.startRepeating(1_ms * lround(1000 / rate));
-
-    return true;
 }
 
 void DisplayCaptureSourceCocoa::emitFrame()

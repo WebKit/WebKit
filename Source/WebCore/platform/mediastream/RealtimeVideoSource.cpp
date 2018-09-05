@@ -125,17 +125,6 @@ IntSize RealtimeVideoSource::bestSupportedCaptureSizeForWidthAndHeight(std::opti
     return { };
 }
 
-bool RealtimeVideoSource::applySize(const IntSize& size)
-{
-    IntSize supportedSize = bestSupportedCaptureSizeForWidthAndHeight(size.width(), size.height());
-    if (supportedSize.isEmpty()) {
-        LOG(Media, "RealtimeVideoSource::applySize(%p), unable find or set preset for width: %i, height: %i", this, size.width(), size.height());
-        return false;
-    }
-
-    return true;
-}
-
 void RealtimeVideoSource::applySizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
 {
     if (width || height) {
@@ -166,11 +155,6 @@ void RealtimeVideoSource::dispatchMediaSampleToObservers(MediaSample& sample)
         m_observedFrameRate = (m_observedFrameTimeStamps.size() / interval);
 
     videoSampleAvailable(sample);
-}
-
-bool RealtimeVideoSource::applyFrameRate(double rate)
-{
-    return supportsFrameRate(rate);
 }
 
 bool RealtimeVideoSource::supportsFrameRate(double frameRate)

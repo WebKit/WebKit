@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -253,21 +253,12 @@ void ScreenDisplayCaptureSourceMac::startDisplayStream()
     m_isRunning = true;
 }
 
-bool ScreenDisplayCaptureSourceMac::applySize(const IntSize& newSize)
+void ScreenDisplayCaptureSourceMac::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
-    if (!DisplayCaptureSourceCocoa::applySize(newSize))
-        return false;
-
-    m_displayStream = nullptr;
-    return true;
-}
-
-bool ScreenDisplayCaptureSourceMac::applyFrameRate(double rate)
-{
-    if (frameRate() != rate)
+    if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height, RealtimeMediaSourceSettings::Flag::FrameRate }))
         m_displayStream = nullptr;
 
-    return DisplayCaptureSourceCocoa::applyFrameRate(rate);
+    return DisplayCaptureSourceCocoa::settingsDidChange(settings);
 }
 
 void ScreenDisplayCaptureSourceMac::commitConfiguration()

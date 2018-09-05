@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -876,39 +876,19 @@ const RealtimeMediaSourceSettings& CoreAudioCaptureSource::settings() const
     return m_currentSettings.value();
 }
 
-void CoreAudioCaptureSource::settingsDidChange()
+void CoreAudioCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
-    m_currentSettings = std::nullopt;
-    RealtimeMediaSource::settingsDidChange();
-}
-
-bool CoreAudioCaptureSource::applySampleRate(int sampleRate)
-{
-    // FIXME: We should be able to describe sample rate as a discreet range constraint so that we only enter here with values that can be applied.
-    switch (sampleRate) {
-    case 8000:
-    case 16000:
-    case 32000:
-    case 44100:
-    case 48000:
-    case 96000:
-        break;
-    default:
-        return false;
+    if (settings.contains(RealtimeMediaSourceSettings::Flag::EchoCancellation)) {
+        CoreAudioSharedUnit::singleton().setEnableEchoCancellation(echoCancellation());
+        scheduleReconfiguration();
+    }
+    if (settings.contains(RealtimeMediaSourceSettings::Flag::SampleRate)) {
+        CoreAudioSharedUnit::singleton().setSampleRate(sampleRate());
+        scheduleReconfiguration();
     }
 
-    CoreAudioSharedUnit::singleton().setSampleRate(sampleRate);
-
-    scheduleReconfiguration();
-    return true;
-}
-
-bool CoreAudioCaptureSource::applyEchoCancellation(bool enableEchoCancellation)
-{
-    CoreAudioSharedUnit::singleton().setEnableEchoCancellation(enableEchoCancellation);
-
-    scheduleReconfiguration();
-    return true;
+    m_currentSettings = std::nullopt;
+    RealtimeMediaSource::settingsDidChange(settings);
 }
 
 void CoreAudioCaptureSource::scheduleReconfiguration()

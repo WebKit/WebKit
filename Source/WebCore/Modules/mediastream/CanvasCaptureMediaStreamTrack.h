@@ -67,7 +67,6 @@ private:
         void stopProducingData()  final;
         const RealtimeMediaSourceCapabilities& capabilities() const final { return RealtimeMediaSourceCapabilities::emptyCapabilities(); }
         const RealtimeMediaSourceSettings& settings() const final { return m_settings; }
-        bool applySize(const IntSize&) final { return true; }
 
         void captureCanvas();
         void requestFrameTimerFired();

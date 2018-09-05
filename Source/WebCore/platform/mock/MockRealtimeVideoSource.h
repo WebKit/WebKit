@@ -60,12 +60,11 @@ protected:
     ImageBuffer* imageBuffer() const;
 
     Seconds elapsedTime();
-    bool applySize(const IntSize&) override;
+    void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) override;
 
 private:
     const RealtimeMediaSourceCapabilities& capabilities() const final;
     const RealtimeMediaSourceSettings& settings() const final;
-    void settingsDidChange() final;
 
     void startProducingData() final;
     void stopProducingData() final;
@@ -73,9 +72,6 @@ private:
     void drawAnimation(GraphicsContext&);
     void drawText(GraphicsContext&);
     void drawBoxes(GraphicsContext&);
-
-    bool applyFacingMode(RealtimeMediaSourceSettings::VideoFacingMode) override { return true; }
-    bool applyAspectRatio(double) override { return true; }
 
     bool isCaptureSource() const final { return true; }
 

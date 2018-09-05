@@ -154,13 +154,11 @@ void MockRealtimeVideoSourceMac::updateSampleBuffer()
     dispatchMediaSampleToObservers(MediaSampleAVFObjC::create(sampleBuffer.get(), m_deviceOrientation));
 }
 
-bool MockRealtimeVideoSourceMac::applySize(const IntSize& newSize)
+void MockRealtimeVideoSourceMac::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
-    if (!MockRealtimeVideoSource::applySize(newSize))
-        return false;
-
-    m_bufferPool = nullptr;
-    return true;
+    if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height }))
+        m_bufferPool = nullptr;
+    MockRealtimeVideoSource::settingsDidChange(settings);
 }
 
 void MockRealtimeVideoSourceMac::orientationChanged(int orientation)

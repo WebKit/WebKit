@@ -107,18 +107,14 @@ GStreamerVideoCaptureSource::~GStreamerVideoCaptureSource()
 {
 }
 
-bool GStreamerVideoCaptureSource::applySize(const IntSize &size)
+void GStreamerVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
-    m_capturer->setSize(size.width(), size.height());
+    if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height }))
+        m_capturer->setSize(size().width(), size().height());
+    if (settings.contains(RealtimeMediaSourceSettings::Flag::FrameRate))
+        m_capturer->setFrameRate(frameRate());
 
-    return true;
-}
-
-bool GStreamerVideoCaptureSource::applyFrameRate(double framerate)
-{
-    m_capturer->setFrameRate(framerate);
-
-    return true;
+    RealtimeMediaSource::settingsDidChange(settings);
 }
 
 void GStreamerVideoCaptureSource::startProducingData()

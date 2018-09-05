@@ -46,8 +46,6 @@ protected:
     void prepareToProduceData();
     bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
     void applySizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
-    bool applySize(const IntSize&) override;
-    bool applyFrameRate(double) final;
 
     void setSupportedFrameRates(Vector<double>&&);
     void setSupportedCaptureSizes(const Vector<IntSize>&& sizes) { m_supportedCaptureSizes = sizes; }

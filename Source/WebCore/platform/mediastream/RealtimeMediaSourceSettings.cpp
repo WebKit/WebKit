@@ -69,6 +69,43 @@ RealtimeMediaSourceSettings::VideoFacingMode RealtimeMediaSourceSettings::videoF
     return RealtimeMediaSourceSettings::Unknown;
 }
 
+OptionSet<RealtimeMediaSourceSettings::Flag> RealtimeMediaSourceSettings::difference(const RealtimeMediaSourceSettings& that) const
+{
+    OptionSet<RealtimeMediaSourceSettings::Flag> difference;
+
+    if (width() != that.width())
+        difference.add(RealtimeMediaSourceSettings::Width);
+    if (height() != that.height())
+        difference.add(RealtimeMediaSourceSettings::Height);
+    if (aspectRatio() != that.aspectRatio())
+        difference.add(RealtimeMediaSourceSettings::AspectRatio);
+    if (frameRate() != that.frameRate())
+        difference.add(RealtimeMediaSourceSettings::FrameRate);
+    if (facingMode() != that.facingMode())
+        difference.add(RealtimeMediaSourceSettings::FacingMode);
+    if (volume() != that.volume())
+        difference.add(RealtimeMediaSourceSettings::Volume);
+    if (sampleRate() != that.sampleRate())
+        difference.add(RealtimeMediaSourceSettings::SampleRate);
+    if (sampleSize() != that.sampleSize())
+        difference.add(RealtimeMediaSourceSettings::SampleSize);
+    if (echoCancellation() != that.echoCancellation())
+        difference.add(RealtimeMediaSourceSettings::EchoCancellation);
+    if (deviceId() != that.deviceId())
+        difference.add(RealtimeMediaSourceSettings::DeviceId);
+    if (groupId() != that.groupId())
+        difference.add(RealtimeMediaSourceSettings::GroupId);
+    if (label() != that.label())
+        difference.add(RealtimeMediaSourceSettings::Label);
+    if (displaySurface() != that.displaySurface())
+        difference.add(RealtimeMediaSourceSettings::DisplaySurface);
+    if (logicalSurface() != that.logicalSurface())
+        difference.add(RealtimeMediaSourceSettings::LogicalSurface);
+
+    return difference;
+}
+
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

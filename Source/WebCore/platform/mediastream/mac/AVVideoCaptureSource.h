@@ -73,13 +73,12 @@ private:
 
     const RealtimeMediaSourceCapabilities& capabilities() const final;
     void applySizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
-    bool applySize(const IntSize&) final;
-    bool applyFrameRate(double) final;
+    void setFrameRate(double);
     const RealtimeMediaSourceSettings& settings() const final;
     void startProducingData() final;
     void stopProducingData() final;
     bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
-    void settingsDidChange() final;
+    void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
     void monitorOrientation(OrientationNotifier&) final;
     void beginConfiguration() final;
     void commitConfiguration() final;

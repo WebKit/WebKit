@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,8 +50,8 @@ private:
     friend class MockRealtimeAudioSource;
     MockRealtimeAudioSourceMac(const String& deviceID, const String& name);
 
-    bool applySampleRate(int) final;
-    bool applySampleSize(int) final { return false; }
+    void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
+    std::optional<Vector<int>> discreteSampleRates() const final { return { { 44100, 48000 } }; }
 
     void emitSampleBuffers(uint32_t);
     void render(Seconds) final;
