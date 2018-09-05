@@ -50,12 +50,12 @@ SOFT_LINK_CLASS(AssetViewer, ASVThumbnailView);
 
 // FIXME: At the moment we only have one supported UTI, but
 // if we start supporting more types, then we'll need a table.
-static String getUTIForMIMEType(const String& mimeType)
+static NSString *getUTIForSystemPreviewMIMEType(const String& mimeType)
 {
-    static const NeverDestroyed<String> uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, CFSTR("usdz"), nil)).get();
+    static NSString *uti = (__bridge NSString *) UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, CFSTR("usdz"), nil);
 
     if (!WebCore::MIMETypeRegistry::isSystemPreviewMIMEType(mimeType))
-        return emptyString();
+        return nil;
 
     return uti;
 }
@@ -103,8 +103,7 @@ static String getUTIForMIMEType(const String& mimeType)
     _suggestedFilename = adoptNS([filename copy]);
     _data = adoptNS([data copy]);
 
-    NSString *contentType;
-    contentType = getUTIForMIMEType(_mimeType.get());
+    NSString *contentType = getUTIForSystemPreviewMIMEType(_mimeType.get());
 
     _item = adoptNS([allocQLItemInstance() initWithDataProvider:self contentType:contentType previewTitle:_suggestedFilename.get()]);
     [_item setUseLoadingTimeout:NO];

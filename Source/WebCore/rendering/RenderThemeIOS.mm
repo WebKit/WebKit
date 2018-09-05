@@ -1855,16 +1855,14 @@ String RenderThemeIOS::extraDefaultStyleSheet()
 #if USE(SYSTEM_PREVIEW)
 static NSBundle *arKitBundle()
 {
-    static NSBundle *arKitBundle;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    static NSBundle *arKitBundle = []() {
 #if PLATFORM(IOS_SIMULATOR)
         dlopen("/System/Library/PrivateFrameworks/AssetViewer.framework/AssetViewer", RTLD_NOW);
-        arKitBundle = [NSBundle bundleForClass:NSClassFromString(@"ASVThumbnailView")];
+        return [NSBundle bundleForClass:NSClassFromString(@"ASVThumbnailView")];
 #else
-        arKitBundle = [NSBundle bundleWithURL:[NSURL fileURLWithPath:@"/System/Library/PrivateFrameworks/AssetViewer.framework"]];
+        return [NSBundle bundleWithURL:[NSURL fileURLWithPath:@"/System/Library/PrivateFrameworks/AssetViewer.framework"]];
 #endif
-    });
+    }();
 
     return arKitBundle;
 }
@@ -1884,18 +1882,13 @@ static RetainPtr<CGPDFPageRef> loadARKitPDFPage(NSString *imageName)
         return nullptr;
 
     return CGPDFDocumentGetPage(document.get(), 1);
-};
+}
 
 static CGPDFPageRef systemPreviewLogo()
 {
-    static CGPDFPageRef logoPage;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        logoPage = loadARKitPDFPage(@"ARKitBadge").leakRef();
-    });
-
+    static CGPDFPageRef logoPage = loadARKitPDFPage(@"ARKitBadge").leakRef();
     return logoPage;
-};
+}
 
 void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& paintInfo, const FloatRect& rect)
 {

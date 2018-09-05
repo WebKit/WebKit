@@ -1,3 +1,20 @@
+2018-09-04  Dean Jackson  <dino@apple.com>
+
+        Post review Weinig fix-ups
+        https://bugs.webkit.org/show_bug.cgi?id=189288
+
+        Reviewed by Sam Weinig.
+
+        Fix-ups from https://bugs.webkit.org/show_bug.cgi?id=189252
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::getSystemPreviewMIMETypes):
+        (WebCore::initializeSystemPreviewMIMETypes): Deleted.
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::arKitBundle):
+        (WebCore::loadARKitPDFPage):
+        (WebCore::systemPreviewLogo):
+
 2018-09-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         slotchange event doesn't get fired when inserting, removing, or renaming slot elements

@@ -1,3 +1,20 @@
+2018-09-04  Dean Jackson  <dino@apple.com>
+
+        Post review Weinig fix-ups
+        https://bugs.webkit.org/show_bug.cgi?id=189288
+
+        Reviewed by Sam Weinig.
+
+        Fix-ups from https://bugs.webkit.org/show_bug.cgi?id=189252
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        (-[_WKPreviewControllerDataSource previewController:previewItemAtIndex:]):
+        (getUTIForMIMEType): Deleted.
+        * UIProcess/ios/WKSystemPreviewView.mm:
+        (getUTIForSystemPreviewMIMEType):
+        (-[WKSystemPreviewView web_setContentProviderData:suggestedFilename:]):
+        (getUTIForMIMEType): Deleted.
+
 2018-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Populate "text/uri-list" with multiple URLs when the pasteboard contains multiple URLs
