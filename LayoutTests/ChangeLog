@@ -1,3 +1,18 @@
+2018-09-04  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
+        [EME] Add a layoutTest for ClearKey WebM video playback
+        https://bugs.webkit.org/show_bug.cgi?id=189200
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add a new layoutTest in order to test the playback of ClearKey encrypted WebM.
+
+        * media/encrypted-media/clearKey/clearKey-webm-video-playback-mse-expected.txt: Added.
+        * media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2018-09-04  Frederic Wang  <fwang@igalia.com>
 
         Add basic support for ScrollIntoViewOptions

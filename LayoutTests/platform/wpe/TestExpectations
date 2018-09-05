@@ -334,6 +334,7 @@ imported/w3c/web-platform-tests/encrypted-media/drm-temporary-license-type.https
 
 # Encrypted WebM is not supported yet.
 webkit.org/b/189196 media/encrypted-media/clearKey/clearKey-encrypted-webm-event-mse.html [ Skip ]
+webkit.org/b/189200 media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html [ Skip ]
 
 # This port doesn't support detecting slow unload handlers.
 Bug(GTK) fast/dom/Window/slow-unload-handler.html [ WontFix Timeout Failure ]
