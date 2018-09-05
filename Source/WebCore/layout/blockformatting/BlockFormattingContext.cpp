@@ -161,14 +161,14 @@ void BlockFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutCo
 
 void BlockFormattingContext::computeStaticPosition(LayoutContext& layoutContext, const Box& layoutBox) const
 {
-    layoutContext.displayBoxForLayoutBox(layoutBox)->setTopLeft(Geometry::staticPosition(layoutContext, layoutBox));
+    layoutContext.displayBoxForLayoutBox(layoutBox).setTopLeft(Geometry::staticPosition(layoutContext, layoutBox));
 }
 
 void BlockFormattingContext::computeEstimatedMarginTop(LayoutContext& layoutContext, const Box& layoutBox) const
 {
     auto estimatedMarginTop = Geometry::estimatedMarginTop(layoutContext, layoutBox);
 
-    auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
+    auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
     displayBox.setEstimatedMarginTop(estimatedMarginTop);
     displayBox.moveVertically(estimatedMarginTop);
 }
@@ -189,10 +189,9 @@ void BlockFormattingContext::computeEstimatedMarginTopForAncestors(LayoutContext
     // The idea here is that as long as we don't cross the block formatting context boundary, we should be able to pre-compute the final top margin.
 
     for (auto* ancestor = layoutBox.containingBlock(); ancestor && !ancestor->establishesBlockFormattingContext(); ancestor = ancestor->containingBlock()) {
-        auto* displayBox = layoutContext.displayBoxForLayoutBox(*ancestor);
-        ASSERT(displayBox);
+        auto& displayBox = layoutContext.displayBoxForLayoutBox(*ancestor);
         // FIXME: with incremental layout, we might actually have a valid (non-estimated) margin top as well.
-        if (displayBox->estimatedMarginTop())
+        if (displayBox.estimatedMarginTop())
             return;
 
         computeEstimatedMarginTop(layoutContext, *ancestor);
@@ -202,12 +201,12 @@ void BlockFormattingContext::computeEstimatedMarginTopForAncestors(LayoutContext
 void BlockFormattingContext::computeFloatingPosition(LayoutContext& layoutContext, FloatingContext& floatingContext, const Box& layoutBox) const
 {
     ASSERT(layoutBox.isFloatingPositioned());
-    auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
+    auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
     // 8.3.1 Collapsing margins
     // In block formatting context margins between a floated box and any other box do not collapse.
     // Adjust the static position by using the previous inflow box's non-collapsed margin.
     if (auto* previousInFlowBox = layoutBox.previousInFlowSibling()) {
-        auto& previousDisplayBox = *layoutContext.displayBoxForLayoutBox(*previousInFlowBox);
+        auto& previousDisplayBox = layoutContext.displayBoxForLayoutBox(*previousInFlowBox);
         displayBox.moveVertically(previousDisplayBox.nonCollapsedMarginBottom() - previousDisplayBox.marginBottom());
     }
     computeEstimatedMarginTopForAncestors(layoutContext, layoutBox);
@@ -227,7 +226,7 @@ void BlockFormattingContext::computePositionToAvoidFloats(LayoutContext& layoutC
 
     computeEstimatedMarginTopForAncestors(layoutContext, layoutBox);
     if (auto adjustedPosition = floatingContext.positionForFloatAvoiding(layoutBox))
-        layoutContext.displayBoxForLayoutBox(layoutBox)->setTopLeft(*adjustedPosition);
+        layoutContext.displayBoxForLayoutBox(layoutBox).setTopLeft(*adjustedPosition);
 }
 
 void BlockFormattingContext::computeVerticalPositionForFloatClear(LayoutContext& layoutContext, const FloatingContext& floatingContext, const Box& layoutBox) const
@@ -238,12 +237,12 @@ void BlockFormattingContext::computeVerticalPositionForFloatClear(LayoutContext&
 
     computeEstimatedMarginTopForAncestors(layoutContext, layoutBox);
     if (auto verticalPositionWithClearance = floatingContext.verticalPositionWithClearance(layoutBox))
-        layoutContext.displayBoxForLayoutBox(layoutBox)->setTop(*verticalPositionWithClearance);
+        layoutContext.displayBoxForLayoutBox(layoutBox).setTop(*verticalPositionWithClearance);
 }
 
 void BlockFormattingContext::computeInFlowPositionedPosition(LayoutContext& layoutContext, const Box& layoutBox) const
 {
-    layoutContext.displayBoxForLayoutBox(layoutBox)->setTopLeft(Geometry::inFlowPositionedPosition(layoutContext, layoutBox));
+    layoutContext.displayBoxForLayoutBox(layoutBox).setTopLeft(Geometry::inFlowPositionedPosition(layoutContext, layoutBox));
 }
 
 void BlockFormattingContext::computeWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox) const
@@ -257,7 +256,7 @@ void BlockFormattingContext::computeWidthAndMargin(LayoutContext& layoutContext,
     else
         ASSERT_NOT_REACHED();
 
-    auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
+    auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
     displayBox.setContentBoxWidth(widthAndMargin.width);
     displayBox.moveHorizontally(widthAndMargin.margin.left);
     displayBox.setHorizontalMargin(widthAndMargin.margin);
@@ -268,7 +267,7 @@ void BlockFormattingContext::computeHeightAndMargin(LayoutContext& layoutContext
 {
     HeightAndMargin heightAndMargin;
     std::optional<LayoutUnit> marginTopOffset;
-    auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
+    auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
 
     if (layoutBox.isInFlow()) {
         heightAndMargin = Geometry::inFlowHeightAndMargin(layoutContext, layoutBox);

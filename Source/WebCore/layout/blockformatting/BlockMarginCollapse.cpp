@@ -108,7 +108,7 @@ static bool isMarginTopCollapsedWithParent(const LayoutContext& layoutContext, c
     if (parent.isDocumentBox() || parent.isInitialContainingBlock())
         return false;
 
-    auto& parentDisplayBox = *layoutContext.displayBoxForLayoutBox(parent);
+    auto& parentDisplayBox = layoutContext.displayBoxForLayoutBox(parent);
     if (parentDisplayBox.borderTop())
         return false;
 
@@ -123,7 +123,7 @@ static bool isMarginBottomCollapsedThrough(const LayoutContext& layoutContext, c
     ASSERT(layoutBox.isBlockLevelBox());
 
     // If the top and bottom margins of a box are adjoining, then it is possible for margins to collapse through it.
-    auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
+    auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
 
     if (displayBox.borderTop() || displayBox.borderBottom())
         return false;
@@ -285,7 +285,7 @@ bool BlockFormattingContext::Geometry::MarginCollapse::isMarginBottomCollapsedWi
     if (parent.isDocumentBox() || parent.isInitialContainingBlock())
         return false;
 
-    auto& parentDisplayBox = *layoutContext.displayBoxForLayoutBox(parent);
+    auto& parentDisplayBox = layoutContext.displayBoxForLayoutBox(parent);
     if (parentDisplayBox.borderTop())
         return false;
 

@@ -81,9 +81,6 @@ void FloatingState::append(const Box& layoutBox)
 {
     ASSERT(is<Container>(*m_formattingContextRoot));
     ASSERT(belongsToThisFloatingContext(layoutBox, *m_formattingContextRoot));
-
-    // Floating state should hold boxes with computed position/size.
-    ASSERT(m_layoutContext.displayBoxForLayoutBox(layoutBox));
     ASSERT(is<Container>(*m_formattingContextRoot));
 
     m_floats.append({ layoutBox, *this });

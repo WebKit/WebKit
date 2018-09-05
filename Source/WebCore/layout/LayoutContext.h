@@ -81,7 +81,7 @@ public:
     FormattingState& establishedFormattingState(const Box& formattingRoot);
 
     Display::Box& createDisplayBox(const Box&);
-    Display::Box* displayBoxForLayoutBox(const Box& layoutBox) const { return m_layoutToDisplayBox.get(&layoutBox); }
+    Display::Box& displayBoxForLayoutBox(const Box& layoutBox) const { return *m_layoutToDisplayBox.get(&layoutBox); }
 
     bool inQuirksMode() const { return m_inQuirksMode; }
     // For testing purposes only

@@ -155,7 +155,7 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
 static void outputLayoutTree(const LayoutContext* layoutContext, TextStream& stream, const Container& rootContainer, unsigned depth)
 {
     for (auto& child : childrenOfType<Box>(rootContainer)) {
-        outputLayoutBox(stream, child, layoutContext ? layoutContext->displayBoxForLayoutBox(child) : nullptr, depth);
+        outputLayoutBox(stream, child, layoutContext ? &layoutContext->displayBoxForLayoutBox(child) : nullptr, depth);
         if (is<Container>(child))
             outputLayoutTree(layoutContext, stream, downcast<Container>(child), depth + 1);
     }
@@ -166,7 +166,7 @@ void showLayoutTree(const Box& layoutBox, const LayoutContext* layoutContext)
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
 
     auto& initialContainingBlock = layoutBox.initialContainingBlock();
-    outputLayoutBox(stream, initialContainingBlock, layoutContext ? layoutContext->displayBoxForLayoutBox(initialContainingBlock) : nullptr, 0);
+    outputLayoutBox(stream, initialContainingBlock, layoutContext ? &layoutContext->displayBoxForLayoutBox(initialContainingBlock) : nullptr, 0);
     outputLayoutTree(layoutContext, stream, initialContainingBlock, 1);
     WTFLogAlways("%s", stream.release().utf8().data());
 }

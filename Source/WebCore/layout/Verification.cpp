@@ -133,36 +133,35 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         };
     };
 
-    auto* displayBox = context.displayBoxForLayoutBox(layoutBox);
-    ASSERT(displayBox);
+    auto& displayBox = context.displayBoxForLayoutBox(layoutBox);
 
     auto frameRect = renderer.frameRect();
     // rendering does not offset for relative positioned boxes.
     if (renderer.isInFlowPositioned())
         frameRect.move(renderer.offsetForInFlowPosition());
 
-    if (frameRect != displayBox->rect()) {
-        outputRect("frameBox", renderer.frameRect(), displayBox->rect());
+    if (frameRect != displayBox.rect()) {
+        outputRect("frameBox", renderer.frameRect(), displayBox.rect());
         return true;
     }
 
-    if (renderer.marginBoxRect() != renderBoxLikeMarginBox(*displayBox)) {
-        outputRect("marginBox", renderer.marginBoxRect(), renderBoxLikeMarginBox(*displayBox));
+    if (renderer.marginBoxRect() != renderBoxLikeMarginBox(displayBox)) {
+        outputRect("marginBox", renderer.marginBoxRect(), renderBoxLikeMarginBox(displayBox));
         return true;
     }
 
-    if (renderer.borderBoxRect() != displayBox->borderBox()) {
-        outputRect("borderBox", renderer.borderBoxRect(), displayBox->borderBox());
+    if (renderer.borderBoxRect() != displayBox.borderBox()) {
+        outputRect("borderBox", renderer.borderBoxRect(), displayBox.borderBox());
         return true;
     }
 
-    if (renderer.paddingBoxRect() != displayBox->paddingBox()) {
-        outputRect("paddingBox", renderer.paddingBoxRect(), displayBox->paddingBox());
+    if (renderer.paddingBoxRect() != displayBox.paddingBox()) {
+        outputRect("paddingBox", renderer.paddingBoxRect(), displayBox.paddingBox());
         return true;
     }
 
-    if (renderer.contentBoxRect() != displayBox->contentBox()) {
-        outputRect("contentBox", renderer.contentBoxRect(), displayBox->contentBox());
+    if (renderer.contentBoxRect() != displayBox.contentBox()) {
+        outputRect("contentBox", renderer.contentBoxRect(), displayBox.contentBox());
         return true;
     }
 

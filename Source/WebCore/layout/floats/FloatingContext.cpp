@@ -121,11 +121,11 @@ PointInContainingBlock FloatingContext::positionForFloat(const Box& layoutBox) c
     ASSERT(layoutBox.isFloatingPositioned());
 
     if (m_floatingState.isEmpty()) {
-        auto& displayBox = *layoutContext().displayBoxForLayoutBox(layoutBox);
+        auto& displayBox = layoutContext().displayBoxForLayoutBox(layoutBox);
 
         auto alignWithContainingBlock = [&]() -> PositionInContainingBlock {
             // If there is no floating to align with, push the box to the left/right edge of its containing block's content box.
-            auto& containingBlockDisplayBox = *layoutContext().displayBoxForLayoutBox(*layoutBox.containingBlock());
+            auto& containingBlockDisplayBox = layoutContext().displayBoxForLayoutBox(*layoutBox.containingBlock());
 
             if (layoutBox.isLeftFloatingPositioned())
                 return containingBlockDisplayBox.contentBoxLeft() + displayBox.marginLeft();
@@ -177,7 +177,7 @@ std::optional<PositionInContainingBlock> FloatingContext::verticalPositionWithCl
         // 2. The amount necessary to place the top border edge of the block at its hypothetical position.
 
         auto& layoutContext = this->layoutContext();
-        auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
+        auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
         auto rootRelativeTop = FormattingContext::mapTopLeftToAncestor(layoutContext, layoutBox, downcast<Container>(m_floatingState.root())).y;
         auto clearance = *floatBottom - rootRelativeTop;
         if (clearance <= 0)
@@ -185,7 +185,7 @@ std::optional<PositionInContainingBlock> FloatingContext::verticalPositionWithCl
 
         // Clearance inhibits margin collapsing. Let's reset the relevant adjoining margins.
         if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
-            auto& previousInFlowDisplayBox = *layoutContext.displayBoxForLayoutBox(*previousInFlowSibling);
+            auto& previousInFlowDisplayBox = layoutContext.displayBoxForLayoutBox(*previousInFlowSibling);
 
             // Since the previous inflow sibling has already been laid out, its margin is collapsed by now.
             ASSERT(!previousInFlowDisplayBox.marginBottom());
