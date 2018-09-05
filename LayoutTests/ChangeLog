@@ -1,3 +1,14 @@
+2018-09-04  Frederic Wang  <fwang@igalia.com>
+
+        Add basic support for ScrollIntoViewOptions
+        https://bugs.webkit.org/show_bug.cgi?id=189258
+
+        Reviewed by Simon Fraser.
+
+        Update test expectations for WPT scrollIntoView tests.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-smooth-expected.txt: Removed.
+
 2018-09-04  Michael Saboff  <msaboff@apple.com>
 
         YARR: Add new RegExp back reference tests to specifically test back reference JIT code

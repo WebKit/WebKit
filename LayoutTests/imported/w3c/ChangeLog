@@ -1,3 +1,20 @@
+2018-09-04  Frederic Wang  <fwang@igalia.com>
+
+        Add basic support for ScrollIntoViewOptions
+        https://bugs.webkit.org/show_bug.cgi?id=189258
+
+        Reviewed by Simon Fraser.
+
+        Update test expectations for WPT scrollIntoView tests.
+
+        * web-platform-tests/css/cssom-view/scrollIntoView-scrollMargin-expected.txt: This is not
+        supported yet but update the error message.
+        * web-platform-tests/css/cssom-view/scrollIntoView-scrollPadding-expected.txt: Ditto.
+        * web-platform-tests/css/cssom-view/scrollIntoView-shadow-expected.txt: Update expectation
+        now that this test passes.
+        * web-platform-tests/css/cssom-view/scrollIntoView-smooth-expected.txt: Ditto.
+        * web-platform-tests/css/cssom-view/scrollintoview-expected.txt: Ditto.
+
 2018-09-04  Oriol Brufau  <obrufau@igalia.com>
 
         Check important flags when serializing shorthand with "initial" values

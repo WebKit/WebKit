@@ -54,6 +54,7 @@
 #include <WebCore/Range.h>
 #include <WebCore/RenderElement.h>
 #include <WebCore/RenderTreeAsText.h>
+#include <WebCore/ScrollIntoViewOptions.h>
 #include <WebCore/StyledElement.h>
 
 #include <initguid.h>

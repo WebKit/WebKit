@@ -1,3 +1,13 @@
+2018-09-04  Frederic Wang  <fwang@igalia.com>
+
+        Add basic support for ScrollIntoViewOptions
+        https://bugs.webkit.org/show_bug.cgi?id=189258
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElementGtk.cpp: Add ScrollIntoViewOptions
+        header so that this file can build despite the new scrollIntoView function.
+
 2018-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Populate "text/uri-list" with multiple URLs when the pasteboard contains multiple URLs

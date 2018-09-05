@@ -71,7 +71,7 @@
     // CSSOM-view extensions (https://drafts.csswg.org/cssom-view/#extension-to-the-element-interface).
     DOMRectList getClientRects();
     [NewObject] DOMRect getBoundingClientRect();
-    void scrollIntoView(optional boolean alignWithTop = true); // FIXME(webkit.org/b/161611): Parameter type should be (boolean or object).
+    void scrollIntoView(optional (boolean or ScrollIntoViewOptions) arg);
     [ImplementedAs=scrollTo] void scroll(optional ScrollToOptions options);
     [ImplementedAs=scrollTo] void scroll(unrestricted double x, unrestricted double y);
     void scrollTo(optional ScrollToOptions options);

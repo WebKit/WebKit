@@ -3058,6 +3058,8 @@ JSSVGZoomEvent.cpp
 JSScreen.cpp
 JSScreenLuminance.cpp
 JSScriptProcessorNode.cpp
+JSScrollIntoViewOptions.cpp
+JSScrollLogicalPosition.cpp
 JSScrollToOptions.cpp
 JSSecurityPolicyViolationEvent.cpp
 JSServiceWorker.cpp

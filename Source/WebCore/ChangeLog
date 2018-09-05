@@ -1,3 +1,36 @@
+2018-09-04  Frederic Wang  <fwang@igalia.com>
+
+        Add basic support for ScrollIntoViewOptions
+        https://bugs.webkit.org/show_bug.cgi?id=189258
+
+        Reviewed by Simon Fraser.
+
+        This patch introduces a new ScrollIntoViewOptions parameter that can be passed into
+        Element.scrollIntoView instead of a boolean. A basic support for scroll alignments is
+        implemented, so that it is closer to the behavior of the CSSOMView spec while still remaining
+        compatible with the current boolean-parameter implementation. Full implementation that
+        takes into account orientation/direction will be handled in bug 161611. This patch is also a
+        preliminary step to support the ScrollBehavior (bug 188043) for ScrollIntoView.
+
+        Tests: web-platform-tests/css/cssom-view/scrollintoview-html
+               web-platform-tests/css/cssom-view/scrollIntoView-smooth.html
+
+        * CMakeLists.txt: Add new IDL files.
+        * DerivedSources.make: Ditto.
+        * Sources.txt: Add new generated cpp JS bindings.
+        * WebCore.xcodeproj/project.pbxproj: Add files to build to XCode.
+        * dom/Element.cpp:
+        (WebCore::toScrollAlignment): Convert ScrollLogicalPosition to scroll alignment. Orientation
+        and direction are not implemented yet.
+        (WebCore::Element::scrollIntoView): Implement new scrollIntoView version accepting
+        ScrollIntoViewOptions parameter.
+        * dom/Element.h: Declare new scrollIntoView.
+        * dom/Element.idl: Make scrollIntoView accept a ScrollIntoViewOptions parameter.
+        * page/ScrollIntoViewOptions.h: Added.
+        * page/ScrollIntoViewOptions.idl: Added.
+        * page/ScrollLogicalPosition.h: Added.
+        * page/ScrollLogicalPosition.idl: Added.
+
 2018-09-04  Oriol Brufau  <obrufau@igalia.com>
 
         Check important flags when serializing shorthand with "initial" values

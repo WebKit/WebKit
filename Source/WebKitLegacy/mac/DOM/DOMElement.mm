@@ -40,6 +40,7 @@
 #import <WebCore/JSExecState.h>
 #import <WebCore/NameNodeList.h>
 #import <WebCore/NodeList.h>
+#import <WebCore/ScrollIntoViewOptions.h>
 #import <WebCore/StyleProperties.h>
 #import <WebCore/StyledElement.h>
 #import <WebCore/ThreadCheck.h>
