@@ -1,3 +1,49 @@
+2018-09-05  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r234649. rdar://problem/43009920
+
+    Use a more specific PtrTag for PlatformRegisters PC and LR.
+    https://bugs.webkit.org/show_bug.cgi?id=188366
+    <rdar://problem/42984123>
+    
+    Reviewed by Keith Miller.
+    
+    Also fixed a bug in linkRegister(), which was previously returning the PC instead
+    of LR.  It now returns LR.
+    
+    * runtime/JSCPtrTag.h:
+    * runtime/MachineContext.h:
+    (JSC::MachineContext::instructionPointer):
+    (JSC::MachineContext::linkRegister):
+    * runtime/VMTraps.cpp:
+    (JSC::SignalContext::SignalContext):
+    * tools/SigillCrashAnalyzer.cpp:
+    (JSC::SignalContext::SignalContext):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234649 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-07  Mark Lam  <mark.lam@apple.com>
+
+            Use a more specific PtrTag for PlatformRegisters PC and LR.
+            https://bugs.webkit.org/show_bug.cgi?id=188366
+            <rdar://problem/42984123>
+
+            Reviewed by Keith Miller.
+
+            Also fixed a bug in linkRegister(), which was previously returning the PC instead
+            of LR.  It now returns LR.
+
+            * runtime/JSCPtrTag.h:
+            * runtime/MachineContext.h:
+            (JSC::MachineContext::instructionPointer):
+            (JSC::MachineContext::linkRegister):
+            * runtime/VMTraps.cpp:
+            (JSC::SignalContext::SignalContext):
+            * tools/SigillCrashAnalyzer.cpp:
+            (JSC::SignalContext::SignalContext):
+
 2018-08-06  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r234576. rdar://problem/42973449

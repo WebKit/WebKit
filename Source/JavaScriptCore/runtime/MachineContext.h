@@ -43,9 +43,9 @@ template<typename T = void*> T stackPointer(const PlatformRegisters&);
 template<typename T = void*> void setStackPointer(PlatformRegisters&, T);
 template<typename T = void*> T framePointer(const PlatformRegisters&);
 template<typename T = void*> void setFramePointer(PlatformRegisters&, T);
-inline MacroAssemblerCodePtr<CFunctionPtrTag> linkRegister(const PlatformRegisters&);
+inline MacroAssemblerCodePtr<PlatformRegistersLRPtrTag> linkRegister(const PlatformRegisters&);
 inline void setLinkRegister(PlatformRegisters&, MacroAssemblerCodePtr<CFunctionPtrTag>);
-inline std::optional<MacroAssemblerCodePtr<CFunctionPtrTag>> instructionPointer(const PlatformRegisters&);
+inline std::optional<MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>> instructionPointer(const PlatformRegisters&);
 inline void setInstructionPointer(PlatformRegisters&, MacroAssemblerCodePtr<CFunctionPtrTag>);
 
 template<size_t N> void*& argumentPointer(PlatformRegisters&);
@@ -67,7 +67,7 @@ template<typename T = void*> T stackPointer(const mcontext_t&);
 template<typename T = void*> void setStackPointer(mcontext_t&, T);
 template<typename T = void*> T framePointer(const mcontext_t&);
 template<typename T = void*> void setFramePointer(mcontext_t&, T);
-inline MacroAssemblerCodePtr<CFunctionPtrTag> instructionPointer(const mcontext_t&);
+inline MacroAssemblerCodePtr<PlatformRegistersPCPtrTag> instructionPointer(const mcontext_t&);
 inline void setInstructionPointer(mcontext_t&, MacroAssemblerCodePtr<CFunctionPtrTag>);
 
 template<size_t N> void*& argumentPointer(mcontext_t&);
@@ -432,7 +432,7 @@ static inline void*& instructionPointerImpl(PlatformRegisters& regs)
 }
 #endif // !USE(PLATFORM_REGISTERS_WITH_PROFILE)
 
-inline std::optional<MacroAssemblerCodePtr<CFunctionPtrTag>> instructionPointer(const PlatformRegisters& regs)
+inline std::optional<MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>> instructionPointer(const PlatformRegisters& regs)
 {
 #if USE(PLATFORM_REGISTERS_WITH_PROFILE)
     void* value = WTF_READ_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs);
@@ -440,11 +440,11 @@ inline std::optional<MacroAssemblerCodePtr<CFunctionPtrTag>> instructionPointer(
     void* value = instructionPointerImpl(const_cast<PlatformRegisters&>(regs));
 #endif
     if (!value)
-        return MacroAssemblerCodePtr<CFunctionPtrTag>(nullptr);
+        return MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(nullptr);
     if (!usesPointerTagging())
-        return MacroAssemblerCodePtr<CFunctionPtrTag>(value);
-    if (isTaggedWith(value, CFunctionPtrTag))
-        return MacroAssemblerCodePtr<CFunctionPtrTag>(value);
+        return MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(value);
+    if (isTaggedWith(value, PlatformRegistersPCPtrTag))
+        return MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(value);
     return std::nullopt;
 }
 
@@ -505,14 +505,14 @@ static inline void*& instructionPointerImpl(mcontext_t& machineContext)
 }
 #endif // !USE(PLATFORM_REGISTERS_WITH_PROFILE)
 
-inline MacroAssemblerCodePtr<CFunctionPtrTag> instructionPointer(const mcontext_t& machineContext)
+inline MacroAssemblerCodePtr<PlatformRegistersPCPtrTag> instructionPointer(const mcontext_t& machineContext)
 {
 #if USE(PLATFORM_REGISTERS_WITH_PROFILE)
     void* value = WTF_READ_MACHINE_CONTEXT_PC_WITH_PROFILE(machineContext);
 #else
     void* value = instructionPointerImpl(const_cast<mcontext_t&>(machineContext));
 #endif
-    return MacroAssemblerCodePtr<CFunctionPtrTag>(value);
+    return MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(value);
 }
 
 inline void setInstructionPointer(mcontext_t& machineContext, MacroAssemblerCodePtr<CFunctionPtrTag> value)
@@ -537,14 +537,14 @@ inline void*& linkRegisterImpl(PlatformRegisters& regs)
 #endif // USE(PLATFORM_REGISTERS_WITH_PROFILE)
 
 
-inline MacroAssemblerCodePtr<CFunctionPtrTag> linkRegister(const PlatformRegisters& regs)
+inline MacroAssemblerCodePtr<PlatformRegistersLRPtrTag> linkRegister(const PlatformRegisters& regs)
 {
 #if USE(PLATFORM_REGISTERS_WITH_PROFILE)
-    void* value = WTF_READ_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs);
+    void* value = WTF_READ_PLATFORM_REGISTERS_LR_WITH_PROFILE(regs);
 #else
     void* value = linkRegisterImpl(const_cast<PlatformRegisters&>(regs));
 #endif
-    return MacroAssemblerCodePtr<CFunctionPtrTag>(value);
+    return MacroAssemblerCodePtr<PlatformRegistersLRPtrTag>(value);
 }
 
 inline void setLinkRegister(PlatformRegisters& regs, MacroAssemblerCodePtr<CFunctionPtrTag> value)

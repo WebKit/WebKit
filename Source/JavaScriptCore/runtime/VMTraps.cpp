@@ -56,7 +56,7 @@ ALWAYS_INLINE VM& VMTraps::vm() const
 
 struct SignalContext {
 private:
-    SignalContext(PlatformRegisters& registers, MacroAssemblerCodePtr<CFunctionPtrTag> trapPC)
+    SignalContext(PlatformRegisters& registers, MacroAssemblerCodePtr<PlatformRegistersPCPtrTag> trapPC)
         : registers(registers)
         , trapPC(trapPC)
         , stackPointer(MachineContext::stackPointer(registers))
@@ -73,7 +73,7 @@ public:
     }
 
     PlatformRegisters& registers;
-    MacroAssemblerCodePtr<CFunctionPtrTag> trapPC;
+    MacroAssemblerCodePtr<PlatformRegistersPCPtrTag> trapPC;
     void* stackPointer;
     void* framePointer;
 };
