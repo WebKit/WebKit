@@ -1,3 +1,14 @@
+2018-09-05  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r235419): DFGCFG.h is missing from JavaScriptCore Xcode project
+
+        Found using `tidy-Xcode-project-file --missing` (see Bug
+        188754).  Fix was made manually.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        (dfg/DFGCFG.h): Revert accidental change in r235419 by restoring
+        `name` and `path` values to file reference.
+
 2018-09-05  Mark Lam  <mark.lam@apple.com>
 
         isAsyncGeneratorMethodParseMode() should check for SourceParseMode::AsyncGeneratorWrapperMethodMode.
