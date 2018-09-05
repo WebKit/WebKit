@@ -55,8 +55,8 @@
 		1AFFEF761860EE6800DA465E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		1AFFEF781860EE6800DA465E /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		1AFFEF831860EEFB00DA465E /* MiniBrowserBundle.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = MiniBrowserBundle.xcconfig; sourceTree = "<group>"; };
-		1AFFEF841860EF2200DA465E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = mac/Bundle/Info.plist; sourceTree = SOURCE_ROOT; };
-		1AFFEF851860EF2200DA465E /* MiniBrowserBundle_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MiniBrowserBundle_Prefix.pch; path = mac/Bundle/MiniBrowserBundle_Prefix.pch; sourceTree = SOURCE_ROOT; };
+		1AFFEF841860EF2200DA465E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1AFFEF851860EF2200DA465E /* MiniBrowserBundle_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MiniBrowserBundle_Prefix.pch; sourceTree = "<group>"; };
 		1AFFEF8618611C3D00DA465E /* MiniBrowserWebProcessPlugIn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MiniBrowserWebProcessPlugIn.m; sourceTree = SOURCE_ROOT; };
 		1AFFEF8718611C3D00DA465E /* MiniBrowserWebProcessPlugIn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MiniBrowserWebProcessPlugIn.h; sourceTree = SOURCE_ROOT; };
 		1DDD58150DA1D0A300B32029 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = mac/MainMenu.xib; sourceTree = "<group>"; };
@@ -155,7 +155,8 @@
 				1AFFEF8718611C3D00DA465E /* MiniBrowserWebProcessPlugIn.h */,
 				1AFFEF8618611C3D00DA465E /* MiniBrowserWebProcessPlugIn.m */,
 			);
-			path = Bundle;
+			name = Bundle;
+			path = mac/Bundle;
 			sourceTree = "<group>";
 		};
 		29B97314FDCFA39411CA2CEA /* MiniBrowser */ = {
