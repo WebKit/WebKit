@@ -1,5 +1,12 @@
 2018-09-05  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r235006): Let Xcode have its way with the WebKit project
+
+        * WebKit.xcodeproj/project.pbxproj: Let Xcode remove empty
+        settings.
+
+2018-09-05  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r110214): Remove deleted WebProcess/Fullscreen/mac folder from WebKit Xcode project
 
         Found using `tidy-Xcode-project-file --missing` (see Bug
