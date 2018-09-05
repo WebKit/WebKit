@@ -1,3 +1,18 @@
+2018-09-05  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r143543): PluginProcess/EntryPoint/XPCService/PluginService is missing in WebKit Xcode project
+
+        Found using `tidy-Xcode-project-file --missing` (see Bug
+        188754). Fixes applied manually.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        (PluginProcess/EntryPoint/XPCService/PluginService): Remove path
+        to PluginService.64 directory, which was removed in r143543, so
+        that this becomes a virtual folder that inherits its path from
+        its parent.
+        (PluginService.32-64.Info.plist): Change path to be relative to
+        its group after the above change.  Delete redundant name value.
+
 2018-09-05  Woodrow Wang  <woodrow_wang@apple.com>
 
         Add infrastructure to dump resource load statistics
