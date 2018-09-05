@@ -51,6 +51,7 @@ public:
 
     void addListener(IPC::Connection&, uint64_t storageMapID);
     void removeListener(IPC::Connection&, uint64_t storageMapID);
+    bool hasListener(IPC::Connection&, uint64_t storageMapID) const;
 
     Ref<StorageArea> clone() const;
 
@@ -194,6 +195,11 @@ void StorageManager::StorageArea::removeListener(IPC::Connection& connection, ui
 {
     ASSERT(isSessionStorage() || m_eventListeners.contains(std::make_pair(&connection, storageMapID)));
     m_eventListeners.remove(std::make_pair(&connection, storageMapID));
+}
+
+bool StorageManager::StorageArea::hasListener(IPC::Connection& connection, uint64_t storageMapID) const
+{
+    return m_eventListeners.contains(std::make_pair(&connection, storageMapID));
 }
 
 Ref<StorageManager::StorageArea> StorageManager::StorageArea::clone() const
@@ -697,7 +703,12 @@ void StorageManager::createTransientLocalStorageMap(IPC::Connection& connection,
         if (!origin.securityOrigin()->isSameSchemeHostPort(area->securityOrigin().securityOrigin().get()))
             continue;
         area->addListener(connection, storageMapID);
-        m_storageAreasByConnection.remove(it);
+        // If the storageMapID used as key in m_storageAreasByConnection is no longer one of the StorageArea's listeners, then this means
+        // that destroyStorageMap() was already called for that storageMapID but it decided not to remove it from m_storageAreasByConnection
+        // so that we could reuse it later on for the same connection/origin combo. In this case, it is safe to remove the previous
+        // storageMapID from m_storageAreasByConnection.
+        if (!area->hasListener(connection, it->key.second))
+            m_storageAreasByConnection.remove(it);
         m_storageAreasByConnection.add({ &connection, storageMapID }, WTFMove(area));
         return;
     }
