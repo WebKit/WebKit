@@ -1,3 +1,27 @@
+2018-09-05  Woodrow Wang  <woodrow_wang@apple.com>
+
+        Add infrastructure to dump resource load statistics
+        https://bugs.webkit.org/show_bug.cgi?id=189213
+
+        Reviewed by Daniel Bates.
+
+        The dumping functionality is not currently used, but will be included in tests for
+        <https://bugs.webkit.org/show_bug.cgi?id=187773>.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setDumpResourceLoadStatistics):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::resourceStatisticsStringResultCallback):
+        (WTR::TestController::dumpResourceLoadStatistics):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::dumpResults):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestInvocation::setDumpResourceLoadStatistics):
+        * WebKitTestRunner/TestInvocation.h:
+
 2018-09-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] DragAndDropTests.ExposeMultipleURLsInDataTransfer fails on macOS versions prior to Mojave

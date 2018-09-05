@@ -191,6 +191,7 @@ public:
     void setStatisticsLastSeen(WKStringRef hostName, double seconds);
     void setStatisticsPrevalentResource(WKStringRef hostName, bool value);
     void setStatisticsVeryPrevalentResource(WKStringRef hostName, bool value);
+    String dumpResourceLoadStatistics();
     bool isStatisticsPrevalentResource(WKStringRef hostName);
     bool isStatisticsVeryPrevalentResource(WKStringRef hostName);
     bool isStatisticsRegisteredAsSubresourceUnder(WKStringRef subresourceHost, WKStringRef topFrameHost);

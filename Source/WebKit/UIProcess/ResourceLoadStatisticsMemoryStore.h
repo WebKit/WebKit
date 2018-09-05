@@ -83,6 +83,7 @@ public:
     bool isRegisteredAsRedirectingTo(const String& hostRedirectedFromPrimaryDomain, const String& hostRedirectedToPrimaryDomain) const;
 
     void clearPrevalentResource(const String& primaryDomain);
+    String dumpResourceLoadStatistics() const;
     bool isPrevalentResource(const String& primaryDomain) const;
     bool isVeryPrevalentResource(const String& primaryDomain) const;
     void setPrevalentResource(const String& primaryDomain);

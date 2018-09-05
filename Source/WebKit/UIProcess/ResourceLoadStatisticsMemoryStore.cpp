@@ -671,6 +671,17 @@ void ResourceLoadStatisticsMemoryStore::setPrevalentResource(WebCore::ResourceLo
         mapEntry->value.isPrevalentResource = true;
     }
 }
+    
+String ResourceLoadStatisticsMemoryStore::dumpResourceLoadStatistics() const
+{
+    ASSERT(!RunLoop::isMain());
+
+    StringBuilder result;
+    result.appendLiteral("Resource load statistics:\n\n");
+    for (auto& mapEntry : m_resourceStatisticsMap.values())
+        result.append(mapEntry.toString());
+    return result.toString();
+}
 
 bool ResourceLoadStatisticsMemoryStore::isPrevalentResource(const String& primaryDomain) const
 {

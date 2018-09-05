@@ -493,6 +493,18 @@ void WebResourceLoadStatisticsStore::setVeryPrevalentResource(const URL& url, Co
         postTaskReply(WTFMove(completionHandler));
     });
 }
+    
+void WebResourceLoadStatisticsStore::dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    postTask([this, completionHandler = WTFMove(completionHandler)] () mutable {
+        String result = m_memoryStore ? m_memoryStore->dumpResourceLoadStatistics() : emptyString();
+        postTaskReply([result = result.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
+            completionHandler(result);
+        });
+    });
+}
 
 void WebResourceLoadStatisticsStore::isPrevalentResource(const URL& url, CompletionHandler<void (bool)>&& completionHandler)
 {

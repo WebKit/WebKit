@@ -56,6 +56,7 @@ interface TestRunner {
     void dumpDatabaseCallbacks();
     void dumpDOMAsWebArchive();
     void dumpPolicyDelegateCallbacks();
+    void dumpResourceLoadStatistics();
 
     void clearDOMCaches();
     void clearDOMCache(DOMString origin);

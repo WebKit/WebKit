@@ -91,6 +91,7 @@ public:
     void setLastSeen(const WebCore::URL&, Seconds, CompletionHandler<void()>&&);
     void setPrevalentResource(const WebCore::URL&, CompletionHandler<void()>&&);
     void setVeryPrevalentResource(const WebCore::URL&, CompletionHandler<void()>&&);
+    void dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&&);
     void isPrevalentResource(const WebCore::URL&, CompletionHandler<void(bool)>&&);
     void isVeryPrevalentResource(const WebCore::URL&, CompletionHandler<void(bool)>&&);
     void isRegisteredAsSubresourceUnder(const WebCore::URL& subresource, const WebCore::URL& topFrame, CompletionHandler<void(bool)>&&);

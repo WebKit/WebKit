@@ -250,6 +250,9 @@ void TestInvocation::forceRepaintDoneCallback(WKErrorRef error, void* context)
 
 void TestInvocation::dumpResults()
 {
+    if (m_shouldDumpResourceLoadStatistics)
+        m_textOutput.append(m_savedResourceLoadStatistics.isNull() ? TestController::singleton().dumpResourceLoadStatistics() : m_savedResourceLoadStatistics);
+
     if (m_textOutput.length() || !m_audioResult)
         dump(m_textOutput.toString().utf8().data());
     else
@@ -1069,6 +1072,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
     
+    if (WKStringIsEqualToUTF8CString(messageName, "dumpResourceLoadStatistics")) {
+        dumpResourceLoadStatistics();
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "IsStatisticsPrevalentResource")) {
         ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
 
@@ -1351,6 +1359,8 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     }
     
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsResetToConsistentState")) {
+        if (m_shouldDumpResourceLoadStatistics)
+            m_savedResourceLoadStatistics = TestController::singleton().dumpResourceLoadStatistics();
         TestController::singleton().statisticsResetToConsistentState();
         return nullptr;
     }
@@ -1578,6 +1588,11 @@ void TestInvocation::didRemoveAllSessionCredentials()
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidRemoveAllSessionCredentialsCallback"));
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
+}
+
+void TestInvocation::dumpResourceLoadStatistics()
+{
+    m_shouldDumpResourceLoadStatistics = true;
 }
 
 } // namespace WTR

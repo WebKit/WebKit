@@ -1462,6 +1462,12 @@ void TestRunner::statisticsCallDidSetVeryPrevalentResourceCallback()
 {
     callTestRunnerCallback(SetStatisticsVeryPrevalentResourceCallbackID);
 }
+    
+void TestRunner::dumpResourceLoadStatistics()
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("dumpResourceLoadStatistics"));
+    WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr, nullptr);
+}
 
 bool TestRunner::isStatisticsPrevalentResource(JSStringRef hostName)
 {

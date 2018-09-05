@@ -2816,7 +2816,16 @@ struct ResourceStatisticsCallbackContext {
     TestController& testController;
     bool done { false };
     bool result { false };
+    WKRetainPtr<WKStringRef> resourceLoadStatisticsRepresentation;
 };
+    
+static void resourceStatisticsStringResultCallback(WKStringRef resourceLoadStatisticsRepresentation, void* userData)
+{
+    auto* context = static_cast<ResourceStatisticsCallbackContext*>(userData);
+    context->resourceLoadStatisticsRepresentation = resourceLoadStatisticsRepresentation;
+    context->done = true;
+    context->testController.notifyDone();
+}
 
 static void resourceStatisticsVoidResultCallback(void* userData)
 {
@@ -2876,6 +2885,15 @@ void TestController::setStatisticsVeryPrevalentResource(WKStringRef host, bool v
     WKWebsiteDataStoreSetStatisticsVeryPrevalentResource(dataStore, host, value, &context, resourceStatisticsVoidResultCallback);
     runUntil(context.done, noTimeout);
     m_currentInvocation->didSetVeryPrevalentResource();
+}
+    
+String TestController::dumpResourceLoadStatistics()
+{
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreDumpResourceLoadStatistics(dataStore, &context, resourceStatisticsStringResultCallback);
+    runUntil(context.done, noTimeout);
+    return toWTFString(context.resourceLoadStatisticsRepresentation.get());
 }
 
 bool TestController::isStatisticsPrevalentResource(WKStringRef host)

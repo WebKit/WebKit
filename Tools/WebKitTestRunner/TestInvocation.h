@@ -83,6 +83,8 @@ public:
 
     void didRemoveAllSessionCredentials();
     
+    void dumpResourceLoadStatistics();
+    
 private:
     WKRetainPtr<WKMutableDictionaryRef> createTestSettingsDictionary();
 
@@ -129,9 +131,11 @@ private:
     bool m_dumpFrameLoadCallbacks { false };
     bool m_dumpPixels { false };
     bool m_pixelResultIsPending { false };
+    bool m_shouldDumpResourceLoadStatistics { false };
     WhatToDump m_whatToDump { WhatToDump::RenderTree };
 
     StringBuilder m_textOutput;
+    String m_savedResourceLoadStatistics;
     WKRetainPtr<WKDataRef> m_audioResult;
     WKRetainPtr<WKImageRef> m_pixelResult;
     WKRetainPtr<WKArrayRef> m_repaintRects;

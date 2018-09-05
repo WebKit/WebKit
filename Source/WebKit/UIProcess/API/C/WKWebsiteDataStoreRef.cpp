@@ -30,6 +30,7 @@
 #include "APIWebsiteDataStore.h"
 #include "WKAPICast.h"
 #include "WKSecurityOriginRef.h"
+#include "WKString.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebResourceLoadStatisticsTelemetry.h"
 #include "WebsiteData.h"
@@ -141,6 +142,19 @@ void WKWebsiteDataStoreSetStatisticsVeryPrevalentResource(WKWebsiteDataStoreRef 
         store->clearPrevalentResource(WebCore::URL(WebCore::URL(), WebKit::toImpl(host)->string()), [context, completionHandler] {
             completionHandler(context);
         });
+}
+
+void WKWebsiteDataStoreDumpResourceLoadStatistics(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreDumpResourceLoadStatisticsFunction callback)
+{
+    auto* store = WebKit::toImpl(dataStoreRef)->websiteDataStore().resourceLoadStatistics();
+    if (!store) {
+        callback(WebKit::toAPI(emptyString().impl()), context);
+        return;
+    }
+
+    store->dumpResourceLoadStatistics([context, callback] (const String& resourceLoadStatistics) {
+        callback(WebKit::toAPI(resourceLoadStatistics.impl()), context);
+    });
 }
 
 void WKWebsiteDataStoreIsStatisticsPrevalentResource(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreIsStatisticsPrevalentResourceFunction callback)
