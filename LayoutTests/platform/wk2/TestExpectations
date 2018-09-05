@@ -88,6 +88,9 @@ platform/mac/fast/text/attributed-substring-from-range-in-textfield.html
 platform/mac/fast/text/attributed-substring-from-range.html
 platform/mac/fast/text/justified-text-rect.html
 
+# [WebKit2] WebKitTestRunner doesn't support emulating pressing a tab key during IME composition
+webkit.org/b/188428 editing/input/press-tab-during-ime-composition.html
+
 # WebKitTestRunner needs testRunner.setMainFrameIsFirstResponder
 # <https://bugs.webkit.org/show_bug.cgi?id=42685>
 editing/selection/caret-and-focus-ring.html

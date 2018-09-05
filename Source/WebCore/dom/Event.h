@@ -119,6 +119,9 @@ public:
     bool defaultHandled() const { return m_defaultHandled; }
     void setDefaultHandled() { m_defaultHandled = true; }
 
+    bool isDefaultEventHandlerIgnored() const { return m_isDefaultEventHandlerIgnored; }
+    void setIsDefaultEventHandlerIgnored() { m_isDefaultEventHandlerIgnored = true; }
+
     void setInPassiveListener(bool value) { m_isExecutingPassiveEventListener = value; }
 
     bool cancelBubble() const { return propagationStopped(); }
@@ -156,6 +159,7 @@ private:
     bool m_immediatePropagationStopped { false };
     bool m_wasCanceled { false };
     bool m_defaultHandled { false };
+    bool m_isDefaultEventHandlerIgnored { false };
     bool m_isTrusted { false };
     bool m_isExecutingPassiveEventListener { false };
 
