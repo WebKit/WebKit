@@ -65,10 +65,8 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
     FloatingContext floatingContext(formattingState.floatingState());
     // This is a post-order tree traversal layout.
     // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
-    if (auto* firstChild = formattingRoot.firstInFlowOrFloatingChild()) {
+    if (auto* firstChild = formattingRoot.firstInFlowOrFloatingChild())
         layoutQueue.append(firstChild);
-        layoutContext.createDisplayBox(*firstChild);
-    }
     // 1. Go all the way down to the leaf node
     // 2. Compute static position and width as we traverse down
     // 3. As we climb back on the tree, compute height and finialize position
@@ -85,9 +83,7 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
                 // Continue with next sibling if exists.
                 if (!layoutBox.nextInFlowOrFloatingSibling())
                     break;
-                auto* nextSibling = layoutBox.nextInFlowOrFloatingSibling();
-                layoutQueue.append(nextSibling);
-                layoutContext.createDisplayBox(*nextSibling);
+                layoutQueue.append(layoutBox.nextInFlowOrFloatingSibling());
                 continue;
             }
 
@@ -97,9 +93,7 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             computeWidthAndMargin(layoutContext, layoutBox);
             if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
                 break;
-            auto* firstChild = downcast<Container>(layoutBox).firstInFlowOrFloatingChild();
-            layoutQueue.append(firstChild);
-            layoutContext.createDisplayBox(*firstChild);
+            layoutQueue.append(downcast<Container>(layoutBox).firstInFlowOrFloatingChild());
         }
 
         // Climb back on the ancestors and compute height/final position.
@@ -121,7 +115,6 @@ void BlockFormattingContext::layout(LayoutContext& layoutContext, FormattingStat
             placeInFlowPositionedChildren(layoutContext, container);
             if (auto* nextSibling = container.nextInFlowOrFloatingSibling()) {
                 layoutQueue.append(nextSibling);
-                layoutContext.createDisplayBox(*nextSibling);
                 break;
             }
         }

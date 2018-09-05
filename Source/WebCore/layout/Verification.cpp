@@ -219,6 +219,7 @@ void LayoutContext::verifyAndOutputMismatchingLayoutTree(const RenderView& rende
     showLayoutTree(*m_root.get(), this);
 #endif
     WTFLogAlways("%s", stream.release().utf8().data());
+    ASSERT_NOT_REACHED();
 }
 
 }

@@ -1,3 +1,24 @@
+2018-09-05  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Construct the Display::Box objects on demand.
+        https://bugs.webkit.org/show_bug.cgi?id=189320
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowDescendants const):
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::initializeRoot):
+        (WebCore::Layout::LayoutContext::displayBoxForLayoutBox const):
+        (WebCore::Layout::LayoutContext::createDisplayBox): Deleted.
+        * layout/LayoutContext.h:
+        (WebCore::Layout::LayoutContext::displayBoxForLayoutBox const): Deleted.
+        * layout/Verification.cpp:
+        (WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree const):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        * layout/displaytree/DisplayBox.h:
+
 2018-09-05  Woodrow Wang  <woodrow_wang@apple.com>
 
         Add infrastructure to dump resource load statistics

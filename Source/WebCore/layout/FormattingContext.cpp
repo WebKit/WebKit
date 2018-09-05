@@ -113,7 +113,6 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext,
 
     for (auto& outOfFlowBox : container.outOfFlowDescendants()) {
         auto& layoutBox = *outOfFlowBox;
-        layoutContext.createDisplayBox(layoutBox);
 
         ASSERT(layoutBox.establishesFormattingContext());
         auto formattingContext = layoutContext.formattingContext(layoutBox);

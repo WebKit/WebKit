@@ -54,7 +54,7 @@ void LayoutContext::initializeRoot(const Container& root, const LayoutSize& cont
     ASSERT(root.establishesFormattingContext());
 
     m_root = makeWeakPtr(const_cast<Container&>(root));
-    auto& displayBox = createDisplayBox(root);
+    auto& displayBox = displayBoxForLayoutBox(root);
 
     // FIXME: m_root could very well be a formatting context root with ancestors and resolvable border and padding (as opposed to the topmost root)
     displayBox.setHorizontalMargin({ });
@@ -86,12 +86,11 @@ void LayoutContext::layoutFormattingContextSubtree(const Box& layoutRoot)
     formattingContext->layoutOutOfFlowDescendants(*this, layoutRoot);
 }
 
-Display::Box& LayoutContext::createDisplayBox(const Box& layoutBox)
+Display::Box& LayoutContext::displayBoxForLayoutBox(const Box& layoutBox) const
 {
-    std::unique_ptr<Display::Box> displayBox(new Display::Box(layoutBox.style()));
-    auto* displayBoxPtr = displayBox.get();
-    m_layoutToDisplayBox.add(&layoutBox, WTFMove(displayBox));
-    return *displayBoxPtr;
+    return *m_layoutToDisplayBox.ensure(&layoutBox, [&layoutBox] {
+        return std::make_unique<Display::Box>(layoutBox.style());
+    }).iterator->value;
 }
 
 void LayoutContext::styleChanged(const Box& layoutBox, StyleDiff styleDiff)

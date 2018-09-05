@@ -56,6 +56,7 @@ public:
     friend class Layout::FloatingContext;
     friend class Layout::LayoutContext;
 
+    Box(const RenderStyle&);
     Box(const Box&);
 
     class Rect {
@@ -172,8 +173,6 @@ public:
     Rect contentBox() const;
 
 private:
-    Box(const RenderStyle&);
-
     struct Style {
         Style(const RenderStyle&);
 
