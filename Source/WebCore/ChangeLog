@@ -1,3 +1,40 @@
+2018-09-04  Antti Koivisto  <antti@apple.com>
+
+        Remove pointless RenderSVGResourceMode::ApplyToDefault enum value
+        https://bugs.webkit.org/show_bug.cgi?id=189260
+
+        Reviewed by Sam Weinig.
+
+        Default does not need a bit, it is better represented with an empty OptionSet.
+
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::requestPaintingResource):
+        * rendering/svg/RenderSVGResource.h:
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyResource):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::applyResource):
+        (WebCore::RenderSVGResourcePattern::postApplyResource):
+        * rendering/svg/RenderSVGResourceSolidColor.cpp:
+        (WebCore::RenderSVGResourceSolidColor::applyResource):
+        (WebCore::RenderSVGResourceSolidColor::postApplyResource):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::SVGInlineTextBox):
+        (WebCore::SVGInlineTextBox::paintSelectionBackground):
+        (WebCore::SVGInlineTextBox::paint):
+        (WebCore::SVGInlineTextBox::acquirePaintingResource):
+        (WebCore::SVGInlineTextBox::paintDecorationWithStyle):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::~SVGRenderingContext):
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+
 2018-08-29  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Remove PseudoElementUserAgentCustom.

@@ -68,7 +68,7 @@ void RenderSVGResourceClipper::removeClientFromCache(RenderElement& client, bool
 bool RenderSVGResourceClipper::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     ASSERT(context);
-    ASSERT_UNUSED(resourceMode, resourceMode == RenderSVGResourceMode::ApplyToDefault);
+    ASSERT_UNUSED(resourceMode, !resourceMode);
 
     return applyClippingToContext(renderer, renderer.objectBoundingBox(), renderer.repaintRectInLocalCoordinates(), *context);
 }

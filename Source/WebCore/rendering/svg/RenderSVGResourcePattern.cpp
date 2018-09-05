@@ -146,7 +146,7 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, Opt
 bool RenderSVGResourcePattern::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     ASSERT(context);
-    ASSERT(resourceMode != RenderSVGResourceMode::ApplyToDefault);
+    ASSERT(!resourceMode.isEmpty());
 
     if (m_shouldCollectPatternAttributes) {
         patternElement().synchronizeAnimatedSVGAttribute(anyQName());
@@ -205,7 +205,7 @@ bool RenderSVGResourcePattern::applyResource(RenderElement& renderer, const Rend
 void RenderSVGResourcePattern::postApplyResource(RenderElement&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderSVGShape* shape)
 {
     ASSERT(context);
-    ASSERT(resourceMode != RenderSVGResourceMode::ApplyToDefault);
+    ASSERT(!resourceMode.isEmpty());
 
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToFill)) {
         if (path)

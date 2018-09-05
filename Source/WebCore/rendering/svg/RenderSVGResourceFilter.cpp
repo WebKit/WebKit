@@ -111,7 +111,7 @@ std::unique_ptr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFi
 bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     ASSERT(context);
-    ASSERT_UNUSED(resourceMode, resourceMode == RenderSVGResourceMode::ApplyToDefault);
+    ASSERT_UNUSED(resourceMode, !resourceMode);
 
     LOG(Filters, "RenderSVGResourceFilter %p applyResource renderer %p", this, &renderer);
 
@@ -229,7 +229,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
 void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path*, const RenderSVGShape*)
 {
     ASSERT(context);
-    ASSERT_UNUSED(resourceMode, resourceMode == RenderSVGResourceMode::ApplyToDefault);
+    ASSERT_UNUSED(resourceMode, !resourceMode);
 
     auto findResult = m_rendererFilterDataMap.find(&renderer);
     if (findResult == m_rendererFilterDataMap.end())

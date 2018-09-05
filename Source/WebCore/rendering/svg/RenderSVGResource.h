@@ -38,10 +38,9 @@ enum RenderSVGResourceType {
 
 // If this enum changes change the unsigned bitfields using it.
 enum class RenderSVGResourceMode {
-    ApplyToDefault = 1 << 0, // used for all resources except gradient/pattern
-    ApplyToFill    = 1 << 1,
-    ApplyToStroke  = 1 << 2,
-    ApplyToText    = 1 << 3 // used in combination with ApplyTo{Fill|Stroke}Mode
+    ApplyToFill    = 1 << 0,
+    ApplyToStroke  = 1 << 1,
+    ApplyToText    = 1 << 2 // used in combination with ApplyTo{Fill|Stroke}Mode
 };
 
 class Color;

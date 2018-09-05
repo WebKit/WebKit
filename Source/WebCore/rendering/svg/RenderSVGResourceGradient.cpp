@@ -97,7 +97,7 @@ static inline AffineTransform clipToTextMask(GraphicsContext& context, std::uniq
 bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     ASSERT(context);
-    ASSERT(resourceMode != RenderSVGResourceMode::ApplyToDefault);
+    ASSERT(!resourceMode.isEmpty());
 
     // Be sure to synchronize all SVG properties on the gradientElement _before_ processing any further.
     // Otherwhise the call to collectGradientAttributes() in createTileImage(), may cause the SVG DOM property
@@ -190,7 +190,7 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
 void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderSVGShape* shape)
 {
     ASSERT(context);
-    ASSERT(resourceMode != RenderSVGResourceMode::ApplyToDefault);
+    ASSERT(!resourceMode.isEmpty());
 
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToText)) {
 #if USE(CG)

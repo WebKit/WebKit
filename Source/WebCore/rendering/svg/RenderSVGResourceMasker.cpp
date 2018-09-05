@@ -57,7 +57,7 @@ void RenderSVGResourceMasker::removeClientFromCache(RenderElement& client, bool 
 bool RenderSVGResourceMasker::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     ASSERT(context);
-    ASSERT_UNUSED(resourceMode, resourceMode == RenderSVGResourceMode::ApplyToDefault);
+    ASSERT_UNUSED(resourceMode, !resourceMode);
 
     bool missingMaskerData = !m_masker.contains(&renderer);
     if (missingMaskerData)
