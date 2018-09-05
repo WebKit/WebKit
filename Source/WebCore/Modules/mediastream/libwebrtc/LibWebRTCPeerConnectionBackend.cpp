@@ -408,47 +408,69 @@ static inline bool updateTrackSource(Source& source, MediaStreamTrack* track)
     return source->setSource(track->privateTrack());
 }
 
+template<typename Source>
+static inline bool tryUpdatingTrackSource(MediaStreamTrack& currentTrack, MediaStreamTrack* newTrack, const Vector<Source>& sources)
+{
+    for (auto& source : sources) {
+        if (&source->source() == &currentTrack.privateTrack()) {
+            if (!updateTrackSource(source, newTrack))
+                return false;
+            return true;
+        }
+    }
+    return false;
+}
+
 void LibWebRTCPeerConnectionBackend::replaceTrack(RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& track, DOMPromiseDeferred<void>&& promise)
 {
-    ASSERT(sender.track());
-
     auto* currentTrack = sender.track();
 
-    ASSERT(!track || currentTrack->source().type() == track->source().type());
-    switch (currentTrack->source().type()) {
-    case RealtimeMediaSource::Type::None:
-        ASSERT_NOT_REACHED();
-        promise.reject(InvalidModificationError);
-        break;
-    case RealtimeMediaSource::Type::Audio: {
-        for (auto& audioSource : m_audioSources) {
-            if (&audioSource->source() == &currentTrack->privateTrack()) {
-                if (!updateTrackSource(audioSource, track.get())) {
-                    promise.reject(InvalidModificationError);
-                    return;
-                }
-                connection().enqueueReplaceTrackTask(sender, WTFMove(track), WTFMove(promise));
+    ASSERT(!track || !currentTrack || currentTrack->source().type() == track->source().type());
+    if (currentTrack) {
+        switch (currentTrack->source().type()) {
+        case RealtimeMediaSource::Type::None:
+            ASSERT_NOT_REACHED();
+            promise.reject(InvalidModificationError);
+            break;
+        case RealtimeMediaSource::Type::Audio:
+            if (!tryUpdatingTrackSource(*currentTrack, track.get(), m_audioSources)) {
+                promise.reject(InvalidModificationError);
+                return;
+            }
+            break;
+        case RealtimeMediaSource::Type::Video:
+            if (!tryUpdatingTrackSource(*currentTrack, track.get(), m_videoSources)) {
+                promise.reject(InvalidModificationError);
+                return;
+            }
+            break;
+        }
+    }
+    enqueueReplaceTrackTask(sender, WTFMove(track), WTFMove(promise));
+}
+
+void LibWebRTCPeerConnectionBackend::enqueueReplaceTrackTask(RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& withTrack, DOMPromiseDeferred<void>&& promise)
+{
+    m_peerConnection.scriptExecutionContext()->postTask([protectedConnection = makeRef(m_peerConnection), protectedSender = makeRef(sender), promise = WTFMove(promise), withTrack = WTFMove(withTrack), this](ScriptExecutionContext&) mutable {
+        if (protectedConnection->isClosed())
+            return;
+
+        if (!withTrack) {
+            protectedSender->setTrackToNull();
+            promise.resolve();
+            return;
+        }
+
+        bool hasTrack = protectedSender->track();
+        protectedSender->setTrack(withTrack.releaseNonNull());
+        if (!hasTrack) {
+            if (!m_endpoint->addTrack(backendFromRTPSender(protectedSender), *protectedSender->track(), { })) {
+                promise.reject(Exception { TypeError, "Unable to add track"_s });
                 return;
             }
         }
-        promise.reject(InvalidModificationError);
-        break;
-    }
-    case RealtimeMediaSource::Type::Video: {
-        for (auto& videoSource : m_videoSources) {
-            if (&videoSource->source() == &currentTrack->privateTrack()) {
-                if (!updateTrackSource(videoSource, track.get())) {
-                    promise.reject(InvalidModificationError);
-                    return;
-                }
-                connection().enqueueReplaceTrackTask(sender, WTFMove(track), WTFMove(promise));
-                return;
-            }
-        }
-        promise.reject(InvalidModificationError);
-        break;
-    }
-    }
+        promise.resolve();
+    });
 }
 
 void LibWebRTCPeerConnectionBackend::applyRotationForOutgoingVideoSources()

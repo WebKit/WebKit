@@ -530,26 +530,6 @@ void RTCPeerConnection::fireEvent(Event& event)
     dispatchEvent(event);
 }
 
-void RTCPeerConnection::enqueueReplaceTrackTask(RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& withTrack, DOMPromiseDeferred<void>&& promise)
-{
-    scriptExecutionContext()->postTask([protectedThis = makeRef(*this), protectedSender = makeRef(sender), promise = WTFMove(promise), withTrack = WTFMove(withTrack)](ScriptExecutionContext&) mutable {
-        if (protectedThis->isClosed())
-            return;
-
-        if (!withTrack) {
-            protectedSender->setTrackToNull();
-            promise.resolve();
-            return;
-        }
-
-        bool hasTrack = protectedSender->track();
-        protectedSender->setTrack(withTrack.releaseNonNull());
-        if (!hasTrack)
-            protectedThis->m_backend->addTrack(protectedSender.ptr(), *protectedSender->track(), { });
-        promise.resolve();
-    });
-}
-
 void RTCPeerConnection::dispatchEvent(Event& event)
 {
     DEBUG_LOG(LOGIDENTIFIER, "dispatching '", event.type(), "'");

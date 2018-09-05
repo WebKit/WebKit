@@ -41,11 +41,6 @@ void LibWebRTCRtpSenderBackend::replaceTrack(RTCRtpSender& sender, RefPtr<MediaS
         return;
     }
 
-    if (!sender.track() && track) {
-        m_peerConnectionBackend->connection().enqueueReplaceTrackTask(sender, track.releaseNonNull(), WTFMove(promise));
-        return;
-    }
-
     m_peerConnectionBackend->replaceTrack(sender, WTFMove(track), WTFMove(promise));
 }
 

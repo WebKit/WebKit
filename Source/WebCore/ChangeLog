@@ -1,3 +1,25 @@
+2018-09-05  Youenn Fablet  <youenn@apple.com>
+
+        Move replaceTrack logic to LibWebRTCPeerConnectionBackend
+        https://bugs.webkit.org/show_bug.cgi?id=189281
+
+        Reviewed by Eric Carlson.
+
+        Move replaceTrack handling code from RTCPeerConnection to LibWebRTCPeerConnectionBackend.
+        This makes the logic easier to understand.
+        Future refactoring will further try to put more handling in RTCRtpSenderBackend.
+        No change of behavior.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::tryUpdatingTrackSource):
+        (WebCore::LibWebRTCPeerConnectionBackend::replaceTrack):
+        (WebCore::LibWebRTCPeerConnectionBackend::enqueueReplaceTrackTask):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        (WebCore::LibWebRTCRtpSenderBackend::replaceTrack):
+
 2018-09-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] LayoutContext::displayBoxForLayoutBox() should return a Display::Box&
