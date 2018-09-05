@@ -2079,12 +2079,12 @@ bool WKPreferencesGetColorFilterEnabled(WKPreferencesRef preferencesRef)
 
 void WKPreferencesSetProcessSwapOnNavigationEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
-    toImpl(preferencesRef)->setProcessSwapOnNavigationEnabled(flag);
+    toImpl(preferencesRef)->setProcessSwapOnCrossSiteNavigationEnabled(flag);
 }
 
 bool WKPreferencesGetProcessSwapOnNavigationEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->processSwapOnNavigationEnabled();
+    return toImpl(preferencesRef)->processSwapOnCrossSiteNavigationEnabled();
 }
 
 void WKPreferencesSetPunchOutWhiteBackgroundsInDarkMode(WKPreferencesRef preferencesRef, bool flag)

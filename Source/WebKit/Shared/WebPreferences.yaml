@@ -1316,11 +1316,11 @@ EncryptedMediaAPIEnabled:
   category: experimental
   condition: ENABLE(ENCRYPTED_MEDIA)
 
-ProcessSwapOnNavigationEnabled:
+ProcessSwapOnCrossSiteNavigationEnabled:
   type: bool
   defaultValue: false
-  humanReadableName: "Swap Processes on Navigation"
-  humanReadableDescription: "Swap WebContent processes on cross-origin navigations"
+  humanReadableName: "Swap Processes on Cross-Site Navigation"
+  humanReadableDescription: "Swap WebContent processes on cross-site navigations"
   category: experimental
   webcoreBinding: none
 

@@ -133,7 +133,7 @@ void WebPreferences::updateBoolValueForKey(const String& key, bool value)
 
 void WebPreferences::updateBoolValueForExperimentalFeatureKey(const String& key, bool value)
 {
-    if (key == WebPreferencesKey::processSwapOnNavigationEnabledKey()) {
+    if (key == WebPreferencesKey::processSwapOnCrossSiteNavigationEnabledKey()) {
         for (auto* page : m_pages)
             page->process().processPool().configuration().setProcessSwapsOnNavigation(value);
 

@@ -1,3 +1,27 @@
+2018-09-04  Chris Dumez  <cdumez@apple.com>
+
+        Rename experimental feature for process swap on navigation
+        https://bugs.webkit.org/show_bug.cgi?id=189280
+
+        Reviewed by Antti Koivisto.
+
+        The "process swap on navigation" experimental feature on macOS Mojave does not work due to missing
+        browser changes, resulting in frequent load hangs. When enabling the experimental feature in WebKit
+        ToT or Safari Technology Preview for testing, it enables it as well for Mojave's system Safari which
+        is annoying.
+
+        This patch renames the experimental feature so that the feature stays disabled in Mojave's system
+        Safari even when enabled in WebKit ToT / STP.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetProcessSwapOnNavigationEnabled):
+        (WKPreferencesGetProcessSwapOnNavigationEnabled):
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::updateBoolValueForExperimentalFeatureKey):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createWebPage):
+
 2018-09-04  Dean Jackson  <dino@apple.com>
 
         Post review Weinig fix-ups
