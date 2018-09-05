@@ -67,14 +67,18 @@ public:
     Element* activeElement() const;
 
     ShadowRootMode mode() const { return m_type; }
+    bool shouldFireSlotchangeEvent() const { return m_type != ShadowRootMode::UserAgent && !m_hasBegunDeletingDetachedChildren; }
 
     void removeAllEventListeners() override;
 
     HTMLSlotElement* findAssignedSlot(const Node&);
 
+    void renameSlotElement(HTMLSlotElement&, const AtomicString& oldName, const AtomicString& newName);
     void addSlotElementByName(const AtomicString&, HTMLSlotElement&);
-    void removeSlotElementByName(const AtomicString&, HTMLSlotElement&);
+    void removeSlotElementByName(const AtomicString&, HTMLSlotElement&, ContainerNode& oldParentOfRemovedTree);
     void slotFallbackDidChange(HTMLSlotElement&);
+    void resolveSlotsBeforeNodeInsertionOrRemoval();
+    void willRemoveAllChildren(ContainerNode&);
 
     void didRemoveAllChildrenOfShadowHost();
     void didChangeDefaultSlot();
@@ -103,6 +107,7 @@ private:
     void removedFromAncestor(RemovalType, ContainerNode& insertionPoint) override;
 
     bool m_resetStyleInheritance { false };
+    bool m_hasBegunDeletingDetachedChildren { false };
     ShadowRootMode m_type { ShadowRootMode::UserAgent };
 
     Element* m_host { nullptr };

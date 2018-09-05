@@ -1,3 +1,127 @@
+2018-09-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        slotchange event doesn't get fired when inserting, removing, or renaming slot elements
+        https://bugs.webkit.org/show_bug.cgi?id=189144
+        <rdar://problem/43871061>
+
+        Reviewed by Antti Koivisto.
+
+        This patch implements `slotchange` event when a slot element is inserted, removed, or renamed in the DOM tree.
+        Let us consider each scenario separately.
+
+        Insertion (https://dom.spec.whatwg.org/#concept-node-insert): In this case, we must fire `slotchange` event on
+        slot elements whose assigned nodes have changed in the tree order. When there is at most one slot element for
+        each name, this can be done by simply checking whether each slot has assigned nodes or not. When there are more
+        than one slot element, however, the newly inserted slot element may now become the first slot of a given name,
+        and gain assined nodes while the previously first element loses its assigned nodes. To see if the newly inserted
+        slot element is the first of its kind, we must travere the DOM tree to check the order of that and the previously
+        first slot element. To do this, we resolve the slot elements before start inserting nodes in
+        executeNodeInsertionWithScriptAssertion via SlotAssignment::resolveSlotsBeforeNodeInsertionOrRemoval. Note that
+        when the DOM tree has at most one slot element of its kind, resolveSlotsBeforeNodeInsertionOrRemoval is a no-op
+        and addSlotElementByName continues to operate in O(1). Becasue addSlotElementByName is called on each inserted
+        slot element in the tree order, we do the tree traversal upon finding the first slot element which has more than
+        one of its kind in the current tree. In this case, we resolve all other slot elements and enqueues slotchange
+        event as needed to avoid doing the tree traversal more than once.
+
+        Removal (https://dom.spec.whatwg.org/#concept-node-remove): In removal, we're concerned with removing the first
+        slot element of its kind. We must fire slotchange event on the remaining slot elements which became the first of
+        its kind after the removal as well as the ones which got removed from the tree if they had assigned nodes.
+        Furthermore, the DOM specification mandates that we first fire slotchange events in the tree from which a node
+        was removed and then in the removed subtree. Because we must only fire slotchange event on the first slot element
+        of its kind which has been removed, we must resolve the first slot elements of each kind before a node removal
+        in removeAllChildrenWithScriptAssertion and removeNodeWithScriptAssertion as we've done for insertion. Again,
+        in the case there was at most one slot element of each kind, resolveSlotsBeforeNodeInsertionOrRemoval is a no-op
+        and removeSlotElementByName would continue to operate in O(1). When there are multiple slot elements for a given
+        kind, we immediately enqueue slotchange event on the slot elements which newly became the first of its kind but
+        delay the enqueuing of slotchange event on the removed slot elements until removeSlotElementByName is called on
+        that element so that enqueuing of slotchange events on the slot elements still remaining in the in the tree would
+        happen before those which got removed as the DOM specification mandates.
+
+        Rename (https://dom.spec.whatwg.org/#shadow-tree-slots): In the case the slot element's name content attribute
+        is changed, the renamed element might have become the first of its kind or ceased to be the first of its kind.
+        There could be two other slot elements appearing later in the tree order which might have gained or lost assigned
+        nodes as a result. In this case, we invoke the algorithms for removing & inserting the slot with a key difference:
+        we enqueue slotchange event on the renamed slot immediately if it has assigned nodes.
+
+        To enqueue slotchange event in the tree order, this patch adds oldElement, which is a WeakPtr to a slot element,
+        to SlotAssignment::Slot. This WeakPtr is set to the slot element which used to have assigned nodes prior to the
+        node insertion, removal, or rename but no longer has after the mutation. This patch also adds a slot mutation
+        version number, m_slotMutationVersion, which is incremented whenever a node is about to be inserted or removed,
+        and slot resolution version, m_slotResolutionVersion, which is set to the current slot mutation version number
+        when the full slot resolution is triggered during slot mutations. They are used to avoid redundant tree traversals
+        in resolveSlotsAfterSlotMutation. This patch also makes m_needsToResolveSlotElements compiled in release builds
+        to avoid resolving slot elements when there is at most one slot element of each kind.
+
+        For insertion, oldElement is set to the slot which used to be the first of its kind before getting set to a slot
+        element being inserted in resolveSlotsAfterSlotMutation. We enqueue slotchange event on the newly inserted slot
+        element at that point (1). Since the slot element which used to be the first of its kind appears after the newly
+        inserted slot element by definition, we're guaranteed to see this oldElement later in the tree traversal upon
+        which we enqueue slotchange event. Note that if this slot element was the first of its kind, then we're simply
+        hitting (1), which is O(1) and does not invoke the tree traversal.
+
+        For removal, oldElement is set to the slot which used to be the first of its kind. Because this slot element is
+        getting removed, slotchange event must be enqueud after slotchange events have been enqueued on all slot elements
+        still remaining in the tree. To do this, we enqueue slotchange event immediately on the first slot element of
+        its kind during the tree traversal as we encounter it (2), and set oldElement to the previosuly-first-but-removed
+        slot element. slotchange event is enqueued on this slot element when removeSlotElementByName is later invoked via
+        HTMLSlotElement::removedFromAncestor which traverses each removed element in the tree order. Again, if this was
+        the last slot of its kind, we'd simply expedite (2) by enqueuing slotchange event during removeSlotElementByName,
+        which is O(1).
+
+        When the DOM invokes the concept to replace all children (https://dom.spec.whatwg.org/#concept-node-replace-all),
+        however, this algorithm isn't sufficient because the removal of each child happens one after another. We would
+        either need to resolve slots between each removal, or treat the removal of all children as a single operation.
+        While the DOM specification currently specifies the former behavior, this patch implements the latter behavior
+        to avoid useless work. See the DOM spec issue: https://github.com/w3c/webcomponents/issues/764
+
+        Test: fast/shadow-dom/slotchange-for-slot-mutation.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeAllChildrenWithScriptAssertion): Call resolveSlotsBeforeNodeInsertionOrRemoval
+        before start removing children.
+        (WebCore::ContainerNode::removeNodeWithScriptAssertion): Ditto.
+        (WebCore::executeNodeInsertionWithScriptAssertion): Ditto before inserting children.
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::~ShadowRoot): Set m_hasBegunDeletingDetachedChildren to true. This flag is used to supress
+        slotchange events during the shadow tree destruction.
+        (WebCore::ShadowRoot::renameSlotElement): Added.
+        (WebCore::ShadowRoot::removeSlotElementByName): Added oldParentOfRemovedTree as an argument.
+        * dom/ShadowRoot.h:
+        (WebCore::ShadowRoot::shouldFireSlotchangeEvent): Added.
+        * dom/SlotAssignment.cpp:
+        (WebCore::findSlotElement): Added.
+        (WebCore::nextSlotElementSkippingSubtree): Added.
+        (WebCore::SlotAssignment::hasAssignedNodes): Added. Returns true if the slot of a given name has assigned nodes.
+        (WebCore::SlotAssignment::renameSlotElement): Added.
+        (WebCore::SlotAssignment::addSlotElementByName): Call resolveSlotsAfterSlotMutation when slotchange event needs
+        to be dispatched for the current slot and there are more than one slot elements.
+        (WebCore::SlotAssignment::removeSlotElementByName): Ditto. When the slot's oldElement is set to the current slot
+        element, meaning that this slot element used to have assigned nodes, then enqueue slotchange event. It also has
+        a special case for oldParentOfRemovedTree is null when renaming a slot element. In this case, we want to enqueue
+        slot change event immediately on the renamed slot element and any affected elements as in a node insertion since
+        removeSlotElementByName would never be called on a slot element which newly become the first of its kind after
+        a slot rename.
+        (WebCore::SlotAssignment::resolveSlotsAfterSlotMutation): Added. This is the slot resolution algorithm invoked
+        when there are more than one slot elements for a given name. It has two modes dealing with insertion & removal.
+        The insertion mode is also used for renaming a slot element. The firs
+        (WebCore::SlotAssignment::resolveSlotsBeforeNodeInsertionOrRemoval): Added. Resolves all slot elements prior to
+        inserting or removing nodes. In many cases, this should be a no-op since m_needsToResolveSlotElements is set to
+        true only when there are more than one slot element of its kind.
+        (WebCore::SlotAssignment::willRemoveAllChildren): Ditto. Also sets m_willBeRemovingAllChildren to true.
+        (WebCore::SlotAssignment::didChangeSlot):
+        (WebCore::SlotAssignment::resolveAllSlotElements): Use seenFirstElement instead of element to indicate whether
+        we have seen a slot element of given name for consistency with resolveSlotsAfterSlotMutation.
+        * dom/SlotAssignment.h:
+        (WebCore::SlotAssignment::Slot): Added oldElement and seenFirstElement.
+        (WebCore::SlotAssignment): Always compile m_needsToResolveSlotElements. Added m_willBeRemovingAllChildren,
+        m_slotMutationVersion, and m_slotResolutionVersion.
+        (WebCore::ShadowRoot::resolveSlotsBeforeNodeInsertionOrRemoval): Added. Calls the one in SlotAssignment.
+        (WebCore::ShadowRoot::willRemoveAllChildren): Ditto.
+        * html/HTMLSlotElement.cpp:
+        (WebCore::HTMLSlotElement::removedFromAncestor):
+        (WebCore::HTMLSlotElement::attributeChanged): Calls ShadowRoot::renameSlotElement instead of
+        removeSlotElementByName and addSlotElementByName pair.
+
 2018-09-04  Youenn Fablet  <youenn@apple.com>
 
         Make LibWebRTCRtpSenderBackend own its libwebrtc RTP sender backend

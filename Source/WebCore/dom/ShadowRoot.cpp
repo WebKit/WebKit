@@ -82,6 +82,9 @@ ShadowRoot::~ShadowRoot()
     // to access it Document reference after that.
     willBeDeletedFrom(document());
 
+    ASSERT(!m_hasBegunDeletingDetachedChildren);
+    m_hasBegunDeletingDetachedChildren = true;
+
     // We must remove all of our children first before the TreeScope destructor
     // runs so we don't go through Node::setTreeScopeRecursively for each child with a
     // destructed tree scope in each descendant.
@@ -181,6 +184,12 @@ HTMLSlotElement* ShadowRoot::findAssignedSlot(const Node& node)
     return m_slotAssignment->findAssignedSlot(node, *this);
 }
 
+void ShadowRoot::renameSlotElement(HTMLSlotElement& slot, const AtomicString& oldName, const AtomicString& newName)
+{
+    ASSERT(m_slotAssignment);
+    return m_slotAssignment->renameSlotElement(slot, oldName, newName, *this);
+}
+
 void ShadowRoot::addSlotElementByName(const AtomicString& name, HTMLSlotElement& slot)
 {
     ASSERT(&slot.rootNode() == this);
@@ -190,9 +199,10 @@ void ShadowRoot::addSlotElementByName(const AtomicString& name, HTMLSlotElement&
     return m_slotAssignment->addSlotElementByName(name, slot, *this);
 }
 
-void ShadowRoot::removeSlotElementByName(const AtomicString& name, HTMLSlotElement& slot)
+void ShadowRoot::removeSlotElementByName(const AtomicString& name, HTMLSlotElement& slot, ContainerNode& oldParentOfRemovedTree)
 {
-    return m_slotAssignment->removeSlotElementByName(name, slot, *this);
+    ASSERT(m_slotAssignment);
+    return m_slotAssignment->removeSlotElementByName(name, slot, &oldParentOfRemovedTree, *this);
 }
 
 void ShadowRoot::slotFallbackDidChange(HTMLSlotElement& slot)

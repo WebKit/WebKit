@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Shadow DOM: slotchange event when inserting, removing, or renaming a slot element</title>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<link rel="help" href="https://dom.spec.whatwg.org/#shadow-tree-slots">
+<link rel="help" href="https://dom.spec.whatwg.org/#concept-node-insert">
+<link rel="help" href="https://dom.spec.whatwg.org/#concept-node-remove">
+<link rel="help" href="https://dom.spec.whatwg.org/#assign-slotables-for-a-tree">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+function generateTests(...args) {
+    testMutatingSlot('closed', true, ...args);
+    testMutatingSlot('closed', false, ...args);
+    testMutatingSlot('open', true, ...args);
+    testMutatingSlot('open', false, ...args);
+}
+
+let slotchangeEventTargets;
+function testMutatingSlot(mode, connectedToDocument, hostContent, shadowContent, mutateSlot, expectedTargets, description)
+{
+    promise_test(async function () {
+        const host = document.createElement('div');
+        if (connectedToDocument)
+            document.body.appendChild(host);
+        if (hostContent)
+            host.innerHTML = hostContent;
+
+        const shadowRoot = host.attachShadow({mode});
+        slotchangeEventTargets = [];
+        if (shadowContent) {
+            shadowRoot.innerHTML = shadowContent;
+            addEventListners(shadowRoot);
+        }
+
+        await Promise.resolve();
+        slotchangeEventTargets.length = 0;
+
+        mutateSlot(shadowRoot);
+        await Promise.resolve();
+
+        assert_array_equals(slotchangeEventTargets, expectedTargets);
+
+        host.remove();
+    }, description + ` in a ${connectedToDocument ? 'connected' : 'disconnected'} ${mode} mode shadow root`);
+}
+
+function addEventListners(container)
+{
+    for (const existingSlots of container.querySelectorAll('slot'))
+        existingSlots.addEventListener('slotchange', (event) => slotchangeEventTargets.push(event.target.id));
+}
+
+function newSlot(slotName)
+{
+    const slot = document.createElement('slot');
+    slot.id = 'newSlot';
+    if (slotName)
+        slot.name = slotName;
+    slot.addEventListener('slotchange', (event) => slotchangeEventTargets.push(event.target.id));
+    return slot;
+}
+
+// Insertions
+
+generateTests(null, null, (shadowRoot) => shadowRoot.append(newSlot()), [],
+    'slotchange event should not fire when inserting a default slot element into a shadow host with no children');
+generateTests(null, null, (shadowRoot) => shadowRoot.append(newSlot('foo')), [],
+    'slotchange event should not fire when inserting a named slot element into a shadow host with no children');
+
+generateTests('<span slot="bar"></span>', null, (shadowRoot) => shadowRoot.append(newSlot()), [],
+    'slotchange event should not fire when inserting a default slot element when there is an element assigned to another slot');
+generateTests('<span></span>', null, (shadowRoot) => shadowRoot.append(newSlot()), ['newSlot'],
+    'slotchange event should fire when inserting a default slot element when there is an element assigned to the default slot');
+generateTests('hello', null, (shadowRoot) => shadowRoot.append(newSlot()), ['newSlot'],
+    'slotchange event should fire when inserting a default slot element when there is a Text node assigned to the default slot');
+
+generateTests('<span slot="bar"></span>', null, (shadowRoot) => shadowRoot.append(newSlot('foo')), [],
+    'slotchange event should not fire when inserting a named slot element when there is an element assigned to another slot');
+generateTests('<span></span>', null, (shadowRoot) => shadowRoot.append(newSlot('foo')), [],
+    'slotchange event should not fire when inserting a named slot element when there is an element assigned to the default slot');
+generateTests('<span slot="foo"></span>', null, (shadowRoot) => shadowRoot.append(newSlot('foo')), ['newSlot'],
+    'slotchange event should fire when inserting a named slot element when there is an element assigned to the slot');
+generateTests('hello', null, (shadowRoot) => shadowRoot.append(newSlot('foo')), [],
+    'slotchange event should not fire when inserting a named slot element when there is a Text node assigned to the default slot');
+
+generateTests('<span></span>', '<slot id="oldSlot"></slot>',
+    (shadowRoot) => shadowRoot.append(newSlot()), [],
+    'slotchange event should not fire when inserting a default slot element after an existing default slot');
+generateTests('<span></span>', '<slot id="oldSlot"></slot>',
+    (shadowRoot) => shadowRoot.prepend(newSlot()), ['newSlot', 'oldSlot'],
+    'slotchange event should fire when inserting a default slot element before an existing default slot in the tree order');
+generateTests('<span></span>', '<slot id="oldSlot1"></slot><slot id="oldSlot2"></slot>',
+    (shadowRoot) => shadowRoot.firstChild.after(newSlot()), [],
+    'slotchange event should not fire when inserting a default slot element between two existing default slots');
+
+generateTests('<span slot="foo"></span>', '<slot id="oldSlot" name="foo"></slot>',
+    (shadowRoot) => shadowRoot.append(newSlot('foo')), [],
+    'slotchange event should not fire when inserting a named slot element after an existing slot of the same name');
+generateTests('<span slot="foo"></span>', '<slot id="oldSlot" name="foo"></slot>',
+    (shadowRoot) => shadowRoot.prepend(newSlot('foo')), ['newSlot', 'oldSlot'],
+    'slotchange event should fire when inserting a named slot element before an existing slot of the same name in the tree order');
+generateTests('<span name="foo"></span>', '<slot id="oldSlot1" name="foo"></slot><slot id="oldSlot2" name="foo"></slot>',
+    (shadowRoot) => shadowRoot.firstChild.after(newSlot('foo')), [],
+    'slotchange event should not fire when inserting a named slot element between two existing slots of the same name');
+
+generateTests('<span></span>', '<div><slot id="oldSlot"></slot></div>',
+    (shadowRoot) => {
+        const ancestor = document.createElement('div');
+        ancestor.innerHTML = '<span><b><slot id="newSlot"></slot></b></span>';
+        addEventListners(ancestor);
+        shadowRoot.prepend(ancestor);
+    }, ['newSlot', 'oldSlot'],
+    'slotchange event should fire when inserting the ancestor of a default slot element before an existing default slot in the tree order');
+generateTests('<span slot="foo"></span>', '<div><slot name="foo" id="oldSlot"></slot></div>',
+    (shadowRoot) => {
+        const ancestor = document.createElement('div');
+        ancestor.innerHTML = '<span><b><slot id="newSlot" name="foo"></slot></b></span>';
+        addEventListners(ancestor);
+        shadowRoot.prepend(ancestor);
+    }, ['newSlot', 'oldSlot'],
+    'slotchange event should fire when inserting the ancestor of a named slot element before an existing named slot element in the tree order');
+
+generateTests('<span></span>', null,
+    (shadowRoot) => {
+        const ancestor = document.createElement('div');
+        ancestor.innerHTML = '<p><slot id="slot1"></slot><b><slot id="slot2"></slot></b><slot id="slot3"></slot></p>';
+        addEventListners(ancestor);
+        shadowRoot.append(ancestor);
+    }, ['slot1'],
+    'slotchange event should fire on the first default slot inserted in the tree order');
+generateTests('<span slot="foo"></span>', null,
+    (shadowRoot) => {
+        const ancestor = document.createElement('div');
+        ancestor.innerHTML = '<p><slot id="slot1" name="foo"></slot><b><slot id="slot2" name="foo"></slot></b><slot id="slot3" name="foo"></slot></p>';
+        addEventListners(ancestor);
+        shadowRoot.append(ancestor);
+    }, ['slot1'],
+    'slotchange event should fire on the first named slot inserted in the tree order');
+
+generateTests('<span slot="b"></span>', null,
+    (shadowRoot) => {
+        const ancestor = document.createElement('div');
+        ancestor.innerHTML = '<p><slot id="slot1" name="a"></slot><b><slot id="slot2" name="b"></slot></b><slot id="slot3" name="b"></slot></p>';
+        addEventListners(ancestor);
+        shadowRoot.append(ancestor);
+    }, ['slot2'],
+    'slotchange event should fire on the first named slot of the same name inserted in the tree order');
+
+generateTests('<span slot="a"></span><span slot="b"></span>', '<slot id="oldSlot" name="a"></slot><slot></slot>',
+    (shadowRoot) => shadowRoot.prepend(newSlot('a')), ['newSlot', 'oldSlot'],
+    'slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order');
+
+generateTests('<span></span><span slot="a"></span>', '<slot id="oldDefault"></slot><slot id="oldA" name="a"></slot>',
+    (shadowRoot) => {
+        const ancestor = document.createElement('div');
+        ancestor.innerHTML = `<span><slot id="newDefault1"></slot><b><slot id="newDefault2"></slot><slot id="newB" name="b"></slot><slot id="newA" name="a"></slot></b></span>`;
+        addEventListners(ancestor);
+        shadowRoot.prepend(ancestor);
+    }, ['newDefault1', 'newA', 'oldDefault', 'oldA'],
+    'slotchange event should fire on all newly inserted slots with assigned nodes and their previously-first counterparts in the tree order');
+
+generateTests('<span></span><span slot="a"></span>', '<slot id="oldDefault"></slot><slot id="oldA" name="a"></slot><slot id="oldB" name="b"></slot>',
+    (shadowRoot) => {
+        const ancestor = document.createElement('div');
+        ancestor.innerHTML = `<span><slot id="newDefault1"></slot><b><slot id="newDefault2"></slot><slot id="newB" name="b"></slot><slot id="newA" name="a"></slot></b></span>`;
+        addEventListners(ancestor);
+        shadowRoot.prepend(ancestor);
+    }, ['newDefault1', 'newA', 'oldDefault', 'oldA'],
+    'slotchange event should fire on all newly inserted slots with assigned nodes but not on those without in the tree order');
+
+
+// Removals
+
+generateTests(null, '<slot id="oldSlot"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').remove(), [],
+    'slotchange event should not fire when removing a default slot element into a shadow host with no children');
+generateTests(null, '<slot id="oldSlot" name="foo"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').remove(), [],
+    'slotchange event should not fire when removing a named slot element into a shadow host with no children');
+
+generateTests('<span slot="bar"></span>', '<slot id="oldSlot"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').remove(), [],
+    'slotchange event should not fire when removing a default slot element when there is an element assigned to another slot');
+generateTests('<span></span>', '<slot id="oldSlot"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').remove(), ['oldSlot'],
+    'slotchange event should fire when removing a default slot element when there is an element assigned to the default slot');
+generateTests('hello', '<slot id="oldSlot"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').remove(), ['oldSlot'],
+    'slotchange event should fire when removing a default slot element when there is a Text node assigned to the default slot');
+
+generateTests('<span slot="bar"></span>', '<slot id="oldSlot" name="foo"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').remove(), [],
+    'slotchange event should not fire when removing a named slot element when there is an element assigned to another slot');
+generateTests('<span></span>', '<slot id="oldSlot" name="foo"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').remove(), [],
+    'slotchange event should not fire when removing a named slot element when there is an element assigned to the default slot');
+generateTests('<span slot="foo"></span>', '<slot id="oldSlot" name="foo"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').remove(), ['oldSlot'],
+    'slotchange event should fire when removing a named slot element when there is an element assigned to the slot');
+generateTests('hello', '<slot id="oldSlot" name="foo"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').remove(), [],
+    'slotchange event should not fire when removing a named slot element when there is a Text node assigned to the default slot');
+
+generateTests('<span></span>', '<slot id="slot1"></slot><slot id="slot2"></slot>',
+    (shadowRoot) => shadowRoot.getElementById('slot2').remove(), [],
+    'slotchange event should not fire when removing a default slot element after an existing default slot');
+generateTests('<span></span>', '<slot id="slot1"></slot><slot id="slot2"></slot>',
+    (shadowRoot) => shadowRoot.getElementById('slot1').remove(), ['slot2', 'slot1'],
+    'slotchange event should fire when removing the first default slot element even if it had duplicates');
+generateTests('<span></span>', '<slot id="slot1"><slot id="slot2"></slot></slot><slot id="slot3"></slot>',
+    (shadowRoot) => shadowRoot.getElementById('slot2').remove(), [],
+    'slotchange event should not fire when removing a duplicate default slot, which is the first child of a default slot element');
+
+generateTests('<span slot="foo"></span>', '<slot id="slot1" name="foo"></slot><slot id="slot2" name="foo"></slot>',
+    (shadowRoot) => shadowRoot.getElementById('slot2').remove(), [],
+    'slotchange event should not fire when removing a named slot element after an existing named slot of the same name');
+generateTests('<span slot="foo"></span>', '<slot id="slot1" name="foo"></slot><slot id="slot2" name="foo"></slot>',
+    (shadowRoot) => shadowRoot.getElementById('slot1').remove(), ['slot2', 'slot1'],
+    'slotchange event should fire when removing the first named slot element even if it had duplicates');
+generateTests('<span slot="foo"></span>', '<slot id="slot1" name="foo"><slot id="slot2" name="foo"></slot></slot><slot id="slot3" name="foo"></slot>',
+    (shadowRoot) => shadowRoot.getElementById('slot2').remove(), [],
+    'slotchange event should not fire when removing a duplicate named slot, which is the first child of a named slot element of the same name');
+
+generateTests('<span></span>', '<div><span><b><slot id="slot1"></slot></b></span></div><slot id="slot2"></slot>',
+    (shadowRoot) => shadowRoot.querySelector('div').remove(), ['slot2', 'slot1'],
+    'slotchange event should fire when removing the ancestor of a default slot element before another default slot in the tree order');
+generateTests('<span></span>', '<div><span><b><slot id="slot1"></slot></b></span></div><slot id="slot2"></slot>',
+    (shadowRoot) => shadowRoot.querySelector('div').remove(), ['slot2', 'slot1'],
+    'slotchange event should fire when removing the ancestor of a named slot element before another slot of the same name in the tree order');
+
+generateTests('<span></span>', '<div><p><slot id="slot1"></slot><b><slot id="slot2"></slot></b><slot id="slot3"></slot></p></div>',
+    (shadowRoot) => shadowRoot.querySelector('p').remove(), ['slot1'],
+    'slotchange event should fire on the first default slot removed in the tree order');
+generateTests('<span slot="foo"></span>',
+    '<div><p><slot id="slot1" name="foo"></slot><b><slot id="slot2" name="foo"></slot></b><slot id="slot3" name="foo"></slot></p></div>',
+    (shadowRoot) => shadowRoot.querySelector('p').remove(), ['slot1'],
+    'slotchange event should fire on the first named slot removed in the tree order');
+
+generateTests('<span></span>', '<div><p><slot id="slot1"></slot><b><slot id="slot2"></slot></b><slot id="slot3"></slot></p></div>',
+    (shadowRoot) => shadowRoot.querySelector('p').textContent = '', ['slot1'],
+    'slotchange event should fire on the first default slot removed in the tree order when replacing all children');
+
+generateTests('<span></span>', '<div><p><slot id="slot1"></slot><b><slot id="slot2"></slot></b><slot id="slot3"></slot></p></div>',
+    (shadowRoot) => shadowRoot.querySelector('p').textContent = '', ['slot1'],
+    'slotchange event should fire on the first default slot removed in the tree order when replacing all children');
+
+generateTests('<span slot="b"></span>',
+    '<p><slot id="slot1" name="a"></slot><b><slot id="slot2" name="b"></slot></b><slot id="slot3" name="b"></slot></p>',
+    (shadowRoot) => shadowRoot.querySelector('p').remove(), ['slot2'],
+    'slotchange event should fire on the first named slot of the same name removed in the tree order');
+
+generateTests('<span slot="a"></span><span slot="b"></span>', '<slot id="a1" name="a"></slot><slot id="a2" name="a"></slot><slot></slot>',
+    (shadowRoot) => shadowRoot.getElementById('a1').remove(), ['a2', 'a1'],
+    'slotchange event should fire when inserting a named slot element before an existing slot of the same name before a default slot in the tree order');
+
+generateTests('<span></span><span slot="a"></span>', '<span><slot id="default1"></slot><b><slot id="b1" name="b"></slot>'
+    + '<slot id="a1" name="a"></slot></b></span><slot id="default2"></slot><slot id="a2" name="a"></slot>',
+    (shadowRoot) => shadowRoot.querySelector('span').remove(), ['default2', 'a2', 'default1', 'a1'],
+    'slotchange event should fire on all first slots of its kind with assigned nodes and their previously-first counterparts in the tree order');
+
+generateTests('<span></span><span slot="a"></span>', '<span><slot id="default1"></slot><b><slot id="default2"></slot>'
+    + '<slot id="b1" name="b"></slot><slot id="a1" name="a"></slot></b></span>'
+    + '<slot id="default3"></slot><slot id="a2" name="a"></slot><slot id="b2" name="b"></slot>',
+    (shadowRoot) => shadowRoot.querySelector('span').remove(), ['default3', 'a2', 'default1', 'a1'],
+    'slotchange event should fire on all removed slots with assigned nodes but not on those without in the tree order');
+
+// Changing the name
+
+generateTests(null, '<slot id="slot"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').name = 'foo', [],
+    'slotchange event should not fire when renaming a default slot element to a named slot when there are no assigned nodes');
+generateTests('<span slot="foo"></span>', '<slot id="slot"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').name = 'foo', ['slot'],
+    'slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the named slot');
+generateTests('hello', '<slot id="slot"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').name = 'foo', ['slot'],
+    'slotchange event should fire when renaming a default slot element to a named slot when there is an assigned node to the default slot');
+
+generateTests(null, '<slot id="slot" name="foo"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').name = null, [],
+    'slotchange event should not fire when renaming a named slot element to a default slot when there are no assigned nodes');
+generateTests('<span></span>', '<slot id="slot" name="foo"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').name = '', ['slot'],
+    'slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the default slot');
+generateTests('<span slot="foo"></span>', '<slot id="slot" name="foo"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').name = '', ['slot'],
+    'slotchange event should fire when renaming a named slot element to a default slot when there is a node assigned to the named slot');
+
+generateTests(null, '<slot id="slot" name="foo"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').name = 'bar', [],
+    'slotchange event should not fire when renaming a named slot element when there are no assigned nodes');
+generateTests('<span slot="bar"></span>', '<slot id="slot" name="foo"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').name = 'bar', ['slot'],
+    'slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the new name');
+generateTests('<span slot="foo"></span>', '<slot id="slot" name="foo"></slot>', (shadowRoot) => shadowRoot.querySelector('slot').name = 'bar', ['slot'],
+    'slotchange event should fire when renaming a named slot element when there is an assigned node to the slot of the old name');
+
+generateTests('<span slot="foo"></span>', '<slot id="slot1" name="foo"></slot><slot id="slot2" name="foo"></slot>',
+    (shadowRoot) => shadowRoot.getElementById('slot2').name = 'bar', [],
+    'slotchange event should not fire when renaming the second slot element of a given name and there is no assigned node of the new name');
+generateTests('<span slot="foo"></span>', '<slot id="slot1" name="foo"></slot><slot id="slot2" name="foo"></slot>',
+    (shadowRoot) => shadowRoot.getElementById('slot1').name = 'bar', ['slot1', 'slot2'],
+    'slotchange event should fire when renaming the slot element of a given name and there is an assigned node and a second slot element');
+
+generateTests('<span slot="foo"></span><span slot="bar"></span>',
+    '<slot id="slot1" name="foo"></slot><slot id="slot2" name="bar"></slot><slot id="slot3" name="foo"></slot>',
+    (shadowRoot) => shadowRoot.getElementById('slot1').name = 'bar', ['slot1', 'slot2', 'slot3'],
+    'slotchange event should fire on all three slot elements whose assigned nodes were affected in the tree order when renaming a slot element');
+
+generateTests('<span slot="bar"></span>', '<slot id="slot1" name="foo"></slot><slot id="slot2" name="bar"></slot><slot id="slot3" name="foo"></slot>',
+    (shadowRoot) => shadowRoot.getElementById('slot1').name = 'bar', ['slot1', 'slot2'],
+    'slotchange event should fire on slot elements with assigned nodes in the tree order when renaming a slot element but not on those without');
+
+generateTests('<span slot="foo"></span><span slot="bar"></span>',
+    '<slot id="slot1" name="foo"></slot><slot id="slot2" name="bar"></slot><slot id="slot3" name="foo"></slot>',
+    (shadowRoot) => shadowRoot.getElementById('slot2').name = 'foo', ['slot2'],
+    'slotchange event should only fire on the renamed slot when there is another slot with the same name earlier in the tree');
+
+</script>
+</body>
+</html>

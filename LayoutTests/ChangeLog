@@ -1,3 +1,25 @@
+2018-09-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        slotchange event doesn't get fired when inserting, removing, or renaming slot elements
+        https://bugs.webkit.org/show_bug.cgi?id=189144
+        <rdar://problem/43871061>
+
+        Reviewed by Antti Koivisto.
+
+        Added a W3C style testharness.js test for inserting, removing, and renaming slot elements.
+
+        It has 62 distinct test cases for closed/open shadow roots in connected and disconnected trees
+        for the total of 248 test cases.
+
+        This test presumes the resolution of https://github.com/w3c/webcomponents/issues/764 in our favor.
+
+        Chrome fails 48 test cases because it doesn't follow the tree order when dispatching slotchange event
+        on the previously first slot element, and Firefox fails 84 test cases because it fails to fire slotchange
+        in the tree order when a node is inserted.
+
+        * fast/shadow-dom/slotchange-for-slot-mutation-expected.txt: Added.
+        * fast/shadow-dom/slotchange-for-slot-mutation.html: Added.
+
 2018-09-04  Simon Fraser  <simon.fraser@apple.com>
 
         CSS reference filter that references a tiled feTurbulence is blank

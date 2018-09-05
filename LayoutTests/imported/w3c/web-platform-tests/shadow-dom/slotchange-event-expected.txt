@@ -1,9 +1,3 @@
-CONSOLE MESSAGE: line 2659: Error: assert_equals: slotchange must not be fired on a slot element if the assigned nodes changed after the slot was removed expected 2 but got 0
-CONSOLE MESSAGE: line 2659: Error: assert_equals: slotchange must not be fired on a slot element if the assigned nodes changed after the slot was removed expected 2 but got 0
-CONSOLE MESSAGE: line 2659: Error: assert_equals: slotchange must not be fired on a slot element if the assigned nodes changed after the slot was removed expected 2 but got 0
-CONSOLE MESSAGE: line 2659: Error: assert_equals: slotchange must not be fired on a slot element if the assigned nodes changed after the slot was removed expected 2 but got 0
-
-Harness Error (FAIL), message = Error: assert_equals: slotchange must not be fired on a slot element if the assigned nodes changed after the slot was removed expected 2 but got 0
 
 PASS slotchange event must fire on a default slot element inside an open shadow root  in a document 
 PASS slotchange event must fire on a default slot element inside a closed shadow root  in a document 
@@ -17,10 +11,10 @@ PASS slotchange event must not fire on a slot element inside an open shadow root
 PASS slotchange event must not fire on a slot element inside a closed shadow root  in a document when another slot's assigned nodes change 
 PASS slotchange event must not fire on a slot element inside an open shadow root  not in a document when another slot's assigned nodes change 
 PASS slotchange event must not fire on a slot element inside a closed shadow root  not in a document when another slot's assigned nodes change 
-FAIL slotchange event must fire on a slot element when a shadow host has a slotable and the slot was inserted and must not fire when the shadow host was mutated after the slot was removed inside an open shadow root  in a document assert_equals: slotchange must be fired on a slot element if there is assigned nodes when the slot was inserted expected 1 but got 0
-FAIL slotchange event must fire on a slot element when a shadow host has a slotable and the slot was inserted and must not fire when the shadow host was mutated after the slot was removed inside a closed shadow root  in a document assert_equals: slotchange must be fired on a slot element if there is assigned nodes when the slot was inserted expected 1 but got 0
-FAIL slotchange event must fire on a slot element when a shadow host has a slotable and the slot was inserted and must not fire when the shadow host was mutated after the slot was removed inside an open shadow root  not in a document assert_equals: slotchange must be fired on a slot element if there is assigned nodes when the slot was inserted expected 1 but got 0
-FAIL slotchange event must fire on a slot element when a shadow host has a slotable and the slot was inserted and must not fire when the shadow host was mutated after the slot was removed inside a closed shadow root  not in a document assert_equals: slotchange must be fired on a slot element if there is assigned nodes when the slot was inserted expected 1 but got 0
+PASS slotchange event must fire on a slot element when a shadow host has a slotable and the slot was inserted and must not fire when the shadow host was mutated after the slot was removed inside an open shadow root  in a document 
+PASS slotchange event must fire on a slot element when a shadow host has a slotable and the slot was inserted and must not fire when the shadow host was mutated after the slot was removed inside a closed shadow root  in a document 
+PASS slotchange event must fire on a slot element when a shadow host has a slotable and the slot was inserted and must not fire when the shadow host was mutated after the slot was removed inside an open shadow root  not in a document 
+PASS slotchange event must fire on a slot element when a shadow host has a slotable and the slot was inserted and must not fire when the shadow host was mutated after the slot was removed inside a closed shadow root  not in a document 
 PASS slotchange event must fire on a slot element inside an open shadow root  in a document even if the slot was removed immediately after the assigned nodes were mutated 
 PASS slotchange event must fire on a slot element inside a closed shadow root  in a document even if the slot was removed immediately after the assigned nodes were mutated 
 PASS slotchange event must fire on a slot element inside an open shadow root  not in a document even if the slot was removed immediately after the assigned nodes were mutated 
@@ -29,10 +23,10 @@ PASS slotchange event must fire on a slot element inside an open shadow root  in
 PASS slotchange event must fire on a slot element inside a closed shadow root  in a document when innerHTML modifies the children of the shadow host 
 PASS slotchange event must fire on a slot element inside an open shadow root  not in a document when innerHTML modifies the children of the shadow host 
 PASS slotchange event must fire on a slot element inside a closed shadow root  not in a document when innerHTML modifies the children of the shadow host 
-FAIL slotchange event must fire on a slot element inside an open shadow root  in a document when nested slots's contents change assert_equals: slotchange event's target must be the inner slot element at 1st slotchange expected Element node <slot></slot> but got Element node <slot></slot>
-FAIL slotchange event must fire on a slot element inside a closed shadow root  in a document when nested slots's contents change assert_equals: slotchange event's target must be the inner slot element at 1st slotchange expected Element node <slot></slot> but got Element node <slot></slot>
-FAIL slotchange event must fire on a slot element inside an open shadow root  not in a document when nested slots's contents change assert_equals: slotchange event's target must be the inner slot element at 1st slotchange expected Element node <slot></slot> but got Element node <slot></slot>
-FAIL slotchange event must fire on a slot element inside a closed shadow root  not in a document when nested slots's contents change assert_equals: slotchange event's target must be the inner slot element at 1st slotchange expected Element node <slot></slot> but got Element node <slot></slot>
+PASS slotchange event must fire on a slot element inside an open shadow root  in a document when nested slots's contents change 
+PASS slotchange event must fire on a slot element inside a closed shadow root  in a document when nested slots's contents change 
+PASS slotchange event must fire on a slot element inside an open shadow root  not in a document when nested slots's contents change 
+PASS slotchange event must fire on a slot element inside a closed shadow root  not in a document when nested slots's contents change 
 PASS slotchange event must fire at the end of current microtask after mutation observers are invoked inside an open shadow root  in a document when slots's contents change 
 PASS slotchange event must fire at the end of current microtask after mutation observers are invoked inside a closed shadow root  in a document when slots's contents change 
 PASS slotchange event must fire at the end of current microtask after mutation observers are invoked inside an open shadow root  not in a document when slots's contents change 

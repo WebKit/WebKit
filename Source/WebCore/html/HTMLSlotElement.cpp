@@ -69,7 +69,7 @@ void HTMLSlotElement::removedFromAncestor(RemovalType removalType, ContainerNode
     if (removalType.treeScopeChanged && oldParentOfRemovedTree.isInShadowTree()) {
         auto* oldShadowRoot = oldParentOfRemovedTree.containingShadowRoot();
         ASSERT(oldShadowRoot);
-        oldShadowRoot->removeSlotElementByName(attributeWithoutSynchronization(nameAttr), *this);
+        oldShadowRoot->removeSlotElementByName(attributeWithoutSynchronization(nameAttr), *this, oldParentOfRemovedTree);
     }
 
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
@@ -90,10 +90,8 @@ void HTMLSlotElement::attributeChanged(const QualifiedName& name, const AtomicSt
     HTMLElement::attributeChanged(name, oldValue, newValue, reason);
 
     if (isInShadowTree() && name == nameAttr) {
-        if (auto shadowRoot = makeRefPtr(containingShadowRoot())) {
-            shadowRoot->removeSlotElementByName(oldValue, *this);
-            shadowRoot->addSlotElementByName(newValue, *this);
-        }
+        if (auto shadowRoot = makeRefPtr(containingShadowRoot()))
+            shadowRoot->renameSlotElement(*this, oldValue, newValue);
     }
 }
 

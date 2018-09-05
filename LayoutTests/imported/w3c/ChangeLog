@@ -1,3 +1,15 @@
+2018-09-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        slotchange event doesn't get fired when inserting, removing, or renaming slot elements
+        https://bugs.webkit.org/show_bug.cgi?id=189144
+        <rdar://problem/43871061>
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/shadow-dom/slotchange-customelements-expected.txt:
+        * web-platform-tests/shadow-dom/slotchange-event-expected.txt:
+        * web-platform-tests/shadow-dom/slotchange-expected.txt:
+
 2018-09-04  Rob Buis  <rbuis@igalia.com>
 
         Adjust XMLHttpRequest username/password precedence rules

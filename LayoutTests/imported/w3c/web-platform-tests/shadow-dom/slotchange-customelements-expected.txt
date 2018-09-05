@@ -1,3 +1,3 @@
 
-FAIL slotchange must fire on initialization of custom elements with slotted children assert_true: expected true got false
+PASS slotchange must fire on initialization of custom elements with slotted children 
 

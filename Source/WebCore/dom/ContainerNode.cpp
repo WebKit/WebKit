@@ -59,6 +59,7 @@
 #include "SVGUseElement.h"
 #include "ScriptDisallowedScope.h"
 #include "SelectorQuery.h"
+#include "SlotAssignment.h"
 #include "TemplateContentDocumentFragment.h"
 #include <algorithm>
 #include <wtf/IsoMallocInlines.h>
@@ -103,6 +104,9 @@ ALWAYS_INLINE NodeVector ContainerNode::removeAllChildrenWithScriptAssertion(Chi
 
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
+    if (UNLIKELY(isShadowRoot() || isInShadowTree()))
+        containingShadowRoot()->willRemoveAllChildren(*this);
 
     document().nodeChildrenWillBeRemoved(*this);
 
@@ -150,6 +154,9 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
+        if (UNLIKELY(isShadowRoot() || isInShadowTree()))
+            containingShadowRoot()->resolveSlotsBeforeNodeInsertionOrRemoval();
+
         document().nodeWillBeRemoved(childToRemove);
 
         ASSERT_WITH_SECURITY_IMPLICATION(childToRemove.parentNode() == this);
@@ -181,6 +188,10 @@ static ALWAYS_INLINE void executeNodeInsertionWithScriptAssertion(ContainerNode&
     NodeVector postInsertionNotificationTargets;
     {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
+        if (UNLIKELY(containerNode.isShadowRoot() || containerNode.isInShadowTree()))
+            containerNode.containingShadowRoot()->resolveSlotsBeforeNodeInsertionOrRemoval();
+
         doNodeInsertion();
         ChildListMutationScope(containerNode).childAdded(child);
         postInsertionNotificationTargets = notifyChildNodeInserted(containerNode, child);
