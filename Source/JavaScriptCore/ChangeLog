@@ -1,3 +1,18 @@
+2018-09-05  Mark Lam  <mark.lam@apple.com>
+
+        JSPropertyNameEnumerator::visitChildren() needs to visit its m_cachedStructureID.
+        https://bugs.webkit.org/show_bug.cgi?id=189124
+        <rdar://problem/43863605>
+
+        Reviewed by Filip Pizlo.
+
+        It is assumed that the Structure for the m_cachedStructureID will remain alive
+        while the m_cachedStructureID is in use.  This prevents the structureID from being
+        re-used for a different Structure.
+
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::visitChildren):
+
 2018-09-05  Ross Kirsling  <ross.kirsling@sony.com>
 
         [ESNext] Symbol.prototype.description
