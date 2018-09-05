@@ -27,6 +27,7 @@
 
 #import "DragAndDropSimulator.h"
 #import "PlatformUtilities.h"
+#import <WebKit/WKPreferencesPrivate.h>
 
 #if WK_API_ENABLED && ENABLE(DRAG_SUPPORT)
 
@@ -47,6 +48,7 @@ TEST(DragAndDropTests, ExposeMultipleURLsInDataTransfer)
 {
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:CGRectMake(0, 0, 320, 500)]);
     auto webView = [simulator webView];
+    WKPreferencesSetCustomPasteboardDataEnabled((WKPreferencesRef)[webView configuration].preferences, true);
     [webView synchronouslyLoadTestPageNamed:@"DataTransfer"];
 
     NSString *stringData = @"Hello world";
