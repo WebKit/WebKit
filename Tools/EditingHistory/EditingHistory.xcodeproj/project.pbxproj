@@ -45,8 +45,6 @@
 		516ADBF21DE157AD00E2B98D /* RewindAndPlaybackTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RewindAndPlaybackTests.m; sourceTree = "<group>"; };
 		516ADBF41DE157AD00E2B98D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		517FD93B1DE18DC900A73673 /* DOMTestingUtil.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = DOMTestingUtil.js; path = EditingHistory/Resources/DOMTestingUtil.js; sourceTree = SOURCE_ROOT; };
-		51D3947E1DF2541D00ABE875 /* DumpEditingHistory.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = DumpEditingHistory.js; path = ../../Source/WebCore/InternalScripts/DumpEditingHistory.js; sourceTree = SOURCE_ROOT; };
-		51D3947F1DF2541D00ABE875 /* EditingHistoryUtil.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = EditingHistoryUtil.js; path = ../../Source/WebCore/InternalScripts/EditingHistoryUtil.js; sourceTree = SOURCE_ROOT; };
 		F4BFB9871E1DE82D00862C24 /* DumpEditingHistory.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = DumpEditingHistory.js; path = ../../Source/WebCore/Scripts/DumpEditingHistory.js; sourceTree = "<group>"; };
 		F4BFB9881E1DE82D00862C24 /* EditingHistoryUtil.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = EditingHistoryUtil.js; path = ../../Source/WebCore/Scripts/EditingHistoryUtil.js; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -102,15 +100,12 @@
 				516ADBB71DE155BD00E2B98D /* WKWebViewAdditions.m */,
 				512D7AB51DE0FC590028F0E6 /* Resources */,
 			);
-			name = EditingHistory;
-			path = EditingHistoryTest;
+			path = EditingHistory;
 			sourceTree = "<group>";
 		};
 		512D7AB51DE0FC590028F0E6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				51D3947E1DF2541D00ABE875 /* DumpEditingHistory.js */,
-				51D3947F1DF2541D00ABE875 /* EditingHistoryUtil.js */,
 				517FD93B1DE18DC900A73673 /* DOMTestingUtil.js */,
 				516ADBA81DE155AB00E2B98D /* CaptureHarness.html */,
 				516ADBAB1DE155AB00E2B98D /* PlaybackHarness.html */,

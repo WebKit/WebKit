@@ -1,5 +1,21 @@
 2018-09-05  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r209470): EditingHistory folder is missing in EditingHistory Xcode project
+
+        Found using `tidy-Xcode-project-file --missing` (see Bug
+        188754).  Fixes were made manually.
+
+        * EditingHistory/EditingHistory.xcodeproj/project.pbxproj:
+        (EditingHistory): Change the path of the folder to
+        "EditingHistory", then remove the now-redundant name.
+        (EditingHistory/Resources/DumpEditingHistory.js): Remove
+        redundant file reference since another file reference exists at
+        the top of the project file list, and that file reference is the
+        one used in the "Copy Bundle Resources" build phase.
+        (EditingHistory/Resources/EditingHistoryUtil.js): Ditto.
+
+2018-09-05  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r160736): Bundle folder is missing in MiniBrowser Xcode project
 
         Found using `tidy-Xcode-project-file --missing` (see Bug
