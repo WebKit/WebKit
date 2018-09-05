@@ -194,9 +194,10 @@ void LibWebRTCMediaEndpoint::doSetRemoteDescription(RTCSessionDescription& descr
     startLoggingStats();
 }
 
-bool LibWebRTCMediaEndpoint::addTrack(RTCRtpSender& sender, MediaStreamTrack& track, const Vector<String>& mediaStreamIds)
+bool LibWebRTCMediaEndpoint::addTrack(LibWebRTCRtpSenderBackend& sender, MediaStreamTrack& track, const Vector<String>& mediaStreamIds)
 {
     ASSERT(m_backend);
+    ASSERT(!sender.rtcSender());
 
     if (!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled()) {
         String mediaStreamId = mediaStreamIds.isEmpty() ? createCanonicalUUIDString() : mediaStreamIds[0];
@@ -217,18 +218,20 @@ bool LibWebRTCMediaEndpoint::addTrack(RTCRtpSender& sender, MediaStreamTrack& tr
         auto audioTrack = m_peerConnectionFactory.CreateAudioTrack(track.id().utf8().data(), trackSource.ptr());
         m_peerConnectionBackend.addAudioSource(WTFMove(trackSource));
         auto rtpSender = m_backend->AddTrack(audioTrack.get(), WTFMove(ids));
-        if (rtpSender.ok())
-            m_senders.add(&sender, rtpSender.MoveValue());
-        return rtpSender.ok();
+        if (!rtpSender.ok())
+            return false;
+        sender.setRTCSender(rtpSender.MoveValue());
+        return true;
     }
     case RealtimeMediaSource::Type::Video: {
         auto videoSource = RealtimeOutgoingVideoSource::create(track.privateTrack());
         auto videoTrack = m_peerConnectionFactory.CreateVideoTrack(track.id().utf8().data(), videoSource.ptr());
         m_peerConnectionBackend.addVideoSource(WTFMove(videoSource));
         auto rtpSender = m_backend->AddTrack(videoTrack.get(), WTFMove(ids));
-        if (rtpSender.ok())
-            m_senders.add(&sender, rtpSender.MoveValue());
-        return rtpSender.ok();
+        if (!rtpSender.ok())
+            return false;
+        sender.setRTCSender(rtpSender.MoveValue());
+        return true;
     }
     case RealtimeMediaSource::Type::None:
         ASSERT_NOT_REACHED();
@@ -236,46 +239,10 @@ bool LibWebRTCMediaEndpoint::addTrack(RTCRtpSender& sender, MediaStreamTrack& tr
     return false;
 }
 
-void LibWebRTCMediaEndpoint::removeTrack(RTCRtpSender& sender)
+void LibWebRTCMediaEndpoint::removeTrack(LibWebRTCRtpSenderBackend& sender)
 {
     ASSERT(m_backend);
-
-    auto rtcSender = m_senders.get(&sender);
-    if (!rtcSender)
-        return;
-    m_backend->RemoveTrack(rtcSender.get());
-}
-
-bool LibWebRTCMediaEndpoint::shouldOfferAllowToReceiveAudio() const
-{
-    ASSERT(!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled());
-    for (const auto& transceiver : m_peerConnectionBackend.connection().getTransceivers()) {
-        if (transceiver->sender().trackKind() != "audio")
-            continue;
-
-        if (transceiver->direction() == RTCRtpTransceiverDirection::Recvonly)
-            return true;
-
-        if (transceiver->direction() == RTCRtpTransceiverDirection::Sendrecv && !m_senders.contains(&transceiver->sender()))
-            return true;
-    }
-    return false;
-}
-
-bool LibWebRTCMediaEndpoint::shouldOfferAllowToReceiveVideo() const
-{
-    ASSERT(!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled());
-    for (const auto& transceiver : m_peerConnectionBackend.connection().getTransceivers()) {
-        if (transceiver->sender().trackKind() != "video")
-            continue;
-
-        if (transceiver->direction() == RTCRtpTransceiverDirection::Recvonly)
-            return true;
-
-        if (transceiver->direction() == RTCRtpTransceiverDirection::Sendrecv && !m_senders.contains(&transceiver->sender()))
-            return true;
-    }
-    return false;
+    m_backend->RemoveTrack(sender.rtcSender());
 }
 
 void LibWebRTCMediaEndpoint::doCreateOffer(const RTCOfferOptions& options)
@@ -288,9 +255,9 @@ void LibWebRTCMediaEndpoint::doCreateOffer(const RTCOfferOptions& options)
     rtcOptions.voice_activity_detection = options.voiceActivityDetection;
 
     if (!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled()) {
-        if (shouldOfferAllowToReceiveAudio())
+        if (m_peerConnectionBackend.shouldOfferAllowToReceive("audio"_s))
             rtcOptions.offer_to_receive_audio = webrtc::PeerConnectionInterface::RTCOfferAnswerOptions::kOfferToReceiveMediaTrue;
-        if (shouldOfferAllowToReceiveVideo())
+        if (m_peerConnectionBackend.shouldOfferAllowToReceive("video"_s))
             rtcOptions.offer_to_receive_video = webrtc::PeerConnectionInterface::RTCOfferAnswerOptions::kOfferToReceiveMediaTrue;
     }
     m_backend->CreateOffer(&m_createSessionDescriptionObserver, rtcOptions);
@@ -470,7 +437,6 @@ void LibWebRTCMediaEndpoint::stop()
     m_backend->Close();
     m_backend = nullptr;
     m_streams.clear();
-    m_senders.clear();
 }
 
 void LibWebRTCMediaEndpoint::OnRenegotiationNeeded()
@@ -612,14 +578,6 @@ void LibWebRTCMediaEndpoint::setRemoteSessionDescriptionFailed(const std::string
             return;
         protectedThis->m_peerConnectionBackend.setRemoteDescriptionFailed(Exception { OperationError, WTFMove(error) });
     });
-}
-
-RTCRtpParameters LibWebRTCMediaEndpoint::getRTCRtpSenderParameters(RTCRtpSender& sender)
-{
-    auto rtcSender = m_senders.get(&sender);
-    if (!rtcSender)
-        return { };
-    return fillRtpParameters(rtcSender->GetParameters());
 }
 
 void LibWebRTCMediaEndpoint::gatherStatsForLogging()

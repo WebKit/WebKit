@@ -50,10 +50,12 @@ public:
     {
     }
 
-private:
     void setRTCSender(rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender) { m_rtcSender = WTFMove(rtcSender); }
+    webrtc::RtpSenderInterface* rtcSender() { return m_rtcSender.get(); }
+
+private:
     void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) final;
-    RTCRtpParameters getParameters(RTCRtpSender&) const final;
+    RTCRtpParameters getParameters() const final;
 
     WeakPtr<LibWebRTCPeerConnectionBackend> m_peerConnectionBackend;
     rtc::scoped_refptr<webrtc::RtpSenderInterface> m_rtcSender;

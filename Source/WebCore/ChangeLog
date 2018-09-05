@@ -1,3 +1,51 @@
+2018-09-04  Youenn Fablet  <youenn@apple.com>
+
+        Make LibWebRTCRtpSenderBackend own its libwebrtc RTP sender backend
+        https://bugs.webkit.org/show_bug.cgi?id=189270
+
+        Reviewed by Eric Carlson.
+
+        Previously, the libwebrtc senders were owned in LibWebRTCMediaEndpoint.
+        This patch makes them be owned by LibWebRTCRtpSenderBackend.
+        This simplifies the implementation of RTCRtpSender::getParameters.
+        This will help simplify the implementation of RTCRtpSender::replaceTrack.
+
+        removeTrack is also refactored so that LibWebRTCMediaEndpoint directly uses libwebrtc constructs and not WebCore libwebrtc-agnostic ones.
+
+        No change of behavior.
+
+        * Modules/mediastream/PeerConnectionBackend.h:
+        (WebCore::PeerConnectionBackend::removeTrack):
+        (WebCore::PeerConnectionBackend::notifyRemovedTrack): Deleted.
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::removeTrack):
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::getParameters):
+        * Modules/mediastream/RTCRtpSender.h:
+        (WebCore::RTCRtpSender::backend):
+        * Modules/mediastream/RTCRtpSenderBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::addTrack):
+        (WebCore::LibWebRTCMediaEndpoint::removeTrack):
+        (WebCore::LibWebRTCMediaEndpoint::doCreateOffer):
+        (WebCore::LibWebRTCMediaEndpoint::stop):
+        (WebCore::LibWebRTCMediaEndpoint::shouldOfferAllowToReceiveAudio const): Deleted.
+        (WebCore::LibWebRTCMediaEndpoint::shouldOfferAllowToReceiveVideo const): Deleted.
+        (WebCore::LibWebRTCMediaEndpoint::getRTCRtpSenderParameters): Deleted.
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::backendFromRTPSender):
+        (WebCore::LibWebRTCPeerConnectionBackend::addTrack):
+        (WebCore::LibWebRTCPeerConnectionBackend::addTransceiver):
+        (WebCore::LibWebRTCPeerConnectionBackend::removeTrack):
+        (WebCore::LibWebRTCPeerConnectionBackend::shouldOfferAllowToReceive const):
+        (WebCore::LibWebRTCPeerConnectionBackend::notifyRemovedTrack): Deleted.
+        (WebCore::LibWebRTCPeerConnectionBackend::getParameters const): Deleted.
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        (WebCore::LibWebRTCRtpSenderBackend::getParameters const):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.h:
+
 2018-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Populate "text/uri-list" with multiple URLs when the pasteboard contains multiple URLs

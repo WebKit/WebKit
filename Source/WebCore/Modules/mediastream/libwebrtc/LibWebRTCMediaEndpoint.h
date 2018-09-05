@@ -61,6 +61,7 @@ namespace WebCore {
 
 class LibWebRTCProvider;
 class LibWebRTCPeerConnectionBackend;
+class LibWebRTCRtpSenderBackend;
 class MediaStreamTrack;
 class RTCSessionDescription;
 
@@ -97,9 +98,8 @@ public:
     RefPtr<RTCSessionDescription> pendingLocalDescription() const;
     RefPtr<RTCSessionDescription> pendingRemoteDescription() const;
 
-    bool addTrack(RTCRtpSender&, MediaStreamTrack&, const Vector<String>&);
-    void removeTrack(RTCRtpSender&);
-    RTCRtpParameters getRTCRtpSenderParameters(RTCRtpSender&);
+    bool addTrack(LibWebRTCRtpSenderBackend&, MediaStreamTrack&, const Vector<String>&);
+    void removeTrack(LibWebRTCRtpSenderBackend&);
 
 private:
     LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend&, LibWebRTCProvider&);
@@ -142,9 +142,6 @@ private:
         : rtc::RefCountReleaseStatus::kDroppedLastRef;
     }
 
-    bool shouldOfferAllowToReceiveAudio() const;
-    bool shouldOfferAllowToReceiveVideo() const;
-
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
@@ -167,7 +164,6 @@ private:
     SetRemoteSessionDescriptionObserver<LibWebRTCMediaEndpoint> m_setRemoteSessionDescriptionObserver;
 
     HashMap<webrtc::MediaStreamInterface*, RefPtr<MediaStream>> m_streams;
-    HashMap<RTCRtpSender*, rtc::scoped_refptr<webrtc::RtpSenderInterface>> m_senders;
 
     bool m_isInitiator { false };
     Timer m_statsLogTimer;

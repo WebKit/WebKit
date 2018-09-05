@@ -56,7 +56,8 @@ public:
     bool hasVideoSources() const { return m_videoSources.size(); }
 
     void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&);
-    RTCRtpParameters getParameters(RTCRtpSender&) const;
+
+    bool shouldOfferAllowToReceive(const char*) const;
 
 private:
     void doCreateOffer(RTCOfferOptions&&) final;
@@ -90,7 +91,7 @@ private:
     void getStatsSucceeded(const DeferredPromise&, Ref<RTCStatsReport>&&);
 
     ExceptionOr<Ref<RTCRtpSender>> addTrack(RTCRtpSender*, MediaStreamTrack&, const Vector<String>&) final;
-    void notifyRemovedTrack(RTCRtpSender&) final;
+    void removeTrack(RTCRtpSender&) final;
 
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(const String&, const RTCRtpTransceiverInit&) final;
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&) final;

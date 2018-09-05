@@ -96,7 +96,7 @@ RTCRtpParameters RTCRtpSender::getParameters()
 {
     if (isStopped())
         return { };
-    return m_backend->getParameters(*this);
+    return m_backend->getParameters();
 }
 
 } // namespace WebCore

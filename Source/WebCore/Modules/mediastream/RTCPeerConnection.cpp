@@ -157,9 +157,8 @@ ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)
     if (shouldAbort)
         return { };
 
+    m_backend->removeTrack(sender);
     sender.stop();
-
-    m_backend->notifyRemovedTrack(sender);
     return { };
 }
 

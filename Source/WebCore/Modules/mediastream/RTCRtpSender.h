@@ -57,6 +57,7 @@ public:
     void replaceTrack(RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&);
 
     RTCRtpParameters getParameters();
+    RTCRtpSenderBackend* backend() { return m_backend.get(); }
 
 private:
     RTCRtpSender(String&& trackKind, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&&);

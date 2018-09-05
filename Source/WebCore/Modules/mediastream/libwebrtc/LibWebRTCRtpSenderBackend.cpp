@@ -49,14 +49,11 @@ void LibWebRTCRtpSenderBackend::replaceTrack(RTCRtpSender& sender, RefPtr<MediaS
     m_peerConnectionBackend->replaceTrack(sender, WTFMove(track), WTFMove(promise));
 }
 
-RTCRtpParameters LibWebRTCRtpSenderBackend::getParameters(RTCRtpSender& sender) const
+RTCRtpParameters LibWebRTCRtpSenderBackend::getParameters() const
 {
-    if (!m_rtcSender) {
-        // FIXME: We should not need to go through the backend and should directly have m_rtcSender here.
-        if (!m_peerConnectionBackend)
-            return { };
-        return m_peerConnectionBackend->getParameters(sender);
-    }
+    if (!m_rtcSender)
+        return { };
+
     return fillRtpParameters(m_rtcSender->GetParameters());
 }
 
