@@ -977,15 +977,12 @@ static const NSTimeInterval kAnimationDuration = 0.2;
         if (![self._webView _page])
             return;
 
-
-        if (_interactiveDismissTransitionCoordinator.get().animator.context.transitionWasCancelled) {
+        if (_interactiveDismissTransitionCoordinator.get().animator.context.transitionWasCancelled)
             [_fullscreenViewController setAnimating:NO];
-            return;
-        }
-
+        else
+            [self _completedExitFullScreen];
+        
         _interactiveDismissTransitionCoordinator = nil;
-
-        [self _completedExitFullScreen];
     }];
 }
 

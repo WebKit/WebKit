@@ -1,3 +1,13 @@
+2018-09-05  Jeremy Jones  <jeremyj@apple.com>
+
+        Cancelled fullscreen exit gesture leaves bad state for next exit request.
+        https://bugs.webkit.org/show_bug.cgi?id=189278
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController _dismissFullscreenViewController]):
+
 2018-09-05  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Simplify logic when changing RealtimeMediaSource settings
