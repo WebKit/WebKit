@@ -1,5 +1,34 @@
 2018-09-04  Don Olmstead  <don.olmstead@sony.com>
 
+        Add generic entrypoint and run loop in TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=189287
+
+        Reviewed by Michael Catanzaro.
+
+        The implementations in jsconly are platform agnostic.
+
+        * TestWebKitAPI/PlatformJSCOnly.cmake:
+        Use the glib implementation of Utilities when using that as a run loop
+        otherwise use the generic implementation.
+
+        * TestWebKitAPI/PlatformUtilities.h:
+        Remove repeated entries from Utilities.h.
+
+        * TestWebKitAPI/PlatformWPE.cmake:
+        Use the generic main.cpp.
+        
+        * TestWebKitAPI/generic/UtilitiesGeneric.cpp: Renamed from Tools/TestWebKitAPI/jsconly/PlatformUtilitiesJSCOnly.cpp.
+        (TestWebKitAPI::Util::run):
+        (TestWebKitAPI::Util::spinRunLoop):
+        Moved to a generic implementation and added spinRunLoop.
+
+        * TestWebKitAPI/generic/main.cpp: Renamed from Tools/TestWebKitAPI/jsconly/main.cpp.
+        Share between JSCOnly and WPE
+
+        * TestWebKitAPI/wpe/main.cpp: Removed.
+
+2018-09-04  Don Olmstead  <don.olmstead@sony.com>
+
         [CMake] Make TestWebKitAPI dependencies explicit
         https://bugs.webkit.org/show_bug.cgi?id=189282
 

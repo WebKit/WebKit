@@ -24,26 +24,24 @@
  */
 
 #include "config.h"
-#include "PlatformUtilities.h"
+#include "Utilities.h"
 
 #include <wtf/RunLoop.h>
-
-#if USE(GLIB_EVENT_LOOP)
-#include <glib.h>
-#include <wtf/glib/GRefPtr.h>
-#endif
 
 namespace TestWebKitAPI {
 namespace Util {
 
 void run(bool* done)
 {
-    while (!*done) {
-#if USE(GLIB_EVENT_LOOP)
-        g_main_context_iteration(RunLoop::current().mainContext(), false);
-#else
+    while (!*done)
         WTF::RunLoop::iterate();
-#endif
+}
+
+void spinRunLoop(uint64_t count)
+{
+    while (count > 0) {
+        WTF::RunLoop::current().iterate();
+        count--;
     }
 }
 

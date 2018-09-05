@@ -29,7 +29,7 @@ include_directories(SYSTEM
 )
 
 set(test_main_SOURCES
-    ${TESTWEBKITAPI_DIR}/wpe/main.cpp
+    ${TESTWEBKITAPI_DIR}/generic/main.cpp
 )
 
 set(bundle_harness_SOURCES
