@@ -1,3 +1,10 @@
+2018-09-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, fix the build with recent SDKs.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::exernalDeviceDisplayNameForPlayer):
+
 2018-09-05  Woodrow Wang  <woodrow_wang@apple.com>
 
         Added runtime feature flag for web API statistics

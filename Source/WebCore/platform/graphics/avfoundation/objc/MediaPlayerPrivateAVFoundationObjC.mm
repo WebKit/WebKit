@@ -2828,7 +2828,10 @@ static NSString *exernalDeviceDisplayNameForPlayer(AVPlayerType *player)
 
         auto outputDeviceNames = adoptNS([[NSMutableArray alloc] init]);
         for (AVOutputDevice *outputDevice in [outputContext outputDevices]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             auto outputDeviceName = adoptNS([[outputDevice name] copy]);
+#pragma clang diagnostic pop
             [outputDeviceNames addObject:outputDeviceName.get()];
         }
 
