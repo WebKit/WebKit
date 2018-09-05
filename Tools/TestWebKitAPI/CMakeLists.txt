@@ -14,6 +14,16 @@ set(TestWebKitAPI_LIBRARIES
     WTF${DEBUG_SUFFIX}
 )
 
+set(TestWebKitAPI_DEPENDENCIES
+    JavaScriptCoreForwardingHeaders
+    JavaScriptCorePrivateForwardingHeaders
+    WTFForwardingHeaders
+)
+
+if (ENABLE_WEBCORE)
+    list(APPEND TestWebKitAPI_DEPENDENCIES PALForwardingHeaders)
+endif ()
+
 if (ENABLE_WEBKIT)
     set(test_webkit_api_LIBRARIES
         JavaScriptCore
@@ -216,7 +226,7 @@ if (ENABLE_WEBKIT)
     )
 
     target_link_libraries(TestWebKitAPIInjectedBundle ${TestWebKitAPI_LIBRARIES})
-    add_dependencies(TestWebKitAPIInjectedBundle WTF ${ForwardingHeadersForTestWebKitAPI_NAME})
+    add_dependencies(TestWebKitAPIInjectedBundle WTF ${TestWebKitAPI_DEPENDENCIES})
 
     if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKitAPIInjectedBundle -Wno-dangling-else
@@ -249,10 +259,11 @@ add_executable(TestWTF
 
 if (WIN32)
     add_dependencies(TestWTF TestWTFLib)
+else ()
+    add_dependencies(TestWTF WTF ${TestWebKitAPI_DEPENDENCIES})
 endif ()
 
 target_link_libraries(TestWTF ${test_wtf_LIBRARIES})
-add_dependencies(TestWTF WTF ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
 add_test(TestWTF ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY_WTF}/TestWTF)
 set_tests_properties(TestWTF PROPERTIES TIMEOUT 60)
 set_target_properties(TestWTF PROPERTIES
@@ -283,7 +294,7 @@ if (ENABLE_WEBKIT)
 
     target_link_libraries(TestWebKitAPIBase JavaScriptCore WTF WebKit gtest)
 
-    add_dependencies(TestWebKitAPIBase WebKit ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
+    add_dependencies(TestWebKitAPIBase WebKit ${TestWebKitAPI_DEPENDENCIES})
 
     if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKitAPIBase -Wno-sign-compare

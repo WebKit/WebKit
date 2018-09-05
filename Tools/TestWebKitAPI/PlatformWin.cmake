@@ -99,9 +99,9 @@ if (USE_CF)
     )
 endif ()
 
-set(forwarding_headers_dependencies WebCoreForwardingHeaders PALForwardingHeaders)
+list(APPEND TestWebKitAPI_DEPENDENCIES WebCoreForwardingHeaders)
 if (ENABLE_WEBKIT)
-    list(APPEND forwarding_headers_dependencies WebKitForwardingHeaders)
+    list(APPEND TestWebKitAPI_DEPENDENCIES WebKitForwardingHeaders)
 endif ()
 
 add_library(TestWTFLib SHARED
@@ -110,7 +110,7 @@ add_library(TestWTFLib SHARED
 )
 set_target_properties(TestWTFLib PROPERTIES OUTPUT_NAME "TestWTFLib")
 target_link_libraries(TestWTFLib ${test_wtf_LIBRARIES})
-add_dependencies(TestWTFLib ${forwarding_headers_dependencies})
+add_dependencies(TestWTFLib ${TestWebKitAPI_DEPENDENCIES})
 
 set(test_wtf_LIBRARIES
     shlwapi
@@ -124,7 +124,7 @@ add_library(TestWebCoreLib SHARED
 
 target_link_libraries(TestWebCoreLib ${test_webcore_LIBRARIES})
 set_target_properties(TestWebCoreLib PROPERTIES OUTPUT_NAME "TestWebCoreLib")
-add_dependencies(TestWebCoreLib ${forwarding_headers_dependencies})
+add_dependencies(TestWebCoreLib ${TestWebKitAPI_DEPENDENCIES})
 
 if (PAL_LIBRARY_TYPE MATCHES STATIC)
     target_compile_definitions(TestWebCoreLib PRIVATE -DSTATICALLY_LINKED_WITH_PAL=1)
@@ -161,7 +161,7 @@ if (ENABLE_WEBKIT_LEGACY)
     )
 
     target_link_libraries(TestWebKitLegacyLib ${test_webkitlegacy_LIBRARIES})
-    add_dependencies(TestWebKitLegacyLib ${forwarding_headers_dependencies})
+    add_dependencies(TestWebKitLegacyLib ${TestWebKitAPI_DEPENDENCIES})
 
     add_executable(TestWebKitLegacy
         ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp

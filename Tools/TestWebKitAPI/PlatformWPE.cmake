@@ -10,7 +10,7 @@ add_custom_target(TestWebKitAPI-forwarding-headers
     DEPENDS webkitwpe-forwarding-headers
 )
 
-set(ForwardingHeadersForTestWebKitAPI_NAME TestWebKitAPI-forwarding-headers PALForwardingHeaders)
+list(APPEND TestWebKitAPI_DEPENDENCIES TestWebKitAPI-forwarding-headers)
 
 include_directories(
     ${FORWARDING_HEADERS_DIR}
@@ -70,7 +70,7 @@ add_executable(TestWebCore
 )
 
 target_link_libraries(TestWebCore ${test_webcore_LIBRARIES})
-add_dependencies(TestWebCore ${ForwardingHeadersForTestWebKitAPI_NAME})
+add_dependencies(TestWebCore ${TestWebKitAPI_DEPENDENCIES})
 
 add_test(TestWebCore ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebCore/TestWebCore)
 set_tests_properties(TestWebCore PROPERTIES TIMEOUT 60)
@@ -98,7 +98,7 @@ target_link_libraries(TestJSC
     JavaScriptCore
 )
 add_test(TestJSC ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/JavaScriptCore/TestJSC)
-add_dependencies(TestJSC ${ForwardingHeadersForTestWebKitAPI_NAME})
+add_dependencies(TestJSC ${TestWebKitAPI_DEPENDENCIES})
 set_tests_properties(TestJSC PROPERTIES TIMEOUT 60)
 set_target_properties(TestJSC PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/JavaScriptCore)
 

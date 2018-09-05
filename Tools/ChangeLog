@@ -1,3 +1,20 @@
+2018-09-04  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Make TestWebKitAPI dependencies explicit
+        https://bugs.webkit.org/show_bug.cgi?id=189282
+
+        Reviewed by Fujii Hironori.
+
+        The config.h file includes files from JSC, WebCore and WebKit which
+        places a dependency on those headers even when just building TestWTF.
+        This makes the depedencies explicit for all CMake ports and shoud
+        remove any race conditions that can be encountered when building tests.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * TestWebKitAPI/PlatformWin.cmake:
+
 2018-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Populate "text/uri-list" with multiple URLs when the pasteboard contains multiple URLs
