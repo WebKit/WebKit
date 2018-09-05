@@ -1,3 +1,45 @@
+2018-09-05  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r234651. rdar://problem/43009912
+
+    [Wi-Fi Assertions] suspendWiFiAssertions() should be able to delay sending ProcessReadyToSuspend
+    https://bugs.webkit.org/show_bug.cgi?id=188373
+    <rdar://problem/42857398>
+    
+    Reviewed by Tim Horton.
+    
+    * NetworkProcess/NetworkProcess.cpp:
+    (WebKit::NetworkProcess::actualPrepareToSuspend):
+    * NetworkProcess/NetworkProcess.h:
+    * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+    (WebKit::NetworkProcess::platformPrepareToSuspend):
+    (WebKit::NetworkProcess::platformProcessDidTransitionToBackground):
+    * NetworkProcess/curl/NetworkProcessCurl.cpp:
+    (WebKit::NetworkProcess::platformPrepareToSuspend):
+    * NetworkProcess/soup/NetworkProcessSoup.cpp:
+    (WebKit::NetworkProcess::platformPrepareToSuspend):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234651 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-06  Andy Estes  <aestes@apple.com>
+
+            [Wi-Fi Assertions] suspendWiFiAssertions() should be able to delay sending ProcessReadyToSuspend
+            https://bugs.webkit.org/show_bug.cgi?id=188373
+            <rdar://problem/42857398>
+
+            Reviewed by Tim Horton.
+
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::actualPrepareToSuspend):
+            * NetworkProcess/NetworkProcess.h:
+            * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+            (WebKit::NetworkProcess::platformPrepareToSuspend):
+            (WebKit::NetworkProcess::platformProcessDidTransitionToBackground):
+            * NetworkProcess/curl/NetworkProcessCurl.cpp:
+            (WebKit::NetworkProcess::platformPrepareToSuspend):
+            * NetworkProcess/soup/NetworkProcessSoup.cpp:
+            (WebKit::NetworkProcess::platformPrepareToSuspend):
+
 2018-08-01  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r234486. rdar://problem/42844004
