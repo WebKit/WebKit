@@ -249,7 +249,7 @@ void BlockFormattingContext::computeWidthAndMargin(LayoutContext& layoutContext,
     if (layoutBox.isInFlow())
         widthAndMargin = Geometry::inFlowWidthAndMargin(layoutContext, layoutBox);
     else if (layoutBox.isFloatingPositioned())
-        widthAndMargin = FormattingContext::Geometry::floatingWidthAndMargin(layoutContext, *this, layoutBox);
+        widthAndMargin = Geometry::floatingWidthAndMargin(layoutContext, *this, layoutBox);
     else
         ASSERT_NOT_REACHED();
 
@@ -271,7 +271,7 @@ void BlockFormattingContext::computeHeightAndMargin(LayoutContext& layoutContext
         if (!displayBox.estimatedMarginTop())
             marginTopOffset = heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin).top;
     } else if (layoutBox.isFloatingPositioned()) {
-        heightAndMargin = FormattingContext::Geometry::floatingHeightAndMargin(layoutContext, layoutBox);
+        heightAndMargin = Geometry::floatingHeightAndMargin(layoutContext, layoutBox);
         ASSERT(!heightAndMargin.collapsedMargin);
 
         marginTopOffset = heightAndMargin.margin.top;

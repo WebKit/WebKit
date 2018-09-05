@@ -101,8 +101,8 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
         auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock())->contentBoxWidth();
         auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
 
-        VerticalEdges nonCollapsedMargin = { FormattingContext::Geometry::computedValueIfNotAuto(style.marginTop(), containingBlockWidth).value_or(0),
-            FormattingContext::Geometry::computedValueIfNotAuto(style.marginBottom(), containingBlockWidth).value_or(0) }; 
+        VerticalEdges nonCollapsedMargin = { computedValueIfNotAuto(style.marginTop(), containingBlockWidth).value_or(0),
+            computedValueIfNotAuto(style.marginBottom(), containingBlockWidth).value_or(0) }; 
         VerticalEdges collapsedMargin = { MarginCollapse::marginTop(layoutContext, layoutBox), MarginCollapse::marginBottom(layoutContext, layoutBox) };
         auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop().value_or(0);
         
@@ -186,9 +186,9 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
         auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*containingBlock)->contentBoxWidth();
         auto& displayBox = *layoutContext.displayBoxForLayoutBox(layoutBox);
 
-        auto width = FormattingContext::Geometry::computedValueIfNotAuto(precomputedWidth ? Length { precomputedWidth.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
-        auto marginLeft = FormattingContext::Geometry::computedValueIfNotAuto(style.marginLeft(), containingBlockWidth);
-        auto marginRight = FormattingContext::Geometry::computedValueIfNotAuto(style.marginRight(), containingBlockWidth);
+        auto width = computedValueIfNotAuto(precomputedWidth ? Length { precomputedWidth.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
+        auto marginLeft = computedValueIfNotAuto(style.marginLeft(), containingBlockWidth);
+        auto marginRight = computedValueIfNotAuto(style.marginRight(), containingBlockWidth);
         auto nonComputedMarginLeft = marginLeft.value_or(0);
         auto nonComputedMarginRight = marginRight.value_or(0);
         auto borderLeft = displayBox.borderLeft();
@@ -264,7 +264,7 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin(La
     // 2. Then the rules for non-replaced block-level elements are applied to determine the margins.
 
     // #1
-    auto width = FormattingContext::Geometry::inlineReplacedWidthAndMargin(layoutContext, layoutBox).width;
+    auto width = inlineReplacedWidthAndMargin(layoutContext, layoutBox).width;
     // #2
     auto nonReplacedWidthAndMargin = inFlowNonReplacedWidthAndMargin(layoutContext, layoutBox, width);
 
@@ -311,8 +311,8 @@ Position BlockFormattingContext::Geometry::inFlowPositionedPosition(LayoutContex
     auto& containingBlock = *layoutBox.containingBlock();
     auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(containingBlock)->contentBoxWidth();
 
-    auto top = FormattingContext::Geometry::computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
-    auto bottom = FormattingContext::Geometry::computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
+    auto top = computedValueIfNotAuto(style.logicalTop(), containingBlockWidth);
+    auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
 
     if (!top && !bottom) {
         // #1
@@ -339,8 +339,8 @@ Position BlockFormattingContext::Geometry::inFlowPositionedPosition(LayoutContex
     //    If the 'direction' property of the containing block is 'ltr', the value of 'left' wins and 'right' becomes -'left'.
     //    If 'direction' of the containing block is 'rtl', 'right' wins and 'left' is ignored.
 
-    auto left = FormattingContext::Geometry::computedValueIfNotAuto(style.logicalLeft(), containingBlockWidth);
-    auto right = FormattingContext::Geometry::computedValueIfNotAuto(style.logicalRight(), containingBlockWidth);
+    auto left = computedValueIfNotAuto(style.logicalLeft(), containingBlockWidth);
+    auto right = computedValueIfNotAuto(style.logicalRight(), containingBlockWidth);
 
     if (!left && !right) {
         // #1
@@ -377,7 +377,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(LayoutCo
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block'
     // replaced elements in normal flow and floating replaced elements
     if (layoutBox.replaced())
-        return FormattingContext::Geometry::inlineReplacedHeightAndMargin(layoutContext, layoutBox);
+        return inlineReplacedHeightAndMargin(layoutContext, layoutBox);
 
     HeightAndMargin heightAndMargin;
     // TODO: Figure out the case for the document element. Let's just complicated-case it for now.
@@ -386,7 +386,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(LayoutCo
     else {
         // 10.6.6 Complicated cases
         // Block-level, non-replaced elements in normal flow when 'overflow' does not compute to 'visible' (except if the 'overflow' property's value has been propagated to the viewport).
-        heightAndMargin = FormattingContext::Geometry::complicatedCases(layoutContext, layoutBox);
+        heightAndMargin = complicatedCases(layoutContext, layoutBox);
     }
 
     if (!isStretchedToInitialContainingBlock(layoutContext, layoutBox))
@@ -418,7 +418,7 @@ bool BlockFormattingContext::Geometry::instrinsicWidthConstraintsNeedChildrenWid
 FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::Geometry::instrinsicWidthConstraints(LayoutContext& layoutContext, const Box& layoutBox)
 {
     auto& style = layoutBox.style();
-    if (auto width = FormattingContext::Geometry::fixedValue(style.logicalWidth()))
+    if (auto width = fixedValue(style.logicalWidth()))
         return { *width, *width };
 
     // Minimum/maximum width can't be depending on the containing block's width.
@@ -440,12 +440,12 @@ FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::Geometry::
         ASSERT(childInstrinsicWidthConstraints);
         
         auto& style = child.style();
-        auto horizontalMarginBorderAndPadding = FormattingContext::Geometry::fixedValue(style.marginLeft()).value_or(0)
+        auto horizontalMarginBorderAndPadding = fixedValue(style.marginLeft()).value_or(0)
             + LayoutUnit { style.borderLeftWidth() }
-            + FormattingContext::Geometry::fixedValue(style.paddingLeft()).value_or(0)
-            + FormattingContext::Geometry::fixedValue(style.paddingRight()).value_or(0)
+            + fixedValue(style.paddingLeft()).value_or(0)
+            + fixedValue(style.paddingRight()).value_or(0)
             + LayoutUnit { style.borderRightWidth() }
-            + FormattingContext::Geometry::fixedValue(style.marginRight()).value_or(0);
+            + fixedValue(style.marginRight()).value_or(0);
 
         minimumIntrinsicWidth = std::max(minimumIntrinsicWidth, childInstrinsicWidthConstraints->minimum + horizontalMarginBorderAndPadding); 
         maximumIntrinsicWidth = std::max(maximumIntrinsicWidth, childInstrinsicWidthConstraints->maximum + horizontalMarginBorderAndPadding); 

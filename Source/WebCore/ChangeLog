@@ -1,3 +1,24 @@
+2018-09-04  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Make BlockFormattingContext::Geometry a subclass of FormattingContext::Geometry
+        https://bugs.webkit.org/show_bug.cgi?id=189294
+
+        Reviewed by Antti Koivisto.
+
+        This simplifies some of the call sites.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowPositionedPosition):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::instrinsicWidthConstraints):
+
 2018-09-04  Frederic Wang  <fwang@igalia.com>
 
         Add basic support for ScrollIntoViewOptions

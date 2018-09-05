@@ -64,10 +64,10 @@ private:
     void computeEstimatedMarginTop(LayoutContext&, const Box&, Display::Box&) const;
     void computeEstimatedMarginTopForAncestors(LayoutContext&, const Box&) const;
 
-    FormattingContext::InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutContext&, const Box&) const override;
+    InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutContext&, const Box&) const override;
 
     // This class implements positioning and sizing for boxes participating in a block formatting context.
-    class Geometry {
+    class Geometry : public FormattingContext::Geometry {
     public:
         static HeightAndMargin inFlowHeightAndMargin(LayoutContext&, const Box&);
         static WidthAndMargin inFlowWidthAndMargin(LayoutContext&, const Box&);
@@ -76,7 +76,7 @@ private:
         static Position inFlowPositionedPosition(LayoutContext&, const Box&);
 
         static bool instrinsicWidthConstraintsNeedChildrenWidth(const Box&);
-        static FormattingContext::InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutContext&, const Box&);
+        static InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutContext&, const Box&);
 
     private:
         static HeightAndMargin inFlowNonReplacedHeightAndMargin(LayoutContext&, const Box&);
