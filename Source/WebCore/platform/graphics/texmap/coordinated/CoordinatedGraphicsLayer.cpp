@@ -966,6 +966,15 @@ void CoordinatedGraphicsLayer::purgeBackingStores()
         m_nicosia.backingStore = nullptr;
     }
 
+    if (m_nicosia.imageBacking) {
+        auto& layerState = downcast<Nicosia::ImageBackingTextureMapperImpl>(m_nicosia.imageBacking->impl()).layerState();
+        layerState.imageID = 0;
+        layerState.nativeImageID = 0;
+        layerState.update = { };
+
+        m_nicosia.imageBacking = nullptr;
+    }
+
     notifyFlushRequired();
 }
 
