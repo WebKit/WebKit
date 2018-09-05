@@ -1,3 +1,11 @@
+2018-09-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove some logging that I committed by mistake.
+
+        * rendering/RenderLayerFilters.cpp:
+        (WebCore::RenderLayerFilters::RenderLayerFilters):
+        (WebCore::RenderLayerFilters::~RenderLayerFilters):
+
 2018-09-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Construct the Display::Box objects on demand.

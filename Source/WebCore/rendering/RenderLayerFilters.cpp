@@ -41,12 +41,10 @@ namespace WebCore {
 RenderLayerFilters::RenderLayerFilters(RenderLayer& layer)
     : m_layer(layer)
 {
-    WTFLogAlways("RenderLayerFilters %p ctor", this);
 }
 
 RenderLayerFilters::~RenderLayerFilters()
 {
-    WTFLogAlways("RenderLayerFilters %p dtor", this);
     removeReferenceFilterClients();
 }
 
