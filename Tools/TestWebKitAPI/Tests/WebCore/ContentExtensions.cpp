@@ -100,7 +100,7 @@ public:
     }
 
 private:
-    void writeSource(const String&) final { }
+    void writeSource(String&&) final { }
 
     void writeActions(Vector<ContentExtensions::SerializedActionByte>&& actions, bool conditionsApplyOnlyToDomain) final
     {
@@ -150,7 +150,8 @@ public:
     {
         CompiledContentExtensionData extensionData;
         InMemoryContentExtensionCompilationClient client(extensionData);
-        auto compilerError = ContentExtensions::compileRuleList(client, WTFMove(filter));
+        auto parsedRules = ContentExtensions::parseRuleList(filter);
+        auto compilerError = ContentExtensions::compileRuleList(client, WTFMove(filter), WTFMove(parsedRules.value()));
 
         // Compiling should always succeed here. We have other tests for compile failures.
         EXPECT_FALSE(compilerError);
@@ -1371,7 +1372,12 @@ void checkCompilerError(const char* json, std::error_code expectedError)
 {
     CompiledContentExtensionData extensionData;
     InMemoryContentExtensionCompilationClient client(extensionData);
-    std::error_code compilerError = ContentExtensions::compileRuleList(client, json);
+    auto parsedRules = ContentExtensions::parseRuleList(json);
+    std::error_code compilerError;
+    if (parsedRules.has_value())
+        compilerError = ContentExtensions::compileRuleList(client, json, WTFMove(parsedRules.value()));
+    else
+        compilerError = parsedRules.error();
     EXPECT_EQ(compilerError.value(), expectedError.value());
     if (compilerError.value())
         EXPECT_STREQ(compilerError.category().name(), expectedError.category().name());

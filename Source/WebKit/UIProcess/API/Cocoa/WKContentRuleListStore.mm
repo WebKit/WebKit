@@ -32,6 +32,7 @@
 #import "APIContentRuleListStore.h"
 #import "WKErrorInternal.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/CompletionHandler.h>
 
 static WKErrorCode toWKErrorCode(const std::error_code& error)
 {
