@@ -1,3 +1,16 @@
+2018-09-04  Michael Saboff  <msaboff@apple.com>
+
+        YARR: Add new RegExp back reference tests to specifically test back reference JIT code
+        https://bugs.webkit.org/show_bug.cgi?id=189291
+
+        Reviewed by Saam Barati.
+
+        New tests.
+
+        * fast/regex/backreferences-expected.txt: Added.
+        * fast/regex/backreferences.html: Added.
+        * fast/regex/script-tests/backreferences.js: Added.
+
 2018-09-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         slotchange event doesn't get fired when inserting, removing, or renaming slot elements
