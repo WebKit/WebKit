@@ -1,3 +1,44 @@
+2018-09-05  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r234778. rdar://problem/44144053
+
+    [macOS] Multiple third party apps crash due to the thread safety check in TimerBase::setNextFireTime
+    https://bugs.webkit.org/show_bug.cgi?id=188480
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Suppress the release assert in WebKit1 on macOS (isInWebProcess is always true in non-Cocoa platforms).
+    
+    In the future, we should consider throwing Objective-C exceptions when third party apps call WebKit1
+    or WebKit2 APIs in non-main threads.
+    
+    * platform/Timer.cpp:
+    (WebCore::shouldSuppressThreadSafetyCheck): Extracted out of ~TimerBase and setNextFireTime.
+    (WebCore::TimerBase::~TimerBase):
+    (WebCore::TimerBase::setNextFireTime):
+    
+    Source/WTF:
+    
+    Added the SDK version for macOS Mojave.
+    
+    * wtf/spi/darwin/dyldSPI.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234778 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+            [macOS] Multiple third party apps crash due to the thread safety check in TimerBase::setNextFireTime
+            https://bugs.webkit.org/show_bug.cgi?id=188480
+
+            Reviewed by Simon Fraser.
+
+            Added the SDK version for macOS Mojave.
+
+            * wtf/spi/darwin/dyldSPI.h:
+
 2018-08-02  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r234528. rdar://problem/42883788
