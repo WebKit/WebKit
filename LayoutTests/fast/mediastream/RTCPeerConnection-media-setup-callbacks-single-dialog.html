@@ -40,7 +40,7 @@
             .then(function (s) {
                 stream = s;
 
-                startTestWithMedia();
+                return startTestWithMedia();
             })
             .catch(function (error) {
                 testFailed(`Unable to get user media: ${error}`);
@@ -52,15 +52,15 @@
                 pcA.addTrack(stream.getAudioTracks()[0], stream);
 
                 debug("A: create offer");
-                return pcA.createOffer(offer => {
+                return pcA.createOffer().then(offer => {
                     debug("A: got offer, set it as local description");
-                    pcA.setLocalDescription(offer, () => {
+                    return pcA.setLocalDescription(offer).then(() => {
                         debug("A: local offer set");
                         shouldBe("pcA.signalingState", "'have-local-offer'");
 
                         debug("A: send offer to B");
                         debug("A --- offer --> B");
-                        offerToPcB(pcA.localDescription);
+                        return offerToPcB(pcA.localDescription);
                     }, gotError);
 
                 }, gotError);
@@ -68,7 +68,7 @@
 
             function offerToPcB(offer) {
                 debug("B: got offer from A, set it as remote description");
-                pcB.setRemoteDescription(offer, () => {
+                return pcB.setRemoteDescription(offer).then(() => {
                     debug("B: remote offer set");
                     shouldBe("pcB.signalingState", "'have-remote-offer'");
 
@@ -76,15 +76,15 @@
                     pcB.addTrack(stream.getAudioTracks()[0], stream);
 
                     debug("B: create answer");
-                    return pcB.createAnswer(answer => {
+                    return pcB.createAnswer().then(answer => {
                         debug("B: got answer, set it as local description");
-                        pcB.setLocalDescription(answer, () => {
+                        return pcB.setLocalDescription(answer).then(() => {
                             debug("B: local answer set");
                             shouldBe("pcB.signalingState", "'stable'");
 
                             debug("B: send answer to A");
                             debug("A <-- answer -- B");
-                            answerToA(pcB.localDescription);
+                            return answerToA(pcB.localDescription);
                         }, gotError);
                     }, gotError);
                 }, gotError);
@@ -92,7 +92,7 @@
 
             function answerToA(answer) {
                 debug("A: got answer from B, set it as remote description");
-                pcA.setRemoteDescription(answer, () => {
+                return pcA.setRemoteDescription(answer).then(() => {
                     debug("A: remote answer set");
                     shouldBe("pcA.signalingState", "'stable'");
 

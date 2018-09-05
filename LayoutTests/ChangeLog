@@ -1,3 +1,18 @@
+2018-09-05  Ms2ger  <Ms2ger@igalia.com>
+
+        GTK-focused gardening
+        https://bugs.webkit.org/show_bug.cgi?id=189305
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Remove passing test.
+        * fast/mediastream/RTCPeerConnection-media-setup-callbacks-single-dialog.html: Speculative fix for r235484.
+        * platform/gtk/http/tests/inspector/network/resource-request-headers-expected.txt: Added.
+        * platform/gtk/http/tests/loading/oauth-expected.txt: Added.
+        * platform/gtk/http/tests/websocket/connection-refusal-in-frame-resource-load-statistics-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/xhr/send-network-error-sync-events.sub-expected.txt: Updated for r235354.
+        * platform/gtk/js/dom/dom-static-property-for-in-iteration-expected.txt: Updated for r235245.
+
 2018-09-04  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [EME] Add a layoutTest for ClearKey WebM video playback

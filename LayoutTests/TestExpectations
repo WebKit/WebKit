@@ -275,7 +275,6 @@ imported/w3c/web-platform-tests/xhr/send-authentication-basic-setrequestheader-e
 imported/w3c/web-platform-tests/xhr/send-authentication-competing-names-passwords.htm [ Failure ]
 imported/w3c/web-platform-tests/xhr/preserve-ua-header-on-redirect.htm [ Failure ]
 imported/w3c/web-platform-tests/xhr/setrequestheader-case-insensitive.htm [ Failure ]
-imported/w3c/web-platform-tests/xhr/send-network-error-async-events.sub.htm [ Failure ]
 http/tests/security/cross-origin-cached-images-parallel.html [ DumpJSConsoleLogInStdErr ]
 
 # textarea.animate is not supported

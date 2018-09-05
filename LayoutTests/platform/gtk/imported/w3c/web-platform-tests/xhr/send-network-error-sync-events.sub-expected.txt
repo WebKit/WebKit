@@ -1,4 +1,4 @@
-Blocked access to external URL http://nonexistent-origin.localhost:8800/
+Blocked access to external URL http://nonexistent.localhost:8800/
 
 PASS http URL 
 FAIL data URL assert_throws: function "function ()
