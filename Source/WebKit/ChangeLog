@@ -1,5 +1,23 @@
 2018-09-05  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r234908. rdar://problem/44144086
+
+    [WinCairo] Unreviewed build fix after r234896.
+    
+    * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+    (WebKit::NetworkDataTaskCurl::tryHttpAuthentication):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@234908 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-15  Ross Kirsling  <ross.kirsling@sony.com>
+
+            [WinCairo] Unreviewed build fix after r234896.
+
+            * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+            (WebKit::NetworkDataTaskCurl::tryHttpAuthentication):
+
+2018-09-05  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r234905. rdar://problem/44144059
 
     Can't share an app on AppStore to WeChat due to a release assert
