@@ -1,3 +1,26 @@
+2018-09-04  Keith Miller  <keith_miller@apple.com>
+
+        RELEASE_ASSERT at ../../Source/JavaScriptCore/heap/MarkedSpace.h:83
+        https://bugs.webkit.org/show_bug.cgi?id=188917
+
+        Reviewed by Mark Lam.
+
+        Our allocators should be able to handle allocating a zero-sized object.
+        Zero-sized objects will be allocated into the smallest size class.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArrayWithSize):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatorForSize):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::sizeClassToIndex):
+        (JSC::MarkedSpace::indexToSizeClass):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitAllocateVariableSized):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+
 2018-09-05  Mark Lam  <mark.lam@apple.com>
 
         Fix DeferredSourceDump to capture the caller bytecodeIndex instead of CodeOrigin.
