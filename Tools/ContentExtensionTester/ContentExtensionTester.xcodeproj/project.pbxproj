@@ -29,7 +29,7 @@
 		7C2227531AFC4D9C008C3338 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		7C4AB3A11AF0276C003FC8D1 /* ContentExtensionTester */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ContentExtensionTester; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C4AB3AB1AF02798003FC8D1 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
-		7CB6844A1AFA7978002B305C /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = SOURCE_ROOT; };
+		7CB6844A1AFA7978002B305C /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,7 +77,8 @@
 			children = (
 				7CB6844A1AFA7978002B305C /* main.m */,
 			);
-			path = ContentExtensionTester;
+			name = ContentExtensionTester;
+			path = .;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
