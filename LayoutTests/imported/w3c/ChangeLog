@@ -1,3 +1,16 @@
+2018-09-04  Oriol Brufau  <obrufau@igalia.com>
+
+        Check important flags when serializing shorthand with "initial" values
+        https://bugs.webkit.org/show_bug.cgi?id=188984
+
+        Reviewed by Antti Koivisto.
+
+        The test still has some failures due to https://bugs.webkit.org/show_bug.cgi?id=185953
+        but without this patch it would fail earlier.
+
+        * web-platform-tests/css/cssom/shorthand-serialization-expected.txt:
+        * web-platform-tests/css/cssom/shorthand-serialization.html:
+
 2018-09-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         slotchange event doesn't get fired when inserting, removing, or renaming slot elements
