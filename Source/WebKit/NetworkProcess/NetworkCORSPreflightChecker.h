@@ -30,6 +30,7 @@
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class ResourceError;
@@ -38,7 +39,7 @@ class SecurityOrigin;
 
 namespace WebKit {
 
-class NetworkCORSPreflightChecker final : private NetworkDataTaskClient  {
+class NetworkCORSPreflightChecker final : private NetworkDataTaskClient, public CanMakeWeakPtr<NetworkCORSPreflightChecker> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     struct Parameters {
@@ -63,7 +64,7 @@ public:
 
 private:
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final;
-    void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&) final;
+    void didReceiveChallenge(WebCore::AuthenticationChallenge&&, ChallengeCompletionHandler&&) final;
     void didReceiveResponseNetworkSession(WebCore::ResourceResponse&&, ResponseCompletionHandler&&) final;
     void didReceiveData(Ref<WebCore::SharedBuffer>&&) final;
     void didCompleteWithError(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&) final;

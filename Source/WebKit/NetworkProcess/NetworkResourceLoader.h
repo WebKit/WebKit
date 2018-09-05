@@ -80,9 +80,6 @@ public:
     // Message handlers.
     void didReceiveNetworkResourceLoaderMessage(IPC::Connection&, IPC::Decoder&);
 
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    void continueCanAuthenticateAgainstProtectionSpace(bool);
-#endif
     void continueWillSendRequest(WebCore::ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials);
 
     const WebCore::ResourceResponse& response() const { return m_response; }
