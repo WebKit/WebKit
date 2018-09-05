@@ -1,3 +1,19 @@
+2018-09-05  Mark Lam  <mark.lam@apple.com>
+
+        isAsyncGeneratorMethodParseMode() should check for SourceParseMode::AsyncGeneratorWrapperMethodMode.
+        https://bugs.webkit.org/show_bug.cgi?id=189292
+        <rdar://problem/38907433>
+
+        Reviewed by Saam Barati.
+
+        Previously, isAsyncGeneratorMethodParseMode() was checking for AsyncGeneratorWrapperFunctionMode
+        instead of AsyncGeneratorWrapperMethodMode.  This patch fixes it
+        to check for AsyncGeneratorWrapperMethodMode (to match what is expected as indicated
+        in the name isAsyncGeneratorMethodParseMode).
+
+        * parser/ParserModes.h:
+        (JSC::isAsyncGeneratorMethodParseMode):
+
 2018-09-04  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed indentations change.

@@ -1,3 +1,13 @@
+2018-09-05  Mark Lam  <mark.lam@apple.com>
+
+        isAsyncGeneratorMethodParseMode() should check for SourceParseMode::AsyncGeneratorWrapperMethodMode.
+        https://bugs.webkit.org/show_bug.cgi?id=189292
+        <rdar://problem/38907433>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-189292.js: Added.
+
 2018-09-04  David Fenton  <david_fenton@apple.com>
 
         Skip Test on 32-bit platforms.
