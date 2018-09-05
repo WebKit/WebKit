@@ -1,5 +1,18 @@
 2018-09-05  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r204222): UIProces/Gamepad/mac is missing in WebKit Xcode project
+
+        Found using `tidy-Xcode-project-file --missing` (see Bug
+        188754). Fixes applied manually.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        (UIProces/Gamepad/mac): Fix path to "mac" directory, then remove
+        its now-redundant name.
+        (UIGamepadProviderMac.mm): Change path to be relative to its
+        group after the above change.
+
+2018-09-05  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r143543): PluginProcess/EntryPoint/XPCService/PluginService is missing in WebKit Xcode project
 
         Found using `tidy-Xcode-project-file --missing` (see Bug

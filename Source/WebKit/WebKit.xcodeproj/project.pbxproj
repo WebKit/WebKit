@@ -3422,7 +3422,7 @@
 		515BE1AD1D555C5100DD7C68 /* UIGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIGamepad.h; sourceTree = "<group>"; };
 		515BE1B01D59006900DD7C68 /* GamepadData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadData.h; sourceTree = "<group>"; };
 		515BE1B11D5902B600DD7C68 /* GamepadData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GamepadData.cpp; sourceTree = "<group>"; };
-		515BE1B61D5A94F900DD7C68 /* UIGamepadProviderMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = UIGamepadProviderMac.mm; path = UIProcess/Gamepad/mac/UIGamepadProviderMac.mm; sourceTree = SOURCE_ROOT; };
+		515BE1B61D5A94F900DD7C68 /* UIGamepadProviderMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIGamepadProviderMac.mm; sourceTree = "<group>"; };
 		515C415A207D74E000726E02 /* SuspendedPageProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SuspendedPageProxy.cpp; sourceTree = "<group>"; };
 		515C415B207D74E100726E02 /* SuspendedPageProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SuspendedPageProxy.h; sourceTree = "<group>"; };
 		515E7725183DD6F60007203F /* AsyncRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncRequest.cpp; sourceTree = "<group>"; };
@@ -6748,8 +6748,7 @@
 			children = (
 				515BE1B61D5A94F900DD7C68 /* UIGamepadProviderMac.mm */,
 			);
-			name = mac;
-			path = UIProcess/Gamepad/mac;
+			path = mac;
 			sourceTree = "<group>";
 		};
 		515BE1AE1D59003400DD7C68 /* Gamepad */ = {
