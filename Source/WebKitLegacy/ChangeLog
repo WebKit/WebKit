@@ -1,3 +1,13 @@
+2018-09-05  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r235585): WebDownloadInternal.h is missing from WebKitLegacy Xcode project
+        <https://bugs.webkit.org/show_bug.cgi?id=189072>
+
+        Found using tidy-Xcode-project-file (see Bug 188754).
+
+        * WebKitLegacy.xcodeproj/project.pbxproj: Remove references to
+        WebDownloadInternal.h since the header was removed in r235585.
+
 2018-08-26  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Don’t make unnecessary, broken WebKitPluginAgent symlink when WK_USE_OVERRIDE_FRAMEWORKS_DIR=YES
