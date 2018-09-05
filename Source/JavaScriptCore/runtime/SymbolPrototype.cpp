@@ -97,7 +97,8 @@ EncodedJSValue JSC_HOST_CALL symbolProtoGetterDescription(ExecState* exec)
     if (!symbol)
         return throwVMTypeError(exec, scope, SymbolDescriptionTypeError);
     scope.release();
-    return JSValue::encode(jsString(&vm, symbol->description()));
+    const auto description = symbol->description();
+    return JSValue::encode(description.isNull() ? jsUndefined() : jsString(&vm, description));
 }
 
 EncodedJSValue JSC_HOST_CALL symbolProtoFuncToString(ExecState* exec)

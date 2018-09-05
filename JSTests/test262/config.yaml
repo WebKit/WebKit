@@ -11,8 +11,6 @@ skip:
     - BigInt
     # https://bugs.webkit.org/show_bug.cgi?id=166693
     - async-iteration
-    # https://bugs.webkit.org/show_bug.cgi?id=186686
-    - Symbol.prototype.description
     # https://bugs.webkit.org/show_bug.cgi?id=186694
     - String.prototype.matchAll
     - Symbol.matchAll
