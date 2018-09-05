@@ -1,3 +1,12 @@
+2018-09-05  Truitt Savell  <tsavell@apple.com>
+
+        Rebaseline test after changes in https://trac.webkit.org/changeset/235669/webkit deleted the expectation. 
+        https://bugs.webkit.org/show_bug.cgi?id=188816
+
+        Unreviewed Test Gardening.
+
+        * platform/mac-wk1/imported/w3c/web-platform-tests/xhr/send-network-error-async-events.sub-expected.txt:
+
 2018-09-05  Ms2ger  <Ms2ger@igalia.com>
 
         GTK-focused gardening
