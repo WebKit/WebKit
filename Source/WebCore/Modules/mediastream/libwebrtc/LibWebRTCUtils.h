@@ -36,7 +36,8 @@ namespace WebCore {
 
 struct RTCRtpParameters;
 
-RTCRtpParameters fillRtpParameters(const webrtc::RtpParameters&);
+RTCRtpParameters toRTCRtpParameters(const webrtc::RtpParameters&);
+webrtc::RtpParameters fromRTCRtpParameters(const RTCRtpParameters&);
 
 inline String fromStdString(const std::string& value)
 {

@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-static inline RTCRtpParameters::EncodingParameters fillEncodingParameters(const webrtc::RtpEncodingParameters& rtcParameters)
+static inline RTCRtpParameters::EncodingParameters toRTCEncodingParameters(const webrtc::RtpEncodingParameters& rtcParameters)
 {
     RTCRtpParameters::EncodingParameters parameters;
 
@@ -65,7 +65,32 @@ static inline RTCRtpParameters::EncodingParameters fillEncodingParameters(const 
     return parameters;
 }
 
-static inline RTCRtpParameters::HeaderExtensionParameters fillHeaderExtensionParameters(const webrtc::RtpHeaderExtensionParameters& rtcParameters)
+static inline webrtc::RtpEncodingParameters fromRTCEncodingParameters(const RTCRtpParameters::EncodingParameters& parameters)
+{
+    webrtc::RtpEncodingParameters rtcParameters;
+
+    if (parameters.dtx) {
+        switch (*parameters.dtx) {
+        case RTCRtpParameters::DtxStatus::Disabled:
+            rtcParameters.dtx = webrtc::DtxStatus::DISABLED;
+            break;
+        case RTCRtpParameters::DtxStatus::Enabled:
+            rtcParameters.dtx = webrtc::DtxStatus::ENABLED;
+        }
+    }
+    rtcParameters.active = parameters.active;
+    if (parameters.maxBitrate)
+        rtcParameters.max_bitrate_bps = parameters.maxBitrate;
+    if (parameters.maxFramerate)
+        rtcParameters.max_framerate = parameters.maxFramerate;
+    rtcParameters.rid = parameters.rid.utf8().data();
+    if (parameters.scaleResolutionDownBy != 1)
+        rtcParameters.scale_resolution_down_by = parameters.scaleResolutionDownBy;
+
+    return rtcParameters;
+}
+
+static inline RTCRtpParameters::HeaderExtensionParameters toRTCHeaderExtensionParameters(const webrtc::RtpHeaderExtensionParameters& rtcParameters)
 {
     RTCRtpParameters::HeaderExtensionParameters parameters;
 
@@ -75,7 +100,17 @@ static inline RTCRtpParameters::HeaderExtensionParameters fillHeaderExtensionPar
     return parameters;
 }
 
-static inline RTCRtpParameters::CodecParameters fillCodecParameters(const webrtc::RtpCodecParameters& rtcParameters)
+static inline webrtc::RtpHeaderExtensionParameters fromRTCHeaderExtensionParameters(const RTCRtpParameters::HeaderExtensionParameters& parameters)
+{
+    webrtc::RtpHeaderExtensionParameters rtcParameters;
+
+    rtcParameters.uri = parameters.uri.utf8().data();
+    rtcParameters.id = parameters.id;
+
+    return rtcParameters;
+}
+
+static inline RTCRtpParameters::CodecParameters toRTCCodecParameters(const webrtc::RtpCodecParameters& rtcParameters)
 {
     RTCRtpParameters::CodecParameters parameters;
 
@@ -89,17 +124,17 @@ static inline RTCRtpParameters::CodecParameters fillCodecParameters(const webrtc
     return parameters;
 }
 
-RTCRtpParameters fillRtpParameters(const webrtc::RtpParameters& rtcParameters)
+RTCRtpParameters toRTCRtpParameters(const webrtc::RtpParameters& rtcParameters)
 {
     RTCRtpParameters parameters;
 
     parameters.transactionId = fromStdString(rtcParameters.transaction_id);
     for (auto& rtcEncoding : rtcParameters.encodings)
-        parameters.encodings.append(fillEncodingParameters(rtcEncoding));
+        parameters.encodings.append(toRTCEncodingParameters(rtcEncoding));
     for (auto& extension : rtcParameters.header_extensions)
-        parameters.headerExtensions.append(fillHeaderExtensionParameters(extension));
+        parameters.headerExtensions.append(toRTCHeaderExtensionParameters(extension));
     for (auto& codec : rtcParameters.codecs)
-        parameters.codecs.append(fillCodecParameters(codec));
+        parameters.codecs.append(toRTCCodecParameters(codec));
 
     switch (rtcParameters.degradation_preference) {
     // FIXME: Support DegradationPreference::DISABLED.
@@ -115,6 +150,31 @@ RTCRtpParameters fillRtpParameters(const webrtc::RtpParameters& rtcParameters)
         break;
     };
     return parameters;
+}
+
+webrtc::RtpParameters fromRTCRtpParameters(const RTCRtpParameters& parameters)
+{
+    webrtc::RtpParameters rtcParameters;
+    rtcParameters.transaction_id = parameters.transactionId.utf8().data();
+
+    for (auto& encoding : parameters.encodings)
+        rtcParameters.encodings.push_back(fromRTCEncodingParameters(encoding));
+    for (auto& extension : parameters.headerExtensions)
+        rtcParameters.header_extensions.push_back(fromRTCHeaderExtensionParameters(extension));
+    // Codecs parameters are readonly
+
+    switch (parameters.degradationPreference) {
+    case RTCRtpParameters::DegradationPreference::MaintainFramerate:
+        rtcParameters.degradation_preference = webrtc::DegradationPreference::MAINTAIN_FRAMERATE;
+        break;
+    case RTCRtpParameters::DegradationPreference::MaintainResolution:
+        rtcParameters.degradation_preference = webrtc::DegradationPreference::MAINTAIN_RESOLUTION;
+        break;
+    case RTCRtpParameters::DegradationPreference::Balanced:
+        rtcParameters.degradation_preference = webrtc::DegradationPreference::BALANCED;
+        break;
+    }
+    return rtcParameters;
 }
 
 }; // namespace WebCore

@@ -1,3 +1,3 @@
 
-FAIL setParameters() when transceiver is stopped should reject with InvalidStateError sender.setParameters is not a function. (In 'sender.setParameters(param)', 'sender.setParameters' is undefined)
+PASS setParameters() when transceiver is stopped should reject with InvalidStateError 
 

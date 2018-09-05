@@ -57,6 +57,8 @@ public:
     void replaceTrack(RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&);
 
     RTCRtpParameters getParameters();
+    void setParameters(const RTCRtpParameters&, DOMPromiseDeferred<void>&&);
+
     RTCRtpSenderBackend* backend() { return m_backend.get(); }
 
 private:

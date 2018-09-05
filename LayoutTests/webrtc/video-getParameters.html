@@ -51,7 +51,7 @@ promise_test((test) => {
         assert_equals(JSON.stringify(senderParameters), JSON.stringify(receiverParameters), "testing sender vs. receiver parameters");
 
         senderParameters.encodings[0].ssrc = 1;
-        assert_equals(JSON.stringify(senderParameters), '{"codecs":[],"degradationPreference":"balanced","encodings":[{"active":true,"dtx":"disabled","fec":{"ssrc":1},"maxBitrate":0,"maxFramerate":0,"priority":"medium","rid":"","rtx":{"ssrc":1},"scaleResolutionDownBy":1,"ssrc":1}],"headerExtensions":[],"transactionId":""}', "Testing sanitized parameters");
+        assert_equals(JSON.stringify(senderParameters), '{"codecs":[],"degradationPreference":"balanced","encodings":[{"active":true,"fec":{"ssrc":1},"maxBitrate":0,"maxFramerate":0,"priority":"medium","rid":"","rtx":{"ssrc":1},"scaleResolutionDownBy":1,"ssrc":1}],"headerExtensions":[],"transactionId":""}', "Testing sanitized parameters");
     });
 }, "Basic video stats");
         </script>

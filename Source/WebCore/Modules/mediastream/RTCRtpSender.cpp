@@ -99,6 +99,15 @@ RTCRtpParameters RTCRtpSender::getParameters()
     return m_backend->getParameters();
 }
 
+void RTCRtpSender::setParameters(const RTCRtpParameters& parameters, DOMPromiseDeferred<void>&& promise)
+{
+    if (isStopped()) {
+        promise.reject(InvalidStateError);
+        return;
+    }
+    return m_backend->setParameters(parameters, WTFMove(promise));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

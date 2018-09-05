@@ -33,7 +33,7 @@ namespace WebCore {
 
 RTCRtpParameters LibWebRTCRtpReceiverBackend::getParameters()
 {
-    return fillRtpParameters(m_rtcReceiver->GetParameters());
+    return toRTCRtpParameters(m_rtcReceiver->GetParameters());
 }
 
 } // namespace WebCore

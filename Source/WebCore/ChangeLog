@@ -1,3 +1,41 @@
+2018-09-05  Youenn Fablet  <youenn@apple.com>
+
+        Expose RTCRtpSender.setParameters
+        https://bugs.webkit.org/show_bug.cgi?id=189307
+
+        Reviewed by Eric Carlson.
+
+        Implement RTCRtpSender.setParameters.
+        This is an incomplete implementation as we need to refresh parameters as per the spec and testing is much easier with full transceiver support.
+        Implementation uses sender backend to set the parameters at libwebrtc level.
+        Fix the case of a stopped sender/transceiver in which case promise should be rejected.
+        Covered by rebased and modified tests.
+
+        * Modules/mediastream/RTCRtpParameters.h:
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::setParameters):
+        * Modules/mediastream/RTCRtpSender.h:
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/RTCRtpSenderBackend.h:
+        * Modules/mediastream/RTCRtpTransceiver.cpp:
+        (WebCore::RTCRtpTransceiver::stop):
+        * Modules/mediastream/RTCRtpTransceiver.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp:
+        (WebCore::LibWebRTCRtpReceiverBackend::getParameters):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        (WebCore::LibWebRTCRtpSenderBackend::getParameters const):
+        (WebCore::LibWebRTCRtpSenderBackend::setParameters):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp:
+        (WebCore::toRTCEncodingParameters):
+        (WebCore::fromRTCEncodingParameters):
+        (WebCore::toRTCHeaderExtensionParameters):
+        (WebCore::fromRTCHeaderExtensionParameters):
+        (WebCore::toRTCCodecParameters):
+        (WebCore::toRTCRtpParameters):
+        (WebCore::fromRTCRtpParameters):
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.h:
+
 2018-09-05  Simon Fraser  <simon.fraser@apple.com>
 
         Remove some logging that I committed by mistake.

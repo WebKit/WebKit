@@ -38,6 +38,7 @@ class RTCRtpSenderBackend {
 public:
     virtual void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) = 0;
     virtual RTCRtpParameters getParameters() const = 0;
+    virtual void setParameters(const RTCRtpParameters&, DOMPromiseDeferred<void>&&) = 0;
     virtual ~RTCRtpSenderBackend() = default;
 };
 

@@ -102,6 +102,13 @@ void RTCRtpTransceiver::disableSendingDirection()
         m_direction = RTCRtpTransceiverDirection::Inactive;
 }
 
+void RTCRtpTransceiver::stop()
+{
+    m_stopped = true;
+    m_receiver->stop();
+    m_sender->stop();
+}
+
 void RtpTransceiverSet::append(Ref<RTCRtpTransceiver>&& transceiver)
 {
     m_senders.append(transceiver->sender());

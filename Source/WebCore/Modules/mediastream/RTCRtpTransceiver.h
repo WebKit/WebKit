@@ -68,7 +68,7 @@ public:
     RTCRtpReceiver& receiver() { return m_receiver.get(); }
 
     bool stopped() const { return m_stopped; }
-    void stop() { m_stopped = true; }
+    void stop();
 
     // FIXME: Temporary solution to keep track of ICE states for this transceiver. Later, each
     // sender and receiver will have up to two DTLS transports, which in turn will have an ICE

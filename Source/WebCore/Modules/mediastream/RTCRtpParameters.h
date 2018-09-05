@@ -57,7 +57,7 @@ struct RTCRtpParameters {
         unsigned long ssrc { 0 };
         RtxParameters rtx;
         FecParameters fec;
-        DtxStatus dtx { DtxStatus::Disabled };
+        std::optional<DtxStatus> dtx;
         bool active { false};
         PriorityType priority { PriorityType::Medium };
         unsigned long maxBitrate { 0 };

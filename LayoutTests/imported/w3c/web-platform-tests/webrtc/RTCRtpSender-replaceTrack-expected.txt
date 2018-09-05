@@ -1,7 +1,7 @@
 
 PASS Calling replaceTrack on closed connection should reject with InvalidStateError 
 PASS Calling replaceTrack with track of different kind should reject with TypeError 
-FAIL Calling replaceTrack on stopped sender should reject with InvalidStateError assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Calling replaceTrack on stopped sender should reject with InvalidStateError 
 PASS Calling replaceTrack on sender with null track and not set to session description should resolve with sender.track set to given track 
 PASS Calling replaceTrack on sender not set to session description should resolve with sender.track set to given track 
 PASS Calling replaceTrack(null) on sender not set to session description should resolve with sender.track set to null 
