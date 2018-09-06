@@ -1126,16 +1126,16 @@ namespace WebCore {
 } // namespace WebCore
 ```
 
-[](#using-position) In implementation files, put all other "using" statements at the beginning of the file, before any namespace definitions and after any "include" statements.
+[](#using-position) In implementation files, put all "using namespace" statements inside namespace definitions.
 
 ###### Right:
 
 ```cpp
 // HTMLSelectElement.cpp
 
-using namespace other;
-
 namespace WebCore {
+
+using namespace other;
 
 } // namespace WebCore
 ```
@@ -1145,9 +1145,9 @@ namespace WebCore {
 ```cpp
 // HTMLSelectElement.cpp
 
-namespace WebCore {
-
 using namespace other;
+
+namespace WebCore {
 
 } // namespace WebCore
 ```

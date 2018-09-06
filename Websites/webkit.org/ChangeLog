@@ -1,3 +1,15 @@
+2018-09-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Update code style guidelines for using namespace inside a namespace definition
+        https://bugs.webkit.org/show_bug.cgi?id=189298
+
+        Reviewed by Ryosuke Niwa.
+
+        "using namespace" statements should be inside namespace definitions for
+        unified source builds.
+
+        * code-style.md(#using-position): 
+
 2018-08-31  Dean Jackson  <dino@apple.com>
 
         Add support for USDZ to webkit.org for a sample file
