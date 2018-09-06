@@ -1,3 +1,16 @@
+2018-09-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Allow port specific options on gtest
+        https://bugs.webkit.org/show_bug.cgi?id=189313
+
+        Reviewed by Alex Christensen.
+
+        Use the global property set by the gtest CMake file to add to the
+        compilation definitions for TestWebKitAPI rather than repeating the
+        logic.
+
+        * TestWebKitAPI/CMakeLists.txt:
+
 2018-09-05  Woodrow Wang  <woodrow_wang@apple.com>
 
         Add infrastructure to dump resource load statistics
