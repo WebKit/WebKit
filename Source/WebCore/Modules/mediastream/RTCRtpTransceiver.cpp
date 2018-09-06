@@ -38,53 +38,41 @@
 
 namespace WebCore {
 
-#define STRING_FUNCTION(name) \
-    static const String& name##String() \
-    { \
-        static NeverDestroyed<const String> name(MAKE_STATIC_STRING_IMPL(#name)); \
-        return name; \
-    }
-
-STRING_FUNCTION(sendrecv)
-STRING_FUNCTION(sendonly)
-STRING_FUNCTION(recvonly)
-STRING_FUNCTION(inactive)
-
-String RTCRtpTransceiver::getNextMid()
-{
-    static unsigned mid = 0;
-    return String::number(++mid);
-}
-
-RTCRtpTransceiver::RTCRtpTransceiver(Ref<RTCRtpSender>&& sender, Ref<RTCRtpReceiver>&& receiver)
+RTCRtpTransceiver::RTCRtpTransceiver(Ref<RTCRtpSender>&& sender, Ref<RTCRtpReceiver>&& receiver, std::unique_ptr<RTCRtpTransceiverBackend>&& backend)
     : m_direction(RTCRtpTransceiverDirection::Sendrecv)
     , m_sender(WTFMove(sender))
     , m_receiver(WTFMove(receiver))
     , m_iceTransport(RTCIceTransport::create())
+    , m_backend(WTFMove(backend))
 {
 }
 
-const String& RTCRtpTransceiver::directionString() const
+const String& RTCRtpTransceiver::mid() const
 {
-    switch (m_direction) {
-    case RTCRtpTransceiverDirection::Sendrecv:
-        return sendrecvString();
-    case RTCRtpTransceiverDirection::Sendonly:
-        return sendonlyString();
-    case RTCRtpTransceiverDirection::Recvonly:
-        return recvonlyString();
-    case RTCRtpTransceiverDirection::Inactive:
-        return inactiveString();
-    }
-
-    ASSERT_NOT_REACHED();
-    return inactiveString();
+    if (!m_backend)
+        return m_mid;
+    return m_backend->mid();
 }
 
 bool RTCRtpTransceiver::hasSendingDirection() const
 {
     return m_direction == RTCRtpTransceiverDirection::Sendrecv || m_direction == RTCRtpTransceiverDirection::Sendonly;
 }
+
+RTCRtpTransceiverDirection RTCRtpTransceiver::direction() const
+{
+    if (!m_backend)
+        return m_direction;
+    return m_backend->direction();
+}
+
+void RTCRtpTransceiver::setDirection(RTCRtpTransceiverDirection direction)
+{
+    m_direction = direction;
+    if (m_backend)
+        m_backend->setDirection(direction);
+}
+
 
 void RTCRtpTransceiver::enableSendingDirection()
 {
@@ -104,9 +92,13 @@ void RTCRtpTransceiver::disableSendingDirection()
 
 void RTCRtpTransceiver::stop()
 {
+    if (m_stopped)
+        return;
     m_stopped = true;
     m_receiver->stop();
     m_sender->stop();
+    if (m_backend)
+        m_backend->stop();
 }
 
 void RtpTransceiverSet::append(Ref<RTCRtpTransceiver>&& transceiver)

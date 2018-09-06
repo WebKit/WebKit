@@ -1,3 +1,38 @@
+2018-09-05  Youenn Fablet  <youenn@apple.com>
+
+        Introduce a backend for RTCRtpTransceiver
+        https://bugs.webkit.org/show_bug.cgi?id=189322
+
+        Reviewed by Eric Carlson.
+
+        Introduce RTCRtpTransceiverBackend to implement the transceiver functionality using libwebrtc.
+        Remove provisional mids as it will be done by the webrtc backend.
+
+        No observable change of behavior yet since there is no transceiver backend yet.
+
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCRtpTransceiver.cpp:
+        (WebCore::RTCRtpTransceiver::RTCRtpTransceiver):
+        (WebCore::RTCRtpTransceiver::mid const):
+        (WebCore::RTCRtpTransceiver::direction const):
+        (WebCore::RTCRtpTransceiver::setDirection):
+        (WebCore::RTCRtpTransceiver::stop):
+        (WebCore::RTCRtpTransceiver::getNextMid): Deleted.
+        (WebCore::RTCRtpTransceiver::directionString const): Deleted.
+        * Modules/mediastream/RTCRtpTransceiver.h:
+        (WebCore::RTCRtpTransceiver::create):
+        (WebCore::RTCRtpTransceiver::provisionalMid const): Deleted.
+        (WebCore::RTCRtpTransceiver::setMid): Deleted.
+        * Modules/mediastream/RTCRtpTransceiverBackend.h: Added.
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::createReceiver):
+        (WebCore::LibWebRTCPeerConnectionBackend::videoReceiver):
+        (WebCore::LibWebRTCPeerConnectionBackend::audioReceiver):
+        (WebCore::LibWebRTCPeerConnectionBackend::addTrack):
+        (WebCore::LibWebRTCPeerConnectionBackend::completeAddTransceiver):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-09-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Pass in const LayoutContext& to geometry methods when possible
