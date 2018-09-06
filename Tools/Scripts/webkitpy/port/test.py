@@ -102,7 +102,7 @@ class TestList(object):
 #
 # These numbers may need to be updated whenever we add or delete tests.
 #
-TOTAL_TESTS = 76
+TOTAL_TESTS = 77
 TOTAL_SKIPS = 9
 TOTAL_RETRIES = 15
 
@@ -123,6 +123,9 @@ def unit_test_list():
     tests.add('failures/expected/leak.html', leak=True)
     tests.add('failures/expected/flaky-leak.html', leak=True)
     tests.add('failures/expected/image.html',
+              actual_image='image_fail-pngtEXtchecksum\x00checksum_fail',
+              expected_image='image-pngtEXtchecksum\x00checksum-png')
+    tests.add('failures/expected/pixel-fail.html',
               actual_image='image_fail-pngtEXtchecksum\x00checksum_fail',
               expected_image='image-pngtEXtchecksum\x00checksum-png')
     tests.add('failures/expected/image_checksum.html',
@@ -293,6 +296,7 @@ Bug(test) failures/expected/leak.html [ Leak ]
 Bug(test) failures/expected/flaky-leak.html [ Failure Leak ]
 Bug(test) failures/expected/leaky-reftest.html [ ImageOnlyFailure Leak ]
 Bug(test) failures/expected/image.html [ ImageOnlyFailure ]
+Bug(test) failures/expected/pixel-fail.html [ ImageOnlyFailure ]
 Bug(test) failures/expected/audio.html [ Failure ]
 Bug(test) failures/expected/image_checksum.html [ ImageOnlyFailure ]
 Bug(test) failures/expected/mismatch.html [ ImageOnlyFailure ]

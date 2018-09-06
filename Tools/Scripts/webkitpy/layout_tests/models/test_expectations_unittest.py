@@ -234,7 +234,8 @@ class MiscTests(Base):
 
     def test_pixel_tests_flag(self):
         def match(test, result, pixel_tests_enabled):
-            return self._exp.matches_an_expected_result(test, result, pixel_tests_enabled, False)
+            expectations = self._exp.filtered_expectations_for_test(test, pixel_tests_enabled, False)
+            return self._exp.matches_an_expected_result(test, result, expectations)
 
         self.parse_exp(self.get_basic_expectations())
         pixel_tests_enabled = True
@@ -250,7 +251,8 @@ class MiscTests(Base):
 
     def test_world_leaks_flag(self):
         def match(test, result, pixel_tests_enabled, world_leaks_enabled):
-            return self._exp.matches_an_expected_result(test, result, pixel_tests_enabled, world_leaks_enabled)
+            expectations = self._exp.filtered_expectations_for_test(test, pixel_tests_enabled, world_leaks_enabled)
+            return self._exp.matches_an_expected_result(test, result, expectations)
 
         pixel_tests_enabled = True
         pixel_tests_disabled = False

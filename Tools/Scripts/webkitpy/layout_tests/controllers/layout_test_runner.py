@@ -182,8 +182,9 @@ class LayoutTestRunner(object):
             exp_str = got_str = 'SKIP'
             expected = True
         else:
-            expected = self._expectations.matches_an_expected_result(result.test_name, result.type, self._options.pixel_tests or result.reftest_type, self._options.world_leaks)
-            exp_str = self._expectations.model().get_expectations_string(result.test_name)
+            expectations = self._expectations.filtered_expectations_for_test(result.test_name, self._options.pixel_tests or bool(result.reftest_type), self._options.world_leaks)
+            expected = self._expectations.matches_an_expected_result(result.test_name, result.type, expectations)
+            exp_str = self._expectations.model().expectations_to_string(expectations)
             got_str = self._expectations.model().expectation_to_string(result.type)
 
         run_results.add(result, expected, self._test_is_slow(result.test_name))
@@ -198,8 +199,9 @@ class LayoutTestRunner(object):
             # When running a chunk (--run-chunk), results_by_name contains all the tests, but (confusingly) all_tests only contains those in the chunk that was run,
             # and we don't want to modify the results of a test that didn't run. existing_result.test_number is only non-None for tests that ran.
             if existing_result and existing_result.test_number is not None:
-                was_expected = self._expectations.matches_an_expected_result(new_result.test_name, existing_result.type, self._options.pixel_tests or existing_result.reftest_type, self._options.world_leaks)
-                now_expected = self._expectations.matches_an_expected_result(new_result.test_name, new_result.type, self._options.pixel_tests or new_result.reftest_type, self._options.world_leaks)
+                expectations = self._expectations.filtered_expectations_for_test(new_result.test_name, self._options.pixel_tests or bool(new_result.reftest_type), self._options.world_leaks)
+                was_expected = self._expectations.matches_an_expected_result(new_result.test_name, existing_result.type, expectations)
+                now_expected = self._expectations.matches_an_expected_result(new_result.test_name, new_result.type, expectations)
                 run_results.change_result_to_failure(existing_result, new_result, was_expected, now_expected)
 
     def start_servers(self):

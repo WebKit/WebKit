@@ -233,7 +233,10 @@ def summarize_results(port_obj, expectations, initial_results, retry_results, en
         # Note that if a test crashed in the original run, we ignore
         # whether or not it crashed when we retried it (if we retried it),
         # and always consider the result not flaky.
-        expected = expectations.model().get_expectations_string(test_name)
+        pixel_tests_enabled = enabled_pixel_tests_in_retry or port_obj._options.pixel_tests or bool(result.reftest_type)
+        test_expectation = expectations.filtered_expectations_for_test(test_name, pixel_tests_enabled, port_obj._options.world_leaks)
+        expected = expectations.model().expectations_to_string(test_expectation)
+
         result_type = result.type
         actual = [keywords[result_type]]
 
@@ -267,10 +270,6 @@ def summarize_results(port_obj, expectations, initial_results, retry_results, en
             if test_name in initial_results.unexpected_results_by_name:
                 num_missing += 1
                 test_dict['report'] = 'MISSING'
-        elif result_type == test_expectations.LEAK:
-            if test_name in initial_results.unexpected_results_by_name:
-                num_regressions += 1
-                test_dict['report'] = 'REGRESSION'
         elif test_name in initial_results.unexpected_results_by_name:
             if retry_results and test_name not in retry_results.unexpected_results_by_name:
                 actual.extend(expectations.model().get_expectations_string(test_name).split(" "))

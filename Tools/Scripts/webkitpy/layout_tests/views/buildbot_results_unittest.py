@@ -30,6 +30,7 @@ import StringIO
 import unittest
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.tool.mocktool import MockOptions
 
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
@@ -52,7 +53,7 @@ class BuildBotPrinterTests(unittest.TestCase):
         return printer, stream
 
     def test_print_unexpected_results(self):
-        port = MockHost().port_factory.get('test')
+        port = MockHost().port_factory.get('test', options=MockOptions(pixel_tests=False, world_leaks=False))
         printer, out = self.get_printer()
 
         # test everything running as expected
@@ -88,8 +89,34 @@ class BuildBotPrinterTests(unittest.TestCase):
         printer.print_unexpected_results(summary)
         self.assertNotEmpty(out)
 
+    def test_print_unexpected_results_with_options(self):
+        port = MockHost().port_factory.get('test', options=MockOptions(pixel_tests=False, world_leaks=False))
+
+        DASHED_LINE = "-" * 78 + "\n"
+
+        port._options.pixel_tests = True
+        port._options.world_leaks = False
+        printer, out = self.get_printer()
+        summary = test_run_results_unittest.summarized_results(port, expected=True, passing=False, flaky=False)
+        printer.print_unexpected_results(summary)
+        self.assertEqual(out.getvalue(), DASHED_LINE)
+
+        port._options.pixel_tests = False
+        port._options.world_leaks = True
+        printer, out = self.get_printer()
+        summary = test_run_results_unittest.summarized_results(port, expected=True, passing=False, flaky=False)
+        printer.print_unexpected_results(summary)
+        self.assertEqual(out.getvalue(), DASHED_LINE)
+
+        port._options.pixel_tests = True
+        port._options.world_leaks = True
+        printer, out = self.get_printer()
+        summary = test_run_results_unittest.summarized_results(port, expected=True, passing=False, flaky=False)
+        printer.print_unexpected_results(summary)
+        self.assertEqual(out.getvalue(), DASHED_LINE)
+
     def test_print_results(self):
-        port = MockHost().port_factory.get('test')
+        port = MockHost().port_factory.get('test', options=MockOptions(pixel_tests=False, world_leaks=False))
         printer, out = self.get_printer()
         initial_results = test_run_results_unittest.run_results(port)
         summary = test_run_results_unittest.summarized_results(port, expected=False, passing=True, flaky=False)

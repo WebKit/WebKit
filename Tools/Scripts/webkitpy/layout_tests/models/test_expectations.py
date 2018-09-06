@@ -598,8 +598,22 @@ class TestExpectationsModel(object):
     def get_expectations(self, test):
         return self._test_to_expectations[test]
 
+    def get_expectations_or_pass(self, test):
+        try:
+            return self.get_expectations(test)
+        except:
+            return set([PASS])
+
+    def expectations_to_string(self, expectations):
+        retval = []
+
+        for expectation in expectations:
+            retval.append(self.expectation_to_string(expectation))
+
+        return " ".join(retval)
+
     def get_expectations_string(self, test):
-        """Returns the expectatons for the given test as an uppercase string.
+        """Returns the expectations for the given test as an uppercase string.
         If there are no expectations for the test, then "PASS" is returned."""
         try:
             expectations = self.get_expectations(test)
@@ -965,14 +979,16 @@ class TestExpectations(object):
     def get_rebaselining_failures(self):
         return self._model.get_test_set(REBASELINE)
 
-    def matches_an_expected_result(self, test, result, pixel_tests_are_enabled, world_leaks_are_enabled):
-        expected_results = self._model.get_expectations(test)
+    def filtered_expectations_for_test(self, test, pixel_tests_are_enabled, world_leaks_are_enabled):
+        expected_results = self._model.get_expectations_or_pass(test)
         if not pixel_tests_are_enabled:
             expected_results = self.remove_pixel_failures(expected_results)
-
         if not world_leaks_are_enabled:
             expected_results = self.remove_leak_failures(expected_results)
 
+        return expected_results
+
+    def matches_an_expected_result(self, test, result, expected_results):
         return self.result_was_expected(result,
                                    expected_results,
                                    self.is_rebaselining(test),

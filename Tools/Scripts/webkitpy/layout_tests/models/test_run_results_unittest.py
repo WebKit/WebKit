@@ -33,6 +33,7 @@ from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models import test_run_results
+from webkitpy.tool.mocktool import MockOptions
 
 
 def get_result(test_name, result_type=test_expectations.PASS, run_time=0):
@@ -65,18 +66,38 @@ def summarized_results(port, expected, passing, flaky, include_passes=False):
         initial_results.add(get_result('failures/expected/audio.html', test_expectations.AUDIO), expected, test_is_slow)
         initial_results.add(get_result('failures/expected/timeout.html', test_expectations.TIMEOUT), expected, test_is_slow)
         initial_results.add(get_result('failures/expected/crash.html', test_expectations.CRASH), expected, test_is_slow)
-        initial_results.add(get_result('failures/expected/leak.html', test_expectations.LEAK), expected, test_is_slow)
+
+        if port._options.pixel_tests:
+            initial_results.add(get_result('failures/expected/pixel-fail.html', test_expectations.IMAGE), expected, test_is_slow)
+        else:
+            initial_results.add(get_result('failures/expected/pixel-fail.html', test_expectations.PASS), expected, test_is_slow)
+
+        if port._options.world_leaks:
+            initial_results.add(get_result('failures/expected/leak.html', test_expectations.LEAK), expected, test_is_slow)
+        else:
+            initial_results.add(get_result('failures/expected/leak.html', test_expectations.PASS), expected, test_is_slow)
+
     elif passing:
         initial_results.add(get_result('passes/text.html'), expected, test_is_slow)
         initial_results.add(get_result('failures/expected/audio.html'), expected, test_is_slow)
         initial_results.add(get_result('failures/expected/timeout.html'), expected, test_is_slow)
         initial_results.add(get_result('failures/expected/crash.html'), expected, test_is_slow)
-        initial_results.add(get_result('failures/expected/leak.html'), expected, test_is_slow)
+
+        if port._options.pixel_tests:
+            initial_results.add(get_result('failures/expected/pixel-fail.html'), expected, test_is_slow)
+        else:
+            initial_results.add(get_result('failures/expected/pixel-fail.html', test_expectations.IMAGE), expected, test_is_slow)
+
+        if port._options.world_leaks:
+            initial_results.add(get_result('failures/expected/leak.html'), expected, test_is_slow)
+        else:
+            initial_results.add(get_result('failures/expected/leak.html', test_expectations.PASS), expected, test_is_slow)
     else:
         initial_results.add(get_result('passes/text.html', test_expectations.TIMEOUT), expected, test_is_slow)
         initial_results.add(get_result('failures/expected/audio.html', test_expectations.AUDIO), expected, test_is_slow)
         initial_results.add(get_result('failures/expected/timeout.html', test_expectations.CRASH), expected, test_is_slow)
         initial_results.add(get_result('failures/expected/crash.html', test_expectations.TIMEOUT), expected, test_is_slow)
+        initial_results.add(get_result('failures/expected/pixel-fail.html', test_expectations.TIMEOUT), expected, test_is_slow)
         initial_results.add(get_result('failures/expected/leak.html', test_expectations.CRASH), expected, test_is_slow)
 
         # we only list hang.html here, since normally this is WontFix
@@ -87,6 +108,7 @@ def summarized_results(port, expected, passing, flaky, include_passes=False):
         retry_results.add(get_result('passes/text.html'), True, test_is_slow)
         retry_results.add(get_result('failures/expected/timeout.html'), True, test_is_slow)
         retry_results.add(get_result('failures/expected/crash.html'), True, test_is_slow)
+        retry_results.add(get_result('failures/expected/pixel-fail.html'), True, test_is_slow)
         retry_results.add(get_result('failures/expected/leak.html'), True, test_is_slow)
     else:
         retry_results = None
@@ -126,7 +148,7 @@ class InterpretTestFailuresTest(unittest.TestCase):
 class SummarizedResultsTest(unittest.TestCase):
     def setUp(self):
         host = MockHost(initialize_scm_by_default=False)
-        self.port = host.port_factory.get(port_name='test')
+        self.port = host.port_factory.get(port_name='test', options=MockOptions(http=True, pixel_tests=False, world_leaks=False))
 
     def test_no_svn_revision(self):
         summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
@@ -146,3 +168,8 @@ class SummarizedResultsTest(unittest.TestCase):
         self.port._options.builder_name = 'dummy builder'
         summary = summarized_results(self.port, expected=False, passing=True, flaky=False, include_passes=True)
         self.assertEqual(summary['tests']['passes']['text.html']['expected'], 'PASS')
+
+    def test_summarized_results_world_leaks_disabled(self):
+        self.port._options.builder_name = 'dummy builder'
+        summary = summarized_results(self.port, expected=False, passing=True, flaky=False, include_passes=True)
+        self.assertEqual(summary['tests']['failures']['expected']['leak.html']['expected'], 'PASS')

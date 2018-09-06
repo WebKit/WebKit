@@ -54,7 +54,6 @@ from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATU
 from webkitpy.port import Port
 from webkitpy.port import test
 from webkitpy.test.skip import skip_if
-from webkitpy.tool.mocktool import MockOptions
 
 
 def parse_args(extra_args=None, tests_included=False, new_results=False, print_nothing=True):

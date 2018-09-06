@@ -1,3 +1,49 @@
+2018-09-06  Simon Fraser  <simon.fraser@apple.com>
+
+        run-webkit-tests prints confusing messages when test expectations list results that are not compatible with the run options
+        https://bugs.webkit.org/show_bug.cgi?id=189219
+
+        Reviewed by Jon Lee.
+        
+        If you call run-webkit-tests without --pixel-tests, and a non-ref test is marked as ImageOnlyFailure,
+        it will be reported as unexpectedly passing. This is more confusing if you run without --world-leaks, yet
+        tests are marked as [ Leak ] in TestExpectations.
+        
+        Fix by filtering out expectations that don't apply given the run options. So without --pixel-tests,
+        a non-ref ImageOnlyFailure becomes a Pass, and without --world-leaks, a Leak becomes a Pass.
+        
+        Add various unit tests to test the various combinations.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner._update_summary_with_result):
+        (LayoutTestRunner._annotate_results_with_additional_failures):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        (LayoutTestRunnerTests.test_update_summary_with_result):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationsModel.get_expectations_or_pass):
+        (TestExpectationsModel):
+        (TestExpectationsModel.expectations_to_string):
+        (TestExpectationsModel.get_expectations_string):
+        (TestExpectations.filtered_expectations_for_test):
+        (TestExpectations):
+        (TestExpectations.matches_an_expected_result):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (summarize_results):
+        * Scripts/webkitpy/layout_tests/models/test_run_results_unittest.py:
+        (summarized_results):
+        (SummarizedResultsTest.setUp):
+        (SummarizedResultsTest.test_summarized_results_include_passes):
+        (SummarizedResultsTest):
+        (SummarizedResultsTest.test_summarized_results_world_leaks_disabled):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        * Scripts/webkitpy/layout_tests/views/buildbot_results_unittest.py:
+        (BuildBotPrinterTests.test_print_unexpected_results):
+        (BuildBotPrinterTests.test_print_unexpected_results_with_options):
+        (BuildBotPrinterTests.test_print_results):
+        * Scripts/webkitpy/port/test.py:
+        (unit_test_list):
+
 2018-09-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Add support for min(max)-height

@@ -122,8 +122,10 @@ class LayoutTestRunnerTests(unittest.TestCase):
         # Reftests expected to be image mismatch should be respected when pixel_tests=False.
         runner = self._runner()
         runner._options.pixel_tests = False
+        runner._options.world_leaks = False
         test = 'failures/expected/reftest.html'
-        expectations = TestExpectations(runner._port, tests=[test])
+        leak_test = 'failures/expected/leak.html'
+        expectations = TestExpectations(runner._port, tests=[test, leak_test])
         expectations.parse_all_expectations()
         runner._expectations = expectations
 
@@ -138,6 +140,12 @@ class LayoutTestRunnerTests(unittest.TestCase):
         runner._update_summary_with_result(run_results, result)
         self.assertEqual(0, run_results.expected)
         self.assertEqual(1, run_results.unexpected)
+
+        run_results = TestRunResults(expectations, 1)
+        result = TestResult(test_name=leak_test, failures=[])
+        runner._update_summary_with_result(run_results, result)
+        self.assertEqual(1, run_results.expected)
+        self.assertEqual(0, run_results.unexpected)
 
     def test_servers_started(self):
 
