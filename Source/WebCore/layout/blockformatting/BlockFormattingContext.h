@@ -56,8 +56,8 @@ private:
     void computeHeightAndMargin(const LayoutContext&, const Box&) const;
 
     void computeStaticPosition(const LayoutContext&, const Box&) const override;
-    void computeFloatingPosition(const LayoutContext&, FloatingContext&, const Box&) const;
-    void computePositionToAvoidFloats(const LayoutContext&, FloatingContext&, const Box&) const;
+    void computeFloatingPosition(const LayoutContext&, const FloatingContext&, const Box&) const;
+    void computePositionToAvoidFloats(const LayoutContext&, const FloatingContext&, const Box&) const;
     void computeVerticalPositionForFloatClear(const LayoutContext&, const FloatingContext&, const Box&) const;
 
     void computeInFlowPositionedPosition(const LayoutContext&, const Box&) const override;

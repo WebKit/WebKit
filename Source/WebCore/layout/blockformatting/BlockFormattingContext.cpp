@@ -142,8 +142,10 @@ void BlockFormattingContext::layoutFormattingContextRoot(LayoutContext& layoutCo
     computeHeightAndMargin(layoutContext, layoutBox);
 
     // Float related final positioning.
-    if (layoutBox.isFloatingPositioned())
+    if (layoutBox.isFloatingPositioned()) {
         computeFloatingPosition(layoutContext, floatingContext, layoutBox);
+        floatingContext.floatingState().append(layoutBox);
+    }
     else if (layoutBox.hasFloatClear())
         computeVerticalPositionForFloatClear(layoutContext, floatingContext, layoutBox);
     else
@@ -192,7 +194,7 @@ void BlockFormattingContext::computeEstimatedMarginTopForAncestors(const LayoutC
     }
 }
 
-void BlockFormattingContext::computeFloatingPosition(const LayoutContext& layoutContext, FloatingContext& floatingContext, const Box& layoutBox) const
+void BlockFormattingContext::computeFloatingPosition(const LayoutContext& layoutContext, const FloatingContext& floatingContext, const Box& layoutBox) const
 {
     ASSERT(layoutBox.isFloatingPositioned());
     auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
@@ -205,10 +207,9 @@ void BlockFormattingContext::computeFloatingPosition(const LayoutContext& layout
     }
     computeEstimatedMarginTopForAncestors(layoutContext, layoutBox);
     displayBox.setTopLeft(floatingContext.positionForFloat(layoutBox));
-    floatingContext.floatingState().append(layoutBox);
 }
 
-void BlockFormattingContext::computePositionToAvoidFloats(const LayoutContext& layoutContext, FloatingContext& floatingContext, const Box& layoutBox) const
+void BlockFormattingContext::computePositionToAvoidFloats(const LayoutContext& layoutContext, const FloatingContext& floatingContext, const Box& layoutBox) const
 {
     // Formatting context roots avoid floats.
     ASSERT(layoutBox.establishesBlockFormattingContext());
