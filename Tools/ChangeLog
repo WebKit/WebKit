@@ -1,3 +1,15 @@
+2018-09-06  Thomas Denney  <tdenney@apple.com>
+
+        [WHLSL] The test suite should log the compile time for the standard library
+        https://bugs.webkit.org/show_bug.cgi?id=189354
+
+        Reviewed by Myles C. Maxfield.
+
+        The test suite previously only logged the time for test execution, and
+        not the compile time for the standard library.
+
+        * WebGPUShadingLanguageRI/Test.js:
+
 2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Cannot change font size at selection until font panel is shown

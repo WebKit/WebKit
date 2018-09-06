@@ -7649,9 +7649,11 @@ function* doTest(testFilter)
     let before = preciseTime();
 
     print("Compiling standard library...");
+    const compileBefore = preciseTime();
     yield;
     prepare();
-    print("    OK!");
+    const compileAfter = preciseTime();
+    print(`    OK, took ${Math.round((compileAfter - compileBefore) * 1000)} ms`);
 
     let names = [];
     for (let s in tests)
