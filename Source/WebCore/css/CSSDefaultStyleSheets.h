@@ -49,9 +49,9 @@ public:
 
     static void initDefaultStyle(const Element*);
     static void ensureDefaultStyleSheetsForElement(const Element&);
+    static void loadFullDefaultStyle();
 
 private:
-    static void loadFullDefaultStyle();
     static void loadSimpleDefaultStyle();
     static void addToDefaultStyle(StyleSheetContents&);
 };

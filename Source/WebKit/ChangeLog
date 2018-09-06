@@ -1,3 +1,17 @@
+2018-09-06  Antti Koivisto  <antti@apple.com>
+
+        Actively prewarm processes created for prewarm pool
+        https://bugs.webkit.org/show_bug.cgi?id=189364
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::prewarm):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2018-09-06  Jer Noble  <jer.noble@apple.com>
 
         Don't pause playback when locking screen if video is being displayed on second screen.

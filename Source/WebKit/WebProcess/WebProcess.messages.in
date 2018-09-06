@@ -26,6 +26,8 @@ messages -> WebProcess LegacyReceiver {
     # Create a new page.
     CreateWebPage(uint64_t newPageID, struct WebKit::WebPageCreationParameters pageCreationParameters)
 
+    Prewarm();
+ 
     # Global preferences.
     SetCacheModel(uint32_t cacheModel)
 

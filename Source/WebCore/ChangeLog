@@ -1,3 +1,35 @@
+2018-09-06  Antti Koivisto  <antti@apple.com>
+
+        Actively prewarm processes created for prewarm pool
+        https://bugs.webkit.org/show_bug.cgi?id=189364
+
+        Reviewed by Chris Dumez.
+
+        Do some basic prewarming for newly created processes.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::CSSDefaultStyleSheets::loadFullDefaultStyle):
+        * css/CSSDefaultStyleSheets.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * page/ProcessWarming.cpp: Added.
+        (WebCore::ProcessWarming::initializeNames):
+
+        Factor name initialization into a function.
+
+        (WebCore::ProcessWarming::prewarm):
+
+        Prewarm
+        - names
+        - settings (system fonts)
+        - user agent stylesheet
+        - JavaScript VM
+        - telephone number detection
+
+        * page/ProcessWarming.h: Added.
+
 2018-09-06  Youenn Fablet  <youenn@apple.com>
 
         Move replaceTrack logic to RTCRtpSender backend

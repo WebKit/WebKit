@@ -777,6 +777,8 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDa
     if (isPrewarmed == WebProcessProxy::IsPrewarmed::Yes) {
         ASSERT(!m_prewarmedProcess);
         m_prewarmedProcess = &process;
+        
+        m_prewarmedProcess->send(Messages::WebProcess::Prewarm(), 0);
     }
 
     if (m_serviceWorkerProcessesTerminationTimer.isActive())

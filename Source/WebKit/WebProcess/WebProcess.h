@@ -249,6 +249,8 @@ private:
     void initializeWebProcess(WebProcessCreationParameters&&);
     void platformInitializeWebProcess(WebProcessCreationParameters&&);
 
+    void prewarm();
+
 #if USE(OS_STATE)
     void registerWithStateDumper();
 #endif

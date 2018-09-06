@@ -142,6 +142,9 @@ void CSSDefaultStyleSheets::addToDefaultStyle(StyleSheetContents& sheet)
 
 void CSSDefaultStyleSheets::loadFullDefaultStyle()
 {
+    if (defaultStyle && !simpleDefaultStyleSheet)
+        return;
+    
     if (simpleDefaultStyleSheet) {
         ASSERT(defaultStyle);
         ASSERT(defaultPrintStyle == defaultStyle);

@@ -69,14 +69,13 @@
 #include "InspectorInstrumentation.h"
 #include "JSWindowProxy.h"
 #include "Logging.h"
-#include "MathMLNames.h"
-#include "MediaFeatureNames.h"
 #include "NavigationScheduler.h"
 #include "Navigator.h"
 #include "NodeList.h"
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "PageCache.h"
+#include "ProcessWarming.h"
 #include "RenderLayerCompositor.h"
 #include "RenderTableCell.h"
 #include "RenderText.h"
@@ -87,7 +86,6 @@
 #include "RuntimeEnabledFeatures.h"
 #include "SVGDocument.h"
 #include "SVGDocumentExtensions.h"
-#include "SVGNames.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "ScrollingCoordinator.h"
@@ -101,10 +99,6 @@
 #include "UserScript.h"
 #include "UserTypingGestureIndicator.h"
 #include "VisibleUnits.h"
-#include "WebKitFontFamilyNames.h"
-#include "XLinkNames.h"
-#include "XMLNSNames.h"
-#include "XMLNames.h"
 #include "markup.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
@@ -171,16 +165,7 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
     , m_activeDOMObjectsAndAnimationsSuspendedCount(0)
     , m_eventHandler(makeUniqueRef<EventHandler>(*this))
 {
-    AtomicString::init();
-    HTMLNames::init();
-    QualifiedName::init();
-    MediaFeatureNames::init();
-    SVGNames::init();
-    XLinkNames::init();
-    MathMLNames::init();
-    XMLNSNames::init();
-    XMLNames::init();
-    WebKitFontFamilyNames::init();
+    ProcessWarming::initializeNames();
 
     if (ownerElement) {
         m_mainFrame.selfOnlyRef();

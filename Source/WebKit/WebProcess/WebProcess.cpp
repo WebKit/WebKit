@@ -107,6 +107,7 @@
 #include <WebCore/PageCache.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PlatformMediaSessionManager.h>
+#include <WebCore/ProcessWarming.h>
 #include <WebCore/ResourceLoadObserver.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/RuntimeApplicationChecks.h>
@@ -425,6 +426,11 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #endif
 
     RELEASE_LOG(Process, "%p - WebProcess::initializeWebProcess: Presenting process = %d", this, WebCore::presentingApplicationPID());
+}
+
+void WebProcess::prewarm()
+{
+    WebCore::ProcessWarming::prewarm();
 }
 
 void WebProcess::registerURLSchemeAsEmptyDocument(const String& urlScheme)
