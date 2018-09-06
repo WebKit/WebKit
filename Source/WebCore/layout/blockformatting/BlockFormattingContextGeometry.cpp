@@ -151,8 +151,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
     return heightAndMargin;
 }
 
-WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin(const LayoutContext& layoutContext, const Box& layoutBox,
-    std::optional<LayoutUnit> precomputedWidth)
+WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin(const LayoutContext& layoutContext, const Box& layoutBox, std::optional<LayoutUnit> precomputedWidth)
 {
     ASSERT(layoutBox.isInFlow() && !layoutBox.replaced());
 
@@ -252,7 +251,7 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
     return widthAndMargin;
 }
 
-WidthAndMargin BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin(const LayoutContext& layoutContext, const Box& layoutBox)
+WidthAndMargin BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin(const LayoutContext& layoutContext, const Box& layoutBox, std::optional<LayoutUnit> precomputedWidth)
 {
     ASSERT(layoutBox.isInFlow() && layoutBox.replaced());
 
@@ -262,7 +261,7 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin(co
     // 2. Then the rules for non-replaced block-level elements are applied to determine the margins.
 
     // #1
-    auto width = inlineReplacedWidthAndMargin(layoutContext, layoutBox).width;
+    auto width = inlineReplacedWidthAndMargin(layoutContext, layoutBox, precomputedWidth).width;
     // #2
     auto nonReplacedWidthAndMargin = inFlowNonReplacedWidthAndMargin(layoutContext, layoutBox, width);
 
@@ -397,13 +396,13 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const La
     return heightAndMargin;
 }
 
-WidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(const LayoutContext& layoutContext, const Box& layoutBox)
+WidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(const LayoutContext& layoutContext, const Box& layoutBox, std::optional<LayoutUnit> precomputedWidth)
 {
     ASSERT(layoutBox.isInFlow());
 
     if (!layoutBox.replaced())
-        return inFlowNonReplacedWidthAndMargin(layoutContext, layoutBox);
-    return inFlowReplacedWidthAndMargin(layoutContext, layoutBox);
+        return inFlowNonReplacedWidthAndMargin(layoutContext, layoutBox, precomputedWidth);
+    return inFlowReplacedWidthAndMargin(layoutContext, layoutBox, precomputedWidth);
 }
 
 bool BlockFormattingContext::Geometry::instrinsicWidthConstraintsNeedChildrenWidth(const Box& layoutBox)

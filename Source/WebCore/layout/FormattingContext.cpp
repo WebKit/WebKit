@@ -53,7 +53,24 @@ FormattingContext::~FormattingContext()
 
 void FormattingContext::computeOutOfFlowHorizontalGeometry(LayoutContext& layoutContext, const Box& layoutBox) const
 {
-    auto horizontalGeometry = Geometry::outOfFlowHorizontalGeometry(layoutContext, *this, layoutBox);
+    auto compute = [&](std::optional<LayoutUnit> precomputedWidth) {
+        return Geometry::outOfFlowHorizontalGeometry(layoutContext, *this, layoutBox, precomputedWidth);
+    };
+
+    auto horizontalGeometry = compute({ });
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
+
+    if (auto maxWidth = Geometry::computedValueIfNotAuto(layoutBox.style().logicalMaxWidth(), containingBlockWidth)) {
+        auto maxHorizontalGeometry = compute(maxWidth);
+        if (horizontalGeometry.widthAndMargin.width > maxHorizontalGeometry.widthAndMargin.width)
+            horizontalGeometry = maxHorizontalGeometry;
+    }
+
+    if (auto minWidth = Geometry::computedValueIfNotAuto(layoutBox.style().logicalMinWidth(), containingBlockWidth)) {
+        auto minHorizontalGeometry = compute(minWidth);
+        if (horizontalGeometry.widthAndMargin.width < minHorizontalGeometry.widthAndMargin.width)
+            horizontalGeometry = minHorizontalGeometry;
+    }
 
     auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
     displayBox.setLeft(horizontalGeometry.left + horizontalGeometry.widthAndMargin.margin.left);

@@ -77,6 +77,9 @@ static LayoutUnit contentHeightForFormattingContextRoot(const LayoutContext& lay
 
 std::optional<LayoutUnit> FormattingContext::Geometry::computedValueIfNotAuto(const Length& geometryProperty, LayoutUnit containingBlockWidth)
 {
+    if (geometryProperty.isUndefined())
+        return std::nullopt;
+
     if (geometryProperty.isAuto())
         return std::nullopt;
     return valueForLength(geometryProperty, containingBlockWidth);
@@ -274,7 +277,7 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
     return { *top, *bottom, { *height, { *marginTop, *marginBottom }, { } } };
 }
 
-HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry(LayoutContext& layoutContext, const FormattingContext& formattingContext, const Box& layoutBox)
+HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry(LayoutContext& layoutContext, const FormattingContext& formattingContext, const Box& layoutBox, std::optional<LayoutUnit> precomputedWidth)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced());
     
@@ -312,7 +315,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
     
     auto left = computedValueIfNotAuto(style.logicalLeft(), containingBlockWidth);
     auto right = computedValueIfNotAuto(style.logicalRight(), containingBlockWidth);
-    auto width = computedValueIfNotAuto(style.logicalWidth(), containingBlockWidth);
+    auto width = computedValueIfNotAuto(precomputedWidth ? Length { precomputedWidth.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
     auto marginLeft = computedValueIfNotAuto(style.marginLeft(), containingBlockWidth);
     auto marginRight = computedValueIfNotAuto(style.marginRight(), containingBlockWidth);
     auto nonComputedMarginLeft = marginLeft.value_or(0);
@@ -489,7 +492,7 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
     return { *top, *bottom, { height, { *marginTop, *marginBottom }, { } } };
 }
 
-HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry(const LayoutContext& layoutContext, const Box& layoutBox)
+HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry(const LayoutContext& layoutContext, const Box& layoutBox, std::optional<LayoutUnit> precomputedWidth)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && layoutBox.replaced());
 
@@ -519,7 +522,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
     auto marginRight = computedValueIfNotAuto(style.marginRight(), containingBlockWidth);
     auto nonComputedMarginLeft = marginLeft.value_or(0);
     auto nonComputedMarginRight = marginRight.value_or(0);
-    auto width = inlineReplacedWidthAndMargin(layoutContext, layoutBox).width;
+    auto width = inlineReplacedWidthAndMargin(layoutContext, layoutBox, precomputedWidth).width;
     auto paddingLeft = displayBox.paddingLeft().value_or(0);
     auto paddingRight = displayBox.paddingRight().value_or(0);
     auto borderLeft = displayBox.borderLeft();
@@ -630,7 +633,7 @@ HeightAndMargin FormattingContext::Geometry::complicatedCases(const LayoutContex
     return HeightAndMargin { *height, { *marginTop, *marginBottom }, { } };
 }
 
-WidthAndMargin FormattingContext::Geometry::floatingNonReplacedWidthAndMargin(LayoutContext& layoutContext, const FormattingContext& formattingContext, const Box& layoutBox)
+WidthAndMargin FormattingContext::Geometry::floatingNonReplacedWidthAndMargin(LayoutContext& layoutContext, const FormattingContext& formattingContext, const Box& layoutBox, std::optional<LayoutUnit> precomputedWidth)
 {
     ASSERT(layoutBox.isFloatingPositioned() && !layoutBox.replaced());
 
@@ -644,8 +647,8 @@ WidthAndMargin FormattingContext::Geometry::floatingNonReplacedWidthAndMargin(La
 
     // #1
     auto margin = computedNonCollapsedHorizontalMarginValue(layoutContext, layoutBox);
-      // #2
-    auto width = computedValueIfNotAuto(layoutBox.style().logicalWidth(), containingBlockWidth);
+    // #2
+    auto width = computedValueIfNotAuto(precomputedWidth ? Length { precomputedWidth.value(), Fixed } : layoutBox.style().logicalWidth(), containingBlockWidth);
     if (!width)
         width = shrinkToFitWidth(layoutContext, formattingContext, layoutBox);
 
@@ -663,7 +666,7 @@ HeightAndMargin FormattingContext::Geometry::floatingReplacedHeightAndMargin(con
     return inlineReplacedHeightAndMargin(layoutContext, layoutBox);
 }
 
-WidthAndMargin FormattingContext::Geometry::floatingReplacedWidthAndMargin(const LayoutContext& layoutContext, const Box& layoutBox)
+WidthAndMargin FormattingContext::Geometry::floatingReplacedWidthAndMargin(const LayoutContext& layoutContext, const Box& layoutBox, std::optional<LayoutUnit> precomputedWidth)
 {
     ASSERT(layoutBox.isFloatingPositioned() && layoutBox.replaced());
 
@@ -674,7 +677,7 @@ WidthAndMargin FormattingContext::Geometry::floatingReplacedWidthAndMargin(const
     auto margin = computedNonCollapsedHorizontalMarginValue(layoutContext, layoutBox);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> floating replaced -> redirected to inline replaced");
-    return inlineReplacedWidthAndMargin(layoutContext, layoutBox, margin.left, margin.right);
+    return inlineReplacedWidthAndMargin(layoutContext, layoutBox, precomputedWidth, margin.left, margin.right);
 }
 
 VerticalGeometry FormattingContext::Geometry::outOfFlowVerticalGeometry(const LayoutContext& layoutContext, const Box& layoutBox)
@@ -686,13 +689,13 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowVerticalGeometry(const La
     return outOfFlowReplacedVerticalGeometry(layoutContext, layoutBox);
 }
 
-HorizontalGeometry FormattingContext::Geometry::outOfFlowHorizontalGeometry(LayoutContext& layoutContext, const FormattingContext& formattingContext, const Box& layoutBox)
+HorizontalGeometry FormattingContext::Geometry::outOfFlowHorizontalGeometry(LayoutContext& layoutContext, const FormattingContext& formattingContext, const Box& layoutBox, std::optional<LayoutUnit> precomputedWidth)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
 
     if (!layoutBox.replaced())
-        return outOfFlowNonReplacedHorizontalGeometry(layoutContext, formattingContext, layoutBox);
-    return outOfFlowReplacedHorizontalGeometry(layoutContext, layoutBox);
+        return outOfFlowNonReplacedHorizontalGeometry(layoutContext, formattingContext, layoutBox, precomputedWidth);
+    return outOfFlowReplacedHorizontalGeometry(layoutContext, layoutBox, precomputedWidth);
 }
 
 HeightAndMargin FormattingContext::Geometry::floatingHeightAndMargin(const LayoutContext& layoutContext, const Box& layoutBox)
@@ -704,13 +707,13 @@ HeightAndMargin FormattingContext::Geometry::floatingHeightAndMargin(const Layou
     return floatingReplacedHeightAndMargin(layoutContext, layoutBox);
 }
 
-WidthAndMargin FormattingContext::Geometry::floatingWidthAndMargin(LayoutContext& layoutContext, const FormattingContext& formattingContext, const Box& layoutBox)
+WidthAndMargin FormattingContext::Geometry::floatingWidthAndMargin(LayoutContext& layoutContext, const FormattingContext& formattingContext, const Box& layoutBox, std::optional<LayoutUnit> precomputedWidth)
 {
     ASSERT(layoutBox.isFloatingPositioned());
 
     if (!layoutBox.replaced())
-        return floatingNonReplacedWidthAndMargin(layoutContext, formattingContext, layoutBox);
-    return floatingReplacedWidthAndMargin(layoutContext, layoutBox);
+        return floatingNonReplacedWidthAndMargin(layoutContext, formattingContext, layoutBox, precomputedWidth);
+    return floatingReplacedWidthAndMargin(layoutContext, layoutBox, precomputedWidth);
 }
 
 HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(const LayoutContext& layoutContext, const Box& layoutBox)
@@ -763,7 +766,7 @@ HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(const
 }
 
 WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(const LayoutContext& layoutContext, const Box& layoutBox,
-    std::optional<LayoutUnit> precomputedMarginLeft, std::optional<LayoutUnit> precomputedMarginRight)
+    std::optional<LayoutUnit> precomputedWidth, std::optional<LayoutUnit> precomputedMarginLeft, std::optional<LayoutUnit> precomputedMarginRight)
 {
     ASSERT((layoutBox.isOutOfFlowPositioned() || layoutBox.isFloatingPositioned() || layoutBox.isInFlow()) && layoutBox.replaced());
 
@@ -811,7 +814,7 @@ WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(const L
     auto marginRight = computeMarginRight();
     auto nonComputedMarginLeft = computedValueIfNotAuto(style.marginLeft(), containingBlockWidth).value_or(0);
     auto nonComputedMarginRight = computedValueIfNotAuto(style.marginRight(), containingBlockWidth).value_or(0);
-    auto width = computedValueIfNotAuto(style.logicalWidth(), containingBlockWidth);
+    auto width = computedValueIfNotAuto(precomputedWidth ? Length { precomputedWidth.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
 
     auto heightIsAuto = style.logicalHeight().isAuto();
     auto height = fixedValue(style.logicalHeight());

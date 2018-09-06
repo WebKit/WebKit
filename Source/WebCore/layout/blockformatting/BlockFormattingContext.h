@@ -70,7 +70,7 @@ private:
     class Geometry : public FormattingContext::Geometry {
     public:
         static HeightAndMargin inFlowHeightAndMargin(const LayoutContext&, const Box&);
-        static WidthAndMargin inFlowWidthAndMargin(const LayoutContext&, const Box&);
+        static WidthAndMargin inFlowWidthAndMargin(const LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = { });
 
         static Position staticPosition(const LayoutContext&, const Box&);
         static Position inFlowPositionedPosition(const LayoutContext&, const Box&);
@@ -102,8 +102,8 @@ private:
         };
 
         static HeightAndMargin inFlowNonReplacedHeightAndMargin(const LayoutContext&, const Box&);
-        static WidthAndMargin inFlowNonReplacedWidthAndMargin(const LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = std::nullopt);
-        static WidthAndMargin inFlowReplacedWidthAndMargin(const LayoutContext&, const Box&);
+        static WidthAndMargin inFlowNonReplacedWidthAndMargin(const LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = { });
+        static WidthAndMargin inFlowReplacedWidthAndMargin(const LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = { });
         static Position staticPositionForOutOfFlowPositioned(const LayoutContext&, const Box&);
     };
 };

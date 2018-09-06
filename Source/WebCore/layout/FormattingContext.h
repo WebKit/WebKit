@@ -83,14 +83,14 @@ protected:
     class Geometry {
     public:
         static VerticalGeometry outOfFlowVerticalGeometry(const LayoutContext&, const Box&);
-        static HorizontalGeometry outOfFlowHorizontalGeometry(LayoutContext&, const FormattingContext&, const Box&);
+        static HorizontalGeometry outOfFlowHorizontalGeometry(LayoutContext&, const FormattingContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = { });
 
         static HeightAndMargin floatingHeightAndMargin(const LayoutContext&, const Box&);
-        static WidthAndMargin floatingWidthAndMargin(LayoutContext&, const FormattingContext&, const Box&);
+        static WidthAndMargin floatingWidthAndMargin(LayoutContext&, const FormattingContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = { });
 
         static HeightAndMargin inlineReplacedHeightAndMargin(const LayoutContext&, const Box&);
-        static WidthAndMargin inlineReplacedWidthAndMargin(const LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedMarginLeft = { },
-            std::optional<LayoutUnit> precomputedMarginRight = { });
+        static WidthAndMargin inlineReplacedWidthAndMargin(const LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = { }, 
+            std::optional<LayoutUnit> precomputedMarginLeft = { }, std::optional<LayoutUnit> precomputedMarginRight = { });
 
         static HeightAndMargin complicatedCases(const LayoutContext&, const Box&);
 
@@ -105,15 +105,15 @@ protected:
 
     private:
         static VerticalGeometry outOfFlowReplacedVerticalGeometry(const LayoutContext&, const Box&);
-        static HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const LayoutContext&, const Box&);
+        static HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = { });
 
         static VerticalGeometry outOfFlowNonReplacedVerticalGeometry(const LayoutContext&, const Box&);
-        static HorizontalGeometry outOfFlowNonReplacedHorizontalGeometry(LayoutContext&, const FormattingContext&, const Box&);
+        static HorizontalGeometry outOfFlowNonReplacedHorizontalGeometry(LayoutContext&, const FormattingContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = { });
 
         static HeightAndMargin floatingReplacedHeightAndMargin(const LayoutContext&, const Box&);
-        static WidthAndMargin floatingReplacedWidthAndMargin(const LayoutContext&, const Box&);
+        static WidthAndMargin floatingReplacedWidthAndMargin(const LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = { });
 
-        static WidthAndMargin floatingNonReplacedWidthAndMargin(LayoutContext&, const FormattingContext&, const Box&);
+        static WidthAndMargin floatingNonReplacedWidthAndMargin(LayoutContext&, const FormattingContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = { });
 
         static LayoutUnit shrinkToFitWidth(LayoutContext&, const FormattingContext&, const Box&);
     };

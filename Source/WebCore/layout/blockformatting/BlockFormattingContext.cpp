@@ -242,14 +242,32 @@ void BlockFormattingContext::computeInFlowPositionedPosition(const LayoutContext
 
 void BlockFormattingContext::computeWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox) const
 {
-    WidthAndMargin widthAndMargin;
+    auto compute = [&](std::optional<LayoutUnit> precomputedWidth) -> WidthAndMargin {
 
-    if (layoutBox.isInFlow())
-        widthAndMargin = Geometry::inFlowWidthAndMargin(layoutContext, layoutBox);
-    else if (layoutBox.isFloatingPositioned())
-        widthAndMargin = Geometry::floatingWidthAndMargin(layoutContext, *this, layoutBox);
-    else
+        if (layoutBox.isInFlow())
+            return Geometry::inFlowWidthAndMargin(layoutContext, layoutBox, precomputedWidth);
+
+        if (layoutBox.isFloatingPositioned())
+            return Geometry::floatingWidthAndMargin(layoutContext, *this, layoutBox, precomputedWidth);
+
         ASSERT_NOT_REACHED();
+        return { };
+    };
+
+    auto widthAndMargin = compute({ });
+    auto containingBlockWidth = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
+
+    if (auto maxWidth = Geometry::computedValueIfNotAuto(layoutBox.style().logicalMaxWidth(), containingBlockWidth)) {
+        auto maxWidthAndMargin = compute(maxWidth);
+        if (widthAndMargin.width > maxWidthAndMargin.width)
+            widthAndMargin = maxWidthAndMargin;
+    }
+
+    if (auto minWidth = Geometry::computedValueIfNotAuto(layoutBox.style().logicalMinWidth(), containingBlockWidth)) {
+        auto minWidthAndMargin = compute(minWidth);
+        if (widthAndMargin.width < minWidthAndMargin.width)
+            widthAndMargin = minWidthAndMargin;
+    }
 
     auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
     displayBox.setContentBoxWidth(widthAndMargin.width);

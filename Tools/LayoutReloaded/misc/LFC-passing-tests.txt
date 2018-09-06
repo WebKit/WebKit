@@ -55,3 +55,6 @@ fast/block/block-only/float-avoider-simple-left.html
 fast/block/block-only/float-avoider-simple-right.html
 fast/block/block-only/float-avoider-multiple-roots.html
 fast/block/block-only/float-avoider-with-margins.html
+fast/block/block-only/inflow-min-max-width.html
+fast/block/block-only/absolute-position-min-max-width.html
+fast/block/block-only/float-min-max-width.html

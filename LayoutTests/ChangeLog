@@ -1,3 +1,17 @@
+2018-09-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Add support for min(max)-width
+        https://bugs.webkit.org/show_bug.cgi?id=189358
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/block-only/absolute-position-min-max-width-expected.txt: Added.
+        * fast/block/block-only/absolute-position-min-max-width.html: Added.
+        * fast/block/block-only/float-min-max-width-expected.txt: Added.
+        * fast/block/block-only/float-min-max-width.html: Added.
+        * fast/block/block-only/inflow-min-max-width-expected.txt: Added.
+        * fast/block/block-only/inflow-min-max-width.html: Added.
+
 2018-09-06  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening after r235732.
