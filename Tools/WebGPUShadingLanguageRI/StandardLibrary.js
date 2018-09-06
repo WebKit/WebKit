@@ -773,8 +773,7 @@ let standardLibrary = (function() {
             }
             return result;
         }
-        
-        /*
+
         for (let type of [`bool`, `uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
             for (let size of [2, 3, 4]) {
                 for (let maxValue of [2, 3, 4]) {
@@ -1889,7 +1888,7 @@ let standardLibrary = (function() {
             }
         }
         print();
-        
+        /*
         for (let type of [`uint`, `int`]) {
             for (let functionName of [`Add`, `And`, `Exchange`, `Max`, `Min`, `Or`, `Xor`]) {
                 print(`native void Interlocked${functionName}(thread atomic_${type}*, ${type}, thread ${type}*);`);
@@ -1898,7 +1897,6 @@ let standardLibrary = (function() {
         }
         print();
         */
-
         for (let type of [`uchar`, `ushort`, `uint`, `char`, `short`, `int`, `half`, `float`]) {
             for (let length of [``, `2`, `3`, `4`]) {
                 print(`native ${type}${length} Sample(Texture1D<${type}${length}>, sampler, float location);`);

@@ -35,6 +35,14 @@ class Lexer {
         this._text = text;
         this._index = 0;
         this._stack = [];
+
+        this._lineNumbers = [];
+        let lineNumber = 1;
+        for (let i = 0; i < this._text.length; ++i) {
+            this._lineNumbers.push(lineNumber);
+            if (this._text[i] == '\n')
+                ++lineNumber;
+        }
     }
     
     get lineNumber()
@@ -53,8 +61,7 @@ class Lexer {
     
     lineNumberForIndex(index)
     {
-        let matches = this._text.substring(0, index).match(/\n/g);
-        return (matches ? matches.length : 0) + this._lineNumberOffset;
+        return this._lineNumbers[index] + this._lineNumberOffset;
     }
     
     get state() { return {index: this._index, stack: this._stack.concat()}; }
@@ -166,35 +173,6 @@ class Lexer {
     
     fail(error)
     {
-        throw new WSyntaxError(this.originString, error);
-    }
-    
-    backtrackingScope(callback)
-    {
-        let state = this.state;
-        try {
-            return callback();
-        } catch (e) {
-            if (e instanceof WSyntaxError) {
-                this.state = state;
-                return null;
-            }
-            throw e;
-        }
-    }
-    
-    testScope(callback)
-    {
-        let state = this.state;
-        try {
-            callback();
-            return true;
-        } catch (e) {
-            if (e instanceof WSyntaxError)
-                return false;
-            throw e;
-        } finally {
-            this.state = state;
-        }
+        throw new WLexicalError(this.originString, error);
     }
 }

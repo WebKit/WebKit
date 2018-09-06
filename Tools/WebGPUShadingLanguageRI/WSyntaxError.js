@@ -24,10 +24,10 @@
  */
 "use strict";
 
-class WSyntaxError extends Error {
+class WSyntaxError {
     constructor(originString, message)
     {
-        super("Syntax error at " + originString + ": " + message);
+        this.payload = "Syntax error at " + originString + ": " + message;
         this.originString = originString;
         this.syntaxErrorMessage = message;
     }

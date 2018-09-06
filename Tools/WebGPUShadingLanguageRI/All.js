@@ -168,6 +168,7 @@ load("VariableDecl.js");
 load("VariableRef.js");
 load("VectorType.js");
 load("VisitingSet.js");
+load("WLexicalError.js");
 load("WSyntaxError.js");
 load("WTrapError.js");
 load("WTypeError.js");

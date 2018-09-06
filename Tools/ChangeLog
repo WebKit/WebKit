@@ -1,3 +1,88 @@
+2018-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] The parser is too slow
+        https://bugs.webkit.org/show_bug.cgi?id=189014
+
+        Reviewed by Filip Pizlo.
+
+        This patch includes three changes:
+        1. Migrate from using try/catch to simply returning the WSyntaxError. This means that
+           each parser call has to check for this sentinel value. The lexer still can throw if
+           it encounters an unknown token or an unmatched "/*" token (which is rare).
+        2. After removing try/catch, making the sentinel values not inherit from Error (the
+           Error constructor was taking lots of time)
+        3. Previously, every time the parser failed (which is many times per expression) it was
+           running a regex over the entire source text to figure out where the error occurred.
+           Instead, we can preprocess the text string to find these line numbers ahead of time.
+
+        Together, these make the parser 75x faster. Parsing the standard library goes from 2.5
+        hours down to 2 minutes. Because it's now a reasonable length, this patch uncomments
+        the bulk of the standard library.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/Lexer.js:
+        (Lexer):
+        (Lexer.prototype.lineNumberForIndex):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (fail):
+        (backtrackingScope):
+        (testScope):
+        (genericConsume):
+        (consumeEndOfTypeArgs):
+        (parseTerm):
+        (parseConstexpr):
+        (parseTypeArguments):
+        (parseType.getAddressSpace):
+        (parseType):
+        (parseTypeDef):
+        (genericParseLeft):
+        (parseCallExpression.let.parseArguments):
+        (isCallExpression):
+        (parseSuffixOperator):
+        (parsePossibleSuffix):
+        (parsePreIncrement):
+        (parsePossiblePrefix):
+        (parsePossibleTernaryConditional):
+        (parsePossibleAssignment):
+        (parsePostIncrement):
+        (parseEffectfulExpression):
+        (genericParseCommaExpression):
+        (parseEffectfulStatement):
+        (parseReturn):
+        (parseBreak):
+        (parseContinue):
+        (parseIfStatement):
+        (parseWhile):
+        (parseFor):
+        (parseDo):
+        (parseVariableDecls):
+        (parseSwitchCase):
+        (parseSwitchStatement):
+        (parseStatement):
+        (parseBlockBody):
+        (parseBlock):
+        (parseParameter):
+        (parseFuncName):
+        (parseFuncDecl):
+        (parseFuncDef):
+        (parseField):
+        (parseStructType):
+        (parseNativeFunc):
+        (parseNative):
+        (parseRestrictedFuncDef):
+        (parseEnumMember):
+        (parseEnumType):
+        (parse):
+        * WebGPUShadingLanguageRI/SPIRV.html:
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        (let.standardLibrary):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (checkFail.doPrep): Deleted.
+        * WebGPUShadingLanguageRI/WLexicalError.js: Added.
+        (WLexicalError):
+        * WebGPUShadingLanguageRI/index.html:
+
 2018-09-06  Xan Lopez  <xan@igalia.com>
 
         [test262] Do not call keys on a reference

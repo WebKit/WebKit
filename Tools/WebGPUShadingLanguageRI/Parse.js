@@ -27,7 +27,7 @@
 function parse(program, origin, originKind, lineNumberOffset, text)
 {
     let lexer = new Lexer(origin, originKind, lineNumberOffset, text);
-    
+
     // The hardest part of dealing with C-like languages is parsing variable declaration statements.
     // Let's consider if this happens in WSL. Here are the valid statements in WSL that being with an
     // identifier, if we assume that any expression can be a standalone statement.
@@ -61,32 +61,59 @@ function parse(program, origin, originKind, lineNumberOffset, text)
     // pointers means that we can still allow function call statements - unlike in C, those cannot
     // have arbitrary expressions as the callee. The remaining two problems are solved by
     // backtracking. In all other respects, this is a simple recursive descent parser.
-    
+
+    function fail(error)
+    {
+        return new WSyntaxError(lexer.originString, error);
+    }
+
+    function backtrackingScope(callback)
+    {
+        let state = lexer.state;
+        let maybeError = callback();
+        if (maybeError instanceof WSyntaxError) {
+            lexer.state = state;
+            return null;
+        } else
+            return maybeError;
+    }
+
+    function testScope(callback)
+    {
+        let state = lexer.state;
+        let maybeError = callback();
+        lexer.state = state;
+        return !(maybeError instanceof WSyntaxError);
+    }
+
     function genericConsume(callback, explanation)
     {
         let token = lexer.next();
         if (!token)
-            lexer.fail("Unexpected end of file");
+            return fail("Unexpected end of file");
         if (!callback(token))
-            lexer.fail("Unexpected token: " + token.text + "; expected: " + explanation);
+            return fail("Unexpected token: " + token.text + "; expected: " + explanation);
         return token;
     }
-    
+
     function consume(...texts)
     {
         return genericConsume(token => texts.includes(token.text), texts);
     }
-    
+
     function consumeKind(kind)
     {
         return genericConsume(token => token.kind == kind, kind);
     }
-    
+
     function assertNext(...texts)
     {
-        lexer.push(consume(...texts));
+        let maybeError = consume(...texts);
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
+        lexer.push(maybeError);
     }
-    
+
     function genericTest(callback)
     {
         let token = lexer.peek();
@@ -94,17 +121,17 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             return token;
         return null;
     }
-    
+
     function test(...texts)
     {
         return genericTest(token => texts.includes(token.text));
     }
-    
+
     function testKind(kind)
     {
         return genericTest(token => token.kind == kind);
     }
-    
+
     function tryConsume(...texts)
     {
         let result = test(...texts);
@@ -112,7 +139,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             lexer.next();
         return result;
     }
-    
+
     function tryConsumeKind(kind)
     {
         let result = testKind(kind);
@@ -120,16 +147,19 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             lexer.next();
         return result;
     }
-    
+
     function consumeEndOfTypeArgs()
     {
         let rightShift = tryConsume(">>");
         if (rightShift)
             lexer.push(new LexerToken(lexer, rightShift, rightShift.index, rightShift.kind, ">"));
-        else
-            consume(">");
+        else {
+            let maybeError = consume(">");
+            if (maybeError instanceof WSyntaxError)
+                return maybeError;
+        }
     }
-    
+
     function parseTerm()
     {
         let token;
@@ -140,13 +170,13 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         if (token = tryConsumeKind("intLiteral")) {
             let intVersion = (+token.text) | 0;
             if ("" + intVersion !== token.text)
-                lexer.fail("Integer literal is not an integer: " + token.text);
+                return fail("Integer literal is not an integer: " + token.text);
             return new IntLiteral(token, intVersion);
         }
         if (token = tryConsumeKind("uintLiteral")) {
             let uintVersion = token.text.substr(0, token.text.length - 1) >>> 0;
             if (uintVersion + "u" !== token.text)
-                lexer.fail("Integer literal is not 32-bit unsigned integer: " + token.text);
+                return fail("Integer literal is not 32-bit unsigned integer: " + token.text);
             return new UintLiteral(token, uintVersion);
         }
         if ((token = tryConsumeKind("intHexLiteral"))
@@ -162,7 +192,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             else
                 intVersion = intVersion >>> 0;
             if (intVersion.toString(16) !== hexString)
-                lexer.fail("Hex integer literal is not an integer: " + token.text);
+                return fail("Hex integer literal is not an integer: " + token.text);
             if (token.kind == "intHexLiteral")
                 return new IntLiteral(token, intVersion);
             return new UintLiteral(token, intVersion >>> 0);
@@ -178,30 +208,48 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         if (token = tryConsume("true", "false"))
             return new BoolLiteral(token, token.text == "true");
         // FIXME: Need support for other literals too.
-        consume("(");
+        let maybeError = consume("(");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         let result = parseExpression();
-        consume(")");
+        if (result instanceof WSyntaxError)
+            return result;
+        maybeError = consume(")");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         return result;
     }
-    
+
     function parseConstexpr()
     {
         let token;
-        if (token = tryConsume("-"))
-            return new CallExpression(token, "operator" + token.text, [parseTerm()]);
+        if (token = tryConsume("-")) {
+            let term = parseTerm();
+            if (term instanceof WSyntaxError)
+                return term;
+            return new CallExpression(token, "operator" + token.text, [term]);
+        }
         let left = parseTerm();
-        if (token = tryConsume("."))
-            left = new DotExpression(token, left, consumeKind("identifier").text);
+        if (left instanceof WSyntaxError)
+            return left;
+        if (token = tryConsume(".")) {
+            let maybeError = consumeKind("identifier")
+            if (maybeError instanceof WSyntaxError)
+                return maybeError;
+            left = new DotExpression(token, left, maybeError.text);
+        }
         return left;
     }
-    
+
     function parseTypeArguments()
     {
         if (!test("<"))
             return [];
 
         let result = [];
-        consume("<");
+        let maybeError = consume("<");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         while (!test(">")) {
             // It's possible for a constexpr or type can syntactically overlap in the single
             // identifier case. Let's consider the possibilities:
@@ -214,31 +262,45 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             // In the future we'll allow constexprs to do more things, and then we'll still have
             // the problem that something of the form T[1][2][3]... can either be a type or a
             // constexpr, and we can figure out in the checker which it is.
-            let typeRef = lexer.backtrackingScope(() => {
+            let typeRef = backtrackingScope(() => {
                 let result = consumeKind("identifier");
-                assertNext(",", ">", ">>");
+                if (result instanceof WSyntaxError)
+                    return result;
+                let maybeError = assertNext(",", ">", ">>");
+                if (maybeError instanceof WSyntaxError)
+                    return maybeError;
                 return new TypeRef(result, result.text);
             });
             if (typeRef)
                 result.push(typeRef);
             else {
-                let constexpr = lexer.backtrackingScope(() => {
+                let constexpr = backtrackingScope(() => {
                     let result = parseConstexpr();
-                    assertNext(",", ">", ">>");
+                    if (result instanceof WSyntaxError)
+                        return result;
+                    let maybeError = assertNext(",", ">", ">>");
+                    if (maybeError instanceof WSyntaxError)
+                        return maybeError;
                     return result;
                 });
                 if (constexpr)
                     result.push(constexpr);
-                else
-                    result.push(parseType());
+                else {
+                    let type = parseType();
+                    if (type instanceof WSyntaxError)
+                        return type;
+                    result.push(type);
+                }
             }
             if (!tryConsume(","))
                 break;
         }
-        consumeEndOfTypeArgs();
+        maybeError = consumeEndOfTypeArgs();
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         return result;
     }
-    
+
     function parseType()
     {
         let token;
@@ -246,68 +308,96 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         let addressSpaceConsumed = false;
         if (token = tryConsume(...addressSpaces))
             addressSpace = token.text;
-        
+
         let name = consumeKind("identifier");
+        if (name instanceof WSyntaxError)
+            return name;
         let typeArguments = parseTypeArguments();
+        if (typeArguments instanceof WSyntaxError)
+            return typeArguments;
         let type = new TypeRef(name, name.text, typeArguments);
-        
+
         function getAddressSpace()
         {
             addressSpaceConsumed = true;
             if (addressSpace)
                 return addressSpace;
-            return consume(...addressSpaces).text;
+            let consumedAddressSpace = consume(...addressSpaces);
+            if (consumedAddressSpace instanceof WSyntaxError)
+                return consumedAddressSpace;
+            return consumedAddressSpace.text;
         }
-        
+
         const typeConstructorStack = [ ];
 
         for (let token; token = tryConsume("*", "[");) {
             if (token.text == "*") {
                 // Likewise, the address space must be parsed before parsing continues.
                 const addressSpace = getAddressSpace();
+                if (addressSpace instanceof WSyntaxError)
+                    return addressSpace;
                 typeConstructorStack.unshift(type => new PtrType(token, addressSpace, type));
                 continue;
             }
 
             if (tryConsume("]")) {
                 const addressSpace = getAddressSpace();
+                if (addressSpace instanceof WSyntaxError)
+                    return addressSpace;
                 typeConstructorStack.unshift(type => new ArrayRefType(token, addressSpace, type));
                 continue;
             }
 
             const lengthExpr = parseConstexpr();
+            if (lengthExpr instanceof WSyntaxError)
+                return lengthExpr;
             typeConstructorStack.unshift(type => new ArrayType(token, type, lengthExpr));
-            consume("]");
+            let maybeError = consume("]");
+            if (maybeError instanceof WSyntaxError)
+                return maybeError;
         }
 
         for (let constructor of typeConstructorStack)
             type = constructor(type);
 
         if (addressSpace && !addressSpaceConsumed)
-            lexer.fail("Address space specified for type that does not need address space");
+            return fail("Address space specified for type that does not need address space");
 
         return type;
     }
-    
+
     function parseTypeDef()
     {
         let origin = consume("typedef");
-        let name = consumeKind("identifier").text;
-        consume("=");
+        if (origin instanceof WSyntaxError)
+            return origin;
+        let maybeError = consumeKind("identifier");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
+        let name = maybeError.text;
+        maybeError = consume("=");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         let type = parseType();
-        consume(";");
+        if (type instanceof WSyntaxError)
+            return type;
+        maybeError = consume(";");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         return new TypeDef(origin, name, type);
     }
-    
+
     function genericParseLeft(texts, nextParser, constructor)
     {
         let left = nextParser();
+        if (left instanceof WSyntaxError)
+            return left;
         let token;
         while (token = tryConsume(...texts))
             left = constructor(token, left, nextParser());
         return left;
     }
-    
+
     function parseLeftOperatorCall(texts, nextParser)
     {
         return genericParseLeft(
@@ -315,24 +405,32 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             (token, left, right) =>
                 new CallExpression(token, "operator" + token.text, [left, right]));
     }
-    
+
     function parseCallExpression()
     {
         let parseArguments = function(origin, callName) {
             let argumentList = [];
             while (!test(")")) {
                 let argument = parsePossibleAssignment();
+                if (argument instanceof WSyntaxError)
+                    return argument;
                 argumentList.push(argument);
                 if (!tryConsume(","))
                     break;
             }
-            consume(")");
+            let maybeError = consume(")");
+            if (maybeError instanceof WSyntaxError)
+                return maybeError;
             return new CallExpression(origin, callName, argumentList);
         }
 
-        let name = lexer.backtrackingScope(() => {
+        let name = backtrackingScope(() => {
             let name = consumeKind("identifier");
-            consume("(");
+            if (name instanceof WSyntaxError)
+                return name;
+            let maybeError = consume("(");
+            if (maybeError instanceof WSyntaxError)
+                return maybeError;
             return name;
         });
 
@@ -341,40 +439,52 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             return result;
         } else {
             let returnType = parseType();
-            consume("(");
+            if (returnType instanceof WSyntaxError)
+                return returnType;
+            let maybeError = consume("(");
+            if (maybeError instanceof WSyntaxError)
+                return maybeError;
             let result = parseArguments(returnType.origin, "operator cast");
             result.setCastData(returnType);
             return result;
         }
     }
-    
+
     function isCallExpression()
     {
-        return lexer.testScope(() => {
-                consumeKind("identifier");
-                consume("(");
-            }) || lexer.testScope(() => {
-                parseType();
-                consume("(");
+        return testScope(() => {
+                let maybeError = consumeKind("identifier");
+                if (maybeError instanceof WSyntaxError)
+                    return maybeError;
+                maybeError = consume("(");
+                if (maybeError instanceof WSyntaxError)
+                    return maybeError;
+            }) || testScope(() => {
+                let type = parseType();
+                if (type instanceof WSyntaxError)
+                    return type;
+                let maybeError = consume("(");
+                if (maybeError instanceof WSyntaxError)
+                    return maybeError;
             });
     }
-    
+
     function emitIncrement(token, old, extraArg)
     {
         let args = [old];
         if (extraArg)
             args.push(extraArg);
-        
+
         let name = "operator" + token.text;
         if (/=$/.test(name))
             name = RegExp.leftContext;
-        
+
         if (name == "operator")
             throw new Error("Invalid name: " + name);
-        
+
         return new CallExpression(token, name, args);
     }
-    
+
     function finishParsingPostIncrement(token, left)
     {
         let readModifyWrite = new ReadModifyWriteExpression(token, left);
@@ -382,7 +492,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         readModifyWrite.resultExp = readModifyWrite.oldValueRef();
         return readModifyWrite;
     }
-    
+
     function parseSuffixOperator(left, acceptableOperators)
     {
         let token;
@@ -395,11 +505,18 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             case "->":
                 if (token.text == "->")
                     left = new DereferenceExpression(token, left);
-                left = new DotExpression(token, left, consumeKind("identifier").text);
+                let maybeError = consumeKind("identifier");
+                if (maybeError instanceof WSyntaxError)
+                    return maybeError;
+                left = new DotExpression(token, left, maybeError.text);
                 break;
             case "[": {
                 let index = parseExpression();
-                consume("]");
+                if (index instanceof WSyntaxError)
+                    return index;
+                let maybeError = consume("]");
+                if (maybeError instanceof WSyntaxError)
+                    return maybeError;
                 left = new IndexExpression(token, left, index);
                 break;
             }
@@ -409,7 +526,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         }
         return left;
     }
-    
+
     function parsePossibleSuffix()
     {
         let acceptableOperators = ["++", "--", ".", "->", "["];
@@ -417,13 +534,18 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         let left;
         if (isCallExpression()) {
             left = parseCallExpression();
+            if (left instanceof WSyntaxError)
+                return left;
             acceptableOperators = limitedOperators;
-        } else
+        } else {
             left = parseTerm();
-        
+            if (left instanceof WSyntaxError)
+                return left;
+        }
+
         return parseSuffixOperator(left, acceptableOperators);
     }
-    
+
     function finishParsingPreIncrement(token, left, extraArg)
     {
         let readModifyWrite = new ReadModifyWriteExpression(token, left);
@@ -431,54 +553,72 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         readModifyWrite.resultExp = readModifyWrite.newValueRef();
         return readModifyWrite;
     }
-    
+
     function parsePreIncrement()
     {
         let token = consume("++", "--");
+        if (token instanceof WSyntaxError)
+            return token;
         let left = parsePossiblePrefix();
+        if (left instanceof WSyntaxError)
+            return left;
         return finishParsingPreIncrement(token, left);
     }
-    
+
     function parsePossiblePrefix()
     {
         let token;
         if (test("++", "--"))
             return parsePreIncrement();
-        if (token = tryConsume("+", "-", "~"))
-            return new CallExpression(token, "operator" + token.text, [parsePossiblePrefix()]);
-        if (token = tryConsume("*"))
-            return new DereferenceExpression(token, parsePossiblePrefix());
-        if (token = tryConsume("&"))
-            return new MakePtrExpression(token, parsePossiblePrefix());
-        if (token = tryConsume("@"))
-            return new MakeArrayRefExpression(token, parsePossiblePrefix());
-        if (token = tryConsume("!")) {
+        if (token = tryConsume("+", "-", "~")) {
+            let possiblePrefix = parsePossiblePrefix();
+            if (possiblePrefix instanceof WSyntaxError)
+                return WSyntaxError;
+            return new CallExpression(token, "operator" + token.text, [possiblePrefix]);
+        } if (token = tryConsume("*")) {
+            let possiblePrefix = parsePossiblePrefix();
+            if (possiblePrefix instanceof WSyntaxError)
+                return WSyntaxError;
+            return new DereferenceExpression(token, possiblePrefix);
+        } if (token = tryConsume("&")) {
+            let possiblePrefix = parsePossiblePrefix();
+            if (possiblePrefix instanceof WSyntaxError)
+                return WSyntaxError;
+            return new MakePtrExpression(token, possiblePrefix);
+        } if (token = tryConsume("@")) {
+            let possiblePrefix = parsePossiblePrefix();
+            if (possiblePrefix instanceof WSyntaxError)
+                return WSyntaxError;
+            return new MakeArrayRefExpression(token, possiblePrefix);
+        } if (token = tryConsume("!")) {
             let remainder = parsePossiblePrefix();
+            if (remainder instanceof WSyntaxError)
+                return remainder;
             return new LogicalNot(token, new CallExpression(remainder.origin, "bool", [remainder]));
         }
         return parsePossibleSuffix();
     }
-    
+
     function parsePossibleProduct()
     {
         return parseLeftOperatorCall(["*", "/", "%"], parsePossiblePrefix);
     }
-    
+
     function parsePossibleSum()
     {
         return parseLeftOperatorCall(["+", "-"], parsePossibleProduct);
     }
-    
+
     function parsePossibleShift()
     {
         return parseLeftOperatorCall(["<<", ">>"], parsePossibleSum);
     }
-    
+
     function parsePossibleRelationalInequality()
     {
         return parseLeftOperatorCall(["<", ">", "<=", ">="], parsePossibleShift);
     }
-    
+
     function parsePossibleRelationalEquality()
     {
         return genericParseLeft(
@@ -490,100 +630,129 @@ function parse(program, origin, originKind, lineNumberOffset, text)
                 return result;
             });
     }
-    
+
     function parsePossibleBitwiseAnd()
     {
         return parseLeftOperatorCall(["&"], parsePossibleRelationalEquality);
     }
-    
+
     function parsePossibleBitwiseXor()
     {
         return parseLeftOperatorCall(["^"], parsePossibleBitwiseAnd);
     }
-    
+
     function parsePossibleBitwiseOr()
     {
         return parseLeftOperatorCall(["|"], parsePossibleBitwiseXor);
     }
-    
+
     function parseLeftLogicalExpression(texts, nextParser)
     {
         return genericParseLeft(
             texts, nextParser,
             (token, left, right) => new LogicalExpression(token, token.text, new CallExpression(left.origin, "bool", [left]), new CallExpression(right.origin, "bool", [right])));
     }
-    
+
     function parsePossibleLogicalAnd()
     {
         return parseLeftLogicalExpression(["&&"], parsePossibleBitwiseOr);
     }
-    
+
     function parsePossibleLogicalOr()
     {
         return parseLeftLogicalExpression(["||"], parsePossibleLogicalAnd);
     }
-    
+
     function parsePossibleTernaryConditional()
     {
         let predicate = parsePossibleLogicalOr();
+        if (predicate instanceof WSyntaxError)
+            return predicate;
         let operator = tryConsume("?");
         if (!operator)
             return predicate;
         let bodyExpression = parsePossibleAssignment();
-        consume(":");
+        if (bodyExpression instanceof WSyntaxError)
+            return bodyExpression;
+        let maybeError = consume(":");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         let elseExpression = parsePossibleAssignment();
+        if (elseExpression instanceof WSyntaxError)
+            return elseExpression;
         return new TernaryExpression(operator, predicate, bodyExpression, elseExpression);
     }
-    
+
     function parsePossibleAssignment(mode)
     {
         let lhs = parsePossibleTernaryConditional();
+        if (lhs instanceof WSyntaxError)
+            return lhs;
         let operator = tryConsume("=", "+=", "-=", "*=", "/=", "%=", "^=", "|=", "&=");
         if (!operator) {
             if (mode == "required")
-                lexer.fail("Expected assignment: " + lexer._text.substring(lexer._index));
+                return fail("Expected assignment: " + lexer._text.substring(lexer._index));
             return lhs;
         }
-        if (operator.text == "=")
-            return new Assignment(operator, lhs, parsePossibleAssignment());
-        return finishParsingPreIncrement(operator, lhs, parsePossibleAssignment());
+        if (operator.text == "=") {
+            let innerAssignment = parsePossibleAssignment();
+            if (innerAssignment instanceof WSyntaxError)
+                return innerAssignment;
+            return new Assignment(operator, lhs, innerAssignment);
+        }
+        let innerAssignment = parsePossibleAssignment();
+        if (innerAssignment instanceof WSyntaxError)
+            return innerAssignment;
+        return finishParsingPreIncrement(operator, lhs, innerAssignment);
     }
-    
+
     function parseAssignment()
     {
         return parsePossibleAssignment("required");
     }
-    
+
     function parsePostIncrement()
     {
-        let left = parseSuffixOperator(parseTerm(), ".", "->", "[");
+        let term = parseTerm();
+        if (term instanceof WSyntaxError)
+            return term;
+        let left = parseSuffixOperator(term, ".", "->", "[");
+        if (left instanceof WSyntaxError)
+            return left;
         let token = consume("++", "--");
+        if (token instanceof WSyntaxError)
+            return token;
         return finishParsingPostIncrement(token, left);
     }
-    
+
     function parseEffectfulExpression()
     {
         if (isCallExpression())
             return parseCallExpression();
-        let preIncrement = lexer.backtrackingScope(parsePreIncrement);
+        let preIncrement = backtrackingScope(parsePreIncrement);
         if (preIncrement)
             return preIncrement;
-        let postIncrement = lexer.backtrackingScope(parsePostIncrement);
+        let postIncrement = backtrackingScope(parsePostIncrement);
         if (postIncrement)
             return postIncrement;
         return parseAssignment();
     }
-    
+
     function genericParseCommaExpression(finalExpressionParser)
     {
         let list = [];
         let origin = lexer.peek();
         if (!origin)
-            lexer.fail("Unexpected end of file");
+            return fail("Unexpected end of file");
         for (;;) {
-            let effectfulExpression = lexer.backtrackingScope(() => {
-                parseEffectfulExpression();
-                consume(",");
+            let effectfulExpression = backtrackingScope(() => {
+                let effectfulExpression = parseEffectfulExpression();
+                if (effectfulExpression instanceof WSyntaxError)
+                    return effectfulExpression;
+                let maybeError = consume(",");
+                if (maybeError instanceof WSyntaxError)
+                    return maybeError;
+                return effectfulExpression;
             });
             if (!effectfulExpression) {
                 let final = finalExpressionParser();
@@ -598,89 +767,141 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             return list[0];
         return new CommaExpression(origin, list);
     }
-    
+
     function parseCommaExpression()
     {
         return genericParseCommaExpression(parsePossibleAssignment);
     }
-    
+
     function parseExpression()
     {
         return parseCommaExpression();
     }
-    
+
     function parseEffectfulStatement()
     {
         let result = genericParseCommaExpression(parseEffectfulExpression);
-        consume(";");
+        if (result instanceof WSyntaxError)
+            return result;
+        let maybeError = consume(";");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         return result;
     }
-    
+
     function parseReturn()
     {
         let origin = consume("return");
+        if (origin instanceof WSyntaxError)
+            return origin;
         if (tryConsume(";"))
             return new Return(origin, null);
         let expression = parseExpression();
-        consume(";");
+        if (expression instanceof WSyntaxError)
+            return expression;
+        let maybeError = consume(";");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         return new Return(origin, expression);
     }
-    
+
     function parseBreak()
     {
         let origin = consume("break");
-        consume(";");
+        if (origin instanceof WSyntaxError)
+            return origin;
+        let maybeError = consume(";");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         return new Break(origin);
     }
-    
+
     function parseContinue()
     {
         let origin = consume("continue");
-        consume(";");
+        if (origin instanceof WSyntaxError)
+            return origin;
+        let maybeError = consume(";");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         return new Continue(origin);
     }
 
     function parseIfStatement()
     {
         let origin = consume("if");
-        consume("(");
+        if (origin instanceof WSyntaxError)
+            return origin;
+        let maybeError = consume("(");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         let conditional = parseExpression();
-        consume(")");
+        if (conditional instanceof WSyntaxError)
+            return conditional;
+        maybeError = consume(")");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         let body = parseStatement();
+        if (body instanceof WSyntaxError)
+            return body;
         let elseBody;
-        if (tryConsume("else"))
+        if (tryConsume("else")) {
             elseBody = parseStatement();
+            if (elseBody instanceof WSyntaxError)
+                return elseBody;
+        }
         return new IfStatement(origin, new CallExpression(conditional.origin, "bool", [conditional]), body, elseBody);
     }
 
     function parseWhile()
     {
         let origin = consume("while");
-        consume("(");
+        if (origin instanceof WSyntaxError)
+            return origin;
+        let maybeError = consume("(");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         let conditional = parseExpression();
-        consume(")");
+        if (conditional instanceof WSyntaxError)
+            return conditional;
+        maybeError = consume(")");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         let body = parseStatement();
+        if (body instanceof WSyntaxError)
+            return body;
         return new WhileLoop(origin, new CallExpression(conditional.origin, "bool", [conditional]), body);
     }
 
     function parseFor()
     {
         let origin = consume("for");
-        consume("(");
+        if (origin instanceof WSyntaxError)
+            return origin;
+        let maybeError = consume("(");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         let initialization;
         if (tryConsume(";"))
             initialization = undefined;
         else {
-            initialization = lexer.backtrackingScope(parseVariableDecls);
-            if (!initialization)
+            initialization = backtrackingScope(parseVariableDecls);
+            if (!initialization) {
                 initialization = parseEffectfulStatement();
+                if (initialization instanceof WSyntaxError)
+                    return initialization;
+            }
         }
         let condition = tryConsume(";");
         if (condition)
             condition = undefined;
         else {
             condition = parseExpression();
-            consume(";");
+            if (condition instanceof WSyntaxError)
+                return condition;
+            maybeError = consume(";");
+            if (maybeError instanceof WSyntaxError)
+                return maybeError;
             condition = new CallExpression(condition.origin, "bool", [condition]);
         }
         let increment;
@@ -688,59 +909,111 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             increment = undefined;
         else {
             increment = parseExpression();
-            consume(")");
+            if (increment instanceof WSyntaxError)
+                return increment;
+            maybeError = consume(")");
+            if (maybeError instanceof WSyntaxError)
+                return maybeError;
         }
         let body = parseStatement();
+        if (body instanceof WSyntaxError)
+            return body;
         return new ForLoop(origin, initialization, condition, increment, body);
     }
 
     function parseDo()
     {
         let origin = consume("do");
+        if (origin instanceof WSyntaxError)
+            return origin;
         let body = parseStatement();
-        consume("while");
-        consume("(");
+        if (body instanceof WSyntaxError)
+            return body;
+        let maybeError = consume("while");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
+        maybeError = consume("(");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         let conditional = parseExpression();
-        consume(")");
+        if (conditional instanceof WSyntaxError)
+            return conditional;
+        maybeError = consume(")");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         return new DoWhileLoop(origin, body, new CallExpression(conditional.origin, "bool", [conditional]));
     }
-    
+
     function parseVariableDecls()
     {
         let type = parseType();
+        if (type instanceof WSyntaxError)
+            return type;
         let list = [];
         do {
             let name = consumeKind("identifier");
+            if (name instanceof WSyntaxError)
+                return name;
             let initializer = tryConsume("=") ? parseExpression() : null;
+            if (initializer instanceof WSyntaxError)
+                return initializer;
             list.push(new VariableDecl(name, name.text, type, initializer));
-        } while (consume(",", ";").text == ",");
+            let maybeError = consume(",", ";");
+            if (maybeError instanceof WSyntaxError)
+                return maybeError;
+            if (maybeError.text != ",")
+                break;
+        } while (true);
         return new CommaExpression(type.origin, list);
     }
-    
+
     function parseSwitchCase()
     {
         let token = consume("default", "case");
+        if (token instanceof WSyntaxError)
+            return token;
         let value;
-        if (token.text == "case")
+        if (token.text == "case") {
             value = parseConstexpr();
-        consume(":");
+            if (value instanceof WSyntaxError)
+                return value;
+        }
+        let maybeError = consume(":");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         let body = parseBlockBody("}", "default", "case");
+        if (body instanceof WSyntaxError)
+            return body;
         return new SwitchCase(token, value, body);
     }
-    
+
     function parseSwitchStatement()
     {
         let origin = consume("switch");
-        consume("(");
+        if (origin instanceof WSyntaxError)
+            return origin;
+        let maybeError = consume("(");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         let value = parseExpression();
-        consume(")");
-        consume("{");
+        if (value instanceof WSyntaxError)
+            return value;
+        maybeError = consume(")");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
+        maybeError = consume("{");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         let result = new SwitchStatement(origin, value);
-        while (!tryConsume("}"))
-            result.add(parseSwitchCase());
+        while (!tryConsume("}")) {
+            let switchCase = parseSwitchCase();
+            if (switchCase instanceof WSyntaxError)
+                return switchCase;
+            result.add(switchCase);
+        }
         return result;
     }
-    
+
     function parseStatement()
     {
         let token = lexer.peek();
@@ -766,77 +1039,109 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             return parseSwitchStatement();
         if (token.text == "trap") {
             let origin = consume("trap");
+            if (origin instanceof WSyntaxError)
+                return origin;
             consume(";");
             return new TrapStatement(origin);
         }
         if (token.text == "{")
             return parseBlock();
-        let variableDecl = lexer.backtrackingScope(parseVariableDecls);
+        let variableDecl = backtrackingScope(parseVariableDecls);
         if (variableDecl)
             return variableDecl;
         return parseEffectfulStatement();
     }
-    
+
     function parseBlockBody(...terminators)
     {
         let block = new Block(origin);
         while (!test(...terminators)) {
             let statement = parseStatement();
+            if (statement instanceof WSyntaxError)
+                return statement;
             if (statement)
                 block.add(statement);
         }
         return block;
     }
-    
+
     function parseBlock()
     {
         let origin = consume("{");
+        if (origin instanceof WSyntaxError)
+            return origin;
         let block = parseBlockBody("}");
-        consume("}");
+        if (block instanceof WSyntaxError)
+            return block;
+        let maybeError = consume("}");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         return block;
     }
-    
+
     function parseParameter()
     {
         let type = parseType();
+        if (type instanceof WSyntaxError)
+            return type;
         let name = tryConsumeKind("identifier");
         return new FuncParameter(type.origin, name ? name.text : null, type);
     }
-    
+
     function parseParameters()
     {
-        consume("(");
+        let maybeError = consume("(");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         let parameters = [];
         while (!test(")")) {
-            parameters.push(parseParameter());
+            let parameter = parseParameter();
+            if (parameter instanceof WSyntaxError)
+                return parameter;
+            parameters.push(parameter);
             if (!tryConsume(","))
                 break;
         }
-        consume(")");
+        maybeError = consume(")");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         return parameters;
     }
-    
+
     function parseFuncName()
     {
         if (tryConsume("operator")) {
             let token = consume("+", "-", "*", "/", "%", "^", "&", "|", "<", ">", "<=", ">=", "==", "++", "--", ".", "~", "<<", ">>", "[");
+            if (token instanceof WSyntaxError)
+                return token;
             if (token.text == "&") {
                 if (tryConsume("[")) {
-                    consume("]");
+                    let maybeError = consume("]");
+                    if (maybeError instanceof WSyntaxError)
+                        return maybeError;
                     return "operator&[]";
                 }
-                if (tryConsume("."))
-                    return "operator&." + consumeKind("identifier").text;
+                if (tryConsume(".")) {
+                    let maybeError = consumeKind("identifier");
+                    if (maybeError instanceof WSyntaxError)
+                        return maybeError;
+                    return "operator&." + maybeError.text;
+                }
                 return "operator&";
             }
             if (token.text == ".") {
-                let result = "operator." + consumeKind("identifier").text;
+                let maybeError = consumeKind("identifier");
+                if (maybeError instanceof WSyntaxError)
+                    return maybeError;
+                let result = "operator." + maybeError.text;
                 if (tryConsume("="))
                     result += "=";
                 return result;
             }
             if (token.text == "[") {
-                consume("]");
+                let maybeError = consume("]");
+                if (maybeError instanceof WSyntaxError)
+                    return maybeError;
                 let result = "operator[]";
                 if (tryConsume("="))
                     result += "=";
@@ -844,7 +1149,10 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             }
             return "operator" + token.text;
         }
-        return consumeKind("identifier").text;
+        let maybeError = consumeKind("identifier");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
+        return maybeError.text;
     }
 
     function parseFuncDecl()
@@ -858,127 +1166,211 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         if (operatorToken) {
             origin = operatorToken;
             returnType = parseType();
+            if (returnType instanceof WSyntaxError)
+                return returnType;
             name = "operator cast";
             isCast = true;
         } else {
             shaderType = tryConsume("vertex", "fragment");
             returnType = parseType();
+            if (returnType instanceof WSyntaxError)
+                return returnType;
             if (shaderType) {
                 origin = shaderType;
                 shaderType = shaderType.text;
             } else
                 origin = returnType.origin;
             name = parseFuncName();
+            if (name instanceof WSyntaxError)
+                return name;
             isCast = false;
         }
         let parameters = parseParameters();
+        if (parameters instanceof WSyntaxError)
+            return parameters;
         return new Func(origin, name, returnType, parameters, isCast, shaderType);
     }
-    
+
     function parseFuncDef()
     {
         let func = parseFuncDecl();
+        if (func instanceof WSyntaxError)
+            return func;
         let body = parseBlock();
+        if (body instanceof WSyntaxError)
+            return body;
         return new FuncDef(func.origin, func.name, func.returnType, func.parameters, body, func.isCast, func.shaderType);
     }
-    
+
     function parseField()
     {
         let type = parseType();
+        if (type instanceof WSyntaxError)
+            return type;
         let name = consumeKind("identifier");
-        consume(";");
+        if (name instanceof WSyntaxError)
+            return name;
+        let maybeError = consume(";");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         return new Field(name, name.text, type);
     }
-    
+
     function parseStructType()
     {
         let origin = consume("struct");
-        let name = consumeKind("identifier").text;
-        let result = new StructType(origin, name);
-        consume("{");
-        while (!tryConsume("}"))
-            result.add(parseField());
+        if (origin instanceof WSyntaxError)
+            return origin;
+        let name = consumeKind("identifier");
+        if (name instanceof WSyntaxError)
+            return name;
+        let result = new StructType(origin, name.text);
+        let maybeError = consume("{");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
+        while (!tryConsume("}")) {
+            let field = parseField();
+            if (field instanceof WSyntaxError)
+                return field;
+            result.add(field);
+        }
         return result;
     }
-    
+
     function parseNativeFunc()
     {
         let func = parseFuncDecl();
-        consume(";");
+        if (func instanceof WSyntaxError)
+            return func;
+        let maybeError = consume(";");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         return new NativeFunc(func.origin, func.name, func.returnType, func.parameters, func.isCast, func.shaderType);
     }
-    
+
     function parseNative()
     {
         let origin = consume("native");
+        if (origin instanceof WSyntaxError)
+            return origin;
         if (tryConsume("typedef")) {
             let name = consumeKind("identifier");
+            if (name instanceof WSyntaxError)
+                return name;
             let args = parseTypeArguments();
-            consume(";");
+            if (args instanceof WSyntaxError)
+                return args;
+            let maybeError = consume(";");
+            if (maybeError instanceof WSyntaxError)
+                return maybeError;
             return NativeType.create(origin, name.text, args);
         }
         return parseNativeFunc();
     }
-    
+
     function parseRestrictedFuncDef()
     {
-        consume("restricted");
+        let maybeError = consume("restricted");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         let result;
-        if (tryConsume("native"))
+        if (tryConsume("native")) {
             result = parseNativeFunc();
-        else
+            if (result instanceof WSyntaxError)
+                return result;
+        } else {
             result = parseFuncDef();
+            if (result instanceof WSyntaxError)
+                return result;
+        }
         result.isRestricted = true;
         return result;
     }
-    
+
     function parseEnumMember()
     {
         let name = consumeKind("identifier");
+        if (name instanceof WSyntaxError)
+            return name;
         let value = null;
-        if (tryConsume("="))
+        if (tryConsume("=")) {
             value = parseConstexpr();
+            if (value instanceof WSyntaxError)
+                return value;
+        }
         return new EnumMember(name, name.text, value);
     }
-    
+
     function parseEnumType()
     {
-        consume("enum");
+        let maybeError = consume("enum");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         let name = consumeKind("identifier");
+        if (name instanceof WSyntaxError)
+            return name;
         let baseType;
-        if (tryConsume(":"))
+        if (tryConsume(":")) {
             baseType = parseType();
-        else
+            if (baseType instanceof WSyntaxError)
+                return baseType;
+        } else
             baseType = new TypeRef(name, "int");
-        consume("{");
+        maybeError = consume("{");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         let result = new EnumType(name, name.text, baseType);
         while (!test("}")) {
-            result.add(parseEnumMember());
+            let enumMember = parseEnumMember();
+            if (enumMember instanceof WSyntaxError)
+                return enumMember;
+            result.add(enumMember);
             if (!tryConsume(","))
                 break;
         }
-        consume("}");
+        maybeError = consume("}");
+        if (maybeError instanceof WSyntaxError)
+            return maybeError;
         return result;
     }
-    
+
     for (;;) {
         let token = lexer.peek();
         if (!token)
             return;
         if (token.text == ";")
             lexer.next();
-        else if (token.text == "typedef")
-            program.add(parseTypeDef());
-        else if (originKind == "native" && token.text == "native")
-            program.add(parseNative());
-        else if (originKind == "native" && token.text == "restricted")
-            program.add(parseRestrictedFuncDef());
-        else if (token.text == "struct")
-            program.add(parseStructType());
-        else if (token.text == "enum")
-            program.add(parseEnumType());
-        else
-            program.add(parseFuncDef());
+        else if (token.text == "typedef") {
+            let typeDef = parseTypeDef();
+            if (typeDef instanceof WSyntaxError)
+                throw typeDef;
+            program.add(typeDef);
+        } else if (originKind == "native" && token.text == "native") {
+            let native = parseNative();
+            if (native instanceof WSyntaxError)
+                throw native;
+            program.add(native);
+        } else if (originKind == "native" && token.text == "restricted") {
+            let restrictedFuncDef = parseRestrictedFuncDef();
+            if (restrictedFuncDef instanceof WSyntaxError)
+                throw restrictedFuncDef;
+            program.add(restrictedFuncDef);
+        } else if (token.text == "struct") {
+            let struct = parseStructType();
+            if (struct instanceof WSyntaxError)
+                throw struct;
+            program.add(struct);
+        } else if (token.text == "enum") {
+            let enumType = parseEnumType();
+            if (enumType instanceof WSyntaxError)
+                throw enumType;
+            program.add(enumType);
+        } else {
+            let funcDef = parseFuncDef();
+            if (funcDef instanceof WSyntaxError)
+                throw funcDef;
+            program.add(funcDef);
+        }
     }
 }
 

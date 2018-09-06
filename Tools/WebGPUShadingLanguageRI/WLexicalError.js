@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,57 +24,12 @@
  */
 "use strict";
 
-class LexerToken {
-    constructor(lexer, index, kind, text)
+class WLexicalError extends Error {
+    constructor(originString, message)
     {
-        this._lexer = lexer;
-        this._index = index;
-        this._kind = kind;
-        this._text = text;
-    }
-    
-    get lexer()
-    {
-        return this._lexer;
-    }
-    
-    get kind()
-    {
-        return this._kind;
-    }
-    
-    get text()
-    {
-        return this._text;
-    }
-    
-    get origin()
-    {
-        return this.lexer.origin;
-    }
-    
-    get originKind()
-    {
-        return this.lexer.originKind;
-    }
-    
-    get index()
-    {
-        return this._index;
-    }
-    
-    get lineNumber()
-    {
-        return this._lexer.lineNumberForIndex(this._index);
-    }
-    
-    get originString()
-    {
-        return this.origin + ":" + this.lineNumber;
-    }
-    
-    toString()
-    {
-        return "LexerToken(" + this.kind + ", " + this.text + ", " + this.lineNumber + ")";
+        super("Lexical error at " + originString + ": " + message);
+        this.originString = originString;
+        this.syntaxErrorMessage = message;
     }
 }
+
