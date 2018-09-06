@@ -1,5 +1,47 @@
 2018-09-06  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r235537. rdar://problem/44169516
+
+    CounterMaps should hold a unique_ptr of CounterMap.
+    https://bugs.webkit.org/show_bug.cgi?id=189174
+    <rdar://problem/43686458>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebCore:
+    
+    In certain cases calls to CounterMaps might lead to unexpected deletion of the CounterMap object.
+    
+    Test: fast/css/counters/crash-when-cloning-body.html
+    
+    * rendering/RenderCounter.cpp:
+    (WebCore::makeCounterNode):
+    (WebCore::destroyCounterNodeWithoutMapRemoval):
+    (WebCore::RenderCounter::destroyCounterNodes):
+    (WebCore::RenderCounter::destroyCounterNode):
+    (WebCore::updateCounters):
+    (showCounterRendererTree):
+    
+    LayoutTests:
+    
+    * fast/css/counters/crash-when-cloning-body-expected.txt: Added.
+    * fast/css/counters/crash-when-cloning-body.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@235537 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-30  Zalan Bujtas  <zalan@apple.com>
+
+            CounterMaps should hold a unique_ptr of CounterMap.
+            https://bugs.webkit.org/show_bug.cgi?id=189174
+            <rdar://problem/43686458>
+
+            Reviewed by Ryosuke Niwa.
+
+            * fast/css/counters/crash-when-cloning-body-expected.txt: Added.
+            * fast/css/counters/crash-when-cloning-body.html: Added.
+
+2018-09-06  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r233902. rdar://problem/44168991
 
     Rebaseline imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.html for Sierra after r233898.

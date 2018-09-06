@@ -47,7 +47,7 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderCounter);
 
 using CounterMap = HashMap<AtomicString, Ref<CounterNode>>;
-using CounterMaps = HashMap<const RenderElement*, CounterMap>;
+using CounterMaps = HashMap<const RenderElement*, std::unique_ptr<CounterMap>>;
 
 static CounterNode* makeCounterNode(RenderElement&, const AtomicString& identifier, bool alwaysCreateCounter);
 
@@ -296,7 +296,7 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomicString&
 {
     if (renderer.hasCounterNodeMap()) {
         ASSERT(counterMaps().contains(&renderer));
-        if (auto* node = counterMaps().find(&renderer)->value.get(identifier))
+        if (auto* node = counterMaps().find(&renderer)->value->get(identifier))
             return node;
     }
 
@@ -312,7 +312,7 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomicString&
     if (place.parent)
         place.parent->insertAfter(newNode, place.previousSibling.get(), identifier);
 
-    maps.add(&renderer, CounterMap { }).iterator->value.add(identifier, newNode.copyRef());
+    maps.add(&renderer, std::make_unique<CounterMap>()).iterator->value->add(identifier, newNode.copyRef());
     renderer.setHasCounterNodeMap(true);
 
     if (newNode->parent())
@@ -326,7 +326,7 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomicString&
         skipDescendants = false;
         if (!currentRenderer->hasCounterNodeMap())
             continue;
-        auto* currentCounter = maps.find(currentRenderer)->value.get(identifier);
+        auto* currentCounter = maps.find(currentRenderer)->value->get(identifier);
         if (!currentCounter)
             continue;
         skipDescendants = true;
@@ -436,8 +436,8 @@ static void destroyCounterNodeWithoutMapRemoval(const AtomicString& identifier, 
     for (RefPtr<CounterNode> child = node.lastDescendant(); child && child != &node; child = WTFMove(previous)) {
         previous = child->previousInPreOrder();
         child->parent()->removeChild(*child);
-        ASSERT(counterMaps().find(&child->owner())->value.get(identifier) == child);
-        counterMaps().find(&child->owner())->value.remove(identifier);
+        ASSERT(counterMaps().find(&child->owner())->value->get(identifier) == child);
+        counterMaps().find(&child->owner())->value->remove(identifier);
     }
     if (auto* parent = node.parent())
         parent->removeChild(node);
@@ -448,8 +448,9 @@ void RenderCounter::destroyCounterNodes(RenderElement& owner)
     ASSERT(owner.hasCounterNodeMap());
     auto& maps = counterMaps();
     ASSERT(maps.contains(&owner));
-    for (auto& keyValue : maps.take(&owner))
-        destroyCounterNodeWithoutMapRemoval(keyValue.key, keyValue.value);
+    auto counterMap = maps.take(&owner);
+    for (auto& counterMapEntry : *counterMap)
+        destroyCounterNodeWithoutMapRemoval(counterMapEntry.key, counterMapEntry.value);
     owner.setHasCounterNodeMap(false);
 }
 
@@ -458,7 +459,7 @@ void RenderCounter::destroyCounterNode(RenderElement& owner, const AtomicString&
     auto map = counterMaps().find(&owner);
     if (map == counterMaps().end())
         return;
-    auto node = map->value.take(identifier);
+    auto node = map->value->take(identifier);
     if (!node)
         return;
     destroyCounterNodeWithoutMapRemoval(identifier, *node);
@@ -499,15 +500,15 @@ static void updateCounters(RenderElement& renderer)
         return;
     }
     ASSERT(counterMaps().contains(&renderer));
-    auto& counterMap = counterMaps().find(&renderer)->value;
+    auto* counterMap = counterMaps().find(&renderer)->value.get();
     for (auto& key : directiveMap->keys()) {
-        RefPtr<CounterNode> node = counterMap.get(key);
+        RefPtr<CounterNode> node = counterMap->get(key);
         if (!node) {
             makeCounterNode(renderer, key, false);
             continue;
         }
         auto place = findPlaceForCounter(renderer, key, node->hasResetType());
-        if (node != counterMap.get(key))
+        if (node != counterMap->get(key))
             continue;
         CounterNode* parent = node->parent();
         if (place.parent == parent && place.previousSibling == node->previousSibling())
@@ -601,7 +602,7 @@ void showCounterRendererTree(const WebCore::RenderObject* renderer, const char* 
         fprintf(stderr, "%p N:%p P:%p PS:%p NS:%p C:%p\n",
             current, current->node(), current->parent(), current->previousSibling(),
             current->nextSibling(), downcast<WebCore::RenderElement>(*current).hasCounterNodeMap() ?
-            counterName ? WebCore::counterMaps().find(downcast<WebCore::RenderElement>(current))->value.get(identifier) : (WebCore::CounterNode*)1 : (WebCore::CounterNode*)0);
+            counterName ? WebCore::counterMaps().find(downcast<WebCore::RenderElement>(current))->value->get(identifier) : (WebCore::CounterNode*)1 : (WebCore::CounterNode*)0);
     }
     fflush(stderr);
 }
