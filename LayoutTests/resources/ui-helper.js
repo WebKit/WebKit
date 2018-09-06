@@ -311,7 +311,7 @@ window.UIHelper = class UIHelper {
             return;
         }
 
-        const escapedString = characterString.replace(/`/g, "\\`");
+        const escapedString = characterString.replace(/\\/g, "\\\\").replace(/`/g, "\\`");
         const uiScript = `uiController.typeCharacterUsingHardwareKeyboard(\`${escapedString}\`, () => uiController.uiScriptComplete())`;
         return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
     }

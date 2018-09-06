@@ -1,3 +1,19 @@
+2018-09-06  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Add a test to ensure that DOM keyup events have the correct details
+        https://bugs.webkit.org/show_bug.cgi?id=189327
+
+        Reviewed by Wenson Hsieh.
+
+        Until we fix <rdar://problem/35282761> DOM keyup events will have incorrect details on iOS
+        when dispatched in response to a hardware keyboard press. For now, land expected failure results.
+
+        * fast/events/ios/keyup-expected.txt: Added.
+        * fast/events/ios/keyup.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.typeCharacter): Escape backslash characters in order to build up
+        a well-formed UI script to evaluate.
+
 2018-09-06  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Rename the -apple-pay-button-type value "checkout" to "check-out"

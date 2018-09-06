@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>This tests that DOM keyup events are dispatched on iOS for hardware key presses. To run this test manually, focus the text field below and then verify that a message is emitted when you press the following keys: a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, `, ~, !, @, #, $, %, ^, &, *, (, ), -, _, =, +, [, ], {, }, \, |, ;, :, ', &quot;, ,, <, ., >, /, ?, &lt;return&gt;.</p>
+<input type="text" id="input" onkeyup="logKeyEvent(event)">
+<pre id="console"></pre>
+<script>
+const asciiCharactersToType = "abcdefghijklmnopqrstuvwxyz0123456789`~!@#$%^&*()-_=+[]{}\\|;:'\",<.>/?\r";
+var numberOfFiredKeyEventsForTestComplete;
+var numberOfFiredKeyEvents = 0;
+
+function log(message)
+{
+    document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+}
+
+function logKeyEvent(event)
+{
+    let pieces = [];
+    for (let propertyName of ["type", "key", "code", "keyIdentifier", "keyCode", "charCode", "keyCode", "which"])
+        pieces.push(`${propertyName}: ${event[propertyName]}`);
+    log(pieces.join(", "));
+    if (++numberOfFiredKeyEvents >= numberOfFiredKeyEventsForTestComplete && window.testRunner)
+        testRunner.notifyDone();
+}
+
+async function runTest()
+{
+    if (!window.testRunner)
+        return;
+
+    let charactersToType = asciiCharactersToType.split("");
+    numberOfFiredKeyEventsForTestComplete = charactersToType.length;
+
+    let input = document.getElementById("input");
+    await UIHelper.activateFormControl(input);
+    for (let character of charactersToType)
+        await UIHelper.typeCharacter(character);
+}
+
+runTest();
+</script>
+</body>
+</html>
