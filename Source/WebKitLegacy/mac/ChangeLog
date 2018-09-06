@@ -1,3 +1,24 @@
+2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Cannot change font size at selection until font panel is shown
+        https://bugs.webkit.org/show_bug.cgi?id=189295
+        <rdar://problem/35593389>
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove code in WebKitLegacy for diffing NSFonts to figure out which style properties need to be changed. See
+        WebCore ChangeLog for more details.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView changeFont:]):
+        (-[WebHTMLView changeAttributes:]):
+        (-[WebHTMLView _originalFontA]): Deleted.
+        (-[WebHTMLView _originalFontB]): Deleted.
+        (fontNameForDescription): Deleted.
+        (-[WebHTMLView _addToStyle:fontA:fontB:]): Deleted.
+        (-[WebHTMLView _styleFromFontManagerOperation]): Deleted.
+        (-[WebHTMLView _styleForAttributeChange:]): Deleted.
+
 2018-09-05  Jer Noble  <jer.noble@apple.com>
 
         Add MediaCapabilities as an Experimental Feature

@@ -3356,7 +3356,7 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (void)changeFont:(id)sender
 {
-    _impl->changeFontFromFontPanel();
+    _impl->changeFontFromFontManager();
 }
 
 - (IBAction)startSpeaking:(id)sender

@@ -63,6 +63,7 @@
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/FocusController.h>
+#import <WebCore/FontAttributeChanges.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameView.h>
@@ -1114,10 +1115,11 @@ void WebPage::dataDetectorsDidHideUI(PageOverlay::PageOverlayID overlayID)
     }
 }
 
-void WebPage::setFont(const String& fontFamily, double fontSize, uint64_t fontTraits)
+void WebPage::changeFont(WebCore::FontChanges&& changes)
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-    frame.editor().applyFontStyles(fontFamily, fontSize, fontTraits);
+    auto& frame = m_page->focusController().focusedOrMainFrame();
+    if (frame.selection().selection().isContentEditable())
+        frame.editor().applyStyleToSelection(changes.createEditingStyle(), EditActionSetFont, Editor::ColorFilterMode::InvertColor);
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)

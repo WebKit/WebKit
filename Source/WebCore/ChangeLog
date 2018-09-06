@@ -1,3 +1,139 @@
+2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Cannot change font size at selection until font panel is shown
+        https://bugs.webkit.org/show_bug.cgi?id=189295
+        <rdar://problem/35593389>
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently, attempting to alter the font size of currently selected editable text in WKWebView via menu items
+        will fail if the font panel has never been shown. This is because WebViewImpl::changeFontFromFontPanel, which is
+        responsible for converting the current font at the selection to the new font using -[NSFontManager convertFont:]
+        bails as a result of NSFontManager's currently selected font always being nil.
+
+        WKWebView is responsible for keeping NSFontManager up-to-date with the currently selected font; in fact, this
+        was initially the case in r180465, which introduced NSFontManager support in WebKit2 by propagating EditorState
+        updates that contained font information for the current selection. However, this regressed performance due to
+        selected font computation triggering extra layout passes; r180768 addressed this by introducing a mechanism for
+        requesting the font at the current selection, and only updating NSFontManager with the new selected font when
+        the shared font panel is visible (determined by KVO on NSFontPanel). However, this again regressed WKWebView
+        launch performance, due to KVO registration always forcing the shared NSFontPanel to be created. r182037
+        addressed this by only registering for KVO on the font panel if the WKWebView has been made editable (SPI on
+        WKWebView).
+
+        This leads to two issues when attempting to alter font attributes using macOS UI: (1) in web views that have not
+        been made editable using SPI, showing the font panel and attempting to change the font fails due to the selected
+        font staying nil, because we've never begun registering for KVO notifications on the font panel so we don't try
+        to keep the font manager up to date. (2) Even if the web view is made editable, if the font panel is never
+        shown, then the font manager still won't be kept up to date with the current selection, so changing fonts using
+        menu items still does not work.
+
+        We fix both of these problems by refactoring font manager support on WebKit2 such that an up-to-date selected
+        font in the UI process is no longer necessary in order to alter the font at the current selection. To do this,
+        we figure out what changes the NSFontManager would've made to the currently selected font in the UI process, and
+        then propagate this information to the web process, where we convert this information into an EditingStyle which
+        we apply to the current selection.
+
+        The code to both determine the attributes changed by NSFontManager and to convert these attributes into editing
+        styles to be applied via Editor already exists in WebKitLegacy, in WebHTMLView.mm. This patch moves this
+        existing logic into WebCore and teases it apart into two portions: the first portion probes NSFontManager to
+        determine which aspects of the font changed and constructs FontChanges, which captures these differences. The
+        second portion maps FontChanges to an EditingStyle, which can then be applied to the current selection. In
+        WebKitLegacy, we construct FontChanges using the font manager, and then immediately use it to create and apply
+        an EditingStyle. In WebKit, we construct FontChanges in the UI process using the font manager, and then send
+        this over to the web process via WebPage::changeFont, which then creates and applies the EditingStyle.
+
+        Note that this patch also introduces FontAttributeChanges, which is similar in concept to FontChanges, but
+        captures a broader range of changes possible via NSFontPanel. This was done so that we can eliminate all of the
+        font manager probing code (along with the two specimen fonts) from WebHTMLView, but is also necessary in order
+        to allow changing font shadow, strikethrough, and underlines via the font panel to work in WebKit2. This will be
+        fixed in a followup, by making FontAttributeChanges IPC encodable and by making WKWebView/WKView respond to the
+        -changeAttributes: selector.
+
+        Changes in behavior to WebKit2 are covered by new API tests; legacy WebKit behavior should remain unchanged.
+
+        Tests:  FontManagerTests.ChangeFontSizeWithMenuItems
+                FontManagerTests.ChangeFontWithPanel
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/Editor.h:
+
+        Remove applyFontStyles.
+
+        * editing/FontAttributeChanges.cpp: Added.
+        (WebCore::FontChanges::platformFontFamilyNameForCSS const):
+
+        Given a font family name and a font name, returns the string to use as the "font-family" style property value.
+        Originally from WebHTMLView.mm.
+
+        (WebCore::FontChanges::createEditingStyle const):
+
+        Converts font changes to an EditingStyle that can be used to apply these changes.
+
+        (WebCore::FontChanges::createStyleProperties const):
+
+        Introduce FontChanges, which encapsulates changes which are to be applied to the font in the current selection.
+
+        (WebCore::cssValueListForShadow):
+        (WebCore::FontAttributeChanges::createEditingStyle const):
+
+        Converts font attribute changes to an EditingStyle that can be used to apply these changes.
+
+        * editing/FontAttributeChanges.h: Added.
+
+        Introduce FontAttributeChanges, which encapsulates changes which are to be applied to the font attributes in the
+        current selection. This includes a set of FontChanges, as well as additional attributes such as strike-through
+        and underlines.
+
+        (WebCore::FontChanges::setFontName):
+        (WebCore::FontChanges::setFontFamily):
+        (WebCore::FontChanges::setFontSize):
+        (WebCore::FontChanges::setFontSizeDelta):
+        (WebCore::FontChanges::setBold):
+        (WebCore::FontChanges::setItalic):
+        (WebCore::FontAttributeChanges::setVerticalAlign):
+        (WebCore::FontAttributeChanges::setBackgroundColor):
+        (WebCore::FontAttributeChanges::setForegroundColor):
+        (WebCore::FontAttributeChanges::setShadow):
+        (WebCore::FontAttributeChanges::setStrikeThrough):
+        (WebCore::FontAttributeChanges::setUnderline):
+        (WebCore::FontAttributeChanges::setFontChanges):
+
+        Setters for FontChanges and FontAttributeChanges. Initially, most of these values are optional, indicating that
+        there should be no change.
+
+        (WebCore::FontChanges::encode const):
+        (WebCore::FontChanges::decode):
+
+        Add encoding/decoding support to FontChanges, so that it can be sent over IPC for WebKit2.
+
+        * editing/cocoa/FontAttributeChangesCocoa.mm: Added.
+        (WebCore::FontChanges::platformFontFamilyNameForCSS const):
+
+        Helper method to determine whether the font family or the font name should be used, by looking up the PostScript
+        font name using a FontDescriptor and comparing it against the result of -[NSFont fontName]. This logic was
+        originally in WebHTMLView.mm.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::applyFontStyles): Deleted.
+        * platform/mac/WebCoreNSFontManagerExtras.h: Added.
+        * platform/mac/WebCoreNSFontManagerExtras.mm: Added.
+
+        Add helper functions to compute FontChanges and FontAttributeChanges from NSFontManager.
+
+        (WebCore::firstFontConversionSpecimen):
+        (WebCore::secondFontConversionSpecimen):
+
+        Two "specimen fonts" used to determine what changes NSFontManager or NSFontPanel makes when performing font or
+        font attribute conversion. Moved from WebHTMLView.mm.
+
+        (WebCore::computedFontChanges):
+        (WebCore::computedFontAttributeChanges):
+
+        Moved here from WebHTMLView.mm. Instead of converting font attributes to NSStrings and setting properties on
+        DOMCSSStyleDeclaration, we instead specify properties on MutableStyleProperties using CSSValues.
+
 2018-09-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Add support for min(max)-width

@@ -1,3 +1,24 @@
+2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Cannot change font size at selection until font panel is shown
+        https://bugs.webkit.org/show_bug.cgi?id=189295
+        <rdar://problem/35593389>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add API tests to simulate using menu items to increase or decrease font size, and also simulate using
+        NSFontPanel to specify the font family, font size, and other traits.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/FontManagerTests.mm: Added.
+        (-[TestWKWebView selectedText]):
+        (-[TestWKWebView selectNextWord]):
+        (-[TestWKWebView stylePropertyAtSelectionStart:]):
+        (-[TestWKWebView stylePropertyAtSelectionEnd:]):
+        (webViewForFontManagerTesting):
+        (menuItemCellForFontAction):
+        (TestWebKitAPI::TEST):
+
 2018-09-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Add support for min(max)-width

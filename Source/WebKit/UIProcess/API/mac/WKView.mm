@@ -316,7 +316,7 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (void)changeFont:(id)sender
 {
-    _data->_impl->changeFontFromFontPanel();
+    _data->_impl->changeFontFromFontManager();
 }
 
 /*

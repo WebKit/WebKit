@@ -162,6 +162,7 @@ class CertificateInfo;
 class Cursor;
 class DragData;
 class FloatRect;
+class FontChanges;
 class GraphicsLayer;
 class IntSize;
 class ProtectionSpace;
@@ -680,7 +681,7 @@ public:
 #if PLATFORM(MAC)
     void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::TextAlternativeWithRange>& dictationAlternatives, bool registerUndoGroup);
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, WTF::Function<void (const AttributedString&, const EditingRange&, CallbackBase::Error)>&&);
-    void setFont(const String& fontFamily, double fontSize, uint64_t fontTraits);
+    void changeFont(WebCore::FontChanges&&);
     void fontAtSelection(WTF::Function<void (const String&, double, bool, CallbackBase::Error)>&&);
 
     void startWindowDrag();

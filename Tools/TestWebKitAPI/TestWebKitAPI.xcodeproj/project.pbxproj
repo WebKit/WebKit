@@ -806,6 +806,7 @@
 		F4517B672054C49500C26721 /* TestWKWebViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4517B662054C49500C26721 /* TestWKWebViewController.mm */; };
 		F4517B7F2055101B00C26721 /* ClassMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4517B692054E0AC00C26721 /* ClassMethodSwizzler.mm */; };
 		F4538EF71E8473E600B5C953 /* large-red-square.png in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4538EF01E846B4100B5C953 /* large-red-square.png */; };
+		F456AB1C213EDBA300CB2CEF /* FontManagerTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F456AB1B213EDBA300CB2CEF /* FontManagerTests.mm */; };
 		F457A9B8202D5CDC00F7E9D5 /* PasteMixedContent.mm in Sources */ = {isa = PBXBuildFile; fileRef = F457A9B6202D5CDC00F7E9D5 /* PasteMixedContent.mm */; };
 		F457A9D6202D68AF00F7E9D5 /* DataTransfer.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F457A9B3202D535300F7E9D5 /* DataTransfer.html */; };
 		F45B63FB1F197F4A009D38B9 /* image-map.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F45B63FA1F197F33009D38B9 /* image-map.html */; };
@@ -2050,6 +2051,7 @@
 		F4517B682054E0AC00C26721 /* ClassMethodSwizzler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClassMethodSwizzler.h; sourceTree = "<group>"; };
 		F4517B692054E0AC00C26721 /* ClassMethodSwizzler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ClassMethodSwizzler.mm; sourceTree = "<group>"; };
 		F4538EF01E846B4100B5C953 /* large-red-square.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "large-red-square.png"; sourceTree = "<group>"; };
+		F456AB1B213EDBA300CB2CEF /* FontManagerTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FontManagerTests.mm; sourceTree = "<group>"; };
 		F457A9B3202D535300F7E9D5 /* DataTransfer.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DataTransfer.html; sourceTree = "<group>"; };
 		F457A9B6202D5CDC00F7E9D5 /* PasteMixedContent.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteMixedContent.mm; sourceTree = "<group>"; };
 		F45B63FA1F197F33009D38B9 /* image-map.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "image-map.html"; sourceTree = "<group>"; };
@@ -3207,6 +3209,7 @@
 				4BB4160316815F9100824238 /* ElementAtPointInWebFrame.mm */,
 				9B79164F1BD89D0D00D50B8F /* FirstResponderScrollingPosition.mm */,
 				C9E6DD311EA972D800DD78AA /* FirstResponderSuppression.mm */,
+				F456AB1B213EDBA300CB2CEF /* FontManagerTests.mm */,
 				1A7E8B33181208DE00AEB74A /* FragmentNavigation.mm */,
 				CDBFCC431A9FF44800A7B691 /* FullscreenZoomInitialFrame.mm */,
 				9B4F8FA3159D52B1002D9F94 /* HTMLCollectionNamedItem.mm */,
@@ -3774,6 +3777,7 @@
 				7A909A7F1D877480007E10F8 /* FloatRect.cpp in Sources */,
 				7A909A801D877480007E10F8 /* FloatSize.cpp in Sources */,
 				1CAD1F861E5CE7DA00AF2C2C /* FontCache.cpp in Sources */,
+				F456AB1C213EDBA300CB2CEF /* FontManagerTests.mm in Sources */,
 				7CCE7EF51A411AE600447C4C /* ForceRepaint.cpp in Sources */,
 				7CCE7EC01A411A7E00447C4C /* FragmentNavigation.mm in Sources */,
 				376C8C061D6E197C007D2BB9 /* FrameHandle.cpp in Sources */,

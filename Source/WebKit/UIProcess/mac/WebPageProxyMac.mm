@@ -50,6 +50,7 @@
 #import <WebCore/DictationAlternative.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragItem.h>
+#import <WebCore/FontAttributeChanges.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/RuntimeApplicationChecks.h>
@@ -626,12 +627,12 @@ bool WebPageProxy::appleMailLinesClampEnabled()
     return MacApplication::isAppleMail();
 }
     
-void WebPageProxy::setFont(const String& fontFamily, double fontSize, uint64_t fontTraits)
+void WebPageProxy::changeFont(WebCore::FontChanges&& changes)
 {
     if (!isValid())
         return;
 
-    process().send(Messages::WebPage::SetFont(fontFamily, fontSize, fontTraits), m_pageID);
+    process().send(Messages::WebPage::ChangeFont(WTFMove(changes)), m_pageID);
 }
 
 void WebPageProxy::editorStateChanged(const EditorState& editorState)

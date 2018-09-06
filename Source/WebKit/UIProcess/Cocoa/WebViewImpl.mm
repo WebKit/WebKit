@@ -80,6 +80,7 @@
 #import <WebCore/DragItem.h>
 #import <WebCore/Editor.h>
 #import <WebCore/FileSystem.h>
+#import <WebCore/FontAttributeChanges.h>
 #import <WebCore/KeypressCommand.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LoaderNSURLExtras.h>
@@ -92,6 +93,7 @@
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
+#import <WebCore/WebCoreNSFontManagerExtras.h>
 #import <WebCore/WebPlaybackControlsManager.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
@@ -2732,13 +2734,14 @@ void WebViewImpl::updateFontPanelIfNeeded()
     }
 }
 
-void WebViewImpl::changeFontFromFontPanel()
+void WebViewImpl::changeFontFromFontManager()
 {
-    NSFontManager *fontManager = [NSFontManager sharedFontManager];
-    NSFont *font = [fontManager convertFont:fontManager.selectedFont];
-    if (!font)
+    auto& editorState = m_page->editorState();
+    if (!editorState.isContentEditable || editorState.selectionIsNone)
         return;
-    m_page->setFont(font.familyName, font.pointSize, font.fontDescriptor.symbolicTraits);
+
+    m_page->changeFont(WebCore::computedFontChanges(NSFontManager.sharedFontManager));
+    updateFontPanelIfNeeded();
 }
 
 static NSMenuItem *menuItem(id <NSValidatedUserInterfaceItem> item)

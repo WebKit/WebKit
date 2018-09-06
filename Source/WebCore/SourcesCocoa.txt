@@ -78,6 +78,7 @@ editing/SmartReplaceCF.cpp
 
 editing/cocoa/DataDetection.mm
 editing/cocoa/EditorCocoa.mm
+editing/cocoa/FontAttributeChangesCocoa.mm
 editing/cocoa/HTMLConverter.mm @no-unify
 editing/cocoa/WebArchiveResourceFromNSAttributedString.mm
 editing/cocoa/WebArchiveResourceWebResourceHandler.mm
@@ -462,6 +463,7 @@ platform/mac/VideoFullscreenInterfaceMac.mm
 platform/mac/WebCoreFullScreenPlaceholderView.mm
 platform/mac/WebCoreFullScreenWarningView.mm
 platform/mac/WebCoreFullScreenWindow.mm
+platform/mac/WebCoreNSFontManagerExtras.mm
 platform/mac/WebCoreNSURLExtras.mm
 platform/mac/WebCoreObjCExtras.mm
 platform/mac/WebGLBlacklist.mm

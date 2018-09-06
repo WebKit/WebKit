@@ -135,6 +135,7 @@ namespace WebCore {
 class CaptureDevice;
 class DocumentLoader;
 class DragData;
+class FontChanges;
 class Frame;
 class FrameSelection;
 class FrameView;
@@ -1361,7 +1362,7 @@ private:
     void immediateActionDidUpdate();
     void immediateActionDidCancel();
     void immediateActionDidComplete();
-    void setFont(const String& fontFamily, double fontSize, uint64_t fontTraits);
+    void changeFont(WebCore::FontChanges&&);
 
     void dataDetectorsDidPresentUI(WebCore::PageOverlay::PageOverlayID);
     void dataDetectorsDidChangeUI(WebCore::PageOverlay::PageOverlayID);

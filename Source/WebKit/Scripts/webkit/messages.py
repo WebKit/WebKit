@@ -381,6 +381,7 @@ def headers_for_type(type):
         'WebCore::ExceptionDetails': ['<WebCore/JSDOMExceptionHandling.h>'],
         'WebCore::FileChooserSettings': ['<WebCore/FileChooser.h>'],
         'WebCore::ShareDataWithParsedURL': ['<WebCore/ShareData.h>'],
+        'WebCore::FontChanges': ['<WebCore/FontAttributeChanges.h>'],
         'WebCore::FrameLoadType': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::GrammarDetail': ['<WebCore/TextCheckerClient.h>'],
         'WebCore::HasInsecureContent': ['<WebCore/FrameLoaderTypes.h>'],
