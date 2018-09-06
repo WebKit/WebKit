@@ -62,7 +62,7 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(LayoutContext& layout
     displayBox.setHorizontalNonComputedMargin(horizontalGeometry.widthAndMargin.nonComputedMargin);
 }
 
-void FormattingContext::computeOutOfFlowVerticalGeometry(LayoutContext& layoutContext, const Box& layoutBox) const
+void FormattingContext::computeOutOfFlowVerticalGeometry(const LayoutContext& layoutContext, const Box& layoutBox) const
 {
     auto verticalGeometry = Geometry::outOfFlowVerticalGeometry(layoutContext, layoutBox);
 
@@ -74,14 +74,14 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(LayoutContext& layoutCo
     displayBox.setVerticalNonCollapsedMargin(verticalGeometry.heightAndMargin.margin);
 }
 
-void FormattingContext::computeBorderAndPadding(LayoutContext& layoutContext, const Box& layoutBox) const
+void FormattingContext::computeBorderAndPadding(const LayoutContext& layoutContext, const Box& layoutBox) const
 {
     auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
     displayBox.setBorder(Geometry::computedBorder(layoutContext, layoutBox));
     displayBox.setPadding(Geometry::computedPadding(layoutContext, layoutBox));
 }
 
-void FormattingContext::placeInFlowPositionedChildren(LayoutContext& layoutContext, const Container& container) const
+void FormattingContext::placeInFlowPositionedChildren(const LayoutContext& layoutContext, const Container& container) const
 {
     // If this container also establishes a formatting context, then positioning already has happend in that the formatting context.
     if (container.establishesFormattingContext() && &container != &root())
@@ -120,7 +120,8 @@ void FormattingContext::layoutOutOfFlowDescendants(LayoutContext& layoutContext,
         computeBorderAndPadding(layoutContext, layoutBox);
         computeOutOfFlowHorizontalGeometry(layoutContext, layoutBox);
 
-        formattingContext->layout(layoutContext, layoutContext.establishedFormattingState(layoutBox));
+        auto& formattingState = layoutContext.createFormattingStateForFormattingRootIfNeeded(layoutBox);
+        formattingContext->layout(layoutContext, formattingState);
 
         computeOutOfFlowVerticalGeometry(layoutContext, layoutBox);
         layoutOutOfFlowDescendants(layoutContext, layoutBox);

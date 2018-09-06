@@ -82,7 +82,8 @@ void LayoutContext::layoutFormattingContextSubtree(const Box& layoutRoot)
 {
     RELEASE_ASSERT(layoutRoot.establishesFormattingContext());
     auto formattingContext = this->formattingContext(layoutRoot);
-    formattingContext->layout(*this, establishedFormattingState(layoutRoot));
+    auto& formattingState = createFormattingStateForFormattingRootIfNeeded(layoutRoot);
+    formattingContext->layout(*this, formattingState);
     formattingContext->layoutOutOfFlowDescendants(*this, layoutRoot);
 }
 
@@ -118,8 +119,17 @@ FormattingState& LayoutContext::formattingStateForBox(const Box& layoutBox) cons
     return *m_formattingStates.get(&root);
 }
 
-FormattingState& LayoutContext::establishedFormattingState(const Box& formattingRoot)
+FormattingState& LayoutContext::establishedFormattingState(const Box& formattingRoot) const
 {
+    ASSERT(formattingRoot.establishesFormattingContext());
+    RELEASE_ASSERT(m_formattingStates.contains(&formattingRoot));
+    return *m_formattingStates.get(&formattingRoot);
+}
+
+FormattingState& LayoutContext::createFormattingStateForFormattingRootIfNeeded(const Box& formattingRoot)
+{
+    ASSERT(formattingRoot.establishesFormattingContext());
+
     if (formattingRoot.establishesInlineFormattingContext()) {
         return *m_formattingStates.ensure(&formattingRoot, [&] {
 
@@ -142,10 +152,11 @@ FormattingState& LayoutContext::establishedFormattingState(const Box& formatting
             return std::make_unique<BlockFormattingState>(FloatingState::create(*this, formattingRoot), *this);
         }).iterator->value;
     }
+
     CRASH();
 }
 
-std::unique_ptr<FormattingContext> LayoutContext::formattingContext(const Box& formattingContextRoot)
+std::unique_ptr<FormattingContext> LayoutContext::formattingContext(const Box& formattingContextRoot) const
 {
     if (formattingContextRoot.establishesBlockFormattingContext())
         return std::make_unique<BlockFormattingContext>(formattingContextRoot);

@@ -46,8 +46,8 @@ public:
     void layout(LayoutContext&, FormattingState&) const override;
 
 private:
-    void computeStaticPosition(LayoutContext&, const Box&) const override;
-    void computeInFlowPositionedPosition(LayoutContext&, const Box&) const override;
+    void computeStaticPosition(const LayoutContext&, const Box&) const override;
+    void computeInFlowPositionedPosition(const LayoutContext&, const Box&) const override;
 
     InstrinsicWidthConstraints instrinsicWidthConstraints(LayoutContext&, const Box&) const override;
 };
