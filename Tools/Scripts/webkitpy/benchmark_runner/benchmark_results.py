@@ -23,6 +23,7 @@
 import json
 import math
 import re
+import sys
 
 
 class BenchmarkResults(object):
@@ -48,11 +49,11 @@ class BenchmarkResults(object):
         self._lint_results(results)
         self._results = self._aggregate_results(results)
 
-    def format(self, scale_unit=True, show_iteration_values=False):
-        return self._format_tests(self._results, scale_unit, show_iteration_values)
+    def format(self, scale_unit=True, show_iteration_values=False, max_depth=sys.maxsize):
+        return self._format_tests(self._results, scale_unit, show_iteration_values, max_depth)
 
     @classmethod
-    def _format_tests(cls, tests, scale_unit, show_iteration_values, indent=''):
+    def _format_tests(cls, tests, scale_unit, show_iteration_values, max_depth, indent=''):
         output = ''
         config_name = 'current'
         for test_name in sorted(tests.keys()):
@@ -72,8 +73,8 @@ class BenchmarkResults(object):
                     if aggregator_name:
                         output += aggregator_name + ':'
                     output += ' ' + cls._format_values(metric_name, metric[aggregator_name][config_name], scale_unit, show_iteration_values) + '\n'
-            if 'tests' in test:
-                output += cls._format_tests(test['tests'], scale_unit, show_iteration_values, indent=(indent + ' ' * len(test_name)))
+            if 'tests' in test and max_depth > 1:
+                output += cls._format_tests(test['tests'], scale_unit, show_iteration_values, max_depth - 1, indent=(indent + ' ' * len(test_name)))
         return output
 
     @classmethod
