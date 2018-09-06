@@ -53,7 +53,7 @@ void LayoutContext::initializeRoot(const Container& root, const LayoutSize& cont
 {
     ASSERT(root.establishesFormattingContext());
 
-    m_root = makeWeakPtr(const_cast<Container&>(root));
+    m_root = makeWeakPtr(root);
     auto& displayBox = displayBoxForLayoutBox(root);
 
     // FIXME: m_root could very well be a formatting context root with ancestors and resolvable border and padding (as opposed to the topmost root)

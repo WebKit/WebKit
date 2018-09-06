@@ -40,14 +40,14 @@ namespace Layout {
 WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingState);
 
 FloatingState::FloatItem::FloatItem(const Box& layoutBox, const FloatingState& floatingState)
-    : m_layoutBox(makeWeakPtr(const_cast<Box&>(layoutBox)))
+    : m_layoutBox(makeWeakPtr(layoutBox))
     , m_absoluteDisplayBox(FormattingContext::mapBoxToAncestor(floatingState.layoutContext(), layoutBox, downcast<Container>(floatingState.root())))
 {
 }
 
 FloatingState::FloatingState(LayoutContext& layoutContext, const Box& formattingContextRoot)
     : m_layoutContext(layoutContext)
-    , m_formattingContextRoot(makeWeakPtr(const_cast<Box&>(formattingContextRoot)))
+    , m_formattingContextRoot(makeWeakPtr(formattingContextRoot))
 {
 }
 

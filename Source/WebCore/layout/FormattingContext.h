@@ -122,7 +122,7 @@ private:
     void computeOutOfFlowVerticalGeometry(const LayoutContext&, const Box&) const;
     void computeOutOfFlowHorizontalGeometry(LayoutContext&, const Box&) const;
 
-    WeakPtr<Box> m_root;
+    WeakPtr<const Box> m_root;
 };
 
 }

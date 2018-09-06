@@ -39,7 +39,7 @@ namespace Layout {
 WTF_MAKE_ISO_ALLOCATED_IMPL(FloatAvoider);
 
 FloatAvoider::FloatAvoider(const Box& layoutBox, const FloatingState& floatingState, const LayoutContext& layoutContext)
-    : m_layoutBox(makeWeakPtr(const_cast<Box&>(layoutBox)))
+    : m_layoutBox(makeWeakPtr(layoutBox))
     , m_floatingState(floatingState)
     , m_absoluteDisplayBox(FormattingContext::mapBoxToAncestor(layoutContext, layoutBox, downcast<Container>(floatingState.root())))
     , m_containingBlockAbsoluteDisplayBox(FormattingContext::mapBoxToAncestor(layoutContext, *layoutBox.containingBlock(), downcast<Container>(floatingState.root())))

@@ -96,7 +96,7 @@ void Container::addOutOfFlowDescendant(const Box& outOfFlowBox)
     // Since we layout the out-of-flow boxes at the end of the formatting context layout,
     // it's okay to store them at the formatting context root level -as opposed to the containing block level.
     ASSERT(establishesFormattingContext());
-    m_outOfFlowDescendants.append(makeWeakPtr(const_cast<Box&>(outOfFlowBox)));
+    m_outOfFlowDescendants.append(makeWeakPtr(outOfFlowBox));
 }
 
 }

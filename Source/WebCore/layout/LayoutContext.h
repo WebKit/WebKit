@@ -90,7 +90,7 @@ public:
 private:
     void layoutFormattingContextSubtree(const Box&);
 
-    WeakPtr<Container> m_root;
+    WeakPtr<const Container> m_root;
     HashSet<const Container*> m_formattingContextRootListForLayout;
     HashMap<const Box*, std::unique_ptr<FormattingState>> m_formattingStates;
     mutable HashMap<const Box*, std::unique_ptr<Display::Box>> m_layoutToDisplayBox;

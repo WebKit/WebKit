@@ -82,7 +82,7 @@ protected:
     const Display::Box& displayBox() const { return m_absoluteDisplayBox; }
 
 private:
-    WeakPtr<Box> m_layoutBox;
+    WeakPtr<const Box> m_layoutBox;
     const FloatingState& m_floatingState;
     Display::Box m_absoluteDisplayBox;
     Display::Box m_containingBlockAbsoluteDisplayBox;

@@ -71,7 +71,7 @@ public:
         PositionInContextRoot bottom() const { return m_absoluteDisplayBox.bottom(); }
 
     private:
-        WeakPtr<Box> m_layoutBox;
+        WeakPtr<const Box> m_layoutBox;
         Display::Box m_absoluteDisplayBox;
     };
     using FloatList = Vector<FloatItem>;
@@ -87,7 +87,7 @@ private:
     std::optional<LayoutUnit> bottom(const Box& formattingContextRoot, Clear) const;
 
     LayoutContext& m_layoutContext;
-    WeakPtr<Box> m_formattingContextRoot;
+    WeakPtr<const Box> m_formattingContextRoot;
     FloatList m_floats;
 };
 

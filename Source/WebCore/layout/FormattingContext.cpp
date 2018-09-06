@@ -43,7 +43,7 @@ namespace Layout {
 WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingContext);
 
 FormattingContext::FormattingContext(const Box& formattingContextRoot)
-    : m_root(makeWeakPtr(const_cast<Box&>(formattingContextRoot)))
+    : m_root(makeWeakPtr(formattingContextRoot))
 {
 }
 
