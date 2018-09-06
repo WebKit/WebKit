@@ -55,6 +55,18 @@ SomeTest:Time:Arithmetic: 3.0ms stdev=33.3%
         SubTest2:Time: 5.0ms stdev=20.0%
 '''[1:])
 
+    def test_format_with_depth_limit(self):
+        result = BenchmarkResults({'SomeTest': {
+            'metrics': {'Time': ['Total', 'Arithmetic']},
+            'tests': {
+                'SubTest1': {'metrics': {'Time': {'current': [1, 2, 3]}}},
+                'SubTest2': {'metrics': {'Time': {'current': [4, 5, 6]}}}}}})
+        self.assertEqual(result.format(max_depth=1), '''
+SomeTest:Time:Arithmetic: 3.0ms stdev=33.3%
+        :Time:Total: 7.0ms stdev=28.6%
+'''[1:])
+        self.assertEqual(result.format(max_depth=0), "")
+
     def test_format_values_with_large_error(self):
         self.assertEqual(BenchmarkResults._format_values('Runs', [1, 2, 3]), '2.0/s stdev=50.0%')
         self.assertEqual(BenchmarkResults._format_values('Runs', [10, 20, 30]), '20/s stdev=50.0%')
