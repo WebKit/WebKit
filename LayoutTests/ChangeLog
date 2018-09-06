@@ -1,5 +1,27 @@
 2018-09-06  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r233902. rdar://problem/44168991
+
+    Rebaseline imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.html for Sierra after r233898.
+    
+    Unreviewed test gardening.
+    
+    * platform/mac-sierra/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker-expected.txt: Added.
+    * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker-expected.txt: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@233902 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-07-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Rebaseline imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.html for Sierra after r233898.
+
+            Unreviewed test gardening.
+
+            * platform/mac-sierra/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker-expected.txt: Added.
+            * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker-expected.txt: Added.
+
+2018-09-06  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r233900. rdar://problem/44168991
 
     Unreviewed, test gardening after r233898.
