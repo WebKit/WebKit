@@ -1,3 +1,26 @@
+2018-09-05  Youenn Fablet  <youenn@apple.com>
+
+        Move ownership of outgoing source to RTCRtpSender backend
+        https://bugs.webkit.org/show_bug.cgi?id=189310
+
+        Reviewed by Alex Christensen.
+
+        RTCRtpSender should own the source so that it can replace/stop it.
+        Since this is libwebrtc specific, the source is actually owned by the backend.
+        Simplified replaceTrack a bit based on that.
+
+        No change of behavior.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::addTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::doStop):
+        (WebCore::updateTrackSource):
+        (WebCore::LibWebRTCPeerConnectionBackend::replaceTrack):
+        (WebCore::LibWebRTCPeerConnectionBackend::applyRotationForOutgoingVideoSources):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.h:
+
 2018-09-05  Brent Fulgham  <bfulgham@apple.com>
 
         The width of an empty or nullptr TextRun should be zero

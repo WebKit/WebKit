@@ -214,9 +214,9 @@ bool LibWebRTCMediaEndpoint::addTrack(LibWebRTCRtpSenderBackend& sender, MediaSt
 
     switch (track.privateTrack().type()) {
     case RealtimeMediaSource::Type::Audio: {
-        auto trackSource = RealtimeOutgoingAudioSource::create(track.privateTrack());
-        auto audioTrack = m_peerConnectionFactory.CreateAudioTrack(track.id().utf8().data(), trackSource.ptr());
-        m_peerConnectionBackend.addAudioSource(WTFMove(trackSource));
+        auto audioSource = RealtimeOutgoingAudioSource::create(track.privateTrack());
+        auto audioTrack = m_peerConnectionFactory.CreateAudioTrack(track.id().utf8().data(), audioSource.ptr());
+        sender.setSource(WTFMove(audioSource));
         auto rtpSender = m_backend->AddTrack(audioTrack.get(), WTFMove(ids));
         if (!rtpSender.ok())
             return false;
@@ -226,7 +226,7 @@ bool LibWebRTCMediaEndpoint::addTrack(LibWebRTCRtpSenderBackend& sender, MediaSt
     case RealtimeMediaSource::Type::Video: {
         auto videoSource = RealtimeOutgoingVideoSource::create(track.privateTrack());
         auto videoTrack = m_peerConnectionFactory.CreateVideoTrack(track.id().utf8().data(), videoSource.ptr());
-        m_peerConnectionBackend.addVideoSource(WTFMove(videoSource));
+        sender.setSource(WTFMove(videoSource));
         auto rtpSender = m_backend->AddTrack(videoTrack.get(), WTFMove(ids));
         if (!rtpSender.ok())
             return false;

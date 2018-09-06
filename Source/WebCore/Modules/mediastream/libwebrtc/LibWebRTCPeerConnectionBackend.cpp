@@ -174,15 +174,7 @@ void LibWebRTCPeerConnectionBackend::doCreateAnswer(RTCAnswerOptions&&)
 
 void LibWebRTCPeerConnectionBackend::doStop()
 {
-    for (auto& source : m_audioSources)
-        source->stop();
-    for (auto& source : m_videoSources)
-        source->stop();
-
     m_endpoint->stop();
-
-    m_audioSources.clear();
-    m_videoSources.clear();
     m_pendingReceivers.clear();
 }
 
@@ -206,16 +198,6 @@ void LibWebRTCPeerConnectionBackend::doAddIceCandidate(RTCIceCandidate& candidat
         return;
     }
     addIceCandidateSucceeded();
-}
-
-void LibWebRTCPeerConnectionBackend::addAudioSource(Ref<RealtimeOutgoingAudioSource>&& source)
-{
-    m_audioSources.append(WTFMove(source));
-}
-
-void LibWebRTCPeerConnectionBackend::addVideoSource(Ref<RealtimeOutgoingVideoSource>&& source)
-{
-    m_videoSources.append(WTFMove(source));
 }
 
 static inline Ref<RTCRtpReceiver> createReceiverForSource(ScriptExecutionContext& context, Ref<RealtimeMediaSource>&& source)
@@ -395,23 +377,10 @@ template<typename Source>
 static inline bool updateTrackSource(Source& source, MediaStreamTrack* track)
 {
     if (!track) {
-        source->stop();
+        source.stop();
         return true;
     }
-    return source->setSource(track->privateTrack());
-}
-
-template<typename Source>
-static inline bool tryUpdatingTrackSource(MediaStreamTrack& currentTrack, MediaStreamTrack* newTrack, const Vector<Source>& sources)
-{
-    for (auto& source : sources) {
-        if (&source->source() == &currentTrack.privateTrack()) {
-            if (!updateTrackSource(source, newTrack))
-                return false;
-            return true;
-        }
-    }
-    return false;
+    return source.setSource(track->privateTrack());
 }
 
 void LibWebRTCPeerConnectionBackend::replaceTrack(RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& track, DOMPromiseDeferred<void>&& promise)
@@ -426,13 +395,13 @@ void LibWebRTCPeerConnectionBackend::replaceTrack(RTCRtpSender& sender, RefPtr<M
             promise.reject(InvalidModificationError);
             break;
         case RealtimeMediaSource::Type::Audio:
-            if (!tryUpdatingTrackSource(*currentTrack, track.get(), m_audioSources)) {
+            if (!updateTrackSource(*backendFromRTPSender(sender).audioSource(), track.get())) {
                 promise.reject(InvalidModificationError);
                 return;
             }
             break;
         case RealtimeMediaSource::Type::Video:
-            if (!tryUpdatingTrackSource(*currentTrack, track.get(), m_videoSources)) {
+            if (!updateTrackSource(*backendFromRTPSender(sender).videoSource(), track.get())) {
                 promise.reject(InvalidModificationError);
                 return;
             }
@@ -468,8 +437,10 @@ void LibWebRTCPeerConnectionBackend::enqueueReplaceTrackTask(RTCRtpSender& sende
 
 void LibWebRTCPeerConnectionBackend::applyRotationForOutgoingVideoSources()
 {
-    for (auto& source : m_videoSources)
-        source->setApplyRotation(true);
+    for (auto& transceiver : m_peerConnection.getTransceivers()) {
+        if (auto* videoSource = backendFromRTPSender(transceiver->sender()).videoSource())
+            videoSource->setApplyRotation(true);
+    }
 }
 
 bool LibWebRTCPeerConnectionBackend::shouldOfferAllowToReceive(const char* kind) const

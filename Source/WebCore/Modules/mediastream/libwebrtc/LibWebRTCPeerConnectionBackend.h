@@ -52,9 +52,6 @@ public:
     LibWebRTCPeerConnectionBackend(RTCPeerConnection&, LibWebRTCProvider&);
     ~LibWebRTCPeerConnectionBackend();
 
-    bool hasAudioSources() const { return m_audioSources.size(); }
-    bool hasVideoSources() const { return m_videoSources.size(); }
-
     void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&);
 
     bool shouldOfferAllowToReceive(const char*) const;
@@ -84,8 +81,6 @@ private:
     friend class LibWebRTCMediaEndpoint;
     friend class LibWebRTCRtpSenderBackend;
     RTCPeerConnection& connection() { return m_peerConnection; }
-    void addAudioSource(Ref<RealtimeOutgoingAudioSource>&&);
-    void addVideoSource(Ref<RealtimeOutgoingVideoSource>&&);
 
     void getStatsSucceeded(const DeferredPromise&, Ref<RTCStatsReport>&&);
 
@@ -119,8 +114,6 @@ private:
     bool m_isRemoteDescriptionSet { false };
 
     Vector<std::unique_ptr<webrtc::IceCandidateInterface>> m_pendingCandidates;
-    Vector<Ref<RealtimeOutgoingAudioSource>> m_audioSources;
-    Vector<Ref<RealtimeOutgoingVideoSource>> m_videoSources;
     Vector<Ref<RTCRtpReceiver>> m_pendingReceivers;
 };
 

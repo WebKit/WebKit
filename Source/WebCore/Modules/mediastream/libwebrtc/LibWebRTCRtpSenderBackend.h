@@ -28,6 +28,8 @@
 
 #include "LibWebRTCMacros.h"
 #include "RTCRtpSenderBackend.h"
+#include "RealtimeOutgoingAudioSource.h"
+#include "RealtimeOutgoingVideoSource.h"
 #include <wtf/WeakPtr.h>
 
 #pragma GCC diagnostic push
@@ -53,6 +55,42 @@ public:
     void setRTCSender(rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender) { m_rtcSender = WTFMove(rtcSender); }
     webrtc::RtpSenderInterface* rtcSender() { return m_rtcSender.get(); }
 
+    RealtimeOutgoingAudioSource* audioSource()
+    {
+        return WTF::switchOn(m_source,
+            [] (Ref<RealtimeOutgoingAudioSource>& source) { return source.ptr(); },
+            [] (const auto&) -> RealtimeOutgoingAudioSource* { return nullptr; }
+        );
+    }
+
+    RealtimeOutgoingVideoSource* videoSource()
+    {
+        return WTF::switchOn(m_source,
+            [] (Ref<RealtimeOutgoingVideoSource>& source) { return source.ptr(); },
+            [] (const auto&) -> RealtimeOutgoingVideoSource* { return nullptr; }
+        );
+    }
+
+    bool hasNoSource() const
+    {
+        return WTF::switchOn(m_source,
+            [] (const std::nullptr_t&) { return true; },
+            [] (const auto&) { return false; }
+        );
+    }
+
+    void setSource(Ref<RealtimeOutgoingAudioSource>&& source)
+    {
+        ASSERT(hasNoSource());
+        m_source = WTFMove(source);
+    }
+
+    void setSource(Ref<RealtimeOutgoingVideoSource>&& source)
+    {
+        ASSERT(hasNoSource());
+        m_source = WTFMove(source);
+    }
+
 private:
     void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) final;
     RTCRtpParameters getParameters() const final;
@@ -60,6 +98,7 @@ private:
 
     WeakPtr<LibWebRTCPeerConnectionBackend> m_peerConnectionBackend;
     rtc::scoped_refptr<webrtc::RtpSenderInterface> m_rtcSender;
+    Variant<std::nullptr_t, Ref<RealtimeOutgoingAudioSource>, Ref<RealtimeOutgoingVideoSource>> m_source;
 };
 
 } // namespace WebCore
