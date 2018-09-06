@@ -1,3 +1,43 @@
+2018-09-06  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r235177. rdar://problem/44169333
+
+    The DFG CFGSimplification phase shouldn’t jettison a block when it’s the target of both branch directions.
+    https://bugs.webkit.org/show_bug.cgi?id=188298
+    <rdar://problem/42888427>
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/bug-188298.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    In the event that both targets of a Branch is the same block, then even if we'll
+    always take one path of the branch, the other target is not unreachable because
+    it is the same target as the one in the taken path.  Hence, it should not be
+    jettisoned.
+    
+    * JavaScriptCore.xcodeproj/project.pbxproj:
+    - Added DFGCFG.h which is in use and should have been added to the project.
+    * dfg/DFGCFGSimplificationPhase.cpp:
+    (JSC::DFG::CFGSimplificationPhase::run):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@235177 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-22  Mark Lam  <mark.lam@apple.com>
+
+            The DFG CFGSimplification phase shouldn’t jettison a block when it’s the target of both branch directions.
+            https://bugs.webkit.org/show_bug.cgi?id=188298
+            <rdar://problem/42888427>
+
+            Reviewed by Saam Barati.
+
+            * stress/bug-188298.js: Added.
+
 2018-09-05  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r235007. rdar://problem/44144079
