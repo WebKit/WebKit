@@ -35,10 +35,17 @@ public:
         return adoptRef(*new MainThreadNotifier());
     }
 
+    ~MainThreadNotifier()
+    {
+        ASSERT(!m_isValid.load());
+    }
+
     template<typename F>
     void notify(T notificationType, F&& callbackFunctor)
     {
         ASSERT(m_isValid.load());
+        // Assert that there is only one bit on at a time.
+        ASSERT(!(static_cast<int>(notificationType) & (static_cast<int>(notificationType) - 1)));
         if (isMainThread()) {
             removePendingNotification(notificationType);
             callbackFunctor();
