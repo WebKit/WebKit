@@ -171,7 +171,7 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll(ScrollingNodeID
         return;
 
 #if PLATFORM(IOS)
-    m_webPageProxy.overflowScrollViewDidScroll();
+    m_webPageProxy.scrollingNodeScrollViewDidScroll();
 #endif
     m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ScrollPositionChangedForNode(scrolledNodeID, newScrollPosition, scrollingLayerPositionAction == ScrollingLayerPositionAction::Sync));
 }

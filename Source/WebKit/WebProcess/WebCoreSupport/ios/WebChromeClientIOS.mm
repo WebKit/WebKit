@@ -96,12 +96,12 @@ void WebChromeClient::didLayout(LayoutType type)
 
 void WebChromeClient::didStartOverflowScroll()
 {
-    m_page.send(Messages::WebPageProxy::OverflowScrollWillStartScroll());
+    m_page.send(Messages::WebPageProxy::ScrollingNodeScrollWillStartScroll());
 }
 
 void WebChromeClient::didEndOverflowScroll()
 {
-    m_page.send(Messages::WebPageProxy::OverflowScrollDidEndScroll());
+    m_page.send(Messages::WebPageProxy::ScrollingNodeScrollDidEndScroll());
 }
 
 bool WebChromeClient::hasStablePageScaleFactor() const

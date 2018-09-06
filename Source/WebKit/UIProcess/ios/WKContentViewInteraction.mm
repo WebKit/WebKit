@@ -1269,13 +1269,13 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     [self _cancelInteraction];
 }
 
-- (void)_overflowScrollingWillBegin
+- (void)_scrollingNodeScrollingWillBegin
 {
     [_webSelectionAssistant willStartScrollingOverflow];
     [_textSelectionAssistant willStartScrollingOverflow];    
 }
 
-- (void)_overflowScrollingDidEnd
+- (void)_scrollingNodeScrollingDidEnd
 {
     // If scrolling ends before we've received a selection update,
     // we postpone showing the selection until the update is received.

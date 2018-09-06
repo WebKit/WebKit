@@ -1,3 +1,52 @@
+2018-09-06  Frederic Wang  <fwang@igalia.com>
+
+        Use more generic names than "overflow" for functions that can be used for subframes
+        https://bugs.webkit.org/show_bug.cgi?id=179125
+
+        Reviewed by Simon Fraser..
+
+        Some functions will be used by subframes when iframe scrolling is implemented on iOS (see
+        bug 149264). Currently they are only used for "overflow" nodes. This patch renames them to
+        use a more generic "scrolling node" name.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll):
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartPanGesture):
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartScroll):
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidEndScroll):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::scrollingNodeScrollViewWillStartPanGesture):
+        (WebKit::PageClientImpl::scrollingNodeScrollViewDidScroll):
+        (WebKit::PageClientImpl::scrollingNodeScrollWillStartScroll):
+        (WebKit::PageClientImpl::scrollingNodeScrollDidEndScroll):
+        (WebKit::PageClientImpl::overflowScrollViewWillStartPanGesture): Deleted.
+        (WebKit::PageClientImpl::overflowScrollViewDidScroll): Deleted.
+        (WebKit::PageClientImpl::overflowScrollWillStartScroll): Deleted.
+        (WebKit::PageClientImpl::overflowScrollDidEndScroll): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _scrollingNodeScrollingWillBegin]):
+        (-[WKContentView _scrollingNodeScrollingDidEnd]):
+        (-[WKContentView _overflowScrollingWillBegin]): Deleted.
+        (-[WKContentView _overflowScrollingDidEnd]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::scrollingNodeScrollViewWillStartPanGesture):
+        (WebKit::WebPageProxy::scrollingNodeScrollViewDidScroll):
+        (WebKit::WebPageProxy::scrollingNodeScrollWillStartScroll):
+        (WebKit::WebPageProxy::scrollingNodeScrollDidEndScroll):
+        (WebKit::WebPageProxy::overflowScrollViewWillStartPanGesture): Deleted.
+        (WebKit::WebPageProxy::overflowScrollViewDidScroll): Deleted.
+        (WebKit::WebPageProxy::overflowScrollWillStartScroll): Deleted.
+        (WebKit::WebPageProxy::overflowScrollDidEndScroll): Deleted.
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::didStartOverflowScroll):
+        (WebKit::WebChromeClient::didEndOverflowScroll):
+
 2018-09-06  Chris Dumez  <cdumez@apple.com>
 
         WebKit/Platform/IPC/mac/ConnectionMac.mm:222: _dispatch_bug_kevent_vanished

@@ -285,24 +285,24 @@ WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect&
     return layoutViewportRect;
 }
 
-void WebPageProxy::overflowScrollViewWillStartPanGesture()
+void WebPageProxy::scrollingNodeScrollViewWillStartPanGesture()
 {
-    m_pageClient.overflowScrollViewWillStartPanGesture();
+    m_pageClient.scrollingNodeScrollViewWillStartPanGesture();
 }
 
-void WebPageProxy::overflowScrollViewDidScroll()
+void WebPageProxy::scrollingNodeScrollViewDidScroll()
 {
-    m_pageClient.overflowScrollViewDidScroll();
+    m_pageClient.scrollingNodeScrollViewDidScroll();
 }
 
-void WebPageProxy::overflowScrollWillStartScroll()
+void WebPageProxy::scrollingNodeScrollWillStartScroll()
 {
-    m_pageClient.overflowScrollWillStartScroll();
+    m_pageClient.scrollingNodeScrollWillStartScroll();
 }
 
-void WebPageProxy::overflowScrollDidEndScroll()
+void WebPageProxy::scrollingNodeScrollDidEndScroll()
 {
-    m_pageClient.overflowScrollDidEndScroll();
+    m_pageClient.scrollingNodeScrollDidEndScroll();
 }
 
 void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double targetScale, int32_t deviceOrientation, DynamicViewportSizeUpdateID dynamicViewportSizeUpdateID)

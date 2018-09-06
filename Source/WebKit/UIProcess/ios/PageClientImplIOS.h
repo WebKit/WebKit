@@ -159,10 +159,10 @@ private:
     void enableInspectorNodeSearch() override;
     void disableInspectorNodeSearch() override;
 
-    void overflowScrollViewWillStartPanGesture() override;
-    void overflowScrollViewDidScroll() override;
-    void overflowScrollWillStartScroll() override;
-    void overflowScrollDidEndScroll() override;
+    void scrollingNodeScrollViewWillStartPanGesture() override;
+    void scrollingNodeScrollViewDidScroll() override;
+    void scrollingNodeScrollWillStartScroll() override;
+    void scrollingNodeScrollDidEndScroll() override;
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)

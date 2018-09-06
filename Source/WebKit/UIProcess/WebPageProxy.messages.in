@@ -405,8 +405,8 @@ messages -> WebPageProxy {
 
     StartAssistingNode(struct WebKit::AssistedNodeInformation information, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, WebKit::UserData userData)
     StopAssistingNode()
-    OverflowScrollWillStartScroll()
-    OverflowScrollDidEndScroll()
+    ScrollingNodeScrollWillStartScroll()
+    ScrollingNodeScrollDidEndScroll()
     ShowInspectorHighlight(struct WebCore::Highlight highlight)
     HideInspectorHighlight()
     AssistedNodeInformationCallback(struct WebKit::AssistedNodeInformation information, WebKit::CallbackID callbackID)

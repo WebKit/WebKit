@@ -556,10 +556,10 @@ public:
 
     WebCore::FloatRect computeCustomFixedPositionRect(const WebCore::FloatRect& unobscuredContentRect, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& currentCustomFixedPositionRect, double displayedContentScale, WebCore::FrameView::LayoutViewportConstraint = WebCore::FrameView::LayoutViewportConstraint::Unconstrained, bool visualViewportEnabled = false) const;
 
-    void overflowScrollViewWillStartPanGesture();
-    void overflowScrollViewDidScroll();
-    void overflowScrollWillStartScroll();
-    void overflowScrollDidEndScroll();
+    void scrollingNodeScrollViewWillStartPanGesture();
+    void scrollingNodeScrollViewDidScroll();
+    void scrollingNodeScrollWillStartScroll();
+    void scrollingNodeScrollDidEndScroll();
 
     void dynamicViewportSizeUpdate(const WebCore::FloatSize& viewLayoutSize, const WebCore::FloatSize& maximumUnobscuredSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double targetScale, int32_t deviceOrientation, DynamicViewportSizeUpdateID);
 
