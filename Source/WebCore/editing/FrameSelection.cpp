@@ -53,6 +53,7 @@
 #include "HitTestResult.h"
 #include "InlineTextBox.h"
 #include "Page.h"
+#include "RenderLayer.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
@@ -71,7 +72,6 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Color.h"
-#include "RenderLayer.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
 #endif
@@ -2374,7 +2374,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
         if (RenderLayer* layer = start.deprecatedNode()->renderer()->enclosingLayer()) {
             if (!m_scrollingSuppressCount) {
                 layer->setAdjustForIOSCaretWhenScrolling(true);
-                layer->scrollRectToVisible(revealMode, rect, insideFixed, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes);
+                layer->scrollRectToVisible(rect, insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes });
                 layer->setAdjustForIOSCaretWhenScrolling(false);
                 updateAppearance();
                 if (m_frame->page())
@@ -2385,7 +2385,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
         // FIXME: This code only handles scrolling the startContainer's layer, but
         // the selection rect could intersect more than just that.
         // See <rdar://problem/4799899>.
-        if (start.deprecatedNode()->renderer()->scrollRectToVisible(revealMode, rect, insideFixed, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes))
+        if (start.deprecatedNode()->renderer()->scrollRectToVisible(rect, insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes }))
             updateAppearance();
 #endif
     }

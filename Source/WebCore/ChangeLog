@@ -1,3 +1,41 @@
+2018-09-06  Frederic Wang  <fwang@igalia.com>
+
+        Group options of scrollRectToVisible into a struct
+        https://bugs.webkit.org/show_bug.cgi?id=189352
+
+        Reviewed by Simon Fraser.
+
+        RenderLayer::scrollRectToVisible and RenderObject::scrollRectToVisible have several
+        parameters to configure the type of scrolling. This patch groups the const options into a
+        single struct to make easier to handle them in the future. For example, an #ifdefed scroll
+        behavior option will be added in bug 188043. This refactoring can maybe help too for other
+        scroll extensions (e.g. bug 176454 and bug 161611).
+
+        No new tests, behavior unchanged.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::scrollToMakeVisible const): Pass options via a struct.
+        * dom/Element.cpp:
+        (WebCore::Element::scrollIntoView): Ditto.
+        (WebCore::Element::scrollIntoViewIfNeeded): Ditto.
+        (WebCore::Element::scrollIntoViewIfNotVisible): Ditto.
+        * editing/FrameSelection.cpp: Include RenderLayer.h in all WebKit ports in order to define
+        ScrollRectToVisibleOptions.
+        (WebCore::FrameSelection::revealSelection): Pass options via a struct.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToFocusedElementInternal): Ditto.
+        (WebCore::FrameView::scrollToAnchor): Ditto.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible): Pass options via a struct. Note that
+        absoluteRect and insideFixed are modified in this function.
+        (WebCore::RenderLayer::autoscroll): Pass options via a struct.
+        * rendering/RenderLayer.h: Add ScrollRectToVisibleOptions and use it in order to pass
+        scrollRectToVisible options.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::scrollRectToVisible): Pass options via a struct
+        * rendering/RenderObject.h: Forward-declare ScrollRectToVisibleOptions and use in order to
+        pass scrollRectToVisible options.
+
 2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Cannot change font size at selection until font panel is shown

@@ -83,6 +83,8 @@ const int caretWidth = 1;
 
 enum class ShouldAllowCrossOriginScrolling { No, Yes };
 
+struct ScrollRectToVisibleOptions;
+
 #if ENABLE(DASHBOARD_SUPPORT)
 struct AnnotatedRegionValue {
     bool operator==(const AnnotatedRegionValue& o) const
@@ -158,7 +160,7 @@ public:
     WEBCORE_EXPORT RenderLayer* enclosingLayer() const;
 
     // Scrolling is a RenderBox concept, however some code just cares about recursively scrolling our enclosing ScrollableArea(s).
-    WEBCORE_EXPORT bool scrollRectToVisible(SelectionRevealMode, const LayoutRect& absoluteRect, bool insideFixed, const ScrollAlignment& alignX = ScrollAlignment::alignCenterIfNeeded, const ScrollAlignment& alignY = ScrollAlignment::alignCenterIfNeeded, ShouldAllowCrossOriginScrolling = ShouldAllowCrossOriginScrolling::No);
+    WEBCORE_EXPORT bool scrollRectToVisible(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions&);
 
     // Convenience function for getting to the nearest enclosing box of a RenderObject.
     WEBCORE_EXPORT RenderBox& enclosingBox() const;

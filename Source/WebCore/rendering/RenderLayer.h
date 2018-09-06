@@ -120,6 +120,13 @@ enum class RequestState {
     Undetermined
 };
 
+struct ScrollRectToVisibleOptions {
+    SelectionRevealMode revealMode { SelectionRevealMode::Reveal };
+    const ScrollAlignment& alignX { ScrollAlignment::alignCenterIfNeeded };
+    const ScrollAlignment& alignY { ScrollAlignment::alignCenterIfNeeded };
+    ShouldAllowCrossOriginScrolling shouldAllowCrossOriginScrolling { ShouldAllowCrossOriginScrolling::No };
+};
+
 class RenderLayer final : public ScrollableArea {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -218,7 +225,7 @@ public:
     void availableContentSizeChanged(AvailableSizeChangeReason) override;
 
     // "absoluteRect" is in scaled document coordinates.
-    void scrollRectToVisible(SelectionRevealMode, const LayoutRect& absoluteRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY, ShouldAllowCrossOriginScrolling);
+    void scrollRectToVisible(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions&);
 
     bool scrollsOverflow() const;
     bool hasScrollbars() const { return m_hBar || m_vBar; }

@@ -414,16 +414,16 @@ RenderLayer* RenderObject::enclosingLayer() const
     return nullptr;
 }
 
-bool RenderObject::scrollRectToVisible(SelectionRevealMode revealMode, const LayoutRect& absoluteRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY, ShouldAllowCrossOriginScrolling shouldAllowCrossOriginScrolling)
+bool RenderObject::scrollRectToVisible(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions& options)
 {
-    if (revealMode == SelectionRevealMode::DoNotReveal)
+    if (options.revealMode == SelectionRevealMode::DoNotReveal)
         return false;
 
     RenderLayer* enclosingLayer = this->enclosingLayer();
     if (!enclosingLayer)
         return false;
 
-    enclosingLayer->scrollRectToVisible(revealMode, absoluteRect, insideFixed, alignX, alignY, shouldAllowCrossOriginScrolling);
+    enclosingLayer->scrollRectToVisible(absoluteRect, insideFixed, options);
     return true;
 }
 

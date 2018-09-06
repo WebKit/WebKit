@@ -2502,7 +2502,7 @@ bool RenderLayer::allowsCurrentScroll() const
     return box->hasHorizontalOverflow() || box->hasVerticalOverflow();
 }
 
-void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const LayoutRect& absoluteRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY, ShouldAllowCrossOriginScrolling shouldAllowCrossOriginScrolling)
+void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions& options)
 {
     LOG_WITH_STREAM(Scrolling, stream << "Layer " << this << " scrollRectToVisible " << absoluteRect);
 
@@ -2523,7 +2523,7 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
         ASSERT(box);
         LayoutRect localExposeRect(box->absoluteToLocalQuad(FloatQuad(FloatRect(absoluteRect))).boundingBox());
         LayoutRect layerBounds(0, 0, box->clientWidth(), box->clientHeight());
-        LayoutRect revealRect = getRectToExpose(layerBounds, localExposeRect, insideFixed, alignX, alignY);
+        LayoutRect revealRect = getRectToExpose(layerBounds, localExposeRect, insideFixed, options.alignX, options.alignY);
 
         ScrollOffset clampedScrollOffset = clampScrollOffset(scrollOffset() + toIntSize(roundedIntRect(revealRect).location()));
         if (clampedScrollOffset != scrollOffset()) {
@@ -2547,14 +2547,14 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
                 ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
                 LayoutRect viewRect = frameView.visibleContentRect(LegacyIOSDocumentVisibleRect);
-                LayoutRect exposeRect = getRectToExpose(viewRect, absoluteRect, insideFixed, alignX, alignY);
+                LayoutRect exposeRect = getRectToExpose(viewRect, absoluteRect, insideFixed, options.alignX, options.alignY);
 
                 IntPoint scrollOffset(roundedIntPoint(exposeRect.location()));
                 // Adjust offsets if they're outside of the allowable range.
                 scrollOffset = scrollOffset.constrainedBetween(IntPoint(), IntPoint(frameView.contentsSize()));
                 frameView.setScrollPosition(scrollOffset);
 
-                if (shouldAllowCrossOriginScrolling == ShouldAllowCrossOriginScrolling::Yes || frameView.safeToPropagateScrollToParent()) {
+                if (options.shouldAllowCrossOriginScrolling == ShouldAllowCrossOriginScrolling::Yes || frameView.safeToPropagateScrollToParent()) {
                     parentLayer = ownerElement->renderer()->enclosingLayer();
                     // Convert the rect into the coordinate space of the parent frame's document.
                     newRect = frameView.contentsToContainingViewContents(enclosingIntRect(newRect));
@@ -2563,7 +2563,7 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
                     parentLayer = nullptr;
             }
         } else {
-            if (revealMode == SelectionRevealMode::RevealUpToMainFrame && frameView.frame().isMainFrame())
+            if (options.revealMode == SelectionRevealMode::RevealUpToMainFrame && frameView.frame().isMainFrame())
                 return;
 
 #if !PLATFORM(IOS)
@@ -2575,7 +2575,7 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
             LayoutRect targetRect = absoluteRect;
             targetRect.move(0, frameView.headerHeight());
 
-            LayoutRect revealRect = getRectToExpose(viewRect, targetRect, insideFixed, alignX, alignY);
+            LayoutRect revealRect = getRectToExpose(viewRect, targetRect, insideFixed, options.alignX, options.alignY);
             
             frameView.setScrollPosition(roundedIntPoint(revealRect.location()));
 
@@ -2589,7 +2589,7 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
     }
     
     if (parentLayer)
-        parentLayer->scrollRectToVisible(revealMode, newRect, insideFixed, alignX, alignY, shouldAllowCrossOriginScrolling);
+        parentLayer->scrollRectToVisible(newRect, insideFixed, options);
 }
 
 void RenderLayer::updateCompositingLayersAfterScroll()
@@ -2712,7 +2712,7 @@ LayoutRect RenderLayer::getRectToExpose(const LayoutRect &visibleRect, const Lay
 void RenderLayer::autoscroll(const IntPoint& positionInWindow)
 {
     IntPoint currentDocumentPosition = renderer().view().frameView().windowToContents(positionInWindow);
-    scrollRectToVisible(SelectionRevealMode::Reveal, LayoutRect(currentDocumentPosition, LayoutSize(1, 1)), false, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded, ShouldAllowCrossOriginScrolling::Yes);
+    scrollRectToVisible(LayoutRect(currentDocumentPosition, LayoutSize(1, 1)), false, { SelectionRevealMode::Reveal, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded, ShouldAllowCrossOriginScrolling::Yes });
 }
 
 bool RenderLayer::canResize() const
