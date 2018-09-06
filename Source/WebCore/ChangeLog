@@ -1,3 +1,16 @@
+2018-09-06  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Initialize AVVideoCapture video presets
+        https://bugs.webkit.org/show_bug.cgi?id=189355
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, no functionality changed.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::AVVideoCaptureSource): Don't try to load symbols if they
+        aren't available.
+
 2018-09-06  Ali Juma  <ajuma@chromium.org>
 
         IntersectionObserver leaks documents

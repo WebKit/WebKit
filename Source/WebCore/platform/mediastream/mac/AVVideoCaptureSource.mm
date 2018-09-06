@@ -164,27 +164,36 @@ AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDeviceTypedef* device, const
     , m_device(device)
 {
     struct VideoPreset {
-        bool symbolAvailable;
         NSString* name;
         int width;
         int height;
     };
 
-    static const VideoPreset presets[] = {
+    static NeverDestroyed<Vector<VideoPreset>> presets = [] {
+        Vector<VideoPreset> sets;
 #if PLATFORM(IOS)
-        { canLoadAVCaptureSessionPreset3840x2160(), AVCaptureSessionPreset3840x2160, 3840, 2160  },
-        { canLoadAVCaptureSessionPreset1920x1080(), AVCaptureSessionPreset1920x1080, 1920, 1080 },
+        if (canLoadAVCaptureSessionPreset3840x2160())
+            sets.append({ AVCaptureSessionPreset3840x2160, 3840, 2160 });
+        if (canLoadAVCaptureSessionPreset1920x1080())
+            sets.append({ AVCaptureSessionPreset1920x1080, 1920, 1080 });
 #endif
-        { canLoadAVCaptureSessionPreset1280x720(), AVCaptureSessionPreset1280x720, 1280, 720 },
-        { canLoadAVCaptureSessionPreset960x540(), AVCaptureSessionPreset960x540, 960, 540 },
-        { canLoadAVCaptureSessionPreset640x480(), AVCaptureSessionPreset640x480, 640, 480 },
-        { canLoadAVCaptureSessionPreset352x288(), AVCaptureSessionPreset352x288, 352, 288 },
-        { canLoadAVCaptureSessionPreset320x240(), AVCaptureSessionPreset320x240, 320, 240 },
-    };
+        if (canLoadAVCaptureSessionPreset1280x720())
+            sets.append({ AVCaptureSessionPreset1280x720, 1280, 720 });
+        if (canLoadAVCaptureSessionPreset960x540())
+            sets.append({ AVCaptureSessionPreset960x540, 960, 540 });
+        if (canLoadAVCaptureSessionPreset640x480())
+            sets.append({ AVCaptureSessionPreset640x480, 640, 480 });
+        if (canLoadAVCaptureSessionPreset352x288())
+            sets.append({ AVCaptureSessionPreset352x288, 352, 288 });
+        if (canLoadAVCaptureSessionPreset320x240())
+            sets.append({ AVCaptureSessionPreset320x240, 320, 240 });
+
+        return sets;
+    }();
 
     auto* presetsMap = &videoPresets();
-    for (auto& preset : presets) {
-        if (!preset.symbolAvailable || !preset.name || ![device supportsAVCaptureSessionPreset:preset.name])
+    for (auto& preset : presets.get()) {
+        if (![device supportsAVCaptureSessionPreset:preset.name])
             continue;
 
         presetsMap->add(String(preset.name), IntSize(preset.width, preset.height));
