@@ -1076,8 +1076,14 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     subp maxFrameExtentForSlowPathCall, sp
     callSlowPath(_llint_stack_check)
     bpeq r1, 0, .stackHeightOKGetCodeBlock
+
+    # We're throwing before the frame is fully set up. This frame will be
+    # ignored by the unwinder. So, let's restore the callee saves before we
+    # start unwinding. We need to do this before we change the cfr.
+    restoreCalleeSavesUsedByLLInt()
+
     move r1, cfr
-    dispatch(0) # Go to exception handler in PC
+    jmp _llint_throw_from_slow_path_trampoline
 
 .stackHeightOKGetCodeBlock:
     # Stack check slow path returned that the stack was ok.

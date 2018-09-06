@@ -51,7 +51,6 @@
 #include "SmallStrings.h"
 #include "Strong.h"
 #include "StructureCache.h"
-#include "VMEntryRecord.h"
 #include "VMTraps.h"
 #include "WasmContext.h"
 #include "Watchpoint.h"
@@ -168,9 +167,12 @@ namespace DOMJIT {
 class Signature;
 }
 
+struct EntryFrame;
 struct HashTable;
 struct Instruction;
 struct ValueProfile;
+
+typedef ExecState CallFrame;
 
 struct LocalTimeOffsetCache {
     LocalTimeOffsetCache()
@@ -288,6 +290,11 @@ public:
     SamplingProfiler* samplingProfiler() { return m_samplingProfiler.get(); }
     JS_EXPORT_PRIVATE SamplingProfiler& ensureSamplingProfiler(RefPtr<Stopwatch>&&);
 #endif
+
+    inline CallFrame* topJSCallFrame() const;
+
+    // Global object in which execution began.
+    JS_EXPORT_PRIVATE JSGlobalObject* vmEntryGlobalObject(const CallFrame*) const;
 
 private:
     RefPtr<JSLock> m_apiLock;

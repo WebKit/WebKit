@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -115,18 +115,13 @@ namespace JSC  {
             ASSERT(this[scopeRegisterOffset].Register::scope());
             return this[scopeRegisterOffset].Register::scope();
         }
-        // Global object in which execution began.
-        // This variant is not safe to call from a Wasm frame.
-        JS_EXPORT_PRIVATE JSGlobalObject* vmEntryGlobalObject();
-        // This variant is safe to call from a Wasm frame.
-        JSGlobalObject* vmEntryGlobalObject(VM&);
 
         JSGlobalObject* wasmAwareLexicalGlobalObject(VM&);
 
         bool isAnyWasmCallee();
 
         // Global object in which the currently executing code was defined.
-        // Differs from vmEntryGlobalObject() during function calls across web browser frames.
+        // Differs from VM::vmEntryGlobalObject() during function calls across web browser frames.
         JSGlobalObject* lexicalGlobalObject() const;
 
         // Differs from lexicalGlobalObject because this will have DOM window shell rather than
@@ -145,8 +140,8 @@ namespace JSC  {
         void* callerFrameOrEntryFrame() const { return callerFrameAndPC().callerFrame; }
         SUPPRESS_ASAN void* unsafeCallerFrameOrEntryFrame() const { return unsafeCallerFrameAndPC().callerFrame; }
 
-        CallFrame* unsafeCallerFrame(EntryFrame*&);
-        JS_EXPORT_PRIVATE CallFrame* callerFrame(EntryFrame*&);
+        CallFrame* unsafeCallerFrame(EntryFrame*&) const;
+        JS_EXPORT_PRIVATE CallFrame* callerFrame(EntryFrame*&) const;
 
         JS_EXPORT_PRIVATE SourceOrigin callerSourceOrigin();
 
@@ -255,7 +250,15 @@ namespace JSC  {
 
         static int offsetFor(size_t argumentCountIncludingThis) { return argumentCountIncludingThis + CallFrameSlot::thisArgument - 1; }
 
-        static CallFrame* noCaller() { return 0; }
+        static CallFrame* noCaller() { return nullptr; }
+        bool isGlobalExec() const
+        {
+            return callerFrameAndPC().callerFrame == noCaller() && callerFrameAndPC().pc == nullptr;
+        }
+
+        void convertToStackOverflowFrame(VM&);
+        inline bool isStackOverflowFrame() const;
+        inline bool isWasmFrame() const;
 
         void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[CallFrameSlot::argumentCount].payload() = count; }
         void setCallee(JSObject* callee) { static_cast<Register*>(this)[CallFrameSlot::callee] = callee; }
@@ -269,7 +272,7 @@ namespace JSC  {
         // FIXME: This method is improper. We rely on the fact that we can call it with a null
         // receiver. We should always be using StackVisitor directly.
         // It's only valid to call this from a non-wasm top frame.
-        template <typename Functor> void iterate(const Functor& functor)
+        template <StackVisitor::EmptyEntryFrameAction action = StackVisitor::ContinueIfTopEntryFrameIsEmpty, typename Functor> void iterate(const Functor& functor)
         {
             VM* vm;
             void* rawThis = this;
@@ -278,7 +281,7 @@ namespace JSC  {
                 vm = &this->vm();
             } else
                 vm = nullptr;
-            StackVisitor::visit<Functor>(this, vm, functor);
+            StackVisitor::visit<action, Functor>(this, vm, functor);
         }
 
         void dump(PrintStream&);

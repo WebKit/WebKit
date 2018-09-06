@@ -4121,7 +4121,7 @@ bool Internals::isReadableStreamDisturbed(JSC::ExecState& state, JSValue stream)
 JSValue Internals::cloneArrayBuffer(JSC::ExecState& state, JSValue buffer, JSValue srcByteOffset, JSValue srcLength)
 {
     JSC::VM& vm = state.vm();
-    JSGlobalObject* globalObject = state.vmEntryGlobalObject();
+    JSGlobalObject* globalObject = vm.vmEntryGlobalObject(&state);
     JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData);
     const Identifier& privateName = clientData->builtinNames().cloneArrayBufferPrivateName();
     JSValue value;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,19 +20,31 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
+#include "StackAlignment.h"
+#include "VMEntryRecord.h"
+
 namespace JSC {
 
-class ExecState;
-class JSObject;
+struct EntryFrame {
+#if ENABLE(JIT) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+    static ptrdiff_t vmEntryRecordOffset()
+    {
+        EntryFrame* fakeEntryFrame = reinterpret_cast<EntryFrame*>(0x1000);
+        VMEntryRecord* record = vmEntryRecord(fakeEntryFrame);
+        return static_cast<ptrdiff_t>(
+            reinterpret_cast<char*>(record) - reinterpret_cast<char*>(fakeEntryFrame));
+    }
 
-namespace CommonSlowPaths {
+    static ptrdiff_t calleeSaveRegistersBufferOffset()
+    {
+        return vmEntryRecordOffset() + OBJECT_OFFSETOF(VMEntryRecord, calleeSaveRegistersBuffer);
+    }
+#endif
+};
 
-// Throw the currently active exception in the context of the caller's call frame.
-void interpreterThrowInCaller(ExecState* callerFrame, JSObject*);
-
-} } // namespace JSC::CommonSlowPaths
+} // namespace JSC

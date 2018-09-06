@@ -635,7 +635,7 @@ private:
 ALWAYS_INLINE static void notifyDebuggerOfUnwinding(VM& vm, CallFrame* callFrame)
 {
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
-    if (Debugger* debugger = callFrame->vmEntryGlobalObject(vm)->debugger()) {
+    if (Debugger* debugger = vm.vmEntryGlobalObject(callFrame)->debugger()) {
         SuspendExceptionScope scope(&vm);
         if (callFrame->isAnyWasmCallee()
             || (callFrame->callee().isCell() && callFrame->callee().asCell()->inherits<JSFunction>(vm)))
@@ -718,18 +718,11 @@ private:
     HandlerInfo*& m_handler;
 };
 
-NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exception* exception, UnwindStart unwindStart)
+NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exception* exception)
 {
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    if (unwindStart == UnwindFromCallerFrame) {
-        if (callFrame->callerFrameOrEntryFrame() == vm.topEntryFrame)
-            return nullptr;
-
-        callFrame = callFrame->callerFrame();
-        vm.topCallFrame = callFrame;
-    }
-
+    ASSERT(reinterpret_cast<void*>(callFrame) != vm.topEntryFrame);
     CodeBlock* codeBlock = callFrame->codeBlock();
 
     JSValue exceptionValue = exception->value();
@@ -740,12 +733,12 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
     if (exceptionValue.isEmpty() || (exceptionValue.isCell() && !exceptionValue.asCell()))
         exceptionValue = jsNull();
 
-    EXCEPTION_ASSERT_UNUSED(scope, scope.exception() && (!Options::exceptionStackTraceLimit() || scope.exception()->stack().size()));
+    EXCEPTION_ASSERT_UNUSED(scope, scope.exception());
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.
     HandlerInfo* handler = nullptr;
     UnwindFunctor functor(vm, callFrame, isTerminatedExecutionException(vm, exception), codeBlock, handler);
-    StackVisitor::visit(callFrame, &vm, functor);
+    StackVisitor::visit<StackVisitor::TerminateIfTopEntryFrameIsEmpty>(callFrame, &vm, functor);
     if (!handler)
         return nullptr;
 
@@ -754,7 +747,7 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
 
 void Interpreter::notifyDebuggerOfExceptionToBeThrown(VM& vm, CallFrame* callFrame, Exception* exception)
 {
-    Debugger* debugger = callFrame->vmEntryGlobalObject(vm)->debugger();
+    Debugger* debugger = vm.vmEntryGlobalObject(callFrame)->debugger();
     if (debugger && debugger->needsExceptionCallbacks() && !exception->didNotifyInspectorOfThrow()) {
         // This code assumes that if the debugger is enabled then there is no inlining.
         // If that assumption turns out to be false then we'll ignore the inlined call
@@ -1327,7 +1320,7 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookType debugHo
 {
     VM& vm = callFrame->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger();
+    Debugger* debugger = vm.vmEntryGlobalObject(callFrame)->debugger();
     if (!debugger)
         return;
 

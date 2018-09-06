@@ -88,9 +88,10 @@ ObjcValue convertValueToObjcValue(ExecState* exec, JSValue value, ObjcValueType 
 
     switch (type) {
         case ObjcObjectType: {
-            JSLockHolder lock(exec);
+            VM& vm = exec->vm();
+            JSLockHolder lock(vm);
             
-            JSGlobalObject *originGlobalObject = exec->vmEntryGlobalObject();
+            JSGlobalObject *originGlobalObject = vm.vmEntryGlobalObject(exec);
             RootObject* originRootObject = findRootObject(originGlobalObject);
 
             JSGlobalObject* globalObject = 0;

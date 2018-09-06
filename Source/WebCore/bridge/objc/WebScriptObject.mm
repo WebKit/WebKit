@@ -122,7 +122,8 @@ id createJSWrapper(JSC::JSObject* object, RefPtr<JSC::Bindings::RootObject>&& or
 
 static void addExceptionToConsole(ExecState* exec, JSC::Exception* exception)
 {
-    JSDOMWindow* window = asJSDOMWindow(exec->vmEntryGlobalObject());
+    JSC::VM& vm = exec->vm();
+    JSDOMWindow* window = asJSDOMWindow(vm.vmEntryGlobalObject(exec));
     if (!window || !exception)
         return;
     reportException(exec, exception);
