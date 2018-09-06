@@ -119,7 +119,7 @@ static PKPaymentButtonType toPKPaymentButtonType(ApplePayButtonType type)
     case ApplePayButtonType::Donate:
         return PKPaymentButtonTypeDonate;
 #if ENABLE(APPLE_PAY_SESSION_V4)
-    case ApplePayButtonType::Checkout:
+    case ApplePayButtonType::CheckOut:
         return PKPaymentButtonTypeCheckout;
     case ApplePayButtonType::Book:
         return PKPaymentButtonTypeBook;

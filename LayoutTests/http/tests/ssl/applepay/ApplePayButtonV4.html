@@ -21,8 +21,8 @@
             -apple-pay-button-style: black;
         }
 
-        .checkout {
-            -apple-pay-button-type: checkout;
+        .check-out {
+            -apple-pay-button-type: check-out;
         }
 
         .book {
@@ -37,7 +37,7 @@
 <body>
     <script>
         for (let style of ["white", "white-outline", "black"]) {
-            for (let type of ["checkout", "book", "subscribe"]) {
+            for (let type of ["check-out", "book", "subscribe"]) {
                 var button = document.createElement("button");
                 button.classList.add("apple-pay-button", style, type);
                 document.body.appendChild(button);

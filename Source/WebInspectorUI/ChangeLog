@@ -1,3 +1,13 @@
+2018-09-06  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Rename the -apple-pay-button-type value "checkout" to "check-out"
+        https://bugs.webkit.org/show_bug.cgi?id=189366
+        <rdar://problem/44193218>
+
+        Reviewed by Sam Weinig.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2018-08-31  Jamal Nasser  <xnasser@outlook.com>
 
         Added a CSS rule to DarkMode.css to fix color on sidebar toggle.
