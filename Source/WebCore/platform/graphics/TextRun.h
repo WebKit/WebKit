@@ -57,6 +57,7 @@ public:
         , m_characterScanForCodePath(characterScanForCodePath)
         , m_disableSpacing(false)
     {
+        ASSERT(!m_text.isNull());
     }
 
     explicit TextRun(StringView stringView, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = DefaultExpansion, TextDirection direction = TextDirection::LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
@@ -89,7 +90,7 @@ public:
 
     void setText(const LChar* text, unsigned length) { setText({ text, length }); }
     void setText(const UChar* text, unsigned length) { setText({ text, length }); }
-    void setText(StringView text) { m_text = text.toStringWithoutCopying(); }
+    void setText(StringView text) { ASSERT(!text.isNull()); m_text = text.toStringWithoutCopying(); }
 
     float horizontalGlyphStretch() const { return m_horizontalGlyphStretch; }
     void setHorizontalGlyphStretch(float scale) { m_horizontalGlyphStretch = scale; }

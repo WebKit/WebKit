@@ -1,3 +1,20 @@
+2018-09-05  Brent Fulgham  <bfulgham@apple.com>
+
+        The width of an empty or nullptr TextRun should be zero
+        https://bugs.webkit.org/show_bug.cgi?id=189154
+        <rdar://problem/43685926>
+
+        Reviewed by Zalan Bujtas.
+
+        Most accessors in WTFString.cpp, such as isAllASCII(), hash(), etc., perform a nullptr check
+        before using m_impl, but is8Bit() does not.
+
+        This patch adds a check in the is8Bit() implementation to be consistent with other methods,
+        and to address a small number of crashes observed in testing.
+
+        * wtf/text/WTFString.h:
+        (WTF::String::is8Bit const):
+
 2018-09-05  Mark Lam  <mark.lam@apple.com>
 
         Remove unused bad_optional_access implementation.

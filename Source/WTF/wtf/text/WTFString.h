@@ -1,6 +1,6 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -154,7 +154,7 @@ public:
     // Return characters8() or characters16() depending on CharacterType.
     template<typename CharacterType> const CharacterType* characters() const;
 
-    bool is8Bit() const { return m_impl->is8Bit(); }
+    bool is8Bit() const { return !m_impl || m_impl->is8Bit(); }
 
     unsigned sizeInBytes() const { return m_impl ? m_impl->length() * (is8Bit() ? sizeof(LChar) : sizeof(UChar)) : 0; }
 

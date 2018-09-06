@@ -1,3 +1,28 @@
+2018-09-05  Brent Fulgham  <bfulgham@apple.com>
+
+        The width of an empty or nullptr TextRun should be zero
+        https://bugs.webkit.org/show_bug.cgi?id=189154
+        <rdar://problem/43685926>
+
+        Reviewed by Zalan Bujtas.
+
+        If a page has an empty TextRun and attempts to paint it we can crash with a nullptr.
+
+        This patch recognizes that an empty TextRun should always produce a zero width, rather than
+        attempt to compute this value from font data. It also prevents ListBox from attempting to
+        paint a null string.
+
+        Test: fast/text/null-string-textrun.html
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::widthOfTextRange const): An empty TextRun has zero width.
+        (WebCore::FontCascade::width const): Ditto.
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun): ASSERT that the supplied String is non-null.
+        (WebCore::TextRun::setText): Ditto.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground): Don't attempt to paint a null string.
+
 2018-09-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] ComputeFloat* methods should take a const FloatingContext&
