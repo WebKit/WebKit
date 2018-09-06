@@ -1,5 +1,4 @@
-//@ skip if $architecture == "x86"
-//@ runDefault
+//@ runWebAssembly
 // This passes if it does not crash.
 new WebAssembly.CompileError({
     valueOf() {

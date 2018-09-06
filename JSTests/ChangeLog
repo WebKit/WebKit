@@ -1,3 +1,13 @@
+2018-09-06  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: Move regress-189185.js under JSTests/wasm.
+        https://bugs.webkit.org/show_bug.cgi?id=189347
+
+        Unreviewed.
+
+        * stress/regress-189185.js: Removed.
+        * wasm/regress/regress-189185.js: Copied from JSTests/stress/regress-189185.js.
+
 2018-09-05  Mark Lam  <mark.lam@apple.com>
 
         JSPropertyNameEnumerator::visitChildren() needs to visit its m_cachedStructureID.
