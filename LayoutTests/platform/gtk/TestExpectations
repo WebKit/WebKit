@@ -1288,8 +1288,6 @@ webkit.org/b/183215 imported/w3c/web-platform-tests/encoding/legacy-mb-korean/eu
 
 webkit.org/b/183401 fast/animation/request-animation-frame-during-modal.html [ Crash Pass ]
 
-webkit.org/b/184781 [ Release ] plugins/unavailable-plugin-indicator-obscurity.html [ Crash ]
-
 webkit.org/b/185546 media/video-playbackrate.html [ Crash Pass ]
 
 # Crashes only when GNOME icon theme is not installed
@@ -1529,13 +1527,14 @@ webkit.org/b/132185 editing/pasteboard/gtk/middle-button-paste.html [ Failure Pa
 # Some media fragment tests are flaky
 webkit.org/b/132248 media/media-fragments/TC0001.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0002.html [ Crash Pass ]
-webkit.org/b/132248 media/media-fragments/TC0004.html [ Crash Pass ]
+webkit.org/b/132248 media/media-fragments/TC0004.html [ Timeout Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0005.html [ Failure Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0006.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0009.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0011.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0014.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0015.html [ Failure Crash Pass ]
+webkit.org/b/132248 media/media-fragments/TC0017.html [ Timeout Pass ]
 webkit.org/b/134574 media/media-fragments/TC0024.html [ Failure Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0035.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0036.html [ Failure Pass ]
@@ -1985,7 +1984,7 @@ webkit.org/b/186673 editing/spelling/spellcheck-async-mutation.html [ Failure Pa
 
 webkit.org/b/186678 fast/mediastream/change-tracks-media-stream-being-played.html [ Crash Pass ]
 
-webkit.org/b/186679 media/video-currentTime-delay.html [ Crash Pass ]
+webkit.org/b/186679 media/video-currentTime-delay.html [ Timeout Crash Pass ]
 
 webkit.org/b/186750 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https.html [ Pass Failure ]
 webkit.org/b/186750 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_short_long.https.html [ Pass Failure ]
@@ -2039,6 +2038,21 @@ webkit.org/b/188434 imported/w3c/web-platform-tests/html/browsers/history/the-hi
 webkit.org/b/188435 imported/w3c/web-platform-tests/html/semantics/links/linktypes/alternate-css.html [ Timeout Pass ]
 
 webkit.org/b/188437 media/W3C/audio/events/event_playing_manual.html [ Crash Pass ]
+
+webkit.org/b/189338 imported/w3c/web-platform-tests/visual-viewport/viewport-no-resize-event-on-overflow-recalc.html [ Failure Pass ]
+webkit.org/b/189338 imported/w3c/web-platform-tests/visual-viewport/viewport-resize-event-on-load-overflowing-page.html [ Failure Pass ]
+
+webkit.org/b/189339 compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/189340 webaudio/silence-after-playback.html [ Failure Timeout Pass ]
+
+webkit.org/b/189341 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Timeout Pass ]
+
+webkit.org/b/189342 media/media-fullscreen-return-to-inline.html [ Timeout Pass ]
+
+webkit.org/b/189346 media/media-ended.html [ Timeout Pass ]
+
+webkit.org/b/189348 media/video-currentTime-set.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -3523,6 +3537,15 @@ webkit.org/b/188218 fast/repaint/canvas-object-fit.html [ Failure ]
 webkit.org/b/188436 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure ]
 
 webkit.org/b/188844 http/tests/resourceLoadStatistics/blocking-in-web-worker-script-import.html [ Failure ]
+
+webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html [ Failure ]
+webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.worker.html [ Failure ]
+
+webkit.org/b/189344 webanimations/css-animation-effect-target-change-and-animation-removal-crash.html [ ImageOnlyFailure ]
+
+webkit.org/b/189345 http/tests/media/clearkey/collect-webkit-media-session.html [ Timeout ]
+
+webkit.org/b/189350 fast/forms/color/input-appearance-color.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
