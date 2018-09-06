@@ -106,7 +106,6 @@ private:
 
     Ref<RTCRtpTransceiver> completeAddTransceiver(Ref<RTCRtpSender>&&, const RTCRtpTransceiverInit&, const String& trackId, const String& trackKind);
 
-    void enqueueReplaceTrackTask(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&);
     Ref<RTCRtpReceiver> createReceiver(const String& trackKind, const String& trackId);
 
     Ref<LibWebRTCMediaEndpoint> m_endpoint;

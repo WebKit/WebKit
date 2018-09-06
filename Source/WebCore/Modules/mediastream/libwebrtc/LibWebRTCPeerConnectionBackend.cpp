@@ -383,58 +383,6 @@ static inline bool updateTrackSource(Source& source, MediaStreamTrack* track)
     return source.setSource(track->privateTrack());
 }
 
-void LibWebRTCPeerConnectionBackend::replaceTrack(RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& track, DOMPromiseDeferred<void>&& promise)
-{
-    auto* currentTrack = sender.track();
-
-    ASSERT(!track || !currentTrack || currentTrack->source().type() == track->source().type());
-    if (currentTrack) {
-        switch (currentTrack->source().type()) {
-        case RealtimeMediaSource::Type::None:
-            ASSERT_NOT_REACHED();
-            promise.reject(InvalidModificationError);
-            break;
-        case RealtimeMediaSource::Type::Audio:
-            if (!updateTrackSource(*backendFromRTPSender(sender).audioSource(), track.get())) {
-                promise.reject(InvalidModificationError);
-                return;
-            }
-            break;
-        case RealtimeMediaSource::Type::Video:
-            if (!updateTrackSource(*backendFromRTPSender(sender).videoSource(), track.get())) {
-                promise.reject(InvalidModificationError);
-                return;
-            }
-            break;
-        }
-    }
-    enqueueReplaceTrackTask(sender, WTFMove(track), WTFMove(promise));
-}
-
-void LibWebRTCPeerConnectionBackend::enqueueReplaceTrackTask(RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& withTrack, DOMPromiseDeferred<void>&& promise)
-{
-    m_peerConnection.scriptExecutionContext()->postTask([protectedConnection = makeRef(m_peerConnection), protectedSender = makeRef(sender), promise = WTFMove(promise), withTrack = WTFMove(withTrack), this](ScriptExecutionContext&) mutable {
-        if (protectedConnection->isClosed())
-            return;
-
-        if (!withTrack) {
-            protectedSender->setTrackToNull();
-            promise.resolve();
-            return;
-        }
-
-        bool hasTrack = protectedSender->track();
-        protectedSender->setTrack(withTrack.releaseNonNull());
-        if (!hasTrack) {
-            if (!m_endpoint->addTrack(backendFromRTPSender(protectedSender), *protectedSender->track(), { })) {
-                promise.reject(Exception { TypeError, "Unable to add track"_s });
-                return;
-            }
-        }
-        promise.resolve();
-    });
-}
-
 void LibWebRTCPeerConnectionBackend::applyRotationForOutgoingVideoSources()
 {
     for (auto& transceiver : m_peerConnection.getTransceivers()) {

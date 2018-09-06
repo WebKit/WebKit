@@ -92,7 +92,7 @@ public:
     }
 
 private:
-    void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) final;
+    void replaceTrack(ScriptExecutionContext&, RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) final;
     RTCRtpParameters getParameters() const final;
     void setParameters(const RTCRtpParameters&, DOMPromiseDeferred<void>&&) final;
 

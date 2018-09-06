@@ -77,7 +77,7 @@ void RTCRtpSender::setTrack(Ref<MediaStreamTrack>&& track)
     m_track = WTFMove(track);
 }
 
-void RTCRtpSender::replaceTrack(RefPtr<MediaStreamTrack>&& withTrack, DOMPromiseDeferred<void>&& promise)
+void RTCRtpSender::replaceTrack(ScriptExecutionContext& context, RefPtr<MediaStreamTrack>&& withTrack, DOMPromiseDeferred<void>&& promise)
 {
     if (isStopped()) {
         promise.reject(InvalidStateError);
@@ -89,7 +89,7 @@ void RTCRtpSender::replaceTrack(RefPtr<MediaStreamTrack>&& withTrack, DOMPromise
         return;
     }
 
-    m_backend->replaceTrack(*this, WTFMove(withTrack), WTFMove(promise));
+    m_backend->replaceTrack(context, *this, WTFMove(withTrack), WTFMove(promise));
 }
 
 RTCRtpParameters RTCRtpSender::getParameters()

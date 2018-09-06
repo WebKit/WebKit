@@ -54,7 +54,7 @@ public:
     void setTrack(Ref<MediaStreamTrack>&&);
     void setTrackToNull();
 
-    void replaceTrack(RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&);
+    void replaceTrack(ScriptExecutionContext&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&);
 
     RTCRtpParameters getParameters();
     void setParameters(const RTCRtpParameters&, DOMPromiseDeferred<void>&&);

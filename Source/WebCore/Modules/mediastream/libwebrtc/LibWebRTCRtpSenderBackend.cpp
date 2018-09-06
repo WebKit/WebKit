@@ -31,17 +31,73 @@
 #include "LibWebRTCUtils.h"
 #include "RTCPeerConnection.h"
 #include "RTCRtpSender.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
-void LibWebRTCRtpSenderBackend::replaceTrack(RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& track, DOMPromiseDeferred<void>&& promise)
+template<typename Source>
+static inline bool updateTrackSource(Source& source, MediaStreamTrack* track)
+{
+    if (!track) {
+        source.stop();
+        return true;
+    }
+    return source.setSource(track->privateTrack());
+}
+
+void LibWebRTCRtpSenderBackend::replaceTrack(ScriptExecutionContext& context, RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& track, DOMPromiseDeferred<void>&& promise)
 {
     if (!m_peerConnectionBackend) {
         promise.reject(Exception { InvalidStateError, "No WebRTC backend"_s });
         return;
     }
 
-    m_peerConnectionBackend->replaceTrack(sender, WTFMove(track), WTFMove(promise));
+    auto* currentTrack = sender.track();
+
+    ASSERT(!track || !currentTrack || currentTrack->source().type() == track->source().type());
+    if (currentTrack) {
+    switch (currentTrack->source().type()) {
+    case RealtimeMediaSource::Type::None:
+        ASSERT_NOT_REACHED();
+        promise.reject(InvalidModificationError);
+        break;
+    case RealtimeMediaSource::Type::Audio:
+        if (!updateTrackSource(*audioSource(), track.get())) {
+            promise.reject(InvalidModificationError);
+            return;
+        }
+        break;
+    case RealtimeMediaSource::Type::Video:
+        if (!updateTrackSource(*videoSource(), track.get())) {
+            promise.reject(InvalidModificationError);
+            return;
+        }
+        break;
+    }
+    }
+
+    context.postTask([protectedSender = makeRef(sender), promise = WTFMove(promise), track = WTFMove(track), this](ScriptExecutionContext&) mutable {
+        if (protectedSender->isStopped())
+            return;
+
+        if (!track) {
+            protectedSender->setTrackToNull();
+            promise.resolve();
+            return;
+        }
+
+        bool hasTrack = protectedSender->track();
+        protectedSender->setTrack(track.releaseNonNull());
+        if (!hasTrack) {
+            // FIXME: In case of unified plan, we should use m_rtcSender->SetTrack and no longer need m_peerConnectionBackend.
+            auto result = m_peerConnectionBackend->addTrack(protectedSender.ptr(), *protectedSender->track(), { });
+            if (result.hasException()) {
+                promise.reject(result.releaseException());
+                return;
+            }
+        }
+        promise.resolve();
+    });
 }
 
 RTCRtpParameters LibWebRTCRtpSenderBackend::getParameters() const

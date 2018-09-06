@@ -40,5 +40,5 @@
     // FIXME 169662: missing setStreams
     RTCRtpParameters getParameters();
     Promise<void> setParameters(RTCRtpParameters parameters);
-    Promise<void> replaceTrack(MediaStreamTrack? withTrack);
+    [CallWith=ScriptExecutionContext] Promise<void> replaceTrack(MediaStreamTrack? withTrack);
 };

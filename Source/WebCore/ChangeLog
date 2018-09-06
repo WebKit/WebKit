@@ -1,3 +1,28 @@
+2018-09-06  Youenn Fablet  <youenn@apple.com>
+
+        Move replaceTrack logic to RTCRtpSender backend
+        https://bugs.webkit.org/show_bug.cgi?id=189359
+
+        Reviewed by Eric Carlson.
+
+        Move replaceTrack handling from LibWebRTCPeerConnectionBackend to LibWebRTCRtpSenderBackend.
+        This will allow using SetTrack when fully implementing unified plan.
+        No change of behavior.
+
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::replaceTrack):
+        * Modules/mediastream/RTCRtpSender.h:
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/RTCRtpSenderBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::replaceTrack): Deleted.
+        (WebCore::LibWebRTCPeerConnectionBackend::enqueueReplaceTrackTask): Deleted.
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        (WebCore::updateTrackSource):
+        (WebCore::LibWebRTCRtpSenderBackend::replaceTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.h:
+
 2018-09-06  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Rename the -apple-pay-button-type value "checkout" to "check-out"
