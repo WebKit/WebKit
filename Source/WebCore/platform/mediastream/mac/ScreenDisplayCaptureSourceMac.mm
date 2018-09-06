@@ -135,8 +135,7 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
                 captureFailed();
                 return false;
             }
-            setWidth(screenWidth);
-            setHeight(screenHeight);
+            setSize(IntSize(screenWidth, screenHeight));
         }
 
         if (!m_captureQueue)

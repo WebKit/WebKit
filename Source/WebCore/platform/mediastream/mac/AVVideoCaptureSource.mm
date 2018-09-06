@@ -453,7 +453,7 @@ void AVVideoCaptureSource::setFrameRate(double rate)
     return;
 }
 
-void AVVideoCaptureSource::applySizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
+void AVVideoCaptureSource::setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
 {
     if (width || height)
         setPreset(bestSessionPresetForVideoDimensions(WTFMove(width), WTFMove(height)));

@@ -165,8 +165,6 @@ public:
     WEBCORE_EXPORT void addObserver(Observer&);
     WEBCORE_EXPORT void removeObserver(Observer&);
 
-    void setWidth(int);
-    void setHeight(int);
     void setSize(const IntSize&);
     const IntSize& size() const { return m_size; }
 
@@ -233,7 +231,7 @@ protected:
     bool supportsSizeAndFrameRate(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<DoubleConstraint>, String&, double& fitnessDistance);
 
     virtual bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>);
-    virtual void applySizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>);
+    virtual void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>);
 
     void notifyMutedObservers() const;
     void notifyMutedChange(bool muted);

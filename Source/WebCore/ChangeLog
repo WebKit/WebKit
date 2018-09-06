@@ -1,3 +1,59 @@
+2018-09-06  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Include supported frame rates in video capture presets
+        https://bugs.webkit.org/show_bug.cgi?id=189351
+        <rdar://problem/44188917>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, no functionality changed.
+
+        Include frame rates as well as width/height in video capture presets, so the mock video
+        capture devices model real camera devices more closely.
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::setSizeAndFrameRate): Renamed from applySizeAndFrameRate. Use
+        setSize instead of setWidth and setHeight.
+        (WebCore::RealtimeMediaSource::applyConstraints): applySizeAndFrameRate -> setSizeAndFrameRate.
+        (WebCore::RealtimeMediaSource::applySizeAndFrameRate): Deleted.
+        (WebCore::RealtimeMediaSource::setWidth): Deleted.
+        (WebCore::RealtimeMediaSource::setHeight): Deleted.
+        * platform/mediastream/RealtimeMediaSource.h:
+
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        (WebCore::RealtimeVideoSource::setSupportedPresets): New.
+        (WebCore::updateMinMax):
+        (WebCore::RealtimeVideoSource::addSupportedCapabilities const): Calculate capabilities from
+        presets.
+        (WebCore::RealtimeVideoSource::supportsSizeAndFrameRate): Use bestSupportedSizeAndFrameRate.
+        (WebCore::RealtimeVideoSource::bestSupportedSizeAndFrameRate): 
+        (WebCore::RealtimeVideoSource::setSizeAndFrameRate):
+        (WebCore::RealtimeVideoSource::setSupportedFrameRates): Deleted.
+        (WebCore::RealtimeVideoSource::bestSupportedCaptureSizeForWidthAndHeight): Deleted.
+        (WebCore::RealtimeVideoSource::applySizeAndFrameRate): Deleted.
+        (WebCore::RealtimeVideoSource::supportsFrameRate): Deleted.
+        * platform/mediastream/RealtimeVideoSource.h:
+        (WebCore::RealtimeVideoSource::setSupportedCaptureSizes): Deleted.
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        (WebCore::GStreamerVideoCaptureSource::stopProducingData):
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::setSizeAndFrameRate):
+        (WebCore::AVVideoCaptureSource::applySizeAndFrameRate): Deleted.
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.mm:
+        (WebCore::ScreenDisplayCaptureSourceMac::createDisplayStream):
+        * platform/mock/MockMediaDevice.h:
+        (WebCore::MockCameraProperties::encode const):
+        (WebCore::MockCameraProperties::decode):
+        (WebCore::MockDisplayProperties::encode const):
+        (WebCore::MockDisplayProperties::decode):
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::defaultDevices):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::MockRealtimeVideoSource):
+        (WebCore::MockRealtimeVideoSource::capabilities const):
+        (WebCore::MockRealtimeVideoSource::settings const):
+
 2018-09-06  Antti Koivisto  <antti@apple.com>
 
         Actively prewarm processes created for prewarm pool

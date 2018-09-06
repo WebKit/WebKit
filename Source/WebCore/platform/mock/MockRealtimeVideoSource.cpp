@@ -129,10 +129,9 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(const String& deviceID, const S
     }
 
     auto& properties = WTF::get<MockCameraProperties>(m_device.properties);
-    setFrameRate(properties.frameRates[0]);
+    setFrameRate(properties.defaultFrameRate);
     setFacingMode(properties.facingMode);
-    setSupportedFrameRates(WTFMove(properties.frameRates));
-    setSupportedCaptureSizes(WTFMove(properties.frameSizes));
+    setSupportedPresets(WTFMove(properties.presets));
     m_fillColor = properties.fillColor;
 }
 
@@ -142,15 +141,15 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities() c
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
 
         capabilities.setDeviceId(id());
-        if (mockCamera()) {
+        if (mockCamera())
             capabilities.addFacingMode(WTF::get<MockCameraProperties>(m_device.properties).facingMode);
-            addSupportedCapabilities(capabilities);
-        } else {
+        else {
             capabilities.setWidth(CapabilityValueOrRange(72, 2880));
             capabilities.setHeight(CapabilityValueOrRange(45, 1800));
             capabilities.setFrameRate(CapabilityValueOrRange(.01, 60.0));
         }
 
+        addSupportedCapabilities(capabilities);
         m_capabilities = WTFMove(capabilities);
     }
     return m_capabilities.value();
@@ -160,7 +159,6 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings() const
 {
     if (m_currentSettings)
         return m_currentSettings.value();
-
 
     RealtimeMediaSourceSettings settings;
     if (mockCamera())

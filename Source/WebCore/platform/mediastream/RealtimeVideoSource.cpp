@@ -58,84 +58,116 @@ void RealtimeVideoSource::prepareToProduceData()
         setSize(m_defaultSize);
 }
 
-void RealtimeVideoSource::setSupportedFrameRates(Vector<double>&& rates)
+void RealtimeVideoSource::setSupportedPresets(RealtimeVideoSource::VideoPresets&& presets)
 {
-    m_supportedFrameRates = WTFMove(rates);
-    std::sort(m_supportedFrameRates.begin(), m_supportedFrameRates.end());
+    m_presets = WTFMove(presets);
+    std::sort(m_presets.begin(), m_presets.end(),
+        [&] (const auto& a, const auto& b) -> bool {
+            return (a.size.width() * a.size.height()) < (b.size.width() * b.size.height());
+    });
+    
+    for (auto& preset : m_presets) {
+        std::sort(preset.frameRateRanges.begin(), preset.frameRateRanges.end(),
+            [&] (const auto& a, const auto& b) -> bool {
+                return a.minimum < b.minimum;
+        });
+    }
+}
+
+template <typename ValueType>
+static void updateMinMax(ValueType& min, ValueType& max, ValueType value)
+{
+    min = std::min<ValueType>(min, value);
+    max = std::max<ValueType>(max, value);
 }
 
 void RealtimeVideoSource::addSupportedCapabilities(RealtimeMediaSourceCapabilities& capabilities) const
 {
-    ASSERT(!m_supportedCaptureSizes.isEmpty());
-    ASSERT(!m_supportedFrameRates.isEmpty());
-
-    capabilities.setFrameRate({ m_supportedFrameRates[0], m_supportedFrameRates[m_supportedFrameRates.size() - 1] });
+    ASSERT(!m_presets.isEmpty());
 
     int minimumWidth = std::numeric_limits<int>::max();
     int maximumWidth = 0;
     int minimumHeight = std::numeric_limits<int>::max();
     int maximumHeight = 0;
-    float minimumAspectRatio = std::numeric_limits<float>::max();
-    float maximumAspectRatio = 0;
-    for (const auto& size : m_supportedCaptureSizes) {
-        minimumWidth = std::min(minimumWidth, size.width());
-        maximumWidth = std::max(maximumWidth, size.width());
+    double minimumAspectRatio = std::numeric_limits<double>::max();
+    double maximumAspectRatio = 0;
+    double minimumFrameRate = std::numeric_limits<double>::max();
+    double maximumFrameRate = 0;
+    for (const auto& preset : m_presets) {
+        const auto& size = preset.size;
+        updateMinMax(minimumWidth, maximumWidth, size.width());
+        updateMinMax(minimumHeight, maximumHeight, size.height());
 
-        minimumHeight = std::min(minimumHeight, size.height());
-        maximumHeight = std::max(maximumHeight, size.height());
+        updateMinMax(minimumAspectRatio, maximumAspectRatio, static_cast<double>(size.width()) / size.height());
 
-        minimumAspectRatio = std::min(minimumAspectRatio, size.aspectRatio());
-        maximumAspectRatio = std::max(maximumAspectRatio, size.aspectRatio());
+        for (const auto& rate : preset.frameRateRanges) {
+            updateMinMax(minimumFrameRate, maximumFrameRate, rate.minimum);
+            updateMinMax(minimumFrameRate, maximumFrameRate, rate.maximum);
+        }
     }
-
     capabilities.setWidth({ minimumWidth, maximumWidth });
     capabilities.setHeight({ minimumHeight, maximumHeight });
     capabilities.setAspectRatio({ minimumAspectRatio, maximumAspectRatio });
+    capabilities.setFrameRate({ minimumFrameRate, maximumFrameRate });
 }
 
 bool RealtimeVideoSource::supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
 {
-    if (!height && !width && !frameRate)
+    if (!width && !height && !frameRate)
         return true;
 
-    if (height || width) {
-        if (m_supportedCaptureSizes.isEmpty())
-            return false;
-
-        if (bestSupportedCaptureSizeForWidthAndHeight(width, height).isEmpty())
-            return false;
-    }
-
-    if (!frameRate)
-        return true;
-
-    return supportsFrameRate(frameRate.value());
+    return !!bestSupportedSizeAndFrameRate(width, height, frameRate);
 }
 
-IntSize RealtimeVideoSource::bestSupportedCaptureSizeForWidthAndHeight(std::optional<int> width, std::optional<int> height)
+std::optional<RealtimeVideoSource::CaptureSizeAndFrameRate> RealtimeVideoSource::bestSupportedSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
 {
-    if (!width && !height)
+    if (!width && !height && !frameRate)
         return { };
 
-    for (auto size : m_supportedCaptureSizes) {
-        if ((!width || width.value() == size.width()) && (!height || height.value() == size.height()))
-            return size;
+    CaptureSizeAndFrameRate match;
+    for (const auto& preset : m_presets) {
+        const auto& size = preset.size;
+        if ((width && width.value() != size.width()) || (height && height.value() != size.height()))
+            continue;
+
+        match.size = size;
+        if (!frameRate) {
+            match.frameRate = preset.frameRateRanges[preset.frameRateRanges.size() - 1].maximum;
+            return match;
+        }
+
+        const double epsilon = 0.001;
+        for (const auto& rate : preset.frameRateRanges) {
+            if (frameRate.value() + epsilon >= rate.minimum && frameRate.value() - epsilon <= rate.maximum) {
+                match.frameRate = frameRate.value();
+                return match;
+            }
+        }
+
+        break;
     }
 
     return { };
 }
 
-void RealtimeVideoSource::applySizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
+void RealtimeVideoSource::setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
 {
-    if (width || height) {
-        IntSize supportedSize = bestSupportedCaptureSizeForWidthAndHeight(WTFMove(width), WTFMove(height));
-        ASSERT(!supportedSize.isEmpty());
-        if (!supportedSize.isEmpty())
-            setSize(supportedSize);
-    }
+    std::optional<RealtimeVideoSource::CaptureSizeAndFrameRate> match;
 
-    if (frameRate)
-        setFrameRate(frameRate.value());
+    // If only the framerate is changing, first see if it is supported with the current width and height.
+    auto size = this->size();
+    if (!width && !height && !size.isEmpty())
+        match = bestSupportedSizeAndFrameRate(size.width(), size.height(), frameRate);
+
+    if (!match)
+        match = bestSupportedSizeAndFrameRate(width, height, frameRate);
+
+    ASSERT(match);
+    if (!match)
+        return;
+
+    setSize(match->size);
+    setFrameRate(match->frameRate);
 }
 
 void RealtimeVideoSource::dispatchMediaSampleToObservers(MediaSample& sample)
@@ -155,16 +187,6 @@ void RealtimeVideoSource::dispatchMediaSampleToObservers(MediaSample& sample)
         m_observedFrameRate = (m_observedFrameTimeStamps.size() / interval);
 
     videoSampleAvailable(sample);
-}
-
-bool RealtimeVideoSource::supportsFrameRate(double frameRate)
-{
-    double epsilon = 0.001;
-    for (auto rate : m_supportedFrameRates) {
-        if (frameRate + epsilon >= rate && frameRate - epsilon <= rate)
-            return true;
-    }
-    return false;
 }
 
 } // namespace WebCore

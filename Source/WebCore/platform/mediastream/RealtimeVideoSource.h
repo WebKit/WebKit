@@ -36,6 +36,9 @@
 
 namespace WebCore {
 
+struct FrameRateRange;
+struct VideoPreset;
+
 class RealtimeVideoSource : public RealtimeMediaSource {
 public:
     virtual ~RealtimeVideoSource();
@@ -45,11 +48,16 @@ protected:
 
     void prepareToProduceData();
     bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
-    void applySizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
+    void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
 
-    void setSupportedFrameRates(Vector<double>&&);
-    void setSupportedCaptureSizes(const Vector<IntSize>&& sizes) { m_supportedCaptureSizes = sizes; }
-    IntSize bestSupportedCaptureSizeForWidthAndHeight(std::optional<int> width, std::optional<int> height);
+    using VideoPresets = Vector<VideoPreset>;
+    void setSupportedPresets(VideoPresets&&);
+
+    struct CaptureSizeAndFrameRate {
+        IntSize size;
+        double frameRate;
+    };
+    std::optional<CaptureSizeAndFrameRate> bestSupportedSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>);
 
     void addSupportedCapabilities(RealtimeMediaSourceCapabilities&) const;
 
@@ -60,14 +68,74 @@ protected:
     void dispatchMediaSampleToObservers(MediaSample&);
 
 private:
-    bool supportsFrameRate(double);
 
-    Vector<IntSize> m_supportedCaptureSizes;
-    Vector<double> m_supportedFrameRates;
+    VideoPresets m_presets;
     Deque<double> m_observedFrameTimeStamps;
     double m_observedFrameRate { 0 };
     IntSize m_defaultSize;
 };
+
+struct FrameRateRange {
+    double minimum;
+    double maximum;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<FrameRateRange> decode(Decoder&);
+};
+
+template<class Encoder>
+void FrameRateRange::encode(Encoder& encoder) const
+{
+    encoder << minimum;
+    encoder << maximum;
+}
+
+template <class Decoder>
+std::optional<FrameRateRange> FrameRateRange::decode(Decoder& decoder)
+{
+    std::optional<double> minimum;
+    decoder >> minimum;
+    if (!minimum)
+        return std::nullopt;
+
+    std::optional<double> maximum;
+    decoder >> maximum;
+    if (!maximum)
+        return std::nullopt;
+
+    return FrameRateRange { *minimum, *maximum };
+}
+
+struct VideoPreset {
+    IntSize size;
+    Vector<FrameRateRange> frameRateRanges;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<VideoPreset> decode(Decoder&);
+};
+
+template<class Encoder>
+void VideoPreset::encode(Encoder& encoder) const
+{
+    encoder << size;
+    encoder << frameRateRanges;
+}
+
+template <class Decoder>
+std::optional<VideoPreset> VideoPreset::decode(Decoder& decoder)
+{
+    std::optional<IntSize> size;
+    decoder >> size;
+    if (!size)
+        return std::nullopt;
+
+    std::optional<Vector<FrameRateRange>> frameRateRanges;
+    decoder >> frameRateRanges;
+    if (!frameRateRanges)
+        return std::nullopt;
+
+    return VideoPreset { *size, *frameRateRanges };
+}
 
 } // namespace WebCore
 

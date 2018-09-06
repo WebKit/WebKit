@@ -72,7 +72,7 @@ private:
     void shutdownCaptureSession();
 
     const RealtimeMediaSourceCapabilities& capabilities() const final;
-    void applySizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
+    void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
     void setFrameRate(double);
     const RealtimeMediaSourceSettings& settings() const final;
     void startProducingData() final;

@@ -31,6 +31,7 @@
 
 #include "CaptureDevice.h"
 #include "RealtimeMediaSource.h"
+#include "RealtimeVideoSource.h"
 
 namespace WebCore {
 
@@ -54,15 +55,15 @@ struct MockMicrophoneProperties {
     int defaultSampleRate { 44100 };
 };
 
-// FIXME: Add support for other properties and serialization of colors.
+// FIXME: Add support for other properties.
 struct MockCameraProperties {
     template<class Encoder>
     void encode(Encoder& encoder) const
     {
         encoder << defaultFrameRate;
         encoder << facingMode;
-        encoder << frameRates;
-        encoder << frameSizes;
+        encoder << presets;
+        encoder << fillColor;
     }
 
     template <class Decoder>
@@ -78,23 +79,22 @@ struct MockCameraProperties {
         if (!facingMode)
             return std::nullopt;
 
-        std::optional<Vector<double>> frameRates;
-        decoder >> frameRates;
-        if (!frameRates)
+        std::optional<Vector<VideoPreset>> presets;
+        decoder >> presets;
+        if (!presets)
             return std::nullopt;
 
-        std::optional<Vector<IntSize>> frameSizes;
-        decoder >> frameSizes;
-        if (!frameSizes)
+        std::optional<Color> fillColor;
+        decoder >> fillColor;
+        if (!fillColor)
             return std::nullopt;
 
-        return MockCameraProperties { *defaultFrameRate, *facingMode, WTFMove(*frameRates), WTFMove(*frameSizes), Color::black };
+        return MockCameraProperties { *defaultFrameRate, *facingMode, WTFMove(*presets), *fillColor };
     }
 
     double defaultFrameRate { 30 };
     RealtimeMediaSourceSettings::VideoFacingMode facingMode { RealtimeMediaSourceSettings::VideoFacingMode::User };
-    Vector<double> frameRates { 30, 15 };
-    Vector<IntSize> frameSizes { { 640, 480 }, { 352, 288 }, { 320, 240 } };
+    Vector<VideoPreset> presets { { { 640, 480 }, { { 30, 30}, { 15, 15 } } } };
     Color fillColor { Color::black };
 };
 
@@ -103,6 +103,7 @@ struct MockDisplayProperties {
     void encode(Encoder& encoder) const
     {
         encoder << defaultFrameRate;
+        encoder << fillColor;
     }
 
     template <class Decoder>
@@ -113,7 +114,12 @@ struct MockDisplayProperties {
         if (!defaultFrameRate)
             return std::nullopt;
 
-        return MockDisplayProperties { *defaultFrameRate, Color::lightGray };
+        std::optional<Color> fillColor;
+        decoder >> fillColor;
+        if (!fillColor)
+            return std::nullopt;
+
+        return MockDisplayProperties { *defaultFrameRate, *fillColor };
     }
 
     double defaultFrameRate { 30 };

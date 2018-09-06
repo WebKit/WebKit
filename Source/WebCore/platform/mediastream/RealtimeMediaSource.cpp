@@ -438,12 +438,14 @@ static void applyNumericConstraint(const NumericConstraint<ValueType>& constrain
         (source.*applier)(value);
 }
 
-void RealtimeMediaSource::applySizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
+void RealtimeMediaSource::setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
 {
+    IntSize size = this->size();
     if (width)
-        setWidth(width.value());
+        size.setWidth(width.value());
     if (height)
-        setHeight(height.value());
+        size.setHeight(height.value());
+    setSize(size);
     if (frameRate)
         setFrameRate(frameRate.value());
 }
@@ -816,7 +818,7 @@ void RealtimeMediaSource::applyConstraints(const FlattenedConstraint& constraint
     }
 
     if (width || height || frameRate)
-        applySizeAndFrameRate(WTFMove(width), WTFMove(height), WTFMove(frameRate));
+        setSizeAndFrameRate(WTFMove(width), WTFMove(height), WTFMove(frameRate));
 
     for (auto& variant : constraints) {
         if (variant.constraintType() == MediaConstraintType::Width || variant.constraintType() == MediaConstraintType::Height || variant.constraintType() == MediaConstraintType::FrameRate)
@@ -863,30 +865,6 @@ void RealtimeMediaSource::setSize(const IntSize& size)
 
     m_size = size;
     settingsDidChange(changed);
-}
-
-void RealtimeMediaSource::setWidth(int width)
-{
-    if (width == m_size.width())
-        return;
-
-    m_size.setWidth(width);
-    if (m_aspectRatio)
-        m_size.setHeight(width / m_aspectRatio);
-
-    settingsDidChange({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
-}
-
-void RealtimeMediaSource::setHeight(int height)
-{
-    if (height == m_size.height())
-        return;
-
-    if (m_aspectRatio)
-        m_size.setWidth(height * m_aspectRatio);
-    m_size.setHeight(height);
-
-    settingsDidChange({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
 }
 
 void RealtimeMediaSource::setFrameRate(double rate)
