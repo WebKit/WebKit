@@ -48,13 +48,11 @@ class BenchmarkResults(object):
         self._lint_results(results)
         self._results = self._aggregate_results(results)
 
-    def format(self, scale_unit=True, show_iteration_values=False, max_depth=None):
-        return self._format_tests(self._results, scale_unit, show_iteration_values, max_depth)
+    def format(self, scale_unit=True, show_iteration_values=False):
+        return self._format_tests(self._results, scale_unit, show_iteration_values)
 
     @classmethod
-    def _format_tests(cls, tests, scale_unit, show_iteration_values, max_depth, indent=''):
-        if max_depth is not None and max_depth <= 0:
-            return ''
+    def _format_tests(cls, tests, scale_unit, show_iteration_values, indent=''):
         output = ''
         config_name = 'current'
         for test_name in sorted(tests.keys()):
@@ -75,7 +73,7 @@ class BenchmarkResults(object):
                         output += aggregator_name + ':'
                     output += ' ' + cls._format_values(metric_name, metric[aggregator_name][config_name], scale_unit, show_iteration_values) + '\n'
             if 'tests' in test:
-                output += cls._format_tests(test['tests'], scale_unit, show_iteration_values, max_depth - 1 if max_depth else None, indent=(indent + ' ' * len(test_name)))
+                output += cls._format_tests(test['tests'], scale_unit, show_iteration_values, indent=(indent + ' ' * len(test_name)))
         return output
 
     @classmethod
