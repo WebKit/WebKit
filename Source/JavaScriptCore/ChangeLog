@@ -1,3 +1,15 @@
+2018-09-06  Michael Saboff  <msaboff@apple.com>
+
+        Improper speculation type for Math.pow(NaN, 0) in Abstract Interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=189380
+
+        Reviewed by Saam Barati.
+
+        Account for the case where in Math.pow(NaN, y) where y could be 0.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::typeOfDoublePow):
+
 2018-09-06  Mark Lam  <mark.lam@apple.com>
 
         Gardening: only visit m_cachedStructureID if it's not null.
