@@ -1,3 +1,13 @@
+2018-09-06  Xan Lopez  <xan@igalia.com>
+
+        [test262] Do not call keys on a reference
+        https://bugs.webkit.org/show_bug.cgi?id=189301
+
+        Reviewed by Keith Miller.
+
+        * Scripts/test262/Runner.pm:
+        (UpdateResults):
+
 2018-09-06  David Kilzer  <ddkilzer@apple.com>
 
         svn-create-patch fails when svn mv is used on directory trees

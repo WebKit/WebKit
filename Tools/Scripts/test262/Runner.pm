@@ -927,7 +927,7 @@ sub UpdateResults {
     }
 
     foreach my $path (keys(%{$expect})) {
-        foreach my $mode (keys($expect->{$path})) {
+        foreach my $mode (keys(%{$expect->{$path}})) {
             my $test = {
                 path => $path,
                 mode => $mode,
