@@ -171,7 +171,7 @@ class FailureLeak(TestFailure):
 
 
 class FailureDocumentLeak(FailureLeak):
-    def __init__(self, leaked_document_urls):
+    def __init__(self, leaked_document_urls=None):
         super(FailureDocumentLeak, self).__init__()
         self.leaked_document_urls = leaked_document_urls
 
@@ -295,5 +295,5 @@ ALL_FAILURE_CLASSES = (FailureTimeout, FailureCrash, FailureMissingResult, Failu
                        FailureMissingImage, FailureImageHashMismatch,
                        FailureImageHashIncorrect, FailureReftestMismatch,
                        FailureReftestMismatchDidNotOccur, FailureReftestNoImagesGenerated,
-                       FailureMissingAudio, FailureAudioMismatch,
+                       FailureMissingAudio, FailureAudioMismatch, FailureDocumentLeak,
                        FailureEarlyExit)

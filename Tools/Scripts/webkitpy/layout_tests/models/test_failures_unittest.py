@@ -59,6 +59,26 @@ class TestFailuresTest(unittest.TestCase):
         for c in ALL_FAILURE_CLASSES:
             self.assert_loads(c)
 
+    def test_all_failure_classes(self):
+        failure_classes = (
+            FailureTimeout,
+            FailureCrash,
+            FailureMissingResult,
+            FailureNotTested,
+            FailureTextMismatch,
+            FailureMissingImageHash,
+            FailureMissingImage,
+            FailureImageHashMismatch,
+            FailureImageHashIncorrect,
+            FailureReftestMismatch,
+            FailureReftestMismatchDidNotOccur,
+            FailureReftestNoImagesGenerated,
+            FailureMissingAudio,
+            FailureAudioMismatch,
+            FailureDocumentLeak,
+            FailureEarlyExit)
+        self.assertEqual(failure_classes, ALL_FAILURE_CLASSES)
+
     def test_equals(self):
         self.assertEqual(FailureCrash(), FailureCrash())
         self.assertNotEqual(FailureCrash(), FailureTimeout())
