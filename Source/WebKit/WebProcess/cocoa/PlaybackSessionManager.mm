@@ -507,6 +507,12 @@ void PlaybackSessionManager::setVolume(uint64_t contextId, double volume)
     ensureModel(contextId).setVolume(volume);
 }
 
+void PlaybackSessionManager::setPlayingOnSecondScreen(uint64_t contextId, bool value)
+{
+    UserGestureIndicator indicator(ProcessingUserGesture);
+    ensureModel(contextId).setPlayingOnSecondScreen(value);
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

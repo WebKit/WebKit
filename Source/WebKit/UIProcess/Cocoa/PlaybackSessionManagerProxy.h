@@ -113,6 +113,7 @@ private:
     void toggleMuted() final;
     void setMuted(bool) final;
     void setVolume(double) final;
+    void setPlayingOnSecondScreen(bool) final;
 
     double playbackStartedTime() const final { return m_playbackStartedTime; }
     double duration() const final { return m_duration; }
@@ -231,6 +232,7 @@ private:
     void toggleMuted(uint64_t contextId);
     void setMuted(uint64_t contextId, bool);
     void setVolume(uint64_t contextId, double);
+    void setPlayingOnSecondScreen(uint64_t contextId, bool);
 
     WebPageProxy* m_page;
     HashMap<uint64_t, ModelInterfaceTuple> m_contextMap;

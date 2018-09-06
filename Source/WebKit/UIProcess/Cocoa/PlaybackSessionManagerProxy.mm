@@ -151,6 +151,12 @@ void PlaybackSessionModelContext::setVolume(double volume)
         m_manager->setVolume(m_contextId, volume);
 }
 
+void PlaybackSessionModelContext::setPlayingOnSecondScreen(bool value)
+{
+    if (m_manager)
+        m_manager->setPlayingOnSecondScreen(m_contextId, value);
+}
+
 void PlaybackSessionModelContext::playbackStartedTimeChanged(double playbackStartedTime)
 {
     m_playbackStartedTime = playbackStartedTime;
@@ -569,6 +575,12 @@ void PlaybackSessionManagerProxy::setMuted(uint64_t contextId, bool muted)
 void PlaybackSessionManagerProxy::setVolume(uint64_t contextId, double volume)
 {
     m_page->send(Messages::PlaybackSessionManager::SetVolume(contextId, volume), m_page->pageID());
+}
+
+void PlaybackSessionManagerProxy::setPlayingOnSecondScreen(uint64_t contextId, bool value)
+{
+    if (m_page)
+        m_page->send(Messages::PlaybackSessionManager::SetPlayingOnSecondScreen(contextId, value), m_page->pageID());
 }
 
 void PlaybackSessionManagerProxy::requestControlledElementID()

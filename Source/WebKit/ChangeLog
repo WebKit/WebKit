@@ -1,3 +1,21 @@
+2018-09-06  Jer Noble  <jer.noble@apple.com>
+
+        Don't pause playback when locking screen if video is being displayed on second screen.
+        https://bugs.webkit.org/show_bug.cgi?id=189321
+
+        Reviewed by Eric Carlson.
+
+        Pass the "isPlayingOnSecondScreen" value across the process boundary.
+
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        (WebKit::PlaybackSessionModelContext::setPlayingOnSecondScreen):
+        (WebKit::PlaybackSessionManagerProxy::setPlayingOnSecondScreen):
+        * WebProcess/cocoa/PlaybackSessionManager.h:
+        * WebProcess/cocoa/PlaybackSessionManager.messages.in:
+        * WebProcess/cocoa/PlaybackSessionManager.mm:
+        (WebKit::PlaybackSessionManager::setPlayingOnSecondScreen):
+
 2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Cannot change font size at selection until font panel is shown

@@ -5744,11 +5744,6 @@ void HTMLMediaElement::webkitShowPlaybackTargetPicker()
     m_mediaSession->showPlaybackTargetPicker();
 }
 
-bool HTMLMediaElement::webkitCurrentPlaybackTargetIsWireless() const
-{
-    return m_isPlayingToWirelessTarget;
-}
-
 void HTMLMediaElement::wirelessRoutesAvailableDidChange()
 {
     enqueuePlaybackTargetAvailabilityChangedEvent();
@@ -5836,20 +5831,6 @@ void HTMLMediaElement::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& devi
         m_player->setWirelessPlaybackTarget(WTFMove(device));
 }
 
-bool HTMLMediaElement::canPlayToWirelessPlaybackTarget() const
-{
-    bool canPlay = m_player && m_player->canPlayToWirelessPlaybackTarget();
-
-    INFO_LOG(LOGIDENTIFIER, "returning ", canPlay);
-
-    return canPlay;
-}
-
-bool HTMLMediaElement::isPlayingToWirelessPlaybackTarget() const
-{
-    return m_isPlayingToWirelessTarget;
-}
-
 void HTMLMediaElement::setShouldPlayToPlaybackTarget(bool shouldPlay)
 {
     ALWAYS_LOG(LOGIDENTIFIER, shouldPlay);
@@ -5857,14 +5838,20 @@ void HTMLMediaElement::setShouldPlayToPlaybackTarget(bool shouldPlay)
     if (m_player)
         m_player->setShouldPlayToPlaybackTarget(shouldPlay);
 }
-#else // ENABLE(WIRELESS_PLAYBACK_TARGET)
-
-bool HTMLMediaElement::webkitCurrentPlaybackTargetIsWireless() const
-{
-    return false;
-}
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
+
+void HTMLMediaElement::setPlayingOnSecondScreen(bool value)
+{
+    if (value == m_playingOnSecondScreen)
+        return;
+
+    m_playingOnSecondScreen = value;
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    updateMediaState(UpdateState::Asynchronously);
+#endif
+}
 
 double HTMLMediaElement::minFastReverseRate() const
 {
@@ -7572,12 +7559,10 @@ bool HTMLMediaElement::supportsSeeking() const
 bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType type) const
 {
     if (type == PlatformMediaSession::EnteringBackground) {
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        if (m_isPlayingToWirelessTarget) {
-            INFO_LOG(LOGIDENTIFIER, "returning true because m_isPlayingToWirelessTarget is true");
+        if (isPlayingToExternalTarget()) {
+            INFO_LOG(LOGIDENTIFIER, "returning true because isPlayingToExternalTarget() is true");
             return true;
         }
-#endif
         if (m_videoFullscreenMode & VideoFullscreenModePictureInPicture)
             return true;
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
@@ -7585,12 +7570,10 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
             return true;
 #endif
     } else if (type == PlatformMediaSession::SuspendedUnderLock) {
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        if (m_isPlayingToWirelessTarget) {
-            INFO_LOG(LOGIDENTIFIER, "returning true because m_isPlayingToWirelessTarget is true");
+        if (isPlayingToExternalTarget()) {
+            INFO_LOG(LOGIDENTIFIER, "returning true because isPlayingToExternalTarget() is true");
             return true;
         }
-#endif
     }
     return false;
 }
@@ -7599,8 +7582,8 @@ bool HTMLMediaElement::processingUserGestureForMedia() const
 {
     return document().processingUserGestureForMedia();
 }
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
+
 void HTMLMediaElement::updateMediaState(UpdateState updateState)
 {
     if (updateState == UpdateState::Asynchronously) {
@@ -7628,10 +7611,10 @@ MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
 
     bool hasActiveVideo = isVideo() && hasVideo();
     bool hasAudio = this->hasAudio();
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (m_isPlayingToWirelessTarget)
+    if (isPlayingToExternalTarget())
         state |= IsPlayingToExternalDevice;
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (m_hasPlaybackTargetAvailabilityListeners) {
         state |= HasPlaybackTargetAvailabilityListener;
         if (!m_mediaSession->wirelessVideoPlaybackDisabled())
@@ -7754,7 +7737,7 @@ void HTMLMediaElement::purgeBufferedDataIfPossible()
     if (!MemoryPressureHandler::singleton().isUnderMemoryPressure() && m_mediaSession->dataBufferingPermitted())
         return;
 
-    if (m_isPlayingToWirelessTarget) {
+    if (isPlayingToExternalTarget()) {
         INFO_LOG(LOGIDENTIFIER, "early return because playing to wireless target");
         return;
     }
@@ -7933,10 +7916,8 @@ void HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired()
 
 bool HTMLMediaElement::shouldOverrideBackgroundLoadingRestriction() const
 {
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (isPlayingToWirelessPlaybackTarget())
+    if (isPlayingToExternalTarget())
         return true;
-#endif
 
     return m_videoFullscreenMode == VideoFullscreenModePictureInPicture;
 }

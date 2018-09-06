@@ -152,7 +152,6 @@ public:
 
     bool shouldOverrideBackgroundLoadingRestriction() const;
 
-    virtual bool canPlayToWirelessPlaybackTarget() const { return false; }
     virtual bool isPlayingToWirelessPlaybackTarget() const { return m_isPlayingToWirelessPlaybackTarget; }
     void isPlayingToWirelessPlaybackTargetChanged(bool);
 
@@ -240,9 +239,10 @@ public:
 
     virtual void wirelessRoutesAvailableDidChange() { }
     virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) { }
-    virtual bool canPlayToWirelessPlaybackTarget() const { return false; }
     virtual bool isPlayingToWirelessPlaybackTarget() const { return false; }
     virtual void setShouldPlayToPlaybackTarget(bool) { }
+
+    virtual bool isPlayingOnSecondScreen() const { return false; }
 
     virtual Document* hostingDocument() const = 0;
     virtual String sourceApplicationIdentifier() const = 0;

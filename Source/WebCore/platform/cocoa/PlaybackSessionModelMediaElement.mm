@@ -325,6 +325,12 @@ void PlaybackSessionModelMediaElement::setVolume(double volume)
         m_mediaElement->setVolume(volume);
 }
 
+void PlaybackSessionModelMediaElement::setPlayingOnSecondScreen(bool value)
+{
+    if (m_mediaElement)
+        m_mediaElement->setPlayingOnSecondScreen(value);
+}
+
 void PlaybackSessionModelMediaElement::updateMediaSelectionOptions()
 {
     if (!m_mediaElement)

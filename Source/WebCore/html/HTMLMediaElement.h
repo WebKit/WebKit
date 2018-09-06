@@ -404,12 +404,16 @@ public:
     bool removeEventListener(const AtomicString& eventType, EventListener&, const ListenerOptions&) override;
 
     void wirelessRoutesAvailableDidChange() override;
-    bool canPlayToWirelessPlaybackTarget() const override;
-    bool isPlayingToWirelessPlaybackTarget() const override;
     void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
     void setShouldPlayToPlaybackTarget(bool) override;
 #endif
-    bool webkitCurrentPlaybackTargetIsWireless() const;
+    bool isPlayingToWirelessPlaybackTarget() const override { return m_isPlayingToWirelessTarget; };
+    bool webkitCurrentPlaybackTargetIsWireless() const { return m_isPlayingToWirelessTarget; }
+
+    void setPlayingOnSecondScreen(bool value);
+    bool isPlayingOnSecondScreen() const override { return m_playingOnSecondScreen; }
+
+    bool isPlayingToExternalTarget() const { return isPlayingToWirelessPlaybackTarget() || isPlayingOnSecondScreen(); }
 
     // EventTarget function.
     // Both Node (via HTMLElement) and ActiveDOMObject define this method, which
@@ -1170,8 +1174,10 @@ private:
     MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };
     bool m_hasPlaybackTargetAvailabilityListeners { false };
     bool m_failedToPlayToWirelessTarget { false };
-    bool m_isPlayingToWirelessTarget { false };
 #endif
+
+    bool m_isPlayingToWirelessTarget { false };
+    bool m_playingOnSecondScreen { false };
 };
 
 String convertEnumerationToString(HTMLMediaElement::PlaybackWithoutUserGesture);

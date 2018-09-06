@@ -174,6 +174,7 @@ private:
     void toggleMuted() override;
     void setMuted(bool) final;
     void setVolume(double) final;
+    void setPlayingOnSecondScreen(bool) final;
 
     // PlaybackSessionModelClient
     void durationChanged(double) override;
@@ -739,6 +740,15 @@ void VideoFullscreenControllerContext::setVolume(double volume)
     WebThreadRun([protectedThis = makeRefPtr(this), this, volume] {
         if (m_playbackModel)
             m_playbackModel->setVolume(volume);
+    });
+}
+
+void VideoFullscreenControllerContext::setPlayingOnSecondScreen(bool value)
+{
+    ASSERT(isUIThread());
+    WebThreadRun([protectedThis = makeRefPtr(this), this, value] {
+        if (m_playbackModel)
+            m_playbackModel->setPlayingOnSecondScreen(value);
     });
 }
 

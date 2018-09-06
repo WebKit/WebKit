@@ -1,3 +1,49 @@
+2018-09-06  Jer Noble  <jer.noble@apple.com>
+
+        Don't pause playback when locking screen if video is being displayed on second screen.
+        https://bugs.webkit.org/show_bug.cgi?id=189321
+
+        Reviewed by Eric Carlson.
+
+        Expand the existing behavior when AirPlaying to an external device to playing to a local
+        external screen. Don't pause when the screen locks, and don't stop buffering in that mode either.
+
+        Add a KVO-observer to the WebAVPlayerController's playingOnSecondScreen property, and pass
+        that observed value on to the media element.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setShouldPlayToPlaybackTarget):
+        (WebCore::HTMLMediaElement::setPlayingOnSecondScreen):
+        (WebCore::HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction const):
+        (WebCore::HTMLMediaElement::processingUserGestureForMedia const):
+        (WebCore::HTMLMediaElement::mediaState const):
+        (WebCore::HTMLMediaElement::purgeBufferedDataIfPossible):
+        (WebCore::HTMLMediaElement::shouldOverrideBackgroundLoadingRestriction const):
+        (WebCore::HTMLMediaElement::webkitCurrentPlaybackTargetIsWireless const): Deleted.
+        (WebCore::HTMLMediaElement::canPlayToWirelessPlaybackTarget const): Deleted.
+        (WebCore::HTMLMediaElement::isPlayingToWirelessPlaybackTarget const): Deleted.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::webkitCurrentPlaybackTargetIsWireless const):
+        (WebCore::HTMLMediaElement::isPlayingToExternalTarget const):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::canPlayToWirelessPlaybackTarget const): Deleted.
+        * html/MediaElementSession.h:
+        * platform/audio/PlatformMediaSession.h:
+        (WebCore::PlatformMediaSessionClient::setWirelessPlaybackTarget):
+        (WebCore::PlatformMediaSessionClient::isPlayingOnSecondScreen const):
+        (WebCore::PlatformMediaSession::canPlayToWirelessPlaybackTarget const): Deleted.
+        (WebCore::PlatformMediaSessionClient::canPlayToWirelessPlaybackTarget const): Deleted.
+        * platform/cocoa/PlaybackSessionModel.h:
+        * platform/cocoa/PlaybackSessionModelMediaElement.h:
+        * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+        (WebCore::PlaybackSessionModelMediaElement::setPlayingOnSecondScreen):
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController init]):
+        (-[WebAVPlayerController dealloc]):
+        (-[WebAVPlayerController observeValueForKeyPath:ofObject:change:context:]):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::setPlayingOnSecondScreen):
+
 2018-09-06  Frederic Wang  <fwang@igalia.com>
 
         Group options of scrollRectToVisible into a struct

@@ -651,16 +651,6 @@ void MediaElementSession::externalOutputDeviceAvailableDidChange(bool hasTargets
     m_targetAvailabilityChangedTimer.startOneShot(0_s);
 }
 
-bool MediaElementSession::canPlayToWirelessPlaybackTarget() const
-{
-#if !PLATFORM(IOS)
-    if (!m_playbackTarget || !m_playbackTarget->hasActiveRoute())
-        return false;
-#endif
-
-    return client().canPlayToWirelessPlaybackTarget();
-}
-
 bool MediaElementSession::isPlayingToWirelessPlaybackTarget() const
 {
 #if !PLATFORM(IOS)
