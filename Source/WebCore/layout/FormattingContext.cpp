@@ -81,7 +81,23 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(LayoutContext& layout
 
 void FormattingContext::computeOutOfFlowVerticalGeometry(const LayoutContext& layoutContext, const Box& layoutBox) const
 {
-    auto verticalGeometry = Geometry::outOfFlowVerticalGeometry(layoutContext, layoutBox);
+    auto compute = [&](std::optional<LayoutUnit> precomputedHeight) {
+        return Geometry::outOfFlowVerticalGeometry(layoutContext, layoutBox, precomputedHeight);
+    };
+
+    auto verticalGeometry = compute({ });
+    // FIXME: Add support for percentage values where the containing block's height is explicitly specified.
+    if (auto maxHeight = Geometry::fixedValue(layoutBox.style().logicalMaxHeight())) {
+        auto maxVerticalGeometry = compute(maxHeight);
+        if (verticalGeometry.heightAndMargin.height > maxVerticalGeometry.heightAndMargin.height)
+            verticalGeometry = maxVerticalGeometry;
+    }
+
+    if (auto minHeight = Geometry::fixedValue(layoutBox.style().logicalMinHeight())) {
+        auto minVerticalGeometry = compute(minHeight);
+        if (verticalGeometry.heightAndMargin.height < minVerticalGeometry.heightAndMargin.height)
+            verticalGeometry = minVerticalGeometry;
+    }
 
     auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
     displayBox.setTop(verticalGeometry.top + verticalGeometry.heightAndMargin.margin.top);

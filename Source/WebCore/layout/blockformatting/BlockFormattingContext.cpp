@@ -278,29 +278,40 @@ void BlockFormattingContext::computeWidthAndMargin(LayoutContext& layoutContext,
 
 void BlockFormattingContext::computeHeightAndMargin(const LayoutContext& layoutContext, const Box& layoutBox) const
 {
-    HeightAndMargin heightAndMargin;
-    std::optional<LayoutUnit> marginTopOffset;
-    auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
+    auto compute = [&](std::optional<LayoutUnit> precomputedHeight) -> HeightAndMargin {
 
-    if (layoutBox.isInFlow()) {
-        heightAndMargin = Geometry::inFlowHeightAndMargin(layoutContext, layoutBox);
+        if (layoutBox.isInFlow())
+            return Geometry::inFlowHeightAndMargin(layoutContext, layoutBox, precomputedHeight);
 
-        // If this box has already been moved by the estimated vertical margin, no need to move it again.
-        if (!displayBox.estimatedMarginTop())
-            marginTopOffset = heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin).top;
-    } else if (layoutBox.isFloatingPositioned()) {
-        heightAndMargin = Geometry::floatingHeightAndMargin(layoutContext, layoutBox);
-        ASSERT(!heightAndMargin.collapsedMargin);
+        if (layoutBox.isFloatingPositioned())
+            return Geometry::floatingHeightAndMargin(layoutContext, layoutBox, precomputedHeight);
 
-        marginTopOffset = heightAndMargin.margin.top;
-    } else
         ASSERT_NOT_REACHED();
+        return { };
+    };
 
+    auto heightAndMargin = compute({ });
+    // FIXME: Add support for percentage values where the containing block's height is explicitly specified.
+    if (auto maxHeight = Geometry::fixedValue(layoutBox.style().logicalMaxHeight())) {
+        auto maxHeightAndMargin = compute(maxHeight);
+        if (heightAndMargin.height > maxHeightAndMargin.height)
+            heightAndMargin = maxHeightAndMargin;
+    }
+
+    if (auto minHeight = Geometry::fixedValue(layoutBox.style().logicalMinHeight())) {
+        auto minHeightAndMargin = compute(minHeight);
+        if (heightAndMargin.height < minHeightAndMargin.height)
+            heightAndMargin = minHeightAndMargin;
+    }
+
+    auto& displayBox = layoutContext.displayBoxForLayoutBox(layoutBox);
     displayBox.setContentBoxHeight(heightAndMargin.height);
     displayBox.setVerticalNonCollapsedMargin(heightAndMargin.margin);
     displayBox.setVerticalMargin(heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin));
-    if (marginTopOffset)
-        displayBox.moveVertically(*marginTopOffset);
+
+    // If this box has already been moved by the estimated vertical margin, no need to move it again.
+    if (layoutBox.isFloatingPositioned() || !displayBox.estimatedMarginTop())
+        displayBox.moveVertically(heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin).top);
 }
 
 FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::instrinsicWidthConstraints(LayoutContext& layoutContext, const Box& layoutBox) const

@@ -77,7 +77,7 @@ static WidthAndMargin stretchWidthToInitialContainingBlock(WidthAndMargin widthA
     return widthAndMargin;
 }
 
-HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin(const LayoutContext& layoutContext, const Box& layoutBox)
+HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin(const LayoutContext& layoutContext, const Box& layoutBox, std::optional<LayoutUnit> precomputedHeight)
 {
     ASSERT(layoutBox.isInFlow() && !layoutBox.replaced());
     ASSERT(layoutBox.isOverflowVisible());
@@ -106,10 +106,10 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
         VerticalEdges collapsedMargin = { MarginCollapse::marginTop(layoutContext, layoutBox), MarginCollapse::marginBottom(layoutContext, layoutBox) };
         auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop().value_or(0);
         
-        auto height = style.logicalHeight();
+        auto height = precomputedHeight ? Length { precomputedHeight.value(), Fixed } : style.logicalHeight();
         if (!height.isAuto()) {
             if (height.isFixed())
-                return { style.logicalHeight().value(), nonCollapsedMargin, collapsedMargin };
+                return { height.value(), nonCollapsedMargin, collapsedMargin };
 
             // Most notably height percentage.
             ASSERT_NOT_IMPLEMENTED_YET();
@@ -367,23 +367,23 @@ Position BlockFormattingContext::Geometry::inFlowPositionedPosition(const Layout
     return { newLeftPosition, newTopPosition };
 }
 
-HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const LayoutContext& layoutContext, const Box& layoutBox)
+HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const LayoutContext& layoutContext, const Box& layoutBox, std::optional<LayoutUnit> precomputedHeight)
 {
     ASSERT(layoutBox.isInFlow());
 
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block'
     // replaced elements in normal flow and floating replaced elements
     if (layoutBox.replaced())
-        return inlineReplacedHeightAndMargin(layoutContext, layoutBox);
+        return inlineReplacedHeightAndMargin(layoutContext, layoutBox, precomputedHeight);
 
     HeightAndMargin heightAndMargin;
     // TODO: Figure out the case for the document element. Let's just complicated-case it for now.
     if (layoutBox.isOverflowVisible() && !layoutBox.isDocumentBox())
-        heightAndMargin = inFlowNonReplacedHeightAndMargin(layoutContext, layoutBox);
+        heightAndMargin = inFlowNonReplacedHeightAndMargin(layoutContext, layoutBox, precomputedHeight);
     else {
         // 10.6.6 Complicated cases
         // Block-level, non-replaced elements in normal flow when 'overflow' does not compute to 'visible' (except if the 'overflow' property's value has been propagated to the viewport).
-        heightAndMargin = complicatedCases(layoutContext, layoutBox);
+        heightAndMargin = complicatedCases(layoutContext, layoutBox, precomputedHeight);
     }
 
     if (!isStretchedToInitialContainingBlock(layoutContext, layoutBox))

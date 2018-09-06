@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    border: 1px solid green;
+}
+
+div > div {
+    border: 1px solid red;
+}
+</style>
+</head>
+<body>
+<div style="width: 200px;">
+    <div style="width: 200px; height: 50px"></div>
+</div>
+
+<div style="width: 200px; max-height: 50px;">
+    <div style="height: 200px; width: 200px;"></div>
+</div>
+
+<div style="width: 200px; min-height: 300px">
+    <div style="height: 50px; width: 200px;"></div>
+</div>
+</body>
+</html>
