@@ -320,17 +320,9 @@ class Evaluator extends Visitor {
             let argumentValue = argument.visit(this);
             if (!argumentValue)
                 throw new Error("Null argument value, i = " + i + ", node = " + node);
-            callArguments.push(() => {
-                let result = this._snapshot(type, null, argumentValue);
-                return result;
-            });
+            callArguments.push(EBuffer.allowAllocation(() => this._snapshot(type, null, argumentValue)));
         }
-        
-        // For simplicity, we allow intrinsics to just allocate new buffers, and we allocate new
-        // buffers when snapshotting their arguments. This is not observable to the user, so it's OK.
-        let result = EBuffer.allowAllocation(
-            () => node.func.implementation(callArguments.map(thunk => thunk()), node));
-        
+        let result = EBuffer.allowAllocation(() => node.func.implementation(callArguments, node));
         result = this._snapshot(node.func.returnType, node.resultEPtr, result);
         return result;
     }

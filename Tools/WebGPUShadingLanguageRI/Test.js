@@ -7626,6 +7626,23 @@ tests.commentParsing = function() {
         (e) => e instanceof WLexicalError);
 }
 
+tests.callArgumentsAreCopiedImmediatelyAfterEvaluation = () => {
+    let program = doPrep(`
+        int foo()
+        {
+            return *bar(5) + *bar(7);
+        }
+
+        thread int* bar(int value)
+        {
+            int x = value;
+            return &x;
+        }
+    `);
+
+    checkInt(program, callFunction(program, "foo", []), 12);
+};
+
 okToTest = true;
 
 let testFilter = /.*/; // run everything by default

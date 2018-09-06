@@ -1,5 +1,23 @@
 2018-09-06  Thomas Denney  <tdenney@apple.com>
 
+        [WHLSL] Call arguments should be copied as soon as they are evaluated
+        https://bugs.webkit.org/show_bug.cgi?id=189360
+
+        Reviewed by Myles C. Maxfield.
+
+        Previously all call arguments were evaluated and then their results were
+        copied into new buffers for the call. However, the results are not
+        necessarily independent, so the result should be copied immediately
+        after evaluation.
+
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitCallExpression): Move location of copy.
+        (Evaluator):
+        * WebGPUShadingLanguageRI/Test.js: Add new test to verify correct
+        behavior.
+
+2018-09-06  Thomas Denney  <tdenney@apple.com>
+
         [WHLSL] The test suite should log the compile time for the standard library
         https://bugs.webkit.org/show_bug.cgi?id=189354
 
