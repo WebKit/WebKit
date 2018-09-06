@@ -57,17 +57,17 @@ CryptoAlgorithmIdentifier CryptoAlgorithmHMAC::identifier() const
     return s_identifier;
 }
 
-void CryptoAlgorithmHMAC::sign(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmHMAC::sign(const CryptoAlgorithmParameters&, Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
-    dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
+    dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [key = WTFMove(key), data = WTFMove(data)] {
             return platformSign(downcast<CryptoKeyHMAC>(key.get()), data);
         });
 }
 
-void CryptoAlgorithmHMAC::verify(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&& key, Vector<uint8_t>&& signature, Vector<uint8_t>&& data, BoolCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParameters&, Ref<CryptoKey>&& key, Vector<uint8_t>&& signature, Vector<uint8_t>&& data, BoolCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
-    dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
+    dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [key = WTFMove(key), signature = WTFMove(signature), data = WTFMove(data)] {
             return platformVerify(downcast<CryptoKeyHMAC>(key.get()), signature, data);
         });
@@ -96,11 +96,11 @@ void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParameters& parameter
     callback(WTFMove(result));
 }
 
-void CryptoAlgorithmHMAC::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmHMAC::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     using namespace CryptoAlgorithmHMACInternal;
-    ASSERT(parameters);
-    const auto& hmacParameters = downcast<CryptoAlgorithmHmacKeyParams>(*parameters);
+
+    const auto& hmacParameters = downcast<CryptoAlgorithmHmacKeyParams>(parameters);
 
     if (usagesAreInvalidForCryptoAlgorithmHMAC(usages)) {
         exceptionCallback(SyntaxError);

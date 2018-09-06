@@ -43,7 +43,7 @@ public:
     BufferSource salt;
     BufferSource info;
 
-    const Vector<uint8_t>& saltVector()
+    const Vector<uint8_t>& saltVector() const
     {
         if (!m_saltVector.isEmpty() || !salt.length())
             return m_saltVector;
@@ -52,7 +52,7 @@ public:
         return m_saltVector;
     }
 
-    const Vector<uint8_t>& infoVector()
+    const Vector<uint8_t>& infoVector() const
     {
         if (!m_infoVector.isEmpty() || !info.length())
             return m_infoVector;
@@ -63,9 +63,20 @@ public:
 
     Class parametersClass() const final { return Class::HkdfParams; }
 
+    CryptoAlgorithmHkdfParams isolatedCopy() const
+    {
+        CryptoAlgorithmHkdfParams result;
+        result.identifier = identifier;
+        result.m_saltVector = saltVector();
+        result.m_infoVector = infoVector();
+        result.hashIdentifier = hashIdentifier;
+
+        return result;
+    }
+
 private:
-    Vector<uint8_t> m_saltVector;
-    Vector<uint8_t> m_infoVector;
+    mutable Vector<uint8_t> m_saltVector;
+    mutable Vector<uint8_t> m_infoVector;
 };
 
 } // namespace WebCore

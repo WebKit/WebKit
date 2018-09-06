@@ -47,27 +47,27 @@ CryptoAlgorithmIdentifier CryptoAlgorithmRSAES_PKCS1_v1_5::identifier() const
     return s_identifier;
 }
 
-void CryptoAlgorithmRSAES_PKCS1_v1_5::encrypt(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmRSAES_PKCS1_v1_5::encrypt(const CryptoAlgorithmParameters&, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     if (key->type() != CryptoKeyType::Public) {
         exceptionCallback(InvalidAccessError);
         return;
     }
 
-    dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
+    dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [key = WTFMove(key), plainText = WTFMove(plainText)] {
             return platformEncrypt(downcast<CryptoKeyRSA>(key.get()), plainText);
         });
 }
 
-void CryptoAlgorithmRSAES_PKCS1_v1_5::decrypt(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmRSAES_PKCS1_v1_5::decrypt(const CryptoAlgorithmParameters&, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     if (key->type() != CryptoKeyType::Private) {
         exceptionCallback(InvalidAccessError);
         return;
     }
 
-    dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
+    dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [key = WTFMove(key), cipherText = WTFMove(cipherText)] {
             return platformDecrypt(downcast<CryptoKeyRSA>(key.get()), cipherText);
         });
@@ -94,9 +94,8 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::generateKey(const CryptoAlgorithmParameter
     CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5, CryptoAlgorithmIdentifier::SHA_1, false, rsaParameters.modulusLength, rsaParameters.publicExponentVector(), extractable, usages, WTFMove(keyPairCallback), WTFMove(failureCallback), &context);
 }
 
-void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    ASSERT(parameters);
     RefPtr<CryptoKeyRSA> result;
     switch (format) {
     case CryptoKeyFormat::Jwk: {
@@ -113,7 +112,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(CryptoKeyFormat format, KeyData&
             exceptionCallback(DataError);
             return;
         }
-        result = CryptoKeyRSA::importJwk(parameters->identifier, std::nullopt, WTFMove(key), extractable, usages);
+        result = CryptoKeyRSA::importJwk(parameters.identifier, std::nullopt, WTFMove(key), extractable, usages);
         break;
     }
     case CryptoKeyFormat::Spki: {
@@ -121,7 +120,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(CryptoKeyFormat format, KeyData&
             exceptionCallback(SyntaxError);
             return;
         }
-        result = CryptoKeyRSA::importSpki(parameters->identifier, std::nullopt, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
+        result = CryptoKeyRSA::importSpki(parameters.identifier, std::nullopt, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     }
     case CryptoKeyFormat::Pkcs8: {
@@ -129,7 +128,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(CryptoKeyFormat format, KeyData&
             exceptionCallback(SyntaxError);
             return;
         }
-        result = CryptoKeyRSA::importPkcs8(parameters->identifier, std::nullopt, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
+        result = CryptoKeyRSA::importPkcs8(parameters.identifier, std::nullopt, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     }
     default:

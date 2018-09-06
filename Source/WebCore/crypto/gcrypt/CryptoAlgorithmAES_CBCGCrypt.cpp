@@ -166,7 +166,7 @@ static std::optional<Vector<uint8_t>> gcryptDecrypt(const Vector<uint8_t>& key, 
     return output;
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformEncrypt(CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformEncrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
 {
     auto output = gcryptEncrypt(key.key(), parameters.ivVector(), Vector<uint8_t>(plainText));
     if (!output)
@@ -174,7 +174,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformEncrypt(CryptoAlgor
     return WTFMove(*output);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformDecrypt(CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformDecrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
 {
     auto output = gcryptDecrypt(key.key(), parameters.ivVector(), cipherText);
     if (!output)

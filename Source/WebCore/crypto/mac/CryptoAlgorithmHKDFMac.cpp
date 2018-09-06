@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(CryptoAlgorithmHkdfParams& parameters, const CryptoKeyRaw& key, size_t length)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(const CryptoAlgorithmHkdfParams& parameters, const CryptoKeyRaw& key, size_t length)
 {
     Vector<uint8_t> result(length / 8);
     CCDigestAlgorithm digestAlgorithm;

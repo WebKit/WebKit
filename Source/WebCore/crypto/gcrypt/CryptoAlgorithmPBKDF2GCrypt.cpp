@@ -57,7 +57,7 @@ static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& ke
     return result;
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmPBKDF2::platformDeriveBits(CryptoAlgorithmPbkdf2Params& parameters, const CryptoKeyRaw& key, size_t length)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmPBKDF2::platformDeriveBits(const CryptoAlgorithmPbkdf2Params& parameters, const CryptoKeyRaw& key, size_t length)
 {
     auto output = gcryptDeriveBits(key.key(), parameters.saltVector(), parameters.hashIdentifier, parameters.iterations, length);
     if (!output)

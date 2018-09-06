@@ -71,10 +71,10 @@ void CryptoAlgorithmAES_KW::generateKey(const CryptoAlgorithmParameters& paramet
     callback(WTFMove(result));
 }
 
-void CryptoAlgorithmAES_KW::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAES_KW::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     using namespace CryptoAlgorithmAES_KWInternal;
-    ASSERT(parameters);
+
     if (usagesAreInvalidForCryptoAlgorithmAES_KW(usages)) {
         exceptionCallback(SyntaxError);
         return;
@@ -83,10 +83,10 @@ void CryptoAlgorithmAES_KW::importKey(CryptoKeyFormat format, KeyData&& data, co
     RefPtr<CryptoKeyAES> result;
     switch (format) {
     case CryptoKeyFormat::Raw:
-        result = CryptoKeyAES::importRaw(parameters->identifier, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
+        result = CryptoKeyAES::importRaw(parameters.identifier, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     case CryptoKeyFormat::Jwk: {
-        result = CryptoKeyAES::importJwk(parameters->identifier, WTFMove(WTF::get<JsonWebKey>(data)), extractable, usages, [](size_t length, const String& alg) -> bool {
+        result = CryptoKeyAES::importJwk(parameters.identifier, WTFMove(WTF::get<JsonWebKey>(data)), extractable, usages, [](size_t length, const String& alg) -> bool {
             switch (length) {
             case CryptoKeyAES::s_length128:
                 return alg.isNull() || alg == ALG128;

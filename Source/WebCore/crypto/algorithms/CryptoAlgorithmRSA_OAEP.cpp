@@ -33,6 +33,7 @@
 #include "CryptoAlgorithmRsaOaepParams.h"
 #include "CryptoKeyPair.h"
 #include "CryptoKeyRSA.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {
@@ -55,31 +56,29 @@ CryptoAlgorithmIdentifier CryptoAlgorithmRSA_OAEP::identifier() const
     return s_identifier;
 }
 
-void CryptoAlgorithmRSA_OAEP::encrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmRSA_OAEP::encrypt(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
-    ASSERT(parameters);
     if (key->type() != CryptoKeyType::Public) {
         exceptionCallback(InvalidAccessError);
         return;
     }
 
-    dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
-        [parameters = WTFMove(parameters), key = WTFMove(key), plainText = WTFMove(plainText)] {
-            return platformEncrypt(downcast<CryptoAlgorithmRsaOaepParams>(*parameters), downcast<CryptoKeyRSA>(key.get()), plainText);
+    dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
+        [parameters = crossThreadCopy(downcast<CryptoAlgorithmRsaOaepParams>(parameters)), key = WTFMove(key), plainText = WTFMove(plainText)] {
+            return platformEncrypt(parameters, downcast<CryptoKeyRSA>(key.get()), plainText);
         });
 }
 
-void CryptoAlgorithmRSA_OAEP::decrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+void CryptoAlgorithmRSA_OAEP::decrypt(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
-    ASSERT(parameters);
     if (key->type() != CryptoKeyType::Private) {
         exceptionCallback(InvalidAccessError);
         return;
     }
 
-    dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
-        [parameters = WTFMove(parameters), key = WTFMove(key), cipherText = WTFMove(cipherText)] {
-            return platformDecrypt(downcast<CryptoAlgorithmRsaOaepParams>(*parameters), downcast<CryptoKeyRSA>(key.get()), cipherText);
+    dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
+        [parameters = crossThreadCopy(downcast<CryptoAlgorithmRsaOaepParams>(parameters)), key = WTFMove(key), cipherText = WTFMove(cipherText)] {
+            return platformDecrypt(parameters, downcast<CryptoKeyRSA>(key.get()), cipherText);
         });
 }
 
@@ -103,11 +102,11 @@ void CryptoAlgorithmRSA_OAEP::generateKey(const CryptoAlgorithmParameters& param
     CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier::RSA_OAEP, rsaParameters.hashIdentifier, true, rsaParameters.modulusLength, rsaParameters.publicExponentVector(), extractable, usages, WTFMove(keyPairCallback), WTFMove(failureCallback), &context);
 }
 
-void CryptoAlgorithmRSA_OAEP::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmRSA_OAEP::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     using namespace CryptoAlgorithmRSA_OAEPInternal;
-    ASSERT(parameters);
-    const auto& rsaParameters = downcast<CryptoAlgorithmRsaHashedImportParams>(*parameters);
+
+    const auto& rsaParameters = downcast<CryptoAlgorithmRsaHashedImportParams>(parameters);
 
     RefPtr<CryptoKeyRSA> result;
     switch (format) {
@@ -178,7 +177,7 @@ void CryptoAlgorithmRSA_OAEP::importKey(CryptoKeyFormat format, KeyData&& data, 
             return;
         }
         // FIXME: <webkit.org/b/165436>
-        result = CryptoKeyRSA::importPkcs8(parameters->identifier, rsaParameters.hashIdentifier, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
+        result = CryptoKeyRSA::importPkcs8(parameters.identifier, rsaParameters.hashIdentifier, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     }
     default:
