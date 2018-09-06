@@ -1,3 +1,15 @@
+2018-09-06  Tomas Popela  <tpopela@redhat.com>
+
+        [JSC] Build broken after r234975 on s390x, ppc64le, armv7hl
+        https://bugs.webkit.org/show_bug.cgi?id=189078
+
+        Reviewed by Mark Lam.
+
+        Caused by the GCC bug - https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70124.
+        Using the ternary operator instead of std::max() fixes it.
+
+        * heap/RegisterState.h:
+
 2018-09-05  Mark Lam  <mark.lam@apple.com>
 
         JSPropertyNameEnumerator::visitChildren() needs to visit its m_cachedStructureID.
