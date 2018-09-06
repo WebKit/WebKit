@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2013, 2015 Apple Inc.  All rights reserved.
+# Copyright (C) 2007-2018 Apple Inc.  All rights reserved.
 # Copyright (C) 2009, 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
 # Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
 # Copyright (C) 2012 Daniel Bates (dbates@intudata.com)
@@ -82,6 +82,7 @@ BEGIN {
         &parseDiffStartLine
         &parseFirstEOL
         &parsePatch
+        &parseSvnDiffStartLine
         &pathRelativeToSVNRepositoryRootForPath
         &possiblyColored
         &prepareParsedPatch
@@ -723,20 +724,23 @@ sub isExecutable($)
 # Parses an SVN or Git diff header start line.
 #
 # Args:
-#   $line: "Index: " line or "diff --git" line
+#   $line: "Index: " line or "diff --git" line.
 #
 # Returns the path of the target file or undef if the $line is unrecognized.
 sub parseDiffStartLine($)
 {
     my ($line) = @_;
-    return $1 if $line =~ /$svnDiffStartRegEx/;
     return parseGitDiffStartLine($line) if $line =~ /$gitDiffStartRegEx/;
+    return parseSvnDiffStartLine($line);
 }
 
 # Parse the Git diff header start line.
 #
 # Args:
 #   $line: "diff --git" line.
+#
+# Prerequisites:
+#   $line argument matches /$gitDiffStartRegEx/.
 #
 # Returns the path of the target file.
 sub parseGitDiffStartLine($)
@@ -752,11 +756,24 @@ sub parseGitDiffStartLine($)
         die("Could not find '/' in \"diff --git\" line: \"$line\"; only non-prefixed git diffs (i.e. not generated with --no-prefix) that move a top-level directory file are supported.");
     }
     my $pathPrefix = $1;
-    if (!/^diff --git \Q$pathPrefix\E.+ (\Q$pathPrefix\E.+)$/) {
+    if (!/^diff --git \Q$pathPrefix\E.+ (\Q$pathPrefix\E[^\r\n]+)/) {
         # FIXME: Moving a file through sub directories of top directory is not supported (e.g diff --git A/B.txt C/B.txt).
         die("Could not find '/' in \"diff --git\" line: \"$line\"; only non-prefixed git diffs (i.e. not generated with --no-prefix) that move a file between top-level directories are supported.");
     }
     return $1;
+}
+
+# Parses an SVN diff header start line.
+#
+# Args:
+#   $line: "Index: " line.
+#
+# Returns the path of the target file or undef if the $line is unrecognized.
+sub parseSvnDiffStartLine($)
+{
+    my ($line) = @_;
+    return $1 if $line =~ /$svnDiffStartRegEx/;
+    return undef;
 }
 
 # Parse the next Git diff header from the given file handle, and advance

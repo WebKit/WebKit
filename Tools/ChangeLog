@@ -1,3 +1,38 @@
+2018-09-06  David Kilzer  <ddkilzer@apple.com>
+
+        svn-create-patch fails when svn mv is used on directory trees
+        <https://webkit.org/b/14590>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/VCSUtils.pm: Export parseSvnDiffStartLine() for
+        svn-create-patch.
+        (parseDiffStartLine): Use parseSvnDiffStartLine().
+        (parseGitDiffStartLine): Document a prerequisite.  Fix a bug
+        when parsing Git patches using `git diff --no-prefix` that have
+        non-native line endings.  Found by new tests written for
+        Scripts/webkitperl/VCSUtils_unittest/parseDiffStartLine.pl.
+        (parseSvnDiffStartLine): Add.  Extract logic from
+        parseDiffStartLine() for use with svn-create-patch.
+
+        * Scripts/svn-create-patch: Update copyright and license.
+        (generateDiff): Return early for moved directories since
+        individual files within the directory are handled separately.
+        (generateFileList): Keep track of moved directories in the
+        @additionWithHistoryDirectories array, then process this array
+        in reverse order to create delete/add patches for each file in
+        a moved directory.  This also prevents duplicate patches.
+        (manufacturePatchForAdditionWithHistory): Fix a long-standing
+        bug where the path used to describe property changes contained
+        the original (moved-from) path instead of the new (moved-to)
+        path. This could cause svn-apply to fail mysteriously when
+        trying to apply an empty patch created by the property change
+        containing the moved-from path.
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiffStartLine.pl: Add.
+        Tests for parseDiffStartLine(), parseGitDiffStartLine() and
+        parseSvnDiffStartLine().
+
 2018-09-05  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Allow port specific options on gtest

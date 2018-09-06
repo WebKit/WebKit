@@ -1,30 +1,26 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2005, 2006 Apple Inc.  All rights reserved.
+# Copyright (C) 2005-2018 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
 # are met:
-#
 # 1.  Redistributions of source code must retain the above copyright
-#     notice, this list of conditions and the following disclaimer. 
+#     notice, this list of conditions and the following disclaimer.
 # 2.  Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
-#     documentation and/or other materials provided with the distribution. 
-# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
-#     its contributors may be used to endorse or promote products derived
-#     from this software without specific prior written permission. 
+#     documentation and/or other materials provided with the distribution.
 #
-# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
 # DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 # (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Extended "svn diff" script for WebKit Open Source Project, used to make patches.
 
@@ -35,10 +31,7 @@
 #   Handles binary files (encoded as a base64 chunk of text).
 #   Sorts the diffs alphabetically by text files, then binary files.
 #   Handles copied and moved files.
-#
-# Missing features:
-#
-#   Handle copied and moved directories.
+#   Handles copied and moved directories.
 
 use strict;
 use warnings;
@@ -252,6 +245,8 @@ sub generateDiff($$)
     my $patch = "";
     my $isAdditionWithHistory = $fileData->{modificationType} eq "additionWithHistory";
     if ($isAdditionWithHistory) {
+        # Nothing to do for a moved directory since each moved file is handled individually.
+        return if -d $fileData->{path};
         manufacturePatchForAdditionWithHistory($fileData, $prefix);
     }
 
@@ -283,6 +278,7 @@ sub generateFileList($\%)
     my %testDirectories = map { $_ => 1 } qw(LayoutTests);
     my $escapedStatPath = escapeSubversionPath($statPath);
     my @deletedFiles;
+    my @additionWithHistoryDirectories;
 
     print STDERR "Performing \"svn stat '$escapedStatPath'\"\n" if $verbose;
 
@@ -304,8 +300,6 @@ sub generateFileList($\%)
             $stat = substr($line, 0, 7);
             $path = substr($line, 7);
         }
-
-        next if -d $path;
 
         my $modificationType = findModificationType($stat);
 
@@ -343,9 +337,37 @@ sub generateFileList($\%)
             my ($sourceFile, $sourceRevision) = findSourceFileAndRevision($path);
             $diffFiles->{$path}->{sourceFile} = $sourceFile;
             $diffFiles->{$path}->{sourceRevision} = $sourceRevision;
+            push(@additionWithHistoryDirectories, $path) if -d $path;
         }
     }
     close STAT;
+
+    # Handle these in reverse order so that the deepest directory moves are processed first.
+    # Shallow directory moves include changes for deeper directories, which causes double
+    # processing and causes the wrong original path to be used if the order is not reversed.
+    foreach my $directory (reverse @additionWithHistoryDirectories) {
+        my ($sourceDirectory, $sourceRevision) = findSourceFileAndRevision($directory);
+        # Gather a hierarchical list of files inside the moved directory.
+        my $diffOptions = diffOptionsForFile($sourceDirectory);
+        my $escapedDirectory = escapeSubversionPath($directory);
+        print STDERR "Performing \"svn diff --diff-cmd diff -x -$diffOptions '$escapedDirectory'\"\n" if $verbose;
+        open DIFF, "svn diff --diff-cmd diff -x -$diffOptions '$escapedDirectory' |" or die;
+        while (<DIFF>) {
+            my $movedFile = parseSvnDiffStartLine($_);
+            if ($movedFile) {
+                # Ignore other files added/moved into the moved directory.
+                next if exists $diffFiles->{$movedFile};
+                $diffFiles->{$movedFile}->{path} = $movedFile;
+                $diffFiles->{$movedFile}->{modificationType} = "additionWithHistory";
+                $diffFiles->{$movedFile}->{isBinary} = isBinaryMimeType($movedFile);
+                $diffFiles->{$movedFile}->{isTestFile} = exists $testDirectories{(File::Spec->splitdir($movedFile))[0]} ? 1 : 0;
+                my $relativePath = File::Spec->abs2rel("/" . $movedFile, "/" . $directory);
+                $diffFiles->{$movedFile}->{sourceFile} = File::Spec->catfile($sourceDirectory, $relativePath);
+                $diffFiles->{$movedFile}->{sourceRevision} = $sourceRevision;
+            }
+        }
+        close DIFF;
+    }
 
     foreach my $path (@deletedFiles) {
         my $isInsideDeletedDirectory = 0;
@@ -408,6 +430,7 @@ sub manufacturePatchForAdditionWithHistory($$)
         while (<DIFF>) {
             # Skip the diff header, since it was manufactured aboved.
             next if ++$count < 5;
+            s/^(Property changes on:\s+)$sourceFile([\r\n]+)/$1$file$2/;
             print $_;
         }
         close DIFF;
