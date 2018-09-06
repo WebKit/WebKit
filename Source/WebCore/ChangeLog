@@ -1,3 +1,50 @@
+2018-09-06  Ali Juma  <ajuma@chromium.org>
+
+        IntersectionObserver leaks documents
+        https://bugs.webkit.org/show_bug.cgi?id=189128
+
+        Reviewed by Simon Fraser.
+
+        Currently, Documents own IntersectionObservers while IntersectionObservers own callbacks
+        that have strong references to Documents. To break this cycle, make Documents only have
+        weak pointers to IntersectionObservers. Instead, manage the lifetime of an
+        IntersectionObserver as an ActiveDOMObject, overriding hasPendingActivity to keep
+        the observer alive while there are ongoing observations.
+
+        However, there is a still a potential reference cycle. The callback keeps global
+        references alive, so if there's a global reference to the observer in JavaScript,
+        we have an observer->callback->observer cycle, keeping the callback (and hence the Document)
+        alive. To break this cycle, make IntersectionObserver release the callback when its
+        Document is stopped.
+
+        With these changes, there are no longer any leaks reported with run-webkit-tests --world-leaks
+        on LayoutTests/intersection-observer and LayoutTests/imported/w3c/web-platform-tests/intersection-observer.
+
+        Tests: intersection-observer/no-document-leak.html
+               intersection-observer/observer-and-callback-without-js-references.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::addIntersectionObserver):
+        (WebCore::Document::removeIntersectionObserver):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::didMoveToNewDocument):
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::IntersectionObserver):
+        (WebCore::IntersectionObserver::~IntersectionObserver):
+        (WebCore::IntersectionObserver::observe):
+        (WebCore::IntersectionObserver::rootDestroyed):
+        (WebCore::IntersectionObserver::createTimestamp const):
+        (WebCore::IntersectionObserver::notify):
+        (WebCore::IntersectionObserver::hasPendingActivity const):
+        (WebCore::IntersectionObserver::activeDOMObjectName const):
+        (WebCore::IntersectionObserver::canSuspendForDocumentSuspension const):
+        (WebCore::IntersectionObserver::stop):
+        * page/IntersectionObserver.h:
+        (WebCore::IntersectionObserver::trackingDocument const):
+        (WebCore::IntersectionObserver::trackingDocument): Deleted.
+        * page/IntersectionObserver.idl:
+
 2018-09-05  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Adapt to the new const WeakPtr<>

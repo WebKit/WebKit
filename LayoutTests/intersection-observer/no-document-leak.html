@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<iframe id="testFrame" src="resources/no-document-leak-frame.html"></iframe>
+<script>
+description("Tests that using IntersectionObserver does not cause the document to get leaked.");
+window.jsTestIsAsync = true;
+
+function documentShouldDie(documentIdentifier)
+{
+    return new Promise(function(resolve, reject) {
+        handle = setInterval(function() {
+            gc();
+            if (internals && !internals.isDocumentAlive(documentIdentifier) && internals.numberOfIntersectionObservers(document) == 0) {
+                clearInterval(handle);
+                resolve();
+            }
+        }, 10);
+    });
+}
+
+var testFrame = document.getElementById("testFrame");
+testFrame.onload = function() {
+    let frameDocumentIdentifier = internals.documentIdentifier(testFrame.contentDocument);
+    testFrame.remove();
+    setTimeout(function() {
+        documentShouldDie(frameDocumentIdentifier).then(function() {
+            testPassed("Document did not leak");
+            finishJSTest();
+        });
+    });
+};
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

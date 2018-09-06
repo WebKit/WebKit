@@ -1,3 +1,16 @@
+2018-09-06  Ali Juma  <ajuma@chromium.org>
+
+        IntersectionObserver leaks documents
+        https://bugs.webkit.org/show_bug.cgi?id=189128
+
+        Reviewed by Simon Fraser.
+
+        * intersection-observer/no-document-leak-expected.txt: Added.
+        * intersection-observer/no-document-leak.html: Added.
+        * intersection-observer/observer-and-callback-without-js-references-expected.txt: Added.
+        * intersection-observer/observer-and-callback-without-js-references.html: Added.
+        * intersection-observer/resources/no-document-leak-frame.html: Added.
+
 2018-09-05  Brent Fulgham  <bfulgham@apple.com>
 
         The width of a nullptr TextRun should be zero

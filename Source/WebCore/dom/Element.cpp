@@ -1699,8 +1699,10 @@ void Element::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 #if ENABLE(INTERSECTION_OBSERVER)
     if (auto* observerData = intersectionObserverData()) {
         for (auto observer : observerData->observers) {
-            if (observer->hasObservationTargets())
-                newDocument.addIntersectionObserver(oldDocument.removeIntersectionObserver(*observer));
+            if (observer->hasObservationTargets()) {
+                oldDocument.removeIntersectionObserver(*observer);
+                newDocument.addIntersectionObserver(*observer);
+            }
         }
     }
 #endif

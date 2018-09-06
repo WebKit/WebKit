@@ -1369,8 +1369,8 @@ public:
     void removeViewportDependentPicture(HTMLPictureElement&);
 
 #if ENABLE(INTERSECTION_OBSERVER)
-    void addIntersectionObserver(RefPtr<IntersectionObserver>&&);
-    RefPtr<IntersectionObserver> removeIntersectionObserver(IntersectionObserver&);
+    void addIntersectionObserver(IntersectionObserver&);
+    void removeIntersectionObserver(IntersectionObserver&);
     unsigned numberOfIntersectionObservers() const { return m_intersectionObservers.size(); }
     void updateIntersectionObservations();
     void scheduleIntersectionObservationUpdate();
@@ -1784,7 +1784,7 @@ private:
     HashSet<HTMLPictureElement*> m_viewportDependentPictures;
 
 #if ENABLE(INTERSECTION_OBSERVER)
-    Vector<RefPtr<IntersectionObserver>> m_intersectionObservers;
+    Vector<WeakPtr<IntersectionObserver>> m_intersectionObservers;
     Vector<WeakPtr<IntersectionObserver>> m_intersectionObserversWithPendingNotifications;
 
     // FIXME: Schedule intersection observation updates in a way that fits into the HTML

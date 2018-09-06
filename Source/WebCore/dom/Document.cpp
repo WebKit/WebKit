@@ -7463,21 +7463,15 @@ void Document::removeViewportDependentPicture(HTMLPictureElement& picture)
 }
 
 #if ENABLE(INTERSECTION_OBSERVER)
-void Document::addIntersectionObserver(RefPtr<IntersectionObserver>&& observer)
+void Document::addIntersectionObserver(IntersectionObserver& observer)
 {
-    ASSERT(m_intersectionObservers.find(observer) == notFound);
-    m_intersectionObservers.append(WTFMove(observer));
+    ASSERT(m_intersectionObservers.find(&observer) == notFound);
+    m_intersectionObservers.append(makeWeakPtr(&observer));
 }
 
-RefPtr<IntersectionObserver> Document::removeIntersectionObserver(IntersectionObserver& observer)
+void Document::removeIntersectionObserver(IntersectionObserver& observer)
 {
-    RefPtr<IntersectionObserver> observerRef;
-    auto index = m_intersectionObservers.find(&observer);
-    if (index != notFound) {
-        observerRef = WTFMove(m_intersectionObservers[index]);
-        m_intersectionObservers.remove(index);
-    }
-    return observerRef;
+    m_intersectionObservers.removeFirst(&observer);
 }
 
 static void computeIntersectionRects(FrameView& frameView, IntersectionObserver& observer, Element& target, FloatRect& absTargetRect, FloatRect& absIntersectionRect, FloatRect& absRootBounds)

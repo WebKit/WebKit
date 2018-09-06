@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<script src="../resources/gc.js"></script>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+
+<style>
+#target {
+  width: 100px;
+  height: 100px;
+  background-color: green;
+}
+</style>
+<div id="target"></div>
+
+<script>
+var target = document.getElementById("target");
+
+async_test(function(t) {
+    new IntersectionObserver(function(changes) {
+        t.done();
+    }).observe(target);
+}, "IntersectionObserver callback fires even when the observer and callback have no JS references");
+
+gc();
+</script>
