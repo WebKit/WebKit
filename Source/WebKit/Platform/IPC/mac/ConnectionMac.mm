@@ -116,11 +116,21 @@ void Connection::platformInvalidate()
 {
     if (!m_isConnected) {
         if (m_sendPort) {
+            ASSERT(!m_isServer);
             deallocateSendRightSafely(m_sendPort);
             m_sendPort = MACH_PORT_NULL;
         }
 
+        if (m_receiveSource) {
+            // For a short period of time, when m_isServer is true and open() has been called, m_receiveSource has been initialized
+            // but m_isConnected has not been set to true yet. In this case, we need to cancel m_receiveSource instead of destroying
+            // m_receivePort ourselves.
+            ASSERT(m_isServer);
+            cancelReceiveSource();
+        }
+
         if (m_receivePort) {
+            ASSERT(m_isServer);
 #if !PLATFORM(WATCHOS)
             mach_port_unguard(mach_task_self(), m_receivePort, reinterpret_cast<mach_port_context_t>(this));
 #endif
@@ -144,6 +154,11 @@ void Connection::platformInvalidate()
     m_sendSource = nullptr;
     m_sendPort = MACH_PORT_NULL;
 
+    cancelReceiveSource();
+}
+
+void Connection::cancelReceiveSource()
+{
     dispatch_source_cancel(m_receiveSource);
     dispatch_release(m_receiveSource);
     m_receiveSource = nullptr;

@@ -1,3 +1,27 @@
+2018-09-06  Chris Dumez  <cdumez@apple.com>
+
+        WebKit/Platform/IPC/mac/ConnectionMac.mm:222: _dispatch_bug_kevent_vanished
+        https://bugs.webkit.org/show_bug.cgi?id=189314
+        <rdar://problem/41248286>
+
+        Reviewed by Anders Carlsson.
+
+        There is a short period in time when m_isServer is true, after open() has been
+        called, but before we've receive the InitializeConnection IPC, where m_receiveSource
+        has been initialized but m_isConnected is still false. If platformInvalidate() gets
+        called during this period of time, we would fail to cancel / release m_receiveSource
+        and we would forcefully deallocate m_receivePort, leading to the libdispatch simulated
+        crashes.
+
+        To address the issue, platformInvalidate() now properly cancels / releases
+        m_receiveSource if present, and only deallocates m_receivePort manually if m_receiveSource
+        has not been initialized (i.e. open() has not been called yet).
+
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::platformInvalidate):
+        (IPC::Connection::clearReceiveSource):
+
 2018-09-05  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r235489): WKSharingServicePickerDelegate.mm accidentally added back to Sources in WebKit project
