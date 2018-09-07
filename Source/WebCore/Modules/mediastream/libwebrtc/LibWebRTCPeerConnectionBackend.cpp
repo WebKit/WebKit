@@ -230,10 +230,10 @@ LibWebRTCPeerConnectionBackend::VideoReceiver LibWebRTCPeerConnectionBackend::vi
     // FIXME: Add to Vector a utility routine for that take-or-create pattern.
     // FIXME: We should be selecting the receiver based on track id.
     for (size_t cptr = 0; cptr < m_pendingReceivers.size(); ++cptr) {
-        if (m_pendingReceivers[cptr]->track()->source().type() == RealtimeMediaSource::Type::Video) {
+        if (m_pendingReceivers[cptr]->track().source().type() == RealtimeMediaSource::Type::Video) {
             Ref<RTCRtpReceiver> receiver = m_pendingReceivers[cptr].copyRef();
             m_pendingReceivers.remove(cptr);
-            Ref<RealtimeIncomingVideoSource> source = static_cast<RealtimeIncomingVideoSource&>(receiver->track()->source());
+            Ref<RealtimeIncomingVideoSource> source = static_cast<RealtimeIncomingVideoSource&>(receiver->track().source());
             return { WTFMove(receiver), WTFMove(source) };
         }
     }
@@ -253,10 +253,10 @@ LibWebRTCPeerConnectionBackend::AudioReceiver LibWebRTCPeerConnectionBackend::au
     // FIXME: Add to Vector a utility routine for that take-or-create pattern.
     // FIXME: We should be selecting the receiver based on track id.
     for (size_t cptr = 0; cptr < m_pendingReceivers.size(); ++cptr) {
-        if (m_pendingReceivers[cptr]->track()->source().type() == RealtimeMediaSource::Type::Audio) {
+        if (m_pendingReceivers[cptr]->track().source().type() == RealtimeMediaSource::Type::Audio) {
             Ref<RTCRtpReceiver> receiver = m_pendingReceivers[cptr].copyRef();
             m_pendingReceivers.remove(cptr);
-            Ref<RealtimeIncomingAudioSource> source = static_cast<RealtimeIncomingAudioSource&>(receiver->track()->source());
+            Ref<RealtimeIncomingAudioSource> source = static_cast<RealtimeIncomingAudioSource&>(receiver->track().source());
             return { WTFMove(receiver), WTFMove(source) };
         }
     }

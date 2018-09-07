@@ -1,3 +1,35 @@
+2018-09-07  Youenn Fablet  <youenn@apple.com>
+
+        RTCRtpReceiver::track should return a MediaStreamTrack reference
+        https://bugs.webkit.org/show_bug.cgi?id=189420
+
+        Reviewed by Eric Carlson.
+
+        As per spec, a receiver always has a track.
+        Remove unneeded RTCRtpSenderReceiverBase and make RTCRtpReceiver have a Ref<MediaStreamTrack>.
+        RTCRtpSender keeps having a RefPtr<MediaStreamTrack>.
+        Update call sites accordingly. 
+        No change of behavior.
+
+        * Modules/mediastream/RTCRtpReceiver.cpp:
+        (WebCore::RTCRtpReceiver::RTCRtpReceiver):
+        (WebCore::RTCRtpReceiver::stop):
+        * Modules/mediastream/RTCRtpReceiver.h:
+        (WebCore::RTCRtpReceiver::track):
+        * Modules/mediastream/RTCRtpReceiver.idl:
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::RTCRtpSender):
+        * Modules/mediastream/RTCRtpSender.h:
+        (WebCore::RTCRtpSender::track):
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/RTCRtpSenderReceiverBase.h: Removed.
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::addRemoteTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::videoReceiver):
+        (WebCore::LibWebRTCPeerConnectionBackend::audioReceiver):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-09-07  Daniel Bates  <dabates@apple.com>
 
         Cleanup: Remove extraneous "using namespace" and scope WebCore::LogThreading

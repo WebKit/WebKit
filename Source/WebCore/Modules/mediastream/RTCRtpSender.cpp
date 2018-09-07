@@ -50,8 +50,7 @@ Ref<RTCRtpSender> RTCRtpSender::create(String&& trackKind, Vector<String>&& medi
 }
 
 RTCRtpSender::RTCRtpSender(String&& trackKind, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&& backend)
-    : RTCRtpSenderReceiverBase()
-    , m_trackKind(WTFMove(trackKind))
+    : m_trackKind(WTFMove(trackKind))
     , m_mediaStreamIds(WTFMove(mediaStreamIds))
     , m_backend(WTFMove(backend))
 {

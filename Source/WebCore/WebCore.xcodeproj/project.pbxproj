@@ -1861,7 +1861,6 @@
 		5DFE8F570D16477C0076E937 /* ScheduledAction.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA378BB0D15F64200B793D6 /* ScheduledAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5DFEBAB718592B6D00C75BEB /* WebKitAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DFEBAB618592B6D00C75BEB /* WebKitAvailability.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5E2C43511BCEE2F60001E2BC /* PeerConnectionBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C434D1BCEE2E50001E2BC /* PeerConnectionBackend.h */; };
-		5E2C435F1BCEE31E0001E2BC /* RTCRtpSenderReceiverBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C435D1BCEE30D0001E2BC /* RTCRtpSenderReceiverBase.h */; };
 		5E2C43611BCEE3230001E2BC /* RTCRtpSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C435A1BCEE30D0001E2BC /* RTCRtpSender.h */; };
 		5E2C43631BCEE32B0001E2BC /* RTCRtpReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43571BCEE30D0001E2BC /* RTCRtpReceiver.h */; };
 		5E2C43681BCEE3770001E2BC /* RTCTrackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43651BCEE3720001E2BC /* RTCTrackEvent.h */; };
@@ -8749,7 +8748,6 @@
 		5E2C43591BCEE30D0001E2BC /* RTCRtpSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCRtpSender.cpp; sourceTree = "<group>"; };
 		5E2C435A1BCEE30D0001E2BC /* RTCRtpSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpSender.h; sourceTree = "<group>"; };
 		5E2C435B1BCEE30D0001E2BC /* RTCRtpSender.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCRtpSender.idl; sourceTree = "<group>"; };
-		5E2C435D1BCEE30D0001E2BC /* RTCRtpSenderReceiverBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpSenderReceiverBase.h; sourceTree = "<group>"; };
 		5E2C43641BCEE3720001E2BC /* RTCTrackEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCTrackEvent.cpp; sourceTree = "<group>"; };
 		5E2C43651BCEE3720001E2BC /* RTCTrackEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCTrackEvent.h; sourceTree = "<group>"; };
 		5E2C43661BCEE3720001E2BC /* RTCTrackEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCTrackEvent.idl; sourceTree = "<group>"; };
@@ -15179,7 +15177,6 @@
 				5E2C435A1BCEE30D0001E2BC /* RTCRtpSender.h */,
 				5E2C435B1BCEE30D0001E2BC /* RTCRtpSender.idl */,
 				41D1A046213EDDEB0063FB6B /* RTCRtpSenderBackend.h */,
-				5E2C435D1BCEE30D0001E2BC /* RTCRtpSenderReceiverBase.h */,
 				5E5E2B101CFC3E4B000C0D85 /* RTCRtpTransceiver.cpp */,
 				5E5E2B111CFC3E4B000C0D85 /* RTCRtpTransceiver.h */,
 				5E5E2B121CFC3E4B000C0D85 /* RTCRtpTransceiver.idl */,
@@ -30083,7 +30080,6 @@
 				5E2C437C1BCF9A840001E2BC /* RTCPeerConnectionInternalsBuiltins.h in Headers */,
 				5E2C43631BCEE32B0001E2BC /* RTCRtpReceiver.h in Headers */,
 				5E2C43611BCEE3230001E2BC /* RTCRtpSender.h in Headers */,
-				5E2C435F1BCEE31E0001E2BC /* RTCRtpSenderReceiverBase.h in Headers */,
 				5E5E2B141CFC3E75000C0D85 /* RTCRtpTransceiver.h in Headers */,
 				31EB54DF1E7DC74400C1623B /* RTCRtpTransceiverDirection.h in Headers */,
 				3135910A1E7DDC7300F30630 /* RTCSdpType.h in Headers */,

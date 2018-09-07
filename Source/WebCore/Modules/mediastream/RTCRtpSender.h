@@ -32,16 +32,19 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "MediaStreamTrack.h"
 #include "PeerConnectionBackend.h"
 #include "RTCRtpSenderBackend.h"
-#include "RTCRtpSenderReceiverBase.h"
+#include "ScriptWrappable.h"
 
 namespace WebCore {
 
-class RTCRtpSender : public RTCRtpSenderReceiverBase {
+class RTCRtpSender : public RefCounted<RTCRtpSender>, public ScriptWrappable {
 public:
     static Ref<RTCRtpSender> create(Ref<MediaStreamTrack>&&, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&&);
     static Ref<RTCRtpSender> create(String&& trackKind, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&&);
+
+    MediaStreamTrack* track() { return m_track.get(); }
 
     const String& trackId() const { return m_trackId; }
     const String& trackKind() const { return m_trackKind; }
@@ -64,6 +67,7 @@ public:
 private:
     RTCRtpSender(String&& trackKind, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&&);
 
+    RefPtr<MediaStreamTrack> m_track;
     String m_trackId;
     String m_trackKind;
     Vector<String> m_mediaStreamIds;

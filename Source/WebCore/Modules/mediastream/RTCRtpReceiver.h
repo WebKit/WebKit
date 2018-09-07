@@ -32,14 +32,14 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "RTCRtpParameters.h"
+#include "MediaStreamTrack.h"
 #include "RTCRtpReceiverBackend.h"
-#include "RTCRtpSenderReceiverBase.h"
+#include "ScriptWrappable.h"
 
 namespace WebCore {
 
 
-class RTCRtpReceiver : public RTCRtpSenderReceiverBase {
+class RTCRtpReceiver : public RefCounted<RTCRtpReceiver>, public ScriptWrappable  {
 public:
     static Ref<RTCRtpReceiver> create(Ref<MediaStreamTrack>&& track, std::unique_ptr<RTCRtpReceiverBackend>&& backend)
     {
@@ -51,9 +51,12 @@ public:
     void setBackend(std::unique_ptr<RTCRtpReceiverBackend>&& backend) { m_backend = WTFMove(backend); }
     RTCRtpParameters getParameters() { return m_backend ? m_backend->getParameters() : RTCRtpParameters(); }
 
+    MediaStreamTrack& track() { return m_track.get(); }
+
 private:
     RTCRtpReceiver(Ref<MediaStreamTrack>&&, std::unique_ptr<RTCRtpReceiverBackend>&&);
 
+    Ref<MediaStreamTrack> m_track;
     std::unique_ptr<RTCRtpReceiverBackend> m_backend;
 };
 

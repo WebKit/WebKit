@@ -367,7 +367,7 @@ void LibWebRTCMediaEndpoint::addRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiv
     }
 
     receiver->setBackend(std::make_unique<LibWebRTCRtpReceiverBackend>(WTFMove(rtcReceiver)));
-    auto& track = *receiver->track();
+    auto& track = receiver->track();
     fireTrackEvent(receiver.releaseNonNull(), track, rtcStreams, nullptr);
 }
 
@@ -427,7 +427,7 @@ void LibWebRTCMediaEndpoint::newTransceiver(rtc::scoped_refptr<webrtc::RtpTransc
         return rtcTransceiver.get() == transceiverBackend.rtcTransceiver();
     });
     if (transceiver) {
-        setExistingReceiverSourceTrack(transceiver->receiver().track()->source(), *rtcTransceiver->receiver());
+        setExistingReceiverSourceTrack(transceiver->receiver().track().source(), *rtcTransceiver->receiver());
         return;
     }
 
@@ -438,7 +438,7 @@ void LibWebRTCMediaEndpoint::newTransceiver(rtc::scoped_refptr<webrtc::RtpTransc
 
     auto& newTransceiver = m_peerConnectionBackend.newRemoteTransceiver(std::make_unique<LibWebRTCRtpTransceiverBackend>(WTFMove(rtcTransceiver)), source.releaseNonNull());
 
-    fireTrackEvent(makeRef(newTransceiver.receiver()), *newTransceiver.receiver().track(), rtcReceiver->streams(), makeRef(newTransceiver));
+    fireTrackEvent(makeRef(newTransceiver.receiver()), newTransceiver.receiver().track(), rtcReceiver->streams(), makeRef(newTransceiver));
 }
 
 template<typename T>
