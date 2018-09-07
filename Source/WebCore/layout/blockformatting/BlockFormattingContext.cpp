@@ -242,13 +242,13 @@ void BlockFormattingContext::computeInFlowPositionedPosition(const LayoutContext
 
 void BlockFormattingContext::computeWidthAndMargin(LayoutContext& layoutContext, const Box& layoutBox) const
 {
-    auto compute = [&](std::optional<LayoutUnit> precomputedWidth) -> WidthAndMargin {
+    auto compute = [&](std::optional<LayoutUnit> usedWidth) -> WidthAndMargin {
 
         if (layoutBox.isInFlow())
-            return Geometry::inFlowWidthAndMargin(layoutContext, layoutBox, precomputedWidth);
+            return Geometry::inFlowWidthAndMargin(layoutContext, layoutBox, usedWidth);
 
         if (layoutBox.isFloatingPositioned())
-            return Geometry::floatingWidthAndMargin(layoutContext, *this, layoutBox, precomputedWidth);
+            return Geometry::floatingWidthAndMargin(layoutContext, *this, layoutBox, usedWidth);
 
         ASSERT_NOT_REACHED();
         return { };
@@ -278,13 +278,13 @@ void BlockFormattingContext::computeWidthAndMargin(LayoutContext& layoutContext,
 
 void BlockFormattingContext::computeHeightAndMargin(const LayoutContext& layoutContext, const Box& layoutBox) const
 {
-    auto compute = [&](std::optional<LayoutUnit> precomputedHeight) -> HeightAndMargin {
+    auto compute = [&](std::optional<LayoutUnit> usedHeight) -> HeightAndMargin {
 
         if (layoutBox.isInFlow())
-            return Geometry::inFlowHeightAndMargin(layoutContext, layoutBox, precomputedHeight);
+            return Geometry::inFlowHeightAndMargin(layoutContext, layoutBox, usedHeight);
 
         if (layoutBox.isFloatingPositioned())
-            return Geometry::floatingHeightAndMargin(layoutContext, layoutBox, precomputedHeight);
+            return Geometry::floatingHeightAndMargin(layoutContext, layoutBox, usedHeight);
 
         ASSERT_NOT_REACHED();
         return { };

@@ -69,8 +69,8 @@ private:
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry : public FormattingContext::Geometry {
     public:
-        static HeightAndMargin inFlowHeightAndMargin(const LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedHeight = { });
-        static WidthAndMargin inFlowWidthAndMargin(const LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = { });
+        static HeightAndMargin inFlowHeightAndMargin(const LayoutContext&, const Box&, std::optional<LayoutUnit> usedHeight = { });
+        static WidthAndMargin inFlowWidthAndMargin(const LayoutContext&, const Box&, std::optional<LayoutUnit> usedWidth = { });
 
         static Position staticPosition(const LayoutContext&, const Box&);
         static Position inFlowPositionedPosition(const LayoutContext&, const Box&);
@@ -101,9 +101,9 @@ private:
             static LayoutUnit nonCollapsedMarginTop(const LayoutContext&, const Box&);
         };
 
-        static HeightAndMargin inFlowNonReplacedHeightAndMargin(const LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedHeight = { });
-        static WidthAndMargin inFlowNonReplacedWidthAndMargin(const LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = { });
-        static WidthAndMargin inFlowReplacedWidthAndMargin(const LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = { });
+        static HeightAndMargin inFlowNonReplacedHeightAndMargin(const LayoutContext&, const Box&, std::optional<LayoutUnit> usedHeight = { });
+        static WidthAndMargin inFlowNonReplacedWidthAndMargin(const LayoutContext&, const Box&, std::optional<LayoutUnit> usedWidth = { });
+        static WidthAndMargin inFlowReplacedWidthAndMargin(const LayoutContext&, const Box&, std::optional<LayoutUnit> usedWidth = { });
         static Position staticPositionForOutOfFlowPositioned(const LayoutContext&, const Box&);
     };
 };
