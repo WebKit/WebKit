@@ -93,7 +93,7 @@ static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec)
     return JSValue::encode(jsString(exec, WTFMove(impl)));
 }
 
-JSCell* JSC_HOST_CALL stringFromCharCode(ExecState* exec, int32_t arg)
+JSString* JSC_HOST_CALL stringFromCharCode(ExecState* exec, int32_t arg)
 {
     return jsSingleCharacterString(exec, arg);
 }
@@ -144,7 +144,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* ex
     return JSValue::encode(StringObject::create(vm, structure, str));
 }
 
-JSCell* stringConstructor(ExecState* exec, JSValue argument)
+JSString* stringConstructor(ExecState* exec, JSValue argument)
 {
     if (argument.isSymbol())
         return jsNontrivialString(exec, asSymbol(argument)->descriptiveString());

@@ -1994,6 +1994,11 @@ private:
             break;
         }
 
+        case StringValueOf: {
+            fixupStringValueOf(node);
+            break;
+        }
+
         case StringSlice: {
             fixEdge<StringUse>(node->child1());
             fixEdge<Int32Use>(node->child2());
@@ -2748,6 +2753,31 @@ private:
         // we can say that ToString never throws an error!
         if (node->child1()->shouldSpeculateNotCell()) {
             fixEdge<NotCellUse>(node->child1());
+            node->clearFlags(NodeMustGenerate);
+            return;
+        }
+    }
+
+    void fixupStringValueOf(Node* node)
+    {
+        if (node->child1()->shouldSpeculateString()) {
+            fixEdge<StringUse>(node->child1());
+            node->convertToIdentity();
+            return;
+        }
+
+        if (node->child1()->shouldSpeculateStringObject()) {
+            fixEdge<StringObjectUse>(node->child1());
+            node->convertToToString();
+            // It does not need to look up a toString property for the StringObject case. So we can clear NodeMustGenerate.
+            node->clearFlags(NodeMustGenerate);
+            return;
+        }
+
+        if (node->child1()->shouldSpeculateStringOrStringObject()) {
+            fixEdge<StringOrStringObjectUse>(node->child1());
+            node->convertToToString();
+            // It does not need to look up a toString property for the StringObject case. So we can clear NodeMustGenerate.
             node->clearFlags(NodeMustGenerate);
             return;
         }

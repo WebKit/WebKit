@@ -465,6 +465,7 @@ namespace JSC { namespace DFG {
     macro(WeakMapSet, NodeMustGenerate | NodeHasVarArgs) \
     macro(ExtractValueFromWeakMapGet, NodeResultJS) \
     \
+    macro(StringValueOf, NodeMustGenerate | NodeResultJS) \
     macro(StringSlice, NodeResultJS) \
     macro(ToLowerCase, NodeResultJS) \
     /* Nodes for DOM JIT */\

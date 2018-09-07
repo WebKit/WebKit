@@ -3326,8 +3326,9 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case ToString:
-    case CallStringConstructor: {
-        compileToStringOrCallStringConstructor(node);
+    case CallStringConstructor:
+    case StringValueOf: {
+        compileToStringOrCallStringConstructorOrStringValueOf(node);
         break;
     }
         

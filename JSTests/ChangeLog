@@ -1,3 +1,36 @@
+2018-09-06  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [DFG] DFG should handle String#toString
+        https://bugs.webkit.org/show_bug.cgi?id=189151
+
+        Reviewed by Saam Barati.
+
+        The error message in String#toString and String#valueOf is poor, which will be
+        handled in a separate bug[1].
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=189357
+
+        * microbenchmarks/string-object-to-string.js: Added.
+        (test):
+        * microbenchmarks/string-object-value-of.js: Added.
+        (test):
+        * stress/string-to-string-error.js: Added.
+        (shouldThrow):
+        (test):
+        * stress/string-to-string.js: Added.
+        (shouldBe):
+        (test1):
+        (test2):
+        (test3):
+        * stress/string-value-of-error.js: Added.
+        (shouldThrow):
+        (test):
+        * stress/string-value-of.js: Added.
+        (shouldBe):
+        (test1):
+        (test2):
+        (test3):
+
 2018-09-06  Michael Saboff  <msaboff@apple.com>
 
         Improper speculation type for Math.pow(NaN, 0) in Abstract Interpreter

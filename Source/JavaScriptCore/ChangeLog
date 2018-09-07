@@ -1,3 +1,59 @@
+2018-09-06  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [DFG] DFG should handle String#toString
+        https://bugs.webkit.org/show_bug.cgi?id=189151
+
+        Reviewed by Saam Barati.
+
+        We handle String#toString and String#valueOf in DFG by introducing StringValueOf node.
+        In the fixup phase, we attempt to lower StringValueOf to the existing ToString or Identity
+        nodes. If we fail to lower it, we have StringValueOf(UntypedUse), which may raise an error
+        if an argument is neither String nor StringObject. The error message in String#toString and
+        String#valueOf is poor, which will be handled in a separate bug[1].
+
+        It improves simple microbenchmarks by 53.4 - 67.6%.
+
+                                              baseline                  patched
+
+            string-object-to-string       21.7308+-3.3147     ^     12.9655+-0.0527        ^ definitely 1.6760x faster
+            string-object-value-of        20.1122+-0.0691     ^     13.1134+-0.2482        ^ definitely 1.5337x faster
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=189357
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupStringValueOf):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToToString):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileToStringOrCallStringConstructorOrStringValueOf):
+        (JSC::DFG::SpeculativeJIT::compileToStringOrCallStringConstructor): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToStringOrCallStringConstructorOrStringValueOf):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToStringOrCallStringConstructor): Deleted.
+
 2018-09-07  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [WebAssembly] Optimize JS to Wasm call by using pointer of Signature as SignatureIndex

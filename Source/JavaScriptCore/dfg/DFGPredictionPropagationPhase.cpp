@@ -826,6 +826,7 @@ private:
             break;
         }
 
+        case StringValueOf:
         case StringSlice:
         case ToLowerCase:
             setPrediction(SpecString);

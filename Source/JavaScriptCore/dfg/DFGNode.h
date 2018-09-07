@@ -694,7 +694,7 @@ public:
     
     void convertToToString()
     {
-        ASSERT(m_op == ToPrimitive);
+        ASSERT(m_op == ToPrimitive || m_op == StringValueOf);
         m_op = ToString;
     }
 

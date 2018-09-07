@@ -193,6 +193,7 @@ StringImpl* JIT_OPERATION operationResolveRope(ExecState*, JSString*);
 JSString* JIT_OPERATION operationSingleCharacterString(ExecState*, int32_t);
 
 JSCell* JIT_OPERATION operationStringSubstr(ExecState*, JSCell*, int32_t, int32_t);
+JSString* JIT_OPERATION operationStringValueOf(ExecState*, EncodedJSValue);
 JSString* JIT_OPERATION operationToLowerCase(ExecState*, JSString*, uint32_t);
 
 char* JIT_OPERATION operationInt32ToString(ExecState*, int32_t, int32_t);
@@ -212,14 +213,14 @@ EncodedJSValue JIT_OPERATION operationParseIntString(ExecState*, JSString*, int3
 EncodedJSValue JIT_OPERATION operationParseIntGeneric(ExecState*, EncodedJSValue, int32_t);
 
 JSCell* JIT_OPERATION operationNewStringObject(ExecState*, JSString*, Structure*);
-JSCell* JIT_OPERATION operationToStringOnCell(ExecState*, JSCell*);
-JSCell* JIT_OPERATION operationToString(ExecState*, EncodedJSValue);
-JSCell* JIT_OPERATION operationCallStringConstructorOnCell(ExecState*, JSCell*);
-JSCell* JIT_OPERATION operationCallStringConstructor(ExecState*, EncodedJSValue);
-JSCell* JIT_OPERATION operationMakeRope2(ExecState*, JSString*, JSString*);
-JSCell* JIT_OPERATION operationMakeRope3(ExecState*, JSString*, JSString*, JSString*);
-JSCell* JIT_OPERATION operationStrCat2(ExecState*, EncodedJSValue, EncodedJSValue);
-JSCell* JIT_OPERATION operationStrCat3(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
+JSString* JIT_OPERATION operationToStringOnCell(ExecState*, JSCell*);
+JSString* JIT_OPERATION operationToString(ExecState*, EncodedJSValue);
+JSString* JIT_OPERATION operationCallStringConstructorOnCell(ExecState*, JSCell*);
+JSString* JIT_OPERATION operationCallStringConstructor(ExecState*, EncodedJSValue);
+JSString* JIT_OPERATION operationMakeRope2(ExecState*, JSString*, JSString*);
+JSString* JIT_OPERATION operationMakeRope3(ExecState*, JSString*, JSString*, JSString*);
+JSString* JIT_OPERATION operationStrCat2(ExecState*, EncodedJSValue, EncodedJSValue);
+JSString* JIT_OPERATION operationStrCat3(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
 char* JIT_OPERATION operationFindSwitchImmTargetForDouble(ExecState*, EncodedJSValue, size_t tableIndex);
 char* JIT_OPERATION operationSwitchString(ExecState*, size_t tableIndex, JSString*);
 int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(ExecState*, size_t tableIndex, JSString*);

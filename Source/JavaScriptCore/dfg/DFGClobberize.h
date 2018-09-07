@@ -652,6 +652,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case NumberToStringWithRadix:
     case CreateThis:
     case InstanceOf:
+    case StringValueOf:
         read(World);
         write(Heap);
         return;

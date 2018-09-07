@@ -2691,6 +2691,13 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         return true;
     }
 
+    case StringPrototypeValueOfIntrinsic: {
+        insertChecks();
+        Node* value = get(virtualRegisterForArgument(0, registerOffset));
+        set(VirtualRegister(resultOperand), addToGraph(StringValueOf, value));
+        return true;
+    }
+
     case StringPrototypeReplaceIntrinsic: {
         if (argumentCountIncludingThis != 3)
             return false;
