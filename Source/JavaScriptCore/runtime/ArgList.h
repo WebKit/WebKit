@@ -34,12 +34,11 @@ class MarkedArgumentBuffer : public RecordOverflow {
     friend class VM;
     friend class ArgList;
 
-private:
+public:
     using Base = RecordOverflow;
     static const size_t inlineCapacity = 8;
     typedef HashSet<MarkedArgumentBuffer*> ListSet;
 
-public:
     // Constructor for a read-write list, to which you may append values.
     // FIXME: Remove all clients of this API, then remove this API.
     MarkedArgumentBuffer()

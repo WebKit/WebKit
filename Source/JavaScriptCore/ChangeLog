@@ -1,3 +1,17 @@
+2018-09-06  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [WebAssembly] Optimize JS to Wasm call by removing Vector allocation
+        https://bugs.webkit.org/show_bug.cgi?id=189353
+
+        Reviewed by Mark Lam.
+
+        JS to Wasm call always allocates Vector for the arguments. This is really costly if the wasm function is small.
+        This patch adds an initial size parameter to the Vector to avoid allocations for small sized arguments.
+
+        * runtime/ArgList.h:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+
 2018-08-31  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Clean up StructureStubClearingWatchpoint
