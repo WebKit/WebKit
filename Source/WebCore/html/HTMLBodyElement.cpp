@@ -30,8 +30,6 @@
 #include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "EventNames.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "HTMLFrameElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
@@ -50,13 +48,6 @@ HTMLBodyElement::HTMLBodyElement(const QualifiedName& tagName, Document& documen
     : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(bodyTag));
-}
-
-bool HTMLBodyElement::isFirstBodyElementOfDocument() const
-{
-    // By spec http://dev.w3.org/csswg/cssom-view/#the-html-body-element
-    // "The HTML body element is the first body HTML element child of the root HTML element html."
-    return document().body() == this;
 }
 
 Ref<HTMLBodyElement> HTMLBodyElement::create(Document& document)
@@ -229,126 +220,6 @@ bool HTMLBodyElement::isURLAttribute(const Attribute& attribute) const
 bool HTMLBodyElement::supportsFocus() const
 {
     return hasEditableStyle() || HTMLElement::supportsFocus();
-}
-
-static int adjustForZoom(int value, const Frame& frame)
-{
-    double zoomFactor = frame.pageZoomFactor() * frame.frameScaleFactor();
-    if (zoomFactor == 1)
-        return value;
-    // Needed because of truncation (rather than rounding) when scaling up.
-    if (zoomFactor > 1)
-        value++;
-    return static_cast<int>(value / zoomFactor);
-}
-
-int HTMLBodyElement::scrollLeft()
-{
-    if (isFirstBodyElementOfDocument()) {
-        document().updateLayoutIgnorePendingStylesheets();
-        RefPtr<Frame> frame = document().frame();
-        if (!frame)
-            return 0;
-        RefPtr<FrameView> view = frame->view();
-        if (!view)
-            return 0;
-        return adjustForZoom(view->contentsScrollPosition().x(), *frame);
-    }
-    return HTMLElement::scrollLeft();
-}
-
-void HTMLBodyElement::setScrollLeft(int scrollLeft)
-{
-    if (isFirstBodyElementOfDocument()) {
-        document().updateLayoutIgnorePendingStylesheets();
-        RefPtr<Frame> frame = document().frame();
-        if (!frame)
-            return;
-        RefPtr<FrameView> view = frame->view();
-        if (!view)
-            return;
-        view->setScrollPosition(IntPoint(static_cast<int>(scrollLeft * frame->pageZoomFactor() * frame->frameScaleFactor()), view->scrollY()));
-    }
-    HTMLElement::setScrollLeft(scrollLeft);
-}
-
-int HTMLBodyElement::scrollTop()
-{
-    if (isFirstBodyElementOfDocument()) {
-        document().updateLayoutIgnorePendingStylesheets();
-        RefPtr<Frame> frame = document().frame();
-        if (!frame)
-            return 0;
-        RefPtr<FrameView> view = frame->view();
-        if (!view)
-            return 0;
-        return adjustForZoom(view->contentsScrollPosition().y(), *frame);
-    }
-    return HTMLElement::scrollTop();
-}
-
-void HTMLBodyElement::setScrollTop(int scrollTop)
-{
-    if (isFirstBodyElementOfDocument()) {
-        document().updateLayoutIgnorePendingStylesheets();
-        RefPtr<Frame> frame = document().frame();
-        if (!frame)
-            return;
-        RefPtr<FrameView> view = frame->view();
-        if (!view)
-            return;
-        view->setScrollPosition(IntPoint(view->scrollX(), static_cast<int>(scrollTop * frame->pageZoomFactor() * frame->frameScaleFactor())));
-    }
-    return HTMLElement::setScrollTop(scrollTop);
-}
-
-void HTMLBodyElement::scrollTo(const ScrollToOptions& options, ScrollClamping clamping)
-{
-    if (isFirstBodyElementOfDocument()) {
-        // If the element is the HTML body element, document is in quirks mode, and the element is not potentially scrollable,
-        // invoke scroll() on window with options as the only argument, and terminate these steps.
-        // Note that WebKit always uses quirks mode document scrolling behavior. See Document::scrollingElement().
-        // FIXME: Scrolling an independently scrollable body is broken: webkit.org/b/161612.
-        auto window = makeRefPtr(document().domWindow());
-        if (!window)
-            return;
-
-        window->scrollTo(options);
-        return;
-    }
-    return HTMLElement::scrollTo(options, clamping);
-}
-
-int HTMLBodyElement::scrollHeight()
-{
-    if (isFirstBodyElementOfDocument()) {
-        // Update the document's layout.
-        document().updateLayoutIgnorePendingStylesheets();
-        RefPtr<Frame> frame = document().frame();
-        if (!frame)
-            return 0;
-        RefPtr<FrameView> view = frame->view();
-        if (!view)
-            return 0;
-        return adjustForZoom(view->contentsHeight(), *frame);
-    }
-    return HTMLElement::scrollHeight();
-}
-
-int HTMLBodyElement::scrollWidth()
-{
-    if (isFirstBodyElementOfDocument()) {
-        // Update the document's layout.
-        document().updateLayoutIgnorePendingStylesheets();
-        RefPtr<Frame> frame = document().frame();
-        if (!frame)
-            return 0;
-        RefPtr<FrameView> view = frame->view();
-        if (!view)
-            return 0;
-        return adjustForZoom(view->contentsWidth(), *frame);
-    }
-    return HTMLElement::scrollWidth();
 }
 
 void HTMLBodyElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const

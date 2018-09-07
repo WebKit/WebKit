@@ -1,20 +1,20 @@
-Tests scrollTo/By(x,y) and scrollTo/By(scrollOptions) on the body. WebKit always uses quirks mode for body scrolling behavior, so this scrolls the window.
+Tests scrollTo/By(x,y) and scrollTo/By(scrollOptions) on the body in standard mode.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS scroller.scrollLeft is 20
-PASS scroller.scrollTop is 500
-PASS window.scrollX is 20
-PASS window.scrollY is 500
-PASS scroller.scrollLeft is 70
-PASS scroller.scrollTop is 560
-PASS window.scrollX is 70
-PASS window.scrollY is 560
-PASS scroller.scrollLeft is 100
-PASS scroller.scrollTop is 400
-PASS window.scrollX is 100
-PASS window.scrollY is 400
+PASS scroller.scrollLeft is 0
+PASS scroller.scrollTop is 0
+PASS window.scrollX is 0
+PASS window.scrollY is 0
+PASS scroller.scrollLeft is 0
+PASS scroller.scrollTop is 0
+PASS window.scrollX is 0
+PASS window.scrollY is 0
+PASS scroller.scrollLeft is 0
+PASS scroller.scrollTop is 0
+PASS window.scrollX is 0
+PASS window.scrollY is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

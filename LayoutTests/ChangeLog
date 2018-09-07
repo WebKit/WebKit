@@ -1,3 +1,39 @@
+2018-09-07  Frederic Wang  <fwang@igalia.com>
+
+        [CSSOM View] Handle the scrollingElement in Element::scroll(Left/Top/Width/Height/To)
+        https://bugs.webkit.org/show_bug.cgi?id=182230
+
+        Reviewed by Simon Fraser.
+
+        This commit updates some tests to work when CSSOMViewScrollingAPI is enabled.
+
+        * TestExpectations: Enable web-platform-tests/cssom-view/scrollingElement.html.
+        * fast/dom/Document/scrollingElement-quirks-mode.html: Do not enable explictly enable
+        CSSOMViewScrollingAPI.
+        * fast/dom/Document/scrollingElement-standards-mode.html: Ditto.
+        * fast/dom/Element/body-scrollLeft-expected.txt: Updated to follow the CSSOMView spec.
+        * fast/dom/Element/body-scrollLeft.html: Ditto.
+        * fast/dom/Element/body-scrollTop-expected.txt: Ditto.
+        * fast/dom/Element/body-scrollTop.html: Ditto.
+        * fast/dom/Element/documentElement-scrollLeft-expected.txt: Ditto.
+        * fast/dom/Element/documentElement-scrollLeft.html: Ditto.
+        * fast/dom/Element/documentElement-scrollTop-expected.txt: Ditto.
+        * fast/dom/Element/documentElement-scrollTop.html: Ditto.
+        * fast/dom/Element/scrollLeft-expected.txt: Ditto.
+        * fast/dom/Element/scrollLeft.html: Ditto.
+        * fast/dom/Element/scrollTop-expected.txt: Ditto.
+        * fast/dom/Element/scrollTop.html: Ditto.
+        * fast/dom/Element/scrolling-funtions-on-body-expected.txt: Ditto.
+        * fast/dom/Element/scrolling-funtions-on-body.html: Ditto.
+        * platform/ios/TestExpectations: Add expectation for one WPT test that was already failing
+        on iOS.
+        * platform/ios/ios/fast/coordinates/page-offsets-expected.txt: Use documentElement instead
+        of body for this test when running in standard mode.
+        * platform/ios/ios/fast/coordinates/resources/helpers.js: Ditto.
+        (verifyScrollOffsets):
+        * tiled-drawing/scrolling/fast-scroll-div-latched-mainframe.html: Use
+        document.scrollingElement instead of document.body to access viewport scroll offset.
+
 2018-09-07  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Unreviewed test gardening.

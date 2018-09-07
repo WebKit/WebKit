@@ -1929,7 +1929,7 @@ WebKitDOMElement* webkit_dom_document_get_scrolling_element(WebKitDOMDocument* s
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), 0);
     WebCore::Document* item = WebKit::core(self);
-    RefPtr<WebCore::Element> gobjectResult = WTF::getPtr(item->scrollingElement());
+    RefPtr<WebCore::Element> gobjectResult = WTF::getPtr(item->scrollingElementForAPI());
     return WebKit::kit(gobjectResult.get());
 }
 

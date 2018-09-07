@@ -43,6 +43,7 @@ class DOMRect;
 class DOMRectList;
 class DOMTokenList;
 class ElementRareData;
+class Frame;
 class HTMLDocument;
 class IntSize;
 class JSCustomElementInterface;
@@ -605,6 +606,8 @@ protected:
     static ExceptionOr<void> mergeWithNextTextNode(Text&);
 
 private:
+    Frame* documentFrameWithNonNullView() const;
+
     bool isTextNode() const;
 
     bool isUserActionElementInActiveChain() const;

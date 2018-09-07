@@ -12,8 +12,8 @@
             function runTest() {
                 description('Tests that for non-standard mode document.body.scrollLeft returns the scroll left value as 0');
 
-                document.body.scrollLeft = 500;
-                shouldBe("document.body.scrollLeft","500");
+                document.body.scrollLeft = 0;
+                shouldBe("document.body.scrollLeft","0");
                 isSuccessfullyParsed();
 			}
         </script>

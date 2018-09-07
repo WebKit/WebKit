@@ -51,10 +51,10 @@ function setExpectedScrollOffsets(x, y) {
 function verifyScrollOffsets() {
     shouldBe('window.scrollX', expectedScrollX.toString());
     shouldBe('window.pageXOffset', expectedScrollX.toString());
-    shouldBe('document.body.scrollLeft', expectedScrollX.toString());
+    shouldBe('document.documentElement.scrollLeft', expectedScrollX.toString());
     shouldBe('window.scrollY', expectedScrollY.toString());
     shouldBe('window.pageYOffset', expectedScrollY.toString());
-    shouldBe('document.body.scrollTop', expectedScrollY.toString());
+    shouldBe('document.documentElement.scrollTop', expectedScrollY.toString());
 }
 
 // To verify visible window sizes.

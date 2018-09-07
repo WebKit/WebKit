@@ -1,3 +1,17 @@
+2018-09-07  Frederic Wang  <fwang@igalia.com>
+
+        [CSSOM View] Handle the scrollingElement in Element::scroll(Left/Top/Width/Height/To)
+        https://bugs.webkit.org/show_bug.cgi?id=182230
+
+        Reviewed by Simon Fraser.
+
+        This commit updates expectations for some WPT tests so that they have only PASS results.
+        Note that css/cssom-view/scrollingElement-quirks-dynamic-*.html still fail for now (bug 182292).
+
+        * web-platform-tests/css/cssom-view/HTMLBody-ScrollArea_quirksmode-expected.txt:
+        * web-platform-tests/css/cssom-view/scrolling-quirks-vs-nonquirks-expected.txt:
+        * web-platform-tests/css/cssom-view/scrollingElement-expected.txt: Added.
+
 2018-09-05  Youenn Fablet  <youenn@apple.com>
 
         Expose RTCRtpSender.setParameters

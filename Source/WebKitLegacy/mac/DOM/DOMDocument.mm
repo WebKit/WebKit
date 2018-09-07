@@ -418,7 +418,7 @@
 - (DOMElement *)scrollingElement
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->scrollingElement()));
+    return kit(WTF::getPtr(IMPL->scrollingElementForAPI()));
 }
 
 - (DOMHTMLCollection *)children

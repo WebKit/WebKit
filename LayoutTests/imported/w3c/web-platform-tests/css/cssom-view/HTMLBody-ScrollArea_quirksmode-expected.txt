@@ -3,10 +3,9 @@ PASS Ensure that body element is loaded.
 PASS Ensure that style.overflowY can be set properly. 
 PASS document.compatMode should be BackCompat in quirks. 
 PASS document.scrollingElement should be body element in quirks. 
-FAIL scrollingElement in quirks should be null when body is potentially scrollable. assert_equals: In quirks, we would expect null here (because of potentially scrollable body) expected null but got Element node <body id="thebody" style="overflow-y: scroll;">
-    <div ...
+PASS scrollingElement in quirks should be null when body is potentially scrollable. 
 PASS scrollingElement in quirks should be body if any of document and body has a visible overflow. 
-FAIL When body potentially scrollable, document.body.scrollHeight changes when changing the height of the body content in quirks. assert_not_equals: got disallowed value 600
+PASS When body potentially scrollable, document.body.scrollHeight changes when changing the height of the body content in quirks. 
 PASS When body not potentially scrollable, document.body.scrollHeight always equals window.innerHeight in quirks. (cond. visible, scroll) 
 PASS When body not potentially scrollable, document.body.scrollHeight always equals window.innerHeight in quirks. (cond. scroll, visible) 
 PASS When body not potentially scrollable, document.body.scrollHeight always equals window.innerHeight in quirks. (cond. visible, visible) 

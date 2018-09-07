@@ -1461,6 +1461,13 @@ bool Document::isBodyPotentiallyScrollable(HTMLBodyElement& body)
         && !body.computedStyle()->isOverflowVisible();
 }
 
+Element* Document::scrollingElementForAPI()
+{
+    if (inQuirksMode() && settings().CSSOMViewScrollingAPIEnabled())
+        updateLayoutIgnorePendingStylesheets();
+    return scrollingElement();
+}
+
 Element* Document::scrollingElement()
 {
     if (settings().CSSOMViewScrollingAPIEnabled()) {
@@ -1468,7 +1475,6 @@ Element* Document::scrollingElement()
         // The scrollingElement attribute, on getting, must run these steps:
         // 1. If the Document is in quirks mode, follow these substeps:
         if (inQuirksMode()) {
-            updateLayoutIgnorePendingStylesheets();
             auto* firstBody = body();
             // 1. If the HTML body element exists, and it is not potentially scrollable, return the
             // HTML body element and abort these steps.

@@ -1,3 +1,46 @@
+2018-09-07  Frederic Wang  <fwang@igalia.com>
+
+        [CSSOM View] Handle the scrollingElement in Element::scroll(Left/Top/Width/Height/To)
+        https://bugs.webkit.org/show_bug.cgi?id=182230
+
+        Reviewed by Simon Fraser.
+
+        This commit moves the special logic for "scrolling element" body from the
+        HtmlBodyElement::scroll(Left/Top/Width/Height/To) functions to the Element class. The code
+        is executed when the element is the scrolling element which includes the case of body
+        in Quirks mode and of documentElement in standard mode. This makes the behavior closer to
+        the CSSOM View spec (bug 5991) while not deviating too much from the current implementation.
+        Finally, CSSOMViewScrollingAPI is now enabled for running tests and some adjustments are made
+        to existing tests. Further improvements will be performed in dependencies of bug 5991.
+
+        No new tests, already covered by existing tests.
+
+        * dom/Document.cpp: Split scrollingElement into two functions so that one can be called
+        internally without updating the layout.
+        (WebCore::Document::scrollingElement):
+        (WebCore::Document::scrollingElementForAPI):
+        * dom/Document.h: Ditto.
+        * dom/Document.idl: Use the version updating the layout for API calls.
+        * dom/Element.cpp: Add include to call DOMWindow::ScrollTo
+        (WebCore::Element::scrollTo): Moved some logic from HtmlBodyElement to handle the case of
+        the scrolling element. Also skip special handling of documentElement() when
+        CSSOMViewScrollingAPI is disabled.
+        (WebCore::adjustContentsScrollPositionOrSizeForZoom): Moved some logic from HtmlBodyElement
+        to handle the case of the scrolling element. Also add a FIXME for improving these kinds of
+        helper functions. Renamed to make more explicit the semantic of the value argument.
+        (WebCore::Element::scrollLeft): Moved some logic from HtmlBodyElement to handle the case of
+        the scrolling element. Use the new documentFrameWithNonNullView() helper function.
+        (WebCore::Element::scrollTop): Ditto.
+        (WebCore::Element::setScrollLeft): Ditto
+        (WebCore::Element::setScrollTop): Ditto.
+        (WebCore::Element::scrollWidth): Ditto.
+        (WebCore::Element::scrollHeight): Ditto.
+        * dom/Element.h:
+        (WebCore::Document::documentFrameWithNonNullView): New helper function to retrieve the
+        frame and ensure a view is available.
+        * html/HTMLBodyElement.cpp: Remove code that is now in Element.
+        * html/HTMLBodyElement.h: Ditto.
+
 2018-09-07  Don Olmstead  <don.olmstead@sony.com>
 
         [AX] Fix compile error in AXObjectCache constructor when !HAVE(ACCESSIBILITY)

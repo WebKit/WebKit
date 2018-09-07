@@ -11,27 +11,27 @@
         <script>
             var scroller;
             function runTest() {
-                description('Tests scrollTo/By(x,y) and scrollTo/By(scrollOptions) on the body. WebKit always uses quirks mode for body scrolling behavior, so this scrolls the window.');
+                description('Tests scrollTo/By(x,y) and scrollTo/By(scrollOptions) on the body in standard mode.');
                 
                 scroller = document.body;
                 setTimeout(function() {
                     scroller.scrollTo(20, 500);
-                    shouldBe("scroller.scrollLeft", "20");
-                    shouldBe("scroller.scrollTop", "500");
-                    shouldBe("window.scrollX", "20");
-                    shouldBe("window.scrollY", "500");
+                    shouldBe("scroller.scrollLeft", "0");
+                    shouldBe("scroller.scrollTop", "0");
+                    shouldBe("window.scrollX", "0");
+                    shouldBe("window.scrollY", "0");
 
                     scroller.scrollBy(50, 60);
-                    shouldBe("scroller.scrollLeft", "70");
-                    shouldBe("scroller.scrollTop", "560");
-                    shouldBe("window.scrollX", "70");
-                    shouldBe("window.scrollY", "560");
+                    shouldBe("scroller.scrollLeft", "0");
+                    shouldBe("scroller.scrollTop", "0");
+                    shouldBe("window.scrollX", "0");
+                    shouldBe("window.scrollY", "0");
 
                     scroller.scrollTo({ 'left' : 100, 'top' : 400 });
-                    shouldBe("scroller.scrollLeft", "100");
-                    shouldBe("scroller.scrollTop", "400");
-                    shouldBe("window.scrollX", "100");
-                    shouldBe("window.scrollY", "400");
+                    shouldBe("scroller.scrollLeft", "0");
+                    shouldBe("scroller.scrollTop", "0");
+                    shouldBe("window.scrollX", "0");
+                    shouldBe("window.scrollY", "0");
 
                     scroller.scrollTo(0, 0);
 

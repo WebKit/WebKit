@@ -1,3 +1,13 @@
+2018-09-07  Frederic Wang  <fwang@igalia.com>
+
+        [CSSOM View] Handle the scrollingElement in Element::scroll(Left/Top/Width/Height/To)
+        https://bugs.webkit.org/show_bug.cgi?id=182230
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentGtk.cpp:
+        (webkit_dom_document_get_scrolling_element): Use the new name.
+
 2018-09-07  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Remove unused XPC service from sandbox

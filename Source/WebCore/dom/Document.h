@@ -448,7 +448,8 @@ public:
     WEBCORE_EXPORT RefPtr<Range> caretRangeFromPoint(int x, int y);
     RefPtr<Range> caretRangeFromPoint(const LayoutPoint& clientPoint);
 
-    WEBCORE_EXPORT Element* scrollingElement();
+    WEBCORE_EXPORT Element* scrollingElementForAPI();
+    Element* scrollingElement();
 
     enum ReadyState {
         Loading,

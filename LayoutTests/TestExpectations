@@ -1892,9 +1892,6 @@ fast/table/colspanMinWidth-vertical.html [ Skip ]
 # Test only works on iOS WK2. webkit.org/b/165535
 fast/forms/range/range-remove-on-drag.html [ Skip ]
 
-# CSSOM View module
-webkit.org/b/5991 imported/w3c/web-platform-tests/css/cssom-view/scrollingElement.html [ Skip ]
-
 # FileAPI
 webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html [ Failure ]

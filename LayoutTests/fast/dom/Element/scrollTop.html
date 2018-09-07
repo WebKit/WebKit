@@ -15,8 +15,8 @@
                 setTimeout(function() {
                     window.scrollTo(0,500);
                     shouldBe("window.pageYOffset","500");
-                    shouldBe("document.body.scrollTop","500");
-                    shouldBe("document.documentElement.scrollTop","0");
+                    shouldBe("document.body.scrollTop","0");
+                    shouldBe("document.documentElement.scrollTop","500");
                     finishJSTest();
                 }, 0);
             }

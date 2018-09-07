@@ -1,3 +1,13 @@
+2018-09-07  Frederic Wang  <fwang@igalia.com>
+
+        [CSSOM View] Handle the scrollingElement in Element::scroll(Left/Top/Width/Height/To)
+        https://bugs.webkit.org/show_bug.cgi?id=182230
+
+        Reviewed by Simon Fraser.
+
+        * DOM/DOMDocument.mm:
+        (-[DOMDocument scrollingElement]): Use the new name.
+
 2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor WebCore::EditAction to be an 8-bit enum class

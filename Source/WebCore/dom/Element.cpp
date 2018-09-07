@@ -41,6 +41,7 @@
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DOMTokenList.h"
+#include "DOMWindow.h"
 #include "DocumentSharedObjectPool.h"
 #include "DocumentTimeline.h"
 #include "Editing.h"
@@ -756,12 +757,26 @@ void Element::scrollBy(double x, double y)
 
 void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping)
 {
-    // If the element is the root element and document is in quirks mode, terminate these steps.
-    // Note that WebKit always uses quirks mode document scrolling behavior. See Document::scrollingElement().
-    if (this == document().documentElement())
-        return;
+    if (!document().settings().CSSOMViewScrollingAPIEnabled()) {
+        // If the element is the root element and document is in quirks mode, terminate these steps.
+        // Note that WebKit always uses quirks mode document scrolling behavior. See Document::scrollingElement().
+        if (this == document().documentElement())
+            return;
+    }
 
     document().updateLayoutIgnorePendingStylesheets();
+
+    if (document().scrollingElement() == this) {
+        // If the element is the scrolling element and is not potentially scrollable,
+        // invoke scroll() on window with options as the only argument, and terminate these steps.
+        // FIXME: Scrolling an independently scrollable body is broken: webkit.org/b/161612.
+        auto window = makeRefPtr(document().domWindow());
+        if (!window)
+            return;
+
+        window->scrollTo(options);
+        return;
+    }
 
     // If the element does not have any associated CSS layout box, the element has no associated scrolling box,
     // or the element has no overflow, terminate these steps.
@@ -841,6 +856,18 @@ static double adjustForLocalZoom(LayoutUnit value, const RenderElement& renderer
     if (zoomFactor == 1)
         return value.toDouble();
     return value.toDouble() / zoomFactor;
+}
+
+static int adjustContentsScrollPositionOrSizeForZoom(int value, const Frame& frame)
+{
+    double zoomFactor = frame.pageZoomFactor() * frame.frameScaleFactor();
+    if (zoomFactor == 1)
+        return value;
+    // FIXME (webkit.org/b/189397): Why can't we just ceil/floor?
+    // Needed because of truncation (rather than rounding) when scaling up.
+    if (zoomFactor > 1)
+        value++;
+    return static_cast<int>(value / zoomFactor);
 }
 
 enum LegacyCSSOMElementMetricsRoundingStrategy { Round, Floor };
@@ -984,9 +1011,21 @@ double Element::clientHeight()
     return 0;
 }
 
+ALWAYS_INLINE Frame* Element::documentFrameWithNonNullView() const
+{
+    auto* frame = document().frame();
+    return frame && frame->view() ? frame : nullptr;
+}
+
 int Element::scrollLeft()
 {
     document().updateLayoutIgnorePendingStylesheets();
+
+    if (document().scrollingElement() == this) {
+        if (auto* frame = documentFrameWithNonNullView())
+            return adjustContentsScrollPositionOrSizeForZoom(frame->view()->contentsScrollPosition().x(), *frame);
+        return 0;
+    }
 
     if (auto* renderer = renderBox())
         return adjustForAbsoluteZoom(renderer->scrollLeft(), *renderer);
@@ -997,6 +1036,12 @@ int Element::scrollTop()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
+    if (document().scrollingElement() == this) {
+        if (auto* frame = documentFrameWithNonNullView())
+            return adjustContentsScrollPositionOrSizeForZoom(frame->view()->contentsScrollPosition().y(), *frame);
+        return 0;
+    }
+
     if (RenderBox* renderer = renderBox())
         return adjustForAbsoluteZoom(renderer->scrollTop(), *renderer);
     return 0;
@@ -1005,6 +1050,12 @@ int Element::scrollTop()
 void Element::setScrollLeft(int newLeft)
 {
     document().updateLayoutIgnorePendingStylesheets();
+
+    if (document().scrollingElement() == this) {
+        if (auto* frame = documentFrameWithNonNullView())
+            frame->view()->setScrollPosition(IntPoint(static_cast<int>(newLeft * frame->pageZoomFactor() * frame->frameScaleFactor()), frame->view()->scrollY()));
+        return;
+    }
 
     if (auto* renderer = renderBox()) {
         renderer->setScrollLeft(static_cast<int>(newLeft * renderer->style().effectiveZoom()));
@@ -1017,6 +1068,12 @@ void Element::setScrollTop(int newTop)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
+    if (document().scrollingElement() == this) {
+        if (auto* frame = documentFrameWithNonNullView())
+            frame->view()->setScrollPosition(IntPoint(frame->view()->scrollX(), static_cast<int>(newTop * frame->pageZoomFactor() * frame->frameScaleFactor())));
+        return;
+    }
+
     if (auto* renderer = renderBox()) {
         renderer->setScrollTop(static_cast<int>(newTop * renderer->style().effectiveZoom()));
         if (auto* scrollableArea = renderer->layer())
@@ -1027,6 +1084,15 @@ void Element::setScrollTop(int newTop)
 int Element::scrollWidth()
 {
     document().updateLayoutIfDimensionsOutOfDate(*this, WidthDimensionsCheck);
+
+    if (document().scrollingElement() == this) {
+        // FIXME (webkit.org/b/182289): updateLayoutIfDimensionsOutOfDate seems to ignore zoom level change.
+        document().updateLayoutIgnorePendingStylesheets();
+        if (auto* frame = documentFrameWithNonNullView())
+            return adjustContentsScrollPositionOrSizeForZoom(frame->view()->contentsWidth(), *frame);
+        return 0;
+    }
+
     if (auto* renderer = renderBox())
         return adjustForAbsoluteZoom(renderer->scrollWidth(), *renderer);
     return 0;
@@ -1035,6 +1101,15 @@ int Element::scrollWidth()
 int Element::scrollHeight()
 {
     document().updateLayoutIfDimensionsOutOfDate(*this, HeightDimensionsCheck);
+
+    if (document().scrollingElement() == this) {
+        // FIXME (webkit.org/b/182289): updateLayoutIfDimensionsOutOfDate seems to ignore zoom level change.
+        document().updateLayoutIgnorePendingStylesheets();
+        if (auto* frame = documentFrameWithNonNullView())
+            return adjustContentsScrollPositionOrSizeForZoom(frame->view()->contentsHeight(), *frame);
+        return 0;
+    }
+
     if (auto* renderer = renderBox())
         return adjustForAbsoluteZoom(renderer->scrollHeight(), *renderer);
     return 0;

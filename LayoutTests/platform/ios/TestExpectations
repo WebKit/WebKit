@@ -2648,6 +2648,8 @@ webkit.org/b/163291 media/video-play-require-user-gesture.html
 
 webkit.org/b/163755 imported/w3c/web-platform-tests/css/css-shapes [ Skip ]
 
+webkit.org/b/5991 imported/w3c/web-platform-tests/css/cssom-view/scrolling-quirks-vs-nonquirks.html [ Failure ]
+
 # Variation fonts are not implemented earlier than iOS 11.
 fast/text/variations [ Pass Failure ImageOnlyFailure ]
 animations/font-variations [ Pass Failure ImageOnlyFailure Timeout ]
