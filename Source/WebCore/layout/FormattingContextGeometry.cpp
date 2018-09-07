@@ -788,22 +788,21 @@ HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(const
 
     auto& style = layoutBox.style();
     auto replaced = layoutBox.replaced();
-    auto& containingBlockDisplayBox = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock());
-    auto containingBlockWidth = containingBlockDisplayBox.width();
 
     auto height = fixedValue(precomputedHeight ? Length { precomputedHeight.value(), Fixed } : style.logicalHeight());
-    auto heightIsAuto = style.logicalHeight().isAuto();
-    auto width = computedValueIfNotAuto(style.logicalWidth(), containingBlockWidth);
+    auto heightIsAuto = !precomputedHeight && style.logicalHeight().isAuto();
+    auto widthIsAuto = style.logicalWidth().isAuto();
 
     if (!height && !heightIsAuto)
         ASSERT_NOT_IMPLEMENTED_YET();
 
-    if (heightIsAuto && !width && replaced->hasIntrinsicHeight()) {
+    if (heightIsAuto && widthIsAuto && replaced->hasIntrinsicHeight()) {
         // #2
         height = replaced->intrinsicHeight();
     } else if (heightIsAuto && replaced->hasIntrinsicRatio()) {
         // #3
-        height = *width / replaced->intrinsicRatio();
+        auto usedWidth = layoutContext.displayBoxForLayoutBox(layoutBox).width();
+        height = usedWidth / replaced->intrinsicRatio();
     } else if (heightIsAuto && replaced->hasIntrinsicHeight()) {
         // #4
         height = replaced->intrinsicHeight();

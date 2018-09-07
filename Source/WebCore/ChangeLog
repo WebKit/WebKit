@@ -1,3 +1,16 @@
+2018-09-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Inline replaced height calculation should use "used value"
+        https://bugs.webkit.org/show_bug.cgi?id=189395
+
+        Reviewed by Antti Koivisto.
+
+        Use the already assigned width value (aka used value) instead of the computed value when computing the inline's height.
+        see https://www.w3.org/TR/CSS22/cascade.html#value-stages for "used" and "computed" value.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin):
+
 2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor WebCore::EditAction to be an 8-bit enum class
