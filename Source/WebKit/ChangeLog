@@ -1,3 +1,15 @@
+2018-09-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Move default mach-lookup deny to after common.sb is imported
+        https://bugs.webkit.org/show_bug.cgi?id=189385
+        <rdar://problem/43624193>
+
+        Reviewed by Eric Carlson.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb: Move the 'deny mach-lookup' call later in the file.
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Storage.sb: Ditto.
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb: Ditto.
+
 2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor WebCore::EditAction to be an 8-bit enum class

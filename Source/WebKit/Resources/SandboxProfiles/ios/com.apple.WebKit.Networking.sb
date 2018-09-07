@@ -25,9 +25,9 @@
 (deny default (with partial-symbolication))
 (allow system-audit file-read-metadata)
 
-(deny mach-lookup (xpc-service-name-prefix ""))
-
 (import "common.sb")
+
+(deny mach-lookup (xpc-service-name-prefix #""))
 
 (deny lsopen)
 
