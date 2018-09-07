@@ -26,7 +26,7 @@
 #pragma once
 
 #include "Color.h"
-#include "RenderStyleConstants.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
 
@@ -34,6 +34,8 @@ namespace WebCore {
 
 class EditingStyle;
 class MutableStyleProperties;
+
+enum class VerticalAlignChange : uint8_t { Superscript, Baseline, Subscript };
 
 class FontChanges {
 public:
@@ -62,6 +64,9 @@ private:
 };
 
 struct FontShadow {
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, FontShadow&);
+
     Color color;
     double width { 0 };
     double height { 0 };
@@ -70,7 +75,10 @@ struct FontShadow {
 
 class FontAttributeChanges {
 public:
-    void setVerticalAlign(VerticalAlign align) { m_verticalAlign = align; }
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, FontAttributeChanges&);
+
+    void setVerticalAlign(VerticalAlignChange align) { m_verticalAlign = align; }
     void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
     void setForegroundColor(const Color& color) { m_foregroundColor = color; }
     void setShadow(const FontShadow& shadow) { m_shadow = shadow; }
@@ -81,7 +89,7 @@ public:
     WEBCORE_EXPORT Ref<EditingStyle> createEditingStyle() const;
 
 private:
-    std::optional<VerticalAlign> m_verticalAlign;
+    std::optional<VerticalAlignChange> m_verticalAlign;
     std::optional<Color> m_backgroundColor;
     std::optional<Color> m_foregroundColor;
     std::optional<FontShadow> m_shadow;
@@ -122,4 +130,72 @@ bool FontChanges::decode(Decoder& decoder, FontChanges& changes)
     return true;
 }
 
+template<class Encoder>
+void FontShadow::encode(Encoder& encoder) const
+{
+    encoder << color << width << height << blurRadius;
+}
+
+template<class Decoder>
+bool FontShadow::decode(Decoder& decoder, FontShadow& shadow)
+{
+    if (!decoder.decode(shadow.color))
+        return false;
+
+    if (!decoder.decode(shadow.width))
+        return false;
+
+    if (!decoder.decode(shadow.height))
+        return false;
+
+    if (!decoder.decode(shadow.blurRadius))
+        return false;
+
+    return true;
+}
+
+template<class Encoder>
+void FontAttributeChanges::encode(Encoder& encoder) const
+{
+    encoder << m_verticalAlign << m_backgroundColor << m_foregroundColor << m_shadow << m_strikeThrough << m_underline << m_fontChanges;
+}
+
+template<class Decoder>
+bool FontAttributeChanges::decode(Decoder& decoder, FontAttributeChanges& changes)
+{
+    if (!decoder.decode(changes.m_verticalAlign))
+        return false;
+
+    if (!decoder.decode(changes.m_backgroundColor))
+        return false;
+
+    if (!decoder.decode(changes.m_foregroundColor))
+        return false;
+
+    if (!decoder.decode(changes.m_shadow))
+        return false;
+
+    if (!decoder.decode(changes.m_strikeThrough))
+        return false;
+
+    if (!decoder.decode(changes.m_underline))
+        return false;
+
+    if (!decoder.decode(changes.m_fontChanges))
+        return false;
+
+    return true;
+}
+
 } // namespace WebCore
+
+namespace WTF {
+template<> struct EnumTraits<WebCore::VerticalAlignChange> {
+    using values = EnumValues<
+        WebCore::VerticalAlignChange,
+        WebCore::VerticalAlignChange::Superscript,
+        WebCore::VerticalAlignChange::Baseline,
+        WebCore::VerticalAlignChange::Subscript
+    >;
+};
+}

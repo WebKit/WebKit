@@ -1,3 +1,54 @@
+2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] [WK2] Support changing attributes for selected text (text shadow, underline, strike-through)
+        https://bugs.webkit.org/show_bug.cgi?id=189356
+        <rdar://problem/44185674>
+
+        Reviewed by Tim Horton.
+
+        Adds a new API test to verify that some font attributes (text shadow, underline, and strike-through) can be
+        added and removed using NSFontPanel.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/FontManagerTests.mm:
+
+        Add the new API test.
+
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/mac/NSFontPanelTesting.h: Added.
+        * TestWebKitAPI/mac/NSFontPanelTesting.mm: Added.
+
+        Introduce a new file that extends NSFontPanel with some additional testing functionality. This includes the
+        ability to interact with the text shadow toggle button, choose the text shadow blur radius and opacity, and
+        change underline and strike-through styles.
+
+        (findSubviewOfClass):
+        (findMenuItemWithTitle):
+        (-[NSFontPanel fontEffectsBox]):
+
+        NSFontEffectsBox (an internal AppKit class) is the sender in the case where -changeAttributes: is invoked
+        through interaction with the font panel. To simulate this for testing, grab this font effects box and pass it
+        directory to -changeAttributes:.
+
+        (-[NSFontPanel chooseUnderlineMenuItemWithTitle:]):
+        (-[NSFontPanel chooseStrikeThroughMenuItemWithTitle:]):
+
+        The supported values for these menu items are "none" and "single", which adds a single underline or
+        strike-through to selected text. We grab these menu items by asking for the font panel's NSToolbar, and finding
+        the relevant menu items via toolbar item identifiers.
+
+        (-[NSFontPanel _didChangeAttributes]):
+        (-[NSFontPanel shadowBlurSlider]):
+        (-[NSFontPanel shadowOpacitySlider]):
+        (-[NSFontPanel shadowToggleButton]):
+        (-[NSFontPanel toggleShadow]):
+        (-[NSFontPanel shadowOpacity]):
+        (-[NSFontPanel setShadowOpacity:]):
+        (-[NSFontPanel shadowBlur]):
+        (-[NSFontPanel setShadowBlur:]):
+        (-[NSFontPanel _toolbarItemWithIdentifier:]):
+
 2018-09-06  Simon Fraser  <simon.fraser@apple.com>
 
         run-webkit-tests prints confusing messages when test expectations list results that are not compatible with the run options

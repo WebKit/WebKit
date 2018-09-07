@@ -37,6 +37,7 @@
 @interface WKWebView (AdditionalDeclarations)
 #if PLATFORM(MAC)
 - (void)paste:(id)sender;
+- (void)changeAttributes:(id)sender;
 #endif
 @end
 

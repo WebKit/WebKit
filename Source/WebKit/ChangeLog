@@ -1,3 +1,35 @@
+2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] [WK2] Support changing attributes for selected text (text shadow, underline, strike-through)
+        https://bugs.webkit.org/show_bug.cgi?id=189356
+        <rdar://problem/44185674>
+
+        Reviewed by Tim Horton.
+
+        Implement -[WKWebView changeAttributes:], so that WKWebView can carry out more types of font style changes via
+        NSFontPanel. This patch makes it possible to (1) change text shadow, (2) add or remove strike-through, and (3)
+        add or remove underlines from selected text using the font panel.
+
+        This builds on the mechanisms introduced in r235748 to compute font attribute changes in the UI process and
+        propagate this information to the web process, where we're able to create and apply an EditingStyle to the
+        current selection.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView changeAttributes:]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::changeFontAttributesFromSender):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::changeFontAttributes):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Add boilerplate IPC support.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::changeFontAttributes):
+
 2018-09-06  Antti Koivisto  <antti@apple.com>
 
         Actively prewarm processes created for prewarm pool

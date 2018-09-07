@@ -1,3 +1,29 @@
+2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] [WK2] Support changing attributes for selected text (text shadow, underline, strike-through)
+        https://bugs.webkit.org/show_bug.cgi?id=189356
+        <rdar://problem/44185674>
+
+        Reviewed by Tim Horton.
+
+        Add support for encoding and decoding FontAttributeChanges, so that we can send FontAttributeChanges over IPC in
+        WebKit2. Also change m_verticalAlign to a new VerticalAlignChange enum type, so that it's no longer tied to the
+        CSS property values of "vertical-align", and can be encoded/decoded separately from VerticalAlign in
+        RenderStyleConstants.
+
+        Test: FontManagerTests.ChangeAttributesWithFontEffectsBox
+
+        * editing/FontAttributeChanges.cpp:
+        (WebCore::FontAttributeChanges::createEditingStyle const):
+        * editing/FontAttributeChanges.h:
+        (WebCore::FontAttributeChanges::setVerticalAlign):
+        (WebCore::FontShadow::encode const):
+        (WebCore::FontShadow::decode):
+        (WebCore::FontAttributeChanges::encode const):
+        (WebCore::FontAttributeChanges::decode):
+        * platform/mac/WebCoreNSFontManagerExtras.mm:
+        (WebCore::computedFontAttributeChanges):
+
 2018-09-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Add support for min(max)-height

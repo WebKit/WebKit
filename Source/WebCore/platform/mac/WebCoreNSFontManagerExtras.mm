@@ -144,11 +144,11 @@ FontAttributeChanges computedFontAttributeChanges(NSFontManager *fontManager, id
     int convertedSuperscriptA = [[convertedAttributesA objectForKey:NSSuperscriptAttributeName] intValue];
     if (convertedSuperscriptA == [[convertedAttributesB objectForKey:NSSuperscriptAttributeName] intValue]) {
         if (convertedSuperscriptA > 0)
-            changes.setVerticalAlign(VerticalAlign::Super);
+            changes.setVerticalAlign(VerticalAlignChange::Superscript);
         else if (convertedSuperscriptA < 0)
-            changes.setVerticalAlign(VerticalAlign::Sub);
+            changes.setVerticalAlign(VerticalAlignChange::Subscript);
         else
-            changes.setVerticalAlign(VerticalAlign::Baseline);
+            changes.setVerticalAlign(VerticalAlignChange::Baseline);
     }
 
     int convertedStrikeThroughA = [[convertedAttributesA objectForKey:NSStrikethroughStyleAttributeName] intValue];

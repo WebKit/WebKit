@@ -1115,6 +1115,13 @@ void WebPage::dataDetectorsDidHideUI(PageOverlay::PageOverlayID overlayID)
     }
 }
 
+void WebPage::changeFontAttributes(WebCore::FontAttributeChanges&& changes)
+{
+    auto& frame = m_page->focusController().focusedOrMainFrame();
+    if (frame.selection().selection().isContentEditable())
+        frame.editor().applyStyleToSelection(changes.createEditingStyle(), EditActionChangeAttributes, Editor::ColorFilterMode::InvertColor);
+}
+
 void WebPage::changeFont(WebCore::FontChanges&& changes)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();

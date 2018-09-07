@@ -316,6 +316,7 @@ public:
     void didBecomeEditable();
     void updateFontPanelIfNeeded();
     void changeFontFromFontManager();
+    void changeFontAttributesFromSender(id);
     bool validateUserInterfaceItem(id <NSValidatedUserInterfaceItem>);
     void setEditableElementIsFocused(bool);
 

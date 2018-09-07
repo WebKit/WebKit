@@ -112,14 +112,19 @@ Ref<EditingStyle> FontAttributeChanges::createEditingStyle() const
     }
 
     if (m_verticalAlign) {
-        if (*m_verticalAlign == VerticalAlign::Super)
+        switch (*m_verticalAlign) {
+        case VerticalAlignChange::Superscript:
             style->setProperty(CSSPropertyVerticalAlign, CSSValueSuper);
-        else if (*m_verticalAlign == VerticalAlign::Sub)
+            break;
+        case VerticalAlignChange::Subscript:
             style->setProperty(CSSPropertyVerticalAlign, CSSValueSub);
-        else if (*m_verticalAlign == VerticalAlign::Baseline)
+            break;
+        case VerticalAlignChange::Baseline:
             style->setProperty(CSSPropertyVerticalAlign, CSSValueBaseline);
-        else
+            break;
+        default:
             ASSERT_NOT_REACHED();
+        }
     }
 
     auto editingStyle = EditingStyle::create(style.ptr());

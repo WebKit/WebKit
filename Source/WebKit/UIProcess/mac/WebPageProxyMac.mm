@@ -626,6 +626,14 @@ bool WebPageProxy::appleMailLinesClampEnabled()
 {
     return MacApplication::isAppleMail();
 }
+
+void WebPageProxy::changeFontAttributes(WebCore::FontAttributeChanges&& changes)
+{
+    if (!isValid())
+        return;
+
+    process().send(Messages::WebPage::ChangeFontAttributes(WTFMove(changes)), m_pageID);
+}
     
 void WebPageProxy::changeFont(WebCore::FontChanges&& changes)
 {

@@ -3359,6 +3359,11 @@ WEBCORE_COMMAND(yankAndSelect)
     _impl->changeFontFromFontManager();
 }
 
+- (void)changeAttributes:(id)sender
+{
+    _impl->changeFontAttributesFromSender(sender);
+}
+
 - (IBAction)startSpeaking:(id)sender
 {
     _impl->startSpeaking();

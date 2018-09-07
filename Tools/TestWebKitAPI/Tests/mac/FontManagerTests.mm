@@ -27,6 +27,8 @@
 
 #if PLATFORM(MAC) && WK_API_ENABLED
 
+#import "AppKitSPI.h"
+#import "NSFontPanelTesting.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
@@ -176,6 +178,74 @@ TEST(FontManagerTests, ChangeFontWithPanel)
     EXPECT_WK_STREQ("24px", [webView stylePropertyAtSelectionStart:@"font-size"]);
     EXPECT_WK_STREQ("normal", [webView stylePropertyAtSelectionStart:@"font-weight"]);
     EXPECT_EQ(largeItalicLightAvenirFont, fontManager.selectedFont);
+}
+
+TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
+{
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    auto webView = webViewForFontManagerTesting(fontManager);
+
+    NSFontPanel *fontPanel = [fontManager fontPanel:YES];
+    [fontPanel setIsVisible:YES];
+
+    auto textDecorationsAroundSelection = [webView] {
+        NSString *decorationsAtStart = [webView stylePropertyAtSelectionStart:@"-webkit-text-decorations-in-effect"];
+        NSString *decorationsAtEnd = [webView stylePropertyAtSelectionEnd:@"-webkit-text-decorations-in-effect"];
+        if ([decorationsAtStart isEqualToString:decorationsAtEnd] || decorationsAtStart == decorationsAtEnd)
+            return decorationsAtStart;
+        return [NSString stringWithFormat:@"(%@, %@)", decorationsAtStart, decorationsAtEnd];
+    };
+
+    auto textShadowAroundSelection = [webView] {
+        NSString *shadowAtStart = [webView stylePropertyAtSelectionStart:@"text-shadow"];
+        NSString *shadowAtEnd = [webView stylePropertyAtSelectionEnd:@"text-shadow"];
+        if ([shadowAtStart isEqualToString:shadowAtEnd] || shadowAtStart == shadowAtEnd)
+            return shadowAtStart;
+        return [NSString stringWithFormat:@"(%@, %@)", shadowAtStart, shadowAtEnd];
+    };
+
+    [webView selectWord:nil];
+    [fontPanel chooseUnderlineMenuItemWithTitle:@"single"];
+    EXPECT_WK_STREQ("foo", [webView selectedText]);
+    EXPECT_WK_STREQ("underline", textDecorationsAroundSelection());
+
+    [fontPanel chooseUnderlineMenuItemWithTitle:@"none"];
+    EXPECT_WK_STREQ("none", textDecorationsAroundSelection());
+
+    [webView selectNextWord];
+    [fontPanel chooseStrikeThroughMenuItemWithTitle:@"single"];
+    EXPECT_WK_STREQ("bar", [webView selectedText]);
+    EXPECT_WK_STREQ("line-through", textDecorationsAroundSelection());
+
+    [fontPanel chooseStrikeThroughMenuItemWithTitle:@"none"];
+    EXPECT_WK_STREQ("none", textDecorationsAroundSelection());
+
+    [webView selectNextWord];
+    fontPanel.shadowBlur = 8;
+    fontPanel.shadowOpacity = 1;
+    [fontPanel toggleShadow];
+    EXPECT_WK_STREQ("baz", [webView selectedText]);
+    EXPECT_WK_STREQ("rgb(0, 0, 0) 0px 1px 8px", textShadowAroundSelection());
+
+    [fontPanel toggleShadow];
+    EXPECT_WK_STREQ("none", textShadowAroundSelection());
+
+    // Now combine all three attributes together.
+    [webView selectAll:nil];
+    fontPanel.shadowBlur = 5;
+    fontPanel.shadowOpacity = 0.2;
+    [fontPanel toggleShadow];
+    [fontPanel chooseUnderlineMenuItemWithTitle:@"single"];
+    [fontPanel chooseStrikeThroughMenuItemWithTitle:@"single"];
+    EXPECT_WK_STREQ("foo bar baz", [webView selectedText]);
+    EXPECT_WK_STREQ("rgba(0, 0, 0, 0.2) 0px 1px 5px", textShadowAroundSelection());
+    EXPECT_WK_STREQ("underline line-through", textDecorationsAroundSelection());
+
+    [fontPanel toggleShadow];
+    [fontPanel chooseUnderlineMenuItemWithTitle:@"none"];
+    [fontPanel chooseStrikeThroughMenuItemWithTitle:@"none"];
+    EXPECT_WK_STREQ("none", textShadowAroundSelection());
+    EXPECT_WK_STREQ("none", textDecorationsAroundSelection());
 }
 
 } // namespace TestWebKitAPI

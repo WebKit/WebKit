@@ -2734,6 +2734,16 @@ void WebViewImpl::updateFontPanelIfNeeded()
     }
 }
 
+void WebViewImpl::changeFontAttributesFromSender(id sender)
+{
+    auto& editorState = m_page->editorState();
+    if (!editorState.isContentEditable || editorState.selectionIsNone)
+        return;
+
+    m_page->changeFontAttributes(WebCore::computedFontAttributeChanges(NSFontManager.sharedFontManager, sender));
+    updateFontPanelIfNeeded();
+}
+
 void WebViewImpl::changeFontFromFontManager()
 {
     auto& editorState = m_page->editorState();
