@@ -1056,5 +1056,13 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     ],
     "-webkit-overflow-scrolling": [
         "auto", "touch"
+    ],
+
+    // Apple Pay Properties
+    "-apple-pay-button-style": [
+        "black", "white", "white-outline"
+    ],
+    "-apple-pay-button-type": [
+        "book", "buy", "checkout", "donate", "in-store", "plain", "set-up", "subscribe"
     ]
 };
