@@ -31,8 +31,6 @@
 #import "WebCoreThreadInternal.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 
-using namespace WebCore;
-
 static inline void _FillRectsUsingOperation(CGContextRef context, const CGRect* rects, int count, CGCompositeOperation op)
 {
     int i;

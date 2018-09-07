@@ -1,3 +1,14 @@
+2018-09-07  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Remove extraneous "using namespace" and scope WebCore::LogThreading
+        https://bugs.webkit.org/show_bug.cgi?id=189381
+
+        Reviewed by Simon Fraser.
+
+        * platform/ios/wak/WKGraphics.mm:
+        * platform/ios/wak/WebCoreThread.mm:
+        (WebThreadEnable):
+
 2018-09-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Clean up FontAttributeChanges.cpp after r235748
