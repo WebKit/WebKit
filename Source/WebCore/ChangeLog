@@ -1,3 +1,14 @@
+2018-09-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Clean up FontAttributeChanges.cpp after r235748
+        https://bugs.webkit.org/show_bug.cgi?id=189394
+
+        Reviewed by Tim Horton.
+
+        * Sources.txt: Move FontAttributeChanges.cpp into unified sources.
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/FontAttributeChanges.cpp: Replace `#import`s with `#include`s.
+
 2018-09-07  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl][WebKitLegacy] Stop sending credential embedded in the url via XHR.

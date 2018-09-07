@@ -873,6 +873,7 @@ editing/Editing.cpp
 editing/EditingStyle.cpp
 editing/Editor.cpp
 editing/EditorCommand.cpp
+editing/FontAttributeChanges.cpp
 editing/FormatBlockCommand.cpp
 editing/FrameSelection.cpp
 editing/HTMLInterchange.cpp

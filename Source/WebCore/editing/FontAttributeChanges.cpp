@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "FontAttributeChanges.h"
+#include "config.h"
+#include "FontAttributeChanges.h"
 
-#import "CSSPropertyNames.h"
-#import "CSSShadowValue.h"
-#import "CSSValueKeywords.h"
-#import "CSSValueList.h"
-#import "CSSValuePool.h"
-#import "EditingStyle.h"
-#import "StyleProperties.h"
+#include "CSSPropertyNames.h"
+#include "CSSShadowValue.h"
+#include "CSSValueKeywords.h"
+#include "CSSValueList.h"
+#include "CSSValuePool.h"
+#include "EditingStyle.h"
+#include "StyleProperties.h"
 
 namespace WebCore {
 
