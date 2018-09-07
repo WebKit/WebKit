@@ -1,5 +1,38 @@
 2018-09-06  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r235506. rdar://problem/44169670
+
+    [macOS] Whitelist Network process features for VPN
+    https://bugs.webkit.org/show_bug.cgi?id=189023
+    <rdar://problem/43310000>
+    
+    Reviewed by Eric Carlson.
+    
+    CFNetwork needs access to some VPN preference files to configure networking, and
+    need to be allowed to communicate with the VPN process from the Network Process
+    sandbox.
+    
+    * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@235506 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-30  Brent Fulgham  <bfulgham@apple.com>
+
+            [macOS] Whitelist Network process features for VPN
+            https://bugs.webkit.org/show_bug.cgi?id=189023
+            <rdar://problem/43310000>
+
+            Reviewed by Eric Carlson.
+
+            CFNetwork needs access to some VPN preference files to configure networking, and
+            need to be allowed to communicate with the VPN process from the Network Process
+            sandbox.
+
+            * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
+2018-09-06  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r235569. rdar://problem/44169479
 
     Storage Access API: Maintain access through same-site navigations

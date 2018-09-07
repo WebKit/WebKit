@@ -155,6 +155,7 @@
     (global-name "com.apple.cookied")
     (global-name "com.apple.cfnetwork.AuthBrokerAgent")
     (global-name "com.apple.cfnetwork.cfnetworkagent")
+    (global-name "com.apple.ist.ds.appleconnect2.service.kdctunnelcontroller")
     (global-name "com.apple.lsd.mapdb")
     (global-name "com.apple.nesessionmanager.flow-divert-token")
 )
@@ -197,7 +198,16 @@
        (literal "/Library/Preferences/com.apple.security.revocation.plist")
        (home-literal "/Library/Application Support/SyncServices/Local/ClientsWithChanges/com.apple.Keychain")
        (home-literal "/Library/Preferences/com.apple.security.plist")
-       (home-literal "/Library/Preferences/com.apple.security.revocation.plist"))
+       (home-literal "/Library/Preferences/com.apple.security.revocation.plist")
+
+       ; Likewise for <rdar://problem/43310000>
+       (literal "/Library/Preferences/com.apple.ist.ds.appleconnect2.plist")
+       (literal "/Library/Preferences/com.apple.ist.ds.appleconnect2.production.plist")
+       (home-literal "/Library/Preferences/com.apple.ist.ds.appleconnect2.plist")
+       (home-literal "/Library/Preferences/com.apple.ist.ds.appleconnect2.production.plist")
+       (home-regex (string-append "/Library/Preferences/ByHost/com\.apple\.ist\.ds\.appleconnect2\." (uuid-regex-string) "\.plist$"))
+       (home-regex (string-append "/Library/Preferences/ByHost/com\.apple\.ist\.ds\.appleconnect2\.production\." (uuid-regex-string) "\.plist$"))
+)
 
 (allow ipc-posix-shm-read* ipc-posix-shm-write-data
        (ipc-posix-name "com.apple.AppleDatabaseChanged"))
