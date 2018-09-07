@@ -1,3 +1,19 @@
+2018-09-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Log when leak detection changes the test result
+        https://bugs.webkit.org/show_bug.cgi?id=189293
+
+        Reviewed by Jon Lee.
+        
+        When you have an "Leak" expectation in TestExpectations, it's confusing to see a test unexpectedly pass,
+        but then show up as an expected fail at the end (because leak detection happens at the end of a shard).
+        So log when leak detection changes a test result.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner._annotate_results_with_additional_failures):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations):
+
 2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] [WK2] Support changing attributes for selected text (text shadow, underline, strike-through)

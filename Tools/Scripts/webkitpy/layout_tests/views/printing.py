@@ -321,7 +321,7 @@ class Printer(object):
     def print_finished_test(self, result, expected, exp_str, got_str):
         test_name = result.test_name
 
-        result_message = self._result_message(result.type, result.failures, expected, self._options.verbose)
+        result_message = self._result_message(result.type, result.failures, expected, exp_str, self._options.verbose)
 
         if self._options.details:
             self._print_test_trace(result, exp_str, got_str)
@@ -340,8 +340,11 @@ class Printer(object):
             self._completed_tests = []
         self._running_tests.remove(test_name)
 
-    def _result_message(self, result_type, failures, expected, verbose):
-        exp_string = ' unexpectedly' if not expected else ''
+    def _result_message(self, result_type, failures, expected, exp_str, verbose):
+        exp_string = ''
+        if not expected:
+            exp_string = ' (leak detection is pending)' if 'LEAK' in exp_str else ' unexpectedly'
+
         if result_type == test_expectations.PASS:
             return ' passed%s' % exp_string
         else:

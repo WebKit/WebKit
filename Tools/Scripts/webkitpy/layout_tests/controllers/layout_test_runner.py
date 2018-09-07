@@ -202,6 +202,11 @@ class LayoutTestRunner(object):
                 expectations = self._expectations.filtered_expectations_for_test(new_result.test_name, self._options.pixel_tests or bool(new_result.reftest_type), self._options.world_leaks)
                 was_expected = self._expectations.matches_an_expected_result(new_result.test_name, existing_result.type, expectations)
                 now_expected = self._expectations.matches_an_expected_result(new_result.test_name, new_result.type, expectations)
+                if was_expected != now_expected:
+                    # When annotation is not just about leaks, this logging should be changed.
+                    _log.warning('  %s -> changed by leak detection from a %s (%s) to a %s (%s)' % (new_result.test_name,
+                        TestExpectations.EXPECTATION_DESCRIPTION[existing_result.type], 'expected' if was_expected else 'unexpected',
+                        TestExpectations.EXPECTATION_DESCRIPTION[new_result.type], 'expected' if now_expected else 'unexpected'))
                 run_results.change_result_to_failure(existing_result, new_result, was_expected, now_expected)
 
     def start_servers(self):

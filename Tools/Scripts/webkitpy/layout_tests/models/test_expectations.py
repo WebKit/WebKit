@@ -815,6 +815,19 @@ class TestExpectations(object):
                     'leak': LEAK,
                     'skip': SKIP}
 
+    # Singulars
+    EXPECTATION_DESCRIPTION = {SKIP: 'skipped',
+                                PASS: 'pass',
+                                FAIL: 'failure',
+                                IMAGE: 'image-only failure',
+                                TEXT: 'text-only failure',
+                                IMAGE_PLUS_TEXT: 'image and text failure',
+                                AUDIO: 'audio failure',
+                                CRASH: 'crash',
+                                TIMEOUT: 'timeout',
+                                MISSING: 'missing',
+                                LEAK: 'leak'}
+
     # (aggregated by category, pass/fail/skip, type)
     EXPECTATION_DESCRIPTIONS = {SKIP: 'skipped',
                                 PASS: 'passes',
