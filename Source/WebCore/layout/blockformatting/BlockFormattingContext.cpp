@@ -291,14 +291,13 @@ void BlockFormattingContext::computeHeightAndMargin(const LayoutContext& layoutC
     };
 
     auto heightAndMargin = compute({ });
-    // FIXME: Add support for percentage values where the containing block's height is explicitly specified.
-    if (auto maxHeight = Geometry::fixedValue(layoutBox.style().logicalMaxHeight())) {
+    if (auto maxHeight = Geometry::computedMaxHeight(layoutContext, layoutBox)) {
         auto maxHeightAndMargin = compute(maxHeight);
         if (heightAndMargin.height > maxHeightAndMargin.height)
             heightAndMargin = maxHeightAndMargin;
     }
 
-    if (auto minHeight = Geometry::fixedValue(layoutBox.style().logicalMinHeight())) {
+    if (auto minHeight = Geometry::computedMinHeight(layoutContext, layoutBox)) {
         auto minHeightAndMargin = compute(minHeight);
         if (heightAndMargin.height < minHeightAndMargin.height)
             heightAndMargin = minHeightAndMargin;

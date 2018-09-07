@@ -103,6 +103,9 @@ protected:
         static std::optional<LayoutUnit> computedValueIfNotAuto(const Length& geometryProperty, LayoutUnit containingBlockWidth);
         static std::optional<LayoutUnit> fixedValue(const Length& geometryProperty);
 
+        static std::optional<LayoutUnit> computedMinHeight(const LayoutContext&, const Box&);
+        static std::optional<LayoutUnit> computedMaxHeight(const LayoutContext&, const Box&);
+
     private:
         static VerticalGeometry outOfFlowReplacedVerticalGeometry(const LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedHeight = { });
         static HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const LayoutContext&, const Box&, std::optional<LayoutUnit> precomputedWidth = { });

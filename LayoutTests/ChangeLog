@@ -1,3 +1,13 @@
+2018-09-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add support for min/max-height percentage values.
+        https://bugs.webkit.org/show_bug.cgi?id=189391
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/block-only/min-max-height-percentage-expected.txt: Added.
+        * fast/block/block-only/min-max-height-percentage.html: Added.
+
 2018-09-06  Megan Gardner  <megan_gardner@apple.com>
 
         Add Support for Conic Gradients

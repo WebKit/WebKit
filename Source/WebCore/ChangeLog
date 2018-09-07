@@ -1,3 +1,26 @@
+2018-09-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add support for min/max-height percentage values.
+        https://bugs.webkit.org/show_bug.cgi?id=189391
+
+        Reviewed by Antti Koivisto.
+
+        The percentage is calculated with respect to the height of the generated box's containing block.
+        If the height of the containing block is not specified explicitly (i.e., it depends on content height), and this element
+        is not absolutely positioned, the percentage value is treated as '0' (for 'min-height') or 'none' (for 'max-height').
+
+        Test: fast/block/block-only/min-max-height-percentage.html
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry const):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::computedValueIfNotAuto):
+        (WebCore::Layout::FormattingContext::Geometry::computedMaxHeight):
+        (WebCore::Layout::FormattingContext::Geometry::computedMinHeight):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin const):
+
 2018-09-06  Megan Gardner  <megan_gardner@apple.com>
 
         Add Support for Conic Gradients

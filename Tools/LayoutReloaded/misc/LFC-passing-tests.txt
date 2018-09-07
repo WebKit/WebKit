@@ -61,3 +61,4 @@ fast/block/block-only/float-min-max-width.html
 fast/block/block-only/inflow-min-max-height.html
 fast/block/block-only/absolute-position-min-max-height.html
 fast/block/block-only/float-min-max-height.html
+fast/block/block-only/min-max-height-percentage.html

@@ -86,14 +86,13 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const LayoutContext& la
     };
 
     auto verticalGeometry = compute({ });
-    // FIXME: Add support for percentage values where the containing block's height is explicitly specified.
-    if (auto maxHeight = Geometry::fixedValue(layoutBox.style().logicalMaxHeight())) {
+    if (auto maxHeight = Geometry::computedMaxHeight(layoutContext, layoutBox)) {
         auto maxVerticalGeometry = compute(maxHeight);
         if (verticalGeometry.heightAndMargin.height > maxVerticalGeometry.heightAndMargin.height)
             verticalGeometry = maxVerticalGeometry;
     }
 
-    if (auto minHeight = Geometry::fixedValue(layoutBox.style().logicalMinHeight())) {
+    if (auto minHeight = Geometry::computedMinHeight(layoutContext, layoutBox)) {
         auto minVerticalGeometry = compute(minHeight);
         if (verticalGeometry.heightAndMargin.height < minVerticalGeometry.heightAndMargin.height)
             verticalGeometry = minVerticalGeometry;

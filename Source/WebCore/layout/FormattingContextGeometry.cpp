@@ -82,6 +82,7 @@ std::optional<LayoutUnit> FormattingContext::Geometry::computedValueIfNotAuto(co
 
     if (geometryProperty.isAuto())
         return std::nullopt;
+
     return valueForLength(geometryProperty, containingBlockWidth);
 }
 
@@ -90,6 +91,58 @@ std::optional<LayoutUnit> FormattingContext::Geometry::fixedValue(const Length& 
     if (!geometryProperty.isFixed())
         return std::nullopt;
     return { geometryProperty.value() };
+}
+
+// https://www.w3.org/TR/CSS22/visudet.html#min-max-heights
+// Specifies a percentage for determining the used value. The percentage is calculated with respect to the height of the generated box's containing block.
+// If the height of the containing block is not specified explicitly (i.e., it depends on content height), and this element is not absolutely positioned,
+// the percentage value is treated as '0' (for 'min-height') or 'none' (for 'max-height').
+std::optional<LayoutUnit> FormattingContext::Geometry::computedMaxHeight(const LayoutContext& layoutContext, const Box& layoutBox)
+{
+    auto maxHeight = layoutBox.style().logicalMaxHeight();
+    if (maxHeight.isUndefined() || maxHeight.isAuto())
+        return { };
+
+    if (maxHeight.isFixed())
+        return { maxHeight.value() };
+
+    std::optional<LayoutUnit> containingBlockHeightValue;
+    auto height = layoutBox.containingBlock()->style().logicalHeight();
+    if (height.isFixed())
+        containingBlockHeightValue = { height.value() };
+    else if (layoutBox.isOutOfFlowPositioned()) {
+        // Containing block's height is already computed.
+        containingBlockHeightValue = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock()).height();
+    }
+
+    if (containingBlockHeightValue)
+        return valueForLength(maxHeight, *containingBlockHeightValue);
+
+    return { };
+}
+
+std::optional<LayoutUnit> FormattingContext::Geometry::computedMinHeight(const LayoutContext& layoutContext, const Box& layoutBox)
+{
+    auto minHeight = layoutBox.style().logicalMinHeight();
+    if (minHeight.isUndefined() || minHeight.isAuto())
+        return { };
+
+    if (minHeight.isFixed())
+        return { minHeight.value() };
+
+    std::optional<LayoutUnit> containingBlockHeightValue;
+    auto height = layoutBox.containingBlock()->style().logicalHeight();
+    if (height.isFixed())
+        containingBlockHeightValue = { height.value() };
+    else if (layoutBox.isOutOfFlowPositioned()) {
+        // Containing block's height is already computed.
+        containingBlockHeightValue = layoutContext.displayBoxForLayoutBox(*layoutBox.containingBlock()).height();
+    }
+
+    if (containingBlockHeightValue)
+        return valueForLength(minHeight, *containingBlockHeightValue);
+
+    return { 0 };
 }
 
 static LayoutUnit staticVerticalPositionForOutOfFlowPositioned(const LayoutContext& layoutContext, const Box& layoutBox)
