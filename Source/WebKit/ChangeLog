@@ -1,3 +1,17 @@
+2018-09-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Allow WebContent access to AVCSupported IOKit property in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=189429
+        <rdar://problem/43612229>
+
+        Reviewed by Eric Carlson.
+
+        Allow access to the IOKit properties AVCSupported and HEVCSupported to allow the WebContent process
+        to check for efficient video codecs.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-09-07  Frederic Wang  <fwang@igalia.com>
 
         [CSSOM View] Handle the scrollingElement in Element::scroll(Left/Top/Width/Height/To)

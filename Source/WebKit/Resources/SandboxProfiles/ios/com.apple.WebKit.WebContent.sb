@@ -324,9 +324,11 @@
 (allow iokit-get-properties
     (iokit-property-regex #"^AAPL,(DisplayPipe|OpenCLdisabled|IOGraphics_LER(|_RegTag_1|_RegTag_0|_Busy_2)|alias-policy|boot-display|display-alias|mux-switch-state|ndrv-dev|primary-display|slot-name)")
     (iokit-property "APTDevice")
+    (iokit-property "AVCSupported")
     (iokit-property-regex #"^AppleJPEG(NumCores|Supports(AppleInterchangeFormats|MissingEOI|RSTLogging))")
     (iokit-property "BaseAddressAlignmentRequirement")
     (iokit-property-regex #"^DisplayPipe(PlaneBaseAlignment|StrideRequirements)")
+    (iokit-property "HEVCSupported")
     (iokit-property-regex #"^IOGL(|ES(|Metal))BundleName")
     (iokit-property "IOGLESDefaultUseMetal")
     (iokit-property "IOClassNameOverride")
