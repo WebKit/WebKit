@@ -1,3 +1,19 @@
+2018-09-07  Simon Fraser  <simon.fraser@apple.com>
+
+        resultsjsonparser needs to handle leak failures
+        https://bugs.webkit.org/show_bug.cgi?id=189430
+
+        Reviewed by Alexey Proskuryakov.
+        
+        Teach resultsjsonparser how to handle LEAK failures, building a FailureDocumentLeak
+        with a list of the leaked URLs.
+
+        * Scripts/webkitpy/common/net/resultsjsonparser.py:
+        (JSONTestResult._failure_types_from_actual_result):
+        * Scripts/webkitpy/common/net/resultsjsonparser_unittest.py:
+        (ParsedJSONResultsTest):
+        (test_basic):
+
 2018-09-07  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] API tests should output result summary in json

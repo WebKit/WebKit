@@ -121,6 +121,11 @@ class JSONTestResult(object):
         elif actual == test_expectations.CRASH:
             # NOTE: We don't know what process crashed from the json, just that a process crashed.
             return [test_failures.FailureCrash()]
+        elif actual == test_expectations.LEAK:
+            urls = []
+            for url_dict in self._result_dict['leaks']:
+                urls.append(url_dict['document'])
+            return [test_failures.FailureDocumentLeak(urls)]
         elif actual == test_expectations.MISSING:
             return [test_failures.FailureMissingResult(), test_failures.FailureMissingImageHash(), test_failures.FailureMissingImage()]
         else:

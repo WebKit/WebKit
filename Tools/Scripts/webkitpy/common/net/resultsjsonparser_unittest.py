@@ -58,13 +58,12 @@ class ParsedJSONResultsTest(unittest.TestCase):
                 },
                 "prototype-strawberry.html": {
                     "expected": "PASS",
-                    "actual": "FAIL PASS",
-                    "leaks": {
-                        "documents": [
-                            "file:///Volumes/Data/slave/webkit/build/LayoutTests/fast/dom/prototype-strawberry.html",
-                            "about:blank"
-                        ]
-                    }
+                    "actual": "LEAK",
+                    "leaks": [
+                        {
+                            "document": "file:///Volumes/Data/slave/webkit/build/LayoutTests/fast/dom/prototype-strawberry.html"
+                        }
+                    ]
                 }
             }
         },
@@ -112,13 +111,12 @@ class ParsedJSONResultsTest(unittest.TestCase):
                 },
                 "prototype-strawberry.html": {
                     "expected": "PASS",
-                    "actual": "FAIL PASS",
-                    "leaks": {
-                        "documents": [
-                            "file:///Volumes/Data/slave/webkit/build/LayoutTests/fast/dom/prototype-strawberry.html",
-                            "about:blank"
-                        ]
-                    }
+                    "actual": "LEAK",
+                    "leaks": [
+                        {
+                            "document": "file:///Volumes/Data/slave/webkit/build/LayoutTests/fast/dom/prototype-strawberry.html"
+                        }
+                    ]
                 }
             }
         },
@@ -148,6 +146,7 @@ class ParsedJSONResultsTest(unittest.TestCase):
         expected_results = [
             test_results.TestResult("svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr.html", [test_failures.FailureImageHashMismatch()], 0),
             test_results.TestResult("fast/dom/prototype-inheritance.html", [test_failures.FailureTextMismatch(), test_failures.FailureImageHashMismatch(), test_failures.FailureAudioMismatch()], 0),
+            test_results.TestResult("fast/dom/prototype-strawberry.html", [test_failures.FailureDocumentLeak(['file:///Volumes/Data/slave/webkit/build/LayoutTests/fast/dom/prototype-strawberry.html'])], 0),
         ]
         parsed_results = ParsedJSONResults(self._example_full_results_json)
         self.assertEqual(expected_results, parsed_results.test_results())
