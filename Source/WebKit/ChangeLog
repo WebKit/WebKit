@@ -1,5 +1,32 @@
 2018-09-06  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r235209. rdar://problem/44169451
+
+    The Storage Access API prompt should show the eTLD+1s, not the full host names
+    https://bugs.webkit.org/show_bug.cgi?id=188830
+    <rdar://problem/43380645>
+    
+    Reviewed by Brent Fulgham.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::requestStorageAccess):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@235209 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-22  John Wilander  <wilander@apple.com>
+
+            The Storage Access API prompt should show the eTLD+1s, not the full host names
+            https://bugs.webkit.org/show_bug.cgi?id=188830
+            <rdar://problem/43380645>
+
+            Reviewed by Brent Fulgham.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::requestStorageAccess):
+
+2018-09-06  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r235145. rdar://problem/44169453
 
     Storage Access API: The call to ResourceLoadStatisticsMemoryStore::grantStorageAccessInternal() should send eTLD+1s, not full host names
