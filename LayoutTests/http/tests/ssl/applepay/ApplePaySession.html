@@ -36,6 +36,12 @@ function logAndShouldNotThrow(setup, test) {
 }
 
 function go() {
+    debug("Testing supportsVersion");
+    debug("");
+	shouldThrow("ApplePaySession.supportsVersion(0)");
+	shouldBeTrue("ApplePaySession.supportsVersion(1)");
+	shouldBeTrue("ApplePaySession.supportsVersion(2)");
+
     debug("Testing PaymentRequest")
     debug("");
     shouldThrow("new ApplePaySession(2, { })");

@@ -1,5 +1,65 @@
 2018-09-06  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r235251. rdar://problem/44209840
+
+    [Apple Pay] Introduce Apple Pay JS v4 on iOS 12 and macOS Mojave
+    https://bugs.webkit.org/show_bug.cgi?id=188829
+    
+    Reviewed by Tim Horton.
+    
+    Source/JavaScriptCore:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebCore:
+    
+    Test: http/tests/ssl/applepay/ApplePaySessionV4.html
+    
+    * Configurations/FeatureDefines.xcconfig:
+    * testing/MockPaymentCoordinator.cpp:
+    (WebCore::MockPaymentCoordinator::supportsVersion):
+    
+    Source/WebCore/PAL:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebKit:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+    (WebKit::WebPaymentCoordinator::supportsVersion):
+    
+    Source/WebKitLegacy/mac:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Tools:
+    
+    * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+    
+    LayoutTests:
+    
+    * http/tests/ssl/applepay/ApplePaySession-expected.txt:
+    * http/tests/ssl/applepay/ApplePaySession.html:
+    * http/tests/ssl/applepay/ApplePaySessionV3-expected.txt:
+    * http/tests/ssl/applepay/ApplePaySessionV3.html:
+    * http/tests/ssl/applepay/ApplePaySessionV4-expected.txt: Added.
+    * http/tests/ssl/applepay/ApplePaySessionV4.html: Added.
+    * platform/mac-wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@235251 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-23  Andy Estes  <aestes@apple.com>
+
+            [Apple Pay] Introduce Apple Pay JS v4 on iOS 12 and macOS Mojave
+            https://bugs.webkit.org/show_bug.cgi?id=188829
+
+            Reviewed by Tim Horton.
+
+            * Configurations/FeatureDefines.xcconfig:
+
+2018-09-06  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r235742. rdar://problem/44169344
 
     Gardening: only visit m_cachedStructureID if it's not null.
