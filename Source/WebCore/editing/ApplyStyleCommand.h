@@ -47,19 +47,19 @@ public:
     enum EAddStyledElement { AddStyledElement, DoNotAddStyledElement };
     typedef bool (*IsInlineElementToRemoveFunction)(const Element*);
 
-    static Ref<ApplyStyleCommand> create(Document& document, const EditingStyle* style, EditAction action = EditActionChangeAttributes, EPropertyLevel level = PropertyDefault)
+    static Ref<ApplyStyleCommand> create(Document& document, const EditingStyle* style, EditAction action = EditAction::ChangeAttributes, EPropertyLevel level = PropertyDefault)
     {
         return adoptRef(*new ApplyStyleCommand(document, style, action, level));
     }
-    static Ref<ApplyStyleCommand> create(Document& document, const EditingStyle* style, const Position& start, const Position& end, EditAction action = EditActionChangeAttributes, EPropertyLevel level = PropertyDefault)
+    static Ref<ApplyStyleCommand> create(Document& document, const EditingStyle* style, const Position& start, const Position& end, EditAction action = EditAction::ChangeAttributes, EPropertyLevel level = PropertyDefault)
     {
         return adoptRef(*new ApplyStyleCommand(document, style, start, end, action, level));
     }
-    static Ref<ApplyStyleCommand> create(Ref<Element>&& element, bool removeOnly = false, EditAction action = EditActionChangeAttributes)
+    static Ref<ApplyStyleCommand> create(Ref<Element>&& element, bool removeOnly = false, EditAction action = EditAction::ChangeAttributes)
     {
         return adoptRef(*new ApplyStyleCommand(WTFMove(element), removeOnly, action));
     }
-    static Ref<ApplyStyleCommand> create(Document& document, const EditingStyle* style, IsInlineElementToRemoveFunction isInlineElementToRemoveFunction, EditAction action = EditActionChangeAttributes)
+    static Ref<ApplyStyleCommand> create(Document& document, const EditingStyle* style, IsInlineElementToRemoveFunction isInlineElementToRemoveFunction, EditAction action = EditAction::ChangeAttributes)
     {
         return adoptRef(*new ApplyStyleCommand(document, style, isInlineElementToRemoveFunction, action));
     }

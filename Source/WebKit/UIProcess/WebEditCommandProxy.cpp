@@ -72,104 +72,104 @@ String WebEditCommandProxy::nameForEditAction(EditAction editAction)
 {
     // FIXME: This is identical to code in WebKit's WebEditorClient class; would be nice to share the strings instead of having two copies.
     switch (editAction) {
-    case EditActionUnspecified:
-    case EditActionInsert:
-    case EditActionInsertReplacement:
-    case EditActionInsertFromDrop:
+    case EditAction::Unspecified:
+    case EditAction::Insert:
+    case EditAction::InsertReplacement:
+    case EditAction::InsertFromDrop:
         return String();
-    case EditActionSetColor:
+    case EditAction::SetColor:
         return WEB_UI_STRING_KEY("Set Color", "Set Color (Undo action name)", "Undo action name");
-    case EditActionSetBackgroundColor:
+    case EditAction::SetBackgroundColor:
         return WEB_UI_STRING_KEY("Set Background Color", "Set Background Color (Undo action name)", "Undo action name");
-    case EditActionTurnOffKerning:
+    case EditAction::TurnOffKerning:
         return WEB_UI_STRING_KEY("Turn Off Kerning", "Turn Off Kerning (Undo action name)", "Undo action name");
-    case EditActionTightenKerning:
+    case EditAction::TightenKerning:
         return WEB_UI_STRING_KEY("Tighten Kerning", "Tighten Kerning (Undo action name)", "Undo action name");
-    case EditActionLoosenKerning:
+    case EditAction::LoosenKerning:
         return WEB_UI_STRING_KEY("Loosen Kerning", "Loosen Kerning (Undo action name)", "Undo action name");
-    case EditActionUseStandardKerning:
+    case EditAction::UseStandardKerning:
         return WEB_UI_STRING_KEY("Use Standard Kerning", "Use Standard Kerning (Undo action name)", "Undo action name");
-    case EditActionTurnOffLigatures:
+    case EditAction::TurnOffLigatures:
         return WEB_UI_STRING_KEY("Turn Off Ligatures", "Turn Off Ligatures (Undo action name)", "Undo action name");
-    case EditActionUseStandardLigatures:
+    case EditAction::UseStandardLigatures:
         return WEB_UI_STRING_KEY("Use Standard Ligatures", "Use Standard Ligatures (Undo action name)", "Undo action name");
-    case EditActionUseAllLigatures:
+    case EditAction::UseAllLigatures:
         return WEB_UI_STRING_KEY("Use All Ligatures", "Use All Ligatures (Undo action name)", "Undo action name");
-    case EditActionRaiseBaseline:
+    case EditAction::RaiseBaseline:
         return WEB_UI_STRING_KEY("Raise Baseline", "Raise Baseline (Undo action name)", "Undo action name");
-    case EditActionLowerBaseline:
+    case EditAction::LowerBaseline:
         return WEB_UI_STRING_KEY("Lower Baseline", "Lower Baseline (Undo action name)", "Undo action name");
-    case EditActionSetTraditionalCharacterShape:
+    case EditAction::SetTraditionalCharacterShape:
         return WEB_UI_STRING_KEY("Set Traditional Character Shape", "Set Traditional Character Shape (Undo action name)", "Undo action name");
-    case EditActionSetFont:
+    case EditAction::SetFont:
         return WEB_UI_STRING_KEY("Set Font", "Set Font (Undo action name)", "Undo action name");
-    case EditActionChangeAttributes:
+    case EditAction::ChangeAttributes:
         return WEB_UI_STRING_KEY("Change Attributes", "Change Attributes (Undo action name)", "Undo action name");
-    case EditActionAlignLeft:
+    case EditAction::AlignLeft:
         return WEB_UI_STRING_KEY("Align Left", "Align Left (Undo action name)", "Undo action name");
-    case EditActionAlignRight:
+    case EditAction::AlignRight:
         return WEB_UI_STRING_KEY("Align Right", "Align Right (Undo action name)", "Undo action name");
-    case EditActionCenter:
+    case EditAction::Center:
         return WEB_UI_STRING_KEY("Center", "Center (Undo action name)", "Undo action name");
-    case EditActionJustify:
+    case EditAction::Justify:
         return WEB_UI_STRING_KEY("Justify", "Justify (Undo action name)", "Undo action name");
-    case EditActionSetWritingDirection:
+    case EditAction::SetWritingDirection:
         return WEB_UI_STRING_KEY("Set Writing Direction", "Set Writing Direction (Undo action name)", "Undo action name");
-    case EditActionSubscript:
+    case EditAction::Subscript:
         return WEB_UI_STRING_KEY("Subscript", "Subscript (Undo action name)", "Undo action name");
-    case EditActionSuperscript:
+    case EditAction::Superscript:
         return WEB_UI_STRING_KEY("Superscript", "Superscript (Undo action name)", "Undo action name");
-    case EditActionUnderline:
+    case EditAction::Underline:
         return WEB_UI_STRING_KEY("Underline", "Underline (Undo action name)", "Undo action name");
-    case EditActionOutline:
+    case EditAction::Outline:
         return WEB_UI_STRING_KEY("Outline", "Outline (Undo action name)", "Undo action name");
-    case EditActionUnscript:
+    case EditAction::Unscript:
         return WEB_UI_STRING_KEY("Unscript", "Unscript (Undo action name)", "Undo action name");
-    case EditActionDeleteByDrag:
+    case EditAction::DeleteByDrag:
         return WEB_UI_STRING_KEY("Drag", "Drag (Undo action name)", "Undo action name");
-    case EditActionCut:
+    case EditAction::Cut:
         return WEB_UI_STRING_KEY("Cut", "Cut (Undo action name)", "Undo action name");
-    case EditActionBold:
+    case EditAction::Bold:
         return WEB_UI_STRING_KEY("Bold", "Bold (Undo action name)", "Undo action name");
-    case EditActionItalics:
+    case EditAction::Italics:
         return WEB_UI_STRING_KEY("Italics", "Italics (Undo action name)", "Undo action name");
-    case EditActionDelete:
+    case EditAction::Delete:
         return WEB_UI_STRING_KEY("Delete", "Delete (Undo action name)", "Undo action name");
-    case EditActionDictation:
+    case EditAction::Dictation:
         return WEB_UI_STRING_KEY("Dictation", "Dictation (Undo action name)", "Undo action name");
-    case EditActionPaste:
+    case EditAction::Paste:
         return WEB_UI_STRING_KEY("Paste", "Paste (Undo action name)", "Undo action name");
-    case EditActionPasteFont:
+    case EditAction::PasteFont:
         return WEB_UI_STRING_KEY("Paste Font", "Paste Font (Undo action name)", "Undo action name");
-    case EditActionPasteRuler:
+    case EditAction::PasteRuler:
         return WEB_UI_STRING_KEY("Paste Ruler", "Paste Ruler (Undo action name)", "Undo action name");
-    case EditActionTypingDeleteSelection:
-    case EditActionTypingDeleteBackward:
-    case EditActionTypingDeleteForward:
-    case EditActionTypingDeleteWordBackward:
-    case EditActionTypingDeleteWordForward:
-    case EditActionTypingDeleteLineBackward:
-    case EditActionTypingDeleteLineForward:
-    case EditActionTypingDeletePendingComposition:
-    case EditActionTypingDeleteFinalComposition:
-    case EditActionTypingInsertText:
-    case EditActionTypingInsertLineBreak:
-    case EditActionTypingInsertParagraph:
-    case EditActionTypingInsertPendingComposition:
-    case EditActionTypingInsertFinalComposition:
+    case EditAction::TypingDeleteSelection:
+    case EditAction::TypingDeleteBackward:
+    case EditAction::TypingDeleteForward:
+    case EditAction::TypingDeleteWordBackward:
+    case EditAction::TypingDeleteWordForward:
+    case EditAction::TypingDeleteLineBackward:
+    case EditAction::TypingDeleteLineForward:
+    case EditAction::TypingDeletePendingComposition:
+    case EditAction::TypingDeleteFinalComposition:
+    case EditAction::TypingInsertText:
+    case EditAction::TypingInsertLineBreak:
+    case EditAction::TypingInsertParagraph:
+    case EditAction::TypingInsertPendingComposition:
+    case EditAction::TypingInsertFinalComposition:
         return WEB_UI_STRING_KEY("Typing", "Typing (Undo action name)", "Undo action name");
-    case EditActionCreateLink:
+    case EditAction::CreateLink:
         return WEB_UI_STRING_KEY("Create Link", "Create Link (Undo action name)", "Undo action name");
-    case EditActionUnlink:
+    case EditAction::Unlink:
         return WEB_UI_STRING_KEY("Unlink", "Unlink (Undo action name)", "Undo action name");
-    case EditActionInsertUnorderedList:
-    case EditActionInsertOrderedList:
+    case EditAction::InsertUnorderedList:
+    case EditAction::InsertOrderedList:
         return WEB_UI_STRING_KEY("Insert List", "Insert List (Undo action name)", "Undo action name");
-    case EditActionFormatBlock:
+    case EditAction::FormatBlock:
         return WEB_UI_STRING_KEY("Formatting", "Format Block (Undo action name)", "Undo action name");
-    case EditActionIndent:
+    case EditAction::Indent:
         return WEB_UI_STRING_KEY("Indent", "Indent (Undo action name)", "Undo action name");
-    case EditActionOutdent:
+    case EditAction::Outdent:
         return WEB_UI_STRING_KEY("Outdent", "Outdent (Undo action name)", "Undo action name");
     }
     return String();

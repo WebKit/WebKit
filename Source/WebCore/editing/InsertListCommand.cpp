@@ -192,7 +192,7 @@ void InsertListCommand::doApply()
 
 EditAction InsertListCommand::editingAction() const
 {
-    return m_type == OrderedList ? EditActionInsertOrderedList : EditActionInsertUnorderedList;
+    return m_type == OrderedList ? EditAction::InsertOrderedList : EditAction::InsertUnorderedList;
 }
 
 void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HTMLQualifiedName& listTag, Range* currentSelection)

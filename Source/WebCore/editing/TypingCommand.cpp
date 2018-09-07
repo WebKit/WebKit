@@ -83,58 +83,58 @@ static inline EditAction editActionForTypingCommand(TypingCommand::ETypingComman
 {
     if (compositionType == TypingCommand::TextCompositionPending) {
         if (command == TypingCommand::InsertText)
-            return EditActionTypingInsertPendingComposition;
+            return EditAction::TypingInsertPendingComposition;
         if (command == TypingCommand::DeleteSelection)
-            return EditActionTypingDeletePendingComposition;
+            return EditAction::TypingDeletePendingComposition;
         ASSERT_NOT_REACHED();
     }
 
     if (compositionType == TypingCommand::TextCompositionFinal) {
         if (command == TypingCommand::InsertText)
-            return EditActionTypingInsertFinalComposition;
+            return EditAction::TypingInsertFinalComposition;
         if (command == TypingCommand::DeleteSelection)
-            return EditActionTypingDeleteFinalComposition;
+            return EditAction::TypingDeleteFinalComposition;
         ASSERT_NOT_REACHED();
     }
 
     switch (command) {
     case TypingCommand::DeleteSelection:
-        return EditActionTypingDeleteSelection;
+        return EditAction::TypingDeleteSelection;
     case TypingCommand::DeleteKey: {
         if (granularity == WordGranularity)
-            return EditActionTypingDeleteWordBackward;
+            return EditAction::TypingDeleteWordBackward;
         if (granularity == LineBoundary)
-            return EditActionTypingDeleteLineBackward;
-        return EditActionTypingDeleteBackward;
+            return EditAction::TypingDeleteLineBackward;
+        return EditAction::TypingDeleteBackward;
     }
     case TypingCommand::ForwardDeleteKey:
         if (granularity == WordGranularity)
-            return EditActionTypingDeleteWordForward;
+            return EditAction::TypingDeleteWordForward;
         if (granularity == LineBoundary)
-            return EditActionTypingDeleteLineForward;
-        return EditActionTypingDeleteForward;
+            return EditAction::TypingDeleteLineForward;
+        return EditAction::TypingDeleteForward;
     case TypingCommand::InsertText:
-        return isAutocompletion ? EditActionInsertReplacement : EditActionTypingInsertText;
+        return isAutocompletion ? EditAction::InsertReplacement : EditAction::TypingInsertText;
     case TypingCommand::InsertLineBreak:
-        return EditActionTypingInsertLineBreak;
+        return EditAction::TypingInsertLineBreak;
     case TypingCommand::InsertParagraphSeparator:
     case TypingCommand::InsertParagraphSeparatorInQuotedContent:
-        return EditActionTypingInsertParagraph;
+        return EditAction::TypingInsertParagraph;
     default:
-        return EditActionUnspecified;
+        return EditAction::Unspecified;
     }
 }
 
 static inline bool editActionIsDeleteByTyping(EditAction action)
 {
     switch (action) {
-    case EditActionTypingDeleteSelection:
-    case EditActionTypingDeleteBackward:
-    case EditActionTypingDeleteWordBackward:
-    case EditActionTypingDeleteLineBackward:
-    case EditActionTypingDeleteForward:
-    case EditActionTypingDeleteWordForward:
-    case EditActionTypingDeleteLineForward:
+    case EditAction::TypingDeleteSelection:
+    case EditAction::TypingDeleteBackward:
+    case EditAction::TypingDeleteWordBackward:
+    case EditAction::TypingDeleteLineBackward:
+    case EditAction::TypingDeleteForward:
+    case EditAction::TypingDeleteWordForward:
+    case EditAction::TypingDeleteLineForward:
         return true;
     default:
         return false;
@@ -401,17 +401,17 @@ String TypingCommand::inputEventTypeName() const
 
 bool TypingCommand::isBeforeInputEventCancelable() const
 {
-    return m_currentTypingEditAction != EditActionTypingInsertPendingComposition && m_currentTypingEditAction != EditActionTypingDeletePendingComposition;
+    return m_currentTypingEditAction != EditAction::TypingInsertPendingComposition && m_currentTypingEditAction != EditAction::TypingDeletePendingComposition;
 }
 
 String TypingCommand::inputEventData() const
 {
     switch (m_currentTypingEditAction) {
-    case EditActionTypingInsertText:
-    case EditActionTypingInsertPendingComposition:
-    case EditActionTypingInsertFinalComposition:
+    case EditAction::TypingInsertText:
+    case EditAction::TypingInsertPendingComposition:
+    case EditAction::TypingInsertFinalComposition:
         return m_currentTextToInsert;
-    case EditActionInsertReplacement:
+    case EditAction::InsertReplacement:
         return isEditingTextAreaOrTextInput() ? m_currentTextToInsert : String();
     default:
         return CompositeEditCommand::inputEventData();
@@ -420,7 +420,7 @@ String TypingCommand::inputEventData() const
 
 RefPtr<DataTransfer> TypingCommand::inputEventDataTransfer() const
 {
-    if (m_currentTypingEditAction != EditActionInsertReplacement || isEditingTextAreaOrTextInput())
+    if (m_currentTypingEditAction != EditAction::InsertReplacement || isEditingTextAreaOrTextInput())
         return nullptr;
 
     StringBuilder htmlText;
@@ -548,7 +548,7 @@ void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool select
         return;
 
     auto command = InsertTextCommand::create(document(), text, selectInsertedText,
-        m_compositionType == TextCompositionNone ? InsertTextCommand::RebalanceLeadingAndTrailingWhitespaces : InsertTextCommand::RebalanceAllWhitespaces, EditActionTypingInsertText);
+        m_compositionType == TextCompositionNone ? InsertTextCommand::RebalanceLeadingAndTrailingWhitespaces : InsertTextCommand::RebalanceAllWhitespaces, EditAction::TypingInsertText);
 
     applyCommandToComposite(WTFMove(command), endingSelection());
 
@@ -583,7 +583,7 @@ void TypingCommand::insertParagraphSeparator()
     if (!willAddTypingToOpenCommand(InsertParagraphSeparator, ParagraphGranularity))
         return;
 
-    applyCommandToComposite(InsertParagraphSeparatorCommand::create(document(), false, false, EditActionTypingInsertParagraph));
+    applyCommandToComposite(InsertParagraphSeparatorCommand::create(document(), false, false, EditAction::TypingInsertParagraph));
     typingAddedToOpenCommand(InsertParagraphSeparator);
 }
 

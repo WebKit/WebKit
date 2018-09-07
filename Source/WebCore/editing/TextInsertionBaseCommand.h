@@ -38,7 +38,7 @@ public:
     virtual ~TextInsertionBaseCommand() { };
 
 protected:
-    explicit TextInsertionBaseCommand(Document&, EditAction = EditActionUnspecified);
+    explicit TextInsertionBaseCommand(Document&, EditAction = EditAction::Unspecified);
     static void applyTextInsertionCommand(Frame*, TextInsertionBaseCommand&, const VisibleSelection& selectionForInsertion, const VisibleSelection& endingSelection);
 };
 

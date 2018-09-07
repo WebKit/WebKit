@@ -1,3 +1,13 @@
+2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor WebCore::EditAction to be an 8-bit enum class
+        https://bugs.webkit.org/show_bug.cgi?id=189383
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/WebEditorClient.cpp:
+        (undoNameForEditAction):
+
 2018-09-04  Frederic Wang  <fwang@igalia.com>
 
         Add basic support for ScrollIntoViewOptions

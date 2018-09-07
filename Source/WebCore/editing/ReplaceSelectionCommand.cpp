@@ -1412,7 +1412,7 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
     else
         return;
 
-    if (AXObjectCache::accessibilityEnabled() && editingAction() == EditActionPaste)
+    if (AXObjectCache::accessibilityEnabled() && editingAction() == EditAction::Paste)
         m_visibleSelectionForInsertedText = VisibleSelection(start, end);
 
     if (m_selectReplacement)
@@ -1584,7 +1584,7 @@ bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& f
 
     VisibleSelection selectionAfterReplace(m_selectReplacement ? start : end, end);
 
-    if (AXObjectCache::accessibilityEnabled() && editingAction() == EditActionPaste)
+    if (AXObjectCache::accessibilityEnabled() && editingAction() == EditAction::Paste)
         m_visibleSelectionForInsertedText = VisibleSelection(start, end);
 
     setEndingSelection(selectionAfterReplace);

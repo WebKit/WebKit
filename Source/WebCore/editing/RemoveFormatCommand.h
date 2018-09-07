@@ -40,7 +40,7 @@ private:
     explicit RemoveFormatCommand(Document&);
 
     void doApply() override;
-    EditAction editingAction() const override { return EditActionUnspecified; }
+    EditAction editingAction() const override { return EditAction::Unspecified; }
 };
 
 } // namespace WebCore

@@ -1119,14 +1119,14 @@ void WebPage::changeFontAttributes(WebCore::FontAttributeChanges&& changes)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
     if (frame.selection().selection().isContentEditable())
-        frame.editor().applyStyleToSelection(changes.createEditingStyle(), EditActionChangeAttributes, Editor::ColorFilterMode::InvertColor);
+        frame.editor().applyStyleToSelection(changes.createEditingStyle(), EditAction::ChangeAttributes, Editor::ColorFilterMode::InvertColor);
 }
 
 void WebPage::changeFont(WebCore::FontChanges&& changes)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
     if (frame.selection().selection().isContentEditable())
-        frame.editor().applyStyleToSelection(changes.createEditingStyle(), EditActionSetFont, Editor::ColorFilterMode::InvertColor);
+        frame.editor().applyStyleToSelection(changes.createEditingStyle(), EditAction::SetFont, Editor::ColorFilterMode::InvertColor);
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)

@@ -1,3 +1,21 @@
+2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor WebCore::EditAction to be an 8-bit enum class
+        https://bugs.webkit.org/show_bug.cgi?id=189383
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (undoNameForEditAction):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView pasteFont:]):
+        (-[WebHTMLView changeFont:]):
+        (-[WebHTMLView changeAttributes:]):
+        (-[WebHTMLView _undoActionFromColorPanelWithSelector:]):
+        (-[WebHTMLView changeColor:]):
+        * WebView/WebView.mm:
+        (-[WebView setTypingStyle:]):
+
 2018-09-06  Frederic Wang  <fwang@igalia.com>
 
         Group options of scrollRectToVisible into a struct

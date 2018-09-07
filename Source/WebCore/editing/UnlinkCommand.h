@@ -40,7 +40,7 @@ private:
     explicit UnlinkCommand(Document&);
 
     void doApply() override;
-    EditAction editingAction() const override { return EditActionUnlink; }
+    EditAction editingAction() const override { return EditAction::Unlink; }
 };
 
 } // namespace WebCore

@@ -41,7 +41,7 @@
 namespace WebCore {
 
 ReplaceRangeWithTextCommand::ReplaceRangeWithTextCommand(RefPtr<Range> rangeToBeReplaced, const String& text)
-    : CompositeEditCommand(rangeToBeReplaced->startContainer().document(), EditActionInsertReplacement)
+    : CompositeEditCommand(rangeToBeReplaced->startContainer().document(), EditAction::InsertReplacement)
     , m_rangeToBeReplaced(rangeToBeReplaced)
     , m_text(text)
 {
@@ -68,7 +68,7 @@ void ReplaceRangeWithTextCommand::doApply()
         return;
 
     applyCommandToComposite(SetSelectionCommand::create(selection, FrameSelection::defaultSetSelectionOptions()));
-    applyCommandToComposite(ReplaceSelectionCommand::create(document(), WTFMove(m_textFragment), ReplaceSelectionCommand::MatchStyle, EditActionPaste));
+    applyCommandToComposite(ReplaceSelectionCommand::create(document(), WTFMove(m_textFragment), ReplaceSelectionCommand::MatchStyle, EditAction::Paste));
 }
 
 String ReplaceRangeWithTextCommand::inputEventData() const

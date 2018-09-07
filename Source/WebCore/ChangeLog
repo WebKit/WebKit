@@ -1,3 +1,115 @@
+2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor WebCore::EditAction to be an 8-bit enum class
+        https://bugs.webkit.org/show_bug.cgi?id=189383
+
+        Reviewed by Dan Bernstein.
+
+        Currently, EditAction.h defines an EditAction as an enum. This patch changes EditAction to instead be an 8-bit-
+        wide enum class, and renames all EditAction values from EditAction(*) to EditAction::(*).
+
+        No change in behavior.
+
+        * editing/ApplyStyleCommand.h:
+        (WebCore::ApplyStyleCommand::create):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::apply):
+        (WebCore::deleteSelectionEditingActionForEditingAction):
+        * editing/CompositeEditCommand.h:
+        (WebCore::EditCommandComposition::wasCreateLinkCommand const):
+        * editing/CreateLinkCommand.h:
+        * editing/DeleteFromTextNodeCommand.h:
+        (WebCore::DeleteFromTextNodeCommand::create):
+        * editing/DeleteSelectionCommand.h:
+        (WebCore::DeleteSelectionCommand::create):
+        * editing/DictationCommand.cpp:
+        (WebCore::DictationCommand::insertTextRunWithoutNewlines):
+        (WebCore::DictationCommand::insertParagraphSeparator):
+        * editing/EditAction.h:
+        (): Deleted.
+        * editing/EditCommand.cpp:
+        (WebCore::inputTypeNameForEditingAction):
+        * editing/EditCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::inputEventDataForEditingStyleAndAction):
+        (WebCore::ClearTextCommand::editingAction const):
+        (WebCore::Editor::handleTextEvent):
+        (WebCore::Editor::replaceSelectionWithFragment):
+        (WebCore::Editor::performCutOrCopy):
+        (WebCore::Editor::setBaseWritingDirection):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::changeBackToReplacedString):
+        (WebCore::Editor::transpose):
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::applyCommandToFrame):
+        (WebCore::executeInsertFragment):
+        (WebCore::executeBackColor):
+        (WebCore::executeFontName):
+        (WebCore::executeFontSize):
+        (WebCore::executeFontSizeDelta):
+        (WebCore::executeForeColor):
+        (WebCore::executeJustifyCenter):
+        (WebCore::executeJustifyFull):
+        (WebCore::executeJustifyLeft):
+        (WebCore::executeJustifyRight):
+        (WebCore::executeMakeTextWritingDirectionLeftToRight):
+        (WebCore::executeMakeTextWritingDirectionNatural):
+        (WebCore::executeMakeTextWritingDirectionRightToLeft):
+        (WebCore::executeStrikethrough):
+        (WebCore::executeSubscript):
+        (WebCore::executeSuperscript):
+        (WebCore::executeToggleBold):
+        (WebCore::executeToggleItalic):
+        (WebCore::executeUnderline):
+        (WebCore::executeUnscript):
+        * editing/FormatBlockCommand.h:
+        * editing/IndentOutdentCommand.h:
+        * editing/InsertIntoTextNodeCommand.h:
+        (WebCore::InsertIntoTextNodeCommand::create):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::editingAction const):
+        * editing/InsertNodeBeforeCommand.h:
+        (WebCore::InsertNodeBeforeCommand::create):
+        * editing/InsertParagraphSeparatorCommand.h:
+        (WebCore::InsertParagraphSeparatorCommand::create):
+        * editing/InsertTextCommand.h:
+        (WebCore::InsertTextCommand::create):
+        (WebCore::InsertTextCommand::createWithMarkerSupplier):
+        * editing/MoveSelectionCommand.cpp:
+        (WebCore::MoveSelectionCommand::doApply):
+        (WebCore::MoveSelectionCommand::editingAction const):
+        * editing/RemoveFormatCommand.h:
+        * editing/RemoveNodeCommand.h:
+        (WebCore::RemoveNodeCommand::create):
+        * editing/ReplaceRangeWithTextCommand.cpp:
+        (WebCore::ReplaceRangeWithTextCommand::ReplaceRangeWithTextCommand):
+        (WebCore::ReplaceRangeWithTextCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::completeHTMLReplacement):
+        (WebCore::ReplaceSelectionCommand::performTrivialReplace):
+        * editing/ReplaceSelectionCommand.h:
+        (WebCore::ReplaceSelectionCommand::create):
+        * editing/SpellingCorrectionCommand.cpp:
+        (WebCore::SpellingCorrectionCommand::SpellingCorrectionCommand):
+        (WebCore::SpellingCorrectionCommand::doApply):
+        * editing/TextInsertionBaseCommand.h:
+        * editing/TypingCommand.cpp:
+        (WebCore::editActionForTypingCommand):
+        (WebCore::editActionIsDeleteByTyping):
+        (WebCore::TypingCommand::isBeforeInputEventCancelable const):
+        (WebCore::TypingCommand::inputEventData const):
+        (WebCore::TypingCommand::inputEventDataTransfer const):
+        (WebCore::TypingCommand::insertTextRunWithoutNewlines):
+        (WebCore::TypingCommand::insertParagraphSeparator):
+        * editing/UnlinkCommand.h:
+        * editing/ios/DictationCommandIOS.cpp:
+        (WebCore::DictationCommandIOS::DictationCommandIOS):
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::removeUnchangeableStyles):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+
 2018-09-06  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the build for non-Cocoa platforms after r235772.

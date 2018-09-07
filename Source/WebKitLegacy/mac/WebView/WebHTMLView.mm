@@ -5297,7 +5297,7 @@ static RefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 
     // Read RTF with font attributes from the pasteboard.
     // Maybe later we should add a pasteboard type that contains CSS text for "native" copy and paste font.
-    [self _applyStyleToSelection:[self _styleFromFontAttributes:[self _fontAttributesFromFontPasteboard]] withUndoAction:EditActionPasteFont];
+    [self _applyStyleToSelection:[self _styleFromFontAttributes:[self _fontAttributesFromFontPasteboard]] withUndoAction:EditAction::PasteFont];
 }
 
 - (void)pasteAsRichText:(id)sender
@@ -5313,14 +5313,14 @@ static RefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 {
     COMMAND_PROLOGUE
 
-    [self _applyEditingStyleToSelection:computedFontChanges(NSFontManager.sharedFontManager).createEditingStyle() withUndoAction:EditActionSetFont];
+    [self _applyEditingStyleToSelection:computedFontChanges(NSFontManager.sharedFontManager).createEditingStyle() withUndoAction:EditAction::SetFont];
 }
 
 - (void)changeAttributes:(id)sender
 {
     COMMAND_PROLOGUE
 
-    [self _applyEditingStyleToSelection:computedFontAttributeChanges(NSFontManager.sharedFontManager, sender).createEditingStyle() withUndoAction:EditActionChangeAttributes];
+    [self _applyEditingStyleToSelection:computedFontAttributeChanges(NSFontManager.sharedFontManager, sender).createEditingStyle() withUndoAction:EditAction::ChangeAttributes];
 }
 
 - (DOMCSSStyleDeclaration *)_styleFromColorPanelWithSelector:(SEL)selector
@@ -5336,8 +5336,8 @@ static RefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 - (EditAction)_undoActionFromColorPanelWithSelector:(SEL)selector
 {
     if (selector == @selector(setBackgroundColor:))
-        return EditActionSetBackgroundColor;    
-    return EditActionSetColor;
+        return EditAction::SetBackgroundColor;
+    return EditAction::SetColor;
 }
 
 - (void)_changeCSSColorUsingSelector:(SEL)selector inRange:(DOMRange *)range
@@ -5381,8 +5381,7 @@ static RefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     // AppKit will have to be revised to allow this to work with anything that isn't an 
     // NSTextView. However, this might not be required for Tiger, since the background-color 
     // changing box in the font panel doesn't work in Mail (3674481), though it does in TextEdit.
-    [self _applyStyleToSelection:[self _styleFromColorPanelWithSelector:@selector(setColor:)] 
-                  withUndoAction:EditActionSetColor];
+    [self _applyStyleToSelection:[self _styleFromColorPanelWithSelector:@selector(setColor:)] withUndoAction:EditAction::SetColor];
 }
 
 #endif // PLATFORM(MAC)

@@ -321,30 +321,30 @@ void CompositeEditCommand::apply()
 {
     if (!endingSelection().isContentRichlyEditable()) {
         switch (editingAction()) {
-        case EditActionTypingDeleteSelection:
-        case EditActionTypingDeleteBackward:
-        case EditActionTypingDeleteForward:
-        case EditActionTypingDeleteWordBackward:
-        case EditActionTypingDeleteWordForward:
-        case EditActionTypingDeleteLineBackward:
-        case EditActionTypingDeleteLineForward:
-        case EditActionTypingDeletePendingComposition:
-        case EditActionTypingDeleteFinalComposition:
-        case EditActionTypingInsertText:
-        case EditActionTypingInsertLineBreak:
-        case EditActionTypingInsertParagraph:
-        case EditActionTypingInsertPendingComposition:
-        case EditActionTypingInsertFinalComposition:
-        case EditActionPaste:
-        case EditActionDeleteByDrag:
-        case EditActionSetWritingDirection:
-        case EditActionCut:
-        case EditActionUnspecified:
-        case EditActionInsert:
-        case EditActionInsertReplacement:
-        case EditActionInsertFromDrop:
-        case EditActionDelete:
-        case EditActionDictation:
+        case EditAction::TypingDeleteSelection:
+        case EditAction::TypingDeleteBackward:
+        case EditAction::TypingDeleteForward:
+        case EditAction::TypingDeleteWordBackward:
+        case EditAction::TypingDeleteWordForward:
+        case EditAction::TypingDeleteLineBackward:
+        case EditAction::TypingDeleteLineForward:
+        case EditAction::TypingDeletePendingComposition:
+        case EditAction::TypingDeleteFinalComposition:
+        case EditAction::TypingInsertText:
+        case EditAction::TypingInsertLineBreak:
+        case EditAction::TypingInsertParagraph:
+        case EditAction::TypingInsertPendingComposition:
+        case EditAction::TypingInsertFinalComposition:
+        case EditAction::Paste:
+        case EditAction::DeleteByDrag:
+        case EditAction::SetWritingDirection:
+        case EditAction::Cut:
+        case EditAction::Unspecified:
+        case EditAction::Insert:
+        case EditAction::InsertReplacement:
+        case EditAction::InsertFromDrop:
+        case EditAction::Delete:
+        case EditAction::Dictation:
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -819,10 +819,10 @@ void CompositeEditCommand::insertNodeAtTabSpanPosition(Ref<Node>&& node, const P
 static EditAction deleteSelectionEditingActionForEditingAction(EditAction editingAction)
 {
     switch (editingAction) {
-    case EditActionCut:
-        return EditActionCut;
+    case EditAction::Cut:
+        return EditAction::Cut;
     default:
-        return EditActionDelete;
+        return EditAction::Delete;
     }
 }
 

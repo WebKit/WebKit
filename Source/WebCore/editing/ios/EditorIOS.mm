@@ -163,8 +163,8 @@ void Editor::removeUnchangeableStyles()
     defaultStyle->removeProperty(CSSPropertyTextDecoration);
     defaultStyle->removeProperty(CSSPropertyWebkitTextDecorationsInEffect); // implements underline
 
-    // FIXME add EditActionMatchStlye <rdar://problem/9156507> Undo rich text's paste & match style should say "Undo Match Style"
-    applyStyleToSelection(defaultStyle.get(), EditActionChangeAttributes);
+    // FIXME add EditAction::MatchStlye <rdar://problem/9156507> Undo rich text's paste & match style should say "Undo Match Style"
+    applyStyleToSelection(defaultStyle.get(), EditAction::ChangeAttributes);
 }
 
 static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& cachedImage)

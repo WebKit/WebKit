@@ -569,7 +569,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
         if (!innerFrame->editor().shouldApplyStyle(style.ptr(), innerRange.get()))
             return false;
         m_client.willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
-        innerFrame->editor().applyStyle(style.ptr(), EditActionSetColor);
+        innerFrame->editor().applyStyle(style.ptr(), EditAction::SetColor);
         return true;
     }
 
@@ -622,7 +622,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
                     options.add(ReplaceSelectionCommand::SmartReplace);
                 if (chosePlainText)
                     options.add(ReplaceSelectionCommand::MatchStyle);
-                ReplaceSelectionCommand::create(*m_documentUnderMouse, fragment.releaseNonNull(), options, EditActionInsertFromDrop)->apply();
+                ReplaceSelectionCommand::create(*m_documentUnderMouse, fragment.releaseNonNull(), options, EditAction::InsertFromDrop)->apply();
             }
         }
     } else {
@@ -639,7 +639,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
             return true;
 
         if (setSelectionToDragCaret(innerFrame.get(), dragCaret, range, point))
-            ReplaceSelectionCommand::create(*m_documentUnderMouse, fragment.get(), { ReplaceSelectionCommand::SelectReplacement, ReplaceSelectionCommand::MatchStyle, ReplaceSelectionCommand::PreventNesting }, EditActionInsertFromDrop)->apply();
+            ReplaceSelectionCommand::create(*m_documentUnderMouse, fragment.get(), { ReplaceSelectionCommand::SelectReplacement, ReplaceSelectionCommand::MatchStyle, ReplaceSelectionCommand::PreventNesting }, EditAction::InsertFromDrop)->apply();
     }
 
     if (rootEditableElement) {
