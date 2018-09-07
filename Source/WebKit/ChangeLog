@@ -1,5 +1,68 @@
 2018-09-06  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r235569. rdar://problem/44169479
+
+    Storage Access API: Maintain access through same-site navigations
+    https://bugs.webkit.org/show_bug.cgi?id=188564
+    <rdar://problem/43445160>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebCore:
+    
+    Tests: http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html
+           http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html
+    
+    * dom/Document.h:
+        Removed unused member variable m_hasFrameSpecificStorageAccess.
+    * loader/DocumentLoader.cpp:
+    (WebCore::DocumentLoader::willSendRequest):
+    * loader/FrameLoaderClient.h:
+    
+    Source/WebKit:
+    
+    * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+    (WebKit::WebFrameLoaderClient::dispatchWillChangeDocument):
+        Now takes the current URL and the new URL as parameters
+        and only clears out storage access if the navigation is
+        cross-site, i.e. with differing eTLD+1s.
+    * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+    
+    LayoutTests:
+    
+    * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame-expected.txt:
+    * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame.html:
+        Added both a same-site and a cross-site navigation to the sub frame to test maintained and cleared access.
+    * http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access-expected.txt: Copied from LayoutTests/http/tests/storageAccess/request-and-grant-access-then-navigate-should-not-have-access-expected.txt.
+    * http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html: Copied from LayoutTests/http/tests/storageAccess/request-and-grant-access-then-navigate-should-not-have-access.html.
+    * http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access-expected.txt: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-access-then-navigate-should-not-have-access-expected.txt.
+    * http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html: Renamed from LayoutTests/http/tests/storageAccess/request-and-grant-access-then-navigate-should-not-have-access.html.
+    * http/tests/storageAccess/resources/get-cookies.php:
+        Support for the new test scenarios.
+    * http/tests/storageAccess/resources/self-navigating-frame-after-granted-access.html:
+        Support for the new test scenarios.
+    * platform/mac-wk2/TestExpectations:
+        Marked the new and the renamed tests as [ Pass ].
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@235569 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-31  John Wilander  <wilander@apple.com>
+
+            Storage Access API: Maintain access through same-site navigations
+            https://bugs.webkit.org/show_bug.cgi?id=188564
+            <rdar://problem/43445160>
+
+            Reviewed by Alex Christensen.
+
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::dispatchWillChangeDocument):
+                Now takes the current URL and the new URL as parameters
+                and only clears out storage access if the navigation is
+                cross-site, i.e. with differing eTLD+1s.
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+2018-09-06  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r235251. rdar://problem/44209840
 
     [Apple Pay] Introduce Apple Pay JS v4 on iOS 12 and macOS Mojave

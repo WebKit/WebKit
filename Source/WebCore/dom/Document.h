@@ -1952,7 +1952,6 @@ private:
 
     static bool hasEverCreatedAnAXObjectCache;
 
-    bool m_hasFrameSpecificStorageAccess { false };
     bool m_grantStorageAccessOverride { false };
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

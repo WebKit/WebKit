@@ -600,7 +600,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     FrameLoader::addSameSiteInfoToRequestIfNeeded(newRequest, m_frame->document());
 
     if (!didReceiveRedirectResponse)
-        frameLoader()->client().dispatchWillChangeDocument();
+        frameLoader()->client().dispatchWillChangeDocument(m_frame->document()->url(), newRequest.url());
 
     // If we're fielding a redirect in response to a POST, force a load from origin, since
     // this is a common site technique to return to a page viewing some data that the POST
