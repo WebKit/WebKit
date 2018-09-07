@@ -1,5 +1,36 @@
 2018-09-06  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r235341. rdar://problem/44209834
+
+    [Apple Pay] Add a test for rendering Apple Pay buttons
+    https://bugs.webkit.org/show_bug.cgi?id=188947
+    
+    Reviewed by Sam Weinig.
+    
+    * http/tests/ssl/applepay/ApplePayButton.html: Added.
+    * platform/mac-sierra/http/tests/ssl/applepay/ApplePayButton-expected.png: Added.
+    * platform/mac-sierra/http/tests/ssl/applepay/ApplePayButton-expected.txt: Added.
+    * platform/mac/http/tests/ssl/applepay/ApplePayButton-expected.png: Added.
+    * platform/mac/http/tests/ssl/applepay/ApplePayButton-expected.txt: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@235341 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-08-26  Andy Estes  <aestes@apple.com>
+
+            [Apple Pay] Add a test for rendering Apple Pay buttons
+            https://bugs.webkit.org/show_bug.cgi?id=188947
+
+            Reviewed by Sam Weinig.
+
+            * http/tests/ssl/applepay/ApplePayButton.html: Added.
+            * platform/mac-sierra/http/tests/ssl/applepay/ApplePayButton-expected.png: Added.
+            * platform/mac-sierra/http/tests/ssl/applepay/ApplePayButton-expected.txt: Added.
+            * platform/mac/http/tests/ssl/applepay/ApplePayButton-expected.png: Added.
+            * platform/mac/http/tests/ssl/applepay/ApplePayButton-expected.txt: Added.
+
+2018-09-06  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r235569. rdar://problem/44169479
 
     Storage Access API: Maintain access through same-site navigations
