@@ -127,6 +127,18 @@ void Gradient::paint(CGContextRef platformContext)
 
             if (needScaling)
                 CGContextRestoreGState(platformContext);
+        },
+        [&] (const ConicData& data) {
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(WATCHOS)
+            CGContextSaveGState(platformContext);
+            CGContextTranslateCTM(platformContext, data.point0.x(), data.point0.y());
+            CGContextRotateCTM(platformContext, (CGFloat)-M_PI_2);
+            CGContextTranslateCTM(platformContext, -data.point0.x(), -data.point0.y());
+            CGContextDrawConicGradient(platformContext, platformGradient(), data.point0, data.angle);
+            CGContextRestoreGState(platformContext);
+#else
+            UNUSED_PARAM(data);
+#endif
         }
     );
 }

@@ -45,7 +45,9 @@ static inline Ref<Gradient> createGradient(CSSGradientValue& value, RenderElemen
 {
     if (is<CSSLinearGradientValue>(value))
         return downcast<CSSLinearGradientValue>(value).createGradient(renderer, size);
-    return downcast<CSSRadialGradientValue>(value).createGradient(renderer, size);
+    if (is<CSSRadialGradientValue>(value))
+        return downcast<CSSRadialGradientValue>(value).createGradient(renderer, size);
+    return downcast<CSSConicGradientValue>(value).createGradient(renderer, size);
 }
 
 RefPtr<Image> CSSGradientValue::image(RenderElement& renderer, const FloatSize& size)
@@ -125,9 +127,12 @@ public:
         : m_data(data)
     {
     }
-
-    FloatPoint startPoint() const { return m_data.point0; }
-    FloatPoint endPoint() const { return m_data.point1; }
+    
+    float gradientLength() const
+    {
+        auto gradientSize = m_data.point0 - m_data.point1;
+        return gradientSize.diagonalLength();
+    }
     float maxExtent(float, float) const { return 1; }
 
     void normalizeStopsAndEndpointsOutsideRange(Vector<GradientStop>& stops)
@@ -162,8 +167,7 @@ public:
     {
     }
 
-    FloatPoint startPoint() const { return m_data.point0; }
-    FloatPoint endPoint() const { return m_data.point0 + FloatSize { m_data.endRadius, 0 }; }
+    float gradientLength() const { return m_data.endRadius; }
 
     // Radial gradients may need to extend further than the endpoints, because they have
     // to repeat out to the corners of the box.
@@ -224,8 +228,78 @@ private:
     Gradient::RadialData& m_data;
 };
 
+class ConicGradientAdapter {
+public:
+    explicit ConicGradientAdapter() { }
+    float gradientLength() const { return 1; }
+    float maxExtent(float, float) const { return 1; }
+
+    void normalizeStopsAndEndpointsOutsideRange(Vector<GradientStop>& stops)
+    {
+        auto numStops = stops.size();
+        
+        size_t firstZeroOrGreaterIndex = numStops;
+        for (size_t i = 0; i < numStops; ++i) {
+            if (stops[i].offset >= 0) {
+                firstZeroOrGreaterIndex = i;
+                break;
+            }
+        }
+
+        if (firstZeroOrGreaterIndex > 0) {
+            if (firstZeroOrGreaterIndex < numStops && stops[firstZeroOrGreaterIndex].offset > 0) {
+                float prevOffset = stops[firstZeroOrGreaterIndex - 1].offset;
+                float nextOffset = stops[firstZeroOrGreaterIndex].offset;
+                
+                float interStopProportion = -prevOffset / (nextOffset - prevOffset);
+                // FIXME: when we interpolate gradients using premultiplied colors, this should do premultiplication.
+                Color blendedColor = blend(stops[firstZeroOrGreaterIndex - 1].color, stops[firstZeroOrGreaterIndex].color, interStopProportion);
+                
+                // Clamp the positions to 0 and set the color.
+                for (size_t i = 0; i < firstZeroOrGreaterIndex; ++i) {
+                    stops[i].offset = 0;
+                    stops[i].color = blendedColor;
+                }
+            } else {
+                // All stops are below 0; just clamp them.
+                for (size_t i = 0; i < firstZeroOrGreaterIndex; ++i)
+                    stops[i].offset = 0;
+            }
+        }
+
+        size_t lastOneOrLessIndex = numStops;
+        for (int i = numStops - 1; i >= 0; --i) {
+            if (stops[i].offset <= 1) {
+                lastOneOrLessIndex = i;
+                break;
+            }
+        }
+        
+        if (lastOneOrLessIndex < numStops - 1) {
+            if (lastOneOrLessIndex < numStops && stops[lastOneOrLessIndex].offset < 1) {
+                float prevOffset = stops[lastOneOrLessIndex].offset;
+                float nextOffset = stops[lastOneOrLessIndex + 1].offset;
+                
+                float interStopProportion = 1 / (nextOffset - prevOffset);
+                // FIXME: when we interpolate gradients using premultiplied colors, this should do premultiplication.
+                Color blendedColor = blend(stops[lastOneOrLessIndex].color, stops[lastOneOrLessIndex + 1].color, interStopProportion);
+                
+                // Clamp the positions to 1 and set the color.
+                for (size_t i = lastOneOrLessIndex + 1; i < numStops; ++i) {
+                    stops[i].offset = 1;
+                    stops[i].color = blendedColor;
+                }
+            } else {
+                // All stops are above 1; just clamp them.
+                for (size_t i = lastOneOrLessIndex; i < numStops; ++i)
+                    stops[i].offset = 1;
+            }
+        }
+    }
+};
+
 template<typename GradientAdapter>
-Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradient, const CSSToLengthConversionData& conversionData, const RenderStyle& style, float maxLengthForRepeat)
+Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradientAdapter, const CSSToLengthConversionData& conversionData, const RenderStyle& style, float maxLengthForRepeat)
 {
     if (m_gradientType == CSSDeprecatedLinearGradient || m_gradientType == CSSDeprecatedRadialGradient) {
         sortStopsIfNeeded();
@@ -252,11 +326,7 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
     size_t numStops = m_stops.size();
     Vector<GradientStop> stops(numStops);
 
-    auto gradientStart = gradient.startPoint();
-    auto gradientEnd = gradient.endPoint();
-
-    auto gradientSize = gradientStart - gradientEnd;
-    float gradientLength = gradientSize.diagonalLength();
+    float gradientLength = gradientAdapter.gradientLength();
 
     for (size_t i = 0; i < numStops; ++i) {
         auto& stop = m_stops[i];
@@ -282,7 +352,9 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
                     length = calculationValue->evaluate(gradientLength);
                 }
                 stops[i].offset = (gradientLength > 0) ? length / gradientLength : 0;
-            } else {
+            } else if (positionValue.isAngle())
+                stops[i].offset = positionValue.floatValue(CSSPrimitiveValue::CSS_DEG) / 360;
+            else {
                 ASSERT_NOT_REACHED();
                 stops[i].offset = 0;
             }
@@ -438,7 +510,7 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
             stops.shrink(1);
             numStops = 1;
         } else {
-            float maxExtent = gradient.maxExtent(maxLengthForRepeat, gradientLength);
+            float maxExtent = gradientAdapter.maxExtent(maxLengthForRepeat, gradientLength);
 
             size_t originalNumStops = numStops;
             size_t originalFirstStopIndex = 0;
@@ -486,7 +558,7 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
 
     // If the gradient goes outside the 0-1 range, normalize it by moving the endpoints, and adjusting the stops.
     if (stops.size() > 1 && (stops.first().offset < 0 || stops.last().offset > 1))
-        gradient.normalizeStopsAndEndpointsOutsideRange(stops);
+        gradientAdapter.normalizeStopsAndEndpointsOutsideRange(stops);
     
     Gradient::ColorStopVector result;
     result.reserveInitialCapacity(stops.size());
@@ -1350,10 +1422,29 @@ String CSSConicGradientValue::customCSSText() const
     return result.toString();
 }
 
-Ref<Gradient> CSSConicGradientValue::createGradient(RenderElement&, const FloatSize&)
+Ref<Gradient> CSSConicGradientValue::createGradient(RenderElement& renderer, const FloatSize& size)
 {
-    // FIXME: Implement.
-    return Gradient::create(Gradient::LinearData { });
+    ASSERT(!size.isEmpty());
+
+    CSSToLengthConversionData conversionData(&renderer.style(), renderer.document().documentElement()->renderStyle(), &renderer.view());
+
+    FloatPoint centerPoint = computeEndPoint(m_firstX.get(), m_firstY.get(), conversionData, size);
+    if (!m_firstX)
+        centerPoint.setX(size.width() / 2);
+    if (!m_firstY)
+        centerPoint.setY(size.height() / 2);
+
+    float angle = 0;
+    if (m_angle)
+        angle = m_angle->floatValue(CSSPrimitiveValue::CSS_DEG);
+
+    Gradient::ConicData data { centerPoint, angle };
+    ConicGradientAdapter adapter;
+    auto stops = computeStops(adapter, conversionData, renderer.style(), 1);
+
+    auto gradient = Gradient::create(WTFMove(data));
+    gradient->setSortedColorStops(WTFMove(stops));
+    return gradient;
 }
 
 bool CSSConicGradientValue::equals(const CSSConicGradientValue& other) const

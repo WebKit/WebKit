@@ -209,5 +209,11 @@
 #define DEFAULT_SERVICE_WORKERS_ENABLED false
 #endif
 
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || PLATFORM(WATCHOS)
+#define DEFAULT_CONIC_GRADIENT_ENABLED true
+#else
+#define DEFAULT_CONIC_GRADIENT_ENABLED false
+#endif
+
 bool defaultPassiveTouchListenersAsDefaultOnDocument();
 bool defaultCustomPasteboardDataEnabled();

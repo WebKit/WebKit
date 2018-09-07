@@ -25,3 +25,10 @@ compositing/contents-scale/non-decomposable-matrix.html [ ImageOnlyFailure ]
 
 # <rdar://problem/41546970> REGRESSION: LayoutTest media/media-fullscreen-loop-inline.html is a flaky timeout
 media/media-fullscreen-loop-inline.html [ Pass Timeout ]
+
+# < iOS12 doesn't support the CG needed for Conic Gradients
+fast/gradients/conic-repeating.html [ Pass ]
+fast/gradients/conic.html [ Pass ]
+fast/gradients/conic-off-center.html [ Pass ]
+fast/gradients/conic-center-outside-box.html [ Pass ]
+fast/gradients/conic-extended-stops.html [ Pass ]

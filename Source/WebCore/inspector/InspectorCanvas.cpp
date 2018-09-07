@@ -613,8 +613,8 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildAction(const String& name,
 Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildArrayForCanvasGradient(const CanvasGradient& canvasGradient)
 {
     const auto& gradient = canvasGradient.gradient();
-
-    String type = gradient.type() == Gradient::Type::Radial ? "radial-gradient"_s : "linear-gradient"_s;
+    
+    String type = gradient.type() == Gradient::Type::Radial ? "radial-gradient"_s : gradient.type() == Gradient::Type::Linear ? "linear-gradient"_s : "conic-gradient"_s;
 
     auto parameters = JSON::ArrayOf<float>::create();
     WTF::switchOn(gradient.data(),
@@ -631,6 +631,11 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildArrayForCanvasGradient(con
             parameters->addItem(data.point1.x());
             parameters->addItem(data.point1.y());
             parameters->addItem(data.endRadius);
+        },
+        [&parameters] (const Gradient::ConicData& data) {
+            parameters->addItem(data.point0.x());
+            parameters->addItem(data.point0.y());
+            parameters->addItem(data.angle);
         }
     );
 

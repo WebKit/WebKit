@@ -279,6 +279,8 @@ CGRect* CGSNextRect(const CGSRegionEnumeratorObj);
 CGSRegionEnumeratorObj CGSRegionEnumerator(CGRegionRef);
 CGStyleRef CGStyleCreateFocusRingWithColor(const CGFocusRingStyle*, CGColorRef);
 void CGContextSetStyle(CGContextRef, CGStyleRef);
+
+void CGContextDrawConicGradient(CGContextRef, CGGradientRef, CGPoint center, CGFloat angle);
 #endif
 
 #if PLATFORM(WIN)

@@ -1,3 +1,54 @@
+2018-09-06  Megan Gardner  <megan_gardner@apple.com>
+
+        Add Support for Conic Gradients
+        https://bugs.webkit.org/show_bug.cgi?id=189329
+        <rdar://problem/21444701>
+
+        Reviewed by Simon Fraser.
+
+        Add support for rendering CSS conic gradients.
+        The parsing work was already done, this just hooks up the data we have
+        with the CG functionality for conic gradients. Add the needed plumbing
+        to allow for this additional type and fill in the creation of 
+        a conic gradient.
+
+        Tests: fast/gradients/conic-repeating.html
+               fast/gradients/conic.html
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::createGradient):
+        (WebCore::LinearGradientAdapter::gradientLength const):
+        (WebCore::RadialGradientAdapter::gradientLength const):
+        (WebCore::ConicGradientAdapter::ConicGradientAdapter):
+        (WebCore::ConicGradientAdapter::gradientLength const):
+        (WebCore::ConicGradientAdapter::maxExtent const):
+        (WebCore::ConicGradientAdapter::normalizeStopsAndEndpointsOutsideRange):
+
+        Compute what the color stops should be if they extend past 0-1
+
+        (WebCore::CSSGradientValue::computeStops):
+        (WebCore::CSSConicGradientValue::createGradient):
+        (WebCore::LinearGradientAdapter::startPoint const): Deleted.
+        (WebCore::LinearGradientAdapter::endPoint const): Deleted.
+        (WebCore::RadialGradientAdapter::startPoint const): Deleted.
+        (WebCore::RadialGradientAdapter::endPoint const): Deleted.
+
+        Start and End points weren't very universal. All we really need from these
+        gradientAdapters is their length, so just ask for that instead.
+
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::buildArrayForCanvasGradient):
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::create):
+        (WebCore::Gradient::Gradient):
+        (WebCore::Gradient::type const):
+        (WebCore::Gradient::adjustParametersForTiledDrawing):
+        (WebCore::Gradient::isZeroSize const):
+        (WebCore::Gradient::hash const):
+        * platform/graphics/Gradient.h:
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::paint):
+
 2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] [WK2] Support changing attributes for selected text (text shadow, underline, strike-through)

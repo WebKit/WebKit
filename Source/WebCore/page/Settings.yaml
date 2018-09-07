@@ -525,7 +525,7 @@ springTimingFunctionEnabled:
   initial: false
 
 conicGradientsEnabled:
-  initial: false
+  initial: defaultConicGradient
 
 colorFilterEnabled:
   initial: false

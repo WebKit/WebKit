@@ -1,3 +1,16 @@
+2018-09-06  Megan Gardner  <megan_gardner@apple.com>
+
+        Add Support for Conic Gradients
+        https://bugs.webkit.org/show_bug.cgi?id=189329
+        <rdar://problem/21444701>
+
+        Reviewed by Simon Fraser.
+
+        Connect up web preferences to allow conic gradients to be turned on in the
+        experimental features menu.
+
+        * Shared/WebPreferences.yaml:
+
 2018-09-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] [WK2] Support changing attributes for selected text (text shadow, underline, strike-through)

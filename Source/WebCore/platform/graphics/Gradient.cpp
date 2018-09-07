@@ -46,6 +46,11 @@ Ref<Gradient> Gradient::create(RadialData&& data)
     return adoptRef(*new Gradient(WTFMove(data)));
 }
 
+Ref<Gradient> Gradient::create(ConicData&& data)
+{
+    return adoptRef(*new Gradient(WTFMove(data)));
+}
+
 Gradient::Gradient(LinearData&& data)
     : m_data(WTFMove(data))
 {
@@ -53,6 +58,12 @@ Gradient::Gradient(LinearData&& data)
 }
 
 Gradient::Gradient(RadialData&& data)
+    : m_data(WTFMove(data))
+{
+    platformInit();
+}
+    
+Gradient::Gradient(ConicData&& data)
     : m_data(WTFMove(data))
 {
     platformInit();
@@ -71,6 +82,9 @@ auto Gradient::type() const -> Type
         },
         [] (const RadialData&) {
             return Type::Radial;
+        },
+        [] (const ConicData&) {
+            return Type::Conic;
         }
     );
 }
@@ -99,6 +113,8 @@ void Gradient::adjustParametersForTiledDrawing(FloatSize& size, FloatRect& srcRe
             srcRect.setY(0);
         },
         [] (const RadialData&) {
+        },
+        [] (const ConicData&) {
         }
     );
 }
@@ -111,6 +127,9 @@ bool Gradient::isZeroSize() const
         },
         [] (const RadialData& data) {
             return data.point0.x() == data.point1.x() && data.point0.y() == data.point1.y() && data.startRadius == data.endRadius;
+        },
+        [] (const ConicData&) {
+            return false;
         }
     );
 }
@@ -204,6 +223,7 @@ unsigned Gradient::hash() const
         float startRadius;
         float endRadius;
         float aspectRatio;
+        float angle;
         GradientSpreadMethod spreadMethod;
         AffineTransform gradientSpaceTransformation;
     } parameters;
@@ -223,6 +243,7 @@ unsigned Gradient::hash() const
             parameters.startRadius = 0;
             parameters.endRadius = 0;
             parameters.aspectRatio = 0;
+            parameters.angle = 0;
             parameters.type = Type::Linear;
         },
         [&parameters] (const RadialData& data) {
@@ -231,7 +252,17 @@ unsigned Gradient::hash() const
             parameters.startRadius = data.startRadius;
             parameters.endRadius = data.endRadius;
             parameters.aspectRatio = data.aspectRatio;
+            parameters.angle = 0;
             parameters.type = Type::Radial;
+        },
+        [&parameters] (const ConicData& data) {
+            parameters.point0 = data.point0;
+            parameters.point1 = {0, 0};
+            parameters.startRadius = 0;
+            parameters.endRadius = 0;
+            parameters.aspectRatio = 0;
+            parameters.angle = data.angle;
+            parameters.type = Type::Conic;
         }
     );
 

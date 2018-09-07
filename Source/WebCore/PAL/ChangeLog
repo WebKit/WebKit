@@ -1,3 +1,15 @@
+2018-09-06  Megan Gardner  <megan_gardner@apple.com>
+
+        Add Support for Conic Gradients
+        https://bugs.webkit.org/show_bug.cgi?id=189329
+        <rdar://problem/21444701>
+
+        Reviewed by Simon Fraser.
+
+        Define the CG functionality for conic gradients. 
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+
 2018-09-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, attempt to fix an internal build after r235585.

@@ -1756,3 +1756,11 @@ webkit.org/b/187393 imported/w3c/web-platform-tests/2dcontext/imagebitmap/create
 [ Mojave+ ] fast/inline/break-between-nobr.html [ ImageOnlyFailure ]
 [ Mojave+ ] imported/blink/fast/text/international/text-shaping-arabic.html [ ImageOnlyFailure ]
 [ Mojave+ ] imported/blink/fast/text/international/vertical-positioning-with-combining-marks.html [ ImageOnlyFailure ]
+
+# < Mojave doesn't support the CG needed for Conic Gradients
+[ Mojave+ ] fast/gradients/conic-repeating.html [ Pass ]
+[ Mojave+ ] fast/gradients/conic.html [ Pass ]
+[ Mojave+ ] fast/gradients/conic-off-center.html [ Pass ]
+[ Mojave+ ] fast/gradients/conic-center-outside-box.html [ Pass ]
+[ Mojave+ ] fast/gradients/conic-extended-stops.html [ Pass ]
+
