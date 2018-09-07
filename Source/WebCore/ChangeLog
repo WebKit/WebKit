@@ -1,3 +1,29 @@
+2018-09-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ShadowRoot should have its own node flag
+        https://bugs.webkit.org/show_bug.cgi?id=189392
+
+        Reviewed by Antti Koivisto.
+
+        Added IsShadowRootFlag and IsDocumentNodeFlag, and removed IsDocumentFragmentFlag and IsStyledElementFlag.
+        Also re-ordered flags to group flags used by subclasses below ones directly used by Node in
+        accordinate with the comment.
+
+        No new tests since there should be no behavioral change.
+
+        * dom/ContainerNode.h:
+        (WebCore::Node::isTreeScope const): Deleted.
+        * dom/Node.h:
+        (WebCore::Node::isStyledElement const): Check if this is a HTML, SVG, or MathML element instead.
+        (WebCore::Node::isDocumentNode const): Simply check IsDocumentNodeFlag.
+        (WebCore::Node::isTreeScope const): Check if this is a document or a shadow root Instead of comparing
+        the tree scope to this.
+        (WebCore::Node::isDocumentFragment const): Check if this is a container node which is neither document,
+        element, nor shadow root.
+        (WebCore::Node::isShadowRoot const): Simply check IsShadowRootFlag. This is the change needed to fix
+        the blockign bug 166748.
+        (WebCore::Node::flagIsShadowRoot): Added. Will be used in the bug 166748.
+
 2018-09-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Inline replaced height calculation should use "used value"

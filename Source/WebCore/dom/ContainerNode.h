@@ -192,11 +192,6 @@ inline Node* Node::lastChild() const
     return downcast<ContainerNode>(*this).lastChild();
 }
 
-inline bool Node::isTreeScope() const
-{
-    return &treeScope().rootNode() == this;
-}
-
 inline Node& Node::rootNode() const
 {
     if (isInTreeScope())
