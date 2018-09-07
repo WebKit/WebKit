@@ -27,7 +27,7 @@
 
 (import "common.sb")
 
-(deny mach-lookup (xpc-service-name-prefix #""))
+(deny mach-lookup (xpc-service-name-prefix ""))
 
 (deny lsopen)
 
