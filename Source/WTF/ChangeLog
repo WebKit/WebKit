@@ -1,3 +1,16 @@
+2018-09-07  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [RunLoopGeneric] OneShotTimer should be inactive when fired.
+        https://bugs.webkit.org/show_bug.cgi?id=189335
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/generic/RunLoopGeneric.cpp:
+        (WTF::RunLoop::TimerBase::ScheduledTask::fired):
+        (WTF::RunLoop::TimerBase::isActive const):
+
+        Deactivate one-shot timer before invoking its callback. 
+
 2018-09-05  Brent Fulgham  <bfulgham@apple.com>
 
         The width of an empty or nullptr TextRun should be zero

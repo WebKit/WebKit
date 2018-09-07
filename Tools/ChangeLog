@@ -1,3 +1,18 @@
+2018-09-07  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [RunLoopGeneric] OneShotTimer should be inactive when fired.
+        https://bugs.webkit.org/show_bug.cgi?id=189335
+
+        Reviewed by Yusuke Suzuki.
+
+        * TestWebKitAPI/Tests/WTF/RunLoop.cpp:
+        (TestWebKitAPI::TEST):
+
+        Add test expectations about timer's active state.
+
+        Add a new test to restart a one-shot timer within
+        its fired callback.
+
 2018-09-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add support for min/max-height percentage values.

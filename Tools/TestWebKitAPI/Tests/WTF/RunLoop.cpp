@@ -85,11 +85,50 @@ TEST(WTF_RunLoop, OneShotTimer)
 
         void fired()
         {
+            EXPECT_FALSE(isActive());
             m_testFinished = true;
             stop();
         }
 
     private:
+        bool& m_testFinished;
+    };
+
+    {
+        DerivedTimer timer(testFinished);
+        timer.startOneShot(100_ms);
+        Util::run(&testFinished);
+    }
+}
+
+TEST(WTF_RunLoop, ChainingOneShotTimer)
+{
+    RunLoop::initializeMainRunLoop();
+
+    bool testFinished = false;
+
+    class DerivedTimer : public RunLoop::Timer<DerivedTimer> {
+    public:
+        DerivedTimer(bool& testFinished)
+            : RunLoop::Timer<DerivedTimer>(RunLoop::current(), this, &DerivedTimer::fired)
+            , m_testFinished(testFinished)
+        {
+        }
+
+        void fired()
+        {
+            EXPECT_FALSE(isActive());
+            if (++m_count != 2) {
+                startOneShot(100_ms);
+                EXPECT_TRUE(isActive());
+            } else {
+                m_testFinished = true;
+                stop();
+            }
+        }
+
+    private:
+        unsigned m_count { 0 };
         bool& m_testFinished;
     };
 
@@ -116,6 +155,7 @@ TEST(WTF_RunLoop, RepeatingTimer)
 
         void fired()
         {
+            EXPECT_TRUE(isActive());
             if (++m_count == 10) {
                 m_testFinished = true;
                 stop();
