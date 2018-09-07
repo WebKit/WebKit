@@ -343,6 +343,9 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
     if (isForbiddenMethod(method))
         return Exception { SecurityError };
 
+    if (!url.isValid())
+        return Exception { SyntaxError };
+
     if (!async && scriptExecutionContext()->isDocument()) {
         // Newer functionality is not available to synchronous requests in window contexts, as a spec-mandated
         // attempt to discourage synchronous XHR use. responseType is one such piece of functionality.
