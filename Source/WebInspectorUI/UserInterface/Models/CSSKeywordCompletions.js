@@ -1063,6 +1063,6 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "black", "white", "white-outline"
     ],
     "-apple-pay-button-type": [
-        "book", "buy", "checkout", "donate", "in-store", "plain", "set-up", "subscribe"
+        "book", "buy", "check-out", "donate", "in-store", "plain", "set-up", "subscribe"
     ]
 };
