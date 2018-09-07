@@ -1,5 +1,26 @@
 2018-09-07  Youenn Fablet  <youenn@apple.com>
 
+        RealtimeOutgoingVideoSourceCocoa should use VTImageRotationSession to rotate CVPixelBuffers
+        https://bugs.webkit.org/show_bug.cgi?id=189427
+
+        Reviewed by Eric Carlson.
+
+        Previously, we were relying on libwebrtc utils to do the rotation.
+        This is inefficient compared to VTImageRotateSession and also induces additional memory cost
+        since libwebrtc is rotating using its own buffers and the encoder will convert this buffer back to a CVPixelBuffer.
+
+        Instead use VTImageRotationSession when rotation must be done at sending side.
+        Covered by webrtc/video-rotation.html.
+
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp:
+        (WebCore::RealtimeOutgoingVideoSourceCocoa::sampleBufferUpdated):
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.h:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.mm:
+        (WebCore::computeRotatedWidthAndHeight):
+        (WebCore::RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer):
+
+2018-09-07  Youenn Fablet  <youenn@apple.com>
+
         Add support for unified plan transceivers
         https://bugs.webkit.org/show_bug.cgi?id=189390
 
