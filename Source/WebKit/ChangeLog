@@ -1,5 +1,18 @@
 2018-09-07  Brent Fulgham  <bfulgham@apple.com>
 
+        [macOS] Remove unused XPC service from sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=189406
+        <rdar://problem/43015423>
+
+        Reviewed by Youenn Fablet.
+
+        The API surface exposed by "com.apple.systemstats.analysis" is no longer used by the
+        WebContent process. Since there is no need for this sandbox opening, we should remove it.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2018-09-07  Brent Fulgham  <bfulgham@apple.com>
+
         Unreviewed syntax fix after r235781
 
         Don't use hash-quote syntax for these non-regex inputs.

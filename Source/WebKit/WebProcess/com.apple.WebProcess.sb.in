@@ -608,7 +608,6 @@
        (global-name "com.apple.system.DirectoryService.libinfo_v1")
        (global-name "com.apple.system.logger")
        (global-name "com.apple.system.opendirectoryd.api")
-       (global-name "com.apple.systemstats.analysis")
        (global-name "com.apple.tccd")
        (global-name "com.apple.tccd.system")
        (global-name "com.apple.trustd")
