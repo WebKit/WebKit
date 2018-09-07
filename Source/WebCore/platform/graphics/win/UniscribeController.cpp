@@ -369,8 +369,8 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const F
                 glyphBuffer->setInitialAdvance(origin);
             else
                 glyphBuffer->expandLastAdvance(origin);
-            GlyphBufferAdvance advance(-origin.width() + advance, -origin.height());
-            glyphBuffer->add(glyph, fontData, advance);
+            GlyphBufferAdvance glyphAdvance(-origin.width() + advance, -origin.height());
+            glyphBuffer->add(glyph, fontData, glyphAdvance);
         }
 
         FloatRect glyphBounds = fontData->boundsForGlyph(glyph);

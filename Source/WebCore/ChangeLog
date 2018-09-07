@@ -1,3 +1,20 @@
+2018-09-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] duplicated variable name `advance` in UniscribeController::shapeAndPlaceItem
+        https://bugs.webkit.org/show_bug.cgi?id=189399
+
+        Reviewed by Myles C. Maxfield.
+
+        Clang reports the following compilation error:
+
+        UniscribeController.cpp(372,56):  error: invalid operands to binary expression ('float' and 'WebCore::GlyphBufferAdvance' (aka 'WebCore::FloatSize'))
+             GlyphBufferAdvance advance(-origin.width() + advance, -origin.height());
+                                        ~~~~~~~~~~~~~~~ ^ ~~~~~~~
+        No new tests (No behavior change).
+
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::shapeAndPlaceItem): Replaced the second variable named `advance` with `glyphAdvance`.
+
 2018-09-07  Youenn Fablet  <youenn@apple.com>
 
         RTCRtpReceiver::track should return a MediaStreamTrack reference
