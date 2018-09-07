@@ -1,3 +1,20 @@
+2018-09-07  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Put .throwStackOverflow code after the fast path in LLInt doVMEntry
+        https://bugs.webkit.org/show_bug.cgi?id=189410
+
+        Reviewed by Mark Lam.
+
+        Put .throwStackOverflow code after the fast path in LLInt doVMEntry to
+        make doVMEntry code tight.
+
+        * llint/LLIntThunks.cpp:
+        (JSC::vmEntryToWasm): Deleted.
+        * llint/LLIntThunks.h:
+        (JSC::vmEntryToWasm):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2018-09-06  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [WebAssembly] Optimize JS to Wasm call by removing Vector allocation
