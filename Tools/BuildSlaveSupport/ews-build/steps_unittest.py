@@ -928,6 +928,7 @@ class TestExtractBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
 class TestRunAPITests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
+        self.jsonFileName = 'api_test_results.json'
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -941,7 +942,8 @@ class TestRunAPITests(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--release', '--verbose'],
+                        command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--release', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='''...
 worker/0 TestWTF.WTF_Variant.OperatorAmpersand Passed
@@ -967,7 +969,8 @@ All tests successfully passed!
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', '--ios-simulator'],
+                        command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', '--json-output={0}'.format(self.jsonFileName), '--ios-simulator'],
+                        logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='''...
 worker/0 TestWTF.WTF_Variant.OperatorAmpersand Passed
@@ -993,7 +996,8 @@ All tests successfully passed!
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose'],
+                        command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='''
 worker/0 TestWTF.WTF_Variant.OperatorAmpersand Passed
@@ -1033,7 +1037,8 @@ Testing completed, Exit status: 3
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose'],
+                        command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='''...
 worker/0 TestWTF.WTF_Variant.OperatorAmpersand Passed
@@ -1087,7 +1092,8 @@ Testing completed, Exit status: 3
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose'],
+                        command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='Unexpected failure. Failed to run api tests.')
             + 2,
@@ -1103,7 +1109,8 @@ Testing completed, Exit status: 3
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose'],
+                        command=['python', 'Tools/Scripts/run-api-tests', '--no-build', '--debug', '--verbose', '--json-output={0}'.format(self.jsonFileName)],
+                        logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='''...
 worker/0 TestWTF.WTF_Variant.OperatorAmpersand Passed

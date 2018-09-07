@@ -479,7 +479,10 @@ class RunAPITests(TestWithFailureCount):
     name = 'run-api-tests'
     description = ['api tests running']
     descriptionDone = ['api-tests']
-    command = ['python', 'Tools/Scripts/run-api-tests', '--no-build', WithProperties('--%(configuration)s'), '--verbose']
+    jsonFileName = 'api_test_results.json'
+    logfiles = {'json': jsonFileName}
+    command = ['python', 'Tools/Scripts/run-api-tests', '--no-build',
+               WithProperties('--%(configuration)s'), '--verbose', '--json-output={0}'.format(jsonFileName)]
     failedTestsFormatString = '%d api test%s failed or timed out'
 
     def start(self):
