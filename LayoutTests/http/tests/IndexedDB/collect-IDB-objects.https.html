@@ -30,10 +30,13 @@ async function done()
 
             await waitFor(50);
         }
-    } finally {
         rejectCallback("Test failed");
+    } catch (e) {
+        rejectCallback("Test failed: exception " + e);
     }
 }
+
+window.addEventListener("message", done);
 
 promise_test((test) => {
     if (!window.internals)

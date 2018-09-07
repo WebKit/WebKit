@@ -17,7 +17,7 @@ createdb(t).onupgradeneeded = function(e) {
                 .onsuccess = t.step_func(function(e)
         {
             t.done();
-            parent.done();
+            parent.postMessage("done", "*");
         });
     });
 };

@@ -22,7 +22,7 @@
             }
 
             session = video.webkitKeys.createSession('application/x-mpegurl', event.initData);
-            parent.done();
+            parent.postMessage("done", "*");
         }
     </script>
 </head>

@@ -1,3 +1,23 @@
+2018-09-07  Youenn Fablet  <youenn@apple.com>
+
+        Tests checking document GC in case of ActiveDOMObjects are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=189413
+
+        Reviewed by Eric Carlson.
+
+        Instead of calling parent.done() use postMessage.
+        The assumption is that GC might not always collect 'parent' as it is in the call stack.
+        With postMessage, no flakiness is observed locally.
+        Added a related MediaDevices test that was missing from r235438.
+
+        * http/tests/IndexedDB/collect-IDB-objects.https.html:
+        * http/tests/IndexedDB/resources/myidbframe.htm:
+        * http/tests/media/clearkey/collect-webkit-media-session.html:
+        * http/tests/media/clearkey/resources/mywebkitmediasessionframe.htm:
+        * http/tests/media/media-stream/collect-media-devices.https-expected.txt: Added.
+        * http/tests/media/media-stream/collect-media-devices.https.html: Added.
+        * http/tests/media/media-stream/resources/mymediadevicesframe.htm: Added.
+
 2018-09-07  Daniel Bates  <dabates@apple.com>
 
         [iOS] uiController.typeCharacterUsingHardwareKeyboard("`", ...) dispatches DOM key events for ~

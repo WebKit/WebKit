@@ -42,7 +42,7 @@ promise_test((test) => {
     if (!window.internals)
         rejectCallback("Test require internals API");
     return promise;
-}, "Ensure that the frame's document get collected after being stopped while doing some webkit media session calls");
+}, "Ensure that the frame's document get collected after being stopped while using MediaDevices");
 
 </script>
-<iframe src="resources/mywebkitmediasessionframe.htm" id="iframe"></iframe>
+<iframe src="resources/mymediadevicesframe.htm" id="iframe"></iframe>
