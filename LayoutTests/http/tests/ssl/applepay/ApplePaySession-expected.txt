@@ -8,6 +8,7 @@ Testing supportsVersion
 PASS ApplePaySession.supportsVersion(0) threw exception InvalidAccessError: The object does not support the operation or argument..
 PASS ApplePaySession.supportsVersion(1) is true
 PASS ApplePaySession.supportsVersion(2) is true
+
 Testing PaymentRequest
 
 PASS new ApplePaySession(2, { }) threw exception TypeError: Member ApplePayPaymentRequest.countryCode is required and must be an instance of DOMString.
@@ -148,11 +149,8 @@ PASS new ApplePaySession(2, request) threw exception TypeError: "" is not a vali
 SETUP: request = validRequest(); request.total = { label: 'label', amount: 'amount' };
 PASS new ApplePaySession(2, request) threw exception TypeError: "amount" is not a valid amount..
 
-SETUP: request = validRequest(); request.total = { label: 'label', amount: '0' };
-PASS new ApplePaySession(2, request) threw exception TypeError: Total amount must be greater than zero..
-
 SETUP: request = validRequest(); request.total = { label: 'label', amount: '-10.00' };
-PASS new ApplePaySession(2, request) threw exception TypeError: Total amount must be greater than zero..
+PASS new ApplePaySession(2, request) threw exception TypeError: Total amount must not be negative..
 
 SETUP: request = validRequest(); request.total = { label: 'label', amount: '10000000000.00' };
 PASS new ApplePaySession(2, request) threw exception TypeError: Total amount is too big..

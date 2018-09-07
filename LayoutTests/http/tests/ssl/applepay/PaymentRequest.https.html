@@ -154,7 +154,6 @@ async function go() {
     await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label' };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
     await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: 'amount' };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
     await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: '', value: '0' } };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
-    await logAndShouldReject("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: 'USD', value: '0' } };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
     debug("")
     await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: 'USD', value:'-10.00'} };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")
     await logAndShouldReject("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: 'USD', value: '10000000000.00' } };", "request = new PaymentRequest([validPaymentMethod()], paymentDetails); request.show()")

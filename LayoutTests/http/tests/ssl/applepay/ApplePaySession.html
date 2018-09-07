@@ -38,9 +38,10 @@ function logAndShouldNotThrow(setup, test) {
 function go() {
     debug("Testing supportsVersion");
     debug("");
-	shouldThrow("ApplePaySession.supportsVersion(0)");
-	shouldBeTrue("ApplePaySession.supportsVersion(1)");
-	shouldBeTrue("ApplePaySession.supportsVersion(2)");
+    shouldThrow("ApplePaySession.supportsVersion(0)");
+    shouldBeTrue("ApplePaySession.supportsVersion(1)");
+    shouldBeTrue("ApplePaySession.supportsVersion(2)");
+    debug("");
 
     debug("Testing PaymentRequest")
     debug("");
@@ -107,7 +108,6 @@ function go() {
     logAndShouldThrow("request = validRequest(); request.total = { };", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.total = { label: 'label' };", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.total = { label: 'label', amount: 'amount' };", "new ApplePaySession(2, request)")
-    logAndShouldThrow("request = validRequest(); request.total = { label: 'label', amount: '0' };", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.total = { label: 'label', amount: '-10.00' };", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.total = { label: 'label', amount: '10000000000.00' };", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.total = { label: 'label', amount: '10.00', type: 'invalid' };", "new ApplePaySession(2, request)")

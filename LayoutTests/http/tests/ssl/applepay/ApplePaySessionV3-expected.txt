@@ -9,6 +9,7 @@ PASS ApplePaySession.supportsVersion(0) threw exception InvalidAccessError: The 
 PASS ApplePaySession.supportsVersion(1) is true
 PASS ApplePaySession.supportsVersion(2) is true
 PASS ApplePaySession.supportsVersion(3) is true
+
 Testing PaymentRequest (v3)
 
 PASS new ApplePaySession(3, { }) threw exception TypeError: Member ApplePayPaymentRequest.countryCode is required and must be an instance of DOMString.
