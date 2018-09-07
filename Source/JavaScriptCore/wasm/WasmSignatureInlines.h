@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Yusuke Suzuki <yusukesuzuki@slowstart.org>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,34 +21,41 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ProtoCallFrame.h"
+#pragma once
 
-#include "CodeBlock.h"
-#include "JSCInlines.h"
-#include "StackAlignment.h"
+#if ENABLE(WEBASSEMBLY)
 
-namespace JSC {
+#include "WasmSignature.h"
 
-void ProtoCallFrame::init(CodeBlock* codeBlock, JSObject* callee, JSValue thisValue, int argCountIncludingThis, JSValue* otherArgs)
+namespace JSC { namespace Wasm {
+
+inline SignatureInformation& SignatureInformation::singleton()
 {
-    this->args = otherArgs;
-    this->setCodeBlock(codeBlock);
-    this->setCallee(callee);
-    this->setArgumentCountIncludingThis(argCountIncludingThis);
-    if (codeBlock && argCountIncludingThis < codeBlock->numParameters())
-        this->hasArityMismatch = true;
-    else
-        this->hasArityMismatch = false;
-
-    // Round up argCountIncludingThis to keep the stack frame size aligned.
-    size_t paddedArgsCount = roundArgumentCountToAlignFrame(argCountIncludingThis);
-    this->setPaddedArgCount(paddedArgsCount);
-    this->clearCurrentVPC();
-    this->setThisValue(thisValue);
+    std::call_once(signatureInformationFlag, [] () {
+        theOne = new SignatureInformation;
+    });
+    return *theOne;
 }
 
-} // namespace JSC
+inline const Signature& SignatureInformation::get(SignatureIndex index)
+{
+    ASSERT(index != Signature::invalidIndex);
+    return *bitwise_cast<const Signature*>(index);
+}
+
+inline SignatureIndex SignatureInformation::get(const Signature& signature)
+{
+    if (!ASSERT_DISABLED) {
+        SignatureInformation& info = singleton();
+        auto locker = holdLock(info.m_lock);
+        ASSERT_UNUSED(info, info.m_signatureSet.contains(SignatureHash { makeRef(const_cast<Signature&>(signature)) }));
+    }
+    return bitwise_cast<SignatureIndex>(&signature);
+}
+
+} } // namespace JSC::Wasm
+
+#endif // ENABLE(WEBASSEMBLY)

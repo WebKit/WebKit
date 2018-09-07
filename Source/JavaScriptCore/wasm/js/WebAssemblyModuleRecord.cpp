@@ -37,7 +37,7 @@
 #include "JSWebAssemblyLinkError.h"
 #include "JSWebAssemblyModule.h"
 #include "ProtoCallFrame.h"
-#include "WasmSignature.h"
+#include "WasmSignatureInlines.h"
 #include "WebAssemblyFunction.h"
 #include <limits>
 

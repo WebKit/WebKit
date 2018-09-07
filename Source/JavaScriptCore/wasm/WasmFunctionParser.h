@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmParser.h"
+#include "WasmSignatureInlines.h"
 #include <wtf/DataLog.h>
 
 namespace JSC { namespace Wasm {

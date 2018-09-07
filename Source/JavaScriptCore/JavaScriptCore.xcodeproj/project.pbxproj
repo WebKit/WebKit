@@ -1536,6 +1536,7 @@
 		AD5C36EC1F75AD7C000BCAAF /* WasmToJS.h in Headers */ = {isa = PBXBuildFile; fileRef = ADD09AEE1F5F623F001313C2 /* WasmToJS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD5C36EF1F7A263A000BCAAF /* WasmMemoryMode.h in Headers */ = {isa = PBXBuildFile; fileRef = AD5C36EE1F7A2629000BCAAF /* WasmMemoryMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD7438C01E0457A400FD0C2A /* WasmSignature.h in Headers */ = {isa = PBXBuildFile; fileRef = AD7438BF1E04579200FD0C2A /* WasmSignature.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BAA07CEB81F49A296E02203 /* WasmSignatureInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 30A5F403F11C4F599CD596D5 /* WasmSignatureInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD7B4B2E1FA3E29800C9DF79 /* WasmNameSection.h in Headers */ = {isa = PBXBuildFile; fileRef = AD7B4B2D1FA3E28600C9DF79 /* WasmNameSection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD86A93E1AA4D88D002FE77F /* WeakGCMapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = AD86A93D1AA4D87C002FE77F /* WeakGCMapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD8FF3981EB5BDB20087FF82 /* WasmIndexOrName.h in Headers */ = {isa = PBXBuildFile; fileRef = AD8FF3951EB5BD850087FF82 /* WasmIndexOrName.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3599,7 +3600,6 @@
 		65EA73620BAE35D1001BB560 /* CommonIdentifiers.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CommonIdentifiers.cpp; sourceTree = "<group>"; };
 		65EA73630BAE35D1001BB560 /* CommonIdentifiers.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CommonIdentifiers.h; sourceTree = "<group>"; };
 		65FB5115184EE8F800C12B70 /* ProtoCallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtoCallFrame.h; sourceTree = "<group>"; };
-		65FB5116184EE9BC00C12B70 /* ProtoCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProtoCallFrame.cpp; sourceTree = "<group>"; };
 		6A38CFA71E32B58B0060206F /* AsyncStackTrace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncStackTrace.cpp; sourceTree = "<group>"; };
 		6A38CFA81E32B58B0060206F /* AsyncStackTrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncStackTrace.h; sourceTree = "<group>"; };
 		6AD2CB4C19B9140100065719 /* DebuggerEvalEnabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerEvalEnabler.h; sourceTree = "<group>"; };
@@ -4364,6 +4364,7 @@
 		AD5C36F01F7A26BF000BCAAF /* WasmMemoryMode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmMemoryMode.cpp; sourceTree = "<group>"; };
 		AD7438BE1E04579200FD0C2A /* WasmSignature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmSignature.cpp; sourceTree = "<group>"; };
 		AD7438BF1E04579200FD0C2A /* WasmSignature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmSignature.h; sourceTree = "<group>"; };
+		30A5F403F11C4F599CD596D5 /* WasmSignatureInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmSignatureInlines.h; sourceTree = "<group>"; };
 		AD7B4B2D1FA3E28600C9DF79 /* WasmNameSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmNameSection.h; sourceTree = "<group>"; };
 		AD86A93D1AA4D87C002FE77F /* WeakGCMapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakGCMapInlines.h; sourceTree = "<group>"; };
 		AD8DD6CF1F67089F0004EB52 /* JSToWasm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JSToWasm.h; path = js/JSToWasm.h; sourceTree = "<group>"; };
@@ -5508,8 +5509,8 @@
 				796DAA2A1E89CCD6005DF24A /* CalleeBits.h */,
 				1429D8DB0ED2205B00B89619 /* CallFrame.cpp */,
 				1429D8DC0ED2205B00B89619 /* CallFrame.h */,
-				FEA3BBA7212B655800E93AD1 /* CallFrameInlines.h */,
 				A7F869EC0F95C2EC00558697 /* CallFrameClosure.h */,
+				FEA3BBA7212B655800E93AD1 /* CallFrameInlines.h */,
 				1429D85B0ED218E900B89619 /* CLoopStack.cpp */,
 				14D792640DAA03FB001A9F05 /* CLoopStack.h */,
 				A7C1EAEB17987AB600299DB2 /* CLoopStackInlines.h */,
@@ -5518,7 +5519,6 @@
 				1429D7D30ED2128200B89619 /* Interpreter.cpp */,
 				1429D77B0ED20D7300B89619 /* Interpreter.h */,
 				E39D9D841D39000600667282 /* InterpreterInlines.h */,
-				65FB5116184EE9BC00C12B70 /* ProtoCallFrame.cpp */,
 				65FB5115184EE8F800C12B70 /* ProtoCallFrame.h */,
 				149B24FF0D8AF6D1009CB8C7 /* Register.h */,
 				DC17E8131C9C7FD4008A6AB3 /* ShadowChicken.cpp */,
@@ -6362,6 +6362,7 @@
 				53F40E841D58F9770099A1B6 /* WasmSections.h */,
 				AD7438BE1E04579200FD0C2A /* WasmSignature.cpp */,
 				AD7438BF1E04579200FD0C2A /* WasmSignature.h */,
+				30A5F403F11C4F599CD596D5 /* WasmSignatureInlines.h */,
 				E3A0531921342B670022EC14 /* WasmStreamingParser.cpp */,
 				E3A0531621342B660022EC14 /* WasmStreamingParser.h */,
 				AD5C36E31F69EC8B000BCAAF /* WasmTable.cpp */,
@@ -8444,7 +8445,6 @@
 				99DA00A31BD5993100F4575C /* builtins_generator.py in Headers */,
 				99DA00A41BD5993100F4575C /* builtins_model.py in Headers */,
 				99DA00A51BD5993100F4575C /* builtins_templates.py in Headers */,
-				FEA3BBA8212B655900E93AD1 /* CallFrameInlines.h in Headers */,
 				41DEA1321B9F3163006D65DD /* BuiltinUtils.h in Headers */,
 				9E72940B190F0514001A91B5 /* BundlePath.h in Headers */,
 				0FB7F39715ED8E4600F167B2 /* Butterfly.h in Headers */,
@@ -8469,6 +8469,7 @@
 				0F64B27A1A7957B2006E4E66 /* CallEdge.h in Headers */,
 				796DAA2B1E89CCD6005DF24A /* CalleeBits.h in Headers */,
 				1429D8DE0ED2205B00B89619 /* CallFrame.h in Headers */,
+				FEA3BBA8212B655900E93AD1 /* CallFrameInlines.h in Headers */,
 				62EC9BB71B7EB07C00303AD1 /* CallFrameShuffleData.h in Headers */,
 				62D755D71B84FB4A001801FA /* CallFrameShuffler.h in Headers */,
 				0F0B83B114BCF71800885B4F /* CallLinkInfo.h in Headers */,
@@ -8759,6 +8760,7 @@
 				A70447EE17A0BD7000F5898E /* DumpContext.h in Headers */,
 				FE318FE01CAC982F00DFCC54 /* ECMAScriptSpecInternalFunctions.h in Headers */,
 				2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */,
+				FE086BCA2123DEFB003F2929 /* EntryFrame.h in Headers */,
 				2AD2EDFB19799E38004D6478 /* EnumerationMode.h in Headers */,
 				BC3046070E1F497F003232CF /* Error.h in Headers */,
 				BC02E90D0E1839DB000F9297 /* ErrorConstructor.h in Headers */,
@@ -9095,7 +9097,6 @@
 				978801411471AD920041B016 /* JSDateMath.h in Headers */,
 				C2A7F688160432D400F76B98 /* JSDestructibleObject.h in Headers */,
 				0F7DF13C1E2971130095951B /* JSDestructibleObjectHeapCellType.h in Headers */,
-				FE086BCA2123DEFB003F2929 /* EntryFrame.h in Headers */,
 				FE384EE61ADDB7AD0055DE2C /* JSDollarVM.h in Headers */,
 				86E3C614167BABD7006D760A /* JSExport.h in Headers */,
 				A7B4ACAF1484C9CE00B38A36 /* JSExportMacros.h in Headers */,
@@ -9622,6 +9623,7 @@
 				E3A0531C21342B680022EC14 /* WasmSectionParser.h in Headers */,
 				53F40E851D58F9770099A1B6 /* WasmSections.h in Headers */,
 				AD7438C01E0457A400FD0C2A /* WasmSignature.h in Headers */,
+				4BAA07CEB81F49A296E02203 /* WasmSignatureInlines.h in Headers */,
 				E3A0531A21342B680022EC14 /* WasmStreamingParser.h in Headers */,
 				AD5C36E61F69EC91000BCAAF /* WasmTable.h in Headers */,
 				5250D2D21E8DA05A0029A932 /* WasmThunks.h in Headers */,

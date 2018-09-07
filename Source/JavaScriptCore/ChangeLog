@@ -1,5 +1,67 @@
 2018-09-07  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
+        [WebAssembly] Optimize JS to Wasm call by using pointer of Signature as SignatureIndex
+        https://bugs.webkit.org/show_bug.cgi?id=189401
+
+        Reviewed by Mark Lam.
+
+        SignatureInformation is a global repository for Signature to make Signature atomic.
+        It takes Ref<Signature>&& and generates SignatureIndex. And we get const Signature&
+        by using this SignatureIndex. However, converting SignatureIndex to const Signature&
+        always looks up a hash table. This is costly since JS to Wasm calls always use
+        Signature& to check types of arguments.
+
+        Instead of using this hash table, this patch uses a pointer of Signature as SignatureIndex.
+        This allows us to convert SignatureIndex to Signature by just casting it.
+
+        We also optimize SignatureInformation::singleton by making an accessor function inlined.
+        And we move ProtoCallFrame::init to the header since it's just setting values.
+
+        This change significantly optimizes JS to wasm calls (1e7 times) from 600ms to 320ms.
+
+        In the future, we can remove SignatureIndex by directly handling Ref<Signature>: adding
+        deref() of Signature which unregisters itself from SignatureInformation carefully. Or we can
+        make SignatureIndex uint32_t by introducing a mechanism similar to StructureID.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * interpreter/ProtoCallFrame.h:
+        (JSC::ProtoCallFrame::init):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmBBQPlan.cpp:
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::WasmToWasmImportableFunction::offsetOfSignatureIndex):
+        * wasm/WasmFunctionParser.h:
+        * wasm/WasmModule.h:
+        * wasm/WasmOMGPlan.cpp:
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseType):
+        * wasm/WasmSignature.cpp:
+        (JSC::Wasm::SignatureInformation::adopt):
+        (JSC::Wasm::SignatureInformation::tryCleanup):
+        (JSC::Wasm::SignatureInformation::singleton): Deleted.
+        (JSC::Wasm::SignatureInformation::get): Deleted.
+        * wasm/WasmSignature.h:
+        (JSC::Wasm::Signature::index const):
+        (JSC::Wasm::SignatureHash::SignatureHash):
+        (JSC::Wasm::SignatureHash::hash):
+        (JSC::Wasm::SignatureHash::isHashTableDeletedValue const):
+        (JSC::Wasm::SignatureHash::empty): Deleted.
+        (JSC::Wasm::SignatureHash::deleted): Deleted.
+        * wasm/WasmSignatureInlines.h: Renamed from Source/JavaScriptCore/interpreter/ProtoCallFrame.cpp.
+        (JSC::Wasm::SignatureInformation::singleton):
+        (JSC::Wasm::SignatureInformation::get):
+        * wasm/js/JSToWasm.cpp:
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunction.cpp:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+
+2018-09-07  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
         [JSC] Put .throwStackOverflow code after the fast path in LLInt doVMEntry
         https://bugs.webkit.org/show_bug.cgi?id=189410
 

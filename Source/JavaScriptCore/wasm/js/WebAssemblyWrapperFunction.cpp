@@ -32,6 +32,7 @@
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
 #include "JSWebAssemblyInstance.h"
+#include "WasmSignatureInlines.h"
 
 namespace JSC {
 

@@ -41,7 +41,7 @@ struct Context;
 struct ModuleInformation;
 class Plan;
 
-using SignatureIndex = uint32_t;
+using SignatureIndex = uint64_t;
 
 class Module : public ThreadSafeRefCounted<Module> {
 public:

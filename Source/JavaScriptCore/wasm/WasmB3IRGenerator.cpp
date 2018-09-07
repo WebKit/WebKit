@@ -59,6 +59,7 @@
 #include "WasmMemory.h"
 #include "WasmOMGPlan.h"
 #include "WasmOpcodeOrigin.h"
+#include "WasmSignatureInlines.h"
 #include "WasmThunks.h"
 #include <limits>
 #include <wtf/Optional.h>
@@ -1229,13 +1230,13 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
 
         // Check that the WasmToWasmImportableFunction is initialized. We trap if it isn't. An "invalid" SignatureIndex indicates it's not initialized.
         // FIXME: when we have trap handlers, we can just let the call fail because Signature::invalidIndex is 0. https://bugs.webkit.org/show_bug.cgi?id=177210
-        static_assert(sizeof(WasmToWasmImportableFunction::signatureIndex) == sizeof(uint32_t), "Load codegen assumes i32");
-        ExpressionType calleeSignatureIndex = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), callableFunction, safeCast<int32_t>(OBJECT_OFFSETOF(WasmToWasmImportableFunction, signatureIndex)));
+        static_assert(sizeof(WasmToWasmImportableFunction::signatureIndex) == sizeof(uint64_t), "Load codegen assumes i64");
+        ExpressionType calleeSignatureIndex = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), callableFunction, safeCast<int32_t>(WasmToWasmImportableFunction::offsetOfSignatureIndex()));
         {
             CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
                 m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
                     calleeSignatureIndex,
-                    m_currentBlock->appendNew<Const32Value>(m_proc, origin(), Signature::invalidIndex)));
+                    m_currentBlock->appendNew<Const64Value>(m_proc, origin(), Signature::invalidIndex)));
 
             check->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
                 this->emitExceptionCheck(jit, ExceptionType::NullTableEntry);
@@ -1244,7 +1245,7 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
 
         // Check the signature matches the value we expect.
         {
-            ExpressionType expectedSignatureIndex = m_currentBlock->appendNew<Const32Value>(m_proc, origin(), SignatureInformation::get(signature));
+            ExpressionType expectedSignatureIndex = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), SignatureInformation::get(signature));
             CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
                 m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), calleeSignatureIndex, expectedSignatureIndex));
 

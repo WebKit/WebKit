@@ -33,6 +33,7 @@
 #include <cstring>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -47,7 +48,7 @@ namespace JSC {
 namespace Wasm {
 
 using SignatureArgCount = uint32_t;
-using SignatureIndex = uint32_t;
+using SignatureIndex = uint64_t;
 
 class Signature : public ThreadSafeRefCounted<Signature> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -81,6 +82,7 @@ public:
         return *storage(returnCount() + i);
     }
     Type argument(SignatureArgCount i) const { return const_cast<Signature*>(this)->argument(i); }
+    SignatureIndex index() const { return bitwise_cast<SignatureIndex>(this); }
 
     WTF::String toString() const;
     void dump(WTF::PrintStream& out) const;
@@ -102,7 +104,6 @@ public:
 
     // Signatures are uniqued and, for call_indirect, validated at runtime. Tables can create invalid SignatureIndex values which cause call_indirect to fail. We use 0 as the invalidIndex so that the codegen can easily test for it and trap, and we add a token invalid entry in SignatureInformation.
     static const constexpr SignatureIndex invalidIndex = 0;
-    static const constexpr SignatureIndex firstValidIndex = invalidIndex + 1;
 
 private:
     friend class SignatureInformation;
@@ -111,28 +112,21 @@ private:
 };
 
 struct SignatureHash {
-    const Signature* key;
-    static const Signature* empty() { return nullptr; }
-    static const Signature* deleted() { return reinterpret_cast<const Signature*>(1); }
-    SignatureHash()
-        : key(empty())
+    RefPtr<Signature> key { nullptr };
+    SignatureHash() = default;
+    explicit SignatureHash(Ref<Signature>&& key)
+        : key(WTFMove(key))
     {
-    }
-    explicit SignatureHash(const Signature* key)
-        : key(key)
-    {
-        ASSERT(key != empty());
-        ASSERT(key != deleted());
     }
     explicit SignatureHash(WTF::HashTableDeletedValueType)
-        : key(deleted())
+        : key(WTF::HashTableDeletedValue)
     {
     }
     bool operator==(const SignatureHash& rhs) const { return equal(*this, rhs); }
     static bool equal(const SignatureHash& lhs, const SignatureHash& rhs) { return lhs.key == rhs.key || (lhs.key && rhs.key && *lhs.key == *rhs.key); }
-    static unsigned hash(const SignatureHash& signature) { return signature.key->hash(); }
+    static unsigned hash(const SignatureHash& signature) { return signature.key ? signature.key->hash() : 0; }
     static const bool safeToCompareToEmptyOrDeleted = false;
-    bool isHashTableDeletedValue() const { return key == deleted(); }
+    bool isHashTableDeletedValue() const { return key.isHashTableDeletedValue(); }
 };
 
 } } // namespace JSC::Wasm
@@ -165,16 +159,17 @@ class SignatureInformation {
 public:
     static SignatureInformation& singleton();
 
-    static std::pair<SignatureIndex, Ref<Signature>> WARN_UNUSED_RETURN adopt(Ref<Signature>&&);
+    static Ref<Signature> WARN_UNUSED_RETURN adopt(Ref<Signature>&&);
     static const Signature& WARN_UNUSED_RETURN get(SignatureIndex);
     static SignatureIndex WARN_UNUSED_RETURN get(const Signature&);
     static void tryCleanup();
 
 private:
-    HashMap<Wasm::SignatureHash, Wasm::SignatureIndex> m_signatureMap;
-    HashMap<Wasm::SignatureIndex, Ref<Signature>> m_indexMap;
-    SignatureIndex m_nextIndex { Signature::firstValidIndex };
+    HashSet<Wasm::SignatureHash> m_signatureSet;
     Lock m_lock;
+
+    JS_EXPORT_PRIVATE static SignatureInformation* theOne;
+    JS_EXPORT_PRIVATE static std::once_flag signatureInformationFlag;
 };
 
 } } // namespace JSC::Wasm

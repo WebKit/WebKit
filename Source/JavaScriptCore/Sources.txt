@@ -587,7 +587,6 @@ interpreter/AbstractPC.cpp
 interpreter/CLoopStack.cpp
 interpreter/CallFrame.cpp
 interpreter/Interpreter.cpp
-interpreter/ProtoCallFrame.cpp
 interpreter/ShadowChicken.cpp
 interpreter/StackVisitor.cpp
 

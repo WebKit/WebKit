@@ -42,6 +42,7 @@
 #include "WasmContext.h"
 #include "WasmFormat.h"
 #include "WasmMemory.h"
+#include "WasmSignatureInlines.h"
 #include <wtf/FastTLS.h>
 #include <wtf/SystemTracing.h>
 

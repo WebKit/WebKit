@@ -39,6 +39,7 @@
 #include "WasmMachineThreads.h"
 #include "WasmMemory.h"
 #include "WasmNameSection.h"
+#include "WasmSignatureInlines.h"
 #include "WasmValidate.h"
 #include "WasmWorklist.h"
 #include <wtf/DataLog.h>

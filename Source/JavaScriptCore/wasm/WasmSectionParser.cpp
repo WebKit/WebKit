@@ -34,6 +34,7 @@
 #include "WasmNameSectionParser.h"
 #include "WasmOps.h"
 #include "WasmSections.h"
+#include "WasmSignatureInlines.h"
 
 namespace JSC { namespace Wasm {
 
@@ -75,8 +76,7 @@ auto SectionParser::parseType() -> PartialResult
             returnType = Type::Void;
         signature->returnType() = returnType;
 
-        std::pair<SignatureIndex, Ref<Signature>> result = SignatureInformation::adopt(WTFMove(signature));
-        m_info->usedSignatures.uncheckedAppend(WTFMove(result.second));
+        m_info->usedSignatures.uncheckedAppend(SignatureInformation::adopt(WTFMove(signature)));
     }
     return { };
 }

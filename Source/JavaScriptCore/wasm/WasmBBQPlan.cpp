@@ -36,6 +36,7 @@
 #include "WasmFaultSignalHandler.h"
 #include "WasmMemory.h"
 #include "WasmModuleParser.h"
+#include "WasmSignatureInlines.h"
 #include "WasmTierUpCount.h"
 #include "WasmValidate.h"
 #include <wtf/DataLog.h>
