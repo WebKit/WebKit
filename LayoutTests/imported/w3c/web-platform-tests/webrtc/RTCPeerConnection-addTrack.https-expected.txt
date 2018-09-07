@@ -5,6 +5,6 @@ PASS addTrack with single track argument and single mediaStream should succeed
 PASS addTrack with single track argument and multiple mediaStreams should succeed 
 PASS Adding the same track multiple times should throw InvalidAccessError 
 PASS addTrack with existing sender with null track, same kind, and recvonly direction should reuse sender 
-PASS addTrack with existing sender with null track, same kind, and sendrecv direction should create new sender 
+FAIL addTrack with existing sender with null track, same kind, and sendrecv direction should create new sender assert_not_equals: got disallowed value object "[object RTCRtpSender]"
 PASS addTrack with existing sender with null track, different kind, and recvonly direction should create new sender 
 

@@ -7,6 +7,9 @@
 <script>
 self.jsTestIsAsync = true;
 
+if (window.testRunner)
+    testRunner.setWebRTCUnifiedPlanEnabled(false);
+
 if (window.internals)
     internals.useMockRTCPeerConnectionFactory("LibWebRTCReleasingWhileGettingStats");
 

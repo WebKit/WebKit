@@ -11,7 +11,7 @@ PASS Remote description set
 
 *** Define sdpMid, badSdpMid, sdpMLineIndex and badSdpMLineIndex for testing
 PASS sdpMLineIndex is not badSdpMLineIndex
-FAIL sdpMid should not be null.
+PASS sdpMid is not null
 PASS sdpMid is not badSdpMid
 FAIL promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: badSdpMid})) fulfilled unexpectedly.
 FAIL promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMLineIndex: badSdpMLineIndex})) fulfilled unexpectedly.

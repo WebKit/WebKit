@@ -122,22 +122,7 @@ ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>
     for (auto stream : streams)
         mediaStreamIds.append(stream.get().id());
 
-    RTCRtpSender* sender = nullptr;
-
-    // Reuse an existing sender with the same track kind if it has never been used to send before.
-    for (auto& transceiver : m_transceiverSet->list()) {
-        auto& existingSender = transceiver->sender();
-        if (existingSender.trackKind() == track->kind() && existingSender.trackId().isNull() && !transceiver->hasSendingDirection()) {
-            existingSender.setTrack(track.copyRef());
-            existingSender.setMediaStreamIds(WTFMove(mediaStreamIds));
-            transceiver->enableSendingDirection();
-            sender = &existingSender;
-            
-            break;
-        }
-    }
-
-    return m_backend->addTrack(sender, track.get(), mediaStreamIds);
+    return m_backend->addTrack(track.get(), WTFMove(mediaStreamIds));
 }
 
 ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)
@@ -168,11 +153,17 @@ ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransce
 
     if (WTF::holds_alternative<String>(withTrack)) {
         const String& kind = WTF::get<String>(withTrack);
-        if (kind != "audio" && kind != "video")
+        if (kind != "audio"_s && kind != "video"_s)
             return Exception { TypeError };
+
+        if (isClosed())
+            return Exception { InvalidStateError };
 
         return m_backend->addTransceiver(kind, init);
     }
+
+    if (isClosed())
+        return Exception { InvalidStateError };
 
     auto track = WTF::get<RefPtr<MediaStreamTrack>>(withTrack).releaseNonNull();
     return m_backend->addTransceiver(WTFMove(track), init);

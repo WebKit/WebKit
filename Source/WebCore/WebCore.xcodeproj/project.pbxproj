@@ -1103,6 +1103,7 @@
 		4186BD3E213EE3400001826F /* LibWebRTCUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41D1A049213EDDFD0063FB6B /* LibWebRTCUtils.cpp */; };
 		4186BD3F213EE3430001826F /* LibWebRTCRtpSenderBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41D1A04B213EDDFE0063FB6B /* LibWebRTCRtpSenderBackend.cpp */; };
 		4186BD40213EE3450001826F /* LibWebRTCRtpReceiverBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41D1A04A213EDDFE0063FB6B /* LibWebRTCRtpReceiverBackend.cpp */; };
+		4186BD4E2140B9E80001826F /* LibWebRTCRtpTransceiverBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4186BD4D2140B9E80001826F /* LibWebRTCRtpTransceiverBackend.cpp */; };
 		41885B9311B6FDA6003383BB /* FormSubmission.h in Headers */ = {isa = PBXBuildFile; fileRef = 41885B9111B6FDA6003383BB /* FormSubmission.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		418A06D0133C04D500CD379C /* EventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 418A06CE133C04D500CD379C /* EventDispatcher.h */; };
 		418F88050FF957AF0080F045 /* JSAbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 418F88030FF957AE0080F045 /* JSAbstractWorker.h */; };
@@ -7288,6 +7289,8 @@
 		4186BD3B213EDE380001826F /* LibWebRTCRtpReceiverBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LibWebRTCRtpReceiverBackend.h; path = libwebrtc/LibWebRTCRtpReceiverBackend.h; sourceTree = "<group>"; };
 		4186BD3D213EDE390001826F /* LibWebRTCRtpSenderBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LibWebRTCRtpSenderBackend.h; path = libwebrtc/LibWebRTCRtpSenderBackend.h; sourceTree = "<group>"; };
 		4186BD46214072B60001826F /* RTCRtpTransceiverBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpTransceiverBackend.h; sourceTree = "<group>"; };
+		4186BD4B2140A8050001826F /* LibWebRTCRtpTransceiverBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCRtpTransceiverBackend.h; path = libwebrtc/LibWebRTCRtpTransceiverBackend.h; sourceTree = "<group>"; };
+		4186BD4D2140B9E80001826F /* LibWebRTCRtpTransceiverBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCRtpTransceiverBackend.cpp; path = libwebrtc/LibWebRTCRtpTransceiverBackend.cpp; sourceTree = "<group>"; };
 		41885B9111B6FDA6003383BB /* FormSubmission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormSubmission.h; sourceTree = "<group>"; };
 		41885B9211B6FDA6003383BB /* FormSubmission.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormSubmission.cpp; sourceTree = "<group>"; };
 		418A06CE133C04D500CD379C /* EventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDispatcher.h; sourceTree = "<group>"; };
@@ -16894,6 +16897,8 @@
 				4186BD3B213EDE380001826F /* LibWebRTCRtpReceiverBackend.h */,
 				41D1A04B213EDDFE0063FB6B /* LibWebRTCRtpSenderBackend.cpp */,
 				4186BD3D213EDE390001826F /* LibWebRTCRtpSenderBackend.h */,
+				4186BD4D2140B9E80001826F /* LibWebRTCRtpTransceiverBackend.cpp */,
+				4186BD4B2140A8050001826F /* LibWebRTCRtpTransceiverBackend.h */,
 				41D28D0B2139E01D00F4206F /* LibWebRTCStatsCollector.cpp */,
 				41D28D0C2139E01E00F4206F /* LibWebRTCStatsCollector.h */,
 				41D1A049213EDDFD0063FB6B /* LibWebRTCUtils.cpp */,
@@ -28781,7 +28786,6 @@
 				D6489D26166FFCF1007C031B /* JSHTMLTemplateElement.h in Headers */,
 				A80E7E9D0A1A83E3007FB8C5 /* JSHTMLTextAreaElement.h in Headers */,
 				83E359A21BB1031D002CEB98 /* JSHTMLTimeElement.h in Headers */,
-				E42050172141901B0066EF3B /* ProcessWarming.h in Headers */,
 				A80E7B0C0A19D606007FB8C5 /* JSHTMLTitleElement.h in Headers */,
 				070756D414239A4F00414161 /* JSHTMLTrackElement.h in Headers */,
 				1A85B2110A1B258700D8C87C /* JSHTMLUListElement.h in Headers */,
@@ -29789,6 +29793,7 @@
 				B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */,
 				51F645D51FECDBCE00B54DED /* Process.h in Headers */,
 				A8EA7EBC0A1945D000A8EF5F /* ProcessingInstruction.h in Headers */,
+				E42050172141901B0066EF3B /* ProcessWarming.h in Headers */,
 				E44613EC0CD681B500FADA75 /* ProgressEvent.h in Headers */,
 				A715E653134BBBEC00D8E713 /* ProgressShadowElement.h in Headers */,
 				1A2A68240B5BEDE70002A480 /* ProgressTracker.h in Headers */,
@@ -31525,6 +31530,7 @@
 				417612B11E3A994000C3D81D /* LibWebRTCPeerConnectionBackend.cpp in Sources */,
 				4186BD40213EE3450001826F /* LibWebRTCRtpReceiverBackend.cpp in Sources */,
 				4186BD3F213EE3430001826F /* LibWebRTCRtpSenderBackend.cpp in Sources */,
+				4186BD4E2140B9E80001826F /* LibWebRTCRtpTransceiverBackend.cpp in Sources */,
 				41D28D0D2139E05800F4206F /* LibWebRTCStatsCollector.cpp in Sources */,
 				4186BD3E213EE3400001826F /* LibWebRTCUtils.cpp in Sources */,
 				9759E93E14EF1CF80026A2DD /* LoadableTextTrack.cpp in Sources */,

@@ -28,9 +28,17 @@
 #if USE(LIBWEBRTC)
 
 #include "LibWebRTCMacros.h"
+#include "RTCPeerConnection.h"
 #include "RTCRtpParameters.h"
-#include <webrtc/api/rtpparameters.h>
 #include <wtf/text/WTFString.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
+#include <webrtc/api/rtpparameters.h>
+#include <webrtc/api/rtptransceiverinterface.h>
+
+#pragma GCC diagnostic pop
 
 namespace WebCore {
 
@@ -175,6 +183,41 @@ webrtc::RtpParameters fromRTCRtpParameters(const RTCRtpParameters& parameters)
         break;
     }
     return rtcParameters;
+}
+
+RTCRtpTransceiverDirection toRTCRtpTransceiverDirection(webrtc::RtpTransceiverDirection rtcDirection)
+{
+    switch (rtcDirection) {
+    case webrtc::RtpTransceiverDirection::kSendRecv:
+        return RTCRtpTransceiverDirection::Sendrecv;
+    case webrtc::RtpTransceiverDirection::kSendOnly:
+        return RTCRtpTransceiverDirection::Sendonly;
+    case webrtc::RtpTransceiverDirection::kRecvOnly:
+        return RTCRtpTransceiverDirection::Recvonly;
+    case webrtc::RtpTransceiverDirection::kInactive:
+        return RTCRtpTransceiverDirection::Inactive;
+    };
+}
+
+webrtc::RtpTransceiverDirection fromRTCRtpTransceiverDirection(RTCRtpTransceiverDirection direction)
+{
+    switch (direction) {
+    case RTCRtpTransceiverDirection::Sendrecv:
+        return webrtc::RtpTransceiverDirection::kSendRecv;
+    case RTCRtpTransceiverDirection::Sendonly:
+        return webrtc::RtpTransceiverDirection::kSendOnly;
+    case RTCRtpTransceiverDirection::Recvonly:
+        return webrtc::RtpTransceiverDirection::kRecvOnly;
+    case RTCRtpTransceiverDirection::Inactive:
+        return webrtc::RtpTransceiverDirection::kInactive;
+    };
+}
+
+webrtc::RtpTransceiverInit fromRtpTransceiverInit(const RTCRtpTransceiverInit& init)
+{
+    webrtc::RtpTransceiverInit rtcInit;
+    rtcInit.direction = fromRTCRtpTransceiverDirection(init.direction);
+    return rtcInit;
 }
 
 }; // namespace WebCore

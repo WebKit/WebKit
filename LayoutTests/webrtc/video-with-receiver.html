@@ -14,6 +14,9 @@
 video = document.getElementById("video");
 canvas = document.getElementById("canvas");
 
+if (window.testRunner)
+    testRunner.setWebRTCUnifiedPlanEnabled(false);
+
 function testImage()
 {
     canvas.width = video.videoWidth;

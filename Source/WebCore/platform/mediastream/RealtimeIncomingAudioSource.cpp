@@ -41,6 +41,7 @@ RealtimeIncomingAudioSource::RealtimeIncomingAudioSource(rtc::scoped_refptr<webr
     : RealtimeMediaSource(WTFMove(audioTrackId), RealtimeMediaSource::Type::Audio, String())
     , m_audioTrack(WTFMove(audioTrack))
 {
+    setName("remote audio");
     notifyMutedChange(!m_audioTrack);
 }
 

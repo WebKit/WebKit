@@ -1,3 +1,83 @@
+2018-09-07  Youenn Fablet  <youenn@apple.com>
+
+        Add support for unified plan transceivers
+        https://bugs.webkit.org/show_bug.cgi?id=189390
+
+        Reviewed by Eric Carlson.
+
+        Keep previous transceiver behavior when unified plan flag is off.
+        Otherwise, use the libwebrtc transceiver API to create and use unified plan transceivers.
+        Fuel the implementation of transceivers through a dedicated backend.
+
+        Update transceiver IDL and make some smaller fixes at the same time:
+        - Make sure remote sources have a proper name as per https://w3c.github.io/webrtc-pc/#dfn-create-an-rtcrtpreceiver.
+        - Add support for transceiver.currentDirection.
+
+        Our mock peer connections are only supporting plan B APIs at the moment.
+        We therefore mandate plan B when using such mocks until we can upgrade mocks to support unified plan APIs.
+
+        Covered by modified and rebased tests.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::addTrack):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::addTrack):
+        (WebCore::RTCPeerConnection::addTransceiver):
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::RTCRtpSender):
+        * Modules/mediastream/RTCRtpTransceiver.cpp:
+        (WebCore::RTCRtpTransceiver::mid const):
+        (WebCore::RTCRtpTransceiver::currentDirection const):
+        * Modules/mediastream/RTCRtpTransceiver.h:
+        (WebCore::RTCRtpTransceiver::backend):
+        * Modules/mediastream/RTCRtpTransceiver.idl:
+        * Modules/mediastream/RTCRtpTransceiverBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::addTrack):
+        (WebCore::LibWebRTCMediaEndpoint::newTransceiver):
+        (WebCore::LibWebRTCMediaEndpoint::addTransceiver):
+        (WebCore::LibWebRTCMediaEndpoint::transceiverBackendFromSender):
+        (WebCore::LibWebRTCMediaEndpoint::OnAddTrack):
+        (WebCore::LibWebRTCMediaEndpoint::OnTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::createReceiverForSource):
+        (WebCore::LibWebRTCPeerConnectionBackend::createReceiver):
+        (WebCore::LibWebRTCPeerConnectionBackend::videoReceiver):
+        (WebCore::LibWebRTCPeerConnectionBackend::audioReceiver):
+        (WebCore::LibWebRTCPeerConnectionBackend::addTrack):
+        (WebCore::LibWebRTCPeerConnectionBackend::addTransceiver):
+        (WebCore::backendFromRTPTransceiver):
+        (WebCore::LibWebRTCPeerConnectionBackend::existingTransceiver):
+        (WebCore::LibWebRTCPeerConnectionBackend::newTransceiver):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        (WebCore::LibWebRTCRtpSenderBackend::replaceTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpTransceiverBackend.cpp: Added.
+        (WebCore::LibWebRTCRtpTransceiverBackend::createReceiverBackend):
+        (WebCore::LibWebRTCRtpTransceiverBackend::createSenderBackend):
+        (WebCore::LibWebRTCRtpTransceiverBackend::direction const):
+        (WebCore::LibWebRTCRtpTransceiverBackend::currentDirection const):
+        (WebCore::LibWebRTCRtpTransceiverBackend::setDirection):
+        (WebCore::LibWebRTCRtpTransceiverBackend::mid):
+        (WebCore::LibWebRTCRtpTransceiverBackend::stop):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpTransceiverBackend.h: Added.
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp:
+        (WebCore::toRTCRtpTransceiverDirection):
+        (WebCore::fromRTCRtpTransceiverDirection):
+        (WebCore::fromRtpTransceiverInit):
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/RealtimeIncomingAudioSource.cpp:
+        (WebCore::RealtimeIncomingAudioSource::RealtimeIncomingAudioSource):
+        * platform/mediastream/RealtimeIncomingVideoSource.cpp:
+        (WebCore::RealtimeIncomingVideoSource::RealtimeIncomingVideoSource):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::useMockRTCPeerConnectionFactory):
+
 2018-09-07  Rob Buis  <rbuis@igalia.com>
 
         XMLHttpRequest: open() does not throw a SYNTAX_ERR exception if method is empty or url cannot be resolved

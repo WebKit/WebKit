@@ -90,7 +90,7 @@ void LibWebRTCRtpSenderBackend::replaceTrack(ScriptExecutionContext& context, RT
         protectedSender->setTrack(track.releaseNonNull());
         if (!hasTrack) {
             // FIXME: In case of unified plan, we should use m_rtcSender->SetTrack and no longer need m_peerConnectionBackend.
-            auto result = m_peerConnectionBackend->addTrack(protectedSender.ptr(), *protectedSender->track(), { });
+            auto result = m_peerConnectionBackend->addTrack(*protectedSender->track(), { });
             if (result.hasException()) {
                 promise.reject(result.releaseException());
                 return;

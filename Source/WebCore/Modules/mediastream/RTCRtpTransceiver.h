@@ -55,8 +55,9 @@ public:
     void disableSendingDirection();
 
     RTCRtpTransceiverDirection direction() const;
+    std::optional<RTCRtpTransceiverDirection> currentDirection() const;
     void setDirection(RTCRtpTransceiverDirection);
-    const String& mid() const;
+    String mid() const;
 
     RTCRtpSender& sender() { return m_sender.get(); }
     RTCRtpReceiver& receiver() { return m_receiver.get(); }
@@ -69,10 +70,11 @@ public:
     // transport each.
     RTCIceTransport& iceTransport() { return m_iceTransport.get(); }
 
+    RTCRtpTransceiverBackend* backend() { return m_backend.get(); }
+
 private:
     RTCRtpTransceiver(Ref<RTCRtpSender>&&, Ref<RTCRtpReceiver>&&, std::unique_ptr<RTCRtpTransceiverBackend>&&);
 
-    String m_mid;
     RTCRtpTransceiverDirection m_direction;
 
     Ref<RTCRtpSender> m_sender;

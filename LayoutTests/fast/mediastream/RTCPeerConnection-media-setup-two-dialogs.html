@@ -11,9 +11,10 @@
 
             description("Test setting up media between two RTCPeerConnection instances with a single SDP dialog.");
 
-            if (window.testRunner)
+            if (window.testRunner) {
+                testRunner.setWebRTCUnifiedPlanEnabled(false);
                 testRunner.setUserMediaPermission(true);
-            else {
+            } else {
                 debug("This test can not be run without the testRunner");
                 finishJSTest();
             }

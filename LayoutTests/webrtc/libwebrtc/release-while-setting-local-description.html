@@ -10,6 +10,9 @@ self.jsTestIsAsync = true;
 // Silence unhandled rejection messages.
 window.onunhandledrejection = () => false;
 
+if (window.testRunner)
+    testRunner.setWebRTCUnifiedPlanEnabled(false);
+
 if (window.internals)
     internals.useMockRTCPeerConnectionFactory("LibWebRTCReleasingWhileSettingDescription");
 

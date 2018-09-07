@@ -38,11 +38,13 @@ namespace WebCore {
 
 class LibWebRTCMediaEndpoint;
 class LibWebRTCProvider;
+class LibWebRTCRtpTransceiverBackend;
 class RTCRtpReceiver;
 class RTCSessionDescription;
 class RTCStatsReport;
 class RealtimeIncomingAudioSource;
 class RealtimeIncomingVideoSource;
+class RealtimeMediaSource;
 class RealtimeOutgoingAudioSource;
 class RealtimeOutgoingVideoSource;
 
@@ -84,11 +86,14 @@ private:
 
     void getStatsSucceeded(const DeferredPromise&, Ref<RTCStatsReport>&&);
 
-    ExceptionOr<Ref<RTCRtpSender>> addTrack(RTCRtpSender*, MediaStreamTrack&, const Vector<String>&) final;
+    ExceptionOr<Ref<RTCRtpSender>> addTrack(MediaStreamTrack&, Vector<String>&&) final;
     void removeTrack(RTCRtpSender&) final;
 
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(const String&, const RTCRtpTransceiverInit&) final;
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&) final;
+
+    RTCRtpTransceiver* existingTransceiver(WTF::Function<bool(LibWebRTCRtpTransceiverBackend&)>&&);
+    RTCRtpTransceiver& newRemoteTransceiver(std::unique_ptr<LibWebRTCRtpTransceiverBackend>&&, Ref<RealtimeMediaSource>&&);
 
     struct VideoReceiver {
         Ref<RTCRtpReceiver> receiver;
@@ -107,6 +112,9 @@ private:
     Ref<RTCRtpTransceiver> completeAddTransceiver(Ref<RTCRtpSender>&&, const RTCRtpTransceiverInit&, const String& trackId, const String& trackKind);
 
     Ref<RTCRtpReceiver> createReceiver(const String& trackKind, const String& trackId);
+
+    template<typename T>
+    ExceptionOr<Ref<RTCRtpTransceiver>> addUnifiedPlanTransceiver(T&& trackOrKind, const RTCRtpTransceiverInit&);
 
     Ref<LibWebRTCMediaEndpoint> m_endpoint;
     bool m_isLocalDescriptionSet { false };

@@ -33,6 +33,8 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "RuntimeEnabledFeatures.h"
+
 namespace WebCore {
 
 Ref<RTCRtpSender> RTCRtpSender::create(Ref<MediaStreamTrack>&& track, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&& backend)
@@ -53,6 +55,7 @@ RTCRtpSender::RTCRtpSender(String&& trackKind, Vector<String>&& mediaStreamIds, 
     , m_mediaStreamIds(WTFMove(mediaStreamIds))
     , m_backend(WTFMove(backend))
 {
+    ASSERT(!RuntimeEnabledFeatures::sharedFeatures().webRTCUnifiedPlanEnabled() || m_backend);
 }
 
 void RTCRtpSender::setTrackToNull()

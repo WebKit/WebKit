@@ -47,11 +47,9 @@ RTCRtpTransceiver::RTCRtpTransceiver(Ref<RTCRtpSender>&& sender, Ref<RTCRtpRecei
 {
 }
 
-const String& RTCRtpTransceiver::mid() const
+String RTCRtpTransceiver::mid() const
 {
-    if (!m_backend)
-        return m_mid;
-    return m_backend->mid();
+    return m_backend ? m_backend->mid() : String { };
 }
 
 bool RTCRtpTransceiver::hasSendingDirection() const
@@ -64,6 +62,13 @@ RTCRtpTransceiverDirection RTCRtpTransceiver::direction() const
     if (!m_backend)
         return m_direction;
     return m_backend->direction();
+}
+
+std::optional<RTCRtpTransceiverDirection> RTCRtpTransceiver::currentDirection() const
+{
+    if (!m_backend)
+        return std::nullopt;
+    return m_backend->currentDirection();
 }
 
 void RTCRtpTransceiver::setDirection(RTCRtpTransceiverDirection direction)

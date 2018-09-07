@@ -28,10 +28,8 @@
 
 #include "LibWebRTCObservers.h"
 #include "LibWebRTCProvider.h"
-#include "PeerConnectionBackend.h"
+#include "LibWebRTCRtpSenderBackend.h"
 #include "RTCRtpReceiver.h"
-#include "RealtimeOutgoingAudioSource.h"
-#include "RealtimeOutgoingVideoSource.h"
 #include <Timer.h>
 
 #pragma GCC diagnostic push
@@ -61,7 +59,8 @@ namespace WebCore {
 
 class LibWebRTCProvider;
 class LibWebRTCPeerConnectionBackend;
-class LibWebRTCRtpSenderBackend;
+class LibWebRTCRtpReceiverBackend;
+class LibWebRTCRtpTransceiverBackend;
 class MediaStreamTrack;
 class RTCSessionDescription;
 
@@ -101,6 +100,15 @@ public:
     bool addTrack(LibWebRTCRtpSenderBackend&, MediaStreamTrack&, const Vector<String>&);
     void removeTrack(LibWebRTCRtpSenderBackend&);
 
+    struct Backends {
+        std::unique_ptr<LibWebRTCRtpSenderBackend> senderBackend;
+        std::unique_ptr<LibWebRTCRtpReceiverBackend> receiverBackend;
+        std::unique_ptr<LibWebRTCRtpTransceiverBackend> transceiverBackend;
+    };
+    std::optional<Backends> addTransceiver(const String& trackKind, const RTCRtpTransceiverInit&);
+    std::optional<Backends> addTransceiver(MediaStreamTrack&, const RTCRtpTransceiverInit&);
+    std::unique_ptr<LibWebRTCRtpTransceiverBackend> transceiverBackendFromSender(LibWebRTCRtpSenderBackend&);
+
 private:
     LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend&, LibWebRTCProvider&);
 
@@ -110,6 +118,8 @@ private:
     void OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInterface>) final;
     void OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface>) final;
     void OnAddTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>&) final;
+    void OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface>) final;
+
     void OnRenegotiationNeeded() final;
     void OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState) final;
     void OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState) final;
@@ -125,6 +135,12 @@ private:
     void addRemoteStream(webrtc::MediaStreamInterface&);
     void addRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&&, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>&);
     void removeRemoteStream(webrtc::MediaStreamInterface&);
+    void newTransceiver(rtc::scoped_refptr<webrtc::RtpTransceiverInterface>&&);
+
+    void fireTrackEvent(Ref<RTCRtpReceiver>&&, Ref<MediaStreamTrack>&&, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>&, RefPtr<RTCRtpTransceiver>&&);
+
+    template<typename T>
+    std::optional<Backends> createTransceiverBackends(T&&, const RTCRtpTransceiverInit&, LibWebRTCRtpSenderBackend::Source&&);
 
     void OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>&) final;
     void gatherStatsForLogging();

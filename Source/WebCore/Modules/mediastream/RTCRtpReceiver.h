@@ -41,7 +41,7 @@ namespace WebCore {
 
 class RTCRtpReceiver : public RTCRtpSenderReceiverBase {
 public:
-    static Ref<RTCRtpReceiver> create(Ref<MediaStreamTrack>&& track, std::unique_ptr<RTCRtpReceiverBackend>&& backend = nullptr)
+    static Ref<RTCRtpReceiver> create(Ref<MediaStreamTrack>&& track, std::unique_ptr<RTCRtpReceiverBackend>&& backend)
     {
         return adoptRef(*new RTCRtpReceiver(WTFMove(track), WTFMove(backend)));
     }

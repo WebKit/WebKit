@@ -42,7 +42,7 @@ promise_test(() => {
 
 promise_test(() => {
     return closedConnection().then((connection) => {
-        connection.addTransceiver("video");
+        assert_throws("InvalidStateError", () => { connection.addTransceiver("video"); });
     });
 }, "Ensuring closed connection addTransceiver does not crash");
 

@@ -27,6 +27,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "LibWebRTCMacros.h"
+#include "LibWebRTCPeerConnectionBackend.h"
 #include "RTCRtpSenderBackend.h"
 #include "RealtimeOutgoingAudioSource.h"
 #include "RealtimeOutgoingVideoSource.h"
@@ -46,9 +47,17 @@ class LibWebRTCPeerConnectionBackend;
 
 class LibWebRTCRtpSenderBackend final : public RTCRtpSenderBackend {
 public:
-    explicit LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend& backend, rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender)
+    LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend& backend, rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender)
         : m_peerConnectionBackend(makeWeakPtr(&backend))
         , m_rtcSender(WTFMove(rtcSender))
+    {
+    }
+
+    using Source = Variant<std::nullptr_t, Ref<RealtimeOutgoingAudioSource>, Ref<RealtimeOutgoingVideoSource>>;
+    LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend& backend, rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender, Source&& source)
+        : m_peerConnectionBackend(makeWeakPtr(&backend))
+        , m_rtcSender(WTFMove(rtcSender))
+        , m_source(WTFMove(source))
     {
     }
 
@@ -71,24 +80,19 @@ public:
         );
     }
 
-    bool hasNoSource() const
+    bool hasSource() const
     {
         return WTF::switchOn(m_source,
-            [] (const std::nullptr_t&) { return true; },
-            [] (const auto&) { return false; }
+            [] (const std::nullptr_t&) { return false; },
+            [] (const auto&) { return true; }
         );
     }
 
-    void setSource(Ref<RealtimeOutgoingAudioSource>&& source)
+    void setSource(Source&& source)
     {
-        ASSERT(hasNoSource());
+        ASSERT(!hasSource());
         m_source = WTFMove(source);
-    }
-
-    void setSource(Ref<RealtimeOutgoingVideoSource>&& source)
-    {
-        ASSERT(hasNoSource());
-        m_source = WTFMove(source);
+        ASSERT(hasSource());
     }
 
 private:
@@ -98,7 +102,7 @@ private:
 
     WeakPtr<LibWebRTCPeerConnectionBackend> m_peerConnectionBackend;
     rtc::scoped_refptr<webrtc::RtpSenderInterface> m_rtcSender;
-    Variant<std::nullptr_t, Ref<RealtimeOutgoingAudioSource>, Ref<RealtimeOutgoingVideoSource>> m_source;
+    Source m_source;
 };
 
 } // namespace WebCore

@@ -1,3 +1,32 @@
+2018-09-07  Youenn Fablet  <youenn@apple.com>
+
+        Add support for unified plan transceivers
+        https://bugs.webkit.org/show_bug.cgi?id=189390
+
+        Reviewed by Eric Carlson.
+
+        Update tests using mock to enforce plan B for now until unified plan mocks are supported.
+
+        * fast/mediastream/RTCPeerConnection-addIceCandidate-expected.txt:
+        * fast/mediastream/RTCPeerConnection-icecandidate-event.html:
+        * fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html:
+        * fast/mediastream/RTCPeerConnection-inspect-answer.html:
+        * fast/mediastream/RTCPeerConnection-inspect-offer.html:
+        * fast/mediastream/RTCPeerConnection-media-setup-single-dialog.html:
+        * fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html:
+        * fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html:
+        * fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html:
+        * fast/mediastream/RTCPeerConnection-setRemoteDescription-offer.html:
+        * webrtc/calling-peerconnection-once-closed.html:
+        Once closed, addTransceiver is expected to throw.
+        * webrtc/libwebrtc/release-while-creating-offer.html:
+        * webrtc/libwebrtc/release-while-getting-stats.html:
+        * webrtc/libwebrtc/release-while-setting-local-description.html:
+        * webrtc/video-getParameters.html: sender and receiver parameters are no longer the same.
+        Testing them individually.
+        * webrtc/video-with-receiver.html:
+        Test is working only with legacy mode.
+
 2018-09-07  Frederic Wang  <fwang@igalia.com>
 
         [CSSOM View] Handle the scrollingElement in Element::scroll(Left/Top/Width/Height/To)

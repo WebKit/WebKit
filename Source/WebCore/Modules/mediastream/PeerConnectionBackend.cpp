@@ -530,7 +530,7 @@ void PeerConnectionBackend::markAsNeedingNegotiation()
         m_peerConnection.scheduleNegotiationNeededEvent();
 }
 
-ExceptionOr<Ref<RTCRtpSender>> PeerConnectionBackend::addTrack(RTCRtpSender*, MediaStreamTrack&, const Vector<String>&)
+ExceptionOr<Ref<RTCRtpSender>> PeerConnectionBackend::addTrack(MediaStreamTrack&, Vector<String>&&)
 {
     return Exception { NotSupportedError, "Not implemented"_s };
 }

@@ -1,7 +1,7 @@
 
-FAIL setLocalDescription(offer) with m= section should assign mid to corresponding transceiver assert_equals: Expect transceiver.mid to set to valid string value expected "string" but got "object"
+PASS setLocalDescription(offer) with m= section should assign mid to corresponding transceiver 
 FAIL setRemoteDescription(offer) with m= section and no existing transceiver should create corresponding transceiver promise_test: Unhandled rejection with value: object "TypeError: pc2.setRemoteDescrption is not a function. (In 'pc2.setRemoteDescrption(offer)', 'pc2.setRemoteDescrption' is undefined)"
-FAIL setLocalDescription(rollback) should unset transceiver.mid assert_not_equals: got disallowed value null
-FAIL setLocalDescription(rollback) should only unset transceiver mids associated with current round assert_not_equals: got disallowed value null
-FAIL setRemoteDescription(rollback) should remove newly created transceiver from transceiver list assert_equals: expected 1 but got 0
+FAIL setLocalDescription(rollback) should unset transceiver.mid promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL setLocalDescription(rollback) should only unset transceiver mids associated with current round promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL setRemoteDescription(rollback) should remove newly created transceiver from transceiver list promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
 

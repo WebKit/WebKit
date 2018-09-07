@@ -158,7 +158,7 @@ public:
     virtual void setInterrupted(bool, bool);
 
     const String& name() const { return m_name; }
-    void setName(const String& name) { m_name = name; }
+    void setName(String&& name) { m_name = WTFMove(name); }
 
     unsigned fitnessScore() const { return m_fitnessScore; }
 

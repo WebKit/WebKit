@@ -41,6 +41,7 @@ RealtimeIncomingVideoSource::RealtimeIncomingVideoSource(rtc::scoped_refptr<webr
     : RealtimeMediaSource(WTFMove(videoTrackId), RealtimeMediaSource::Type::Video, String())
     , m_videoTrack(WTFMove(videoTrack))
 {
+    setName("remote video");
     m_currentSettings.setWidth(640);
     m_currentSettings.setHeight(480);
     notifyMutedChange(!m_videoTrack);

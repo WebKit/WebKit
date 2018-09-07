@@ -8,6 +8,9 @@
         <script>
             description("Test RTCPeerConnection 'icecandidate' event and gathering done");
 
+            if (window.testRunner)
+                testRunner.setWebRTCUnifiedPlanEnabled(false);
+
             if (window.internals)
                 internals.useMockRTCPeerConnectionFactory("ICECandidates");
 

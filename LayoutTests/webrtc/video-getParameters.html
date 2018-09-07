@@ -42,16 +42,13 @@ promise_test((test) => {
 
         senderParameters.encodings[0].fec.ssrc = 1;
         senderParameters.encodings[0].rtx.ssrc = 1;
-        receiverParameters.encodings[0].fec.ssrc = 1;
-        receiverParameters.encodings[0].rtx.ssrc = 1;
 
         senderParameters.transactionId = "";
         receiverParameters.transactionId = "";
 
-        assert_equals(JSON.stringify(senderParameters), JSON.stringify(receiverParameters), "testing sender vs. receiver parameters");
-
         senderParameters.encodings[0].ssrc = 1;
-        assert_equals(JSON.stringify(senderParameters), '{"codecs":[],"degradationPreference":"balanced","encodings":[{"active":true,"fec":{"ssrc":1},"maxBitrate":0,"maxFramerate":0,"priority":"medium","rid":"","rtx":{"ssrc":1},"scaleResolutionDownBy":1,"ssrc":1}],"headerExtensions":[],"transactionId":""}', "Testing sanitized parameters");
+        assert_equals(JSON.stringify(senderParameters), '{"codecs":[],"degradationPreference":"balanced","encodings":[{"active":true,"fec":{"ssrc":1},"maxBitrate":0,"maxFramerate":0,"priority":"medium","rid":"","rtx":{"ssrc":1},"scaleResolutionDownBy":1,"ssrc":1}],"headerExtensions":[],"transactionId":""}', "Testing sanitized sender parameters");
+        assert_equals(JSON.stringify(receiverParameters), '{"codecs":[],"degradationPreference":"balanced","encodings":[],"headerExtensions":[],"transactionId":""}', "Testing sanitized receiver parameters");
     });
 }, "Basic video stats");
         </script>
