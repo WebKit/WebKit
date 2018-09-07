@@ -799,7 +799,6 @@ static inline bool shouldWrapWithShiftKeyEventForCharacter(NSString *key)
     if (65 <= keyCode && keyCode <= 90)
         return true;
     switch (keyCode) {
-    case '`':
     case '!':
     case '@':
     case '#':

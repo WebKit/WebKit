@@ -1,3 +1,17 @@
+2018-09-07  Daniel Bates  <dabates@apple.com>
+
+        [iOS] uiController.typeCharacterUsingHardwareKeyboard("`", ...) dispatches DOM key events for ~
+        https://bugs.webkit.org/show_bug.cgi?id=189325
+
+        Reviewed by Wenson Hsieh.
+
+        Fixes an issue where the test infrastructure would incorrectly synthesized a shift key press followed
+        by a ` key press (i.e. type '~') when instructed to simulate typing a grave accent (`). Typing a
+        grave accent does not require holding the shift key.
+
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (shouldWrapWithShiftKeyEventForCharacter):
+
 2018-09-07  Frederic Wang  <fwang@igalia.com>
 
         [CSSOM View] Handle the scrollingElement in Element::scroll(Left/Top/Width/Height/To)
