@@ -1,3 +1,13 @@
+2018-09-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the build for non-Cocoa platforms after r235772.
+
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::Gradient::createPlatformGradient):
+        * platform/graphics/win/GradientDirect2D.cpp:
+        (WebCore::Gradient::generateGradient):
+        (WebCore::Gradient::fill):
+
 2018-09-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add support for min/max-height percentage values.

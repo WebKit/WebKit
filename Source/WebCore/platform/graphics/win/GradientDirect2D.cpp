@@ -99,6 +99,9 @@ void Gradient::generateGradient(ID2D1RenderTarget* renderTarget)
                 &radialGradient);
             RELEASE_ASSERT(SUCCEEDED(hr));
             m_gradient = radialGradient;
+        },
+        [&] (const ConicData&) {
+            // FIXME: implement conic gradient rendering.
         }
     );
 
@@ -148,6 +151,9 @@ void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
 
             if (needScaling)
                 context.restore();
+        },
+        [&] (const ConicData&) {
+            // FIXME: implement conic gradient rendering.
         }
     );
 }
