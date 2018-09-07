@@ -34,20 +34,6 @@
 
 namespace JSC {
 
-StructureStubClearingWatchpoint::~StructureStubClearingWatchpoint()
-{
-    for (auto current = WTFMove(m_next); current; current = WTFMove(current->m_next)) { }
-}
-
-StructureStubClearingWatchpoint* StructureStubClearingWatchpoint::push(
-    const ObjectPropertyCondition& key,
-    WatchpointsOnStructureStubInfo& holder,
-    std::unique_ptr<StructureStubClearingWatchpoint>& head)
-{
-    head = std::make_unique<StructureStubClearingWatchpoint>(key, holder, WTFMove(head));
-    return head.get();
-}
-
 void StructureStubClearingWatchpoint::fireInternal(VM& vm, const FireDetail&)
 {
     if (!m_key || !m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
@@ -68,13 +54,9 @@ void StructureStubClearingWatchpoint::fireInternal(VM& vm, const FireDetail&)
     m_key.object()->structure(vm)->addTransitionWatchpoint(this);
 }
 
-WatchpointsOnStructureStubInfo::~WatchpointsOnStructureStubInfo()
-{
-}
-
 StructureStubClearingWatchpoint* WatchpointsOnStructureStubInfo::addWatchpoint(const ObjectPropertyCondition& key)
 {
-    return StructureStubClearingWatchpoint::push(key, *this, m_head);
+    return m_watchpoints.add(key, *this);
 }
 
 StructureStubClearingWatchpoint* WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(

@@ -1,3 +1,21 @@
+2018-08-31  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Clean up StructureStubClearingWatchpoint
+        https://bugs.webkit.org/show_bug.cgi?id=189156
+
+        Reviewed by Saam Barati.
+
+        Cleaning up StructureStubClearingWatchpoint by holding StructureStubClearingWatchpoint in Bag
+        in WatchpointsOnStructureStubInfo. This removes hacky linked list code for StructureStubClearingWatchpoint.
+
+        * bytecode/StructureStubClearingWatchpoint.cpp:
+        (JSC::WatchpointsOnStructureStubInfo::addWatchpoint):
+        (JSC::StructureStubClearingWatchpoint::~StructureStubClearingWatchpoint): Deleted.
+        (JSC::StructureStubClearingWatchpoint::push): Deleted.
+        (JSC::WatchpointsOnStructureStubInfo::~WatchpointsOnStructureStubInfo): Deleted.
+        * bytecode/StructureStubClearingWatchpoint.h:
+        (JSC::StructureStubClearingWatchpoint::StructureStubClearingWatchpoint):
+
 2018-09-06  Michael Saboff  <msaboff@apple.com>
 
         Improper speculation type for Math.pow(NaN, 0) in Abstract Interpreter
