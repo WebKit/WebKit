@@ -1,3 +1,9 @@
+2018-09-07  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2018-09-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add support for min/max-height percentage values.
