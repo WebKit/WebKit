@@ -382,7 +382,6 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
 {
     ASSERT(isMainThread());
 
-    auto localRequest = request;
     SynchronousLoaderClient client;
     bool defersLoading = false;
     bool shouldContentSniff = true;
@@ -390,12 +389,13 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, defersLoading, shouldContentSniff, shouldContentEncodingSniff));
     handle->d->m_messageQueue = &client.messageQueue();
 
-    if (localRequest.url().protocolIsData()) {
+    if (request.url().protocolIsData()) {
         handle->handleDataURL();
         return;
     }
 
-    handle->d->m_curlRequest = handle->createCurlRequest(WTFMove(localRequest));
+    auto requestCopy = handle->firstRequest();
+    handle->d->m_curlRequest = handle->createCurlRequest(WTFMove(requestCopy));
     handle->d->m_curlRequest->start();
 
     do {

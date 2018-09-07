@@ -1,3 +1,19 @@
+2018-09-07  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl][WebKitLegacy] Stop sending credential embedded in the url via XHR.
+        https://bugs.webkit.org/show_bug.cgi?id=189198
+
+        Reviewed by Alexey Proskuryakov.
+
+        Because sync XHR of Curl port uses passed request directly, the credential information in
+        url is not removed. Use ResourceHandleInternal's firstRequest because those are
+        already takne out.
+
+        Test: http/tests/xmlhttprequest/url-with-credentials.html
+
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+
 2018-09-07  Youenn Fablet  <youenn@apple.com>
 
         RealtimeOutgoingVideoSourceCocoa should use VTImageRotationSession to rotate CVPixelBuffers

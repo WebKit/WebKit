@@ -1,3 +1,15 @@
+2018-09-07  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl][WebKitLegacy] Stop sending credential embedded in the url via XHR.
+        https://bugs.webkit.org/show_bug.cgi?id=189198
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/xmlhttprequest/resources/url-with-credentials/authenticate.php: Added.
+        * http/tests/xmlhttprequest/resources/url-with-credentials/authorize.php: Added.
+        * http/tests/xmlhttprequest/url-with-credentials-expected.txt: Added.
+        * http/tests/xmlhttprequest/url-with-credentials.html: Added.
+
 2018-09-07  Youenn Fablet  <youenn@apple.com>
 
         Add support for unified plan transceivers
