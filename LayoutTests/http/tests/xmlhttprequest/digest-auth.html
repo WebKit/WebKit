@@ -1,0 +1,22 @@
+<html>
+<p>Check Digest Access Authentication works well.</p>
+<div id="result"></div>
+
+<script>
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    const req = new XMLHttpRequest();
+
+    /* Send auth info after getting authorization header. */
+    req.open('GET', '/resources/digest-auth/authorize.php', false, 'everybody', 'lovesbeer');
+    req.send(null);
+
+    const check = function(req) {
+        return req.status == 200 && req.responseText.match(/everybody/);
+    }
+
+    document.getElementById('result').innerHTML = check(req) ? 'PASS' : 'FAIL';
+
+</script>

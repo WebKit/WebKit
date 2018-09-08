@@ -1,5 +1,19 @@
 2018-09-07  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
+        [LayoutTests] Add digest access authentication test.
+        https://bugs.webkit.org/show_bug.cgi?id=189286
+
+        Reviewed by Alex Christensen.
+
+        Add digest auth tests
+
+        * http/tests/resources/digest-auth/authorize.php: Added.
+        * http/tests/resources/digest-auth/digest.php: Added.
+        * http/tests/xmlhttprequest/digest-auth-expected.txt: Added.
+        * http/tests/xmlhttprequest/digest-auth.html: Added.
+
+2018-09-07  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
         [Curl] Stop sending request with credential if no authorization requested.
         https://bugs.webkit.org/show_bug.cgi?id=189057
 
