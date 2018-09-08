@@ -1,0 +1,9 @@
+This tests that the request doesn't sends another request for 401 response without www-authenticate header. If it does, the request never stops by repeated request sending. Test passes if the request returns without displaying authentication callenge UI.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS () => xhr.status is 401
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

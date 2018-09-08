@@ -1,3 +1,16 @@
+2018-09-07  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Stop sending request with credential if no authorization requested.
+        https://bugs.webkit.org/show_bug.cgi?id=189057
+
+        Reviewed by Alex Christensen.
+
+        When 401 response returns without 'www-authenticate' header, suppress another request with credential.
+        Same fix for proxy authentication.
+
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::curlDidReceiveResponse):
+
 2018-09-07  Brent Fulgham  <bfulgham@apple.com>
 
         Allow WebContent access to AVCSupported IOKit property in sandbox

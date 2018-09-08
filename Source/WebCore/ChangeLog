@@ -1,3 +1,17 @@
+2018-09-07  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Stop sending request with credential if no authorization requested.
+        https://bugs.webkit.org/show_bug.cgi?id=189057
+
+        Reviewed by Alex Christensen.
+
+        When 401 response returns without 'www-authenticate' header, suppress another request with credential.
+
+        Test: http/tests/xmlhttprequest/unauthorized-without-authenticate-header.html
+
+        * platform/network/curl/CurlResourceHandleDelegate.cpp:
+        (WebCore::CurlResourceHandleDelegate::curlDidReceiveResponse):
+
 2018-09-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang] duplicated variable name `advance` in UniscribeController::shapeAndPlaceItem

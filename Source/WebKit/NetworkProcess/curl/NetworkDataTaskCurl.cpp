@@ -161,13 +161,13 @@ void NetworkDataTaskCurl::curlDidReceiveResponse(CurlRequest& request, const Cur
         return;
     }
 
-    if (m_response.isUnauthorized()) {
+    if (m_response.isUnauthorized() && receivedResponse.availableHttpAuth) {
         tryHttpAuthentication(AuthenticationChallenge(receivedResponse, m_authFailureCount, m_response));
         m_authFailureCount++;
         return;
     }
 
-    if (m_response.isProxyAuthenticationRequired()) {
+    if (m_response.isProxyAuthenticationRequired() && receivedResponse.availableProxyAuth) {
         tryProxyAuthentication(AuthenticationChallenge(receivedResponse, 0, m_response));
         return;
     }

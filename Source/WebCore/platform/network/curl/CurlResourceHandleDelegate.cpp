@@ -119,7 +119,7 @@ void CurlResourceHandleDelegate::curlDidReceiveResponse(CurlRequest& request, co
         return;
     }
 
-    if (m_response.isUnauthorized()) {
+    if (m_response.isUnauthorized() && receivedResponse.availableHttpAuth) {
         AuthenticationChallenge challenge(receivedResponse, d()->m_authFailureCount, m_response, &m_handle);
         m_handle.didReceiveAuthenticationChallenge(challenge);
         d()->m_authFailureCount++;
