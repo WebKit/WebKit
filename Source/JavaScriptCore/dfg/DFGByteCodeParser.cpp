@@ -57,6 +57,7 @@
 #include "JSModuleNamespaceObject.h"
 #include "NumberConstructor.h"
 #include "ObjectConstructor.h"
+#include "OpcodeInlines.h"
 #include "PreciseJumpTargets.h"
 #include "PutByIdFlags.h"
 #include "PutByIdStatus.h"
@@ -2098,7 +2099,10 @@ template<typename ChecksFunctor>
 bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrinsic intrinsic, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction, const ChecksFunctor& insertChecks)
 {
     VERBOSE_LOG("       The intrinsic is ", intrinsic, "\n");
-    
+
+    if (!isOpcodeShape<OpCallShape>(m_currentInstruction))
+        return false;
+
     // It so happens that the code below doesn't handle the invalid result case. We could fix that, but
     // it would only benefit intrinsics called as setters, like if you do:
     //
@@ -2210,8 +2214,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
 
         if (static_cast<unsigned>(argumentCountIncludingThis) >= MIN_SPARSE_ARRAY_INDEX)
             return false;
-        
-        ArrayMode arrayMode = getArrayMode(m_currentInstruction[OPCODE_LENGTH(op_call) - 2].u.arrayProfile, Array::Write);
+        ArrayMode arrayMode = getArrayMode(arrayProfileFor<OpCallShape>(m_currentInstruction), Array::Write);
         if (!arrayMode.isJSArray())
             return false;
         switch (arrayMode.type()) {
@@ -2248,8 +2251,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantCache)
             || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache))
             return false;
-
-        ArrayMode arrayMode = getArrayMode(m_currentInstruction[OPCODE_LENGTH(op_call) - 2].u.arrayProfile, Array::Read);
+        ArrayMode arrayMode = getArrayMode(arrayProfileFor<OpCallShape>(m_currentInstruction), Array::Read);
         if (!arrayMode.isJSArray())
             return false;
 
@@ -2338,7 +2340,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
             || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
             return false;
 
-        ArrayMode arrayMode = getArrayMode(m_currentInstruction[OPCODE_LENGTH(op_call) - 2].u.arrayProfile, Array::Read);
+        ArrayMode arrayMode = getArrayMode(arrayProfileFor<OpCallShape>(m_currentInstruction), Array::Read);
         if (!arrayMode.isJSArray())
             return false;
 
@@ -2397,8 +2399,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
     case ArrayPopIntrinsic: {
         if (argumentCountIncludingThis != 1)
             return false;
-        
-        ArrayMode arrayMode = getArrayMode(m_currentInstruction[OPCODE_LENGTH(op_call) - 2].u.arrayProfile, Array::Write);
+        ArrayMode arrayMode = getArrayMode(arrayProfileFor<OpCallShape>(m_currentInstruction), Array::Write);
         if (!arrayMode.isJSArray())
             return false;
         switch (arrayMode.type()) {
@@ -5280,7 +5281,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             if (compiledAsGetById)
                 handleGetById(currentInstruction[1].u.operand, prediction, base, identifierNumber, getByIdStatus, AccessType::Get, OPCODE_LENGTH(op_get_by_val));
             else {
-                ArrayMode arrayMode = getArrayMode(currentInstruction[4].u.arrayProfile, Array::Read);
+                ArrayMode arrayMode = getArrayMode(arrayProfileFor<OpGetByValShape>(currentInstruction), Array::Read);
                 // FIXME: We could consider making this not vararg, since it only uses three child
                 // slots.
                 // https://bugs.webkit.org/show_bug.cgi?id=184192
@@ -5352,7 +5353,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             }
 
             if (!compiledAsPutById) {
-                ArrayMode arrayMode = getArrayMode(currentInstruction[4].u.arrayProfile, Array::Write);
+                ArrayMode arrayMode = getArrayMode(arrayProfileFor<OpPutByValShape>(currentInstruction), Array::Write);
 
                 addVarArgChild(base);
                 addVarArgChild(property);
@@ -6642,7 +6643,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_in_by_val: {
-            ArrayMode arrayMode = getArrayMode(currentInstruction[OPCODE_LENGTH(op_in_by_val) - 1].u.arrayProfile, Array::Read);
+            ArrayMode arrayMode = getArrayMode(arrayProfileFor<OpInByValShape>(currentInstruction), Array::Read);
             set(VirtualRegister(currentInstruction[1].u.operand),
                 addToGraph(InByVal, OpInfo(arrayMode.asWord()), get(VirtualRegister(currentInstruction[2].u.operand)), get(VirtualRegister(currentInstruction[3].u.operand))));
             NEXT_OPCODE(op_in_by_val);
@@ -6711,7 +6712,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_has_indexed_property: {
             Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
-            ArrayMode arrayMode = getArrayMode(currentInstruction[4].u.arrayProfile, Array::Read);
+            ArrayMode arrayMode = getArrayMode(arrayProfileFor<OpHasIndexedPropertyShape>(currentInstruction), Array::Read);
             Node* property = get(VirtualRegister(currentInstruction[3].u.operand));
             Node* hasIterableProperty = addToGraph(HasIndexedProperty, OpInfo(arrayMode.asWord()), OpInfo(static_cast<uint32_t>(PropertySlot::InternalMethodType::GetOwnProperty)), base, property);
             set(VirtualRegister(currentInstruction[1].u.operand), hasIterableProperty);
