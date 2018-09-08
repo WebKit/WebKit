@@ -31,7 +31,7 @@
 extern "C" int __stdcall exceptionHandlerThunk(); // Defined in makesafeseh.asm
 #endif
 
-static bool exceptionShouldTerminateProgram(int code)
+static bool exceptionShouldTerminateProgram(DWORD code)
 {
     switch (code) {
 #ifndef NDEBUG

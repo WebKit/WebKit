@@ -1,3 +1,21 @@
+2018-09-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] exceptionShouldTerminateProgram of StructuredExceptionHandlerSuppressor.cpp should take DWORD
+        https://bugs.webkit.org/show_bug.cgi?id=189402
+
+        Reviewed by Alex Christensen.
+
+        Clang reports compilation errors like following:
+
+        > StructuredExceptionHandlerSuppressor.cpp(38,10):  error: case value evaluates to 2147483650, which cannot be narrowed to type 'int' [-Wc++11-narrowing]
+        >     case EXCEPTION_DATATYPE_MISALIGNMENT:
+        >          ^
+
+        No new tests (no behavioral change).
+
+        * platform/win/StructuredExceptionHandlerSuppressor.cpp:
+        (exceptionShouldTerminateProgram): Changed the type of argument from int to DWORD.
+
 2018-09-07  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Stop sending request with credential if no authorization requested.
