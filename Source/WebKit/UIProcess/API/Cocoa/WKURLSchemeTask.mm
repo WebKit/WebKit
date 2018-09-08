@@ -35,8 +35,6 @@
 #import <WebCore/SharedBuffer.h>
 #import <wtf/BlockPtr.h>
 
-using namespace WebCore;
-
 static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType exceptionType)
 {
     switch (exceptionType) {
@@ -71,7 +69,7 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
 
 - (NSURLRequest *)request
 {
-    return _urlSchemeTask->task().request().nsURLRequest(HTTPBodyUpdatePolicy::UpdateHTTPBody);
+    return _urlSchemeTask->task().request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
 }
 
 - (void)didReceiveResponse:(NSURLResponse *)response

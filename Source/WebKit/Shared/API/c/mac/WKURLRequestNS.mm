@@ -29,18 +29,15 @@
 #import "APIURLRequest.h"
 #import "WKAPICast.h"
 
-using namespace WebCore;
-using namespace WebKit;
-
-WKURLRequestRef WKURLRequestCreateWithNSURLRequest(NSURLRequest* urlRequest)
+WKURLRequestRef WKURLRequestCreateWithNSURLRequest(NSURLRequest *urlRequest)
 {
     if ([urlRequest HTTPBodyStream])
         return nullptr;
     RetainPtr<NSURLRequest> copiedURLRequest = adoptNS([urlRequest copy]);
-    return toAPI(&API::URLRequest::create(copiedURLRequest.get()).leakRef());
+    return WebKit::toAPI(&API::URLRequest::create(copiedURLRequest.get()).leakRef());
 }
 
-NSURLRequest* WKURLRequestCopyNSURLRequest(WKURLRequestRef urlRequest)
+NSURLRequest *WKURLRequestCopyNSURLRequest(WKURLRequestRef urlRequest)
 {
-    return [toImpl(urlRequest)->resourceRequest().nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) copy];
+    return [WebKit::toImpl(urlRequest)->resourceRequest().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) copy];
 }

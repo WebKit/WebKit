@@ -42,10 +42,8 @@
 #import "WKURLCF.h"
 #import <wtf/Vector.h>
 
-using namespace WebKit;
-
 @implementation WKBrowsingContextGroup {
-    API::ObjectStorage<WebPageGroup> _pageGroup;
+    API::ObjectStorage<WebKit::WebPageGroup> _pageGroup;
 }
 
 - (void)dealloc
@@ -61,55 +59,55 @@ using namespace WebKit;
     if (!self)
         return nil;
 
-    API::Object::constructInWrapper<WebPageGroup>(self, identifier);
+    API::Object::constructInWrapper<WebKit::WebPageGroup>(self, identifier);
 
     // Give the WKBrowsingContextGroup a identifier-less preferences, so that they
     // don't get automatically written to the disk. The automatic writing has proven
     // confusing to users of the API.
     WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
-    WKPageGroupSetPreferences(toAPI(_pageGroup.get()), preferences.get());
+    WKPageGroupSetPreferences(WebKit::toAPI(_pageGroup.get()), preferences.get());
 
     return self;
 }
 
 - (BOOL)allowsJavaScript
 {
-    return WKPreferencesGetJavaScriptEnabled(WKPageGroupGetPreferences(toAPI(_pageGroup.get())));
+    return WKPreferencesGetJavaScriptEnabled(WKPageGroupGetPreferences(WebKit::toAPI(_pageGroup.get())));
 }
 
 - (void)setAllowsJavaScript:(BOOL)allowsJavaScript
 {
-    WKPreferencesSetJavaScriptEnabled(WKPageGroupGetPreferences(toAPI(_pageGroup.get())), allowsJavaScript);
+    WKPreferencesSetJavaScriptEnabled(WKPageGroupGetPreferences(WebKit::toAPI(_pageGroup.get())), allowsJavaScript);
 }
 
 - (BOOL)allowsJavaScriptMarkup
 {
-    return WKPreferencesGetJavaScriptMarkupEnabled(WKPageGroupGetPreferences(toAPI(_pageGroup.get())));
+    return WKPreferencesGetJavaScriptMarkupEnabled(WKPageGroupGetPreferences(WebKit::toAPI(_pageGroup.get())));
 }
 
 - (void)setAllowsJavaScriptMarkup:(BOOL)allowsJavaScriptMarkup
 {
-    WKPreferencesSetJavaScriptMarkupEnabled(WKPageGroupGetPreferences(toAPI(_pageGroup.get())), allowsJavaScriptMarkup);
+    WKPreferencesSetJavaScriptMarkupEnabled(WKPageGroupGetPreferences(WebKit::toAPI(_pageGroup.get())), allowsJavaScriptMarkup);
 }
 
 - (BOOL)allowsPlugIns
 {
-    return WKPreferencesGetPluginsEnabled(WKPageGroupGetPreferences(toAPI(_pageGroup.get())));
+    return WKPreferencesGetPluginsEnabled(WKPageGroupGetPreferences(WebKit::toAPI(_pageGroup.get())));
 }
 
 - (void)setAllowsPlugIns:(BOOL)allowsPlugIns
 {
-    WKPreferencesSetPluginsEnabled(WKPageGroupGetPreferences(toAPI(_pageGroup.get())), allowsPlugIns);
+    WKPreferencesSetPluginsEnabled(WKPageGroupGetPreferences(WebKit::toAPI(_pageGroup.get())), allowsPlugIns);
 }
 
 - (BOOL)privateBrowsingEnabled
 {
-    return WKPreferencesGetPrivateBrowsingEnabled(WKPageGroupGetPreferences(toAPI(_pageGroup.get())));
+    return WKPreferencesGetPrivateBrowsingEnabled(WKPageGroupGetPreferences(WebKit::toAPI(_pageGroup.get())));
 }
 
 - (void)setPrivateBrowsingEnabled:(BOOL)enablePrivateBrowsing
 {
-    WKPreferencesSetPrivateBrowsingEnabled(WKPageGroupGetPreferences(toAPI(_pageGroup.get())), enablePrivateBrowsing);
+    WKPreferencesSetPrivateBrowsingEnabled(WKPageGroupGetPreferences(WebKit::toAPI(_pageGroup.get())), enablePrivateBrowsing);
 }
 
 static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
@@ -124,10 +122,10 @@ static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
 
     for (id entry in array) {
         if ([entry isKindOfClass:[NSString class]])
-            strings.uncheckedAppend(adoptRef(toImpl(WKStringCreateWithCFString((__bridge CFStringRef)entry))));
+            strings.uncheckedAppend(adoptRef(WebKit::toImpl(WKStringCreateWithCFString((__bridge CFStringRef)entry))));
     }
 
-    return toAPI(&API::Array::create(WTFMove(strings)).leakRef());
+    return WebKit::toAPI(&API::Array::create(WTFMove(strings)).leakRef());
 }
 
 -(void)addUserStyleSheet:(NSString *)source baseURL:(NSURL *)baseURL whitelistedURLPatterns:(NSArray *)whitelist blacklistedURLPatterns:(NSArray *)blacklist mainFrameOnly:(BOOL)mainFrameOnly
@@ -141,12 +139,12 @@ static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
     auto wkBlacklist = createWKArray(blacklist);
     WKUserContentInjectedFrames injectedFrames = mainFrameOnly ? kWKInjectInTopFrameOnly : kWKInjectInAllFrames;
 
-    WKPageGroupAddUserStyleSheet(toAPI(_pageGroup.get()), wkSource.get(), wkBaseURL.get(), wkWhitelist.get(), wkBlacklist.get(), injectedFrames);
+    WKPageGroupAddUserStyleSheet(WebKit::toAPI(_pageGroup.get()), wkSource.get(), wkBaseURL.get(), wkWhitelist.get(), wkBlacklist.get(), injectedFrames);
 }
 
 - (void)removeAllUserStyleSheets
 {
-    WKPageGroupRemoveAllUserStyleSheets(toAPI(_pageGroup.get()));
+    WKPageGroupRemoveAllUserStyleSheets(WebKit::toAPI(_pageGroup.get()));
 }
 
 - (void)addUserScript:(NSString *)source baseURL:(NSURL *)baseURL whitelistedURLPatterns:(NSArray *)whitelist blacklistedURLPatterns:(NSArray *)blacklist injectionTime:(_WKUserScriptInjectionTime)injectionTime mainFrameOnly:(BOOL)mainFrameOnly
@@ -160,12 +158,12 @@ static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
     auto wkBlacklist = createWKArray(blacklist);
     WKUserContentInjectedFrames injectedFrames = mainFrameOnly ? kWKInjectInTopFrameOnly : kWKInjectInAllFrames;
 
-    WKPageGroupAddUserScript(toAPI(_pageGroup.get()), wkSource.get(), wkBaseURL.get(), wkWhitelist.get(), wkBlacklist.get(), injectedFrames, injectionTime);
+    WKPageGroupAddUserScript(WebKit::toAPI(_pageGroup.get()), wkSource.get(), wkBaseURL.get(), wkWhitelist.get(), wkBlacklist.get(), injectedFrames, injectionTime);
 }
 
 - (void)removeAllUserScripts
 {
-    WKPageGroupRemoveAllUserScripts(toAPI(_pageGroup.get()));
+    WKPageGroupRemoveAllUserScripts(WebKit::toAPI(_pageGroup.get()));
 }
 
 #pragma mark WKObject protocol implementation
@@ -181,7 +179,7 @@ static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
 
 - (WKPageGroupRef)_pageGroupRef
 {
-    return toAPI(_pageGroup.get());
+    return WebKit::toAPI(_pageGroup.get());
 }
 
 @end

@@ -34,10 +34,8 @@
 
 #if WK_API_ENABLED
 
-using namespace WebKit;
-
 @implementation WKWebProcessPlugInNodeHandle {
-    API::ObjectStorage<InjectedBundleNodeHandle> _nodeHandle;
+    API::ObjectStorage<WebKit::InjectedBundleNodeHandle> _nodeHandle;
 }
 
 - (void)dealloc
@@ -50,12 +48,12 @@ using namespace WebKit;
 {
     JSContextRef contextRef = [context JSGlobalContextRef];
     JSObjectRef objectRef = JSValueToObject(contextRef, [value JSValueRef], nullptr);
-    return wrapper(InjectedBundleNodeHandle::getOrCreate(contextRef, objectRef));
+    return WebKit::wrapper(WebKit::InjectedBundleNodeHandle::getOrCreate(contextRef, objectRef));
 }
 
 - (WKWebProcessPlugInFrame *)htmlIFrameElementContentFrame
 {
-    return wrapper(_nodeHandle->htmlIFrameElementContentFrame());
+    return WebKit::wrapper(_nodeHandle->htmlIFrameElementContentFrame());
 }
 
 #if PLATFORM(IOS)
@@ -70,7 +68,7 @@ using namespace WebKit;
     if (width)
         optionalWidth = width.floatValue;
 
-    RefPtr<WebImage> image = _nodeHandle->renderedImage(toSnapshotOptions(options), options & kWKSnapshotOptionsExcludeOverflow, optionalWidth);
+    RefPtr<WebKit::WebImage> image = _nodeHandle->renderedImage(WebKit::toSnapshotOptions(options), options & kWKSnapshotOptionsExcludeOverflow, optionalWidth);
     if (!image)
         return nil;
 
@@ -90,7 +88,7 @@ using namespace WebKit;
     if (width)
         optionalWidth = width.floatValue;
 
-    RefPtr<WebImage> image = _nodeHandle->renderedImage(toSnapshotOptions(options), options & kWKSnapshotOptionsExcludeOverflow, optionalWidth);
+    RefPtr<WebKit::WebImage> image = _nodeHandle->renderedImage(WebKit::toSnapshotOptions(options), options & kWKSnapshotOptionsExcludeOverflow, optionalWidth);
     if (!image)
         return nil;
 
@@ -183,15 +181,15 @@ static _WKAutoFillButtonType toWKAutoFillButtonType(WebCore::AutoFillButtonType 
 
 - (WKWebProcessPlugInNodeHandle *)HTMLTableCellElementCellAbove
 {
-    return wrapper(_nodeHandle->htmlTableCellElementCellAbove());
+    return WebKit::wrapper(_nodeHandle->htmlTableCellElementCellAbove());
 }
 
 - (WKWebProcessPlugInFrame *)frame
 {
-    return wrapper(_nodeHandle->document()->documentFrame());
+    return WebKit::wrapper(_nodeHandle->document()->documentFrame());
 }
 
-- (InjectedBundleNodeHandle&)_nodeHandle
+- (WebKit::InjectedBundleNodeHandle&)_nodeHandle
 {
     return *_nodeHandle;
 }

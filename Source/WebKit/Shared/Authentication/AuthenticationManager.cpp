@@ -38,9 +38,8 @@
 #include "WebPageProxyMessages.h"
 #include <WebCore/AuthenticationChallenge.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static uint64_t generateAuthenticationChallengeID()
 {

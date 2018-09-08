@@ -39,8 +39,6 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
-using namespace WebKit;
-
 static const NSInteger UnspecifiedAttachmentErrorCode = 1;
 static const NSInteger InvalidAttachmentErrorCode = 2;
 
@@ -139,7 +137,7 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
         if (!capturedBlock)
             return;
 
-        if (error == CallbackBase::Error::None)
+        if (error == WebKit::CallbackBase::Error::None)
             capturedBlock(nil);
         else
             capturedBlock([NSError errorWithDomain:WKErrorDomain code:UnspecifiedAttachmentErrorCode userInfo:nil]);

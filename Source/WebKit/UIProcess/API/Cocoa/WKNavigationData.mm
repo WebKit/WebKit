@@ -32,8 +32,6 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 
-using namespace WebKit;
-
 @implementation WKNavigationData {
     API::ObjectStorage<API::NavigationData> _data;
 }

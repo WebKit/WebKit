@@ -28,20 +28,18 @@
 
 #if WK_API_ENABLED
 
-using namespace WebKit;
-
 @implementation WKWebProcessPlugInScriptWorld {
-    API::ObjectStorage<InjectedBundleScriptWorld> _world;
+    API::ObjectStorage<WebKit::InjectedBundleScriptWorld> _world;
 }
 
 + (WKWebProcessPlugInScriptWorld *)world
 {
-    return wrapper(InjectedBundleScriptWorld::create());
+    return WebKit::wrapper(WebKit::InjectedBundleScriptWorld::create());
 }
 
 + (WKWebProcessPlugInScriptWorld *)normalWorld
 {
-    return wrapper(InjectedBundleScriptWorld::normalWorld());
+    return WebKit::wrapper(WebKit::InjectedBundleScriptWorld::normalWorld());
 }
 
 - (void)dealloc
@@ -70,7 +68,7 @@ using namespace WebKit;
     return _world->name();
 }
 
-- (InjectedBundleScriptWorld&)_scriptWorld
+- (WebKit::InjectedBundleScriptWorld&)_scriptWorld
 {
     return *_world;
 }

@@ -29,20 +29,18 @@
 #import "ObjCObjectGraph.h"
 #import "WKSharedAPICast.h"
 
-using namespace WebKit;
-
 WKTypeID WKObjCTypeWrapperGetTypeID()
 {
-    return toAPI(ObjCObjectGraph::APIType);
+    return WebKit::toAPI(WebKit::ObjCObjectGraph::APIType);
 }
 
 WKObjCTypeWrapperRef WKObjCTypeWrapperCreate(id object)
 {
-    auto objectWrapper = ObjCObjectGraph::create(object);
-    return toAPI(&objectWrapper.leakRef());
+    auto objectWrapper = WebKit::ObjCObjectGraph::create(object);
+    return WebKit::toAPI(&objectWrapper.leakRef());
 }
 
 id WKObjCTypeWrapperGetObject(WKObjCTypeWrapperRef wrapperRef)
 {
-    return toImpl(wrapperRef)->rootObject();
+    return WebKit::toImpl(wrapperRef)->rootObject();
 }

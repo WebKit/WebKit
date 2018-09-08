@@ -61,9 +61,6 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/WeakObjCPtr.h>
 
-using namespace WebCore;
-using namespace WebKit;
-
 NSString * const WKActionIsMainFrameKey = @"WKActionIsMainFrameKey";
 NSString * const WKActionNavigationTypeKey = @"WKActionNavigationTypeKey";
 NSString * const WKActionMouseButtonKey = @"WKActionMouseButtonKey";
@@ -76,16 +73,16 @@ NSString * const WKActionOriginatingFrameURLKey = @"WKActionOriginatingFrameURLK
 NSString * const WKActionCanShowMIMETypeKey = @"WKActionCanShowMIMETypeKey";
 
 @implementation WKBrowsingContextController {
-    RefPtr<WebPageProxy> _page;
-    std::unique_ptr<PageLoadStateObserver> _pageLoadStateObserver;
+    RefPtr<WebKit::WebPageProxy> _page;
+    std::unique_ptr<WebKit::PageLoadStateObserver> _pageLoadStateObserver;
 
     WeakObjCPtr<id <WKBrowsingContextLoadDelegate>> _loadDelegate;
     WeakObjCPtr<id <WKBrowsingContextPolicyDelegate>> _policyDelegate;
 }
 
-static HashMap<WebPageProxy*, __unsafe_unretained WKBrowsingContextController *>& browsingContextControllerMap()
+static HashMap<WebKit::WebPageProxy*, __unsafe_unretained WKBrowsingContextController *>& browsingContextControllerMap()
 {
-    static NeverDestroyed<HashMap<WebPageProxy*, __unsafe_unretained WKBrowsingContextController *>> browsingContextControllerMap;
+    static NeverDestroyed<HashMap<WebKit::WebPageProxy*, __unsafe_unretained WKBrowsingContextController *>> browsingContextControllerMap;
     return browsingContextControllerMap;
 }
 
@@ -103,12 +100,12 @@ static HashMap<WebPageProxy*, __unsafe_unretained WKBrowsingContextController *>
 
 + (void)registerSchemeForCustomProtocol:(NSString *)scheme
 {
-    WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
+    WebKit::WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
 }
 
 + (void)unregisterSchemeForCustomProtocol:(NSString *)scheme
 {
-    WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
+    WebKit::WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
 }
 
 - (void)loadRequest:(NSURLRequest *)request
@@ -118,11 +115,11 @@ static HashMap<WebPageProxy*, __unsafe_unretained WKBrowsingContextController *>
 
 - (void)loadRequest:(NSURLRequest *)request userData:(id)userData
 {
-    RefPtr<ObjCObjectGraph> wkUserData;
+    RefPtr<WebKit::ObjCObjectGraph> wkUserData;
     if (userData)
-        wkUserData = ObjCObjectGraph::create(userData);
+        wkUserData = WebKit::ObjCObjectGraph::create(userData);
 
-    _page->loadRequest(request, ShouldOpenExternalURLsPolicy::ShouldNotAllow, wkUserData.get());
+    _page->loadRequest(request, WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow, wkUserData.get());
 }
 
 - (void)loadFileURL:(NSURL *)URL restrictToFilesWithin:(NSURL *)allowedDirectory
@@ -135,9 +132,9 @@ static HashMap<WebPageProxy*, __unsafe_unretained WKBrowsingContextController *>
     if (![URL isFileURL] || (allowedDirectory && ![allowedDirectory isFileURL]))
         [NSException raise:NSInvalidArgumentException format:@"Attempted to load a non-file URL"];
 
-    RefPtr<ObjCObjectGraph> wkUserData;
+    RefPtr<WebKit::ObjCObjectGraph> wkUserData;
     if (userData)
-        wkUserData = ObjCObjectGraph::create(userData);
+        wkUserData = WebKit::ObjCObjectGraph::create(userData);
 
     _page->loadFile([URL _web_originalDataAsWTFString], [allowedDirectory _web_originalDataAsWTFString], wkUserData.get());
 }
@@ -149,9 +146,9 @@ static HashMap<WebPageProxy*, __unsafe_unretained WKBrowsingContextController *>
 
 - (void)loadHTMLString:(NSString *)HTMLString baseURL:(NSURL *)baseURL userData:(id)userData
 {
-    RefPtr<ObjCObjectGraph> wkUserData;
+    RefPtr<WebKit::ObjCObjectGraph> wkUserData;
     if (userData)
-        wkUserData = ObjCObjectGraph::create(userData);
+        wkUserData = WebKit::ObjCObjectGraph::create(userData);
 
     NSData *data = [HTMLString dataUsingEncoding:NSUTF8StringEncoding];
     _page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, "text/html"_s, "UTF-8"_s, [baseURL _web_originalDataAsWTFString], wkUserData.get());
@@ -170,9 +167,9 @@ static HashMap<WebPageProxy*, __unsafe_unretained WKBrowsingContextController *>
 
 - (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL userData:(id)userData
 {
-    RefPtr<ObjCObjectGraph> wkUserData;
+    RefPtr<WebKit::ObjCObjectGraph> wkUserData;
     if (userData)
-        wkUserData = ObjCObjectGraph::create(userData);
+        wkUserData = WebKit::ObjCObjectGraph::create(userData);
 
     _page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, encodingName, [baseURL _web_originalDataAsWTFString], wkUserData.get());
 }
@@ -292,7 +289,7 @@ static HashMap<WebPageProxy*, __unsafe_unretained WKBrowsingContextController *>
 
 - (NSArray *)certificateChain
 {
-    if (WebFrameProxy* mainFrame = _page->mainFrame())
+    if (WebKit::WebFrameProxy* mainFrame = _page->mainFrame())
         return mainFrame->certificateInfo() ? (__bridge NSArray *)mainFrame->certificateInfo()->certificateInfo().certificateChain() : nil;
 
     return nil;
@@ -344,7 +341,7 @@ static void didFailProvisionalNavigation(WKPageRef page, WKNavigationRef, WKErro
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextController:didFailProvisionalLoadWithError:)])
-        [loadDelegate browsingContextController:browsingContext didFailProvisionalLoadWithError:wrapper(*toImpl(error))];
+        [loadDelegate browsingContextController:browsingContext didFailProvisionalLoadWithError:wrapper(*WebKit::toImpl(error))];
 }
 
 static void didCommitNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo)
@@ -371,7 +368,7 @@ static void didFailNavigation(WKPageRef page, WKNavigationRef, WKErrorRef error,
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextController:didFailLoadWithError:)])
-        [loadDelegate browsingContextController:browsingContext didFailLoadWithError:wrapper(*toImpl(error))];
+        [loadDelegate browsingContextController:browsingContext didFailLoadWithError:wrapper(*WebKit::toImpl(error))];
 }
 
 static bool canAuthenticateAgainstProtectionSpace(WKPageRef page, WKProtectionSpaceRef protectionSpace, const void *clientInfo)
@@ -380,7 +377,7 @@ static bool canAuthenticateAgainstProtectionSpace(WKPageRef page, WKProtectionSp
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextController:canAuthenticateAgainstProtectionSpace:)])
-        return [(id <WKBrowsingContextLoadDelegatePrivate>)loadDelegate browsingContextController:browsingContext canAuthenticateAgainstProtectionSpace:toImpl(protectionSpace)->protectionSpace().nsSpace()];
+        return [(id <WKBrowsingContextLoadDelegatePrivate>)loadDelegate browsingContextController:browsingContext canAuthenticateAgainstProtectionSpace:WebKit::toImpl(protectionSpace)->protectionSpace().nsSpace()];
 
     return false;
 }
@@ -391,7 +388,7 @@ static void didReceiveAuthenticationChallenge(WKPageRef page, WKAuthenticationCh
     auto loadDelegate = browsingContext->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(browsingContextController:didReceiveAuthenticationChallenge:)])
-        [(id <WKBrowsingContextLoadDelegatePrivate>)loadDelegate browsingContextController:browsingContext didReceiveAuthenticationChallenge:wrapper(*toImpl(authenticationChallenge))];
+        [(id <WKBrowsingContextLoadDelegatePrivate>)loadDelegate browsingContextController:browsingContext didReceiveAuthenticationChallenge:wrapper(*WebKit::toImpl(authenticationChallenge))];
 }
 
 static void processDidCrash(WKPageRef page, const void* clientInfo)
@@ -403,7 +400,7 @@ static void processDidCrash(WKPageRef page, const void* clientInfo)
         [(id <WKBrowsingContextLoadDelegatePrivate>)loadDelegate browsingContextControllerWebProcessDidCrash:browsingContext];
 }
 
-static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, WebPageProxy& page)
+static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, WebKit::WebPageProxy& page)
 {
     WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
@@ -446,7 +443,7 @@ static WKPolicyDecisionHandler makePolicyDecisionBlock(WKFramePolicyListenerRef 
     } copy] autorelease];
 }
 
-static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, WebPageProxy& page)
+static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, WebKit::WebPageProxy& page)
 {
     WKPagePolicyClientInternal policyClient;
     memset(&policyClient, 0, sizeof(policyClient));
@@ -471,7 +468,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 
             if (originatingFrame) {
                 actionDictionary = [[actionDictionary mutableCopy] autorelease];
-                [(NSMutableDictionary *)actionDictionary setObject:[NSURL _web_URLWithWTFString:toImpl(originatingFrame)->url()] forKey:WKActionOriginatingFrameURLKey];
+                [(NSMutableDictionary *)actionDictionary setObject:[NSURL _web_URLWithWTFString:WebKit::toImpl(originatingFrame)->url()] forKey:WKActionOriginatingFrameURLKey];
             }
             
             [policyDelegate browsingContextController:browsingContext decidePolicyForNavigationAction:actionDictionary decisionHandler:makePolicyDecisionBlock(listener)];
@@ -491,7 +488,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
                 WKActionModifierFlagsKey: @(modifiers),
                 WKActionMouseButtonKey: @(mouseButton),
                 WKActionURLRequestKey: adoptNS(WKURLRequestCopyNSURLRequest(request)).get(),
-                WKActionFrameNameKey: toImpl(frameName)->wrapper()
+                WKActionFrameNameKey: WebKit::toImpl(frameName)->wrapper()
             };
             
             [policyDelegate browsingContextController:browsingContext decidePolicyForNewWindowAction:actionDictionary decisionHandler:makePolicyDecisionBlock(listener)];
@@ -571,9 +568,9 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     if (!(self = [super init]))
         return nil;
 
-    _page = toImpl(pageRef);
+    _page = WebKit::toImpl(pageRef);
 
-    _pageLoadStateObserver = std::make_unique<PageLoadStateObserver>(self);
+    _pageLoadStateObserver = std::make_unique<WebKit::PageLoadStateObserver>(self);
     _page->pageLoadState().addObserver(*_pageLoadStateObserver);
 
     ASSERT(!browsingContextControllerMap().contains(_page.get()));
@@ -584,7 +581,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 
 + (WKBrowsingContextController *)_browsingContextControllerForPageRef:(WKPageRef)pageRef
 {
-    return browsingContextControllerMap().get(toImpl(pageRef));
+    return browsingContextControllerMap().get(WebKit::toImpl(pageRef));
 }
 
 @end
@@ -593,27 +590,27 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 
 - (WKPageRef)_pageRef
 {
-    return toAPI(_page.get());
+    return WebKit::toAPI(_page.get());
 }
 
 - (void)setPaginationMode:(WKBrowsingContextPaginationMode)paginationMode
 {
-    Pagination::Mode mode;
+    WebCore::Pagination::Mode mode;
     switch (paginationMode) {
     case WKPaginationModeUnpaginated:
-        mode = Pagination::Unpaginated;
+        mode = WebCore::Pagination::Unpaginated;
         break;
     case WKPaginationModeLeftToRight:
-        mode = Pagination::LeftToRightPaginated;
+        mode = WebCore::Pagination::LeftToRightPaginated;
         break;
     case WKPaginationModeRightToLeft:
-        mode = Pagination::RightToLeftPaginated;
+        mode = WebCore::Pagination::RightToLeftPaginated;
         break;
     case WKPaginationModeTopToBottom:
-        mode = Pagination::TopToBottomPaginated;
+        mode = WebCore::Pagination::TopToBottomPaginated;
         break;
     case WKPaginationModeBottomToTop:
-        mode = Pagination::BottomToTopPaginated;
+        mode = WebCore::Pagination::BottomToTopPaginated;
         break;
     default:
         return;
@@ -625,15 +622,15 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 - (WKBrowsingContextPaginationMode)paginationMode
 {
     switch (_page->paginationMode()) {
-    case Pagination::Unpaginated:
+    case WebCore::Pagination::Unpaginated:
         return WKPaginationModeUnpaginated;
-    case Pagination::LeftToRightPaginated:
+    case WebCore::Pagination::LeftToRightPaginated:
         return WKPaginationModeLeftToRight;
-    case Pagination::RightToLeftPaginated:
+    case WebCore::Pagination::RightToLeftPaginated:
         return WKPaginationModeRightToLeft;
-    case Pagination::TopToBottomPaginated:
+    case WebCore::Pagination::TopToBottomPaginated:
         return WKPaginationModeTopToBottom;
-    case Pagination::BottomToTopPaginated:
+    case WebCore::Pagination::BottomToTopPaginated:
         return WKPaginationModeBottomToTop;
     }
 

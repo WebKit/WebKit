@@ -36,8 +36,6 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
 
-using namespace WebKit;
-
 @implementation WKConnection {
     WeakObjCPtr<id <WKConnectionDelegate>> _delegate;
 }
@@ -56,7 +54,7 @@ static void didReceiveMessage(WKConnectionRef, WKStringRef messageName, WKTypeRe
 
     if ([delegate respondsToSelector:@selector(connection:didReceiveMessageWithName:body:)]) {
         RetainPtr<CFStringRef> nsMessageName = adoptCF(WKStringCopyCFString(kCFAllocatorDefault, messageName));
-        RetainPtr<id> nsMessageBody = static_cast<ObjCObjectGraph*>(toImpl(messageBody))->rootObject();
+        RetainPtr<id> nsMessageBody = static_cast<WebKit::ObjCObjectGraph*>(WebKit::toImpl(messageBody))->rootObject();
         [delegate connection:connection didReceiveMessageWithName:(__bridge NSString *)nsMessageName.get() body:nsMessageBody.get()];
     }
 }
@@ -70,7 +68,7 @@ static void didClose(WKConnectionRef, const void* clientInfo)
         [delegate connectionDidClose:connection];
 }
 
-static void setUpClient(WKConnection *wrapper, WebConnection& connection)
+static void setUpClient(WKConnection *wrapper, WebKit::WebConnection& connection)
 {
     WKConnectionClientV0 client;
     memset(&client, 0, sizeof(client));
@@ -99,13 +97,13 @@ static void setUpClient(WKConnection *wrapper, WebConnection& connection)
 
 - (void)sendMessageWithName:(NSString *)messageName body:(id)messageBody
 {
-    RefPtr<ObjCObjectGraph> wkMessageBody = ObjCObjectGraph::create(messageBody);
+    RefPtr<WebKit::ObjCObjectGraph> wkMessageBody = WebKit::ObjCObjectGraph::create(messageBody);
     self._connection.postMessage(messageName, wkMessageBody.get());
 }
 
-- (WebConnection&)_connection
+- (WebKit::WebConnection&)_connection
 {
-    return static_cast<WebConnection&>(API::Object::fromWKObjectExtraSpace(self));
+    return static_cast<WebKit::WebConnection&>(API::Object::fromWKObjectExtraSpace(self));
 }
 
 #pragma mark WKObject protocol implementation

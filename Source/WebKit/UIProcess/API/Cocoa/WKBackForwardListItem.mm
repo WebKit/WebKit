@@ -30,10 +30,8 @@
 
 #import "WKNSURLExtras.h"
 
-using namespace WebKit;
-
 @implementation WKBackForwardListItem {
-    API::ObjectStorage<WebBackForwardListItem> _item;
+    API::ObjectStorage<WebKit::WebBackForwardListItem> _item;
 }
 
 - (void)dealloc

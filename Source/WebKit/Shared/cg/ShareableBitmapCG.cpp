@@ -34,9 +34,8 @@
 #include <wtf/RetainPtr.h>
 #include "CGUtilities.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
     
 static CGColorSpaceRef colorSpace(const ShareableBitmap::Configuration& configuration)
 {

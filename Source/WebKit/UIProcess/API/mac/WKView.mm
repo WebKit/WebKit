@@ -45,12 +45,9 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/BlockPtr.h>
 
-using namespace WebKit;
-using namespace WebCore;
-
 @interface WKViewData : NSObject {
 @public
-    std::unique_ptr<WebViewImpl> _impl;
+    std::unique_ptr<WebKit::WebViewImpl> _impl;
 }
 
 @end
@@ -759,7 +756,7 @@ Some other editing-related methods still unimplemented:
 
 - (BOOL)mouseDownCanMoveWindow
 {
-    return WebViewImpl::mouseDownCanMoveWindow();
+    return WebKit::WebViewImpl::mouseDownCanMoveWindow();
 }
 
 - (void)viewDidHide
@@ -898,7 +895,7 @@ Some other editing-related methods still unimplemented:
                 ASSERT(RunLoop::isMain());
                 if (loadCompletionHandler) {
                     completionHandler([loadCompletionHandler = BlockPtr<void (NSData *)>(loadCompletionHandler)](API::Data* data, WebKit::CallbackBase::Error error) {
-                        if (error != CallbackBase::Error::None || !data)
+                        if (error != WebKit::CallbackBase::Error::None || !data)
                             loadCompletionHandler(nil);
                         else
                             loadCompletionHandler(wrapper(*data));
@@ -916,16 +913,16 @@ Some other editing-related methods still unimplemented:
 #endif // WK_API_ENABLED
 }
 
-- (instancetype)initWithFrame:(NSRect)frame processPool:(WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration
+- (instancetype)initWithFrame:(NSRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration
 {
     self = [super initWithFrame:frame];
     if (!self)
         return nil;
 
-    InitializeWebKit2();
+    WebKit::InitializeWebKit2();
 
     _data = [[WKViewData alloc] init];
-    _data->_impl = std::make_unique<WebViewImpl>(self, nullptr, processPool, WTFMove(configuration));
+    _data->_impl = std::make_unique<WebKit::WebViewImpl>(self, nullptr, processPool, WTFMove(configuration));
 
     [self maybeInstallIconLoadingClient];
 
@@ -1006,7 +1003,7 @@ Some other editing-related methods still unimplemented:
 
 - (id)_web_immediateActionAnimationControllerForHitTestResultInternal:(API::HitTestResult*)hitTestResult withType:(uint32_t)type userData:(API::Object*)userData
 {
-    return [self _immediateActionAnimationControllerForHitTestResult:toAPI(hitTestResult) withType:type userData:toAPI(userData)];
+    return [self _immediateActionAnimationControllerForHitTestResult:WebKit::toAPI(hitTestResult) withType:type userData:WebKit::toAPI(userData)];
 }
 
 - (void)_web_prepareForImmediateActionAnimation
@@ -1131,7 +1128,7 @@ Some other editing-related methods still unimplemented:
 
 - (void)saveBackForwardSnapshotForItem:(WKBackForwardListItemRef)item
 {
-    _data->_impl->saveBackForwardSnapshotForItem(*toImpl(item));
+    _data->_impl->saveBackForwardSnapshotForItem(*WebKit::toImpl(item));
 }
 
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
@@ -1155,19 +1152,19 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage
 {
     auto configuration = API::PageConfiguration::create();
-    configuration->setProcessPool(toImpl(contextRef));
-    configuration->setPageGroup(toImpl(pageGroupRef));
-    configuration->setRelatedPage(toImpl(relatedPage));
+    configuration->setProcessPool(WebKit::toImpl(contextRef));
+    configuration->setPageGroup(WebKit::toImpl(pageGroupRef));
+    configuration->setRelatedPage(WebKit::toImpl(relatedPage));
 #if PLATFORM(MAC)
     configuration->preferenceValues().set(WebKit::WebPreferencesKey::systemLayoutDirectionKey(), WebKit::WebPreferencesStore::Value(static_cast<uint32_t>(toUserInterfaceLayoutDirection(self.userInterfaceLayoutDirection))));
 #endif
 
-    return [self initWithFrame:frame processPool:*toImpl(contextRef) configuration:WTFMove(configuration)];
+    return [self initWithFrame:frame processPool:*WebKit::toImpl(contextRef) configuration:WTFMove(configuration)];
 }
 
 - (id)initWithFrame:(NSRect)frame configurationRef:(WKPageConfigurationRef)configurationRef
 {
-    Ref<API::PageConfiguration> configuration = toImpl(configurationRef)->copy();
+    Ref<API::PageConfiguration> configuration = WebKit::toImpl(configurationRef)->copy();
     auto& processPool = *configuration->processPool();
 
     return [self initWithFrame:frame processPool:processPool configuration:WTFMove(configuration)];
@@ -1175,7 +1172,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
 
 - (BOOL)wantsUpdateLayer
 {
-    return WebViewImpl::wantsUpdateLayer();
+    return WebKit::WebViewImpl::wantsUpdateLayer();
 }
 
 - (void)updateLayer
@@ -1185,17 +1182,17 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
 
 - (WKPageRef)pageRef
 {
-    return toAPI(&_data->_impl->page());
+    return WebKit::toAPI(&_data->_impl->page());
 }
 
 - (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef
 {
-    return _data->_impl->canChangeFrameLayout(*toImpl(frameRef));
+    return _data->_impl->canChangeFrameLayout(*WebKit::toImpl(frameRef));
 }
 
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef
 {
-    return _data->_impl->printOperationWithPrintInfo(printInfo, *toImpl(frameRef));
+    return _data->_impl->printOperationWithPrintInfo(printInfo, *WebKit::toImpl(frameRef));
 }
 
 - (void)setFrame:(NSRect)rect andScrollBy:(NSSize)offset
@@ -1220,7 +1217,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
 
 + (void)hideWordDefinitionWindow
 {
-    WebViewImpl::hideWordDefinitionWindow();
+    WebKit::WebViewImpl::hideWordDefinitionWindow();
 }
 
 - (NSSize)minimumSizeForAutoLayout

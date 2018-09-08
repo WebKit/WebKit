@@ -29,14 +29,11 @@
 #import "WKAPICast.h"
 #import "WebCertificateInfo.h"
 
-using namespace WebCore;
-using namespace WebKit;
-
 WKCertificateInfoRef WKCertificateInfoCreateWithServerTrust(SecTrustRef serverTrust)
 {
 #if HAVE(SEC_TRUST_SERIALIZATION)
-    RefPtr<WebCertificateInfo> certificateInfo = WebCertificateInfo::create(CertificateInfo(serverTrust));
-    return toAPI(certificateInfo.leakRef());
+    RefPtr<WebKit::WebCertificateInfo> certificateInfo = WebKit::WebCertificateInfo::create(WebCore::CertificateInfo(serverTrust));
+    return WebKit::toAPI(certificateInfo.leakRef());
 #else
     return nullptr;
 #endif
@@ -44,19 +41,19 @@ WKCertificateInfoRef WKCertificateInfoCreateWithServerTrust(SecTrustRef serverTr
 
 WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(CFArrayRef certificateChain)
 {
-    RefPtr<WebCertificateInfo> certificateInfo = WebCertificateInfo::create(CertificateInfo(certificateChain));
-    return toAPI(certificateInfo.leakRef());
+    RefPtr<WebKit::WebCertificateInfo> certificateInfo = WebKit::WebCertificateInfo::create(WebCore::CertificateInfo(certificateChain));
+    return WebKit::toAPI(certificateInfo.leakRef());
 }
 
 CFArrayRef WKCertificateInfoGetCertificateChain(WKCertificateInfoRef certificateInfoRef)
 {
-    return toImpl(certificateInfoRef)->certificateInfo().certificateChain();
+    return WebKit::toImpl(certificateInfoRef)->certificateInfo().certificateChain();
 }
 
 SecTrustRef WKCertificateInfoGetServerTrust(WKCertificateInfoRef certificateInfoRef)
 {
 #if HAVE(SEC_TRUST_SERIALIZATION)
-    return toImpl(certificateInfoRef)->certificateInfo().trust();
+    return WebKit::toImpl(certificateInfoRef)->certificateInfo().trust();
 #else
     return nullptr;
 #endif

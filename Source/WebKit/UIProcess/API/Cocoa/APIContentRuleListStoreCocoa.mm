@@ -32,7 +32,7 @@
 
 namespace API {
 
-String ContentRuleListStore::defaultStorePath(bool legacyFilename)
+WTF::String ContentRuleListStore::defaultStorePath(bool legacyFilename)
 {
     static dispatch_once_t onceToken;
     static NSURL *contentRuleListStoreURL;

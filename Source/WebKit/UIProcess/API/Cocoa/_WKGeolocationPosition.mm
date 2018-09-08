@@ -30,8 +30,6 @@
 
 #import <CoreLocation/CLLocation.h>
 
-using namespace WebKit;
-
 @implementation _WKGeolocationPosition
 
 + (instancetype)positionWithLocation:(CLLocation *)location
@@ -39,7 +37,7 @@ using namespace WebKit;
     if (!location)
         return nil;
 
-    return wrapper(WebGeolocationPosition::create(WebCore::GeolocationPosition { location }));
+    return wrapper(WebKit::WebGeolocationPosition::create(WebCore::GeolocationPosition { location }));
 }
 
 - (void)dealloc

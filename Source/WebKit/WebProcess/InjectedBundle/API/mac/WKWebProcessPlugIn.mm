@@ -37,10 +37,8 @@
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
 #import <wtf/RetainPtr.h>
 
-using namespace WebKit;
-
 @interface WKWebProcessPlugInController () {
-    API::ObjectStorage<InjectedBundle> _bundle;
+    API::ObjectStorage<WebKit::InjectedBundle> _bundle;
     RetainPtr<id <WKWebProcessPlugIn>> _principalClassInstance;
 }
 @end
@@ -60,7 +58,7 @@ static void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* 
     id <WKWebProcessPlugIn> principalClassInstance = plugInController->_principalClassInstance.get();
 
     if ([principalClassInstance respondsToSelector:@selector(webProcessPlugIn:didCreateBrowserContextController:)])
-        [principalClassInstance webProcessPlugIn:plugInController didCreateBrowserContextController:wrapper(*toImpl(page))];
+        [principalClassInstance webProcessPlugIn:plugInController didCreateBrowserContextController:wrapper(*WebKit::toImpl(page))];
 }
 
 static void willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
@@ -69,10 +67,10 @@ static void willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void
     id <WKWebProcessPlugIn> principalClassInstance = plugInController->_principalClassInstance.get();
 
     if ([principalClassInstance respondsToSelector:@selector(webProcessPlugIn:willDestroyBrowserContextController:)])
-        [principalClassInstance webProcessPlugIn:plugInController willDestroyBrowserContextController:wrapper(*toImpl(page))];
+        [principalClassInstance webProcessPlugIn:plugInController willDestroyBrowserContextController:wrapper(*WebKit::toImpl(page))];
 }
 
-static void setUpBundleClient(WKWebProcessPlugInController *plugInController, InjectedBundle& bundle)
+static void setUpBundleClient(WKWebProcessPlugInController *plugInController, WebKit::InjectedBundle& bundle)
 {
     WKBundleClientV1 bundleClient;
     memset(&bundleClient, 0, sizeof(bundleClient));
@@ -111,7 +109,7 @@ static Ref<API::Array> createWKArray(NSArray *array)
     
     for (id entry in array) {
         if ([entry isKindOfClass:[NSString class]])
-            strings.uncheckedAppend(adoptRef(toImpl(WKStringCreateWithCFString((__bridge CFStringRef)entry))));
+            strings.uncheckedAppend(adoptRef(WebKit::toImpl(WKStringCreateWithCFString((__bridge CFStringRef)entry))));
     }
     
     return API::Array::create(WTFMove(strings));

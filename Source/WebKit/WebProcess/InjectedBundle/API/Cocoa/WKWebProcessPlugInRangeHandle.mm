@@ -37,10 +37,8 @@
 #import "WKDataDetectorTypesInternal.h"
 #endif
 
-using namespace WebKit;
-
 @implementation WKWebProcessPlugInRangeHandle {
-    API::ObjectStorage<InjectedBundleRangeHandle> _rangeHandle;
+    API::ObjectStorage<WebKit::InjectedBundleRangeHandle> _rangeHandle;
 }
 
 - (void)dealloc
@@ -53,7 +51,7 @@ using namespace WebKit;
 {
     JSContextRef contextRef = [context JSGlobalContextRef];
     JSObjectRef objectRef = JSValueToObject(contextRef, [value JSValueRef], nullptr);
-    return wrapper(InjectedBundleRangeHandle::getOrCreate(contextRef, objectRef));
+    return wrapper(WebKit::InjectedBundleRangeHandle::getOrCreate(contextRef, objectRef));
 }
 
 - (WKWebProcessPlugInFrame *)frame
@@ -78,7 +76,7 @@ using namespace WebKit;
 }
 #endif
 
-- (InjectedBundleRangeHandle&)_rangeHandle
+- (WebKit::InjectedBundleRangeHandle&)_rangeHandle
 {
     return *_rangeHandle;
 }

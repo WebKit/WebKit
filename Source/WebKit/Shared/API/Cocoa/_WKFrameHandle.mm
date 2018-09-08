@@ -28,8 +28,6 @@
 
 #if WK_API_ENABLED
 
-using namespace WebKit;
-
 @implementation _WKFrameHandle {
     API::ObjectStorage<API::FrameHandle> _frameHandle;
 }

@@ -31,9 +31,6 @@
 #import <objc/runtime.h>
 #import <wtf/text/WTFString.h>
 
-using namespace WebCore;
-using namespace WebKit;
-
 #if WK_API_ENABLED
 static inline Class wkNSStringClass()
 {
@@ -51,19 +48,19 @@ WKStringRef WKStringCreateWithCFString(CFStringRef cfString)
 #if WK_API_ENABLED
     // Since WKNSString is an internal class with no subclasses, we can do a simple equality check.
     if (object_getClass((__bridge NSString *)cfString) == wkNSStringClass())
-        return toAPI(static_cast<API::String*>(&[(WKNSString *)(__bridge NSString *)CFRetain(cfString) _apiObject]));
+        return WebKit::toAPI(static_cast<API::String*>(&[(WKNSString *)(__bridge NSString *)CFRetain(cfString) _apiObject]));
 #endif
     String string(cfString);
-    return toCopiedAPI(string);
+    return WebKit::toCopiedAPI(string);
 }
 
 CFStringRef WKStringCopyCFString(CFAllocatorRef allocatorRef, WKStringRef stringRef)
 {
-    ASSERT(!toImpl(stringRef)->string().isNull());
+    ASSERT(!WebKit::toImpl(stringRef)->string().isNull());
 
     // NOTE: This does not use StringImpl::createCFString() since that function
     // expects to be called on the thread running WebCore.
-    if (toImpl(stringRef)->string().is8Bit())
-        return CFStringCreateWithBytes(allocatorRef, reinterpret_cast<const UInt8*>(toImpl(stringRef)->string().characters8()), toImpl(stringRef)->string().length(), kCFStringEncodingISOLatin1, true);
-    return CFStringCreateWithCharacters(allocatorRef, reinterpret_cast<const UniChar*>(toImpl(stringRef)->string().characters16()), toImpl(stringRef)->string().length());
+    if (WebKit::toImpl(stringRef)->string().is8Bit())
+        return CFStringCreateWithBytes(allocatorRef, reinterpret_cast<const UInt8*>(WebKit::toImpl(stringRef)->string().characters8()), WebKit::toImpl(stringRef)->string().length(), kCFStringEncodingISOLatin1, true);
+    return CFStringCreateWithCharacters(allocatorRef, reinterpret_cast<const UniChar*>(WebKit::toImpl(stringRef)->string().characters16()), WebKit::toImpl(stringRef)->string().length());
 }

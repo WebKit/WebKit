@@ -29,15 +29,13 @@
 #import "APIURLResponse.h"
 #import "WKAPICast.h"
 
-using namespace WebKit;
-
-WKURLResponseRef WKURLResponseCreateWithNSURLResponse(NSURLResponse* urlResponse)
+WKURLResponseRef WKURLResponseCreateWithNSURLResponse(NSURLResponse *urlResponse)
 {
     RetainPtr<NSURLResponse> copiedURLResponse = adoptNS([urlResponse copy]);
-    return toAPI(&API::URLResponse::create(copiedURLResponse.get()).leakRef());
+    return WebKit::toAPI(&API::URLResponse::create(copiedURLResponse.get()).leakRef());
 }
 
-NSURLResponse* WKURLResponseCopyNSURLResponse(WKURLResponseRef urlResponse)
+NSURLResponse *WKURLResponseCopyNSURLResponse(WKURLResponseRef urlResponse)
 {
-    return [toImpl(urlResponse)->resourceResponse().nsURLResponse() copy];
+    return [WebKit::toImpl(urlResponse)->resourceResponse().nsURLResponse() copy];
 }

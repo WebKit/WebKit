@@ -30,8 +30,6 @@
 
 #import "RemoteWebInspectorProxy.h"
 
-using namespace WebKit;
-
 @interface _WKRemoteWebInspectorViewController ()
 - (void)sendMessageToBackend:(NSString *)message;
 - (void)closeFromFrontend;
@@ -67,8 +65,8 @@ private:
 } // namespace WebKit
 
 @implementation _WKRemoteWebInspectorViewController {
-    RefPtr<RemoteWebInspectorProxy> m_remoteInspectorProxy;
-    std::unique_ptr<_WKRemoteWebInspectorProxyClient> m_remoteInspectorClient;
+    RefPtr<WebKit::RemoteWebInspectorProxy> m_remoteInspectorProxy;
+    std::unique_ptr<WebKit::_WKRemoteWebInspectorProxyClient> m_remoteInspectorClient;
 }
 
 - (instancetype)init
@@ -76,8 +74,8 @@ private:
     if (!(self = [super init]))
         return nil;
 
-    m_remoteInspectorProxy = RemoteWebInspectorProxy::create();
-    m_remoteInspectorClient = std::make_unique<_WKRemoteWebInspectorProxyClient>(self);
+    m_remoteInspectorProxy = WebKit::RemoteWebInspectorProxy::create();
+    m_remoteInspectorClient = std::make_unique<WebKit::_WKRemoteWebInspectorProxyClient>(self);
     m_remoteInspectorProxy->setClient(m_remoteInspectorClient.get());
 
     return self;

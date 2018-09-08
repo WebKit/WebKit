@@ -44,15 +44,13 @@
 #import <WebCore/LinkIconCollector.h>
 #import <WebCore/LinkIconType.h>
 
-using namespace WebKit;
-
 @implementation WKWebProcessPlugInFrame {
-    API::ObjectStorage<WebFrame> _frame;
+    API::ObjectStorage<WebKit::WebFrame> _frame;
 }
 
 + (instancetype)lookUpFrameFromHandle:(_WKFrameHandle *)handle
 {
-    return wrapper(WebProcess::singleton().webFrame(handle._frameID));
+    return wrapper(WebKit::WebProcess::singleton().webFrame(handle._frameID));
 }
 
 - (void)dealloc
@@ -85,7 +83,7 @@ using namespace WebKit;
 
 - (WKWebProcessPlugInBrowserContextController *)_browserContextController
 {
-    return wrapper(*_frame->page());
+    return WebKit::wrapper(*_frame->page());
 }
 
 - (NSURL *)URL
@@ -95,7 +93,7 @@ using namespace WebKit;
 
 - (NSArray *)childFrames
 {
-    return wrapper(_frame->childFrames());
+    return WebKit::wrapper(_frame->childFrames());
 }
 
 - (BOOL)containsAnyFormElements

@@ -42,8 +42,6 @@
 #import <WebKit/ServiceWorkerProcessProxy.h>
 #import <wtf/BlockPtr.h>
 
-using namespace WebCore;
-
 @implementation WKWebsiteDataStore
 
 + (WKWebsiteDataStore *)defaultDataStore

@@ -53,8 +53,6 @@
 #import <WebCore/Device.h>
 #endif
 
-using namespace WebCore;
-
 template<typename T> class LazyInitialized {
 public:
     typedef typename WTF::GetPtrHelper<T>::PtrType PtrType;
@@ -238,7 +236,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     _systemPreviewEnabled = NO;
 #endif // PLATFORM(IOS)
 
-    _mediaContentTypesRequiringHardwareSupport = Settings::defaultMediaContentTypesRequiringHardwareSupport();
+    _mediaContentTypesRequiringHardwareSupport = WebCore::Settings::defaultMediaContentTypesRequiringHardwareSupport();
     _allowMediaContentTypesRequiringHardwareSupportAsFallback = YES;
 
     _colorFilterEnabled = NO;

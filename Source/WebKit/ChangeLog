@@ -1,3 +1,42 @@
+2018-09-08  Tim Horton  <timothy_horton@apple.com>
+
+        Unify most of the WebKit Objective-C API sources
+        https://bugs.webkit.org/show_bug.cgi?id=189447
+
+        Reviewed by Andy Estes.
+
+        Unify and fix errors.
+
+        * Shared/API/Cocoa/_WKFrameHandle.mm:
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/APIContentRuleListStoreCocoa.mm:
+        * UIProcess/API/Cocoa/WKBackForwardList.mm:
+        * UIProcess/API/Cocoa/WKBackForwardListItem.mm:
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.mm:
+        * UIProcess/API/Cocoa/WKConnection.mm:
+        * UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm:
+        * UIProcess/API/Cocoa/WKNavigationData.mm:
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        * UIProcess/API/Cocoa/WKURLSchemeTask.mm:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        * UIProcess/API/Cocoa/_WKAttachment.mm:
+        * UIProcess/API/Cocoa/_WKGeolocationPosition.mm:
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm:
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        * UIProcess/API/mac/WKView.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResult.mm:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.mm:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.mm:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.mm:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+
 2018-09-07  Tim Horton  <timothy_horton@apple.com>
 
         Try to fix the build

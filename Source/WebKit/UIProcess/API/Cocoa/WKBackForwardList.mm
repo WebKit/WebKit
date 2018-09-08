@@ -31,10 +31,8 @@
 #import "WKBackForwardListItemInternal.h"
 #import "WKNSArray.h"
 
-using namespace WebKit;
-
 @implementation WKBackForwardList {
-    API::ObjectStorage<WebBackForwardList> _list;
+    API::ObjectStorage<WebKit::WebBackForwardList> _list;
 }
 
 - (void)dealloc
@@ -46,32 +44,32 @@ using namespace WebKit;
 
 - (WKBackForwardListItem *)currentItem
 {
-    return wrapper(_list->currentItem());
+    return WebKit::wrapper(_list->currentItem());
 }
 
 - (WKBackForwardListItem *)backItem
 {
-    return wrapper(_list->backItem());
+    return WebKit::wrapper(_list->backItem());
 }
 
 - (WKBackForwardListItem *)forwardItem
 {
-    return wrapper(_list->forwardItem());
+    return WebKit::wrapper(_list->forwardItem());
 }
 
 - (WKBackForwardListItem *)itemAtIndex:(NSInteger)index
 {
-    return wrapper(_list->itemAtIndex(index));
+    return WebKit::wrapper(_list->itemAtIndex(index));
 }
 
 - (NSArray *)backList
 {
-    return wrapper(_list->backList());
+    return WebKit::wrapper(_list->backList());
 }
 
 - (NSArray *)forwardList
 {
-    return wrapper(_list->forwardList());
+    return WebKit::wrapper(_list->forwardList());
 }
 
 #pragma mark WKObject protocol implementation

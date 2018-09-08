@@ -52,10 +52,8 @@
 #import <WebCore/WebCoreThreadSystemInterface.h>
 #endif
 
-using namespace WebKit;
-
 @implementation WKProcessGroup {
-    RefPtr<WebProcessPool> _processPool;
+    RefPtr<WebKit::WebProcessPool> _processPool;
 
     WeakObjCPtr<id <WKProcessGroupDelegate>> _delegate;
 
@@ -70,7 +68,7 @@ static void didCreateConnection(WKContextRef, WKConnectionRef connectionRef, con
     auto delegate = processGroup->_delegate.get();
 
     if ([delegate respondsToSelector:@selector(processGroup:didCreateConnectionToWebProcessPlugIn:)])
-        [delegate processGroup:processGroup didCreateConnectionToWebProcessPlugIn:wrapper(*toImpl(connectionRef))];
+        [delegate processGroup:processGroup didCreateConnectionToWebProcessPlugIn:wrapper(*WebKit::toImpl(connectionRef))];
 }
 
 static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef contextRef)
@@ -113,50 +111,50 @@ static void setUpInjectedBundleClient(WKProcessGroup *processGroup, WKContextRef
 
 static void didNavigateWithNavigationData(WKContextRef, WKPageRef pageRef, WKNavigationDataRef navigationDataRef, WKFrameRef frameRef, const void*)
 {
-    if (!toImpl(frameRef)->isMainFrame())
+    if (!WebKit::toImpl(frameRef)->isMainFrame())
         return;
 
     WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
     auto historyDelegate = controller->_historyDelegate.get();
 
     if ([historyDelegate respondsToSelector:@selector(browsingContextController:didNavigateWithNavigationData:)])
-        [historyDelegate browsingContextController:controller didNavigateWithNavigationData:wrapper(*toImpl(navigationDataRef))];
+        [historyDelegate browsingContextController:controller didNavigateWithNavigationData:wrapper(*WebKit::toImpl(navigationDataRef))];
 }
 
 static void didPerformClientRedirect(WKContextRef, WKPageRef pageRef, WKURLRef sourceURLRef, WKURLRef destinationURLRef, WKFrameRef frameRef, const void*)
 {
-    if (!toImpl(frameRef)->isMainFrame())
+    if (!WebKit::toImpl(frameRef)->isMainFrame())
         return;
 
     WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
     auto historyDelegate = controller->_historyDelegate.get();
 
     if ([historyDelegate respondsToSelector:@selector(browsingContextController:didPerformClientRedirectFromURL:toURL:)])
-        [historyDelegate browsingContextController:controller didPerformClientRedirectFromURL:wrapper(*toImpl(sourceURLRef)) toURL:wrapper(*toImpl(destinationURLRef))];
+        [historyDelegate browsingContextController:controller didPerformClientRedirectFromURL:wrapper(*WebKit::toImpl(sourceURLRef)) toURL:wrapper(*WebKit::toImpl(destinationURLRef))];
 }
 
 static void didPerformServerRedirect(WKContextRef, WKPageRef pageRef, WKURLRef sourceURLRef, WKURLRef destinationURLRef, WKFrameRef frameRef, const void*)
 {
-    if (!toImpl(frameRef)->isMainFrame())
+    if (!WebKit::toImpl(frameRef)->isMainFrame())
         return;
 
     WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
     auto historyDelegate = controller->_historyDelegate.get();
 
     if ([historyDelegate respondsToSelector:@selector(browsingContextController:didPerformServerRedirectFromURL:toURL:)])
-        [historyDelegate browsingContextController:controller didPerformServerRedirectFromURL:wrapper(*toImpl(sourceURLRef)) toURL:wrapper(*toImpl(destinationURLRef))];
+        [historyDelegate browsingContextController:controller didPerformServerRedirectFromURL:wrapper(*WebKit::toImpl(sourceURLRef)) toURL:wrapper(*WebKit::toImpl(destinationURLRef))];
 }
 
 static void didUpdateHistoryTitle(WKContextRef, WKPageRef pageRef, WKStringRef titleRef, WKURLRef urlRef, WKFrameRef frameRef, const void*)
 {
-    if (!toImpl(frameRef)->isMainFrame())
+    if (!WebKit::toImpl(frameRef)->isMainFrame())
         return;
 
     WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
     auto historyDelegate = controller->_historyDelegate.get();
 
     if ([historyDelegate respondsToSelector:@selector(browsingContextController:didUpdateHistoryTitle:forURL:)])
-        [historyDelegate browsingContextController:controller didUpdateHistoryTitle:wrapper(*toImpl(titleRef)) forURL:wrapper(*toImpl(urlRef))];
+        [historyDelegate browsingContextController:controller didUpdateHistoryTitle:wrapper(*WebKit::toImpl(titleRef)) forURL:wrapper(*WebKit::toImpl(urlRef))];
 }
 
 static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contextRef)
@@ -188,7 +186,7 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
     auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
     configuration->setInjectedBundlePath(bundleURL ? String(bundleURL.path) : String());
 
-    _processPool = WebProcessPool::create(configuration);
+    _processPool = WebKit::WebProcessPool::create(configuration);
 
     setUpConnectionClient(self, toAPI(_processPool.get()));
     setUpInjectedBundleClient(self, toAPI(_processPool.get()));
@@ -218,7 +216,7 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
 
 - (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host
 {
-    _processPool->allowSpecificHTTPSCertificateForHost(WebCertificateInfo::create(WebCore::CertificateInfo((__bridge CFArrayRef)certificateChain)).ptr(), host);
+    _processPool->allowSpecificHTTPSCertificateForHost(WebKit::WebCertificateInfo::create(WebCore::CertificateInfo((__bridge CFArrayRef)certificateChain)).ptr(), host);
 }
 
 #if PLATFORM(IOS)

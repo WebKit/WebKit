@@ -34,10 +34,8 @@
 #import "WKRetainPtr.h"
 #import "WebPageGroupProxy.h"
 
-using namespace WebKit;
-
 @implementation WKWebProcessPlugInPageGroup {
-    API::ObjectStorage<WebPageGroupProxy> _bundlePageGroup;
+    API::ObjectStorage<WebKit::WebPageGroupProxy> _bundlePageGroup;
 }
 
 - (NSString *)identifier
