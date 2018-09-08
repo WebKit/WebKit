@@ -1,3 +1,24 @@
+2018-09-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][MiniBrowser][WebKit] REGRESSION(r235398): ASSERTION FAILED: !m_client.didReceiveTitleForFrame
+        https://bugs.webkit.org/show_bug.cgi?id=189336
+
+        Reviewed by Alex Christensen.
+
+        WKPageSetPageLoaderClient is deprecated. Replaced it with
+        WKPageSetPageNavigationClient.
+
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::WebKitBrowserWindow):
+        Call WKPageSetPageNavigationClient instead of WKPageSetPageLoaderClient.
+        (WebKitBrowserWindow::didFinishNavigation):
+        Copied from didReceiveTitleForFrame. Use WKPageCopyTitle to get the title.
+        (WebKitBrowserWindow::didCommitNavigation):
+        Copied from didCommitLoadForFrame. Use WKPageCopyCommittedURL to get the URL.
+        (WebKitBrowserWindow::didReceiveTitleForFrame): Deleted.
+        (WebKitBrowserWindow::didCommitLoadForFrame): Deleted.
+        * MiniBrowser/win/WebKitBrowserWindow.h: Renamed the class methods.
+
 2018-09-07  Daniel Bates  <dabates@apple.com>
 
         [iOS] uiController.typeCharacterUsingHardwareKeyboard("`", ...) dispatches DOM key events for ~

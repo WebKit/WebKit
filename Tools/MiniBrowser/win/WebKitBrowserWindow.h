@@ -57,8 +57,8 @@ private:
     void zoomIn() override;
     void zoomOut() override;
 
-    static void didReceiveTitleForFrame(WKPageRef, WKStringRef, WKFrameRef, WKTypeRef, const void *);
-    static void didCommitLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void *);
+    static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*);
+    static void didCommitNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*);
 
     WKRetainPtr<WKViewRef> m_view;
     HWND m_hMainWnd { nullptr };

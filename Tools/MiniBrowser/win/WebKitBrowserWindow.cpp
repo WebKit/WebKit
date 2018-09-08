@@ -91,10 +91,10 @@ WebKitBrowserWindow::WebKitBrowserWindow(HWND mainWnd, HWND urlBarWnd)
     m_view = adoptWK(WKViewCreate(rect, conf.get(), mainWnd));
     auto page = WKViewGetPage(m_view.get());
 
-    WKPageLoaderClientV0 loadClient = {{ 0, this }};
-    loadClient.didReceiveTitleForFrame = didReceiveTitleForFrame;
-    loadClient.didCommitLoadForFrame = didCommitLoadForFrame;
-    WKPageSetPageLoaderClient(page, &loadClient.base);
+    WKPageNavigationClientV0 navigationClient = {{ 0, this }};
+    navigationClient.didFinishNavigation = didFinishNavigation;
+    navigationClient.didCommitNavigation = didCommitNavigation;
+    WKPageSetPageNavigationClient(page, &navigationClient.base);
 }
 
 HRESULT WebKitBrowserWindow::init()
@@ -213,22 +213,19 @@ static WebKitBrowserWindow& toWebKitBrowserWindow(const void *clientInfo)
     return *const_cast<WebKitBrowserWindow*>(static_cast<const WebKitBrowserWindow*>(clientInfo));
 }
 
-void WebKitBrowserWindow::didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
+void WebKitBrowserWindow::didFinishNavigation(WKPageRef page, WKNavigationRef navigation, WKTypeRef userData, const void* clientInfo)
 {
-    if (!WKFrameIsMainFrame(frame))
-        return;
-    std::wstring titleString = createString(title) + L" [WebKit]";
+    WKRetainPtr<WKStringRef> title = adoptWK(WKPageCopyTitle(page));
+    std::wstring titleString = createString(title.get()) + L" [WebKit]";
     auto& thisWindow = toWebKitBrowserWindow(clientInfo);
     SetWindowText(thisWindow.m_hMainWnd, titleString.c_str());
 }
 
-void WebKitBrowserWindow::didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
+void WebKitBrowserWindow::didCommitNavigation(WKPageRef page, WKNavigationRef navigation, WKTypeRef userData, const void* clientInfo)
 {
-    if (!WKFrameIsMainFrame(frame))
-        return;
     auto& thisWindow = toWebKitBrowserWindow(clientInfo);
 
-    WKRetainPtr<WKURLRef> wkurl = adoptWK(WKFrameCopyURL(frame));
+    WKRetainPtr<WKURLRef> wkurl = adoptWK(WKPageCopyCommittedURL(page));
     std::wstring urlString = createString(wkurl.get());
     SetWindowText(thisWindow.m_urlBarWnd, urlString.c_str());
 }
