@@ -1,3 +1,31 @@
+2018-09-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up code related to Document node removal
+        https://bugs.webkit.org/show_bug.cgi?id=189452
+
+        Reviewed by Wenson Hsieh.
+
+        Replace the "amongChildrenOnly" boolean argument with an enum for clarity.
+        
+        Rename the remove*OfSubtree functions, because that naming is very unclear.
+        Instead, use adjust*OnNodeRemoval which better describes what the code does.
+
+        * dom/Document.cpp:
+        (WebCore::isNodeInSubtree):
+        (WebCore::Document::adjustFocusedNodeOnNodeRemoval):
+        (WebCore::Document::nodeChildrenWillBeRemoved):
+        (WebCore::Document::nodeWillBeRemoved):
+        (WebCore::Document::adjustFocusNavigationNodeOnNodeRemoval):
+        (WebCore::Document::adjustFullScreenElementOnNodeRemoval):
+        (WebCore::Document::removeFocusedNodeOfSubtree): Deleted.
+        (WebCore::Document::removeFocusNavigationNodeOfSubtree): Deleted.
+        (WebCore::Document::removeFullScreenElementOfSubtree): Deleted.
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::removeShadowRoot):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+
 2018-09-08  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [CSSJIT] Use lshiftPtr instead of mul32

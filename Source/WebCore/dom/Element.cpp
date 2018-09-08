@@ -2017,7 +2017,7 @@ void Element::removeShadowRoot()
         return;
 
     InspectorInstrumentation::willPopShadowRoot(*this, *oldRoot);
-    document().removeFocusedNodeOfSubtree(*oldRoot);
+    document().adjustFocusedNodeOnNodeRemoval(*oldRoot);
 
     ASSERT(!oldRoot->renderer());
 

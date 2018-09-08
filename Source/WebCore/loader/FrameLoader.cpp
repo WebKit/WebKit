@@ -631,7 +631,7 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
         bool hadLivingRenderTree = m_frame.document()->hasLivingRenderTree();
         m_frame.document()->prepareForDestruction();
         if (hadLivingRenderTree)
-            m_frame.document()->removeFocusedNodeOfSubtree(*m_frame.document());
+            m_frame.document()->adjustFocusedNodeOnNodeRemoval(*m_frame.document());
     }
 
     // Do this after detaching the document so that the unload event works.
