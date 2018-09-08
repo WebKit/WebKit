@@ -1,5 +1,11 @@
 2018-09-07  Tim Horton  <timothy_horton@apple.com>
 
+        Try to fix the build
+
+        * Shared/mac/SandboxExtensionMac.mm:
+
+2018-09-07  Tim Horton  <timothy_horton@apple.com>
+
         Unify most of the WebKit C API sources
         https://bugs.webkit.org/show_bug.cgi?id=189400
 
