@@ -83,18 +83,18 @@ PluginProcess/EntryPoint/mac/XPCService/PluginServiceEntryPoint.mm @no-unify
 PluginProcess/mac/PluginControllerProxyMac.mm @no-unify
 PluginProcess/mac/PluginProcessMac.mm @no-unify
 
-Shared/API/c/cf/WKErrorCF.cpp @no-unify
-Shared/API/c/cf/WKStringCF.mm @no-unify
-Shared/API/c/cf/WKURLCF.mm @no-unify
+Shared/API/c/cf/WKErrorCF.cpp
+Shared/API/c/cf/WKStringCF.mm
+Shared/API/c/cf/WKURLCF.mm
 
-Shared/API/c/cg/WKImageCG.cpp @no-unify
+Shared/API/c/cg/WKImageCG.cpp
 
-Shared/API/c/mac/WKCertificateInfoMac.mm @no-unify
-Shared/API/c/mac/WKObjCTypeWrapperRef.mm @no-unify
-Shared/API/c/mac/WKURLRequestNS.mm @no-unify
-Shared/API/c/mac/WKURLResponseNS.mm @no-unify
-Shared/API/c/mac/WKWebArchive.cpp @no-unify
-Shared/API/c/mac/WKWebArchiveResource.cpp @no-unify
+Shared/API/c/mac/WKCertificateInfoMac.mm
+Shared/API/c/mac/WKObjCTypeWrapperRef.mm
+Shared/API/c/mac/WKURLRequestNS.mm
+Shared/API/c/mac/WKURLResponseNS.mm
+Shared/API/c/mac/WKWebArchive.cpp
+Shared/API/c/mac/WKWebArchiveResource.cpp
 
 Shared/API/Cocoa/_WKFrameHandle.mm @no-unify
 Shared/API/Cocoa/_WKHitTestResult.mm @no-unify
@@ -214,19 +214,19 @@ UIProcess/WKInspectorHighlightView.mm
 
 UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp
 
-UIProcess/API/APIWebsiteDataRecord.cpp @no-unify
+UIProcess/API/APIWebsiteDataRecord.cpp
 
-UIProcess/API/C/WKContextMenuListener.cpp @no-unify
-UIProcess/API/C/WKMediaSessionFocusManager.cpp @no-unify
-UIProcess/API/C/WKTestingSupport.cpp @no-unify
-UIProcess/API/C/WKUserContentExtensionStoreRef.cpp @no-unify
-UIProcess/API/C/WKUserScriptRef.cpp @no-unify
+UIProcess/API/C/WKContextMenuListener.cpp
+UIProcess/API/C/WKMediaSessionFocusManager.cpp
+UIProcess/API/C/WKTestingSupport.cpp
+UIProcess/API/C/WKUserContentExtensionStoreRef.cpp
+UIProcess/API/C/WKUserScriptRef.cpp
 
-UIProcess/API/C/cg/WKIconDatabaseCG.cpp @no-unify
+UIProcess/API/C/cg/WKIconDatabaseCG.cpp
 
-UIProcess/API/C/mac/WKContextPrivateMac.mm @no-unify
-UIProcess/API/C/mac/WKPagePrivateMac.mm @no-unify
-UIProcess/API/C/mac/WKProtectionSpaceNS.mm @no-unify
+UIProcess/API/C/mac/WKContextPrivateMac.mm
+UIProcess/API/C/mac/WKPagePrivateMac.mm
+UIProcess/API/C/mac/WKProtectionSpaceNS.mm
 
 UIProcess/API/Cocoa/_WKActivatedElementInfo.mm @no-unify
 UIProcess/API/Cocoa/_WKApplicationManifest.mm @no-unify
@@ -471,11 +471,11 @@ WebProcess/cocoa/WebProcessCocoa.mm
 
 WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm
 
-WebProcess/InjectedBundle/API/c/WKBundleFileHandleRef.cpp @no-unify
-WebProcess/InjectedBundle/API/c/WKBundlePageBanner.cpp @no-unify
+WebProcess/InjectedBundle/API/c/WKBundleFileHandleRef.cpp
+WebProcess/InjectedBundle/API/c/WKBundlePageBanner.cpp
 
-WebProcess/InjectedBundle/API/c/mac/WKBundleMac.mm @no-unify
-WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.mm @no-unify
+WebProcess/InjectedBundle/API/c/mac/WKBundleMac.mm
+WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.mm
 
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessBundleParameters.mm @no-unify
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm @no-unify

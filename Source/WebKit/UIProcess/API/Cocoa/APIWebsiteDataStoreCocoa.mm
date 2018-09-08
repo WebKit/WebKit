@@ -43,7 +43,7 @@ NSString *WebStorageDirectoryDefaultsKey = @"WebKitLocalStorageDatabasePathPrefe
 NSString *WebKitMediaCacheDirectoryDefaultsKey = @"WebKitMediaCacheDirectory";
 NSString *WebKitMediaKeysStorageDirectoryDefaultsKey = @"WebKitMediaKeysStorageDirectory";
 
-String WebsiteDataStore::defaultApplicationCacheDirectory()
+WTF::String WebsiteDataStore::defaultApplicationCacheDirectory()
 {
 #if PLATFORM(IOS)
     // This quirk used to make these apps share application cache storage, but doesn't accomplish that any more.
@@ -60,57 +60,57 @@ String WebsiteDataStore::defaultApplicationCacheDirectory()
     return cacheDirectoryFileSystemRepresentation("OfflineWebApplicationCache");
 }
 
-String WebsiteDataStore::defaultCacheStorageDirectory()
+WTF::String WebsiteDataStore::defaultCacheStorageDirectory()
 {
     return cacheDirectoryFileSystemRepresentation("CacheStorage");
 }
 
-String WebsiteDataStore::defaultNetworkCacheDirectory()
+WTF::String WebsiteDataStore::defaultNetworkCacheDirectory()
 {
     return cacheDirectoryFileSystemRepresentation("NetworkCache");
 }
 
-String WebsiteDataStore::defaultMediaCacheDirectory()
+WTF::String WebsiteDataStore::defaultMediaCacheDirectory()
 {
     return tempDirectoryFileSystemRepresentation("MediaCache");
 }
 
-String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
+WTF::String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
 {
     return websiteDataDirectoryFileSystemRepresentation("IndexedDB");
 }
 
-String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory()
+WTF::String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory()
 {
     return cacheDirectoryFileSystemRepresentation("ServiceWorkers");
 }
 
-String WebsiteDataStore::defaultLocalStorageDirectory()
+WTF::String WebsiteDataStore::defaultLocalStorageDirectory()
 {
     return websiteDataDirectoryFileSystemRepresentation("LocalStorage");
 }
 
-String WebsiteDataStore::defaultMediaKeysStorageDirectory()
+WTF::String WebsiteDataStore::defaultMediaKeysStorageDirectory()
 {
     return websiteDataDirectoryFileSystemRepresentation("MediaKeys");
 }
 
-String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
+WTF::String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
 {
     return websiteDataDirectoryFileSystemRepresentation("WebSQL");
 }
 
-String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
+WTF::String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
 {
     return websiteDataDirectoryFileSystemRepresentation("ResourceLoadStatistics");
 }
 
-String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
+WTF::String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
 {
     return tempDirectoryFileSystemRepresentation("JavaScriptCoreDebug", DontCreateDirectory);
 }
 
-String WebsiteDataStore::legacyDefaultApplicationCacheDirectory()
+WTF::String WebsiteDataStore::legacyDefaultApplicationCacheDirectory()
 {
     NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
     if (!appName)
@@ -130,7 +130,7 @@ String WebsiteDataStore::legacyDefaultApplicationCacheDirectory()
     char cacheDirectory[MAXPATHLEN];
     size_t cacheDirectoryLen = confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectory, MAXPATHLEN);
     if (!cacheDirectoryLen)
-        return String();
+        return WTF::String();
     
     NSString *cacheDir = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:cacheDirectory length:cacheDirectoryLen - 1];
 #endif
@@ -138,7 +138,7 @@ String WebsiteDataStore::legacyDefaultApplicationCacheDirectory()
     return WebKit::stringByResolvingSymlinksInPath([cachePath stringByStandardizingPath]);
 }
 
-String WebsiteDataStore::legacyDefaultNetworkCacheDirectory()
+WTF::String WebsiteDataStore::legacyDefaultNetworkCacheDirectory()
 {
     NSString *cachePath = CFBridgingRelease(_CFURLCacheCopyCacheDirectory([[NSURLCache sharedURLCache] _CFURLCache]));
     if (!cachePath)
@@ -149,7 +149,7 @@ String WebsiteDataStore::legacyDefaultNetworkCacheDirectory()
     return WebKit::stringByResolvingSymlinksInPath([cachePath stringByStandardizingPath]);
 }
 
-String WebsiteDataStore::legacyDefaultWebSQLDatabaseDirectory()
+WTF::String WebsiteDataStore::legacyDefaultWebSQLDatabaseDirectory()
 {
     NSString *databasesDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebDatabaseDirectoryDefaultsKey];
     if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
@@ -157,7 +157,7 @@ String WebsiteDataStore::legacyDefaultWebSQLDatabaseDirectory()
     return WebKit::stringByResolvingSymlinksInPath([databasesDirectory stringByStandardizingPath]);
 }
 
-String WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory()
+WTF::String WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory()
 {
     // Indexed databases exist in a subdirectory of the "database directory path."
     // Currently, the top level of that directory contains entities related to WebSQL databases.
@@ -166,7 +166,7 @@ String WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory()
     return WebCore::FileSystem::pathByAppendingComponent(legacyDefaultWebSQLDatabaseDirectory(), "___IndexedDB");
 }
 
-String WebsiteDataStore::legacyDefaultLocalStorageDirectory()
+WTF::String WebsiteDataStore::legacyDefaultLocalStorageDirectory()
 {
     NSString *localStorageDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebStorageDirectoryDefaultsKey];
     if (!localStorageDirectory || ![localStorageDirectory isKindOfClass:[NSString class]])
@@ -174,7 +174,7 @@ String WebsiteDataStore::legacyDefaultLocalStorageDirectory()
     return WebKit::stringByResolvingSymlinksInPath([localStorageDirectory stringByStandardizingPath]);
 }
 
-String WebsiteDataStore::legacyDefaultMediaCacheDirectory()
+WTF::String WebsiteDataStore::legacyDefaultMediaCacheDirectory()
 {
     NSString *mediaKeysCacheDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebKitMediaCacheDirectoryDefaultsKey];
     if (!mediaKeysCacheDirectory || ![mediaKeysCacheDirectory isKindOfClass:[NSString class]]) {
@@ -191,7 +191,7 @@ String WebsiteDataStore::legacyDefaultMediaCacheDirectory()
     return WebKit::stringByResolvingSymlinksInPath([mediaKeysCacheDirectory stringByStandardizingPath]);
 }
 
-String WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory()
+WTF::String WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory()
 {
     NSString *mediaKeysStorageDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebKitMediaKeysStorageDirectoryDefaultsKey];
     if (!mediaKeysStorageDirectory || ![mediaKeysStorageDirectory isKindOfClass:[NSString class]])
@@ -199,10 +199,10 @@ String WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory()
     return WebKit::stringByResolvingSymlinksInPath([mediaKeysStorageDirectory stringByStandardizingPath]);
 }
 
-String WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory()
+WTF::String WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory()
 {
 #if PLATFORM(IOS)
-    String path = WebKit::pathForProcessContainer();
+    WTF::String path = WebKit::pathForProcessContainer();
     if (path.isEmpty())
         path = NSHomeDirectory();
     
@@ -217,7 +217,7 @@ String WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory()
 #endif
 }
 
-String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory shouldCreateDirectory)
+WTF::String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const WTF::String& directoryName, ShouldCreateDirectory shouldCreateDirectory)
 {
     static dispatch_once_t onceToken;
     static NSURL *tempURL;
@@ -246,7 +246,7 @@ String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const String& dir
     return url.absoluteURL.path.fileSystemRepresentation;
 }
 
-String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName)
+WTF::String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const WTF::String& directoryName)
 {
     static dispatch_once_t onceToken;
     static NSURL *cacheURL;
@@ -273,7 +273,7 @@ String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& di
     return url.absoluteURL.path.fileSystemRepresentation;
 }
 
-String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName)
+WTF::String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const WTF::String& directoryName)
 {
     static dispatch_once_t onceToken;
     static NSURL *websiteDataURL;

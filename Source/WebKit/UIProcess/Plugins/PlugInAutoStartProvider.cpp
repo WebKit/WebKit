@@ -33,11 +33,10 @@
 #include "WebProcessPool.h"
 #include <wtf/WallTime.h>
 
+namespace WebKit {
 using namespace WebCore;
 
 static const Seconds plugInAutoStartExpirationTimeThreshold { 30 * 24 * 60 * 60 };
-
-namespace WebKit {
 
 PlugInAutoStartProvider::PlugInAutoStartProvider(WebProcessPool* processPool)
     : m_processPool(processPool)

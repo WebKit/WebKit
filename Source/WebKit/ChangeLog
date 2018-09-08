@@ -1,3 +1,79 @@
+2018-09-07  Tim Horton  <timothy_horton@apple.com>
+
+        Unify most of the WebKit C API sources
+        https://bugs.webkit.org/show_bug.cgi?id=189400
+
+        Reviewed by Alex Christensen.
+
+        Unify and fix errors (mostly API:String vs. WTF::String mismatches).
+
+        * Shared/APIWebArchiveResource.h:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::constructedPathPrefix):
+        (API::constructedPathFilter):
+        (API::constructedPath):
+        (API::encodeContentRuleListMetaData):
+        (API::decodeContentRuleListMetaData):
+        (API::openAndMapContentRuleList):
+        (API::writeDataToFile):
+        (API::compiledToFile):
+        (API::createExtension):
+        (API::ContentRuleListStore::lookupContentRuleList):
+        (API::ContentRuleListStore::getAvailableContentRuleListIdentifiers):
+        (API::ContentRuleListStore::compileContentRuleList):
+        (API::ContentRuleListStore::getContentRuleListSource):
+        * UIProcess/API/APINavigation.cpp:
+        (API::Navigation::loggingString const):
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::defaultMediaCacheDirectory):
+        (API::WebsiteDataStore::defaultJavaScriptConfigurationDirectory):
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::defaultApplicationCacheDirectory):
+        (API::WebsiteDataStore::defaultCacheStorageDirectory):
+        (API::WebsiteDataStore::defaultNetworkCacheDirectory):
+        (API::WebsiteDataStore::defaultMediaCacheDirectory):
+        (API::WebsiteDataStore::defaultIndexedDBDatabaseDirectory):
+        (API::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory):
+        (API::WebsiteDataStore::defaultLocalStorageDirectory):
+        (API::WebsiteDataStore::defaultMediaKeysStorageDirectory):
+        (API::WebsiteDataStore::defaultWebSQLDatabaseDirectory):
+        (API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory):
+        (API::WebsiteDataStore::defaultJavaScriptConfigurationDirectory):
+        (API::WebsiteDataStore::legacyDefaultApplicationCacheDirectory):
+        (API::WebsiteDataStore::legacyDefaultNetworkCacheDirectory):
+        (API::WebsiteDataStore::legacyDefaultWebSQLDatabaseDirectory):
+        (API::WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory):
+        (API::WebsiteDataStore::legacyDefaultLocalStorageDirectory):
+        (API::WebsiteDataStore::legacyDefaultMediaCacheDirectory):
+        (API::WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory):
+        (API::WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory):
+        (API::WebsiteDataStore::tempDirectoryFileSystemRepresentation):
+        (API::WebsiteDataStore::cacheDirectoryFileSystemRepresentation):
+        (API::WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation):
+        * UIProcess/API/glib/APIWebsiteDataStoreGLib.cpp:
+        (API::WebsiteDataStore::defaultApplicationCacheDirectory):
+        (API::WebsiteDataStore::defaultNetworkCacheDirectory):
+        (API::WebsiteDataStore::defaultCacheStorageDirectory):
+        (API::WebsiteDataStore::defaultIndexedDBDatabaseDirectory):
+        (API::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory):
+        (API::WebsiteDataStore::defaultLocalStorageDirectory):
+        (API::WebsiteDataStore::defaultMediaKeysStorageDirectory):
+        (API::WebsiteDataStore::defaultWebSQLDatabaseDirectory):
+        (API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory):
+        (API::WebsiteDataStore::cacheDirectoryFileSystemRepresentation):
+        (API::WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation):
+        (API::WebsiteDataStore::legacyDefaultApplicationCacheDirectory):
+        (API::WebsiteDataStore::legacyDefaultNetworkCacheDirectory):
+        (API::WebsiteDataStore::legacyDefaultWebSQLDatabaseDirectory):
+        (API::WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory):
+        (API::WebsiteDataStore::legacyDefaultLocalStorageDirectory):
+        (API::WebsiteDataStore::legacyDefaultMediaCacheDirectory):
+        (API::WebsiteDataStore::legacyDefaultMediaKeysStorageDirectory):
+        (API::WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-09-07  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Stop sending request with credential if no authorization requested.

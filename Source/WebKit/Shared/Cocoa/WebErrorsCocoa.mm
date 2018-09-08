@@ -32,10 +32,8 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 
-using namespace WebCore;
-using namespace WebKit;
-
 namespace WebKit {
+using namespace WebCore;
 
 static RetainPtr<NSError> createNSError(NSString* domain, int code, NSURL *URL)
 {

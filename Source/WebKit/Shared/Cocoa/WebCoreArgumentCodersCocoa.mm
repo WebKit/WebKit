@@ -45,9 +45,8 @@ SOFT_LINK_CLASS(PassKit, PKPayment);
 SOFT_LINK_CLASS(PassKit, PKPaymentMethod);
 SOFT_LINK_CLASS(PassKit, PKPaymentMerchantSession);
 
-using namespace WebCore;
-
 namespace IPC {
+using namespace WebCore;
 
 void ArgumentCoder<WebCore::Payment>::encode(Encoder& encoder, const WebCore::Payment& payment)
 {

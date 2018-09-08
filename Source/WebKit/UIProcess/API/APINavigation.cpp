@@ -69,7 +69,7 @@ void Navigation::setCurrentRequest(ResourceRequest&& request, ProcessIdentifier 
     m_currentRequestProcessIdentifier = processIdentifier;
 }
 
-void Navigation::appendRedirectionURL(const URL& url)
+void Navigation::appendRedirectionURL(const WebCore::URL& url)
 {
     if (m_redirectChain.isEmpty() || m_redirectChain.last() != url)
         m_redirectChain.append(url);
@@ -78,8 +78,8 @@ void Navigation::appendRedirectionURL(const URL& url)
 #if !LOG_DISABLED
 const char* Navigation::loggingString() const
 {
-    return debugString("Most recent URL: ", m_currentRequest.url().string(), " Back/forward list item URL: '", m_targetItem ? m_targetItem->url() : String { }, String::format("' (%p)", m_targetItem.get()));
+    return debugString("Most recent URL: ", m_currentRequest.url().string(), " Back/forward list item URL: '", m_targetItem ? m_targetItem->url() : WTF::String { }, WTF::String::format("' (%p)", m_targetItem.get()));
 }
 #endif
 
-} // namespace WebKit
+} // namespace API

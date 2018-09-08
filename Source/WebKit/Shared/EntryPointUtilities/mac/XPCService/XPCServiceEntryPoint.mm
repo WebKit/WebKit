@@ -31,9 +31,8 @@
 #import <WebCore/Process.h>
 #import <wtf/cocoa/Entitlements.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 XPCServiceInitializerDelegate::~XPCServiceInitializerDelegate()
 {

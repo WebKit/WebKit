@@ -47,18 +47,18 @@ class WebArchiveResource : public API::ObjectImpl<API::Object::Type::WebArchiveR
 public:
     virtual ~WebArchiveResource();
 
-    static Ref<WebArchiveResource> create(API::Data*, const String& URL, const String& MIMEType, const String& textEncoding);
+    static Ref<WebArchiveResource> create(API::Data*, const WTF::String& URL, const WTF::String& MIMEType, const WTF::String& textEncoding);
     static Ref<WebArchiveResource> create(RefPtr<WebCore::ArchiveResource>&&);
 
     Ref<API::Data> data();
-    String URL();
-    String MIMEType();
-    String textEncoding();
+    WTF::String URL();
+    WTF::String MIMEType();
+    WTF::String textEncoding();
 
     WebCore::ArchiveResource* coreArchiveResource();
 
 private:
-    WebArchiveResource(API::Data*, const String& URL, const String& MIMEType, const String& textEncoding);
+    WebArchiveResource(API::Data*, const WTF::String& URL, const WTF::String& MIMEType, const WTF::String& textEncoding);
     WebArchiveResource(RefPtr<WebCore::ArchiveResource>&&);
 
     RefPtr<WebCore::ArchiveResource> m_archiveResource;
