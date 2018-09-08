@@ -1,7 +1,5 @@
-import { shouldBe, shouldThrow } from "./resources/assert.js"
+import { shouldBe } from "./resources/assert.js"
 
-shouldThrow(() => {
-    loadModule('./different-view/main.js');
-}, `SyntaxError: Importing binding name 'A' cannot be resolved due to ambiguous multiple bindings.`);
-
-
+import('./different-view/main.js').then($vm.abort, function (error) {
+    shouldBe(String(error), `SyntaxError: Importing binding name 'A' cannot be resolved due to ambiguous multiple bindings.`);
+}).catch($vm.abort);

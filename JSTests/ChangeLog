@@ -1,3 +1,25 @@
+2018-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove loadModule function in jsc.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=184808
+
+        Reviewed by Darin Adler.
+
+        Use `import` expression instead.
+
+        * modules/different-view.js:
+        (from.string_appeared_here.shouldThrow): Deleted.
+        * modules/fallback-ambiguous.js:
+        (from.string_appeared_here.shouldThrow): Deleted.
+        * modules/import-error.js:
+        (from.string_appeared_here.shouldThrow): Deleted.
+        (shouldThrow): Deleted.
+        * modules/indirect-export-error.js:
+        (from.string_appeared_here.shouldThrow): Deleted.
+        (shouldThrow): Deleted.
+        * modules/namespace-error.js:
+        (from.string_appeared_here.shouldThrow): Deleted.
+
 2018-09-07  Mark Lam  <mark.lam@apple.com>
 
         Ensure that handleIntrinsicCall() is only applied on op_call shaped instructions.

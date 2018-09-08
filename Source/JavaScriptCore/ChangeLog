@@ -1,3 +1,16 @@
+2018-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove loadModule function in jsc.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=184808
+
+        Reviewed by Darin Adler.
+
+        Since we have `import`, we do not need to have `loadModule` function for testing purpose.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionLoadModule): Deleted.
+
 2018-09-07  Mark Lam  <mark.lam@apple.com>
 
         Ensure that handleIntrinsicCall() is only applied on op_call shaped instructions.

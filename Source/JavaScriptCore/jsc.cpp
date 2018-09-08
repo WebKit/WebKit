@@ -300,7 +300,6 @@ static EncodedJSValue JSC_HOST_CALL functionHasCustomProperties(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDumpTypesForAllVariables(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDrainMicrotasks(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionIs32BitPlatform(ExecState*);
-static EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionPlatformSupportsSamplingProfiler(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionGenerateHeapSnapshot(ExecState*);
@@ -538,7 +537,6 @@ protected:
 
         addFunction(vm, "is32BitPlatform", functionIs32BitPlatform, 0);
 
-        addFunction(vm, "loadModule", functionLoadModule, 1);
         addFunction(vm, "checkModuleSyntax", functionCheckModuleSyntax, 1);
 
         addFunction(vm, "platformSupportsSamplingProfiler", functionPlatformSupportsSamplingProfiler, 0);
@@ -1962,34 +1960,6 @@ EncodedJSValue JSC_HOST_CALL functionIs32BitPlatform(ExecState*)
 #else
     return JSValue::encode(JSValue(JSC::JSValue::JSTrue));
 #endif
-}
-
-EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    String fileName = exec->argument(0).toWTFString(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    Vector<char> script;
-    if (!fetchScriptFromLocalFileSystem(fileName, script))
-        return JSValue::encode(throwException(exec, scope, createError(exec, "Could not open file."_s)));
-
-    JSInternalPromise* promise = loadAndEvaluateModule(exec, fileName, jsUndefined(), jsUndefined());
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    JSValue error;
-    JSFunction* errorHandler = JSNativeStdFunction::create(vm, exec->lexicalGlobalObject(), 1, String(), [&](ExecState* exec) {
-        error = exec->argument(0);
-        return JSValue::encode(jsUndefined());
-    });
-
-    promise->then(exec, nullptr, errorHandler);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    vm.drainMicrotasks();
-    if (error)
-        return JSValue::encode(throwException(exec, scope, error));
-    return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL functionCreateGlobalObject(ExecState* exec)
