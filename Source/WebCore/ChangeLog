@@ -1,3 +1,18 @@
+2018-09-08  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [CSSJIT] Use lshiftPtr instead of mul32
+        https://bugs.webkit.org/show_bug.cgi?id=189451
+
+        Reviewed by Sam Weinig.
+
+        Use `value << 4` instead of `value * 16`. In 64bit environment, sizeof(Style::Relation) is 16,
+        so that we can use `value << 4` in CSS JIT.
+
+        No behavior change.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateAddStyleRelation):
+
 2018-09-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang] exceptionShouldTerminateProgram of StructuredExceptionHandlerSuppressor.cpp should take DWORD

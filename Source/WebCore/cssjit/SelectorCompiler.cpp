@@ -2211,6 +2211,18 @@ void SelectorCodeGenerator::generateAddStyleRelation(Assembler::RegisterID check
     auto dataAddress = vectorAddress.withOffset(Style::Relations::dataMemoryOffset());
     auto sizeAddress = vectorAddress.withOffset(Style::Relations::sizeMemoryOffset());
 
+    auto getLastRelationPointer = [&] (Assembler::RegisterID sizeAndTarget) {
+        m_assembler.sub32(Assembler::TrustedImm32(1), sizeAndTarget);
+#if CPU(ADDRESS64)
+        static_assert(sizeof(Style::Relation) == 16, "");
+        static_assert(1 << 4 == 16, "");
+        m_assembler.lshiftPtr(Assembler::TrustedImm32(4), sizeAndTarget);
+#else
+        m_assembler.mul32(TrustedImm32(sizeof(Style::Relation)), sizeAndTarget, sizeAndTarget);
+#endif
+        m_assembler.addPtr(dataAddress, sizeAndTarget);
+    };
+
     // For AffectsNextSibling we just increment the count if the previous added relation was in the same sibling chain.
     Assembler::JumpList mergeSuccess;
     if (relationType == Style::Relation::AffectsNextSibling) {
@@ -2223,9 +2235,7 @@ void SelectorCodeGenerator::generateAddStyleRelation(Assembler::RegisterID check
         mergeFailure.append(m_assembler.branchTest32(Assembler::Zero, lastRelation));
 
         // Style::Relation& lastRelation = checkingContext.styleRelations.last();
-        m_assembler.sub32(Assembler::TrustedImm32(1), lastRelation);
-        m_assembler.mul32(Assembler::TrustedImm32(sizeof(Style::Relation)), lastRelation, lastRelation);
-        m_assembler.addPtr(dataAddress, lastRelation);
+        getLastRelationPointer(lastRelation);
 
         // if (lastRelation.type == Style::Relation::AffectsNextSibling)
         Assembler::Address typeAddress(lastRelation, OBJECT_OFFSETOF(Style::Relation, type));
@@ -2259,9 +2269,7 @@ void SelectorCodeGenerator::generateAddStyleRelation(Assembler::RegisterID check
 
     LocalRegister relationPointer(m_registerAllocator);
     m_assembler.load32(sizeAddress, relationPointer);
-    m_assembler.sub32(Assembler::TrustedImm32(1), relationPointer);
-    m_assembler.mul32(Assembler::TrustedImm32(sizeof(Style::Relation)), relationPointer, relationPointer);
-    m_assembler.addPtr(dataAddress, relationPointer);
+    getLastRelationPointer(relationPointer);
 
     Assembler::Address typeAddress(relationPointer, OBJECT_OFFSETOF(Style::Relation, type));
     m_assembler.store32(Assembler::TrustedImm32(relationType), typeAddress);
