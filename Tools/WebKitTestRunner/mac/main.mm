@@ -53,7 +53,7 @@ static void setDefaultsToConsistentValuesForTesting()
 static void disableAppNapInUIProcess()
 {
     NSActivityOptions options = (NSActivityUserInitiatedAllowingIdleSystemSleep | NSActivityLatencyCritical) & ~(NSActivitySuddenTerminationDisabled | NSActivityAutomaticTerminationDisabled);
-    static id assertion = [[[NSProcessInfo processInfo] beginActivityWithOptions:options reason:@"WebKitTestRunner should not be subject to process suppression"] retain];
+    static id assertion = [[NSProcessInfo processInfo] beginActivityWithOptions:options reason:@"WebKitTestRunner should not be subject to process suppression"];
     ASSERT_UNUSED(assertion, assertion);
 }
 

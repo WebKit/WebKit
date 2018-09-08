@@ -110,8 +110,6 @@ PlatformWebView::~PlatformWebView()
 {
     m_window.platformWebView = nullptr;
     [m_window close];
-    [m_window release];
-    [m_view release];
 }
 
 PlatformWindow PlatformWebView::keyWindow()
@@ -163,7 +161,6 @@ void PlatformWebView::addChromeInputField()
     NSTextField *textField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)];
     textField.tag = 1;
     [[m_window contentView] addSubview:textField];
-    [textField release];
 
     NSView *view = platformView();
     [textField setNextKeyView:view];

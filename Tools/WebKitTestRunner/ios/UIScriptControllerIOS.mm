@@ -135,7 +135,7 @@ void UIScriptController::retrieveSpeakSelectionContent(JSValueRef callback)
 JSRetainPtr<JSStringRef> UIScriptController::accessibilitySpeakSelectionContent() const
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return JSStringCreateWithCFString((CFStringRef)webView.accessibilitySpeakSelectionContent);
+    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)webView.accessibilitySpeakSelectionContent));
 }
 
 void UIScriptController::simulateAccessibilitySettingsChangeNotification(JSValueRef callback)
@@ -335,7 +335,7 @@ void UIScriptController::enterText(JSStringRef text)
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     auto textAsCFString = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, text));
-    [webView _simulateTextEntered:(NSString *)textAsCFString.get()];
+    [webView _simulateTextEntered:(__bridge NSString *)textAsCFString.get()];
 }
 
 void UIScriptController::typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef callback)
@@ -383,19 +383,19 @@ void UIScriptController::dismissFormAccessoryView()
 JSRetainPtr<JSStringRef> UIScriptController::selectFormPopoverTitle() const
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return JSStringCreateWithCFString((CFStringRef)webView.selectFormPopoverTitle);
+    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)webView.selectFormPopoverTitle));
 }
 
 JSRetainPtr<JSStringRef> UIScriptController::textContentType() const
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return JSStringCreateWithCFString((CFStringRef)(webView.textContentTypeForTesting ?: @""));
+    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)(webView.textContentTypeForTesting ?: @"")));
 }
 
 JSRetainPtr<JSStringRef> UIScriptController::formInputLabel() const
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return JSStringCreateWithCFString((CFStringRef)webView.formInputLabel);
+    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)webView.formInputLabel));
 }
 
 void UIScriptController::selectFormAccessoryPickerRow(long rowIndex)
@@ -573,7 +573,7 @@ void UIScriptController::removeAllDynamicDictionaries()
 JSRetainPtr<JSStringRef> UIScriptController::scrollingTreeAsText() const
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    return JSStringCreateWithCFString((CFStringRef)[webView _scrollingTreeAsText]);
+    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)[webView _scrollingTreeAsText]));
 }
 
 JSObjectRef UIScriptController::propertiesOfLayerWithID(uint64_t layerID) const

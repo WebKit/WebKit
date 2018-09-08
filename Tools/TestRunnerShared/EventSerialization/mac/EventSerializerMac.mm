@@ -198,7 +198,7 @@ bool eventIsOfGestureTypes(CGEventRef event, IOHIDEventType first, Types ... res
     RetainPtr<CGEventRef> plainEvent = adoptCF(CGEventCreate(NULL));
     CGEventRef rawPlainEvent = plainEvent.get();
 
-    NSMutableDictionary *dict = [[[NSMutableDictionary alloc] init] autorelease];
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
 
     FOR_EACH_CGEVENT_INTEGER_FIELD(LOAD_INTEGER_FIELD_FROM_EVENT);
     FOR_EACH_CGEVENT_DOUBLE_FIELD(LOAD_DOUBLE_FIELD_FROM_EVENT);

@@ -69,7 +69,6 @@ static Vector<WebKitTestRunnerWindow *> allWindows;
 {
     allWindows.removeFirst(self);
     ASSERT(!allWindows.contains(self));
-    [super dealloc];
 }
 
 - (BOOL)isKeyWindow
@@ -176,7 +175,6 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
 
     UIViewController *viewController = [[PlatformWebViewController alloc] init];
     [m_window setRootViewController:viewController];
-    [viewController release];
 
     m_view = [[TestRunnerWKWebView alloc] initWithFrame:viewRectForWindowRect(rect, WebViewSizingMode::Default) configuration:configuration];
 
@@ -187,8 +185,6 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
 PlatformWebView::~PlatformWebView()
 {
     m_window.platformWebView = nil;
-    [m_view release];
-    [m_window release];
 }
 
 PlatformWindow PlatformWebView::keyWindow()
@@ -270,7 +266,6 @@ void PlatformWebView::addChromeInputField()
     UITextField* textField = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, 100, 20)];
     textField.tag = 1;
     [m_window addSubview:textField];
-    [textField release];
 }
 
 void PlatformWebView::removeChromeInputField()
@@ -279,7 +274,6 @@ void PlatformWebView::removeChromeInputField()
     if (textField) {
         [textField removeFromSuperview];
         makeWebViewFirstResponder();
-        [textField release];
     }
 }
 

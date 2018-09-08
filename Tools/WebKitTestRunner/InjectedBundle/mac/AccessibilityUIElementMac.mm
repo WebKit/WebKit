@@ -91,8 +91,6 @@ AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
     : m_element(element)
     , m_notificationHandler(0)
 {
-    // FIXME: ap@webkit.org says ObjC objects need to be CFRetained/CFRelease to be GC-compliant on the mac.
-    [m_element retain];
 }
 
 AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement& other)
@@ -100,14 +98,12 @@ AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement& oth
     , m_element(other.m_element)
     , m_notificationHandler(0)
 {
-    [m_element retain];
 }
 
 AccessibilityUIElement::~AccessibilityUIElement()
 {
     // The notification handler should be nil because removeNotificationListener() should have been called in the test.
     ASSERT(!m_notificationHandler);
-    [m_element release];
 }
 
 bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
@@ -1558,7 +1554,6 @@ bool AccessibilityUIElement::removeNotificationListener()
     ASSERT(m_notificationHandler);
 
     [m_notificationHandler stopObserving];
-    [m_notificationHandler release];
     m_notificationHandler = nil;
     
     return true;
@@ -1827,16 +1822,15 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::accessibilityElementForTe
 
 static JSStringRef createJSStringRef(id string)
 {
-    id mutableString = [[[NSMutableString alloc] init] autorelease];
-    id attributes = [string attributesAtIndex:0 effectiveRange:nil];
-    id attributeEnumerationBlock = ^(NSDictionary<NSString *, id> *attrs, NSRange range, BOOL *stop) {
+    auto mutableString = [[NSMutableString alloc] init];
+    auto attributes = [string attributesAtIndex:0 effectiveRange:nil];
+    auto attributeEnumerationBlock = ^(NSDictionary<NSString *, id> *attrs, NSRange range, BOOL *stop) {
         BOOL misspelled = [[attrs objectForKey:NSAccessibilityMisspelledTextAttribute] boolValue];
         if (misspelled)
             misspelled = [[attrs objectForKey:NSAccessibilityMarkedMisspelledTextAttribute] boolValue];
         if (misspelled)
             [mutableString appendString:@"Misspelled, "];
-        id font = [attributes objectForKey:(__bridge id)kAXFontTextAttribute];
-        if (font)
+        if (id font = [attributes objectForKey:(__bridge id)kAXFontTextAttribute])
             [mutableString appendFormat:@"%@ - %@, ", (__bridge id)kAXFontTextAttribute, font];
     };
     [string enumerateAttributesInRange:NSMakeRange(0, [string length]) options:(NSAttributedStringEnumerationOptions)0 usingBlock:attributeEnumerationBlock];

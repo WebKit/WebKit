@@ -1,3 +1,125 @@
+2018-09-02  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Turn on ARC for WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=189228
+
+        Reviewed by Sam Weinig.
+
+        * TestRunnerShared/EventSerialization/mac/EventSerializerMac.mm:
+        (+[EventSerializer dictionaryForEvent:relativeToTime:]): Removed autorelease.
+
+        * TestRunnerShared/cocoa/LayoutTestSpellChecker.mm:
+        (-[LayoutTestSpellChecker setResultsFromJSObject:inContext:]): Removed autorelease.
+
+        * WebKitTestRunner/Configurations/Base.xcconfig: Added CLANG_ENABLE_OBJC_ARC.
+
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityControllerIOS.mm:
+        (WTR::AccessibilityController::accessibleElementById): Use a __bridge cast.
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityTextMarkerIOS.mm:
+        (WTR::AccessibilityTextMarker::isEqual): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::AccessibilityUIElement): Removed retain.
+        (WTR::AccessibilityUIElement::~AccessibilityUIElement): Removed release.
+        (WTR::AccessibilityUIElement::removeNotificationListener): Removed release.
+        (WTR::AccessibilityUIElement::lineTextMarkerRangeForTextMarker): Use a __bridge cast.
+        (WTR::AccessibilityUIElement::textMarkerRangeForElement): Ditto.
+        (WTR::AccessibilityUIElement::textMarkerRangeLength): Ditto.
+        (WTR::AccessibilityUIElement::previousTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::nextTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::stringForTextMarkerRange): Ditto.
+        (WTR::AccessibilityUIElement::textMarkerRangeForMarkers): Ditto.
+        (WTR::AccessibilityUIElement::startTextMarkerForTextMarkerRange): Ditto.
+        (WTR::AccessibilityUIElement::endTextMarkerForTextMarkerRange): Ditto.
+        (WTR::AccessibilityUIElement::accessibilityElementForTextMarker): Ditto.
+        (WTR::AccessibilityUIElement::textMarkerRangeMatchesTextNearMarkers): Ditto.
+        (WTR::_CGPathEnumerationIteration): Ditto.
+        (WTR::AccessibilityUIElement::pathDescription const): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityNotificationHandler.mm:
+        (-[AccessibilityNotificationHandler dealloc]): Removed [super dealloc].
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::AccessibilityUIElement): Removed retain.
+        (WTR::AccessibilityUIElement::~AccessibilityUIElement): Removed release.
+        (WTR::AccessibilityUIElement::removeNotificationListener): Removed release.
+        (WTR::createJSStringRef): Removed autorelease.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration): Removed release.
+        (WTR::TestController::cocoaPlatformInitialize): Removed release.
+        (WTR::TestController::platformCreateOtherPage): Removed autorelease.
+
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView dealloc]): Removed [super dealloc] and also many
+        cases of setting properties to nil that were only present for memory
+        management reasons.
+
+        * WebKitTestRunner/ios/GeneratedTouchesDebugWindow.mm:
+        (-[GeneratedTouchesDebugWindow dealloc]): Removed release and [super dealloc].
+
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator dealloc]): Deleted.
+        (-[HIDEventGenerator _sendMarkerHIDEventWithCompletionBlock:]): Removed
+        Block_copy.
+        (-[HIDEventGenerator markerEventReceived:]): Removed Block_release.
+        (-[HIDEventGenerator interpolatedEvents:]): Removed release.
+        (-[HIDEventGenerator sendEventStream:completionBlock:]): Removed autorelease.
+
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (-[WebKitTestRunnerWindow dealloc]): Removed [super dealloc].
+        (WTR::PlatformWebView::PlatformWebView): Removed release.
+        (WTR::PlatformWebView::~PlatformWebView): Removed release.
+        (WTR::PlatformWebView::addChromeInputField): Removed release.
+        (WTR::PlatformWebView::removeChromeInputField): Removed release.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::initializeInjectedBundlePath): Use __bridge cast.
+        (WTR::TestController::initializeTestPluginDirectory): Ditto.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::accessibilitySpeakSelectionContent const):
+        Use __bridge cast.
+        (WTR::UIScriptController::enterText): Ditto.
+        (WTR::UIScriptController::selectFormPopoverTitle const): Ditto.
+        (WTR::UIScriptController::textContentType const): Ditto.
+        (WTR::UIScriptController::formInputLabel const): Ditto.
+        (WTR::UIScriptController::scrollingTreeAsText const): Ditto.
+
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::~PlatformWebView): Removed release.
+        (WTR::PlatformWebView::addChromeInputField): Removed release.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::allowedFontFamilySet): Removed retain.
+        (WTR::systemHiddenFontFamilySet): Removed retain.
+
+        * WebKitTestRunner/mac/WebKitTestRunnerDraggingInfo.mm:
+        (-[WebKitTestRunnerDraggingInfo draggingDestinationWindow]): Removed retain.
+        (-[WebKitTestRunnerDraggingInfo dealloc]): Deleted.
+
+        * WebKitTestRunner/mac/WebKitTestRunnerPasteboard.mm:
+        (+[WebKitTestRunnerPasteboard _pasteboardWithName:]): Removed release.
+        (+[WebKitTestRunnerPasteboard releaseLocalPasteboards]): Removed release.
+        Method name is still OK because setting localPasteboards to nil will
+        still release them.
+        (+[NSPasteboard superAlloc]): Added. Helper so that LocalPasteboard can
+        bypass +[NSPasteboard alloc].
+        (+[NSPasteboard superAllocWithZone:]): Ditto.
+        (+[LocalPasteboard alloc]): Call superAlloc instead of class_createInstance.
+        This is a different way to achieve the "bypass NSPasteboard" behavior we need.
+        (+[LocalPasteboard allocWithZone:]): Added. Calls superAllocWithZone: for the
+        same reason as above. Needed because, at least at this time, +[NSObject alloc]
+        calls +allocWithZone: so we have to override both.
+        (-[LocalPasteboard dealloc]): Deleted.
+        (-[LocalPasteboard addTypes:owner:]): Removed release.
+
+        * WebKitTestRunner/mac/WebKitTestRunnerWindow.mm:
+        (-[WebKitTestRunnerWindow dealloc]): Removed [super dealloc].
+
+        * WebKitTestRunner/mac/main.mm:
+        (disableAppNapInUIProcess): Removed retain.
+
 2018-09-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][MiniBrowser][WebKit] REGRESSION(r235398): ASSERTION FAILED: !m_client.didReceiveTitleForFrame

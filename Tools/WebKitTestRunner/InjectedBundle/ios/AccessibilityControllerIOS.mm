@@ -93,7 +93,7 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
 RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef idAttribute)
 {
     WKBundlePageRef page = InjectedBundle::singleton().page()->page();
-    id root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
+    id root = (__bridge PlatformUIElement)WKAccessibilityRootObject(page);
 
     id result = findAccessibleObjectById(root, [NSString stringWithJSStringRef:idAttribute]);
     if (result)

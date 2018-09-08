@@ -83,8 +83,6 @@
 
     JSValueUnprotect(context, m_notificationFunctionCallback);
     m_notificationFunctionCallback = 0;
-
-    [super dealloc];
 }
 
 - (void)setCallback:(JSValueRef)callback
