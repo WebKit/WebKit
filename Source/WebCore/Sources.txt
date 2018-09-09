@@ -429,6 +429,7 @@ bindings/js/JSNodeCustom.cpp
 bindings/js/JSNodeIteratorCustom.cpp
 bindings/js/JSNodeListCustom.cpp
 bindings/js/JSOffscreenCanvasRenderingContext2DCustom.cpp
+bindings/js/JSPaymentMethodChangeEventCustom.cpp
 bindings/js/JSPerformanceEntryCustom.cpp
 bindings/js/JSPerformanceObserverCustom.cpp
 bindings/js/JSPluginElementFunctions.cpp
@@ -2823,7 +2824,6 @@ JSPaymentDetailsModifier.cpp
 JSPaymentDetailsUpdate.cpp
 JSPaymentItem.cpp
 JSPaymentMethodChangeEvent.cpp
-JSPaymentMethodChangeEventInit.cpp
 JSPaymentMethodData.cpp
 JSPaymentOptions.cpp
 JSPaymentRequest.cpp

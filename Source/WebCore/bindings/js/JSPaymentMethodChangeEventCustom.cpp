@@ -23,9 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=PAYMENT_REQUEST,
-] dictionary PaymentMethodChangeEventInit : PaymentRequestUpdateEventInit {
-    DOMString methodName = "";
-    object? methodDetails;
-};
+#include "config.h"
+#include "JSPaymentMethodChangeEvent.h"
+
+#if ENABLE(PAYMENT_REQUEST)
+
+namespace WebCore {
+
+JSC::JSValue JSPaymentMethodChangeEvent::methodDetails(JSC::ExecState& state) const
+{
+    return cachedPropertyValue(state, *this, wrapped().cachedMethodDetails(), [this, &state] {
+        return WTF::switchOn(wrapped().methodDetails(), [](JSC::JSValue methodDetails) {
+            return methodDetails ? methodDetails : JSC::jsNull();
+        }, [&state](const PaymentMethodChangeEvent::MethodDetailsFunction& function) {
+            return function(state).get();
+        });
+    });
+}
+
+void JSPaymentMethodChangeEvent::visitAdditionalChildren(JSC::SlotVisitor& visitor)
+{
+    WTF::switchOn(wrapped().methodDetails(), [&visitor](const JSValueInWrappedObject& methodDetails) {
+        methodDetails.visit(visitor);
+    }, [](const PaymentMethodChangeEvent::MethodDetailsFunction&) {
+    });
+
+    wrapped().cachedMethodDetails().visit(visitor);
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(PAYMENT_REQUEST)

@@ -13,7 +13,7 @@ PASS checkForNodeLeaks(createCustomEventDetailsCycle) is "did not leak"
 PASS checkForNodeLeaks(createErrorEventDataCycle) is "did not leak"
 ---- Did not test ExtendableMessageEvent because it is not enabled.
 PASS checkForNodeLeaks(createMessageEventDataCycle) is "did not leak"
----- Did not test PaymentMethodChangeEvent because it is not enabled.
+PASS checkForNodeLeaks(createPaymentMethodChangeEventMethodDetailsCycle) is "did not leak"
 PASS checkForNodeLeaks(createPopStateEventStateCycle) is "did not leak"
 FAIL checkForNodeLeaks(createPromiseRejectionEventPromiseCycle) should be did not leak. Was leaked.
 PASS checkForNodeLeaks(createPromiseRejectionEventPromiseFunctionCycle) is "did not leak"

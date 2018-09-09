@@ -27,8 +27,10 @@
 
 #if ENABLE(PAYMENT_REQUEST)
 
+#include "JSValueInWrappedObject.h"
 #include "PaymentRequestUpdateEvent.h"
 #include <JavaScriptCore/Strong.h>
+#include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -36,8 +38,6 @@ class JSObject;
 }
 
 namespace WebCore {
-    
-struct PaymentMethodChangeEventInit;
 
 class PaymentMethodChangeEvent final : public PaymentRequestUpdateEvent {
 public:
@@ -46,17 +46,28 @@ public:
         return adoptRef(*new PaymentMethodChangeEvent(std::forward<Args>(args)...));
     }
 
+    using MethodDetailsFunction = std::function<JSC::Strong<JSC::JSObject>(JSC::ExecState&)>;
+    using MethodDetailsType = Variant<JSValueInWrappedObject, MethodDetailsFunction>;
+
     const String& methodName() const { return m_methodName; }
-    const JSC::Strong<JSC::JSObject>& methodDetails() const { return m_methodDetails; }
+    const MethodDetailsType& methodDetails() const { return m_methodDetails; }
+    JSValueInWrappedObject& cachedMethodDetails() { return m_cachedMethodDetails; }
 
     // Event
     EventInterface eventInterface() const override;
+    
+    struct Init final : PaymentRequestUpdateEventInit {
+        String methodName;
+        JSC::Strong<JSC::JSObject> methodDetails;
+    };
 
 private:
-    PaymentMethodChangeEvent(const AtomicString& type, const PaymentMethodChangeEventInit&);
+    PaymentMethodChangeEvent(const AtomicString& type, Init&&);
+    PaymentMethodChangeEvent(const AtomicString& type, PaymentRequest&, const String& methodName, MethodDetailsFunction&&);
 
     String m_methodName;
-    JSC::Strong<JSC::JSObject> m_methodDetails;
+    MethodDetailsType m_methodDetails;
+    JSValueInWrappedObject m_cachedMethodDetails;
 };
 
 } // namespace WebCore

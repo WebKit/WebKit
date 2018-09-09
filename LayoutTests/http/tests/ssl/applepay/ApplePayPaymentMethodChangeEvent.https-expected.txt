@@ -1,0 +1,34 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: The operation was aborted.
+Test PaymentMethodChangeEvent with Apple Pay.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing that PaymentMethodChangeEvent fires after selecting a 'credit' payment method type.
+PASS event.methodName is 'https://apple.com/apple-pay'
+PASS event.methodDetails.type is 'credit'
+
+Testing that PaymentMethodChangeEvent.updateWith() updates payment details after selecting a 'credit' payment method type.
+PASS event.methodName is 'https://apple.com/apple-pay'
+PASS event.methodDetails.type is 'credit'
+PASS internals.mockPaymentCoordinator.total.label is 'Total'
+PASS internals.mockPaymentCoordinator.total.amount is '15.00'
+PASS internals.mockPaymentCoordinator.lineItems.length is 1
+PASS internals.mockPaymentCoordinator.lineItems[0].label is 'Item'
+PASS internals.mockPaymentCoordinator.lineItems[0].amount is '10.00'
+
+Testing that PaymentMethodChangeEvent.updateWith() applies modifiers after selecting a 'credit' payment method type.
+PASS event.methodName is 'https://apple.com/apple-pay'
+PASS event.methodDetails.type is 'credit'
+PASS internals.mockPaymentCoordinator.total.label is 'Credit total override'
+PASS internals.mockPaymentCoordinator.total.amount is '20.00'
+PASS internals.mockPaymentCoordinator.lineItems.length is 2
+PASS internals.mockPaymentCoordinator.lineItems[0].label is 'Item'
+PASS internals.mockPaymentCoordinator.lineItems[0].amount is '10.00'
+PASS internals.mockPaymentCoordinator.lineItems[1].label is 'Credit surcharge'
+PASS internals.mockPaymentCoordinator.lineItems[1].amount is '10.00'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

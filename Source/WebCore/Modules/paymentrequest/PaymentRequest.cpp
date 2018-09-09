@@ -38,6 +38,7 @@
 #include "PaymentCurrencyAmount.h"
 #include "PaymentDetailsInit.h"
 #include "PaymentHandler.h"
+#include "PaymentMethodChangeEvent.h"
 #include "PaymentMethodData.h"
 #include "PaymentOptions.h"
 #include "PaymentRequestUpdateEvent.h"
@@ -552,10 +553,14 @@ void PaymentRequest::shippingOptionChanged(const String& shippingOption)
     });
 }
 
-void PaymentRequest::paymentMethodChanged()
+void PaymentRequest::paymentMethodChanged(const String& methodName, PaymentMethodChangeEvent::MethodDetailsFunction&& methodDetailsFunction)
 {
-    whenDetailsSettled([this, protectedThis = makeRefPtr(this)] {
-        m_activePaymentHandler->detailsUpdated(UpdateReason::PaymentMethodChanged, { });
+    whenDetailsSettled([this, protectedThis = makeRefPtr(this), methodName, methodDetailsFunction = WTFMove(methodDetailsFunction)]() mutable {
+        auto& eventName = eventNames().paymentmethodchangeEvent;
+        if (hasEventListeners(eventName))
+            dispatchEvent(PaymentMethodChangeEvent::create(eventName, *this, methodName, WTFMove(methodDetailsFunction)));
+        else
+            m_activePaymentHandler->detailsUpdated(UpdateReason::PaymentMethodChanged, { });
     });
 }
 

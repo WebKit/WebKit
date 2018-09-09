@@ -1,3 +1,49 @@
+2018-09-08  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Dispatch a paymentmethodchange event when the payment method changes
+        https://bugs.webkit.org/show_bug.cgi?id=189386
+
+        Reviewed by Darin Adler.
+
+        Implemented the "payment method changed" algorithm as defined in the Payment Request API W3C
+        Editor's Draft of 05 September 2018.
+
+        Payment Request says that the user agent MAY run this algorithm when the payment method
+        changes. In our case, we only wish to dispatch this event when a listener is registered for
+        it. Since PassKit requires merchants to respond to this event by calling updateWith() within
+        30 seconds, firing the event unconditionally would break compatibility with existing
+        clients.
+
+        For merchants that do not listen for this event, they can continue to use modifiers to
+        update details based on the selected payment method type.
+        
+        Also made PaymentMethodChangeEvent.methodDetails a cached attribute in a way that avoids
+        potential reference cycles from holding a JSC::Strong in the wrapped object.
+
+        Test: http/tests/ssl/applepay/ApplePayPaymentMethodChangeEvent.https.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::toJSDictionary):
+        (WebCore::ApplePayPaymentHandler::didAuthorizePayment):
+        (WebCore::ApplePayPaymentHandler::didSelectPaymentMethod):
+        * Modules/paymentrequest/PaymentMethodChangeEvent.cpp:
+        (WebCore::PaymentMethodChangeEvent::PaymentMethodChangeEvent):
+        * Modules/paymentrequest/PaymentMethodChangeEvent.h:
+        * Modules/paymentrequest/PaymentMethodChangeEvent.idl:
+        * Modules/paymentrequest/PaymentMethodChangeEventInit.idl: Removed.
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::paymentMethodChanged):
+        * Modules/paymentrequest/PaymentRequest.h:
+        * Modules/paymentrequest/PaymentRequestUpdateEvent.cpp:
+        (WebCore::PaymentRequestUpdateEvent::updateWith):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSPaymentMethodChangeEventCustom.cpp: Added.
+        (WebCore::JSPaymentMethodChangeEvent::methodDetails const):
+        (WebCore::JSPaymentMethodChangeEvent::visitAdditionalChildren):
+
 2018-09-08  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up code related to Document node removal

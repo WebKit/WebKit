@@ -28,8 +28,16 @@
     Constructor(DOMString type, optional PaymentMethodChangeEventInit eventInitDict),
     EnabledBySetting=PaymentRequest,
     Exposed=Window,
+    JSCustomMarkFunction,
     SecureContext,
 ] interface PaymentMethodChangeEvent : PaymentRequestUpdateEvent {
     readonly attribute DOMString methodName;
-    readonly attribute object? methodDetails;
+    [CustomGetter] readonly attribute object? methodDetails;
+};
+
+[
+    Conditional=PAYMENT_REQUEST,
+] dictionary PaymentMethodChangeEventInit : PaymentRequestUpdateEventInit {
+    DOMString methodName = "";
+    object? methodDetails;
 };

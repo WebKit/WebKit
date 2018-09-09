@@ -28,8 +28,6 @@
 
 #if ENABLE(PAYMENT_REQUEST)
 
-#include "PaymentMethodChangeEventInit.h"
-
 namespace WebCore {
 
 EventInterface PaymentMethodChangeEvent::eventInterface() const
@@ -37,10 +35,17 @@ EventInterface PaymentMethodChangeEvent::eventInterface() const
     return PaymentMethodChangeEventInterfaceType;
 }
 
-PaymentMethodChangeEvent::PaymentMethodChangeEvent(const AtomicString& type, const PaymentMethodChangeEventInit& eventInit)
+PaymentMethodChangeEvent::PaymentMethodChangeEvent(const AtomicString& type, Init&& eventInit)
     : PaymentRequestUpdateEvent { type, eventInit }
-    , m_methodName { eventInit.methodName }
-    , m_methodDetails { eventInit.methodDetails }
+    , m_methodName { WTFMove(eventInit.methodName) }
+    , m_methodDetails { JSValueInWrappedObject { eventInit.methodDetails.get() } }
+{
+}
+
+PaymentMethodChangeEvent::PaymentMethodChangeEvent(const AtomicString& type, PaymentRequest& request, const String& methodName, MethodDetailsFunction&& methodDetailsFunction)
+    : PaymentRequestUpdateEvent { type, request }
+    , m_methodName { methodName }
+    , m_methodDetails { WTFMove(methodDetailsFunction) }
 {
 }
 
