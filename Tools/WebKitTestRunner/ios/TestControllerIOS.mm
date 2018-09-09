@@ -86,12 +86,12 @@ void TestController::platformDestroy()
 void TestController::initializeInjectedBundlePath()
 {
     NSString *nsBundlePath = [[NSBundle mainBundle].builtInPlugInsPath stringByAppendingPathComponent:@"WebKitTestRunnerInjectedBundle.bundle"];
-    m_injectedBundlePath.adopt(WKStringCreateWithCFString((__bridge CFStringRef)nsBundlePath));
+    m_injectedBundlePath.adopt(WKStringCreateWithCFString((CFStringRef)nsBundlePath));
 }
 
 void TestController::initializeTestPluginDirectory()
 {
-    m_testPluginDirectory.adopt(WKStringCreateWithCFString((__bridge CFStringRef)[[NSBundle mainBundle] bundlePath]));
+    m_testPluginDirectory.adopt(WKStringCreateWithCFString((CFStringRef)[[NSBundle mainBundle] bundlePath]));
 }
 
 void TestController::platformResetPreferencesToConsistentValues()

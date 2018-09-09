@@ -41,15 +41,23 @@ using namespace WTR;
     if (!self)
         return nil;
 
-    _draggedImage = image;
-    _draggingPasteboard = pasteboard;
-    _draggingSource = source;
+    _draggedImage = [image retain];
+    _draggingPasteboard = [pasteboard retain];
+    _draggingSource = [source retain];
     _offset = offset;
     
     return self;
 }
 
-- (NSWindow *)draggingDestinationWindow
+- (void)dealloc
+{
+    [_draggedImage release];
+    [_draggingPasteboard release];
+    [_draggingSource release];
+    [super dealloc];
+}
+
+- (NSWindow *)draggingDestinationWindow 
 {
     return [TestController::singleton().mainWebView()->platformView() window];
 }

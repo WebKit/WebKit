@@ -57,6 +57,7 @@ static WKWebViewConfiguration *globalWebViewConfiguration;
 void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injectedBundlePath, WKContextRef context, WKContextConfigurationRef contextConfiguration)
 {
 #if WK_API_ENABLED
+    [globalWebViewConfiguration release];
     globalWebViewConfiguration = [[WKWebViewConfiguration alloc] init];
 
     globalWebViewConfiguration.processPool = (__bridge WKProcessPool *)context;
@@ -108,6 +109,7 @@ void TestController::cocoaPlatformInitialize()
     NSDictionary *resourceLogPlist = [[NSDictionary alloc] initWithObjectsAndKeys: [NSNumber numberWithInt:1], @"version", nil];
     if (![resourceLogPlist writeToFile:fullBrowsingSessionResourceLog atomically:YES])
         WTFCrash();
+    [resourceLogPlist release];
 }
 
 WKContextRef TestController::platformContext()
@@ -176,7 +178,7 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
 PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions& options)
 {
 #if WK_API_ENABLED
-    WKWebViewConfiguration *newConfiguration = [globalWebViewConfiguration copy];
+    WKWebViewConfiguration *newConfiguration = [[globalWebViewConfiguration copy] autorelease];
     newConfiguration._relatedWebView = static_cast<WKWebView*>(parentView->platformView());
     return new PlatformWebView(newConfiguration, options);
 #else

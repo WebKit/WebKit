@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2018 Apple, Inc. All rights reserved.
+ * Copyright (C) 2005-2018 Apple, Inc.  All rights reserved.
  * Copyright (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WebKitTestRunnerPasteboard.h"
 
+#include <objc/runtime.h>
 #include <wtf/RetainPtr.h>
 
 @interface LocalPasteboard : NSPasteboard
@@ -40,11 +41,6 @@
 }
 
 -(id)initWithName:(NSString *)name;
-@end
-
-@interface NSPasteboard (SuperHelpers)
-+ (instancetype)superAlloc;
-+ (instancetype)superAllocWithZone:(NSZone *)zone;
 @end
 
 static NSMutableDictionary *localPasteboards;
@@ -64,6 +60,7 @@ static NSMutableDictionary *localPasteboards;
         return pasteboard;
     pasteboard = [[LocalPasteboard alloc] initWithName:name];
     [localPasteboards setObject:pasteboard forKey:name];
+    [pasteboard release];
     return pasteboard;
 }
 
@@ -75,6 +72,7 @@ static NSMutableDictionary *localPasteboards;
 
 + (void)releaseLocalPasteboards
 {
+    [localPasteboards release];
     localPasteboards = nil;
 }
 
@@ -87,32 +85,12 @@ static NSMutableDictionary *localPasteboards;
 
 @end
 
-@implementation NSPasteboard (SuperHelpers)
-
-+ (instancetype)superAlloc
-{
-    return [super alloc];
-}
-
-+ (instancetype)superAllocWithZone:(NSZone *)zone
-{
-    return [super allocWithZone:zone];
-}
-
-@end
-
 @implementation LocalPasteboard
 
 + (id)alloc
 {
     // Need to skip over [NSPasteboard alloc], which won't allocate a new object.
-    return [self superAlloc];
-}
-
-+ (id)allocWithZone:(NSZone *)zone
-{
-    // Need to skip over [NSPasteboard allocWithZone:], which won't allocate a new object.
-    return [self superAllocWithZone:zone];
+    return class_createInstance(self, 0);
 }
 
 - (id)initWithName:(NSString *)name
@@ -125,6 +103,15 @@ static NSMutableDictionary *localPasteboards;
     dataByType = [[NSMutableDictionary alloc] init];
     pasteboardName = [name copy];
     return self;
+}
+
+- (void)dealloc
+{
+    [typesArray release];
+    [typesSet release];
+    [dataByType release];
+    [pasteboardName release];
+    [super dealloc];
 }
 
 - (NSString *)name
@@ -155,6 +142,7 @@ static NSMutableDictionary *localPasteboards;
             setType = [type copy];
             [typesArray addObject:setType];
             [typesSet addObject:setType];
+            [setType release];
         }
         if (newOwner && [newOwner respondsToSelector:@selector(pasteboard:provideDataForType:)])
             [newOwner pasteboard:self provideDataForType:setType];

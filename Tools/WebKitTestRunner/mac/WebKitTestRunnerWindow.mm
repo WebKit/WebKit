@@ -54,6 +54,7 @@ static Vector<WebKitTestRunnerWindow *> allWindows;
 {
     allWindows.removeFirst(self);
     ASSERT(!allWindows.contains(self));
+    [super dealloc];
 }
 
 - (BOOL)isKeyWindow

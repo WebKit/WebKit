@@ -155,7 +155,7 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
 
 static NSSet *allowedFontFamilySet()
 {
-    static NSSet *fontFamilySet = [NSSet setWithObjects:
+    static NSSet *fontFamilySet = [[NSSet setWithObjects:
         @"Ahem",
         @"Al Bayan",
         @"American Typewriter",
@@ -277,16 +277,16 @@ static NSSet *allowedFontFamilySet()
         @"Wingdings",
         @"Zapf Dingbats",
         @"Zapfino",
-        nil];
+        nil] retain];
 
     return fontFamilySet;
 }
 
 static NSSet *systemHiddenFontFamilySet()
 {
-    static NSSet *fontFamilySet = [NSSet setWithObjects:
+    static NSSet *fontFamilySet = [[NSSet setWithObjects:
         @".LucidaGrandeUI",
-        nil];
+        nil] retain];
 
     return fontFamilySet;
 }

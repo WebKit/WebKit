@@ -84,6 +84,22 @@
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    self.didStartFormControlInteractionCallback = nil;
+    self.didEndFormControlInteractionCallback = nil;
+    self.didShowForcePressPreviewCallback = nil;
+    self.didDismissForcePressPreviewCallback = nil;
+    self.willBeginZoomingCallback = nil;
+    self.didEndZoomingCallback = nil;
+    self.didShowKeyboardCallback = nil;
+    self.didHideKeyboardCallback = nil;
+    self.didEndScrollingCallback = nil;
+    self.rotationDidEndCallback = nil;
+
+    self.zoomToScaleCompletionHandler = nil;
+    self.retrieveSpeakSelectionContentCompletionHandler = nil;
+
+    [super dealloc];
 }
 
 - (void)didStartFormControlInteraction

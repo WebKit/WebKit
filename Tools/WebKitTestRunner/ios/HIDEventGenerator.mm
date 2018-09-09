@@ -191,6 +191,15 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     return self;
 }
 
+- (void)dealloc
+{
+    [_eventCallbacks release];
+    [_debugTouchViews release];
+    [super dealloc];
+}
+
+
+
 - (void)_sendIOHIDKeyboardEvent:(uint64_t)timestamp usage:(uint32_t)usage isKeyDown:(bool)isKeyDown
 {
     RetainPtr<IOHIDEventRef> eventRef = adoptCF(IOHIDEventCreateKeyboardEvent(kCFAllocatorDefault,
@@ -471,7 +480,7 @@ static InterpolationType interpolationFromString(NSString *string)
 - (BOOL)_sendMarkerHIDEventWithCompletionBlock:(void (^)(void))completionBlock
 {
     auto callbackID = [HIDEventGenerator nextEventCallbackID];
-    [_eventCallbacks setObject:completionBlock forKey:@(callbackID)];
+    [_eventCallbacks setObject:Block_copy(completionBlock) forKey:@(callbackID)];
 
     auto markerEvent = adoptCF(IOHIDEventCreateVendorDefinedEvent(kCFAllocatorDefault,
         mach_absolute_time(),
@@ -773,6 +782,7 @@ static InterpolationType interpolationFromString(NSString *string)
     if (completionBlock) {
         [_eventCallbacks removeObjectForKey:@(callbackID)];
         completionBlock();
+        Block_release(completionBlock);
     }
 }
 
@@ -1026,6 +1036,7 @@ static inline uint32_t hidUsageCodeForCharacter(NSString *key)
                     newTouch[HIDEventPressureKey] = @(interpolations[interpolationType]([startTouch[HIDEventPressureKey] doubleValue], [endTouch[HIDEventPressureKey] doubleValue], timeRatio));
                 
                 [newTouches addObject:newTouch];
+                [newTouch release];
             } else
                 NSLog(@"Missing End Touch with ID: %ld", (long)startTouchID);
         }
@@ -1033,6 +1044,7 @@ static inline uint32_t hidUsageCodeForCharacter(NSString *key)
         newEvent[HIDEventTouchesKey] = newTouches;
         
         [interpolatedEvents addObject:newEvent];
+        [newEvent release];
         time += timeStep;
     }
     
@@ -1100,10 +1112,10 @@ static inline uint32_t hidUsageCodeForCharacter(NSString *key)
     
     NSDictionary* threadData = @{
         @"eventInfo": [eventInfo copy],
-        @"completionBlock": [completionBlock copy]
+        @"completionBlock": [[completionBlock copy] autorelease]
     };
     
-    NSThread *eventDispatchThread = [[NSThread alloc] initWithTarget:self selector:@selector(eventDispatchThreadEntry:) object:threadData];
+    NSThread *eventDispatchThread = [[[NSThread alloc] initWithTarget:self selector:@selector(eventDispatchThreadEntry:) object:threadData] autorelease];
     eventDispatchThread.qualityOfService = NSQualityOfServiceUserInteractive;
     [eventDispatchThread start];
 }

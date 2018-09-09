@@ -53,6 +53,10 @@ static const CGFloat debugTouchDotSize = debugTouchDotRadius * 2;
 - (void)dealloc
 {
     _debugTouchWindow.hidden = YES;
+    [_debugTouchWindow release];
+    [_debugTouchViews release];
+    
+    [super dealloc];
 }
 
 - (void)updateDebugIndicatorForTouch:(NSUInteger)index withPointInWindowCoordinates:(CGPoint)point isTouching:(BOOL)isTouching
