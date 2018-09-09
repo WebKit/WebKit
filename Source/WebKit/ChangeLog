@@ -1,3 +1,32 @@
+2018-09-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r235153): [iOS] Can't move selection start grabber when selecting text in a subframe
+        https://bugs.webkit.org/show_bug.cgi?id=189454
+        <rdar://problem/44265956>
+
+        Reviewed by Darin Adler.
+
+        rangeForPointInRootViewCoordinates is responsible for taking a user gesture location representing the location
+        of the selection start or end handle (given in root view coordinates) and computing a Range representing an
+        updated selection. r235153 introduced a mechanism here to clamp the y offset of this user gesture location to
+        a max or min value determined by computing the bounds of the other selection handle, which more closely matches
+        platform behavior elsewhere in iOS.
+
+        However, this clamping logic would cause the user gesture location in root view coordinates to incorrectly clamp
+        in cases where the user selects text within an iframe that is offset from the top of the main document, since it
+        compares content coordinates (i.e. the caret bounds) against root view coordinates (i.e. the gesture location).
+        This makes it impossible to use selection handles to select text in some iframes.
+
+        We fix this by first converting the gesture location to document coordinates, and then clamping.
+
+        Test: editing/selection/ios/selection-handle-clamping-in-iframe.html
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::rangeForPointInRootViewCoordinates):
+
+        Also reuse `selectionStart` and `selectionEnd` when computing absolute caret bounds, instead of creating new
+        VisiblePositions.
+
 2018-09-08  Tim Horton  <timothy_horton@apple.com>
 
         Unify most of the WebKit Objective-C API sources

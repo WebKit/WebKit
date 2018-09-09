@@ -1,0 +1,7 @@
+The final selection is: "iOS"
+
+Verifies that the selection remains the same when dragging the start selection handles below the end selection handle and vice versa.
+
+To manually run the test, select "iOS" in the iframe above, drag the start selection handle down, and then drag the end selection handle up.
+
+The text "iOS" should remain selected.

@@ -1221,22 +1221,19 @@ static RefPtr<Range> rangeForPointInRootViewCoordinates(Frame& frame, const IntP
     VisibleSelection existingSelection = frame.selection().selection();
     VisiblePosition selectionStart = existingSelection.visibleStart();
     VisiblePosition selectionEnd = existingSelection.visibleEnd();
-    
-    IntPoint adjustedPoint = pointInRootViewCoordinates;
-    
+
+    auto pointInDocument = frame.view()->rootViewToContents(pointInRootViewCoordinates);
+
     if (baseIsStart) {
-        IntRect caret = existingSelection.visibleStart().absoluteCaretBounds();
-        int startY = caret.center().y();
-        if (adjustedPoint.y() < startY)
-            adjustedPoint.setY(startY);
+        int startY = selectionStart.absoluteCaretBounds().center().y();
+        if (pointInDocument.y() < startY)
+            pointInDocument.setY(startY);
     } else {
-        IntRect caret = existingSelection.visibleEnd().absoluteCaretBounds();
-        int endY = caret.center().y();
-        if (adjustedPoint.y() > endY)
-            adjustedPoint.setY(endY);
+        int endY = selectionEnd.absoluteCaretBounds().center().y();
+        if (pointInDocument.y() > endY)
+            pointInDocument.setY(endY);
     }
     
-    IntPoint pointInDocument = frame.view()->rootViewToContents(adjustedPoint);
     VisiblePosition result;
     RefPtr<Range> range;
     
