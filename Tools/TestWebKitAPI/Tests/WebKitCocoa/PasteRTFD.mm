@@ -67,19 +67,19 @@ void writeRTFDToPasteboard(NSData *data)
 
 void writeRTFToPasteboard(NSData *data)
 {
-    [[UIPasteboard generalPasteboard] setItems:@[@{ (NSString *)kUTTypeRTF : data}]];
+    [[UIPasteboard generalPasteboard] setItems:@[@{ (__bridge NSString *)kUTTypeRTF : data}]];
 }
 
 void writeRTFDToPasteboard(NSData *data)
 {
-    [[UIPasteboard generalPasteboard] setItems:@[@{ (NSString *)kUTTypeFlatRTFD : data}]];
+    [[UIPasteboard generalPasteboard] setItems:@[@{ (__bridge NSString *)kUTTypeFlatRTFD : data}]];
 }
 #endif
 
 static RetainPtr<TestWKWebView> createWebViewWithCustomPasteboardDataEnabled()
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
-    auto preferences = (WKPreferencesRef)[[webView configuration] preferences];
+    auto preferences = (__bridge WKPreferencesRef)[[webView configuration] preferences];
     WKPreferencesSetDataTransferItemsEnabled(preferences, true);
     WKPreferencesSetCustomPasteboardDataEnabled(preferences, true);
     return webView;
@@ -145,7 +145,7 @@ TEST(PasteRTFD, ImageElementUsesBlobURL)
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
 
     auto *pngData = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"sunset-in-cupertino-200px" ofType:@"png" inDirectory:@"TestWebKitAPI.resources"]];
-    auto attachment = adoptNS([[NSTextAttachment alloc] initWithData:pngData ofType:(NSString *)kUTTypePNG]);
+    auto attachment = adoptNS([[NSTextAttachment alloc] initWithData:pngData ofType:(__bridge NSString *)kUTTypePNG]);
     NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:attachment.get()];
     NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }];
 
@@ -163,7 +163,7 @@ TEST(PasteRTFD, ImageElementUsesBlobURLInHTML)
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
 
     auto *pngData = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"sunset-in-cupertino-200px" ofType:@"png" inDirectory:@"TestWebKitAPI.resources"]];
-    auto attachment = adoptNS([[NSTextAttachment alloc] initWithData:pngData ofType:(NSString *)kUTTypePNG]);
+    auto attachment = adoptNS([[NSTextAttachment alloc] initWithData:pngData ofType:(__bridge NSString *)kUTTypePNG]);
     NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:attachment.get()];
     NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }];
 

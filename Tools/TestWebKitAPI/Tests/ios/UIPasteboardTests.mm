@@ -174,7 +174,7 @@ TEST(UIPasteboardTests, DataTransferGetDataWhenPastingPlatformRepresentations)
     RetainPtr<NSString> testPlainTextString = @"WebKit";
     RetainPtr<NSString> testMarkupString = @"<a href=\"https://www.webkit.org/\">The WebKit Project</a>";
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
-    [itemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
+    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeHTML visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
     {
         completionHandler([testMarkupString dataUsingEncoding:NSUTF8StringEncoding], nil);
         return nil;
@@ -199,11 +199,11 @@ TEST(UIPasteboardTests, DataTransferGetDataWhenPastingImageAndText)
     auto webView = setUpWebViewForPasteboardTests(@"DataTransfer");
     auto copiedText = retainPtr(@"Apple Inc.");
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
-    [itemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypePNG visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
+    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
         completionHandler([NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]], nil);
         return nil;
     }];
-    [itemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeUTF8PlainText visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[copiedText] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
+    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeUTF8PlainText visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[copiedText] (DataLoadCompletionBlock completionHandler) -> NSProgress * {
         completionHandler([copiedText dataUsingEncoding:NSUTF8StringEncoding], nil);
         return nil;
     }];
@@ -238,7 +238,7 @@ TEST(UIPasteboardTests, DataTransferSetDataCannotWritePlatformTypes)
     });
 
     // Most importantly, the system pasteboard should not contain the PDF UTI.
-    NSData *pdfData = [[UIPasteboard generalPasteboard] dataForPasteboardType:(NSString *)kUTTypePDF];
+    NSData *pdfData = [[UIPasteboard generalPasteboard] dataForPasteboardType:(__bridge NSString *)kUTTypePDF];
     EXPECT_EQ(0UL, pdfData.length);
 
     // However, the system pasteboard should contain a plain text string.
@@ -249,7 +249,7 @@ TEST(UIPasteboardTests, DataTransferGetDataCannotReadArbitraryPlatformTypes)
 {
     auto webView = setUpWebViewForPasteboardTests(@"dump-datatransfer-types");
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
-    [itemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeMP3 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
+    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeMP3 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
     {
         completionHandler([@"this is a test" dataUsingEncoding:NSUTF8StringEncoding], nil);
         return nil;

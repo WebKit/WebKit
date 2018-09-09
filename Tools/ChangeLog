@@ -1,3 +1,63 @@
+2018-09-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Use more bridging casts in TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=189457
+
+        Reviewed by Darin Adler.
+
+        Adds some bridging casts to TestWebKitAPI, when converting betweeen several common types of objects, including:
+        CFStringRef <=> NSString
+        CFURLRef <=> NSURL
+        WKPreferences <=> WKPreferencesRef
+        CFDataRef <=> NSData
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/SharedBuffer.mm:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/CopyHTML.mm:
+        (readHTMLFromPasteboard):
+        (createWebViewWithCustomPasteboardDataEnabled):
+        * TestWebKitAPI/Tests/WebKitCocoa/CopyURL.mm:
+        (createWebViewWithCustomPasteboardDataEnabled):
+        * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteHTML.mm:
+        (writeHTMLToPasteboard):
+        (createWebViewWithCustomPasteboardDataSetting):
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteImage.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteMixedContent.mm:
+        (TestWebKitAPI::setUpWebView):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteRTFD.mm:
+        (writeRTFToPasteboard):
+        (writeRTFDToPasteboard):
+        (createWebViewWithCustomPasteboardDataEnabled):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteWebArchive.mm:
+        (createWebViewWithCustomPasteboardDataEnabled):
+        * TestWebKitAPI/Tests/WebKitCocoa/RestoreSessionStateWithoutNavigation.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (webViewForTestingAttachments):
+        * TestWebKitAPI/Tests/WebKitLegacy/mac/AccessingPastedImage.mm:
+        (writeRTFDToPasteboard):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/ActionSheetTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (checkRichTextTypePrecedesPlainTextType):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::setUpTestWebViewForDataTransferItems):
+        * TestWebKitAPI/Tests/ios/UIPasteboardTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm:
+        (TestWebKitAPI::Util::createInjectedBundlePath):
+        (TestWebKitAPI::Util::createURLForResource):
+        (TestWebKitAPI::Util::URLForNonExistentResource):
+        (TestWebKitAPI::Util::MIMETypeForWKURLResponse):
+        * TestWebKitAPI/mac/WebKitAgnosticTest.mm:
+        (TestWebKitAPI::WebKitAgnosticTest::loadURL):
+
 2018-09-02  Darin Adler  <darin@apple.com>
 
         [Cocoa] Turn on ARC for WebKitTestRunner

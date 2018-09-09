@@ -98,7 +98,7 @@ TEST(WebKit, RestoreSessionStateWithoutNavigation)
     auto currentItem = WKBackForwardListGetCurrentItem(backForwardList);
     auto currentItemURL = adoptWK(WKBackForwardListItemCopyURL(currentItem));
     
-    auto expectedURL = adoptWK(WKURLCreateWithCFURL((CFURLRef)[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]));
+    auto expectedURL = adoptWK(WKURLCreateWithCFURL((__bridge CFURLRef)[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]));
     EXPECT_NOT_NULL(expectedURL);
     EXPECT_TRUE(WKURLIsEqual(currentItemURL.get(), expectedURL.get()));
 }

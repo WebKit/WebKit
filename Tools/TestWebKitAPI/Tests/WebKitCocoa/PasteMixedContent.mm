@@ -90,7 +90,7 @@ void writeTypesAndDataToPasteboard(id type, ...)
 static RetainPtr<TestWKWebView> setUpWebView()
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
-    WKPreferencesSetCustomPasteboardDataEnabled((WKPreferencesRef)[webView configuration].preferences, true);
+    WKPreferencesSetCustomPasteboardDataEnabled((__bridge WKPreferencesRef)[webView configuration].preferences, true);
     [webView synchronouslyLoadTestPageNamed:@"DataTransfer"];
     return webView;
 }
@@ -310,7 +310,7 @@ TEST(PasteMixedContent, CopyAndPasteWithCustomPasteboardDataOnly)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"same"];
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"different"];
-    WKPreferencesSetCustomPasteboardDataEnabled((WKPreferencesRef)[configuration preferences], true);
+    WKPreferencesSetCustomPasteboardDataEnabled((__bridge WKPreferencesRef)[configuration preferences], true);
 
     auto source = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     [source synchronouslyLoadHTMLString:markupForSource baseURL:[NSURL URLWithString:@"same://"]];

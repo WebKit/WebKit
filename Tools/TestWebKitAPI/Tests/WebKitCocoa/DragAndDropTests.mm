@@ -48,7 +48,7 @@ TEST(DragAndDropTests, ExposeMultipleURLsInDataTransfer)
 {
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:CGRectMake(0, 0, 320, 500)]);
     auto webView = [simulator webView];
-    WKPreferencesSetCustomPasteboardDataEnabled((WKPreferencesRef)[webView configuration].preferences, true);
+    WKPreferencesSetCustomPasteboardDataEnabled((__bridge WKPreferencesRef)[webView configuration].preferences, true);
     [webView synchronouslyLoadTestPageNamed:@"DataTransfer"];
 
     NSString *stringData = @"Hello world";

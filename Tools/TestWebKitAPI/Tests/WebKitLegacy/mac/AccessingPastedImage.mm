@@ -53,7 +53,7 @@ static void writeRTFDToPasteboard(NSData *data)
 
 static void writeRTFDToPasteboard(NSData *data)
 {
-    [[UIPasteboard generalPasteboard] setItems:@[@{ (NSString *)kUTTypeFlatRTFD : data}]];
+    [[UIPasteboard generalPasteboard] setItems:@[@{ (__bridge NSString *)kUTTypeFlatRTFD : data}]];
 }
 #endif
 
@@ -93,7 +93,7 @@ TEST(WebKitLegacy, AccessingImageInPastedRTFD)
     [webView.get() setEditable:YES];
 
     auto *pngData = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"sunset-in-cupertino-200px" ofType:@"png" inDirectory:@"TestWebKitAPI.resources"]];
-    auto attachment = adoptNS([[NSTextAttachment alloc] initWithData:pngData ofType:(NSString *)kUTTypePNG]);
+    auto attachment = adoptNS([[NSTextAttachment alloc] initWithData:pngData ofType:(__bridge NSString *)kUTTypePNG]);
     NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:attachment.get()];
     NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }];
 

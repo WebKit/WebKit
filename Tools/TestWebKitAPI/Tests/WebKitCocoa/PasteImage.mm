@@ -77,7 +77,7 @@ TEST(PasteImage, PasteGIFImage)
     [webView synchronouslyLoadTestPageNamed:@"paste-image"];
 
     auto *data = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"sunset-in-cupertino-400px" ofType:@"gif" inDirectory:@"TestWebKitAPI.resources"]];
-    writeImageDataToPasteboard((NSString *)kUTTypeGIF, data);
+    writeImageDataToPasteboard((__bridge NSString *)kUTTypeGIF, data);
     [webView paste:nil];
 
     EXPECT_WK_STREQ("false", [webView stringByEvaluatingJavaScript:@"dataTransfer.types.includes('image/gif').toString()"]);
@@ -99,7 +99,7 @@ TEST(PasteImage, PasteJPEGImage)
     [webView synchronouslyLoadTestPageNamed:@"paste-image"];
 
     auto *data = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"sunset-in-cupertino-600px" ofType:@"jpg" inDirectory:@"TestWebKitAPI.resources"]];
-    writeImageDataToPasteboard((NSString *)kUTTypeJPEG, data);
+    writeImageDataToPasteboard((__bridge NSString *)kUTTypeJPEG, data);
     [webView paste:nil];
 
     EXPECT_WK_STREQ("false", [webView stringByEvaluatingJavaScript:@"dataTransfer.types.includes('image/gif').toString()"]);
@@ -121,7 +121,7 @@ TEST(PasteImage, PastePNGImage)
     [webView synchronouslyLoadTestPageNamed:@"paste-image"];
 
     auto *data = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"sunset-in-cupertino-200px" ofType:@"png" inDirectory:@"TestWebKitAPI.resources"]];
-    writeImageDataToPasteboard((NSString *)kUTTypePNG, data);
+    writeImageDataToPasteboard((__bridge NSString *)kUTTypePNG, data);
     [webView paste:nil];
 
     EXPECT_WK_STREQ("false", [webView stringByEvaluatingJavaScript:@"dataTransfer.types.includes('image/gif').toString()"]);
@@ -259,7 +259,7 @@ TEST(PasteImage, PasteTIFFImage)
     [webView synchronouslyLoadTestPageNamed:@"paste-image"];
 
     auto *data = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"sunset-in-cupertino-100px" ofType:@"tiff" inDirectory:@"TestWebKitAPI.resources"]];
-    writeImageDataToPasteboard((NSString *)kUTTypeTIFF, data);
+    writeImageDataToPasteboard((__bridge NSString *)kUTTypeTIFF, data);
     [webView paste:nil];
 
     EXPECT_WK_STREQ("false", [webView stringByEvaluatingJavaScript:@"dataTransfer.types.includes('image/gif').toString()"]);

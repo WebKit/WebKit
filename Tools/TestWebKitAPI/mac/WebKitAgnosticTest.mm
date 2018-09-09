@@ -118,7 +118,7 @@ void WebKitAgnosticTest::loadURL(WebView *webView, NSURL *url)
 void WebKitAgnosticTest::loadURL(WKView *view, NSURL *url)
 {
     EXPECT_FALSE(didFinishLoad);
-    WKPageLoadURL([view pageRef], adoptWK(WKURLCreateWithCFURL((CFURLRef)url)).get());
+    WKPageLoadURL([view pageRef], adoptWK(WKURLCreateWithCFURL((__bridge CFURLRef)url)).get());
 }
 
 void WebKitAgnosticTest::goBack(WebView *webView)

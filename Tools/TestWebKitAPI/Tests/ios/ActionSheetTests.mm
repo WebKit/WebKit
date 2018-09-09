@@ -250,14 +250,14 @@ TEST(ActionSheetTests, CopyImageElementWithHREFAndTitle)
     [webView _doAfterNextPresentationUpdate:^() {
         NSArray <NSString *> *pasteboardTypes = [[UIPasteboard generalPasteboard] pasteboardTypes];
         EXPECT_EQ(2UL, pasteboardTypes.count);
-        EXPECT_WK_STREQ((NSString *)kUTTypePNG, pasteboardTypes.firstObject);
-        EXPECT_WK_STREQ((NSString *)kUTTypeURL, pasteboardTypes.lastObject);
+        EXPECT_WK_STREQ((__bridge NSString *)kUTTypePNG, pasteboardTypes.firstObject);
+        EXPECT_WK_STREQ((__bridge NSString *)kUTTypeURL, pasteboardTypes.lastObject);
         NSArray <NSItemProvider *> *itemProviders = [[UIPasteboard generalPasteboard] itemProviders];
         EXPECT_EQ(1UL, itemProviders.count);
         itemProvider = itemProviders.firstObject;
         EXPECT_EQ(2UL, [itemProvider registeredTypeIdentifiers].count);
-        EXPECT_WK_STREQ((NSString *)kUTTypePNG, [itemProvider registeredTypeIdentifiers].firstObject);
-        EXPECT_WK_STREQ((NSString *)kUTTypeURL, [itemProvider registeredTypeIdentifiers].lastObject);
+        EXPECT_WK_STREQ((__bridge NSString *)kUTTypePNG, [itemProvider registeredTypeIdentifiers].firstObject);
+        EXPECT_WK_STREQ((__bridge NSString *)kUTTypeURL, [itemProvider registeredTypeIdentifiers].lastObject);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -290,14 +290,14 @@ TEST(ActionSheetTests, CopyImageElementWithHREF)
     [webView _doAfterNextPresentationUpdate:^() {
         NSArray <NSString *> *pasteboardTypes = [[UIPasteboard generalPasteboard] pasteboardTypes];
         EXPECT_EQ(2UL, pasteboardTypes.count);
-        EXPECT_WK_STREQ((NSString *)kUTTypePNG, pasteboardTypes.firstObject);
-        EXPECT_WK_STREQ((NSString *)kUTTypeURL, pasteboardTypes.lastObject);
+        EXPECT_WK_STREQ((__bridge NSString *)kUTTypePNG, pasteboardTypes.firstObject);
+        EXPECT_WK_STREQ((__bridge NSString *)kUTTypeURL, pasteboardTypes.lastObject);
         NSArray <NSItemProvider *> *itemProviders = [[UIPasteboard generalPasteboard] itemProviders];
         EXPECT_EQ(1UL, itemProviders.count);
         itemProvider = itemProviders.firstObject;
         EXPECT_EQ(2UL, [itemProvider registeredTypeIdentifiers].count);
-        EXPECT_WK_STREQ((NSString *)kUTTypePNG, [itemProvider registeredTypeIdentifiers].firstObject);
-        EXPECT_WK_STREQ((NSString *)kUTTypeURL, [itemProvider registeredTypeIdentifiers].lastObject);
+        EXPECT_WK_STREQ((__bridge NSString *)kUTTypePNG, [itemProvider registeredTypeIdentifiers].firstObject);
+        EXPECT_WK_STREQ((__bridge NSString *)kUTTypeURL, [itemProvider registeredTypeIdentifiers].lastObject);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -329,12 +329,12 @@ TEST(ActionSheetTests, CopyImageElementWithoutHREF)
     [webView _doAfterNextPresentationUpdate:^() {
         NSArray <NSString *> *pasteboardTypes = [[UIPasteboard generalPasteboard] pasteboardTypes];
         EXPECT_EQ(1UL, pasteboardTypes.count);
-        EXPECT_WK_STREQ((NSString *)kUTTypePNG, pasteboardTypes.firstObject);
+        EXPECT_WK_STREQ((__bridge NSString *)kUTTypePNG, pasteboardTypes.firstObject);
         NSArray <NSItemProvider *> *itemProviders = [[UIPasteboard generalPasteboard] itemProviders];
         EXPECT_EQ(1UL, itemProviders.count);
         NSItemProvider *itemProvider = itemProviders.firstObject;
         EXPECT_EQ(1UL, itemProvider.registeredTypeIdentifiers.count);
-        EXPECT_WK_STREQ((NSString *)kUTTypePNG, itemProvider.registeredTypeIdentifiers.firstObject);
+        EXPECT_WK_STREQ((__bridge NSString *)kUTTypePNG, itemProvider.registeredTypeIdentifiers.firstObject);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);

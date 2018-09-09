@@ -42,7 +42,7 @@
 static RetainPtr<TestWKWebView> createWebViewWithCustomPasteboardDataEnabled()
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
-    auto preferences = (WKPreferencesRef)[[webView configuration] preferences];
+    auto preferences = (__bridge WKPreferencesRef)[[webView configuration] preferences];
     WKPreferencesSetDataTransferItemsEnabled(preferences, true);
     WKPreferencesSetCustomPasteboardDataEnabled(preferences, true);
     return webView;

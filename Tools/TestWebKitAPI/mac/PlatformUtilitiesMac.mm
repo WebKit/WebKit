@@ -40,25 +40,25 @@ namespace Util {
 WKStringRef createInjectedBundlePath()
 {
     NSString *nsString = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"InjectedBundleTestWebKitAPI.bundle"];
-    return WKStringCreateWithCFString((CFStringRef)nsString);
+    return WKStringCreateWithCFString((__bridge CFStringRef)nsString);
 }
 
 WKURLRef createURLForResource(const char* resource, const char* extension)
 {
     NSURL *nsURL = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:resource] withExtension:[NSString stringWithUTF8String:extension] subdirectory:@"TestWebKitAPI.resources"];
-    return WKURLCreateWithCFURL((CFURLRef)nsURL);
+    return WKURLCreateWithCFURL((__bridge CFURLRef)nsURL);
 }
 
 WKURLRef URLForNonExistentResource()
 {
     NSURL *nsURL = [NSURL URLWithString:@"file:///does-not-exist.html"];
-    return WKURLCreateWithCFURL((CFURLRef)nsURL);
+    return WKURLCreateWithCFURL((__bridge CFURLRef)nsURL);
 }
 
 WKRetainPtr<WKStringRef> MIMETypeForWKURLResponse(WKURLResponseRef wkResponse)
 {
     RetainPtr<NSURLResponse> response = adoptNS(WKURLResponseCopyNSURLResponse(wkResponse));
-    return adoptWK(WKStringCreateWithCFString((CFStringRef)[response.get() MIMEType]));
+    return adoptWK(WKStringCreateWithCFString((__bridge CFStringRef)[response.get() MIMEType]));
 }
 
 bool isKeyDown(WKNativeEventPtr event)

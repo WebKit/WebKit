@@ -153,7 +153,7 @@ static NSString *attachmentEditingTestMarkup = @"<meta name='viewport' content='
 static RetainPtr<TestWKWebView> webViewForTestingAttachments(CGSize webViewSize, WKWebViewConfiguration *configuration)
 {
     configuration._attachmentElementEnabled = YES;
-    WKPreferencesSetCustomPasteboardDataEnabled((WKPreferencesRef)[configuration preferences], YES);
+    WKPreferencesSetCustomPasteboardDataEnabled((__bridge WKPreferencesRef)[configuration preferences], YES);
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, webViewSize.width, webViewSize.height) configuration:configuration]);
     [webView synchronouslyLoadHTMLString:attachmentEditingTestMarkup];

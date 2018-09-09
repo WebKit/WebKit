@@ -56,11 +56,11 @@ TEST_F(SharedBufferTest, createNSDataArray)
         expectDataArraysEqual(@[ helloData ], buffer->createNSDataArray().get());
 
         NSData *worldData = [NSData dataWithBytes:"world" length:5];
-        buffer->append((CFDataRef)worldData);
+        buffer->append((__bridge CFDataRef)worldData);
         expectDataArraysEqual(@[ helloData, worldData ], buffer->createNSDataArray().get());
 
         expectDataArraysEqual(@[ helloData ], SharedBuffer::create(helloData)->createNSDataArray().get());
-        expectDataArraysEqual(@[ worldData ], SharedBuffer::create((CFDataRef)worldData)->createNSDataArray().get());
+        expectDataArraysEqual(@[ worldData ], SharedBuffer::create((__bridge CFDataRef)worldData)->createNSDataArray().get());
 
         expectDataArraysEqual(@[ [NSData dataWithContentsOfFile:tempFilePath()] ], SharedBuffer::createWithContentsOfFile(tempFilePath())->createNSDataArray().get());
     }
