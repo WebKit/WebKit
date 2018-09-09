@@ -51,7 +51,8 @@ bool AccessibilityController::addNotificationListener(JSValueRef functionCallbac
 
     if (m_globalNotificationHandler)
         return false;
-    m_globalNotificationHandler = [[AccessibilityNotificationHandler alloc] init];
+
+    m_globalNotificationHandler = adoptNS([[AccessibilityNotificationHandler alloc] init]);
     [m_globalNotificationHandler.get() setCallback:functionCallback];
     [m_globalNotificationHandler.get() startObserving];
 

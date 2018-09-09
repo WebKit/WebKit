@@ -1,3 +1,16 @@
+2018-09-08  Simon Fraser  <simon.fraser@apple.com>
+
+        accessibility/notification-listeners.html abandons a document
+        https://bugs.webkit.org/show_bug.cgi?id=188724
+
+        Reviewed by Darin Adler.
+        
+        AccessibilityControllerMac leaked m_globalNotificationHandler, which leaks a JSValueProtect'd function,
+        which leaks a Document. Fix by using adoptNS().
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityControllerMac.mm:
+        (WTR::AccessibilityController::addNotificationListener):
+
 2018-09-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Use more bridging casts in TestWebKitAPI
