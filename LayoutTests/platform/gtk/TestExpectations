@@ -1527,14 +1527,13 @@ webkit.org/b/132185 editing/pasteboard/gtk/middle-button-paste.html [ Failure Pa
 # Some media fragment tests are flaky
 webkit.org/b/132248 media/media-fragments/TC0001.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0002.html [ Crash Pass ]
-webkit.org/b/132248 media/media-fragments/TC0004.html [ Timeout Crash Pass ]
+webkit.org/b/132248 media/media-fragments/TC0004.html [ Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0005.html [ Failure Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0006.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0009.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0011.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0014.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0015.html [ Failure Crash Pass ]
-webkit.org/b/132248 media/media-fragments/TC0017.html [ Timeout Pass ]
 webkit.org/b/134574 media/media-fragments/TC0024.html [ Failure Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0035.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0036.html [ Failure Pass ]
@@ -1984,7 +1983,7 @@ webkit.org/b/186673 editing/spelling/spellcheck-async-mutation.html [ Failure Pa
 
 webkit.org/b/186678 fast/mediastream/change-tracks-media-stream-being-played.html [ Crash Pass ]
 
-webkit.org/b/186679 media/video-currentTime-delay.html [ Timeout Crash Pass ]
+webkit.org/b/186679 media/video-currentTime-delay.html [ Crash Pass ]
 
 webkit.org/b/186750 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https.html [ Pass Failure ]
 webkit.org/b/186750 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_short_long.https.html [ Pass Failure ]
@@ -2043,16 +2042,6 @@ webkit.org/b/189338 imported/w3c/web-platform-tests/visual-viewport/viewport-no-
 webkit.org/b/189338 imported/w3c/web-platform-tests/visual-viewport/viewport-resize-event-on-load-overflowing-page.html [ Failure Pass ]
 
 webkit.org/b/189339 compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/189340 webaudio/silence-after-playback.html [ Failure Timeout Pass ]
-
-webkit.org/b/189341 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Timeout Pass ]
-
-webkit.org/b/189342 media/media-fullscreen-return-to-inline.html [ Timeout Pass ]
-
-webkit.org/b/189346 media/media-ended.html [ Timeout Pass ]
-
-webkit.org/b/189348 media/video-currentTime-set.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests

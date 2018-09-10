@@ -1,3 +1,12 @@
+2018-09-10  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Several media related tests timing out around the same revision
+        https://bugs.webkit.org/show_bug.cgi?id=189349
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/TestExpectations: Unflag Timeout from now-unaffected tests.
+
 2018-09-10  Rob Buis  <rbuis@igalia.com>
 
         XMLHttpRequest: overrideMimeType should not update the response's "Content-Type" header
