@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+div {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+</head>
+<body>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const animation = document.body.appendChild(document.createElement("div")).animate({
+    transform: ["translateX(100px)", "none"]
+}, { duration: 10000, delay: 1000 });
+
+requestAnimationFrame(() => {
+    animation.pause();
+    animation.currentTime = 6000;
+    if (window.testRunner)
+        requestAnimationFrame(() => testRunner.notifyDone());
+});
+
+</script>
+</body>
+</html>

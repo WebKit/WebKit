@@ -1,3 +1,16 @@
+2018-09-10  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Positive delays of accelerated animations are not respected
+        https://bugs.webkit.org/show_bug.cgi?id=189411
+        <rdar://problem/44151416>
+
+        Reviewed by Dean Jackson.
+
+        Add a test that checks that positive delays are accounted for during accelerated actions, including a seek.
+
+        * webanimations/accelerated-animation-with-delay-and-seek-expected.html: Added.
+        * webanimations/accelerated-animation-with-delay-and-seek.html: Added.
+
 2018-09-10  Per Arne Vollan  <pvollan@apple.com>
 
         [Windows] Layout Test webanimations/accelerated-transition-interrupted-on-composited-element.html is failing

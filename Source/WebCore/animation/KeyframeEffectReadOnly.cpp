@@ -1279,9 +1279,7 @@ void KeyframeEffectReadOnly::applyPendingAcceleratedActions()
     auto* compositedRenderer = downcast<RenderBoxModelObject>(renderer);
 
     // To simplify the code we use a default of 0s for an unresolved current time since for a Stop action that is acceptable.
-    auto timeOffset = animation()->currentTime().value_or(0_s).seconds();
-    if (timing()->delay() < 0_s)
-        timeOffset = -timing()->delay().seconds();
+    auto timeOffset = animation()->currentTime().value_or(0_s).seconds() - timing()->delay().seconds();
 
     for (const auto& action : pendingAcceleratedActions) {
         switch (action) {

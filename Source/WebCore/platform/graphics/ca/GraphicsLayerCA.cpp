@@ -2972,6 +2972,7 @@ void GraphicsLayerCA::seekCAAnimationOnLayer(AnimatedPropertyID property, const 
     // Animations on the layer are immutable, so we have to clone and modify.
     RefPtr<PlatformCAAnimation> newAnim = currentAnimation->copy();
 
+    newAnim->setBeginTime(CACurrentMediaTime());
     newAnim->setTimeOffset(timeOffset.seconds());
 
     layer->addAnimationForKey(animationID, *newAnim); // This will replace the running animation.
