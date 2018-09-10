@@ -1,3 +1,16 @@
+2018-09-10  Frederic Wang  <fwang@igalia.com>
+
+        [CSSOM View] Handle the scrollingElement in Element::scroll(Left/Top/Width/Height/To)
+        https://bugs.webkit.org/show_bug.cgi?id=182230
+
+        Follow-up patch replacing document.body with document.scrollingElement in
+        fast-scroll-iframe-latched-mainframe.html. This fixes flaky behavior.
+
+        Reviewed by Antonio Gomes.
+
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe.html: Replace document.body
+        with document.scrollingElement since this document is in standard mode.
+
 2018-09-10  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Positive delays of accelerated animations are not respected
