@@ -1,3 +1,38 @@
+2018-09-10  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Arrow keys do not dispatch DOM events to non-editable elements
+        https://bugs.webkit.org/show_bug.cgi?id=189389
+
+        Reviewed by Simon Fraser.
+
+        On iOS the arrow keys are identified by special multi character key strings: UIKeyInput{Up,
+        Down, Left, Right}Arrow as opposed to special key codes as on Mac. When converting the iOS-
+        specific WebEvent we need to take care to recognize when the key string for the event is
+        one of these special key strings when computing key code, character code, and key identifier
+        properties for the WebCore platform-specific event. These details will be included in
+        the corresponding DOM keyboard events that are dispatched when the arrow keys are pressed.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Mark file PlatformEventFactoryIOS as @no-unify as it is not compatible with the unified sources
+        build strategy given its use of wtf/cocoa/SoftLinking.h macros.
+
+        * platform/ios/PlatformEventFactoryIOS.h:
+        * platform/ios/PlatformEventFactoryIOS.mm:
+        (WebCore::convertSpecialKeyToCharCode): Manufacture the appropriate character code for an
+        event that represents an arrow key. Otherwise, return std::nullopt to indicate that the
+        event is not for an arrow key.
+        (WebCore::keyCodeForEvent): Manufacture the appropriate Windows virtual key code for an
+        event that represents an arrow key. Otherwise, do what we do now and return the key code
+        associated with the WebEvent.
+        (WebCore::keyIdentifierForKeyEvent): Modified to test if the event is for an arrow key
+        and return the appropriate key identifier.
+        (WebCore::keyForKeyEvent): Modified to test if the event is for an arrow key
+        and return the appropriate character code.
+        (WebCore::codeForKeyEvent): Modified to call keyCodeForEvent(), which knows how to account
+        for events that represent arrow keys.
+        (WebCore::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder):
+
 2018-09-10  Dan Bernstein  <mitz@apple.com>
 
         [macOS] Editor::readSelectionFromPasteboard’s MailBlockquoteHandling argument is effectively unused

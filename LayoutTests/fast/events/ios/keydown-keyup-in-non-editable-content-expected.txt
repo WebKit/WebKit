@@ -94,10 +94,10 @@ type: keydown, key: /, code: Slash, keyIdentifier: U+002F, keyCode: 191, charCod
 type: keyup, key: Dead, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0, charCode: 0, keyCode: 0, which: 0
 type: keydown, key: Enter, code: Enter, keyIdentifier: Enter, keyCode: 13, charCode: 0, keyCode: 13, which: 13
 type: keyup, key: Dead, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0, charCode: 0, keyCode: 0, which: 0
-type: keydown, key: UIKeyInputUpArrow, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0, charCode: 0, keyCode: 0, which: 0
-type: keyup, key: UIKeyInputUpArrow, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0, charCode: 0, keyCode: 0, which: 0
-type: keyup, key: UIKeyInputDownArrow, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0, charCode: 0, keyCode: 0, which: 0
-type: keydown, key: UIKeyInputLeftArrow, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0, charCode: 0, keyCode: 0, which: 0
-type: keyup, key: UIKeyInputLeftArrow, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0, charCode: 0, keyCode: 0, which: 0
-type: keyup, key: UIKeyInputRightArrow, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0, charCode: 0, keyCode: 0, which: 0
+type: keydown, key: ArrowUp, code: ArrowUp, keyIdentifier: Up, keyCode: 38, charCode: 0, keyCode: 38, which: 38
+type: keyup, key: ArrowUp, code: ArrowUp, keyIdentifier: Up, keyCode: 38, charCode: 0, keyCode: 38, which: 38
+type: keyup, key: ArrowDown, code: ArrowDown, keyIdentifier: Down, keyCode: 40, charCode: 0, keyCode: 40, which: 40
+type: keydown, key: ArrowLeft, code: ArrowLeft, keyIdentifier: Left, keyCode: 37, charCode: 0, keyCode: 37, which: 37
+type: keyup, key: ArrowLeft, code: ArrowLeft, keyIdentifier: Left, keyCode: 37, charCode: 0, keyCode: 37, which: 37
+type: keyup, key: ArrowRight, code: ArrowRight, keyIdentifier: Right, keyCode: 39, charCode: 0, keyCode: 39, which: 39
 

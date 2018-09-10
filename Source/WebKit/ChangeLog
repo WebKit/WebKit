@@ -1,3 +1,17 @@
+2018-09-10  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Arrow keys do not dispatch DOM events to non-editable elements
+        https://bugs.webkit.org/show_bug.cgi?id=189389
+
+        Reviewed by Simon Fraser.
+
+        Use WebCore::keyCodeForEvent() to retrieve the key code for a WebEvent instead of querying
+        the key code from the WebEvent directly. The function WebCore::keyCodeForEvent() knows how
+        to compute the key code for an event that represents an arrow key.
+
+        * Shared/ios/WebIOSEventFactory.mm:
+        (WebIOSEventFactory::createWebKeyboardEvent):
+
 2018-09-10  Tim Horton  <timothy_horton@apple.com>
 
         Try to fix the iOSMac build

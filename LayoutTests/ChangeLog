@@ -1,5 +1,17 @@
 2018-09-10  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Arrow keys do not dispatch DOM events to non-editable elements
+        https://bugs.webkit.org/show_bug.cgi?id=189389
+
+        Reviewed by Simon Fraser.
+
+        Update expected result now that we compute the correct keyIdentifier, keycode, and which properties
+        for DOM keyboard events dispatched when the arrow keys are pressed.
+
+        * fast/events/ios/keydown-keyup-in-non-editable-content-expected.txt:
+
+2018-09-10  Daniel Bates  <dabates@apple.com>
+
         [iOS] Make WKWebView become the first responder to support testing key presses to non-editable elements
         https://bugs.webkit.org/show_bug.cgi?id=189432
 

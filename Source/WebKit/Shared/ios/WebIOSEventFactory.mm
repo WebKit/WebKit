@@ -58,8 +58,8 @@ WebKit::WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *
     String key = WebCore::keyForKeyEvent(event);
     String code = WebCore::codeForKeyEvent(event);
     String keyIdentifier = WebCore::keyIdentifierForKeyEvent(event);
-    int windowsVirtualKeyCode = event.keyCode;
-    int nativeVirtualKeyCode = event.keyCode;
+    int windowsVirtualKeyCode = WebCore::keyCodeForEvent(event);
+    int nativeVirtualKeyCode = WebCore::keyCodeForEvent(event);
     int macCharCode = 0;
     bool autoRepeat = event.isKeyRepeating;
     bool isKeypad = false;

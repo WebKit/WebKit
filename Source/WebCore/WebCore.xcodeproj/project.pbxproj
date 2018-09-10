@@ -4124,6 +4124,7 @@
 		CE7B2DB31586ABAD0098B3FA /* AlternativeTextUIController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DAF1586ABAD0098B3FA /* AlternativeTextUIController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE7B2DB51586ABAD0098B3FA /* TextAlternativeWithRange.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE7E17831C83A49100AD06AF /* ContentSecurityPolicyHash.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7E17821C83A49100AD06AF /* ContentSecurityPolicyHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CEA284662141E84900E407E8 /* PlatformEventFactoryIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26601EBE14B3B9AD0012C0FE /* PlatformEventFactoryIOS.mm */; };
 		CEBB8C3320786DCB00039547 /* FetchIdioms.h in Headers */ = {isa = PBXBuildFile; fileRef = CEBB8C3120786DCB00039547 /* FetchIdioms.h */; };
 		CECADFC7153778FF00E37068 /* DictationAlternative.h in Headers */ = {isa = PBXBuildFile; fileRef = CECADFC3153778FF00E37068 /* DictationAlternative.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CECADFC9153778FF00E37068 /* DictationCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = CECADFC5153778FF00E37068 /* DictationCommand.h */; };
@@ -31562,6 +31563,7 @@
 				31078CC71880AAB5008099DC /* OESTextureHalfFloatLinear.cpp in Sources */,
 				77A17A7112F28182004E02F6 /* OESVertexArrayObject.cpp in Sources */,
 				DE5F86101FA238D9006DB63A /* PaymentMerchantSessionCocoa.mm in Sources */,
+				CEA284662141E84900E407E8 /* PlatformEventFactoryIOS.mm in Sources */,
 				AA12DF491743DF83004DAFDF /* PlatformSpeechSynthesizerIOS.mm in Sources */,
 				CDA29A301CBF74D400901CCF /* PlaybackSessionInterfaceAVKit.mm in Sources */,
 				CDA29A161CBDA56C00901CCF /* PlaybackSessionInterfaceMac.mm in Sources */,

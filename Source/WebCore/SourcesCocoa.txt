@@ -385,7 +385,7 @@ platform/ios/LegacyTileLayer.mm
 platform/ios/LegacyTileLayerPool.mm
 platform/ios/LowPowerModeNotifierIOS.mm
 platform/ios/PasteboardIOS.mm
-platform/ios/PlatformEventFactoryIOS.mm
+platform/ios/PlatformEventFactoryIOS.mm @no-unify
 platform/ios/PlatformPasteboardIOS.mm
 platform/ios/PlatformScreenIOS.mm
 platform/ios/PlatformSpeechSynthesizerIOS.mm @no-unify
