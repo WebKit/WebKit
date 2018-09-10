@@ -271,9 +271,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "CheckForWorldLeaks")) {
-        WKBundleClearPageCache(m_bundle);
-        WKBundleClearMemoryCache(m_bundle);
-        WKBundleGarbageCollectJavaScriptObjects(m_bundle);
+        WKBundleReleaseMemory(m_bundle);
 
         WKRetain(page); // Balanced by the release in postGCTask.
         WKBundlePagePostTask(page, postGCTask, (void*)page);

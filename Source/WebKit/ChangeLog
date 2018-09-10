@@ -1,3 +1,20 @@
+2018-09-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Before tracking Document leaks, clear all caches
+        https://bugs.webkit.org/show_bug.cgi?id=189459
+
+        Reviewed by Sam Weinig.
+        
+        It's not enough to clear the page and memory caches; font caches can reference Documents (for SVG fonts),
+        so just call WebCore::releaseMemory(), which empties caches including the page and memory caches, and
+        does the GC that we need to happen.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleReleaseMemory):
+        (WKBundleClearPageCache): Deleted.
+        (WKBundleClearMemoryCache): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+
 2018-09-07  Matt Rajca  <mrajca@apple.com>
 
         Touch Bar displays an active PIP button for audio elements (and it doesn't do anything)

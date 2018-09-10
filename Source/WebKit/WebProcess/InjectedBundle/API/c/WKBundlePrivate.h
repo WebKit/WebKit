@@ -98,8 +98,7 @@ WK_EXPORT void WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef);
 
 WK_EXPORT void WKBundleExtendClassesForParameterCoder(WKBundleRef bundle, WKArrayRef classes);
 
-WK_EXPORT void WKBundleClearPageCache(WKBundleRef bundle);
-WK_EXPORT void WKBundleClearMemoryCache(WKBundleRef bundle);
+WK_EXPORT void WKBundleReleaseMemory(WKBundleRef);
 
 #ifdef __cplusplus
 }

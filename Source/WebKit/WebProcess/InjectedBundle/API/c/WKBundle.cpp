@@ -44,8 +44,7 @@
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
 #include <WebCore/DatabaseTracker.h>
-#include <WebCore/MemoryCache.h>
-#include <WebCore/PageCache.h>
+#include <WebCore/MemoryRelease.h>
 #include <WebCore/ResourceLoadObserver.h>
 #include <WebCore/ServiceWorkerThreadProxy.h>
 
@@ -260,14 +259,9 @@ void WKBundleSetDatabaseQuota(WKBundleRef bundleRef, uint64_t quota)
     DatabaseTracker::singleton().setQuota(*SecurityOriginData::fromDatabaseIdentifier("file__0"), quota);
 }
 
-void WKBundleClearPageCache(WKBundleRef bundle)
+void WKBundleReleaseMemory(WKBundleRef)
 {
-    PageCache::singleton().pruneToSizeNow(0, PruningReason::MemoryPressure);
-}
-
-void WKBundleClearMemoryCache(WKBundleRef bundle)
-{
-    MemoryCache::singleton().evictResources();
+    WebCore::releaseMemory(WTF::Critical::Yes, WTF::Synchronous::Yes);
 }
 
 WKDataRef WKBundleCreateWKDataFromUInt8Array(WKBundleRef bundle, JSContextRef context, JSValueRef data)
