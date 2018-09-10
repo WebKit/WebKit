@@ -45,6 +45,7 @@ typedef struct _cairo_rectangle cairo_rectangle_t;
 #endif
 
 #if PLATFORM(WIN)
+typedef struct tagRECT RECT;
 struct D2D_RECT_F;
 typedef D2D_RECT_F D2D1_RECT_F;
 #endif
@@ -195,6 +196,7 @@ public:
 #endif
 
 #if PLATFORM(WIN)
+    WEBCORE_EXPORT FloatRect(const RECT&);
     WEBCORE_EXPORT FloatRect(const D2D1_RECT_F&);
     WEBCORE_EXPORT operator D2D1_RECT_F() const;
 #endif

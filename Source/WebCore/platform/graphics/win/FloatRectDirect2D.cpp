@@ -50,6 +50,12 @@ static bool isInfiniteRect(const D2D1_RECT_F& rect)
     return true;
 }
 
+FloatRect::FloatRect(const RECT& rect)
+    : m_location(rect.left, rect.top)
+    , m_size(rect.right - rect.left, rect.bottom - rect.top)
+{
+}
+
 FloatRect::FloatRect(const D2D1_RECT_F& r)
 {
     // Infinite Rect case:

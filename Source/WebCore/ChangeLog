@@ -1,3 +1,21 @@
+2018-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] Add FloatRect(const RECT&) constructor
+        https://bugs.webkit.org/show_bug.cgi?id=189398
+
+        Reviewed by Alex Christensen.
+
+        While trying to build WebKit WinCairo port with the latest Clang
+        (Bug 171618), the following compilation errors were reported.
+
+          error: no viable conversion from returned value of type 'RECT' (aka 'tagRECT') to function return type 'WebCore::FloatRect'
+
+        No new tests (No behavior change).
+
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/win/FloatRectDirect2D.cpp:
+        (WebCore::FloatRect::FloatRect): Added a new constructor taking a RECT as the argument.
+
 2018-09-08  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Dispatch a paymentmethodchange event when the payment method changes
