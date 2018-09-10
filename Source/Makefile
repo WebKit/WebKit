@@ -1,6 +1,10 @@
 LIBWEBRTC_MODULE = 
 WEBINSPECTORUI_MODULE =
 
+ifeq (iosmac,$(SDK_VARIANT))
+	DISABLE_LIBWEBRTC = 1
+endif
+
 ifneq (,$(SDKROOT))
 	ifneq (,$(findstring iphone,$(SDKROOT)))
 		LIBWEBRTC_MODULE = ThirdParty/libwebrtc

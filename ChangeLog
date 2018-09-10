@@ -1,3 +1,17 @@
+2018-09-10  Tim Horton  <timothy_horton@apple.com>
+
+        Make it easier to build for SDK_VARIANT=iosmac
+        https://bugs.webkit.org/show_bug.cgi?id=189488
+        <rdar://problem/38254840>
+
+        Reviewed by Wenson Hsieh.
+
+        * Makefile:
+        * Makefile.shared:
+        * Source/Makefile:
+        Set a variety of build flags (disable libwebrtc, tools, and set
+        SDK_VARIANT and WK_ALTERNATE_FRAMEWORKS_DIR).
+
 2018-08-30  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Replace AVFoundationSupport.py using CMake
