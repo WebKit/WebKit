@@ -4074,6 +4074,7 @@ void Document::setFocusNavigationStartingNode(Node* node)
         return;
     }
 
+    ASSERT(!node || node != this);
     m_focusNavigationStartingNode = node;
 }
 
@@ -4271,7 +4272,8 @@ void Document::adjustFocusNavigationNodeOnNodeRemoval(Node& node, NodeRemoval no
         return;
 
     if (isNodeInSubtree(*m_focusNavigationStartingNode, node, nodeRemoval)) {
-        m_focusNavigationStartingNode = (nodeRemoval == NodeRemoval::ChildrenOfNode) ? &node : fallbackFocusNavigationStartingNodeAfterRemoval(node);
+        auto* newNode = (nodeRemoval == NodeRemoval::ChildrenOfNode) ? &node : fallbackFocusNavigationStartingNodeAfterRemoval(node);
+        m_focusNavigationStartingNode = (newNode != this) ? newNode : nullptr;
         m_focusNavigationStartingNodeIsRemoved = true;
     }
 }
