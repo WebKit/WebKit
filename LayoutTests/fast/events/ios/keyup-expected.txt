@@ -37,7 +37,7 @@ type: keyup, key: 6, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0
 type: keyup, key: 7, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0, charCode: 0, keyCode: 0, which: 0
 type: keyup, key: 8, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0, charCode: 0, keyCode: 0, which: 0
 type: keyup, key: 9, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0, charCode: 0, keyCode: 0, which: 0
-type: keyup, key: ~, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0, charCode: 0, keyCode: 0, which: 0
+type: keyup, key: `, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0, charCode: 0, keyCode: 0, which: 0
 type: keyup, key: ~, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0, charCode: 0, keyCode: 0, which: 0
 type: keyup, key: !, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0, charCode: 0, keyCode: 0, which: 0
 type: keyup, key: @, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0, charCode: 0, keyCode: 0, which: 0
