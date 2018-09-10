@@ -1,5 +1,32 @@
 2018-09-10  Tim Horton  <timothy_horton@apple.com>
 
+        Try to fix the iOSMac build
+        https://bugs.webkit.org/show_bug.cgi?id=189469
+
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextSetPluginLoadClientPolicy):
+        (WKContextClearPluginClientPolicies):
+        (WKContextCopyPlugInInfoForBundleIdentifier):
+        (WKContextGetInfoForInstalledPlugIns):
+        (WKContextResetHSTSHosts):
+        (WKContextResetHSTSHostsAddedAfterDate):
+        (WKContextRegisterSchemeForCustomProtocol):
+        (WKContextUnregisterSchemeForCustomProtocol):
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm:
+        (-[WKObservablePageState initWithPage:]):
+        (WKPageCreateObservableState):
+        (WKPageGetObjectRegistry):
+        (WKPageIsURLKnownHSTSHost):
+        (WKPageLoadURLRequestReturningNavigation):
+        (WKPageLoadFileReturningNavigation):
+        (WKPageIsPlayingVideoInEnhancedFullscreen):
+        (WKPageSetFullscreenDelegate):
+        (WKPageGetFullscreenDelegate):
+        * UIProcess/API/C/mac/WKProtectionSpaceNS.mm:
+        (WKProtectionSpaceCopyNSURLProtectionSpace):
+
+2018-09-10  Tim Horton  <timothy_horton@apple.com>
+
         Try to fix the build after r235850
 
         * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:

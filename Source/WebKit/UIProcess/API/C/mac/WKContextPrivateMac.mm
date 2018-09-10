@@ -42,8 +42,6 @@
 #import <WebCore/WebGLBlacklist.h>
 #import <wtf/RetainPtr.h>
 
-using namespace WebKit;
-
 bool WKContextIsPlugInUpdateAvailable(WKContextRef contextRef, WKStringRef plugInBundleIdentifierRef)
 {
 #if PLATFORM(IOS)
@@ -56,26 +54,26 @@ bool WKContextIsPlugInUpdateAvailable(WKContextRef contextRef, WKStringRef plugI
 void WKContextSetPluginLoadClientPolicy(WKContextRef contextRef, WKPluginLoadClientPolicy policy, WKStringRef host, WKStringRef bundleIdentifier, WKStringRef versionString)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    toImpl(contextRef)->setPluginLoadClientPolicy(toPluginLoadClientPolicy(policy), toWTFString(host), toWTFString(bundleIdentifier), toWTFString(versionString));
+    WebKit::toImpl(contextRef)->setPluginLoadClientPolicy(WebKit::toPluginLoadClientPolicy(policy), WebKit::toWTFString(host), WebKit::toWTFString(bundleIdentifier), WebKit::toWTFString(versionString));
 #endif
 }
 
 void WKContextClearPluginClientPolicies(WKContextRef contextRef)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    toImpl(contextRef)->clearPluginClientPolicies();
+    WebKit::toImpl(contextRef)->clearPluginClientPolicies();
 #endif
 }
 
 WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef contextRef, WKStringRef plugInBundleIdentifierRef)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    PluginModuleInfo plugin = toImpl(contextRef)->pluginInfoStore().findPluginWithBundleIdentifier(toWTFString(plugInBundleIdentifierRef));
+    WebKit::PluginModuleInfo plugin = WebKit::toImpl(contextRef)->pluginInfoStore().findPluginWithBundleIdentifier(WebKit::toWTFString(plugInBundleIdentifierRef));
     if (plugin.path.isNull())
         return 0;
 
     auto dictionary = createPluginInformationDictionary(plugin);
-    return toAPI(&dictionary.leakRef());
+    return WebKit::toAPI(&dictionary.leakRef());
 #else
     return 0;
 #endif
@@ -84,7 +82,7 @@ WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef contextR
 void WKContextGetInfoForInstalledPlugIns(WKContextRef contextRef, WKContextGetInfoForInstalledPlugInsBlock block)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    Vector<PluginModuleInfo> plugins = toImpl(contextRef)->pluginInfoStore().plugins();
+    Vector<WebKit::PluginModuleInfo> plugins = WebKit::toImpl(contextRef)->pluginInfoStore().plugins();
 
     Vector<RefPtr<API::Object>> pluginInfoDictionaries;
     pluginInfoDictionaries.reserveInitialCapacity(plugins.size());
@@ -94,33 +92,33 @@ void WKContextGetInfoForInstalledPlugIns(WKContextRef contextRef, WKContextGetIn
 
     RefPtr<API::Array> array = API::Array::create(WTFMove(pluginInfoDictionaries));
 
-    toImpl(contextRef)->ref();
+    WebKit::toImpl(contextRef)->ref();
     dispatch_async(dispatch_get_main_queue(), ^() {
-        block(toAPI(array.get()), 0);
+        block(WebKit::toAPI(array.get()), 0);
     
-        toImpl(contextRef)->deref();
+        WebKit::toImpl(contextRef)->deref();
     });
 #endif
 }
 
 void WKContextResetHSTSHosts(WKContextRef context)
 {
-    return toImpl(context)->resetHSTSHosts();
+    return WebKit::toImpl(context)->resetHSTSHosts();
 }
 
 void WKContextResetHSTSHostsAddedAfterDate(WKContextRef context, double startDateIntervalSince1970)
 {
-    return toImpl(context)->resetHSTSHostsAddedAfterDate(startDateIntervalSince1970);
+    return WebKit::toImpl(context)->resetHSTSHostsAddedAfterDate(startDateIntervalSince1970);
 }
 
 void WKContextRegisterSchemeForCustomProtocol(WKContextRef context, WKStringRef scheme)
 {
-    WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(toWTFString(scheme));
+    WebKit::WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(WebKit::toWTFString(scheme));
 }
 
 void WKContextUnregisterSchemeForCustomProtocol(WKContextRef context, WKStringRef scheme)
 {
-    WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(toWTFString(scheme));
+    WebKit::WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(WebKit::toWTFString(scheme));
 }
 
 /* DEPRECATED -  Please use constants from WKPluginInformation instead. */
