@@ -48,4 +48,9 @@ public:
 
 } // namespace WebCore
 
+namespace WTF {
+template<> struct DefaultHash<WebCore::ProtectionSpace>;
+template<> struct HashTraits<WebCore::ProtectionSpace>;
+}
+
 #endif

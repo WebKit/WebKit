@@ -1,5 +1,43 @@
 2018-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        Add specialized template declarations of HashTraits and DefaultHash to detect misuse
+        https://bugs.webkit.org/show_bug.cgi?id=189044
+
+        Reviewed by Yusuke Suzuki.
+
+        Some classes have a separate header for specializations of
+        WTF::HashTraits and WTF::DefaultHash to reduce the number of
+        header files included. For example, ColorHash.h and Color.h.
+
+        If someone is mistakenly using HashSet or HashMap without
+        including the specialization header, unexpected template
+        instantiation can cause subtle bugs. For example, MSVC linker
+        would silently produce an broken executable (Bug 188893).
+
+        By applying this change, I found three misuse cases in
+        DebugPageOverlays.cpp, AVVideoCaptureSource.h and WebPage.h. As
+        far as I analyzed, I concluded that these misuses don't introduce
+        any bugs at the moment, and they are not testable (Bug 189044 Comment 9),
+        except the MSVC issue (Bug 188893).
+
+        No new tests (Covered by existing tests).
+
+        * Modules/webdatabase/SQLResultSetRowList.h: Removed unused #include <wtf/HashTraits.h>.
+        * bindings/js/SerializedScriptValue.cpp: Ditto.
+        * page/DebugPageOverlays.cpp: Added #include "ColorHash.h" to instantiate HashMap<String, Color>.
+        * platform/URLHash.h: Added DefaultHash<URL> specialization definition.
+        * platform/URL.h: Added specialized template declarations.
+        * platform/graphics/Color.h: Ditto.
+        * platform/graphics/FloatSize.h: Ditto.
+        * platform/graphics/IntPoint.h: Ditto.
+        * platform/graphics/IntSize.h: Ditto.
+        * platform/network/ProtectionSpace.h: Ditto.
+        * platform/network/ProtectionSpaceHash.h: Removed unnecessary DefaultHash declaration.
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        Added #include "IntSizeHash.h" to instantiate HashMap<String, IntSize>.
+
+2018-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [Win][Clang] Add FloatRect(const RECT&) constructor
         https://bugs.webkit.org/show_bug.cgi?id=189398
 

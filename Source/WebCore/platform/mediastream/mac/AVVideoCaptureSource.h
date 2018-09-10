@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
+#include "IntSizeHash.h"
 #include "OrientationNotifier.h"
 #include "RealtimeMediaSource.h"
 #include <wtf/text/StringHash.h>

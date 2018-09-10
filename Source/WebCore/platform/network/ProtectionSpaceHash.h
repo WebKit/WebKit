@@ -59,9 +59,8 @@ namespace WTF {
 
     template<> struct HashTraits<WebCore::ProtectionSpace> : SimpleClassHashTraits<WebCore::ProtectionSpace> { };
 
-    template<typename T> struct DefaultHash;
     template<> struct DefaultHash<WebCore::ProtectionSpace> {
-        typedef WebCore::ProtectionSpaceHash Hash;
+        using Hash = WebCore::ProtectionSpaceHash;
     };
 
 } // namespace WTF

@@ -50,7 +50,12 @@ namespace WebCore {
 
 namespace WTF {
 
-    template<> struct HashTraits<WebCore::URL> : SimpleClassHashTraits<WebCore::URL> { };
+// URLHash is the default hash for String
+template<> struct DefaultHash<WebCore::URL> {
+    using Hash = WebCore::URLHash;
+};
+
+template<> struct HashTraits<WebCore::URL> : SimpleClassHashTraits<WebCore::URL> { };
 
 } // namespace WTF
 

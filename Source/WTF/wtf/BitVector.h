@@ -482,7 +482,6 @@ template<> struct DefaultHash<BitVector> {
     typedef BitVectorHash Hash;
 };
 
-template<typename T> struct HashTraits;
 template<> struct HashTraits<BitVector> : public CustomHashTraits<BitVector> { };
 
 } // namespace WTF

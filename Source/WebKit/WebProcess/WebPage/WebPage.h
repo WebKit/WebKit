@@ -92,6 +92,7 @@
 #if PLATFORM(IOS)
 #include "GestureTypes.h"
 #include "WebPageMessages.h"
+#include <WebCore/IntPointHash.h>
 #include <WebCore/ViewportConfiguration.h>
 #endif
 

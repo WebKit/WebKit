@@ -256,3 +256,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatSize&);
 
 } // namespace WebCore
 
+namespace WTF {
+template<> struct DefaultHash<WebCore::FloatSize>;
+template<> struct HashTraits<WebCore::FloatSize>;
+}

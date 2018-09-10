@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Assertions.h>
+#include <wtf/HashTraits.h>
 #include <wtf/UniqueArray.h>
 
 namespace WTF {
@@ -123,7 +124,6 @@ template<> struct DefaultHash<StackShot> {
     typedef StackShotHash Hash;
 };
 
-template<typename T> struct HashTraits;
 template<> struct HashTraits<StackShot> : SimpleClassHashTraits<StackShot> { };
 
 } // namespace WTF

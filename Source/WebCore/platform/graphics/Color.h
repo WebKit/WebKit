@@ -470,3 +470,8 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ColorSpace);
 
 } // namespace WebCore
+
+namespace WTF {
+template<> struct DefaultHash<WebCore::Color>;
+template<> struct HashTraits<WebCore::Color>;
+}

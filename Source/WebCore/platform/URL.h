@@ -424,11 +424,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, const URL&);
 } // namespace WebCore
 
 namespace WTF {
-
-// URLHash is the default hash for String
-template<typename T> struct DefaultHash;
-template<> struct DefaultHash<WebCore::URL> {
-    typedef WebCore::URLHash Hash;
-};
-
+template<> struct DefaultHash<WebCore::URL>;
+template<> struct HashTraits<WebCore::URL>;
 } // namespace WTF

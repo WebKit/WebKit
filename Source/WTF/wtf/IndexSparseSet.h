@@ -26,7 +26,6 @@
 #ifndef IndexSparseSet_h
 #define IndexSparseSet_h
 
-#include <wtf/HashTraits.h>
 #include <wtf/Vector.h>
 
 namespace WTF {

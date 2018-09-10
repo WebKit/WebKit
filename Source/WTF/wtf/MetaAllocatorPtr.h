@@ -114,7 +114,6 @@ template<PtrTag tag> struct DefaultHash<MetaAllocatorPtr<tag>> {
     typedef MetaAllocatorPtrHash<tag> Hash;
 };
 
-template<typename T> struct HashTraits;
 template<PtrTag tag> struct HashTraits<MetaAllocatorPtr<tag>> : public CustomHashTraits<MetaAllocatorPtr<tag>> { };
 
 } // namespace WTF

@@ -1,5 +1,14 @@
 2018-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        Add specialized template declarations of HashTraits and DefaultHash to detect misuse
+        https://bugs.webkit.org/show_bug.cgi?id=189044
+
+        Reviewed by Yusuke Suzuki.
+
+        * WebProcess/WebPage/WebPage.h: Added #include <WebCore/IntPointHash.h> to instantiate HashMap<std::pair<IntSize, double>, IntPoint>.
+
+2018-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [MSVC] X86Assembler.h(108): error C2666: 'WebCore::operator -': 7 overloads have similar conversions
         https://bugs.webkit.org/show_bug.cgi?id=189467
 

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DebugPageOverlays.h"
 
+#include "ColorHash.h"
 #include "ElementIterator.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
