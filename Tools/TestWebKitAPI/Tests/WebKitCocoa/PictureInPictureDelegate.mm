@@ -30,6 +30,7 @@
 #import "PlatformUtilities.h"
 #import "PlatformWebView.h"
 #import "Test.h"
+#import "TestWKWebView.h"
 #import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <WebKit/WKPagePrivateMac.h>
@@ -119,13 +120,17 @@ TEST(PictureInPicture, WKUIDelegate)
     RetainPtr<PictureInPictureUIDelegate> handler = adoptNS([[PictureInPictureUIDelegate alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"pictureInPictureChangeHandler"];
     [webView setUIDelegate:handler.get()];
-    
+
+#if HAVE(TOUCH_BAR)
+    [webView _forceRequestCandidates];
+#endif
+
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
     [[window contentView] addSubview:webView.get()];
     [window makeKeyAndOrderFront:nil];
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"PictureInPictureDelegate" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    
+
     receivedLoadedMessage = false;
     
     [webView loadRequest:request];
@@ -138,16 +143,46 @@ TEST(PictureInPicture, WKUIDelegate)
     [webView mouseDown:event];
     TestWebKitAPI::Util::run(&hasVideoInPictureInPictureCalled);
     ASSERT_TRUE(hasVideoInPictureInPictureValue);
-    
-    sleep(1_s); // Wait for PIPAgent to launch, or it won't call -pipDidClose: callback.
-    
+
+    // Wait for PIPAgent to launch, or it won't call -pipDidClose: callback.
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+
+#if HAVE(TOUCH_BAR)
+    ASSERT_TRUE([webView _canTogglePictureInPictureForTesting]);
+#endif
+
     hasVideoInPictureInPictureCalled = false;
     [webView mouseDown:event];
     TestWebKitAPI::Util::run(&hasVideoInPictureInPictureCalled);
     ASSERT_FALSE(hasVideoInPictureInPictureValue);
 }
-    
-    
+
+#if HAVE(TOUCH_BAR)
+
+TEST(PictureInPicture, AudioCannotTogglePictureInPicture)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 54) configuration:configuration.get()]);
+    [configuration preferences]._fullScreenEnabled = YES;
+    [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;
+    RetainPtr<PictureInPictureUIDelegate> handler = adoptNS([[PictureInPictureUIDelegate alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"pictureInPictureChangeHandler"];
+    [webView setUIDelegate:handler.get()];
+    [webView _forceRequestCandidates];
+
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+    [window makeKeyAndOrderFront:nil];
+
+    [webView synchronouslyLoadTestPageNamed:@"audio-with-controls"];
+    [webView evaluateJavaScript:@"play()" completionHandler:nil];
+
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    ASSERT_FALSE([webView _canTogglePictureInPictureForTesting]);
+}
+
+#endif // HAVE(TOUCH_BAR)
+
 TEST(PictureInPicture, WKPageUIClient)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());

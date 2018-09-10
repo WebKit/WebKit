@@ -276,6 +276,13 @@ void PlaybackSessionModelContext::volumeChanged(double volume)
         client->volumeChanged(volume);
 }
 
+void PlaybackSessionModelContext::pictureInPictureSupportedChanged(bool supported)
+{
+    m_pictureInPictureSupported = supported;
+    for (auto* client : m_clients)
+        client->isPictureInPictureSupportedChanged(supported);
+}
+
 void PlaybackSessionModelContext::pictureInPictureActiveChanged(bool active)
 {
     m_pictureInPictureActive = active;
@@ -476,6 +483,11 @@ void PlaybackSessionManagerProxy::playbackStartedTimeChanged(uint64_t contextId,
 void PlaybackSessionManagerProxy::rateChanged(uint64_t contextId, bool isPlaying, double rate)
 {
     ensureModel(contextId).rateChanged(isPlaying, rate);
+}
+
+void PlaybackSessionManagerProxy::pictureInPictureSupportedChanged(uint64_t contextId, bool supported)
+{
+    ensureModel(contextId).pictureInPictureSupportedChanged(supported);
 }
 
 void PlaybackSessionManagerProxy::pictureInPictureActiveChanged(uint64_t contextId, bool active)

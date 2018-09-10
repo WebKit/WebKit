@@ -184,12 +184,17 @@ void PlaybackSessionInterfaceMac::legibleMediaSelectionIndexChanged(uint64_t sel
 #endif
 }
 
-void PlaybackSessionInterfaceMac::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String&)
+void PlaybackSessionInterfaceMac::isPictureInPictureSupportedChanged(bool)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-    [playBackControlsManager() setCanTogglePictureInPicture:!enabled];
-#else
-    UNUSED_PARAM(enabled);
+    updatePlaybackControlsManagerCanTogglePictureInPicture();
+#endif
+}
+
+void PlaybackSessionInterfaceMac::externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, const String&)
+{
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    updatePlaybackControlsManagerCanTogglePictureInPicture();
 #endif
 }
 
@@ -235,6 +240,17 @@ void PlaybackSessionInterfaceMac::setPlayBackControlsManager(WebPlaybackControls
     manager.playing = m_playbackSessionModel->isPlaying();
     [manager setAudioMediaSelectionOptions:m_playbackSessionModel->audioMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(m_playbackSessionModel->audioMediaSelectedIndex())];
     [manager setLegibleMediaSelectionOptions:m_playbackSessionModel->legibleMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(m_playbackSessionModel->legibleMediaSelectedIndex())];
+}
+
+void PlaybackSessionInterfaceMac::updatePlaybackControlsManagerCanTogglePictureInPicture()
+{
+    PlaybackSessionModel* model = playbackSessionModel();
+    if (!model) {
+        [playBackControlsManager() setCanTogglePictureInPicture:NO];
+        return;
+    }
+
+    [playBackControlsManager() setCanTogglePictureInPicture:model->isPictureInPictureSupported() && !model->externalPlaybackEnabled()];
 }
 
 void PlaybackSessionInterfaceMac::updatePlaybackControlsManagerTiming(double currentTime, double anchorTime, double playbackRate, bool isPlaying)

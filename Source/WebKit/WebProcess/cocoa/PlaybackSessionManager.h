@@ -89,6 +89,7 @@ private:
     void wirelessVideoPlaybackDisabledChanged(bool) final;
     void mutedChanged(bool) final;
     void volumeChanged(double) final;
+    void isPictureInPictureSupportedChanged(bool) final;
 
     PlaybackSessionInterfaceContext(PlaybackSessionManager&, uint64_t contextId);
 
@@ -143,6 +144,7 @@ protected:
     void wirelessVideoPlaybackDisabledChanged(uint64_t contextId, bool);
     void mutedChanged(uint64_t contextId, bool);
     void volumeChanged(uint64_t contextId, double);
+    void isPictureInPictureSupportedChanged(uint64_t contextId, bool);
 
     // Messages from PlaybackSessionManagerProxy
     void play(uint64_t contextId);

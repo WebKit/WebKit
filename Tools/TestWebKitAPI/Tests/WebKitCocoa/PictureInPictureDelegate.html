@@ -8,6 +8,9 @@
             });
             
             function load() {
+                var target = document.getElementById('video');
+                target.play();
+
                 if (window.webkit !== undefined && window.webkit.messageHandlers.pictureInPictureChangeHandler !== undefined) {
                     window.webkit.messageHandlers.pictureInPictureChangeHandler.postMessage('load');
                 }

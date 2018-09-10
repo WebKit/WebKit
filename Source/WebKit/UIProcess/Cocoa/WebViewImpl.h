@@ -559,6 +559,8 @@ public:
 
     void updateTouchBarAndRefreshTextBarIdentifiers();
     void setIsCustomizingTouchBar(bool isCustomizingTouchBar) { m_isCustomizingTouchBar = isCustomizingTouchBar; };
+
+    bool canTogglePictureInPictureForTesting();
 #endif // HAVE(TOUCH_BAR)
 
     bool beginBackSwipeForTesting();

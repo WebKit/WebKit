@@ -84,6 +84,7 @@ public:
     virtual bool wirelessVideoPlaybackDisabled() const = 0;
     virtual bool isMuted() const = 0;
     virtual double volume() const = 0;
+    virtual bool isPictureInPictureSupported() const = 0;
     virtual bool isPictureInPictureActive() const = 0;
 };
 
@@ -105,6 +106,7 @@ public:
     virtual void wirelessVideoPlaybackDisabledChanged(bool) { }
     virtual void mutedChanged(bool) { }
     virtual void volumeChanged(double) { }
+    virtual void isPictureInPictureSupportedChanged(bool) { }
     virtual void pictureInPictureActiveChanged(bool) { }
     virtual void ensureControlsManager() { }
 };

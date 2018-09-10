@@ -65,6 +65,10 @@ public:
         m_parent.playing = isPlaying;
     }
 
+    void pictureInPictureSupportedChanged(bool) override
+    {
+    }
+
     void pictureInPictureActiveChanged(bool active) override
     {
         m_parent.pictureInPictureActive = active;

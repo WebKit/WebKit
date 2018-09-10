@@ -1,3 +1,37 @@
+2018-09-07  Matt Rajca  <mrajca@apple.com>
+
+        Touch Bar displays an active PIP button for audio elements (and it doesn't do anything)
+        https://bugs.webkit.org/show_bug.cgi?id=189433
+        <rdar://problem/44186498> Touch Bar displays an active PIP button for audio elements (and it doesn't do anything)
+
+        Reviewed by Eric Carlson.
+
+        When playing an audio element, the media Touch Bar displays an active PIP button even though only
+        videos are PIP-able. Pressing it does not do anything. The issue is canTogglePictureInPicture is set
+        to YES unconditionally on the WebPlaybackControlsManager. It is then only updated based on whether or
+        not external playback is enabled.
+
+        This patch extends that logic such that the picture-in-picture Touch Bar button will be disabled for
+        audio elements. Since PlaybackSessionModelMediaElement today does not know whether we're dealing
+        with an audio or video element, a new isPictureInPictureSupported flag has been added (as well as
+        the plumbing necessary to get the state over from the web process).
+
+        An API test has been added that checks the value of the canTogglePictureInPicture and ensures it
+        is NO when audio elements are playing. To expose it to tests, a _canTogglePictureInPictureForTesting
+        property has been added to the WKTesting category.
+
+        * platform/cocoa/PlaybackSessionModel.h:
+        (WebCore::PlaybackSessionModelClient::isPictureInPictureSupportedChanged):
+        * platform/cocoa/PlaybackSessionModelMediaElement.h:
+        * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+        (WebCore::PlaybackSessionModelMediaElement::setMediaElement):
+        (WebCore::PlaybackSessionModelMediaElement::isPictureInPictureSupported const):
+        * platform/mac/PlaybackSessionInterfaceMac.h:
+        * platform/mac/PlaybackSessionInterfaceMac.mm:
+        (WebCore::PlaybackSessionInterfaceMac::isPictureInPictureSupportedChanged):
+        (WebCore::PlaybackSessionInterfaceMac::externalPlaybackChanged):
+        (WebCore::PlaybackSessionInterfaceMac::updatePlaybackControlsManagerCanTogglePictureInPicture):
+
 2018-09-10  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer] Fix overflow in buffered ranges

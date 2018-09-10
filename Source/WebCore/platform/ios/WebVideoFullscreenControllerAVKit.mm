@@ -202,6 +202,7 @@ private:
     FloatSize videoDimensions() const override;
     bool isMuted() const override;
     double volume() const override;
+    bool isPictureInPictureSupported() const override;
     bool isPictureInPictureActive() const override;
     void willEnterPictureInPicture() final;
     void didEnterPictureInPicture() final;
@@ -632,6 +633,12 @@ bool VideoFullscreenControllerContext::isPictureInPictureActive() const
 {
     ASSERT(isUIThread());
     return m_playbackModel ? m_playbackModel->isPictureInPictureActive() : false;
+}
+
+bool VideoFullscreenControllerContext::isPictureInPictureSupported() const
+{
+    ASSERT(isUIThread());
+    return m_playbackModel ? m_playbackModel->isPictureInPictureSupported() : false;
 }
 
 void VideoFullscreenControllerContext::willEnterPictureInPicture()

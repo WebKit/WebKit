@@ -38,6 +38,7 @@ messages -> PlaybackSessionManagerProxy {
     RateChanged(uint64_t contextId, bool isPlaying, double rate)
     MutedChanged(uint64_t contextId, bool muted);
     VolumeChanged(uint64_t contextId, double volume);
+    PictureInPictureSupportedChanged(uint64_t contextID, bool pictureInPictureSupported)
     PictureInPictureActiveChanged(uint64_t contextId, bool pictureInPictureActive)
     SetUpPlaybackControlsManagerWithID(uint64_t contextId)
     ClearPlaybackControlsManager()

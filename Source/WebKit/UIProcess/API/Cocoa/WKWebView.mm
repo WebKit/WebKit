@@ -6495,6 +6495,15 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _page->setDefersLoadingForTesting(defersLoading);
 }
 
+- (BOOL)_canTogglePictureInPictureForTesting
+{
+#if HAVE(TOUCH_BAR)
+    return _impl->canTogglePictureInPictureForTesting();
+#else
+    return NO;
+#endif
+}
+
 - (_WKInspector *)_inspector
 {
     if (auto* inspector = _page->inspector())

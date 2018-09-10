@@ -700,6 +700,7 @@
 		C540F784152E5A9A00A40C8C /* verboseMarkup.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C540F783152E5A7800A40C8C /* verboseMarkup.html */; };
 		C54237F116B8957D00E638FC /* PasteboardNotifications_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C54237ED16B8955800E638FC /* PasteboardNotifications_Bundle.cpp */; };
 		C5E1AFFE16B221F1006CC1F2 /* execCopy.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C5E1AFFD16B22179006CC1F2 /* execCopy.html */; };
+		C944160021430E8900B1EDDA /* audio-with-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C94415FF21430B6700B1EDDA /* audio-with-controls.html */; };
 		C95984F41E36BC6B002C0D45 /* autoplay-check.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C95984F21E36BC55002C0D45 /* autoplay-check.html */; };
 		C95984F51E36BC6B002C0D45 /* autoplay-no-audio-check.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C95984F31E36BC55002C0D45 /* autoplay-no-audio-check.html */; };
 		C95984F71E36BCEF002C0D45 /* test-without-audio-track.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = C95984F61E36BCD7002C0D45 /* test-without-audio-track.mp4 */; };
@@ -931,6 +932,7 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				C944160021430E8900B1EDDA /* audio-with-controls.html in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */,
 				1C2B81871C8925A000A5529F /* Ahem.ttf in Copy Resources */,
@@ -1917,6 +1919,7 @@
 		C54237ED16B8955800E638FC /* PasteboardNotifications_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PasteboardNotifications_Bundle.cpp; sourceTree = "<group>"; };
 		C54237EE16B8955800E638FC /* PasteboardNotifications.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardNotifications.mm; sourceTree = "<group>"; };
 		C5E1AFFD16B22179006CC1F2 /* execCopy.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = execCopy.html; sourceTree = "<group>"; };
+		C94415FF21430B6700B1EDDA /* audio-with-controls.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "audio-with-controls.html"; sourceTree = "<group>"; };
 		C95501BE19AD2FAF0049BE3E /* Preferences.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Preferences.mm; sourceTree = "<group>"; };
 		C95984F21E36BC55002C0D45 /* autoplay-check.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autoplay-check.html"; sourceTree = "<group>"; };
 		C95984F31E36BC55002C0D45 /* autoplay-no-audio-check.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autoplay-no-audio-check.html"; sourceTree = "<group>"; };
@@ -2613,6 +2616,7 @@
 		A16F66B81C40E9E100BD4D24 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C94415FF21430B6700B1EDDA /* audio-with-controls.html */,
 				C25CCA0C1E5140E50026CB8A /* AllAhem.svg */,
 				F4A9202E1FEE34C800F59590 /* apple-data-url.html */,
 				F47D30EB1ED28619000482E1 /* apple.gif */,

@@ -85,6 +85,7 @@ public:
     void wirelessVideoPlaybackDisabledChanged(bool);
     void mutedChanged(bool);
     void volumeChanged(double);
+    void pictureInPictureSupportedChanged(bool);
     void pictureInPictureActiveChanged(bool);
 
 private:
@@ -136,6 +137,7 @@ private:
     bool wirelessVideoPlaybackDisabled() const final { return m_wirelessVideoPlaybackDisabled; }
     bool isMuted() const final { return m_muted; }
     double volume() const final { return m_volume; }
+    bool isPictureInPictureSupported() const final { return m_pictureInPictureSupported; }
     bool isPictureInPictureActive() const final { return m_pictureInPictureActive; }
 
     PlaybackSessionManagerProxy* m_manager;
@@ -163,6 +165,7 @@ private:
     bool m_wirelessVideoPlaybackDisabled { false };
     bool m_muted { false };
     double m_volume { 0 };
+    bool m_pictureInPictureSupported { false };
     bool m_pictureInPictureActive { false };
 };
 
@@ -213,6 +216,7 @@ private:
     void handleControlledElementIDResponse(uint64_t, String) const;
     void mutedChanged(uint64_t contextId, bool muted);
     void volumeChanged(uint64_t contextId, double volume);
+    void pictureInPictureSupportedChanged(uint64_t contextId, bool pictureInPictureSupported);
     void pictureInPictureActiveChanged(uint64_t contextId, bool pictureInPictureActive);
 
     // Messages to PlaybackSessionManager

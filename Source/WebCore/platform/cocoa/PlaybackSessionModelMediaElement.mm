@@ -101,6 +101,9 @@ void PlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaEl
     }
 
     updateForEventName(eventNameAll());
+
+    for (auto client : m_clients)
+        client->isPictureInPictureSupportedChanged(isPictureInPictureSupported());
 }
 
 void PlaybackSessionModelMediaElement::handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event& event)
@@ -571,6 +574,11 @@ bool PlaybackSessionModelMediaElement::isMuted() const
 double PlaybackSessionModelMediaElement::volume() const
 {
     return m_mediaElement ? m_mediaElement->volume() : 0;
+}
+
+bool PlaybackSessionModelMediaElement::isPictureInPictureSupported() const
+{
+    return m_mediaElement ? m_mediaElement->isVideo() : false;
 }
 
 bool PlaybackSessionModelMediaElement::isPictureInPictureActive() const

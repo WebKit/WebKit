@@ -1235,11 +1235,13 @@ void WebViewImpl::updateMediaTouchBar()
     if (!m_playbackControlsManager) {
         m_playbackControlsManager = adoptNS([[WebPlaybackControlsManager alloc] init]);
         [m_playbackControlsManager setAllowsPictureInPicturePlayback:m_page->preferences().allowsPictureInPictureMediaPlayback()];
-        [m_playbackControlsManager setCanTogglePictureInPicture:YES];
+        [m_playbackControlsManager setCanTogglePictureInPicture:NO];
     }
 
-    if (PlatformPlaybackSessionInterface* interface = m_page->playbackSessionManager()->controlsManagerInterface())
+    if (PlatformPlaybackSessionInterface* interface = m_page->playbackSessionManager()->controlsManagerInterface()) {
         [m_playbackControlsManager setPlaybackSessionInterfaceMac:interface];
+        interface->updatePlaybackControlsManagerCanTogglePictureInPicture();
+    }
 
     [m_mediaTouchBarProvider setPlaybackControlsController:m_playbackControlsManager.get()];
     [m_mediaPlaybackControlsView setPlaybackControlsController:m_playbackControlsManager.get()];
@@ -1274,6 +1276,19 @@ void WebViewImpl::updateMediaTouchBar()
         [m_view _web_didAddMediaControlsManager:m_mediaPlaybackControlsView.get()];
 #endif
 }
+
+#if HAVE(TOUCH_BAR)
+
+bool WebViewImpl::canTogglePictureInPictureForTesting()
+{
+#if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+    return [m_playbackControlsManager canTogglePictureInPicture];
+#else
+    return NO;
+#endif
+}
+
+#endif // HAVE(TOUCH_BAR)
 
 void WebViewImpl::forceRequestCandidatesForTesting()
 {

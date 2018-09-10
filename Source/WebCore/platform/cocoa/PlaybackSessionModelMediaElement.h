@@ -95,6 +95,7 @@ public:
     bool wirelessVideoPlaybackDisabled() const final;
     bool isMuted() const final;
     double volume() const final;
+    bool isPictureInPictureSupported() const final;
     bool isPictureInPictureActive() const final;
 
 protected:
