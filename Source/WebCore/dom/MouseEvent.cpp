@@ -49,8 +49,9 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, RefPtr<WindowP
     bool isMouseEnterOrLeave = eventType == eventNames().mouseenterEvent || eventType == eventNames().mouseleaveEvent;
     auto isCancelable = eventType != eventNames().mousemoveEvent && !isMouseEnterOrLeave ? IsCancelable::Yes : IsCancelable::No;
     auto canBubble = !isMouseEnterOrLeave ? CanBubble::Yes : CanBubble::No;
+    auto isComposed = !isMouseEnterOrLeave ? IsComposed::Yes : IsComposed::No;
 
-    return MouseEvent::create(eventType, canBubble, isCancelable, IsComposed::Yes, event.timestamp().approximateMonotonicTime(), WTFMove(view), detail,
+    return MouseEvent::create(eventType, canBubble, isCancelable, isComposed, event.timestamp().approximateMonotonicTime(), WTFMove(view), detail,
         event.globalPosition(), event.position(),
 #if ENABLE(POINTER_LOCK)
         event.movementDelta(),

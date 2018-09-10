@@ -1,0 +1,28 @@
+This tests mouseenter and mouseleave events across shadow boundaries.
+
+
+==Entering host parent==
+mouseenter on hostParent
+
+==Entering host==
+mouseenter on host
+
+==Entering shadow content==
+mouseenter on slotParent
+
+==Entering slotted text==
+mouseenter on slot
+
+==Entering slotted element==
+mouseenter on target
+mouseenter on targetParent
+
+==Leaving slotted element==
+mouseleave on target
+mouseleave on targetParent
+mouseleave on slot
+
+==Leaving host==
+mouseleave on slotParent
+mouseleave on host
+

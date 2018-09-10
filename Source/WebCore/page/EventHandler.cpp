@@ -33,6 +33,7 @@
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ComposedTreeAncestorIterator.h"
 #include "CursorList.h"
 #include "DocumentMarkerController.h"
 #include "DragController.h"
@@ -2444,24 +2445,9 @@ MouseEventWithHitTestResults EventHandler::prepareMouseEvent(const HitTestReques
     return m_frame.document()->prepareMouseEvent(request, documentPointForWindowPoint(m_frame, mouseEvent.position()), mouseEvent);
 }
 
-static RenderElement* nearestCommonHoverAncestor(RenderElement* obj1, RenderElement* obj2)
-{
-    if (!obj1 || !obj2)
-        return nullptr;
-
-    for (RenderElement* currObj1 = obj1; currObj1; currObj1 = currObj1->hoverAncestor()) {
-        for (RenderElement* currObj2 = obj2; currObj2; currObj2 = currObj2->hoverAncestor()) {
-            if (currObj1 == currObj2)
-                return currObj1;
-        }
-    }
-
-    return nullptr;
-}
-
 static bool hierarchyHasCapturingEventListeners(Element* element, const AtomicString& eventName)
 {
-    for (ContainerNode* curr = element; curr; curr = curr->parentOrShadowHostNode()) {
+    for (ContainerNode* curr = element; curr; curr = curr->parentInComposedTree()) {
         if (curr->hasCapturingEventListeners(eventName))
             return true;
     }
@@ -2535,48 +2521,35 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
             bool hasCapturingMouseEnterListener = hierarchyHasCapturingEventListeners(m_elementUnderMouse.get(), eventNames().mouseenterEvent);
             bool hasCapturingMouseLeaveListener = hierarchyHasCapturingEventListeners(m_lastElementUnderMouse.get(), eventNames().mouseleaveEvent);
 
-            RenderElement* oldHoverRenderer = m_lastElementUnderMouse ? m_lastElementUnderMouse->renderer() : nullptr;
-            RenderElement* newHoverRenderer = m_elementUnderMouse ? m_elementUnderMouse->renderer() : nullptr;
-            RenderElement* ancestor = nearestCommonHoverAncestor(oldHoverRenderer, newHoverRenderer);
-
             Vector<Ref<Element>, 32> leftElementsChain;
-            if (oldHoverRenderer) {
-                for (RenderElement* curr = oldHoverRenderer; curr && curr != ancestor; curr = curr->hoverAncestor()) {
-                    if (Element* element = curr->element())
-                        leftElementsChain.append(*element);
-                }
-            } else {
-                // If the old hovered element is not null but it's renderer is, it was probably detached.
-                // In this case, the old hovered element (and its ancestors) must be updated, to ensure it's normal style is re-applied.
-                for (Element* element = m_lastElementUnderMouse.get(); element; element = element->parentElement())
-                    leftElementsChain.append(*element);
-            }
-
+            for (Element* element = m_lastElementUnderMouse.get(); element; element = element->parentElementInComposedTree())
+                leftElementsChain.append(*element);
             Vector<Ref<Element>, 32> enteredElementsChain;
-            const Element* ancestorElement = ancestor ? ancestor->element() : nullptr;
-            for (RenderElement* curr = newHoverRenderer; curr; curr = curr->hoverAncestor()) {
-                if (Element *element = curr->element()) {
-                    if (element == ancestorElement)
+            for (Element* element = m_elementUnderMouse.get(); element; element = element->parentElementInComposedTree())
+                enteredElementsChain.append(*element);
+
+            if (!leftElementsChain.isEmpty() && !enteredElementsChain.isEmpty() && leftElementsChain.last().ptr() == enteredElementsChain.last().ptr()) {
+                size_t minHeight = std::min(leftElementsChain.size(), enteredElementsChain.size());
+                size_t i;
+                for (i = 0; i < minHeight; ++i) {
+                    if (leftElementsChain[leftElementsChain.size() - i - 1].ptr() != enteredElementsChain[enteredElementsChain.size() - i - 1].ptr())
                         break;
-                    enteredElementsChain.append(*element);
                 }
+                leftElementsChain.shrink(leftElementsChain.size() - i);
+                enteredElementsChain.shrink(enteredElementsChain.size() - i);
             }
 
-            // Send mouseout event to the old node.
             if (m_lastElementUnderMouse)
                 m_lastElementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventNames().mouseoutEvent, 0, m_elementUnderMouse.get());
 
-            // Send mouseleave to the node hierarchy no longer under the mouse.
             for (auto& chain : leftElementsChain) {
                 if (hasCapturingMouseLeaveListener || chain->hasEventListeners(eventNames().mouseleaveEvent))
                     chain->dispatchMouseEvent(platformMouseEvent, eventNames().mouseleaveEvent, 0, m_elementUnderMouse.get());
             }
 
-            // Send mouseover event to the new node.
             if (m_elementUnderMouse)
                 m_elementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventNames().mouseoverEvent, 0, m_lastElementUnderMouse.get());
 
-            // Send mouseleave event to the nodes hierarchy under the mouse.
             for (auto& chain : enteredElementsChain) {
                 if (hasCapturingMouseEnterListener || chain->hasEventListeners(eventNames().mouseenterEvent))
                     chain->dispatchMouseEvent(platformMouseEvent, eventNames().mouseenterEvent, 0, m_lastElementUnderMouse.get());

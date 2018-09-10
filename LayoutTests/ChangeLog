@@ -1,3 +1,21 @@
+2018-09-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        mouseenter and mouseleave events don't get dispatched even when there is a capturing event listener for a slot ancestor
+        https://bugs.webkit.org/show_bug.cgi?id=188561
+
+        Reviewed by Darin Adler.
+
+        Added tests for listening to mouseenter and mouseleave events using capturing and bubbling event listeners
+        across shadow boundaries.
+
+        * fast/shadow-dom/mouseenter-mouseleave-across-shadow-boundary-expected.txt: Added.
+        * fast/shadow-dom/mouseenter-mouseleave-across-shadow-boundary.html: Added.
+        * fast/shadow-dom/mouseenter-mouseleave-inside-shadow-tree-expected.txt: Added.
+        * fast/shadow-dom/mouseenter-mouseleave-inside-shadow-tree.html: Added.
+        * fast/shadow-dom/mouseenter-mouseleave-on-slot-parent-expected.txt: Added.
+        * fast/shadow-dom/mouseenter-mouseleave-on-slot-parent.html: Added.
+        * platform/ios/TestExpectations: Skip the new tests since mouse events aren't supported on iOS.
+
 2018-09-10  Daniel Bates  <dabates@apple.com>
 
         [iOS] Arrow keys do not dispatch DOM events to non-editable elements

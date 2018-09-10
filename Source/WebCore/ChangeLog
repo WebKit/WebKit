@@ -1,3 +1,33 @@
+2018-09-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        mouseenter and mouseleave events don't get dispatched even when there is a capturing event listener for a slot ancestor
+        https://bugs.webkit.org/show_bug.cgi?id=188561
+
+        Reviewed by Darin Adler.
+
+        This patch makes mouseenter and mouseleave events to work with shadow trees and slots therein, and makes them uncomposed
+        as discussed in https://github.com/w3c/uievents/issues/208.
+
+        This patch also makes these events dispatched on DOM tree ancestors of the currently hovered element instead of
+        render tree's hover ancestors to be consistent with the check in hierarchyHasCapturingEventListeners and other browsers.
+        In particular, using hover ancestors is problematic when there is an element with display: contents such as slot elements,
+        which do not have a render object.
+
+        Tests: fast/shadow-dom/mouseenter-mouseleave-across-shadow-boundary.html
+               fast/shadow-dom/mouseenter-mouseleave-inside-shadow-tree.html
+               fast/shadow-dom/mouseenter-mouseleave-on-slot-parent.html
+
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create):
+        * page/EventHandler.cpp:
+        (WebCore::nearestCommonHoverAncestor): Deleted.
+        (WebCore::hierarchyHasCapturingEventListeners): Use parentInComposedTree. Else we would miss capturing event listeners
+        on inclusive ancestors of slots.
+        (WebCore::EventHandler::updateMouseEventTargetNode): Use the composed tree's ancestor chain to fire mouseenter and
+        mouseleave events. This is needed to dispatch mouseenter / mouseleave events on slot elements. Also removed comments
+        which just state what is self-evident from the code beneath them.
+
+
 2018-09-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove isOrphan check in ShadowRoot::setInnerHTML
