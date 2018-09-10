@@ -30,6 +30,8 @@
 #include "config.h"
 #include "CBORWriter.h"
 
+#if ENABLE(WEB_AUTHN)
+
 #include "CBORBinary.h"
 
 namespace cbor {
@@ -190,3 +192,5 @@ size_t CBORWriter::getNumUintBytes(uint64_t value)
 }
 
 } // namespace cbor
+
+#endif // ENABLE(WEB_AUTHN)

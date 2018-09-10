@@ -30,6 +30,8 @@
 #include "config.h"
 #include "CBORValue.h"
 
+#if ENABLE(WEB_AUTHN)
+
 #include <new>
 #include <utility>
 
@@ -293,3 +295,5 @@ void CBORValue::internalCleanup()
 }
 
 } // namespace cbor
+
+#endif // ENABLE(WEB_AUTHN)

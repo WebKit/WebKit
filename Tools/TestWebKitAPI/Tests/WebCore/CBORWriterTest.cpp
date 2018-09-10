@@ -29,8 +29,9 @@
 
 #include "config.h"
 
-#include <WebCore/CBORWriter.h>
+#if ENABLE(WEB_AUTHN)
 
+#include <WebCore/CBORWriter.h>
 #include <limits>
 
 // Leveraging RFC 7049 examples from https://github.com/cbor/test-vectors/blob/master/appendix_a.json.
@@ -460,3 +461,5 @@ TEST(CBORWriterTest, OverlyNestedCBOR)
 }
 
 } // namespace TestWebKitAPI
+
+#endif // ENABLE(WEB_AUTHN)

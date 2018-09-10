@@ -29,8 +29,9 @@
 
 #include "config.h"
 
-#include <WebCore/CBORValue.h>
+#if ENABLE(WEB_AUTHN)
 
+#include <WebCore/CBORValue.h>
 #include <utility>
 
 namespace TestWebKitAPI {
@@ -379,3 +380,5 @@ TEST(CBORValueTest, SelfSwap)
 }
 
 } // namespace TestWebKitAPI
+
+#endif // ENABLE(WEB_AUTHN)

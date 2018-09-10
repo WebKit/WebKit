@@ -30,6 +30,8 @@
 #include "config.h"
 #include "CBORReader.h"
 
+#if ENABLE(WEB_AUTHN)
+
 #include "CBORBinary.h"
 #include <limits>
 #include <utility>
@@ -375,3 +377,5 @@ const char* CBORReader::errorCodeToString(DecoderError error)
 }
 
 } // namespace cbor
+
+#endif // ENABLE(WEB_AUTHN)

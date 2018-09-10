@@ -28,8 +28,10 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "config.h"
-#include <WebCore/CBORReader.h>
 
+#if ENABLE(WEB_AUTHN)
+
+#include <WebCore/CBORReader.h>
 #include <limits>
 #include <utility>
 
@@ -763,3 +765,5 @@ TEST(CBORReaderTest, TestUnsupportedSimplevalue)
 }
 
 } // namespace TestWebKitAPI
+
+#endif // ENABLE(WEB_AUTHN)

@@ -29,6 +29,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 #include <stdint.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/StdMap.h>
@@ -188,3 +190,5 @@ private:
 };
 
 } // namespace cbor
+
+#endif // ENABLE(WEB_AUTHN)

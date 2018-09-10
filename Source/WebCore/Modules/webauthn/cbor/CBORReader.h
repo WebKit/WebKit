@@ -29,6 +29,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 #include "CBORValue.h"
 #include <stddef.h>
 
@@ -130,3 +132,5 @@ private:
 };
 
 } // namespace cbor
+
+#endif // ENABLE(WEB_AUTHN)

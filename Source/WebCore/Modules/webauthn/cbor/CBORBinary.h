@@ -27,9 +27,11 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <stdint.h>
-
 #pragma once
+
+#if ENABLE(WEB_AUTHN)
+
+#include <stdint.h>
 
 namespace cbor {
 
@@ -57,3 +59,5 @@ static constexpr uint8_t kAdditionalInformation8Bytes = 27u;
 } // namespace constants
 
 } // namespace cbor
+
+#endif // ENABLE(WEB_AUTHN)
