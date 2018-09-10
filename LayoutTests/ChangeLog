@@ -1,3 +1,12 @@
+2018-09-10  Truitt Savell  <tsavell@apple.com>
+
+        Rebaseline test after https://trac.webkit.org/changeset/235866/webkit.
+        https://bugs.webkit.org/show_bug.cgi?id=189178.
+
+        Unreviewed Test Gardening.
+
+        * platform/mac-highsierra/fast/css/apple-system-control-colors-expected.txt:
+
 2018-09-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, rebaseline fast/events/ios/keyup.html after r235818.
