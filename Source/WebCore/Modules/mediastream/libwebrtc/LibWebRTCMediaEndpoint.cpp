@@ -427,7 +427,9 @@ void LibWebRTCMediaEndpoint::newTransceiver(rtc::scoped_refptr<webrtc::RtpTransc
         return rtcTransceiver.get() == transceiverBackend.rtcTransceiver();
     });
     if (transceiver) {
-        setExistingReceiverSourceTrack(transceiver->receiver().track().source(), *rtcTransceiver->receiver());
+        auto rtcReceiver = rtcTransceiver->receiver();
+        setExistingReceiverSourceTrack(transceiver->receiver().track().source(), *rtcReceiver);
+        fireTrackEvent(makeRef(transceiver->receiver()), transceiver->receiver().track(), rtcReceiver->streams(), makeRef(*transceiver));
         return;
     }
 

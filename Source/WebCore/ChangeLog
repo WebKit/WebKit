@@ -1,3 +1,19 @@
+2018-09-10  Youenn Fablet  <youenn@apple.com>
+
+        ontrack events should be fired even if an existing transceiver exists
+        https://bugs.webkit.org/show_bug.cgi?id=189477
+
+        Reviewed by Eric Carlson.
+
+        In case of an OnTrack callback from libwebrtc, make sure the ontrack event is called even if a transceiver already exists for that track.
+
+        Covered by updated video-addTransceiver.html
+        New test video-addLegacyTransceiver.html keeps testing the old transceiver behavior.
+        Test: webrtc/video-addLegacyTransceiver.html
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::newTransceiver):
+
 2018-09-10  Megan Gardner  <megan_gardner@apple.com>
 
         Correctly interpret from angle for conic gradients

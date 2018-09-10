@@ -11,39 +11,32 @@
         <canvas id="canvas" width="640" height="480"></canvas>
         <script src ="routines.js"></script>
         <script>
-if (window.testRunner)
-    testRunner.setWebRTCUnifiedPlanEnabled(false);
-
-promise_test((test) => {
+promise_test(async (test) => {
     var pc = new RTCPeerConnection();
     pc.addTransceiver("video");
 
-    return pc.createOffer().then((offer) => {
-        assert_true(offer.sdp.indexOf("mid:video") !== -1);
-        assert_true(offer.sdp.indexOf("a=recvonly") !== -1);
+    let offer = await pc.createOffer();
+    assert_true(offer.sdp.indexOf("m=video") !== -1, "mid");
+    assert_true(offer.sdp.indexOf("a=sendrecv") !== -1, "recvonly");
 
-        pc.addTransceiver("audio");
-        return pc.createOffer();
-    }).then((offer) => {
-        assert_true(offer.sdp.indexOf("mid:audio") !== -1);
-    });
+    pc.addTransceiver("audio");
+    offer = await pc.createOffer();
+    assert_true(offer.sdp.indexOf("m=audio") !== -1, "m=audio");
 }, "Setting up calls with addTransceiver but with no track");
 
-promise_test((test) => {
+promise_test(async (test) => {
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
 
-    return navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
-        var pc = new RTCPeerConnection();
-        pc.addTransceiver("video");
-        pc.getSenders()[0].replaceTrack(stream.getVideoTracks()[0]);
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    var pc = new RTCPeerConnection();
+    pc.addTransceiver("video", {direction:"recvonly"});
+    pc.getSenders()[0].replaceTrack(stream.getVideoTracks()[0]);
 
-        return pc.createOffer().then((offer) => {
-            assert_true(offer.sdp.indexOf("mid:video") !== -1);
-            // Replacing the track is not done yet so we still set it as a recvonly.
-            assert_true(offer.sdp.indexOf("a=recvonly") !== -1);
-        });
-    });
+    const offer = await pc.createOffer();
+    assert_true(offer.sdp.indexOf("m=video") !== -1, "m=video");
+    // Replacing the track is not done yet so we still set it as a recvonly.
+    assert_true(offer.sdp.indexOf("a=recvonly") !== -1, "a=recvonly");
 }, "Setting up calls with addTransceiver with a track");
 
 function testImage()
@@ -71,29 +64,27 @@ function testImage()
     assert_true(data[index + 2] < 100);
 }
 
-promise_test((test) => {
+promise_test(async (test) => {
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
 
-    return navigator.mediaDevices.getUserMedia({ video: true}).then((stream) => {
-        return new Promise((resolve, reject) => {
-            createConnections((firstConnection) => {
-                var track = stream.getVideoTracks()[0];
-                firstConnection.addTransceiver("video");
-                return firstConnection.getSenders()[0].replaceTrack(stream.getVideoTracks()[0]);
-            }, (secondConnection) => {
-                secondConnection.ontrack = (trackEvent) => {
-                    resolve(trackEvent.streams[0]);
-                };
-            });
-            setTimeout(() => reject("Test timed out"), 5000);
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true});
+    const track = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            var track = stream.getVideoTracks()[0];
+            firstConnection.addTransceiver("video");
+            return firstConnection.getSenders()[0].replaceTrack(stream.getVideoTracks()[0]);
+        }, (secondConnection) => {
+            secondConnection.addTransceiver("video");
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.track);
+            };
         });
-    }).then((stream) => {
-        video.srcObject = stream;
-        return video.play();
-    }).then(() => {
-        testImage();
+        setTimeout(() => reject("Test timed out"), 5000);
     });
+    video.srcObject = new MediaStream([track]);
+    await video.play();
+    testImage();
 }, "Basic video exchange set up with addTransceiver");
 
         </script>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+if (window.testRunner)
+    testRunner.setWebRTCUnifiedPlanEnabled(false);
+
+promise_test((test) => {
+    var pc = new RTCPeerConnection();
+    pc.addTransceiver("video");
+
+    return pc.createOffer().then((offer) => {
+        assert_true(offer.sdp.indexOf("mid:video") !== -1);
+        assert_true(offer.sdp.indexOf("a=recvonly") !== -1);
+
+        pc.addTransceiver("audio");
+        return pc.createOffer();
+    }).then((offer) => {
+        assert_true(offer.sdp.indexOf("mid:audio") !== -1);
+    });
+}, "Setting up calls with addTransceiver but with no track");
+
+promise_test((test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    return navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+        var pc = new RTCPeerConnection();
+        pc.addTransceiver("video");
+        pc.getSenders()[0].replaceTrack(stream.getVideoTracks()[0]);
+
+        return pc.createOffer().then((offer) => {
+            assert_true(offer.sdp.indexOf("mid:video") !== -1);
+            // Replacing the track is not done yet so we still set it as a recvonly.
+            assert_true(offer.sdp.indexOf("a=recvonly") !== -1);
+        });
+    });
+}, "Setting up calls with addTransceiver with a track");
+
+function testImage()
+{
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    imageData = canvas.getContext('2d').getImageData(10, 325, 250, 1);
+    data = imageData.data;
+
+    var index = 20;
+    assert_true(data[index] < 100);
+    assert_true(data[index + 1] < 100);
+    assert_true(data[index + 2] < 100);
+
+    index = 80;
+    assert_true(data[index] > 200);
+    assert_true(data[index + 1] > 200);
+    assert_true(data[index + 2] > 200);
+
+    index += 80;
+    assert_true(data[index] > 200);
+    assert_true(data[index + 1] > 200);
+    assert_true(data[index + 2] < 100);
+}
+
+promise_test((test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    return navigator.mediaDevices.getUserMedia({ video: true}).then((stream) => {
+        return new Promise((resolve, reject) => {
+            createConnections((firstConnection) => {
+                var track = stream.getVideoTracks()[0];
+                firstConnection.addTransceiver("video");
+                return firstConnection.getSenders()[0].replaceTrack(stream.getVideoTracks()[0]);
+            }, (secondConnection) => {
+                secondConnection.ontrack = (trackEvent) => {
+                    resolve(trackEvent.streams[0]);
+                };
+            });
+            setTimeout(() => reject("Test timed out"), 5000);
+        });
+    }).then((stream) => {
+        video.srcObject = stream;
+        return video.play();
+    }).then(() => {
+        testImage();
+    });
+}, "Basic video exchange set up with addTransceiver");
+
+        </script>
+    </body>
+</html>
