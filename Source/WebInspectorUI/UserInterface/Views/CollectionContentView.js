@@ -275,7 +275,7 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
             if (typeof this._contentPlaceholder === "string")
                 this._contentPlaceholderElement = WI.createMessageTextView(this._contentPlaceholder);
             else if (this._contentPlaceholder instanceof HTMLElement)
-                this._contentPlaceholderElement =  this._contentPlaceholder;
+                this._contentPlaceholderElement = this._contentPlaceholder;
         }
 
         if (!this._contentPlaceholderElement.parentNode)

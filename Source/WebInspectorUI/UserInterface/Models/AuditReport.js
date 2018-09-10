@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- WI.AuditReport = class AuditReport
+WI.AuditReport = class AuditReport
 {
     constructor(representedTest)
     {
         console.assert(representedTest instanceof WI.AuditTestCase || representedTest instanceof WI.AuditTestSuite);
-        
+
         this._results = [];
         this._isWritable = true;
         this._representedTestCases = (representedTest instanceof WI.AuditTestCase) ? [representedTest] : [...representedTest.testCases];
@@ -59,4 +59,4 @@
     {
         this._isWritable = false;
     }
-}
+};

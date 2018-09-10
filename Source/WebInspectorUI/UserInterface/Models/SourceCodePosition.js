@@ -42,12 +42,6 @@ WI.SourceCodePosition = class SourceCodePosition
         return new WI.SourceCodePosition(this._lineNumber, this._columnNumber + delta);
     }
 
-    offsetColumn(delta)
-    {
-        console.assert(this._columnNumber + delta >= 0);
-        return new WI.SourceCodePosition(this._lineNumber, this._columnNumber + delta);
-    }
-
     equals(position)
     {
         return this._lineNumber === position.lineNumber && this._columnNumber === position.columnNumber;

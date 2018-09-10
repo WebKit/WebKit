@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- WI.AuditTestSuite = class AuditTestSuite extends WI.Object
+WI.AuditTestSuite = class AuditTestSuite extends WI.Object
 {
     constructor(identifier, name)
     {
@@ -50,12 +50,12 @@
     _buildTestCasesFromDescriptors()
     {
         for (let descriptor of this.constructor.testCaseDescriptors()) {
-            if (typeof(descriptor.name) !== "string" || !descriptor.name)
+            if (typeof descriptor.name !== "string" || !descriptor.name)
                 throw new Error("Test name must be a valid string.");
-            
+
             let {name, test, setup, tearDown, errorDetails} = descriptor;
 
-            if (!test instanceof Function || test[Symbol.toStringTag] !== "AsyncFunction")
+            if (!(test instanceof Function) || test[Symbol.toStringTag] !== "AsyncFunction")
                 throw new Error("Test function must be an async function.");
 
             let testCaseInstance = new WI.AuditTestCase(this, name, test, setup, tearDown, errorDetails);
@@ -63,8 +63,8 @@
             this._testCases.set(testCaseInstance.id, testCaseInstance);
         }
     }
-}
+};
 
 WI.AuditTestSuite.Event = {
     NewAuditResultAvailable: Symbol("new-audit-result-available")
-}   
+};

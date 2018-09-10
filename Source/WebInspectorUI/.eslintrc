@@ -54,6 +54,7 @@
         "RecordingAgent": true,
         "RuntimeAgent": true,
         "ScriptProfilerAgent": true,
+        "ServiceWorkerAgent": true,
         "TimelineAgent": true,
         "WorkerAgent": true,
 
@@ -98,6 +99,7 @@
         "CSSPrimitiveValue": true,
         "Exception": true,
         "WebKitPoint": true,
+        "SQLError": true,
 
         // Utilities
         "appendWebInspectorConsoleEvaluationSourceURL": true,
@@ -122,6 +124,7 @@
         "parseMIMEType": true,
         "resolveDotsInPath": true,
         "simpleGlobStringToRegExp": true,
+        "textToBlob": true,
         "timestamp": true,
         "zeroWidthSpace": true,
 

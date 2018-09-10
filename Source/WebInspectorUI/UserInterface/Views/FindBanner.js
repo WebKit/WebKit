@@ -53,7 +53,7 @@ WI.FindBanner = class FindBanner extends WI.NavigationItem
         this._previousResultButton = document.createElement("button");
         this._previousResultButton.classList.add("segmented", "previous-result");
         this._previousResultButton.disabled = true;
-        this._previousResultButton.title = WI.UIString("Find Previous (%s)").format(WI.findPreviousKeyboardShortcut.displayName);;
+        this._previousResultButton.title = WI.UIString("Find Previous (%s)").format(WI.findPreviousKeyboardShortcut.displayName);
         this._previousResultButton.addEventListener("click", this._previousResultButtonClicked.bind(this));
         this.element.appendChild(this._previousResultButton);
 
@@ -64,7 +64,7 @@ WI.FindBanner = class FindBanner extends WI.NavigationItem
         this._nextResultButton = document.createElement("button");
         this._nextResultButton.classList.add("segmented", "next-result");
         this._nextResultButton.disabled = true;
-        this._nextResultButton.title = WI.UIString("Find Next (%s)").format(WI.findNextKeyboardShortcut.displayName);;
+        this._nextResultButton.title = WI.UIString("Find Next (%s)").format(WI.findNextKeyboardShortcut.displayName);
         this._nextResultButton.addEventListener("click", this._nextResultButtonClicked.bind(this));
         this.element.appendChild(this._nextResultButton);
 

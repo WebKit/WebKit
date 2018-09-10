@@ -396,7 +396,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         let selection = window.getSelection();
 
         let isHidden = (clientRect) => {
-            return clientRect.x === 0 && clientRect.y === 0
+            return clientRect.x === 0 && clientRect.y === 0;
         };
 
         if (selection.rangeCount) {

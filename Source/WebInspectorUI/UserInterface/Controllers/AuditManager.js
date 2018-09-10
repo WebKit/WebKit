@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- WI.AuditManager = class AuditManager extends WI.Object
+WI.AuditManager = class AuditManager extends WI.Object
 {
     constructor()
     {
@@ -31,12 +31,12 @@
 
         this._testSuiteConstructors = [];
         this._reports = new Map;
-        
+
         // Transforming all the constructors into AuditTestSuite instances.
-        this._testSuites = this._testSuiteConstructors.map(suite =>  {
+        this._testSuites = this._testSuiteConstructors.map(suite => {
             let newTestSuite = new suite;
 
-            if (!newTestSuite instanceof WI.AuditTestSuite)
+            if (!(newTestSuite instanceof WI.AuditTestSuite))
                 throw new Error("Audit test suites must be of instance WI.AuditTestSuite.");
 
             return newTestSuite;
@@ -56,11 +56,11 @@
             let auditResult = await this._runTestCase(representedObject);
             auditReport.addResult(auditResult);
         } else if (representedObject instanceof WI.AuditTestSuite) {
-            let testCases = representedObject.testCases;            
+            let testCases = representedObject.testCases;
             // Start reducing from testCases[0].
             let result = testCases.slice(1).reduce((chain, testCase, index) => {
                 if (testCase.setup) {
-                    let setup = testCase.setup.call(testCase, testCase.suite)
+                    let setup = testCase.setup.call(testCase, testCase.suite);
                     if (testCase.setup[Symbol.toStringTag] === "AsyncFunction")
                         return setup;
                     else
@@ -73,7 +73,7 @@
                 });
 
                 if (testCase.tearDown) {
-                    let tearDown = testCase.tearDown.call(testCase, testCase.suite)
+                    let tearDown = testCase.tearDown.call(testCase, testCase.suite);
                     if (testCase.tearDown[Symbol.toStringTag] === "AsyncFunction")
                         return tearDown;
                     else
@@ -131,9 +131,9 @@
         this.dispatchEventToListeners(WI.AuditManager.Event.TestEnded, {test: testCase});
         return new WI.AuditResult(testCase, {result}, didRaiseException);
     }
-}
+};
 
 WI.AuditManager.Event = {
     TestStarted: Symbol("test-started"),
     TestEnded: Symbol("test-ended")
-}
+};

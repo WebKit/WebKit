@@ -49,7 +49,7 @@ WI.Platform = {
         WI.Platform.version.base = 10;
         WI.Platform.version.release = parseInt(osVersionMatch[2]);
         switch (osVersionMatch[2]) {
-        case "12":
+        case "13":
             WI.Platform.version.name = "high-sierra";
             break;
         case "12":

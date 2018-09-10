@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- WI.AuditResult = class AuditResult
+WI.AuditResult = class AuditResult
 {
     constructor(testInstance, testResult, failed)
     {
@@ -43,10 +43,10 @@
     get name() { return this._testName; }
     get logLevel() { return this._logLevel; }
     get failed() { return this._failed; }
-}
+};
 
 WI.AuditResult.LogLevel = {
     Error: "error",
     Warning: "warning",
     Passed: "passed"
-}
+};

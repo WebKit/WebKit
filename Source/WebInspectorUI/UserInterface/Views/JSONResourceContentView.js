@@ -56,7 +56,7 @@ WI.JSONResourceContentView = class JSONResourceContentView extends WI.ResourceCo
             doNotPauseOnExceptionsAndMuteConsole: true,
             contextId: undefined,
             returnByValue: false,
-            generatePreview: true,    
+            generatePreview: true,
         };
         this.resource.target.RuntimeAgent.evaluate.invoke(options, (error, result, wasThrown) => {
             if (error || wasThrown) {
@@ -80,6 +80,6 @@ WI.JSONResourceContentView = class JSONResourceContentView extends WI.ResourceCo
         if (this._remoteObject) {
             this._remoteObject.release();
             this._remoteObject = null;
-        }   
+        }
     }
 };

@@ -308,4 +308,4 @@ WI.HARBuilder = class HARBuilder
         console.assert(false);
         return undefined;
     }
-}
+};

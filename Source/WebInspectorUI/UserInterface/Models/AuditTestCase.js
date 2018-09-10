@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- WI.AuditTestCase = class AuditTestCase extends WI.Object
+WI.AuditTestCase = class AuditTestCase extends WI.Object
 {
     constructor(suite, name, test, setup, tearDown, errorDetails = {})
     {
         console.assert(suite instanceof WI.AuditTestSuite);
-        console.assert(typeof(name) === "string");
-        
+        console.assert(typeof name === "string");
+
         if (setup)
             console.assert(setup instanceof Function);
 
@@ -41,7 +41,7 @@
 
         super();
         this._id = Symbol(name);
-        
+
         this._suite = suite;
         this._name = name;
         this._test = test;
@@ -59,4 +59,4 @@
     get setup() { return this._setup; }
     get tearDown() { return this._tearDown; }
     get errorDetails() { return this._errorDetails; }
-}
+};

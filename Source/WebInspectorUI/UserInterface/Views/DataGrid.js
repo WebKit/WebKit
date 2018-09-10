@@ -1573,7 +1573,6 @@ WI.DataGrid = class DataGrid extends WI.View
         if (!gridNode) {
             if (this.selectedNode)
                 this.selectedNode.deselect();
-            
             return;
         }
 

@@ -73,7 +73,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
     {
         // FIXME <https://webkit.org/b/151400>: If there are no cookies, add placeholder explanatory text.
         if (!this._dataGrid) {
-            var columns = {name: {}, value: {}, domain: {}, path: {}, expires: {}, size: {}, http: {}, secure: {}, sameSite: {} };
+            var columns = {name: {}, value: {}, domain: {}, path: {}, expires: {}, size: {}, http: {}, secure: {}, sameSite: {}};
 
             columns.name.title = WI.UIString("Name");
             columns.name.sortable = true;

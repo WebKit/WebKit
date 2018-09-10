@@ -214,7 +214,7 @@ WI.Cookie = class Cookie
 
         return new WI.Cookie(WI.Cookie.Type.Response, name, value, header, expires, maxAge, path, domain, secure, httpOnly, sameSite);
     }
-}
+};
 
 WI.Cookie.Type = {
     Request: "request",

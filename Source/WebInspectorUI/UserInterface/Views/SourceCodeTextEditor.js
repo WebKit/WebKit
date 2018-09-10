@@ -1432,7 +1432,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             startPosition = fromInlineScriptPosition(startPosition).toCodeMirror();
             endPosition = fromInlineScriptPosition(endPosition).toCodeMirror();
             callback({startPosition, endPosition});
-        }
+        };
 
         script.requestScriptSyntaxTree((syntaxTree) => {
             // Convert to the position within the inline script before querying the AST.

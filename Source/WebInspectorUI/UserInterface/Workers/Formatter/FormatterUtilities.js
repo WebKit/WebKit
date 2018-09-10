@@ -42,7 +42,7 @@ Object.defineProperty(String.prototype, "lineEndings",
         let match = pattern.exec(this);
         while (match) {
             lineEndings.push(match.index);
-            match = pattern.exec(this)
+            match = pattern.exec(this);
         }
 
         lineEndings.push(this.length);

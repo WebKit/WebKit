@@ -63,7 +63,7 @@ WI.BasicBlockAnnotator = class BasicBlockAnnotator extends WI.Annotator
         while (match) {
             lineEndings.push(match.index);
             lineEndingLengths.push(match[0].length);
-            match = pattern.exec(content)
+            match = pattern.exec(content);
         }
 
         function offsetToPosition(offset) {

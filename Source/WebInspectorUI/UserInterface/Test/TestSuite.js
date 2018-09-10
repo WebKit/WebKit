@@ -182,7 +182,7 @@ SyncTestSuite = class SyncTestSuite extends TestSuite
     addTestCase(testcase)
     {
         if ([testcase.setup, testcase.teardown, testcase.test].some((fn) => fn && fn[Symbol.toStringTag] === "AsyncFunction"))
-            throw new Error("Tried to pass a test case with an async `setup`, `test`, or `teardown` function, but this is a synchronous test suite.")
+            throw new Error("Tried to pass a test case with an async `setup`, `test`, or `teardown` function, but this is a synchronous test suite.");
 
         super.addTestCase(testcase);
     }

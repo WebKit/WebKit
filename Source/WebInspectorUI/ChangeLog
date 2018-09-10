@@ -1,3 +1,38 @@
+2018-09-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Address some ESLint warnings
+        https://bugs.webkit.org/show_bug.cgi?id=188824
+
+        Reviewed by Matt Baker.
+
+        * .eslintrc:
+        * UserInterface/Base/Platform.js:
+        * UserInterface/Controllers/AuditManager.js:
+        * UserInterface/Controllers/BasicBlockAnnotator.js:
+        * UserInterface/Controllers/CallFrameTreeController.js:
+        * UserInterface/Controllers/HARBuilder.js:
+        * UserInterface/Models/AuditReport.js:
+        * UserInterface/Models/AuditResult.js:
+        * UserInterface/Models/AuditTestCase.js:
+        * UserInterface/Models/AuditTestSuite.js:
+        * UserInterface/Models/Cookie.js:
+        * UserInterface/Models/SourceCodePosition.js:
+        * UserInterface/Test/FrontendTestHarness.js:
+        * UserInterface/Test/TestSuite.js:
+        * UserInterface/Views/CanvasContentView.js:
+        * UserInterface/Views/CollectionContentView.js:
+        * UserInterface/Views/ContentBrowser.js:
+        * UserInterface/Views/CookieStorageContentView.js:
+        * UserInterface/Views/DataGrid.js:
+        * UserInterface/Views/DatabaseTableContentView.js:
+        * UserInterface/Views/FindBanner.js:
+        * UserInterface/Views/JSONResourceContentView.js:
+        * UserInterface/Views/LogContentView.js:
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        * UserInterface/Views/SpreadsheetTextField.js:
+        * UserInterface/Workers/Formatter/FormatterUtilities.js:
+
 2018-09-06  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Rename the -apple-pay-button-type value "checkout" to "check-out"

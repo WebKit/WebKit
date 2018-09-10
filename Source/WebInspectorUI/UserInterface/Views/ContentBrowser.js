@@ -230,7 +230,7 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
     shown()
     {
         this._updateContentViewSelectionPathNavigationItem(this.currentContentView);
-        this.updateHierarchicalPathForCurrentContentView()
+        this.updateHierarchicalPathForCurrentContentView();
 
         this._contentViewContainer.shown();
     }

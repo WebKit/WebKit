@@ -69,7 +69,7 @@ WI.DatabaseTableContentView = class DatabaseTableContentView extends WI.ContentV
 
     _escapeTableName(name)
     {
-        return name.replace(/\"/g, "\"\"");
+        return name.replace(/"/g, "\"\"");
     }
 
     _queryFinished(columnNames, values)

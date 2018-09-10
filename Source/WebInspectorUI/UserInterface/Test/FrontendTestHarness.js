@@ -94,7 +94,7 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
             return (!remoteObjectOnly && remoteObject.hasValue()) ? remoteObject.value : remoteObject;
         }
 
-        let response = RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", includeCommandLineAPI: false})
+        let response = RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", includeCommandLineAPI: false});
         if (callback && typeof callback === "function") {
             response = response.then(({result, wasThrown}) => callback(null, translateResult(result), wasThrown));
             response = response.catch((error) => callback(error, null, false));

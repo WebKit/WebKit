@@ -317,7 +317,7 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
                     this._addTargetWithMainResource(script.target);
                 this.contentTreeOutline.disclosureButtons = true;
                 return;
-            }            
+            }
         }
 
         // If the script URL matches a resource we can assume it is part of that resource and does not need added.
