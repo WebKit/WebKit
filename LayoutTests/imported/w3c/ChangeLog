@@ -1,3 +1,12 @@
+2018-09-10  Rob Buis  <rbuis@igalia.com>
+
+        XMLHttpRequest: overrideMimeType should not update the response's "Content-Type" header
+        https://bugs.webkit.org/show_bug.cgi?id=189465
+
+        Reviewed by Frédéric Wang.
+
+        * web-platform-tests/xhr/overridemimetype-invalid-mime-type-expected.txt:
+
 2018-09-07  Youenn Fablet  <youenn@apple.com>
 
         Add support for unified plan transceivers

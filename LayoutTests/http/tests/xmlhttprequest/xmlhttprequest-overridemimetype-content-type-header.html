@@ -5,7 +5,7 @@
 </head>
 <body>
     <script>
-        description('This tests that XMLHttpRequest overrideMimeType() properly updates the Content-Type header for the response.');
+        description('This tests that XMLHttpRequest overrideMimeType() does not update the Content-Type header for the response.');
         window.jsTestIsAsync = true;
 
         var xhr = new XMLHttpRequest();
@@ -13,7 +13,7 @@
 
         xhr.onreadystatechange = function () {
             if (xhr.readyState == xhr.LOADING) {
-                shouldBe('xhr.getResponseHeader("Content-Type")', '"text/xml;charset=GBK"');
+                shouldBe('xhr.getResponseHeader("Content-Type")', '"application/xml"');
                 finishJSTest();
             }
         }

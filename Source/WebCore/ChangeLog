@@ -1,3 +1,24 @@
+2018-09-10  Rob Buis  <rbuis@igalia.com>
+
+        XMLHttpRequest: overrideMimeType should not update the response's "Content-Type" header
+        https://bugs.webkit.org/show_bug.cgi?id=189465
+
+        Reviewed by Frédéric Wang.
+
+        The xhr spec changed [1, 2] so that overrideMimeType should not update the
+        response's "Content-Type" header anymore.
+
+        Behavior matches Firefox and Chrome.
+
+        [1] https://xhr.spec.whatwg.org/#dom-xmlhttprequest-overridemimetype
+        [2] https://github.com/whatwg/xhr/issues/157
+
+        Tests: http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-content-type-header.html
+               web-platform-tests/xhr/overridemimetype-invalid-mime-type.htm
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didReceiveResponse):
+
 2018-09-10  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Interrupting an accelerated CSS transition on a composited element in flight fails
