@@ -1,3 +1,9 @@
+2018-09-10  Tim Horton  <timothy_horton@apple.com>
+
+        Try to fix the build after r235850
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+
 2018-09-10  Simon Fraser  <simon.fraser@apple.com>
 
         Before tracking Document leaks, clear all caches
