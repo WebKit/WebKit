@@ -4143,7 +4143,7 @@ webkit.org/b/188166 webanimations/accessing-current-time-after-clearing-css-anim
 webkit.org/b/188166 webanimations/setting-css-animation-none-after-clearing-effect.html [ Failure ]
 webkit.org/b/188166 webanimations/setting-css-animation-timing-property-via-style-after-clearing-effect.html [ Failure ]
 
-webkit.org/b/189468 webanimations/accelerated-transition-interrupted-on-composited-element.html [ Failure ]
+webkit.org/b/189468 webanimations/accelerated-transition-interrupted-on-composited-element.html [ Skip ]
 
 webkit.org/b/188167 fast/repaint/canvas-object-fit.html [ Failure ]
 
