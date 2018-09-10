@@ -182,6 +182,7 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
 
     [m_window.rootViewController.view addSubview:m_view];
     [m_window makeKeyAndVisible];
+    [m_view becomeFirstResponder];
 }
 
 PlatformWebView::~PlatformWebView()

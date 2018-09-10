@@ -1,3 +1,16 @@
+2018-09-10  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make WKWebView become the first responder to support testing key presses to non-editable elements
+        https://bugs.webkit.org/show_bug.cgi?id=189432
+
+        Reviewed by Simon Fraser.
+
+        Make the WKWebView become the first responder immediately without the need to focus an editable
+        element. This allows us to test that DOM keyboard events are dispatched to non-editable elements.
+
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+
 2018-09-10  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [WTF] Add Markable<T, Traits>

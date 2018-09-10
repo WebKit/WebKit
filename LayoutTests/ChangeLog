@@ -1,3 +1,16 @@
+2018-09-10  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make WKWebView become the first responder to support testing key presses to non-editable elements
+        https://bugs.webkit.org/show_bug.cgi?id=189432
+
+        Reviewed by Simon Fraser.
+
+        Add a test that DOM keyboard events are dispatched to a non-editable <body> when simulating key
+        presses using a hardware keyboard.
+
+        * fast/events/ios/keydown-keyup-in-non-editable-content-expected.txt: Added.
+        * fast/events/ios/keydown-keyup-in-non-editable-content.html: Added.
+
 2018-09-10  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Use JSValueInWrappedObject for PaymentResponse's details attribute
