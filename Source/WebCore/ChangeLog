@@ -1,3 +1,19 @@
+2018-09-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove isOrphan check in ShadowRoot::setInnerHTML
+        https://bugs.webkit.org/show_bug.cgi?id=189449
+
+        Reviewed by Darin Adler.
+
+        Removed isOrphan() check in ShadowRoot::setInnerHTML needed for webkit.org/b/88834.
+
+        The only reason this check was kept in the code was because the fix for V8 couldn't be landed
+        due to a perf regression but V8 binding isn't even a thing in WebKit anymore.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::setInnerHTML):
+        * dom/ShadowRoot.h:
+
 2018-09-10  Simon Fraser  <simon.fraser@apple.com>
 
         Many textarea tests leak documents because Document::removeFocusNavigationNodeOfSubtree() can trigger a Document retain cycle

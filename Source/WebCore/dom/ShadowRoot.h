@@ -95,9 +95,6 @@ protected:
 
     ShadowRoot(Document&, std::unique_ptr<SlotAssignment>&&);
 
-    // FIXME: This shouldn't happen. https://bugs.webkit.org/show_bug.cgi?id=88834
-    bool isOrphan() const { return !m_host; }
-
 private:
     bool childTypeAllowed(NodeType) const override;
 
