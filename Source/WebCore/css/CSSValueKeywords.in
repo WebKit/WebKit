@@ -244,6 +244,7 @@ windowtext
 -apple-system-quaternary-label
 -apple-system-grid
 -apple-system-separator
+-apple-system-container-border
 #endif
 -apple-wireless-playback-target-active
 -apple-system-blue

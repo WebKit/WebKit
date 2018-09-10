@@ -768,6 +768,13 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
                 // Handled below.
                 return nullptr;
 #endif
+            case CSSValueAppleSystemContainerBorder:
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+                return @selector(containerBorderColor);
+#else
+                // Handled below.
+                return nullptr;
+#endif
             case CSSValueAppleSystemLabel:
                 return @selector(labelColor);
             case CSSValueAppleSystemSecondaryLabel:
@@ -860,6 +867,9 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
         case CSSValueAppleSystemFindHighlightBackground:
             return platformActiveTextSearchHighlightColor(options);
+
+        case CSSValueAppleSystemContainerBorder:
+            return 0xFFC5C5C5;
 #endif
 
         case CSSValueAppleSystemEvenAlternatingContentBackground: {

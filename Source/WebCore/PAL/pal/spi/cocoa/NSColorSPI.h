@@ -48,6 +48,7 @@
 + (NSColor *)linkColor;
 + (NSColor *)findHighlightColor;
 + (NSColor *)placeholderTextColor;
++ (NSColor *)containerBorderColor;
 @end
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
