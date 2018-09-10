@@ -1,3 +1,16 @@
+2018-09-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [MSVC] X86Assembler.h(108): error C2666: 'WebCore::operator -': 7 overloads have similar conversions
+        https://bugs.webkit.org/show_bug.cgi?id=189467
+
+        Unreviewed build fix for WinCairo port.
+
+        MSVC reports compilation errors if certain JSC header files are
+        included after "using namespace" statements.
+
+        * Sources.txt: Added @no-unify to InjectedBundleNodeHandle.cpp and InjectedBundleRangeHandle.cpp temporarily.
+        * WebKit.xcodeproj/project.pbxproj: Compile InjectedBundleNodeHandle.cpp and InjectedBundleRangeHandle.cpp.
+
 2018-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed, rolling out r235839.
