@@ -652,7 +652,13 @@ void WebPage::enableEnumeratingAllNetworkInterfaces()
 
 void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 {
-    ASSERT(m_drawingArea);
+    if (!m_drawingArea) {
+        m_drawingArea = DrawingArea::create(*this, parameters);
+        m_drawingArea->setPaintingEnabled(false);
+        m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
+        m_drawingArea->updatePreferences(parameters.store);
+        m_drawingArea->setPaintingEnabled(true);
+    }
     m_drawingArea->attachDrawingArea();
 
     if (m_activityState != parameters.activityState)
@@ -5993,7 +5999,12 @@ void WebPage::urlSchemeTaskDidComplete(uint64_t handlerIdentifier, uint64_t task
 
 void WebPage::setIsSuspended(bool suspended)
 {
+    if (m_isSuspended == suspended)
+        return;
+
     m_isSuspended = suspended;
+    if (m_isSuspended)
+        m_drawingArea = nullptr;
 }
 
 void WebPage::frameBecameRemote(uint64_t frameID, GlobalFrameIdentifier&& remoteFrameIdentifier, GlobalWindowIdentifier&& remoteWindowIdentifier)

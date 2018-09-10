@@ -1,3 +1,43 @@
+2018-09-10  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON): WebView is blank when navigating back cross-process on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=189481
+        <rdar://problem/44315010>
+
+        Reviewed by Tim Horton.
+
+        When process swapping on navigation, the WebPageProxy would detach from the old WebProcess and destroy
+        its RemoteLayerTreeDrawingAreaProxy. It would then create a new process and a new RemoteLayerTreeDrawingAreaProxy
+        to listen for IPC from this new process. When navigating back to the original process, we would do the
+        same in the opposite direction. However, the issue was that the old WebProcess's WebPage would not destroy its
+        drawing area and some state would persist and cause issues. For example, the DrawingArea would send a
+        CommitLayerTree IPC to the UIProcess and set m_waitingForBackingStoreSwap to true. It normally resets
+        m_waitingForBackingStoreSwap to false when getting the DidUpdate IPC from the UIProcess. However, when the
+        WebPage is detached from its WebPageProxy (i.e. suspended due to PSON), the UIProcess would not respond to
+        IPC from the old WebProcess and m_waitingForBackingStoreSwap would never get reset.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::~SuspendedPageProxy):
+        Make sure we send the SetIsSuspended IPC to the WebProcess with false value when
+        the SuspendedPageProxy gets destroyed, so that the WebProcess can update its
+        m_isSuspended flag. Previous, it was set to true when constructing the
+        SuspendedPageProxy but never reset to false.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::invalidateContentsAndRootView):
+        (WebKit::WebChromeClient::invalidateContentsForSlowScroll):
+        Add null checks for the drawing area now that it can be null while suspended.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+        When a WebPage gets reattached to a WebPageProxy, this method is called. Since we now
+        destroy the drawing area upon suspension (WebPage gets detached from WebPageProxy), we
+        need to make sure we recreate the drawing area when reattaching.
+
+        (WebKit::WebPage::setIsSuspended):
+        Destroy the drawing area when the WebPage is suspended, meaning that this WebPage
+        is no longer associated with a WebPageProxy.
+
 2018-09-10  Daniel Bates  <dabates@apple.com>
 
         [iOS] Arrow keys do not dispatch DOM events to non-editable elements

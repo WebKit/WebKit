@@ -523,7 +523,8 @@ void WebChromeClient::invalidateContentsAndRootView(const IntRect& rect)
             return;
     }
 
-    m_page.drawingArea()->setNeedsDisplayInRect(rect);
+    if (auto* drawingArea = m_page.drawingArea())
+        drawingArea->setNeedsDisplayInRect(rect);
 }
 
 void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect)
@@ -541,7 +542,8 @@ void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect)
         return;
     }
 #endif
-    m_page.drawingArea()->setNeedsDisplayInRect(rect);
+    if (auto* drawingArea = m_page.drawingArea())
+        drawingArea->setNeedsDisplayInRect(rect);
 }
 
 void WebChromeClient::scroll(const IntSize& scrollDelta, const IntRect& scrollRect, const IntRect& clipRect)

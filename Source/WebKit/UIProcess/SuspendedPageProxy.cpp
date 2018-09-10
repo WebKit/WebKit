@@ -87,6 +87,7 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, WebProcessProxy& proc
 SuspendedPageProxy::~SuspendedPageProxy()
 {
     if (auto process = makeRefPtr(m_process)) {
+        process->send(Messages::WebPage::SetIsSuspended(false), m_page.pageID());
         process->suspendedPageWasDestroyed(*this);
         process->processPool().unregisterSuspendedPageProxy(*this);
     }
