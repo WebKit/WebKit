@@ -49,6 +49,7 @@ namespace WebCore {
     M(Events) \
     M(FileAPI) \
     M(Filters) \
+    M(Fonts) \
     M(Frames) \
     M(FTP) \
     M(Fullscreen) \

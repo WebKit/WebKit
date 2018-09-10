@@ -45,6 +45,7 @@
 #include "FontSelectorClient.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "Logging.h"
 #include "Settings.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
@@ -68,10 +69,13 @@ CSSFontSelector::CSSFontSelector(Document& document)
     ASSERT(m_document);
     FontCache::singleton().addClient(*this);
     m_cssFontFaceSet->addClient(*this);
+    LOG(Fonts, "CSSFontSelector %p ctor", this);
 }
 
 CSSFontSelector::~CSSFontSelector()
 {
+    LOG(Fonts, "CSSFontSelector %p dtor", this);
+
     clearDocument();
     m_cssFontFaceSet->removeClient(*this);
     FontCache::singleton().removeClient(*this);

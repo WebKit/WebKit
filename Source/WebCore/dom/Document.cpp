@@ -684,6 +684,9 @@ void Document::removedLastRef()
 #endif
         m_associatedFormControls.clear();
 
+        m_fontSelector->clearDocument();
+        m_fontSelector->unregisterForInvalidationCallbacks(*this);
+
         detachParser();
 
         // removeDetachedChildren() doesn't always unregister IDs,
