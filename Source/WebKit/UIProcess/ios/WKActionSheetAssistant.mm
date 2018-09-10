@@ -372,7 +372,7 @@ static const CGFloat presentationElementRectPadding = 15;
 
         _elementInfo = WTFMove(elementInfo);
 
-        if (![_interactionSheet presentSheet:presentationStyleForView(_view.getAutoreleased(), _positionInformation.value(), _elementInfo.get())])
+        if (![_interactionSheet presentSheet:[self _presentationStyleForPositionInfo:_positionInformation.value() elementInfo:_elementInfo.get()]])
             [self cleanupSheet];
     };
 
@@ -394,24 +394,29 @@ static const CGFloat presentationElementRectPadding = 15;
     showImageSheetWithAlternateURLBlock(nil, nil);
 }
 
-static WKActionSheetPresentationStyle presentationStyleForView(UIView *view, const WebKit::InteractionInformationAtPosition& positionInfo, _WKActivatedElementInfo *elementInfo)
+- (WKActionSheetPresentationStyle)_presentationStyleForPositionInfo:(const WebKit::InteractionInformationAtPosition&)positionInfo elementInfo:(_WKActivatedElementInfo *)elementInfo
 {
-    auto apparentElementRect = [view convertRect:positionInfo.bounds toView:view.window];
+    auto apparentElementRect = [_view convertRect:positionInfo.bounds toView:[_view window]];
     if (CGRectIsEmpty(apparentElementRect))
         return WKActionSheetPresentAtTouchLocation;
 
-    auto windowRect = view.window.bounds;
-    apparentElementRect = CGRectIntersection(apparentElementRect, windowRect);
+    CGRect visibleRect;
+    auto delegate = _delegate.get();
+    if ([delegate respondsToSelector:@selector(unoccludedWindowBoundsForActionSheetAssistant:)])
+        visibleRect = [delegate unoccludedWindowBoundsForActionSheetAssistant:self];
+    else
+        visibleRect = [[_view window] bounds];
 
-    auto leftInset = CGRectGetMinX(apparentElementRect) - CGRectGetMinX(windowRect);
-    auto topInset = CGRectGetMinY(apparentElementRect) - CGRectGetMinY(windowRect);
-    auto rightInset = CGRectGetMaxX(windowRect) - CGRectGetMaxX(apparentElementRect);
-    auto bottomInset = CGRectGetMaxY(windowRect) - CGRectGetMaxY(apparentElementRect);
+    apparentElementRect = CGRectIntersection(apparentElementRect, visibleRect);
+    auto leftInset = CGRectGetMinX(apparentElementRect) - CGRectGetMinX(visibleRect);
+    auto topInset = CGRectGetMinY(apparentElementRect) - CGRectGetMinY(visibleRect);
+    auto rightInset = CGRectGetMaxX(visibleRect) - CGRectGetMaxX(apparentElementRect);
+    auto bottomInset = CGRectGetMaxY(visibleRect) - CGRectGetMaxY(apparentElementRect);
 
     // If at least this much of the window is available for the popover to draw in, then target the element rect when presenting the action menu popover.
     // Otherwise, there is not enough space to position the popover around the element, so revert to using the touch location instead.
     static const CGFloat minimumAvailableWidthOrHeightRatio = 0.4;
-    if (std::max(leftInset, rightInset) <= minimumAvailableWidthOrHeightRatio * CGRectGetWidth(windowRect) && std::max(topInset, bottomInset) <= minimumAvailableWidthOrHeightRatio * CGRectGetHeight(windowRect))
+    if (std::max(leftInset, rightInset) <= minimumAvailableWidthOrHeightRatio * CGRectGetWidth(visibleRect) && std::max(topInset, bottomInset) <= minimumAvailableWidthOrHeightRatio * CGRectGetHeight(visibleRect))
         return WKActionSheetPresentAtTouchLocation;
 
     if (elementInfo.type == _WKActivatedElementTypeLink && positionInfo.linkIndicator.textRectsInBoundingRectCoordinates.size())
@@ -539,7 +544,7 @@ static WKActionSheetPresentationStyle presentationStyleForView(UIView *view, con
 
     _elementInfo = WTFMove(elementInfo);
 
-    if (![_interactionSheet presentSheet:presentationStyleForView(_view.getAutoreleased(), _positionInformation.value(), _elementInfo.get())])
+    if (![_interactionSheet presentSheet:[self _presentationStyleForPositionInfo:_positionInformation.value() elementInfo:_elementInfo.get()]])
         [self cleanupSheet];
 }
 

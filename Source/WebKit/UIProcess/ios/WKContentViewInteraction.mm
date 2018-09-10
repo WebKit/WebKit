@@ -4874,6 +4874,15 @@ static bool isAssistableInputType(InputType type)
     return NO;
 }
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+- (CGRect)unoccludedWindowBoundsForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+{
+    UIEdgeInsets contentInset = [[_webView scrollView] adjustedContentInset];
+    CGRect rect = UIEdgeInsetsInsetRect([_webView bounds], contentInset);
+    return [_webView convertRect:rect toView:[self window]];
+}
+#endif
+
 - (RetainPtr<NSArray>)actionSheetAssistant:(WKActionSheetAssistant *)assistant decideActionsForElement:(_WKActivatedElementInfo *)element defaultActions:(RetainPtr<NSArray>)defaultActions
 {
     return _page->uiClient().actionsForElement(element, WTFMove(defaultActions));

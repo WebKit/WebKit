@@ -1,3 +1,35 @@
+2018-09-10  James Savage  <james.savage@apple.com>
+
+        Long press on picture/link show menu obscured by keyboard.
+        https://bugs.webkit.org/show_bug.cgi?id=189114.
+
+        Reviewed by Megan Gardner.
+
+        Use the visible bounds of the window, not the full bounds, when deciding if
+        an element's rect takes up too much screen space to present from. This factors
+        in occlusion of the window by the keyboard, bars, and other overlapping content.
+
+        If possible, it would be nice to only account for overlapping geometry which a
+        popover would avoid, but that information is not available. This approach will
+        produce some false positives in favor of the "from touch" style, but those are
+        still better than getting an unusably small action sheet.
+
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showImageSheet]): Use new helper method for style.
+        (-[WKActionSheetAssistant showLinkSheet]): Ditto.
+        (-[WKActionSheetAssistant _presentationStyleForPositionInfo:elementInfo:]):
+        Query new delegate method to figure out the unobscured rect of the window. This
+        information only exists on WKScrollView, so we have to ask for it. If this method
+        is not implemented, fall back to the current approach of assuming the full window
+        bounds are available.
+        (presentationStyleForView): Deleted. Replaced by instance method.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView unoccludedWindowBoundsForActionSheetAssistant:]):
+        Calculate the unoccluded rect using -[UIScrollView adjustedContentInset], which
+        factors in client specified insets and system insets (such as the keyboard).
+
 2018-09-10  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON): WebView is blank when navigating back cross-process on iOS
