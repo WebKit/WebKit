@@ -29,6 +29,7 @@
 
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSValueInWrappedObject.h"
 #include "PaymentAddress.h"
 #include "PaymentComplete.h"
 
@@ -40,9 +41,11 @@ struct PaymentValidationErrors;
 
 class PaymentResponse final : public RefCounted<PaymentResponse>, public EventTargetWithInlineData {
 public:
-    static Ref<PaymentResponse> create(PaymentRequest& request)
+    using DetailsFunction = Function<JSC::Strong<JSC::JSObject>(JSC::ExecState&)>;
+
+    static Ref<PaymentResponse> create(PaymentRequest& request, DetailsFunction&& detailsFunction)
     {
-        return adoptRef(*new PaymentResponse(request));
+        return adoptRef(*new PaymentResponse(request, WTFMove(detailsFunction)));
     }
 
     ~PaymentResponse();
@@ -53,8 +56,8 @@ public:
     const String& methodName() const { return m_methodName; }
     void setMethodName(const String& methodName) { m_methodName = methodName; }
 
-    const JSC::Strong<JSC::JSObject>& details() const { return m_details; }
-    void setDetails(JSC::Strong<JSC::JSObject>&& details) { m_details = WTFMove(details); }
+    const DetailsFunction& detailsFunction() const { return m_detailsFunction; }
+    JSValueInWrappedObject& cachedDetails() { return m_cachedDetails; }
 
     PaymentAddress* shippingAddress() const { return m_shippingAddress.get(); }
     void setShippingAddress(PaymentAddress* shippingAddress) { m_shippingAddress = shippingAddress; }
@@ -78,7 +81,7 @@ public:
     using RefCounted<PaymentResponse>::deref;
 
 private:
-    explicit PaymentResponse(PaymentRequest&);
+    PaymentResponse(PaymentRequest&, DetailsFunction&&);
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return PaymentResponseEventTargetInterfaceType; }
@@ -89,9 +92,8 @@ private:
     Ref<PaymentRequest> m_request;
     String m_requestId;
     String m_methodName;
-    // FIXME: The following use of JSC::Strong is incorrect and can lead to storage leaks
-    // due to reference cycles; we should use JSValueInWrappedObject instead.
-    JSC::Strong<JSC::JSObject> m_details;
+    DetailsFunction m_detailsFunction;
+    JSValueInWrappedObject m_cachedDetails;
     RefPtr<PaymentAddress> m_shippingAddress;
     String m_shippingOption;
     String m_payerName;

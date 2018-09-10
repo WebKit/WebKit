@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Test for leaks caused by reference cycles that pass through PaymentResponse</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+async function checkForNodeLeaks(testFunction, underlyingClass)
+{
+    // Bump this number as high as we need to, to get reproducible results.
+    const repetitions = 40;
+
+    GCController.collect();
+    const beforeCount = internals.numberOfLiveNodes();
+    for (var i = 0; i < repetitions; ++i)
+        await testFunction();
+    GCController.collect();
+    const leaks = internals.numberOfLiveNodes() - beforeCount;
+
+    if (leaks == repetitions)
+        return "leaked";
+    if (leaks < repetitions / 10)
+        return "did not leak";
+    return "leaked an unexpected number of nodes: " + leaks + " leaks in " + repetitions + " runs";
+}
+
+async function createPaymentResponseDetailsCycle()
+{
+    const applePay = {
+        supportedMethods: "https://apple.com/apple-pay",
+        data: {
+            version: 2,
+            merchantIdentifier: '',
+            merchantCapabilities: ['supports3DS'],
+            supportedNetworks: ['visa', 'masterCard'],
+            countryCode: 'US',
+        },
+    };
+
+    const details = {
+        total: {
+            label: "Total",
+            amount: {
+                currency: "USD",
+                value: "1.00",
+            },
+        },
+    };
+
+    const paymentRequest = new PaymentRequest([applePay], details); 
+    await activateThen(async () => {
+        const acceptPromise = paymentRequest.show();
+        internals.mockPaymentCoordinator.acceptPayment();
+        const paymentResponse = await acceptPromise;
+
+        const leakDetectionNode = document.createTextNode("");
+        const details = paymentResponse.details;
+        leakDetectionNode.details = details;
+        details.leakDetectionNode = leakDetectionNode;
+
+        paymentResponse.complete("success");
+    });
+}
+
+promise_test(async t => {
+    const result = await checkForNodeLeaks(createPaymentResponseDetailsCycle);
+    assert_equals(result, 'did not leak');
+}, "PaymentResponse should not leak when there is a reference cycle due to the details attribute");
+
+</script>

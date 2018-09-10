@@ -27,13 +27,14 @@
     Conditional=PAYMENT_REQUEST,
     EnabledBySetting=PaymentRequest,
     Exposed=Window,
+    JSCustomMarkFunction,
     SecureContext,
 ] interface PaymentResponse : EventTarget {
     serializer = { attribute };
 
     readonly attribute DOMString requestId;
     readonly attribute DOMString methodName;
-    readonly attribute object details;
+    [CustomGetter] readonly attribute object details;
     readonly attribute PaymentAddress? shippingAddress;
     readonly attribute DOMString? shippingOption;
     readonly attribute DOMString? payerName;

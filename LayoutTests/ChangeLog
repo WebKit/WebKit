@@ -1,3 +1,14 @@
+2018-09-10  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Use JSValueInWrappedObject for PaymentResponse's details attribute
+        https://bugs.webkit.org/show_bug.cgi?id=189458
+
+        Reviewed by Youenn Fablet.
+
+        * fast/dom/reference-cycle-leaks.html:
+        * http/tests/paymentrequest/payment-response-reference-cycle-leak.https-expected.txt: Added.
+        * http/tests/paymentrequest/payment-response-reference-cycle-leak.https.html: Added.
+
 2018-09-10  Frederic Wang  <fwang@igalia.com>
 
         [CSSOM View] Handle the scrollingElement in Element::scroll(Left/Top/Width/Height/To)

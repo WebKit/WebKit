@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 #include "JSServiceWorkerClient.h"
 
+#include "JSDOMBinding.h"
 #include "JSServiceWorkerWindowClient.h"
 
 namespace WebCore {

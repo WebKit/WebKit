@@ -34,6 +34,7 @@
 #include "PaymentDetailsInit.h"
 #include "PaymentMethodChangeEvent.h"
 #include "PaymentOptions.h"
+#include "PaymentResponse.h"
 #include "URL.h"
 #include <wtf/Variant.h>
 
@@ -91,7 +92,7 @@ public:
     void paymentMethodChanged(const String& methodName, PaymentMethodChangeEvent::MethodDetailsFunction&&);
     ExceptionOr<void> updateWith(UpdateReason, Ref<DOMPromise>&&);
     ExceptionOr<void> completeMerchantValidation(Event&, Ref<DOMPromise>&&);
-    void accept(const String& methodName, JSC::Strong<JSC::JSObject>&& details, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone);
+    void accept(const String& methodName, PaymentResponse::DetailsFunction&&, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone);
     void complete(std::optional<PaymentComplete>&&);
     void cancel();
 

@@ -125,13 +125,8 @@ function createIDBRequestResultCycle()
     // Add another property to the result object that references a leak detection node.
 }
 
-function createPaymentResponseDetailsCycle()
-{
-    // FIXME: Need to write this test and reorganize so it can be asynchronous.
-    // Get a PaymentResponse, requires simulating a successful payment.
-    // Add a property to the details object that references the PaymentResponse.
-    // Add another property to the details object that references a leak detection node.
-}
+// PaymentResponse details reference cycle is tested in
+// http/tests/paymentrequest/payment-response-reference-cycle-leak.https.html.
 
 function createRTCStatsReportCycle()
 {

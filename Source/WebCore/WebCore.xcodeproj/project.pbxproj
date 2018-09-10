@@ -10879,6 +10879,7 @@
 		A10BB5831484E3A700B2E87A /* RenderSVGRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGRect.h; sourceTree = "<group>"; };
 		A10BB5881484E3B300B2E87A /* RenderSVGShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGShape.cpp; sourceTree = "<group>"; };
 		A10BB5891484E3B300B2E87A /* RenderSVGShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGShape.h; sourceTree = "<group>"; };
+		A10D6E942144C99800FDD14D /* JSPaymentResponseCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentResponseCustom.cpp; sourceTree = "<group>"; };
 		A10DBF4618F92317000D70C6 /* PreviewLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewLoaderClient.h; sourceTree = "<group>"; };
 		A10DC76814747BAB005E2471 /* StyleGridData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleGridData.cpp; sourceTree = "<group>"; };
 		A10DC76914747BAB005E2471 /* StyleGridData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleGridData.h; sourceTree = "<group>"; };
@@ -19943,6 +19944,7 @@
 				BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */,
 				410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */,
 				A1677E242144532800A08C34 /* JSPaymentMethodChangeEventCustom.cpp */,
+				A10D6E942144C99800FDD14D /* JSPaymentResponseCustom.cpp */,
 				A85F22081430377D007CC884 /* JSPopStateEventCustom.cpp */,
 				BC348BBD0DB7F531004ABAB9 /* JSXMLHttpRequestCustom.cpp */,
 			);

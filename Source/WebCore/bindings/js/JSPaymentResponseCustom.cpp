@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,46 +24,22 @@
  */
 
 #include "config.h"
-#include "PaymentResponse.h"
+#include "JSPaymentResponse.h"
 
 #if ENABLE(PAYMENT_REQUEST)
 
-#include "NotImplemented.h"
-#include "PaymentRequest.h"
-#include <wtf/RunLoop.h>
-
 namespace WebCore {
 
-PaymentResponse::PaymentResponse(PaymentRequest& request, DetailsFunction&& detailsFunction)
-    : m_request { request }
-    , m_detailsFunction { WTFMove(detailsFunction) }
+JSC::JSValue JSPaymentResponse::details(JSC::ExecState& state) const
 {
-    ASSERT(m_detailsFunction);
+    return cachedPropertyValue(state, *this, wrapped().cachedDetails(), [this, &state] {
+        return wrapped().detailsFunction()(state).get();
+    });
 }
 
-PaymentResponse::~PaymentResponse() = default;
-
-void PaymentResponse::complete(std::optional<PaymentComplete>&& result, DOMPromiseDeferred<void>&& promise)
+void JSPaymentResponse::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
-    if (m_completeCalled) {
-        promise.reject(Exception { InvalidStateError });
-        return;
-    }
-
-    m_completeCalled = true;
-    m_request->complete(WTFMove(result));
-    promise.resolve();
-}
-
-void PaymentResponse::retry(PaymentValidationErrors&&, DOMPromiseDeferred<void>&& promise)
-{
-    notImplemented();
-    promise.reject(Exception { NotSupportedError });
-}
-
-ScriptExecutionContext* PaymentResponse::scriptExecutionContext() const
-{
-    return static_cast<ActiveDOMObject&>(m_request.get()).scriptExecutionContext();
+    wrapped().cachedDetails().visit(visitor);
 }
 
 } // namespace WebCore

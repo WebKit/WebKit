@@ -453,9 +453,12 @@ void ApplePayPaymentHandler::didAuthorizePayment(const Payment& payment)
     ASSERT(!m_isUpdating);
 
     auto applePayPayment = payment.toApplePayPayment(version());
-    auto details = toJSDictionary(*document().execState(), applePayPayment);
-    const auto& shippingContact = applePayPayment.shippingContact.value_or(ApplePayPaymentContact());
-    m_paymentRequest->accept(WTF::get<URL>(m_identifier).string(), WTFMove(details), convert(shippingContact), shippingContact.localizedName, shippingContact.emailAddress, shippingContact.phoneNumber);
+    auto shippingContact = applePayPayment.shippingContact.value_or(ApplePayPaymentContact());
+    auto detailsFunction = [applePayPayment = WTFMove(applePayPayment)](JSC::ExecState& execState) {
+        return toJSDictionary(execState, applePayPayment);
+    };
+
+    m_paymentRequest->accept(WTF::get<URL>(m_identifier).string(), WTFMove(detailsFunction), convert(shippingContact), shippingContact.localizedName, shippingContact.emailAddress, shippingContact.phoneNumber);
 }
 
 void ApplePayPaymentHandler::didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)

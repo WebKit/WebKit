@@ -1,3 +1,46 @@
+2018-09-10  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Use JSValueInWrappedObject for PaymentResponse's details attribute
+        https://bugs.webkit.org/show_bug.cgi?id=189458
+
+        Reviewed by Youenn Fablet.
+
+        Test: http/tests/paymentrequest/payment-response-reference-cycle-leak.https.html
+
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::ApplePayPaymentHandler::didAuthorizePayment):
+
+        Created a PaymentResponse::DetailsFunction that converts the ApplePayPayment into a JSValue.
+
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::accept):
+
+        Passed detailsFunction into PaymentResponse::create().
+
+        * Modules/paymentrequest/PaymentRequest.h:
+        * Modules/paymentrequest/PaymentResponse.cpp:
+        (WebCore::PaymentResponse::PaymentResponse):
+        * Modules/paymentrequest/PaymentResponse.h:
+        * Modules/paymentrequest/PaymentResponse.idl:
+
+        Removed m_details and replaced it with a DetailsFunction and a cached JSValueInWrappedObject.
+        JSPaymentResponseCustom.cpp uses these values to implement the details attribute getter.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSPaymentResponseCustom.cpp: Added.
+        (WebCore::JSPaymentResponse::details const):
+
+        Called PaymentResponse::detailsFunction() to cache a JSValue for the details attribute.
+
+        (WebCore::JSPaymentResponse::visitAdditionalChildren):
+
+        Visited PaymentResponse::cachedDetails().
+
+        * bindings/js/JSServiceWorkerClientCustom.cpp:
+
+        Fixed a missing include issue that cropped up due to unified source shuffling.
+
 2018-09-10  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Positive delays of accelerated animations are not respected

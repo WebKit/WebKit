@@ -42,7 +42,6 @@
 #include "PaymentMethodData.h"
 #include "PaymentOptions.h"
 #include "PaymentRequestUpdateEvent.h"
-#include "PaymentResponse.h"
 #include "ScriptController.h"
 #include <JavaScriptCore/JSONObject.h>
 #include <JavaScriptCore/ThrowScope.h>
@@ -683,14 +682,13 @@ void PaymentRequest::whenDetailsSettled(std::function<void()>&& callback)
     });
 }
 
-void PaymentRequest::accept(const String& methodName, JSC::Strong<JSC::JSObject>&& details, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone)
+void PaymentRequest::accept(const String& methodName, PaymentResponse::DetailsFunction&& detailsFunction, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone)
 {
     ASSERT(m_state == State::Interactive);
 
-    auto response = PaymentResponse::create(*this);
+    auto response = PaymentResponse::create(*this, WTFMove(detailsFunction));
     response->setRequestId(m_details.id);
     response->setMethodName(methodName);
-    response->setDetails(WTFMove(details));
 
     if (m_options.requestShipping) {
         response->setShippingAddress(shippingAddress.ptr());
