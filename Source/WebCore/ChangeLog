@@ -1,3 +1,24 @@
+2018-09-10  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Interrupting an accelerated CSS transition on a composited element in flight fails
+        https://bugs.webkit.org/show_bug.cgi?id=189405
+        <rdar://problem/43342639>
+
+        Reviewed by Simon Fraser.
+
+        Test: webanimations/accelerated-transition-interrupted-on-composited-element.html
+
+        If we interrupt an animation on an element that is composited also outside of the duration of the animation,
+        the "stop" accelerated action would fail to be performed because we no longer had a resolved current time and
+        the accelerated animation applied to the layer would never be removed.
+
+        However, having a resolved current time is not necessary to stop an animation, only for the other types of
+        actions (play, pause and seek). So we now simply default to a 0s time for an unresolved current time for a
+        simple fix to this issue.
+
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::applyPendingAcceleratedActions):
+
 2018-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Add specialized template declarations of HashTraits and DefaultHash to detect misuse
