@@ -1,3 +1,14 @@
+2018-09-07  Frederic Wang  <fwang@igalia.com>
+
+        Refactor filter list checking code
+        https://bugs.webkit.org/show_bug.cgi?id=185087
+
+        Reviewed by Yusuke Suzuki.
+
+        No new tests, behavior unchanged.
+
+        * animation/KeyframeEffectReadOnly.h: Add missing forward-declaration FilterOperations.
+
 2018-09-10  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Several media related tests timing out around the same revision

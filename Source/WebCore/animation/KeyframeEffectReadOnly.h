@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class Element;
+class FilterOperations;
 
 class KeyframeEffectReadOnly : public AnimationEffectReadOnly
     , public CSSPropertyBlendingClient {
