@@ -1,3 +1,19 @@
+2018-09-10  Dan Bernstein  <mitz@apple.com>
+
+        [macOS] Editor::readSelectionFromPasteboard’s MailBlockquoteHandling argument is effectively unused
+        https://bugs.webkit.org/show_bug.cgi?id=189480
+
+        Reviewed by Anders Carlsson.
+
+        No new tests, because this doesn’t change behavior.
+
+        * editing/Editor.h: Removed the MailBlockquoteHandling argument from
+          readSelectionFromPasteboard.
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::readSelectionFromPasteboard): Don’t pass mailBlockquoteHandling to
+          pasteWithPasteboard. It was always set to RespectBlockquote, which is the latter’s
+          default.
+
 2018-09-10  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Use JSValueInWrappedObject for PaymentResponse's details attribute
