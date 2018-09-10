@@ -1,3 +1,18 @@
+2018-09-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Correctly interpret from angle for conic gradients
+        https://bugs.webkit.org/show_bug.cgi?id=189445
+        <rdar://problem/44158271>
+
+        Reviewed by Tim Horton.
+
+        Test: fast/gradients/conic-from-angle.html
+
+        We were pulling the angle as degrees when we really need radians.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSConicGradientValue::createGradient):
+
 2018-09-10  James Savage  <james.savage@apple.com>
 
         Expose -apple-system-container-border color to internal web views.

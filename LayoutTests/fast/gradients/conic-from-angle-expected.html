@@ -1,0 +1,44 @@
+<html>
+<head>
+    <style>
+        div {
+            width: 200px;
+            height: 200px;
+        }
+        #top {
+            width: 0; 
+            height: 0; 
+            border-left: 100px solid green;
+            border-right: 100px solid blue;
+            border-top: 100px solid yellow;
+        }
+        #bottom {
+            width: 0; 
+            height: 0; 
+            border-left: 100px solid green;
+            border-right: 100px solid blue;
+            border-bottom: 100px solid orange;
+        }
+        .box {
+            position: absolute;
+        }
+        .x {
+            position: absolute;
+            -webkit-clip-path: polygon(0% 0%, 0% 5%, 45% 50%, 0% 95%, 0% 100%, 5% 100%, 50% 55%, 95% 100%, 100% 100%, 100% 95%, 55% 50%, 100% 5%, 100% 0%, 95% 0%, 50% 45%, 5% 0%);
+        }
+        #x {
+            background-color:black;
+        }
+        
+    </style>
+</head>
+<body>
+    <div>
+        <div class="box">
+            <div id="top"></div>
+            <div id="bottom"></div>
+        </div>
+        <div id="x" class="x"></div>
+    </div>
+</body>
+</html>

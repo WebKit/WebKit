@@ -1,3 +1,21 @@
+2018-09-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Correctly interpret from angle for conic gradients
+        https://bugs.webkit.org/show_bug.cgi?id=189445
+        <rdar://problem/44158271>
+
+        Reviewed by Tim Horton.
+
+        Adding a test for a conic gradient that starts at an angle.
+        Cover the edges because triangles and conic gradients aren't rendered
+        exactly the same.
+
+        * TestExpectations:
+        * fast/gradients/conic-from-angle-expected.html: Added.
+        * fast/gradients/conic-from-angle.html: Added.
+        * platform/ios-12/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-09-10  James Savage  <james.savage@apple.com>
 
         Expose -apple-system-container-border color to internal web views.

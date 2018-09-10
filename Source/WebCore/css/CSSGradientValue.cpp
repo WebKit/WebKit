@@ -1436,7 +1436,7 @@ Ref<Gradient> CSSConicGradientValue::createGradient(RenderElement& renderer, con
 
     float angle = 0;
     if (m_angle)
-        angle = m_angle->floatValue(CSSPrimitiveValue::CSS_DEG);
+        angle = m_angle->floatValue(CSSPrimitiveValue::CSS_RAD);
 
     Gradient::ConicData data { centerPoint, angle };
     ConicGradientAdapter adapter;
