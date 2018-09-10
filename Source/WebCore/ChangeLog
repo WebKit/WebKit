@@ -1,3 +1,19 @@
+2018-09-10  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer] Fix overflow in buffered ranges
+        https://bugs.webkit.org/show_bug.cgi?id=189419
+
+        Reviewed by Philippe Normand.
+
+        Scale operations on big numbers (like media timestamps or durations)
+        should be made with GStreamer utility functions to avoid overflows.
+
+        This fixes an assertion when a 24 hour long fragmented MP4 file is
+        played.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::buffered const):
+
 2018-09-07  Frederic Wang  <fwang@igalia.com>
 
         Refactor filter list checking code
