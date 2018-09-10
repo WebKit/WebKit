@@ -1,3 +1,65 @@
+2018-09-10  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [WTF] Add Markable<T, Traits>
+        https://bugs.webkit.org/show_bug.cgi?id=189231
+
+        Reviewed by Sam Weinig.
+
+        We can represent a value with nullopt by using std::optional<T>. However, std::optional<T> has storage efficiency
+        problem. It always has a bool indicating that the value is nullopt or not. If we have a following class,
+
+            class A {
+                std::optional<WallTime> m_timeA;
+                std::optional<WallTime> m_timeB;
+                std::optional<WallTime> m_timeC;
+            };
+
+        This class has significant amount of padding between m_timeA / m_timeB, m_timeB / m_timeC due to the above bool.
+
+        If we know that WallTime has a value that represents invalid, we can use it instead and save the storage.
+        This is very similar problem to our HashTable implementation. In our HashTable implementation, we need Deleted
+        and Empty value, which can represent Deleted and Empty values without sacrificing storage efficiency.
+
+        We should have similar mechanism here. In this patch, we have WTF::Markable<T, Traits>. Traits offers
+        `Traits::isEmptyValue(value)` and `Traits::emptyValue()`. Then, we use this empty value instead of having bool
+        flag. This way, we can make `sizeof(WTF::Markable<T>) == sizeof(T)`.
+
+        This idea is inspired from https://github.com/akrzemi1/markable. But we would like to have WTF::Markable<T>
+        here instead of importing it since we would like to have (1) integrated interfaces with std::optional<T> and (2)
+        aligned function names to HashTraits' `isEmptyValue` and `emptyValue`.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Markable.h: Added.
+        (WTF::std::underlying_type<EnumType>::type>::max): EnumMarkableTraits can be used as an MarkableTraits for enum
+        values. We can specify a constant value as an empty value.
+        (WTF::IntegralMarkableTraits::isEmptyValue):
+        (WTF::IntegralMarkableTraits::emptyValue): IntegralMarkableTraits can be used as an MarkableTraits for integral
+        types including int etc.
+        (WTF::Markable::Markable):
+        (WTF::Markable::operator bool const):
+        (WTF::Markable::reset):
+        (WTF::Markable::value const):
+        (WTF::Markable::value):
+        (WTF::Markable::operator-> const):
+        (WTF::Markable::operator->):
+        (WTF::Markable::operator* const):
+        (WTF::Markable::operator*):
+        (WTF::Markable::operator std::optional<T>):
+        (WTF::Markable::operator std::optional<T> const): This operator allows us to cast Markable<T> to
+        std::optional<T>.
+        * wtf/MonotonicTime.h:
+        (WTF::MonotonicTime::MarkableTraits::isEmptyValue):
+        (WTF::MonotonicTime::MarkableTraits::emptyValue): MarkableTraits for MonotonicTime. MonotonicTime::nan() is used
+        as an empty value.
+        * wtf/Seconds.h:
+        (WTF::Seconds::MarkableTraits::isEmptyValue):
+        (WTF::Seconds::MarkableTraits::emptyValue): MarkableTraits for Seconds. Seconds::nan() is used as an empty value.
+        * wtf/WallTime.h:
+        (WTF::WallTime::nan):
+        (WTF::WallTime::MarkableTraits::isEmptyValue):
+        (WTF::WallTime::MarkableTraits::emptyValue): MarkableTraits for WallTime. WallTime::nan() is used as an empty value.
+
 2018-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Add specialized template declarations of HashTraits and DefaultHash to detect misuse

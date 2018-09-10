@@ -1,3 +1,17 @@
+2018-09-10  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [WTF] Add Markable<T, Traits>
+        https://bugs.webkit.org/show_bug.cgi?id=189231
+
+        Reviewed by Sam Weinig.
+
+        Add tests for Markable.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/Markable.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2018-09-10  Simon Fraser  <simon.fraser@apple.com>
 
         Before tracking Document leaks, clear all caches

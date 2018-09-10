@@ -122,6 +122,7 @@ set(WTF_PUBLIC_HEADERS
     MachSendRight.h
     MainThread.h
     MallocPtr.h
+    Markable.h
     MathExtras.h
     MediaTime.h
     MemoryFootprint.h

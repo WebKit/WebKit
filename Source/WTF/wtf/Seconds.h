@@ -247,11 +247,25 @@ public:
         return true;
     }
 
+    struct MarkableTraits;
+
 private:
     double m_value { 0 };
 };
 
 WTF_EXPORT_PRIVATE void sleep(Seconds);
+
+struct Seconds::MarkableTraits {
+    static bool isEmptyValue(Seconds seconds)
+    {
+        return std::isnan(seconds.value());
+    }
+
+    static constexpr Seconds emptyValue()
+    {
+        return Seconds::nan();
+    }
+};
 
 inline namespace seconds_literals {
 

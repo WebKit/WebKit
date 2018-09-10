@@ -32,6 +32,7 @@
 #include "NetworkLoadMetrics.h"
 #include "ParsedContentRange.h"
 #include "URL.h"
+#include <wtf/Markable.h>
 #include <wtf/WallTime.h>
 
 namespace WebCore {
@@ -214,10 +215,10 @@ protected:
     mutable std::optional<CertificateInfo> m_certificateInfo;
 
 private:
-    mutable std::optional<Seconds> m_age;
-    mutable std::optional<WallTime> m_date;
-    mutable std::optional<WallTime> m_expires;
-    mutable std::optional<WallTime> m_lastModified;
+    mutable Markable<Seconds, Seconds::MarkableTraits> m_age;
+    mutable Markable<WallTime, WallTime::MarkableTraits> m_date;
+    mutable Markable<WallTime, WallTime::MarkableTraits> m_expires;
+    mutable Markable<WallTime, WallTime::MarkableTraits> m_lastModified;
     mutable ParsedContentRange m_contentRange;
     mutable CacheControlDirectives m_cacheControlDirectives;
 

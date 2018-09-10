@@ -1,3 +1,18 @@
+2018-09-10  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [WTF] Add Markable<T, Traits>
+        https://bugs.webkit.org/show_bug.cgi?id=189231
+
+        Reviewed by Sam Weinig.
+
+        Use Markable<Seconds> and Markable<WallTime> in ResourceResponseBase.
+        Since these fields are parsed results from http header fields, Seconds::nan() and WallTime::nan()
+        can be used as an empty value for these fields. Thus we can use Markable because it uses
+        these nan values as an empty values (they are configured by Seconds::MarkableTraits and WallTime::MarkableTraits).
+        This reduces the size of ResourceResponseBase from 448 to 416.
+
+        * platform/network/ResourceResponseBase.h:
+
 2018-09-07  Matt Rajca  <mrajca@apple.com>
 
         Touch Bar displays an active PIP button for audio elements (and it doesn't do anything)

@@ -123,6 +123,7 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Lock.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Logger.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MD5.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/Markable.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MathExtras.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MediaTime.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MetaAllocator.cpp

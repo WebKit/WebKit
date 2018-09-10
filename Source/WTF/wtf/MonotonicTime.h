@@ -165,6 +165,8 @@ public:
         return true;
     }
 
+    struct MarkableTraits;
+
 private:
     constexpr MonotonicTime(double rawValue)
         : m_value(rawValue)
@@ -172,6 +174,18 @@ private:
     }
 
     double m_value { 0 };
+};
+
+struct MonotonicTime::MarkableTraits {
+    static bool isEmptyValue(MonotonicTime time)
+    {
+        return std::isnan(time.m_value);
+    }
+
+    static constexpr MonotonicTime emptyValue()
+    {
+        return MonotonicTime::nan();
+    }
 };
 
 } // namespace WTF
