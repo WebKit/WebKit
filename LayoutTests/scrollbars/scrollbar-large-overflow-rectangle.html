@@ -21,11 +21,11 @@
             }
             
             function test() {
-              var height = document.body.scrollHeight;
+              var height = document.scrollingElement.scrollHeight;
               if (height == 3000)
                 document.getElementById("result").innerHTML = "PASS";
               else
-                document.getElementById("result").innerHTML = "<p style='color:red'>FAIL document.body.scrollHeight = " + height +"</p>";
+                document.getElementById("result").innerHTML = "<p style='color:red'>FAIL document.scrollingElement.scrollHeight = " + height +"</p>";
               }
         </script> 
     </head>

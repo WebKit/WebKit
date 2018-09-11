@@ -16,14 +16,14 @@ function runTest()
 
   jsTestIsAsync = true;
 
-  alert("Scroll position " + document.body.scrollTop);
+  alert("Scroll position " + document.scrollingElement.scrollTop);
   center = getCenterFor(document.getElementById("sp"));
   eventSender.mouseMoveTo(center.x, center.y);
   eventSender.mouseDown();
   eventSender.mouseUp();
   eventSender.keyDown("downArrow");
   intervalID = setInterval(function() {
-    if (document.body.scrollTop > 0) {
+    if (document.scrollingElement.scrollTop > 0) {
       testPassed("Scroll position is more than 0");
       done();
     }

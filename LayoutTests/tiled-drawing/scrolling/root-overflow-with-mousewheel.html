@@ -10,7 +10,7 @@ html {
 <script>
 function checkForScroll()
 {
-    var pageScrollPositionAfter = document.body.scrollTop;
+    var pageScrollPositionAfter = document.scrollingElement.scrollTop;
     var finishLog = document.getElementById("finishLog");
     if (pageScrollPositionAfter > 50)
         finishLog.innerHTML = "Success!";

@@ -28,7 +28,7 @@
 <script>
 touchstartEventCount = 0;
 
-document.body.scrollTop = 0;
+document.scrollingElement.scrollTop = 0;
 document.body.addEventListener("touchstart", () => {
     document.body.style.backgroundColor = (++touchstartEventCount == 2) ? "green" : "red";
     touches.textContent = `${touchstartEventCount}`;
@@ -52,11 +52,11 @@ if (window.testRunner && testRunner.runUIScript) {
     testRunner.dumpAsText();
     jsTestIsAsync = true;
     testRunner.runUIScript(getSwipeUIScript(100, 0.75 * innerHeight, 100, 0.25 * innerHeight, 0.1), () => {
-        shouldBecomeDifferent("document.body.scrollTop", "0", () => {
+        shouldBecomeDifferent("document.scrollingElement.scrollTop", "0", () => {
             expectTouchCountToBe(1);
-            UIHelper.tapAt(100, document.body.scrollTop + 0.75 * innerHeight).then(() => {
+            UIHelper.tapAt(100, document.scrollingElement.scrollTop + 0.75 * innerHeight).then(() => {
                 expectTouchCountToBe(1);
-                UIHelper.tapAt(100, document.body.scrollTop + 0.25 * innerHeight).then(() => {
+                UIHelper.tapAt(100, document.scrollingElement.scrollTop + 0.25 * innerHeight).then(() => {
                     expectTouchCountToBe(2);
                     finishJSTest();
                 });

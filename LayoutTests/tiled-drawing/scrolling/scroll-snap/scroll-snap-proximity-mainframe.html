@@ -46,9 +46,9 @@
                 eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
                 eventSender.callAfterScrollingCompletes(() => {
                     let areaHeight = document.querySelector(".area").clientHeight;
-                    write(`- Did the scrolling snap to the top? ${document.body.scrollTop == 0 ? "YES" : "NO"}`);
-                    write(`- Did scrolling snap to the second box? ${document.body.scrollTop == areaHeight ? "YES" : "NO"}`);
-                    document.body.scrollTop = 0;
+                    write(`- Did the scrolling snap to the top? ${document.scrollingElement.scrollTop == 0 ? "YES" : "NO"}`);
+                    write(`- Did scrolling snap to the second box? ${document.scrollingElement.scrollTop == areaHeight ? "YES" : "NO"}`);
+                    document.scrollingElement.scrollTop = 0;
                     setTimeout(resolve, 0);
                 });
             });

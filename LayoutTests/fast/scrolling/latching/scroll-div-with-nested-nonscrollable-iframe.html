@@ -37,7 +37,7 @@ function finishTest()
 
 function checkForScroll()
 {
-    var pageScrollPositionAfter = document.body.scrollTop;
+    var pageScrollPositionAfter = document.scrollingElement.scrollTop;
     var divScrollPositionAfter = divTarget.scrollTop;
 
     if (divScrollPositionBefore != divScrollPositionAfter)
@@ -55,7 +55,7 @@ function checkForScroll()
 
 function scrollTest()
 {
-    pageScrollPositionBefore = document.body.scrollTop;
+    pageScrollPositionBefore = document.scrollingElement.scrollTop;
 
     divTarget = document.getElementById('scrollable_div');
 

@@ -1,7 +1,7 @@
 RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForVideoRateChange,OverrideUserGestureRequirementForMainContent"))
 EVENT(canplaythrough)
 EVENT(playing)
-RUN(document.body.scrollTop = document.body.clientHeight)
+RUN(document.scrollingElement.scrollTop = document.body.clientHeight)
 EXPECTED (video.paused == 'false') OK
 END OF TEST
 

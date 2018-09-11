@@ -43,7 +43,7 @@ var continueCount = 5;
 function checkForScroll()
 {
     // The div should not have scrolled at all.
-    var pageScrollPositionAfter = document.body.scrollTop;
+    var pageScrollPositionAfter = document.scrollingElement.scrollTop;
     var divScrollPositionAfter = divTarget.scrollTop;
 
     if (pageScrollPositionBefore != pageScrollPositionAfter)
@@ -61,7 +61,7 @@ function checkForScroll()
 
 function scrollTest()
 {
-    pageScrollPositionBefore = document.body.scrollTop;
+    pageScrollPositionBefore = document.scrollingElement.scrollTop;
 
     divTarget = document.getElementById('target');
     divTarget.scrollTop = divTarget.scrollHeight - divTarget.clientHeight - 100;

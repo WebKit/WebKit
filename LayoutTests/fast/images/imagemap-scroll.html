@@ -14,28 +14,28 @@ function runTest()
         testRunner.waitUntilDone();
     }
 
-    if (document.body.scrollTop == 0)
+    if (document.scrollingElement.scrollTop == 0)
         log("PASS: Document is starting scrolled to top.");
     else
-        log("FAIL: Document is starting scrolled to " + document.body.scrollTop + ".");
+        log("FAIL: Document is starting scrolled to " + document.scrollingElement.scrollTop + ".");
     document.getElementById("area").focus();
 
     setTimeout(() => {
-        if (document.body.scrollTop > 4000 && document.body.scrollTop < 6000)
+        if (document.scrollingElement.scrollTop > 4000 && document.scrollingElement.scrollTop < 6000)
             log("PASS: Focusing area element caused the image to scroll into view.");
         else
-            log("FAIL: Document is scrolled to " + document.body.scrollTop + " after focusing area element.");
-        document.body.scrollTop = 0;
-        if (document.body.scrollTop == 0)
+            log("FAIL: Document is scrolled to " + document.scrollingElement.scrollTop + " after focusing area element.");
+        document.scrollingElement.scrollTop = 0;
+        if (document.scrollingElement.scrollTop == 0)
             log("PASS: Document is scrolled to top once again.");
         else
-            log("FAIL: Document should be scrolled to top but is scrolled to " + document.body.scrollTop + ".");
+            log("FAIL: Document should be scrolled to top but is scrolled to " + document.scrollingElement.scrollTop + ".");
         document.getElementById("area").blur();
-        if (document.body.scrollTop == 0)
+        if (document.scrollingElement.scrollTop == 0)
             log("PASS: Document is still scrolled to top after removing focus from area element.");
         else
-            log("FAIL: Document is scrolled to " + document.body.scrollTop + " after removing focus from area element.");
-        document.body.scrollTop = 0;
+            log("FAIL: Document is scrolled to " + document.scrollingElement.scrollTop + " after removing focus from area element.");
+        document.scrollingElement.scrollTop = 0;
         document.body.removeChild(document.getElementById("test"));
         log("TEST COMPLETE");
 

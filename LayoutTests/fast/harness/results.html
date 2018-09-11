@@ -1996,7 +1996,7 @@ class TestNavigator
 
         let rowRect = targetLink.getBoundingClientRect();
         // rowRect is in client coords (i.e. relative to viewport), so we just want to add its top to the current scroll position.
-        document.body.scrollTop += rowRect.top;
+        document.scrollingElement.scrollTop += rowRect.top;
     }
 
     onlyShowUnexpectedFailuresChanged()

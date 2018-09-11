@@ -43,7 +43,7 @@ var continueCount = 5;
 function checkForScroll() {
 
     // The div should not have scrolled at all.
-    var pageScrollPositionAfter = document.body.scrollTop;
+    var pageScrollPositionAfter = document.scrollingElement.scrollTop;
     var divScrollPositionAfter = divTarget.scrollTop;
 
     //debug("Page before: " + pageScrollPositionBefore + ", div before: " + divScrollPositionBefore);
@@ -59,7 +59,7 @@ function checkForScroll() {
 
 function scrollTest() {
     // See where our IFrame lives:
-    pageScrollPositionBefore = document.body.scrollTop;
+    pageScrollPositionBefore = document.scrollingElement.scrollTop;
 
     divTarget = document.getElementById('target');
 

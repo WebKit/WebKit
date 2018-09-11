@@ -104,7 +104,7 @@
         if (e.pageX) {
           x = e.pageX;
         } else if (e.clientX) {
-          x = e.clientX + document.body.scrollLeft;
+          x = e.clientX + document.scrollingElement.scrollLeft;
         } else {
           x = 0;
         }
@@ -117,7 +117,7 @@
         if (e.pageY) {
           y = e.pageY;
         } else if (e.clientY) {
-          y = e.clientY + document.body.scrollTop;
+          y = e.clientY + document.scrollingElement.scrollTop;
         } else {
           y = 0;
         }

@@ -12,8 +12,8 @@ onscroll = function(event)
     eventCount++;
     if (eventCount == 1) {
         debug('Scroll event bubbles: ' + event.bubbles);
-        var scrollX = document.body.scrollLeft;
-        var scrollY = document.body.scrollTop;
+        var scrollX = document.scrollingElement.scrollLeft;
+        var scrollY = document.scrollingElement.scrollTop;
         testPassed('Scroll position: (' + scrollX + ', ' + scrollY + ')');
         // Don't call notifyDone straight away, in case there's another scroll event coming.
         doneTimeout = setTimeout(finishJSTest, 100);

@@ -14,8 +14,8 @@
         function checkForScroll() {
 
             // The iframe should have scrolled, but not the main page.
-            var pageScrollPositionAfter = document.body.scrollTop;
-            var iframeScrollPositionAfter = window.frames['target'].document.body.scrollTop;
+            var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+            var iframeScrollPositionAfter = window.frames['target'].document.scrollingElement.scrollTop;
 
             if (iframeScrollPositionBefore != iframeScrollPositionAfter)
                 testPassed("iframe received wheel events.");
@@ -27,7 +27,7 @@
 
         function scrollTest() {
             // See where our iframe lives:
-            pageScrollPositionBefore = document.body.scrollTop;
+            pageScrollPositionBefore = document.scrollingElement.scrollTop;
 
             iframeTarget = document.getElementById('target');
 

@@ -25,15 +25,15 @@ var continueCount = 5;
 
 function onPageScroll()
 {
-    if (document.body.scrollTop >= 70)
+    if (document.scrollingElement.scrollTop >= 70)
         checkForScroll();
 }
 
 function checkForScroll()
 {
     // The IFrame should not have scrolled at all.
-    var pageScrollPositionAfter = document.body.scrollTop;
-    var iFrameScrollPositionAfter = window.frames['target'].document.body.scrollTop;
+    var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+    var iFrameScrollPositionAfter = window.frames['target'].document.scrollingElement.scrollTop;
 
     if (iFrameScrollPositionBefore != iFrameScrollPositionAfter)
         testFailed("IFrame consumed wheel events.");
@@ -50,8 +50,8 @@ function checkForScroll()
 
 function scrollTest()
 {
-    pageScrollPositionBefore = document.body.scrollTop;
-    iFrameScrollPositionBefore = window.frames['target'].document.body.scrollTop;
+    pageScrollPositionBefore = document.scrollingElement.scrollTop;
+    iFrameScrollPositionBefore = window.frames['target'].document.scrollingElement.scrollTop;
 
     iframeTarget = document.getElementById('target');
 

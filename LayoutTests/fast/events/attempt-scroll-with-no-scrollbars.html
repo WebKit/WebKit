@@ -25,10 +25,10 @@ function doNewWindow()
 
 function printResult()
 {
-    if (theWinref.document.body.scrollTop == 0)
+    if (theWinref.document.scrollingElement.scrollTop == 0)
         document.getElementById("console").innerHTML = "PASSED";
     else
-        document.getElementById("console").innerHTML = "FAILED - window should not have been scrolled but was scrolled to " + theWinref.document.body.scrollTop;
+        document.getElementById("console").innerHTML = "FAILED - window should not have been scrolled but was scrolled to " + theWinref.document.scrollingElement.scrollTop;
     theWinref.close();
     endTest();
 }

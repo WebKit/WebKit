@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function checkForScroll()
 {
-    var pageScrollPositionAfterGesture = document.body.scrollTop;
+    var pageScrollPositionAfterGesture = document.scrollingElement.scrollTop;
 
     // The page should not have scrolled
     if (pageScrollPositionBeforeGesture != pageScrollPositionAfterGesture)
@@ -120,7 +120,7 @@ function checkForScroll()
 
 function scrollTest()
 {
-    pageScrollPositionBeforeGesture = document.body.scrollTop;
+    pageScrollPositionBeforeGesture = document.scrollingElement.scrollTop;
 
     divElement = document.getElementById('objectBack');
 

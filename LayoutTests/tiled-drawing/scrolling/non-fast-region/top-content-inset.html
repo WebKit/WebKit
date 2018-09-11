@@ -24,7 +24,7 @@
         {
             window.setTimeout(function() {
                 // Scroll to test the mapping from document to view coords.
-                document.body.scrollTop = 195;
+                document.scrollingElement.scrollTop = 195;
                 dumpRegion();
                 if (window.testRunner)
                     testRunner.notifyDone();

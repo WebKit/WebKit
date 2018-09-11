@@ -10,8 +10,8 @@ function runTest()
     }
     shouldBe('document.body.clientWidth', 'window.innerWidth');
     shouldBe('document.body.clientHeight', 'window.innerHeight');
-    shouldBe('document.body.scrollWidth', 'window.innerWidth');
-    shouldBe('document.body.scrollHeight', 'window.innerHeight');
+    shouldBe('document.scrollingElement.scrollWidth', 'window.innerWidth');
+    shouldBe('document.scrollingElement.scrollHeight', 'window.innerHeight');
     shouldBe('window.innerWidth', 'window.outerWidth');
     shouldBe('window.innerHeight', 'window.outerHeight');
     if (window.testRunner)

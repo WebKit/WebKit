@@ -231,8 +231,8 @@ shouldBe("nonNumericPolicy('document.elementFromPoint(0, x)')", "'mixed'");
 
 // Element
 
-shouldBe("nonNumericPolicy('document.body.scrollLeft = x')", "'any type allowed'");
-shouldBe("nonNumericPolicy('document.body.scrollTop = x')", "'any type allowed'");
+shouldBe("nonNumericPolicy('document.scrollingElement.scrollLeft = x')", "'any type allowed'");
+shouldBe("nonNumericPolicy('document.scrollingElement.scrollTop = x')", "'any type allowed'");
 
 // History
 

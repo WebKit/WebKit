@@ -43,7 +43,7 @@ var continueCount = 5;
 function checkForScroll() {
 
     // The page should not have scrolled at all.
-    var pageScrollPositionAfter = document.body.scrollTop;
+    var pageScrollPositionAfter = document.scrollingElement.scrollTop;
     var selectScrollPositionAfter = selectTarget.scrollTop;
 
     //debug("Page before: " + pageScrollPositionBefore + ", select before: " + selectScrollPositionBefore);
@@ -59,7 +59,7 @@ function checkForScroll() {
 
 function scrollTest() {
     // See where our IFrame lives:
-    pageScrollPositionBefore = document.body.scrollTop;
+    pageScrollPositionBefore = document.scrollingElement.scrollTop;
 
     selectTarget = document.getElementById('target');
     selectTarget.scrollTop = selectTarget.scrollHeight - selectTarget.clientHeight - 100;

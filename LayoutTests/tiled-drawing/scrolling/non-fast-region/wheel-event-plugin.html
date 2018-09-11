@@ -32,7 +32,7 @@
                 internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
 
             // Scroll to test the mapping from document to view coords.
-            document.body.scrollTop = 197;
+            document.scrollingElement.scrollTop = 197;
             dumpRegion();
             if (window.testRunner)
                 testRunner.notifyDone();

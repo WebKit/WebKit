@@ -27,7 +27,7 @@ function test()
     }
 
     window.setTimeout(function() {
-        document.body.scrollTop = 2000;
+        document.scrollingElement.scrollTop = 2000;
         if (window.testRunner) {
             testRunner.displayAndTrackRepaints();
             testRunner.notifyDone();

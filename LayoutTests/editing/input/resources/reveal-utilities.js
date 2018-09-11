@@ -73,9 +73,9 @@ function performJumpAtTheEdgeTest(useCtrlKeyModifier)
         var previousScrollTop = 0, currentScrollTop = 0;
         var jumpDetected = false;
         for (var i = 0; i < 120; ++i) {
-            previousScrollTop = document.body.scrollTop;
+            previousScrollTop = document.scrollingElement.scrollTop;
             eventSender.keyDown("\r", useCtrlKeyModifier ? ["ctrlKey"] : []);
-            currentScrollTop = document.body.scrollTop;
+            currentScrollTop = document.scrollingElement.scrollTop;
             // Smooth scrolls are allowed.
             if (Math.abs(previousScrollTop - currentScrollTop) > 24) {
                 jumpDetected = true;

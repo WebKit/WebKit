@@ -83,7 +83,7 @@ function runTest()
     if (window.testRunner) {
         let clientRect = square.getBoundingClientRect();
         testRunner.runUIScript(getUIScript(clientRect.left + 50, clientRect.top + 200, clientRect.left + 50, clientRect.top + 10), () => {
-            shouldBe("document.body.scrollTop", "0");
+            shouldBe("document.scrollingElement.scrollTop", "0");
             finishJSTest();
         });
     }

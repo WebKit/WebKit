@@ -12,8 +12,8 @@ if (window.testRunner) {
 function run()
 {
     var frameWindow = document.getElementById("frame").contentWindow;
-    frameWindow.postMessage("shouldBe('document.body.scrollWidth', 400)", "*");
-    frameWindow.postMessage("shouldBe('document.body.scrollHeight', 200)", "*");
+    frameWindow.postMessage("shouldBe('document.scrollingElement.scrollWidth', 400)", "*");
+    frameWindow.postMessage("shouldBe('document.scrollingElement.scrollHeight', 200)", "*");
     frameWindow.postMessage("log('DONE'); if (window.testRunner) testRunner.notifyDone();", "*");
 }
 </script>

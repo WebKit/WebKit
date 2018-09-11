@@ -22,7 +22,7 @@
     }
 
     function playing() {
-        run('document.body.scrollTop = document.body.clientHeight');
+        run('document.scrollingElement.scrollTop = document.body.clientHeight');
         waitForEventAndFail('pause');
         setTimeout(afterPlaying, 100);
     }

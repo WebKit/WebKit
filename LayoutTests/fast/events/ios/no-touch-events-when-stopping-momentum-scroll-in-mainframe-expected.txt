@@ -1,4 +1,4 @@
-PASS document.body.scrollTop became different from 0
+PASS document.scrollingElement.scrollTop became different from 0
 PASS document.getElementById('touches').textContent is "1"
 PASS document.getElementById('touches').textContent is "1"
 PASS document.getElementById('touches').textContent is "2"

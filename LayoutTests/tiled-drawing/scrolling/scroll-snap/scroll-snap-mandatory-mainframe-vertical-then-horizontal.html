@@ -40,10 +40,10 @@
             eventSender.mouseScrollByWithWheelAndMomentumPhases(-4, 0, 'none', 'continue');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
             eventSender.callAfterScrollingCompletes(() => {
-                if (document.body.scrollTop == 0)
+                if (document.scrollingElement.scrollTop == 0)
                     testPassed("scroll offset snapped back to top.");
                 else
-                    testFailed(`did not honor snap points (expected 0, observed ${document.body.scrollTop}).`);
+                    testFailed(`did not honor snap points (expected 0, observed ${document.scrollingElement.scrollTop}).`);
 
                 finishJSTest();
             });

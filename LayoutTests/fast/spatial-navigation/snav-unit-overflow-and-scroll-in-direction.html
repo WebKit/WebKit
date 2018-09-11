@@ -65,7 +65,7 @@
 
     function step2()
     {
-      shouldBeTrue(String(document.body.scrollTop != 0));
+      shouldBeTrue(String(document.scrollingElement.scrollTop != 0));
 
       // Then it scrolls down to the end of the page ...
       if (window.eventSender)

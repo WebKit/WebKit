@@ -54,7 +54,7 @@
             shouldBe("initialSelectionRects[0].top", "0");
             shouldBe("initialSelectionRects[0].width", "309");
             shouldBe("initialSelectionRects[0].height", "114");
-            document.body.scrollTop += 5000;
+            document.scrollingElement.scrollTop += 5000;
             return UIHelper.getUISelectionRects();
         })
         .then((rects) => {

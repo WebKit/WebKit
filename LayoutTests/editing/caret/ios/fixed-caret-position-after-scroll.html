@@ -45,7 +45,7 @@ jsTestIsAsync = true;
         shouldBe("initialCaretRect.top", "21");
         shouldBe("initialCaretRect.width", "3");
         shouldBe("initialCaretRect.height", "15");
-        document.body.scrollTop += 5000;
+        document.scrollingElement.scrollTop += 5000;
         return UIHelper.getUICaretRect();
     })
     .then((rect) => {

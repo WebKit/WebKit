@@ -15,8 +15,8 @@
           // than device pixels.
           window.scrollTo(100,100);
 
-          shouldBe("window.document.body.scrollTop", "100");
-          shouldBe("window.document.body.scrollLeft", "100");
+          shouldBe("window.document.scrollingElement.scrollTop", "100");
+          shouldBe("window.document.scrollingElement.scrollLeft", "100");
           shouldBe("window.scrollX", "100");
           shouldBe("window.scrollY", "100");
       }

@@ -18,12 +18,12 @@
                 ta.scrollIntoView();
 
                 originalPageYOffset = pageYOffset;
-                originalBodyScrollTop = document.body.scrollTop;
+                originalBodyScrollTop = document.scrollingElement.scrollTop;
 
                 if (window.eventSender) {
                     var taClientRect = ta.getBoundingClientRect();
                     var verticalOffset = taClientRect.top + (taClientRect.height / 2);
-                    var h = ta.offsetTop - document.body.scrollTop + 10;
+                    var h = ta.offsetTop - document.scrollingElement.scrollTop + 10;
                     eventSender.dragMode = false;
                     eventSender.mouseMoveTo(20, verticalOffset);
                     eventSender.mouseDown();
@@ -40,9 +40,9 @@
                 shouldBeTrue('document.getSelection().toString().length > 1');
                 shouldBe('pageXOffset', '0');
                 shouldBe('pageYOffset', 'originalPageYOffset');
-                shouldBe('document.body.scrollLeft', '0');
-                shouldBe('document.body.scrollTop', 'originalBodyScrollTop');
-                shouldBe('pageYOffset', 'document.body.scrollTop');
+                shouldBe('document.scrollingElement.scrollLeft', '0');
+                shouldBe('document.scrollingElement.scrollTop', 'originalBodyScrollTop');
+                shouldBe('pageYOffset', 'document.scrollingElement.scrollTop');
                 shouldBeTrue('pageYOffset > 2000');
 
                 finishJSTest();

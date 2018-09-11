@@ -23,7 +23,7 @@ testoffset("absolute"/* in iframe */, function($, iframe) {
 	var forceScroll = jQuery('<div>', { width: 2000, height: 2000 }).appendTo('body');
 	window.scrollTo(200, 200);
 
-	if ( document.documentElement.scrollTop || document.body.scrollTop ) {
+	if ( document.documentElement.scrollTop || document.scrollingElement.scrollTop ) {
 		supportsScroll = true;
 	}
 

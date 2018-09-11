@@ -1,1 +1,128 @@
+2018-09-11  Frederic Wang  <fwang@igalia.com>
+
+        Modify more tests to use document.scrollingElement to access viewport scroll properties
+        https://bugs.webkit.org/show_bug.cgi?id=189495
+
+        After r235806, it is wrong to use document.body to access scroll properties of the viewport
+        in standard mode. New tests added since r227781 are modified to use
+        document.scrollingElement instead and avoid flaky behavior. For consistency, we do the same
+        for old tests in quirks mode. Note that WPT tests as well as the following tests using
+        document.body on purpose are not modified:
+        - fast/dom/Element/*
+        - events/scroll-in-scaled-page-with-overflow-hidden.html
+        - compositing/ios/overflow-scroll-update-overlap.html
+        - body-stuck-with-dirty-bit-with-columns.html
+
+        Reviewed by Antonio Gomes.
+
+        * compositing/rtl/rtl-absolute-overflow-scrolled.html:
+        * compositing/rtl/rtl-fixed-overflow-scrolled.html:
+        * editing/caret/ios/absolute-caret-position-after-scroll.html:
+        * editing/caret/ios/fixed-caret-position-after-scroll.html:
+        * editing/execCommand/delete-no-scroll.html:
+        * editing/input/resources/reveal-utilities.js:
+        (performJumpAtTheEdgeTest):
+        * editing/pasteboard/copy-crash.html:
+        * editing/selection/ios/absolute-selection-after-scroll.html:
+        * editing/selection/ios/fixed-selection-after-scroll.html:
+        * fast/autoresize/autoresize-with-iframe-expected.txt:
+        * fast/autoresize/autoresize-with-iframe.html:
+        * fast/autoresize/basic-expected.txt:
+        * fast/autoresize/basic.html:
+        * fast/autoresize/turn-off-autoresize-expected.txt:
+        * fast/autoresize/turn-off-autoresize.html:
+        * fast/css/element-scrollByLines-scrollByPages-obsolete.html:
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+        * fast/dom/non-numeric-values-numeric-parameters.html:
+        * fast/dom/resources/check-scroll-position-onload.html:
+        * fast/dom/scroll-position-for-new-loads.html:
+        * fast/events/attempt-scroll-with-no-scrollbars.html:
+        * fast/events/fire-scroll-event.html:
+        * fast/events/frame-scroll-fake-mouse-move.html:
+        * fast/events/ios/no-touch-events-when-stopping-momentum-scroll-in-mainframe-expected.txt:
+        * fast/events/ios/no-touch-events-when-stopping-momentum-scroll-in-mainframe.html:
+        * fast/events/ios/touch-events-during-scroll-deceleration-in-overflow.html:
+        * fast/events/mouse-cursor-image-set.html:
+        * fast/events/mouse-cursor-multiframecur.html:
+        * fast/events/mouse-cursor.html:
+        * fast/events/no-scroll-on-input-text-selection-expected.txt:
+        * fast/events/no-scroll-on-input-text-selection.html:
+        * fast/events/platform-wheelevent-paging-x-in-non-scrolling-page-expected.txt:
+        * fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html:
+        * fast/events/platform-wheelevent-paging-x-in-scrolling-page-expected.txt:
+        * fast/events/platform-wheelevent-paging-x-in-scrolling-page.html:
+        * fast/events/platform-wheelevent-paging-xy-in-scrolling-page-expected.txt:
+        * fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html:
+        * fast/events/platform-wheelevent-paging-y-in-non-scrolling-page-expected.txt:
+        * fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html:
+        * fast/events/platform-wheelevent-paging-y-in-scrolling-page-expected.txt:
+        * fast/events/platform-wheelevent-paging-y-in-scrolling-page.html:
+        * fast/events/scale-and-scroll-body-expected.txt:
+        * fast/events/scale-and-scroll-body.html:
+        * fast/events/scale-and-scroll-window-expected.txt:
+        * fast/events/scale-and-scroll-window.html:
+        * fast/events/scroll-after-click-on-tab-index.html:
+        * fast/events/scroll-to-anchor-in-overflow-hidden.html:
+        * fast/events/touch/ios/touchmove-cancelable-after-touchstart-expected.txt:
+        * fast/events/touch/ios/touchmove-cancelable-after-touchstart.html:
+        * fast/forms/autofocus-opera-003.html:
+        * fast/forms/input-readonly-autoscroll.html:
+        * fast/forms/resources/common.js:
+        (getAbsoluteRect):
+        * fast/frames/iframe-scroll-page-up-down.html:
+        * fast/frames/transparent-scrollbar.html:
+        * fast/harness/results.html:
+        * fast/html/empty-fragment-id-goto-top-expected.txt:
+        * fast/html/empty-fragment-id-goto-top.html:
+        * fast/images/imagemap-scroll.html:
+        * fast/loader/scroll-position-restored-on-back-non-cached.html:
+        * fast/loader/scroll-position-restored-on-back.html:
+        * fast/multicol/body-stuck-with-dirty-bit-with-columns.html:
+        * fast/repaint/resources/iframe-scroll-repaint-iframe.html:
+        * fast/scrolling/ios/iframe-scroll-into-view.html:
+        * fast/scrolling/latching/scroll-div-latched-div.html:
+        * fast/scrolling/latching/scroll-div-latched-mainframe.html:
+        * fast/scrolling/latching/scroll-div-with-nested-nonscrollable-iframe.html:
+        * fast/scrolling/latching/scroll-iframe-fragment.html:
+        * fast/scrolling/latching/scroll-iframe-latched-iframe.html:
+        * fast/scrolling/latching/scroll-iframe-latched-mainframe.html:
+        * fast/scrolling/latching/scroll-iframe-webkit1-latching-bug.html:
+        * fast/scrolling/latching/scroll-select-bottom-test.html:
+        * fast/scrolling/latching/scroll-select-latched-mainframe.html:
+        * fast/scrolling/latching/scroll-select-latched-select.html:
+        * fast/scrolling/rtl-point-in-iframe.html:
+        * fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html:
+        * fast/table/assert-when-visual-overflow-is-cleared.html:
+        * fast/transforms/selection-bounds-in-transformed-view.html:
+        * http/tests/navigation/anchor-frames-cross-origin-expected.txt:
+        * http/tests/navigation/resources/frame-with-anchor-cross-origin.html:
+        * jquery/resources/test/unit/offset.js:
+        * legacy-animation-engine/fast/harness/results.html:
+        * media/video-controls-to-not-scroll-page-on-load.html:
+        * media/video-main-content-allow-then-scroll-expected.txt:
+        * media/video-main-content-allow-then-scroll.html:
+        * scrollbars/scrollbar-large-overflow-rectangle.html:
+        * tiled-drawing/scrolling/fast-scroll-div-latched-div-with-handler.html:
+        * tiled-drawing/scrolling/fast-scroll-div-latched-div.html:
+        * tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-with-handler.html:
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-iframe-with-handler.html:
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-iframe.html:
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-with-handler.html:
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-select.html:
+        * tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-with-handler.html:
+        * tiled-drawing/scrolling/fast-scroll-select-latched-mainframe.html:
+        * tiled-drawing/scrolling/fast-scroll-select-latched-select-with-handler.html:
+        * tiled-drawing/scrolling/fast-scroll-select-latched-select.html:
+        * tiled-drawing/scrolling/latched-to-deleted-node.html:
+        * tiled-drawing/scrolling/non-fast-region/top-content-inset-header.html:
+        * tiled-drawing/scrolling/non-fast-region/top-content-inset.html:
+        * tiled-drawing/scrolling/non-fast-region/wheel-event-plugin.html:
+        * tiled-drawing/scrolling/root-overflow-with-mousewheel.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-vertical.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-then-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-mainframe.html:
+
 == Rolled over to ChangeLog-2018-09-11 ==

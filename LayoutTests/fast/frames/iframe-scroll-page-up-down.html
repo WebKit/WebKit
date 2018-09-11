@@ -14,12 +14,12 @@ function test()
     window[0][0].scrollTo(0,0);
     window[0].scrollTo(0,0);
     window.scrollTo(0, document.body.offsetHeight);
-    var oldScrollTop = document.body.scrollTop;
+    var oldScrollTop = document.scrollingElement.scrollTop;
     var focus1 = window[0][0].document.getElementById("focus1");
     focus1.focus();    
     eventSender.keyDown("pageUp");
     var test1Passed = false;
-    if (document.body.scrollTop < oldScrollTop)
+    if (document.scrollingElement.scrollTop < oldScrollTop)
         test1Passed = true;
 
     // 2nd test: iframes scrolled to bottom, top level document scrolled to top
@@ -27,12 +27,12 @@ function test()
     window[0][0].scrollTo(0,window[0][0].document.body.offsetHeight);
     window[0].scrollTo(0,window[0].document.body.offsetHeight);
     window.scrollTo(0, 0);
-    oldScrollTop = document.body.scrollTop
+    oldScrollTop = document.scrollingElement.scrollTop
     var focus2 = window[0][0].document.getElementById("focus2");
     focus2.focus();
     eventSender.keyDown("pageDown");
     var test2Passed = false;
-    if (document.body.scrollTop > oldScrollTop)
+    if (document.scrollingElement.scrollTop > oldScrollTop)
         test2Passed = true;
 
     printResults(test1Passed, test2Passed);

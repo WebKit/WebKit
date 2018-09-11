@@ -16,7 +16,7 @@
             testRunner.dumpAsText();
 
         if (document.activeElement == document.getElementsByTagName("input")[0] &&
-            document.body.scrollTop != 0)
+            document.scrollingElement.scrollTop != 0)
             log("SUCCESS");
         else
             log("FAILURE");

@@ -24,7 +24,7 @@
     window.scrollTo(0, 1000);
     document.execCommand("Delete");
 
-    var result = (document.body.scrollTop == 1000) ? "SUCCESS" : "FAILURE";
+    var result = (document.scrollingElement.scrollTop == 1000) ? "SUCCESS" : "FAILURE";
     if (window.testRunner) {
       testRunner.notifyDone();
       document.write(result);

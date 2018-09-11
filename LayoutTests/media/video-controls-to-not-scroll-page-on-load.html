@@ -20,7 +20,7 @@ var result = document.getElementById("result");
 result.innerHTML = "";
 
 function testScroll () {
-	result.innerHTML += (document.body.scrollTop <= 0)? `PASS`: `FAILED: ${document.body.scrollTop} > 0, the page scrolled automatically.`;
+	result.innerHTML += (document.scrollingElement.scrollTop <= 0)? `PASS`: `FAILED: ${document.scrollingElement.scrollTop} > 0, the page scrolled automatically.`;
 
 	testRunner.notifyDone();
 }

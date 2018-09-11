@@ -35,7 +35,7 @@
                eventSender.mouseUp();
            }
 
-           if (document.body.scrollTop == 0)
+           if (document.scrollingElement.scrollTop == 0)
                log("Automated test : FAILED  : no scroll has occured ");
            else
                log("Automated test : PASSED");

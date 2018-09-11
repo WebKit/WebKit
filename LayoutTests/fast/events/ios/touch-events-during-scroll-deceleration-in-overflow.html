@@ -48,7 +48,7 @@
 containerTouchstartEventCount = 0;
 documentTouchstartEventCount = 0;
 container.scrollTop = 0;
-document.body.scrollTop = 0;
+document.scrollingElement.scrollTop = 0;
 container.addEventListener("touchstart", () => {
     container.style.backgroundColor = (++containerTouchstartEventCount == 1) ? "green" : "red";
     containerTouches.textContent = `${containerTouchstartEventCount}`;

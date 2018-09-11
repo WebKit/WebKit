@@ -17,7 +17,7 @@ function navigate()
     }
 
     setTimeout(function () { 
-        var scrollPosition = document.body.scrollTop;
+        var scrollPosition = document.scrollingElement.scrollTop;
         var result = document.getElementById("result");
         if (scrollPosition == 100)
             result.innerHTML = "Success! The scroll position was restored after navigation."

@@ -13,7 +13,7 @@
                 var tf = document.getElementById('tf');
                 if (window.eventSender) {
                     tf.scrollIntoView();
-                    var h = tf.offsetTop - document.body.scrollTop + 10;
+                    var h = tf.offsetTop - document.scrollingElement.scrollTop + 10;
                     eventSender.dragMode = false;
                     eventSender.mouseMoveTo(20, h);
                     eventSender.mouseDown();

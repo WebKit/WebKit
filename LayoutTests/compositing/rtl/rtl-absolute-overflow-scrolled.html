@@ -44,7 +44,7 @@
         }
 
         // The far left coordinate of the document varies by window width.
-        var offset = document.body.clientWidth - document.body.scrollWidth + 1;
+        var offset = document.body.clientWidth - document.scrollingElement.scrollWidth + 1;
         document.getElementById('layer').style.left = offset + 50;
         document.getElementById('indicator').style.left = offset + 50;
 

@@ -93,10 +93,10 @@ function getValidationMessageBubbleNode(host) {
 
 function getAbsoluteRect(element) {
     var rect = element.getBoundingClientRect();
-    rect.top += document.body.scrollTop;
-    rect.bottom += document.body.scrollTop;
-    rect.left += document.body.scrollLeft;
-    rect.right += document.body.scrollLeft;
+    rect.top += document.scrollingElement.scrollTop;
+    rect.bottom += document.scrollingElement.scrollTop;
+    rect.left += document.scrollingElement.scrollLeft;
+    rect.right += document.scrollingElement.scrollLeft;
     return rect;
 }
 
