@@ -1,3 +1,112 @@
+2018-09-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Polish AuthenticatorManager and rename it to AuthenticatorCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=189277
+        <rdar://problem/44115936>
+
+        Reviewed by Chris Dumez.
+
+        This patch aims to polish AuthenticatorManager such that:
+        1) It is no longer a singleton. Instead, it will live with Page. It was a singleton simply because static
+        PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable() have to access it. However, this request
+        can be fulfilled by adding an attribute [CallWith=Document] to the IDL defination. Therefore, there is no
+        such need. Also, the singleton is illy implemented as it owns a single IPC proxy to UI Process which means
+        different web pages will talk to the same web page proxy. Anyway, making it live with Page should fix everything.
+        2) Since we are now planning to support external authenticators, the manager of all authenticators will then
+        have to live in UI Process which makes this AuthenticatorManager obsolete. Instead, rename it to AuthenticatorCoordinator.
+        3) Rename CredentialsMessenger to AuthenticatorCoordinatorClient to tight it to WebAuthN. Also, simplify the
+        message reply model as PublicKeyCredentialCreationOptions/PublicKeyCredentialRequestOptions =>
+        ExceptionData/PublicKeyCredentialData for makeCredential/getAssertion operations.
+        4) Restrict one request per time, i.e. makeCredential/getAssertion for a single page.
+        5) Unifying makeCredentialReply/getAssertionReply/exceptionReply into requestReply for IPC. Correspondingly,
+        unify callback and exceptionCallback into callback as well for LocalAuthenticator.
+        6) Enhance PublicKeyCredentialCreationOptions encoding/decoding with encoder.encodeFixedLengthData/decoder.decodeFixedLengthData.
+
+        Covered by existing tests.
+
+        * DerivedSources.make:
+        * Modules/credentialmanagement/CredentialsContainer.cpp:
+        (WebCore::CredentialsContainer::get):
+        (WebCore::CredentialsContainer::isCreate):
+        * Modules/credentialmanagement/CredentialsContainer.h:
+        * Modules/credentialmanagement/CredentialsMessenger.cpp: Removed.
+        * Modules/credentialmanagement/CredentialsMessenger.h: Removed.
+        * Modules/webauthn/AuthenticatorAssertionResponse.cpp: Removed.
+        * Modules/webauthn/AuthenticatorAssertionResponse.h:
+        (WebCore::AuthenticatorAssertionResponse::create):
+        (WebCore::AuthenticatorAssertionResponse::authenticatorData const):
+        (WebCore::AuthenticatorAssertionResponse::signature const):
+        (WebCore::AuthenticatorAssertionResponse::userHandle const):
+        (WebCore::AuthenticatorAssertionResponse::AuthenticatorAssertionResponse):
+        * Modules/webauthn/AuthenticatorAttestationResponse.cpp: Removed.
+        * Modules/webauthn/AuthenticatorAttestationResponse.h:
+        (WebCore::AuthenticatorAttestationResponse::create):
+        (WebCore::AuthenticatorAttestationResponse::attestationObject const):
+        (WebCore::AuthenticatorAttestationResponse::AuthenticatorAttestationResponse):
+        * Modules/webauthn/AuthenticatorCoordinator.cpp: Renamed from Source/WebCore/Modules/webauthn/AuthenticatorManager.cpp.
+        (WebCore::AuthenticatorCoordinatorInternal::produceClientDataJson):
+        (WebCore::AuthenticatorCoordinatorInternal::produceClientDataJsonHash):
+        (WebCore::AuthenticatorCoordinatorInternal::initTimeoutTimer):
+        (WebCore::AuthenticatorCoordinatorInternal::didTimeoutTimerFire):
+        (WebCore::AuthenticatorCoordinator::AuthenticatorCoordinator):
+        (WebCore::AuthenticatorCoordinator::setClient):
+        (WebCore::AuthenticatorCoordinator::create const):
+        (WebCore::AuthenticatorCoordinator::discoverFromExternalSource const):
+        (WebCore::AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable const):
+        * Modules/webauthn/AuthenticatorCoordinator.h: Renamed from Source/WebCore/Modules/webauthn/AuthenticatorManager.h.
+        * Modules/webauthn/AuthenticatorCoordinatorClient.cpp: Added.
+        (WebCore::AuthenticatorCoordinatorClient::~AuthenticatorCoordinatorClient):
+        (WebCore::AuthenticatorCoordinatorClient::requestReply):
+        (WebCore::AuthenticatorCoordinatorClient::isUserVerifyingPlatformAuthenticatorAvailableReply):
+        (WebCore::AuthenticatorCoordinatorClient::setRequestCompletionHandler):
+        (WebCore::AuthenticatorCoordinatorClient::addQueryCompletionHandler):
+        * Modules/webauthn/AuthenticatorCoordinatorClient.h: Copied from Source/WebKit/UIProcess/CredentialManagement/WebCredentialsMessengerProxy.h.
+        * Modules/webauthn/AuthenticatorResponse.cpp: Removed.
+        * Modules/webauthn/AuthenticatorResponse.h:
+        (WebCore::AuthenticatorResponse::AuthenticatorResponse):
+        (WebCore::AuthenticatorResponse::clientDataJSON const):
+        * Modules/webauthn/PublicKeyCredential.cpp:
+        (WebCore::PublicKeyCredential::create):
+        (WebCore::PublicKeyCredential::tryCreate):
+        (WebCore::PublicKeyCredential::PublicKeyCredential):
+        (WebCore::PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable):
+        * Modules/webauthn/PublicKeyCredential.h:
+        * Modules/webauthn/PublicKeyCredential.idl:
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.h:
+        (WebCore::PublicKeyCredentialCreationOptions::encode const):
+        (WebCore::PublicKeyCredentialCreationOptions::decode):
+        * Modules/webauthn/PublicKeyCredentialData.h: Added.
+        (WebCore::PublicKeyCredentialData::encode const):
+        (WebCore::PublicKeyCredentialData::decode):
+        * Modules/webauthn/cocoa/LocalAuthenticator.h:
+        * Modules/webauthn/cocoa/LocalAuthenticator.mm:
+        (WebCore::LocalAuthenticator::makeCredential):
+        (WebCore::LocalAuthenticator::getAssertion):
+        * Modules/webvr/VRStageParameters.cpp:
+        Add a header file to prevent linkage error.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Page.cpp:
+        * page/Page.h:
+        (WebCore::Page::authenticatorCoordinator const):
+        * page/PageConfiguration.cpp:
+        * page/PageConfiguration.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::mockAuthenticatorCoordinator const):
+        (WebCore::Internals::mockCredentialsMessenger const): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * testing/MockAuthenticatorCoordinator.cpp: Added.
+        (WebCore::MockAuthenticatorCoordinator::setCreationReturnBundle):
+        (WebCore::MockAuthenticatorCoordinator::setAssertionReturnBundle):
+        (WebCore::MockAuthenticatorCoordinator::makeCredential):
+        (WebCore::MockAuthenticatorCoordinator::getAssertion):
+        (WebCore::MockAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable):
+        * testing/MockAuthenticatorCoordinator.h: Renamed from Source/WebCore/testing/MockCredentialsMessenger.h.
+        * testing/MockAuthenticatorCoordinator.idl: Renamed from Source/WebCore/testing/MockCredentialsMessenger.idl.
+        * testing/MockCredentialsMessenger.cpp: Removed.
+
 2018-09-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove unused needsDestruction class variables from HashTraits

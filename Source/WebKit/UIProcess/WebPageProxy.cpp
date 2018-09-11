@@ -211,7 +211,7 @@
 #endif
 
 #if ENABLE(WEB_AUTHN)
-#include "WebCredentialsMessengerProxy.h"
+#include "WebAuthenticatorCoordinatorProxy.h"
 #endif
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
@@ -461,7 +461,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 #endif
 
 #if ENABLE(WEB_AUTHN)
-    m_credentialsMessenger = std::make_unique<WebCredentialsMessengerProxy>(*this);
+    m_credentialsMessenger = std::make_unique<WebAuthenticatorCoordinatorProxy>(*this);
 #endif
 
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
@@ -779,7 +779,7 @@ void WebPageProxy::reattachToWebProcess(Ref<WebProcessProxy>&& process, API::Nav
 #endif
 
 #if ENABLE(WEB_AUTHN)
-    m_credentialsMessenger = std::make_unique<WebCredentialsMessengerProxy>(*this);
+    m_credentialsMessenger = std::make_unique<WebAuthenticatorCoordinatorProxy>(*this);
 #endif
 
     initializeWebPage();

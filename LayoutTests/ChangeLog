@@ -1,3 +1,19 @@
+2018-09-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Polish AuthenticatorManager and rename it to AuthenticatorCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=189277
+        <rdar://problem/44115936>
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/credential-management/credentialscontainer-store-basics.https.html:
+        * http/wpt/webauthn/idl.https.html:
+        * http/wpt/webauthn/public-key-credential-create-failure.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success.https.html:
+        * http/wpt/webauthn/public-key-is-user-verifying-platform-authenticator-available.html:
+
 2018-09-10  Michael Saboff  <msaboff@apple.com>
 
         Test262 failure with Named Capture Groups - using a reference before the group is defined

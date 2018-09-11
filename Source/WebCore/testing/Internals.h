@@ -77,7 +77,7 @@ class MediaStreamTrack;
 class MemoryInfo;
 class MockCDMFactory;
 class MockContentFilterSettings;
-class MockCredentialsMessenger;
+class MockAuthenticatorCoordinator;
 class MockPageOverlay;
 class MockPaymentCoordinator;
 class NodeList;
@@ -697,7 +697,7 @@ public:
     void testIncomingSyncIPCMessageWhileWaitingForSyncReply();
 
 #if ENABLE(WEB_AUTHN)
-    MockCredentialsMessenger& mockCredentialsMessenger() const;
+    MockAuthenticatorCoordinator& mockAuthenticatorCoordinator() const;
 #endif
 
     bool isSystemPreviewLink(Element&) const;
@@ -763,7 +763,7 @@ private:
 #endif
 
 #if ENABLE(WEB_AUTHN)
-    std::unique_ptr<MockCredentialsMessenger> m_mockCredentialsMessenger;
+    WeakPtr<MockAuthenticatorCoordinator> m_mockAuthenticatorCoordinator;
 #endif
 };
 

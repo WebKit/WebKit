@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "ExceptionOr.h"
 #include "JSDOMPromiseDeferred.h"
+#include "Page.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {
@@ -63,7 +64,7 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
 {
     // The following implements https://www.w3.org/TR/credential-management-1/#algorithm-request as of 4 August 2017
     // with enhancement from 14 November 2017 Editor's Draft.
-    if (!m_document) {
+    if (!m_document || !m_document->page()) {
         promise.reject(Exception { NotSupportedError });
         return;
     }
@@ -82,8 +83,7 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
         return;
     }
 
-    // Async operations are dispatched/handled in (Web)CredentialMessenger, which exchanges messages between WebProcess and UIProcess.
-    AuthenticatorManager::singleton().discoverFromExternalSource(m_document->securityOrigin(), options.publicKey.value(), doesHaveSameOriginAsItsAncestors(), WTFMove(options.signal), WTFMove(promise));
+    m_document->page()->authenticatorCoordinator().discoverFromExternalSource(m_document->securityOrigin(), options.publicKey.value(), doesHaveSameOriginAsItsAncestors(), WTFMove(options.signal), WTFMove(promise));
 }
 
 void CredentialsContainer::store(const BasicCredential&, CredentialPromise&& promise)
@@ -95,7 +95,7 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
 {
     // The following implements https://www.w3.org/TR/credential-management-1/#algorithm-create as of 4 August 2017
     // with enhancement from 14 November 2017 Editor's Draft.
-    if (!m_document) {
+    if (!m_document || !m_document->page()) {
         promise.reject(Exception { NotSupportedError });
         return;
     }
@@ -112,8 +112,7 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
         return;
     }
 
-    // Async operations are dispatched/handled in (Web)CredentialMessenger, which exchanges messages between WebProcess and UIProcess.
-    AuthenticatorManager::singleton().create(m_document->securityOrigin(), options.publicKey.value(), doesHaveSameOriginAsItsAncestors(), WTFMove(options.signal), WTFMove(promise));
+    m_document->page()->authenticatorCoordinator().create(m_document->securityOrigin(), options.publicKey.value(), doesHaveSameOriginAsItsAncestors(), WTFMove(options.signal), WTFMove(promise));
 }
 
 void CredentialsContainer::preventSilentAccess(DOMPromiseDeferred<void>&& promise) const

@@ -40,15 +40,18 @@ public:
         Attestation
     };
 
-    explicit AuthenticatorResponse(RefPtr<ArrayBuffer>&&);
+    explicit AuthenticatorResponse(Ref<ArrayBuffer>&& clientDataJSON)
+        : m_clientDataJSON(WTFMove(clientDataJSON))
+    {
+    }
     virtual ~AuthenticatorResponse() = default;
 
     virtual Type type() const = 0;
 
-    ArrayBuffer* clientDataJSON() const;
+    ArrayBuffer* clientDataJSON() const { return m_clientDataJSON.ptr(); }
 
 private:
-    RefPtr<ArrayBuffer> m_clientDataJSON;
+    Ref<ArrayBuffer> m_clientDataJSON;
 };
 
 } // namespace WebCore

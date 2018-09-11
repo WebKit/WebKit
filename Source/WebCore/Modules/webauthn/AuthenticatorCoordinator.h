@@ -30,13 +30,12 @@
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class AbortSignal;
+class AuthenticatorCoordinatorClient;
 class BasicCredential;
-class CredentialsMessenger;
 class SecurityOrigin;
 
 struct PublicKeyCredentialCreationOptions;
@@ -44,12 +43,11 @@ struct PublicKeyCredentialRequestOptions;
 
 using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
 
-class AuthenticatorManager {
-    WTF_MAKE_NONCOPYABLE(AuthenticatorManager);
-    friend class NeverDestroyed<AuthenticatorManager>;
+class AuthenticatorCoordinator {
+    WTF_MAKE_NONCOPYABLE(AuthenticatorCoordinator);
 public:
-    WEBCORE_EXPORT static AuthenticatorManager& singleton();
-    WEBCORE_EXPORT void setMessenger(CredentialsMessenger&);
+    WEBCORE_EXPORT explicit AuthenticatorCoordinator(std::unique_ptr<AuthenticatorCoordinatorClient>&&);
+    WEBCORE_EXPORT void setClient(std::unique_ptr<AuthenticatorCoordinatorClient>&&);
 
     // The following methods implement static methods of PublicKeyCredential.
     void create(const SecurityOrigin&, const PublicKeyCredentialCreationOptions&, bool sameOriginWithAncestors, RefPtr<AbortSignal>&&, CredentialPromise&&) const;
@@ -57,9 +55,9 @@ public:
     void isUserVerifyingPlatformAuthenticatorAvailable(DOMPromiseDeferred<IDLBoolean>&&) const;
 
 private:
-    AuthenticatorManager() = default;
+    AuthenticatorCoordinator() = default;
 
-    WeakPtr<CredentialsMessenger> m_messenger;
+    std::unique_ptr<AuthenticatorCoordinatorClient> m_client;
 };
 
 } // namespace WebCore

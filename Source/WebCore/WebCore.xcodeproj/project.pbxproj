@@ -1754,7 +1754,7 @@
 		57303C222009AF0300355965 /* JSAuthenticatorAttestationResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303C212009AEF600355965 /* JSAuthenticatorAttestationResponse.h */; };
 		57303C2C2009B4A800355965 /* AuthenticatorAssertionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303C272009B2FC00355965 /* AuthenticatorAssertionResponse.h */; };
 		57303C2F2009B7E100355965 /* JSAuthenticatorAssertionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303C2D2009B7D900355965 /* JSAuthenticatorAssertionResponse.h */; };
-		57303C4620105D2F00355965 /* AuthenticatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303C4320105B3D00355965 /* AuthenticatorManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		57303C4620105D2F00355965 /* AuthenticatorCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303C4320105B3D00355965 /* AuthenticatorCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		573489391DAC6B6E00DC0667 /* CryptoAlgorithmParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 573489381DAC6B6D00DC0667 /* CryptoAlgorithmParameters.h */; };
 		5739E12F1DAC7F7800E14383 /* JSCryptoAlgorithmParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5739E12E1DAC7F7800E14383 /* JSCryptoAlgorithmParameters.h */; };
 		574F55E0204F3ACE002948C6 /* LocalAuthenticator.h in Headers */ = {isa = PBXBuildFile; fileRef = 574F55DE204F3744002948C6 /* LocalAuthenticator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1764,11 +1764,9 @@
 		5750A9821E6A150800705C4A /* JSEcKeyParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5750A9801E6A150800705C4A /* JSEcKeyParams.h */; };
 		5750A9871E6A216800705C4A /* CryptoAlgorithmECDH.h in Headers */ = {isa = PBXBuildFile; fileRef = 5750A9851E6A216800705C4A /* CryptoAlgorithmECDH.h */; };
 		5754719F1ECE628300DD63B2 /* JSRsaPssParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 575471991ECE5D2A00DD63B2 /* JSRsaPssParams.h */; };
-		5760827220215A5500116678 /* CredentialsMessenger.h in Headers */ = {isa = PBXBuildFile; fileRef = 576082702021513F00116678 /* CredentialsMessenger.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5760827A2024EA5C00116678 /* MockCredentialsMessenger.h in Headers */ = {isa = PBXBuildFile; fileRef = 5760827820244DAB00116678 /* MockCredentialsMessenger.h */; };
-		5760827B2024ED2900116678 /* MockCredentialsMessenger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5760827920244DAC00116678 /* MockCredentialsMessenger.cpp */; };
-		5760828620256AFA00116678 /* JSMockCredentialsMessenger.h in Headers */ = {isa = PBXBuildFile; fileRef = 576082822025679700116678 /* JSMockCredentialsMessenger.h */; };
-		5760828820256AFD00116678 /* JSMockCredentialsMessenger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 576082812025679600116678 /* JSMockCredentialsMessenger.cpp */; };
+		5760827220215A5500116678 /* AuthenticatorCoordinatorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 576082702021513F00116678 /* AuthenticatorCoordinatorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5760827A2024EA5C00116678 /* MockAuthenticatorCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 5760827820244DAB00116678 /* MockAuthenticatorCoordinator.h */; };
+		5760827B2024ED2900116678 /* MockAuthenticatorCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5760827920244DAC00116678 /* MockAuthenticatorCoordinator.cpp */; };
 		5768142A1E6F99C100E77754 /* CryptoAlgorithmEcdhKeyDeriveParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 576814291E6F99C100E77754 /* CryptoAlgorithmEcdhKeyDeriveParams.h */; };
 		576814411E709FA400E77754 /* JSEcdhKeyDeriveParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5768143E1E709C3600E77754 /* JSEcdhKeyDeriveParams.h */; };
 		576814451E70CB1F00E77754 /* JSAesKeyParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 576814431E70CB1000E77754 /* JSAesKeyParams.h */; };
@@ -1784,12 +1782,15 @@
 		57B5F7F91E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7F71E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.h */; };
 		57B5F8091E5D1A9800F34F90 /* CryptoAlgorithmAesGcmParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F8081E5D1A9800F34F90 /* CryptoAlgorithmAesGcmParams.h */; };
 		57B5F8101E5E2A4E00F34F90 /* JSAesGcmParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F80B1E5D22DA00F34F90 /* JSAesGcmParams.h */; };
-		57C7A68C1E56967500C67D71 /* BasicCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C7A68B1E56967500C67D71 /* BasicCredential.h */; };
+		57C7A68C1E56967500C67D71 /* BasicCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C7A68B1E56967500C67D71 /* BasicCredential.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57C7A69F1E57917800C67D71 /* JSBasicCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C7A69D1E57910D00C67D71 /* JSBasicCredential.h */; };
 		57D0018D1DD5413200ED19D9 /* JSCryptoKeyUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D0018C1DD5413200ED19D9 /* JSCryptoKeyUsage.h */; };
 		57D846281FE8960500CA3682 /* NavigatorCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D846261FE895F800CA3682 /* NavigatorCredentials.h */; };
-		57D8462E1FEAF69900CA3682 /* PublicKeyCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D8462B1FEAF68F00CA3682 /* PublicKeyCredential.h */; };
+		57D8462E1FEAF69900CA3682 /* PublicKeyCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D8462B1FEAF68F00CA3682 /* PublicKeyCredential.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57D846351FEAFCD300CA3682 /* JSPublicKeyCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D846301FEAFC2F00CA3682 /* JSPublicKeyCredential.h */; };
+		57DCED672140775B0016B847 /* JSMockAuthenticatorCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED622140763C0016B847 /* JSMockAuthenticatorCoordinator.h */; };
+		57DCED69214077640016B847 /* JSMockAuthenticatorCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57DCED632140763C0016B847 /* JSMockAuthenticatorCoordinator.cpp */; };
+		57DCED74214305F00016B847 /* PublicKeyCredentialData.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED72214305F00016B847 /* PublicKeyCredentialData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57E1E5A31E8C91B500EE37C9 /* CryptoAlgorithmAES_CTR.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E1E5A11E8C91B500EE37C9 /* CryptoAlgorithmAES_CTR.h */; };
 		57E1E5A71E8DBD3E00EE37C9 /* CryptoAlgorithmAesCtrParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E1E5A61E8DBD3E00EE37C9 /* CryptoAlgorithmAesCtrParams.h */; };
 		57E1E5AD1E8DD09B00EE37C9 /* JSAesCtrParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E1E5AB1E8DD09B00EE37C9 /* JSAesCtrParams.h */; };
@@ -8459,7 +8460,6 @@
 		57303BBE2006E00400355965 /* CBORReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CBORReader.cpp; sourceTree = "<group>"; };
 		57303BBF2006E00C00355965 /* CBORReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBORReader.h; sourceTree = "<group>"; };
 		57303BCF20087A8300355965 /* AuthenticatorResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticatorResponse.h; sourceTree = "<group>"; };
-		57303BD020087A8300355965 /* AuthenticatorResponse.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticatorResponse.cpp; sourceTree = "<group>"; };
 		57303BD120087A8300355965 /* AuthenticatorResponse.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AuthenticatorResponse.idl; sourceTree = "<group>"; };
 		57303BDD20095B2600355965 /* JSAuthenticatorResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAuthenticatorResponse.h; sourceTree = "<group>"; };
 		57303BDE20095B2700355965 /* JSAuthenticatorResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAuthenticatorResponse.cpp; sourceTree = "<group>"; };
@@ -8480,17 +8480,15 @@
 		57303C132009A25700355965 /* JSPublicKeyCredentialCreationOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPublicKeyCredentialCreationOptions.h; sourceTree = "<group>"; };
 		57303C142009A25700355965 /* JSPublicKeyCredentialCreationOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPublicKeyCredentialCreationOptions.cpp; sourceTree = "<group>"; };
 		57303C1B2009A98600355965 /* AuthenticatorAttestationResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticatorAttestationResponse.h; sourceTree = "<group>"; };
-		57303C1C2009A98600355965 /* AuthenticatorAttestationResponse.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticatorAttestationResponse.cpp; sourceTree = "<group>"; };
 		57303C1D2009A98600355965 /* AuthenticatorAttestationResponse.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AuthenticatorAttestationResponse.idl; sourceTree = "<group>"; };
 		57303C202009AEF500355965 /* JSAuthenticatorAttestationResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAuthenticatorAttestationResponse.cpp; sourceTree = "<group>"; };
 		57303C212009AEF600355965 /* JSAuthenticatorAttestationResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAuthenticatorAttestationResponse.h; sourceTree = "<group>"; };
 		57303C272009B2FC00355965 /* AuthenticatorAssertionResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticatorAssertionResponse.h; sourceTree = "<group>"; };
-		57303C282009B2FC00355965 /* AuthenticatorAssertionResponse.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticatorAssertionResponse.cpp; sourceTree = "<group>"; };
 		57303C292009B2FC00355965 /* AuthenticatorAssertionResponse.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AuthenticatorAssertionResponse.idl; sourceTree = "<group>"; };
 		57303C2D2009B7D900355965 /* JSAuthenticatorAssertionResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAuthenticatorAssertionResponse.h; sourceTree = "<group>"; };
 		57303C2E2009B7DA00355965 /* JSAuthenticatorAssertionResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAuthenticatorAssertionResponse.cpp; sourceTree = "<group>"; };
-		57303C4320105B3D00355965 /* AuthenticatorManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticatorManager.h; sourceTree = "<group>"; };
-		57303C4420105B3D00355965 /* AuthenticatorManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticatorManager.cpp; sourceTree = "<group>"; };
+		57303C4320105B3D00355965 /* AuthenticatorCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticatorCoordinator.h; sourceTree = "<group>"; };
+		57303C4420105B3D00355965 /* AuthenticatorCoordinator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticatorCoordinator.cpp; sourceTree = "<group>"; };
 		573489381DAC6B6D00DC0667 /* CryptoAlgorithmParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmParameters.h; sourceTree = "<group>"; };
 		5739E12E1DAC7F7800E14383 /* JSCryptoAlgorithmParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoAlgorithmParameters.h; sourceTree = "<group>"; };
 		5739E1301DAC7FD100E14383 /* JSCryptoAlgorithmParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoAlgorithmParameters.cpp; sourceTree = "<group>"; };
@@ -8513,13 +8511,11 @@
 		5754719A1ECE5D2A00DD63B2 /* JSRsaPssParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRsaPssParams.cpp; sourceTree = "<group>"; };
 		5760824F20118D8D00116678 /* JSBasicCredentialCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSBasicCredentialCustom.cpp; sourceTree = "<group>"; };
 		576082562011BE0200116678 /* JSAuthenticatorResponseCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSAuthenticatorResponseCustom.cpp; sourceTree = "<group>"; };
-		576082702021513F00116678 /* CredentialsMessenger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CredentialsMessenger.h; sourceTree = "<group>"; };
-		5760827820244DAB00116678 /* MockCredentialsMessenger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCredentialsMessenger.h; sourceTree = "<group>"; };
-		5760827920244DAC00116678 /* MockCredentialsMessenger.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MockCredentialsMessenger.cpp; sourceTree = "<group>"; };
-		57608280202556F400116678 /* MockCredentialsMessenger.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MockCredentialsMessenger.idl; sourceTree = "<group>"; };
-		576082812025679600116678 /* JSMockCredentialsMessenger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMockCredentialsMessenger.cpp; sourceTree = "<group>"; };
-		576082822025679700116678 /* JSMockCredentialsMessenger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMockCredentialsMessenger.h; sourceTree = "<group>"; };
-		57608293202BA95300116678 /* CredentialsMessenger.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CredentialsMessenger.cpp; sourceTree = "<group>"; };
+		576082702021513F00116678 /* AuthenticatorCoordinatorClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticatorCoordinatorClient.h; sourceTree = "<group>"; };
+		5760827820244DAB00116678 /* MockAuthenticatorCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockAuthenticatorCoordinator.h; sourceTree = "<group>"; };
+		5760827920244DAC00116678 /* MockAuthenticatorCoordinator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MockAuthenticatorCoordinator.cpp; sourceTree = "<group>"; };
+		57608280202556F400116678 /* MockAuthenticatorCoordinator.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MockAuthenticatorCoordinator.idl; sourceTree = "<group>"; };
+		57608293202BA95300116678 /* AuthenticatorCoordinatorClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticatorCoordinatorClient.cpp; sourceTree = "<group>"; };
 		576814281E6F98AD00E77754 /* EcdhKeyDeriveParams.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = EcdhKeyDeriveParams.idl; sourceTree = "<group>"; };
 		576814291E6F99C100E77754 /* CryptoAlgorithmEcdhKeyDeriveParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmEcdhKeyDeriveParams.h; sourceTree = "<group>"; };
 		576814341E6FE3E800E77754 /* CryptoAlgorithmECDHMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmECDHMac.cpp; sourceTree = "<group>"; };
@@ -8573,6 +8569,9 @@
 		57D8462D1FEAF68F00CA3682 /* PublicKeyCredential.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PublicKeyCredential.idl; sourceTree = "<group>"; };
 		57D846301FEAFC2F00CA3682 /* JSPublicKeyCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPublicKeyCredential.h; sourceTree = "<group>"; };
 		57D846311FEAFC2F00CA3682 /* JSPublicKeyCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPublicKeyCredential.cpp; sourceTree = "<group>"; };
+		57DCED622140763C0016B847 /* JSMockAuthenticatorCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMockAuthenticatorCoordinator.h; sourceTree = "<group>"; };
+		57DCED632140763C0016B847 /* JSMockAuthenticatorCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMockAuthenticatorCoordinator.cpp; sourceTree = "<group>"; };
+		57DCED72214305F00016B847 /* PublicKeyCredentialData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PublicKeyCredentialData.h; sourceTree = "<group>"; };
 		57E1E5A01E8C91B500EE37C9 /* CryptoAlgorithmAES_CTR.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAES_CTR.cpp; sourceTree = "<group>"; };
 		57E1E5A11E8C91B500EE37C9 /* CryptoAlgorithmAES_CTR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAES_CTR.h; sourceTree = "<group>"; };
 		57E1E5A61E8DBD3E00EE37C9 /* CryptoAlgorithmAesCtrParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAesCtrParams.h; sourceTree = "<group>"; };
@@ -16921,6 +16920,9 @@
 				A7BE7EDE14C9175A0014489D /* MallocStatistics.idl */,
 				CD5393CB175DCCE600C07123 /* MemoryInfo.h */,
 				CD5393CC175DCCE600C07123 /* MemoryInfo.idl */,
+				5760827920244DAC00116678 /* MockAuthenticatorCoordinator.cpp */,
+				5760827820244DAB00116678 /* MockAuthenticatorCoordinator.h */,
+				57608280202556F400116678 /* MockAuthenticatorCoordinator.idl */,
 				CDF4B7211E03BF8100E235A2 /* MockCDMFactory.cpp */,
 				CDF4B7221E03BF8100E235A2 /* MockCDMFactory.h */,
 				CDF4B71F1E03BF6F00E235A2 /* MockCDMFactory.idl */,
@@ -16929,9 +16931,6 @@
 				A1B5B29C1AAA846E008B6042 /* MockContentFilterSettings.cpp */,
 				A1B5B29D1AAA846E008B6042 /* MockContentFilterSettings.h */,
 				A19AEA1C1AAA7C4900B52B25 /* MockContentFilterSettings.idl */,
-				5760827920244DAC00116678 /* MockCredentialsMessenger.cpp */,
-				5760827820244DAB00116678 /* MockCredentialsMessenger.h */,
-				57608280202556F400116678 /* MockCredentialsMessenger.idl */,
 				51058AD71D679257009A538C /* MockGamepad.cpp */,
 				51058AD81D679257009A538C /* MockGamepad.h */,
 				51058AD91D679257009A538C /* MockGamepadProvider.cpp */,
@@ -16978,12 +16977,12 @@
 				A7B4EA6914C9348400C8F5BF /* JSMallocStatistics.h */,
 				CD5393D1175E018600C07123 /* JSMemoryInfo.cpp */,
 				CD5393D2175E018600C07123 /* JSMemoryInfo.h */,
+				57DCED632140763C0016B847 /* JSMockAuthenticatorCoordinator.cpp */,
+				57DCED622140763C0016B847 /* JSMockAuthenticatorCoordinator.h */,
 				CDF4B72D1E03CA4A00E235A2 /* JSMockCDMFactory.cpp */,
 				CDF4B72E1E03CA4A00E235A2 /* JSMockCDMFactory.h */,
 				A19AEA1D1AAA806E00B52B25 /* JSMockContentFilterSettings.cpp */,
 				A19AEA1E1AAA806E00B52B25 /* JSMockContentFilterSettings.h */,
-				576082812025679600116678 /* JSMockCredentialsMessenger.cpp */,
-				576082822025679700116678 /* JSMockCredentialsMessenger.h */,
 				2D6F3E921C1F85550061DBD4 /* JSMockPageOverlay.cpp */,
 				2D6F3E931C1F85550061DBD4 /* JSMockPageOverlay.h */,
 				A146D3201F99CA3E00D29196 /* JSMockPaymentAddress.cpp */,
@@ -18712,8 +18711,6 @@
 				77D510181ED7159900DA4C87 /* CredentialsContainer.cpp */,
 				77D510161ED6021B00DA4C87 /* CredentialsContainer.h */,
 				57D846291FE99F6300CA3682 /* CredentialsContainer.idl */,
-				57608293202BA95300116678 /* CredentialsMessenger.cpp */,
-				576082702021513F00116678 /* CredentialsMessenger.h */,
 				57D846241FE895F500CA3682 /* NavigatorCredentials.cpp */,
 				57D846261FE895F800CA3682 /* NavigatorCredentials.h */,
 				57D846251FE895F600CA3682 /* NavigatorCredentials.idl */,
@@ -18743,15 +18740,14 @@
 			children = (
 				57303BB32006C6ED00355965 /* cbor */,
 				574F55DD204F3744002948C6 /* cocoa */,
-				57303C282009B2FC00355965 /* AuthenticatorAssertionResponse.cpp */,
 				57303C272009B2FC00355965 /* AuthenticatorAssertionResponse.h */,
 				57303C292009B2FC00355965 /* AuthenticatorAssertionResponse.idl */,
-				57303C1C2009A98600355965 /* AuthenticatorAttestationResponse.cpp */,
 				57303C1B2009A98600355965 /* AuthenticatorAttestationResponse.h */,
 				57303C1D2009A98600355965 /* AuthenticatorAttestationResponse.idl */,
-				57303C4420105B3D00355965 /* AuthenticatorManager.cpp */,
-				57303C4320105B3D00355965 /* AuthenticatorManager.h */,
-				57303BD020087A8300355965 /* AuthenticatorResponse.cpp */,
+				57303C4420105B3D00355965 /* AuthenticatorCoordinator.cpp */,
+				57303C4320105B3D00355965 /* AuthenticatorCoordinator.h */,
+				57608293202BA95300116678 /* AuthenticatorCoordinatorClient.cpp */,
+				576082702021513F00116678 /* AuthenticatorCoordinatorClient.h */,
 				57303BCF20087A8300355965 /* AuthenticatorResponse.h */,
 				57303BD120087A8300355965 /* AuthenticatorResponse.idl */,
 				574F55DC204F3732002948C6 /* COSEConstants.h */,
@@ -18760,6 +18756,7 @@
 				57D8462D1FEAF68F00CA3682 /* PublicKeyCredential.idl */,
 				57303BE62009747A00355965 /* PublicKeyCredentialCreationOptions.h */,
 				57303BE82009747A00355965 /* PublicKeyCredentialCreationOptions.idl */,
+				57DCED72214305F00016B847 /* PublicKeyCredentialData.h */,
 				57303BEC200980BF00355965 /* PublicKeyCredentialDescriptor.h */,
 				57303BEE200980BF00355965 /* PublicKeyCredentialDescriptor.idl */,
 				57303C06200998F800355965 /* PublicKeyCredentialRequestOptions.h */,
@@ -27001,18 +26998,18 @@
 				53ED3FDF167A88E7006762E6 /* JSInternalSettingsGenerated.h in Headers */,
 				A740B59514C935AB00A77FA4 /* JSMallocStatistics.h in Headers */,
 				CD5393D4175E018600C07123 /* JSMemoryInfo.h in Headers */,
+				57DCED672140775B0016B847 /* JSMockAuthenticatorCoordinator.h in Headers */,
 				538EC9331F99B9F7004D22A8 /* JSMockCDMFactory.h in Headers */,
 				A19AEA211AAA808600B52B25 /* JSMockContentFilterSettings.h in Headers */,
-				5760828620256AFA00116678 /* JSMockCredentialsMessenger.h in Headers */,
 				538EC9341F99B9F7004D22A8 /* JSMockPageOverlay.h in Headers */,
 				A146D3231F99D0EF00D29196 /* JSMockPaymentAddress.h in Headers */,
 				A146D31B1F99BCFB00D29196 /* JSMockPaymentCoordinator.h in Headers */,
 				427DA71E13735DFA007C57FB /* JSServiceWorkerInternals.h in Headers */,
 				EBF5121D1696496C0056BD25 /* JSTypeConversions.h in Headers */,
 				CDC26B41160A8CCE0026757B /* LegacyMockCDM.h in Headers */,
+				5760827A2024EA5C00116678 /* MockAuthenticatorCoordinator.h in Headers */,
 				A1BF6B831AA96C7D00AF4A8A /* MockContentFilter.h in Headers */,
 				A1B5B29F1AAA846F008B6042 /* MockContentFilterSettings.h in Headers */,
-				5760827A2024EA5C00116678 /* MockCredentialsMessenger.h in Headers */,
 				51058ADC1D6792C1009A538C /* MockGamepad.h in Headers */,
 				51058ADE1D6792C1009A538C /* MockGamepadProvider.h in Headers */,
 				4157EBFB1E3AB67F00AC9FE9 /* MockLibWebRTCPeerConnection.h in Headers */,
@@ -27202,7 +27199,8 @@
 				514C764C0CE9234E007EF3CD /* AuthenticationMac.h in Headers */,
 				57303C2C2009B4A800355965 /* AuthenticatorAssertionResponse.h in Headers */,
 				57303C1F2009AB4200355965 /* AuthenticatorAttestationResponse.h in Headers */,
-				57303C4620105D2F00355965 /* AuthenticatorManager.h in Headers */,
+				57303C4620105D2F00355965 /* AuthenticatorCoordinator.h in Headers */,
+				5760827220215A5500116678 /* AuthenticatorCoordinatorClient.h in Headers */,
 				57303BD220087A8300355965 /* AuthenticatorResponse.h in Headers */,
 				A501920E132EBF2E008BFE55 /* Autocapitalize.h in Headers */,
 				A5A7AA43132F0ECC00D3A3C2 /* AutocapitalizeTypes.h in Headers */,
@@ -27467,7 +27465,6 @@
 				77D5100D1ED5E29500DA4C87 /* CredentialCreationOptions.h in Headers */,
 				77D5100B1ED5E28800DA4C87 /* CredentialRequestOptions.h in Headers */,
 				77D510171ED6022200DA4C87 /* CredentialsContainer.h in Headers */,
-				5760827220215A5500116678 /* CredentialsMessenger.h in Headers */,
 				51A052331058774F00CC9E95 /* CredentialStorage.h in Headers */,
 				2D481F02146B5C5500AA7834 /* CrossfadeGeneratedImage.h in Headers */,
 				E1C416120F6562FD0092D2FB /* CrossOriginAccessControl.h in Headers */,
@@ -29798,6 +29795,7 @@
 				FF945ECC161F7F3600971BC8 /* PseudoElement.h in Headers */,
 				57D8462E1FEAF69900CA3682 /* PublicKeyCredential.h in Headers */,
 				57303BE92009748D00355965 /* PublicKeyCredentialCreationOptions.h in Headers */,
+				57DCED74214305F00016B847 /* PublicKeyCredentialData.h in Headers */,
 				57303BEF200980C600355965 /* PublicKeyCredentialDescriptor.h in Headers */,
 				57303C0A20099BAD00355965 /* PublicKeyCredentialRequestOptions.h in Headers */,
 				57303BEB20097F4000355965 /* PublicKeyCredentialType.h in Headers */,
@@ -31411,19 +31409,19 @@
 				53ED3FDE167A88E7006762E6 /* JSInternalSettingsGenerated.cpp in Sources */,
 				538EC9321F99B9F7004D22A8 /* JSMallocStatistics.cpp in Sources */,
 				CD5393D3175E018600C07123 /* JSMemoryInfo.cpp in Sources */,
+				57DCED69214077640016B847 /* JSMockAuthenticatorCoordinator.cpp in Sources */,
 				CDF4B7321E03D06000E235A2 /* JSMockCDMFactory.cpp in Sources */,
 				A19AEA221AAA808A00B52B25 /* JSMockContentFilterSettings.cpp in Sources */,
-				5760828820256AFD00116678 /* JSMockCredentialsMessenger.cpp in Sources */,
 				2D4150DE1C1F868C000A3BA2 /* JSMockPageOverlay.cpp in Sources */,
 				A146D3221F99D0EC00D29196 /* JSMockPaymentAddress.cpp in Sources */,
 				A146D31A1F99BCF800D29196 /* JSMockPaymentCoordinator.cpp in Sources */,
 				427DA71D13735DFA007C57FB /* JSServiceWorkerInternals.cpp in Sources */,
 				EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */,
 				CDC26B40160A8CC60026757B /* LegacyMockCDM.cpp in Sources */,
+				5760827B2024ED2900116678 /* MockAuthenticatorCoordinator.cpp in Sources */,
 				CDF4B7311E03D00700E235A2 /* MockCDMFactory.cpp in Sources */,
 				A1BF6B821AA96C7D00AF4A8A /* MockContentFilter.cpp in Sources */,
 				A1B5B29E1AAA846E008B6042 /* MockContentFilterSettings.cpp in Sources */,
-				5760827B2024ED2900116678 /* MockCredentialsMessenger.cpp in Sources */,
 				51058ADB1D6792C1009A538C /* MockGamepad.cpp in Sources */,
 				51058ADD1D6792C1009A538C /* MockGamepadProvider.cpp in Sources */,
 				4157EBFA1E3AB67900AC9FE9 /* MockLibWebRTCPeerConnection.cpp in Sources */,

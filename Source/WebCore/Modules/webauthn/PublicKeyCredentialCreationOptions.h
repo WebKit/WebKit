@@ -94,9 +94,9 @@ template<class Encoder>
 void PublicKeyCredentialCreationOptions::encode(Encoder& encoder) const
 {
     encoder << rp.id << rp.name << rp.icon;
-    Vector<uint8_t> idVector;
-    idVector.append(user.id.data(), user.id.length());
-    encoder << idVector << user.displayName << user.name << user.icon << pubKeyCredParams << excludeCredentials;
+    encoder << static_cast<uint64_t>(user.id.length());
+    encoder.encodeFixedLengthData(user.id.data(), user.id.length(), 1);
+    encoder << user.displayName << user.name << user.icon << pubKeyCredParams << excludeCredentials;
 }
 
 template<class Decoder>
@@ -109,8 +109,15 @@ std::optional<PublicKeyCredentialCreationOptions> PublicKeyCredentialCreationOpt
         return std::nullopt;
     if (!decoder.decode(result.rp.icon))
         return std::nullopt;
-    if (!decoder.decode(result.user.idVector))
+
+    std::optional<uint64_t> userIdLength;
+    decoder >> userIdLength;
+    if (!userIdLength)
         return std::nullopt;
+    result.user.idVector.reserveCapacity(userIdLength.value());
+    if (!decoder.decodeFixedLengthData(result.user.idVector.data(), userIdLength.value(), 1))
+        return std::nullopt;
+
     if (!decoder.decode(result.user.displayName))
         return std::nullopt;
     if (!decoder.decode(result.user.name))

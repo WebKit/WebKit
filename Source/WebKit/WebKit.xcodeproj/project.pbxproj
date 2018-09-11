@@ -1030,11 +1030,11 @@
 		53BA47D11DC2EF5E004DF4AD /* NetworkDataTaskBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 539EB5471DC2EE40009D48CF /* NetworkDataTaskBlob.h */; };
 		53DEA3661DDE423100E82648 /* json.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 53DEA3651DDE422E00E82648 /* json.hpp */; };
 		570AB8F320AE3BD700B8BE87 /* SecKeyProxyStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 570AB8F220AE3BD700B8BE87 /* SecKeyProxyStore.h */; };
-		5760829C202D2C3C00116678 /* WebCredentialsMessengerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5760829020298FBD00116678 /* WebCredentialsMessengerMessageReceiver.cpp */; };
-		5760829D202D2C4000116678 /* WebCredentialsMessengerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 5760828F20298FBD00116678 /* WebCredentialsMessengerMessages.h */; };
-		5760829E202D2C4300116678 /* WebCredentialsMessengerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5760829A202BEE5A00116678 /* WebCredentialsMessengerProxyMessageReceiver.cpp */; };
-		5760829F202D2C4600116678 /* WebCredentialsMessengerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 5760829B202BEE5A00116678 /* WebCredentialsMessengerProxyMessages.h */; };
 		57B4B46020B504AC00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B4B45E20B504AB00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h */; };
+		57DCED6E2142EE5E0016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57DCED6B2142EAE20016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp */; };
+		57DCED6F2142EE630016B847 /* WebAuthenticatorCoordinatorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED6A2142EAE20016B847 /* WebAuthenticatorCoordinatorMessages.h */; };
+		57DCED702142EE680016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57DCED6C2142EAF90016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp */; };
+		57DCED712142EE6C0016B847 /* WebAuthenticatorCoordinatorProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED6D2142EAFA0016B847 /* WebAuthenticatorCoordinatorProxyMessages.h */; };
 		5C0B17781E7C880E00E9123C /* NetworkSocketStreamMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B17741E7C879C00E9123C /* NetworkSocketStreamMessageReceiver.cpp */; };
 		5C0B17791E7C882100E9123C /* WebSocketStreamMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B17761E7C879C00E9123C /* WebSocketStreamMessageReceiver.cpp */; };
 		5C1426ED1C23F80900D41183 /* NetworkProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */; };
@@ -3370,18 +3370,18 @@
 		570AB90320B2541C00B8BE87 /* SecKeyProxyStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SecKeyProxyStore.mm; sourceTree = "<group>"; };
 		575075A720AB763600693EA9 /* WebCredentialMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCredentialMac.mm; sourceTree = "<group>"; };
 		5750F32A2032D4E500389347 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
-		5760828B2029854200116678 /* WebCredentialsMessenger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCredentialsMessenger.h; sourceTree = "<group>"; };
-		5760828C2029854200116678 /* WebCredentialsMessenger.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCredentialsMessenger.cpp; sourceTree = "<group>"; };
-		5760828D202987E600116678 /* WebCredentialsMessenger.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCredentialsMessenger.messages.in; sourceTree = "<group>"; };
-		5760828F20298FBD00116678 /* WebCredentialsMessengerMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCredentialsMessengerMessages.h; sourceTree = "<group>"; };
-		5760829020298FBD00116678 /* WebCredentialsMessengerMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCredentialsMessengerMessageReceiver.cpp; sourceTree = "<group>"; };
-		57608295202BD8BA00116678 /* WebCredentialsMessengerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCredentialsMessengerProxy.h; sourceTree = "<group>"; };
-		57608296202BD8BA00116678 /* WebCredentialsMessengerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCredentialsMessengerProxy.cpp; sourceTree = "<group>"; };
-		57608299202BDAE200116678 /* WebCredentialsMessengerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCredentialsMessengerProxy.messages.in; sourceTree = "<group>"; };
-		5760829A202BEE5A00116678 /* WebCredentialsMessengerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCredentialsMessengerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
-		5760829B202BEE5A00116678 /* WebCredentialsMessengerProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCredentialsMessengerProxyMessages.h; sourceTree = "<group>"; };
+		5760828B2029854200116678 /* WebAuthenticatorCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticatorCoordinator.h; sourceTree = "<group>"; };
+		5760828C2029854200116678 /* WebAuthenticatorCoordinator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthenticatorCoordinator.cpp; sourceTree = "<group>"; };
+		5760828D202987E600116678 /* WebAuthenticatorCoordinator.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebAuthenticatorCoordinator.messages.in; sourceTree = "<group>"; };
+		57608295202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticatorCoordinatorProxy.h; sourceTree = "<group>"; };
+		57608296202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthenticatorCoordinatorProxy.cpp; sourceTree = "<group>"; };
+		57608299202BDAE200116678 /* WebAuthenticatorCoordinatorProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebAuthenticatorCoordinatorProxy.messages.in; sourceTree = "<group>"; };
 		57B4B45D20B504AB00D4AD79 /* AuthenticationManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AuthenticationManagerCocoa.mm; path = Authentication/cocoa/AuthenticationManagerCocoa.mm; sourceTree = "<group>"; };
 		57B4B45E20B504AB00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClientCertificateAuthenticationXPCConstants.h; path = Authentication/cocoa/ClientCertificateAuthenticationXPCConstants.h; sourceTree = "<group>"; };
+		57DCED6A2142EAE20016B847 /* WebAuthenticatorCoordinatorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAuthenticatorCoordinatorMessages.h; sourceTree = "<group>"; };
+		57DCED6B2142EAE20016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthenticatorCoordinatorMessageReceiver.cpp; sourceTree = "<group>"; };
+		57DCED6C2142EAF90016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthenticatorCoordinatorProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		57DCED6D2142EAFA0016B847 /* WebAuthenticatorCoordinatorProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAuthenticatorCoordinatorProxyMessages.h; sourceTree = "<group>"; };
 		5C0B17741E7C879C00E9123C /* NetworkSocketStreamMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkSocketStreamMessageReceiver.cpp; sourceTree = "<group>"; };
 		5C0B17751E7C879C00E9123C /* NetworkSocketStreamMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSocketStreamMessages.h; sourceTree = "<group>"; };
 		5C0B17761E7C879C00E9123C /* WebSocketStreamMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketStreamMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -6723,24 +6723,24 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		5760828A202984C900116678 /* CredentialManagement */ = {
+		5760828A202984C900116678 /* WebAuthentication */ = {
 			isa = PBXGroup;
 			children = (
-				5760828C2029854200116678 /* WebCredentialsMessenger.cpp */,
-				5760828B2029854200116678 /* WebCredentialsMessenger.h */,
-				5760828D202987E600116678 /* WebCredentialsMessenger.messages.in */,
+				5760828C2029854200116678 /* WebAuthenticatorCoordinator.cpp */,
+				5760828B2029854200116678 /* WebAuthenticatorCoordinator.h */,
+				5760828D202987E600116678 /* WebAuthenticatorCoordinator.messages.in */,
 			);
-			path = CredentialManagement;
+			path = WebAuthentication;
 			sourceTree = "<group>";
 		};
-		57608294202BD84900116678 /* CredentialManagement */ = {
+		57608294202BD84900116678 /* WebAuthentication */ = {
 			isa = PBXGroup;
 			children = (
-				57608296202BD8BA00116678 /* WebCredentialsMessengerProxy.cpp */,
-				57608295202BD8BA00116678 /* WebCredentialsMessengerProxy.h */,
-				57608299202BDAE200116678 /* WebCredentialsMessengerProxy.messages.in */,
+				57608296202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.cpp */,
+				57608295202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.h */,
+				57608299202BDAE200116678 /* WebAuthenticatorCoordinatorProxy.messages.in */,
 			);
-			path = CredentialManagement;
+			path = WebAuthentication;
 			sourceTree = "<group>";
 		};
 		57B4B45C20B5048B00D4AD79 /* cocoa */ = {
@@ -7035,7 +7035,6 @@
 				1C0A19431C8FF1A800FE0EBB /* Automation */,
 				41D129D81F3D101400D15E47 /* Cache */,
 				7C6E70F818B2D47E00F24E2E /* cocoa */,
-				5760828A202984C900116678 /* CredentialManagement */,
 				512A9754180DF9270039A149 /* Databases */,
 				BCACC43B16B24C5D00B6E092 /* EntryPoint */,
 				E170876D16D6CA7200F99226 /* FileAPI */,
@@ -7050,6 +7049,7 @@
 				1A6FB7AA11E64B4900DB1371 /* Plugins */,
 				5118E9981F295259003EF9F5 /* Storage */,
 				1AAF08AA1926930B00B6390C /* UserContent */,
+				5760828A202984C900116678 /* WebAuthentication */,
 				BC032D5D10F437220058C15A /* WebCoreSupport */,
 				BC032D5E10F4372B0058C15A /* WebPage */,
 				1AAC4DDE16B1CBF6009425E3 /* WebStorage */,
@@ -7195,7 +7195,6 @@
 				512F588D12A8836F00629530 /* Authentication */,
 				9955A6E81C79809000EB6A93 /* Automation */,
 				1ABC3DF21899E415004F0626 /* Cocoa */,
-				57608294202BD84900116678 /* CredentialManagement */,
 				1AB7D4C71288AA9A00CFD08C /* Downloads */,
 				515BE17B1D54EF5A00DD7C68 /* Gamepad */,
 				2DA944A81884E9AB00ED86DB /* ios */,
@@ -7207,6 +7206,7 @@
 				2D1551A91F5A9B420006E3FE /* RemoteLayerTree */,
 				517DD5BB180DA7C40081660B /* Storage */,
 				1AAF089E192681AC00B6390C /* UserContent */,
+				57608294202BD84900116678 /* WebAuthentication */,
 				1A53C2A31A325691004E8C70 /* WebsiteData */,
 				1A44B95816B73F8C00B7BBD8 /* WebStorage */,
 				7CD102D91866770600ED429D /* AutoCorrectionCallback.h */,
@@ -8346,6 +8346,10 @@
 				1A60224B18C16B9F00C3E8C9 /* VisitedLinkStoreMessages.h */,
 				1A8E7D3A18C15149005A702A /* VisitedLinkTableControllerMessageReceiver.cpp */,
 				1A8E7D3B18C15149005A702A /* VisitedLinkTableControllerMessages.h */,
+				57DCED6B2142EAE20016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp */,
+				57DCED6A2142EAE20016B847 /* WebAuthenticatorCoordinatorMessages.h */,
+				57DCED6C2142EAF90016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp */,
+				57DCED6D2142EAFA0016B847 /* WebAuthenticatorCoordinatorProxyMessages.h */,
 				1C0A19551C90068F00FE0EBB /* WebAutomationSessionMessageReceiver.cpp */,
 				1C0A19561C90068F00FE0EBB /* WebAutomationSessionMessages.h */,
 				1C0A19511C8FFDFB00FE0EBB /* WebAutomationSessionProxyMessageReceiver.cpp */,
@@ -8358,10 +8362,6 @@
 				330934441315B9220097A7BC /* WebCookieManagerMessages.h */,
 				330934451315B9220097A7BC /* WebCookieManagerProxyMessageReceiver.cpp */,
 				330934461315B9220097A7BC /* WebCookieManagerProxyMessages.h */,
-				5760829020298FBD00116678 /* WebCredentialsMessengerMessageReceiver.cpp */,
-				5760828F20298FBD00116678 /* WebCredentialsMessengerMessages.h */,
-				5760829A202BEE5A00116678 /* WebCredentialsMessengerProxyMessageReceiver.cpp */,
-				5760829B202BEE5A00116678 /* WebCredentialsMessengerProxyMessages.h */,
 				CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */,
 				CD73BA49131ACD8E00EEDED2 /* WebFullScreenManagerMessages.h */,
 				CD73BA45131ACC8800EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp */,
@@ -9225,6 +9225,8 @@
 				1AF4CEF018BC481800BC2D34 /* VisitedLinkTableController.h in Headers */,
 				1A8E7D3D18C15149005A702A /* VisitedLinkTableControllerMessages.h in Headers */,
 				CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */,
+				57DCED6F2142EE630016B847 /* WebAuthenticatorCoordinatorMessages.h in Headers */,
+				57DCED712142EE6C0016B847 /* WebAuthenticatorCoordinatorProxyMessages.h in Headers */,
 				9955A6EC1C7980C200EB6A93 /* WebAutomationSession.h in Headers */,
 				99C3AE2D1DADA6AD00AF5C16 /* WebAutomationSessionMacros.h in Headers */,
 				1C0A19581C90068F00FE0EBB /* WebAutomationSessionMessages.h in Headers */,
@@ -9265,8 +9267,6 @@
 				3309344A1315B9220097A7BC /* WebCookieManagerProxyMessages.h in Headers */,
 				BC1DD7B2114DC396005ADAF3 /* WebCoreArgumentCoders.h in Headers */,
 				512F589B12A8838800629530 /* WebCredential.h in Headers */,
-				5760829D202D2C4000116678 /* WebCredentialsMessengerMessages.h in Headers */,
-				5760829F202D2C4600116678 /* WebCredentialsMessengerProxyMessages.h in Headers */,
 				1AA83F6D1A5B63FF00026EC6 /* WebDatabaseProvider.h in Headers */,
 				E52CF55220A35C3A00DADA27 /* WebDataListSuggestionPicker.h in Headers */,
 				E568B91F20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h in Headers */,
@@ -10904,6 +10904,8 @@
 				2684055218B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp in Sources */,
 				1A60224C18C16B9F00C3E8C9 /* VisitedLinkStoreMessageReceiver.cpp in Sources */,
 				1A8E7D3C18C15149005A702A /* VisitedLinkTableControllerMessageReceiver.cpp in Sources */,
+				57DCED6E2142EE5E0016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp in Sources */,
+				57DCED702142EE680016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp in Sources */,
 				1C0A19571C90068F00FE0EBB /* WebAutomationSessionMessageReceiver.cpp in Sources */,
 				1C0A19531C8FFDFB00FE0EBB /* WebAutomationSessionProxyMessageReceiver.cpp in Sources */,
 				517CF0E3163A486C00C2950D /* WebCacheStorageConnectionMessageReceiver.cpp in Sources */,
@@ -10911,8 +10913,6 @@
 				330934471315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp in Sources */,
 				330934491315B9220097A7BC /* WebCookieManagerProxyMessageReceiver.cpp in Sources */,
 				2D92A788212B6AB100F493FD /* WebCoreArgumentCoders.cpp in Sources */,
-				5760829C202D2C3C00116678 /* WebCredentialsMessengerMessageReceiver.cpp in Sources */,
-				5760829E202D2C4300116678 /* WebCredentialsMessengerProxyMessageReceiver.cpp in Sources */,
 				2D92A789212B6AB100F493FD /* WebEvent.cpp in Sources */,
 				CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */,
 				CD73BA47131ACC9A00EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp in Sources */,

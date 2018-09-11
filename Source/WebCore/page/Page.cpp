@@ -24,6 +24,7 @@
 #include "AlternativeTextClient.h"
 #include "ApplicationCacheStorage.h"
 #include "ApplicationStateChangeListener.h"
+#include "AuthenticatorCoordinator.h"
 #include "BackForwardClient.h"
 #include "BackForwardController.h"
 #include "CSSAnimationController.h"
@@ -254,6 +255,9 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_pageOverlayController(std::make_unique<PageOverlayController>(*this))
 #if ENABLE(APPLE_PAY)
     , m_paymentCoordinator(std::make_unique<PaymentCoordinator>(*pageConfiguration.paymentCoordinatorClient))
+#endif
+#if ENABLE(WEB_AUTHN)
+    , m_authenticatorCoordinator(makeUniqueRef<AuthenticatorCoordinator>(WTFMove(pageConfiguration.authenticatorCoordinatorClient)))
 #endif
 #if ENABLE(APPLICATION_MANIFEST)
     , m_applicationManifest(pageConfiguration.applicationManifest)

@@ -28,7 +28,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "AuthenticatorManager.h"
+#include "AuthenticatorCoordinator.h"
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 

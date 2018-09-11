@@ -38,6 +38,7 @@ namespace WebCore {
 
 class AlternativeTextClient;
 class ApplicationCacheStorage;
+class AuthenticatorCoordinatorClient;
 class BackForwardClient;
 class CacheStorageProvider;
 class ChromeClient;
@@ -78,6 +79,10 @@ public:
     InspectorClient* inspectorClient { nullptr };
 #if ENABLE(APPLE_PAY)
     PaymentCoordinatorClient* paymentCoordinatorClient { nullptr };
+#endif
+
+#if ENABLE(WEB_AUTHN)
+    std::unique_ptr<AuthenticatorCoordinatorClient> authenticatorCoordinatorClient;
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)

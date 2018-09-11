@@ -27,48 +27,50 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "MessageReceiver.h"
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
+#include "ExceptionData.h"
+#include <wtf/CompletionHandler.h>
+#include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-class LocalAuthenticator;
 
-struct ExceptionData;
+class DeferredPromise;
+
 struct PublicKeyCredentialCreationOptions;
+struct PublicKeyCredentialData;
 struct PublicKeyCredentialRequestOptions;
-}
 
-namespace WebKit {
+using RequestCompletionHandler = CompletionHandler<void(const WebCore::PublicKeyCredentialData&, const WebCore::ExceptionData&)>;
+using QueryCompletionHandler = CompletionHandler<void(bool)>;
 
-class WebPageProxy;
-
-class WebCredentialsMessengerProxy : private IPC::MessageReceiver, public CanMakeWeakPtr<WebCredentialsMessengerProxy> {
-    WTF_MAKE_NONCOPYABLE(WebCredentialsMessengerProxy);
+class WEBCORE_EXPORT AuthenticatorCoordinatorClient : public CanMakeWeakPtr<AuthenticatorCoordinatorClient> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(AuthenticatorCoordinatorClient);
 public:
-    explicit WebCredentialsMessengerProxy(WebPageProxy&);
-    ~WebCredentialsMessengerProxy();
-
-private:
-    // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-
-    // Receivers.
-    void makeCredential(uint64_t messageId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions&);
-    void getAssertion(uint64_t messageId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&);
-    void isUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId);
+    AuthenticatorCoordinatorClient() = default;
+    virtual ~AuthenticatorCoordinatorClient();
 
     // Senders.
-    void exceptionReply(uint64_t messageId, const WebCore::ExceptionData&);
-    void makeCredentialReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& attestationObject);
-    void getAssertionReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle);
+    virtual void makeCredential(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions&, RequestCompletionHandler&&) = 0;
+    virtual void getAssertion(const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions&, RequestCompletionHandler&&) = 0;
+    virtual void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&) = 0;
+
+    // Receivers.
+    void requestReply(const WebCore::PublicKeyCredentialData&, const WebCore::ExceptionData&);
     void isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool);
 
-    WebPageProxy& m_webPageProxy;
-    std::unique_ptr<WebCore::LocalAuthenticator> m_authenticator;
+protected:
+    // Only one request is allowed at one time. It returns false whenever there is an existing pending request.
+    // And invokes the provided handler with NotAllowedError.
+    bool setRequestCompletionHandler(RequestCompletionHandler&&);
+    uint64_t addQueryCompletionHandler(QueryCompletionHandler&&);
+
+private:
+    RequestCompletionHandler m_pendingCompletionHandler;
+    uint64_t m_accumulatedMessageId { 1 };
+    HashMap<uint64_t, QueryCompletionHandler> m_pendingQueryCompletionHandlers;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // ENABLE(WEB_AUTHN)

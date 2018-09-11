@@ -344,8 +344,6 @@ UIProcess/Cocoa/WebViewImpl.mm
 UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm
 UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm
 
-UIProcess/CredentialManagement/WebCredentialsMessengerProxy.cpp
-
 UIProcess/Gamepad/cocoa/UIGamepadProviderCocoa.mm
 UIProcess/Gamepad/ios/UIGamepadProviderIOS.mm
 UIProcess/Gamepad/mac/UIGamepadProviderMac.mm
@@ -456,6 +454,8 @@ UIProcess/RemoteLayerTree/RemoteLayerTreeScrollingPerformanceData.mm
 UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp
 UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp
 
+UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp
+
 UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
 
 UIProcess/WebStorage/StorageManager.cpp
@@ -463,8 +463,6 @@ UIProcess/WebStorage/StorageManager.cpp
 UIProcess/WebStorage/ios/LocalStorageDatabaseTrackerIOS.mm
 
 WebProcess/ApplePay/WebPaymentCoordinator.cpp
-
-WebProcess/CredentialManagement/WebCredentialsMessenger.cpp
 
 WebProcess/cocoa/PlaybackSessionManager.mm
 WebProcess/cocoa/UserMediaCaptureManager.cpp
@@ -509,6 +507,8 @@ WebProcess/Plugins/PDF/PDFPluginAnnotation.mm
 WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm
 WebProcess/Plugins/PDF/PDFPluginPasswordField.mm
 WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm
+
+WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp
 
 WebProcess/WebCoreSupport/WebDataListSuggestionPicker.cpp
 WebProcess/WebCoreSupport/WebPasteboardOverrides.cpp

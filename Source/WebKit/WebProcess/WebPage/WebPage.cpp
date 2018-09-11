@@ -278,8 +278,8 @@
 #endif
 
 #if ENABLE(WEB_AUTHN)
-#include "WebCredentialsMessenger.h"
-#include <WebCore/AuthenticatorManager.h>
+#include "WebAuthenticatorCoordinator.h"
+#include <WebCore/AuthenticatorCoordinator.h>
 #endif
 
 namespace WebKit {
@@ -392,9 +392,6 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     , m_userInterfaceLayoutDirection(parameters.userInterfaceLayoutDirection)
     , m_overrideContentSecurityPolicy { parameters.overrideContentSecurityPolicy }
     , m_cpuLimit(parameters.cpuLimit)
-#if ENABLE(WEB_AUTHN)
-    , m_credentialsMessenger(std::make_unique<WebCredentialsMessenger>(*this))
-#endif
 {
     ASSERT(m_pageID);
 
@@ -446,6 +443,10 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 
 #if ENABLE(APPLE_PAY)
     pageConfiguration.paymentCoordinatorClient = new WebPaymentCoordinator(*this);
+#endif
+
+#if ENABLE(WEB_AUTHN)
+    pageConfiguration.authenticatorCoordinatorClient = std::make_unique<WebAuthenticatorCoordinator>(*this);
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -603,10 +604,6 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     if (parameters.enumeratingAllNetworkInterfacesEnabled)
         enableEnumeratingAllNetworkInterfaces();
 #endif
-#endif
-
-#if ENABLE(WEB_AUTHN)
-    WebCore::AuthenticatorManager::singleton().setMessenger(*m_credentialsMessenger);
 #endif
 
     for (auto iterator : parameters.urlSchemeHandlers)

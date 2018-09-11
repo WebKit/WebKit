@@ -23,36 +23,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "AuthenticatorAssertionResponse.h"
+#pragma once
 
 #if ENABLE(WEB_AUTHN)
 
+#include "MessageReceiver.h"
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/WeakPtr.h>
+
 namespace WebCore {
+class LocalAuthenticator;
 
-AuthenticatorAssertionResponse::AuthenticatorAssertionResponse(RefPtr<ArrayBuffer>&& clientDataJSON, RefPtr<ArrayBuffer>&& authenticatorData, RefPtr<ArrayBuffer>&& signature, RefPtr<ArrayBuffer>&& userHandle)
-    : AuthenticatorResponse(WTFMove(clientDataJSON))
-    , m_authenticatorData(WTFMove(authenticatorData))
-    , m_signature(WTFMove(signature))
-    , m_userHandle(WTFMove(userHandle))
-{
+struct ExceptionData;
+struct PublicKeyCredentialCreationOptions;
+struct PublicKeyCredentialData;
+struct PublicKeyCredentialRequestOptions;
 }
 
-ArrayBuffer* AuthenticatorAssertionResponse::authenticatorData() const
-{
-    return m_authenticatorData.get();
-}
+namespace WebKit {
 
-ArrayBuffer* AuthenticatorAssertionResponse::signature() const
-{
-    return m_signature.get();
-}
+class WebPageProxy;
 
-ArrayBuffer* AuthenticatorAssertionResponse::userHandle() const
-{
-    return m_userHandle.get();
-}
+class WebAuthenticatorCoordinatorProxy : private IPC::MessageReceiver, public CanMakeWeakPtr<WebAuthenticatorCoordinatorProxy> {
+    WTF_MAKE_NONCOPYABLE(WebAuthenticatorCoordinatorProxy);
+public:
+    explicit WebAuthenticatorCoordinatorProxy(WebPageProxy&);
+    ~WebAuthenticatorCoordinatorProxy();
 
-} // namespace WebCore
+private:
+    // IPC::MessageReceiver.
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+
+    // Receivers.
+    void makeCredential(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions&);
+    void getAssertion(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&);
+    void isUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId);
+
+    // Senders.
+    void requestReply(const WebCore::PublicKeyCredentialData&, const WebCore::ExceptionData&);
+    void isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool);
+
+    WebPageProxy& m_webPageProxy;
+    std::unique_ptr<WebCore::LocalAuthenticator> m_authenticator;
+};
+
+} // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)

@@ -45,7 +45,6 @@ Modules/cache/WorkerGlobalScopeCaches.cpp
 
 Modules/credentialmanagement/BasicCredential.cpp
 Modules/credentialmanagement/CredentialsContainer.cpp
-Modules/credentialmanagement/CredentialsMessenger.cpp
 Modules/credentialmanagement/NavigatorCredentials.cpp
 
 Modules/entriesapi/ErrorCallback.cpp
@@ -247,10 +246,8 @@ Modules/webaudio/WaveShaperDSPKernel.cpp
 Modules/webaudio/WaveShaperNode.cpp
 Modules/webaudio/WaveShaperProcessor.cpp
 
-Modules/webauthn/AuthenticatorAssertionResponse.cpp
-Modules/webauthn/AuthenticatorAttestationResponse.cpp
-Modules/webauthn/AuthenticatorManager.cpp
-Modules/webauthn/AuthenticatorResponse.cpp
+Modules/webauthn/AuthenticatorCoordinator.cpp
+Modules/webauthn/AuthenticatorCoordinatorClient.cpp
 Modules/webauthn/PublicKeyCredential.cpp
 Modules/webauthn/cbor/CBORReader.cpp
 Modules/webauthn/cbor/CBORValue.cpp

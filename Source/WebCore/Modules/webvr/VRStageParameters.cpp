@@ -27,6 +27,7 @@
 #include "VRStageParameters.h"
 
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 
 namespace WebCore {

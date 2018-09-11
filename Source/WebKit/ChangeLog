@@ -1,3 +1,43 @@
+2018-09-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Polish AuthenticatorManager and rename it to AuthenticatorCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=189277
+        <rdar://problem/44115936>
+
+        Reviewed by Chris Dumez.
+
+        * DerivedSources.make:
+        * SourcesCocoa.txt:
+        * UIProcess/CredentialManagement/WebCredentialsMessengerProxy.cpp: Removed.
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp: Added.
+        (WebKit::WebAuthenticatorCoordinatorProxy::WebAuthenticatorCoordinatorProxy):
+        (WebKit::WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy):
+        (WebKit::WebAuthenticatorCoordinatorProxy::makeCredential):
+        (WebKit::WebAuthenticatorCoordinatorProxy::getAssertion):
+        (WebKit::WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable):
+        (WebKit::WebAuthenticatorCoordinatorProxy::requestReply):
+        (WebKit::WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailableReply):
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.h: Renamed from Source/WebKit/UIProcess/CredentialManagement/WebCredentialsMessengerProxy.h.
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.messages.in: Renamed from Source/WebKit/UIProcess/CredentialManagement/WebCredentialsMessengerProxy.messages.in.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_resetRecentCrashCountTimer):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/CredentialManagement/WebCredentialsMessenger.cpp: Removed.
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp: Added.
+        (WebKit::WebAuthenticatorCoordinator::WebAuthenticatorCoordinator):
+        (WebKit::WebAuthenticatorCoordinator::~WebAuthenticatorCoordinator):
+        (WebKit::WebAuthenticatorCoordinator::makeCredential):
+        (WebKit::WebAuthenticatorCoordinator::getAssertion):
+        (WebKit::WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable):
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.h: Renamed from Source/WebKit/WebProcess/CredentialManagement/WebCredentialsMessenger.h.
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.messages.in: Renamed from Source/WebKit/WebProcess/CredentialManagement/WebCredentialsMessenger.messages.in.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_cpuLimit):
+        (WebKit::m_credentialsMessenger): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+
 2018-09-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix ProcessSwap API tests after r235867.

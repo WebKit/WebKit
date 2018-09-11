@@ -24,17 +24,18 @@
  */
 
 #include "config.h"
-#include "AuthenticatorManager.h"
+#include "AuthenticatorCoordinator.h"
 
 #if ENABLE(WEB_AUTHN)
 
 #include "AbortSignal.h"
 #include "AuthenticatorAssertionResponse.h"
 #include "AuthenticatorAttestationResponse.h"
-#include "CredentialsMessenger.h"
+#include "AuthenticatorCoordinatorClient.h"
 #include "JSBasicCredential.h"
 #include "PublicKeyCredential.h"
 #include "PublicKeyCredentialCreationOptions.h"
+#include "PublicKeyCredentialData.h"
 #include "PublicKeyCredentialRequestOptions.h"
 #include "SecurityOrigin.h"
 #include "Timer.h"
@@ -45,7 +46,7 @@
 
 namespace WebCore {
 
-namespace AuthenticatorManagerInternal {
+namespace AuthenticatorCoordinatorInternal {
 
 enum class ClientDataType {
     Create,
@@ -104,23 +105,21 @@ static bool didTimeoutTimerFire(Timer* timer)
     return false;
 }
 
-} // namespace AuthenticatorManagerInternal
+} // namespace AuthenticatorCoordinatorInternal
 
-AuthenticatorManager& AuthenticatorManager::singleton()
+AuthenticatorCoordinator::AuthenticatorCoordinator(std::unique_ptr<AuthenticatorCoordinatorClient>&& client)
+    : m_client(WTFMove(client))
 {
-    ASSERT(isMainThread());
-    static NeverDestroyed<AuthenticatorManager> authenticator;
-    return authenticator;
 }
 
-void AuthenticatorManager::setMessenger(CredentialsMessenger& messenger)
+void AuthenticatorCoordinator::setClient(std::unique_ptr<AuthenticatorCoordinatorClient>&& client)
 {
-    m_messenger = makeWeakPtr(messenger);
+    m_client = WTFMove(client);
 }
 
-void AuthenticatorManager::create(const SecurityOrigin& callerOrigin, const PublicKeyCredentialCreationOptions& options, bool sameOriginWithAncestors, RefPtr<AbortSignal>&& abortSignal, CredentialPromise&& promise) const
+void AuthenticatorCoordinator::create(const SecurityOrigin& callerOrigin, const PublicKeyCredentialCreationOptions& options, bool sameOriginWithAncestors, RefPtr<AbortSignal>&& abortSignal, CredentialPromise&& promise) const
 {
-    using namespace AuthenticatorManagerInternal;
+    using namespace AuthenticatorCoordinatorInternal;
 
     // The following implements https://www.w3.org/TR/webauthn/#createCredential as of 5 December 2017.
     // FIXME: Extensions are not supported yet. Skip Step 11-12.
@@ -161,33 +160,34 @@ void AuthenticatorManager::create(const SecurityOrigin& callerOrigin, const Publ
     // Only platform attachments will be supported at this stage. Assuming one authenticator per device.
     // Also, resident keys, user verifications and direct attestation are enforced at this tage.
     // For better performance, transports of options.excludeCredentials are checked in LocalAuthenticator.
-    if (!m_messenger)  {
+    if (!m_client)  {
         promise.reject(Exception { UnknownError, "Unknown internal error."_s });
         return;
     }
 
-    auto completionHandler = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), timeoutTimer = WTFMove(timeoutTimer), abortSignal = WTFMove(abortSignal)] (ExceptionOr<CreationReturnBundle>&& result) mutable {
+    auto completionHandler = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), timeoutTimer = WTFMove(timeoutTimer), abortSignal = WTFMove(abortSignal)] (const WebCore::PublicKeyCredentialData& data, const WebCore::ExceptionData& exception) mutable {
         if (didTimeoutTimerFire(timeoutTimer.get()))
             return;
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
             return;
         }
-        if (result.hasException()) {
-            promise.reject(result.exception());
+
+        data.clientDataJSON = WTFMove(clientDataJson);
+        if (auto publicKeyCredential = PublicKeyCredential::tryCreate(data)) {
+            promise.resolve(publicKeyCredential.get());
             return;
         }
-
-        auto bundle = result.releaseReturnValue();
-        promise.resolve(PublicKeyCredential::create(WTFMove(bundle.credentialId), AuthenticatorAttestationResponse::create(WTFMove(clientDataJson), ArrayBuffer::create(WTFMove(bundle.attestationObject)))).ptr());
+        ASSERT(!exception.message.isNull());
+        promise.reject(exception.toException());
     };
     // Async operations are dispatched and handled in the messenger.
-    m_messenger->makeCredential(clientDataJsonHash, options, WTFMove(completionHandler));
+    m_client->makeCredential(clientDataJsonHash, options, WTFMove(completionHandler));
 }
 
-void AuthenticatorManager::discoverFromExternalSource(const SecurityOrigin& callerOrigin, const PublicKeyCredentialRequestOptions& options, bool sameOriginWithAncestors, RefPtr<AbortSignal>&& abortSignal, CredentialPromise&& promise) const
+void AuthenticatorCoordinator::discoverFromExternalSource(const SecurityOrigin& callerOrigin, const PublicKeyCredentialRequestOptions& options, bool sameOriginWithAncestors, RefPtr<AbortSignal>&& abortSignal, CredentialPromise&& promise) const
 {
-    using namespace AuthenticatorManagerInternal;
+    using namespace AuthenticatorCoordinatorInternal;
 
     // The following implements https://www.w3.org/TR/webauthn/#createCredential as of 5 December 2017.
     // FIXME: Extensions are not supported yet. Skip Step 8-9.
@@ -220,35 +220,36 @@ void AuthenticatorManager::discoverFromExternalSource(const SecurityOrigin& call
     // Only platform attachments will be supported at this stage. Assuming one authenticator per device.
     // Also, resident keys, user verifications and direct attestation are enforced at this tage.
     // For better performance, filtering of options.allowCredentials is done in LocalAuthenticator.
-    if (!m_messenger)  {
+    if (!m_client)  {
         promise.reject(Exception { UnknownError, "Unknown internal error."_s });
         return;
     }
 
-    auto completionHandler = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), timeoutTimer = WTFMove(timeoutTimer), abortSignal = WTFMove(abortSignal)] (ExceptionOr<AssertionReturnBundle>&& result) mutable {
+    auto completionHandler = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), timeoutTimer = WTFMove(timeoutTimer), abortSignal = WTFMove(abortSignal)] (const WebCore::PublicKeyCredentialData& data, const WebCore::ExceptionData& exception) mutable {
         if (didTimeoutTimerFire(timeoutTimer.get()))
             return;
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
             return;
         }
-        if (result.hasException()) {
-            promise.reject(result.exception());
+
+        data.clientDataJSON = WTFMove(clientDataJson);
+        if (auto publicKeyCredential = PublicKeyCredential::tryCreate(data)) {
+            promise.resolve(publicKeyCredential.get());
             return;
         }
-
-        auto bundle = result.releaseReturnValue();
-        promise.resolve(PublicKeyCredential::create(WTFMove(bundle.credentialId), AuthenticatorAssertionResponse::create(WTFMove(clientDataJson), WTFMove(bundle.authenticatorData), WTFMove(bundle.signature), WTFMove(bundle.userHandle))).ptr());
+        ASSERT(!exception.message.isNull());
+        promise.reject(exception.toException());
     };
     // Async operations are dispatched and handled in the messenger.
-    m_messenger->getAssertion(clientDataJsonHash, options, WTFMove(completionHandler));
+    m_client->getAssertion(clientDataJsonHash, options, WTFMove(completionHandler));
 }
 
-void AuthenticatorManager::isUserVerifyingPlatformAuthenticatorAvailable(DOMPromiseDeferred<IDLBoolean>&& promise) const
+void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(DOMPromiseDeferred<IDLBoolean>&& promise) const
 {
     // The following implements https://www.w3.org/TR/webauthn/#isUserVerifyingPlatformAuthenticatorAvailable
     // as of 5 December 2017.
-    if (!m_messenger)  {
+    if (!m_client)  {
         promise.reject(Exception { UnknownError, "Unknown internal error."_s });
         return;
     }
@@ -259,7 +260,7 @@ void AuthenticatorManager::isUserVerifyingPlatformAuthenticatorAvailable(DOMProm
         promise.resolve(result);
     };
     // Async operation are dispatched and handled in the messenger.
-    m_messenger->isUserVerifyingPlatformAuthenticatorAvailable(WTFMove(completionHandler));
+    m_client->isUserVerifyingPlatformAuthenticatorAvailable(WTFMove(completionHandler));
 }
 
 } // namespace WebCore

@@ -52,7 +52,7 @@ promise_test(async () => {
         }
     };
     // A mock attestation object
-    internals.mockCredentialsMessenger.setCreationReturnBundle(hexStringToUint8Array('00'), hexStringToUint8Array('01'));
+    internals.mockAuthenticatorCoordinator.setCreationReturnBundle(hexStringToUint8Array('00'), hexStringToUint8Array('01'));
     createdCredential = await navigator.credentials.create(creationOptions);
 
 
@@ -62,7 +62,7 @@ promise_test(async () => {
         }
     };
     // A mock assertion return bundle.
-    internals.mockCredentialsMessenger.setAssertionReturnBundle(hexStringToUint8Array('00'), hexStringToUint8Array('01'), hexStringToUint8Array('02'), hexStringToUint8Array('03'));
+    internals.mockAuthenticatorCoordinator.setAssertionReturnBundle(hexStringToUint8Array('00'), hexStringToUint8Array('01'), hexStringToUint8Array('02'), hexStringToUint8Array('03'));
     requestedCredential = await navigator.credentials.get(requestOptions);
 
     idlArray.add_objects({"PublicKeyCredential": ["createdCredential"], "AuthenticatorAttestationResponse": ["createdCredential.response"], "AuthenticatorAssertionResponse": ["requestedCredential.response"]});

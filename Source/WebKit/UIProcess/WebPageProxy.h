@@ -236,7 +236,7 @@ class WebFullScreenManagerProxy;
 class PlaybackSessionManagerProxy;
 class WebNavigationState;
 class VideoFullscreenManagerProxy;
-class WebCredentialsMessengerProxy;
+class WebAuthenticatorCoordinatorProxy;
 class WebKeyboardEvent;
 class WebURLSchemeHandler;
 class WebMouseEvent;
@@ -1917,7 +1917,7 @@ private:
 #endif
 
 #if ENABLE(WEB_AUTHN)
-    std::unique_ptr<WebCredentialsMessengerProxy> m_credentialsMessenger;
+    std::unique_ptr<WebAuthenticatorCoordinatorProxy> m_credentialsMessenger;
 #endif
 
     CallbackMap m_callbacks;

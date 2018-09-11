@@ -36,28 +36,29 @@
 namespace WebCore {
 
 class AuthenticatorResponse;
+class Document;
+
+struct PublicKeyCredentialData;
 
 class PublicKeyCredential final : public BasicCredential {
 public:
-    static Ref<PublicKeyCredential> create(RefPtr<ArrayBuffer>&& id, RefPtr<AuthenticatorResponse>&& response)
-    {
-        return adoptRef(*new PublicKeyCredential(WTFMove(id), WTFMove(response)));
-    }
+    static Ref<PublicKeyCredential> create(Ref<ArrayBuffer>&& id, Ref<AuthenticatorResponse>&&);
+    static RefPtr<PublicKeyCredential> tryCreate(const PublicKeyCredentialData&);
 
-    ArrayBuffer* rawId() const { return m_rawId.get(); }
-    AuthenticatorResponse* response() const { return m_response.get(); }
+    ArrayBuffer* rawId() const { return m_rawId.ptr(); }
+    AuthenticatorResponse* response() const { return m_response.ptr(); }
     // Not support yet. Always throws.
     ExceptionOr<bool> getClientExtensionResults() const;
 
-    static void isUserVerifyingPlatformAuthenticatorAvailable(DOMPromiseDeferred<IDLBoolean>&&);
+    static void isUserVerifyingPlatformAuthenticatorAvailable(Document&, DOMPromiseDeferred<IDLBoolean>&&);
 
 private:
-    PublicKeyCredential(RefPtr<ArrayBuffer>&& id, RefPtr<AuthenticatorResponse>&&);
+    PublicKeyCredential(Ref<ArrayBuffer>&& id, Ref<AuthenticatorResponse>&&);
 
     Type credentialType() const final { return Type::PublicKey; }
 
-    RefPtr<ArrayBuffer> m_rawId;
-    RefPtr<AuthenticatorResponse> m_response;
+    Ref<ArrayBuffer> m_rawId;
+    Ref<AuthenticatorResponse> m_response;
 };
 
 } // namespace WebCore

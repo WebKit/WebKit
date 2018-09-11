@@ -23,13 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WEB_AUTHN,
-    NoInterfaceObject,
-] interface MockCredentialsMessenger {
-    void setDidTimeOut();
-    void setDidUserCancel();
-    void setDidUserVerifyingPlatformAuthenticatorPresent();
-    void setCreationReturnBundle(BufferSource credentialId, BufferSource attestationObject);
-    void setAssertionReturnBundle(BufferSource credentialId, BufferSource authenticatorData, BufferSource signature, BufferSource userHandle);
+#pragma once
+
+#if ENABLE(WEB_AUTHN)
+
+#include "MessageReceiver.h"
+#include <WebCore/AuthenticatorCoordinatorClient.h>
+
+namespace WebKit {
+
+class WebPage;
+
+class WebAuthenticatorCoordinator final : public WebCore::AuthenticatorCoordinatorClient, private IPC::MessageReceiver {
+public:
+    explicit WebAuthenticatorCoordinator(WebPage&);
+    ~WebAuthenticatorCoordinator();
+
+private:
+    // WebCore::AuthenticatorCoordinatorClient
+    // Senders.
+    void makeCredential(const Vector<uint8_t>&, const WebCore::PublicKeyCredentialCreationOptions&, WebCore::RequestCompletionHandler&&) final;
+    void getAssertion(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, WebCore::RequestCompletionHandler&&) final;
+    void isUserVerifyingPlatformAuthenticatorAvailable(WebCore::QueryCompletionHandler&&) final;
+
+    // IPC::MessageReceiver.
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+
+    WebPage& m_webPage;
 };
+
+} // namespace WebKit
+
+#endif // ENABLE(WEB_AUTHN)

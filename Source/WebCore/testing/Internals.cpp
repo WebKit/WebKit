@@ -267,8 +267,8 @@
 #endif
 
 #if ENABLE(WEB_AUTHN)
-#include "AuthenticatorManager.h"
-#include "MockCredentialsMessenger.h"
+#include "AuthenticatorCoordinator.h"
+#include "MockAuthenticatorCoordinator.h"
 #endif
 
 using JSC::CallData;
@@ -549,8 +549,11 @@ Internals::Internals(Document& document)
 #endif
 
 #if ENABLE(WEB_AUTHN)
-    m_mockCredentialsMessenger = std::make_unique<MockCredentialsMessenger>(*this);
-    AuthenticatorManager::singleton().setMessenger(*m_mockCredentialsMessenger);
+    if (document.page()) {
+        auto mockAuthenticatorCoordinator = std::make_unique<MockAuthenticatorCoordinator>();
+        m_mockAuthenticatorCoordinator = makeWeakPtr(mockAuthenticatorCoordinator.get());
+        document.page()->authenticatorCoordinator().setClient(WTFMove(mockAuthenticatorCoordinator));
+    }
 #endif
 }
 
@@ -4620,9 +4623,9 @@ MockPaymentCoordinator& Internals::mockPaymentCoordinator() const
 #endif
 
 #if ENABLE(WEB_AUTHN)
-MockCredentialsMessenger& Internals::mockCredentialsMessenger() const
+MockAuthenticatorCoordinator& Internals::mockAuthenticatorCoordinator() const
 {
-    return *m_mockCredentialsMessenger;
+    return *m_mockAuthenticatorCoordinator;
 }
 #endif
 

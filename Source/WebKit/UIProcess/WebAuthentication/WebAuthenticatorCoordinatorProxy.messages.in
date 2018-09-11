@@ -24,12 +24,11 @@
 
 #if ENABLE(WEB_AUTHN)
 
-messages -> WebCredentialsMessenger {
+messages -> WebAuthenticatorCoordinatorProxy {
 
-    ExceptionReply(uint64_t messageId, struct WebCore::ExceptionData exception);
-    MakeCredentialReply(uint64_t messageId, Vector<uint8_t> credentialId, Vector<uint8_t> attestationObject);
-    GetAssertionReply(uint64_t messageId, Vector<uint8_t> credentialId, Vector<uint8_t> authenticatorData, Vector<uint8_t> signature, Vector<uint8_t> userHandle);
-    IsUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool result);
+    MakeCredential(Vector<uint8_t> hash, struct WebCore::PublicKeyCredentialCreationOptions options);
+    GetAssertion(Vector<uint8_t> hash, struct WebCore::PublicKeyCredentialRequestOptions options);
+    IsUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId);
 }
 
 #endif

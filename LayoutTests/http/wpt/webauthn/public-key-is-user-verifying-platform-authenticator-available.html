@@ -4,7 +4,7 @@
 <script src="/resources/testharnessreport.js"></script>
 <script>
     promise_test(function(t) {
-        internals.mockCredentialsMessenger;
+        internals.mockAuthenticatorCoordinator;
 
         return PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(function(result) {
             assert_equals(result, false);
@@ -12,7 +12,7 @@
     }, "PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable() without any available authenticators.");
 
     promise_test(function(t) {
-        internals.mockCredentialsMessenger.setDidUserVerifyingPlatformAuthenticatorPresent();
+        internals.mockAuthenticatorCoordinator.setDidUserVerifyingPlatformAuthenticatorPresent();
 
         return PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(function(result) {
             assert_equals(result, true);

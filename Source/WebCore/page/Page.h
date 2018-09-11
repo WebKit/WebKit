@@ -76,6 +76,7 @@ class IDBConnectionToServer;
 
 class AlternativeTextClient;
 class ApplicationCacheStorage;
+class AuthenticatorCoordinator;
 class BackForwardController;
 class BackForwardClient;
 class CacheStorageProvider;
@@ -408,6 +409,10 @@ public:
 #if ENABLE(APPLE_PAY)
     PaymentCoordinator& paymentCoordinator() const { return *m_paymentCoordinator; }
     WEBCORE_EXPORT void setPaymentCoordinator(std::unique_ptr<PaymentCoordinator>&&);
+#endif
+
+#if ENABLE(WEB_AUTHN)
+    AuthenticatorCoordinator& authenticatorCoordinator() { return m_authenticatorCoordinator.get(); }
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -899,6 +904,10 @@ private:
 
 #if ENABLE(APPLE_PAY)
     std::unique_ptr<PaymentCoordinator> m_paymentCoordinator;
+#endif
+
+#if ENABLE(WEB_AUTHN)
+    UniqueRef<AuthenticatorCoordinator> m_authenticatorCoordinator;
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)

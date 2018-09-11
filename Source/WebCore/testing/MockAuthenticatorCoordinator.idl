@@ -23,24 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "AuthenticatorAttestationResponse.h"
-
-#if ENABLE(WEB_AUTHN)
-
-namespace WebCore {
-
-AuthenticatorAttestationResponse::AuthenticatorAttestationResponse(RefPtr<ArrayBuffer>&& clientDataJSON, RefPtr<ArrayBuffer>&& attestationObject)
-    : AuthenticatorResponse(WTFMove(clientDataJSON))
-    , m_attestationObject(WTFMove(attestationObject))
-{
-}
-
-ArrayBuffer* AuthenticatorAttestationResponse::attestationObject() const
-{
-    return m_attestationObject.get();
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(WEB_AUTHN)
+[
+    Conditional=WEB_AUTHN,
+    NoInterfaceObject,
+] interface MockAuthenticatorCoordinator {
+    void setDidTimeOut();
+    void setDidUserCancel();
+    void setDidUserVerifyingPlatformAuthenticatorPresent();
+    void setCreationReturnBundle(BufferSource credentialId, BufferSource attestationObject);
+    void setAssertionReturnBundle(BufferSource credentialId, BufferSource authenticatorData, BufferSource signature, BufferSource userHandle);
+};
