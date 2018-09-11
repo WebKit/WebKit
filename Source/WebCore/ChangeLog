@@ -1,3 +1,18 @@
+2018-09-11  James Savage  <james.savage@apple.com>
+
+        Follow up to:
+        Expose -apple-system-container-border color to internal web views.
+        https://bugs.webkit.org/show_bug.cgi?id=189178.
+
+        Reviewed by Timothy Hatcher.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor const): Add a separate #if block for
+        Mojave. When I used CSSValueAppleSystemFindHighlightBackground as a template
+        for this change, I had to write out the condition in the first change, but
+        mistakenly thought I could reuse the block here. Turns out the versions were
+        different, and I could not.
+
 2018-09-11  Youenn Fablet  <youenn@apple.com>
 
         Remove MediaDevices NoInterfaceObject

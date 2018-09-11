@@ -1,3 +1,14 @@
+2018-09-11  James Savage  <james.savage@apple.com>
+
+        Follow up to:
+        Expose -apple-system-container-border color to internal web views.
+        https://bugs.webkit.org/show_bug.cgi?id=189178.
+
+        Reviewed by Timothy Hatcher.
+
+        * platform/mac-highsierra/fast/css/apple-system-control-colors-expected.txt:
+        Reset test expectations to go along with fix.
+
 2018-09-07  Dean Jackson  <dino@apple.com>
 
         Add and expose Internal features from WebKit

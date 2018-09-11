@@ -19,5 +19,5 @@
 -apple-system-quaternary-label : rgba(0, 0, 0, 0.0980392)
 -apple-system-grid : rgb(204, 204, 204)
 -apple-system-separator : rgb(204, 204, 204)
--apple-system-container-border : rgba(0, 0, 0, 0)
+-apple-system-container-border : rgb(197, 197, 197)
 current-color with inherited -apple-system-label : rgba(0, 0, 0, 0.85098)
